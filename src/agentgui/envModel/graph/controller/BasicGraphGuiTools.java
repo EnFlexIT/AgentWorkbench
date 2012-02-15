@@ -55,8 +55,6 @@ import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.prototypes.DistributionNode;
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 public class BasicGraphGuiTools implements ActionListener {
 
@@ -121,12 +119,12 @@ public class BasicGraphGuiTools implements ActionListener {
 		    jToolBar.add(getJButtonZoomOut());
 	
 		    jToolBar.addSeparator();
-		    jToolBar.add(getJToggleMouseTransforming());
 		    jToolBar.add(getJToggleMousePicking());
-	
+		    jToolBar.add(getJToggleMouseTransforming());
+		    
 		    ButtonGroup bg = new ButtonGroup();
-		    bg.add(jToggleMousePicking);
-		    bg.add(jToggleMouseTransforming);
+		    bg.add(getJToggleMousePicking());
+		    bg.add(getJToggleMouseTransforming());
 	
 		    // --- In case of editing the simulation setup ----------
 		    if (this.graphController.getProject() != null) {
@@ -466,13 +464,6 @@ public class BasicGraphGuiTools implements ActionListener {
 		
     	this.setGraphGuiElements();
     	
-		// ----------------------------------------------------------
-		// --- Get ready to access the needed components ------------
-		VisualizationViewer<GraphNode, GraphEdge> visView = this.basicGraphGui.getVisView();
-		if (visView==null) {
-			return;
-		}
-		
 		if (ae.getSource() == getJButtonComponents()) {
 			// ------------------------------------------------------
 			// --- Edit the ComponentType settings ------------------
@@ -481,9 +472,6 @@ public class BasicGraphGuiTools implements ActionListener {
 			// - - - Waiting here - - -
 			if (ctsDialog.isCanceled()==false) {
 				this.graphController.getNetworkModelAdapter().setGeneralGraphSettings4MAS(ctsDialog.getGeneralGraphSettings4MAS());
-				this.graphController.setProjectUnsaved();
-				this.graphController.validateNetworkComponentAndAgents2Start();
-				this.basicGraphGui.setGraph(this.graphController.getNetworkModelAdapter().getGraph());
 			}
 			ctsDialog.dispose();
 			ctsDialog = null;
@@ -491,36 +479,32 @@ public class BasicGraphGuiTools implements ActionListener {
 		} else if (ae.getSource() == getJButtonZoomFit2Window()) {
 			// ------------------------------------------------------
 			// --- Button Reset zoom --------------------------------
-			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
-			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
-			this.basicGraphGui.setAllowInitialScaling(true);
-			this.basicGraphGui.setInitialScalingAndMovement();
-		
+			this.graphController.getNetworkModelAdapter().zoomFit2Window();
+			
 		} else if (ae.getSource() == getJButtonZoomOne2One()) {
 			// ------------------------------------------------------
 			// --- Button Reset zoom --------------------------------
-			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
-			visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
+			this.graphController.getNetworkModelAdapter().zoomOne2One();
 			
 		} else if (ae.getSource() == getJButtonZoomIn()) {
 			// ------------------------------------------------------
 			// --- Button Zoom in -----------------------------------
-			this.basicGraphGui.getScalingControl().scale(visView, 1.1f, basicGraphGui.getDefaultScaleAtPoint());
+			this.graphController.getNetworkModelAdapter().zoomIn();
 			
 		} else if (ae.getSource() == getJButtonZoomOut()) {
 			// ------------------------------------------------------
 			// --- Button Zoom out ----------------------------------
-			this.basicGraphGui.getScalingControl().scale(visView, 1 / 1.1f, basicGraphGui.getDefaultScaleAtPoint());
+			this.graphController.getNetworkModelAdapter().zoomOut();
 
 		} else if (ae.getSource() == getJToggleMouseTransforming()) {
 			// ------------------------------------------------------
 			// --- Button Transforming Mouse mode -------------------
-			visView.setGraphMouse(this.basicGraphGui.getDefaultModalGraphMouse());
+			this.graphController.getNetworkModelAdapter().setGraphMouseTransforming();
 			
 		} else if (ae.getSource() == getJToggleMousePicking()) {
 			// ------------------------------------------------------
 			// --- Button Picking Mouse mode ------------------------
-			visView.setGraphMouse(this.basicGraphGui.getPluggableGraphMouse());
+			this.graphController.getNetworkModelAdapter().setGraphMousePicking();
 			
 		} else if (ae.getSource() == getJButtonAddComponent() || ae.getSource() == getJMenuItemAddComp()) {
 			// ------------------------------------------------------
@@ -529,9 +513,9 @@ public class BasicGraphGuiTools implements ActionListener {
 				// --- If the graph is empty - starting from scratch -
 				this.showAddComponentDialog();	
 				
-			} else if(basicGraphGui.getPickedVertex()!=null) {
+			} else if(basicGraphGui.getPickedSingleNode()!=null) {
 				// --- Picked a vertex ------------------------------
-					if(this.graphController.getNetworkModelAdapter().isFreeGraphNode(basicGraphGui.getPickedVertex())) {
+					if(this.graphController.getNetworkModelAdapter().isFreeGraphNode(basicGraphGui.getPickedSingleNode())) {
 						this.showAddComponentDialog();
 					} else {
 						JOptionPane.showMessageDialog(this.graphControllerGUI, Language.translate("Select a valid vertex", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
@@ -545,19 +529,17 @@ public class BasicGraphGuiTools implements ActionListener {
 			// ------------------------------------------------------
 			// --- Remove Component Button clicked ------------------
 			NetworkComponent selectedComponent = null;
-			Set<GraphEdge> edgeSet = visView.getPickedEdgeState().getPicked();
+			Set<GraphEdge> edgeSet = this.basicGraphGui.getPickedEdges();
 			if(edgeSet.size()>0){ 
 				// --- At least one edge is picked ------------------
 				// --- Get the Network component from picked edge ---
 				selectedComponent = this.graphController.getNetworkModelAdapter().getNetworkComponent(edgeSet.iterator().next());
 				// --- Remove component and update graph ------------ 
-				this.basicGraphGui.removeNetworkComponent(selectedComponent);
-				this.graphControllerGUI.networkComponentRemove(selectedComponent);
-				this.graphController.refreshNetworkModel();
+				this.graphController.getNetworkModelAdapter().removeNetworkComponent(selectedComponent);
 				
 			} else {
 				// --- No edge is picked ----------------------------
-				Set<GraphNode> nodeSet = visView.getPickedVertexState().getPicked();
+				Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
 				if (nodeSet.size()>0) {
 					// --- At least one node is picked --------------
 					HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(nodeSet.iterator().next());
@@ -566,9 +548,7 @@ public class BasicGraphGuiTools implements ActionListener {
 						selectedComponent = it.next();
 						if (selectedComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
 							// --- Remove component, update graph --- 
-							this.basicGraphGui.removeNetworkComponent(selectedComponent);
-							this.graphControllerGUI.networkComponentRemove(selectedComponent);
-							this.graphController.refreshNetworkModel();
+							this.graphController.getNetworkModelAdapter().removeNetworkComponent(selectedComponent);
 							return;
 						}	
 					}
@@ -583,7 +563,7 @@ public class BasicGraphGuiTools implements ActionListener {
 		} else if (ae.getSource() == getJButtonMergeNodes()) {
 			// ------------------------------------------------------
 			// --- Merge Nodes Button clicked -----------------------
-			Set<GraphNode> nodeSet = visView.getPickedVertexState().getPicked();
+			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
 			if(nodeSet.size()==2){
 				// --- Two nodes are picked
 				Iterator<GraphNode> nodeIter = nodeSet.iterator();
@@ -591,7 +571,7 @@ public class BasicGraphGuiTools implements ActionListener {
 				GraphNode node2 = nodeIter.next();
 				if (this.graphController.getNetworkModelAdapter().isFreeGraphNode(node1) && this.graphController.getNetworkModelAdapter().isFreeGraphNode(node2)) {
 					// --- Valid nodes are picked
-					basicGraphGui.mergeNodes(node1, node2);
+					this.graphController.getNetworkModelAdapter().mergeNodes(node1, node2);
 				} else {
 					// --- Invalid nodes are picked
 					JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Select two valid vertices", Language.EN),
@@ -607,21 +587,21 @@ public class BasicGraphGuiTools implements ActionListener {
 		} else if (ae.getSource() == getJButtonSplitNode() || ae.getSource() == getJMenuItemSplitNode()) {
 			// ------------------------------------------------------
 			// --- Button Split node --------------------------------
-			GraphNode pickedVertex = basicGraphGui.getPickedVertex();
-			if(pickedVertex!=null){
+			GraphNode pickedNode = basicGraphGui.getPickedSingleNode();
+			if(pickedNode!=null){
 				// --- One vertex is picked -----
-				HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(pickedVertex);
+				HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(pickedNode);
 				NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
 				if (containsDistributionNode!=null) {
 					if(components.size()>=2){
-						basicGraphGui.splitNode(pickedVertex);
+						this.graphController.getNetworkModelAdapter().splitNetworkModelAtNode(pickedNode);
 					} else {
 						JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("The select Vertex should be at least between two components !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
 
 				} else {
 					if(components.size()==2){
-						basicGraphGui.splitNode(pickedVertex);
+						this.graphController.getNetworkModelAdapter().splitNetworkModelAtNode(pickedNode);
 					} else {
 						JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("The select Vertex should be between two components !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
@@ -635,15 +615,14 @@ public class BasicGraphGuiTools implements ActionListener {
 		} else if (ae.getSource() == getJButtonClearGraph()) {
 			// ------------------------------------------------------
 			// --- Button Clear graph -------------------------------
-			int n = JOptionPane.showConfirmDialog(Application.MainWindow, Language.translate(
-					"Are you sure that you want to clear the graph?", Language.EN), Language
-					.translate("Confirmation", Language.EN),
-					JOptionPane.YES_NO_OPTION);
+			int answer = JOptionPane.showConfirmDialog(Application.MainWindow,
+						 Language.translate("Are you sure that you want to clear the graph?", Language.EN), 
+						 Language.translate("Confirmation", Language.EN), 
+						 JOptionPane.YES_NO_OPTION);
 
-			if (n == JOptionPane.YES_OPTION) {
+			if (answer == JOptionPane.YES_OPTION) {
 				// --- Clearing the actual Network and Graph model ------------
-				this.graphController.clearNetworkModel();
-				graphControllerGUI.showNumberOfComponents();
+				this.graphController.getNetworkModelAdapter().clearNetworkModel();
 			}
 		
 		} else if (ae.getSource() == getJButtonImportGraph()) {
@@ -661,7 +640,7 @@ public class BasicGraphGuiTools implements ActionListener {
 		} else if(ae.getSource() == getJMenuItemNodeProp()) {
 			// ------------------------------------------------------
 			// --- Popup Menu Item Node properties clicked ----------
-			GraphNode pickedVertex = basicGraphGui.getPickedVertex();
+			GraphNode pickedVertex = basicGraphGui.getPickedSingleNode();
 			if(pickedVertex!=null){
 				new OntologySettingsDialog(this.graphController.getProject(), this.graphController, pickedVertex).setVisible(true);
 			}
@@ -669,7 +648,7 @@ public class BasicGraphGuiTools implements ActionListener {
 		} else if(ae.getSource() == getJMenuItemEdgeProp()){
 			// ------------------------------------------------------
 			// --- Popup Menu Item Edge properties clicked ----------
-			GraphEdge pickedEdge = basicGraphGui.getPickedEdge();
+			GraphEdge pickedEdge = basicGraphGui.getPickedSingleEdge();
 			if(pickedEdge!=null){
 				NetworkComponent netComp = graphController.getNetworkModelAdapter().getNetworkComponent(pickedEdge);					
 				new OntologySettingsDialog(this.graphController.getProject(), this.graphController, netComp).setVisible(true);

@@ -45,16 +45,15 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.apache.commons.collections15.Transformer;
 
-import agentgui.core.agents.AgentClassElement4SimStart;
-import agentgui.core.application.Language;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
@@ -63,6 +62,7 @@ import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
+import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
@@ -89,7 +89,7 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class BasicGraphGui extends JPanel {
+public class BasicGraphGui extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 5764679914667183305L;
 
@@ -118,19 +118,43 @@ public class BasicGraphGui extends JPanel {
 
 	/**
 	 * This is the default constructor
-	 * 
 	 * @param controller The Graph Environment controller
 	 */
 	public BasicGraphGui(GraphEnvironmentController controller) {
 		super();
 		this.controller = controller;
+		this.controller.addObserver(this);
 		this.graphGuiTools = new BasicGraphGuiTools(this.controller);
 		initialize();
+		
+		this.reLoadGraph();
+	}
+	
+	/**
+	 * Gets the graph environment controller.
+	 * @return the controller
+	 */
+	public GraphEnvironmentController getGraphEnvironmentController() {
+		return controller;
+	}
+	/**
+	 * Gets the VisualizationViewer
+	 * @return The VisualizationViewer
+	 */
+	public VisualizationViewer<GraphNode, GraphEdge> getVisView() {
+		return visView;
 	}
 
 	/**
+	 * Gets the scaling control.
+	 * @return the scalingControl
+	 */
+	private ScalingControl getScalingControl() {
+		return scalingControl;
+	}
+	
+	/**
 	 * This method initializes this
-	 * 
 	 * @return void
 	 */
 	private void initialize() {
@@ -178,7 +202,7 @@ public class BasicGraphGui extends JPanel {
 	 * Gets the PluggableGraphMouse.
 	 * @return the pluggableGraphMouse
 	 */
-	public PluggableGraphMouse getPluggableGraphMouse() {
+	private PluggableGraphMouse getPluggableGraphMouse() {
 		return pluggableGraphMouse;
 	}
 
@@ -186,54 +210,14 @@ public class BasicGraphGui extends JPanel {
 	 * Gets the DefaultModalGraphMouse.
 	 * @return the pluggableGraphMouse
 	 */
-	public DefaultModalGraphMouse<GraphNode, GraphEdge> getDefaultModalGraphMouse() {
+	private DefaultModalGraphMouse<GraphNode, GraphEdge> getDefaultModalGraphMouse() {
 		return defaultModalGraphMouse;
-	}
-
-	/**
-	 * Gets the VisualizationViewer
-	 * @return The VisualizationViewer
-	 */
-	public VisualizationViewer<GraphNode, GraphEdge> getVisView() {
-		return visView;
-	}
-
-	/**
-	 * Gets the scaling control.
-	 * @return the scalingControl
-	 */
-	public ScalingControl getScalingControl() {
-		return scalingControl;
-	}
-
-	/**
-	 * Sets the scaling control.
-	 * @param scalingControl the scalingControl to set
-	 */
-	public void setScalingControl(ScalingControl scalingControl) {
-		this.scalingControl = scalingControl;
-	}
-
-	/**
-	 * Checks if the initial scaling is allowed.
-	 * @return true, if is allow initial scaling
-	 */
-	public boolean isAllowInitialScaling() {
-		return allowInitialScaling;
-	}
-
-	/**
-	 * Sets to allow the initial scaling.
-	 * @param allowInitialScaling the new allow initial scaling
-	 */
-	public void setAllowInitialScaling(boolean allowInitialScaling) {
-		this.allowInitialScaling = allowInitialScaling;
 	}
 
 	/**
 	 * Sets the initial scaling for the graph on the VisualizationViewer.
 	 */
-	public void setInitialScalingAndMovement() {
+	private void setInitialScalingAndMovement() {
 
 		if (this.visView == null)
 			return;
@@ -294,15 +278,14 @@ public class BasicGraphGui extends JPanel {
 	 * Gets the default point to scale at for zooming.
 	 * @return the default scale at point
 	 */
-	public Point2D getDefaultScaleAtPoint() {
+	private Point2D getDefaultScaleAtPoint() {
 		return defaultScaleAtPoint;
 	}
-
 	/**
 	 * Sets the default point to scale at for zooming..
 	 * @param scalePoint the new default scale at point
 	 */
-	public void setDefaultScaleAtPoint(Point2D scalePoint) {
+	private void setDefaultScaleAtPoint(Point2D scalePoint) {
 		defaultScaleAtPoint = scalePoint;
 	}
 
@@ -387,8 +370,10 @@ public class BasicGraphGui extends JPanel {
 	 * 
 	 * @param graph The graph
 	 */
-	public void setGraph(Graph<GraphNode, GraphEdge> graph) {
-
+	private void reLoadGraph() {
+		
+		Graph<GraphNode, GraphEdge> graph = this.controller.getNetworkModelAdapter().getGraph();
+		
 		// --- Remove the old component -------------------
 		if (centerComponent != null) {
 			this.remove(centerComponent);
@@ -415,6 +400,14 @@ public class BasicGraphGui extends JPanel {
 		}
 	}
 
+	/**
+	 * Gets the current Graph and repaints the visualisation viewer.
+	 */
+	private void repaintGraph() {
+		visView.getGraphLayout().setGraph(this.controller.getNetworkModelAdapter().getGraph());
+		visView.repaint();
+	}
+	
 	/**
 	 * Gets the new visualization viewer for a given graph.
 	 *
@@ -664,18 +657,7 @@ public class BasicGraphGui extends JPanel {
 	}
 
 	/**
-	 * Repaints the visualisation viewer, with the given graph
-	 * 
-	 * @param graph The new graph to be painted with.
-	 */
-	public void repaintGraph(Graph<GraphNode, GraphEdge> graph) {
-		visView.getGraphLayout().setGraph(graph);
-		visView.repaint();
-	}
-
-	/**
 	 * This method notifies the observers about a graph object selection
-	 * 
 	 * @param pickedObject The selected object
 	 */
 	public void handleObjectLeftClick(Object pickedObject) {
@@ -685,7 +667,6 @@ public class BasicGraphGui extends JPanel {
 
 	/**
 	 * Notifies the observers that this object is right clicked
-	 * 
 	 * @param pickedObject the selected object
 	 */
 	public void handleObjectRightClick(Object pickedObject) {
@@ -695,7 +676,6 @@ public class BasicGraphGui extends JPanel {
 
 	/**
 	 * Invoked when a graph node or edge is double clicked (left or right)
-	 * 
 	 * @param pickedObject
 	 */
 	public void handleObjectDoubleClick(Object pickedObject) {
@@ -706,7 +686,7 @@ public class BasicGraphGui extends JPanel {
 	/**
 	 * Clears the picked nodes and edges
 	 */
-	public void clearPickedObjects() {
+	private void clearPickedObjects() {
 		visView.getPickedVertexState().clear();
 		visView.getPickedEdgeState().clear();
 	}
@@ -716,7 +696,7 @@ public class BasicGraphGui extends JPanel {
 	 * 
 	 * @param object The GraphNode or GraphEdge to pick
 	 */
-	public void setPickedObject(GraphElement object) {
+	private void setPickedObject(GraphElement object) {
 		if (object instanceof GraphEdge) {
 			visView.getPickedEdgeState().pick((GraphEdge) object, true);
 		} else if (object instanceof GraphNode) {
@@ -726,10 +706,9 @@ public class BasicGraphGui extends JPanel {
 
 	/**
 	 * Marks a group of objects as picked
-	 * 
 	 * @param objects The objects
 	 */
-	public void setPickedObjects(Vector<GraphElement> objects) {
+	private void setPickedObjects(Vector<GraphElement> objects) {
 		Iterator<GraphElement> objIter = objects.iterator();
 		while (objIter.hasNext()) {
 			setPickedObject(objIter.next());
@@ -738,34 +717,46 @@ public class BasicGraphGui extends JPanel {
 
 	/**
 	 * Returns the node which is picked. If multiple nodes are picked, returns null.
-	 * 
 	 * @return GraphNode - the GraphNode which is picked.
 	 */
-	public GraphNode getPickedVertex() {
+	public GraphNode getPickedSingleNode() {
 		Set<GraphNode> nodeSet = this.getVisView().getPickedVertexState().getPicked();
 		if (nodeSet.size() == 1)
 			return nodeSet.iterator().next();
 		return null;
 	}
-
+	/**
+	 * Gets the Set<GraphNode> of picked nodes.
+	 * @return the picked nodes
+	 */
+	public Set<GraphNode> getPickedNodes(){
+		return visView.getPickedVertexState().getPicked();	
+	}
+	
 	/**
 	 * Returns the edge which is picked. If multiple nodes are picked, returns null.
-	 * 
 	 * @return GraphEdge - the GraphNode which is picked.
 	 */
-	public GraphEdge getPickedEdge() {
+	public GraphEdge getPickedSingleEdge() {
 		Set<GraphEdge> edgeSet = this.getVisView().getPickedEdgeState().getPicked();
 		if (edgeSet.size() == 1)
 			return edgeSet.iterator().next();
 		return null;
 	}
-
+	/**
+	 * Gets the Set<GraphEdge> of picked edges.
+	 * @return the picked edges
+	 */
+	public Set<GraphEdge> getPickedEdges(){
+		return this.visView.getPickedEdgeState().getPicked();	
+	}
+	
 	/**
 	 * This method handles the selection of an object, i.e. highlights the related graph elements
 	 * 
 	 * @param object The object to select
 	 */
-	public void selectObject(Object object) {
+	private void selectObject(Object object) {
 		this.selectObject(object, false);
 	}
 
@@ -775,7 +766,7 @@ public class BasicGraphGui extends JPanel {
 	 * @param object
 	 * @param showComponentSettingsDialog - shows the dialog if true
 	 */
-	public void selectObject(Object object, boolean showComponentSettingsDialog) {
+	private void selectObject(Object object, boolean showComponentSettingsDialog) {
 
 		if (object instanceof GraphNode) {
 			this.setPickedObject((GraphElement) object);
@@ -783,15 +774,13 @@ public class BasicGraphGui extends JPanel {
 			HashSet<NetworkComponent> netComps = controller.getNetworkModelAdapter().getNetworkComponents((GraphNode) object);
 			NetworkComponent disNode = controller.getNetworkModelAdapter().containsDistributionNode(netComps);
 			if (disNode != null) {
-				GraphEnvironmentControllerGUI graphEnvGui = (GraphEnvironmentControllerGUI) this.controller.getEnvironmentPanel();
-				graphEnvGui.networkComponentSelect(disNode);
+				this.controller.getNetworkModelAdapter().selectNetworkComponent(disNode);
 			}
 
 		} else if (object instanceof GraphEdge) {
 			NetworkComponent netComp = controller.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object);
 			this.setPickedObjects(controller.getNetworkModelAdapter().getGraphElementsFromNetworkComponent(netComp));
-			GraphEnvironmentControllerGUI graphEnvGui = (GraphEnvironmentControllerGUI) this.controller.getEnvironmentPanel();
-			graphEnvGui.networkComponentSelect(netComp);
+			this.controller.getNetworkModelAdapter().selectNetworkComponent(netComp);
 
 		} else if (object instanceof NetworkComponent) {
 			this.setPickedObjects(controller.getNetworkModelAdapter().getGraphElementsFromNetworkComponent((NetworkComponent) object));
@@ -814,77 +803,6 @@ public class BasicGraphGui extends JPanel {
 			osd.setVisible(true);
 		}
 
-	}
-
-	/**
-	 * Removes the given network component from the network model, updates the graph accordingly and the HashMap of graphElements
-	 * 
-	 * @param selectedComponent The network component to be removed
-	 */
-	public void removeNetworkComponent(NetworkComponent selectedComponent) {
-
-		this.controller.getNetworkModelAdapter().removeNetworkComponent(selectedComponent);
-
-		// Removing the new agent from the agent start list of the simulation setup
-		int i = 0;
-		for (i = 0; i < this.controller.getAgents2Start().size(); i++) {
-			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) this.controller.getAgents2Start().get(i);
-			if (ac4s.getStartAsName().equals(selectedComponent.getId())) {
-				this.controller.getAgents2Start().remove(i);
-				break;
-			}
-		}
-
-		// Shifting the positions of the later components by 1
-		for (int j = i; j < this.controller.getAgents2Start().size(); j++) {
-			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) this.controller.getAgents2Start().get(j);
-			ac4s.setPostionNo(ac4s.getPostionNo() - 1);
-		}
-	}
-
-	/**
-	 * Merges the two nodes as a single node and updates the graph and network model
-	 * 
-	 * @param node1
-	 * @param node2
-	 */
-	public void mergeNodes(GraphNode node1, GraphNode node2) {
-		// Environment Network Model
-		if (this.controller.getNetworkModelAdapter().mergeNodes(node1, node2)) {
-			this.controller.refreshNetworkModel();
-		} else {
-			// Have a common node
-			JOptionPane.showMessageDialog(this, Language.translate("The two network components selected already have a vertex in common", Language.EN),
-					Language.translate("Constraint: Two components can have atmost one common vertex", Language.EN), JOptionPane.WARNING_MESSAGE);
-		}
-	}
-
-	/**
-	 * Splits the node into two nodes, separating the two network components and updates the graph and the network model
-	 * 
-	 * @param node
-	 */
-	public void splitNode(GraphNode node) {
-		this.controller.getNetworkModelAdapter().splitNetworkModelAtNode(node);
-		this.controller.refreshNetworkModel();
-	}
-
-	/**
-	 * Gets the graph environment controller.
-	 * 
-	 * @return the controller
-	 */
-	public GraphEnvironmentController getGraphEnvironmentController() {
-		return controller;
-	}
-
-	/**
-	 * Sets the graph environment controller.
-	 * 
-	 * @param controller the controller to set
-	 */
-	public void setGraphEnvironmentController(GraphEnvironmentController controller) {
-		this.controller = controller;
 	}
 
 	/**
@@ -1010,6 +928,71 @@ public class BasicGraphGui extends JPanel {
 			}
 			return shape;
 		}
+	}
+
+	@Override
+	public void update(Observable observable, Object object) {
+
+		if (object instanceof NetworkModelNotification) {
+    		
+    		NetworkModelNotification nmNotification = (NetworkModelNotification) object;
+    		int reason = nmNotification.getReason();
+    		Object infoObject = nmNotification.getInfoObject();
+    		
+    		switch (reason) {
+    		case NetworkModelNotification.NETWORK_MODEL_Reload:
+    			this.reLoadGraph();
+    			break;
+			
+    		case NetworkModelNotification.NETWORK_MODEL_Repaint:
+    		case NetworkModelNotification.NETWORK_MODEL_Component_Added:
+    		case NetworkModelNotification.NETWORK_MODEL_Component_Removed:
+    		case NetworkModelNotification.NETWORK_MODEL_Component_Renamed:
+    		case NetworkModelNotification.NETWORK_MODEL_Nodes_Merged:
+    		case NetworkModelNotification.NETWORK_MODEL_Nodes_Splited:
+				this.repaintGraph();	
+				break;
+    			
+			case NetworkModelNotification.NETWORK_MODEL_Component_Select:
+				this.clearPickedObjects();
+				this.selectObject(infoObject, false);
+				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_Zoom_Fit2Window:
+				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
+				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
+				this.allowInitialScaling = true;
+				this.setInitialScalingAndMovement();
+				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_Zoom_One2One:
+				visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
+				visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
+				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_Zoom_In:
+				this.getScalingControl().scale(visView, 1.1f, this.getDefaultScaleAtPoint());
+				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_Zoom_Out:
+				this.getScalingControl().scale(visView, 1 / 1.1f, this.getDefaultScaleAtPoint());
+				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking:
+				this.visView.setGraphMouse(this.getPluggableGraphMouse());
+				break;
+			
+			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Transforming:
+				this.visView.setGraphMouse(this.getDefaultModalGraphMouse());
+				break;
+				
+			default:
+				break;
+			}
+    		
+    		
+    	}
+		
 	}
 
 }

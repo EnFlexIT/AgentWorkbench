@@ -118,7 +118,6 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     private JButton jButtonCancel = null;
 
     private GraphEnvironmentController graphController = null;
-    private GraphEnvironmentControllerGUI graphControllerGUI = null;
     private BasicGraphGui basicGraphGui = null;
     
     private VisualizationViewer<GraphNode, GraphEdge> visualizationViewer = null;
@@ -132,8 +131,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     public AddComponentDialog(GraphEnvironmentController controller) {
 		super(Application.MainWindow);
 		this.graphController = controller;
-		this.graphControllerGUI = (GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel();
-		this.basicGraphGui = this.graphControllerGUI.getGraphGUI();
+		this.basicGraphGui = ((GraphEnvironmentControllerGUI)controller.getEnvironmentPanel()).getGraphGUI();
 		initialize();
     }
 
@@ -470,7 +468,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 		// Environment network model
 		NetworkModelAdapter networkModel = this.graphController.getNetworkModelAdapter();
 		// The Node picked in the parent graph
-		GraphNode parentPickedVertex = this.basicGraphGui.getPickedVertex();
+		GraphNode parentPickedVertex = this.basicGraphGui.getPickedSingleNode();
 	
 		HashMap<String, ComponentTypeSettings> componentTypeSettings = this.graphController.getComponentTypeSettings();
 	
@@ -490,12 +488,6 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 		NetworkComponent newComponent = new NetworkComponent(graphElement.getId(), selectedType, componentTypeSettings.get(selectedType).getGraphPrototype(), componentTypeSettings.get(selectedType).getAgentClass(), graphElements, graphElement.isDirected());
 		networkModel.addNetworkComponent(newComponent);
 		
-		this.graphController.refreshNetworkModel();
-		// Adding the new component to the table of components 
-		this.graphControllerGUI.networkComponentAdd(newComponent);
-		// Adding the new agent to the agent start list of the environment
-		this.graphController.add2Agents2Start(newComponent);
-
     }
 
     /**
@@ -638,7 +630,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 				    }
 				} else if (graphElement instanceof DistributionNode) {
 					// --- If the current selection of the main graph is also a DistributionNode => disallow ---
-					GraphNode nodeSelected = this.basicGraphGui.getPickedVertex();
+					GraphNode nodeSelected = this.basicGraphGui.getPickedSingleNode();
 					HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(nodeSelected);
 					NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
 					if (containsDistributionNode!=null) {

@@ -25,17 +25,20 @@ public interface NetworkModelInterface {
 	 * @return the general graph settings for the MAS
 	 */
 	public abstract GeneralGraphSettings4MAS getGeneralGraphSettings4MAS();
+
 	/**
 	 * Sets the alternative network model.
 	 * @param alternativeNetworkModel the alternativeNetworkModel to set
 	 */
-	public abstract void setAlternativeNetworkModel(HashMap<String, NetworkModel> alternativeNetworkModel);
+	public abstract void setAlternativeNetworkModel(
+			HashMap<String, NetworkModel> alternativeNetworkModel);
 
 	/**
 	 * Gets the alternative network models.
 	 * @return the alternativeNetworkModel
 	 */
 	public abstract HashMap<String, NetworkModel> getAlternativeNetworkModel();
+
 	/**
 	 * Creates a clone of the current instance.
 	 * @return the copy
@@ -48,7 +51,7 @@ public interface NetworkModelInterface {
 	 * @param networkComponents the network components
 	 * @return ArrayList of the IDs
 	 */
-	public abstract ArrayList<String> getNetworkComponentsIDs(
+	public abstract HashSet<String> getNetworkComponentsIDs(
 			HashSet<NetworkComponent> networkComponents);
 
 	/**
@@ -106,11 +109,10 @@ public interface NetworkModelInterface {
 
 	/**
 	 * Removes the network components if not in list.
-	 * 
 	 * @param networkComponentIDs the network components
 	 */
-	public abstract void removeInverseNetworkComponents(
-			ArrayList<String> networkComponentIDs);
+	public abstract HashSet<NetworkComponent> removeNetworkComponentsInverse(
+			HashSet<NetworkComponent> networkComponents);
 
 	/**
 	 * This method removes a NetworkComponent from the GridModel's networkComponents 
@@ -125,7 +127,7 @@ public interface NetworkModelInterface {
 	 * Removes the network components.
 	 * @param networkComponents the network components
 	 */
-	public abstract void removeNetworkComponents(
+	public abstract HashSet<NetworkComponent> removeNetworkComponents(
 			HashSet<NetworkComponent> networkComponents);
 
 	/**

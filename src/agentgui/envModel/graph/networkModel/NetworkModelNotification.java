@@ -34,16 +34,28 @@ package agentgui.envModel.graph.networkModel;
 public class NetworkModelNotification {
 
 	/** Possible reasons. */
-	public static final int NETWORK_MODEL_Load = 1;
-	public static final int NETWORK_MODEL_Refresh = 2;
+	public static final int NETWORK_MODEL_Reload = 1;
+	public static final int NETWORK_MODEL_Repaint = 2;
 	
-	public static final int NETWORK_MODEL_Component_Added = 3;
-	public static final int NETWORK_MODEL_Component_Removed = 4;
-	public static final int NETWORK_MODEL_Component_Renamed = 5;
+	public static final int NETWORK_MODEL_Zoom_In = 3;
+	public static final int NETWORK_MODEL_Zoom_Out = 4;
+	public static final int NETWORK_MODEL_Zoom_Fit2Window = 5;
+	public static final int NETWORK_MODEL_Zoom_One2One = 6;
+	
+	public static final int NETWORK_MODEL_Component_Added = 7;
+	public static final int NETWORK_MODEL_Component_Removed = 8;
+	public static final int NETWORK_MODEL_Component_Renamed = 9;
+	public static final int NETWORK_MODEL_Component_Select = 10;
+	
+	public static final int NETWORK_MODEL_Nodes_Merged = 11;
+	public static final int NETWORK_MODEL_Nodes_Splited = 12;
+	
+	public static final int NETWORK_MODEL_GraphMouse_Picking = 13;
+	public static final int NETWORK_MODEL_GraphMouse_Transforming = 14;
 
 	
 	/** The reason. */
-	private String reason = null;
+	private int reason = 0;
 	
 	/** The info object, which come with the notification. */
 	private Object infoObject = null;
@@ -53,7 +65,7 @@ public class NetworkModelNotification {
 	 * Instantiates a new network model notification.
 	 * @param reason the reason
 	 */
-	public NetworkModelNotification(String reason) {
+	public NetworkModelNotification(int reason) {
 		this.setReason(reason);
 	}
 
@@ -61,14 +73,14 @@ public class NetworkModelNotification {
 	 * Sets the reason for the notification.
 	 * @param reason the new reason
 	 */
-	public void setReason(String reason) {
+	public void setReason(int reason) {
 		this.reason = reason;
 	}
 	/**
 	 * Returns the reason of the notification.
 	 * @return the reason
 	 */
-	public String getReason() {
+	public int getReason() {
 		return reason;
 	}
 

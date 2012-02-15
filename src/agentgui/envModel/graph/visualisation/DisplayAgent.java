@@ -208,7 +208,7 @@ public class DisplayAgent extends SimulationAgent {
 	 */
 	@Override
 	protected void onEnvironmentStimulus() {
-		this.netModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();
+		this.netModel = ((NetworkModel) myEnvironmentModel.getDisplayEnvironment()).getCopy();
 		this.myGraphEnvironmentController.setEnvironmentModel(this.netModel);
 	}
 	

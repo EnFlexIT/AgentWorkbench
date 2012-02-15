@@ -54,6 +54,29 @@ public class DomainSettings implements Serializable {
 	}
 	
 	/**
+	 * Returns a copy of the current instance.
+	 * @return the copy
+	 */
+	public DomainSettings getCopy() {
+		DomainSettings copy = new DomainSettings();
+		if (ontologyClass!=null) {
+			copy.setOntologyClass(new String(ontologyClass));	
+		}
+		copy.setShowLabel(showLabel);
+		copy.setVertexSize(new Integer(vertexSize));
+		if (vertexColor!=null) {
+			copy.setVertexColor(new String(vertexColor));	
+		}
+		if (vertexColorPicked!=null) {
+			copy.setVertexColorPicked(new String(vertexColorPicked));	
+		}
+		if (clusterShape!=null) {
+			copy.setClusterShape(new String(clusterShape));	
+		}
+		return copy;
+	}
+	
+	/**
 	 * Gets the ontology class.
 	 * @return the ontologyClass
 	 */
@@ -142,5 +165,5 @@ public class DomainSettings implements Serializable {
 	public void setClusterShape(String clusterShape) {
 		this.clusterShape = clusterShape;
 	}
-	
+
 }

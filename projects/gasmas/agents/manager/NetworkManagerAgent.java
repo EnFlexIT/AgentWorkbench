@@ -75,30 +75,31 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
      */
     @Override
     protected void setup() {
-	super.setup();
-
-	// --- Get the connection to the current project ------------
-	currProject = Application.ProjectCurr;
-	if (currProject == null) {
-	    takeDown();
-	}
-
-	// --- Get the initial environment model --------------------
-	this.envModel = this.getInitialEnvironmentModel();
-	// --- Remind the current network model ---------------------
-	this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
-
-	// --- Put the environment model into the SimulationService -
-	// --- in order to make it accessible for the whole agency --
-	try {
-	    simHelper.setEnvironmentModel(this.envModel, true);
-	} catch (ServiceException e) {
-	    e.printStackTrace();
-	}
-
-	// --- Start working ----------------------------------------
-	identifyActiveComponents();
-	behaviours();
+		super.setup();
+	
+		// --- Get the connection to the current project ------------
+		currProject = Application.ProjectCurr;
+		if (currProject == null) {
+		    takeDown();
+		    return;
+		}
+	
+		// --- Get the initial environment model --------------------
+		this.envModel = this.getInitialEnvironmentModel();
+		// --- Remind the current network model ---------------------
+		this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
+	
+		// --- Put the environment model into the SimulationService -
+		// --- in order to make it accessible for the whole agency --
+		try {
+		    simHelper.setEnvironmentModel(this.envModel, true);
+		} catch (ServiceException e) {
+		    e.printStackTrace();
+		}
+	
+		// --- Start working ----------------------------------------
+		identifyActiveComponents();
+		behaviours();
 
     }
 
@@ -117,43 +118,43 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
     @Override
     public EnvironmentModel getInitialEnvironmentModel() {
 
-	int currentlyDoing = 0;
-	final int GET_EnvCont = 1;
-	final int GET_NetworkModel = 2;
-
-	EnvironmentModel environmentModel = new EnvironmentModel();
-	TimeModelDiscrete myTimeModel = new TimeModelDiscrete(new Long(1000 * 60));
-
-	NetworkModel networkModel = null;
-	try {
-	    currentlyDoing = GET_EnvCont;
-
-	    currentlyDoing = GET_NetworkModel;
-	    networkModel = (NetworkModel) ((GraphEnvironmentController) currProject.getEnvironmentController()).getEnvironmentModelCopy();
-
-	    environmentModel.setTimeModel(myTimeModel);
-	    environmentModel.setDisplayEnvironment(networkModel);
-
-	} catch (Exception ex) {
-
-	    String msg = null;
-	    switch (currentlyDoing) {
-	    case GET_EnvCont:
-		msg = ": Could not get GraphEnvironmentController!";
-		break;
-	    case GET_NetworkModel:
-		msg = ": Could not get NetworkModel!";
-		break;
-	    }
-
-	    if (msg == null) {
-		ex.printStackTrace();
-	    } else {
-		System.err.println(this.getLocalName() + ": " + msg);
-	    }
-	    return null;
-	}
-	return environmentModel;
+		int currentlyDoing = 0;
+		final int GET_EnvCont = 1;
+		final int GET_NetworkModel = 2;
+	
+		EnvironmentModel environmentModel = new EnvironmentModel();
+		TimeModelDiscrete myTimeModel = new TimeModelDiscrete(new Long(1000 * 60));
+	
+		NetworkModel networkModel = null;
+		try {
+		    currentlyDoing = GET_EnvCont;
+	
+		    currentlyDoing = GET_NetworkModel;
+		    networkModel = (NetworkModel) ((GraphEnvironmentController) currProject.getEnvironmentController()).getEnvironmentModelCopy();
+	
+		    environmentModel.setTimeModel(myTimeModel);
+		    environmentModel.setDisplayEnvironment(networkModel);
+	
+		} catch (Exception ex) {
+	
+		    String msg = null;
+		    switch (currentlyDoing) {
+		    case GET_EnvCont:
+				msg = ": Could not get GraphEnvironmentController!";
+				break;
+		    case GET_NetworkModel:
+				msg = ": Could not get NetworkModel!";
+				break;
+		    }
+	
+		    if (msg == null) {
+		    	ex.printStackTrace();
+		    } else {
+		    	System.err.println(this.getLocalName() + ": " + msg);
+		    }
+		    return null;
+		}
+		return environmentModel;
     }
 
     /*

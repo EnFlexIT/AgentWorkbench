@@ -30,6 +30,7 @@ package agentgui.envModel.graph.controller;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -102,9 +103,9 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * Creates a clone of the current instance
 	 */
 	@Override
-	public Object clone() {
+	public GeneralGraphSettings4MAS clone() {
 		try {
-			return super.clone();
+			return (GeneralGraphSettings4MAS) super.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 			return null;
@@ -117,14 +118,48 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 */
 	public GeneralGraphSettings4MAS getCopy() {
 		
-		HashMap<String, ComponentTypeSettings> copyCTS = new HashMap<String, ComponentTypeSettings>(this.currentCTS);
-		HashMap<String, DomainSettings> copyDS = new HashMap<String, DomainSettings>(this.currentDomainSettings);
+		HashMap<String, ComponentTypeSettings> copyCTS = this.copyComponentTypeSettings();
+		HashMap<String, DomainSettings> copyDS = this.copyDomainSettings();
 		
 		GeneralGraphSettings4MAS copy = new GeneralGraphSettings4MAS();
 		copy.setCurrentCTS(copyCTS);
 		copy.setDomainSettings(copyDS);
 		return copy;
 	}
+	
+	/**
+	 * Copies the component type settings.
+	 * @return the hash map
+	 */
+	private HashMap <String, ComponentTypeSettings> copyComponentTypeSettings() {
+		
+		HashMap<String, ComponentTypeSettings> copyCtsHash = new HashMap<String, ComponentTypeSettings>();
+		
+		Iterator<String> ctsIt = this.getCurrentCTS().keySet().iterator();
+		while (ctsIt.hasNext()) {
+			String element = ctsIt.next();
+			ComponentTypeSettings cts = this.currentCTS.get(element); 
+			copyCtsHash.put(element, cts.getCopy());
+		}
+		return copyCtsHash;
+	}
+	/**
+	 * Copies the component type settings.
+	 * @return the hash map
+	 */
+	private HashMap <String, DomainSettings> copyDomainSettings() {
+		
+		HashMap<String, DomainSettings> copyDomainHash = new HashMap<String, DomainSettings>();
+		
+		Iterator<String> ctsIt = this.getDomainSettings().keySet().iterator();
+		while (ctsIt.hasNext()) {
+			String element = ctsIt.next();
+			DomainSettings ds = this.currentDomainSettings.get(element); 
+			copyDomainHash.put(element, ds.getCopy());
+		}
+		return copyDomainHash;
+	}
+	
 	
 	/**
 	 * Get the component type settings HashMap 

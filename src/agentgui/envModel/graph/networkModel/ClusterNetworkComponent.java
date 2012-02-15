@@ -28,7 +28,6 @@
  */
 package agentgui.envModel.graph.networkModel;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -48,7 +47,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	private NetworkModel clusterNetworkModel;
 
 	/** The network component IDs. */
-	private ArrayList<String> networkComponentIDs = new ArrayList<String>();
+	private HashSet<String> networkComponentIDs = new HashSet<String>();
 
 	/**
 	 * Instantiates a new cluster network component.
@@ -61,7 +60,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @param networkComponentIDs the network component i ds
 	 * @param clusterNetworkModel the cluster network model
 	 */
-	public ClusterNetworkComponent(String id, String type, String agentClassName, HashSet<GraphElement> graphElements, boolean directed, ArrayList<String> networkComponentIDs,
+	public ClusterNetworkComponent(String id, String type, String agentClassName, HashSet<GraphElement> graphElements, boolean directed, HashSet<String> networkComponentIDs,
 			NetworkModel clusterNetworkModel) {
 
 		super(id, type, ClusterNetworkComponent.defaultPrototypeClassName, agentClassName, graphElements, directed);
@@ -72,7 +71,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	@Override
 	public ClusterNetworkComponent getCopy() {
 
-		ArrayList<String> copyComponentIDs = new ArrayList<String>(this.networkComponentIDs);
+		HashSet<String> copyComponentIDs = new HashSet<String>(this.networkComponentIDs);
 
 		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.agentClassName, null, this.directed, copyComponentIDs, this.clusterNetworkModel.getCopy());
 		copy.setGraphElementIDs(this.getGraphElementIDs());
@@ -85,7 +84,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * 
 	 * @param networkComponentIDs the new network component IDs
 	 */
-	public void setNetworkComponentIDs(ArrayList<String> networkComponentIDs) {
+	public void setNetworkComponentIDs(HashSet<String> networkComponentIDs) {
 		this.networkComponentIDs = networkComponentIDs;
 	}
 
@@ -94,7 +93,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * 
 	 * @return the network component IDs
 	 */
-	public ArrayList<String> getNetworkComponentIDs() {
+	public HashSet<String> getNetworkComponentIDs() {
 		return networkComponentIDs;
 	}
 

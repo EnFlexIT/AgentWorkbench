@@ -44,7 +44,7 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1127</useLocalPort>
+        <useLocalPort>1142</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -76,7 +76,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>HNord</simulationSetupCurrent>
+    <simulationSetupCurrent>Testnetz 1</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>HNord</key>

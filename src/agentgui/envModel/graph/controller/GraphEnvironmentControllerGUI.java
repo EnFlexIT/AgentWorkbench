@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -59,8 +60,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
-import javax.swing.SortOrder;
 import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -69,17 +70,15 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
-import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
-import agentgui.core.project.Project;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.components.TableCellEditor4TableButton;
 import agentgui.envModel.graph.components.TableCellRenderer4Button;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
+import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 
 /**
  * The GUI for a GraphEnvironmentController. This contains a pane showing the NetworkComponents table and the BasicGraphGUI. The main class which associates with the components table, the environment
@@ -93,7 +92,7 @@ import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology - Guwahati
  * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen
  */
-public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements ListSelectionListener, TableModelListener {
+public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements ListSelectionListener, TableModelListener, Observer {
 
     private static final long serialVersionUID = 7376906096627051173L;
 
@@ -114,9 +113,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 
     private JTable jTableComponents = null;
     private DefaultTableModel componentsTableModel = null;
+    
     /** The graph visualization component */
     private BasicGraphGui graphGUI = null;
 
+    
     /**
      * This is the default constructor for just displaying the current environment model during a running simulation
      */
@@ -124,10 +125,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		super(envController);
 		this.initialize();
     }
-
+    
     /**
      * This method initializes this
-     * 
      * @return void
      */
     private void initialize() {
@@ -141,30 +141,35 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    this.useTabs = true;
 		}
 		this.add(this.mainDisplayComponent, null);
-		this.showNumberOfComponents();
+		this.setNumberOfComponents();
     }
 
     /**
+     * ReLoads the network model.
+     */
+    private void reLoad() {
+    	
+    	this.setAlternativeNetworkModels();
+		
+		this.getJTextFieldSearch().setText(null);
+		this.tblFilter();
+	    this.jScrollPaneComponentsTable.getViewport().removeAll();
+	    this.jTableComponents = null;
+		this.componentsTableModel = null;
+		this.jScrollPaneComponentsTable.setViewportView(this.getJTableComponents());
+		this.setNumberOfComponents();
+    }
+    
+    /**
      * Returns the graph environment controller.
-     * 
      * @return the graph environment controller
      */
-    public GraphEnvironmentController getGraphController() {
+    private GraphEnvironmentController getGraphController() {
     	return (GraphEnvironmentController) this.environmentController;
     }
 
     /**
-     * Gets the current project.
-     * 
-     * @return the current project
-     */
-    public Project getCurrentProject() {
-    	return this.getGraphController().getProject();
-    }
-
-    /**
      * Gets the JTabbedPane for alternative network models.
-     * 
      * @return the JTabbedPane for alternative network models
      */
     private JTabbedPane getJTabbedPaneAltNetModels() {
@@ -185,7 +190,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 
     /**
      * Sets to use tabs or not.
-     * 
      * @param use the new use
      */
     public void setUseTabs(boolean use) {
@@ -274,7 +278,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 
     /**
      * This method initializes scpComponentTable
-     * 
      * @return javax.swing.JScrollPane
      */
     private JScrollPane getScpComponentTable() {
@@ -287,7 +290,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 
     /**
      * This method builds the tblComponents' contents based on the controllers GridModel
-     * 
      * @return The grid components' IDs and class names
      */
     private Vector<Vector<String>> getComponentTableContents() {
@@ -310,41 +312,51 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		}
 		return componentVector;
     }
+    
     /**
-     * Returnss the DefaultTableModel for the network components.
+     * Returns the DefaultTableModel for the network components.
      * @return the DefaultTableModel for the network components
      */
     private DefaultTableModel getDefaultTableModel4Components() {
     	if (componentsTableModel==null) {
-		   
-    		// --- Set column titles --------------------------------
-		    Vector<String> titles = new Vector<String>();
-		    titles.add(Language.translate("Komponente"));
-		    titles.add(Language.translate("Typ"));
-		    titles.add(Language.translate("Options", Language.EN));
-	
-		    // --- Set DataVector -----------------------------------
-		    final Vector<Vector<String>> data = getComponentTableContents();
-		    componentsTableModel = new DefaultTableModel(data, titles) {
-				private static final long serialVersionUID = 1636744550817904118L;
-				@Override
-				public boolean isCellEditable(int row, int col) {
-				    if (col == 1) {
-				    	return false;
-				    } else {
-				    	return true;	
-				    }
-				}
-		    };
+    		componentsTableModel = getNewDefaultTableModel4Components();
     	}
     	return componentsTableModel;
+    }
+    
+    /**
+     * Returns the DefaultTableModel for the network components.
+     * @return the DefaultTableModel for the network components
+     */
+    private DefaultTableModel getNewDefaultTableModel4Components() {
+    	
+		// --- Set column titles --------------------------------
+	    Vector<String> titles = new Vector<String>();
+	    titles.add(Language.translate("Komponente"));
+	    titles.add(Language.translate("Typ"));
+	    titles.add(Language.translate("Options", Language.EN));
+
+	    // --- Set DataVector -----------------------------------
+	    final Vector<Vector<String>> data = getComponentTableContents();
+	    DefaultTableModel tableModel = new DefaultTableModel(data, titles) {
+			private static final long serialVersionUID = 1636744550817904118L;
+			@Override
+			public boolean isCellEditable(int row, int col) {
+			    if (col == 1) {
+			    	return false;
+			    } else {
+			    	return true;	
+			    }
+			}
+	    };
+    	return tableModel;
     }
     
     /**
      * Given a network component, selects the corresponding row in the components display table
      * @param networkComponent
      */
-    public void networkComponentSelect(NetworkComponent networkComponent) {
+    private void networkComponentSelect(NetworkComponent networkComponent) {
 		int rowCount = this.getDefaultTableModel4Components().getRowCount();
 		int row = -1;
 		// Searching all the rows in the table
@@ -368,26 +380,26 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      * Adds a new network component to the list of components in the table.
      * @param networkComponent the network component
      */
-    public void networkComponentAdd(NetworkComponent networkComponent) {
+    private void networkComponentAdd(NetworkComponent networkComponent) {
 		Vector<String> compData = new Vector<String>();
 		compData.add(networkComponent.getId());
 		compData.add(networkComponent.getType());
 		compData.add("Edit"); // For the edit properties button
 		this.getDefaultTableModel4Components().addRow(compData);
-		this.showNumberOfComponents();
+		this.setNumberOfComponents();
 		
     }
     /**
      * Removes a network component from the list of components in the table.
      * @param networkComponent the network component
      */
-    public void networkComponentRemove(NetworkComponent networkComponent) {
+    private void networkComponentRemove(NetworkComponent networkComponent) {
     	DefaultTableModel tm = this.getDefaultTableModel4Components();
     	for (int row = 0; row < tm.getRowCount(); row++) {
     		String entry = (String) this.getDefaultTableModel4Components().getValueAt(row, 0);
     		if (entry.equals(networkComponent.getId())) {
     			tm.removeRow(row);
-    			this.showNumberOfComponents();
+    			this.setNumberOfComponents();
     			return;
     		}
 		}
@@ -479,14 +491,14 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    return;
 		}
 		((TableRowSorter<DefaultTableModel>)this.getJTableComponents().getRowSorter()).setRowFilter(rf);
-		this.showNumberOfComponents();
+		this.setNumberOfComponents();
 
     }
 
     /**
      * Show number of components.
      */
-    public void showNumberOfComponents() {
+    private void setNumberOfComponents() {
 		// --- Set the number of rows displayed -----------
 		String text = this.jLabelTable.getText();
 		if (text.indexOf("(") > -1) {
@@ -522,64 +534,41 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    // If new ID is not equal to old ID
 		    if (!oldCompID.equals(newCompID)) {
 	
-			if (newCompID == null || newCompID.length() == 0) {
-			    // --- Check if the component id is empty
-			    JOptionPane.showMessageDialog(this, Language.translate("Enter a valid name", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-			    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
-	
-			} else if (newCompID.contains(" ")) {
-			    // --- Check for spaces
-			    JOptionPane.showMessageDialog(this, Language.translate("Enter the name without spaces", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-			    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
-	
-			} else if (getGraphController().getNetworkModelAdapter().getNetworkComponent(newCompID) != null) {
-			    // --- Check if a network component name already exists
-			    JOptionPane.showMessageDialog(this, Language.translate("The component name already exists!\n Choose a different one.", Language.EN), Language.translate("Warning", Language.EN),
-				    JOptionPane.WARNING_MESSAGE);
-			    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
-	
-			} else if (getCurrentProject().simulationSetups.getCurrSimSetup().isAgentNameExists(newCompID)) {
-			    // --- Check if the agent name already exists in the
-			    // simulation setup
-			    JOptionPane.showMessageDialog(this, Language.translate("An agent with the name already exists in the simulation setup!\n Choose a different one.", Language.EN),
-				    Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-			    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
-	
-			} else {
-			    // --- All validations done, rename the component and update
-			    // the network model
-			    handleRenameComponent(oldCompID, newCompID);
-			}
+				if (newCompID == null || newCompID.length() == 0) {
+				    // --- Check if the component id is empty
+				    JOptionPane.showMessageDialog(this, Language.translate("Enter a valid name", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+				    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
+		
+				} else if (newCompID.contains(" ")) {
+				    // --- Check for spaces
+				    JOptionPane.showMessageDialog(this, Language.translate("Enter the name without spaces", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+				    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
+		
+				} else if (getGraphController().getNetworkModelAdapter().getNetworkComponent(newCompID) != null) {
+				    // --- Check if a network component name already exists
+				    JOptionPane.showMessageDialog(this, Language.translate("The component name already exists!\n Choose a different one.", Language.EN), Language.translate("Warning", Language.EN),
+					    JOptionPane.WARNING_MESSAGE);
+				    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
+		
+				} else if (this.getGraphController().getProject().simulationSetups.getCurrSimSetup().isAgentNameExists(newCompID)) {
+				    // --- Check if the agent name already exists in the
+				    // simulation setup
+				    JOptionPane.showMessageDialog(this, Language.translate("An agent with the name already exists in the simulation setup!\n Choose a different one.", Language.EN),
+					    Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+				    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
+		
+				} else {
+				    // --- All validations done, rename the component and update the network model
+					// renaming NetworkComponents and GraphElements
+					this.getGraphController().getNetworkModelAdapter().renameComponent(oldCompID, newCompID);
+				}
 		    }
 		}
 		// System.out.println(row+","+column);
     }
 
     /**
-     * Changes the network component Id from old to new and updates the graph and the network model accordingly
-     * 
-     * @param oldCompID
-     * @param newCompID
-     */
-    private void handleRenameComponent(String oldCompID, String newCompID) {
-		// renaming NetworkComponents and GraphElements
-		getGraphController().getNetworkModelAdapter().renameComponent(oldCompID, newCompID);
-		getGraphController().refreshNetworkModel();
-	
-		// Renaming the agent in the agent start list of the simulation setup
-		int i = 0;
-		for (i = 0; i < this.getGraphController().getAgents2Start().size(); i++) {
-		    AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) this.getGraphController().getAgents2Start().get(i);
-		    if (ac4s.getStartAsName().equals(oldCompID)) {
-			ac4s.setStartAsName(newCompID);
-			break;
-		    }
-		}
-    }
-
-    /**
      * Gets the graph visualization either for configuration or for displaying it during the simulation runtime.
-     * 
      * @return the graph visualization
      */
     private JComponent getGraphVisualization() {
@@ -588,38 +577,28 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 
     /**
      * Get the visualization component
-     * 
      * @return the basic graph GUI which contains the graph visualization component
      */
     public BasicGraphGui getGraphGUI() {
 		if (graphGUI == null) {
 		    graphGUI = new BasicGraphGui(this.getGraphController());
-		    NetworkModelAdapter networkModel = this.getGraphController().getNetworkModelAdapter();
-		    if (networkModel != null && networkModel.getGraph() != null) {
-			graphGUI.setGraph(networkModel.getGraph());
-		    }
 		}
 		return graphGUI;
     }
 
     /**
      * Sets the network model to the display.
-     * 
      * @param nm the new NetworkModel
      */
-    public void setNetworkModel(NetworkModel nm) {
-
-		this.getGraphGUI().setGraph(nm.getGraph());
-		this.showNumberOfComponents();
+    private void setAlternativeNetworkModels() {
 	
+    	NetworkModel nm = this.getGraphController().getNetworkModel();
 		if (nm.getAlternativeNetworkModel().size() > 0) {
 		    // --------------------------------------------------------------------------
-		    // --- Alternative NetworkModel's has to be displayed
-		    // -----------------------
+		    // --- Alternative NetworkModel's has to be displayed -----------------------
 		    // --------------------------------------------------------------------------
 		    HashMap<String, NetworkModel> altNetModelHash = nm.getAlternativeNetworkModel();
-		    // --- Get the model names ordered
-		    // ------------------------------------------
+		    // --- Get the model names ordered ------------------------------------------
 		    Vector<String> altNetModels = new Vector<String>(altNetModelHash.keySet());
 		    Collections.sort(altNetModels);
 	
@@ -632,26 +611,23 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 				GraphEnvironmentController graphController = null;
 		
 				if (networkModelTabs.get(altNetModelName) == null) {
-				    // --- Create a new Controller for the alternative
-				    // NetworkModel -----
+				    // --- Create a new Controller for the alternative NetworkModel -----
 				    graphController = new GraphEnvironmentController();
 				    graphController.setEnvironmentModel(altNetModel);
 				    graphControllerGUI = (GraphEnvironmentControllerGUI) graphController.getEnvironmentPanel();
-		
+
 				    this.jTabbedPaneAltNetModels.addTab(altNetModelName, graphControllerGUI);
 				    this.networkModelTabs.put(altNetModelName, graphControllerGUI);
 		
 				} else {
-				    // --- Get the Controller for the alternative NetworkModel
-				    // ----------
+				    // --- Get the Controller for the alternative NetworkModel ----------
 				    graphControllerGUI = networkModelTabs.get(altNetModelName);
 				    graphController = graphControllerGUI.getGraphController();
 				    graphController.setEnvironmentModel(altNetModel);
 		
 				}
 		
-				// --- Set the appearance of the GUI to use or not use a
-				// JTabbedPane ----
+				// --- Set the appearance of the GUI to use or not use a JTabbedPane ----
 				if (altNetModel.getAlternativeNetworkModel().size() > 0) {
 				    graphControllerGUI.setUseTabs(true);
 				} else {
@@ -665,31 +641,17 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     }
 
     /**
-     * Refresh network model.
-     */
-    public void refreshNetworkModel() {
-		// --- Network model is updated/refreshed -----
-		this.getGraphGUI().repaintGraph(this.getGraphController().getNetworkModelAdapter().getGraph());
-		// --- Rebuilding the component table ---------
-		this.showNumberOfComponents();
-		this.getGraphGUI().clearPickedObjects();
-    }
-
-    /**
-     * Invoked when a row of the components table is selected. Highlights the selected network component in the Graph.
-     * 
-     * @param e List selection event
+     * Invoked when a row of the components table is selected. 
+     * @param le List selection event
      */
     @Override
-    public void valueChanged(ListSelectionEvent e) {
+    public void valueChanged(ListSelectionEvent le) {
 		if (getJTableComponents().getSelectedRowCount() > 0) {
 		    // Converting from view coordinates to model coordinates
 		    int selectedIndex = getJTableComponents().convertRowIndexToModel(getJTableComponents().getSelectedRow());
 		    String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
-		    NetworkComponent component = this.getGraphController().getNetworkModelAdapter().getNetworkComponent(componentID);
-	
-		    this.getGraphGUI().clearPickedObjects();
-		    this.getGraphGUI().selectObject(component);
+		    NetworkComponent networkComponent = this.getGraphController().getNetworkModelAdapter().getNetworkComponent(componentID);
+		    this.getGraphController().getNetworkModelAdapter().selectNetworkComponent(networkComponent);
 		}
     }
 
@@ -715,33 +677,65 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 
     /**
      * This method initializes jButtonClearSearch
-     * 
      * @return javax.swing.JButton
      */
     private JButton getJButtonClearSearch() {
-	if (jButtonClearSearch == null) {
-	    jButtonClearSearch = new JButton();
-	    jButtonClearSearch.setPreferredSize(new Dimension(16, 20));
-	    jButtonClearSearch.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "ClearSearch.png")));
-	    jButtonClearSearch.addActionListener(new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		    getJTextFieldSearch().setText(null);
-		    tblFilter();
+		if (jButtonClearSearch == null) {
+		    jButtonClearSearch = new JButton();
+		    jButtonClearSearch.setPreferredSize(new Dimension(16, 20));
+		    jButtonClearSearch.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "ClearSearch.png")));
+		    jButtonClearSearch.addActionListener(new ActionListener() {
+		    	@Override
+				public void actionPerformed(ActionEvent e) {
+				    getJTextFieldSearch().setText(null);
+				    tblFilter();
+				}
+		    });
 		}
-	    });
-	}
-	return jButtonClearSearch;
+		return jButtonClearSearch;
     }
 
     /*
      * (non-Javadoc)
-     * 
      * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
      */
     @Override
-    public void update(Observable o, Object arg) {
-	// --- Nothing to do here yet -----------
+    public void update(Observable observable, Object object) {
+    	
+    	if (object instanceof NetworkModelNotification) {
+    		
+    		NetworkModelNotification nmNotification = (NetworkModelNotification) object;
+    		int reason = nmNotification.getReason();
+    		Object infoObject = nmNotification.getInfoObject();
+    		NetworkComponent networkComponent = null;
+    		
+    		switch (reason) {
+    		case NetworkModelNotification.NETWORK_MODEL_Reload:
+    			this.reLoad();
+    			break;
+				
+    		case NetworkModelNotification.NETWORK_MODEL_Component_Added:
+				networkComponent = (NetworkComponent) infoObject;
+				this.networkComponentAdd(networkComponent);
+				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_Component_Removed:
+				networkComponent = (NetworkComponent) infoObject;
+				this.networkComponentRemove(networkComponent);				
+				break;
+			
+			case NetworkModelNotification.NETWORK_MODEL_Component_Select:
+				networkComponent = (NetworkComponent) infoObject;
+				this.networkComponentSelect(networkComponent);
+				break;
+				
+			default:
+				break;
+			}
+    		
+    		
+    	}
+    	
     }
 
 } // @jve:decl-index=0:visual-constraint="33,19"

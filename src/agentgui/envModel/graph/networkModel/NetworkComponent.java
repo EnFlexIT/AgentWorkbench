@@ -94,7 +94,8 @@ public class NetworkComponent implements Serializable {
 	 */
 	public NetworkComponent getCopy() {
 		NetworkComponent copy = new NetworkComponent(this.id, this.type, this.prototypeClassName, this.agentClassName, null, this.directed);
-		copy.setGraphElementIDs(this.getGraphElementIDs());
+		HashSet<String> gaphElementIDs = new HashSet<String>(this.getGraphElementIDs());
+		copy.setGraphElementIDs(gaphElementIDs);
 		return copy;
 	}
 	

@@ -98,8 +98,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     private String baseFileName = null;
     /** The network model currently loaded */
     private NetworkModel networkModel = null;
-
-    private NetworkModelAdapter networkModelAdapter;
+    private NetworkModelAdapter networkModelAdapter = new NetworkModelAdapter(this);
     
     /** Custom user object to be placed in the project object. Used here for storing the current component type settings. */
     private static final String generalGraphSettings4MASFile = "~GeneralGraphSettings~";
@@ -127,11 +126,11 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    this.updateGraphFileName();
 		    this.loadEnvironment();
 		}
+		
     }
 
     /*
      * (non-Javadoc)
-     * 
      * @see agentgui.core.environment.EnvironmentController#createEnvironmentPanel()
      */
     @Override
@@ -147,6 +146,15 @@ public class GraphEnvironmentController extends EnvironmentController {
     	if (this.getProject() != null) {
 		    this.getProject().isUnsaved = true;
 		}
+    }
+    
+    /* (non-Javadoc)
+     * @see java.util.Observable#notifyObservers(java.lang.Object)
+     */
+    @Override
+    public void notifyObservers(Object arg) {
+    	this.setChanged();
+    	super.notifyObservers(arg);
     }
     
     /**
@@ -170,19 +178,32 @@ public class GraphEnvironmentController extends EnvironmentController {
      */
     public void importNetworkModel(File graphMLFile) {
 		NetworkModel netModel = this.getGraphFileImporter().importGraphFromFile(graphMLFile);
-		this.setNetworkModel(netModel);
+		this.setEnvironmentModel(netModel);
     }
 
     /**
      * Sets the environment network model
      * @return NetworkModel - The environment model
      */
-    private void setNetworkModel(NetworkModel networkModel) {
-		this.networkModel = networkModel;
-		((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).setNetworkModel(networkModel);
-		if (getProject() != null) {
-		    getProject().isUnsaved = true;
+    private void setNetworkModel(NetworkModel newNetworkModel) {
+		// --- Remind the GeneralGraphSettings4MAS ----------------------------
+    	GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+		if (this.networkModel!=null) {
+
+			generalGraphSettings4MAS = this.networkModel.getGeneralGraphSettings4MAS();	
 		}
+		// --- Set NetworkModel -----------------------------------------------
+    	if (newNetworkModel==null) {
+    		this.networkModel = new NetworkModel();
+    		this.networkModel.setGeneralGraphSettings4MAS(generalGraphSettings4MAS);
+    	} else {
+    		this.networkModel = newNetworkModel;	
+    	}
+	    // --- Clean up agents list corresponding to current NetworkModel -----
+	    this.validateNetworkComponentAndAgents2Start();
+	    // --- Notify all Observers about a new NetworkModel ------------------
+	    this.getNetworkModelAdapter().reLoadNetworkModel();
+	    
     }
     /**
      * Returns the environment network model
@@ -203,25 +224,486 @@ public class GraphEnvironmentController extends EnvironmentController {
     }
     
     /**
-     * Clears the network model by replacing with an empty graph and notifies observers
+     * This method handles the SimulationSetupChangeNotifications sent from the project
+     * @param sscn The SimulationSetupChangeNotifications to handle
      */
-    public void clearNetworkModel() {
-		// clear the network model objects
-		networkModel = new NetworkModel();
-		this.getAgents2Start().clear();
-		refreshNetworkModel();
+    @Override
+    protected void handleSimSetupChange(SimulationSetupsChangeNotification sscn) {
+
+		switch (sscn.getUpdateReason()) {
+		case SimulationSetups.SIMULATION_SETUP_LOAD:
+		    this.updateGraphFileName();
+		    this.loadEnvironment(); // Loads network model and notifies observers
+		    break;
+	
+		case SimulationSetups.SIMULATION_SETUP_SAVED:
+		    this.saveEnvironment();
+		    break;
+	
+		case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
+		    
+			GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+			if (this.networkModel!=null) {
+				generalGraphSettings4MAS = this.networkModel.getGeneralGraphSettings4MAS();	
+			}
+			
+			this.updateGraphFileName();
+		    networkModel = new NetworkModel();
+		    networkModel.setGeneralGraphSettings4MAS(generalGraphSettings4MAS);
+		    this.setEnvironmentModel(this.networkModel);
+		    
+		    // --- register a new list of agents, which has to be started with the environment ------
+		    this.setAgents2Start(new DefaultListModel());
+		    this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+	
+		    break;
+	
+		case SimulationSetups.SIMULATION_SETUP_COPY:
+		    this.updateGraphFileName();
+		    this.saveEnvironment();
+		    this.getProject().isUnsaved = true;
+		    break;
+	
+		case SimulationSetups.SIMULATION_SETUP_REMOVE:
+		    File graphFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".graphml");
+		    if (graphFile.exists()) {
+		    	graphFile.delete();
+		    }
+	
+		    File componentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
+		    if (componentFile.exists()) {
+		    	componentFile.delete();
+		    }
+		    updateGraphFileName();
+		    break;
+	
+		case SimulationSetups.SIMULATION_SETUP_RENAME:
+		    File oldGraphFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".graphml");
+		    File oldComponentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
+		    updateGraphFileName();
+		    if (oldGraphFile.exists()) {
+				File newGraphFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".graphml");
+				oldGraphFile.renameTo(newGraphFile);
+		    }
+		    if (oldComponentFile.exists()) {
+				File newComponentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
+				oldComponentFile.renameTo(newComponentFile);
+		    }
+		    break;
+		}
+
     }
 
     /**
-     * Can be used to notify the observers after changing the network model from outside. Also sets the project as unsaved
+     * This method sets the baseFileName property and the SimulationSetup's environmentFileName according to the current SimulationSetup
      */
-    public void refreshNetworkModel() {
-    	((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).refreshNetworkModel();
+    private void updateGraphFileName() {
+		this.baseFileName = this.getProject().simulationSetupCurrent;
+		this.getCurrentSimSetup().setEnvironmentFileName(baseFileName + ".graphml");
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see EnvironmentController#loadEnvironment()
+     */
+    @Override
+    protected void loadEnvironment() {
+
+		this.networkModel = new NetworkModel();
+	
+		String fileName = getCurrentSimSetup().getEnvironmentFileName();
+		if (fileName != null) {
+	
+		    // --- register the list of agents, which has to be started with the environment ------
+		    this.setAgents2Start(new DefaultListModel());
+		    this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+	
+		    // --- Load the graph topology from the graph file ------------------------------------
+		    File graphFile = new File(getEnvFolderPath() + fileName);
+		    if (graphFile.exists()) {
+		    	baseFileName = fileName.substring(0, fileName.lastIndexOf('.'));
+				try {
+				    // Load graph topology
+				    networkModel.setGraph(getGraphMLReader(graphFile).readGraph());
+		
+				} catch (FileNotFoundException e) {
+				    e.printStackTrace();
+				} catch (GraphIOException e) {
+				    e.printStackTrace();
+				}
+		    }
+	
+		    // --- Load the component definitions from the component file -------------------------
+		    File componentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
+		    if (componentFile.exists()) {
+				try {
+				    FileReader componentReader = new FileReader(componentFile);
+		
+				    JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
+				    Unmarshaller unmarsh = context.createUnmarshaller();
+				    NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(componentReader);
+				    networkModel.setNetworkComponents(compList.getComponentList());
+		
+				    componentReader.close();
+		
+				} catch (JAXBException e) {
+				    e.printStackTrace();
+				} catch (FileNotFoundException e) {
+				    e.printStackTrace();
+				} catch (IOException e) {
+				    e.printStackTrace();
+				}
+		    }
+		}
+	
+		// --- Loading component type settings from the simulation setup --------------------------
+		this.loadGeneralGraphSettings();
+	
+		// --- Use the local method in order to inform the observer -------------------------------
+		this.setEnvironmentModel(this.networkModel);
+
+    }
+
+    /**
+     * Clean up / correct list of agents corresponding to the current NetworkModel.
+     */
+    public void validateNetworkComponentAndAgents2Start() {
+
+		// --------------------------------------------------------------------
+		// --- Get the current ComponentTypeSettings --------------------------
+		HashMap<String, ComponentTypeSettings> cts = this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
+	
+		// --------------------------------------------------------------------
+		// --- Transfer the agent list into a HashMap for a faster access -----
+		HashMap<String, AgentClassElement4SimStart> agents2StartHash = new HashMap<String, AgentClassElement4SimStart>();
+		for (int i = 0; i < this.getAgents2Start().size(); i++) {
+		    AgentClassElement4SimStart ace4s = (AgentClassElement4SimStart) this.getAgents2Start().get(i);
+		    String agentName = ace4s.getStartAsName();
+	
+		    AgentClassElement4SimStart ace4sThere = agents2StartHash.get(agentName);
+		    agents2StartHash.put(agentName, ace4s);
+		    if (ace4sThere != null) {
+				// --- Remove the redundant entries and let one entry survive -
+				AgentClassElement4SimStart[] ace4sArr2Delete = getAgents2StartFromAgentName(agentName);
+				for (int j = 0; j < ace4sArr2Delete.length - 1; j++) {
+				    this.getAgents2Start().removeElement(ace4sArr2Delete[j]);
+				}
+		    }
+		}
+	
+		// --------------------------------------------------------------------
+		// --- Run through the network components and validate agent list -----
+		Collection<String> compNameCollection = this.networkModel.getNetworkComponents().keySet();
+		String[] compNames = compNameCollection.toArray(new String[compNameCollection.size()]);
+		for (int i = 0; i < compNames.length; i++) {
+		    // --- Current component ------------------------------------------
+		    String compName = compNames[i];
+		    NetworkComponent comp = this.networkModel.getNetworkComponent(compName);
+	
+		    // ----------------------------------------------------------------
+		    // --- Validate current component against ComponentTypeSettings ---
+		    ComponentTypeSettings ctsSingle = cts.get(comp.getType());
+		    if (ctsSingle == null) {
+				// --- remove this component ---
+				this.networkModel.removeNetworkComponent(comp);
+				comp = null;
+	
+		    } else {
+				if (comp.getAgentClassName().equals(ctsSingle.getAgentClass()) == false) {
+				    // --- Correct this entry -------
+				    comp.setAgentClassName(ctsSingle.getAgentClass());
+				}
+				if (comp.getPrototypeClassName().equals(ctsSingle.getGraphPrototype()) == false) {
+				    // --- Correct this entry -------
+				    // TODO change the graph elements if needed
+				    comp.setPrototypeClassName(ctsSingle.getGraphPrototype());
+				}
+		    }
+	
+		    // ----------------------------------------------------------------
+		    // --- Check if an Agent can be found in the start list -----------
+		    AgentClassElement4SimStart ace4s = agents2StartHash.get(compName);
+		    if (ace4s == null) {
+			// --- Agent definition NOT found in agent start list ---------
+		    	this.addAgent(comp);
+	
+		    } else {
+				// --- Agent definition found in agent start list -------------
+				if (isValidAgent2Start(ace4s, comp) == false) {
+				    // --- Error found --------------------
+				    this.getAgents2Start().removeElement(ace4s);
+				    this.addAgent(comp);
+				}
+				agents2StartHash.remove(compName);
+		    }
+	
+		} // end for
+	
+		// --------------------------------------------------------------------
+		// --- Are there remaining agents in the start list? ------------------
+		if (agents2StartHash.size() != 0) {
+	
+		    Collection<String> remainingAgents2Start = agents2StartHash.keySet();
+		    String[] remainingAgents = remainingAgents2Start.toArray(new String[remainingAgents2Start.size()]);
+		    for (int i = 0; i < remainingAgents.length; i++) {
+				String remainingAgent = remainingAgents[i];
+				AgentClassElement4SimStart remainingAce4s = agents2StartHash.get(remainingAgent);
+				this.getAgents2Start().removeElement(remainingAce4s);
+		    }
+		}
+	
+		// --------------------------------------------------------------------
+		// --- Renumber list --------------------------------------------------
+		this.reNumberAgents2Start();
+		this.getNetworkModelAdapter().refreshNetworkModel();
+    }
+
+    /**
+     * Checks if is valid agent2 start.
+     * 
+     * @param ace4s the AgentClassElement4SimStart
+     * @param comp the NetworkComponent
+     * @return true, if the AgentClassElement4SimStart is valid
+     */
+    private boolean isValidAgent2Start(AgentClassElement4SimStart ace4s, NetworkComponent comp) {
+		if (comp == null) {
+		    return false;
+		}
+		if (ace4s.getAgentClassReference().equals(comp.getAgentClassName()) == false) {
+		    return false;
+		}
+		if (ace4s.getStartAsName().equals(comp.getId()) == false) {
+		    return false;
+		}
+		return true;
+    }
+
+    /**
+     * Adds an agent to the start list corresponding to the current network component .
+     * @param networkComponent the NetworkComponent
+     */
+    public void addAgent(NetworkComponent networkComponent) {
+
+    	if (networkComponent == null) {
+			return;
+		}
+		Class<? extends Agent> agentClass = this.getAgentClass(networkComponent.getAgentClassName());
+		if (agentClass != null) {
+	
+		    int newPosNo = this.getEmptyPosition4Agents2Start();
+		    // --- Agent class found. Create new list element ---------
+		    AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart(agentClass, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
+		    ace4s.setStartAsName(networkComponent.getId());
+		    ace4s.setPostionNo(newPosNo);
+		    // --- Add the new list element to the list ---------------
+		    this.getAgents2Start().add(newPosNo - 1, ace4s);
+		}
+    }
+
+
+    /**
+     * Removes an agent from the start list corresponding to the current network component .
+     * @param networkComponent the NetworkComponent
+     */
+    public void removeAgent(NetworkComponent networkComponent){
+    	
+    	if (networkComponent == null) {
+			return;
+		}
+    	
+    	String search4 = networkComponent.getId();
+    	DefaultListModel agentList = this.getAgents2Start();
+    	int i = 0;
+    	for (i = 0; i < agentList.size(); i++) {
+    		AgentClassElement4SimStart agentElement = (AgentClassElement4SimStart) agentList.get(i);
+			if (agentElement.getStartAsName().equals(search4)) {
+				agentList.remove(i);
+				break;
+			}
+		}
+    	
+    	// Shifting the positions of the later components by 1
+		for (int j = i; j < agentList.size(); j++) {
+			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) agentList.get(j);
+			ac4s.setPostionNo(ac4s.getPostionNo() - 1);
+		}
+    	
+    }
+    
+    /**
+     * Renames an agent by its old NetworkComponentID.
+     * @param oldCompID the old NetworkComponentID
+     * @param newCompID the new NetworkComponentID
+     */
+    public void renameAgent(String oldCompID, String newCompID) {
+    	
+    	// Renaming the agent in the agent start list of the simulation setup
+		int i = 0;
+		for (i = 0; i < getAgents2Start().size(); i++) {
+		    AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) getAgents2Start().get(i);
+		    if (ac4s.getStartAsName().equals(oldCompID)) {
+		    	ac4s.setStartAsName(newCompID);
+		    	break;
+		    }
+		}
+		
+    }
+    
+    /**
+     * Returns the agent class.
+     * 
+     * @param agentReference the agent reference
+     * @return the agent class
+     */
+    @SuppressWarnings("unchecked")
+    private Class<? extends Agent> getAgentClass(String agentReference) {
+		Class<? extends Agent> agentClass = null;
+		try {
+		    agentClass = (Class<? extends Agent>) Class.forName(agentReference);
+		} catch (ClassNotFoundException ex) {
+		    System.err.println("Could not find agent class '" + agentReference + "'");
+		}
+		return agentClass;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see EnvironmentController#saveEnvironment()
+     */
+    @Override
+    protected void saveEnvironment() {
+
+		this.validateNetworkComponentAndAgents2Start();
+		this.saveGeneralGraphSettings();
+		if (networkModel != null && networkModel.getGraph() != null) {
+	
+		    try {
+				// Save the graph topology
+				String graphFileName = baseFileName + ".graphml";
+				File file = new File(getEnvFolderPath() + File.separator + graphFileName);
+				if (!file.exists()) {
+				    file.createNewFile();
+				}
+				PrintWriter pw = new PrintWriter(new FileWriter(file));
+				getGraphMLWriter().save(networkModel.getGraph(), pw);
+		
+				// Save the network component definitions
+				File componentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
+				if (!componentFile.exists()) {
+				    componentFile.createNewFile();
+				}
+				FileWriter componentFileWriter = new FileWriter(componentFile);
+		
+				JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
+				Marshaller marsh = context.createMarshaller();
+				marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+				marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+				marsh.marshal(new NetworkComponentList(networkModel.getNetworkComponents()), componentFileWriter);
+		
+				componentFileWriter.close();
+	
+		    } catch (IOException e) {
+		    	e.printStackTrace();
+		    } catch (JAXBException e) {
+		    	e.printStackTrace();
+		    }
+		}
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see agentgui.core.environment.EnvironmentController#setEnvironmentModel(java.lang.Object)
+     */
+    @Override
+    public void setEnvironmentModel(Object environmentObject) {
+		try {
+		    if (environmentObject == null) {
+		    	this.setNetworkModel(null);
+		    } else {
+		    	this.setNetworkModel((NetworkModel) environmentObject);
+		    }
+	
+		} catch (Exception ex) {
+		    ex.printStackTrace();
+		}
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see agentgui.core.environment.EnvironmentController#getEnvironmentModel()
+     */
+    @Override
+    public Object getEnvironmentModel() {
+    	return this.networkModel;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see agentgui.core.environment.EnvironmentController#getEnvironmentModelCopy()
+     */
+    @Override
+    public Object getEnvironmentModelCopy() {
+		NetworkModel netModel = this.networkModel.getCopy();
+		return netModel;
+    }
+
+    /**
+     * Load general graph settings.
+     */
+    private void loadGeneralGraphSettings() {
+
+		try {
+		    File componentFile = new File(getEnvFolderPath() + File.separator + generalGraphSettings4MASFile + ".xml");
+		    FileReader componentReader = new FileReader(componentFile);
+	
+		    JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
+		    Unmarshaller unmarsh = context.createUnmarshaller();
+		    GeneralGraphSettings4MAS ggs4MAS = (GeneralGraphSettings4MAS) unmarsh.unmarshal(componentReader);
+		    this.networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
+		    componentReader.close();
+	
+		} catch (JAXBException e) {
+		    e.printStackTrace();
+		} catch (FileNotFoundException e) {
+		    e.printStackTrace();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+    }
+
+    /**
+     * Save general graph settings.
+     */
+    private void saveGeneralGraphSettings() {
+
+		try {
+		    File componentFile = new File(getEnvFolderPath() + File.separator + generalGraphSettings4MASFile + ".xml");
+		    if (!componentFile.exists()) {
+		    	componentFile.createNewFile();
+		    }
+	
+		    FileWriter componentFileWriter = new FileWriter(componentFile);
+	
+		    JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
+		    Marshaller marsh = context.createMarshaller();
+		    marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+		    marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		    marsh.marshal(this.networkModel.getGeneralGraphSettings4MAS(), componentFileWriter);
+	
+		    componentFileWriter.close();
+	
+		} catch (IOException e) {
+		    e.printStackTrace();
+		} catch (JAXBException e) {
+		    e.printStackTrace();
+		}
+
     }
 
     /**
      * Gets the GraphFileImporter, creates a new instance if null
-     * 
      * @return GraphFileImporter
      */
     public GraphFileImporter getGraphFileImporter() {
@@ -230,10 +712,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 		}
 		return graphFileImporter;
     }
-
     /**
      * Gets the GraphMLWriter, creates and initiates a new instance if null
-     * 
      * @return The GraphMLWriter
      */
     private GraphMLWriter<GraphNode, GraphEdge> getGraphMLWriter() {
@@ -284,516 +764,68 @@ public class GraphEnvironmentController extends EnvironmentController {
     /**
      * Creates a new GraphMLReader2 and initiates it with the GraphML file to be loaded
      * 
-     * @param file
-     *            The file to be loaded
+     * @param file The file to be loaded
      * @return The GraphMLReader2
      * @throws FileNotFoundException
      */
     private GraphMLReader2<Graph<GraphNode, GraphEdge>, GraphNode, GraphEdge> getGraphMLReader(File file) throws FileNotFoundException {
 
-	Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>> graphTransformer = new Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>>() {
-	    @Override
-	    public SparseGraph<GraphNode, GraphEdge> transform(GraphMetadata gmd) {
-		return new SparseGraph<GraphNode, GraphEdge>();
-	    }
-	};
-
-	Transformer<NodeMetadata, GraphNode> nodeTransformer = new Transformer<NodeMetadata, GraphNode>() {
-
-	    @Override
-	    public GraphNode transform(NodeMetadata nmd) {
-
-		GraphNode gn = new GraphNode();
-		gn.setId(nmd.getId());
-		gn.setEncodedOntologyRepresentation(nmd.getProperty(KEY_ONTOLOGY_REPRESENTATION_PROPERTY));
-
-		Point2D pos = null;
-		String posString = nmd.getProperty(KEY_POSITION_PROPERTY);
-		if (posString != null) {
-		    String[] coords = posString.split(":");
-		    if (coords.length == 2) {
-			double xPos = Double.parseDouble(coords[0]);
-			double yPos = Double.parseDouble(coords[1]);
-			pos = new Point2D.Double(xPos, yPos);
+		Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>> graphTransformer = new Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>>() {
+		    @Override
+		    public SparseGraph<GraphNode, GraphEdge> transform(GraphMetadata gmd) {
+			return new SparseGraph<GraphNode, GraphEdge>();
 		    }
-		}
-		if (pos == null) {
-		    System.err.println("Keine Position definiert für Knoten " + nmd.getId());
-		    pos = new Point2D.Double(0, 0);
-		}
-		gn.setPosition(pos);
-		return gn;
-	    }
-	};
-
-	Transformer<EdgeMetadata, GraphEdge> edgeTransformer = new Transformer<EdgeMetadata, GraphEdge>() {
-
-	    @Override
-	    public GraphEdge transform(EdgeMetadata emd) {
-		return new GraphEdge(emd.getId(), emd.getDescription());
-	    }
-	};
-
-	Transformer<HyperEdgeMetadata, GraphEdge> hyperEdgeTransformer = new Transformer<HyperEdgeMetadata, GraphEdge>() {
-
-	    @Override
-	    public GraphEdge transform(HyperEdgeMetadata arg0) {
-		return null;
-	    }
-	};
-
-	FileReader fileReader = new FileReader(file);
-
-	return new GraphMLReader2<Graph<GraphNode, GraphEdge>, GraphNode, GraphEdge>(fileReader, graphTransformer, nodeTransformer, edgeTransformer, hyperEdgeTransformer);
-
-    }
-
-    /**
-     * This method handles the SimulationSetupChangeNotifications sent from the project
-     * 
-     * @param sscn
-     *            The SimulationSetupChangeNotifications to handle
-     */
-    @Override
-    protected void handleSimSetupChange(SimulationSetupsChangeNotification sscn) {
-
-	switch (sscn.getUpdateReason()) {
-	case SimulationSetups.SIMULATION_SETUP_LOAD:
-	    this.updateGraphFileName();
-	    this.loadEnvironment(); // Loads network model and notifies observers
-	    break;
-
-	case SimulationSetups.SIMULATION_SETUP_SAVED:
-	    this.saveEnvironment();
-	    break;
-
-	case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
-	    
-		GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
-		if (this.networkModel!=null) {
-			generalGraphSettings4MAS = this.networkModel.getGeneralGraphSettings4MAS();	
-		}
-		
-		this.updateGraphFileName();
-	    networkModel = new NetworkModel();
-	    networkModel.setGeneralGraphSettings4MAS(generalGraphSettings4MAS);
-	    
-	    // --- register a new list of agents, which has to be started with the environment ------
-	    this.setAgents2Start(new DefaultListModel());
-	    this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-
-	    ((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).setNetworkModel(networkModel);
-	    // setChanged();
-	    // notifyObservers(EVENT_NETWORKMODEL_LOADED);
-	    break;
-
-	case SimulationSetups.SIMULATION_SETUP_COPY:
-	    this.updateGraphFileName();
-	    this.saveEnvironment();
-	    this.getProject().isUnsaved = true;
-	    break;
-
-	case SimulationSetups.SIMULATION_SETUP_REMOVE:
-	    File graphFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".graphml");
-	    if (graphFile.exists()) {
-		graphFile.delete();
-	    }
-
-	    File componentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
-	    if (componentFile.exists()) {
-		componentFile.delete();
-	    }
-	    updateGraphFileName();
-	    break;
-
-	case SimulationSetups.SIMULATION_SETUP_RENAME:
-	    File oldGraphFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".graphml");
-	    File oldComponentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
-	    updateGraphFileName();
-	    if (oldGraphFile.exists()) {
-		File newGraphFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".graphml");
-		oldGraphFile.renameTo(newGraphFile);
-	    }
-	    if (oldComponentFile.exists()) {
-		File newComponentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
-		oldComponentFile.renameTo(newComponentFile);
-	    }
-	    break;
-	}
-
-    }
-
-    /**
-     * This method sets the baseFileName property and the SimulationSetup's environmentFileName according to the current SimulationSetup
-     */
-    private void updateGraphFileName() {
-	baseFileName = this.getProject().simulationSetupCurrent;
-	getCurrentSimSetup().setEnvironmentFileName(baseFileName + ".graphml");
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see EnvironmentController#loadEnvironment()
-     */
-    @Override
-    protected void loadEnvironment() {
-
-	networkModel = new NetworkModel();
-
-	String fileName = getCurrentSimSetup().getEnvironmentFileName();
-	if (fileName != null) {
-
-	    // --- register the list of agents, which has to be started with the environment ------
-	    this.setAgents2Start(new DefaultListModel());
-	    this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-
-	    // --- Load the graph topology from the graph file ------------------------------------
-	    File graphFile = new File(getEnvFolderPath() + fileName);
-	    if (graphFile.exists()) {
-	    	baseFileName = fileName.substring(0, fileName.lastIndexOf('.'));
-			try {
-			    // Load graph topology
-			    networkModel.setGraph(getGraphMLReader(graphFile).readGraph());
+		};
 	
-			} catch (FileNotFoundException e) {
-			    e.printStackTrace();
-			} catch (GraphIOException e) {
-			    e.printStackTrace();
+		Transformer<NodeMetadata, GraphNode> nodeTransformer = new Transformer<NodeMetadata, GraphNode>() {
+	
+		    @Override
+		    public GraphNode transform(NodeMetadata nmd) {
+	
+			GraphNode gn = new GraphNode();
+			gn.setId(nmd.getId());
+			gn.setEncodedOntologyRepresentation(nmd.getProperty(KEY_ONTOLOGY_REPRESENTATION_PROPERTY));
+	
+			Point2D pos = null;
+			String posString = nmd.getProperty(KEY_POSITION_PROPERTY);
+			if (posString != null) {
+			    String[] coords = posString.split(":");
+			    if (coords.length == 2) {
+				double xPos = Double.parseDouble(coords[0]);
+				double yPos = Double.parseDouble(coords[1]);
+				pos = new Point2D.Double(xPos, yPos);
+			    }
 			}
-	    }
-
-	    // --- Load the component definitions from the component file -------------------------
-	    File componentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
-	    if (componentFile.exists()) {
-			try {
-			    FileReader componentReader = new FileReader(componentFile);
-	
-			    JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
-			    Unmarshaller unmarsh = context.createUnmarshaller();
-			    NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(componentReader);
-			    networkModel.setNetworkComponents(compList.getComponentList());
-	
-			    componentReader.close();
-	
-			} catch (JAXBException e) {
-			    e.printStackTrace();
-			} catch (FileNotFoundException e) {
-			    e.printStackTrace();
-			} catch (IOException e) {
-			    e.printStackTrace();
+			if (pos == null) {
+			    System.err.println("Keine Position definiert für Knoten " + nmd.getId());
+			    pos = new Point2D.Double(0, 0);
 			}
-	    }
-	}
-
-	// --- Loading component type settings from the simulation setup --------------------------
-	this.loadGeneralGraphSettings();
-
-	// --- Clean up / correct list of agents corresponding to the current NetworkModel --------
-	this.validateNetworkComponentAndAgents2Start();
-
-	// --- Set the visualization of the graph -------------------------------------------------
-	((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).setNetworkModel(networkModel);
-	// setChanged();
-	// notifyObservers(EVENT_NETWORKMODEL_LOADED);
-
-    }
-
-    /**
-     * Clean up / correct list of agents corresponding to the current NetworkModel.
-     */
-    public void validateNetworkComponentAndAgents2Start() {
-
-	// --------------------------------------------------------------------
-	// --- Get the current ComponentTypeSettings --------------------------
-	HashMap<String, ComponentTypeSettings> cts = this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
-
-	// --------------------------------------------------------------------
-	// --- Transfer the agent list into a HashMap for a faster access -----
-	HashMap<String, AgentClassElement4SimStart> agents2StartHash = new HashMap<String, AgentClassElement4SimStart>();
-	for (int i = 0; i < this.getAgents2Start().size(); i++) {
-	    AgentClassElement4SimStart ace4s = (AgentClassElement4SimStart) this.getAgents2Start().get(i);
-	    String agentName = ace4s.getStartAsName();
-
-	    AgentClassElement4SimStart ace4sThere = agents2StartHash.get(agentName);
-	    agents2StartHash.put(agentName, ace4s);
-	    if (ace4sThere != null) {
-		// --- Remove the redundant entries and let one entry survive -
-		AgentClassElement4SimStart[] ace4sArr2Delete = getAgents2StartFromAgentName(agentName);
-		for (int j = 0; j < ace4sArr2Delete.length - 1; j++) {
-		    this.getAgents2Start().removeElement(ace4sArr2Delete[j]);
-		}
-	    }
-	}
-
-	// --------------------------------------------------------------------
-	// --- Run through the network components and validate agent list -----
-	Collection<String> compNameCollection = this.networkModel.getNetworkComponents().keySet();
-	String[] compNames = compNameCollection.toArray(new String[compNameCollection.size()]);
-	for (int i = 0; i < compNames.length; i++) {
-	    // --- Current component ------------------------------------------
-	    String compName = compNames[i];
-	    NetworkComponent comp = this.networkModel.getNetworkComponent(compName);
-
-	    // ----------------------------------------------------------------
-	    // --- Validate current component against ComponentTypeSettings ---
-	    ComponentTypeSettings ctsSingle = cts.get(comp.getType());
-	    if (ctsSingle == null) {
-		// --- remove this component ---
-		this.networkModel.removeNetworkComponent(comp);
-		comp = null;
-
-	    } else {
-		if (comp.getAgentClassName().equals(ctsSingle.getAgentClass()) == false) {
-		    // --- Correct this entry -------
-		    comp.setAgentClassName(ctsSingle.getAgentClass());
-		}
-		if (comp.getPrototypeClassName().equals(ctsSingle.getGraphPrototype()) == false) {
-		    // --- Correct this entry -------
-		    // TODO change the graph elements if needed
-		    comp.setPrototypeClassName(ctsSingle.getGraphPrototype());
-		}
-	    }
-
-	    // ----------------------------------------------------------------
-	    // --- Check if an Agent can be found in the start list -----------
-	    AgentClassElement4SimStart ace4s = agents2StartHash.get(compName);
-	    if (ace4s == null) {
-		// --- Agent definition NOT found in agent start list ---------
-		this.add2Agents2Start(comp);
-
-	    } else {
-		// --- Agent definition found in agent start list -------------
-		if (isValidAgent2Start(ace4s, comp) == false) {
-		    // --- Error found --------------------
-		    this.getAgents2Start().removeElement(ace4s);
-		    this.add2Agents2Start(comp);
-		}
-		agents2StartHash.remove(compName);
-	    }
-
-	} // end for
-
-	// --------------------------------------------------------------------
-	// --- Are there remaining agents in the start list? ------------------
-	if (agents2StartHash.size() != 0) {
-
-	    Collection<String> remainingAgents2Start = agents2StartHash.keySet();
-	    String[] remainingAgents = remainingAgents2Start.toArray(new String[remainingAgents2Start.size()]);
-	    for (int i = 0; i < remainingAgents.length; i++) {
-		String remainingAgent = remainingAgents[i];
-		AgentClassElement4SimStart remainingAce4s = agents2StartHash.get(remainingAgent);
-		this.getAgents2Start().removeElement(remainingAce4s);
-	    }
-	}
-
-	// --------------------------------------------------------------------
-	// --- Renumber list --------------------------------------------------
-	this.reNumberAgents2Start();
-
-    }
-
-    /**
-     * Checks if is valid agent2 start.
-     * 
-     * @param ace4s
-     *            the AgentClassElement4SimStart
-     * @param comp
-     *            the NetworkComponent
-     * @return true, if the AgentClassElement4SimStart is valid
-     */
-    private boolean isValidAgent2Start(AgentClassElement4SimStart ace4s, NetworkComponent comp) {
-
-	if (comp == null) {
-	    return false;
-	}
-	if (ace4s.getAgentClassReference().equals(comp.getAgentClassName()) == false) {
-	    return false;
-	}
-	if (ace4s.getStartAsName().equals(comp.getId()) == false) {
-	    return false;
-	}
-	return true;
-    }
-
-    /**
-     * Adds an agent to the start list corresponding to the network component .
-     * 
-     * @param networkComponent the network component
-     */
-    public void add2Agents2Start(NetworkComponent networkComponent) {
-
-    	if (networkComponent == null) {
-			return;
-		}
-		Class<? extends Agent> agentClass = this.getAgentClass(networkComponent.getAgentClassName());
-		if (agentClass != null) {
+			gn.setPosition(pos);
+			return gn;
+		    }
+		};
 	
-		    int newPosNo = this.getEmptyPosition4Agents2Start();
-		    // --- Agent class found. Create new list element ---------
-		    AgentClassElement4SimStart ace4s = new AgentClassElement4SimStart(agentClass, SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-		    ace4s.setStartAsName(networkComponent.getId());
-		    ace4s.setPostionNo(newPosNo);
-		    // --- Add the new list element to the list ---------------
-		    this.getAgents2Start().add(newPosNo - 1, ace4s);
-		}
+		Transformer<EdgeMetadata, GraphEdge> edgeTransformer = new Transformer<EdgeMetadata, GraphEdge>() {
+	
+		    @Override
+		    public GraphEdge transform(EdgeMetadata emd) {
+		    	return new GraphEdge(emd.getId(), emd.getDescription());
+		    }
+		};
+	
+		Transformer<HyperEdgeMetadata, GraphEdge> hyperEdgeTransformer = new Transformer<HyperEdgeMetadata, GraphEdge>() {
+	
+		    @Override
+		    public GraphEdge transform(HyperEdgeMetadata arg0) {
+		    	return null;
+		    }
+		};
+	
+		FileReader fileReader = new FileReader(file);
+	
+		return new GraphMLReader2<Graph<GraphNode, GraphEdge>, GraphNode, GraphEdge>(fileReader, graphTransformer, nodeTransformer, edgeTransformer, hyperEdgeTransformer);
 
     }
-
-    /**
-     * Returns the agent class.
-     * 
-     * @param agentReference the agent reference
-     * @return the agent class
-     */
-    @SuppressWarnings("unchecked")
-    private Class<? extends Agent> getAgentClass(String agentReference) {
-		Class<? extends Agent> agentClass = null;
-		try {
-		    agentClass = (Class<? extends Agent>) Class.forName(agentReference);
-		} catch (ClassNotFoundException ex) {
-		    System.err.println("Could not find agent class '" + agentReference + "'");
-		}
-		return agentClass;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see EnvironmentController#saveEnvironment()
-     */
-    @Override
-    protected void saveEnvironment() {
-
-	this.validateNetworkComponentAndAgents2Start();
-	this.saveGeneralGraphSettings();
-	if (networkModel != null && networkModel.getGraph() != null) {
-
-	    try {
-		// Save the graph topology
-		String graphFileName = baseFileName + ".graphml";
-		File file = new File(getEnvFolderPath() + File.separator + graphFileName);
-		if (!file.exists()) {
-		    file.createNewFile();
-		}
-		PrintWriter pw = new PrintWriter(new FileWriter(file));
-		getGraphMLWriter().save(networkModel.getGraph(), pw);
-
-		// Save the network component definitions
-		File componentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
-		if (!componentFile.exists()) {
-		    componentFile.createNewFile();
-		}
-		FileWriter componentFileWriter = new FileWriter(componentFile);
-
-		JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
-		Marshaller marsh = context.createMarshaller();
-		marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-		marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		marsh.marshal(new NetworkComponentList(networkModel.getNetworkComponents()), componentFileWriter);
-
-		componentFileWriter.close();
-
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    } catch (JAXBException e) {
-		e.printStackTrace();
-	    }
-	}
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see agentgui.core.environment.EnvironmentController#setEnvironmentModel(java.lang.Object)
-     */
-    @Override
-    public void setEnvironmentModel(Object environmentObject) {
-	try {
-	    if (environmentObject == null) {
-		this.setNetworkModel(null);
-	    } else {
-		this.setNetworkModel((NetworkModel) environmentObject);
-	    }
-
-	} catch (Exception ex) {
-	    ex.printStackTrace();
-	}
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see agentgui.core.environment.EnvironmentController#getEnvironmentModel()
-     */
-    @Override
-    public Object getEnvironmentModel() {
-	return this.networkModel;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see agentgui.core.environment.EnvironmentController#getEnvironmentModelCopy()
-     */
-    @Override
-    public Object getEnvironmentModelCopy() {
-	NetworkModel netModel = this.networkModel.getCopy();
-	return netModel;
-    }
-
-    /**
-     * Load general graph settings.
-     */
-    private void loadGeneralGraphSettings() {
-
-	try {
-	    File componentFile = new File(getEnvFolderPath() + File.separator + generalGraphSettings4MASFile + ".xml");
-	    FileReader componentReader = new FileReader(componentFile);
-
-	    JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
-	    Unmarshaller unmarsh = context.createUnmarshaller();
-	    GeneralGraphSettings4MAS ggs4MAS = (GeneralGraphSettings4MAS) unmarsh.unmarshal(componentReader);
-	    this.networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
-	    componentReader.close();
-
-	} catch (JAXBException e) {
-	    e.printStackTrace();
-	} catch (FileNotFoundException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * Save general graph settings.
-     */
-    private void saveGeneralGraphSettings() {
-
-	try {
-
-	    File componentFile = new File(getEnvFolderPath() + File.separator + generalGraphSettings4MASFile + ".xml");
-	    if (!componentFile.exists()) {
-		componentFile.createNewFile();
-	    }
-
-	    FileWriter componentFileWriter = new FileWriter(componentFile);
-
-	    JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
-	    Marshaller marsh = context.createMarshaller();
-	    marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-	    marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-	    marsh.marshal(this.networkModel.getGeneralGraphSettings4MAS(), componentFileWriter);
-
-	    componentFileWriter.close();
-
-	} catch (IOException e) {
-	    e.printStackTrace();
-	} catch (JAXBException e) {
-	    e.printStackTrace();
-	}
-
-    }
-
+    
+    
 }

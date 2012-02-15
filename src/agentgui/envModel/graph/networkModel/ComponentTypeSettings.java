@@ -41,7 +41,7 @@ import agentgui.envModel.graph.prototypes.GraphElementPrototype;
  * @author Satyadeep 
  *
  */
-public class ComponentTypeSettings implements Serializable {
+public class ComponentTypeSettings implements Serializable, Cloneable {
 	
 	private static final long serialVersionUID = 2456632300628196922L;
 	
@@ -81,6 +81,35 @@ public class ComponentTypeSettings implements Serializable {
 		this.edgeImage = edgeImage;
 		this.color = color;
 	}
+	
+
+	/**
+	 * Returns a copy of the current instance.
+	 * @return the copy
+	 */
+	public ComponentTypeSettings getCopy() {
+		
+		ComponentTypeSettings copy = new ComponentTypeSettings();
+		if (domain!=null) {
+			copy.setDomain(new String (domain));	
+		}
+		if (agentClass!=null) {
+			copy.setAgentClass(new String(agentClass));	
+		}
+		if (graphPrototype!=null) {
+			copy.setGraphPrototype(new String(graphPrototype));	
+		}
+		if (color!=null) {
+			copy.setColor(new String(color));	
+		}
+		if (edgeImage!=null) {
+			copy.setEdgeImage(new String(edgeImage));	
+		}
+		copy.setEdgeWidth(edgeWidth);
+		copy.setShowLabel(showLabel);
+		return copy;
+	}
+	
 	
 	/**
 	 * Sets the domain.
@@ -178,8 +207,8 @@ public class ComponentTypeSettings implements Serializable {
 	/**
 	 * @param showLable the showLable to set
 	 */
-	public void setShowLabel(boolean showLable) {
-		this.showLabel = showLable;
+	public void setShowLabel(boolean showLabel) {
+		this.showLabel = showLabel;
 	}
 	/**
 	 * @return the showLable
