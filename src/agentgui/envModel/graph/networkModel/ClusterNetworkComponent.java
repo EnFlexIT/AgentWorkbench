@@ -70,13 +70,12 @@ public class ClusterNetworkComponent extends NetworkComponent {
 
 	@Override
 	public ClusterNetworkComponent getCopy() {
-
-		HashSet<String> copyComponentIDs = new HashSet<String>(this.networkComponentIDs);
-
-		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.agentClassName, null, this.directed, copyComponentIDs, this.clusterNetworkModel.getCopy());
-		copy.setGraphElementIDs(this.getGraphElementIDs());
+		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.agentClassName, null, this.directed, null, this.clusterNetworkModel.getCopy());
+		HashSet<String> copyComponentIDs = new HashSet<String>	(this.getNetworkComponentIDs());
+		copy.setNetworkComponentIDs(copyComponentIDs);
+		HashSet<String> gaphElementIDs = new HashSet<String>(this.getGraphElementIDs());
+		copy.setGraphElementIDs(gaphElementIDs);
 		return copy;
-
 	}
 
 	/**

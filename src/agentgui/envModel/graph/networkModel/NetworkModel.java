@@ -153,8 +153,13 @@ public class NetworkModel implements Cloneable, Serializable {
 		// -- Create a copy of the networkComponents ----------------
 		HashMap<String, NetworkComponent> copyOfComponents = new HashMap<String, NetworkComponent>();
 		for (NetworkComponent networkComponent : this.networkComponents.values()) {
-			NetworkComponent networkComponentCopy = networkComponent.getCopy();
-			copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
+			if (networkComponent instanceof ClusterNetworkComponent) {
+				ClusterNetworkComponent networkComponentCopy = ((ClusterNetworkComponent)networkComponent).getCopy(); 
+				copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
+			} else {
+				NetworkComponent networkComponentCopy = networkComponent.getCopy();
+				copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
+			}
 		}
 		netModel.setNetworkComponents(copyOfComponents);
 		netModel.refreshGraphElements();
