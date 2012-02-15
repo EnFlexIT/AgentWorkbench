@@ -478,6 +478,7 @@ de;Überspringen;Skip
 en;;Cluster shape;;;
 en;;Discrete squares environment;;;
 en;;Select a network component;;;
+en;;Select one vertex !;;;
 en;;Select two valid vertices;;;
 en;;The select Vertex should be at least between two components !;;;
 en;;The select Vertex should be between two components !;;;

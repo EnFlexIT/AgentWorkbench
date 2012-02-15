@@ -613,24 +613,46 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @return true, if successful
 	 */
 	public boolean mergeNodes(GraphNode node1, GraphNode node2) {
-		// Get the Network components from the nodes
-		NetworkComponent comp1 = this.getNetworkComponents(node1).iterator().next();
-		NetworkComponent comp2 = this.getNetworkComponents(node2).iterator().next();
+		
+		GraphNode graphNode1 = node1;
+		GraphNode graphNode2 = node2;
+		NetworkComponent comp1 = null;
+		NetworkComponent comp2 = null;
+			
+		// --- Try to find instances of DistributionNode ------------
+		NetworkComponent disNodeComp1 = containsDistributionNode(this.getNetworkComponents(graphNode1));
+		NetworkComponent disNodeComp2 = containsDistributionNode(this.getNetworkComponents(graphNode2));
+		if (disNodeComp1!=null && disNodeComp2!=null) {
+			// --- Two DistributionNode instances can't be merged ---
+			return false;
+		} else if (disNodeComp1!=null) {
+			comp1 = disNodeComp1;
+		} else if (disNodeComp2!=null) {
+			// --- change the direction of the selection ------------
+			graphNode1 = node2;
+			graphNode2 = node1;
+			comp1 = disNodeComp2; 
+		} else {
+			comp1 = this.getNetworkComponents(graphNode1).iterator().next();
+		}
+		comp2 = this.getNetworkComponents(graphNode2).iterator().next();
+
+		
 		// Finding the intersection set of the Graph elements of the two network components
 		HashSet<String> intersection = new HashSet<String>(comp1.getGraphElementIDs());
 		intersection.retainAll(comp2.getGraphElementIDs());
 		// Checking the constraint - Two network components can have maximum one node in common
 		if (intersection.size() == 0) {
 			// No common node
-			for (GraphEdge edge : graph.getIncidentEdges(node2)) {
-				addEdge(edge, node1, node2);
+			for (GraphEdge edge : graph.getIncidentEdges(graphNode2)) {
+				addEdge(edge, graphNode1, graphNode2);
 			}
 			// Updating the graph element IDs of the component
-			comp2.getGraphElementIDs().remove(node2.getId());
-			comp2.getGraphElementIDs().add(node1.getId());
+			comp2.getGraphElementIDs().remove(graphNode2.getId());
+			comp2.getGraphElementIDs().add(graphNode1.getId());
 			// Removing node2 from the graph and network model
-			graph.removeVertex(node2);
-			graphElements.remove(node2.getId());
+			graph.removeVertex(graphNode2);
+			graphElements.remove(graphNode2.getId());
 			return true;
 		}
 		return false;

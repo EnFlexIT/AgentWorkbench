@@ -152,11 +152,13 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     	this.setAlternativeNetworkModels();
 		
 		this.getJTextFieldSearch().setText(null);
-		this.tblFilter();
-	    this.jScrollPaneComponentsTable.getViewport().removeAll();
+		//this.tblFilter();
+		this.jScrollPaneComponentsTable.getViewport().setVisible(false);
+		this.jScrollPaneComponentsTable.getViewport().removeAll();
 	    this.jTableComponents = null;
 		this.componentsTableModel = null;
 		this.jScrollPaneComponentsTable.setViewportView(this.getJTableComponents());
+		this.jScrollPaneComponentsTable.getViewport().setVisible(true);
 		this.setNumberOfComponents();
     }
     

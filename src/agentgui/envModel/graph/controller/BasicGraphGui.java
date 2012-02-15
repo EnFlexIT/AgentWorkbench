@@ -950,7 +950,8 @@ public class BasicGraphGui extends JPanel implements Observer {
     		case NetworkModelNotification.NETWORK_MODEL_Component_Renamed:
     		case NetworkModelNotification.NETWORK_MODEL_Nodes_Merged:
     		case NetworkModelNotification.NETWORK_MODEL_Nodes_Splited:
-				this.repaintGraph();	
+				this.clearPickedObjects();
+    			this.repaintGraph();	
 				break;
     			
 			case NetworkModelNotification.NETWORK_MODEL_Component_Select:
