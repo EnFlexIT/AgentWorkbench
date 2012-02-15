@@ -56,6 +56,7 @@ import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.envModel.graph.controller.yedGraphml.YedGraphMLFileImporter;
+import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
@@ -400,41 +401,43 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    String compName = compNames[i];
 		    NetworkComponent comp = this.networkModel.getNetworkComponent(compName);
 	
-		    // ----------------------------------------------------------------
-		    // --- Validate current component against ComponentTypeSettings ---
-		    ComponentTypeSettings ctsSingle = cts.get(comp.getType());
-		    if (ctsSingle == null) {
-				// --- remove this component ---
-				this.networkModel.removeNetworkComponent(comp);
-				comp = null;
-	
-		    } else {
-				if (comp.getAgentClassName().equals(ctsSingle.getAgentClass()) == false) {
-				    // --- Correct this entry -------
-				    comp.setAgentClassName(ctsSingle.getAgentClass());
-				}
-				if (comp.getPrototypeClassName().equals(ctsSingle.getGraphPrototype()) == false) {
-				    // --- Correct this entry -------
-				    // TODO change the graph elements if needed
-				    comp.setPrototypeClassName(ctsSingle.getGraphPrototype());
-				}
-		    }
-	
-		    // ----------------------------------------------------------------
-		    // --- Check if an Agent can be found in the start list -----------
-		    AgentClassElement4SimStart ace4s = agents2StartHash.get(compName);
-		    if (ace4s == null) {
-			// --- Agent definition NOT found in agent start list ---------
-		    	this.addAgent(comp);
-	
-		    } else {
-				// --- Agent definition found in agent start list -------------
-				if (isValidAgent2Start(ace4s, comp) == false) {
-				    // --- Error found --------------------
-				    this.getAgents2Start().removeElement(ace4s);
-				    this.addAgent(comp);
-				}
-				agents2StartHash.remove(compName);
+		    if (!(comp instanceof ClusterNetworkComponent)) {
+			    // ----------------------------------------------------------------
+			    // --- Validate current component against ComponentTypeSettings ---
+			    ComponentTypeSettings ctsSingle = cts.get(comp.getType());
+			    if (ctsSingle == null) {
+					// --- remove this component ---
+					this.networkModel.removeNetworkComponent(comp);
+					comp = null;
+		
+			    } else {
+					if (comp.getAgentClassName().equals(ctsSingle.getAgentClass()) == false) {
+					    // --- Correct this entry -------
+					    comp.setAgentClassName(ctsSingle.getAgentClass());
+					}
+					if (comp.getPrototypeClassName().equals(ctsSingle.getGraphPrototype()) == false) {
+					    // --- Correct this entry -------
+					    // TODO change the graph elements if needed
+					    comp.setPrototypeClassName(ctsSingle.getGraphPrototype());
+					}
+			    }
+		
+			    // ----------------------------------------------------------------
+			    // --- Check if an Agent can be found in the start list -----------
+			    AgentClassElement4SimStart ace4s = agents2StartHash.get(compName);
+			    if (ace4s == null) {
+				// --- Agent definition NOT found in agent start list ---------
+			    	this.addAgent(comp);
+		
+			    } else {
+					// --- Agent definition found in agent start list -------------
+					if (isValidAgent2Start(ace4s, comp) == false) {
+					    // --- Error found --------------------
+					    this.getAgents2Start().removeElement(ace4s);
+					    this.addAgent(comp);
+					}
+					agents2StartHash.remove(compName);
+			    }
 		    }
 	
 		} // end for
