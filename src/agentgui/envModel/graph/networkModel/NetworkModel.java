@@ -134,13 +134,13 @@ public class NetworkModel implements Cloneable, Serializable {
 	@Override
 	protected NetworkModel clone() {
 		try {
-			return (NetworkModel) super.clone();	
+			return (NetworkModel) super.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Creates a clone of the current instance.
 	 * @return the copy
@@ -154,7 +154,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		HashMap<String, NetworkComponent> copyOfComponents = new HashMap<String, NetworkComponent>();
 		for (NetworkComponent networkComponent : this.networkComponents.values()) {
 			if (networkComponent instanceof ClusterNetworkComponent) {
-				ClusterNetworkComponent networkComponentCopy = ((ClusterNetworkComponent)networkComponent).getCopy(); 
+				ClusterNetworkComponent networkComponentCopy = ((ClusterNetworkComponent) networkComponent).getCopy();
 				copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
 			} else {
 				NetworkComponent networkComponentCopy = networkComponent.getCopy();
@@ -177,7 +177,7 @@ public class NetworkModel implements Cloneable, Serializable {
 			copyOfAlternativeNetworkModel = new HashMap<String, NetworkModel>(this.alternativeNetworkModel);
 		}
 		netModel.setAlternativeNetworkModel(copyOfAlternativeNetworkModel);
-		
+
 		return netModel;
 	}
 
@@ -368,7 +368,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @param networkComponent The NetworkComponent to remove
 	 */
 	public void removeNetworkComponent(NetworkComponent networkComponent) {
-		
+
 		if (networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
 			// ----------------------------------------------------------------
 			// --- A DistributionNode has to be removed -----------------------
@@ -413,21 +413,17 @@ public class NetworkModel implements Cloneable, Serializable {
 
 	/**
 	 * Removes the network components if not in list.
-	 * @param networkComponentIDs the network components
+	 * @param hashSet the network components
 	 */
-	public HashSet<NetworkComponent> removeNetworkComponentsInverse(HashSet<NetworkComponent> networkComponents) {
-		
-		HashSet<NetworkComponent> removed = new HashSet<NetworkComponent>();
-		HashSet<String> networkComponentIDs = getNetworkComponentsIDs(networkComponents);
-		for (NetworkComponent networkComponent : networkComponents) {
-			if (!networkComponentIDs.contains(networkComponent.getId()) && this.networkComponents.values().contains(networkComponent)) {
+	public void removeInverseNetworkComponents(HashSet<String> hashSet) {
+		ArrayList<NetworkComponent> allNetworkComponents = new ArrayList<NetworkComponent>(this.networkComponents.values());
+		for (NetworkComponent networkComponent : allNetworkComponents) {
+			if (!hashSet.contains(networkComponent.getId()) && this.networkComponents.values().contains(networkComponent)) {
 				this.removeNetworkComponent(networkComponent);
-				removed.add(networkComponent);
 			}
 		}
-		return removed;
 	}
-	
+
 	/**
 	 * Gets the a node from network component.
 	 * 
@@ -618,31 +614,30 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @return true, if successful
 	 */
 	public boolean mergeNodes(GraphNode node1, GraphNode node2) {
-		
+
 		GraphNode graphNode1 = node1;
 		GraphNode graphNode2 = node2;
 		NetworkComponent comp1 = null;
 		NetworkComponent comp2 = null;
-			
+
 		// --- Try to find instances of DistributionNode ------------
 		NetworkComponent disNodeComp1 = containsDistributionNode(this.getNetworkComponents(graphNode1));
 		NetworkComponent disNodeComp2 = containsDistributionNode(this.getNetworkComponents(graphNode2));
-		if (disNodeComp1!=null && disNodeComp2!=null) {
+		if (disNodeComp1 != null && disNodeComp2 != null) {
 			// --- Two DistributionNode instances can't be merged ---
 			return false;
-		} else if (disNodeComp1!=null) {
+		} else if (disNodeComp1 != null) {
 			comp1 = disNodeComp1;
-		} else if (disNodeComp2!=null) {
+		} else if (disNodeComp2 != null) {
 			// --- change the direction of the selection ------------
 			graphNode1 = node2;
 			graphNode2 = node1;
-			comp1 = disNodeComp2; 
+			comp1 = disNodeComp2;
 		} else {
 			comp1 = this.getNetworkComponents(graphNode1).iterator().next();
 		}
 		comp2 = this.getNetworkComponents(graphNode2).iterator().next();
 
-		
 		// Finding the intersection set of the Graph elements of the two network components
 		HashSet<String> intersection = new HashSet<String>(comp1.getGraphElementIDs());
 		intersection.retainAll(comp2.getGraphElementIDs());
@@ -904,7 +899,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		// ---------- Prepare Parameters for ClusterComponent ------------------------------
 		NetworkModel clusterNetworkModel = this.getCopy();
 		clusterNetworkModel.setAlternativeNetworkModel(null);
-		clusterNetworkModel.removeNetworkComponentsInverse(networkComponents);
+		clusterNetworkModel.removeInverseNetworkComponents(getNetworkComponentsIDs(networkComponents));
 		removeNetworkComponents(networkComponents);
 		// --------------- Identifiy outernodes of the Cluster ----------------
 		Vector<GraphNode> outerNodes = new Vector<GraphNode>();
@@ -919,9 +914,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		String clusterComponentID = nextNetworkComponentID();
 		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, clusterComponentID);
 		HashSet<GraphElement> clusterElements = new ClusterGraphElement(outerNodes, clusterComponentID).addToGraph(this);
-		ClusterNetworkComponent clusterComponent = 
-			new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), 
-					null, clusterElements, clusterGraphElement.isDirected(),
+		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), null, clusterElements, clusterGraphElement.isDirected(),
 				getNetworkComponentsIDs(networkComponents), clusterNetworkModel);
 		this.networkComponents.put(clusterComponent.getId(), clusterComponent);
 		for (String id : clusterComponent.getGraphElementIDs()) {

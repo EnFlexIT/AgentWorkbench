@@ -45,20 +45,18 @@ import edu.uci.ics.jung.graph.Graph;
  * with the NetworkModel in the context of the GUI.
  */
 public class NetworkModelAdapter implements NetworkModelInterface {
-	
+
 	/** The graph controller. */
 	private GraphEnvironmentController graphController = null;
 
-	
 	/**
 	 * Instantiates a new network model action.
 	 * @param controller the controller
 	 */
 	public NetworkModelAdapter(GraphEnvironmentController controller) {
-		this.graphController=controller;
+		this.graphController = controller;
 	}
-	
-	
+
 	/**
 	 * Returns the network model.
 	 * @return the network model
@@ -66,7 +64,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	public NetworkModel getNetworkModel() {
 		return this.graphController.getNetworkModel();
 	}
-	
+
 	/**
 	 * Sets a new network model.
 	 * @param networkModel the new network model
@@ -92,6 +90,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 		this.graphController.validateNetworkComponentAndAgents2Start();
 		this.graphController.setProjectUnsaved();
 	}
+
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getGeneralGraphSettings4MAS()
 	 */
@@ -107,6 +106,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	public void setAlternativeNetworkModel(HashMap<String, NetworkModel> alternativeNetworkModel) {
 		this.graphController.getNetworkModel().setAlternativeNetworkModel(alternativeNetworkModel);
 	}
+
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getAlternativeNetworkModel()
 	 */
@@ -175,71 +175,76 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * Reloads the NetworModel.
 	 */
 	public void reLoadNetworkModel() {
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Reload);
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Reload);
 		this.notifyObserver(notification);
 	}
+
 	/**
 	 * Refreshes the NetworkModel visualization.
 	 */
 	public void refreshNetworkModel() {
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint);
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint);
 		this.notifyObserver(notification);
 	}
-	
+
 	/**
 	 * Zoom fit to window.
 	 */
 	public void zoomFit2Window() {
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Zoom_Fit2Window);
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Zoom_Fit2Window);
 		this.notifyObserver(notification);
 	}
+
 	/**
 	 * Zoom to the original size.
 	 */
 	public void zoomOne2One() {
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Zoom_One2One);
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Zoom_One2One);
 		this.notifyObserver(notification);
 	}
+
 	/**
 	 * Zoom in.
 	 */
 	public void zoomIn() {
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Zoom_In);
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Zoom_In);
 		this.notifyObserver(notification);
 	}
+
 	/**
 	 * Zoom out.
 	 */
 	public void zoomOut() {
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Zoom_Out);
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Zoom_Out);
 		this.notifyObserver(notification);
 	}
-	
+
 	/**
 	 * Sets the graph mouse to transforming mode.
 	 */
-	public void setGraphMouseTransforming(){
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_GraphMouse_Transforming);
+	public void setGraphMouseTransforming() {
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_GraphMouse_Transforming);
 		this.notifyObserver(notification);
 	}
+
 	/**
 	 * Sets the graph mouse to picking mode.
 	 */
 	public void setGraphMousePicking() {
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking);
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking);
 		this.notifyObserver(notification);
 	}
-	
+
 	/**
 	 * Can be used in order to select a NetworkComponent.
 	 * @param networkComponent the network component
 	 */
 	public void selectNetworkComponent(NetworkComponent networkComponent) {
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Select);
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Select);
 		notification.setInfoObject(networkComponent);
 		this.notifyObserver(notification);
 	}
-	
+
 	/**
 	 * Clears the current NetworModel.
 	 */
@@ -247,17 +252,17 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 		this.graphController.setEnvironmentModel(null);
 		this.graphController.getAgents2Start().clear();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#addNetworkComponent(agentgui.envModel.graph.networkModel.NetworkComponent)
 	 */
 	@Override
 	public NetworkComponent addNetworkComponent(NetworkComponent networkComponent) {
-		
-		NetworkComponent newComponent = this.graphController.getNetworkModel().addNetworkComponent(networkComponent); 
+
+		NetworkComponent newComponent = this.graphController.getNetworkModel().addNetworkComponent(networkComponent);
 		this.graphController.addAgent(networkComponent);
-		
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Added);
+
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Added);
 		notification.setInfoObject(newComponent);
 		this.notifyObserver(notification);
 
@@ -278,11 +283,11 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 */
 	@Override
 	public void removeNetworkComponent(NetworkComponent networkComponent) {
-		
+
 		this.graphController.getNetworkModel().removeNetworkComponent(networkComponent);
 		this.graphController.removeAgent(networkComponent);
-		
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
+
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
 		notification.setInfoObject(networkComponent);
 		this.notifyObserver(notification);
 
@@ -293,44 +298,26 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 */
 	@Override
 	public HashSet<NetworkComponent> removeNetworkComponents(HashSet<NetworkComponent> networkComponents) {
-		
+
 		HashSet<NetworkComponent> removedComponents = this.graphController.getNetworkModel().removeNetworkComponents(networkComponents);
 		for (NetworkComponent networkComponent : removedComponents) {
-			
+
 			this.graphController.removeAgent(networkComponent);
-			
-			NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
+
+			NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
 			notification.setInfoObject(networkComponent);
 			this.notifyObserver(notification);
 		}
 		return removedComponents;
 	}
-	
-	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#removeNetworkComponentsInverse(java.util.HashSet)
-	 */
-	@Override
-	public HashSet<NetworkComponent> removeNetworkComponentsInverse(HashSet<NetworkComponent> networkComponents) {
-		
-		HashSet<NetworkComponent> removedComponents = this.graphController.getNetworkModel().removeNetworkComponentsInverse(networkComponents);
-		for (NetworkComponent networkComponent : removedComponents) {
-			
-			this.graphController.removeAgent(networkComponent);
-			
-			NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
-			notification.setInfoObject(networkComponent);
-			this.notifyObserver(notification);
-		}
-		return removedComponents;
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#mergeNodes(agentgui.envModel.graph.networkModel.GraphNode, agentgui.envModel.graph.networkModel.GraphNode)
 	 */
 	@Override
 	public boolean mergeNodes(GraphNode node1, GraphNode node2) {
-		boolean merged = this.graphController.getNetworkModel().mergeNodes(node1, node2); 
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Merged);
+		boolean merged = this.graphController.getNetworkModel().mergeNodes(node1, node2);
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Merged);
 		this.notifyObserver(notification);
 		return merged;
 	}
@@ -340,8 +327,8 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 */
 	@Override
 	public void splitNetworkModelAtNode(GraphNode node2SplitAt) {
-		this.graphController.getNetworkModel().splitNetworkModelAtNode(node2SplitAt);	
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Splited);
+		this.graphController.getNetworkModel().splitNetworkModelAtNode(node2SplitAt);
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Splited);
 		this.notifyObserver(notification);
 	}
 
@@ -512,6 +499,5 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	public ArrayList<String> getOuterNetworkComponentIDs() {
 		return this.graphController.getNetworkModel().getOuterNetworkComponentIDs();
 	}
-	
 
 }

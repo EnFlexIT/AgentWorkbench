@@ -17,8 +17,7 @@ public interface NetworkModelInterface {
 	 * Sets the general graph settings for the MAS.
 	 * @param generalGraphSettings4MAS the new general graph settings for the MAS
 	 */
-	public abstract void setGeneralGraphSettings4MAS(
-			GeneralGraphSettings4MAS generalGraphSettings4MAS);
+	public abstract void setGeneralGraphSettings4MAS(GeneralGraphSettings4MAS generalGraphSettings4MAS);
 
 	/**
 	 * Gets the general graph settings for the MAS.
@@ -30,8 +29,7 @@ public interface NetworkModelInterface {
 	 * Sets the alternative network model.
 	 * @param alternativeNetworkModel the alternativeNetworkModel to set
 	 */
-	public abstract void setAlternativeNetworkModel(
-			HashMap<String, NetworkModel> alternativeNetworkModel);
+	public abstract void setAlternativeNetworkModel(HashMap<String, NetworkModel> alternativeNetworkModel);
 
 	/**
 	 * Gets the alternative network models.
@@ -51,8 +49,7 @@ public interface NetworkModelInterface {
 	 * @param networkComponents the network components
 	 * @return ArrayList of the IDs
 	 */
-	public abstract HashSet<String> getNetworkComponentsIDs(
-			HashSet<NetworkComponent> networkComponents);
+	public abstract HashSet<String> getNetworkComponentsIDs(HashSet<NetworkComponent> networkComponents);
 
 	/**
 	 * Returns the GraphElement with the given ID, or null if not found.
@@ -73,8 +70,7 @@ public interface NetworkModelInterface {
 	 * @param networkComponent The NetworkComponent
 	 * @return The GraphElements
 	 */
-	public abstract Vector<GraphElement> getGraphElementsFromNetworkComponent(
-			NetworkComponent networkComponent);
+	public abstract Vector<GraphElement> getGraphElementsFromNetworkComponent(NetworkComponent networkComponent);
 
 	/**
 	 * Gets the graph.
@@ -96,8 +92,7 @@ public interface NetworkModelInterface {
 	 * @param networkComponent the network component
 	 * @return the network component
 	 */
-	public abstract NetworkComponent addNetworkComponent(
-			NetworkComponent networkComponent);
+	public abstract NetworkComponent addNetworkComponent(NetworkComponent networkComponent);
 
 	/**
 	 * Rename component.
@@ -108,27 +103,18 @@ public interface NetworkModelInterface {
 	public abstract void renameComponent(String oldCompID, String newCompID);
 
 	/**
-	 * Removes the network components if not in list.
-	 * @param networkComponentIDs the network components
-	 */
-	public abstract HashSet<NetworkComponent> removeNetworkComponentsInverse(
-			HashSet<NetworkComponent> networkComponents);
-
-	/**
 	 * This method removes a NetworkComponent from the GridModel's networkComponents 
 	 * HashMap, using its' ID as key.
 	 * 
 	 * @param networkComponent The NetworkComponent to remove
 	 */
-	public abstract void removeNetworkComponent(
-			NetworkComponent networkComponent);
+	public abstract void removeNetworkComponent(NetworkComponent networkComponent);
 
 	/**
 	 * Removes the network components.
 	 * @param networkComponents the network components
 	 */
-	public abstract HashSet<NetworkComponent> removeNetworkComponents(
-			HashSet<NetworkComponent> networkComponents);
+	public abstract HashSet<NetworkComponent> removeNetworkComponents(HashSet<NetworkComponent> networkComponents);
 
 	/**
 	 * Gets the a node from network component.
@@ -136,8 +122,7 @@ public interface NetworkModelInterface {
 	 * @param networkComponent the network component
 	 * @return the a node from network component
 	 */
-	public abstract Vector<GraphNode> getNodesFromNetworkComponent(
-			NetworkComponent networkComponent);
+	public abstract Vector<GraphNode> getNodesFromNetworkComponent(NetworkComponent networkComponent);
 
 	/**
 	 * This method gets the NetworkComponent with the given ID from the GridModel's networkComponents HashMap.
@@ -147,8 +132,7 @@ public interface NetworkModelInterface {
 	 */
 	public abstract NetworkComponent getNetworkComponent(String id);
 
-	public abstract HashSet<NetworkComponent> getNeighbourNetworkComponents(
-			HashSet<NetworkComponent> networkComponents);
+	public abstract HashSet<NetworkComponent> getNeighbourNetworkComponents(HashSet<NetworkComponent> networkComponents);
 
 	/**
 	 * Gets the neighbour network components.
@@ -156,8 +140,7 @@ public interface NetworkModelInterface {
 	 * @param networkComponent the network component
 	 * @return the neighbour network components
 	 */
-	public abstract Vector<NetworkComponent> getNeighbourNetworkComponents(
-			NetworkComponent networkComponent);
+	public abstract Vector<NetworkComponent> getNeighbourNetworkComponents(NetworkComponent networkComponent);
 
 	/**
 	 * Gets the network component by graph edge id.
@@ -173,8 +156,7 @@ public interface NetworkModelInterface {
 	 * @param graphNodes the graph nodes
 	 * @return the network components
 	 */
-	public abstract HashSet<NetworkComponent> getNetworkComponents(
-			Set<GraphNode> graphNodes);
+	public abstract HashSet<NetworkComponent> getNetworkComponents(Set<GraphNode> graphNodes);
 
 	/**
 	 * Gives the set of network components containing the given node.
@@ -182,8 +164,7 @@ public interface NetworkModelInterface {
 	 * @param graphNode - A GraphNode
 	 * @return HashSet<NetworkComponent> - The set of components which contain the node
 	 */
-	public abstract HashSet<NetworkComponent> getNetworkComponents(
-			GraphNode graphNode);
+	public abstract HashSet<NetworkComponent> getNetworkComponents(GraphNode graphNode);
 
 	/**
 	 * Gets the network components.
@@ -197,8 +178,7 @@ public interface NetworkModelInterface {
 	 * 
 	 * @param networkComponents the networkComponents to set
 	 */
-	public abstract void setNetworkComponents(
-			HashMap<String, NetworkComponent> networkComponents);
+	public abstract void setNetworkComponents(HashMap<String, NetworkComponent> networkComponents);
 
 	/**
 	 * Generates the next unique network component ID in the series n1, n2, n3, ...
@@ -229,8 +209,7 @@ public interface NetworkModelInterface {
 	 * @param shiftNode the shift node
 	 * @return the shifted position
 	 */
-	public abstract Point2D getShiftedPosition(GraphNode fixedNode,
-			GraphNode shiftNode);
+	public abstract Point2D getShiftedPosition(GraphNode fixedNode, GraphNode shiftNode);
 
 	/**
 	 * Returns the network component vector with the DistributionNode as last.
@@ -238,8 +217,7 @@ public interface NetworkModelInterface {
 	 * @param componentVector the component vector
 	 * @return the network component vector with distribution node as last
 	 */
-	public abstract Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(
-			HashSet<NetworkComponent> componentVector);
+	public abstract Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(HashSet<NetworkComponent> componentVector);
 
 	/**
 	 * Checks, if a component list contains distribution node.
@@ -247,8 +225,7 @@ public interface NetworkModelInterface {
 	 * @param components the components as HashSet<NetworkComponent>
 	 * @return the network component, which is the DistributionNode or null
 	 */
-	public abstract NetworkComponent containsDistributionNode(
-			HashSet<NetworkComponent> components);
+	public abstract NetworkComponent containsDistributionNode(HashSet<NetworkComponent> components);
 
 	/**
 	 * Returns the cluster components of the NetworkModel.
@@ -262,8 +239,7 @@ public interface NetworkModelInterface {
 	 * @param components the components
 	 * @return the cluster components
 	 */
-	public abstract ArrayList<ClusterNetworkComponent> getClusterComponents(
-			Collection<NetworkComponent> components);
+	public abstract ArrayList<ClusterNetworkComponent> getClusterComponents(Collection<NetworkComponent> components);
 
 	/**
 	 * Checks whether a network component is in the star graph element
@@ -279,8 +255,7 @@ public interface NetworkModelInterface {
 	 * @param node The node to be checked
 	 * @param comp The network component containing the node having the star prototype
 	 */
-	public abstract boolean isCenterNodeOfStar(GraphNode node,
-			NetworkComponent comp);
+	public abstract boolean isCenterNodeOfStar(GraphNode node, NetworkComponent comp);
 
 	/**
 	 * Checks if is free node.
@@ -294,8 +269,7 @@ public interface NetworkModelInterface {
 	 * Replace NetworkComponents by one ClusterComponent.
 	 * @param networkComponents A List of NetworkComponents
 	 */
-	public abstract ClusterNetworkComponent replaceComponentsByCluster(
-			HashSet<NetworkComponent> networkComponents);
+	public abstract ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponents);
 
 	/**
 	 * Gets the outer network components.
