@@ -42,6 +42,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -144,7 +145,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	public VisualizationViewer<GraphNode, GraphEdge> getVisView() {
 		return visView;
 	}
-
 	/**
 	 * Gets the scaling control.
 	 * @return the scalingControl
@@ -170,32 +170,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 				setInitialScalingAndMovement();
 			}
 		});
-
-		// --- Initializing JUNG mouse modes --------------
-		this.initMouseModes();
-
-	}
-
-	/**
-	 * This method initializes the two mouse modes - Transforming mode and picking mode by 
-	 * using PluggableGraphMouse and DefaultModalGraphMouse respectively
-	 */
-	private void initMouseModes() {
-
-		pluggableGraphMouse = new PluggableGraphMouse();
-
-		// Adding the picking plugin
-		pluggableGraphMouse.add(new GraphEnvironmentMousePlugin(this));
-
-		// Adding the context menu plugin
-		GraphEnvironmentPopupPlugin<GraphNode, GraphEdge> popupPlugin = new GraphEnvironmentPopupPlugin<GraphNode, GraphEdge>(this);
-		popupPlugin.setEdgePopup(this.graphGuiTools.getEdgePopup());
-		popupPlugin.setVertexPopup(this.graphGuiTools.getVertexPopup());
-
-		pluggableGraphMouse.add(popupPlugin);
-
-		defaultModalGraphMouse = new DefaultModalGraphMouse<GraphNode, GraphEdge>();
-		defaultModalGraphMouse.setMode(DefaultModalGraphMouse.Mode.TRANSFORMING);
 	}
 
 	/**
@@ -203,6 +177,17 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the pluggableGraphMouse
 	 */
 	private PluggableGraphMouse getPluggableGraphMouse() {
+		if (pluggableGraphMouse==null) {
+			
+			// Create the context menu Plugin
+			GraphEnvironmentPopupPlugin<GraphNode, GraphEdge> popupPlugin = new GraphEnvironmentPopupPlugin<GraphNode, GraphEdge>(this);
+			popupPlugin.setEdgePopup(this.graphGuiTools.getEdgePopup());
+			popupPlugin.setVertexPopup(this.graphGuiTools.getVertexPopup());
+
+			pluggableGraphMouse = new PluggableGraphMouse();
+			pluggableGraphMouse.add(new GraphEnvironmentMousePlugin(this));
+			pluggableGraphMouse.add(popupPlugin);
+		}
 		return pluggableGraphMouse;
 	}
 
@@ -211,6 +196,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the pluggableGraphMouse
 	 */
 	private DefaultModalGraphMouse<GraphNode, GraphEdge> getDefaultModalGraphMouse() {
+		if (defaultModalGraphMouse==null) {
+			defaultModalGraphMouse = new DefaultModalGraphMouse<GraphNode, GraphEdge>();
+		}
 		return defaultModalGraphMouse;
 	}
 
@@ -454,7 +442,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.setBackground(Color.WHITE);
 
 		// --- Configure mouse interaction --------------------------------
-		vViewer.setGraphMouse(this.pluggableGraphMouse);
+		vViewer.setGraphMouse(this.getPluggableGraphMouse());
 
 		// --- Set tool tip for nodes -------------------------------------
 		vViewer.setVertexToolTipTransformer(new Transformer<GraphNode, String>() {
@@ -776,7 +764,12 @@ public class BasicGraphGui extends JPanel implements Observer {
 			if (disNode != null) {
 				this.controller.getNetworkModelAdapter().selectNetworkComponent(disNode);
 			}
-
+			if (netComps.size()==1) {
+				this.controller.getNetworkModelAdapter().selectNetworkComponent(netComps.iterator().next());
+				this.clearPickedObjects();
+				this.setPickedObject((GraphElement) object);
+			}
+			
 		} else if (object instanceof GraphEdge) {
 			NetworkComponent netComp = controller.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object);
 			this.setPickedObjects(controller.getNetworkModelAdapter().getGraphElementsFromNetworkComponent(netComp));
@@ -839,8 +832,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 							// --- Normal node or ClusterNode ---------------------------- Start --
 							if (componentHashSet.iterator().hasNext()) {
 
-								NetworkComponent component = componentHashSet.iterator().next();
-								if (networkModel.getClusterComponents(componentHashSet).size() == 1) {
+								// --- Is this a inner node of a ClusterComponent ? ----
+								ArrayList<ClusterNetworkComponent> clusterHash = networkModel.getClusterComponents(componentHashSet);
+								if (componentHashSet.size()==1 && clusterHash.size()== 1) {
 									// --- This is a cluster component ------------------
 									ClusterNetworkComponent cnc = networkModel.getClusterComponents(componentHashSet).get(0);
 									DomainSettings ds = null;
@@ -858,6 +852,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 								} else {
 									// --- This is a normal component -------------------
+									NetworkComponent component = componentHashSet.iterator().next();
 									ComponentTypeSettings cts = controller.getComponentTypeSettings().get(component.getType());
 									if (cts == null) {
 										return size;
