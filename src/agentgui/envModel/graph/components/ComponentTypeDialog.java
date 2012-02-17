@@ -40,6 +40,7 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -64,6 +66,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
@@ -194,6 +197,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				setVisible(false);
 			}
 		});
+		this.registerEscapeKeyStroke();
 		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 		int top = (screenSize.height - this.getHeight()) / 2; 
@@ -218,6 +222,21 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	    }
 	    
 	}
+	
+    /**
+     * Registers the escape key stroke in order to close this dialog.
+     */
+    private void registerEscapeKeyStroke() {
+    	final ActionListener listener = new ActionListener() {
+            public final void actionPerformed(final ActionEvent e) {
+            	canceled = true;
+    			setVisible(false);
+            }
+        };
+        final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
+        this.getRootPane().registerKeyboardAction(listener, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+	
 	/**
 	 * Checks if is canceled.
 	 * @return true, if is canceled

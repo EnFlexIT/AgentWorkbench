@@ -136,6 +136,7 @@ public class BasicGraphGuiTools implements ActionListener {
 		
 				jToolBar.addSeparator();
 				jToolBar.add(getJButtonClearGraph());
+				jToolBar.addSeparator();
 				jToolBar.add(getJButtonImportGraph());
 		    }
 		}

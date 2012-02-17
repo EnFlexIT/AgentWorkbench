@@ -412,16 +412,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// ----------------------------------------------------------------
 		// --- Get the spread of the graph and correct the positions ------
 		// ----------------------------------------------------------------
-		this.graphMargin = graphSettings.getSnapRaster();
+		this.graphMargin = graphSettings.getSnapRaster() * 3;
 		double moveX = 0;
 		double moveY = 0;
 
 		Rectangle2D rect = this.getGraphSpreadDimension(graph);
-		if (rect.getX() != graphMargin)
-			moveX = (rect.getX() * (-1)) + graphMargin;
-		if (rect.getY() != graphMargin)
-			moveY = (rect.getY() * (-1)) + graphMargin;
-		graph = this.correctGraphCoordinates(graph, moveX, moveY);
+		if (rect.getX() != graphMargin) moveX = (rect.getX() * (-1)) + graphMargin;
+		if (rect.getY() != graphMargin) moveY = (rect.getY() * (-1)) + graphMargin;
+		graph = this.correctGraphCoordinates(graph, moveX, moveY);	
 
 		// ----------------------------------------------------------------
 		// --- Define graph layout ----------------------------------------
@@ -442,6 +440,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.setBackground(Color.WHITE);
 
 		// --- Configure mouse interaction --------------------------------
+		this.defaultModalGraphMouse = null;	// Reset new VisualizationViewer
+		this.pluggableGraphMouse = null;	// Reset new VisualizationViewer
 		vViewer.setGraphMouse(this.getPluggableGraphMouse());
 
 		// --- Set tool tip for nodes -------------------------------------
@@ -599,9 +599,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 							} else {
 								textDisplay = "<html><center><img src='" + url + "'></center></html>";
 							}
-							return textDisplay;
 						}
-						return textDisplay;
 					}
 					return textDisplay;
 

@@ -42,7 +42,7 @@
                 <color>-16777216</color>
                 <domain>Electricity</domain>
                 <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
+                <edgeWidth>20.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
             </value>

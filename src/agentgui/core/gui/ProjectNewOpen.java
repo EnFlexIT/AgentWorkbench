@@ -35,6 +35,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -43,6 +44,7 @@ import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -50,6 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -126,7 +129,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 		//--- TreeModel initialisieren --------------------------
 		RootNode = new DefaultMutableTreeNode( "... " + Application.RunInfo.PathProjects(false) );
 		ProjectTreeModel = new DefaultTreeModel( RootNode );	
-		initialize();
+		this.initialize();
 
 		// --- Dialog zentrieren ------------------------------------
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
@@ -165,6 +168,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 		this.setResizable(true);
 		this.setModal(true);
 		this.setContentPane(getJContentPane());
+		this.registerEscapeKeyStroke();
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
 				Canceled = true;
@@ -173,6 +177,20 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 		});
 	}
 
+	 /**
+     * Registers the escape key stroke in order to close this dialog.
+     */
+    private void registerEscapeKeyStroke() {
+    	final ActionListener listener = new ActionListener() {
+            public final void actionPerformed(final ActionEvent e) {
+            	Canceled = true;
+    			setVisible(false);
+            }
+        };
+        final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
+        this.getRootPane().registerKeyboardAction(listener, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+    
 	/**
 	 * This method initializes jContentPane.
 	 *

@@ -40,6 +40,7 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
@@ -48,6 +49,7 @@ import java.util.TreeMap;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -55,6 +57,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
@@ -78,66 +81,35 @@ import agentgui.core.config.GlobalInfo;
  */
 public class OptionDialog extends JDialog implements ActionListener {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-	/** The global. */
 	private GlobalInfo global = Application.RunInfo;  //  @jve:decl-index=0:
-	
-	/** The Path image. */
 	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
 	
-	/** The image icon. */
 	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
-	
-	/** The image. */
 	private Image image = imageIcon.getImage();  //  @jve:decl-index=0:
 	
-	/** The j split pane main. */
 	private JSplitPane jSplitPaneMain = null;
-	
-	/** The j tabbed pane right. */
 	private JTabbedPane jTabbedPaneRight = null;
-	
-	/** The j scroll pane left. */
 	private JScrollPane jScrollPaneLeft = null;
-	
-	/** The j tree options. */
 	private JTree jTreeOptions = null;
-	
-	/** The j panel base. */
 	private JPanel jPanelBase = null;
-	
-	/** The j panel south. */
 	private JPanel jPanelSouth = null;
-	
-	/** The j button ok. */
 	private JButton jButtonOK = null;
-	
-	/** The j button cancel. */
 	private JButton jButtonCancel = null;
 	
-	/** The Option tree model. */
 	private DefaultTreeModel OptionTreeModel;
-	
-	/** The Root node. */
 	private DefaultMutableTreeNode RootNode;
 	
-	/** The additional nodes. */
 	private TreeMap<Integer, String[]> additionalNodes = new TreeMap<Integer, String[]>();  //  @jve:decl-index=0:
 	
-	/** The options start. */
 	private StartOptions optionsStart = null;
-	
-	/** The canceled. */
 	private boolean canceled = false;
 	
-	/** The force restart. */
 	private boolean forceRestart = false;  //  @jve:decl-index=0:
 		
 	/**
 	 * Instantiates a new option dialog.
-	 *
 	 * @param owner the owner
 	 */
 	public OptionDialog(Frame owner) {
@@ -204,6 +176,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		this.setTitle("Agent.GUI: Optionen");
 		this.setAlwaysOnTop(true);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.registerEscapeKeyStroke();
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
 				canceled = true;
@@ -215,6 +188,21 @@ public class OptionDialog extends JDialog implements ActionListener {
 
 	}
 
+    /**
+     * Registers the escape key stroke in order to close this dialog.
+     */
+    private void registerEscapeKeyStroke() {
+    	final ActionListener listener = new ActionListener() {
+            public final void actionPerformed(final ActionEvent e) {
+            	canceled = true;
+            	setVisible(false);
+            }
+        };
+        final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
+        this.getRootPane().registerKeyboardAction(listener, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+
+	
 	/**
 	 * This method set the Look and Feel of this Dialog.
 	 *

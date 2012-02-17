@@ -477,6 +477,7 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
 en;;Cluster shape;;;
 en;;Discrete squares environment;;;
+en;;Select a Network Component to Add;;;
 en;;Select a network component;;;
 en;;Select one vertex !;;;
 en;;Select two valid vertices;;;
