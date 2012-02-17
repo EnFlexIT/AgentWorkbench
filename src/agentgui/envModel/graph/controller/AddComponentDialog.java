@@ -583,11 +583,28 @@ public class AddComponentDialog extends JDialog implements ActionListener {
      */
     private void graphRepaint(Graph<GraphNode, GraphEdge> graph) {
 		
+		// --------------------------------------
 		// --- Define default layout ------------
     	Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
 		layout.setSize(new Dimension(100, 100));
-
-		if (graph.getEdgeCount()==1) {
+		
+		// --------------------------------------
+		// --- Some special cases ---------------
+		// --------------------------------------
+		if (graph.getEdgeCount()==0 && graph.getVertexCount()==1) {
+			
+			GraphNode node = graph.getVertices().iterator().next();
+			node.setPosition(new Point2D.Double(50, 50));
+			
+			layout = new StaticLayout<GraphNode, GraphEdge>(graph);
+			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
+				public Point2D transform(GraphNode node) {
+					return node.getPosition(); // The position is specified in the GraphNode instance
+				}
+			});
+			
+			
+		} else if (graph.getEdgeCount()==1) {
 			
 			GraphEdge edge = graph.getEdges().iterator().next();
 			EdgeType edgeType = graph.getEdgeType(edge);
@@ -608,7 +625,8 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 			}
 		}
 
-		// --- Set the new layout ---------------
+		// --------------------------------------
+		// --- Set the graph to the layout ------
 		visViewer.setGraphLayout(layout);
 		visViewer.repaint();
 		jContentPane.repaint();
