@@ -123,6 +123,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	public final String COL_D_VertexColorPicked 	= Language.translate("Color picked", Language.EN);  	//  @jve:decl-index=0:
 	public final String COL_D_ShowLable				= Language.translate("Show label", Language.EN);  		//  @jve:decl-index=0:
 	public final String COL_D_ClusterShape			= Language.translate("Cluster shape", Language.EN);  	//  @jve:decl-index=0:
+	public final String COL_D_ClusterAgent			= Language.translate("Cluster agent", Language.EN);  	//  @jve:decl-index=0:
 	
 	private HashMap<String, ComponentTypeSettings> currCompTypSettings = null;
 	private HashMap<String, DomainSettings> currDomainSettings = null;
@@ -133,17 +134,19 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private boolean canceled = false;
 
 	private JTabbedPane jTabbedPane = null;
-	
+
 	private JPanel jContentPane = null;
 	private JPanel jPanelDomains = null;
 	private JPanel jPanelComponents = null;
 	private JPanel jPanelGeneralSettings = null;
 	private JPanel jPanelButtonOkCancel = null;
+	private JPanel jPanelRaster = null;
 	private JScrollPane jScrollPaneClassTableComponents = null;
 	private JScrollPane jScrollPaneClassTableDomains = null;
 	
 	private JLabel jLabelGridHeader = null;
 	private JLabel jLabelGuideGridWidth = null;
+	private JLabel jLabelBottomDummy = null;
 	private JCheckBox jCheckBoxSnap2Grid = null;
 	private JSpinner jSpnnerGridWidth = null;
 
@@ -160,10 +163,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	
 	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  //  @jve:decl-index=0:
 	private ClassSelector ontologyClassSelector = null;
-
-	private JPanel jPanelRaster = null;
-
-	private JLabel jLabelBottomDummy = null;
 	
 		
 	/**
@@ -310,6 +309,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			columnHeaderDomains.add(COL_D_VertexColor);
 			columnHeaderDomains.add(COL_D_VertexColorPicked);
 			columnHeaderDomains.add(COL_D_ClusterShape);
+			columnHeaderDomains.add(COL_D_ClusterAgent);
 		}
 		return columnHeaderDomains;
 	}
@@ -717,6 +717,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			clusterShapeColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxClusterShape()));
 			clusterShapeColumn.setPreferredWidth(10);
 			
+			TableColumn clusterAgentColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_ClusterAgent));
+			clusterAgentColumn.setCellEditor(new TableCellEditor4AgentClass());
+			clusterAgentColumn.setCellRenderer(new TableCellRenderer4Label());
+			
+			
 		}
 		return jTableDomainTypes;
 	}
@@ -749,6 +754,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 					Color vertexColorPicked = new Color(Integer.parseInt(domSetting.getVertexColorPicked()));
 					boolean showLabel = domSetting.isShowLabel();
 					String clusterShape = domSetting.getClusterShape();
+					String clusterAgent = domSetting.getClusterAgent();
 					
 					// --- Create row vector --------------
 					Vector<Object> newRow = new Vector<Object>();
@@ -767,6 +773,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 							newRow.add(showLabel);
 						} else if (i == getColumnHeaderIndexDomains(COL_D_ClusterShape)) {
 							newRow.add(clusterShape);
+						} else if (i == getColumnHeaderIndexDomains(COL_D_ClusterAgent)) {
+							newRow.add(clusterAgent);
 						}
 					}
 					dataRows.add(newRow);
@@ -818,6 +826,10 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				newRow.add(GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR);
 			} else if (i == getColumnHeaderIndexDomains(COL_D_VertexColorPicked)) {
 				newRow.add(GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR);
+			} else if (i == getColumnHeaderIndexDomains(COL_D_ClusterShape)) {
+				newRow.add(GeneralGraphSettings4MAS.SHAPE_DEFAULT_4_CLUSTER);
+			} else if (i == getColumnHeaderIndexDomains(COL_D_ClusterAgent)) {
+				newRow.add(null);
 			}
 		}
 		
@@ -1384,6 +1396,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 					Color colorPicked	 = (Color)  dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_VertexColorPicked));					
 					String colorPickStr	 = String.valueOf(colorPicked.getRGB());
 					String clusterShape  = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_ClusterShape));
+					String clusterAgent  = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_ClusterAgent));
 					
 					DomainSettings ds = new DomainSettings();
 					ds.setOntologyClass(ontoClass);
@@ -1392,7 +1405,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 					ds.setVertexColor(colorStr);
 					ds.setVertexColorPicked(colorPickStr);
 					ds.setClusterShape(clusterShape);
-
+					ds.setClusterAgent(clusterAgent);
+					
 					dsHash.put(name, ds);
 				}
 			}

@@ -39,7 +39,7 @@
             <key>Coffee machine</key>
             <value>
                 <agentClass>gasmas.agents.components.StorageAgent</agentClass>
-                <color>-16777216</color>
+                <color>-6750055</color>
                 <domain>Electricity</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>20.0</edgeWidth>
