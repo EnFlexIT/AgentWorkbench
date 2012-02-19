@@ -41,6 +41,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 
 /**
  * This class manages the properties that are located in the
@@ -80,7 +81,7 @@ public class FileProperties extends Properties {
 	private final String DEF_MASTER_DB_USER = "22_MASTER_DB_USER";
 	private final String DEF_MASTER_DB_PSWD = "23_MASTER_DB_PSWD";
 	
-	private String[] mandantoryProps = {this.DEF_RUNAS,
+	private String[] mandatoryProps = {	this.DEF_RUNAS,
 										this.DEF_BENCH_VALUE,
 										this.DEF_BENCH_EXEC_ON,
 										this.DEF_BENCH_SKIP_ALLWAYS,
@@ -112,7 +113,7 @@ public class FileProperties extends Properties {
 			// --- Does the configFile exists ? ---------------------
 			if ( new File( configFile ).exists() == true) {
 				// --- configFile found -----------------------------
-				this.load(new FileInputStream( configFile ));	
+				this.load(new FileInputStream(configFile));	
 				this.checkDefaultConfigValues();
 			} else {
 				// --- configFile NOT found -------------------------
@@ -347,16 +348,19 @@ public class FileProperties extends Properties {
 	 * This method sets the mandatory properties with default values to this properties 
 	 */
 	private void setDefaultConfigValues() {
-		for (int i = 0; i < mandantoryProps.length; i++) {
+		for (int i = 0; i < mandatoryProps.length; i++) {
 			// ----------------------------------------
 			// --- Here are some mandantory Props ----- 
-			this.setProperty( mandantoryProps[i], "" );
+			this.setProperty( mandatoryProps[i], "" );
 			// ----------------------------------------
 			// --- Here are some mandantory Values ---- 
-			if ( mandantoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT) ) {				
+			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_LANGUAGE) ) {				
+				this.setProperty(this.DEF_LANGUAGE, Language.EN);
+			}
+			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT) ) {				
 				this.setProperty(this.DEF_MASTER_PORT, Application.RunInfo.getJadeLocalPort().toString());
 			}
-			if ( mandantoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT4MTP) ) {				
+			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT4MTP) ) {				
 				this.setProperty(this.DEF_MASTER_PORT4MTP, Application.RunInfo.getServerMasterPort4MTP().toString());
 			}
 			// ----------------------------------------
@@ -371,15 +375,15 @@ public class FileProperties extends Properties {
 		
 		boolean somethingMissed = false;
 		// --- Search all mandantory property-values ------
-		for (int i = 0; i < mandantoryProps.length; i++) {
-			if ( this.containsKey(mandantoryProps[i])  == false ) {
+		for (int i = 0; i < mandatoryProps.length; i++) {
+			if ( this.containsKey(mandatoryProps[i])  == false ) {
 				
 				// ----------------------------------------
-				// --- Here are some Mandantory Values ---- 
-				if ( mandantoryProps[i].equals(this.DEF_LANGUAGE) ) {
-					this.setProperty( this.DEF_LANGUAGE, "en" );
+				// --- Here are some mandatory Values ----- 
+				if ( mandatoryProps[i].equals(this.DEF_LANGUAGE) ) {
+					this.setProperty( this.DEF_LANGUAGE, Language.EN );
 				} else {
-					this.setProperty( mandantoryProps[i], "" );	
+					this.setProperty( mandatoryProps[i], "" );	
 				}
 				// ----------------------------------------
 				somethingMissed = true;

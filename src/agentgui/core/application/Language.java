@@ -98,9 +98,7 @@ public class Language {
 	private static final String dictLangHeaderDefault = SOURCE_LANG + seperator + DE + seperator + EN + seperator + IT + seperator + ES + seperator + FR;
 	private static String[] dictLangHeaderArray = null;
 	
-	/**
-	 * The currently selected language index of the dictionary-file, which is used in the application
-	 */
+	/** The currently selected language index of the dictionary-file, which is used in the application */
 	public static Integer currLanguageIndex = null;
 	
 

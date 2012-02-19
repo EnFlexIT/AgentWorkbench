@@ -51,10 +51,10 @@ import jnt.scimark2.kernel;
  */
 public class BenchmarkMeasurement extends Thread {
 
-	/** The bench gui. */
+	/** The BenchmarkMonitor. */
 	private BenchmarkMonitor benchGUI = null;
 	
-	/** The bench value old. */
+	/** The benchmark value old. */
 	private float benchValueOld = Application.RunInfo.getBenchValue();
 	
 	/** The bench allways skip. */
@@ -157,11 +157,11 @@ public class BenchmarkMeasurement extends Thread {
 		Random R = new Random(Constants.RANDOM_SEED);
 
 		benchGUI.jProgressBarBenchmark.setValue(1);
-		res[1] = kernel.measureFFT( FFT_size, min_time, R);
+		res[1] = kernel.measureFFT(FFT_size, min_time, R);
 		if (this.isSkipAction()) return;
 		
 		benchGUI.jProgressBarBenchmark.setValue(2);
-		res[2] = kernel.measureSOR( SOR_size, min_time, R);
+		res[2] = kernel.measureSOR(SOR_size, min_time, R);
 		if (this.isSkipAction()) return;
 		
 		benchGUI.jProgressBarBenchmark.setValue(3);
@@ -169,23 +169,23 @@ public class BenchmarkMeasurement extends Thread {
 		if (this.isSkipAction()) return;
 		
 		benchGUI.jProgressBarBenchmark.setValue(4);
-		res[4] = kernel.measureSparseMatmult( Sparse_size_M, Sparse_size_nz, min_time, R);
+		res[4] = kernel.measureSparseMatmult(Sparse_size_M, Sparse_size_nz, min_time, R);
 		if (this.isSkipAction()) return;
 		
 		benchGUI.jProgressBarBenchmark.setValue(5);
-		res[5] = kernel.measureLU( LU_size, min_time, R);
+		res[5] = kernel.measureLU(LU_size, min_time, R);
 		if (this.isSkipAction()) return;
 
 		benchGUI.jProgressBarBenchmark.setValue(6);
 		res[0] = (res[1] + res[2] + res[3] + res[4] + res[5]) / 5;
 		
-		System.out.println("Benchmark Result:");
-		System.out.println("FFT:" + res[1] + " Mflops");
-		System.out.println("SOR:" + res[2] + " Mflops");
-		System.out.println("MonteCarlo:" + res[3] + " Mflops");
-		System.out.println("SparseMatmult:" + res[4] + " Mflops");
-		System.out.println("LU:" + res[5] + " Mflops");
-		System.out.println("Average:" + res[0] + " Mflops");
+		System.out.println("=> Benchmark Result <=");
+		System.out.println("FFT:           " + Math.round(res[1]) + " Mflops");
+		System.out.println("SOR:           " + Math.round(res[2]) + " Mflops");
+		System.out.println("MonteCarlo:    " + Math.round(res[3]) + " Mflops");
+		System.out.println("SparseMatmult: " + Math.round(res[4]) + " Mflops");
+		System.out.println("LU:            " + Math.round(res[5]) + " Mflops");
+		System.out.println("A V E R A G E: " + Math.round(res[0]) + " Mflops");
 
 		float result  = (float)Math.round((float)res[0]*100)/100;
 		if (this.isSkipAction()) return;
