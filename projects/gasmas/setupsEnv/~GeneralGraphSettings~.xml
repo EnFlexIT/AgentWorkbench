@@ -41,7 +41,7 @@
                 <agentClass>gasmas.agents.components.StorageAgent</agentClass>
                 <color>-6750055</color>
                 <domain>Electricity</domain>
-                <edgeImage>MissingIcon</edgeImage>
+                <edgeImage>/gasmas/img/wind_turbine.jpg</edgeImage>
                 <edgeWidth>20.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
@@ -64,7 +64,6 @@
                 <agentClass>gasmas.agents.components.PipeAgent</agentClass>
                 <color>-16777216</color>
                 <domain>Gas network</domain>
-                <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
                 <showLabel>false</showLabel>
@@ -91,18 +90,6 @@
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>4.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>Node4Distribution</key>
-            <value>
-                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
-                <color>-3393792</color>
-                <domain>Gas network</domain>
-                <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>20.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
         </entry>
@@ -137,9 +124,9 @@
                 <clusterShape>Rectangle</clusterShape>
                 <ontologyClass></ontologyClass>
                 <showLabel>false</showLabel>
-                <vertexColor>-26368</vertexColor>
-                <vertexColorPicked>-256</vertexColorPicked>
-                <vertexSize>8</vertexSize>
+                <vertexColor>-65536</vertexColor>
+                <vertexColorPicked>-3394561</vertexColorPicked>
+                <vertexSize>10</vertexSize>
             </value>
         </entry>
         <entry>
@@ -148,8 +135,8 @@
                 <clusterShape>Rectangle</clusterShape>
                 <showLabel>false</showLabel>
                 <vertexColor>-10978818</vertexColor>
-                <vertexColorPicked>-10027264</vertexColorPicked>
-                <vertexSize>10</vertexSize>
+                <vertexColorPicked>-16711681</vertexColorPicked>
+                <vertexSize>8</vertexSize>
             </value>
         </entry>
     </domainSettings>

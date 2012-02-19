@@ -147,6 +147,9 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Setup rausschmeissen------------------------
 		this.remove(name);
 		new File(currSimXMLFile).delete();
+		String userObjectFileName = Application.RunInfo.getBinFileNameFromXmlFileName(currSimXMLFile);
+		new File(userObjectFileName).delete();
+		
 		// --- Interessenten informieren ------------------
 		currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(SIMULATION_SETUP_REMOVE));
 		
@@ -177,18 +180,29 @@ public class SimulationSetups extends Hashtable<String, String> {
 
 		if (this.containsKey(nameOld)==false) return;
 
+		this.currSimSetup.save();
+		
 		// --- Verzeichnis-Info zusammenbauen -------------
 		String pathSimXML  = currProject.getSubFolder4Setups(true);
 		String fileNameXMLNew = pathSimXML + fileNameNew; 
 		// --- Datei kopieren -----------------------------
 		FileCopier fc = new FileCopier();
 		fc.copyFile(currSimXMLFile, fileNameXMLNew);
+		
+		// --- Copy user object file ----------------------
+		String userObjectFileNameOld = Application.RunInfo.getBinFileNameFromXmlFileName(currSimXMLFile);
+		String userObjectFileNameNew = Application.RunInfo.getBinFileNameFromXmlFileName(fileNameXMLNew);
+		
+		fc = new FileCopier();
+		fc.copyFile(userObjectFileNameOld, userObjectFileNameNew);
+		
 		// --- Alte Datei und alten Eintrag raus ----------
 		new File(currSimXMLFile).delete();
+		new File(userObjectFileNameOld).delete();
 		this.remove(nameOld);
 		// --- Neuen Eintrag rein -------------------------
 		this.put(nameNew, fileNameNew);
-		this.setupLoadAndFocus(SIMULATION_SETUP_RENAME,nameNew, false);
+		this.setupLoadAndFocus(SIMULATION_SETUP_RENAME, nameNew, false);
 		// --- Projekt speichern --------------------------
 		currProject.save();
 	}

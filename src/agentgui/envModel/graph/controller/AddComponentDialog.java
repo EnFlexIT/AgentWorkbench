@@ -54,6 +54,8 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -90,12 +92,14 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.LayeredIcon;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.renderers.Checkmark;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
@@ -417,7 +421,45 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 			// --- Configure the vertex shape and size ------------------------
 			visViewer.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<GraphNode, GraphEdge>());
 			
-
+			// --- Configure node icons, if configured ------------------------		
+			visViewer.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>(){
+				
+				@Override
+				public Icon transform(GraphNode node) {
+					
+					boolean picked = visViewer.getPickedVertexState().isPicked(node);
+					Icon icon = null;
+					if (isCurrentComponentDistributionNode()) {
+						
+						String nodeImage = currCtsListElement.getComponentTypeSettings().getEdgeImage();
+						if (nodeImage!=null) {
+							if (nodeImage.equals("MissingIcon")==false) {
+								// --- Icon reference found --- Start ---
+								LayeredIcon layeredIcon = null;
+								try {
+									URL url = getClass().getResource(nodeImage);
+									ImageIcon imageIcon = new ImageIcon(url);
+									layeredIcon = new LayeredIcon(imageIcon.getImage());
+									if (layeredIcon!=null && picked==true){
+										String checkColor = currDomainSetings.getVertexColorPicked();
+										Checkmark checkmark = new Checkmark(new Color(Integer.parseInt(checkColor)));
+										layeredIcon.add(checkmark);
+									}
+									
+								} catch (Exception ex) {
+									System.err.println("Could not find node image for '" + currCtsListElement.getComponentName() + "'");
+									layeredIcon = null;
+								}
+							
+								icon = layeredIcon;	
+								// --- Icon reference found --- End -----	
+							}
+						}
+					}
+					return icon;
+				}
+			});
+			
 			// --- Set tool tip for nodes -------------------------------------
 			visViewer.setVertexToolTipTransformer(new Transformer<GraphNode, String>() {
 				@Override

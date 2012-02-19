@@ -418,20 +418,14 @@
         <agent>
             <postionNo>69</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
             <startAsName>n69</startAsName>
         </agent>
         <agent>
             <postionNo>70</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
             <startAsName>n70</startAsName>
-        </agent>
-        <agent>
-            <postionNo>71</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>n71</startAsName>
         </agent>
     </agentSetup>
     <environmentFileName>HNord.graphml</environmentFileName>

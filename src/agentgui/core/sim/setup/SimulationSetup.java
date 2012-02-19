@@ -159,7 +159,8 @@ import agentgui.core.project.Project;
 
 			Writer pw = new FileWriter( currProject.simulationSetups.getCurrSimXMLFile() );
 			pm.marshal(this, pw);
-						
+			pw.close();
+			
 			// --------------------------------------------
 			// --- Save the userRuntimeObject in the   ----
 			// --- SimSetup into a different file as a ----

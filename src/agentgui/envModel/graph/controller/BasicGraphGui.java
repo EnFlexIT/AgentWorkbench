@@ -34,23 +34,29 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import org.apache.commons.collections15.Transformer;
@@ -67,8 +73,10 @@ import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.visualization.FourPassImageShaper;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.LayeredIcon;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
@@ -77,6 +85,7 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.renderers.Checkmark;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
@@ -402,7 +411,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param graph the graph
 	 * @return the new VisualizationViewer
 	 */
-	public VisualizationViewer<GraphNode, GraphEdge> getNewVisualizationViewer(Graph<GraphNode, GraphEdge> graph) {
+	private VisualizationViewer<GraphNode, GraphEdge> getNewVisualizationViewer(Graph<GraphNode, GraphEdge> graph) {
 
 		// ----------------------------------------------------------------
 		// --- Get the layout settings for domains ------------------------
@@ -454,7 +463,52 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		// --- Configure the vertex shape and size ------------------------
 		vViewer.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<GraphNode, GraphEdge>());
-
+		
+		// --- Configure node icons, if configured ------------------------		
+		vViewer.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>(){
+			
+			@Override
+			public Icon transform(GraphNode node) {
+				
+				Icon icon = null;
+				boolean picked = vViewer.getPickedVertexState().isPicked(node);
+				
+				NetworkModelAdapter networkModel = controller.getNetworkModelAdapter();
+				HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
+				NetworkComponent distributionNode = networkModel.containsDistributionNode(componentHashSet);
+				if (distributionNode!=null) {
+					
+					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(distributionNode.getType());
+					String nodeImage = cts.getEdgeImage();
+					if (nodeImage!=null) {
+						if (nodeImage.equals("MissingIcon")==false) {
+							// --- Icon reference found --- Start ---
+							LayeredIcon layeredIcon = null;
+							try {
+								URL url = getClass().getResource(nodeImage);
+								ImageIcon imageIcon = new ImageIcon(url);
+								layeredIcon = new LayeredIcon(imageIcon.getImage());
+								if (layeredIcon!=null && picked==true){
+									DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
+									String checkColor = ds.getVertexColorPicked();
+									Checkmark checkmark = new Checkmark(new Color(Integer.parseInt(checkColor)));
+									layeredIcon.add(checkmark);
+								}
+								
+							} catch (Exception ex) {
+								System.err.println("Could not find node image for '" + distributionNode.getType() + "'");
+								layeredIcon = null;
+							}
+							
+							icon = layeredIcon;	
+							// --- Icon reference found --- End -----	
+						}
+					}
+				}
+				return icon;
+			}
+		});
+		
 		// --- Configure vertex colors ------------------------------------
 		vViewer.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
 			@Override
@@ -481,6 +535,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 							DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
 							colorString = ds.getVertexColorPicked();
 						}
+						
 					} else {
 						if (componentHashSet.iterator().hasNext()) {
 							NetworkComponent component = componentHashSet.iterator().next();
@@ -554,7 +609,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 				if (vViewer.getPickedEdgeState().isPicked(edge)) {
 					// Highlight color when picked
 					return GeneralGraphSettings4MAS.DEFAULT_EDGE_PICKED_COLOR;
-
 				}
 				try {
 					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
@@ -804,8 +858,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private final class VertexShapeSizeAspect<V, E> extends AbstractVertexShapeTransformer<GraphNode> implements Transformer<GraphNode, Shape> {
 
-		public VertexShapeSizeAspect() {
+		private Map<String, Shape> shapeMap = new HashMap<String, Shape>();
 
+		public VertexShapeSizeAspect() {
+			
 			this.setSizeTransformer(new Transformer<GraphNode, Integer>() {
 
 				@Override
@@ -889,7 +945,44 @@ public class BasicGraphGui extends JPanel implements Observer {
 			NetworkModelAdapter networkModel = controller.getNetworkModelAdapter();
 			HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
 			NetworkComponent networkComponent = networkModel.containsDistributionNode(componentHashSet);
-			if (componentHashSet.size() == 1 && networkComponent == null) {
+			if (networkComponent!=null) {
+				// ------------------------------------------------------------
+				// --- This is a DistributionNode -----------------------------
+				// ------------------------------------------------------------
+				// --- Have a look, if the node is an image ---- START --------
+				// ------------------------------------------------------------
+				ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
+				String nodeImage = cts.getEdgeImage();
+				if (nodeImage!=null) {
+					if (nodeImage.equals("MissingIcon")==false) {
+						try {
+							shape = shapeMap.get(nodeImage);
+							if (shape==null) {
+								URL url = getClass().getResource(nodeImage);
+								ImageIcon imageIcon = new ImageIcon(url);
+								Image image = imageIcon.getImage();
+							    shape = FourPassImageShaper.getShape(image, 30);
+							    if(shape.getBounds().getWidth() > 0 &&  shape.getBounds().getHeight() > 0) {
+				                    // don't cache a zero-sized shape, wait for the image to be ready
+				                    int width = image.getWidth(null);
+				                    int height = image.getHeight(null);
+				                    AffineTransform transform = AffineTransform.getTranslateInstance(-width / 2, -height / 2);
+				                    shape = transform.createTransformedShape(shape);
+				                    this.shapeMap.put(nodeImage, shape);
+							    }
+							}
+						
+						} catch (Exception ex) {
+							System.err.println("Could not find node image for '" + networkComponent.getType() + "'");
+						}
+					}
+				}
+				// ------------------------------------------------------------
+				// --- Have a look, if the node is an image ---- END ----------
+				// ------------------------------------------------------------
+				
+			} else if (networkComponent == null && componentHashSet.size() == 1) {
+				// --- This is a ClusterNetworkComponent --
 				networkComponent = componentHashSet.iterator().next();
 				if (networkComponent instanceof ClusterNetworkComponent) {
 
@@ -921,6 +1014,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 			}
 			return shape;
 		}
+		
+		 
 	}
 
 	@Override

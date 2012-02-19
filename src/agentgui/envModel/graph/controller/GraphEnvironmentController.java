@@ -411,7 +411,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 					comp = null;
 		
 			    } else {
-					if (comp.getAgentClassName().equals(ctsSingle.getAgentClass()) == false) {
+			    	if (ctsSingle.getAgentClass()==null) {
+			    		comp.setAgentClassName(null);
+			    		
+			    	} else  if (comp.getAgentClassName().equals(ctsSingle.getAgentClass()) == false) {
 					    // --- Correct this entry -------
 					    comp.setAgentClassName(ctsSingle.getAgentClass());
 					}
@@ -560,7 +563,12 @@ public class GraphEnvironmentController extends EnvironmentController {
      */
     @SuppressWarnings("unchecked")
     private Class<? extends Agent> getAgentClass(String agentReference) {
-		Class<? extends Agent> agentClass = null;
+		
+    	if (agentReference==null) {
+    		return null;
+    	}
+    	
+    	Class<? extends Agent> agentClass = null;
 		try {
 		    agentClass = (Class<? extends Agent>) Class.forName(agentReference);
 		} catch (ClassNotFoundException ex) {
