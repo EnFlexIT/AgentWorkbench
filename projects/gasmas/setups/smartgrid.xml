@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<simulationSetup>
+    <agentSetup>
+        <agent>
+            <postionNo>1</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n0</startAsName>
+        </agent>
+        <agent>
+            <postionNo>2</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n4</startAsName>
+        </agent>
+        <agent>
+            <postionNo>3</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n6</startAsName>
+        </agent>
+        <agent>
+            <postionNo>4</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n8</startAsName>
+        </agent>
+        <agent>
+            <postionNo>5</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n10</startAsName>
+        </agent>
+        <agent>
+            <postionNo>6</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n12</startAsName>
+        </agent>
+        <agent>
+            <postionNo>7</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n14</startAsName>
+        </agent>
+        <agent>
+            <postionNo>8</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n16</startAsName>
+        </agent>
+        <agent>
+            <postionNo>9</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n18</startAsName>
+        </agent>
+        <agent>
+            <postionNo>10</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n22</startAsName>
+        </agent>
+        <agent>
+            <postionNo>11</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n23</startAsName>
+        </agent>
+        <agent>
+            <postionNo>12</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n24</startAsName>
+        </agent>
+        <agent>
+            <postionNo>13</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
+            <startAsName>n66</startAsName>
+        </agent>
+        <agent>
+            <postionNo>14</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
+            <startAsName>n67</startAsName>
+        </agent>
+        <agent>
+            <postionNo>15</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
+            <startAsName>n68</startAsName>
+        </agent>
+        <agent>
+            <postionNo>16</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n69</startAsName>
+        </agent>
+    </agentSetup>
+    <environmentFileName>SmartGrid.graphml</environmentFileName>
+</simulationSetup>
