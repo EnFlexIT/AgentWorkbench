@@ -106,6 +106,7 @@ de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
 de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
 de;Die Datei;The file
 de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br> Try to create it now?
+de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.<br><br>Möchten Sie die Konfiguration nun vornehmen?;The system configuration does not contain valid information about the<br>database server. The launch of JADE is therefore interrupted.<br> Please configure a valid MySQL database server and restart the Server.Master.<br><br> Would you like to configure this now?;;;
 de;Dieser Eintrag ist ein notwendiger Systemparameter, der 
 nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter, which
 can not be deleted or renamed!;;;
@@ -293,7 +294,6 @@ de;Objekte aus Projekt-Ontologie;Objects from project ontology
 de;Objekteigenschaften;Object properties
 de;Ontologie Referenz benennen;Name ontology reference ;;;
 de;Ontologie Referenz maskieren;Mask ontology reference;;;
-de;Ontologie hinzuf?gen;Add ontology
 de;Ontologie hinzufügen;Add ontology
 de;Ontologie-Klasse für Übergabepunkte;Ontology class for transfer points
 de;Ontologie-Klasse;Ontology Class;;;
@@ -440,7 +440,7 @@ de;Verzeichnis;Folder
 de;Vis.-Geschwindigkeit;Visualisation speed
 de;Visualisierung;Visualization
 de;Vor dem Löschen exportieren!;Export before deleting!;;;
-de;Vorhandene Projektverzeichnisse;Available project folders;null;null;null
+de;Vorhandene Projektverzeichnisse;Available project folders;;;
 de;Voriger Datensatz (STRG+UP);Previous Record (CTRL + UP)
 de;Warte auf Agentenliste...;Waiting for agent list...
 de;Warte auf Ontologie-Liste...;Waiting for ontology list...
@@ -475,15 +475,6 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
-en;;Cluster agent;;;
-en;;Cluster shape;;;
-en;;Discrete squares environment;;;
-en;;Select a Network Component to Add;;;
-en;;Select a network component;;;
-en;;Select one vertex !;;;
-en;;Select two valid vertices;;;
-en;;The select Vertex should be at least between two components !;;;
-en;;The select Vertex should be between two components !;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktuelles Bild entfernen;Remove current image;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;
@@ -492,15 +483,21 @@ en;Beschriftung zeigen;Show label;;;
 en;Bestätigung;Confirmation;;;
 en;Bild;Image;;;
 en;Bitte wählen Sie ein gültiges Element!;Select a valid element first!;;;
+en;Bitte wählen Sie einen Knoten !;Select one vertex !;;;
 en;Bitte wählen Sie einen Knoten ausserhalb des Zentrums;Select a vertex other than the center of the star;;;
 en;Bitte wählen Sie einen Knoten.;Select one vertex;;;
 en;Bitte wählen Sie einen gültigen Knoten;Select a valid vertex first;;;
 en;Bitte wählen Sie zuerst eine Kante;Select an edge first;;;
 en;Bitte wählen Sie zuerst einen Knoten mit einem Rechtsklick aus!;Right click a valid vertex first;;;
+en;Bitte wählen Sie zwei gültige Knoten;Select two valid vertices;;;
 en;Breite;Width;;;
+en;Cluster-Agent;Cluster agent;;;
+en;Cluster-Form;Cluster shape;;;
 en;Der ausgewählte Knoten des Netzwerkes enthält bereits eine Komponente
 vom Typ 'DistributionNode'. Dies ist für einen Knoten jedoch nur einmal zulässig!;The selection in the main graph already contains a component of
 the type 'DistributionNode'. This is only allowed once at one node!;;;
+en;Der ausgewählte Knoten sollte zumindest zwischen zwei Komponenten liegen !;The select Vertex should be at least between two components !;;;
+en;Der ausgewählte Knoten sollte zwischen zwei Komponenten liegen !;The select Vertex should be between two components !;;;
 en;Die Komponente ist bereits vorhanden!
   Bitte wählen Sie einen anderen Namen.;The component name already exists!
  Choose a different one.;;;
@@ -534,6 +531,8 @@ en;Unschalten auf Transorming-Modus;Switch to Transforming mode;;;
 en;Verbindungsknoten in zwei Knoten aufteilen;Split the node into two nodes;;;
 en;Verbindungsknoten trennen;Split Node;;;
 en;Warnung;Warning;;;
+en;Wählen Sie die Netzwerkkomponente, die hinzugefügt werden soll;Select a Network Component to Add;;;
+en;Wählen Sie eine Netzwerkkomponente;Select a network component;;;
 en;Wählen Sie einen Knoten, um diese zu verbinden;Select a vertex to merge;;;
 en;Wählen Sie einen gültigen Knoten;Select a valid vertex;;;
 en;Wählen Sie genau zwei Knoten mit Hilfe der Umschalttaste.;Use Shift and click two vertices;;;
