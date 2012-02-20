@@ -36,18 +36,6 @@
             </value>
         </entry>
         <entry>
-            <key>Coffee machine</key>
-            <value>
-                <agentClass>gasmas.agents.components.StorageAgent</agentClass>
-                <color>-6750055</color>
-                <domain>Electricity</domain>
-                <edgeImage>/gasmas/img/wind_turbine.jpg</edgeImage>
-                <edgeWidth>20.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
             <key>Branch4</key>
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
@@ -90,6 +78,18 @@
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>4.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Wind turbine</key>
+            <value>
+                <agentClass>gasmas.agents.components.StorageAgent</agentClass>
+                <color>-16724992</color>
+                <domain>Electricity</domain>
+                <edgeImage>/gasmas/img/wind_turbine.jpg</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
         </entry>

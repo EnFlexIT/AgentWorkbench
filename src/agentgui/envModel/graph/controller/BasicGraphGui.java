@@ -416,7 +416,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// ----------------------------------------------------------------
 		// --- Get the layout settings for domains ------------------------
 		// ----------------------------------------------------------------
-		final GeneralGraphSettings4MAS graphSettings = this.controller.getNetworkModelAdapter().getGeneralGraphSettings4MAS();
+		GeneralGraphSettings4MAS graphSettings = this.controller.getNetworkModelAdapter().getGeneralGraphSettings4MAS();
 
 		// ----------------------------------------------------------------
 		// --- Get the spread of the graph and correct the positions ------
@@ -464,7 +464,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Configure the vertex shape and size ------------------------
 		vViewer.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<GraphNode, GraphEdge>());
 		
-		// --- Configure node icons, if configured ------------------------		
+		// --- Configure vertex icons, if configured ----------------------		
 		vViewer.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>(){
 			
 			@Override
@@ -561,33 +561,22 @@ public class BasicGraphGui extends JPanel implements Observer {
 					return defaultColor;
 				}
 			}
-		} // end transformer
-				);
-		// --- Configure to show node labels ------------------------------
+		}); // end transformer
+				
+		// --- Configure to show vertex labels ----------------------------
 		vViewer.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode node) {
 
+				//GeneralGraphSettings4MAS graphSettings = controller.getNetworkModelAdapter().getGeneralGraphSettings4MAS();
+				
 				NetworkModelAdapter nModel = controller.getNetworkModelAdapter();
 				HashSet<NetworkComponent> components = nModel.getNetworkComponents(node);
 				NetworkComponent distributionNode = nModel.containsDistributionNode(components);
-				if (distributionNode == null) {
-					if (components.iterator().hasNext()) {
-						String compType = components.iterator().next().getType();
-						ComponentTypeSettings cts = graphSettings.getCurrentCTS().get(compType);
-						if (cts == null) {
-							return node.getId();
-						}
-						DomainSettings ds = graphSettings.getDomainSettings().get(cts.getDomain());
-						if (ds.isShowLabel()) {
-							return node.getId();
-						}
-						return null;
-					}
-
-				} else {
+				if (distributionNode != null) {
+					// --- This is a DistributionNode -----
 					String compType = distributionNode.getType();
-					ComponentTypeSettings cts = graphSettings.getCurrentCTS().get(compType);
+					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(compType);
 					if (cts == null) {
 						return node.getId();
 					}
@@ -595,7 +584,23 @@ public class BasicGraphGui extends JPanel implements Observer {
 						return node.getId();
 					}
 					return null;
+					
+				} else {
+					// --- Just a normal node -------------
+					if (components.iterator().hasNext()) {
+						String compType = components.iterator().next().getType();
+						ComponentTypeSettings cts = controller.getComponentTypeSettings().get(compType);
+						if (cts == null) {
+							return node.getId();
+						}
+						DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
+						if (ds.isShowLabel()) {
+							return node.getId();
+						}
+						return null;
+					}
 
+					
 				}
 				return null;
 			}
