@@ -111,7 +111,7 @@ public class FileProperties extends Properties {
 		// --- open or create the config file -----------------------
 		try {
 			// --- Does the configFile exists ? ---------------------
-			if ( new File( configFile ).exists() == true) {
+			if (new File(configFile).exists()==true) {
 				// --- configFile found -----------------------------
 				this.load(new FileInputStream(configFile));	
 				this.checkDefaultConfigValues();
@@ -376,18 +376,35 @@ public class FileProperties extends Properties {
 		boolean somethingMissed = false;
 		// --- Search all mandantory property-values ------
 		for (int i = 0; i < mandatoryProps.length; i++) {
+			
 			if ( this.containsKey(mandatoryProps[i])  == false ) {
-				
 				// ----------------------------------------
-				// --- Here are some mandatory Values ----- 
+				// --- Mandatory property is NOT there ----
+				// --- => Set default valid value      ----
+				// ----------------------------------------
 				if ( mandatoryProps[i].equals(this.DEF_LANGUAGE) ) {
-					this.setProperty( this.DEF_LANGUAGE, Language.EN );
+					this.setProperty(mandatoryProps[i], Language.EN );
 				} else {
-					this.setProperty( mandatoryProps[i], "" );	
+					this.setProperty(mandatoryProps[i], "" );	
+				}
+				somethingMissed = true;
+				// ----------------------------------------
+				
+			} else {
+				// ----------------------------------------
+				// --- Mandatory property IS there --------
+				// --- => Check for valid value    --------
+				// ----------------------------------------
+				String value = this.getProperty(mandatoryProps[i]);
+				if (mandatoryProps[i].equals(this.DEF_LANGUAGE) ) {
+					if (value.equals("")) {
+						this.setProperty(mandatoryProps[i], Language.EN);
+						somethingMissed = true;
+					}
 				}
 				// ----------------------------------------
-				somethingMissed = true;
-			}			
+			}
+
 		}
 		// --- If something was not there, save the file --
 		if ( somethingMissed == true ) {

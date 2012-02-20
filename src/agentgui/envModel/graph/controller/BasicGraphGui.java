@@ -599,7 +599,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 						}
 						return null;
 					}
-
 					
 				}
 				return null;
