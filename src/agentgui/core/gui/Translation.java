@@ -47,7 +47,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
@@ -67,8 +69,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -76,6 +80,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -95,7 +100,7 @@ private static final long serialVersionUID = 1L;
 	private Image image = imageIcon.getImage();
 	
 	private Vector<Object> currDataSet = null;
-	private DefaultTableModel dictData = new DefaultTableModel();
+	private DefaultTableModel dictData = null;
 	private DefaultComboBoxModel langSelectionModelSource = new DefaultComboBoxModel();
 	private DefaultComboBoxModel langSelectionModelDestin = new DefaultComboBoxModel();
 	
@@ -199,7 +204,7 @@ private static final long serialVersionUID = 1L;
 		this.setContentPane(getJContentPane());
 
 		// --- Load Data from dictionary ----------------------------
-		this.setDictionaryTable();
+		this.getTableModel4Dictionary();
 		this.setLanguageComboModels();
 		
 		// --- Configure PopUp-menue -------------------------------- 
@@ -373,90 +378,83 @@ private static final long serialVersionUID = 1L;
 	/**
 	 * dictionary data will be loaded to the TableModel.
 	 */
-	private void setDictionaryTable() {
+	private DefaultTableModel getTableModel4Dictionary() {
 		
-		// --- Header of the table ----------------------------------
-		this.dictData.addColumn("Nr.");
-		String[] languages = Language.getLanguages();
-		for (int i = 0; i < languages.length; i++) {
-			String lang = languages[i];
-			if (lang.equalsIgnoreCase(Language.SOURCE_LANG)) {
-				this.dictData.addColumn(Language.translate("Sprache"));
-			} else {
-				this.dictData.addColumn(Language.getLanguageName(lang));	
-			}
-				
-		}
-		
-		// --- Rows of the dictionary -------------------------------
-		int rowNo = 0;
-		List<String> dictContent = Language.getDictLineList();
-		for (String dictLine : dictContent) {
+		if (dictData==null) {
 			
-			Vector<Object> rowData = new Vector<Object>(); 
-			rowData.addAll(Arrays.asList(dictLine.split(Language.seperator, -1)));
-			
-			if (rowData.get(0)!=null && rowData.get(0).equals("")==false && rowData.get(0).equals(Language.SOURCE_LANG)==false) {
-				// --- add row to the displayable dictionary --------
-				rowNo++;
-				rowData.add(0, rowNo);
-				this.dictData.addRow(rowData);	
+			dictData = new DefaultTableModel();
+
+			// --- Header of the table ----------------------------------
+			dictData.addColumn("Nr.");
+			String[] languages = Language.getLanguages();
+			for (int i = 0; i < languages.length; i++) {
+				String lang = languages[i];
+				if (lang.equalsIgnoreCase(Language.SOURCE_LANG)) {
+					dictData.addColumn(Language.translate("Sprache"));
+				} else {
+					dictData.addColumn(Language.getLanguageName(lang));	
+				}
 			}
-		}
-		
-		// --- add TableModelListener -------------------------------
-		this.dictData.addTableModelListener(new TableModelListener() {
-			@Override
-			public void tableChanged(TableModelEvent evt) {
+			
+			// --- Rows of the dictionary -------------------------------
+			int rowNo = 0;
+			List<String> dictContent = Language.getDictLineList();
+			for (String dictLine : dictContent) {
 				
-				int rowChanged = evt.getFirstRow();
-				int colChanged = evt.getColumn();
+				Vector<Object> rowData = new Vector<Object>(); 
+				rowData.addAll(Arrays.asList(dictLine.split(Language.seperator, -1)));
 				
-				if (rowChanged==-1 || colChanged==-1) {
-					return;
+				if (rowData.get(0)!=null && rowData.get(0).equals("")==false && rowData.get(0).equals(Language.SOURCE_LANG)==false) {
+					// --- add row to the displayable dictionary --------
+					rowNo++;
+					rowData.add(0, rowNo);
+					dictData.addRow(rowData);	
 				}
-				
-				// --- maybe correct value --------------------------
-				String cellValue = (String) dictData.getValueAt(rowChanged, colChanged);
-				String checkValue = new String(cellValue.toString());
-				if (checkValue.equals(cellValue)==false) {
-					dictData.setValueAt(checkValue, rowChanged, colChanged);
-				}
-				
-				// --- get row data ---------------------------------
-				Vector<?> dataVectorRow = (Vector<?>) dictData.getDataVector().elementAt(rowChanged);
-				
-				// --- make a copy of the row data ------------------
-				Vector<Object> rowData = new Vector<Object>(dataVectorRow); 
-				rowData.removeElementAt(0);
-				String deExp = (String) rowData.get(0);
-				String dictRow = "";
-				for (int i = 0; i < rowData.size(); i++) {
-					if (dictRow.equals("")) {
-						dictRow += rowData.get(i);	
-					} else {
-						dictRow += Language.seperator + rowData.get(i);
+			}
+			
+			// --- add TableModelListener -------------------------------
+			dictData.addTableModelListener(new TableModelListener() {
+				@Override
+				public void tableChanged(TableModelEvent evt) {
+					
+					int rowChanged = evt.getFirstRow();
+					int colChanged = evt.getColumn();
+					
+					if (rowChanged==-1 || colChanged==-1) {
+						return;
 					}
+					
+					// --- maybe correct value --------------------------
+					String cellValue = (String) dictData.getValueAt(rowChanged, colChanged);
+					String checkValue = new String(cellValue.toString());
+					if (checkValue.equals(cellValue)==false) {
+						dictData.setValueAt(checkValue, rowChanged, colChanged);
+					}
+					
+					// --- get row data ---------------------------------
+					Vector<?> dataVectorRow = (Vector<?>) dictData.getDataVector().elementAt(rowChanged);
+					
+					// --- make a copy of the row data ------------------
+					Vector<Object> rowData = new Vector<Object>(dataVectorRow); 
+					rowData.removeElementAt(0);
+					String deExp = (String) rowData.get(0);
+					String dictRow = "";
+					for (int i = 0; i < rowData.size(); i++) {
+						if (dictRow.equals("")) {
+							dictRow += rowData.get(i);	
+						} else {
+							dictRow += Language.seperator + rowData.get(i);
+						}
+					}
+					
+					// --- update the dictionary ------------------------
+					Language.update(deExp, dictRow);
+					
 				}
-				
-				// --- update the dictionary ------------------------
-				Language.update(deExp, dictRow);
-				
-			}
-		});
-		
-		// ----------------------------------------------------------
-		// --- Set layout of the table ------------------------------
-		TableColumn tbColNo = this.jTableDictionary.getColumnModel().getColumn(0);
-		tbColNo.setPreferredWidth(40);
-		tbColNo.setMinWidth(35);
-		tbColNo.setMaxWidth(45);
-		
-		TableColumn tbColSrcLang = this.jTableDictionary.getColumnModel().getColumn(1);
-		tbColSrcLang.setPreferredWidth(55);
-		tbColSrcLang.setMinWidth(35);
-		tbColSrcLang.setMaxWidth(70);
-		
+			});
+			
+		}
+		return dictData;
 	}
 	
 	/**
@@ -467,7 +465,7 @@ private static final long serialVersionUID = 1L;
 	private JTable getJTableDictionary() {
 		if (jTableDictionary == null) {
 			jTableDictionary = new JTable();
-			jTableDictionary.setModel(dictData);
+			jTableDictionary.setModel(this.getTableModel4Dictionary());
 			jTableDictionary.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 			jTableDictionary.setColumnSelectionAllowed(false);
 			jTableDictionary.setRowSelectionAllowed(true);
@@ -506,10 +504,37 @@ private static final long serialVersionUID = 1L;
 					int currSelection = jTableDictionary.getSelectedRow();
 					if (currSelection>-1) {
 						// --- provide dataset  -----------
-						setCurrentDataSet(currSelection);
+						setCurrentDataSet(jTableDictionary.convertRowIndexToModel(currSelection));
 					}
 				}
 			});
+			
+			// --------------------------------------------
+			// --- Define RowSorter for the first column --
+			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(dictData);
+			sorter.setComparator(0, new Comparator<Integer>() {
+				@Override
+				public int compare(Integer o1, Integer o2) {
+					return o1.compareTo(o2);
+				}
+			});
+			jTableDictionary.setRowSorter(sorter);
+			// --- Define the first sort order ------------
+			List<SortKey> sortKeys = new ArrayList<SortKey>();
+			sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
+			jTableDictionary.getRowSorter().setSortKeys(sortKeys);
+			
+			// ----------------------------------------------------------
+			// --- Set layout of the table ------------------------------
+			TableColumn tbColNo = this.jTableDictionary.getColumnModel().getColumn(0);
+			tbColNo.setPreferredWidth(40);
+			tbColNo.setMinWidth(35);
+			tbColNo.setMaxWidth(45);
+			
+			TableColumn tbColSrcLang = this.jTableDictionary.getColumnModel().getColumn(1);
+			tbColSrcLang.setPreferredWidth(55);
+			tbColSrcLang.setMinWidth(35);
+			tbColSrcLang.setMaxWidth(70);
 			
 		}
 		return jTableDictionary;
@@ -1105,12 +1130,13 @@ private static final long serialVersionUID = 1L;
 	 *
 	 * @param rowNumber the new current data set
 	 */
-	private void setCurrentDataSet(int rowNumber) {
+	private void setCurrentDataSet(int rowNumberOfDataModel) {
 		
-		jTableDictionary.setRowSelectionInterval(rowNumber, rowNumber);
+		int rowNumberOfTable = jTableDictionary.convertRowIndexToView(rowNumberOfDataModel);
+		jTableDictionary.setRowSelectionInterval(rowNumberOfTable, rowNumberOfTable);
 		
 		// --- provide dataset  ---------------------------
-		Vector<?> dataVectorRow = (Vector<?>) dictData.getDataVector().elementAt(rowNumber);
+		Vector<?> dataVectorRow = (Vector<?>) this.getTableModel4Dictionary().getDataVector().elementAt(rowNumberOfDataModel);
 		// --- make a copy of the row data ----------------
 		Vector<Object> rowData = new Vector<Object>(dataVectorRow); 
 		rowData.removeElementAt(0);
@@ -1134,14 +1160,22 @@ private static final long serialVersionUID = 1L;
 	 */
 	private void move2Dataset(int direction) {
 				
-		int currSelection = 0;
-		if (currDataSet!=null) {
-			currSelection = jTableDictionary.getSelectedRow() + direction;
-		}
-		if (currSelection < 0 || currSelection >= dictData.getRowCount() ) {
+		int currModelSelection = 0;
+		int currTabelSelection = 0; 
+		
+		currTabelSelection = jTableDictionary.getSelectedRow();
+		if (currTabelSelection==-1) {
 			return;
 		}
-		this.setCurrentDataSet(currSelection);
+		
+		try {
+			currTabelSelection = currTabelSelection + direction;
+			currModelSelection = jTableDictionary.convertRowIndexToModel(currTabelSelection) ;
+			this.setCurrentDataSet(currModelSelection);
+		} catch (Exception ex) {
+			//ex.printStackTrace();
+		}
+		
 	}
 	
 	/**
@@ -1159,9 +1193,9 @@ private static final long serialVersionUID = 1L;
 			searchRowStart = selectedRow+1;
 		}
 		// --- start search for the next gap in the dictionary ------ 
-		for (searchRow=searchRowStart; searchRow<dictData.getRowCount(); searchRow++) {
+		for (searchRow=searchRowStart; searchRow<this.getTableModel4Dictionary().getRowCount(); searchRow++) {
 			
-			Vector<?> lineVector = (Vector<?>) dictData.getDataVector().elementAt(searchRow);
+			Vector<?> lineVector = (Vector<?>) this.getTableModel4Dictionary().getDataVector().elementAt(searchRow);
 			String element = (String) lineVector.get(searchColumn);
 			
 			if (element==null || element.equals("")) {
@@ -1174,7 +1208,7 @@ private static final long serialVersionUID = 1L;
 			// --- ... but only if we didn't start from the top -----
 			for (searchRow=0; searchRow<=selectedRow; searchRow++) {
 				
-				Vector<?> lineVector = (Vector<?>) dictData.getDataVector().elementAt(searchRow);
+				Vector<?> lineVector = (Vector<?>) this.getTableModel4Dictionary().getDataVector().elementAt(searchRow);
 				String element = (String) lineVector.get(searchColumn);
 				
 				if (element==null || element.equals("")) {
@@ -1200,7 +1234,7 @@ private static final long serialVersionUID = 1L;
 
 			// --- remove the entry from the dataDict -----
 			int row = jTableDictionary.getSelectedRow();
-			dictData.removeRow(row);
+			this.getTableModel4Dictionary().removeRow(row);
 			if (row==0) {
 				jTableDictionary.setRowSelectionInterval(row, row);
 			} else {
@@ -1235,7 +1269,7 @@ private static final long serialVersionUID = 1L;
 		currDataSet.setElementAt(textEdited, colEdited);
 
 		// --- update dictData -----------------------------
-		dictData.setValueAt(textEdited, rowEdited, colEdited+1);
+		this.getTableModel4Dictionary().setValueAt(textEdited, rowEdited, colEdited+1);
 		
 		// --- update the dictionary -----------------------		
 		String dictRow = "";
