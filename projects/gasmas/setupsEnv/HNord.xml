@@ -196,19 +196,6 @@
             </value>
         </entry>
         <entry>
-            <key>n70</key>
-            <value>
-                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>n70</graphElementIDs>
-                <graphElementIDs>PP118</graphElementIDs>
-                <graphElementIDs>PP117</graphElementIDs>
-                <id>n70</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Pipe</type>
-            </value>
-        </entry>
-        <entry>
             <key>n33</key>
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
@@ -597,17 +584,6 @@
                 <id>n61</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>ControlValve</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n69</key>
-            <value>
-                <agentClassName>gasmas.agents.components.StorageAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP118</graphElementIDs>
-                <id>n69</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Wind turbine</type>
             </value>
         </entry>
         <entry>
