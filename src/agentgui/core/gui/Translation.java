@@ -30,6 +30,7 @@ package agentgui.core.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -84,6 +85,7 @@ import javax.swing.table.TableRowSorter;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import javax.swing.JCheckBox;
 
 /**
  * The JDialog is used in order to allow the translations between all defined languages
@@ -103,6 +105,8 @@ private static final long serialVersionUID = 1L;
 	private DefaultTableModel dictData = null;
 	private DefaultComboBoxModel langSelectionModelSource = new DefaultComboBoxModel();
 	private DefaultComboBoxModel langSelectionModelDestin = new DefaultComboBoxModel();
+	
+	private boolean useGoogleTranslation = true;
 	
 	private boolean forceApplicationRestart = false;
 	
@@ -153,6 +157,8 @@ private static final long serialVersionUID = 1L;
 	private JPanel jPanelSouthWest = null;
 	private JPanel jPanelEast = null;
 	private JLabel jLabelSourceLanguage = null;
+
+	private JCheckBox jCheckBoxUseGoogleTranslation = null;
 
 	
 	/**
@@ -456,10 +462,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return dictData;
 	}
-	
 	/**
 	 * This method initializes jTableDictionary.
-	 *
 	 * @return javax.swing.JTable
 	 */
 	private JTable getJTableDictionary() {
@@ -539,10 +543,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jTableDictionary;
 	}
-	
 	/**
 	 * This method initializes jPopupMenuDictionary.
-	 *
 	 * @return javax.swing.JPopupMenu
 	 */
 	private JPopupMenu getJPopupMenuDictionary() {
@@ -553,10 +555,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jPopupMenuDictionary;
 	}
-
 	/**
 	 * This method initializes jMenuItemDelete.
-	 *
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getJMenuItemDelete() {
@@ -567,10 +567,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jMenuItemDelete;
 	}
-
 	/**
 	 * This method initializes jMenuItemEdit.
-	 *
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getJMenuItemEdit() {
@@ -581,10 +579,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jMenuItemEdit;
 	}
-	
 	/**
 	 * This method initializes jContentPane.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -611,10 +607,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jContentPane;
 	}
-
 	/**
 	 * This method initializes jTabbedPane.
-	 *
 	 * @return javax.swing.JTabbedPane
 	 */
 	private JTabbedPane getJTabbedPane() {
@@ -625,15 +619,20 @@ private static final long serialVersionUID = 1L;
 		}
 		return jTabbedPane;
 	}
-
 	/**
 	 * This method initializes jPanelTranslation.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelTranslation() {
 		if (jPanelTranslation == null) {
 			
+			GridBagConstraints gridBagConstraints19 = new GridBagConstraints();
+			gridBagConstraints19.gridx = 1;
+			gridBagConstraints19.insets = new Insets(23, 20, 9, 0);
+			gridBagConstraints19.anchor = GridBagConstraints.SOUTHWEST;
+			gridBagConstraints19.ipadx = 0;
+			gridBagConstraints19.gridwidth = 2;
+			gridBagConstraints19.gridy = 4;
 			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
 			gridBagConstraints18.gridx = 6;
 			gridBagConstraints18.anchor = GridBagConstraints.WEST;
@@ -671,7 +670,7 @@ private static final long serialVersionUID = 1L;
 			gridBagConstraints11.fill = GridBagConstraints.BOTH;
 			gridBagConstraints11.gridy = 5;
 			gridBagConstraints11.weightx = 1.0;
-			gridBagConstraints11.weighty = 1.0;
+			gridBagConstraints11.weighty = 0.33;
 			gridBagConstraints11.gridwidth = 7;
 			gridBagConstraints11.insets = new Insets(0, 10, 10, 10);
 			gridBagConstraints11.anchor = GridBagConstraints.NORTH;
@@ -693,7 +692,7 @@ private static final long serialVersionUID = 1L;
 			gridBagConstraints1.gridy = 1;
 			gridBagConstraints1.weightx = 1.0;
 			gridBagConstraints1.insets = new Insets(0, 10, 0, 10);
-			gridBagConstraints1.weighty = 1.0;
+			gridBagConstraints1.weighty = 0.33;
 			gridBagConstraints1.gridwidth = 7;
 			
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
@@ -708,9 +707,8 @@ private static final long serialVersionUID = 1L;
 			gridBagConstraints4.gridy = 3;
 			gridBagConstraints4.weightx = 1.0;
 			gridBagConstraints4.insets = new Insets(0, 10, 0, 10);
-			gridBagConstraints4.weighty = 1.0;
+			gridBagConstraints4.weighty = 0.33;
 			gridBagConstraints4.gridwidth = 7;
-
 			
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 			gridBagConstraints7.gridx = 1;
@@ -736,6 +734,7 @@ private static final long serialVersionUID = 1L;
 			gridBagConstraints6.gridy = 2;
 			gridBagConstraints6.weightx = 0.0;
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
+			gridBagConstraints6.weighty = 0.0;
 			gridBagConstraints6.insets = new Insets(20, 5, 5, 0);
 			
 			jLabelSelectSourceLang = new JLabel();
@@ -783,13 +782,12 @@ private static final long serialVersionUID = 1L;
 			jPanelTranslation.add(getJButtonDelete(), gridBagConstraints9);
 			jPanelTranslation.add(getJButtonFindGap(), gridBagConstraints16);
 			jPanelTranslation.add(jLabelSourceLanguage, gridBagConstraints18);
+			jPanelTranslation.add(getJCheckBoxDoGoogleTranslation(), gridBagConstraints19);
 		}
 		return jPanelTranslation;
 	}
-
 	/**
 	 * This method initializes jScrollPaneDictionary.
-	 *
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneDictionary() {
@@ -803,7 +801,6 @@ private static final long serialVersionUID = 1L;
 
 	/**
 	 * This method initializes jPanelSouth.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelSouth() {
@@ -827,10 +824,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jPanelSouth;
 	}
-
 	/**
 	 * This method initializes jPaneFooter.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPaneFooter() {
@@ -844,10 +839,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jPaneFooter;
 	}
-
 	/**
 	 * This method initializes jButtonClose.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonClose() {
@@ -860,10 +853,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jButtonClose;
 	}
-	
 	/**
 	 * This method initializes jButtonImportCSV.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonImportCSV() {
@@ -876,10 +867,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jButtonImportCSV;
 	}
-
 	/**
 	 * This method initializes jPanelSouthWest.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelSouthWest() {
@@ -891,10 +880,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jPanelSouthWest;
 	}
-	
 	/**
 	 * This method initializes jPanelEast.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelEast() {
@@ -905,10 +892,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jPanelEast;
 	}
-	
 	/**
 	 * This method initializes jScrollPaneDictionary.
-	 *
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneTextSource() {
@@ -918,10 +903,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jScrollPaneTextSource;
 	}
-	
 	/**
 	 * This method initializes jTextFieldSource.
-	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextPane getJTextFieldSource() {
@@ -931,10 +914,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jTextFieldSource;
 	}
-
 	/**
 	 * This method initializes jScrollPaneDictionary.
-	 *
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneTextDestination() {
@@ -944,10 +925,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jScrollPaneTextDestination;
 	}
-	
 	/**
 	 * This method initializes jTextFieldDestination.
-	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextPane getJTextFieldDestination() {
@@ -956,10 +935,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jTextFieldDestination;
 	}
-
 	/**
 	 * This method initializes jComboBoxSourceLang.
-	 *
 	 * @return javax.swing.JComboBox
 	 */
 	private JComboBox getJComboBoxSourceLang() {
@@ -979,10 +956,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jComboBoxSourceLang;
 	}
-
 	/**
 	 * This method initializes jComboBoxDestinationLang.
-	 *
 	 * @return javax.swing.JComboBox
 	 */
 	private JComboBox getJComboBoxDestinationLang() {
@@ -1002,10 +977,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jComboBoxDestinationLang;
 	}
-	
 	/**
 	 * This method initializes jScrollPanelGoogle.
-	 *
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPanelGoogle() {
@@ -1015,10 +988,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jScrollPanelGoogle;
 	}
-
 	/**
 	 * This method initializes jTextAreaGoogle.
-	 *
 	 * @return javax.swing.JTextArea
 	 */
 	private JTextPane getJTextAreaGoogle() {
@@ -1028,10 +999,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jTextAreaGoogle;
 	}
-
 	/**
 	 * This method initializes jButtonNextDS.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonNextDS() {
@@ -1044,10 +1013,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jButtonNextDS;
 	}
-
 	/**
 	 * This method initializes jButtonPreviousDS.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonPreviousDS() {
@@ -1060,10 +1027,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jButtonPreviousDS;
 	}
-	
 	/**
 	 * This method initializes jButtonDelete.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonDelete() {
@@ -1076,10 +1041,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jButtonDelete;
 	}
-	
 	/**
 	 * This method initializes jButtonSave.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonSave() {
@@ -1092,10 +1055,8 @@ private static final long serialVersionUID = 1L;
 		}
 		return jButtonSave;
 	}
-
 	/**
 	 * This method initializes jButtonFindGap.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonFindGap() {
@@ -1108,10 +1069,22 @@ private static final long serialVersionUID = 1L;
 		}
 		return jButtonFindGap;
 	}
-
+	/**
+	 * This method initializes jCheckBoxDoGoogleTranslation	
+	 * @return javax.swing.JCheckBox	
+	 */
+	private JCheckBox getJCheckBoxDoGoogleTranslation() {
+		if (jCheckBoxUseGoogleTranslation == null) {
+			jCheckBoxUseGoogleTranslation = new JCheckBox();
+			jCheckBoxUseGoogleTranslation.setText("Google-Übersetzung verwenden");
+			jCheckBoxUseGoogleTranslation.setText(Language.translate(jCheckBoxUseGoogleTranslation.getText()));
+			jCheckBoxUseGoogleTranslation.setSelected(this.useGoogleTranslation);
+			jCheckBoxUseGoogleTranslation.addActionListener(this);
+		}
+		return jCheckBoxUseGoogleTranslation;
+	}
 	/**
 	 * This method initializes jButtonGoogleTake.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonGoogleTake() {
@@ -1165,7 +1138,13 @@ private static final long serialVersionUID = 1L;
 		
 		currTabelSelection = jTableDictionary.getSelectedRow();
 		if (currTabelSelection==-1) {
-			return;
+			if (direction > 0) {
+				// --- If nothing is selected and direction is positive -----------
+				jTableDictionary.setRowSelectionInterval(0, 0);
+				currTabelSelection = -1;
+			} else {
+				return;
+			}
 		}
 		
 		try {
@@ -1182,12 +1161,14 @@ private static final long serialVersionUID = 1L;
 	 * Shows and displays the next translation gap.
 	 */
 	private void findNextTranslationGap() {
-		
+
 		int searchColumn = jComboBoxDestinationLang.getSelectedIndex() + 2;
 		int searchRow = 0;
 		int searchRowStart = 0;
 		int selectedRow = jTableDictionary.getSelectedRow();
 
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		
 		// --- take into account the current selection --------------
 		if (selectedRow!=-1) {
 			searchRowStart = selectedRow+1;
@@ -1200,6 +1181,7 @@ private static final long serialVersionUID = 1L;
 			
 			if (element==null || element.equals("")) {
 				this.setCurrentDataSet(searchRow);
+				this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				return;
 			}
 		}
@@ -1213,10 +1195,13 @@ private static final long serialVersionUID = 1L;
 				
 				if (element==null || element.equals("")) {
 					this.setCurrentDataSet(searchRow);
+					this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 					return;
 				}
 			}
 		}
+		
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		
 	}
 	
@@ -1289,27 +1274,34 @@ private static final long serialVersionUID = 1L;
 	 */
 	private void setGoogleTranslation() {
 		
-		String langSource = ((LanguageListElement) jComboBoxSourceLang.getSelectedItem()).getLangShort();
-		String langDestin = ((LanguageListElement) jComboBoxDestinationLang.getSelectedItem()).getLangShort();
-		String text2Translate = jTextFieldSource.getText();
-		
-		langSource = langSource.replace("LANG_", "").toLowerCase();
-		langDestin = langDestin.replace("LANG_", "").toLowerCase();
-		
-		com.google.api.translate.Language langGoogleSource = com.google.api.translate.Language.fromString(langSource);
-		com.google.api.translate.Language langGoogleDestin = com.google.api.translate.Language.fromString(langDestin);
-		
-		String translation = null; 
-		try {
-			translation = com.google.api.translate.Translate.execute(text2Translate, langGoogleSource, langGoogleDestin);
-		} catch (Exception e) {
-			translation = "ERROR: " + e.getLocalizedMessage();
-			//e.printStackTrace();
+		if (this.useGoogleTranslation) {
+			
+			String langSource = ((LanguageListElement) jComboBoxSourceLang.getSelectedItem()).getLangShort();
+			String langDestin = ((LanguageListElement) jComboBoxDestinationLang.getSelectedItem()).getLangShort();
+			String text2Translate = jTextFieldSource.getText();
+			
+			langSource = langSource.replace("LANG_", "").toLowerCase();
+			langDestin = langDestin.replace("LANG_", "").toLowerCase();
+			
+			com.google.api.translate.Language langGoogleSource = com.google.api.translate.Language.fromString(langSource);
+			com.google.api.translate.Language langGoogleDestin = com.google.api.translate.Language.fromString(langDestin);
+			
+			String translation = null; 
+			try {
+				translation = com.google.api.translate.Translate.execute(text2Translate, langGoogleSource, langGoogleDestin);
+			
+			} catch (Exception e) {
+				//e.printStackTrace();
+				translation  = "ERROR: " + e.getLocalizedMessage();
+				translation += "\n=> " + Language.translate("Die Google-Übersetzungsfunktion wurde deaktiviert!");
+				this.useGoogleTranslation = false;
+				this.jCheckBoxUseGoogleTranslation.setSelected(this.useGoogleTranslation);
+
+			}
+			jTextAreaGoogle.setText(translation);
 		}
-		jTextAreaGoogle.setText(translation);
 		
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -1357,7 +1349,8 @@ private static final long serialVersionUID = 1L;
 			if (jTextAreaGoogle.getText().startsWith("ERROR: ")==false) {
 				jTextFieldDestination.setText(jTextAreaGoogle.getText());
 			}
-			
+		} else if (trigger == jCheckBoxUseGoogleTranslation) {
+			this.useGoogleTranslation = jCheckBoxUseGoogleTranslation.isSelected();
 		} else {
 			System.out.println("Unknown Action-Event" + ae.getActionCommand() );
 		}

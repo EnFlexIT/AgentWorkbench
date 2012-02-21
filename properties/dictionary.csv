@@ -106,13 +106,14 @@ de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
 de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
 de;Die Datei;The file
 de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br> Try to create it now?
+de;Die Google-Übersetzungsfunktion wurde deaktiviert!;Google's translation feature has been disabled!;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.<br><br>Möchten Sie die Konfiguration nun vornehmen?;The system configuration does not contain valid information about the<br>database server. The launch of JADE is therefore interrupted.<br> Please configure a valid MySQL database server and restart the Server.Master.<br><br> Would you like to configure this now?;;;
 de;Dieser Eintrag ist ein notwendiger Systemparameter, der 
 nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter, which
 can not be deleted or renamed!;;;
 de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
 de;Dummy-Agenten starten;Start Dummy agent
-de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;null;null;null
+de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;;;
 de;Eigene Auslastungsgrenzwerte verwenden;Use own threshold values
 de;Einheit;Unit
 de;Element-Typ;Element type
@@ -155,7 +156,8 @@ de;Folgende Jade-Dienste starten:;Start the following JADE-services:
 de;Folgende Plattform-Dienste starten:;Start the following platform-services:
 de;Formular;Form
 de;Französisch;French
-de;Google - Übersetzung;Google - Translation
+de;Google - Übersetzung;Google translation;null;null;null
+de;Google-Übersetzung verwenden;Use Google Translate;;;
 de;Google-Übersetzung übernehmen (STRG+G);Apply Google translation (CTRL + G)
 de;Graph Importieren;Import Graph
 de;Graph Laden;Load Graph
@@ -199,7 +201,7 @@ de;Java-Klasse für den Start der Simulations-Agenten und die statische Lastverte
 de;Java-Klasse für die dynamische Lastverteilung;Java class for dynamic load balancing
 de;Kein Projekt geöffnet !;No open project!
 de;Kein SVG zugewiesen;No SVG assigned
-de;Kein vordefiniertes Umgebungsmodell verwenden;Don't use a predefined environment model;null;null;null
+de;Kein vordefiniertes Umgebungsmodell verwenden;Don't use a predefined environment model;;;
 de;Keine Computer nutzen, die bereits einen Remote-Container beherbergen;Don't use computer that are already host a remote-container;;;
 de;Keine Graph-Datei definiert!;No Graph file defined!
 de;Keine Klasse definiert;No class defined
