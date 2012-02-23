@@ -436,7 +436,7 @@ public class ProjectsLoaded {
 		
 		boolean setFontBold = true;
 		
-		JMenu WindowMenu = Application.MainWindow.jMenuMainWindows;
+		JMenu WindowMenu = Application.MainWindow.getJMenuMainWindow();
 		WindowMenu.removeAll();
 		if (this.count()==0 ){
 			WindowMenu.add( new JMenuItmen_Window( Language.translate("Kein Projekt geöffnet !"), -1, setFontBold ) );

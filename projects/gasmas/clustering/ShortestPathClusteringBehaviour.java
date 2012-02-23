@@ -100,7 +100,7 @@ public class ShortestPathClusteringBehaviour extends SimpleBehaviour {
 		NetworkModel copyNetworkModel = networkModel.getCopy();
 		copyNetworkModel.setAlternativeNetworkModel(null);
 		while (copyNetworkModel != null) {
-			HashSet<NetworkComponent> mostFrequent = findMostFrequentNetworkComponent(findShortestPaths(copyNetworkModel), copyNetworkModel.getActiveNetworkComponents());
+			HashSet<NetworkComponent> mostFrequent = findMostFrequentNetworkComponent(findShortestPaths(copyNetworkModel), ActiveNetworkComponents.getActiveNetworkComponents(copyNetworkModel));
 			if (mostFrequent.size() == 1 && mostFrequent.iterator().next() == null) {
 				copyNetworkModel = null;
 			} else {
@@ -125,7 +125,7 @@ public class ShortestPathClusteringBehaviour extends SimpleBehaviour {
 	 * Find shortest path.
 	 */
 	private ArrayList<NetworkPath> findShortestPaths(NetworkModel workingCopyNetworkModel) {
-		ArrayList<NetworkComponent> activeNCs = workingCopyNetworkModel.getActiveNetworkComponents();
+		ArrayList<NetworkComponent> activeNCs = ActiveNetworkComponents.getActiveNetworkComponents(workingCopyNetworkModel);
 		ArrayList<NetworkPath> paths = new ArrayList<NetworkPath>();
 		for (int c1 = 0; c1 < activeNCs.size(); c1++) {
 			for (int c2 = c1 + 1; c2 < activeNCs.size(); c2++) {

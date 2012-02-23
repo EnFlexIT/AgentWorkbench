@@ -111,7 +111,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	private JMenuBar jMenuBarMain;
 	private JMenu jMenuMainProject;
 	private JMenu jMenuMainView;
-		private ButtonGroup viewGroup;
+		private ButtonGroup viewGroup;  //  @jve:decl-index=0:
 		public JRadioButtonMenuItem viewDeveloper; 
 		public JRadioButtonMenuItem viewEndUser; 
 	private JMenu jMenuMainJade;
@@ -122,7 +122,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	private JMenu jMenuExtra;
 		private JMenu jMenuExtraLang;
 		private JMenu jMenuExtraLnF;
-	public JMenu jMenuMainWindows;
+	private JMenu jMenuMainWindows;
 	private JMenu jMenuMainHelp;
 
 	private JMenuItem jMenuCloseButton;
@@ -490,11 +490,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			
 			jMenuBarMain.add( getJMenuMainProject() );
 			jMenuBarMain.add( getJMenuMainView() );
-			jMenuBarMain.add( getjMenuMainJade() );
-			jMenuBarMain.add( getjMenuMainSimulation() );
-			jMenuBarMain.add( getjMenuMainExtra() );
-			jMenuBarMain.add( getjMenuMainWindow() );
-			jMenuBarMain.add( getjMenuMainHelp() );	
+			jMenuBarMain.add( getJMenuMainJade() );
+			jMenuBarMain.add( getJMenuMainSimulation() );
+			jMenuBarMain.add( getJMenuMainExtra() );
+			jMenuBarMain.add( getJMenuMainWindow() );
+			jMenuBarMain.add( getJMenuMainHelp() );	
 
 		}
 		return jMenuBarMain;
@@ -644,7 +644,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	 *
 	 * @return the j menu main jade
 	 */
-	public JMenu getjMenuMainJade() {
+	public JMenu getJMenuMainJade() {
 		if (jMenuMainJade == null) {
 			jMenuMainJade = new JMenu("JADE");
 			jMenuMainJade.setText(Language.translate("JADE"));			
@@ -670,7 +670,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	 *
 	 * @return the j menu main simulation
 	 */
-	public JMenu getjMenuMainSimulation() {
+	public JMenu getJMenuMainSimulation() {
 		if (jMenuMainSimulation == null) {
 			jMenuMainSimulation = new JMenu("MAS");
 			jMenuMainSimulation.setText(Language.translate("MAS"));			
@@ -694,7 +694,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	 *
 	 * @return the j menu main extra
 	 */
-	public JMenu getjMenuMainExtra() {
+	public JMenu getJMenuMainExtra() {
 		if (jMenuExtra == null) {
 			jMenuExtra = new JMenu("Extras");
 			jMenuExtra.setText(Language.translate("Extras"));
@@ -848,11 +848,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// --- Menü Fenster -------------------------------------------
 	// ------------------------------------------------------------
 	/**
-		 * Gets the j menu main window.
-		 *
-		 * @return the j menu main window
-		 */
-		private JMenu getjMenuMainWindow() {
+	 * Gets the JMenu main window.
+	 *
+	 * @return the JMenu main window
+	 */
+	public JMenu getJMenuMainWindow() {
 		if (jMenuMainWindows == null) {
 			jMenuMainWindows = new JMenu("Fenster");
 			jMenuMainWindows.setText(Language.translate("Fenster"));
@@ -868,7 +868,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	 *
 	 * @return the j menu main help
 	 */
-	public JMenu getjMenuMainHelp() {
+	public JMenu getJMenuMainHelp() {
 		if (jMenuMainHelp == null) {
 			jMenuMainHelp = new JMenu("Hilfe");
 			jMenuMainHelp.setText(Language.translate("Hilfe"));

@@ -62,6 +62,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -140,7 +141,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    this.mainDisplayComponent = getJTabbedPaneAltNetModels();
 		    this.useTabs = true;
 		}
-		this.add(this.mainDisplayComponent, null);
+		this.add(this.mainDisplayComponent, BorderLayout.CENTER);
 		this.setNumberOfComponents();
     }
 
@@ -149,17 +150,24 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      */
     private void reLoad() {
     	
+    	// --- Set the alternative NetworkModels ----------
     	this.setAlternativeNetworkModels();
-		
-		this.getJTextFieldSearch().setText(null);
+    	
+    	// --- Refresh the list of components -------------
+    	SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+		    	componentsTableModel = getDefaultTableModel4ComponentsNew();
+		    	getJTableComponents().setModel(componentsTableModel);
+		    	setLayout4JTableComponents();
+			}
+		});
+    	
+		// --- Clear search field -------------------------
+    	this.getJTextFieldSearch().setText(null);
 		//this.tblFilter();
-		this.jScrollPaneComponentsTable.getViewport().setVisible(false);
-		this.jScrollPaneComponentsTable.getViewport().removeAll();
-	    this.jTableComponents = null;
-		this.componentsTableModel = null;
-		this.jScrollPaneComponentsTable.setViewportView(this.getJTableComponents());
-		this.jScrollPaneComponentsTable.getViewport().setVisible(true);
-		this.setNumberOfComponents();
+    	this.setNumberOfComponents();
+    	
     }
     
     /**
@@ -321,16 +329,16 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      */
     private DefaultTableModel getDefaultTableModel4Components() {
     	if (componentsTableModel==null) {
-    		componentsTableModel = getNewDefaultTableModel4Components();
+    		componentsTableModel = getDefaultTableModel4ComponentsNew();
     	}
     	return componentsTableModel;
     }
     
     /**
-     * Returns the DefaultTableModel for the network components.
-     * @return the DefaultTableModel for the network components
+     * Returns a new DefaultTableModel for the NetworkComponents.
+     * @return a new DefaultTableModel for the NetworkComponents
      */
-    private DefaultTableModel getNewDefaultTableModel4Components() {
+    private DefaultTableModel getDefaultTableModel4ComponentsNew() {
     	
 		// --- Set column titles --------------------------------
 	    Vector<String> titles = new Vector<String>();
@@ -423,43 +431,54 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    jTableComponents.getModel().addTableModelListener(this);
 		    jTableComponents.getSelectionModel().addListSelectionListener(this);
 
-		    TableRowSorter<DefaultTableModel> tblSorter = new TableRowSorter<DefaultTableModel>(componentsTableModel);
-		    tblSorter.setComparator(0, new Comparator<String>() {
-				@Override
-				public int compare(String o1, String o2) {
-					Integer o1Int = extractNumericalValue(o1);
-					Integer o2Int = extractNumericalValue(o2);
-					if (o1Int!=null && o2Int!=null) {
-						return o1Int.compareTo(o2Int);
-					} else if (o1Int==null && o2Int!=null) {
-						return -1;
-					} else if (o1Int!=null && o2Int==null) {
-						return 1;
-					} else {
-						return o1.compareTo(o2);	
-					}
-				}
-			});
-		    jTableComponents.setRowSorter(tblSorter);		    
-
-		    // --- Define the first sort order ------------
-			List<SortKey> sortKeys = new ArrayList<SortKey>();
-			for (int i = 0; i < jTableComponents.getColumnCount(); i++) {
-			    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
-			}
-			jTableComponents.getRowSorter().setSortKeys(sortKeys);
-			
-			
-			TableColumnModel colModel = jTableComponents.getColumnModel();
-			colModel.getColumn(0).setPreferredWidth(20);
-			colModel.getColumn(2).setPreferredWidth(30);
-			colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(getGraphController(), jTableComponents));			
-			colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());
-
+		    this.setLayout4JTableComponents();
+		    
 		}
 		return jTableComponents;
     }
+    
+    /**
+     * Sets the layout for the JTable of the NetworkComponents.
+     */
+    private void setLayout4JTableComponents() {
+    	
+    	// --- Set Sorter for the table -------------------
+    	TableRowSorter<DefaultTableModel> tblSorter = new TableRowSorter<DefaultTableModel>(this.getDefaultTableModel4Components());
+	    tblSorter.setComparator(0, new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				Integer o1Int = extractNumericalValue(o1);
+				Integer o2Int = extractNumericalValue(o2);
+				if (o1Int!=null && o2Int!=null) {
+					return o1Int.compareTo(o2Int);
+				} else if (o1Int==null && o2Int!=null) {
+					return -1;
+				} else if (o1Int!=null && o2Int==null) {
+					return 1;
+				} else {
+					return o1.compareTo(o2);	
+				}
+			}
+		});
+	    this.getJTableComponents().setRowSorter(tblSorter);		    
 
+	    // --- Define the first sort order ----------------
+		List<SortKey> sortKeys = new ArrayList<SortKey>();
+		for (int i = 0; i < this.getJTableComponents().getColumnCount(); i++) {
+		    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
+		}
+		this.getJTableComponents().getRowSorter().setSortKeys(sortKeys);
+		
+		// --- Define the column widths -------------------
+		TableColumnModel colModel = this.getJTableComponents().getColumnModel();
+		colModel.getColumn(0).setPreferredWidth(20);
+		colModel.getColumn(2).setPreferredWidth(30);
+		colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(getGraphController(), jTableComponents));			
+		colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());
+		
+    }
+    
+    
     /**
      * Extract the numerical value from a String.
      * @param expression the expression
@@ -653,7 +672,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    int selectedIndex = getJTableComponents().convertRowIndexToModel(getJTableComponents().getSelectedRow());
 		    String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
 		    NetworkComponent networkComponent = this.getGraphController().getNetworkModelAdapter().getNetworkComponent(componentID);
-		    this.getGraphController().getNetworkModelAdapter().selectNetworkComponent(networkComponent);
+		    this.getGraphController().getNetworkModelAdapter().selectNetworkComponent(networkComponent);	
 		}
     }
 

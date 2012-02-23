@@ -196,19 +196,6 @@
             </value>
         </entry>
         <entry>
-            <key>n70</key>
-            <value>
-                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP119</graphElementIDs>
-                <graphElementIDs>n70</graphElementIDs>
-                <graphElementIDs>PP117</graphElementIDs>
-                <id>n70</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Pipe</type>
-            </value>
-        </entry>
-        <entry>
             <key>n33</key>
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
@@ -906,7 +893,7 @@
                 <graphElementIDs>PP94</graphElementIDs>
                 <graphElementIDs>PP96</graphElementIDs>
                 <graphElementIDs>PP95</graphElementIDs>
-                <graphElementIDs>PP117</graphElementIDs>
+                <graphElementIDs>PP119</graphElementIDs>
                 <graphElementIDs>n59_2</graphElementIDs>
                 <graphElementIDs>n59_1</graphElementIDs>
                 <graphElementIDs>n59_0</graphElementIDs>

@@ -833,7 +833,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		} else if (object instanceof NetworkComponent) {
 			this.setPickedObjects(controller.getNetworkModelAdapter().getGraphElementsFromNetworkComponent((NetworkComponent) object));
-
 		}
 
 		if (showComponentSettingsDialog == true) {
