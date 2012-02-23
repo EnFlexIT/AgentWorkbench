@@ -58,6 +58,12 @@ public class NetworkModel implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = -5712689010090750522L;
 
+	/** The active network component agent class prefix. */
+	private static final String activeNetworkComponentAgentClassPrefix = "gasmas.agents.components.";
+
+	/** The active network component agent classes. */
+	private final String[] activeNetworkComponentAgentClasses = new String[] { "CompressorAgent", "EntryAgent", "ExitAgent", "StorageAgent" };
+
 	/** The original JUNG graph created or imported in the application. */
 	private Graph<GraphNode, GraphEdge> graph;
 
@@ -139,6 +145,12 @@ public class NetworkModel implements Cloneable, Serializable {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public NetworkModel getCopy(boolean removeAlternativeNMs) {
+		NetworkModel networkModel = getCopy();
+		networkModel.setAlternativeNetworkModel(null);
+		return networkModel;
 	}
 
 	/**
@@ -943,6 +955,23 @@ public class NetworkModel implements Cloneable, Serializable {
 			}
 		}
 		return outerNetworkComponents;
+	}
+
+	/**
+	 * Identify active components.
+	 */
+	public ArrayList<NetworkComponent> getActiveNetworkComponents() {
+		ArrayList<NetworkComponent> activeNetworkComponents = new ArrayList<NetworkComponent>();
+
+		for (NetworkComponent networkComponent : this.getNetworkComponents().values()) {
+			String agentClassName = networkComponent.getAgentClassName();
+			for (String activeAgentClassType : activeNetworkComponentAgentClasses) {
+				if (agentClassName.equals(NetworkModel.activeNetworkComponentAgentClassPrefix + activeAgentClassType)) {
+					activeNetworkComponents.add(networkComponent);
+				}
+			}
+		}
+		return activeNetworkComponents;
 	}
 
 }
