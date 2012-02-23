@@ -130,6 +130,7 @@ de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured f
 de;Externe jar-Ressourcen;External jar resources;;;
 de;Extras;Extras
 de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!
+de;Fehlende Auswahl !;;;;
 de;Fehlende Auswahl!;Missing selection!
 de;Fehlende Ontologie-Auswahl !;Missing ontology selection!
 de;Fehler - '@';Error – '@'
@@ -450,6 +451,7 @@ de;Wollen Sie das aktuelle Setup wirklich löschen?;Do you want to delete the cur
 de;Wörterbuch;Dictionary
 de;XML-Dateien;XML files
 de;XML;XML
+de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologie aus!;;;;
 de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agents project .
 de;Zurücksetzen;Reset
 de;Zyklisch !;Cyclic!
@@ -477,6 +479,7 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
+en;;Discrete squares environment;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktuelles Bild entfernen;Remove current image;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;

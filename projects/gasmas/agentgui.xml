@@ -8,43 +8,48 @@
     <plugins/>
     <subOntologies>
         <subOntology>gasmas.ontology.GasGridOntology</subOntology>
+        <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
     </subOntologies>
     <agentConfiguration>
         <entry>
-            <key>gasmas.agents.EntryAgent</key>
-            <value>gasmas.ontology.Entry</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.BranchAgent</key>
-            <value>gasmas.ontology.Branch</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.ValveAgent</key>
-            <value>gasmas.ontology.Valve</value>
+            <key>gasmas.agents.CompressorAgent</key>
+            <value>gasmas.ontology.Compressor</value>
         </entry>
         <entry>
             <key>gasmas.agents.components.PipeAgent</key>
             <value>gasmas.ontology.PropagationPoint</value>
         </entry>
         <entry>
-            <key>gasmas.agents.ExitAgent</key>
-            <value>gasmas.ontology.Exit</value>
+            <key>gasmas.agents.BranchAgent</key>
+            <value>gasmas.ontology.Branch</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.StorageAgent</key>
+            <value>gasmas.ontology.Storage</value>
         </entry>
         <entry>
             <key>gasmas.agents.PipeAgent</key>
             <value>gasmas.ontology.Pipe</value>
         </entry>
         <entry>
-            <key>gasmas.agents.CompressorAgent</key>
-            <value>gasmas.ontology.Compressor</value>
+            <key>gasmas.agents.ValveAgent</key>
+            <value>gasmas.ontology.Valve</value>
         </entry>
         <entry>
-            <key>gasmas.agents.StorageAgent</key>
-            <value>gasmas.ontology.Storage</value>
+            <key>gasmas.agents.EntryAgent</key>
+            <value>gasmas.ontology.Entry</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.components.ExitAgent</key>
+            <value>agentgui.ontology.Simple_Boolean</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.ExitAgent</key>
+            <value>gasmas.ontology.Exit</value>
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1105</useLocalPort>
+        <useLocalPort>1108</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -76,7 +81,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>HNord</simulationSetupCurrent>
+    <simulationSetupCurrent>SmartGrid</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>HNord</key>

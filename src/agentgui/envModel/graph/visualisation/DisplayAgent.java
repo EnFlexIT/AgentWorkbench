@@ -80,7 +80,9 @@ public class DisplayAgent extends SimulationAgent {
 			this.useFrame = this.getIndependentFrame();
 			
 			this.myEnvironmentModel = this.grabEnvironmentModelFromSimulationService(); 
-			this.netModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();
+			if (this.myEnvironmentModel!=null) {
+				this.netModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();	
+			}
 
 		} else {
 			// --- started from Agent.GUI -----------------

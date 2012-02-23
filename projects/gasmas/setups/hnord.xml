@@ -3,12 +3,6 @@
     <agentSetup>
         <agent>
             <postionNo>1</postionNo>
-            <listMembership>01 AgentStartManual</listMembership>
-            <agentClassReference>gasmas.agents.manager.NetworkManagerAgent</agentClassReference>
-            <startAsName>NeMaAg</startAsName>
-        </agent>
-        <agent>
-            <postionNo>1</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
             <startAsName>n41</startAsName>
@@ -414,6 +408,12 @@
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
             <startAsName>n50</startAsName>
+        </agent>
+        <agent>
+            <postionNo>69</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n69</startAsName>
         </agent>
     </agentSetup>
     <environmentFileName>HNord.graphml</environmentFileName>

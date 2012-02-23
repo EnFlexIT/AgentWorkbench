@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Game of Life</projectName>
-    <projectView>Developer</projectView>
+    <projectView>User</projectView>
     <environmentModel>Squared</environmentModel>
     <projectResources>
         <projectResource>D:\10 Java Projects\Game of Life\bin</projectResource>
@@ -23,8 +23,8 @@
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
