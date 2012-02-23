@@ -147,12 +147,6 @@ public class NetworkModel implements Cloneable, Serializable {
 		}
 	}
 
-	public NetworkModel getCopy(boolean removeAlternativeNMs) {
-		NetworkModel networkModel = getCopy();
-		networkModel.setAlternativeNetworkModel(null);
-		return networkModel;
-	}
-
 	/**
 	 * Creates a clone of the current instance.
 	 * @return the copy
@@ -426,14 +420,18 @@ public class NetworkModel implements Cloneable, Serializable {
 	/**
 	 * Removes the network components if not in list.
 	 * @param hashSet the network components
+	 * @return 
 	 */
-	public void removeInverseNetworkComponents(HashSet<String> hashSet) {
+	public ArrayList<NetworkComponent> removeNetworkComponentsInverse(HashSet<String> hashSet) {
 		ArrayList<NetworkComponent> allNetworkComponents = new ArrayList<NetworkComponent>(this.networkComponents.values());
+		ArrayList<NetworkComponent> removedNetworkComponents = new ArrayList<NetworkComponent>();
 		for (NetworkComponent networkComponent : allNetworkComponents) {
 			if (!hashSet.contains(networkComponent.getId()) && this.networkComponents.values().contains(networkComponent)) {
 				this.removeNetworkComponent(networkComponent);
+				removedNetworkComponents.add(networkComponent);
 			}
 		}
+		return removedNetworkComponents;
 	}
 
 	/**
@@ -911,7 +909,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		// ---------- Prepare Parameters for ClusterComponent ------------------------------
 		NetworkModel clusterNetworkModel = this.getCopy();
 		clusterNetworkModel.setAlternativeNetworkModel(null);
-		clusterNetworkModel.removeInverseNetworkComponents(getNetworkComponentsIDs(networkComponents));
+		clusterNetworkModel.removeNetworkComponentsInverse(getNetworkComponentsIDs(networkComponents));
 		removeNetworkComponents(networkComponents);
 		// --------------- Identifiy outernodes of the Cluster ----------------
 		Vector<GraphNode> outerNodes = new Vector<GraphNode>();
@@ -962,12 +960,13 @@ public class NetworkModel implements Cloneable, Serializable {
 	 */
 	public ArrayList<NetworkComponent> getActiveNetworkComponents() {
 		ArrayList<NetworkComponent> activeNetworkComponents = new ArrayList<NetworkComponent>();
-
 		for (NetworkComponent networkComponent : this.getNetworkComponents().values()) {
 			String agentClassName = networkComponent.getAgentClassName();
-			for (String activeAgentClassType : activeNetworkComponentAgentClasses) {
-				if (agentClassName.equals(NetworkModel.activeNetworkComponentAgentClassPrefix + activeAgentClassType)) {
-					activeNetworkComponents.add(networkComponent);
+			if (agentClassName != null) {
+				for (String activeAgentClassType : activeNetworkComponentAgentClasses) {
+					if (agentClassName.equals(NetworkModel.activeNetworkComponentAgentClassPrefix + activeAgentClassType)) {
+						activeNetworkComponents.add(networkComponent);
+					}
 				}
 			}
 		}

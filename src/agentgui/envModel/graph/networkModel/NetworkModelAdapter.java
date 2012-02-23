@@ -116,6 +116,14 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	}
 
 	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getActiveNetworkComponents()
+	 */
+	@Override
+	public ArrayList<NetworkComponent> getActiveNetworkComponents() {
+		return graphController.getNetworkModel().getActiveNetworkComponents();
+	}
+
+	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getCopy()
 	 */
 	@Override
@@ -309,6 +317,18 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 			this.notifyObserver(notification);
 		}
 		return removedComponents;
+	}
+
+	@Override
+	public ArrayList<NetworkComponent> removeNetworkComponentsInverse(HashSet<String> hashSet) {
+		ArrayList<NetworkComponent> removedNetworkComponents = graphController.getNetworkModel().removeNetworkComponentsInverse(hashSet);
+		for (NetworkComponent networkComponent : removedNetworkComponents) {
+			graphController.removeAgent(networkComponent);
+			NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
+			notification.setInfoObject(networkComponent);
+			this.notifyObserver(notification);
+		}
+		return removedNetworkComponents;
 	}
 
 	/* (non-Javadoc)

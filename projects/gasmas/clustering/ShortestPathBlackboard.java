@@ -29,6 +29,8 @@
 package gasmas.clustering;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
 
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 
@@ -37,86 +39,85 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
  */
 public class ShortestPathBlackboard {
 
-    /** The hash map paths. */
-    private HashMap<String, NetworkPath> hashMapPaths = new HashMap<String, NetworkPath>();
+	/** The hash map paths. */
+	private HashMap<String, NetworkPath> hashMapPaths = new HashMap<String, NetworkPath>();
 
-    /**
-     * Adds the path.
-     * 
-     * @param networkComponent1 the network component1
-     * @param networkComponent2 the network component2
-     * @param networkPath the network path
-     */
-    public void addPath(NetworkComponent networkComponent1, NetworkComponent networkComponent2, NetworkPath networkPath) {
-    	hashMapPaths.put(networkComponent1.getId() + networkComponent2.getId(),
-		networkPath);
-    }
+	/**
+	 * Adds the path.
+	 * 
+	 * @param networkComponent1 the network component1
+	 * @param networkComponent2 the network component2
+	 * @param networkPath the network path
+	 */
+	public void addPath(NetworkComponent networkComponent1, NetworkComponent networkComponent2, NetworkPath networkPath) {
+		hashMapPaths.put(networkComponent1.getId() + networkComponent2.getId(), networkPath);
+	}
 
-    /**
-     * Contains.
-     * 
-     * @param networkComponent1
-     *            the network component1
-     * @param networkComponent2
-     *            the network component2
-     * @return true, if successful
-     */
-    public boolean contains(NetworkComponent networkComponent1, NetworkComponent networkComponent2) {
+	/**
+	 * Contains.
+	 * 
+	 * @param networkComponent1
+	 *            the network component1
+	 * @param networkComponent2
+	 *            the network component2
+	 * @return true, if successful
+	 */
+	public boolean contains(NetworkComponent networkComponent1, NetworkComponent networkComponent2) {
 		if (hashMapPaths.containsKey(networkComponent1.getId() + networkComponent2.getId())) {
-		    return true;
+			return true;
 		}
 		if (hashMapPaths.containsKey(networkComponent2.getId() + networkComponent1.getId())) {
-		    return true;
+			return true;
 		}
-	return false;
-    }
+		return false;
+	}
 
-    /**
-     * Gets the path.
-     * 
-     * @param networkComponent1
-     *            the network component1
-     * @param networkComponent2
-     *            the network component2
-     * @return the path
-     */
-    public NetworkPath getPath(NetworkComponent networkComponent1,
-	    NetworkComponent networkComponent2) {
-	NetworkPath networkPath = hashMapPaths.get(networkComponent1.getId()
-		+ networkComponent2.getId());
-	if (networkPath == null) {
-	    networkPath = hashMapPaths.get(networkComponent2.getId()
-		    + networkComponent1.getId());
+	/**
+	 * Gets the path.
+	 * 
+	 * @param networkComponent1
+	 *            the network component1
+	 * @param networkComponent2
+	 *            the network component2
+	 * @return the path
+	 */
+	public NetworkPath getPath(NetworkComponent networkComponent1, NetworkComponent networkComponent2) {
+		NetworkPath networkPath = hashMapPaths.get(networkComponent1.getId() + networkComponent2.getId());
+		if (networkPath == null) {
+			networkPath = hashMapPaths.get(networkComponent2.getId() + networkComponent1.getId());
+		}
+		return networkPath;
 	}
-	return networkPath;
-    }
 
-    /**
-     * Find most frequent network component.
-     * 
-     * TODO: Problem chooses first found component
-     * 
-     * @return the network component
-     */
-    public NetworkComponent findMostFrequentNetworkComponent() {
-	HashMap<NetworkComponent, Integer> componentCounter = new HashMap<NetworkComponent, Integer>();
-	for (NetworkPath networkPath : hashMapPaths.values()) {
-	    for (NetworkComponent networkComponent : networkPath.getPath()) {
-		componentCounter.put(networkComponent, componentCounter
-			.get(networkComponent) == null ? new Integer(1)
-			: new Integer(componentCounter.get(networkComponent)
-				.intValue() + 1));
-	    }
+	/**
+	 * Find most frequent network component.
+	 * 
+	 * TODO: Problem chooses first found component
+	 * 
+	 * @return the network component
+	 */
+	public HashSet<NetworkComponent> findMostFrequentNetworkComponent() {
+		HashMap<NetworkComponent, Integer> componentCounter = new HashMap<NetworkComponent, Integer>();
+		for (NetworkPath networkPath : hashMapPaths.values()) {
+			for (NetworkComponent networkComponent : networkPath.getPath()) {
+				componentCounter.put(networkComponent, componentCounter.get(networkComponent) == null ? new Integer(1) : new Integer(componentCounter.get(networkComponent).intValue() + 1));
+			}
+		}
+		int max = 0;
+		NetworkComponent networkComponent = null;
+		for (Entry<NetworkComponent, Integer> entry : componentCounter.entrySet()) {
+			if (entry.getValue().intValue() > max) {
+				max = entry.getValue().intValue();
+				networkComponent = entry.getKey();
+			}
+		}
+		HashSet<NetworkComponent> maxNetworkComponents = new HashSet<NetworkComponent>();
+		maxNetworkComponents.add(networkComponent);
+		for (Entry<NetworkComponent, Integer> entry : componentCounter.entrySet()) {
+			if (entry.getValue().intValue() >= max) {
+				maxNetworkComponents.add(entry.getKey());
+			}
+		}
+		return maxNetworkComponents;
 	}
-	int max = 0;
-	NetworkComponent networkComponent = null;
-	for (java.util.Map.Entry<NetworkComponent, Integer> entry : componentCounter
-		.entrySet()) {
-	    if (entry.getValue().intValue() > max) {
-		max = entry.getValue().intValue();
-		networkComponent = entry.getKey();
-	    }
-	}
-	return networkComponent;
-    }
 }

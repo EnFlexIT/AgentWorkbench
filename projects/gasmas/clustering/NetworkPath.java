@@ -37,35 +37,27 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
 
 public class NetworkPath {
 
-    private long timestamp = System.currentTimeMillis();
-    private NetworkModel networkModel;
-    private ArrayList<NetworkComponent> path = new ArrayList<NetworkComponent>();
+	private ArrayList<NetworkComponent> path = new ArrayList<NetworkComponent>();
 
-    public NetworkPath(NetworkModel networkModel, List<GraphEdge> graphElementsPath) {
-	this.networkModel = networkModel;
-	graphElemntsPathToComponentsPath(graphElementsPath);
-    }
-
-    private void graphElemntsPathToComponentsPath(List<GraphEdge> graphElementsPath) {
-	for (GraphEdge graphEdge : graphElementsPath) {
-	    NetworkComponent networkComponent = networkModel.getNetworkComponent(graphEdge);
-	    if (!path.contains(networkComponent)) {
-		path.add(networkComponent);
-	    }
+	public NetworkPath(NetworkModel networkModel, List<GraphEdge> graphElementsPath) {
+		graphElemntsPathToComponentsPath(graphElementsPath, networkModel);
 	}
-    }
 
-    /**
-     * Gets the path.
-     * 
-     * @return the path
-     */
-    public ArrayList<NetworkComponent> getPath() {
-	return path;
-    }
+	private void graphElemntsPathToComponentsPath(List<GraphEdge> graphElementsPath, NetworkModel networkModel) {
+		for (GraphEdge graphEdge : graphElementsPath) {
+			NetworkComponent networkComponent = networkModel.getNetworkComponent(graphEdge);
+			if (!path.contains(networkComponent)) {
+				path.add(networkComponent);
+			}
+		}
+	}
 
-    public long getTimeStamp() {
-	return timestamp;
-    }
-
+	/**
+	 * Gets the path.
+	 * 
+	 * @return the path
+	 */
+	public ArrayList<NetworkComponent> getPath() {
+		return path;
+	}
 }

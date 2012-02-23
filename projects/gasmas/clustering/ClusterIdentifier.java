@@ -95,9 +95,9 @@ public class ClusterIdentifier {
 			}
 		}
 		if (baseModelChanged) {
-			NetworkModel copy = networkModel.getCopy();
-			copy.setAlternativeNetworkModel(null);
-			return copy;
+			NetworkModel clusteredModel = networkModel.getCopy();
+			clusteredModel.setAlternativeNetworkModel(null);
+			return clusteredModel;
 		}
 		return clustersToSmall ? null : reducedModel;
 	}
@@ -118,10 +118,6 @@ public class ClusterIdentifier {
 				}
 			}
 		}
-		for (NetworkComponent networkComponent : networkComponents) {
-			System.out.print(networkComponent.getId() + ' ');
-		}
-		System.out.println();
 		ArrayList<NetworkComponent> clustersComponents = new ArrayList<NetworkComponent>(networkComponents);
 		// ------- add the Neighbours to the List because removed are part of the cluster
 		networkComponents.addAll(networkModel.getNeighbourNetworkComponents(networkComponents));

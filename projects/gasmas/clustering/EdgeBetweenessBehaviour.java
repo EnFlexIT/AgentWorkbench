@@ -81,6 +81,7 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 		}
 		ClusterIdentifier clusterIdentifier = new ClusterIdentifier(environmentModel, simulationServiceHelper);
 		NetworkModel copyNetworkModel = networkModel.getCopy();
+		copyNetworkModel.setAlternativeNetworkModel(null);
 		this.networkModel.getAlternativeNetworkModel().put("ClusteredModel", copyNetworkModel);
 		try {
 			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
