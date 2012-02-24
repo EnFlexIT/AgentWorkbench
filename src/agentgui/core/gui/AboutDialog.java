@@ -41,15 +41,18 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -99,33 +102,51 @@ public class AboutDialog extends JDialog implements ActionListener{
 	
 	/**
 	 * Instantiates a new about dialog.
-	 *
+	 */
+	public AboutDialog() {
+		this.initialize();
+	}
+	
+	/**
+	 * Instantiates a new about dialog.
 	 * @param owner the owner
 	 */
 	public AboutDialog(Frame owner) {
 		super(owner);
-		
+		this.initialize();
+	}
+
+	/**
+	 * This method initializes this.
+	 * @return void
+	 */
+	private void initialize() {
+
 		teamMember = "<HTML><BODY><CENTER><br>Christian Derksen<br>" +
-						"Hanno-Felix Wagner<br>" +
-						"Nils Loose<br>" +
-						"Christopher Nde<br>" +
-						"Marvin Steinberg<br>" +
-						"Tim Lewen<br>" +
-						"Satyadeep Karnati<br>" +
-						"David Pachula" +
-						"</CENTER></HTML></BODY>";
+					"Hanno-Felix Wagner<br>" +
+					"Nils Loose<br>" +
+					"Christopher Nde<br>" +
+					"Marvin Steinberg<br>" +
+					"Tim Lewen<br>" +
+					"Satyadeep Karnati<br>" +
+					"David Pachula" +
+					"</CENTER></HTML></BODY>";
+
+		this.setSize(550, 445);
+		this.setIconImage(imageAgentGUI);
 		
+		this.setModal(true);
+		this.setResizable(false);
+		this.setContentPane(getJContentPane());
+		this.registerEscapeKeyStroke();
 		
 		// --- Set the Look and Feel of the Dialog ------------------
 		if (Application.isServer==true) {
 			if (Application.RunInfo.getAppLnF()!=null) {
-				setLookAndFeel( Application.RunInfo.getAppLnF() );
+				setLookAndFeel(Application.RunInfo.getAppLnF());
 			}
 		}
-		
-		// --- Create/Config der Dialog-Elemnete --------------------
-		initialize();
-		
+
 		// --- Übersetzungen einstellen -----------------------------
 		this.setTitle( Application.RunInfo.getApplicationTitle() );
 		jLabelTitle.setText( Application.RunInfo.getApplicationTitle());
@@ -141,24 +162,18 @@ public class AboutDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes this.
-	 *
-	 * @return void
-	 */
-	private void initialize() {
-
-		this.setSize(549, 445);
-		this.setIconImage(imageAgentGUI);
-		
-		this.setModal(true);
-		this.setResizable(false);
-		this.setContentPane(getJContentPane());
-		
-		// --- Set the IconImage ----------------------------------
-
-
-	}
-
+     * Registers the escape key stroke in order to close this dialog.
+     */
+    private void registerEscapeKeyStroke() {
+    	final ActionListener listener = new ActionListener() {
+            public final void actionPerformed(final ActionEvent e) {
+    			setVisible(false);
+            }
+        };
+        final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
+        this.getRootPane().registerKeyboardAction(listener, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+    
 	/**
 	 * This method initializes jContentPane.
 	 *
@@ -274,8 +289,11 @@ public class AboutDialog extends JDialog implements ActionListener{
 			jTabbedPane = new JTabbedPane();
 			jTabbedPane.setName("");
 			jTabbedPane.setTabPlacement(JTabbedPane.TOP);
+			
 			jTabbedPane.addTab("Copyright", null, getJPanelGeneral(), null);
-			jTabbedPane.addTab(Language.translate("Mitwirkende"), null, getJPanelMembers(), null);
+			
+			jTabbedPane.addTab("Mitwirkende", null, getJPanelMembers(), null);
+			jTabbedPane.setTitleAt(1, Language.translate("Mitwirkende"));
 		}
 		return jTabbedPane;
 	}
