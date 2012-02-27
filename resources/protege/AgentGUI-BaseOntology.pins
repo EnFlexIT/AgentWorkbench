@@ -1,9 +1,21 @@
-; Thu Oct 06 20:12:10 CEST 2011
+; Sat Feb 25 19:58:01 CET 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
 
+([Chart] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
 ([Formula] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([NumericDataColum] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([NumericDataTable] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -31,5 +43,9 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([Simple_String] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TimeSeries] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))

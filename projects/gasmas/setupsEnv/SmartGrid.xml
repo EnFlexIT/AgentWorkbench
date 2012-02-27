@@ -205,6 +205,28 @@
             </value>
         </entry>
         <entry>
+            <key>n73</key>
+            <value>
+                <directed>false</directed>
+                <graphElementIDs>PP41</graphElementIDs>
+                <graphElementIDs>PP42</graphElementIDs>
+                <graphElementIDs>n73</graphElementIDs>
+                <id>n73</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Power Line</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n74</key>
+            <value>
+                <directed>false</directed>
+                <graphElementIDs>PP43</graphElementIDs>
+                <id>n74</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Solar Panel</type>
+            </value>
+        </entry>
+        <entry>
             <key>n35</key>
             <value>
                 <directed>false</directed>
@@ -471,21 +493,11 @@
             <value>
                 <directed>false</directed>
                 <graphElementIDs>PP32</graphElementIDs>
-                <graphElementIDs>PP33</graphElementIDs>
+                <graphElementIDs>PP43</graphElementIDs>
                 <graphElementIDs>n62</graphElementIDs>
                 <id>n62</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Power Line</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n63</key>
-            <value>
-                <directed>false</directed>
-                <graphElementIDs>PP33</graphElementIDs>
-                <id>n63</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Solar Panel</type>
             </value>
         </entry>
         <entry>

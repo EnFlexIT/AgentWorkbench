@@ -41,7 +41,7 @@
         </entry>
         <entry>
             <key>gasmas.agents.components.ExitAgent</key>
-            <value>agentgui.ontology.Simple_Boolean</value>
+            <value>[Output] agentgui.ontology.TimeSeries</value>
         </entry>
         <entry>
             <key>gasmas.agents.ExitAgent</key>
@@ -49,12 +49,12 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1116</useLocalPort>
+        <useLocalPort>1099</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.debugging.DebugService</service>
+            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>

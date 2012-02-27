@@ -62,11 +62,15 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Language;
+import agentgui.core.charts.timeseries.TimeSeriesWidget;
 import agentgui.core.ontologies.OntologyClassTree;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologySingleClassDescription;
 import agentgui.core.ontologies.OntologySingleClassSlotDescription;
 import agentgui.core.project.Project;
+import agentgui.ontology.Chart;
+import agentgui.ontology.Formula;
+import agentgui.ontology.TimeSeries;
 
 /**
  * This class can be used in order to generate a Swing based user form, that represents
@@ -214,7 +218,7 @@ public class DynForm extends JPanel {
 			// --- Get the info about the slots --------------------
 			OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClass);
 			if(osc!=null) {
-				this.createGUI(osc, startObjectClass, startObjectClassMask, startObjectPanel, 0, (DefaultMutableTreeNode) rootNode);
+				this.createGUI(osc, i, 0, startObjectClass, startObjectClassMask, (DefaultMutableTreeNode) rootNode, startObjectPanel);
 			} else {
 				System.out.println("Could not get OntologySingleClassDescription for " + startObjectClass);
 			}
@@ -669,31 +673,18 @@ public class DynForm extends JPanel {
 		
 		// --- The current parentNode and the position of the current node --------------
 		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) currNode.getParent();
-		int currNodePosition = parentNode.getIndex(currNode);
 
 		// --- Search for all similar nodes --------------------------------------------- 
-		int searchPostion = 0;
-		int similarNodeCounter = 0;
-		boolean similarNode = true;
-		while (similarNode) {
-			
-			DefaultMutableTreeNode checkNode = (DefaultMutableTreeNode) parentNode.getChildAt(searchPostion);
+		for (int i = 0; i < parentNode.getChildCount(); i++) {
+			DefaultMutableTreeNode checkNode = (DefaultMutableTreeNode) parentNode.getChildAt(i);
 			DynType checkDT = (DynType) checkNode.getUserObject();
 			if (checkDT.equals(currDT)) {
 				nodesFound.add(checkNode);
-				similarNodeCounter++;	
-			} else {
-				if (searchPostion<currNodePosition==false) {
-					similarNode=false;	
-				}
-			}
-			searchPostion++;
+			} 
 		}
 		return nodesFound;
-		
+
 	}
-	
-	
 	
 	/**
 	 * This Method checks if an instance of an object has an asked method.
@@ -730,7 +721,7 @@ public class DynForm extends JPanel {
 			JTextField jt = (JTextField) dynType.getFieldDisplay();
 			returnValue = jt.getText();
 			
-		} else if(valueType.equals("float")){
+		} else if(valueType.equals("float") || valueType.equals("Float")){
 			JTextField jt = (JTextField) dynType.getFieldDisplay();
 			String stringValue = jt.getText();
 			stringValue = stringValue.replace(",", ".");
@@ -740,7 +731,7 @@ public class DynForm extends JPanel {
 				returnValue = new Float(stringValue);	
 			}
 			
-		} else if(valueType.equals("int")){
+		} else if(valueType.equals("int") || valueType.equals("Integer")){
 			JTextField jt = (JTextField) dynType.getFieldDisplay();
 			String stringValue = jt.getText();
 			stringValue = stringValue.replace(",", ".");
@@ -781,7 +772,7 @@ public class DynForm extends JPanel {
 				jt.setText(ontologyObject.toString());	
 			}
 			
-		} else if(valueType.equals("float")){
+		} else if(valueType.equals("float") || valueType.equals("Float")){
 			JTextField jt = (JTextField) dynType.getFieldDisplay();;
 			if (ontologyObject==null) {
 				jt.setText("0.0");
@@ -789,7 +780,7 @@ public class DynForm extends JPanel {
 				jt.setText(ontologyObject.toString());
 			}
 			
-		} else if(valueType.equals("int")){
+		} else if(valueType.equals("int") || valueType.equals("Integer")){
 			JTextField jt = (JTextField) dynType.getFieldDisplay();;
 			if (ontologyObject==null) {
 				jt.setText("0");
@@ -976,7 +967,7 @@ public class DynForm extends JPanel {
 	 * @param depth the depth
 	 * @param parentNode the parent node
 	 */
-	private void createGUI(OntologySingleClassDescription osc, String startObjectClass, String startObjectClassMask, JPanel parentPanel, int depth, DefaultMutableTreeNode parentNode){
+	private void createGUI(OntologySingleClassDescription osc, int startArgIndex, int depth, String startObjectClass, String startObjectClassMask,  DefaultMutableTreeNode parentNode, JPanel parentPanel){
 		
 		String startObjectClassName = startObjectClass.substring(startObjectClass.lastIndexOf(".") + 1, startObjectClass.length());
 		String startObjectPackage = startObjectClass.substring(0, startObjectClass.lastIndexOf("."));
@@ -1024,44 +1015,50 @@ public class DynForm extends JPanel {
 			while (iterator.hasNext()) {
 				
 				OntologySingleClassSlotDescription oscsd = iterator.next();
-				
-				String dataItemCardinality = oscsd.getSlotCardinality();
-				String dataItemName = oscsd.getSlotName();
-				String dataItemVarType = oscsd.getSlotVarType();
-				String clazz = dataItemVarType;
-				if(dataItemVarType.matches("Instance of (.)*")){
-					clazz = dataItemVarType.substring(12);	
-				}
-				
-				// --------------------------------------------------------------------------------
-				// --- if we have a field to which an object is assigned --> inner class ----------
-				// --------------------------------------------------------------------------------
-				if(isSpecialType(clazz)){
-					// --- Was this classs already displayed in the current tree path? --
+
+				if(isRawType(oscsd.getSlotVarTypeCorrected())){
+					// --- Here we have a field with a final type (String, int, ...) ----
+					this.createOuterElements(oscsd, depth, parentPanel, parentNode, false);
+					
+				} else {
+					// --- Here we have a field with an assigned object => inner class --					
+					String clazz = oscsd.getSlotVarType();
+					if(clazz.matches("Instance of (.)*")){
+						clazz = clazz.substring(12);	
+					}
+					
 					String clazzCheck = null;
 					if (clazz.equals("AID")) {
 						clazzCheck = OntologyClassTree.BaseClassAID;
 					} else {
 						clazzCheck = startObjectPackage+"."+clazz;	
 					}					
+
+					// --- Was this class already displayed in the current tree path? ---
 					if(objectAlreadyInPath(clazzCheck, parentNode) == false) {
 						// --- Create Sub-Panel for the according class -----------------
-						this.createInnerElements(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazzCheck, depth+1, parentPanel, parentNode, false);
+						this.createInnerElements(oscsd, clazzCheck, depth+1, parentPanel, parentNode, false);
 					} else {
 						// --- Create Sub-Panel that shows the cyclic reference ---------
-						this.createOuterDeadEnd(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazz, parentPanel, depth, parentNode);
+						this.createOuterDeadEnd(oscsd, clazz, depth, parentPanel, parentNode);
 					}
 					
-				} else {
-					// --- Here we have a field with a final type (String, int, ...) ----
-					this.createOuterElements(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazz, depth, parentPanel, parentNode, false);
 				}
 				// --------------------------------------------------------------------------------
 			}
 		
 		} else {
-			System.out.println("Could not create DefaultTableModel ("+startObjectClassName+")");
+			System.out.println(this.getClass().getName() + ": Can not create element for '"+startObjectClassName+"'!");
 		}
+		
+		// ---------------------------------------------------------------------
+		// --- Is the current ontology class a special case of Agent.GUI ? -----
+		Object specialClass = isAgentGUISpecialClass(startObjectPackage, startObjectClassName); 
+		if (specialClass!=null){
+			this.createOuterElement4AgentGUISpecialClass(startArgIndex, specialClass, parentNode, parentPanel);
+			
+		}
+		// ---------------------------------------------------------------------
 		
 	}	
 
@@ -1094,20 +1091,20 @@ public class DynForm extends JPanel {
 	 * @param dataItemVarType the data item var type
 	 * @param dataItemCardinality the data item cardinality
 	 * @param startObjectClassName the start object class name
-	 * @param tiefe the tiefe
+	 * @param tiefe the depth
 	 * @param parentPanel the parent panel
 	 * @param parentNode the parent node
 	 * @param addMultiple the add multiple
 	 * @return the default mutable tree node
 	 */
-	private DefaultMutableTreeNode createInnerElements(OntologySingleClassSlotDescription oscsd, String dataItemName, String dataItemVarType, String dataItemCardinality, String startObjectClassName, int tiefe, final JPanel parentPanel, DefaultMutableTreeNode parentNode, boolean addMultiple){
+	private DefaultMutableTreeNode createInnerElements(OntologySingleClassSlotDescription oscsd, String startObjectClassName, int tiefe, final JPanel parentPanel, DefaultMutableTreeNode parentNode, boolean addMultiple){
 		
 		// --- create a JPanel which will contain further inner classes and fields
 		final JPanel dataPanel = new JPanel();
 		dataPanel.setLayout(null);
 		int innerX  = 0;
 
-		// set the value of how much the panel shall be shifted (Einrückung)
+		// set the value of how much the panel shall be shifted to the left
 		if(tiefe > 1)
 			innerX = (einrueckungProUntereEbene*(tiefe-1));
 		else
@@ -1119,20 +1116,20 @@ public class DynForm extends JPanel {
 		// --- create two JLabels: first displays the field name
 		// --- the second displays the inner class name
 		JLabel valueFieldText = new JLabel();
-		valueFieldText.setText(dataItemName + " ["+dataItemVarType+"]");
+		valueFieldText.setText(oscsd.getSlotName() + " ["+oscsd.getSlotVarType()+"]");
 		valueFieldText.setBounds(new Rectangle(10, 5, 300, 16));
 		
 		dataPanel.add(valueFieldText, null);
 		this.setPanelBounds(dataPanel);
 
 		// --- Create node for this element/panel ----------------------------- 
-		DynType dynType = new DynType(oscsd, DynType.typeInnerClassType, startObjectClassName, dataPanel, dataItemName);
+		DynType dynType = new DynType(oscsd, DynType.typeInnerClassType, startObjectClassName, dataPanel, oscsd.getSlotName());
 		final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
 		parentNode.add(newNode);
 		//parentNode = newNode;
 		
 		// --- if the inner class has got a multi cardinality create an add-button		
-		if(dataItemCardinality.equals("multiple")) {
+		if(oscsd.getSlotCardinality().equals("multiple")) {
 
 			if (addMultiple==false) {
 				// --- Add an add Button to the panel ---------------
@@ -1166,7 +1163,7 @@ public class DynForm extends JPanel {
 		
 		// --- create the inner fields of the current inner class
 		OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClassName);
-		this.createGUI(osc, startObjectClassName, null, dataPanel, tiefe, newNode);
+		this.createGUI(osc, -1, tiefe, startObjectClassName, null, newNode, dataPanel);
 		
 		// --- set the correct height of the parent of this inner class according to the
 		// --- inner class's height
@@ -1182,35 +1179,70 @@ public class DynForm extends JPanel {
 	}
 
 	/**
+	 * Creates the outer element for a Agent.GUI special class.
+	 *
+	 * @param specialClass the special class
+	 * @param parentNode the parent node
+	 * @param parentPanel the parent panel
+	 */
+	private void createOuterElement4AgentGUISpecialClass(int startArgIndex, Object specialClass, DefaultMutableTreeNode parentNode, JPanel parentPanel){
+		
+		Rectangle feBounds = null; // --- firstElementBounds ---
+		
+		// ------------------------------------------------------------------------------
+		// --- Make all of the created panels invisible and reduce their height ---------
+		// ------------------------------------------------------------------------------
+		for (int i = 0; i < parentNode.getChildCount(); i++) {
+			DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) parentNode.getChildAt(i);
+			DynType dt = (DynType) childNode.getUserObject();
+			
+			if (feBounds==null) {
+				feBounds = dt.getPanel().getBounds();
+			}
+			dt.getPanel().setVisible(false);
+			dt.getPanel().setBounds(feBounds);
+			
+		}
+		
+		// ------------------------------------------------------------------------------
+		// --- Show the widget for the special type -------------------------------------
+		// ------------------------------------------------------------------------------
+		if (specialClass instanceof TimeSeries) {
+			// --- A TimeSeries has to be displayed -----------------
+			TimeSeriesWidget tsw = new TimeSeriesWidget(this, startArgIndex);
+			tsw.setBounds(feBounds.x, feBounds.y, feBounds.width, tsw.getHeight());
+			parentPanel.add(tsw);
+		}
+		
+		this.setPanelBounds(parentPanel);
+	}
+	
+	/**
 	 * This method creates the panels for fields which have no inner classes.
 	 *
-	 * @param oscsd the oscsd
-	 * @param dataItemName the data item name
-	 * @param dataItemVarType the data item var type
-	 * @param dataItemCardinality the data item cardinality
-	 * @param className the class name
-	 * @param tiefe the tiefe
+	 * @param oscsd the OntologySingleClassSlotDescription
+	 * @param tiefe the depth
 	 * @param parentPanel the parent panel
 	 * @param parentNode the parent node
 	 * @param addMultiple the add multiple
 	 * @return the default mutable tree node
 	 */
-	private DefaultMutableTreeNode createOuterElements(OntologySingleClassSlotDescription oscsd, String dataItemName, String dataItemVarType, String dataItemCardinality, String className, int tiefe, JPanel parentPanel, DefaultMutableTreeNode parentNode, boolean addMultiple){
+	private DefaultMutableTreeNode createOuterElements(OntologySingleClassSlotDescription oscsd, int tiefe, JPanel parentPanel, DefaultMutableTreeNode parentNode, boolean addMultiple){
 		
 		// --- this outer element has no parents which are inner classes
 		// --- so its added to the mainPanel
 		final JPanel dataPanel = new JPanel();
 		dataPanel.setLayout(null);
-		dataPanel.setToolTipText(dataItemName + "-Panel");
+		dataPanel.setToolTipText(oscsd.getSlotName() + "-Panel");
 		dataPanel.setBounds(new Rectangle(0, 0 , 350, 10));
 		
 		// --- add a JLabel to display the field's name
 		JLabel valueFieldText = new JLabel();
-		valueFieldText.setText(dataItemName + " ["+dataItemVarType+"]");
+		valueFieldText.setText(oscsd.getSlotName() + " ["+oscsd.getSlotVarType()+"]");
 		valueFieldText.setBounds(new Rectangle(0, 4, 130, 16));
 		
 		// --- valueFields (Textfield, Checkbox (for boolean) , ... )
-		JComponent valueDisplay = this.getVisualComponent(dataItemVarType);
+		JComponent valueDisplay = this.getVisualComponent(oscsd.getSlotVarType());
 		
 		// --- add both GUI elements to the panel
 		dataPanel.add(valueFieldText, null);
@@ -1218,12 +1250,12 @@ public class DynForm extends JPanel {
 		this.setPanelBounds(dataPanel);
 
 		// --- add node to parent -------------------------
-		DynType dynType = new DynType(oscsd, DynType.typeRawType, className, dataPanel, dataItemName, valueDisplay);
+		DynType dynType = new DynType(oscsd, DynType.typeRawType, oscsd.getSlotVarTypeCorrected(), dataPanel, oscsd.getSlotName(), valueDisplay);
 		final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType); 
 		parentNode.add(newNode);
 
 		// --- if the inner class has got a multiple cardinality create an add-button
-		if(dataItemCardinality.equals("multiple")) {
+		if(oscsd.getSlotCardinality().equals("multiple")) {
 			
 			if (addMultiple==false) {
 				// --- Add an add Button to the panel ---------------
@@ -1282,24 +1314,24 @@ public class DynForm extends JPanel {
 	 * @param depth the depth
 	 * @param node the node
 	 */
-	private void createOuterDeadEnd(OntologySingleClassSlotDescription oscsd, String dataItemName, String dataItemVarType, String dataItemCardinality, String className, JPanel pan, int depth, DefaultMutableTreeNode node){
+	private void createOuterDeadEnd(OntologySingleClassSlotDescription oscsd, String className, int depth, JPanel pan, DefaultMutableTreeNode node){
 		
 		// --- this outer element has no parents which are inner classes
 		// --- so its added to the mainPanel
 		final JPanel dataPanel = new JPanel();
 		dataPanel.setLayout(null);
-		dataPanel.setToolTipText(dataItemName + "-Panel");
+		dataPanel.setToolTipText(oscsd.getSlotName() + "-Panel");
 		
 		// --- add a JLabel to display the field's name
 		JLabel valueFieldText = new JLabel();
-		valueFieldText.setText("<html>" + dataItemName + " ["+dataItemVarType+"] - <b>" + Language.translate("Zyklisch !") + "</b></html>");
+		valueFieldText.setText("<html>" + oscsd.getSlotName() + " ["+oscsd.getSlotVarType()+"] - <b>" + Language.translate("Zyklisch !") + "</b></html>");
 		valueFieldText.setBounds(new Rectangle(0, 4, 330, 16));
 		
 		// --- add both GUI elements to the panel
 		dataPanel.add(valueFieldText, null);
 		this.setPanelBounds(dataPanel);
 		
-		DynType dynType = new DynType(oscsd, DynType.typeCyclic, className, dataPanel, dataItemName, null);
+		DynType dynType = new DynType(oscsd, DynType.typeCyclic, className, dataPanel, oscsd.getSlotName(), null);
 		node.add(new DefaultMutableTreeNode(dynType));
 		
 		// --- set the new position (increment the height) for the parent panel of the 
@@ -1328,12 +1360,12 @@ public class DynForm extends JPanel {
 			valueField = new JTextField();
 			valueField.setBounds(new Rectangle(140, 0, 170, 27));
 			
-		} else if(valueType.equals("float")){
+		} else if(valueType.equals("float") || valueType.equals("Float")){
 			valueField = new JTextField("0.0");
 			valueField.setBounds(new Rectangle(140, 0, 100, 26));
 			valueField.addKeyListener(this.numWatcherFloat);
 			
-		} else if(valueType.equals("int")){
+		} else if(valueType.equals("int") || valueType.equals("Integer")){
 			valueField = new JTextField(0);
 			valueField.setBounds(new Rectangle(140, 0, 100, 26));
 			valueField.addKeyListener(this.numWatcherInteger);
@@ -1359,9 +1391,6 @@ public class DynForm extends JPanel {
 		String clazz = dt.getClassName();
 		
 		OntologySingleClassSlotDescription oscsd = dt.getOntologySingleClassSlotDescription();
-		String dataItemName = oscsd.getSlotName();
-		String dataItemVarType = oscsd.getSlotVarType();
-		String dataItemCardinality = oscsd.getSlotCardinality();
 		
 		JPanel oldPanel = dt.getPanel();
 		JPanel parentPanel = (JPanel) oldPanel.getParent();
@@ -1375,9 +1404,9 @@ public class DynForm extends JPanel {
 		blindPanel.setLayout(null);
 		DefaultMutableTreeNode newNode = null;
 		if (isInnerClass==true) {
-			newNode = this.createInnerElements(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazz, depth2WorkOn+1, blindPanel, parentNode, true);
+			newNode = this.createInnerElements(oscsd, clazz, depth2WorkOn+1, blindPanel, parentNode, true);
 		} else {
-			newNode = this.createOuterElements(oscsd, dataItemName, dataItemVarType, dataItemCardinality, clazz, depth2WorkOn, blindPanel, parentNode, true);
+			newNode = this.createOuterElements(oscsd, depth2WorkOn, blindPanel, parentNode, true);
 		}
 		
 		// --- Place the node at the right position in the tree -------------------------
@@ -1396,7 +1425,11 @@ public class DynForm extends JPanel {
 		int xPos = oldPanel.getX();
 		int yPos = oldPanel.getY() + movement;
 		newPanel.setBounds(xPos, yPos, newPanel.getWidth(), newPanel.getHeight());
+		
+		// --- Add to parent panel ------------------------------------------------------
 		parentPanel.add(newPanel);
+		parentPanel.validate();
+		this.setPanelBounds(parentPanel);
 		
 		// --- Now move the rest of the elements on the form ----------------------------
 		this.moveAfterAddOrRemove(movement, newNode);
@@ -1426,9 +1459,13 @@ public class DynForm extends JPanel {
 		int movement = (deletePanel.getHeight() + 2) * (-1);
 		
 		// --- Remove node from the parent node and panel -------------------------------
-		parentPanel.remove(deletePanel);
 		node.setUserObject(null);
 		parentNode.remove(node);
+		
+		// --- remove the panel from the parent -----------------------------------------
+		parentPanel.remove(deletePanel);
+		parentPanel.validate();
+		this.setPanelBounds(parentPanel);
 		
 		// --- Now move the rest of the elements on the form ----------------------------
 		this.moveAfterAddOrRemove(movement, previousNode);
@@ -1452,9 +1489,15 @@ public class DynForm extends JPanel {
 		}
 		
 		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) node.getParent();
+		JPanel parentPanel = null;
+		if (parentNode.getUserObject() instanceof DynType) {
+			DynType dynType = (DynType) parentNode.getUserObject();
+			parentPanel = dynType.getPanel();
+		}
 		
 		int numOfChilds = parentNode.getChildCount();
 		int indexOfNextNode = parentNode.getIndex(node) + 1;
+		
 		for (int i = indexOfNextNode; i < numOfChilds; i++) {
 			
 			DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) parentNode.getChildAt(i);
@@ -1464,12 +1507,19 @@ public class DynForm extends JPanel {
 			movePanel.setBounds(movePanel.getX(), movePanel.getY()+movement, movePanel.getWidth(), movePanel.getHeight());
 			
 			JComponent parentComp = (JComponent) movePanel.getParent();
+			parentComp.validate();
 			if (parentComp instanceof JPanel) {
 				this.setPanelBounds((JPanel) parentComp);	
 			}
 			
 		}
 
+		// --- Configure size of parent panel -----------------------
+		if (parentPanel!=null) {
+			parentPanel.validate();
+			this.setPanelBounds(parentPanel);
+		}
+		
 		// --- do the same at the parent node -----------------------
 		this.moveAfterAddOrRemove(movement, parentNode);
 		
@@ -1499,6 +1549,45 @@ public class DynForm extends JPanel {
 		}
 	}
 	
+	
+	/**
+	 * Checks if the current class is a an Agent.GUI special 
+	 * class, like Formula or Chart.
+	 *
+	 * @param packageName the package name
+	 * @param objectType the object type
+	 * @return true, if the current request was for an Agent.GUI special class
+	 */
+	private Object isAgentGUISpecialClass(String packageName, String objectType) {
+
+		if (isRawType(objectType)==false) {
+			
+			String testReference = packageName + "." + objectType;
+			Class<?> testClass = null;
+			Object testObject = null; 
+			try {
+				testClass  = Class.forName(testReference);
+				testObject = testClass.newInstance();
+				
+			} catch (ClassNotFoundException e) {
+				//e.printStackTrace();
+			} catch (InstantiationException e) {
+				//e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				//e.printStackTrace();
+			}
+			
+			if (testObject!=null) {
+				if (testObject instanceof Chart) {
+					return testObject;
+				} else if (testObject instanceof Formula) {
+					return testObject;
+				}
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * This method checks if the type of the field is a raw type
 	 * (String, int, float, ...)
@@ -1506,16 +1595,20 @@ public class DynForm extends JPanel {
 	 * @param valueType the value type
 	 * @return true, if is special type
 	 */
-	private boolean isSpecialType(String valueType){
-		boolean flag = true;
+	private boolean isRawType(String valueType){
+		boolean flag = false;
 		if(valueType.equals("String")){
-			flag = false;
+			flag = true;
 		} else if(valueType.equals("float")){
-			flag = false;
+			flag = true;
+		} else if(valueType.equals("Float")){
+			flag = true;
 		} else if(valueType.equals("int")){
-			flag = false;
+			flag = true;
+		} else if(valueType.equals("Integer")){
+			flag = true;
 		} else if(valueType.equals("boolean")){
-			flag = false;
+			flag = true;
 		}
 		return flag;
 	}

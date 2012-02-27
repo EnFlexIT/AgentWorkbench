@@ -260,7 +260,7 @@ public class OntologyClassTreeObject extends Object {
 		Hashtable<String, String> ontoSlotHash = ontologyClass.ontologieVocabulary.getSlots(ontologySubClass);
 		ReflectClass reflectedClass = new ReflectClass(ontologySubClass, ontoSlotHash);
 
-		Vector<String> v = new Vector<String>( ontoSlotHash.keySet() );
+		Vector<String> v = new Vector<String>(ontoSlotHash.keySet());
 	    Collections.sort(v);
 	    Iterator<String> it = v.iterator();
 	    while (it.hasNext()) {

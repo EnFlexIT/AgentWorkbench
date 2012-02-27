@@ -213,6 +213,19 @@
             </value>
         </entry>
         <entry>
+            <key>n70</key>
+            <value>
+                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>n70</graphElementIDs>
+                <graphElementIDs>PP74</graphElementIDs>
+                <graphElementIDs>PP122</graphElementIDs>
+                <id>n70</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>Exit</type>
+            </value>
+        </entry>
+        <entry>
             <key>n71</key>
             <value>
                 <agentClassName>gasmas.agents.components.EntryAgent</agentClassName>

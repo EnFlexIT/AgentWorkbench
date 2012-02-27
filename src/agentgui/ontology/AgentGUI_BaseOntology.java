@@ -9,7 +9,7 @@ import jade.core.CaseInsensitiveString;
 
 /** file: AgentGUI_BaseOntology.java
  * @author ontology bean generator
- * @version 2011/06/28, 17:23:30
+ * @version 2012/02/25, 19:42:36
  */
 public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
   //NAME
@@ -25,16 +25,29 @@ public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
    // VOCABULARY
     public static final String SIMPLE_OBJECT_OBJECTVALUE="ObjectValue";
     public static final String SIMPLE_OBJECT="Simple_Object";
+    public static final String SIMPLE_STRING_STRINGVALUE="StringValue";
+    public static final String SIMPLE_STRING="Simple_String";
+    public static final String SIMPLE_FLOAT_FLOATVALUE="FloatValue";
+    public static final String SIMPLE_FLOAT="Simple_Float";
+    public static final String SIMPLE_INTEGER_INTEGERVALUE="IntegerValue";
+    public static final String SIMPLE_INTEGER="Simple_Integer";
+    public static final String NUMERICDATACOLUM_COLUMNDATA="columnData";
+    public static final String NUMERICDATACOLUM="NumericDataColum";
+    public static final String NUMERICDATATABLE_TABLEDATA="tableData";
+    public static final String NUMERICDATATABLE="NumericDataTable";
     public static final String FORMULA_FORMULA="formula";
     public static final String FORMULA="Formula";
     public static final String SIMPLE_BOOLEAN_BOOLEANVALUE="BooleanValue";
     public static final String SIMPLE_BOOLEAN="Simple_Boolean";
-    public static final String SIMPLE_INTEGER_INTEGERVALUE="IntegerValue";
-    public static final String SIMPLE_INTEGER="Simple_Integer";
-    public static final String SIMPLE_FLOAT_FLOATVALUE="FloatValue";
-    public static final String SIMPLE_FLOAT="Simple_Float";
-    public static final String SIMPLE_STRING_STRINGVALUE="StringValue";
-    public static final String SIMPLE_STRING="Simple_String";
+    public static final String CHART="Chart";
+    public static final String TIMESERIES_TIMEAXIS="timeAxis";
+    public static final String TIMESERIES_YAXISUNITS="yAxisUnits";
+    public static final String TIMESERIES_YAXISLINEWIDTH="yAxisLineWidth";
+    public static final String TIMESERIES_YAXISCOLORS="yAxisColors";
+    public static final String TIMESERIES_YAXISDATATABLE="yAxisDataTable";
+    public static final String TIMESERIES_YAXISDESCRIPTIONS="yAxisDescriptions";
+    public static final String TIMESERIES_TIMEFORMAT="timeFormat";
+    public static final String TIMESERIES="TimeSeries";
 
   /**
    * Constructor
@@ -44,16 +57,24 @@ public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
     try { 
 
     // adding Concept(s)
-    ConceptSchema simple_StringSchema = new ConceptSchema(SIMPLE_STRING);
-    add(simple_StringSchema, agentgui.ontology.Simple_String.class);
-    ConceptSchema simple_FloatSchema = new ConceptSchema(SIMPLE_FLOAT);
-    add(simple_FloatSchema, agentgui.ontology.Simple_Float.class);
-    ConceptSchema simple_IntegerSchema = new ConceptSchema(SIMPLE_INTEGER);
-    add(simple_IntegerSchema, agentgui.ontology.Simple_Integer.class);
+    ConceptSchema timeSeriesSchema = new ConceptSchema(TIMESERIES);
+    add(timeSeriesSchema, agentgui.ontology.TimeSeries.class);
+    ConceptSchema chartSchema = new ConceptSchema(CHART);
+    add(chartSchema, agentgui.ontology.Chart.class);
     ConceptSchema simple_BooleanSchema = new ConceptSchema(SIMPLE_BOOLEAN);
     add(simple_BooleanSchema, agentgui.ontology.Simple_Boolean.class);
     ConceptSchema formulaSchema = new ConceptSchema(FORMULA);
     add(formulaSchema, agentgui.ontology.Formula.class);
+    ConceptSchema numericDataTableSchema = new ConceptSchema(NUMERICDATATABLE);
+    add(numericDataTableSchema, agentgui.ontology.NumericDataTable.class);
+    ConceptSchema numericDataColumSchema = new ConceptSchema(NUMERICDATACOLUM);
+    add(numericDataColumSchema, agentgui.ontology.NumericDataColum.class);
+    ConceptSchema simple_IntegerSchema = new ConceptSchema(SIMPLE_INTEGER);
+    add(simple_IntegerSchema, agentgui.ontology.Simple_Integer.class);
+    ConceptSchema simple_FloatSchema = new ConceptSchema(SIMPLE_FLOAT);
+    add(simple_FloatSchema, agentgui.ontology.Simple_Float.class);
+    ConceptSchema simple_StringSchema = new ConceptSchema(SIMPLE_STRING);
+    add(simple_StringSchema, agentgui.ontology.Simple_String.class);
     ConceptSchema simple_ObjectSchema = new ConceptSchema(SIMPLE_OBJECT);
     add(simple_ObjectSchema, agentgui.ontology.Simple_Object.class);
 
@@ -65,16 +86,26 @@ public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
 
 
     // adding fields
-    simple_StringSchema.add(SIMPLE_STRING_STRINGVALUE, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    simple_FloatSchema.add(SIMPLE_FLOAT_FLOATVALUE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
-    simple_IntegerSchema.add(SIMPLE_INTEGER_INTEGERVALUE, (TermSchema)getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
+    timeSeriesSchema.add(TIMESERIES_TIMEFORMAT, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_YAXISDESCRIPTIONS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_YAXISDATATABLE, numericDataTableSchema, ObjectSchema.OPTIONAL);
+    timeSeriesSchema.add(TIMESERIES_YAXISCOLORS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_YAXISLINEWIDTH, (TermSchema)getSchema(BasicOntology.FLOAT), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_YAXISUNITS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_TIMEAXIS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
     simple_BooleanSchema.add(SIMPLE_BOOLEAN_BOOLEANVALUE, (TermSchema)getSchema(BasicOntology.BOOLEAN), ObjectSchema.OPTIONAL);
     formulaSchema.add(FORMULA_FORMULA, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    numericDataTableSchema.add(NUMERICDATATABLE_TABLEDATA, numericDataColumSchema, 0, ObjectSchema.UNLIMITED);
+    numericDataColumSchema.add(NUMERICDATACOLUM_COLUMNDATA, (TermSchema)getSchema(BasicOntology.FLOAT), 0, ObjectSchema.UNLIMITED);
+    simple_IntegerSchema.add(SIMPLE_INTEGER_INTEGERVALUE, (TermSchema)getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
+    simple_FloatSchema.add(SIMPLE_FLOAT_FLOATVALUE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
+    simple_StringSchema.add(SIMPLE_STRING_STRINGVALUE, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
     simple_ObjectSchema.add(SIMPLE_OBJECT_OBJECTVALUE, new ConceptSchema("Concept"), ObjectSchema.OPTIONAL);
 
     // adding name mappings
 
     // adding inheritance
+    timeSeriesSchema.addSuperSchema(chartSchema);
 
    }catch (java.lang.Exception e) {e.printStackTrace();}
   }

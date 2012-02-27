@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: Simple_Float
 * @author ontology bean generator
-* @version 2011/06/28, 17:23:30
+* @version 2012/02/25, 19:42:36
 */
 public class Simple_Float implements Concept {
 

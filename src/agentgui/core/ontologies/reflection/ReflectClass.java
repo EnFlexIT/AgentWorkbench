@@ -106,26 +106,20 @@ public class ReflectClass extends Object {
 		
 		/** The slot name. */
 		private String slotName;
-		
 		/** The method list, stored in a Hashtable. */
 		public Hashtable<String, Method> MethodList = new Hashtable<String, Method>();
-		
 		/** The number of the methods found. */
 		public int N_Methods;
-		
 		/** The Cardinality ("single" or "multiple"). */
 		public String Cardinality = null;
-		
 		/** The type of the variable. */
 		public String VarType = null;
-		
 		/** The Other facts, which are usually free, but displayed in Protégé. */
 		public String OtherFacts = null;
 		
 		
 		/**
 		 * Initialise this Sub-Class.
-		 *
 		 * @param currSlot the curr slot
 		 */
 		public Slot(String currSlot) {
@@ -135,7 +129,6 @@ public class ReflectClass extends Object {
 		
 		/**
 		 * returns the name of the current slot.
-		 *
 		 * @return the string
 		 */
 		public String toString(){
@@ -153,7 +146,11 @@ public class ReflectClass extends Object {
 			// --- Beschreibungsparameter ermitteln -----------------
 			N_Methods = MethodList.size();
 			Method singleMethod;
-			if ( N_Methods == 2 ) {
+			if ( N_Methods <2 ) {
+				Cardinality = "empty";
+				VarType = "";
+				
+			} else  if ( N_Methods == 2 ) {
 				// --- "einfache" Variablen mit Getter und Setter ---
 				Cardinality = "single";
 				singleMethod = MethodList.get( "get" + slotName.toLowerCase() );				

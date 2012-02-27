@@ -1,4 +1,4 @@
-; Thu Oct 06 20:12:10 CEST 2011
+; Sat Feb 25 19:58:01 CET 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7,16 +7,43 @@
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
+	(single-slot yAxisDataTable
+		(type INSTANCE)
+;+		(allowed-classes NumericDataTable)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot StringValue
 		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot FloatValue
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot IntegerValue
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot FloatValue
-		(type FLOAT)
+	(single-slot xAxisDescriptions
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot timeFormat
+		(type STRING)
+		(create-accessor read-write))
+	(multislot yAxisDescriptions
+		(type STRING)
+		(create-accessor read-write))
+	(single-slot graphDataType
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot tableData
+		(type INSTANCE)
+;+		(allowed-classes NumericDataColum)
+		(create-accessor read-write))
+	(single-slot formula
+		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot BooleanValue
@@ -29,9 +56,20 @@
 ;+		(allowed-classes)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot formula
+	(multislot columnData
+		(type FLOAT)
+		(create-accessor read-write))
+	(multislot yAxisColors
 		(type STRING)
-;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot yAxisLineWidth
+		(type FLOAT)
+		(create-accessor read-write))
+	(multislot yAxisUnits
+		(type STRING)
+		(create-accessor read-write))
+	(multislot timeAxis
+		(type STRING)
 		(create-accessor read-write)))
 
 (defclass Formula
@@ -82,4 +120,50 @@
 		(type SYMBOL)
 		(allowed-values FALSE TRUE)
 ;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Chart
+	(is-a Concept)
+	(role concrete))
+
+(defclass TimeSeries
+	(is-a Chart)
+	(role concrete)
+	(multislot timeFormat
+		(type STRING)
+		(create-accessor read-write))
+	(multislot yAxisDescriptions
+		(type STRING)
+		(create-accessor read-write))
+	(single-slot yAxisDataTable
+		(type INSTANCE)
+;+		(allowed-classes NumericDataTable)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot yAxisColors
+		(type STRING)
+		(create-accessor read-write))
+	(multislot yAxisLineWidth
+		(type FLOAT)
+		(create-accessor read-write))
+	(multislot yAxisUnits
+		(type STRING)
+		(create-accessor read-write))
+	(multislot timeAxis
+		(type STRING)
+		(create-accessor read-write)))
+
+(defclass NumericDataTable
+	(is-a Concept)
+	(role concrete)
+	(multislot tableData
+		(type INSTANCE)
+;+		(allowed-classes NumericDataColum)
+		(create-accessor read-write)))
+
+(defclass NumericDataColum
+	(is-a Concept)
+	(role concrete)
+	(multislot columnData
+		(type FLOAT)
 		(create-accessor read-write)))

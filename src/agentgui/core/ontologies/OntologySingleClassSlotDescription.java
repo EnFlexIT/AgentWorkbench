@@ -45,6 +45,7 @@ public class OntologySingleClassSlotDescription {
 	private String slotCardinality = null;
 	private boolean slotCardinalityIsMultiple = false;
 	private String slotVarType = null;
+	private String slotVarTypeCorrected = null;
 	private String slotOtherFacts = null;
 
 	private Hashtable<String, Method> methodList = null;
@@ -71,7 +72,7 @@ public class OntologySingleClassSlotDescription {
 		} else {
 			this.slotCardinalityIsMultiple = false;
 		}		
-		this.slotVarType = currSlotVarType;
+		this.setSlotVarType(currSlotVarType);
 		this.slotOtherFacts = otherFacts;
 	}
 
@@ -104,16 +105,13 @@ public class OntologySingleClassSlotDescription {
 	
 	/**
 	 * Gets the slot name.
-	 *
 	 * @return the slotName
 	 */
 	public String getSlotName() {
 		return slotName;
 	}
-	
 	/**
 	 * Sets the slot name.
-	 *
 	 * @param slotName the slotName to set
 	 */
 	public void setSlotName(String slotName) {
@@ -122,16 +120,13 @@ public class OntologySingleClassSlotDescription {
 
 	/**
 	 * Gets the slot cardinality.
-	 *
 	 * @return the slotCardinality
 	 */
 	public String getSlotCardinality() {
 		return slotCardinality;
 	}
-	
 	/**
 	 * Sets the slot cardinality.
-	 *
 	 * @param slotCardinality the slotCardinality to set
 	 */
 	public void setSlotCardinality(String slotCardinality) {
@@ -145,16 +140,13 @@ public class OntologySingleClassSlotDescription {
 
 	/**
 	 * Checks if is slot cardinality is multiple.
-	 *
 	 * @return the slotCardinalityIsMultiple
 	 */
 	public boolean isSlotCardinalityIsMultiple() {
 		return slotCardinalityIsMultiple;
 	}
-	
 	/**
 	 * Sets the slot cardinality is multiple.
-	 *
 	 * @param slotCardinalityIsMultiple the slotCardinalityIsMultiple to set
 	 */
 	public void setSlotCardinalityIsMultiple(boolean slotCardinalityIsMultiple) {
@@ -168,34 +160,53 @@ public class OntologySingleClassSlotDescription {
 
 	/**
 	 * Gets the slot variable type.
-	 *
 	 * @return the slotVarType
 	 */
 	public String getSlotVarType() {
 		return slotVarType;
 	}
-	
 	/**
 	 * Sets the slot variable type.
-	 *
 	 * @param slotVarType the slotVarType to set
 	 */
 	public void setSlotVarType(String slotVarType) {
+		
 		this.slotVarType = slotVarType;
+		
+		String checkSlotVarType = slotVarType;
+		if(checkSlotVarType.matches("Instance of (.)*")){
+			checkSlotVarType = checkSlotVarType.substring(12);	
+		}
+		if (checkSlotVarType.equalsIgnoreCase("aid")) {
+			checkSlotVarType = OntologyClassTree.BaseClassAID;
+		}
+		this.slotVarTypeCorrected = checkSlotVarType;
+	}
+
+	/**
+	 * Sets the slot var type corrected.
+	 * @param slotVarTypeCorrected the new slot var type corrected
+	 */
+	public void setSlotVarTypeCorrected(String slotVarTypeCorrected) {
+		this.slotVarTypeCorrected = slotVarTypeCorrected;
+	}
+	/**
+	 * Gets the slot var type corrected.
+	 * @return the slot var type corrected
+	 */
+	public String getSlotVarTypeCorrected() {
+		return slotVarTypeCorrected;
 	}
 
 	/**
 	 * Gets the slot other facts.
-	 *
 	 * @return the slotOtherFacts
 	 */
 	public String getSlotOtherFacts() {
 		return slotOtherFacts;
 	}
-	
 	/**
 	 * Sets the slot other facts.
-	 *
 	 * @param slotOtherFacts the slotOtherFacts to set
 	 */
 	public void setSlotOtherFacts(String slotOtherFacts) {
@@ -204,16 +215,13 @@ public class OntologySingleClassSlotDescription {
 	
 	/**
 	 * Sets the slot method list.
-	 *
 	 * @param methodList the methodList to set
 	 */
 	public void setSlotMethodList(Hashtable<String, Method> methodList) {
 		this.methodList = methodList;
 	}
-	
 	/**
 	 * Gets the slot method list.
-	 *
 	 * @return the methodList
 	 */
 	public Hashtable<String, Method> getSlotMethodList() {
