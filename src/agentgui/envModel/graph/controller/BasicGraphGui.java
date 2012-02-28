@@ -34,6 +34,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Shape;
@@ -43,6 +44,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,12 +58,20 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.apache.commons.collections15.Transformer;
 
+import agentgui.core.application.Application;
+import agentgui.core.gui.imaging.ImageFileView;
+import agentgui.core.gui.imaging.ConfigurableFileFilter;
+import agentgui.core.gui.imaging.ImagePreview;
+import agentgui.core.gui.imaging.ImageUtils;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
@@ -853,6 +864,121 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 	}
 
+	
+	/**
+	 * Export the current graph as image by using a file selection dialog.
+	 */
+	private void exportAsImage() {
+		
+		String currentFolder = null;
+		if (Application.RunInfo!=null) {
+			// --- Get the last selected folder of Agent.GUI ---
+			currentFolder = Application.RunInfo.getLastSelectedFolderAsString();	
+		}
+		
+		// --- Create instance of JFileChooser ----------------- 
+		JFileChooser jfc = new JFileChooser(); 
+		jfc.setMultiSelectionEnabled(false);
+		jfc.setAcceptAllFileFilterUsed(false);
+		
+		// --- Add custom icons for file types. ----------------
+        jfc.setFileView(new ImageFileView());
+	    // --- Add the preview pane. ---------------------------
+        jfc.setAccessory(new ImagePreview(jfc));
+		
+        
+		// --- Set the file filter -----------------------------
+        String[] extensionsJPEG = {ImageUtils.jpg,ImageUtils.jpeg};
+        
+        ConfigurableFileFilter filterJPG = new ConfigurableFileFilter(extensionsJPEG, "JPEG - Image");
+        ConfigurableFileFilter filterPNG = new ConfigurableFileFilter(ImageUtils.png, "PNG - File");
+        ConfigurableFileFilter filterGIF = new ConfigurableFileFilter(ImageUtils.gif ,"GIF - Image");
+		
+        jfc.addChoosableFileFilter(filterGIF);
+		jfc.addChoosableFileFilter(filterJPG);
+		jfc.addChoosableFileFilter(filterPNG);
+
+		jfc.setFileFilter(filterPNG);
+		
+
+		// --- Maybe set the current directory ----------------- 
+		if (currentFolder!=null) {
+			jfc.setCurrentDirectory(new File(currentFolder));	
+		}
+        
+		// === Show dialog and wait on user action =============
+        int state = jfc.showSaveDialog(this); 
+		if (state==JFileChooser.APPROVE_OPTION) {
+		
+			ConfigurableFileFilter cff = (ConfigurableFileFilter) jfc.getFileFilter();
+			String selectedExtension = cff.getFileExtension()[0];
+			String mustExtension = "." + selectedExtension;
+					
+			File selectedFile = jfc.getSelectedFile();
+			if (selectedFile!=null) {
+				String selectedPath = selectedFile.getAbsolutePath();
+				if (selectedPath.endsWith(mustExtension)==false) {
+					selectedPath = selectedPath + mustExtension;
+				}
+				// ---------------------------------------------
+				// --- Export current display to image ---------
+				// ---------------------------------------------
+				this.exportAsImage(this.getVisView(), selectedPath, selectedExtension);	
+				// ---------------------------------------------
+				
+				if (Application.RunInfo!=null) {
+					Application.RunInfo.setLastSelectedFolder(jfc.getCurrentDirectory());
+				}	
+			}
+		} // end APPROVE_OPTION
+		
+	}
+	
+	/**
+	 * Export the current graph as image by using specified parameters. 
+	 *
+	 * @param vv the VisualizationViewer
+	 * @param file the current file to export to
+	 */
+	private void exportAsImage(VisualizationViewer<GraphNode, GraphEdge> vv, String path2File, String extension) {
+		
+		// --- If the VisualizationViewer is null ---------
+		if (vv==null) {
+			return;
+		}
+		// --- Overwrite existing file ? ------------------
+		File writeFile = new File(path2File);
+		if (writeFile.exists()) {
+			String msgHead = "Overwrite?";
+			String msgText = "Overwrite existing file?";
+			int msgAnswer  =  JOptionPane.showInternalConfirmDialog( this, msgText, msgHead, JOptionPane.YES_NO_OPTION);
+			if (msgAnswer==JOptionPane.NO_OPTION) {
+				return;  
+			}
+		}
+
+		// --- Lets go ! ----------------------------------
+		int width = vv.getSize().width;
+		int height = vv.getSize().height;
+
+		BufferedImage bi = new BufferedImage(width,height,BufferedImage.TYPE_INT_BGR);
+		Graphics2D graphics = bi.createGraphics();
+		graphics.fillRect(0,0, width, height);
+		
+		//vv.setDoubleBuffered(false);
+		vv.paint(graphics);
+		vv.paintComponents(graphics);
+		//vv.setDoubleBuffered(true);
+		
+		try{
+			ImageIO.write(bi, extension, writeFile);
+			
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+	
 	/**
 	 * Controls the shape, size, and aspect ratio for each vertex.
 	 * 
@@ -1068,6 +1194,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 				
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Out:
 				this.getScalingControl().scale(visView, 1 / 1.1f, this.getDefaultScaleAtPoint());
+				break;
+			
+			case NetworkModelNotification.NETWORK_MODEL_ExportGraphAsImage:
+				this.exportAsImage();
 				break;
 				
 			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking:

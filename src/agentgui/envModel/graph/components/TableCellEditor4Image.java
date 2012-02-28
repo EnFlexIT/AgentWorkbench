@@ -47,7 +47,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.PathHandling;
 import agentgui.core.gui.imaging.ImageFileView;
-import agentgui.core.gui.imaging.ImageFilter;
+import agentgui.core.gui.imaging.ImageFilterAll;
 import agentgui.core.gui.imaging.ImagePreview;
 import agentgui.core.project.Project;
 
@@ -196,7 +196,7 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 			
 			// --- Set up the dialog that the button brings up. -----
 	        fileChooser = new JFileChooser();
-	        fileChooser.addChoosableFileFilter(new ImageFilter());
+	        fileChooser.addChoosableFileFilter(new ImageFilterAll());
 	        fileChooser.setAcceptAllFileFilterUsed(false);
 
 		    // --- Add custom icons for file types. -----------------

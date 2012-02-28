@@ -69,6 +69,7 @@ public class BasicGraphGuiTools implements ActionListener {
     private JButton jButtonZoomOne2One = null;
     private JButton jButtonZoomIn = null;
     private JButton jButtonZoomOut = null;
+    private JButton jButtonSaveImage = null;
     private JToggleButton jToggleMouseTransforming = null;
     private JToggleButton jToggleMousePicking = null;
     private JButton jButtonAddComponent = null;
@@ -108,24 +109,9 @@ public class BasicGraphGuiTools implements ActionListener {
 		    jToolBar.setOrientation(JToolBar.VERTICAL);
 		    jToolBar.setFloatable(false);
 		    jToolBar.setPreferredSize(new Dimension(40, 380));
-	
+
 		    jToolBar.add(getJButtonComponents());
-		    jToolBar.addSeparator();
-	
-		    jToolBar.add(getJButtonZoomFit2Window());
-		    jToolBar.add(getJButtonZoomOne2One());
-		    
-		    jToolBar.add(getJButtonZoomIn());
-		    jToolBar.add(getJButtonZoomOut());
-	
-		    jToolBar.addSeparator();
-		    jToolBar.add(getJToggleMousePicking());
-		    jToolBar.add(getJToggleMouseTransforming());
-		    
-		    ButtonGroup bg = new ButtonGroup();
-		    bg.add(getJToggleMousePicking());
-		    bg.add(getJToggleMouseTransforming());
-	
+
 		    // --- In case of editing the simulation setup ----------
 		    if (this.graphController.getProject() != null) {
 				jToolBar.addSeparator();
@@ -133,12 +119,32 @@ public class BasicGraphGuiTools implements ActionListener {
 				jToolBar.add(getJButtonRemoveComponent());
 				jToolBar.add(getJButtonMergeNodes());
 				jToolBar.add(getJButtonSplitNode());
-		
-				jToolBar.addSeparator();
-				jToolBar.add(getJButtonClearGraph());
-				jToolBar.addSeparator();
-				jToolBar.add(getJButtonImportGraph());
 		    }
+		    
+		    jToolBar.addSeparator();
+		    jToolBar.add(getJToggleMousePicking());
+		    jToolBar.add(getJToggleMouseTransforming());
+
+		    ButtonGroup bg = new ButtonGroup();
+		    bg.add(getJToggleMousePicking());
+		    bg.add(getJToggleMouseTransforming());
+		    
+		    jToolBar.addSeparator();
+		    jToolBar.add(getJButtonZoomFit2Window());
+		    jToolBar.add(getJButtonZoomOne2One());
+		    jToolBar.add(getJButtonSaveImage());
+		    jToolBar.add(getJButtonZoomIn());
+		    jToolBar.add(getJButtonZoomOut());
+	
+
+		    // --- In case of editing the simulation setup ----------
+		    if (this.graphController.getProject() != null) {
+		    	jToolBar.addSeparator();
+				jToolBar.add(getJButtonImportGraph());
+		    	jToolBar.addSeparator();
+				jToolBar.add(getJButtonClearGraph());
+		    }
+		    
 		}
 		return jToolBar;
     }
@@ -231,6 +237,21 @@ public class BasicGraphGuiTools implements ActionListener {
 		    jButtonZoomOut.addActionListener(this);
 		}
 		return jButtonZoomOut;
+    }
+    
+    /**
+     * This method initializes jButtonSaveImage
+     * @return javax.swing.JButton
+     */
+    private JButton getJButtonSaveImage() {
+		if (jButtonSaveImage == null) {
+			jButtonSaveImage = new JButton();
+			jButtonSaveImage.setIcon(new ImageIcon(getClass().getResource(pathImage + "SaveAsImage.png")));
+			jButtonSaveImage.setPreferredSize(jButtonSize);
+			jButtonSaveImage.setToolTipText(Language.translate("Als Bild exportieren"));
+			jButtonSaveImage.addActionListener(this);
+		}
+		return jButtonSaveImage;
     }
 
     /**
@@ -497,6 +518,11 @@ public class BasicGraphGuiTools implements ActionListener {
 			// --- Button Zoom out ----------------------------------
 			this.graphController.getNetworkModelAdapter().zoomOut();
 
+		} else if (ae.getSource() == getJButtonSaveImage()) {
+			// ------------------------------------------------------
+			// --- Save graph as Image ------------------------------
+			this.graphController.getNetworkModelAdapter().saveAsImage();
+			
 		} else if (ae.getSource() == getJToggleMouseTransforming()) {
 			// ------------------------------------------------------
 			// --- Button Transforming Mouse mode -------------------

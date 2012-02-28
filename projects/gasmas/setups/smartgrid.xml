@@ -109,6 +109,12 @@
             <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
             <startAsName>n69</startAsName>
         </agent>
+        <agent>
+            <postionNo>18</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n75</startAsName>
+        </agent>
     </agentSetup>
     <environmentFileName>SmartGrid.graphml</environmentFileName>
 </simulationSetup>

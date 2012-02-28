@@ -416,7 +416,7 @@ public class NetworkModel implements Cloneable, Serializable {
 
 	/**
 	 * Removes the network components if not in list.
-	 * @param networkComponentIDs the network components
+	 * @param networkComponents the network components
 	 */
 	public HashSet<NetworkComponent> removeNetworkComponentsInverse(HashSet<NetworkComponent> networkComponents) {
 		
@@ -873,8 +873,8 @@ public class NetworkModel implements Cloneable, Serializable {
 
 	/**
 	 * Checks if is free node.
-	 * 
-	 * @param object the object
+	 *
+	 * @param graphNode the GraphNode
 	 * @return true, if is free node
 	 */
 	public boolean isFreeGraphNode(GraphNode graphNode) {

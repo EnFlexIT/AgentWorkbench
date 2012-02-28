@@ -728,7 +728,6 @@ public class ImageHelper {
 	 *
 	 * @param list the list
 	 * @param node the node
-	 * @return True or false
 	 */
 	public void addToList(ArrayList	<agentgui.envModel.p2Dsvg.imageProcessing.StepNode> list,	agentgui.envModel.p2Dsvg.imageProcessing.StepNode node)
 	{

@@ -53,6 +53,7 @@ public class NetworkModelNotification {
 	public static final int NETWORK_MODEL_GraphMouse_Picking = 13;
 	public static final int NETWORK_MODEL_GraphMouse_Transforming = 14;
 
+	public static final int NETWORK_MODEL_ExportGraphAsImage = 15;
 	
 	/** The reason. */
 	private int reason = 0;

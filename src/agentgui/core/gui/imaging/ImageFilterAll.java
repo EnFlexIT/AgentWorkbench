@@ -27,46 +27,42 @@
  */
 package agentgui.core.gui.imaging;
 
+
 import java.io.File;
-import javax.swing.ImageIcon;
+
+import javax.swing.filechooser.FileFilter;
 
 /**
- * Utility functions used by the Image file chooser dialog
+ * ImageFilter implements the accept method so that it accepts all directories 
+ * and any file that has a .png, .jpg, .jpeg, .gif, .tif, or .tiff filename extension.
  * 
  * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
  */
-public class ImageUtils {
-	 
-	public final static String jpeg = "jpeg";
-	public final static String jpg = "jpg";
-    public final static String gif = "gif";
-    public final static String png = "png";
+public class ImageFilterAll extends FileFilter {
 
-    /**
-     * Get the extension of a file.
-     */
-    public static String getExtension(File f) {
-        String ext = null;
-        String s = f.getName();
-        int i = s.lastIndexOf('.');
-
-        if (i > 0 &&  i < s.length() - 1) {
-            ext = s.substring(i+1).toLowerCase();
+    //Accept all directories and all gif, jpg, tiff, or png files.
+    public boolean accept(File f) {
+        
+    	if (f.isDirectory()) {
+            return true;
         }
-        return ext;
+        String extension = ImageUtils.getExtension(f);
+        if (extension != null) {
+            if (extension.equals(ImageUtils.gif) ||
+                extension.equals(ImageUtils.jpeg) ||
+                extension.equals(ImageUtils.jpg) ||
+                extension.equals(ImageUtils.png)) {
+                    return true;
+            } else {
+                return false;
+            }
+        }
+
+        return false;
     }
 
-    /** 
-     * Returns an ImageIcon, or null if the path was invalid. 
-     */
-    protected static ImageIcon createImageIcon(String path) {
-        java.net.URL imgURL = ImageUtils.class.getResource(path);
-        if (imgURL != null) {
-            return new ImageIcon(imgURL);
-        } else {
-           // System.err.println("Couldn't find file: " + path);
-            return null;
-        }
+    //The description of this filter
+    public String getDescription() {
+        return "Images (*.png, *.jpg, *.jpeg, *.gif)";
     }
-    
 }

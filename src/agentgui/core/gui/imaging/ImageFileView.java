@@ -44,10 +44,9 @@ public class ImageFileView extends FileView {
 	
 	private final String pathImage = GraphGlobals.getPathImages(); 
 	
-    private ImageIcon jpgIcon = ImageUtils.createImageIcon(pathImage +  "jpgIcon.gif");
-    private ImageIcon gifIcon = ImageUtils.createImageIcon(pathImage +  "gifIcon.gif");
-    private ImageIcon tiffIcon = ImageUtils.createImageIcon(pathImage + "tiffIcon.gif");
-    private ImageIcon pngIcon = ImageUtils.createImageIcon(pathImage +  "pngIcon.png");
+    private ImageIcon jpgIcon = ImageUtils.createImageIcon(pathImage +  "ImageIconJPG.gif");
+    private ImageIcon gifIcon = ImageUtils.createImageIcon(pathImage +  "ImageIconGIF.gif");
+    private ImageIcon pngIcon = ImageUtils.createImageIcon(pathImage +  "ImageIconPNG.gif");
 
     public String getName(File f) {
         return null; //let the L&F FileView figure this out
@@ -71,9 +70,6 @@ public class ImageFileView extends FileView {
                 type = "JPEG Image";
             } else if (extension.equals(ImageUtils.gif)){
                 type = "GIF Image";
-            } else if (extension.equals(ImageUtils.tiff) ||
-                       extension.equals(ImageUtils.tif)) {
-                type = "TIFF Image";
             } else if (extension.equals(ImageUtils.png)){
                 type = "PNG Image";
             }
@@ -91,9 +87,6 @@ public class ImageFileView extends FileView {
                 icon = jpgIcon;
             } else if (extension.equals(ImageUtils.gif)) {
                 icon = gifIcon;
-            } else if (extension.equals(ImageUtils.tiff) ||
-                       extension.equals(ImageUtils.tif)) {
-                icon = tiffIcon;
             } else if (extension.equals(ImageUtils.png)) {
                 icon = pngIcon;
             }

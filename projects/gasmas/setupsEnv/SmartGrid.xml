@@ -227,6 +227,19 @@
             </value>
         </entry>
         <entry>
+            <key>n75</key>
+            <value>
+                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>PP44</graphElementIDs>
+                <graphElementIDs>PP37</graphElementIDs>
+                <graphElementIDs>n75</graphElementIDs>
+                <id>n75</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>Exit</type>
+            </value>
+        </entry>
+        <entry>
             <key>n35</key>
             <value>
                 <directed>false</directed>

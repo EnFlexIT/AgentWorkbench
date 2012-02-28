@@ -37,6 +37,7 @@ de;Alle Objekte löschen;Delete all objects
 de;Alle Ontologien;All ontologies
 de;Alle Rechte vorbehalten.;All rights reserved.
 de;Allgemein;General;;;
+de;Als Bild exportieren;Export as image;;;
 de;Alter Wert:;Old value:
 de;An Fenster anpassen;Fit to window;;;
 de;Ansicht:;View:
@@ -130,7 +131,7 @@ de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured f
 de;Externe jar-Ressourcen;External jar resources;;;
 de;Extras;Extras
 de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!
-de;Fehlende Auswahl !;;;;
+de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
 de;Fehlende Ontologie-Auswahl !;Missing ontology selection!
 de;Fehler - '@';Error – '@'
@@ -451,7 +452,7 @@ de;Wollen Sie das aktuelle Setup wirklich löschen?;Do you want to delete the cur
 de;Wörterbuch;Dictionary
 de;XML-Dateien;XML files
 de;XML;XML
-de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologie aus!;;;;
+de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
 de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agents project .
 de;Zurücksetzen;Reset
 de;Zyklisch !;Cyclic!

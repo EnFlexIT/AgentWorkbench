@@ -215,6 +215,14 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	}
 	
 	/**
+	 * Save the current graph as image.
+	 */
+	public void saveAsImage() {
+		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ExportGraphAsImage);
+		this.notifyObserver(notification);
+	}
+	
+	/**
 	 * Sets the graph mouse to transforming mode.
 	 */
 	public void setGraphMouseTransforming(){
@@ -511,6 +519,5 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	public ArrayList<String> getOuterNetworkComponentIDs() {
 		return this.graphController.getNetworkModel().getOuterNetworkComponentIDs();
 	}
-	
 
 }

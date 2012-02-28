@@ -336,7 +336,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			// --- Ontologie entfernen ------------------------------
 			if ( OntoTree.isSelectionEmpty() ) {
 				MsgHead = Language.translate("Fehlende Auswahl !");
-				MsgText = Language.translate("Zum Löschen, wählen Sie bitte eine der dargestellten Ontologie aus!");			
+				MsgText = Language.translate("Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!");			
 				JOptionPane.showInternalMessageDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}

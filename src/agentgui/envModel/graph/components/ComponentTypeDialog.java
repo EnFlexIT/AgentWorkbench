@@ -168,7 +168,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	/**
 	 * This is the default constructor.
 	 *
-	 * @param currentCTS the current HashMap with the ComponentTypeSettings
+	 * @param graphSettings the graph settings
 	 * @param project the current project
 	 */
 	public ComponentTypeDialog(GeneralGraphSettings4MAS graphSettings, Project project) {

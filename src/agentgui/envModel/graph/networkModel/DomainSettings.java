@@ -131,7 +131,7 @@ public class DomainSettings implements Serializable {
 	}
 	/**
 	 * Sets the vertex color for a picked vertex.
-	 * @param vertexColor the vertexColor to set
+	 * @param vertexColorPicked the vertexColor to set, if a vertex is picked
 	 */
 	public void setVertexColorPicked(String vertexColorPicked) {
 		this.vertexColorPicked = vertexColorPicked;

@@ -205,13 +205,15 @@ public class ComponentTypeSettings implements Serializable, Cloneable {
 	}
 	
 	/**
-	 * @param showLable the showLable to set
+	 * Sets the show label.
+	 * @param showLabel the new show label
 	 */
 	public void setShowLabel(boolean showLabel) {
 		this.showLabel = showLabel;
 	}
 	/**
-	 * @return the showLable
+	 * Checks if is show label.
+	 * @return true, if the label has to be displayed
 	 */
 	public boolean isShowLabel() {
 		return showLabel;

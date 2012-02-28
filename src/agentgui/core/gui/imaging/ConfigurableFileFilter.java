@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -28,44 +29,63 @@
 package agentgui.core.gui.imaging;
 
 
-
 import java.io.File;
 
-import javax.swing.filechooser.FileFilter;
 
 /**
  * ImageFilter implements the accept method so that it accepts all directories 
  * and any file that has a .png, .jpg, .jpeg, .gif, .tif, or .tiff filename extension.
+ * 
  * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
- *
  */
-public class ImageFilter extends FileFilter {
+public class ConfigurableFileFilter extends AbstractFileFilter {
 
-    //Accept all directories and all gif, jpg, tiff, or png files.
-    public boolean accept(File f) {
-        if (f.isDirectory()) {
+    /**
+     * Instantiates a new image filter.
+     *
+     * @param allowedFileExtension the allowed file extension
+     * @param fileDescription the file description
+     */
+    public ConfigurableFileFilter(String allowedFileExtension, String fileDescription) {
+		super(allowedFileExtension, fileDescription);
+	}
+    /**
+     * Instantiates a new image filter.
+     *
+     * @param allowedFileExtension the allowed file extension
+     * @param fileDescription the file description
+     */
+    public ConfigurableFileFilter(String[] allowedFileExtension, String fileDescription) {
+		super(allowedFileExtension, fileDescription);
+	}
+    
+    
+	/* (non-Javadoc)
+	 * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
+	 */
+	public boolean accept(File f) {
+    	if (f.isDirectory()) {
             return true;
         }
-
         String extension = ImageUtils.getExtension(f);
-        if (extension != null) {
-            if (extension.equals(ImageUtils.tiff) ||
-                extension.equals(ImageUtils.tif) ||
-                extension.equals(ImageUtils.gif) ||
-                extension.equals(ImageUtils.jpeg) ||
-                extension.equals(ImageUtils.jpg) ||
-                extension.equals(ImageUtils.png)) {
-                    return true;
-            } else {
-                return false;
-            }
+        if (extension==null) {
+        	return false;
+        } else {
+        	for (int i = 0; i < this.getFileExtension().length; i++) {
+	        	String checkExtension = this.getFileExtension()[i];
+	        	if (extension.equals(checkExtension)) {
+	        		return true;
+	        	}
+			}
+        	return false;
         }
-
-        return false;
     }
 
-    //The description of this filter
+    /* (non-Javadoc)
+     * @see javax.swing.filechooser.FileFilter#getDescription()
+     */
     public String getDescription() {
-        return "Just Images";
+        return this.getFileDescription();
     }
+    
 }

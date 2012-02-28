@@ -61,9 +61,10 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
     int clickCountToStart = 1;
 
     /**
-     * Constructor of this class
+     * Constructor of this class.
      *
-     * @param table the table
+     * @param graphController the current GraphEnvironmentController
+     * @param componentsTable the components table
      */
     public TableCellEditor4TableButton(GraphEnvironmentController graphController, JTable componentsTable) {
     	this.graphController = graphController;
