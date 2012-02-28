@@ -341,7 +341,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 			gridBagConstraints3.insets = new Insets(30, 10, 0, 0);
 			
 			jLabelCopyright1 = new JLabel();
-			jLabelCopyright1.setText("Copyright \u00A9 2009-2011 by Christian Derksen");
+			jLabelCopyright1.setText("Copyright \u00A9 2009-2012 by Christian Derksen");
 			jLabelCopyright1.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jLabelCopyright2 = new JLabel();
 			jLabelCopyright2.setText("& DAWIS @ ICB - University of Duisburg-Essen");
