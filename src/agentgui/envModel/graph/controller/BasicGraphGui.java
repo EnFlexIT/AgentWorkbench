@@ -478,6 +478,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Configure vertex icons, if configured ----------------------		
 		vViewer.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>(){
 			
+			private final String pickedPostfix = "[picked]";
+			private HashMap<String, LayeredIcon> iconHash = new HashMap<String, LayeredIcon>();
+			
 			@Override
 			public Icon transform(GraphNode node) {
 				
@@ -488,36 +491,65 @@ public class BasicGraphGui extends JPanel implements Observer {
 				HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
 				NetworkComponent distributionNode = networkModel.containsDistributionNode(componentHashSet);
 				if (distributionNode!=null) {
-					
+					// --- Found a distribution node ----------------
 					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(distributionNode.getType());
-					String nodeImage = cts.getEdgeImage();
-					if (nodeImage!=null) {
-						if (nodeImage.equals("MissingIcon")==false) {
-							// --- Icon reference found --- Start ---
+					DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
+					String nodeImagePath = cts.getEdgeImage();
+					String checkColor = ds.getVertexColorPicked();
+					
+					if (nodeImagePath!=null) {
+						if (nodeImagePath.equals("MissingIcon")==false) {
+							// --- 1. Search in the local Hash ------
 							LayeredIcon layeredIcon = null;
-							try {
-								URL url = getClass().getResource(nodeImage);
-								ImageIcon imageIcon = new ImageIcon(url);
-								layeredIcon = new LayeredIcon(imageIcon.getImage());
-								if (layeredIcon!=null && picked==true){
-									DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
-									String checkColor = ds.getVertexColorPicked();
-									Checkmark checkmark = new Checkmark(new Color(Integer.parseInt(checkColor)));
-									layeredIcon.add(checkmark);
-								}
-								
-							} catch (Exception ex) {
-								System.err.println("Could not find node image for '" + distributionNode.getType() + "'");
-								layeredIcon = null;
+							if (picked==true) {
+								layeredIcon = iconHash.get(nodeImagePath+this.pickedPostfix);	
+							} else {
+								layeredIcon = iconHash.get(nodeImagePath);								
 							}
-							
+							// --- 2. If necessary, load the image -- 
+							if (layeredIcon==null) {
+								ImageIcon imageIcon = this.loadImageIcon(nodeImagePath, distributionNode.getType());
+								if (imageIcon!=null){
+									// --- 3. Remind this images ----
+									LayeredIcon layeredIconUnPicked = new LayeredIcon(imageIcon.getImage());
+									this.iconHash.put(nodeImagePath, layeredIconUnPicked);
+									
+									LayeredIcon layeredIconPicked = new LayeredIcon(imageIcon.getImage());
+									layeredIconPicked.add(new Checkmark(new Color(Integer.parseInt(checkColor))));
+									this.iconHash.put(nodeImagePath+this.pickedPostfix, layeredIconPicked);
+									// --- 4. Return the right one --
+									if (picked==true) {
+										layeredIcon = layeredIconPicked;
+									} else {
+										layeredIcon = layeredIconUnPicked;
+									}
+								}
+							}
 							icon = layeredIcon;	
-							// --- Icon reference found --- End -----	
 						}
 					}
 				}
 				return icon;
 			}
+			
+			/**
+			 * Load image icon.
+			 * @param nodeImagePath the node image path
+			 * @return the image icon
+			 */
+			private ImageIcon loadImageIcon(String nodeImagePath, String componentType) {
+				ImageIcon imageIcon = null;
+				try {
+					URL url = getClass().getResource(nodeImagePath);
+					imageIcon = new ImageIcon(url);
+					
+				} catch (Exception ex) {
+					System.err.println("Could not find node image for '" + componentType + "'");
+					imageIcon = null;
+				}
+				return imageIcon;
+			}
+			
 		});
 		
 		// --- Configure vertex colors ------------------------------------
