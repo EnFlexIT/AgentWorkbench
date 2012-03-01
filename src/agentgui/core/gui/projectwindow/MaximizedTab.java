@@ -126,7 +126,8 @@ public class MaximizedTab extends JInternalFrame {
     	if (jButtonRestore4MainToolBar==null) {
     		jButtonRestore4MainToolBar = new JButton();
     		jButtonRestore4MainToolBar.setIcon(this.iconRestore);
-    		jButtonRestore4MainToolBar.setText(" " + Language.translate("Ansicht wiederherstellen") + " !");
+    		jButtonRestore4MainToolBar.setText(" " + Language.translate("Ansicht wiederherstellen"));
+    		jButtonRestore4MainToolBar.setToolTipText(jButtonRestore4MainToolBar.getText() + " [ESC]");
     		jButtonRestore4MainToolBar.setFont(new Font("Dialog", Font.BOLD, 12));
     		jButtonRestore4MainToolBar.setForeground(new Color(230, 0, 0));
     		jButtonRestore4MainToolBar.addActionListener(new ActionListener() {
