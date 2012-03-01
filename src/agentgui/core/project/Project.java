@@ -121,8 +121,9 @@ import agentgui.core.webserver.JarFileCreator;
 	
 	/** Constant value in order to set the project view */
 	@XmlTransient public static final String VIEW_Developer = "Developer";
-	/** Constant value in order to set the project view */
 	@XmlTransient public static final String VIEW_User = "User";
+	@XmlTransient public static final String VIEW_Maximize = "MaximizeView";
+	@XmlTransient public static final String VIEW_Restore = "RestoreView";
 	
 	// --- Constants -------------------------------------------
 	@XmlTransient private String defaultSubFolder4Setups    = "setups";

@@ -32,6 +32,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -42,9 +44,13 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
+import javax.swing.DesktopManager;
 import javax.swing.JComponent;
+import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -63,7 +69,9 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
+import agentgui.core.gui.projectwindow.MaximizedTab;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.Project;
 
@@ -97,16 +105,10 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	
 	private HashMap<String, ProjectWindowTab> tab4SubPanel = new HashMap<String, ProjectWindowTab>();  //  @jve:decl-index=0:
 	private Vector<ProjectWindowTab> tabVector = new Vector<ProjectWindowTab>();  //  @jve:decl-index=0:
-	private int oldNumberOfNodes = 0;
 	
-	
-	private JTabbedPane tabClicked = null;
-	private int tabClickedIndex = 0;
-	private String tabClickedName = null;
-
-	private boolean tabClickedMaximized = false;
-	private int dividerLocation = 0;
-	
+	private boolean isMaximizedTab = false;
+	private MaximizedTab maxTab = null;
+	private ProjectWindowTab maxProjectWindowTab = null;
 	
 	/**
 	 * This is the default constructor.
@@ -120,8 +122,8 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		this.currProject.addObserver(this);		
 		
 		// --- TreeModel initialisieren --------------------------
-		this.rootNode = new DefaultMutableTreeNode( currProject.getProjectName() );
-		this.projectTreeModel = new DefaultTreeModel( rootNode );	
+		this.rootNode = new DefaultMutableTreeNode(currProject.getProjectName());
+		this.projectTreeModel = new DefaultTreeModel(rootNode);	
 		
 		// --- Projektfenster zusammenbauen ----------------------
 		this.initialize();		
@@ -130,7 +132,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 
 	/**
 	 * This method initializes this.
-	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -151,6 +152,16 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		Application.MainWindow.getJDesktopPane4Projects().add(this);		
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.JInternalFrame#dispose()
+	 */
+	@Override
+	public void dispose() {
+		if (this.maxTab!=null) {
+			this.tabRestore();
+		}
+		super.dispose();
+	}
 	/**
 	 * This method initializes ProjectViewSplit.
 	 *
@@ -176,6 +187,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
+			jScrollPane.setBorder(null);
 			jScrollPane.setViewportView(getProjectTree());
 		}
 		return jScrollPane;
@@ -228,7 +240,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 						// --- Catch double click on node ---
 						TreePath tp = projectTree.getPathForLocation(me.getX(), me.getY());
 						if (tp != null) {
-							tabMaximize();
+							currProject.setNotChangedButNotify(Project.VIEW_Maximize);
 						}
 					}
 					
@@ -316,19 +328,15 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 				@Override
 				public void mouseClicked(MouseEvent me) {
 					
-					tabClicked = (JTabbedPane) me.getComponent();
-					tabClickedIndex = tabClicked.getSelectedIndex();
-					tabClickedName = tabClicked.getTitleAt(tabClickedIndex);
-					
 					if (me.getClickCount()==2 & SwingUtilities.isLeftMouseButton(me)) {
-						if (tabClickedMaximized==false) {
-							tabMaximize();
+						if (isMaximizedTab) {
+							currProject.setNotChangedButNotify(Project.VIEW_Restore);
 						} else {
-							tabRestore();
+							currProject.setNotChangedButNotify(Project.VIEW_Maximize);
 						}
 					}
 					if (me.getClickCount()==1 & SwingUtilities.isRightMouseButton(me)) {
-						System.out.println("right click on Tab " + tabClickedName + " ...");
+						getTabPopupMenu().show(me.getComponent(), me.getX(), me.getY());
 					}
 				}
 			};
@@ -337,20 +345,74 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	}
 	
 	/**
+	 * Returns the JPopupMenu for the tabs.
+	 * @return the JPopupMenu
+	 */
+	private JPopupMenu getTabPopupMenu() {
+		
+		JMenuItem jme = new JMenuItem();
+		if (isMaximizedTab) {
+			jme.setText(Language.translate("Wiederherstellen"));
+		} else {
+			jme.setText(Language.translate("Maximieren"));	
+		}
+		jme.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (isMaximizedTab) {
+					currProject.setNotChangedButNotify(Project.VIEW_Restore);
+				} else {
+					currProject.setNotChangedButNotify(Project.VIEW_Maximize);	
+				}
+			}
+		});
+		
+		JPopupMenu pop = new JPopupMenu();
+		pop.add(jme);
+		return pop;
+		
+	}
+	
+	/**
+	 * Returns the MaximizedTab (extends JInteralFrame), 
+	 * with the currently selected tab.
+	 * @return the MaximizedTab (extends JInteralFrame)
+	 */
+	private MaximizedTab getMaximizedTab() {
+		if (maxTab==null) {
+			// --- Get and remove the currently selcted tab ---------
+			this.maxProjectWindowTab = this.getProjectWindowTabSelected();
+			this.remove(this.maxProjectWindowTab);
+			// --- Create the extra JInternalFrame ------------------
+			this.maxTab = new MaximizedTab(this, this.maxProjectWindowTab.getTitle());
+			this.maxTab.add(this.maxProjectWindowTab.getComponent());
+		}
+		return maxTab;
+	}
+	
+	/**
 	 * Tab maximize.
 	 */
 	private void tabMaximize() {
 
-		// --- Maximize the main window -------------------
+		// --- Maximize the main window ---------------------------------------
 		Application.MainWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-		// --- Wait for the end of maximisation -----------
+		// --- Open a new JInteraFrame with the current tab enlarged ---------- 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				tabClickedMaximized = true;
-				dividerLocation = jSplitPaneProjectView.getDividerLocation();
-				jSplitPaneProjectView.setDividerLocation(0);
+				JDesktopPane appDesktop = Application.MainWindow.getJDesktopPane4Projects();
+				if (maxTab==null) {
+					appDesktop.add(getMaximizedTab());	
+					Application.MainWindow.addJToolbarComponent(getMaximizedTab().getJButtonRestore4MainToolBar());
+				}
+				
+				DesktopManager dtm = Application.MainWindow.getJDesktopPane4Projects().getDesktopManager();
+				if (dtm!=null) {
+					dtm.activateFrame(getMaximizedTab());
+					dtm.maximizeFrame(getMaximizedTab());
+				}
 			}
 		});
 		
@@ -359,10 +421,34 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	/**
 	 * Tab restore.
 	 */
-	private void tabRestore(){
-		//System.out.println("Maximize");
-		this.tabClickedMaximized = false;
-		this.jSplitPaneProjectView.setDividerLocation(this.dividerLocation);
+	public void tabRestore(){
+
+		if (this.maxTab!=null) {
+
+			// --- Remove toolbar button --------------------------------------
+			Application.MainWindow.removeJToolbarComponent(getMaximizedTab().getJButtonRestore4MainToolBar());
+			this.maxTab.setVisible(false);
+
+			// --- Place the enlarged tab back to the other one ---------------
+			if (this.maxProjectWindowTab!=null) {
+				this.addProjectTab(this.maxProjectWindowTab, this.maxProjectWindowTab.getIndexPosition());
+				this.maxProjectWindowTab.getComponent().validate();
+				this.setFocus2Tab(this.maxProjectWindowTab.getTitle());
+				this.maxProjectWindowTab = null;
+
+			}
+			// --- Destroy the extra JInteralFrame ----------------------------
+			this.maxTab.dispose();
+
+			// --- Final configuration for the next time ----------------------
+			this.maxTab = null;
+			this.isMaximizedTab = false;			
+
+			// --- Refresh view -----------------------------------------------
+			Application.MainWindow.validate();
+			Application.MainWindow.repaint();
+			
+		}
 	}
 	
 	/**
@@ -379,31 +465,62 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 					
 					if (pauseTabSelectionListener) return;
 					
-					// --- To prevent, that an add-action came in ----
-					int newNumberOfNodes = getNumberOfNodes();
-					if (newNumberOfNodes==oldNumberOfNodes) {
-						
-						JTabbedPane pane = (JTabbedPane)evt.getSource();
-				        int selIndex = pane.getSelectedIndex();
-				        if (selIndex>-1) {
-					        String title = pane.getTitleAt(selIndex);
-					        DefaultMutableTreeNode selectedNode = getTreeNode(title);
-
-					        DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) projectTree.getLastSelectedPathComponent();
-					        if (selectedNode!=currentNode) {
-					        	pauseTreeSelectionListener=true;
-					        	projectTree.setSelectionPath(new TreePath(selectedNode.getPath()));
-					        	pauseTreeSelectionListener=false;
-					        }
+					ProjectWindowTab pwt = getProjectWindowTabSelected();
+			        if (pwt!=null) {
+				        DefaultMutableTreeNode selectedNode = getTreeNode(pwt.getTitle());
+				        DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) projectTree.getLastSelectedPathComponent();
+				        if (selectedNode!=currentNode) {
+				        	pauseTreeSelectionListener=true;
+				        	projectTree.setSelectionPath(new TreePath(selectedNode.getPath()));
+				        	pauseTreeSelectionListener=false;
 				        }
-				        
-					} else {
-						oldNumberOfNodes = newNumberOfNodes; 
-					}
+			        }
 				}
 			};
 		}
 		return tabSelectionListener;
+	}
+	
+	/**
+	 * Gets the currently selected tab as instance of ProjectWindowTab.
+	 * @return the tab selected
+	 */
+	private ProjectWindowTab getProjectWindowTabSelected() {
+		
+		ProjectWindowTab tabSelected = null;
+		
+        int selIndex = this.projectViewRightTabs.getSelectedIndex();
+        if (selIndex>-1) {
+        	String tabTitle = this.projectViewRightTabs.getTitleAt(selIndex);
+        	tabSelected = getProjectWindowTab(tabTitle);
+        	if (tabSelected!=null) {
+        		JTabbedPane subPane = tabSelected.getCompForChildComp();
+        		if (subPane!=null) {
+        			int selSubIndex = subPane.getSelectedIndex();
+        			if (selSubIndex!=-1) {
+        				tabTitle = subPane.getTitleAt(selSubIndex);
+            			tabSelected = getProjectWindowTab(tabTitle);	
+        			}
+        		}
+        	}
+        }
+        return tabSelected;
+        
+	}
+	
+	/**
+	 * Returns the ProjectWindowTab specified by its name.
+	 *
+	 * @param tabTitle the tab title
+	 * @return the instance of ProjectWindowTab
+	 */
+	private ProjectWindowTab getProjectWindowTab(String tabTitle) {
+		for (ProjectWindowTab pwt : tabVector) {
+			if (pwt.getTitle().equals(tabTitle)) {
+				return pwt;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -427,9 +544,14 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		} else if (ObjectName.equals(Project.CHANGED_EnvironmentModel)) {
 			this.setView();			
 			
-		} else {
-			//System.out.println("Unbekannter Updatebefehl vom Observerable ...");
-		};
+		} else if (ObjectName.equals(Project.VIEW_Maximize)) {
+			this.tabMaximize();
+			
+		} else if (ObjectName.equals(Project.VIEW_Restore)) {
+			this.tabRestore();
+			
+		}
+		this.validate();
 		this.repaint();
 	}
 
@@ -453,21 +575,26 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	public void addProjectTab(ProjectWindowTab projectWindowTab, int indexPositionGreaterOne) {
 
 		int newIndexPos = indexPositionGreaterOne;
-		if (newIndexPos > -1 && newIndexPos < 2) {
-			// ----------------------------------------------------------------
-			// --- if we adding at the root node, we have to make sure that --- 
-			// --- we don't use index position 0 or 1 ! 					---
-			// ----------------------------------------------------------------
-			String parentName = projectWindowTab.getParentName();
-			if (parentName!=null) {
-				DefaultMutableTreeNode pareNode = getTreeNode(parentName);
-				if (pareNode==rootNode) {
-					newIndexPos = 2;
-				}
-			} else {
-				newIndexPos = 2;	
+		boolean add2RootNode = false;
+		
+		String parentName = projectWindowTab.getParentName();
+		if (parentName==null) {
+			add2RootNode = true;
+		} else  {
+			DefaultMutableTreeNode pareNode = getTreeNode(parentName);
+			if (pareNode==this.rootNode) {
+				add2RootNode = true;
 			}
-			// ----------------------------------------------------------------
+		} 
+
+		if (add2RootNode==true && (newIndexPos==0 || newIndexPos==1)) {
+			newIndexPos = 2;
+		} else if (newIndexPos==-1) {
+			newIndexPos = projectViewRightTabs.getTabCount(); // Default
+			if (parentName!=null) {
+				ProjectWindowTab parentPWT = this.getProjectWindowTab(parentName);
+				newIndexPos = parentPWT.getCompForChildComp().getTabCount();	
+			}
 		}
 		projectWindowTab.setIndexPosition(newIndexPos);
 		
@@ -609,22 +736,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			} 
 		}
 		return nodeFound;
-	}
-	
-	/**
-	 * Gets the number of nodes.
-	 *
-	 * @return the number of nodes in the tree
-	 */
-	@SuppressWarnings("unchecked")
-	private int getNumberOfNodes() {
-		
-		int counter = 0;
-		for (Enumeration<DefaultMutableTreeNode> e = rootNode.breadthFirstEnumeration(); e.hasMoreElements();) {
-			counter++;
-			e.nextElement();
-		}
-		return counter;
 	}
 	
 	/**

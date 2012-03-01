@@ -947,9 +947,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		 * @param Text the text
 		 * @param imgName the img name
 		 */
-		private CWMenueItem( String actionCommand, 
-							 String Text, 
-							 String imgName ) {
+		private CWMenueItem(String actionCommand, String Text, String imgName) {
 
 			this.setText(Text);
 			if ( imgName != null ) {
@@ -1156,6 +1154,15 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	 */
 	public void addJToolbarComponent(JComponent myComponent) {
 		jToolBarApplication.add(myComponent);
+		this.validate();
+	}
+	
+	/**
+	 * This methode removes a menu button from the toolbar.
+	 * @param myComponent the my component
+	 */
+	public void removeJToolbarComponent(JComponent myComponent) {
+		jToolBarApplication.remove(myComponent);
 		this.validate();
 	}
 	// ------------------------------------------------------------

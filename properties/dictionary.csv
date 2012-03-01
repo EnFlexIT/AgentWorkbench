@@ -40,6 +40,7 @@ de;Allgemein;General;;;
 de;Als Bild exportieren;Export as image;;;
 de;Alter Wert:;Old value:
 de;An Fenster anpassen;Fit to window;;;
+de;Ansicht wiederherstellen;Restore View;;;
 de;Ansicht:;View:
 de;Ansicht;View
 de;Anwenden;Apply
@@ -247,6 +248,7 @@ de;MAS-Start;MAS-Start;;;
 de;MAS-Stop;MAS-Stop
 de;MAS;MAS
 de;Maximale Geschwindigkeit;Maximum speed
+de;Maximieren;Maximize;;;
 de;Maßstab festlegen;Set scale
 de;Maßstab;Scale
 de;Mess-Agenten anhalten;Stop load measure agent
@@ -448,6 +450,7 @@ de;Vorhandene Projektverzeichnisse;Available project folders;;;
 de;Voriger Datensatz (STRG+UP);Previous Record (CTRL + UP)
 de;Warte auf Agentenliste...;Waiting for agent list...
 de;Warte auf Ontologie-Liste...;Waiting for ontology list...
+de;Wiederherstellen;Restore;;;
 de;Wollen Sie das aktuelle Setup wirklich löschen?;Do you want to delete the current Setup?
 de;Wörterbuch;Dictionary
 de;XML-Dateien;XML files
@@ -480,7 +483,6 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
-en;;Discrete squares environment;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktuelles Bild entfernen;Remove current image;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;

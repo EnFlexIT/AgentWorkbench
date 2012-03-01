@@ -494,10 +494,7 @@ private static final long serialVersionUID = 1L;
 						// --- mark row -------------------
 						jTableDictionary.changeSelection(jTableDictionary.rowAtPoint(evt.getPoint()), 0, false, false);
 						// --- show popUp -----------------
-						if (jPopupMenuDictionary== null) {
-							getJPopupMenuDictionary();
-						}
-						jPopupMenuDictionary.show(evt.getComponent(), evt.getX(), evt.getY());
+						getJPopupMenuDictionary().show(evt.getComponent(), evt.getX(), evt.getY());
 					}
 				}
 			});
@@ -1219,7 +1216,8 @@ private static final long serialVersionUID = 1L;
 
 			// --- remove the entry from the dataDict -----
 			int row = jTableDictionary.getSelectedRow();
-			this.getTableModel4Dictionary().removeRow(row);
+			int rowModel = jTableDictionary.convertRowIndexToModel(row);
+			this.getTableModel4Dictionary().removeRow(rowModel);
 			if (row==0) {
 				jTableDictionary.setRowSelectionInterval(row, row);
 			} else {

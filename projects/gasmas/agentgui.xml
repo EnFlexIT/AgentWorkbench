@@ -49,7 +49,7 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1102</useLocalPort>
+        <useLocalPort>1099</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -81,7 +81,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>SmartGrid</simulationSetupCurrent>
+    <simulationSetupCurrent>HNord</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>HNord</key>

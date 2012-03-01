@@ -108,7 +108,7 @@ public class BasicGraphGuiTools implements ActionListener {
 		    jToolBar = new JToolBar();
 		    jToolBar.setOrientation(JToolBar.VERTICAL);
 		    jToolBar.setFloatable(false);
-		    jToolBar.setPreferredSize(new Dimension(40, 380));
+		    jToolBar.setPreferredSize(new Dimension(40, 40));
 
 		    jToolBar.add(getJButtonComponents());
 
