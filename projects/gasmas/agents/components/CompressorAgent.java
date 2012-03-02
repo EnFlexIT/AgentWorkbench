@@ -1,6 +1,5 @@
 package gasmas.agents.components;
 
-import gasmas.clustering.ShortestPathClusteringBehaviour;
 import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
 import agentgui.envModel.graph.networkModel.NetworkModel;
@@ -37,7 +36,7 @@ public class CompressorAgent extends SimulationAgent {
 
 		this.myNetworkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
 
-		this.addBehaviour(new ShortestPathClusteringBehaviour(myEnvironmentModel, myNetworkModel.getNetworkComponent(this.getName().split("@")[0])));
+		// this.addBehaviour(new AntClusteringBehaviour(myEnvironmentModel, myNetworkModel.getNetworkComponent(this.getName().split("@")[0])));
 	}
 
 	class ClusterBeha extends OneShotBehaviour {
