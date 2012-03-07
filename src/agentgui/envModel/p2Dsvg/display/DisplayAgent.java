@@ -199,10 +199,8 @@ public class DisplayAgent extends Agent {
 						needsToDisplay=true;
 						decided_to_display=true;
 						 int tmpCounter = myGUI.jSliderTime.getValue();
-						 if(!play)
-						 {
-							counter=tmpCounter;
-						 }
+						counter=tmpCounter;
+						
 						
 						sameVisualisationCounter = 0;
 						if (counter == -1) {
