@@ -2,6 +2,17 @@
 <generalGraphSettings4MAS>
     <currentCTS>
         <entry>
+            <key>Lignite Plant</key>
+            <value>
+                <color>-3381760</color>
+                <domain>Electricity</domain>
+                <edgeImage>/gasmas/img/power_plant_lignite.png</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
             <key>Valve</key>
             <value>
                 <agentClass>gasmas.agents.components.SimpleValveAgent</agentClass>
@@ -82,15 +93,92 @@
             </value>
         </entry>
         <entry>
+            <key>Nuklear Plant</key>
+            <value>
+                <color>-256</color>
+                <domain>Electricity</domain>
+                <edgeImage>/gasmas/img/power_nuke.png</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Transformator</key>
+            <value>
+                <color>-16777063</color>
+                <domain>Electricity</domain>
+                <edgeImage>/gasmas/img/power_substation.png</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
             <key>Wind turbine</key>
             <value>
                 <agentClass>gasmas.agents.components.StorageAgent</agentClass>
                 <color>-16724992</color>
                 <domain>Electricity</domain>
-                <edgeImage>/gasmas/img/wind_turbine.jpg</edgeImage>
+                <edgeImage>/gasmas/img/power_windturbine.png</edgeImage>
                 <edgeWidth>20.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Power Line</key>
+            <value>
+                <color>-16777063</color>
+                <domain>Electricity</domain>
+                <edgeWidth>1.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Storage</key>
+            <value>
+                <agentClass>gasmas.agents.components.StorageAgent</agentClass>
+                <color>-26368</color>
+                <domain>Gas network</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Power2Gas</key>
+            <value>
+                <color>-16724788</color>
+                <domain>Electricity</domain>
+                <edgeImage>/gasmas/img/power_2_gas.jpg</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Coal Plant</key>
+            <value>
+                <color>-16777216</color>
+                <domain>Electricity</domain>
+                <edgeImage>/gasmas/img/power_plant_coal.png</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Solar Panel</key>
+            <value>
+                <color>-16777216</color>
+                <domain>Electricity</domain>
+                <edgeImage>/gasmas/img/power_solarenergy.png</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
             </value>
         </entry>
         <entry>
