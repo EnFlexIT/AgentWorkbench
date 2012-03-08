@@ -39,7 +39,7 @@ import agentgui.envModel.graph.prototypes.GraphElementPrototype;
  * @see GraphElementPrototype
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  * @author Satyadeep 
- *
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class ComponentTypeSettings implements Serializable, Cloneable {
 	

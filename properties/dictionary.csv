@@ -224,6 +224,7 @@ de;Klassenangabe überprüfen;Check Class specification
 de;Klassenzuordnung;Class Assignment
 de;Kommunikation;Communication
 de;Komponente;Component
+de;Komponenten-Definition bearbeiten;Edit Component Definitions;;;
 de;Komponenten-Einstellungen;Component settings
 de;Komponenten-Typen;Component-Types
 de;Komponententyp-Definition;Component-Type definition
@@ -483,6 +484,8 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
+en;;Redo Action;;;
+en;;Undo Action;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktuelles Bild entfernen;Remove current image;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;

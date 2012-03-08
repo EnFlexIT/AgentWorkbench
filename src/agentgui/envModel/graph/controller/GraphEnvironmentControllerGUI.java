@@ -160,13 +160,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    	componentsTableModel = getDefaultTableModel4ComponentsNew();
 		    	getJTableComponents().setModel(componentsTableModel);
 		    	setLayout4JTableComponents();
+				// --- Clear search field -----------------
+		    	getJTextFieldSearch().setText(null);
+				// --- Refresh number of components -------
+		    	setNumberOfComponents();
 			}
 		});
-    	
-		// --- Clear search field -------------------------
-    	this.getJTextFieldSearch().setText(null);
-		//this.tblFilter();
-    	this.setNumberOfComponents();
     	
     }
     
@@ -731,6 +730,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     		NetworkComponent networkComponent = null;
     		
     		switch (reason) {
+    		case NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged:
     		case NetworkModelNotification.NETWORK_MODEL_Reload:
     			this.reLoad();
     			break;

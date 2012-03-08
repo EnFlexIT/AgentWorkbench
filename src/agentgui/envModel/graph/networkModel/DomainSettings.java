@@ -34,6 +34,8 @@ import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 
 /**
  * The Class DomainSettings.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class DomainSettings implements Serializable {
 

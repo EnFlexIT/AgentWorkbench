@@ -34,6 +34,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 import javax.swing.ButtonGroup;
@@ -45,7 +47,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.undo.UndoManager;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -54,9 +58,10 @@ import agentgui.envModel.graph.components.ComponentTypeDialog;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.prototypes.DistributionNode;
 
-public class BasicGraphGuiTools implements ActionListener {
+public class BasicGraphGuiTools implements ActionListener, Observer {
 
     private static final long serialVersionUID = 7033208567874447367L;
 
@@ -76,6 +81,8 @@ public class BasicGraphGuiTools implements ActionListener {
     private JButton jButtonRemoveComponent = null;
     private JButton jButtonMergeNodes = null;
     private JButton jButtonSplitNode = null;
+    private JButton jButtonRedo = null;
+    private JButton jButtonUndo = null;
     private JButton jButtonClearGraph = null;
     private JButton jButtonImportGraph = null;
 
@@ -97,6 +104,7 @@ public class BasicGraphGuiTools implements ActionListener {
      */
     public BasicGraphGuiTools(GraphEnvironmentController graphEnvironmentController) {
     	this.graphController = graphEnvironmentController;
+    	this.graphController.addObserver(this);
     }
 
     /**
@@ -108,7 +116,7 @@ public class BasicGraphGuiTools implements ActionListener {
 		    jToolBar = new JToolBar();
 		    jToolBar.setOrientation(JToolBar.VERTICAL);
 		    jToolBar.setFloatable(false);
-		    jToolBar.setPreferredSize(new Dimension(40, 40));
+		    jToolBar.setPreferredSize(new Dimension(30, 30));
 
 		    jToolBar.add(getJButtonComponents());
 
@@ -119,6 +127,12 @@ public class BasicGraphGuiTools implements ActionListener {
 				jToolBar.add(getJButtonRemoveComponent());
 				jToolBar.add(getJButtonMergeNodes());
 				jToolBar.add(getJButtonSplitNode());
+				
+				jToolBar.addSeparator();
+				jToolBar.add(getJButtonUndo());
+				jToolBar.add(getJButtonRedo());
+				this.setUndoRedoButtonsEnabled();
+				
 		    }
 		    
 		    jToolBar.addSeparator();
@@ -347,6 +361,35 @@ public class BasicGraphGuiTools implements ActionListener {
     }
 
     /**
+     * Returns the button for the undo action.
+     * @return javax.swing.JButton
+     */
+    private JButton getJButtonUndo() {
+		if (jButtonUndo == null) {
+			jButtonUndo = new JButton();
+		    jButtonUndo.setIcon(new ImageIcon(getClass().getResource(pathImage + "ActionUndo.png")));
+		    jButtonUndo.setPreferredSize(jButtonSize);
+		    jButtonUndo.setToolTipText(Language.translate("Undo Action", Language.EN));
+		    jButtonUndo.addActionListener(this);
+		}
+		return jButtonUndo;
+    }
+    /**
+     * Returns the button for the redo action.
+     * @return javax.swing.JButton
+     */
+    private JButton getJButtonRedo() {
+		if (jButtonRedo == null) {
+			jButtonRedo = new JButton();
+			jButtonRedo.setIcon(new ImageIcon(getClass().getResource(pathImage + "ActionRedo.png")));
+			jButtonRedo.setPreferredSize(jButtonSize);
+			jButtonRedo.setToolTipText(Language.translate("Redo Action", Language.EN));
+			jButtonRedo.addActionListener(this);
+		}
+		return jButtonRedo;
+    }
+    
+    /**
      * This method initializes jButtonImportGraph
      * @return javax.swing.JButton
      */
@@ -477,6 +520,36 @@ public class BasicGraphGuiTools implements ActionListener {
     		this.basicGraphGui = graphControllerGUI.getGraphGUI();	
     	}
     }
+    
+    /**
+     * Sets the undo and redo buttons enabled or not. 
+     * Additionally the ToolTipText will be set.
+     */
+    private void setUndoRedoButtonsEnabled() {
+    	SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				UndoManager undoManager = graphController.getNetworkModelAdapter().getUndoManager();
+				
+				getJButtonUndo().setEnabled(undoManager.canUndo());
+				getJButtonUndo().setToolTipText(undoManager.getUndoPresentationName());
+				
+				getJButtonRedo().setEnabled(undoManager.canRedo());
+				getJButtonRedo().setToolTipText(undoManager.getRedoPresentationName());
+				
+			}
+		});
+    }
+	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable observable, Object object) {
+		if (object instanceof NetworkModelNotification) {
+			this.setUndoRedoButtonsEnabled();
+		}
+	}
     
     /* (non-Javadoc)
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -638,6 +711,14 @@ public class BasicGraphGuiTools implements ActionListener {
 				//Multiple vertices are picked
 				JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Select one vertex !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 			}
+		
+		} else if (ae.getSource() == getJButtonUndo()) {
+			this.graphController.getNetworkModelAdapter().undo();
+			this.setUndoRedoButtonsEnabled();
+			
+		} else if (ae.getSource() == getJButtonRedo()) {
+			this.graphController.getNetworkModelAdapter().redo();
+			this.setUndoRedoButtonsEnabled();
 			
 		} else if (ae.getSource() == getJButtonClearGraph()) {
 			// ------------------------------------------------------
@@ -683,6 +764,5 @@ public class BasicGraphGuiTools implements ActionListener {
 		}		
 		
 	} // end actionPerformed()
-    
 
 }

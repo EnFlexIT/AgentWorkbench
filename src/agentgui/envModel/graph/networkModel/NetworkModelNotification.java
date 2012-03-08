@@ -30,10 +30,14 @@ package agentgui.envModel.graph.networkModel;
 
 /**
  * The Class NetworkModelNotification.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class NetworkModelNotification {
 
 	/** Possible reasons. */
+	public static final int NETWORK_MODEL_ComponentTypeSettingsChanged = -1;
+	
 	public static final int NETWORK_MODEL_Reload = 1;
 	public static final int NETWORK_MODEL_Repaint = 2;
 	

@@ -112,7 +112,7 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
  * @see GraphElementPrototype
  * 
  * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
- * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class AddComponentDialog extends JDialog implements ActionListener {
 
