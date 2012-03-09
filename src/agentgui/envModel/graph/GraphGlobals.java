@@ -29,13 +29,19 @@
 package agentgui.envModel.graph;
 
 import java.awt.Color;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
+
+import agentgui.core.common.PathHandling;
 
 /**
  * The Class Globals for global constant values of the Graph or Network model.
@@ -57,6 +63,89 @@ public final class GraphGlobals {
 		return pathImages;
 	}
 
+	 /**
+ 	 * Returns an ImageIcon as specified in path2Image. Therefore the methods
+ 	 * tries to find the images at different places. This is, first, in the
+ 	 * available packages or second at different folder location on the disc.  
+ 	 *
+ 	 * @param path2Image the path to the image
+ 	 * @param description the description for the ImageIcon
+ 	 * @return the image icon
+ 	 */
+ 	public static ImageIcon getImageIcon(String path2Image, String description) {
+	    
+ 		String path = null;
+ 		String pathRoot = null;
+ 		File imageFile = null;
+ 		ImageIcon imageIcon = null;
+ 		
+ 		// ----------------------------------------------------------
+ 		// --- 0. Get the source folder of the execution instance ---
+ 		// ----------------------------------------------------------
+ 		File currRootFile;
+		try {
+			currRootFile = new File(GraphGlobals.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+			if (currRootFile.exists()) {
+				pathRoot = currRootFile.getParentFile().getAbsolutePath();
+	    	}
+		} catch (URISyntaxException e) {
+			//e.printStackTrace();
+		}
+ 		
+ 		// ----------------------------------------------------------
+		// --- 1. Search in the loaded packages ---------------------
+ 		// ----------------------------------------------------------
+		try {
+			URL url = GraphGlobals.class.getResource(path2Image);
+			imageIcon = new ImageIcon(url);
+			
+		} catch (Exception ex) {
+			//System.err.println("Could not find image for '" + description + "' in packages");
+			imageIcon = null;
+		}
+
+ 		// ----------------------------------------------------------
+		// --- 2. Try folder locations ------------------------------
+ 		// ----------------------------------------------------------
+		if (imageIcon==null) {
+			// --- 2a. Try direct folder location -------------------
+	 		path = path2Image;
+	 		imageFile = new File(PathHandling.getPathName4LocalFileSystem(path));
+			if (imageFile.exists()) {
+				imageIcon = new ImageIcon(imageFile.getAbsolutePath());
+			} 
+		}
+		if (imageIcon==null) {
+			// --- 2b. Try sub folder 'project' ---------------------
+			path = "/projects" + path2Image;
+			imageFile = new File(PathHandling.getPathName4LocalFileSystem(path));
+			if (imageFile.exists()) {
+				imageIcon = new ImageIcon(imageFile.getAbsolutePath());
+			} 
+		}
+		if (imageIcon==null) {
+			// --- 2c. Try absolute folder location ---------------------
+			path = pathRoot + path2Image;
+			imageFile = new File(PathHandling.getPathName4LocalFileSystem(path));
+			if (imageFile.exists()) {
+				imageIcon = new ImageIcon(imageFile.getAbsolutePath());
+			} 			
+		}
+		if (imageIcon==null) {
+			// --- 2d. Try absolute sub folder 'project' ---------------------
+			path = pathRoot + "/projects" + path2Image;
+			imageFile = new File(PathHandling.getPathName4LocalFileSystem(path));
+			if (imageFile.exists()) {
+				imageIcon = new ImageIcon(imageFile.getAbsolutePath());
+			} 
+		}
+		if (imageIcon!=null) {
+			imageIcon.setDescription(path2Image);
+		}
+		return imageIcon;
+    }
+	
+	
 	/**
 	 * The Class Colors.
 	 */

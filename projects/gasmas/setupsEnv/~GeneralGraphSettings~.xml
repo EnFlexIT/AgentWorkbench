@@ -142,7 +142,6 @@
                 <agentClass>gasmas.agents.components.StorageAgent</agentClass>
                 <color>-26368</color>
                 <domain>Gas network</domain>
-                <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>20.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>false</showLabel>

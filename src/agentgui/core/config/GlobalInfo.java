@@ -145,10 +145,10 @@ public class GlobalInfo {
 		// --- Class-Path untersuchen ---------------------------------------
 		for (int i=0; i<JCP_Files.length; i++) {
 
-			if ( JCP_Files[i].endsWith( localFileRunnableJar )  ) {
+			if (JCP_Files[i].endsWith(localFileRunnableJar)) {
 				localAppExecutedOver = ExecutedOverAgentGuiJar;
 				// --- Bei jar, immer interne Console verwenden -------------
-				CutAt = JCP_Files[i].lastIndexOf( localAppPathSeparatorString ) + 1;
+				CutAt = JCP_Files[i].lastIndexOf(localAppPathSeparatorString) + 1;
 				localBaseDir = JCP_Folders[i].substring(0, CutAt);	
 
 				// --- jade.jar in die ClassLoaderUtility einbinden ----------
@@ -156,7 +156,7 @@ public class GlobalInfo {
 				ClassLoaderUtil.addJarToClassPath(jadeJar);
 				
 			};
-			if ( JCP_Files[i].endsWith(".jar")  ) {
+			if (JCP_Files[i].endsWith(".jar")) {
 				// ----------------------------------------------------------
 				// --- Dateinamen herausnehmen ------------------------------
 				CutAt = JCP_Files[i].lastIndexOf( localAppPathSeparatorString );
@@ -175,7 +175,7 @@ public class GlobalInfo {
 				if ( JCP_Folders[j].endsWith( localPathAgentGUI ) ) {
 					// --- bin-Verzeichnis gefunden ---					
 					CutAt = JCP_Folders[j].lastIndexOf( localPathAgentGUI );
-					localBaseDir =  JCP_Folders[j].substring(0, CutAt);
+					localBaseDir = JCP_Folders[j].substring(0, CutAt);
 					break;
 				}
 			} // -- End 'for' --
@@ -347,7 +347,7 @@ public class GlobalInfo {
 	 * @return the path to the JADE libraries
 	 */
 	public String PathJade(boolean absolute){
-		if ( absolute == true ) { 
+		if (absolute == true) { 
 			return FilePath2Absolute( localPathJade );
 		}
 		else {

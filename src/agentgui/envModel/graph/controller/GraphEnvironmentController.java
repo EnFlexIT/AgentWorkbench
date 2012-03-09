@@ -363,6 +363,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 		// --- Use the local method in order to inform the observer -------------------------------
 		this.setEnvironmentModel(this.networkModel);
 
+		// --- Reset Undo-Manageer ----------------------------------------------------------------
+		this.networkModelAdapter.getUndoManager().discardAllEdits();
+
     }
 
     /**

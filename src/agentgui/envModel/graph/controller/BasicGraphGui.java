@@ -68,10 +68,11 @@ import javax.swing.JPanel;
 import org.apache.commons.collections15.Transformer;
 
 import agentgui.core.application.Application;
-import agentgui.core.gui.imaging.ImageFileView;
 import agentgui.core.gui.imaging.ConfigurableFileFilter;
+import agentgui.core.gui.imaging.ImageFileView;
 import agentgui.core.gui.imaging.ImagePreview;
 import agentgui.core.gui.imaging.ImageUtils;
+import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
@@ -508,7 +509,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 							}
 							// --- 2. If necessary, load the image -- 
 							if (layeredIcon==null) {
-								ImageIcon imageIcon = this.loadImageIcon(nodeImagePath, distributionNode.getType());
+								ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath, distributionNode.getType());
 								if (imageIcon!=null){
 									// --- 3. Remind this images ----
 									LayeredIcon layeredIconUnPicked = new LayeredIcon(imageIcon.getImage());
@@ -530,24 +531,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 					}
 				}
 				return icon;
-			}
-			
-			/**
-			 * Load image icon.
-			 * @param nodeImagePath the node image path
-			 * @return the image icon
-			 */
-			private ImageIcon loadImageIcon(String nodeImagePath, String componentType) {
-				ImageIcon imageIcon = null;
-				try {
-					URL url = getClass().getResource(nodeImagePath);
-					imageIcon = new ImageIcon(url);
-					
-				} catch (Exception ex) {
-					System.err.println("Could not find node image for '" + componentType + "'");
-					imageIcon = null;
-				}
-				return imageIcon;
 			}
 			
 		});
@@ -1116,11 +1099,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 				String nodeImage = cts.getEdgeImage();
 				if (nodeImage!=null) {
 					if (nodeImage.equals("MissingIcon")==false) {
-						try {
-							shape = shapeMap.get(nodeImage);
-							if (shape==null) {
-								URL url = getClass().getResource(nodeImage);
-								ImageIcon imageIcon = new ImageIcon(url);
+						// --- shape already there ? ------ 
+						shape = shapeMap.get(nodeImage);
+						if (shape==null) {
+							ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImage, networkComponent.getType());
+							if (imageIcon!=null) {
 								Image image = imageIcon.getImage();
 							    shape = FourPassImageShaper.getShape(image, 30);
 							    if(shape.getBounds().getWidth() > 0 &&  shape.getBounds().getHeight() > 0) {
@@ -1131,10 +1114,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 				                    shape = transform.createTransformedShape(shape);
 				                    this.shapeMap.put(nodeImage, shape);
 							    }
+							} else {
+								System.err.println("Could not find node image for '" + networkComponent.getType() + "'");
 							}
-						
-						} catch (Exception ex) {
-							System.err.println("Could not find node image for '" + networkComponent.getType() + "'");
 						}
 					}
 				}

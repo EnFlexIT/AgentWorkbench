@@ -630,7 +630,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			
 			jTableDomainTypes = new JTable();
 			jTableDomainTypes.setFillsViewportHeight(true);
-			jTableDomainTypes.setShowGrid(true);
+			jTableDomainTypes.setShowGrid(false);
 			jTableDomainTypes.setRowHeight(20);
 			jTableDomainTypes.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTableDomainTypes.setModel(getTableModel4Domains());
@@ -928,7 +928,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		if (jTableComponentTypes == null) {
 			jTableComponentTypes = new JTable();
 			jTableComponentTypes.setFillsViewportHeight(true);
-			jTableComponentTypes.setShowGrid(true);
+			jTableComponentTypes.setShowGrid(false);
 			jTableComponentTypes.setRowHeight(20);
 			jTableComponentTypes.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTableComponentTypes.setModel(getTableModel4ComponentTypes());
@@ -1246,13 +1246,13 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			if (path.equals("MissingIcon")) {
 				return new MissingIcon(description);
 			} else {
-			    java.net.URL imgURL = getClass().getResource(path);
-			    if (imgURL != null) {
-			        return new ImageIcon(imgURL, description);
-			    } else {
-			        System.err.println("Couldn't find file: " + path);
+			    ImageIcon imageIcon = GraphGlobals.getImageIcon(path, description);
+				if (imageIcon!=null) {
+					return imageIcon;
+				} else {
+					System.err.println("Couldn't find file: " + path);
 			        return new MissingIcon(description);
-			    }
+				}
 			}
 		} else{
 		    return (new MissingIcon(description));		    

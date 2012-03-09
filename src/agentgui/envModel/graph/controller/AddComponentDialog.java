@@ -74,6 +74,7 @@ import org.apache.commons.collections15.Transformer;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.components.ComponentTypeListElement;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
@@ -436,21 +437,17 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 							if (nodeImage.equals("MissingIcon")==false) {
 								// --- Icon reference found --- Start ---
 								LayeredIcon layeredIcon = null;
-								try {
-									URL url = getClass().getResource(nodeImage);
-									ImageIcon imageIcon = new ImageIcon(url);
+								ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImage, currCtsListElement.getComponentName());
+								if (imageIcon!=null) {
 									layeredIcon = new LayeredIcon(imageIcon.getImage());
 									if (layeredIcon!=null && picked==true){
 										String checkColor = currDomainSetings.getVertexColorPicked();
 										Checkmark checkmark = new Checkmark(new Color(Integer.parseInt(checkColor)));
 										layeredIcon.add(checkmark);
 									}
-									
-								} catch (Exception ex) {
+								} else {
 									System.err.println("Could not find node image for '" + currCtsListElement.getComponentName() + "'");
-									layeredIcon = null;
 								}
-							
 								icon = layeredIcon;	
 								// --- Icon reference found --- End -----	
 							}
@@ -458,6 +455,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 					}
 					return icon;
 				}
+				
 			});
 			
 			// --- Set tool tip for nodes -------------------------------------
@@ -605,7 +603,6 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 		}
 		return visViewer;
     }
-    
     
     /**
      * Checks if the current selection is a DistributionNode.
