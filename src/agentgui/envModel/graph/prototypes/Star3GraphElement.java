@@ -43,10 +43,6 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  */
 public class Star3GraphElement extends StarGraphElement {
-	/**
-	 * The number of corners or edges of the graph prototype
-	 */
-	private Integer n = null;
 
 	/**
 	 * Default constructor with 3 corners
@@ -104,15 +100,6 @@ public class Star3GraphElement extends StarGraphElement {
 
 		}
 		throw new GraphElementPrototypeException("Number of connection points (n) is null");
-	}
-
-	/**
-	 * Gets the n.
-	 * 
-	 * @return the number of corners
-	 */
-	public Integer getN() {
-		return n;
 	}
 
 	/**

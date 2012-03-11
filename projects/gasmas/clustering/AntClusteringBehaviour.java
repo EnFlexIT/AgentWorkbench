@@ -103,10 +103,12 @@ public class AntClusteringBehaviour extends SimpleBehaviour {
 	}
 
 	private NetworkModel startAntAnalysis(NetworkModel networkModel) {
+		// init ants
 		ArrayList<Ant> ants = new ArrayList<Ant>();
 		for (int i = 0; i < ANTS; i++) {
 			ants.add(new Ant(thisNetworkComponent));
 		}
+
 		for (int step = 0; step < AntClusteringBehaviour.STEPS; step++) {
 			for (Ant ant : ants) {
 				ant.run(networkModel);

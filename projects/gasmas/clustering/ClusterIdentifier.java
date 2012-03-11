@@ -148,7 +148,7 @@ public class ClusterIdentifier {
 					counter++;
 				}
 			}
-			if (counter < componentsNodes.size() / 2) {
+			if (counter <= componentsNodes.size() / 2) {
 				networkComponents.remove(networkComponent);
 			}
 		}

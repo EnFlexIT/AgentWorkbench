@@ -13,6 +13,8 @@ public abstract class StarGraphElement extends GraphElementPrototype {
 	/** The vector of outernodes which forms the corners of the element. */
 	protected Vector<GraphNode> outerNodes = new Vector<GraphNode>();
 
+	protected Integer n;
+
 	public StarGraphElement() {
 		super();
 	}
@@ -50,6 +52,10 @@ public abstract class StarGraphElement extends GraphElementPrototype {
 	@Override
 	public boolean isDirected() {
 		return false;
+	}
+
+	public Integer getN() {
+		return n;
 	}
 
 }
