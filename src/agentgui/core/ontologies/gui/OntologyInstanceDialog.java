@@ -131,7 +131,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 		this.setTitle(Language.translate("Ontologie-Klassen initialisieren"));
 		this.setContentPane(getJContentPane());
 		
-		this.setAlwaysOnTop(true);
+//		this.setAlwaysOnTop(true);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {

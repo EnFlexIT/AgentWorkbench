@@ -9,7 +9,7 @@ import jade.core.CaseInsensitiveString;
 
 /** file: AgentGUI_BaseOntology.java
  * @author ontology bean generator
- * @version 2012/02/25, 19:42:36
+ * @version 2012/03/18, 18:10:20
  */
 public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
   //NAME
@@ -23,6 +23,8 @@ public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
 
 
    // VOCABULARY
+    public static final String NUMERICDATATABLE_TABLEDATA="tableData";
+    public static final String NUMERICDATATABLE="NumericDataTable";
     public static final String SIMPLE_OBJECT_OBJECTVALUE="ObjectValue";
     public static final String SIMPLE_OBJECT="Simple_Object";
     public static final String SIMPLE_STRING_STRINGVALUE="StringValue";
@@ -33,20 +35,18 @@ public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
     public static final String SIMPLE_INTEGER="Simple_Integer";
     public static final String NUMERICDATACOLUM_COLUMNDATA="columnData";
     public static final String NUMERICDATACOLUM="NumericDataColum";
-    public static final String NUMERICDATATABLE_TABLEDATA="tableData";
-    public static final String NUMERICDATATABLE="NumericDataTable";
     public static final String FORMULA_FORMULA="formula";
     public static final String FORMULA="Formula";
     public static final String SIMPLE_BOOLEAN_BOOLEANVALUE="BooleanValue";
     public static final String SIMPLE_BOOLEAN="Simple_Boolean";
     public static final String CHART="Chart";
-    public static final String TIMESERIES_TIMEAXIS="timeAxis";
-    public static final String TIMESERIES_YAXISUNITS="yAxisUnits";
-    public static final String TIMESERIES_YAXISLINEWIDTH="yAxisLineWidth";
-    public static final String TIMESERIES_YAXISCOLORS="yAxisColors";
     public static final String TIMESERIES_YAXISDATATABLE="yAxisDataTable";
-    public static final String TIMESERIES_YAXISDESCRIPTIONS="yAxisDescriptions";
+    public static final String TIMESERIES_YAXISCOLORS="yAxisColors";
     public static final String TIMESERIES_TIMEFORMAT="timeFormat";
+    public static final String TIMESERIES_YAXISDESCRIPTIONS="yAxisDescriptions";
+    public static final String TIMESERIES_YAXISLINEWIDTH="yAxisLineWidth";
+    public static final String TIMESERIES_YAXISUNITS="yAxisUnits";
+    public static final String TIMESERIES_TIMEAXIS="timeAxis";
     public static final String TIMESERIES="TimeSeries";
 
   /**
@@ -65,8 +65,6 @@ public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
     add(simple_BooleanSchema, agentgui.ontology.Simple_Boolean.class);
     ConceptSchema formulaSchema = new ConceptSchema(FORMULA);
     add(formulaSchema, agentgui.ontology.Formula.class);
-    ConceptSchema numericDataTableSchema = new ConceptSchema(NUMERICDATATABLE);
-    add(numericDataTableSchema, agentgui.ontology.NumericDataTable.class);
     ConceptSchema numericDataColumSchema = new ConceptSchema(NUMERICDATACOLUM);
     add(numericDataColumSchema, agentgui.ontology.NumericDataColum.class);
     ConceptSchema simple_IntegerSchema = new ConceptSchema(SIMPLE_INTEGER);
@@ -77,6 +75,8 @@ public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
     add(simple_StringSchema, agentgui.ontology.Simple_String.class);
     ConceptSchema simple_ObjectSchema = new ConceptSchema(SIMPLE_OBJECT);
     add(simple_ObjectSchema, agentgui.ontology.Simple_Object.class);
+    ConceptSchema numericDataTableSchema = new ConceptSchema(NUMERICDATATABLE);
+    add(numericDataTableSchema, agentgui.ontology.NumericDataTable.class);
 
     // adding AgentAction(s)
 
@@ -86,21 +86,21 @@ public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
 
 
     // adding fields
-    timeSeriesSchema.add(TIMESERIES_TIMEFORMAT, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
-    timeSeriesSchema.add(TIMESERIES_YAXISDESCRIPTIONS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
-    timeSeriesSchema.add(TIMESERIES_YAXISDATATABLE, numericDataTableSchema, ObjectSchema.OPTIONAL);
-    timeSeriesSchema.add(TIMESERIES_YAXISCOLORS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
-    timeSeriesSchema.add(TIMESERIES_YAXISLINEWIDTH, (TermSchema)getSchema(BasicOntology.FLOAT), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_TIMEAXIS, (TermSchema)getSchema(BasicOntology.FLOAT), 0, ObjectSchema.UNLIMITED);
     timeSeriesSchema.add(TIMESERIES_YAXISUNITS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
-    timeSeriesSchema.add(TIMESERIES_TIMEAXIS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_YAXISLINEWIDTH, (TermSchema)getSchema(BasicOntology.FLOAT), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_YAXISDESCRIPTIONS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_TIMEFORMAT, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_YAXISCOLORS, (TermSchema)getSchema(BasicOntology.INTEGER), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_YAXISDATATABLE, numericDataTableSchema, ObjectSchema.OPTIONAL);
     simple_BooleanSchema.add(SIMPLE_BOOLEAN_BOOLEANVALUE, (TermSchema)getSchema(BasicOntology.BOOLEAN), ObjectSchema.OPTIONAL);
     formulaSchema.add(FORMULA_FORMULA, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    numericDataTableSchema.add(NUMERICDATATABLE_TABLEDATA, numericDataColumSchema, 0, ObjectSchema.UNLIMITED);
     numericDataColumSchema.add(NUMERICDATACOLUM_COLUMNDATA, (TermSchema)getSchema(BasicOntology.FLOAT), 0, ObjectSchema.UNLIMITED);
     simple_IntegerSchema.add(SIMPLE_INTEGER_INTEGERVALUE, (TermSchema)getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
     simple_FloatSchema.add(SIMPLE_FLOAT_FLOATVALUE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
     simple_StringSchema.add(SIMPLE_STRING_STRINGVALUE, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
     simple_ObjectSchema.add(SIMPLE_OBJECT_OBJECTVALUE, new ConceptSchema("Concept"), ObjectSchema.OPTIONAL);
+    numericDataTableSchema.add(NUMERICDATATABLE_TABLEDATA, numericDataColumSchema, 0, ObjectSchema.UNLIMITED);
 
     // adding name mappings
 

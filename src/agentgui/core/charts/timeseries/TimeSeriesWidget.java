@@ -37,6 +37,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Language;
@@ -114,6 +115,11 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 			TimeSeries timeSeries = (TimeSeries) startArgs[this.startArgIndex];
 
 			System.out.println("=> Open Chart View ... " + timeSeries.toString());
+			
+			TimeSeriesEditDialog tsed = new TimeSeriesEditDialog(SwingUtilities.getWindowAncestor(this), timeSeries);
+			tsed.setTitle("Edit time series");
+			
+			tsed.setVisible(true);
 			
 			
 		}
