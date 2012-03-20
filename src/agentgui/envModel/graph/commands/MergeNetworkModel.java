@@ -52,8 +52,6 @@ public class MergeNetworkModel extends AbstractUndoableEdit {
 	private GraphNode suppNetModelNodeSelected = null;
 	private GraphNode currNetModelNodeSelected = null;
 
-	private NetworkModel oldNetworkModel = null;
-	
 	/**
 	 * Instantiates a new merge network model.
 	 *
@@ -69,8 +67,6 @@ public class MergeNetworkModel extends AbstractUndoableEdit {
 		this.suppNetModel = this.graphController.getNetworkModel().adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel);
 		this.suppNetModelNodeSelected = nodeOfSupplementNetworkModelSelected;
 		this.currNetModelNodeSelected = nodeOfCurrentNetworkModelSelected;
-		
-		this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
 		
 		this.doEdit();
 	}
@@ -135,7 +131,17 @@ public class MergeNetworkModel extends AbstractUndoableEdit {
 	@Override
 	public void undo() throws CannotUndoException {
 		super.undo();
-		this.graphController.setEnvironmentModel(oldNetworkModel.getCopy());
+		
+		for (NetworkComponent networkComponent: this.suppNetModel.getNetworkComponents().values()) {
+
+			NetworkComponent netComp2Remove = this.graphController.getNetworkModel().getNetworkComponent(networkComponent.getId());
+			this.graphController.getNetworkModel().removeNetworkComponent(netComp2Remove);
+			
+			NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
+			notification.setInfoObject(netComp2Remove);
+			this.graphController.notifyObservers(notification);
+		}
+		this.graphController.setProjectUnsaved();
 	}
 	
 }

@@ -775,9 +775,9 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @param supplementNetworkModel the supplement network model
 	 * @param nodeOfSupplementNetworkModelSelected the node of the supplement NetworkModel, which is selected
 	 * @param nodeOfCurrentNetworkModelSelected the node of current NetworkModel, which is selected 
-	 * @return true, if successful
+	 * @return the residual GraphNode, which connects the two NetworkModel's
 	 */
-	public void mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNode nodeOfSupplementNetworkModelSelected, GraphNode nodeOfCurrentNetworkModelSelected) {
+	public GraphNode mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNode nodeOfSupplementNetworkModelSelected, GraphNode nodeOfCurrentNetworkModelSelected) {
 
 		// --- 1. Adjust the names of the supplement NetworkModel, in order to avoid name clashes -
 		NetworkModel srcNM = adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel);
@@ -814,7 +814,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		}
 
 		// --- 5. Merge the specified nodes -------------------------------------------------------  
-		this.mergeNodes(nodeOfCurrentNetworkModelSelected, nodeOfSupplementNetworkModelSelected);
+		return this.mergeNodes(nodeOfCurrentNetworkModelSelected, nodeOfSupplementNetworkModelSelected);
 		
 	}
 	
@@ -823,13 +823,13 @@ public class NetworkModel implements Cloneable, Serializable {
 	 *
 	 * @param node1 the first GraphNode
 	 * @param node2 the second GraphNode
-	 * @return true, if successful
+	 * @return the residual GraphNode, after the merge process
 	 */
-	public boolean mergeNodes(GraphNode node1, GraphNode node2) {
+	public GraphNode mergeNodes(GraphNode node1, GraphNode node2) {
 
 		// --- Preliminary check ------------------------------------
 		if (node1==null || node2==null) {
-			return false;
+			return null;
 		}
 		
 		GraphNode graphNode1 = node1;
@@ -842,7 +842,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		NetworkComponent disNodeComp2 = containsDistributionNode(this.getNetworkComponents(graphNode2));
 		if (disNodeComp1 != null && disNodeComp2 != null) {
 			// --- Two DistributionNode instances can't be merged ---
-			return false;
+			return null;
 		} else if (disNodeComp1 != null) {
 			comp1 = disNodeComp1;
 		} else if (disNodeComp2 != null) {
@@ -870,9 +870,9 @@ public class NetworkModel implements Cloneable, Serializable {
 			// Removing node2 from the graph and network model
 			graph.removeVertex(graphNode2);
 			graphElements.remove(graphNode2.getId());
-			return true;
+			return graphNode1;
 		}
-		return false;
+		return null;
 	}
 
 	/**

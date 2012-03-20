@@ -94,6 +94,7 @@ de;Datei nicht gefunden!;File not found!;;;
 de;Datei überschreiben?;Overwrite file?;;;
 de;Datei:;File:
 de;Dateien einbinden;Include Files
+de;Daten Importieren...;;;;
 de;Datenbank erfolgreich angelegt!;Database created successfully!
 de;Datenbank für das Hauptserver-Modul;Database for the main server module
 de;Datenbank nicht vorhanden!;Database does not exist!
@@ -104,6 +105,7 @@ de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wählen Sie e
 de;Der Name;The name
 de;Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.;The maximum memory must be greater than the initial memory.;;;
 de;Deutsch;German
+de;Dicke;;;;
 de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
 de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
 de;Die Datei;The file
@@ -118,6 +120,7 @@ de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;;;
 de;Eigene Auslastungsgrenzwerte verwenden;Use own threshold values
 de;Einheit;Unit
+de;Einstellungen;;;;
 de;Element-Typ;Element type
 de;Element;Element
 de;Endanwender-Ansicht;End users view
@@ -131,6 +134,7 @@ de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
 de;Externe jar-Ressourcen;External jar resources;;;
 de;Extras;Extras
+de;Farbe;;;;
 de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!
 de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
@@ -413,6 +417,7 @@ de;Suche & Auswahl;Search & Selection;;;
 de;Suche nach Agenten beendet...;Search for agents finished...
 de;Suche nach der nächsten fehlenden Übersetzung (STRG+F);Search for the next missing translation (CTRL + F)
 de;Suche;Search
+de;Tabelle;;;;
 de;Teil-Umgebung;environment part
 de;Teilnetze;Subnetworks;;;
 de;Text zur Übersetzung;Text to translate

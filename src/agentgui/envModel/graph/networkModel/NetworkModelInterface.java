@@ -259,7 +259,7 @@ public interface NetworkModelInterface {
 	 * @param supplementNetworkModel the supplement network model
 	 * @param nodeOfSupplementNetworkModelSelected the node of the supplement NetworkModel, which is selected
 	 * @param nodeOfCurrentNetworkModelSelected the node of current NetworkModel, which is selected 
-	 * @return true, if successful
+	 * @return the residual GraphNode, which connects the two NetworkModel's
 	 */
 	public abstract void mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNode nodeOfSupplementNetworkModelSelected, GraphNode nodeOfCurrentNetworkModelSelected);
 	
@@ -268,9 +268,9 @@ public interface NetworkModelInterface {
 	 *
 	 * @param node1 the first GraphNode
 	 * @param node2 the second GraphNode
-	 * @return true, if successful
+	 * @return the residual GraphNode, after the merge process
 	 */
-	public abstract boolean mergeNodes(GraphNode node1, GraphNode node2);
+	public abstract void mergeNodes(GraphNode node1, GraphNode node2);
 
 	/**
 	 * Splits the network model at a specified node.

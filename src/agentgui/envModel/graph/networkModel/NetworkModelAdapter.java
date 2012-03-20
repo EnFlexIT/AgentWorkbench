@@ -384,11 +384,10 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#mergeNodes(agentgui.envModel.graph.networkModel.GraphNode, agentgui.envModel.graph.networkModel.GraphNode)
 	 */
 	@Override
-	public boolean mergeNodes(GraphNode node1, GraphNode node2) {
-		boolean merged = this.graphController.getNetworkModel().mergeNodes(node1, node2); 
+	public void mergeNodes(GraphNode node1, GraphNode node2) {
+		this.graphController.getNetworkModel().mergeNodes(node1, node2); 
 		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Merged);
 		this.notifyObservers(notification);
-		return merged;
 	}
 
 	/* (non-Javadoc)
