@@ -87,6 +87,7 @@ public class MergeNetworkModel extends AbstractUndoableEdit {
 		for (GraphNode node:supplementNetworkModel.getGraph().getVertices()) {
 			if (node.getId().equals(this.suppNetModelNodeSelected.getId())) {
 				suppNetModelNodeSelected = node;
+				break;
 			}
 		}
 
@@ -95,6 +96,7 @@ public class MergeNetworkModel extends AbstractUndoableEdit {
 		for (GraphNode node:this.graphController.getNetworkModel().getGraph().getVertices()) {
 			if (node.getId().equals(this.currNetModelNodeSelected.getId())) {
 				currNetModelNodeSelected = node;
+				break;
 			}
 		}
 		
