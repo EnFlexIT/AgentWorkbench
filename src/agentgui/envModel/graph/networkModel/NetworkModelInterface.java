@@ -243,7 +243,26 @@ public interface NetworkModelInterface {
 	 * @return String The next unique node ID that can be used.
 	 */
 	public abstract String nextNodeID();
-
+	
+	/**
+	 * Corrects the name definitions of a supplement NetworkModel in  
+	 * order to avoid name clashes with the current NetworkModel.
+	 *
+	 * @param supplementNetworkModel a supplement NetworkModel
+	 * @return the NetworkModel with corrected names
+	 */
+	public abstract NetworkModel adjustNameDefinitionsOfSupplementNetworkModel(NetworkModel supplementNetworkModel);
+	
+	/**
+	 * Merges the current NetworkModel with an incoming NetworkModel as supplement.
+	 *
+	 * @param supplementNetworkModel the supplement network model
+	 * @param nodeOfSupplementNetworkModelSelected the node of the supplement NetworkModel, which is selected
+	 * @param nodeOfCurrentNetworkModelSelected the node of current NetworkModel, which is selected 
+	 * @return true, if successful
+	 */
+	public abstract void mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNode nodeOfSupplementNetworkModelSelected, GraphNode nodeOfCurrentNetworkModelSelected);
+	
 	/**
 	 * Merges the network model by using two (selected) nodes.
 	 *

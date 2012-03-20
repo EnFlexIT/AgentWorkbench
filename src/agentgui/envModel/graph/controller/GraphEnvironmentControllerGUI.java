@@ -732,6 +732,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     		switch (reason) {
     		case NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged:
     		case NetworkModelNotification.NETWORK_MODEL_Reload:
+    		case NetworkModelNotification.NETWORK_MODEL_Merged_With_Supplement_NetworkModel:
     			this.reLoad();
     			break;
 				

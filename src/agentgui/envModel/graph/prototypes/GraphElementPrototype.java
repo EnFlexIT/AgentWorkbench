@@ -46,23 +46,20 @@ import edu.uci.ics.jung.graph.Graph;
  *
  */
 public abstract class GraphElementPrototype {
-	/**
-	 * Counting the total Number of nodes for generating unique node IDs 
-	 */
-	protected static int nodeCounter = 0;
-	/**
-	 * The id of the element represented by this GraphElementPrototype	
-	 */
+	
+	/** Counting the number of nodes for generating unique node IDs for one prototype */
+	protected int nodeCounter = 0;
+
+	/** The id of the element represented by this GraphElementPrototype */
 	protected String id;
-	/**
-	 * The type of the element represented by this GraphElementPrototype
-	 */
+	
+	/** The type of the element represented by this GraphElementPrototype */
 	protected String type;
-	/**
-	 * Reference to the graph instance, required to get graph topology related information on nodes and edges 
-	 */
+	
+	/** Reference to the graph instance, required to get graph topology related information on nodes and edges */
 	protected Graph<GraphNode, GraphEdge> graph;
 
+	
 	/**
 	 * This method adds a GraphElementPrototype to a JUNG graph, with no connection to other graph elements.
 	 * This method should be implemented, for new graph prototypes.
@@ -137,7 +134,4 @@ public abstract class GraphElementPrototype {
 	 */
 	public abstract boolean isDirected();
 	
-	//TODO think about this vs the current implementation based on the 
-	//	constraint that a node can be in max two network components. (eg. Star) 
-	//public abstract boolean isFreeConnectionPoint();
 }

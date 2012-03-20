@@ -115,6 +115,18 @@
             <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
             <startAsName>n67</startAsName>
         </agent>
+        <agent>
+            <postionNo>19</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
+            <startAsName>n72</startAsName>
+        </agent>
+        <agent>
+            <postionNo>20</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
+            <startAsName>n73</startAsName>
+        </agent>
     </agentSetup>
     <environmentFileName>SmartGrid.graphml</environmentFileName>
 </simulationSetup>

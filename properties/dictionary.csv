@@ -273,6 +273,7 @@ de;Netz-Komponenten;Network Components
 de;Netz;Network
 de;Netzkomponente;Network component
 de;Netzwerk-Komponenten;Network Components;;;
+de;Netzwerkkomponente(n) hinzufügen;Add network component s);;;
 de;Neu laden;Reload;;;
 de;Neuer Agent;New agent
 de;Neuer Eintrag;New Entry
@@ -484,7 +485,9 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
+en;;Please, select the network component that you would like to add!;;;
 en;;Redo Action;;;
+en;;Select one vertex please!;;;
 en;;Undo Action;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktuelles Bild entfernen;Remove current image;;;

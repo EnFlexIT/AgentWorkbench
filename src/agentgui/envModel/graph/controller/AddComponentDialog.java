@@ -82,10 +82,11 @@ import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
-import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
+import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.prototypes.DistributionNode;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 import agentgui.envModel.graph.prototypes.Star3GraphElement;
+import agentgui.envModel.graph.prototypes.StarGraphElement;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
@@ -135,13 +136,17 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 
     private GraphEnvironmentController graphController = null;
     private BasicGraphGui basicGraphGui = null;
+
     
     private VisualizationViewer<GraphNode, GraphEdge> visViewer = null;
 
-    /** The graph element prototype of the selected component type. */
-    private GraphElementPrototype graphElement = null; // @jve:decl-index=0:
-	private ComponentTypeListElement currCtsListElement;
+    private NetworkModel currNetworkModel = null;
+    private ComponentTypeListElement currCtsListElement;
 	private DomainSettings currDomainSetings;
+	
+	/** The graph element prototype of the selected component type. */
+    private GraphElementPrototype currGraphElementPrototype = null; // @jve:decl-index=0:
+	private GraphNode currGraphNodeSelected = null;
 	
 
 	/**
@@ -242,7 +247,6 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 
 	/**
 	 * This method initializes jPanelCenter	
-	 * 	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelCenter() {
@@ -273,77 +277,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 		return jPanelCenter;
 	}
 	
-    /**
-     * This method initializes componentTypesList
-     * @return javax.swing.JList
-     */
-    private JList getComponentTypesList() {
-		if (componentTypesList == null) {
-		    componentTypesList = new JList(this.getListData());
-		    componentTypesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		    componentTypesList.addListSelectionListener(new ListSelectionListener() {
-				public void valueChanged(javax.swing.event.ListSelectionEvent e) {
-				    if (!e.getValueIsAdjusting()) {
-						ComponentTypeListElement ctsSelected = (ComponentTypeListElement) componentTypesList.getSelectedValue();
-						String graphPrototype = ctsSelected.getComponentTypeSettings().getGraphPrototype();
-						if (graphPrototype!=null) {
-							setPrototypePreview(ctsSelected);	
-						} else {
-							String msg = Language.translate("The definition of the component contains no graph prototyp definition.", Language.EN);
-							String titel = Language.translate("Missing definition of the Graph prototype for '" + ctsSelected.getComponentName() + "'!", Language.EN);
-							JOptionPane.showMessageDialog(getJContentPane(), msg, titel, JOptionPane.WARNING_MESSAGE);
-						}
-				    }
-				}
-		    });
-		}
-		return componentTypesList;
-    }
-
-    /**
-     * This method takes the GraphPrototype class name as string and creates a graph of the prototype and shows a preview in the visualizationViewer
-     * @param graphPrototype
-     */
-    private void setPrototypePreview(ComponentTypeListElement ctsListElement) {
-	
-    	// --- Get the configuration for the selection -------------- 
-    	this.currCtsListElement = ctsListElement;
-    	String domain = this.currCtsListElement.getDomain();
-
-    	if (domain==null) {
-    		this.currDomainSetings = this.graphController.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
-    	} else {
-    		this.currDomainSetings = this.graphController.getDomainSettings().get(domain);	
-    	}
-    	
-    	// --- Create the graph of the NetworkComponent -------------
-		this.graphElement = null;
-		try {
-		    Class<?> theClass = Class.forName(this.currCtsListElement.getComponentTypeSettings().getGraphPrototype());
-		    graphElement = (GraphElementPrototype) theClass.newInstance();
-		} catch (ClassNotFoundException ex) {
-		    System.err.println(ex + " GraphElementPrototype class must be in class path.");
-		} catch (InstantiationException ex) {
-		    System.err.println(ex + " GraphElementPrototype class must be concrete.");
-		} catch (IllegalAccessException ex) {
-		    System.err.println(ex + " GraphElementPrototype class must have a no-arg constructor.");
-		}
-	
-		if (graphElement != null) {
-		    // Generate and use the next unique network component ID
-		    String nextID = this.graphController.getNetworkModelAdapter().nextNetworkComponentID();
-		    graphElement.setId(nextID);
-		    graphElement.setType(this.currCtsListElement.getComponentName());
-	
-		    // Create an empty graph and add the graphElement to it
-		    Graph<GraphNode, GraphEdge> graph = new SparseGraph<GraphNode, GraphEdge>();
-		    graphElement.addToGraph(graph);
-		    graphRepaint(graph);
-		}
-
-    }
-
-    /**
+	 /**
      * This method initializes jScrollPane
      * @return javax.swing.JScrollPane
      */
@@ -357,36 +291,107 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Gets the list of componentTypeSettings from the controller and 
-     * returns it as a Vector<ComponentTypeListElement>
-     * @see ComponentTypeListElement
-     * @return Object[] - array of component types
+     * This method initializes btnOK
+     * @return javax.swing.JButton
      */
-    private Vector<ComponentTypeListElement> getListData() {
-		
-    	// --- Create the Vector ----------------
-    	Vector<ComponentTypeListElement> list = new Vector<ComponentTypeListElement>();
-    	HashMap<String, ComponentTypeSettings> ctsHash = this.graphController.getComponentTypeSettings();
-		if (ctsHash != null) {
-			Iterator<String> ctsIt = ctsHash.keySet().iterator();
-		    while (ctsIt.hasNext()) {
-		    	String componentName = ctsIt.next(); 
-		    	ComponentTypeSettings cts = ctsHash.get(componentName); 
-				list.add(new ComponentTypeListElement(componentName, cts));
-		    }
-		} 
-		// --- Sort the Vector ------------------
-		Collections.sort(list, new Comparator<ComponentTypeListElement>() {
-			@Override
-			public int compare(ComponentTypeListElement cts1, ComponentTypeListElement cts2) {
-				if (cts1.getDomain().equals(cts2.getDomain())) {
-					return cts1.getComponentName().compareTo(cts2.getComponentName());
-				} else {
-					return cts1.getDomain().compareTo(cts2.getDomain());
+    private JButton getBtnOK() {
+		if (jButtonOK == null) {
+		    jButtonOK = new JButton();
+		    jButtonOK.setText("OK");
+		    jButtonOK.setPreferredSize(new Dimension(80, 26));
+		    jButtonOK.setForeground(new Color(0, 153, 0));
+		    jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
+		    jButtonOK.addActionListener(this);
+		}
+		return jButtonOK;
+    }
+    /**
+     * This method initializes jBottomPanel
+     * @return javax.swing.JPanel
+     */
+    private JPanel getJBottomPanel() {
+		if (jPanelBottom == null) {
+		    GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+		    gridBagConstraints5.insets = new Insets(5, 25, 5, 0);
+		    GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+		    gridBagConstraints4.insets = new Insets(5, 0, 5, 25);
+		    jPanelBottom = new JPanel();
+		    jPanelBottom.setLayout(new GridBagLayout());
+		    jPanelBottom.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		    jPanelBottom.add(getBtnOK(), gridBagConstraints4);
+		    jPanelBottom.add(getBtnCancel(), gridBagConstraints5);
+		}
+		return jPanelBottom;
+    }
+
+    /**
+     * This method initializes btnCancel
+     * @return javax.swing.JButton
+     */
+    private JButton getBtnCancel() {
+		if (jButtonCancel == null) {
+		    jButtonCancel = new JButton();
+		    jButtonCancel.setText("Cancel");
+		    jButtonCancel.setPreferredSize(new Dimension(80, 26));
+		    jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
+		    jButtonCancel.setForeground(new Color(153, 0, 0));
+		    jButtonCancel.addActionListener(this);
+		}
+		return jButtonCancel;
+    }
+
+    /**
+     * This method initializes jViewerPanel
+     * @return javax.swing.JPanel
+     */
+    private JPanel getJViewerPanel() {
+		if (jPanelViewer == null) {
+		    GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		    gridBagConstraints.fill = GridBagConstraints.BOTH;
+		    gridBagConstraints.weighty = 1.0;
+		    gridBagConstraints.weightx = 1.0;
+		    jPanelViewer = new JPanel();
+		    jPanelViewer.setLayout(new GridBagLayout());
+		    jPanelViewer.setPreferredSize(new Dimension(20, 150));
+		    jPanelViewer.add(getVisualizationViewer(), gridBagConstraints);
+		}
+		return jPanelViewer;
+    }
+    
+    /**
+     * This method initializes componentTypesList
+     * @return javax.swing.JList
+     */
+    private JList getComponentTypesList() {
+		if (componentTypesList == null) {
+		    componentTypesList = new JList(this.getListData());
+		    componentTypesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		    componentTypesList.addListSelectionListener(new ListSelectionListener() {
+				public void valueChanged(javax.swing.event.ListSelectionEvent e) {
+				    if (!e.getValueIsAdjusting()) {
+						// --- Set the current list element ---------
+				    	currCtsListElement = (ComponentTypeListElement) componentTypesList.getSelectedValue();
+						// --- Set the current domain ---------------
+				    	String domain = currCtsListElement.getDomain();
+				    	if (domain==null) {
+				    		currDomainSetings = graphController.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
+				    	} else {
+				    		currDomainSetings = graphController.getDomainSettings().get(domain);	
+				    	}
+				    	// --- Paint GraphPrototype, if available ---  
+				    	String graphPrototype = currCtsListElement.getComponentTypeSettings().getGraphPrototype();
+				    	if (graphPrototype!=null) {
+							setPrototypePreview();	
+						} else {
+							String msg = Language.translate("The definition of the component contains no graph prototyp definition.", Language.EN);
+							String titel = Language.translate("Missing definition of the Graph prototype for '" + currCtsListElement.getComponentName() + "'!", Language.EN);
+							JOptionPane.showMessageDialog(getJContentPane(), msg, titel, JOptionPane.WARNING_MESSAGE);
+						}
+				    }
 				}
-			}
-		});
-		return list;
+		    });
+		}
+		return componentTypesList;
     }
 
     /**
@@ -605,233 +610,6 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     }
     
     /**
-     * Checks if the current selection is a DistributionNode.
-     * @return true, if it is a DistributionNode
-     */
-    private boolean isCurrentComponentDistributionNode() {
-    	if (currCtsListElement==null) {
-    		return false;
-    	} else {
-    		return currCtsListElement.getComponentTypeSettings().getGraphPrototype().equals(DistributionNode.class.getName());	
-    	}
-    }
-    
-    /**
-     * Repaints/Refreshes the visualisation viewer, with the given graph
-     * @param graph The new graph to be painted
-     */
-    private void graphRepaint(Graph<GraphNode, GraphEdge> graph) {
-		
-		// --------------------------------------
-		// --- Define default layout ------------
-    	Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
-		layout.setSize(new Dimension(100, 100));
-		
-		// --------------------------------------
-		// --- Some special cases ---------------
-		// --------------------------------------
-		if (graph.getEdgeCount()==0 && graph.getVertexCount()==1) {
-			
-			GraphNode node = graph.getVertices().iterator().next();
-			node.setPosition(new Point2D.Double(50, 50));
-			
-			layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-				public Point2D transform(GraphNode node) {
-					return node.getPosition(); // The position is specified in the GraphNode instance
-				}
-			});
-			
-			
-		} else if (graph.getEdgeCount()==1) {
-			
-			GraphEdge edge = graph.getEdges().iterator().next();
-			EdgeType edgeType = graph.getEdgeType(edge);
-			if (edgeType==EdgeType.DIRECTED) {
-			
-				GraphNode nodeSource = graph.getSource(edge);
-				GraphNode nodeDestin = graph.getDest(edge);
-				nodeSource.setPosition(new Point2D.Double(0, 50));
-				nodeDestin.setPosition(new Point2D.Double(100, 50));
-				
-				layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-				layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-					public Point2D transform(GraphNode node) {
-						return node.getPosition(); // The position is specified in the GraphNode instance
-					}
-				});
-				
-			}
-		}
-
-		// --------------------------------------
-		// --- Set the graph to the layout ------
-		visViewer.setGraphLayout(layout);
-		visViewer.repaint();
-		jContentPane.repaint();
-    }
-
-    /**
-     * This method initializes btnOK
-     * @return javax.swing.JButton
-     */
-    private JButton getBtnOK() {
-		if (jButtonOK == null) {
-		    jButtonOK = new JButton();
-		    jButtonOK.setText("OK");
-		    jButtonOK.setPreferredSize(new Dimension(80, 26));
-		    jButtonOK.setForeground(new Color(0, 153, 0));
-		    jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
-		    jButtonOK.addActionListener(this);
-		}
-		return jButtonOK;
-    }
-
-    /**
-     * Add a new network component of selectedType to the main graph joined at the pickedVertex. Updates the environment network model accordingly.
-     * 
-     * @param selectedComponentTypeListElement - The Network component type selected
-     * @param pickedVertex - The vertex selected in the prototype preview which is to be used as common point for merging
-     */
-    private void addGraphPrototype(ComponentTypeListElement selectedComponentTypeListElement, GraphNode pickedVertex) {
-	
-    	String comp2Add = selectedComponentTypeListElement.getComponentName();
-    	ComponentTypeSettings cts = selectedComponentTypeListElement.getComponentTypeSettings();
-    	
-    	// --- Get information about the current network model ----------------
-		NetworkModelAdapter networkModel = this.graphController.getNetworkModelAdapter();
-		GraphNode parentPickedVertex = this.basicGraphGui.getPickedSingleNode();
-	
-		// --- Adding to an empty graph - starting from scratch ---------------
-		if (networkModel.getGraph().getVertexCount() == 0) {
-		    // Creating an initial dummy vertex on the parent graph so that the
-		    // same merge function can be used
-		    parentPickedVertex = new GraphNode(GraphNode.GRAPH_NODE_PREFIX + "0", new Point(30, 30));
-		    networkModel.getGraph().addVertex(parentPickedVertex);
-		}
-	
-		// --- Adding the prototype element to the main graph -----------------
-		HashSet<GraphElement> graphElements = merge(networkModel.getGraph(), getVisualizationViewer().getGraphLayout().getGraph(), parentPickedVertex, pickedVertex);
-	
-		// --- register the new NetworkComponent in the NetworkModel ----------
-		NetworkComponent newComponent = new NetworkComponent(graphElement.getId(), comp2Add, cts.getGraphPrototype(), cts.getAgentClass(), graphElements, graphElement.isDirected());
-		networkModel.addNetworkComponent(newComponent);
-		
-    }
-
-    /**
-     * Merge the two graphs into one graph as if v1 and v2 are the same. The resultant graph is g1 Modifying the network model here, may move this function to GraphEnvironmentController instead
-     * 
-     * @param g1 First Graph
-     * @param g2 Second Graph
-     * @param v1 a vertex in g1
-     * @param v2 a vertex in g2
-     */
-    private HashSet<GraphElement> merge(Graph<GraphNode, GraphEdge> g1, Graph<GraphNode, GraphEdge> g2, GraphNode v1, GraphNode v2) {
-
-    	// A mapping from vertices in g2 to the newly created corresponding vertices in g1
-		HashMap<GraphNode, GraphNode> map = new HashMap<GraphNode, GraphNode>();
-	
-		// Create a HashSet containing the nodes and edges belonging to the new
-		// network component and return it
-		HashSet<GraphElement> elements = new HashSet<GraphElement>();
-		// Adding the common vertex to the elements set
-		elements.add(v1);
-
-		// Copy the vertices from g2 to g1
-		for (GraphNode v : g2.getVertices()) {
-		    if (v != v2) {
-				GraphNode newNode = new GraphNode();
-				// Generate the unique ID to be assigned to the new node
-				String nextID = graphController.getNetworkModelAdapter().nextNodeID();
-				newNode.setId(nextID);
-		
-				// Set position of node v1+(v-v2)
-				int x = (int) (v1.getPosition().getX() + (getVisualizationViewer().getGraphLayout().transform(v).getX() - getVisualizationViewer().getGraphLayout().transform(v2).getX()));
-				int y = (int) (v1.getPosition().getY() + (getVisualizationViewer().getGraphLayout().transform(v).getY() - getVisualizationViewer().getGraphLayout().transform(v2).getY()));
-				newNode.setPosition(new Point(x, y));
-				g1.addVertex(newNode);
-				// inserting a mapping from g2 to g1 of corresponding nodes
-				map.put(v, newNode);
-				elements.add(newNode);
-		    }
-		}
-	
-		// copy the edges from g2 to g1
-		EdgeType direction = (graphElement.isDirected()) ? EdgeType.DIRECTED : EdgeType.UNDIRECTED;
-	
-		for (GraphEdge e : g2.getEdges()) {
-		    GraphNode front = g2.getEndpoints(e).getFirst();
-		    GraphNode back = g2.getEndpoints(e).getSecond();
-		    GraphEdge newEdge = new GraphEdge(e.getId(), graphElement.getType());
-		    if (front == v2) {
-		    	g1.addEdge(newEdge, v1, map.get(back), direction);
-		    } else if (back == v2) {
-		    	g1.addEdge(newEdge, map.get(front), v1, direction);
-		    } else {
-		    	g1.addEdge(newEdge, map.get(front), map.get(back), direction);
-		    }
-		    elements.add(newEdge);
-		}
-		return elements;
-    }
-
-    /**
-     * This method initializes jBottomPanel
-     * 
-     * @return javax.swing.JPanel
-     */
-    private JPanel getJBottomPanel() {
-		if (jPanelBottom == null) {
-		    GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-		    gridBagConstraints5.insets = new Insets(5, 25, 5, 0);
-		    GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-		    gridBagConstraints4.insets = new Insets(5, 0, 5, 25);
-		    jPanelBottom = new JPanel();
-		    jPanelBottom.setLayout(new GridBagLayout());
-		    jPanelBottom.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		    jPanelBottom.add(getBtnOK(), gridBagConstraints4);
-		    jPanelBottom.add(getBtnCancel(), gridBagConstraints5);
-		}
-		return jPanelBottom;
-    }
-
-    /**
-     * This method initializes btnCancel
-     * 
-     * @return javax.swing.JButton
-     */
-    private JButton getBtnCancel() {
-		if (jButtonCancel == null) {
-		    jButtonCancel = new JButton();
-		    jButtonCancel.setText("Cancel");
-		    jButtonCancel.setPreferredSize(new Dimension(80, 26));
-		    jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-		    jButtonCancel.setForeground(new Color(153, 0, 0));
-		    jButtonCancel.addActionListener(this);
-		}
-		return jButtonCancel;
-    }
-
-    /**
-     * This method initializes jViewerPanel
-     * @return javax.swing.JPanel
-     */
-    private JPanel getJViewerPanel() {
-		if (jPanelViewer == null) {
-		    GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		    gridBagConstraints.fill = GridBagConstraints.BOTH;
-		    gridBagConstraints.weighty = 1.0;
-		    gridBagConstraints.weightx = 1.0;
-		    jPanelViewer = new JPanel();
-		    jPanelViewer.setLayout(new GridBagLayout());
-		    jPanelViewer.setPreferredSize(new Dimension(20, 150));
-		    jPanelViewer.add(getVisualizationViewer(), gridBagConstraints);
-		}
-		return jPanelViewer;
-    }
-
-    /**
 	 * Controls the shape, size, and aspect ratio for each vertex.
 	 * 
 	 * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
@@ -882,6 +660,239 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 			return factory.getEllipse(node); // DEFAULT;
 		}
 	}
+	
+    /**
+     * This method takes the GraphPrototype class name as string and creates a graph of the prototype and shows a preview in the visualizationViewer
+     * @param graphPrototype
+     */
+    private void setPrototypePreview() {
+
+    	String componentName = this.currCtsListElement.getComponentName();
+    	String graphPrototype = this.currCtsListElement.getComponentTypeSettings().getGraphPrototype();
+    	
+    	// --- Create the graph of the NetworkComponent -------------
+		this.currNetworkModel = null;
+    	this.currGraphElementPrototype = null;
+    	
+		try {
+		    Class<?> theClass = Class.forName(graphPrototype);
+		    currGraphElementPrototype = (GraphElementPrototype) theClass.newInstance();
+		} catch (ClassNotFoundException ex) {
+		    System.err.println("GraphElementPrototype class must be in class path.\n" + ex);
+		} catch (InstantiationException ex) {
+		    System.err.println("GraphElementPrototype class must be concrete.\n" + ex);
+		} catch (IllegalAccessException ex) {
+		    System.err.println("GraphElementPrototype class must have a no-arg constructor.\n" + ex);
+		}
+	
+		if (currGraphElementPrototype!=null) {
+		    
+			// --- Create a new local NetworkModel ------------------
+			this.currNetworkModel = new NetworkModel();
+			this.currNetworkModel.setGeneralGraphSettings4MAS(this.graphController.getNetworkModel().getGeneralGraphSettings4MAS().getCopy());
+
+			// --- Configure and add the prototype to the graph ----- 
+			this.currGraphElementPrototype.setId(this.currNetworkModel.nextNetworkComponentID());
+			this.currGraphElementPrototype.setType(componentName);
+			this.currGraphElementPrototype.addToGraph(this.currNetworkModel.getGraph());
+		    
+		    // --- Paint and Layout the graph -----------------------
+		    this.paintGraph();
+		    
+		    // --- Create the needed NetworkComponent --------------- 
+	    	ComponentTypeSettings cts = this.currCtsListElement.getComponentTypeSettings();
+			HashSet<GraphElement> elements = new HashSet<GraphElement>();
+
+	    	// --- Get graph elements -------------------------------
+	    	Graph<GraphNode, GraphEdge> currGraph = this.currNetworkModel.getGraph();    	
+			for (GraphNode vertex : currGraph.getVertices()) {
+				elements.add(vertex);
+			}
+			for (GraphEdge edge : currGraph.getEdges()) {
+			    elements.add(edge);
+			}
+	    	
+			// --- Create a NetworkComponent for the local NetworkModel -
+			this.currNetworkModel.addNetworkComponent(new NetworkComponent(currGraphElementPrototype.getId(), componentName, graphPrototype, cts.getAgentClass(), elements, currGraphElementPrototype.isDirected()));
+		    
+		    // --- Set current selected node ------------------------ 
+		    this.setSelectedGraphNode();
+	
+		}
+
+    }
+    
+    /**
+     * Repaints/Refreshes the visualisation viewer, with the given graph
+     * @param graph The new graph to be painted
+     */
+    private void paintGraph() {
+		
+    	Graph<GraphNode, GraphEdge> graph = this.currNetworkModel.getGraph();
+    	
+		// --- Define default layout ------------
+    	Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
+		layout.setSize(new Dimension(100, 100));
+		
+		// --------------------------------------
+		// --- Some special cases ---------------
+		// --------------------------------------
+		if (graph.getEdgeCount()==0 && graph.getVertexCount()==1) {
+			// ----------------------------------
+			// --- Case DistributionNodes -------
+			// ----------------------------------
+			GraphNode node = graph.getVertices().iterator().next();
+			node.setPosition(new Point2D.Double(50, 50));
+			
+			layout = new StaticLayout<GraphNode, GraphEdge>(graph);
+			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
+				public Point2D transform(GraphNode node) {
+					return node.getPosition(); // The position is specified in the GraphNode instance
+				}
+			});
+			// --- Pick node -------------------- 
+			this.getVisualizationViewer().getPickedVertexState().pick(node, true);
+
+			
+		} else if (graph.getEdgeCount()==1) {
+			// ----------------------------------
+			// --- Case directed Graph ----------
+			// ----------------------------------
+			GraphEdge edge = graph.getEdges().iterator().next();
+			EdgeType edgeType = graph.getEdgeType(edge);
+			if (edgeType==EdgeType.DIRECTED) {
+			
+				GraphNode nodeSource = graph.getSource(edge);
+				GraphNode nodeDestin = graph.getDest(edge);
+				nodeSource.setPosition(new Point2D.Double(0, 50));
+				nodeDestin.setPosition(new Point2D.Double(100, 50));
+				
+				layout = new StaticLayout<GraphNode, GraphEdge>(graph);
+				layout.setInitializer(new Transformer<GraphNode, Point2D>() {
+					public Point2D transform(GraphNode node) {
+						return node.getPosition(); // The position is specified in the GraphNode instance
+					}
+				});
+			}
+		}
+
+		if (this.currGraphElementPrototype instanceof StarGraphElement) {
+			// ----------------------------------
+			// --- Case StarGraphElement --------
+			// ----------------------------------
+			int nNodes = graph.getVertices().size();
+			double angle = 0;
+			double angleStep = 0;
+			if ((nNodes-1)<=4) {
+				angleStep = 2 * Math.PI / 4;
+			} else {
+				angleStep = 2 * Math.PI / (nNodes-1);
+			}
+			
+			for (GraphNode node : graph.getVertices()) {
+				int nEdges = graph.getIncidentEdges(node).size();
+				
+				if (nEdges==nNodes-1) {
+					node.setPosition(new Point2D.Double(50, 50));
+				} else {
+					// --- outer Node found -----
+					double x = 50 + 50 * Math.cos(angle);
+					double y = 50 + 50 * Math.sin(angle);
+					node.setPosition(new Point2D.Double(x, y));
+					angle += angleStep;
+				}
+			}
+			
+			layout = new StaticLayout<GraphNode, GraphEdge>(graph);
+			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
+				public Point2D transform(GraphNode node) {
+					return node.getPosition(); // The position is specified in the GraphNode instance
+				}
+			});
+			
+			
+		}
+		
+		// --------------------------------------
+		// --- Set the graph to the layout ------
+		visViewer.setGraphLayout(layout);
+		visViewer.repaint();
+		jContentPane.repaint();
+    }
+
+    /**
+     * Evaluates the current graph and sets the selected GraphNode.
+     */
+    private void setSelectedGraphNode() {
+    	
+    	// --- Is everything selected what is needed ? --------------
+    	if (this.currCtsListElement==null || this.currGraphElementPrototype==null) {
+    		this.currNetworkModel = null;
+    		this.currGraphNodeSelected = null;
+    		return;
+    	}
+    	
+    	// --- Update position information of current graph ---------
+    	Graph<GraphNode, GraphEdge> currGraph = this.currNetworkModel.getGraph();    	
+		for (GraphNode vertex : currGraph.getVertices()) {
+			int x = (int) getVisualizationViewer().getGraphLayout().transform(vertex).getX();
+			int y = (int) getVisualizationViewer().getGraphLayout().transform(vertex).getY();
+			vertex.setPosition(new Point(x, y));
+		}
+		
+    	Set<GraphNode> nodeSet = getVisualizationViewer().getPickedVertexState().getPicked();
+    	if (nodeSet.size() == 1) {
+    		this.currGraphNodeSelected = nodeSet.iterator().next();
+    	} else {
+    		this.currGraphNodeSelected = null;
+    	}
+    	
+    }
+    
+    /**
+     * Gets the list of componentTypeSettings from the controller and 
+     * returns it as a Vector<ComponentTypeListElement>
+     * @see ComponentTypeListElement
+     * @return Object[] - array of component types
+     */
+    private Vector<ComponentTypeListElement> getListData() {
+		
+    	// --- Create the Vector ----------------
+    	Vector<ComponentTypeListElement> list = new Vector<ComponentTypeListElement>();
+    	HashMap<String, ComponentTypeSettings> ctsHash = this.graphController.getComponentTypeSettings();
+		if (ctsHash != null) {
+			Iterator<String> ctsIt = ctsHash.keySet().iterator();
+		    while (ctsIt.hasNext()) {
+		    	String componentName = ctsIt.next(); 
+		    	ComponentTypeSettings cts = ctsHash.get(componentName); 
+				list.add(new ComponentTypeListElement(componentName, cts));
+		    }
+		} 
+		// --- Sort the Vector ------------------
+		Collections.sort(list, new Comparator<ComponentTypeListElement>() {
+			@Override
+			public int compare(ComponentTypeListElement cts1, ComponentTypeListElement cts2) {
+				if (cts1.getDomain().equals(cts2.getDomain())) {
+					return cts1.getComponentName().compareTo(cts2.getComponentName());
+				} else {
+					return cts1.getDomain().compareTo(cts2.getDomain());
+				}
+			}
+		});
+		return list;
+    }
+    
+    /**
+     * Checks if the current selection is a DistributionNode.
+     * @return true, if it is a DistributionNode
+     */
+    private boolean isCurrentComponentDistributionNode() {
+    	if (currCtsListElement==null) {
+    		return false;
+    	} else {
+    		return currCtsListElement.getComponentTypeSettings().getGraphPrototype().equals(DistributionNode.class.getName());	
+    	}
+    }
     
     /*
      * (non-Javadoc)
@@ -891,45 +902,50 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
 
-		if (ae.getSource().equals(getBtnOK())) {
-		    // --- OK button ---
-		    // check whether only one vertex is picked or not
-		    ComponentTypeListElement selected = (ComponentTypeListElement) componentTypesList.getSelectedValue();
-		    Set<GraphNode> nodeSet = getVisualizationViewer().getPickedVertexState().getPicked();
-		    if (nodeSet.size() == 1) {
-				// Picked one vertex
-				GraphNode pickedVertex = nodeSet.iterator().next();
-				// Check for Star prototype
-				if (graphElement instanceof Star3GraphElement) {
-				    // If the picked vertex is the center of the star, cannot add
-				    Graph<GraphNode, GraphEdge> graph = getVisualizationViewer().getGraphLayout().getGraph();
-				    // All the edges in the graph or incident on the pickedVertex => It is a center
-				    if (graph.getEdgeCount() == graph.getIncidentEdges(pickedVertex).size()) {
-				    	JOptionPane.showMessageDialog(this, Language.translate("Select a vertex other than the center of the star", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-				    	return;
-				    }
-				} else if (graphElement instanceof DistributionNode) {
-					// --- If the current selection of the main graph is also a DistributionNode => disallow ---
-					GraphNode nodeSelected = this.basicGraphGui.getPickedSingleNode();
-					HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(nodeSelected);
-					NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
-					if (containsDistributionNode!=null) {
-						String msg = "The selection in the main graph already contains a component of\n";
-						msg += "the type 'DistributionNode'. This is only allowed once at one node! ";
-						JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-				}
-				
-				this.addGraphPrototype(selected, pickedVertex);
-				this.dispose();
-	
-		    } else {
-		    	JOptionPane.showMessageDialog(this, Language.translate("Select one vertex", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+    	String msg = null;
+
+    	if (ae.getSource()==this.getBtnOK() ) {
+			// --- OK button ----------------------------------------
+		    this.setSelectedGraphNode();
+		    if (this.currNetworkModel==null) {
+		    	msg = "Please, select the network component that you would like to add!";
+		    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+		    	return;
 		    }
+		    if (this.currGraphNodeSelected==null) {
+		    	msg = "Select one vertex please!";
+		    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+		    	return;
+		    }
+
+			if (this.currGraphElementPrototype instanceof Star3GraphElement) {
+			    // If the picked vertex is the center of the star, cannot add
+			    Graph<GraphNode, GraphEdge> graph = getVisualizationViewer().getGraphLayout().getGraph();
+			    // All the edges in the graph or incident on the pickedVertex => It is a center
+			    if (graph.getEdgeCount() == graph.getIncidentEdges(this.currGraphNodeSelected).size()) {
+			    	JOptionPane.showMessageDialog(this, Language.translate("Select a vertex other than the center of the star", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+			    	return;
+			    }
+			    
+			} else if (this.currGraphElementPrototype instanceof DistributionNode) {
+				// --- If the current selection of the main graph is also a DistributionNode => disallow ---
+				GraphNode nodeSelected = this.basicGraphGui.getPickedSingleNode();
+				HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(nodeSelected);
+				NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
+				if (containsDistributionNode!=null) {
+					msg  = "The selection in the main graph already contains a component of\n";
+					msg += "the type 'DistributionNode'. This is only allowed once at one node! ";
+					JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+			}
+			
+			this.graphController.getNetworkModelAdapter().mergeNetworkModel(this.currNetworkModel, this.currGraphNodeSelected, this.basicGraphGui.getPickedSingleNode());
+			this.dispose();
 	
-		} else if (ae.getSource().equals(getBtnCancel())) {
-		    // --- Cancel button ---
+		   
+		} else if (ae.getSource()== getBtnCancel()) {
+		    // --- Cancel button ------------------------------------
 		    this.dispose();
 		}
     }

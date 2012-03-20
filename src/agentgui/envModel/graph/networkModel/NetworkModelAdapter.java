@@ -38,6 +38,7 @@ import java.util.Vector;
 
 import javax.swing.undo.UndoManager;
 
+import agentgui.envModel.graph.commands.MergeNetworkModel;
 import agentgui.envModel.graph.commands.SetGeneralGraphSettings4MAS;
 import agentgui.envModel.graph.commands.SetNetworkModel;
 import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
@@ -85,8 +86,9 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	public void undo() {
 		try {
 			this.undoManager.undo();	
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			System.out.println("Can't undo");
+			ex.printStackTrace();
 		}
 	}
 	/**
@@ -95,8 +97,9 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	public void redo() {
 		try {
 			this.undoManager.redo();	
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			System.out.println("Can't redo");
+			ex.printStackTrace();
 		}
 	}
 	
@@ -122,7 +125,6 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	@Override
 	public void setGeneralGraphSettings4MAS(GeneralGraphSettings4MAS generalGraphSettings4MAS) {
 		this.undoManager.addEdit(new SetGeneralGraphSettings4MAS(this.graphController, generalGraphSettings4MAS));
-		this.graphController.setProjectUnsaved();
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getGeneralGraphSettings4MAS()
@@ -362,6 +364,20 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 			this.notifyObservers(notification);
 		}
 		return removedComponents;
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#adjustNameDefinitionsOfSupplementNetworkModel(agentgui.envModel.graph.networkModel.NetworkModel)
+	 */
+	public NetworkModel adjustNameDefinitionsOfSupplementNetworkModel(NetworkModel supplementNetworkModel) {
+		return this.graphController.getNetworkModel().adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel);
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#mergeNetworkModel(agentgui.envModel.graph.networkModel.NetworkModel, agentgui.envModel.graph.networkModel.GraphNode, agentgui.envModel.graph.networkModel.GraphNode)
+	 */
+	public void mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNode nodeOfSupplementNetworkModelSelected, GraphNode nodeOfCurrentNetworkModelSelected) {
+		this.undoManager.addEdit(new MergeNetworkModel(this.graphController, supplementNetworkModel, nodeOfSupplementNetworkModelSelected, nodeOfCurrentNetworkModelSelected));
 	}
 	
 	/* (non-Javadoc)

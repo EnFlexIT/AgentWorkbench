@@ -33,46 +33,80 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import agentgui.core.application.Language;
-import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 
-
 /**
- * The Class SetGeneralGraphSettings4MAS.
+ * The Class AddNetworkComponent.
  */
-public class SetGeneralGraphSettings4MAS extends AbstractUndoableEdit {
+public class MergeNetworkModel extends AbstractUndoableEdit {
 
 	private static final long serialVersionUID = -4772137855514690242L;
 
 	private GraphEnvironmentController graphController = null;
-	private GeneralGraphSettings4MAS newGeneralGraphSettings4MAS = null;
 	
+	private NetworkModel suppNetModel = null;
+	private GraphNode suppNetModelNodeSelected = null;
+	private GraphNode currNetModelNodeSelected = null;
+
 	private NetworkModel oldNetworkModel = null;
 	
-	
 	/**
-	 * Instantiates a new sets the general graph settings4 mas.
+	 * Instantiates a new merge network model.
 	 *
 	 * @param graphController the graph controller
-	 * @param newGeneralGraphSettings4MAS the new general graph settings4 mas
+	 * @param supplementNetworkModel the supplement network model
+	 * @param nodeOfSupplementNetworkModelSelected the node of supplement network model selected
+	 * @param nodeOfCurrentNetworkModelSelected the node of current network model selected
 	 */
-	public SetGeneralGraphSettings4MAS(GraphEnvironmentController graphController, GeneralGraphSettings4MAS newGeneralGraphSettings4MAS) {
+	public MergeNetworkModel(GraphEnvironmentController graphController, NetworkModel supplementNetworkModel, GraphNode nodeOfSupplementNetworkModelSelected, GraphNode nodeOfCurrentNetworkModelSelected) {
 		super();
 		this.graphController = graphController;
-		this.newGeneralGraphSettings4MAS = newGeneralGraphSettings4MAS;
+		
+		this.suppNetModel = this.graphController.getNetworkModel().adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel);
+		this.suppNetModelNodeSelected = nodeOfSupplementNetworkModelSelected;
+		this.currNetModelNodeSelected = nodeOfCurrentNetworkModelSelected;
+		
 		this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
+		
 		this.doEdit();
 	}
 	
 	/**
-	 * Do the wished edit.
+	 * Do edit.
 	 */
 	private void doEdit() {
-		this.graphController.getNetworkModel().setGeneralGraphSettings4MAS(this.newGeneralGraphSettings4MAS);
-		this.graphController.validateNetworkComponentAndAgents2Start();
-		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ComponentTypeSettingsChanged));
+		
+		NetworkModel supplementNetworkModel = this.suppNetModel.getCopy();
+		
+		// --- 1. Search for the right node in the supplement graph --
+		GraphNode suppNetModelNodeSelected = null;
+		for (GraphNode node:supplementNetworkModel.getGraph().getVertices()) {
+			if (node.getId().equals(this.suppNetModelNodeSelected.getId())) {
+				suppNetModelNodeSelected = node;
+			}
+		}
+
+		// --- 2. Search for the right node in the current graph ----
+		GraphNode currNetModelNodeSelected = null;
+		for (GraphNode node:this.graphController.getNetworkModel().getGraph().getVertices()) {
+			if (node.getId().equals(this.currNetModelNodeSelected.getId())) {
+				currNetModelNodeSelected = node;
+			}
+		}
+		
+		// --- 3. Merge NetworkModels -------------------------------
+		this.graphController.getNetworkModel().mergeNetworkModel(supplementNetworkModel, suppNetModelNodeSelected, currNetModelNodeSelected);
+		
+		// --- 4. Add the Agent definitions -------------------------
+		for(NetworkComponent networkComponent : supplementNetworkModel.getNetworkComponents().values()) {
+			this.graphController.addAgent(networkComponent);
+		}
+		
+		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Merged_With_Supplement_NetworkModel));
 		this.graphController.setProjectUnsaved();
 	}
 	
@@ -81,9 +115,9 @@ public class SetGeneralGraphSettings4MAS extends AbstractUndoableEdit {
 	 */
 	@Override
 	public String getPresentationName() {
-		return Language.translate("Komponenten-Definition bearbeiten");
+		return Language.translate("Netzwerkkomponente(n) hinzufügen");
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.undo.AbstractUndoableEdit#redo()
 	 */
@@ -101,6 +135,5 @@ public class SetGeneralGraphSettings4MAS extends AbstractUndoableEdit {
 		super.undo();
 		this.graphController.setEnvironmentModel(oldNetworkModel.getCopy());
 	}
-	
 	
 }
