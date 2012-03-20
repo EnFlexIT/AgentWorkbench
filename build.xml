@@ -89,6 +89,8 @@
 					lib/jFreeChart/jcommon-1.0.17.jar
 					lib/jFreeChart/jfreechart-1.0.14.jar
 		
+					lib/jcalendar/jcalendar.jar
+		
 					lib/jep-2.3.1/jep-2.3.1.jar
 		
 					lib/hyperic-sigar/sigar-bin/lib/junit.jar 
