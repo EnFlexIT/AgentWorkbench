@@ -256,9 +256,39 @@
         <agent>
             <postionNo>42</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
             <startAsName>n47</startAsName>
         </agent>
+        <agent>
+            <postionNo>43</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n49</startAsName>
+        </agent>
+        <agent>
+            <postionNo>44</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n50</startAsName>
+        </agent>
+        <agent>
+            <postionNo>45</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n51</startAsName>
+        </agent>
+        <agent>
+            <postionNo>46</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n48</startAsName>
+        </agent>
+        <agent>
+            <postionNo>47</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n52</startAsName>
+        </agent>
     </agentSetup>
-    <environmentFileName>Testnetz 1.graphml</environmentFileName>
+    <environmentFileName>Testnetz 2.graphml</environmentFileName>
 </simulationSetup>

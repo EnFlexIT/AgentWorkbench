@@ -28,7 +28,7 @@
  */
 package gasmas.agents.manager;
 
-import gasmas.clustering.PathAnalyseClusteringBehaviour;
+import gasmas.clustering.PathCircleClusteringBehaviour;
 import jade.core.ServiceException;
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
@@ -154,7 +154,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	 * Adds Behaviours.
 	 */
 	private void behaviours() {
-		this.addBehaviour(new PathAnalyseClusteringBehaviour(envModel, myNetworkModel.getNetworkComponent("n1")));
+		this.addBehaviour(new PathCircleClusteringBehaviour(envModel, myNetworkModel.getNetworkComponent("n1")));
 		// this.addBehaviour(new EdgeBetweenessBehaviour(envModel));
 	}
 }

@@ -106,12 +106,12 @@ public class AntClusteringBehaviour extends SimpleBehaviour {
 		// init ants
 		ArrayList<Ant> ants = new ArrayList<Ant>();
 		for (int i = 0; i < ANTS; i++) {
-			ants.add(new Ant(thisNetworkComponent));
+			ants.add(new Ant(networkModel, thisNetworkComponent.getId()));
 		}
 
 		for (int step = 0; step < AntClusteringBehaviour.STEPS; step++) {
 			for (Ant ant : ants) {
-				ant.run(networkModel);
+				ant.run();
 			}
 		}
 		findBorderNetworkCompoennts(new AntDistributionMatrix(ants));

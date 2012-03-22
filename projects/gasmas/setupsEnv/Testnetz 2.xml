@@ -20,10 +20,10 @@
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n23_0</graphElementIDs>
-                <graphElementIDs>PP19</graphElementIDs>
                 <graphElementIDs>n23_1</graphElementIDs>
                 <graphElementIDs>n23_2</graphElementIDs>
                 <graphElementIDs>PP48</graphElementIDs>
+                <graphElementIDs>PP88</graphElementIDs>
                 <graphElementIDs>PP22</graphElementIDs>
                 <graphElementIDs>PP23</graphElementIDs>
                 <id>n23</id>
@@ -236,6 +236,36 @@
             </value>
         </entry>
         <entry>
+            <key>n48</key>
+            <value>
+                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n48</graphElementIDs>
+                <graphElementIDs>PP101</graphElementIDs>
+                <graphElementIDs>PP100</graphElementIDs>
+                <id>n48</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Pipe</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n49</key>
+            <value>
+                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP92</graphElementIDs>
+                <graphElementIDs>n49_1</graphElementIDs>
+                <graphElementIDs>PP91</graphElementIDs>
+                <graphElementIDs>n49_0</graphElementIDs>
+                <graphElementIDs>PP94</graphElementIDs>
+                <graphElementIDs>n49_2</graphElementIDs>
+                <graphElementIDs>PP93</graphElementIDs>
+                <id>n49</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
+                <type>Branch3</type>
+            </value>
+        </entry>
+        <entry>
             <key>n46</key>
             <value>
                 <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
@@ -268,14 +298,18 @@
         <entry>
             <key>n47</key>
             <value>
-                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
+                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>PP28</graphElementIDs>
-                <graphElementIDs>n47</graphElementIDs>
-                <graphElementIDs>PP87</graphElementIDs>
+                <graphElementIDs>PP19</graphElementIDs>
+                <graphElementIDs>PP91</graphElementIDs>
+                <graphElementIDs>n47_2</graphElementIDs>
+                <graphElementIDs>PP88</graphElementIDs>
+                <graphElementIDs>n47_0</graphElementIDs>
+                <graphElementIDs>PP90</graphElementIDs>
+                <graphElementIDs>n47_1</graphElementIDs>
                 <id>n47</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Pipe</type>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
+                <type>Branch3</type>
             </value>
         </entry>
         <entry>
@@ -447,6 +481,53 @@
             </value>
         </entry>
         <entry>
+            <key>n50</key>
+            <value>
+                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP93</graphElementIDs>
+                <graphElementIDs>PP95</graphElementIDs>
+                <graphElementIDs>PP98</graphElementIDs>
+                <graphElementIDs>PP97</graphElementIDs>
+                <graphElementIDs>n50_2</graphElementIDs>
+                <graphElementIDs>n50_1</graphElementIDs>
+                <graphElementIDs>n50_0</graphElementIDs>
+                <id>n50</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
+                <type>Branch3</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n51</key>
+            <value>
+                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n51_0</graphElementIDs>
+                <graphElementIDs>PP94</graphElementIDs>
+                <graphElementIDs>n51_2</graphElementIDs>
+                <graphElementIDs>PP98</graphElementIDs>
+                <graphElementIDs>n51_1</graphElementIDs>
+                <graphElementIDs>PP99</graphElementIDs>
+                <graphElementIDs>PP100</graphElementIDs>
+                <id>n51</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
+                <type>Branch3</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n52</key>
+            <value>
+                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP95</graphElementIDs>
+                <graphElementIDs>PP102</graphElementIDs>
+                <graphElementIDs>n52</graphElementIDs>
+                <id>n52</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Pipe</type>
+            </value>
+        </entry>
+        <entry>
             <key>n35</key>
             <value>
                 <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
@@ -584,7 +665,7 @@
             <value>
                 <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>PP87</graphElementIDs>
+                <graphElementIDs>PP28</graphElementIDs>
                 <graphElementIDs>n15</graphElementIDs>
                 <graphElementIDs>PP23</graphElementIDs>
                 <id>n15</id>
