@@ -148,10 +148,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.controller.addObserver(this);
 		this.graphGuiTools = new BasicGraphGuiTools(this.controller);
 		initialize();
-		
+
 		this.reLoadGraph();
 	}
-	
+
 	/**
 	 * Gets the graph environment controller.
 	 * @return the controller
@@ -159,6 +159,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	public GraphEnvironmentController getGraphEnvironmentController() {
 		return controller;
 	}
+
 	/**
 	 * Gets the VisualizationViewer
 	 * @return The VisualizationViewer
@@ -166,6 +167,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	public VisualizationViewer<GraphNode, GraphEdge> getVisView() {
 		return visView;
 	}
+
 	/**
 	 * Gets the scaling control.
 	 * @return the scalingControl
@@ -173,7 +175,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private ScalingControl getScalingControl() {
 		return scalingControl;
 	}
-	
+
 	/**
 	 * This method initializes this
 	 * @return void
@@ -198,8 +200,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the pluggableGraphMouse
 	 */
 	private PluggableGraphMouse getPluggableGraphMouse() {
-		if (pluggableGraphMouse==null) {
-			
+		if (pluggableGraphMouse == null) {
+
 			// Create the context menu Plugin
 			GraphEnvironmentPopupPlugin<GraphNode, GraphEdge> popupPlugin = new GraphEnvironmentPopupPlugin<GraphNode, GraphEdge>(this);
 			popupPlugin.setEdgePopup(this.graphGuiTools.getEdgePopup());
@@ -217,7 +219,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the pluggableGraphMouse
 	 */
 	private DefaultModalGraphMouse<GraphNode, GraphEdge> getDefaultModalGraphMouse() {
-		if (defaultModalGraphMouse==null) {
+		if (defaultModalGraphMouse == null) {
 			defaultModalGraphMouse = new DefaultModalGraphMouse<GraphNode, GraphEdge>();
 		}
 		return defaultModalGraphMouse;
@@ -290,6 +292,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private Point2D getDefaultScaleAtPoint() {
 		return defaultScaleAtPoint;
 	}
+
 	/**
 	 * Sets the default point to scale at for zooming..
 	 * @param scalePoint the new default scale at point
@@ -380,9 +383,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param graph The graph
 	 */
 	private void reLoadGraph() {
-		
+
 		Graph<GraphNode, GraphEdge> graph = this.controller.getNetworkModelAdapter().getGraph();
-		
+
 		// --- Remove the old component -------------------
 		if (centerComponent != null) {
 			this.remove(centerComponent);
@@ -416,7 +419,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		visView.getGraphLayout().setGraph(this.controller.getNetworkModelAdapter().getGraph());
 		visView.repaint();
 	}
-	
+
 	/**
 	 * Gets the new visualization viewer for a given graph.
 	 *
@@ -438,9 +441,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 		double moveY = 0;
 
 		Rectangle2D rect = this.getGraphSpreadDimension(graph);
-		if (rect.getX() != graphMargin) moveX = (rect.getX() * (-1)) + graphMargin;
-		if (rect.getY() != graphMargin) moveY = (rect.getY() * (-1)) + graphMargin;
-		graph = this.correctGraphCoordinates(graph, moveX, moveY);	
+		if (rect.getX() != graphMargin)
+			moveX = (rect.getX() * (-1)) + graphMargin;
+		if (rect.getY() != graphMargin)
+			moveY = (rect.getY() * (-1)) + graphMargin;
+		graph = this.correctGraphCoordinates(graph, moveX, moveY);
 
 		// ----------------------------------------------------------------
 		// --- Define graph layout ----------------------------------------
@@ -461,8 +466,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.setBackground(Color.WHITE);
 
 		// --- Configure mouse interaction --------------------------------
-		this.defaultModalGraphMouse = null;	// Reset new VisualizationViewer
-		this.pluggableGraphMouse = null;	// Reset new VisualizationViewer
+		this.defaultModalGraphMouse = null; // Reset new VisualizationViewer
+		this.pluggableGraphMouse = null; // Reset new VisualizationViewer
 		vViewer.setGraphMouse(this.getPluggableGraphMouse());
 
 		// --- Set tool tip for nodes -------------------------------------
@@ -475,66 +480,66 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		// --- Configure the vertex shape and size ------------------------
 		vViewer.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<GraphNode, GraphEdge>());
-		
-		// --- Configure vertex icons, if configured ----------------------		
-		vViewer.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>(){
-			
+
+		// --- Configure vertex icons, if configured ----------------------
+		vViewer.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>() {
+
 			private final String pickedPostfix = "[picked]";
 			private HashMap<String, LayeredIcon> iconHash = new HashMap<String, LayeredIcon>();
-			
+
 			@Override
 			public Icon transform(GraphNode node) {
-				
+
 				Icon icon = null;
 				boolean picked = vViewer.getPickedVertexState().isPicked(node);
-				
+
 				NetworkModelAdapter networkModel = controller.getNetworkModelAdapter();
 				HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
 				NetworkComponent distributionNode = networkModel.containsDistributionNode(componentHashSet);
-				if (distributionNode!=null) {
+				if (distributionNode != null) {
 					// --- Found a distribution node ----------------
 					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(distributionNode.getType());
 					DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
 					String nodeImagePath = cts.getEdgeImage();
 					String checkColor = ds.getVertexColorPicked();
-					
-					if (nodeImagePath!=null) {
-						if (nodeImagePath.equals("MissingIcon")==false) {
+
+					if (nodeImagePath != null) {
+						if (nodeImagePath.equals("MissingIcon") == false) {
 							// --- 1. Search in the local Hash ------
 							LayeredIcon layeredIcon = null;
-							if (picked==true) {
-								layeredIcon = iconHash.get(nodeImagePath+this.pickedPostfix);	
+							if (picked == true) {
+								layeredIcon = iconHash.get(nodeImagePath + this.pickedPostfix);
 							} else {
-								layeredIcon = iconHash.get(nodeImagePath);								
+								layeredIcon = iconHash.get(nodeImagePath);
 							}
-							// --- 2. If necessary, load the image -- 
-							if (layeredIcon==null) {
+							// --- 2. If necessary, load the image --
+							if (layeredIcon == null) {
 								ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath, distributionNode.getType());
-								if (imageIcon!=null){
+								if (imageIcon != null) {
 									// --- 3. Remind this images ----
 									LayeredIcon layeredIconUnPicked = new LayeredIcon(imageIcon.getImage());
 									this.iconHash.put(nodeImagePath, layeredIconUnPicked);
-									
+
 									LayeredIcon layeredIconPicked = new LayeredIcon(imageIcon.getImage());
 									layeredIconPicked.add(new Checkmark(new Color(Integer.parseInt(checkColor))));
-									this.iconHash.put(nodeImagePath+this.pickedPostfix, layeredIconPicked);
+									this.iconHash.put(nodeImagePath + this.pickedPostfix, layeredIconPicked);
 									// --- 4. Return the right one --
-									if (picked==true) {
+									if (picked == true) {
 										layeredIcon = layeredIconPicked;
 									} else {
 										layeredIcon = layeredIconUnPicked;
 									}
 								}
 							}
-							icon = layeredIcon;	
+							icon = layeredIcon;
 						}
 					}
 				}
 				return icon;
 			}
-			
+
 		});
-		
+
 		// --- Configure vertex colors ------------------------------------
 		vViewer.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
 			@Override
@@ -561,7 +566,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 							DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
 							colorString = ds.getVertexColorPicked();
 						}
-						
+
 					} else {
 						if (componentHashSet.iterator().hasNext()) {
 							NetworkComponent component = componentHashSet.iterator().next();
@@ -588,14 +593,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 				}
 			}
 		}); // end transformer
-				
+
 		// --- Configure to show vertex labels ----------------------------
 		vViewer.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode node) {
 
-				//GeneralGraphSettings4MAS graphSettings = controller.getNetworkModelAdapter().getGeneralGraphSettings4MAS();
-				
+				// GeneralGraphSettings4MAS graphSettings = controller.getNetworkModelAdapter().getGeneralGraphSettings4MAS();
+
 				NetworkModelAdapter nModel = controller.getNetworkModelAdapter();
 				HashSet<NetworkComponent> components = nModel.getNetworkComponents(node);
 				NetworkComponent distributionNode = nModel.containsDistributionNode(components);
@@ -610,22 +615,20 @@ public class BasicGraphGui extends JPanel implements Observer {
 						return node.getId();
 					}
 					return null;
-					
-				} else {
-					// --- Just a normal node -------------
-					if (components.iterator().hasNext()) {
-						String compType = components.iterator().next().getType();
-						ComponentTypeSettings cts = controller.getComponentTypeSettings().get(compType);
-						if (cts == null) {
-							return node.getId();
-						}
-						DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
-						if (ds.isShowLabel()) {
-							return node.getId();
-						}
-						return null;
+
+				}
+				// --- Just a normal node -------------
+				if (components.iterator().hasNext()) {
+					String compType = components.iterator().next().getType();
+					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(compType);
+					if (cts == null) {
+						return node.getId();
 					}
-					
+					DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
+					if (ds.isShowLabel()) {
+						return node.getId();
+					}
+					return null;
 				}
 				return null;
 			}
@@ -731,7 +734,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param pickedObject The selected object
 	 */
 	public void handleObjectLeftClick(Object pickedObject) {
-		this.clearPickedObjects();
 		this.selectObject(pickedObject);
 	}
 
@@ -740,7 +742,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param pickedObject the selected object
 	 */
 	public void handleObjectRightClick(Object pickedObject) {
-		this.clearPickedObjects();
 		this.selectObject(pickedObject);
 	}
 
@@ -749,8 +750,44 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param pickedObject
 	 */
 	public void handleObjectDoubleClick(Object pickedObject) {
-		this.clearPickedObjects();
-		selectObject(pickedObject, true);
+		this.selectObject(pickedObject);
+		if (!doubleClickActionClusterNetworkComponent(pickedObject)) {
+			showComponentSettingsDialog(pickedObject);
+		}
+	}
+
+	/**
+	 * Open ClusterNetworkComponents NetworkModel
+	 * 
+	 * @param object
+	 * @return
+	 */
+	private boolean doubleClickActionClusterNetworkComponent(Object object) {
+		ClusterNetworkComponent clusterNetworkComponent = null;
+		if (object instanceof GraphNode) {
+			HashSet<NetworkComponent> netComps = controller.getNetworkModelAdapter().getNetworkComponents((GraphNode) object);
+			if (netComps.size() == 1) {
+				clusterNetworkComponent = getClusterNetworkComponent(netComps.iterator().next());
+			}
+		} else if (object instanceof GraphEdge) {
+			clusterNetworkComponent = getClusterNetworkComponent(controller.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object));
+		} else {
+			clusterNetworkComponent = getClusterNetworkComponent(object);
+		}
+		if (clusterNetworkComponent != null) {
+			System.out.println("cluster");
+			controller.getNetworkModelAdapter().getAlternativeNetworkModel().put("C: " + clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
+			controller.getNetworkModelAdapter().reLoadNetworkModel();
+			return true;
+		}
+		return false;
+	}
+
+	private ClusterNetworkComponent getClusterNetworkComponent(Object object) {
+		if (object instanceof ClusterNetworkComponent) {
+			return (ClusterNetworkComponent) object;
+		}
+		return null;
 	}
 
 	/**
@@ -795,14 +832,15 @@ public class BasicGraphGui extends JPanel implements Observer {
 			return nodeSet.iterator().next();
 		return null;
 	}
+
 	/**
 	 * Gets the Set<GraphNode> of picked nodes.
 	 * @return the picked nodes
 	 */
-	public Set<GraphNode> getPickedNodes(){
-		return visView.getPickedVertexState().getPicked();	
+	public Set<GraphNode> getPickedNodes() {
+		return visView.getPickedVertexState().getPicked();
 	}
-	
+
 	/**
 	 * Returns the edge which is picked. If multiple nodes are picked, returns null.
 	 * @return GraphEdge - the GraphNode which is picked.
@@ -813,21 +851,13 @@ public class BasicGraphGui extends JPanel implements Observer {
 			return edgeSet.iterator().next();
 		return null;
 	}
+
 	/**
 	 * Gets the Set<GraphEdge> of picked edges.
 	 * @return the picked edges
 	 */
-	public Set<GraphEdge> getPickedEdges(){
-		return this.visView.getPickedEdgeState().getPicked();	
-	}
-	
-	/**
-	 * This method handles the selection of an object, i.e. highlights the related graph elements
-	 * 
-	 * @param object The object to select
-	 */
-	private void selectObject(Object object) {
-		this.selectObject(object, false);
+	public Set<GraphEdge> getPickedEdges() {
+		return this.visView.getPickedEdgeState().getPicked();
 	}
 
 	/**
@@ -836,7 +866,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param object
 	 * @param showComponentSettingsDialog - shows the dialog if true
 	 */
-	private void selectObject(Object object, boolean showComponentSettingsDialog) {
+	private void selectObject(Object object) {
+		this.clearPickedObjects();
 
 		if (object instanceof GraphNode) {
 			this.setPickedObject((GraphElement) object);
@@ -846,12 +877,12 @@ public class BasicGraphGui extends JPanel implements Observer {
 			if (disNode != null) {
 				this.controller.getNetworkModelAdapter().selectNetworkComponent(disNode);
 			}
-			if (netComps.size()==1) {
+			if (netComps.size() == 1) {
 				this.controller.getNetworkModelAdapter().selectNetworkComponent(netComps.iterator().next());
 				this.clearPickedObjects();
 				this.setPickedObject((GraphElement) object);
 			}
-			
+
 		} else if (object instanceof GraphEdge) {
 			NetworkComponent netComp = controller.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object);
 			this.setPickedObjects(controller.getNetworkModelAdapter().getGraphElementsFromNetworkComponent(netComp));
@@ -860,95 +891,91 @@ public class BasicGraphGui extends JPanel implements Observer {
 		} else if (object instanceof NetworkComponent) {
 			this.setPickedObjects(controller.getNetworkModelAdapter().getGraphElementsFromNetworkComponent((NetworkComponent) object));
 		}
-
-		if (showComponentSettingsDialog == true) {
-			OntologySettingsDialog osd = null;
-			if (object instanceof GraphNode) {
-				osd = new OntologySettingsDialog(this.controller.getProject(), this.controller, object);
-
-			} else if (object instanceof GraphEdge) {
-				NetworkComponent netComp = controller.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object);
-				osd = new OntologySettingsDialog(this.controller.getProject(), this.controller, netComp);
-
-			} else if (object instanceof NetworkComponent) {
-				osd = new OntologySettingsDialog(this.controller.getProject(), this.controller, object);
-
-			}
-			osd.setVisible(true);
-		}
-
 	}
 
-	
+	private void showComponentSettingsDialog(Object object) {
+		OntologySettingsDialog osd = null;
+		if (object instanceof GraphNode) {
+			osd = new OntologySettingsDialog(this.controller.getProject(), this.controller, object);
+
+		} else if (object instanceof GraphEdge) {
+			NetworkComponent netComp = controller.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object);
+			osd = new OntologySettingsDialog(this.controller.getProject(), this.controller, netComp);
+
+		} else if (object instanceof NetworkComponent) {
+			osd = new OntologySettingsDialog(this.controller.getProject(), this.controller, object);
+
+		}
+		osd.setVisible(true);
+	}
+
 	/**
 	 * Export the current graph as image by using a file selection dialog.
 	 */
 	private void exportAsImage() {
-		
+
 		String currentFolder = null;
-		if (Application.RunInfo!=null) {
+		if (Application.RunInfo != null) {
 			// --- Get the last selected folder of Agent.GUI ---
-			currentFolder = Application.RunInfo.getLastSelectedFolderAsString();	
+			currentFolder = Application.RunInfo.getLastSelectedFolderAsString();
 		}
-		
-		// --- Create instance of JFileChooser ----------------- 
-		JFileChooser jfc = new JFileChooser(); 
+
+		// --- Create instance of JFileChooser -----------------
+		JFileChooser jfc = new JFileChooser();
 		jfc.setMultiSelectionEnabled(false);
 		jfc.setAcceptAllFileFilterUsed(false);
-		
+
 		// --- Add custom icons for file types. ----------------
-        jfc.setFileView(new ImageFileView());
-	    // --- Add the preview pane. ---------------------------
-        jfc.setAccessory(new ImagePreview(jfc));
-		
-        
+		jfc.setFileView(new ImageFileView());
+		// --- Add the preview pane. ---------------------------
+		jfc.setAccessory(new ImagePreview(jfc));
+
 		// --- Set the file filter -----------------------------
-        String[] extensionsJPEG = {ImageUtils.jpg,ImageUtils.jpeg};
-        
-        ConfigurableFileFilter filterJPG = new ConfigurableFileFilter(extensionsJPEG, "JPEG - Image");
-        ConfigurableFileFilter filterPNG = new ConfigurableFileFilter(ImageUtils.png, "PNG - File");
-        ConfigurableFileFilter filterGIF = new ConfigurableFileFilter(ImageUtils.gif ,"GIF - Image");
-		
-        jfc.addChoosableFileFilter(filterGIF);
+		String[] extensionsJPEG = { ImageUtils.jpg, ImageUtils.jpeg };
+
+		ConfigurableFileFilter filterJPG = new ConfigurableFileFilter(extensionsJPEG, "JPEG - Image");
+		ConfigurableFileFilter filterPNG = new ConfigurableFileFilter(ImageUtils.png, "PNG - File");
+		ConfigurableFileFilter filterGIF = new ConfigurableFileFilter(ImageUtils.gif, "GIF - Image");
+
+		jfc.addChoosableFileFilter(filterGIF);
 		jfc.addChoosableFileFilter(filterJPG);
 		jfc.addChoosableFileFilter(filterPNG);
 
 		jfc.setFileFilter(filterPNG);
-		
 
-		// --- Maybe set the current directory ----------------- 
-		if (currentFolder!=null) {
-			jfc.setCurrentDirectory(new File(currentFolder));	
+		// --- Maybe set the current directory -----------------
+		if (currentFolder != null) {
+			jfc.setCurrentDirectory(new File(currentFolder));
 		}
-        
+
 		// === Show dialog and wait on user action =============
-        int state = jfc.showSaveDialog(this); 
-		if (state==JFileChooser.APPROVE_OPTION) {
-		
+		int state = jfc.showSaveDialog(this);
+		if (state == JFileChooser.APPROVE_OPTION) {
+
 			ConfigurableFileFilter cff = (ConfigurableFileFilter) jfc.getFileFilter();
 			String selectedExtension = cff.getFileExtension()[0];
 			String mustExtension = "." + selectedExtension;
-					
+
 			File selectedFile = jfc.getSelectedFile();
-			if (selectedFile!=null) {
+			if (selectedFile != null) {
 				String selectedPath = selectedFile.getAbsolutePath();
-				if (selectedPath.endsWith(mustExtension)==false) {
+				if (selectedPath.endsWith(mustExtension) == false) {
 					selectedPath = selectedPath + mustExtension;
 				}
 				// ---------------------------------------------
 				// --- Export current display to image ---------
 				// ---------------------------------------------
-				this.exportAsImage(this.getVisView(), selectedPath, selectedExtension);	
+				this.exportAsImage(this.getVisView(), selectedPath, selectedExtension);
 				// ---------------------------------------------
-				
-				if (Application.RunInfo!=null) {
+
+				if (Application.RunInfo != null) {
 					Application.RunInfo.setLastSelectedFolder(jfc.getCurrentDirectory());
-				}	
+				}
 			}
 		} // end APPROVE_OPTION
-		
+
 	}
-	
+
 	/**
 	 * Export the current graph as image by using specified parameters. 
 	 *
@@ -956,9 +983,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param file the current file to export to
 	 */
 	private void exportAsImage(VisualizationViewer<GraphNode, GraphEdge> vv, String path2File, String extension) {
-		
+
 		// --- If the VisualizationViewer is null ---------
-		if (vv==null) {
+		if (vv == null) {
 			return;
 		}
 		// --- Overwrite existing file ? ------------------
@@ -966,9 +993,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (writeFile.exists()) {
 			String msgHead = "Overwrite?";
 			String msgText = "Overwrite existing file?";
-			int msgAnswer  =  JOptionPane.showInternalConfirmDialog( this, msgText, msgHead, JOptionPane.YES_NO_OPTION);
-			if (msgAnswer==JOptionPane.NO_OPTION) {
-				return;  
+			int msgAnswer = JOptionPane.showInternalConfirmDialog(this, msgText, msgHead, JOptionPane.YES_NO_OPTION);
+			if (msgAnswer == JOptionPane.NO_OPTION) {
+				return;
 			}
 		}
 
@@ -976,24 +1003,24 @@ public class BasicGraphGui extends JPanel implements Observer {
 		int width = vv.getSize().width;
 		int height = vv.getSize().height;
 
-		BufferedImage bi = new BufferedImage(width,height,BufferedImage.TYPE_INT_BGR);
+		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
 		Graphics2D graphics = bi.createGraphics();
-		graphics.fillRect(0,0, width, height);
-		
-		//vv.setDoubleBuffered(false);
+		graphics.fillRect(0, 0, width, height);
+
+		// vv.setDoubleBuffered(false);
 		vv.paint(graphics);
 		vv.paintComponents(graphics);
-		//vv.setDoubleBuffered(true);
-		
-		try{
+		// vv.setDoubleBuffered(true);
+
+		try {
 			ImageIO.write(bi, extension, writeFile);
-			
-		} catch(Exception e){
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Controls the shape, size, and aspect ratio for each vertex.
 	 * 
@@ -1005,7 +1032,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		private Map<String, Shape> shapeMap = new HashMap<String, Shape>();
 
 		public VertexShapeSizeAspect() {
-			
+
 			this.setSizeTransformer(new Transformer<GraphNode, Integer>() {
 
 				@Override
@@ -1032,7 +1059,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 								// --- Is this a inner node of a ClusterComponent ? ----
 								ArrayList<ClusterNetworkComponent> clusterHash = networkModel.getClusterComponents(componentHashSet);
-								if (componentHashSet.size()==1 && clusterHash.size()== 1) {
+								if (componentHashSet.size() == 1 && clusterHash.size() == 1) {
 									// --- This is a cluster component ------------------
 									ClusterNetworkComponent cnc = networkModel.getClusterComponents(componentHashSet).get(0);
 									DomainSettings ds = null;
@@ -1089,7 +1116,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			NetworkModelAdapter networkModel = controller.getNetworkModelAdapter();
 			HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
 			NetworkComponent networkComponent = networkModel.containsDistributionNode(componentHashSet);
-			if (networkComponent!=null) {
+			if (networkComponent != null) {
 				// ------------------------------------------------------------
 				// --- This is a DistributionNode -----------------------------
 				// ------------------------------------------------------------
@@ -1097,23 +1124,23 @@ public class BasicGraphGui extends JPanel implements Observer {
 				// ------------------------------------------------------------
 				ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
 				String nodeImage = cts.getEdgeImage();
-				if (nodeImage!=null) {
-					if (nodeImage.equals("MissingIcon")==false) {
-						// --- shape already there ? ------ 
+				if (nodeImage != null) {
+					if (nodeImage.equals("MissingIcon") == false) {
+						// --- shape already there ? ------
 						shape = shapeMap.get(nodeImage);
-						if (shape==null) {
+						if (shape == null) {
 							ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImage, networkComponent.getType());
-							if (imageIcon!=null) {
+							if (imageIcon != null) {
 								Image image = imageIcon.getImage();
-							    shape = FourPassImageShaper.getShape(image, 30);
-							    if(shape.getBounds().getWidth() > 0 &&  shape.getBounds().getHeight() > 0) {
-				                    // don't cache a zero-sized shape, wait for the image to be ready
-				                    int width = image.getWidth(null);
-				                    int height = image.getHeight(null);
-				                    AffineTransform transform = AffineTransform.getTranslateInstance(-width / 2, -height / 2);
-				                    shape = transform.createTransformedShape(shape);
-				                    this.shapeMap.put(nodeImage, shape);
-							    }
+								shape = FourPassImageShaper.getShape(image, 30);
+								if (shape.getBounds().getWidth() > 0 && shape.getBounds().getHeight() > 0) {
+									// don't cache a zero-sized shape, wait for the image to be ready
+									int width = image.getWidth(null);
+									int height = image.getHeight(null);
+									AffineTransform transform = AffineTransform.getTranslateInstance(-width / 2, -height / 2);
+									shape = transform.createTransformedShape(shape);
+									this.shapeMap.put(nodeImage, shape);
+								}
 							} else {
 								System.err.println("Could not find node image for '" + networkComponent.getType() + "'");
 							}
@@ -1123,8 +1150,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 				// ------------------------------------------------------------
 				// --- Have a look, if the node is an image ---- END ----------
 				// ------------------------------------------------------------
-				
-			} else if (networkComponent == null && componentHashSet.size() == 1) {
+
+			} else if (componentHashSet.size() == 1) {
 				// --- This is a ClusterNetworkComponent --
 				networkComponent = componentHashSet.iterator().next();
 				if (networkComponent instanceof ClusterNetworkComponent) {
@@ -1157,79 +1184,76 @@ public class BasicGraphGui extends JPanel implements Observer {
 			}
 			return shape;
 		}
-		
-		 
+
 	}
 
 	@Override
 	public void update(Observable observable, Object object) {
 
 		if (object instanceof NetworkModelNotification) {
-    		
-    		NetworkModelNotification nmNotification = (NetworkModelNotification) object;
-    		int reason = nmNotification.getReason();
-    		Object infoObject = nmNotification.getInfoObject();
-    		
-    		switch (reason) {
-    		case NetworkModelNotification.NETWORK_MODEL_Reload:
-    			this.reLoadGraph();
-    			break;
-			
-    		case NetworkModelNotification.NETWORK_MODEL_Repaint:
-    		case NetworkModelNotification.NETWORK_MODEL_Component_Added:
-    		case NetworkModelNotification.NETWORK_MODEL_Component_Removed:
-    		case NetworkModelNotification.NETWORK_MODEL_Component_Renamed:
-    		case NetworkModelNotification.NETWORK_MODEL_Nodes_Merged:
-    		case NetworkModelNotification.NETWORK_MODEL_Nodes_Splited:
-    		case NetworkModelNotification.NETWORK_MODEL_Merged_With_Supplement_NetworkModel:
-				this.clearPickedObjects();
-    			this.repaintGraph();	
+
+			NetworkModelNotification nmNotification = (NetworkModelNotification) object;
+			int reason = nmNotification.getReason();
+			Object infoObject = nmNotification.getInfoObject();
+
+			switch (reason) {
+			case NetworkModelNotification.NETWORK_MODEL_Reload:
+				this.reLoadGraph();
 				break;
-    			
+
+			case NetworkModelNotification.NETWORK_MODEL_Repaint:
+			case NetworkModelNotification.NETWORK_MODEL_Component_Added:
+			case NetworkModelNotification.NETWORK_MODEL_Component_Removed:
+			case NetworkModelNotification.NETWORK_MODEL_Component_Renamed:
+			case NetworkModelNotification.NETWORK_MODEL_Nodes_Merged:
+			case NetworkModelNotification.NETWORK_MODEL_Nodes_Splited:
+			case NetworkModelNotification.NETWORK_MODEL_Merged_With_Supplement_NetworkModel:
+				this.clearPickedObjects();
+				this.repaintGraph();
+				break;
+
 			case NetworkModelNotification.NETWORK_MODEL_Component_Select:
-				this.clearPickedObjects();
-				this.selectObject(infoObject, false);
+				this.selectObject(infoObject);
 				break;
-				
+
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Fit2Window:
 				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
 				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
 				this.allowInitialScaling = true;
 				this.setInitialScalingAndMovement();
 				break;
-				
+
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_One2One:
 				visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
 				visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
 				break;
-				
+
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_In:
 				this.getScalingControl().scale(visView, 1.1f, this.getDefaultScaleAtPoint());
 				break;
-				
+
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Out:
 				this.getScalingControl().scale(visView, 1 / 1.1f, this.getDefaultScaleAtPoint());
 				break;
-			
+
 			case NetworkModelNotification.NETWORK_MODEL_ExportGraphAsImage:
 				this.exportAsImage();
 				break;
-				
+
 			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking:
 				this.visView.setGraphMouse(this.getPluggableGraphMouse());
 				break;
-			
+
 			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Transforming:
 				this.visView.setGraphMouse(this.getDefaultModalGraphMouse());
 				break;
-				
+
 			default:
 				break;
 			}
-    		
-    		
-    	}
-		
+
+		}
+
 	}
 
 }
