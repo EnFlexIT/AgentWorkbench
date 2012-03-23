@@ -88,8 +88,16 @@
             <value>hnord.xml</value>
         </entry>
         <entry>
+            <key>Testnetz 3</key>
+            <value>testnetz_3.xml</value>
+        </entry>
+        <entry>
             <key>SmartGrid</key>
             <value>smartgrid.xml</value>
+        </entry>
+        <entry>
+            <key>Testnetz 2</key>
+            <value>testnetz_2.xml</value>
         </entry>
         <entry>
             <key>Testnetz 1</key>
