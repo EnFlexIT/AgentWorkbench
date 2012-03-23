@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package gasmas.clustering;
+package gasmas.clustering.randomWalk;
 
 import java.util.ArrayList;
 import java.util.HashMap;

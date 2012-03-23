@@ -1,28 +1,28 @@
-package gasmas.clustering;
+package gasmas.clustering.randomWalk;
 
+import gasmas.clustering.ClusterIdentifier;
 import jade.core.ServiceException;
 import jade.core.behaviours.SimpleBehaviour;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
 
-public class PathCircleClusteringBehaviour extends SimpleBehaviour {
+public class PathAnalyseClusteringBehaviour extends SimpleBehaviour {
 
-	private static final int STEPS = 100;
+	private static final int STEPS = 1000;
 
 	private EnvironmentModel environmentModel;
 	private NetworkModel networkModel;
 	private NetworkComponent thisNetworkComponent;
 	private SimulationServiceHelper simulationServiceHelper;
 
-	public PathCircleClusteringBehaviour(EnvironmentModel environmentModel, NetworkComponent thisNetworkComponent) {
+	public PathAnalyseClusteringBehaviour(EnvironmentModel environmentModel, NetworkComponent thisNetworkComponent) {
 		this.environmentModel = environmentModel;
 		this.networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
 		this.thisNetworkComponent = thisNetworkComponent;
@@ -35,44 +35,44 @@ public class PathCircleClusteringBehaviour extends SimpleBehaviour {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Begin Ant Circle Cluster Analysis");
-		analyseClusters();
-		System.out.println("End Ant Circle Cluster Analysis");
-	}
-
-	public void analyseClusters() {
-		Subgraph subgraph = startPathAnalysis(networkModel);
+		ClusterIdentifier clusterIdentifier = new ClusterIdentifier(environmentModel, simulationServiceHelper);
 		NetworkModel copyNetworkModel = networkModel.getCopy();
 		copyNetworkModel.setAlternativeNetworkModel(null);
-		ClusterNetworkComponent clusterNetworkComponent = copyNetworkModel.replaceComponentsByCluster(subgraph.getNetworkComponents(copyNetworkModel));
 		this.networkModel.getAlternativeNetworkModel().put("ClusteredModel", copyNetworkModel);
-		this.networkModel.getAlternativeNetworkModel().put(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 		try {
 			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
+
+		System.out.println("Begin Ant Cluster Analysis");
+		analyseClusters(copyNetworkModel, clusterIdentifier);
 	}
 
-	private Subgraph startPathAnalysis(NetworkModel newNetworkModel) {
+	public void analyseClusters(NetworkModel networkModel, ClusterIdentifier clusterIdentifier) {
+		NetworkModel newNetworkModel = networkModel.getCopy();
+		while (newNetworkModel != null && newNetworkModel.getNetworkComponent(thisNetworkComponent.getId()) != null) {
+			newNetworkModel = clusterIdentifier.search(startPathAnalysis(newNetworkModel), networkModel);
+		}
+	}
+
+	private NetworkModel startPathAnalysis(NetworkModel newNetworkModel) {
 		HashSet<Ant> ants = new HashSet<Ant>();
 		ants.add(new Ant(newNetworkModel, thisNetworkComponent.getId()));
 		ArrayList<Ant> nextRunAnts = new ArrayList<Ant>(ants);
-		for (int step = 0; step < PathCircleClusteringBehaviour.STEPS; step++) {
+		for (int step = 0; step < PathAnalyseClusteringBehaviour.STEPS; step++) {
 			ArrayList<Ant> runAnts = new ArrayList<Ant>(nextRunAnts);
 			nextRunAnts = new ArrayList<Ant>();
 			for (Ant ant : runAnts) {
 				nextRunAnts.addAll(ant.run());
 			}
-			if (nextRunAnts.size() == 0) {
-				break;
-			}
 			ants.addAll(nextRunAnts);
 		}
-		System.out.println("Start Analysing Circle; Ants: " + ants.size());
-		AntCircleAnalyser antCircleAnalyser = new AntCircleAnalyser(new ArrayList<Ant>(ants), newNetworkModel);
-		System.out.println("End Analysing Circle");
-		return antCircleAnalyser.getBestSubgraph();
+		AntDistributionMatrix antDistributionMatrix = new AntDistributionMatrix(new ArrayList<Ant>(ants));
+		String x = antDistributionMatrix.findFrequentPathComponent();
+		NetworkComponent networkComponent = newNetworkModel.getNetworkComponent(x);
+		newNetworkModel.removeNetworkComponent(networkComponent);
+		return newNetworkModel;
 	}
 
 	@Override

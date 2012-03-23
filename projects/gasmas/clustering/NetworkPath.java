@@ -35,15 +35,37 @@ import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 
+/**
+ * @author Apo
+ *
+ */
 public class NetworkPath {
 
+	/**
+	 * Network Path as ArrayList
+	 */
 	private ArrayList<NetworkComponent> path = new ArrayList<NetworkComponent>();
 
+	private NetworkModel networkModel;
+
+	/**
+	 * 
+	 * 
+	 * @param networkModel
+	 * @param graphElementsPath
+	 */
 	public NetworkPath(NetworkModel networkModel, List<GraphEdge> graphElementsPath) {
-		graphElemntsPathToComponentsPath(graphElementsPath, networkModel);
+		this.networkModel = networkModel;
+		graphElemntsPathToComponentsPath(graphElementsPath);
 	}
 
-	private void graphElemntsPathToComponentsPath(List<GraphEdge> graphElementsPath, NetworkModel networkModel) {
+	/**
+	 * Identifies
+	 * 
+	 * @param graphElementsPath
+	 * @param networkModel
+	 */
+	private void graphElemntsPathToComponentsPath(List<GraphEdge> graphElementsPath) {
 		for (GraphEdge graphEdge : graphElementsPath) {
 			NetworkComponent networkComponent = networkModel.getNetworkComponent(graphEdge);
 			if (!path.contains(networkComponent)) {

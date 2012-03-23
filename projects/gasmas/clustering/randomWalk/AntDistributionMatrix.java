@@ -1,4 +1,5 @@
-package gasmas.clustering;
+package gasmas.clustering.randomWalk;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
