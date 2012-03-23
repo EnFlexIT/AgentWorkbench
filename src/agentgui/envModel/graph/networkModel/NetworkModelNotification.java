@@ -61,6 +61,9 @@ public class NetworkModelNotification {
 	
 	public static final int NETWORK_MODEL_ExportGraphAsImage = 16;
 	
+	public static final int NETWORK_MODEL_SelectClusterComponent = 20;
+	
+	
 	/** The reason. */
 	private int reason = 0;
 	

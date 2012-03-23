@@ -880,7 +880,11 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * 
 	 * @param node2SplitAt the node
 	 */
-	public void splitNetworkModelAtNode(GraphNode node2SplitAt) {
+	public GraphNodePairs splitNetworkModelAtNode(GraphNode node2SplitAt) {
+		
+		GraphNodePairs graphNodePair = null;
+		HashSet<GraphNode> graphNodeConnections = new HashSet<GraphNode>();
+		
 		// --- Get the components containing the node -------------------------
 		HashSet<NetworkComponent> netCompHash = this.getNetworkComponents(node2SplitAt);
 		// --- Sort the list of component: ------------------------------------
@@ -900,19 +904,26 @@ public class NetworkModel implements Cloneable, Serializable {
 
 					// --- Find the node on the other side of the edge --------
 					GraphNode otherNode = addEdge(edge, newNode, node2SplitAt);
+					graphNodeConnections.add(newNode);
+
 					// --- Shift position of the new node a bit ---------------
 					newNode.setPosition(this.getShiftedPosition(otherNode, newNode));
 
 					component.getGraphElementIDs().add(newNode.getId());
-					// --- Adding new node to the network model -----------------------
+					// --- Adding new node to the network model ---------------
 					this.graphElements.put(newNode.getId(), newNode);
 				}
 			}
 			// --- Updating the graph element IDs of the component ------------
 			component.getGraphElementIDs().remove(node2SplitAt.getId());
 
-		} // --- 'end for' for components -----
+		} // --- 'end for' for components -------------------------------------
 		refreshGraphElements();
+		
+		// -- Set return value ------------------------------------------------
+		graphNodePair = new GraphNodePairs(node2SplitAt, graphNodeConnections);
+		return graphNodePair;
+		
 	}
 
 	/**

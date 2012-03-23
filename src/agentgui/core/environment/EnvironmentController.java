@@ -80,7 +80,6 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * @param project the current project
 	 */
 	public EnvironmentController(Project project){
-		
 		this.currProject = project;
 		if (currProject!=null) {
 			this.currProject.addObserver(this);

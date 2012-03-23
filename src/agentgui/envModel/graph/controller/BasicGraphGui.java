@@ -775,14 +775,20 @@ public class BasicGraphGui extends JPanel implements Observer {
 			clusterNetworkComponent = getClusterNetworkComponent(object);
 		}
 		if (clusterNetworkComponent != null) {
-			System.out.println("cluster");
-			controller.getNetworkModelAdapter().getAlternativeNetworkModel().put("C: " + clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
-			controller.getNetworkModelAdapter().reLoadNetworkModel();
+			NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_SelectClusterComponent);
+			nmn.setInfoObject(clusterNetworkComponent);
+			controller.notifyObservers(nmn);
 			return true;
 		}
 		return false;
 	}
 
+	/**
+	 * Gets the cluster network component.
+	 *
+	 * @param object the object
+	 * @return the cluster network component
+	 */
 	private ClusterNetworkComponent getClusterNetworkComponent(Object object) {
 		if (object instanceof ClusterNetworkComponent) {
 			return (ClusterNetworkComponent) object;

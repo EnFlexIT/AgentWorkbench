@@ -41,6 +41,7 @@ import javax.swing.undo.UndoManager;
 import agentgui.envModel.graph.commands.MergeNetworkModel;
 import agentgui.envModel.graph.commands.SetGeneralGraphSettings4MAS;
 import agentgui.envModel.graph.commands.SetNetworkModel;
+import agentgui.envModel.graph.commands.SplitNetworkComponent;
 import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import edu.uci.ics.jung.graph.Graph;
@@ -395,9 +396,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 */
 	@Override
 	public void splitNetworkModelAtNode(GraphNode node2SplitAt) {
-		this.graphController.getNetworkModel().splitNetworkModelAtNode(node2SplitAt);	
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Splited);
-		this.notifyObservers(notification);
+		this.undoManager.addEdit(new SplitNetworkComponent(this.graphController, node2SplitAt));
 	}
 
 	/* (non-Javadoc)

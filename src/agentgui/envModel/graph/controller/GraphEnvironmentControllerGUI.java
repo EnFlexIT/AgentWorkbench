@@ -77,6 +77,7 @@ import agentgui.core.environment.EnvironmentPanel;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.components.TableCellEditor4TableButton;
 import agentgui.envModel.graph.components.TableCellRenderer4Button;
+import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
@@ -223,6 +224,23 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		}
     }
 
+    /**
+     * Sets the focus on the specified alternative tab.
+     * @param tabTitle2Focus the title, where the focus has to set on
+     */
+    private void setFocusOnAlternativeTab(String tabTitle2Focus) {
+    	
+    	if (this.getParent() instanceof JTabbedPane) {
+    		JTabbedPane tabs = (JTabbedPane) this.getParent();
+    		for (int i = 0; i < tabs.getTabCount(); i++) {
+    			if (tabs.getTitleAt(i).equals(tabTitle2Focus)) {
+    				tabs.setSelectedIndex(i);
+    				break;
+    			}
+			}
+    	}
+    }
+    
     /**
      * This method initializes jSplitPaneRoot
      * @return javax.swing.JSplitPane
@@ -749,6 +767,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 			case NetworkModelNotification.NETWORK_MODEL_Component_Select:
 				networkComponent = (NetworkComponent) infoObject;
 				this.networkComponentSelect(networkComponent);
+				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_SelectClusterComponent:
+				ClusterNetworkComponent cnc = (ClusterNetworkComponent) infoObject;
+				this.setFocusOnAlternativeTab(cnc.getId());
 				break;
 				
 			default:

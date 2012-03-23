@@ -20,8 +20,8 @@
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n0_0</graphElementIDs>
-                <graphElementIDs>n0_2</graphElementIDs>
                 <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>n0_2</graphElementIDs>
                 <graphElementIDs>n0_1</graphElementIDs>
                 <graphElementIDs>PP1</graphElementIDs>
                 <graphElementIDs>PP3</graphElementIDs>
@@ -36,9 +36,9 @@
             <value>
                 <agentClassName>gasmas.agents.components.ControlValveAgent</agentClassName>
                 <directed>true</directed>
-                <graphElementIDs>n5</graphElementIDs>
-                <graphElementIDs>PP9</graphElementIDs>
                 <graphElementIDs>PP10</graphElementIDs>
+                <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>n5</graphElementIDs>
                 <id>n5</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>ControlValve</type>
@@ -49,8 +49,8 @@
             <value>
                 <agentClassName>gasmas.agents.components.ControlValveAgent</agentClassName>
                 <directed>true</directed>
-                <graphElementIDs>PP8</graphElementIDs>
                 <graphElementIDs>n4</graphElementIDs>
+                <graphElementIDs>PP8</graphElementIDs>
                 <graphElementIDs>PP1</graphElementIDs>
                 <id>n4</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
@@ -89,8 +89,8 @@
                 <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
                 <directed>true</directed>
                 <graphElementIDs>PP11</graphElementIDs>
-                <graphElementIDs>PP13</graphElementIDs>
                 <graphElementIDs>n7</graphElementIDs>
+                <graphElementIDs>PP13</graphElementIDs>
                 <id>n7</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>Exit</type>
@@ -102,8 +102,8 @@
                 <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP11</graphElementIDs>
-                <graphElementIDs>PP6</graphElementIDs>
                 <graphElementIDs>n6</graphElementIDs>
+                <graphElementIDs>PP6</graphElementIDs>
                 <id>n6</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Pipe</type>

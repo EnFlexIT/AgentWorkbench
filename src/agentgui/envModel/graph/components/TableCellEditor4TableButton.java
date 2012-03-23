@@ -42,7 +42,9 @@ import javax.swing.table.TableCellEditor;
 
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.OntologySettingsDialog;
+import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 
 
 /**
@@ -82,8 +84,16 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
 		// converting view coordinates to model coordinates
 		int modelRowIndex = componentsTable.convertRowIndexToModel(row);
 		String compID = (String) componentsTable.getModel().getValueAt(modelRowIndex, 0);
+		
 		NetworkComponent comp = graphController.getNetworkModelAdapter().getNetworkComponent(compID);
-		new OntologySettingsDialog(graphController.getProject(), graphController, comp).setVisible(true);
+		if (comp instanceof ClusterNetworkComponent) {
+			NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_SelectClusterComponent);
+			nmn.setInfoObject(comp);
+			graphController.notifyObservers(nmn);
+		} else {
+			new OntologySettingsDialog(graphController.getProject(), graphController, comp).setVisible(true);	
+		}
+		
     }
 
     /* (non-Javadoc)
