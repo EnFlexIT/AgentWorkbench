@@ -1118,7 +1118,26 @@ public class NetworkModel implements Cloneable, Serializable {
 		clusterNetworkModel.setAlternativeNetworkModel(null);
 		clusterNetworkModel.removeNetworkComponentsInverse(networkComponents);
 		removeNetworkComponents(networkComponents);
-		// --------------- Identifiy outernodes of the Cluster ----------------
+
+		// ----------- Create Cluster Prototype and Component ---------------------
+		Vector<GraphNode> outerNodes = getOuterNodes(networkComponents);
+		String clusterComponentID = nextNetworkComponentID();
+		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, clusterComponentID);
+		HashSet<GraphElement> clusterElements = new ClusterGraphElement(outerNodes, clusterComponentID).addToGraph(this);
+		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), null, clusterElements, clusterGraphElement.isDirected(),
+				getNetworkComponentsIDs(networkComponents), clusterNetworkModel);
+		this.networkComponents.put(clusterComponent.getId(), clusterComponent);
+		refreshGraphElements();
+		return clusterComponent;
+	}
+
+	/**
+	 * Gets the outer nodes.
+	 *
+	 * @param networkComponents the network components
+	 * @return the outer nodes
+	 */
+	private Vector<GraphNode> getOuterNodes(HashSet<NetworkComponent> networkComponents) {
 		Vector<GraphNode> outerNodes = new Vector<GraphNode>();
 		for (NetworkComponent networkComponent : networkComponents) {
 			for (GraphNode graphNode : getNodesFromNetworkComponent(networkComponent)) {
@@ -1127,19 +1146,7 @@ public class NetworkModel implements Cloneable, Serializable {
 				}
 			}
 		}
-		// ----------- Create Cluster Prototype and Component ---------------------
-		String clusterComponentID = nextNetworkComponentID();
-		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, clusterComponentID);
-		HashSet<GraphElement> clusterElements = new ClusterGraphElement(outerNodes, clusterComponentID).addToGraph(this);
-		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), null, clusterElements, clusterGraphElement.isDirected(),
-				getNetworkComponentsIDs(networkComponents), clusterNetworkModel);
-		this.networkComponents.put(clusterComponent.getId(), clusterComponent);
-		for (String id : clusterComponent.getGraphElementIDs()) {
-			System.out.print(id + ';');
-
-		}
-		System.out.println();
-		return clusterComponent;
+		return outerNodes;
 	}
 
 	/**
