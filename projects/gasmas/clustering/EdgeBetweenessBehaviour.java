@@ -138,6 +138,7 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 		for (GraphEdge edge : edges) {
 			NetworkComponent networkComponent = networkModel.getNetworkComponent(edge);
 			if (networkComponent != null) {
+				System.out.println(networkModel.getNetworkComponent(edge).getId());
 				networkModel.removeNetworkComponent(networkModel.getNetworkComponent(edge));
 			}
 		}
