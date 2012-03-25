@@ -97,7 +97,7 @@ public class PathCircleClusteringBehaviour extends SimpleBehaviour {
 		copyNetworkModel.setAlternativeNetworkModel(null);
 		ClusterNetworkComponent clusterNetworkComponent = copyNetworkModel.replaceComponentsByCluster(subgraph.getNetworkComponents(copyNetworkModel));
 		this.networkModel.getAlternativeNetworkModel().put("ClusteredModel", copyNetworkModel);
-		this.networkModel.getAlternativeNetworkModel().put(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
+		copyNetworkModel.getAlternativeNetworkModel().put(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 		try {
 			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
 		} catch (ServiceException e) {

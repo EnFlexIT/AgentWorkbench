@@ -1,44 +1,103 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package gasmas.clustering.randomWalk;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 
+/**
+ * The Class AntDistributionMatrix.
+ */
 public class AntDistributionMatrix {
 
+	/** The ants. */
 	private ArrayList<Ant> ants;
+
+	/** The component i ds. */
 	private HashSet<String> componentIDs = new HashSet<String>();
+
+	/** The dynamic matrix. */
 	private ArrayList<HashMap<String, Integer>> dynamicMatrix = new ArrayList<HashMap<String, Integer>>();
 
+	/**
+	 * Instantiates a new ant distribution matrix.
+	 *
+	 * @param ants the ants
+	 */
 	public AntDistributionMatrix(ArrayList<Ant> ants) {
 		this.ants = ants;
 	}
 
+	/**
+	 * Creates the dynamic matrix.
+	 *
+	 * @param onlyActive the only active
+	 * @param ants the ants
+	 */
 	private void createDynamicMatrix(boolean onlyActive, ArrayList<Ant> ants) {
 		for (Ant ant : ants) {
 			if (!onlyActive || (onlyActive && ant.getActive())) {
-				ArrayList<String> path = ant.getPath();
-				for (int step = 0; step < path.size(); step++) {
-					// System.out.print(path.get(step) + ";");
-					if (dynamicMatrix.size() <= step) {
-						dynamicMatrix.add(new HashMap<String, Integer>());
-					}
-					HashMap<String, Integer> map = dynamicMatrix.get(step);
-					String componentID = path.get(step);
-					if (map.containsKey(componentID)) {
-						map.put(componentID, map.get(componentID).intValue() + 1);
-					} else {
-						componentIDs.add(componentID);
-						map.put(componentID, 1);
-					}
-				}
+				addAntToDynamicMatrix(ant);
 			}
-			// System.out.println();
 		}
 	}
 
+	/**
+	 * Adds the ant to dynamic matrix.
+	 *
+	 * @param ant the ant
+	 */
+	private void addAntToDynamicMatrix(Ant ant) {
+		ArrayList<String> path = ant.getPath();
+		for (int step = 0; step < path.size(); step++) {
+			// System.out.print(path.get(step) + ";");
+			if (dynamicMatrix.size() <= step) {
+				dynamicMatrix.add(new HashMap<String, Integer>());
+			}
+			HashMap<String, Integer> map = dynamicMatrix.get(step);
+			String componentID = path.get(step);
+			if (map.containsKey(componentID)) {
+				map.put(componentID, map.get(componentID).intValue() + 1);
+			} else {
+				componentIDs.add(componentID);
+				map.put(componentID, 1);
+			}
+		}
+	}
+
+	/**
+	 * Removes the same start.
+	 *
+	 * @return the array list
+	 */
 	private ArrayList<HashMap<String, Integer>> removeSameStart() {
 		ArrayList<HashMap<String, Integer>> listofMaps = new ArrayList<HashMap<String, Integer>>(dynamicMatrix);
 		for (HashMap<String, Integer> map : dynamicMatrix) {
@@ -49,35 +108,12 @@ public class AntDistributionMatrix {
 		return listofMaps;
 	}
 
-	private ArrayList<Ant> removeCriclesAndCrossings() {
-		ArrayList<Ant> listAnts = new ArrayList<Ant>(ants);
-		{
-			for (Ant ant : ants) {
-				if (new HashSet<String>(ant.getPath()).size() != ant.getPath().size()) {
-					listAnts.remove(ant);
-				}
-			}
-		}
-		return listAnts;
-	}
-
-	public void put(HashMap<String, Integer> hashMap) {
-		dynamicMatrix.add(hashMap);
-	}
-
-	public void set(int step, HashMap<String, Integer> hashMap) {
-		if (step < dynamicMatrix.size()) {
-			dynamicMatrix.set(step, hashMap);
-		}
-	}
-
-	public HashMap<String, Integer> get(int step) {
-		if (dynamicMatrix.size() > step) {
-			return dynamicMatrix.get(step);
-		}
-		return null;
-	}
-
+	/**
+	 * Gets the distribution component.
+	 *
+	 * @param componentID the component id
+	 * @return the distribution component
+	 */
 	public ArrayList<Integer> getDistributionComponent(String componentID) {
 		ArrayList<Integer> distribution = new ArrayList<Integer>();
 		for (HashMap<String, Integer> hashMap : dynamicMatrix) {
@@ -90,10 +126,12 @@ public class AntDistributionMatrix {
 		return distribution;
 	}
 
-	public void printDistrubutionAfterStep() {
-		printMatrix(getDistribution());
-	}
-
+	/**
+	 * Accumulate.
+	 *
+	 * @param dynamicMatrix the dynamic matrix
+	 * @return the hash map
+	 */
 	private HashMap<String, Integer> accumulate(ArrayList<HashMap<String, Integer>> dynamicMatrix) {
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
 		for (HashMap<String, Integer> stepMap : dynamicMatrix) {
@@ -108,6 +146,11 @@ public class AntDistributionMatrix {
 		return map;
 	}
 
+	/**
+	 * Find frequent path component.
+	 *
+	 * @return the string
+	 */
 	public String findFrequentPathComponent() {
 		createDynamicMatrix(false, ants);
 		ArrayList<HashMap<String, Integer>> dynamicMatrix = removeSameStart();
@@ -136,10 +179,10 @@ public class AntDistributionMatrix {
 	}
 
 	/**
-	 * finds the first Entry from the maxEntryList
-	 * 
-	 * @param maxEntryList
-	 * @return
+	 * finds the first Entry from the maxEntryList.
+	 *
+	 * @param maxEntryList the max entry list
+	 * @return the max entry
 	 */
 	private String getMaxEntry(ArrayList<Entry<String, Integer>> maxEntryList) {
 		for (HashMap<String, Integer> map : dynamicMatrix) {
@@ -152,6 +195,11 @@ public class AntDistributionMatrix {
 		return null;
 	}
 
+	/**
+	 * Prints the path matrix.
+	 *
+	 * @param dynamicMatrix the dynamic matrix
+	 */
 	public void printPathMatrix(ArrayList<HashMap<String, Integer>> dynamicMatrix) {
 		System.out.println("Ants:" + ants.size());
 
@@ -173,6 +221,11 @@ public class AntDistributionMatrix {
 		}
 	}
 
+	/**
+	 * Gets the distribution.
+	 *
+	 * @return the distribution
+	 */
 	public HashMap<String, ArrayList<Integer>> getDistribution() {
 		createDynamicMatrix(false, ants);
 		HashMap<String, ArrayList<Integer>> distribution = new HashMap<String, ArrayList<Integer>>();
@@ -180,19 +233,5 @@ public class AntDistributionMatrix {
 			distribution.put(componentID, getDistributionComponent(componentID));
 		}
 		return distribution;
-	}
-
-	public int size() {
-		return dynamicMatrix.size();
-	}
-
-	private void printMatrix(HashMap<String, ArrayList<Integer>> distribution) {
-		for (Entry<String, ArrayList<Integer>> entry : distribution.entrySet()) {
-			System.out.printf("%-4s :", entry.getKey());
-			for (Integer integer : entry.getValue()) {
-				System.out.printf("%6d", integer);
-			}
-			System.out.println();
-		}
 	}
 }
