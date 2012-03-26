@@ -106,6 +106,7 @@ public class Ant {
 			return activeAnts;
 		}
 		Vector<NetworkComponent> nextNCs = networkModel.getNeighbourNetworkComponents(path.get(path.size() - 1));
+		nextNCs = new Vector<NetworkComponent>(new HashSet<NetworkComponent>(nextNCs));
 		if (path.size() > 1) {
 			nextNCs.remove(path.get(path.size() - 2));
 		}

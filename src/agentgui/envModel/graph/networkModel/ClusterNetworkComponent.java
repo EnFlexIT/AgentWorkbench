@@ -28,6 +28,8 @@
  */
 package agentgui.envModel.graph.networkModel;
 
+
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -147,5 +149,19 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 */
 	public String getDomain() {
 		return domain;
+	}
+
+	/**
+	 * get all connection NetworkComponents (all NetworkComonent with a FreeNode)
+	 * 
+	 * @return all connection NetworkComponents
+	 */
+	public ArrayList<NetworkComponent> getConnectionNetworkComponents() {
+		ArrayList<NetworkComponent> connectionNC = new ArrayList<NetworkComponent>();
+		for (GraphNode graphNode : clusterNetworkModel.getGraph().getVertices()) {
+			if (clusterNetworkModel.isFreeGraphNode(graphNode))
+				connectionNC.addAll(clusterNetworkModel.getNetworkComponents(graphNode));
+		}
+		return connectionNC;
 	}
 }

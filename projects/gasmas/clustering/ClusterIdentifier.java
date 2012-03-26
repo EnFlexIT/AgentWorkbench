@@ -28,14 +28,11 @@
  */
 package gasmas.clustering;
 
-import jade.core.ServiceException;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -84,7 +81,7 @@ public class ClusterIdentifier {
 		if (clusterSet.size() > 1) {
 			clustersToSmall = true;
 			for (Set<GraphNode> graphNodes : clusterSet) {
-				if (graphNodes.size() > 3) {
+				if (graphNodes.size() > 5) {
 					clustersToSmall = false;
 					if (clusterReplace(graphNodes, reducedModel, networkModel)) {
 						baseModelChanged = true;
@@ -118,10 +115,17 @@ public class ClusterIdentifier {
 			}
 		}
 		checkBranches(networkComponents, getConnectionComponents(networkComponents, reducedModel.getNetworkComponents(graphNodes), networkModel), networkModel);
-		refrehDisplay(networkModel.replaceComponentsByCluster(networkComponents));
+		networkModel.replaceComponentsByCluster(networkComponents);
 		return true;
 	}
 
+	/**
+	 * Heuristik checks Branches if they are part of the cluster or of the baseModel based on Edges betweenn them 
+	 *
+	 * @param networkComponents the network components
+	 * @param connectionComponents the connection components
+	 * @param networkModel the network model
+	 */
 	private void checkBranches(HashSet<NetworkComponent> networkComponents, ArrayList<NetworkComponent> connectionComponents, NetworkModel networkModel) {
 		ArrayList<NetworkComponent> coreComponents = new ArrayList<NetworkComponent>(networkComponents);
 		coreComponents.removeAll(connectionComponents);
@@ -134,6 +138,7 @@ public class ClusterIdentifier {
 		for (NetworkComponent networkComponent : connectionComponents) {
 			int counter = 0;
 			Vector<GraphNode> componentsNodes = networkModel.getNodesFromNetworkComponent(networkComponent);
+			if (componentsNodes.size() > 2) {
 			for (GraphNode graphNode : componentsNodes) {
 				if (clusterComponentsNodes.contains(graphNode)) {
 					counter++;
@@ -142,33 +147,23 @@ public class ClusterIdentifier {
 			if (counter < componentsNodes.size() / 2) {
 				networkComponents.remove(networkComponent);
 			}
+			}
 		}
 	}
 
+	/**
+	 * Gets the connection components of a possible Cluster
+	 *
+	 * @param networkComponents the network components
+	 * @param coreComponents the core components
+	 * @param networkModel the network model
+	 * @return the connection components
+	 */
 	private ArrayList<NetworkComponent> getConnectionComponents(HashSet<NetworkComponent> networkComponents, HashSet<NetworkComponent> coreComponents,NetworkModel networkModel) {
 		ArrayList<NetworkComponent> connectionComponents = new ArrayList<NetworkComponent>(networkComponents);
 		for (NetworkComponent networkComponent : coreComponents) {
 			connectionComponents.remove(networkModel.getNetworkComponent(networkComponent.getId()));
 		}
 		return connectionComponents;
-	}
-
-	/**
-	 * Refresh display.
-	 *
-	 * @param clusterComponent the cluster component
-	 */
-	private void refrehDisplay(ClusterNetworkComponent clusterComponent) {
-		this.baseNetworkModel.getAlternativeNetworkModel().put(clusterComponent.getId(), clusterComponent.getClusterNetworkModel());
-		this.environmentModel.setDisplayEnvironment(this.baseNetworkModel);
-
-		// --- Put the environment model into the SimulationService -
-		// --- in order to make it accessible for the whole agency --
-		try {
-			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
-
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
 	}
 }

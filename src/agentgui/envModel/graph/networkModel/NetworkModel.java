@@ -476,7 +476,7 @@ public class NetworkModel implements Cloneable, Serializable {
 				// --- check if the component contains the current node -------
 				if (netComponent.getGraphElementIDs().contains(node.getId())) {
 					// --- Add component to result list -----------------------
-					if (netComponent != networkComponent && comps.contains(netComponent) == false) {
+					if (netComponent != networkComponent) {
 						comps.add(netComponent);
 						break;
 					}
@@ -768,6 +768,56 @@ public class NetworkModel implements Cloneable, Serializable {
 			numeric = Integer.parseInt(numericString);
 		}
 		return numeric;
+	}
+	
+	/**
+	 * Merge two Clusters which are part of the same model and connected to each other
+	 *
+	 * @param clusterNC the cluster nc
+	 * @param supplementNC the supplement nc
+	 */
+	public void mergeClusters(ClusterNetworkComponent clusterNC, ClusterNetworkComponent supplementNC) {
+		GraphNode centerOfCluster = null;
+		for (GraphNode graphNode : getNodesFromNetworkComponent(clusterNC)) {
+			if (isCenterNodeOfStar(graphNode, clusterNC)) {
+				centerOfCluster = graphNode;
+			}
+		}
+
+		// get all Nodes which remain as connections, remove the rest
+		Vector<GraphElement> graphElements = getGraphElementsFromNetworkComponent(supplementNC);
+		for (GraphElement graphElement : new ArrayList<GraphElement>(graphElements)) {
+			if (graphElement instanceof GraphEdge) {
+				graphElements.remove(graphElement);
+			}
+			if (graphElement instanceof GraphNode) {
+				GraphNode graphNode = (GraphNode) graphElement;
+				HashSet<NetworkComponent> components = getNetworkComponents(graphNode);
+				if (components.size() == 1 && components.contains(supplementNC)) {
+					graphElements.remove(graphNode);
+				}
+				if (getNetworkComponents(graphNode).contains(clusterNC)) {
+					clusterNC.getGraphElementIDs().remove(graphNode.getId());
+					graph.removeVertex(graphNode);
+					graphElements.remove(graphNode);
+				}
+			}
+		}
+		// add new Edges
+		HashSet<String> graphElementIDs = clusterNC.getGraphElementIDs();
+		int counter = 0;
+		for (GraphElement graphElement : graphElements) {
+			while( graphElementIDs.contains(clusterNC +"_" + counter) ){
+				counter++;
+			}
+			GraphEdge edge = new GraphEdge(clusterNC + "_" + counter, GeneralGraphSettings4MAS.NETWORK_COMPONENT_TYPE_4_CLUSTER);
+			graph.addEdge(edge, centerOfCluster, (GraphNode) graphElement, EdgeType.UNDIRECTED);
+			graphElementIDs.add(edge.getId());
+			graphElementIDs.add(graphElement.getId());
+		}
+		
+		removeNetworkComponent(supplementNC);
+		clusterNC.getClusterNetworkModel().replaceClusterByComponents(supplementNC);
 	}
 
 	/**
@@ -1229,6 +1279,41 @@ public class NetworkModel implements Cloneable, Serializable {
 		this.networkComponents.put(clusterComponent.getId(), clusterComponent);
 		refreshGraphElements();
 		return clusterComponent;
+	}
+
+	/**
+	 * Merges Cluster NetworkModel with this NetworkModel and removes the Cluster if it's part of this model
+	 *
+	 * @param clusterNetworkComponent the cluster network component
+	 */
+	public void replaceClusterByComponents(ClusterNetworkComponent clusterNetworkComponent) {
+		for( GraphNode graphNode : clusterNetworkComponent.getClusterNetworkModel().getGraph().getVertices())
+		{
+			if (getGraphElement(graphNode.getId()) == null) {
+				GraphNode graphNodeCopy = graphNode.getCopy();
+				graph.addVertex(graphNodeCopy);
+				graphElements.put(graphNodeCopy.getId(), graphNodeCopy);
+			}
+		}
+		
+		for (GraphEdge graphEdge : clusterNetworkComponent.getClusterNetworkModel().getGraph().getEdges()) {
+			GraphEdge graphEdgeNew = new GraphEdge(graphEdge.getId(), graphEdge.getComponentType());
+			EdgeType edgeType = clusterNetworkComponent.getClusterNetworkModel().getGraph().getEdgeType(graphEdge);
+			GraphNode first = clusterNetworkComponent.getClusterNetworkModel().getGraph().getEndpoints(graphEdge).getFirst();
+			GraphNode second = clusterNetworkComponent.getClusterNetworkModel().getGraph().getEndpoints(graphEdge).getSecond();
+
+			GraphNode copyFirst = (GraphNode) graphElements.get(first.getId());
+			GraphNode copySecond = (GraphNode) graphElements.get(second.getId());
+			graph.addEdge(graphEdgeNew, copyFirst, copySecond, edgeType);
+		}
+
+		for (NetworkComponent networkComponent : clusterNetworkComponent.getClusterNetworkModel().getNetworkComponents().values()) {
+			addNetworkComponent(networkComponent);
+		}
+		if (getNetworkComponent(clusterNetworkComponent.getId()) != null) {
+			removeNetworkComponent(clusterNetworkComponent);
+		}
+		refreshGraphElements();
 	}
 
 	/**

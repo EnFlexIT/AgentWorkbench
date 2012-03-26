@@ -368,7 +368,14 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	public NetworkModel adjustNameDefinitionsOfSupplementNetworkModel(NetworkModel supplementNetworkModel) {
 		return this.graphController.getNetworkModel().adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#mergeClusters(agentgui.envModel.graph.networkModel.ClusterNetworkComponent, agentgui.envModel.graph.networkModel.ClusterNetworkComponent)
+	 */
+	public void mergeClusters(ClusterNetworkComponent clusterNC, ClusterNetworkComponent supplementNC) {
+		this.graphController.getNetworkModel().mergeClusters(clusterNC, supplementNC);
+	}
+
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#mergeNetworkModel(agentgui.envModel.graph.networkModel.NetworkModel, agentgui.envModel.graph.networkModel.GraphNode, agentgui.envModel.graph.networkModel.GraphNode)
 	 */
@@ -560,6 +567,14 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	@Override
 	public ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponents) {
 		return this.graphController.getNetworkModel().replaceComponentsByCluster(networkComponents);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#replaceClusterByComponents()
+	 */
+	public void replaceClusterByComponents(ClusterNetworkComponent clusterNetworkComponent) {
+		this.graphController.getNetworkModel().replaceClusterByComponents(clusterNetworkComponent);
 	}
 
 	/* (non-Javadoc)
