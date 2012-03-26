@@ -34,7 +34,7 @@ import javax.swing.undo.CannotUndoException;
 
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
-import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.GraphNodePairs;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
@@ -47,26 +47,23 @@ public class MergeNetworkModel extends AbstractUndoableEdit {
 	private static final long serialVersionUID = -4772137855514690242L;
 
 	private GraphEnvironmentController graphController = null;
-	
+
 	private NetworkModel suppNetModel = null;
-	private GraphNode suppNetModelNodeSelected = null;
-	private GraphNode currNetModelNodeSelected = null;
+	private GraphNodePairs nodes2Merge = null;
 
 	/**
 	 * Instantiates a new merge network model.
 	 *
 	 * @param graphController the graph controller
 	 * @param supplementNetworkModel the supplement network model
-	 * @param nodeOfSupplementNetworkModelSelected the node of supplement network model selected
-	 * @param nodeOfCurrentNetworkModelSelected the node of current network model selected
+	 * @param node2Merge the merge description
 	 */
-	public MergeNetworkModel(GraphEnvironmentController graphController, NetworkModel supplementNetworkModel, GraphNode nodeOfSupplementNetworkModelSelected, GraphNode nodeOfCurrentNetworkModelSelected) {
+	public MergeNetworkModel(GraphEnvironmentController graphController, NetworkModel supplementNetworkModel, GraphNodePairs node2Merge) {
 		super();
 		this.graphController = graphController;
 		
 		this.suppNetModel = this.graphController.getNetworkModel().adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel);
-		this.suppNetModelNodeSelected = nodeOfSupplementNetworkModelSelected;
-		this.currNetModelNodeSelected = nodeOfCurrentNetworkModelSelected;
+		this.nodes2Merge = node2Merge;
 		
 		this.doEdit();
 	}
@@ -76,31 +73,11 @@ public class MergeNetworkModel extends AbstractUndoableEdit {
 	 */
 	private void doEdit() {
 		
-		NetworkModel supplementNetworkModel = this.suppNetModel.getCopy();
+		// --- 1. Merge NetworkModels -------------------------------
+		this.nodes2Merge = this.graphController.getNetworkModel().mergeNetworkModel(this.suppNetModel, this.nodes2Merge);
 		
-		// --- 1. Search for the right node in the supplement graph --
-		GraphNode suppNetModelNodeSelected = null;
-		for (GraphNode node:supplementNetworkModel.getGraph().getVertices()) {
-			if (node.getId().equals(this.suppNetModelNodeSelected.getId())) {
-				suppNetModelNodeSelected = node;
-				break;
-			}
-		}
-
-		// --- 2. Search for the right node in the current graph ----
-		GraphNode currNetModelNodeSelected = null;
-		for (GraphNode node:this.graphController.getNetworkModel().getGraph().getVertices()) {
-			if (node.getId().equals(this.currNetModelNodeSelected.getId())) {
-				currNetModelNodeSelected = node;
-				break;
-			}
-		}
-		
-		// --- 3. Merge NetworkModels -------------------------------
-		this.graphController.getNetworkModel().mergeNetworkModel(supplementNetworkModel, suppNetModelNodeSelected, currNetModelNodeSelected);
-		
-		// --- 4. Add the Agent definitions -------------------------
-		for(NetworkComponent networkComponent : supplementNetworkModel.getNetworkComponents().values()) {
+		// --- 2. Add the Agent definitions -------------------------
+		for(NetworkComponent networkComponent : this.suppNetModel.getNetworkComponents().values()) {
 			this.graphController.addAgent(networkComponent);
 		}
 		
@@ -131,6 +108,8 @@ public class MergeNetworkModel extends AbstractUndoableEdit {
 	@Override
 	public void undo() throws CannotUndoException {
 		super.undo();
+		
+		this.graphController.getNetworkModel().mergeNodesRevert(this.nodes2Merge);
 		
 		for (NetworkComponent networkComponent: this.suppNetModel.getNetworkComponents().values()) {
 

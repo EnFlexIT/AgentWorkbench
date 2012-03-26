@@ -102,9 +102,8 @@ public class SplitNetworkComponent extends AbstractUndoableEdit {
 	public void undo() throws CannotUndoException {
 		super.undo();
 
-		for (GraphNode node2MergWith: this.graphNodePairsSplited.getGraphNode2Hash()) {
-			this.graphController.getNetworkModel().mergeNodes(this.graphNodePairsSplited.getGraphNode1(), node2MergWith);
-		}
+		this.graphController.getNetworkModel().mergeNodes(this.graphNodePairsSplited);
+		
 		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Merged));
 		this.graphController.setProjectUnsaved();
 	}

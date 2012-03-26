@@ -188,6 +188,7 @@ de;Immer Überspringen;Allways Skip
 de;Info;Info
 de;Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !;Initial Memory >= Maximum Memory !;;;
 de;Introspector-Agent starten;Start Introspector agent
+de;Invalid node selection!;;;;
 de;Italienisch;Italian
 de;JADE starten;Start JADE
 de;JADE stoppen;Stop JADE
@@ -226,6 +227,7 @@ de;Klasse;Class
 de;Klassen bestimmen;Determine classes 
 de;Klassenangabe überprüfen;Check Class specification
 de;Klassenzuordnung;Class Assignment
+de;Knoten verbinden;;;;
 de;Kommunikation;Communication
 de;Komponente;Component
 de;Komponenten-Definition bearbeiten;Edit Component Definitions;;;
@@ -278,6 +280,7 @@ de;Netz-Komponenten;Network Components
 de;Netz;Network
 de;Netzkomponente;Network component
 de;Netzwerk-Komponenten;Network Components;;;
+de;Netzwerkkomponente entfernen;;;;
 de;Netzwerkkomponente(n) hinzufügen;Add network component s);;;
 de;Neu laden;Reload;;;
 de;Neuer Agent;New agent
@@ -491,10 +494,13 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
+en;;Merge nodes;;;
 en;;Please, select the network component that you would like to add!;;;
 en;;Redo Action;;;
+en;;Select at least two valid vertices!;;;
 en;;Select one vertex please!;;;
 en;;Undo Action;;;
+en;;Use Shift and click on two vertices at least!;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktuelles Bild entfernen;Remove current image;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;

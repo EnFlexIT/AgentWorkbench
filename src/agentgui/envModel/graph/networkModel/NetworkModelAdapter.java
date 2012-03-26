@@ -38,7 +38,9 @@ import java.util.Vector;
 
 import javax.swing.undo.UndoManager;
 
+import agentgui.envModel.graph.commands.MergeNetworkComponents;
 import agentgui.envModel.graph.commands.MergeNetworkModel;
+import agentgui.envModel.graph.commands.RemoveNetworkComponent;
 import agentgui.envModel.graph.commands.SetGeneralGraphSettings4MAS;
 import agentgui.envModel.graph.commands.SetNetworkModel;
 import agentgui.envModel.graph.commands.SplitNetworkComponent;
@@ -321,14 +323,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 */
 	@Override
 	public void removeNetworkComponent(NetworkComponent networkComponent) {
-		
-		this.graphController.getNetworkModel().removeNetworkComponent(networkComponent);
-		this.graphController.removeAgent(networkComponent);
-		
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
-		notification.setInfoObject(networkComponent);
-		this.notifyObservers(notification);
-
+		this.undoManager.addEdit(new RemoveNetworkComponent(this.graphController, networkComponent));
 	}
 
 	/* (non-Javadoc)
@@ -377,18 +372,26 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#mergeNetworkModel(agentgui.envModel.graph.networkModel.NetworkModel, agentgui.envModel.graph.networkModel.GraphNode, agentgui.envModel.graph.networkModel.GraphNode)
 	 */
-	public void mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNode nodeOfSupplementNetworkModelSelected, GraphNode nodeOfCurrentNetworkModelSelected) {
-		this.undoManager.addEdit(new MergeNetworkModel(this.graphController, supplementNetworkModel, nodeOfSupplementNetworkModelSelected, nodeOfCurrentNetworkModelSelected));
+	public void mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs node2Merge) {
+		this.undoManager.addEdit(new MergeNetworkModel(this.graphController, supplementNetworkModel, node2Merge));
+	}
+	
+	/**
+	 * Gets the valid configuration for a GraphNodePair, that can be used for merging nodes.
+	 *
+	 * @param graphNodePairs the graph node pairs
+	 * @return the valid GraphNodePair for merging couples of GraphNodes
+	 */
+	public GraphNodePairs getValidGraphNodePairConfig4Merging(GraphNodePairs graphNodePairs) {
+		return this.graphController.getNetworkModel().getValidGraphNodePairConfig4Merging(graphNodePairs);
 	}
 	
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#mergeNodes(agentgui.envModel.graph.networkModel.GraphNode, agentgui.envModel.graph.networkModel.GraphNode)
 	 */
 	@Override
-	public void mergeNodes(GraphNode node1, GraphNode node2) {
-		this.graphController.getNetworkModel().mergeNodes(node1, node2); 
-		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Merged);
-		this.notifyObservers(notification);
+	public void mergeNodes(GraphNodePairs nodes2Merge) {
+		this.undoManager.addEdit(new MergeNetworkComponents(this.graphController, nodes2Merge));
 	}
 
 	/* (non-Javadoc)

@@ -293,8 +293,8 @@ public class NetworkModel implements Cloneable, Serializable {
 	private void refreshGraphElements() {
 		if (this.graph != null) {
 			this.graphElements = new HashMap<String, GraphElement>();
-			register(graph.getVertices().toArray(new GraphNode[0]));
-			register(graph.getEdges().toArray(new GraphEdge[0]));
+			this.register(graph.getVertices().toArray(new GraphNode[0]));
+			this.register(graph.getEdges().toArray(new GraphEdge[0]));
 		}
 	}
 
@@ -774,107 +774,193 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * Merges the current NetworkModel with an incoming NetworkModel as supplement.
 	 *
 	 * @param supplementNetworkModel the supplement network model
-	 * @param nodeOfSupplementNetworkModelSelected the node of the supplement NetworkModel, which is selected
-	 * @param nodeOfCurrentNetworkModelSelected the node of current NetworkModel, which is selected 
+	 * @param nodes2Merge the merge description
 	 * @return the residual GraphNode, which connects the two NetworkModel's
 	 */
-	public GraphNode mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNode nodeOfSupplementNetworkModelSelected, GraphNode nodeOfCurrentNetworkModelSelected) {
+	public GraphNodePairs mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs nodes2Merge) {
 
 		// --- 1. Adjust the names of the supplement NetworkModel, in order to avoid name clashes -
 		NetworkModel srcNM = adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel);
 
-		// --- 2. Determine position shift --------------------------------------------------------
-		double shiftX = 0;
-		double shiftY = 0;
-		if (nodeOfCurrentNetworkModelSelected != null) {
-			shiftX = nodeOfCurrentNetworkModelSelected.getPosition().getX() - nodeOfSupplementNetworkModelSelected.getPosition().getX();
-			shiftY = nodeOfCurrentNetworkModelSelected.getPosition().getY() - nodeOfSupplementNetworkModelSelected.getPosition().getY();
-		}
-
-		// --- 3. Add the new graph to the current graph ------------------------------------------
+		// --- 2. Add the new graph to the current graph ------------------------------------------
 		Graph<GraphNode, GraphEdge> suppGraph = supplementNetworkModel.getGraph();
-		// --- 3. a) Nodes ------------------------------------------------------------------------
+		// --- 2. a) Nodes ------------------------------------------------------------------------
 		for (GraphNode node : suppGraph.getVertices()) {
-			double posX = node.getPosition().getX() + shiftX;
-			double posY = node.getPosition().getY() + shiftY;
-			node.setPosition(new Point2D.Double(posX, posY));
 			this.graph.addVertex(node);
 		}
-
-		// --- 3. b) Nodes ------------------------------------------------------------------------
+		// --- 2. b) Nodes ------------------------------------------------------------------------
 		for (GraphEdge edge : suppGraph.getEdges()) {
 			GraphNode node1 = suppGraph.getEndpoints(edge).getFirst();
 			GraphNode node2 = suppGraph.getEndpoints(edge).getSecond();
 			this.graph.addEdge(edge, node1, node2, suppGraph.getEdgeType(edge));
 		}
 
-		// --- 4. Add the NetworkComponents to the model ------------------------------------------
+		// --- 3. Add the NetworkComponents to the model ------------------------------------------
 		for (String netCompName : srcNM.getNetworkComponents().keySet()) {
 			this.addNetworkComponent(srcNM.getNetworkComponents().get(netCompName));
 		}
 
-		// --- 5. Merge the specified nodes -------------------------------------------------------
-		return this.mergeNodes(nodeOfCurrentNetworkModelSelected, nodeOfSupplementNetworkModelSelected);
+		// --- 4. Merge the specified nodes -------------------------------------------------------
+		return this.mergeNodes(nodes2Merge);
 
 	}
 
 	/**
-	 * Merges the network model by using two (selected) nodes.
+	 * Gets the valid configuration for a GraphNodePair, that can be used for merging nodes.
 	 *
-	 * @param node1 the first GraphNode
-	 * @param node2 the second GraphNode
+	 * @param graphNodePairs the graph node pairs
+	 * @return the valid GraphNodePair for merging couples of GraphNodes
+	 */
+	public GraphNodePairs getValidGraphNodePairConfig4Merging(GraphNodePairs graphNodePairs) {
+		
+		GraphNodePairs validConfig = null;
+		HashSet<GraphNode> nodes2Merge = new HashSet<GraphNode>();
+		HashSet<GraphNode> distributionNodes = new HashSet<GraphNode>();
+		
+		// --- Get the first component --------------------
+		if (containsDistributionNode(this.getNetworkComponents(graphNodePairs.getGraphNode1()))!=null) {
+			distributionNodes.add(graphNodePairs.getGraphNode1());
+		}
+		nodes2Merge.add(graphNodePairs.getGraphNode1());
+		// --- Get all other components -------------------
+		for (GraphNode node : graphNodePairs.getGraphNode2Hash()) {
+			if (containsDistributionNode(this.getNetworkComponents(node))!=null) {
+				distributionNodes.add(node);
+			}
+			nodes2Merge.add(node);
+		}
+		
+		// ------------------------------------------------
+		// --- Validate current configuration -------------
+		// ------------------------------------------------
+		if (distributionNodes.size()==0) {
+			// --- Not more than two nodes can be merged --
+			if (nodes2Merge.size()==1) {
+				// Nothing to merge -----------------------
+				return null;
+			} else if (nodes2Merge.size()>2) {
+				// Without DistributionNode, not more ----- 
+				// than two nodes can be merged       -----
+				return null;
+			}
+			return graphNodePairs;
+			
+		} else if (distributionNodes.size()>1) {
+			// --- Found more than one DistributionNode ---
+			// --- That is not a valid configuration    ---
+			return null;
+			
+		} 
+		
+		// --------------------------------------------------------------------
+		// --- Is the single DistributionNode on the GraphNode1 position ? ----
+		// --------------------------------------------------------------------
+		GraphNode distributionNode = distributionNodes.iterator().next(); 
+		if (graphNodePairs.getGraphNode1()==distributionNode) {
+			// --- That is OK ---------------------------------------
+			return graphNodePairs;
+		} 
+
+		// --- In case of merging, a DistributionNode should -------- 
+		// --- always on the graphNode1 position             --------
+		nodes2Merge.remove(distributionNode);
+		validConfig = new GraphNodePairs(distributionNode, nodes2Merge);
+		return validConfig;
+	}
+	
+	
+	/**
+	 * Merges the network model by using at least two (selected) nodes.
+	 *
+	 * @param nodes2Merge the nodes that have to be merge, as GraphNodePairs
 	 * @return the residual GraphNode, after the merge process
 	 */
-	public GraphNode mergeNodes(GraphNode node1, GraphNode node2) {
+	public GraphNodePairs mergeNodes(GraphNodePairs nodes2Merge) {
 
-		// --- Preliminary check ------------------------------------
-		if (node1 == null || node2 == null) {
-			return null;
-		}
+		// --- Preliminary check ----------------------------------------------
+		if (nodes2Merge==null)return null;
+		if (nodes2Merge.getGraphNode1()==null) return null;
+		if (nodes2Merge.getGraphNode2Hash()==null) return null;
+		
+		// --- Have a look to the case of one or more DistributionNode's ------
+		nodes2Merge = this.getValidGraphNodePairConfig4Merging(nodes2Merge);
+		if (nodes2Merge==null) return null;
+		
+		// --- Create revert information --------------------------------------
+		HashSet<GraphNodePairsRevert> revertInfos = new HashSet<GraphNodePairsRevert>();
+		
+		// --------------------------------------------------------------------
+		// --- Walk through the list of GraphNode that have to be merged ------
+		GraphNode graphNode1 = (GraphNode) this.getGraphElement(nodes2Merge.getGraphNode1().getId());
+		for (GraphNode graphNode2 : nodes2Merge.getGraphNode2Hash() ) {
+			
+			// --- Make sure that this is a current GraphNode -----------------
+			graphNode2 = (GraphNode) this.getGraphElement(graphNode2.getId());
+			
+			NetworkComponent comp1 = this.getNetworkComponents(graphNode1).iterator().next();
+			NetworkComponent comp2 = this.getNetworkComponents(graphNode2).iterator().next();
 
-		GraphNode graphNode1 = node1;
-		GraphNode graphNode2 = node2;
-		NetworkComponent comp1 = null;
-		NetworkComponent comp2 = null;
+			// Finding the intersection set of the Graph elements of the two network components
+			HashSet<String> intersection = new HashSet<String>(comp1.getGraphElementIDs());
+			intersection.retainAll(comp2.getGraphElementIDs());
+			// Checking the constraint - Two network components can have maximum one node in common
+			if (intersection.size() == 0) {
 
-		// --- Try to find instances of DistributionNode ------------
-		NetworkComponent disNodeComp1 = containsDistributionNode(this.getNetworkComponents(graphNode1));
-		NetworkComponent disNodeComp2 = containsDistributionNode(this.getNetworkComponents(graphNode2));
-		if (disNodeComp1 != null && disNodeComp2 != null) {
-			// --- Two DistributionNode instances can't be merged ---
-			return null;
-		} else if (disNodeComp1 != null) {
-			comp1 = disNodeComp1;
-		} else if (disNodeComp2 != null) {
-			// --- change the direction of the selection ------------
-			graphNode1 = node2;
-			graphNode2 = node1;
-			comp1 = disNodeComp2;
-		} else {
-			comp1 = this.getNetworkComponents(graphNode1).iterator().next();
-		}
-		comp2 = this.getNetworkComponents(graphNode2).iterator().next();
-
-		// Finding the intersection set of the Graph elements of the two network components
-		HashSet<String> intersection = new HashSet<String>(comp1.getGraphElementIDs());
-		intersection.retainAll(comp2.getGraphElementIDs());
-		// Checking the constraint - Two network components can have maximum one node in common
-		if (intersection.size() == 0) {
-			// No common node
-			for (GraphEdge edge : graph.getIncidentEdges(graphNode2)) {
-				addEdge(edge, graphNode1, graphNode2);
+				// --- No intersection node found - proceed -------------------
+				for (GraphEdge edge : this.graph.getIncidentEdges(graphNode2)) {
+					// --- switch connection to graphNode1 ----------
+					GraphEdge newGraphEdge = this.switchEdgeBetweenGraphNodes(edge, graphNode1, graphNode2);
+					// --- store revert information -----------------
+					GraphNodePairsRevert revert = new GraphNodePairsRevert(graphNode2, newGraphEdge);
+					revertInfos.add(revert);
+				}
+				// --- Updating the graph element IDs of the component --------
+				comp2.getGraphElementIDs().remove(graphNode2.getId());
+				comp2.getGraphElementIDs().add(graphNode1.getId());
+				// --- Removing node2 from the graph and network model --------
+				this.graph.removeVertex(graphNode2);
+				this.graphElements.remove(graphNode2.getId());
 			}
-			// Updating the graph element IDs of the component
-			comp2.getGraphElementIDs().remove(graphNode2.getId());
-			comp2.getGraphElementIDs().add(graphNode1.getId());
-			// Removing node2 from the graph and network model
-			graph.removeVertex(graphNode2);
-			graphElements.remove(graphNode2.getId());
-			return graphNode1;
 		}
-		return null;
+		
+		nodes2Merge.setRevertInfos(revertInfos);
+		return nodes2Merge;
 	}
 
+	/**
+	 * Merge nodes revert.
+	 *
+	 * @param nodes2Merge the nodes2 merge
+	 */
+	public void mergeNodesRevert(GraphNodePairs nodes2Merge) {
+	
+		if (nodes2Merge==null) return;
+		if (nodes2Merge.getGraphNode1()==null) return;
+		if (nodes2Merge.getGraphNode2Hash()==null) return;
+		
+		// --------------------------------------------------------------------
+		// --- Walk through the list of revert informations -------------------
+		
+		GraphNode mergedGraphNode = (GraphNode) this.getGraphElement(nodes2Merge.getGraphNode1().getId());
+		for (GraphNodePairsRevert revertInfo : nodes2Merge.getRevertInfos() ) {
+			
+			GraphEdge graphEdge = (GraphEdge) this.getGraphElement(revertInfo.getGraphEdge().getId());
+			GraphNode graphNode = (GraphNode) this.getGraphElement(revertInfo.getGraphNode().getId());
+			if (graphNode==null) {
+				graphNode = revertInfo.getGraphNode();
+				this.graph.addVertex(graphNode);
+			}
+			this.switchEdgeBetweenGraphNodes(graphEdge, graphNode, mergedGraphNode);
+			
+			NetworkComponent comp1 = this.getNetworkComponent(graphEdge);
+			comp1.getGraphElementIDs().remove(mergedGraphNode.getId());
+			comp1.getGraphElementIDs().add(graphNode.getId());
+			this.graphElements.put(graphNode.getId(), graphNode);
+			
+		}
+		
+	}
+	
 	/**
 	 * Splits the network model at a specified node.
 	 * 
@@ -902,11 +988,12 @@ public class NetworkModel implements Cloneable, Serializable {
 					newNode.setId(this.nextNodeID());
 					newNode.setPosition(node2SplitAt.getPosition());
 
-					// --- Find the node on the other side of the edge --------
-					GraphNode otherNode = addEdge(edge, newNode, node2SplitAt);
+					// --- Switch the connection to the new node --------------
+					GraphEdge newEdge = switchEdgeBetweenGraphNodes(edge, newNode, node2SplitAt);
 					graphNodeConnections.add(newNode);
 
 					// --- Shift position of the new node a bit ---------------
+					GraphNode otherNode = this.graph.getOpposite(newNode, newEdge);
 					newNode.setPosition(this.getShiftedPosition(otherNode, newNode));
 
 					component.getGraphElementIDs().add(newNode.getId());
@@ -927,35 +1014,37 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Adds Edges for split and merge Nodes
+	 * Switches the coupling of an edge between an old and a new GraphNode. 
+	 * This is used for splitting and merging GraphNodes.
 	 *
-	 * @param edge the edge
-	 * @param node1 the node1
-	 * @param node2 the node2
+	 * @param edge the edge to switch between GraphNodes
+	 * @param newGraphNode the new GraphNode for the edge
+	 * @param oldGraphNode the old GraphNode for the edge
 	 * @return the graph node
 	 */
-	private GraphNode addEdge(GraphEdge edge, GraphNode node1, GraphNode node2) {
+	private GraphEdge switchEdgeBetweenGraphNodes(GraphEdge edge, GraphNode newGraphNode, GraphNode oldGraphNode) {
+		
 		// Find the node on the other side of the edge
-		GraphNode otherNode = graph.getOpposite(node2, edge);
+		GraphNode otherNode = graph.getOpposite(oldGraphNode, edge);
 		// Create a new edge with the same ID and type
 		GraphEdge newEdge = new GraphEdge(edge.getId(), edge.getComponentType());
 
 		if (graph.getSource(edge) != null) {
 			// if the edge is directed
-			if (graph.getSource(edge) == node2)
-				graph.addEdge(newEdge, node1, otherNode, EdgeType.DIRECTED);
-			else if (graph.getDest(edge) == node2)
-				graph.addEdge(newEdge, otherNode, node1, EdgeType.DIRECTED);
+			if (graph.getSource(edge) == oldGraphNode)
+				graph.addEdge(newEdge, newGraphNode, otherNode, EdgeType.DIRECTED);
+			else if (graph.getDest(edge) == oldGraphNode)
+				graph.addEdge(newEdge, otherNode, newGraphNode, EdgeType.DIRECTED);
 		} else {
 			// if the edge is undirected
-			graph.addEdge(newEdge, node1, otherNode, EdgeType.UNDIRECTED);
+			graph.addEdge(newEdge, newGraphNode, otherNode, EdgeType.UNDIRECTED);
 		}
 		// Removing the old edge from the graph and network model
 		graph.removeEdge(edge);
 		graphElements.remove(edge.getId());
 		graphElements.put(newEdge.getId(), newEdge);
 
-		return otherNode;
+		return newEdge;
 	}
 
 	/**

@@ -35,7 +35,7 @@ import javax.swing.undo.CannotUndoException;
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
-import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 
 
 /**
@@ -48,9 +48,7 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 	private static final long serialVersionUID = -4772137855514690242L;
 
 	private GraphEnvironmentController graphController = null;
-
-	private NetworkComponent removedNetworkComponent = null;
-	private NetworkModel removedPartNetworkModel = null;
+	private NetworkComponent networkComponent2Remove = null;
 	
 	
 	/**
@@ -63,7 +61,7 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 	public RemoveNetworkComponent(GraphEnvironmentController graphController, NetworkComponent networkComponent2Remove) {
 		super();
 		this.graphController = graphController;
-		this.removedNetworkComponent = networkComponent2Remove;
+		this.networkComponent2Remove = networkComponent2Remove;
 		this.doEdit();
 	}
 
@@ -72,14 +70,13 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 	 */
 	private void doEdit() {
 		
-		// --- 1. Evaluate and remind the current configuration -----
+		this.graphController.getNetworkModel().removeNetworkComponent(networkComponent2Remove);
+		this.graphController.removeAgent(networkComponent2Remove);
 		
-		
-		
-		// --- 2. Finally, remove component -------------------------
-		
-		
-		
+		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
+		notification.setInfoObject(networkComponent2Remove);
+		this.graphController.notifyObservers(notification);
+		this.graphController.setProjectUnsaved();
 		
 	}
 	

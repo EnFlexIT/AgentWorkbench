@@ -81,6 +81,7 @@ import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.GraphNodePairs;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.prototypes.DistributionNode;
@@ -894,6 +895,30 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     	}
     }
     
+    /**
+     * Apply a shift for the new elements, in order to match the position 
+     * of the currently selected node of the current setup		
+     *
+     * @param graphNode1 the graph node1
+     * @param graphNode2 the graph node2
+     */
+    private void applyNodeShift2MergeWithNetworkModel(GraphNode graphNode1, GraphNode graphNode2) {
+    	
+    	double shiftX = 0;
+		double shiftY = 0;
+		if (graphNode1 != null) {
+			shiftX = graphNode1.getPosition().getX() - graphNode2.getPosition().getX();
+			shiftY = graphNode1.getPosition().getY() - graphNode2.getPosition().getY();
+		}
+		
+		for (GraphNode node : this.currNetworkModel.getGraph().getVertices()) {
+			double posX = node.getPosition().getX() + shiftX;
+			double posY = node.getPosition().getY() + shiftY;
+			node.setPosition(new Point2D.Double(posX, posY));			
+		}
+		
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -940,7 +965,21 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 				}
 			}
 			
-			this.graphController.getNetworkModelAdapter().mergeNetworkModel(this.currNetworkModel, this.currGraphNodeSelected, this.basicGraphGui.getPickedSingleNode());
+			// ----------------------------------------------------------------
+			// --- Apply a shift for the new elements, in order to match ------ 
+			// --- the position of the currently selected node in the    ------  
+			// --- current setup									 	 ------
+			// ----------------------------------------------------------------			
+			this.applyNodeShift2MergeWithNetworkModel(this.basicGraphGui.getPickedSingleNode(), this.currGraphNodeSelected);
+			
+			// --- Create the merge description -------------------------------
+			HashSet<GraphNode> nodes2Add = new HashSet<GraphNode>();
+			nodes2Add.add(this.currGraphNodeSelected);
+			GraphNodePairs nodeCouples = new GraphNodePairs(this.basicGraphGui.getPickedSingleNode(), nodes2Add);
+
+			// --- Add the new element to the current NetworkModel ------------
+			this.graphController.getNetworkModelAdapter().mergeNetworkModel(this.currNetworkModel, nodeCouples);
+			
 			this.dispose();
 	
 		   

@@ -35,7 +35,9 @@ import java.util.HashSet;
  * The Class GraphNodePair can be utilized as a reminder for couples 
  * of GraphNodes that are used for merging or splitting actions.<br>
  * Because nodes can be connected with more than one other component
- * the second slot is designed as Hash.
+ * the second slot is designed as Hash.<br><br>
+ * The revertInfo can be used in order to reconstruct a merged 
+ * configuration.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -43,6 +45,7 @@ public class GraphNodePairs {
 
 	private GraphNode graphNode1 = null;
 	private HashSet<GraphNode> graphNode2Hash = null;
+	private HashSet<GraphNodePairsRevert> revertInfos = null;
 	
 	/**
 	 * Constructor.
@@ -83,6 +86,21 @@ public class GraphNodePairs {
 	 */
 	public void setGraphNode2Hash(HashSet<GraphNode> graphNode2Hash) {
 		this.graphNode2Hash = graphNode2Hash;
+	}
+
+	/**
+	 * Returns the revert info as configurations of GraphNodes and GraphEdges.
+	 * @return the revertInfos
+	 */
+	public HashSet<GraphNodePairsRevert> getRevertInfos() {
+		return revertInfos;
+	}
+	/**
+	 * Sets the revert info.
+	 * @param revertInfos the revertInfo to set
+	 */
+	public void setRevertInfos(HashSet<GraphNodePairsRevert> revertInfos) {
+		this.revertInfos = revertInfos;
 	}
 	
 }

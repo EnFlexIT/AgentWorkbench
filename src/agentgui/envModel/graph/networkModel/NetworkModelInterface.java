@@ -45,8 +45,7 @@ public interface NetworkModelInterface {
 	 * Sets the general graph settings for the MAS.
 	 * @param generalGraphSettings4MAS the new general graph settings for the MAS
 	 */
-	public abstract void setGeneralGraphSettings4MAS(
-			GeneralGraphSettings4MAS generalGraphSettings4MAS);
+	public abstract void setGeneralGraphSettings4MAS(GeneralGraphSettings4MAS generalGraphSettings4MAS);
 
 	/**
 	 * Gets the general graph settings for the MAS.
@@ -141,15 +140,13 @@ public interface NetworkModelInterface {
 	 * 
 	 * @param networkComponent The NetworkComponent to remove
 	 */
-	public abstract void removeNetworkComponent(
-			NetworkComponent networkComponent);
+	public abstract void removeNetworkComponent(NetworkComponent networkComponent);
 
 	/**
 	 * Removes the network components.
 	 * @param networkComponents the network components
 	 */
-	public abstract HashSet<NetworkComponent> removeNetworkComponents(
-			HashSet<NetworkComponent> networkComponents);
+	public abstract HashSet<NetworkComponent> removeNetworkComponents(HashSet<NetworkComponent> networkComponents);
 
 	/**
 	 * Removes the network components if not in list.
@@ -257,20 +254,26 @@ public interface NetworkModelInterface {
 	 * Merges the current NetworkModel with an incoming NetworkModel as supplement.
 	 *
 	 * @param supplementNetworkModel the supplement network model
-	 * @param nodeOfSupplementNetworkModelSelected the node of the supplement NetworkModel, which is selected
-	 * @param nodeOfCurrentNetworkModelSelected the node of current NetworkModel, which is selected 
+	 * @param nodes2Merge the merge description
 	 * @return the residual GraphNode, which connects the two NetworkModel's
 	 */
-	public abstract void mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNode nodeOfSupplementNetworkModelSelected, GraphNode nodeOfCurrentNetworkModelSelected);
+	public abstract void mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs node2Merge);
 	
 	/**
-	 * Merges the network model by using two (selected) nodes.
+	 * Gets the valid configuration for a GraphNodePair, that can be used for merging nodes.
 	 *
-	 * @param node1 the first GraphNode
-	 * @param node2 the second GraphNode
+	 * @param graphNodePairs the graph node pairs
+	 * @return the valid GraphNodePair for merging couples of GraphNodes
+	 */
+	public GraphNodePairs getValidGraphNodePairConfig4Merging(GraphNodePairs graphNodePairs);
+	
+	/**
+	 * Merges the network model by using at least two (selected) nodes.
+	 *
+	 * @param nodes2Merge the nodes that have to be merge, as GraphNodePairs
 	 * @return the residual GraphNode, after the merge process
 	 */
-	public abstract void mergeNodes(GraphNode node1, GraphNode node2);
+	public abstract void mergeNodes(GraphNodePairs nodes2Merge);
 
 	/**
 	 * Splits the network model at a specified node.

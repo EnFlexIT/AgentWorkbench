@@ -57,6 +57,7 @@ import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.components.ComponentTypeDialog;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.GraphNodePairs;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.prototypes.DistributionNode;
@@ -339,7 +340,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		    jButtonMergeNodes = new JButton();
 		    jButtonMergeNodes.setIcon(new ImageIcon(getClass().getResource(pathImage + "Merge.png")));
 		    jButtonMergeNodes.setPreferredSize(jButtonSize);
-		    jButtonMergeNodes.setToolTipText(Language.translate("Merge two nodes", Language.EN));
+		    jButtonMergeNodes.setToolTipText(Language.translate("Merge nodes", Language.EN));
 		    jButtonMergeNodes.addActionListener(this);
 		}
 		return jButtonMergeNodes;
@@ -656,31 +657,47 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				} 
 				// --- Nothing valid picked -------------------------
 				JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Select a valid element first!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	
-				
-				
 			}
 			
 		} else if (ae.getSource() == getJButtonMergeNodes()) {
 			// ------------------------------------------------------
 			// --- Merge Nodes Button clicked -----------------------
 			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
-			if(nodeSet.size()==2){
-				// --- Two nodes are picked
-				Iterator<GraphNode> nodeIter = nodeSet.iterator();
-				GraphNode node1 = nodeIter.next();
-				GraphNode node2 = nodeIter.next();
-				if (this.graphController.getNetworkModelAdapter().isFreeGraphNode(node1) && this.graphController.getNetworkModelAdapter().isFreeGraphNode(node2)) {
-					// --- Valid nodes are picked
-					this.graphController.getNetworkModelAdapter().mergeNodes(node1, node2);
+			if(nodeSet.size()>=2){
+				boolean mergeError = false;
+				GraphNode node2Add2 = null;
+				HashSet<GraphNode> nodeHash2Add = new HashSet<GraphNode>();
+				for (GraphNode node : nodeSet) {
+					if (this.graphController.getNetworkModelAdapter().isFreeGraphNode(node)==false) {
+						mergeError=true;
+						break;
+					}
+					if (node2Add2 == null) {
+						node2Add2 = node;
+					} else {
+						nodeHash2Add.add(node);
+					}
+				}
+				
+				if (mergeError==false) {
+					// --- Valid nodes are picked -------------------
+					GraphNodePairs mergeNodes = new GraphNodePairs(node2Add2, nodeHash2Add);
+					mergeNodes = this.graphController.getNetworkModel().getValidGraphNodePairConfig4Merging(mergeNodes);
+					if (mergeNodes==null) {
+						String msg = "Invalid node selection!";
+						JOptionPane.showMessageDialog(graphControllerGUI, Language.translate(msg), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+
+					} else {
+						this.graphController.getNetworkModelAdapter().mergeNodes(mergeNodes);	
+					}
+					
 				} else {
-					// --- Invalid nodes are picked
-					JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Select two valid vertices", Language.EN),
-							Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+					// --- Invalid nodes are picked -----------------
+					JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Select at least two valid vertices!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 				}
 			} else {
-				// --- Two nodes are not picked
-				JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Use Shift and click two vertices", Language.EN),
-						Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+				// --- At least two nodes are required --------------
+				JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Use Shift and click on two vertices at least!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 			}	
 			
 			
