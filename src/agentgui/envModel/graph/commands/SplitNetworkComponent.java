@@ -53,6 +53,7 @@ public class SplitNetworkComponent extends AbstractUndoableEdit {
 	
 	private GraphNode graphNode2SplitAt = null;
 	private GraphNodePairs graphNodePairsSplited = null;
+	private boolean moveOppositeNode = false;
 	
 	/**
 	 * Instantiates the new action in order to split a 
@@ -61,10 +62,11 @@ public class SplitNetworkComponent extends AbstractUndoableEdit {
 	 * @param graphController the graph controller
 	 * @param graphNode2SplitAt the graph node2 split at
 	 */
-	public SplitNetworkComponent(GraphEnvironmentController graphController, GraphNode graphNode2SplitAt) {
+	public SplitNetworkComponent(GraphEnvironmentController graphController, GraphNode graphNode2SplitAt, boolean moveOppositeNode) {
 		super();
 		this.graphController = graphController;
 		this.graphNode2SplitAt = graphNode2SplitAt;
+		this.moveOppositeNode = moveOppositeNode;
 		this.doEdit();
 	}
 
@@ -73,7 +75,7 @@ public class SplitNetworkComponent extends AbstractUndoableEdit {
 	 */
 	private void doEdit() {
 		// --- Split at node and remind the coupling ----------------
-		this.graphNodePairsSplited = this.graphController.getNetworkModel().splitNetworkModelAtNode(this.graphNode2SplitAt);
+		this.graphNodePairsSplited = this.graphController.getNetworkModel().splitNetworkModelAtNode(this.graphNode2SplitAt, this.moveOppositeNode);
 		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Splited));
 		this.graphController.setProjectUnsaved();
 	}

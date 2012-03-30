@@ -40,6 +40,7 @@ import javax.swing.undo.UndoManager;
 
 import agentgui.envModel.graph.commands.MergeNetworkComponents;
 import agentgui.envModel.graph.commands.MergeNetworkModel;
+import agentgui.envModel.graph.commands.MoveGraphNodes;
 import agentgui.envModel.graph.commands.RemoveNetworkComponent;
 import agentgui.envModel.graph.commands.SetGeneralGraphSettings4MAS;
 import agentgui.envModel.graph.commands.SetNetworkModel;
@@ -47,6 +48,7 @@ import agentgui.envModel.graph.commands.SplitNetworkComponent;
 import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 /**
  * The Class NetworkModelAdapter is used for the action / interaction
@@ -323,25 +325,17 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 */
 	@Override
 	public void removeNetworkComponent(NetworkComponent networkComponent) {
-		this.undoManager.addEdit(new RemoveNetworkComponent(this.graphController, networkComponent));
+		HashSet<NetworkComponent> compHash = new HashSet<NetworkComponent>();
+		compHash.add(networkComponent);
+		this.removeNetworkComponents(compHash);
 	}
 
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#removeNetworkComponents(java.util.HashSet)
 	 */
 	@Override
-	public HashSet<NetworkComponent> removeNetworkComponents(HashSet<NetworkComponent> networkComponents) {
-		
-		HashSet<NetworkComponent> removedComponents = this.graphController.getNetworkModel().removeNetworkComponents(networkComponents);
-		for (NetworkComponent networkComponent : removedComponents) {
-			
-			this.graphController.removeAgent(networkComponent);
-			
-			NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
-			notification.setInfoObject(networkComponent);
-			this.notifyObservers(notification);
-		}
-		return removedComponents;
+	public void removeNetworkComponents(HashSet<NetworkComponent> networkComponents) {
+		this.undoManager.addEdit(new RemoveNetworkComponent(this.graphController, networkComponents));
 	}
 	
 	/* (non-Javadoc)
@@ -406,9 +400,25 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 */
 	@Override
 	public void splitNetworkModelAtNode(GraphNode node2SplitAt) {
-		this.undoManager.addEdit(new SplitNetworkComponent(this.graphController, node2SplitAt));
+		this.undoManager.addEdit(new SplitNetworkComponent(this.graphController, node2SplitAt, true));
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#splitNetworkModelAtNode(agentgui.envModel.graph.networkModel.GraphNode, boolean)
+	 */
+	@Override
+	public void splitNetworkModelAtNode(GraphNode node2SplitAt, boolean moveOppositeNode) {
+		this.undoManager.addEdit(new SplitNetworkComponent(this.graphController, node2SplitAt, moveOppositeNode));
+	}
+	
+	/**
+	 * Sets the movement of GraphNodes to the undoManager.
+	 * @param nodesMovedOldPostions the old positions of the moved GraphNodes 
+	 */
+	public void setGraphNodesMoved(VisualizationViewer<GraphNode,GraphEdge> visViewer, HashMap<String, Point2D> nodesMovedOldPositions) {
+		this.undoManager.addEdit(new MoveGraphNodes(this.graphController, visViewer, nodesMovedOldPositions));
+	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getNodesFromNetworkComponent(agentgui.envModel.graph.networkModel.NetworkComponent)
 	 */
@@ -457,6 +467,14 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 		return this.graphController.getNetworkModel().getNetworkComponents(graphNodes);
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getNetworkComponentsFullySelected(java.util.Set)
+	 */
+	@Override
+	public HashSet<NetworkComponent> getNetworkComponentsFullySelected(Set<GraphNode> graphNodes) {
+		return this.graphController.getNetworkModel().getNetworkComponentsFullySelected(graphNodes);
+	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getNetworkComponents(agentgui.envModel.graph.networkModel.GraphNode)
 	 */

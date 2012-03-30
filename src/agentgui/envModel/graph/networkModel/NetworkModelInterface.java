@@ -146,7 +146,7 @@ public interface NetworkModelInterface {
 	 * Removes the network components.
 	 * @param networkComponents the network components
 	 */
-	public abstract HashSet<NetworkComponent> removeNetworkComponents(HashSet<NetworkComponent> networkComponents);
+	public abstract void removeNetworkComponents(HashSet<NetworkComponent> networkComponents);
 
 	/**
 	 * Removes the network components if not in list.
@@ -200,9 +200,18 @@ public interface NetworkModelInterface {
 	 * @param graphNodes the graph nodes
 	 * @return the network components
 	 */
-	public abstract HashSet<NetworkComponent> getNetworkComponents(
-			Set<GraphNode> graphNodes);
+	public abstract HashSet<NetworkComponent> getNetworkComponents(Set<GraphNode> graphNodes);
 
+	/**
+	 * Returns the {@link NetworkComponent}'s that are fully selected by the given set of GraphNodes.<br>
+	 * As an example: if you have selected one vertex of a simple directed edge with two vertices, this
+	 * method will return null.  
+	 *
+	 * @param graphNodes the GraphNodes
+	 * @return the {@link NetworkComponent}'s that are fully selected by the given GraphNodes's
+	 */
+	public abstract HashSet<NetworkComponent> getNetworkComponentsFullySelected(Set<GraphNode> graphNodes);
+	
 	/**
 	 * Gives the set of network components containing the given node.
 	 * 
@@ -282,6 +291,15 @@ public interface NetworkModelInterface {
 	 */
 	public abstract void splitNetworkModelAtNode(GraphNode node2SplitAt);
 
+	/**
+	 * Splits the network model at a specified node.
+	 *
+	 * @param node2SplitAt the node
+	 * @param moveOppositeNode the move opposite node
+	 * @return the GraphNodePairs that can be used to undo this operation
+	 */
+	public abstract void splitNetworkModelAtNode(GraphNode node2SplitAt, boolean moveOppositeNode);
+	
 	/**
 	 * Gets a shifted position for a node in relation to the raster size of the component type settings.
 	 * @param fixedNode the fixed node

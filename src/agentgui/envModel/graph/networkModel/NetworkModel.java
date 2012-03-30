@@ -517,6 +517,85 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Returns the {@link NetworkComponent}'s that are fully selected by the given set of GraphNodes.<br>
+	 * As an example: if you have selected one vertex of a simple directed edge with two vertices, this
+	 * method will return null.  
+	 *
+	 * @param graphNodes the GraphNodes
+	 * @return the {@link NetworkComponent}'s that are fully selected by the given GraphNodes's
+	 */
+	public HashSet<NetworkComponent> getNetworkComponentsFullySelected(Set<GraphNode> graphNodes) {
+		
+		// --- Create a reminder for the IDs of the GraphNodes ------
+		Set<String> idSetGraphNodes = new HashSet<String>();
+		for (GraphNode graphNode : graphNodes) {
+			idSetGraphNodes.add(graphNode.getId());
+		}
+		
+		// --- Get the affected components --------------------------
+		HashSet<NetworkComponent> componentsAffected = this.getNetworkComponents(graphNodes);
+		HashSet<NetworkComponent> componentsFound = new HashSet<NetworkComponent>();
+		
+		// --- Run through the list of components -------------------
+		for (NetworkComponent component : componentsAffected) {
+			// --- Extract all GraphNode IDs ------------------------
+			Set<String> compIDSetAffecetd = this.extractElementIDs(component, true);
+			Set<String> compIDSetFound = new HashSet<String>();
+			for (String compID : compIDSetAffecetd) {
+				// --- Is this a node in the selection? -------------
+				if (idSetGraphNodes.contains(compID)) {
+					compIDSetFound.add(compID);
+				}
+			}
+			// --- Add the NetworkComponent to the result
+			if (compIDSetFound.size()==compIDSetAffecetd.size()) {
+				componentsFound.add(component);
+			}
+			
+		}
+		
+		if (componentsFound.size()==0) {
+			return null;
+		} else {
+			return componentsFound;	
+		}
+		
+	}
+	
+	
+	/**
+	 * Extract graph node i ds.
+	 *
+	 * @param networkComponent the network component
+	 * @return the hash set
+	 */
+	public HashSet<String> extractElementIDs(NetworkComponent networkComponent, boolean search4GraphNodes) {
+		
+		// --- Create the result set -----------------
+		HashSet<String> elementIDsFound = new HashSet<String>();
+		
+		// --- Check the GraphElements ---------------
+		Set<String> elements = networkComponent.getGraphElementIDs();
+		for (String elementID : elements) {
+			GraphElement element = this.getGraphElement(elementID);
+			if (element!=null) {
+				if (search4GraphNodes==true) {
+					// --- search for GraphNode's ----
+					if (element instanceof GraphNode) {
+						elementIDsFound.add(elementID);
+					}
+				} else {
+					// --- search for GraphEdge's ----
+					if (element instanceof GraphEdge) {
+						elementIDsFound.add(elementID);
+					}
+				}
+			}
+		}
+		return elementIDsFound;
+	}
+	
+	/**
 	 * Gives the set of network components containing the given node.
 	 * 
 	 * @param graphNode - A GraphNode
@@ -1013,10 +1092,21 @@ public class NetworkModel implements Cloneable, Serializable {
 	
 	/**
 	 * Splits the network model at a specified node.
-	 * 
 	 * @param node2SplitAt the node
+	 * @return the GraphNodePairs that can be used to undo this operation
 	 */
 	public GraphNodePairs splitNetworkModelAtNode(GraphNode node2SplitAt) {
+		return this.splitNetworkModelAtNode(node2SplitAt, true);
+	}
+	
+	/**
+	 * Splits the network model at a specified node.
+	 *
+	 * @param node2SplitAt the node
+	 * @param moveOppositeNode the move opposite node
+	 * @return the GraphNodePairs that can be used to undo this operation
+	 */
+	public GraphNodePairs splitNetworkModelAtNode(GraphNode node2SplitAt, boolean moveOppositeNode) {
 		
 		GraphNodePairs graphNodePair = null;
 		HashSet<GraphNode> graphNodeConnections = new HashSet<GraphNode>();
@@ -1042,9 +1132,11 @@ public class NetworkModel implements Cloneable, Serializable {
 					GraphEdge newEdge = switchEdgeBetweenGraphNodes(edge, newNode, node2SplitAt);
 					graphNodeConnections.add(newNode);
 
-					// --- Shift position of the new node a bit ---------------
-					GraphNode otherNode = this.graph.getOpposite(newNode, newEdge);
-					newNode.setPosition(this.getShiftedPosition(otherNode, newNode));
+					if (moveOppositeNode==true) {
+						// --- Shift position of the new node a bit -----------
+						GraphNode otherNode = this.graph.getOpposite(newNode, newEdge);
+						newNode.setPosition(this.getShiftedPosition(otherNode, newNode));	
+					}
 
 					component.getGraphElementIDs().add(newNode.getId());
 					// --- Adding new node to the network model ---------------

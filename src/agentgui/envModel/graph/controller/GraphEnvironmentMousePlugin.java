@@ -35,13 +35,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.SwingUtilities;
 
 import agentgui.envModel.graph.networkModel.GraphEdge;
+import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.Layer;
@@ -74,6 +79,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 
 	private Vector<GraphNode> nodesTemp = new Vector<GraphNode>();
 	private Vector<GraphNode> nodesMoved = new Vector<GraphNode>();
+	private HashMap<String, Point2D> nodesMovedOldPositions = null;
 	
 	/** Whether to center the zoom at the current mouse position */
 	private boolean zoomAtMouse = true;
@@ -124,12 +130,11 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 * Sets the nodes moved2 end position.
 	 */
 	private void setNodesMoved2EndPosition() {
-		this.removeAllTemporaryNodes(graphGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGraph());
+		this.removeAllTemporaryNodes(this.getVisViewer().getGraphLayout().getGraph());
 		for (int i = 0; i < this.nodesMoved.size(); i++) {
 			GraphNode node = this.nodesMoved.get(i);
 			this.getVisViewer().getGraphLayout().setLocation(node, node.getPosition());
 		}
-		this.nodesMoved.removeAllElements();
 	}
 	
 	/**
@@ -155,6 +160,58 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		this.nodesTemp.removeAllElements();
 	}
 	
+	/**
+	 * Sets the reminder for the old positions of the currently moved GraphNodes.
+	 * @param graphNodes the graph nodes
+	 */
+	private void remindOldPositions() {
+		nodesMovedOldPositions = new HashMap<String, Point2D>();
+		// --- Get selected GraphNodes ----------
+		Set<GraphNode> nodesSelected = this.getVisViewer().getPickedVertexState().getPicked();
+		for (GraphNode node : nodesSelected) {
+			Point2D point = new Point2D.Double(node.getPosition().getX(), node.getPosition().getY());
+			nodesMovedOldPositions.put(node.getId(), point);
+		}
+	}
+	/**
+	 * Creates the undoable move action.
+	 */
+	private void createUndoableMoveAction() {
+		if (this.nodesMovedOldPositions!=null) {
+			if (this.nodesMovedOldPositions.size()>0) {
+				this.graphGUI.getGraphEnvironmentController().getNetworkModelAdapter().setGraphNodesMoved(this.visViewer, this.nodesMovedOldPositions);	
+			}
+			this.nodesMovedOldPositions = null;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#pickContainedVertices(edu.uci.ics.jung.visualization.VisualizationViewer, java.awt.geom.Point2D, java.awt.geom.Point2D, boolean)
+	 */
+	@Override
+	protected void pickContainedVertices(VisualizationViewer<GraphNode, GraphEdge> vv, Point2D down,Point2D out, boolean clear) {
+		
+		super.pickContainedVertices(vv, down, out, clear);
+		NetworkModelAdapter netAdapter = this.graphGUI.getGraphEnvironmentController().getNetworkModelAdapter();
+		
+		// --- Get the selected nodes ----------------
+		Set<GraphNode> nodesSelected = this.getVisViewer().getPickedVertexState().getPicked();
+		// --- Get the related NetworkComponent's ---- 
+		HashSet<NetworkComponent> components = netAdapter.getNetworkComponentsFullySelected(nodesSelected);
+		if (components!=null) {
+			// --- Run through NetworkComponents -----  
+			for (NetworkComponent networkComponent : components) {
+				Vector<GraphElement> elements = netAdapter.getGraphElementsFromNetworkComponent(networkComponent);
+				for (GraphElement graphElement : elements) {
+					if (graphElement instanceof GraphEdge) {
+						this.getVisViewer().getPickedEdgeState().pick((GraphEdge) graphElement, true);
+					}
+				}
+			}
+		}
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mousePressed(java.awt.event.MouseEvent)
 	 */
@@ -175,6 +232,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		} else if (SwingUtilities.isLeftMouseButton(me)) {
 			if (pickedNode!=null) {
 				this.moveNodeWithLeftAction = true;	
+				this.remindOldPositions();
 			}
 		}
 		
@@ -196,6 +254,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			if (moveNodeWithLeftAction=true) {
 				this.moveNodeWithLeftAction = true;	
 				this.setNodesMoved2EndPosition();
+				this.createUndoableMoveAction();
+				this.nodesMoved.removeAllElements();
 			}
 		}
 	
@@ -228,11 +288,11 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			if(pickedObject != null) {
 				if (me.getClickCount()==2){
 					// --- Double click ---------
-					graphGUI.handleObjectDoubleClick(pickedObject);
+					this.graphGUI.handleObjectDoubleClick(pickedObject);
 				} else {
 					if(me.isShiftDown()==false) {
 						// --- Left click -----------
-						graphGUI.handleObjectLeftClick(pickedObject);
+						this.graphGUI.handleObjectLeftClick(pickedObject);
 					}	
 				} 
 			}
@@ -279,21 +339,20 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		if (moveNodeWithLeftAction==true) {
 			
 			Graph<GraphNode, GraphEdge> graph = null;
-			boolean snapToGrid = graphGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGeneralGraphSettings4MAS().isSnap2Grid();
-			double snapRaster = graphGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGeneralGraphSettings4MAS().getSnapRaster();
+			boolean snapToGrid = this.graphGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGeneralGraphSettings4MAS().isSnap2Grid();
+			double snapRaster = this.graphGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGeneralGraphSettings4MAS().getSnapRaster();
 			
-			Iterator<GraphNode> pickedNodes = this.getVisViewer().getPickedVertexState().getPicked().iterator();
-			while(pickedNodes.hasNext()){
+			Set<GraphNode> pickedNodes = this.getVisViewer().getPickedVertexState().getPicked();
+			for(GraphNode pickedNode: pickedNodes){
 
 				// --- Get the Graph, if not already there --------------------
 				if (graph==null) {
-					graph = graphGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGraph();
+					graph = this.graphGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGraph();
 					this.nodesMoved.removeAllElements();
 					this.removeAllTemporaryNodes(graph);
 				}
 				
 				// --- Get the position of the node ---------------------------
-				GraphNode pickedNode = pickedNodes.next();
 				Point2D newPos = this.getVisViewer().getGraphLayout().transform(pickedNode);
 				if (snapToGrid==true && snapRaster>0) {
 					double xPos = roundGridSnap(newPos.getX(), snapRaster); 

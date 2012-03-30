@@ -228,6 +228,7 @@ de;Klassen bestimmen;Determine classes
 de;Klassenangabe überprüfen;Check Class specification
 de;Klassenzuordnung;Class Assignment
 de;Knoten verbinden;;;;
+de;Knoten verschieben;;;;
 de;Kommunikation;Communication
 de;Komponente;Component
 de;Komponenten-Definition bearbeiten;Edit Component Definitions;;;
@@ -281,6 +282,7 @@ de;Netz;Network
 de;Netzkomponente;Network component
 de;Netzwerk-Komponenten;Network Components;;;
 de;Netzwerkkomponente entfernen;;;;
+de;Netzwerkkomponente(n) entfernen;;;;
 de;Netzwerkkomponente(n) hinzufügen;Add network component s);;;
 de;Neu laden;Reload;;;
 de;Neuer Agent;New agent

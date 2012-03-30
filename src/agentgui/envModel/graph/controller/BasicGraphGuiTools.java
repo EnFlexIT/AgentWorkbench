@@ -33,7 +33,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -60,7 +59,6 @@ import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.GraphNodePairs;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
-import agentgui.envModel.graph.prototypes.DistributionNode;
 
 public class BasicGraphGuiTools implements ActionListener, Observer {
 
@@ -629,32 +627,14 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if (ae.getSource() == getJButtonRemoveComponent() || ae.getSource() == getJMenuItemDeleteComp()) {
 			// ------------------------------------------------------
 			// --- Remove Component Button clicked ------------------
-			NetworkComponent selectedComponent = null;
-			Set<GraphEdge> edgeSet = this.basicGraphGui.getPickedEdges();
-			if(edgeSet.size()>0){ 
-				// --- At least one edge is picked ------------------
-				// --- Get the Network component from picked edge ---
-				selectedComponent = this.graphController.getNetworkModelAdapter().getNetworkComponent(edgeSet.iterator().next());
+			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
+			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModelAdapter().getNetworkComponentsFullySelected(nodeSet);
+			
+			if(selectedComponents.size()>0){ 
 				// --- Remove component and update graph ------------ 
-				this.graphController.getNetworkModelAdapter().removeNetworkComponent(selectedComponent);
+				this.graphController.getNetworkModelAdapter().removeNetworkComponents(selectedComponents);	
 				
 			} else {
-				// --- No edge is picked ----------------------------
-				Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
-				if (nodeSet.size()>0) {
-					// --- At least one node is picked --------------
-					HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(nodeSet.iterator().next());
-					Iterator<NetworkComponent> it = components.iterator();
-					while(it.hasNext()) {
-						selectedComponent = it.next();
-						if (selectedComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
-							// --- Remove component, update graph --- 
-							this.graphController.getNetworkModelAdapter().removeNetworkComponent(selectedComponent);
-							return;
-						}	
-					}
-					
-				} 
 				// --- Nothing valid picked -------------------------
 				JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Select a valid element first!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	
 			}

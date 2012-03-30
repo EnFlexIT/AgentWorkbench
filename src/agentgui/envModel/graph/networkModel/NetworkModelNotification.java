@@ -36,32 +36,33 @@ package agentgui.envModel.graph.networkModel;
 public class NetworkModelNotification {
 
 	/** Possible reasons. */
-	public static final int NETWORK_MODEL_ComponentTypeSettingsChanged = -1;
+	public static final int NETWORK_MODEL_ComponentTypeSettingsChanged = 1;
 	
-	public static final int NETWORK_MODEL_Reload = 1;
-	public static final int NETWORK_MODEL_Repaint = 2;
+	public static final int NETWORK_MODEL_Reload = 2;
+	public static final int NETWORK_MODEL_Repaint = 3;
 	
-	public static final int NETWORK_MODEL_Zoom_In = 3;
-	public static final int NETWORK_MODEL_Zoom_Out = 4;
-	public static final int NETWORK_MODEL_Zoom_Fit2Window = 5;
-	public static final int NETWORK_MODEL_Zoom_One2One = 6;
+	public static final int NETWORK_MODEL_Zoom_In = 5;
+	public static final int NETWORK_MODEL_Zoom_Out = 6;
+	public static final int NETWORK_MODEL_Zoom_Fit2Window = 7;
+	public static final int NETWORK_MODEL_Zoom_One2One = 8;
 	
-	public static final int NETWORK_MODEL_Component_Added = 7;
-	public static final int NETWORK_MODEL_Component_Removed = 8;
-	public static final int NETWORK_MODEL_Component_Renamed = 9;
-	public static final int NETWORK_MODEL_Component_Select = 10;
+	public static final int NETWORK_MODEL_Merged_With_Supplement_NetworkModel = 10;
 	
-	public static final int NETWORK_MODEL_Nodes_Merged = 11;
-	public static final int NETWORK_MODEL_Nodes_Splited = 12;
+	public static final int NETWORK_MODEL_Component_Added = 11;
+	public static final int NETWORK_MODEL_Component_Removed = 12;
+	public static final int NETWORK_MODEL_Component_Renamed = 13;
+	public static final int NETWORK_MODEL_Component_Select = 14;
 	
-	public static final int NETWORK_MODEL_GraphMouse_Picking = 13;
-	public static final int NETWORK_MODEL_GraphMouse_Transforming = 14;
+	public static final int NETWORK_MODEL_Nodes_Moved = 15;
+	public static final int NETWORK_MODEL_Nodes_Merged = 16;
+	public static final int NETWORK_MODEL_Nodes_Splited = 17;
+	
+	public static final int NETWORK_MODEL_GraphMouse_Picking = 20;
+	public static final int NETWORK_MODEL_GraphMouse_Transforming = 21;
 
-	public static final int NETWORK_MODEL_Merged_With_Supplement_NetworkModel = 15;
+	public static final int NETWORK_MODEL_SelectClusterComponent = 25;
 	
-	public static final int NETWORK_MODEL_ExportGraphAsImage = 16;
-	
-	public static final int NETWORK_MODEL_SelectClusterComponent = 20;
+	public static final int NETWORK_MODEL_ExportGraphAsImage = 30;
 	
 	
 	/** The reason. */

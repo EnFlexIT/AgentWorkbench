@@ -899,6 +899,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 	}
 
+	/**
+	 * Shows the dialog for the component settings of the given object.
+	 *
+	 * @param object the object
+	 */
 	private void showComponentSettingsDialog(Object object) {
 		OntologySettingsDialog osd = null;
 		if (object instanceof GraphNode) {
