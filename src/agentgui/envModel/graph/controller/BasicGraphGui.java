@@ -1070,7 +1070,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 								// --- Is this a inner node of a ClusterComponent ? ----
 								ArrayList<ClusterNetworkComponent> clusterHash = networkModel.getClusterComponents(componentHashSet);
-								if (componentHashSet.size() == 1 && clusterHash.size() == 1) {
+								if (componentHashSet.size() == 1 && clusterHash.size() == 1 && networkModel.isFreeGraphNode(node)==false) {
 									// --- This is a cluster component ------------------
 									ClusterNetworkComponent cnc = networkModel.getClusterComponents(componentHashSet).get(0);
 									DomainSettings ds = null;
@@ -1162,13 +1162,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 				// --- Have a look, if the node is an image ---- END ----------
 				// ------------------------------------------------------------
 
-			} else if (componentHashSet.size() == 1) {
+			} else if (componentHashSet.size() == 1 && networkModel.isFreeGraphNode(node)==false) {
 				// --- This is a ClusterNetworkComponent --
 				networkComponent = componentHashSet.iterator().next();
 				if (networkComponent instanceof ClusterNetworkComponent) {
 
 					DomainSettings ds = null;
 					ClusterNetworkComponent cnc = (ClusterNetworkComponent) networkComponent;
+					
 					String domain = cnc.getDomain();
 					if (domain != null) {
 						if (domain.equals("") == false) {

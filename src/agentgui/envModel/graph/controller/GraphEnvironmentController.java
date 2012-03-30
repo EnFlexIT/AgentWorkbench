@@ -617,6 +617,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		
 				componentFileWriter.close();
 	
+				
 		    } catch (IOException e) {
 		    	e.printStackTrace();
 		    } catch (JAXBException e) {
