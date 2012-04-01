@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: NumericDataTable
 * @author ontology bean generator
-* @version 2012/03/30, 16:31:30
+* @version 2012/04/1, 18:52:07
 */
 public class NumericDataTable implements Concept {
 
@@ -16,11 +16,11 @@ public class NumericDataTable implements Concept {
 * Protege name: tableData
    */
    private List tableData = new ArrayList();
-   public void addTableData(NumericDataColum elem) { 
+   public void addTableData(NumericDataColumn elem) { 
      List oldList = this.tableData;
      tableData.add(elem);
    }
-   public boolean removeTableData(NumericDataColum elem) {
+   public boolean removeTableData(NumericDataColumn elem) {
      List oldList = this.tableData;
      boolean result = tableData.remove(elem);
      return result;

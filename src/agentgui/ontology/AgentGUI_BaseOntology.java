@@ -9,7 +9,7 @@ import jade.core.CaseInsensitiveString;
 
 /** file: AgentGUI_BaseOntology.java
  * @author ontology bean generator
- * @version 2012/03/30, 16:31:30
+ * @version 2012/04/1, 18:52:07
  */
 public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
   //NAME
@@ -23,34 +23,34 @@ public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
 
 
    // VOCABULARY
-    public static final String NUMERICDATACOLUM_COLUMNDATA="columnData";
-    public static final String NUMERICDATACOLUM="NumericDataColum";
     public static final String NUMERICDATATABLE_TABLEDATA="tableData";
     public static final String NUMERICDATATABLE="NumericDataTable";
+    public static final String FORMULA_FORMULA="formula";
+    public static final String FORMULA="Formula";
     public static final String SIMPLE_OBJECT_OBJECTVALUE="ObjectValue";
     public static final String SIMPLE_OBJECT="Simple_Object";
+    public static final String NUMERICDATACOLUMN_COLUMNDATA="columnData";
+    public static final String NUMERICDATACOLUMN="NumericDataColumn";
+    public static final String CHART="Chart";
+    public static final String TIMESERIES_VALUEAXISDESCRIPTIONS="valueAxisDescriptions";
+    public static final String TIMESERIES_TIMEFORMAT="timeFormat";
+    public static final String TIMESERIES_CHARTTITLE="chartTitle";
+    public static final String TIMESERIES_VALUEAXISLABEL="valueAxisLabel";
+    public static final String TIMESERIES_VALUEAXISCOLORS="valueAxisColors";
+    public static final String TIMESERIES_TIMEAXISLABEL="timeAxisLabel";
+    public static final String TIMESERIES_TIMEAXIS="timeAxis";
+    public static final String TIMESERIES_VALUEAXISUNITS="valueAxisUnits";
+    public static final String TIMESERIES_VALUEAXISLINEWIDTH="valueAxisLineWidth";
+    public static final String TIMESERIES_VALUEAXISDATATABLE="valueAxisDataTable";
+    public static final String TIMESERIES="TimeSeries";
     public static final String SIMPLE_STRING_STRINGVALUE="StringValue";
     public static final String SIMPLE_STRING="Simple_String";
     public static final String SIMPLE_FLOAT_FLOATVALUE="FloatValue";
     public static final String SIMPLE_FLOAT="Simple_Float";
     public static final String SIMPLE_INTEGER_INTEGERVALUE="IntegerValue";
     public static final String SIMPLE_INTEGER="Simple_Integer";
-    public static final String FORMULA_FORMULA="formula";
-    public static final String FORMULA="Formula";
     public static final String SIMPLE_BOOLEAN_BOOLEANVALUE="BooleanValue";
     public static final String SIMPLE_BOOLEAN="Simple_Boolean";
-    public static final String CHART="Chart";
-    public static final String TIMESERIES_TIMEFORMAT="timeFormat";
-    public static final String TIMESERIES_VALUEAXISDESCRIPTIONS="valueAxisDescriptions";
-    public static final String TIMESERIES_TIMEAXIS="timeAxis";
-    public static final String TIMESERIES_VALUEAXISUNITS="valueAxisUnits";
-    public static final String TIMESERIES_VALUEAXISCOLORS="valueAxisColors";
-    public static final String TIMESERIES_VALUEAXISLINEWIDTH="valueAxisLineWidth";
-    public static final String TIMESERIES_VALUEAXISDATATABLE="valueAxisDataTable";
-    public static final String TIMESERIES_CHARTTITLE="chartTitle";
-    public static final String TIMESERIES_VALUEAXISLABEL="valueAxisLabel";
-    public static final String TIMESERIES_TIMEAXISLABEL="timeAxisLabel";
-    public static final String TIMESERIES="TimeSeries";
 
   /**
    * Constructor
@@ -60,26 +60,26 @@ public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
     try { 
 
     // adding Concept(s)
-    ConceptSchema timeSeriesSchema = new ConceptSchema(TIMESERIES);
-    add(timeSeriesSchema, agentgui.ontology.TimeSeries.class);
-    ConceptSchema chartSchema = new ConceptSchema(CHART);
-    add(chartSchema, agentgui.ontology.Chart.class);
     ConceptSchema simple_BooleanSchema = new ConceptSchema(SIMPLE_BOOLEAN);
     add(simple_BooleanSchema, agentgui.ontology.Simple_Boolean.class);
-    ConceptSchema formulaSchema = new ConceptSchema(FORMULA);
-    add(formulaSchema, agentgui.ontology.Formula.class);
     ConceptSchema simple_IntegerSchema = new ConceptSchema(SIMPLE_INTEGER);
     add(simple_IntegerSchema, agentgui.ontology.Simple_Integer.class);
     ConceptSchema simple_FloatSchema = new ConceptSchema(SIMPLE_FLOAT);
     add(simple_FloatSchema, agentgui.ontology.Simple_Float.class);
     ConceptSchema simple_StringSchema = new ConceptSchema(SIMPLE_STRING);
     add(simple_StringSchema, agentgui.ontology.Simple_String.class);
+    ConceptSchema timeSeriesSchema = new ConceptSchema(TIMESERIES);
+    add(timeSeriesSchema, agentgui.ontology.TimeSeries.class);
+    ConceptSchema chartSchema = new ConceptSchema(CHART);
+    add(chartSchema, agentgui.ontology.Chart.class);
+    ConceptSchema numericDataColumnSchema = new ConceptSchema(NUMERICDATACOLUMN);
+    add(numericDataColumnSchema, agentgui.ontology.NumericDataColumn.class);
     ConceptSchema simple_ObjectSchema = new ConceptSchema(SIMPLE_OBJECT);
     add(simple_ObjectSchema, agentgui.ontology.Simple_Object.class);
+    ConceptSchema formulaSchema = new ConceptSchema(FORMULA);
+    add(formulaSchema, agentgui.ontology.Formula.class);
     ConceptSchema numericDataTableSchema = new ConceptSchema(NUMERICDATATABLE);
     add(numericDataTableSchema, agentgui.ontology.NumericDataTable.class);
-    ConceptSchema numericDataColumSchema = new ConceptSchema(NUMERICDATACOLUM);
-    add(numericDataColumSchema, agentgui.ontology.NumericDataColum.class);
 
     // adding AgentAction(s)
 
@@ -89,24 +89,24 @@ public class AgentGUI_BaseOntology extends jade.content.onto.Ontology  {
 
 
     // adding fields
-    timeSeriesSchema.add(TIMESERIES_TIMEAXISLABEL, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    timeSeriesSchema.add(TIMESERIES_VALUEAXISLABEL, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    timeSeriesSchema.add(TIMESERIES_CHARTTITLE, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    timeSeriesSchema.add(TIMESERIES_VALUEAXISDATATABLE, numericDataTableSchema, ObjectSchema.OPTIONAL);
-    timeSeriesSchema.add(TIMESERIES_VALUEAXISLINEWIDTH, (TermSchema)getSchema(BasicOntology.FLOAT), 0, ObjectSchema.UNLIMITED);
-    timeSeriesSchema.add(TIMESERIES_VALUEAXISCOLORS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
-    timeSeriesSchema.add(TIMESERIES_VALUEAXISUNITS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
-    timeSeriesSchema.add(TIMESERIES_TIMEAXIS, (TermSchema)getSchema(BasicOntology.FLOAT), 0, ObjectSchema.UNLIMITED);
-    timeSeriesSchema.add(TIMESERIES_VALUEAXISDESCRIPTIONS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
-    timeSeriesSchema.add(TIMESERIES_TIMEFORMAT, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
     simple_BooleanSchema.add(SIMPLE_BOOLEAN_BOOLEANVALUE, (TermSchema)getSchema(BasicOntology.BOOLEAN), ObjectSchema.OPTIONAL);
-    formulaSchema.add(FORMULA_FORMULA, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
     simple_IntegerSchema.add(SIMPLE_INTEGER_INTEGERVALUE, (TermSchema)getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
     simple_FloatSchema.add(SIMPLE_FLOAT_FLOATVALUE, (TermSchema)getSchema(BasicOntology.FLOAT), ObjectSchema.OPTIONAL);
     simple_StringSchema.add(SIMPLE_STRING_STRINGVALUE, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    timeSeriesSchema.add(TIMESERIES_VALUEAXISDATATABLE, numericDataTableSchema, ObjectSchema.OPTIONAL);
+    timeSeriesSchema.add(TIMESERIES_VALUEAXISLINEWIDTH, (TermSchema)getSchema(BasicOntology.FLOAT), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_VALUEAXISUNITS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_TIMEAXIS, (TermSchema)getSchema(BasicOntology.FLOAT), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_TIMEAXISLABEL, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    timeSeriesSchema.add(TIMESERIES_VALUEAXISCOLORS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_VALUEAXISLABEL, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    timeSeriesSchema.add(TIMESERIES_CHARTTITLE, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    timeSeriesSchema.add(TIMESERIES_TIMEFORMAT, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
+    timeSeriesSchema.add(TIMESERIES_VALUEAXISDESCRIPTIONS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
+    numericDataColumnSchema.add(NUMERICDATACOLUMN_COLUMNDATA, (TermSchema)getSchema(BasicOntology.FLOAT), 0, ObjectSchema.UNLIMITED);
     simple_ObjectSchema.add(SIMPLE_OBJECT_OBJECTVALUE, new ConceptSchema("Concept"), ObjectSchema.OPTIONAL);
-    numericDataTableSchema.add(NUMERICDATATABLE_TABLEDATA, numericDataColumSchema, 0, ObjectSchema.UNLIMITED);
-    numericDataColumSchema.add(NUMERICDATACOLUM_COLUMNDATA, (TermSchema)getSchema(BasicOntology.FLOAT), 0, ObjectSchema.UNLIMITED);
+    formulaSchema.add(FORMULA_FORMULA, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    numericDataTableSchema.add(NUMERICDATATABLE_TABLEDATA, numericDataColumnSchema, 0, ObjectSchema.UNLIMITED);
 
     // adding name mappings
 

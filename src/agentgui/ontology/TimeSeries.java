@@ -7,42 +7,9 @@ import jade.core.*;
 /**
 * Protege name: TimeSeries
 * @author ontology bean generator
-* @version 2012/03/30, 16:31:30
+* @version 2012/04/1, 18:52:07
 */
 public class TimeSeries extends Chart{ 
-
-   /**
-* Protege name: timeAxisLabel
-   */
-   private String timeAxisLabel;
-   public void setTimeAxisLabel(String value) { 
-    this.timeAxisLabel=value;
-   }
-   public String getTimeAxisLabel() {
-     return this.timeAxisLabel;
-   }
-
-   /**
-* Protege name: valueAxisLabel
-   */
-   private String valueAxisLabel;
-   public void setValueAxisLabel(String value) { 
-    this.valueAxisLabel=value;
-   }
-   public String getValueAxisLabel() {
-     return this.valueAxisLabel;
-   }
-
-   /**
-* Protege name: chartTitle
-   */
-   private String chartTitle;
-   public void setChartTitle(String value) { 
-    this.chartTitle=value;
-   }
-   public String getChartTitle() {
-     return this.chartTitle;
-   }
 
    /**
 * Protege name: valueAxisDataTable
@@ -75,27 +42,6 @@ public class TimeSeries extends Chart{
    public Iterator getAllValueAxisLineWidth() {return valueAxisLineWidth.iterator(); }
    public List getValueAxisLineWidth() {return valueAxisLineWidth; }
    public void setValueAxisLineWidth(List l) {valueAxisLineWidth = l; }
-
-   /**
-* Protege name: valueAxisColors
-   */
-   private List valueAxisColors = new ArrayList();
-   public void addValueAxisColors(String elem) { 
-     List oldList = this.valueAxisColors;
-     valueAxisColors.add(elem);
-   }
-   public boolean removeValueAxisColors(String elem) {
-     List oldList = this.valueAxisColors;
-     boolean result = valueAxisColors.remove(elem);
-     return result;
-   }
-   public void clearAllValueAxisColors() {
-     List oldList = this.valueAxisColors;
-     valueAxisColors.clear();
-   }
-   public Iterator getAllValueAxisColors() {return valueAxisColors.iterator(); }
-   public List getValueAxisColors() {return valueAxisColors; }
-   public void setValueAxisColors(List l) {valueAxisColors = l; }
 
    /**
 * Protege name: valueAxisUnits
@@ -140,25 +86,58 @@ public class TimeSeries extends Chart{
    public void setTimeAxis(List l) {timeAxis = l; }
 
    /**
-* Protege name: valueAxisDescriptions
+* Protege name: timeAxisLabel
    */
-   private List valueAxisDescriptions = new ArrayList();
-   public void addValueAxisDescriptions(String elem) { 
-     List oldList = this.valueAxisDescriptions;
-     valueAxisDescriptions.add(elem);
+   private String timeAxisLabel;
+   public void setTimeAxisLabel(String value) { 
+    this.timeAxisLabel=value;
    }
-   public boolean removeValueAxisDescriptions(String elem) {
-     List oldList = this.valueAxisDescriptions;
-     boolean result = valueAxisDescriptions.remove(elem);
+   public String getTimeAxisLabel() {
+     return this.timeAxisLabel;
+   }
+
+   /**
+* Protege name: valueAxisColors
+   */
+   private List valueAxisColors = new ArrayList();
+   public void addValueAxisColors(String elem) { 
+     List oldList = this.valueAxisColors;
+     valueAxisColors.add(elem);
+   }
+   public boolean removeValueAxisColors(String elem) {
+     List oldList = this.valueAxisColors;
+     boolean result = valueAxisColors.remove(elem);
      return result;
    }
-   public void clearAllValueAxisDescriptions() {
-     List oldList = this.valueAxisDescriptions;
-     valueAxisDescriptions.clear();
+   public void clearAllValueAxisColors() {
+     List oldList = this.valueAxisColors;
+     valueAxisColors.clear();
    }
-   public Iterator getAllValueAxisDescriptions() {return valueAxisDescriptions.iterator(); }
-   public List getValueAxisDescriptions() {return valueAxisDescriptions; }
-   public void setValueAxisDescriptions(List l) {valueAxisDescriptions = l; }
+   public Iterator getAllValueAxisColors() {return valueAxisColors.iterator(); }
+   public List getValueAxisColors() {return valueAxisColors; }
+   public void setValueAxisColors(List l) {valueAxisColors = l; }
+
+   /**
+* Protege name: valueAxisLabel
+   */
+   private String valueAxisLabel;
+   public void setValueAxisLabel(String value) { 
+    this.valueAxisLabel=value;
+   }
+   public String getValueAxisLabel() {
+     return this.valueAxisLabel;
+   }
+
+   /**
+* Protege name: chartTitle
+   */
+   private String chartTitle;
+   public void setChartTitle(String value) { 
+    this.chartTitle=value;
+   }
+   public String getChartTitle() {
+     return this.chartTitle;
+   }
 
    /**
 * Protege name: timeFormat
@@ -180,5 +159,26 @@ public class TimeSeries extends Chart{
    public Iterator getAllTimeFormat() {return timeFormat.iterator(); }
    public List getTimeFormat() {return timeFormat; }
    public void setTimeFormat(List l) {timeFormat = l; }
+
+   /**
+* Protege name: valueAxisDescriptions
+   */
+   private List valueAxisDescriptions = new ArrayList();
+   public void addValueAxisDescriptions(String elem) { 
+     List oldList = this.valueAxisDescriptions;
+     valueAxisDescriptions.add(elem);
+   }
+   public boolean removeValueAxisDescriptions(String elem) {
+     List oldList = this.valueAxisDescriptions;
+     boolean result = valueAxisDescriptions.remove(elem);
+     return result;
+   }
+   public void clearAllValueAxisDescriptions() {
+     List oldList = this.valueAxisDescriptions;
+     valueAxisDescriptions.clear();
+   }
+   public Iterator getAllValueAxisDescriptions() {return valueAxisDescriptions.iterator(); }
+   public List getValueAxisDescriptions() {return valueAxisDescriptions; }
+   public void setValueAxisDescriptions(List l) {valueAxisDescriptions = l; }
 
 }

@@ -1,4 +1,4 @@
-; Fri Mar 30 16:42:13 CEST 2012
+; Sun Apr 01 18:52:57 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -11,7 +11,7 @@
 
 	(%3AJADE-IGNORE FALSE))
 
-([NumericDataColum] of  %3AJADE-CLASS
+([NumericDataColumn] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 

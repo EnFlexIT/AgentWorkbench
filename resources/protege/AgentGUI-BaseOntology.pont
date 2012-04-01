@@ -1,4 +1,4 @@
-; Fri Mar 30 16:42:13 CEST 2012
+; Sun Apr 01 18:52:57 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7,35 +7,22 @@
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
-	(multislot valueAxisLineWidth
-		(type FLOAT)
-		(create-accessor read-write))
-	(multislot valueAxisUnits
-		(type STRING)
-		(create-accessor read-write))
-	(multislot timeAxis
-		(type FLOAT)
-		(create-accessor read-write))
-	(single-slot timeAxisLabel
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot valueAxisLabel
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot chartTitle
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot xAxisDescriptions
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot ObjectValue
+	(multislot tableData
 		(type INSTANCE)
-;+		(allowed-classes)
+;+		(allowed-classes NumericDataColumn)
+		(create-accessor read-write))
+	(single-slot graphDataType
+		(type STRING)
 ;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot valueAxisColors
+		(type STRING)
+		(create-accessor read-write))
+	(multislot timeFormat
+		(type STRING)
+		(create-accessor read-write))
+	(multislot valueAxisDescriptions
+		(type STRING)
 		(create-accessor read-write))
 	(multislot columnData
 		(type FLOAT)
@@ -66,22 +53,35 @@
 ;+		(allowed-classes NumericDataTable)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot valueAxisColors
+	(multislot valueAxisLineWidth
+		(type FLOAT)
+		(create-accessor read-write))
+	(multislot valueAxisUnits
 		(type STRING)
 		(create-accessor read-write))
-	(single-slot graphDataType
+	(multislot timeAxis
+		(type FLOAT)
+		(create-accessor read-write))
+	(single-slot timeAxisLabel
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot tableData
+	(single-slot valueAxisLabel
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot chartTitle
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot xAxisDescriptions
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ObjectValue
 		(type INSTANCE)
-;+		(allowed-classes NumericDataColum)
-		(create-accessor read-write))
-	(multislot valueAxisDescriptions
-		(type STRING)
-		(create-accessor read-write))
-	(multislot timeFormat
-		(type STRING)
+;+		(allowed-classes)
+;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass Formula
@@ -141,6 +141,23 @@
 (defclass TimeSeries
 	(is-a Chart)
 	(role concrete)
+	(single-slot valueAxisDataTable
+		(type INSTANCE)
+;+		(allowed-classes NumericDataTable)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot valueAxisLineWidth
+		(type FLOAT)
+		(create-accessor read-write))
+	(multislot valueAxisUnits
+		(type STRING)
+		(create-accessor read-write))
+	(multislot timeAxis
+		(type FLOAT)
+		(create-accessor read-write))
+	(multislot valueAxisColors
+		(type STRING)
+		(create-accessor read-write))
 	(single-slot timeAxisLabel
 		(type STRING)
 ;+		(cardinality 0 1)
@@ -153,27 +170,10 @@
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot valueAxisDataTable
-		(type INSTANCE)
-;+		(allowed-classes NumericDataTable)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(multislot valueAxisLineWidth
-		(type FLOAT)
-		(create-accessor read-write))
-	(multislot valueAxisUnits
+	(multislot timeFormat
 		(type STRING)
-		(create-accessor read-write))
-	(multislot valueAxisColors
-		(type STRING)
-		(create-accessor read-write))
-	(multislot timeAxis
-		(type FLOAT)
 		(create-accessor read-write))
 	(multislot valueAxisDescriptions
-		(type STRING)
-		(create-accessor read-write))
-	(multislot timeFormat
 		(type STRING)
 		(create-accessor read-write)))
 
@@ -182,10 +182,10 @@
 	(role concrete)
 	(multislot tableData
 		(type INSTANCE)
-;+		(allowed-classes NumericDataColum)
+;+		(allowed-classes NumericDataColumn)
 		(create-accessor read-write)))
 
-(defclass NumericDataColum
+(defclass NumericDataColumn
 	(is-a Concept)
 	(role concrete)
 	(multislot columnData

@@ -39,7 +39,6 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 	private JTable table = null;
 	
 	private TimeSeriesDataModel model = null;
-	private JButton btnOk;
 	private JButton btnAdd;
 	private JButton btnRemove;
 	
@@ -53,8 +52,6 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 	 */
 	private void initialize(){
 		table = new TimeSeriesJTable(model.getTableModel());	// Private class specifying CellRenderers and CellEditors, Definition below
-		
-		table.setAutoCreateRowSorter(true);
 		
 		model.addObserver(this);
 
@@ -80,12 +77,6 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 		gbc_btnRemove.gridx = 1;
 		gbc_btnRemove.gridy = 1;
 		add(getBtnRemove(), gbc_btnRemove);
-		GridBagConstraints gbc_btnOk = new GridBagConstraints();
-		gbc_btnOk.anchor = GridBagConstraints.SOUTH;
-		gbc_btnOk.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnOk.gridx = 1;
-		gbc_btnOk.gridy = 2;
-		add(getBtnOk(), gbc_btnOk);
 	}
 	
 	
@@ -94,12 +85,7 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		if(e.getSource() == btnOk){
-			
-			// Trigger rebuild of ontology and chart model 
-			model.rebuildFromTable();
-			
-		}else if(e.getSource() == btnAdd){
+		if(e.getSource() == btnAdd){
 			Float[] emptyRow = new Float[model.getTableModel().getColumnCount()];
 			emptyRow[0] = new Float(new Date().getTime());
 			model.getTableModel().addRow(new Float[] {new Float(0), new Float(0)});
@@ -132,14 +118,6 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 			}
 		}
 	}
-	
-	private JButton getBtnOk() {
-		if (btnOk == null) {
-			btnOk = new JButton(Language.translate("Übernehmen"));
-			btnOk.addActionListener(this);
-		}
-		return btnOk;
-	}
 
 	private JButton getBtnAdd() {
 		if (btnAdd == null) {
@@ -165,6 +143,8 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 
 		public TimeSeriesJTable(DefaultTableModel tableModel) {
 			super(tableModel);
+			if(model.getAggregatedSeriesIndex() >= 0){
+			}
 		}
 
 		/* (non-Javadoc)

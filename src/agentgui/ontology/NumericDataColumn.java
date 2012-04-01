@@ -6,11 +6,11 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: NumericDataColum
+* Protege name: NumericDataColumn
 * @author ontology bean generator
-* @version 2012/03/30, 16:31:30
+* @version 2012/04/1, 18:52:07
 */
-public class NumericDataColum implements Concept {
+public class NumericDataColumn implements Concept {
 
    /**
 * Protege name: columnData

@@ -13,12 +13,16 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Observable;
+
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeriesCollection;
 
-import agentgui.ontology.NumericDataColum;
+import agentgui.core.application.Language;
+import agentgui.ontology.NumericDataColumn;
 import agentgui.ontology.NumericDataTable;
 import agentgui.ontology.TimeSeries;
 /**
@@ -31,10 +35,12 @@ import agentgui.ontology.TimeSeries;
  * @author Nils
  *
  */
-public class TimeSeriesDataModel extends Observable{
+public class TimeSeriesDataModel extends Observable implements TableModelListener{
 	private DefaultTableModel tableModel = null;
 	private TimeSeriesCollection chartModel = null;
 	private TimeSeries ontologyModel = null;
+	
+	private int aggregatedSeriesIndex = -1;
 
 	/**
 	 * Event ID for observers. This event is triggered when a new series was added to the model. 
@@ -51,6 +57,7 @@ public class TimeSeriesDataModel extends Observable{
 	private static final String DEFAULT_TIME_AXIS_LABEL = "Time";
 	private static final String DEFAULT_VALUE_AXIS_LABEL = "Values";
 	private static final String DEFAULT_CHART_TITLE = "Time Series Chart";
+	private static final String DEFAULT_AGGREGATED_SERIES_LABEL = Language.translate("Summe");
 	/**
 	 * Default name for newly added series
 	 */
@@ -78,7 +85,7 @@ public class TimeSeriesDataModel extends Observable{
 			this.ontologyModel.setChartTitle(DEFAULT_CHART_TITLE);
 			this.ontologyModel.setTimeAxisLabel(DEFAULT_TIME_AXIS_LABEL);
 			this.ontologyModel.setValueAxisLabel(DEFAULT_VALUE_AXIS_LABEL);
-			this.tableModel = new DefaultTableModel();
+			this.tableModel = new TimeSeriesTableModel(this);
 			this.chartModel = new TimeSeriesCollection();
 			
 		}else{
@@ -89,7 +96,6 @@ public class TimeSeriesDataModel extends Observable{
 			buildChartModelFromOntologyModel();
 			this.numberOfSeries = ts.getValueAxisDataTable().getTableData().size();
 		}
-		
 	}
 	
 	/**
@@ -135,8 +141,6 @@ public class TimeSeriesDataModel extends Observable{
 			setChanged();
 			notifyObservers(new Integer(TIME_SERIES_ADDED));
 		}
-		
-		
 	}
 	
 	/**
@@ -147,7 +151,15 @@ public class TimeSeriesDataModel extends Observable{
 	 */
 	public void addTimeSeries(String name, ArrayList timestamps, ArrayList values){
 		
-		
+		if(aggregatedSeriesIndex >= 0){
+			// Remove old sum column
+			ontologyModel.getValueAxisDataTable().getTableData().remove(aggregatedSeriesIndex);
+			ontologyModel.getValueAxisColors().remove(aggregatedSeriesIndex);
+			ontologyModel.getValueAxisDescriptions().remove(aggregatedSeriesIndex);
+			chartModel.removeSeries(aggregatedSeriesIndex);
+			aggregatedSeriesIndex = -1;
+			numberOfSeries--;
+		}
 		
 		// If no name is specified, use default name + number
 		String newTsName;
@@ -157,18 +169,28 @@ public class TimeSeriesDataModel extends Observable{
 			newTsName = DEFAULT_SERIES_NAME + numberOfSeries;
 		}
 		
-		// Add name, line width and color to the ontologyModel
-		ontologyModel.getValueAxisDescriptions().add(newTsName);
-		ontologyModel.getValueAxisLineWidth().add(new Float(DEFAULT_LINE_WIDTH));
-		ontologyModel.getValueAxisColors().add("" + DEFAULT_COLORS[numberOfSeries % DEFAULT_COLORS.length].getRGB());
-		
-		// Add series data to the three sub-models
+		// Add series data to the ontology model
 		addTimeSeries2ontologyModel(newTsName, timestamps, values);
-		buildTableModelFromOntologyModel();	// A complete rebuild is much easier than adding a series to the existing model 
-		addTimeSeries2chartModel(newTsName, timestamps, values);
-		
-		// Some final administrative stuff
 		numberOfSeries++;
+		
+		// If more than one series, calculate the total load for each time 
+		List aggregatedValues = null;
+		if(numberOfSeries > 1){
+			aggregatedValues = calculateAggregatedValues();
+			addTimeSeries2ontologyModel(DEFAULT_AGGREGATED_SERIES_LABEL, ontologyModel.getTimeAxis(), aggregatedValues);
+			aggregatedSeriesIndex = numberOfSeries;
+			numberOfSeries++;
+		}
+		
+		// For the table model, a complete rebuild is much easier than adding a series to the existing model
+		buildTableModelFromOntologyModel();	 
+		
+		addTimeSeries2chartModel(newTsName, timestamps, values);
+		if(aggregatedValues != null){
+			addTimeSeries2chartModel(DEFAULT_AGGREGATED_SERIES_LABEL, ontologyModel.getTimeAxis(), aggregatedValues);
+		}
+		
+		// Notify observers
 		setChanged();
 		notifyObservers(new Integer(TIME_SERIES_ADDED));
 	}
@@ -179,7 +201,12 @@ public class TimeSeriesDataModel extends Observable{
 	 * @param importTimestamps The timestamps (long values, encoded as float for ontology compatibility)
 	 * @param importValues The values
 	 */
-	private void addTimeSeries2ontologyModel(String name, ArrayList importTimestamps, ArrayList importValues){
+	private void addTimeSeries2ontologyModel(String name, List importTimestamps, List importValues){
+		
+		// Add name, line width and color to the ontologyModel
+		ontologyModel.getValueAxisDescriptions().add(name);
+		ontologyModel.getValueAxisLineWidth().add(new Float(DEFAULT_LINE_WIDTH));
+		ontologyModel.getValueAxisColors().add("" + DEFAULT_COLORS[numberOfSeries % DEFAULT_COLORS.length].getRGB());
 		
 		if(ontologyModel.getTimeAxis().size() == 0){
 			
@@ -188,7 +215,7 @@ public class TimeSeriesDataModel extends Observable{
 			if(ontologyModel.getValueAxisDataTable() == null){
 				ontologyModel.setValueAxisDataTable(new NumericDataTable());
 			}
-			NumericDataColum yVals = new NumericDataColum();
+			NumericDataColumn yVals = new NumericDataColumn();
 			yVals.setColumnData(importValues);
 			ontologyModel.getValueAxisDataTable().addTableData(yVals);
 			
@@ -227,7 +254,7 @@ public class TimeSeriesDataModel extends Observable{
 						Iterator columns = ontologyModel.getValueAxisDataTable().getAllTableData();
 						// Iterate over columns
 						while(columns.hasNext()){
-							NumericDataColum column = (NumericDataColum) columns.next();
+							NumericDataColumn column = (NumericDataColumn) columns.next();
 							if(currentIndex > 0){
 								// Insert last value
 								float lastVal = (Float) column.getColumnData().get(currentIndex-1);
@@ -262,14 +289,14 @@ public class TimeSeriesDataModel extends Observable{
 					// Iterate over the columns and insert the last value
 					Iterator columns = ontologyModel.getValueAxisDataTable().getAllTableData();
 					while(columns.hasNext()){
-						NumericDataColum column = (NumericDataColum) columns.next();
+						NumericDataColumn column = (NumericDataColumn) columns.next();
 						float lastVal = (Float) column.getColumnData().get(importItemNum-1);
 						column.getColumnData().add(currentIndex, new Float(lastVal));
 					}
 					currentIndex++;
 				}
 			}
-			NumericDataColum yVals = new NumericDataColum();
+			NumericDataColumn yVals = new NumericDataColumn();
 			yVals.setColumnData(importValues);
 			ontologyModel.getValueAxisDataTable().addTableData(yVals);
 		}
@@ -279,16 +306,17 @@ public class TimeSeriesDataModel extends Observable{
 	 * This method creates a new table model based on the ontologyModel. 
 	 */
 	private void buildTableModelFromOntologyModel(){
-		DefaultTableModel newTableModel = new DefaultTableModel();
+		DefaultTableModel newTableModel = new TimeSeriesTableModel(this);
 		newTableModel.addColumn("Zeit", ontologyModel.getTimeAxis().toArray());
 		Iterator columns = ontologyModel.getValueAxisDataTable().getAllTableData();
 		
 		int colCount = 0;
 		while(columns.hasNext()){
-			NumericDataColum columnData = (NumericDataColum) columns.next();
+			NumericDataColumn columnData = (NumericDataColumn) columns.next();
 			newTableModel.addColumn(ontologyModel.getValueAxisDescriptions().get(colCount++), columnData.getColumnData().toArray());
 		}
 		tableModel = newTableModel;
+		tableModel.addTableModelListener(this);
 	}
 	
 	/**
@@ -302,7 +330,7 @@ public class TimeSeriesDataModel extends Observable{
 		while(columns.hasNext()){
 			org.jfree.data.time.TimeSeries newTs = new org.jfree.data.time.TimeSeries(ontologyModel.getValueAxisDescriptions().get(colCount++).toString());
 			Iterator xVals = ontologyModel.getAllTimeAxis();
-			Iterator yVals = ((NumericDataColum)columns.next()).getAllColumnData();
+			Iterator yVals = ((NumericDataColumn)columns.next()).getAllColumnData();
 			while(xVals.hasNext() && yVals.hasNext()){
 				newTs.add(new FixedMillisecond(((Float)xVals.next()).longValue()), ((Float)yVals.next()).longValue());
 			}
@@ -330,7 +358,7 @@ public class TimeSeriesDataModel extends Observable{
 	/**
 	 * This method rebuilds ontologyModel and chartModel after the tableModel has been edited.
 	 */
-	public void rebuildFromTable(){
+	private void rebuildFromTable(){
 		// Remove old data
 		ontologyModel.clearAllTimeAxis();
 		ontologyModel.getValueAxisDataTable().clearAllTableData();
@@ -345,20 +373,20 @@ public class TimeSeriesDataModel extends Observable{
 
 		// Add columns
 		for(int col=0; col<tableModel.getColumnCount(); col++){
-			tableDataByColumn.add(new NumericDataColum());
+			tableDataByColumn.add(new NumericDataColumn());
 		}
 		
 		// Insert data
 		for(int row=0; row<tableModel.getRowCount(); row++){
 			for(int col=0; col<tableModel.getColumnCount(); col++){
-				((NumericDataColum) tableDataByColumn.get(col)).addColumnData((Float) tableModel.getValueAt(row, col));
+				((NumericDataColumn) tableDataByColumn.get(col)).addColumnData((Float) tableModel.getValueAt(row, col));
 			}
 		}
 		
 		// Add the data to the ontologyModel
-		ontologyModel.setTimeAxis(((NumericDataColum) tableDataByColumn.get(0)).getColumnData());
+		ontologyModel.setTimeAxis(((NumericDataColumn) tableDataByColumn.get(0)).getColumnData());
 		for(int col=1; col<tableDataByColumn.size(); col++){
-			ontologyModel.getValueAxisDataTable().addTableData((NumericDataColum) tableDataByColumn.get(col));
+			ontologyModel.getValueAxisDataTable().addTableData((NumericDataColumn) tableDataByColumn.get(col));
 			numberOfSeries++;
 		}
 		
@@ -367,12 +395,25 @@ public class TimeSeriesDataModel extends Observable{
 			addTimeSeries2chartModel(
 					ontologyModel.getValueAxisDescriptions().get(i).toString(), 
 					ontologyModel.getTimeAxis(), 
-					((NumericDataColum)ontologyModel.getValueAxisDataTable().getTableData().get(i)).getColumnData());
+					((NumericDataColumn)ontologyModel.getValueAxisDataTable().getTableData().get(i)).getColumnData());
+		}
+	}
+	
+	private List calculateAggregatedValues(){
+		List totalValues = new ArrayList();
+		int colNum = ontologyModel.getValueAxisDataTable().getTableData().size();
+		int rowNum = ((NumericDataColumn)ontologyModel.getValueAxisDataTable().getTableData().get(0)).getColumnData().size();
+		for(int i=0; i<rowNum; i++){
+			float rowSum = 0;
+			for(int j=0; j<colNum; j++){
+				NumericDataColumn column = (NumericDataColumn) ontologyModel.getValueAxisDataTable().getTableData().get(j);
+				rowSum += (Float)column.getColumnData().get(i); 
+			}
+			totalValues.add(new Float(rowSum));
 		}
 		
-		
-		
-	}
+		return totalValues;
+	};
 
 	/**
 	 * @return the tableModel
@@ -487,5 +528,19 @@ public class TimeSeriesDataModel extends Observable{
 	 */
 	public void setRendererType(String rendererType) {
 		this.rendererType = rendererType;
+	}
+
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		if(e.getSource() == tableModel){
+			rebuildFromTable();
+		}
+	}
+
+	/**
+	 * @return the sumIndex
+	 */
+	public int getAggregatedSeriesIndex() {
+		return aggregatedSeriesIndex;
 	}
 }

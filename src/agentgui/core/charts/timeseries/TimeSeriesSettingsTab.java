@@ -182,7 +182,7 @@ public class TimeSeriesSettingsTab extends JPanel implements ActionListener, Obs
 		TableColumn tcColor = tblSeries.getColumnModel().getColumn(1);
 		tcColor.setCellRenderer(new TableCellRenderer4Color(true));
 		tcColor.setCellEditor(new TableCellEditor4Color());
-		tblSeries.getColumnModel().getColumn(2).setCellEditor(new TableCellEditor4FloatObject());
+		tblSeries.getColumnModel().getColumn(2).setCellEditor(new TableCellSpinnerEditor4FloatObject());
 		
 	}
 
