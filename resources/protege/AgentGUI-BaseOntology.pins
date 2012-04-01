@@ -1,4 +1,4 @@
-; Sat Feb 25 19:58:01 CET 2012
+; Fri Mar 30 16:42:13 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -21,7 +21,7 @@
 
 ([project+annotation] of  %3APROJECT-ANNOTATION
 
-	(%3ALOCATION "D:\\10 Java Projects\\AgentGUI\\src")
+	(%3ALOCATION "D:\\Eclipse Workspace\\AgentGUI\\src")
 	(%3AONTOLOGYNAME "AgentGUI_Base")
 	(%3APACKAGE "agentgui.ontology")
 	(%3ASUPPORT "j2se"))

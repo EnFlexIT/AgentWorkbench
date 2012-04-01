@@ -12,7 +12,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
-
 import javax.swing.JButton;
 
 import agentgui.core.application.Language;
@@ -20,6 +19,7 @@ import agentgui.core.application.Language;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
@@ -44,9 +44,7 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 	private JButton btnRemove;
 	
 	public TimeSeriesTableTab(TimeSeriesDataModel model){
-//		setTimeSeriesData(tsData);
 		this.model = model;
-		model.getTableModel();
 		initialize();
 	}
 	
@@ -54,7 +52,8 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 	 * This method initializes the panel
 	 */
 	private void initialize(){
-		table = new TimeSeriesJTable();	// Private class specifying CellRenderers and CellEditors, Definition below 
+		table = new TimeSeriesJTable(model.getTableModel());	// Private class specifying CellRenderers and CellEditors, Definition below
+		
 		table.setAutoCreateRowSorter(true);
 		
 		model.addObserver(this);
@@ -117,12 +116,17 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 		if(o == this.model && (Integer) arg == TimeSeriesDataModel.TIME_SERIES_ADDED){
 			table.setModel(model.getTableModel());
 			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(model.getTableModel());
-			sorter.toggleSortOrder(0);
-			table.setRowSorter(sorter);
+			sorter.setComparator(0, new Comparator<Float>() {
+
+				@Override
+				public int compare(Float o1, Float o2) {
+					return o1.compareTo(o2);
+				}
+			});
 			repaint();
 		}else if(o == this.model && (Integer) arg == TimeSeriesDataModel.SETTINGS_CHANGED){
 			table.getColumnModel().getColumn(0).setHeaderValue(model.getxAxisLabel());
-			List labels = model.getOntologyModel().getYAxisDescriptions();
+			List labels = model.getOntologyModel().getValueAxisDescriptions();
 			for(int i=1; i<table.getColumnCount(); i++){
 				table.getColumnModel().getColumn(i).setHeaderValue(labels.get(i-1));
 			}
@@ -159,13 +163,17 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 		 */
 		private static final long serialVersionUID = -6416669054997825823L;
 
+		public TimeSeriesJTable(DefaultTableModel tableModel) {
+			super(tableModel);
+		}
+
 		/* (non-Javadoc)
 		 * Special cell renderer for first column, default for the others
 		 */
 		@Override
 		public TableCellRenderer getCellRenderer(int row, int column) {
 			if(column == 0){
-				return new TableCellRenderer4Date();
+				return new TableCellRenderer4Time();
 			}else{
 				return super.getCellRenderer(row, column);
 			}
@@ -177,7 +185,7 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 		@Override
 		public TableCellEditor getCellEditor(int row, int column) {
 			if(column == 0){
-				return new TableCellEditor4Date();
+				return new TableCellEditor4Time();
 			}else{
 				return new TableCellEditor4FloatObject();
 			}

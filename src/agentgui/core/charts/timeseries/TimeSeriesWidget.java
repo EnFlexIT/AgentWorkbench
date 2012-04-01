@@ -35,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -78,7 +79,7 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         
-        this.setSize(new Dimension(350, 100));
+        this.setSize(new Dimension(500, 250));
         this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
         
         this.setLayout(new GridBagLayout());
@@ -118,10 +119,15 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 			
 			TimeSeriesEditDialog tsed = new TimeSeriesEditDialog(SwingUtilities.getWindowAncestor(this), timeSeries);
 			tsed.setTitle("Edit time series");
-			
+			tsed.setModal(true);
 			tsed.setVisible(true);
-			
-			
+			if(! tsed.isCanceled()){
+				dynForm.setOntoArgsInstance(new Object[]{tsed.getModel().getOntologyModel()});
+				if(tsed.getChartThumb() != null){
+					getJButtonEdit().setText("");
+					getJButtonEdit().setIcon(new ImageIcon(tsed.getChartThumb()));
+				}
+			}
 		}
 		
 	}

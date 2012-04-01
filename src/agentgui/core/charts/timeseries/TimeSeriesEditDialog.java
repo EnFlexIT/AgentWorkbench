@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -12,6 +13,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JTabbedPane;
 import agentgui.core.application.Language;
 import agentgui.ontology.TimeSeries;
+import java.awt.Insets;
 
 public class TimeSeriesEditDialog extends JDialog implements ActionListener{
 
@@ -20,8 +22,6 @@ public class TimeSeriesEditDialog extends JDialog implements ActionListener{
 	 */
 	private static final long serialVersionUID = -318270376215113469L;
 	
-	private TimeSeries timeSeries = null;
-	
 	private JButton jButtonImport = null;
 	private JTabbedPane jTabbedPane = null;
 	private TimeSeriesChartTab chartTab = null; 
@@ -29,6 +29,12 @@ public class TimeSeriesEditDialog extends JDialog implements ActionListener{
 	private TimeSeriesSettingsTab settingsTab = null;
 	
 	private TimeSeriesDataModel model = null;
+	private JButton btnCancel;
+	private JButton btnOk;
+	
+	private BufferedImage chartThumb = null;
+	
+	private boolean canceled = false;
 	
 	
 	/**
@@ -37,8 +43,7 @@ public class TimeSeriesEditDialog extends JDialog implements ActionListener{
 	 */
 	public TimeSeriesEditDialog (Window owner, TimeSeries timeSeries) {
 		super(owner);
-		this.timeSeries = timeSeries;
-		this.model = new TimeSeriesDataModel(null);
+		this.model = new TimeSeriesDataModel(timeSeries);
 		initialize();
 	}
 
@@ -51,23 +56,37 @@ public class TimeSeriesEditDialog extends JDialog implements ActionListener{
         
         
         GridBagConstraints gbcJButtonImport = new GridBagConstraints();
+        gbcJButtonImport.insets = new Insets(0, 0, 0, 5);
         gbcJButtonImport.gridx = 0;
         gbcJButtonImport.gridy = 1;
         gbcJButtonImport.anchor = GridBagConstraints.WEST;
         
         GridBagConstraints gbcTabbedPane = new GridBagConstraints();
+        gbcTabbedPane.insets = new Insets(0, 0, 5, 0);
         gbcTabbedPane.weighty = 1.0;
         gbcTabbedPane.weightx = 1.0;
         gbcTabbedPane.gridx = 0;
         gbcTabbedPane.gridy = 0;
-        gbcTabbedPane.gridwidth = 1;
+        gbcTabbedPane.gridwidth = 3;
         gbcTabbedPane.fill = GridBagConstraints.BOTH;
         
 //        this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
         
-        this.setLayout(new GridBagLayout());
-        this.add(getJButtonImport(), gbcJButtonImport);
-        this.add(getJTabbedPane(), gbcTabbedPane);
+        getContentPane().setLayout(new GridBagLayout());
+        getContentPane().add(getJButtonImport(), gbcJButtonImport);
+        getContentPane().add(getJTabbedPane(), gbcTabbedPane);
+        GridBagConstraints gbc_btnOk = new GridBagConstraints();
+        gbc_btnOk.weightx = 1.0;
+        gbc_btnOk.anchor = GridBagConstraints.EAST;
+        gbc_btnOk.insets = new Insets(0, 0, 0, 5);
+        gbc_btnOk.gridx = 1;
+        gbc_btnOk.gridy = 1;
+        getContentPane().add(getBtnOk(), gbc_btnOk);
+        GridBagConstraints gbc_btnCancel = new GridBagConstraints();
+        gbc_btnCancel.anchor = GridBagConstraints.EAST;
+        gbc_btnCancel.gridx = 2;
+        gbc_btnCancel.gridy = 1;
+        getContentPane().add(getBtnCancel(), gbc_btnCancel);
 			
 	}
 
@@ -121,8 +140,49 @@ public class TimeSeriesEditDialog extends JDialog implements ActionListener{
 				model.importTimeSeriesFromCSV(csvFile);
 				repaint();
 			}
+		}else if(ae.getSource() == btnOk){
+			chartThumb = chartTab.createChartThumb();
+			setVisible(false);
+		}else if(ae.getSource() == btnCancel){
+			canceled = true;
+			setVisible(false);
 		}
 		
 	}
 
+	private JButton getBtnCancel() {
+		if (btnCancel == null) {
+			btnCancel = new JButton("Cancel");
+			btnCancel.addActionListener(this);
+		}
+		return btnCancel;
+	}
+	private JButton getBtnOk() {
+		if (btnOk == null) {
+			btnOk = new JButton("OK");
+			btnOk.addActionListener(this);
+		}
+		return btnOk;
+	}
+
+	/**
+	 * @return the model
+	 */
+	public TimeSeriesDataModel getModel() {
+		return model;
+	}
+
+	/**
+	 * @return the canceled
+	 */
+	public boolean isCanceled() {
+		return canceled;
+	}
+
+	/**
+	 * @return the chartThumb
+	 */
+	public BufferedImage getChartThumb() {
+		return chartThumb;
+	}
 }

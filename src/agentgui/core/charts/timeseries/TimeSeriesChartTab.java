@@ -6,6 +6,7 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Stroke;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
@@ -20,6 +21,7 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -85,6 +87,8 @@ public class TimeSeriesChartTab extends JPanel implements Observer{
 		chart.setBackgroundPaint(this.getBackground());
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setRenderer(new XYStepRenderer());
+		setSeriesColors();
+		setSeriesLineWidths();
 		
 		rendererClassName = plot.getRenderer().getClass().getSimpleName();
 		
@@ -134,7 +138,8 @@ public class TimeSeriesChartTab extends JPanel implements Observer{
 		for(int i=0;i<dataset.getSeriesCount();i++){
 			if(dataset.getSeriesKey(i).equals(seriesLabel)){
 				XYItemRenderer renderer = (chart.getXYPlot()).getRenderer();
-				return (Color) renderer.getSeriesPaint(i);
+				Color color = (Color) renderer.getSeriesPaint(i);
+				return color;
 			}
 		}
 		return null;
@@ -144,7 +149,10 @@ public class TimeSeriesChartTab extends JPanel implements Observer{
 		for(int i=0;i<dataset.getSeriesCount();i++){
 			if(dataset.getSeriesKey(i).equals(seriesLabel)){
 				XYItemRenderer renderer = (chart.getXYPlot()).getRenderer();
-				return ((BasicStroke)renderer.getSeriesStroke(i)).getLineWidth();
+				BasicStroke stroke = (BasicStroke)renderer.getSeriesStroke(i);
+				if(stroke != null){
+					return stroke.getLineWidth();
+				}
 			}
 		}
 		return 0;
@@ -154,11 +162,11 @@ public class TimeSeriesChartTab extends JPanel implements Observer{
 	 * This method sets the series colors according to those specified in the ontology model
 	 */
 	private void setSeriesColors(){
-		List colors = model.getOntologyModel().getYAxisColors();
+		List colors = model.getOntologyModel().getValueAxisColors();
 		XYItemRenderer renderer = chart.getXYPlot().getRenderer();
 		for(int i=0; i<dataset.getSeriesCount(); i++){
-			if(i < colors.size()){
-				Color newColor = new Color((Integer) colors.get(i));
+			if(i < colors.size() && !colors.get(i).equals("")){
+				Color newColor = new Color(Integer.parseInt((String) colors.get(i)));
 				renderer.setSeriesPaint(i, newColor);
 			}
 		}
@@ -168,10 +176,10 @@ public class TimeSeriesChartTab extends JPanel implements Observer{
 	 * This method sets the series line widths according to those specified in the ontology model
 	 */
 	private void setSeriesLineWidths(){
-		List lineWidths = model.getOntologyModel().getYAxisLineWidth();
+		List lineWidths = model.getOntologyModel().getValueAxisLineWidth();
 		XYItemRenderer renderer = chart.getXYPlot().getRenderer();
 		for(int i=0; i<dataset.getSeriesCount(); i++){
-			if(i < lineWidths.size()){
+			if(i < lineWidths.size() && ((Float)lineWidths.get(i)) > 0.0){
 				Stroke newStroke = new BasicStroke((Float) lineWidths.get(i));
 				renderer.setSeriesStroke(i, newStroke);
 			}
@@ -182,7 +190,7 @@ public class TimeSeriesChartTab extends JPanel implements Observer{
 	 * This method sets the series labels according to those specified in the ontology model
 	 */
 	private void setSeriesLabels(){
-		List labels = model.getOntologyModel().getYAxisDescriptions();
+		List labels = model.getOntologyModel().getValueAxisDescriptions();
 		for(int i=0; i<dataset.getSeriesCount(); i++){
 			if(i < labels.size()){
 				TimeSeries series = dataset.getSeries(i);
@@ -202,7 +210,10 @@ public class TimeSeriesChartTab extends JPanel implements Observer{
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o == this.model && (Integer)arg == TimeSeriesDataModel.SETTINGS_CHANGED){
+		if(o == this.model && (
+				(Integer)arg == TimeSeriesDataModel.SETTINGS_CHANGED
+				|| (Integer)arg == TimeSeriesDataModel.TIME_SERIES_ADDED)
+		){
 			setRendererClass(model.getRendererType());
 			chart.setTitle(model.getTitle());
 			setAxisLabels();
@@ -210,5 +221,20 @@ public class TimeSeriesChartTab extends JPanel implements Observer{
 			setSeriesLineWidths();
 			setSeriesLabels();
 		}
+	}
+
+
+	/**
+	 * Creates a thumbnail of the chart
+	 * @return The thumbnail
+	 */
+	BufferedImage createChartThumb() {
+		// Remove legend while creating the thumb
+		LegendTitle legend = chart.getLegend();
+		chart.removeLegend();
+		BufferedImage thumb = chart.createBufferedImage(260, 175, 600, 400, null);
+		
+		chart.addLegend(legend);
+		return thumb;
 	}
 }

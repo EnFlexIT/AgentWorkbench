@@ -1,6 +1,6 @@
 package agentgui.core.charts.timeseries;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Date;
 
 import javax.swing.table.DefaultTableCellRenderer;
@@ -10,7 +10,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @author Nils
  *
  */
-public class TableCellRenderer4Date extends DefaultTableCellRenderer {
+public class TableCellRenderer4Time extends DefaultTableCellRenderer {
 
 	/**
 	 * 
@@ -23,7 +23,8 @@ public class TableCellRenderer4Date extends DefaultTableCellRenderer {
 	@Override
 	protected void setValue(Object value) {
 		Date date = new Date(((Float)value).longValue());
-		setText(new SimpleDateFormat().format(date));
+		DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+		setText(timeFormat.format(date));
 	}
 
 }

@@ -4,11 +4,13 @@ import jade.util.leap.ArrayList;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Observable;
 import javax.swing.table.DefaultTableModel;
@@ -44,38 +46,48 @@ public class TimeSeriesDataModel extends Observable{
 	public static final int SETTINGS_CHANGED = 2;
 	
 	/**
-	 * Use this default series name if none specified
+	 * 
+	 */
+	private static final String DEFAULT_TIME_AXIS_LABEL = "Time";
+	private static final String DEFAULT_VALUE_AXIS_LABEL = "Values";
+	private static final String DEFAULT_CHART_TITLE = "Time Series Chart";
+	/**
+	 * Default name for newly added series
 	 */
 	private static final String DEFAULT_SERIES_NAME = "Data";
-	
-	private String title = "Time series chart";
-	
-	private String xAxisLabel = "Zeit";
-	
-	private String yAxisLabel = "Last";
 	
 	private Date startDate = null;
 	
 	private int numberOfSeries = 0;
 	
 	private String rendererType = "XYStepRenderer"; 
+	/**
+	 * Default colors for newly added series 
+	 */
+	static final Color[] DEFAULT_COLORS = {Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.CYAN, Color.YELLOW};
+	static final float DEFAULT_LINE_WIDTH = 1.0f;
 	
 	public TimeSeriesDataModel(TimeSeries ts){
-		this.startDate = new Date();	// Initialize with instantiation time
+		Calendar cal = Calendar.getInstance();
+		cal.set(1970, 0, 1, 0, 0, 0);
+		this.startDate = cal.getTime();
 		
-		
-		if(ts != null){
+		if(ts == null || ts.getValueAxisDescriptions().get(0).equals("")){
+			// No or empty model passed, create new one
+			this.ontologyModel = new TimeSeries();
+			this.ontologyModel.setChartTitle(DEFAULT_CHART_TITLE);
+			this.ontologyModel.setTimeAxisLabel(DEFAULT_TIME_AXIS_LABEL);
+			this.ontologyModel.setValueAxisLabel(DEFAULT_VALUE_AXIS_LABEL);
+			this.tableModel = new DefaultTableModel();
+			this.chartModel = new TimeSeriesCollection();
+			
+		}else{
 			// Use ontology model from parameter
 			this.ontologyModel = ts;
 			// Create chart and table model from the ontology model
 			buildTableModelFromOntologyModel();
 			buildChartModelFromOntologyModel();
-			this.numberOfSeries = ts.getYAxisDataTable().getTableData().size();
-		}else{
-			// No model passed, create empty new ones
-			this.ontologyModel = new TimeSeries();
-			this.tableModel = new DefaultTableModel();
-			this.chartModel = new TimeSeriesCollection();
+			this.numberOfSeries = ts.getValueAxisDataTable().getTableData().size();
 		}
 		
 	}
@@ -135,7 +147,7 @@ public class TimeSeriesDataModel extends Observable{
 	 */
 	public void addTimeSeries(String name, ArrayList timestamps, ArrayList values){
 		
-		numberOfSeries++;
+		
 		
 		// If no name is specified, use default name + number
 		String newTsName;
@@ -145,14 +157,18 @@ public class TimeSeriesDataModel extends Observable{
 			newTsName = DEFAULT_SERIES_NAME + numberOfSeries;
 		}
 		
-		// Add the series to the ontologyModel
+		// Add name, line width and color to the ontologyModel
+		ontologyModel.getValueAxisDescriptions().add(newTsName);
+		ontologyModel.getValueAxisLineWidth().add(new Float(DEFAULT_LINE_WIDTH));
+		ontologyModel.getValueAxisColors().add("" + DEFAULT_COLORS[numberOfSeries % DEFAULT_COLORS.length].getRGB());
+		
+		// Add series data to the three sub-models
 		addTimeSeries2ontologyModel(newTsName, timestamps, values);
-		// Completely rebuilding the tableModel is much easier than adding a series 
-		buildTableModelFromOntologyModel(); 
-		// Add the series to the chartModel
+		buildTableModelFromOntologyModel();	// A complete rebuild is much easier than adding a series to the existing model 
 		addTimeSeries2chartModel(newTsName, timestamps, values);
 		
-		// Notify observers
+		// Some final administrative stuff
+		numberOfSeries++;
 		setChanged();
 		notifyObservers(new Integer(TIME_SERIES_ADDED));
 	}
@@ -165,18 +181,16 @@ public class TimeSeriesDataModel extends Observable{
 	 */
 	private void addTimeSeries2ontologyModel(String name, ArrayList importTimestamps, ArrayList importValues){
 		
-		ontologyModel.getYAxisDescriptions().add(name);
-		
 		if(ontologyModel.getTimeAxis().size() == 0){
 			
 			// Empty model => no problems
 			ontologyModel.setTimeAxis(importTimestamps);
-			if(ontologyModel.getYAxisDataTable() == null){
-				ontologyModel.setYAxisDataTable(new NumericDataTable());
+			if(ontologyModel.getValueAxisDataTable() == null){
+				ontologyModel.setValueAxisDataTable(new NumericDataTable());
 			}
 			NumericDataColum yVals = new NumericDataColum();
 			yVals.setColumnData(importValues);
-			ontologyModel.getYAxisDataTable().addTableData(yVals);
+			ontologyModel.getValueAxisDataTable().addTableData(yVals);
 			
 		}else{
 			
@@ -210,7 +224,7 @@ public class TimeSeriesDataModel extends Observable{
 					}else if(importTimestamp < modelTimestamp){
 						// The value is missing in the model
 						modelTimestamps.add(currentIndex, new Float(importTimestamp));
-						Iterator columns = ontologyModel.getYAxisDataTable().getAllTableData();
+						Iterator columns = ontologyModel.getValueAxisDataTable().getAllTableData();
 						// Iterate over columns
 						while(columns.hasNext()){
 							NumericDataColum column = (NumericDataColum) columns.next();
@@ -246,7 +260,7 @@ public class TimeSeriesDataModel extends Observable{
 					modelTimestamps.add(currentIndex, new Float(importTimestamp));
 					
 					// Iterate over the columns and insert the last value
-					Iterator columns = ontologyModel.getYAxisDataTable().getAllTableData();
+					Iterator columns = ontologyModel.getValueAxisDataTable().getAllTableData();
 					while(columns.hasNext()){
 						NumericDataColum column = (NumericDataColum) columns.next();
 						float lastVal = (Float) column.getColumnData().get(importItemNum-1);
@@ -257,7 +271,7 @@ public class TimeSeriesDataModel extends Observable{
 			}
 			NumericDataColum yVals = new NumericDataColum();
 			yVals.setColumnData(importValues);
-			ontologyModel.getYAxisDataTable().addTableData(yVals);
+			ontologyModel.getValueAxisDataTable().addTableData(yVals);
 		}
 	}
 	
@@ -267,12 +281,12 @@ public class TimeSeriesDataModel extends Observable{
 	private void buildTableModelFromOntologyModel(){
 		DefaultTableModel newTableModel = new DefaultTableModel();
 		newTableModel.addColumn("Zeit", ontologyModel.getTimeAxis().toArray());
-		Iterator columns = ontologyModel.getYAxisDataTable().getAllTableData();
+		Iterator columns = ontologyModel.getValueAxisDataTable().getAllTableData();
 		
 		int colCount = 0;
 		while(columns.hasNext()){
 			NumericDataColum columnData = (NumericDataColum) columns.next();
-			newTableModel.addColumn(ontologyModel.getYAxisDescriptions().get(colCount++), columnData.getColumnData().toArray());
+			newTableModel.addColumn(ontologyModel.getValueAxisDescriptions().get(colCount++), columnData.getColumnData().toArray());
 		}
 		tableModel = newTableModel;
 	}
@@ -282,11 +296,11 @@ public class TimeSeriesDataModel extends Observable{
 	 */
 	private void buildChartModelFromOntologyModel(){
 		TimeSeriesCollection newChartModel = new TimeSeriesCollection();
-		Iterator columns = ontologyModel.getYAxisDataTable().getAllTableData();
+		Iterator columns = ontologyModel.getValueAxisDataTable().getAllTableData();
 		
 		int colCount = 0;
 		while(columns.hasNext()){
-			org.jfree.data.time.TimeSeries newTs = new org.jfree.data.time.TimeSeries(ontologyModel.getYAxisDescriptions().get(colCount++).toString());
+			org.jfree.data.time.TimeSeries newTs = new org.jfree.data.time.TimeSeries(ontologyModel.getValueAxisDescriptions().get(colCount++).toString());
 			Iterator xVals = ontologyModel.getAllTimeAxis();
 			Iterator yVals = ((NumericDataColum)columns.next()).getAllColumnData();
 			while(xVals.hasNext() && yVals.hasNext()){
@@ -319,7 +333,7 @@ public class TimeSeriesDataModel extends Observable{
 	public void rebuildFromTable(){
 		// Remove old data
 		ontologyModel.clearAllTimeAxis();
-		ontologyModel.getYAxisDataTable().clearAllTableData();
+		ontologyModel.getValueAxisDataTable().clearAllTableData();
 		chartModel.removeAllSeries();
 		numberOfSeries = 0;
 		
@@ -344,16 +358,16 @@ public class TimeSeriesDataModel extends Observable{
 		// Add the data to the ontologyModel
 		ontologyModel.setTimeAxis(((NumericDataColum) tableDataByColumn.get(0)).getColumnData());
 		for(int col=1; col<tableDataByColumn.size(); col++){
-			ontologyModel.getYAxisDataTable().addTableData((NumericDataColum) tableDataByColumn.get(col));
+			ontologyModel.getValueAxisDataTable().addTableData((NumericDataColum) tableDataByColumn.get(col));
 			numberOfSeries++;
 		}
 		
 		// Add the data to the chartModel
 		for(int i=0; i < numberOfSeries; i++){
 			addTimeSeries2chartModel(
-					ontologyModel.getYAxisDescriptions().get(i).toString(), 
+					ontologyModel.getValueAxisDescriptions().get(i).toString(), 
 					ontologyModel.getTimeAxis(), 
-					((NumericDataColum)ontologyModel.getYAxisDataTable().getTableData().get(i)).getColumnData());
+					((NumericDataColum)ontologyModel.getValueAxisDataTable().getTableData().get(i)).getColumnData());
 		}
 		
 		
@@ -385,42 +399,42 @@ public class TimeSeriesDataModel extends Observable{
 	 * @return the title
 	 */
 	public String getTitle() {
-		return title;
+		return ontologyModel.getChartTitle();
 	}
 
 	/**
 	 * @param title the title to set
 	 */
 	public void setTitle(String title) {
-		this.title = title;
+		ontologyModel.setChartTitle(title);
 	}
 
 	/**
 	 * @return the xAxisLabel
 	 */
 	public String getxAxisLabel() {
-		return xAxisLabel;
+		return ontologyModel.getTimeAxisLabel();
 	}
 
 	/**
 	 * @param xAxisLabel the xAxisLabel to set
 	 */
 	public void setxAxisLabel(String xAxisLabel) {
-		this.xAxisLabel = xAxisLabel;
+		ontologyModel.setTimeAxisLabel(xAxisLabel);
 	}
 
 	/**
 	 * @return the yAxisLabel
 	 */
 	public String getyAxisLabel() {
-		return yAxisLabel;
+		return ontologyModel.getValueAxisLabel();
 	}
 
 	/**
 	 * @param yAxisLabel the yAxisLabel to set
 	 */
 	public void setyAxisLabel(String yAxisLabel) {
-		this.yAxisLabel = yAxisLabel;
+		ontologyModel.setValueAxisLabel(yAxisLabel);
 	}
 
 	/**

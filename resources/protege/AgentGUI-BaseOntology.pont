@@ -1,4 +1,4 @@
-; Sat Feb 25 19:58:01 CET 2012
+; Fri Mar 30 16:42:13 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7,9 +7,46 @@
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
-	(single-slot yAxisDataTable
+	(multislot valueAxisLineWidth
+		(type FLOAT)
+		(create-accessor read-write))
+	(multislot valueAxisUnits
+		(type STRING)
+		(create-accessor read-write))
+	(multislot timeAxis
+		(type FLOAT)
+		(create-accessor read-write))
+	(single-slot timeAxisLabel
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot valueAxisLabel
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot chartTitle
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot xAxisDescriptions
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ObjectValue
 		(type INSTANCE)
-;+		(allowed-classes NumericDataTable)
+;+		(allowed-classes)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot columnData
+		(type FLOAT)
+		(create-accessor read-write))
+	(single-slot BooleanValue
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot formula
+		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot StringValue
@@ -24,14 +61,12 @@
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot xAxisDescriptions
-		(type STRING)
+	(single-slot valueAxisDataTable
+		(type INSTANCE)
+;+		(allowed-classes NumericDataTable)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot timeFormat
-		(type STRING)
-		(create-accessor read-write))
-	(multislot yAxisDescriptions
+	(multislot valueAxisColors
 		(type STRING)
 		(create-accessor read-write))
 	(single-slot graphDataType
@@ -42,33 +77,10 @@
 		(type INSTANCE)
 ;+		(allowed-classes NumericDataColum)
 		(create-accessor read-write))
-	(single-slot formula
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot BooleanValue
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot ObjectValue
-		(type INSTANCE)
-;+		(allowed-classes)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(multislot columnData
-		(type FLOAT)
-		(create-accessor read-write))
-	(multislot yAxisColors
+	(multislot valueAxisDescriptions
 		(type STRING)
 		(create-accessor read-write))
-	(multislot yAxisLineWidth
-		(type FLOAT)
-		(create-accessor read-write))
-	(multislot yAxisUnits
-		(type STRING)
-		(create-accessor read-write))
-	(multislot timeAxis
+	(multislot timeFormat
 		(type STRING)
 		(create-accessor read-write)))
 
@@ -129,27 +141,39 @@
 (defclass TimeSeries
 	(is-a Chart)
 	(role concrete)
-	(multislot timeFormat
+	(single-slot timeAxisLabel
 		(type STRING)
+;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot yAxisDescriptions
+	(single-slot valueAxisLabel
 		(type STRING)
+;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot yAxisDataTable
+	(single-slot chartTitle
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot valueAxisDataTable
 		(type INSTANCE)
 ;+		(allowed-classes NumericDataTable)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot yAxisColors
-		(type STRING)
-		(create-accessor read-write))
-	(multislot yAxisLineWidth
+	(multislot valueAxisLineWidth
 		(type FLOAT)
 		(create-accessor read-write))
-	(multislot yAxisUnits
+	(multislot valueAxisUnits
+		(type STRING)
+		(create-accessor read-write))
+	(multislot valueAxisColors
 		(type STRING)
 		(create-accessor read-write))
 	(multislot timeAxis
+		(type FLOAT)
+		(create-accessor read-write))
+	(multislot valueAxisDescriptions
+		(type STRING)
+		(create-accessor read-write))
+	(multislot timeFormat
 		(type STRING)
 		(create-accessor read-write)))
 
