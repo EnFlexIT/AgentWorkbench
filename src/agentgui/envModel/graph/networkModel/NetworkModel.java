@@ -556,9 +556,8 @@ public class NetworkModel implements Cloneable, Serializable {
 		
 		if (componentsFound.size()==0) {
 			return null;
-		} else {
-			return componentsFound;	
 		}
+		return componentsFound;
 		
 	}
 	
@@ -1427,7 +1426,8 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Gets the outer network components.
+	 * Gets the outer network components. Is build only one time, after generation or after copy
+	 * 
 	 * @return the outer network components
 	 */
 	public ArrayList<String> getOuterNetworkComponentIDs() {

@@ -29,16 +29,16 @@
 package gasmas.clustering;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.environment.EnvironmentModel;
 import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer;
 
 /**
@@ -46,27 +46,8 @@ import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer;
  */
 public class ClusterIdentifier {
 
-	/** The environment model. */
-	private EnvironmentModel environmentModel;
-
-	/** The base network model. */
-	private NetworkModel baseNetworkModel;
-
-	/** The simulation service helper. */
-	private SimulationServiceHelper simulationServiceHelper;
-
-	/**
-	 * Instantiates a new cluster identifier.
-	 *
-	 * @param environmentModel the environment model
-	 * @param simulationServiceHelper the simulation service helper
-	 */
-	public ClusterIdentifier(EnvironmentModel environmentModel, SimulationServiceHelper simulationServiceHelper) {
-		this.environmentModel = environmentModel;
-		this.simulationServiceHelper = simulationServiceHelper;
-		this.baseNetworkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
-	}
-
+	private HashMap<ClusterNetworkComponent, ArrayList<String>> criticalBranchConnectionComponents = new HashMap<ClusterNetworkComponent, ArrayList<String>>();
+	
 	/**
 	 * Seraches for possible Clusters.
 	 *
@@ -78,6 +59,8 @@ public class ClusterIdentifier {
 		Set<Set<GraphNode>> clusterSet = wcSearch.transform(reducedModel.getGraph());
 		boolean clustersToSmall = false;
 		boolean baseModelChanged = false;
+
+		// analyse identified componentGroups for Clusters
 		if (clusterSet.size() > 1) {
 			clustersToSmall = true;
 			for (Set<GraphNode> graphNodes : clusterSet) {
@@ -89,6 +72,7 @@ public class ClusterIdentifier {
 				}
 			}
 		}
+		// return new ClusteredModel
 		if (baseModelChanged) {
 			NetworkModel clusteredModel = networkModel.getCopy();
 			clusteredModel.setAlternativeNetworkModel(null);
@@ -114,8 +98,9 @@ public class ClusterIdentifier {
 				}
 			}
 		}
-		checkBranches(networkComponents, getConnectionComponents(networkComponents, reducedModel.getNetworkComponents(graphNodes), networkModel), networkModel);
-		networkModel.replaceComponentsByCluster(networkComponents);
+		ArrayList<String> branchConnectionComponents = checkBranches(networkComponents, getConnectionComponents(networkComponents, reducedModel.getNetworkComponents(graphNodes), networkModel),
+				networkModel);
+		criticalBranchConnectionComponents.put(networkModel.replaceComponentsByCluster(networkComponents), branchConnectionComponents);
 		return true;
 	}
 
@@ -126,29 +111,33 @@ public class ClusterIdentifier {
 	 * @param connectionComponents the connection components
 	 * @param networkModel the network model
 	 */
-	private void checkBranches(HashSet<NetworkComponent> networkComponents, ArrayList<NetworkComponent> connectionComponents, NetworkModel networkModel) {
+	private ArrayList<String> checkBranches(HashSet<NetworkComponent> networkComponents, ArrayList<NetworkComponent> connectionComponents, NetworkModel networkModel) {
+		ArrayList<String> branchConnectionComponents = new ArrayList<String>();
 		ArrayList<NetworkComponent> coreComponents = new ArrayList<NetworkComponent>(networkComponents);
 		coreComponents.removeAll(connectionComponents);
-
+		// get the Nodes of connectionComponents
 		HashSet<GraphNode> clusterComponentsNodes = new HashSet<GraphNode>();
 		for (NetworkComponent networkComponent : coreComponents) {
 			clusterComponentsNodes.addAll(networkModel.getNodesFromNetworkComponent(networkComponent));
 		}
-
+		// decide if connectionComponent belongs to cluster or not
 		for (NetworkComponent networkComponent : connectionComponents) {
 			int counter = 0;
 			Vector<GraphNode> componentsNodes = networkModel.getNodesFromNetworkComponent(networkComponent);
 			if (componentsNodes.size() > 2) {
-			for (GraphNode graphNode : componentsNodes) {
-				if (clusterComponentsNodes.contains(graphNode)) {
-					counter++;
+				for (GraphNode graphNode : componentsNodes) {
+					if (clusterComponentsNodes.contains(graphNode)) {
+						counter++;
+					}
+				}
+				if (counter < componentsNodes.size() / 2) {
+					networkComponents.remove(networkComponent);
+				} else if (componentsNodes.size() > 4) {
+					branchConnectionComponents.add(networkComponent.getId());
 				}
 			}
-			if (counter < componentsNodes.size() / 2) {
-				networkComponents.remove(networkComponent);
-			}
-			}
 		}
+		return branchConnectionComponents;
 	}
 
 	/**
@@ -165,5 +154,9 @@ public class ClusterIdentifier {
 			connectionComponents.remove(networkModel.getNetworkComponent(networkComponent.getId()));
 		}
 		return connectionComponents;
+	}
+	
+	public ArrayList<String> getCriticalBranchConnectionComponents(ClusterNetworkComponent clusterNetworkComponent) {
+		return criticalBranchConnectionComponents.get(clusterNetworkComponent);
 	}
 }

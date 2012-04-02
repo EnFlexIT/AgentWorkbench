@@ -78,7 +78,7 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		ClusterIdentifier clusterIdentifier = new ClusterIdentifier(environmentModel, simulationServiceHelper);
+		ClusterIdentifier clusterIdentifier = new ClusterIdentifier();
 		NetworkModel clusteredNM = networkModel.getCopy();
 		clusteredNM.setAlternativeNetworkModel(null);
 		this.networkModel.getAlternativeNetworkModel().put("ClusteredModel", clusteredNM);
@@ -86,7 +86,7 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 		System.out.println("Begin Edge Betweness Cluster Analysis");
 		analyseClusters(clusteredNM, clusterIdentifier);
 
-		ClusterCorrection clusterCorrection = new ClusterCorrection(networkModel);
+		ClusterCorrection clusterCorrection = new ClusterCorrection(networkModel, clusterIdentifier);
 		clusterCorrection.checkNetwork(clusteredNM, "ClusteredModel");
 
 		this.environmentModel.setDisplayEnvironment(this.networkModel);

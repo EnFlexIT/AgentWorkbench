@@ -89,7 +89,7 @@ public class ShortestPathClusteringBehaviour extends SimpleBehaviour {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		ClusterIdentifier clusterIdentifier = new ClusterIdentifier(environmentModel, simulationServiceHelper);
+		ClusterIdentifier clusterIdentifier = new ClusterIdentifier();
 		NetworkModel clusterNM = networkModel.getCopy();
 		clusterNM.setAlternativeNetworkModel(null);
 		this.networkModel.getAlternativeNetworkModel().put("ClusteredModel", clusterNM);

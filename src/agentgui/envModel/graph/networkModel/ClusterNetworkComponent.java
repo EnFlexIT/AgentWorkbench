@@ -131,8 +131,8 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @param graphNode the graph node
 	 * @return the receive
 	 */
-	private NetworkComponent getReceiver(GraphNode graphNode) {
-		return clusterNetworkModel.getNetworkComponents(graphNode).iterator().next();
+	public NetworkComponent getReceiver(GraphNode graphNode) {
+		return clusterNetworkModel.getNetworkComponents((GraphNode) clusterNetworkModel.getGraphElement(graphNode.getId())).iterator().next();
 	}
 
 	/**

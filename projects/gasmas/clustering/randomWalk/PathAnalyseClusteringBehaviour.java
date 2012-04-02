@@ -35,7 +35,7 @@ public class PathAnalyseClusteringBehaviour extends SimpleBehaviour {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		ClusterIdentifier clusterIdentifier = new ClusterIdentifier(environmentModel, simulationServiceHelper);
+		ClusterIdentifier clusterIdentifier = new ClusterIdentifier();
 		NetworkModel copyNetworkModel = networkModel.getCopy();
 		copyNetworkModel.setAlternativeNetworkModel(null);
 		this.networkModel.getAlternativeNetworkModel().put("ClusteredModel", copyNetworkModel);
