@@ -5,7 +5,9 @@
     <projectView>Developer</projectView>
     <environmentModel>gridEnvironment</environmentModel>
     <projectResources/>
-    <plugins/>
+    <plugins>
+        <className>gasmas.plugin.GasMasPlugIn</className>
+    </plugins>
     <subOntologies>
         <subOntology>gasmas.ontology.GasGridOntology</subOntology>
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
@@ -81,7 +83,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Testnetz 1</simulationSetupCurrent>
+    <simulationSetupCurrent>Import Test</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>HNord</key>
@@ -98,6 +100,10 @@
         <entry>
             <key>Testnetz 2</key>
             <value>testnetz_2.xml</value>
+        </entry>
+        <entry>
+            <key>Import Test</key>
+            <value>import_test.xml</value>
         </entry>
         <entry>
             <key>Testnetz 1</key>

@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.xml.bind.JAXBContext;
@@ -104,8 +105,9 @@ public class GraphEnvironmentController extends EnvironmentController {
     /** Custom user object to be placed in the project object. Used here for storing the current component type settings. */
     private static final String generalGraphSettings4MASFile = "~GeneralGraphSettings~";
     
-    /** The GraphFileImporter used for importing externally defined graph definitions */
-    private GraphFileImporter graphFileImporter = null;
+    
+    /** Known adapter for the import of network models */
+    private Vector<NetworkModelFileImporter> importAdapter = new Vector<NetworkModelFileImporter>();
     /** The GraphMLWriter used to save the graph */
     private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter = null;
 
@@ -159,29 +161,27 @@ public class GraphEnvironmentController extends EnvironmentController {
     }
     
     /**
+     * Gets the general graph settings4 mas.
+     * @return the general graph settings4 mas
+     */
+    public GeneralGraphSettings4MAS getGeneralGraphSettings4MAS() {
+    	return this.networkModel.getGeneralGraphSettings4MAS();
+    }
+    /**
      * Gets the current ComponentTypeSettings
      * @return HashMap<String, ComponentTypeSettings> The current component type settings map.
      */
     public HashMap<String, ComponentTypeSettings> getComponentTypeSettings() {
-    	return this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
+    	return this.getGeneralGraphSettings4MAS().getCurrentCTS();
     }
     /**
      * Returns the DomainSttings.
      * @return the DomainSttings
      */
     public HashMap<String, DomainSettings> getDomainSettings() {
-    	return this.networkModel.getGeneralGraphSettings4MAS().getDomainSettings();
+    	return this.getGeneralGraphSettings4MAS().getDomainSettings();
     }
     
-    /**
-     * This method imports a new network model using the GraphFileImporter
-     * @param graphMLFile The GraphML file defining the new graph.
-     */
-    public void importNetworkModel(File graphMLFile) {
-		NetworkModel netModel = this.getGraphFileImporter().importGraphFromFile(graphMLFile);
-		this.setEnvironmentModel(netModel);
-    }
-
     /**
      * Sets the environment network model
      * @return NetworkModel - The environment model
@@ -716,17 +716,26 @@ public class GraphEnvironmentController extends EnvironmentController {
 		}
 
     }
-
+    
     /**
-     * Gets the GraphFileImporter, creates a new instance if null
-     * @return GraphFileImporter
+     * Gets the known import adapter.
+     * @return the import adapter
      */
-    public GraphFileImporter getGraphFileImporter() {
-		if (graphFileImporter == null) {
-		    graphFileImporter = new YedGraphMLFileImporter(getComponentTypeSettings());
-		}
-		return graphFileImporter;
+    public Vector<NetworkModelFileImporter> getImportAdapter() {
+    	if (this.importAdapter.size()==0) {
+    		importAdapter.add(new YedGraphMLFileImporter(getGeneralGraphSettings4MAS(), "graphml", "yEd GraphML"));
+    	}
+    	return this.importAdapter;
     }
+    /**
+     * This method imports a new network model using the GraphFileImporter
+     * @param file The file defining the new graph.
+     */
+    public void importNetworkModel(NetworkModelFileImporter importer, File file) {
+		NetworkModel netModel = importer.importGraphFromFile(file);
+		this.setEnvironmentModel(netModel);
+    }
+    
     /**
      * Gets the GraphMLWriter, creates and initiates a new instance if null
      * @return The GraphMLWriter

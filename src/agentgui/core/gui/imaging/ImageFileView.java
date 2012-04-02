@@ -37,8 +37,8 @@ import agentgui.envModel.graph.GraphGlobals;
 /**
  * The ImageFileView class shows a different icon for each type of image accepted by the image filter.
  * Used by the FileChooser
+ * 
  * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
- *
  */
 public class ImageFileView extends FileView {
 	

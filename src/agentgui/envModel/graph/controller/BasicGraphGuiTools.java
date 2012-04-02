@@ -47,7 +47,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.undo.UndoManager;
 
 import agentgui.core.application.Application;
@@ -734,12 +734,24 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// ------------------------------------------------------
 			// --- Button Import graph from file --------------------
 			JFileChooser graphFC = new JFileChooser();
-			graphFC.setFileFilter(new FileNameExtensionFilter(Language.translate(this.graphController.getGraphFileImporter().getTypeString()), this.graphController.getGraphFileImporter().getGraphFileExtension()));
+			graphFC.removeChoosableFileFilter(graphFC.getAcceptAllFileFilter());
+			// --- Add defined FileFilters --------------------------
+			for (NetworkModelFileImporter importer : this.graphController.getImportAdapter()){
+				graphFC.addChoosableFileFilter(importer.getFileFilter());
+			}
+			graphFC.setFileFilter(graphFC.getChoosableFileFilters()[0]);
 			graphFC.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
+			// --- Show FileChooser ---------------------------------
 			if(graphFC.showOpenDialog(this.getJToolBar()) == JFileChooser.APPROVE_OPTION){
 				Application.RunInfo.setLastSelectedFolder(graphFC.getCurrentDirectory());
-				File graphMLFile = graphFC.getSelectedFile();
-				this.graphController.importNetworkModel(graphMLFile);
+				File selectedFile = graphFC.getSelectedFile();
+				FileFilter selectedFileFilter = graphFC.getFileFilter();
+				for (NetworkModelFileImporter importer : this.graphController.getImportAdapter()){
+					if (selectedFileFilter==importer.getFileFilter()) {
+						this.graphController.importNetworkModel(importer, selectedFile);
+						break;
+					}
+				}	
 			}
 			
 		} else if(ae.getSource() == getJMenuItemNodeProp()) {

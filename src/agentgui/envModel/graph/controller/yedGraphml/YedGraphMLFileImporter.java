@@ -35,7 +35,8 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.core.application.Language;
-import agentgui.envModel.graph.controller.GraphFileImporter;
+import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
+import agentgui.envModel.graph.controller.NetworkModelFileImporter;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -49,12 +50,8 @@ import edu.uci.ics.jung.graph.Graph;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  * 
  */
-public class YedGraphMLFileImporter extends GraphFileImporter {
+public class YedGraphMLFileImporter extends NetworkModelFileImporter {
    
-	/** The file extension used for filtering in JFileChooser selecting the file to import */
-    private String fileTypeExtension = "graphml";
-    /** The file type description for the JFileChooser for selecting the file to import */
-    private String fileTypeDescription = "yEd GraphML";
     /** Intermediate graph, after loading the GraphML file, before converting to a GridModel */
     private Graph<TempNode, Object> tempGraph;
     /** The GridModel created from the imported yEd GraphML file */
@@ -62,8 +59,8 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 
     private HashMap<String, GraphElementPrototype> addedElements = null;
 
-    public YedGraphMLFileImporter(HashMap<String, ComponentTypeSettings> elementSettings) {
-		super(elementSettings);
+    public YedGraphMLFileImporter(GeneralGraphSettings4MAS generalGraphSettings4MAS, String fileTypeExtension, String fileTypeDescription) {
+		super(generalGraphSettings4MAS, fileTypeExtension, fileTypeDescription);
 		addedElements = new HashMap<String, GraphElementPrototype>();
     }
 
@@ -110,7 +107,7 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
      */
     private void addElement(TempNode tempElement, GraphElementPrototype predecessor) {
 		// Create a NetworkComponent representing the element
-		String prototypeClassName = this.componentTypeSettings.get(tempElement.getType()).getGraphPrototype();
+		String prototypeClassName = this.generalGraphSettings4MAS.getCurrentCTS().get(tempElement.getType()).getGraphPrototype();
 	
 		// Create a GraphElementPrototype for the component
 		GraphElementPrototype newElement = null;
@@ -143,7 +140,7 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 		    }
 		    
 		    // Get the component type settings for the component
-		    ComponentTypeSettings cts = this.componentTypeSettings.get(tempElement.getType());
+		    ComponentTypeSettings cts = this.generalGraphSettings4MAS.getCurrentCTS().get(tempElement.getType());
 		    
 		    // Add the new NetworkComponent
 		    NetworkComponent netComp = new NetworkComponent(tempElement.getId(), tempElement.getType(), prototypeClassName, cts.getAgentClass(), graphElements, newElement.isDirected());
@@ -160,13 +157,4 @@ public class YedGraphMLFileImporter extends GraphFileImporter {
 		}
     }
 
-    @Override
-    public String getGraphFileExtension() {
-    	return fileTypeExtension;
-    }
-
-    @Override
-    public String getTypeString() {
-    	return fileTypeDescription;
-    }
 }

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  targetNamespace="http://www.am.uni-erlangen.de/wima/CombinedDecisions/XMLSchema"  
+  xmlns:xmlschema="http://www.am.uni-erlangen.de/wima/CombinedDecisions/XMLSchema">
+  
+  <xs:annotation>
+    <xs:documentation>
+      This XML-Schema specifies XML documents, for the modeling of so called combined decisions.
+      A combined decision consists of several decision groups, which in turn consist of (i) a
+      set of switchable network elements and (ii) a number of possible switching states of the
+      respective network elements. The tag <a href="#id13">combinedDecisions</a> must be the root element of each 
+      XML document conforming to this schema. 
+    </xs:documentation>
+  </xs:annotation>
+  
+  <xs:attributeGroup name="idGroup">
+    <xs:annotation>
+      <xs:documentation>id field</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="id" use="required">
+      <xs:annotation>
+        <xs:documentation> A unique identifier</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:minLength value="2"/>
+          <xs:maxLength value="30"/>
+          <xs:pattern value="[a-zA-Z]{1}[a-zA-Z0-9_]*"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="switch">
+    <xs:annotation>
+      <xs:documentation>standard attribute set for switchable elements</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="xmlschema:idGroup"/>
+    <xs:attribute name="value" use="required" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>false, 0: closed true, 1: open</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="flowDirection" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>the extra attribute flowDirection makes sure that a compressorStation in
+          bypass-mode is only used in one direction false, 0: use tail-to-head true, 1: use
+          head-to-tail</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:element name="combinedDecisions">
+    <xs:annotation>
+      <xs:documentation>combinedDecisions contains all groups of switchable elements where
+        additional constraints not contained in the net-file need to be
+        considered</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="xmlschema:decisionGroup"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="decisionGroup">
+    <xs:annotation>
+      <xs:documentation>a decision group contains all possible decisions for the set of elements it
+        is the obligation of the generator to make sure that the set of decisions is the complete
+        set of possible states</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="xmlschema:sourceComment"/>
+        <xs:element maxOccurs="unbounded" ref="xmlschema:decision"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="xmlschema:idGroup"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="sourceComment" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>the sourceComment field states the source of the set of decisions in human
+        readable form</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="decision">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="xmlschema:valve"/>
+        <xs:element ref="xmlschema:controlValve"/>
+        <xs:element ref="xmlschema:compressorStation"/>
+      </xs:choice>
+      <xs:attributeGroup ref="xmlschema:idGroup"/>
+      <xs:attribute name="fullName" type="xs:string" default="">
+        <xs:annotation>
+          <xs:documentation> Full name of the decision</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="valve">
+    <xs:complexType>
+      <xs:attributeGroup ref="xmlschema:switch"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="controlValve">
+    <xs:complexType>
+      <xs:attributeGroup ref="xmlschema:switch"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="compressorStation">
+    <xs:complexType>
+      <xs:attributeGroup ref="xmlschema:switch"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

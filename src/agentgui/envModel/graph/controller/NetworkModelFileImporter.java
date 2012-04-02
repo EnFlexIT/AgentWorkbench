@@ -29,36 +29,44 @@
 package agentgui.envModel.graph.controller;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Iterator;
 
-import edu.uci.ics.jung.algorithms.layout.Layout;
+import javax.swing.filechooser.FileFilter;
 
-import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import edu.uci.ics.jung.algorithms.layout.Layout;
 
 /**
- * Classes that should work as import components for the GraphEnvironmentController must implement this interface. 
+ * Classes that should work as import components for the 
+ * GraphEnvironmentController must extend this class. 
  * 
  * @see GraphEnvironmentController
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
+ * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen
  */
-public abstract class GraphFileImporter {
+public abstract class NetworkModelFileImporter {
+	
+	/** The current settings for the graph environment */
+	protected GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+	/** The file extension used for filtering in JFileChooser selecting the file to import */
+	protected String fileTypeExtension = null;
+    /** The file type description for the JFileChooser for selecting the file to import */
+	protected String fileTypeDescription = null;
+    /** The file filter. */
+	protected FileFilter fileFilter = null;
+
 	
 	/**
-	 * The component type definitions
+	 * Constructor.
+	 * @param generalGraphSettings4MAS the current settings for the graph environment
 	 */
-	protected HashMap<String, ComponentTypeSettings> componentTypeSettings = null;
-	
-	/**
-	 * Constructor
-	 * @param componentTypeSettings	The component type definitions
-	 */
-	public GraphFileImporter(HashMap<String, ComponentTypeSettings> componentTypeSettings){
-		this.componentTypeSettings = componentTypeSettings;
+	public NetworkModelFileImporter(GeneralGraphSettings4MAS generalGraphSettings4MAS, String fileTypeExtension, String fileTypeDescription){
+		this.generalGraphSettings4MAS = generalGraphSettings4MAS;
+	    this.fileTypeExtension = fileTypeExtension;
+	    this.fileTypeDescription = fileTypeDescription;
 	}
 	
 	/**
@@ -76,19 +84,57 @@ public abstract class GraphFileImporter {
 	}
 	
 	/**
-	 * This method loads the graph graph from the file and translates it into a JUNG graph. 
+	 * This method loads the graph from the file and translates it into a JUNG graph. 
 	 * @param graphFile The file containing the graph definition.
 	 * @return The JUNG graph.
 	 */
 	public abstract NetworkModel importGraphFromFile(File graphFile);
+	
 	/**
 	 * Returns the extension of the file type the GraphFileLoader can handle
 	 * @return The file extension
 	 */
-	public abstract String getGraphFileExtension();
+	public String getFileTypeExtension() {
+		return fileTypeExtension;
+	}
 	/**
 	 * Returns a type string used for GraphFileLoader selection
 	 * @return The type String
 	 */
-	public abstract String getTypeString();
+	public String getFileTypeDescription() {
+		return fileTypeDescription;
+	}
+	
+	/**
+	 * Returns the file filter for this type of import.
+	 * @return the file filter
+	 */
+	public FileFilter getFileFilter() {
+		if (this.fileFilter==null) {
+			this.fileFilter = new FileFilter() {
+				@Override
+				public boolean accept(File file) {
+					if (file.isDirectory()) {
+			            return true;
+			        }
+			        String path = file.getAbsolutePath();
+			        if (path != null) {
+			        	if (path.endsWith(fileTypeExtension)) {
+			        		return true;
+			            } else {
+			                return false;
+			            }
+			        }		
+					return false;
+				}
+
+				@Override
+				public String getDescription() {
+					return fileTypeDescription;
+				}
+			};
+		}
+		return this.fileFilter;
+	}
+	
 }
