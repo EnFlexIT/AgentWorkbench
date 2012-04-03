@@ -122,7 +122,8 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 			tsed.setModal(true);
 			tsed.setVisible(true);
 			if(! tsed.isCanceled()){
-				dynForm.setOntoArgsInstance(new Object[]{tsed.getModel().getOntologyModel()});
+				startArgs[this.startArgIndex] = tsed.getModel().getOntologyModel();
+				dynForm.setOntoArgsInstance(startArgs);
 				if(tsed.getChartThumb() != null){
 					getJButtonEdit().setText("");
 					getJButtonEdit().setIcon(new ImageIcon(tsed.getChartThumb()));

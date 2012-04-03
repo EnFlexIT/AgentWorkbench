@@ -641,7 +641,7 @@ public class DynForm extends JPanel {
 			// --- Consider the number of nodes found is smaller than needed -------
 			Vector<DefaultMutableTreeNode> nodesNew = new Vector<DefaultMutableTreeNode>();
 			while (nodesAvailableVector.size()+nodesNew.size()<nodesNeeded) {
-				DefaultMutableTreeNode newNode = this.addMultiple(currNode, isInnerClass);
+				DefaultMutableTreeNode newNode = this.addSingleMultipleNode(currNode, isInnerClass);
 				nodesNew.add(newNode);
 			}
 			Collections.reverse(nodesNew);
@@ -1138,7 +1138,7 @@ public class DynForm extends JPanel {
 				multipleButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						addMultiple(newNode, true);
+						addSingleMultipleNode(newNode, true);
 					}
 				});	
 				dataPanel.add(multipleButton, null);
@@ -1187,22 +1187,10 @@ public class DynForm extends JPanel {
 	 */
 	private void createOuterElement4AgentGUISpecialClass(int startArgIndex, Object specialClass, DefaultMutableTreeNode parentNode, JPanel parentPanel){
 		
-		Rectangle feBounds = null; // --- firstElementBounds ---
-		
 		// ------------------------------------------------------------------------------
 		// --- Make all of the created panels invisible and reduce their height ---------
 		// ------------------------------------------------------------------------------
-		for (int i = 0; i < parentNode.getChildCount(); i++) {
-			DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) parentNode.getChildAt(i);
-			DynType dt = (DynType) childNode.getUserObject();
-			
-			if (feBounds==null) {
-				feBounds = dt.getPanel().getBounds();
-			}
-			dt.getPanel().setVisible(false);
-			dt.getPanel().setBounds(feBounds);
-			
-		}
+		Rectangle feBounds = this.setJPanelInvisibleAndSmall(parentNode);
 		
 		// ------------------------------------------------------------------------------
 		// --- Show the widget for the special type -------------------------------------
@@ -1216,6 +1204,36 @@ public class DynForm extends JPanel {
 		
 		this.setPanelBounds(parentPanel);
 	}
+	
+	
+	/**
+	 * Sets the invisible.
+	 * @param parentNode the new invisible
+	 */
+	private Rectangle setJPanelInvisibleAndSmall(DefaultMutableTreeNode parentNode) {
+		
+		Rectangle feBounds = null; // --- First element Bounds ------
+		DynType parentDT = (DynType) parentNode.getUserObject();
+		
+		for (int i = 0; i < parentNode.getChildCount(); i++) {
+			DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) parentNode.getChildAt(i);
+			if (childNode.getChildCount()>0) {
+				// --- recursively edit all sub panels --------------
+				feBounds = this.setJPanelInvisibleAndSmall(childNode);
+			}
+			DynType dt = (DynType) childNode.getUserObject();
+			
+			if (feBounds==null) {
+				feBounds = dt.getPanel().getBounds();
+			}
+			dt.getPanel().setVisible(false);
+			dt.getPanel().setBounds(feBounds);
+		}
+		
+		this.setPanelBounds(parentDT.getPanel());		
+		return feBounds;
+	}
+	
 	
 	/**
 	 * This method creates the panels for fields which have no inner classes.
@@ -1264,7 +1282,7 @@ public class DynForm extends JPanel {
 				multipleButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						addMultiple(newNode, false);
+						addSingleMultipleNode(newNode, false);
 					}
 				});	
 				dataPanel.add(multipleButton, null);
@@ -1384,12 +1402,11 @@ public class DynForm extends JPanel {
 	 * @param isInnerClass the is inner class
 	 * @return the default mutable tree node
 	 */
-	public DefaultMutableTreeNode addMultiple(DefaultMutableTreeNode node, boolean isInnerClass){
+	private DefaultMutableTreeNode addSingleMultipleNode(DefaultMutableTreeNode node, boolean isInnerClass){
 		
 		// --- Get all needed information about the node, which has to be copied --------
 		DynType dt = (DynType) node.getUserObject();
 		String clazz = dt.getClassName();
-		
 		OntologySingleClassSlotDescription oscsd = dt.getOntologySingleClassSlotDescription();
 		
 		JPanel oldPanel = dt.getPanel();
@@ -1403,8 +1420,14 @@ public class DynForm extends JPanel {
 		JPanel blindPanel = new JPanel();
 		blindPanel.setLayout(null);
 		DefaultMutableTreeNode newNode = null;
+		
 		if (isInnerClass==true) {
 			newNode = this.createInnerElements(oscsd, clazz, depth2WorkOn+1, blindPanel, parentNode, true);
+			if (oldPanel.isVisible()==false) {
+				// --- Case special class: set invisible and small ------------ 
+				this.setJPanelInvisibleAndSmall(newNode);
+			}
+			
 		} else {
 			newNode = this.createOuterElements(oscsd, depth2WorkOn, blindPanel, parentNode, true);
 		}
@@ -1417,22 +1440,37 @@ public class DynForm extends JPanel {
 		// --- Set the size of the new Panel --------------------------------------------
 		DynType dtNew = (DynType) newNode.getUserObject();
 		JPanel newPanel = dtNew.getPanel();
-		this.setPanelBounds(newPanel);
-		newPanel.setPreferredSize(newPanel.getSize());
 		
-		// --- Now place the new sub panel on the right super panel ---------------------
-		int movement = oldPanel.getHeight() + 2;
-		int xPos = oldPanel.getX();
-		int yPos = oldPanel.getY() + movement;
-		newPanel.setBounds(xPos, yPos, newPanel.getWidth(), newPanel.getHeight());
-		
-		// --- Add to parent panel ------------------------------------------------------
-		parentPanel.add(newPanel);
-		parentPanel.validate();
-		this.setPanelBounds(parentPanel);
-		
-		// --- Now move the rest of the elements on the form ----------------------------
-		this.moveAfterAddOrRemove(movement, newNode);
+		// --- Layout the new panel -----------------------------------------------------
+		if (oldPanel.isVisible()==true) {
+			// ----------------------------------------------------------------
+			// --- The normal case for visible classes ------------------------
+			// ----------------------------------------------------------------			
+			this.setPanelBounds(newPanel);
+			newPanel.setPreferredSize(newPanel.getSize());
+
+			// --- Now place the new sub panel on the right super panel -------
+			int movement = oldPanel.getHeight() + 2;
+			int xPos = oldPanel.getX();
+			int yPos = oldPanel.getY() + movement;
+			newPanel.setBounds(xPos, yPos, newPanel.getWidth(), newPanel.getHeight());
+			
+			// --- Add to parent panel ----------------------------------------
+			parentPanel.add(newPanel);
+			parentPanel.validate();
+			this.setPanelBounds(parentPanel);
+			
+			// --- Now move the rest of the elements on the form ----------------------------
+			this.moveAfterAddOrRemove(movement, newNode);
+			
+		} else {
+			// ----------------------------------------------------------------
+			// --- The case for special classes, that have to be invisible ----
+			// ----------------------------------------------------------------
+			newPanel.setVisible(false);
+			newPanel.setBounds(oldPanel.getBounds());
+			
+		}
 		
 		// --- refresh the GUI ----------------------------------------------------------
 		this.setPreferredSize(this);
@@ -1551,8 +1589,8 @@ public class DynForm extends JPanel {
 	
 	
 	/**
-	 * Checks if the current class is a an Agent.GUI special 
-	 * class, like Formula or Chart.
+	 * Checks if the current class is an Agent.GUI special 
+	 * class, like for Formulas or Charts.
 	 *
 	 * @param packageName the package name
 	 * @param objectType the object type
