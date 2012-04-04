@@ -31,6 +31,7 @@ package gasmas.clustering;
 import jade.core.ServiceException;
 import jade.core.behaviours.SimpleBehaviour;
 
+import java.util.Date;
 import java.util.List;
 
 import agentgui.envModel.graph.networkModel.GraphEdge;
@@ -83,10 +84,10 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 		clusteredNM.setAlternativeNetworkModel(null);
 		this.networkModel.getAlternativeNetworkModel().put("ClusteredModel", clusteredNM);
 
-		System.out.println("Begin Edge Betweness Cluster Analysis");
+		System.out.println("Begin Edge Betweness Cluster Analysis " + new Date());
 		analyseClusters(clusteredNM, clusterIdentifier);
 
-		ClusterCorrection clusterCorrection = new ClusterCorrection(networkModel, clusterIdentifier);
+		ClusterCorrectionHeuristics clusterCorrection = new ClusterCorrectionHeuristics(networkModel, clusterIdentifier);
 		clusterCorrection.checkNetwork(clusteredNM, "ClusteredModel");
 
 		this.environmentModel.setDisplayEnvironment(this.networkModel);
@@ -95,7 +96,7 @@ public class EdgeBetweenessBehaviour extends SimpleBehaviour {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		System.out.println("End Edge Betweness Cluster Analysis");
+		System.out.println("End Edge Betweness Cluster Analysis " + new Date());
 	}
 
 	public void analyseClusters(NetworkModel networkModel, ClusterIdentifier clusterIdentifier) {

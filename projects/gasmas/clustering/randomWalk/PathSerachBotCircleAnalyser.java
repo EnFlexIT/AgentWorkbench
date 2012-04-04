@@ -45,11 +45,15 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
 /**
  * The Class AntCircleAnalyser.
  */
-public class AntCircleAnalyser {
+public class PathSerachBotCircleAnalyser {
+
+	private NetworkModel networkModel;
 
 	/** The coordinates map. */
 	private HashMap<String, Point2D> coordinatesMap = new HashMap<String, Point2D>();
 
+	private HashMap<Integer, ArrayList<PathSearchBot>> circles = new HashMap<Integer, ArrayList<PathSearchBot>>();
+	
 	/** The subgraphs. */
 	private HashMap<Integer, ArrayList<Subgraph>> subgraphs = new HashMap<Integer, ArrayList<Subgraph>>();
 
@@ -59,15 +63,17 @@ public class AntCircleAnalyser {
 	 * @param ants the ants
 	 * @param networkModel the network model
 	 */
-	public AntCircleAnalyser(ArrayList<Ant> ants, NetworkModel networkModel) {
+	public PathSerachBotCircleAnalyser(NetworkModel networkModel) {
+		this.networkModel = networkModel;
 		buildCoordinatesMap(networkModel);
-		findSubgraphs(ants, networkModel);
 	}
 
 	public Subgraph getBestSubgraph() {
+		findSubgraphs();
+		System.out.println("Circles: " + circles.size());
 		ArrayList<Integer> keys = new ArrayList<Integer>(subgraphs.keySet());
 		Collections.sort(keys);
-		ArrayList<Subgraph> minInterfaceSubgraphs = subgraphs.get(keys.get(0));
+		ArrayList<Subgraph> minInterfaceSubgraphs = subgraphs.get(subgraphs.keySet().iterator().next());
 		Subgraph subgraph = minInterfaceSubgraphs.get(0);
 		for (Subgraph subgraphInList : minInterfaceSubgraphs) {
 			if (subgraphInList.getNetworkComponents().size() < subgraph.getNetworkComponents().size()) {
@@ -83,12 +89,11 @@ public class AntCircleAnalyser {
 	 * @param ants the ants
 	 * @param networkModel the network model
 	 */
-	private void findSubgraphs(ArrayList<Ant> ants, NetworkModel networkModel) {
-		HashMap<Integer, ArrayList<Ant>> circles = buildCircleMap(ants);
+	private void findSubgraphs() {
 		ArrayList<Integer> keys = new ArrayList<Integer>(circles.keySet());
 		Collections.sort(keys);
 		for (Integer integer : keys) {
-			for (Ant ant : circles.get(integer)) {
+			for (PathSearchBot ant : circles.get(integer)) {
 				Subgraph subgraph = findSubgraph(networkModel, ant.getPath(), ant.getAllAlternativeComponents());
 				addSubgraphToMap(subgraph);
 			}
@@ -151,37 +156,22 @@ public class AntCircleAnalyser {
 	}
 
 	/**
-	 * builds a Map of Ants containing circles.
-	 *
-	 * @param ants the ants
-	 * @return the hash map
-	 */
-	private HashMap<Integer, ArrayList<Ant>> buildCircleMap(ArrayList<Ant> ants) {
-		HashMap<Integer, ArrayList<Ant>> circles = new HashMap<Integer, ArrayList<Ant>>();
-		for (Ant ant : new ArrayList<Ant>(ants)) {
-			if (ant.isCircle()) {
-				addAntToMap(ant, circles);
-			}
-		}
-		return circles;
-	}
-
-	/**
-	 * Adds the ant to map.
+	 * Adds a bot to the circleMap only,if that bot is unique
+	 * Reduces the amount of circles
 	 *
 	 * @param ant the ant
 	 * @param circles the circles
 	 */
-	private void addAntToMap(Ant ant, HashMap<Integer, ArrayList<Ant>> circles) {
+	public void addPathSearchBotToCircleMap(PathSearchBot ant) {
 		if (circles.containsKey(ant.getPath().size())) {
-			for (Ant circleAnt : circles.get(ant.getPath().size())) {
+			for (PathSearchBot circleAnt : circles.get(ant.getPath().size())) {
 				if (circleAnt.getPath().containsAll(ant.getPath())) {
 					continue;
 				}
 			}
 			circles.get(ant.getPath().size()).add(ant);
 		} else {
-			ArrayList<Ant> circleAntList = new ArrayList<Ant>();
+			ArrayList<PathSearchBot> circleAntList = new ArrayList<PathSearchBot>();
 			circleAntList.add(ant);
 			circles.put(ant.getPath().size(), circleAntList);
 		}

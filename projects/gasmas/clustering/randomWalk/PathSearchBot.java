@@ -40,19 +40,17 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
 /**
  * The Class Ant.
  */
-public class Ant {
+public class PathSearchBot {
 
 	/** The network model. */
 	private NetworkModel networkModel;
+	private PathSearchBotRunner pathSearchBotRuner;
 
 	/** The path. */
 	private ArrayList<NetworkComponent> path = new ArrayList<NetworkComponent>();
 
 	/** The altrnative paths. */
 	private HashMap<String, ArrayList<String>> altrnativePaths = new HashMap<String, ArrayList<String>>();
-
-	/** The active. */
-	private boolean active = true;
 
 	/** The circle. */
 	private boolean circle;
@@ -63,7 +61,7 @@ public class Ant {
 	 * @param networkModel the network model
 	 * @param startNC the start nc
 	 */
-	public Ant(NetworkModel networkModel, String startNCID) {
+	public PathSearchBot(NetworkModel networkModel, String startNCID) {
 		this.networkModel = networkModel;
 		path.add(networkModel.getNetworkComponent(startNCID));
 	}
@@ -71,15 +69,15 @@ public class Ant {
 	/**
 	 * Instantiates a new ant.
 	 *
-	 * @param ant the ant
+	 * @param bot the ant
 	 */
-	public Ant(NetworkModel networkModel, Ant ant) {
+	public PathSearchBot(NetworkModel networkModel, PathSearchBot bot) {
 		this.networkModel = networkModel;
-		path = new ArrayList<NetworkComponent>(ant.getPathNetworkComponents());
-		for (Entry<String, ArrayList<String>> entry : ant.getAlternativePaths().entrySet()) {
+		pathSearchBotRuner = bot.getPathBotSearchBotRuner();
+		path = new ArrayList<NetworkComponent>(bot.getPathNetworkComponents());
+		for (Entry<String, ArrayList<String>> entry : bot.getAlternativePaths().entrySet()) {
 			altrnativePaths.put(entry.getKey(), new ArrayList<String>(entry.getValue()));
 		}
-		active = ant.getActive();
 	}
 
 	/**
@@ -92,18 +90,26 @@ public class Ant {
 	}
 
 	/**
+	 * checks if this is already a circle
+	 * 
+	 * @return
+	 */
+	private boolean checkForCircle() {
+		if (new HashSet<NetworkComponent>(path).size() < path.size()) {
+			circle = true;
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Ant goes to the next NetworkComponent returns NetworkComponentID or null if already Home or End reached.
 	 *
 	 * @return boolean  Home/End arrived
 	 */
-	public ArrayList<Ant> run() {
-		ArrayList<Ant> activeAnts = new ArrayList<Ant>();
-		if (new HashSet<NetworkComponent>(path).size() < path.size()) {
-			active = false;
-			circle = true;
-		}
-		if (!active) {
-			return activeAnts;
+	public boolean run() {
+		if (checkForCircle()) {
+			return false;
 		}
 		Vector<NetworkComponent> nextNCs = networkModel.getNeighbourNetworkComponents(path.get(path.size() - 1));
 		nextNCs = new Vector<NetworkComponent>(new HashSet<NetworkComponent>(nextNCs));
@@ -112,24 +118,30 @@ public class Ant {
 		}
 		switch (nextNCs.size()) {
 		case 0:
-			active = false;
-			return activeAnts;
+			return false;
 		case 1:
 			path.add(nextNCs.get(0));
-			activeAnts.add(this);
 			break;
 
 		default:
-			for (int i = 1; i < nextNCs.size(); i++) {
-				Ant ant = new Ant(networkModel, this);
-				ant.run(i, new Vector<NetworkComponent>(nextNCs));
-				activeAnts.add(ant);
-			}
+			createPathSearchBotClones(nextNCs);
 			path.add(nextNCs.get(0));
-			activeAnts.add(this);
 			this.addAlternativePaths(nextNCs.get(0), nextNCs);
 		}
-		return activeAnts;
+		return true;
+	}
+
+	/**
+	 * Creates the path search bot clones for other branches
+	 *
+	 * @param nextNCs other Branch NetworkComponents
+	 */
+	private void createPathSearchBotClones(Vector<NetworkComponent> nextNCs) {
+		for (int i = 1; i < nextNCs.size(); i++) {
+			PathSearchBot bot = new PathSearchBot(networkModel, this);
+			bot.run(i, new Vector<NetworkComponent>(nextNCs));
+			pathSearchBotRuner.addPathSearchBotToRun(bot);
+		}
 	}
 
 	/**
@@ -141,15 +153,6 @@ public class Ant {
 	public void run(int no, Vector<NetworkComponent> nextNCs) {
 		path.add(nextNCs.get(no));
 		addAlternativePaths(nextNCs.get(no), nextNCs);
-	}
-
-	/**
-	 * Ant still running?.
-	 *
-	 * @return boolean running
-	 */
-	public boolean getActive() {
-		return active;
 	}
 
 	/**
@@ -221,5 +224,23 @@ public class Ant {
 			alternativesList.addAll(alternatives);
 		}
 		return alternativesList;
+	}
+
+	/**
+	 * Sets the path search bot runner.
+	 *
+	 * @param pathSearchBotRuner the new path search bot runner
+	 */
+	public void setPathSearchBotRunner(PathSearchBotRunner pathSearchBotRuner) {
+		this.pathSearchBotRuner = pathSearchBotRuner;
+	}
+
+	/**
+	 * Gets the path bot search bot runer.
+	 *
+	 * @return the path bot search bot runer
+	 */
+	public PathSearchBotRunner getPathBotSearchBotRuner() {
+		return pathSearchBotRuner;
 	}
 }

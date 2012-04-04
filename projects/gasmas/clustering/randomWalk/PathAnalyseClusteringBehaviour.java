@@ -3,10 +3,6 @@ package gasmas.clustering.randomWalk;
 import gasmas.clustering.ClusterIdentifier;
 import jade.core.ServiceException;
 import jade.core.behaviours.SimpleBehaviour;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.SimulationService;
@@ -15,7 +11,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
 
 public class PathAnalyseClusteringBehaviour extends SimpleBehaviour {
 
-	private static final int STEPS = 1000;
+	private static final int STEPS = 500;
 
 	private EnvironmentModel environmentModel;
 	private NetworkModel networkModel;
@@ -57,18 +53,8 @@ public class PathAnalyseClusteringBehaviour extends SimpleBehaviour {
 	}
 
 	private NetworkModel startPathAnalysis(NetworkModel newNetworkModel) {
-		HashSet<Ant> ants = new HashSet<Ant>();
-		ants.add(new Ant(newNetworkModel, thisNetworkComponent.getId()));
-		ArrayList<Ant> nextRunAnts = new ArrayList<Ant>(ants);
-		for (int step = 0; step < PathAnalyseClusteringBehaviour.STEPS; step++) {
-			ArrayList<Ant> runAnts = new ArrayList<Ant>(nextRunAnts);
-			nextRunAnts = new ArrayList<Ant>();
-			for (Ant ant : runAnts) {
-				nextRunAnts.addAll(ant.run());
-			}
-			ants.addAll(nextRunAnts);
-		}
-		AntDistributionMatrix antDistributionMatrix = new AntDistributionMatrix(new ArrayList<Ant>(ants));
+		PathSearchBotDistributionMatrix antDistributionMatrix = new PathSearchBotRunner().runBotsAndGetDistributionMatrix(newNetworkModel, thisNetworkComponent.getId(),
+				PathAnalyseClusteringBehaviour.STEPS);
 		String x = antDistributionMatrix.findFrequentPathComponent();
 		NetworkComponent networkComponent = newNetworkModel.getNetworkComponent(x);
 		newNetworkModel.removeNetworkComponent(networkComponent);

@@ -36,10 +36,7 @@ import java.util.Map.Entry;
 /**
  * The Class AntDistributionMatrix.
  */
-public class AntDistributionMatrix {
-
-	/** The ants. */
-	private ArrayList<Ant> ants;
+public class PathSearchBotDistributionMatrix {
 
 	/** The component i ds. */
 	private HashSet<String> componentIDs = new HashSet<String>();
@@ -48,35 +45,12 @@ public class AntDistributionMatrix {
 	private ArrayList<HashMap<String, Integer>> dynamicMatrix = new ArrayList<HashMap<String, Integer>>();
 
 	/**
-	 * Instantiates a new ant distribution matrix.
-	 *
-	 * @param ants the ants
-	 */
-	public AntDistributionMatrix(ArrayList<Ant> ants) {
-		this.ants = ants;
-	}
-
-	/**
-	 * Creates the dynamic matrix.
-	 *
-	 * @param onlyActive the only active
-	 * @param ants the ants
-	 */
-	private void createDynamicMatrix(boolean onlyActive, ArrayList<Ant> ants) {
-		for (Ant ant : ants) {
-			if (!onlyActive || (onlyActive && ant.getActive())) {
-				addAntToDynamicMatrix(ant);
-			}
-		}
-	}
-
-	/**
 	 * Adds the ant to dynamic matrix.
 	 *
-	 * @param ant the ant
+	 * @param bot the ant
 	 */
-	private void addAntToDynamicMatrix(Ant ant) {
-		ArrayList<String> path = ant.getPath();
+	public void addAntToDynamicMatrix(PathSearchBot bot) {
+		ArrayList<String> path = bot.getPath();
 		for (int step = 0; step < path.size(); step++) {
 			// System.out.print(path.get(step) + ";");
 			if (dynamicMatrix.size() <= step) {
@@ -152,12 +126,11 @@ public class AntDistributionMatrix {
 	 * @return the string
 	 */
 	public String findFrequentPathComponent() {
-		createDynamicMatrix(false, ants);
 		ArrayList<HashMap<String, Integer>> dynamicMatrix = removeSameStart();
 		HashMap<String, Integer> accumulatedMap = accumulate(dynamicMatrix);
-		ArrayList<HashMap<String, Integer>> mapLits = new ArrayList<HashMap<String, Integer>>();
-		mapLits.add(accumulatedMap);
-		printPathMatrix(mapLits);
+		ArrayList<HashMap<String, Integer>> mapList = new ArrayList<HashMap<String, Integer>>();
+		mapList.add(accumulatedMap);
+		printPathMatrix(mapList);
 		Entry<String, Integer> maxEntry = null;
 		ArrayList<Entry<String, Integer>> maxEntryList = new ArrayList<Entry<String, Integer>>();
 		for (Entry<String, Integer> entry : accumulatedMap.entrySet()) {
@@ -201,8 +174,6 @@ public class AntDistributionMatrix {
 	 * @param dynamicMatrix the dynamic matrix
 	 */
 	public void printPathMatrix(ArrayList<HashMap<String, Integer>> dynamicMatrix) {
-		System.out.println("Ants:" + ants.size());
-
 		System.out.print("   :");
 		for (String componentID : componentIDs) {
 			System.out.printf("%-5s", componentID);
@@ -227,7 +198,6 @@ public class AntDistributionMatrix {
 	 * @return the distribution
 	 */
 	public HashMap<String, ArrayList<Integer>> getDistribution() {
-		createDynamicMatrix(false, ants);
 		HashMap<String, ArrayList<Integer>> distribution = new HashMap<String, ArrayList<Integer>>();
 		for (String componentID : componentIDs) {
 			distribution.put(componentID, getDistributionComponent(componentID));

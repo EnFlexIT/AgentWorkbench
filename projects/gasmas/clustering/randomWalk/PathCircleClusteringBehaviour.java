@@ -31,8 +31,7 @@ package gasmas.clustering.randomWalk;
 import jade.core.ServiceException;
 import jade.core.behaviours.SimpleBehaviour;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
 
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -47,7 +46,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
 public class PathCircleClusteringBehaviour extends SimpleBehaviour {
 
 	/** The Constant STEPS. */
-	private static final int STEPS = 100;
+	private static final int STEPS = 50;
 
 	/** The environment model. */
 	private EnvironmentModel environmentModel;
@@ -83,9 +82,9 @@ public class PathCircleClusteringBehaviour extends SimpleBehaviour {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Begin Ant Circle Cluster Analysis");
+		System.out.println("Begin Ant Circle Cluster Analysis " + new Date());
 		analyseClusters();
-		System.out.println("End Ant Circle Cluster Analysis");
+		System.out.println("End Ant Circle Cluster Analysis " + new Date());
 	}
 
 	/**
@@ -112,35 +111,11 @@ public class PathCircleClusteringBehaviour extends SimpleBehaviour {
 	 * @return the subgraph
 	 */
 	private Subgraph startPathAnalysis(NetworkModel newNetworkModel) {
-		HashSet<Ant> ants = runAnts(newNetworkModel);
-		System.out.println("Start Analysing Circle; Ants: " + ants.size());
-		AntCircleAnalyser antCircleAnalyser = new AntCircleAnalyser(new ArrayList<Ant>(ants), newNetworkModel);
+		System.out.println("Start Analysing Circle");
+		PathSerachBotCircleAnalyser pathSerachBotCircleAnalyser = new PathSearchBotRunner().runBotsAndGetPathSerachBotCircleAnalyser(newNetworkModel, thisNetworkComponent.getId(),
+				PathCircleClusteringBehaviour.STEPS);
 		System.out.println("End Analysing Circle");
-		return antCircleAnalyser.getBestSubgraph();
-	}
-
-	/**
-	 * Does Random Walk with Ants
-	 *
-	 * @param newNetworkModel the new network model
-	 * @return the hash set
-	 */
-	private HashSet<Ant> runAnts(NetworkModel newNetworkModel) {
-		HashSet<Ant> ants = new HashSet<Ant>();
-		ants.add(new Ant(newNetworkModel, thisNetworkComponent.getId()));
-		ArrayList<Ant> nextRunAnts = new ArrayList<Ant>(ants);
-		for (int step = 0; step < PathCircleClusteringBehaviour.STEPS; step++) {
-			ArrayList<Ant> runAnts = new ArrayList<Ant>(nextRunAnts);
-			nextRunAnts = new ArrayList<Ant>();
-			for (Ant ant : runAnts) {
-				nextRunAnts.addAll(ant.run());
-			}
-			if (nextRunAnts.size() == 0) {
-				break;
-			}
-			ants.addAll(nextRunAnts);
-		}
-		return ants;
+		return pathSerachBotCircleAnalyser.getBestSubgraph();
 	}
 
 	/* (non-Javadoc)
