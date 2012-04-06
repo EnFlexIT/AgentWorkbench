@@ -35,7 +35,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.core.application.Language;
-import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.NetworkModelFileImporter;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.GraphElement;
@@ -59,8 +59,8 @@ public class YedGraphMLFileImporter extends NetworkModelFileImporter {
 
     private HashMap<String, GraphElementPrototype> addedElements = null;
 
-    public YedGraphMLFileImporter(GeneralGraphSettings4MAS generalGraphSettings4MAS, String fileTypeExtension, String fileTypeDescription) {
-		super(generalGraphSettings4MAS, fileTypeExtension, fileTypeDescription);
+    public YedGraphMLFileImporter(GraphEnvironmentController graphController, String fileTypeExtension, String fileTypeDescription) {
+		super(graphController, fileTypeExtension, fileTypeDescription);
 		addedElements = new HashMap<String, GraphElementPrototype>();
     }
 
@@ -107,7 +107,7 @@ public class YedGraphMLFileImporter extends NetworkModelFileImporter {
      */
     private void addElement(TempNode tempElement, GraphElementPrototype predecessor) {
 		// Create a NetworkComponent representing the element
-		String prototypeClassName = this.generalGraphSettings4MAS.getCurrentCTS().get(tempElement.getType()).getGraphPrototype();
+		String prototypeClassName = this.graphController.getGeneralGraphSettings4MAS().getCurrentCTS().get(tempElement.getType()).getGraphPrototype();
 	
 		// Create a GraphElementPrototype for the component
 		GraphElementPrototype newElement = null;
@@ -140,7 +140,7 @@ public class YedGraphMLFileImporter extends NetworkModelFileImporter {
 		    }
 		    
 		    // Get the component type settings for the component
-		    ComponentTypeSettings cts = this.generalGraphSettings4MAS.getCurrentCTS().get(tempElement.getType());
+		    ComponentTypeSettings cts = this.graphController.getGeneralGraphSettings4MAS().getCurrentCTS().get(tempElement.getType());
 		    
 		    // Add the new NetworkComponent
 		    NetworkComponent netComp = new NetworkComponent(tempElement.getId(), tempElement.getType(), prototypeClassName, cts.getAgentClass(), graphElements, newElement.isDirected());

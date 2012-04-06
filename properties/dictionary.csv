@@ -497,12 +497,16 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
+en;;Cancel;;;
+en;;Component Type;;;
 en;;Discrete squares environment;;;
+en;;External Type;;;
 en;;Merge nodes;;;
 en;;Please, select the network component that you would like to add!;;;
 en;;Redo Action;;;
 en;;Select at least two valid vertices!;;;
 en;;Select one vertex please!;;;
+en;;Set mapping of external types to local components;;;
 en;;Undo Action;;;
 en;;Use Shift and click on two vertices at least!;;;
 en;Agenten-Klasse;Agent class;;;

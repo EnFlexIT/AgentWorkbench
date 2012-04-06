@@ -723,7 +723,7 @@ public class GraphEnvironmentController extends EnvironmentController {
      */
     public Vector<NetworkModelFileImporter> getImportAdapter() {
     	if (this.importAdapter.size()==0) {
-    		importAdapter.add(new YedGraphMLFileImporter(getGeneralGraphSettings4MAS(), "graphml", "yEd GraphML"));
+    		importAdapter.add(new YedGraphMLFileImporter(this, "graphml", "yEd GraphML"));
     	}
     	return this.importAdapter;
     }

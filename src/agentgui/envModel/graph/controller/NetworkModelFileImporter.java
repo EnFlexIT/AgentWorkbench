@@ -50,7 +50,7 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 public abstract class NetworkModelFileImporter {
 	
 	/** The current settings for the graph environment */
-	protected GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+	protected GraphEnvironmentController graphController = null;
 	/** The file extension used for filtering in JFileChooser selecting the file to import */
 	protected String fileTypeExtension = null;
     /** The file type description for the JFileChooser for selecting the file to import */
@@ -63,8 +63,8 @@ public abstract class NetworkModelFileImporter {
 	 * Constructor.
 	 * @param generalGraphSettings4MAS the current settings for the graph environment
 	 */
-	public NetworkModelFileImporter(GeneralGraphSettings4MAS generalGraphSettings4MAS, String fileTypeExtension, String fileTypeDescription){
-		this.generalGraphSettings4MAS = generalGraphSettings4MAS;
+	public NetworkModelFileImporter(GraphEnvironmentController graphController, String fileTypeExtension, String fileTypeDescription){
+		this.graphController = graphController;
 	    this.fileTypeExtension = fileTypeExtension;
 	    this.fileTypeDescription = fileTypeDescription;
 	}

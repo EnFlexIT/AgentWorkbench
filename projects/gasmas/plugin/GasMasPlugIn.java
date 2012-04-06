@@ -9,7 +9,6 @@ public class GasMasPlugIn extends PlugIn {
 
 	private GraphEnvironmentController graphController = null;
 	
-	
 	public GasMasPlugIn(Project currProject) {
 		super(currProject);
 		graphController = (GraphEnvironmentController) this.project.getEnvironmentController();
@@ -25,7 +24,7 @@ public class GasMasPlugIn extends PlugIn {
 		super.onPlugIn();
 	
 		// --- Add the customized import methods to the import methods --------
-		OGE_Importer ogeImporter = new OGE_Importer(this.graphController.getNetworkModel().getGeneralGraphSettings4MAS(), "net", "OGE / ZIB-Gas Netzwerk");
+		OGE_Importer ogeImporter = new OGE_Importer(this.graphController, "net", "OGE / ZIB-Gas Netzwerk");
 		this.graphController.getImportAdapter().add(ogeImporter);
 		
 		
