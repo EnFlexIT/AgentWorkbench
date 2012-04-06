@@ -42,6 +42,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -62,6 +63,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
 
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.components.TableCellEditor4Combo;
@@ -197,6 +199,7 @@ public class UserMapping extends JDialog implements ActionListener {
 			Vector<String> columnHeader = new Vector<String>();
 			columnHeader.add(Language.translate("External Type", Language.EN));
 			columnHeader.add(Language.translate("Component Type", Language.EN));
+			columnHeader.add(Language.translate("Count", Language.EN));
 			
 			// --- Define data rows ----------------------- 
 			Vector<Vector<Object>> dataRows = new Vector<Vector<Object>>();
@@ -206,6 +209,7 @@ public class UserMapping extends JDialog implements ActionListener {
 				Vector<Object> newRow = new Vector<Object>();
 				newRow.add(typeName);
 				newRow.add(null);
+				newRow.add(this.externalTypes.get(typeName).getClassOccurrence());
 				dataRows.add(newRow);
 			}
 			
@@ -213,7 +217,7 @@ public class UserMapping extends JDialog implements ActionListener {
 			this.tableModelMappingModel =  new DefaultTableModel(dataRows, columnHeader) {
 				private static final long serialVersionUID = -955036182324685554L;
 				public boolean isCellEditable(int row, int column) {
-					if (column==0) {
+					if (column==0 || column==2) {
 						return false;
 					} else {
 						return true;
@@ -240,6 +244,16 @@ public class UserMapping extends JDialog implements ActionListener {
 			jTableMapping.setAutoCreateRowSorter(true);
 			jTableMapping.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			
+			// --- Define the sorter ------------------------------------------
+			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(this.getTableModel4Mapping());
+			sorter.setComparator(2, new Comparator<Integer>() {
+				@Override
+				public int compare(Integer o1, Integer o2) {
+					return o1.compareTo(o2);
+				}
+			});
+			jTableMapping.setRowSorter(sorter);
+			
 			// --- Define the first sort order --------------------------------
 			List<SortKey> sortKeys = new ArrayList<SortKey>();
 			for (int i = 0; i < jTableMapping.getColumnCount(); i++) {
@@ -249,9 +263,17 @@ public class UserMapping extends JDialog implements ActionListener {
 			
 			// --- Configure the editor and the renderer of the cells ---------
 			TableColumnModel tcm = jTableMapping.getColumnModel();
+
+			TableColumn typeColum = tcm.getColumn(0);
+			typeColum.setPreferredWidth(300);
 			
-			TableColumn domainColumn = tcm.getColumn(1);
-			domainColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxComponents()));
+			TableColumn componentColumn = tcm.getColumn(1);
+			componentColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxComponents()));
+			componentColumn.setPreferredWidth(300);
+
+			TableColumn countColum = tcm.getColumn(2);
+			countColum.setPreferredWidth(80);
+			
 		}
 		return jTableMapping;
 	}
