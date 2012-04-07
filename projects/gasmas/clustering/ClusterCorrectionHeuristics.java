@@ -28,10 +28,9 @@
  */
 package gasmas.clustering;
 
-import gasmas.clustering.randomWalk.Ant;
+import gasmas.clustering.randomWalk.PathSearchBotRunner;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Vector;
 
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
@@ -42,7 +41,7 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
 /**
  * The Class ClusterCorrection.
  */
-public class ClusterCorrection {
+public class ClusterCorrectionHeuristics {
 
 	/** The base network model. */
 	private NetworkModel baseNetworkModel;
@@ -53,7 +52,7 @@ public class ClusterCorrection {
 	 *
 	 * @param networkModel the network model
 	 */
-	public ClusterCorrection(NetworkModel networkModel, ClusterIdentifier clusterIdentifier) {
+	public ClusterCorrectionHeuristics(NetworkModel networkModel, ClusterIdentifier clusterIdentifier) {
 		this.baseNetworkModel = networkModel;
 		this.clusterIdentifier = clusterIdentifier;
 	}
@@ -87,7 +86,7 @@ public class ClusterCorrection {
 			networkModel.mergeClusters(clusterNetworkComponent, cnc);
 			// restart check for new build cluster
 			checkNetwork(clusterNetworkComponent.getClusterNetworkModel(), clusterNetworkComponent.getId());
-		} else if (!checkAmountConnections(clusterNetworkComponent) || !checkClusterCircle(clusterNetworkComponent)) {
+		} else if (!checkAmountConnections(clusterNetworkComponent) || !new PathSearchBotRunner().checkClusterCircle(clusterNetworkComponent)) {
 			if (!mergeTwoCluster(clusterNetworkComponent, networkModel)) {
 				networkModel.replaceClusterByComponents(clusterNetworkComponent);
 				baseNetworkModel.getAlternativeNetworkModel().put(name, networkModel);
@@ -179,36 +178,4 @@ public class ClusterCorrection {
 		}
 		return true;
 	}
-
-	/**
-	 * Check cluster circle.
-	 *
-	 * @param clusterNetworkComponent the cluster network component
-	 * @return true, if successful
-	 */
-	private boolean checkClusterCircle(ClusterNetworkComponent clusterNetworkComponent) {
-
-		HashSet<Ant> ants = new HashSet<Ant>();
-		ants.add(new Ant(clusterNetworkComponent.getClusterNetworkModel(), clusterNetworkComponent.getConnectionNetworkComponents().get(0).getId()));
-		boolean active = true;
-		ArrayList<Ant> nextRunAnts = new ArrayList<Ant>(ants);
-		while (active) {
-			ArrayList<Ant> runAnts = new ArrayList<Ant>(nextRunAnts);
-			nextRunAnts = new ArrayList<Ant>();
-			for (Ant ant : runAnts) {
-				nextRunAnts.addAll(ant.run());
-			}
-			if (nextRunAnts.size() == 0) {
-				active = false;
-			}
-			ants.addAll(nextRunAnts);
-			for (Ant ant : ants) {
-				if (ant.isCircle()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 }
