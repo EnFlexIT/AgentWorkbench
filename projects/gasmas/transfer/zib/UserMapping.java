@@ -83,9 +83,12 @@ public class UserMapping extends JDialog implements ActionListener {
 	private JButton jButtonCancel = null;
 	private JLabel jLabelTitle = null;
 
-	private HashMap<String, TypeDescription> externalTypes = null; 
-	private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
 	private boolean cancelled = false;
+	
+	private static HashMap<String, TypeDescription> externalTypesReminder = null;
+	private HashMap<String, TypeDescription> externalTypes = null; 
+	
+	private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
 	
 	
 	/**
@@ -208,7 +211,13 @@ public class UserMapping extends JDialog implements ActionListener {
 				String typeName = typeIterator.next();
 				Vector<Object> newRow = new Vector<Object>();
 				newRow.add(typeName);
-				newRow.add(null);
+				if (UserMapping.externalTypesReminder!=null) {
+					// --- Take reminder value ------------
+					newRow.add(UserMapping.externalTypesReminder.get(typeName).getMapToComponent());
+				} else {
+					// --- Keep that empty ----------------
+					newRow.add(null);	
+				}
 				newRow.add(this.externalTypes.get(typeName).getClassOccurrence());
 				dataRows.add(newRow);
 			}
@@ -382,6 +391,9 @@ public class UserMapping extends JDialog implements ActionListener {
 				typeDesc.setMapToComponent(compo);
 			}
 			this.cancelled = false;
+			
+			// --- Remind this assignment -----------------
+			UserMapping.externalTypesReminder = this.externalTypes;
 			
 		} else if (ae.getSource() == this.getJButtonCancel()) {
 			this.cancelled = true;

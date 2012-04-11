@@ -77,6 +77,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public static final String SHAPE_ROUND_RECTANGLE = "Round rectangle";
 	public static final String SHAPE_REGULAR_POLYGON = "Regular polygon";
 	public static final String SHAPE_REGULAR_STAR = "Regular star";
+	public static final String SHAPE_IMAGE_SHAPE = "Image shape";
 	
 	/** Default shapes for a central cluster node */
 	public static final String SHAPE_DEFAULT_4_CLUSTER = SHAPE_RECTANGLE;

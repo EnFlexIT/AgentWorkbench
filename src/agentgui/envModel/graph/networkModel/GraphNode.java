@@ -43,13 +43,9 @@ public class GraphNode extends GraphElement {
 
 	private static final long serialVersionUID = 7676853104978228247L;
 
-	/**
-	 * The GraphNode's position in a visualization
-	 */
+	/** The GraphNode's position in a visualization */
 	private Point2D position = null;
-	/**
-	 * The ontology object instance representing this component, serialized as a base64 encoded String for saving via JAXB
-	 */
+	/** The ontology object instance representing this component, serialized as a base64 encoded String for saving via JAXB	 */
 	private String encodedOntologyRepresentation;
 
 	public final static String GRAPH_NODE_PREFIX = "PP";
@@ -68,7 +64,6 @@ public class GraphNode extends GraphElement {
 
 	/**
 	 * Gets the copy of the current instance.
-	 * 
 	 * @return the copy
 	 */
 	@Override
@@ -84,7 +79,6 @@ public class GraphNode extends GraphElement {
 	public void setPosition(Point2D point2d) {
 		this.position = point2d;
 	}
-
 	/**
 	 * @return the position
 	 */
@@ -98,7 +92,6 @@ public class GraphNode extends GraphElement {
 	public String getEncodedOntologyRepresentation() {
 		return encodedOntologyRepresentation;
 	}
-
 	/**
 	 * @param encodedOntologyRepresentation the encodedOntologyRepresentation to set
 	 */

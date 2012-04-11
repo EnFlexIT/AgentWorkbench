@@ -119,6 +119,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     /** The graph visualization component */
     private BasicGraphGui graphGUI = null;
 
+    private NetworkComponent currNetworkComponent = null;
     
     /**
      * This is the default constructor for just displaying the current environment model during a running simulation
@@ -391,7 +392,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    String compId = (String) getJTableComponents().getModel().getValueAt(row, 0);
 		    // Checking for the matching component Id
 		    if (compId.equals(networkComponent.getId())) {
-				// Converting from model cooardinates to view coordinates
+				// Converting from model coordinates to view coordinates
 				int viewRowIndex = getJTableComponents().convertRowIndexToView(row);
 				int viewColumnIndex = getJTableComponents().convertColumnIndexToView(0);
 				boolean toggle = false;
@@ -464,8 +465,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 	    tblSorter.setComparator(0, new Comparator<String>() {
 			@Override
 			public int compare(String o1, String o2) {
-				Integer o1Int = extractNumericalValue(o1);
-				Integer o2Int = extractNumericalValue(o2);
+				Long o1Int = extractNumericalValue(o1);
+				Long o2Int = extractNumericalValue(o2);
 				if (o1Int!=null && o2Int!=null) {
 					return o1Int.compareTo(o2Int);
 				} else if (o1Int==null && o2Int!=null) {
@@ -501,9 +502,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      * @param expression the expression
      * @return the integer value
      */
-    private Integer extractNumericalValue(String expression) {
+    private Long extractNumericalValue(String expression) {
     	String  numericString = "";
-    	Integer numeric = null;
+    	Long 	numeric = null;
     	for (int i = 0; i < expression.length(); i++) {
     		String letter = Character.toString(expression.charAt(i));
     		if (letter.matches("[0-9]")) {
@@ -511,7 +512,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     		}
 		}
     	if (numericString.equals("")==false) {
-    		numeric = Integer.parseInt(numericString);
+    		try {
+    			numeric = Long.parseLong(numericString);	
+    			
+			} catch (Exception ex) {
+				numeric = new Long(-1);
+			}
     	}
     	return numeric;
     }
@@ -546,59 +552,69 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		this.jLabelTable.setText(text);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event. TableModelEvent)
-     */
-    /**
-     * Invoked when a table data model changes. Used for renaming the network component.
+    /* (non-Javadoc)
+     * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
      */
     @Override
-    public void tableChanged(TableModelEvent e) {
+    public void valueChanged(ListSelectionEvent le) {
+		if (getJTableComponents().getSelectedRowCount() > 0) {
+		    // Converting from view coordinates to model coordinates
+		    int selectedIndex = getJTableComponents().convertRowIndexToModel(getJTableComponents().getSelectedRow());
+		    String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
+		    this.currNetworkComponent = this.getGraphController().getNetworkModelAdapter().getNetworkComponent(componentID);
+		    this.getGraphController().getNetworkModelAdapter().selectNetworkComponent(this.currNetworkComponent);	
+		}
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event. TableModelEvent)
+     */
+    @Override
+    public void tableChanged(TableModelEvent tme) {
 
-		int row = e.getFirstRow();
-		int column = e.getColumn(); // In model coordinates
+		int row = tme.getFirstRow();
+		int column = tme.getColumn();
 	
-		DefaultTableModel model = (DefaultTableModel) e.getSource();
-		// If the component name is changed
+		DefaultTableModel model = (DefaultTableModel) tme.getSource();
 		if (column == 0 && row >= 0 && row < model.getRowCount()) {
-		    String newCompID = (String) model.getValueAt(row, column);
-		    // Getting the corresponding comp from the network model
-		    NetworkComponent comp = (NetworkComponent) getGraphController().getNetworkModelAdapter().getNetworkComponents().values().toArray()[row];
-		    // The Old component ID before the change
-		    String oldCompID = comp.getId();
 	
-		    // If new ID is not equal to old ID
+		    String oldCompID = this.currNetworkComponent.getId();
+			String newCompID = (String) model.getValueAt(row, column);
+	
 		    if (!oldCompID.equals(newCompID)) {
 	
+		    	String message = null;
+		    	String title = "Warning";
+		    	
 				if (newCompID == null || newCompID.length() == 0) {
 				    // --- Check if the component id is empty
-				    JOptionPane.showMessageDialog(this, Language.translate("Enter a valid name", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+					message = "Enter a valid name";
+				    JOptionPane.showMessageDialog(this, Language.translate(message, Language.EN), Language.translate(title, Language.EN), JOptionPane.WARNING_MESSAGE);
 				    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
 		
 				} else if (newCompID.contains(" ")) {
 				    // --- Check for spaces
-				    JOptionPane.showMessageDialog(this, Language.translate("Enter the name without spaces", Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+					message = "Enter the name without spaces";
+				    JOptionPane.showMessageDialog(this, Language.translate(message, Language.EN), Language.translate(title, Language.EN), JOptionPane.WARNING_MESSAGE);
 				    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
 		
 				} else if (getGraphController().getNetworkModelAdapter().getNetworkComponent(newCompID) != null) {
 				    // --- Check if a network component name already exists
-				    JOptionPane.showMessageDialog(this, Language.translate("The component name already exists!\n Choose a different one.", Language.EN), Language.translate("Warning", Language.EN),
-					    JOptionPane.WARNING_MESSAGE);
+					message = "The component name already exists!\n Choose a different one.";
+				    JOptionPane.showMessageDialog(this, Language.translate(message, Language.EN), Language.translate(title, Language.EN), JOptionPane.WARNING_MESSAGE);
 				    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
 		
 				} else if (this.getGraphController().getProject().simulationSetups.getCurrSimSetup().isAgentNameExists(newCompID)) {
-				    // --- Check if the agent name already exists in the
-				    // simulation setup
-				    JOptionPane.showMessageDialog(this, Language.translate("An agent with the name already exists in the simulation setup!\n Choose a different one.", Language.EN),
-					    Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+				    // --- Check if the agent name already exists in the simulation setup
+					message = "An agent with the name already exists in the simulation setup!\n Choose a different one.";
+					JOptionPane.showMessageDialog(this, Language.translate(message, Language.EN), Language.translate(title, Language.EN), JOptionPane.WARNING_MESSAGE);
 				    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
 		
 				} else {
 				    // --- All validations done, rename the component and update the network model
-					// renaming NetworkComponents and GraphElements
-					this.getGraphController().getNetworkModelAdapter().renameComponent(oldCompID, newCompID);
+					// --- renaming NetworkComponents and GraphElements
+					this.getGraphController().getNetworkModelAdapter().renameNetworkComponent(oldCompID, newCompID);
 				}
 		    }
 		}
@@ -675,21 +691,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    }
 		    // --------------------------------------------------------------------------
 		    // --------------------------------------------------------------------------
-		}
-    }
-
-    /**
-     * Invoked when a row of the components table is selected. 
-     * @param le List selection event
-     */
-    @Override
-    public void valueChanged(ListSelectionEvent le) {
-		if (getJTableComponents().getSelectedRowCount() > 0) {
-		    // Converting from view coordinates to model coordinates
-		    int selectedIndex = getJTableComponents().convertRowIndexToModel(getJTableComponents().getSelectedRow());
-		    String componentID = (String) jTableComponents.getModel().getValueAt(selectedIndex, 0);
-		    NetworkComponent networkComponent = this.getGraphController().getNetworkModelAdapter().getNetworkComponent(componentID);
-		    this.getGraphController().getNetworkModelAdapter().selectNetworkComponent(networkComponent);	
 		}
     }
 

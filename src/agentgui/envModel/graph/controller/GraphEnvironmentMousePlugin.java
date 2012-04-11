@@ -44,6 +44,7 @@ import javax.swing.SwingUtilities;
 
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
+import agentgui.envModel.graph.networkModel.GraphElementLayout;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
@@ -142,9 +143,17 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 * @param graph the graph
 	 * @param point2d the point2d
 	 */
-	private void addTemporaryNode(Graph<GraphNode, GraphEdge> graph, Point2D point2d) {
+	private void addTemporaryNode(Graph<GraphNode, GraphEdge> graph, GraphNode pickedNode, Point2D point2d) {
+		
 		GraphNode tmpNode = new GraphNode();
 		tmpNode.setPosition(point2d);
+
+		GraphElementLayout layoutPickedNode = pickedNode.getGraphElementLayout();
+		GraphElementLayout layoutTmpNode = tmpNode.getGraphElementLayout();
+		layoutTmpNode.setSize(layoutPickedNode.getSize());
+		layoutTmpNode.setShapeForm(layoutPickedNode.getShapeForm());
+		layoutTmpNode.setImageReference(layoutPickedNode.getImageReference());
+		
 		graph.addVertex(tmpNode);
 		this.nodesTemp.add(tmpNode);
 	}
@@ -360,7 +369,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 					newPos.setLocation(xPos, yPos);
 					
 					this.nodesMoved.add(pickedNode);
-					this.addTemporaryNode(graph, newPos);
+					this.addTemporaryNode(graph, pickedNode, newPos);
 				}
 				pickedNode.setPosition(newPos);
 				

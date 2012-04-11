@@ -132,7 +132,7 @@ public interface NetworkModelInterface {
 	 * @param oldCompID the old comp id
 	 * @param newCompID the new comp id
 	 */
-	public abstract void renameComponent(String oldCompID, String newCompID);
+	public abstract void renameNetworkComponent(String oldCompID, String newCompID);
 
 	/**
 	 * This method removes a NetworkComponent from the GridModel's networkComponents 

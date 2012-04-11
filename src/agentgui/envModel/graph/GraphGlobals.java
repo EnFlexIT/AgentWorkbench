@@ -72,7 +72,7 @@ public final class GraphGlobals {
  	 * @param description the description for the ImageIcon
  	 * @return the image icon
  	 */
- 	public static ImageIcon getImageIcon(String path2Image, String description) {
+ 	public static ImageIcon getImageIcon(String path2Image) {
 	    
  		String path = null;
  		String pathRoot = null;

@@ -40,24 +40,20 @@ import jade.util.leap.Serializable;
  */
 public abstract class GraphElement implements Serializable {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8008053317555768852L;
 
-	/** Used for identification of a specific GraphElement instance. */
 	protected String id = null;
-
+	protected GraphElementLayout graphElementLayout = null;
+	
 	/**
 	 * Gets the id. 
-	 * 
 	 * @return the id
 	 */
 	public String getId() {
 		return id;
 	}
-
 	/**
 	 * Sets the id.
-	 * 
 	 * @param id the id to set
 	 */
 	public void setId(String id) {
@@ -66,8 +62,27 @@ public abstract class GraphElement implements Serializable {
 
 	/**
 	 * Gets the copy.
-	 * 
 	 * @return the copy
 	 */
 	public abstract GraphElement getCopy();
+
+	
+	/**
+	 * Returns the graph element layout.
+	 * @return the graph element layout
+	 */
+	public GraphElementLayout getGraphElementLayout() {
+		if (this.graphElementLayout==null) {
+			this.graphElementLayout = new GraphElementLayout(this);
+		}
+		return this.graphElementLayout;
+	}
+	/**
+	 * Resets the graph element layout.
+	 */
+	public void resetGraphElementLayout() {
+		this.graphElementLayout = null;
+		this.getGraphElementLayout();
+	}
+	
 }

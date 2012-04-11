@@ -499,6 +499,7 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
 en;;Cancel;;;
 en;;Component Type;;;
+en;;Count;;;
 en;;Discrete squares environment;;;
 en;;External Type;;;
 en;;Merge nodes;;;

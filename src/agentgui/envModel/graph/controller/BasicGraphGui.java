@@ -47,7 +47,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -74,13 +73,11 @@ import agentgui.core.gui.imaging.ImagePreview;
 import agentgui.core.gui.imaging.ImageUtils;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
-import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
-import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
+import agentgui.envModel.graph.networkModel.GraphElementLayout;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
-import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
@@ -421,6 +418,78 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 
 	/**
+	 * Controls the shape, size, and aspect ratio for each vertex.
+	 * 
+	 * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+	 */
+	private final class VertexShapeSizeAspect<V, E> extends AbstractVertexShapeTransformer<GraphNode> implements Transformer<GraphNode, Shape> {
+
+		private Map<String, Shape> shapeMap = new HashMap<String, Shape>();
+
+		public VertexShapeSizeAspect() {
+			this.setSizeTransformer(new Transformer<GraphNode, Integer>() {
+				@Override
+				public Integer transform(GraphNode node) {
+					return (int) node.getGraphElementLayout().getSize();
+				}
+			});
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.apache.commons.collections15.Transformer#transform(java.lang.Object)
+		 */
+		@Override
+		public Shape transform(GraphNode node) {
+
+			Shape shape = factory.getEllipse(node); // DEFAULT
+			
+			String shapeForm = node.getGraphElementLayout().getShapeForm();
+			if (shapeForm==null) {
+				// --- nothing to do here ----
+			} else  if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_RECTANGLE)) {
+				shape = factory.getRectangle(node);
+				
+			} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_ROUND_RECTANGLE)) {
+				shape = factory.getRoundRectangle(node);
+				
+			} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_REGULAR_POLYGON)) {
+				shape = factory.getRegularPolygon(node, 6);
+				
+			} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_REGULAR_STAR)) {
+				shape = factory.getRegularStar(node, 6);
+				
+			} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_IMAGE_SHAPE)) {
+				
+				String imageRef = node.getGraphElementLayout().getImageReference();
+				shape = shapeMap.get(imageRef);
+				if (shape == null) {
+					ImageIcon imageIcon = GraphGlobals.getImageIcon(imageRef);
+					if (imageIcon != null) {
+						Image image = imageIcon.getImage();
+						shape = FourPassImageShaper.getShape(image, 30);
+						if (shape.getBounds().getWidth() > 0 && shape.getBounds().getHeight() > 0) {
+							// don't cache a zero-sized shape, wait for the image to be ready
+							int width = image.getWidth(null);
+							int height = image.getHeight(null);
+							AffineTransform transform = AffineTransform.getTranslateInstance(-width / 2, -height / 2);
+							shape = transform.createTransformedShape(shape);
+							this.shapeMap.put(imageRef, shape);
+						}
+					} else {
+						System.err.println("Could not find node image '" + imageRef + "'");
+					}
+				}
+				
+			}
+			return shape;
+		}
+
+	}
+	
+	/**
 	 * Gets the new visualization viewer for a given graph.
 	 *
 	 * @param graph the graph
@@ -441,10 +510,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		double moveY = 0;
 
 		Rectangle2D rect = this.getGraphSpreadDimension(graph);
-		if (rect.getX() != graphMargin)
-			moveX = (rect.getX() * (-1)) + graphMargin;
-		if (rect.getY() != graphMargin)
-			moveY = (rect.getY() * (-1)) + graphMargin;
+		if (rect.getX() != graphMargin) moveX = (rect.getX() * (-1)) + graphMargin;
+		if (rect.getY() != graphMargin) moveY = (rect.getY() * (-1)) + graphMargin;
 		graph = this.correctGraphCoordinates(graph, moveX, moveY);
 
 		// ----------------------------------------------------------------
@@ -480,7 +547,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		// --- Configure the vertex shape and size ------------------------
 		vViewer.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<GraphNode, GraphEdge>());
-
+		
 		// --- Configure vertex icons, if configured ----------------------
 		vViewer.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>() {
 
@@ -491,48 +558,39 @@ public class BasicGraphGui extends JPanel implements Observer {
 			public Icon transform(GraphNode node) {
 
 				Icon icon = null;
+				GraphElementLayout nodeLayout = node.getGraphElementLayout();
 				boolean picked = vViewer.getPickedVertexState().isPicked(node);
+				String nodeImagePath = nodeLayout.getImageReference();
 
-				NetworkModelAdapter networkModel = controller.getNetworkModelAdapter();
-				HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
-				NetworkComponent distributionNode = networkModel.containsDistributionNode(componentHashSet);
-				if (distributionNode != null) {
-					// --- Found a distribution node ----------------
-					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(distributionNode.getType());
-					DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
-					String nodeImagePath = cts.getEdgeImage();
-					String checkColor = ds.getVertexColorPicked();
+				if (nodeImagePath != null) {
+					if (nodeImagePath.equals("MissingIcon")==false) {
+						// --- 1. Search in the local Hash ------
+						LayeredIcon layeredIcon = null;
+						if (picked == true) {
+							layeredIcon = this.iconHash.get(nodeImagePath + this.pickedPostfix);
+						} else {
+							layeredIcon = this.iconHash.get(nodeImagePath);
+						}
+						// --- 2. If necessary, load the image --
+						if (layeredIcon == null) {
+							ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath);
+							if (imageIcon != null) {
+								// --- 3. Remind this images ----
+								LayeredIcon layeredIconUnPicked = new LayeredIcon(imageIcon.getImage());
+								this.iconHash.put(nodeImagePath, layeredIconUnPicked);
 
-					if (nodeImagePath != null) {
-						if (nodeImagePath.equals("MissingIcon") == false) {
-							// --- 1. Search in the local Hash ------
-							LayeredIcon layeredIcon = null;
-							if (picked == true) {
-								layeredIcon = iconHash.get(nodeImagePath + this.pickedPostfix);
-							} else {
-								layeredIcon = iconHash.get(nodeImagePath);
-							}
-							// --- 2. If necessary, load the image --
-							if (layeredIcon == null) {
-								ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath, distributionNode.getType());
-								if (imageIcon != null) {
-									// --- 3. Remind this images ----
-									LayeredIcon layeredIconUnPicked = new LayeredIcon(imageIcon.getImage());
-									this.iconHash.put(nodeImagePath, layeredIconUnPicked);
-
-									LayeredIcon layeredIconPicked = new LayeredIcon(imageIcon.getImage());
-									layeredIconPicked.add(new Checkmark(new Color(Integer.parseInt(checkColor))));
-									this.iconHash.put(nodeImagePath + this.pickedPostfix, layeredIconPicked);
-									// --- 4. Return the right one --
-									if (picked == true) {
-										layeredIcon = layeredIconPicked;
-									} else {
-										layeredIcon = layeredIconUnPicked;
-									}
+								LayeredIcon layeredIconPicked = new LayeredIcon(imageIcon.getImage());
+								layeredIconPicked.add(new Checkmark(nodeLayout.getColorPicked()));
+								this.iconHash.put(nodeImagePath + this.pickedPostfix, layeredIconPicked);
+								// --- 4. Return the right one --
+								if (picked == true) {
+									layeredIcon = layeredIconPicked;
+								} else {
+									layeredIcon = layeredIconUnPicked;
 								}
 							}
-							icon = layeredIcon;
 						}
+						icon = layeredIcon;
 					}
 				}
 				return icon;
@@ -544,120 +602,32 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
 			@Override
 			public Paint transform(GraphNode node) {
-
-				String defaultColorString = controller.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME).getVertexColor();
-				Color defaultColor = new Color(Integer.parseInt(defaultColorString));
-				boolean picked = vViewer.getPickedVertexState().isPicked(node);
-
-				// --- Get color from component type settings -----
-				String colorString = null;
-				NetworkModelAdapter networkModel = controller.getNetworkModelAdapter();
-				HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
-				NetworkComponent networkComponent = networkModel.containsDistributionNode(componentHashSet);
-				try {
-					// --- Get the vertex size from the component type settings -
-					if (networkComponent != null) {
-						ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
-						if (cts == null) {
-							return defaultColor;
-						}
-						colorString = cts.getColor();
-						if (picked == true) {
-							DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
-							colorString = ds.getVertexColorPicked();
-						}
-
-					} else {
-						if (componentHashSet.iterator().hasNext()) {
-							NetworkComponent component = componentHashSet.iterator().next();
-							ComponentTypeSettings cts = controller.getComponentTypeSettings().get(component.getType());
-							if (cts == null) {
-								return defaultColor;
-							}
-							DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
-							if (picked == true) {
-								colorString = ds.getVertexColorPicked();
-							} else {
-								colorString = ds.getVertexColor();
-							}
-						}
-					}
-					if (colorString != null) {
-						return new Color(Integer.parseInt(colorString));
-					}
-					return defaultColor;
-
-				} catch (NullPointerException ex) {
-					ex.printStackTrace();
-					return defaultColor;
-				}
+				if (vViewer.getPickedVertexState().isPicked(node)) {
+					return node.getGraphElementLayout().getColorPicked();
+				} 
+				return node.getGraphElementLayout().getColor();
 			}
-		}); // end transformer
+		});
 
 		// --- Configure to show vertex labels ----------------------------
 		vViewer.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode node) {
-
-				// GeneralGraphSettings4MAS graphSettings = controller.getNetworkModelAdapter().getGeneralGraphSettings4MAS();
-
-				NetworkModelAdapter nModel = controller.getNetworkModelAdapter();
-				HashSet<NetworkComponent> components = nModel.getNetworkComponents(node);
-				NetworkComponent distributionNode = nModel.containsDistributionNode(components);
-				if (distributionNode != null) {
-					// --- This is a DistributionNode -----
-					String compType = distributionNode.getType();
-					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(compType);
-					if (cts == null) {
-						return node.getId();
-					}
-					if (cts.isShowLabel()) {
-						return node.getId();
-					}
-					return null;
-
-				}
-				// --- Just a normal node -------------
-				if (components.iterator().hasNext()) {
-					String compType = components.iterator().next().getType();
-					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(compType);
-					if (cts == null) {
-						return node.getId();
-					}
-					DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
-					if (ds.isShowLabel()) {
-						return node.getId();
-					}
-					return null;
+				if (node.getGraphElementLayout().isShowLabel()==true) {
+					return node.getGraphElementLayout().getLabelText();
 				}
 				return null;
 			}
-		} // end transformer
-				);
+		});
 
 		// --- Configure edge colors --------------------------------------
 		vViewer.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<GraphEdge, Paint>() {
 			@Override
 			public Paint transform(GraphEdge edge) {
 				if (vViewer.getPickedEdgeState().isPicked(edge)) {
-					// Highlight color when picked
-					return GeneralGraphSettings4MAS.DEFAULT_EDGE_PICKED_COLOR;
+					return edge.getGraphElementLayout().getColorPicked();
 				}
-				try {
-					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
-					if (cts == null) {
-						return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;
-					}
-					String colorString = cts.getColor();
-					if (colorString != null) {
-						Color color = new Color(Integer.parseInt(colorString));
-						return color;
-					}
-					return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;
-				} catch (NullPointerException ex) {
-					ex.printStackTrace();
-					return GeneralGraphSettings4MAS.DEFAULT_EDGE_COLOR;
-				}
+				return edge.getGraphElementLayout().getColor();
 			}
 		});
 		// --- Configure Edge Image Labels --------------------------------
@@ -666,34 +636,22 @@ public class BasicGraphGui extends JPanel implements Observer {
 			public String transform(GraphEdge edge) {
 				// Get the path of the Image from the component type settings
 				String textDisplay = "";
-				try {
-					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
-					if (cts == null) {
-						return textDisplay;
-					}
-					String edgeImage = cts.getEdgeImage();
-					boolean showLabel = cts.isShowLabel();
-
-					if (showLabel) {
-						textDisplay = edge.getId();
-					}
-
-					if (edgeImage != null) {
-						URL url = getClass().getResource(edgeImage);
-						if (url != null) {
-							if (showLabel) {
-								textDisplay = "<html><center>" + textDisplay + "<br><img src='" + url + "'></center></html>";
-							} else {
-								textDisplay = "<html><center><img src='" + url + "'></center></html>";
-							}
+				String imageRef = edge.getGraphElementLayout().getImageReference();
+				boolean showLabel = edge.getGraphElementLayout().isShowLabel();
+				if (showLabel) {
+					textDisplay = edge.getId();
+				}
+				if (imageRef!= null) {
+					URL url = getClass().getResource(imageRef);
+					if (url != null) {
+						if (showLabel) {
+							textDisplay = "<html><center>" + textDisplay + "<br><img src='" + url + "'></center></html>";
+						} else {
+							textDisplay = "<html><center><img src='" + url + "'></center></html>";
 						}
 					}
-					return textDisplay;
-
-				} catch (NullPointerException ex) {
-					ex.printStackTrace();
-					return edge.getId();
 				}
+				return textDisplay;
 			}
 		});
 		// --- Configure edge label position ------------------------------
@@ -707,23 +665,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
 			@Override
 			public Stroke transform(GraphEdge edge) {
-				float edgeWidth = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
-				try {
-					ComponentTypeSettings cts = controller.getComponentTypeSettings().get(edge.getComponentType());
-					if (cts == null) {
-						return new BasicStroke(edgeWidth);
-					}
-					edgeWidth = cts.getEdgeWidth();
-
-					if (edgeWidth == 0) {
-						edgeWidth = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
-					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
-					edgeWidth = GeneralGraphSettings4MAS.DEFAULT_EDGE_WIDTH;
-				}
-				return new BasicStroke(edgeWidth);
+				return new BasicStroke(edge.getGraphElementLayout().getSize());
 			}
 		});
 		return vViewer;
@@ -1032,173 +974,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 	}
 
-	/**
-	 * Controls the shape, size, and aspect ratio for each vertex.
-	 * 
-	 * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
-	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
-	private final class VertexShapeSizeAspect<V, E> extends AbstractVertexShapeTransformer<GraphNode> implements Transformer<GraphNode, Shape> {
-
-		private Map<String, Shape> shapeMap = new HashMap<String, Shape>();
-
-		public VertexShapeSizeAspect() {
-
-			this.setSizeTransformer(new Transformer<GraphNode, Integer>() {
-
-				@Override
-				public Integer transform(GraphNode node) {
-
-					Integer size = controller.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME).getVertexSize();
-					Integer sizeFromCTS = null;
-
-					NetworkModelAdapter networkModel = controller.getNetworkModelAdapter();
-					HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
-					NetworkComponent networkComponent = networkModel.containsDistributionNode(componentHashSet);
-					try {
-						if (networkComponent != null) {
-							// --- DistributionNode: get size from ComponentTypeSettings - Start --
-							ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
-							if (cts == null) {
-								return size;
-							}
-							sizeFromCTS = (int) cts.getEdgeWidth();
-							// --- DistributionNode: get size from ComponentTypeSettings - End ----
-						} else {
-							// --- Normal node or ClusterNode ---------------------------- Start --
-							if (componentHashSet.iterator().hasNext()) {
-
-								// --- Is this a inner node of a ClusterComponent ? ----
-								ArrayList<ClusterNetworkComponent> clusterHash = networkModel.getClusterComponents(componentHashSet);
-								if (componentHashSet.size() == 1 && clusterHash.size() == 1 && networkModel.isFreeGraphNode(node)==false) {
-									// --- This is a cluster component ------------------
-									ClusterNetworkComponent cnc = networkModel.getClusterComponents(componentHashSet).get(0);
-									DomainSettings ds = null;
-									String domain = cnc.getDomain();
-									if (domain != null) {
-										if (domain.equals("") == false) {
-											ds = controller.getDomainSettings().get(domain);
-										}
-									}
-									if (ds == null) {
-										ds = controller.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
-									}
-									sizeFromCTS = ds.getVertexSize();
-									sizeFromCTS = sizeFromCTS * 3;
-
-								} else {
-									// --- This is a normal component -------------------
-									NetworkComponent component = componentHashSet.iterator().next();
-									ComponentTypeSettings cts = controller.getComponentTypeSettings().get(component.getType());
-									if (cts == null) {
-										return size;
-									}
-									DomainSettings ds = controller.getDomainSettings().get(cts.getDomain());
-									sizeFromCTS = ds.getVertexSize();
-
-								}
-							}
-							// --- Normal node or ClusterNode ---------------------------- End ----
-						}
-						if (sizeFromCTS != null) {
-							size = sizeFromCTS;
-						}
-
-					} catch (NullPointerException ex) {
-						System.err.println("Invalid vertex size");
-						ex.printStackTrace();
-					}
-					return size;
-				}
-			});
-
-		}// end constructor
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.apache.commons.collections15.Transformer#transform(java.lang.Object)
-		 */
-		@Override
-		public Shape transform(GraphNode node) {
-
-			Shape shape = factory.getEllipse(node); // DEFAULT
-
-			NetworkModelAdapter networkModel = controller.getNetworkModelAdapter();
-			HashSet<NetworkComponent> componentHashSet = networkModel.getNetworkComponents(node);
-			NetworkComponent networkComponent = networkModel.containsDistributionNode(componentHashSet);
-			if (networkComponent != null) {
-				// ------------------------------------------------------------
-				// --- This is a DistributionNode -----------------------------
-				// ------------------------------------------------------------
-				// --- Have a look, if the node is an image ---- START --------
-				// ------------------------------------------------------------
-				ComponentTypeSettings cts = controller.getComponentTypeSettings().get(networkComponent.getType());
-				String nodeImage = cts.getEdgeImage();
-				if (nodeImage != null) {
-					if (nodeImage.equals("MissingIcon") == false) {
-						// --- shape already there ? ------
-						shape = shapeMap.get(nodeImage);
-						if (shape == null) {
-							ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImage, networkComponent.getType());
-							if (imageIcon != null) {
-								Image image = imageIcon.getImage();
-								shape = FourPassImageShaper.getShape(image, 30);
-								if (shape.getBounds().getWidth() > 0 && shape.getBounds().getHeight() > 0) {
-									// don't cache a zero-sized shape, wait for the image to be ready
-									int width = image.getWidth(null);
-									int height = image.getHeight(null);
-									AffineTransform transform = AffineTransform.getTranslateInstance(-width / 2, -height / 2);
-									shape = transform.createTransformedShape(shape);
-									this.shapeMap.put(nodeImage, shape);
-								}
-							} else {
-								System.err.println("Could not find node image for '" + networkComponent.getType() + "'");
-							}
-						}
-					}
-				}
-				// ------------------------------------------------------------
-				// --- Have a look, if the node is an image ---- END ----------
-				// ------------------------------------------------------------
-
-			} else if (componentHashSet.size() == 1 && networkModel.isFreeGraphNode(node)==false) {
-				// --- This is a ClusterNetworkComponent --
-				networkComponent = componentHashSet.iterator().next();
-				if (networkComponent instanceof ClusterNetworkComponent) {
-
-					DomainSettings ds = null;
-					ClusterNetworkComponent cnc = (ClusterNetworkComponent) networkComponent;
-					
-					String domain = cnc.getDomain();
-					if (domain != null) {
-						if (domain.equals("") == false) {
-							ds = controller.getDomainSettings().get(domain);
-						}
-					}
-					if (ds == null) {
-						ds = controller.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
-					}
-					String shapeForm = ds.getClusterShape();
-					if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_RECTANGLE)) {
-						shape = factory.getRectangle(node);
-					} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_ROUND_RECTANGLE)) {
-						shape = factory.getRoundRectangle(node);
-					} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_REGULAR_POLYGON)) {
-						shape = factory.getRegularPolygon(node, 6);
-					} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_REGULAR_STAR)) {
-						shape = factory.getRegularStar(node, 6);
-					} else {
-						shape = factory.getEllipse(node);
-					}
-
-				}
-			}
-			return shape;
-		}
-
-	}
-
 	@Override
 	public void update(Observable observable, Object object) {
 

@@ -1246,7 +1246,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			if (path.equals("MissingIcon")) {
 				return new MissingIcon(description);
 			} else {
-			    ImageIcon imageIcon = GraphGlobals.getImageIcon(path, description);
+			    ImageIcon imageIcon = GraphGlobals.getImageIcon(path);
 				if (imageIcon!=null) {
 					return imageIcon;
 				} else {
@@ -1340,7 +1340,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 */
 	private JSpinner getJSpinnerGridWidth() {
 		if (jSpnnerGridWidth == null) {
-			jSpnnerGridWidth = new JSpinner(new SpinnerNumberModel(5.0, 5.0, 100.0, 0.1));
+			jSpnnerGridWidth = new JSpinner(new SpinnerNumberModel(5.0, 0.1, 100.0, 0.1));
 			jSpnnerGridWidth.setPreferredSize(new Dimension(60, 26));
 		}
 		return jSpnnerGridWidth;

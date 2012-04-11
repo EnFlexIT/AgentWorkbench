@@ -25,14 +25,25 @@
             </value>
         </entry>
         <entry>
+            <key>Pipe-Short</key>
+            <value>
+                <color>-16777216</color>
+                <domain>Gas network</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
             <key>Entry</key>
             <value>
                 <agentClass>gasmas.agents.components.EntryAgent</agentClass>
                 <color>-16724992</color>
                 <domain>Gas network</domain>
-                <edgeWidth>3.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
-                <showLabel>true</showLabel>
+                <edgeWidth>8.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
             </value>
         </entry>
         <entry>
@@ -41,9 +52,9 @@
                 <agentClass>gasmas.agents.components.ExitAgent</agentClass>
                 <color>-65536</color>
                 <domain>Gas network</domain>
-                <edgeWidth>3.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
-                <showLabel>true</showLabel>
+                <edgeWidth>8.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
             </value>
         </entry>
         <entry>
@@ -148,6 +159,17 @@
             </value>
         </entry>
         <entry>
+            <key>Resistor</key>
+            <value>
+                <color>-6750208</color>
+                <domain>Gas network</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>6.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
+        <entry>
             <key>Power2Gas</key>
             <value>
                 <color>-16724788</color>
@@ -202,7 +224,7 @@
                 <showLabel>false</showLabel>
                 <vertexColor>-26368</vertexColor>
                 <vertexColorPicked>-256</vertexColorPicked>
-                <vertexSize>8</vertexSize>
+                <vertexSize>5</vertexSize>
             </value>
         </entry>
         <entry>
@@ -223,10 +245,10 @@
                 <showLabel>false</showLabel>
                 <vertexColor>-10978818</vertexColor>
                 <vertexColorPicked>-16711681</vertexColorPicked>
-                <vertexSize>8</vertexSize>
+                <vertexSize>5</vertexSize>
             </value>
         </entry>
     </domainSettings>
     <snap2Grid>true</snap2Grid>
-    <snapRaster>5.0</snapRaster>
+    <snapRaster>0.5</snapRaster>
 </generalGraphSettings4MAS>

@@ -98,6 +98,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	 */
 	public void setGeneralGraphSettings4MAS(GeneralGraphSettings4MAS generalGraphSettings4MAS) {
 		this.generalGraphSettings4MAS = generalGraphSettings4MAS;
+		this.resetGraphElementLayout();
 	}
 
 	/**
@@ -322,19 +323,32 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Rename graph element.
-	 * 
-	 * @param graphElementID the graph element id
-	 * @param oldComponentID the old component id
-	 * @param newComponentID the new component id
-	 * @return the string
+	 * Rename a graph element (GraphNode or GraphEdge). In case that a GraphNode
+	 * is renamed, the changes will also apply to all connected NetworkComponent's. 
+	 *
+	 * @param oldGraphNodeID the old GraphNode ID
+	 * @param newGraphNodeID the new GraphNode ID
 	 */
-	private String renameGraphElement(String graphElementID, String oldComponentID, String newComponentID) {
-		GraphElement graphElement = graphElements.get(graphElementID);
-		graphElements.remove(graphElementID);
-		graphElement.setId(graphElement.getId().replaceFirst(oldComponentID, newComponentID));
-		graphElements.put(graphElement.getId(), graphElement);
-		return graphElement.getId();
+	public void renameGraphNode(String oldGraphNodeID, String newGraphNodeID) {
+		
+		// --- Rename the GraphNode ----------------------------------------
+		GraphElement graphElement = graphElements.get(oldGraphNodeID);
+		if (graphElement instanceof GraphNode) {
+			
+			// --- Look for NetworkComponents, that are knowing this graphElement -
+			HashSet<NetworkComponent> components = this.getNetworkComponents((GraphNode) graphElement);
+			for (NetworkComponent component : components) {
+				// --- Replace the old ID with the new one ---------- 
+				HashSet<String> compIDs = component.getGraphElementIDs();
+				compIDs.remove(oldGraphNodeID);
+				compIDs.add(newGraphNodeID);
+			}
+			
+			graphElements.remove(oldGraphNodeID);
+			graphElement.setId(newGraphNodeID);
+			graphElements.put(newGraphNodeID, graphElement);
+		}
+		
 	}
 
 	/**
@@ -343,14 +357,26 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @param oldCompID the old comp id
 	 * @param newCompID the new comp id
 	 */
-	public void renameComponent(String oldCompID, String newCompID) {
+	public void renameNetworkComponent(String oldCompID, String newCompID) {
+		
 		NetworkComponent networkComponent = networkComponents.get(oldCompID);
-		// Temporary set
 		HashSet<String> newGraphElementIDs = new HashSet<String>(networkComponent.getGraphElementIDs());
-		// Renaming the corresponding edges of the network component
-		for (String graphElementID : networkComponent.getGraphElementIDs()) {
-			newGraphElementIDs.remove(graphElementID);
-			newGraphElementIDs.add(renameGraphElement(graphElementID, oldCompID, newCompID));
+		// --- Rename the corresponding edges of the network component --------
+		for (String oldGraphElementID : networkComponent.getGraphElementIDs()) {
+			String newGraphElementID = oldGraphElementID.replaceFirst(oldCompID, newCompID);
+			if (newGraphElementID.equals(oldGraphElementID)==false) {
+				// --- Delete old reference -------------------------
+				newGraphElementIDs.remove(oldGraphElementID);
+				// --- rename the edges ----------------------------- 
+				GraphElement graphElement = graphElements.get(oldGraphElementID);
+				if (graphElement instanceof GraphEdge) {
+					graphElements.remove(oldGraphElementID);
+					graphElement.setId(newGraphElementID);
+					graphElements.put(newGraphElementID, graphElement);	
+				}
+				// --- Add new reference ----------------------------
+				newGraphElementIDs.add(newGraphElementID);	
+			}
 		}
 
 		// Updating the network component
@@ -661,7 +687,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	private String nextNodeID(boolean skipNullEntries) {
 
 		// Finds the current maximum node ID and returns the next one to it.
-		int max = -1;
+		long max = -1;
 		boolean errEntry = false;
 
 		Collection<GraphNode> nodeCollection = getGraph().getVertices();
@@ -678,8 +704,8 @@ public class NetworkModel implements Cloneable, Serializable {
 			}
 			// --- normal operation -------------
 			if (errEntry == false) {
-				int num = Integer.parseInt(id.replace(GraphNode.GRAPH_NODE_PREFIX, ""));
-				if (num > max) {
+				Long num = extractNumericalValue(id);
+				if (num!=null && num > max) {
 					max = num;
 				}
 			}
@@ -786,14 +812,14 @@ public class NetworkModel implements Cloneable, Serializable {
 			public int compare(GraphNode node1, GraphNode node2) {
 				String o1 = node1.getId();
 				String o2 = node2.getId();
-				Integer o1Int = extractNumericalValue(o1);
-				Integer o2Int = extractNumericalValue(o2);
+				Long o1Lng = extractNumericalValue(o1);
+				Long o2Lng = extractNumericalValue(o2);
 
-				if (o1Int != null && o2Int != null) {
-					return o1Int.compareTo(o2Int);
-				} else if (o1Int == null && o2Int != null) {
+				if (o1Lng != null && o2Lng != null) {
+					return o1Lng.compareTo(o2Lng);
+				} else if (o1Lng == null && o2Lng != null) {
 					return -1;
-				} else if (o1Int != null && o2Int == null) {
+				} else if (o1Lng != null && o2Lng == null) {
 					return 1;
 				} else {
 					return o1.compareTo(o2);
@@ -812,13 +838,13 @@ public class NetworkModel implements Cloneable, Serializable {
 		Comparator<String> comp = new Comparator<String>() {
 			@Override
 			public int compare(String o1, String o2) {
-				Integer o1Int = extractNumericalValue(o1);
-				Integer o2Int = extractNumericalValue(o2);
-				if (o1Int != null && o2Int != null) {
-					return o1Int.compareTo(o2Int);
-				} else if (o1Int == null && o2Int != null) {
+				Long o1Lng = extractNumericalValue(o1);
+				Long o2Lng = extractNumericalValue(o2);
+				if (o1Lng != null && o2Lng != null) {
+					return o1Lng.compareTo(o2Lng);
+				} else if (o1Lng == null && o2Lng != null) {
 					return -1;
-				} else if (o1Int != null && o2Int == null) {
+				} else if (o1Lng != null && o2Lng == null) {
 					return 1;
 				} else {
 					return o1.compareTo(o2);
@@ -833,9 +859,9 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @param expression the expression
 	 * @return the integer value
 	 */
-	private Integer extractNumericalValue(String expression) {
+	private Long extractNumericalValue(String expression) {
 		String numericString = "";
-		Integer numeric = null;
+		Long numeric = null;
 		for (int i = 0; i < expression.length(); i++) {
 			String letter = Character.toString(expression.charAt(i));
 			if (letter.matches("[0-9]")) {
@@ -843,7 +869,12 @@ public class NetworkModel implements Cloneable, Serializable {
 			}
 		}
 		if (numericString.equals("") == false) {
-			numeric = Integer.parseInt(numericString);
+			try {
+				numeric = Long.parseLong(numericString);	
+			} catch (Exception e) {
+				numeric = new Long(-1);
+			}
+			
 		}
 		return numeric;
 	}
@@ -902,13 +933,29 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * Merges the current NetworkModel with an incoming NetworkModel as supplement.
 	 *
 	 * @param supplementNetworkModel the supplement network model
-	 * @param nodes2Merge the merge description
-	 * @return the residual GraphNode, which connects the two NetworkModel's
+	 * @param nodes2Merge the nodes2 merge
+	 * @return the graph node pairs
 	 */
 	public GraphNodePairs mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs nodes2Merge) {
+		return this.mergeNetworkModel(supplementNetworkModel, nodes2Merge, true);	
+	}
+	
+	/**
+	 * Merges the current NetworkModel with an incoming NetworkModel as supplement.
+	 *
+	 * @param supplementNetworkModel the supplement network model
+	 * @param nodes2Merge the merge description
+	 * @param adjustNameDefinitions the adjust name definitions
+	 * @return the residual GraphNode, which connects the two NetworkModel's
+	 */
+	public GraphNodePairs mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs nodes2Merge, boolean adjustNameDefinitions) {
 
+		NetworkModel srcNM = supplementNetworkModel;
+		
 		// --- 1. Adjust the names of the supplement NetworkModel, in order to avoid name clashes -
-		NetworkModel srcNM = adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel);
+		if (adjustNameDefinitions==true) {
+			srcNM = adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel);	
+		}
 
 		// --- 2. Add the new graph to the current graph ------------------------------------------
 		Graph<GraphNode, GraphEdge> suppGraph = supplementNetworkModel.getGraph();
@@ -1348,7 +1395,18 @@ public class NetworkModel implements Cloneable, Serializable {
 
 		return false;
 	}
-
+	
+	/**
+	 * Resets the GraphElementLayout for every GraphNode or GraphEdge.
+	 */
+	public void resetGraphElementLayout() {
+		for (GraphElement graphElement : this.graphElements.values()) {
+			if (graphElement.graphElementLayout!=null) {
+				graphElement.resetGraphElementLayout();	
+			}
+		}
+	}
+	
 	/**
 	 * Replace NetworkComponents by one ClusterComponent.
 	 * @param networkComponents A List of NetworkComponents

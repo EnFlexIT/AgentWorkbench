@@ -315,8 +315,8 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#renameComponent(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void renameComponent(String oldCompID, String newCompID) {
-		this.graphController.getNetworkModel().renameComponent(oldCompID, newCompID);
+	public void renameNetworkComponent(String oldCompID, String newCompID) {
+		this.graphController.getNetworkModel().renameNetworkComponent(oldCompID, newCompID);
 		this.graphController.renameAgent(oldCompID, newCompID);
 	}
 

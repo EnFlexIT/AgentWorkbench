@@ -128,7 +128,10 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     private JPanel jPanelBottom = null;
     private JPanel jPanelViewer = null;
     private JScrollPane jScrollPane = null;
-    private JList componentTypesList = null;
+    
+    private JList jListComponentTypes = null;
+    private Vector<ComponentTypeListElement> componentTypeList = null;  
+    
     private JLabel jLabelInstructionMerge = null;
     private JLabel jLabelInstructionSelect = null;
     
@@ -286,7 +289,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 		if (jScrollPane == null) {
 		    jScrollPane = new JScrollPane();
 		    jScrollPane.setPreferredSize(new Dimension(20, 200));
-		    jScrollPane.setViewportView(getComponentTypesList());
+		    jScrollPane.setViewportView(getJListComponentTypes());
 		}
 		return jScrollPane;
     }
@@ -363,16 +366,21 @@ public class AddComponentDialog extends JDialog implements ActionListener {
      * This method initializes componentTypesList
      * @return javax.swing.JList
      */
-    private JList getComponentTypesList() {
-		if (componentTypesList == null) {
-		    componentTypesList = new JList(this.getListData());
-		    componentTypesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		    componentTypesList.addListSelectionListener(new ListSelectionListener() {
+    private JList getJListComponentTypes() {
+		if (jListComponentTypes == null) {
+		    jListComponentTypes = new JList(this.getComponentTypeList());
+		    jListComponentTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		    jListComponentTypes.addListSelectionListener(new ListSelectionListener() {
 				public void valueChanged(javax.swing.event.ListSelectionEvent e) {
 				    if (!e.getValueIsAdjusting()) {
 						// --- Set the current list element ---------
-				    	currCtsListElement = (ComponentTypeListElement) componentTypesList.getSelectedValue();
-						// --- Set the current domain ---------------
+				    	currCtsListElement = (ComponentTypeListElement) jListComponentTypes.getSelectedValue();
+						if (currCtsListElement==null) {
+							currNetworkModel = null;
+					    	currGraphElementPrototype = null;
+					    	return;
+						}
+				    	// --- Set the current domain ---------------
 				    	String domain = currCtsListElement.getDomain();
 				    	if (domain==null) {
 				    		currDomainSetings = graphController.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
@@ -392,7 +400,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 				}
 		    });
 		}
-		return componentTypesList;
+		return jListComponentTypes;
     }
 
     /**
@@ -443,7 +451,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 							if (nodeImage.equals("MissingIcon")==false) {
 								// --- Icon reference found --- Start ---
 								LayeredIcon layeredIcon = null;
-								ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImage, currCtsListElement.getComponentName());
+								ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImage);
 								if (imageIcon!=null) {
 									layeredIcon = new LayeredIcon(imageIcon.getImage());
 									if (layeredIcon!=null && picked==true){
@@ -856,31 +864,33 @@ public class AddComponentDialog extends JDialog implements ActionListener {
      * @see ComponentTypeListElement
      * @return Object[] - array of component types
      */
-    private Vector<ComponentTypeListElement> getListData() {
+    private Vector<ComponentTypeListElement> getComponentTypeList() {
 		
-    	// --- Create the Vector ----------------
-    	Vector<ComponentTypeListElement> list = new Vector<ComponentTypeListElement>();
-    	HashMap<String, ComponentTypeSettings> ctsHash = this.graphController.getComponentTypeSettings();
-		if (ctsHash != null) {
-			Iterator<String> ctsIt = ctsHash.keySet().iterator();
-		    while (ctsIt.hasNext()) {
-		    	String componentName = ctsIt.next(); 
-		    	ComponentTypeSettings cts = ctsHash.get(componentName); 
-				list.add(new ComponentTypeListElement(componentName, cts));
-		    }
-		} 
-		// --- Sort the Vector ------------------
-		Collections.sort(list, new Comparator<ComponentTypeListElement>() {
-			@Override
-			public int compare(ComponentTypeListElement cts1, ComponentTypeListElement cts2) {
-				if (cts1.getDomain().equals(cts2.getDomain())) {
-					return cts1.getComponentName().compareTo(cts2.getComponentName());
-				} else {
-					return cts1.getDomain().compareTo(cts2.getDomain());
-				}
-			}
-		});
-		return list;
+    	if (this.componentTypeList==null) {
+    		// --- Create the Vector ----------------
+        	this.componentTypeList = new Vector<ComponentTypeListElement>();
+        	HashMap<String, ComponentTypeSettings> ctsHash = this.graphController.getComponentTypeSettings();
+    		if (ctsHash != null) {
+    			Iterator<String> ctsIt = ctsHash.keySet().iterator();
+    		    while (ctsIt.hasNext()) {
+    		    	String componentName = ctsIt.next(); 
+    		    	ComponentTypeSettings cts = ctsHash.get(componentName); 
+    		    	this.componentTypeList.add(new ComponentTypeListElement(componentName, cts));
+    		    }
+    		} 
+    		// --- Sort the Vector ------------------
+    		Collections.sort(this.componentTypeList, new Comparator<ComponentTypeListElement>() {
+    			@Override
+    			public int compare(ComponentTypeListElement cts1, ComponentTypeListElement cts2) {
+    				if (cts1.getDomain().equals(cts2.getDomain())) {
+    					return cts1.getComponentName().compareTo(cts2.getComponentName());
+    				} else {
+    					return cts1.getDomain().compareTo(cts2.getDomain());
+    				}
+    			}
+    		});
+    	}
+		return this.componentTypeList;
     }
     
     /**
@@ -918,6 +928,29 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 		}
 		
     }
+    
+    /**
+     * This method can be used in order to produce components, by using this 
+     * dialog as factory. Just specify the component by the name given in 
+     * the ComponentTypeSettings dialog. 
+     *
+     * @param componentName the map node2 component
+     * @return the NetworkModel for the component
+     */
+    public NetworkModel getNetworkModel4Component(String componentName) {
+
+    	this.getJListComponentTypes().clearSelection();
+    	// --- Select the right element from the list ---------------
+    	Vector<ComponentTypeListElement> listModel = this.getComponentTypeList();
+    	for (int i = 0; i < listModel.size(); i++) {
+        	ComponentTypeListElement ctsElement = (ComponentTypeListElement) listModel.get(i);
+        	if (ctsElement.getComponentName().equals(componentName)) {
+        		this.getJListComponentTypes().setSelectedValue(ctsElement, true);
+        		break;
+        	}
+		}
+		return this.currNetworkModel;
+	}
     
     /*
      * (non-Javadoc)

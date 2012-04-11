@@ -732,7 +732,8 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @param file The file defining the new graph.
      */
     public void importNetworkModel(NetworkModelFileImporter importer, File file) {
-		NetworkModel netModel = importer.importGraphFromFile(file);
+		this.setAgents2Start(new DefaultListModel()); 
+    	NetworkModel netModel = importer.importGraphFromFile(file);
 		this.setEnvironmentModel(netModel);
     }
     
