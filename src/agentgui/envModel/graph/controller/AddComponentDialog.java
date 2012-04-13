@@ -944,7 +944,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     	Vector<ComponentTypeListElement> listModel = this.getComponentTypeList();
     	for (int i = 0; i < listModel.size(); i++) {
         	ComponentTypeListElement ctsElement = (ComponentTypeListElement) listModel.get(i);
-        	if (ctsElement.getComponentName().equals(componentName)) {
+        	if (ctsElement.getComponentName().equalsIgnoreCase(componentName)) {
         		this.getJListComponentTypes().setSelectedValue(ctsElement, true);
         		break;
         	}

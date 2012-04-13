@@ -98,7 +98,7 @@
                 <directed>false</directed>
                 <graphElementIDs>PP79</graphElementIDs>
                 <graphElementIDs>n84</graphElementIDs>
-                <graphElementIDs>PP35</graphElementIDs>
+                <graphElementIDs>PP85</graphElementIDs>
                 <id>n84</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Pipe</type>
@@ -146,6 +146,17 @@
                 <id>n88</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Exit</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n89</key>
+            <value>
+                <agentClassName>gasmas.agents.components.StorageAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP85</graphElementIDs>
+                <id>n89</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Storage</type>
             </value>
         </entry>
         <entry>
@@ -261,18 +272,6 @@
             </value>
         </entry>
         <entry>
-            <key>n33</key>
-            <value>
-                <directed>false</directed>
-                <graphElementIDs>PP19</graphElementIDs>
-                <graphElementIDs>n33</graphElementIDs>
-                <graphElementIDs>PP18</graphElementIDs>
-                <id>n33</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Power Line</type>
-            </value>
-        </entry>
-        <entry>
             <key>n70</key>
             <value>
                 <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
@@ -283,6 +282,18 @@
                 <id>n70</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Pipe</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n33</key>
+            <value>
+                <directed>false</directed>
+                <graphElementIDs>PP19</graphElementIDs>
+                <graphElementIDs>n33</graphElementIDs>
+                <graphElementIDs>PP18</graphElementIDs>
+                <id>n33</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Power Line</type>
             </value>
         </entry>
         <entry>
@@ -323,8 +334,8 @@
             <value>
                 <directed>false</directed>
                 <graphElementIDs>PP66</graphElementIDs>
-                <graphElementIDs>PP64</graphElementIDs>
                 <graphElementIDs>n77</graphElementIDs>
+                <graphElementIDs>PP64</graphElementIDs>
                 <id>n77</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Power Line</type>
@@ -528,8 +539,8 @@
                 <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
                 <directed>true</directed>
                 <graphElementIDs>n66</graphElementIDs>
+                <graphElementIDs>PP85</graphElementIDs>
                 <graphElementIDs>PP34</graphElementIDs>
-                <graphElementIDs>PP35</graphElementIDs>
                 <id>n66</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>Compressor</type>

@@ -83,7 +83,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Import Test</simulationSetupCurrent>
+    <simulationSetupCurrent>HNord Complete</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>HNord</key>
@@ -102,8 +102,8 @@
             <value>testnetz_2.xml</value>
         </entry>
         <entry>
-            <key>Import Test</key>
-            <value>import_test.xml</value>
+            <key>HNord Complete</key>
+            <value>hnord_complete.xml</value>
         </entry>
         <entry>
             <key>Testnetz 1</key>

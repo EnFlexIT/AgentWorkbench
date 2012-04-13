@@ -1242,8 +1242,19 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @return the shifted position
 	 */
 	public Point2D getShiftedPosition(GraphNode fixedNode, GraphNode shiftNode) {
-
 		double move = this.generalGraphSettings4MAS.getSnapRaster() * 2;
+		return this.getShiftedPosition(fixedNode, shiftNode, move);
+	}
+	
+	/**
+	 * Gets a shifted position for a node in relation to the raster size of the component type settings.
+	 *
+	 * @param fixedNode the fixed node
+	 * @param shiftNode the shift node
+	 * @param move the move
+	 * @return the shifted position
+	 */
+	public Point2D getShiftedPosition(GraphNode fixedNode, GraphNode shiftNode, double move) {
 
 		double fixedNodeX = fixedNode.getPosition().getX();
 		double fixedNodeY = fixedNode.getPosition().getY();

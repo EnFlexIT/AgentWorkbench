@@ -43,6 +43,7 @@ import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.networkModel.GraphEdge;
+import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 
@@ -80,13 +81,16 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 		// --- evaluate the current positions ---
 		this.nodesMovedNewPositions = new HashMap<String, Point2D>();
 		for(String nodeID : this.nodesMovedOldPositions.keySet()) {
-			GraphNode node = (GraphNode) this.graphController.getNetworkModel().getGraphElement(nodeID);
-			if (node!=null) {
-				Point2D point = new Point2D.Double(node.getPosition().getX(), node.getPosition().getY());
-				this.nodesMovedNewPositions.put(node.getId(), point);	
+			GraphElement graphElement = this.graphController.getNetworkModel().getGraphElement(nodeID);
+			if (graphElement instanceof GraphNode) {
+				GraphNode node = (GraphNode) this.graphController.getNetworkModel().getGraphElement(nodeID);
+				if (node!=null) {
+					Point2D point = new Point2D.Double(node.getPosition().getX(), node.getPosition().getY());
+					this.nodesMovedNewPositions.put(node.getId(), point);	
+				}	
 			}
 		}
-		this.sendNotification();
+		this.sendNodesMovedNotification();
 	}
 	
 	/**
@@ -107,16 +111,15 @@ public class MoveGraphNodes extends AbstractUndoableEdit {
 			}
 		}
 		
-		this.sendNotification();
+		this.sendNodesMovedNotification();
 	}
 	
 	/**
 	 * Send notification to the observer.
 	 */
-	private void sendNotification() {
+	private void sendNodesMovedNotification() {
 		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Moved));
 		this.graphController.setProjectUnsaved();
-		
 	}
 	
 	/* (non-Javadoc)
