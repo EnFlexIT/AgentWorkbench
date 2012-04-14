@@ -29,6 +29,7 @@
 package gasmas.transfer.zib;
 
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.EdgeType;
 import gasmas.transfer.zib.cdf.CombinedDecisions;
 import gasmas.transfer.zib.cs.CompressorStationsType;
 import gasmas.transfer.zib.net.CompressorStationType;
@@ -146,13 +147,15 @@ public class OGE_Importer extends NetworkModelFileImporter {
 	 * Translate GasNetwork to NetworkNodel.
 	 * @param gasNetwork the gas network
 	 */
-private void translateGasNetwork2NetworkModel() {
+	private void translateGasNetwork2NetworkModel() {
 		
 		AddComponentDialog componentFactory = new AddComponentDialog(this.graphController);
 		HashMap<String, HashSet<GraphNode>> nodeConnections = new HashMap<String, HashSet<GraphNode>>();
+		double stretchFactor = 4.0;
+		double branchMovement = 4.0;
 		
 		// --------------------------------------------------------------------
-		// --- Run through the nodes of the network ---------------------------
+		// --- Run through the (distribution) nodes of the network ------------
 		for (GasNodeType gasNodeType : this.GNW_Nodes.values()) {
 
 			String className = gasNodeType.getClass().getSimpleName();
@@ -173,8 +176,8 @@ private void translateGasNetwork2NetworkModel() {
 				compNetModel.renameGraphNode(graphNode.getId(), gasNodeType.getId());
 				
 				// --- Define the right position ------------------------------
-				double newX = gasNodeType.getX().doubleValue();
-				double newY = gasNodeType.getY().doubleValue() * (-1);
+				double newX = stretchFactor * gasNodeType.getX().doubleValue();
+				double newY = stretchFactor * gasNodeType.getY().doubleValue() * (-1);
 				Point2D pos = new Point2D.Double(newX, newY);
 				graphNode.setPosition(pos);
 				
@@ -200,7 +203,6 @@ private void translateGasNetwork2NetworkModel() {
 				GasNodeType gasNodeFrom = this.GNW_Nodes.get(connectionNodeFrom );
 				GasNodeType gasNodeTo = this.GNW_Nodes.get(connectionNodeTo );
 				
-				// TODO Direction of directed components !!
 				// --- Create the component for this single connection --------
 				NetworkModel compNetModel = componentFactory.getNetworkModel4Component(mapConnection2Component);
 				// --- Get the new NetworkComponent ---------------------------
@@ -216,15 +218,26 @@ private void translateGasNetwork2NetworkModel() {
 				compNetModel.renameGraphNode(compNetGraphNodeFrom.getId(), gasNodeFrom.getId());
 				compNetModel.renameGraphNode(compNetGraphNodeTo.getId(), gasNodeTo.getId());
 				
+				// --- directed element ? -------------------------------------
+				if (netComp.isDirected()) {
+					GraphEdge compNetGraphEdge = compNetModel.getGraph().getEdges().iterator().next();
+					EdgeType edgeType = compNetModel.getGraph().getEdgeType(compNetGraphEdge);
+					if (compNetModel.getGraph().getSource(compNetGraphEdge)!=compNetGraphNodeFrom) {
+						// --- change the direction of the edge ---------------
+						compNetModel.getGraph().removeEdge(compNetGraphEdge);
+						compNetModel.getGraph().addEdge(compNetGraphEdge, compNetGraphNodeFrom, compNetGraphNodeTo, edgeType);
+					}
+				}
+				
 				// --- Define the right position ------------------------------
-				double newX = gasNodeFrom.getX().doubleValue();
-				double newY = gasNodeFrom.getY().doubleValue() * (-1);
+				double newX = stretchFactor * gasNodeFrom.getX().doubleValue();
+				double newY = stretchFactor * gasNodeFrom.getY().doubleValue() * (-1);
 				Point2D pos = new Point2D.Double(newX, newY);
 				compNetGraphNodeFrom.setPosition(pos);
 				
 				// --- Define the right position ------------------------------
-				newX = gasNodeTo.getX().doubleValue();
-				newY = gasNodeTo.getY().doubleValue() * (-1);
+				newX = stretchFactor * gasNodeTo.getX().doubleValue();
+				newY = stretchFactor * gasNodeTo.getY().doubleValue() * (-1);
 				pos = new Point2D.Double(newX, newY);
 				compNetGraphNodeTo.setPosition(pos);
 				
@@ -340,7 +353,7 @@ private void translateGasNetwork2NetworkModel() {
 				tmpGraphNodes.add(graphNode1);
 				for (GraphNode tmpNode : tmpGraphNodes) {
 					
-					this.moveGraphNode(tmpNode, tmpGraphNodes);
+					this.moveGraphNode(tmpNode, tmpGraphNodes, branchMovement);
 					
 					HashSet<GraphNode> nodes2MergeHash = new HashSet<GraphNode>();
 					nodes2MergeHash.add(newNodesMove[newNodesMoveCount]);
@@ -362,36 +375,31 @@ private void translateGasNetwork2NetworkModel() {
 		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Reload));
 		
 	}
-	
 
-	private void moveGraphNode(GraphNode node2Move, HashSet<GraphNode> neighbourNodes) {
+	/**
+	 * Move graph node.
+	 * @param node2Move the node2 move
+	 * @param neighbourNodes the neighbour nodes
+	 * @param movement the movement
+	 */
+	private void moveGraphNode(GraphNode node2Move, HashSet<GraphNode> neighbourNodes, double movement) {
 		
 		Graph<GraphNode, GraphEdge> graph = this.graphController.getNetworkModel().getGraph();
 		Collection<GraphEdge> edges = graph.getIncidentEdges(node2Move);
 		if (edges.size()==0) {
 			if (neighbourNodes!=null) {
 				// --- find two neighbour, where x and y is different --- 
-				double posX2Set = 0; 
-				double posY2Set = 0; 
+				double posX2Set = node2Move.getPosition().getX() + 2 * movement * Math.cos(2*Math.PI/12); 
+				double posY2Set = node2Move.getPosition().getY() + 2 * movement * Math.sin(2*Math.PI/12); 
 				
-				for (GraphNode nNode : neighbourNodes) {
-					double currX = nNode.getPosition().getX();
-					double currY = nNode.getPosition().getY();
-					double currXAbs = Math.abs(currX);
-					double currYAbs = Math.abs(currY);
-					if (currXAbs>posX2Set) posX2Set = currX;
-					if (currYAbs>posY2Set) posY2Set = currY;
-					
-				}
 				Point2D newPos = new Point2D.Double(posX2Set, posY2Set);
 				node2Move.setPosition(newPos); 
 			}
 			
-			
 		} else if (edges.size()==1) {
 			GraphEdge edge = edges.iterator().next();
 			GraphNode incidentNode = graph.getOpposite(node2Move, edge);
-			Point2D newPos = this.graphController.getNetworkModel().getShiftedPosition(incidentNode, node2Move);
+			Point2D newPos = this.graphController.getNetworkModel().getShiftedPosition(incidentNode, node2Move, movement);
 			node2Move.setPosition(newPos);
 			
 		}
@@ -399,6 +407,12 @@ private void translateGasNetwork2NetworkModel() {
 		
 	}
 
+	/**
+	 * Remind temporary node connection.
+	 * @param nodeConnections the node connections
+	 * @param nodeID the node id
+	 * @param node the node
+	 */
 	private void remindTmpNodeConnection(HashMap<String, HashSet<GraphNode>> nodeConnections, String nodeID, GraphNode node) {
 
 		HashSet<GraphNode> tmpNodes = nodeConnections.get(nodeID);
@@ -413,6 +427,11 @@ private void translateGasNetwork2NetworkModel() {
 		}
 	}
 	
+	/**
+	 * Gets the temporary nodeID.
+	 * @param currentNodeID the current node id
+	 * @return the temporary nodeID
+	 */
 	private String getTmpNodeID(String currentNodeID) {
 		
 		String tmpID = new String(currentNodeID);

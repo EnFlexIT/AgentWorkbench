@@ -570,17 +570,6 @@
             </value>
         </entry>
         <entry>
-            <key>n67</key>
-            <value>
-                <agentClassName>gasmas.agents.components.StorageAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP35</graphElementIDs>
-                <id>n67</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Storage</type>
-            </value>
-        </entry>
-        <entry>
             <key>n7</key>
             <value>
                 <directed>false</directed>

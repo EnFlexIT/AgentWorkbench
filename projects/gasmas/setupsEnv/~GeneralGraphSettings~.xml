@@ -30,7 +30,7 @@
                 <agentClass>gasmas.agents.components.ExitAgent</agentClass>
                 <color>-65536</color>
                 <domain>Gas network</domain>
-                <edgeWidth>8.0</edgeWidth>
+                <edgeWidth>10.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
@@ -100,7 +100,7 @@
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>3.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
-                <showLabel>false</showLabel>
+                <showLabel>true</showLabel>
             </value>
         </entry>
         <entry>
@@ -133,7 +133,7 @@
                 <agentClass>gasmas.agents.components.EntryAgent</agentClass>
                 <color>-16724992</color>
                 <domain>Gas network</domain>
-                <edgeWidth>8.0</edgeWidth>
+                <edgeWidth>10.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
@@ -295,8 +295,8 @@
                 <ontologyClass>gasmas.ontology.PropagationPoint</ontologyClass>
                 <showLabel>false</showLabel>
                 <vertexColor>-26368</vertexColor>
-                <vertexColorPicked>-256</vertexColorPicked>
-                <vertexSize>8</vertexSize>
+                <vertexColorPicked>-205</vertexColorPicked>
+                <vertexSize>7</vertexSize>
             </value>
         </entry>
         <entry>
@@ -306,7 +306,7 @@
                 <ontologyClass></ontologyClass>
                 <showLabel>false</showLabel>
                 <vertexColor>-65536</vertexColor>
-                <vertexColorPicked>-3394561</vertexColorPicked>
+                <vertexColorPicked>-65281</vertexColorPicked>
                 <vertexSize>10</vertexSize>
             </value>
         </entry>
@@ -317,7 +317,7 @@
                 <showLabel>false</showLabel>
                 <vertexColor>-10978818</vertexColor>
                 <vertexColorPicked>-16711681</vertexColorPicked>
-                <vertexSize>8</vertexSize>
+                <vertexSize>7</vertexSize>
             </value>
         </entry>
     </domainSettings>

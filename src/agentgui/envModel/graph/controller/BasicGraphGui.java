@@ -227,16 +227,13 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private void setInitialScalingAndMovement() {
 
-		if (this.visView == null)
-			return;
-		if (this.allowInitialScaling == false)
-			return;
+		if (this.visView == null) return;
+		if (this.allowInitialScaling == false) return;
 
 		Graph<GraphNode, GraphEdge> currGraph = this.visView.getGraphLayout().getGraph();
 		Rectangle2D rectGraph = this.getGraphSpreadDimension(currGraph);
 		Rectangle2D rectVis = this.visView.getVisibleRect();
-		if (rectVis.isEmpty())
-			return;
+		if (rectVis.isEmpty()) return;
 
 		Point2D scaleAt = new Point2D.Double(rectGraph.getX(), rectGraph.getY());
 		scaleAt = new Point2D.Double(0, 0);
@@ -250,10 +247,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		float scaleX = (float) (visWidth / graphWidth);
 		float scaleY = (float) (visHeight / graphHeight);
-		if (scaleX > 1)
-			scaleX = 1;
-		if (scaleY > 1)
-			scaleY = 1;
+		if (scaleX > 1) scaleX = 1;
+		if (scaleY > 1) scaleY = 1;
 
 		float scale = scaleX;
 		if (scaleX > scaleY) {
@@ -324,14 +319,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 				y_max = y;
 			}
 
-			if (x < x_min)
-				x_min = x;
-			if (x > x_max)
-				x_max = x;
-			if (y < y_min)
-				y_min = y;
-			if (y > y_max)
-				y_max = y;
+			if (x < x_min) x_min = x;
+			if (x > x_max) x_max = x;
+			if (y < y_min) y_min = y;
+			if (y > y_max) y_max = y;
 			count++;
 		}
 		return new Rectangle2D.Double(x_min, y_min, x_max - x_min, y_max - y_min);
@@ -498,20 +489,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private VisualizationViewer<GraphNode, GraphEdge> getNewVisualizationViewer(Graph<GraphNode, GraphEdge> graph) {
 
 		// ----------------------------------------------------------------
-		// --- Get the layout settings for domains ------------------------
-		// ----------------------------------------------------------------
-		GeneralGraphSettings4MAS graphSettings = this.controller.getNetworkModelAdapter().getGeneralGraphSettings4MAS();
-
-		// ----------------------------------------------------------------
 		// --- Get the spread of the graph and correct the positions ------
 		// ----------------------------------------------------------------
-		this.graphMargin = graphSettings.getSnapRaster() * 3;
 		double moveX = 0;
 		double moveY = 0;
 
 		Rectangle2D rect = this.getGraphSpreadDimension(graph);
-		if (rect.getX() != graphMargin) moveX = (rect.getX() * (-1)) + graphMargin;
-		if (rect.getY() != graphMargin) moveY = (rect.getY() * (-1)) + graphMargin;
+		if (rect.getX() != this.graphMargin) moveX = (rect.getX() * (-1)) + this.graphMargin;
+		if (rect.getY() != this.graphMargin) moveY = (rect.getY() * (-1)) + this.graphMargin;
 		graph = this.correctGraphCoordinates(graph, moveX, moveY);
 
 		// ----------------------------------------------------------------
@@ -541,7 +526,17 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.setVertexToolTipTransformer(new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode edge) {
-				return edge.getId();
+				
+//				double xPos = edge.getPosition().getX();
+//				double yPos = edge.getPosition().getY();
+//				xPos = Math.round(xPos * 1000.0) / 1000.0;
+//				yPos = Math.round(yPos * 1000.0) / 1000.0;
+//				
+				String toolTip = "<html>";
+				toolTip += "" + edge.getId() + "";  
+//				toolTip += "<br>x=" + xPos + "  y=" + yPos + "<br>";
+				toolTip += "</html>";
+				return toolTip;
 			}
 		});
 
@@ -619,7 +614,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 				return null;
 			}
 		});
-
+		
 		// --- Configure edge colors --------------------------------------
 		vViewer.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<GraphEdge, Paint>() {
 			@Override
