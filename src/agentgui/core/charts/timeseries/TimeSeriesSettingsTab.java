@@ -1,6 +1,5 @@
 package agentgui.core.charts.timeseries;
 
-import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 
@@ -19,13 +18,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import agentgui.core.application.Language;
+import agentgui.core.charts.SettingsTab;
 import agentgui.envModel.graph.components.TableCellEditor4Color;
 import agentgui.envModel.graph.components.TableCellRenderer4Color;
 import agentgui.ontology.TimeSeries;
 
-public class TimeSeriesSettingsTab extends JPanel implements ActionListener, Observer{
+public class TimeSeriesSettingsTab extends SettingsTab implements ActionListener, Observer{
 	/**
 	 * 
 	 */
@@ -158,17 +159,6 @@ public class TimeSeriesSettingsTab extends JPanel implements ActionListener, Obs
 		tm.addColumn(Language.translate("Farbe"));
 		tm.addColumn(Language.translate("Dicke"));
 		
-//		Iterator seriesLabels = model.getOntologyModel().getAllValueAxisDescriptions();
-//		
-//		while(seriesLabels.hasNext()){
-//			String label = (String) seriesLabels.next();
-//			Color color = (Color) chartTab.getSeriesColor(label);
-//			float width = chartTab.getLineWidth(label);
-//			
-//			Object[] rowData = {label, color, new Float(width)};
-//			tm.addRow(rowData);
-//		}
-		
 		// Get the series settings from the ontology model and add them to the table model 
 		for(int i=0; i<model.getNumberOfSeries(); i++){
 			String label = (String) model.getOntologyModel().getValueAxisDescriptions().get(i);
@@ -189,6 +179,12 @@ public class TimeSeriesSettingsTab extends JPanel implements ActionListener, Obs
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(btnConfirm)){
+			
+			TableCellEditor tce = tblSeries.getCellEditor();
+			if(tce != null){
+				tce.stopCellEditing();
+			}
+			
 			model.setTitle(txtTitle.getText());
 			model.setxAxisLabel(txtXaxislabel.getText());
 			model.setyAxisLabel(txtYaxislabel.getText());
@@ -213,7 +209,7 @@ public class TimeSeriesSettingsTab extends JPanel implements ActionListener, Obs
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o == model && (Integer)arg == TimeSeriesDataModel.TIME_SERIES_ADDED){
+		if(o == model && (Integer)arg == TimeSeriesDataModel.DATA_ADDED){
 			rebuildSeriesTable();
 		}
 		

@@ -117,7 +117,7 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 
 			System.out.println("=> Open Chart View ... " + timeSeries.toString());
 			
-			TimeSeriesEditDialog tsed = new TimeSeriesEditDialog(SwingUtilities.getWindowAncestor(this), timeSeries);
+			TimeSeriesChartDialog tsed = new TimeSeriesChartDialog(SwingUtilities.getWindowAncestor(this), timeSeries);
 			tsed.setTitle("Edit time series");
 			tsed.setModal(true);
 			tsed.setVisible(true);

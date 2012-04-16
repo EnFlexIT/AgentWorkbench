@@ -5,7 +5,6 @@ import jade.util.leap.List;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -15,6 +14,7 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.JButton;
 
 import agentgui.core.application.Language;
+import agentgui.core.charts.TableTab;
 
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -30,7 +30,7 @@ import java.util.Observer;
  * @author Nils
  *
  */
-public class TimeSeriesTableTab extends JPanel implements ActionListener, Observer{
+public class TimeSeriesTableTab extends TableTab implements ActionListener, Observer{
 	/**
 	 * 
 	 */
@@ -99,7 +99,7 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o == this.model && (Integer) arg == TimeSeriesDataModel.TIME_SERIES_ADDED){
+		if(o == this.model && (Integer) arg == TimeSeriesDataModel.DATA_ADDED){
 			table.setModel(model.getTableModel());
 			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(model.getTableModel());
 			sorter.setComparator(0, new Comparator<Float>() {
@@ -143,7 +143,7 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, Observ
 
 		public TimeSeriesJTable(DefaultTableModel tableModel) {
 			super(tableModel);
-			if(model.getAggregatedSeriesIndex() >= 0){
+			if(model.getSumSeriesIndex() >= 0){
 			}
 		}
 

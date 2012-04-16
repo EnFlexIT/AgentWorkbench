@@ -25,7 +25,7 @@ class TimeSeriesTableModel extends DefaultTableModel {
 	 */
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		if(column == (parent.getAggregatedSeriesIndex()+1)){	// +1 because of the time column  
+		if(column == (parent.getSumSeriesIndex()+1)){	// +1 because of the time column  
 			return false;
 		}else{
 			return true;

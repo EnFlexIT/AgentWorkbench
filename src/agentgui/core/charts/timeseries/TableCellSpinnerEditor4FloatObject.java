@@ -1,9 +1,9 @@
 package agentgui.core.charts.timeseries;
 
 import java.awt.Component;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.JSpinner;
+import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.JTable;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.TableCellEditor;
@@ -20,9 +20,10 @@ public class TableCellSpinnerEditor4FloatObject extends AbstractCellEditor imple
 	private JSpinner spinner;
 
 	@Override
-	public Object getCellEditorValue() {
-		Double value = (Double) spinner.getValue();
-		return new Float(value.floatValue());
+	public Object getCellEditorValue(){
+		String value = ((DefaultEditor)spinner.getEditor()).getTextField().getText();
+		value = value.replace(",", ".");
+		return new Float(Float.parseFloat(value));
 	}
 
 	@Override

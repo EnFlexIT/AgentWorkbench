@@ -6,28 +6,24 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Stroke;
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Observable;
-import java.util.Observer;
-import javax.swing.JPanel;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
-import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 
-public class TimeSeriesChartTab extends JPanel implements Observer{
+import agentgui.core.charts.ChartTab;
+
+public class TimeSeriesChartTab extends ChartTab{
 
 	/**
 	 * 
@@ -46,11 +42,6 @@ public class TimeSeriesChartTab extends JPanel implements Observer{
 	 * The dataset for the chart
 	 */
 	private TimeSeriesCollection dataset = null;
-	
-	/**
-	 * The chart
-	 */
-	private JFreeChart chart = null;
 	
 	private TimeSeriesDataModel model = null;
 	
@@ -74,7 +65,8 @@ public class TimeSeriesChartTab extends JPanel implements Observer{
 	 * @param tsData The dataset
 	 * @return Chartpanel containing the chart
 	 */
-	private ChartPanel createChartPanel(Dataset tsData){
+	@Override
+	protected ChartPanel createChartPanel(Dataset tsData){
 		chart = ChartFactory.createTimeSeriesChart(
 				model.getTitle(), 
 				model.getxAxisLabel(), 
@@ -212,7 +204,7 @@ public class TimeSeriesChartTab extends JPanel implements Observer{
 	public void update(Observable o, Object arg) {
 		if(o == this.model && (
 				(Integer)arg == TimeSeriesDataModel.SETTINGS_CHANGED
-				|| (Integer)arg == TimeSeriesDataModel.TIME_SERIES_ADDED)
+				|| (Integer)arg == TimeSeriesDataModel.DATA_ADDED)
 		){
 			setRendererClass(model.getRendererType());
 			chart.setTitle(model.getTitle());
@@ -222,19 +214,5 @@ public class TimeSeriesChartTab extends JPanel implements Observer{
 			setSeriesLabels();
 		}
 	}
-
-
-	/**
-	 * Creates a thumbnail of the chart
-	 * @return The thumbnail
-	 */
-	BufferedImage createChartThumb() {
-		// Remove legend while creating the thumb
-		LegendTitle legend = chart.getLegend();
-		chart.removeLegend();
-		BufferedImage thumb = chart.createBufferedImage(260, 175, 600, 400, null);
-		
-		chart.addLegend(legend);
-		return thumb;
-	}
+	
 }
