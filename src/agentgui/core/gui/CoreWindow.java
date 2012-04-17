@@ -136,12 +136,8 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		private JButton jButtonSimStart;
 		private JButton jButtonSimPause;
 		private JButton jButtonSimStop;
-
 		
 	
-	// ------------------------------------------------------------		
-	// --- Start -------------------------------------------------- 
-	// ------------------------------------------------------------
 	/**
 	 * Constructor of this class.
 	 */
@@ -180,12 +176,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		this.setVisible(true);
 		
 	}
-	// ------------------------------------------------------------	
-
 	
-	// ------------------------------------------------------------
-	// --- Initialisierung des Fensters - START -------------------
-	// ------------------------------------------------------------
 	/**
 	 * Inits the components.
 	 */
@@ -1109,12 +1100,11 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			
 			jToolBarApplication.add(new JToolBarButton( "JadeStart", Language.translate("JADE starten"), null, "MBJadeOn.png" ));
 			jToolBarApplication.add(new JToolBarButton( "JadeStop", Language.translate("JADE stoppen"), null, "MBJadeOff.png" ));
+			jToolBarApplication.addSeparator();
 			JadeTools = new JToolBarButton( "JadeTools", Language.translate("JADE-Tools..."), null, "MBJadeTools.png" );
-			jToolBarApplication.add( JadeTools );
+			jToolBarApplication.add(JadeTools);
 			jToolBarApplication.addSeparator();
-			jToolBarApplication.add(new JToolBarButton( "ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), null, "MBLoadMonitor.png" ));
-			jToolBarApplication.addSeparator();
-
+			
 			// --- Add Simulation Setup -----------------------------------
 			this.setSetupSelectorToolbar();
 			jToolBarApplication.addSeparator();
@@ -1122,15 +1112,15 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			// --- Simulation Buttons -----------
 			jButtonSimStart = new JToolBarButton( "SimulationStart", Language.translate("MAS-Start"), null, "MBLoadPlay.png" );
 			jToolBarApplication.add(jButtonSimStart);
-			
 			jButtonSimPause = new JToolBarButton( "SimulationPause", Language.translate("MAS-Pause"), null, "MBLoadPause.png" );
 			jToolBarApplication.add(jButtonSimPause);
-			
 			jButtonSimStop = new JToolBarButton( "SimulationStop", Language.translate("MAS-Stop"), null, "MBLoadStopRecord.png" );
 			jToolBarApplication.add(jButtonSimStop) ;
-			
 			jToolBarApplication.addSeparator();
-			
+
+			jToolBarApplication.add(new JToolBarButton( "ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), null, "MBLoadMonitor.png" ));
+			jToolBarApplication.addSeparator();
+
 			
 		};		
 		return jToolBarApplication;

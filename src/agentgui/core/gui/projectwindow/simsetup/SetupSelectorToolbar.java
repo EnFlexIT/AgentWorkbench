@@ -54,6 +54,12 @@ import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 
 
+/**
+ * The Class SetupSelectorToolbar is used in the main toolbar of the application
+ * and manages different simulation setups for a current project.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class SetupSelectorToolbar implements ActionListener {
 
 	private final String pathImage = Application.RunInfo.PathImageIntern();
@@ -78,11 +84,18 @@ public class SetupSelectorToolbar implements ActionListener {
 	private JButton jButtonSetupDelete = null;
 	
 	
+	/**
+	 * Instantiates a new setup selector toolbar.
+	 * @param jToolBar2Add2 the JToolBar, on which the elements of this class are added
+	 */
 	public SetupSelectorToolbar(JToolBar jToolBar2Add2) {
 		this.jToolBar2Add2 = jToolBar2Add2;
 		this.initialize();
 	}
 	
+	/**
+	 * Initialize.
+	 */
 	private void initialize() {
 		
 		this.jToolBar2Add2.add(this.getJLabel4SetupSelection());
@@ -105,6 +118,10 @@ public class SetupSelectorToolbar implements ActionListener {
 		
 	}
 	
+	/**
+	 * Sets the project.
+	 * @param project the new project
+	 */
 	public void setProject(Project project) {
 		
 		if (project==null) {
@@ -126,6 +143,10 @@ public class SetupSelectorToolbar implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Sets the enabled.
+	 * @param enable the new enabled
+	 */
 	private void setEnabled(boolean enable) {
 		
 		this.jLabelSetupSelector.setEnabled(enable);
@@ -137,6 +158,10 @@ public class SetupSelectorToolbar implements ActionListener {
 		
 	}
 	
+	/**
+	 * Gets the JLabel for the setup selection.
+	 * @return the JLabel for the setup selection
+	 */
 	private JLabel getJLabel4SetupSelection() {
 		if (jLabelSetupSelector==null){
 			jLabelSetupSelector = new JLabel();
@@ -250,7 +275,10 @@ public class SetupSelectorToolbar implements ActionListener {
 		
 	}
 
-	
+	/**
+	 * 
+	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+	 */
 	private class MyObserver implements Observer {
 
 		/* (non-Javadoc)
@@ -436,7 +464,5 @@ public class SetupSelectorToolbar implements ActionListener {
 			currProject.simulationSetups.setupRemove(jComboBoxSetupSelector.getSelectedItem().toString());
 		}		
 	}
-	
-	
 	
 }
