@@ -392,16 +392,16 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
          
 		if(zoomAtMouse) {
 			if(amount > 0) {
-				scaler.scale(this.getVisViewer(), in, mouse);
-			} else if(amount < 0) {
 				scaler.scale(this.getVisViewer(), out, mouse);
+			} else if(amount < 0) {
+				scaler.scale(this.getVisViewer(), in, mouse);
 			}
 			
 		} else {
 			if(amount > 0) {
-				scaler.scale(this.getVisViewer(), in, center);
-			} else if(amount < 0) {
 				scaler.scale(this.getVisViewer(), out, center);
+			} else if(amount < 0) {
+				scaler.scale(this.getVisViewer(), in, center);
 			}
          }
          me.consume();

@@ -99,8 +99,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	
 	private DefaultListModel jListModelAgents2Start = new DefaultListModel();
 	
-	private SetupSelector jPanelTopNew = null;
-	
 	private JSplitPane jSplitPane = null;
 	private JPanel jPanelRightSplit = null;
 	private JPanel jPanelLeftSplit = null;
@@ -163,14 +161,6 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		gridBagConstraints1.weighty = 1.0;
 		gridBagConstraints1.weightx = 1.0;
 		
-		GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
-		gridBagConstraints18.gridx = 0;
-		gridBagConstraints18.gridy = 0;
-		gridBagConstraints18.weightx = 0.0;
-		gridBagConstraints18.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints18.insets = new Insets(0, 0, 0, 0);
-		
-		
 		this.setLayout(new GridBagLayout());
 		this.setSize(800, 350);
 		this.setPreferredSize(new Dimension(550, 176));
@@ -178,23 +168,10 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		this.setBorder(null);
 		this.setFocusable(true);
 		this.setVisible(true);
-		this.add(getJPanelTopNew(), gridBagConstraints18);
 		this.add(getJSplitPane(), gridBagConstraints1);
 		
 	}
 	
-	/**
-	 * This method initializes jPanelTopNew	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelTopNew() {
-		if (jPanelTopNew == null) {
-			jPanelTopNew = new SetupSelector(currProject);
-		}
-		return jPanelTopNew;
-	}
-	
-
 	/**
 	 * This method initializes jSplitPane	
 	 * @return javax.swing.JSplitPane	

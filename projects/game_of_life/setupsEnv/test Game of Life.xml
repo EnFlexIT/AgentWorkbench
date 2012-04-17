@@ -54,6 +54,58 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>12&amp;18</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;19</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;14</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;9</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;15</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;8</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;16</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;7</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;17</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;10</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;11</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;12</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;13</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>2&amp;18</key>
             <value>0</value>
         </entry>
@@ -74,11 +126,51 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>10&amp;5</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>2&amp;10</key>
-            <value>1</value>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>4&amp;22</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;6</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>4&amp;23</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;3</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>4&amp;20</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;4</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>4&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;1</key>
+            <value>0</value>
         </entry>
         <entry>
             <key>2&amp;14</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;2</key>
             <value>0</value>
         </entry>
         <entry>
@@ -87,11 +179,47 @@
         </entry>
         <entry>
             <key>2&amp;12</key>
-            <value>1</value>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;0</key>
+            <value>0</value>
         </entry>
         <entry>
             <key>2&amp;11</key>
-            <value>1</value>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;23</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>1&amp;23</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>1&amp;22</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>1&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;22</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>1&amp;20</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;20</key>
+            <value>0</value>
         </entry>
         <entry>
             <key>4&amp;17</key>
@@ -118,11 +246,15 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>5&amp;16</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>4&amp;10</key>
             <value>0</value>
         </entry>
         <entry>
-            <key>5&amp;16</key>
+            <key>5&amp;15</key>
             <value>0</value>
         </entry>
         <entry>
@@ -134,11 +266,7 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>5&amp;15</key>
-            <value>0</value>
-        </entry>
-        <entry>
-            <key>4&amp;12</key>
+            <key>2&amp;21</key>
             <value>0</value>
         </entry>
         <entry>
@@ -146,16 +274,32 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>4&amp;12</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>2&amp;20</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>5&amp;13</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>4&amp;13</key>
-            <value>1</value>
+            <value>0</value>
         </entry>
         <entry>
             <key>1&amp;7</key>
             <value>0</value>
         </entry>
         <entry>
-            <key>5&amp;13</key>
-            <value>1</value>
+            <key>2&amp;23</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>5&amp;12</key>
+            <value>0</value>
         </entry>
         <entry>
             <key>4&amp;14</key>
@@ -166,8 +310,12 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>5&amp;12</key>
-            <value>1</value>
+            <key>2&amp;22</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>5&amp;11</key>
+            <value>0</value>
         </entry>
         <entry>
             <key>4&amp;15</key>
@@ -178,7 +326,7 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>5&amp;11</key>
+            <key>5&amp;10</key>
             <value>0</value>
         </entry>
         <entry>
@@ -190,11 +338,39 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>5&amp;10</key>
+            <key>5&amp;20</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>5&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>5&amp;22</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>5&amp;23</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>8&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>8&amp;20</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>8&amp;23</key>
             <value>0</value>
         </entry>
         <entry>
             <key>5&amp;0</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>8&amp;22</key>
             <value>0</value>
         </entry>
         <entry>
@@ -223,6 +399,38 @@
         </entry>
         <entry>
             <key>8&amp;18</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>9&amp;20</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>9&amp;23</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>7&amp;23</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>9&amp;22</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>9&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>7&amp;20</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>7&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>7&amp;22</key>
             <value>0</value>
         </entry>
         <entry>
@@ -326,19 +534,19 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>6&amp;9</key>
-            <value>1</value>
-        </entry>
-        <entry>
             <key>5&amp;6</key>
-            <value>1</value>
+            <value>0</value>
         </entry>
         <entry>
-            <key>6&amp;8</key>
-            <value>1</value>
+            <key>6&amp;9</key>
+            <value>0</value>
         </entry>
         <entry>
             <key>5&amp;5</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>6&amp;8</key>
             <value>0</value>
         </entry>
         <entry>
@@ -375,7 +583,7 @@
         </entry>
         <entry>
             <key>6&amp;7</key>
-            <value>1</value>
+            <value>0</value>
         </entry>
         <entry>
             <key>6&amp;6</key>
@@ -394,7 +602,15 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>3&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>2&amp;9</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>3&amp;22</key>
             <value>0</value>
         </entry>
         <entry>
@@ -402,11 +618,19 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>3&amp;20</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>2&amp;5</key>
-            <value>1</value>
+            <value>0</value>
         </entry>
         <entry>
             <key>2&amp;4</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>3&amp;23</key>
             <value>0</value>
         </entry>
         <entry>
@@ -415,11 +639,11 @@
         </entry>
         <entry>
             <key>2&amp;6</key>
-            <value>1</value>
+            <value>0</value>
         </entry>
         <entry>
             <key>6&amp;10</key>
-            <value>1</value>
+            <value>0</value>
         </entry>
         <entry>
             <key>6&amp;16</key>
@@ -439,11 +663,11 @@
         </entry>
         <entry>
             <key>6&amp;12</key>
-            <value>1</value>
+            <value>0</value>
         </entry>
         <entry>
             <key>6&amp;11</key>
-            <value>1</value>
+            <value>0</value>
         </entry>
         <entry>
             <key>6&amp;14</key>
@@ -455,7 +679,7 @@
         </entry>
         <entry>
             <key>4&amp;6</key>
-            <value>1</value>
+            <value>0</value>
         </entry>
         <entry>
             <key>4&amp;7</key>
@@ -487,6 +711,38 @@
         </entry>
         <entry>
             <key>4&amp;5</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;22</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;23</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;20</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>6&amp;20</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>6&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>6&amp;23</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>6&amp;22</key>
             <value>0</value>
         </entry>
         <entry>
@@ -530,15 +786,31 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>0&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>3&amp;12</key>
-            <value>1</value>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>0&amp;20</key>
+            <value>0</value>
         </entry>
         <entry>
             <key>3&amp;13</key>
-            <value>1</value>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>0&amp;23</key>
+            <value>0</value>
         </entry>
         <entry>
             <key>3&amp;14</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>0&amp;22</key>
             <value>0</value>
         </entry>
         <entry>
@@ -578,19 +850,19 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>9&amp;19</key>
-            <value>0</value>
-        </entry>
-        <entry>
             <key>3&amp;18</key>
             <value>0</value>
         </entry>
         <entry>
-            <key>9&amp;18</key>
+            <key>9&amp;19</key>
             <value>0</value>
         </entry>
         <entry>
             <key>3&amp;19</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>9&amp;18</key>
             <value>0</value>
         </entry>
         <entry>
@@ -619,7 +891,7 @@
         </entry>
         <entry>
             <key>3&amp;5</key>
-            <value>1</value>
+            <value>0</value>
         </entry>
         <entry>
             <key>3&amp;6</key>
@@ -635,6 +907,18 @@
         </entry>
         <entry>
             <key>3&amp;9</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;10</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;11</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;12</key>
             <value>0</value>
         </entry>
         <entry>
@@ -658,7 +942,15 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>11&amp;17</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>1&amp;17</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;18</key>
             <value>0</value>
         </entry>
         <entry>
@@ -666,7 +958,19 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>11&amp;19</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>1&amp;15</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;13</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;14</key>
             <value>0</value>
         </entry>
         <entry>
@@ -674,7 +978,255 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>11&amp;15</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>1&amp;19</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;16</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;5</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;4</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;3</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;9</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;2</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;8</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;1</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;7</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;0</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;6</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;5</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;4</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;0</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;6</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;5</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;4</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;3</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;4</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;3</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;9</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;2</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;8</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;1</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;7</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;7</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;8</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;5</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;6</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;1</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;2</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>12&amp;9</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;0</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;2</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;3</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;0</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;1</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;8</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;9</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;6</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;7</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;16</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;13</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;15</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;12</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;18</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;15</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;17</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;14</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;19</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;11</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;10</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;10</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;12</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;17</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;11</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;16</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;14</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;19</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>13&amp;13</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;18</key>
             <value>0</value>
         </entry>
         <entry>
@@ -682,11 +1234,31 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>10&amp;13</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>8&amp;0</key>
             <value>0</value>
         </entry>
         <entry>
+            <key>10&amp;12</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;15</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;14</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>8&amp;5</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;17</key>
             <value>0</value>
         </entry>
         <entry>
@@ -698,6 +1270,10 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>10&amp;16</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>7&amp;8</key>
             <value>0</value>
         </entry>
@@ -706,11 +1282,19 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>10&amp;19</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>7&amp;7</key>
             <value>0</value>
         </entry>
         <entry>
             <key>8&amp;2</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;18</key>
             <value>0</value>
         </entry>
         <entry>
@@ -758,6 +1342,30 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>10&amp;11</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;10</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;23</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;22</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>14&amp;20</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>0&amp;7</key>
             <value>0</value>
         </entry>
@@ -774,7 +1382,15 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>10&amp;23</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>2&amp;3</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;22</key>
             <value>0</value>
         </entry>
         <entry>
@@ -782,11 +1398,23 @@
             <value>0</value>
         </entry>
         <entry>
+            <key>11&amp;23</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>2&amp;1</key>
             <value>0</value>
         </entry>
         <entry>
+            <key>11&amp;20</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>2&amp;0</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>11&amp;21</key>
             <value>0</value>
         </entry>
         <entry>
@@ -801,8 +1429,20 @@
             <key>3&amp;0</key>
             <value>0</value>
         </entry>
+        <entry>
+            <key>10&amp;22</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;21</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>10&amp;20</key>
+            <value>0</value>
+        </entry>
     </golHash>
-    <numberOfAgents>200</numberOfAgents>
-    <numberOfColumns>20</numberOfColumns>
-    <numberOfRows>10</numberOfRows>
+    <numberOfAgents>360</numberOfAgents>
+    <numberOfColumns>24</numberOfColumns>
+    <numberOfRows>15</numberOfRows>
 </gameOfLifeDataModel>

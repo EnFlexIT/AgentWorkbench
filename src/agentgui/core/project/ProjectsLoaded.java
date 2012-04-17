@@ -336,6 +336,9 @@ public class ProjectsLoaded {
 	 */
 	public void remove(Project project2Remove) {
 		projectsOpen.remove(project2Remove);
+		if (projectsOpen.size()==0) {
+			Application.ProjectCurr = null;
+		}
 		this.setProjectView();
 	}
 	/**
@@ -389,10 +392,13 @@ public class ProjectsLoaded {
 	 */
 	public void setProjectView() {
 		
-		// --- 1. Rebuild the view to the Items in MenuBar 'Window' -----------
+		// --- 1. Set Setup-Selector and Tools --------------------------------
+		Application.MainWindow.setSetupSelectorToolbar().setProject(Application.ProjectCurr);
+		
+		// --- 2. Rebuild the view to the Items in MenuBar 'Window' -----------
 		this.setProjectMenuItems();
 		
-		// --- 2. Set the right value to the MenueBar 'View' ------------------
+		// --- 3. Set the right value to the MenueBar 'View' ------------------
 		this.setProjectView4DevOrUser();
 		
 	}

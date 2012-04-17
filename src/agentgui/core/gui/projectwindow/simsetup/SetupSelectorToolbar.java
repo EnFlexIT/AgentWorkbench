@@ -28,12 +28,8 @@
  */
 package agentgui.core.gui.projectwindow.simsetup;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
@@ -42,16 +38,13 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
+import javax.swing.JToolBar;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -60,139 +53,98 @@ import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 
-/**
- * Represents the Setup-Selector within the Simulation Setup
- * 
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
- */
-public class SetupSelector extends JPanel implements Observer, ActionListener {
 
-	private static final long serialVersionUID = -3929823093128900880L;
+public class SetupSelectorToolbar implements ActionListener {
+
+	private final String pathImage = Application.RunInfo.PathImageIntern();
 	
-	private final String PathImage = Application.RunInfo.PathImageIntern(); 
+	private final Integer SETUP_add = 1;
+	private final Integer SETUP_rename = 2;
+	private final Integer SETUP_copy = 3;
 	
-	private final Integer SETUP_add = 1;  //  @jve:decl-index=0:
-	private final Integer SETUP_rename = 2;  //  @jve:decl-index=0:
-	private final Integer SETUP_copy = 3;  //  @jve:decl-index=0:
+	private Project currProject = null;
+	private SimulationSetup currSimSetup = null;
 	
-	private Project currProject;
-	private SimulationSetup currSimSetup = null;  //  @jve:decl-index=0:
-	private DefaultComboBoxModel jComboBoxModel4Setups = new DefaultComboBoxModel();  //  @jve:decl-index=0:visual-constraint="566,21"
+	private MyObserver myProjectMyObserver = null;
+	private JToolBar jToolBar2Add2 = null;
 	
-	private JPanel jPanelTop = null;
-	private JComboBox jComboBoxSetupSelector = null;
 	private JLabel jLabelSetupSelector = null;
+	private JComboBox jComboBoxSetupSelector = null;
+	private DefaultComboBoxModel jComboBoxModel4Setups = new DefaultComboBoxModel(); 
+	
 	private JButton jButtonSetupRename = null;
 	private JButton jButtonSetupCopy = null;
 	private JButton jButtonSetupNew = null;
 	private JButton jButtonSetupDelete = null;
 	
-	/**
-	 * This is the default constructor
-	 */
-	public SetupSelector( Project project ) {
-		super();
-		this.currProject = project;
-		this.currProject.addObserver(this);		
-		initialize();	
-		
-		// --- Das aktuelle Setup laden -------------------
-		this.setupLoad();
-		
-		// --- Übersetzungen laden ------------------------
-		jButtonSetupRename.setText(Language.translate("Umbenennen"));
-		jButtonSetupCopy.setToolTipText(Language.translate("Setup kopieren"));
-		jButtonSetupRename.setToolTipText(Language.translate("Setup umbenennen"));
-		jButtonSetupNew.setToolTipText(Language.translate("Setup hinzufügen"));
-		jButtonSetupDelete.setToolTipText(Language.translate("Setup löschen"));
-
+	
+	public SetupSelectorToolbar(JToolBar jToolBar2Add2) {
+		this.jToolBar2Add2 = jToolBar2Add2;
+		this.initialize();
 	}
-
-	/**
-	 * This method initialises this
-	 * @return void
-	 */
+	
 	private void initialize() {
 		
-		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-		gridBagConstraints11.gridx = 0;
-		gridBagConstraints11.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints11.insets = new Insets(10, 10, 5, 10);
-		gridBagConstraints11.gridwidth = 1;
-		gridBagConstraints11.weightx = 1.0;
-		gridBagConstraints11.ipadx = 0;
-		gridBagConstraints11.gridy = 0;
-		this.setLayout(new GridBagLayout());
-		this.setSize(520, 53);
-		this.setPreferredSize(new Dimension(520, 53));
-		this.setAutoscrolls(true);		
-		this.setBorder(null);
-		this.setFocusable(true);
-		this.setVisible(true);
-		this.add(getJPanelTop(), gridBagConstraints11);
+		this.jToolBar2Add2.add(this.getJLabel4SetupSelection());
+		this.jToolBar2Add2.add(this.getJComboBoxSetupSelector());
+		
+		this.jToolBar2Add2.add(this.getJButtonSetupRename());
+		this.jToolBar2Add2.add(this.getJButtonSetupCopy());
+		this.jToolBar2Add2.add(this.getJButtonSetupNew());
+		this.jToolBar2Add2.add(this.getJButtonSetupDelete());
+		
+		
+		// --- Übersetzungen laden ------------------------
+		this.jComboBoxSetupSelector.setToolTipText(Language.translate("Setup auswählen"));
+		this.jButtonSetupRename.setToolTipText(Language.translate("Setup umbenennen"));
+		this.jButtonSetupCopy.setToolTipText(Language.translate("Setup kopieren"));
+		this.jButtonSetupNew.setToolTipText(Language.translate("Setup hinzufügen"));
+		this.jButtonSetupDelete.setToolTipText(Language.translate("Setup löschen"));
+		
+		this.setEnabled(false);
 		
 	}
 	
-	/**
-	 * This method initialises jPanelTop	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelTop() {
-		if (jPanelTop == null) {
+	public void setProject(Project project) {
+		
+		if (project==null) {
+			this.setEnabled(false);
+			this.myProjectMyObserver = null;
+			this.currProject = null;
+			this.jComboBoxSetupSelector.removeActionListener(this);
+			this.jComboBoxModel4Setups.removeAllElements();
 			
-			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
-			gridBagConstraints13.gridx = 0;
-			gridBagConstraints13.gridy = 0;
-			gridBagConstraints13.insets = new Insets(0, 5, 0, 5);
-			gridBagConstraints13.anchor = GridBagConstraints.WEST;
-			
-			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
-			gridBagConstraints12.fill = GridBagConstraints.BOTH;
-			gridBagConstraints12.gridx = 1;
-			gridBagConstraints12.anchor = GridBagConstraints.WEST;
-			gridBagConstraints12.insets = new Insets(0, 0, 0, 0);
-			gridBagConstraints12.weightx = 1.0;
-			
-			GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
-			gridBagConstraints16.gridx = 2;
-			gridBagConstraints16.gridy = 0;
-			gridBagConstraints16.insets = new Insets(0, 5, 0, 0);
-			
-			GridBagConstraints gridBagConstraints17 = new GridBagConstraints();
-			gridBagConstraints17.gridx = 3;
-			gridBagConstraints17.gridy = 0;
-			gridBagConstraints17.insets = new Insets(0, 10, 0, 0);
-			
-			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
-			gridBagConstraints14.gridx = 4;
-			gridBagConstraints14.gridy = 0;
-			gridBagConstraints14.insets = new Insets(0, 10, 0, 0);
-			
-			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
-			gridBagConstraints15.gridx = 5;
-			gridBagConstraints15.gridy = 0;
-			gridBagConstraints15.insets = new Insets(0, 5, 0, 0);
-			gridBagConstraints15.fill = GridBagConstraints.NONE;
-			
-			jLabelSetupSelector = new JLabel();
-			jLabelSetupSelector.setText("Setup:");
-			jLabelSetupSelector.setFont(new Font("Dialog", Font.BOLD, 12));
-			
-			jPanelTop = new JPanel();
-			jPanelTop.setLayout(new GridBagLayout());
-			jPanelTop.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
-			jPanelTop.setPreferredSize(new Dimension(500, 38));
-			jPanelTop.add(getJComboBoxSetupSelector(), gridBagConstraints12);
-			jPanelTop.add(jLabelSetupSelector, gridBagConstraints13);
-			jPanelTop.add(getJButtonSetupNew(), gridBagConstraints14);
-			jPanelTop.add(getJButtonSetupDelete(), gridBagConstraints15);
-			jPanelTop.add(getJButtonSetupRename(), gridBagConstraints16);
-			jPanelTop.add(getJButtonSetupCopy(), gridBagConstraints17);
-			
+		} else {
+			this.setEnabled(true);
+			if (project!=this.currProject) {
+				this.myProjectMyObserver = null;
+				this.myProjectMyObserver = new MyObserver();
+				this.currProject = project;
+				this.currProject.addObserver(this.myProjectMyObserver);
+				this.setupLoad();
+			}
 		}
-		return jPanelTop;
 	}
-
+	
+	private void setEnabled(boolean enable) {
+		
+		this.jLabelSetupSelector.setEnabled(enable);
+		this.jComboBoxSetupSelector.setEnabled(enable);
+		this.jButtonSetupRename.setEnabled(enable);
+		this.jButtonSetupCopy.setEnabled(enable);
+		this.jButtonSetupNew.setEnabled(enable);
+		this.jButtonSetupDelete.setEnabled(enable);
+		
+	}
+	
+	private JLabel getJLabel4SetupSelection() {
+		if (jLabelSetupSelector==null){
+			jLabelSetupSelector = new JLabel();
+			jLabelSetupSelector.setText(" Setup:  ");
+			jLabelSetupSelector.setFont(new Font("Dialog", Font.BOLD, 12));	
+		}
+		return jLabelSetupSelector;
+	}
 	/**
 	 * This method initialises jComboBoxSetupSelector	
 	 * @return javax.swing.JComboBox	
@@ -200,14 +152,12 @@ public class SetupSelector extends JPanel implements Observer, ActionListener {
 	private JComboBox getJComboBoxSetupSelector() {
 		if (jComboBoxSetupSelector == null) {
 			jComboBoxSetupSelector = new JComboBox(jComboBoxModel4Setups);
-			jComboBoxSetupSelector.setPreferredSize(new Dimension(100, 26));
-			//jComboBoxSetupSelector.setFont(new Font("Dialog", Font.BOLD, 12));
-			jComboBoxSetupSelector.setActionCommand("SetupSelected");
+			jComboBoxSetupSelector.setToolTipText("Setup auswählen");
+			jComboBoxSetupSelector.setPreferredSize(new Dimension(200, 26));
 			jComboBoxSetupSelector.addActionListener(this);
 		}
 		return jComboBoxSetupSelector;
 	}
-	
 	/**
 	 * This method initialises jButtonSetupRename	
 	 * @return javax.swing.JButton	
@@ -215,11 +165,9 @@ public class SetupSelector extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonSetupRename() {
 		if (jButtonSetupRename == null) {
 			jButtonSetupRename = new JButton();
-			jButtonSetupRename.setPreferredSize(new Dimension(110, 26));
-			jButtonSetupRename.setText("Umbenennen");
+			jButtonSetupRename.setPreferredSize(new Dimension(26, 26));
+			jButtonSetupRename.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rename.gif")));
 			jButtonSetupRename.setToolTipText("Setup umbenennen");
-			jButtonSetupRename.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonSetupRename.setActionCommand("SetupRename");
 			jButtonSetupRename.addActionListener(this);
 
 		}
@@ -233,10 +181,9 @@ public class SetupSelector extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonSetupCopy() {
 		if (jButtonSetupCopy == null) {
 			jButtonSetupCopy = new JButton();
-			jButtonSetupCopy.setPreferredSize(new Dimension(45, 26));
-			jButtonSetupCopy.setIcon(new ImageIcon(getClass().getResource(PathImage + "Copy.png")));
+			jButtonSetupCopy.setPreferredSize(new Dimension(26, 26));
+			jButtonSetupCopy.setIcon(new ImageIcon(getClass().getResource(pathImage + "Copy.png")));
 			jButtonSetupCopy.setToolTipText("Setup kopieren");
-			jButtonSetupCopy.setActionCommand("SetupCopy");
 			jButtonSetupCopy.addActionListener(this);
 
 		}
@@ -250,10 +197,9 @@ public class SetupSelector extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonSetupNew() {
 		if (jButtonSetupNew == null) {
 			jButtonSetupNew = new JButton();
-			jButtonSetupNew.setPreferredSize(new Dimension(45, 26));
+			jButtonSetupNew.setPreferredSize(new Dimension(26, 26));
 			jButtonSetupNew.setToolTipText("Setup hinzufügen");
-			jButtonSetupNew.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListPlus.png")));
-			jButtonSetupNew.setActionCommand("SetupNew");
+			jButtonSetupNew.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListPlus.png")));
 			jButtonSetupNew.addActionListener(this);
 		}
 		return jButtonSetupNew;
@@ -266,20 +212,20 @@ public class SetupSelector extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonSetupDelete() {
 		if (jButtonSetupDelete == null) {
 			jButtonSetupDelete = new JButton();
-			jButtonSetupDelete.setPreferredSize(new Dimension(45, 26));
+			jButtonSetupDelete.setPreferredSize(new Dimension(26, 26));
 			jButtonSetupDelete.setToolTipText("Setup löschen");
-			jButtonSetupDelete.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListMinus.png")));
-			jButtonSetupDelete.setActionCommand("SetupDelete");
+			jButtonSetupDelete.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
 			jButtonSetupDelete.addActionListener(this);
 		}
 		return jButtonSetupDelete;
 	}
 	
-	/**
-	 * This Method handles all ActionEvents from this part of the User-View
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+		
 		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
 		Object trigger = ae.getSource();
 		
@@ -301,39 +247,49 @@ public class SetupSelector extends JPanel implements Observer, ActionListener {
 		} else {
 			System.out.println(ae.toString());
 		};
+		
 	}
 
-	/**
-	 * Listens to the Data-Model of this Project (MVC-Pattern)
-	 */
-	@Override
-	public void update(Observable arg0, Object arg1) {
+	
+	private class MyObserver implements Observer {
 
-		if ( arg1.toString().equalsIgnoreCase(SimulationSetups.CHANGED)) {
-			// --- Change inside the simulation setup ---------------
-			SimulationSetupsChangeNotification scn = (SimulationSetupsChangeNotification) arg1;
-			switch (scn.getUpdateReason()) {
-			case SimulationSetups.SIMULATION_SETUP_SAVED:
-				break;
-			default:
-				this.setupLoad();	
-				break;
-			}			
+		/* (non-Javadoc)
+		 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+		 */
+		@Override
+		public void update(Observable observable, Object arg) {
+			
+			if ( arg.toString().equalsIgnoreCase(SimulationSetups.CHANGED)) {
+				// --- Change inside the simulation setup ---------------
+				SimulationSetupsChangeNotification scn = (SimulationSetupsChangeNotification) arg;
+				switch (scn.getUpdateReason()) {
+				case SimulationSetups.SIMULATION_SETUP_SAVED:
+					break;
+				default:
+					setupLoad();	
+					break;
+				}			
+			}
 		}
 		
 	}
 	
+	/**
+	 * Setup load.
+	 */
 	private void setupLoad() {
-	
+		
+		if (this.currProject==null) return;
+		
 		// --- Aktuelles Setup ermitteln ------------------
-		String currSetup = currProject.simulationSetupCurrent;
-		String currSetupFile = currProject.simulationSetups.get(currSetup);
+		String currSetup = this.currProject.simulationSetupCurrent;
+		String currSetupFile = this.currProject.simulationSetups.get(currSetup);
 		
 		// --- ComboBoxModel neu aufbauen -----------------
 		jComboBoxSetupSelector.removeActionListener(this);
 		jComboBoxModel4Setups.removeAllElements();
 		
-		Vector<String> v = new Vector<String>(currProject.simulationSetups.keySet());
+		Vector<String> v = new Vector<String>(this.currProject.simulationSetups.keySet());
 		Collections.sort(v, String.CASE_INSENSITIVE_ORDER);
 		Iterator<String> it = v.iterator();
 		while (it.hasNext()) {
@@ -481,4 +437,6 @@ public class SetupSelector extends JPanel implements Observer, ActionListener {
 		}		
 	}
 	
-}  //  @jve:decl-index=0:visual-constraint="20,8"
+	
+	
+}

@@ -373,6 +373,8 @@ de;Server-Konfiguration;Server Configuration
 de;Server;Server
 de;Service entfernen;Remove Service;;;
 de;Service hinzufügen;Add Service;;;
+de;Setup Umbenennen;;;;
+de;Setup auswählen;;;;
 de;Setup hinzufügen;Add Setup
 de;Setup kopieren ...;Copy Setup ...
 de;Setup kopieren;Copy Setup

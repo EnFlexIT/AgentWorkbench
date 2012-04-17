@@ -439,7 +439,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonRename() {
 		if (jButtonRename == null) {
 			jButtonRename = new JButton();
-			jButtonRename.setIcon(new ImageIcon(getClass().getResource(PathImage + "Rename.png")));
+			jButtonRename.setIcon(new ImageIcon(getClass().getResource(PathImage + "Rename.gif")));
 			jButtonRename.setPreferredSize(new Dimension(15, 15));
 			jButtonRename.setToolTipText("Ontologie Referenz benennen");
 			jButtonRename.setActionCommand("OntoRename");

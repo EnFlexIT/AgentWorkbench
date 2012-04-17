@@ -76,6 +76,7 @@ import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
 import agentgui.core.project.Project;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 
@@ -128,6 +129,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	private JMenuItem jMenuCloseButton;
 	
 	private JToolBar jToolBarApplication;
+		private SetupSelectorToolbar setupSelectorToolbar;
 		private JButton JadeTools;	
 		private JPopupMenu JadeToolsPopUp;
 		
@@ -135,6 +137,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		private JButton jButtonSimPause;
 		private JButton jButtonSimStop;
 
+		
 	
 	// ------------------------------------------------------------		
 	// --- Start -------------------------------------------------- 
@@ -1112,6 +1115,10 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			jToolBarApplication.add(new JToolBarButton( "ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), null, "MBLoadMonitor.png" ));
 			jToolBarApplication.addSeparator();
 
+			// --- Add Simulation Setup -----------------------------------
+			this.setSetupSelectorToolbar();
+			jToolBarApplication.addSeparator();
+			
 			// --- Simulation Buttons -----------
 			jButtonSimStart = new JToolBarButton( "SimulationStart", Language.translate("MAS-Start"), null, "MBLoadPlay.png" );
 			jToolBarApplication.add(jButtonSimStart);
@@ -1128,6 +1135,17 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		};		
 		return jToolBarApplication;
 	}	
+	
+	/**
+	 * Gets the setup selector toolbar.
+	 * @return the setup selector toolbar
+	 */
+	public SetupSelectorToolbar setSetupSelectorToolbar() {
+		if (this.setupSelectorToolbar==null) {
+			this.setupSelectorToolbar = new SetupSelectorToolbar(jToolBarApplication);	
+		}
+		return this.setupSelectorToolbar;
+	}
 	
 	/**
 	 * This method can be used in order to add an individual menu button

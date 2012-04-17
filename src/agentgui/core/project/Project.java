@@ -646,8 +646,8 @@ import agentgui.core.webserver.JarFileCreator;
 			this.resourcesRemove();
 		}
 		
-		projectWindow.moveToFront();
-		Application.setTitelAddition( projectName );
+		this.projectWindow.moveToFront();
+		Application.setTitelAddition(projectName);
 		Application.ProjectCurr = this;
 		Application.Projects.setProjectView();
 		this.setMaximized();

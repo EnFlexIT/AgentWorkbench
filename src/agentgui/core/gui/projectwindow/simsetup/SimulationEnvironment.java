@@ -52,8 +52,6 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	private static final long serialVersionUID = 3230313372954316520L;
 	
 	private Project currProject;
-	
-	private SetupSelector jPanelTopNew = null;
 	private JPanel environmentControllerGUI = null;
 	
 	/**
@@ -73,7 +71,6 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	private void initialize(){
 		
 		this.setLayout(new BorderLayout());
-		this.add(getJPanelTopNew(), BorderLayout.NORTH);
 		this.add(getEnvironmentControllerGUI(), BorderLayout.CENTER);
 		
 	}
@@ -146,18 +143,6 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 		this.add(this.getEnvironmentControllerGUI(), BorderLayout.CENTER);
 	}
 	
-	/**
-	 * This method initializes jPanelTopNew.
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJPanelTopNew() {
-		if (jPanelTopNew == null) {
-			jPanelTopNew = new SetupSelector(this.currProject);
-		}
-		return jPanelTopNew;
-	}
-
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */

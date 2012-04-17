@@ -98,7 +98,7 @@
                 <color>-39424</color>
                 <domain>Gas network</domain>
                 <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>3.0</edgeWidth>
+                <edgeWidth>4.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
@@ -259,7 +259,7 @@
                 <color>-6750208</color>
                 <domain>Gas network</domain>
                 <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>6.0</edgeWidth>
+                <edgeWidth>4.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
@@ -296,7 +296,7 @@
                 <showLabel>false</showLabel>
                 <vertexColor>-26368</vertexColor>
                 <vertexColorPicked>-205</vertexColorPicked>
-                <vertexSize>7</vertexSize>
+                <vertexSize>6</vertexSize>
             </value>
         </entry>
         <entry>
@@ -317,7 +317,7 @@
                 <showLabel>false</showLabel>
                 <vertexColor>-10978818</vertexColor>
                 <vertexColorPicked>-16711681</vertexColorPicked>
-                <vertexSize>7</vertexSize>
+                <vertexSize>6</vertexSize>
             </value>
         </entry>
     </domainSettings>
