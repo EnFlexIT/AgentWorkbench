@@ -70,7 +70,7 @@ public class PathSerachBotCircleAnalyser {
 
 	public Subgraph getBestSubgraph() {
 		findSubgraphs();
-		System.out.println("Circles: " + circles.size());
+		// System.out.println("Circles: " + circles.size());
 		ArrayList<Integer> keys = new ArrayList<Integer>(subgraphs.keySet());
 		Collections.sort(keys);
 		ArrayList<Subgraph> minInterfaceSubgraphs = subgraphs.get(subgraphs.keySet().iterator().next());

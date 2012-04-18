@@ -64,7 +64,6 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 */
 	public ClusterNetworkComponent(String id, String type, String agentClassName, HashSet<GraphElement> graphElements, boolean directed, HashSet<String> networkComponentIDs,
 			NetworkModel clusterNetworkModel) {
-
 		super(id, type, ClusterNetworkComponent.defaultPrototypeClassName, agentClassName, graphElements, directed);
 		this.networkComponentIDs = networkComponentIDs;
 		this.clusterNetworkModel = clusterNetworkModel;

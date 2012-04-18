@@ -28,48 +28,29 @@
  */
 package gasmas.clustering.randomWalk;
 
-import jade.core.ServiceException;
-import jade.core.behaviours.SimpleBehaviour;
-
-import java.util.Date;
-
+import gasmas.clustering.ClusteringBehaviour;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
-import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
 
 /**
  * The Class PathCircleClusteringBehaviour.
  */
-public class PathCircleClusteringBehaviour extends SimpleBehaviour {
+public class PathCircleClusteringBehaviour extends ClusteringBehaviour {
 
 	/** The Constant STEPS. */
 	private static final int STEPS = 50;
 
-	/** The environment model. */
-	private EnvironmentModel environmentModel;
-
 	/** The network model. */
 	private NetworkModel networkModel;
-
-	/** The this network component. */
-	private NetworkComponent thisNetworkComponent;
-
-	/** The simulation service helper. */
-	private SimulationServiceHelper simulationServiceHelper;
 
 	/**
 	 * Instantiates a new path circle clustering behaviour.
 	 *
 	 * @param environmentModel the environment model
-	 * @param thisNetworkComponent the this network component
 	 */
-	public PathCircleClusteringBehaviour(EnvironmentModel environmentModel, NetworkComponent thisNetworkComponent) {
-		this.environmentModel = environmentModel;
+	public PathCircleClusteringBehaviour(EnvironmentModel environmentModel) {
 		this.networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
-		this.thisNetworkComponent = thisNetworkComponent;
 	}
 
 	/* (non-Javadoc)
@@ -77,14 +58,9 @@ public class PathCircleClusteringBehaviour extends SimpleBehaviour {
 	 */
 	@Override
 	public void action() {
-		try {
-			simulationServiceHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Begin Ant Circle Cluster Analysis " + new Date());
+		// System.out.println("Begin Ant Circle Cluster Analysis " + new Date());
 		analyseClusters();
-		System.out.println("End Ant Circle Cluster Analysis " + new Date());
+		// System.out.println("End Ant Circle Cluster Analysis " + new Date());
 	}
 
 	/**
@@ -95,13 +71,7 @@ public class PathCircleClusteringBehaviour extends SimpleBehaviour {
 		NetworkModel copyNetworkModel = networkModel.getCopy();
 		copyNetworkModel.setAlternativeNetworkModel(null);
 		ClusterNetworkComponent clusterNetworkComponent = copyNetworkModel.replaceComponentsByCluster(subgraph.getNetworkComponents(copyNetworkModel));
-		this.networkModel.getAlternativeNetworkModel().put("ClusteredModel", copyNetworkModel);
-		copyNetworkModel.getAlternativeNetworkModel().put(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
-		try {
-			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
+		coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent);
 	}
 
 	/**
@@ -111,10 +81,10 @@ public class PathCircleClusteringBehaviour extends SimpleBehaviour {
 	 * @return the subgraph
 	 */
 	private Subgraph startPathAnalysis(NetworkModel newNetworkModel) {
-		System.out.println("Start Analysing Circle");
-		PathSerachBotCircleAnalyser pathSerachBotCircleAnalyser = new PathSearchBotRunner().runBotsAndGetPathSerachBotCircleAnalyser(newNetworkModel, thisNetworkComponent.getId(),
+		// System.out.println("Start Analysing Circle");
+		PathSerachBotCircleAnalyser pathSerachBotCircleAnalyser = new PathSearchBotRunner().runBotsAndGetPathSerachBotCircleAnalyser(newNetworkModel, coalitionBehaviour.getThisNetworkComponent().getId(),
 				PathCircleClusteringBehaviour.STEPS);
-		System.out.println("End Analysing Circle");
+		// System.out.println("End Analysing Circle");
 		return pathSerachBotCircleAnalyser.getBestSubgraph();
 	}
 
@@ -125,5 +95,4 @@ public class PathCircleClusteringBehaviour extends SimpleBehaviour {
 	public boolean done() {
 		return true;
 	}
-
 }

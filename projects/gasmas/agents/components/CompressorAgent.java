@@ -1,7 +1,9 @@
 package gasmas.agents.components;
 
+import gasmas.clustering.ClusteringBehaviour;
+import gasmas.clustering.coalitions.CoalitionBehaviour;
+import gasmas.clustering.randomWalk.PathCircleClusteringBehaviour;
 import jade.core.ServiceException;
-import jade.core.behaviours.OneShotBehaviour;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
@@ -36,24 +38,8 @@ public class CompressorAgent extends SimulationAgent {
 
 		this.myNetworkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
 
-		// this.addBehaviour(new AntClusteringBehaviour(myEnvironmentModel, myNetworkModel.getNetworkComponent(this.getName().split("@")[0])));
+		ClusteringBehaviour clusteringBehaviour = new PathCircleClusteringBehaviour(myEnvironmentModel);
+		clusteringBehaviour.setAgent(this);
+		this.addBehaviour(new CoalitionBehaviour(this, myEnvironmentModel, clusteringBehaviour));
 	}
-
-	class ClusterBeha extends OneShotBehaviour {
-
-		private NetworkModel myNetworkModel = null;
-
-		public ClusterBeha(NetworkModel networkModel) {
-			myNetworkModel = networkModel;
-		}
-
-		@Override
-		public void action() {
-
-			myNetworkModel.getGraph().getEdges();
-
-		}
-
-	}
-
 }

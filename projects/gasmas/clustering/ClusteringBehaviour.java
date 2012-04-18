@@ -26,63 +26,35 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.envModel.graph.networkModel;
+package gasmas.clustering;
 
-import jade.util.leap.Serializable;
+import gasmas.clustering.coalitions.CoalitionBehaviour;
+import jade.core.behaviours.SimpleBehaviour;
 
 /**
- * Abstract super class for nodes and edges in an environment model of the type graph / network.
- * 
- * @see GraphEdge
- * @see GraphNode
- * 
- * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
+ * The Class ClusteringBehaviour.
  */
-public abstract class GraphElement implements Serializable {
+abstract public class ClusteringBehaviour extends SimpleBehaviour {
 
-	private static final long serialVersionUID = -8008053317555768852L;
+	/** The coalition behaviour. */
+	protected CoalitionBehaviour coalitionBehaviour;
 
-	protected String id = null;
-	transient protected GraphElementLayout graphElementLayout = null;
-	
 	/**
-	 * Gets the id. 
-	 * @return the id
+	 * Sets the coalition behaviours.
+	 *
+	 * @param coalitionBehaviour the new coalition behaviours
 	 */
-	public String getId() {
-		return id;
-	}
-	/**
-	 * Sets the id.
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
+	public void setCoalitionBehaviours(CoalitionBehaviour coalitionBehaviour) {
+		this.coalitionBehaviour = coalitionBehaviour;
 	}
 
 	/**
-	 * Gets the copy.
-	 * @return the copy
+	 * Gets the coalition behaviour.
+	 *
+	 * @return the coalition behaviour
 	 */
-	public abstract GraphElement getCopy();
+	public CoalitionBehaviour getCoalitionBehaviour() {
+		return coalitionBehaviour;
+	}
 
-	
-	/**
-	 * Returns the graph element layout.
-	 * @return the graph element layout
-	 */
-	public GraphElementLayout getGraphElementLayout() {
-		if (this.graphElementLayout==null) {
-			this.graphElementLayout = new GraphElementLayout(this);
-		}
-		return this.graphElementLayout;
-	}
-	/**
-	 * Resets the graph element layout.
-	 */
-	public void resetGraphElementLayout() {
-		this.graphElementLayout = null;
-		this.getGraphElementLayout();
-	}
-	
 }
