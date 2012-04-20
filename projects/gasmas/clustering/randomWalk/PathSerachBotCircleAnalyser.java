@@ -73,10 +73,10 @@ public class PathSerachBotCircleAnalyser {
 		// System.out.println("Circles: " + circles.size());
 		ArrayList<Integer> keys = new ArrayList<Integer>(subgraphs.keySet());
 		Collections.sort(keys);
-		ArrayList<Subgraph> minInterfaceSubgraphs = subgraphs.get(subgraphs.keySet().iterator().next());
+		ArrayList<Subgraph> minInterfaceSubgraphs = subgraphs.get(keys.get(0));
 		Subgraph subgraph = minInterfaceSubgraphs.get(0);
 		for (Subgraph subgraphInList : minInterfaceSubgraphs) {
-			if (subgraphInList.getNetworkComponents().size() < subgraph.getNetworkComponents().size()) {
+			if (subgraphInList.getNetworkComponents().size() > subgraph.getNetworkComponents().size()) {
 				subgraph = subgraphInList;
 			}
 		}
@@ -129,11 +129,13 @@ public class PathSerachBotCircleAnalyser {
 	 * @param alternatives the alternatives
 	 * @return the subgraph
 	 */
-	private Subgraph findSubgraph(NetworkModel networkModel, ArrayList<String> path, HashSet<String> alternatives) {
+	private Subgraph findSubgraph(NetworkModel networkModel, ArrayList<String> path, ArrayList<String> alternatives) {
 		Polygon2D polygon = getPolygon2D(path);
 		HashSet<String> components = new HashSet<String>(path);
-		for (String networkComponentID : networkModel.getNetworkComponents().keySet()) {
-			if (polygon.contains(coordinatesMap.get(networkComponentID)) && !components.contains(coordinatesMap.get(networkComponentID))) {
+		ArrayList<String> otherComponents = new ArrayList<String>(networkModel.getNetworkComponents().keySet());
+		otherComponents.removeAll(components);
+		for (String networkComponentID : otherComponents) {
+			if (polygon.contains(coordinatesMap.get(networkComponentID))) {
 				components.add(networkComponentID);
 			}
 		}

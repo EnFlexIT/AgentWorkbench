@@ -44,5 +44,11 @@ public class CoalitionANCAuthorityBehaviour extends ParallelBehaviour {
 
 	public void addAgree(String networkComponentID) {
 		activeNCMap.put(networkComponentID, true);
+		for (Boolean value : activeNCMap.values()) {
+			if( !value ){
+				return;
+			}
+		}
+		coalitionBehaviour.startClusterAgent();
 	}
 }

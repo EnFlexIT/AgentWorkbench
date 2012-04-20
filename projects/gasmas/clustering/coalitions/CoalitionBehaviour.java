@@ -50,6 +50,7 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	public boolean checkSuggestedCluster(ClusterNetworkComponent clusterNetworkComponent) {
 		if (suggestedClusterNetworkComponent == null) {
 			changeSuggestedCluster(clusterNetworkComponent);
+			changeDisplay();
 		}
 		if (coalitionPNCAuthorityBehaviour != null) {
 			return false;
@@ -59,6 +60,8 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 		case ClusterCompare.BETTER:
 		case ClusterCompare.PART_OF_NEW:
 			changeSuggestedCluster(clusterNetworkComponent);
+			return true;
+		case ClusterCompare.EQUAL:
 			return true;
 
 		default:
@@ -83,12 +86,11 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 			}
 			Collections.sort(activeNCIDs);
 			if (activeNCIDs.get(0).equals(thisNetworkComponent.getId())) {
-				System.out.println(thisNetworkComponent.getId());
+				System.out.println("active " + thisNetworkComponent.getId());
 				coalitionAuthorityBehaviour = new CoalitionANCAuthorityBehaviour(this, activeNCs);
 				addSubBehaviour(coalitionAuthorityBehaviour);
 			}
 		}
-		changeDisplay();
 	}
 
 	private void changeDisplay() {
@@ -97,7 +99,8 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		networkModel.getAlternativeNetworkModel().put(suggestedClusterNetworkComponent.getId(), suggestedClusterNetworkComponent.getClusterNetworkModel());
+		networkModel.getAlternativeNetworkModel().put(thisNetworkComponent.getId() + " " + suggestedClusterNetworkComponent.getId(),
+				suggestedClusterNetworkComponent.getClusterNetworkModel());
 		try {
 			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
 		} catch (ServiceException e) {
@@ -114,6 +117,6 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	}
 
 	public void startClusterAgent() {
-		System.out.println(suggestedClusterNetworkComponent.getId());
+
 	}
 }

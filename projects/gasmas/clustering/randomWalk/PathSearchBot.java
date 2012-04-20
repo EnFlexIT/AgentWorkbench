@@ -218,8 +218,8 @@ public class PathSearchBot {
 	 *
 	 * @return the all alternative components
 	 */
-	public HashSet<String> getAllAlternativeComponents() {
-		HashSet<String> alternativesList = new HashSet<String>();
+	public ArrayList<String> getAllAlternativeComponents() {
+		ArrayList<String> alternativesList = new ArrayList<String>();
 		for (ArrayList<String> alternatives : altrnativePaths.values()) {
 			alternativesList.addAll(alternatives);
 		}

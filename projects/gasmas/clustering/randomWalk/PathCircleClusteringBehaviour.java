@@ -39,7 +39,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
 public class PathCircleClusteringBehaviour extends ClusteringBehaviour {
 
 	/** The Constant STEPS. */
-	private static final int STEPS = 50;
+	private static final int STEPS = 70;
 
 	/** The network model. */
 	private NetworkModel networkModel;
@@ -84,7 +84,7 @@ public class PathCircleClusteringBehaviour extends ClusteringBehaviour {
 		// System.out.println("Start Analysing Circle");
 		PathSerachBotCircleAnalyser pathSerachBotCircleAnalyser = new PathSearchBotRunner().runBotsAndGetPathSerachBotCircleAnalyser(newNetworkModel, coalitionBehaviour.getThisNetworkComponent().getId(),
 				PathCircleClusteringBehaviour.STEPS);
-		// System.out.println("End Analysing Circle");
+		System.out.println(coalitionBehaviour.getThisNetworkComponent().getId() + "-" + pathSerachBotCircleAnalyser.getBestSubgraph());
 		return pathSerachBotCircleAnalyser.getBestSubgraph();
 	}
 
