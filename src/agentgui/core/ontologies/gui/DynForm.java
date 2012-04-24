@@ -46,6 +46,7 @@ import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -57,6 +58,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -105,6 +107,7 @@ public class DynForm extends JPanel {
 	private NumberWatcher numWatcherFloat = new NumberWatcher(true);
 	private NumberWatcher numWatcherInteger = new NumberWatcher(false);
 	
+	private HashMap<DefaultMutableTreeNode, Object> userFormElements = new HashMap<DefaultMutableTreeNode, Object>();
 
 	/**
 	 * Constructor of this class by using a project and an agent reference.
@@ -608,6 +611,31 @@ public class DynForm extends JPanel {
 				// -----------------------------------------------------------
 			} // --- end skipChilds ---
 		} // --- end for ---
+		
+		
+		// ----------------------------------------------------------->
+		// --- Capture special classes, which are coming from the ----
+		// --- Agent.GUI Base ontology							  ----
+		// ----------------------------------------------------------->
+		
+		if (object instanceof TimeSeries) {
+			
+			Object userFormElement = this.userFormElements.get(node);
+			if (userFormElement!=null) {
+				final TimeSeriesWidget tsw = (TimeSeriesWidget) userFormElement;
+				final TimeSeries timeSeries = (TimeSeries) object;
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						tsw.setTimeSeries(timeSeries);
+					}
+				});
+			}
+			
+			
+		}
+		
+		
 	}
 	
 	/**
@@ -1200,6 +1228,8 @@ public class DynForm extends JPanel {
 			TimeSeriesWidget tsw = new TimeSeriesWidget(this, startArgIndex);
 			tsw.setBounds(feBounds.x, feBounds.y, feBounds.width, tsw.getHeight());
 			parentPanel.add(tsw);
+			
+			this.userFormElements.put(parentNode, tsw);
 		}
 		
 		this.setPanelBounds(parentPanel);

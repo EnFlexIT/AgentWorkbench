@@ -43,7 +43,7 @@ public abstract class GraphElement implements Serializable {
 	private static final long serialVersionUID = -8008053317555768852L;
 
 	protected String id = null;
-	transient protected GraphElementLayout graphElementLayout = null;
+	protected transient GraphElementLayout graphElementLayout = null;
 	
 	/**
 	 * Gets the id. 

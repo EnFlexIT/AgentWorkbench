@@ -26,6 +26,10 @@ public class TimeSeriesChartDialog extends ChartDialog implements ActionListener
 	public TimeSeriesChartDialog (Window owner, TimeSeries timeSeries) {
 		super(owner);
 		this.model = new TimeSeriesDataModel(timeSeries);
+
+		this.setTitle("Edit time series");
+		this.setModal(true);
+
 		initialize();
 	}
 

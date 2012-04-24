@@ -334,8 +334,8 @@
             <value>
                 <directed>false</directed>
                 <graphElementIDs>PP66</graphElementIDs>
-                <graphElementIDs>PP64</graphElementIDs>
                 <graphElementIDs>n77</graphElementIDs>
+                <graphElementIDs>PP64</graphElementIDs>
                 <id>n77</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Power Line</type>

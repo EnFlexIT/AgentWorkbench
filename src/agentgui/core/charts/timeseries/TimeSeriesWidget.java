@@ -56,6 +56,9 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 	private DynForm dynForm = null;  //  @jve:decl-index=0:
 	private int startArgIndex = -1;
 	
+	private TimeSeries currTimeSeries = null;  //  @jve:decl-index=0:
+	private TimeSeriesChartDialog tscd = null;
+	
 	private JButton jButtonEdit = null;
 
 	
@@ -101,6 +104,34 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 		return jButtonEdit;
 	}
 
+	/**
+	 * Gets the time series chart dialog.
+	 * @return the time series chart dialog
+	 */
+	private TimeSeriesChartDialog getTimeSeriesChartDialog() {
+		if (this.tscd==null) {
+			this.tscd = new TimeSeriesChartDialog(SwingUtilities.getWindowAncestor(this), this.currTimeSeries);
+		}
+		return this.tscd;
+	}
+	
+	/**
+	 * Sets the time series.
+	 * @param timeSeries the new time series
+	 */
+	public void setTimeSeries(TimeSeries timeSeries) {
+		this.currTimeSeries = timeSeries;
+		ImageIcon icon = new ImageIcon(this.getTimeSeriesChartDialog().getChartThumb());
+		this.getJButtonEdit().setIcon(icon);
+	}
+	
+	/**
+	 * Gets the time series.
+	 * @return the time series
+	 */
+	public TimeSeries getTimeSeries() {
+		return currTimeSeries;
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -113,20 +144,15 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 			
 			this.dynForm.save(true);
 			Object[] startArgs = this.dynForm.getOntoArgsInstance();
-			TimeSeries timeSeries = (TimeSeries) startArgs[this.startArgIndex];
+			this.currTimeSeries = (TimeSeries) startArgs[this.startArgIndex];
 
-			System.out.println("=> Open Chart View ... " + timeSeries.toString());
-			
-			TimeSeriesChartDialog tsed = new TimeSeriesChartDialog(SwingUtilities.getWindowAncestor(this), timeSeries);
-			tsed.setTitle("Edit time series");
-			tsed.setModal(true);
-			tsed.setVisible(true);
-			if(! tsed.isCanceled()){
-				startArgs[this.startArgIndex] = tsed.getModel().getOntologyModel();
-				dynForm.setOntoArgsInstance(startArgs);
-				if(tsed.getChartThumb() != null){
+			this.getTimeSeriesChartDialog().setVisible(true);
+			if(! this.getTimeSeriesChartDialog().isCanceled()){
+				startArgs[this.startArgIndex] = this.getTimeSeriesChartDialog().getModel().getOntologyModel();
+				this.dynForm.setOntoArgsInstance(startArgs);
+				if(this.getTimeSeriesChartDialog().getChartThumb() != null){
 					getJButtonEdit().setText("");
-					getJButtonEdit().setIcon(new ImageIcon(tsed.getChartThumb()));
+					getJButtonEdit().setIcon(new ImageIcon(this.getTimeSeriesChartDialog().getChartThumb()));
 				}
 			}
 		}
