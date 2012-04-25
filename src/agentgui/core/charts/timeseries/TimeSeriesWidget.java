@@ -99,6 +99,7 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 			jButtonEdit = new JButton();
 			jButtonEdit.setText("Bearbeiten");
 			jButtonEdit.setText(Language.translate(jButtonEdit.getText()));
+			jButtonEdit.setToolTipText(Language.translate("Daten bearbeiten"));
 			jButtonEdit.addActionListener(this);
 		}
 		return jButtonEdit;
@@ -122,7 +123,11 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 	public void setTimeSeries(TimeSeries timeSeries) {
 		this.currTimeSeries = timeSeries;
 		ImageIcon icon = new ImageIcon(this.getTimeSeriesChartDialog().getChartThumb());
-		this.getJButtonEdit().setIcon(icon);
+		if(icon != null){
+			// Replace text by thumbnail if available
+			this.getJButtonEdit().setText("");
+			this.getJButtonEdit().setIcon(icon);
+		}
 	}
 	
 	/**

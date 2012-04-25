@@ -39,7 +39,7 @@ public abstract class ChartDialog extends JDialog implements ActionListener{
 	private JPanel pnlBottom;
 	protected JButton btnImport;
 	
-	protected JButton btnOk;
+	protected JButton btnApply;
 	protected JButton btnCancel;
 	
 	protected ChartDataModel model;
@@ -77,7 +77,7 @@ public abstract class ChartDialog extends JDialog implements ActionListener{
 	private JPanel getPnlBottom() {
 		if (pnlBottom == null) {
 			pnlBottom = new JPanel();
-			pnlBottom.add(getBtnOk());
+			pnlBottom.add(getBtnApply());
 			pnlBottom.add(getBtnCancel());
 		}
 		return pnlBottom;
@@ -96,17 +96,17 @@ public abstract class ChartDialog extends JDialog implements ActionListener{
 	 *
 	 * @return javax.swing.JButton
 	 */
-	private JButton getBtnOk() {
-		if (btnOk == null) {
-			btnOk = new JButton();
-			btnOk.setPreferredSize(new Dimension(120, 26));
-			btnOk.setFont(new Font("Dialog", Font.BOLD, 12));
-			btnOk.setForeground(new Color(0, 153, 0));
-			btnOk.setText("OK");
-			btnOk.setText(Language.translate(btnOk.getText()));
-			btnOk.addActionListener(this);
+	private JButton getBtnApply() {
+		if (btnApply == null) {
+			btnApply = new JButton();
+			btnApply.setPreferredSize(new Dimension(120, 26));
+			btnApply.setFont(new Font("Dialog", Font.BOLD, 12));
+			btnApply.setForeground(new Color(0, 153, 0));
+			btnApply.setText("Übernehmen");
+			btnApply.setText(Language.translate(btnApply.getText()));
+			btnApply.addActionListener(this);
 		}
-		return btnOk;
+		return btnApply;
 	}
 	
 	/**
@@ -138,6 +138,9 @@ public abstract class ChartDialog extends JDialog implements ActionListener{
 	 * @return the chartThumb
 	 */
 	public BufferedImage getChartThumb() {
+		if(chartThumb == null){
+			chartThumb = chartTab.createChartThumb();
+		}
 		return chartThumb;
 	}
 	
@@ -185,7 +188,7 @@ public abstract class ChartDialog extends JDialog implements ActionListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		if(ae.getSource() == btnOk){
+		if(ae.getSource() == btnApply){
 			chartThumb = chartTab.createChartThumb();
 			setVisible(false);
 		}else if(ae.getSource() == btnCancel){
