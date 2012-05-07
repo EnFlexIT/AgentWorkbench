@@ -1,9 +1,17 @@
-; Sun Apr 01 18:52:57 CEST 2012
+; Mon May 07 21:26:22 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
 
 ([Chart] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ChartVisualizationSettings] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([DataSeries] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -38,6 +46,11 @@
 
 	(%3AJADE-IGNORE FALSE))
 
+([Simple_Long] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public Long getLongValue(){\n	   try{\n		   return Long.parseLong(getStringLongValue());\n	   }catch(NumberFormatException ex){\n		   return null;\n	   }\n   }\n   public void setLongValue(long value){\n	   setStringLongValue(\"\"+value);\n   }\n   public void setLongValue(Long value){\n	   setStringLongValue(value.toString());\n   }"))
+
 ([Simple_Object] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
@@ -47,5 +60,13 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([TimeSeries] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TimeSeriesChartVisualizationSettings] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TimeValuePair] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
