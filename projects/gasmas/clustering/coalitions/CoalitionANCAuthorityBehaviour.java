@@ -26,13 +26,13 @@ public class CoalitionANCAuthorityBehaviour extends ParallelBehaviour {
 		for (NetworkComponent networkComponent : activeNCs) {
 			activeNCMap.put(networkComponent.getId(), false);
 			createRequest(networkComponent.getId());
-			addSubBehaviour(new CoalitionANCRequestBehaviour(this, myAgent, createRequest(networkComponent.getId()), networkComponent.getId()));
+			addSubBehaviour(new CoalitionANCProposeBehaviour(this, myAgent, createRequest(networkComponent.getId()), networkComponent.getId()));
 		}
 	}
 
 	private ACLMessage createRequest(String receiver) {
-		ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-		request.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+		ACLMessage request = new ACLMessage(ACLMessage.PROPOSE);
+		request.setProtocol(FIPANames.InteractionProtocol.FIPA_PROPOSE);
 		request.addReceiver(new AID(receiver, AID.ISLOCALNAME));
 		try {
 			request.setContentObject(coalitionBehaviour.getSuggestedClusterNetworkComponent());

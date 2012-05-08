@@ -43,7 +43,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
 public class PathAnalyseClusteringBehaviour extends SimpleBehaviour {
 
 	/** The Constant STEPS. */
-	private static final int STEPS = 500;
+	private static final int STEPS = 100;
 
 	/** The environment model. */
 	private EnvironmentModel environmentModel;

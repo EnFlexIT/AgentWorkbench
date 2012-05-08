@@ -2,9 +2,9 @@ package gasmas.clustering.coalitions;
 
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
-import jade.proto.AchieveREInitiator;
+import jade.proto.ProposeInitiator;
 
-public class CoalitionPNCRequestBehaviour extends AchieveREInitiator {
+public class CoalitionPNCRequestBehaviour extends ProposeInitiator {
 
 	private CoalitionPNCAuthorityBehaviour coalitionBehaviour;
 
@@ -17,12 +17,14 @@ public class CoalitionPNCRequestBehaviour extends AchieveREInitiator {
 	}
 
 	@Override
-	protected void handleAgree(ACLMessage agree) {
+	protected void handleAcceptProposal(ACLMessage accept_proposal) {
 		coalitionBehaviour.addAgree(networkComponentID);
 	}
 
 	@Override
-	protected void handleRefuse(ACLMessage refuse) {
+	protected void handleRejectProposal(ACLMessage reject_proposal) {
 	}
 
+	protected void handleNotUnderstood(ACLMessage notUnderstood) {
+	}
 }

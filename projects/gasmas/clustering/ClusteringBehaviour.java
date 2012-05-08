@@ -36,6 +36,8 @@ import jade.core.behaviours.SimpleBehaviour;
  */
 abstract public class ClusteringBehaviour extends SimpleBehaviour {
 
+	public static final String CLUSTER_NETWORK_MODL_NAME = "ClusterdNM";
+
 	/** The coalition behaviour. */
 	protected CoalitionBehaviour coalitionBehaviour;
 

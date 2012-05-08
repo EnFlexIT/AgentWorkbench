@@ -42,7 +42,7 @@ public class ActiveNetworkComponents {
 	private static final String networkComponentAgentClassPrefix = "gasmas.agents.components.";
 
 	/** The active network component agent classes. */
-	private final static String[] activeNetworkComponentAgentClasses = new String[] { "CompressorAgent", "EntryAgent", "ExitAgent", "StorageAgent", "ControlValveAgent" };
+	private final static String[] activeNetworkComponentAgentClasses = new String[] { "CompressorAgent", "EntryAgent", "ExitAgent", "StorageAgent" };
 
 	/**
 	 * Identify active components.

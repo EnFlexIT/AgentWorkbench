@@ -32,8 +32,8 @@ public class CoalitionPNCAuthorityBehaviour extends ParallelBehaviour {
 
 	private void addPassiveNetworkComponentBehaviour(String receiver) {
 		passiveNCMap.put(receiver, false);
-		ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-		request.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+		ACLMessage request = new ACLMessage(ACLMessage.PROPOSE);
+		request.setProtocol(FIPANames.InteractionProtocol.FIPA_PROPOSE);
 		request.addReceiver(new AID(receiver, AID.ISLOCALNAME));
 		try {
 			request.setContentObject(coalitionBehaviour.getSuggestedClusterNetworkComponent());

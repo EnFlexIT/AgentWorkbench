@@ -40,6 +40,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 682444875338053459L;
 
+	/** The Constant defaultPrototypeClassName. */
 	private static final String defaultPrototypeClassName = "agentgui.envModel.graph.prototypes.ClusterGraphElement";
 
 	/** The domain. which this cluster contains to */
@@ -56,7 +57,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 *
 	 * @param id the id
 	 * @param type the type
-	 * @param prototypeClassName the prototype class name
+	 * @param agentClassName the agent class name
 	 * @param graphElements the graph elements
 	 * @param directed the directed
 	 * @param networkComponentIDs the network component i ds
@@ -69,6 +70,9 @@ public class ClusterNetworkComponent extends NetworkComponent {
 		this.clusterNetworkModel = clusterNetworkModel;
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponent#getCopy()
+	 */
 	@Override
 	public ClusterNetworkComponent getCopy() {
 		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.agentClassName, null, this.directed, null, this.clusterNetworkModel.getCopy());
@@ -95,6 +99,19 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 */
 	public HashSet<String> getNetworkComponentIDs() {
 		return networkComponentIDs;
+	}
+
+	/**
+	 * Gets the network components.
+	 *
+	 * @return the network components
+	 */
+	public ArrayList<NetworkComponent> getNetworkComponents() {
+		ArrayList<NetworkComponent> componentsList = new ArrayList<NetworkComponent>();
+		for (String id : networkComponentIDs) {
+			componentsList.add(clusterNetworkModel.getNetworkComponent(id));
+		}
+		return componentsList;
 	}
 
 	/**
@@ -151,8 +168,8 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	}
 
 	/**
-	 * get all connection NetworkComponents (all NetworkComonent with a FreeNode)
-	 * 
+	 * get all connection NetworkComponents (all NetworkComonent with a FreeNode).
+	 *
 	 * @return all connection NetworkComponents
 	 */
 	public ArrayList<NetworkComponent> getConnectionNetworkComponents() {

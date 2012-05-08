@@ -198,6 +198,11 @@ public class GraphElementLayout {
 		// --- Evaluate the GraphEdge ------------------------------------
 		GraphEdge graphEdge = (GraphEdge) this.myGraphElement;
 		NetworkComponent networkComponent = this.networkModel.getNetworkComponent(graphEdge);
+		// TODO: Remove QuickFix, there is something wrong with visualization model is ok
+		if (networkComponent == null) {
+			System.out.println(graphEdge.getId());
+			return;
+		}
 		myComponentTypeSettings = ctsHash.get(networkComponent.getType());
 		myDomain = domainHash.get(myComponentTypeSettings.getDomain());
 		

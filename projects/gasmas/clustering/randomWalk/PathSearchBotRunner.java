@@ -92,9 +92,9 @@ public class PathSearchBotRunner {
 	 * @param steps the steps
 	 * @return the path serach bot circle analyser
 	 */
-	public PathSerachBotCircleAnalyser runBotsAndGetPathSerachBotCircleAnalyser(NetworkModel networkModel, String startNCID, int steps) {
+	public PathSerachBotCycleAnalyser runBotsAndGetPathSerachBotCircleAnalyser(NetworkModel networkModel, String startNCID, int steps) {
 		createInitialBot(networkModel, startNCID);
-		PathSerachBotCircleAnalyser antCircleAnalyser = new PathSerachBotCircleAnalyser(networkModel);
+		PathSerachBotCycleAnalyser antCircleAnalyser = new PathSerachBotCycleAnalyser(networkModel);
 
 		for (int step = 0; step < steps; step++) {
 			if (activeSearchBots.size() < 1) {
@@ -104,7 +104,7 @@ public class PathSearchBotRunner {
 				if (!bot.run())
 					activeSearchBots.remove(bot);
 				if (bot.isCircle()) {
-					antCircleAnalyser.addPathSearchBotToCircleMap(bot);
+					antCircleAnalyser.addPathSearchBotToSubgraphs(bot);
 				}
 			}
 		}

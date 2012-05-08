@@ -29,15 +29,17 @@
 package gasmas.clustering.coalitions;
 
 import jade.core.Agent;
+import jade.domain.FIPAAgentManagement.NotUnderstoodException;
+import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-import jade.proto.AchieveREResponder;
+import jade.proto.ProposeResponder;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 
 /**
  * The Class CoalitionActiveNetworkComponentBehaviour.
  */
-public class CoalitionANCResponseBehaviour extends AchieveREResponder {
+public class CoalitionANCResponseBehaviour extends ProposeResponder {
 
 	/** The coalition behaviour. */
 	private CoalitionBehaviour coalitionBehaviour;
@@ -49,7 +51,7 @@ public class CoalitionANCResponseBehaviour extends AchieveREResponder {
 	 * @param a the a
 	 */
 	public CoalitionANCResponseBehaviour(CoalitionBehaviour coalitionBehaviour, Agent a) {
-		super(a, AchieveREResponder.createMessageTemplate(FIPA_REQUEST));
+		super(a, ProposeResponder.createMessageTemplate(FIPA_PROPOSE));
 		this.coalitionBehaviour = coalitionBehaviour;
 	}
 
@@ -57,20 +59,20 @@ public class CoalitionANCResponseBehaviour extends AchieveREResponder {
 	 * @see jade.proto.AchieveREResponder#prepareResultNotification(jade.lang.acl.ACLMessage, jade.lang.acl.ACLMessage)
 	 */
 	@Override
-	protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) {
+	protected ACLMessage prepareResponse(ACLMessage propose) throws NotUnderstoodException, RefuseException {
 		ClusterNetworkComponent clusterNetworkComponent = null;
 		try {
-			clusterNetworkComponent = (ClusterNetworkComponent) request.getContentObject();
+			clusterNetworkComponent = (ClusterNetworkComponent) propose.getContentObject();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
-		ACLMessage reply = request.createReply();
+		ACLMessage reply = propose.createReply();
 		if( clusterNetworkComponent == null ){
 			reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
 		}else if (coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent)) {
-			reply.setPerformative(ACLMessage.AGREE);
+			reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 		}else{
-			reply.setPerformative(ACLMessage.REFUSE);
+			reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
 		}
 		return reply;
 	}

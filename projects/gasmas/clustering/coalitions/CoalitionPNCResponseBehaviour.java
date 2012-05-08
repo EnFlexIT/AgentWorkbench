@@ -35,12 +35,13 @@ import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
+import jade.proto.ProposeResponder;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 
 /**
  * The Class CoalitionPNCBehaviour.
  */
-public class CoalitionPNCResponseBehaviour extends AchieveREResponder {
+public class CoalitionPNCResponseBehaviour extends ProposeResponder {
 
 	/** The cluster network component. */
 	private ClusterNetworkComponent clusterNetworkComponent;
@@ -51,15 +52,18 @@ public class CoalitionPNCResponseBehaviour extends AchieveREResponder {
 	 * @param a the a
 	 */
 	public CoalitionPNCResponseBehaviour(Agent a) {
-		super(a, AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST));
+		super(a, AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_PROPOSE));
 	}
 	
+	/* (non-Javadoc)
+	 * @see jade.proto.AchieveREResponder#prepareResultNotification(jade.lang.acl.ACLMessage, jade.lang.acl.ACLMessage)
+	 */
 	@Override
-	protected ACLMessage handleRequest(ACLMessage request) throws NotUnderstoodException, RefuseException {
-		ACLMessage response = request.createReply();
+	protected ACLMessage prepareResponse(ACLMessage propose) throws NotUnderstoodException, RefuseException {
+		ACLMessage response = propose.createReply();
 		ClusterNetworkComponent clusterNetworkComponent = null;
 		try {
-			clusterNetworkComponent = (ClusterNetworkComponent) request.getContentObject();
+			clusterNetworkComponent = (ClusterNetworkComponent) propose.getContentObject();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
@@ -68,19 +72,10 @@ public class CoalitionPNCResponseBehaviour extends AchieveREResponder {
 			response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
 		}
 		if (this.clusterNetworkComponent == null || clusterNetworkComponent == this.clusterNetworkComponent) {
-			response.setPerformative(ACLMessage.AGREE);
+			response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 		} else {
-			response.setPerformative(ACLMessage.REFUSE);
+			response.setPerformative(ACLMessage.REJECT_PROPOSAL);
 		}
 		return response;
 	}
-
-	/* (non-Javadoc)
-	 * @see jade.proto.AchieveREResponder#prepareResultNotification(jade.lang.acl.ACLMessage, jade.lang.acl.ACLMessage)
-	 */
-	@Override
-	protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) {
-		return null;
-	}
-
 }

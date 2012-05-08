@@ -82,7 +82,7 @@ public class PathCircleClusteringBehaviour extends ClusteringBehaviour {
 	 */
 	private Subgraph startPathAnalysis(NetworkModel newNetworkModel) {
 		// System.out.println("Start Analysing Circle");
-		PathSerachBotCircleAnalyser pathSerachBotCircleAnalyser = new PathSearchBotRunner().runBotsAndGetPathSerachBotCircleAnalyser(newNetworkModel, coalitionBehaviour.getThisNetworkComponent().getId(),
+		PathSerachBotCycleAnalyser pathSerachBotCircleAnalyser = new PathSearchBotRunner().runBotsAndGetPathSerachBotCircleAnalyser(newNetworkModel, coalitionBehaviour.getThisNetworkComponent().getId(),
 				PathCircleClusteringBehaviour.STEPS);
 		System.out.println(coalitionBehaviour.getThisNetworkComponent().getId() + "-" + pathSerachBotCircleAnalyser.getBestSubgraph());
 		return pathSerachBotCircleAnalyser.getBestSubgraph();
