@@ -127,7 +127,7 @@ public class PathSerachBotCycleAnalyser {
 	 * @param circles the circles
 	 */
 	public void addPathSearchBotToSubgraphs(PathSearchBot ant) {
-		Subgraph subgraph = findSubgraph(networkModel, ant.getPath(), ant.getAllAlternativeComponents());
+		Subgraph subgraph = findSubgraph(networkModel, ant.getPath(), ant.getAlternativePaths());
 		if (subgraph.getInterfaceNetworkComponents().size() < minConnections && !subgraph.hasMultipleConnectionsOnABranch(networkModel)) {
 			subgraphs = new ArrayList<Subgraph>();
 			subgraphs.add(subgraph);

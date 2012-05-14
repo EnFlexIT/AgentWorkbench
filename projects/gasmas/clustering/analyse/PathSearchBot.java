@@ -29,9 +29,7 @@
 package gasmas.clustering.analyse;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
 import java.util.Vector;
 
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -50,7 +48,7 @@ public class PathSearchBot {
 	private ArrayList<NetworkComponent> path = new ArrayList<NetworkComponent>();
 
 	/** The altrnative paths. */
-	private HashMap<String, ArrayList<String>> altrnativePaths = new HashMap<String, ArrayList<String>>();
+	private ArrayList<String> altrnativePaths = new ArrayList<String>();
 
 	/** The circle. */
 	private boolean circle;
@@ -75,9 +73,8 @@ public class PathSearchBot {
 		this.networkModel = networkModel;
 		pathSearchBotRuner = bot.getPathBotSearchBotRuner();
 		path = new ArrayList<NetworkComponent>(bot.getPathNetworkComponents());
-		for (Entry<String, ArrayList<String>> entry : bot.getAlternativePaths().entrySet()) {
-			altrnativePaths.put(entry.getKey(), new ArrayList<String>(entry.getValue()));
-		}
+		altrnativePaths.addAll(bot.getAlternativePaths());
+		altrnativePaths.removeAll(path);
 	}
 
 	/**
@@ -174,7 +171,7 @@ public class PathSearchBot {
 	 *
 	 * @return the alternative paths
 	 */
-	public HashMap<String, ArrayList<String>> getAlternativePaths() {
+	public ArrayList<String> getAlternativePaths() {
 		return altrnativePaths;
 	}
 
@@ -199,7 +196,7 @@ public class PathSearchBot {
 		for (NetworkComponent netComponent : networkComponents) {
 			listNCIDs.add(netComponent.getId());
 		}
-		altrnativePaths.put(path.get(path.size() - 2).getId(), listNCIDs);
+		altrnativePaths.addAll(listNCIDs);
 	}
 
 	/* (non-Javadoc)
@@ -213,20 +210,7 @@ public class PathSearchBot {
 		}
 		return string;
 	}
-
-	/**
-	 * Gets the all alternative components.
-	 *
-	 * @return the all alternative components
-	 */
-	public ArrayList<String> getAllAlternativeComponents() {
-		ArrayList<String> alternativesList = new ArrayList<String>();
-		for (ArrayList<String> alternatives : altrnativePaths.values()) {
-			alternativesList.addAll(alternatives);
-		}
-		return alternativesList;
-	}
-
+	
 	/**
 	 * Sets the path search bot runner.
 	 *
