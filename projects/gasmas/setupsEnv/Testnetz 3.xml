@@ -24,12 +24,12 @@
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n10_1</graphElementIDs>
-                <graphElementIDs>n10_2</graphElementIDs>
                 <graphElementIDs>n10_0</graphElementIDs>
+                <graphElementIDs>n10_2</graphElementIDs>
                 <graphElementIDs>PP21</graphElementIDs>
                 <graphElementIDs>PP22</graphElementIDs>
-                <graphElementIDs>PP18</graphElementIDs>
                 <graphElementIDs>PP36</graphElementIDs>
+                <graphElementIDs>PP18</graphElementIDs>
                 <id>n10</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch3</type>
@@ -57,8 +57,8 @@
                 <graphElementIDs>n11_1</graphElementIDs>
                 <graphElementIDs>PP20</graphElementIDs>
                 <graphElementIDs>PP24</graphElementIDs>
-                <graphElementIDs>n11_0</graphElementIDs>
                 <graphElementIDs>PP25</graphElementIDs>
+                <graphElementIDs>n11_0</graphElementIDs>
                 <graphElementIDs>PP35</graphElementIDs>
                 <id>n11</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
@@ -91,8 +91,8 @@
                 <graphElementIDs>PP8</graphElementIDs>
                 <graphElementIDs>n4_2</graphElementIDs>
                 <graphElementIDs>n4_1</graphElementIDs>
-                <graphElementIDs>PP5</graphElementIDs>
                 <graphElementIDs>n4_0</graphElementIDs>
+                <graphElementIDs>PP5</graphElementIDs>
                 <graphElementIDs>PP12</graphElementIDs>
                 <id>n4</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
@@ -133,8 +133,8 @@
                 <graphElementIDs>PP19</graphElementIDs>
                 <graphElementIDs>n9_2</graphElementIDs>
                 <graphElementIDs>n9_0</graphElementIDs>
-                <graphElementIDs>PP20</graphElementIDs>
                 <graphElementIDs>n9_1</graphElementIDs>
+                <graphElementIDs>PP20</graphElementIDs>
                 <graphElementIDs>PP17</graphElementIDs>
                 <graphElementIDs>PP18</graphElementIDs>
                 <id>n9</id>
@@ -241,8 +241,8 @@
                 <graphElementIDs>PP32</graphElementIDs>
                 <graphElementIDs>PP31</graphElementIDs>
                 <graphElementIDs>PP30</graphElementIDs>
-                <graphElementIDs>PP33</graphElementIDs>
                 <graphElementIDs>n16_2</graphElementIDs>
+                <graphElementIDs>PP33</graphElementIDs>
                 <graphElementIDs>n16_0</graphElementIDs>
                 <graphElementIDs>n16_1</graphElementIDs>
                 <id>n16</id>

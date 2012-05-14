@@ -51,7 +51,7 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1111</useLocalPort>
+        <useLocalPort>1130</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -83,11 +83,15 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>HNord Complete</simulationSetupCurrent>
+    <simulationSetupCurrent>SmallClusters (2) Mid</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>HNord</key>
-            <value>hnord.xml</value>
+            <key>SmallClusters (1) Small</key>
+            <value>smallclusters_1_small.xml</value>
+        </entry>
+        <entry>
+            <key>HNord (2) Mid</key>
+            <value>hnord_2_mid.xml</value>
         </entry>
         <entry>
             <key>Testnetz 3</key>
@@ -98,16 +102,16 @@
             <value>smartgrid.xml</value>
         </entry>
         <entry>
-            <key>Testnetz 2</key>
-            <value>testnetz_2.xml</value>
-        </entry>
-        <entry>
             <key>HNord Complete</key>
             <value>hnord_complete.xml</value>
         </entry>
         <entry>
-            <key>Testnetz 1</key>
-            <value>testnetz_1.xml</value>
+            <key>HNord (1) Small</key>
+            <value>hnord_1_small.xml</value>
+        </entry>
+        <entry>
+            <key>SmallClusters (2) Mid</key>
+            <value>smallclusters_2_mid.xml</value>
         </entry>
         <entry>
             <key>Einfaches Netz</key>

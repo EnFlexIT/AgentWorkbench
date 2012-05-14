@@ -67,5 +67,6 @@
 	<classpathentry kind="lib" path="lib/jFreeChart/iText-2.1.5.jar"/>
 	<classpathentry kind="lib" path="lib/jFreeChart/jcommon-1.0.17.jar"/>
 	<classpathentry kind="lib" path="lib/jFreeChart/jfreechart-1.0.14.jar"/>
+	<classpathentry kind="lib" path="lib/batik/lib/batik-awt-util.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

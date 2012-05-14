@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 
 public class CoalitionANCAuthorityBehaviour extends ParallelBehaviour {
@@ -25,17 +26,16 @@ public class CoalitionANCAuthorityBehaviour extends ParallelBehaviour {
 	private void sendMessagesToActiveNCs(ArrayList<NetworkComponent> activeNCs) {
 		for (NetworkComponent networkComponent : activeNCs) {
 			activeNCMap.put(networkComponent.getId(), false);
-			createRequest(networkComponent.getId());
-			addSubBehaviour(new CoalitionANCProposeBehaviour(this, myAgent, createRequest(networkComponent.getId()), networkComponent.getId()));
+			addSubBehaviour(new CoalitionANCProposeBehaviour(this, myAgent, createRequest(networkComponent.getId(), coalitionBehaviour.getSuggestedClusterNetworkComponent())));
 		}
 	}
 
-	private ACLMessage createRequest(String receiver) {
+	public static ACLMessage createRequest(String receiver, ClusterNetworkComponent clusterNetworkComponent) {
 		ACLMessage request = new ACLMessage(ACLMessage.PROPOSE);
 		request.setProtocol(FIPANames.InteractionProtocol.FIPA_PROPOSE);
 		request.addReceiver(new AID(receiver, AID.ISLOCALNAME));
 		try {
-			request.setContentObject(coalitionBehaviour.getSuggestedClusterNetworkComponent());
+			request.setContentObject(clusterNetworkComponent);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -49,9 +49,6 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	/** The cluster network model. */
 	private NetworkModel clusterNetworkModel;
 
-	/** The network component IDs. */
-	private HashSet<String> networkComponentIDs = new HashSet<String>();
-
 	/**
 	 * Instantiates a new cluster network component.
 	 *
@@ -63,10 +60,8 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @param networkComponentIDs the network component i ds
 	 * @param clusterNetworkModel the cluster network model
 	 */
-	public ClusterNetworkComponent(String id, String type, String agentClassName, HashSet<GraphElement> graphElements, boolean directed, HashSet<String> networkComponentIDs,
-			NetworkModel clusterNetworkModel) {
+	public ClusterNetworkComponent(String id, String type, String agentClassName, HashSet<GraphElement> graphElements, boolean directed, NetworkModel clusterNetworkModel) {
 		super(id, type, ClusterNetworkComponent.defaultPrototypeClassName, agentClassName, graphElements, directed);
-		this.networkComponentIDs = networkComponentIDs;
 		this.clusterNetworkModel = clusterNetworkModel;
 	}
 
@@ -75,21 +70,10 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 */
 	@Override
 	public ClusterNetworkComponent getCopy() {
-		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.agentClassName, null, this.directed, null, this.clusterNetworkModel.getCopy());
-		HashSet<String> copyComponentIDs = new HashSet<String>	(this.getNetworkComponentIDs());
-		copy.setNetworkComponentIDs(copyComponentIDs);
+		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.agentClassName, null, this.directed, this.clusterNetworkModel.getCopy());
 		HashSet<String> gaphElementIDs = new HashSet<String>(this.getGraphElementIDs());
 		copy.setGraphElementIDs(gaphElementIDs);
 		return copy;
-	}
-
-	/**
-	 * Sets the network component IDs.
-	 * 
-	 * @param networkComponentIDs the new network component IDs
-	 */
-	public void setNetworkComponentIDs(HashSet<String> networkComponentIDs) {
-		this.networkComponentIDs = networkComponentIDs;
 	}
 
 	/**
@@ -98,7 +82,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @return the network component IDs
 	 */
 	public HashSet<String> getNetworkComponentIDs() {
-		return networkComponentIDs;
+		return new HashSet<String>(clusterNetworkModel.getNetworkComponents().keySet());
 	}
 
 	/**
@@ -107,11 +91,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @return the network components
 	 */
 	public ArrayList<NetworkComponent> getNetworkComponents() {
-		ArrayList<NetworkComponent> componentsList = new ArrayList<NetworkComponent>();
-		for (String id : networkComponentIDs) {
-			componentsList.add(clusterNetworkModel.getNetworkComponent(id));
-		}
-		return componentsList;
+		return new ArrayList<NetworkComponent>(clusterNetworkModel.getNetworkComponents().values());
 	}
 
 	/**
@@ -138,7 +118,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @return the size
 	 */
 	public int getSize() {
-		return networkComponentIDs.size();
+		return clusterNetworkModel.getNetworkComponents().size();
 	}
 
 	/**

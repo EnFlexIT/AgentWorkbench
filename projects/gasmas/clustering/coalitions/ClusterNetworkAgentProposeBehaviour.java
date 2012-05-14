@@ -40,8 +40,6 @@ public class ClusterNetworkAgentProposeBehaviour extends ProposeInitiator {
 	/** The cluster network agent coalition behaviour. */
 	private ClusterNetworkAgentCoalitionBehaviour clusterNetworkAgentCoalitionBehaviour;
 
-	private String networkComponentID;
-
 	/**
 	 * Instantiates a new cluster network agent propose behaviour.
 	 *
@@ -50,11 +48,10 @@ public class ClusterNetworkAgentProposeBehaviour extends ProposeInitiator {
 	 * @param msg the msg
 	 * @param networkComponentID the network component id
 	 */
-	public ClusterNetworkAgentProposeBehaviour(ClusterNetworkAgentCoalitionBehaviour clusterNetworkAgentCoalitionBehaviour, Agent a, ACLMessage msg, String networkComponentID) {
+	public ClusterNetworkAgentProposeBehaviour(ClusterNetworkAgentCoalitionBehaviour clusterNetworkAgentCoalitionBehaviour, Agent a, ACLMessage msg) {
 		super(a, msg);
 		message = msg;
 		this.clusterNetworkAgentCoalitionBehaviour = clusterNetworkAgentCoalitionBehaviour;
-		this.networkComponentID = networkComponentID;
 	}
 
 	/**
@@ -62,7 +59,7 @@ public class ClusterNetworkAgentProposeBehaviour extends ProposeInitiator {
 	 */
 	@Override
 	protected void handleAcceptProposal(ACLMessage accept_proposal) {
-		clusterNetworkAgentCoalitionBehaviour.addAgree(networkComponentID);
+		clusterNetworkAgentCoalitionBehaviour.addAgree(accept_proposal.getSender().getLocalName());
 	}
 
 	/**

@@ -1435,7 +1435,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, clusterComponentID);
 		HashSet<GraphElement> clusterElements = new ClusterGraphElement(outerNodes, clusterComponentID).addToGraph(this);
 		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), null, clusterElements, clusterGraphElement.isDirected(),
-				getNetworkComponentsIDs(networkComponents), clusterNetworkModel);
+				clusterNetworkModel);
 		this.networkComponents.put(clusterComponent.getId(), clusterComponent);
 		refreshGraphElements();
 		return clusterComponent;
@@ -1447,6 +1447,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @param clusterNetworkComponent the cluster network component
 	 */
 	public void replaceClusterByComponents(ClusterNetworkComponent clusterNetworkComponent) {
+		removeNetworkComponent(clusterNetworkComponent);
 		for( GraphNode graphNode : clusterNetworkComponent.getClusterNetworkModel().getGraph().getVertices())
 		{
 			if (getGraphElement(graphNode.getId()) == null) {
@@ -1469,9 +1470,6 @@ public class NetworkModel implements Cloneable, Serializable {
 
 		for (NetworkComponent networkComponent : clusterNetworkComponent.getClusterNetworkModel().getNetworkComponents().values()) {
 			addNetworkComponent(networkComponent);
-		}
-		if (getNetworkComponent(clusterNetworkComponent.getId()) != null) {
-			removeNetworkComponent(clusterNetworkComponent);
 		}
 		refreshGraphElements();
 	}
@@ -1507,9 +1505,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		for (GraphNode graphNode : graph.getVertices()) {
 			if (isFreeGraphNode(graphNode)) {
 				NetworkComponent networkComponent = getNetworkComponents(graphNode).iterator().next();
-				if (!networkComponent.getType().equals("Exit")) {
-					outerNetworkComponents.add(networkComponent.getId());
-				}
+				outerNetworkComponents.add(networkComponent.getId());
 			}
 		}
 		return outerNetworkComponents;

@@ -2,6 +2,9 @@ package gasmas.agents.components;
 
 import gasmas.clustering.coalitions.ClusterNetworkAgentCoalitionBehaviour;
 import jade.core.ServiceException;
+
+import java.util.ArrayList;
+
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
@@ -35,11 +38,17 @@ public class ClusterNetworkAgent extends SimulationAgent {
 		}
 
 		clusterNetworkComponent = (ClusterNetworkComponent) this.getArguments()[0];
-		this.addBehaviour(new ClusterNetworkAgentCoalitionBehaviour(myEnvironmentModel, clusterNetworkComponent));
+		@SuppressWarnings("unchecked")
+		ArrayList<ClusterNetworkComponent> biggerClusters = (ArrayList<ClusterNetworkComponent>) this.getArguments()[1];
+		this.addBehaviour(new ClusterNetworkAgentCoalitionBehaviour(this, myEnvironmentModel, clusterNetworkComponent, biggerClusters));
 	}
 
 	public static int getFreeID() {
 		return clusterIDCounter++;
+	}
+
+	public void setClusterNetworkComponent(ClusterNetworkComponent clusterNetworkComponent) {
+		this.clusterNetworkComponent=clusterNetworkComponent;
 	}
 
 }

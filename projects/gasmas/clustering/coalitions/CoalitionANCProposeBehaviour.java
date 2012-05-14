@@ -9,22 +9,23 @@ public class CoalitionANCProposeBehaviour extends ProposeInitiator {
 	private ACLMessage message;
 	private CoalitionANCAuthorityBehaviour coalitionAuthorityBehaviour;
 
-	private String networkComponentID;
 
-	public CoalitionANCProposeBehaviour(CoalitionANCAuthorityBehaviour coalitionAuthorityBehaviour, Agent a, ACLMessage msg, String networkComponentID) {
+	public CoalitionANCProposeBehaviour(CoalitionANCAuthorityBehaviour coalitionAuthorityBehaviour, Agent a, ACLMessage msg) {
 		super(a, msg);
 		message = msg;
 		this.coalitionAuthorityBehaviour = coalitionAuthorityBehaviour;
-		this.networkComponentID = networkComponentID;
 	}
 
 	@Override
 	protected void handleAcceptProposal(ACLMessage accept_proposal) {
-		coalitionAuthorityBehaviour.addAgree(networkComponentID);
+		if (coalitionAuthorityBehaviour != null) {
+			coalitionAuthorityBehaviour.addAgree(accept_proposal.getSender().getLocalName());
+		}
 	}
 
 	@Override
 	protected void handleRejectProposal(ACLMessage reject_proposal) {
+		// if rejected wait there will be no coalition, so wait for better suggestion
 	}
 
 	@Override

@@ -1,8 +1,6 @@
 package gasmas.agents.components;
 
-import gasmas.clustering.ClusteringBehaviour;
-import gasmas.clustering.coalitions.CoalitionBehaviour;
-import gasmas.clustering.randomWalk.PathCircleClusteringBehaviour;
+import gasmas.clustering.coalitions.CoalitionPNCResponseBehaviour;
 import jade.core.ServiceException;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.SimulationService;
@@ -37,9 +35,6 @@ public class ExitAgent extends SimulationAgent {
 		}
 
 		this.myNetworkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
-
-		ClusteringBehaviour clusteringBehaviour = new PathCircleClusteringBehaviour(myEnvironmentModel);
-		this.addBehaviour(new CoalitionBehaviour(this, myEnvironmentModel, clusteringBehaviour));
+		this.addBehaviour(new CoalitionPNCResponseBehaviour(this));
 	}
-	
 }

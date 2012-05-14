@@ -1,8 +1,8 @@
 package gasmas.agents.components;
 
-import gasmas.clustering.ClusteringBehaviour;
+import gasmas.clustering.behaviours.ClusteringBehaviour;
+import gasmas.clustering.behaviours.CycleClusteringBehaviour;
 import gasmas.clustering.coalitions.CoalitionBehaviour;
-import gasmas.clustering.randomWalk.PathCircleClusteringBehaviour;
 import jade.core.ServiceException;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.SimulationService;
@@ -38,7 +38,7 @@ public class CompressorAgent extends SimulationAgent {
 
 		this.myNetworkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
 
-		ClusteringBehaviour clusteringBehaviour = new PathCircleClusteringBehaviour(myEnvironmentModel);
+		ClusteringBehaviour clusteringBehaviour = new CycleClusteringBehaviour(myEnvironmentModel);
 		clusteringBehaviour.setAgent(this);
 		this.addBehaviour(new CoalitionBehaviour(this, myEnvironmentModel, clusteringBehaviour));
 	}

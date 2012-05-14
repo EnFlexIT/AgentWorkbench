@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package gasmas.clustering;
+package gasmas.clustering.coalitions;
 
 import java.util.HashSet;
 
@@ -36,12 +36,6 @@ import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
  * The Class ClusterCompare, compares different ClusterComponents with each other
  */
 public class ClusterCompare {
-
-	/** The cluster network component. */
-	private ClusterNetworkComponent clusterNetworkComponent;
-
-	/** The suggested cluster network component. */
-	private ClusterNetworkComponent suggestedClusterNetworkComponent;
 
 	/** The EQUAL. */
 	public static final int EQUAL = 1;
@@ -62,33 +56,13 @@ public class ClusterCompare {
 	public static final int DROP_BOTH = 6;
 	
 	/**
-	 * Instantiates a new cluster compare.
-	 *
-	 * @param clusterNetworkComponent the cluster network component
-	 * @param suggestedClusterNetworkComponent the suggested cluster network component
-	 */
-	public ClusterCompare(ClusterNetworkComponent clusterNetworkComponent, ClusterNetworkComponent suggestedClusterNetworkComponent) {
-		this.clusterNetworkComponent = clusterNetworkComponent;
-		this.suggestedClusterNetworkComponent = suggestedClusterNetworkComponent;
-	}
-
-	/**
-	 * compares two clusters
-	 *
-	 * @return the ClusterCompare ID
-	 */
-	public int compare() {
-		return compareClusters(clusterNetworkComponent, suggestedClusterNetworkComponent);
-	}
-
-	/**
 	 * Check agent cluster.
 	 *
 	 * @param clusterNC the cluster nc
 	 * @param suggestedCNC the suggested cnc
 	 * @return the int
 	 */
-	protected int compareClusters(ClusterNetworkComponent clusterNC, ClusterNetworkComponent suggestedCNC) {
+	public static int compareClusters(ClusterNetworkComponent clusterNC, ClusterNetworkComponent suggestedCNC) {
 		HashSet<String> clusterNCs = new HashSet<String>(clusterNC.getClusterNetworkModel().getNetworkComponents().keySet());
 		HashSet<String> suggestedClusterNCs = new HashSet<String>(suggestedCNC.getClusterNetworkModel().getNetworkComponents().keySet());
 		if (clusterNCs.size() == suggestedClusterNCs.size()) {
@@ -116,7 +90,7 @@ public class ClusterCompare {
 	 * @param suggestedCluster the suggested cluster
 	 * @return the int
 	 */
-	protected int findBetterCluster(ClusterNetworkComponent cluster, ClusterNetworkComponent suggestedCluster) {
+	protected static int findBetterCluster(ClusterNetworkComponent cluster, ClusterNetworkComponent suggestedCluster) {
 		// analyze amount of connections of the Cluster
 		int clusterConnections = cluster.getConnectionNetworkComponents().size();
 		int suggestedClusterConnections = suggestedCluster.getConnectionNetworkComponents().size();

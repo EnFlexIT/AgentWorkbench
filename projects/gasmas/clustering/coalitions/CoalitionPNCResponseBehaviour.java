@@ -62,16 +62,16 @@ public class CoalitionPNCResponseBehaviour extends ProposeResponder {
 	protected ACLMessage prepareResponse(ACLMessage propose) throws NotUnderstoodException, RefuseException {
 		ACLMessage response = propose.createReply();
 		ClusterNetworkComponent clusterNetworkComponent = null;
+		boolean notUnderstood = false;
 		try {
 			clusterNetworkComponent = (ClusterNetworkComponent) propose.getContentObject();
 		} catch (UnreadableException e) {
-			e.printStackTrace();
+			 notUnderstood = true;
 		}
 
-		if (clusterNetworkComponent == null) {
+		if (notUnderstood) {
 			response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
-		}
-		if (this.clusterNetworkComponent == null || clusterNetworkComponent == this.clusterNetworkComponent) {
+		}else if (this.clusterNetworkComponent == null || clusterNetworkComponent == this.clusterNetworkComponent) {
 			response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 		} else {
 			response.setPerformative(ACLMessage.REJECT_PROPOSAL);

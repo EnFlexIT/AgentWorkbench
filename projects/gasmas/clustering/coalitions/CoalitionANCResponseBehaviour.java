@@ -60,20 +60,23 @@ public class CoalitionANCResponseBehaviour extends ProposeResponder {
 	 */
 	@Override
 	protected ACLMessage prepareResponse(ACLMessage propose) throws NotUnderstoodException, RefuseException {
+		coalitionBehaviour.removeCoalitionANCWakerBehaviour(propose.getSender().getLocalName());
+		ACLMessage response = propose.createReply();
 		ClusterNetworkComponent clusterNetworkComponent = null;
+		boolean notUnderstood = false;
 		try {
 			clusterNetworkComponent = (ClusterNetworkComponent) propose.getContentObject();
 		} catch (UnreadableException e) {
-			e.printStackTrace();
+			notUnderstood = true;
 		}
-		ACLMessage reply = propose.createReply();
-		if( clusterNetworkComponent == null ){
-			reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
-		}else if (coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent)) {
-			reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+
+		if (notUnderstood) {
+			response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
+		} else if (coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent, false)) {
+			response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 		}else{
-			reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+			response.setPerformative(ACLMessage.REJECT_PROPOSAL);
 		}
-		return reply;
+		return response;
 	}
 }
