@@ -30,6 +30,7 @@ package gasmas.clustering.analyse;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Vector;
 
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
@@ -88,6 +89,27 @@ public class Subgraph {
 			networkComponents.add(networkModel.getNetworkComponent(networkComponentID));
 		}
 		return networkComponents;
+	}
+
+	public boolean hasMultipleConnectionsOnABranch(NetworkModel networkModel){
+		HashSet<NetworkComponent> multipleConnections = new HashSet<NetworkComponent>();
+		ArrayList<NetworkComponent> neighbours = new ArrayList<NetworkComponent>();
+		for (String id : interfaceNetworkComponents) {
+			Vector<NetworkComponent> neighboursNC = networkModel.getNeighbourNetworkComponents(networkModel.getNetworkComponent(id));
+			for (NetworkComponent networkComponent : neighboursNC) {
+				if (neighbours.contains(networkComponent)) {
+					multipleConnections.add(networkComponent);
+				} else {
+					neighbours.add(networkComponent);
+				}
+			}
+		}
+		for (NetworkComponent networkComponent : multipleConnections) {
+			if (networkComponents.contains(networkComponent.getId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

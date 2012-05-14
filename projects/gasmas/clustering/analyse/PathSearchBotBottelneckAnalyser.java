@@ -36,7 +36,7 @@ import java.util.Map.Entry;
 /**
  * The Class AntDistributionMatrix.
  */
-public class PathSearchBotDistributionMatrix {
+public class PathSearchBotBottelneckAnalyser {
 
 	private static final int SKIP_STEPS = 2;
 
@@ -67,21 +67,6 @@ public class PathSearchBotDistributionMatrix {
 				map.put(componentID, 1);
 			}
 		}
-	}
-
-	/**
-	 * Removes the same start.
-	 *
-	 * @return the array list
-	 */
-	private ArrayList<HashMap<String, Integer>> removeSameStart() {
-		ArrayList<HashMap<String, Integer>> listofMaps = new ArrayList<HashMap<String, Integer>>(dynamicMatrix);
-		for (HashMap<String, Integer> map : dynamicMatrix) {
-			if (map.size() == 1) {
-				listofMaps.remove(map);
-			}
-		}
-		return listofMaps;
 	}
 
 	/**

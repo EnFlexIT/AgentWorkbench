@@ -61,19 +61,20 @@ public class PathSearchBotRunner {
 	 * @param steps the steps
 	 * @return the path search bot distribution matrix
 	 */
-	public PathSearchBotDistributionMatrix runBotsAndGetDistributionMatrix(NetworkModel networkModel, String startNCID, int steps) {
+	public PathSearchBotBottelneckAnalyser runBotsAndGetDistributionMatrix(NetworkModel networkModel, String startNCID, int steps) {
 		createInitialBot(networkModel, startNCID);
-		PathSearchBotDistributionMatrix antDistributionMatrix = new PathSearchBotDistributionMatrix();
+		PathSearchBotBottelneckAnalyser antDistributionMatrix = new PathSearchBotBottelneckAnalyser();
 
 		for (int step = 0; step < steps; step++) {
 			if (activeSearchBots.size() < 1) {
 				break;
 			}
 			for (PathSearchBot bot : new ArrayList<PathSearchBot>(activeSearchBots)) {
-				if (!bot.run())
+				if (!bot.run()) {
 					activeSearchBots.remove(bot);
-				if (!bot.isCycle()) {
-					antDistributionMatrix.addAntToDynamicMatrix(bot);
+					if (!bot.isCycle()) {
+						antDistributionMatrix.addAntToDynamicMatrix(bot);
+					}
 				}
 			}
 		}
@@ -101,10 +102,11 @@ public class PathSearchBotRunner {
 				break;
 			}
 			for (PathSearchBot bot : new ArrayList<PathSearchBot>(activeSearchBots)) {
-				if (!bot.run())
+				if (!bot.run()) {
 					activeSearchBots.remove(bot);
-				if (bot.isCycle()) {
-					antCircleAnalyser.addPathSearchBotToSubgraphs(bot);
+					if (bot.isCycle()) {
+						antCircleAnalyser.addPathSearchBotToSubgraphs(bot);
+					}
 				}
 			}
 		}

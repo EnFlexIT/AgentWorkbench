@@ -29,11 +29,11 @@
 package gasmas.clustering.behaviours;
 
 import gasmas.clustering.analyse.ClusterIdentifier;
-import gasmas.clustering.analyse.PathSearchBotDistributionMatrix;
+import gasmas.clustering.analyse.PathSearchBotBottelneckAnalyser;
 import gasmas.clustering.analyse.PathSearchBotRunner;
+import jade.core.Agent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.environment.EnvironmentModel;
 
 /**
  * The Class PathAnalyseClusteringBehaviour.
@@ -49,8 +49,8 @@ public class BottelneckClusteringBehaviour extends ClusteringBehaviour {
 	 * @param environmentModel the environment model
 	 * @param thisNetworkComponent the this network component
 	 */
-	public BottelneckClusteringBehaviour(EnvironmentModel environmentModel) {
-		super(environmentModel);
+	public BottelneckClusteringBehaviour(Agent agent, NetworkModel networkModel) {
+		super(agent, networkModel);
 	}
 
 	/* (non-Javadoc)
@@ -91,7 +91,7 @@ public class BottelneckClusteringBehaviour extends ClusteringBehaviour {
 	 * @return the network model
 	 */
 	private NetworkModel startPathAnalysis(NetworkModel newNetworkModel) {
-		PathSearchBotDistributionMatrix antDistributionMatrix = new PathSearchBotRunner().runBotsAndGetDistributionMatrix(newNetworkModel, coalitionBehaviour.getThisNetworkComponent().getId(),
+		PathSearchBotBottelneckAnalyser antDistributionMatrix = new PathSearchBotRunner().runBotsAndGetDistributionMatrix(newNetworkModel, coalitionBehaviour.getThisNetworkComponent().getId(),
 				BottelneckClusteringBehaviour.STEPS);
 		String frequentComponent = antDistributionMatrix.findFrequentPathComponent();
 		if (frequentComponent == null) {

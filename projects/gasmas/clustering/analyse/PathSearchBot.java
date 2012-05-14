@@ -95,9 +95,10 @@ public class PathSearchBot {
 	 * @return
 	 */
 	private boolean checkForCycle() {
-		if (new HashSet<NetworkComponent>(path).size() < path.size()-1) {
-			circle = true;
-			return true;
+		if (new HashSet<NetworkComponent>(path).size() < path.size() - 1) {
+			if (path.indexOf(path.get(path.size() - 1)) - 1 == path.indexOf(path.get(path.size() - 2)) || path.indexOf(path.get(path.size() - 1)) + 1 == path.indexOf(path.get(path.size() - 2)))
+				circle = true;
+				return true;
 		}
 		return false;
 	}

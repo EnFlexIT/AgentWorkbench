@@ -102,7 +102,7 @@ public class ClusterCompare {
 		// analyze size of the Clusters
 		int clusterNCs = cluster.getClusterNetworkModel().getNetworkComponents().size();
 		int suggestedClusterNCs = suggestedCluster.getClusterNetworkModel().getNetworkComponents().size();
-		if (clusterNCs > suggestedClusterNCs) {
+		if (clusterNCs < suggestedClusterNCs) {
 			return ClusterCompare.BETTER;
 		} else if (suggestedClusterNCs > clusterNCs) {
 			return ClusterCompare.WORSE;

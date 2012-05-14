@@ -72,6 +72,8 @@ public class NetworkModel implements Cloneable, Serializable {
 	/** The outer network components of this NetworkModel with no Connections */
 	private transient ArrayList<String> outerNetworkComponents;
 
+	private transient int connectionsOfBiggestBranch;
+
 	/** This instance stores the DomainSettings and the ComponentTypeSettings. */
 	private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
 
@@ -155,7 +157,7 @@ public class NetworkModel implements Cloneable, Serializable {
 
 		// -- Create a copy of the networkComponents ----------------
 		HashMap<String, NetworkComponent> copyOfComponents = new HashMap<String, NetworkComponent>();
-		for (NetworkComponent networkComponent : this.networkComponents.values()) {
+		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
 			if (networkComponent instanceof ClusterNetworkComponent) {
 				ClusterNetworkComponent networkComponentCopy = ((ClusterNetworkComponent) networkComponent).getCopy();
 				copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
@@ -498,7 +500,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		Vector<GraphNode> nodes = this.getNodesFromNetworkComponent(networkComponent);
 		for (int i = 0; i < nodes.size(); i++) {
 			GraphNode node = nodes.get(i);
-			for (NetworkComponent netComponent : this.networkComponents.values()) {
+			for (NetworkComponent netComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
 				// --- check if the component contains the current node -------
 				if (netComponent.getGraphElementIDs().contains(node.getId())) {
 					// --- Add component to result list -----------------------
@@ -519,7 +521,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @return the network component by graph edge id
 	 */
 	public NetworkComponent getNetworkComponent(GraphEdge graphEdge) {
-		for (NetworkComponent networkComponent : this.networkComponents.values()) {
+		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
 			if (networkComponent.getGraphElementIDs().contains(graphEdge.getId())) {
 				return networkComponent;
 			}
@@ -628,7 +630,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	 */
 	public HashSet<NetworkComponent> getNetworkComponents(GraphNode graphNode) {
 		HashSet<NetworkComponent> networkComponents = new HashSet<NetworkComponent>();
-		for (NetworkComponent networkComponent : this.networkComponents.values()) {
+		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
 			if (networkComponent.getGraphElementIDs().contains(graphNode.getId())) {
 				networkComponents.add(networkComponent);
 			}
@@ -1316,7 +1318,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	* @return the cluster components
 	*/
 	public ArrayList<ClusterNetworkComponent> getClusterComponents() {
-		return getClusterComponents(this.networkComponents.values());
+		return getClusterComponents(new ArrayList<NetworkComponent>(this.networkComponents.values()));
 	}
 
 	/**
@@ -1511,4 +1513,17 @@ public class NetworkModel implements Cloneable, Serializable {
 		return outerNetworkComponents;
 	}
 
+	public int getConnectionsOfBiggestBranch() {
+		if (connectionsOfBiggestBranch < 1) {
+			for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(networkComponents.values())) {
+				if (!(networkComponent instanceof ClusterNetworkComponent)) {
+					int nodes = getNodesFromNetworkComponent(networkComponent).size() - 1;
+					if (nodes > connectionsOfBiggestBranch) {
+						connectionsOfBiggestBranch = nodes;
+					}
+				}
+			}
+		}
+		return connectionsOfBiggestBranch;
+	}
 }

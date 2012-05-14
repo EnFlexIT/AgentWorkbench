@@ -41,7 +41,9 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	private static final long serialVersionUID = 682444875338053459L;
 
 	/** The Constant defaultPrototypeClassName. */
-	private static final String defaultPrototypeClassName = "agentgui.envModel.graph.prototypes.ClusterGraphElement";
+	private static final String DEFAUL_PROTOTYPE_CLASS_NAME = "agentgui.envModel.graph.prototypes.ClusterGraphElement";
+
+	private static final String DEFAUL_AGENT_CLASS_NAME = "gasmas.agents.components.ClusterNetworkAgent";
 
 	/** The domain. which this cluster contains to */
 	private String domain;
@@ -61,8 +63,9 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @param clusterNetworkModel the cluster network model
 	 */
 	public ClusterNetworkComponent(String id, String type, String agentClassName, HashSet<GraphElement> graphElements, boolean directed, NetworkModel clusterNetworkModel) {
-		super(id, type, ClusterNetworkComponent.defaultPrototypeClassName, agentClassName, graphElements, directed);
+		super(id, type, ClusterNetworkComponent.DEFAUL_PROTOTYPE_CLASS_NAME, agentClassName, graphElements, directed);
 		this.clusterNetworkModel = clusterNetworkModel;
+		this.setAgentClassName(DEFAUL_AGENT_CLASS_NAME);
 	}
 
 	/* (non-Javadoc)

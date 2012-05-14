@@ -29,6 +29,8 @@
 package gasmas.clustering.analyse;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
@@ -43,7 +45,7 @@ public class ComponentFunctions {
 
 	/** The active network component agent classes. */
 	private final static String[] activeNetworkComponentAgentClasses = new String[] { "Compressor", "ControlValve", "SimpleValve", "Entry", "Exit", "Storage" };
-	private final static String[] activeClasses = new String[] { "Compressor", "ControlValve" };
+	private final static String[] activeClasses = new String[] { "Compressor", "ControlValve", "ClusterNetwork" };
 
 	/**
 	 * Identify active components.
@@ -74,4 +76,18 @@ public class ComponentFunctions {
 		return activeNetworkComponents;
 	}
 
+	public static void printAmountOfDiffernetTypesOfAgents(String name, NetworkModel networkModel) {
+		HashMap<String, Integer> map = new HashMap<String, Integer>(); 
+		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(networkModel.getNetworkComponents().values())) {
+			Integer i = map.get(networkComponent.getAgentClassName());
+			if (i == null) {
+				i = new Integer(0);
+			}
+			map.put(networkComponent.getAgentClassName(), i + 1);
+		}
+		System.out.println(name);
+		for (Entry<String, Integer> entry : map.entrySet()) {
+			System.out.println(entry.getKey() + " : " + entry.getValue());
+		}
+	}
 }

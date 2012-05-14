@@ -29,7 +29,6 @@
 package gasmas.clustering.coalitions;
 
 import gasmas.agents.components.ClusterNetworkAgent;
-import gasmas.clustering.analyse.ComponentFunctions;
 import gasmas.clustering.behaviours.ClusteringBehaviour;
 import jade.core.AID;
 import jade.core.Agent;
@@ -39,8 +38,6 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -49,6 +46,7 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.agents.SimulationAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 
 /**
@@ -65,45 +63,42 @@ public class ClusterNetworkAgentCoalitionBehaviour extends ParallelBehaviour {
 	/** The cluster network component. */
 	private ClusterNetworkComponent clusterNetworkComponent;
 
-	/** The bigger clusters. */
-	private ArrayList<ClusterNetworkComponent> biggerClusters;
-
-	private boolean clustering = true;
+	private ClusteringBehaviour clusteringBehaviour;
 
 	/**
 	 * Instantiates a new cluster network agent coalition behaviour.
-	 * @param agent 
 	 *
+	 * @param agent the agent
 	 * @param environmentModel the environment model
 	 * @param clusterNetworkComponent the cluster network component
-	 * @param biggerClusters the bigger clusters
+	 * @param clusteringBehaviour 
 	 */
-	public ClusterNetworkAgentCoalitionBehaviour(Agent agent, EnvironmentModel environmentModel, ClusterNetworkComponent clusterNetworkComponent, ArrayList<ClusterNetworkComponent> biggerClusters) {
+	public ClusterNetworkAgentCoalitionBehaviour(Agent agent, EnvironmentModel environmentModel, ClusterNetworkComponent clusterNetworkComponent, ClusteringBehaviour clusteringBehaviour) {
 		this.environmentModel = environmentModel;
 		this.clusterNetworkComponent = clusterNetworkComponent;
-		this.biggerClusters = biggerClusters;
 		this.myAgent = agent;
-		System.out.println(myAgent.getLocalName() + " " + biggerClusters.size());
-		sendMessagesToNCs(clusterNetworkComponent.getNetworkComponentIDs());
+		this.clusteringBehaviour = clusteringBehaviour;
+		sendMessagesToNCs();
 	}
 
 	/**
-	 * Send messages to active n cs.
+	 * Send messages to=
+	 *
+	 * @param networkComponents the network components
 	 */
-	private void sendMessagesToNCs(HashSet<String> networkComponents) {
+	private void sendMessagesToNCs() {
 		networkComponentMap = new HashMap<String, Boolean>();
-		for (String networkComponentID : networkComponents) {
-			System.out.print(networkComponentID + ";");
+		for (String networkComponentID : clusterNetworkComponent.getNetworkComponentIDs()) {
 			networkComponentMap.put(networkComponentID, false);
 			addSubBehaviour(new ClusterNetworkAgentProposeBehaviour(this, myAgent, createRequest(networkComponentID, clusterNetworkComponent)));
 		}
-		System.out.println();
 	}
 
 	/**
-	 * Creates the request.
+	 * Creates the request and sends the clusterComponent as suggestion
 	 *
 	 * @param receiver the receiver
+	 * @param clusterNetworkComponent the cluster network component
 	 * @return the aCL message
 	 */
 	private ACLMessage createRequest(String receiver, ClusterNetworkComponent clusterNetworkComponent) {
@@ -119,7 +114,7 @@ public class ClusterNetworkAgentCoalitionBehaviour extends ParallelBehaviour {
 	}
 
 	/**
-	 * Adds the agree.
+	 * Adds the agree of a component, when all are in it starts replacing the Cluster 
 	 *
 	 * @param networkComponentID the network component id
 	 */
@@ -130,22 +125,32 @@ public class ClusterNetworkAgentCoalitionBehaviour extends ParallelBehaviour {
 				return;
 			}
 		}
-		if (clustering) {
-			clustering = false;
-			recreateCluster();
-		}
+		recreateCluster();
 	}
 
 	/**
-	 * Recreate cluster.
+	 * Recreate cluster within the ClusterNetworkModel
 	 */
 	private void recreateCluster() {
 		NetworkModel clusteredNM = getClusteredModel();
 		clusterNetworkComponent = replaceNetworkModelPartWithCluster(clusteredNM);
+		clusteredNM.renameNetworkComponent(clusterNetworkComponent.getId(), myAgent.getLocalName());
 		((ClusterNetworkAgent) myAgent).setClusterNetworkComponent(clusterNetworkComponent);
-		startSubClustering();
-		
+
+		startCoalitionBehaviourForThisAgent(clusteredNM);
 		changeDisplay(clusteredNM, clusterNetworkComponent);
+	}
+
+	/**
+	 * Start coalition behavior for this agent.
+	 *
+	 * @param clusteredNM the clustered nm
+	 */
+	private void startCoalitionBehaviourForThisAgent(NetworkModel clusteredNM) {
+		NetworkModel clusteredNetworkModel = clusteredNM.getCopy();
+		clusteringBehaviour.setNetworkModel(clusteredNetworkModel);
+		this.addSubBehaviour(new CoalitionBehaviour((SimulationAgent) myAgent, environmentModel, clusteredNetworkModel, clusteringBehaviour));
+
 	}
 	
 	/**
@@ -163,36 +168,7 @@ public class ClusterNetworkAgentCoalitionBehaviour extends ParallelBehaviour {
 	}
 
 	/**
-	 * Start sub clustering.
-	 *
-	 * @param cluster the cluster
-	 */
-	private void startSubClustering() {
-		if (biggerClusters.size() < 1) {
-			return;
-		}
-		for (ClusterNetworkComponent nextBest : biggerClusters) {
-			ClusterNetworkComponent clusterNetworkComponent = replaceNetworkModelPartWithCluster(nextBest.getClusterNetworkModel());
-			nextBest.getClusterNetworkModel().renameNetworkComponent(clusterNetworkComponent.getId(), this.clusterNetworkComponent.getId());
-			ArrayList<String> activeAgents = getSortedActiveNCIDs(ComponentFunctions.getActiveAgentComponents(nextBest.getClusterNetworkModel()));
-			if( activeAgents.size() > 1){
-				addSubBehaviour(new ClusterNetworkAgentProposeBehaviour(this, myAgent, createRequest(activeAgents.get(0), nextBest)));
-			}
-		}
-
-	}
-	
-	private ArrayList<String> getSortedActiveNCIDs(ArrayList<NetworkComponent> activeNCs) {
-		ArrayList<String> activeNCIDs = new ArrayList<String>();
-		for (NetworkComponent networkComponent : activeNCs) {
-			activeNCIDs.add(networkComponent.getId());
-		}
-		Collections.sort(activeNCIDs);
-		return activeNCIDs;
-	}
-
-	/**
-	 * Gets the clustered model.
+	 * Gets the clustered model or creates it and updates the networkModel alternatives.
 	 *
 	 * @return the clustered model
 	 */

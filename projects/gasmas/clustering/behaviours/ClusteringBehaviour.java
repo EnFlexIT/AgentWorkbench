@@ -31,7 +31,7 @@ package gasmas.clustering.behaviours;
 import gasmas.clustering.analyse.ClusterCorrectionHeuristics;
 import gasmas.clustering.analyse.ClusterIdentifier;
 import gasmas.clustering.coalitions.CoalitionBehaviour;
-import jade.core.ServiceException;
+import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 
 import java.util.ArrayList;
@@ -39,9 +39,6 @@ import java.util.ArrayList;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.environment.EnvironmentModel;
 
 /**
  * The Class ClusteringBehaviour.
@@ -57,16 +54,18 @@ abstract public class ClusteringBehaviour extends OneShotBehaviour {
 	/** The network model. */
 	protected NetworkModel networkModel;
 
-	protected EnvironmentModel environmentModel;
-
 	/**
 	 * Instantiates a new path circle clustering behaviour.
 	 *
 	 * @param environmentModel the environment model
 	 */
-	public ClusteringBehaviour(EnvironmentModel environmentModel) {
-		this.environmentModel = environmentModel;
-		this.networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
+	public ClusteringBehaviour(Agent agent, NetworkModel networkModel) {
+		myAgent = agent;
+		this.networkModel = networkModel;
+	}
+
+	public void setNetworkModel(NetworkModel networkModel) {
+		this.networkModel = networkModel;
 	}
 
 	/**
@@ -98,24 +97,6 @@ abstract public class ClusteringBehaviour extends OneShotBehaviour {
 				removeSubClusters((ClusterNetworkComponent) networkComponent);
 				clusterNetworkComponent.getClusterNetworkModel().replaceClusterByComponents((ClusterNetworkComponent) networkComponent);
 			}
-		}
-	}
-
-	/**
-	 * Change display.
-	 */
-	protected void changeDisplay(NetworkModel netModel) {
-		SimulationServiceHelper simulationServiceHelper = null;
-		try {
-			simulationServiceHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-		networkModel.getAlternativeNetworkModel().put("Test", netModel);
-		try {
-			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
-		} catch (ServiceException e) {
-			e.printStackTrace();
 		}
 	}
 

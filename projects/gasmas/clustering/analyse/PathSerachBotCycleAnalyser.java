@@ -69,6 +69,9 @@ public class PathSerachBotCycleAnalyser {
 	}
 
 	public Subgraph getBestSubgraph() {
+		if (subgraphs == null) {
+			return null;
+		}
 		Subgraph subgraph = subgraphs.get(0);
 		for (Subgraph subgraphInList : subgraphs) {
 			if (subgraphInList.getNetworkComponents().size() < subgraph.getNetworkComponents().size()) {
@@ -125,11 +128,11 @@ public class PathSerachBotCycleAnalyser {
 	 */
 	public void addPathSearchBotToSubgraphs(PathSearchBot ant) {
 		Subgraph subgraph = findSubgraph(networkModel, ant.getPath(), ant.getAllAlternativeComponents());
-		if (subgraph.getInterfaceNetworkComponents().size() < minConnections) {
+		if (subgraph.getInterfaceNetworkComponents().size() < minConnections && !subgraph.hasMultipleConnectionsOnABranch(networkModel)) {
 			subgraphs = new ArrayList<Subgraph>();
 			subgraphs.add(subgraph);
 			minConnections = subgraph.getInterfaceNetworkComponents().size();
-		} else if (subgraph.getInterfaceNetworkComponents().size() == minConnections) {
+		} else if (subgraph.getInterfaceNetworkComponents().size() == minConnections && !subgraph.hasMultipleConnectionsOnABranch(networkModel)) {
 			subgraphs.add(subgraph);
 		}
 	}

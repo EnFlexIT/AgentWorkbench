@@ -39,7 +39,7 @@
             <key>Exit</key>
             <value>
                 <agentClass>gasmas.agents.components.ExitAgent</agentClass>
-                <color>-65536</color>
+                <color>-13312</color>
                 <domain>Gas network</domain>
                 <edgeWidth>10.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>

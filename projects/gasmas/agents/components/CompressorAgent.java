@@ -38,8 +38,7 @@ public class CompressorAgent extends SimulationAgent {
 
 		this.myNetworkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
 
-		ClusteringBehaviour clusteringBehaviour = new CycleClusteringBehaviour(myEnvironmentModel);
-		clusteringBehaviour.setAgent(this);
-		this.addBehaviour(new CoalitionBehaviour(this, myEnvironmentModel, clusteringBehaviour));
+		ClusteringBehaviour clusteringBehaviour = new CycleClusteringBehaviour(this, myNetworkModel);
+		this.addBehaviour(new CoalitionBehaviour(this, myEnvironmentModel, myNetworkModel, clusteringBehaviour));
 	}
 }

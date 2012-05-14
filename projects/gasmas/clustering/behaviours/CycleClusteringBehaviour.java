@@ -31,12 +31,12 @@ package gasmas.clustering.behaviours;
 import gasmas.clustering.analyse.PathSearchBotRunner;
 import gasmas.clustering.analyse.PathSerachBotCycleAnalyser;
 import gasmas.clustering.analyse.Subgraph;
+import jade.core.Agent;
 
 import java.util.Date;
 
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.environment.EnvironmentModel;
 
 /**
  * The Class PathCircleClusteringBehaviour.
@@ -47,8 +47,8 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 	private static final int STEPS = 50;
 
 
-	public CycleClusteringBehaviour(EnvironmentModel environmentModel) {
-		super(environmentModel);
+	public CycleClusteringBehaviour(Agent agent, NetworkModel networkModel) {
+		super(agent, networkModel);
 	}
 
 	/* (non-Javadoc)
@@ -56,9 +56,7 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 	 */
 	@Override
 	public void action() {
-		// System.out.println("Begin Ant Circle Cluster Analysis " + new Date());
 		analyseClusters();
-		// System.out.println("End Ant Circle Cluster Analysis " + new Date());
 	}
 
 	/**
@@ -68,11 +66,13 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 		System.out.println("Begin CircleClusteringBehaviour " + new Date());
 
 		Subgraph subgraph = startPathAnalysis(networkModel);
-		NetworkModel copyNetworkModel = getClusterNM();
-		ClusterNetworkComponent clusterNetworkComponent = copyNetworkModel.replaceComponentsByCluster(subgraph.getNetworkComponents(copyNetworkModel));
-		coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent, true);
+		if (subgraph != null) {
+			NetworkModel copyNetworkModel = getClusterNM();
+			ClusterNetworkComponent clusterNetworkComponent = copyNetworkModel.replaceComponentsByCluster(subgraph.getNetworkComponents(copyNetworkModel));
+			coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent, true);
+		}
 
-		System.out.println("Begin CircleClusteringBehaviour " + new Date());
+		System.out.println("End CircleClusteringBehaviour " + new Date());
 	}
 
 	/**
@@ -85,7 +85,6 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 		// System.out.println("Start Analysing Circle");
 		PathSerachBotCycleAnalyser pathSerachBotCircleAnalyser = new PathSearchBotRunner().runBotsAndGetPathSerachBotCircleAnalyser(newNetworkModel, coalitionBehaviour.getThisNetworkComponent().getId(),
 				CycleClusteringBehaviour.STEPS);
-		//System.out.println(coalitionBehaviour.getThisNetworkComponent().getId() + "-" + pathSerachBotCircleAnalyser.getBestSubgraph());
 		return pathSerachBotCircleAnalyser.getBestSubgraph();
 	}
 }

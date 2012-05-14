@@ -55,7 +55,7 @@ public class ClusterNetworkAgentProposeBehaviour extends ProposeInitiator {
 	}
 
 	/**
-	 * Add an agree for 
+	 * Add an agree for this component
 	 */
 	@Override
 	protected void handleAcceptProposal(ACLMessage accept_proposal) {
@@ -63,7 +63,7 @@ public class ClusterNetworkAgentProposeBehaviour extends ProposeInitiator {
 	}
 
 	/**
-	 * delets the clusterAgent, because that Clsuter is not possible
+	 * delete the clusterAgent, because that Cluster is not possible
 	 */
 	@Override
 	protected void handleRejectProposal(ACLMessage reject_proposal) {

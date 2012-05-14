@@ -82,7 +82,7 @@ public class ClusterCorrectionHeuristics {
 			networkModel.mergeClusters(clusterNetworkComponent, cnc);
 			// restart check for new build cluster
 			checkNetwork(clusterNetworkComponent.getClusterNetworkModel(), clusterNetworkComponent.getId());
-		} else if (!checkAmountConnections(clusterNetworkComponent) || !new PathSearchBotRunner().checkClusterCircle(clusterNetworkComponent)) {
+		} else if (!checkAmountConnections(networkModel, clusterNetworkComponent) || !new PathSearchBotRunner().checkClusterCircle(clusterNetworkComponent)) {
 			if (!mergeTwoCluster(clusterNetworkComponent, networkModel)) {
 				networkModel.replaceClusterByComponents(clusterNetworkComponent);
 			}
@@ -165,8 +165,8 @@ public class ClusterCorrectionHeuristics {
 	 * @param clusterNetworkComponent the cluster network component
 	 * @return true, if successful
 	 */
-	private boolean checkAmountConnections(ClusterNetworkComponent clusterNetworkComponent) {
-		if (clusterNetworkComponent.getConnectionNetworkComponents().size() > 4) {
+	private boolean checkAmountConnections(NetworkModel networkModel, ClusterNetworkComponent clusterNetworkComponent) {
+		if (clusterNetworkComponent.getConnectionNetworkComponents().size() > networkModel.getConnectionsOfBiggestBranch()) {
 			return false;
 		}
 		return true;

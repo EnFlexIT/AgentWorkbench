@@ -51,7 +51,7 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1130</useLocalPort>
+        <useLocalPort>1169</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -83,39 +83,43 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>SmallClusters (2) Mid</simulationSetupCurrent>
+    <simulationSetupCurrent>HNord (2) Mid</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>SmallClusters (1) Small</key>
-            <value>smallclusters_1_small.xml</value>
+            <key>SmallClusters (2) Mid</key>
+            <value>smallclusters_2_mid.xml</value>
         </entry>
         <entry>
             <key>HNord (2) Mid</key>
             <value>hnord_2_mid.xml</value>
         </entry>
         <entry>
-            <key>Testnetz 3</key>
-            <value>testnetz_3.xml</value>
+            <key>Einfaches Netz</key>
+            <value>einfaches_netz.xml</value>
         </entry>
         <entry>
             <key>SmartGrid</key>
             <value>smartgrid.xml</value>
         </entry>
         <entry>
-            <key>HNord Complete</key>
-            <value>hnord_complete.xml</value>
+            <key>SmallClusters (3) Large</key>
+            <value>smallclusters_3_large.xml</value>
+        </entry>
+        <entry>
+            <key>Testnetz 3</key>
+            <value>testnetz_3.xml</value>
+        </entry>
+        <entry>
+            <key>SmallClusters (1) Small</key>
+            <value>smallclusters_1_small.xml</value>
         </entry>
         <entry>
             <key>HNord (1) Small</key>
             <value>hnord_1_small.xml</value>
         </entry>
         <entry>
-            <key>SmallClusters (2) Mid</key>
-            <value>smallclusters_2_mid.xml</value>
-        </entry>
-        <entry>
-            <key>Einfaches Netz</key>
-            <value>einfaches_netz.xml</value>
+            <key>HNord Complete</key>
+            <value>hnord_complete.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>

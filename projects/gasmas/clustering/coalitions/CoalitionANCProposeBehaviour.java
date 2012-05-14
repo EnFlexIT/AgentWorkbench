@@ -25,7 +25,7 @@ public class CoalitionANCProposeBehaviour extends ProposeInitiator {
 
 	@Override
 	protected void handleRejectProposal(ACLMessage reject_proposal) {
-		// if rejected wait there will be no coalition, so wait for better suggestion
+		// if rejected wait: there will be no coalition, so wait for better suggestion
 	}
 
 	@Override

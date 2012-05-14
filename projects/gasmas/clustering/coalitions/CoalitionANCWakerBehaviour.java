@@ -17,7 +17,6 @@ public class CoalitionANCWakerBehaviour extends WakerBehaviour {
 	
 	@Override
 	protected void onWake() {
-		System.out.println("Waker is Active "+myAgent.getLocalName());
 		coalitionBehaviour.informCoalitionAuthority(nameOfAuthority);
 	}
 }

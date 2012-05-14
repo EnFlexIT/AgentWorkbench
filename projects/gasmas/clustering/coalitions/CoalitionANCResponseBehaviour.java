@@ -60,7 +60,7 @@ public class CoalitionANCResponseBehaviour extends ProposeResponder {
 	 */
 	@Override
 	protected ACLMessage prepareResponse(ACLMessage propose) throws NotUnderstoodException, RefuseException {
-		coalitionBehaviour.removeCoalitionANCWakerBehaviour(propose.getSender().getLocalName());
+		coalitionBehaviour.killCoalitionANCWakerBehaviour(propose.getSender().getLocalName());
 		ACLMessage response = propose.createReply();
 		ClusterNetworkComponent clusterNetworkComponent = null;
 		boolean notUnderstood = false;
@@ -75,6 +75,9 @@ public class CoalitionANCResponseBehaviour extends ProposeResponder {
 		} else if (coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent, false)) {
 			response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 		}else{
+			// if (propose.getSender().getLocalName().contains(ClusterNetworkAgent.CLUSTER_AGENT_Prefix)) {
+			// System.out.println("Denial " + myAgent.getLocalName());
+			// }
 			response.setPerformative(ACLMessage.REJECT_PROPOSAL);
 		}
 		return response;

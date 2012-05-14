@@ -31,6 +31,7 @@ package gasmas.clustering.behaviours;
 import edu.uci.ics.jung.algorithms.cluster.EdgeBetweennessClusterer;
 import edu.uci.ics.jung.graph.Graph;
 import gasmas.clustering.analyse.ClusterIdentifier;
+import jade.core.Agent;
 
 import java.util.Date;
 import java.util.List;
@@ -39,18 +40,17 @@ import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.environment.EnvironmentModel;
 
 /**
  * The Class EdgeBetweenessBehaviour. Based on the alreay implemented EdgeBetweenessClusterer of the Jung 2.0 Framework. Some changes to fullfill the needs of network clustering
  */
-public class EdgeBetweenessBehaviour extends ClusteringBehaviour {
+public class EdgeBetweenessClusteringBehaviour extends ClusteringBehaviour {
 
 	private static final int edgeBetweneenessRuns = 1;
 	private static final long serialVersionUID = -1944492299919314055L;
 
-	public EdgeBetweenessBehaviour(EnvironmentModel environmentModel) {
-		super(environmentModel);
+	public EdgeBetweenessClusteringBehaviour(Agent agent, NetworkModel networkModel) {
+		super(agent, networkModel);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class EdgeBetweenessBehaviour extends ClusteringBehaviour {
 	 */
 
 	private List<GraphEdge> removeEdge(Graph<GraphNode, GraphEdge> graph) {
-		EdgeBetweennessClusterer<GraphNode, GraphEdge> edgeBetweennessClusterer = new EdgeBetweennessClusterer<GraphNode, GraphEdge>(EdgeBetweenessBehaviour.edgeBetweneenessRuns);
+		EdgeBetweennessClusterer<GraphNode, GraphEdge> edgeBetweennessClusterer = new EdgeBetweennessClusterer<GraphNode, GraphEdge>(EdgeBetweenessClusteringBehaviour.edgeBetweneenessRuns);
 		edgeBetweennessClusterer.transform(graph);
 		List<GraphEdge> edges = edgeBetweennessClusterer.getEdgesRemoved();
 		if (edges.size() < 1) {

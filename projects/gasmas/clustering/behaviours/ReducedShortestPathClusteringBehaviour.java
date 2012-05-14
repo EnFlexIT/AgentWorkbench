@@ -32,6 +32,7 @@ import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
 import gasmas.clustering.analyse.ClusterIdentifier;
 import gasmas.clustering.analyse.ComponentFunctions;
 import gasmas.clustering.analyse.NetworkPath;
+import jade.core.Agent;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,7 +46,6 @@ import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.environment.EnvironmentModel;
 
 /**
  * The Class ShortestPathClusteringBehaviour.
@@ -61,8 +61,8 @@ public class ReducedShortestPathClusteringBehaviour extends ClusteringBehaviour 
 	 *
 	 * @param environmentModel the environment model
 	 */
-	public ReducedShortestPathClusteringBehaviour(EnvironmentModel environmentModel) {
-		super(environmentModel);
+	public ReducedShortestPathClusteringBehaviour(Agent agent, NetworkModel networkModel) {
+		super(agent, networkModel);
 	}
 
 	/*

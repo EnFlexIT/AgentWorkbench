@@ -62,8 +62,6 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	/** The environment model. */
 	private EnvironmentModel environmentModel;
 
-	/** The network model. */
-	private NetworkModel networkModel;
 
 	/** The this network component. */
 	private NetworkComponent thisNetworkComponent;
@@ -74,25 +72,22 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	/** The active NetworkCompoenents within a suggestedClusterNetworkComponent. */
 	private ArrayList<NetworkComponent> activeNCs;
 
-	/** The list of bigger cnc. */
-	private ArrayList<ClusterNetworkComponent> listOfBiggerCNC = new ArrayList<ClusterNetworkComponent>();
-
 	/** The coalition authority behaviour. */
 	private CoalitionANCAuthorityBehaviour coalitionAuthorityBehaviour;
 
 	/** Starts own coalitionAuthorityBehaviour if estimated calitionAuthority has not asked. */
 	private CoalitionANCWakerBehaviour coalitionANCWakerBehaviour = null;
-	
+
 	/**
 	 * Instantiates a new coalition behaviour.
 	 *
 	 * @param agent the agent
 	 * @param environmentModel the environment model
+	 * @param networkModel the network model
 	 * @param clusteringBehaviour the clustering behaviour
 	 */
-	public CoalitionBehaviour(SimulationAgent agent, EnvironmentModel environmentModel, ClusteringBehaviour clusteringBehaviour) {
+	public CoalitionBehaviour(SimulationAgent agent, EnvironmentModel environmentModel, NetworkModel networkModel, ClusteringBehaviour clusteringBehaviour) {
 		this.environmentModel = environmentModel;
-		networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
 		myAgent = agent;
 		thisNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
 
@@ -102,7 +97,7 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	}
 
 	/**
-	 * Check suggested cluster.
+	 * Check suggested cluster based on Rules
 	 *
 	 * @param clusterNetworkComponent the cluster network component
 	 * @param internal the internal
@@ -111,16 +106,13 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	public boolean checkSuggestedCluster(ClusterNetworkComponent clusterNetworkComponent, boolean internal) {
 		if (suggestedClusterNetworkComponent == null) {
 			changeSuggestedCluster(clusterNetworkComponent, internal);
-			changeDisplay();
 		}
 		switch (ClusterCompare.compareClusters(clusterNetworkComponent, suggestedClusterNetworkComponent)) {
 		case ClusterCompare.PART_OF_SUGGESTED:
-			sendSuggestedToAuthorityForSubClustering();
 		case ClusterCompare.BETTER:
 			changeSuggestedCluster(clusterNetworkComponent, internal);
 			return true;
 		case ClusterCompare.PART_OF_NEW:
-			addToListOfBiggerCNC(clusterNetworkComponent);
 			return false;
 		case ClusterCompare.EQUAL:
 			return true;
@@ -129,75 +121,20 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 			return false;
 		}
 	}
-	
-	/**
-	 * Adds the to list of bigger cnc.
-	 *
-	 * @param clusterNetworkComponent the cluster network component
-	 */
-	private void addToListOfBiggerCNC(ClusterNetworkComponent clusterNetworkComponent) {
-		for (ClusterNetworkComponent cNC : listOfBiggerCNC) {
-			if (ClusterCompare.compareClusters(cNC, clusterNetworkComponent) == ClusterCompare.EQUAL) {
-				return;
-			}
-		}
-		// check if components still part of model
-		NetworkModel networkModel = getClusteredModel();
-		for( String componentID:clusterNetworkComponent.getNetworkComponentIDs()){
-			if( networkModel.getNetworkComponent(componentID) == null){
-				return;
-			}
-		}
-		listOfBiggerCNC.add(clusterNetworkComponent);
-	}
 
 	/**
-	 * Gets the clustered model.
+	 * Start waker behaviour.
 	 *
-	 * @return the clustered model
+	 * @param activeNCIDs the active nci ds
 	 */
-	private NetworkModel getClusteredModel() {
-		NetworkModel networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
-		NetworkModel clusteredNM = networkModel.getAlternativeNetworkModel().get(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME);
-		if (clusteredNM == null) {
-			clusteredNM = networkModel.getCopy();
-			clusteredNM.setAlternativeNetworkModel(null);
-			changeDisplay(clusteredNM);
+	private void startWakerBehaviour(ArrayList<String> activeNCIDs) {
+		int position = 0;
+		for (int i = 0; i < activeNCIDs.size(); i++) {
+			if (activeNCIDs.get(i).equals(thisNetworkComponent.getId()))
+				position = i;
 		}
-		return clusteredNM;
-	}
-
-	/**
-	 * Change display.
-	 *
-	 * @param clusteredNM the clustered nm
-	 * @param cluster the cluster
-	 */
-	private void changeDisplay(NetworkModel clusteredNM) {
-		SimulationServiceHelper simulationServiceHelper = null;
-		NetworkModel networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
-		try {
-			simulationServiceHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-		networkModel.getAlternativeNetworkModel().put(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME, clusteredNM);
-		try {
-			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Send suggested to authority for sub clustering.
-	 */
-	private void sendSuggestedToAuthorityForSubClustering() {
-		ArrayList<NetworkComponent> activeNCs = ComponentFunctions.getActiveAgentComponents(suggestedClusterNetworkComponent.getClusterNetworkModel());
-		ArrayList<String> activeNCIDs = getSortedActiveNCIDs(activeNCs);
-		if (!thisNetworkComponent.getId().equals(activeNCIDs.get(0))) {
-			informCoalitionAuthority(activeNCIDs.get(0));
-		}
+		coalitionANCWakerBehaviour = new CoalitionANCWakerBehaviour(myAgent, WAITING_TIME_FOR_COALITION_AUTHORIRY + position * WAITING_TIME_FOR_COALITION_AUTHORIRY_INCEMENT, this, activeNCIDs.get(0));
+		this.addSubBehaviour(coalitionANCWakerBehaviour);
 	}
 
 	/**
@@ -205,16 +142,16 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	 *
 	 * @param componentID the component id
 	 */
-	public void removeCoalitionANCWakerBehaviour(String componentID) {
+	public void killCoalitionANCWakerBehaviour(String componentID) {
 		if (suggestedClusterNetworkComponent != null && suggestedClusterNetworkComponent.getNetworkComponentIDs().contains(componentID)) {
-			removeCoalitionANCWakerBehaviour();
+			killCoalitionANCWakerBehaviour();
 		}
 	}
-	
+
 	/**
-	 * Removes the coalition anc waker behaviour.
+	 * Removes the coalition ANCWakerehaviour this is called locally
 	 */
-	private void removeCoalitionANCWakerBehaviour() {
+	private void killCoalitionANCWakerBehaviour() {
 		if (coalitionANCWakerBehaviour != null) {
 			this.removeSubBehaviour(coalitionANCWakerBehaviour);
 			coalitionANCWakerBehaviour = null;
@@ -229,36 +166,7 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 			this.removeSubBehaviour(coalitionAuthorityBehaviour);
 			coalitionAuthorityBehaviour = null;
 		}
-		removeCoalitionANCWakerBehaviour();
-	}
-
-	/**
-	 * Start new behaviours.
-	 *
-	 * @param internal the internal
-	 */
-	private void startNewBehaviours(boolean internal) {
-		// Actually shouldn't happen, only if Agents and getActiveAgentComponents are out of Sync
-		if (activeNCs.size() < 1) {
-			System.out.println("Bad");
-			for (NetworkComponent net : suggestedClusterNetworkComponent.getClusterNetworkModel().getClusterComponents())
-				System.out.println(net.getId());
-		} else {
-			ArrayList<String> activeNCIDs = getSortedActiveNCIDs(activeNCs);
-			if (activeNCIDs.get(0).equals(thisNetworkComponent.getId())) {
-				System.out.println("Authority " + thisNetworkComponent.getId() + " Size " + suggestedClusterNetworkComponent.getSize());
-				startCoalitionAuthorityBehaviour();
-			} else if (internal) {
-				int position = 0;
-				for( int i = 0; i < activeNCIDs.size(); i++){
-					if (activeNCIDs.get(i).equals(thisNetworkComponent.getId()))
-						position = i;
-				}
-				coalitionANCWakerBehaviour = new CoalitionANCWakerBehaviour(myAgent, WAITING_TIME_FOR_COALITION_AUTHORIRY + position * WAITING_TIME_FOR_COALITION_AUTHORIRY_INCEMENT, this,
-						activeNCIDs.get(0));
-				this.addSubBehaviour(coalitionANCWakerBehaviour);
-			}
-		}
+		killCoalitionANCWakerBehaviour();
 	}
 
 	/**
@@ -271,18 +179,25 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 		killPreviousBehavioursBasedOnSuggestedCNC();
 		suggestedClusterNetworkComponent = clusterNetworkComponent;
 		activeNCs = ComponentFunctions.getActiveAgentComponents(suggestedClusterNetworkComponent.getClusterNetworkModel());
-		changeListOfBiggerCNC();
 
 		startNewBehaviours(internal);
 	}
 
 	/**
-	 * Change list of bigger cnc.
+	 * Start new behaviours.
+	 *
+	 * @param internal the internal
 	 */
-	private void changeListOfBiggerCNC(){
-		for (ClusterNetworkComponent clusterNetworkComponent : new ArrayList<ClusterNetworkComponent>(listOfBiggerCNC)) {
-			if (ClusterCompare.compareClusters(clusterNetworkComponent, suggestedClusterNetworkComponent) != ClusterCompare.PART_OF_NEW) {
-				listOfBiggerCNC.remove(clusterNetworkComponent);
+	private void startNewBehaviours(boolean internal) {
+		// Actually shouldn't happen, only if Agents and getActiveAgentComponents are out of Sync
+		if (activeNCs.size() < 1) {
+			System.out.println("Bad " + thisNetworkComponent.getId() + " " + suggestedClusterNetworkComponent.getNetworkComponentIDs().contains(thisNetworkComponent.getId()));
+		} else {
+			ArrayList<String> activeNCIDs = getSortedActiveNCIDs(activeNCs);
+			if (activeNCIDs.get(0).equals(thisNetworkComponent.getId())) {
+				startCoalitionAuthorityBehaviour();
+			} else if (internal) {
+				startWakerBehaviour(activeNCIDs);
 			}
 		}
 	}
@@ -320,25 +235,6 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	}
 
 	/**
-	 * Change display.
-	 */
-	private void changeDisplay() {
-		SimulationServiceHelper simulationServiceHelper = null;
-		try {
-			simulationServiceHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-		networkModel.getAlternativeNetworkModel().put(thisNetworkComponent.getId() + " " + suggestedClusterNetworkComponent.getId(),
-				suggestedClusterNetworkComponent.getClusterNetworkModel());
-		try {
-			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Gets the this network component.
 	 *
 	 * @return the this network component
@@ -360,11 +256,10 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	 * Start cluster agent.
 	 */
 	public void startClusterAgent() {
-		System.out.println("startAgent " + thisNetworkComponent.getId());
 		try {		
 			LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
 			String agentName = "" + ClusterNetworkAgent.CLUSTER_AGENT_Prefix + ClusterNetworkAgent.getFreeID();
-			Object[] params = new Object[] { suggestedClusterNetworkComponent, listOfBiggerCNC };
+			Object[] params = new Object[] { suggestedClusterNetworkComponent };
 			try {
 				loadHelper.startAgent(agentName, "gasmas.agents.components.ClusterNetworkAgent", params, myAgent.getContainerController().getContainerName());
 			} catch (ControllerException e) {
@@ -375,4 +270,27 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * Change display for debugging pruposes
+	 *
+	 * @param id the id
+	 * @param newNetworkModel the new network model
+	 */
+	private void changeDisplay(String id, NetworkModel newNetworkModel) {
+		SimulationServiceHelper simulationServiceHelper = null;
+		NetworkModel networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
+		try {
+			simulationServiceHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		networkModel.getAlternativeNetworkModel().put(id, newNetworkModel);
+		try {
+			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+
 }
