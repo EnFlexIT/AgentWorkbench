@@ -28,6 +28,7 @@
  */
 package gasmas.clustering.behaviours;
 
+import gasmas.clustering.analyse.ClusterIdentifier;
 import gasmas.clustering.analyse.PathSearchBotRunner;
 import gasmas.clustering.analyse.PathSerachBotCycleAnalyser;
 import gasmas.clustering.analyse.Subgraph;
@@ -86,5 +87,10 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 		PathSerachBotCycleAnalyser pathSerachBotCircleAnalyser = new PathSearchBotRunner().runBotsAndGetPathSerachBotCircleAnalyser(newNetworkModel, coalitionBehaviour.getThisNetworkComponent().getId(),
 				CycleClusteringBehaviour.STEPS);
 		return pathSerachBotCircleAnalyser.getBestSubgraph();
+	}
+
+	@Override
+	public void analyseClusters(NetworkModel networkModel, ClusterIdentifier clusterIdentifier) {
+		// Dummy
 	}
 }

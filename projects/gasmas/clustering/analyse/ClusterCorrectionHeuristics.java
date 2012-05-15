@@ -47,7 +47,7 @@ public class ClusterCorrectionHeuristics {
 	/**
 	 * Instantiates a new cluster correction.
 	 *
-	 * @param networkModel the network model
+	 * @param clusterIdentifier the cluster identifier
 	 */
 	public ClusterCorrectionHeuristics(ClusterIdentifier clusterIdentifier) {
 		this.clusterIdentifier = clusterIdentifier;
@@ -70,7 +70,7 @@ public class ClusterCorrectionHeuristics {
 	}
 
 	/**
-	 * Checks Clusters based on heuristics if they're really good clsuters
+	 * Checks Clusters based on heuristics if they're really good clsuters.
 	 *
 	 * @param clusterNetworkComponent the cluster network component
 	 * @param networkModel the network model
@@ -82,13 +82,48 @@ public class ClusterCorrectionHeuristics {
 			networkModel.mergeClusters(clusterNetworkComponent, cnc);
 			// restart check for new build cluster
 			checkNetwork(clusterNetworkComponent.getClusterNetworkModel(), clusterNetworkComponent.getId());
-		} else if (!checkAmountConnections(networkModel, clusterNetworkComponent) || !new PathSearchBotRunner().checkClusterCircle(clusterNetworkComponent)) {
+		} else if (!checkAmountConnections(networkModel, clusterNetworkComponent) || !new PathSearchBotRunner().checkClusterCircle(clusterNetworkComponent)
+				|| multipleConnectionsBetweenClusterAndNetwrokModel(clusterNetworkComponent, networkModel)) {
 			if (!mergeTwoCluster(clusterNetworkComponent, networkModel)) {
 				networkModel.replaceClusterByComponents(clusterNetworkComponent);
 			}
 		}
 	}
 
+	/**
+	 * Multiple connections between cluster and netwrok model.
+	 *
+	 * @param clusterNetworkComponent the cluster network component
+	 * @param networkModel the network model
+	 * @return true, if successful
+	 */
+	private boolean multipleConnectionsBetweenClusterAndNetwrokModel(ClusterNetworkComponent clusterNetworkComponent, NetworkModel networkModel) {
+		ArrayList<String> criticalComponents = clusterIdentifier.getCriticalBranchConnectionComponents(clusterNetworkComponent);
+		for (String criticalNCID : criticalComponents) {
+			NetworkComponent networkComponent = clusterNetworkComponent.getClusterNetworkModel().getNetworkComponent(criticalNCID);
+			if (networkComponent != null) {
+				Vector<GraphNode> nodes = clusterNetworkComponent.getClusterNetworkModel().getNodesFromNetworkComponent(networkComponent);
+				int counter = 0;
+				for (GraphNode graphNode : nodes) {
+					if (networkModel.getGraphElement(graphNode.getId()) != null) {
+						counter++;
+					}
+				}
+				if (counter > 1) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Multiple connectins on a branch.
+	 *
+	 * @param clusterNetworkComponent the cluster network component
+	 * @param networkModel the network model
+	 * @return the cluster network component
+	 */
 	private ClusterNetworkComponent multipleConnectinsOnABranch(ClusterNetworkComponent clusterNetworkComponent, NetworkModel networkModel) {
 		ArrayList<ClusterNetworkComponent> clusters = multipleConnectionsBetweenClusters(clusterNetworkComponent, networkModel);
 		ArrayList<String> criticalComponents = clusterIdentifier.getCriticalBranchConnectionComponents(clusterNetworkComponent);
@@ -114,6 +149,12 @@ public class ClusterCorrectionHeuristics {
 		return null;
 	}
 
+	/**
+	 * Extract cluster network components.
+	 *
+	 * @param networkComponents the network components
+	 * @return the array list
+	 */
 	private ArrayList<ClusterNetworkComponent> extractClusterNetworkComponents(Vector<NetworkComponent> networkComponents) {
 		ArrayList<ClusterNetworkComponent> clusters = new ArrayList<ClusterNetworkComponent>();
 		for (NetworkComponent networkComponent : networkComponents) {
@@ -124,6 +165,13 @@ public class ClusterCorrectionHeuristics {
 		return clusters;
 	}
 
+	/**
+	 * Multiple connections between clusters.
+	 *
+	 * @param clusterNetworkComponent the cluster network component
+	 * @param networkModel the network model
+	 * @return the array list
+	 */
 	private ArrayList<ClusterNetworkComponent> multipleConnectionsBetweenClusters(ClusterNetworkComponent clusterNetworkComponent, NetworkModel networkModel) {
 		Vector<NetworkComponent> connectionsToNCs = networkModel.getNeighbourNetworkComponents(clusterNetworkComponent);
 		ArrayList<ClusterNetworkComponent> clusters = extractClusterNetworkComponents(connectionsToNCs);
@@ -144,7 +192,7 @@ public class ClusterCorrectionHeuristics {
 	}
 
 	/**
-	 * Merge two cluster on the first multi Connection
+	 * Merge two cluster on the first multi Connection.
 	 *
 	 * @param clusterNetworkComponent the cluster network component
 	 * @param networkModel the network model
@@ -162,6 +210,7 @@ public class ClusterCorrectionHeuristics {
 	/**
 	 * Check amount connections.
 	 *
+	 * @param networkModel the network model
 	 * @param clusterNetworkComponent the cluster network component
 	 * @return true, if successful
 	 */

@@ -35,7 +35,6 @@ import gasmas.clustering.analyse.NetworkPath;
 import jade.core.Agent;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -65,30 +64,13 @@ public class ReducedShortestPathClusteringBehaviour extends ClusteringBehaviour 
 		super(agent, networkModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jade.core.behaviours.Behaviour#action()
-	 */
-	@Override
-	public void action() {
-		System.out.println("Begin ReducedShortestPathClusteringBehaviour " + new Date());
-
-		ClusterIdentifier clusterIdentifier = new ClusterIdentifier();
-		NetworkModel clusteredNM = getClusterNM();
-
-		analyseClusters(clusteredNM, clusterIdentifier);
-		correctAndSetCluster(clusteredNM, clusterIdentifier);
-
-		System.out.println("Begin ReducedShortestPathClusteringBehaviour " + new Date());
-	}
-
 	/**
 	 * Analyse clusters.
 	 *
 	 * @param networkModel the network model
 	 * @param clusterIdentifier the cluster identifier
 	 */
+	@Override
 	public void analyseClusters(NetworkModel networkModel, ClusterIdentifier clusterIdentifier) {
 		NetworkModel copyNetworkModel = networkModel.getCopy();
 		copyNetworkModel.setAlternativeNetworkModel(null);

@@ -33,7 +33,6 @@ import edu.uci.ics.jung.graph.Graph;
 import gasmas.clustering.analyse.ClusterIdentifier;
 import jade.core.Agent;
 
-import java.util.Date;
 import java.util.List;
 
 import agentgui.envModel.graph.networkModel.GraphEdge;
@@ -46,31 +45,26 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
  */
 public class EdgeBetweenessClusteringBehaviour extends ClusteringBehaviour {
 
+	/** The Constant edgeBetweneenessRuns. */
 	private static final int edgeBetweneenessRuns = 1;
+
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1944492299919314055L;
 
+	/**
+	 * Instantiates a new edge betweeness clustering behaviour.
+	 *
+	 * @param agent the agent
+	 * @param networkModel the network model
+	 */
 	public EdgeBetweenessClusteringBehaviour(Agent agent, NetworkModel networkModel) {
 		super(agent, networkModel);
 	}
 
-	/**
-	 * action to cluster the network
-	 * 
-	 * @see jade.core.behaviours.Behaviour#action()
+	/* (non-Javadoc)
+	 * @see gasmas.clustering.behaviours.ClusteringBehaviour#analyseClusters(agentgui.envModel.graph.networkModel.NetworkModel, gasmas.clustering.analyse.ClusterIdentifier)
 	 */
 	@Override
-	public void action() {
-		System.out.println("Begin Edge Betweness Cluster Analysis " + new Date());
-
-		ClusterIdentifier clusterIdentifier = new ClusterIdentifier();
-		NetworkModel clusteredNM = getClusterNM();
-
-		analyseClusters(clusteredNM, clusterIdentifier);
-		correctAndSetCluster(clusteredNM, clusterIdentifier);
-
-		System.out.println("End Edge Betweness Cluster Analysis " + new Date());
-	}
-
 	public void analyseClusters(NetworkModel networkModel, ClusterIdentifier clusterIdentifier) {
 		NetworkModel newNetworkModel = networkModel.getCopy();
 		while (newNetworkModel != null) {
@@ -79,10 +73,10 @@ public class EdgeBetweenessClusteringBehaviour extends ClusteringBehaviour {
 	}
 
 	/**
-	 * identifies a removable Edge with the Jung EdgeBetwenessClusterer
-	 * 
-	 * @param graph
-	 * @return
+	 * identifies a removable Edge with the Jung EdgeBetwenessClusterer.
+	 *
+	 * @param graph the graph
+	 * @return the list
 	 */
 
 	private List<GraphEdge> removeEdge(Graph<GraphNode, GraphEdge> graph) {
@@ -96,9 +90,10 @@ public class EdgeBetweenessClusteringBehaviour extends ClusteringBehaviour {
 	}
 
 	/**
-	 * removes a component from the copy of the network model
-	 * 
-	 * @param networkModel
+	 * removes a component from the copy of the network model.
+	 *
+	 * @param networkModel the network model
+	 * @return the network model
 	 */
 	private NetworkModel removeComponent(NetworkModel networkModel) {
 		List<GraphEdge> edges = removeEdge(networkModel.getGraph());

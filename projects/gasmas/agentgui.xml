@@ -51,12 +51,12 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1169</useLocalPort>
+        <useLocalPort>1184</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -83,7 +83,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>HNord (2) Mid</simulationSetupCurrent>
+    <simulationSetupCurrent>HNord Complete</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>

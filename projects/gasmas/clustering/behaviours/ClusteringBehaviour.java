@@ -35,6 +35,7 @@ import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -64,6 +65,23 @@ abstract public class ClusteringBehaviour extends OneShotBehaviour {
 		this.networkModel = networkModel;
 	}
 
+	@Override
+	public void action() {
+		Date begin = new Date();
+		System.out.println("Begin Cluster Analysis " + begin.getTime());
+
+		ClusterIdentifier clusterIdentifier = new ClusterIdentifier();
+		NetworkModel clusteredNM = getClusterNM();
+
+		analyseClusters(clusteredNM, clusterIdentifier);
+		correctAndSetCluster(clusteredNM, clusterIdentifier);
+
+		Date end = new Date();
+		System.out.println("End Cluster Analysis " + end.getTime() + " Duration: " + (end.getTime() - begin.getTime()));
+	}
+	
+	public abstract void analyseClusters(NetworkModel networkModel, ClusterIdentifier clusterIdentifier);
+
 	public void setNetworkModel(NetworkModel networkModel) {
 		this.networkModel = networkModel;
 	}
@@ -87,13 +105,13 @@ abstract public class ClusteringBehaviour extends OneShotBehaviour {
 	}
 
 	/**
-	 * Removes the sub clusters.
+	 * Removes the sub clusters which are not part of the NetworkModel
 	 *
 	 * @param clusterNetworkComponent the cluster network component
 	 */
 	protected void removeSubClusters(ClusterNetworkComponent clusterNetworkComponent) {
 		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(clusterNetworkComponent.getClusterNetworkModel().getNetworkComponents().values())) {
-			if (networkComponent instanceof ClusterNetworkComponent) {
+			if (networkComponent instanceof ClusterNetworkComponent && networkModel.getNetworkComponent(networkComponent.getId()) == null) {
 				removeSubClusters((ClusterNetworkComponent) networkComponent);
 				clusterNetworkComponent.getClusterNetworkModel().replaceClusterByComponents((ClusterNetworkComponent) networkComponent);
 			}

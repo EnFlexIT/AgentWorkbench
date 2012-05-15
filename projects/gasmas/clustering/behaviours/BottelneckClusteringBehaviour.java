@@ -41,7 +41,7 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
 public class BottelneckClusteringBehaviour extends ClusteringBehaviour {
 
 	/** The Constant STEPS. */
-	private static final int STEPS = 70;
+	private static final int STEPS = 100;
 
 	/**
 	 * Instantiates a new path analyse clustering behaviour.
@@ -53,24 +53,13 @@ public class BottelneckClusteringBehaviour extends ClusteringBehaviour {
 		super(agent, networkModel);
 	}
 
-	/* (non-Javadoc)
-	 * @see jade.core.behaviours.Behaviour#action()
-	 */
-	@Override
-	public void action() {
-		ClusterIdentifier clusterIdentifier = new ClusterIdentifier();
-		NetworkModel clusteredNM = getClusterNM();
-
-		analyseClusters(clusteredNM, clusterIdentifier);
-		correctAndSetCluster(clusteredNM, clusterIdentifier);
-	}
-
 	/**
 	 * Analyse clusters.
 	 *
 	 * @param networkModel the network model
 	 * @param clusterIdentifier the cluster identifier
 	 */
+	@Override
 	public void analyseClusters(NetworkModel networkModel, ClusterIdentifier clusterIdentifier) {
 		NetworkModel newNetworkModel = networkModel.getCopy();
 		while (newNetworkModel != null && newNetworkModel.getNetworkComponent(coalitionBehaviour.getThisNetworkComponent().getId()) != null) {
