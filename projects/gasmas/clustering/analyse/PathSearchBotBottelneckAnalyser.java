@@ -51,10 +51,9 @@ public class PathSearchBotBottelneckAnalyser {
 	 *
 	 * @param bot the ant
 	 */
-	public void addAntToDynamicMatrix(PathSearchBot bot) {
+	public void addPathSearchBotToDynamicMatrix(PathSearchBot bot) {
 		ArrayList<String> path = bot.getPath();
 		for (int step = SKIP_STEPS; step < path.size(); step++) {
-			// System.out.print(path.get(step) + ";");
 			if (dynamicMatrix.size() <= step) {
 				dynamicMatrix.add(new HashMap<String, Integer>());
 			}
@@ -93,7 +92,7 @@ public class PathSearchBotBottelneckAnalyser {
 	 * @param dynamicMatrix the dynamic matrix
 	 * @return the hash map
 	 */
-	private HashMap<String, Integer> accumulate(ArrayList<HashMap<String, Integer>> dynamicMatrix) {
+	private HashMap<String, Integer> getSumMatrix(ArrayList<HashMap<String, Integer>> dynamicMatrix) {
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
 		for (HashMap<String, Integer> stepMap : dynamicMatrix) {
 			for (Entry<String, Integer> entry : stepMap.entrySet()) {
@@ -113,7 +112,7 @@ public class PathSearchBotBottelneckAnalyser {
 	 * @return the string
 	 */
 	public String findFrequentPathComponent() {
-		HashMap<String, Integer> accumulatedMap = accumulate(dynamicMatrix);
+		HashMap<String, Integer> accumulatedMap = getSumMatrix(dynamicMatrix);
 		Entry<String, Integer> maxEntry = null;
 		ArrayList<Entry<String, Integer>> maxEntryList = new ArrayList<Entry<String, Integer>>();
 		for (Entry<String, Integer> entry : accumulatedMap.entrySet()) {

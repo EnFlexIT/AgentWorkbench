@@ -99,18 +99,20 @@ public class ClusterCorrectionHeuristics {
 	 */
 	private boolean multipleConnectionsBetweenClusterAndNetwrokModel(ClusterNetworkComponent clusterNetworkComponent, NetworkModel networkModel) {
 		ArrayList<String> criticalComponents = clusterIdentifier.getCriticalBranchConnectionComponents(clusterNetworkComponent);
-		for (String criticalNCID : criticalComponents) {
-			NetworkComponent networkComponent = clusterNetworkComponent.getClusterNetworkModel().getNetworkComponent(criticalNCID);
-			if (networkComponent != null) {
-				Vector<GraphNode> nodes = clusterNetworkComponent.getClusterNetworkModel().getNodesFromNetworkComponent(networkComponent);
-				int counter = 0;
-				for (GraphNode graphNode : nodes) {
-					if (networkModel.getGraphElement(graphNode.getId()) != null) {
-						counter++;
+		if (criticalComponents != null) {
+			for (String criticalNCID : criticalComponents) {
+				NetworkComponent networkComponent = clusterNetworkComponent.getClusterNetworkModel().getNetworkComponent(criticalNCID);
+				if (networkComponent != null) {
+					Vector<GraphNode> nodes = clusterNetworkComponent.getClusterNetworkModel().getNodesFromNetworkComponent(networkComponent);
+					int counter = 0;
+					for (GraphNode graphNode : nodes) {
+						if (networkModel.getGraphElement(graphNode.getId()) != null) {
+							counter++;
+						}
 					}
-				}
-				if (counter > 1) {
-					return true;
+					if (counter > 1) {
+						return true;
+					}
 				}
 			}
 		}

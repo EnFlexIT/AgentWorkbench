@@ -111,13 +111,11 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 		case ClusterCompare.PART_OF_SUGGESTED:
 		case ClusterCompare.BETTER:
 			changeSuggestedCluster(clusterNetworkComponent, internal);
-			return true;
-		case ClusterCompare.PART_OF_NEW:
-			return false;
 		case ClusterCompare.EQUAL:
 			return true;
-
+			
 		default:
+			// all three other cases
 			return false;
 		}
 	}

@@ -41,7 +41,7 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
 public class BottelneckClusteringBehaviour extends ClusteringBehaviour {
 
 	/** The Constant STEPS. */
-	private static final int STEPS = 100;
+	private static final int STEPS = 60;
 
 	/**
 	 * Instantiates a new path analyse clustering behaviour.

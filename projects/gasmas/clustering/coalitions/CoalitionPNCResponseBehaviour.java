@@ -71,7 +71,8 @@ public class CoalitionPNCResponseBehaviour extends ProposeResponder {
 
 		if (notUnderstood) {
 			response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
-		}else if (this.clusterNetworkComponent == null || clusterNetworkComponent == this.clusterNetworkComponent) {
+		} else if (this.clusterNetworkComponent == null || clusterNetworkComponent == this.clusterNetworkComponent) {
+			this.clusterNetworkComponent = clusterNetworkComponent;
 			response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 		} else {
 			response.setPerformative(ACLMessage.REJECT_PROPOSAL);

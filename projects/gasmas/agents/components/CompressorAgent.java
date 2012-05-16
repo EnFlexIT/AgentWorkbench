@@ -1,7 +1,7 @@
 package gasmas.agents.components;
 
 import gasmas.clustering.behaviours.ClusteringBehaviour;
-import gasmas.clustering.behaviours.EdgeBetweenessClusteringBehaviour;
+import gasmas.clustering.behaviours.CycleClusteringBehaviour;
 import gasmas.clustering.coalitions.CoalitionBehaviour;
 import jade.core.ServiceException;
 import agentgui.envModel.graph.networkModel.NetworkModel;
@@ -38,7 +38,7 @@ public class CompressorAgent extends SimulationAgent {
 
 		this.myNetworkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
 
-		ClusteringBehaviour clusteringBehaviour = new EdgeBetweenessClusteringBehaviour(this, myNetworkModel);
+		ClusteringBehaviour clusteringBehaviour = new CycleClusteringBehaviour(this, myNetworkModel);
 		this.addBehaviour(new CoalitionBehaviour(this, myEnvironmentModel, myNetworkModel, clusteringBehaviour));
 	}
 }

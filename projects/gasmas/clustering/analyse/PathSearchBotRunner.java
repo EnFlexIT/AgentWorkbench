@@ -73,14 +73,14 @@ public class PathSearchBotRunner {
 				if (!bot.run()) {
 					activeSearchBots.remove(bot);
 					if (!bot.isCycle()) {
-						antDistributionMatrix.addAntToDynamicMatrix(bot);
+						antDistributionMatrix.addPathSearchBotToDynamicMatrix(bot);
 					}
 				}
 			}
 		}
 		// and Rest of the running bots
 		for (PathSearchBot bot : activeSearchBots) {
-			antDistributionMatrix.addAntToDynamicMatrix(bot);
+			antDistributionMatrix.addPathSearchBotToDynamicMatrix(bot);
 		}
 		return antDistributionMatrix;
 	}
