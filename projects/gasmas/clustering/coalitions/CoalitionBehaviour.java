@@ -73,10 +73,10 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	private ArrayList<NetworkComponent> activeNCs;
 
 	/** The coalition authority behaviour. */
-	private CoalitionANCAuthorityBehaviour coalitionAuthorityBehaviour;
+	private ActiveNAAuthorityBehaviour coalitionAuthorityBehaviour;
 
 	/** Starts own coalitionAuthorityBehaviour if estimated calitionAuthority has not asked. */
-	private CoalitionANCWakerBehaviour coalitionANCWakerBehaviour = null;
+	private AuthorityWakerBehaviour coalitionANCWakerBehaviour = null;
 
 	/**
 	 * Instantiates a new coalition behaviour.
@@ -93,7 +93,7 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 
 		clusteringBehaviour.setCoalitionBehaviours(this);
 		addSubBehaviour(clusteringBehaviour);
-		addSubBehaviour(new CoalitionANCResponseBehaviour(this, myAgent));
+		addSubBehaviour(new ActiveNAResponderBehaviour(this, myAgent));
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 			if (activeNCIDs.get(i).equals(thisNetworkComponent.getId()))
 				position = i;
 		}
-		coalitionANCWakerBehaviour = new CoalitionANCWakerBehaviour(myAgent, WAITING_TIME_FOR_COALITION_AUTHORIRY + position * WAITING_TIME_FOR_COALITION_AUTHORIRY_INCEMENT, this, activeNCIDs.get(0));
+		coalitionANCWakerBehaviour = new AuthorityWakerBehaviour(myAgent, WAITING_TIME_FOR_COALITION_AUTHORIRY + position * WAITING_TIME_FOR_COALITION_AUTHORIRY_INCEMENT, this, activeNCIDs.get(0));
 		this.addSubBehaviour(coalitionANCWakerBehaviour);
 	}
 
@@ -219,7 +219,10 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	 * Start coalition authority behaviour.
 	 */
 	private void startCoalitionAuthorityBehaviour() {
-		coalitionAuthorityBehaviour = new CoalitionANCAuthorityBehaviour(this, activeNCs);
+		if (activeNCs.size() == 1) {
+			startClusterAgent();
+		}
+		coalitionAuthorityBehaviour = new ActiveNAAuthorityBehaviour(this, activeNCs);
 		addSubBehaviour(coalitionAuthorityBehaviour);
 	}
 
@@ -229,7 +232,7 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	 * @param componentID the component id
 	 */
 	public void informCoalitionAuthority(String componentID) {
-		addSubBehaviour(new CoalitionANCProposeBehaviour(null, myAgent, CoalitionANCAuthorityBehaviour.createRequest(componentID, suggestedClusterNetworkComponent)));
+		addSubBehaviour(new ActiveNAProposeBehaviour(null, myAgent, ActiveNAAuthorityBehaviour.createRequest(componentID, suggestedClusterNetworkComponent)));
 	}
 
 	/**

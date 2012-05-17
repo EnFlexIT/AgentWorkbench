@@ -32,13 +32,13 @@ import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ProposeInitiator;
 
-public class ClusterNetworkAgentProposeBehaviour extends ProposeInitiator {
+public class ClusterNAProposeBehaviour extends ProposeInitiator {
 
 	/** The message. */
 	private ACLMessage message;
 
 	/** The cluster network agent coalition behaviour. */
-	private ClusterNetworkAgentCoalitionBehaviour clusterNetworkAgentCoalitionBehaviour;
+	private ClusterNACoalitionBehaviour clusterNetworkAgentCoalitionBehaviour;
 
 	/**
 	 * Instantiates a new cluster network agent propose behaviour.
@@ -48,7 +48,7 @@ public class ClusterNetworkAgentProposeBehaviour extends ProposeInitiator {
 	 * @param msg the msg
 	 * @param networkComponentID the network component id
 	 */
-	public ClusterNetworkAgentProposeBehaviour(ClusterNetworkAgentCoalitionBehaviour clusterNetworkAgentCoalitionBehaviour, Agent a, ACLMessage msg) {
+	public ClusterNAProposeBehaviour(ClusterNACoalitionBehaviour clusterNetworkAgentCoalitionBehaviour, Agent a, ACLMessage msg) {
 		super(a, msg);
 		message = msg;
 		this.clusterNetworkAgentCoalitionBehaviour = clusterNetworkAgentCoalitionBehaviour;

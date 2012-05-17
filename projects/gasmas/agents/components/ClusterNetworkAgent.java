@@ -2,7 +2,7 @@ package gasmas.agents.components;
 
 import gasmas.clustering.behaviours.ClusteringBehaviour;
 import gasmas.clustering.behaviours.CycleClusteringBehaviour;
-import gasmas.clustering.coalitions.ClusterNetworkAgentCoalitionBehaviour;
+import gasmas.clustering.coalitions.ClusterNACoalitionBehaviour;
 import jade.core.ServiceException;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.simulationService.SimulationService;
@@ -37,7 +37,7 @@ public class ClusterNetworkAgent extends SimulationAgent {
 		}
 		clusterNetworkComponent = (ClusterNetworkComponent) this.getArguments()[0];
 		ClusteringBehaviour clusteringBehaviour = new CycleClusteringBehaviour(this, null);
-		this.addBehaviour(new ClusterNetworkAgentCoalitionBehaviour(this, myEnvironmentModel, clusterNetworkComponent, clusteringBehaviour));
+		this.addBehaviour(new ClusterNACoalitionBehaviour(this, myEnvironmentModel, clusterNetworkComponent, clusteringBehaviour));
 	}
 
 	public static int getFreeID() {

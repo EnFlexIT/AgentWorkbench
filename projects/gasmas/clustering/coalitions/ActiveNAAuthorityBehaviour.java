@@ -43,7 +43,7 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 /**
  * The Class CoalitionANCAuthorityBehaviour.
  */
-public class CoalitionANCAuthorityBehaviour extends ParallelBehaviour {
+public class ActiveNAAuthorityBehaviour extends ParallelBehaviour {
 
 	/** The coalition behaviour. */
 	private CoalitionBehaviour coalitionBehaviour;
@@ -57,8 +57,9 @@ public class CoalitionANCAuthorityBehaviour extends ParallelBehaviour {
 	 * @param coalitionBehaviour the coalition behaviour
 	 * @param activeNCs the active n cs
 	 */
-	public CoalitionANCAuthorityBehaviour(CoalitionBehaviour coalitionBehaviour, ArrayList<NetworkComponent> activeNCs) {
+	public ActiveNAAuthorityBehaviour(CoalitionBehaviour coalitionBehaviour, ArrayList<NetworkComponent> activeNCs) {
 		this.coalitionBehaviour = coalitionBehaviour;
+		activeNCs.remove(0);
 		sendMessagesToActiveNCs(activeNCs);
 	}
 	
@@ -70,7 +71,7 @@ public class CoalitionANCAuthorityBehaviour extends ParallelBehaviour {
 	private void sendMessagesToActiveNCs(ArrayList<NetworkComponent> activeNCs) {
 		for (NetworkComponent networkComponent : activeNCs) {
 			activeNCMap.put(networkComponent.getId(), false);
-			addSubBehaviour(new CoalitionANCProposeBehaviour(this, myAgent, createRequest(networkComponent.getId(), coalitionBehaviour.getSuggestedClusterNetworkComponent())));
+			addSubBehaviour(new ActiveNAProposeBehaviour(this, myAgent, createRequest(networkComponent.getId(), coalitionBehaviour.getSuggestedClusterNetworkComponent())));
 		}
 	}
 

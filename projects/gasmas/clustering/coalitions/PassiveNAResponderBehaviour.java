@@ -29,55 +29,52 @@
 package gasmas.clustering.coalitions;
 
 import jade.core.Agent;
+import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import jade.proto.AchieveREResponder;
 import jade.proto.ProposeResponder;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 
 /**
- * The Class CoalitionActiveNetworkComponentBehaviour.
+ * The Class CoalitionPNCBehaviour.
  */
-public class CoalitionANCResponseBehaviour extends ProposeResponder {
+public class PassiveNAResponderBehaviour extends ProposeResponder {
 
-	/** The coalition behaviour. */
-	private CoalitionBehaviour coalitionBehaviour;
+	/** The cluster network component. */
+	private ClusterNetworkComponent clusterNetworkComponent;
 
 	/**
-	 * Instantiates a new coalition active network component behaviour.
+	 * Instantiates a new coalition pnc behaviour.
 	 *
-	 * @param coalitionBehaviour the coalition behaviour
 	 * @param a the a
 	 */
-	public CoalitionANCResponseBehaviour(CoalitionBehaviour coalitionBehaviour, Agent a) {
-		super(a, ProposeResponder.createMessageTemplate(FIPA_PROPOSE));
-		this.coalitionBehaviour = coalitionBehaviour;
+	public PassiveNAResponderBehaviour(Agent a) {
+		super(a, AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_PROPOSE));
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see jade.proto.AchieveREResponder#prepareResultNotification(jade.lang.acl.ACLMessage, jade.lang.acl.ACLMessage)
 	 */
 	@Override
 	protected ACLMessage prepareResponse(ACLMessage propose) throws NotUnderstoodException, RefuseException {
-		coalitionBehaviour.killCoalitionANCWakerBehaviour(propose.getSender().getLocalName());
 		ACLMessage response = propose.createReply();
 		ClusterNetworkComponent clusterNetworkComponent = null;
 		boolean notUnderstood = false;
 		try {
 			clusterNetworkComponent = (ClusterNetworkComponent) propose.getContentObject();
 		} catch (UnreadableException e) {
-			notUnderstood = true;
+			 notUnderstood = true;
 		}
 
 		if (notUnderstood) {
 			response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
-		} else if (coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent, false)) {
+		} else if (clusterNetworkComponent != null && (this.clusterNetworkComponent == null || clusterNetworkComponent == this.clusterNetworkComponent)) {
+			this.clusterNetworkComponent = clusterNetworkComponent;
 			response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-		}else{
-			// if (propose.getSender().getLocalName().contains(ClusterNetworkAgent.CLUSTER_AGENT_Prefix)) {
-			// System.out.println("Denial " + myAgent.getLocalName());
-			// }
+		} else {
 			response.setPerformative(ACLMessage.REJECT_PROPOSAL);
 		}
 		return response;

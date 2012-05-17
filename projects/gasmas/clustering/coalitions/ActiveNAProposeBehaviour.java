@@ -4,13 +4,13 @@ import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ProposeInitiator;
 
-public class CoalitionANCProposeBehaviour extends ProposeInitiator {
+public class ActiveNAProposeBehaviour extends ProposeInitiator {
 
 	private ACLMessage message;
-	private CoalitionANCAuthorityBehaviour coalitionAuthorityBehaviour;
+	private ActiveNAAuthorityBehaviour coalitionAuthorityBehaviour;
 
 
-	public CoalitionANCProposeBehaviour(CoalitionANCAuthorityBehaviour coalitionAuthorityBehaviour, Agent a, ACLMessage msg) {
+	public ActiveNAProposeBehaviour(ActiveNAAuthorityBehaviour coalitionAuthorityBehaviour, Agent a, ACLMessage msg) {
 		super(a, msg);
 		message = msg;
 		this.coalitionAuthorityBehaviour = coalitionAuthorityBehaviour;

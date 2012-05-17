@@ -52,7 +52,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
 /**
  * The Class ClusterNetworkAgentCoalitionBehaviour.
  */
-public class ClusterNetworkAgentCoalitionBehaviour extends ParallelBehaviour {
+public class ClusterNACoalitionBehaviour extends ParallelBehaviour {
 
 	/** The environment model. */
 	private EnvironmentModel environmentModel;
@@ -73,7 +73,7 @@ public class ClusterNetworkAgentCoalitionBehaviour extends ParallelBehaviour {
 	 * @param clusterNetworkComponent the cluster network component
 	 * @param clusteringBehaviour 
 	 */
-	public ClusterNetworkAgentCoalitionBehaviour(Agent agent, EnvironmentModel environmentModel, ClusterNetworkComponent clusterNetworkComponent, ClusteringBehaviour clusteringBehaviour) {
+	public ClusterNACoalitionBehaviour(Agent agent, EnvironmentModel environmentModel, ClusterNetworkComponent clusterNetworkComponent, ClusteringBehaviour clusteringBehaviour) {
 		this.environmentModel = environmentModel;
 		this.clusterNetworkComponent = clusterNetworkComponent;
 		this.myAgent = agent;
@@ -90,7 +90,7 @@ public class ClusterNetworkAgentCoalitionBehaviour extends ParallelBehaviour {
 		networkComponentMap = new HashMap<String, Boolean>();
 		for (String networkComponentID : clusterNetworkComponent.getNetworkComponentIDs()) {
 			networkComponentMap.put(networkComponentID, false);
-			addSubBehaviour(new ClusterNetworkAgentProposeBehaviour(this, myAgent, createRequest(networkComponentID, clusterNetworkComponent)));
+			addSubBehaviour(new ClusterNAProposeBehaviour(this, myAgent, createRequest(networkComponentID, clusterNetworkComponent)));
 		}
 	}
 

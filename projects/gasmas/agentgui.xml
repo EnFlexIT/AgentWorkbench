@@ -51,7 +51,7 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1214</useLocalPort>
+        <useLocalPort>1224</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -83,7 +83,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>SmallClusters (2) Mid</simulationSetupCurrent>
+    <simulationSetupCurrent>SmallClusters (1) Small</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>
@@ -116,6 +116,10 @@
         <entry>
             <key>HNord (1) Small</key>
             <value>hnord_1_small.xml</value>
+        </entry>
+        <entry>
+            <key>MixedClusters (1) Small</key>
+            <value>mixedclusters_1_small.xml</value>
         </entry>
         <entry>
             <key>HNord Complete</key>

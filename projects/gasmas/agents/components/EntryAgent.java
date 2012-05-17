@@ -1,6 +1,6 @@
 package gasmas.agents.components;
 
-import gasmas.clustering.coalitions.CoalitionPNCResponseBehaviour;
+import gasmas.clustering.coalitions.PassiveNAResponderBehaviour;
 import agentgui.simulationService.agents.SimulationAgent;
 
 public class EntryAgent extends SimulationAgent {
@@ -10,7 +10,7 @@ public class EntryAgent extends SimulationAgent {
 	@Override
 	protected void setup() {
 		super.setup();
-		this.addBehaviour(new CoalitionPNCResponseBehaviour(this));
+		this.addBehaviour(new PassiveNAResponderBehaviour(this));
 	}
 	
 	
