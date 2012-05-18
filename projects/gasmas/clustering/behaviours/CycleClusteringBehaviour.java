@@ -64,7 +64,8 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 	 * Analyse clusters.
 	 */
 	public void analyseClusters() {
-		System.out.println("Begin CircleClusteringBehaviour " + new Date());
+		Date begin = new Date();
+		System.out.println("Begin CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + begin.getTime());
 
 		Subgraph subgraph = startPathAnalysis(networkModel);
 		if (subgraph != null) {
@@ -72,8 +73,8 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 			ClusterNetworkComponent clusterNetworkComponent = copyNetworkModel.replaceComponentsByCluster(subgraph.getNetworkComponents(copyNetworkModel));
 			coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent, true);
 		}
-
-		System.out.println("End CircleClusteringBehaviour " + new Date());
+		Date end = new Date();
+		System.out.println("End CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + new Date() + " Duration: " + (end.getTime() - begin.getTime()));
 	}
 
 	/**
@@ -83,7 +84,6 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 	 * @return the subgraph
 	 */
 	private Subgraph startPathAnalysis(NetworkModel newNetworkModel) {
-		// System.out.println("Start Analysing Circle");
 		PathSerachBotCycleAnalyser pathSerachBotCircleAnalyser = new PathSearchBotRunner().runBotsAndGetPathSerachBotCircleAnalyser(newNetworkModel, coalitionBehaviour.getThisNetworkComponent().getId(),
 				CycleClusteringBehaviour.STEPS);
 		return pathSerachBotCircleAnalyser.getBestSubgraph();

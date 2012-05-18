@@ -29,11 +29,19 @@
 package gasmas.agents.manager;
 
 import gasmas.clustering.analyse.ComponentFunctions;
+import gasmas.clustering.behaviours.ClusteringBehaviour;
 import jade.core.ServiceException;
+
+import java.util.HashSet;
+
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelDiscrete;
@@ -112,6 +120,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 			currentlyDoing = GET_NetworkModel;
 			networkModel = (NetworkModel) ((GraphEnvironmentController) currProject.getEnvironmentController()).getEnvironmentModelCopy();
+			networkModel.getAlternativeNetworkModel().put(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME, networkModel.getCopy());
 
 			environmentModel.setTimeModel(myTimeModel);
 			environmentModel.setDisplayEnvironment(networkModel);
@@ -153,8 +162,60 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	 */
 	@Override
 	protected void onManagerNotification(EnvironmentNotification notification) {
-		
-		
+		if (notification.getNotification() instanceof ClusterNetworkComponent) {
+			ClusterNetworkComponent clusterNetworkComponent = (ClusterNetworkComponent) notification.getNotification();
+			clusterNetworkComponent = replaceNetworkModelPartWithCluster(clusterNetworkComponent);
+			NetworkModel clusteredNM = getClusteredModel();
+			clusteredNM.renameNetworkComponent(clusterNetworkComponent.getId(), notification.getSender().getLocalName());
+			changeDisplay(clusteredNM, clusterNetworkComponent);
+			sendAgentNotification(notification.getSender(), clusterNetworkComponent);
+		}
+	}
+
+	/**
+	 * Replace network model part with cluster.
+	 *
+	 * @param networkModel the network model
+	 * @return the cluster network component
+	 */
+	private ClusterNetworkComponent replaceNetworkModelPartWithCluster(ClusterNetworkComponent clusterNetworkComponent) {
+		NetworkModel networkModel = getClusteredModel();
+		HashSet<NetworkComponent> networkComponents = new HashSet<NetworkComponent>();
+		for (String id : clusterNetworkComponent.getNetworkComponentIDs()) {
+			networkComponents.add(networkModel.getNetworkComponent(id));
+		}
+		return networkModel.replaceComponentsByCluster(networkComponents);
+	}
+
+	/**
+	 * Change display.
+	 *
+	 * @param clusteredNM the clustered nm
+	 * @param cluster the cluster
+	 */
+	private void changeDisplay(NetworkModel clusteredNM, ClusterNetworkComponent cluster) {
+		SimulationServiceHelper simulationServiceHelper = null;
+		NetworkModel networkModel = (NetworkModel) envModel.getDisplayEnvironment();
+		try {
+			simulationServiceHelper = (SimulationServiceHelper) this.getHelper(SimulationService.NAME);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		networkModel.getAlternativeNetworkModel().put(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME, clusteredNM);
+		if (cluster != null) {
+			networkModel.getAlternativeNetworkModel().put(cluster.getId(), cluster.getClusterNetworkModel());
+		}
+		try {
+			simulationServiceHelper.setEnvironmentModel(this.envModel, true);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private NetworkModel getClusteredModel() {
+		NetworkModel networkModel = (NetworkModel) envModel.getDisplayEnvironment();
+		NetworkModel clusteredNM = networkModel.getAlternativeNetworkModel().get(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME);
+		return clusteredNM;
 	}
 
 	

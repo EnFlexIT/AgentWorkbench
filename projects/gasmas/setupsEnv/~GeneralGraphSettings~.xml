@@ -2,6 +2,17 @@
 <generalGraphSettings4MAS>
     <currentCTS>
         <entry>
+            <key>Lignite Plant</key>
+            <value>
+                <color>-3381760</color>
+                <domain>Electricity</domain>
+                <edgeImage>/gasmas/img/power_plant_lignite.png</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
             <key>Valve</key>
             <value>
                 <agentClass>gasmas.agents.components.SimpleValveAgent</agentClass>
@@ -14,13 +25,13 @@
             </value>
         </entry>
         <entry>
-            <key>Lignite Plant</key>
+            <key>Pipe-Short</key>
             <value>
-                <color>-3381760</color>
-                <domain>Electricity</domain>
-                <edgeImage>/gasmas/img/power_plant_lignite.png</edgeImage>
-                <edgeWidth>20.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <color>-16777216</color>
+                <domain>Gas network</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -32,17 +43,6 @@
                 <domain>Gas network</domain>
                 <edgeWidth>10.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>false</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>Pipe-Short</key>
-            <value>
-                <color>-16777216</color>
-                <domain>Gas network</domain>
-                <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -128,17 +128,6 @@
             </value>
         </entry>
         <entry>
-            <key>Entry</key>
-            <value>
-                <agentClass>gasmas.agents.components.EntryAgent</agentClass>
-                <color>-16724992</color>
-                <domain>Gas network</domain>
-                <edgeWidth>10.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>false</showLabel>
-            </value>
-        </entry>
-        <entry>
             <key>Branch7</key>
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
@@ -147,6 +136,17 @@
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>gasmas.graphprototypes.Star7GraphElement</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Entry</key>
+            <value>
+                <agentClass>gasmas.agents.components.EntryAgent</agentClass>
+                <color>-16724992</color>
+                <domain>Gas network</domain>
+                <edgeWidth>10.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>

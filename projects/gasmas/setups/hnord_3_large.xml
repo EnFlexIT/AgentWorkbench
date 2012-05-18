@@ -745,6 +745,36 @@
             <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
             <startAsName>n124</startAsName>
         </agent>
+        <agent>
+            <postionNo>124</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
+            <startAsName>n126</startAsName>
+        </agent>
+        <agent>
+            <postionNo>125</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.SimpleValveAgent</agentClassReference>
+            <startAsName>n127</startAsName>
+        </agent>
+        <agent>
+            <postionNo>126</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n128</startAsName>
+        </agent>
+        <agent>
+            <postionNo>127</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.SimpleValveAgent</agentClassReference>
+            <startAsName>n129</startAsName>
+        </agent>
+        <agent>
+            <postionNo>128</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n130</startAsName>
+        </agent>
     </agentSetup>
     <environmentFileName>HNord (3) Large.graphml</environmentFileName>
 </simulationSetup>

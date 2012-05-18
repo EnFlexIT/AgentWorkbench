@@ -1341,6 +1341,19 @@
             </value>
         </entry>
         <entry>
+            <key>n126</key>
+            <value>
+                <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>PP248</graphElementIDs>
+                <graphElementIDs>n126</graphElementIDs>
+                <graphElementIDs>PP250</graphElementIDs>
+                <id>n126</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>Compressor</type>
+            </value>
+        </entry>
+        <entry>
             <key>n123</key>
             <value>
                 <agentClassName>gasmas.agents.components.SimpleValveAgent</agentClassName>
@@ -1366,6 +1379,49 @@
                 <graphElementIDs>PP245</graphElementIDs>
                 <graphElementIDs>n124_2</graphElementIDs>
                 <id>n124</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
+                <type>Branch3</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n129</key>
+            <value>
+                <agentClassName>gasmas.agents.components.SimpleValveAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP256</graphElementIDs>
+                <graphElementIDs>PP254</graphElementIDs>
+                <graphElementIDs>n129</graphElementIDs>
+                <id>n129</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Valve</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n127</key>
+            <value>
+                <agentClassName>gasmas.agents.components.SimpleValveAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP244</graphElementIDs>
+                <graphElementIDs>n127</graphElementIDs>
+                <graphElementIDs>PP252</graphElementIDs>
+                <id>n127</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Valve</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n128</key>
+            <value>
+                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP238</graphElementIDs>
+                <graphElementIDs>PP254</graphElementIDs>
+                <graphElementIDs>PP253</graphElementIDs>
+                <graphElementIDs>n128_1</graphElementIDs>
+                <graphElementIDs>n128_0</graphElementIDs>
+                <graphElementIDs>PP252</graphElementIDs>
+                <graphElementIDs>n128_2</graphElementIDs>
+                <id>n128</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch3</type>
             </value>
@@ -1473,6 +1529,19 @@
                 <id>n78</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>ControlValve</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n130</key>
+            <value>
+                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n130</graphElementIDs>
+                <graphElementIDs>PP256</graphElementIDs>
+                <graphElementIDs>PP250</graphElementIDs>
+                <id>n130</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Pipe</type>
             </value>
         </entry>
         <entry>

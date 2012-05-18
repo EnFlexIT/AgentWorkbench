@@ -28,21 +28,21 @@
  */
 package agentgui.simulationService.agents;
 
-import java.util.Vector;
-
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
-
-import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.sensoring.ServiceActuator;
-import agentgui.simulationService.sensoring.ServiceSensor;
-import agentgui.simulationService.transaction.EnvironmentNotification;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Location;
 import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+
+import java.util.Vector;
+
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.sensoring.ServiceActuator;
+import agentgui.simulationService.sensoring.ServiceSensor;
+import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /**
  * This agent class can be used for simulations based on agents, that are using the
@@ -266,7 +266,7 @@ public class SimulationAgent extends Agent {
 	 * @param notification the notification
 	 * @return true, if successful
 	 */
-	protected boolean sendManagerNotification(Object notification) {
+	public boolean sendManagerNotification(Object notification) {
 		boolean send = false;
 		EnvironmentNotification myNotification = new EnvironmentNotification(this.getAID(), false, notification);
 		try {

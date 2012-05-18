@@ -68,7 +68,7 @@ abstract public class ClusteringBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() {
 		Date begin = new Date();
-		System.out.println("Begin Cluster Analysis " + begin.getTime());
+		System.out.println("Begin Cluster Analysis for " + myAgent.getLocalName() + " " + begin.getTime());
 
 		ClusterIdentifier clusterIdentifier = new ClusterIdentifier();
 		NetworkModel clusteredNM = getClusterNM();
@@ -77,7 +77,7 @@ abstract public class ClusteringBehaviour extends OneShotBehaviour {
 		correctAndSetCluster(clusteredNM, clusterIdentifier);
 
 		Date end = new Date();
-		System.out.println("End Cluster Analysis " + end.getTime() + " Duration: " + (end.getTime() - begin.getTime()));
+		System.out.println("End Cluster Analysis for " + myAgent.getLocalName() + " " + end.getTime() + " Duration: " + (end.getTime() - begin.getTime()));
 	}
 	
 	public abstract void analyseClusters(NetworkModel networkModel, ClusterIdentifier clusterIdentifier);

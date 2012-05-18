@@ -37,6 +37,10 @@ public class ControlValveAgent extends SimulationAgent {
 
 		this.myNetworkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
 
+		startCoalitionBehaviour();
+	}
+
+	private void startCoalitionBehaviour() {
 		ClusteringBehaviour clusteringBehaviour = new CycleClusteringBehaviour(this, myNetworkModel);
 		this.addBehaviour(new CoalitionBehaviour(this, myEnvironmentModel, myNetworkModel, clusteringBehaviour));
 	}

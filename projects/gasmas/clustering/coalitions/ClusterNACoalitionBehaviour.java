@@ -28,42 +28,28 @@
  */
 package gasmas.clustering.coalitions;
 
-import gasmas.agents.components.ClusterNetworkAgent;
-import gasmas.clustering.behaviours.ClusteringBehaviour;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.ServiceException;
 import jade.core.behaviours.ParallelBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
-import agentgui.envModel.graph.networkModel.NetworkComponent;
-import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.SimulationAgent;
-import agentgui.simulationService.environment.EnvironmentModel;
 
 /**
  * The Class ClusterNetworkAgentCoalitionBehaviour.
  */
 public class ClusterNACoalitionBehaviour extends ParallelBehaviour {
 
-	/** The environment model. */
-	private EnvironmentModel environmentModel;
-
 	/** The network component map. */
 	private HashMap<String, Boolean> networkComponentMap;
 
 	/** The cluster network component. */
 	private ClusterNetworkComponent clusterNetworkComponent;
-
-	private ClusteringBehaviour clusteringBehaviour;
 
 	/**
 	 * Instantiates a new cluster network agent coalition behaviour.
@@ -73,11 +59,9 @@ public class ClusterNACoalitionBehaviour extends ParallelBehaviour {
 	 * @param clusterNetworkComponent the cluster network component
 	 * @param clusteringBehaviour 
 	 */
-	public ClusterNACoalitionBehaviour(Agent agent, EnvironmentModel environmentModel, ClusterNetworkComponent clusterNetworkComponent, ClusteringBehaviour clusteringBehaviour) {
-		this.environmentModel = environmentModel;
+	public ClusterNACoalitionBehaviour(Agent agent, ClusterNetworkComponent clusterNetworkComponent) {
 		this.clusterNetworkComponent = clusterNetworkComponent;
 		this.myAgent = agent;
-		this.clusteringBehaviour = clusteringBehaviour;
 		sendMessagesToNCs();
 	}
 
@@ -132,79 +116,7 @@ public class ClusterNACoalitionBehaviour extends ParallelBehaviour {
 	 * Recreate cluster within the ClusterNetworkModel
 	 */
 	private void recreateCluster() {
-		NetworkModel clusteredNM = getClusteredModel();
-		clusterNetworkComponent = replaceNetworkModelPartWithCluster(clusteredNM);
-		clusteredNM.renameNetworkComponent(clusterNetworkComponent.getId(), myAgent.getLocalName());
-		((ClusterNetworkAgent) myAgent).setClusterNetworkComponent(clusterNetworkComponent);
-
-		startCoalitionBehaviourForThisAgent(clusteredNM);
-		changeDisplay(clusteredNM, clusterNetworkComponent);
-	}
-
-	/**
-	 * Start coalition behavior for this agent.
-	 *
-	 * @param clusteredNM the clustered nm
-	 */
-	private void startCoalitionBehaviourForThisAgent(NetworkModel clusteredNM) {
-		NetworkModel clusteredNetworkModel = clusteredNM.getCopy();
-		clusteringBehaviour.setNetworkModel(clusteredNetworkModel);
-		this.addSubBehaviour(new CoalitionBehaviour((SimulationAgent) myAgent, environmentModel, clusteredNetworkModel, clusteringBehaviour));
-
-	}
-	
-	/**
-	 * Replace network model part with cluster.
-	 *
-	 * @param networkModel the network model
-	 * @return the cluster network component
-	 */
-	private ClusterNetworkComponent replaceNetworkModelPartWithCluster(NetworkModel networkModel) {
-		HashSet<NetworkComponent> networkComponents = new HashSet<NetworkComponent>();
-		for (String id : clusterNetworkComponent.getNetworkComponentIDs()) {
-			networkComponents.add(networkModel.getNetworkComponent(id));
-		}
-		return networkModel.replaceComponentsByCluster(networkComponents);
-	}
-
-	/**
-	 * Gets the clustered model or creates it and updates the networkModel alternatives.
-	 *
-	 * @return the clustered model
-	 */
-	private NetworkModel getClusteredModel() {
-		NetworkModel networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
-		NetworkModel clusteredNM = networkModel.getAlternativeNetworkModel().get(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME);
-		if (clusteredNM == null) {
-			clusteredNM = networkModel.getCopy();
-			clusteredNM.setAlternativeNetworkModel(null);
-			changeDisplay(clusteredNM, null);
-		}
-		return clusteredNM;
-	}
-
-	/**
-	 * Change display.
-	 *
-	 * @param clusteredNM the clustered nm
-	 * @param cluster the cluster
-	 */
-	private void changeDisplay(NetworkModel clusteredNM, ClusterNetworkComponent cluster) {
-		SimulationServiceHelper simulationServiceHelper = null;
-		NetworkModel networkModel = (NetworkModel) environmentModel.getDisplayEnvironment();
-		try {
-			simulationServiceHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-		networkModel.getAlternativeNetworkModel().put(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME, clusteredNM);
-		if (cluster != null) {
-			networkModel.getAlternativeNetworkModel().put(cluster.getId(), cluster.getClusterNetworkModel());
-		}
-		try {
-			simulationServiceHelper.setEnvironmentModel(this.environmentModel, true);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
+		clusterNetworkComponent.setId(myAgent.getLocalName());
+		((SimulationAgent) myAgent).sendManagerNotification(clusterNetworkComponent);
 	}
 }
