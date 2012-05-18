@@ -322,5 +322,5 @@
         </entry>
     </domainSettings>
     <snap2Grid>true</snap2Grid>
-    <snapRaster>0.5</snapRaster>
+    <snapRaster>2.0</snapRaster>
 </generalGraphSettings4MAS>
