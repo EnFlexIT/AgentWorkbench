@@ -292,14 +292,254 @@
         <agent>
             <postionNo>48</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
-            <startAsName>n47</startAsName>
+            <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
+            <startAsName>n80</startAsName>
         </agent>
         <agent>
             <postionNo>49</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
-            <startAsName>n48</startAsName>
+            <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
+            <startAsName>n81</startAsName>
+        </agent>
+        <agent>
+            <postionNo>50</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n84</startAsName>
+        </agent>
+        <agent>
+            <postionNo>51</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n85</startAsName>
+        </agent>
+        <agent>
+            <postionNo>52</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n82</startAsName>
+        </agent>
+        <agent>
+            <postionNo>53</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n83</startAsName>
+        </agent>
+        <agent>
+            <postionNo>54</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n88</startAsName>
+        </agent>
+        <agent>
+            <postionNo>55</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n89</startAsName>
+        </agent>
+        <agent>
+            <postionNo>56</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n86</startAsName>
+        </agent>
+        <agent>
+            <postionNo>57</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n87</startAsName>
+        </agent>
+        <agent>
+            <postionNo>58</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n90</startAsName>
+        </agent>
+        <agent>
+            <postionNo>59</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n49</startAsName>
+        </agent>
+        <agent>
+            <postionNo>60</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n70</startAsName>
+        </agent>
+        <agent>
+            <postionNo>61</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n71</startAsName>
+        </agent>
+        <agent>
+            <postionNo>62</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.SimpleValveAgent</agentClassReference>
+            <startAsName>n72</startAsName>
+        </agent>
+        <agent>
+            <postionNo>63</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n73</startAsName>
+        </agent>
+        <agent>
+            <postionNo>64</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n74</startAsName>
+        </agent>
+        <agent>
+            <postionNo>65</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n75</startAsName>
+        </agent>
+        <agent>
+            <postionNo>66</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n76</startAsName>
+        </agent>
+        <agent>
+            <postionNo>67</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n77</startAsName>
+        </agent>
+        <agent>
+            <postionNo>68</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.SimpleValveAgent</agentClassReference>
+            <startAsName>n78</startAsName>
+        </agent>
+        <agent>
+            <postionNo>69</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.SimpleValveAgent</agentClassReference>
+            <startAsName>n79</startAsName>
+        </agent>
+        <agent>
+            <postionNo>70</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n66</startAsName>
+        </agent>
+        <agent>
+            <postionNo>71</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n67</startAsName>
+        </agent>
+        <agent>
+            <postionNo>72</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n64</startAsName>
+        </agent>
+        <agent>
+            <postionNo>73</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
+            <startAsName>n65</startAsName>
+        </agent>
+        <agent>
+            <postionNo>74</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n62</startAsName>
+        </agent>
+        <agent>
+            <postionNo>75</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n63</startAsName>
+        </agent>
+        <agent>
+            <postionNo>76</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n60</startAsName>
+        </agent>
+        <agent>
+            <postionNo>77</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n61</startAsName>
+        </agent>
+        <agent>
+            <postionNo>78</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.SimpleValveAgent</agentClassReference>
+            <startAsName>n69</startAsName>
+        </agent>
+        <agent>
+            <postionNo>79</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n68</startAsName>
+        </agent>
+        <agent>
+            <postionNo>80</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n53</startAsName>
+        </agent>
+        <agent>
+            <postionNo>81</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ControlValveAgent</agentClassReference>
+            <startAsName>n54</startAsName>
+        </agent>
+        <agent>
+            <postionNo>82</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
+            <startAsName>n55</startAsName>
+        </agent>
+        <agent>
+            <postionNo>83</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n56</startAsName>
+        </agent>
+        <agent>
+            <postionNo>84</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.SimpleValveAgent</agentClassReference>
+            <startAsName>n50</startAsName>
+        </agent>
+        <agent>
+            <postionNo>85</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.SimpleValveAgent</agentClassReference>
+            <startAsName>n51</startAsName>
+        </agent>
+        <agent>
+            <postionNo>86</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n52</startAsName>
+        </agent>
+        <agent>
+            <postionNo>87</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n58</startAsName>
+        </agent>
+        <agent>
+            <postionNo>88</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.SimpleValveAgent</agentClassReference>
+            <startAsName>n57</startAsName>
+        </agent>
+        <agent>
+            <postionNo>89</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n59</startAsName>
         </agent>
     </agentSetup>
     <environmentFileName>MixedClusters (3) Large.graphml</environmentFileName>

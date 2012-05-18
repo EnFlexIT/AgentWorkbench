@@ -21,6 +21,8 @@ public class CompressorAgent extends SimulationAgent {
 
 		super.setup();
 
+		//sendManagerNotification(notification)
+		
 		while (this.myEnvironmentModel == null) {
 
 			try {

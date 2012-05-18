@@ -1,1 +1,1 @@
-http://Apo-PC:10544/acc
+http://rudel1.cs.uni-due.de:4898/acc

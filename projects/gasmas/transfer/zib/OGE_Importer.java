@@ -64,7 +64,6 @@ import agentgui.envModel.graph.controller.AddComponentDialog;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.NetworkModelFileImporter;
 import agentgui.envModel.graph.networkModel.GraphEdge;
-import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.GraphNodePairs;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -143,9 +142,9 @@ public class OGE_Importer extends NetworkModelFileImporter {
 	}
 
 	
+
 	/**
 	 * Translate GasNetwork to NetworkNodel.
-	 * @param gasNetwork the gas network
 	 */
 	private void translateGasNetwork2NetworkModel() {
 		

@@ -37,6 +37,7 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelDiscrete;
+import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /**
  * The Class NetworManagerAgent.
@@ -146,4 +147,16 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	public void doSingleSimulationSequennce() {
 
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationManagerAgent#onManagerNotification(agentgui.simulationService.transaction.EnvironmentNotification)
+	 */
+	@Override
+	protected void onManagerNotification(EnvironmentNotification notification) {
+		
+		
+	}
+
+	
+	
 }
