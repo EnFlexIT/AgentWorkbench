@@ -27,6 +27,7 @@
         <entry>
             <key>Pipe-Short</key>
             <value>
+                <agentClass>gasmas.agents.components.PipeShortAgent</agentClass>
                 <color>-16777216</color>
                 <domain>Gas network</domain>
                 <edgeImage>MissingIcon</edgeImage>
@@ -256,6 +257,7 @@
         <entry>
             <key>Resistor</key>
             <value>
+                <agentClass>gasmas.agents.components.ResistorAgent</agentClass>
                 <color>-6750208</color>
                 <domain>Gas network</domain>
                 <edgeImage>MissingIcon</edgeImage>

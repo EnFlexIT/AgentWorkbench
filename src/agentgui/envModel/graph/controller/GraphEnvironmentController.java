@@ -414,8 +414,13 @@ public class GraphEnvironmentController extends EnvironmentController {
 					comp = null;
 		
 			    } else {
+			    	
 			    	if (ctsSingle.getAgentClass()==null) {
 			    		comp.setAgentClassName(null);
+			    		
+			    	} else  if (comp.getAgentClassName()==null) {
+			    		// --- Correct this entry -------
+			    		comp.setAgentClassName(ctsSingle.getAgentClass());
 			    		
 			    	} else  if (comp.getAgentClassName().equals(ctsSingle.getAgentClass()) == false) {
 					    // --- Correct this entry -------
