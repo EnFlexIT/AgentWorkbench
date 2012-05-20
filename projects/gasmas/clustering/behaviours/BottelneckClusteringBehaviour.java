@@ -66,9 +66,6 @@ public class BottelneckClusteringBehaviour extends ClusteringBehaviour {
 			newNetworkModel = startPathAnalysis(newNetworkModel);
 			if (newNetworkModel != null) {
 				newNetworkModel = clusterIdentifier.search(newNetworkModel, networkModel);
-				// if (coalitionBehaviour.getThisNetworkComponent().getId().equals("n25")) {
-				// changeDisplay(newNetworkModel);
-				// }
 			}
 		}
 	}

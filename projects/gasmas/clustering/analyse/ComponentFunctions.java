@@ -29,6 +29,7 @@
 package gasmas.clustering.analyse;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -85,9 +86,10 @@ public class ComponentFunctions {
 			}
 			map.put(networkComponent.getAgentClassName(), i + 1);
 		}
-		System.out.println(name);
+		System.out.println(name + " " + new Date().getTime());
 		for (Entry<String, Integer> entry : map.entrySet()) {
 			System.out.println(entry.getKey() + " : " + entry.getValue());
 		}
+		System.out.println("Sum Components " + networkModel.getNetworkComponents().size());
 	}
 }

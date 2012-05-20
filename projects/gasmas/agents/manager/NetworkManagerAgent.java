@@ -169,6 +169,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			clusteredNM.renameNetworkComponent(clusterNetworkComponent.getId(), notification.getSender().getLocalName());
 			changeDisplay(clusteredNM, clusterNetworkComponent);
 			sendAgentNotification(notification.getSender(), clusterNetworkComponent);
+			ComponentFunctions.printAmountOfDiffernetTypesOfAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 		}
 	}
 

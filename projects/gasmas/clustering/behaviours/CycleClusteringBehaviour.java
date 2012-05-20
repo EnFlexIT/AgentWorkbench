@@ -74,7 +74,7 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 			coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent, true);
 		}
 		Date end = new Date();
-		System.out.println("End CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + new Date() + " Duration: " + (end.getTime() - begin.getTime()));
+		System.out.println("End CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + end.getTime() + " Duration: " + (end.getTime() - begin.getTime()));
 	}
 
 	/**

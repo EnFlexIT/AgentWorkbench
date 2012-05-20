@@ -93,10 +93,6 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 
 		clusteringBehaviour.setCoalitionBehaviours(this);
 		addSubBehaviour(clusteringBehaviour);
-		if (myAgent.getLocalName().contains(ClusterNetworkAgent.CLUSTER_AGENT_Prefix)) {
-			System.out.println("XX");
-			clusteringBehaviour.restart();
-		}
 		addSubBehaviour(new ActiveNAResponderBehaviour(this, myAgent));
 	}
 
