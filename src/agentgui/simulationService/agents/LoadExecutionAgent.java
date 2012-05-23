@@ -65,8 +65,8 @@ public class LoadExecutionAgent extends Agent {
 	public final static int BASE_ACTION_Pause = 1;
 	/** The Constant BASE_ACTION_Restart. */
 	public final static int BASE_ACTION_Restart = 2;
-	/** The Constant BASE_ACTION_Stop. */
-	public final static int BASE_ACTION_Stop = 3;
+//	/** The Constant BASE_ACTION_Stop. */
+//	public final static int BASE_ACTION_Stop = 3;
 	
 	private int startArg;
 	
@@ -117,6 +117,7 @@ public class LoadExecutionAgent extends Agent {
 					mainWindow.setEnableSimStart(false);
 					mainWindow.setEnableSimPause(true);
 					mainWindow.setEnableSimStop(true);
+					mainWindow.enableSetupSelector(false);
 				} else {
 					myAgent.doDelete();
 				}
@@ -136,13 +137,15 @@ public class LoadExecutionAgent extends Agent {
 				mainWindow.setEnableSimStop(true);
 				myAgent.doDelete();
 				break;
-			case BASE_ACTION_Stop:
-				//Application.JadePlatform.jadeStop();
-				mainWindow.setEnableSimStart(true);
-				mainWindow.setEnableSimPause(false);
-				mainWindow.setEnableSimStop(false);
-				myAgent.doDelete();
-				break;
+// 			REMOVED! Instead 'Application.JadePlatform.jadeStop()' will 
+//			be invoked from the buttons of the CoreWindow 				
+//			case BASE_ACTION_Stop:
+//				//Application.JadePlatform.jadeStop();
+//				mainWindow.setEnableSimStart(true);
+//				mainWindow.setEnableSimPause(false);
+//				mainWindow.setEnableSimStop(false);
+//				myAgent.doDelete();
+//				break;
 			}
 			
 		}

@@ -37,17 +37,12 @@ import java.util.HashSet;
  */
 public class ClusterNetworkComponent extends NetworkComponent {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 682444875338053459L;
 
 	/** The Constant defaultPrototypeClassName. */
-	private static final String DEFAUL_PROTOTYPE_CLASS_NAME = "agentgui.envModel.graph.prototypes.ClusterGraphElement";
-
-	private static final String DEFAUL_AGENT_CLASS_NAME = "gasmas.agents.components.ClusterNetworkAgent";
-
+	private static final String DEFAUL_PROTOTYPE_CLASS_NAME = agentgui.envModel.graph.prototypes.ClusterGraphElement.class.getName();
 	/** The domain. which this cluster contains to */
 	private String domain;
-
 	/** The cluster network model. */
 	private NetworkModel clusterNetworkModel;
 
@@ -59,13 +54,17 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @param agentClassName the agent class name
 	 * @param graphElements the graph elements
 	 * @param directed the directed
-	 * @param networkComponentIDs the network component i ds
+	 * @param domain the domain
 	 * @param clusterNetworkModel the cluster network model
 	 */
-	public ClusterNetworkComponent(String id, String type, String agentClassName, HashSet<GraphElement> graphElements, boolean directed, NetworkModel clusterNetworkModel) {
+	public ClusterNetworkComponent(String id, String type, String agentClassName, HashSet<GraphElement> graphElements, boolean directed, String domain, NetworkModel clusterNetworkModel) {
 		super(id, type, ClusterNetworkComponent.DEFAUL_PROTOTYPE_CLASS_NAME, agentClassName, graphElements, directed);
+
+		this.domain = domain;
 		this.clusterNetworkModel = clusterNetworkModel;
-		this.setAgentClassName(DEFAUL_AGENT_CLASS_NAME);
+		DomainSettings domainSettings = this.clusterNetworkModel.getGeneralGraphSettings4MAS().getDomainSettings().get(domain); 
+		this.setAgentClassName(domainSettings.getClusterAgent());
+		
 	}
 
 	/* (non-Javadoc)
@@ -73,7 +72,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 */
 	@Override
 	public ClusterNetworkComponent getCopy() {
-		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.agentClassName, null, this.directed, this.clusterNetworkModel.getCopy());
+		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.agentClassName, null, this.directed, this.domain, this.clusterNetworkModel.getCopy());
 		HashSet<String> gaphElementIDs = new HashSet<String>(this.getGraphElementIDs());
 		copy.setGraphElementIDs(gaphElementIDs);
 		return copy;

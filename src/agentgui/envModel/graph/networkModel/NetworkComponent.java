@@ -78,8 +78,7 @@ public class NetworkComponent implements Serializable {
 	 * @param prototypeClassName the prototype class name
 	 * @param directed the directed
 	 */
-	public NetworkComponent(String id, String type, String prototypeClassName, String agentClassName, 
-			HashSet<GraphElement> graphElements, boolean directed ) {
+	public NetworkComponent(String id, String type, String prototypeClassName, String agentClassName, HashSet<GraphElement> graphElements, boolean directed ) {
 		this.id = id;
 		this.type = type;
 		this.prototypeClassName = prototypeClassName;

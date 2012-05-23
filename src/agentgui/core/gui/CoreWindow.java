@@ -1106,7 +1106,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			jToolBarApplication.addSeparator();
 			
 			// --- Add Simulation Setup -----------------------------------
-			this.setSetupSelectorToolbar();
+			this.getSetupSelectorToolbar();
 			jToolBarApplication.addSeparator();
 			
 			// --- Simulation Buttons -----------
@@ -1130,11 +1130,19 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	 * Gets the setup selector toolbar.
 	 * @return the setup selector toolbar
 	 */
-	public SetupSelectorToolbar setSetupSelectorToolbar() {
+	public SetupSelectorToolbar getSetupSelectorToolbar() {
 		if (this.setupSelectorToolbar==null) {
 			this.setupSelectorToolbar = new SetupSelectorToolbar(jToolBarApplication);	
 		}
 		return this.setupSelectorToolbar;
+	}
+	
+	/**
+	 * Enable/Disables the SetupSelector in the toolbar.
+	 * @param enable the enable
+	 */
+	public void enableSetupSelector(boolean enable) {
+		this.getSetupSelectorToolbar().setEnabled(enable);
 	}
 	
 	/**
@@ -1289,55 +1297,44 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	// -------------------------------------------------------------------
 	/**
 	 * Sets the enable sim start.
-	 *
 	 * @param enable the new enable sim start
 	 */
 	public void setEnableSimStart(boolean enable) {
 		jButtonSimStart.setEnabled(enable);
-		jMenuItemSimStart.setEnabled(enable);	
+		jMenuItemSimStart.setEnabled(enable);
 	}
-	
 	/**
 	 * Sets the enable sim pause.
-	 *
 	 * @param enable the new enable sim pause
 	 */
 	public void setEnableSimPause(boolean enable) {
 		jButtonSimPause.setEnabled(enable);
 		jMenuItemSimPause.setEnabled(enable);
 	}
-	
 	/**
 	 * Sets the enable sim stop.
-	 *
 	 * @param enable the new enable sim stop
 	 */
 	public void setEnableSimStop(boolean enable) {
 		jButtonSimStop.setEnabled(enable);
 		jMenuItemSimStop.setEnabled(enable);
 	}
-	
 	/**
 	 * Checks if is enabled sim start.
-	 *
 	 * @return true, if is enabled sim start
 	 */
 	public boolean isEnabledSimStart() {
 		return jButtonSimStart.isEnabled();
 	}
-	
 	/**
 	 * Checks if is enabled sim pause.
-	 *
 	 * @return true, if is enabled sim pause
 	 */
 	public boolean isEnabledSimPause() {
 		return jButtonSimPause.isEnabled();
 	}
-	
 	/**
 	 * Checks if is enabled sim stop.
-	 *
 	 * @return true, if is enabled sim stop
 	 */
 	public boolean isEnabledSimStop() {
@@ -1351,6 +1348,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		this.setEnableSimStart(true);
 		this.setEnableSimPause(false);
 		this.setEnableSimStop(false);
+		if (Application.ProjectCurr!=null) {
+			this.enableSetupSelector(true);
+		}
 	}	
 	// -------------------------------------------------------------------
 	// -------------------------------------------------------------------
@@ -1362,21 +1362,18 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	@Override
 	public void componentShown(ComponentEvent e) {
 	}
-	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ComponentListener#componentHidden(java.awt.event.ComponentEvent)
 	 */
 	@Override
 	public void componentHidden(ComponentEvent e) {
 	}
-	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ComponentListener#componentMoved(java.awt.event.ComponentEvent)
 	 */
 	@Override
 	public void componentMoved(ComponentEvent e) {
 	}
-	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ComponentListener#componentResized(java.awt.event.ComponentEvent)
 	 */
@@ -1394,25 +1391,16 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		}
 	}
 	
-	// ------------------------------------------------------------
-	// --- Unterklasse für die Schräge im unteren  
-	// --- rechten Teil des Hauptfenmsters
-	// ------------------------------------------------------------	
+
 	/**
 	 * The Class AngledLinesWindowsCornerIcon.
 	 */
 	private class AngledLinesWindowsCornerIcon implements Icon {
 		  
-		/** The WHIT e_ lin e_ color. */
 		private final Color WHITE_LINE_COLOR = new Color(255, 255, 255);
-		
-		/** The GRA y_ lin e_ color. */
 		private final Color GRAY_LINE_COLOR = new Color(172, 168, 153);
 		
-		/** The Constant WIDTH. */
 		private static final int WIDTH = 13;
-		
-		/** The Constant HEIGHT. */
 		private static final int HEIGHT = 13;
 
 		/* (non-Javadoc)
@@ -1421,14 +1409,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		public int getIconHeight() {
 			return WIDTH;
 		}
-
 		/* (non-Javadoc)
 		 * @see javax.swing.Icon#getIconWidth()
 		 */
 		public int getIconWidth() {
 			return HEIGHT;
 		}
-
 		/* (non-Javadoc)
 		 * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int)
 		 */
@@ -1453,7 +1439,6 @@ public class CoreWindow extends JFrame implements ComponentListener {
 
 		}
 	}
+	
+	
 } // -- End Class ---
-
-
-

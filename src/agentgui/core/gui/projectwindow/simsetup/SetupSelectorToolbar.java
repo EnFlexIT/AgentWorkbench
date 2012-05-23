@@ -53,7 +53,6 @@ import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 
-
 /**
  * The Class SetupSelectorToolbar is used in the main toolbar of the application
  * and manages different simulation setups for a current project.
@@ -147,7 +146,7 @@ public class SetupSelectorToolbar implements ActionListener {
 	 * Sets the enabled.
 	 * @param enable the new enabled
 	 */
-	private void setEnabled(boolean enable) {
+	public void setEnabled(boolean enable) {
 		
 		this.jLabelSetupSelector.setEnabled(enable);
 		this.jComboBoxSetupSelector.setEnabled(enable);

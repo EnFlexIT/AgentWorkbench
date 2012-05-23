@@ -422,7 +422,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			this.setSizeTransformer(new Transformer<GraphNode, Integer>() {
 				@Override
 				public Integer transform(GraphNode node) {
-					return (int) node.getGraphElementLayout().getSize();
+					return (int) node.getGraphElementLayout(controller.getNetworkModel()).getSize();
 				}
 			});
 		}
@@ -437,7 +437,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 			Shape shape = factory.getEllipse(node); // DEFAULT
 			
-			String shapeForm = node.getGraphElementLayout().getShapeForm();
+			String shapeForm = node.getGraphElementLayout(controller.getNetworkModel()).getShapeForm();
 			if (shapeForm==null) {
 				// --- nothing to do here ----
 			} else  if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_RECTANGLE)) {
@@ -454,7 +454,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 				
 			} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_IMAGE_SHAPE)) {
 				
-				String imageRef = node.getGraphElementLayout().getImageReference();
+				String imageRef = node.getGraphElementLayout(controller.getNetworkModel()).getImageReference();
 				shape = shapeMap.get(imageRef);
 				if (shape == null) {
 					ImageIcon imageIcon = GraphGlobals.getImageIcon(imageRef);
@@ -553,7 +553,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			public Icon transform(GraphNode node) {
 
 				Icon icon = null;
-				GraphElementLayout nodeLayout = node.getGraphElementLayout();
+				GraphElementLayout nodeLayout = node.getGraphElementLayout(controller.getNetworkModel());
 				boolean picked = vViewer.getPickedVertexState().isPicked(node);
 				String nodeImagePath = nodeLayout.getImageReference();
 
@@ -598,9 +598,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			@Override
 			public Paint transform(GraphNode node) {
 				if (vViewer.getPickedVertexState().isPicked(node)) {
-					return node.getGraphElementLayout().getColorPicked();
+					return node.getGraphElementLayout(controller.getNetworkModel()).getColorPicked();
 				} 
-				return node.getGraphElementLayout().getColor();
+				return node.getGraphElementLayout(controller.getNetworkModel()).getColor();
 			}
 		});
 
@@ -608,8 +608,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode node) {
-				if (node.getGraphElementLayout().isShowLabel()==true) {
-					return node.getGraphElementLayout().getLabelText();
+				if (node.getGraphElementLayout(controller.getNetworkModel()).isShowLabel()==true) {
+					return node.getGraphElementLayout(controller.getNetworkModel()).getLabelText();
 				}
 				return null;
 			}
@@ -620,9 +620,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			@Override
 			public Paint transform(GraphEdge edge) {
 				if (vViewer.getPickedEdgeState().isPicked(edge)) {
-					return edge.getGraphElementLayout().getColorPicked();
+					return edge.getGraphElementLayout(controller.getNetworkModel()).getColorPicked();
 				}
-				return edge.getGraphElementLayout().getColor();
+				return edge.getGraphElementLayout(controller.getNetworkModel()).getColor();
 			}
 		});
 		// --- Configure Edge Image Labels --------------------------------
@@ -631,8 +631,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 			public String transform(GraphEdge edge) {
 				// Get the path of the Image from the component type settings
 				String textDisplay = "";
-				String imageRef = edge.getGraphElementLayout().getImageReference();
-				boolean showLabel = edge.getGraphElementLayout().isShowLabel();
+				String imageRef = edge.getGraphElementLayout(controller.getNetworkModel()).getImageReference();
+				boolean showLabel = edge.getGraphElementLayout(controller.getNetworkModel()).isShowLabel();
 				if (showLabel) {
 					textDisplay = edge.getId();
 				}
@@ -660,7 +660,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
 			@Override
 			public Stroke transform(GraphEdge edge) {
-				return new BasicStroke(edge.getGraphElementLayout().getSize());
+				return new BasicStroke(edge.getGraphElementLayout(controller.getNetworkModel()).getSize());
 			}
 		});
 		return vViewer;

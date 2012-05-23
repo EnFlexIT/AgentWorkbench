@@ -393,7 +393,7 @@ public class ProjectsLoaded {
 	public void setProjectView() {
 		
 		// --- 1. Set Setup-Selector and Tools --------------------------------
-		Application.MainWindow.setSetupSelectorToolbar().setProject(Application.ProjectCurr);
+		Application.MainWindow.getSetupSelectorToolbar().setProject(Application.ProjectCurr);
 		
 		// --- 2. Rebuild the view to the Items in MenuBar 'Window' -----------
 		this.setProjectMenuItems();

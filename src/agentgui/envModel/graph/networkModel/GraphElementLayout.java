@@ -33,25 +33,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import agentgui.core.application.Application;
 import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
-import agentgui.envModel.graph.controller.GraphEnvironmentController;
 
 /**
  * The Class GraphElementLayout.
  */
 public class GraphElementLayout {
 
-	private GraphEnvironmentController graphController = null;
+	private GraphElement myGraphElement = null;
+	
 	private NetworkModel networkModel = null;
-	private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
 	private HashMap<String, DomainSettings> domainHash = null;
 	private HashMap<String, ComponentTypeSettings> ctsHash = null;
 
-
-	private GraphElement myGraphElement = null;
 	private DomainSettings myDomain = null;
 	private ComponentTypeSettings myComponentTypeSettings = null;
+	
 	
 	private float size = 0;
 	private Color color = Color.BLACK;
@@ -67,21 +64,16 @@ public class GraphElementLayout {
 	 */
 	public GraphElementLayout(GraphElement graphElement) {
 		this.myGraphElement = graphElement;
-		this.initialize();
 	}
 	
 	/**
-	 * Initialize.
+	 * Sets the network mdel.
+	 * @param networkModel the new network mdel
 	 */
-	private void initialize() {
-		
-		if (Application.ProjectCurr==null) return;
-		
-		this.graphController = (GraphEnvironmentController) Application.ProjectCurr.getEnvironmentController();
-		this.networkModel = graphController.getNetworkModel();
-		this.generalGraphSettings4MAS = this.graphController.getNetworkModel().getGeneralGraphSettings4MAS();
-		this.domainHash = generalGraphSettings4MAS.getDomainSettings();
-		this.ctsHash = generalGraphSettings4MAS.getCurrentCTS();
+	public void setNetworkModel(NetworkModel networkModel) {
+		this.networkModel = networkModel;
+		this.domainHash = this.networkModel.getGeneralGraphSettings4MAS().getDomainSettings();
+		this.ctsHash = this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
 		
 		if (this.myGraphElement instanceof GraphNode) {
 			this.setGraphNodeValues();
@@ -89,11 +81,10 @@ public class GraphElementLayout {
 			this.setGraphEdgeValues();
 		}
 		
-		this.graphController = null;
 		this.networkModel = null;
-		this.generalGraphSettings4MAS = null;
 		this.domainHash = null;
 		this.ctsHash = null;
+		
 	}
 	
 	/**
@@ -198,20 +189,35 @@ public class GraphElementLayout {
 		// --- Evaluate the GraphEdge ------------------------------------
 		GraphEdge graphEdge = (GraphEdge) this.myGraphElement;
 		NetworkComponent networkComponent = this.networkModel.getNetworkComponent(graphEdge);
-		// TODO: Remove QuickFix, there is something wrong with visualization model is ok
 		if (networkComponent == null) {
-			System.out.println(graphEdge.getId());
+			System.out.println(graphEdge.getId() + " not found!");
 			return;
 		}
-		myComponentTypeSettings = ctsHash.get(networkComponent.getType());
-		myDomain = domainHash.get(myComponentTypeSettings.getDomain());
-		
-		this.size = myComponentTypeSettings.getEdgeWidth();
-		this.color = new Color(Integer.parseInt(myComponentTypeSettings.getColor()));
-		this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
-		this.labelText = graphEdge.getId();
-		this.showLabel = myComponentTypeSettings.isShowLabel();
-		this.imageReference = myComponentTypeSettings.getEdgeImage();
+		if (networkComponent instanceof ClusterNetworkComponent) {
+
+			ClusterNetworkComponent clusterNetworkComponent = (ClusterNetworkComponent) networkComponent;
+			myDomain = domainHash.get(clusterNetworkComponent.getDomain());
+			
+			//this.size = myComponentTypeSettings.getEdgeWidth();
+			//this.color = new Color(Integer.parseInt(myComponentTypeSettings.getColor()));
+			this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
+			this.labelText = graphEdge.getId();
+			this.showLabel = false;
+			this.imageReference = null;
+			
+		} else {
+			
+			myComponentTypeSettings = ctsHash.get(networkComponent.getType());
+			myDomain = domainHash.get(myComponentTypeSettings.getDomain());
+			
+			this.size = myComponentTypeSettings.getEdgeWidth();
+			this.color = new Color(Integer.parseInt(myComponentTypeSettings.getColor()));
+			this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
+			this.labelText = graphEdge.getId();
+			this.showLabel = myComponentTypeSettings.isShowLabel();
+			this.imageReference = myComponentTypeSettings.getEdgeImage();
+			
+		}
 		
 	}
 	
@@ -319,5 +325,5 @@ public class GraphElementLayout {
 	public void setShapeForm(String shapeForm) {
 		this.shapeForm = shapeForm;
 	}
-	
+
 }

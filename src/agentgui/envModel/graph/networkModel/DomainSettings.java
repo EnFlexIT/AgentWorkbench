@@ -76,6 +76,9 @@ public class DomainSettings implements Serializable {
 		if (clusterShape!=null) {
 			copy.setClusterShape(new String(clusterShape));	
 		}
+		if (clusterAgent!=null) {
+			copy.setClusterAgent(new String(clusterAgent));	
+		}
 		return copy;
 	}
 	

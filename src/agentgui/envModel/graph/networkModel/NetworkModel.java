@@ -361,31 +361,35 @@ public class NetworkModel implements Cloneable, Serializable {
 	 */
 	public void renameNetworkComponent(String oldCompID, String newCompID) {
 		
-		NetworkComponent networkComponent = networkComponents.get(oldCompID);
-		HashSet<String> newGraphElementIDs = new HashSet<String>(networkComponent.getGraphElementIDs());
-		// --- Rename the corresponding edges of the network component --------
-		for (String oldGraphElementID : networkComponent.getGraphElementIDs()) {
-			String newGraphElementID = oldGraphElementID.replaceFirst(oldCompID, newCompID);
-			if (newGraphElementID.equals(oldGraphElementID)==false) {
-				// --- Delete old reference -------------------------
-				newGraphElementIDs.remove(oldGraphElementID);
-				// --- rename the edges ----------------------------- 
-				GraphElement graphElement = graphElements.get(oldGraphElementID);
-				if (graphElement instanceof GraphEdge) {
-					graphElements.remove(oldGraphElementID);
-					graphElement.setId(newGraphElementID);
-					graphElements.put(newGraphElementID, graphElement);	
+		NetworkComponent networkComponent = this.networkComponents.get(oldCompID);
+		if (networkComponent!=null) {
+			HashSet<String> newGraphElementIDs = new HashSet<String>(networkComponent.getGraphElementIDs());
+			// --- Rename the corresponding edges of the network component --------
+			for (String oldGraphElementID : networkComponent.getGraphElementIDs()) {
+				String newGraphElementID = oldGraphElementID.replaceFirst(oldCompID, newCompID);
+				if (newGraphElementID.equals(oldGraphElementID)==false) {
+					// --- Delete old reference -------------------------
+					newGraphElementIDs.remove(oldGraphElementID);
+					// --- rename the edges ----------------------------- 
+					GraphElement graphElement = this.graphElements.get(oldGraphElementID);
+					if (graphElement instanceof GraphEdge) {
+						this.graphElements.remove(oldGraphElementID);
+						graphElement.setId(newGraphElementID);
+						this.graphElements.put(newGraphElementID, graphElement);	
+					}
+					// --- Add new reference ----------------------------
+					newGraphElementIDs.add(newGraphElementID);	
 				}
-				// --- Add new reference ----------------------------
-				newGraphElementIDs.add(newGraphElementID);	
 			}
-		}
 
-		// Updating the network component
-		networkComponent.setGraphElementIDs(newGraphElementIDs);
-		networkComponent.setId(newCompID);
-		networkComponents.remove(oldCompID);
-		networkComponents.put(newCompID, networkComponent);
+			// Updating the network component
+			networkComponent.setGraphElementIDs(newGraphElementIDs);
+			networkComponent.setId(newCompID);
+			this.networkComponents.remove(oldCompID);
+			this.networkComponents.put(newCompID, networkComponent);
+			
+		}
+		
 	}
 
 	/**
@@ -481,6 +485,12 @@ public class NetworkModel implements Cloneable, Serializable {
 		return networkComponents.get(id);
 	}
 
+	/**
+	 * Gets the neighbour NetworkComponents.
+	 *
+	 * @param networkComponents the network components
+	 * @return the neighbour network components
+	 */
 	public HashSet<NetworkComponent> getNeighbourNetworkComponents(HashSet<NetworkComponent> networkComponents) {
 		HashSet<NetworkComponent> neighbourNetworkComponents = new HashSet<NetworkComponent>();
 		for (NetworkComponent networkComponent : networkComponents) {
@@ -526,7 +536,6 @@ public class NetworkModel implements Cloneable, Serializable {
 				return networkComponent;
 			}
 		}
-		System.out.println("Edge not part of Component");
 		return null;
 	}
 
@@ -1415,7 +1424,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	public void resetGraphElementLayout() {
 		for (GraphElement graphElement : this.graphElements.values()) {
 			if (graphElement.graphElementLayout!=null) {
-				graphElement.resetGraphElementLayout();	
+				graphElement.resetGraphElementLayout(this);	
 			}
 		}
 	}
@@ -1425,21 +1434,33 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * @param networkComponents A List of NetworkComponents
 	 */
 	public ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponents) {
-		// ---------- Prepare Parameters for ClusterComponent ------------------------------
+		
+		// ---------- Get Domain of current NetworkComponent ----------------------
+		String domain = null;
+		NetworkComponent networkComponent = networkComponents.iterator().next();
+		if (networkComponent instanceof ClusterNetworkComponent) {
+			domain = ((ClusterNetworkComponent) networkComponent).getDomain();
+		} else {
+			String compType = networkComponent.getType();
+			ComponentTypeSettings cts = this.generalGraphSettings4MAS.getCurrentCTS().get(compType);
+			domain = cts.getDomain();	
+		}
+				
+		// ---------- Prepare Parameters for ClusterComponent ---------------------
 		NetworkModel clusterNetworkModel = this.getCopy();
 		clusterNetworkModel.setAlternativeNetworkModel(null);
 		clusterNetworkModel.removeNetworkComponentsInverse(networkComponents);
-		removeNetworkComponents(networkComponents);
+		this.removeNetworkComponents(networkComponents);
 
 		// ----------- Create Cluster Prototype and Component ---------------------
-		Vector<GraphNode> outerNodes = getOuterNodes(networkComponents);
-		String clusterComponentID = nextNetworkComponentID();
+		Vector<GraphNode> outerNodes = this.getOuterNodes(networkComponents);
+		String clusterComponentID = this.nextNetworkComponentID();
 		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, clusterComponentID);
 		HashSet<GraphElement> clusterElements = new ClusterGraphElement(outerNodes, clusterComponentID).addToGraph(this);
-		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), null, clusterElements, clusterGraphElement.isDirected(),
-				clusterNetworkModel);
-		this.networkComponents.put(clusterComponent.getId(), clusterComponent);
-		refreshGraphElements();
+		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), null, clusterElements, clusterGraphElement.isDirected(), domain, clusterNetworkModel);
+		
+		this.addNetworkComponent(clusterComponent);
+		this.refreshGraphElements();
 		return clusterComponent;
 	}
 
