@@ -1534,6 +1534,11 @@ public class NetworkModel implements Cloneable, Serializable {
 		return outerNetworkComponents;
 	}
 
+	/**
+	 * Gets the connections of biggest branch.
+	 *
+	 * @return the connections of biggest branch
+	 */
 	public int getConnectionsOfBiggestBranch() {
 		if (connectionsOfBiggestBranch < 1) {
 			for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(networkComponents.values())) {

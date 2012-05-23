@@ -379,5 +379,11 @@ public interface NetworkModelInterface {
 	 * @return the outer network components
 	 */
 	public abstract ArrayList<String> getOuterNetworkComponentIDs();
-
+	
+	/**
+	 * Gets the connections of biggest branch.
+	 *
+	 * @return the connections of biggest branch
+	 */
+	public abstract int getConnectionsOfBiggestBranch();
 }

@@ -114,14 +114,6 @@ public class ClusterNetworkComponent extends NetworkComponent {
 		return clusterNetworkModel;
 	}
 
-	/**
-	 * Gets the size.
-	 *
-	 * @return the size
-	 */
-	public int getSize() {
-		return clusterNetworkModel.getNetworkComponents().size();
-	}
 
 	/**
 	 * Gets the Component represented by Node and of the ClusterStar.

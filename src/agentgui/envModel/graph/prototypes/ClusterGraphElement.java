@@ -78,7 +78,6 @@ public class ClusterGraphElement extends StarGraphElement {
 		GraphNode centralNode = new GraphNode();
 		centralNode.setId(networkModel.nextNodeID());
 		Rectangle2D rectangle = BasicGraphGui.getVerticesSpreadDimension(outerNodes);
-		
 		centralNode.setPosition(new Point2D.Double(rectangle.getCenterX(), rectangle.getCenterY()));
 		networkModel.getGraph().addVertex(centralNode);
 		elements.add(centralNode);

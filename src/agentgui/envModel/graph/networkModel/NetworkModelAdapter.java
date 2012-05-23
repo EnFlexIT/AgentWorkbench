@@ -359,6 +359,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#adjustNameDefinitionsOfSupplementNetworkModel(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
+	@Override
 	public NetworkModel adjustNameDefinitionsOfSupplementNetworkModel(NetworkModel supplementNetworkModel) {
 		return this.graphController.getNetworkModel().adjustNameDefinitionsOfSupplementNetworkModel(supplementNetworkModel);
 	}
@@ -373,6 +374,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#mergeNetworkModel(agentgui.envModel.graph.networkModel.NetworkModel, agentgui.envModel.graph.networkModel.GraphNode, agentgui.envModel.graph.networkModel.GraphNode)
 	 */
+	@Override
 	public void mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs node2Merge) {
 		this.undoManager.addEdit(new MergeNetworkModel(this.graphController, supplementNetworkModel, node2Merge));
 	}
@@ -383,6 +385,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * @param graphNodePairs the graph node pairs
 	 * @return the valid GraphNodePair for merging couples of GraphNodes
 	 */
+	@Override
 	public GraphNodePairs getValidGraphNodePairConfig4Merging(GraphNodePairs graphNodePairs) {
 		return this.graphController.getNetworkModel().getValidGraphNodePairConfig4Merging(graphNodePairs);
 	}
@@ -601,6 +604,14 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	@Override
 	public ArrayList<String> getOuterNetworkComponentIDs() {
 		return this.graphController.getNetworkModel().getOuterNetworkComponentIDs();
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getConnectionsOfBiggestBranch()
+	 */
+	@Override
+	public int getConnectionsOfBiggestBranch() {
+		return this.graphController.getNetworkModel().getConnectionsOfBiggestBranch();
 	}
 
 }
