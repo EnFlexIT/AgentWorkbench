@@ -9,9 +9,20 @@ import jade.core.*;
    * A set of parameters describing the current gas flow at a PropagationPoint.
 * Protege name: FlowParameters
 * @author ontology bean generator
-* @version 2012/01/4, 17:18:05
+* @version 2012/05/21, 12:49:00
 */
 public class FlowParameters implements Concept {
+
+   /**
+* Protege name: reynoldsNumber
+   */
+   private int reynoldsNumber;
+   public void setReynoldsNumber(int value) { 
+    this.reynoldsNumber=value;
+   }
+   public int getReynoldsNumber() {
+     return this.reynoldsNumber;
+   }
 
    /**
 * Protege name: pressure
@@ -22,28 +33,6 @@ public class FlowParameters implements Concept {
    }
    public float getPressure() {
      return this.pressure;
-   }
-
-   /**
-* Protege name: massFlow
-   */
-   private float massFlow;
-   public void setMassFlow(float value) { 
-    this.massFlow=value;
-   }
-   public float getMassFlow() {
-     return this.massFlow;
-   }
-
-   /**
-* Protege name: flow
-   */
-   private float flow;
-   public void setFlow(float value) { 
-    this.flow=value;
-   }
-   public float getFlow() {
-     return this.flow;
    }
 
    /**
@@ -58,6 +47,17 @@ public class FlowParameters implements Concept {
    }
 
    /**
+* Protege name: massFlow
+   */
+   private float massFlow;
+   public void setMassFlow(float value) { 
+    this.massFlow=value;
+   }
+   public float getMassFlow() {
+     return this.massFlow;
+   }
+
+   /**
 * Protege name: fluidVelocity
    */
    private float fluidVelocity;
@@ -69,14 +69,14 @@ public class FlowParameters implements Concept {
    }
 
    /**
-* Protege name: reynoldsNumber
+* Protege name: flow
    */
-   private int reynoldsNumber;
-   public void setReynoldsNumber(int value) { 
-    this.reynoldsNumber=value;
+   private float flow;
+   public void setFlow(float value) { 
+    this.flow=value;
    }
-   public int getReynoldsNumber() {
-     return this.reynoldsNumber;
+   public float getFlow() {
+     return this.flow;
    }
 
 }

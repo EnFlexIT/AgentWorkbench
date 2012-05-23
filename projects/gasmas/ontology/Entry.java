@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Entry
 * @author ontology bean generator
-* @version 2012/01/4, 17:18:05
+* @version 2012/05/21, 12:49:00
 */
 public class Entry extends GridComponent{ 
 
