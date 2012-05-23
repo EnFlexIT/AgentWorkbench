@@ -53,6 +53,8 @@ import agentgui.simulationService.environment.EnvironmentModel;
  */
 public class CoalitionBehaviour extends ParallelBehaviour {
 	
+	private static final long serialVersionUID = 6163342649832560736L;
+
 	/** The Constant WAITING_TIME_FOR_COALITION_AUTHORIRY in miliseconds. */
 	private static final long WAITING_TIME_FOR_COALITION_AUTHORIRY = 10000;
 
@@ -260,9 +262,13 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 		try {		
 			LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
 			String agentName = "" + ClusterNetworkAgent.CLUSTER_AGENT_Prefix + ClusterNetworkAgent.getFreeID();
-			Object[] params = new Object[] { suggestedClusterNetworkComponent };
+			Object[] params = new Object[] {suggestedClusterNetworkComponent};
+			
+			String domain = this.suggestedClusterNetworkComponent.getDomain();
+			String agentClassReference = this.suggestedClusterNetworkComponent.getClusterNetworkModel().getGeneralGraphSettings4MAS().getDomainSettings().get(domain).getClusterAgent(); 
+			
 			try {
-				loadHelper.startAgent(agentName, "gasmas.agents.components.ClusterNetworkAgent", params, myAgent.getContainerController().getContainerName());
+				loadHelper.startAgent(agentName, agentClassReference, params, myAgent.getContainerController().getContainerName());
 			} catch (ControllerException e) {
 				e.printStackTrace();
 			}
