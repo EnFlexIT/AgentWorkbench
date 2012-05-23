@@ -9,44 +9,9 @@ import jade.core.*;
    * A set of parameters describing the physical properties of a PropagationPoint.
 * Protege name: StructuralParameters
 * @author ontology bean generator
-* @version 2012/01/4, 17:18:05
+* @version 2012/05/21, 12:49:00
 */
 public class StructuralParameters implements Concept {
-
-   /**
-   * The geographical y coordinate of the propagation point.
-* Protege name: diameter
-   */
-   private float diameter;
-   public void setDiameter(float value) { 
-    this.diameter=value;
-   }
-   public float getDiameter() {
-     return this.diameter;
-   }
-
-   /**
-* Protege name: atParentLengthPos
-   */
-   private float atParentLengthPos;
-   public void setAtParentLengthPos(float value) { 
-    this.atParentLengthPos=value;
-   }
-   public float getAtParentLengthPos() {
-     return this.atParentLengthPos;
-   }
-
-   /**
-   * The geographical x coordinate of the propagation point.
-* Protege name: geoX
-   */
-   private float geoX;
-   public void setGeoX(float value) { 
-    this.geoX=value;
-   }
-   public float getGeoX() {
-     return this.geoX;
-   }
 
    /**
    * The geographical z coordinate of the propagation point.
@@ -62,6 +27,30 @@ public class StructuralParameters implements Concept {
 
    /**
    * The geographical y coordinate of the propagation point.
+* Protege name: diameter
+   */
+   private float diameter;
+   public void setDiameter(float value) { 
+    this.diameter=value;
+   }
+   public float getDiameter() {
+     return this.diameter;
+   }
+
+   /**
+   * The geographical x coordinate of the propagation point.
+* Protege name: geoX
+   */
+   private float geoX;
+   public void setGeoX(float value) { 
+    this.geoX=value;
+   }
+   public float getGeoX() {
+     return this.geoX;
+   }
+
+   /**
+   * The geographical y coordinate of the propagation point.
 * Protege name: geoY
    */
    private float geoY;
@@ -70,6 +59,17 @@ public class StructuralParameters implements Concept {
    }
    public float getGeoY() {
      return this.geoY;
+   }
+
+   /**
+* Protege name: atParentLengthPos
+   */
+   private float atParentLengthPos;
+   public void setAtParentLengthPos(float value) { 
+    this.atParentLengthPos=value;
+   }
+   public float getAtParentLengthPos() {
+     return this.atParentLengthPos;
    }
 
 }
