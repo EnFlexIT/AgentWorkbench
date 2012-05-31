@@ -117,7 +117,7 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		// --- Split the nodes of the component from the rest of --------------
 		// --- the network and remind these connections 		 --------------
 		Vector<GraphNodePairs> nodeConnections4Component = new Vector<GraphNodePairs>();
-		HashSet<String> nodeIDs = sourceNetworkModel.extractElementIDs(networkComponent, true);
+		HashSet<String> nodeIDs = sourceNetworkModel.extractGraphElementIDs(networkComponent, new GraphNode());
 		for (String nodeID: nodeIDs) {
 			GraphNode node2SplitAt = (GraphNode) sourceNetworkModel.getGraphElement(nodeID);
 			// --- Split the connection node ------------------------
@@ -132,7 +132,7 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		
 		// --- Transfer the graph representation of the network component ----- 
 		NetworkComponent netComp = sourceNetworkModel.getNetworkComponent(networkComponent.getId());
-		HashSet<String> edgeIDs = sourceNetworkModel.extractElementIDs(netComp, false);
+		HashSet<String> edgeIDs = sourceNetworkModel.extractGraphElementIDs(netComp, new GraphEdge("searchFor", "searchFor"));
 		for (String edgeID: edgeIDs) {
 			GraphEdge edge = (GraphEdge) sourceNetworkModel.getGraphElement(edgeID);
 			GraphNode node1 = sourceGraph.getEndpoints(edge).getFirst();
@@ -203,8 +203,8 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		
 		// --- Transfer the graph representation of the network component ----- 
 		NetworkComponent netComp = sourceNetworkModel.getNetworkComponent(networkComponent.getId());
-		HashSet<String> nodeIDs = sourceNetworkModel.extractElementIDs(networkComponent, true);
-		HashSet<String> edgeIDs = sourceNetworkModel.extractElementIDs(netComp, false);
+		HashSet<String> nodeIDs = sourceNetworkModel.extractGraphElementIDs(networkComponent, new GraphNode());
+		HashSet<String> edgeIDs = sourceNetworkModel.extractGraphElementIDs(netComp, new GraphEdge("searchFor", "searchFor"));
 		for (String edgeID: edgeIDs) {
 			GraphEdge edge = (GraphEdge) sourceNetworkModel.getGraphElement(edgeID);
 			GraphNode node1 = sourceGraph.getEndpoints(edge).getFirst();

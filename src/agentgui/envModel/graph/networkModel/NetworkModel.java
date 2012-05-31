@@ -55,35 +55,35 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class NetworkModel implements Cloneable, Serializable {
+public class NetworkModel implements Serializable {
 
 	private static final long serialVersionUID = -5712689010090750522L;
 
+	/** This attribute stores layout settings like the DomainSettings and the ComponentTypeSettings. */
+	private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+	
 	/** The original JUNG graph created or imported in the application. */
 	private Graph<GraphNode, GraphEdge> graph;
-
-	/** HashMap providing access to the grid components based on the component's agentID. */
+	/** HashMap that provides faster access to the GraphElement's. */
 	private HashMap<String, GraphElement> graphElements;
-
-	/** A list of all NetworkComponents in the GridModel, accessible by ID. */
+	/** A list of all NetworkComponents in the NetworkModel, accessible by ID. */
 	private HashMap<String, NetworkComponent> networkComponents;
-
-	/** The outer network components of this NetworkModel with no Connections */
-	private transient ArrayList<String> outerNetworkComponents;
-
-	private transient int connectionsOfBiggestBranch;
-
-	/** This instance stores the DomainSettings and the ComponentTypeSettings. */
-	private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
-
+	
 	/**
 	 * This HashMap can hold alternative NetworkModel's that can be used to 
 	 * reduce the complexity of the original graph (e.g after clustering). 
 	 * The NetworkModel's placed in this HashMap will be also displayed 
-	 * through the {@link DisplayAgent}.
+	 * by the {@link DisplayAgent}.
 	 */
 	private HashMap<String, NetworkModel> alternativeNetworkModel = null;
+
+	
+	/** The outer network components of this NetworkModel with no Connections */
+	private transient ArrayList<String> outerNetworkComponents;
+	private transient int connectionsOfBiggestBranch;
+
 
 	/**
 	 * Default constructor.
@@ -102,7 +102,6 @@ public class NetworkModel implements Cloneable, Serializable {
 		this.generalGraphSettings4MAS = generalGraphSettings4MAS;
 		this.resetGraphElementLayout();
 	}
-
 	/**
 	 * Gets the general graph settings for the MAS.
 	 * @return the general graph settings for the MAS
@@ -115,13 +114,61 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Returns the JUNG graph.
+	 * @return the JUNG Graph
+	 */
+	public Graph<GraphNode, GraphEdge> getGraph() {
+		return graph;
+	}
+	/**
+	 * Sets the the graph of the network model.
+	 * @param newGraph the new graph
+	 */
+	public void setGraph(Graph<GraphNode, GraphEdge> newGraph) {
+		this.graph = newGraph;
+		this.graphElements = new HashMap<String, GraphElement>();
+		this.refreshGraphElements();
+	}
+	
+	/**
+	 * Returns the GraphElement with the given ID, or null if not found.
+	 * @param id The ID to look for
+	 * @return the GraphElement
+	 */
+	public GraphElement getGraphElement(String id) {
+		return graphElements.get(id);
+	}
+	/**
+	 * Gets the graph elements.
+	 * @return graphElements The hashmap of GraphElements
+	 */
+	public HashMap<String, GraphElement> getGraphElements() {
+		return graphElements;
+	}
+	
+	/**
+	 * Gets the network components.
+	 * @return the networkComponents
+	 */
+	public HashMap<String, NetworkComponent> getNetworkComponents() {
+		return networkComponents;
+	}
+	/**
+	 * Sets the network components.
+	 * @param networkComponents the networkComponents to set
+	 */
+	public void setNetworkComponents(HashMap<String, NetworkComponent> networkComponents) {
+		this.networkComponents = networkComponents;
+		this.refreshGraphElements();
+	}
+	
+	/**
 	 * Sets the alternative network model.
 	 * @param alternativeNetworkModel the alternativeNetworkModel to set
 	 */
 	public void setAlternativeNetworkModel(HashMap<String, NetworkModel> alternativeNetworkModel) {
 		this.alternativeNetworkModel = alternativeNetworkModel;
 	}
-
 	/**
 	 * Gets the alternative network models.
 	 * @return the alternativeNetworkModel
@@ -131,19 +178,6 @@ public class NetworkModel implements Cloneable, Serializable {
 			alternativeNetworkModel = new HashMap<String, NetworkModel>();
 		}
 		return alternativeNetworkModel;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
-	@Override
-	protected NetworkModel clone() {
-		try {
-			return (NetworkModel) super.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	/**
@@ -223,37 +257,6 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Extracts Network IDs from NetworkComponenList and returns an ID List
-	 *
-	 * @param networkComponents the network components
-	 * @return ArrayList of the IDs
-	 */
-	public HashSet<String> getNetworkComponentsIDs(HashSet<NetworkComponent> networkComponents) {
-		HashSet<String> networkComponentIDs = new HashSet<String>();
-		for (NetworkComponent networkComponent : networkComponents) {
-			networkComponentIDs.add(networkComponent.getId());
-		}
-		return networkComponentIDs;
-	}
-
-	/**
-	 * Returns the GraphElement with the given ID, or null if not found.
-	 * @param id The ID to look for
-	 * @return the GraphElement
-	 */
-	public GraphElement getGraphElement(String id) {
-		return graphElements.get(id);
-	}
-
-	/**
-	 * Gets the graph elements.
-	 * @return graphElements The hashmap of GraphElements
-	 */
-	public HashMap<String, GraphElement> getGraphElements() {
-		return graphElements;
-	}
-
-	/**
 	 * This method gets the GraphElements that are part of the given NetworkComponent
 	 * 
 	 * @param networkComponent The NetworkComponent
@@ -270,25 +273,6 @@ public class NetworkModel implements Cloneable, Serializable {
 		return elements;
 	}
 
-	/**
-	 * Gets the graph.
-	 * 
-	 * @return The Graph
-	 */
-	public Graph<GraphNode, GraphEdge> getGraph() {
-		return graph;
-	}
-
-	/**
-	 * Sets the the graph of the network model.
-	 * 
-	 * @param newGraph the new graph
-	 */
-	public void setGraph(Graph<GraphNode, GraphEdge> newGraph) {
-		this.graph = newGraph;
-		this.graphElements = new HashMap<String, GraphElement>();
-		this.refreshGraphElements();
-	}
 
 	/**
 	 * Reloads the the GraphElementsMap.
@@ -303,7 +287,6 @@ public class NetworkModel implements Cloneable, Serializable {
 
 	/**
 	 * Register all GraphElemnents used when adding a Component.
-	 * 
 	 * @param graphElements the graph elements
 	 */
 	private void register(GraphElement[] graphElements) {
@@ -448,7 +431,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	 */
 	public HashSet<NetworkComponent> removeNetworkComponentsInverse(HashSet<NetworkComponent> networkComponents) {
 		HashSet<NetworkComponent> removed = new HashSet<NetworkComponent>();
-		HashSet<String> networkComponentIDs = getNetworkComponentsIDs(networkComponents);
+		HashSet<String> networkComponentIDs = this.getNetworkComponentsIDs(networkComponents);
 		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
 			if (!networkComponentIDs.contains(networkComponent.getId())) {
 				removeNetworkComponent(networkComponent);
@@ -457,7 +440,21 @@ public class NetworkModel implements Cloneable, Serializable {
 		}
 		return removed;
 	}
-
+	
+	/**
+	 * Extracts Network IDs from NetworkComponenList and returns an ID List.
+	 * @param networkComponents the network components
+	 * @return HashSet<String> of the IDs
+	 */
+	private HashSet<String> getNetworkComponentsIDs(HashSet<NetworkComponent> networkComponents) {
+		HashSet<String> networkComponentIDs = new HashSet<String>();
+		for (NetworkComponent networkComponent : networkComponents) {
+			networkComponentIDs.add(networkComponent.getId());
+		}
+		return networkComponentIDs;
+	}
+	
+	
 	/**
 	 * Gets the a node from network component.
 	 * 
@@ -540,7 +537,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Gets alls networkComponents contained in a GraphNode Set
+	 * Gets all networkComponents contained in a GraphNode Set
 	 *
 	 * @param graphNodes the graph nodes
 	 * @return the network components
@@ -576,7 +573,7 @@ public class NetworkModel implements Cloneable, Serializable {
 		// --- Run through the list of components -------------------
 		for (NetworkComponent component : componentsAffected) {
 			// --- Extract all GraphNode IDs ------------------------
-			Set<String> compIDSetAffecetd = this.extractElementIDs(component, true);
+			Set<String> compIDSetAffecetd = this.extractGraphElementIDs(component, new GraphNode());
 			Set<String> compIDSetFound = new HashSet<String>();
 			for (String compID : compIDSetAffecetd) {
 				// --- Is this a node in the selection? -------------
@@ -600,12 +597,12 @@ public class NetworkModel implements Cloneable, Serializable {
 	
 	
 	/**
-	 * Extract graph node i ds.
+	 * Extract graph node IDs.
 	 *
 	 * @param networkComponent the network component
 	 * @return the hash set
 	 */
-	public HashSet<String> extractElementIDs(NetworkComponent networkComponent, boolean search4GraphNodes) {
+	public HashSet<String> extractGraphElementIDs(NetworkComponent networkComponent, GraphElement searchForInstance) {
 		
 		// --- Create the result set -----------------
 		HashSet<String> elementIDsFound = new HashSet<String>();
@@ -615,12 +612,15 @@ public class NetworkModel implements Cloneable, Serializable {
 		for (String elementID : elements) {
 			GraphElement element = this.getGraphElement(elementID);
 			if (element!=null) {
-				if (search4GraphNodes==true) {
+				if (searchForInstance==null) {
+					// --- search for everything -----
+					elementIDsFound.add(elementID);
+				} else if (searchForInstance instanceof GraphNode) {
 					// --- search for GraphNode's ----
 					if (element instanceof GraphNode) {
 						elementIDsFound.add(elementID);
 					}
-				} else {
+				} else if (searchForInstance instanceof GraphEdge) {
 					// --- search for GraphEdge's ----
 					if (element instanceof GraphEdge) {
 						elementIDsFound.add(elementID);
@@ -648,27 +648,7 @@ public class NetworkModel implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Gets the network components.
-	 * 
-	 * @return the networkComponents
-	 */
-	public HashMap<String, NetworkComponent> getNetworkComponents() {
-		return networkComponents;
-	}
-
-	/**
-	 * Sets the network components.
-	 * 
-	 * @param networkComponents the networkComponents to set
-	 */
-	public void setNetworkComponents(HashMap<String, NetworkComponent> networkComponents) {
-		this.networkComponents = networkComponents;
-		this.refreshGraphElements();
-	}
-
-	/**
 	 * Generates the next unique network component ID in the series n1, n2, n3, ...
-	 * 
 	 * @return the next unique network component ID
 	 */
 	public String nextNetworkComponentID() {
@@ -682,7 +662,6 @@ public class NetworkModel implements Cloneable, Serializable {
 
 	/**
 	 * Generates the next unique node ID in the series PP0, PP1, PP2, ...
-	 * 
 	 * @return String The next unique node ID that can be used.
 	 */
 	public String nextNodeID() {
@@ -1308,11 +1287,11 @@ public class NetworkModel implements Cloneable, Serializable {
 	/**
 	 * Checks, if a component list contains distribution node.
 	 * 
-	 * @param components the components as HashSet<NetworkComponent>
+	 * @param networkComponents the components as HashSet<NetworkComponent>
 	 * @return the network component, which is the DistributionNode or null
 	 */
-	public NetworkComponent containsDistributionNode(HashSet<NetworkComponent> components) {
-		Iterator<NetworkComponent> compIt = components.iterator();
+	public NetworkComponent containsDistributionNode(HashSet<NetworkComponent> networkComponents) {
+		Iterator<NetworkComponent> compIt = networkComponents.iterator();
 		while (compIt.hasNext()) {
 			NetworkComponent component = compIt.next();
 			if (component.getPrototypeClassName().equals(DistributionNode.class.getName())) {
@@ -1377,10 +1356,10 @@ public class NetworkModel implements Cloneable, Serializable {
 	 * Given a node and a graph component of star prototype, checks whether the node is the center of the star or not.
 	 * 
 	 * @param node The node to be checked
-	 * @param comp The network component containing the node having the star prototype
+	 * @param networkComponent The network component containing the node having the star prototype
 	 */
-	public boolean isCenterNodeOfStar(GraphNode node, NetworkComponent comp) {
-		for (String graphElementID : comp.getGraphElementIDs()) {
+	public boolean isCenterNodeOfStar(GraphNode node, NetworkComponent networkComponent) {
+		for (String graphElementID : networkComponent.getGraphElementIDs()) {
 			GraphElement elem = getGraphElement(graphElementID);
 			// The center node should be incident on all the edges of the component
 			if (elem instanceof GraphEdge && !graph.isIncident(node, (GraphEdge) elem)) {
@@ -1552,4 +1531,35 @@ public class NetworkModel implements Cloneable, Serializable {
 		}
 		return connectionsOfBiggestBranch;
 	}
+
+
+	/**
+	 * Sets the directions of the specified NetworkComponent.
+	 * @param networkComponent the NetworkComponent
+	 */
+	public void setDirectionsOfNetworkComponent(NetworkComponent networkComponent) {
+		HashMap<String, GraphEdgeDirection> edgeHash = networkComponent.getEdgeDirections();
+		for (GraphEdgeDirection direction : edgeHash.values()) {
+			this.setGraphEdgeDirection(direction);
+		}
+	}
+	
+	/**
+	 * Sets the GraphEdge direction.
+	 * @param graphEdgeDirection the new graph edge direction
+	 */
+	public void setGraphEdgeDirection(GraphEdgeDirection graphEdgeDirection) {
+		
+		GraphEdge graphEdge 	= (GraphEdge) this.graphElements.get(graphEdgeDirection.getGraphEdgeID());
+		GraphNode graphNodeFrom = (GraphNode) this.graphElements.get(graphEdgeDirection.getGraphNodeIDFrom());
+		GraphNode graphNodeTo   = (GraphNode) this.graphElements.get(graphEdgeDirection.getGraphNodeIDTo());
+		
+		if (graphEdge!=null && graphNodeFrom!=null && graphNodeTo!=null) {
+			// --- Set graph directed ----------------
+			this.graph.removeEdge(graphEdge);
+			this.graph.addEdge(graphEdge, graphNodeFrom, graphNodeTo, EdgeType.DIRECTED);
+		} 
+		
+	}
+
 }

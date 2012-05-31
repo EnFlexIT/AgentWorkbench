@@ -1,0 +1,19 @@
+; Tue May 22 14:20:33 CEST 2012
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+([Line] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([PhysicalValuesPerPhase] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([project+annotation] of  %3APROJECT-ANNOTATION
+
+	(%3ALOCATION "D:\\10 Java Projects\\AgentGUI\\projects")
+	(%3AONTOLOGYNAME "E-Grid")
+	(%3APACKAGE "gasmas.eGrid.ontology")
+	(%3ASUPPORT "j2se"))

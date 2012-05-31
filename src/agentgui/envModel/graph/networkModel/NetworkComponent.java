@@ -29,6 +29,7 @@
 package agentgui.envModel.graph.networkModel;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -38,6 +39,7 @@ import java.util.HashSet;
  * @see NetworkModel
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class NetworkComponent implements Serializable {
 
@@ -56,6 +58,9 @@ public class NetworkComponent implements Serializable {
 	/** The NetworkComponent's GraphElementPrototype class name. */
 	protected String agentClassName;
 
+	protected HashMap<String, GraphEdgeDirection> edgeDirections;
+	
+	
 	/**
 	 * The ontology object instance representing this component, serialized 
 	 * as a base64 encoded String for saving via JAXB.
@@ -216,6 +221,21 @@ public class NetworkComponent implements Serializable {
 	 */
 	public void setEncodedOntologyRepresentation(String encodedOntologyRepresentation) {
 		this.encodedOntologyRepresentation = encodedOntologyRepresentation;
+	}
+	
+	/**
+	 * Returns the current edge directions.
+	 * @return the edgeDirections
+	 */
+	public HashMap<String, GraphEdgeDirection> getEdgeDirections() {
+		return edgeDirections;
+	}
+	/**
+	 * Sets the edge directions.
+	 * @param edgeDirections the edgeDirections to set
+	 */
+	public void setEdgeDirections(HashMap<String, GraphEdgeDirection> edgeDirections) {
+		this.edgeDirections = edgeDirections;
 	}
 	
 }

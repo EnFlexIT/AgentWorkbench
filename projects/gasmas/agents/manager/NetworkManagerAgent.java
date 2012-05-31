@@ -38,7 +38,9 @@ import agentgui.core.application.Application;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
+import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkComponentDirectionSettings;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
@@ -50,12 +52,10 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
  */
 public class NetworkManagerAgent extends SimulationManagerAgent {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1823164338744218569L;
 
 	/** The current project. */
 	private Project currProject = null;
-
 	/** The my network model. */
 	private NetworkModel myNetworkModel = null;
 
@@ -85,13 +85,44 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		// --- in order to make it accessible for the whole agency --
 		this.notifyAboutEnvironmentChanges();
 		
+		this.testArea();
 		ComponentFunctions.printAmountOfDiffernetTypesOfAgents("Global", myNetworkModel);
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++ Some temporary test cases here +++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	private void testArea() {
+		
+		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n1");
+		if (netComp!=null) {
+			
+			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(myNetworkModel, netComp);
+			if (netCompDirect.isDistributionNode()==false) {
+				// --- Just to construct a small test case ----------
+				HashSet<GraphNode> outerNodes = netCompDirect.getOuterNodes();
+				HashSet<GraphNode> inNodes = new HashSet<GraphNode>(outerNodes);
+				HashSet<GraphNode> outNodes = new HashSet<GraphNode>();
 
+				GraphNode firstNode = inNodes.iterator().next();
+				inNodes.remove(firstNode);
+				outNodes.add(firstNode);
+				
+				// --- Test for assigning the direction -------------
+				HashSet<NetworkComponent> inComps = netCompDirect.translateGraphNodeHashSet(inNodes);
+				HashSet<NetworkComponent> outComps = netCompDirect.translateGraphNodeHashSet(outNodes);
+				netCompDirect.setGraphEdgeDirection(inComps, outComps);
+				
+				// --- Finally, set the the edge directions to the NetworkComponent -----
+				netComp.setEdgeDirections(netCompDirect.getEdgeDirections());
+				// --- Apply setting to the NetworkModel --------------------------------
+				this.myNetworkModel.setDirectionsOfNetworkComponent(netComp);
+				this.notifyAboutEnvironmentChanges();
+				
+			}
+		}
+		
+	}
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

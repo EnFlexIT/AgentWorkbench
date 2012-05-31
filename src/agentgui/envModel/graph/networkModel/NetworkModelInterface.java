@@ -57,8 +57,7 @@ public interface NetworkModelInterface {
 	 * Sets the alternative network model.
 	 * @param alternativeNetworkModel the alternativeNetworkModel to set
 	 */
-	public abstract void setAlternativeNetworkModel(
-			HashMap<String, NetworkModel> alternativeNetworkModel);
+	public abstract void setAlternativeNetworkModel(HashMap<String, NetworkModel> alternativeNetworkModel);
 
 	/**
 	 * Gets the alternative network models.
@@ -71,15 +70,6 @@ public interface NetworkModelInterface {
 	 * @return the copy
 	 */
 	public abstract NetworkModel getCopy();
-
-	/**
-	 * Extracts Network IDs from NetworkComponenList and returns an ID List
-	 *
-	 * @param networkComponents the network components
-	 * @return ArrayList of the IDs
-	 */
-	public abstract HashSet<String> getNetworkComponentsIDs(
-			HashSet<NetworkComponent> networkComponents);
 
 	/**
 	 * Returns the GraphElement with the given ID, or null if not found.

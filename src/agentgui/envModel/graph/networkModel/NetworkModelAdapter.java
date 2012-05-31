@@ -163,14 +163,6 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getNetworkComponentsIDs(java.util.HashSet)
-	 */
-	@Override
-	public HashSet<String> getNetworkComponentsIDs(HashSet<NetworkComponent> networkComponents) {
-		return this.graphController.getNetworkModel().getNetworkComponentsIDs(networkComponents);
-	}
-
-	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getGraphElement(java.lang.String)
 	 */
 	@Override
