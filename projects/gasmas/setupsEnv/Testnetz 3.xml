@@ -23,12 +23,12 @@
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
+                <graphElementIDs>PP40</graphElementIDs>
                 <graphElementIDs>n10_1</graphElementIDs>
                 <graphElementIDs>n10_0</graphElementIDs>
                 <graphElementIDs>n10_2</graphElementIDs>
                 <graphElementIDs>PP21</graphElementIDs>
                 <graphElementIDs>PP22</graphElementIDs>
-                <graphElementIDs>PP36</graphElementIDs>
                 <graphElementIDs>PP18</graphElementIDs>
                 <id>n10</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
@@ -41,11 +41,22 @@
                 <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
                 <directed>true</directed>
                 <graphElementIDs>n0</graphElementIDs>
+                <graphElementIDs>PP37</graphElementIDs>
                 <graphElementIDs>PP1</graphElementIDs>
-                <graphElementIDs>PP0</graphElementIDs>
                 <id>n0</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>Compressor</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n20</key>
+            <value>
+                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP38</graphElementIDs>
+                <id>n20</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Exit</type>
             </value>
         </entry>
         <entry>
@@ -199,10 +210,21 @@
         <entry>
             <key>n18</key>
             <value>
+                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP40</graphElementIDs>
+                <id>n18</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Exit</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n19</key>
+            <value>
                 <agentClassName>gasmas.agents.components.EntryAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>PP36</graphElementIDs>
-                <id>n18</id>
+                <graphElementIDs>PP37</graphElementIDs>
+                <id>n19</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Entry</type>
             </value>
@@ -239,8 +261,8 @@
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP32</graphElementIDs>
-                <graphElementIDs>PP31</graphElementIDs>
                 <graphElementIDs>PP30</graphElementIDs>
+                <graphElementIDs>PP38</graphElementIDs>
                 <graphElementIDs>n16_2</graphElementIDs>
                 <graphElementIDs>PP33</graphElementIDs>
                 <graphElementIDs>n16_0</graphElementIDs>

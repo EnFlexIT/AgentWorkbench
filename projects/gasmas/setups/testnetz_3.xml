@@ -107,6 +107,18 @@
             <postionNo>17</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
+            <startAsName>n19</startAsName>
+        </agent>
+        <agent>
+            <postionNo>18</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n20</startAsName>
+        </agent>
+        <agent>
+            <postionNo>19</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
             <startAsName>n18</startAsName>
         </agent>
     </agentSetup>

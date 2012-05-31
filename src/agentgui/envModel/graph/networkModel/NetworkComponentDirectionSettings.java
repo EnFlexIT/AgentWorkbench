@@ -88,7 +88,15 @@ public class NetworkComponentDirectionSettings {
 				this.edgeConnections.add(graphEdgeConnection);
 				
 				String graphEdgeID = graphEdgeConnection.getGraphEdge().getId();
-				GraphEdgeDirection graphEdgeDirection = new GraphEdgeDirection(graphEdgeID, null, null);
+				GraphEdgeDirection graphEdgeDirection = null;
+				if (graphEdgeConnection.isFixedDirected()) {
+					String graphNodeIDFrom = graphEdgeConnection.getGraphNode1().getId();
+					String graphNodeIDTo   = graphEdgeConnection.getGraphNode2().getId();
+					graphEdgeDirection = new GraphEdgeDirection(graphEdgeID, graphNodeIDFrom, graphNodeIDTo, true);
+				} else {
+					graphEdgeDirection = new GraphEdgeDirection(graphEdgeID, null, null, false);	
+				}
+				
 				if (this.edgeDirections==null) {
 					this.edgeDirections = new HashMap<String, GraphEdgeDirection>();
 				}
@@ -110,21 +118,6 @@ public class NetworkComponentDirectionSettings {
 			return true;
 		}
 		return false;
-	}
-	
-	/**
-	 * Gets the edge connections.
-	 * @return the edgeConnections
-	 */
-	public HashSet<GraphEdgeConnection> getEdgeConnections() {
-		return this.edgeConnections;
-	}
-	/**
-	 * Gets the edge directions.
-	 * @return the edgeDirections
-	 */
-	public HashMap<String, GraphEdgeDirection> getEdgeDirections() {
-		return this.edgeDirections;
 	}
 	
 	/**
@@ -172,9 +165,22 @@ public class NetworkComponentDirectionSettings {
 					this.innerGraphNodes.add(node);
 				}
 			}
-
 		}
-
+	}
+	
+	/**
+	 * Gets the edge connections.
+	 * @return the edgeConnections
+	 */
+	public HashSet<GraphEdgeConnection> getEdgeConnections() {
+		return this.edgeConnections;
+	}
+	/**
+	 * Gets the edge directions.
+	 * @return the edgeDirections
+	 */
+	public HashMap<String, GraphEdgeDirection> getEdgeDirections() {
+		return this.edgeDirections;
 	}
 	
 	/**
@@ -326,11 +332,15 @@ public class NetworkComponentDirectionSettings {
 			graphEdgeDirection = this.edgeDirections.get(graphEdgeID);
 			if (graphEdgeDirection==null)  error = "Got no valid GraphEdgeID for the edge!";
 		}
-		
+
 		if (error==null) {
-			// --- Assign direction setting ---------------
-			graphEdgeDirection.setGraphNodeIDFrom(graphNodeFromID);
-			graphEdgeDirection.setGraphNodeIDTo(graphNodeToID);
+			// --- Assign direction setting, if allowed ---
+			if (graphEdgeDirection.isFixedDirected()) {
+				System.out.println("-> Direction of edge '" + graphEdgeDirection.getGraphEdgeID() + "' is fixed and can not be changed!");
+			} else {
+				graphEdgeDirection.setGraphNodeIDFrom(graphNodeFromID);
+				graphEdgeDirection.setGraphNodeIDTo(graphNodeToID);	
+			}
 			
 		} else {
 			// --- Throw an exception ---------------------

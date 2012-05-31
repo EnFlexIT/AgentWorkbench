@@ -45,7 +45,8 @@ public class GraphEdgeDirection implements Serializable {
 	private String graphNodeIDFrom = null; 	
 	/** The graph node id to. */
 	private String graphNodeIDTo = null;
-	
+
+	private boolean fixedDirected = false;
 	
 	/**
 	 * Instantiates a new graph edge direction.
@@ -56,10 +57,11 @@ public class GraphEdgeDirection implements Serializable {
 	/**
 	 * Instantiates a new graph edge direction.
 	 */
-	public GraphEdgeDirection(String graphEdgeID, String graphNodeIDFrom, String graphNodeIDTo) {
+	public GraphEdgeDirection(String graphEdgeID, String graphNodeIDFrom, String graphNodeIDTo, boolean fixedDirected) {
 		this.graphEdgeID = graphEdgeID;
 		this.graphNodeIDFrom = graphNodeIDFrom; 	
 		this.graphNodeIDTo = graphNodeIDTo;
+		this.fixedDirected = fixedDirected;
 	}
 
 	/**
@@ -105,6 +107,21 @@ public class GraphEdgeDirection implements Serializable {
 	 */
 	public void setGraphNodeIDTo(String graphNodeIDTo) {
 		this.graphNodeIDTo = graphNodeIDTo;
+	}
+	
+	/**
+	 * Sets the fixed directed.
+	 * @param fixedDirected the new fixed directed
+	 */
+	public void setFixedDirected(boolean fixedDirected) {
+		this.fixedDirected = fixedDirected;
+	}
+	/**
+	 * Checks if is fixed directed.
+	 * @return true, if is fixed directed
+	 */
+	public boolean isFixedDirected() {
+		return fixedDirected;
 	}
 
 }
