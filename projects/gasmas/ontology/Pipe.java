@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Pipe
 * @author ontology bean generator
-* @version 2012/05/21, 12:49:00
+* @version 2012/06/4, 15:20:38
 */
 public class Pipe extends GridComponent{ 
-
-   /**
-* Protege name: length
-   */
-   private float length;
-   public void setLength(float value) { 
-    this.length=value;
-   }
-   public float getLength() {
-     return this.length;
-   }
 
    /**
    * The ResistanceParameters of this pipe.
@@ -32,6 +21,17 @@ public class Pipe extends GridComponent{
    }
    public ResistanceParameters getResistance() {
      return this.resistance;
+   }
+
+   /**
+* Protege name: length
+   */
+   private float length;
+   public void setLength(float value) { 
+    this.length=value;
+   }
+   public float getLength() {
+     return this.length;
    }
 
 }

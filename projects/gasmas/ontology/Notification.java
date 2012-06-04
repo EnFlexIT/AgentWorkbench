@@ -1,0 +1,37 @@
+package gasmas.ontology;
+
+
+import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
+
+/**
+* Protege name: Notification
+* @author ontology bean generator
+* @version 2012/06/4, 15:20:38
+*/
+public class Notification implements Concept {
+
+   /**
+* Protege name: reason
+   */
+   private String reason;
+   public void setReason(String value) { 
+    this.reason=value;
+   }
+   public String getReason() {
+     return this.reason;
+   }
+
+   /**
+* Protege name: notificationObject
+   */
+   private Object notificationObject;
+   public void setNotificationObject(Object value) { 
+    this.notificationObject=value;
+   }
+   public Object getNotificationObject() {
+     return this.notificationObject;
+   }
+
+}

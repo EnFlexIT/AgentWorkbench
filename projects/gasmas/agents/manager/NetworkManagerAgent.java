@@ -94,7 +94,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	private void testArea() {
 		
-		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n15");
+		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n11");
 		if (netComp!=null) {
 			
 			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(myNetworkModel, netComp);

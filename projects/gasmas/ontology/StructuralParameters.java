@@ -9,33 +9,9 @@ import jade.core.*;
    * A set of parameters describing the physical properties of a PropagationPoint.
 * Protege name: StructuralParameters
 * @author ontology bean generator
-* @version 2012/05/21, 12:49:00
+* @version 2012/06/4, 15:20:38
 */
 public class StructuralParameters implements Concept {
-
-   /**
-   * The geographical z coordinate of the propagation point.
-* Protege name: geoZ
-   */
-   private float geoZ;
-   public void setGeoZ(float value) { 
-    this.geoZ=value;
-   }
-   public float getGeoZ() {
-     return this.geoZ;
-   }
-
-   /**
-   * The geographical y coordinate of the propagation point.
-* Protege name: diameter
-   */
-   private float diameter;
-   public void setDiameter(float value) { 
-    this.diameter=value;
-   }
-   public float getDiameter() {
-     return this.diameter;
-   }
 
    /**
    * The geographical x coordinate of the propagation point.
@@ -51,14 +27,14 @@ public class StructuralParameters implements Concept {
 
    /**
    * The geographical y coordinate of the propagation point.
-* Protege name: geoY
+* Protege name: diameter
    */
-   private float geoY;
-   public void setGeoY(float value) { 
-    this.geoY=value;
+   private float diameter;
+   public void setDiameter(float value) { 
+    this.diameter=value;
    }
-   public float getGeoY() {
-     return this.geoY;
+   public float getDiameter() {
+     return this.diameter;
    }
 
    /**
@@ -70,6 +46,30 @@ public class StructuralParameters implements Concept {
    }
    public float getAtParentLengthPos() {
      return this.atParentLengthPos;
+   }
+
+   /**
+   * The geographical y coordinate of the propagation point.
+* Protege name: geoY
+   */
+   private float geoY;
+   public void setGeoY(float value) { 
+    this.geoY=value;
+   }
+   public float getGeoY() {
+     return this.geoY;
+   }
+
+   /**
+   * The geographical z coordinate of the propagation point.
+* Protege name: geoZ
+   */
+   private float geoZ;
+   public void setGeoZ(float value) { 
+    this.geoZ=value;
+   }
+   public float getGeoZ() {
+     return this.geoZ;
    }
 
 }

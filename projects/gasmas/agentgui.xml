@@ -2,7 +2,7 @@
 <project>
     <projectName>GasMAS</projectName>
     <projectDescription>MAS zur Simulation eines Gasnetzes (nur technische Ebene).</projectDescription>
-    <projectView>Developer</projectView>
+    <projectView>User</projectView>
     <environmentModel>gridEnvironment</environmentModel>
     <projectResources/>
     <plugins>
@@ -51,7 +51,7 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1189</useLocalPort>
+        <useLocalPort>1190</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -83,7 +83,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Testnetz 3</simulationSetupCurrent>
+    <simulationSetupCurrent>MixedClusters (1) Small</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>

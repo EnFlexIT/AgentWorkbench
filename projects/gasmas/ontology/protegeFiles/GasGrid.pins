@@ -1,4 +1,4 @@
-; Wed Jan 04 17:20:02 CET 2012
+; Mon Jun 04 15:20:40 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7,7 +7,15 @@
 
 	(%3AJADE-IGNORE FALSE))
 
+([ClusterNotification] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
 ([Compressor] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([DirectionSettingNotification] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -33,6 +41,10 @@
 	(%3AJADE-JAVA-CODE "/**\n * <code>GasComponent_CH4 = 1</code>\n */\npublic static final int GasComponent_CH4 = 1;\n/**\n * <code>GasComponent_N2 = 2</code>\n */\npublic static final int GasComponent_N2 = 2;\n/**\n * <code>GasComponent_CO2 = 3</code>\n */\npublic static final int GasComponent_CO2 = 3;\n/**\n * <code>GasComponent_C2H6 = 4</code>\n */\npublic static final int GasComponent_C2H6 = 4;\n/**\n * <code>GasComponent_C3H8 = 5</code>\n */\npublic static final int GasComponent_C3H8 = 5;\n/**\n * <code>GasComponent_n_C4H10 = 6</code>\n */\npublic static final int GasComponent_n_C4H10 = 6;\n/**\n * <code>GasComponent_i_C4H10 = 7</code>\n */\npublic static final int GasComponent_i_C4H10 = 7;\n/**\n * <code>GasComponent_n_C5H12 = 8</code>\n */\npublic static final int GasComponent_n_C5H12 = 8;\n/**\n * <code>GasComponent_i_C5H12 = 9</code>\n */\npublic static final int GasComponent_i_C5H12 = 9;\n/**\n * <code>GasComponent_n_C6H14 = 10</code>\n */\npublic static final int GasComponent_n_C6H14 = 10;\n/**\n * <code>GasComponent_n_C7H16 = 11</code>\n */\npublic static final int GasComponent_n_C7H16 = 11;\n/**\n * <code>GasComponent_n_C8H18 = 12</code>\n */\npublic static final int GasComponent_n_C8H18 = 12;\n/**\n * <code>GasComponent_n_C9H20 = 13</code>\n */\npublic static final int GasComponent_n_C9H20 = 13;\n/**\n * <code>GasComponent_n_C10H22 = 14</code>\n */\npublic static final int GasComponent_n_C10H22 = 14;\n/**\n * <code>GasComponent_He = 15</code>\n */\npublic static final int GasComponent_He = 15;\n/**\n * <code>GasComponent_Ar = 16</code>\n */\npublic static final int GasComponent_Ar = 16;\n/**\n * <code>GasComponent_H2 = 17</code>\n */\npublic static final int GasComponent_H2 = 17;\n/**\n * <code>GasComponent_O2 = 18</code>\n */\npublic static final int GasComponent_O2 = 18;\n/**\n * <code>GasComponent_CO = 19</code>\n */\npublic static final int GasComponent_CO = 19;\n/**\n * <code>GasComponent_H2O = 20</code>\n */\npublic static final int GasComponent_H2O = 20;\n/**\n * <code>GasComponent_H2S = 21</code>\n */\npublic static final int GasComponent_H2S = 21;\n/**\n * <code>GasComponent_neo_C5H12 = 22</code>\n */\npublic static final int GasComponent_neo_C5H12 = 22;\n/**\n * <code>GasComponent_i_C6H14 = 23</code>\n */\npublic static final int GasComponent_i_C6H14 = 23;\n/**\n * <code>GasComponent_z3_C6H14 = 24</code>\n */\npublic static final int GasComponent_z3_C6H14 = 24;\n/**\n * <code>GasComponent_z2_2_C6H14 = 25</code>\n */\npublic static final int GasComponent_z2_2_C6H14 = 25;\n/**\n * <code>GasComponent_z2_3_C6H14 = 26</code>\n */\npublic static final int GasComponent_z2_3_C6H14 = 26;\n/**\n * <code>GasComponent_C2H4 = 27</code>\n */\npublic static final int GasComponent_C2H4 = 27;\n/**\n * <code>GasComponent_C3H6 = 28</code>\n */\npublic static final int GasComponent_C3H6 = 28;\n/**\n * <code>GasComponent_z1_C4H8 = 29</code>\n */\npublic static final int GasComponent_z1_C4H8 = 29;\n/**\n * <code>GasComponent_cis_2_C4H8 = 30</code>\n */\npublic static final int GasComponent_cis_2_C4H8 = 30;\n/**\n * <code>GasComponent_tra_2_C4H8 = 31</code>\n */\npublic static final int GasComponent_tra_2_C4H8 = 31;\n/**\n * <code>GasComponent_i_C4H8 = 32</code>\n */\npublic static final int GasComponent_i_C4H8 = 32;\n/**\n * <code>GasComponent_z1_C5H10 = 33</code>\n */\npublic static final int GasComponent_z1_C5H10 = 33;\n/**\n * <code>GasComponent_C3H4 = 34</code>\n */\npublic static final int GasComponent_C3H4 = 34;\n/**\n * <code>GasComponent_z1_2_C4H6 = 35</code>\n */\npublic static final int GasComponent_z1_2_C4H6 = 35;\n/**\n * <code>GasComponent_z1_3_C4H6 = 36</code>\n */\npublic static final int GasComponent_z1_3_C4H6 = 36;\n/**\n * <code>GasComponent_C2H2 = 37</code>\n */\npublic static final int GasComponent_C2H2 = 37;\n/**\n * <code>GasComponent_C5H10 = 38</code>\n */\npublic static final int GasComponent_C5H10 = 38;\n/**\n * <code>GasComponent_z_5_C6H12 = 39</code>\n */\npublic static final int GasComponent_z_5_C6H12 = 39;\n/**\n * <code>GasComponent_C7H14 = 40</code>\n */\npublic static final int GasComponent_C7H14 = 40;\n/**\n * <code>GasComponent_c_C6H12 = 41</code>\n */\npublic static final int GasComponent_c_C6H12 = 41;\n/**\n * <code>GasComponent_z6_C7H14 = 42</code>\n */\npublic static final int GasComponent_z6_C7H14 = 42;\n/**\n * <code>GasComponent_C8H16 = 43</code>\n */\npublic static final int GasComponent_C8H16 = 43;\n/**\n * <code>GasComponent_C6H6 = 44</code>\n */\npublic static final int GasComponent_C6H6 = 44;\n/**\n * <code>GasComponent_C7H8 = 45</code>\n */\npublic static final int GasComponent_C7H8 = 45;\n/**\n * <code>GasComponent_C8H10 = 46</code>\n */\npublic static final int GasComponent_C8H10 = 46;\n/**\n * <code>GasComponent_o_C8H10 = 47</code>\n */\npublic static final int GasComponent_o_C8H10 = 47;\n/**\n * <code>GasComponent_CH3OH = 48</code>\n */\npublic static final int GasComponent_CH3OH = 48;\n/**\n * <code>GasComponent_CH3SH = 49</code>\n */\npublic static final int GasComponent_CH3SH = 49;\n/**\n * <code>GasComponent_NH3 = 50</code>\n */\npublic static final int GasComponent_NH3 = 50;\n/**\n * <code>GasComponent_HCN = 51</code>\n */\npublic static final int GasComponent_HCN = 51;\n/**\n * <code>GasComponent_COS = 52</code>\n */\npublic static final int GasComponent_COS = 52;\n/**\n * <code>GasComponent_CS2 = 53</code>\n */\npublic static final int GasComponent_CS2 = 53;\n/**\n * <code>GasComponent_Ne = 54</code>\n */\npublic static final int GasComponent_Ne = 54;\n/**\n * <code>GasComponent_SO2 = 55</code>\n */\npublic static final int GasComponent_SO2 = 55;\n/**\n * <code>GasComponent_N2O = 56</code>\n */\npublic static final int GasComponent_N2O = 56;\n/**\n * <code>GasComponent_Kr = 57</code>\n */\npublic static final int GasComponent_Kr = 57;\n/**\n * <code>GasComponent_Xe = 58</code>\n */\npublic static final int GasComponent_Xe = 58;"))
 
 ([GridComponent] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Notification] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 

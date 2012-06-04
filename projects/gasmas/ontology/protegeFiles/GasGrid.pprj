@@ -1,4 +1,4 @@
-; Wed Jan 04 17:20:02 CET 2012
+; Mon Jun 04 15:20:40 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -38,39 +38,6 @@
 	(is_hidden FALSE)
 	(widget_class_name "edu.stanford.smi.protege.widget.FormsTab"))
 
-([GasGrid_ProjectKB_Instance_10143] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([GasGrid_ProjectKB_Instance_10144] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([GasGrid_ProjectKB_Instance_10145] of  Property_List
-)
-
-([GasGrid_ProjectKB_Instance_10146] of  Property_List
-)
-
-([GasGrid_ProjectKB_Instance_10147] of  Property_List
-)
-
-([GasGrid_ProjectKB_Instance_10162] of  Map_Entry
-
-	(key "add_name_on_instance_form")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
-([GasGrid_ProjectKB_Instance_10163] of  Map_Entry
-
-	(key "change_tracking_active")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
 ([GasGrid_ProjectKB_Instance_133] of  Property_List
 )
 
@@ -104,6 +71,20 @@
 
 ([GasGrid_ProjectKB_Instance_142] of  Property_List
 )
+
+([GasGrid_ProjectKB_Instance_143] of  Map_Entry
+
+	(key "add_name_on_instance_form")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
+
+([GasGrid_ProjectKB_Instance_144] of  Map_Entry
+
+	(key "change_tracking_active")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
 
 ([GasGrid_ProjectKB_Instance_202] of  Widget
 
@@ -432,8 +413,8 @@
 ([GasGrid_ProjectKB_Instance_289] of  Map
 
 	(entries
-		[GasGrid_ProjectKB_Instance_10162]
-		[GasGrid_ProjectKB_Instance_10163]))
+		[GasGrid_ProjectKB_Instance_143]
+		[GasGrid_ProjectKB_Instance_144]))
 
 ([GasGrid_ProjectKB_Instance_98] of  String
 
