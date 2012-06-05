@@ -2,7 +2,7 @@
 <project>
     <projectName>GasMAS</projectName>
     <projectDescription>MAS zur Simulation eines Gasnetzes (nur technische Ebene).</projectDescription>
-    <projectView>User</projectView>
+    <projectView>Developer</projectView>
     <environmentModel>gridEnvironment</environmentModel>
     <projectResources/>
     <plugins>
@@ -51,7 +51,7 @@
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1190</useLocalPort>
+        <useLocalPort>1191</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>

@@ -35,8 +35,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
-import org.apache.batik.ext.awt.geom.Polygon2D;
-
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
@@ -90,7 +88,7 @@ public class PathSerachBotCycleAnalyser {
 	 * @return the subgraph
 	 */
 	private Subgraph findSubgraph(NetworkModel networkModel, ArrayList<String> path, ArrayList<String> alternatives) {
-		Polygon2D polygon = getPolygon2D(path);
+		HashSet<Point2D> polygon = getPolygon2D(path);
 		HashSet<String> components = new HashSet<String>(path);
 		ArrayList<String> otherComponents = new ArrayList<String>(networkModel.getNetworkComponents().keySet());
 		otherComponents.removeAll(components);
@@ -112,10 +110,10 @@ public class PathSerachBotCycleAnalyser {
 	 * @param path the path
 	 * @return the polygon2 d
 	 */
-	private Polygon2D getPolygon2D(ArrayList<String> path) {
-		Polygon2D polygon = new Polygon2D();
+	private HashSet<Point2D> getPolygon2D(ArrayList<String> path) {
+		HashSet<Point2D> polygon = new HashSet<Point2D>();
 		for (String componentID : path) {
-			polygon.addPoint(coordinatesMap.get(componentID));
+			polygon.add(coordinatesMap.get(componentID));
 		}
 		return polygon;
 	}
