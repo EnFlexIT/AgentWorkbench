@@ -217,7 +217,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private DefaultModalGraphMouse<GraphNode, GraphEdge> getDefaultModalGraphMouse() {
 		if (defaultModalGraphMouse == null) {
-			defaultModalGraphMouse = new DefaultModalGraphMouse<GraphNode, GraphEdge>();
+			defaultModalGraphMouse = new DefaultModalGraphMouse<GraphNode, GraphEdge>(1/1.1f, 1.1f);
 		}
 		return defaultModalGraphMouse;
 	}
