@@ -1,4 +1,4 @@
-; Tue Jun 05 16:29:58 CEST 2012
+; Tue Jun 05 16:52:23 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -54,7 +54,7 @@
 
 ([project+annotation] of  %3APROJECT-ANNOTATION
 
-	(%3ALOCATION "E:\\Eigene Dateien\\Studium\\Bachelor\\AgentGUI\\projects")
+	(%3ALOCATION "D:\\10 Java Projects\\AgentGUI\\projects")
 	(%3AONTOLOGYNAME "GasGrid")
 	(%3APACKAGE "gasmas.ontology")
 	(%3ASUPPORT "j2se"))
