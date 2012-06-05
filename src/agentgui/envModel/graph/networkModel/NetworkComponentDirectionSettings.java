@@ -457,11 +457,11 @@ public class NetworkComponentDirectionSettings {
 				if (graphNode1.getId().equalsIgnoreCase(graphNodeCenter.getId())) {
 					// --- graphNode1 is center node ------
 					if (this.getGraphNodeFromHashSet(inNodes, graphNode2)==null) {
-						graphNodeFrom = graphNode2; 
-						graphNodeTo   = graphNode1;
-					} else {
 						graphNodeFrom = graphNode1; 
 						graphNodeTo   = graphNode2;
+					} else {
+						graphNodeFrom = graphNode2; 
+						graphNodeTo   = graphNode1;
 					}
 					
 				} else {
@@ -470,8 +470,8 @@ public class NetworkComponentDirectionSettings {
 						graphNodeFrom = graphNode1; 
 						graphNodeTo   = graphNode2;
 					} else {
-						graphNodeFrom = graphNode2; 
-						graphNodeTo   = graphNode1;
+						graphNodeFrom = graphNode1; 
+						graphNodeTo   = graphNode2;
 					}
 					
 				}
