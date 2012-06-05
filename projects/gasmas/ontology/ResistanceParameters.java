@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: ResistanceParameters
 * @author ontology bean generator
-* @version 2012/06/4, 15:20:38
+* @version 2012/06/5, 16:34:03
 */
 public class ResistanceParameters implements Concept {
-
-   /**
-* Protege name: pipeFriction
-   */
-   private float pipeFriction;
-   public void setPipeFriction(float value) { 
-    this.pipeFriction=value;
-   }
-   public float getPipeFriction() {
-     return this.pipeFriction;
-   }
 
    /**
 * Protege name: costs
@@ -32,6 +21,17 @@ public class ResistanceParameters implements Concept {
    }
    public float getCosts() {
      return this.costs;
+   }
+
+   /**
+* Protege name: pipeFriction
+   */
+   private float pipeFriction;
+   public void setPipeFriction(float value) { 
+    this.pipeFriction=value;
+   }
+   public float getPipeFriction() {
+     return this.pipeFriction;
    }
 
 }

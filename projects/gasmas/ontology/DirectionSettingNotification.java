@@ -1,6 +1,5 @@
 package gasmas.ontology;
 
-
 import jade.content.*;
 import jade.util.leap.*;
 import jade.core.*;
@@ -8,19 +7,8 @@ import jade.core.*;
 /**
 * Protege name: DirectionSettingNotification
 * @author ontology bean generator
-* @version 2012/06/4, 15:20:38
+* @version 2012/06/5, 16:34:03
 */
-public class DirectionSettingNotification implements AgentAction {
-
-   /**
-* Protege name: directionNote
-   */
-   private Notification directionNote;
-   public void setDirectionNote(Notification value) { 
-    this.directionNote=value;
-   }
-   public Notification getDirectionNote() {
-     return this.directionNote;
-   }
+public class DirectionSettingNotification extends Notification{ 
 
 }

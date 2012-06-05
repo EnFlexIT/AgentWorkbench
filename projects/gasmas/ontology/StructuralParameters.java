@@ -9,9 +9,20 @@ import jade.core.*;
    * A set of parameters describing the physical properties of a PropagationPoint.
 * Protege name: StructuralParameters
 * @author ontology bean generator
-* @version 2012/06/4, 15:20:38
+* @version 2012/06/5, 16:34:03
 */
 public class StructuralParameters implements Concept {
+
+   /**
+* Protege name: atParentLengthPos
+   */
+   private float atParentLengthPos;
+   public void setAtParentLengthPos(float value) { 
+    this.atParentLengthPos=value;
+   }
+   public float getAtParentLengthPos() {
+     return this.atParentLengthPos;
+   }
 
    /**
    * The geographical x coordinate of the propagation point.
@@ -35,17 +46,6 @@ public class StructuralParameters implements Concept {
    }
    public float getDiameter() {
      return this.diameter;
-   }
-
-   /**
-* Protege name: atParentLengthPos
-   */
-   private float atParentLengthPos;
-   public void setAtParentLengthPos(float value) { 
-    this.atParentLengthPos=value;
-   }
-   public float getAtParentLengthPos() {
-     return this.atParentLengthPos;
    }
 
    /**
