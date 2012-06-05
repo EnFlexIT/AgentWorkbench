@@ -34,7 +34,7 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jung/jung-api-2.0.1.jar" sourcepath="/jung-api">
 		<attributes>
-			<attribute name="javadoc_location" value="file:/D:/10 Java Projects/AgentGUI/lib/jung/apidocs/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/AgentGUI/lib/jung/jung2-2_0_1-apidocs.zip!/apidocs"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jung/jung-graph-impl-2.0.1.jar" sourcepath="/jung-graph-impl/src">
@@ -64,7 +64,11 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jFreeChart/iText-2.1.5.jar"/>
 	<classpathentry kind="lib" path="lib/jFreeChart/jcommon-1.0.17.jar"/>
-	<classpathentry kind="lib" path="lib/jFreeChart/jfreechart-1.0.14.jar"/>
+	<classpathentry kind="lib" path="lib/jFreeChart/jfreechart-1.0.14.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/AgentGUI/lib/jFreeChart/jfreechart-1.0.14-javadocs.zip!/jfreechart-1.0.14-javadocs"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/batik/batik.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/AgentGUI/lib/batik/batik-docs-1.7.zip!/docs/javadoc"/>
