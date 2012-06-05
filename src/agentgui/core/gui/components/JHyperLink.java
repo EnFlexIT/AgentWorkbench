@@ -51,6 +51,7 @@ public class JHyperLink extends JLabel {
 
 	private static final long serialVersionUID = -8351025656123572661L;
 
+	protected String link = null;
 	protected final Color LINK_COLOR = Color.blue;
 	protected boolean underline;
 	
@@ -77,20 +78,45 @@ public class JHyperLink extends JLabel {
 	}
 
 	/**
-	 * Instantiates a new j hyper link.
-	 *
+	 * Instantiates a new JHyperLink.
 	 * @param text the text
 	 */
 	public JHyperLink(String text) {
 		super(text);
+		this.setLink(text);
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		setForeground(LINK_COLOR);
 		addMouseListener(mouseListener);
 	}
-
+	
+	/**
+	 * Gets the link.
+	 * @return the link
+	 */
+	public String getLink() {
+		return link;
+	}
+	/**
+	 * Sets the link.
+	 * @param link the link to set
+	 */
+	public void setLink(String link) {
+		this.link = link;
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JLabel#setText(java.lang.String)
+	 */
+	@Override
+	public void setText(String text) {
+		super.setText(text);
+		if (this.link==null || this.link.equals("")) {
+			this.link = text;
+		}
+	}
+	
 	/**
 	 * Adds the ActionListener.
-	 *
 	 * @param actionListener the ActionListener
 	 */
 	public void addActionListener(ActionListener actionListener) {
@@ -101,7 +127,6 @@ public class JHyperLink extends JLabel {
 
 	/**
 	 * Removes the ActionListener.
-	 *
 	 * @param actionListener the ActionListener
 	 */
 	public void removeActionListener(ActionListener actionListener) {
@@ -112,7 +137,7 @@ public class JHyperLink extends JLabel {
 	 * Fire action event.
 	 */
 	protected void fireActionEvent() {
-		ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, getText());
+		ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, this.getLink());
 		for (ActionListener l : actionListenerList) {
 			l.actionPerformed(event);
 		}

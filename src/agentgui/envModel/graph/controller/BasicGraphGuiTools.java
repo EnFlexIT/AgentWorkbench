@@ -665,7 +665,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 					mergeNodes = this.graphController.getNetworkModel().getValidGraphNodePairConfig4Merging(mergeNodes);
 					if (mergeNodes==null) {
 						String msg = "Invalid node selection!";
-						JOptionPane.showMessageDialog(graphControllerGUI, Language.translate(msg), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(graphControllerGUI, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 
 					} else {
 						this.graphController.getNetworkModelAdapter().mergeNodes(mergeNodes);	

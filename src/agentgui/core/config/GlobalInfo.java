@@ -127,6 +127,9 @@ public class GlobalInfo {
 	private String filePropServerMasterDBUser = null;
 	private String filePropServerMasterDBPswd = null;
 	
+	private String googleKey4API = null;
+	private String googleHTTPref = null;
+	
 	// --- Reminder information for file dialogs ----------------------------
 	private File lastSelectedFolder = null; 
 	
@@ -1018,5 +1021,33 @@ public class GlobalInfo {
 		EnvironmentType envType = this.knowEnvironmentTypes.getEnvironmentTypeByKey(envTypeKey);
 		this.removeEnvironmentType(envType);
 	}
-	
+
+	/**
+	 * Returns the API key for Google.
+	 * @return the API key for Google
+	 */
+	public String getGoogleKey4API() {
+		return this.googleKey4API;
+	}
+	/**
+	 * Sets the API key for Google.
+	 * @param key4API the new API key for Google.
+	 */
+	public void setGoogleKey4API(String key4API) {
+		this.googleKey4API = key4API;
+	}
+	/**
+	 * Returns the HTTP-Reference for Google translate.
+	 * @return the HTTP-Reference for Google translate
+	 */
+	public String getGoogleHttpRef() {
+		return this.googleHTTPref;
+	}
+	/**
+	 * Sets the HTTP-Reference for Google translate.
+	 * @param httpRef the new HTTP-Reference for Google translate.
+	 */
+	public void setGoogleHttpRef(String httpRef) {
+		this.googleHTTPref = httpRef;
+	}
 }

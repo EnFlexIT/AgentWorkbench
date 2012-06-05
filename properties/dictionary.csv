@@ -80,7 +80,7 @@ de;Bitte wählen Sie einen Namen für den Agenten!;Please choose a name for the ag
 de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please check your database settings!
 de;CPU-Auslastung;CPU-Load
 de;CPU;CPU
-de;CSV-Dateien;;;;
+de;CSV-Dateien;CSV files;;;
 de;CSV-Version des Wörterbuchs übernehmen?;Take over the csv-version of the dictionary?;;;
 de;Class not found:;Class not found:
 de;Container;Container
@@ -95,8 +95,8 @@ de;Datei nicht gefunden!;File not found!;;;
 de;Datei überschreiben?;Overwrite file?;;;
 de;Datei:;File:
 de;Dateien einbinden;Include Files
-de;Daten Importieren...;;;;
-de;Daten bearbeiten;;;;
+de;Daten Importieren...;Import Data ...;;;
+de;Daten bearbeiten;Edit Data;;;
 de;Datenbank erfolgreich angelegt!;Database created successfully!
 de;Datenbank für das Hauptserver-Modul;Database for the main server module
 de;Datenbank nicht vorhanden!;Database does not exist!
@@ -107,7 +107,7 @@ de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wählen Sie e
 de;Der Name;The name
 de;Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.;The maximum memory must be greater than the initial memory.;;;
 de;Deutsch;German
-de;Dicke;;;;
+de;Dicke;Thickness;;;
 de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
 de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
 de;Die Datei;The file
@@ -122,7 +122,7 @@ de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;;;
 de;Eigene Auslastungsgrenzwerte verwenden;Use own threshold values
 de;Einheit;Unit
-de;Einstellungen;;;;
+de;Einstellungen;Settings;;;
 de;Element-Typ;Element type
 de;Element;Element
 de;Endanwender-Ansicht;End users view
@@ -136,7 +136,7 @@ de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
 de;Externe jar-Ressourcen;External jar resources;;;
 de;Extras;Extras
-de;Farbe;;;;
+de;Farbe;Color;;;
 de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!
 de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
@@ -186,11 +186,12 @@ de;Hindernis;Obstacle
 de;Hindernisse;Obstacles
 de;Hinzufügen;Add
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
+de;Ihre Webseite:;Your Website:;;;
 de;Immer Überspringen;Allways Skip
 de;Info;Info
+de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;
 de;Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !;Initial Memory >= Maximum Memory !;;;
 de;Introspector-Agent starten;Start Introspector agent
-de;Invalid node selection!;;;;
 de;Italienisch;Italian
 de;JADE starten;Start JADE
 de;JADE stoppen;Stop JADE
@@ -229,15 +230,15 @@ de;Klasse;Class
 de;Klassen bestimmen;Determine classes 
 de;Klassenangabe überprüfen;Check Class specification
 de;Klassenzuordnung;Class Assignment
-de;Knoten verbinden;;;;
-de;Knoten verschieben;;;;
+de;Knoten verbinden;Connect nodes ;;;
+de;Knoten verschieben;Move nodes;;;
 de;Kommunikation;Communication
 de;Komponente;Component
 de;Komponenten-Definition bearbeiten;Edit Component Definitions;;;
 de;Komponenten-Einstellungen;Component settings
 de;Komponenten-Typen;Component-Types
 de;Komponententyp-Definition;Component-Type definition
-de;Komponentenverbindung trennen;;;;
+de;Komponentenverbindung trennen;Disconnect components;;;
 de;Konfiguration des;Configuration of
 de;Konfiguration;Configuration
 de;Konsole ein- oder ausblenden;Show / hide console
@@ -283,11 +284,10 @@ de;Netz-Komponenten;Network Components
 de;Netz;Network
 de;Netzkomponente;Network component
 de;Netzwerk-Komponenten;Network Components;;;
-de;Netzwerkkomponente entfernen;;;;
-de;Netzwerkkomponente(n) entfernen;;;;
+de;Netzwerkkomponente(n) entfernen;Remove network component (s) ;;;
 de;Netzwerkkomponente(n) hinzufügen;Add network component s);;;
 de;Neu laden;Reload;;;
-de;Neue Datenreihe(n) importieren;;;;
+de;Neue Datenreihe(n) importieren;Import new data set (s) ;;;
 de;Neuer Agent;New agent
 de;Neuer Eintrag;New Entry
 de;Neues Hindernis;New obstacle
@@ -376,8 +376,8 @@ de;Server-Konfiguration;Server Configuration
 de;Server;Server
 de;Service entfernen;Remove Service;;;
 de;Service hinzufügen;Add Service;;;
-de;Setup Umbenennen;;;;
-de;Setup auswählen;;;;
+de;Setup Umbenennen;Rename Setup;;;
+de;Setup auswählen;Select Setup;;;
 de;Setup hinzufügen;Add Setup
 de;Setup kopieren ...;Copy Setup ...
 de;Setup kopieren;Copy Setup
@@ -428,9 +428,9 @@ de;Suche & Auswahl;Search & Selection;;;
 de;Suche nach Agenten beendet...;Search for agents finished...
 de;Suche nach der nächsten fehlenden Übersetzung (STRG+F);Search for the next missing translation (CTRL + F)
 de;Suche;Search
-de;Summe einblenden;;;;
-de;Summe;;;;
-de;Tabelle;;;;
+de;Summe einblenden;Show Sum ;;;
+de;Summe;Sum;;;
+de;Tabelle;Table;;;
 de;Teil-Umgebung;environment part
 de;Teilnetze;Subnetworks;;;
 de;Text zur Übersetzung;Text to translate
@@ -503,10 +503,6 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
-en;;Cancel;;;
-en;;Component Type;;;
-en;;Count;;;
-en;;Discrete squares environment;;;
 en;;External Type;;;
 en;;Merge nodes;;;
 en;;Please, select the network component that you would like to add!;;;
@@ -516,6 +512,7 @@ en;;Select one vertex please!;;;
 en;;Set mapping of external types to local components;;;
 en;;Undo Action;;;
 en;;Use Shift and click on two vertices at least!;;;
+en;Abbruch;Cancel;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktuelles Bild entfernen;Remove current image;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;
@@ -560,6 +557,7 @@ en;Knotengröße;Vertex size;;;
 en;Komponente hinzufügen;Add component;;;
 en;Komponente hinzufügen;Add new component;;;
 en;Komponente löschen;Delete Component;;;
+en;Komponenten-Typ;Component Type;;;
 en;Komponentensuche;Search Components;;;
 en;Name;Name;;;
 en;Ontologie-Klasse;Ontology class;;;

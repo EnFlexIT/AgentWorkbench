@@ -81,6 +81,9 @@ public class FileProperties extends Properties {
 	private final String DEF_MASTER_DB_USER = "22_MASTER_DB_USER";
 	private final String DEF_MASTER_DB_PSWD = "23_MASTER_DB_PSWD";
 	
+	private final String DEF_GOOGLE_API_KEY  = "30_GOOGLE_API_KEY";
+	private final String DEF_GOOGLE_HTTP_REF = "31_GOOGLE_HTTP_REF";
+	
 	private String[] mandatoryProps = {	this.DEF_RUNAS,
 										this.DEF_BENCH_VALUE,
 										this.DEF_BENCH_EXEC_ON,
@@ -260,6 +263,20 @@ public class FileProperties extends Properties {
 			Application.RunInfo.setServerMasterDBPswd(null);
 		}
 		
+		// --- this.DEF_GOOGLE_API_KEY ---------------
+		propValue = this.getProperty(this.DEF_GOOGLE_API_KEY);
+		if ( propValue!=null && propValue.equalsIgnoreCase("") == false ) {
+			Application.RunInfo.setGoogleKey4API(propValue.trim());
+		} else {
+			Application.RunInfo.setGoogleKey4API(null);
+		}
+		// --- this.DEF_GOOGLE_HTTP_REF --------------
+		propValue = this.getProperty(this.DEF_GOOGLE_HTTP_REF);
+		if ( propValue!=null && propValue.equalsIgnoreCase("") == false ) {
+			Application.RunInfo.setGoogleHttpRef(propValue.trim());
+		} else {
+			Application.RunInfo.setGoogleHttpRef(null);
+		}
 	}
 
 	/**
@@ -340,6 +357,19 @@ public class FileProperties extends Properties {
 			this.setProperty(this.DEF_MASTER_DB_PSWD, "");
 		} else {
 			this.setProperty(this.DEF_MASTER_DB_PSWD, Application.RunInfo.getServerMasterDBPswd());	
+		}
+		
+		// --- this.DEF_GOOGLE_API_KEY ---------------
+		if (Application.RunInfo.getGoogleKey4API() == null) {
+			this.setProperty(this.DEF_GOOGLE_API_KEY, "");
+		} else {
+			this.setProperty(this.DEF_GOOGLE_API_KEY, Application.RunInfo.getGoogleKey4API());	
+		}
+		// --- this.DEF_GOOGLE_HTTP_REF --------------
+		if (Application.RunInfo.getGoogleKey4API() == null) {
+			this.setProperty(this.DEF_GOOGLE_HTTP_REF, "");
+		} else {
+			this.setProperty(this.DEF_GOOGLE_HTTP_REF, Application.RunInfo.getGoogleHttpRef());	
 		}
 		
 	}	
@@ -434,7 +464,7 @@ public class FileProperties extends Properties {
 		this.setGlobal2Config();
 		// --- Save the config-file -------------------------------------
 		try {
-			this.store(new FileOutputStream( configFile ), configFileDefaultComment);
+			this.store(new FileOutputStream(configFile), configFileDefaultComment);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
