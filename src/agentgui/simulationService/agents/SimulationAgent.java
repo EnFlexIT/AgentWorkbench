@@ -285,7 +285,7 @@ public class SimulationAgent extends Agent {
 	 * @param notification the notification
 	 * @return true, if successful
 	 */
-	protected boolean sendAgentNotification(AID receiverAID, Object notification) {
+	public boolean sendAgentNotification(AID receiverAID, Object notification) {
 		boolean send = false;
 		EnvironmentNotification myNotification = new EnvironmentNotification(this.getAID(), false, notification);
 		try {

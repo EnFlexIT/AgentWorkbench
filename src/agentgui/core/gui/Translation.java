@@ -87,6 +87,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import javax.swing.JCheckBox;
 
+
 /**
  * The JDialog is used in order to allow the translations between all defined languages
  * 
@@ -107,6 +108,7 @@ private static final long serialVersionUID = 1L;
 	private DefaultComboBoxModel langSelectionModelDestin = new DefaultComboBoxModel();
 	
 	private boolean useGoogleTranslation = true;
+	private String lastGoogleTranslation = null;
 	
 	private boolean forceApplicationRestart = false;
 	
@@ -228,8 +230,9 @@ private static final long serialVersionUID = 1L;
 		}
 		
 		// --- Set Google-HttpReferrer ------------------------------
-		com.google.api.GoogleAPI.setHttpReferrer("http://code.google.com/p/google-api-translate-java/");
-		
+		com.google.api.GoogleAPI.setHttpReferrer("http://www.agent.gui.org");
+		com.google.api.GoogleAPI.setKey("AIzaSyA9LYNNoGbzeIVEWELvwvHyNj4Wz2fVUVE");
+
 		// --- Listen to keyboard events ----------------------------
 		this.setKeyListenEvents();
 		
@@ -338,10 +341,7 @@ private static final long serialVersionUID = 1L;
 	 */
 	public class LanguageListElement {
 		
-		/** The lang short. */
 		private String langShort;
-		
-		/** The lang long. */
 		private String langLong;
 		
 		/**
@@ -354,26 +354,21 @@ private static final long serialVersionUID = 1L;
 			this.langShort = langShortText; 
 			this.langLong = langLongText;
 		}
-		
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
 		public String toString() {
 			return this.langLong;
 		}
-		
 		/**
 		 * Gets the lang short.
-		 *
 		 * @return the lang short
 		 */
 		public String getLangShort() {
 			return langShort;
 		}
-		
 		/**
 		 * Gets the lang long.
-		 *
 		 * @return the lang long
 		 */
 		public String getLangLong() {
@@ -1278,25 +1273,29 @@ private static final long serialVersionUID = 1L;
 			String langDestin = ((LanguageListElement) jComboBoxDestinationLang.getSelectedItem()).getLangShort();
 			String text2Translate = jTextFieldSource.getText();
 			
-			langSource = langSource.replace("LANG_", "").toLowerCase();
-			langDestin = langDestin.replace("LANG_", "").toLowerCase();
-			
-			com.google.api.translate.Language langGoogleSource = com.google.api.translate.Language.fromString(langSource);
-			com.google.api.translate.Language langGoogleDestin = com.google.api.translate.Language.fromString(langDestin);
-			
-			String translation = null; 
-			try {
-				translation = com.google.api.translate.Translate.execute(text2Translate, langGoogleSource, langGoogleDestin);
-			
-			} catch (Exception e) {
-				//e.printStackTrace();
-				translation  = "ERROR: " + e.getLocalizedMessage();
-				translation += "\n=> " + Language.translate("Die Google-Übersetzungsfunktion wurde deaktiviert!");
-				this.useGoogleTranslation = false;
-				this.jCheckBoxUseGoogleTranslation.setSelected(this.useGoogleTranslation);
+			if (this.lastGoogleTranslation!=text2Translate) {
+				
+				langSource = langSource.replace("LANG_", "").toLowerCase();
+				langDestin = langDestin.replace("LANG_", "").toLowerCase();
+				
+				com.google.api.translate.Language langGoogleSource = com.google.api.translate.Language.fromString(langSource);
+				com.google.api.translate.Language langGoogleDestin = com.google.api.translate.Language.fromString(langDestin);
+				
+				String translation = null; 
+				try {
+					translation = com.google.api.translate.Translate.DEFAULT.execute(text2Translate, langGoogleSource, langGoogleDestin);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					translation  = "ERROR: " + e.getLocalizedMessage();
+					translation += "\n=> " + Language.translate("Die Google-Übersetzungsfunktion wurde deaktiviert!");
+					this.useGoogleTranslation = false;
+					this.jCheckBoxUseGoogleTranslation.setSelected(this.useGoogleTranslation);
 
+				}
+				jTextAreaGoogle.setText(translation);
+				this.lastGoogleTranslation = text2Translate;
 			}
-			jTextAreaGoogle.setText(translation);
 		}
 		
 	}
