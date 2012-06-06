@@ -30,6 +30,7 @@ package gasmas.agents.manager;
 
 import gasmas.clustering.analyse.ComponentFunctions;
 import gasmas.clustering.behaviours.ClusteringBehaviour;
+import gasmas.ontology.DirectionSettingNotification;
 import jade.core.ServiceException;
 
 import java.util.HashSet;
@@ -85,7 +86,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		// --- in order to make it accessible for the whole agency --
 		this.notifyAboutEnvironmentChanges();
 		
-		this.testArea();
+//		this.testArea();
 		ComponentFunctions.printAmountOfDiffernetTypesOfAgents("Global", myNetworkModel);
 	}
 
@@ -93,7 +94,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	// ++++++++++++++ Some temporary test cases here +++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	private void testArea() {
-		
+		// TODO: I guess could be deleted now
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n11");
 		if (netComp!=null) {
 			
@@ -219,6 +220,13 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			this.sendAgentNotification(notification.getSender(), clusterNetworkComponent);
 			ComponentFunctions.printAmountOfDiffernetTypesOfAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 			
+		} else if (notification.getNotification() instanceof DirectionSettingNotification) {
+			// TODO: Quick change that the NetworkModel is updated, that I can test my algo
+			DirectionSettingNotification dsn= (DirectionSettingNotification)notification.getNotification();
+				
+			// --- Apply setting to the NetworkModel --------------------------------
+			this.myNetworkModel.setDirectionsOfNetworkComponent((NetworkComponent) dsn.getNotificationObject());
+			this.notifyAboutEnvironmentChanges();
 		}
 		
 	}

@@ -10,33 +10,16 @@ import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.SimulationAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 
-public class CompressorAgent extends SimulationAgent {
+public class CompressorAgent extends GenericNetworkAgent {
 
 	private static final long serialVersionUID = 2792727750579482552L;
-
-	private NetworkModel myNetworkModel = null;
 
 	@Override
 	protected void setup() {
 
 		super.setup();
 
-		while (this.myEnvironmentModel == null) {
-
-			try {
-				SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-				EnvironmentModel envModel = simHelper.getEnvironmentModel();
-				if (envModel != null) {
-					this.myEnvironmentModel = envModel;
-					break;
-				}
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
-
-		}
-		this.myNetworkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
-		startCoalitionBehaviour();
+//		startCoalitionBehaviour();
 	}
 
 	private void startCoalitionBehaviour() {

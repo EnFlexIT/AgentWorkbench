@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<simulationSetup>
+    <agentSetup>
+        <agent>
+            <postionNo>1</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>gasmas.agents.manager.NetworkManagerAgent</agentClassReference>
+            <startAsName>NeMaAg</startAsName>
+        </agent>
+        <agent>
+            <postionNo>1</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n6</startAsName>
+        </agent>
+        <agent>
+            <postionNo>2</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n7</startAsName>
+        </agent>
+        <agent>
+            <postionNo>3</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
+            <startAsName>n8</startAsName>
+        </agent>
+        <agent>
+            <postionNo>4</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
+            <startAsName>n9</startAsName>
+        </agent>
+        <agent>
+            <postionNo>5</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n10</startAsName>
+        </agent>
+        <agent>
+            <postionNo>6</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n12</startAsName>
+        </agent>
+        <agent>
+            <postionNo>7</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n11</startAsName>
+        </agent>
+        <agent>
+            <postionNo>8</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n13</startAsName>
+        </agent>
+        <agent>
+            <postionNo>9</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n14</startAsName>
+        </agent>
+        <agent>
+            <postionNo>10</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n15</startAsName>
+        </agent>
+    </agentSetup>
+    <environmentFileName>Optionales Gas Netz.graphml</environmentFileName>
+</simulationSetup>
