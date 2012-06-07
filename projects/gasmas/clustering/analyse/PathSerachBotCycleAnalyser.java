@@ -29,6 +29,7 @@
 package gasmas.clustering.analyse;
 
 
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,7 +89,7 @@ public class PathSerachBotCycleAnalyser {
 	 * @return the subgraph
 	 */
 	private Subgraph findSubgraph(NetworkModel networkModel, ArrayList<String> path, ArrayList<String> alternatives) {
-		HashSet<Point2D> polygon = getPolygon2D(path);
+		Path2D polygon = getPolygon2D(path);
 		HashSet<String> components = new HashSet<String>(path);
 		ArrayList<String> otherComponents = new ArrayList<String>(networkModel.getNetworkComponents().keySet());
 		otherComponents.removeAll(components);
@@ -110,11 +111,19 @@ public class PathSerachBotCycleAnalyser {
 	 * @param path the path
 	 * @return the polygon2 d
 	 */
-	private HashSet<Point2D> getPolygon2D(ArrayList<String> path) {
-		HashSet<Point2D> polygon = new HashSet<Point2D>();
+	private Path2D getPolygon2D(ArrayList<String> path) {
+		boolean firstPointDrawn = false;
+		Path2D polygon = new Path2D.Double();
 		for (String componentID : path) {
-			polygon.add(coordinatesMap.get(componentID));
+			Point2D point = coordinatesMap.get(componentID);
+			if (firstPointDrawn==false) {
+				polygon.moveTo(point.getX(), point.getY());
+				firstPointDrawn = true;
+			} else {
+				polygon.lineTo(point.getX(), point.getY());	
+			}
 		}
+		polygon.closePath();
 		return polygon;
 	}
 
