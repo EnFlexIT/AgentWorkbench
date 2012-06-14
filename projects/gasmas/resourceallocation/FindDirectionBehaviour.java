@@ -22,7 +22,9 @@ import jade.core.behaviours.TickerBehaviour;
 public class FindDirectionBehaviour extends TickerBehaviour {
 
 	private static final long serialVersionUID = 4471250444116997490L;
-	
+
+	private static final int maxMsgAge = 10;
+
 	/** NetworkComponentNames, which has positive flow */
 	private List<String> incoming = new ArrayList<String>();
 
@@ -113,9 +115,11 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		} else if (thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.ExitAgent")) {
 			msg = "out";
 			sendall(msg);
-		} else if (thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.PipeAgent")) {
+		} else if (thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.PipeAgent") || thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.PipeShortAgent")
+				|| thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.SimpleValveAgent")) {
 			if (networkModel.getNeighbourNetworkComponents(thisNetworkComponent).size() < 2) {
 				msg = "dead";
+				System.out.println(myAgent.getLocalName() + " is dead");
 				sendall(msg);
 			}
 		} else if (thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.ControlValveAgent")
@@ -133,17 +137,21 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			String toComGraphNodeID = ged.getGraphNodeIDTo();
 			GraphNode toComGraphNode = (GraphNode) networkModel.getGraphElement(toComGraphNodeID);
 			HashSet<NetworkComponent> netCompToHash = netCompDirect.getNeighbourNetworkComponent(toComGraphNode);
-			NetworkComponent netCompTo = netCompToHash.iterator().next();
 
 			String fromComGraphNodeID = ged.getGraphNodeIDFrom();
 			GraphNode fromComGraphNode = (GraphNode) networkModel.getGraphElement(fromComGraphNodeID);
 			HashSet<NetworkComponent> netCompFromHash = netCompDirect.getNeighbourNetworkComponent(fromComGraphNode);
-			NetworkComponent netCompFrom = netCompFromHash.iterator().next();
+			if (netCompToHash != null) {
+				NetworkComponent netCompTo = netCompToHash.iterator().next();
+				msgSend(netCompTo.getId(), new FindDirData("in"));
+			}
+			if (netCompFromHash != null) {
+				NetworkComponent netCompFrom = netCompFromHash.iterator().next();
+				msgSend(netCompFrom.getId(), new FindDirData("out"));
+			}
 
-			msgSend(netCompFrom.getId(), new FindDirData("out"));
-			msgSend(netCompTo.getId(), new FindDirData("in"));
 			// myAgent.startRA();
-			myAgent.removeBehaviour(this);
+			// myAgent.removeBehaviour(this);
 		}
 	}
 
@@ -159,7 +167,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			// System.out.println("Empänger: "+receiver + " Semder:" +
 			// myAgent.getLocalName());
 		}
-
+		done = true;
 		// myAgent.startRA();
 		myAgent.removeBehaviour(this);
 	}
@@ -170,7 +178,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	 * 
 	 * @see jade.core.behaviours.Behaviour#action()
 	 */
-	public void interpretMsg(EnvironmentNotification msg) {
+	public synchronized void interpretMsg(EnvironmentNotification msg) {
 		FindDirData content = (FindDirData) msg.getNotification();
 		String sender = msg.getSender().getLocalName();
 		// System.out.println("Agent: " + myAgent.getLocalName() +
@@ -184,13 +192,13 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 
 			forwarding(sender, content, getOutgoing(), getIncoming(), "out", outgoingMaybe, incomingMaybe);
 
-		} else if (content.getReason().equals("dead") && done == false) {
+		} else if (content.getReason().equals("dead")) {
 			deadPipe(sender);
-		} else if (content.getReason().equals("in?") && done == false) {
+		} else if (content.getReason().equals("in?")) {
 
 			forwardingMaybe(sender, content, incomingMaybe, outgoingMaybe, "in", "out", getIncoming(), getOutgoing());
 
-		} else if (content.getReason().equals("out?") && done == false) {
+		} else if (content.getReason().equals("out?")) {
 
 			forwardingMaybe(sender, content, outgoingMaybe, incomingMaybe, "out", "in", getOutgoing(), getIncoming());
 
@@ -206,135 +214,165 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 
 	private void deadPipe(String sender) {
 		addDead(sender);
-		if (networkModel.getNeighbourNetworkComponents(thisNetworkComponent).size() == 2) {
-			String temp = "";
-			Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
-			while (it1.hasNext()) {
-				String neighbour = it1.next().getId();
-				if (getDead().contains(neighbour) == false) {
-					temp = neighbour;
-				}
+		System.out.println(myAgent.getLocalName() + " is partly dead, because of " + sender);
+		int i = 0;
+		int p = 0;
+		String toInform = "";
+		Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+		while (it1.hasNext()) {
+			String neighbour = it1.next().getId();
+			if (getDead().contains(neighbour)) {
+				i += 1;
+			} else {
+				toInform = neighbour;
 			}
-
-			msgSend(temp, new FindDirData("dead"));
-			System.out.println(myAgent.getLocalName() + " Dead: " + getDead());
-			myAgent.removeBehaviour(this);
+			p += 1;
 		}
+
+		if ((p - i) == 1) {
+			addDead(toInform);
+			msgSend(toInform, new FindDirData("dead"));
+			done = true;
+			System.out.println(myAgent.getLocalName() + " All dead: " + getDead());
+
+			myAgent.removeBehaviour(this);
+			return;
+		}
+		i = 0;
+		p = 0;
+		toInform = "";
+		it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+		while (it1.hasNext()) {
+			String neighbour = it1.next().getId();
+			if (getDead().contains(neighbour) || getIncoming().contains(neighbour)) {
+				i += 1;
+			} else {
+				toInform = neighbour;
+			}
+			p += 1;
+		}
+
+		if ((p - i) == 1) {
+			addDead(toInform);
+			msgSend(toInform, new FindDirData("in"));
+			done = true;
+			System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
+					+ " OutMaybe: " + outgoingMaybe);
+			setDirections();
+			return;
+
+		}
+		i = 0;
+		p = 0;
+		toInform = "";
+		it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+		while (it1.hasNext()) {
+			String neighbour = it1.next().getId();
+			if (getDead().contains(neighbour) || getOutgoing().contains(neighbour)) {
+				i += 1;
+			} else {
+				toInform = neighbour;
+			}
+			p += 1;
+		}
+
+		if ((p - i) == 1) {
+			addDead(toInform);
+			msgSend(toInform, new FindDirData("out"));
+			done = true;
+			System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
+					+ " OutMaybe: " + outgoingMaybe);
+			setDirections();
+			return;
+
+		}
+
 	}
 
-	private void forwardingMaybe(String sender, FindDirData content, HashMap<String, String> temp1, HashMap<String, String> temp2, String msg1, String msg2,
-			List<String> temp11, List<String> temp22) {
+	private void forwardingMaybe(String sender, FindDirData content, HashMap<String, String> temp1, HashMap<String, String> temp2, String msg1, String msg2, List<String> temp11, List<String> temp22) {
 		/* Check if the information is to "old", too many hops */
-		if (content.getWay().split("::").length < 10) {
+		if (content.getWay().split("::").length < maxMsgAge) {
 			if (temp22.contains(sender)) {
 				/* Information is wrong */
 				System.out.println(myAgent.getLocalName() + " got a wrong ? message from " + sender + ". Message get ignored");
 			} else {
-				/* Information is not known, so we have to react */
-				if (temp2.containsKey(sender) && content.getWay().split("::").length == 1) {
-					temp2.remove(sender);
-					getOptional().add(sender);
-					System.out.println("Optional edge found " + myAgent.getLocalName() + " to " + sender);
-					int i = 0;
-					int p = 0;
-					Iterator<NetworkComponent> it11 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
-					while (it11.hasNext()) {
-						String neighbour = it11.next().getId();
-						if (temp11.contains(neighbour) || temp22.contains(neighbour) || getDead().contains(neighbour)
-								|| getOptional().contains(neighbour)) {
-							i += 1;
-						}
-						p += 1;
-					}
-					if ((p - i) == 0) {
-						temp1.clear();
-						temp2.clear();
-						done = true;
-						System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: "
-								+ getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe + " OutMaybe: " + outgoingMaybe);
-						setDirections();
-						// myAgent.startRA();
-						// myAgent.removeBehaviour(this);
-					}
-				} else {
-					boolean cycle = false;
-					for (int i = 0; i < content.getWay().split("::").length; i++) {
-						if (content.getWay().split("::")[i].equals(myAgent.getLocalName())) {
-							cycle = true;
-						}
-					}
-					if (cycle) {
-						/*
-						 * Got my own ? message, so this should be a cycle
-						 */
-						System.out.println("My own name in the way: " + myAgent.getLocalName() + " Way: " + content.getWay().toString());
-						Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
-						while (it1.hasNext()) {
-							String neighbour = it1.next().getId();
-							if (content.getWay().contains(neighbour)) {
+				boolean cycle = false;
+				if (content.getWay().split("::")[0].equals(myAgent.getLocalName())) {
+					cycle = true;
+				}
+				if (cycle) {
+					/*
+					 * Got my own ? message, so this should be a cycle
+					 */
+					System.out.println("My own name in the way: " + myAgent.getLocalName() + " Way: " + content.getWay().toString());
+					Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+					while (it1.hasNext()) {
+						String neighbour = it1.next().getId();
+						for (int i = 0; i < content.getWay().split("::").length; i++) {
+							if (content.getWay().split("::")[i].equals(neighbour)) {
 								temp22.add(neighbour);
 								msgSend(neighbour, new FindDirData(msg1));
 							}
 						}
-						temp1.clear();
-						temp2.clear();
-						done = true;
-						System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: "
-								+ getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe + " OutMaybe: " + outgoingMaybe);
-						setDirections();
-						// myAgent.startRA();
-						// myAgent.removeBehaviour(this);
-					} else {
-						temp1.put(sender, content.getWay());
+					}
+					temp1.clear();
+					temp2.clear();
+					done = true;
+					System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
+							+ " OutMaybe: " + outgoingMaybe);
+					setDirections();
+					// myAgent.startRA();
+					// myAgent.removeBehaviour(this);
+				} else {
+					temp1.put(sender, content.getWay());
 
-						/* The estimated information could be still wrong... */
-						Iterator<NetworkComponent> it11 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
-						while (it11.hasNext()) {
-							String neighbour = it11.next().getId();
-							if (neighbour.equals(sender) == false && temp2.containsKey(neighbour) == false) {
-								temp2.put(neighbour, content.getWay());
-								msgSend(neighbour, new FindDirData(content.getWay() + "::" + myAgent.getLocalName(), msg1 + "?"));
+					/* The estimated information could be still wrong... */
+					Iterator<NetworkComponent> it11 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+					while (it11.hasNext()) {
+						String neighbour = it11.next().getId();
+						if (neighbour.equals(sender) == false) {
+							temp2.put(neighbour, content.getWay());
+							msgSend(neighbour, new FindDirData(content.getWay() + "::" + myAgent.getLocalName(), msg1 + "?"));
 
-							}
 						}
 					}
+					// }
 				}
 			}
 		} else
-			System.out.println("Message too old, " + myAgent.getLocalName());
+			System.out.println("Message too old, " + myAgent.getLocalName() + " Way:" + content.getWay());
 	}
 
 	private void setDirections() {
+		if (incoming.isEmpty() == false || outgoing.isEmpty() == false) {
+			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, thisNetworkComponent);
+			HashSet<GraphNode> outerNodes = netCompDirect.getOuterNodes();
+			HashSet<NetworkComponent> inComps = new HashSet<NetworkComponent>();
+			HashSet<NetworkComponent> outComps = new HashSet<NetworkComponent>();
+			HashSet<NetworkComponent> outerComps = netCompDirect.translateGraphNodeHashSet(outerNodes);
+			for (Iterator<NetworkComponent> iterator = outerComps.iterator(); iterator.hasNext();) {
+				NetworkComponent outerComp = iterator.next();
+				for (Iterator<String> iterator2 = getIncoming().iterator(); iterator2.hasNext();) {
+					String incoming = iterator2.next();
+					if (incoming.equals(outerComp.getId()))
+						inComps.add(networkModel.getNetworkComponent(incoming));
+				}
+				for (Iterator<String> iterator2 = getOutgoing().iterator(); iterator2.hasNext();) {
+					String outgoing = iterator2.next();
+					if (outgoing.equals(outerComp.getId()))
+						outComps.add(networkModel.getNetworkComponent(outgoing));
+				}
+			}
+			netCompDirect.setGraphEdgeDirection(inComps, outComps);
 
-		NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, thisNetworkComponent);
-		HashSet<GraphNode> outerNodes = netCompDirect.getOuterNodes();
-		HashSet<NetworkComponent> inComps = new HashSet<NetworkComponent>();
-		HashSet<NetworkComponent> outComps = new HashSet<NetworkComponent>();
-		HashSet<NetworkComponent> outerComps = netCompDirect.translateGraphNodeHashSet(outerNodes);
-		for (Iterator<NetworkComponent> iterator = outerComps.iterator(); iterator.hasNext();) {
-			NetworkComponent outerComp = iterator.next();
-			for (Iterator<String> iterator2 = getIncoming().iterator(); iterator2.hasNext();) {
-				String incoming = iterator2.next();
-				if (incoming.equals(outerComp.getId()))
-					inComps.add(networkModel.getNetworkComponent(incoming));
-			}
-			for (Iterator<String> iterator2 = getOutgoing().iterator(); iterator2.hasNext();) {
-				String outgoing = iterator2.next();
-				if (outgoing.equals(outerComp.getId()))
-					outComps.add(networkModel.getNetworkComponent(outgoing));
-			}
+			thisNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
+			DirectionSettingNotification dsn = new DirectionSettingNotification();
+			dsn.setNotificationObject(thisNetworkComponent);
+			myAgent.sendManagerNotification(dsn);
 		}
-		netCompDirect.setGraphEdgeDirection(inComps, outComps);
-
-		thisNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
-		DirectionSettingNotification dsn = new DirectionSettingNotification();
-		dsn.setNotificationObject(thisNetworkComponent);
-		myAgent.sendManagerNotification(dsn);
-
 	}
 
-	private void forwarding(String sender, FindDirData content, List<String> temp1, List<String> temp2, String msg, HashMap<String, String> temp11,
-			HashMap<String, String> temp22) {
+	private void forwarding(String sender, FindDirData content, List<String> temp1, List<String> temp2, String msg, HashMap<String, String> temp11, HashMap<String, String> temp22) {
 		if (temp1.contains(sender) == false) {
 			if (temp2.contains(sender)) {
 				// Should never happen
@@ -367,8 +405,8 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 						msgSend(toInform, new FindDirData(msg));
 					}
 					done = true;
-					System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: "
-							+ getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe + " OutMaybe: " + outgoingMaybe);
+					System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
+							+ " OutMaybe: " + outgoingMaybe);
 					setDirections();
 					// myAgent.startRA();
 					// myAgent.removeBehaviour(this);
@@ -378,7 +416,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 					Iterator<NetworkComponent> it11 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
 					while (it11.hasNext()) {
 						String neighbour = it11.next().getId();
-						if (neighbour.equals(sender) == false && temp22.containsKey(neighbour) == false) {
+						if (neighbour.equals(sender) == false) {
 							temp22.put(neighbour, content.getWay());
 							msgSend(neighbour, new FindDirData(myAgent.getLocalName(), msg + "?"));
 						}
@@ -388,10 +426,10 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			}
 		}
 	}
-	
+
 	public void msgSend(String receiver, GenericMesssageData content) {
-		while(myAgent.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), content)==false){
-			
+		while (myAgent.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), content) == false) {
+
 		}
 
 	}
@@ -399,7 +437,6 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	@Override
 	protected void onTick() {
 		// Not used jet
-
 	}
 
 }
