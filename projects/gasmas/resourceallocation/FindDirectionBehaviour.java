@@ -98,7 +98,6 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		networkModel = (NetworkModel) this.environmentModel.getDisplayEnvironment();
 		myAgent = agent;
 		thisNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
-
 	}
 
 	/**
@@ -226,7 +225,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	private void forwardingMaybe(String sender, FindDirData content, HashMap<String, String> temp1, HashMap<String, String> temp2, String msg1, String msg2,
 			List<String> temp11, List<String> temp22) {
 		/* Check if the information is to "old", too many hops */
-		if (content.getWay().split("::").length < 4) {
+		if (content.getWay().split("::").length < 10) {
 			if (temp22.contains(sender)) {
 				/* Information is wrong */
 				System.out.println(myAgent.getLocalName() + " got a wrong ? message from " + sender + ". Message get ignored");
@@ -391,7 +390,9 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	}
 	
 	public void msgSend(String receiver, GenericMesssageData content) {
-		myAgent.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), content);
+		while(myAgent.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), content)==false){
+			
+		}
 
 	}
 

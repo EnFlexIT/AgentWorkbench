@@ -385,7 +385,7 @@ public class NetworkComponentDirectionSettings {
 		Class<?> argOutClass = null;
 		if (inNodesOrComponents.size()==0)  error = "IN parameter should not be from the size 0!";
 		if (outNodesOrComponents.size()==0) error = "OUT parameter should not be from the size 0!";
-		if ((inNodesOrComponents.size()+outNodesOrComponents.size())!=outerGraphNodes.size()) error = "Number of IN and OUT parameter should be equal to the number of outer GraphNodes!";
+//		if ((inNodesOrComponents.size()+outNodesOrComponents.size())!=outerGraphNodes.size()) error = "Number of IN and OUT parameter should be equal to the number of outer GraphNodes!";
 		
 		Object type = null;
 		if (error==null) {
@@ -456,27 +456,28 @@ public class NetworkComponentDirectionSettings {
 
 				if (graphNode1.getId().equalsIgnoreCase(graphNodeCenter.getId())) {
 					// --- graphNode1 is center node ------
-					if (this.getGraphNodeFromHashSet(inNodes, graphNode2)==null) {
-						graphNodeFrom = graphNode1; 
-						graphNodeTo   = graphNode2;
-					} else {
+					if (this.getGraphNodeFromHashSet(inNodes, graphNode2)!=null) {
 						graphNodeFrom = graphNode2; 
 						graphNodeTo   = graphNode1;
+					} else if (this.getGraphNodeFromHashSet(outNodes, graphNode2)!=null) {
+						graphNodeFrom = graphNode1; 
+						graphNodeTo   = graphNode2;
 					}
 					
 				} else {
 					// --- graphNode2 is center node ------					
-					if (this.getGraphNodeFromHashSet(inNodes, graphNode1)==null) {
+					if (this.getGraphNodeFromHashSet(inNodes, graphNode1)!=null) {
 						graphNodeFrom = graphNode1; 
 						graphNodeTo   = graphNode2;
-					} else {
-						graphNodeFrom = graphNode1; 
-						graphNodeTo   = graphNode2;
+					} else if (this.getGraphNodeFromHashSet(outNodes, graphNode1)!=null) {
+						graphNodeFrom = graphNode2; 
+						graphNodeTo   = graphNode1;
 					}
 					
 				}
-				this.setGraphEdgeDirection(graphEdge, graphNodeFrom, graphNodeTo);
-				
+				if (graphNodeFrom!=null && graphNodeTo!=null) {
+					this.setGraphEdgeDirection(graphEdge, graphNodeFrom, graphNodeTo);	
+				}
 			}
 		} 
 		
