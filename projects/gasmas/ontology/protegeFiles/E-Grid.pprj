@@ -1,7 +1,7 @@
-; Tue May 22 14:20:33 CEST 2012
+; Tue Jun 12 16:49:55 CEST 2012
 ; 
-;+ (version "3.3.1")
-;+ (build "Build 430")
+;+ (version "3.4.8")
+;+ (build "Build 629")
 
 ([ANNOTATED_INSTANCE_WIDGET] of  Widget
 
@@ -19,7 +19,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [E-Grid_ProjectKB_Instance_220]))
+	(properties [E-Grid_ProjectKB_Class177]))
 
 ([CLSES_TAB] of  Widget
 
@@ -33,6 +33,123 @@
 ([CREATOR_WIDGET] of  Widget
 
 	(name ":CREATOR"))
+
+([E-Grid_ProjectKB_Class152] of  Widget
+
+	(is_hidden TRUE)
+	(property_list [E-Grid_ProjectKB_Class153])
+	(widget_class_name "org.protege.owl.mm.protege3.MappingMasterTab"))
+
+([E-Grid_ProjectKB_Class153] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class154] of  Widget
+
+	(is_hidden TRUE)
+	(property_list [E-Grid_ProjectKB_Class155])
+	(widget_class_name "edu.stanford.smi.protegex.evaluation.MetaAnalysis"))
+
+([E-Grid_ProjectKB_Class155] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class156] of  Widget
+
+	(is_hidden TRUE)
+	(property_list [E-Grid_ProjectKB_Class157])
+	(widget_class_name "edu.stanford.smi.protege.query.LuceneQueryPlugin"))
+
+([E-Grid_ProjectKB_Class157] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class158] of  Widget
+
+	(is_hidden TRUE)
+	(property_list [E-Grid_ProjectKB_Class159])
+	(widget_class_name "edu.stanford.smi.protegex.changeanalysis.ChangeAnalysisTab"))
+
+([E-Grid_ProjectKB_Class159] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class160] of  Widget
+
+	(is_hidden TRUE)
+	(property_list [E-Grid_ProjectKB_Class161])
+	(widget_class_name "org.protege.owl.axiome.ui.AxiomeTab"))
+
+([E-Grid_ProjectKB_Class161] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class162] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class163] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class164] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class165] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class166] of  Boolean
+
+	(boolean_value FALSE)
+	(name "ButtonDisplayed-View References to Value"))
+
+([E-Grid_ProjectKB_Class167] of  Boolean
+
+	(boolean_value FALSE)
+	(name "ButtonDisplayed-Delete Instance"))
+
+([E-Grid_ProjectKB_Class168] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class169] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class170] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class171] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class172] of  Boolean
+
+	(boolean_value FALSE)
+	(name "ButtonDisplayed-View References to Value"))
+
+([E-Grid_ProjectKB_Class173] of  Boolean
+
+	(boolean_value FALSE)
+	(name "ButtonDisplayed-Delete Instance"))
+
+([E-Grid_ProjectKB_Class174] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class175] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class176] of  Property_List
+)
+
+([E-Grid_ProjectKB_Class177] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([E-Grid_ProjectKB_Class178] of  Map_Entry
+
+	(key "add_name_on_instance_form")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
+
+([E-Grid_ProjectKB_Class179] of  Map_Entry
+
+	(key "change_tracking_active")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
 
 ([E-Grid_ProjectKB_Instance_133] of  Widget
 
@@ -358,83 +475,11 @@
 ([E-Grid_ProjectKB_Instance_204] of  Property_List
 )
 
-([E-Grid_ProjectKB_Instance_205] of  Property_List
-)
-
-([E-Grid_ProjectKB_Instance_206] of  Property_List
-)
-
-([E-Grid_ProjectKB_Instance_207] of  Property_List
-)
-
-([E-Grid_ProjectKB_Instance_208] of  Property_List
-)
-
-([E-Grid_ProjectKB_Instance_209] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([E-Grid_ProjectKB_Instance_210] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([E-Grid_ProjectKB_Instance_211] of  Property_List
-)
-
-([E-Grid_ProjectKB_Instance_212] of  Property_List
-)
-
-([E-Grid_ProjectKB_Instance_213] of  Property_List
-)
-
-([E-Grid_ProjectKB_Instance_214] of  Property_List
-)
-
-([E-Grid_ProjectKB_Instance_215] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([E-Grid_ProjectKB_Instance_216] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([E-Grid_ProjectKB_Instance_217] of  Property_List
-)
-
-([E-Grid_ProjectKB_Instance_218] of  Property_List
-)
-
-([E-Grid_ProjectKB_Instance_219] of  Property_List
-)
-
-([E-Grid_ProjectKB_Instance_220] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
 ([E-Grid_ProjectKB_Instance_221] of  Map
 
 	(entries
-		[E-Grid_ProjectKB_Instance_222]
-		[E-Grid_ProjectKB_Instance_223]))
-
-([E-Grid_ProjectKB_Instance_222] of  Map_Entry
-
-	(key "add_name_on_instance_form")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
-([E-Grid_ProjectKB_Instance_223] of  Map_Entry
-
-	(key "change_tracking_active")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
+		[E-Grid_ProjectKB_Class178]
+		[E-Grid_ProjectKB_Class179]))
 
 ([E-Grid_ProjectKB_Instance_98] of  String
 
@@ -577,6 +622,9 @@
 	(name "instances_file_name")
 	(string_value "E-Grid.pins"))
 
+([KB_618428_Class151] of  Map
+)
+
 ([LAYOUT_PROPERTIES] of  Property_List
 
 	(name "layout properties")
@@ -649,16 +697,15 @@
 
 	(browser_slot_names [BROWSER_SLOT_NAMES])
 	(customized_instance_widgets
-		[PAL_FORM_WIDGET]
-		[STANDARD_CLASS_FORM_WIDGET]
 		[INSTANCE_ANNOTATION_FORM_WIDGET]
+		[STANDARD_FACET_FORM_WIDGET]
 		[STANDARD_SLOT_FORM_WIDGET]
-		[STANDARD_FACET_FORM_WIDGET])
+		[PAL_FORM_WIDGET]
+		[STANDARD_CLASS_FORM_WIDGET])
 	(default_cls_metaclass ":STANDARD-CLASS")
 	(default_facet_metaclass ":STANDARD-FACET")
 	(default_instance_widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
 	(default_slot_metaclass ":STANDARD-SLOT")
-	(included_projects "file:/C:/Programme/Protege_3.3.1/plugins/nl.uva.psy.swi.beangenerator/projects/SimpleJADEAbstractOntology.pprj")
 	(journaling_enabled FALSE)
 	(next_frame_number 0)
 	(options [KB_485682_Instance_1])

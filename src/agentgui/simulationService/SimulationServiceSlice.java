@@ -31,6 +31,7 @@ package agentgui.simulationService;
 import jade.core.AID;
 import jade.core.IMTPException;
 import jade.core.Service;
+import jade.core.ServiceException;
 
 import java.util.Hashtable;
 import java.util.Vector;
@@ -222,7 +223,7 @@ public interface SimulationServiceSlice extends Service.Slice {
 	
 	
 	// ----------------------------------------------------------
-	// --- Methods for load-informations of all containers
+	// --- Methods for load-informations of all containers ------
 	/** The Constant SERVICE_SET_AGENT_MIGRATION. */
 	static final String SERVICE_SET_AGENT_MIGRATION = "set-agent-migration";
 	/**
@@ -233,6 +234,17 @@ public interface SimulationServiceSlice extends Service.Slice {
 	 * @see AID_Container
 	 */
 	public void setAgentMigration(Vector<AID_Container> transferAgents) throws IMTPException;
+	
+	// ----------------------------------------------------------
+	// --- Methods for updating display agents ------------------
+	/** The Constant SERVICE_DISPLAY_AGENT_NOTIFY. */
+	static final String SERVICE_DISPLAY_AGENT_SET_ENVIRONMENT_MODEL = "service-display-agent-set-environment-model";
+	/**
+	 * Notifies all registered DisplayAgents.
+	 * @param notification the notification
+	 * @throws ServiceException the service exception
+	 */
+	public void displayAgentSetEnvironmentModel(EnvironmentModel envModel) throws IMTPException;
 
 	
 }

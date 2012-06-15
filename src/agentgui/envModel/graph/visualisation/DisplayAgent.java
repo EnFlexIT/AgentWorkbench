@@ -44,7 +44,7 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.agents.SimulationAgent;
+import agentgui.simulationService.agents.AbstractDisplayAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 
 /**
@@ -55,7 +55,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class DisplayAgent extends SimulationAgent {
+public class DisplayAgent extends AbstractDisplayAgent {
 
 	private static final long serialVersionUID = -766291673903767678L;
 
@@ -81,7 +81,8 @@ public class DisplayAgent extends SimulationAgent {
 			
 			this.myEnvironmentModel = this.grabEnvironmentModelFromSimulationService(); 
 			if (this.myEnvironmentModel!=null) {
-				this.netModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();	
+				NetworkModel tmpNetModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();
+				this.netModel = tmpNetModel.getCopy();	
 			}
 
 		} else {
@@ -120,7 +121,8 @@ public class DisplayAgent extends SimulationAgent {
 	protected void afterMove() {
 		this.useFrame = this.getIndependentFrame();
 		EnvironmentModel envModel = this.grabEnvironmentModelFromSimulationService(); 
-		this.netModel = (NetworkModel) envModel.getDisplayEnvironment();
+		NetworkModel tmpNetModel = (NetworkModel) envModel.getDisplayEnvironment();
+		this.netModel = tmpNetModel.getCopy();
 		this.buildVisualizationGUI();
 		super.afterMove();
 	}
@@ -210,7 +212,8 @@ public class DisplayAgent extends SimulationAgent {
 	 */
 	@Override
 	protected void onEnvironmentStimulus() {
-		this.netModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();
+		NetworkModel tmpNetModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();
+		this.netModel = tmpNetModel.getCopy();
 		this.myGraphEnvironmentController.setEnvironmentModel(this.netModel);
 	}
 	

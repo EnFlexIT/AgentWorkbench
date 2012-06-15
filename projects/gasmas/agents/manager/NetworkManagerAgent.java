@@ -39,9 +39,7 @@ import agentgui.core.application.Application;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
-import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
-import agentgui.envModel.graph.networkModel.NetworkComponentDirectionSettings;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
@@ -86,44 +84,13 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		// --- in order to make it accessible for the whole agency --
 		this.notifyAboutEnvironmentChanges();
 		
-//		this.testArea();
 		ComponentFunctions.printAmountOfDiffernetTypesOfAgents("Global", myNetworkModel);
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++ Some temporary test cases here +++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	private void testArea() {
-		// TODO: I guess could be deleted now
-		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n11");
-		if (netComp!=null) {
-			
-			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(myNetworkModel, netComp);
-			if (netCompDirect.isDistributionNode()==false) {
-				// --- Just to construct a small test case ----------
-				HashSet<GraphNode> outerNodes = netCompDirect.getOuterNodes();
-				HashSet<GraphNode> inNodes = new HashSet<GraphNode>(outerNodes);
-				HashSet<GraphNode> outNodes = new HashSet<GraphNode>();
 
-				GraphNode firstNode = inNodes.iterator().next();
-				inNodes.remove(firstNode);
-				outNodes.add(firstNode);
-				
-				// --- Test for assigning the direction -------------
-				HashSet<NetworkComponent> inComps = netCompDirect.translateGraphNodeHashSet(inNodes);
-				HashSet<NetworkComponent> outComps = netCompDirect.translateGraphNodeHashSet(outNodes);
-				netCompDirect.setGraphEdgeDirection(inComps, outComps);
-				
-				// --- Finally, set the the edge directions to the NetworkComponent -----
-				netComp.setEdgeDirections(netCompDirect.getEdgeDirections());
-				// --- Apply setting to the NetworkModel --------------------------------
-				this.myNetworkModel.setDirectionsOfNetworkComponent(netComp);
-				this.notifyAboutEnvironmentChanges();
-				
-			}
-		}
-		
-	}
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -186,7 +153,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	}
 
 	/**
-	 * Notify about environment changes by using the SimulationService.
+	 * Notify all SimulationAgents about environment changes by using the SimulationService.
 	 */
 	private void notifyAboutEnvironmentChanges() {
 		try {
@@ -195,7 +162,16 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Notify all AbstractDisplayAgents about environment changes by using the SimulationService.
+	 */
+	private void notifyDisplayAgentsAboutEnvironmentChanges() {
+		try {
+			simHelper.displayAgentSetEnvironmentModel(this.envModel);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationManagerAgent#onManagerNotification(agentgui.simulationService.transaction.EnvironmentNotification)
 	 */
@@ -221,12 +197,12 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			ComponentFunctions.printAmountOfDiffernetTypesOfAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 			
 		} else if (notification.getNotification() instanceof DirectionSettingNotification) {
-			// TODO: Quick change that the NetworkModel is updated, that I can test my algo
-			DirectionSettingNotification dsn= (DirectionSettingNotification)notification.getNotification();
+			
+			DirectionSettingNotification dsn = (DirectionSettingNotification)notification.getNotification();
 				
 			// --- Apply setting to the NetworkModel --------------------------------
 			this.myNetworkModel.setDirectionsOfNetworkComponent((NetworkComponent) dsn.getNotificationObject());
-//			this.notifyAboutEnvironmentChanges();
+			this.notifyDisplayAgentsAboutEnvironmentChanges();
 		}
 		
 	}

@@ -45,14 +45,14 @@ import agentgui.simulationService.sensoring.ServiceSensor;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /**
- * This agent class can be used for simulations based on agents, that are using the
- * <b>Agent.GUI</b> {@link SimulationService}.
+ * This agent class can be used for simulations based on agents 
+ * that are using the <b>Agent.GUI</b> {@link SimulationService}.
  * 
  * @see SimulationService
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class SimulationAgent extends Agent {
+public abstract class SimulationAgent extends Agent {
 
 	private static final long serialVersionUID = 1782853782362543057L;
 

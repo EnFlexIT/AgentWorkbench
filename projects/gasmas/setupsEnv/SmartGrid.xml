@@ -184,6 +184,18 @@
             </value>
         </entry>
         <entry>
+            <key>n92</key>
+            <value>
+                <directed>false</directed>
+                <graphElementIDs>n92</graphElementIDs>
+                <graphElementIDs>PP89</graphElementIDs>
+                <graphElementIDs>PP1</graphElementIDs>
+                <id>n92</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Power Line</type>
+            </value>
+        </entry>
+        <entry>
             <key>n91</key>
             <value>
                 <directed>false</directed>
@@ -247,6 +259,17 @@
                 <id>n47</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Solar Panel</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n93</key>
+            <value>
+                <agentClassName>gasmas.agents.components.StorageAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP89</graphElementIDs>
+                <id>n93</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Wind turbine</type>
             </value>
         </entry>
         <entry>

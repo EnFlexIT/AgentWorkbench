@@ -38,6 +38,7 @@ import java.util.Vector;
 
 import agentgui.simulationService.agents.SimulationAgent;
 import agentgui.simulationService.agents.SimulationManagerAgent;
+import agentgui.simulationService.agents.AbstractDisplayAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.sensoring.ServiceActuator;
@@ -286,5 +287,36 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	 */
 	public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws ServiceException;
 	
+	
+	/**
+	 * Registers a DisplayAgent at the SimulationService.
+	 *
+	 * @see AbstractDisplayAgent
+	 * @see SimulationService
+	 * 
+	 * @param displayAgent the AID of the display agent
+	 * @throws ServiceException the service exception
+	 */
+	public void displayAgentRegister(AID displayAgent) throws ServiceException;
+	
+	/**
+	 * Unregisters a DisplayAgent at the SimulationService.
+	 *
+	 * @see AbstractDisplayAgent
+	 * @see SimulationService
+	 * 
+	 * @param displayAgent the AID of the display agent
+	 * @throws ServiceException the service exception
+	 */
+	public void displayAgentUnregister(AID displayAgent) throws ServiceException;
+	
+	/**
+	 * Notifies all registered DisplayAgents about a new EnvironmentModel.
+	 *
+	 * @see AbstractDisplayAgent
+	 * @param envModel the EnvironmentModel 
+	 * @throws ServiceException the service exception
+	 */
+	public void displayAgentSetEnvironmentModel(EnvironmentModel envModel) throws ServiceException;
 	
 }

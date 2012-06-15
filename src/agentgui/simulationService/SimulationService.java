@@ -108,34 +108,36 @@ public class SimulationService extends BaseService {
 	private Filter outFilter;
 	private ServiceComponent localSlice;
 	
-	// --- Variables for the Time-Synchronisation -----------------------------
+	/** --- Variables for the Time-Synchronisation ----------------------------- */
 	private long timeMeasureNext = 0;				// --- When was the MainContainerTime last measured 
 	private long timeMeasureInterval = 1000*5; 		// --- measure every 5 seconds 
 	private int timeMeasureCountMax = 100;			// --- How often the time-difference should be measured to build an average value?
 	private long timeDiff2MainContainer = 0;		// --- Difference between this and the MainContainer-Time
 	
-	// --- The Agent who is the Manager / Controller of the Simulation --------
+	/** --- The Agent who is the Manager / Controller of the Simulation -------- */
 	private EnvironmentManagerDescription environmentManagerDescription = null;
-	//private AID managerAgent = null;
+	/** --- Agents which have registered as display agents for the environment - */
+	private Vector<AID> environmentDisplayAgents = new Vector<AID>();
 	
-	// --- The List of Agents, which are registered to this service ----------- 
+	/** --- The List of Agents, which are registered to this service ----------- */ 
 	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
 	
-	// --- Pause the current simulation ---------------------------------------
+	/** --- Pause the current simulation --------------------------------------- */
 	private boolean pauseSimulation = false; 
 	
-	// --- The TransactionMap of the simulation -------------------------------
+	/** --- The TransactionMap of the simulation ------------------------------- */
 	private TransactionMap transactionMap = new TransactionMap();
-	// --- The current EnvironmentModel ---------------------------------------
+	/** --- The current EnvironmentModel --------------------------------------- */
 	private EnvironmentModel environmentModel = null;
-	// --- The Actuator for this Service, which can inform registered --------- 
-	// --- Agents about changes in the Simulation e.g. 'stepTimeModel' --------
+	/** --- The Actuator for this Service, which can inform registered  
+	    	Agents about changes in the Simulation e.g. 'stepTimeModel' -------- */
 	private ServiceActuator localServiceActuator = new ServiceActuator();
 	private ServiceActuatorManager localServiceActuator4Manager = new ServiceActuatorManager();
-	// --- How should an Agent be notified about Environment-Changes? ---------
+	
+	/** --- How should an Agent be notified about Environment-Changes? --------- */
 	private boolean stepSimulationAsynchronous = true;
 
-	// --- The next EnvironmentObject-Instance in parts (answers of agents) ---
+	/** --- The next EnvironmentObject-Instance in parts (answers of agents) --- */
 	private int environmentInstanceNextPartsExpected = 0;
 	private Hashtable<AID, Object> environmentInstanceNextParts = new Hashtable<AID, Object>();
 	private Hashtable<AID, Object> environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
@@ -389,8 +391,7 @@ public class SimulationService extends BaseService {
 			if (pauseSimulation==true) {
 				return false;
 			} else {
-				Service.Slice[] slices = getAllSlices();
-				return broadcastNotifyAgent(agentAID, notification, slices);	
+				return broadcastNotifyAgent(agentAID, notification, getAllSlices());	
 			}
 		}
 		/* (non-Javadoc)
@@ -420,8 +421,7 @@ public class SimulationService extends BaseService {
 		 * @see agentgui.simulationService.SimulationServiceHelper#setEnvironmentModel(agentgui.simulationService.environment.EnvironmentModel, boolean)
 		 */
 		public void setEnvironmentModel(EnvironmentModel envModel, boolean notifySensorAgents) throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastSetEnvironmentModel(envModel, notifySensorAgents, slices);
+			broadcastSetEnvironmentModel(envModel, notifySensorAgents, getAllSlices());
 		}
 		// ----------------------------------------------------------
 		// --- EnvironmentModel of the next simulation step ---------
@@ -456,7 +456,40 @@ public class SimulationService extends BaseService {
 		public void resetEnvironmentInstanceNextParts() throws ServiceException {
 			mainResetEnvironmentInstanceNextParts();
 		}
-
+		
+		// ----------------------------------------------------------
+		// --- EnvironmentModel of the next simulation step ---------
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#displayAgentRegister(jade.core.AID)
+		 */
+		@Override
+		public void displayAgentRegister(AID displayAgent) throws ServiceException {
+			synchronized (environmentDisplayAgents) {
+				environmentDisplayAgents.add(displayAgent);
+			}
+		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#displayAgentUnregister(jade.core.AID)
+		 */
+		@Override
+		public void displayAgentUnregister(AID displayAgent) throws ServiceException {
+			synchronized (environmentDisplayAgents) {
+				Vector<AID> displayAgents = new Vector<AID>(environmentDisplayAgents);
+				for (AID aid: displayAgents) {
+					if (aid.getLocalName().equals(displayAgent.getLocalName())) {
+						environmentDisplayAgents.remove(aid);
+					}
+				}
+			}
+		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#displayAgentSetEnvironmentModel(agentgui.simulationService.environment.EnvironmentModel)
+		 */
+		@Override
+		public void displayAgentSetEnvironmentModel(EnvironmentModel envModel) throws ServiceException {
+			broadcastDisplayAgentSetEnvironmentModel(envModel);
+		}
+		
 	}
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'AgentTimeImpl' ---- End --------------------
@@ -488,7 +521,6 @@ public class SimulationService extends BaseService {
 				slice.setManagerAgent(envManager);
 			}
 			catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error propagating current TimeModel to slice  " + sliceName, t);
 			}
 		}
@@ -515,7 +547,6 @@ public class SimulationService extends BaseService {
 			slice.setEnvironmentInstanceNextPart(environmentInstanceNextPartsLocal);
 		}
 		catch(Throwable t) {
-			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 			myLogger.log(Logger.WARNING, "Error while sending agent-answer of environment-change to slice  " + sliceName, t);
 		}
 	}	
@@ -541,7 +572,6 @@ public class SimulationService extends BaseService {
 			return slice.getEnvironmentInstanceNextParts();
 		}
 		catch(Throwable t) {
-			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 			myLogger.log(Logger.WARNING, "Error while trying to get new environment-parts from slice  " + sliceName, t);
 		}
 		return null;
@@ -567,7 +597,6 @@ public class SimulationService extends BaseService {
 			slice.resetEnvironmentInstanceNextParts();
 		}
 		catch(Throwable t) {
-			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 			myLogger.log(Logger.WARNING, "Error while sending reset of environment-change-hash to slice  " + sliceName, t);
 		}
 	}	
@@ -644,7 +673,6 @@ public class SimulationService extends BaseService {
 				slice.setAnswersExpected(answersExpected);
 			}
 			catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while sending number of expected agent answers to slice " + sliceName, t);
 			}
 		}
@@ -674,7 +702,6 @@ public class SimulationService extends BaseService {
 					slice.notifyManagerPutAgentAnswers(agentAnswers);
 				}
 				catch(Throwable t) {
-					// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 					myLogger.log(Logger.WARNING, "Error while sending agent answers to slice " + sliceName, t);
 				}
 			}
@@ -709,7 +736,6 @@ public class SimulationService extends BaseService {
 				}
 			}
 			catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while sending a notification to agent '" + agentAID.getLocalName() + "' at slice " + sliceName, t);
 			}
 		}
@@ -741,7 +767,6 @@ public class SimulationService extends BaseService {
 					return slice.notifyManager(notification);
 				}
 				catch(Throwable t) {
-					// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 					myLogger.log(Logger.WARNING, "Error while sending notification to Manager at slice " + sliceName, t);
 				}
 			}
@@ -772,7 +797,6 @@ public class SimulationService extends BaseService {
 				slice.setPauseSimulation(pauseSimulation);
 			}
 			catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while sending 'pause simulation'-message to slice " + sliceName, t);
 			}
 		}
@@ -802,7 +826,6 @@ public class SimulationService extends BaseService {
 				slice.setAgentMigration(transferAgents);
 			}
 			catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while sending migration notification to agents at slice " + sliceName, t);
 			}
 		}
@@ -832,12 +855,36 @@ public class SimulationService extends BaseService {
 				slice.stopSimulationAgents();
 			}
 			catch(Throwable t) {
-				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while try to get Location-Object from " + sliceName, t);
 			}
 		}	
 	}
 	
+	/**
+	 * Sets a new EnvironmentModel to all registered DisplayAgents.
+	 * @param notification the notification
+	 * @throws ServiceException the service exception
+	 */
+	private void broadcastDisplayAgentSetEnvironmentModel(EnvironmentModel envModel) throws ServiceException {
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending EnvironmentModel to DisplayAgents!");
+		}
+		Service.Slice[] slices = getAllSlices();
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Sending EnvironmentModel to DisplayAgents over " + sliceName);
+				}
+				slice.displayAgentSetEnvironmentModel(envModel);
+			}
+			catch(Throwable t) {
+				myLogger.log(Logger.WARNING, "Error while sending EnvironmentModel to DisplayAgents over slice  " + sliceName, t);
+			}	
+		}
+	}
 	
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'ServiceComponent' ---- Start ---------------
@@ -998,6 +1045,15 @@ public class SimulationService extends BaseService {
 					}
 					setAgentMigration(transferAgents);
 				}
+				
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_DISPLAY_AGENT_SET_ENVIRONMENT_MODEL)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Getting EnvironmentModel for DisplayAgents");
+					}
+					EnvironmentModel envModel = (EnvironmentModel) params[0];
+					displayAgentSetEnvironmentModel(envModel);
+				}
+				
 				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_AID_LIST)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Answering request for the Agents in this container");
@@ -1011,8 +1067,7 @@ public class SimulationService extends BaseService {
 					cmd.setReturnValue(getListOfAgentsWithSensors());
 				}
 
-			}
-			catch (Throwable t) {
+			} catch (Throwable t) {
 				cmd.setReturnValue(t);
 			}
 			return null;
@@ -1023,7 +1078,6 @@ public class SimulationService extends BaseService {
 		// -----------------------------------------------------------------
 		/**
 		 * Gets the local time.
-		 *
 		 * @return the local time
 		 */
 		private long getLocalTime() {
@@ -1031,17 +1085,14 @@ public class SimulationService extends BaseService {
 		}
 		/**
 		 * Sets the time difference compared to the Main-Container.
-		 *
 		 * @param timeDifference the time difference
 		 */
 		private void setPlatformTimeDiff(long timeDifference) {
 			timeDiff2MainContainer = timeDifference;	
 		}
 		
-		
 		/**
 		 * Sets the EnvironmentManagerDescription of the manager agent.
-		 *
 		 * @param envManager the new manager agent
 		 */
 		private void setManagerAgent(EnvironmentManagerDescription envManager) {
@@ -1149,7 +1200,6 @@ public class SimulationService extends BaseService {
 		
 		/**
 		 * Sets the pause of the simulation.
-		 *
 		 * @param pause true, if the simulation should pause
 		 */
 		private void setPauseSimulation(boolean pause) {
@@ -1158,7 +1208,6 @@ public class SimulationService extends BaseService {
 		
 		/**
 		 * Sets the agent migration.
-		 *
 		 * @param transferAgents the new agent migration
 		 */
 		private void setAgentMigration(Vector<AID_Container> transferAgents) {
@@ -1167,7 +1216,6 @@ public class SimulationService extends BaseService {
 		
 		/**
 		 * Returns the list of agents running in this container.
-		 *
 		 * @return the list of agents
 		 */
 		private AID[] getListOfAgents() {
@@ -1176,13 +1224,26 @@ public class SimulationService extends BaseService {
 		
 		/**
 		 * Returns the list of agents, which are connected through the {@link ServiceActuator}.
-		 *
 		 * @return the list of agents with sensors
 		 */
 		private AID[] getListOfAgentsWithSensors() {
 			return localServiceActuator.getSensorAgents();
 		}
 		
+		/**
+		 * Sets a new EnvironmentModel to all registered DisplayAgents.
+		 * @param notification the EnvironmentNotification
+		 */
+		public void displayAgentSetEnvironmentModel(EnvironmentModel envModel) {
+			synchronized (environmentDisplayAgents) {
+				if (environmentDisplayAgents!=null) {
+					for (AID aid: environmentDisplayAgents) {
+						ServiceSensor sensor = localServiceActuator.getSensor(aid);
+						sensor.putEnvironmentModel(envModel, stepSimulationAsynchronous);
+					}
+				}
+			}
+		}
 		// -----------------------------------------------------------------
 		// --- The real functions for the Service Component --- Stop ------- 
 		// -----------------------------------------------------------------

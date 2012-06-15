@@ -448,5 +448,32 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	// --- Method to get the Load-Informations of all ----------- 
 	// --- containers ----------------------------- E N D -------
 	// ----------------------------------------------------------
+
+	// ----------------------------------------------------------
+	// --- Methods for updating display agents ------------------
+	// ----------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#displayAgentNotify(agentgui.simulationService.transaction.EnvironmentNotification)
+	 */
+	@Override
+	public void displayAgentSetEnvironmentModel(EnvironmentModel envModel) throws IMTPException {
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_DISPLAY_AGENT_SET_ENVIRONMENT_MODEL, SimulationService.NAME, null);
+			cmd.addParam(envModel);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			
+		} catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}		
+	}
 	
 }
