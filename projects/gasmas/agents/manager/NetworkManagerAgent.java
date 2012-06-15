@@ -226,7 +226,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 				
 			// --- Apply setting to the NetworkModel --------------------------------
 			this.myNetworkModel.setDirectionsOfNetworkComponent((NetworkComponent) dsn.getNotificationObject());
-			this.notifyAboutEnvironmentChanges();
+//			this.notifyAboutEnvironmentChanges();
 		}
 		
 	}

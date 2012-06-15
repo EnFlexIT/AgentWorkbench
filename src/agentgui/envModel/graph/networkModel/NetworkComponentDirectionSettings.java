@@ -383,8 +383,8 @@ public class NetworkComponentDirectionSettings {
 		String error = null;
 		Class<?> argInClass = null;
 		Class<?> argOutClass = null;
-		if (inNodesOrComponents.size()==0)  error = "IN parameter should not be from the size 0!";
-		if (outNodesOrComponents.size()==0) error = "OUT parameter should not be from the size 0!";
+//		if (inNodesOrComponents.size()==0)  error = "IN parameter should not be from the size 0!";
+//		if (outNodesOrComponents.size()==0) error = "OUT parameter should not be from the size 0!";
 //		if ((inNodesOrComponents.size()+outNodesOrComponents.size())!=outerGraphNodes.size()) error = "Number of IN and OUT parameter should be equal to the number of outer GraphNodes!";
 		
 		Object type = null;
