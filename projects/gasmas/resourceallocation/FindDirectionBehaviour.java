@@ -340,7 +340,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 				}
 			}
 		} else
-			System.out.println("Message too old, " + myAgent.getLocalName() + " Way:" + content.getWay());
+			System.out.println("Message too old, " + myAgent.getLocalName());
 	}
 
 	private void setDirections() {

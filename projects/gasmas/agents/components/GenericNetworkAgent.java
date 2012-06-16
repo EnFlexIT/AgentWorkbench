@@ -51,8 +51,9 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 		}
 		this.myNetworkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
 		findDirectionBehaviour = new FindDirectionBehaviour(this, 20000, myEnvironmentModel);
-		this.addBehaviour(findDirectionBehaviour);
-		// startRA();
+		findDirectionBehaviour.onStart();
+//		this.addBehaviour(findDirectionBehaviour);
+//		startRA();
 	}
 
 	@Override
