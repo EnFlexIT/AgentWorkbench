@@ -186,11 +186,14 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			
 			DirectionSettingNotification dsn = (DirectionSettingNotification)notification.getNotification();
 				
-			// --- Apply setting to the NetworkModel --------------------------------
+			// --- Apply setting to the NetworkModel -------------------------------
 			NetworkComponent networkComponent = (NetworkComponent) dsn.getNotificationObject();
 			this.myNetworkModel.setDirectionsOfNetworkComponent(networkComponent);
 
-			// --- Send changes to the DisplayAgents -------------------------------- 
+			// --- Update the NetworkModel over all container ----------------------
+			// TODO
+			
+			// --- Send changes to the DisplayAgents ------------------------------- 
 			NetworkComponentDirectionNotification ncdm = new NetworkComponentDirectionNotification(networkComponent);
 			this.sendDisplayAgentNotification(ncdm);
 		}
