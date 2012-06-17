@@ -239,12 +239,19 @@ public interface SimulationServiceSlice extends Service.Slice {
 	// --- Methods for updating display agents ------------------
 	/** The Constant SERVICE_DISPLAY_AGENT_NOTIFY. */
 	static final String SERVICE_DISPLAY_AGENT_SET_ENVIRONMENT_MODEL = "service-display-agent-set-environment-model";
+	static final String SERVICE_DISPLAY_AGENT_NOTIFICATION = "service-display-agent-notification";
 	/**
-	 * Notifies all registered DisplayAgents.
+	 * Notifies all registered DisplayAgents about a new EnvironmentModel.
 	 * @param notification the notification
 	 * @throws ServiceException the service exception
 	 */
 	public void displayAgentSetEnvironmentModel(EnvironmentModel envModel) throws IMTPException;
+	/**
+	 * Notifies all registered DisplayAgents.
+	 * @param notification the notification
+	 * @throws IMTPException the iMTP exception
+	 */
+	public void displayAgentNotification(EnvironmentNotification notification) throws IMTPException;
 
 	
 }

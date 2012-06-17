@@ -43,6 +43,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.sensoring.ServiceActuatorManager;
 import agentgui.simulationService.sensoring.ServiceSensorManager;
 import agentgui.simulationService.time.TimeModel;
+import agentgui.simulationService.transaction.DisplayAgentNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /** 
@@ -290,6 +291,30 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 		}
 		return send;
 	}
+	
+	/**
+	 * Notify all AbstractDisplayAgents about environment changes by using the SimulationService.
+	 */
+	protected void sendDisplayAgentNotificationUpdateEnvironmentModel() {
+		try {
+			simHelper.displayAgentSetEnvironmentModel(this.envModel);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * Notify display agents about environment changes with concrete messages.
+	 * @param displayAgentNotification the display agent message
+	 */
+	protected void sendDisplayAgentNotification(DisplayAgentNotification displayAgentNotification) {
+		try {
+			EnvironmentNotification notification = new EnvironmentNotification(getAID(), true, displayAgentNotification);
+			simHelper.displayAgentNotification(notification);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	/**
 	 * This method can be invoked from the simulation service, if

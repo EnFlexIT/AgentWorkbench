@@ -489,6 +489,13 @@ public class SimulationService extends BaseService {
 		public void displayAgentSetEnvironmentModel(EnvironmentModel envModel) throws ServiceException {
 			broadcastDisplayAgentSetEnvironmentModel(envModel);
 		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#displayAgentNotification(agentgui.simulationService.transaction.EnvironmentNotification)
+		 */
+		@Override
+		public void displayAgentNotification(EnvironmentNotification notification) throws ServiceException {
+			broadcastDisplayAgentNotification(notification);
+		}
 		
 	}
 	// --------------------------------------------------------------	
@@ -886,6 +893,32 @@ public class SimulationService extends BaseService {
 		}
 	}
 	
+	/**
+	 * Sends a new Notification to all registered DisplayAgents.
+	 * @param notification the notification
+	 * @throws ServiceException the service exception
+	 */
+	private void broadcastDisplayAgentNotification(EnvironmentNotification notification) throws ServiceException {
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending Notification to DisplayAgents!");
+		}
+		Service.Slice[] slices = getAllSlices();
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Sending Notification to DisplayAgents over " + sliceName);
+				}
+				slice.displayAgentNotification(notification);
+			}
+			catch(Throwable t) {
+				myLogger.log(Logger.WARNING, "Error while sending Notification to DisplayAgents over slice  " + sliceName, t);
+			}	
+		}
+	}
+	
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'ServiceComponent' ---- Start ---------------
 	// --------------------------------------------------------------
@@ -1052,6 +1085,13 @@ public class SimulationService extends BaseService {
 					}
 					EnvironmentModel envModel = (EnvironmentModel) params[0];
 					displayAgentSetEnvironmentModel(envModel);
+				}
+				else if (cmdName.equals(SimulationServiceSlice.SERVICE_DISPLAY_AGENT_NOTIFICATION)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Getting EnvironmentModel for DisplayAgents");
+					}
+					EnvironmentNotification notification = (EnvironmentNotification) params[0];
+					displayAgentNotification(notification);
 				}
 				
 				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_AID_LIST)) {
@@ -1240,6 +1280,20 @@ public class SimulationService extends BaseService {
 					for (AID aid: environmentDisplayAgents) {
 						ServiceSensor sensor = localServiceActuator.getSensor(aid);
 						sensor.putEnvironmentModel(envModel, stepSimulationAsynchronous);
+					}
+				}
+			}
+		}
+		/**
+		 * Sets a new Notification to all registered DisplayAgents.
+		 * @param notification the EnvironmentNotification
+		 */
+		public void displayAgentNotification(EnvironmentNotification notification) {
+			synchronized (environmentDisplayAgents) {
+				if (environmentDisplayAgents!=null) {
+					for (AID aid: environmentDisplayAgents) {
+						ServiceSensor sensor = localServiceActuator.getSensor(aid);
+						sensor.notifyAgent(notification);
 					}
 				}
 			}

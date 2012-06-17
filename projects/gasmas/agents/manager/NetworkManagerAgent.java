@@ -41,6 +41,7 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDirectionNotification;
 import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelDiscrete;
@@ -87,17 +88,12 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		ComponentFunctions.printAmountOfDiffernetTypesOfAgents("Global", myNetworkModel);
 	}
 
-	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++ Some temporary test cases here +++++++++++++++++++++
-	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see agentgui.simulationService.agents.SimulationManagerInterface# getInitialEnvironmentModel()
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationManagerInterface#getInitialEnvironmentModel()
 	 */
 	@Override
 	public EnvironmentModel getInitialEnvironmentModel() {
@@ -142,10 +138,9 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		return environmentModel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see agentgui.simulationService.agents.SimulationManagerInterface# doSingleSimulationSequennce()
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationManagerInterface#doSingleSimulationSequennce()
 	 */
 	@Override
 	public void doSingleSimulationSequennce() {
@@ -162,16 +157,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			e.printStackTrace();
 		}
 	}
-	/**
-	 * Notify all AbstractDisplayAgents about environment changes by using the SimulationService.
-	 */
-	private void notifyDisplayAgentsAboutEnvironmentChanges() {
-		try {
-			simHelper.displayAgentSetEnvironmentModel(this.envModel);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
-	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationManagerAgent#onManagerNotification(agentgui.simulationService.transaction.EnvironmentNotification)
 	 */
@@ -201,8 +187,12 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			DirectionSettingNotification dsn = (DirectionSettingNotification)notification.getNotification();
 				
 			// --- Apply setting to the NetworkModel --------------------------------
-			this.myNetworkModel.setDirectionsOfNetworkComponent((NetworkComponent) dsn.getNotificationObject());
-			this.notifyDisplayAgentsAboutEnvironmentChanges();
+			NetworkComponent networkComponent = (NetworkComponent) dsn.getNotificationObject();
+			this.myNetworkModel.setDirectionsOfNetworkComponent(networkComponent);
+
+			// --- Send changes to the DisplayAgents -------------------------------- 
+			NetworkComponentDirectionNotification ncdm = new NetworkComponentDirectionNotification(networkComponent);
+			this.sendDisplayAgentNotification(ncdm);
 		}
 		
 	}

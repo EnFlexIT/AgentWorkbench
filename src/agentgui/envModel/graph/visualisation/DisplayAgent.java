@@ -28,7 +28,9 @@
  */
 package agentgui.envModel.graph.visualisation;
 
+import jade.core.Agent;
 import jade.core.ServiceException;
+import jade.core.behaviours.TickerBehaviour;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
@@ -38,14 +40,19 @@ import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.networkModel.NetworkModelNotification;
+import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDirectionNotification;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.AbstractDisplayAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /**
  * This agent can be used in order to display the current network model
@@ -66,6 +73,10 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	
 	private GraphEnvironmentController myGraphEnvironmentController = null;
 	private NetworkModel netModel = null;
+	private NetworkModel netModelNew = null;
+	
+	private DisplayRefreshmentBehaviour displayRefreshmentBehaviour = null;
+	private long displayRefreshmentInterval = 500;
 	
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
@@ -102,8 +113,8 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 */
 	@Override
 	protected void takeDown() {
-		super.takeDown();
 		this.destroyVisualizationGUI();
+		super.takeDown();
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationAgent#beforeMove()
@@ -140,13 +151,15 @@ public class DisplayAgent extends AbstractDisplayAgent {
 			this.useFrame.setContentPane(myGraphEnvironmentController.getEnvironmentPanel());
 			this.useFrame.pack();
 			this.useFrame.setVisible(true);
-			
 		} else {
 			this.usePanel.add(myGraphEnvironmentController.getEnvironmentPanel(), BorderLayout.CENTER);
 			this.usePanel.validate();
 			this.usePanel.repaint();
-			
 		}
+		
+		this.displayRefreshmentBehaviour = new DisplayRefreshmentBehaviour(this, this.displayRefreshmentInterval);
+		this.addBehaviour(this.displayRefreshmentBehaviour);
+		
 	}
 	
 	/**
@@ -154,6 +167,10 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 */
 	private void destroyVisualizationGUI() {
 		
+		this.displayRefreshmentBehaviour.stop();
+		this.removeBehaviour(displayRefreshmentBehaviour);
+		
+		this.netModelNew = null;
 		this.netModel = null;
 		if (this.myGraphEnvironmentController!=null) {
 			this.myGraphEnvironmentController.getEnvironmentPanel().setVisible(false);
@@ -212,9 +229,66 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 */
 	@Override
 	protected void onEnvironmentStimulus() {
-		NetworkModel tmpNetModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();
-		this.netModel = tmpNetModel.getCopy();
-		this.myGraphEnvironmentController.setEnvironmentModel(this.netModel);
+		
+		try {
+			NetworkModel tmpNetModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();
+			if (this.netModelNew==null) {
+				this.netModelNew = tmpNetModel.getCopy();
+			} else {
+				synchronized (this.netModelNew) {
+					this.netModelNew = tmpNetModel.getCopy();	
+				}
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentNotification(agentgui.simulationService.transaction.EnvironmentNotification)
+	 */
+	@Override
+	protected void onEnvironmentNotification(EnvironmentNotification notification) {
+		
+		if (notification.getNotification() instanceof NetworkComponentDirectionNotification) {
+			
+			NetworkComponentDirectionNotification ncdm = (NetworkComponentDirectionNotification) notification.getNotification();
+			NetworkComponent netComp = ncdm.getNetworkComponent();
+			this.netModel.setDirectionsOfNetworkComponent(netComp);
+			this.myGraphEnvironmentController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));
+		}
+		
+	}
+	
+	/**
+	 * The Class DisplayRefreshmentBehaviour.
+	 */
+	private class DisplayRefreshmentBehaviour extends TickerBehaviour {
+
+		private static final long serialVersionUID = 3990126665890900376L;
+
+		public DisplayRefreshmentBehaviour(Agent agent, long period) {
+			super(agent, period);
+		}
+
+		@Override
+		protected void onTick() {
+			// --- Sets a new EnvironmentModel to the display -------
+			if (netModelNew!=null) {
+				synchronized (netModelNew) {
+					netModel = netModelNew;
+					netModelNew = null;
+				}
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						myGraphEnvironmentController.setEnvironmentModel(netModel);
+					}
+				});
+			}
+		}
 	}
 	
 }

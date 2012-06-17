@@ -74,6 +74,7 @@
 						agentgui.envModel.graph.networkModel,
 						agentgui.envModel.graph.prototypes,
 						agentgui.envModel.graph.visualisation,
+						agentgui.envModel.graph.visualisation.notifications,
 						agentgui.envModel.p2Dsvg.behaviours,
 						agentgui.envModel.p2Dsvg.controller,
 						agentgui.envModel.p2Dsvg.display,

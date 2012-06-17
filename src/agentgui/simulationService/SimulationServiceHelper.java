@@ -298,7 +298,7 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	 * @throws ServiceException the service exception
 	 */
 	public void displayAgentRegister(AID displayAgent) throws ServiceException;
-	
+
 	/**
 	 * Unregisters a DisplayAgent at the SimulationService.
 	 *
@@ -318,5 +318,13 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	 * @throws ServiceException the service exception
 	 */
 	public void displayAgentSetEnvironmentModel(EnvironmentModel envModel) throws ServiceException;
+	
+	/**
+	 * Notifies all registered DisplayAgents.
+	 *
+	 * @param notification the EnvironmentNotification
+	 * @throws ServiceException the service exception
+	 */
+	public void displayAgentNotification(EnvironmentNotification notification) throws ServiceException;
 	
 }
