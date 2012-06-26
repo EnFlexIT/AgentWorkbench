@@ -108,9 +108,10 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		NetworkModel networkModel = null;
 		try {
 			currentlyDoing = GET_EnvCont;
-
+			GraphEnvironmentController graphEnvironmentController = (GraphEnvironmentController) currProject.getEnvironmentController();
+			
 			currentlyDoing = GET_NetworkModel;
-			networkModel = (NetworkModel) ((GraphEnvironmentController) currProject.getEnvironmentController()).getEnvironmentModelCopy();
+			networkModel = (NetworkModel) graphEnvironmentController.getEnvironmentModelCopy();
 			networkModel.getAlternativeNetworkModel().put(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME, networkModel.getCopy());
 
 			environmentModel.setTimeModel(myTimeModel);

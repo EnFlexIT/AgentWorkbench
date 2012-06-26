@@ -151,6 +151,246 @@
             <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
             <startAsName>n93</startAsName>
         </agent>
+        <agent>
+            <postionNo>25</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n41</startAsName>
+        </agent>
+        <agent>
+            <postionNo>26</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n45</startAsName>
+        </agent>
+        <agent>
+            <postionNo>27</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n81</startAsName>
+        </agent>
+        <agent>
+            <postionNo>28</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n43</startAsName>
+        </agent>
+        <agent>
+            <postionNo>29</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n42</startAsName>
+        </agent>
+        <agent>
+            <postionNo>30</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n82</startAsName>
+        </agent>
+        <agent>
+            <postionNo>31</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n92</startAsName>
+        </agent>
+        <agent>
+            <postionNo>32</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n90</startAsName>
+        </agent>
+        <agent>
+            <postionNo>33</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n48</startAsName>
+        </agent>
+        <agent>
+            <postionNo>34</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n46</startAsName>
+        </agent>
+        <agent>
+            <postionNo>35</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n30</startAsName>
+        </agent>
+        <agent>
+            <postionNo>36</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n31</startAsName>
+        </agent>
+        <agent>
+            <postionNo>37</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n33</startAsName>
+        </agent>
+        <agent>
+            <postionNo>38</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n77</startAsName>
+        </agent>
+        <agent>
+            <postionNo>39</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n79</startAsName>
+        </agent>
+        <agent>
+            <postionNo>40</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n35</startAsName>
+        </agent>
+        <agent>
+            <postionNo>41</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n37</startAsName>
+        </agent>
+        <agent>
+            <postionNo>42</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n39</startAsName>
+        </agent>
+        <agent>
+            <postionNo>43</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n1</startAsName>
+        </agent>
+        <agent>
+            <postionNo>44</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n21</startAsName>
+        </agent>
+        <agent>
+            <postionNo>45</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n20</startAsName>
+        </agent>
+        <agent>
+            <postionNo>46</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n5</startAsName>
+        </agent>
+        <agent>
+            <postionNo>47</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n3</startAsName>
+        </agent>
+        <agent>
+            <postionNo>48</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n9</startAsName>
+        </agent>
+        <agent>
+            <postionNo>49</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n7</startAsName>
+        </agent>
+        <agent>
+            <postionNo>50</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n64</startAsName>
+        </agent>
+        <agent>
+            <postionNo>51</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n62</startAsName>
+        </agent>
+        <agent>
+            <postionNo>52</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n60</startAsName>
+        </agent>
+        <agent>
+            <postionNo>53</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n27</startAsName>
+        </agent>
+        <agent>
+            <postionNo>54</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n25</startAsName>
+        </agent>
+        <agent>
+            <postionNo>55</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n11</startAsName>
+        </agent>
+        <agent>
+            <postionNo>56</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n54</startAsName>
+        </agent>
+        <agent>
+            <postionNo>57</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n56</startAsName>
+        </agent>
+        <agent>
+            <postionNo>58</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n50</startAsName>
+        </agent>
+        <agent>
+            <postionNo>59</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n51</startAsName>
+        </agent>
+        <agent>
+            <postionNo>60</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n58</startAsName>
+        </agent>
+        <agent>
+            <postionNo>61</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n17</startAsName>
+        </agent>
+        <agent>
+            <postionNo>62</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n19</startAsName>
+        </agent>
+        <agent>
+            <postionNo>63</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n13</startAsName>
+        </agent>
+        <agent>
+            <postionNo>64</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.ontology.PowerlineAgent</agentClassReference>
+            <startAsName>n15</startAsName>
+        </agent>
     </agentSetup>
     <environmentFileName>SmartGrid.graphml</environmentFileName>
 </simulationSetup>

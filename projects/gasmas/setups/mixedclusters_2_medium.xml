@@ -510,6 +510,9 @@
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
             <startAsName>n17</startAsName>
+            <startArguments>
+                <argument>PEJyYW5jaCBJRD0iQnJhbmNoIiBhbGlhcz0iQmzDtmQiLz4K</argument>
+            </startArguments>
         </agent>
         <agent>
             <postionNo>85</postionNo>

@@ -30,18 +30,23 @@ package gasmas.transfer.zib;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import gasmas.ontology.Exit;
+import gasmas.ontology.ValueType;
 import gasmas.transfer.zib.cdf.CombinedDecisions;
 import gasmas.transfer.zib.cs.CompressorStationsType;
 import gasmas.transfer.zib.net.CompressorStationType;
 import gasmas.transfer.zib.net.ControlValveType;
+import gasmas.transfer.zib.net.FlowType;
 import gasmas.transfer.zib.net.GasConnectionType;
 import gasmas.transfer.zib.net.GasNetwork;
 import gasmas.transfer.zib.net.GasNodeType;
 import gasmas.transfer.zib.net.PipeType;
 import gasmas.transfer.zib.net.ResistorType;
 import gasmas.transfer.zib.net.ShortPipeType;
+import gasmas.transfer.zib.net.SinkType;
 import gasmas.transfer.zib.net.ValveType;
 
+import java.awt.Cursor;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,7 +64,9 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
+import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.controller.AddComponentDialog;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.NetworkModelFileImporter;
@@ -94,9 +101,6 @@ public class OGE_Importer extends NetworkModelFileImporter {
 	@Override
 	public NetworkModel importGraphFromFile(File graphFile) {
 		
-		NetworkModel networkModel = new NetworkModel();
-		networkModel.setGeneralGraphSettings4MAS(this.graphController.getNetworkModel().getGeneralGraphSettings4MAS());
-		
 		String fileName = graphFile.getAbsolutePath();
 		fileName = fileName.substring(0, fileName.lastIndexOf("."));
 		
@@ -107,38 +111,32 @@ public class OGE_Importer extends NetworkModelFileImporter {
 		// --------------------------------------------------------------------
 		// --- Build the new NetworkModel (in an own thread) ------------------
 		// --------------------------------------------------------------------
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				
-				// ------------------------------------------------------------
-				// --- Import the *.net file ----------------------------------
-				GasNetwork gasNetwork = importNetFile(netFile);
-				if (gasNetwork!=null) {
-					// --- Fill local HashMaps --------------------------------
-					fillLocalHashMaps(gasNetwork);
-					// --- Get the user mapping for external/internal mapping -
-					if (getUserMapping4Components()==true) {
-						translateGasNetwork2NetworkModel();
-					} else {
-						return;
-					}
-				} else {
-					return;
-				}
-				
-				// ------------------------------------------------------------
-				// --- Import the *.cs file -----------------------------------
-				CompressorStationsType compressorStations = importCsFile(csFile);
-				
-				// ------------------------------------------------------------
-				// --- Import the *.cdf file ----------------------------------
-				CombinedDecisions combinedDecisions = importCdfFile(cdfFile);
-				
+		this.graphController.getProject().projectWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+		// --------------------------------------------------------------------
+		// --- Import the *.net file ------------------------------------------
+		GasNetwork gasNetwork = importNetFile(netFile);
+		if (gasNetwork!=null) {
+			// --- Fill local HashMaps ----------------------------------------
+			fillLocalHashMaps(gasNetwork);
+			// --- Get the user mapping for external/internal mapping ---------
+			if (getUserMapping4Components()==true) {
+				translateGasNetwork2NetworkModel();
 			}
-		});
-		// ----------------------------------------------------------------
-		return networkModel;
+		}
+		
+		// --------------------------------------------------------------------
+		// --- Import the *.cs file -------------------------------------------
+		CompressorStationsType compressorStations = importCsFile(csFile);
+		
+		// --------------------------------------------------------------------
+		// --- Import the *.cdf file ------------------------------------------
+		CombinedDecisions combinedDecisions = importCdfFile(cdfFile);
+				
+			
+		// --------------------------------------------------------------------
+		this.graphController.getProject().projectWindow.setCursor(Cursor.getDefaultCursor());
+		return null;
 	}
 
 	
@@ -183,6 +181,47 @@ public class OGE_Importer extends NetworkModelFileImporter {
 				// --- Assign to the import NetworkModel ----------------------
 				this.graphController.getNetworkModel().mergeNetworkModel(compNetModel, null, false);
 				this.graphController.addAgent(netComp);
+				
+				// --- Save information to agent setup ------------------------
+				if (gasNodeType instanceof SinkType) {
+					
+					SinkType sinkType = (SinkType) gasNodeType;
+					
+					Exit exit = new Exit();
+					exit.setID(sinkType.getId());
+					exit.setAlias(sinkType.getAlias());
+					
+					FlowType flowType = sinkType.getFlowMin();
+					ValueType valueType = new ValueType();
+					valueType.setValue((float) flowType.getValue());
+					valueType.setUnit(flowType.getUnit());
+					exit.setFlowMin(valueType);
+					// .... to be continued !!
+					
+					// --- Configure the start argument for this agent --------
+					AgentClassElement4SimStart[] ace4s = this.graphController.getAgents2StartFromAgentName(netComp.getId());
+					// --- Get a new OntologyInstanceViewer --------- 
+					OntologyInstanceViewer oiv = new OntologyInstanceViewer(this.graphController.getProject(), ace4s[0].getAgentClassReference());
+					// --- Create empty  instances ------------------
+					oiv.save();
+					// --- Get the configuration instances ----------
+					Object[] startArgs = oiv.getConfigurationInstances();
+					startArgs[0] = exit;
+					// --- Set the new configuration instances ------
+					oiv.setConfigurationInstances(startArgs);
+					// --- Get the XML-Version of start arguments ---
+					String[] startArgsXML = oiv.getConfigurationXML();
+					// --- Finally set start argument for this import/agent ---  
+					ace4s[0].setStartArguments(startArgsXML);
+
+					
+				} else if (mapNode2Component.equalsIgnoreCase("Entry")) {
+					
+				} else if (mapNode2Component.equalsIgnoreCase("Storage")) {
+					
+				}
+				
+				
 			}
 			
 		}

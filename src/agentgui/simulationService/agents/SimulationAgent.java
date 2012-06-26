@@ -65,7 +65,7 @@ public abstract class SimulationAgent extends Agent {
 	/** The location, where the agent has to migrate to. */
 	protected Location myNewLocation;
 	
-	private CyclicNotificationHandler notifyHandler = null;
+	private CyclicNotificationHandler notificationHandler = null;
 	private Vector<EnvironmentNotification> notifications = new Vector<EnvironmentNotification>();
 
 	/**
@@ -310,24 +310,28 @@ public abstract class SimulationAgent extends Agent {
 			this.notifications.add(notification);	
 		}
 		// --- restart the CyclicNotificationHandler ---------------------
-		notifyHandler.restart();	
+		if (this.notificationHandler==null) {
+			this.addNotificationHandler();
+		} else {
+			this.notificationHandler.restart();	
+		}
 			
 	}
 	/**
 	 * This method adds the CyclicNotificationHandler to this agent.
 	 */
 	private void addNotificationHandler() {
-		if (this.notifyHandler==null) {
-			this.notifyHandler = new CyclicNotificationHandler();	
+		if (this.notificationHandler==null) {
+			this.notificationHandler = new CyclicNotificationHandler();	
 		}		
-		this.addBehaviour(this.notifyHandler);
+		this.addBehaviour(this.notificationHandler);
 	}
 	/**
 	 * This method removes the CyclicNotificationHandler from this agent.
 	 */
 	private void removeNotificationHandler() {
-		if (this.notifyHandler!=null) {
-			this.removeBehaviour(this.notifyHandler);	
+		if (this.notificationHandler!=null) {
+			this.removeBehaviour(this.notificationHandler);	
 		}
 	}
 
@@ -346,13 +350,27 @@ public abstract class SimulationAgent extends Agent {
 		@Override
 		public void action() {
 			
+			EnvironmentNotification notification = null;
 			boolean removeFirstElement = false;
+			boolean moveAsLastElement = false;
 			
 			// --- Get the first element and work on it ------------------
 			if (notifications.size()!=0) {
-				EnvironmentNotification notification = notifications.get(0);
-				onEnvironmentNotification(notification);
-				removeFirstElement = true;				
+				notification = notifications.get(0);
+				notification = onEnvironmentNotification(notification);
+				if (notification.getProcessingInstruction().isDelete()) {
+					removeFirstElement = true;	
+					moveAsLastElement = false;
+					
+				} else if (notification.getProcessingInstruction().isBlock()) {
+					removeFirstElement = false;
+					moveAsLastElement = false;
+					this.block(notification.getProcessingInstruction().getBlockPeriod());
+					
+				} else if (notification.getProcessingInstruction().isMoveLast()) {
+					removeFirstElement = false;
+					moveAsLastElement = true;
+				}
 			}
 			
 			// --- remove this element and control the notifications -----
@@ -360,10 +378,22 @@ public abstract class SimulationAgent extends Agent {
 				if (removeFirstElement==true) {
 					notifications.remove(0);
 				}
+				if (moveAsLastElement==true) {
+					if (notifications.size()>1) {
+						notifications.remove(0);
+						notifications.add(notification);
+					} else {
+						this.block(notification.getProcessingInstruction().getBlockPeriod());	
+					}
+				}
+				if (notification!=null) {
+					notification.resetProcessingInstruction();	
+				}
 				if (notifications.size()==0) {
 					block();
 				}
 			}
+			
 		}
 	}
 	
@@ -372,7 +402,9 @@ public abstract class SimulationAgent extends Agent {
 	 *
 	 * @param notification the notification
 	 */
-	protected void onEnvironmentNotification(EnvironmentNotification notification) {};
+	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification){
+		return notification;
+	}
 	
 	
 }

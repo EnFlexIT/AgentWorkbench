@@ -4,6 +4,7 @@
         <entry>
             <key>n41</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n41</graphElementIDs>
                 <graphElementIDs>PP64</graphElementIDs>
@@ -36,6 +37,7 @@
         <entry>
             <key>n45</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n45</graphElementIDs>
                 <graphElementIDs>PP21</graphElementIDs>
@@ -48,6 +50,7 @@
         <entry>
             <key>n81</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n81</graphElementIDs>
                 <graphElementIDs>PP66</graphElementIDs>
@@ -70,6 +73,7 @@
         <entry>
             <key>n43</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n43</graphElementIDs>
                 <graphElementIDs>PP24</graphElementIDs>
@@ -82,6 +86,7 @@
         <entry>
             <key>n42</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n42</graphElementIDs>
                 <graphElementIDs>PP18</graphElementIDs>
@@ -118,6 +123,7 @@
         <entry>
             <key>n82</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n82</graphElementIDs>
                 <graphElementIDs>PP24</graphElementIDs>
@@ -186,6 +192,7 @@
         <entry>
             <key>n92</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n92</graphElementIDs>
                 <graphElementIDs>PP89</graphElementIDs>
@@ -208,6 +215,7 @@
         <entry>
             <key>n90</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n90</graphElementIDs>
                 <graphElementIDs>PP87</graphElementIDs>
@@ -220,6 +228,7 @@
         <entry>
             <key>n48</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n48</graphElementIDs>
                 <graphElementIDs>PP26</graphElementIDs>
@@ -242,6 +251,7 @@
         <entry>
             <key>n46</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n46</graphElementIDs>
                 <graphElementIDs>PP25</graphElementIDs>
@@ -275,6 +285,7 @@
         <entry>
             <key>n30</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n30</graphElementIDs>
                 <graphElementIDs>PP16</graphElementIDs>
@@ -297,6 +308,7 @@
         <entry>
             <key>n31</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n31</graphElementIDs>
                 <graphElementIDs>PP17</graphElementIDs>
@@ -332,6 +344,7 @@
         <entry>
             <key>n33</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP19</graphElementIDs>
                 <graphElementIDs>n33</graphElementIDs>
@@ -377,6 +390,7 @@
         <entry>
             <key>n77</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP66</graphElementIDs>
                 <graphElementIDs>n77</graphElementIDs>
@@ -399,6 +413,7 @@
         <entry>
             <key>n79</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n79</graphElementIDs>
                 <graphElementIDs>PP69</graphElementIDs>
@@ -411,6 +426,7 @@
         <entry>
             <key>n35</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP21</graphElementIDs>
                 <graphElementIDs>n35</graphElementIDs>
@@ -433,6 +449,7 @@
         <entry>
             <key>n37</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP21</graphElementIDs>
                 <graphElementIDs>n37</graphElementIDs>
@@ -455,6 +472,7 @@
         <entry>
             <key>n39</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n39</graphElementIDs>
                 <graphElementIDs>PP17</graphElementIDs>
@@ -478,6 +496,7 @@
         <entry>
             <key>n1</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n1</graphElementIDs>
                 <graphElementIDs>PP0</graphElementIDs>
@@ -512,6 +531,7 @@
         <entry>
             <key>n21</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n21</graphElementIDs>
                 <graphElementIDs>PP13</graphElementIDs>
@@ -524,6 +544,7 @@
         <entry>
             <key>n20</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n20</graphElementIDs>
                 <graphElementIDs>PP11</graphElementIDs>
@@ -536,6 +557,7 @@
         <entry>
             <key>n5</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n5</graphElementIDs>
                 <graphElementIDs>PP1</graphElementIDs>
@@ -559,6 +581,7 @@
         <entry>
             <key>n3</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n3</graphElementIDs>
                 <graphElementIDs>PP1</graphElementIDs>
@@ -594,6 +617,7 @@
         <entry>
             <key>n9</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n9</graphElementIDs>
                 <graphElementIDs>PP5</graphElementIDs>
@@ -617,6 +641,7 @@
         <entry>
             <key>n64</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n64</graphElementIDs>
                 <graphElementIDs>PP24</graphElementIDs>
@@ -629,6 +654,7 @@
         <entry>
             <key>n7</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP4</graphElementIDs>
                 <graphElementIDs>n7</graphElementIDs>
@@ -662,6 +688,7 @@
         <entry>
             <key>n62</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP32</graphElementIDs>
                 <graphElementIDs>PP43</graphElementIDs>
@@ -674,6 +701,7 @@
         <entry>
             <key>n60</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP32</graphElementIDs>
                 <graphElementIDs>PP31</graphElementIDs>
@@ -746,6 +774,7 @@
         <entry>
             <key>n27</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP1</graphElementIDs>
                 <graphElementIDs>n27</graphElementIDs>
@@ -769,6 +798,7 @@
         <entry>
             <key>n25</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP1</graphElementIDs>
                 <graphElementIDs>PP64</graphElementIDs>
@@ -803,6 +833,7 @@
         <entry>
             <key>n11</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n11</graphElementIDs>
                 <graphElementIDs>PP4</graphElementIDs>
@@ -825,6 +856,7 @@
         <entry>
             <key>n54</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP28</graphElementIDs>
                 <graphElementIDs>PP29</graphElementIDs>
@@ -847,6 +879,7 @@
         <entry>
             <key>n56</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP30</graphElementIDs>
                 <graphElementIDs>PP27</graphElementIDs>
@@ -859,6 +892,7 @@
         <entry>
             <key>n50</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP26</graphElementIDs>
                 <graphElementIDs>PP27</graphElementIDs>
@@ -871,6 +905,7 @@
         <entry>
             <key>n51</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP28</graphElementIDs>
                 <graphElementIDs>PP25</graphElementIDs>
@@ -893,6 +928,7 @@
         <entry>
             <key>n58</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP31</graphElementIDs>
                 <graphElementIDs>n58</graphElementIDs>
@@ -925,6 +961,7 @@
         <entry>
             <key>n17</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP9</graphElementIDs>
                 <graphElementIDs>PP10</graphElementIDs>
@@ -948,6 +985,7 @@
         <entry>
             <key>n19</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP11</graphElementIDs>
                 <graphElementIDs>n19</graphElementIDs>
@@ -960,6 +998,7 @@
         <entry>
             <key>n13</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP8</graphElementIDs>
                 <graphElementIDs>PP1</graphElementIDs>
@@ -983,6 +1022,7 @@
         <entry>
             <key>n15</key>
             <value>
+                <agentClassName>gasmas.ontology.PowerlineAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP9</graphElementIDs>
                 <graphElementIDs>PP8</graphElementIDs>

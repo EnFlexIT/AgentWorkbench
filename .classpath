@@ -5,7 +5,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jade/lib/jade.jar" sourcepath="/JADE">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/AgentGUI/lib/jade/doc/JADE-doc-4.1.1.zip!/jade/doc/api"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/AgentGUI/lib/jade/doc/JADE-doc-4.2.0.zip!/jade/doc/api"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jade/lib/XMLCodec.jar"/>

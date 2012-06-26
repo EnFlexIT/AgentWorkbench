@@ -237,7 +237,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentNotification(agentgui.simulationService.transaction.EnvironmentNotification)
 	 */
 	@Override
-	protected void onEnvironmentNotification(EnvironmentNotification notification) {
+	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
 		
 		if (notification.getNotification() instanceof NetworkComponentDirectionNotification) {
 			
@@ -253,6 +253,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 				myGraphEnvironmentController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));
 			}
 		});
+		return notification;
 	}
 	
 }

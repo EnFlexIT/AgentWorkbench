@@ -14,44 +14,80 @@
     </subOntologies>
     <agentConfiguration>
         <entry>
-            <key>gasmas.agents.CompressorAgent</key>
+            <key>gasmas.agents.components.CompressorAgent</key>
             <value>gasmas.ontology.Compressor</value>
         </entry>
         <entry>
-            <key>gasmas.agents.components.PipeAgent</key>
-            <value>gasmas.ontology.PropagationPoint</value>
+            <key>gasmas.agents.components.ResistorAgent</key>
+            <value>gasmas.ontology.Resistor</value>
         </entry>
         <entry>
-            <key>gasmas.agents.BranchAgent</key>
+            <key>gasmas.agents.ExitAgent</key>
+            <value>gasmas.ontology.Exit</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.components.BranchAgent</key>
             <value>gasmas.ontology.Branch</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.StorageAgent</key>
-            <value>gasmas.ontology.Storage</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.PipeAgent</key>
-            <value>gasmas.ontology.Pipe</value>
         </entry>
         <entry>
             <key>gasmas.agents.ValveAgent</key>
             <value>gasmas.ontology.Valve</value>
         </entry>
         <entry>
+            <key>gasmas.agents.StorageAgent</key>
+            <value>gasmas.ontology.Storage</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.components.PipeShortAgent</key>
+            <value>gasmas.ontology.ShortPipe</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.components.StorageAgent</key>
+            <value>gasmas.ontology.Storage</value>
+        </entry>
+        <entry>
+            <key>gasmas.ontology.PowerlineAgent</key>
+            <value>gasmas.ontology.PowerLine|gasmas.ontology.StructuralParameters</value>
+        </entry>
+        <entry>
             <key>gasmas.agents.EntryAgent</key>
             <value>gasmas.ontology.Entry</value>
         </entry>
         <entry>
-            <key>gasmas.agents.components.ExitAgent</key>
-            <value>[Output] agentgui.ontology.TimeSeries</value>
+            <key>gasmas.agents.CompressorAgent</key>
+            <value>gasmas.ontology.Compressor</value>
         </entry>
         <entry>
-            <key>gasmas.agents.ExitAgent</key>
-            <value>gasmas.ontology.Exit</value>
+            <key>gasmas.agents.components.SimpleValveAgent</key>
+            <value>gasmas.ontology.Valve</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.components.ControlValveAgent</key>
+            <value>gasmas.ontology.ControlValve</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.components.EntryAgent</key>
+            <value>gasmas.ontology.Entry</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.components.PipeAgent</key>
+            <value>gasmas.ontology.Pipe</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.PipeAgent</key>
+            <value>gasmas.ontology.Pipe</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.BranchAgent</key>
+            <value>gasmas.ontology.Branch</value>
+        </entry>
+        <entry>
+            <key>gasmas.agents.components.ExitAgent</key>
+            <value>gasmas.ontology.Exit|[Output] agentgui.ontology.TimeSeries</value>
         </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1228</useLocalPort>
+        <useLocalPort>1250</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -83,7 +119,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>MixedClusters (3) Large</simulationSetupCurrent>
+    <simulationSetupCurrent>TestImport</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>
@@ -124,6 +160,10 @@
         <entry>
             <key>HNord</key>
             <value>hnord.xml</value>
+        </entry>
+        <entry>
+            <key>TestImport</key>
+            <value>testimport.xml</value>
         </entry>
         <entry>
             <key>HNord (1) Small</key>

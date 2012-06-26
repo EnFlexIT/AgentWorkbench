@@ -190,7 +190,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 		// --- Remind the GeneralGraphSettings4MAS ----------------------------
     	GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
 		if (this.networkModel!=null) {
-
 			generalGraphSettings4MAS = this.networkModel.getGeneralGraphSettings4MAS();	
 		}
 		// --- Set NetworkModel -----------------------------------------------
@@ -200,7 +199,8 @@ public class GraphEnvironmentController extends EnvironmentController {
     	} else {
     		this.networkModel = newNetworkModel;	
     	}
-	    // --- Clean up agents list corresponding to current NetworkModel -----
+    	
+    	// --- Clean up agents list corresponding to current NetworkModel -----
 	    this.validateNetworkComponentAndAgents2Start();
 	    // --- Notify all Observers about a new NetworkModel ------------------
 	    this.getNetworkModelAdapter().reLoadNetworkModel();
@@ -737,9 +737,12 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @param file The file defining the new graph.
      */
     public void importNetworkModel(NetworkModelFileImporter importer, File file) {
-		this.setAgents2Start(new DefaultListModel()); 
-    	NetworkModel netModel = importer.importGraphFromFile(file);
-		this.setEnvironmentModel(netModel);
+    	this.getAgents2Start().clear();
+    	this.setNetworkModel(new NetworkModel());
+    	NetworkModel newNetworkModel = importer.importGraphFromFile(file);
+    	if (newNetworkModel!=null) {
+    		this.setNetworkModel(newNetworkModel);
+    	}
     }
     
     /**

@@ -87,10 +87,12 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
 		
 		NetworkComponent comp = graphController.getNetworkModelAdapter().getNetworkComponent(compID);
 		if (comp instanceof ClusterNetworkComponent) {
+			// --- A ClusterNetworkComponent was selected -----------
 			NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_SelectClusterComponent);
 			nmn.setInfoObject(comp);
 			graphController.notifyObservers(nmn);
 		} else {
+			// --- Another NetworkComponent was selected ------------
 			new OntologySettingsDialog(graphController.getProject(), graphController, comp).setVisible(true);	
 		}
 		

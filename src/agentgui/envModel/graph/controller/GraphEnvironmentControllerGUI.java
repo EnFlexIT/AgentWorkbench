@@ -281,10 +281,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    gridBagConstraints6.gridwidth = 2;
 		    gridBagConstraints6.fill = GridBagConstraints.HORIZONTAL;
 		    gridBagConstraints6.gridy = 0;
-		    jLabelTable = new JLabel();
-		    jLabelTable.setText("Search Components");
-		    jLabelTable.setFont(new Font("Dialog", Font.BOLD, 12));
-		    jLabelTable.setText(Language.translate(jLabelTable.getText(), Language.EN));
 		    GridBagConstraints gridBagConstraints = new GridBagConstraints();
 		    gridBagConstraints.fill = GridBagConstraints.BOTH;
 		    gridBagConstraints.gridy = 2;
@@ -294,6 +290,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    gridBagConstraints.gridwidth = 0;
 		    gridBagConstraints.insets = new Insets(0, 10, 0, 5);
 		    gridBagConstraints.gridx = 0;
+
+		    jLabelTable = new JLabel();
+		    jLabelTable.setText("Search Components");
+		    jLabelTable.setFont(new Font("Dialog", Font.BOLD, 12));
+		    jLabelTable.setText(Language.translate(jLabelTable.getText(), Language.EN));
+
 		    jPanelControls = new JPanel();
 		    jPanelControls.setLayout(new GridBagLayout());
 		    jPanelControls.add(jLabelTable, gridBagConstraints6);
