@@ -7,31 +7,74 @@ import jade.core.*;
 /**
 * Protege name: Pipe
 * @author ontology bean generator
-* @version 2012/06/5, 16:34:03
+* @version 2012/06/26, 14:32:24
 */
-public class Pipe extends GridComponent{ 
+public class Pipe extends Connection{ 
 
    /**
-* Protege name: length
+* Protege name: Diameter
    */
-   private float length;
-   public void setLength(float value) { 
+   private ValueType diameter;
+   public void setDiameter(ValueType value) { 
+    this.diameter=value;
+   }
+   public ValueType getDiameter() {
+     return this.diameter;
+   }
+
+   /**
+* Protege name: heatTransferCoefficient
+   */
+   private ValueType heatTransferCoefficient;
+   public void setHeatTransferCoefficient(ValueType value) { 
+    this.heatTransferCoefficient=value;
+   }
+   public ValueType getHeatTransferCoefficient() {
+     return this.heatTransferCoefficient;
+   }
+
+   /**
+* Protege name: lineOfSight
+   */
+   private ValueType lineOfSight;
+   public void setLineOfSight(ValueType value) { 
+    this.lineOfSight=value;
+   }
+   public ValueType getLineOfSight() {
+     return this.lineOfSight;
+   }
+
+   /**
+* Protege name: roughness
+   */
+   private ValueType roughness;
+   public void setRoughness(ValueType value) { 
+    this.roughness=value;
+   }
+   public ValueType getRoughness() {
+     return this.roughness;
+   }
+
+   /**
+* Protege name: pressureMax
+   */
+   private ValueType pressureMax;
+   public void setPressureMax(ValueType value) { 
+    this.pressureMax=value;
+   }
+   public ValueType getPressureMax() {
+     return this.pressureMax;
+   }
+
+   /**
+* Protege name: Length
+   */
+   private ValueType length;
+   public void setLength(ValueType value) { 
     this.length=value;
    }
-   public float getLength() {
+   public ValueType getLength() {
      return this.length;
-   }
-
-   /**
-   * The ResistanceParameters of this pipe.
-* Protege name: resistance
-   */
-   private ResistanceParameters resistance;
-   public void setResistance(ResistanceParameters value) { 
-    this.resistance=value;
-   }
-   public ResistanceParameters getResistance() {
-     return this.resistance;
    }
 
 }

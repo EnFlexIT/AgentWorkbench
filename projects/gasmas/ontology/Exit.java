@@ -7,8 +7,30 @@ import jade.core.*;
 /**
 * Protege name: Exit
 * @author ontology bean generator
-* @version 2012/06/5, 16:34:03
+* @version 2012/06/26, 14:32:24
 */
-public class Exit extends GridComponent{ 
+public class Exit extends Innode{ 
+
+   /**
+* Protege name: flowMax
+   */
+   private ValueType flowMax;
+   public void setFlowMax(ValueType value) { 
+    this.flowMax=value;
+   }
+   public ValueType getFlowMax() {
+     return this.flowMax;
+   }
+
+   /**
+* Protege name: flowMin
+   */
+   private ValueType flowMin;
+   public void setFlowMin(ValueType value) { 
+    this.flowMin=value;
+   }
+   public ValueType getFlowMin() {
+     return this.flowMin;
+   }
 
 }

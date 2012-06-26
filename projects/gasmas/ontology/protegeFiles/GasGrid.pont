@@ -1,4 +1,4 @@
-; Tue Jun 05 16:52:23 CEST 2012
+; Tue Jun 26 14:33:07 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7,22 +7,62 @@
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
-	(single-slot flow
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot density
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot geoX
-;+		(comment "The geographical x coordinate of the propagation point.")
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot notificationObject
+	(single-slot diameterIn
 		(type INSTANCE)
-;+		(allowed-classes)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot flowParameters
+;+		(comment "A set of parameters describing the current gas flow at a PropagationPoint.")
+		(type INSTANCE)
+;+		(allowed-classes FlowParameters)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot flowMax
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot reason
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot gasComponents
+		(type FLOAT)
+		(create-accessor read-write))
+	(multislot adjacentAgents
+;+		(comment "The AIDs of the agents the propagationpoint connects.")
+		(type INSTANCE)
+;+		(allowed-classes AID)
+		(create-accessor read-write))
+	(single-slot from
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot diameter
+;+		(comment "The geographical y coordinate of the propagation point.")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot c
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot normDensity
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Value
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pipeFriction
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Unit
+		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot fluidParameters
@@ -30,17 +70,38 @@
 ;+		(allowed-classes FluidParameters)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot directionNote
+	(single-slot Length
 		(type INSTANCE)
-;+		(allowed-classes Notification)
+;+		(allowed-classes ValueType)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot reason
+	(single-slot flow
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot height
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot b
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot uni
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot geoY
-;+		(comment "The geographical y coordinate of the propagation point.")
+	(single-slot Diameter
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ID
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot molarMass
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -49,56 +110,184 @@
 ;+		(allowed-classes Notification)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot geoZ
-;+		(comment "The geographical z coordinate of the propagation point.")
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot thermalConductivity
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot fluidVelocity
+	(single-slot dragFactor
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot resistance
 ;+		(comment "The ResistanceParameters of this pipe.")
 		(type INSTANCE)
-;+		(allowed-classes ResistanceParameters)
+;+		(allowed-classes)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot pipeFriction
+	(single-slot pressureDifferentialMax
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot gasCoolerExisting
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot lineOfSight
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot gasTemperature
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot kinematicViscosity
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot GasGrid_Slot_13
+	(single-slot costs
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot geoZ
+;+		(comment "The geographical z coordinate of the propagation point.")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureSet
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot flowDirection
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureLossOut
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot to
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot gasComponents
+	(single-slot pressureMax
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot massFlow
 		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot currentFlow
+		(type INSTANCE)
+;+		(allowed-classes FlowParameters)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot density
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot geoY
+;+		(comment "The geographical y coordinate of the propagation point.")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot value
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot roughness
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot dynamicViscosity
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot fuelGasVertex
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot resistense
+		(type INSTANCE)
+;+		(allowed-classes)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot heatCapacityCoefficient
+		(type INSTANCE)
+;+		(allowed-classes HeatCapacityCoefficient)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot geoX
+;+		(comment "The geographical x coordinate of the propagation point.")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot dragFactorIn
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pseudocriticalTemperature
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot a
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pseudocricalPressure
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot pressure
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot atParentLengthPos
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot diameter
-;+		(comment "The geographical y coordinate of the propagation point.")
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot structuralParameters
-;+		(comment "A set of parameters describing the physical properties of a PropagationPoint.")
+	(single-slot pressureLossIn
 		(type INSTANCE)
-;+		(allowed-classes StructuralParameters)
+;+		(allowed-classes ValueType)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot dynamicViscosity
+	(single-slot internalBypassRequired
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot gasPreheheaterExisting
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot directionNote
+		(type INSTANCE)
+;+		(allowed-classes Notification)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureLoss
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot alias
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot geoCoordinate
+		(type INSTANCE)
+;+		(allowed-classes GeoCoordinate)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureOutMax
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot temperature
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -106,52 +295,97 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot temperature
+	(single-slot fluidVelocity
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot ID
-		(type STRING)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(multislot adjacentAgents
-;+		(comment "The AIDs of the agents the propagationpoint connects.")
+	(single-slot calorificValue
 		(type INSTANCE)
-;+		(allowed-classes AID)
-		(create-accessor read-write))
-	(single-slot costs
-		(type FLOAT)
+;+		(allowed-classes ValueType)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot massFlow
-		(type FLOAT)
+	(single-slot unit
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot increasedOutputTemperature
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot reynoldsNumber
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot kinematicViscosity
+	(single-slot pressureInMin
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot thermalConductivity
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot flowParameters
-;+		(comment "A set of parameters describing the current gas flow at a PropagationPoint.")
+	(single-slot pressureDifferentialMin
 		(type INSTANCE)
-;+		(allowed-classes FlowParameters)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot atParentLengthPos
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureMin
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot structuralParameters
+;+		(comment "A set of parameters describing the physical properties of a PropagationPoint.")
+		(type INSTANCE)
+;+		(allowed-classes GeoCoordinate)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot cooledOutputTemperature
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot flowMin
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot notificationObject
+		(type INSTANCE)
+;+		(allowed-classes)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot heatTransferCoefficient
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot dragFactorOut
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot diameterOut
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass Notification
 	(is-a AgentAction)
 	(role concrete)
+	(single-slot reason
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot notificationObject
 		(type INSTANCE)
 ;+		(allowed-classes)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot reason
-		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -163,25 +397,11 @@
 	(is-a Notification)
 	(role concrete))
 
-(defclass StructuralParameters "A set of parameters describing the physical properties of a PropagationPoint."
+(defclass GeoCoordinate "A set of parameters describing the physical properties of a PropagationPoint."
 	(is-a Concept)
 	(role concrete)
-	(single-slot atParentLengthPos
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot diameter
-;+		(comment "The geographical y coordinate of the propagation point.")
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot geoX
 ;+		(comment "The geographical x coordinate of the propagation point.")
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot geoY
-;+		(comment "The geographical y coordinate of the propagation point.")
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -189,20 +409,21 @@
 ;+		(comment "The geographical z coordinate of the propagation point.")
 		(type FLOAT)
 ;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot geoY
+;+		(comment "The geographical y coordinate of the propagation point.")
+		(type FLOAT)
+;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass FlowParameters "A set of parameters describing the current gas flow at a PropagationPoint."
 	(is-a Concept)
 	(role concrete)
-	(single-slot flow
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot pressure
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot temperature
+	(single-slot flow
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -210,12 +431,16 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot reynoldsNumber
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot fluidVelocity
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot reynoldsNumber
-		(type INTEGER)
+	(single-slot temperature
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -226,11 +451,11 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot dynamicViscosity
+	(single-slot thermalConductivity
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot thermalConductivity
+	(single-slot dynamicViscosity
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -239,36 +464,19 @@
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
-(defclass ResistanceParameters
+(defclass HeatCapacityCoefficient
 	(is-a Concept)
 	(role concrete)
-	(single-slot costs
+	(single-slot a
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot pipeFriction
+	(single-slot b
 		(type FLOAT)
 ;+		(cardinality 0 1)
-		(create-accessor read-write)))
-
-(defclass PropagationPoint "A PropagationPoint is a link between two components of the gas grid."
-	(is-a Concept)
-	(role concrete)
-	(single-slot structuralParameters
-;+		(comment "A set of parameters describing the physical properties of a PropagationPoint.")
-		(type INSTANCE)
-;+		(allowed-classes StructuralParameters)
-;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot ID
-;+		(comment "The unique ID of the PropagationPoint.")
-		(type STRING)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot flowParameters
-;+		(comment "A set of parameters describing the current gas flow at a PropagationPoint.")
-		(type INSTANCE)
-;+		(allowed-classes FlowParameters)
+	(single-slot c
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -279,43 +487,311 @@
 ;+		(comment "The unique ID of the GridComponent.")
 		(type STRING)
 ;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot alias
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Innode
+	(is-a GridComponent)
+	(role concrete)
+	(single-slot height
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot geoCoordinate
+		(type INSTANCE)
+;+		(allowed-classes GeoCoordinate)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureMax
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureMin
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Exit
+	(is-a Innode)
+	(role concrete)
+	(single-slot flowMax
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot flowMin
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass Entry
-	(is-a GridComponent)
-	(role concrete))
-
-(defclass Exit
-	(is-a GridComponent)
-	(role concrete))
-
-(defclass Storage
-	(is-a GridComponent)
-	(role concrete))
-
-(defclass Branch
-	(is-a GridComponent)
-	(role concrete))
-
-(defclass Pipe
-	(is-a GridComponent)
+	(is-a Exit)
 	(role concrete)
-	(single-slot length
+	(single-slot pseudocricalPressure
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot normDensity
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot heatCapacityCoefficient
+		(type INSTANCE)
+;+		(allowed-classes HeatCapacityCoefficient)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pseudocriticalTemperature
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot gasTemperature
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot molarMass
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot resistance
-;+		(comment "The ResistanceParameters of this pipe.")
+	(single-slot calorificValue
 		(type INSTANCE)
-;+		(allowed-classes ResistanceParameters)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Storage
+	(is-a Entry)
+	(role concrete))
+
+(defclass Connection
+	(is-a GridComponent)
+	(role concrete)
+	(single-slot flowMax
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot currentFlow
+		(type INSTANCE)
+;+		(allowed-classes FlowParameters)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot to
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot flowMin
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot from
+		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass Compressor
-	(is-a GridComponent)
-	(role concrete))
+	(is-a Connection)
+	(role concrete)
+	(single-slot diameterIn
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureLossOut
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureLossIn
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot gasCoolerExisting
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot internalBypassRequired
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot cooledOutputTemperature
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureOutMax
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot dragFactorIn
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot dragFactorOut
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot diameterOut
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot fuelGasVertex
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot flowDirection
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureInMin
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
 
 (defclass Valve
+	(is-a Connection)
+	(role concrete)
+	(single-slot pressureDifferentialMax
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot flowDirection
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass ControlValve
+	(is-a Valve)
+	(role concrete)
+	(single-slot diameterIn
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureDifferentialMin
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot increasedOutputTemperature
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot internalBypassRequired
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureSet
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureOutMax
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot dragFactorIn
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot dragFactorOut
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot diameterOut
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot gasPreheheaterExisting
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureInMin
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass shortPipe
+	(is-a Connection)
+	(role concrete))
+
+(defclass Pipe
+	(is-a Connection)
+	(role concrete)
+	(single-slot Diameter
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot heatTransferCoefficient
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot lineOfSight
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureMax
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot roughness
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Length
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Resistor
+	(is-a Connection)
+	(role concrete)
+	(single-slot Diameter
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureLoss
+		(type INSTANCE)
+;+		(allowed-classes ValueType)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot dragFactor
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Branch
 	(is-a GridComponent)
 	(role concrete))
 
@@ -324,4 +800,16 @@
 	(role concrete)
 	(multislot gasComponents
 		(type FLOAT)
+		(create-accessor read-write)))
+
+(defclass ValueType
+	(is-a Concept)
+	(role concrete)
+	(single-slot Value
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Unit
+		(type STRING)
+;+		(cardinality 0 1)
 		(create-accessor read-write)))

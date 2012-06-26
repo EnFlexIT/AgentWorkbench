@@ -9,7 +9,7 @@ import jade.core.*;
    * A set of parameters describing the current gas flow at a PropagationPoint.
 * Protege name: FlowParameters
 * @author ontology bean generator
-* @version 2012/06/5, 16:34:03
+* @version 2012/06/26, 14:32:24
 */
 public class FlowParameters implements Concept {
 
@@ -33,17 +33,6 @@ public class FlowParameters implements Concept {
    }
    public float getFlow() {
      return this.flow;
-   }
-
-   /**
-* Protege name: temperature
-   */
-   private float temperature;
-   public void setTemperature(float value) { 
-    this.temperature=value;
-   }
-   public float getTemperature() {
-     return this.temperature;
    }
 
    /**
@@ -77,6 +66,17 @@ public class FlowParameters implements Concept {
    }
    public float getFluidVelocity() {
      return this.fluidVelocity;
+   }
+
+   /**
+* Protege name: temperature
+   */
+   private float temperature;
+   public void setTemperature(float value) { 
+    this.temperature=value;
+   }
+   public float getTemperature() {
+     return this.temperature;
    }
 
 }
