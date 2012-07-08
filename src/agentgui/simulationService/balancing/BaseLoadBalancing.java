@@ -179,7 +179,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 			return null;
 		} else {
 			String selectedAgentReference = ace4SimStart.getElementClass().getName();
-			OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject, selectedAgentReference);
+			OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getOntologyVisualisationHelper(), currProject.agentConfig, selectedAgentReference);
 			oiv.setConfigurationXML(ace4SimStart.getStartArguments());
 			
 			Object[] startArgs = oiv.getConfigurationInstances();
@@ -344,7 +344,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 * This method will start the Load-Monitor-Agent.
 	 */
 	protected void openLoadMonitor() {
-		 Application.JadePlatform.jadeUtilityAgentStart( Platform.UTIL_CMD_OpenLoadMonitor);
+		 Application.getJadePlatform().jadeUtilityAgentStart( Platform.UTIL_CMD_OpenLoadMonitor);
 	}
 	
 	/**

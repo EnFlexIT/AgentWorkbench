@@ -121,7 +121,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 	 */
 	public void refreshView() {
 		
-		if (Application.JadePlatform.jadeMainContainerIsRunning(false)) {
+		if (Application.getJadePlatform().jadeMainContainerIsRunning(false)) {
 			// --- JADE is running ----------------------------------
 			itemServiceStart.setEnabled(false);
 			itemServiceStop.setEnabled(true);
@@ -146,7 +146,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 				agentGUItray.trayDialog.jLabelIcon.setIcon((Icon) agentGUItray.imageIcon);
 			}
 		}
-		agentGUItray.trayIcon.setToolTip(Application.RunInfo.getApplicationTitle() + " - " + Application.JadePlatform.jadeExecutionMode);
+		agentGUItray.trayIcon.setToolTip(Application.getGlobalInfo().getApplicationTitle() + " - " + Application.getJadePlatform().jadeExecutionMode);
 	}
 	
 	/* (non-Javadoc)
@@ -159,13 +159,13 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		if ( ActCMD.equalsIgnoreCase("About")) {
 			Application.showAboutDialog();
 		}else if ( ActCMD.equalsIgnoreCase("startAgentGUIService")) {
-			Application.JadePlatform.jadeStart();
+			Application.getJadePlatform().jadeStart();
 			this.refreshView();
 		} else if ( ActCMD.equalsIgnoreCase("stoptAgentGUIService")) {
-			Application.JadePlatform.jadeStop();
+			Application.getJadePlatform().jadeStop();
 			this.refreshView();
 		} else if ( ActCMD.equalsIgnoreCase("openRMA")) {
-			Application.JadePlatform.jadeSystemAgentOpen("rma", null);
+			Application.getJadePlatform().jadeSystemAgentOpen("rma", null);
 		} else if ( ActCMD.equalsIgnoreCase("Config")) {
 			Application.showOptionDialog();
 		} else if ( ActCMD.equalsIgnoreCase("Konsole")) {

@@ -38,7 +38,7 @@ import agentgui.envModel.graph.prototypes.GraphElementPrototype;
  * 
  * @see GraphElementPrototype
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
- * @author Satyadeep 
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class ComponentTypeSettings implements Serializable, Cloneable {
@@ -51,6 +51,8 @@ public class ComponentTypeSettings implements Serializable, Cloneable {
 	private String agentClass;
 	/** The GraphElementPrototype class representing this component type */
 	private String graphPrototype;
+	/** The adapter class that can extend functionalities for a NetworkComponent  */
+	private String adapterClass;
 	/** The image icon which will be displayed on the component graph edges. */
 	private float edgeWidth = 2;
 	/** The image icon which will be displayed on the component graph edges. */
@@ -67,21 +69,6 @@ public class ComponentTypeSettings implements Serializable, Cloneable {
 	public ComponentTypeSettings(){
 		super();
 	}
-	/**
-	 * Constructor
-	 * @param agentClass The agent class name
-	 * @param graphPrototype The GraphElementPrototype class name
-	 * @param edgeImage  The path to the image icon to be used for the component
-	 * @param color The color to be used for the component edges in RGB integer representation.
-	 */
-	public ComponentTypeSettings(String agentClass, String graphPrototype, String edgeImage, String color) {
-		super();
-		this.agentClass = agentClass;
-		this.graphPrototype = graphPrototype;
-		this.edgeImage = edgeImage;
-		this.color = color;
-	}
-	
 
 	/**
 	 * Returns a copy of the current instance.
@@ -98,6 +85,9 @@ public class ComponentTypeSettings implements Serializable, Cloneable {
 		}
 		if (graphPrototype!=null) {
 			copy.setGraphPrototype(new String(graphPrototype));	
+		}
+		if (adapterClass!=null) {
+			copy.setAdapterClass(new String(adapterClass));	
 		}
 		if (color!=null) {
 			copy.setColor(new String(color));	
@@ -148,16 +138,33 @@ public class ComponentTypeSettings implements Serializable, Cloneable {
 	}
 	
 	/**
+	 * Gets the graph prototype.
 	 * @return the graphPrototype
 	 */
 	public String getGraphPrototype() {
 		return graphPrototype;
 	}
 	/**
+	 * Sets the graph prototype.
 	 * @param graphPrototype the graphPrototype to set
 	 */
 	public void setGraphPrototype(String graphPrototype) {
 		this.graphPrototype = graphPrototype;
+	}
+	
+	/**
+	 * Sets the adapter class.
+	 * @param adapterClass the new adapter class
+	 */
+	public void setAdapterClass(String adapterClass) {
+		this.adapterClass = adapterClass;
+	}
+	/**
+	 * Returns the adapter class for the current NetworkComponent.
+	 * @return the adapter class
+	 */
+	public String getAdapterClass() {
+		return adapterClass;
 	}
 	
 	/**

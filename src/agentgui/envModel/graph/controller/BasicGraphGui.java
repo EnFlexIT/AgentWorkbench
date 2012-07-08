@@ -72,7 +72,6 @@ import agentgui.core.gui.imaging.ImageFileView;
 import agentgui.core.gui.imaging.ImagePreview;
 import agentgui.core.gui.imaging.ImageUtils;
 import agentgui.envModel.graph.GraphGlobals;
-import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphElementLayout;
@@ -522,28 +521,22 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.pluggableGraphMouse = null; // Reset new VisualizationViewer
 		vViewer.setGraphMouse(this.getPluggableGraphMouse());
 
+		// ----------------------------------------------------------------
 		// --- Set tool tip for nodes -------------------------------------
 		vViewer.setVertexToolTipTransformer(new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode edge) {
-				
-//				double xPos = edge.getPosition().getX();
-//				double yPos = edge.getPosition().getY();
-//				xPos = Math.round(xPos * 1000.0) / 1000.0;
-//				yPos = Math.round(yPos * 1000.0) / 1000.0;
-//				
 				String toolTip = "<html>";
 				toolTip += "" + edge.getId() + "";  
-//				toolTip += "<br>x=" + xPos + "  y=" + yPos + "<br>";
 				toolTip += "</html>";
 				return toolTip;
 			}
 		});
 
-		// --- Configure the vertex shape and size ------------------------
+		// --- Configure the node shape and size --------------------------
 		vViewer.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<GraphNode, GraphEdge>());
 		
-		// --- Configure vertex icons, if configured ----------------------
+		// --- Configure node icons, if configured ------------------------
 		vViewer.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>() {
 
 			private final String pickedPostfix = "[picked]";
@@ -593,7 +586,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		});
 
-		// --- Configure vertex colors ------------------------------------
+		// --- Configure node colors --------------------------------------
 		vViewer.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
 			@Override
 			public Paint transform(GraphNode node) {
@@ -604,7 +597,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			}
 		});
 
-		// --- Configure to show vertex labels ----------------------------
+		// --- Configure to show node labels ------------------------------
 		vViewer.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode node) {
@@ -615,40 +608,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			}
 		});
 		
-		// --- Configure edge colors --------------------------------------
-		vViewer.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<GraphEdge, Paint>() {
-			@Override
-			public Paint transform(GraphEdge edge) {
-				if (vViewer.getPickedEdgeState().isPicked(edge)) {
-					return edge.getGraphElementLayout(controller.getNetworkModel()).getColorPicked();
-				}
-				return edge.getGraphElementLayout(controller.getNetworkModel()).getColor();
-			}
-		});
-		// --- Configure Edge Image Labels --------------------------------
-		vViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
-			@Override
-			public String transform(GraphEdge edge) {
-				// Get the path of the Image from the component type settings
-				String textDisplay = "";
-				String imageRef = edge.getGraphElementLayout(controller.getNetworkModel()).getImageReference();
-				boolean showLabel = edge.getGraphElementLayout(controller.getNetworkModel()).isShowLabel();
-				if (showLabel) {
-					textDisplay = edge.getId();
-				}
-				if (imageRef!= null) {
-					URL url = getClass().getResource(imageRef);
-					if (url != null) {
-						if (showLabel) {
-							textDisplay = "<html><center>" + textDisplay + "<br><img src='" + url + "'></center></html>";
-						} else {
-							textDisplay = "<html><center><img src='" + url + "'></center></html>";
-						}
-					}
-				}
-				return textDisplay;
-			}
-		});
+		// ----------------------------------------------------------------
 		// --- Configure edge label position ------------------------------
 		vViewer.getRenderContext().setLabelOffset(0);
 		vViewer.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
@@ -663,9 +623,80 @@ public class BasicGraphGui extends JPanel implements Observer {
 				return new BasicStroke(edge.getGraphElementLayout(controller.getNetworkModel()).getSize());
 			}
 		});
+		
+		// --- Configure edge color ---------------------------------------
+		vViewer.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<GraphEdge, Paint>() {
+			@Override
+			public Paint transform(GraphEdge edge) {
+				Color initColor = edge.getGraphElementLayout(controller.getNetworkModel()).getColor();
+				if (vViewer.getPickedEdgeState().isPicked(edge)) {
+					initColor = edge.getGraphElementLayout(controller.getNetworkModel()).getColorPicked();
+				}
+				return initColor;
+			}
+		});
+		
+		// --- Configure Edge Image Labels --------------------------------
+		vViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
+			@Override
+			public String transform(GraphEdge edge) {
+				// --- Get the needed info --------------------------------
+				String imageRef = edge.getGraphElementLayout(controller.getNetworkModel()).getImageReference();
+				boolean showLabel = edge.getGraphElementLayout(controller.getNetworkModel()).isShowLabel();
+				// --- Configure color ------------------------------------
+				Color color = null;
+				String htmlColor = null;
+				if (vViewer.getPickedEdgeState().isPicked(edge)) {
+					color = edge.getGraphElementLayout(controller.getNetworkModel()).getColorPicked();
+					htmlColor = Integer.toHexString(color.getRed()) + Integer.toHexString(color.getGreen()) + Integer.toHexString(color.getBlue());
+				} else {
+					color = Color.BLACK;
+					htmlColor = "000000";
+				}
+				
+				// --- Get the text / image content -----------------------
+				String content = "";
+				if (showLabel) {
+					content = edge.getId();
+				}
+				if (imageRef!= null) {
+					URL url = getClass().getResource(imageRef);
+					if (url != null) {
+						if (showLabel) {
+							content = content + "<br><img src='" + url + "'>";
+						} else {
+							content = "<img src='" + url + "'>";
+						}
+					}
+				}
+				// --- Set the return value -------------------------------
+				String textDisplay = "<html><center><font color='#[COLOR]'>[CONTENT]</font></center></html>";
+				textDisplay = textDisplay.replace("[COLOR]", htmlColor);
+				textDisplay = textDisplay.replace("[CONTENT]", content);
+				return textDisplay;
+			}
+		});
+
+		// --- Set edge renderer for a background color of an edge --------
+		vViewer.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer() {
+			@Override
+			public boolean isShowMarker(GraphEdge edge) {
+				return edge.getGraphElementLayout(controller.getNetworkModel()).isMarkerShow();
+			}
+			@Override
+			public float getMarkerStrokeWidth(GraphEdge edge) {
+				return edge.getGraphElementLayout(controller.getNetworkModel()).getMarkerStrokeWidth();
+			}
+			@Override
+			public Color getMarkerColor(GraphEdge edge) {
+				return edge.getGraphElementLayout(controller.getNetworkModel()).getMarkerColor();
+			}
+		});
+		// --- Done -------------------------------------------------------
 		return vViewer;
 	}
 
+	
 	/**
 	 * This method notifies the observers about a graph object selection
 	 * @param pickedObject The selected object
@@ -673,7 +704,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	public void handleObjectLeftClick(Object pickedObject) {
 		this.selectObject(pickedObject);
 	}
-
 	/**
 	 * Notifies the observers that this object is right clicked
 	 * @param pickedObject the selected object
@@ -681,56 +711,16 @@ public class BasicGraphGui extends JPanel implements Observer {
 	public void handleObjectRightClick(Object pickedObject) {
 		this.selectObject(pickedObject);
 	}
-
 	/**
 	 * Invoked when a graph node or edge is double clicked (left or right)
 	 * @param pickedObject
 	 */
 	public void handleObjectDoubleClick(Object pickedObject) {
 		this.selectObject(pickedObject);
-		if (!doubleClickActionClusterNetworkComponent(pickedObject)) {
-			showComponentSettingsDialog(pickedObject);
-		}
-	}
-
-	/**
-	 * Open ClusterNetworkComponents NetworkModel
-	 * 
-	 * @param object
-	 * @return
-	 */
-	private boolean doubleClickActionClusterNetworkComponent(Object object) {
-		ClusterNetworkComponent clusterNetworkComponent = null;
-		if (object instanceof GraphNode) {
-			HashSet<NetworkComponent> netComps = controller.getNetworkModelAdapter().getNetworkComponents((GraphNode) object);
-			if (netComps.size() == 1) {
-				clusterNetworkComponent = getClusterNetworkComponent(netComps.iterator().next());
-			}
-		} else if (object instanceof GraphEdge) {
-			clusterNetworkComponent = getClusterNetworkComponent(controller.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object));
-		} else {
-			clusterNetworkComponent = getClusterNetworkComponent(object);
-		}
-		if (clusterNetworkComponent != null) {
-			NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_SelectClusterComponent);
-			nmn.setInfoObject(clusterNetworkComponent);
-			controller.notifyObservers(nmn);
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Gets the cluster network component.
-	 *
-	 * @param object the object
-	 * @return the cluster network component
-	 */
-	private ClusterNetworkComponent getClusterNetworkComponent(Object object) {
-		if (object instanceof ClusterNetworkComponent) {
-			return (ClusterNetworkComponent) object;
-		}
-		return null;
+		// --- Notify about the editing request for a component ----- 
+		NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
+		nmNote.setInfoObject(pickedObject);
+		this.controller.notifyObservers(nmNote);
 	}
 
 	/**
@@ -837,35 +827,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 
 	/**
-	 * Shows the dialog for the component settings of the given object.
-	 *
-	 * @param object the object
-	 */
-	private void showComponentSettingsDialog(Object object) {
-		OntologySettingsDialog osd = null;
-		if (object instanceof GraphNode) {
-			osd = new OntologySettingsDialog(this.controller.getProject(), this.controller, object);
-
-		} else if (object instanceof GraphEdge) {
-			NetworkComponent netComp = controller.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object);
-			osd = new OntologySettingsDialog(this.controller.getProject(), this.controller, netComp);
-
-		} else if (object instanceof NetworkComponent) {
-			osd = new OntologySettingsDialog(this.controller.getProject(), this.controller, object);
-
-		}
-		osd.setVisible(true);
-	}
-
-	/**
 	 * Export the current graph as image by using a file selection dialog.
 	 */
 	private void exportAsImage() {
 
 		String currentFolder = null;
-		if (Application.RunInfo != null) {
+		if (Application.getGlobalInfo() != null) {
 			// --- Get the last selected folder of Agent.GUI ---
-			currentFolder = Application.RunInfo.getLastSelectedFolderAsString();
+			currentFolder = Application.getGlobalInfo().getLastSelectedFolderAsString();
 		}
 
 		// --- Create instance of JFileChooser -----------------
@@ -916,8 +885,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 				this.exportAsImage(this.getVisView(), selectedPath, selectedExtension);
 				// ---------------------------------------------
 
-				if (Application.RunInfo != null) {
-					Application.RunInfo.setLastSelectedFolder(jfc.getCurrentDirectory());
+				if (Application.getGlobalInfo() != null) {
+					Application.getGlobalInfo().setLastSelectedFolder(jfc.getCurrentDirectory());
 				}
 			}
 		} // end APPROVE_OPTION

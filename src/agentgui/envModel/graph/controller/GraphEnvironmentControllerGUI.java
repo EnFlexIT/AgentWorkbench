@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
@@ -78,6 +79,8 @@ import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.components.TableCellEditor4TableButton;
 import agentgui.envModel.graph.components.TableCellRenderer4Button;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
+import agentgui.envModel.graph.networkModel.GraphEdge;
+import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
@@ -736,6 +739,54 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		return jButtonClearSearch;
     }
 
+    
+    /**
+     * This is the central method that allows the editing of component settings.
+     * @param graphObject the object, where the settings should be edited.
+     */
+    private void editComponentSettings(Object graphObject) {
+
+    	if (graphObject==null) return;
+    	
+    	ClusterNetworkComponent cnc = this.evaluateForClusterNetworkComponent(graphObject);
+    	if (cnc!=null) {
+			this.setFocusOnAlternativeTab(cnc.getId());
+			
+    	} else {
+    		new NetworkComponentDialog(this.getGraphController(), graphObject);
+    	}
+    }
+    
+    /**
+     * Evaluates a graph object to be a ClusterNetworkComponent or not.
+     *
+     * @param graphObject the graph object
+     * @return the cluster network component
+     */
+    private ClusterNetworkComponent evaluateForClusterNetworkComponent(Object graphObject) {
+    	
+    	ClusterNetworkComponent cnc = null;
+    	Object checkObject = null;
+		if (graphObject instanceof GraphNode) {
+			HashSet<NetworkComponent> netComps = this.getGraphController().getNetworkModelAdapter().getNetworkComponents((GraphNode) graphObject);
+			if (netComps.size()==1) {
+				checkObject = netComps.iterator().next();
+			}
+		} else if (graphObject instanceof GraphEdge) {
+			checkObject = this.getGraphController().getNetworkModelAdapter().getNetworkComponent((GraphEdge) graphObject);
+		} else {
+			checkObject = graphObject;
+		}
+		
+		// --- Finally do the Cast ---------------
+		if (checkObject!=null) {
+			if (checkObject instanceof ClusterNetworkComponent) {
+				cnc = (ClusterNetworkComponent) checkObject;
+			}	
+		}
+    	return cnc;
+    }
+	
     /*
      * (non-Javadoc)
      * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
@@ -772,9 +823,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 				this.networkComponentSelect(networkComponent);
 				break;
 				
-			case NetworkModelNotification.NETWORK_MODEL_SelectClusterComponent:
-				ClusterNetworkComponent cnc = (ClusterNetworkComponent) infoObject;
-				this.setFocusOnAlternativeTab(cnc.getId());
+			case NetworkModelNotification.NETWORK_MODEL_EditComponentSettings:
+				this.editComponentSettings(infoObject);
 				break;
 				
 			default:

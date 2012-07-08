@@ -87,7 +87,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	public final static int ACTION_OpenProject = 2;
 	public final static int ACTION_DeleteProject = 3;
 	
-	private static String newLine = Application.RunInfo.AppNewLineString();  //  @jve:decl-index=0:
+	private static String newLine = Application.getGlobalInfo().AppNewLineString();  //  @jve:decl-index=0:
 	
 	private JPanel jContentPane = null;
 	private JPanel jPanelButtons = null;
@@ -127,7 +127,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 		this.actionCode = currentAction;
 		
 		//--- TreeModel initialisieren --------------------------
-		RootNode = new DefaultMutableTreeNode( "... " + Application.RunInfo.PathProjects(false) );
+		RootNode = new DefaultMutableTreeNode( "... " + Application.getGlobalInfo().PathProjects(false) );
 		ProjectTreeModel = new DefaultTreeModel( RootNode );	
 		this.initialize();
 
@@ -451,7 +451,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			ProTree.setRootVisible(true);
 			ProTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			// --- Node-Objekte einfügen ------------------
-			String[] IDEProjects = Application.RunInfo.getIDEProjects();
+			String[] IDEProjects = Application.getGlobalInfo().getIDEProjects();
 			if (IDEProjects!=null) {
 				for ( String Pro : IDEProjects ) {
 					CurrentNode = new DefaultMutableTreeNode( Pro );
@@ -704,7 +704,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			// ----------------------------------------------------
 			// --- Gibt es das gewünschte Verzeichnis bereits? ----
 			if ( ProError==false ) {
-				String[] IDEProjects = Application.RunInfo.getIDEProjects();
+				String[] IDEProjects = Application.getGlobalInfo().getIDEProjects();
 				if (IDEProjects!=null) {
 					for ( String Pro : IDEProjects ) {
 						if ( Pro.equalsIgnoreCase(ProFolder) ) {
@@ -718,7 +718,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			// ----------------------------------------------------
 			// --- Test: Basis-Verzeichnis anlegen ----------------
 			if ( ProError==false ) {
-				String NewDirName = Application.RunInfo.PathProjects(true) + ProFolder;
+				String NewDirName = Application.getGlobalInfo().PathProjects(true) + ProFolder;
 				File f = new File(NewDirName);
 				if ( f.isDirectory() ) {
 					ProErrorSrc = "ProFolderDouble";
@@ -785,10 +785,10 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			}
 			// --- Test, ob die Projektdatei gefunden wurde -------
 			if ( ProError==false ) {				
-				String XMLFileName = Application.RunInfo.PathProjects(true) + 
+				String XMLFileName = Application.getGlobalInfo().PathProjects(true) + 
 									 ProFolder + 
-									 Application.RunInfo.AppPathSeparatorString() +
-									 Application.RunInfo.getFileNameProject();
+									 Application.getGlobalInfo().AppPathSeparatorString() +
+									 Application.getGlobalInfo().getFileNameProject();
 				File f = new File( XMLFileName );
 				if ( f.isFile() == false ) {
 					ProErrorSrc = "ProFolderAgentGUIxml";
@@ -806,8 +806,8 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 				else if ( ProErrorSrc == "ProFolderAgentGUIxml" ) {
 					MsgHead = Language.translate("Fehler - '@'");
 					MsgText = Language.translate("Die Datei '@' wurde nicht gefunden!");	
-					MsgHead = MsgHead.replace("@", Application.RunInfo.getFileNameProject() );
-					MsgText = MsgText.replace("@", Application.RunInfo.getFileNameProject() );					
+					MsgHead = MsgHead.replace("@", Application.getGlobalInfo().getFileNameProject() );
+					MsgText = MsgText.replace("@", Application.getGlobalInfo().getFileNameProject() );					
 				}				
 				JOptionPane.showInternalMessageDialog( this.getContentPane(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
 			}

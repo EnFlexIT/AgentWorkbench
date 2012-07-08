@@ -37,8 +37,6 @@ import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import agentgui.core.project.Project;
-
 /**
  * This class holds detailed information of a single ontology, given by its class reference.<br>
  * Furthermore it creates the needed nodes for the tree, which displays all elements. 
@@ -49,8 +47,6 @@ public class OntologyClass extends Object implements Serializable {
 
 	private static final long serialVersionUID = 1142137843893954757L;
 
-	private Project currProject = null;
-	
 	private String currOntologySrcPackage = null;
 	private String currOntologyMainClass  = null;
 	private String currOntologyName 	  = null;
@@ -71,10 +67,8 @@ public class OntologyClass extends Object implements Serializable {
 	 * @param project the project
 	 * @param ontologyReference the ontology reference
 	 */
-	public OntologyClass(Project project, String ontologyReference) {
+	public OntologyClass(String ontologyReference) {
 
-		this.currProject = project;
-		
 		// --------------------------------------------------------------------
 		// --- Is this the Reference to the Main-class of the ontology? -------
 		if ( referenceIsClass(ontologyReference)==true ) {
@@ -118,7 +112,7 @@ public class OntologyClass extends Object implements Serializable {
 	private void setOntologyTree() {
 		OntologyClassTreeObject octo = new OntologyClassTreeObject(this, "Root");
 		DefaultMutableTreeNode RootNode = new DefaultMutableTreeNode( octo );
-		projectOntologieTree = new OntologyClassTree( currProject, RootNode, this, currOntologySrcPackage );			
+		projectOntologieTree = new OntologyClassTree(RootNode, this, currOntologySrcPackage);			
 	}
 	
 	/**

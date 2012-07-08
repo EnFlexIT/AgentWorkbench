@@ -158,7 +158,6 @@ public class VectorOfProjectResources extends Vector<String> {
 	
 	/**
 	 * Sets the resources list model.
-	 *
 	 * @param resourcesListModel the resourcesListModel to set
 	 */
 	public void setResourcesListModel(DefaultListModel resourcesListModel) {
@@ -167,7 +166,6 @@ public class VectorOfProjectResources extends Vector<String> {
 	
 	/**
 	 * Gets the resources list model.
-	 *
 	 * @return the resourcesListModel
 	 */
 	@XmlTransient 
@@ -184,7 +182,6 @@ public class VectorOfProjectResources extends Vector<String> {
 	
 	/**
 	 * Add to default list model.
-	 *
 	 * @param resource the resource
 	 */
 	private void add2DefaultListModel(String resource) {
@@ -192,7 +189,6 @@ public class VectorOfProjectResources extends Vector<String> {
 	}
 	/**
 	 * Add2 default list model.
-	 *
 	 * @param index the index
 	 * @param resource the resource
 	 */
@@ -204,7 +200,6 @@ public class VectorOfProjectResources extends Vector<String> {
 	
 	/**
 	 * Removes the from default list model.
-	 *
 	 * @param index the index
 	 */
 	private void removeFromDefaultListModel(int index) {

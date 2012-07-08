@@ -57,8 +57,8 @@ public class FileProperties extends Properties {
 
 	private static final long serialVersionUID = 7953205356494195952L;
 	
-	private GlobalInfo global = Application.RunInfo;
-	private VersionInfo version = Application.Version;
+	private GlobalInfo global = Application.getGlobalInfo();
+	private VersionInfo version = Application.getVersionInfo();
 	
 	private String configFile = global.PathConfigFile(true);
 	private String configFileDefaultComment = "";
@@ -168,114 +168,114 @@ public class FileProperties extends Properties {
 		// --- this.DEF_RUNAS ------------------------
 		propValue = this.getProperty(this.DEF_RUNAS).trim();
 		if ( propValue.equalsIgnoreCase("server") == true ) {
-			Application.RunInfo.setRunAsServer(true);
+			Application.getGlobalInfo().setRunAsServer(true);
 		} else {
-			Application.RunInfo.setRunAsServer(false);
+			Application.getGlobalInfo().setRunAsServer(false);
 		}
 		
 		// --- this.DEF_BENCH_VALUE ------------------
 		propValue = this.getProperty(this.DEF_BENCH_VALUE).trim();
 		if ( propValue.equalsIgnoreCase("") == true ) {
-			Application.RunInfo.setBenchValue(0);
+			Application.getGlobalInfo().setBenchValue(0);
 		} else {
-			Application.RunInfo.setBenchValue(Float.parseFloat(propValue));
+			Application.getGlobalInfo().setBenchValue(Float.parseFloat(propValue));
 		}
 		// --- this.DEF_BENCH_EXEC_ON ----------------
 		propValue = this.getProperty(this.DEF_BENCH_EXEC_ON).trim();
 		if ( propValue.equalsIgnoreCase("") == true ) {
-			Application.RunInfo.setBenchExecOn(null);
+			Application.getGlobalInfo().setBenchExecOn(null);
 		} else {
-			Application.RunInfo.setBenchExecOn(propValue);
+			Application.getGlobalInfo().setBenchExecOn(propValue);
 		}
 		// --- this.DEF_BENCH_SKIP_ALLWAYS -----------
 		propValue = this.getProperty(this.DEF_BENCH_SKIP_ALLWAYS).trim();
 		if ( propValue.equalsIgnoreCase("true") == true ) {
-			Application.RunInfo.setBenchAllwaysSkip(true);
+			Application.getGlobalInfo().setBenchAllwaysSkip(true);
 		} else {
-			Application.RunInfo.setBenchAllwaysSkip(false);
+			Application.getGlobalInfo().setBenchAllwaysSkip(false);
 		}
 		
 		// --- this.DEF_LANGUAGE ---------------------
 		propValue = this.getProperty(this.DEF_LANGUAGE).trim();
 		if ( propValue!=null ) {
-			Application.RunInfo.setLanguage(propValue);
+			Application.getGlobalInfo().setLanguage(propValue);
 		} else {
-			Application.RunInfo.setLanguage("en");
+			Application.getGlobalInfo().setLanguage("en");
 		}
 		
 		// --- this.DEF_AUTOSTART --------------------
 		propValue = this.getProperty(this.DEF_AUTOSTART).trim();
 		if ( propValue.equalsIgnoreCase("true") == true ) {
-			Application.RunInfo.setServerAutoRun(true);
+			Application.getGlobalInfo().setServerAutoRun(true);
 		} else {
-			Application.RunInfo.setServerAutoRun(false);
+			Application.getGlobalInfo().setServerAutoRun(false);
 		}
 		// --- this.DEF_MASTER_URL -------------------
 		propValue = this.getProperty(this.DEF_MASTER_URL).trim();
 		if ( propValue.equalsIgnoreCase("") == false ) {
-			Application.RunInfo.setServerMasterURL(propValue.trim());
+			Application.getGlobalInfo().setServerMasterURL(propValue.trim());
 		} else {
-			Application.RunInfo.setServerMasterURL(null);
+			Application.getGlobalInfo().setServerMasterURL(null);
 		}
 		// --- this.DEF_MASTER_PORT ------------------
 		propValue = this.getProperty(this.DEF_MASTER_PORT).trim();
 		if ( propValue.equalsIgnoreCase("") == false ) {
 			Integer propValueInt = Integer.parseInt(propValue.trim());
-			Application.RunInfo.setServerMasterPort(propValueInt);
+			Application.getGlobalInfo().setServerMasterPort(propValueInt);
 		} else {
-			Application.RunInfo.setServerMasterPort(0);
+			Application.getGlobalInfo().setServerMasterPort(0);
 		}
 		// --- this.DEF_MASTER_PORT4MTP --------------
 		propValue = this.getProperty(this.DEF_MASTER_PORT4MTP);
 		if ( propValue.equalsIgnoreCase("") == false ) {
 			Integer propValueInt = Integer.parseInt(propValue.trim());
-			Application.RunInfo.setServerMasterPort4MTP(propValueInt);
+			Application.getGlobalInfo().setServerMasterPort4MTP(propValueInt);
 		} else {
-			Application.RunInfo.setServerMasterPort4MTP(0);
+			Application.getGlobalInfo().setServerMasterPort4MTP(0);
 		}
 		
 		// --- this.DEF_MASTER_DB_HOST ---------------
 		propValue = this.getProperty(this.DEF_MASTER_DB_HOST);
 		if ( propValue!=null &&  propValue.equalsIgnoreCase("") == false ) {
-			Application.RunInfo.setServerMasterDBHost(propValue.trim());
+			Application.getGlobalInfo().setServerMasterDBHost(propValue.trim());
 		} else {
-			Application.RunInfo.setServerMasterDBHost(null);
+			Application.getGlobalInfo().setServerMasterDBHost(null);
 		}
 		// --- this.DEF_MASTER_DB_NAME ---------------
 		propValue = this.getProperty(this.DEF_MASTER_DB_NAME);
 		if ( propValue!=null && propValue.equalsIgnoreCase("") == false ) {
-			Application.RunInfo.setServerMasterDBName(propValue.trim());
+			Application.getGlobalInfo().setServerMasterDBName(propValue.trim());
 		} else {
-			Application.RunInfo.setServerMasterDBName(null);
+			Application.getGlobalInfo().setServerMasterDBName(null);
 		}
 		// --- this.DEF_MASTER_DB_USER ---------------
 		propValue = this.getProperty(this.DEF_MASTER_DB_USER);
 		if ( propValue!=null && propValue.equalsIgnoreCase("") == false ) {
-			Application.RunInfo.setServerMasterDBUser(propValue.trim());
+			Application.getGlobalInfo().setServerMasterDBUser(propValue.trim());
 		} else {
-			Application.RunInfo.setServerMasterDBUser(null);
+			Application.getGlobalInfo().setServerMasterDBUser(null);
 		}
 		// --- this.DEF_MASTER_DB_PSWD ---------------
 		propValue = this.getProperty(this.DEF_MASTER_DB_PSWD);
 		if ( propValue!=null && propValue.equalsIgnoreCase("") == false ) {
-			Application.RunInfo.setServerMasterDBPswd(propValue.trim());
+			Application.getGlobalInfo().setServerMasterDBPswd(propValue.trim());
 		} else {
-			Application.RunInfo.setServerMasterDBPswd(null);
+			Application.getGlobalInfo().setServerMasterDBPswd(null);
 		}
 		
 		// --- this.DEF_GOOGLE_API_KEY ---------------
 		propValue = this.getProperty(this.DEF_GOOGLE_API_KEY);
 		if ( propValue!=null && propValue.equalsIgnoreCase("") == false ) {
-			Application.RunInfo.setGoogleKey4API(propValue.trim());
+			Application.getGlobalInfo().setGoogleKey4API(propValue.trim());
 		} else {
-			Application.RunInfo.setGoogleKey4API(null);
+			Application.getGlobalInfo().setGoogleKey4API(null);
 		}
 		// --- this.DEF_GOOGLE_HTTP_REF --------------
 		propValue = this.getProperty(this.DEF_GOOGLE_HTTP_REF);
 		if ( propValue!=null && propValue.equalsIgnoreCase("") == false ) {
-			Application.RunInfo.setGoogleHttpRef(propValue.trim());
+			Application.getGlobalInfo().setGoogleHttpRef(propValue.trim());
 		} else {
-			Application.RunInfo.setGoogleHttpRef(null);
+			Application.getGlobalInfo().setGoogleHttpRef(null);
 		}
 	}
 
@@ -286,7 +286,7 @@ public class FileProperties extends Properties {
 	private void setGlobal2Config() {
 		
 		// --- this.DEF_RUNAS ------------------------
-		if ( Application.RunInfo.isRunAsServer() == true ) {
+		if ( Application.getGlobalInfo().isRunAsServer() == true ) {
 			this.setProperty(this.DEF_RUNAS, "Server");
 		} else {
 			this.setProperty(this.DEF_RUNAS, "Application");
@@ -294,82 +294,82 @@ public class FileProperties extends Properties {
 		
 		
 		// --- this.DEF_BENCH_VALUE ------------------
-		this.setProperty(this.DEF_BENCH_VALUE, Application.RunInfo.getBenchValue().toString());
+		this.setProperty(this.DEF_BENCH_VALUE, Application.getGlobalInfo().getBenchValue().toString());
 		// --- this.DEF_BENCH_EXEC_ON ----------------
-		if (Application.RunInfo.getBenchExecOn()!=null) {
-			this.setProperty(this.DEF_BENCH_EXEC_ON, Application.RunInfo.getBenchExecOn());	
+		if (Application.getGlobalInfo().getBenchExecOn()!=null) {
+			this.setProperty(this.DEF_BENCH_EXEC_ON, Application.getGlobalInfo().getBenchExecOn());	
 		}
 		// --- this.DEF_BENCH_SKIP_ALLWAYS -----------
-		if ( Application.RunInfo.isBenchAllwaysSkip() == true ) {
+		if ( Application.getGlobalInfo().isBenchAllwaysSkip() == true ) {
 			this.setProperty(this.DEF_BENCH_SKIP_ALLWAYS,"true");	
 		} else {
 			this.setProperty(this.DEF_BENCH_SKIP_ALLWAYS,"false");
 		}
 		
 		// --- this.DEF_LANGUAGE ---------------------
-		if (Application.RunInfo.getLanguage()==null) {
+		if (Application.getGlobalInfo().getLanguage()==null) {
 			this.setProperty(this.DEF_LANGUAGE, "en");			
 		} else {
-			this.setProperty(this.DEF_LANGUAGE, Application.RunInfo.getLanguage());
+			this.setProperty(this.DEF_LANGUAGE, Application.getGlobalInfo().getLanguage());
 		}
 
 		
 		// --- this.DEF_AUTOSTART --------------------
-		if ( Application.RunInfo.isServerAutoRun() == true ) {
+		if ( Application.getGlobalInfo().isServerAutoRun() == true ) {
 			this.setProperty(this.DEF_AUTOSTART, "true");
 		} else {
 			this.setProperty(this.DEF_AUTOSTART, "false");
 		}
 		// --- this.DEF_MASTER_URL -------------------
-		if (Application.RunInfo.getServerMasterURL() == null) {
+		if (Application.getGlobalInfo().getServerMasterURL() == null) {
 			this.setProperty(this.DEF_MASTER_URL, "");
 		} else {
-			this.setProperty(this.DEF_MASTER_URL, Application.RunInfo.getServerMasterURL());	
+			this.setProperty(this.DEF_MASTER_URL, Application.getGlobalInfo().getServerMasterURL());	
 		}
 
 		// --- this.DEF_MASTER_PORT ------------------
-		this.setProperty(this.DEF_MASTER_PORT, Application.RunInfo.getServerMasterPort().toString());
+		this.setProperty(this.DEF_MASTER_PORT, Application.getGlobalInfo().getServerMasterPort().toString());
 
 		// --- this.DEF_MASTER_PORT4MTP --------------
-		this.setProperty(this.DEF_MASTER_PORT4MTP, Application.RunInfo.getServerMasterPort4MTP().toString());
+		this.setProperty(this.DEF_MASTER_PORT4MTP, Application.getGlobalInfo().getServerMasterPort4MTP().toString());
 
 		
 		// --- this.DEF_MASTER_DB_HOST ---------------
-		if (Application.RunInfo.getServerMasterDBHost() == null) {
+		if (Application.getGlobalInfo().getServerMasterDBHost() == null) {
 			this.setProperty(this.DEF_MASTER_DB_HOST, "");
 		} else {
-			this.setProperty(this.DEF_MASTER_DB_HOST, Application.RunInfo.getServerMasterDBHost());	
+			this.setProperty(this.DEF_MASTER_DB_HOST, Application.getGlobalInfo().getServerMasterDBHost());	
 		}
 		// --- this.DEF_MASTER_DB_NAME ---------------
-		if (Application.RunInfo.getServerMasterDBName() == null) {
+		if (Application.getGlobalInfo().getServerMasterDBName() == null) {
 			this.setProperty(this.DEF_MASTER_DB_NAME, "");
 		} else {
-			this.setProperty(this.DEF_MASTER_DB_NAME, Application.RunInfo.getServerMasterDBName());	
+			this.setProperty(this.DEF_MASTER_DB_NAME, Application.getGlobalInfo().getServerMasterDBName());	
 		}
 		// --- this.DEF_MASTER_DB_USER ---------------
-		if (Application.RunInfo.getServerMasterDBUser() == null) {
+		if (Application.getGlobalInfo().getServerMasterDBUser() == null) {
 			this.setProperty(this.DEF_MASTER_DB_USER, "");
 		} else {
-			this.setProperty(this.DEF_MASTER_DB_USER, Application.RunInfo.getServerMasterDBUser());	
+			this.setProperty(this.DEF_MASTER_DB_USER, Application.getGlobalInfo().getServerMasterDBUser());	
 		}
 		// --- this.DEF_MASTER_DB_PSWD ---------------
-		if (Application.RunInfo.getServerMasterDBPswd() == null) {
+		if (Application.getGlobalInfo().getServerMasterDBPswd() == null) {
 			this.setProperty(this.DEF_MASTER_DB_PSWD, "");
 		} else {
-			this.setProperty(this.DEF_MASTER_DB_PSWD, Application.RunInfo.getServerMasterDBPswd());	
+			this.setProperty(this.DEF_MASTER_DB_PSWD, Application.getGlobalInfo().getServerMasterDBPswd());	
 		}
 		
 		// --- this.DEF_GOOGLE_API_KEY ---------------
-		if (Application.RunInfo.getGoogleKey4API() == null) {
+		if (Application.getGlobalInfo().getGoogleKey4API() == null) {
 			this.setProperty(this.DEF_GOOGLE_API_KEY, "");
 		} else {
-			this.setProperty(this.DEF_GOOGLE_API_KEY, Application.RunInfo.getGoogleKey4API());	
+			this.setProperty(this.DEF_GOOGLE_API_KEY, Application.getGlobalInfo().getGoogleKey4API());	
 		}
 		// --- this.DEF_GOOGLE_HTTP_REF --------------
-		if (Application.RunInfo.getGoogleKey4API() == null) {
+		if (Application.getGlobalInfo().getGoogleKey4API() == null) {
 			this.setProperty(this.DEF_GOOGLE_HTTP_REF, "");
 		} else {
-			this.setProperty(this.DEF_GOOGLE_HTTP_REF, Application.RunInfo.getGoogleHttpRef());	
+			this.setProperty(this.DEF_GOOGLE_HTTP_REF, Application.getGlobalInfo().getGoogleHttpRef());	
 		}
 		
 	}	
@@ -388,10 +388,10 @@ public class FileProperties extends Properties {
 				this.setProperty(this.DEF_LANGUAGE, Language.EN);
 			}
 			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT) ) {				
-				this.setProperty(this.DEF_MASTER_PORT, Application.RunInfo.getJadeLocalPort().toString());
+				this.setProperty(this.DEF_MASTER_PORT, Application.getGlobalInfo().getJadeLocalPort().toString());
 			}
 			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT4MTP) ) {				
-				this.setProperty(this.DEF_MASTER_PORT4MTP, Application.RunInfo.getServerMasterPort4MTP().toString());
+				this.setProperty(this.DEF_MASTER_PORT4MTP, Application.getGlobalInfo().getServerMasterPort4MTP().toString());
 			}
 			// ----------------------------------------
 		}

@@ -42,7 +42,6 @@ import java.util.jar.JarFile;
 
 import agentgui.core.application.Application;
 import agentgui.core.ontologies.OntologyClassTree;
-import agentgui.core.project.Project;
 
 /**
  * This extended ArrayList<String> is used for the search of classes 
@@ -58,8 +57,6 @@ public class ReflectClassFiles extends ArrayList<String> {
 
 	private static final long serialVersionUID = -256361698681180954L;
 
-	private Project currProject = null;
-	
 	private String searchINReference = null;
 	private String[] searchINPathParts = null;
 
@@ -68,17 +65,11 @@ public class ReflectClassFiles extends ArrayList<String> {
 	/**
 	 * Constructor of this class.
 	 *
-	 * @param project the project
+	 * @param pathesOfExternalRessources the path expressions to further external resources
 	 * @param searchInPackage the search reference
 	 */
-	public ReflectClassFiles(Project project, String searchInPackage) {
+	public ReflectClassFiles(String searchInPackage) {
 
-		this.currProject = project;
-		
-		// --- Die aktuellen externen Ressourcen zusammenstellen -
-		this.classPathExternalJars = Application.RunInfo.getClassPathJars();
-		this.classPathExternalJars.addAll(currProject.getProjectResources());
-		
 		// --- Verzeichnis, in dem die Ontologie liegt auslesen ---
 		this.searchINReference = searchInPackage;
 		if ( !(searchINReference == null) ) {
@@ -130,7 +121,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 				
 			} else {
 				// --- Points to the Agent.GUI IDE-Environment ------
-				SearchPath = Application.RunInfo.PathBaseDirIDE_BIN();
+				SearchPath = Application.getGlobalInfo().PathBaseDirIDE_BIN();
 				classList = getIDEClasses( SearchPath, SearchPath );
 			}
 			
@@ -148,13 +139,30 @@ public class ReflectClassFiles extends ArrayList<String> {
 	 * @return the jar reference from path of file
 	 */
 	private String getJarReferenceFromPathOfFile( String path2Reference ) {
-		
-		for (String classPathSingle : classPathExternalJars) {
+		for (String classPathSingle : this.getClassPathExternalJars()) {
 			if (path2Reference.contains(classPathSingle)==true) {
 				return classPathSingle;
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * This Method returns all jar-Files, which are part of the current ClassPath
+	 * @return Returns a Vector<String> with all external jars
+	 */
+	private Vector<String> getClassPathExternalJars() {
+		if (this.classPathExternalJars==null) {
+			this.classPathExternalJars = new Vector<String>();
+			String[] JCP_Files = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+			for (int i = 0; i < JCP_Files.length; i++) {
+				String classPathEntry = JCP_Files[i];
+				if (classPathEntry.endsWith(".jar")==true ){
+					this.classPathExternalJars.add(classPathEntry);
+				}
+			}	
+		}
+		return this.classPathExternalJars;
 	}
 	
 	/**
@@ -269,7 +277,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 							if ( SearchINPath == null ) {
 								SearchINPath = searchINPathParts[j];	
 							} else {
-								SearchINPath = SearchINPath +  Application.RunInfo.AppPathSeparatorString() + searchINPathParts[j];
+								SearchINPath = SearchINPath +  Application.getGlobalInfo().AppPathSeparatorString() + searchINPathParts[j];
 							}								
 							// --- Aktuellen Pfad untersuchen / vergleichen -----------
 							//System.out.println(files[i].getAbsolutePath());

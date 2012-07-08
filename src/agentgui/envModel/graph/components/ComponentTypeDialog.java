@@ -29,6 +29,7 @@
 package agentgui.envModel.graph.components;
 
 import jade.content.Concept;
+import jade.core.Agent;
 
 import java.awt.Color;
 import java.awt.ComponentOrientation;
@@ -81,13 +82,13 @@ import javax.swing.table.TableRowSorter;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.gui.ClassSelector;
 import agentgui.core.gui.imaging.MissingIcon;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
+import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 
 /**
@@ -109,6 +110,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	public final String COL_Domain 					= Language.translate("Subnetwork", Language.EN);  		//  @jve:decl-index=0:
 	public final String COL_AgentClass 				= Language.translate("Agent class", Language.EN); 		//  @jve:decl-index=0:
 	public final String COL_GraphPrototyp 			= Language.translate("Graph-prototype", Language.EN);  	//  @jve:decl-index=0:
+	public final String COL_AdapterClass 			= Language.translate("Adapter class", Language.EN);  	//  @jve:decl-index=0:
 	public final String COL_ShowLabel 				= Language.translate("Show label", Language.EN);  		//  @jve:decl-index=0:
 	public final String COL_Image 					= Language.translate("Image", Language.EN);  			//  @jve:decl-index=0:
 	public final String COL_EdgeWidth 				= Language.translate("Width", Language.EN);  			//  @jve:decl-index=0:
@@ -161,8 +163,10 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JTable jTableDomainTypes = null;
 	private DefaultTableModel domainTableModel = null;
 	
-	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  //  @jve:decl-index=0:
-	private ClassSelector ontologyClassSelector = null;
+	private TableCellEditor4ClassSelector agentClassesCellEditor = null;  		//  @jve:decl-index=0:
+	private TableCellEditor4ClassSelector ontologyClassesCellEditor = null;  	//  @jve:decl-index=0:
+	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  	//  @jve:decl-index=0:
+	private TableCellEditor4ClassSelector adapterClassesCellEditor = null;  	//  @jve:decl-index=0:
 	
 		
 	/**
@@ -308,8 +312,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			columnHeaderDomains.add(COL_D_VertexSize);
 			columnHeaderDomains.add(COL_D_VertexColor);
 			columnHeaderDomains.add(COL_D_VertexColorPicked);
-			columnHeaderDomains.add(COL_D_ClusterShape);
 			columnHeaderDomains.add(COL_D_ClusterAgent);
+			columnHeaderDomains.add(COL_D_ClusterShape);
 		}
 		return columnHeaderDomains;
 	}
@@ -341,6 +345,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			columnHeaderComponents.add(COL_TypeSpecifier);
 			columnHeaderComponents.add(COL_AgentClass);
 			columnHeaderComponents.add(COL_GraphPrototyp);
+			columnHeaderComponents.add(COL_AdapterClass);
 			columnHeaderComponents.add(COL_ShowLabel);
 			columnHeaderComponents.add(COL_Image);			
 			columnHeaderComponents.add(COL_EdgeWidth);
@@ -502,21 +507,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return jPanelRaster;
 	}
 	
-	/**
-	 * This method initializes the nodeClassSelector
-	 * @return The nodeClassSelector
-	 */
-	private ClassSelector getOntologyClassSelector(){
-		if(ontologyClassSelector == null){
-			Class<?> superClass = Concept.class;
-			String currValue = null;
-			String defaultValue = null;
-			String description = Language.translate("Ontologie-Klasse für Übergabepunkte");
-			ontologyClassSelector = new ClassSelector(Application.MainWindow, superClass, currValue, defaultValue, description);
-		}
-		return ontologyClassSelector;
-	}
-
 	/**
 	 * This method initializes jButtonConfirm	
 	 * @return javax.swing.JButton	
@@ -687,7 +677,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 
 			//Set up renderer and editor for the agent class column
 			TableColumn agentClassColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_OntologyClass));
-			agentClassColumn.setCellEditor(new TableCellEditor4OntologyClass(this.getOntologyClassSelector()));
+			agentClassColumn.setCellEditor(this.getOntologyClassesCellEditor());
 			agentClassColumn.setCellRenderer(new TableCellRenderer4Label());
 
 			//Set up renderer and editor for Graph prototype column
@@ -718,9 +708,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			clusterShapeColumn.setPreferredWidth(10);
 			
 			TableColumn clusterAgentColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_ClusterAgent));
-			clusterAgentColumn.setCellEditor(new TableCellEditor4AgentClass());
+			clusterAgentColumn.setCellEditor(this.getAgentClassesCellEditor());
 			clusterAgentColumn.setCellRenderer(new TableCellRenderer4Label());
-			
 			
 		}
 		return jTableDomainTypes;
@@ -978,13 +967,17 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 
 			//Set up renderer and editor for the agent class column
 			TableColumn agentClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_AgentClass));
-			agentClassColumn.setCellEditor(new TableCellEditor4AgentClass());
+			agentClassColumn.setCellEditor(this.getAgentClassesCellEditor());
 			agentClassColumn.setCellRenderer(new TableCellRenderer4Label());
 			
 			//Set up renderer and editor for Graph prototype column
 			TableColumn prototypeClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_GraphPrototyp));
-			prototypeClassColumn.setCellEditor(getPrototypeClassesCellEditor());
+			prototypeClassColumn.setCellEditor(this.getPrototypeClassesCellEditor());
 			prototypeClassColumn.setCellRenderer(new TableCellRenderer4Label());
+			
+			TableColumn adapterClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_AdapterClass));
+			adapterClassColumn.setCellEditor(this.getAdapterClassesCellEditor());
+			adapterClassColumn.setCellRenderer(new TableCellRenderer4Label());
 			
 			//Set up renderer and editor for show label
 			TableColumn showLabelClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_ShowLabel));
@@ -1047,6 +1040,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 							newRow.add(cts.getAgentClass());
 						} else if (i == getColumnHeaderIndexComponents(COL_GraphPrototyp)) {
 							newRow.add(cts.getGraphPrototype());
+						} else if (i == getColumnHeaderIndexComponents(COL_AdapterClass)) {
+							newRow.add(cts.getAdapterClass());
 						} else if (i == getColumnHeaderIndexComponents(COL_ShowLabel)) {
 							newRow.add(cts.isShowLabel());
 						} else if (i == getColumnHeaderIndexComponents(COL_Image)) {
@@ -1099,6 +1094,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				newRow.add(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
 			} else if (i == getColumnHeaderIndexComponents(COL_GraphPrototyp)) {
 				newRow.add(null);
+			} else if (i == getColumnHeaderIndexComponents(COL_AdapterClass)) {
+				newRow.add(null);
 			} else if (i == getColumnHeaderIndexComponents(COL_ShowLabel)) {
 				newRow.add(true);
 			} else if (i == getColumnHeaderIndexComponents(COL_Image)) {
@@ -1142,9 +1139,43 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return jButtonAddComponentRow;
 	}
 	
+	/**
+	 * Returns the ClassSelector cell editor for Agent classes.
+	 * @return cell editor for the class selection
+	 */
+	private TableCellEditor4ClassSelector getAgentClassesCellEditor(){
+		if(agentClassesCellEditor == null){
+			agentClassesCellEditor = new TableCellEditor4ClassSelector(Application.getMainWindow(), Agent.class, "", "", Language.translate("Agenten"), true);
+		}
+		return agentClassesCellEditor;
+	}
+	/**
+	 * Returns the ClassSelector cell editor for Concept classes.
+	 * @return cell editor for the class selection
+	 */
+	private TableCellEditor4ClassSelector getOntologyClassesCellEditor(){
+		if(ontologyClassesCellEditor == null){
+			ontologyClassesCellEditor = new TableCellEditor4ClassSelector(Application.getMainWindow(), Concept.class, "", "", Language.translate("Ontologie-Klasse für Übergabepunkte"), true);
+		}
+		return ontologyClassesCellEditor;
+	}
+	/**
+	 * Returns the ClassSelector cell editor for NetworkComponentAdapter classes.
+	 * @return cell editor for the class selection
+	 */
+	private TableCellEditor4ClassSelector getAdapterClassesCellEditor(){
+		if(adapterClassesCellEditor == null){
+			adapterClassesCellEditor = new TableCellEditor4ClassSelector(Application.getMainWindow(), NetworkComponentAdapter.class, "", "", Language.translate("Erweiterungsadapter für Netzwerkkomponenten"), true);
+		}
+		return adapterClassesCellEditor;
+	}
+	/**
+	 * Returns the ClassSelector cell editor for classes of GraphElementPrototype.
+	 * @return cell editor for the class selection
+	 */
 	private TableCellEditor4ClassSelector getPrototypeClassesCellEditor(){
 		if(prototypeClassesCellEditor == null){
-			prototypeClassesCellEditor = new TableCellEditor4ClassSelector(Application.MainWindow, GraphElementPrototype.class, "", "", Language.translate("Graph-Prototypen"));
+			prototypeClassesCellEditor = new TableCellEditor4ClassSelector(Application.getMainWindow(), GraphElementPrototype.class, "", "", Language.translate("Graph-Prototypen"), false);
 		}
 		return prototypeClassesCellEditor;
 	}
@@ -1208,17 +1239,17 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * @return the JComboBox for the possible cluster shapes
 	 */
 	private JComboBox getJComboBoxClusterShape() {
-		String[] clusterList = {
-				GeneralGraphSettings4MAS.SHAPE_ELLIPSE,
-				GeneralGraphSettings4MAS.SHAPE_RECTANGLE,
-				GeneralGraphSettings4MAS.SHAPE_ROUND_RECTANGLE,
-				GeneralGraphSettings4MAS.SHAPE_REGULAR_POLYGON,
-				GeneralGraphSettings4MAS.SHAPE_REGULAR_STAR };
-		DefaultComboBoxModel cbmSizes = new DefaultComboBoxModel(clusterList); 
-
-		JComboBox jComboBoxNodeSize = new JComboBox(cbmSizes);
-		jComboBoxNodeSize.setPreferredSize(new Dimension(50, 26));
-		return jComboBoxNodeSize;
+		
+		DefaultComboBoxModel cbmShape = new DefaultComboBoxModel(); 
+		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_ELLIPSE);
+		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_RECTANGLE);
+		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_ROUND_RECTANGLE);
+		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_REGULAR_POLYGON);
+		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_REGULAR_STAR);
+		
+		JComboBox jComboBoxClusterShape = new JComboBox(cbmShape);
+		jComboBoxClusterShape.setPreferredSize(new Dimension(50, 26));
+		return jComboBoxClusterShape;
 	}
 	
 	/**
@@ -1426,8 +1457,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				if(name!=null && name.length()!=0){
 					
 					String agentClass 	 = (String)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_AgentClass));
-					String domain 	 	= (String)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_Domain));
+					String domain 	 	 = (String)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_Domain));
 					String graphProto 	 = (String)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_GraphPrototyp));
+					String adapterClass	 = (String)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_AdapterClass));
 					ImageIcon imageIcon  = (ImageIcon)dtmComponents.getValueAt(row,this.getColumnHeaderIndexComponents(COL_Image));
 					String imageIconDesc = imageIcon.getDescription();
 					float edgeWidth 	 = (Float)dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_EdgeWidth));
@@ -1435,8 +1467,13 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 					String colorString 	 = String.valueOf(color.getRGB());
 					boolean showLable 	 = (Boolean) dtmComponents.getValueAt(row, this.getColumnHeaderIndexComponents(COL_ShowLabel));
 					
-					ComponentTypeSettings cts = new ComponentTypeSettings(agentClass, graphProto, imageIconDesc, colorString );
+					ComponentTypeSettings cts = new ComponentTypeSettings();
 					cts.setDomain(domain);
+					cts.setAgentClass(agentClass);
+					cts.setGraphPrototype(graphProto);
+					cts.setAdapterClass(adapterClass);
+					cts.setEdgeImage(imageIconDesc);
+					cts.setColor(colorString);
 					cts.setEdgeWidth(edgeWidth);
 					cts.setShowLabel(showLable);
 

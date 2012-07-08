@@ -149,7 +149,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		
 		this.setVisible(true);
 		this.moveToFront();		
-		Application.MainWindow.getJDesktopPane4Projects().add(this);		
+		Application.getMainWindow().getJDesktopPane4Projects().add(this);		
 	}
 
 	/* (non-Javadoc)
@@ -396,19 +396,19 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	private void tabMaximize() {
 
 		// --- Maximize the main window ---------------------------------------
-		Application.MainWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		Application.getMainWindow().setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 		// --- Open a new JInteraFrame with the current tab enlarged ---------- 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				JDesktopPane appDesktop = Application.MainWindow.getJDesktopPane4Projects();
+				JDesktopPane appDesktop = Application.getMainWindow().getJDesktopPane4Projects();
 				if (maxTab==null) {
 					appDesktop.add(getMaximizedTab());	
-					Application.MainWindow.addJToolbarComponent(getMaximizedTab().getJButtonRestore4MainToolBar());
+					Application.getMainWindow().addJToolbarComponent(getMaximizedTab().getJButtonRestore4MainToolBar());
 				}
 				
-				DesktopManager dtm = Application.MainWindow.getJDesktopPane4Projects().getDesktopManager();
+				DesktopManager dtm = Application.getMainWindow().getJDesktopPane4Projects().getDesktopManager();
 				if (dtm!=null) {
 					dtm.activateFrame(getMaximizedTab());
 					dtm.maximizeFrame(getMaximizedTab());
@@ -426,7 +426,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		if (this.maxTab!=null) {
 
 			// --- Remove toolbar button --------------------------------------
-			Application.MainWindow.removeJToolbarComponent(getMaximizedTab().getJButtonRestore4MainToolBar());
+			Application.getMainWindow().removeJToolbarComponent(getMaximizedTab().getJButtonRestore4MainToolBar());
 			this.maxTab.setVisible(false);
 
 			// --- Place the enlarged tab back to the other one ---------------
@@ -445,8 +445,8 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			this.isMaximizedTab = false;			
 
 			// --- Refresh view -----------------------------------------------
-			Application.MainWindow.validate();
-			Application.MainWindow.repaint();
+			Application.getMainWindow().validate();
+			Application.getMainWindow().repaint();
 			
 		}
 	}

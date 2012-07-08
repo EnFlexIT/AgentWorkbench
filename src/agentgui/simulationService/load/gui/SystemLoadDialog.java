@@ -54,7 +54,7 @@ public class SystemLoadDialog extends JFrame {
 
 private static final long serialVersionUID = 1L;
 	
-	final static String PathImage = Application.RunInfo.PathImageIntern();
+	final static String PathImage = Application.getGlobalInfo().PathImageIntern();
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 
@@ -72,7 +72,7 @@ private static final long serialVersionUID = 1L;
 	private void initialize() {
 		this.setSize(620, 120);
 		this.setIconImage(imageAgentGUI);
-	    this.setTitle(Application.RunInfo.getApplicationTitle() + ": " + Language.translate("Load Monitor"));
+	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Load Monitor"));
 		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
 
 		// --- Set the Look and Feel of the Dialog ------------------
@@ -95,7 +95,7 @@ private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private void setLookAndFeel() {
  
-		String lnfClassname = Application.RunInfo.getAppLnF();
+		String lnfClassname = Application.getGlobalInfo().getAppLnF();
 		try {
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();

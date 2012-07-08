@@ -32,6 +32,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 /**
  * This class represents a component of the modelled network. It contains its' ontology representation, its' GraphElementPrototype, the nodes and edges representing it in the environment graph and an
  * ID for easier access.
@@ -57,16 +59,14 @@ public class NetworkComponent implements Serializable {
 	protected String prototypeClassName;
 	/** The NetworkComponent's GraphElementPrototype class name. */
 	protected String agentClassName;
-
+	/** The direction(s) of the edge(s). */
 	protected HashMap<String, GraphEdgeDirection> edgeDirections;
 	
-	
-	/**
-	 * The ontology object instance representing this component, serialized 
-	 * as a base64 encoded String for saving via JAXB.
-	 */
-	private String encodedOntologyRepresentation;
-	
+	/**	The data model for this NetworkComponent.*/
+	@XmlTransient
+	protected Object dataModel;
+	/** The data model for this NetworkComponent encoded as Base64 String*/
+	protected String dataModelBase64;
 	
 	/**
 	 * Instantiates a new network component.
@@ -100,6 +100,8 @@ public class NetworkComponent implements Serializable {
 		NetworkComponent copy = new NetworkComponent(this.id, this.type, this.prototypeClassName, this.agentClassName, null, this.directed);
 		HashSet<String> gaphElementIDs = new HashSet<String>(this.getGraphElementIDs());
 		copy.setGraphElementIDs(gaphElementIDs);
+		copy.setDataModel(this.dataModel);
+		copy.setDataModelBase64(this.dataModelBase64);
 		return copy;
 	}
 	
@@ -209,21 +211,6 @@ public class NetworkComponent implements Serializable {
 	}
 
 	/**
-	 * Gets the encoded ontology representation.
-	 * @return the encodedOntologyRepresentation
-	 */
-	public String getEncodedOntologyRepresentation() {
-		return encodedOntologyRepresentation;
-	}
-	/**
-	 * Sets the encoded ontology representation.
-	 * @param encodedOntologyRepresentation the encodedOntologyRepresentation to set
-	 */
-	public void setEncodedOntologyRepresentation(String encodedOntologyRepresentation) {
-		this.encodedOntologyRepresentation = encodedOntologyRepresentation;
-	}
-	
-	/**
 	 * Returns the current edge directions.
 	 * @return the edgeDirections
 	 */
@@ -237,5 +224,36 @@ public class NetworkComponent implements Serializable {
 	public void setEdgeDirections(HashMap<String, GraphEdgeDirection> edgeDirections) {
 		this.edgeDirections = edgeDirections;
 	}
+
+	/**
+	 * Gets the data model instance.
+	 * @return the data model instance
+	 */
+	@XmlTransient
+	public Object getDataModel() {
+		return dataModel;
+	}
+	/**
+	 * Sets the data model instance.
+	 * @param dataModel the new data model instance
+	 */
+	public void setDataModel(Object dataModel) {
+		this.dataModel = dataModel;
+	}
+	
+	/**
+	 * Returns the data model Base64 encoded.
+	 * @return the dataModelBase64
+	 */
+	public String getDataModelBase64() {
+		return dataModelBase64;
+	}
+	/**
+	 * Sets the data model Base64 encoded.
+	 * @param dataModelBase64 the dataModelBase64 to set
+	 */
+	public void setDataModelBase64(String dataModelBase64) {
+		this.dataModelBase64 = dataModelBase64;
+	}	
 	
 }

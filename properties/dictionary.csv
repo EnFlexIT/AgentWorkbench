@@ -76,6 +76,7 @@ de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'
 de;Bitte wählen Sie das gewünschte Projekt aus!;Please select the desired project!
 de;Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please select the ontology, which has to be added to your project!
 de;Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.;Please select one of the mapped ontology references from the list.;;;
+de;Bitte wählen Sie eine einzelne Netzwerkkomponente !;Please select a single network component!;;;
 de;Bitte wählen Sie einen Namen für den Agenten!;Please choose a name for the agent!
 de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please check your database settings!
 de;CPU-Auslastung;CPU-Load
@@ -132,6 +133,7 @@ de;Entferne Hindernis;Remove obstacle
 de;Entfernen;Remove;;;
 de;Entpacke;Unpacking
 de;Entwickler-Ansicht;Developer view
+de;Erweiterungsadapter für Netzwerkkomponenten;Extension adapter for network components;;;
 de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
 de;Externe jar-Ressourcen;External jar resources;;;
@@ -297,6 +299,7 @@ de;Neues Setup anlegen ...;Create new setup ...
 de;Neuinitialsierung des Anwendungsfensters ...;Re-initialization of the application window ...;;;
 de;Neustart des Server-Dienstes;Restart the server
 de;Nicht definiert;Not defined
+de;Nicht eindeutige Komponentenauswahl !;Non-unique component selection !;;;
 de;Nur Nicht-JADE-Ontologien;Only non-JADE ontologies
 de;Nächster Datensatz (STRG+DOWN);Next Record (CTRL + DOWN)
 de;OK;OK
@@ -504,6 +507,7 @@ de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
 en;;Count;;;
+en;;Discrete squares environment;;;
 en;;External Type;;;
 en;;Merge nodes;;;
 en;;Please, select the network component that you would like to add!;;;
@@ -514,6 +518,7 @@ en;;Set mapping of external types to local components;;;
 en;;Undo Action;;;
 en;;Use Shift and click on two vertices at least!;;;
 en;Abbruch;Cancel;;;
+en;Adapter-Klasse;Adapter class;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktuelles Bild entfernen;Remove current image;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;

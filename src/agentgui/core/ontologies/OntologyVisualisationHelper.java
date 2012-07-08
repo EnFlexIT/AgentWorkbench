@@ -40,34 +40,56 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Application;
-import agentgui.core.project.Project;
 
 /**
  * This class is used for the management of the used ontologies inside a project.
  * It can add or remove further (sub)-ontologies in order to reduce the effort 
- * of building your own complex ontology
+ * of building your own complex ontology.<b>
+ * Basically this class will evaluate the ontologies given by the Vector of
+ * references to the ontologies. One result will be the DefaultTreeMap, which
+ * allows the visualisation of the ontologies as tree. The other will be a
+ * DefaultTableModel, which can be used in order to display the slots of a
+ * specified sub class of an ontology . 
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class Ontologies4Project extends HashMap<String, OntologyClass> {
+public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> {
 
 	private static final long serialVersionUID = 2055269152886396404L;
 	
-	private Project currProject;
+	private Vector<String> subOntologies = null;
 	private DefaultTreeModel projectOntologyTree = null;
+	
 	private boolean hasErrors = false;
 	private ArrayList<String> errorStack = new ArrayList<String>();
 		
 	/**
 	 * Constructor of the Class.
 	 *
-	 * @param project the project
+	 * @param subOntologies the Vector of references to sub ontologies
+	 * @param pathesOfExternalResources the paths of external jar resources
 	 */
-	public Ontologies4Project(Project project) {
-		currProject = project;	
+	public OntologyVisualisationHelper(Vector<String> subOntologies) {
+		this.subOntologies = subOntologies;	
 		this.setOntologyTree();
 	}
 	
+	/**
+	 * Returns the references of the sub ontologies.
+	 * @return the subOntologies
+	 */
+	public Vector<String> getSubOntologies() {
+		return subOntologies;
+	}
+	/**
+	 * Sets the references of the sub ontologies.
+	 * @param subOntologies the subOntologies to set
+	 */
+	public void setSubOntologies(Vector<String> subOntologies) {
+		this.subOntologies = subOntologies;
+		this.setOntologyTree();
+	}
+
 	/**
 	 * This method sets the whole TreeModel for the project ontology, which
 	 * can consist of one or more Sub-Ontologies.
@@ -79,13 +101,13 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		Vector<String> subOntologiesCorrected = new Vector<String>();
 		
 		// --- Run through Sub-Ontologies -----------------------
-		Iterator<String> it = currProject.subOntologies.iterator();
+		Iterator<String> it = this.subOntologies.iterator();
 		while (it.hasNext()) {
 			// --- Get reference of current Sub-Ontology --------
 			String subOntologyReference = it.next();	
 			// --- Build OntologyClass-Object for Ontology ------
-			OntologyClass onCla = new OntologyClass(currProject, subOntologyReference);
-			// --- Remember this class localy -------------------
+			OntologyClass onCla = new OntologyClass(subOntologyReference);
+			// --- Remember this class locally ------------------
 			this.put(onCla.getOntologyMainClass(), onCla);
 			subOntologiesCorrected.add(onCla.getOntologyMainClass());
 		}
@@ -94,7 +116,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		// --- because of the possible missing Main-Class inside the Ontology-Reference.    ---
 		// --- E.g. it is possible to point to an Ontology by just using 'contmas.ontology' ---
 		// ------------------------------------------------------------------------------------
-		currProject.subOntologies = subOntologiesCorrected;
+		this.subOntologies = subOntologiesCorrected;
 
 		// --- Build the OntologyTree (DefaultTreeModel) --------
 		this.buildOntologyTree();
@@ -116,7 +138,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		this.errorStack = new ArrayList<String>();
 		
 		// --- Run through Sub-Ontologies -----------------------
-		Iterator<String> it = currProject.subOntologies.iterator();
+		Iterator<String> it = this.subOntologies.iterator();
 		while (it.hasNext()) {
 			// --- Get reference of current Sub-Ontology --------
 			String subOntologyReference = it.next();	
@@ -183,9 +205,9 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	 * @param newSubOntology the new sub ontology
 	 */
 	public void addSubOntology (String newSubOntology) {
-		OntologyClass onCla = new OntologyClass(currProject, newSubOntology);
-		if ( currProject.subOntologies.contains(onCla.getOntologyMainClass())==false) {
-			currProject.subOntologies.add(onCla.getOntologyMainClass());	
+		OntologyClass onCla = new OntologyClass(newSubOntology);
+		if (this.subOntologies.contains(onCla.getOntologyMainClass())==false) {
+			this.subOntologies.add(onCla.getOntologyMainClass());	
 		}		
 		this.put(onCla.getOntologyMainClass(), onCla);
 		this.buildOntologyTree();
@@ -194,11 +216,11 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	/**
 	 * Removes a sub-ontology from the current project.
 	 *
-	 * @param removableSubOntology the removable sub ontology
+	 * @param subOntology2Remove the removable sub ontology
 	 */
-	public void removeSubOntology (String removableSubOntology) {
-		currProject.subOntologies.remove(removableSubOntology);
-		this.remove(removableSubOntology);
+	public void removeSubOntology (String subOntology2Remove) {
+		this.subOntologies.remove(subOntology2Remove);
+		this.remove(subOntology2Remove);
 		this.buildOntologyTree();
 	}
 	
@@ -215,7 +237,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		for (int i =0; i<allOntos.size(); i++) {
 			Class<?> currClass = allOntos.get(i);
 			String currClassName = currClass.getName();
-			if ( this.get(currClassName)==null && currClassName.endsWith(Application.RunInfo.getFileNameProjectOntology())==false ) {
+			if ( this.get(currClassName)==null && currClassName.endsWith(Application.getGlobalInfo().getFileNameProjectOntology())==false ) {
 				filteredOntos.add(currClass);
 			}
 		}
@@ -237,13 +259,13 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		
 		if (classReference2Search.equals(OntologyClassTree.BaseClassAID)) {
 			// --- Just get the first ontology we can get ----------------
-			String subOntoMainClas = currProject.subOntologies.get(0);
+			String subOntoMainClas = this.subOntologies.get(0);
 			onCla = this.get(subOntoMainClas);
 			searchSrcClass = "AID";
 			
 		} else {
 			// --- Get the designated ontology class ---------------------
-			Iterator<String> it = currProject.subOntologies.iterator();
+			Iterator<String> it = this.subOntologies.iterator();
 			while (it.hasNext()) {
 				String subOntoMainClas = it.next();	
 				onCla = this.get(subOntoMainClas);
@@ -326,7 +348,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 	 */
 	private class ErrorCheck {
 
-		private Ontologies4Project currProjectOntology;
+		private OntologyVisualisationHelper currProjectOntology;
 		
 		private ArrayList<String> mergerConcepts = new ArrayList<String>();
 		private ArrayList<String> mergerAgentActions =  new ArrayList<String>();
@@ -348,7 +370,7 @@ public class Ontologies4Project extends HashMap<String, OntologyClass> {
 		 *
 		 * @param projectOntology the project ontology
 		 */
-		public ErrorCheck(Ontologies4Project projectOntology) {
+		public ErrorCheck(OntologyVisualisationHelper projectOntology) {
 			
 			currProjectOntology = projectOntology;
 			if (currProjectOntology.size()>1) {

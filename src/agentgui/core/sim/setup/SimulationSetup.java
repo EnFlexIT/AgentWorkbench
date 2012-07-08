@@ -169,7 +169,7 @@ import agentgui.core.project.Project;
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
 		    try  {
-		    	String binFileName = Application.RunInfo.getBinFileNameFromXmlFileName(currProject.simulationSetups.getCurrSimXMLFile()); 
+		    	String binFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currProject.simulationSetups.getCurrSimXMLFile()); 
 		    	fos = new FileOutputStream(binFileName);
 		    	out = new ObjectOutputStream(fos);
 		    	out.writeObject(this.userRuntimeObject);

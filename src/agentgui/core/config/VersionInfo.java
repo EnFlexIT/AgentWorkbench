@@ -112,7 +112,7 @@ public class VersionInfo extends Properties {
 		}
 		
 		if (includeApplicationTitle) {
-			versionInfo += Application.RunInfo.getApplicationTitle() + newLineString;	
+			versionInfo += Application.getGlobalInfo().getApplicationTitle() + newLineString;	
 		}
 
 		versionInfo += this.getVersionMajor() + "." + this.getVersionMinor() + newLineString;

@@ -84,8 +84,8 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = -3929823093128900880L;
 	
-	private String newLine = Application.RunInfo.AppNewLineString();  //  @jve:decl-index=0:
-	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
+	private String newLine = Application.getGlobalInfo().AppNewLineString();  //  @jve:decl-index=0:
+	private final String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
 	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );  //  @jve:decl-index=0:
 	
 	@SuppressWarnings("unused")
@@ -374,7 +374,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 							jTextFieldStartAs.setText(agentSelected.getStartAsName());
 
 							// --- Show OntologyInstanceViewer for this agent -
-							OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject, agentSelected.getAgentClassReference());
+							OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getOntologyVisualisationHelper(), currProject.agentConfig, agentSelected.getAgentClassReference());
 							oiv.setConfigurationXML(agentSelected.getStartArguments());
 							setOntologyInstView(oiv);
 
@@ -396,14 +396,12 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	 * set the needed blank {@link OntologyInstanceViewer} 
 	 */
 	private void setJListStartListEmptySelection() {
-		
-		agentSelectedLast = null;
-		jListStartList.setSelectedValue(null, false);
-		
-		OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject);
+		this.agentSelectedLast = null;
+		this.jListStartList.setSelectedValue(null, false);
+		OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getOntologyVisualisationHelper());
 		setOntologyInstView(oiv);
-		
 	}
+
 	/**
 	 * This method initializes jButtonAgentAdd	
 	 * @return javax.swing.JButton	
@@ -666,7 +664,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		Integer startCounter = jListModelAgents2Start.size() + 1;
 
 		// ==================================================================
-		AgentSelector agentSelector = new AgentSelector(Application.MainWindow);
+		AgentSelector agentSelector = new AgentSelector(Application.getMainWindow());
 		agentSelector.setVisible(true);
 		// ==================================================================
 		
@@ -752,7 +750,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		agentSelectedLast = null;
 
 		jTextFieldStartAs.setText(null);
-		OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject);
+		OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getOntologyVisualisationHelper());
 		this.setOntologyInstView(oiv);
 		
 	}

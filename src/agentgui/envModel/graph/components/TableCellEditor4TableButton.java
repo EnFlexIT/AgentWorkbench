@@ -41,8 +41,6 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
-import agentgui.envModel.graph.controller.OntologySettingsDialog;
-import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 
@@ -86,15 +84,10 @@ public class TableCellEditor4TableButton extends AbstractCellEditor implements T
 		String compID = (String) componentsTable.getModel().getValueAt(modelRowIndex, 0);
 		
 		NetworkComponent comp = graphController.getNetworkModelAdapter().getNetworkComponent(compID);
-		if (comp instanceof ClusterNetworkComponent) {
-			// --- A ClusterNetworkComponent was selected -----------
-			NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_SelectClusterComponent);
-			nmn.setInfoObject(comp);
-			graphController.notifyObservers(nmn);
-		} else {
-			// --- Another NetworkComponent was selected ------------
-			new OntologySettingsDialog(graphController.getProject(), graphController, comp).setVisible(true);	
-		}
+
+		NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
+		nmn.setInfoObject(comp);
+		graphController.notifyObservers(nmn);
 		
     }
 

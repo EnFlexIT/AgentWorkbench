@@ -70,7 +70,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	final static String PathImage = Application.RunInfo.PathImageIntern();
+	final static String PathImage = Application.getGlobalInfo().PathImageIntern();
 	
 	private Project currProject;
 	private JSplitPane OntoSplitPane = null;
@@ -154,7 +154,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	private JTree getOntoTree() {
 		if (OntoTree == null) {
 			//OntoTree = new JTree( CurrProject.Ontology.getOntologyTree() );
-			OntoTree = new JTree( currProject.ontologies4Project.getOntologyTree() );
+			OntoTree = new JTree( currProject.getOntologyVisualisationHelper().getOntologyTree() );
 			OntoTree.setName("OntoTree");
 			OntoTree.setShowsRootHandles(false);
 			OntoTree.setRootVisible(true);
@@ -189,7 +189,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
     	Integer CurrNodeLevel = 1;
     	if ( Up2TreeLevel == null ) 
     		Up2TreeLevel = 1000;
-    	OntoTreeExpand( new TreePath( currProject.ontologies4Project.getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
+    	OntoTreeExpand( new TreePath( currProject.getOntologyVisualisationHelper().getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
     }
     
 	private void OntoTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
@@ -319,7 +319,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 		if ( ActCMD.equals("OntologieAdd") ) {
 			// --- Ontologie hinzufgen ------------------------------
 			String ActionTitel = Language.translate("Ontologie hinzufügen"); 
-			OntologieSelector onSel = new OntologieSelector( Application.MainWindow, currProject.getProjectName() + ": " + ActionTitel,true );			
+			OntologieSelector onSel = new OntologieSelector( Application.getMainWindow(), currProject.getProjectName() + ": " + ActionTitel,true );			
 			onSel.setVisible(true);
 			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
 			if ( onSel.isCanceled() == true ) {
@@ -337,7 +337,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			if ( OntoTree.isSelectionEmpty() ) {
 				MsgHead = Language.translate("Fehlende Auswahl !");
 				MsgText = Language.translate("Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!");			
-				JOptionPane.showInternalMessageDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showInternalMessageDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 			DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) OntoTree.getSelectionPath().getLastPathComponent();
@@ -360,7 +360,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 		String ObjectName = OName.toString();
 		if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectOntology ) ) {
 			// --- Ansicht auf die projekt-Ontologie aktualisieren --
-			this.OntoTree.setModel( currProject.ontologies4Project.getOntologyTree() );
+			this.OntoTree.setModel( currProject.getOntologyVisualisationHelper().getOntologyTree() );
 			this.OntoTreeExpand2Level(4, true);
 		} else {
 			//System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);

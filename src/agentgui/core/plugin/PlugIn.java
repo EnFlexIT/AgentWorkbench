@@ -136,7 +136,7 @@ public abstract class PlugIn implements Observer {
 	 * @param myMenu the my menu
 	 */
 	protected void addJMenu(JMenu myMenu) {
-		Application.MainWindow.addJMenu(myMenu);
+		Application.getMainWindow().addJMenu(myMenu);
 		customJComponent.add(myMenu);
 	}
 	
@@ -148,7 +148,7 @@ public abstract class PlugIn implements Observer {
 	 * @param indexPosition the index position
 	 */
 	protected void addJMenu(JMenu myMenu, int indexPosition) {
-		Application.MainWindow.addJMenu(myMenu, indexPosition);
+		Application.getMainWindow().addJMenu(myMenu, indexPosition);
 		customJComponent.add(myMenu);
 	}
 	
@@ -160,7 +160,7 @@ public abstract class PlugIn implements Observer {
 	 * @param myMenuItemComponent the my menu item component
 	 */
 	protected void addJMenuItemComponent(JMenu menu2add, JComponent myMenuItemComponent) {
-		Application.MainWindow.addJMenuItemComponent(menu2add, myMenuItemComponent);
+		Application.getMainWindow().addJMenuItemComponent(menu2add, myMenuItemComponent);
 		customJComponent.add(myMenuItemComponent);
 	}
 	
@@ -173,7 +173,7 @@ public abstract class PlugIn implements Observer {
 	 * @param indexPosition the index position
 	 */
 	protected void addJMenuItemComponent(JMenu menu2add, JComponent myMenuItemComponent, int indexPosition) {
-		Application.MainWindow.addJMenuItemComponent(menu2add, myMenuItemComponent, indexPosition);
+		Application.getMainWindow().addJMenuItemComponent(menu2add, myMenuItemComponent, indexPosition);
 		customJComponent.add(myMenuItemComponent);
 	}
 	
@@ -184,7 +184,7 @@ public abstract class PlugIn implements Observer {
 	 * @param myComponent the my component
 	 */
 	protected void addJToolbarComponent(JComponent myComponent) {
-		Application.MainWindow.addJToolbarComponent(myComponent);
+		Application.getMainWindow().addJToolbarComponent(myComponent);
 		customJComponent.add(myComponent);
 	}
 	
@@ -196,7 +196,7 @@ public abstract class PlugIn implements Observer {
 	 * @param indexPosition the index position
 	 */
 	protected void addJToolbarComponent(JComponent myComponent, int indexPosition) {
-		Application.MainWindow.addJToolbarComponent(myComponent,indexPosition);
+		Application.getMainWindow().addJToolbarComponent(myComponent,indexPosition);
 		customJComponent.add(myComponent);
 	}
 	
@@ -233,7 +233,7 @@ public abstract class PlugIn implements Observer {
 	 */
 	protected void addEnvironmentType(EnvironmentType envType) {
 		if (envType!=null) {
-			Application.RunInfo.addEnvironmentType(envType);	
+			Application.getGlobalInfo().addEnvironmentType(envType);	
 			project.getEnvironmentsComboBoxModel().addElement(envType);
 			customEnvironmentTypes.add(envType);
 		}
@@ -266,10 +266,10 @@ public abstract class PlugIn implements Observer {
 				this.project.setEnvironmentModelName("none");
 			}
 			project.getEnvironmentsComboBoxModel().removeElement(envType);
-			Application.RunInfo.removeEnvironmentType(envType);
+			Application.getGlobalInfo().removeEnvironmentType(envType);
 		}
 		// --- validate/repaint the CorwWindow ------------
-		Application.MainWindow.validate();
+		Application.getMainWindow().validate();
 	}
 	// --------------------------------------------------------------
 	// --- Handling of custom elements for the GUI -------- END -----

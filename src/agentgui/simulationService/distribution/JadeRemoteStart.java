@@ -73,14 +73,14 @@ public class JadeRemoteStart extends Thread {
 	private String jadeShowGUIAgentName = "rma."; 
 	private String jadeServices = "jade.core.event.NotificationService;jade.core.mobility.AgentMobilityService;mas.service.SimulationService;";
 	private String jadeHost = "localhost";
-	private String jadePort = Application.RunInfo.getJadeLocalPort().toString();
+	private String jadePort = Application.getGlobalInfo().getJadeLocalPort().toString();
 	private String jadeContainerName = "remote";
 	
 	private ArrayList jadeJarInclude = null;
 	private ArrayList jadeJarIncludeClassPath = new ArrayList();
 	private File extJarFolder = null; 
 	
-	private final String pathBaseDir = Application.RunInfo.PathBaseDir();
+	private final String pathBaseDir = Application.getGlobalInfo().PathBaseDir();
 	
 	/**
 	 * Default constructor.
@@ -125,8 +125,8 @@ public class JadeRemoteStart extends Thread {
 	 */
 	private void handelExternalJars() {
 		
-		String pathSep = Application.RunInfo.AppPathSeparatorString();
-		String destinPath = Application.RunInfo.PathDownloads(false);
+		String pathSep = Application.getGlobalInfo().AppPathSeparatorString();
+		String destinPath = Application.getGlobalInfo().PathDownloads(false);
 		String projectSubFolder = null;
 		String downloadProtocol = "";
 		
@@ -310,7 +310,7 @@ public class JadeRemoteStart extends Thread {
 		
 		// -----------------------------------------------------
 		// --- Agent.GUI with its integrated libraries ---------
-		String agentGuiJar = Application.RunInfo.AppFileRunnableJar(false);
+		String agentGuiJar = Application.getGlobalInfo().AppFileRunnableJar(false);
 		agentGuiJar = agentGuiJar.replace("\\", "/");
 		classPath += "./" + agentGuiJar + ";";
 		

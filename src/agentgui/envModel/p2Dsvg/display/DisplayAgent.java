@@ -177,7 +177,7 @@ public class DisplayAgent extends Agent {
 			public void actionPerformed(ActionEvent e) {
 				play = !play;
 				envHelper.setRunning(play);
-				String pathImage = Application.RunInfo.PathImageIntern();
+				String pathImage = Application.getGlobalInfo().PathImageIntern();
 				Icon icon = null;
 				if (play) {
 					icon = new ImageIcon(getClass().getResource(

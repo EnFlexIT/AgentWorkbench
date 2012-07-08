@@ -53,10 +53,10 @@ public class BenchmarkMeasurement extends Thread {
 
 	private BenchmarkMonitor benchGUI = null;
 	
-	private float benchValueOld = Application.RunInfo.getBenchValue();
-	private boolean benchAllwaysSkip = Application.RunInfo.isBenchAllwaysSkip();
+	private float benchValueOld = Application.getGlobalInfo().getBenchValue();
+	private boolean benchAllwaysSkip = Application.getGlobalInfo().isBenchAllwaysSkip();
 	private boolean forceBench = false;
-	private String benchExecOn = Application.RunInfo.getBenchExecOn();
+	private String benchExecOn = Application.getGlobalInfo().getBenchExecOn();
 	
 	private String nowExecOn = null;
 	
@@ -96,7 +96,7 @@ public class BenchmarkMeasurement extends Thread {
 		// --- Kriterium für einen vorzeitigen Ausstieg ---
 		if ( this.benchValueOld>0 && this.nowExecOn.equalsIgnoreCase(this.benchExecOn) && this.benchAllwaysSkip==true && forceBench==false) {
 			// --- Nach Agent-, Ontology- und BaseService - Classes suchen ----
-			Application.benchmarkIsRunning = false;
+			Application.setBenchmarkRunning(false);
 			if (Application.ClassDetector == null) {
 				Application.ClassDetector = new ClassSearcher();
 			}			
@@ -104,10 +104,10 @@ public class BenchmarkMeasurement extends Thread {
 		}  
 		
 		// --- Benchmark-Monitor initialisieren -----------
-		if (Application.MainWindow==null) {
+		if (Application.getMainWindow()==null) {
 			benchGUI = new BenchmarkMonitor(null);	
 		} else {
-			benchGUI = new BenchmarkMonitor(Application.MainWindow);	
+			benchGUI = new BenchmarkMonitor(Application.getMainWindow());	
 		}		
 		
 		// --- Eingriffsmöglichkeit für den Nutzer --------
@@ -172,10 +172,10 @@ public class BenchmarkMeasurement extends Thread {
 
 		// --- Ergebnis im LoadMeasurThread speichern -----
 		LoadMeasureThread.setCompositeBenchmarkValue(result);
-		Application.RunInfo.setBenchValue(result);
-		Application.RunInfo.setBenchExecOn(nowExecOn);
-		Application.RunInfo.setBenchAllwaysSkip(benchAllwaysSkip);
-		Application.Properties.save();
+		Application.getGlobalInfo().setBenchValue(result);
+		Application.getGlobalInfo().setBenchExecOn(nowExecOn);
+		Application.getGlobalInfo().setBenchAllwaysSkip(benchAllwaysSkip);
+		Application.getFileProperties().save();
 		
 		// --- Anzeige für den Fortschritt --- OFF --------
 		benchGUI.setBenchmarkValue(result);
@@ -185,7 +185,7 @@ public class BenchmarkMeasurement extends Thread {
 			sleepE.printStackTrace();
 		}
 		this.closeGUI();
-		Application.benchmarkIsRunning = false;
+		Application.setBenchmarkRunning(false);
 		
 		// --- Nach Agent-, Ontology- und BaseService - Classes suchen ----
 		if (Application.ClassDetector == null) {
@@ -201,14 +201,14 @@ public class BenchmarkMeasurement extends Thread {
 	private boolean isSkipAction() {
 		
 		if (benchGUI.actionSkipAllways == true) {
-			Application.RunInfo.setBenchAllwaysSkip(true);
+			Application.getGlobalInfo().setBenchAllwaysSkip(true);
 			this.closeGUI();
-			Application.benchmarkIsRunning = false;
+			Application.setBenchmarkRunning(false);
 			return true;
 		}
 		if (benchGUI.actionSkip==true) {
 			this.closeGUI();
-			Application.benchmarkIsRunning = false;
+			Application.setBenchmarkRunning(false);
 			return true;
 		}		
 		return false;

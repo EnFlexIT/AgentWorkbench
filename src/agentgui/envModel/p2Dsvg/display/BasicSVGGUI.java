@@ -57,7 +57,7 @@ import agentgui.core.application.Language;
 public class BasicSVGGUI extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
+	private final String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
 	private JPanel pnlZoom = null;
 	private JButton btnZoomIn = null;
 	private JButton btnZoomOut = null;

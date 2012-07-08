@@ -35,17 +35,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * Wrapper class encapsulating a HashMap of NetworkComponents. Its' only 
  * purpose is saving a list of NetworkComponents via JAXB.
+ * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen 
- *
  */
 @XmlRootElement
 public class NetworkComponentList {
+
 	private HashMap<String, NetworkComponent> componentList;
+	
+	
 	/**
 	 * Default constructor, required for JAXB
 	 */
 	public NetworkComponentList(){
-		
 	}
 	/**
 	 * Constructor
@@ -55,19 +57,20 @@ public class NetworkComponentList {
 		this.componentList = componentList;
 	}
 
+	
 	/**
+	 * Gets the component list.
 	 * @return the componentList
 	 */
 	public HashMap<String, NetworkComponent> getComponentList() {
 		return componentList;
 	}
-
 	/**
+	 * Sets the component list.
 	 * @param componentList the componentList to set
 	 */
 	public void setComponentList(HashMap<String, NetworkComponent> componentList) {
 		this.componentList = componentList;
 	}
-	
 	
 }

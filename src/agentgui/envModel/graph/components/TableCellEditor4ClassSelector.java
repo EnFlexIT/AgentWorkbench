@@ -62,17 +62,20 @@ public class TableCellEditor4ClassSelector extends AbstractCellEditor implements
 	 * @param clazz2Search4DefaultValue the clazz2 search4 default value
 	 * @param clazz2Search4Description the clazz2 search4 description
 	 */
-	public TableCellEditor4ClassSelector(Frame owner, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description){
+	public TableCellEditor4ClassSelector(Frame owner, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull){
 		
-		classSelector = new ClassSelector(owner, clazz2Search4, clazz2Search4CurrentValue, clazz2Search4DefaultValue, clazz2Search4Description);
+		classSelector = new ClassSelector(owner, clazz2Search4, clazz2Search4CurrentValue, clazz2Search4DefaultValue, clazz2Search4Description, allowNull);
+		
 		JButton btnOk = classSelector.getJButtonOK(); 
-		
 		btnOk.removeActionListener(btnOk.getActionListeners()[0]);
 		btnOk.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				classSelector.handleOkClick();
 				currentClass = classSelector.getClassSelected();
+				if (currentClass.equals("")) {
+					currentClass = null;
+				}
 				fireEditingStopped();
 			}
 		});

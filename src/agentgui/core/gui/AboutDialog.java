@@ -74,7 +74,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5882844235988801425L;
 	
-	private final String PathImage = Application.RunInfo.PathImageIntern();
+	private final String PathImage = Application.getGlobalInfo().PathImageIntern();
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 	
@@ -142,15 +142,15 @@ public class AboutDialog extends JDialog implements ActionListener{
 		
 		// --- Set the Look and Feel of the Dialog ------------------
 		if (Application.isServer==true) {
-			if (Application.RunInfo.getAppLnF()!=null) {
-				setLookAndFeel(Application.RunInfo.getAppLnF());
+			if (Application.getGlobalInfo().getAppLnF()!=null) {
+				setLookAndFeel(Application.getGlobalInfo().getAppLnF());
 			}
 		}
 
 		// --- Übersetzungen einstellen -----------------------------
-		this.setTitle( Application.RunInfo.getApplicationTitle() );
-		jLabelTitle.setText( Application.RunInfo.getApplicationTitle());
-		jLabelVersion.setText("Version: " +  Application.Version.getFullVersionInfo(false, " "));
+		this.setTitle( Application.getGlobalInfo().getApplicationTitle() );
+		jLabelTitle.setText( Application.getGlobalInfo().getApplicationTitle());
+		jLabelVersion.setText("Version: " +  Application.getVersionInfo().getFullVersionInfo(false, " "));
 		jLabelCopyright3.setText(Language.translate("Alle Rechte vorbehalten."));
 		
 		// --- Dialog zentrieren ------------------------------------
@@ -266,16 +266,16 @@ public class AboutDialog extends JDialog implements ActionListener{
 	private void setLookAndFeel( String NewLnF ) {
 		// --- Look and fell einstellen --------------- 
 		if ( NewLnF == null ) return;		
-		Application.RunInfo.setAppLnf( NewLnF );
+		Application.getGlobalInfo().setAppLnf( NewLnF );
 		try {
-			String lnfClassname = Application.RunInfo.getAppLnF();
+			String lnfClassname = Application.getGlobalInfo().getAppLnF();
 			if (lnfClassname == null)
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 				UIManager.setLookAndFeel(lnfClassname);
 				SwingUtilities.updateComponentTreeUI(this);				
 		} 
 		catch (Exception e) {
-				System.err.println("Cannot install " + Application.RunInfo.getAppLnF()
+				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF()
 					+ " on this platform:" + e.getMessage());
 		}
 	}

@@ -89,7 +89,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private final String pathImage = Application.RunInfo.PathImageIntern();
+	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
 	
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( pathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
@@ -105,7 +105,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	private JSplitPane jSplitPane4ProjectDesktop;
 	private JDesktopPane jDesktopPane4Projects;	
 	private JTabbedPane4Consoles jTabbedPane4Console;
-	private JPanelConsole jPanelConsoleLocal = Application.Console;;
+	private JPanelConsole jPanelConsoleLocal = Application.getConsole();;
 	private int oldDividerLocation;
 	
 	private JMenuBar jMenuBarBase;
@@ -147,8 +147,8 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		this.setIconImage(imageAgentGUI);
 		
 		// --- Set the Look and Feel of the Application -----------
-		if (Application.RunInfo.getAppLnF() != null) {
-			this.setLookAndFeel(Application.RunInfo.getAppLnF());
+		if (Application.getGlobalInfo().getAppLnF() != null) {
+			this.setLookAndFeel(Application.getGlobalInfo().getAppLnF());
 		}
 		
 		// --- Create the Main-Elements of the Application --------
@@ -264,9 +264,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	 */
 	public void setTitelAddition(String add2BasicTitel) {
 		if ( add2BasicTitel != "" ) {
-			this.setTitle( Application.RunInfo.getApplicationTitle() + ": " + add2BasicTitel );	
+			this.setTitle( Application.getGlobalInfo().getApplicationTitle() + ": " + add2BasicTitel );	
 		} else {
-			this.setTitle( Application.RunInfo.getApplicationTitle() );
+			this.setTitle( Application.getGlobalInfo().getApplicationTitle() );
 		}
 	}
 	
@@ -294,9 +294,9 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	public void setLookAndFeel(String newLnF) {
 		// --- Look and fell einstellen --------------- 
 		if ( newLnF == null ) return;		
-		Application.RunInfo.setAppLnf(newLnF);
+		Application.getGlobalInfo().setAppLnf(newLnF);
 		try {
-			String lnfClassname = Application.RunInfo.getAppLnF();
+			String lnfClassname = Application.getGlobalInfo().getAppLnF();
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 			}
@@ -304,7 +304,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			SwingUtilities.updateComponentTreeUI(this);
 			
 		} catch (Exception e) {
-				System.err.println("Cannot install " + Application.RunInfo.getAppLnF()
+				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF()
 					+ " on this platform:" + e.getMessage());
 		}
 		if ( jMenuExtraLnF != null ){
@@ -758,7 +758,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 				if ( setBold ) {
 					Font cfont = this.getFont();
 					if ( cfont.isBold() ) {
-						this.setForeground( Application.RunInfo.ColorMenuHighLight() );	
+						this.setForeground( Application.getGlobalInfo().ColorMenuHighLight() );	
 					}
 					else {
 						this.setFont( cfont.deriveFont(Font.BOLD) );
@@ -790,7 +790,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			UIManager.LookAndFeelInfo plaf[] = UIManager.getInstalledLookAndFeels();
 			
 			for (int i = 0, n = plaf.length; i < n; i++) {
-				if ( plaf[i].getClassName() == Application.RunInfo.getAppLnF() )
+				if ( plaf[i].getClassName() == Application.getGlobalInfo().getAppLnF() )
 					setBold = true;
 				else
 					setBold = false;
@@ -822,7 +822,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 				if ( setBold ) {
 					Font cfont = this.getFont();
 					if ( cfont.isBold() ) {
-						this.setForeground( Application.RunInfo.ColorMenuHighLight() );	
+						this.setForeground( Application.getGlobalInfo().ColorMenuHighLight() );	
 					}
 					else {
 						this.setFont( cfont.deriveFont(Font.BOLD) );
@@ -991,50 +991,50 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			}
 			// --- Menü Ansicht / View ------------------------
 			else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) {
-				Application.MainWindow.doSwitchConsole();
+				Application.getMainWindow().doSwitchConsole();
 			}
 			// --- Menü Jade ----------------------------------
 			else if ( ActCMD.equalsIgnoreCase("JadeStart") ) {
-				Application.JadePlatform.jadeStart();
+				Application.getJadePlatform().jadeStart();
 			}
 			else if ( ActCMD.equalsIgnoreCase("JadeStop") ) {
-				Application.JadePlatform.jadeStop();
+				Application.getJadePlatform().jadeStop();
 			}
 			else if ( ActCMD.equalsIgnoreCase("PopRMAStart") ) {
-				Application.JadePlatform.jadeSystemAgentOpen("rma", null);
+				Application.getJadePlatform().jadeSystemAgentOpen("rma", null);
 			}
 			else if ( ActCMD.equalsIgnoreCase("PopSniffer") ) {
-				Application.JadePlatform.jadeSystemAgentOpen("sniffer", null);
+				Application.getJadePlatform().jadeSystemAgentOpen("sniffer", null);
 			}
 			else if ( ActCMD.equalsIgnoreCase("PopDummy") ) {
-				Application.JadePlatform.jadeSystemAgentOpen("dummy", null);
+				Application.getJadePlatform().jadeSystemAgentOpen("dummy", null);
 			}
 			else if ( ActCMD.equalsIgnoreCase("PopDF") ) {
-				Application.JadePlatform.jadeSystemAgentOpen("DF", null);
+				Application.getJadePlatform().jadeSystemAgentOpen("DF", null);
 			}
 			else if ( ActCMD.equalsIgnoreCase("PopIntrospec") ) {
-				Application.JadePlatform.jadeSystemAgentOpen("introspector", null);
+				Application.getJadePlatform().jadeSystemAgentOpen("introspector", null);
 			}
 			else if ( ActCMD.equalsIgnoreCase("PopLog") ) {
-				Application.JadePlatform.jadeSystemAgentOpen("log", null);
+				Application.getJadePlatform().jadeSystemAgentOpen("log", null);
 			}
 			// --- Menü Simulation ----------------------------
 			else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
-				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
+				Application.getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			else if ( ActCMD.equalsIgnoreCase("SimulationPause") ) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Pause;
-				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
+				Application.getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
-				Application.JadePlatform.jadeStop();
+				Application.getJadePlatform().jadeStop();
 			}
 
 			else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
-				Application.JadePlatform.jadeSystemAgentOpen("loadMonitor", null);
+				Application.getJadePlatform().jadeSystemAgentOpen("loadMonitor", null);
 			}
 			// --- Menü Extras => nicht hier !! ---------------
 			else if ( ActCMD.equalsIgnoreCase("ExtraTranslation") ) {
@@ -1252,34 +1252,34 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			}
 			// ------------------------------------------------
 			else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) { 
-				Application.MainWindow.doSwitchConsole();
+				Application.getMainWindow().doSwitchConsole();
 			}
 			// ------------------------------------------------
 			else if ( ActCMD.equalsIgnoreCase("JadeStart") ) { 
-				Application.JadePlatform.jadeStart();				
+				Application.getJadePlatform().jadeStart();				
 			}
 			else if ( ActCMD.equalsIgnoreCase("JadeStop") ) {
-				Application.JadePlatform.jadeStop();				
+				Application.getJadePlatform().jadeStop();				
 			}
 			else if ( ActCMD.equalsIgnoreCase("JadeTools") ) { 
 				JadeToolsPopUp.show( JadeTools, 0, JadeTools.getHeight() );
 			}
 			else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
-				Application.JadePlatform.jadeSystemAgentOpen("loadMonitor", null);
+				Application.getJadePlatform().jadeSystemAgentOpen("loadMonitor", null);
 			}
 			// ------------------------------------------------
 			else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
-				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
+				Application.getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			else if ( ActCMD.equalsIgnoreCase("SimulationPause") ) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Pause;
-				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
+				Application.getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
-				Application.JadePlatform.jadeStop();
+				Application.getJadePlatform().jadeStop();
 //				Object[] startWith = new Object[1];
 //				startWith[0] = SimStartAgent.BASE_ACTION_Stop;
 //				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);

@@ -70,7 +70,7 @@ public class LoadExecutionAgent extends Agent {
 	
 	private int startArg;
 	
-	private CoreWindow mainWindow = Application.MainWindow;
+	private CoreWindow mainWindow = Application.getMainWindow();
 	
 	
 	/* (non-Javadoc)

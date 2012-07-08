@@ -55,7 +55,7 @@ public class SystemLoadSingle extends JPanel {
 
 private static final long serialVersionUID = 1L;
 	
-	final static String PathImage = Application.RunInfo.PathImageIntern();
+	final static String PathImage = Application.getGlobalInfo().PathImageIntern();
 	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );  //  @jve:decl-index=0:
 	private final ImageIcon iconRed = new ImageIcon( this.getClass().getResource( PathImage + "StatRed.png") );  //  @jve:decl-index=0:
 

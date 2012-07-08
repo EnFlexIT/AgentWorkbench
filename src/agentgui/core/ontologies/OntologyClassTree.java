@@ -36,13 +36,12 @@ import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-
 import agentgui.core.application.Application;
 import agentgui.core.ontologies.reflection.ReflectClassFiles;
-import agentgui.core.project.Project;
 
 /**
- * This class represents the DefaultTreeModel for a single ontology, used in the current project.
+ * This class represents the DefaultTreeModel for a single 
+ * ontology, which can be used for example in projects.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -50,7 +49,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 
 	private static final long serialVersionUID = 719806666309626657L;
 
-	private Project currProject;
+	//private Project currProject;
 	private OntologyClass currOntoClass;
 
 	private DefaultMutableTreeNode currentNode;
@@ -85,10 +84,9 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	 * @param ontoClass The current instance of OntologyClass
 	 * @param ontologieSourcePackage The reference to the package of the ontology 
 	 */ 
-	public OntologyClassTree(Project project, DefaultMutableTreeNode root, OntologyClass ontoClass, String ontologieSourcePackage) {
+	public OntologyClassTree(DefaultMutableTreeNode root, OntologyClass ontoClass, String ontologieSourcePackage) {
 		
 		super(root);
-		this.currProject = project;
 		this.currOntoClass = ontoClass;
 		this.searchInPackage = ontologieSourcePackage;
 		this.rootNode = root;
@@ -118,12 +116,12 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		this.conceptNode.add( aActionNode );		
 		
 		// --- Den Knoten Predicate hinzufügen -----------------
-		this.predicateNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, "Predicate") );
+		this.predicateNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(this.currOntoClass, "Predicate") );
 		this.rootNode.add( predicateNode );
 		
 
 		// --- get the class-files from the package ------------
-		ArrayList<String> projectOntologyClassList = new ReflectClassFiles(currProject, searchInPackage);
+		ArrayList<String> projectOntologyClassList = new ReflectClassFiles(this.searchInPackage);
 		
 		// --- investigate classes -----------------------------
 		Class<?> Cla = null;
@@ -206,7 +204,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		        	
 		        	if ( ClaIsBaseOnto == true ) {
 		        		// --- ggf. die Klasse 'AgentGUIProjectOntology' ignorieren? ---
-		        		if (Cla.getName().toLowerCase().endsWith(Application.RunInfo.getFileNameProjectOntology().toLowerCase())==false) {
+		        		if (Cla.getName().toLowerCase().endsWith(Application.getGlobalInfo().getFileNameProjectOntology().toLowerCase())==false) {
 			        		baseClassOntoCount++;
 		        			logMsgOnto += "Found " + baseClassOntoCount + ". Class for Ontology which inherites from '" + ClaPareName + "':\n";
 		        			logMsgOnto += "=> " + Cla.getName() + "\n";
@@ -287,11 +285,11 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	    
 		if ( logMsgShow == true ) {
 			// --- If an error occurs, show the message -----------------------	
-			String MsgHead = Application.RunInfo.getApplicationTitle() + ": " +  logMsgTitleOnto;
+			String MsgHead = Application.getGlobalInfo().getApplicationTitle() + ": " +  logMsgTitleOnto;
 			String MsgText = ontologieSourcePackage + ":\n" + logMsgOnto;			
 
 			// --- Send Message to user of AgentGUI --------------------------- 
-			JOptionPane.showInternalMessageDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showInternalMessageDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
 			
 			// --- Add the Error to the current ontology class ----------------
 			currOntoClass.ontologyErrorStack += MsgText;

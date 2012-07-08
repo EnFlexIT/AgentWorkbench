@@ -31,10 +31,12 @@ package agentgui.core.ontologies.gui;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.io.UnsupportedEncodingException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -50,10 +52,8 @@ import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.project.Project;
-
-import java.awt.Font;
-import java.io.UnsupportedEncodingException;
+import agentgui.core.ontologies.OntologyVisualisationHelper;
+import agentgui.core.project.AgentConfiguration;
 
 /**
  * This class can be used to display a user interface thats allows to configure
@@ -65,10 +65,11 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 private static final long serialVersionUID = 6748263753769300242L;
 	
-	final static String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
+	final static String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
 	private ImageIcon imageEnlarge =  new ImageIcon(getClass().getResource(PathImage + "MBFullScreen.png"));  //  @jve:decl-index=0:
 	
-	private Project project = null;
+	private OntologyVisualisationHelper ontologyVisualisationHelper = null;
+	private AgentConfiguration agentConfiguration = null;
 	private String agentReference = null;
 	private String[] ontologyClassReference = null;
 	private boolean use4Agents =  false;
@@ -79,7 +80,7 @@ private static final long serialVersionUID = 6748263753769300242L;
 	private DynForm dynForm = null;
 	private JTextArea jTextArea = null;
 	
-	private final String newLine = Application.RunInfo.AppNewLineString();
+	private final String newLine = Application.getGlobalInfo().AppNewLineString();
 	private final String separatorLine = "------------------------------------------";  //  @jve:decl-index=0:
 	
 	private JPanel jPanelEnlarege = null;
@@ -92,10 +93,11 @@ private static final long serialVersionUID = 6748263753769300242L;
 	/**
 	 * This is the constructor in case that nothing should be displayed (no form, no slots).
 	 *
-	 * @param currProject the curr project
+	 * @param ontologyVisualisationHelper the ontology visualisation helper
 	 */
-	public OntologyInstanceViewer(Project currProject) {
-		this.project = currProject;
+	public OntologyInstanceViewer(OntologyVisualisationHelper ontologyVisualisationHelper) {
+		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
+		this.agentConfiguration = null; 
 		this.agentReference = null;
 		this.ontologyClassReference = null;
 		this.use4Agents = true;
@@ -105,13 +107,15 @@ private static final long serialVersionUID = 6748263753769300242L;
 	/**
 	 * Instantiates a new ontology instance viewer.
 	 *
-	 * @param currProject the curr project
-	 * @param currAgentReference the curr agent reference
+	 * @param ontologyVisualisationHelper the ontology visualisation helper
+	 * @param agentConfiguration the agent configuration
+	 * @param currentAgentReference the current agent reference
 	 */
-	public OntologyInstanceViewer(Project currProject, String currAgentReference) {
+	public OntologyInstanceViewer(OntologyVisualisationHelper ontologyVisualisationHelper, AgentConfiguration agentConfiguration, String currentAgentReference) {
 		super();
-		this.project = currProject;
-		this.agentReference = currAgentReference;
+		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
+		this.agentConfiguration = agentConfiguration;
+		this.agentReference = currentAgentReference;
 		this.ontologyClassReference = null;
 		this.use4Agents = true;
 		initialize();
@@ -120,12 +124,13 @@ private static final long serialVersionUID = 6748263753769300242L;
 	/**
 	 * Instantiates a new ontology instance viewer.
 	 *
-	 * @param currProject the curr project
-	 * @param currOntologyClassReference the curr ontology class reference
+	 * @param ontologyVisualisationHelper the ontology visualisation helper
+	 * @param currOntologyClassReference the current ontology class reference
 	 */
-	public OntologyInstanceViewer(Project currProject, String[] currOntologyClassReference) {
+	public OntologyInstanceViewer(OntologyVisualisationHelper ontologyVisualisationHelper, String[] currOntologyClassReference) {
 		super();
-		this.project = currProject;
+		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
+		this.agentConfiguration = null;
 		this.agentReference = null;
 		this.ontologyClassReference = currOntologyClassReference;
 		this.use4Agents = false;
@@ -200,10 +205,10 @@ private static final long serialVersionUID = 6748263753769300242L;
 		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		
-		JDialog dialog = new JDialog(Application.MainWindow);
+		JDialog dialog = new JDialog(Application.getMainWindow());
 		dialog.setPreferredSize(new Dimension(100, 200));
 		dialog.setName("Ontology-Instance-Viewer");
-		dialog.setTitle(Application.RunInfo.getApplicationTitle() +  ": Ontology-Instance-Viewer");
+		dialog.setTitle(Application.getGlobalInfo().getApplicationTitle() +  ": Ontology-Instance-Viewer");
 		dialog.setModal(true);
 		dialog.setResizable(true);
 		dialog.setContentPane(getJContentPane());
@@ -389,15 +394,15 @@ private static final long serialVersionUID = 6748263753769300242L;
 	/**
 	 * This method initialises dynForm.
 	 *
-	 * @return the dynform
+	 * @return the DynForm
 	 * @see DynForm
 	 */
 	private DynForm getDynForm() {
 		if (dynForm==null) {
 			if (use4Agents==true) {
-				dynForm = new DynForm(project, agentReference);
+				dynForm = new DynForm(this.ontologyVisualisationHelper, this.agentConfiguration, this.agentReference);
 			} else {
-				dynForm = new DynForm(project, ontologyClassReference);
+				dynForm = new DynForm(this.ontologyVisualisationHelper, ontologyClassReference);
 			}
 		}
 		return dynForm;

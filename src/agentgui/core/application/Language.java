@@ -72,11 +72,11 @@ public class Language {
 	 * This is the separator used in the dictionary file
 	 */
 	public static final String seperator = ";";
-	private static String newLine = Application.RunInfo.AppNewLineString();
-	private static String newLineReplacer = Application.RunInfo.AppNewLineStringReplacer();
+	private static String newLine = Application.getGlobalInfo().AppNewLineString();
+	private static String newLineReplacer = Application.getGlobalInfo().AppNewLineStringReplacer();
 
-	private static String dictFileLocation64 = Application.RunInfo.FileDictionary(true, true);
-	private static String dictFileLocation = Application.RunInfo.FileDictionary(false, true);
+	private static String dictFileLocation64 = Application.getGlobalInfo().FileDictionary(true, true);
+	private static String dictFileLocation = Application.getGlobalInfo().FileDictionary(false, true);
 
 	private static List<String> dictLineList64 = new ArrayList<String>();
 	private static List<String> dictLineListCSV = new ArrayList<String>();
@@ -132,7 +132,7 @@ public class Language {
 	 */
 	public static void changeApplicationLanguageTo(String newLang){
 		String newLangShort = newLang.toLowerCase().replace("lang_", "");
-		Application.RunInfo.setLanguage(newLangShort);
+		Application.getGlobalInfo().setLanguage(newLangShort);
 		currLanguageIndex = getIndexOfLanguage(newLangShort);
 		
 	}
@@ -289,7 +289,7 @@ public class Language {
 		String langWork = language.toLowerCase();
 		if (langWork.equals("")) {
 			langWork = Language.EN;
-			Application.RunInfo.setLanguage(Language.EN);
+			Application.getGlobalInfo().setLanguage(Language.EN);
 			langWork = language.toLowerCase();
 		}
 		
@@ -388,7 +388,7 @@ public class Language {
 							// --- Remind this header ---------------------------------------------
 							dictLangHeaderArray = valuesArray;
 							// --- Which Language has to be used ----------------------------------
-							currLanguageIndex = getIndexOfLanguage(Application.RunInfo.getLanguage());	
+							currLanguageIndex = getIndexOfLanguage(Application.getGlobalInfo().getLanguage());	
 							// --- index the Header -----------------------------------------------
 							dictHash64.put( valuesArray[0], cnt );
 							

@@ -63,7 +63,7 @@ import agentgui.core.project.Project;
 public class JadeSetup extends JPanel implements ActionListener, Observer {
 
 	private static final long serialVersionUID = -7016775471452161527L;
-	private final static String PathImage = Application.RunInfo.PathImageIntern();
+	private final static String PathImage = Application.getGlobalInfo().PathImageIntern();
 	private Project currProject = null;
 	
 	private JLabel jLabelPort = null;
@@ -440,7 +440,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 		
 		Integer currPort = currProject.JadeConfiguration.getLocalPort();
 		if (currPort==null || currPort==0) {
-			currPort = Application.RunInfo.getJadeLocalPort();
+			currPort = Application.getGlobalInfo().getJadeLocalPort();
 			currProject.JadeConfiguration.setLocalPort(currPort);
 		}
 		jTextFieldDefaultPort.setText(currPort.toString());
@@ -466,7 +466,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 		if (trigger==jButtonSetPort) {
 			
 			// --- Open Dialog ------------------
-			JadeSetupNewPort newPort = new JadeSetupNewPort( Application.MainWindow, currProject.getProjectName(), true, currProject, jTextFieldDefaultPort.getLocationOnScreen());
+			JadeSetupNewPort newPort = new JadeSetupNewPort( Application.getMainWindow(), currProject.getProjectName(), true, currProject, jTextFieldDefaultPort.getLocationOnScreen());
 			newPort.setVisible(true);
 			// === Go ahead =====================
 			if ( newPort.isCanceled() == false ) {
@@ -483,8 +483,8 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			
 			
 		} else if (trigger==jButtonSetPortDefault) {
-			currProject.JadeConfiguration.setLocalPort(Application.RunInfo.getJadeLocalPort());
-			jTextFieldDefaultPort.setText( Application.RunInfo.getJadeLocalPort().toString() );
+			currProject.JadeConfiguration.setLocalPort(Application.getGlobalInfo().getJadeLocalPort());
+			jTextFieldDefaultPort.setText( Application.getGlobalInfo().getJadeLocalPort().toString() );
 			
 		} else if (trigger==jButtonServiceAdd) {
 			if (jListServicesAvailable.getSelectedValue()!=null) {
@@ -507,7 +507,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 		} else if (trigger==jButtonDefaultJadeConfig) {
 			
 			// --- Get the default profile configuration ------------
-			PlatformJadeConfig defaultConfig = Application.RunInfo.getJadeDefaultPlatformConfig();
+			PlatformJadeConfig defaultConfig = Application.getGlobalInfo().getJadeDefaultPlatformConfig();
 
 			// --- Clean current profile configuration --------------
 			PlatformJadeConfig currConfig = currProject.JadeConfiguration;

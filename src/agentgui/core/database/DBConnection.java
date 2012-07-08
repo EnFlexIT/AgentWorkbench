@@ -53,7 +53,7 @@ import com.mysql.jdbc.Statement;
  */
 public class DBConnection {
 	
-	private String newLine = Application.RunInfo.AppNewLineString();
+	private String newLine = Application.getGlobalInfo().AppNewLineString();
 	private String sql = null;
 		
 	private Connection connection = null;
@@ -316,7 +316,7 @@ public class DBConnection {
 	 */
 	private boolean connect() {
 		
-		String configuredHost = Application.RunInfo.getServerMasterDBHost();
+		String configuredHost = Application.getGlobalInfo().getServerMasterDBHost();
 		if (configuredHost==null) {
 			
 			String msg = ""; 
@@ -330,9 +330,9 @@ public class DBConnection {
 			return false;
 		}
 
-		dbName = Application.RunInfo.getServerMasterDBName();
-		dbUser = Application.RunInfo.getServerMasterDBUser();
-		dbPswd = Application.RunInfo.getServerMasterDBPswd(); 
+		dbName = Application.getGlobalInfo().getServerMasterDBName();
+		dbUser = Application.getGlobalInfo().getServerMasterDBUser();
+		dbPswd = Application.getGlobalInfo().getServerMasterDBPswd(); 
 		if ( configuredHost.contains(":") ) {
 			// --- Port wurde explizit angegeben --------------------
 			dbHost = "jdbc:mysql://" + configuredHost + "/";

@@ -198,10 +198,10 @@ public abstract class ChartDialog extends JDialog implements ActionListener{
 			// Import CSF data
 
 			// Choose file
-			JFileChooser jFileChooserImportCSV = new JFileChooser(Application.RunInfo.getLastSelectedFolder());
+			JFileChooser jFileChooserImportCSV = new JFileChooser(Application.getGlobalInfo().getLastSelectedFolder());
 			jFileChooserImportCSV.setFileFilter(new FileNameExtensionFilter(Language.translate("CSV-Dateien"), "csv"));
 			if(jFileChooserImportCSV.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-				Application.RunInfo.setLastSelectedFolder(jFileChooserImportCSV.getCurrentDirectory());
+				Application.getGlobalInfo().setLastSelectedFolder(jFileChooserImportCSV.getCurrentDirectory());
 				File csvFile = jFileChooserImportCSV.getSelectedFile();
 				
 				// Read data and init models

@@ -60,37 +60,42 @@ import agentgui.simulationService.load.LoadMeasureThread;
  */
 public class Application {
 	
-	/**
-	 * The instance of this singleton class
-	 */
+	/** The instance of this singleton class */
 	private static Application thisApp = new Application(); 
-	/**
-	 * This attribute holds the current state of the configurable runtime informations  
-	 */
-	public static GlobalInfo RunInfo = null;
-	/**
-	 * Can be used in order to access the version information
-	 */
-	public static VersionInfo Version = null;
-	/**
-	 * Holds the instance of the file properties which are defined in '/properties/agentgui.ini' 
-	 */
-	public static FileProperties Properties = null;
-	/**
-	 * This is the instance of the main application window
-	 */
-	public static JPanelConsole Console = null;
-
-	/**
-	 * With this attribute/class the agent platform (JADE) will be controlled 
-	 */
-	public static Platform JadePlatform = null;
-	/**
-	 * This will hold the instance of the download-server, which will be started concurrently
-	 * to the JADE platform. With this simple web-server the external resources (.jar - files), 
-	 * configured in the project can be transfered to remote container
-	 */
-	public static DownloadServer WebServer = null;
+	/** This attribute holds the current state of the configurable runtime informations */
+	private static GlobalInfo globalInfo = null;
+	/** Can be used in order to access the version information */
+	private static VersionInfo versionInfo = null;
+	/** Holds the instance of the file properties which are defined in '/properties/agentgui.ini' */
+	private static FileProperties fileProperties = null;
+	/** This will hold the instance of the main application window */
+	private static CoreWindow mainWindow = null;
+	/** Here the tray icon of the application can be accessed */
+	private static AgentGUITrayIcon trayIcon = null;
+	/** This is the instance of the main application window */
+	private static JPanelConsole console = null;
+	/** The About dialog of the main application window. */
+	private static AboutDialog about = null;
+	/** The About dialog of the application.*/
+	private static OptionDialog options = null;
+	/** With this attribute/class the agent platform (JADE) will be controlled. */
+	private static Platform jadePlatform = null;
+	/** The ODBC connection to the database */
+	private static DBConnection dbConnection = null;
+	/** Simple web-server that can be used for larger data transfer. */
+	private static DownloadServer downloadServer = null;
+	
+	/** Indicates if the benchmark is currently running */
+	private static boolean benchmarkRunning = false; 
+	/** True, if a remote container has to be started (see start arguments) */
+	private static boolean justStartJade = false;
+	
+	/** Holds the list of the open projects. */
+	public static ProjectsLoaded Projects = null;
+	/** Holds the reference of the currently focused project */
+	public static Project ProjectCurr = null;
+	private static String project2OpenAfterStart = null;
+	
 	/**
 	 * This ClassDetector is used in order to search for agent classes, ontology's and base service.
 	 * If a project was newly opened, the search process will start again. 
@@ -98,46 +103,15 @@ public class Application {
 	public static ClassSearcher ClassDetector = null;
 	
 	/**
-	 * Here the tray icon of the application can be accessed
-	 */
-	public static AgentGUITrayIcon TrayIcon = null;
-	/**
 	 * If the application was executed as end user application, this attribute will be false.
 	 * In case of the execution as a 'server'-tool (without GUI but with tray icon control), this will be true. 
 	 */
 	public static boolean isServer = false;
 	
-	/**
-	 * Holds the list of the open projects. Can be also seen in the window menu of the applications main window
-	 */
-	public static ProjectsLoaded Projects = null;
-	/**
-	 * Holds the reference of the currently focused project
-	 */
-	public static Project ProjectCurr = null;
-	private static String project2OpenAfterStart = null;
 	
 	/**
-	 * This will hold the instance of the main application window 
+	 * Singleton-Constructor: Instantiates a new application.
 	 */
-	public static CoreWindow MainWindow = null;
-	/**
-	 * In case that this program instance was executed as 'server.master', this 
-	 * will hold the connection to the database 
-	 */
-	public static DBConnection DBconnection = null;
-	
-	private static AboutDialog about = null;
-	private static OptionDialog options = null;
-
-	/** Indicates if the benchmark is currently running */
-	public static boolean benchmarkIsRunning = false; 
-	
-	/** True, if a remote container has to be started (see start arguments) */
-	private static boolean justStartJade = false;
-	
-	
-	// --- Singleton-Constructor ---
 	private Application() {
 	}	
 	/**
@@ -149,7 +123,94 @@ public class Application {
 	}
 	
 	/**
-	 * main-method for the start of the application running as end user application or server-tool
+	 * Gets the console.
+	 * @return the console
+	 */
+	public static JPanelConsole getConsole() {
+		if (console==null) {
+			console = new JPanelConsole(true);
+		}
+		return console;
+	}
+	/**
+	 * Returns the application-wide information system.
+	 * @return the global info
+	 */
+	public static GlobalInfo getGlobalInfo() {
+		if (globalInfo==null) {
+			globalInfo = new GlobalInfo();
+		}
+		return globalInfo;
+	}
+	/**
+	 * Gets the version info.
+	 * @return the version info
+	 */
+	public static VersionInfo getVersionInfo() {
+		if (versionInfo==null) {
+			versionInfo = new VersionInfo();
+		}
+		return versionInfo;
+	}
+	/**
+	 * Gets the file properties.
+	 * @return the file properties
+	 */
+	public static FileProperties getFileProperties() {
+		if (fileProperties==null) {
+			fileProperties = new FileProperties();
+		}
+		return fileProperties;
+	}
+	/**
+	 * Gets the jade platform.
+	 * @return the jade platform
+	 */
+	public static Platform getJadePlatform() {
+		if (jadePlatform==null) {
+			jadePlatform = new Platform();	
+		}
+		return jadePlatform;
+	}
+	/**
+	 * Gets the AgentGUI tray icon.
+	 * @return the tray icon
+	 */
+	public static AgentGUITrayIcon getTrayIcon() {
+		if (trayIcon==null) {
+			trayIcon = new AgentGUITrayIcon();
+		}
+		return trayIcon;
+	}
+	
+	/**
+	 * Sets the main window.
+	 * @param newMainWindow the new main window
+	 */
+	private static void setMainWindow(CoreWindow newMainWindow) {
+		mainWindow = newMainWindow;
+	}
+	/**
+	 * Gets the main window.
+	 * @return the main window
+	 */
+	public static CoreWindow getMainWindow() {
+		return mainWindow;
+	}
+	
+	/**
+	 * Returns the database connection for the Application.
+	 * @return the database connection
+	 */
+	public static DBConnection getDatabaseConnection() {
+		if (dbConnection==null) {
+			dbConnection = new DBConnection();
+		}
+		return dbConnection;
+	}
+	
+	/**
+	 * Main method for the start of the application running as end user application or server-tool
 	 * 
 	 * @param args The arguments which can be configured in the command line. 
 	 * -help will print all possible command line arguments 
@@ -163,10 +224,10 @@ public class Application {
 		if (justStartJade==false) {
 			// ------------------------------------------------------
 			// --- Start the Agent.GUI base-instances ---------------
-			Console = new JPanelConsole(true);
-			RunInfo = new GlobalInfo();
-			Version = new VersionInfo();
-			Properties = new FileProperties();
+			getConsole();
+			getGlobalInfo();
+			getVersionInfo();
+			getFileProperties();
 			Language.startDictionary();
 			
 			new LoadMeasureThread().start();  
@@ -175,9 +236,9 @@ public class Application {
 		} else {
 			// ------------------------------------------------------
 			// --- Start JADE ---------------------------------------
-			RunInfo = new GlobalInfo();
-			Version = new VersionInfo();
-			Properties = new FileProperties();
+			getGlobalInfo();
+			getVersionInfo();
+			getFileProperties();
 			Language.startDictionary();
 
 			System.out.println("Just starting JADE now ...");
@@ -303,8 +364,8 @@ public class Application {
 		
 		// ----------------------------------------------------------		
 		// --- Start the Application as defined by 'isServer' -------
-		JadePlatform = new Platform();
-		TrayIcon = new AgentGUITrayIcon();
+		getJadePlatform();
+		getTrayIcon();
 		if ( isServer == true ) {
 			// ------------------------------------------------------
 			// --- Start Server-Version of AgentGUI -----------------
@@ -320,7 +381,7 @@ public class Application {
 			Projects = new ProjectsLoaded();
 
 			startApplication();
-			MainWindow.setStatusBar( Language.translate("Fertig") );
+			getMainWindow().setStatusBar( Language.translate("Fertig") );
 			doBenchmark(false);
 			proceedStartArgumentOpenProject();
 		}
@@ -330,9 +391,7 @@ public class Application {
 	 * Opens the main application window (JFrame)
 	 */
 	public static void startApplication() {
- 		// --- open Main-Dialog -------------------------------------		
-		MainWindow = null;
-		MainWindow = new CoreWindow();		
+		setMainWindow(new CoreWindow());		
 		Projects.setProjectView();
 	}
 	
@@ -341,7 +400,7 @@ public class Application {
 	 */
 	public static void startServer() {
 		// --- Automatically Start JADE, if configured --------------
-		if ( RunInfo.isServerAutoRun()==true ) {
+		if ( getGlobalInfo().isServerAutoRun()==true ) {
 			// --- Wait until the benchmark result is available -----
 			while (LoadMeasureThread.getCompositeBenchmarkValue()==0) {
 				try {
@@ -350,8 +409,8 @@ public class Application {
 					e.printStackTrace();
 				}
 			}			
-			JadePlatform.jadeStart();
-			TrayIcon.popUp.refreshView();
+			getJadePlatform().jadeStart();
+			trayIcon.popUp.refreshView();
 		}
 	}
 	
@@ -363,13 +422,13 @@ public class Application {
 		// --- Anwendung beenden ---------------------- 
 		// --------------------------------------------
 		// --- JADE beenden ------------------------
-		JadePlatform.jadeStop();
+		getJadePlatform().jadeStop();
 		// --- Noch offene Projekte schließen ------
 		if ( Projects != null ) {
 			if ( Projects.closeAll() == false ) return;	
 		}		
 		// --- FileProperties speichern ------------
-		Properties.save();
+		getFileProperties().save();
 		
 		// --- Fertig ------------------------------
 		System.out.println( Language.translate("Programmende... ") );
@@ -381,7 +440,7 @@ public class Application {
 	 * Opens the translation dialog of the application
 	 */
 	public static void showTranslationDialog() {
-		Translation trans = new Translation(Application.MainWindow);
+		Translation trans = new Translation(Application.getMainWindow());
 		trans.setVisible(true);
 	}
 	
@@ -410,7 +469,7 @@ public class Application {
 		if (isServer==true) {
 			options = new OptionDialog(null);
 		} else {
-			options = new OptionDialog(MainWindow);
+			options = new OptionDialog(getMainWindow());
 		}
 		if (focusOnTab!=null) {
 			options.setFocusOnTab(focusOnTab);
@@ -428,7 +487,7 @@ public class Application {
 		
 		if ( (isServerOld==true && isServerNew==true && okAction==true) || enforceRestart==true) { 
 			// --- JADE beenden -------------------------------------
-			JadePlatform.jadeStop();			
+			getJadePlatform().jadeStop();			
 			// --- Anwendung neu starten ----------------------------
 			if (isServerOld == true) {
 				if (isServerNew==true) {
@@ -439,8 +498,8 @@ public class Application {
 					System.out.println(Language.translate("Umschalten von 'Server' auf 'Anwendung'"));
 				}				
 				// --- Tray-Icon entfernen / schliessen -------------
-				TrayIcon.remove();
-				TrayIcon = null;
+				trayIcon.remove();
+				trayIcon = null;
 
 			} else {
 				// --- Umschalten von 'Application' auf 'Server' ----
@@ -450,11 +509,11 @@ public class Application {
 					if ( Projects.closeAll() == false ) return;	
 				}		
 				// --- Anwendungsfenster schliessen -----------------
-				MainWindow.dispose();
-				MainWindow = null;
+				getMainWindow().dispose();
+				setMainWindow(null);
 				// --- Tray-Icon schliessen -------------------------
-				TrayIcon.remove();
-				TrayIcon = null;
+				trayIcon.remove();
+				trayIcon = null;
 			}
 			// --- Restart ------------------------------------------
 			startAgentGUI();
@@ -468,16 +527,13 @@ public class Application {
 	public static void showAboutDialog() {
 		
 		if (about!=null) return;
-		// ==================================================================
 		if (isServer==true) {
 			about = new AboutDialog(null);
 		} else {
-			about = new AboutDialog(MainWindow);
+			about = new AboutDialog(getMainWindow());
 		}
 		about.setVisible(true);
-		// ==================================================================
-		// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
-		// ==================================================================
+		// - - - Wait for user - - - - - - - - -  
 		about.dispose();
 		about = null;		
 	}
@@ -487,7 +543,7 @@ public class Application {
 	 * @param add2BasicTitel
 	 */
 	public static void setTitelAddition( String add2BasicTitel ) {
-		MainWindow.setTitelAddition(add2BasicTitel);
+		getMainWindow().setTitelAddition(add2BasicTitel);
 	}
 
 	/**
@@ -495,10 +551,10 @@ public class Application {
 	 * @param runs  
 	 */
 	public static void setStatusJadeRunning(boolean runs) {
-		if (MainWindow!=null) {
-			MainWindow.setStatusJadeRunning(runs);	
+		if (getMainWindow()!=null) {
+			getMainWindow().setStatusJadeRunning(runs);	
 		}
-		TrayIcon.popUp.refreshView();
+		trayIcon.popUp.refreshView();
 	}
 	
 	/**
@@ -506,7 +562,7 @@ public class Application {
 	 * @param statusText
 	 */
 	public static void setStatusBar(String statusText) {
-		MainWindow.setStatusBar(statusText);
+		getMainWindow().setStatusBar(statusText);
 	}
 	
 	/**
@@ -514,7 +570,7 @@ public class Application {
 	 * @param newLnF
 	 */
 	public static void setLookAndFeel(String newLnF) {
-		MainWindow.setLookAndFeel(newLnF);
+		getMainWindow().setLookAndFeel(newLnF);
 		Projects.setProjectView();
 	}	
 	
@@ -534,7 +590,7 @@ public class Application {
 	 */
 	public static void setLanguage(String newLang, boolean askUser) {
 
-		String newLine = RunInfo.AppNewLineString();
+		String newLine = getGlobalInfo().AppNewLineString();
 		
 		if (askUser) {
 			// --- Sind die neue und die alte Anzeigesprach gleich ? ----
@@ -547,13 +603,13 @@ public class Application {
 							 "Möchten Sie die Anzeigesprache wirklich umstellen?" + newLine + 
 							 "Die Anwendung muss hierzu neu gestartet und Projekte" + newLine +
 							 "von Ihnen neu geöffnet werden.");
-			Integer MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.MainWindow.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
+			Integer MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
 			if (MsgAnswer==1) return;
 			
 		}
 		
 		// --- JADE stoppen -----------------------------------------		
-		JadePlatform.jadeStop();
+		getJadePlatform().jadeStop();
 		// --- Projekte schliessen ----------------------------------
 		if ( Projects != null ) {
 			if ( Projects.closeAll() == false ) return;	
@@ -561,8 +617,8 @@ public class Application {
 		// --- Sprache umstellen ------------------------------------
 		Language.changeApplicationLanguageTo(newLang);
 		// --- Anwendungsfenster schliessen -------------------------
-		MainWindow.dispose();
-		MainWindow = null;
+		getMainWindow().dispose();
+		setMainWindow(null);
 		// --- Anwendung neu öffnen ---------------------------------
 		startApplication();	
 
@@ -573,41 +629,51 @@ public class Application {
 	 * The result will be available in Mflops (Millions of floating point operations per second)
 	 */
 	public static void doBenchmark(boolean forceBenchmark) {
-		// ------------------------------------------------
-		// --- Merker beachten, damit die Messung immer --- 
-		// --- nur einmal ausgeführt werden kann        ---
-		if (Application.benchmarkIsRunning==false) {
-			// --- Merker setzen --------------------------
-			Application.benchmarkIsRunning = true;
+		if (Application.isBenchmarkRunning()==false) {
+			// --- Set marker -----------------------------
+			benchmarkRunning = true;
 			// --- Execute the Benchmark-Thread -----------
 			new BenchmarkMeasurement(forceBenchmark).start();
 		}
-		// ------------------------------------------------
 	}
-	
+	/**
+	 * Sets that the benchmark is running or not.
+	 * @param running the new benchmark is running
+	 */
+	public static void setBenchmarkRunning(boolean running) {
+		benchmarkRunning = running;
+	}
+	/**
+	 * Checks if is benchmark is running.
+	 * @return true, if is benchmark is running
+	 */
+	public static boolean isBenchmarkRunning() {
+		return benchmarkRunning;
+	}
+
 	/**
 	 * Starts the Web-Server, so that a remote server.slave is able 
 	 * to download the additional jar-resources of a project
 	 */
 	public static DownloadServer startDownloadServer() {
 		
-		if (WebServer==null) {
-			WebServer = new DownloadServer();
-			WebServer.setRoot(RunInfo.PathWebServer(true));
-			new Thread(WebServer).start();
+		if (downloadServer==null) {
+			downloadServer = new DownloadServer();
+			downloadServer.setRoot(getGlobalInfo().PathWebServer(true));
+			new Thread(downloadServer).start();
 		}
-		return WebServer;
+		return downloadServer;
 	}
 	/**
 	 * Stops the Web-Server for the resources download of an external server.slave
 	 */
 	public static void stopDownloadServer() {
 
-		if (WebServer!=null) {
-			synchronized (WebServer) {
-				WebServer.stop();	
+		if (downloadServer!=null) {
+			synchronized (downloadServer) {
+				downloadServer.stop();	
 			}			
-			WebServer = null;
+			downloadServer = null;
 		}
 	}
 	
@@ -616,15 +682,16 @@ public class Application {
 	 * @param newApplicationTitle sets a new application title/name 
 	 */
 	public static void setApplicationTitle(String newApplicationTitle) {
-		RunInfo.setApplicationTitle(newApplicationTitle);
+		getGlobalInfo().setApplicationTitle(newApplicationTitle);
 	}
 	/**
 	 * This method return the current title of the application
 	 * @return the Application title/name
 	 */
-	public String getApplicationTitle() {
-		return RunInfo.getApplicationTitle();
+	public static String getApplicationTitle() {
+		return getGlobalInfo().getApplicationTitle();
 	}
+	
 	
 } // --- End Class ---
 

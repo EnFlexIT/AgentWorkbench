@@ -66,7 +66,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private final static String PathImage = Application.RunInfo.PathImageIntern();
+	private final static String PathImage = Application.getGlobalInfo().PathImageIntern();
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 
@@ -100,7 +100,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		this.setSize(542, 194);
 		this.setContentPane(getJContentPane());
 		
-		this.setTitle(Application.RunInfo.getApplicationTitle() + ": Zip-Monitor");
+		this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": Zip-Monitor");
 		this.setIconImage(imageAgentGUI);
 		
 		this.setLookAndFeel();
@@ -120,7 +120,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	 */
 	private void setLookAndFeel() {
 		
-		String lnfClassname = Application.RunInfo.getAppLnF();
+		String lnfClassname = Application.getGlobalInfo().getAppLnF();
 		try {
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();

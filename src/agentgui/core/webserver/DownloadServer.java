@@ -176,9 +176,9 @@ public class DownloadServer implements HttpConstants, Runnable {
      */
     public void setProjectDownloadResources(Project project) {
     	 
-    	String pathSep = Application.RunInfo.AppPathSeparatorString();
+    	String pathSep = Application.getGlobalInfo().AppPathSeparatorString();
     	String sourceDirName = project.getProjectFolderFullPath();
-    	String destinDirName = Application.RunInfo.PathWebServer(true) + project.getProjectFolder();    	
+    	String destinDirName = Application.getGlobalInfo().PathWebServer(true) + project.getProjectFolder();    	
     	
     	File destinDir = null;
     	boolean destinDirNewlyCreated = false;
@@ -263,7 +263,7 @@ public class DownloadServer implements HttpConstants, Runnable {
     	// -------------------------------------------------------------------------
 		// --- If we're running in the IDE of Agent.GUI ----------------------------
     	// -------------------------------------------------------------------------
-		if (Application.RunInfo.AppExecutedOver().equalsIgnoreCase("IDE")) {
+		if (Application.getGlobalInfo().AppExecutedOver().equalsIgnoreCase("IDE")) {
 			
 			if (destinDirNewlyCreated==false) {
     			destinDir = new File(destinDirName);
@@ -281,7 +281,7 @@ public class DownloadServer implements HttpConstants, Runnable {
     		}
 			
 			// --- Pack a jar of all class-files of the current project ------------
-			String pathBin = Application.RunInfo.PathBaseDirIDE_BIN();
+			String pathBin = Application.getGlobalInfo().PathBaseDirIDE_BIN();
 			JarFileCreator jarCreator = new JarFileCreator(pathBin, project.getProjectFolder());
 			
 			String jarArchiveName = project.getProjectFolder() + "_IDE.jar";

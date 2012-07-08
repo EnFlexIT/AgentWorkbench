@@ -163,7 +163,7 @@ public class ClassSearcherSingle {
 		// --- Search for packages in project -------------
 		if (this.currProject!=null) {
 			// --- We are using our IDE in the moment -----			
-			if (Application.RunInfo.AppExecutedOver().equalsIgnoreCase("IDE")) {
+			if (Application.getGlobalInfo().AppExecutedOver().equalsIgnoreCase("IDE")) {
 				packagesInProject.addElement(currProject.getProjectFolder());
 			} 
 			// --- If we have external resources ----------

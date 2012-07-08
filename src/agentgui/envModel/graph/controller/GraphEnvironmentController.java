@@ -63,6 +63,8 @@ import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
+import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 import agentgui.envModel.graph.networkModel.NetworkComponentList;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
@@ -360,10 +362,13 @@ public class GraphEnvironmentController extends EnvironmentController {
 		// --- Loading component type settings from the simulation setup --------------------------
 		this.loadGeneralGraphSettings();
 	
+		// --- Decode the data models that are Base64 encoded in the moment -----------------------  
+		this.setNetworkComponentDataModelBase64Decoded();
+		
 		// --- Use the local method in order to inform the observer -------------------------------
 		this.setEnvironmentModel(this.networkModel);
 
-		// --- Reset Undo-Manageer ----------------------------------------------------------------
+		// --- Reset Undo-Manager -----------------------------------------------------------------
 		this.networkModelAdapter.getUndoManager().discardAllEdits();
 
     }
@@ -572,7 +577,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     @SuppressWarnings("unchecked")
     private Class<? extends Agent> getAgentClass(String agentReference) {
 		
-    	if (agentReference==null) {
+    	if (agentReference==null || agentReference.equals("")) {
     		return null;
     	}
     	
@@ -597,6 +602,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 		this.saveGeneralGraphSettings();
 		if (networkModel != null && networkModel.getGraph() != null) {
 	
+			// --- Encode the DataModels of the NetworkComponents ---  
+			this.setNetworkComponentDataModelBase64Encoded();
+			
 		    try {
 				// Save the graph topology
 				String graphFileName = baseFileName + ".graphml";
@@ -860,5 +868,64 @@ public class GraphEnvironmentController extends EnvironmentController {
 
     }
     
-    
+    /**
+     * Sets the network component Base64 encoded data models to a instance.
+     */
+    private void setNetworkComponentDataModelBase64Decoded() {
+    	
+    	NetworkModel networkModel = this.getNetworkModel();
+    	HashMap<String, NetworkComponent> netComps = networkModel.getNetworkComponents();
+    	for (NetworkComponent netComp : netComps.values()) {
+    		
+    		NetworkComponentAdapter netCompAdapter = networkModel.getNetworkComponentAdapter(netComp);
+    		if (netCompAdapter!=null) {
+    			String dataModelBase64 = netComp.getDataModelBase64();
+    			if (dataModelBase64!=null) {
+    				// --- Get DataModelAdapter ---------------------
+    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getDataModelAdapter();
+    				if (netCompDataModelAdapter!=null) {
+    					// --- Get Base64 decoded Object ------------
+    					Object dataModel = netCompDataModelAdapter.getDataModelBase64Decoded(dataModelBase64);
+    	    			netComp.setDataModel(dataModel);
+    				}
+    			}
+    		}
+    		
+    	} // end for ---
+    	
+    }
+
+    /**
+     * Sets the data models of NetworkComponent to a Base64 encoded String.
+     */
+    private void setNetworkComponentDataModelBase64Encoded() {
+    	
+    	NetworkModel networkModel = this.getNetworkModel();
+    	HashMap<String, NetworkComponent> netComps = networkModel.getNetworkComponents();
+    	for (NetworkComponent netComp : netComps.values()) {
+    		
+    		NetworkComponentAdapter netCompAdapter = networkModel.getNetworkComponentAdapter(netComp);
+    		if (netCompAdapter!=null) {
+    			Object dataModel = netComp.getDataModel();
+    			if (dataModel==null) {
+    				// --- No data model ----------------------------
+    				netComp.setDataModelBase64(null);
+    			} else {
+    				// --- Get DataModelAdapter ---------------------
+    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getDataModelAdapter();
+    				if (netCompDataModelAdapter==null) {
+    					// --- No DataModelAdapter found ------------
+    					netComp.setDataModelBase64(null);	
+    				} else {
+    					// --- Get Base64 encoded String ------------
+    					String dataModelBase64 = netCompDataModelAdapter.getDataModelBase64Encoded(dataModel);
+    	    			netComp.setDataModelBase64(dataModelBase64);
+    				}
+    			}
+    		}
+    		
+    	} // end for ---
+    	
+    }
+
 }

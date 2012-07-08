@@ -52,7 +52,7 @@ public class AgentGUITrayIcon implements ActionListener {
 	private SystemTray tray = SystemTray.getSystemTray();
 	public TrayIcon trayIcon;
 	
-	private final String PathImage = Application.RunInfo.PathImageIntern();
+	private final String PathImage = Application.getGlobalInfo().PathImageIntern();
 	
 	public ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );;
 	public Image     image = imageIcon.getImage();
@@ -80,7 +80,7 @@ public class AgentGUITrayIcon implements ActionListener {
 		
 		if (SystemTray.isSupported()) {
 			// --- System-Tray is supported -------------------------
-			trayIcon = new TrayIcon(image, Application.RunInfo.getApplicationTitle(), popUp);
+			trayIcon = new TrayIcon(image, Application.getGlobalInfo().getApplicationTitle(), popUp);
 			trayIcon.setImageAutoSize(true);
 			trayIcon.addActionListener(this);
 			try {
@@ -117,7 +117,7 @@ public class AgentGUITrayIcon implements ActionListener {
 		if ( Application.isServer == true ) {
 			Application.showOptionDialog();	
 		} else {
-			Application.MainWindow.restoreFocus();
+			Application.getMainWindow().restoreFocus();
 		}
 	}
 

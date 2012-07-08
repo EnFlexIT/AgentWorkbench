@@ -57,7 +57,6 @@ import agentgui.core.common.Zipper;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectNewOpen;
 import agentgui.core.gui.ProjectWindow;
-import agentgui.core.ontologies.Ontologies4Project;
 import agentgui.core.sim.setup.SimulationSetups;
 
 /**
@@ -133,13 +132,13 @@ public class ProjectsLoaded {
 			action = ProjectNewOpen.ACTION_OpenProject;
 			actionTitel = Language.translate("Projekt öffnen");			
 		}
-		Application.MainWindow.setStatusBar(actionTitel + " ...");
+		Application.getMainWindow().setStatusBar(actionTitel + " ...");
 		
 		
 		if (selectedProjectFolder==null) {
 			// ------------------------------------------------
 			// --- Benutzer-Dialog öffnen ---------------------
-			ProjectNewOpen newProDia = new ProjectNewOpen(Application.MainWindow, Application.RunInfo.getApplicationTitle() + ": " + actionTitel, action);
+			ProjectNewOpen newProDia = new ProjectNewOpen(Application.getMainWindow(), Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, action);
 			newProDia.setProjectName(projectNameTest);
 			newProDia.setProjectFolder(projectFolderTest);
 			newProDia.setVisible(true);
@@ -180,8 +179,8 @@ public class ProjectsLoaded {
 			// --- Get data model from file ---------------
 			JAXBContext pc;
 			Unmarshaller um = null;
-			String XMLFileName = newProject.getProjectFolderFullPath() + Application.RunInfo.getFileNameProject();	
-			String userObjectFileName = newProject.getProjectFolderFullPath() + Application.RunInfo.getFilenameProjectUserObject();
+			String XMLFileName = newProject.getProjectFolderFullPath() + Application.getGlobalInfo().getFileNameProject();	
+			String userObjectFileName = newProject.getProjectFolderFullPath() + Application.getGlobalInfo().getFilenameProjectUserObject();
 		
 			// --- Does the file exists -------------------
 			File xmlFile = new File(XMLFileName);
@@ -246,12 +245,9 @@ public class ProjectsLoaded {
 			reloadEnvironmentType = false;
 		}
 		
-		// --- Load the ontology objects -------------------------------------- 
-		newProject.ontologies4Project = new Ontologies4Project(newProject);
-
 		// --- Maybe take over Agent.GUI default JADE configuration -----------
 		if(addNew==true) {
-			newProject.JadeConfiguration = Application.RunInfo.getJadeDefaultPlatformConfig();
+			newProject.JadeConfiguration = Application.getGlobalInfo().getJadeDefaultPlatformConfig();
 		}
 		// --- Set Project reference to the current JADE configuration -------- 
 		newProject.JadeConfiguration.setProject(newProject);
@@ -276,7 +272,7 @@ public class ProjectsLoaded {
 
 		// --- Configure the project view in the main application -------------
 		Application.Projects.setProjectView();		
-		Application.MainWindow.setCloseButtonPosition(true);
+		Application.getMainWindow().setCloseButtonPosition(true);
 		Application.setTitelAddition( newProject.getProjectName() );
 		Application.setStatusBar(Language.translate("Fertig"));	
 		newProject.setMaximized();
@@ -393,7 +389,7 @@ public class ProjectsLoaded {
 	public void setProjectView() {
 		
 		// --- 1. Set Setup-Selector and Tools --------------------------------
-		Application.MainWindow.getSetupSelectorToolbar().setProject(Application.ProjectCurr);
+		Application.getMainWindow().getSetupSelectorToolbar().setProject(Application.ProjectCurr);
 		
 		// --- 2. Rebuild the view to the Items in MenuBar 'Window' -----------
 		this.setProjectMenuItems();
@@ -408,8 +404,8 @@ public class ProjectsLoaded {
 	 */
 	private void setProjectView4DevOrUser() {
 		
-		JRadioButtonMenuItem viewDeveloper = Application.MainWindow.viewDeveloper; 
-		JRadioButtonMenuItem viewEndUser = Application.MainWindow.viewEndUser; 
+		JRadioButtonMenuItem viewDeveloper = Application.getMainWindow().viewDeveloper; 
+		JRadioButtonMenuItem viewEndUser = Application.getMainWindow().viewEndUser; 
 		
 		if (this.count()==0) {
 			// --- Disable both MenuItems -----------------
@@ -442,7 +438,7 @@ public class ProjectsLoaded {
 		
 		boolean setFontBold = true;
 		
-		JMenu WindowMenu = Application.MainWindow.getJMenuMainWindow();
+		JMenu WindowMenu = Application.getMainWindow().getJMenuMainWindow();
 		WindowMenu.removeAll();
 		if (this.count()==0 ){
 			WindowMenu.add( new JMenuItmen_Window( Language.translate("Kein Projekt geöffnet !"), -1, setFontBold ) );
@@ -481,7 +477,7 @@ public class ProjectsLoaded {
 			if ( setBold ) {
 				Font cfont = this.getFont();
 				if ( cfont.isBold() == true ) {
-					this.setForeground( Application.RunInfo.ColorMenuHighLight() );	
+					this.setForeground( Application.getGlobalInfo().ColorMenuHighLight() );	
 				}
 				else {
 					this.setFont( cfont.deriveFont(Font.BOLD) );
@@ -509,27 +505,27 @@ public class ProjectsLoaded {
 		
 		String optionMsg = null;
 		String optionTitle = null;
-		String newLine = Application.RunInfo.AppNewLineString(); 
+		String newLine = Application.getGlobalInfo().AppNewLineString(); 
 		
 		// --- Select a *.agui file -----------------------
-		String fileEnd = Application.RunInfo.getFileEndProjectZip();
+		String fileEnd = Application.getGlobalInfo().getFileEndProjectZip();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(Language.translate("Agent.GUI Projekt-Datei") + " (*." + fileEnd + ")", fileEnd);
 		
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileFilter(filter);
-		chooser.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
+		chooser.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
 		chooser.setMultiSelectionEnabled(false);
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setAcceptAllFileFilterUsed(false);
 		
-		int answerChooser = chooser.showDialog(Application.MainWindow, Language.translate("Projekt importieren"));
+		int answerChooser = chooser.showDialog(Application.getMainWindow(), Language.translate("Projekt importieren"));
 		if (answerChooser==JFileChooser.CANCEL_OPTION) return;
-		Application.RunInfo.setLastSelectedFolder(chooser.getCurrentDirectory());
+		Application.getGlobalInfo().setLastSelectedFolder(chooser.getCurrentDirectory());
 		
 		File projectFile = chooser.getSelectedFile();
 		if (projectFile!=null && projectFile.exists()) {
 
-			String destFolder = Application.RunInfo.PathProjects(true);
+			String destFolder = Application.getGlobalInfo().PathProjects(true);
 			String zipFolder = projectFile.getAbsolutePath();
 			
 			// --- Import project file as a new project ---
@@ -545,7 +541,7 @@ public class ProjectsLoaded {
 				optionTitle = rootFolder2Extract + ": " + Language.translate("Verzeichnis bereits vorhanden!");
 				optionMsg = Language.translate("Verzeichnis") + ": " + testFolder + newLine;
 				optionMsg+= Language.translate("Das Verzeichnis existiert bereits. Der Import wird unterbrochen.");
-				JOptionPane.showMessageDialog(Application.MainWindow, optionMsg, optionTitle, JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(Application.getMainWindow(), optionMsg, optionTitle, JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 			
@@ -582,7 +578,7 @@ public class ProjectsLoaded {
 			if (Application.ProjectCurr!=null) {
 				optionTitle = "" + Application.ProjectCurr.getProjectName() + ": " + Language.translate("Projekt exportieren?");
 				optionMsg = Language.translate("Möchten Sie das aktuelle Projekt exportieren?");
-				int answer = JOptionPane.showConfirmDialog(Application.MainWindow, optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
+				int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
 				if (answer==JOptionPane.YES_OPTION) {
 					projectFolder = Application.ProjectCurr.getProjectFolder();
 				}
@@ -591,7 +587,7 @@ public class ProjectsLoaded {
 			// --- If no projectFolder is specified yet ----------------- 
 			if (projectFolder==null) {
 				// --- Select the project to export ---------------------
-				ProjectNewOpen newProDia = new ProjectNewOpen(Application.MainWindow, Application.RunInfo.getApplicationTitle() + ": " + actionTitel, ProjectNewOpen.ACTION_OpenProject);
+				ProjectNewOpen newProDia = new ProjectNewOpen(Application.getMainWindow(), Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, ProjectNewOpen.ACTION_OpenProject);
 				newProDia.setOkButtonText("Export");
 				newProDia.setVisible(true);
 				// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
@@ -605,8 +601,8 @@ public class ProjectsLoaded {
 		}
 
 		// --- Select a *.agui file ---------------------------------
-		String fileEnd = Application.RunInfo.getFileEndProjectZip();
-		String proposedFileName = Application.RunInfo.getLastSelectedFolderAsString() + projectFolder + "." + fileEnd ;
+		String fileEnd = Application.getGlobalInfo().getFileEndProjectZip();
+		String proposedFileName = Application.getGlobalInfo().getLastSelectedFolderAsString() + projectFolder + "." + fileEnd ;
 		File proposedFile = new File(proposedFileName );
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(Language.translate("Agent.GUI Projekt-Datei") + " (*." + fileEnd + ")", fileEnd);
 		
@@ -618,11 +614,11 @@ public class ProjectsLoaded {
 		chooser.setMultiSelectionEnabled(false);
 		chooser.setAcceptAllFileFilterUsed(false);
 		
-		int answerChooser = chooser.showDialog(Application.MainWindow, Language.translate("Projekt exportieren"));
+		int answerChooser = chooser.showDialog(Application.getMainWindow(), Language.translate("Projekt exportieren"));
 		if (answerChooser==JFileChooser.CANCEL_OPTION) {
 			return false;
 		}
-		Application.RunInfo.setLastSelectedFolder(chooser.getCurrentDirectory());		
+		Application.getGlobalInfo().setLastSelectedFolder(chooser.getCurrentDirectory());		
 		
 		File projectFile = chooser.getSelectedFile();
 		if (projectFile==null) {
@@ -639,7 +635,7 @@ public class ProjectsLoaded {
 		if (projectFile.exists()==true) {
 			optionTitle = projectFile.getName() + ": " + Language.translate("Datei überschreiben?");
 			optionMsg = Language.translate("Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?");
-			int answer = JOptionPane.showConfirmDialog(Application.MainWindow, optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
+			int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
 			if (answer==JOptionPane.YES_OPTION) {
 				projectFile.delete();
 			} else {
@@ -648,7 +644,7 @@ public class ProjectsLoaded {
 		}
 		
 		// --- Export project file as a new project -------------
-		String srcFolder = Application.RunInfo.PathProjects(true) + projectFolder;
+		String srcFolder = Application.getGlobalInfo().PathProjects(true) + projectFolder;
 		String zipFolder = projectFile.getAbsolutePath();
 		
 		Zipper zipper = new Zipper();
@@ -676,11 +672,11 @@ public class ProjectsLoaded {
 		int action = ProjectNewOpen.ACTION_DeleteProject;
 		String actionTitel = Language.translate("Projekt löschen");
 		
-		Application.MainWindow.setStatusBar(actionTitel + " ...");
+		Application.getMainWindow().setStatusBar(actionTitel + " ...");
 		
 		// ----------------------------------------------------------
 		// --- Open project selection dialog ------------------------
-		ProjectNewOpen newProDia = new ProjectNewOpen(Application.MainWindow, Application.RunInfo.getApplicationTitle() + ": " + actionTitel, action);
+		ProjectNewOpen newProDia = new ProjectNewOpen(Application.getMainWindow(), Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, action);
 		newProDia.setVisible(true);
 		// === Waiting for closing dialog ===
 		if ( newProDia.isCanceled() == true ) {
@@ -704,7 +700,7 @@ public class ProjectsLoaded {
 				Project currProject = this.get(iProject);	
 				optionTitle = "" + currProject.getProjectName() + " - " + Language.translate("Projekt schließen");
 				optionMsg = currProject.getProjectName() + ": " + Language.translate("Das Projekt wird nun geschlossen!");
-				int answer = JOptionPane.showConfirmDialog(Application.MainWindow, optionMsg, optionTitle, JOptionPane.OK_CANCEL_OPTION);
+				int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), optionMsg, optionTitle, JOptionPane.OK_CANCEL_OPTION);
 				if (answer==JOptionPane.CANCEL_OPTION) {
 					Application.setStatusBar(Language.translate("Fertig"));
 					return;
@@ -732,7 +728,7 @@ public class ProjectsLoaded {
 		
 		// ----------------------------------------------------------
 		// --- Delete the folders of the project --------------------
-		projectFolderFullPath = Application.RunInfo.PathProjects(true) + projectFolder;
+		projectFolderFullPath = Application.getGlobalInfo().PathProjects(true) + projectFolder;
 		System.out.println(Language.translate("Lösche Verzeichnis") +": " + projectFolderFullPath);
 
 		// --- Get the files and folders in the project folder ------

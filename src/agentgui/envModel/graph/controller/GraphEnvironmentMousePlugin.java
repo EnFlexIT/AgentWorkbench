@@ -194,6 +194,45 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		}
 	}
 	
+	/**
+	 * Acts on the mouse pressed and mouse clicked action.
+	 * @param me the {@link MouseEvent}
+	 */
+	private void mousePressedOrClicked(MouseEvent me) {
+		
+		// --- Left click ---------------------------------
+		if(SwingUtilities.isLeftMouseButton(me) || SwingUtilities.isRightMouseButton(me)){
+
+			// --- Check if an object was selected --------
+			Object pickedObject = null;
+			Point point = me.getPoint();
+			GraphElementAccessor<GraphNode, GraphEdge> ps = this.getVisViewer().getPickSupport();
+			GraphNode pickedNode = ps.getVertex(this.getVisViewer().getGraphLayout(), point.getX(), point.getY());
+			if(pickedNode != null) {  
+				pickedObject = pickedNode;
+			} else {
+				GraphEdge pickedEdge = ps.getEdge(this.getVisViewer().getGraphLayout(), point.getX(), point.getY());
+				if(pickedEdge != null) { 
+					pickedObject = pickedEdge;
+				}
+			}
+
+			// --- Only when node or edge is clicked -----------
+			if(pickedObject != null) {
+				if (me.getClickCount()==2){
+					// --- Double click ---------
+					this.graphGUI.handleObjectDoubleClick(pickedObject);
+				} else {
+					if(me.isShiftDown()==false) {
+						// --- Left click -----------
+						this.graphGUI.handleObjectLeftClick(pickedObject);
+					}	
+				} 
+			}
+		}
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#pickContainedVertices(edu.uci.ics.jung.visualization.VisualizationViewer, java.awt.geom.Point2D, java.awt.geom.Point2D, boolean)
 	 */
@@ -244,7 +283,15 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				this.remindOldPositions();
 			}
 		}
-		
+		this.mousePressedOrClicked(me);
+	}
+	
+	/* (non-Javadoc)
+	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseClicked(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseClicked(MouseEvent me){
+		this.mousePressedOrClicked(me);
 	}
 	
 	/* (non-Javadoc)
@@ -270,46 +317,6 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	
 	}
 	
-	/* (non-Javadoc)
-	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseClicked(java.awt.event.MouseEvent)
-	 */
-	@Override
-	public void mouseClicked(MouseEvent me){
-		
-		// --- Left click ---------------------------------
-		if(SwingUtilities.isLeftMouseButton(me) || SwingUtilities.isRightMouseButton(me)){
-
-			// --- Check if an object was selected --------
-			Object pickedObject = null;
-			Point point = me.getPoint();
-			GraphElementAccessor<GraphNode, GraphEdge> ps = this.getVisViewer().getPickSupport();
-			GraphNode pickedNode = ps.getVertex(this.getVisViewer().getGraphLayout(), point.getX(), point.getY());
-			if(pickedNode != null) {  
-				pickedObject = pickedNode;
-			} else {
-				GraphEdge pickedEdge = ps.getEdge(this.getVisViewer().getGraphLayout(), point.getX(), point.getY());
-				if(pickedEdge != null) { 
-					pickedObject = pickedEdge;
-				}
-			}
-
-			// --- Only when node or edge is clicked -----------
-			if(pickedObject != null) {
-				if (me.getClickCount()==2){
-					// --- Double click ---------
-					this.graphGUI.handleObjectDoubleClick(pickedObject);
-				} else {
-					if(me.isShiftDown()==false) {
-						// --- Left click -----------
-						this.graphGUI.handleObjectLeftClick(pickedObject);
-					}	
-				} 
-			}
-			
-		}
-		
-	}
-
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseDragged(java.awt.event.MouseEvent)
 	 */

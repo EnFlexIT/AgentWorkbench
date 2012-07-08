@@ -80,10 +80,10 @@ import agentgui.core.project.Project;
 public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private final static String PathImage = Application.RunInfo.PathImageIntern();
+	private final static String PathImage = Application.getGlobalInfo().PathImageIntern();
 	
 	private Project currProject;
-	private OntologyClassTreeObject CurrOntoObject = null;
+	private OntologyClassTreeObject currOntoObject = null;
 	
 	private String agentConfig = null;  //  @jve:decl-index=0:
 	private Integer agentConfigPos = null;  //  @jve:decl-index=0:
@@ -242,56 +242,56 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 				public void valueChanged(javax.swing.event.ListSelectionEvent se) {
 
 					if ( jAgentList.getSelectedValue() != null ) {
-						String ToDisplay = jAgentList.getSelectedValue().toString();
+						String toDisplay = jAgentList.getSelectedValue().toString();
 						//System.out.println("Agent: " + ToDisplay);
 						// -----------------------------------------------------
 						// --- Definierte Start-Referenzen anzeigen ------------ 
-						jListReferences.setListData( currProject.agentConfig.getListData(ToDisplay) );
+						jListReferences.setListData( currProject.agentConfig.getListData(toDisplay) );
 						// -----------------------------------------------------
 						// --- Eintrag für den aktuellen Agenten vornehmen -----
 						int maxLenght = 30;
-						if ( ToDisplay.length() > maxLenght ) {
-							String ToDisplayStart = ToDisplay.substring(0, 4);
-							String ToDisplayEnde = ToDisplay.substring( ToDisplay.length() - maxLenght );
-							ToDisplay = ToDisplayStart + "..." + ToDisplayEnde;
+						if ( toDisplay.length() > maxLenght ) {
+							String ToDisplayStart = toDisplay.substring(0, 4);
+							String ToDisplayEnde = toDisplay.substring( toDisplay.length() - maxLenght );
+							toDisplay = ToDisplayStart + "..." + ToDisplayEnde;
 						}
-						jTextAgent.setText( ToDisplay );
+						jTextAgent.setText(toDisplay);
 						// -----------------------------------------------------
 						// --- Vorschlag für den Ausführungsnamen finden -------
-						String StartAs = jAgentList.getSelectedValue().toString();
-						StartAs = StartAs.substring(StartAs.lastIndexOf(".")+1);
+						String startAs = jAgentList.getSelectedValue().toString();
+						startAs = startAs.substring(startAs.lastIndexOf(".")+1);
 						// -----------------------------------------------------
 						// --- Alle Großbuchstaben filtern ---------------------
-						String RegExp = "[A-Z]";	
-						String StartAsNew = ""; 
-						for (int i = 0; i < StartAs.length(); i++) {
-							String SngChar = "" + StartAs.charAt(i);
-							if ( SngChar.matches( RegExp ) == true ) {
-								StartAsNew = StartAsNew + SngChar;	
+						String regExp = "[A-Z]";	
+						String startAsNew = ""; 
+						for (int i = 0; i < startAs.length(); i++) {
+							String sngChar = "" + startAs.charAt(i);
+							if (sngChar.matches(regExp)==true) {
+								startAsNew = startAsNew + sngChar;	
 								// --- ggf. den zweiten Buchstaben mitnehmen ---
-								if ( i < StartAs.length() ) {
-									String SngCharN = "" + StartAs.charAt(i+1);
-									if ( SngCharN.matches( RegExp ) == false ) {
-										StartAsNew = StartAsNew + SngCharN;	
+								if ( i < startAs.length()-1 ) {
+									String SngCharN = "" + startAs.charAt(i+1);
+									if ( SngCharN.matches( regExp ) == false ) {
+										startAsNew = startAsNew + SngCharN;	
 									}
 								}	
 								// ---------------------------------------------
 							}						
 					    }
-						if ( StartAsNew != "" && StartAsNew.length() >= 4 ) {
-							StartAs = StartAsNew;
+						if ( startAsNew != "" && startAsNew.length() >= 4 ) {
+							startAs = startAsNew;
 						}
 						// -----------------------------------------------------
 						// --- Check, ob es dieser Agent schon läuft -----------
 						int i = 1;
-						StartAsNew = StartAs;
-						while ( Application.JadePlatform.jadeAgentIsRunning( StartAs, currProject.getProjectFolder() ) == true ){
-							StartAs = StartAsNew + i;
+						startAsNew = startAs;
+						while ( Application.getJadePlatform().jadeAgentIsRunning( startAs, currProject.getProjectFolder() ) == true ){
+							startAs = startAsNew + i;
 							i++; 
 						}
 						// -----------------------------------------------------
 						// --- Vorschlagsnamen einstellen ----------------------
-						jTextAgentStartAs.setText(StartAs);
+						jTextAgentStartAs.setText(startAs);
 					}
 					// ----------------------------------------------------
 					// --- Fertig -----------------------------------------
@@ -533,7 +533,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		if (jTreeOntology == null) {
 			jTreeOntology = new JTree();
 			//jTreeOntology = new JTree( CurrProject.Ontology.getOntologyTree() );
-			jTreeOntology = new JTree( currProject.ontologies4Project.getOntologyTree() );
+			jTreeOntology = new JTree( currProject.getOntologyVisualisationHelper().getOntologyTree() );
 			jTreeOntology.setName("OntoTree");
 			jTreeOntology.setShowsRootHandles(false);
 			jTreeOntology.setRootVisible(true);
@@ -547,7 +547,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 					// ----------------------------------------------------------
 					// --- Node auslesen und Slots anzeigen ---------------------
 					DefaultMutableTreeNode CurrNode = (DefaultMutableTreeNode)ts.getPath().getLastPathComponent();
-					CurrOntoObject = (OntologyClassTreeObject) CurrNode.getUserObject();
+					currOntoObject = (OntologyClassTreeObject) CurrNode.getUserObject();
 					JPanel NewSlotView = new OntologyTabClassView( CurrNode ); 
 					int DivLoc = jSplitOntologie.getDividerLocation();
 					jSplitOntologie.setBottomComponent( NewSlotView );
@@ -567,7 +567,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
     	Integer CurrNodeLevel = 1;
     	if ( Up2TreeLevel == null ) 
     		Up2TreeLevel = 1000;
-    	OntoTreeExpand( new TreePath( currProject.ontologies4Project.getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
+    	OntoTreeExpand( new TreePath( currProject.getOntologyVisualisationHelper().getOntologyTree().getRoot() ), expand, CurrNodeLevel, Up2TreeLevel);
     }
     /**
      * 
@@ -688,11 +688,11 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			agentReference = jAgentList.getSelectedValue().toString();
 		}
 		// -- configure Var. ontoReference --------------------------		
-		if ( CurrOntoObject == null  ) {
+		if ( currOntoObject == null  ) {
 			ontoReference = null;
 		} else {
-			if ( CurrOntoObject.isClass() ) {
-				ontoReference = CurrOntoObject.getOntologySubClass().getName();	
+			if ( currOntoObject.isClass() ) {
+				ontoReference = currOntoObject.getOntologySubClass().getName();	
 			} else {
 				ontoReference = null;	
 			}
@@ -830,7 +830,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 				String startArgsConfigured = currProject.agentConfig.get(selectedAgentReference);
 				if (startArgsConfigured!=null) {
 					// --- If start-arguments are set, get them now -----
-					OntologyInstanceDialog oid = new OntologyInstanceDialog(Application.MainWindow, this.currProject, selectedAgentReference);
+					OntologyInstanceDialog oid = new OntologyInstanceDialog(Application.getMainWindow(), this.currProject.getOntologyVisualisationHelper(), this.currProject.agentConfig, selectedAgentReference);
 					oid.setTitle(Language.translate("Startargument definieren für Agent") + " '" + selectedAgentName + "' (" + selectedAgentClass.getSimpleName() + ")");
 					oid.setVisible(true);
 					// --- Wait ---
@@ -841,7 +841,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 				}
 				
 				// --- Start the Agent now --------------------------
-				Application.JadePlatform.jadeAgentStart(jTextAgentStartAs.getText(), selectedAgentClass, startArgs, currProject.getProjectFolder());	
+				Application.getJadePlatform().jadeAgentStart(jTextAgentStartAs.getText(), selectedAgentClass, startArgs, currProject.getProjectFolder());	
 				jTextAgent.setText(null);
 				jTextAgentStartAs.setText(null);
 				jAgentList.clearSelection();
@@ -869,7 +869,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			if (jListReferences.getSelectedValue()==null) {
 				head = Language.translate("Ontologie-Referenz auswählen!");
 				msg  = Language.translate("Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.");
-				JOptionPane.showMessageDialog(Application.MainWindow, msg, head, JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 			setTmpAgentConfig();
@@ -879,9 +879,9 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			head = Language.translate("Ontologie Referenz maskieren");
 			msg  = Language.translate("Bitte geben Sie einen Bezeichner für die Referenz an!");
 			if (agentConfigMask== null) {
-				input = (String) JOptionPane.showInputDialog(Application.MainWindow, msg, head, JOptionPane.QUESTION_MESSAGE);	
+				input = (String) JOptionPane.showInputDialog(Application.getMainWindow(), msg, head, JOptionPane.QUESTION_MESSAGE);	
 			} else {
-				input = (String) JOptionPane.showInputDialog(Application.MainWindow, msg, head, JOptionPane.QUESTION_MESSAGE, null, null, agentConfigMask);	
+				input = (String) JOptionPane.showInputDialog(Application.getMainWindow(), msg, head, JOptionPane.QUESTION_MESSAGE, null, null, agentConfigMask);	
 			}
 			if (input==null) {
 				return;
@@ -923,7 +923,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			
 		} else if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectOntology ) ) {
 			// --- Ansicht auf die projekt-Ontologie aktualisieren --
-			this.jTreeOntology.setModel( currProject.ontologies4Project.getOntologyTree() );
+			this.jTreeOntology.setModel( currProject.getOntologyVisualisationHelper().getOntologyTree() );
 			this.OntoTreeExpand2Level(3, true);
 		
 		} else if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectResources ) ) {

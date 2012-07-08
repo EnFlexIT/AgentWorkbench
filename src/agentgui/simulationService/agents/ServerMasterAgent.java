@@ -98,7 +98,7 @@ public class ServerMasterAgent extends Agent {
 	private Codec codec = new SLCodec();
 	
 	private ParallelBehaviour parBehaiv = null;
-	private DBConnection dbConn = Application.DBconnection;
+	private DBConnection dbConn = Application.getDatabaseConnection();
 
 	
 	/* (non-Javadoc)

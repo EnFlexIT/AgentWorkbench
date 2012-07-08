@@ -379,7 +379,7 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 		if(loadSVGDialog == null){
 			loadSVGDialog = new JFileChooser();
 			loadSVGDialog.setFileFilter(new FileNameExtensionFilter(Language.translate("SVG-Dateien"), "svg"));
-			loadSVGDialog.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
+			loadSVGDialog.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
 		}
 		return loadSVGDialog;
 	}
@@ -422,7 +422,7 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == this.environmentSettings.getBtnLoadSVG()){
 			if(getLoadSVGDialog().showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-				Application.RunInfo.setLastSelectedFolder(loadSVGDialog.getCurrentDirectory());
+				Application.getGlobalInfo().setLastSelectedFolder(loadSVGDialog.getCurrentDirectory());
 				this.getP2DController().setSVGFile(loadSVGDialog.getSelectedFile());
 			}
 		}else if(arg0.getSource() == environmentSettings.getBtnSetScale()){
@@ -446,7 +446,7 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 			this.getP2DController().removeObject();
 			setSelectedElement(null);
 		}else if(arg0.getSource() == objectSettings.getBtnSetAgentClass()){
-			AgentSelector agentSelector = new AgentSelector(Application.MainWindow);
+			AgentSelector agentSelector = new AgentSelector(Application.getMainWindow());
 			agentSelector.setVisible(true);
 			Object[] selected = agentSelector.getSelectedAgentClasses();
 			if(selected != null && selected.length > 0){

@@ -120,9 +120,9 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 			if (ae.getActionCommand().equals(EDIT)) {
 	            
 				// --- set the directory to the default project directory or the last selected folder 
-	            if(Application.RunInfo.getLastSelectedFolderAsString().startsWith(project.getProjectFolderFullPath())){
+	            if(Application.getGlobalInfo().getLastSelectedFolderAsString().startsWith(project.getProjectFolderFullPath())){
 	            	// --- last selected folder is a sub folder of the project folder ---
-	            	this.getFileChooser().setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());	           
+	            	this.getFileChooser().setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());	           
 	            } else{
 	            	// --- set current directory as the project folder ------------------	
 	            	this.getFileChooser().setCurrentDirectory(new File(project.getProjectFolderFullPath()));
@@ -143,7 +143,7 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	            // - - Wait for the end of the dialog - - - - - - -
 	            if (returnVal == JFileChooser.APPROVE_OPTION) {
 	            	// --- Choosen a file -----------------------------------------------
-		            Application.RunInfo.setLastSelectedFolder(fileChooser.getCurrentDirectory());
+		            Application.getGlobalInfo().setLastSelectedFolder(fileChooser.getCurrentDirectory());
 	            
 	            	File file = this.getFileChooser().getSelectedFile();	               
 	                String filePath = file.getPath();

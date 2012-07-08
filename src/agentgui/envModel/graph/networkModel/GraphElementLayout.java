@@ -49,6 +49,9 @@ public class GraphElementLayout {
 	private DomainSettings myDomain = null;
 	private ComponentTypeSettings myComponentTypeSettings = null;
 	
+	private boolean markerShow = false;
+	private float markerStrokeWidth = 0;
+	private Color markerColor = new Color(255,0,0, 140);
 	
 	private float size = 0;
 	private Color color = Color.BLACK;
@@ -324,6 +327,51 @@ public class GraphElementLayout {
 	 */
 	public void setShapeForm(String shapeForm) {
 		this.shapeForm = shapeForm;
+	}
+
+	/**
+	 * Checks if is marker show.
+	 * @return the markerShow
+	 */
+	public boolean isMarkerShow() {
+		return markerShow;
+	}
+	/**
+	 * Sets the marker show.
+	 * @param markerShow the markerShow to set
+	 */
+	public void setMarkerShow(boolean markerShow) {
+		this.markerShow = markerShow;
+	}
+	
+	/**
+	 * Gets the marker stroke width.
+	 * @return the markerStrokeWidth
+	 */
+	public float getMarkerStrokeWidth() {
+		return markerStrokeWidth;
+	}
+	/**
+	 * Sets the marker stroke width.
+	 * @param markerStrokeWidth the markerStrokeWidth to set
+	 */
+	public void setMarkerStrokeWidth(float markerStrokeWidth) {
+		this.markerStrokeWidth = markerStrokeWidth;
+	}
+
+	/**
+	 * Returns the marker color.
+	 * @return the markerColor
+	 */
+	public Color getMarkerColor() {
+		return markerColor;
+	}
+	/**
+	 * Sets the marker color.
+	 * @param markerColor the markerColor to set
+	 */
+	public void setMarkerColor(Color markerColor) {
+		this.markerColor = markerColor;
 	}
 
 }

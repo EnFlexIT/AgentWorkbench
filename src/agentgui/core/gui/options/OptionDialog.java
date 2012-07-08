@@ -83,8 +83,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private GlobalInfo global = Application.RunInfo;  //  @jve:decl-index=0:
-	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
+	private GlobalInfo global = Application.getGlobalInfo();  //  @jve:decl-index=0:
+	private final String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
 	
 	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private Image image = imageIcon.getImage();  //  @jve:decl-index=0:
@@ -121,8 +121,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		
 		// --- Set the Look and Feel of the Dialog ------------------
 		if (Application.isServer==true) {
-			if (Application.RunInfo.getAppLnF()!=null) {
-				setLookAndFeel( Application.RunInfo.getAppLnF() );
+			if (Application.getGlobalInfo().getAppLnF()!=null) {
+				setLookAndFeel( Application.getGlobalInfo().getAppLnF() );
 			}
 		}
 		
@@ -130,7 +130,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		this.initialize();
 
 		// --- Übersetzungen konfigurieren --------------------------
-	    this.setTitle( Application.RunInfo.getApplicationTitle() + ": " + Language.translate("Optionen") );
+	    this.setTitle( Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Optionen") );
 	    this.jButtonCancel.setText(Language.translate("Abbrechen"));
 	    
 	    // ----------------------------------------------------------
@@ -144,7 +144,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    
 	    if (Application.isServer==true) {
 	    	tabTitle = Language.translate("Konsole");
-	    	this.addOptionTab(tabTitle, null, Application.Console, tabTitle);	
+	    	this.addOptionTab(tabTitle, null, Application.getConsole(), tabTitle);	
 	    }
 	    // ----------------------------------------------------------
 	    
@@ -211,9 +211,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private void setLookAndFeel( String NewLnF ) {
 		// --- Look and fell einstellen --------------- 
 		if ( NewLnF == null ) return;		
-		Application.RunInfo.setAppLnf( NewLnF );
+		Application.getGlobalInfo().setAppLnf( NewLnF );
 		try {
-			String lnfClassname = Application.RunInfo.getAppLnF();
+			String lnfClassname = Application.getGlobalInfo().getAppLnF();
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 			}
@@ -221,7 +221,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			SwingUtilities.updateComponentTreeUI(this);				
 		} 
 		catch (Exception e) {
-				System.err.println("Cannot install " + Application.RunInfo.getAppLnF()
+				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF()
 					+ " on this platform:" + e.getMessage());
 		}
 	}		
@@ -586,10 +586,10 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 */
 	private void doOkAction() {
 		
-		boolean isServerOld = Application.RunInfo.isRunAsServer();
+		boolean isServerOld = Application.getGlobalInfo().isRunAsServer();
 		boolean isServerNew = optionsStart.jRadioButtonRunAsServer.isSelected();
 		
-		String newLine = Application.RunInfo.AppNewLineString();
+		String newLine = Application.getGlobalInfo().AppNewLineString();
 		String forceRestartTo = null;
 		
 		// --- Fehlerbehnaldung -------------------------------------
@@ -640,7 +640,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		this.setFromData2Global();
 		this.canceled = false;
 		this.setVisible(false);
-		Application.Properties.save();
+		Application.getFileProperties().save();
 		
 	}
 	

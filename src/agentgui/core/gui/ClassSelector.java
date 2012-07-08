@@ -28,6 +28,10 @@
  */
 package agentgui.core.gui;
 
+import jade.content.onto.Ontology;
+import jade.core.Agent;
+import jade.core.BaseService;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -56,6 +60,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 
+import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.components.ClassElement2Display;
@@ -76,15 +81,18 @@ public class ClassSelector extends JDialog {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	
-	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
+	private final String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
 	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private Image image = imageIcon.getImage();  //  @jve:decl-index=0:
 	
 	private JPanel jContentPane = null;
 	private JLabel jLabelCustomize = null;
 	private JTextField jTextFieldCustomizeClass = null;
-	private JButton jButtonDefaultClass = null;
+
 	private JButton jButtonCheckClass = null;
+	private JButton jButtonDefaultClass = null;
+	private JButton jButtonSetNull = null;
+	
 	private JPanel jPanelProceed = null;
 	private JButton jButtonOK = null;
 	private JButton jButtonCancel = null;
@@ -93,12 +101,13 @@ public class ClassSelector extends JDialog {
 	private JTextField jTextFieldSearch = null;
 	private JButton jButtonTakeSelected = null;
 	private JListClassSearcher jListClassesFound = null;
-	/** The class2 search4. */
+	
 	private Class<?> class2Search4 = Object.class;  //  @jve:decl-index=0:
 	private String class2Search4CurrentValue = null;  //  @jve:decl-index=0:
 	private String class2Search4DefaultValue = null;  //  @jve:decl-index=0:
 	private String class2Search4Description = "Klassen der aktuellen Laufzeitumgebung.";  //  @jve:decl-index=0:
-
+	private boolean allowNull = false;
+	
 	private ClassSearcherSingle css = null;
 	private boolean canceled = false;
 	private boolean validClass = false;
@@ -107,7 +116,6 @@ public class ClassSelector extends JDialog {
 
 	/**
 	 * Default constructor.
-	 *
 	 * @param owner the owner
 	 */
 	public ClassSelector(Frame owner) {
@@ -124,47 +132,41 @@ public class ClassSelector extends JDialog {
 	 * @param clazz2Search4DefaultValue the clazz2 search4 default value
 	 * @param clazz2Search4Description the clazz2 search4 description
 	 */
-	public ClassSelector(Frame owner, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description) {
+	public ClassSelector(Frame owner, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
 		super(owner);
 		
 		this.class2Search4 = clazz2Search4;
 		this.class2Search4CurrentValue = clazz2Search4CurrentValue;
 		this.class2Search4DefaultValue = clazz2Search4DefaultValue;
 		this.class2Search4Description = clazz2Search4Description;
-		
+		this.allowNull = allowNull;
 		this.initialize();
+		
 	}
 
 	/**
 	 * Gets the class2 search4.
-	 *
 	 * @return the class2Search4
 	 */
 	public Class<?> getClass2Search4() {
 		return class2Search4;
 	}
-	
 	/**
 	 * Gets the class2 search4 current value.
-	 *
 	 * @return the class2Search4CurrentValue
 	 */
 	public String getClass2Search4CurrentValue() {
 		return class2Search4CurrentValue;
 	}
-
 	/**
 	 * Gets the class2 search4 default value.
-	 *
 	 * @return the class2Search4DefaultValue
 	 */
 	public String getClass2Search4DefaultValue() {
 		return class2Search4DefaultValue;
 	}
-	
 	/**
 	 * Gets the class2 search4 description.
-	 *
 	 * @return the class2Search4Description
 	 */
 	public String getClass2Search4Description() {
@@ -173,16 +175,13 @@ public class ClassSelector extends JDialog {
 	
 	/**
 	 * Sets the canceled.
-	 *
 	 * @param canceled the canceled to set
 	 */
 	public void setCanceled(boolean canceled) {
 		this.canceled = canceled;
 	}
-	
 	/**
 	 * Checks if is canceled.
-	 *
 	 * @return the canceled
 	 */
 	public boolean isCanceled() {
@@ -191,16 +190,14 @@ public class ClassSelector extends JDialog {
 
 	/**
 	 * Sets the class selected.
-	 *
 	 * @param classSelected the classSelected to set
 	 */
 	public void setClassSelected(String classSelected) {
 		this.classSelected = classSelected;
+		this.jTextFieldCustomizeClass.setText(this.classSelected);
 	}
-	
 	/**
 	 * Gets the class selected.
-	 *
 	 * @return the classSelected
 	 */
 	public String getClassSelected() {
@@ -214,7 +211,9 @@ public class ClassSelector extends JDialog {
 	public void setVisible(boolean visible) {
 		if (visible==false) {
 			// --- Stop the class search ------------------
-			this.css.stopSearch();	
+			if (!class2Search4.equals(Agent.class) && !class2Search4.equals(Ontology.class) && !class2Search4.equals(BaseService.class)) {
+				this.css.stopSearch();
+			}
 		}
 		super.setVisible(visible);
 	}
@@ -227,11 +226,19 @@ public class ClassSelector extends JDialog {
 	 */
 	private void initialize() {
 	
-		// --- Die Suche nach den möglichen Klassen starten ---------
-		this.css = new ClassSearcherSingle(class2Search4);
-		this.css.startSearch();
+		// --- Search for the specified class -------------
+		if (class2Search4.equals(Agent.class)) {
+			this.css = Application.ClassDetector.getClassSearcher4Agents(); 	
+		} else if (class2Search4.equals(Ontology.class)) {
+			this.css = Application.ClassDetector.getClassSearcher4Ontologies();
+		} else if (class2Search4.equals(BaseService.class)) {
+			this.css = Application.ClassDetector.getClassSearcher4Ontologies();
+		} else {
+			this.css = new ClassSearcherSingle(class2Search4);
+			this.css.startSearch();
+		}
 		
-		this.setSize(622, 580);
+		this.setSize(730, 606);
 		this.setContentPane(getJContentPane());
 		this.setTitle("Agent.GUI: Class-Selector");
 		this.setIconImage(image);
@@ -253,20 +260,23 @@ public class ClassSelector extends JDialog {
 
 	/**
 	 * This method initializes jContentPane.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
+			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
+			gridBagConstraints13.gridx = 3;
+			gridBagConstraints13.insets = new Insets(5, 5, 0, 20);
+			gridBagConstraints13.gridy = 1;
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
-			gridBagConstraints12.gridx = 2;
+			gridBagConstraints12.gridx = 3;
 			gridBagConstraints12.insets = new Insets(5, 5, 0, 20);
 			gridBagConstraints12.gridy = 5;
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			gridBagConstraints5.gridx = 0;
 			gridBagConstraints5.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints5.insets = new Insets(10, 20, 10, 20);
-			gridBagConstraints5.gridwidth = 3;
+			gridBagConstraints5.gridwidth = 4;
 			gridBagConstraints5.gridy = 3;
 			jLabelSeperator = new JLabel();
 			jLabelSeperator.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
@@ -277,31 +287,27 @@ public class ClassSelector extends JDialog {
 			gridBagConstraints3.gridy = 5;
 			gridBagConstraints3.weightx = 1.0;
 			gridBagConstraints3.insets = new Insets(5, 20, 0, 0);
-			gridBagConstraints3.gridwidth = 2;
+			gridBagConstraints3.gridwidth = 3;
 			gridBagConstraints3.gridx = 0;
 			GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
 			gridBagConstraints21.gridx = 0;
 			gridBagConstraints21.anchor = GridBagConstraints.WEST;
 			gridBagConstraints21.insets = new Insets(0, 20, 0, 20);
 			gridBagConstraints21.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints21.gridwidth = 3;
+			gridBagConstraints21.gridwidth = 4;
 			gridBagConstraints21.gridy = 4;
-			jLabelSearchCaption = new JLabel();
-			jLabelSearchCaption.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelSearchCaption.setText("Suche & Auswahl");
-			jLabelSearchCaption.setText(Language.translate(jLabelSearchCaption.getText()) + ": Class extends " + class2Search4.getName() );
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.fill = GridBagConstraints.BOTH;
 			gridBagConstraints11.gridy = 6;
 			gridBagConstraints11.weightx = 1.0;
 			gridBagConstraints11.weighty = 1.0;
 			gridBagConstraints11.insets = new Insets(10, 20, 20, 20);
-			gridBagConstraints11.gridwidth = 3;
+			gridBagConstraints11.gridwidth = 4;
 			gridBagConstraints11.gridx = 0;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.gridx = 0;
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints.gridwidth = 3;
+			gridBagConstraints.gridwidth = 4;
 			gridBagConstraints.insets = new Insets(10, 20, 0, 20);
 			gridBagConstraints.gridy = 2;
 			GridBagConstraints gridBagConstraints28 = new GridBagConstraints();
@@ -312,7 +318,7 @@ public class ClassSelector extends JDialog {
 			gridBagConstraints52.fill = GridBagConstraints.NONE;
 			gridBagConstraints52.gridx = 2;
 			gridBagConstraints52.gridy = 1;
-			gridBagConstraints52.insets = new Insets(5, 5, 0, 20);
+			gridBagConstraints52.insets = new Insets(5, 5, 0, 0);
 			GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
 			gridBagConstraints31.anchor = GridBagConstraints.WEST;
 			gridBagConstraints31.insets = new Insets(5, 20, 0, 0);
@@ -326,10 +332,17 @@ public class ClassSelector extends JDialog {
 			gridBagConstraints42.gridwidth = 3;
 			gridBagConstraints42.insets = new Insets(20, 20, 0, 0);
 			gridBagConstraints42.gridx = 0;
+
+			jLabelSearchCaption = new JLabel();
+			jLabelSearchCaption.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelSearchCaption.setText("Suche & Auswahl");
+			jLabelSearchCaption.setText(Language.translate(jLabelSearchCaption.getText()) + ": Class extends " + class2Search4.getName() );
+			
 			jLabelCustomize = new JLabel();
 			jLabelCustomize.setText("Klasse mit gewünschter Oberklasse:");
 			jLabelCustomize.setText(class2Search4Description + ":");
 			jLabelCustomize.setFont(new Font("Dialog", Font.BOLD, 12));
+			
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
 			jContentPane.add(jLabelCustomize, gridBagConstraints42);
@@ -342,13 +355,13 @@ public class ClassSelector extends JDialog {
 			jContentPane.add(getJTextFieldSearch(), gridBagConstraints3);
 			jContentPane.add(jLabelSeperator, gridBagConstraints5);
 			jContentPane.add(getJButtonTakeSelected(), gridBagConstraints12);
+			jContentPane.add(getJButtonSetNull(), gridBagConstraints13);
 		}
 		return jContentPane;
 	}
 
 	/**
 	 * This method initializes jTextFieldCustomizeClass.
-	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJTextFieldCustomizeClass() {
@@ -369,17 +382,15 @@ public class ClassSelector extends JDialog {
 	
 	/**
 	 * This method initializes jButtonDefaultClass.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonDefaultClass() {
 		if (jButtonDefaultClass == null) {
 			jButtonDefaultClass = new JButton();
-			jButtonDefaultClass.setToolTipText(Language.translate("Agent.GUI - Standard verwenden"));			
+			jButtonDefaultClass.setToolTipText(Language.translate("Zurücksetzen"));
 			jButtonDefaultClass.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonDefaultClass.setPreferredSize(new Dimension(45, 26));
 			jButtonDefaultClass.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
-			jButtonDefaultClass.setToolTipText(Language.translate("Zurücksetzen"));
 			jButtonDefaultClass.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -390,10 +401,31 @@ public class ClassSelector extends JDialog {
 		}
 		return jButtonDefaultClass;
 	}
+	/**
+	 * This method initializes jButtonSetNull	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonSetNull() {
+		if (jButtonSetNull == null) {
+			jButtonSetNull = new JButton();
+			jButtonSetNull.setEnabled(this.allowNull);
+			jButtonSetNull.setToolTipText(Language.translate("Löschen"));
+			jButtonSetNull.setBounds(new Rectangle(120, 121, 80, 26));
+			jButtonSetNull.setPreferredSize(new Dimension(45, 26));
+			jButtonSetNull.setIcon(new ImageIcon(getClass().getResource(PathImage + "Delete.png")));
+			jButtonSetNull.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					jTextFieldCustomizeClass.setText(null);
+				}
+			});
+
+		}
+		return jButtonSetNull;
+	}
 	
 	/**
 	 * This method initializes jButtonDefaultClassCustomize.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonDefaultClassCustomize() {
@@ -427,7 +459,11 @@ public class ClassSelector extends JDialog {
 			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
 			this.setValidClass(true);
 			return true;
-		
+		} else if (allowNull==true && className.equals("")) {
+			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
+			this.setValidClass(true);
+			return true;
+			
 		} else {
 			// --- If a default value is configured, there should be a valid class ------ 
 			try {
@@ -463,7 +499,6 @@ public class ClassSelector extends JDialog {
 
 	/**
 	 * This method initializes jPanelProceed.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelProceed() {
@@ -482,7 +517,6 @@ public class ClassSelector extends JDialog {
 
 	/**
 	 * This method initializes jButtonOK.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	public JButton getJButtonOK() {
@@ -518,7 +552,6 @@ public class ClassSelector extends JDialog {
 
 	/**
 	 * This method initializes jButtonCancel.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	public JButton getJButtonCancel() {
@@ -542,7 +575,6 @@ public class ClassSelector extends JDialog {
 
 	/**
 	 * This method initializes jTextFieldSearch.
-	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJTextFieldSearch() {
@@ -570,7 +602,6 @@ public class ClassSelector extends JDialog {
 	
 	/**
 	 * This method initializes jButtonTakeSelected.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonTakeSelected() {
@@ -584,8 +615,14 @@ public class ClassSelector extends JDialog {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if (jListClassesFound.isSelectionEmpty()==false) {
-						ClassElement2Display ce2d = (ClassElement2Display) jListClassesFound.getSelectedValue();
-						jTextFieldCustomizeClass.setText(ce2d.toString());
+						Object selectedValue = jListClassesFound.getSelectedValue();
+						if (selectedValue instanceof ClassElement2Display) {
+							ClassElement2Display ce2d = (ClassElement2Display) selectedValue;
+							jTextFieldCustomizeClass.setText(ce2d.toString());	
+						} else if (selectedValue instanceof AgentClassElement) {
+							AgentClassElement ace = (AgentClassElement) selectedValue;
+							jTextFieldCustomizeClass.setText(ace.toString());
+						}
 						jButtonCheckClass.doClick();
 					}
 				}
@@ -596,7 +633,6 @@ public class ClassSelector extends JDialog {
 	
 	/**
 	 * This method initializes jListClassesFound.
-	 *
 	 * @return javax.swing.JList
 	 */
 	private JListWithProgressBar getJListClassesFound() {
@@ -616,6 +652,5 @@ public class ClassSelector extends JDialog {
 		}
 		return jListClassesFound;
 	}
-	
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

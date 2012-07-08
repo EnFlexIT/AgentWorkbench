@@ -187,7 +187,7 @@ public class Physical2DObjectSettingsPanel extends JPanel{
 	JButton getBtnSetAgentClass() {
 		if (btnSetAgentClass == null) {
 			btnSetAgentClass = new JButton();
-			btnSetAgentClass.setIcon(new ImageIcon(getClass().getResource(Application.RunInfo.PathImageIntern() + "Search.png")));
+			btnSetAgentClass.setIcon(new ImageIcon(getClass().getResource(Application.getGlobalInfo().PathImageIntern() + "Search.png")));
 			btnSetAgentClass.setSize(new Dimension(45, 26));
 			btnSetAgentClass.setLocation(new Point(140, 100));
 			btnSetAgentClass.addActionListener(parent);

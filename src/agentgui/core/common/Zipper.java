@@ -87,7 +87,7 @@ public class Zipper extends Thread {
 	 */
 	public Zipper() {
 		this.setName("Zipper");
-		this.zipMonitor = new ZipperMonitor(Application.MainWindow);
+		this.zipMonitor = new ZipperMonitor(Application.getMainWindow());
 	}
 	
 	/**

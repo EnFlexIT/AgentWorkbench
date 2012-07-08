@@ -71,7 +71,7 @@ public class ProjectResources extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 1L;
 	
-	final static String PathImage = Application.RunInfo.PathImageIntern();
+	final static String PathImage = Application.getGlobalInfo().PathImageIntern();
 	private Project currProject = null;
 	
 	private JPanel jPanelSimulationEnvironment = null;
@@ -280,20 +280,20 @@ public class ProjectResources extends JPanel implements Observer {
 			jButtonResourcesAdd.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
-					if (Application.JadePlatform.jadeStopAskUserBefore()==true) {
+					if (Application.getJadePlatform().jadeStopAskUserBefore()==true) {
 						
 						FileNameExtensionFilter filter = new FileNameExtensionFilter("jar", "JAR");
 						
 						JFileChooser chooser = new JFileChooser();
 						chooser.setFileFilter(filter);
-						chooser.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
+						chooser.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
 						chooser.setMultiSelectionEnabled(true);
 						chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 						chooser.setAcceptAllFileFilterUsed(false);
 						
 						int answerChooser = chooser.showDialog(jButtonResourcesAdd, Language.translate("Dateien einbinden"));
 						if (answerChooser==JFileChooser.CANCEL_OPTION) return;
-						Application.RunInfo.setLastSelectedFolder(chooser.getCurrentDirectory());
+						Application.getGlobalInfo().setLastSelectedFolder(chooser.getCurrentDirectory());
 						
 						Vector<String> names = adjustPaths(chooser.getSelectedFiles());
 						currProject.getProjectResources().addAll(names);
@@ -319,7 +319,7 @@ public class ProjectResources extends JPanel implements Observer {
 			jButtonResourcesRemove.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 
-							if (Application.JadePlatform.jadeStopAskUserBefore()==true) {
+							if (Application.getJadePlatform().jadeStopAskUserBefore()==true) {
 								// --- Remove from the ClassPath ----
 								Vector<String> selection = new Vector<String>();
 								Object[] selectionArray = jListResources.getSelectedValues();
@@ -351,10 +351,10 @@ public class ProjectResources extends JPanel implements Observer {
 			jButtonRecourcesRefresh.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							
-							if (Application.JadePlatform.jadeStopAskUserBefore()) {
-								Application.MainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+							if (Application.getJadePlatform().jadeStopAskUserBefore()) {
+								Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 								currProject.resourcesReLoad();
-								Application.MainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+								Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 							}
 						}
 					});
@@ -489,7 +489,7 @@ public class ProjectResources extends JPanel implements Observer {
 					String 	 search4DefaultValue = null;
 					String   search4Description = Language.translate("PlugIn für Agent.GUI");
 					
-					ClassSelector cs = new ClassSelector(Application.MainWindow, search4Class, search4CurrentValue, search4DefaultValue, search4Description);
+					ClassSelector cs = new ClassSelector(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
 					cs.setVisible(true);
 					// --- act in the dialog ... --------------------
 					if (cs.isCanceled()==true) return;

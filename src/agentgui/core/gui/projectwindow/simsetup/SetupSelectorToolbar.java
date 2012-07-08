@@ -61,7 +61,7 @@ import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
  */
 public class SetupSelectorToolbar implements ActionListener {
 
-	private final String pathImage = Application.RunInfo.PathImageIntern();
+	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
 	
 	private final Integer SETUP_add = 1;
 	private final Integer SETUP_rename = 2;
@@ -373,9 +373,9 @@ public class SetupSelectorToolbar implements ActionListener {
 			}
 			
 			if (suggestion== null) {
-				input = (String) JOptionPane.showInputDialog(Application.MainWindow, msg, head, JOptionPane.OK_CANCEL_OPTION);	
+				input = (String) JOptionPane.showInputDialog(Application.getMainWindow(), msg, head, JOptionPane.OK_CANCEL_OPTION);	
 			} else {
-				input = (String) JOptionPane.showInputDialog(Application.MainWindow, msg, head, JOptionPane.OK_CANCEL_OPTION, null, null, suggestion);	
+				input = (String) JOptionPane.showInputDialog(Application.getMainWindow(), msg, head, JOptionPane.OK_CANCEL_OPTION, null, null, suggestion);	
 			}
 			
 			if (input==null) return null;
@@ -388,7 +388,7 @@ public class SetupSelectorToolbar implements ActionListener {
 				head = Language.translate("Setup-Name zu kurz!");
 				msg  = "Name: '" + input + "' " + Language.translate("zu Datei") + ": '" + newFileName + ".xml':";
 				msg += Language.translate("<br>Bitte geben Sie einen längeren Namen für das Setup an.");
-				JOptionPane.showMessageDialog(Application.MainWindow, msg, head, JOptionPane.NO_OPTION);
+				JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.NO_OPTION);
 			} else {
 				inputIsOk = true;
 			}
@@ -398,7 +398,7 @@ public class SetupSelectorToolbar implements ActionListener {
 				head = Language.translate("Setup-Name wird bereits verwendet!");
 				msg  = Language.translate("Der Name") + " '" + input + "' " + Language.translate("wird bereits verwendet.");
 				msg += Language.translate("<br>Bitte geben Sie einen anderen Namen für das Setup an.");
-				JOptionPane.showMessageDialog(Application.MainWindow, msg, head, JOptionPane.NO_OPTION);
+				JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.NO_OPTION);
 				inputIsOk = false;
 			}
 			
@@ -459,7 +459,7 @@ public class SetupSelectorToolbar implements ActionListener {
 		
 		head = jComboBoxSetupSelector.getSelectedItem().toString() + ": " + Language.translate("Setup löschen?");
 		msg  = Language.translate("Wollen Sie das aktuelle Setup wirklich löschen?");
-		input = JOptionPane.showConfirmDialog(Application.MainWindow, msg, head, JOptionPane.YES_NO_OPTION);
+		input = JOptionPane.showConfirmDialog(Application.getMainWindow(), msg, head, JOptionPane.YES_NO_OPTION);
 		if (input == JOptionPane.YES_OPTION) {
 			currProject.simulationSetups.setupRemove(jComboBoxSetupSelector.getSelectedItem().toString());
 		}		

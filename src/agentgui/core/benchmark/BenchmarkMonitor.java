@@ -63,7 +63,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	/** The Constant PathImage. */
-	private final static String PathImage = Application.RunInfo.PathImageIntern();
+	private final static String PathImage = Application.getGlobalInfo().PathImageIntern();
 	
 	/** The icon agent gui. */
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
@@ -125,7 +125,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		this.setSize(506, 185);
 		this.setContentPane(getJContentPane());
 		
-		this.setTitle(Application.RunInfo.getApplicationTitle() + ": SciMark 2.0 - Benchmark");
+		this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": SciMark 2.0 - Benchmark");
 		this.setIconImage(imageAgentGUI);
 		
 		this.setLookAndFeel();
@@ -148,7 +148,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	 */
 	private void setLookAndFeel() {
 		
-		String lnfClassname = Application.RunInfo.getAppLnF();
+		String lnfClassname = Application.getGlobalInfo().getAppLnF();
 		try {
 			if (lnfClassname == null) {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();

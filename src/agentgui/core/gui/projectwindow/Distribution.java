@@ -83,7 +83,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private final static int DYNAMIC_BALANCING_CLASS = 2;
 	private final static int THRESHOLD_LEVEL = 3;
 
-	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
+	private final String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
 	
 	private Project currProject = null;
 	private DistributionSetup currDistributionSetup = null; 
@@ -486,7 +486,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			combo.hidePopup();
 			String head = Language.translate("Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !");
 			String msg = Language.translate("Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.");
-			JOptionPane.showMessageDialog(Application.MainWindow, msg, head, JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.ERROR_MESSAGE);
 			error = true;
 		}
 		return error;
@@ -1126,7 +1126,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			break;
 		}
 		
-		ClassSelector cs = new ClassSelector(Application.MainWindow, search4Class, search4CurrentValue, search4DefaultValue, search4Description);
+		ClassSelector cs = new ClassSelector(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
 		cs.setVisible(true);
 		// --- act in the dialog ... --------------------
 		if (cs.isCanceled()==true) return;

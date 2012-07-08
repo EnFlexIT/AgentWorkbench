@@ -73,7 +73,7 @@ import agentgui.core.gui.projectwindow.TabForSubPanels;
 import agentgui.core.gui.projectwindow.simsetup.SimulationEnvironment;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.jade.ClassSearcher;
-import agentgui.core.ontologies.Ontologies4Project;
+import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInLoadException;
 import agentgui.core.plugin.PlugInNotification;
@@ -132,8 +132,8 @@ import agentgui.core.webserver.JarFileCreator;
 															   defaultSubFolderEnvSetups, 
 															  };
 	
-	@XmlTransient private static final String newLine = Application.RunInfo.AppNewLineString();	
-	@XmlTransient private static final String pathSep = Application.RunInfo.AppPathSeparatorString();
+	@XmlTransient private static final String newLine = Application.getGlobalInfo().AppNewLineString();	
+	@XmlTransient private static final String pathSep = Application.getGlobalInfo().AppPathSeparatorString();
 	
 	// --- GUI der aktuellen Projekt-Instanz -------------------
 	/**
@@ -198,14 +198,14 @@ import agentgui.core.webserver.JarFileCreator;
 	 * This class is used for the management of the used Ontology's inside a project.
 	 * It handles the concrete instances.
 	 */
-	@XmlTransient public Ontologies4Project ontologies4Project;
+	@XmlTransient private OntologyVisualisationHelper ontologyVisualisationHelper;
 	
 	/**
 	 * This Vector is used in order to store the class names of the used ontology's in the project file
 	 */
 	@XmlElementWrapper(name = "subOntologies")
 	@XmlElement(name="subOntology")
-	public Vector<String> subOntologies = new Vector<String>();
+	private Vector<String> subOntologies = new Vector<String>();
 	
 	/**
 	 * This extended HashTable is used in order to save the relationship between an agent (agents class name)
@@ -271,7 +271,7 @@ import agentgui.core.webserver.JarFileCreator;
 		// --- Fill the projects ComboBoxModel for environments ----- 
 		environmentsComboBoxModel = new DefaultComboBoxModel();
 		
-		Vector<EnvironmentType> appEnvTypes = Application.RunInfo.getKnownEnvironmentTypes();
+		Vector<EnvironmentType> appEnvTypes = Application.getGlobalInfo().getKnownEnvironmentTypes();
 		for (int i = 0; i < appEnvTypes.size(); i++) {
 			EnvironmentType envType = (EnvironmentType) appEnvTypes.get(i);
 			environmentsComboBoxModel.addElement(envType);
@@ -370,7 +370,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public boolean save() {
 		// --- Save the current project -------------------
-		Application.MainWindow.setStatusBar( projectName + ": " + Language.translate("speichern") + " ... ");
+		Application.getMainWindow().setStatusBar( projectName + ": " + Language.translate("speichern") + " ... ");
 		try {			
 			// --- prepare Context and Marshaller ---------
 			JAXBContext pc = JAXBContext.newInstance( this.getClass() ); 
@@ -379,7 +379,7 @@ import agentgui.core.webserver.JarFileCreator;
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 			//pm.marshal( this, System.out );
 			// --- Write values to xml-File ---------------
-			Writer pw = new FileWriter( projectFolderFullPath + Application.RunInfo.getFileNameProject() );
+			Writer pw = new FileWriter( projectFolderFullPath + Application.getGlobalInfo().getFileNameProject() );
 			pm.marshal(this, pw);
 			pw.close();
 			
@@ -387,7 +387,7 @@ import agentgui.core.webserver.JarFileCreator;
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
 		    try {
-		       fos = new FileOutputStream(projectFolderFullPath + Application.RunInfo.getFilenameProjectUserObject());
+		       fos = new FileOutputStream(projectFolderFullPath + Application.getGlobalInfo().getFilenameProjectUserObject());
 		       out = new ObjectOutputStream(fos);
 		       out.writeObject(this.userRuntimeObject);
 		       out.close();
@@ -409,7 +409,7 @@ import agentgui.core.webserver.JarFileCreator;
 			System.out.println("XML-Error while saving Project-File!");
 			e.printStackTrace();
 		}
-		Application.MainWindow.setStatusBar("");
+		Application.getMainWindow().setStatusBar("");
 		return true;		
 	}
 	
@@ -424,7 +424,7 @@ import agentgui.core.webserver.JarFileCreator;
 		String msgText = null;
 		Integer msgAnswer = 0;
 		
-		Application.MainWindow.setStatusBar(Language.translate("Projekt schließen") + " ...");
+		Application.getMainWindow().setStatusBar(Language.translate("Projekt schließen") + " ...");
 		if ( isUnsaved == true ) {
 			msgHead = Language.translate("Projekt '@' speichern?");
 			msgHead = msgHead.replace( "'@'", "'" + projectName + "'");			
@@ -433,7 +433,7 @@ import agentgui.core.webserver.JarFileCreator;
 						"Möchten Sie es nun speichern ?");
 			msgText = msgText.replace( "'@'", "'" + projectName + "'");
 			
-			msgAnswer = JOptionPane.showInternalConfirmDialog (Application.MainWindow.getContentPane(), msgText, msgHead, JOptionPane.YES_NO_CANCEL_OPTION );
+			msgAnswer = JOptionPane.showInternalConfirmDialog (Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_CANCEL_OPTION );
 			if (msgAnswer == JOptionPane.CANCEL_OPTION) {
 				return false;
 			} else if (msgAnswer == JOptionPane.YES_OPTION) {
@@ -442,7 +442,7 @@ import agentgui.core.webserver.JarFileCreator;
 			}
 		}
 		// --- ggf. noch Jade beenden ---------------------
-		if (Application.JadePlatform.jadeStopAskUserBefore()==false) {
+		if (Application.getJadePlatform().jadeStopAskUserBefore()==false) {
 			return false;
 		}
 
@@ -467,7 +467,7 @@ import agentgui.core.webserver.JarFileCreator;
 			Application.setTitelAddition( Application.ProjectCurr.projectName );
 		} else {
 			Application.ProjectCurr = null;
-			Application.MainWindow.setCloseButtonPosition( false );
+			Application.getMainWindow().setCloseButtonPosition( false );
 			Application.setTitelAddition( "" );
 		}
 		Application.setStatusBar( "" );
@@ -639,7 +639,7 @@ import agentgui.core.webserver.JarFileCreator;
 		
 		if (forceClassPathReload) {
 			// --- stop Jade ------------------------------
-			if (Application.JadePlatform.jadeStopAskUserBefore()==false) {
+			if (Application.getJadePlatform().jadeStopAskUserBefore()==false) {
 				return;
 			}
 			// --- unload ClassPath -----------------------
@@ -662,12 +662,12 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public void setMaximized() {
 		// --- Validate the min application window ------------------
-		Application.MainWindow.validate();
+		Application.getMainWindow().validate();
 		// --- Be sure that everything is there as needed ----------- 
 		if (projectWindow!=null && projectWindow.getParent()!=null) {
 			// --- maximize now -------------------------------------
 			((BasicInternalFrameUI) projectWindow.getUI()).setNorthPane(null);
-			DesktopManager dtm = Application.MainWindow.getJDesktopPane4Projects().getDesktopManager();
+			DesktopManager dtm = Application.getMainWindow().getJDesktopPane4Projects().getDesktopManager();
 			if (dtm!=null) {
 				dtm.maximizeFrame(projectWindow);	
 			}
@@ -714,7 +714,7 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient
 	public void setProjectFolder(String newProjectFolder) {
 		projectFolder = newProjectFolder;
-		projectFolderFullPath = Application.RunInfo.PathProjects(true) + projectFolder + Application.RunInfo.AppPathSeparatorString();
+		projectFolderFullPath = Application.getGlobalInfo().PathProjects(true) + projectFolder + Application.getGlobalInfo().AppPathSeparatorString();
 		setChanged();
 		notifyObservers(CHANGED_ProjectFolder);
 	}
@@ -786,7 +786,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 * @return the 'EnvironmentType' of the current EnvironmentModel
 	 */
 	public EnvironmentType getEnvironmentModelType() {
-		return Application.RunInfo.getKnownEnvironmentTypes().getEnvironmentTypeByKey(this.environmentModelName);
+		return Application.getGlobalInfo().getKnownEnvironmentTypes().getEnvironmentTypeByKey(this.environmentModelName);
 	}
 	
 	/**
@@ -836,13 +836,30 @@ import agentgui.core.webserver.JarFileCreator;
 		return defaultSubFolderEnvSetups;
 	}
 
+	
+	/**
+	 * Sets the reference Vector for the sub ontologies.
+	 * @param subOntologies the new sub ontologies
+	 */
+	public void setSubOntologies(Vector<String> subOntologies) {
+		this.subOntologies = subOntologies;
+	}
+	/**
+	 * Returns the Vector of references to the used sub ontologies.
+	 * @return the sub ontologies
+	 */
+	@XmlTransient
+	public Vector<String> getSubOntologies() {
+		return subOntologies;
+	}
 	/**
 	 * Adds a new sub ontology to the current project  
 	 * @param newSubOntology
 	 */
 	public void subOntologyAdd(String newSubOntology) {
-		if (this.subOntologies.contains(newSubOntology)==false) {
-			this.ontologies4Project.addSubOntology(newSubOntology);
+		if (this.getSubOntologies().contains(newSubOntology)==false) {
+			this.getSubOntologies().add(newSubOntology);
+			this.getOntologyVisualisationHelper().addSubOntology(newSubOntology);
 			isUnsaved = true;
 			setChanged();
 			notifyObservers(CHANGED_ProjectOntology);
@@ -850,15 +867,28 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 	/**
 	 * Removes a new sub ontology from the current project ontology 
-	 * @param removableSubOntology
+	 * @param subOntology2Remove
 	 */
-	public void subOntologyRemove(String removableSubOntology) {
-		this.ontologies4Project.removeSubOntology(removableSubOntology);
+	public void subOntologyRemove(String subOntology2Remove) {
+		this.getSubOntologies().remove(subOntology2Remove);
+		this.getOntologyVisualisationHelper().removeSubOntology(subOntology2Remove);
 		isUnsaved = true;
 		setChanged();
 		notifyObservers(CHANGED_ProjectOntology);
 	}
 	
+	/**
+	 * Returns the ontology visualisation helper for this project.
+	 * @return the OntologyVisualisationHelper
+	 */
+	public OntologyVisualisationHelper getOntologyVisualisationHelper() {
+		if (this.ontologyVisualisationHelper==null) {
+			this.ontologyVisualisationHelper = new OntologyVisualisationHelper(this.getSubOntologies());
+			this.setSubOntologies(this.ontologyVisualisationHelper.getSubOntologies());
+		}
+		return ontologyVisualisationHelper;
+	}
+
 	/**
 	 * @param projectResources the projectResources to set
 	 */

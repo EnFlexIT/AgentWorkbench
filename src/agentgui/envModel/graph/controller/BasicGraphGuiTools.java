@@ -720,7 +720,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if (ae.getSource() == getJButtonClearGraph()) {
 			// ------------------------------------------------------
 			// --- Button Clear graph -------------------------------
-			int answer = JOptionPane.showConfirmDialog(Application.MainWindow,
+			int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(),
 						 Language.translate("Are you sure that you want to clear the graph?", Language.EN), 
 						 Language.translate("Confirmation", Language.EN), 
 						 JOptionPane.YES_NO_OPTION);
@@ -740,10 +740,10 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				graphFC.addChoosableFileFilter(importer.getFileFilter());
 			}
 			graphFC.setFileFilter(graphFC.getChoosableFileFilters()[0]);
-			graphFC.setCurrentDirectory(Application.RunInfo.getLastSelectedFolder());
+			graphFC.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
 			// --- Show FileChooser ---------------------------------
 			if(graphFC.showOpenDialog(this.getJToolBar()) == JFileChooser.APPROVE_OPTION){
-				Application.RunInfo.setLastSelectedFolder(graphFC.getCurrentDirectory());
+				Application.getGlobalInfo().setLastSelectedFolder(graphFC.getCurrentDirectory());
 				File selectedFile = graphFC.getSelectedFile();
 				FileFilter selectedFileFilter = graphFC.getFileFilter();
 				for (NetworkModelFileImporter importer : this.graphController.getImportAdapter()){
@@ -759,7 +759,9 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// --- Popup Menu Item Node properties clicked ----------
 			GraphNode pickedVertex = basicGraphGui.getPickedSingleNode();
 			if(pickedVertex!=null){
-				new OntologySettingsDialog(this.graphController.getProject(), this.graphController, pickedVertex).setVisible(true);
+				NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
+				nmNote.setInfoObject(pickedVertex);
+				this.graphController.notifyObservers(nmNote);
 			}
 		
 		} else if(ae.getSource() == getJMenuItemEdgeProp()){
@@ -767,8 +769,9 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// --- Popup Menu Item Edge properties clicked ----------
 			GraphEdge pickedEdge = basicGraphGui.getPickedSingleEdge();
 			if(pickedEdge!=null){
-				NetworkComponent netComp = graphController.getNetworkModelAdapter().getNetworkComponent(pickedEdge);					
-				new OntologySettingsDialog(this.graphController.getProject(), this.graphController, netComp).setVisible(true);
+				NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
+				nmNote.setInfoObject(pickedEdge);
+				this.graphController.notifyObservers(nmNote);
 			}
 		}		
 		

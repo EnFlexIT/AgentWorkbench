@@ -69,7 +69,8 @@ import agentgui.core.ontologies.OntologyClassTree;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologySingleClassDescription;
 import agentgui.core.ontologies.OntologySingleClassSlotDescription;
-import agentgui.core.project.Project;
+import agentgui.core.ontologies.OntologyVisualisationHelper;
+import agentgui.core.project.AgentConfiguration;
 import agentgui.ontology.Chart;
 import agentgui.ontology.Formula;
 import agentgui.ontology.TimeSeries;
@@ -93,7 +94,9 @@ public class DynForm extends JPanel {
 	private Vector<String> currOnotologyClassReferenceList = new Vector<String>();
 	
 	// --- parameters which are coming from the constructor --------- 
-	private Project currProject = null;
+	//private Project currProject = null;
+	private OntologyVisualisationHelper ontologyVisualisationHelper = null;
+	private AgentConfiguration agentConfiguration = null;
 	private String currAgentReference = null;
 
 	// --- Runtime parameters of this  class ------------------------
@@ -109,16 +112,18 @@ public class DynForm extends JPanel {
 	
 	private HashMap<DefaultMutableTreeNode, Object> userFormElements = new HashMap<DefaultMutableTreeNode, Object>();
 
+	
 	/**
 	 * Constructor of this class by using a project and an agent reference.
 	 *
 	 * @param project the project
 	 * @param agentReference the agent reference
 	 */
-	public DynForm(Project project, String agentReference) {
+	public DynForm(OntologyVisualisationHelper ontologyVisualisationHelper, AgentConfiguration agentConfiguration, String agentReference) {
 		
 		super();
-		this.currProject = project;
+		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
+		this.agentConfiguration = agentConfiguration;
 		this.currAgentReference = agentReference;
 	
 		// --- Set the preferences for the Main Panel ---------------
@@ -127,10 +132,10 @@ public class DynForm extends JPanel {
 		// --- Prevent errors through empty agent references --------
 		if (currAgentReference!=null) {
 			// --- Find Agent in AgentConfig ------------------------
-			if (currProject.agentConfig.containsKey(currAgentReference)==true) {
+			if (this.agentConfiguration.containsKey(currAgentReference)==true) {
 				
 				// --- Which classes are configured for the Agent? -- 
-				TreeMap<Integer,String> startObjectList = currProject.agentConfig.getReferencesAsTreeMap(currAgentReference);
+				TreeMap<Integer,String> startObjectList = this.agentConfiguration.getReferencesAsTreeMap(currAgentReference);
 				Vector<Integer> v = new Vector<Integer>(startObjectList.keySet()); 
 				Collections.sort(v);
 				
@@ -160,11 +165,10 @@ public class DynForm extends JPanel {
 	 * @param project the project
 	 * @param ontologyClassReferences the ontology class references
 	 */
-	public DynForm(Project project, String[] ontologyClassReferences) {
+	public DynForm(OntologyVisualisationHelper ontologyVisualisationHelper, String[] ontologyClassReferences) {
 
 		super();
-		this.currProject = project;
-
+		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
 		// --- Set the preferences for the Main Panel ---------------
 		this.setLayout(null);
 		
@@ -207,32 +211,33 @@ public class DynForm extends JPanel {
 		
 		// --- Iterate over the available Start-Objects ---
 		for (int i = 0; i < currOnotologyClassReferenceList.size(); i++) {
-			
-			JPanel startObjectPanel = new JPanel(null);
-			
-			String startObjectClass = currOnotologyClassReferenceList.get(i);
-			String startObjectClassMask = null;
-			if (startObjectClass.contains("]")) {
-				int cutPos = startObjectClass.indexOf("]");
-				startObjectClassMask = startObjectClass.substring(1, cutPos);
-				startObjectClass = startObjectClass.substring(cutPos+1).trim();
-			}
-			
-			// --- Get the info about the slots --------------------
-			OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClass);
-			if(osc!=null) {
-				this.createGUI(osc, i, 0, startObjectClass, startObjectClassMask, (DefaultMutableTreeNode) rootNode, startObjectPanel);
-			} else {
-				System.out.println("Could not get OntologySingleClassDescription for " + startObjectClass);
-			}
+			String startObjectClass = currOnotologyClassReferenceList.get(i);			
+			if (startObjectClass!=null) {
 
-			// --- 
-			this.setPanelBounds(startObjectPanel);
-			startObjectPanel.setLocation(0, yPos);
-			this.add(startObjectPanel);
-			
-			// --- Configure the next position for a panel ----------
-			yPos = yPos + ((int)startObjectPanel.getBounds().getHeight()) + 2;
+				JPanel startObjectPanel = new JPanel(null);
+				String startObjectClassMask = null;
+				if (startObjectClass.contains("]")) {
+					int cutPos = startObjectClass.indexOf("]");
+					startObjectClassMask = startObjectClass.substring(1, cutPos);
+					startObjectClass = startObjectClass.substring(cutPos+1).trim();
+				}
+				
+				// --- Get the info about the slots --------------------
+				OntologySingleClassDescription osc = this.ontologyVisualisationHelper.getSlots4ClassAsObject(startObjectClass);
+				if(osc!=null) {
+					this.createGUI(osc, i, 0, startObjectClass, startObjectClassMask, (DefaultMutableTreeNode) rootNode, startObjectPanel);
+				} else {
+					System.out.println("Could not get OntologySingleClassDescription for " + startObjectClass);
+				}
+
+				// --- 
+				this.setPanelBounds(startObjectPanel);
+				startObjectPanel.setLocation(0, yPos);
+				this.add(startObjectPanel);
+				
+				// --- Configure the next position for a panel ----------
+				yPos = yPos + ((int)startObjectPanel.getBounds().getHeight()) + 2;
+			}
 			
 		}
 		// --- Justify the Preferred Size of this Panel ---
@@ -260,7 +265,7 @@ public class DynForm extends JPanel {
 			String className = dt.getClassName();
 			
 			// --- Get the corresponding Ontology-Instance ----------			
-			OntologyClassTreeObject octo = this.currProject.ontologies4Project.getClassTreeObject(className);
+			OntologyClassTreeObject octo = this.ontologyVisualisationHelper.getClassTreeObject(className);
 			Ontology onto = octo.getOntologyClass().getOntologyInstance();
 						
 			// --- Generate XML of this object ----------------------
@@ -292,7 +297,7 @@ public class DynForm extends JPanel {
 			String className = dt.getClassName();
 			
 			// --- Get the corresponding Ontology-Instance ----------			
-			OntologyClassTreeObject octo = this.currProject.ontologies4Project.getClassTreeObject(className);
+			OntologyClassTreeObject octo = this.ontologyVisualisationHelper.getClassTreeObject(className);
 			Ontology onto = octo.getOntologyClass().getOntologyInstance();
 			
 			// --- Generate instance of this object -----------------
@@ -332,7 +337,7 @@ public class DynForm extends JPanel {
 			String className = dt.getClassName();
 			
 			// --- Get the corresponding Ontology-Instance ----------			
-			OntologyClassTreeObject octo = this.currProject.ontologies4Project.getClassTreeObject(className);
+			OntologyClassTreeObject octo = this.ontologyVisualisationHelper.getClassTreeObject(className);
 			Ontology onto = octo.getOntologyClass().getOntologyInstance();
 			
 			// --- Generate instance for this argument --------------
@@ -342,7 +347,7 @@ public class DynForm extends JPanel {
 					// --- Set the current instance to the form -----
 					this.setFormState(obj, currNode);
 					// --- Remind object state as instance ----------
-					ontoArgsInstance[i] = obj;
+					this.ontoArgsInstance[i] = obj;
 				}
 			}
 
@@ -1190,7 +1195,7 @@ public class DynForm extends JPanel {
 		}
 		
 		// --- create the inner fields of the current inner class
-		OntologySingleClassDescription osc = currProject.ontologies4Project.getSlots4ClassAsObject(startObjectClassName);
+		OntologySingleClassDescription osc = this.ontologyVisualisationHelper.getSlots4ClassAsObject(startObjectClassName);
 		this.createGUI(osc, -1, tiefe, startObjectClassName, null, newNode, dataPanel);
 		
 		// --- set the correct height of the parent of this inner class according to the
@@ -1682,37 +1687,38 @@ public class DynForm extends JPanel {
 	}
 
 	/**
-	 * Gets the onto args instance.
-	 *
+	 * Returns the instances of the ontology arguments.
 	 * @return the agentArgsInstance
 	 */
 	public Object[] getOntoArgsInstance() {
 		return ontoArgsInstance;
 	}
-	
 	/**
-	 * Sets the onto args instance.
-	 *
-	 * @param ontoArgsInstance the new onto args instance
+	 * Sets the instances of the ontology arguments.
+	 * @param ontologyInstances the new instances of the ontology arguments
 	 */
-	public void setOntoArgsInstance(Object[] ontoArgsInstance) {
-		this.ontoArgsInstance = ontoArgsInstance;
-		this.setXMLFromInstances();
-		this.setInstancesFromXML();
+	public void setOntoArgsInstance(Object[] ontologyInstances) {
+		if (this.ontoArgsInstance==null) {
+			this.save(true);
+		} 
+		if (ontologyInstances!=null) {
+			this.ontoArgsInstance = ontologyInstances;
+			this.setXMLFromInstances();
+			this.setInstancesFromXML();	
+			this.validate();
+			this.repaint();
+		}
 	}
 
 	/**
-	 * Gets the onto args xml.
-	 *
+	 * Returns the ontology arguments as XML string-array.
 	 * @return the agentArgsXML
 	 */
 	public String[] getOntoArgsXML() {
 		return ontoArgsXML;
 	}
-	
 	/**
-	 * Sets the onto args xml.
-	 *
+	 * Sets the ontology arguments as XML string-array.
 	 * @param ontoArgsXML the new onto args xml
 	 */
 	public void setOntoArgsXML(String[] ontoArgsXML) {
@@ -1735,8 +1741,7 @@ public class DynForm extends JPanel {
 		
 		/**
 		 * Instantiates a new number watcher.
-		 *
-		 * @param floatValue the float value
+		 * @param floatValue indicates, if this watcher is used for Float values. If not Integer values are assumed.
 		 */
 		public NumberWatcher (boolean floatValue) {
 			this.isFloatValue = floatValue;
@@ -1749,15 +1754,18 @@ public class DynForm extends JPanel {
 			
 			char charackter = kT.getKeyChar();
 			String singleChar = Character.toString(charackter);
-			JTextField displayField = (JTextField) kT.getComponent();
 			
+			JTextField displayField = (JTextField) kT.getComponent();
+			String currValue = displayField.getText();
+			int caretPosition = displayField.getCaretPosition();
+
+			// --- Allow negative values ------------------
+			if (singleChar.equals("-") && caretPosition==0 && currValue.startsWith("-")==false) {
+				return;
+			}
 			if (this.isFloatValue==true) {
-				// ----------------------------------------
-				// --- float values allowed ---------------
-				// ----------------------------------------
-				// --- Just one separator is allowed --
+				// --- Float values -----------------------
 				if (singleChar.equals(".") || singleChar.equals(",")) {
-					String currValue = displayField.getText();
 					if (currValue!=null) {
 						if ( currValue.contains(".") || currValue.contains("," )) {
 							kT.consume();	
@@ -1770,9 +1778,7 @@ public class DynForm extends JPanel {
 				}
 				
 			} else {
-				// ----------------------------------------
-				// --- int numbers only !!! ---------------
-				// ----------------------------------------
+				// --- Integer values ---------------------
 				if ( singleChar.matches( "[0-9]" ) == false ) {
 					kT.consume();	
 					return;

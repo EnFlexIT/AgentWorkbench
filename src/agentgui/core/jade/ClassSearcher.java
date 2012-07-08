@@ -69,9 +69,9 @@ public class ClassSearcher {
 	
 	private Project currProject = null;
 	
-	public ClassSearcherSingle csAgents =  new ClassSearcherSingle(CLASSES_AGENTS);
-	public ClassSearcherSingle csOntologies = new ClassSearcherSingle(CLASSES_ONTOLOGIES);
-	public ClassSearcherSingle csBaseService = new ClassSearcherSingle(CLASSES_BASESERVICE);
+	private ClassSearcherSingle csAgents =  new ClassSearcherSingle(CLASSES_AGENTS);
+	private ClassSearcherSingle csOntologies = new ClassSearcherSingle(CLASSES_ONTOLOGIES);
+	private ClassSearcherSingle csBaseService = new ClassSearcherSingle(CLASSES_BASESERVICE);
 
 	
 	/**
@@ -184,30 +184,47 @@ public class ClassSearcher {
 		}
 	}
 	
+	/**
+	 * Returns the ClassSearcherSingle for Agents.
+	 * @return the csAgents
+	 */
+	public ClassSearcherSingle getClassSearcher4Agents() {
+		return csAgents;
+	}
+	/**
+	 * Returns the ClassSearcherSingle for Ontologies.
+	 * @return the csOntologies
+	 */
+	public ClassSearcherSingle getClassSearcher4Ontologies() {
+		return csOntologies;
+	}
+	/**
+	 * Returns the ClassSearcherSingle for BaseService's.
+	 * @return the csBaseService
+	 */
+	public ClassSearcherSingle getClassSearcher4Services() {
+		return csBaseService;
+	}
+
 	
 	/**
-	 * Gets the agent classes.
-	 *
+	 * Returns the agent classes.
 	 * @param filtered the filtered
 	 * @return the agent classes
 	 */
 	public Vector<Class<?>> getAgentClasse(boolean filtered) {
 		return csAgents.getClassesFound(filtered);
 	}
-	
 	/**
-	 * Gets the ontology classes.
-	 *
+	 * Returns  the ontology classes.
 	 * @param filtered the filtered
 	 * @return the ontology classes
 	 */
 	public Vector<Class<?>> getOntologieClasse(boolean filtered) {
 		return csOntologies.getClassesFound(filtered);
 	}
-	
 	/**
-	 * Gets the base service classes.
-	 *
+	 * Returns  the base service classes.
 	 * @param filtered the filtered
 	 * @return the base service classes
 	 */

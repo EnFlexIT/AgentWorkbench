@@ -56,7 +56,7 @@ public class MaximizedTab extends JInternalFrame {
 	
 	private static final long serialVersionUID = 6120229084857901290L;
 
-	private final String pathImage = Application.RunInfo.PathImageIntern();
+	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
 	private final ImageIcon iconRestore = new ImageIcon( this.getClass().getResource( pathImage + "RestoreView.png") );
 	
 	private ProjectWindow projectWindow = null;

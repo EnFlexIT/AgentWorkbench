@@ -104,8 +104,8 @@ public class Translation extends JDialog implements ActionListener {
 
 private static final long serialVersionUID = 1L;
 	
-	private final String appName = Application.RunInfo.getApplicationTitle();  //  @jve:decl-index=0:
-	private final String PathImage = Application.RunInfo.PathImageIntern();  //  @jve:decl-index=0:
+	private final String appName = Application.getGlobalInfo().getApplicationTitle();  //  @jve:decl-index=0:
+	private final String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
 	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private Image image = imageIcon.getImage();
 	
@@ -201,7 +201,7 @@ private static final long serialVersionUID = 1L;
 		super.setVisible(b);
 		if (this.forceApplicationRestart==true) {
 			System.out.println(Language.translate("Neuinitialsierung des Anwendungsfensters ..."));
-			Application.setLanguage(Application.RunInfo.getLanguage(), false);
+			Application.setLanguage(Application.getGlobalInfo().getLanguage(), false);
 		}
 	}
 	
@@ -234,7 +234,7 @@ private static final long serialVersionUID = 1L;
 		this.getJPopupMenuDictionary();
 		
 		// --- Set Selection in combos ------------------------------
-		String currLang = Application.RunInfo.getLanguage();
+		String currLang = Application.getGlobalInfo().getLanguage();
 		int currLangIndex = Language.getIndexOfLanguage(currLang)-1;
 		if (currLang.equalsIgnoreCase("de") || currLang.equalsIgnoreCase("en") ) {
 			jComboBoxSourceLang.setSelectedIndex(Language.getIndexOfLanguage("de")-1);
@@ -245,10 +245,10 @@ private static final long serialVersionUID = 1L;
 		}
 		
 		// --- Set Google-HttpReferrer and API key ------------------
-		this.jTextFieldGoogleHTTP.setText(Application.RunInfo.getGoogleHttpRef());
-		this.jTextFieldGoogleKey4API.setText(Application.RunInfo.getGoogleKey4API());
-		com.google.api.GoogleAPI.setHttpReferrer(Application.RunInfo.getGoogleHttpRef());
-		com.google.api.GoogleAPI.setKey(Application.RunInfo.getGoogleKey4API());
+		this.jTextFieldGoogleHTTP.setText(Application.getGlobalInfo().getGoogleHttpRef());
+		this.jTextFieldGoogleKey4API.setText(Application.getGlobalInfo().getGoogleKey4API());
+		com.google.api.GoogleAPI.setHttpReferrer(Application.getGlobalInfo().getGoogleHttpRef());
+		com.google.api.GoogleAPI.setKey(Application.getGlobalInfo().getGoogleKey4API());
 
 		// --- Listen to keyboard events ----------------------------
 		this.setKeyListenEvents();
@@ -1486,9 +1486,9 @@ private static final long serialVersionUID = 1L;
 			}
 		
 		} else if (trigger == jButtonGoogleKey4API) {
-			Application.RunInfo.setGoogleHttpRef(this.getJTextFieldGoogleHTTP().getText());
-			Application.RunInfo.setGoogleKey4API(this.getJTextFieldGoogleKey4API().getText());
-			com.google.api.GoogleAPI.setHttpReferrer(Application.RunInfo.getGoogleHttpRef());
+			Application.getGlobalInfo().setGoogleHttpRef(this.getJTextFieldGoogleHTTP().getText());
+			Application.getGlobalInfo().setGoogleKey4API(this.getJTextFieldGoogleKey4API().getText());
+			com.google.api.GoogleAPI.setHttpReferrer(Application.getGlobalInfo().getGoogleHttpRef());
 			com.google.api.GoogleAPI.setKey(this.getJTextFieldGoogleKey4API().getText());
 			
 		} else {

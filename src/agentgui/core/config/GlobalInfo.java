@@ -33,9 +33,7 @@ import jade.core.Profile;
 
 import java.awt.Color;
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -55,7 +53,7 @@ import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentController;
  * In the Application class the running instance can be accessed 
  * by using the reference Application.RunInfo. 
  * 
- * @see Application#RunInfo
+ * @see Application#getGlobalInfo()
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -64,6 +62,7 @@ public class GlobalInfo {
 	// --- constant values -------------------------------------------------- 
 	private static String localAppTitle = "Agent.GUI";
 	
+	private final static String localFileRunnableJar = "AgentGui.jar";
 	private final static String localAppPathSeparatorString = File.separator;
 	private final static String localAppNewLineString = System.getProperty("line.separator");
 	private final static String localAppNewLineStringReplacer = "<br>";
@@ -74,8 +73,7 @@ public class GlobalInfo {
 	// --- JADE-Variables ---------------------------------------------------
 	private Integer localeJadeLocalPort = 1099;
 	
-	// --- Variablen --------------------------------------------------------
-	private static Vector<String> localClassPathEntries = new Vector<String>();
+	// --- Variables --------------------------------------------------------
 	public final static String ExecutedOverIDE = "IDE";
 	public final static String ExecutedOverAgentGuiJar = "Executable";
 	private static String localAppExecutedOver = ExecutedOverIDE;
@@ -93,7 +91,6 @@ public class GlobalInfo {
 	
 	private static String[] localProjects = null;
 	
-	private static String localFileRunnableJar = "AgentGui.jar";
 	private static String localFileDictionary  = localPathProperty + "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
 	private static String localFileNameProject = "agentgui.xml";
@@ -142,7 +139,6 @@ public class GlobalInfo {
 		String[] JCP_Files = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
 		String[] JCP_Folders = JCP_Files.clone(); 
 		HashSet<String> Folders = new HashSet<String>();  
-		localClassPathEntries.addAll( Arrays.asList( JCP_Files ) );		
 		
 		// ------------------------------------------------------------------
 		// --- Class-Path untersuchen ---------------------------------------
@@ -270,26 +266,7 @@ public class GlobalInfo {
 	public void setAppLnf( String NewLnF ) {
 		localAppLnF = NewLnF;
 	};
-	/**
-	 * This method returns the ClassPath-Entries of the application 
-	 * @return the ClassPath-Entries 
-	 */
-	public Vector<String> getClassPathEntries() {
-		return localClassPathEntries;
-	}
-	/**
-	 * This Method returns all jar-Files, which are part of the current ClassPath
-	 * @return Returns a Vector<String> with all external jars
-	 */
-	public Vector<String> getClassPathJars() {
-		Vector<String> jarFileInCP = new Vector<String>();
-		for (String classPathEntry : localClassPathEntries) {
-			if ( classPathEntry.endsWith(".jar")==true ){
-				jarFileInCP.add(classPathEntry);
-			}
-		}
-		return jarFileInCP;
-	}
+	
 	// -------------------------------
 	/**
 	 * This method can be used in order to evaluate how Agent.GUI is currently executed

@@ -70,6 +70,8 @@ public class NetworkModel implements Serializable {
 	private HashMap<String, GraphElement> graphElements;
 	/** A list of all NetworkComponents in the NetworkModel, accessible by ID. */
 	private HashMap<String, NetworkComponent> networkComponents;
+	/** The Hash of NetworkComponentAdapter. */
+	private transient HashMap<String, NetworkComponentAdapter> networkComponentAdapterHash = null;
 	
 	/**
 	 * This HashMap can hold alternative NetworkModel's that can be used to 
@@ -1398,6 +1400,23 @@ public class NetworkModel implements Serializable {
 	}
 	
 	/**
+	 * Checks if the current GraphNode is a DistributionNode.
+	 *
+	 * @param graphNode the GraphNode
+	 * @return true, if the GraphNode is a DistributionNode
+	 */
+	public NetworkComponent isDistributionNode(GraphNode graphNode) {
+		NetworkComponent distributionNode = null;
+		HashSet<NetworkComponent> components = this.getNetworkComponents(graphNode);
+		NetworkComponent component = this.containsDistributionNode(components);
+		if (component != null) {
+			// --- Component IS DistributionNode ------
+			distributionNode = component;
+		}
+		return distributionNode;
+	}
+	
+	/**
 	 * Resets the GraphElementLayout for every GraphNode or GraphEdge.
 	 */
 	public void resetGraphElementLayout() {
@@ -1562,4 +1581,44 @@ public class NetworkModel implements Serializable {
 		
 	}
 
+	/**
+	 * Returns the NetworkComponentAdapter for the specified NetworkComponent.
+	 *
+	 * @param networkComponent the NetworkComponent
+	 * @return the network component adapter
+	 */
+	public NetworkComponentAdapter getNetworkComponentAdapter(NetworkComponent networkComponent) {
+		return this.getNetworkComponentAdapter(networkComponent.getType());
+	}
+
+	/**
+	 * Returns the NetworkComponentAdapter for the specified type of component.
+	 *
+	 * @param componentTypeName the component type name
+	 * @return the network component adapter
+	 */
+	public NetworkComponentAdapter getNetworkComponentAdapter(String componentTypeName) {
+		
+		if (this.networkComponentAdapterHash==null) {
+			this.networkComponentAdapterHash = new HashMap<String, NetworkComponentAdapter>();
+		}
+		NetworkComponentAdapter netCompAdapter = this.networkComponentAdapterHash.get(componentTypeName);
+		if (netCompAdapter==null) {
+			// --- Create the NetworkComponentAdapter, if it exists -----------
+			ComponentTypeSettings cts = this.generalGraphSettings4MAS.getCurrentCTS().get(componentTypeName);
+			String adapterClassname = cts.getAdapterClass();
+			if (adapterClassname!=null) {
+				try {
+					@SuppressWarnings("unchecked")
+					Class<? extends NetworkComponentAdapter> nca = (Class<? extends NetworkComponentAdapter>) Class.forName(adapterClassname);
+					netCompAdapter = nca.newInstance();
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return netCompAdapter;
+	}
+	
 }

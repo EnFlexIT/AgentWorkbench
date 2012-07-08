@@ -108,7 +108,7 @@ public class PlatformJadeConfig implements Serializable {
 	@XmlTransient
 	private Project currProject = null;
 	@XmlElement(name="useLocalPort")	
-	private Integer useLocalPort = Application.RunInfo.getJadeLocalPort();
+	private Integer useLocalPort = Application.getGlobalInfo().getJadeLocalPort();
 	@XmlElementWrapper(name = "serviceList")
 	@XmlElement(name="service")			
 	private HashSet<String> useServiceList = new HashSet<String>();

@@ -74,7 +74,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	public static final int SIMULATION_SETUP_RENAME = 4;
 	public static final int SIMULATION_SETUP_SAVED = 5;
 	
-	private final String XML_FilePostfix = Application.RunInfo.getXmlFilePostfix();
+	private final String XML_FilePostfix = Application.getGlobalInfo().getXmlFilePostfix();
 	
 	private Project currProject = Application.ProjectCurr;
 	private SimulationSetup currSimSetup = null;
@@ -147,7 +147,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Setup rausschmeissen------------------------
 		this.remove(name);
 		new File(currSimXMLFile).delete();
-		String userObjectFileName = Application.RunInfo.getBinFileNameFromXmlFileName(currSimXMLFile);
+		String userObjectFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currSimXMLFile);
 		new File(userObjectFileName).delete();
 		
 		// --- Interessenten informieren ------------------
@@ -190,8 +190,8 @@ public class SimulationSetups extends Hashtable<String, String> {
 		fc.copyFile(currSimXMLFile, fileNameXMLNew);
 		
 		// --- Copy user object file ----------------------
-		String userObjectFileNameOld = Application.RunInfo.getBinFileNameFromXmlFileName(currSimXMLFile);
-		String userObjectFileNameNew = Application.RunInfo.getBinFileNameFromXmlFileName(fileNameXMLNew);
+		String userObjectFileNameOld = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currSimXMLFile);
+		String userObjectFileNameNew = Application.getGlobalInfo().getBinFileNameFromXmlFileName(fileNameXMLNew);
 		
 		fc = new FileCopier();
 		fc.copyFile(userObjectFileNameOld, userObjectFileNameNew);
@@ -372,7 +372,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 			msg  = Language.translate("Die Datei") + " '" + this.get(currSimSetupName) + "' " + Language.translate("für das Setup") + " '" + currSimSetupName + "' " + Language.translate("wurde nicht gefunden.");
 			msg += Language.translate("<br>Kann der Name aus der Liste der Setups entfernt werden?");
 			msg += Language.translate("<br>Falls nicht, wird eine neue Setup-Datei erzeugt.");
-			answer = JOptionPane.showConfirmDialog(Application.MainWindow, msg, head, JOptionPane.YES_NO_OPTION);
+			answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), msg, head, JOptionPane.YES_NO_OPTION);
 			if ( answer == JOptionPane.YES_OPTION  ) {
 				this.setupRemove(currSimSetupName);
 			}			
@@ -387,7 +387,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		currSimSetup.setCurrProject(currProject);
 		
 		//--- Reading the serializable user object of the simsetup from the 'agentgui_userobject.bin' ---
-		String userObjectFileName = Application.RunInfo.getBinFileNameFromXmlFileName(currSimXMLFile);
+		String userObjectFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currSimXMLFile);
 		File userObjectFile = new File(userObjectFileName);
 		if (userObjectFile.exists()) {
 			Serializable userObject = null;
@@ -436,7 +436,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 					if (this.containsValue(files[i].getName())==false) {
 						files[i].delete();
 						// --- bin File ebenfalls löschen -
-						String binFileName = Application.RunInfo.getBinFileNameFromXmlFileName(files[i].getAbsolutePath());
+						String binFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(files[i].getAbsolutePath());
 						if (binFileName!=null) {
 							File binFile = new File(binFileName);
 							if (binFile.exists()==true) {
