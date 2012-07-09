@@ -32,6 +32,9 @@ import java.util.Vector;
 
 import javax.swing.JMenuItem;
 
+import agentgui.core.ontologies.OntologyVisualisationHelper;
+import agentgui.core.ontologies.gui.OntologyInstanceViewer;
+
 /**
  * The Class NetworkComponentAdapter can be used in order to extend the local 
  * data model and its visual representation of a {@link NetworkComponent}.
@@ -41,6 +44,34 @@ import javax.swing.JMenuItem;
  */
 public abstract class NetworkComponentAdapter {
 
+	/** The OntologyVisualisationHelper, for ontologies. */
+	private OntologyVisualisationHelper ovHelper = null;
+	
+	
+	/**
+	 * Returns the NetworkComponentAdapter4DataModel for the application.<br>
+	 * DO NOT OVERRIDE !!!
+	 * 
+	 * @return the NetworkComponentAdapter4DataModel 
+	 */
+	public NetworkComponentAdapter4DataModel invokeGetDataModelAdapter() {
+		
+		// --- Get the DataModel Adapter in a regular manner ----------------------------
+		NetworkComponentAdapter4DataModel nca4dm = this.getDataModelAdapter();
+		if (nca4dm instanceof NetworkComponentAdapter4Ontology) {
+
+			NetworkComponentAdapter4Ontology nca4Onto = (NetworkComponentAdapter4Ontology) nca4dm;
+			if (this.ovHelper!=null) {
+				nca4Onto.setOntologyVisualisationHelper(this.ovHelper);
+			} else {
+				// --- Remind this for later ------------------------------------------------ 
+				OntologyInstanceViewer oiv = (OntologyInstanceViewer) nca4Onto.getVisualisationComponent();
+				this.ovHelper = oiv.getOntologyVisualisationHelper();	
+			}
+		}
+		return nca4dm;
+	}
+	
 	/**
 	 * Returns the data model adapter for the {@link NetworkComponent}.
 	 * @return the adapter visualisation

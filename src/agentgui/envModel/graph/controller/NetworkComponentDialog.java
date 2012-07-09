@@ -172,7 +172,7 @@ public class NetworkComponentDialog extends JDialog implements ActionListener {
 			if (this.networkComponentAdapter== null) {
 				this.jPanelContent.remove(this.getJButtonApply());
 			} else {
-				adapterView = this.networkComponentAdapter.getDataModelAdapter();
+				adapterView = this.networkComponentAdapter.invokeGetDataModelAdapter();
 				if (adapterView == null) {
 					this.jPanelContent.remove(this.getJButtonApply());
 				} else {

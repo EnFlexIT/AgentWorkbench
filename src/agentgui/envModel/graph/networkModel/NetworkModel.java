@@ -1612,6 +1612,7 @@ public class NetworkModel implements Serializable {
 					@SuppressWarnings("unchecked")
 					Class<? extends NetworkComponentAdapter> nca = (Class<? extends NetworkComponentAdapter>) Class.forName(adapterClassname);
 					netCompAdapter = nca.newInstance();
+					this.networkComponentAdapterHash.put(componentTypeName, netCompAdapter);
 					
 				} catch (Exception ex) {
 					ex.printStackTrace();

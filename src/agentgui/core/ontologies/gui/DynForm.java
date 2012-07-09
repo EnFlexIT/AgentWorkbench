@@ -1705,8 +1705,6 @@ public class DynForm extends JPanel {
 			this.ontoArgsInstance = ontologyInstances;
 			this.setXMLFromInstances();
 			this.setInstancesFromXML();	
-			this.validate();
-			this.repaint();
 		}
 	}
 

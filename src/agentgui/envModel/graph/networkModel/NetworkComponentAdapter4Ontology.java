@@ -43,6 +43,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 
 	private static final long serialVersionUID = -5374060290921305401L;
 	
+	private OntologyVisualisationHelper ovh = null;
 	private OntologyInstanceViewer oiv = null;
 	private final String base64Seperator = "\n";
 	
@@ -61,19 +62,32 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	 */
 	public abstract String[] getOntologyClassReferences();
 	
+	
+	/**
+	 * Sets the ontology visualisation helper.
+	 * @param ontologyVisualisationHelper the new ontology visualisation helper
+	 */
+	public void setOntologyVisualisationHelper(OntologyVisualisationHelper ontologyVisualisationHelper) {
+		this.ovh = ontologyVisualisationHelper;
+	}
+	/**
+	 * Returns the ontology visualisation helper.
+	 * @return the ontology visualisation helper
+	 */
+	public OntologyVisualisationHelper getOntologyVisualisationHelper() {
+		if (this.ovh==null) {
+			this.ovh = new OntologyVisualisationHelper(this.getOntologyBaseClasses());
+		}
+		return this.ovh;
+	}
+	
 	/**
 	 * Returns the ontology instance viewer.
 	 * @return the ontology instance viewer
 	 */
 	private OntologyInstanceViewer getOntologyInstanceViewer() {
 		if (this.oiv == null) {
-			// ----------------------------------------------------------
-			// --- Initialise the OntologyVisualisationHelper -----------
-			OntologyVisualisationHelper ovh = new OntologyVisualisationHelper(this.getOntologyBaseClasses());
-
-			// ----------------------------------------------------------
-			// --- Initialise the OntologyInstanceViewer ----------------
-			this.oiv = new OntologyInstanceViewer(ovh, this.getOntologyClassReferences());
+			this.oiv = new OntologyInstanceViewer(this.getOntologyVisualisationHelper(), this.getOntologyClassReferences());
 			this.oiv.setAllowViewEnlargement(false);
 		}
 		return this.oiv;

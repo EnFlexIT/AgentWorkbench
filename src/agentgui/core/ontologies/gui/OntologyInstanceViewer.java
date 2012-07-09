@@ -138,8 +138,15 @@ private static final long serialVersionUID = 6748263753769300242L;
 	}
 
 	/**
+	 * Returns the current OntologyVisualisationHelper.
+	 * @return the OntologyVisualisationHelper
+	 */
+	public OntologyVisualisationHelper getOntologyVisualisationHelper() {
+		return this.ontologyVisualisationHelper;
+	}
+	
+	/**
 	 * This method initialises this.
-	 *
 	 * @return void
 	 */
 	private void initialize() {
