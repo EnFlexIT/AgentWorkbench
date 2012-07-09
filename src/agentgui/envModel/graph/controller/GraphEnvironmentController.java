@@ -746,7 +746,7 @@ public class GraphEnvironmentController extends EnvironmentController {
      */
     public void importNetworkModel(NetworkModelFileImporter importer, File file) {
     	this.getAgents2Start().clear();
-    	this.setNetworkModel(new NetworkModel());
+    	this.setNetworkModel(null);
     	NetworkModel newNetworkModel = importer.importGraphFromFile(file);
     	if (newNetworkModel!=null) {
     		this.setNetworkModel(newNetworkModel);
@@ -882,7 +882,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     			String dataModelBase64 = netComp.getDataModelBase64();
     			if (dataModelBase64!=null) {
     				// --- Get DataModelAdapter ---------------------
-    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getDataModelAdapter();
+    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.invokeGetDataModelAdapter();
     				if (netCompDataModelAdapter!=null) {
     					// --- Get Base64 decoded Object ------------
     					Object dataModel = netCompDataModelAdapter.getDataModelBase64Decoded(dataModelBase64);
@@ -912,7 +912,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     				netComp.setDataModelBase64(null);
     			} else {
     				// --- Get DataModelAdapter ---------------------
-    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getDataModelAdapter();
+    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.invokeGetDataModelAdapter();
     				if (netCompDataModelAdapter==null) {
     					// --- No DataModelAdapter found ------------
     					netComp.setDataModelBase64(null);	
