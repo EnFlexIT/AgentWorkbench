@@ -31,8 +31,18 @@ package agentgui.envModel.graph.controller;
 
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.util.HashSet;
+import java.util.Vector;
 
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
+
+import agentgui.envModel.graph.networkModel.GraphEdge;
+import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
+import agentgui.envModel.graph.networkModel.NetworkModel;
 
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -50,44 +60,52 @@ import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
 public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePlugin {
 	
 	/** The parent BasicGraphGUI */
-	private BasicGraphGui myGUI = null;
+	private BasicGraphGui basicGraphGui = null;
 
-    private JPopupMenu edgePopup, vertexPopup;
+    private JPopupMenu edgePopup;
+    private JPopupMenu vertexPopup;
+
+    private Vector<JMenuItem> jMenuItemsAdditionsVertex = new Vector<JMenuItem>();
+    private Vector<JMenuItem> jMenuItemsAdditionsEdge = new Vector<JMenuItem>();
+    
+    private JSeparator separatorVertex = new JPopupMenu.Separator();
+    private JSeparator separatorEdge = new JPopupMenu.Separator();
+    
     
     
     /** Creates a new instance of GraphPopupMenuMousePlugin */
     public GraphEnvironmentPopupPlugin(BasicGraphGui parentGUI) {
         super(MouseEvent.BUTTON3_MASK);
-        this.myGUI = parentGUI;
+        this.basicGraphGui = parentGUI;
     }
     
     /**
      * Implementation of the AbstractPopupGraphMousePlugin method. This is where the 
      * work gets done. You shouldn't have to modify unless you really want to...
-     * @param e 
+     * @param me 
      */
-    protected void handlePopup(MouseEvent e) {
+    protected void handlePopup(MouseEvent me) {
         
     	@SuppressWarnings("unchecked")
-		final VisualizationViewer<V,E> vv = (VisualizationViewer<V,E>)e.getSource();
-        Point2D p = e.getPoint();
+		final VisualizationViewer<V,E> vv = (VisualizationViewer<V,E>)me.getSource();
+        Point2D p = me.getPoint();
         
         GraphElementAccessor<V,E> pickSupport = vv.getPickSupport();
         if(pickSupport != null) {
-            final V v = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
-            if(v != null) {
+            final V vertex = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
+            if(vertex != null) {
                 //System.out.println("Vertex " + v + " was right clicked");
-                updateVertexMenu(v, vv, p);
-                vertexPopup.show(vv, e.getX(), e.getY());
-                myGUI.handleObjectRightClick(v);
+                this.updateVertexMenu(vertex, vv, p);
+                vertexPopup.show(vv, me.getX(), me.getY());
+                basicGraphGui.handleObjectRightClick(vertex);
                 
             } else {
                 final E edge = pickSupport.getEdge(vv.getGraphLayout(), p.getX(), p.getY());
                 if(edge != null) {
                     //System.out.println("Edge " + edge + " was right clicked");
-                    updateEdgeMenu(edge, vv, p);
-                    edgePopup.show(vv, e.getX(), e.getY());
-                    myGUI.handleObjectRightClick(edge);  
+                	this.updateEdgeMenu(edge, vv, p);
+                    edgePopup.show(vv, me.getX(), me.getY());
+                    basicGraphGui.handleObjectRightClick(edge);  
                 }
             }
         }
@@ -96,24 +114,112 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     /**
      * Update vertex menu with context sensitive menu items.
      *
-     * @param v the v
-     * @param vv the vv
+     * @param vertex the vertex
+     * @param vv the VisualizationViewer
      * @param point the point
      */
-    private void updateVertexMenu(V v, VisualizationViewer<V, E> vv, Point2D point) {
+    private void updateVertexMenu(V vertex, VisualizationViewer<V, E> vv, Point2D point) {
         
-    	if (vertexPopup == null) return;
+    	if (this.vertexPopup == null) return;
     	
-//        Component[] menuComps = vertexPopup.getComponents();
-//        for (Component comp: menuComps) {
-//            if (comp instanceof VertexMenuListener) {
-//                ((VertexMenuListener)comp).setVertexAndView(v, vv);
-//            }
-//            if (comp instanceof MenuPointListener) {
-//                ((MenuPointListener)comp).setPoint(point);
-//            }
-//        }
+    	// --- Remove the old customized entries ---------------
+    	if (this.jMenuItemsAdditionsVertex!=null) {
+    		this.vertexPopup.remove(this.separatorVertex);
+    		for (JMenuItem item : this.jMenuItemsAdditionsVertex) {
+        		this.vertexPopup.remove(item);
+    		}
+    	}
+
+    	// --- Evaluate for a NetworkComponent -----------------
+    	NetworkComponent netComp = this.getNetworkComponent(vertex);
+    	if (netComp!=null) {
+    		// --- Add the context sensitive JMenueItems -------
+    		NetworkModel netModel = this.basicGraphGui.getGraphEnvironmentController().getNetworkModel();
+    		NetworkComponentAdapter adapter = netModel.getNetworkComponentAdapter(netComp);
+    		if (adapter!=null) {
+    			// --- Get the context menu items --------------
+    			this.jMenuItemsAdditionsVertex = adapter.invokeGetJPopupMenuElements(this.basicGraphGui.getGraphEnvironmentController(), netComp);
+    			if (this.jMenuItemsAdditionsVertex!=null) {
+    				if (this.jMenuItemsAdditionsVertex.size()>0) {
+    					this.vertexPopup.add(this.separatorVertex);
+    					for (JMenuItem item : this.jMenuItemsAdditionsVertex) {
+    	        			this.vertexPopup.add(item);
+    	    			}
+    				}
+    			}
+    		}
+    		
+    	}
         
+    }
+    /**
+     * Update edge menu with context sensitive menu items.
+     *
+     * @param edge the edge
+     * @param vv the VisualizationViewer
+     * @param point the point
+     */
+    private void updateEdgeMenu(E edge, VisualizationViewer<V, E> vv, Point2D point) {
+        
+    	if (this.edgePopup == null) return;
+    	
+    	// --- Remove the old customized entries ---------------
+    	if (this.jMenuItemsAdditionsEdge!=null) {
+    		this.edgePopup.remove(this.separatorEdge);
+    		for (JMenuItem item : this.jMenuItemsAdditionsEdge) {
+        		this.edgePopup.remove(item);
+    		}	
+    	}
+    	
+    	// --- Evaluate for a NetworkComponent -----------------
+    	NetworkComponent netComp = this.getNetworkComponent(edge);
+    	if (netComp!=null) {
+    		// --- Add the context sensitive JMenueItems -------
+    		NetworkModel netModel = this.basicGraphGui.getGraphEnvironmentController().getNetworkModel();
+    		NetworkComponentAdapter adapter = netModel.getNetworkComponentAdapter(netComp);
+    		if (adapter!=null) {
+    			// --- Get the context menu items -------------- 
+    			this.jMenuItemsAdditionsEdge = adapter.invokeGetJPopupMenuElements(this.basicGraphGui.getGraphEnvironmentController(), netComp);
+        		if (this.jMenuItemsAdditionsEdge!=null) {
+        			if (this.jMenuItemsAdditionsEdge.size()>0) {
+        				// --- Add Separator
+        				this.edgePopup.add(this.separatorEdge);
+        				for (JMenuItem item : this.jMenuItemsAdditionsEdge) {
+                			this.edgePopup.add(item);
+            			}		
+        			}
+        		}
+    		}
+    		
+    	}
+    	
+    }
+    
+    /**
+     * Gets the network component for a specified graphElement.
+     *
+     * @param graphElement the graph element
+     * @return the network component
+     */
+    private NetworkComponent getNetworkComponent(Object graphElement) {
+    	
+    	NetworkModel netModel = this.basicGraphGui.getGraphEnvironmentController().getNetworkModel();
+    	NetworkComponent netComp = null;
+    	if (graphElement instanceof GraphNode) {
+    		
+    		HashSet<NetworkComponent> netComps = netModel.getNetworkComponents((GraphNode)graphElement);
+    		if (netComps.size()==1) {
+    			netComp = netComps.iterator().next();
+    		} else if (netComps.size()>1) {
+    			netComp = netModel.containsDistributionNode(netComps);	
+    		}
+    		
+    	} else if (graphElement instanceof GraphEdge) {
+    		
+    		netComp = netModel.getNetworkComponent((GraphEdge)graphElement);
+    		
+    	}
+    	return netComp;
     }
     
     /**
@@ -123,7 +229,6 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     public JPopupMenu getEdgePopup() {
         return edgePopup;
     }
-    
     /**
      * Setter for the Edge popup.
      * @param edgePopup 
@@ -139,36 +244,12 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     public JPopupMenu getVertexPopup() {
         return vertexPopup;
     }
-    
     /**
      * Setter for the vertex popup.
      * @param vertexPopup 
      */
     public void setVertexPopup(JPopupMenu vertexPopup) {
         this.vertexPopup = vertexPopup;
-    }
-    
-    /**
-     * Update edge menu with context sensitive menu items.
-     *
-     * @param edge the edge
-     * @param vv the vv
-     * @param point the point
-     */
-    private void updateEdgeMenu(E edge, VisualizationViewer<V, E> vv, Point2D point) {
-        
-    	if (edgePopup == null) return;
-    	
-//        Component[] menuComps = edgePopup.getComponents();
-//        for (Component comp: menuComps) {
-//            if (comp instanceof EdgeMenuListener) {
-//                ((EdgeMenuListener)comp).setEdgeAndView(edge, vv);
-//            }
-//            if (comp instanceof MenuPointListener) {
-//                ((MenuPointListener)comp).setPoint(point);
-//            }
-//        }
-        
     }
     
 }

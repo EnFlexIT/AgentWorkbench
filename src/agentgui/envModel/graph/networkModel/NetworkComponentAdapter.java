@@ -34,6 +34,7 @@ import javax.swing.JMenuItem;
 
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 
 /**
  * The Class NetworkComponentAdapter can be used in order to extend the local 
@@ -44,6 +45,11 @@ import agentgui.core.ontologies.gui.OntologyInstanceViewer;
  */
 public abstract class NetworkComponentAdapter {
 
+	/** The current GraphEnvironmentController */
+	protected GraphEnvironmentController graphController;
+	/** The current NetworkComponent */
+	protected NetworkComponent networkComponent;
+	
 	/** The OntologyVisualisationHelper, for ontologies. */
 	private OntologyVisualisationHelper ovHelper = null;
 	
@@ -78,6 +84,20 @@ public abstract class NetworkComponentAdapter {
 	 */
 	public abstract NetworkComponentAdapter4DataModel getDataModelAdapter();
 	
+	
+	
+	/**
+	 * Invokes to get the JPopup menu elements for this kind of NetworkComponent.
+	 * DO NOT OVERRIDE !!!
+	 * 
+	 * @param graphController the current GraphEnvironmentController
+	 * @return the vector of menu elements
+	 */
+	public Vector<JMenuItem> invokeGetJPopupMenuElements(GraphEnvironmentController graphController, NetworkComponent networkComponent) {
+		this.graphController = graphController;
+		this.networkComponent = networkComponent;
+		return this.getJPopupMenuElements();
+	}
 	
 	/**
 	 * Returns the JPopup menu elements for this kind of NetworkComponent.
