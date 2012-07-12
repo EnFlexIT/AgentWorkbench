@@ -49,7 +49,7 @@ import agentgui.core.application.Language;
  * In the Application class the running instance can be accessed 
  * by accessing the reference Application.Properties.
  * 
- * @see Application#Properties
+ * @see Application#getFileProperties()
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

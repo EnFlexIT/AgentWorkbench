@@ -414,7 +414,7 @@ public class LoadMeasureAgent extends Agent {
 			loadBalancingIsStillActivated = true;
 			
 			// --- Which project is currently used?  --------------------------
-			currProject = Application.ProjectCurr;		
+			currProject = Application.getProjectFocused();		
 			if (currProject == null) {
 				currSimSetup = null;
 				currDisSetup = null;

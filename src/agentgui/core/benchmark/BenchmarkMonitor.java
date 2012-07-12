@@ -46,10 +46,10 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.gui.CoreWindow;
 
 /**
  * This JDialog is used to display the progress of the benchmark during its runtime.<br>
@@ -130,7 +130,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		
 		this.setLookAndFeel();
 		
-		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.getContentPane().setPreferredSize(this.getSize());
 		this.setLocationRelativeTo(null);
 		this.setAlwaysOnTop(true);

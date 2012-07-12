@@ -54,11 +54,10 @@ public class MergeNetworkComponents extends AbstractUndoableEdit {
 	
 	/**
 	 * Instantiates a new action in order to merge a
-	 * NetworkModel at specified GraphNodes
+	 * NetworkModel at specified GraphNodes.
 	 *
-	 * @param networkModelAdapter the network model adapter
-	 * @param networkModelNew the network model new
-	 * @param networkModelOld the network model old
+	 * @param graphController the {@link GraphEnvironmentController}
+	 * @param graphNode2Merge the {@link GraphNodePairs}
 	 */
 	public MergeNetworkComponents(GraphEnvironmentController graphController, GraphNodePairs graphNode2Merge) {
 		super();

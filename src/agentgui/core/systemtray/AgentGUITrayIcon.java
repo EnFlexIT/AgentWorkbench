@@ -114,7 +114,7 @@ public class AgentGUITrayIcon implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		//trayIcon.displayMessage(Application.RunInfo.AppTitel(), "An Action Event Has Been Performed!", TrayIcon.MessageType.INFO);
-		if ( Application.isServer == true ) {
+		if ( Application.isRunningAsServer() == true ) {
 			Application.showOptionDialog();	
 		} else {
 			Application.getMainWindow().restoreFocus();

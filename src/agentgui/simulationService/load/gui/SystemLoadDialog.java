@@ -36,10 +36,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.gui.CoreWindow;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 
 /**
@@ -73,7 +73,7 @@ private static final long serialVersionUID = 1L;
 		this.setSize(620, 120);
 		this.setIconImage(imageAgentGUI);
 	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Load Monitor"));
-		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		// --- Set the Look and Feel of the Dialog ------------------
 //		this.setLookAndFeel();

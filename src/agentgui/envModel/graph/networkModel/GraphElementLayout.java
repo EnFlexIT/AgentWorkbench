@@ -291,9 +291,10 @@ public class GraphElementLayout {
 	public boolean isShowLabel() {
 		return showLabel;
 	}
+	
 	/**
 	 * Sets the show lable.
-	 * @param showLable the showLable to set
+	 * @param showLabel the new show label
 	 */
 	public void setShowLabel(boolean showLabel) {
 		this.showLabel = showLabel;

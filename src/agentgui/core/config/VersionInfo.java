@@ -42,7 +42,7 @@ import agentgui.core.application.Application;
  * the package 'agentgui/version.properties'.
  * The information are accessible during runtime by using Application.Version
  * 
- * @see Application#Version
+ * @see Application#getVersionInfo()
  *  
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

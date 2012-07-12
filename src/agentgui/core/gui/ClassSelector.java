@@ -228,11 +228,11 @@ public class ClassSelector extends JDialog {
 	
 		// --- Search for the specified class -------------
 		if (class2Search4.equals(Agent.class)) {
-			this.css = Application.ClassDetector.getClassSearcher4Agents(); 	
+			this.css = Application.getClassSearcher().getClassSearcher4Agents(); 	
 		} else if (class2Search4.equals(Ontology.class)) {
-			this.css = Application.ClassDetector.getClassSearcher4Ontologies();
+			this.css = Application.getClassSearcher().getClassSearcher4Ontologies();
 		} else if (class2Search4.equals(BaseService.class)) {
-			this.css = Application.ClassDetector.getClassSearcher4Ontologies();
+			this.css = Application.getClassSearcher().getClassSearcher4Ontologies();
 		} else {
 			this.css = new ClassSearcherSingle(class2Search4);
 			this.css.startSearch();

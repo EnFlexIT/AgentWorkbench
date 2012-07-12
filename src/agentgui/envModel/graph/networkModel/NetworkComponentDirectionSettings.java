@@ -238,8 +238,8 @@ public class NetworkComponentDirectionSettings {
 	}
 	
 	/**
-	 * Gets the graph node of neighbour network component.
-	 * @param networkComponent the network component
+	 * Returns the graph node of neighbour network component.
+	 * @param neighbourNetworkComponent the neighbour network component
 	 * @return the graph node of neighbour network component
 	 */
 	public GraphNode getGraphNodeOfNeighbourNetworkComponent(NetworkComponent neighbourNetworkComponent) {
@@ -315,9 +315,9 @@ public class NetworkComponentDirectionSettings {
 	/**
 	 * Sets the graph edge direction.
 	 *
-	 * @param graphEdge the graph edge
-	 * @param graphNodeFrom the graph node from
-	 * @param graphNodeTo the graph node to
+	 * @param graphEdgeID the graph edge id
+	 * @param graphNodeFromID the graph node from id
+	 * @param graphNodeToID the graph node to id
 	 */
 	public void setGraphEdgeDirection(String graphEdgeID, String graphNodeFromID, String graphNodeToID) {
 
@@ -371,9 +371,9 @@ public class NetworkComponentDirectionSettings {
 	 * You can use:<br>
 	 * HashSet<{@link GraphNode}> or <br>
 	 * HashSet<{@link NetworkComponent}><br>
-	 *    
-	 * @param inNodes the in nodes
-	 * @param outNodes the out nodes
+	 *
+	 * @param inNodesOrComponents the HashSet of incoming {@link GraphNode}'s or {@link NetworkComponent}'s
+	 * @param outNodesOrComponents the HashSet of outgoing {@link GraphNode}'s or {@link NetworkComponent}'s
 	 */
 	@SuppressWarnings("unchecked")
 	public void setGraphEdgeDirection(HashSet<?> inNodesOrComponents, HashSet<?> outNodesOrComponents) {

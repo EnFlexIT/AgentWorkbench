@@ -43,7 +43,7 @@ public class GraphNodePairsRevert {
 	 * Instantiates a new graph node pairs revert.
 	 *
 	 * @param graphNode the graph node
-	 * @param graphedge the graphedge
+	 * @param graphEdge the graph edge
 	 */
 	public GraphNodePairsRevert(GraphNode graphNode, GraphEdge graphEdge) {
 		this.graphNode = graphNode; 
@@ -66,21 +66,19 @@ public class GraphNodePairsRevert {
 	}
 
 	/**
-	 * Gets the graphedge.
-	 * @return the graphedge
+	 * Gets the {@link GraphEdge}.
+	 * @return the {@link GraphEdge}
 	 */
 	public GraphEdge getGraphEdge() {
 		return graphedge;
 	}
+	
 	/**
-	 * Sets the graphedge.
-	 * @param graphedge the new graphedge
+	 * Sets the {@link GraphEdge}.
+	 * @param graphEdge the new {@link GraphEdge}
 	 */
 	public void setGraphEdge(GraphEdge graphEdge) {
 		this.graphedge = graphEdge;
 	}
 
-	
-	
-	
 }

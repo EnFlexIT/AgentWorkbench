@@ -531,7 +531,7 @@ public class ProjectResources extends JPanel implements Observer {
 					if (pile==null) return;
 					
 					// --- Get the PlugIn -----------------
-					PlugIn pi = currProject.plugIns_Loaded.getPlugIn(pile.getPlugInName());
+					PlugIn pi = currProject.plugInsLoaded.getPlugIn(pile.getPlugInName());
 
 					// --- Remove the PlugIn --------------
 					currProject.plugInRemove(pi, true);

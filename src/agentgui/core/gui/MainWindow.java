@@ -72,6 +72,7 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
@@ -85,7 +86,7 @@ import agentgui.simulationService.agents.LoadExecutionAgent;
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class CoreWindow extends JFrame implements ComponentListener {
+public class MainWindow extends JFrame implements ComponentListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -141,7 +142,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	/**
 	 * Constructor of this class.
 	 */
-	public CoreWindow() {
+	public MainWindow() {
 		
 		// --- Set the IconImage ----------------------------------
 		this.setIconImage(imageAgentGUI);
@@ -154,7 +155,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		// --- Create the Main-Elements of the Application --------
 		this.initComponents();
 		
-		this.setDefaultCloseOperation(CoreWindow.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.getContentPane().setPreferredSize(this.getSize());
 		this.setLocationRelativeTo(null);
 		this.pack();	
@@ -315,8 +316,8 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			jMenuExtraLang.removeAll();
 			setjMenuExtraLang();
 		}
-		if (Application.ProjectCurr != null) {
-			Application.ProjectCurr.setMaximized();
+		if (Application.getProjectFocused() != null) {
+			Application.getProjectFocused().setMaximized();
 		}
 	}		
 	
@@ -365,8 +366,8 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			jSplitPane4ProjectDesktop.setDividerLocation(jSplitPane4ProjectDesktop.getHeight());			
 		}
 		this.validate();
-		if ( Application.Projects.count() != 0 ) {
-			Application.ProjectCurr.setMaximized();
+		if ( Application.getProjectsLoaded().count() != 0 ) {
+			Application.getProjectFocused().setMaximized();
 		}
 	}
 	
@@ -408,8 +409,8 @@ public class CoreWindow extends JFrame implements ComponentListener {
 				public void propertyChange(PropertyChangeEvent EventSource) {
 					// --- Deviderpositionierung abfangen ---
 					if (EventSource.getPropertyName() == "lastDividerLocation" ) {
-						if ( Application.Projects.count() != 0 ) {
-							Application.ProjectCurr.setMaximized();
+						if ( Application.getProjectsLoaded().count() != 0 ) {
+							Application.getProjectFocused().setMaximized();
 						}
 					}
 				}
@@ -598,13 +599,13 @@ public class CoreWindow extends JFrame implements ComponentListener {
 				public void actionPerformed(ActionEvent evt) {
 					JRadioButtonMenuItem actuator = (JRadioButtonMenuItem) evt.getSource();
 					if (actuator==viewDeveloper) {
-						if (Application.ProjectCurr.getProjectView().equalsIgnoreCase("Developer")==false) {
-							Application.ProjectCurr.setProjectView(Project.VIEW_Developer);
+						if (Application.getProjectFocused().getProjectView().equalsIgnoreCase("Developer")==false) {
+							Application.getProjectFocused().setProjectView(Project.VIEW_Developer);
 						}
 						
 					} else if (actuator==viewEndUser) {
-						if (Application.ProjectCurr.getProjectView().equalsIgnoreCase("User")==false) {
-							Application.ProjectCurr.setProjectView(Project.VIEW_User);
+						if (Application.getProjectFocused().getProjectView().equalsIgnoreCase("User")==false) {
+							Application.getProjectFocused().setProjectView(Project.VIEW_User);
 						}
 
 					}
@@ -964,27 +965,27 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	
 			// --- Menü Projekt -------------------------------
 			if ( ActCMD.equalsIgnoreCase("ProjectNew") ) {
-				Application.Projects.add( true );
+				Application.getProjectsLoaded().add( true );
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectOpen") ) {
-				Application.Projects.add( false );
+				Application.getProjectsLoaded().add( false );
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectClose") ) {
-				Project CurPro = Application.ProjectCurr;
+				Project CurPro = Application.getProjectFocused();
 				if ( CurPro != null ) CurPro.close();				
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectSave") ) {
-				Project CurPro = Application.ProjectCurr;
+				Project CurPro = Application.getProjectFocused();
 				if ( CurPro != null ) CurPro.save();
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectImport") ) {
-				Application.Projects.projectImport();
+				Application.getProjectsLoaded().projectImport();
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectExport") ) {
-				Application.Projects.projectExport();
+				Application.getProjectsLoaded().projectExport();
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectDelete") ) {
-				Application.Projects.projectDelete();
+				Application.getProjectsLoaded().projectDelete();
 			}
 			else if ( ActCMD.equalsIgnoreCase("ApplicationQuit") ) {
 				Application.quit();
@@ -1242,12 +1243,12 @@ public class CoreWindow extends JFrame implements ComponentListener {
 			String ActCMD = ae.getActionCommand();			
 			// ------------------------------------------------
 			if ( ActCMD.equalsIgnoreCase("New") ) {
-				Application.Projects.add(true);
+				Application.getProjectsLoaded().add(true);
 			}
 			else if ( ActCMD.equalsIgnoreCase("Open") ) {
-				Application.Projects.add(false);			}
+				Application.getProjectsLoaded().add(false);			}
 			else if ( ActCMD.equalsIgnoreCase("Save") ) {
-				Project CurPro = Application.ProjectCurr;
+				Project CurPro = Application.getProjectFocused();
 				if ( CurPro != null ) CurPro.save();
 			}
 			// ------------------------------------------------
@@ -1348,7 +1349,7 @@ public class CoreWindow extends JFrame implements ComponentListener {
 		this.setEnableSimStart(true);
 		this.setEnableSimPause(false);
 		this.setEnableSimStop(false);
-		if (Application.ProjectCurr!=null) {
+		if (Application.getProjectFocused()!=null) {
 			this.enableSetupSelector(true);
 		}
 	}	
@@ -1380,10 +1381,10 @@ public class CoreWindow extends JFrame implements ComponentListener {
 	@Override
 	public void componentResized(ComponentEvent e) {
 		if (consoleIsVisible() == false) {
-			jSplitPane4ProjectDesktop.setDividerLocation( jSplitPane4ProjectDesktop.getHeight() );			
+			jSplitPane4ProjectDesktop.setDividerLocation(jSplitPane4ProjectDesktop.getHeight());			
 		}
-		if ( Application.Projects.count() != 0 ) {
-			Application.ProjectCurr.setMaximized();
+		if (Application.getProjectsLoaded().count()!= 0) {
+			Application.getProjectFocused().setMaximized();
 			setCloseButtonPosition( true );
 		}
 		else {

@@ -80,7 +80,7 @@ private static final long serialVersionUID = 6748263753769300242L;
 	private DynForm dynForm = null;
 	private JTextArea jTextArea = null;
 	
-	private final String newLine = Application.getGlobalInfo().AppNewLineString();
+	private final String newLine = Application.getGlobalInfo().getNewLineSeparator();
 	private final String separatorLine = "------------------------------------------";  //  @jve:decl-index=0:
 	
 	private JPanel jPanelEnlarege = null;

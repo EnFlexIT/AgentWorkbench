@@ -44,7 +44,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DesktopManager;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -58,9 +57,10 @@ import agentgui.core.application.Language;
 import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.common.PathHandling;
 import agentgui.core.environment.EnvironmentController;
+import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectWindow;
-import agentgui.core.gui.components.JPanel4Visualization;
+import agentgui.core.gui.components.JPanel4Visualisation;
 import agentgui.core.gui.projectwindow.BaseAgents;
 import agentgui.core.gui.projectwindow.Distribution;
 import agentgui.core.gui.projectwindow.JadeSetup;
@@ -125,25 +125,21 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient public static final String VIEW_Maximize = "MaximizeView";
 	@XmlTransient public static final String VIEW_Restore = "RestoreView";
 	
+	// --- private statics -------------------------------------
+	@XmlTransient private static final String newLine = Application.getGlobalInfo().getNewLineSeparator();	
+	
 	// --- Constants -------------------------------------------
-	@XmlTransient private String defaultSubFolder4Setups    = "setups";
+	@XmlTransient private String defaultSubFolder4Setups   = "setups";
 	@XmlTransient private String defaultSubFolderEnvSetups = "setupsEnv";
-	@XmlTransient private String[] defaultSubFolders	   = { defaultSubFolder4Setups,
-															   defaultSubFolderEnvSetups, 
+	@XmlTransient private String[] defaultSubFolders	   = {defaultSubFolder4Setups,
+															  defaultSubFolderEnvSetups, 
 															  };
 	
-	@XmlTransient private static final String newLine = Application.getGlobalInfo().AppNewLineString();	
-	@XmlTransient private static final String pathSep = Application.getGlobalInfo().AppPathSeparatorString();
 	
-	// --- GUI der aktuellen Projekt-Instanz -------------------
-	/**
-	 * This is the 'view' in the context of the mentioned MVC pattern
-	 */
+	/** This is the 'view' in the context of the mentioned MVC pattern */
 	@XmlTransient public ProjectWindow projectWindow = null;
-	/**
-	 * This panel holds the instance of environment model display 
-	 */
-	@XmlTransient public JPanel projectVisualizationPanel = null;
+	/** This panel holds the instance of environment model display */
+	@XmlTransient private JPanel4Visualisation visualisationTab4SetupExecution = null;
 	/**
 	 * This JDesktopPane can be used in order to allow further user interactions within the project
 	 * by using individual JInternalFrames. If frames are added to this desktop, the focus will be 
@@ -151,15 +147,15 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	@XmlTransient public JDesktopPane projectDesktop = null;
 	
-	// --- Objekt- / Projektvariablen --------------------------
-	/**
-	 * Indicates that the project is unsaved or not
-	 */
+
+	/** Indicates that the project is unsaved or not */
 	@XmlTransient public boolean isUnsaved = false;
+	
+
 	@XmlTransient private String projectFolder;
 	@XmlTransient private String projectFolderFullPath;
 	
-	// --- Vars saved within the project file -------------------------
+	// --- Variables saved within the project file -------------
 	@XmlElement(name="projectName")			private String projectName;
 	@XmlElement(name="projectDescription")	private String projectDescription;
 	@XmlElement(name="projectView")			private String projectView;			// --- Developer / End-User ---
@@ -191,7 +187,7 @@ import agentgui.core.webserver.JarFileCreator;
 	/**
 	 * This extended Vector will hold the concrete instances of the PLugIns loaded in this project 
 	 */
-	@XmlTransient public PlugInsLoaded plugIns_Loaded = new PlugInsLoaded();
+	@XmlTransient public PlugInsLoaded plugInsLoaded = new PlugInsLoaded();
 	@XmlTransient private boolean plugInVectorLoaded = false;
 	
 	/**
@@ -250,7 +246,7 @@ import agentgui.core.webserver.JarFileCreator;
 	public SimulationSetups simulationSetups = new SimulationSetups(this, simulationSetupCurrent);
 
 	/**
-	 * The environment controllerGUI of the project. Usually a subclass of EnvironmentPanel.
+	 * The environment controllerGUI of the project. Usually a subclass of {@link EnvironmentPanel}.
 	 */
 	@XmlTransient
 	private EnvironmentController environmentController = null;
@@ -261,6 +257,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	@XmlTransient
 	private DefaultComboBoxModel environmentsComboBoxModel = null;
+	
 	
 	/**
 	 * Default constructor for Project
@@ -349,10 +346,10 @@ import agentgui.core.webserver.JarFileCreator;
 			
 
 		// --- Visualisation ------------------------------
-		this.projectVisualizationPanel = new JPanel4Visualization(this, Language.translate("Simulations-Visualisierung"));
+		this.visualisationTab4SetupExecution = new JPanel4Visualisation(this, Language.translate("Simulations-Visualisierung"));
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, 
 				   Language.translate("Simulations-Visualisierung"), null, null, 
-				   this.projectVisualizationPanel, null);
+				   this.getVisualisationTab4SetupExecution(), null);
 		pwt.add();
 		// --- Project Desktop ----------------------------
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
@@ -455,22 +452,23 @@ import agentgui.core.webserver.JarFileCreator;
 		this.resourcesRemove();
 		
 		// --- Close Project ------------------------------
-		int Index = Application.Projects.getIndexByName(projectName); // --- Merker Index ---		
+		ProjectsLoaded loadedProjects = Application.getProjectsLoaded();
+		int Index = loadedProjects.getIndexByName(projectName); // --- Merker Index ---		
 		projectWindow.dispose();
-		Application.Projects.remove(this);
+		loadedProjects.remove(this);
 		
-		int NProjects = Application.Projects.count();
-		if ( NProjects > 0 ) {
-			if ( Index+1 > NProjects ) Index = NProjects-1;  
-			Application.ProjectCurr = Application.Projects.get(Index);
-			Application.ProjectCurr.setFocus(true);
-			Application.setTitelAddition( Application.ProjectCurr.projectName );
+		int nProjects = loadedProjects.count();
+		if (nProjects > 0) {
+			if ( Index+1 > nProjects ) Index = nProjects-1;  
+			Application.setProjectFocused(loadedProjects.get(Index));
+			Application.getProjectFocused().setFocus(true);
+			Application.setTitelAddition( Application.getProjectFocused().projectName );
 		} else {
-			Application.ProjectCurr = null;
-			Application.getMainWindow().setCloseButtonPosition( false );
-			Application.setTitelAddition( "" );
+			Application.setProjectFocused(null);
+			Application.getMainWindow().setCloseButtonPosition(false);
+			Application.setTitelAddition("");
 		}
-		Application.setStatusBar( "" );
+		Application.setStatusBar("");
 		return true;
 	}
 
@@ -502,8 +500,8 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	private void plugInVectorRemove() {
 		// --- unload/remove all plugins configured in 'plugIns_Loaded' -----------
-		for (int i = this.plugIns_Loaded.size(); i>0; i--) {
-			this.plugInRemove(this.plugIns_Loaded.get(i-1), false);
+		for (int i = this.plugInsLoaded.size(); i>0; i--) {
+			this.plugInRemove(this.plugInsLoaded.get(i-1), false);
 		}
 		this.plugInVectorLoaded = false;
 	}
@@ -514,7 +512,7 @@ import agentgui.core.webserver.JarFileCreator;
 		// --- remove all loaded PlugIns ------------------
 		this.plugInVectorRemove();
 		// --- re-initialise the 'PlugInsLoaded'-Vector ---
-		plugIns_Loaded = new PlugInsLoaded();
+		plugInsLoaded = new PlugInsLoaded();
 		// --- load all configured PlugIns to the project -
 		this.plugInVectorLoad();
 		
@@ -529,9 +527,9 @@ import agentgui.core.webserver.JarFileCreator;
 		String MsgText = "";
 			
 		try {
-			if (plugIns_Loaded.isLoaded(pluginReference)==true) {
+			if (plugInsLoaded.isLoaded(pluginReference)==true) {
 				// --- PlugIn can't be loaded because it's already there ------
-				PlugIn ppi = plugIns_Loaded.getPlugIn(pluginReference);
+				PlugIn ppi = plugInsLoaded.getPlugIn(pluginReference);
 				
 				MsgHead = Language.translate("Fehler - PlugIn: ") + ppi.getName() + " !" ;
 				MsgText = Language.translate("Das PlugIn wurde bereits in das Projekt integriert " +
@@ -540,7 +538,7 @@ import agentgui.core.webserver.JarFileCreator;
 				
 			} else {
 				// --- PlugIn can be loaded -----------------------------------
-				PlugIn ppi = plugIns_Loaded.loadPlugin(this, pluginReference);
+				PlugIn ppi = plugInsLoaded.loadPlugin(this, pluginReference);
 				this.setNotChangedButNotify(new PlugInNotification(PlugIn.ADDED, ppi));
 				if (add2PlugInReferenceVector) {
 					this.plugIns_Classes.add(pluginReference);	
@@ -562,7 +560,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 * @param removeFromProjectReferenceVector 
 	 */
 	public void plugInRemove(PlugIn plugIn, boolean removeFromProjectReferenceVector) {
-		this.plugIns_Loaded.removePlugIn(plugIn);
+		this.plugInsLoaded.removePlugIn(plugIn);
 		this.setNotChangedButNotify(new PlugInNotification(PlugIn.REMOVED, plugIn));
 		if (removeFromProjectReferenceVector) {
 			this.plugIns_Classes.remove(plugIn.getClassReference());
@@ -648,8 +646,8 @@ import agentgui.core.webserver.JarFileCreator;
 		
 		this.projectWindow.moveToFront();
 		Application.setTitelAddition(projectName);
-		Application.ProjectCurr = this;
-		Application.Projects.setProjectView();
+		Application.setProjectFocused(this);
+		Application.getProjectsLoaded().setProjectView();
 		this.setMaximized();
 		
 		if (forceClassPathReload) {
@@ -714,7 +712,7 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient
 	public void setProjectFolder(String newProjectFolder) {
 		projectFolder = newProjectFolder;
-		projectFolderFullPath = Application.getGlobalInfo().PathProjects(true) + projectFolder + Application.getGlobalInfo().AppPathSeparatorString();
+		projectFolderFullPath = Application.getGlobalInfo().PathProjects(true) + projectFolder + File.separator;
 		setChanged();
 		notifyObservers(CHANGED_ProjectFolder);
 	}
@@ -817,7 +815,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public String getSubFolder4Setups(boolean fullPath) {
 		if (fullPath==true) {
-			return getProjectFolderFullPath() + defaultSubFolder4Setups + pathSep;
+			return getProjectFolderFullPath() + defaultSubFolder4Setups + File.separator;
 		} else {
 			return defaultSubFolder4Setups;	
 		}	
@@ -972,11 +970,11 @@ import agentgui.core.webserver.JarFileCreator;
 		}
 		
 		// --- Search for Agent-, Ontology- and BaseService - Classes ----
-		if (Application.ClassDetector != null) {
-			Application.ClassDetector.stopSearch(null);
-			Application.ClassDetector = null;
+		if (Application.getClassSearcher() != null) {
+			Application.getClassSearcher().stopSearch(null);
+			Application.setClassSearcher(null);
 		}
-		Application.ClassDetector = new ClassSearcher(this);
+		Application.setClassSearcher(new ClassSearcher(this));
 		
 		this.setChangedAndNotify(CHANGED_ProjectResources);
 	}
@@ -1109,6 +1107,25 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public void setEnvironmentsComboBoxModel(DefaultComboBoxModel environmentsComboBoxModel) {
 		this.environmentsComboBoxModel = environmentsComboBoxModel;
+	}
+
+	/**
+	 * Sets the visualisation tab of the {@link ProjectWindow} for an executed setup.
+	 * @param visualisationTab4SetupExecution the new visualisation tab4 setup execution
+	 */
+	public void setVisualisationTab4SetupExecution(JPanel4Visualisation visualisationTab4SetupExecution) {
+		this.visualisationTab4SetupExecution = visualisationTab4SetupExecution;
+	}
+	/**
+	 * Returns the visualisation tab of the {@link ProjectWindow} for an executed setup.
+	 * @return the visualisation tab4 setup execution
+	 */
+	@XmlTransient
+	public JPanel4Visualisation getVisualisationTab4SetupExecution() {
+		if (this.visualisationTab4SetupExecution==null) {
+			this.visualisationTab4SetupExecution = new JPanel4Visualisation(this, Language.translate("Simulations-Visualisierung")); 
+		}
+		return this.visualisationTab4SetupExecution;
 	}
 
 }

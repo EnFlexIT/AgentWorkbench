@@ -125,7 +125,6 @@ public class JadeRemoteStart extends Thread {
 	 */
 	private void handelExternalJars() {
 		
-		String pathSep = Application.getGlobalInfo().AppPathSeparatorString();
 		String destinPath = Application.getGlobalInfo().PathDownloads(false);
 		String projectSubFolder = null;
 		String downloadProtocol = "";
@@ -140,7 +139,7 @@ public class JadeRemoteStart extends Thread {
 				projectSubFolder = projectSubFolder.substring(cut, projectSubFolder.length());
 				cut = projectSubFolder.indexOf("/");
 				projectSubFolder = projectSubFolder.substring(0, cut);
-				projectSubFolder+= pathSep;
+				projectSubFolder+= File.separator;
 				
 				// --- Correct the Path for the download -------
 				destinPath = destinPath + projectSubFolder;
@@ -162,7 +161,7 @@ public class JadeRemoteStart extends Thread {
 			new Download(httpJarFile, destinFile);
 
 			// --- Reminder für den ClassPath setzen -----------
-			String ClassPathEntry = "./" + destinFile.replace(pathSep, "/") + ";";
+			String ClassPathEntry = "./" + destinFile.replace(File.separator, "/") + ";";
 			jadeJarIncludeClassPath.add(ClassPathEntry);
 			
 			// --- Download-Protocoll --------------------------

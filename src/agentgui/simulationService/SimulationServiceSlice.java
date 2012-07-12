@@ -31,7 +31,6 @@ package agentgui.simulationService;
 import jade.core.AID;
 import jade.core.IMTPException;
 import jade.core.Service;
-import jade.core.ServiceException;
 
 import java.util.Hashtable;
 import java.util.Vector;
@@ -240,10 +239,11 @@ public interface SimulationServiceSlice extends Service.Slice {
 	/** The Constant SERVICE_DISPLAY_AGENT_NOTIFY. */
 	static final String SERVICE_DISPLAY_AGENT_SET_ENVIRONMENT_MODEL = "service-display-agent-set-environment-model";
 	static final String SERVICE_DISPLAY_AGENT_NOTIFICATION = "service-display-agent-notification";
+	
 	/**
 	 * Notifies all registered DisplayAgents about a new EnvironmentModel.
-	 * @param notification the notification
-	 * @throws ServiceException the service exception
+	 * @param envModel the {@link EnvironmentModel}
+	 * @throws IMTPException the iMTP exception
 	 */
 	public void displayAgentSetEnvironmentModel(EnvironmentModel envModel) throws IMTPException;
 	/**

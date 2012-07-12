@@ -69,7 +69,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		super.setup();
 
 		// --- Get the connection to the current project ------------
-		currProject = Application.ProjectCurr;
+		currProject = Application.getProjectFocused();
 		if (currProject == null) {
 			takeDown();
 			return;

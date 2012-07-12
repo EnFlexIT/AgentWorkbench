@@ -162,7 +162,7 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 				Class<? extends Agent> displayAgentClass = envType.getDisplayAgentClass();
 				
 				Object[] startArg = new Object[3];
-				startArg[0] = currProject.projectVisualizationPanel;
+				startArg[0] = currProject.getVisualisationTab4SetupExecution();
 				startArg[1] = envController;
 				this.startAgent("DisplayAgent", displayAgentClass, startArg);
 				

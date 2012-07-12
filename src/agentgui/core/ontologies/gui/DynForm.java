@@ -116,7 +116,8 @@ public class DynForm extends JPanel {
 	/**
 	 * Constructor of this class by using a project and an agent reference.
 	 *
-	 * @param project the project
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
+	 * @param agentConfiguration the {@link AgentConfiguration}
 	 * @param agentReference the agent reference
 	 */
 	public DynForm(OntologyVisualisationHelper ontologyVisualisationHelper, AgentConfiguration agentConfiguration, String agentReference) {
@@ -162,7 +163,7 @@ public class DynForm extends JPanel {
 	 * Constructor of this class by using an instance of an ontology and
 	 * the reference(s) of a needed class out of the ontology.
 	 *
-	 * @param project the project
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
 	 * @param ontologyClassReferences the ontology class references
 	 */
 	public DynForm(OntologyVisualisationHelper ontologyVisualisationHelper, String[] ontologyClassReferences) {

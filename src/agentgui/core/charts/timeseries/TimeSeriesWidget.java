@@ -64,7 +64,9 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 	
 	/**
 	 * Instantiates a new time series widget.
-	 * @param timeSeries the time series
+	 *
+	 * @param dynForm the {@link DynForm}
+	 * @param startArgIndex the current start argument index
 	 */
 	public TimeSeriesWidget(DynForm dynForm, int startArgIndex) {
 		super();

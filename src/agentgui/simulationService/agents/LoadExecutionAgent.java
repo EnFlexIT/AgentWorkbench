@@ -35,7 +35,7 @@ import jade.core.behaviours.OneShotBehaviour;
 import java.lang.reflect.InvocationTargetException;
 
 import agentgui.core.application.Application;
-import agentgui.core.gui.CoreWindow;
+import agentgui.core.gui.MainWindow;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
 import agentgui.simulationService.SimulationService;
@@ -70,7 +70,7 @@ public class LoadExecutionAgent extends Agent {
 	
 	private int startArg;
 	
-	private CoreWindow mainWindow = Application.getMainWindow();
+	private MainWindow mainWindow = Application.getMainWindow();
 	
 	
 	/* (non-Javadoc)
@@ -178,7 +178,7 @@ public class LoadExecutionAgent extends Agent {
 	private StaticLoadBalancingBase getStartAndStaticLoadBalancingClass(Agent myAgent) {
 		
 		// --- Get the current distribution setup ---------
-		DistributionSetup currDisSetup = Application.ProjectCurr.getDistributionSetup();
+		DistributionSetup currDisSetup = Application.getProjectFocused().getDistributionSetup();
 		if (currDisSetup.isDoStaticLoadBalancing()== true) {
 
 			try {

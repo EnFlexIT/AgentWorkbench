@@ -66,10 +66,9 @@ public final class GraphGlobals {
 	 /**
  	 * Returns an ImageIcon as specified in path2Image. Therefore the methods
  	 * tries to find the images at different places. This is, first, in the
- 	 * available packages or second at different folder location on the disc.  
+ 	 * available packages or second at different folder location on the disc.
  	 *
  	 * @param path2Image the path to the image
- 	 * @param description the description for the ImageIcon
  	 * @return the image icon
  	 */
  	public static ImageIcon getImageIcon(String path2Image) {

@@ -64,7 +64,6 @@ public class OntologyClass extends Object implements Serializable {
 	 * a) the reference to the main-class of an known ontology
 	 * b) the source-package of an ontology e. g. 'myproject.ontology'
 	 *
-	 * @param project the project
 	 * @param ontologyReference the ontology reference
 	 */
 	public OntologyClass(String ontologyReference) {

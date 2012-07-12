@@ -82,7 +82,7 @@ public class GraphNodePairs {
 	}
 	/**
 	 * Sets the second Hash of the second GraphNode's.
-	 * @param graphNode2 the Hash with the second GraphNodes
+	 * @param graphNode2Hash the Hash with the second GraphNodes
 	 */
 	public void setGraphNode2Hash(HashSet<GraphNode> graphNode2Hash) {
 		this.graphNode2Hash = graphNode2Hash;

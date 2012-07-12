@@ -39,7 +39,7 @@ import agentgui.core.config.GlobalInfo;
  * Its concrete instance is stored in the class GlobalInfo 
  * (accessible at runtime by using Application.RunInfo)
  *
- * @see Application#RunInfo
+ * @see Application#getGlobalInfo()
  * @see GlobalInfo
  * @see GlobalInfo#getKnownEnvironmentTypes()
  * @see GlobalInfo#setKnownEnvironmentTypes(EnvironmentTypes)

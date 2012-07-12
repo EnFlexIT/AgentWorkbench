@@ -76,9 +76,8 @@ public class NetworkComponentDialog extends JDialog implements ActionListener {
 
 	/**
 	 * Constructor.
-	 * @param project The simulation project
 	 * @param controller the GraphEnvironmentController
-	 * @param element The GraphElement containing the ontology object
+	 * @param graphObject the graph object
 	 */
 	public NetworkComponentDialog(GraphEnvironmentController controller, Object graphObject) {
 		super(Application.getMainWindow(), Dialog.ModalityType.APPLICATION_MODAL);

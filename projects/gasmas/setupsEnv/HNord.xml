@@ -269,6 +269,17 @@
             </value>
         </entry>
         <entry>
+            <key>n74</key>
+            <value>
+                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP131</graphElementIDs>
+                <id>n74</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Exit</type>
+            </value>
+        </entry>
+        <entry>
             <key>n36</key>
             <value>
                 <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
@@ -321,6 +332,20 @@
             </value>
         </entry>
         <entry>
+            <key>n1</key>
+            <value>
+                <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
+                <dataModelBase64>PENvbXByZXNzb3IgSUQ9Im4xIiBhbGlhcz0iIiB0bz0iIiBmcm9tPSIiIGdhc0Nvb2xlckV4aXN0aW5nPSJmYWxzZSIgaW50ZXJuYWxCeXBhc3NSZXF1aXJlZD0iZmFsc2UiIGRyYWdGYWN0b3JJbj0iMC4wRiIgZHJhZ0ZhY3Rvck91dD0iMC4wRiIgZmxvd0RpcmVjdGlvbj0iMCIgZnVlbEdhc1ZlcnRleD0iIj4KCTxmbG93TWF4PgoJCTxWYWx1ZVR5cGUgVmFsdWU9IjAuMEYiIFVuaXQ9IiIvPgoJPC9mbG93TWF4PgoJPGN1cnJlbnRGbG93PgoJCTxGbG93UGFyYW1ldGVycyBwcmVzc3VyZT0iMC4wRiIgZmxvdz0iMC4wRiIgbWFzc0Zsb3c9IjAuMEYiIHJleW5vbGRzTnVtYmVyPSIwIiBmbHVpZFZlbG9jaXR5PSIwLjBGIiB0ZW1wZXJhdHVyZT0iMC4wRiIvPgoJPC9jdXJyZW50Rmxvdz4KCTxmbG93TWluPgoJCTxWYWx1ZVR5cGUgVmFsdWU9IjAuMEYiIFVuaXQ9IiIvPgoJPC9mbG93TWluPgoJPHByZXNzdXJlTG9zc091dD4KCQk8VmFsdWVUeXBlIFZhbHVlPSIwLjBGIiBVbml0PSIiLz4KCTwvcHJlc3N1cmVMb3NzT3V0PgoJPGRpYW1ldGVySW4+CgkJPFZhbHVlVHlwZSBWYWx1ZT0iMC4wRiIgVW5pdD0iIi8+Cgk8L2RpYW1ldGVySW4+Cgk8cHJlc3N1cmVMb3NzSW4+CgkJPFZhbHVlVHlwZSBWYWx1ZT0iMC4wRiIgVW5pdD0iIi8+Cgk8L3ByZXNzdXJlTG9zc0luPgoJPGNvb2xlZE91dHB1dFRlbXBlcmF0dXJlPgoJCTxWYWx1ZVR5cGUgVmFsdWU9IjAuMEYiIFVuaXQ9IiIvPgoJPC9jb29sZWRPdXRwdXRUZW1wZXJhdHVyZT4KCTxwcmVzc3VyZU91dE1heD4KCQk8VmFsdWVUeXBlIFZhbHVlPSIwLjBGIiBVbml0PSIiLz4KCTwvcHJlc3N1cmVPdXRNYXg+Cgk8ZGlhbWV0ZXJPdXQ+CgkJPFZhbHVlVHlwZSBWYWx1ZT0iMC4wRiIgVW5pdD0iIi8+Cgk8L2RpYW1ldGVyT3V0PgoJPHByZXNzdXJlSW5NaW4+CgkJPFZhbHVlVHlwZSBWYWx1ZT0iMC4wRiIgVW5pdD0iIi8+Cgk8L3ByZXNzdXJlSW5NaW4+CjwvQ29tcHJlc3Nvcj4K</dataModelBase64>
+                <directed>true</directed>
+                <graphElementIDs>n1</graphElementIDs>
+                <graphElementIDs>PP4</graphElementIDs>
+                <graphElementIDs>PP0</graphElementIDs>
+                <id>n1</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>Compressor</type>
+            </value>
+        </entry>
+        <entry>
             <key>n23</key>
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
@@ -335,20 +360,6 @@
                 <id>n23</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch3</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n1</key>
-            <value>
-                <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
-                <dataModelBase64>PENvbXByZXNzb3IgSUQ9Im4xIiBhbGlhcz0iIiB0bz0iIiBmcm9tPSIiIGdhc0Nvb2xlckV4aXN0aW5nPSJmYWxzZSIgaW50ZXJuYWxCeXBhc3NSZXF1aXJlZD0iZmFsc2UiIGRyYWdGYWN0b3JJbj0iMC4wRiIgZHJhZ0ZhY3Rvck91dD0iMC4wRiIgZmxvd0RpcmVjdGlvbj0iMCIgZnVlbEdhc1ZlcnRleD0iIj4KCTxmbG93TWF4PgoJCTxWYWx1ZVR5cGUgVmFsdWU9IjAuMEYiIFVuaXQ9IiIvPgoJPC9mbG93TWF4PgoJPGN1cnJlbnRGbG93PgoJCTxGbG93UGFyYW1ldGVycyBwcmVzc3VyZT0iMC4wRiIgZmxvdz0iMC4wRiIgbWFzc0Zsb3c9IjAuMEYiIHJleW5vbGRzTnVtYmVyPSIwIiBmbHVpZFZlbG9jaXR5PSIwLjBGIiB0ZW1wZXJhdHVyZT0iMC4wRiIvPgoJPC9jdXJyZW50Rmxvdz4KCTxmbG93TWluPgoJCTxWYWx1ZVR5cGUgVmFsdWU9IjAuMEYiIFVuaXQ9IiIvPgoJPC9mbG93TWluPgoJPHByZXNzdXJlTG9zc091dD4KCQk8VmFsdWVUeXBlIFZhbHVlPSIwLjBGIiBVbml0PSIiLz4KCTwvcHJlc3N1cmVMb3NzT3V0PgoJPGRpYW1ldGVySW4+CgkJPFZhbHVlVHlwZSBWYWx1ZT0iMC4wRiIgVW5pdD0iIi8+Cgk8L2RpYW1ldGVySW4+Cgk8cHJlc3N1cmVMb3NzSW4+CgkJPFZhbHVlVHlwZSBWYWx1ZT0iMC4wRiIgVW5pdD0iIi8+Cgk8L3ByZXNzdXJlTG9zc0luPgoJPGNvb2xlZE91dHB1dFRlbXBlcmF0dXJlPgoJCTxWYWx1ZVR5cGUgVmFsdWU9IjAuMEYiIFVuaXQ9IiIvPgoJPC9jb29sZWRPdXRwdXRUZW1wZXJhdHVyZT4KCTxwcmVzc3VyZU91dE1heD4KCQk8VmFsdWVUeXBlIFZhbHVlPSIwLjBGIiBVbml0PSIiLz4KCTwvcHJlc3N1cmVPdXRNYXg+Cgk8ZGlhbWV0ZXJPdXQ+CgkJPFZhbHVlVHlwZSBWYWx1ZT0iMC4wRiIgVW5pdD0iIi8+Cgk8L2RpYW1ldGVyT3V0PgoJPHByZXNzdXJlSW5NaW4+CgkJPFZhbHVlVHlwZSBWYWx1ZT0iMC4wRiIgVW5pdD0iIi8+Cgk8L3ByZXNzdXJlSW5NaW4+CjwvQ29tcHJlc3Nvcj4K</dataModelBase64>
-                <directed>true</directed>
-                <graphElementIDs>n1</graphElementIDs>
-                <graphElementIDs>PP4</graphElementIDs>
-                <graphElementIDs>PP0</graphElementIDs>
-                <id>n1</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
-                <type>Compressor</type>
             </value>
         </entry>
         <entry>
@@ -919,10 +930,10 @@ PFRpbWVTZXJpZXMgdGltZUF4aXNMYWJlbD0iIiB2YWx1ZUF4aXNMYWJlbD0iIiBjaGFydFRpdGxlPSIi
                 <directed>false</directed>
                 <graphElementIDs>PP94</graphElementIDs>
                 <graphElementIDs>PP96</graphElementIDs>
+                <graphElementIDs>PP131</graphElementIDs>
                 <graphElementIDs>n59_2</graphElementIDs>
                 <graphElementIDs>n59_1</graphElementIDs>
                 <graphElementIDs>n59_0</graphElementIDs>
-                <graphElementIDs>PP122</graphElementIDs>
                 <graphElementIDs>PP121</graphElementIDs>
                 <id>n59</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>

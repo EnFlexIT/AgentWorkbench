@@ -64,9 +64,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 	
 	/**
 	 * Constructor of this class.
-	 *
-	 * @param pathesOfExternalRessources the path expressions to further external resources
-	 * @param searchInPackage the search reference
+	 * @param searchInPackage the reference to the package in that the search has to be executed
 	 */
 	public ReflectClassFiles(String searchInPackage) {
 
@@ -277,7 +275,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 							if ( SearchINPath == null ) {
 								SearchINPath = searchINPathParts[j];	
 							} else {
-								SearchINPath = SearchINPath +  Application.getGlobalInfo().AppPathSeparatorString() + searchINPathParts[j];
+								SearchINPath = SearchINPath +  File.separator + searchINPathParts[j];
 							}								
 							// --- Aktuellen Pfad untersuchen / vergleichen -----------
 							//System.out.println(files[i].getAbsolutePath());

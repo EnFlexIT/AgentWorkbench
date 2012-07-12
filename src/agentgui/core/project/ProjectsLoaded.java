@@ -117,11 +117,11 @@ public class ProjectsLoaded {
 			// --- Neuen, allgemeinen Projektnamen finden -----		
 			String ProjectNamePrefix = Language.translate("Neues Projekt");
 			projectNameTest = ProjectNamePrefix;
-			int Index = Application.Projects.getIndexByName(projectNameTest);
+			int Index = Application.getProjectsLoaded().getIndexByName(projectNameTest);
 			int i = 2;
 			while ( Index != -1 ) {
 				projectNameTest = ProjectNamePrefix + " " + i;
-				Index = Application.Projects.getIndexByName( projectNameTest );
+				Index = Application.getProjectsLoaded().getIndexByName( projectNameTest );
 				i++;
 			}
 			projectFolderTest = projectNameTest.toLowerCase().replace(" ", "_");
@@ -163,7 +163,7 @@ public class ProjectsLoaded {
 		// ------------------------------------------------
 		// --- ClassLoader entladen -----------------------
 		if(projectsOpen.size()!=0) {
-			Application.ProjectCurr.resourcesRemove();
+			Application.getProjectFocused().resourcesRemove();
 		}
 		
 		// ------------------------------------------------
@@ -268,10 +268,10 @@ public class ProjectsLoaded {
 		
 		// --- add project to the project-listing -----------------------------
 		projectsOpen.add(newProject);
-		Application.ProjectCurr = newProject;
+		Application.setProjectFocused(newProject);
 
 		// --- Configure the project view in the main application -------------
-		Application.Projects.setProjectView();		
+		Application.getProjectsLoaded().setProjectView();		
 		Application.getMainWindow().setCloseButtonPosition(true);
 		Application.setTitelAddition( newProject.getProjectName() );
 		Application.setStatusBar(Language.translate("Fertig"));	
@@ -297,8 +297,8 @@ public class ProjectsLoaded {
 	 * @return Returns true on success
 	 */
 	public boolean closeAll() {		
-		while ( Application.ProjectCurr != null ) {
-			if ( Application.ProjectCurr.close() == false  ) {
+		while ( Application.getProjectFocused() != null ) {
+			if ( Application.getProjectFocused().close() == false  ) {
 				return false;
 			}
 		}
@@ -333,7 +333,7 @@ public class ProjectsLoaded {
 	public void remove(Project project2Remove) {
 		projectsOpen.remove(project2Remove);
 		if (projectsOpen.size()==0) {
-			Application.ProjectCurr = null;
+			Application.setProjectFocused(null);
 		}
 		this.setProjectView();
 	}
@@ -342,8 +342,8 @@ public class ProjectsLoaded {
 	 */
 	public void removeAll() {
 		projectsOpen.clear();
-		Application.ProjectCurr = null;
-		Application.Projects.setProjectView();		
+		Application.setProjectFocused(null);
+		Application.getProjectsLoaded().setProjectView();		
 	}
 
 	/**
@@ -389,7 +389,7 @@ public class ProjectsLoaded {
 	public void setProjectView() {
 		
 		// --- 1. Set Setup-Selector and Tools --------------------------------
-		Application.getMainWindow().getSetupSelectorToolbar().setProject(Application.ProjectCurr);
+		Application.getMainWindow().getSetupSelectorToolbar().setProject(Application.getProjectFocused());
 		
 		// --- 2. Rebuild the view to the Items in MenuBar 'Window' -----------
 		this.setProjectMenuItems();
@@ -418,7 +418,7 @@ public class ProjectsLoaded {
 			
 			// --- select the right item in relation ------  
 			// --- to the project 					 ------
-			String viewConfigured = Application.ProjectCurr.getProjectView();
+			String viewConfigured = Application.getProjectFocused().getProjectView();
 			if (viewConfigured.equalsIgnoreCase(Project.VIEW_User)) {
 				viewDeveloper.setSelected(false);
 				viewEndUser.setSelected(true);
@@ -426,7 +426,7 @@ public class ProjectsLoaded {
 				viewEndUser.setSelected(false);
 				viewDeveloper.setSelected(true);
 			}
-			Application.ProjectCurr.projectWindow.setView();
+			Application.getProjectFocused().projectWindow.setView();
 		}
 	}
 	
@@ -445,7 +445,7 @@ public class ProjectsLoaded {
 		} else {
 			for(int i=0; i<this.count(); i++) {
 				String ProjectName = projectsOpen.get(i).getProjectName();
-				if ( ProjectName.equalsIgnoreCase( Application.ProjectCurr.getProjectName() ) ) 
+				if ( ProjectName.equalsIgnoreCase( Application.getProjectFocused().getProjectName() ) ) 
 					setFontBold = true;
 				else 
 					setFontBold = false;
@@ -485,7 +485,7 @@ public class ProjectsLoaded {
 			}
 			this.addActionListener( new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					Application.Projects.setFocus( WinIdx );							
+					Application.getProjectsLoaded().setFocus( WinIdx );							
 				}
 			});		
 		}
@@ -505,7 +505,7 @@ public class ProjectsLoaded {
 		
 		String optionMsg = null;
 		String optionTitle = null;
-		String newLine = Application.getGlobalInfo().AppNewLineString(); 
+		String newLine = Application.getGlobalInfo().getNewLineSeparator(); 
 		
 		// --- Select a *.agui file -----------------------
 		String fileEnd = Application.getGlobalInfo().getFileEndProjectZip();
@@ -575,12 +575,12 @@ public class ProjectsLoaded {
 		
 		if (projectFolder==null) {
 			// --- If a project is open, ask to export this project -----
-			if (Application.ProjectCurr!=null) {
-				optionTitle = "" + Application.ProjectCurr.getProjectName() + ": " + Language.translate("Projekt exportieren?");
+			if (Application.getProjectFocused()!=null) {
+				optionTitle = "" + Application.getProjectFocused().getProjectName() + ": " + Language.translate("Projekt exportieren?");
 				optionMsg = Language.translate("Möchten Sie das aktuelle Projekt exportieren?");
 				int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
 				if (answer==JOptionPane.YES_OPTION) {
-					projectFolder = Application.ProjectCurr.getProjectFolder();
+					projectFolder = Application.getProjectFocused().getProjectFolder();
 				}
 			}
 			
@@ -691,7 +691,7 @@ public class ProjectsLoaded {
 	
 		// ----------------------------------------------------------
 		// --- If a project is open, ask to close this project ------
-		if (Application.ProjectCurr!=null) {
+		if (Application.getProjectFocused()!=null) {
 			
 			int iProject = this.getIndexByFolderName(projectFolder);
 			if (iProject>=0) {

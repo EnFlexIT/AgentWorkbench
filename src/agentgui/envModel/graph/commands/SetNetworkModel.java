@@ -54,9 +54,8 @@ public class SetNetworkModel extends AbstractUndoableEdit {
 	/**
 	 * Instantiates the new action in order to set a new NetworkModel.
 	 *
-	 * @param networkModelAdapter the network model adapter
-	 * @param networkModelNew the network model new
-	 * @param networkModelOld the network model old
+	 * @param graphController the graph controller
+	 * @param newNetworkModel the new network model
 	 */
 	public SetNetworkModel(GraphEnvironmentController graphController, NetworkModel newNetworkModel) {
 		super();

@@ -87,7 +87,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	public final static int ACTION_OpenProject = 2;
 	public final static int ACTION_DeleteProject = 3;
 	
-	private static String newLine = Application.getGlobalInfo().AppNewLineString();  //  @jve:decl-index=0:
+	private static String newLine = Application.getGlobalInfo().getNewLineSeparator();  //  @jve:decl-index=0:
 	
 	private JPanel jContentPane = null;
 	private JPanel jPanelButtons = null;
@@ -786,8 +786,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			// --- Test, ob die Projektdatei gefunden wurde -------
 			if ( ProError==false ) {				
 				String XMLFileName = Application.getGlobalInfo().PathProjects(true) + 
-									 ProFolder + 
-									 Application.getGlobalInfo().AppPathSeparatorString() +
+									 ProFolder + File.separator +
 									 Application.getGlobalInfo().getFileNameProject();
 				File f = new File( XMLFileName );
 				if ( f.isFile() == false ) {

@@ -408,7 +408,9 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	
 	/**
 	 * Sets the movement of GraphNodes to the undoManager.
-	 * @param nodesMovedOldPostions the old positions of the moved GraphNodes 
+	 *
+	 * @param visViewer the current {@link VisualizationViewer}
+	 * @param nodesMovedOldPositions the nodes moved old positions
 	 */
 	public void setGraphNodesMoved(VisualizationViewer<GraphNode,GraphEdge> visViewer, HashMap<String, Point2D> nodesMovedOldPositions) {
 		this.undoManager.addEdit(new MoveGraphNodes(this.graphController, visViewer, nodesMovedOldPositions));

@@ -120,7 +120,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		OptionTreeModel = new DefaultTreeModel( RootNode );	
 		
 		// --- Set the Look and Feel of the Dialog ------------------
-		if (Application.isServer==true) {
+		if (Application.isRunningAsServer()==true) {
 			if (Application.getGlobalInfo().getAppLnF()!=null) {
 				setLookAndFeel( Application.getGlobalInfo().getAppLnF() );
 			}
@@ -142,7 +142,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    tabTitle = Language.translate("Programmstart");
 	    this.addOptionTab(tabTitle, null, optionsStart, tabTitle);
 	    
-	    if (Application.isServer==true) {
+	    if (Application.isRunningAsServer()==true) {
 	    	tabTitle = Language.translate("Konsole");
 	    	this.addOptionTab(tabTitle, null, Application.getConsole(), tabTitle);	
 	    }
@@ -589,7 +589,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		boolean isServerOld = Application.getGlobalInfo().isRunAsServer();
 		boolean isServerNew = optionsStart.jRadioButtonRunAsServer.isSelected();
 		
-		String newLine = Application.getGlobalInfo().AppNewLineString();
+		String newLine = Application.getGlobalInfo().getNewLineSeparator();
 		String forceRestartTo = null;
 		
 		// --- Fehlerbehnaldung -------------------------------------

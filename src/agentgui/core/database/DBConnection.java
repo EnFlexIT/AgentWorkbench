@@ -53,7 +53,7 @@ import com.mysql.jdbc.Statement;
  */
 public class DBConnection {
 	
-	private String newLine = Application.getGlobalInfo().AppNewLineString();
+	private String newLine = Application.getGlobalInfo().getNewLineSeparator();
 	private String sql = null;
 		
 	private Connection connection = null;

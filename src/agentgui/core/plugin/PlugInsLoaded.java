@@ -41,7 +41,7 @@ import agentgui.core.project.Project;
  * This class represents the list of plug-in's, which are loaded in a single
  * project.
  * 
- * @see Project#plugIns_Loaded
+ * @see Project#plugInsLoaded
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

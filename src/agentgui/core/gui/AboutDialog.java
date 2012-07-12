@@ -141,7 +141,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 		this.registerEscapeKeyStroke();
 		
 		// --- Set the Look and Feel of the Dialog ------------------
-		if (Application.isServer==true) {
+		if (Application.isRunningAsServer()==true) {
 			if (Application.getGlobalInfo().getAppLnF()!=null) {
 				setLookAndFeel(Application.getGlobalInfo().getAppLnF());
 			}

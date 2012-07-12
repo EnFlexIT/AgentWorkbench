@@ -76,7 +76,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	
 	private final String XML_FilePostfix = Application.getGlobalInfo().getXmlFilePostfix();
 	
-	private Project currProject = Application.ProjectCurr;
+	private Project currProject = Application.getProjectFocused();
 	private SimulationSetup currSimSetup = null;
 	
 	private String currSimSetupName = null;

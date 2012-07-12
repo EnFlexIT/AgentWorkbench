@@ -68,7 +68,7 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 	 * Instantiates the new action in order to remove a set of NetworkComponents's.
 	 *
 	 * @param graphController the graph controller
-	 * @param networkComponent2Remove the network component2 remove
+	 * @param networkComponents2Remove the network components2 remove
 	 */
 	public RemoveNetworkComponent(GraphEnvironmentController graphController, HashSet<NetworkComponent> networkComponents2Remove) {
 		super();

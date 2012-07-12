@@ -61,7 +61,10 @@ public abstract class NetworkModelFileImporter {
 	
 	/**
 	 * Constructor.
-	 * @param generalGraphSettings4MAS the current settings for the graph environment
+	 *
+	 * @param graphController the {@link GraphEnvironmentController}
+	 * @param fileTypeExtension the file type extension
+	 * @param fileTypeDescription the file type description
 	 */
 	public NetworkModelFileImporter(GraphEnvironmentController graphController, String fileTypeExtension, String fileTypeDescription){
 		this.graphController = graphController;

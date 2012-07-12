@@ -39,7 +39,7 @@ import agentgui.core.config.GlobalInfo;
  * In order to add such constructions to Agent.GUI use the methods in the class 
  * GlobalInfo (accessible at runtime by using Application.RunInfo) 
  * 
- * @see Application#RunInfo
+ * @see Application#getGlobalInfo()
  * @see GlobalInfo#addEnvironmentType(EnvironmentType)
  * @see GlobalInfo#removeEnvironmentType(EnvironmentType)
  * @see GlobalInfo#removeEnvironmentType(String)

@@ -51,7 +51,7 @@ import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentController;
  * This class is for constant values or variables, which can
  * be accessed or used application wide.<br>
  * In the Application class the running instance can be accessed 
- * by using the reference Application.RunInfo. 
+ * by using the reference {@link Application#getGlobalInfo()}. 
  * 
  * @see Application#getGlobalInfo()
  * 
@@ -63,10 +63,10 @@ public class GlobalInfo {
 	private static String localAppTitle = "Agent.GUI";
 	
 	private final static String localFileRunnableJar = "AgentGui.jar";
-	private final static String localAppPathSeparatorString = File.separator;
-	private final static String localAppNewLineString = System.getProperty("line.separator");
-	private final static String localAppNewLineStringReplacer = "<br>";
 	private final static String localPathImageIntern = "/agentgui/core/gui/img/";
+	private final static String fileSeparator = File.separator;
+	private final static String newLineSeparator = System.getProperty("line.separator");
+	private final static String newLineSeparatorReplacer = "<br>";
 
 	private final static Color localColorMenuHighLight =  new Color(0,0,192);
 	
@@ -81,13 +81,13 @@ public class GlobalInfo {
 	private static String localAppLnF = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
 	
 	private static String localBaseDir = "";
-	private static String localPathAgentGUI	= "bin";
-	private static String localPathJade		= "lib" + localAppPathSeparatorString + "jade" +  localAppPathSeparatorString + "lib";
-	private static String localPathBatik	= "lib" + localAppPathSeparatorString + "batik";	
-	private static String localPathProperty = "properties" + localAppPathSeparatorString;
-	private static String localPathProjects = "projects" + localAppPathSeparatorString;
-	private static String localPathWebServer   = "server" + localAppPathSeparatorString;
-	private static String localPathDownloads= "download" + localAppPathSeparatorString;
+	private static String localPathAgentGUI	 = "bin";
+	private static String localPathJade		 = "lib" + fileSeparator + "jade" +  fileSeparator + "lib";
+	private static String localPathBatik	 = "lib" + fileSeparator + "batik";	
+	private static String localPathProperty  = "properties" + fileSeparator;
+	private static String localPathProjects  = "projects" + fileSeparator;
+	private static String localPathWebServer = "server" + fileSeparator;
+	private static String localPathDownloads = "download" + fileSeparator;
 	
 	private static String[] localProjects = null;
 	
@@ -147,7 +147,7 @@ public class GlobalInfo {
 			if (JCP_Files[i].endsWith(localFileRunnableJar)) {
 				localAppExecutedOver = ExecutedOverAgentGuiJar;
 				// --- Bei jar, immer interne Console verwenden -------------
-				CutAt = JCP_Files[i].lastIndexOf(localAppPathSeparatorString) + 1;
+				CutAt = JCP_Files[i].lastIndexOf(fileSeparator) + 1;
 				localBaseDir = JCP_Folders[i].substring(0, CutAt);	
 
 				// --- jade.jar in die ClassLoaderUtility einbinden ----------
@@ -158,7 +158,7 @@ public class GlobalInfo {
 			if (JCP_Files[i].endsWith(".jar")) {
 				// ----------------------------------------------------------
 				// --- Dateinamen herausnehmen ------------------------------
-				CutAt = JCP_Files[i].lastIndexOf( localAppPathSeparatorString );
+				CutAt = JCP_Files[i].lastIndexOf( fileSeparator );
 				if(CutAt!=-1){ //only if seperator was actually found
 					JCP_Folders[i] = JCP_Folders[i].substring(0, CutAt);
 				}
@@ -277,18 +277,11 @@ public class GlobalInfo {
 		return localAppExecutedOver;
 	}
 	/**
-	 * Returns the separator String for files like File.separator 
-	 * @return the file separator like '\' for Windows OR '/' for Linux
-	 */
-	public String AppPathSeparatorString() {
-		return localAppPathSeparatorString;
-	}
-	/**
 	 * This method returns the actual String for a new line string
 	 * @return a String that can be used for new lines in text  
 	 */
-	public String AppNewLineString(){
-		return localAppNewLineString;
+	public String getNewLineSeparator(){
+		return newLineSeparator;
 	}
 	/**
 	 * This method will return a substitute String for the new line String.
@@ -298,8 +291,8 @@ public class GlobalInfo {
 	 * 
 	 * @return a substitute String for a new line
 	 */
-	public String AppNewLineStringReplacer(){
-		return localAppNewLineStringReplacer;
+	public String getNewLineSeparatorReplacer(){
+		return newLineSeparatorReplacer;
 	}
 
 	// --- Allgemeine Verzeichnisangaben ---------------------
@@ -319,7 +312,7 @@ public class GlobalInfo {
 	 * @return the binary- or bin- base path of the application
 	 */
 	public String PathBaseDirIDE_BIN( ) {
-		return localBaseDir + localPathAgentGUI + localAppPathSeparatorString;
+		return localBaseDir + localPathAgentGUI + fileSeparator;
 	}	
 	/**
 	 * This method can be invoked in order to get the path to the JADE libraries (e. g. 'lib\jade\lib').
@@ -524,7 +517,7 @@ public class GlobalInfo {
 			}	
 		} else {
 			// --- The current instance was executed by using the IDE ---------
-			String path2Jar = "exec" + localAppPathSeparatorString + "AgentGUI" + localAppPathSeparatorString + localFileRunnableJar; 
+			String path2Jar = "exec" + fileSeparator + "AgentGUI" + fileSeparator + localFileRunnableJar; 
 			if (absolute == true) { 
 				return FilePath2Absolute(path2Jar);
 			} else {
@@ -637,7 +630,7 @@ public class GlobalInfo {
 		jadeConfig.addService(PlatformJadeConfig.SERVICE_AgentGUI_SimulationService);
 		jadeConfig.addService(PlatformJadeConfig.SERVICE_NotificationService);
 		
-		if (Application.isServer==false) {
+		if (Application.isRunningAsServer()==false) {
 			// --- Running as application ---------------------------
 			jadeConfig.addService(PlatformJadeConfig.SERVICE_AgentMobilityService);
 		}
@@ -688,7 +681,7 @@ public class GlobalInfo {
 	 */
 	public void setRunAsServer(boolean runAsServer) {
 		this.filePropRunAsServer = runAsServer;
-		Application.isServer = runAsServer;
+		Application.setRunningAsServer(runAsServer);
 	}
 	/**
 	 * Can be accessed in order to find out whether the current execution 

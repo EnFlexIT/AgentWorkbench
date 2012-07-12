@@ -98,7 +98,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		this.add(itemAbout);
 		this.addSeparator();
 		
-		if (Application.isServer == true) {
+		if (Application.isRunningAsServer() == true) {
 			// --- In case of running as Server -----------------
 			this.add(itemServiceStart);
 			this.add(itemServiceStop);

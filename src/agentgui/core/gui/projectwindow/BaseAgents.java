@@ -806,7 +806,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 		if ( trigger == jButtonAgentListRefresh ) {
 			// --- AgentList aktualisieren ----------------
-			Application.ClassDetector.reStartSearch(currProject, ClassSearcher.RESTART_AGENT_SEARCH);
+			Application.getClassSearcher().reStartSearch(currProject, ClassSearcher.RESTART_AGENT_SEARCH);
 			
 			jTextAgent.setText(null);
 			jTextAgentStartAs.setText(null);

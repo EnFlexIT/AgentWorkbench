@@ -79,7 +79,6 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 
 	/**
 	 * Constructor of this class
-	 * @param project The current Project
 	 * @param root The root node where further nodes can be added
 	 * @param ontoClass The current instance of OntologyClass
 	 * @param ontologieSourcePackage The reference to the package of the ontology 

@@ -72,8 +72,8 @@ public class Language {
 	 * This is the separator used in the dictionary file
 	 */
 	public static final String seperator = ";";
-	private static String newLine = Application.getGlobalInfo().AppNewLineString();
-	private static String newLineReplacer = Application.getGlobalInfo().AppNewLineStringReplacer();
+	private static String newLine = Application.getGlobalInfo().getNewLineSeparator();
+	private static String newLineReplacer = Application.getGlobalInfo().getNewLineSeparatorReplacer();
 
 	private static String dictFileLocation64 = Application.getGlobalInfo().FileDictionary(true, true);
 	private static String dictFileLocation = Application.getGlobalInfo().FileDictionary(false, true);

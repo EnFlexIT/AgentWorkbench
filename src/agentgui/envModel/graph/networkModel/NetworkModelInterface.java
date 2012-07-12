@@ -252,9 +252,8 @@ public interface NetworkModelInterface {
 	/**
 	 * Merges the current NetworkModel with an incoming NetworkModel as supplement.
 	 *
-	 * @param supplementNetworkModel the supplement network model
-	 * @param nodes2Merge the merge description
-	 * @return the residual GraphNode, which connects the two NetworkModel's
+	 * @param supplementNetworkModel the supplement NetworkModel
+	 * @param node2Merge the nodes to merge as GraphNodePairs
 	 */
 	public abstract void mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs node2Merge);
 	
@@ -268,15 +267,12 @@ public interface NetworkModelInterface {
 	
 	/**
 	 * Merges the network model by using at least two (selected) nodes.
-	 *
 	 * @param nodes2Merge the nodes that have to be merge, as GraphNodePairs
-	 * @return the residual GraphNode, after the merge process
 	 */
 	public abstract void mergeNodes(GraphNodePairs nodes2Merge);
 
 	/**
 	 * Splits the network model at a specified node.
-	 * 
 	 * @param node2SplitAt the node
 	 */
 	public abstract void splitNetworkModelAtNode(GraphNode node2SplitAt);
@@ -286,7 +282,6 @@ public interface NetworkModelInterface {
 	 *
 	 * @param node2SplitAt the node
 	 * @param moveOppositeNode the move opposite node
-	 * @return the GraphNodePairs that can be used to undo this operation
 	 */
 	public abstract void splitNetworkModelAtNode(GraphNode node2SplitAt, boolean moveOppositeNode);
 	

@@ -40,7 +40,7 @@ import agentgui.core.project.Project;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class JPanel4Visualization extends JPanel {
+public class JPanel4Visualisation extends JPanel {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2070782580889468458L;
@@ -53,7 +53,7 @@ public class JPanel4Visualization extends JPanel {
 	 *
 	 * @param tabName the tab name
 	 */
-	public JPanel4Visualization(Project project, String tabName) {
+	public JPanel4Visualisation(Project project, String tabName) {
 		super();
 		this.currProject = project;
 		this.tabName = tabName;

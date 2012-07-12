@@ -104,11 +104,11 @@ public class JListClassSearcher extends JListWithProgressBar {
 
 		// --- Select the required 'ClassSearcherSingle' --
 		if (this.currSearchFor == ClassSearcher.CLASSES_AGENTS) {
-			this.currClassSearcherSingle = Application.ClassDetector.getClassSearcher4Agents();
+			this.currClassSearcherSingle = Application.getClassSearcher().getClassSearcher4Agents();
 		} else if (this.currSearchFor == ClassSearcher.CLASSES_ONTOLOGIES) {
-			this.currClassSearcherSingle = Application.ClassDetector.getClassSearcher4Ontologies();
+			this.currClassSearcherSingle = Application.getClassSearcher().getClassSearcher4Ontologies();
 		} else if (this.currSearchFor == ClassSearcher.CLASSES_BASESERVICE) {
-			this.currClassSearcherSingle = Application.ClassDetector.getClassSearcher4Services();
+			this.currClassSearcherSingle = Application.getClassSearcher().getClassSearcher4Services();
 		} 
 		
 		// --- Get the needed ListModel -------------------

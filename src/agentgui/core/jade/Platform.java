@@ -78,13 +78,13 @@ public class Platform extends Object {
 	public String jadeExecutionMode = "";
 
 	public JadeUrlChecker urlChecker = null; 
-	private String newLine = Application.getGlobalInfo().AppNewLineString();
+	private String newLine = Application.getGlobalInfo().getNewLineSeparator();
 	
 	/**
 	 * Constructor of this class.
 	 */
 	public Platform() {
-		if (Application.isServer==true) {
+		if (Application.isRunningAsServer()==true) {
 			jadeExecutionMode = "Server";
 		} else { 
 			jadeExecutionMode = "Application";
@@ -109,7 +109,7 @@ public class Platform extends Object {
 		// ----------------------------------------------------------
 		// --- Differentiation of the Application-Case --------------
 		// ----------------------------------------------------------
-		if (Application.isServer==true) {
+		if (Application.isRunningAsServer()==true) {
 			// ------------------------------------------------------
 			// --- Running as Agent.GUI - Server --------------------
 			// ------------------------------------------------------
@@ -261,7 +261,7 @@ public class Platform extends Object {
 	private Profile jadeGetContainerProfile() {
 
 		Profile jadeContainerProfile = null;
-		Project currProject = Application.ProjectCurr;
+		Project currProject = Application.getProjectFocused();
 		
 		// --- Configure the JADE-Profile to use --------------------
 		if (currProject==null) {
@@ -274,7 +274,7 @@ public class Platform extends Object {
 			this.jadePlatformConfig = currProject.JadeConfiguration;
 			jadeContainerProfile = currProject.JadeConfiguration.getNewInstanceOfProfilImpl();	
 			// --- Invoke the Profile configuration in the plug-ins -- 
-			jadeContainerProfile = currProject.plugIns_Loaded.getJadeProfile(jadeContainerProfile);
+			jadeContainerProfile = currProject.plugInsLoaded.getJadeProfile(jadeContainerProfile);
 			System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );
 			
 			// --- Start Download-Server for project-resources ------
@@ -453,13 +453,13 @@ public class Platform extends Object {
 		// --- For 'simstarter': is there a project? --------- 
 		if (agentNameForStart.equalsIgnoreCase("simstarter")) {
 			showRMA = false;
-			if (Application.ProjectCurr==null) {
+			if (Application.getProjectFocused()==null) {
 				msgHead = Language.translate("Abbruch: Kein Projekt geöffnet!");
 				msgText = Language.translate("Zur Zeit ist kein Agenten-Projekt geöffnet.");
 				JOptionPane.showMessageDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.OK_OPTION);
 				return;	
 			} else {
-				Application.ProjectCurr.save();
+				Application.getProjectFocused().save();
 			}
 		}
 		// --- Setting the real name of the agent to start --- 
@@ -497,7 +497,7 @@ public class Platform extends Object {
 			// --- Agent already EXISTS !! -------------------
 			msgHead = Language.translate("Der Agent '") + rootAgentName +  Language.translate("' ist bereits geöffnet!");
 			msgText = Language.translate("Möchten Sie einen weiteren Agenten dieser Art starten?");
-			if (Application.isServer) {
+			if (Application.isRunningAsServer()) {
 				msgAnswer =  JOptionPane.showConfirmDialog( null, msgText, msgHead, JOptionPane.YES_NO_OPTION);				
 			} else {
 				msgAnswer =  JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);	
@@ -518,7 +518,7 @@ public class Platform extends Object {
 					this.jadeUtilityAgentStart(UTIL_CMD_OpenLoadMonitor);
 					return;
 				} else if (agentNameForStart.equalsIgnoreCase("simstarter")) {
-					String containerName = Application.ProjectCurr.getProjectFolder();
+					String containerName = Application.getProjectFocused().getProjectFolder();
 					jadeAgentStart(agentNameForStart, agentNameClass, openArgs, containerName);
 				} else {
 					// --- Show a standard jade ToolAgent --------

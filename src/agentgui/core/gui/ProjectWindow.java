@@ -79,7 +79,7 @@ import agentgui.core.project.Project;
  * This extended JInternalFrame graphically encapsulates the the project in the
  * main window (class CoreWindow)
  *  
- * @see CoreWindow
+ * @see MainWindow
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

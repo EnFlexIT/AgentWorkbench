@@ -86,7 +86,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 * form will be created, because of missing references to special ontology classes.
 	 *
 	 * @param owner the owner
-	 * @param project the project
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
 	 */
 	public OntologyInstanceDialog(Frame owner, OntologyVisualisationHelper ontologyVisualisationHelper) {
 		super(owner);
@@ -100,7 +100,8 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 * on the start arguments configured for an agent.
 	 *
 	 * @param owner the owner
-	 * @param project the project
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
+	 * @param agentConfiguration the agent configuration
 	 * @param agentReference the agent reference
 	 */
 	public OntologyInstanceDialog(Frame owner, OntologyVisualisationHelper ontologyVisualisationHelper, AgentConfiguration agentConfiguration, String agentReference) {
@@ -117,7 +118,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 * on the class references. This classes have to be part of an ontology.
 	 *
 	 * @param owner the owner
-	 * @param project the project
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
 	 * @param ontologyClassReference the ontology class reference
 	 */
 	public OntologyInstanceDialog(Frame owner, OntologyVisualisationHelper ontologyVisualisationHelper, String[] ontologyClassReference) {

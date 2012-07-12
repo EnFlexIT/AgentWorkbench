@@ -109,7 +109,7 @@ public class Zipper extends Thread {
 		if (this.projectFolder2Open!=null) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					Application.Projects.add(projectFolder2Open);
+					Application.getProjectsLoaded().add(projectFolder2Open);
 				}
 			});
 		}

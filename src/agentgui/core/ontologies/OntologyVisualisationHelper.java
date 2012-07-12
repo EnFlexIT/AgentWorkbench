@@ -67,7 +67,6 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 	 * Constructor of the Class.
 	 *
 	 * @param subOntologies the Vector of references to sub ontologies
-	 * @param pathesOfExternalResources the paths of external jar resources
 	 */
 	public OntologyVisualisationHelper(Vector<String> subOntologies) {
 		this.subOntologies = subOntologies;	
@@ -232,7 +231,7 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 	 */
 	public Vector<Class<?>> getAllNoneUsedOntologies() {
 		
-		Vector<Class<?>> allOntos = Application.ClassDetector.getOntologieClasse(false);
+		Vector<Class<?>> allOntos = Application.getClassSearcher().getOntologieClasse(false);
 		Vector<Class<?>> filteredOntos = new Vector<Class<?>>();
 		for (int i =0; i<allOntos.size(); i++) {
 			Class<?> currClass = allOntos.get(i);
