@@ -72,6 +72,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
@@ -102,7 +103,9 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     private static final long serialVersionUID = 7376906096627051173L;
 
     private final static String pathImage = GraphGlobals.getPathImages();
-
+    private String newLine = Application.getGlobalInfo().getNewLineSeparator();  //  @jve:decl-index=0:
+    
+    
     /** The SplitPane containing this GUI's components */
     private JComponent mainDisplayComponent = null;
     private boolean useTabs = false;
@@ -606,13 +609,13 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		
 				} else if (getGraphController().getNetworkModelAdapter().getNetworkComponent(newCompID) != null) {
 				    // --- Check if a network component name already exists
-					message = "The component name already exists!\n Choose a different one.";
+					message = "The component name already exists!" + newLine + "Choose a different one.";
 				    JOptionPane.showMessageDialog(this, Language.translate(message, Language.EN), Language.translate(title, Language.EN), JOptionPane.WARNING_MESSAGE);
 				    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
 		
 				} else if (this.getGraphController().getProject().simulationSetups.getCurrSimSetup().isAgentNameExists(newCompID)) {
 				    // --- Check if the agent name already exists in the simulation setup
-					message = "An agent with the name already exists in the simulation setup!\n Choose a different one.";
+					message = "An agent with the name already exists in the simulation setup!" + newLine + " Choose a different one.";
 					JOptionPane.showMessageDialog(this, Language.translate(message, Language.EN), Language.translate(title, Language.EN), JOptionPane.WARNING_MESSAGE);
 				    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
 		

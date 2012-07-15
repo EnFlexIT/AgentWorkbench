@@ -84,6 +84,9 @@ public class FileProperties extends Properties {
 	private final String DEF_GOOGLE_API_KEY  = "30_GOOGLE_API_KEY";
 	private final String DEF_GOOGLE_HTTP_REF = "31_GOOGLE_HTTP_REF";
 	
+	private final String DEF_UPDATE_SITE = "35_UPDATE_SITE";
+	private final String DEF_UPDATE_AUTOCONFIG = "36_UPDATE_AUTOCONFIG";
+	
 	private String[] mandatoryProps = {	this.DEF_RUNAS,
 										this.DEF_BENCH_VALUE,
 										this.DEF_BENCH_EXEC_ON,
@@ -92,7 +95,9 @@ public class FileProperties extends Properties {
 										this.DEF_AUTOSTART,
 										this.DEF_MASTER_URL,
 										this.DEF_MASTER_PORT,
-										this.DEF_MASTER_PORT4MTP
+										this.DEF_MASTER_PORT4MTP,
+										this.DEF_UPDATE_SITE,
+										this.DEF_UPDATE_AUTOCONFIG
 										};
 	
 	/**
@@ -277,6 +282,22 @@ public class FileProperties extends Properties {
 		} else {
 			Application.getGlobalInfo().setGoogleHttpRef(null);
 		}
+		
+		// --- this.DEF_UPDATE_SITE ------------------
+		propValue = this.getProperty(this.DEF_UPDATE_SITE);
+		if ( propValue!=null && propValue.equalsIgnoreCase("") == false ) {
+			Application.getGlobalInfo().setUpdateSite(propValue.trim());
+		} else {
+			Application.getGlobalInfo().setUpdateSite(null);
+		}
+		// --- this.DEF_UPDATE_AUTOCONFIG -------------
+		propValue = this.getProperty(this.DEF_UPDATE_AUTOCONFIG);
+		if ( propValue.equalsIgnoreCase("") == false ) {
+			Integer propValueInt = Integer.parseInt(propValue.trim());
+			Application.getGlobalInfo().setUpdateAutoConfiguration(propValueInt);
+		} else {
+			Application.getGlobalInfo().setUpdateAutoConfiguration(0);
+		}
 	}
 
 	/**
@@ -372,6 +393,15 @@ public class FileProperties extends Properties {
 			this.setProperty(this.DEF_GOOGLE_HTTP_REF, Application.getGlobalInfo().getGoogleHttpRef());	
 		}
 		
+		// --- this.DEF_UPDATE_SITE ------------------
+		if (Application.getGlobalInfo().getUpdateSite() == null) {
+			this.setProperty(this.DEF_UPDATE_SITE, "");
+		} else {
+			this.setProperty(this.DEF_UPDATE_SITE, Application.getGlobalInfo().getUpdateSite());	
+		}
+		// --- this.DEF_UPDATE_AUTOCONFIG -------------
+		this.setProperty(this.DEF_UPDATE_AUTOCONFIG, Application.getGlobalInfo().getUpdateAutoConfiguration().toString());	
+		
 	}	
 	
 	/**
@@ -393,6 +423,13 @@ public class FileProperties extends Properties {
 			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT4MTP) ) {				
 				this.setProperty(this.DEF_MASTER_PORT4MTP, Application.getGlobalInfo().getServerMasterPort4MTP().toString());
 			}
+			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_SITE) ) {				
+				this.setProperty(this.DEF_UPDATE_SITE, "http://update.agentgui.org");
+			}
+			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_AUTOCONFIG) ) {				
+				this.setProperty(this.DEF_UPDATE_AUTOCONFIG, "0");
+			}
+
 			// ----------------------------------------
 		}
 	}

@@ -844,7 +844,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		
 		if (domainName!=null) {
 			if (domainName.equals(defaultDomain)) {
-				String msg = Language.translate("Dieser Eintrag ist ein notwendiger Systemparameter, der \nnicht gelöscht oder umbenannt werden darf!");
+				String newLine = Application.getGlobalInfo().getNewLineSeparator();
+				String msg = Language.translate("Dieser Eintrag ist ein notwendiger Systemparameter, der " + newLine + "nicht gelöscht oder umbenannt werden darf!");
 				String title = "'" + defaultDomain + "': " +  Language.translate("Löschen nicht zulässig!");
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				return;

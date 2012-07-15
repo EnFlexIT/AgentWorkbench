@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- ====================================================================== 
-     20.01.2011 12:00:00                                                        
-
      project:		Agent.GUI
      description	Build the executable version of Agent.GUI that can be 
      				used as library for other agent applications or 
@@ -12,8 +10,6 @@
      				
      				The executable version will be packed to the 
      				folder '\exec\AgentGUI'	
-                   
-     Christian Derksen                                                                
      ====================================================================== -->
 <project name="AgentGui" default="execute" basedir=".">
 	
@@ -93,9 +89,15 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
           target: execute => Create and start the AgentGui.jar executable                        
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	<target name="execute" depends="versioning,cleanup,createdir,compile,jarZip" description="Executing jar-file ... ">
+	<target name="execute" depends="" description="Executing jar-file ... ">
+		<antcall target="buildOnly"/>
 		<java jar="${destinJar}" fork="true" />
 	</target>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          target: buildOnly => Create and start the AgentGui.jar executable                        
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<target name="buildOnly" depends="versioning,cleanup,createdir,compile,jarZip" description="Building executable jar-file ... "/>
 	
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
           target: versioning => Update the version info                       

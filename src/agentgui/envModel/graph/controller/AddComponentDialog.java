@@ -991,7 +991,8 @@ public class AddComponentDialog extends JDialog implements ActionListener {
 				HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(nodeSelected);
 				NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
 				if (containsDistributionNode!=null) {
-					msg  = "The selection in the main graph already contains a component of\n";
+					String newLine = Application.getGlobalInfo().getNewLineSeparator();
+					msg  = "The selection in the main graph already contains a component of" + newLine;
 					msg += "the type 'DistributionNode'. This is only allowed once at one node! ";
 					JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
 					return;

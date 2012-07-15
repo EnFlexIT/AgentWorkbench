@@ -697,13 +697,13 @@ public class MainWindow extends JFrame implements ComponentListener {
 			// --- Menue 'Sprache' ---
 			jMenuExtraLang = new JMenu();
 			jMenuExtraLang.setText(Language.translate("Sprache"));
-			setjMenuExtraLang();			
+			this.setjMenuExtraLang();			
 			jMenuExtra.add( jMenuExtraLang );
 
 			// --- Menue 'LnF' -------
 			jMenuExtraLnF = new JMenu();
 			jMenuExtraLnF.setText("Look and Feel");
-			setjMenuExtraLnF();
+			this.setjMenuExtraLnF();
 			jMenuExtra.add( jMenuExtraLnF );
 			
 			jMenuExtra.addSeparator();
@@ -868,6 +868,8 @@ public class MainWindow extends JFrame implements ComponentListener {
 			jMenuMainHelp = new JMenu("Hilfe");
 			jMenuMainHelp.setText(Language.translate("Hilfe"));
 			jMenuMainHelp.add( new CWMenueItem( "HelpAbout", Language.translate("Über..."), null )) ;
+			jMenuMainHelp.addSeparator();
+			jMenuMainHelp.add( new CWMenueItem( "HelpUpdate", Language.translate("Nach Update suchen ..."), null )) ;
 		}
 		return jMenuMainHelp;
 	}
@@ -889,8 +891,6 @@ public class MainWindow extends JFrame implements ComponentListener {
 			jMenuCloseButton.setMargin( new Insets(0, 0, 0, 0) );
 			jMenuCloseButton.setPreferredSize( new Dimension ( 30 , jMenuCloseButton.getHeight() ) );
 			jMenuCloseButton.setIcon( iconCloseDummy );
-//			jMenuCloseButton.setEnabled( false );
-//			jMenuCloseButton.setVisible( false );			
 		}
 		return jMenuCloseButton ;
 	}
@@ -1050,6 +1050,9 @@ public class MainWindow extends JFrame implements ComponentListener {
 			// --- Menü Hilfe ---------------------------------
 			else if ( ActCMD.equalsIgnoreCase("HelpAbout") ) {
 				Application.showAboutDialog();
+			}
+			else if ( ActCMD.equalsIgnoreCase("HelpUpdate") ) {
+				
 			}
 			else {
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);
@@ -1281,9 +1284,6 @@ public class MainWindow extends JFrame implements ComponentListener {
 			}
 			else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
 				Application.getJadePlatform().jadeStop();
-//				Object[] startWith = new Object[1];
-//				startWith[0] = SimStartAgent.BASE_ACTION_Stop;
-//				Application.JadePlatform.jadeSystemAgentOpen("simstarter", null, startWith);
 			}
 			// ------------------------------------------------
 			else { 

@@ -261,6 +261,14 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	}
 	
 	/* (non-Javadoc)
+	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseClicked(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseClicked(MouseEvent me){
+		this.mousePressedOrClicked(me);
+	}
+	
+	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mousePressed(java.awt.event.MouseEvent)
 	 */
 	@Override
@@ -281,17 +289,11 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			if (pickedNode!=null) {
 				this.moveNodeWithLeftAction = true;	
 				this.remindOldPositions();
+			} else {
+				this.mousePressedOrClicked(me);	
 			}
 		}
-		this.mousePressedOrClicked(me);
-	}
-	
-	/* (non-Javadoc)
-	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseClicked(java.awt.event.MouseEvent)
-	 */
-	@Override
-	public void mouseClicked(MouseEvent me){
-		this.mousePressedOrClicked(me);
+
 	}
 	
 	/* (non-Javadoc)
@@ -312,7 +314,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				this.setNodesMoved2EndPosition();
 				this.createUndoableMoveAction();
 				this.nodesMoved.removeAllElements();
-			}
+			} 
 		}
 	
 	}

@@ -16,6 +16,7 @@ de;Agent nach unten verschieben;Move down agent
 de;Agent starten...;Start agent...
 de;Agent.GUI - Projekt öffnen;Agent.GUI – Open project
 de;Agent.GUI - Standard verwenden;Use Agent.GUI defaults
+de;Agent.GUI - Update;Agent.GUI - Update;;;
 de;Agent.GUI Projekt-Datei;Agent.GUI project file
 de;Agent.GUI umschalten ?;Switch Agent.GUI ?
 de;Agent:;Agent:
@@ -99,7 +100,6 @@ de;Dateien einbinden;Include Files
 de;Daten Importieren...;Import Data ...;;;
 de;Daten bearbeiten;Edit Data;;;
 de;Datenbank erfolgreich angelegt!;Database created successfully!
-de;Datenbank für das Hauptserver-Modul;Database for the main server module
 de;Datenbank nicht vorhanden!;Database does not exist!
 de;Datenfeld;Data field
 de;Der Agent ';The Agent '
@@ -270,6 +270,7 @@ de;Mess-Agenten starten;Start load measure agent
 de;Messung aufzeichnen;Record measurement
 de;Messungsaufzeichnung beenden;Stop recording measurement
 de;Mitwirkende;Contributors;;;
+de;MySQL-Datenbank für den Hauptserver (server.master);MySQL-Database for the main server module (server.master);;;
 de;MySQL-Fehler:;MySQL-Error:
 de;MySQL-Fehler;MySQL-Error
 de;Möchten Sie Agent.GUI nun umschalten und neu starten ?;Do you want to switch and restart Agent.GUI ?
@@ -280,6 +281,8 @@ de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hier
 de;Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?;Do you want to take over the CSV version of the dictionary now?;;;
 de;Möchten Sie einen weiteren Agenten dieser Art starten?;Do you want to start another agent of this kind?
 de;N - Threads;N - Threads
+de;Nach Update suchen ...;Check for Update ...;;;
+de;Nach Updates suchen:;Check for updates:;;;
 de;Name bereits vorhanden!;Name already exists!
 de;Name ungültig!;Invalid name!
 de;Netz-Komponenten;Network Components
@@ -455,6 +458,10 @@ de;Umschaltung rückgängig gemacht!;Switching undone!
 de;Unbekannt:;Unknown:
 de;Undefiniert;undefined
 de;Ungültige Eingabe, ausschließlich zahlenwerte zulässig!;Invalid input, only numbers allowed!
+de;Update automatisch herunterladen, Installationszeitpunkt manuell festlegen;Download the update automatically, manually set the time of installation;;;
+de;Update-Konfiguration;Update Configuration;;;
+de;Updates automatisch installieren;Install updates automatically;;;
+de;Updates nicht automatisch herunterladen oder installieren;Do not automatically download or install ;;;
 de;Verbindungsknoten;Connection nodes;;;
 de;Verfügbare JADE-Services;Available JADE Services;;;
 de;Vergrößern ...;Expand View ...
@@ -479,7 +486,7 @@ de;Wörterbuch;Dictionary
 de;XML-Dateien;XML files
 de;XML;XML
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
-de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agents project .
+de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project .;null;null;null
 de;Zurücksetzen;Reset
 de;Zyklisch !;Cyclic!
 de;bereit;ready
@@ -506,21 +513,14 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
-en;;Count;;;
-en;;Discrete squares environment;;;
-en;;External Type;;;
-en;;Merge nodes;;;
-en;;Please, select the network component that you would like to add!;;;
 en;;Redo Action;;;
-en;;Select at least two valid vertices!;;;
-en;;Select one vertex please!;;;
 en;;Set mapping of external types to local components;;;
 en;;Undo Action;;;
-en;;Use Shift and click on two vertices at least!;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktuelles Bild entfernen;Remove current image;;;
+en;Anzahl;Count;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;
 en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;
 en;Beschriftung zeigen;Show label;;;
@@ -529,11 +529,14 @@ en;Bild;Image;;;
 en;Bitte wählen Sie ein gültiges Element!;Select a valid element first!;;;
 en;Bitte wählen Sie einen Knoten !;Select one vertex !;;;
 en;Bitte wählen Sie einen Knoten ausserhalb des Zentrums;Select a vertex other than the center of the star;;;
+en;Bitte wählen Sie einen Knoten!;Select one vertex please!;;;
 en;Bitte wählen Sie einen Knoten.;Select one vertex;;;
 en;Bitte wählen Sie einen gültigen Knoten;Select a valid vertex first;;;
+en;Bitte wählen Sie mindestens zwei gültige Knoten!;Select at least two valid vertices!;;;
 en;Bitte wählen Sie zuerst eine Kante;Select an edge first;;;
 en;Bitte wählen Sie zuerst einen Knoten mit einem Rechtsklick aus!;Right click a valid vertex first;;;
 en;Bitte wählen Sie zwei gültige Knoten;Select two valid vertices;;;
+en;Bitte, wählen Sie die Netzwerk-Komponente aus, die Sie hinzufügen möchten!;Please, select the network component that you would like to add!;;;
 en;Breite;Width;;;
 en;Cluster-Agent;Cluster agent;;;
 en;Cluster-Form;Cluster shape;;;
@@ -545,7 +548,9 @@ en;Der ausgewählte Knoten sollte zwischen zwei Komponenten liegen !;The select V
 en;Die Komponente ist bereits vorhanden!
   Bitte wählen Sie einen anderen Namen.;The component name already exists!
  Choose a different one.;;;
+en;Drücken Sie die Umschalttaste und wählen Sie mindesten zwei Knoten!;Use Shift and click on two vertices at least!;;;
 en;Eigenschaften bearbeiten;Edit Properties;;;
+en;Externer Typ;External Type;;;
 en;Farbe (Auswahl);Color picked;;;
 en;Farbe;Color;;;
 en;Graph importieren;Import Graph from file;;;
@@ -557,6 +562,7 @@ en;Kanten-Breite;Edge Width;;;
 en;Kantenfarbe;Edge Color;;;
 en;Klicken;Click;;;
 en;Knoten verbinden;Merge two nodes;;;
+en;Knoten zusammenlegen;Merge nodes;;;
 en;Knotenfarbe;Vertex Color;;;
 en;Knotengröße;Vertex Size;;;
 en;Knotengröße;Vertex size;;;

@@ -46,12 +46,12 @@ import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.util.TreeMap;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -61,6 +61,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -71,7 +72,6 @@ import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.config.GlobalInfo;
 
 /**
  * This JDialog represents the option dialog, where the 
@@ -83,10 +83,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private GlobalInfo global = Application.getGlobalInfo();  //  @jve:decl-index=0:
 	private final String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
 	
-	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
+	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource(PathImage + "AgentGUI.png"));
 	private Image image = imageIcon.getImage();  //  @jve:decl-index=0:
 	
 	private JSplitPane jSplitPaneMain = null;
@@ -94,20 +93,17 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private JScrollPane jScrollPaneLeft = null;
 	private JTree jTreeOptions = null;
 	private JPanel jPanelBase = null;
-	private JPanel jPanelSouth = null;
-	private JButton jButtonOK = null;
-	private JButton jButtonCancel = null;
+	private JButton jButtonClose = null;
 	
-	private DefaultTreeModel OptionTreeModel;
-	private DefaultMutableTreeNode RootNode;
+	private DefaultTreeModel optionTreeModel;
+	private DefaultMutableTreeNode rootNode;
 	
 	private TreeMap<Integer, String[]> additionalNodes = new TreeMap<Integer, String[]>();  //  @jve:decl-index=0:
 	
-	private StartOptions optionsStart = null;
-	private boolean canceled = false;
+	private StartOptions startOptions = null;
+	private UpdateOptions updateOptions = null;
+
 	
-	private boolean forceRestart = false;  //  @jve:decl-index=0:
-		
 	/**
 	 * Instantiates a new option dialog.
 	 * @param owner the owner
@@ -116,13 +112,13 @@ public class OptionDialog extends JDialog implements ActionListener {
 		super(owner);
 		
 		// --- OptionTree vorbereiten -------------------------------
-		RootNode = new DefaultMutableTreeNode( Language.translate("Optionen") );
-		OptionTreeModel = new DefaultTreeModel( RootNode );	
+		rootNode = new DefaultMutableTreeNode(Language.translate("Optionen"));
+		optionTreeModel = new DefaultTreeModel(rootNode);	
 		
 		// --- Set the Look and Feel of the Dialog ------------------
 		if (Application.isRunningAsServer()==true) {
 			if (Application.getGlobalInfo().getAppLnF()!=null) {
-				setLookAndFeel( Application.getGlobalInfo().getAppLnF() );
+				setLookAndFeel(Application.getGlobalInfo().getAppLnF());
 			}
 		}
 		
@@ -130,17 +126,21 @@ public class OptionDialog extends JDialog implements ActionListener {
 		this.initialize();
 
 		// --- Übersetzungen konfigurieren --------------------------
-	    this.setTitle( Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Optionen") );
-	    this.jButtonCancel.setText(Language.translate("Abbrechen"));
+	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Optionen"));
+	    this.jButtonClose.setText(Language.translate("Schließen"));
 	    
 	    // ----------------------------------------------------------
 	    // --- Optionen (Sub-Panel) einbauen ------------------------
 	    // ----------------------------------------------------------
 	    String tabTitle = null;
 	    // ----------------------------------------------------------
-	    optionsStart = new StartOptions();
+	    startOptions = new StartOptions(this);
 	    tabTitle = Language.translate("Programmstart");
-	    this.addOptionTab(tabTitle, null, optionsStart, tabTitle);
+	    this.addOptionTab(startOptions, null);
+	    
+	    updateOptions = new UpdateOptions();
+	    tabTitle = Language.translate("Agent.GUI - Update");
+	    this.addOptionTab(updateOptions, null);
 	    
 	    if (Application.isRunningAsServer()==true) {
 	    	tabTitle = Language.translate("Konsole");
@@ -152,9 +152,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    // --- Baumsturktur entfalten -------------------------------
 	    this.OptionTreeExpand2Level(3, true);
 	    
-	    // --- Daten in die Formulare übernehmen --------------------
-	    this.setGlobalData2Form();
-
 		// --- Dialog zentrieren ------------------------------------
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 		int top = (screenSize.height - this.getHeight()) / 2; 
@@ -162,7 +159,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    this.setLocation(left, top);	
 	    
 	}
-
+	
 	/**
 	 * This method initializes this.
 	 *
@@ -171,7 +168,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private void initialize() {
 		
 		this.setModal(true);
-		this.setSize(900, 563);
+		this.setSize(977, 609);
 		this.setContentPane(getJPanelBase());
 		this.setTitle("Agent.GUI: Optionen");
 		this.setAlwaysOnTop(true);
@@ -179,7 +176,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 		this.registerEscapeKeyStroke();
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
-				canceled = true;
 				setVisible(false);
 			}
 		});
@@ -194,7 +190,6 @@ public class OptionDialog extends JDialog implements ActionListener {
     private void registerEscapeKeyStroke() {
     	final ActionListener listener = new ActionListener() {
             public final void actionPerformed(final ActionEvent e) {
-            	canceled = true;
             	setVisible(false);
             }
         };
@@ -234,8 +229,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private JSplitPane getJSplitPaneMain() {
 		if (jSplitPaneMain == null) {
 			jSplitPaneMain = new JSplitPane();
-			jSplitPaneMain.setDividerSize(5);
+			jSplitPaneMain.setDividerSize(10);
 			jSplitPaneMain.setResizeWeight(0.2D);
+			jSplitPaneMain.setOneTouchExpandable(true);
 			jSplitPaneMain.setRightComponent(getJTabbedPaneRight());
 			jSplitPaneMain.setLeftComponent(getJScrollPaneLeft());
 			jSplitPaneMain.setDividerLocation(200);
@@ -265,6 +261,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private JScrollPane getJScrollPaneLeft() {
 		if (jScrollPaneLeft == null) {
 			jScrollPaneLeft = new JScrollPane();
+			jScrollPaneLeft.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 			jScrollPaneLeft.setViewportView(getJTreeOptions());
 		}
 		return jScrollPaneLeft;
@@ -277,7 +274,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 */
 	private JTree getJTreeOptions() {
 		if (jTreeOptions == null) {
-			jTreeOptions = new JTree(OptionTreeModel);
+			jTreeOptions = new JTree(optionTreeModel);
 			jTreeOptions.setName("OptionTree");
 			jTreeOptions.setShowsRootHandles(false);
 			jTreeOptions.setRootVisible(true);
@@ -351,11 +348,11 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 */
 	private JPanel getJPanelBase() {
 		if (jPanelBase == null) {
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.gridx = 0;
-			gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints1.insets = new Insets(0, 0, 20, 0);
-			gridBagConstraints1.gridy = 1;
+			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+			gridBagConstraints11.insets = new Insets(0, 20, 25, 20);
+			gridBagConstraints11.gridy = 1;
+			gridBagConstraints11.anchor = GridBagConstraints.CENTER;
+			gridBagConstraints11.gridx = 0;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.BOTH;
 			gridBagConstraints.weighty = 1.0;
@@ -364,50 +361,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 			jPanelBase = new JPanel();
 			jPanelBase.setLayout(new GridBagLayout());
 			jPanelBase.add(getJSplitPaneMain(), gridBagConstraints);
-			jPanelBase.add(getJPanelSouth(), gridBagConstraints1);
+			jPanelBase.add(getJButtonCancel(), gridBagConstraints11);
 		}
 		return jPanelBase;
-	}
-
-	/**
-	 * This method initializes jPanelSouth.
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJPanelSouth() {
-		if (jPanelSouth == null) {
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.gridy = 1;
-			gridBagConstraints3.insets = new Insets(0, 0, 0, 40);
-			gridBagConstraints3.fill = GridBagConstraints.NONE;
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.gridx = 1;
-			gridBagConstraints2.insets = new Insets(0, 40, 0, 0);
-			gridBagConstraints2.gridy = 1;
-			jPanelSouth = new JPanel();
-			jPanelSouth.setLayout(new GridBagLayout());
-			jPanelSouth.add(getJButtonOK(), gridBagConstraints3);
-			jPanelSouth.add(getJButtonCancel(), gridBagConstraints2);
-		}
-		return jPanelSouth;
-	}
-
-	/**
-	 * This method initializes jButtonOK.
-	 *
-	 * @return javax.swing.JButton
-	 */
-	private JButton getJButtonOK() {
-		if (jButtonOK == null) {
-			jButtonOK = new JButton();
-			jButtonOK.setText("OK");
-			jButtonOK.setForeground(new Color(0, 153, 0));
-			jButtonOK.setPreferredSize(new Dimension(100, 26));
-			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOK.setActionCommand("OK");
-			jButtonOK.addActionListener(this);
-		}
-		return jButtonOK;
 	}
 
 	/**
@@ -416,43 +372,55 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonCancel() {
-		if (jButtonCancel == null) {
-			jButtonCancel = new JButton();
-			jButtonCancel.setText("Abbrechen");
-			jButtonCancel.setForeground(new Color(153, 0, 0));
-			jButtonCancel.setPreferredSize(new Dimension(100, 26));
-			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setActionCommand("Cancel");
-			jButtonCancel.addActionListener(this);
+		if (jButtonClose == null) {
+			jButtonClose = new JButton();
+			jButtonClose.setText("Schließen");
+			jButtonClose.setForeground(new Color(0, 0, 153));
+			jButtonClose.setPreferredSize(new Dimension(100, 26));
+			jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonClose.setActionCommand("Close");
+			jButtonClose.addActionListener(this);
 		}
-		return jButtonCancel;
+		return jButtonClose;
 	}
 	
-
 	/**
-	 * Adds a Project-Tab and a new Base Folder
-	 * (child of root!) to the ProjectWindow.
+	 * Adds a Project-Tab and a new Base Folder (child of root!) to the OptionDialog.
 	 *
 	 * @param title the title
 	 * @param icon the icon
 	 * @param component the component
-	 * @param tip the tip
+	 * @param toolTipText the tool tip text
+	 */
+	public void addOptionTab(String title, Icon icon, JComponent component, String toolTipText) {
+		component.setName(title); 							
+		jTabbedPaneRight.addTab(title, icon, component, toolTipText);
+		
+		addOptionTabNode(title);
+	}
+	
+	/**
+	 * Adds a Project-Tab and a new Base Folder (child of root!) to the OptionDialog.
+	 *
+	 * @param optionTab the option tab
+	 * @param icon the icon
 	 */	
-	public void addOptionTab( String title, Icon icon, Component component, String tip ) {
-		// --- GUI-Komponente in das TabbedPane-Objekt einfügen -------------
-		component.setName( title ); 							// --- Component benennen ----
-		jTabbedPaneRight.addTab( title, icon, component, tip);	// --- Component anhängen ----
-		// --- Neuen Basisknoten einfügen ------------------
+	public void addOptionTab(AbstractOptionTab optionTab, Icon icon) {
+		
+		String title = optionTab.getTitle();
+		String toolTip = optionTab.getTabToolTipText();
+		optionTab.setName(title); 							
+		jTabbedPaneRight.addTab(title, icon, optionTab, toolTip);
+
 		addOptionTabNode(title);
 	}
 
 	/**
 	 * Adds a new node to the left Project-Tree.
-	 *
 	 * @param newNode the new node
 	 */
 	public void addOptionTabNode( String newNode ) {
-		RootNode.add( new DefaultMutableTreeNode( newNode ) );
+		rootNode.add( new DefaultMutableTreeNode( newNode ) );
 	}
 	
 	/**
@@ -488,8 +456,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		DefaultMutableTreeNode currNode = null;
 		String currNodeText;
 		
-		for (int i = 0; i < RootNode.getChildCount(); i++) {
-			currNode = (DefaultMutableTreeNode) RootNode.getChildAt(i);
+		for (int i = 0; i < rootNode.getChildCount(); i++) {
+			currNode = (DefaultMutableTreeNode) rootNode.getChildAt(i);
 			currNodeText = currNode.getUserObject().toString(); 
 			if (currNodeText.equals(nodeName)) {				
 				nodeFound = currNode;
@@ -529,7 +497,7 @@ public class OptionDialog extends JDialog implements ActionListener {
     	if ( Up2TreeLevel == null ) 
     		Up2TreeLevel = 1000;
 
-    	OptionTreeExpand( new TreePath(RootNode), expand, CurrNodeLevel, Up2TreeLevel);
+    	OptionTreeExpand( new TreePath(rootNode), expand, CurrNodeLevel, Up2TreeLevel);
     }
 	
 	/**
@@ -561,205 +529,21 @@ public class OptionDialog extends JDialog implements ActionListener {
         }
     }
 	
-	/**
-	 * Handles the ActionEvents of this dialog.
-	 *
-	 * @param ae the ae
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
 		String actCMD = ae.getActionCommand();
-		if (actCMD.equalsIgnoreCase("OK")) {
-			this.doOkAction();
-		} else if (actCMD.equalsIgnoreCase("Cancel")) {
-			this.canceled = true;
+		if (actCMD.equalsIgnoreCase("Close")) {
 			this.setVisible(false);
 		} else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actCMD);
 		}
 		
 	}
-	
-	/**
-	 * Doe's the actions when using the OK-Button.
-	 */
-	private void doOkAction() {
 		
-		boolean isServerOld = Application.getGlobalInfo().isRunAsServer();
-		boolean isServerNew = optionsStart.jRadioButtonRunAsServer.isSelected();
-		
-		String newLine = Application.getGlobalInfo().getNewLineSeparator();
-		String forceRestartTo = null;
-		
-		// --- Fehlerbehnaldung -------------------------------------
-		if ( errorFound() == true) {
-			return;
-		}
-		// --- If a change from 'Application' to 'Server' occures --- 
-		if ( isServerNew != isServerOld ) {
-			if (isServerNew==true) {
-				forceRestartTo = Language.translate("Server");
-			}
-			else {
-				forceRestartTo = Language.translate("Anwendung");
-			}
-			
-			// --------------------------------------------------------------
-			// --- Neustart der Anwendung einleiten, weil von Server --------
-			// --- auf Application umgestellt wurde oder umgekehrt ----------
-			// --- Wenn der User das möchte !! ------------------------------
-			// --------------------------------------------------------------
-			String MsgHead = "";
-			String MsgText = "";
-			
-			MsgHead += Language.translate("Agent.GUI umschalten ?");
-			MsgText += Language.translate("Progamm umschalten auf") + " '" + forceRestartTo + "':" + newLine; 	
-			MsgText += Language.translate("Möchten Sie Agent.GUI nun umschalten und neu starten ?");
-
-			Integer MsgAnswer = JOptionPane.showInternalConfirmDialog( this.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
-			if ( MsgAnswer == JOptionPane.YES_OPTION ) {
-				forceRestart = true;			
-			} else {
-				forceRestart = false;
-				if (optionsStart.jRadioButtonRunAsServer.isSelected() ) {
-					optionsStart.jRadioButtonRunAsApplication.setSelected(true);
-				} else {
-					optionsStart.jRadioButtonRunAsServer.setSelected(true);
-				}
-				MsgHead = Language.translate("Umschaltung rückgängig gemacht!");
-				MsgText =  Language.translate("Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.") + newLine;
-				MsgText += Language.translate("Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.");
-				JOptionPane.showInternalMessageDialog(this.getContentPane(), MsgText, MsgHead, JOptionPane.OK_OPTION);
-				this.canceled = true;
-				this.setVisible(false);
-				return;
-			}
-			// --------------------------------------------------------------
-		}
-		this.setFromData2Global();
-		this.canceled = false;
-		this.setVisible(false);
-		Application.getFileProperties().save();
-		
-	}
-	
-	/**
-	 * Returns, if this Dialog was cancelled.
-	 *
-	 * @return boolean
-	 */
-	public boolean isCanceled(){
-		return canceled;
-	}
-	
-	/**
-	 * Returns, if the Application should be restarted.
-	 *
-	 * @return true, if is force restart
-	 */
-	public boolean isForceRestart() {
-		return forceRestart;
-	}
-	
-	/**
-	 * This method sets the Data from the global Area to the Form.
-	 */
-	private void setGlobalData2Form(){
-		
-		// --- Panel "Programstart" (optionsStart) ------------------
-		if (global.isRunAsServer()== true) {
-			optionsStart.jRadioButtonRunAsServer.setSelected(true);
-			optionsStart.jRadioButtonRunAsApplication.setSelected(false);
-		} else {
-			optionsStart.jRadioButtonRunAsServer.setSelected(false);
-			optionsStart.jRadioButtonRunAsApplication.setSelected(true);
-		}
-		if (global.isServerAutoRun()==  true) {
-			optionsStart.jCheckBoxAutoStart.setSelected(true);	
-		} else {
-			optionsStart.jCheckBoxAutoStart.setSelected(false);
-		}
-		optionsStart.jTextFieldMasterURL.setText(global.getServerMasterURL());
-		optionsStart.jTextFieldMasterPort.setText(global.getServerMasterPort().toString());
-		optionsStart.jTextFieldMasterPort4MTP.setText(global.getServerMasterPort4MTP().toString());
-		
-		optionsStart.jTextFieldDBHost.setText(global.getServerMasterDBHost());
-		optionsStart.jTextFieldDB.setText(global.getServerMasterDBName());
-		optionsStart.jTextFieldDBUser.setText(global.getServerMasterDBUser());
-		optionsStart.jTextFieldDBPswd.setText(global.getServerMasterDBPswd());
-		
-		optionsStart.refreshView();
-	}
-	
-	/**
-	 * This method writes the data back from the form to the global area.
-	 */
-	private void setFromData2Global() {
-		
-		// --- Panel "Programstart" (optionsStart) ------------------
-		global.setRunAsServer( optionsStart.jRadioButtonRunAsServer.isSelected() );
-		global.setServerAutoRun( optionsStart.jCheckBoxAutoStart.isSelected() );
-		global.setServerMasterURL( optionsStart.jTextFieldMasterURL.getText().trim() );
-		
-		Integer usePort = Integer.parseInt( optionsStart.jTextFieldMasterPort.getText().trim() );
-		global.setServerMasterPort( usePort );
-		Integer usePort4MTP = Integer.parseInt( optionsStart.jTextFieldMasterPort4MTP.getText().trim() );
-		global.setServerMasterPort4MTP(usePort4MTP);
-		
-		global.setServerMasterDBHost( optionsStart.jTextFieldDBHost.getText().trim() );
-		global.setServerMasterDBName( optionsStart.jTextFieldDB.getText().trim() );
-		global.setServerMasterDBUser( optionsStart.jTextFieldDBUser.getText().trim() );
-		global.setServerMasterDBPswd( optionsStart.jTextFieldDBPswd.getText().trim() );
-		
-	}
-	
-	/**
-	 * This method doe's the Error-Handling for this Dialog.
-	 *
-	 * @return true or false
-	 */
-	private boolean errorFound() {
-		
-		String MsgHead = null;
-		String MsgText = null;
-		boolean err = false;
-		
-		String  testURL = optionsStart.jTextFieldMasterURL.getText().trim();
-		String  testPortAsString  = optionsStart.jTextFieldMasterPort.getText().trim();
-		Integer testPortAsInteger = Integer.parseInt( testPortAsString );
-				
-		String  testPort4MTPAsString  = optionsStart.jTextFieldMasterPort4MTP.getText().trim();
-		Integer testPort4MTPAsInteger = Integer.parseInt( testPort4MTPAsString );
-
-		// --- Testing URL and Port ---------------------------------
-		if ( testURL != null ) {
-			if ( testURL.equalsIgnoreCase("")==false  ) {
-				// --- Testing the URL ----------------------------------
-				if ( testURL.contains(" ") ) {
-					MsgHead = Language.translate("Fehler: URL oder IP !");
-					MsgText = Language.translate("Die URL oder IP enthält unzulässige Zeichen!");	
-					JOptionPane.showInternalMessageDialog( this.getContentPane(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
-					return true;
-				}
-				// --- Testing the Port ---------------------------------
-				if ( testPortAsInteger.equals(0) ) {
-					MsgHead = Language.translate("Fehler: Port");
-					MsgText = Language.translate("Der Port muss einem Wert ungleich 0 entsprechen!");	
-					JOptionPane.showInternalMessageDialog( this.getContentPane(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
-					return true;
-				}
-				// --- Testing the Port 4 MTP ---------------------------
-				if ( testPort4MTPAsInteger.equals(0) ) {
-					MsgHead = Language.translate("Fehler: Port4MTP ");
-					MsgText = Language.translate("Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!");	
-					JOptionPane.showInternalMessageDialog( this.getContentPane(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
-					return true;
-				}
-			}
-		}
-		return err;
-	}
-	
 	
 }  //  @jve:decl-index=0:visual-constraint="33,9"

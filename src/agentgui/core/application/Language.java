@@ -184,7 +184,7 @@ public class Language {
 		
 		} else {
 			// --- Expression IS there! => get translation --------------------
-			String   dictLine = dictLineList64.get( lineInDictionary );
+			String   dictLine = dictLineList64.get(lineInDictionary);
 			String[] dictLineValues = dictLine.split(seperator, -1);
 			
 			if (dictLineValues.length < currLanguageIndex) {
@@ -194,7 +194,7 @@ public class Language {
 				if ( translationExp == null || translationExp.isEmpty() ) {
 					translationExp = expression.trim();
 				} else {
-					translationExp = translationExp.replace( newLineReplacer, newLine );				
+					translationExp = translationExp.replace(newLineReplacer, newLine);				
 				};
 			}
 			

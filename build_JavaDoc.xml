@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="execute">
+<project default="javadoc-create">
 
 	<property name="destinDir" value="doc" />
 	<property name="destinDirAPI" value="${destinDir}\api\\" />
@@ -7,14 +7,24 @@
 
 	<!-- Get the version info -->
 	<property name="versionPropertyFile" value="src\agentgui\version.properties"/>
+	<property name="versionBuildNumberFile" value="src\agentgui\build.number"/>
+		
 	<property prefix="old" file="${versionPropertyFile}"/>
 	<property name="version.major" value="${old.version.major}"/>
 	<property name="version.minor" value="${old.version.minor}"/>
-	<property name="doc.title" value="Agent.GUI (Version ${version.major}.${version.minor}) - Documentation"/> 
-		
 	
-	<target name="execute" depends="cleanup,javadoc" description="Creating javadoc ... ">
+	<property file="${versionBuildNumberFile}"/>
+	<property name="version.build" value="${build.number}"/>
+				
+	<property name="doc.title" value="Agent.GUI - Documentation (Version ${version.major}.${version.minor} Build ${version.build})"/> 
+	<property name="zip.name" value="Agent.GUI_${version.major}.${version.minor}_API.zip"/>
+	
+		
+	<target name="javadoc-create" depends="" description="Creating javadoc ... ">
 		<echo>Build: ${doc.title}</echo>
+		<antcall target="cleanup"/>
+		<antcall target="javadoc"/>
+		<antcall target="javadoc-zip"/>
 	</target>
 	
 	<target name="cleanup" description="Delete old API folder structure ...">
@@ -24,7 +34,8 @@
 	<target name="javadoc">
 		
 		<!-- Build the API -->
-		<javadoc access="package" author="true" 
+		<javadoc access="package" 
+			author="true" 
 			source="1.6" 
 			sourcepath="projects;src" 
 			destdir="${destinDirAPI}" 
@@ -68,5 +79,11 @@
 			/>
 		
 	</target>
-		
+
+	<target name="javadoc-zip" description="Zipping API">
+		<zip destfile="${destinDirAPI}/${zip.name}">
+			<fileset dir="${destinDirAPI}" />
+		</zip>		
+	</target>
+	
 </project>

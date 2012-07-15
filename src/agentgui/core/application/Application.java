@@ -218,6 +218,14 @@ public class Application {
 		return Application.trayIcon;
 	}
 	/**
+	 * Sets the tray icon.
+	 * @param newTrayIcon the new tray icon
+	 */
+	public static void setTrayIcon(AgentGUITrayIcon newTrayIcon) {
+		Application.trayIcon = newTrayIcon;
+	}
+	
+	/**
 	 * Gets the main window.
 	 * @return the main window
 	 */
@@ -228,6 +236,13 @@ public class Application {
 			}
 		}
 		return Application.mainWindow;
+	}
+	/**
+	 * Sets the main window.
+	 * @param mainWindow the new main window
+	 */
+	public static void setMainWindow(MainWindow mainWindow) {
+		Application.mainWindow = mainWindow;	
 	}
 	
 	/**
@@ -392,7 +407,7 @@ public class Application {
 	 * This methods starts Agent.GUI in application or server mode
 	 * depending on the configuration in 'properties/agentgui.ini'
 	 */
-	private static void startAgentGUI() {
+	public static void startAgentGUI() {
 		
 		// ----------------------------------------------------------		
 		// --- Start the Application as defined by 'isServer' -------
@@ -490,11 +505,6 @@ public class Application {
 	 */
 	public static void showOptionDialog(String focusOnTab) {
 		
-		boolean okAction = false;
-		boolean enforceRestart = false;		
-		boolean isServerOld = isRunningAsServer();
-		boolean isServerNew = isRunningAsServer();
-		
 		if (options!=null) return;
 		
 		// ==================================================================
@@ -510,47 +520,9 @@ public class Application {
 		// ==================================================================
 		// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
 		// ==================================================================
-		okAction = !options.isCanceled();
-		enforceRestart = options.isForceRestart();
-		isServerNew = isRunningAsServer();
 		options.dispose();
-		options = null;		
-		// ==================================================================
+		options = null;
 		
-		if ( (isServerOld==true && isServerNew==true && okAction==true) || enforceRestart==true) { 
-			// --- JADE beenden -------------------------------------
-			getJadePlatform().jadeStop();			
-			// --- Anwendung neu starten ----------------------------
-			if (isServerOld == true) {
-				if (isServerNew==true) {
-					// --- Neustart 'Server'-------------------------
-					System.out.println(Language.translate("Neustart des Server-Dienstes"));
-				} else {
-					// --- Umschalten von 'Server' auf 'Application' ----
-					System.out.println(Language.translate("Umschalten von 'Server' auf 'Anwendung'"));
-				}				
-				// --- Tray-Icon entfernen / schliessen -------------
-				trayIcon.remove();
-				trayIcon = null;
-
-			} else {
-				// --- Umschalten von 'Application' auf 'Server' ----
-				System.out.println(Language.translate("Umschalten von 'Anwendung' auf 'Server'"));
-				// --- Noch offene Projekte schlieﬂen ---------------
-				if ( getProjectsLoaded() != null ) {
-					if ( getProjectsLoaded().closeAll() == false ) return;	
-				}		
-				// --- Anwendungsfenster schliessen -----------------
-				getMainWindow().dispose();
-				mainWindow = null;
-				// --- Tray-Icon schliessen -------------------------
-				trayIcon.remove();
-				trayIcon = null;
-			}
-			// --- Restart ------------------------------------------
-			startAgentGUI();
-		}
-		// ==================================================================
 	}
 
 	/**

@@ -127,6 +127,9 @@ public class GlobalInfo {
 	private String googleKey4API = null;
 	private String googleHTTPref = null;
 	
+	private String updateSite = null;
+	private Integer updateAutoConfiguration = 0;
+	
 	// --- Reminder information for file dialogs ----------------------------
 	private File lastSelectedFolder = null; 
 	
@@ -1020,4 +1023,36 @@ public class GlobalInfo {
 	public void setGoogleHttpRef(String httpRef) {
 		this.googleHTTPref = httpRef;
 	}
+
+	/**
+	 * Sets the update site.
+	 * @param updateSite the new update site
+	 */
+	public void setUpdateSite(String updateSite) {
+		this.updateSite = updateSite;
+	}
+	/**
+	 * Returns the update site.
+	 * @return the update site
+	 */
+	public String getUpdateSite() {
+		return updateSite;
+	}
+
+	/**
+	 * Sets the update auto configuration.
+	 * @param updateAutoConfiguration the new update auto configuration
+	 */
+	public void setUpdateAutoConfiguration(Integer updateAutoConfiguration) {
+		this.updateAutoConfiguration = updateAutoConfiguration;
+	}
+	/**
+	 * Returns the update auto configuration.
+	 * @return the update auto configuration
+	 */
+	public Integer getUpdateAutoConfiguration() {
+		return updateAutoConfiguration;
+	}
+	
+	
 }
