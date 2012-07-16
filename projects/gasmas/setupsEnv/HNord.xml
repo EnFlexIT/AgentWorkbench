@@ -269,17 +269,6 @@
             </value>
         </entry>
         <entry>
-            <key>n74</key>
-            <value>
-                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP131</graphElementIDs>
-                <id>n74</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Exit</type>
-            </value>
-        </entry>
-        <entry>
             <key>n36</key>
             <value>
                 <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
@@ -930,9 +919,9 @@ PFRpbWVTZXJpZXMgdGltZUF4aXNMYWJlbD0iIiB2YWx1ZUF4aXNMYWJlbD0iIiBjaGFydFRpdGxlPSIi
                 <directed>false</directed>
                 <graphElementIDs>PP94</graphElementIDs>
                 <graphElementIDs>PP96</graphElementIDs>
-                <graphElementIDs>PP131</graphElementIDs>
                 <graphElementIDs>n59_2</graphElementIDs>
                 <graphElementIDs>n59_1</graphElementIDs>
+                <graphElementIDs>PP122</graphElementIDs>
                 <graphElementIDs>n59_0</graphElementIDs>
                 <graphElementIDs>PP121</graphElementIDs>
                 <id>n59</id>

@@ -1052,7 +1052,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 				Application.showAboutDialog();
 			}
 			else if ( ActCMD.equalsIgnoreCase("HelpUpdate") ) {
-				
+				//TODO Serach for update
 			}
 			else {
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);

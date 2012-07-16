@@ -564,7 +564,14 @@ private static final long serialVersionUID = 6748263753769300242L;
 		for (int i = 0; i < configXML.length; i++) {
 			configXML64[i] = configXML[i];
 			try {
-				configXML64[i] = new String(Base64.encodeBase64(configXML[i].getBytes("UTF8")));
+				if (configXML[i]==null) {
+					configXML64[i] = null;
+				} else  if (configXML[i].equals("")) {
+					configXML64[i] = null;
+				} else {
+					configXML64[i] = new String(Base64.encodeBase64(configXML[i].getBytes("UTF8")));	
+				}
+				
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}

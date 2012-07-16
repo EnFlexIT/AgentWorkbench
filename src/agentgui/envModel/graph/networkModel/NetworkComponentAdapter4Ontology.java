@@ -32,7 +32,6 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 
-import agentgui.core.application.Application;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 
@@ -46,7 +45,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	
 	private OntologyVisualisationHelper ovh = null;
 	private OntologyInstanceViewer oiv = null;
-	private final String base64Seperator = Application.getGlobalInfo().getNewLineSeparator();
+	private final String base64Seperator = "\n";
 	
 	
 	/**
