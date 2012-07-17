@@ -529,7 +529,7 @@ public class ProjectsLoaded {
 			String zipFolder = projectFile.getAbsolutePath();
 			
 			// --- Import project file as a new project ---
-			Zipper zipper = new Zipper();
+			Zipper zipper = new Zipper(Application.getMainWindow());
 			zipper.setUnzipZipFolder(zipFolder);
 			zipper.setUnzipDestinationFolder(destFolder);
 			
@@ -647,7 +647,7 @@ public class ProjectsLoaded {
 		String srcFolder = Application.getGlobalInfo().PathProjects(true) + projectFolder;
 		String zipFolder = projectFile.getAbsolutePath();
 		
-		Zipper zipper = new Zipper();
+		Zipper zipper = new Zipper(Application.getMainWindow());
 		zipper.setExcludePattern(".svn");
 		zipper.setZipFolder(zipFolder);
 		zipper.setZipSourceFolder(srcFolder);

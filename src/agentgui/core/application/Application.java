@@ -205,11 +205,6 @@ public class Application {
 	 * @return the main window
 	 */
 	public static MainWindow getMainWindow() {
-		if (Application.mainWindow==null) {
-			if (isRunningAsServer()==false) {
-				Application.mainWindow = new MainWindow();	
-			}
-		}
 		return Application.mainWindow;
 	}
 	/**
@@ -409,7 +404,7 @@ public class Application {
 	 * Opens the main application window (JFrame)
 	 */
 	public static void startApplication() {
-		getMainWindow();
+		setMainWindow(new MainWindow());
 		getProjectsLoaded().setProjectView();
 	}
 	
@@ -436,20 +431,18 @@ public class Application {
 	 * Quits the application
 	 */
 	public static void quit() {
-		// --------------------------------------------
-		// --- Anwendung beenden ---------------------- 
-		// --------------------------------------------
+
 		// --- JADE beenden ------------------------
 		getJadePlatform().jadeStop();
 		// --- Noch offene Projekte schlieﬂen ------
-		if ( getProjectsLoaded() != null ) {
-			if ( getProjectsLoaded().closeAll() == false ) return;	
-		}		
+		if (getProjectsLoaded().closeAll()==false) {
+			return;	
+		}
 		// --- FileProperties speichern ------------
 		getGlobalInfo().getFileProperties().save();
 		
 		// --- Fertig ------------------------------
-		System.out.println( Language.translate("Programmende... ") );
+		System.out.println(Language.translate("Programmende... ") );
 		Language.saveDictionaryFile();
 		System.exit(0);		
 	}
@@ -529,7 +522,9 @@ public class Application {
 		if (getMainWindow()!=null) {
 			getMainWindow().setStatusJadeRunning(runs);	
 		}
-		trayIcon.popUp.refreshView();
+		if (trayIcon!=null) {
+			trayIcon.popUp.refreshView();	
+		}
 	}
 	
 	/**

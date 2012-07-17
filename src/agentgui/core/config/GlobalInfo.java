@@ -83,7 +83,6 @@ public class GlobalInfo {
 	private static String localBaseDir = "";
 	private static String localPathAgentGUI	 = "bin";
 	private static String localPathJade		 = "lib" + fileSeparator + "jade" +  fileSeparator + "lib";
-	private static String localPathBatik	 = "lib" + fileSeparator + "batik";	
 	private static String localPathProperty  = "properties" + fileSeparator;
 	private static String localPathProjects  = "projects" + fileSeparator;
 	private static String localPathWebServer = "server" + fileSeparator;
@@ -343,19 +342,6 @@ public class GlobalInfo {
 		else {
 			return localPathJade;	
 		}		
-	}
-	/**
-	 * This method can be invoked in order to get the path to the BATIK libraries (e. g. 'lib\batik').
-	 * @param absolute set true if you want to get the full path to this 
-	 * @return the path to the BATIK libraries
-	 */
-	public String PathBatik(boolean absolute){
-		if (absolute == true) { 
-			return FilePath2Absolute( localPathBatik );
-		}
-		else {
-			return localPathBatik;	
-		}	
 	}
 	/**
 	 * This method can be invoked in order to get the path to the property folder 'properties\'.

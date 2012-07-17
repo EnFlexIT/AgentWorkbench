@@ -28,6 +28,7 @@
  */
 package agentgui.core.common;
 
+import java.awt.Frame;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -66,6 +67,8 @@ import agentgui.core.application.Application;
  */
 public class Zipper extends Thread {
 
+	private boolean done = false;
+	
 	private int kindOfExec = 0;
 	private final int execZip = 1;
 	private final int execUnZip = 2;
@@ -82,12 +85,42 @@ public class Zipper extends Thread {
 	
 	private String projectFolder2Open = null;
 	
+	
 	/**
-	 * Constructor of this class
+	 * Instantiates a new Zipper.
 	 */
 	public Zipper() {
+		this.initialize(null);	
+	}
+	/**
+	 * Constructor of this class.
+	 * @param owner the owner
+	 */
+	public Zipper(Frame owner) {
+		this.initialize(owner);
+	}
+	
+	/**
+	 * Initialize.
+	 */
+	private void initialize(Frame owner) {
 		this.setName("Zipper");
-		this.zipMonitor = new ZipperMonitor(Application.getMainWindow());
+		this.zipMonitor = new ZipperMonitor(owner);
+	}
+	
+	/**
+	 * Sets that the operation is done.
+	 * @param done the new done
+	 */
+	public synchronized void setDone(boolean done) {
+		this.done = done;
+	}
+	/**
+	 * Checks if the operation is done.
+	 * @return true, if is done
+	 */
+	public synchronized boolean isDone() {
+		return done;
 	}
 	
 	/**
@@ -96,12 +129,18 @@ public class Zipper extends Thread {
 	 */
 	@Override
 	public void run() {
+		
+		this.setDone(false);
+		
+		// --- Do the specified job -------------------
 		if (kindOfExec==execZip) {
 			this.zipFolder(zipSourceFolder, zipFolder);
 		} else if (kindOfExec==execUnZip) {
 			this.unzipFolder(unzipZipFolder, unzipDestinationFolder);
 		}
-
+		// --- Done -----------------------------------
+		this.setDone(true);
+		
 		// --- Hide zipMonitor ------------------------
 		this.zipMonitor.setVisible(false);
 		

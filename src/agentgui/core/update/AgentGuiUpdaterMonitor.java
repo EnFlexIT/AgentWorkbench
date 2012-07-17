@@ -34,10 +34,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -54,10 +53,12 @@ import agentgui.core.application.Language;
 /**
  * The Class AgentGuiUpdaterProgress.
  */
-public class AgentGuiUpdaterProgress extends JFrame implements ActionListener {
+public class AgentGuiUpdaterMonitor extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = -5215083407952353606L;
 
+	private final String windowTitle = "Agent.GUI-Update";  //  @jve:decl-index=0:
+	
 	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( pathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
@@ -76,7 +77,7 @@ public class AgentGuiUpdaterProgress extends JFrame implements ActionListener {
 	 * Instantiates a new agent gui updater progress.
 	 * @param owner the owner
 	 */
-	public AgentGuiUpdaterProgress() {
+	public AgentGuiUpdaterMonitor() {
 		super();
 		initialize();
 	}
@@ -89,18 +90,19 @@ public class AgentGuiUpdaterProgress extends JFrame implements ActionListener {
 		this.setSize(571, 188);
 		this.setResizable(false);
 		
-		this.setTitle("Agent.GUI - Update");
+		this.setTitle(this.windowTitle);
 		this.setIconImage(imageAgentGUI);	
 		this.setContentPane(getJContentPane());
 		
 		this.setLookAndFeel();
-		this.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent evt) {
-				canceled = true;
-				setVisible(false);
-			}
-		});
-	
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); 
+		
+		// --- Centre download dialog -----------
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+		int top = (screenSize.height - this.getHeight()) / 2; 
+	    int left = (screenSize.width - this.getWidth()) / 2; 
+	    this.setLocation(left, top);
+	    
 		// --- Translations ---------------------
 		jButtonCancel.setText(Language.translate(jButtonCancel.getText()));
 		
@@ -112,6 +114,7 @@ public class AgentGuiUpdaterProgress extends JFrame implements ActionListener {
 	 */
 	public void setProgress(int progress) {
 		this.getJProgressBarDownload().setValue(progress);
+		this.setTitle(this.windowTitle + " (" + progress + "%)");
 	}
 	/**
 	 * Checks if this dialog was canceled.
@@ -187,7 +190,7 @@ public class AgentGuiUpdaterProgress extends JFrame implements ActionListener {
 			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 14));
 			
 			jLabelDownload = new JLabel();
-			jLabelDownload.setText("Update-Download:");
+			jLabelDownload.setText("Download");
 			jLabelDownload.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jContentPane = new JPanel();
