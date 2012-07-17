@@ -28,17 +28,15 @@
  */
 package agentgui.core.application;
 
-import java.util.Vector;
-
 import jade.debugging.components.JPanelConsole;
+
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import agentgui.core.benchmark.BenchmarkMeasurement;
-import agentgui.core.config.FileProperties;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.config.VersionInfo;
 import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.MainWindow;
@@ -83,10 +81,6 @@ public class Application {
 	private static Application thisApp = new Application();
 	/** This attribute holds the current state of the configurable runtime informations */
 	private static GlobalInfo globalInfo = null;
-	/** Can be used in order to access the version information */
-	private static VersionInfo versionInfo = null;
-	/** Holds the instance of the file properties which are defined in '/properties/agentgui.ini' */
-	private static FileProperties fileProperties = null;
 	/** This will hold the instance of the main application window */
 	private static MainWindow mainWindow = null;
 	/** Here the tray icon of the application can be accessed */
@@ -174,28 +168,9 @@ public class Application {
 	public static GlobalInfo getGlobalInfo() {
 		if (Application.globalInfo==null) {
 			Application.globalInfo = new GlobalInfo();
+			Application.globalInfo.initialize();
 		}
 		return Application.globalInfo;
-	}
-	/**
-	 * Gets the version info.
-	 * @return the version info
-	 */
-	public static VersionInfo getVersionInfo() {
-		if (Application.versionInfo==null) {
-			Application.versionInfo = new VersionInfo();
-		}
-		return Application.versionInfo;
-	}
-	/**
-	 * Gets the file properties.
-	 * @return the file properties
-	 */
-	public static FileProperties getFileProperties() {
-		if (Application.fileProperties==null) {
-			Application.fileProperties = new FileProperties();
-		}
-		return Application.fileProperties;
 	}
 	/**
 	 * Gets the jade platform.
@@ -273,8 +248,6 @@ public class Application {
 			// --- Start the Agent.GUI base-instances ---------------
 			getConsole();
 			getGlobalInfo();
-			getVersionInfo();
-			getFileProperties();
 			Language.startDictionary();
 			
 			new LoadMeasureThread().start();  
@@ -284,8 +257,6 @@ public class Application {
 			// ------------------------------------------------------
 			// --- Start JADE ---------------------------------------
 			getGlobalInfo();
-			getVersionInfo();
-			getFileProperties();
 			Language.startDictionary();
 
 			System.out.println("Just starting JADE now ...");
@@ -475,7 +446,7 @@ public class Application {
 			if ( getProjectsLoaded().closeAll() == false ) return;	
 		}		
 		// --- FileProperties speichern ------------
-		getFileProperties().save();
+		getGlobalInfo().getFileProperties().save();
 		
 		// --- Fertig ------------------------------
 		System.out.println( Language.translate("Programmende... ") );

@@ -175,7 +175,7 @@ public class BenchmarkMeasurement extends Thread {
 		Application.getGlobalInfo().setBenchValue(result);
 		Application.getGlobalInfo().setBenchExecOn(nowExecOn);
 		Application.getGlobalInfo().setBenchAllwaysSkip(benchAllwaysSkip);
-		Application.getFileProperties().save();
+		Application.getGlobalInfo().getFileProperties().save();
 		
 		// --- Anzeige für den Fortschritt --- OFF --------
 		benchGUI.setBenchmarkValue(result);

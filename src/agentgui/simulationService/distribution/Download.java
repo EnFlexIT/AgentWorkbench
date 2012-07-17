@@ -31,8 +31,11 @@ package agentgui.simulationService.distribution;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.NoRouteToHostException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 /**
  * This class enables the download from a given URL to a local destination folder.
@@ -43,10 +46,12 @@ public class Download {
 
 	private String srcFileURL;
 	private String destFileLocale;
-	private Integer downloadProgress;
+	
+	private Integer downloadProgress = 0;
 	private boolean downloadSuccessful = false;
 	private boolean downloadFinished = false;
 	
+	private boolean cancel = false;
 	
 	/**
 	 * Instantiates a new download.
@@ -58,6 +63,12 @@ public class Download {
 		// --- Set the local variables ----
 		this.srcFileURL  = sourceFileURL;
 		this.destFileLocale = destinationFileLocal;
+	}
+	
+	/**
+	 * Starts the download.
+	 */
+	public void startDownload() {
 		// --- Download the required file -----------------
 		this.downloadSuccessful = this.downloadFile();
 		this.downloadFinished = true;
@@ -65,7 +76,6 @@ public class Download {
 	
 	/**
 	 * Will download the configured file.
-	 *
 	 * @return true, if successful
 	 */
 	private boolean downloadFile(){
@@ -74,10 +84,13 @@ public class Download {
 		HttpURLConnection huc;
 		byte[] buffer = new byte[4096] ;
 		int totBytes, bytes, sumBytes = 0;
+
+		String host = null;
 		
 		try {
 			// --- Connect to the SourceObject -----------
 			url = new URL(srcFileURL);
+			host = url.getHost();
 			huc = (HttpURLConnection) url.openConnection();
 			huc.connect();
 			
@@ -87,33 +100,58 @@ public class Download {
 			if ( code == HttpURLConnection.HTTP_OK )   {  
 
 				// --- Define Output-File -----------------
-				File output = new File(destFileLocale) ; 
-				FileOutputStream outputStream= new FileOutputStream(output) ; 
+				File fileDownloaded = new File(destFileLocale) ; 
+				FileOutputStream outputStream = new FileOutputStream(fileDownloaded) ; 
 				
 				// --- Proceed ----------------------------
 				totBytes = huc.getContentLength() ; 
 				while ((bytes = is.read(buffer)) > 0) {
+					if (this.cancel==true) {
+						break;
+					}
 					outputStream.write(buffer, 0, bytes);
 	                sumBytes+= bytes; 
 	                downloadProgress = (Math.round( (((float)sumBytes / (float)totBytes) * 100) ));
 				}
-				huc.disconnect() ;
-				return true;
+				// --- Done -------------------------------
+				outputStream.close();
+				huc.disconnect();
+				if (this.cancel==true) {
+					fileDownloaded.delete();
+					return false;
+				} else {
+					return true;	
+				}
+				
 		    }
 		    huc.disconnect () ; 
 		    return false;
-		    
+		   
+		} catch (UnknownHostException uh) {
+			System.out.println("Host not found: " + host);
+		} catch (NoRouteToHostException nr2h) {
+			System.out.println("No Route to host found: " + host);
+		} catch (ConnectException ce) {
+			System.out.println("Connection to '" + host + "' timed out: ");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
 	
+	
+	/**
+	 * Cancels the currently running download.
+	 */
+	public synchronized void doCancel() {
+		this.cancel = true;
+	}
+
 	/**
 	 * Informs about a finished download.
 	 * @return true, if the download is finished
 	 */
-	public boolean isFinished() {
+	public synchronized boolean isFinished() {
 		return this.downloadFinished;
 	}
 
@@ -121,7 +159,7 @@ public class Download {
 	 * Informs if the download was successful.
 	 * @return true, if the download was successful 
 	 */
-	public boolean wasSuccessful() {
+	public synchronized boolean wasSuccessful() {
 		return this.downloadSuccessful;
 	}
 
@@ -129,7 +167,7 @@ public class Download {
 	 * Informs about the current download progress.
 	 * @return the downloadProgress
 	 */
-	public Integer getDownloadProgress() {
+	public synchronized Integer getDownloadProgress() {
 		return downloadProgress;
 	}
 

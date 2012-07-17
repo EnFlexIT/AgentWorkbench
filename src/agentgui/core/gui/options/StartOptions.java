@@ -844,7 +844,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			// --------------------------------------------------------------
 		}
 		this.setFromData2Global();
-		Application.getFileProperties().save();
+		Application.getGlobalInfo().getFileProperties().save();
 
 		// ------------------------------------------------------------------
 		this.applySettings();

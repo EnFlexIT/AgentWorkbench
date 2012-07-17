@@ -158,7 +158,7 @@ public class JadeRemoteStart extends Thread {
 			String destinFile = destinPath + remoteFile.getAbsoluteFile().getName();
 			
 			// --- Start the download --------------------------
-			new Download(httpJarFile, destinFile);
+			new Download(httpJarFile, destinFile).startDownload();
 
 			// --- Reminder für den ClassPath setzen -----------
 			String ClassPathEntry = "./" + destinFile.replace(File.separator, "/") + ";";

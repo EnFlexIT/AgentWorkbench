@@ -57,10 +57,10 @@ public class FileProperties extends Properties {
 
 	private static final long serialVersionUID = 7953205356494195952L;
 	
-	private GlobalInfo global = Application.getGlobalInfo();
-	private VersionInfo version = Application.getVersionInfo();
+	private GlobalInfo globalInfo = null;
+	private VersionInfo versionInfo = null;
 	
-	private String configFile = global.PathConfigFile(true);
+	private String configFile = null;
 	private String configFileDefaultComment = "";
 
 	private final String DEF_RUNAS = "01_RUNAS";
@@ -103,7 +103,12 @@ public class FileProperties extends Properties {
 	/**
 	 * Default constructor of this class. Will use the default config-file 'agentgui.xml'
 	 */
-	public FileProperties() {
+	public FileProperties(GlobalInfo globalInfo) {
+		
+		this.globalInfo = globalInfo;
+		this.versionInfo = this.globalInfo.getVersionInfo();
+		this.configFile = this.globalInfo.PathConfigFile(true);
+		
 		this.initialize();
 //		println4SysProps();
 //		println4EnvProps();
@@ -487,7 +492,7 @@ public class FileProperties extends Properties {
 	private void setDefaultComment() {
 
 		String defaultComment = "";		
-		defaultComment = defaultComment + " Configuration of " + global.getApplicationTitle() + " (Version: " + version.getFullVersionInfo(false, " ") + ")\n"; 
+		defaultComment = defaultComment + " Configuration of " + globalInfo.getApplicationTitle() + " (Version: " + versionInfo.getFullVersionInfo(false, " ") + ")\n"; 
 		defaultComment = defaultComment + " by Christian Derksen - DAWIS - ICB - University Duisburg-Essen\n";
 		defaultComment = defaultComment + " Email: christian.derksen@icb.uni-due.de\n";
 		configFileDefaultComment = defaultComment;

@@ -133,6 +133,13 @@ public class GlobalInfo {
 	// --- Reminder information for file dialogs ----------------------------
 	private File lastSelectedFolder = null; 
 	
+	// --- FileProperties and VersionInfo -----------------------------------
+	/** Holds the instance of the file properties which are defined in '/properties/agentgui.ini' */
+	private FileProperties fileProperties = null;
+	/** Can be used in order to access the version information */
+	private VersionInfo versionInfo = null;
+	
+	
 	/**
 	 * Constructor of this class. 
 	 */
@@ -221,6 +228,13 @@ public class GlobalInfo {
 		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
+	}
+	/**
+	 * Initialises this class by reading the file properties and the current version information.
+	 */
+	public void initialize() {
+		this.getFileProperties();
+		this.getVersionInfo();
 	}
 	
 	/**
@@ -677,6 +691,26 @@ public class GlobalInfo {
 	// ---------------------------------------------------------
 	// --- File-Properties -------------------------------------
 	// ---------------------------------------------------------
+	/**
+	 * Gets the version info.
+	 * @return the version info
+	 */
+	public VersionInfo getVersionInfo() {
+		if (this.versionInfo==null) {
+			this.versionInfo = new VersionInfo();
+		}
+		return this.versionInfo;
+	}
+	/**
+	 * Gets the file properties.
+	 * @return the file properties
+	 */
+	public FileProperties getFileProperties() {
+		if (this.fileProperties==null) {
+			this.fileProperties = new FileProperties(this);
+		}
+		return this.fileProperties;
+	}
 	/**
 	 * This method can be used in order to configure the current execution 
 	 * of Agent.GUI as an server tool (for 'server.master' or 'server.slave') 
