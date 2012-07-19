@@ -108,7 +108,6 @@ public class SysOutScanner {
 		// --- If a local Console window is used --------------------------------------------------
 		if (this.localConsole!=null) {
 			this.localConsole.appendText(this.getStack());		
-								
 		}
 		
 		// --- If a DebuggingService is registered transfer the output to the Main-Container ------

@@ -309,7 +309,7 @@ public class JadeRemoteStart extends Thread {
 		
 		// -----------------------------------------------------
 		// --- Agent.GUI with its integrated libraries ---------
-		String agentGuiJar = Application.getGlobalInfo().AppFileRunnableJar(false);
+		String agentGuiJar = Application.getGlobalInfo().getFileRunnableJar(false);
 		agentGuiJar = agentGuiJar.replace("\\", "/");
 		classPath += "./" + agentGuiJar + ";";
 		

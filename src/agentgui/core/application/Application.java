@@ -315,8 +315,10 @@ public class Application {
 				} else {
 					// --------------------------------------------------------
 					// --- just skip and remind the next start argument -------
-					i++;
-					remainingArgsVector.addElement(args[i]);
+					if (args.length<i-1) {
+						i++;
+						remainingArgsVector.addElement(args[i]);
+					}
 				}
 				
 			} else {

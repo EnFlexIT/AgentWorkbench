@@ -29,20 +29,10 @@
 package agentgui.core.update;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
-import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.common.Zipper;
 import agentgui.simulationService.distribution.Download;
 import agentgui.simulationService.distribution.DownloadThread;
@@ -52,20 +42,24 @@ import agentgui.simulationService.distribution.DownloadThread;
  */
 public class AgentGuiUpdater extends Thread {
 
-	private String updateSite = null;
 	private final String updateSiteAddition = "?key=xml";
-
+	
+	private String updateSite = null;
 	private Integer updateAutoConfiguration = null;
 	
 	private String downloadPath = null;
-	private String latestRevisionFile = "latestVersion.xml";
-
+	private String propertiesPath = null;
+	
 	private UpdateInformation updateInformation = null;
+	private String latestVersionInfoFile = "latestVersion.xml";
+	private String latestVersionInfoFullPath = null;
+	
 	private DownloadThread downloadThread4Update = null;
 	private AgentGuiUpdaterMonitor progressMonitor = null;
 
 	private String localUpdateZipFile = null;
 	private String localUpdateExtractedFolder = null;
+	
 	
 	/**
 	 * Instantiates a new Agent.GUI updater process.
@@ -79,7 +73,7 @@ public class AgentGuiUpdater extends Thread {
 		updateAutoConfiguration = Application.getGlobalInfo().getUpdateAutoConfiguration();
 		
 		downloadPath = Application.getGlobalInfo().PathDownloads(true);
-		
+		propertiesPath = Application.getGlobalInfo().PathProperty(true);
 	}
 	
 	@Override
@@ -88,16 +82,17 @@ public class AgentGuiUpdater extends Thread {
 		
 		// --- Download information about latest version -- 
 		String srcFileURL = this.updateSite + this.updateSiteAddition;
-		String destinFile = this.downloadPath + this.latestRevisionFile; 
-		Download download = new Download(srcFileURL, destinFile);
-		download.startDownload();
-		boolean loadUpdateInformation = download.isFinished() && download.wasSuccessful();
-		download = null;
+		this.latestVersionInfoFullPath = this.downloadPath + this.latestVersionInfoFile; 
+		Download infoDownload = new Download(srcFileURL, this.latestVersionInfoFullPath);
+		infoDownload.startDownload();
+		boolean loadUpdateInformation = infoDownload.isFinished() && infoDownload.wasSuccessful();
+		infoDownload = null;
 		
 		if (loadUpdateInformation==true) {
 			// --------------------------------------------
 			// --- Load the UpdateInformation -------------
-			this.updateInformation = this.loadUpdateInformation(destinFile);
+			this.updateInformation = new UpdateInformation();
+			this.updateInformation.loadUpdateInformation(this.latestVersionInfoFullPath);
 			if (this.updateInformation!=null) {
 				// --- Set name of the update zip file ----
 				this.localUpdateZipFile = this.downloadPath + this.updateInformation.getDownloadFile();
@@ -106,15 +101,31 @@ public class AgentGuiUpdater extends Thread {
 				// ----------------------------------------
 				// --- Download now -----------------------
 				boolean readyToInstall = this.downloadUpdateFile();
+//				boolean readyToInstall = true; // --- For debugging later executions ---
 				if (readyToInstall==true) {
+					// ------------------------------------
+					// --- Copy latest info to properties --
+					String destPath = this.propertiesPath + this.latestVersionInfoFile;
+					File latestVersionInfoFileProperties = new File(destPath);
+					if (latestVersionInfoFileProperties.exists()) {
+						latestVersionInfoFileProperties.delete();
+					}
+					File latestVersionInfoFile = new File(this.latestVersionInfoFullPath);
+					latestVersionInfoFile.renameTo(latestVersionInfoFileProperties);
+					
 					// ------------------------------------
 					// --- Unzip the downloaded file ------
 					if (this.unzipUpdateFile()==true){
 						if (isPreparedForInstallation()==true) {
 							// --- Do installation --------
 							this.executeAgentGuiUpdater();	
+							// --- ShutDown ---------------
+							System.out.println("Finalize update / starting AgentGuiUpdate.jar / shut down application!");
+							System.exit(0);		
+							return;
+							
 						} else {
-							System.out.println("Agent.GUI-Update: Not prepared for installation!");
+							System.out.println("Agent.GUI-Update: Not prepared for installation! Please close all open projects.");
 						}
 					} else {
 						System.err.println("Agent.GUI-Update: Unsuccessful unzipping!");
@@ -131,7 +142,7 @@ public class AgentGuiUpdater extends Thread {
 				} // end readyToInstall==true after download
 			}// end this.updateInformation!=null
 		}//end loadUpdateInformation==true
-		System.out.println("Thread 2 destroy");
+
 	}
 	
 	/**
@@ -140,12 +151,21 @@ public class AgentGuiUpdater extends Thread {
 	private void executeAgentGuiUpdater() {
 		
 		System.out.println("Doing installation now!");
+		// --- create execute statement -----------------------------
+		String execute = "java -jar " + Application.getGlobalInfo().getFileNameUpdater(false) + " -updated -?";
+		System.out.println( "=> Re-Execute: Agent.GUI");
+		// ----------------------------------------------------------
+		try {
+			String[] arg = execute.split(" ");
+			ProcessBuilder proBui = new ProcessBuilder(arg);
+			proBui.redirectErrorStream(false);
+			proBui.directory(new File(Application.getGlobalInfo().PathBaseDir()));
+			proBui.start();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		
-		// --- Ready ----------------------------
-//		System.out.println( Language.translate("Programmende... ") );
-//		Language.saveDictionaryFile();
-//		System.exit(0);
 	}
 	
 	/**
@@ -161,6 +181,7 @@ public class AgentGuiUpdater extends Thread {
 		}
 		// --- Save FileProperties --------------
 		Application.getGlobalInfo().getFileProperties().save();
+		Language.saveDictionaryFile();
 		return true;
 	}
 	
@@ -239,111 +260,4 @@ public class AgentGuiUpdater extends Thread {
 		
 	}
 	
-	/**
-	 * Creates an example file.
-	 * @param destinFile the destination file
-	 */
-	@SuppressWarnings("unused")
-	private void createExampleFile(String destinFile) {
-		
-		UpdateInformation ui = new UpdateInformation();
-		ui.setMajorRevision(0);
-		ui.setMinorRevision(98);
-		ui.setBuild(174);
-		ui.setDownloadLink("http://update.agentgui.org/updates/Agent.GUI_0.98_171.zip");
-		ui.setDownloadFile("Agent.GUI_0.98_171.zip");
-		ui.setDownloadSize(72456123);
-		this.saveUpdateInformation(ui, destinFile);
-	}
-	
-	/**
-	 * Save update information.
-	 *
-	 * @param updateInformation the update information
-	 * @param updateFile the update file
-	 */
-	private void saveUpdateInformation(UpdateInformation updateInformation, String updateFile) {
-	    
-		// --- Encode downloadLink and downloadFile -------
-		String downloadLink64 = null;
-		String downloadFile64 = null;
-		try {
-			downloadLink64 = new String(Base64.encodeBase64(updateInformation.getDownloadLink().getBytes("UTF8")));
-			downloadFile64 = new String(Base64.encodeBase64(updateInformation.getDownloadFile().getBytes("UTF8")));
-			
-			updateInformation.setDownloadLink(downloadLink64);
-			updateInformation.setDownloadFile(downloadFile64);
-			
-		} catch (UnsupportedEncodingException ex) {
-			ex.printStackTrace();
-		}
-		
-		// --- Save File ----------------------------------
-	    JAXBContext context;
-		try {
-			FileWriter componentFileWriter = new FileWriter(updateFile);
-			
-			context = JAXBContext.newInstance(UpdateInformation.class);
-		    Marshaller marsh = context.createMarshaller();
-		    marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-		    marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		    marsh.marshal(updateInformation, componentFileWriter);
-
-		    componentFileWriter.close();
-
-		} catch (JAXBException ex) {
-			ex.printStackTrace();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-
-	}
-
-	/**
-	 * Load update information.
-	 *
-	 * @param updateFile the update file
-	 * @return the update information
-	 */
-	private UpdateInformation loadUpdateInformation(String updateFile) {
-	    
-		File componentFile = null;
-		// --- Load file ----------------------------------
-		UpdateInformation updateInformation = null;
-		try {
-		    componentFile = new File(updateFile);
-		    FileReader componentReader = new FileReader(componentFile);
-	
-		    JAXBContext context = JAXBContext.newInstance(UpdateInformation.class);
-		    Unmarshaller unmarsh = context.createUnmarshaller();
-		    updateInformation = (UpdateInformation) unmarsh.unmarshal(componentReader);
-		    
-		    componentReader.close();
-		    componentFile.delete();
-		    
-		} catch (JAXBException ex) {
-		    ex.printStackTrace();
-		} catch (FileNotFoundException ex) {
-		    ex.printStackTrace();
-		} catch (IOException ex) {
-		    ex.printStackTrace();
-		}
-
-		// --- Decode downloadLink and downloadFile -------
-		String downloadLink = null;
-		String downloadFile = null;
-		try {
-			downloadLink = new String(Base64.decodeBase64(updateInformation.getDownloadLink().getBytes("UTF8")));
-			downloadFile = new String(Base64.decodeBase64(updateInformation.getDownloadFile().getBytes("UTF8")));
-			
-			updateInformation.setDownloadLink(downloadLink);
-			updateInformation.setDownloadFile(downloadFile);
-			
-		} catch (UnsupportedEncodingException ex) {
-			ex.printStackTrace();
-		}
-		
-		return updateInformation;
-	}
-
 }

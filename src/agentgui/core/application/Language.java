@@ -75,8 +75,8 @@ public class Language {
 	private static String newLine = Application.getGlobalInfo().getNewLineSeparator();
 	private static String newLineReplacer = Application.getGlobalInfo().getNewLineSeparatorReplacer();
 
-	private static String dictFileLocation64 = Application.getGlobalInfo().FileDictionary(true, true);
-	private static String dictFileLocation = Application.getGlobalInfo().FileDictionary(false, true);
+	private static String dictFileLocation64 = Application.getGlobalInfo().getFileDictionary(true, true);
+	private static String dictFileLocation = Application.getGlobalInfo().getFileDictionary(false, true);
 
 	private static List<String> dictLineList64 = new ArrayList<String>();
 	private static List<String> dictLineListCSV = new ArrayList<String>();

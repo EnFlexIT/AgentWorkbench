@@ -189,6 +189,7 @@ de;Hindernisse;Obstacles
 de;Hinzufügen;Add
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
 de;Ihre Webseite:;Your Website:;;;
+de;Im Falle eines Updates, eigenes Wörterbuch beibehalten.;In case of an update, keep own dictionary.;;;
 de;Immer Überspringen;Allways Skip
 de;Info;Info
 de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;
@@ -283,6 +284,7 @@ de;Möchten Sie einen weiteren Agenten dieser Art starten?;Do you want to start a
 de;N - Threads;N - Threads
 de;Nach Update suchen ...;Check for Update ...;;;
 de;Nach Updates suchen:;Check for updates:;;;
+de;Nach Updates suchen;Search for updates;;;
 de;Name bereits vorhanden!;Name already exists!
 de;Name ungültig!;Invalid name!
 de;Netz-Komponenten;Network Components
@@ -513,9 +515,7 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
-en;;Redo Action;;;
 en;;Set mapping of external types to local components;;;
-en;;Undo Action;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agenten-Klasse;Agent class;;;
@@ -574,6 +574,7 @@ en;Komponentensuche;Search Components;;;
 en;Name;Name;;;
 en;Ontologie-Klasse;Ontology class;;;
 en;Optionen;Options;;;
+en;Rückgängig;Undo Action;;;
 en;Sind Sie sicher, dass Sie den Graphen löschen wollen?;Are you sure that you want to clear the graph?;;;
 en;Teilnetz;Subnetwork;;;
 en;Typen-Bezeichnung;Type-Specifier;;;
@@ -582,6 +583,7 @@ en;Unschalten auf Transorming-Modus;Switch to Transforming mode;;;
 en;Verbindungsknoten in zwei Knoten aufteilen;Split the node into two nodes;;;
 en;Verbindungsknoten trennen;Split Node;;;
 en;Warnung;Warning;;;
+en;Wiederholen;Redo Action;;;
 en;Wählen Sie die Netzwerkkomponente, die hinzugefügt werden soll;Select a Network Component to Add;;;
 en;Wählen Sie eine Netzwerkkomponente;Select a network component;;;
 en;Wählen Sie einen Knoten, um diese zu verbinden;Select a vertex to merge;;;

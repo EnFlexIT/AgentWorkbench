@@ -49,7 +49,8 @@ import agentgui.core.application.Language;
  * In the Application class the running instance can be accessed 
  * by accessing the reference Application.Properties.
  * 
- * @see Application#getFileProperties()
+ * @see Application#getGlobalInfo()
+ * @see GlobalInfo#getFileProperties()
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -86,6 +87,7 @@ public class FileProperties extends Properties {
 	
 	private final String DEF_UPDATE_SITE = "35_UPDATE_SITE";
 	private final String DEF_UPDATE_AUTOCONFIG = "36_UPDATE_AUTOCONFIG";
+	private final String DEF_UPDATE_KEEP_DICTIONARY = "37_UPDATE_KEEP_DICTIONARY";
 	
 	private String[] mandatoryProps = {	this.DEF_RUNAS,
 										this.DEF_BENCH_VALUE,
@@ -97,7 +99,8 @@ public class FileProperties extends Properties {
 										this.DEF_MASTER_PORT,
 										this.DEF_MASTER_PORT4MTP,
 										this.DEF_UPDATE_SITE,
-										this.DEF_UPDATE_AUTOCONFIG
+										this.DEF_UPDATE_AUTOCONFIG,
+										this.DEF_UPDATE_KEEP_DICTIONARY
 										};
 	
 	/**
@@ -303,6 +306,15 @@ public class FileProperties extends Properties {
 		} else {
 			Application.getGlobalInfo().setUpdateAutoConfiguration(0);
 		}
+		// --- this.DEF_UPDATE_KEEP_DICTIONARY --------
+		propValue = this.getProperty(this.DEF_UPDATE_KEEP_DICTIONARY);
+		if ( propValue.equalsIgnoreCase("") == false ) {
+			Integer propValueInt = Integer.parseInt(propValue.trim());
+			Application.getGlobalInfo().setUpdateKeepDictionary(propValueInt);
+		} else {
+			Application.getGlobalInfo().setUpdateKeepDictionary(1);
+		}
+		
 	}
 
 	/**
@@ -406,6 +418,9 @@ public class FileProperties extends Properties {
 		}
 		// --- this.DEF_UPDATE_AUTOCONFIG -------------
 		this.setProperty(this.DEF_UPDATE_AUTOCONFIG, Application.getGlobalInfo().getUpdateAutoConfiguration().toString());	
+
+		// --- this.DEF_UPDATE_KEEP_DICTIONAR ---------		
+		this.setProperty(this.DEF_UPDATE_KEEP_DICTIONARY, Application.getGlobalInfo().getUpdateKeepDictionary().toString());
 		
 	}	
 	
@@ -434,7 +449,10 @@ public class FileProperties extends Properties {
 			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_AUTOCONFIG) ) {				
 				this.setProperty(this.DEF_UPDATE_AUTOCONFIG, "0");
 			}
-
+			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_KEEP_DICTIONARY) ) {
+				this.setProperty(this.DEF_UPDATE_KEEP_DICTIONARY, "1");
+			}
+				
 			// ----------------------------------------
 		}
 	}

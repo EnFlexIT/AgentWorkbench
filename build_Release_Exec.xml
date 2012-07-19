@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     project:		Agent.GUI
+     description	Builds a release consisting of executable and API	
+     ====================================================================== -->
+<project name="AgentGui" default="buildReleaseExec" basedir=".">
+	
+	<target name="buildReleaseExec" depends="" description="Building Exec Release ${doc.title} ... ">
+		<ant antfile="build_Release_Full.xml" target="buildReleaseExec"/>
+	</target>
+		
+</project>

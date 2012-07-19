@@ -74,8 +74,7 @@ public class AgentGuiUpdaterMonitor extends JFrame implements ActionListener {
 	private JPanel jPanelDummy = null;
 	
 	/**
-	 * Instantiates a new agent gui updater progress.
-	 * @param owner the owner
+	 * Instantiates a new Agent.GUI updater monitor.
 	 */
 	public AgentGuiUpdaterMonitor() {
 		super();

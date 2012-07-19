@@ -63,6 +63,7 @@ public class GlobalInfo {
 	private static String localAppTitle = "Agent.GUI";
 	
 	private final static String localFileRunnableJar = "AgentGui.jar";
+	private final static String localFileRunnableUpdater = "AgentGuiUpdate.jar";
 	private final static String localPathImageIntern = "/agentgui/core/gui/img/";
 	private final static String fileSeparator = File.separator;
 	private final static String newLineSeparator = System.getProperty("line.separator");
@@ -128,6 +129,7 @@ public class GlobalInfo {
 	
 	private String updateSite = null;
 	private Integer updateAutoConfiguration = 0;
+	private Integer updateKeepDictionary = 1;
 	
 	// --- Reminder information for file dialogs ----------------------------
 	private File lastSelectedFolder = null; 
@@ -137,6 +139,8 @@ public class GlobalInfo {
 	private FileProperties fileProperties = null;
 	/** Can be used in order to access the version information */
 	private VersionInfo versionInfo = null;
+
+	
 	
 	
 	/**
@@ -282,8 +286,8 @@ public class GlobalInfo {
 	public void setAppLnf( String NewLnF ) {
 		localAppLnF = NewLnF;
 	};
-	
 	// -------------------------------
+
 	/**
 	 * This method can be used in order to evaluate how Agent.GUI is currently executed
 	 * @return - 'IDE', if Agent.GUI is executed out of the IDE, where Agent.GUI is developed OR<br>
@@ -509,7 +513,7 @@ public class GlobalInfo {
 	 * @param absolute set true if you want to get the full path to this
 	 * @return the path to the executable jar file
 	 */
-	public String AppFileRunnableJar(boolean absolute){
+	public String getFileRunnableJar(boolean absolute){
 		
 		if (localAppExecutedOver.equals(ExecutedOverAgentGuiJar)) {
 			// --- The current instance was executed over an AgentGui.jar -----
@@ -538,7 +542,7 @@ public class GlobalInfo {
 	 * @param absolute set true if you want to get the full path to this
 	 * @return path to the designated dictionary file
 	 */
-	public String FileDictionary(boolean base64, boolean absolute ){
+	public String getFileDictionary(boolean base64, boolean absolute ){
 		
 		// --- TXT-Version or Base64-encoded dictionary ---
 		String fileName = null;
@@ -555,6 +559,21 @@ public class GlobalInfo {
 			return fileName;	
 		}
 	}
+	
+	
+	/**
+	 * Gets the file name of the updater (AgentGuiUpdate.jar).
+	 * @param absolute the absolute
+	 * @return the file updater
+	 */
+	public String getFileNameUpdater(boolean absolute) {
+		if (absolute == true) { 
+			return FilePath2Absolute(localFileRunnableUpdater);
+		} else {
+			return localFileRunnableUpdater;	
+		}
+	}
+	
 	/**
 	 * Returns the file name of the xml-file, which contains the project configuration (file: 'agentgui.xml')
 	 * @return file name of the project configuration (agentgui.xml)
@@ -1074,5 +1093,19 @@ public class GlobalInfo {
 		return updateAutoConfiguration;
 	}
 	
+	/**
+	 * Sets the update keep dictionary.
+	 * @param updateKeepDictionary the new update keep dictionary
+	 */
+	public void setUpdateKeepDictionary(Integer updateKeepDictionary) {
+		this.updateKeepDictionary = updateKeepDictionary;
+	}
+	/**
+	 * Gets the update keep dictionary.
+	 * @return the update keep dictionary
+	 */
+	public Integer getUpdateKeepDictionary() {
+		return updateKeepDictionary;
+	}
 	
 }

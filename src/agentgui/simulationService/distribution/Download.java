@@ -29,6 +29,7 @@
 package agentgui.simulationService.distribution;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.ConnectException;
@@ -127,6 +128,8 @@ public class Download {
 		    huc.disconnect () ; 
 		    return false;
 		   
+		} catch (FileNotFoundException fnf) {
+			System.out.println("File not found on host! Please retry later.");
 		} catch (UnknownHostException uh) {
 			System.out.println("Host not found: " + host);
 		} catch (NoRouteToHostException nr2h) {
