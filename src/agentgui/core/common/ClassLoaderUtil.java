@@ -96,11 +96,13 @@ public class ClassLoaderUtil {
 
 					if (!entryName.contains("META-INF")) {
 						//if (entry.isDirectory()) {
-						// --- package found ---    						
+						// --- package found ---    	
 						String packpageName = ClassLoaderUtil.getPackageName(entryName);
 						if (packpageName != null && packpageName.length() != 0 && result.contains(packpageName) == false) {
 							//System.out.println( "=> " + packpageName );
-							result.add(packpageName);
+							if (result.contains(packpageName)==false) {
+								result.add(packpageName);	
+							}
 							//    						}
 						}//directory 
 					}//meta-inf
@@ -126,9 +128,6 @@ public class ClassLoaderUtil {
 		if (testDepthArray.length > 3) {
 			return null;
 		} else {
-			if (packpageName.endsWith(".class")) {
-				return null;
-			}
 			int index = packpageName.lastIndexOf("/");
 			if (index == -1) {
 				return null;

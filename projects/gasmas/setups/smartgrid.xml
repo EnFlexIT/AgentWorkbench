@@ -73,6 +73,12 @@
             <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
             <startAsName>n89</startAsName>
         </agent>
+        <agent>
+            <postionNo>12</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
+            <startAsName>n94</startAsName>
+        </agent>
     </agentSetup>
     <environmentFileName>SmartGrid.graphml</environmentFileName>
 </simulationSetup>
