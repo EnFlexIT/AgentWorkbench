@@ -23,37 +23,6 @@ public abstract class ResourceAllocationBehaviour extends CyclicBehaviour {
 	/** NetworkComponentNames, which has positive flow */
 	private List<String> dead = new ArrayList<String>();
 
-	public void addDead(String dead) {
-		this.dead.add(dead);
-	}
-
-	public List<String> getDead() {
-		return dead;
-	}
-
-	public void addIncoming(String incoming) {
-		this.incoming.add(incoming);
-	}
-
-	public List<String> getIncoming() {
-		return incoming;
-	}
-
-	public void addOutgoing(String outgoing) {
-		this.outgoing.add(outgoing);
-	}
-
-	public List<String> getOutgoing() {
-		return outgoing;
-	}
-
-	public void addOptional(String optional) {
-		this.optional.add(optional);
-	}
-
-	public List<String> getOptional() {
-		return optional;
-	}
 	
 	/**
 	 * 

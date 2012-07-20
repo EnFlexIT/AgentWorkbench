@@ -3,11 +3,15 @@ package gasmas.resourceallocation;
 import gasmas.agents.components.GenericNetworkAgent;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import agentgui.envModel.graph.networkModel.GraphEdgeDirection;
+import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkComponentDirectionSettings;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
@@ -54,38 +58,30 @@ public class MessengerBehaviour extends ResourceAllocationBehaviour {
 		networkModel = (NetworkModel) this.environmentModel.getDisplayEnvironment();
 		myAgent = agent;
 		thisNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
-		incoming = getIncoming();
-		outgoing = getOutgoing();
-//		incoming = new ArrayList<String>();
-//		outgoing = new ArrayList<String>();
-//		if (myAgent.getLocalName().equals("n4")) {
-//			incoming.add("n8");
-//			outgoing.add("n11");
-//		} else if (myAgent.getLocalName().equals("n5")) {
-//			incoming.add("n9");
-//			outgoing.add("n10");
-//		} else if (myAgent.getLocalName().equals("n6")) {
-//			incoming.add("n11");
-//			outgoing.add("n7");
-//		} else if (myAgent.getLocalName().equals("n10")) {
-//			incoming.add("n5");
-//			outgoing.add("n15");
-//			outgoing.add("n11");
-//		} else if (myAgent.getLocalName().equals("n11")) {
-//			incoming.add("n10");
-//			incoming.add("n4");
-//
-//			outgoing.add("n7");
-//		} else if (myAgent.getLocalName().equals("n15")) {
-//			incoming.add("n10");
-//			outgoing.add("n14");
-//		} else if (myAgent.getLocalName().equals("n14")) {
-//			incoming.add("n15");
-//			outgoing.add("n13");
-//		} else if (myAgent.getLocalName().equals("n13")) {
-//			incoming.add("n14");
-//			outgoing.add("n12");
-//		}
+		
+		NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, thisNetworkComponent);
+		GraphEdgeDirection ged = netCompDirect.getEdgeDirections().values().iterator().next();
+		String toComGraphNodeID = ged.getGraphNodeIDTo();
+		GraphNode toComGraphNode = (GraphNode) networkModel.getGraphElement(toComGraphNodeID);
+		HashSet<NetworkComponent> netCompToHash = netCompDirect.getNeighbourNetworkComponent(toComGraphNode);
+
+		String fromComGraphNodeID = ged.getGraphNodeIDFrom();
+		GraphNode fromComGraphNode = (GraphNode) networkModel.getGraphElement(fromComGraphNodeID);
+		HashSet<NetworkComponent> netCompFromHash = netCompDirect.getNeighbourNetworkComponent(fromComGraphNode);
+		if (netCompToHash != null) {
+			Iterator<NetworkComponent> netCompToIt = netCompToHash.iterator();
+			while (netCompToIt.hasNext()) {
+				NetworkComponent netCompTo  = netCompToIt.next();
+				incoming.add(netCompTo.getId());
+			}
+		}
+		if (netCompFromHash != null) {
+			Iterator<NetworkComponent> netCompFromIt = netCompFromHash.iterator();
+			while (netCompFromIt.hasNext()) {
+				NetworkComponent netCompFrom  = netCompFromIt.next();
+				outgoing.add(netCompFrom.getId());
+			}
+		}
 
 	}
 	

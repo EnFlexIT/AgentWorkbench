@@ -31,7 +31,10 @@ package gasmas.agents.manager;
 import gasmas.clustering.analyse.ComponentFunctions;
 import gasmas.clustering.behaviours.ClusteringBehaviour;
 import gasmas.ontology.DirectionSettingNotification;
+import gasmas.resourceallocation.StatusData;
+import jade.core.Agent;
 import jade.core.ServiceException;
+import jade.core.behaviours.TickerBehaviour;
 
 import java.util.HashSet;
 
@@ -58,6 +61,8 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	private Project currProject = null;
 	/** The my network model. */
 	private NetworkModel myNetworkModel = null;
+	/** Time since the last action in the initial process. */
+	private long timeOfAction = -1;
 
 	/*
 	 * (non-Javadoc)
@@ -84,6 +89,10 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		// --- Put the environment model into the SimulationService -
 		// --- in order to make it accessible for the whole agency --
 		this.notifyAboutEnvironmentChanges();
+		
+		// --- Start of Time-Behaviour -------------------------------
+		// --- To check if one step in the initial process is done  --
+		this.addBehaviour(new CheckForNextStep(this, 5000));
 		
 		ComponentFunctions.printAmountOfDiffernetTypesOfAgents("Global", myNetworkModel);
 	}
@@ -197,6 +206,8 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			// --- Send changes to the DisplayAgents ------------------------------- 
 			NetworkComponentDirectionNotification ncdm = new NetworkComponentDirectionNotification(networkComponent);
 			this.sendDisplayAgentNotification(ncdm);
+		} else if (notification.getNotification() instanceof StatusData) {
+			timeOfAction = System.currentTimeMillis();
 		}
 		
 	}
@@ -230,6 +241,31 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		return clusteredNM;
 	}
 
-	
+	/**
+	 * The Behaviour class WaitForNextStep.
+	 */
+	protected class CheckForNextStep extends TickerBehaviour {
+
+		private static final long serialVersionUID = -3436029671748149764L;
+
+		/**
+		 * Instantiates a new behaviour that waits for the initial EnvironmentModel.
+		 * @param agent the agent
+		 * @param period the ticker period
+		 */
+		public CheckForNextStep(Agent agent, long period) {
+			super(agent, period);
+		}
+
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.TickerBehaviour#onTick()
+		 */
+		@Override
+		protected void onTick() {
+			if (System.currentTimeMillis() - timeOfAction >= 2000) {
+				// TODO Hier bräuchte ich eine Nachricht an alle Agenten mit der Nachricht, dass eine Stufe durchlaufen ist...
+			}
+		}
+	}
 	
 }

@@ -32,6 +32,7 @@ import gasmas.resourceallocation.AllocData;
 import gasmas.resourceallocation.FindDirData;
 import gasmas.resourceallocation.FindDirectionBehaviour;
 import gasmas.resourceallocation.ResourceAllocationBehaviour;
+import gasmas.resourceallocation.StatusData;
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.TickerBehaviour;
@@ -87,12 +88,15 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 				resourceAllocationBehaviour.interpretMsg(notification);
 			}
 		} else if (notification.getNotification() instanceof FindDirData) {
+			sendManagerNotification(new StatusData(1));
 			if (findDirectionBehaviour == null) {
 				notification.moveLastOrBlock(100);
 				System.out.println("=> Notification parked for 'FindDirData' !");
 			} else {
 				findDirectionBehaviour.interpretMsg(notification);
 			}
+		} else {
+			System.out.println("WOEPv " +notification.getNotification());
 		}
 		return notification;
 	}

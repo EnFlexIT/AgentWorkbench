@@ -306,21 +306,57 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 					 */
 					System.out.println("My own name in the way: " + myAgent.getLocalName() + " Way: " + content.getWay().toString());
 					Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+					String inform="";
+					String direction="";
+					boolean found=false;
+					msg1="";
 					while (it1.hasNext()) {
 						String neighbour = it1.next().getId();
 						for (int i = 0; i < content.getWay().split("::").length; i++) {
 							if (content.getWay().split("::")[i].equals(neighbour)) {
-								temp22.add(neighbour);
-								msgSend(neighbour, new FindDirData(msg1));
+								inform+="::"+neighbour;
+								found=true;
+
 							}
 						}
+						if (!found){
+							direction=neighbour;
+						}
+						found=false;
 					}
-					temp1.clear();
-					temp2.clear();
-					done = true;
-					System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
-							+ " OutMaybe: " + outgoingMaybe);
-					setDirections();
+					Iterator<String> it2 = incoming.iterator();
+					while (it2.hasNext()) {
+						String temp =  it2.next();
+						if (temp.equals(direction)){
+							msg1="in";
+							break;
+						}
+					}
+					it2 = outgoing.iterator();
+					while (it2.hasNext()) {
+						String temp =  it2.next();
+						if (temp.equals(direction)){
+							msg1="out";
+							break;
+						}
+					}
+					
+					if (!msg1.equals("")){
+						for (int i = 1; i < inform.split("::").length; i++) {
+							if (msg1.equals("in")){
+								outgoing.add(inform.split("::")[i]);
+							}else if (msg1.equals("out")){
+								incoming.add(inform.split("::")[i]);
+							}
+							msgSend(inform.split("::")[i], new FindDirData(msg1));
+						}
+						temp1.clear();
+						temp2.clear();
+						done = true;
+						System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
+								+ " OutMaybe: " + outgoingMaybe);
+						setDirections();
+					}
 					// myAgent.startRA();
 					// myAgent.removeBehaviour(this);
 				} else {
