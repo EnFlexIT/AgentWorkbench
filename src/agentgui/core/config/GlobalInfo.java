@@ -30,6 +30,7 @@ package agentgui.core.config;
 
 import jade.core.Agent;
 import jade.core.Profile;
+import jade.wrapper.AgentContainer;
 
 import java.awt.Color;
 import java.io.File;
@@ -42,6 +43,8 @@ import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.environment.EnvironmentTypes;
+import agentgui.core.jade.Platform;
+import agentgui.core.network.JadeUrlChecker;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
@@ -130,6 +133,7 @@ public class GlobalInfo {
 	private String updateSite = null;
 	private Integer updateAutoConfiguration = 0;
 	private Integer updateKeepDictionary = 1;
+	private long updateDateLastChecked = 0;
 	
 	// --- Reminder information for file dialogs ----------------------------
 	private File lastSelectedFolder = null; 
@@ -140,8 +144,15 @@ public class GlobalInfo {
 	/** Can be used in order to access the version information */
 	private VersionInfo versionInfo = null;
 
-	
-	
+	/**
+	 * The Enumeration of possible ExecutionModes.
+	 * In order to get the current execution mode use   
+	 * see 
+	 * @see GlobalInfo#getExecutionMode()
+	 */
+	public enum ExecutionMode {
+		APPLICATION, SERVER, SERVER_MASTER, SERVER_SLAVE
+	}
 	
 	/**
 	 * Constructor of this class. 
@@ -238,6 +249,74 @@ public class GlobalInfo {
 	public void initialize() {
 		this.getFileProperties();
 		this.getVersionInfo();
+	}
+	
+	/**
+	 * Gets the execution mode from configuration.
+	 * @return the execution mode from configuration
+	 */
+	public ExecutionMode getExecutionMode() {
+	
+		ExecutionMode execMode = null; 
+		if (Application.isRunningAsServer()==false) {
+			// ----------------------------------
+			// --- Running as Application -------
+			// ----------------------------------
+			execMode = ExecutionMode.APPLICATION;	
+		} else {
+			// ----------------------------------
+			// --- Running as Server-Tool -------
+			// ----------------------------------
+			execMode = ExecutionMode.SERVER;
+			
+			// --- Does JADE run? ---------------
+			Platform platform = Application.getJadePlatform();
+			AgentContainer mainContainer = platform.jadeGetMainContainer();
+			if (mainContainer!=null) {
+				// --------------------------------------------------
+				// --- JADE is running ------------------------------
+				// --------------------------------------------------
+				JadeUrlChecker urlConfigured = new JadeUrlChecker(this.getServerMasterURL());
+				urlConfigured.setPort(this.getServerMasterPort());
+				urlConfigured.setPort4MTP(this.getServerMasterPort4MTP());
+				
+				JadeUrlChecker urlCurrent = new JadeUrlChecker(mainContainer.getPlatformName());	
+				if (urlCurrent.getHostIP().equalsIgnoreCase(urlConfigured.getHostIP()) && urlCurrent.getPort().equals(urlConfigured.getPort()) ) {
+					// --- Running as Server [Master] ---------------
+					execMode = ExecutionMode.SERVER_MASTER;
+				} else {
+					// --- Running as Server [Slave] ----------------
+					execMode = ExecutionMode.SERVER_SLAVE;
+				}
+				// --------------------------------------------------
+			}
+			
+		}
+		return execMode;
+	}
+	
+	/**
+	 * Gets the execution mode description.
+	 * @return the execution mode description
+	 */
+	public String getExecutionModeDescription() {
+
+		String executionModeDescription = null;
+		switch (this.getExecutionMode()) {
+		case APPLICATION:
+			executionModeDescription = "Application";
+			break;
+		case SERVER:
+			executionModeDescription = "Server";
+			break;
+		case SERVER_MASTER:
+			executionModeDescription = "Server [Master]";
+			break;
+		case SERVER_SLAVE:
+			executionModeDescription = "Server [Slave]";
+			break;
+		}
+		return executionModeDescription;
 	}
 	
 	/**
@@ -1106,6 +1185,21 @@ public class GlobalInfo {
 	 */
 	public Integer getUpdateKeepDictionary() {
 		return updateKeepDictionary;
+	}
+	
+	/**
+	 * Sets the update date last checked.
+	 * @param updateDateLastChecked the new update date last checked
+	 */
+	public void setUpdateDateLastChecked(long updateDateLastChecked) {
+		this.updateDateLastChecked = updateDateLastChecked;
+	}
+	/**
+	 * Gets the update date last checked.
+	 * @return the update date last checked
+	 */
+	public Long getUpdateDateLastChecked() {
+		return updateDateLastChecked;
 	}
 	
 }

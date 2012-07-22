@@ -50,6 +50,7 @@ import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.distribution.JadeRemoteStart;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
+import agentgui.simulationService.ontology.AgentGuiVersion;
 import agentgui.simulationService.ontology.BenchmarkResult;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
@@ -93,7 +94,8 @@ public class ServerSlaveAgent extends Agent {
 	private PlatformAddress myPlatform = null;
 	private PlatformPerformance myPerformance = null;
 	private OSInfo myOS = null;
-
+	private AgentGuiVersion myVersion = null;
+	
 	private PlatformTime myPlatformTime = new PlatformTime();
 	private SlaveRegister myRegistration = new SlaveRegister();
 	private PlatformLoad myLoad = new PlatformLoad();	
@@ -130,6 +132,8 @@ public class ServerSlaveAgent extends Agent {
 			myPerformance = myCRCreply.getRemotePerformance();
 			// --- Set OS-Informations ------------------------
 			myOS = myCRCreply.getRemoteOS();
+			// --- Set version info ---------------------------
+			myVersion = myCRCreply.getRemoteAgentGuiVersion();
 			
 		} catch (ServiceException e) {
 			e.printStackTrace();
@@ -154,6 +158,7 @@ public class ServerSlaveAgent extends Agent {
 		myRegistration.setSlaveTime(myPlatformTime);
 		myRegistration.setSlavePerformance(myPerformance);
 		myRegistration.setSlaveOS(myOS);
+		myRegistration.setSlaveVersion(myVersion);
 		this.sendMessage2MainServer(myRegistration);
 
 		// --- Add Main-Behaiviours -----------------------

@@ -31,9 +31,14 @@ package agentgui.core.update;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.Zipper;
+import agentgui.core.config.GlobalInfo;
+import agentgui.core.config.GlobalInfo.ExecutionMode;
+import agentgui.core.config.VersionInfo;
 import agentgui.simulationService.distribution.Download;
 import agentgui.simulationService.distribution.DownloadThread;
 
@@ -43,104 +48,300 @@ import agentgui.simulationService.distribution.DownloadThread;
 public class AgentGuiUpdater extends Thread {
 
 	private final String updateSiteAddition = "?key=xml";
+
+	private GlobalInfo globalInfo = null;
+	private VersionInfo versionInfo = null;
+	private ExecutionMode executionMode = null;
 	
 	private String updateSite = null;
 	private Integer updateAutoConfiguration = null;
+	private Integer updateKeepDictionary = 1;
+	private long updateDateLastChecked = 0;
+	private long updateDatePeriod = 1000*60*60*24; // - once a day -
 	
-	private String downloadPath = null;
-	private String propertiesPath = null;
+	private String alternativeDownloadLink = null;
+	
+	private String localDownloadPath = null;
+	private String localPropertiesPath = null;
 	
 	private UpdateInformation updateInformation = null;
 	private String latestVersionInfoFile = "latestVersion.xml";
 	private String latestVersionInfoFullPath = null;
-	
-	private DownloadThread downloadThread4Update = null;
-	private AgentGuiUpdaterMonitor progressMonitor = null;
 
 	private String localUpdateZipFile = null;
 	private String localUpdateExtractedFolder = null;
+
+	private DownloadThread downloadThread4Update = null;
+	private AgentGuiUpdaterMonitor progressMonitor = null;
+
+	private boolean manualyExecutedByUser = false;
+	private boolean doUpdateProcedure = true;
+	private boolean askBeforeDownload = false;
+	private boolean askBeforeProjectShutdownAndUnzip = false;
 	
 	
 	/**
 	 * Instantiates a new Agent.GUI updater process.
 	 */
 	public AgentGuiUpdater() {
-	
-		this.setName("Agent.GUI-Updater");
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new Agent.GUI updater process.
+	 * @param userExecuted indicates that execution was manually chosen by user
+	 */
+	public AgentGuiUpdater(boolean userExecuted) {
+		this.manualyExecutedByUser = userExecuted;
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new Agent.GUI updater process.
+	 * @param indicates that execution was manually chosen by user
+	 * @param alternativeDownloadLink the alternative download link for the update
+	 */
+	public AgentGuiUpdater(boolean userExecuted, String alternativeDownloadLink) {
+		this.manualyExecutedByUser = userExecuted;
+		this.alternativeDownloadLink = alternativeDownloadLink;
+		this.initialize();
 		
-		Application.getGlobalInfo();
-		updateSite = Application.getGlobalInfo().getUpdateSite();
-		updateAutoConfiguration = Application.getGlobalInfo().getUpdateAutoConfiguration();
-		
-		downloadPath = Application.getGlobalInfo().PathDownloads(true);
-		propertiesPath = Application.getGlobalInfo().PathProperty(true);
 	}
 	
+	/**
+	 * Initialize and set needed local variables.
+	 */
+	private void initialize() {
+		
+		this.setName("Agent.GUI-Updater");
+		
+		this.globalInfo = Application.getGlobalInfo();
+		this.versionInfo = this.globalInfo.getVersionInfo();
+		this.executionMode = this.globalInfo.getExecutionMode();
+
+		this.updateSite = this.globalInfo.getUpdateSite();
+		this.updateAutoConfiguration = this.globalInfo.getUpdateAutoConfiguration();
+		this.updateKeepDictionary = this.globalInfo.getUpdateKeepDictionary();
+		this.updateDateLastChecked = this.globalInfo.getUpdateDateLastChecked();
+		
+		this.localDownloadPath = this.globalInfo.PathDownloads(true);
+		this.localPropertiesPath = this.globalInfo.PathProperty(true);
+		
+		this.latestVersionInfoFullPath = this.localDownloadPath + this.latestVersionInfoFile;
+		
+		this.setUpdateConfiguration();
+	}
+	
+	/**
+	 * Sets the update configuration.
+	 */
+	private void setUpdateConfiguration() {
+		
+		if (this.manualyExecutedByUser==false) {
+			long timeNow = System.currentTimeMillis();
+			long time4NextCheck = this.updateDateLastChecked + this.updateDatePeriod;
+			if (timeNow<time4NextCheck) {
+				doUpdateProcedure=false;
+			} else {
+				Application.getGlobalInfo().setUpdateDateLastChecked(timeNow);
+			}
+		}
+		
+		switch (this.executionMode) {
+		case APPLICATION:
+			// --------------------------------------------
+			switch (this.updateAutoConfiguration) {
+			case 0:
+				this.askBeforeDownload=false;
+				this.askBeforeProjectShutdownAndUnzip=true;
+				break;
+			case 1:
+				this.askBeforeDownload=true;
+				this.askBeforeProjectShutdownAndUnzip=true;
+				break;
+			default:
+				doUpdateProcedure = false;
+				break;
+			}
+			// --------------------------------------------
+			break;
+			
+		case SERVER:
+			// --------------------------------------------
+			doUpdateProcedure = false;
+			// --------------------------------------------
+			break;
+			
+		case SERVER_MASTER:
+			// --------------------------------------------
+			switch (this.updateAutoConfiguration) {
+			case 0:
+				this.askBeforeDownload=false;
+				this.askBeforeProjectShutdownAndUnzip=false;
+				break;
+			default:
+				doUpdateProcedure = false;
+				break;
+			}
+			// --------------------------------------------
+			break;
+			
+		case SERVER_SLAVE:
+			// --------------------------------------------
+			switch (this.updateAutoConfiguration) {
+			case 0:
+				this.askBeforeDownload=false;
+				this.askBeforeProjectShutdownAndUnzip=false;
+				break;
+			default:
+				doUpdateProcedure = false;
+				break;
+			}
+			// --------------------------------------------
+			break;
+		}
+		
+		// ------------------------------------------------
+		// --- Manual execution? --------------------------
+		if (this.manualyExecutedByUser==true) {
+			this.doUpdateProcedure=true;
+			this.askBeforeDownload=true;
+			this.askBeforeProjectShutdownAndUnzip=true;
+		}
+		
+		// ------------------------------------------------
+		// --- Execution out of the IDE? ------------------
+		if (this.globalInfo.AppExecutedOver().equals(GlobalInfo.ExecutedOverIDE)) {
+//			this.doUpdateProcedure=false; // set to 'true' for further developments of the AgentGuiUpdater class 
+//			this.askBeforeDownload=true;
+//			this.askBeforeProjectShutdownAndUnzip=true;
+			System.out.println("Agent.GUI-Update: No updates in the IDE environment available.");
+		}
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		super.run();
 		
-		// --- Download information about latest version -- 
-		String srcFileURL = this.updateSite + this.updateSiteAddition;
-		this.latestVersionInfoFullPath = this.downloadPath + this.latestVersionInfoFile; 
-		Download infoDownload = new Download(srcFileURL, this.latestVersionInfoFullPath);
-		infoDownload.startDownload();
-		boolean loadUpdateInformation = infoDownload.isFinished() && infoDownload.wasSuccessful();
-		infoDownload = null;
+		if (this.doUpdateProcedure==false) {
+			// --- No download, no update --------------------------- 
+			return;
+		}
+		
+		// --- If running, wait for the end of the benchmark --------
+		this.waitForTheEndOfBenchmark();
+		
+		// ----------------------------------------------------------
+		// --- Get latest version information -----------------------
+		boolean loadUpdateInformation = false;
+		boolean skipUpdateDownload = false;
+		boolean readyToUnZip = false;
+		if (this.isUpdateAlreadyLocallyAvailable()) {
+			// --- Locally (downloaded, but not yet installed) ------
+			loadUpdateInformation = true;
+			skipUpdateDownload = true;
+			readyToUnZip = true;
+		} else {
+			// --- From update site ---------------------------------
+			String srcFileURL = this.updateSite + this.updateSiteAddition;
+			Download infoDownload = new Download(srcFileURL, this.latestVersionInfoFullPath);
+			infoDownload.startDownload();
+			loadUpdateInformation = infoDownload.isFinished() && infoDownload.wasSuccessful();
+			infoDownload = null;
+		}
 		
 		if (loadUpdateInformation==true) {
-			// --------------------------------------------
-			// --- Load the UpdateInformation -------------
+			// ------------------------------------------------------
+			// --- Load the UpdateInformation -----------------------
 			this.updateInformation = new UpdateInformation();
 			this.updateInformation.loadUpdateInformation(this.latestVersionInfoFullPath);
-			if (this.updateInformation!=null) {
-				// --- Set name of the update zip file ----
-				this.localUpdateZipFile = this.downloadPath + this.updateInformation.getDownloadFile();
+			if (this.updateInformation!=null && this.updateInformation.isNewerVersion(this.versionInfo)) {
+				// --------------------------------------------------
+				// --- Set name of the update zip file --------------
+				this.localUpdateZipFile = this.localDownloadPath + this.updateInformation.getDownloadFile();
 				this.localUpdateExtractedFolder = this.updateInformation.getDownloadFile().replace(".zip", "");
-				
-				// ----------------------------------------
-				// --- Download now -----------------------
-				boolean readyToInstall = this.downloadUpdateFile();
-//				boolean readyToInstall = true; // --- For debugging later executions ---
-				if (readyToInstall==true) {
-					// ------------------------------------
-					// --- Copy latest info to properties --
-					String destPath = this.propertiesPath + this.latestVersionInfoFile;
+				// --- Set version info string ----------------------
+				String updateVersion = "Version " + this.updateInformation.getMajorRevision() + "." + this.updateInformation.getMinorRevision() + " revision " + this.updateInformation.getBuild();
+ 				// --------------------------------------------------
+				// --- Ask user -------------------------------------
+				if (this.askBeforeDownload==true && skipUpdateDownload==false) {
+					String title = "Agent.GUI-" + updateVersion + " " + Language.translate("is available", Language.EN) + "!";
+					String message = Language.translate("An Agent.GUI-Update is available. Download now?", Language.EN);
+					int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), message, title, JOptionPane.YES_NO_OPTION);
+					if (answer==JOptionPane.NO_OPTION) {
+						return;
+					}
+				}
+				// --------------------------------------------------
+				// --- Download now ---------------------------------
+				if (skipUpdateDownload==false) {
+					readyToUnZip = this.downloadUpdateFile();
+				}
+				if (readyToUnZip==true) {
+					// ----------------------------------------------
+					// --- Copy latest info to properties -----------
+					String destPath = this.localPropertiesPath + this.latestVersionInfoFile;
 					File latestVersionInfoFileProperties = new File(destPath);
 					if (latestVersionInfoFileProperties.exists()) {
 						latestVersionInfoFileProperties.delete();
 					}
 					File latestVersionInfoFile = new File(this.latestVersionInfoFullPath);
 					latestVersionInfoFile.renameTo(latestVersionInfoFileProperties);
-					
-					// ------------------------------------
-					// --- Unzip the downloaded file ------
-					if (this.unzipUpdateFile()==true){
-						if (isPreparedForInstallation()==true) {
-							// --- Do installation --------
+					// ----------------------------------------------
+					// --- Ask user ---------------------------------
+					if (this.askBeforeProjectShutdownAndUnzip==true) {
+						String title = "Agent.GUI-Update " + updateVersion + " " + Language.translate("was downloaded", Language.EN) + "!";
+						String message = Language.translate("Agent.GUI-Update was downloaded. Install now?", Language.EN);
+						int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), message, title, JOptionPane.YES_NO_OPTION);
+						if (answer==JOptionPane.NO_OPTION) {
+							return;
+						}
+					}
+					// ----------------------------------------------
+					// --- Stop JADE, close Projects ----------------
+					if (isPreparedForInstallation()==true) {
+						// ------------------------------------------
+						// --- Unzip the downloaded file ------------
+						if (this.unzipUpdateFile()==true){
+							// --- Do installation ------------------
 							this.executeAgentGuiUpdater();	
-							// --- ShutDown ---------------
-							System.out.println("Finalize update / starting AgentGuiUpdate.jar / shut down application!");
-							System.exit(0);		
+							// --- ShutDown -------------------------
+							Application.quit();
 							return;
 							
 						} else {
-							System.out.println("Agent.GUI-Update: Not prepared for installation! Please close all open projects.");
+							System.err.println("Agent.GUI-Update: Unsuccessful unzipping!");
 						}
+						
 					} else {
-						System.err.println("Agent.GUI-Update: Unsuccessful unzipping!");
+						System.out.println("Agent.GUI-Update: Not prepared for installation! Please close all open projects.");
 					}
 					
 				} else {
-					// ------------------------------------
-					// --- Download unsuccessful ----------
+					// ----------------------------------------------
+					// --- Download unsuccessful --------------------
 					System.err.println("Agent.GUI-Update: Unsuccessful download !");
 					File downloadedFile = new File(this.localUpdateZipFile);
 					if (downloadedFile.exists()) {
 						downloadedFile.delete();
 					}
 				} // end readyToInstall==true after download
-			}// end this.updateInformation!=null
+			
+			} else {
+				// --- Delete info file -----------------------------
+				File latestVersionInfoFile = new File(this.latestVersionInfoFullPath);
+				latestVersionInfoFile.delete();
+				if (this.manualyExecutedByUser==true) {
+					// --- Inform user ------------------------------
+					String title = "Agent.GUI-Updater!";
+					String message = Language.translate("There is no Agent.GUI-Update available!", Language.EN);
+					JOptionPane.showMessageDialog(Application.getMainWindow(), message, title, JOptionPane.INFORMATION_MESSAGE);	
+				}
+				
+			}// end this.updateInformation!=null && this.updateInformation.isNewerVersion(this.versionInfo)
+			
 		}//end loadUpdateInformation==true
 
 	}
@@ -150,16 +351,18 @@ public class AgentGuiUpdater extends Thread {
 	 */
 	private void executeAgentGuiUpdater() {
 		
-		System.out.println("Doing installation now!");
-		// --- create execute statement -----------------------------
-		String execute = "java -jar " + Application.getGlobalInfo().getFileNameUpdater(false) + " -updated -?";
-		System.out.println( "=> Re-Execute: Agent.GUI");
+		// --- Create execute statement -----------------------------
+		String execute = "java -jar " + this.globalInfo.getFileNameUpdater(false) + " -updated " + this.localUpdateExtractedFolder;
+		if (this.updateKeepDictionary==0) {
+			execute += " -deleteDictionary";
+		}
+		System.out.println( "Execute AgentGuiUpdate.jar: " + execute);
 		// ----------------------------------------------------------
 		try {
 			String[] arg = execute.split(" ");
 			ProcessBuilder proBui = new ProcessBuilder(arg);
 			proBui.redirectErrorStream(false);
-			proBui.directory(new File(Application.getGlobalInfo().PathBaseDir()));
+			proBui.directory(new File(this.globalInfo.PathBaseDir()));
 			proBui.start();
 			
 		} catch (IOException e) {
@@ -180,7 +383,7 @@ public class AgentGuiUpdater extends Thread {
 			return false;	
 		}
 		// --- Save FileProperties --------------
-		Application.getGlobalInfo().getFileProperties().save();
+		this.globalInfo.getFileProperties().save();
 		Language.saveDictionaryFile();
 		return true;
 	}
@@ -227,8 +430,11 @@ public class AgentGuiUpdater extends Thread {
 		if (this.updateInformation!=null && this.localUpdateZipFile!=null) {
 			if (this.updateInformation.getDownloadLink()!=null) {
 				
+				System.out.println("Agent.GUI-Update: Start download ...");
 				this.progressMonitor = new AgentGuiUpdaterMonitor();
-				this.progressMonitor.setVisible(true);
+				if (this.askBeforeDownload==true) {
+					this.progressMonitor.setVisible(true);	
+				}
 				this.progressMonitor.setProgress(0);
 				
 				this.downloadThread4Update = new DownloadThread(this.updateInformation.getDownloadLink(), this.localUpdateZipFile);
@@ -258,6 +464,57 @@ public class AgentGuiUpdater extends Thread {
 		}
 		return readyToInstall;
 		
+	}
+	
+	/**
+	 * Checks if is update already locally available.
+	 * @return true, if is update already locally available
+	 */
+	private boolean isUpdateAlreadyLocallyAvailable() {
+		
+		boolean available = false;
+		
+		String pathCheckLatestVersionInfo = this.localPropertiesPath + this.latestVersionInfoFile;
+		File fileCheckLatestVersionInfo = new File(pathCheckLatestVersionInfo); 
+		if (fileCheckLatestVersionInfo.exists()==true) {
+			// --- There is a File with update information available ----------
+			UpdateInformation updateInfo = new UpdateInformation();
+			updateInfo.loadUpdateInformation(pathCheckLatestVersionInfo);
+			// --- Check if the zip-File is there -----------------------------
+			String downloadFile = updateInfo.getDownloadFile();
+			String pathDownloadFile = this.localDownloadPath + downloadFile;
+			File fileDownloadFile = new File(pathDownloadFile); 
+			if (fileDownloadFile.exists()==true) {
+				// --- Is the size the same ? ---------------------------------
+				Integer normalSize = updateInfo.getDownloadSize();
+				long currentSize = fileDownloadFile.length();
+				if (currentSize==normalSize) {
+					File moveTo = new File(this.latestVersionInfoFullPath);
+					fileCheckLatestVersionInfo.renameTo(moveTo);
+					available = true;
+				} else {
+					fileCheckLatestVersionInfo.delete();
+					fileDownloadFile.delete();
+				}
+				
+			} else {
+				fileCheckLatestVersionInfo.delete();
+			}
+		}
+		return available;
+	}
+
+	/**
+	 * Wait for benchmark.
+	 */
+	private void waitForTheEndOfBenchmark() {
+		while (Application.isBenchmarkRunning()==true) {
+			try {
+				sleep(1000);
+			} catch (InterruptedException ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 	
 }

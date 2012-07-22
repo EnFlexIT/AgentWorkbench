@@ -47,6 +47,7 @@ import agentgui.core.jade.Platform;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectsLoaded;
 import agentgui.core.systemtray.AgentGUITrayIcon;
+import agentgui.core.update.AgentGuiUpdater;
 import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.load.LoadMeasureThread;
 
@@ -250,7 +251,7 @@ public class Application {
 			
 		} else {
 			// ------------------------------------------------------
-			// --- Start JADE ---------------------------------------
+			// --- Just start JADE ----------------------------------
 			getGlobalInfo();
 			Language.startDictionary();
 
@@ -381,7 +382,7 @@ public class Application {
 		// --- Start the Application as defined by 'isServer' -------
 		getJadePlatform();
 		getTrayIcon();
-		if ( isRunningAsServer() == true ) {
+		if (isRunningAsServer()==true) {
 			// ------------------------------------------------------
 			// --- Start Server-Version of AgentGUI -----------------
 			System.out.println( Language.translate("Programmstart [Server] ..." ) );
@@ -396,9 +397,10 @@ public class Application {
 			getProjectsLoaded();
 
 			startApplication();
-			getMainWindow().setStatusBar( Language.translate("Fertig") );
+			getMainWindow().setStatusBar(Language.translate("Fertig"));
 			doBenchmark(false);
 			proceedStartArgumentOpenProject();
+			new AgentGuiUpdater().start();
 		}
 	}
 	

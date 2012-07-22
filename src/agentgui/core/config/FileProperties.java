@@ -57,6 +57,7 @@ import agentgui.core.application.Language;
 public class FileProperties extends Properties {
 
 	private static final long serialVersionUID = 7953205356494195952L;
+	private final String defaultUpdateSite = "http://update.agentgui.org";
 	
 	private GlobalInfo globalInfo = null;
 	private VersionInfo versionInfo = null;
@@ -88,6 +89,7 @@ public class FileProperties extends Properties {
 	private final String DEF_UPDATE_SITE = "35_UPDATE_SITE";
 	private final String DEF_UPDATE_AUTOCONFIG = "36_UPDATE_AUTOCONFIG";
 	private final String DEF_UPDATE_KEEP_DICTIONARY = "37_UPDATE_KEEP_DICTIONARY";
+	private final String DEF_UPDATE_DATE_LAST_CHECKED = "38_UPDATE_DATE_LAST_CHECKED";
 	
 	private String[] mandatoryProps = {	this.DEF_RUNAS,
 										this.DEF_BENCH_VALUE,
@@ -100,7 +102,8 @@ public class FileProperties extends Properties {
 										this.DEF_MASTER_PORT4MTP,
 										this.DEF_UPDATE_SITE,
 										this.DEF_UPDATE_AUTOCONFIG,
-										this.DEF_UPDATE_KEEP_DICTIONARY
+										this.DEF_UPDATE_KEEP_DICTIONARY,
+										this.DEF_UPDATE_DATE_LAST_CHECKED
 										};
 	
 	/**
@@ -314,6 +317,14 @@ public class FileProperties extends Properties {
 		} else {
 			Application.getGlobalInfo().setUpdateKeepDictionary(1);
 		}
+		// --- this.DEF_UPDATE_DATE_LAST_CHECKED ------
+		propValue = this.getProperty(this.DEF_UPDATE_DATE_LAST_CHECKED);
+		if ( propValue.equalsIgnoreCase("") == false ) {
+			Long propValueInt = Long.parseLong(propValue.trim());
+			Application.getGlobalInfo().setUpdateDateLastChecked(propValueInt);
+		} else {
+			Application.getGlobalInfo().setUpdateDateLastChecked(0);
+		}
 		
 	}
 
@@ -418,9 +429,10 @@ public class FileProperties extends Properties {
 		}
 		// --- this.DEF_UPDATE_AUTOCONFIG -------------
 		this.setProperty(this.DEF_UPDATE_AUTOCONFIG, Application.getGlobalInfo().getUpdateAutoConfiguration().toString());	
-
 		// --- this.DEF_UPDATE_KEEP_DICTIONAR ---------		
 		this.setProperty(this.DEF_UPDATE_KEEP_DICTIONARY, Application.getGlobalInfo().getUpdateKeepDictionary().toString());
+		// --- this.DEF_UPDATE_DATE_LAST_CHECKED ------
+		this.setProperty(this.DEF_UPDATE_DATE_LAST_CHECKED, Application.getGlobalInfo().getUpdateDateLastChecked().toString());
 		
 	}	
 	
@@ -428,33 +440,38 @@ public class FileProperties extends Properties {
 	 * This method sets the mandatory properties with default values to this properties 
 	 */
 	private void setDefaultConfigValues() {
+
 		for (int i = 0; i < mandatoryProps.length; i++) {
-			// ----------------------------------------
-			// --- Here are some mandantory Props ----- 
+			
+			// --- Here the mandatory properties in general --------- 
 			this.setProperty( mandatoryProps[i], "" );
-			// ----------------------------------------
-			// --- Here are some mandantory Values ---- 
+
+			// --- Here some special mandatory properties ----------- 
 			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_LANGUAGE) ) {				
 				this.setProperty(this.DEF_LANGUAGE, Language.EN);
-			}
-			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT) ) {				
-				this.setProperty(this.DEF_MASTER_PORT, Application.getGlobalInfo().getJadeLocalPort().toString());
-			}
-			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT4MTP) ) {				
-				this.setProperty(this.DEF_MASTER_PORT4MTP, Application.getGlobalInfo().getServerMasterPort4MTP().toString());
-			}
-			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_SITE) ) {				
-				this.setProperty(this.DEF_UPDATE_SITE, "http://update.agentgui.org");
-			}
-			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_AUTOCONFIG) ) {				
-				this.setProperty(this.DEF_UPDATE_AUTOCONFIG, "0");
-			}
-			if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_KEEP_DICTIONARY) ) {
-				this.setProperty(this.DEF_UPDATE_KEEP_DICTIONARY, "1");
-			}
 				
-			// ----------------------------------------
-		}
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT) ) {				
+				this.setProperty(this.DEF_MASTER_PORT, Application.getGlobalInfo().getJadeLocalPort().toString());
+				
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT4MTP) ) {				
+				this.setProperty(this.DEF_MASTER_PORT4MTP, Application.getGlobalInfo().getServerMasterPort4MTP().toString());
+				
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_SITE) ) {				
+				this.setProperty(this.DEF_UPDATE_SITE, "http://update.agentgui.org");
+				
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_AUTOCONFIG) ) {				
+				this.setProperty(this.DEF_UPDATE_AUTOCONFIG, "0");
+				
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_KEEP_DICTIONARY) ) {
+				this.setProperty(this.DEF_UPDATE_KEEP_DICTIONARY, "1");
+				
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_DATE_LAST_CHECKED) ) {
+				this.setProperty(this.DEF_UPDATE_DATE_LAST_CHECKED, "0");
+				
+			}	
+			
+		} // end for
+		
 	}
 
 	/**
@@ -467,15 +484,19 @@ public class FileProperties extends Properties {
 		// --- Search all mandantory property-values ------
 		for (int i = 0; i < mandatoryProps.length; i++) {
 			
-			if ( this.containsKey(mandatoryProps[i])  == false ) {
+			if (this.containsKey(mandatoryProps[i])==false) {
 				// ----------------------------------------
 				// --- Mandatory property is NOT there ----
 				// --- => Set default valid value      ----
 				// ----------------------------------------
-				if ( mandatoryProps[i].equals(this.DEF_LANGUAGE) ) {
-					this.setProperty(mandatoryProps[i], Language.EN );
+				if (mandatoryProps[i].equals(this.DEF_LANGUAGE)) {
+					this.setProperty(mandatoryProps[i], Language.EN);
+				} else if (mandatoryProps[i].equals(this.DEF_BENCH_SKIP_ALLWAYS)) {
+					this.setProperty(mandatoryProps[i], "true");
+				} else if (mandatoryProps[i].equals(this.DEF_UPDATE_SITE)) {
+					this.setProperty(mandatoryProps[i], this.defaultUpdateSite);
 				} else {
-					this.setProperty(mandatoryProps[i], "" );	
+					this.setProperty(mandatoryProps[i], "");	
 				}
 				somethingMissed = true;
 				// ----------------------------------------
@@ -486,9 +507,19 @@ public class FileProperties extends Properties {
 				// --- => Check for valid value    --------
 				// ----------------------------------------
 				String value = this.getProperty(mandatoryProps[i]);
-				if (mandatoryProps[i].equals(this.DEF_LANGUAGE) ) {
+				if (mandatoryProps[i].equals(this.DEF_LANGUAGE)) {
 					if (value.equals("")) {
 						this.setProperty(mandatoryProps[i], Language.EN);
+						somethingMissed = true;
+					}
+				} else if (mandatoryProps[i].equals(this.DEF_BENCH_SKIP_ALLWAYS)) {
+					if (value.equals("")) {
+						this.setProperty(mandatoryProps[i], "true");
+						somethingMissed = true;
+					}
+				} else if (mandatoryProps[i].equals(this.DEF_UPDATE_SITE)) {
+					if (value.equals("")) {
+						this.setProperty(mandatoryProps[i], this.defaultUpdateSite);
 						somethingMissed = true;
 					}
 				}

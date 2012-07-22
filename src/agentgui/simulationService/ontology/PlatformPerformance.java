@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: PlatformPerformance
 * @author ontology bean generator
-* @version 2011/11/27, 23:21:42
+* @version 2012/07/23, 00:15:35
 */
 public class PlatformPerformance implements Concept {
 
@@ -24,17 +24,6 @@ public class PlatformPerformance implements Concept {
    }
 
    /**
-* Protege name: cpu_numberOf
-   */
-   private int cpu_numberOf;
-   public void setCpu_numberOf(int value) { 
-    this.cpu_numberOf=value;
-   }
-   public int getCpu_numberOf() {
-     return this.cpu_numberOf;
-   }
-
-   /**
 * Protege name: cpu_model
    */
    private String cpu_model;
@@ -43,6 +32,17 @@ public class PlatformPerformance implements Concept {
    }
    public String getCpu_model() {
      return this.cpu_model;
+   }
+
+   /**
+* Protege name: cpu_numberOf
+   */
+   private int cpu_numberOf;
+   public void setCpu_numberOf(int value) { 
+    this.cpu_numberOf=value;
+   }
+   public int getCpu_numberOf() {
+     return this.cpu_numberOf;
    }
 
    /**

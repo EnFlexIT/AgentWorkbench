@@ -132,6 +132,10 @@ public class DBConnection {
 				"jade_port int(11)," +
 				"http4mtp varchar(255) CHARACTER SET utf8," +
 
+				"vers_major int(11)," +
+				"vers_minor int(11)," +
+				"vers_build int(11)," +
+				
 				"os_name varchar(50)," +
 				"os_version varchar(50)," +
 				"os_arch varchar(50)," +

@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2011/11/27, 23:21:43
+* @version 2012/07/23, 00:15:35
 */
 public class ClientRemoteContainerReply implements AgentAction {
 
@@ -24,6 +24,17 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
+* Protege name: remotePerformance
+   */
+   private PlatformPerformance remotePerformance;
+   public void setRemotePerformance(PlatformPerformance value) { 
+    this.remotePerformance=value;
+   }
+   public PlatformPerformance getRemotePerformance() {
+     return this.remotePerformance;
+   }
+
+   /**
 * Protege name: remoteOS
    */
    private OSInfo remoteOS;
@@ -32,6 +43,28 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
    public OSInfo getRemoteOS() {
      return this.remoteOS;
+   }
+
+   /**
+* Protege name: remoteAgentGuiVersion
+   */
+   private AgentGuiVersion remoteAgentGuiVersion;
+   public void setRemoteAgentGuiVersion(AgentGuiVersion value) { 
+    this.remoteAgentGuiVersion=value;
+   }
+   public AgentGuiVersion getRemoteAgentGuiVersion() {
+     return this.remoteAgentGuiVersion;
+   }
+
+   /**
+* Protege name: remoteBenchmarkResult
+   */
+   private BenchmarkResult remoteBenchmarkResult;
+   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
+    this.remoteBenchmarkResult=value;
+   }
+   public BenchmarkResult getRemoteBenchmarkResult() {
+     return this.remoteBenchmarkResult;
    }
 
    /**
@@ -54,28 +87,6 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
    public String getRemotePID() {
      return this.remotePID;
-   }
-
-   /**
-* Protege name: remotePerformance
-   */
-   private PlatformPerformance remotePerformance;
-   public void setRemotePerformance(PlatformPerformance value) { 
-    this.remotePerformance=value;
-   }
-   public PlatformPerformance getRemotePerformance() {
-     return this.remotePerformance;
-   }
-
-   /**
-* Protege name: remoteBenchmarkResult
-   */
-   private BenchmarkResult remoteBenchmarkResult;
-   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
-    this.remoteBenchmarkResult=value;
-   }
-   public BenchmarkResult getRemoteBenchmarkResult() {
-     return this.remoteBenchmarkResult;
    }
 
 }

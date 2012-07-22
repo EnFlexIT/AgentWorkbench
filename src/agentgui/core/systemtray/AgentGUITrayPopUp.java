@@ -37,6 +37,7 @@ import javax.swing.Icon;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.update.AgentGuiUpdater;
 
 /**
  * This class represents the context menu of the tray icon.
@@ -49,6 +50,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 
 	private AgentGUITrayIcon agentGUItray = null;
 	
+	private MenuItem itemUpdate = null;
 	private MenuItem itemAbout = null;
 	private MenuItem itemServiceStart = null;
 	private MenuItem itemServiceStop = null;
@@ -65,6 +67,10 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 	public AgentGUITrayPopUp(AgentGUITrayIcon tray) {
 
 		agentGUItray = tray;
+		
+		itemUpdate = new MenuItem(Language.translate("Nach Update suchen ..."));
+		itemUpdate.setActionCommand("Update");
+		itemUpdate.addActionListener(this);
 		
 		itemAbout = new MenuItem(Language.translate("Über..."));
 		itemAbout.setActionCommand("About");
@@ -95,6 +101,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		itemExit.addActionListener(this);
 		
 		// --- Build PopUp-Menu ---------------------------------
+		this.add(itemUpdate);
 		this.add(itemAbout);
 		this.addSeparator();
 		
@@ -146,7 +153,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 				agentGUItray.trayDialog.jLabelIcon.setIcon((Icon) agentGUItray.imageIcon);
 			}
 		}
-		agentGUItray.trayIcon.setToolTip(Application.getGlobalInfo().getApplicationTitle() + " - " + Application.getJadePlatform().jadeExecutionMode);
+		agentGUItray.trayIcon.setToolTip(Application.getGlobalInfo().getApplicationTitle() + " - " + Application.getGlobalInfo().getExecutionModeDescription());
 	}
 	
 	/* (non-Javadoc)
@@ -156,7 +163,9 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		
 		String ActCMD = ae.getActionCommand();
-		if ( ActCMD.equalsIgnoreCase("About")) {
+		if ( ActCMD.equalsIgnoreCase("Update")) {
+			new AgentGuiUpdater(true).start();
+		} else if ( ActCMD.equalsIgnoreCase("About")) {
 			Application.showAboutDialog();
 		}else if ( ActCMD.equalsIgnoreCase("startAgentGUIService")) {
 			Application.getJadePlatform().jadeStart();

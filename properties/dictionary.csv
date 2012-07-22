@@ -515,8 +515,13 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
+en;;Agent.GUI-Update was downloaded. Install now?;;;
+en;;An Agent.GUI-Update is available. Download now?;;;
 en;;Discrete squares environment;;;
 en;;Set mapping of external types to local components;;;
+en;;There is no Agent.GUI-Update available!;;;
+en;;is available;;;
+en;;was downloaded;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agenten-Klasse;Agent class;;;

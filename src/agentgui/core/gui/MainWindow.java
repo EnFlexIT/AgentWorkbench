@@ -79,6 +79,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
 import agentgui.core.project.Project;
+import agentgui.core.update.AgentGuiUpdater;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 
 /**
@@ -867,9 +868,9 @@ public class MainWindow extends JFrame implements ComponentListener {
 		if (jMenuMainHelp == null) {
 			jMenuMainHelp = new JMenu("Hilfe");
 			jMenuMainHelp.setText(Language.translate("Hilfe"));
-			jMenuMainHelp.add( new CWMenueItem( "HelpAbout", Language.translate("Über..."), null )) ;
+			jMenuMainHelp.add( new CWMenueItem( "HelpUpdate", Language.translate("Nach Update suchen ..."), null ));
 			jMenuMainHelp.addSeparator();
-			jMenuMainHelp.add( new CWMenueItem( "HelpUpdate", Language.translate("Nach Update suchen ..."), null )) ;
+			jMenuMainHelp.add( new CWMenueItem( "HelpAbout", Language.translate("Über..."), null ));
 		}
 		return jMenuMainHelp;
 	}
@@ -1048,11 +1049,11 @@ public class MainWindow extends JFrame implements ComponentListener {
 				Application.showOptionDialog();
 			}
 			// --- Menü Hilfe ---------------------------------
+			else if ( ActCMD.equalsIgnoreCase("HelpUpdate") ) {
+				new AgentGuiUpdater(true).start();
+			}
 			else if ( ActCMD.equalsIgnoreCase("HelpAbout") ) {
 				Application.showAboutDialog();
-			}
-			else if ( ActCMD.equalsIgnoreCase("HelpUpdate") ) {
-				//TODO Serach for update
 			}
 			else {
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);

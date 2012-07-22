@@ -43,6 +43,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.codec.binary.Base64;
 
+import agentgui.core.config.VersionInfo;
+
 /**
  * The Class UpdateInformation.
  */
@@ -177,6 +179,38 @@ public class UpdateInformation {
 	}
 	
 	/**
+	 * Checks if is update.
+	 * @return true, if is update
+	 */
+	public boolean isNewerVersion(VersionInfo versionInfo) {
+		return this.isNewerVersion(versionInfo.getVersionMajor(), versionInfo.getVersionMinor(), versionInfo.getVersionBuild());
+	}
+	
+	/**
+	 * Checks if is newer version.
+	 *
+	 * @param localMajorRevision the major revision to compare
+	 * @param localMinorRevision the minor revision to compare
+	 * @param localBuild the build number to compare
+	 * @return true, if is newer version
+	 */
+	public boolean isNewerVersion(Integer localMajorRevision, Integer localMinorRevision, Integer localBuild) {
+		
+		if (this.majorRevision>localMajorRevision) {
+			return true;
+		} else {
+			if (this.minorRevision>localMinorRevision) {
+				return true;
+			} else {
+				if (this.build>localBuild) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Gets the major revision.
 	 * @return the majorRevision
 	 */
@@ -266,5 +300,5 @@ public class UpdateInformation {
 	public Integer getDownloadSize() {
 		return downloadSize;
 	}
-	
+
 }

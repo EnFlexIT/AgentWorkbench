@@ -52,6 +52,7 @@ import java.util.Iterator;
 import agentgui.core.application.Application;
 import agentgui.core.database.DBConnection;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
+import agentgui.simulationService.ontology.AgentGuiVersion;
 import agentgui.simulationService.ontology.BenchmarkResult;
 import agentgui.simulationService.ontology.ClientRegister;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
@@ -248,11 +249,12 @@ public class ServerMasterAgent extends Agent {
 						PlatformTime plTime = sr.getSlaveTime();
 						PlatformPerformance plPerf = sr.getSlavePerformance();
 						OSInfo os = sr.getSlaveOS();
+						AgentGuiVersion version = sr.getSlaveVersion();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
 						Date plDate = new Date(timestamp);						
 						
-						dbRegisterPlatform(senderAID, os, plAdd, plPerf, plDate, true);
+						dbRegisterPlatform(senderAID, os, plAdd, plPerf, version, plDate, true);
 
 						// --- Answer with 'RegisterReceipt' ------------------
 						RegisterReceipt rr = new RegisterReceipt();
@@ -266,11 +268,12 @@ public class ServerMasterAgent extends Agent {
 						PlatformTime plTime = cr.getClientTime();
 						PlatformPerformance plPerf = cr.getClientPerformance();
 						OSInfo os = cr.getClientOS();
+						AgentGuiVersion version = cr.getClientVersion();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
 						Date plDate = new Date(timestamp);						
 						
-						dbRegisterPlatform(senderAID, os, plAdd, plPerf, plDate, false);
+						dbRegisterPlatform(senderAID, os, plAdd, plPerf, version, plDate, false);
 						
 						// --- Answer with 'RegisterReceipt' ------------------
 						RegisterReceipt rr = new RegisterReceipt();
@@ -350,7 +353,7 @@ public class ServerMasterAgent extends Agent {
 	 * @see PlatformAddress
 	 * @see PlatformPerformance
 	 */
-	private void dbRegisterPlatform(AID sender, OSInfo os, PlatformAddress platform, PlatformPerformance performance, Date time, boolean isServer) {
+	private void dbRegisterPlatform(AID sender, OSInfo os, PlatformAddress platform, PlatformPerformance performance, AgentGuiVersion version, Date time, boolean isServer) {
 		
 		String sqlStmt = "";
 		Timestamp sqlDate = new Timestamp(time.getTime());
@@ -373,6 +376,9 @@ public class ServerMasterAgent extends Agent {
 								"url = '" + platform.getUrl() + "'," +
 								"jade_port = " + platform.getPort() + "," +
 								"http4mtp = '" + platform.getHttp4mtp() + "'," +
+								"vers_major = " + version.getMajorRevision() + "," +
+								"vers_minor = " + version.getMinorRevision() + "," +
+								"vers_build = " + version.getBuildNo() + "," +
 								"os_name = '" + os.getOs_name() + "'," +
 								"os_version = '" + os.getOs_version() + "'," +
 								"os_arch = '" + os.getOs_arch() + "'," +
@@ -399,6 +405,9 @@ public class ServerMasterAgent extends Agent {
 								"url = '" + platform.getUrl() + "'," +
 								"jade_port = " + platform.getPort() + "," +
 								"http4mtp = '" + platform.getHttp4mtp() + "'," +
+								"vers_major = " + version.getMajorRevision() + "," +
+								"vers_minor = " + version.getMinorRevision() + "," +
+								"vers_build = " + version.getBuildNo() + "," +
 								"os_name = '" + os.getOs_name() + "'," +
 								"os_version = '" + os.getOs_version() + "'," +
 								"os_arch = '" + os.getOs_arch() + "'," +

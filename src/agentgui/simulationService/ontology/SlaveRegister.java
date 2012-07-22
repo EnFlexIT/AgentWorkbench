@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: SlaveRegister
 * @author ontology bean generator
-* @version 2011/11/27, 23:21:43
+* @version 2012/07/23, 00:15:35
 */
 public class SlaveRegister implements AgentAction {
 
    /**
-* Protege name: slavePerformance
+* Protege name: slaveOS
    */
-   private PlatformPerformance slavePerformance;
-   public void setSlavePerformance(PlatformPerformance value) { 
-    this.slavePerformance=value;
+   private OSInfo slaveOS;
+   public void setSlaveOS(OSInfo value) { 
+    this.slaveOS=value;
    }
-   public PlatformPerformance getSlavePerformance() {
-     return this.slavePerformance;
+   public OSInfo getSlaveOS() {
+     return this.slaveOS;
    }
 
    /**
@@ -35,14 +35,25 @@ public class SlaveRegister implements AgentAction {
    }
 
    /**
-* Protege name: slaveOS
+* Protege name: slavePerformance
    */
-   private OSInfo slaveOS;
-   public void setSlaveOS(OSInfo value) { 
-    this.slaveOS=value;
+   private PlatformPerformance slavePerformance;
+   public void setSlavePerformance(PlatformPerformance value) { 
+    this.slavePerformance=value;
    }
-   public OSInfo getSlaveOS() {
-     return this.slaveOS;
+   public PlatformPerformance getSlavePerformance() {
+     return this.slavePerformance;
+   }
+
+   /**
+* Protege name: slaveVersion
+   */
+   private AgentGuiVersion slaveVersion;
+   public void setSlaveVersion(AgentGuiVersion value) { 
+    this.slaveVersion=value;
+   }
+   public AgentGuiVersion getSlaveVersion() {
+     return this.slaveVersion;
    }
 
    /**

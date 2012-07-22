@@ -55,6 +55,7 @@ import agentgui.simulationService.LoadServiceHelper;
 
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
+import agentgui.simulationService.ontology.AgentGuiVersion;
 import agentgui.simulationService.ontology.BenchmarkResult;
 import agentgui.simulationService.ontology.ClientRegister;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
@@ -95,6 +96,7 @@ public class ServerClientAgent extends Agent {
 	private PlatformAddress myPlatform = null;
 	private PlatformPerformance myPerformance = null;
 	private OSInfo myOS = null;
+	private AgentGuiVersion myVersion = null;
 	
 	private PlatformTime myPlatformTime = new PlatformTime();
 	private ClientRegister myRegistration = new ClientRegister();
@@ -133,6 +135,8 @@ public class ServerClientAgent extends Agent {
 			myPerformance = myCRCreply.getRemotePerformance();
 			// --- Set OS-Informations ------------------------
 			myOS = myCRCreply.getRemoteOS();
+			// --- Set version info ---------------------------
+			myVersion = myCRCreply.getRemoteAgentGuiVersion();
 			
 		} catch (ServiceException e) {
 			// --- problems to get the SimulationsService ! ---
@@ -166,6 +170,7 @@ public class ServerClientAgent extends Agent {
 		myRegistration.setClientTime(myPlatformTime);
 		myRegistration.setClientPerformance(myPerformance);
 		myRegistration.setClientOS(myOS);
+		myRegistration.setClientVersion(myVersion);
 		this.sendMessage2MainServer(myRegistration);
 		
 		// --- Add Main-Behaviours ------------------------

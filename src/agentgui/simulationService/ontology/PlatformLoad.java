@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: PlatformLoad
 * @author ontology bean generator
-* @version 2011/11/27, 23:21:43
+* @version 2012/07/23, 00:15:35
 */
 public class PlatformLoad implements Concept {
 
    /**
-* Protege name: loadMemorySystem
+* Protege name: loadNoThreads
    */
-   private float loadMemorySystem;
-   public void setLoadMemorySystem(float value) { 
-    this.loadMemorySystem=value;
+   private int loadNoThreads;
+   public void setLoadNoThreads(int value) { 
+    this.loadNoThreads=value;
    }
-   public float getLoadMemorySystem() {
-     return this.loadMemorySystem;
+   public int getLoadNoThreads() {
+     return this.loadNoThreads;
    }
 
    /**
@@ -35,14 +35,14 @@ public class PlatformLoad implements Concept {
    }
 
    /**
-* Protege name: loadNoThreads
+* Protege name: loadMemorySystem
    */
-   private int loadNoThreads;
-   public void setLoadNoThreads(int value) { 
-    this.loadNoThreads=value;
+   private float loadMemorySystem;
+   public void setLoadMemorySystem(float value) { 
+    this.loadMemorySystem=value;
    }
-   public int getLoadNoThreads() {
-     return this.loadNoThreads;
+   public float getLoadMemorySystem() {
+     return this.loadMemorySystem;
    }
 
    /**

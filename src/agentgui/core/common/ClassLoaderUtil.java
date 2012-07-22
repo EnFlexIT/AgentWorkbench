@@ -90,23 +90,17 @@ public class ClassLoaderUtil {
 				Enumeration<JarEntry> e = jarFile.entries();
 
 				while (e.hasMoreElements()) {
-
 					JarEntry entry = e.nextElement();
 					String entryName = entry.getName();
-
 					if (!entryName.contains("META-INF")) {
-						//if (entry.isDirectory()) {
-						// --- package found ---    	
+						// --- package found ? ---    	
 						String packpageName = ClassLoaderUtil.getPackageName(entryName);
-						if (packpageName != null && packpageName.length() != 0 && result.contains(packpageName) == false) {
-							//System.out.println( "=> " + packpageName );
-							if (result.contains(packpageName)==false) {
-								result.add(packpageName);	
-							}
-							//    						}
-						}//directory 
-					}//meta-inf
-				}//while
+						if (packpageName!=null && packpageName.length()!=0 && result.contains(packpageName)==false) {
+							result.add(packpageName);	
+						} 
+					}
+					
+				}// end while
 				jarFile.close();
 
 			}

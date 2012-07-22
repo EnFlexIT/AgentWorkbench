@@ -75,6 +75,7 @@ import java.util.List;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
+import agentgui.core.config.VersionInfo;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation;
@@ -85,6 +86,7 @@ import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadUnits;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
+import agentgui.simulationService.ontology.AgentGuiVersion;
 import agentgui.simulationService.ontology.BenchmarkResult;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
@@ -1462,6 +1464,13 @@ public class LoadService extends BaseService {
 			// --- Get the PID of this JVM --------------------
 			String jvmPID = LoadMeasureThread.getLoadCurrentJVM().getJvmPID();
 			
+			// --- Set Agent.GUI version info -----------------
+			VersionInfo versionInfo = new VersionInfo();
+			AgentGuiVersion version = new AgentGuiVersion();
+			version.setMajorRevision(versionInfo.getVersionMajor());
+			version.setMinorRevision(versionInfo.getVersionMinor());
+			version.setBuildNo(versionInfo.getVersionBuild());
+			
 			// --- Finally define this local description ------
 			crcReply = new ClientRemoteContainerReply();
 			crcReply.setRemoteContainerName(myContainer.getID().getName());
@@ -1470,6 +1479,7 @@ public class LoadService extends BaseService {
 			crcReply.setRemoteOS(myOS);
 			crcReply.setRemotePerformance(myPerformance);
 			crcReply.setRemoteBenchmarkResult(bench);
+			crcReply.setRemoteAgentGuiVersion(version);
 			
 		}
 

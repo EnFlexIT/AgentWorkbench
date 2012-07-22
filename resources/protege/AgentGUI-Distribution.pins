@@ -1,7 +1,11 @@
-; Sun Nov 27 23:41:12 CET 2011
+; Mon Jul 23 00:15:36 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
+
+([AgentGuiVersion] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
 
 ([BenchmarkResult] of  %3AJADE-CLASS
 

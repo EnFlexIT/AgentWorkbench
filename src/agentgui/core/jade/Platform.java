@@ -47,7 +47,6 @@ import agentgui.core.agents.UtilityAgent;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.network.JadeUrlChecker;
-import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.Project;
 import agentgui.core.webserver.DownloadServer;
 
@@ -64,19 +63,15 @@ public class Platform extends Object {
 	public final static int UTIL_CMD_ShutdownPlatform = 2;
 	public final static int UTIL_CMD_OpenLoadMonitor = 3;
 	
-	public static final String MASapplicationAgentName = "server.client";
-	public static final String MASserverMasterAgentName = "server.master";
-	public static final String MASserverSlaveAgentName = "server.slave";
+	private static final String MASapplicationAgentName = "server.client";
+	private static final String MASserverMasterAgentName = "server.master";
+	private static final String MASserverSlaveAgentName = "server.slave";
 
+	private Runtime jadeRuntime;
+	private AgentContainer jadeMainContainer;
+	private Vector<AgentContainer> jadeContainerLocal = new Vector<AgentContainer>();
+	private Vector<ContainerID> jadeContainerRemote = new Vector<ContainerID>();
 	
-	public static Runtime jadeRuntime;
-	public static AgentContainer jadeMainContainer;
-	public static Vector<AgentContainer> jadeContainerLocal = new Vector<AgentContainer>();
-	public static Vector<ContainerID> jadeContainerRemote = new Vector<ContainerID>();
-	
-	public PlatformJadeConfig jadePlatformConfig = null;	
-	public String jadeExecutionMode = "";
-
 	public JadeUrlChecker urlChecker = null; 
 	private String newLine = Application.getGlobalInfo().getNewLineSeparator();
 	
@@ -84,11 +79,7 @@ public class Platform extends Object {
 	 * Constructor of this class.
 	 */
 	public Platform() {
-		if (Application.isRunningAsServer()==true) {
-			jadeExecutionMode = "Server";
-		} else { 
-			jadeExecutionMode = "Application";
-		}
+
 	}	
 	
 	/**
@@ -109,84 +100,10 @@ public class Platform extends Object {
 		// ----------------------------------------------------------
 		// --- Differentiation of the Application-Case --------------
 		// ----------------------------------------------------------
-		if (Application.isRunningAsServer()==true) {
-			// ------------------------------------------------------
-			// --- Running as Agent.GUI - Server --------------------
-			// ------------------------------------------------------
-			// --- Not yet known: Master- or Slave-Server? ----------
-			JadeUrlChecker thisAddress = new JadeUrlChecker(jadeMainContainer.getPlatformName());	
-			if ( thisAddress.getHostIP().equalsIgnoreCase(urlChecker.getHostIP())  && 
-				 thisAddress.getPort().equals(urlChecker.getPort()) ) {
-				// -------------------------------------------------
-				// --- This is a Master-Server-Platform ------------
-				// -------------------------------------------------
-				jadeExecutionMode = "Server [Master]";
-				// --- Connecting to Database ----------------------
-				if (Application.getDatabaseConnection().hasErrors==true ) {
-					
-					this.jadeStop();
-					
-					String msgHead = "";
-					String msgText = "";
-					
-					msgHead += Language.translate("Konfiguration des") + " " + Application.getGlobalInfo().getApplicationTitle() + "-" +  jadeExecutionMode;
-					msgText += "Die Systemkonfiguration enthält keine gültigen Angaben über den" + newLine +
-							   "Datenbankserver. Der Start von JADE wird deshalb unterbrochen." + newLine +
-							   "Bitte konfigurieren Sie einen MySQL-Datenbank-Server und" + newLine +
-							   "starten Sie den Server-Master anschließend erneut." + newLine + newLine +
-							   "Möchten Sie die Konfiguration nun vornehmen?";
-					msgText = Language.translate(msgText);
-					
-					int answer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);
-					if (answer == JOptionPane.YES_OPTION) {
-						Application.showOptionDialog();
-					} 
-					return false;
-					
-				}
-				// --- Starting 'Server.Master'-Agent --------------				
-				jadeAgentStart(MASserverMasterAgentName, agentgui.simulationService.agents.ServerMasterAgent.class.getName());
-				
-			} else {
-				// -------------------------------------------------
-				// --- This is a Slave-Server-Platform -------------
-				// -------------------------------------------------
-				jadeExecutionMode = "Server [Slave]";
-				if (Application.getGlobalInfo().getServerMasterURL()==null ||
-					Application.getGlobalInfo().getServerMasterURL().equalsIgnoreCase("")==true ||
-					Application.getGlobalInfo().getServerMasterPort().equals(0)==true ||
-					Application.getGlobalInfo().getServerMasterPort4MTP().equals(0)==true ) {
-					
-					this.jadeStop();
-					
-					String msgHead = "";
-					String msgText = "";
-					
-					msgHead += Language.translate("Konfiguration des") + " " + Application.getGlobalInfo().getApplicationTitle() + "-" +  jadeExecutionMode;
-					msgText += "Die Systemkonfiguration enthält keine gültigen Angaben über den" + newLine +
-							   "Hauptserver. Der Start von JADE wird deshalb unterbrochen." + newLine +
-							   "Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)" + newLine +
-							   "und starten Sie den Dienst anschließend erneut." + newLine + newLine +
-							   "Möchten Sie die Konfiguration nun vornehmen?";
-					msgText = Language.translate(msgText);
-					
-					int answer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);
-					if (answer == JOptionPane.YES_OPTION) {
-						Application.showOptionDialog();
-					} 
-					return false;
-					
-				} 
-				// --- Starting 'Server.Slave'-Agent ---------------
-				jadeAgentStart(MASserverSlaveAgentName, agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
-					
-			}
-		} else {
-			// ------------------------------------------------------
-			// --- Running as Agent.GUI - Application ---------------
-			// ------------------------------------------------------
-			jadeExecutionMode = "Application";
-			// --- Starting 'Server.Client'-Agent -------------------				
+		String applicationTitle = Application.getGlobalInfo().getApplicationTitle();
+		String executionModeDescription = Application.getGlobalInfo().getExecutionModeDescription();
+		switch (Application.getGlobalInfo().getExecutionMode()) {
+		case APPLICATION:
 			if (jadeAgentIsRunning(MASapplicationAgentName)==false) {
 				jadeAgentStart(MASapplicationAgentName, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
 			}			
@@ -194,7 +111,76 @@ public class Platform extends Object {
 			if (showRMA==true) {
 				jadeSystemAgentOpen( "rma", null );	
 			}
-						
+			break;
+		
+		case SERVER_MASTER:
+			// -------------------------------------------------
+			// --- This is a Master-Server-Platform ------------
+			// -------------------------------------------------
+			// --- Connecting to Database ----------------------
+			if (Application.getDatabaseConnection().hasErrors==true ) {
+				
+				this.jadeStop();
+				
+				String msgHead = "";
+				String msgText = "";
+				
+				msgHead += Language.translate("Konfiguration des") + " " + applicationTitle + "-" +  executionModeDescription;
+				msgText += "Die Systemkonfiguration enthält keine gültigen Angaben über den" + newLine +
+						   "Datenbankserver. Der Start von JADE wird deshalb unterbrochen." + newLine +
+						   "Bitte konfigurieren Sie einen MySQL-Datenbank-Server und" + newLine +
+						   "starten Sie den Server-Master anschließend erneut." + newLine + newLine +
+						   "Möchten Sie die Konfiguration nun vornehmen?";
+				msgText = Language.translate(msgText);
+				
+				int answer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);
+				if (answer == JOptionPane.YES_OPTION) {
+					Application.showOptionDialog();
+				} 
+				return false;
+				
+			}
+			// --- Starting 'Server.Master'-Agent --------------				
+			if (jadeAgentIsRunning(MASserverMasterAgentName)==false) {
+				this.jadeAgentStart(MASserverMasterAgentName, agentgui.simulationService.agents.ServerMasterAgent.class.getName());	
+			}
+			break;
+			
+		case SERVER_SLAVE:
+			// -------------------------------------------------
+			// --- This is a Slave-Server-Platform -------------
+			// -------------------------------------------------
+			if (Application.getGlobalInfo().getServerMasterURL()==null ||
+				Application.getGlobalInfo().getServerMasterURL().equalsIgnoreCase("")==true ||
+				Application.getGlobalInfo().getServerMasterPort().equals(0)==true ||
+				Application.getGlobalInfo().getServerMasterPort4MTP().equals(0)==true ) {
+				
+				this.jadeStop();
+				
+				String msgHead = "";
+				String msgText = "";
+				
+				msgHead += Language.translate("Konfiguration des") + " " + applicationTitle + "-" +  executionModeDescription;
+				msgText += "Die Systemkonfiguration enthält keine gültigen Angaben über den" + newLine +
+						   "Hauptserver. Der Start von JADE wird deshalb unterbrochen." + newLine +
+						   "Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)" + newLine +
+						   "und starten Sie den Dienst anschließend erneut." + newLine + newLine +
+						   "Möchten Sie die Konfiguration nun vornehmen?";
+				msgText = Language.translate(msgText);
+				
+				int answer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);
+				if (answer == JOptionPane.YES_OPTION) {
+					Application.showOptionDialog();
+				} 
+				return false;
+				
+			} 
+			// --- Starting 'Server.Slave'-Agent ---------------
+			if (jadeAgentIsRunning(MASserverSlaveAgentName)==false) {			
+				this.jadeAgentStart(MASserverSlaveAgentName, agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
+			}
+			break;
+			
 		}
 		return true;
 	}
@@ -218,7 +204,7 @@ public class Platform extends Object {
 		
 		boolean startSucceed = false;		
 		
-		if (jadeMainContainerIsRunning()==false) {
+		if (jadeIsMainContainerRunning()==false) {
 			try {
 				// --- Start Platform -------------------------------
 				jadeRuntime = Runtime.instance();	
@@ -227,7 +213,9 @@ public class Platform extends Object {
 						jadeMainContainer = null;
 						jadeRuntime = null;
 						Application.setStatusJadeRunning(false);
-						Application.getMainWindow().setSimulationReady2Start();
+						if (Application.getMainWindow()!=null){
+							Application.getMainWindow().setSimulationReady2Start();
+						}
 					}
 				});
 				// --- Start MainContainer --------------------------				
@@ -266,12 +254,10 @@ public class Platform extends Object {
 		// --- Configure the JADE-Profile to use --------------------
 		if (currProject==null) {
 			// --- Take the AgentGUI-Default-Profile ----------------
-			this.jadePlatformConfig = Application.getGlobalInfo().getJadeDefaultPlatformConfig();
 			jadeContainerProfile = Application.getGlobalInfo().getJadeDefaultProfile();
 			System.out.println("JADE-Profile: Use AgentGUI-defaults");
 		} else {
 			// --- Take the Profile of the current Project ----------
-			this.jadePlatformConfig = currProject.JadeConfiguration;
 			jadeContainerProfile = currProject.JadeConfiguration.getNewInstanceOfProfilImpl();	
 			// --- Invoke the Profile configuration in the plug-ins -- 
 			jadeContainerProfile = currProject.plugInsLoaded.getJadeProfile(jadeContainerProfile);
@@ -299,11 +285,11 @@ public class Platform extends Object {
 		// --- Starts the UtilityAgent which sends --------
 		// --- a 'ShutdownPlatform()' to the AMS   --------	
 		// ------------------------------------------------
-		if (jadeMainContainerIsRunning()) {
+		if (jadeIsMainContainerRunning()) {
 			this.jadeUtilityAgentStart(UTIL_CMD_ShutdownPlatform);
 			// --- Wait for the end of Jade ---------------
 			Long timeStop = System.currentTimeMillis() + (10 * 1000);
-			while(jadeMainContainerIsRunning()) {
+			while(jadeIsMainContainerRunning()) {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -339,7 +325,7 @@ public class Platform extends Object {
 	 */
 	public boolean jadeStopAskUserBefore() {
 		
-		if(this.jadeMainContainerIsRunning()==true) {
+		if(this.jadeIsMainContainerRunning()==true) {
 			String MsgHead = Language.translate("JADE wird zur Zeit ausgeführt!");
 			String MsgText = Language.translate("Möchten Sie JADE nun beenden?");
 			Integer MsgAnswer =  JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
@@ -360,7 +346,7 @@ public class Platform extends Object {
 		if ( forceJadeStart == true ) {
 			jadeSystemAgentOpen("rma", null);
 		}		
-		return jadeMainContainerIsRunning();
+		return jadeIsMainContainerRunning();
 	}
 	
 	/**
@@ -368,7 +354,7 @@ public class Platform extends Object {
 	 *
 	 * @return true, if the Main-Container is running
 	 */
-	public boolean jadeMainContainerIsRunning () {
+	public boolean jadeIsMainContainerRunning () {
 		boolean JiR;		
 		try {
 			jadeMainContainer.getState();
@@ -467,7 +453,7 @@ public class Platform extends Object {
 			agentNameForStart = rootAgentName + optionalSuffixNo.toString(); 
 		
 		// --- Was the system already started? ---------------
-		if ( jadeMainContainerIsRunning() == false ) {
+		if ( jadeIsMainContainerRunning() == false ) {
 			msgHead = Language.translate("JADE wurde noch nicht gestartet!");
 			msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
 			msgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
@@ -584,7 +570,7 @@ public class Platform extends Object {
 	 * @return true, if the agent is running
 	 */
 	public boolean jadeAgentIsRunning (String localAgentName) {
-		return jadeAgentIsRunning( localAgentName, jadeMainContainer.getName() );
+		return jadeAgentIsRunning(localAgentName, jadeMainContainer.getName());
 	}
 	
 	/**
@@ -600,12 +586,12 @@ public class Platform extends Object {
 		AgentContainer AgenCont = null;
 		AgentController AgeCon = null;
 		
-		if (jadeMainContainerIsRunning() == false ) {
+		if (jadeIsMainContainerRunning() == false ) {
 			return false;
 		}
 
 		// --- 0. Set to the right Container ------------------------
-		AgenCont = jadeContainer(localContainerName);
+		AgenCont = jadeGetContainer(localContainerName);
 		if ( AgenCont == null ) {
 			return false;
 		}
@@ -645,39 +631,51 @@ public class Platform extends Object {
 	}	
 	
 	/**
+	 * Returns the Jade main container.
+	 *
+	 * @param containerNameSearch the container name search
+	 * @return the agent container
+	 */
+	public AgentContainer jadeGetMainContainer() {
+		if (jadeIsMainContainerRunning()==false) {
+			return null;
+		}
+		return this.jadeMainContainer;
+	}
+	/**
 	 * Returns the Container given by it's name.
 	 *
 	 * @param containerNameSearch the container name search
 	 * @return the agent container
 	 */
-	public AgentContainer jadeContainer(String containerNameSearch ) {
+	public AgentContainer jadeGetContainer(String containerNameSearch ) {
 		
-		AgentContainer AgeCont = null;
-		String AgeContName = null;
+		AgentContainer agentContainer = null;
+		String agentContainerName = null;
 		
 		// --- Falls JADE noch nicht läuft ... ----------------
-		if ( jadeMainContainerIsRunning() == false ) {
+		if (jadeIsMainContainerRunning()==false) {
 			return null;
 		}
 		// --- Wird nach dem 'Main-Container' gesucht? --------
-		if ( containerNameSearch == jadeMainContainer.getName() ) {
-			return jadeMainContainer;
+		if (containerNameSearch==this.jadeMainContainer.getName()) {
+			return this.jadeMainContainer;
 		}	
 		
 		// --- Den richtigen Container abgreifen -------------- 
-		for ( int i=0; i < jadeContainerLocal.size(); i++ ) {
-			AgeCont = jadeContainerLocal.get(i);
+		for (int i=0; i < jadeContainerLocal.size(); i++) {
+			agentContainer = jadeContainerLocal.get(i);
 			try {
-				AgeContName = AgeCont.getContainerName();
+				agentContainerName = agentContainer.getContainerName();
 			} 
 			catch (ControllerException ex) {
 				ex.printStackTrace();
 			}			
-			if ( AgeContName.equalsIgnoreCase( containerNameSearch ) == true ) {
+			if (agentContainerName.equalsIgnoreCase( containerNameSearch )==true) {
 				break;
 			}
 		}		
-		return AgeCont;
+		return agentContainer;
 	}
 	
 	/**
@@ -687,7 +685,7 @@ public class Platform extends Object {
 	 */
 	public void jadeKillContainer(String containerName) {
 		AgentContainer agentContainer = null;
-		agentContainer = jadeContainer(containerName);
+		agentContainer = jadeGetContainer(containerName);
 		jadeContainerKill( agentContainer );
 	}
 	
@@ -777,7 +775,7 @@ public class Platform extends Object {
 		AgentContainer agentContainer;
 
 		// --- Was the system already started? ---------------
-		if ( jadeMainContainerIsRunning() == false ) {
+		if ( jadeIsMainContainerRunning() == false ) {
 			msgHead = Language.translate("JADE wurde noch nicht gestartet!");
 			msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
 			MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
@@ -786,7 +784,7 @@ public class Platform extends Object {
 			jadeStart();			
 		}
 		
-		agentContainer = this.jadeContainer( inContainer );
+		agentContainer = this.jadeGetContainer( inContainer );
 		if (agentContainer == null) {
 			agentContainer = jadeContainerCreate( inContainer );
 		}		
