@@ -34,7 +34,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	/** NetworkComponentNames, which could have a positive or negative flow */
 	private List<String> optional = new ArrayList<String>();
 
-	/** NetworkComponentNames, which has positive flow */
+	/** NetworkComponentNames, which has no flow */
 	private List<String> dead = new ArrayList<String>();
 
 	public void addDead(String dead) {
@@ -77,9 +77,6 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 
 	/** The environment model. */
 	private EnvironmentModel environmentModel;
-
-	/** Shows if this component thinks the finddirection action is done */
-	private boolean done = false;
 
 	/** The network model. */
 	private NetworkModel networkModel;
@@ -167,9 +164,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			// System.out.println("Empänger: "+receiver + " Semder:" +
 			// myAgent.getLocalName());
 		}
-		done = true;
 		// myAgent.startRA();
-		myAgent.removeBehaviour(this);
 	}
 
 	/**
@@ -232,10 +227,8 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		if ((p - i) == 1) {
 			addDead(toInform);
 			msgSend(toInform, new FindDirData("dead"));
-			done = true;
 			System.out.println(myAgent.getLocalName() + " All dead: " + getDead());
 
-			myAgent.removeBehaviour(this);
 			return;
 		}
 		i = 0;
@@ -253,9 +246,8 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		}
 
 		if ((p - i) == 1) {
-			addDead(toInform);
+			addOutgoing(toInform);
 			msgSend(toInform, new FindDirData("in"));
-			done = true;
 			System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
 					+ " OutMaybe: " + outgoingMaybe);
 			setDirections();
@@ -277,9 +269,8 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		}
 
 		if ((p - i) == 1) {
-			addDead(toInform);
+			addIncoming(toInform);
 			msgSend(toInform, new FindDirData("out"));
-			done = true;
 			System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
 					+ " OutMaybe: " + outgoingMaybe);
 			setDirections();
@@ -352,7 +343,6 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 						}
 						temp1.clear();
 						temp2.clear();
-						done = true;
 						System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
 								+ " OutMaybe: " + outgoingMaybe);
 						setDirections();
@@ -379,8 +369,8 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			System.out.println("Message too old, " + myAgent.getLocalName());
 	}
 
-	private void setDirections() {
-		if (incoming.isEmpty() == false || outgoing.isEmpty() == false) {
+	public void setDirections() {
+		if (!incoming.isEmpty() || !outgoing.isEmpty()) {
 			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, thisNetworkComponent);
 			HashSet<GraphNode> outerNodes = netCompDirect.getOuterNodes();
 			HashSet<NetworkComponent> inComps = new HashSet<NetworkComponent>();
@@ -414,7 +404,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 				// Should never happen
 				temp2.remove(sender);
 				getOptional().add(sender);
-				System.out.println("Never happen...Optional edge found " + myAgent.getLocalName() + " to " + sender);
+				System.out.println("_______________________________Never happen...Optional edge found " + myAgent.getLocalName() + " to " + sender);
 
 			} else {
 				temp22.clear();
@@ -440,7 +430,6 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 
 						msgSend(toInform, new FindDirData(msg));
 					}
-					done = true;
 					System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
 							+ " OutMaybe: " + outgoingMaybe);
 					setDirections();
@@ -469,6 +458,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		}
 
 	}
+	
 
 	@Override
 	protected void onTick() {

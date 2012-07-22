@@ -31,7 +31,9 @@ package gasmas.agents.components;
 import gasmas.resourceallocation.AllocData;
 import gasmas.resourceallocation.FindDirData;
 import gasmas.resourceallocation.FindDirectionBehaviour;
+import gasmas.resourceallocation.FindSimplificationBehaviour;
 import gasmas.resourceallocation.ResourceAllocationBehaviour;
+import gasmas.resourceallocation.SimplificationData;
 import gasmas.resourceallocation.StatusData;
 import jade.core.Agent;
 import jade.core.ServiceException;
@@ -51,9 +53,10 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 	protected EnvironmentModel envModel;
 	protected NetworkModel myNetworkModel = null;
 	
-	/** Msgpool, which contains messages, which are not needed at the moment */
+	/** Different Behaviours, which get messages */
 	protected ResourceAllocationBehaviour resourceAllocationBehaviour;
 	protected FindDirectionBehaviour findDirectionBehaviour;
+	protected FindSimplificationBehaviour findSimplificationBehaviour;
 
 	
 	/* (non-Javadoc)
@@ -95,10 +98,32 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 			} else {
 				findDirectionBehaviour.interpretMsg(notification);
 			}
-		} else {
-			System.out.println("WOEPv " +notification.getNotification());
+		} else if (notification.getNotification() instanceof SimplificationData) {
+//			sendManagerNotification(new StatusData(2));
+			if (findSimplificationBehaviour == null) {
+				notification.moveLastOrBlock(100);
+				System.out.println("=> Notification parked for 'SimplificationData' !");
+			} else {
+				findSimplificationBehaviour.interpretMsg(notification);
+			}
+		} else if (notification.getNotification() instanceof StatusData){
+			startFindSimplificationBehaviour();
 		}
 		return notification;
+	}
+	
+	private void startFindSimplificationBehaviour() {
+		// The end of the the find direction behaviour, so I have to remove this behaviour
+//		findDirectionBehaviour.setDirections();
+		this.removeBehaviour(findDirectionBehaviour);
+		
+		findSimplificationBehaviour = new FindSimplificationBehaviour(this, 20000, myEnvironmentModel);
+		// Because the internal structures can not save dead pipes, so I have to transfer the knowledge from one behaviour to another
+		findSimplificationBehaviour.setDead(findDirectionBehaviour.getDead());
+		findSimplificationBehaviour.setIncoming(findDirectionBehaviour.getIncoming());
+		findSimplificationBehaviour.setOutgoing(findDirectionBehaviour.getOutgoing());
+		// Start next behaviour, in this case, find simplifications
+		this.addBehaviour(findSimplificationBehaviour);
 	}
 	
 	/**

@@ -32,10 +32,12 @@ import gasmas.clustering.analyse.ComponentFunctions;
 import gasmas.clustering.behaviours.ClusteringBehaviour;
 import gasmas.ontology.DirectionSettingNotification;
 import gasmas.resourceallocation.StatusData;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.TickerBehaviour;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import agentgui.core.application.Application;
@@ -93,7 +95,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		// --- Start of Time-Behaviour -------------------------------
 		// --- To check if one step in the initial process is done  --
 		this.addBehaviour(new CheckForNextStep(this, 5000));
-		
+
 		ComponentFunctions.printAmountOfDiffernetTypesOfAgents("Global", myNetworkModel);
 	}
 
@@ -262,8 +264,14 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		 */
 		@Override
 		protected void onTick() {
-			if (System.currentTimeMillis() - timeOfAction >= 2000) {
-				// TODO Hier bräuchte ich eine Nachricht an alle Agenten mit der Nachricht, dass eine Stufe durchlaufen ist...
+			if (System.currentTimeMillis() - timeOfAction >= 2000 && timeOfAction != -1) {
+				// We now inform every network component that we finished the first step
+				timeOfAction = -1;
+				System.out.println("Start of the next step");
+				for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(myNetworkModel.getNetworkComponents().values())) {
+					sendAgentNotification(new AID(networkComponent.getId(), AID.ISLOCALNAME), new StatusData(2));
+				}
+				
 			}
 		}
 	}
