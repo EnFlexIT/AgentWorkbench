@@ -89,8 +89,8 @@
                 <agentClassName></agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n42</graphElementIDs>
-                <graphElementIDs>PP23</graphElementIDs>
                 <graphElementIDs>PP18</graphElementIDs>
+                <graphElementIDs>PP23</graphElementIDs>
                 <id>n42</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Power Line</type>
@@ -249,19 +249,6 @@
             </value>
         </entry>
         <entry>
-            <key>n94</key>
-            <value>
-                <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
-                <directed>true</directed>
-                <graphElementIDs>PP91</graphElementIDs>
-                <graphElementIDs>n94</graphElementIDs>
-                <graphElementIDs>PP80</graphElementIDs>
-                <id>n94</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
-                <type>Compressor</type>
-            </value>
-        </entry>
-        <entry>
             <key>n46</key>
             <value>
                 <agentClassName></agentClassName>
@@ -275,13 +262,16 @@
             </value>
         </entry>
         <entry>
-            <key>n93</key>
+            <key>n94</key>
             <value>
-                <directed>false</directed>
-                <graphElementIDs>PP89</graphElementIDs>
-                <id>n93</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Wind turbine</type>
+                <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>PP91</graphElementIDs>
+                <graphElementIDs>n94</graphElementIDs>
+                <graphElementIDs>PP80</graphElementIDs>
+                <id>n94</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>Compressor</type>
             </value>
         </entry>
         <entry>
@@ -292,6 +282,16 @@
                 <id>n47</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Solar Panel</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n93</key>
+            <value>
+                <directed>false</directed>
+                <graphElementIDs>PP89</graphElementIDs>
+                <id>n93</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Wind turbine</type>
             </value>
         </entry>
         <entry>
@@ -405,8 +405,8 @@
                 <agentClassName></agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP66</graphElementIDs>
-                <graphElementIDs>PP64</graphElementIDs>
                 <graphElementIDs>n77</graphElementIDs>
+                <graphElementIDs>PP64</graphElementIDs>
                 <id>n77</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Power Line</type>
@@ -610,19 +610,6 @@
             </value>
         </entry>
         <entry>
-            <key>n9</key>
-            <value>
-                <agentClassName></agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP5</graphElementIDs>
-                <graphElementIDs>n9</graphElementIDs>
-                <graphElementIDs>PP0</graphElementIDs>
-                <id>n9</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Power Line</type>
-            </value>
-        </entry>
-        <entry>
             <key>n66</key>
             <value>
                 <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
@@ -636,6 +623,19 @@
             </value>
         </entry>
         <entry>
+            <key>n9</key>
+            <value>
+                <agentClassName></agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n9</graphElementIDs>
+                <graphElementIDs>PP5</graphElementIDs>
+                <graphElementIDs>PP0</graphElementIDs>
+                <id>n9</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Power Line</type>
+            </value>
+        </entry>
+        <entry>
             <key>n8</key>
             <value>
                 <directed>false</directed>
@@ -643,19 +643,6 @@
                 <id>n8</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Wind turbine</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n7</key>
-            <value>
-                <agentClassName></agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP4</graphElementIDs>
-                <graphElementIDs>n7</graphElementIDs>
-                <graphElementIDs>PP3</graphElementIDs>
-                <id>n7</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Power Line</type>
             </value>
         </entry>
         <entry>
@@ -672,13 +659,16 @@
             </value>
         </entry>
         <entry>
-            <key>n6</key>
+            <key>n7</key>
             <value>
+                <agentClassName></agentClassName>
                 <directed>false</directed>
+                <graphElementIDs>PP4</graphElementIDs>
+                <graphElementIDs>n7</graphElementIDs>
                 <graphElementIDs>PP3</graphElementIDs>
-                <id>n6</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Wind turbine</type>
+                <id>n7</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Power Line</type>
             </value>
         </entry>
         <entry>
@@ -689,6 +679,16 @@
                 <id>n65</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Power2Gas</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n6</key>
+            <value>
+                <directed>false</directed>
+                <graphElementIDs>PP3</graphElementIDs>
+                <id>n6</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Wind turbine</type>
             </value>
         </entry>
         <entry>
@@ -734,8 +734,8 @@
                 <directed>false</directed>
                 <graphElementIDs>n69_1</graphElementIDs>
                 <graphElementIDs>n69_0</graphElementIDs>
-                <graphElementIDs>PP79</graphElementIDs>
                 <graphElementIDs>n69_2</graphElementIDs>
+                <graphElementIDs>PP79</graphElementIDs>
                 <graphElementIDs>PP38</graphElementIDs>
                 <graphElementIDs>PP39</graphElementIDs>
                 <graphElementIDs>PP74</graphElementIDs>
@@ -862,8 +862,8 @@
                 <agentClassName></agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP28</graphElementIDs>
-                <graphElementIDs>n54</graphElementIDs>
                 <graphElementIDs>PP29</graphElementIDs>
+                <graphElementIDs>n54</graphElementIDs>
                 <id>n54</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Power Line</type>
@@ -885,8 +885,8 @@
                 <agentClassName></agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP30</graphElementIDs>
-                <graphElementIDs>n56</graphElementIDs>
                 <graphElementIDs>PP27</graphElementIDs>
+                <graphElementIDs>n56</graphElementIDs>
                 <id>n56</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Power Line</type>
@@ -966,8 +966,8 @@
             <value>
                 <agentClassName></agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>PP10</graphElementIDs>
                 <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>PP10</graphElementIDs>
                 <graphElementIDs>n17</graphElementIDs>
                 <id>n17</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
@@ -1003,8 +1003,8 @@
                 <agentClassName></agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP8</graphElementIDs>
-                <graphElementIDs>n13</graphElementIDs>
                 <graphElementIDs>PP1</graphElementIDs>
+                <graphElementIDs>n13</graphElementIDs>
                 <id>n13</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Power Line</type>

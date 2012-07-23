@@ -383,25 +383,45 @@ public class NetworkComponentDirectionSettings {
 		String error = null;
 		Class<?> argInClass = null;
 		Class<?> argOutClass = null;
+		
+		if (inNodesOrComponents==null) error = "IN parameter should not be Null!";
+		if (outNodesOrComponents==null) error = "OUT parameter should not be Null!";
 //		if (inNodesOrComponents.size()==0)  error = "IN parameter should not be from the size 0!";
 //		if (outNodesOrComponents.size()==0) error = "OUT parameter should not be from the size 0!";
 //		if ((inNodesOrComponents.size()+outNodesOrComponents.size())!=outerGraphNodes.size()) error = "Number of IN and OUT parameter should be equal to the number of outer GraphNodes!";
 		
 		Object type = null;
 		if (error==null) {
-			type = inNodesOrComponents.iterator().next();
-			if (!(type instanceof NetworkComponent) && !(type instanceof GraphNode) ){
-				error = "IN and OUT parameter have to be of the type GraphNode or NetworkComponent!";
-			}	
+			// --- Working with GraphNode's or NetworkComponent's --- 
+			if (inNodesOrComponents.iterator().hasNext()) {
+				type = inNodesOrComponents.iterator().next();
+			} else {
+				if (outNodesOrComponents.iterator().hasNext()) {
+					type = outNodesOrComponents.iterator().next();
+				} else {
+					error = "Whether IN or OUT parameter have to be set!";
+				}
+			}
+			if (type!=null) {
+				if (!(type instanceof NetworkComponent) && !(type instanceof GraphNode) ){
+					error = "IN and OUT parameter have to be of the type GraphNode or NetworkComponent!";
+				}	
+			}
 		}
 		if (this.innerGraphNodes.size()>1) {
 			error = "This method can only be applied for NetworkComponents with NO or ONE inner node!";
 		}
 		if (error==null) {
-			argInClass = inNodesOrComponents.iterator().next().getClass();
-			argOutClass = outNodesOrComponents.iterator().next().getClass();
-			if (argInClass.equals(argOutClass)==false) {
-				error = "Values of IN and OUT parameter are not of the same type!";
+			if (inNodesOrComponents.iterator().hasNext()) {
+				argInClass = inNodesOrComponents.iterator().next().getClass();	
+			}
+			if (outNodesOrComponents.iterator().hasNext()) {
+				argOutClass = outNodesOrComponents.iterator().next().getClass();	
+			}
+			if (argInClass!=null && argOutClass!=null) {
+				if (argInClass.equals(argOutClass)==false) {
+					error = "Values of IN and OUT parameter are not of the same type!";
+				}
 			}
 		}
 		if (error!=null) {

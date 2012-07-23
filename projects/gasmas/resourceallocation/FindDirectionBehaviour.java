@@ -1,5 +1,7 @@
 package gasmas.resourceallocation;
 
+import gasmas.agents.components.EntryAgent;
+import gasmas.agents.components.ExitAgent;
 import gasmas.agents.components.GenericNetworkAgent;
 import gasmas.ontology.DirectionSettingNotification;
 
@@ -106,10 +108,10 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	 */
 	public void onStart() {
 		String msg = "";
-		if (thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.EntryAgent")) {
+		if (thisNetworkComponent.getAgentClassName().equals(EntryAgent.class.getName())) {
 			msg = "in";
 			sendall(msg);
-		} else if (thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.ExitAgent")) {
+		} else if (thisNetworkComponent.getAgentClassName().equals(ExitAgent.class.getName())) {
 			msg = "out";
 			sendall(msg);
 		} else if (thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.PipeAgent") || thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.PipeShortAgent")
@@ -250,7 +252,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			msgSend(toInform, new FindDirData("in"));
 			System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
 					+ " OutMaybe: " + outgoingMaybe);
-			setDirections();
+//			setDirections();
 			return;
 
 		}
@@ -273,7 +275,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			msgSend(toInform, new FindDirData("out"));
 			System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
 					+ " OutMaybe: " + outgoingMaybe);
-			setDirections();
+//			setDirections();
 			return;
 
 		}
@@ -345,7 +347,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 						temp2.clear();
 						System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
 								+ " OutMaybe: " + outgoingMaybe);
-						setDirections();
+//						setDirections();
 					}
 					// myAgent.startRA();
 					// myAgent.removeBehaviour(this);
@@ -373,8 +375,10 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		if (!incoming.isEmpty() || !outgoing.isEmpty()) {
 			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, thisNetworkComponent);
 			HashSet<GraphNode> outerNodes = netCompDirect.getOuterNodes();
+
 			HashSet<NetworkComponent> inComps = new HashSet<NetworkComponent>();
 			HashSet<NetworkComponent> outComps = new HashSet<NetworkComponent>();
+			
 			HashSet<NetworkComponent> outerComps = netCompDirect.translateGraphNodeHashSet(outerNodes);
 			for (Iterator<NetworkComponent> iterator = outerComps.iterator(); iterator.hasNext();) {
 				NetworkComponent outerComp = iterator.next();
@@ -432,7 +436,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 					}
 					System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
 							+ " OutMaybe: " + outgoingMaybe);
-					setDirections();
+//					setDirections();
 					// myAgent.startRA();
 					// myAgent.removeBehaviour(this);
 				} else if ((p - i) > 1) {

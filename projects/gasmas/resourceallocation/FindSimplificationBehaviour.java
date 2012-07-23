@@ -84,7 +84,7 @@ public class FindSimplificationBehaviour extends TickerBehaviour {
 	public FindSimplificationBehaviour(GenericNetworkAgent agent, long period, EnvironmentModel environmentModel) {
 		super(agent, period);
 		this.environmentModel = environmentModel;
-		networkModel = (NetworkModel) this.environmentModel.getDisplayEnvironment();
+		networkModel = ((NetworkModel) this.environmentModel.getDisplayEnvironment()).getCopy();
 		myAgent = agent;
 		thisNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
 	}
@@ -175,8 +175,8 @@ public class FindSimplificationBehaviour extends TickerBehaviour {
 		}
 		// Wofür gibt es überhaupt die Notification, wenn sie
 		// nicht genutzt wird?
-		// ClusterNotification cn = new ClusterNotification();
-		// cn.setNotificationObject(networkModel.replaceComponentsByCluster(networkComponents));
+//		 ClusterNotification cn = new ClusterNotification();
+//		 cn.setNotificationObject(networkModel.replaceComponentsByCluster(networkComponents));
 		System.out.println("Von " + thisNetworkComponent.getId() + " Cluster: " + list);
 		myAgent.sendManagerNotification(networkModel.replaceComponentsByCluster(networkComponents));
 

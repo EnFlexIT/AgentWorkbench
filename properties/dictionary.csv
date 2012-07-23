@@ -515,13 +515,7 @@ de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
-en;;Agent.GUI-Update was downloaded. Install now?;;;
-en;;An Agent.GUI-Update is available. Download now?;;;
-en;;Discrete squares environment;;;
 en;;Set mapping of external types to local components;;;
-en;;There is no Agent.GUI-Update available!;;;
-en;;is available;;;
-en;;was downloaded;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agenten-Klasse;Agent class;;;
@@ -556,6 +550,8 @@ en;Die Komponente ist bereits vorhanden!
  Choose a different one.;;;
 en;Drücken Sie die Umschalttaste und wählen Sie mindesten zwei Knoten!;Use Shift and click on two vertices at least!;;;
 en;Eigenschaften bearbeiten;Edit Properties;;;
+en;Ein Agent.GUI-Update ist verfügbar.<br>Wollen Sie es jetzt herunterladen?;An Agent.GUI-Update is available. Download now?;;;
+en;Ein Agent.GUI-Update wurde heruntergeladen.<br>Wollen Sie es jetzt installieren?;Agent.GUI-Update was downloaded. Install now?;;;
 en;Externer Typ;External Type;;;
 en;Farbe (Auswahl);Color picked;;;
 en;Farbe;Color;;;
@@ -595,3 +591,6 @@ en;Wählen Sie eine Netzwerkkomponente;Select a network component;;;
 en;Wählen Sie einen Knoten, um diese zu verbinden;Select a vertex to merge;;;
 en;Wählen Sie einen gültigen Knoten;Select a valid vertex;;;
 en;Wählen Sie genau zwei Knoten mit Hilfe der Umschalttaste.;Use Shift and click two vertices;;;
+en;Zur Zeit steht kein Agent.GUI-Update zur Verfügung!;There is no Agent.GUI-Update available!;;;
+en;ist verfügbar;is available;;;
+en;wurde heruntergeladen;was downloaded;;;

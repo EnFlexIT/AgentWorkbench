@@ -114,7 +114,7 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 	
 	private void startFindSimplificationBehaviour() {
 		// The end of the the find direction behaviour, so I have to remove this behaviour
-//		findDirectionBehaviour.setDirections();
+		findDirectionBehaviour.setDirections();
 		this.removeBehaviour(findDirectionBehaviour);
 		
 		findSimplificationBehaviour = new FindSimplificationBehaviour(this, 20000, myEnvironmentModel);
@@ -152,7 +152,7 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 				envModel = simHelper.getEnvironmentModel();
 				if (envModel != null) {
 					myEnvironmentModel = envModel;
-					myNetworkModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();
+					myNetworkModel = ((NetworkModel) myEnvironmentModel.getDisplayEnvironment()).getCopy();
 					setupAgent();
 					this.stop();
 				}
