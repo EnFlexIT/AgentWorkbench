@@ -8,19 +8,30 @@ import jade.core.*;
 /**
 * Protege name: PlatformLoad
 * @author ontology bean generator
-* @version 2012/07/23, 00:15:35
+* @version 2012/07/24, 12:09:17
 */
 public class PlatformLoad implements Concept {
 
    /**
-* Protege name: loadNoThreads
+* Protege name: loadMemorySystem
    */
-   private int loadNoThreads;
-   public void setLoadNoThreads(int value) { 
-    this.loadNoThreads=value;
+   private float loadMemorySystem;
+   public void setLoadMemorySystem(float value) { 
+    this.loadMemorySystem=value;
    }
-   public int getLoadNoThreads() {
-     return this.loadNoThreads;
+   public float getLoadMemorySystem() {
+     return this.loadMemorySystem;
+   }
+
+   /**
+* Protege name: loadExceeded
+   */
+   private int loadExceeded;
+   public void setLoadExceeded(int value) { 
+    this.loadExceeded=value;
+   }
+   public int getLoadExceeded() {
+     return this.loadExceeded;
    }
 
    /**
@@ -35,17 +46,6 @@ public class PlatformLoad implements Concept {
    }
 
    /**
-* Protege name: loadMemorySystem
-   */
-   private float loadMemorySystem;
-   public void setLoadMemorySystem(float value) { 
-    this.loadMemorySystem=value;
-   }
-   public float getLoadMemorySystem() {
-     return this.loadMemorySystem;
-   }
-
-   /**
 * Protege name: loadMemoryJVM
    */
    private float loadMemoryJVM;
@@ -57,14 +57,14 @@ public class PlatformLoad implements Concept {
    }
 
    /**
-* Protege name: loadExceeded
+* Protege name: loadNoThreads
    */
-   private int loadExceeded;
-   public void setLoadExceeded(int value) { 
-    this.loadExceeded=value;
+   private int loadNoThreads;
+   public void setLoadNoThreads(int value) { 
+    this.loadNoThreads=value;
    }
-   public int getLoadExceeded() {
-     return this.loadExceeded;
+   public int getLoadNoThreads() {
+     return this.loadNoThreads;
    }
 
 }

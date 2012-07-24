@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: AgentGuiVersion
 * @author ontology bean generator
-* @version 2012/07/23, 00:15:35
+* @version 2012/07/24, 12:09:17
 */
 public class AgentGuiVersion implements Concept {
 
@@ -24,17 +24,6 @@ public class AgentGuiVersion implements Concept {
    }
 
    /**
-* Protege name: majorRevision
-   */
-   private int majorRevision;
-   public void setMajorRevision(int value) { 
-    this.majorRevision=value;
-   }
-   public int getMajorRevision() {
-     return this.majorRevision;
-   }
-
-   /**
 * Protege name: minorRevision
    */
    private int minorRevision;
@@ -43,6 +32,17 @@ public class AgentGuiVersion implements Concept {
    }
    public int getMinorRevision() {
      return this.minorRevision;
+   }
+
+   /**
+* Protege name: majorRevision
+   */
+   private int majorRevision;
+   public void setMajorRevision(int value) { 
+    this.majorRevision=value;
+   }
+   public int getMajorRevision() {
+     return this.majorRevision;
    }
 
 }

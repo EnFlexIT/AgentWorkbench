@@ -47,6 +47,10 @@ import agentgui.simulationService.distribution.DownloadThread;
  */
 public class AgentGuiUpdater extends Thread {
 
+	public static final long UPDATE_CHECK_PERIOD = 1000*60*60*24; // - once a day -
+	public static final String UPDATE_SUB_FOLDER = "updates"; // - subfolder in the web server directory -
+	public static final String UPDATE_VERSION_INFO_FILE = "latestVersion.xml";
+	
 	private final String updateSiteAddition = "?key=xml";
 
 	private GlobalInfo globalInfo = null;
@@ -57,15 +61,16 @@ public class AgentGuiUpdater extends Thread {
 	private Integer updateAutoConfiguration = null;
 	private Integer updateKeepDictionary = 1;
 	private long updateDateLastChecked = 0;
-	private long updateDatePeriod = 1000*60*60*24; // - once a day -
 	
-	private String alternativeDownloadLink = null;
+	
+	private String alternativeInfoLink = null;
 	
 	private String localDownloadPath = null;
+	private String localWebServerPath = null;
 	private String localPropertiesPath = null;
 	
 	private UpdateInformation updateInformation = null;
-	private String latestVersionInfoFile = "latestVersion.xml";
+	
 	private String latestVersionInfoFullPath = null;
 
 	private String localUpdateZipFile = null;
@@ -78,6 +83,8 @@ public class AgentGuiUpdater extends Thread {
 	private boolean doUpdateProcedure = true;
 	private boolean askBeforeDownload = false;
 	private boolean askBeforeProjectShutdownAndUnzip = false;
+	
+	private boolean storeUpdateLocally = false;
 	
 	
 	/**
@@ -96,14 +103,13 @@ public class AgentGuiUpdater extends Thread {
 	}
 	/**
 	 * Instantiates a new Agent.GUI updater process.
-	 * @param indicates that execution was manually chosen by user
-	 * @param alternativeDownloadLink the alternative download link for the update
+	 * @param userExecuted indicates that execution was manually chosen by user
+	 * @param alternativeInfoLink the alternative download link for the update
 	 */
-	public AgentGuiUpdater(boolean userExecuted, String alternativeDownloadLink) {
+	public AgentGuiUpdater(boolean userExecuted, String alternativeInfoLink) {
 		this.manualyExecutedByUser = userExecuted;
-		this.alternativeDownloadLink = alternativeDownloadLink;
+		this.alternativeInfoLink = alternativeInfoLink;
 		this.initialize();
-		
 	}
 	
 	/**
@@ -123,9 +129,10 @@ public class AgentGuiUpdater extends Thread {
 		this.updateDateLastChecked = this.globalInfo.getUpdateDateLastChecked();
 		
 		this.localDownloadPath = this.globalInfo.PathDownloads(true);
+		this.localWebServerPath = this.globalInfo.PathWebServer(true);
 		this.localPropertiesPath = this.globalInfo.PathProperty(true);
 		
-		this.latestVersionInfoFullPath = this.localDownloadPath + this.latestVersionInfoFile;
+		this.latestVersionInfoFullPath = this.localDownloadPath + AgentGuiUpdater.UPDATE_VERSION_INFO_FILE;
 		
 		this.setUpdateConfiguration();
 	}
@@ -137,11 +144,12 @@ public class AgentGuiUpdater extends Thread {
 		
 		if (this.manualyExecutedByUser==false) {
 			long timeNow = System.currentTimeMillis();
-			long time4NextCheck = this.updateDateLastChecked + this.updateDatePeriod;
+			long time4NextCheck = this.updateDateLastChecked + AgentGuiUpdater.UPDATE_CHECK_PERIOD;
 			if (timeNow<time4NextCheck) {
 				doUpdateProcedure=false;
 			} else {
 				Application.getGlobalInfo().setUpdateDateLastChecked(timeNow);
+				Application.getGlobalInfo().getFileProperties().save();
 			}
 		}
 		
@@ -181,6 +189,7 @@ public class AgentGuiUpdater extends Thread {
 				doUpdateProcedure = false;
 				break;
 			}
+			this.storeUpdateLocally = true;
 			// --------------------------------------------
 			break;
 			
@@ -210,9 +219,9 @@ public class AgentGuiUpdater extends Thread {
 		// ------------------------------------------------
 		// --- Execution out of the IDE? ------------------
 		if (this.globalInfo.AppExecutedOver().equals(GlobalInfo.ExecutedOverIDE)) {
-//			this.doUpdateProcedure=false; // set to 'true' for further developments of the AgentGuiUpdater class 
-//			this.askBeforeDownload=true;
-//			this.askBeforeProjectShutdownAndUnzip=true;
+			this.doUpdateProcedure=false; // set to 'true' for further developments of the AgentGuiUpdater class 
+			this.askBeforeDownload=true;
+			this.askBeforeProjectShutdownAndUnzip=true;
 			System.out.println("Agent.GUI-Update: No updates in the IDE environment available.");
 		}
 		
@@ -245,7 +254,14 @@ public class AgentGuiUpdater extends Thread {
 			readyToUnZip = true;
 		} else {
 			// --- From update site ---------------------------------
-			String srcFileURL = this.updateSite + this.updateSiteAddition;
+			String srcFileURL = null;
+			if (this.alternativeInfoLink!=null) {
+				// --- From a server.master -------------------------
+				srcFileURL = this.alternativeInfoLink;
+			} else {
+				// --- From the Agent.GUI web site ------------------
+				srcFileURL = this.updateSite + this.updateSiteAddition;	
+			}			
 			Download infoDownload = new Download(srcFileURL, this.latestVersionInfoFullPath);
 			infoDownload.startDownload();
 			loadUpdateInformation = infoDownload.isFinished() && infoDownload.wasSuccessful();
@@ -282,7 +298,7 @@ public class AgentGuiUpdater extends Thread {
 				if (readyToUnZip==true) {
 					// ----------------------------------------------
 					// --- Copy latest info to properties -----------
-					String destPath = this.localPropertiesPath + this.latestVersionInfoFile;
+					String destPath = this.localPropertiesPath + AgentGuiUpdater.UPDATE_VERSION_INFO_FILE;
 					File latestVersionInfoFileProperties = new File(destPath);
 					if (latestVersionInfoFileProperties.exists()) {
 						latestVersionInfoFileProperties.delete();
@@ -305,12 +321,35 @@ public class AgentGuiUpdater extends Thread {
 						// ------------------------------------------
 						// --- Unzip the downloaded file ------------
 						if (this.unzipUpdateFile()==true){
-							// --- Do installation ------------------
-							this.executeAgentGuiUpdater();	
-							// --- ShutDown -------------------------
-							Application.quit();
-							return;
-							
+							// --- Clean up or Move to Server directory
+							this.handleDownloadedFilesAfterExtraction();
+							// --- Move AgentGuiUpdate.jar ---------- 
+							if (this.moveAgentGuiUpdaterJar()==true) {
+								// --- Do installation --------------
+								this.executeAgentGuiUpdater();
+								// --- ShutDown ---------------------
+								//Application.quit();
+								return;
+								
+							} else {
+								System.err.println("Agent.GUI-Update: Could not find 'AgentGuiUpdate.jar' in installation package!");
+								// --- Cleanup download folder ------
+								this.cleanUpDownloadFolder(new File(this.localDownloadPath));
+								if (this.askBeforeProjectShutdownAndUnzip==true) {
+									String title = "Error while updating Agent.GUI!";
+									String message = Language.translate("Could not find 'AgentGuiUpdate.jar' in installation package!", Language.EN);
+									JOptionPane.showMessageDialog(Application.getMainWindow(), message, title, JOptionPane.INFORMATION_MESSAGE);	
+								}
+								// --- Restart Agent.GUI if Server --
+								switch (this.executionMode) {
+								case SERVER_MASTER:
+								case SERVER_SLAVE:
+									Application.startAgentGUI();	
+									break;
+								}
+								
+							}
+														
 						} else {
 							System.err.println("Agent.GUI-Update: Unsuccessful unzipping!");
 						}
@@ -347,12 +386,78 @@ public class AgentGuiUpdater extends Thread {
 	}
 	
 	/**
+	 * Moves file 'AgentGuiUpdater.jar' to the main folder.
+	 */
+	private boolean moveAgentGuiUpdaterJar() {
+		
+		File zipFolderFile = new File(this.localUpdateZipFile);
+		String extractedFolder = zipFolderFile.getParent() + File.separator + this.localUpdateExtractedFolder;
+		String updaterFilePath = extractedFolder + File.separator + this.globalInfo.getFileNameUpdater(false);
+		File updaterFile = new File(updaterFilePath);
+		if (updaterFile.exists()==true) {
+			
+			String updaterRootFilePath = globalInfo.PathBaseDir();
+			if (updaterRootFilePath.endsWith(File.separator)==false) {
+				updaterRootFilePath = updaterRootFilePath + File.separator;
+			}
+			updaterRootFilePath = updaterRootFilePath + this.globalInfo.getFileNameUpdater(false);
+			File updaterRootFile = new File(updaterRootFilePath);	
+			if (updaterRootFile.exists()==true) {
+				updaterRootFile.delete();
+			}
+			updaterFile.renameTo(updaterRootFile);
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * Handle download after extraction.
+	 */
+	private void handleDownloadedFilesAfterExtraction() {
+
+		// --- File server/update directory ---------------------------------------------
+		String serverUpdateDirectory = this.localWebServerPath + UPDATE_SUB_FOLDER + File.separator;
+		File serverUpdateDirectoryFile = new File(serverUpdateDirectory);
+		
+		// --- File of the latest version information in the properties directory -------
+		File latestVersionInfoFileProperties = new File(this.localPropertiesPath + AgentGuiUpdater.UPDATE_VERSION_INFO_FILE);
+		File latestVersionInfoFileOnServer = new File(serverUpdateDirectory + AgentGuiUpdater.UPDATE_VERSION_INFO_FILE);
+		
+		// --- File of the downloaded zip archive ---------------------------------------
+		String zipFolderName = this.updateInformation.getDownloadFile();
+		File zipFolderFile = new File(this.localUpdateZipFile);
+		File zipFolderFileOnServer = new File(serverUpdateDirectory + zipFolderName);
+		
+		// --- Application, Master, Slave ? ---------------------------------------------
+		if (this.storeUpdateLocally==true) {
+			// --- Just in the case that currently the server.master is running ---------
+			if (serverUpdateDirectoryFile.exists()==false) {
+				serverUpdateDirectoryFile.mkdirs();
+			}
+			if (latestVersionInfoFileOnServer.exists()==true) {
+				latestVersionInfoFileOnServer.delete();
+			}
+			if (zipFolderFileOnServer.exists()==true) {
+				zipFolderFileOnServer.delete();
+			}
+			latestVersionInfoFileProperties.renameTo(latestVersionInfoFileOnServer);
+			zipFolderFile.renameTo(zipFolderFileOnServer);
+			
+		} else {
+			// --- For case Application and Slave, just delete --------------------------
+			latestVersionInfoFileProperties.delete();
+			zipFolderFile.delete();
+		}
+		
+	}
+	
+	/**
 	 * Executes the AgentGuiUpdater.jar in the same folder.
 	 */
 	private void executeAgentGuiUpdater() {
 		
 		// --- Create execute statement -----------------------------
-		String execute = "java -jar " + this.globalInfo.getFileNameUpdater(false) + " -updated " + this.localUpdateExtractedFolder;
+		String execute = "java -jar " + this.globalInfo.getFileNameUpdater(false) + " -update " + this.localUpdateExtractedFolder;
 		if (this.updateKeepDictionary==0) {
 			execute += " -deleteDictionary";
 		}
@@ -474,7 +579,7 @@ public class AgentGuiUpdater extends Thread {
 		
 		boolean available = false;
 		
-		String pathCheckLatestVersionInfo = this.localPropertiesPath + this.latestVersionInfoFile;
+		String pathCheckLatestVersionInfo = this.localPropertiesPath + AgentGuiUpdater.UPDATE_VERSION_INFO_FILE;
 		File fileCheckLatestVersionInfo = new File(pathCheckLatestVersionInfo); 
 		if (fileCheckLatestVersionInfo.exists()==true) {
 			// --- There is a File with update information available ----------
@@ -504,6 +609,36 @@ public class AgentGuiUpdater extends Thread {
 		return available;
 	}
 
+	
+	
+	/**
+	 * Clean up update folder.
+	 * @param file the file
+	 */
+	private void cleanUpDownloadFolder(File file) {
+		File[] files = file.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			this.deleteFileOrFolder(files[i]);	
+		}// end for
+	}
+	
+	/**
+	 * Delete file or folder.
+	 * @param file the file
+	 */
+	private void deleteFileOrFolder(File file) {
+		if (file.isFile()) {
+			file.delete();	
+		} else {
+			File[] files = file.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				File deleteFile = files[i];
+				this.deleteFileOrFolder(deleteFile);
+			}
+			file.delete();
+		}
+	}
+	
 	/**
 	 * Wait for benchmark.
 	 */

@@ -50,6 +50,7 @@ import jade.lang.acl.UnreadableException;
 import jade.wrapper.StaleProxyException;
 import agentgui.core.application.Application;
 import agentgui.core.network.JadeUrlChecker;
+import agentgui.core.update.AgentGuiUpdater;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 
@@ -62,6 +63,7 @@ import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
 import agentgui.simulationService.ontology.ClientTrigger;
 import agentgui.simulationService.ontology.ClientUnregister;
+import agentgui.simulationService.ontology.MasterUpdateNote;
 import agentgui.simulationService.ontology.OSInfo;
 import agentgui.simulationService.ontology.PlatformAddress;
 import agentgui.simulationService.ontology.PlatformLoad;
@@ -372,13 +374,20 @@ public class ServerClientAgent extends Agent {
 						sendNotReachable = 0;
 						mainPlatformReachable = true;
 						trigger.reset(triggerTime);
-					
+						
+					} else if (agentAction instanceof MasterUpdateNote) {
+						System.out.println( "Server.Master (re)connected, but call for an update!" );
+						MasterUpdateNote masterUpdateNote = (MasterUpdateNote) agentAction;
+						String updateInfoURL = masterUpdateNote.getUpdateInfoURL();
+						System.out.println( "Download Update-Information: " + updateInfoURL);
+						new AgentGuiUpdater(false, updateInfoURL).start();
+						
 					} else if (agentAction instanceof ClientRemoteContainerRequest) {
-						// --- Direkt an den Server.Master weiterleiten -------
+						// --- Forward to Server.Master -----------------------
 						forwardRemoteContainerRequest(agentAction);
 					
 					} else if (agentAction instanceof ClientRemoteContainerReply) {
-						// --- Antwort auf 'RemoteContainerRequest' -----------
+						// --- Answer to 'RemoteContainerRequest' -------------
 						LoadServiceHelper loadHelper = null;
 						try {
 							loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
@@ -386,7 +395,7 @@ public class ServerClientAgent extends Agent {
 						} catch (ServiceException e) {
 							e.printStackTrace();
 						}
-						
+
 					} else {
 						// --- Unknown AgentAction ------------
 						System.out.println( "----------------------------------------------------" );

@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import agentgui.core.application.Application;
+import agentgui.simulationService.ontology.AgentGuiVersion;
 
 /**
  * This class manages the version info of Agent.GUI, based on the file located in 
@@ -174,4 +175,38 @@ public class VersionInfo extends Properties {
 	public String getVersionDateAsString() {
 		return this.getProperty("version.date");
 	}
+
+	/**
+	 * Checks if a foreign is up to date.
+	 *
+	 * @param foreignVersion the foreign version
+	 * @return true, if is up to date
+	 */
+	public boolean isUpToDate(AgentGuiVersion foreignVersion) {
+		return this.isUpToDate(foreignVersion.getMajorRevision(), foreignVersion.getMinorRevision(), foreignVersion.getBuildNo());
+	}
+	/**
+	 * Checks if a foreign is up to date.
+	 *
+	 * @param foreignMajorRevision the major revision to compare
+	 * @param foreignMinorRevision the minor revision to compare
+	 * @param foreignBuild the build number to compare
+	 * @return true, if is newer version
+	 */
+	public boolean isUpToDate(Integer foreignMajorRevision, Integer foreignMinorRevision, Integer foreignBuild) {
+		
+		if (this.getVersionMajor()>foreignMajorRevision) {
+			return false;
+		} else {
+			if (this.getVersionMinor()>foreignMinorRevision) {
+				return false;
+			} else {
+				if (this.getVersionBuild()>foreignBuild) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 }

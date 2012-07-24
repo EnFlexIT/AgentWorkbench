@@ -8,19 +8,41 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2012/07/23, 00:15:35
+* @version 2012/07/24, 12:09:17
 */
 public class ClientRemoteContainerReply implements AgentAction {
 
    /**
-* Protege name: remoteAddress
+* Protege name: remoteBenchmarkResult
    */
-   private PlatformAddress remoteAddress;
-   public void setRemoteAddress(PlatformAddress value) { 
-    this.remoteAddress=value;
+   private BenchmarkResult remoteBenchmarkResult;
+   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
+    this.remoteBenchmarkResult=value;
    }
-   public PlatformAddress getRemoteAddress() {
-     return this.remoteAddress;
+   public BenchmarkResult getRemoteBenchmarkResult() {
+     return this.remoteBenchmarkResult;
+   }
+
+   /**
+* Protege name: remotePID
+   */
+   private String remotePID;
+   public void setRemotePID(String value) { 
+    this.remotePID=value;
+   }
+   public String getRemotePID() {
+     return this.remotePID;
+   }
+
+   /**
+* Protege name: remoteContainerName
+   */
+   private String remoteContainerName;
+   public void setRemoteContainerName(String value) { 
+    this.remoteContainerName=value;
+   }
+   public String getRemoteContainerName() {
+     return this.remoteContainerName;
    }
 
    /**
@@ -57,36 +79,14 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteBenchmarkResult
+* Protege name: remoteAddress
    */
-   private BenchmarkResult remoteBenchmarkResult;
-   public void setRemoteBenchmarkResult(BenchmarkResult value) { 
-    this.remoteBenchmarkResult=value;
+   private PlatformAddress remoteAddress;
+   public void setRemoteAddress(PlatformAddress value) { 
+    this.remoteAddress=value;
    }
-   public BenchmarkResult getRemoteBenchmarkResult() {
-     return this.remoteBenchmarkResult;
-   }
-
-   /**
-* Protege name: remoteContainerName
-   */
-   private String remoteContainerName;
-   public void setRemoteContainerName(String value) { 
-    this.remoteContainerName=value;
-   }
-   public String getRemoteContainerName() {
-     return this.remoteContainerName;
-   }
-
-   /**
-* Protege name: remotePID
-   */
-   private String remotePID;
-   public void setRemotePID(String value) { 
-    this.remotePID=value;
-   }
-   public String getRemotePID() {
-     return this.remotePID;
+   public PlatformAddress getRemoteAddress() {
+     return this.remoteAddress;
    }
 
 }

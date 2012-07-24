@@ -1465,7 +1465,7 @@ public class LoadService extends BaseService {
 			String jvmPID = LoadMeasureThread.getLoadCurrentJVM().getJvmPID();
 			
 			// --- Set Agent.GUI version info -----------------
-			VersionInfo versionInfo = new VersionInfo();
+			VersionInfo versionInfo = Application.getGlobalInfo().getVersionInfo();
 			AgentGuiVersion version = new AgentGuiVersion();
 			version.setMajorRevision(versionInfo.getVersionMajor());
 			version.setMinorRevision(versionInfo.getVersionMinor());

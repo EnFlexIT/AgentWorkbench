@@ -216,6 +216,19 @@ public class Application {
 		Application.mainWindow = mainWindow;	
 	}
 	
+	
+	/**
+	 * Returns the database connection.
+	 * @param renewDatabaseConnection the renew database connection
+	 * @return the database connection
+	 */
+	public static DBConnection getDatabaseConnection(boolean renewDatabaseConnection) {
+		if (renewDatabaseConnection==true) {
+			Application.dbConnection = new DBConnection();
+			return Application.dbConnection;
+		}
+		return Application.getDatabaseConnection();
+	}
 	/**
 	 * Returns the database connection for the Application.
 	 * @return the database connection
@@ -360,7 +373,19 @@ public class Application {
 	private static void proceedStartArgumentOpenProject() {
 		
 		if (isRunningAsServer()==false && project2OpenAfterStart!=null) {
-			// --- open the specified project -----------
+			
+			// --- wait for the end of the benchmark ------
+			while(benchmarkRunning==true) {
+				Application.setStatusBar(Language.translate("Warte auf das Ende des Benchmarks ..."));
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+			// --- open the specified project -------------
+			Application.setStatusBar(Language.translate("Öffne Projekt") + " '" + project2OpenAfterStart + "'...");
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
@@ -368,6 +393,7 @@ public class Application {
 					project2OpenAfterStart=null;
 				}
 			});
+			Application.setStatusBar(Language.translate("Fertig"));
 		}
 	}
 	

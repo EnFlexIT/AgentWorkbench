@@ -102,6 +102,7 @@ public class Platform extends Object {
 		// ----------------------------------------------------------
 		String applicationTitle = Application.getGlobalInfo().getApplicationTitle();
 		String executionModeDescription = Application.getGlobalInfo().getExecutionModeDescription();
+		
 		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
 			if (jadeAgentIsRunning(MASapplicationAgentName)==false) {
@@ -118,7 +119,7 @@ public class Platform extends Object {
 			// --- This is a Master-Server-Platform ------------
 			// -------------------------------------------------
 			// --- Connecting to Database ----------------------
-			if (Application.getDatabaseConnection().hasErrors==true ) {
+			if (Application.getDatabaseConnection(true).hasErrors==true ) {
 				
 				this.jadeStop();
 				
@@ -265,6 +266,7 @@ public class Platform extends Object {
 			
 			// --- Start Download-Server for project-resources ------
 			DownloadServer webServer = Application.startDownloadServer();			
+			//System.out.println(Language.translate("Starte Webserver") + ": " + webServer.getHTTPAddress() );
 			
 			// --- If the current project has external resources ---- 
 			boolean ideExecuted = Application.getGlobalInfo().AppExecutedOver().equalsIgnoreCase("IDE");
@@ -632,8 +634,6 @@ public class Platform extends Object {
 	
 	/**
 	 * Returns the Jade main container.
-	 *
-	 * @param containerNameSearch the container name search
 	 * @return the agent container
 	 */
 	public AgentContainer jadeGetMainContainer() {

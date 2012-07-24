@@ -79,7 +79,14 @@ public class UpdateInformation {
 	 * Save update information.
 	 * @param updateFile the update file
 	 */
-	public void saveUpdateInformation(String updateFile) {
+	public void saveUpdateInformation(File updateFile) {
+		this.saveUpdateInformation(updateFile.getAbsolutePath());
+	}
+	/**
+	 * Save update information.
+	 * @param updateFilePath the update file
+	 */
+	public void saveUpdateInformation(String updateFilePath) {
 		
 		String downloadLink = this.getDownloadLink();
 		String downloadFile = this.getDownloadFile();
@@ -102,7 +109,7 @@ public class UpdateInformation {
 		// --- Save File ----------------------------------
 	    JAXBContext context;
 		try {
-			FileWriter componentFileWriter = new FileWriter(updateFile);
+			FileWriter componentFileWriter = new FileWriter(updateFilePath);
 			
 			context = JAXBContext.newInstance(UpdateInformation.class);
 		    Marshaller marsh = context.createMarshaller();
@@ -126,17 +133,22 @@ public class UpdateInformation {
 
 	/**
 	 * Load update information.
-	 *
 	 * @param updateFile the update file
-	 * @return the update information
 	 */
-	public UpdateInformation loadUpdateInformation(String updateFile) {
+	public void loadUpdateInformation(File updateFile) {
+		this.loadUpdateInformation(updateFile.getAbsolutePath());
+	}
+	/**
+	 * Load update information.
+	 * @param updateFilePath the update file
+	 */
+	public void loadUpdateInformation(String updateFilePath) {
 	    
 		File componentFile = null;
 		// --- Load file ----------------------------------
 		UpdateInformation updateInfo = null;
 		try {
-		    componentFile = new File(updateFile);
+		    componentFile = new File(updateFilePath);
 		    FileReader componentReader = new FileReader(componentFile);
 	
 		    JAXBContext context = JAXBContext.newInstance(UpdateInformation.class);
@@ -175,7 +187,7 @@ public class UpdateInformation {
 	    this.setDownloadFile(updateInfo.getDownloadFile());
 	    this.setDownloadSize(updateInfo.getDownloadSize());
 		
-		return updateInfo;
+//		return updateInfo;
 	}
 	
 	/**

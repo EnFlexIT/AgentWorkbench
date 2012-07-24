@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -53,41 +54,54 @@ import com.mysql.jdbc.Statement;
  */
 public class DBConnection {
 	
-	private String newLine = Application.getGlobalInfo().getNewLineSeparator();
-	private String sql = null;
-		
-	private Connection connection = null;
-	
-	/**
-	 * Flag that shows if errors have occurred 
-	 */
-	public boolean hasErrors = false;
-	/**
-	 * The Error object of this class
-	 * @see Error
-	 */
-	public Error dbError = new Error();
-	
+	private final String newLine = Application.getGlobalInfo().getNewLineSeparator();
+
 	private String dbHost = null;
 	private String dbName = null;
 	private String dbUser = null;
 	private String dbPswd = null;
+
+	private Connection connection = null;
+	private String sql = null;
+	
+	/** The Error object of this class */
+	public Error dbError = new Error();
+	/** Flag that shows if errors have occurred */
+	public boolean hasErrors = false;
+	
 	
 	/**
 	 * Constructor of this class. Try's to connect to or build the database for the server.master agent
 	 */
 	public DBConnection() {
 		
+		// --- Can the connection be established? ---------
 		if (this.connect()==false) {
 			hasErrors=true;
 			return;
 		}
-		if (this.dbIsAvailable()) {
-			this.setConnection2Database(dbName);
+		// --- Is the database available? -----------------
+		if (this.dbIsAvailable()==true) {
+			this.setConnection2Database(this.dbName);
+			// --- DB is there, check table 'platforms' ---
+			if (isPlatformTableCorrect()==false) {
+				// --- if not correct, recreate -----------
+				if (this.createTablePlatforms(true)==false) {
+					this.hasErrors = true;
+					return;
+				}
+			}
+			
 		} else {
-			if (this.dbCreate()==false) {
-				hasErrors = true;
-				return;	
+			// --- try to create to the database ----------
+			if (this.createDB()==true) {
+				if (this.createTablePlatforms()==false) {
+					this.hasErrors = true;
+					return;
+				}
+			} else {
+				this.hasErrors = true;
+				return;
 			}
 		}
 	}
@@ -96,7 +110,7 @@ public class DBConnection {
 	 * Creates the required Database for the server.master agent
 	 * @return True, if the database creation was successful
 	 */
-	private boolean dbCreate(){
+	private boolean createDB(){
 		
 		String msg = ""; 
 		msg += "Die Datenbank für den Server-Master ist nicht vorhanden." + newLine;
@@ -119,6 +133,28 @@ public class DBConnection {
 		
 		// --- Set Connection to Database ---------
 		this.setConnection2Database(dbName);
+		return true;
+		
+	}
+	
+	/**
+	 * Creates the table platforms.
+	 * @return true, if successful
+	 */
+	private boolean createTablePlatforms() {
+		return createTablePlatforms(false);
+	}
+	/**
+	 * Creates the table 'platforms'.
+	 * @param reCreate the re create
+	 * @return true, if successful
+	 */
+	private boolean createTablePlatforms(boolean reCreate) {
+		
+		if (reCreate==true && this.isPlatformTable()==true ) {
+			sql = "Drop Table platforms";
+			this.getSqlExecuteUpdate(sql);
+		}
 		
 		// --- Create TB 'server' -----------------
 		sql  = "CREATE TABLE platforms (" +
@@ -164,12 +200,52 @@ public class DBConnection {
 			   "PRIMARY KEY (id_platform)," +
 			   "UNIQUE KEY contact_agent (contact_agent) " +
 			   ") ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Agent.GUI available platforms'";
+		
 		if ( this.getSqlExecuteUpdate(sql) == false ) return false;
 		
 		// ---------------------------------------------------------------------------------
-		System.out.println( Language.translate("Datenbank erfolgreich angelegt!") );
+		System.out.println( Language.translate("Erzeuge die Tabelle 'platforms' für den Server-Master ... ") );
 		return true;
 		
+	}
+	
+	/**
+	 * Checks if is platform table correct.
+	 * @return true, if is platform table correct
+	 */
+	private boolean isPlatformTableCorrect() {
+		
+		sql  = "SELECT " +
+				"id_platform, contact_agent, platform_name, is_server, ip, url, jade_port, http4mtp, " +
+				"vers_major, vers_minor, vers_build, " +
+				"os_name, os_version, os_arch, " +
+				"cpu_vendor, cpu_model, cpu_n, cpu_speed_mhz, memory_total_mb, " +
+				"benchmark_value, " +
+				"online_since, last_contact_at, local_online_since, local_last_contact_at, " +
+				"currently_available, current_load_cpu, current_load_memory_system, " +
+				"current_load_memory_jvm, current_load_no_threads, " +
+				"current_load_threshold_exceeded " +
+				"FROM platforms";
+		
+		ResultSet res = getSqlResult4ExecuteQuery(sql, false);
+		if (res==null) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Checks if is platform table.
+	 * @return true, if is platform table
+	 */
+	private boolean isPlatformTable() {
+		
+		sql  = "SELECT * FROM platforms";
+		ResultSet res = getSqlResult4ExecuteQuery(sql);
+		if (res==null) {
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -267,10 +343,19 @@ public class DBConnection {
 
 	/**
 	 * Returns a ResultSet - Object for a SQL-Statement
-	 * @param sqlStmt
+	 * @param sqlStmt the SQL statement
 	 * @return com.mysql.jdbc.ResultSet
 	 */
 	public ResultSet getSqlResult4ExecuteQuery(String sqlStmt) {
+		return this.getSqlResult4ExecuteQuery(sqlStmt, true);
+	}
+	/**
+	 * Returns a ResultSet - Object for a SQL-Statement.
+	 * @param sqlStmt the SQL statement
+	 * @param showErrorDialog the show error dialog
+	 * @return com.mysql.jdbc.ResultSet
+	 */
+	public ResultSet getSqlResult4ExecuteQuery(String sqlStmt, boolean showErrorDialog) {
 		
 		ResultSet res = null;
 		Statement state = this.getNewStatement();
@@ -286,7 +371,9 @@ public class DBConnection {
 				this.dbError.setErrNumber( e.getErrorCode() );
 				this.dbError.setHead( "Fehler bei der Ausführung von 'executeQuery'!" );
 				this.dbError.setErr(true);
-				this.dbError.show();
+				if (showErrorDialog==true) {
+					this.dbError.show();
+				}
 			}
 		}		
 		return res;

@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: OSInfo
 * @author ontology bean generator
-* @version 2012/07/23, 00:15:35
+* @version 2012/07/24, 12:09:17
 */
 public class OSInfo implements Concept {
-
-   /**
-* Protege name: os_version
-   */
-   private String os_version;
-   public void setOs_version(String value) { 
-    this.os_version=value;
-   }
-   public String getOs_version() {
-     return this.os_version;
-   }
 
    /**
 * Protege name: os_arch
@@ -43,6 +32,17 @@ public class OSInfo implements Concept {
    }
    public String getOs_name() {
      return this.os_name;
+   }
+
+   /**
+* Protege name: os_version
+   */
+   private String os_version;
+   public void setOs_version(String value) { 
+    this.os_version=value;
+   }
+   public String getOs_version() {
+     return this.os_version;
    }
 
 }

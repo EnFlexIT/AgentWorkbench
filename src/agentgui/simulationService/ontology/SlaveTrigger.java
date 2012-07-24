@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: SlaveTrigger
 * @author ontology bean generator
-* @version 2012/07/23, 00:15:35
+* @version 2012/07/24, 12:09:17
 */
 public class SlaveTrigger implements AgentAction {
-
-   /**
-* Protege name: slaveLoad
-   */
-   private PlatformLoad slaveLoad;
-   public void setSlaveLoad(PlatformLoad value) { 
-    this.slaveLoad=value;
-   }
-   public PlatformLoad getSlaveLoad() {
-     return this.slaveLoad;
-   }
 
    /**
 * Protege name: slaveBenchmarkValue
@@ -32,6 +21,17 @@ public class SlaveTrigger implements AgentAction {
    }
    public BenchmarkResult getSlaveBenchmarkValue() {
      return this.slaveBenchmarkValue;
+   }
+
+   /**
+* Protege name: slaveLoad
+   */
+   private PlatformLoad slaveLoad;
+   public void setSlaveLoad(PlatformLoad value) { 
+    this.slaveLoad=value;
+   }
+   public PlatformLoad getSlaveLoad() {
+     return this.slaveLoad;
    }
 
    /**

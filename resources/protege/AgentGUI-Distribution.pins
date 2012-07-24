@@ -1,4 +1,4 @@
-; Mon Jul 23 00:15:36 CEST 2012
+; Tue Jul 24 12:09:21 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -28,6 +28,10 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([ClientUnregister] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([MasterUpdateNote] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 

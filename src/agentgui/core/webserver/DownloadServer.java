@@ -150,11 +150,9 @@ public class DownloadServer implements HttpConstants, Runnable {
     
     /**
      * Returns the webserver-Address including the currently used port.
-     *
-     * @return the hTTP address
+     * @return the HTTP address
      */
     public String getHTTPAddress() {
-    	
     	String httpAddress = null;
     	try {
 			InetAddress addressLocal = InetAddress.getLocalHost();
@@ -300,11 +298,9 @@ public class DownloadServer implements HttpConstants, Runnable {
     
     /**
      * Deletes a folder and all sub elements.
-     *
      * @param directory the directory
      */
     private void deleteFolder(File directory) {
-    	
     	for (File file : directory.listFiles()) {
     		if (file.isDirectory()) {
 	    		deleteFolder(file);
@@ -313,19 +309,15 @@ public class DownloadServer implements HttpConstants, Runnable {
 		}
     }
 
-
     /**
      * Gets the threads.
-     *
      * @return the threads
      */
 	public Vector<DownloadWorker> getThreads() {
 		return threads;
 	}
-	
 	/**
 	 * Sets the threads.
-	 *
 	 * @param threads the threads to set
 	 */
 	public void setThreads(Vector<DownloadWorker> threads) {
@@ -334,25 +326,20 @@ public class DownloadServer implements HttpConstants, Runnable {
 	
 	/**
 	 * Gets the root.
-	 *
 	 * @return the root
 	 */
 	public File getRoot() {
 		return root;
 	}
-	
 	/**
 	 * Sets the root.
-	 *
 	 * @param root the root to set
 	 */
 	public void setRoot(File root) {
 		this.root = root;
 	}
-	
 	/**
 	 * Sets the root.
-	 *
 	 * @param rootDirectory the new root
 	 */
 	public void setRoot(String rootDirectory) {
@@ -361,16 +348,13 @@ public class DownloadServer implements HttpConstants, Runnable {
 	
 	/**
 	 * Gets the port.
-	 *
 	 * @return the port
 	 */
 	public int getPort() {
 		return port;
 	}
-	
 	/**
 	 * Sets the port.
-	 *
 	 * @param port the port to set
 	 */
 	public void setPort(int port) {
@@ -379,16 +363,13 @@ public class DownloadServer implements HttpConstants, Runnable {
 	
 	/**
 	 * Gets the timeout.
-	 *
 	 * @return the timeout
 	 */
 	public int getTimeout() {
 		return timeout;
 	}
-	
 	/**
 	 * Sets the timeout.
-	 *
 	 * @param timeout the timeout to set
 	 */
 	public void setTimeout(int timeout) {
@@ -397,16 +378,13 @@ public class DownloadServer implements HttpConstants, Runnable {
 	
 	/**
 	 * Gets the workers.
-	 *
 	 * @return the workers
 	 */
 	public int getWorkers() {
 		return workers;
 	}
-	
 	/**
 	 * Sets the workers.
-	 *
 	 * @param workers the workers to set
 	 */
 	public void setWorkers(int workers) {

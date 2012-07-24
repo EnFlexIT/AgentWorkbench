@@ -41,16 +41,22 @@ import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.TickerBehaviour;
+import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.util.leap.ArrayList;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.core.database.DBConnection;
+import agentgui.core.update.AgentGuiUpdater;
+import agentgui.core.update.UpdateInformation;
+import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
 import agentgui.simulationService.ontology.AgentGuiVersion;
 import agentgui.simulationService.ontology.BenchmarkResult;
@@ -59,6 +65,7 @@ import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
 import agentgui.simulationService.ontology.ClientTrigger;
 import agentgui.simulationService.ontology.ClientUnregister;
+import agentgui.simulationService.ontology.MasterUpdateNote;
 import agentgui.simulationService.ontology.OSInfo;
 import agentgui.simulationService.ontology.PlatformAddress;
 import agentgui.simulationService.ontology.PlatformLoad;
@@ -100,7 +107,6 @@ public class ServerMasterAgent extends Agent {
 	
 	private ParallelBehaviour parBehaiv = null;
 	private DBConnection dbConn = Application.getDatabaseConnection();
-
 	
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
@@ -113,9 +119,10 @@ public class ServerMasterAgent extends Agent {
 		getContentManager().registerOntology(ontology);
 
 		// --- Add Main-Behaviours ------------------------
-		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
-		parBehaiv.addSubBehaviour( new MessageReceiveBehaviour() );
-		parBehaiv.addSubBehaviour( new CleanUpBehaviour(this, 1000*60) );
+		this.parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
+		this.parBehaiv.addSubBehaviour( new MessageReceiveBehaviour() );
+		this.parBehaiv.addSubBehaviour( new CleanUpBehaviour(this, 1000*60) );
+		this.parBehaiv.addSubBehaviour( new UpdateBehaviour(this, new Date()) );
 		// --- Add Parallel Behaviour ---------------------
 		this.addBehaviour(parBehaiv);
 	}
@@ -159,7 +166,91 @@ public class ServerMasterAgent extends Agent {
 	}
 	
 	// -----------------------------------------------------
-	// --- ClenUp-Behaviour --- S T A R T ------------------
+	// --- Update-Behaviour --- S T A R T ------------------
+	// -----------------------------------------------------
+	/**
+	 * The Class UpdateBehaviour.
+	 */
+	private class UpdateBehaviour extends WakerBehaviour {
+
+		private static final long serialVersionUID = 4604859330218354875L;
+
+		/**
+		 * Instantiates a new update behaviour.
+		 *
+		 * @param agent the agent
+		 * @param wakeupDate the wake up date
+		 */
+		public UpdateBehaviour(Agent agent, Date wakeupDate) {
+			super(agent, wakeupDate);
+		}
+		
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.WakerBehaviour#onWake()
+		 */
+		@Override
+		protected void onWake() {
+			
+			// --- Start the Updater --------------------------
+			new AgentGuiUpdater().start();
+			
+			// --- Set the time for the next update check -----
+			long updateStartTimeLong = 1000 + Application.getGlobalInfo().getUpdateDateLastChecked() + AgentGuiUpdater.UPDATE_CHECK_PERIOD;
+			Date updateStartDate = new Date(updateStartTimeLong); 
+			this.reset(updateStartDate);
+		}
+		
+	}
+	// -----------------------------------------------------
+	// --- Update-Behaviour --- E N D E --------------------
+	// -----------------------------------------------------
+
+	
+	// -----------------------------------------------------
+	// --- Run Webserver-Behaviour --- S T A R T -----------
+	// -----------------------------------------------------
+	private class WebserverControllerBehaviour extends WakerBehaviour {
+
+		private static final long serialVersionUID = 1691633119254093555L;
+		
+		private DownloadServer downloadServer = null;
+		
+		/**
+		 * Instantiates a new webserver controller behaviour.
+		 *
+		 * @param agent the agent
+		 * @param wakeupDate the wakeup date
+		 */
+		public WebserverControllerBehaviour(Agent agent, Date wakeupDate) {
+			super(agent, wakeupDate);
+			this.downloadServer = Application.startDownloadServer();
+		}
+		
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.WakerBehaviour#onWake()
+		 */
+		@Override
+		protected void onWake() {
+			super.onWake();
+			Application.stopDownloadServer();
+		}
+		
+		/**
+		 * Returns the instance of the download server.
+		 * @return the downloadServer
+		 */
+		public DownloadServer getDownloadServer() {
+			return downloadServer;
+		}
+
+	}
+	// -----------------------------------------------------
+	// --- Run Webserver-Behaviour --- E N D E -------------
+	// -----------------------------------------------------
+
+
+	// -----------------------------------------------------
+	// --- CleanUp-Behaviour --- S T A R T -----------------
 	// -----------------------------------------------------
 	/**
 	 * The CleanUpBehaviour searches for old database entries and removes them.
@@ -189,7 +280,7 @@ public class ServerMasterAgent extends Agent {
 		}
 	}
 	// -----------------------------------------------------
-	// --- ClenUp-Behaviour --- E N D E --------------------
+	// --- CleanUp-Behaviour --- E N D E -------------------
 	// -----------------------------------------------------
 
 	
@@ -203,6 +294,8 @@ public class ServerMasterAgent extends Agent {
 
 		private static final long serialVersionUID = -1701739199514787426L;
 
+		private WebserverControllerBehaviour webserverControllerBehaviour = null;
+		
 		/* (non-Javadoc)
 		 * @see jade.core.behaviours.Behaviour#action()
 		 */
@@ -240,7 +333,7 @@ public class ServerMasterAgent extends Agent {
 					senderAID = act.getActor();
 					
 					// ------------------------------------------------------------------
-					// --- Fallunterscheidung AgentAction --- S T A R T -----------------
+					// --- Cases AgentAction --- S T A R T ------------------------------
 					// ------------------------------------------------------------------
 					if (agentAction instanceof SlaveRegister) {
 						
@@ -254,12 +347,17 @@ public class ServerMasterAgent extends Agent {
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
 						Date plDate = new Date(timestamp);						
 						
+						// --- Register platform ------------------------------
 						dbRegisterPlatform(senderAID, os, plAdd, plPerf, version, plDate, true);
-
-						// --- Answer with 'RegisterReceipt' ------------------
-						RegisterReceipt rr = new RegisterReceipt();
-						ACLMessage reply = msg.createReply();
-						sendReply(reply, rr);
+						if (this.isAgentGuiVersionUpToDate(version)==true) {
+							// --- Answer with 'RegisterReceipt' --------------							
+							RegisterReceipt rr = new RegisterReceipt();
+							ACLMessage reply = msg.createReply();
+							sendReply(reply, rr);
+						} else {
+							// --- Prepare for update of client or slave ------
+							this.prepareForClientOrSlaveUpdate(msg);
+						}
 						
 					} else if ( agentAction instanceof ClientRegister ) {
 						
@@ -273,12 +371,17 @@ public class ServerMasterAgent extends Agent {
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
 						Date plDate = new Date(timestamp);						
 						
-						dbRegisterPlatform(senderAID, os, plAdd, plPerf, version, plDate, false);
-						
-						// --- Answer with 'RegisterReceipt' ------------------
-						RegisterReceipt rr = new RegisterReceipt();
-						ACLMessage reply = msg.createReply();
-						sendReply(reply, rr);
+						// --- Register platform ------------------------------
+						dbRegisterPlatform(senderAID, os, plAdd, plPerf, version, plDate, true);
+						if (this.isAgentGuiVersionUpToDate(version)==true) {
+							// --- Answer with 'RegisterReceipt' --------------							
+							RegisterReceipt rr = new RegisterReceipt();
+							ACLMessage reply = msg.createReply();
+							sendReply(reply, rr);
+						} else {
+							// --- Prepare for update of client or slave ------
+							this.prepareForClientOrSlaveUpdate(msg);
+						}
 
 					} else if ( agentAction instanceof SlaveTrigger ) {
 						
@@ -324,7 +427,7 @@ public class ServerMasterAgent extends Agent {
 						System.out.println( agentAction.toString() );
 					}
 					// ------------------------------------------------------------------
-					// --- Fallunterscheidung AgentAction --- E N D E -------------------
+					// --- Cases AgentAction --- E N D E --------------------------------
 					// ------------------------------------------------------------------
 				}
 			}
@@ -333,11 +436,146 @@ public class ServerMasterAgent extends Agent {
 			}			
 		}
 		
+		/**
+		 * Checks if a foreign version is up to date.
+		 *
+		 * @param foreignVersion the foreign version
+		 * @return true, if is up to date
+		 */
+		private boolean isAgentGuiVersionUpToDate(AgentGuiVersion foreignVersion) {
+			return Application.getGlobalInfo().getVersionInfo().isUpToDate(foreignVersion);
+		}
+		
+		/**
+		 * Sets and prepares the updates for the client or slave.
+		 * @param msg 
+		 */
+		private void prepareForClientOrSlaveUpdate(ACLMessage msg) {
+
+			// --- Start or reset download server for 10 minutes --------------
+			Long timeToStopLong = System.currentTimeMillis() + (1000*60*10); 
+			Date timeToStopDate = new Date(timeToStopLong);
+			if (this.webserverControllerBehaviour==null) {
+				this.webserverControllerBehaviour = new WebserverControllerBehaviour(this.myAgent, timeToStopDate);
+				parBehaiv.addSubBehaviour(this.webserverControllerBehaviour);
+			} else {
+				this.webserverControllerBehaviour.reset(timeToStopDate);
+			}
+			
+			// --- Waiting for the start of the download server ---------------
+			while (this.webserverControllerBehaviour.getDownloadServer()==null) {
+				block(200);
+			}
+			
+			// --- Checking 'updates' folder configure 'latestVersion.xml' ----
+			String updateURL = this.checkUpdateFolderAndUpdateLatestVersionXML(this.webserverControllerBehaviour.getDownloadServer());
+			
+			// --- Notify that an update is needed ----------------------------
+			MasterUpdateNote mun = new MasterUpdateNote();
+			mun.setUpdateInfoURL(updateURL);
+			ACLMessage reply = msg.createReply();
+			sendReply(reply, mun);
+
+		}
+		
+		/**
+		 * Check update folder and update latest version XML.
+		 * @return the URL as string, where the infoFile can be found.
+		 */
+		private String checkUpdateFolderAndUpdateLatestVersionXML(DownloadServer downloadServer) {
+			
+			String urlUpdateDir = downloadServer.getHTTPAddress() + "/" + AgentGuiUpdater.UPDATE_SUB_FOLDER + "/";
+			String localUpdateDir = downloadServer.getRoot().getAbsolutePath() + File.separator + AgentGuiUpdater.UPDATE_SUB_FOLDER;
+			String localVersionInfo = localUpdateDir + File.separator + AgentGuiUpdater.UPDATE_VERSION_INFO_FILE;
+
+			File localUpdateDirFile = new File(localUpdateDir);
+			File localVersionInfoFile = new File(localVersionInfo);
+			if (localVersionInfoFile.exists()) {
+				// --- File 'latestVersion.xml' is available ------------------ 
+				UpdateInformation updateInformation = new UpdateInformation();
+				updateInformation.loadUpdateInformation(localVersionInfoFile);
+				// --- Search for the zip of the update -----------------------
+				String updateZip = localUpdateDir + File.separator + updateInformation.getDownloadFile();
+				File updateZipFile = new File(updateZip);
+				if (updateZipFile.exists()) {
+					// --- Configure info File --------------------------------
+					updateInformation.setDownloadLink(urlUpdateDir + updateInformation.getDownloadFile());
+					updateInformation.setDownloadSize(((Long)updateZipFile.length()).intValue());
+					updateInformation.saveUpdateInformation(localVersionInfoFile);
+					
+					// --- Cleanup update directory ---------------------------
+					Vector<File> keepFiles = new Vector<File>();
+					keepFiles.add(localVersionInfoFile);
+					keepFiles.add(updateZipFile);
+					this.cleanUpUpdateFolder(localUpdateDirFile, keepFiles);
+
+					// --- Return Link to 'lastVersion.xml' -------------------
+					return urlUpdateDir + AgentGuiUpdater.UPDATE_VERSION_INFO_FILE;
+					
+				} else {
+					// --- Cleanup update directory ---------------------------
+					this.cleanUpUpdateFolder(localUpdateDirFile, null);
+					
+				}
+				
+			} else {
+				// --- Cleanup update directory -------------------------------
+				this.cleanUpUpdateFolder(localUpdateDirFile, null);
+				
+			}
+			return null;
+		}
+		
+		
+		/**
+		 * Clean up update folder.
+		 * @param file the file
+		 * @param exceptFiles the except files
+		 */
+		private void cleanUpUpdateFolder(File file, Vector<File> exceptFiles) {
+			File[] files = file.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (exceptFiles==null) {
+					this.deleteFileOrFolder(files[i]);	
+					
+				} else {
+					boolean keepFile = false;
+					for (File exceptedFile : exceptFiles) {
+						if (exceptedFile.equals(files[i])==true) {
+							keepFile = true;
+						}						
+					}
+					if (keepFile==false) {
+						this.deleteFileOrFolder(files[i]);
+					}
+					
+				}
+			}// end for
+		}
+		
+		/**
+		 * Delete file or folder.
+		 * @param file the file
+		 */
+		private void deleteFileOrFolder(File file) {
+			if (file.isFile()) {
+				file.delete();	
+			} else {
+				File[] files = file.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					File deleteFile = files[i];
+					this.deleteFileOrFolder(deleteFile);
+				}
+				file.delete();
+			}
+		}
+		
 	}
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaviour --- E N D -------------
 	// -----------------------------------------------------
 
+	
 	/**
 	 * This method is used for the registration of slave- and client-platforms
 	 * in the database table 'platforms' of the used database.
