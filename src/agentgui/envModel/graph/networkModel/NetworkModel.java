@@ -1399,6 +1399,23 @@ public class NetworkModel implements Serializable {
 		return false;
 	}
 	
+	public boolean isFreeGraphNode1(GraphNode graphNode) {
+
+		// --- The number of network components containing this node ------
+		HashSet<NetworkComponent> networkComponents = getNetworkComponents(graphNode);
+		if (networkComponents.size() == 1) {
+			return true;
+		}
+		for (NetworkComponent networkComponent : networkComponents) {
+			// --- Node is present in several components ------------------
+			if (networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
 	/**
 	 * Checks if the current GraphNode is a DistributionNode.
 	 *
@@ -1452,7 +1469,9 @@ public class NetworkModel implements Serializable {
 
 		// ----------- Create Cluster Prototype and Component ---------------------
 		Vector<GraphNode> outerNodes = this.getOuterNodes(networkComponents);
+		
 		String clusterComponentID = this.nextNetworkComponentID();
+		System.out.println(clusterComponentID + "  "+outerNodes);
 		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, clusterComponentID);
 		HashSet<GraphElement> clusterElements = new ClusterGraphElement(outerNodes, clusterComponentID).addToGraph(this);
 		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), null, clusterElements, clusterGraphElement.isDirected(), domain, clusterNetworkModel);
@@ -1505,7 +1524,7 @@ public class NetworkModel implements Serializable {
 		Vector<GraphNode> outerNodes = new Vector<GraphNode>();
 		for (NetworkComponent networkComponent : networkComponents) {
 			for (GraphNode graphNode : getNodesFromNetworkComponent(networkComponent)) {
-				if (isFreeGraphNode(graphNode)) {
+				if (isFreeGraphNode1(graphNode)) {
 					outerNodes.add(graphNode);
 				}
 			}
