@@ -30,6 +30,7 @@ package agentgui.core.application;
 
 import jade.debugging.components.JPanelConsole;
 
+import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -59,6 +60,8 @@ import agentgui.simulationService.load.LoadMeasureThread;
  */
 public class Application {
 	
+	/** True, if Agent.GUI was updated */
+	private static boolean agentGuiWasUpdated = false;
 	/** True, if a remote container has to be started (see start arguments) */
 	private static boolean justStartJade = false;
 	/** Indicates if the benchmark is currently running */
@@ -303,6 +306,12 @@ public class Application {
 					i++;
 					project2OpenAfterStart = args[i];
 					
+				} else if (args[i].equalsIgnoreCase("-updated")) {
+					// --------------------------------------------------------
+					// --- AgentGui.jar updated, remove AgentGuiUpdate.jar ----
+					remainingArgsVector.removeElement(args[i]);
+					agentGuiWasUpdated = true;
+					
 				} else if (args[i].equalsIgnoreCase("-jade")) {
 					// --------------------------------------------------------
 					// --- JADE has to be started as remote container ---------	
@@ -403,6 +412,16 @@ public class Application {
 	 * depending on the configuration in 'properties/agentgui.ini'
 	 */
 	public static void startAgentGUI() {
+		
+		// ----------------------------------------------------------		
+		// --- Delete the updater file ------------------------------
+		if (agentGuiWasUpdated==true) {
+			String updaterPath = getGlobalInfo().getFileNameUpdater(true);
+			File updater = new File(updaterPath);
+			if (updater.exists()==true) {
+				updater.delete();
+			}
+		}
 		
 		// ----------------------------------------------------------		
 		// --- Start the Application as defined by 'isServer' -------

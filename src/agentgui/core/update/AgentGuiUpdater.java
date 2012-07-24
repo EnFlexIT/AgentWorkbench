@@ -328,7 +328,7 @@ public class AgentGuiUpdater extends Thread {
 								// --- Do installation --------------
 								this.executeAgentGuiUpdater();
 								// --- ShutDown ---------------------
-								//Application.quit();
+								Application.quit();
 								return;
 								
 							} else {
@@ -393,6 +393,7 @@ public class AgentGuiUpdater extends Thread {
 		File zipFolderFile = new File(this.localUpdateZipFile);
 		String extractedFolder = zipFolderFile.getParent() + File.separator + this.localUpdateExtractedFolder;
 		String updaterFilePath = extractedFolder + File.separator + this.globalInfo.getFileNameUpdater(false);
+		System.out.println("Searching for " + updaterFilePath);
 		File updaterFile = new File(updaterFilePath);
 		if (updaterFile.exists()==true) {
 			

@@ -170,7 +170,7 @@ public class GlobalInfo {
 
 			if (JCP_Files[i].endsWith(localFileRunnableJar)) {
 				localAppExecutedOver = ExecutedOverAgentGuiJar;
-				// --- Bei jar, immer interne Console verwenden -------------
+				
 				CutAt = JCP_Files[i].lastIndexOf(fileSeparator) + 1;
 				localBaseDir = JCP_Folders[i].substring(0, CutAt);	
 

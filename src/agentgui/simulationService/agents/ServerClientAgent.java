@@ -380,6 +380,7 @@ public class ServerClientAgent extends Agent {
 						MasterUpdateNote masterUpdateNote = (MasterUpdateNote) agentAction;
 						String updateInfoURL = masterUpdateNote.getUpdateInfoURL();
 						System.out.println( "Download Update-Information: " + updateInfoURL);
+						// --- Start update process ---------------------------
 						new AgentGuiUpdater(false, updateInfoURL).start();
 						
 					} else if (agentAction instanceof ClientRemoteContainerRequest) {
