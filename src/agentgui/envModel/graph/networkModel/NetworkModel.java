@@ -1433,8 +1433,6 @@ public class NetworkModel implements Serializable {
 	 */
 	public ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponents, boolean distributionNodesAreOuterNodes) {
 		
-		boolean setDistributionNodesToOuterNodes = distributionNodesAreOuterNodes;
-		
 		// ---------- Get Domain of current NetworkComponent ----------------------
 		String domain = null;
 		NetworkComponent networkComponent = networkComponents.iterator().next();
@@ -1452,7 +1450,7 @@ public class NetworkModel implements Serializable {
 		clusterNetworkModel.removeNetworkComponentsInverse(networkComponents);
 
 		// ----------- Get outer GraphNode of the NetworkModel --------------------
-		Vector<GraphNode> outerNodes = clusterNetworkModel.getOuterNodes(setDistributionNodesToOuterNodes);
+		Vector<GraphNode> outerNodes = clusterNetworkModel.getOuterNodes(distributionNodesAreOuterNodes);
 		
 		// ----------- Create Cluster Prototype and Component ---------------------
 		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, this.nextNetworkComponentID());
@@ -1461,7 +1459,7 @@ public class NetworkModel implements Serializable {
 		
 		// ----------- Remove clustered NetworkComponents -------------------------
 		for (NetworkComponent netComp : networkComponents) {
-			if (setDistributionNodesToOuterNodes==false) {
+			if (distributionNodesAreOuterNodes==false) {
 				this.removeNetworkComponent(netComp);
 			} else {
 				if (netComp.getPrototypeClassName().equals(DistributionNode.class.getName())==false) {
