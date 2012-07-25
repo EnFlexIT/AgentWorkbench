@@ -82,21 +82,21 @@
             <value>gasmas.ontology.Pipe</value>
         </entry>
         <entry>
-            <key>gasmas.agents.BranchAgent</key>
-            <value>gasmas.ontology.Branch</value>
-        </entry>
-        <entry>
             <key>gasmas.agents.components.ExitAgent</key>
             <value>gasmas.ontology.Exit|[Output] agentgui.ontology.TimeSeries</value>
         </entry>
+        <entry>
+            <key>gasmas.agents.BranchAgent</key>
+            <value>gasmas.ontology.Branch</value>
+        </entry>
     </agentConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1109</useLocalPort>
+        <useLocalPort>1125</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -154,24 +154,24 @@
             <value>smallclusters_3_large.xml</value>
         </entry>
         <entry>
-            <key>SmallClusters (1) Small</key>
-            <value>smallclusters_1_small.xml</value>
-        </entry>
-        <entry>
             <key>Testnetz 3</key>
             <value>testnetz_3.xml</value>
+        </entry>
+        <entry>
+            <key>SmallClusters (1) Small</key>
+            <value>smallclusters_1_small.xml</value>
         </entry>
         <entry>
             <key>HNord</key>
             <value>hnord.xml</value>
         </entry>
         <entry>
-            <key>TestImport</key>
-            <value>testimport.xml</value>
-        </entry>
-        <entry>
             <key>HNord (1) Small</key>
             <value>hnord_1_small.xml</value>
+        </entry>
+        <entry>
+            <key>TestImport</key>
+            <value>testimport.xml</value>
         </entry>
         <entry>
             <key>MixedClusters (3) Large</key>
@@ -182,12 +182,12 @@
             <value>mixedclusters_1_small.xml</value>
         </entry>
         <entry>
-            <key>HNord Complete</key>
-            <value>hnord_complete.xml</value>
-        </entry>
-        <entry>
             <key>HNord (3) Large</key>
             <value>hnord_3_large.xml</value>
+        </entry>
+        <entry>
+            <key>HNord Complete</key>
+            <value>hnord_complete.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>

@@ -70,7 +70,7 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 		Subgraph subgraph = startPathAnalysis(networkModel);
 		if (subgraph != null) {
 			NetworkModel copyNetworkModel = getClusterNM();
-			ClusterNetworkComponent clusterNetworkComponent = copyNetworkModel.replaceComponentsByCluster(subgraph.getNetworkComponents(copyNetworkModel));
+			ClusterNetworkComponent clusterNetworkComponent = copyNetworkModel.replaceComponentsByCluster(subgraph.getNetworkComponents(copyNetworkModel), true);
 			coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent, true);
 		}
 		Date end = new Date();

@@ -356,8 +356,7 @@ public interface NetworkModelInterface {
 	 * Replace NetworkComponents by one ClusterComponent.
 	 * @param networkComponents A List of NetworkComponents
 	 */
-	public abstract ClusterNetworkComponent replaceComponentsByCluster(
-			HashSet<NetworkComponent> networkComponents);
+	public abstract ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponents, boolean distributionNodesAreOuterNodes);
 
 	/**
 	 * Gets the outer network components.

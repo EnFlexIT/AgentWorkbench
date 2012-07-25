@@ -580,8 +580,8 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#replaceComponentsByCluster(java.util.HashSet)
 	 */
 	@Override
-	public ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponents) {
-		return this.graphController.getNetworkModel().replaceComponentsByCluster(networkComponents);
+	public ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponents, boolean distributionNodesAreOuterNodes) {
+		return this.graphController.getNetworkModel().replaceComponentsByCluster(networkComponents, distributionNodesAreOuterNodes);
 	}
 
 	/*

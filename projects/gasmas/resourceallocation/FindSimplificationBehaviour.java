@@ -178,7 +178,7 @@ public class FindSimplificationBehaviour extends TickerBehaviour {
 //		 ClusterNotification cn = new ClusterNotification();
 //		 cn.setNotificationObject(networkModel.replaceComponentsByCluster(networkComponents));
 		System.out.println("Von " + thisNetworkComponent.getId() + " Cluster: " + list);
-		myAgent.sendManagerNotification(networkModel.replaceComponentsByCluster(networkComponents));
+		myAgent.sendManagerNotification(networkModel.replaceComponentsByCluster(networkComponents, true));
 
 	}
 

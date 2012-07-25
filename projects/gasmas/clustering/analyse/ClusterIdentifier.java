@@ -100,7 +100,7 @@ public class ClusterIdentifier {
 		}
 		ArrayList<String> branchConnectionComponents = checkBranches(networkComponents, getConnectionComponents(networkComponents, reducedModel.getNetworkComponents(graphNodes), networkModel),
 				networkModel);
-		criticalBranchConnectionComponents.put(networkModel.replaceComponentsByCluster(networkComponents), branchConnectionComponents);
+		criticalBranchConnectionComponents.put(networkModel.replaceComponentsByCluster(networkComponents, true), branchConnectionComponents);
 		return true;
 	}
 

@@ -181,7 +181,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			// --- Got a ClusterNetworkComponent ----------------------------------------
 			ClusterNetworkComponent clusterNetworkComponent = (ClusterNetworkComponent) notification.getNotification();
 			// --- Substitute the components that are covered by the cluster ------------   
-			clusterNetworkComponent = this.replaceNetworkModelPartWithCluster(clusterNetworkComponent);
+			clusterNetworkComponent = this.replaceNetworkModelPartWithCluster(clusterNetworkComponent, true);
 			// --- Rename the ClusterNetworkComponent -----------------------------------
 			String clusterNetCompIdOld = clusterNetworkComponent.getId();
 			String clusterNetCompIdNew = notification.getSender().getLocalName();
@@ -220,13 +220,13 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	 * @param networkModel the network model
 	 * @return the cluster network component
 	 */
-	private ClusterNetworkComponent replaceNetworkModelPartWithCluster(ClusterNetworkComponent clusterNetworkComponent) {
+	private ClusterNetworkComponent replaceNetworkModelPartWithCluster(ClusterNetworkComponent clusterNetworkComponent, boolean distributionNodesAreOuterNodes) {
 		NetworkModel clusterNetworkModel = this.getClusteredModel();
 		HashSet<NetworkComponent> networkComponents = new HashSet<NetworkComponent>();
 		for (String id : clusterNetworkComponent.getNetworkComponentIDs()) {
 			networkComponents.add(clusterNetworkModel.getNetworkComponent(id));
 		}
-		return clusterNetworkModel.replaceComponentsByCluster(networkComponents);
+		return clusterNetworkModel.replaceComponentsByCluster(networkComponents, distributionNodesAreOuterNodes);
 	}
 
 	/**

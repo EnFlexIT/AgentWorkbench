@@ -1399,23 +1399,6 @@ public class NetworkModel implements Serializable {
 		return false;
 	}
 	
-	public boolean isFreeGraphNode1(GraphNode graphNode) {
-
-		// --- The number of network components containing this node ------
-		HashSet<NetworkComponent> networkComponents = getNetworkComponents(graphNode);
-		if (networkComponents.size() == 1) {
-			return true;
-		}
-		for (NetworkComponent networkComponent : networkComponents) {
-			// --- Node is present in several components ------------------
-			if (networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-	
 	/**
 	 * Checks if the current GraphNode is a DistributionNode.
 	 *
@@ -1448,7 +1431,9 @@ public class NetworkModel implements Serializable {
 	 * Replace NetworkComponents by one ClusterComponent.
 	 * @param networkComponents A List of NetworkComponents
 	 */
-	public ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponents) {
+	public ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponents, boolean distributionNodesAreOuterNodes) {
+		
+		boolean setDistributionNodesToOuterNodes = distributionNodesAreOuterNodes;
 		
 		// ---------- Get Domain of current NetworkComponent ----------------------
 		String domain = null;
@@ -1465,16 +1450,25 @@ public class NetworkModel implements Serializable {
 		NetworkModel clusterNetworkModel = this.getCopy();
 		clusterNetworkModel.setAlternativeNetworkModel(null);
 		clusterNetworkModel.removeNetworkComponentsInverse(networkComponents);
-		this.removeNetworkComponents(networkComponents);
 
-		// ----------- Create Cluster Prototype and Component ---------------------
-		Vector<GraphNode> outerNodes = this.getOuterNodes(networkComponents);
+		// ----------- Get outer GraphNode of the NetworkModel --------------------
+		Vector<GraphNode> outerNodes = clusterNetworkModel.getOuterNodes(setDistributionNodesToOuterNodes);
 		
-		String clusterComponentID = this.nextNetworkComponentID();
-		System.out.println(clusterComponentID + "  "+outerNodes);
-		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, clusterComponentID);
-		HashSet<GraphElement> clusterElements = new ClusterGraphElement(outerNodes, clusterComponentID).addToGraph(this);
-		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterComponentID, clusterGraphElement.getType(), null, clusterElements, clusterGraphElement.isDirected(), domain, clusterNetworkModel);
+		// ----------- Create Cluster Prototype and Component ---------------------
+		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, this.nextNetworkComponentID());
+		HashSet<GraphElement> graphElements = clusterGraphElement.addToGraph(this);
+		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterGraphElement.getId(), clusterGraphElement.getType(), null, graphElements, clusterGraphElement.isDirected(), domain, clusterNetworkModel);
+		
+		// ----------- Remove clustered NetworkComponents -------------------------
+		for (NetworkComponent netComp : networkComponents) {
+			if (setDistributionNodesToOuterNodes==false) {
+				this.removeNetworkComponent(netComp);
+			} else {
+				if (netComp.getPrototypeClassName().equals(DistributionNode.class.getName())==false) {
+					this.removeNetworkComponent(netComp);
+				}
+			}
+		}
 		
 		this.addNetworkComponent(clusterComponent);
 		this.refreshGraphElements();
@@ -1488,8 +1482,8 @@ public class NetworkModel implements Serializable {
 	 */
 	public void replaceClusterByComponents(ClusterNetworkComponent clusterNetworkComponent) {
 		removeNetworkComponent(clusterNetworkComponent);
-		for( GraphNode graphNode : clusterNetworkComponent.getClusterNetworkModel().getGraph().getVertices())
-		{
+		for( GraphNode graphNode : clusterNetworkComponent.getClusterNetworkModel().getGraph().getVertices()) {
+			
 			if (getGraphElement(graphNode.getId()) == null) {
 				GraphNode graphNodeCopy = graphNode.getCopy();
 				graph.addVertex(graphNodeCopy);
@@ -1515,20 +1509,39 @@ public class NetworkModel implements Serializable {
 	}
 
 	/**
-	 * Gets the outer nodes.
+	 * Returns the outer, not connected GraphNodes of a NetworkModel.
 	 *
 	 * @param networkComponents the network components
 	 * @return the outer nodes
 	 */
-	private Vector<GraphNode> getOuterNodes(HashSet<NetworkComponent> networkComponents) {
+	public Vector<GraphNode> getOuterNodes(boolean setDistributionNodesToOuterNodes) {
+		
 		Vector<GraphNode> outerNodes = new Vector<GraphNode>();
-		for (NetworkComponent networkComponent : networkComponents) {
-			for (GraphNode graphNode : getNodesFromNetworkComponent(networkComponent)) {
-				if (isFreeGraphNode1(graphNode)) {
-					outerNodes.add(graphNode);
+		Collection<GraphNode> nodes = this.getGraph().getVertices();
+		for (GraphNode node : nodes) {
+			HashSet<NetworkComponent> comps = this.getNetworkComponents(node);
+			if (comps.size()==1) {
+				if (isFreeGraphNode(node)==true) {
+					outerNodes.add(node);	
 				}
+				
+			} else if (comps.size()>1) {
+				// --- DistributionNode? --------
+				if (this.containsDistributionNode(comps)!=null && setDistributionNodesToOuterNodes==true){
+					outerNodes.add(node);
+				}
+				
 			}
+			
 		}
+		
+//		for (NetworkComponent networkComponent : networkComponents) {
+//			for (GraphNode graphNode : getNodesFromNetworkComponent(networkComponent)) {
+//				if (isFreeGraphNode(graphNode)) {
+//					outerNodes.add(graphNode);
+//				}
+//			}
+//		}
 		return outerNodes;
 	}
 

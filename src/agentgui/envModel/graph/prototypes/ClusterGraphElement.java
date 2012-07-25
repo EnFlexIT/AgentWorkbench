@@ -73,22 +73,33 @@ public class ClusterGraphElement extends StarGraphElement {
 	 * @return the hash set
 	 */
 	public HashSet<GraphElement> addToGraph(NetworkModel networkModel) {
+		
 		HashSet<GraphElement> elements = new HashSet<GraphElement>(outerNodes);
-		// add central Node
+		
+		// --- Add central Node -----------------
 		GraphNode centralNode = new GraphNode();
 		centralNode.setId(networkModel.nextNodeID());
 		Rectangle2D rectangle = BasicGraphGui.getVerticesSpreadDimension(outerNodes);
 		centralNode.setPosition(new Point2D.Double(rectangle.getCenterX(), rectangle.getCenterY()));
 		networkModel.getGraph().addVertex(centralNode);
 		elements.add(centralNode);
-		// add Edges
+		
+		// --- Add Edges ------------------------
 		int counter = 0;
 		for (GraphNode graphNode : outerNodes) {
+			// --- Get node from NetworkModel ---
+			GraphNode graphNode2Connect = (GraphNode) networkModel.getGraphElement(graphNode.getId());
+			if (graphNode2Connect==null) {
+				graphNode2Connect = graphNode;
+			}
+			// --- Add Edge ---------------------
 			GraphEdge edge = new GraphEdge(id + "_" + counter++, getType());
-			networkModel.getGraph().addEdge(edge, centralNode, graphNode, EdgeType.UNDIRECTED);
+			networkModel.getGraph().addEdge(edge, centralNode, graphNode2Connect, EdgeType.UNDIRECTED);
 			elements.add(edge);
 		}
+		
 		return elements;
+		
 	}
 
 	/*

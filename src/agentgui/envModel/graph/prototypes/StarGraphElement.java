@@ -10,7 +10,7 @@ import edu.uci.ics.jung.graph.Graph;
 
 public abstract class StarGraphElement extends GraphElementPrototype {
 
-	/** The vector of outernodes which forms the corners of the element. */
+	/** The vector of outer nodes that forms the corners of the element. */
 	protected Vector<GraphNode> outerNodes = new Vector<GraphNode>();
 
 	protected Integer n;

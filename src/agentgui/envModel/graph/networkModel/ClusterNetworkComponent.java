@@ -58,6 +58,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @param clusterNetworkModel the cluster network model
 	 */
 	public ClusterNetworkComponent(String id, String type, String agentClassName, HashSet<GraphElement> graphElements, boolean directed, String domain, NetworkModel clusterNetworkModel) {
+		
 		super(id, type, ClusterNetworkComponent.DEFAUL_PROTOTYPE_CLASS_NAME, agentClassName, graphElements, directed);
 
 		this.domain = domain;
