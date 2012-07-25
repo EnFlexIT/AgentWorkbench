@@ -1532,14 +1532,6 @@ public class NetworkModel implements Serializable {
 			}
 			
 		}
-		
-//		for (NetworkComponent networkComponent : networkComponents) {
-//			for (GraphNode graphNode : getNodesFromNetworkComponent(networkComponent)) {
-//				if (isFreeGraphNode(graphNode)) {
-//					outerNodes.add(graphNode);
-//				}
-//			}
-//		}
 		return outerNodes;
 	}
 
