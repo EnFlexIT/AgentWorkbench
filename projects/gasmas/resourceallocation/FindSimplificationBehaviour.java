@@ -1,57 +1,65 @@
 package gasmas.resourceallocation;
 
+import gasmas.agents.components.GenericNetworkAgent;
+import jade.core.AID;
+import jade.core.behaviours.TickerBehaviour;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map.Entry;
 
-import gasmas.agents.components.GenericNetworkAgent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
-import jade.core.AID;
-import jade.core.behaviours.TickerBehaviour;
 
 public class FindSimplificationBehaviour extends TickerBehaviour {
 
 	private static final long serialVersionUID = -2365487643740457952L;
 
-	public List<String> getIncoming() {
+	public HashSet<String> getIncoming() {
 		return incoming;
 	}
 
-	public void setIncoming(List<String> incoming) {
+	public void setIncoming(HashSet<String> incoming) {
 		this.incoming = incoming;
 	}
 
-	public List<String> getOutgoing() {
+	public HashSet<String> getOutgoing() {
 		return outgoing;
 	}
 
-	public void setOutgoing(List<String> outgoing) {
+	public void setOutgoing(HashSet<String> outgoing) {
 		this.outgoing = outgoing;
 	}
 
-	public List<String> getDead() {
+	public HashSet<String> getDead() {
 		return dead;
 	}
 
-	public void setDead(List<String> dead) {
+	public void setDead(HashSet<String> dead) {
 		this.dead = dead;
 	}
 
 	/** NetworkComponentNames, which has positive flow */
-	private List<String> incoming = new ArrayList<String>();
+	private HashSet<String> incoming = new HashSet<String>();
 
 	/** NetworkComponentNames, which has negative flow */
-	private List<String> outgoing = new ArrayList<String>();
+	private HashSet<String> outgoing = new HashSet<String>();
 
 	/** NetworkComponentNames, which has no flow */
-	private List<String> dead = new ArrayList<String>();
+	private HashSet<String> dead = new HashSet<String>();
 
 	/** NetworkComponentNames, which has positive flow */
-	private List<String> toAsk = new ArrayList<String>();
+	private HashSet<String> toAsk = new HashSet<String>();
+
+	/** NetworkComponentNames, which has positive flow */
+	private HashSet<String> temp = new HashSet<String>();
+
+	/** Stores the next station, how asked because of a cluster */
+	private HashMap<String, HashSet<String>> nextQuestionier = new HashMap<String, HashSet<String>>();
 
 	/** The environment model. */
 	private EnvironmentModel environmentModel;
@@ -77,6 +85,12 @@ public class FindSimplificationBehaviour extends TickerBehaviour {
 	/** Shows if this component has information */
 	private boolean noInformation = false;
 
+	/** Shows if this component had started */
+	private boolean startdone = false;
+
+	/** Shows if this component had started */
+	private boolean duringACluster = false;
+
 	/**
 	 * @param agent
 	 * @param environmentModel
@@ -95,21 +109,23 @@ public class FindSimplificationBehaviour extends TickerBehaviour {
 	 * @see jade.core.behaviours.Behaviour#onStart()
 	 */
 	public void onStart() {
+		super.onStart();
 		// Start from the network component, where we do not have all
 		// information
 		toAsk.addAll(incoming);
 		toAsk.addAll(outgoing);
 		toAsk.addAll(dead);
 		if (thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.BranchAgent") && networkModel.getNeighbourNetworkComponents(thisNetworkComponent).size() != toAsk.size()
-				&& networkModel.getNeighbourNetworkComponents(thisNetworkComponent).size() > 0) {
+				&& toAsk.size() > 0) {
 			end = true;
-			msgSend(toAsk.get(alreadyReportedStations), new SimplificationData(thisNetworkComponent.getId()));
+			msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(thisNetworkComponent.getId()));
 			alreadyReportedStations += 1;
 			System.out.println("Start " + thisNetworkComponent.getId());
 		}
 		if (incoming.isEmpty() || outgoing.isEmpty()) {
 			noInformation = true;
 		}
+		startdone = true;
 	}
 
 	public void msgSend(String receiver, SimplificationData simplificationData) {
@@ -120,50 +136,100 @@ public class FindSimplificationBehaviour extends TickerBehaviour {
 	}
 
 	public synchronized void interpretMsg(EnvironmentNotification msg) {
+		while (!startdone) {
+			try {
+				wait(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// System.out.println("!" + myAgent.getLocalName() +
+			// "   "+myAgent.getState()+ "   "+myAgent.getAgentState()+
+			// "   "+myAgent.here());
+		}
 		SimplificationData content = (SimplificationData) msg.getNotification();
 		String sender = msg.getSender().getLocalName();
+		buildCluster(content, sender);
+
+	}
+
+	private void buildCluster(SimplificationData content, String sender) {
+		if (thisNetworkComponent.getId().equals("n37")){ 
+			System.out.println("sd");
+		}
 		if (content.isAnswer()) {
 
 			if (alreadyReportedStations < toAsk.size()) {
 				content.setAnswer(false);
-				msgSend(toAsk.get(alreadyReportedStations), content);
+				msgSend((String) toAsk.toArray()[alreadyReportedStations], content);
 				alreadyReportedStations += 1;
 			} else {
+				content.addStation(thisNetworkComponent.getId());
 				if (end) {
-					System.out.println("Auslöser: " + sender + " bei " + thisNetworkComponent.getId());
-					content.addStation(thisNetworkComponent.getId());
 					setCluster(content.getWay());
 				} else {
+//					content.addAnotherWay(temp);
 					msgSend(initiator, content);
+					next();
 				}
 			}
 		} else {
-			content.addStation(thisNetworkComponent.getId());
 			if (noInformation) {
 				content.setAnswer(true);
+				content.addStation(thisNetworkComponent.getId());
 				msgSend(content.getInitiator(), content);
 			} else {
-				toAsk.remove(sender);
-				if (networkModel.getNeighbourNetworkComponents(thisNetworkComponent).size() == 2) {
-					msgSend(toAsk.get(0), content);
+				if (content.getWay().contains(thisNetworkComponent.getId())) {
+					content.setAnswer(true);
+					msgSend(content.getInitiator(), content);
+					System.out.println("____________"+thisNetworkComponent.getId() + "   "+sender);
 				} else {
-					if (end) {
-						System.out.println("we have to think about something");
+					toAsk.remove(sender);
+					content.addStation(thisNetworkComponent.getId());
+					if (networkModel.getNeighbourNetworkComponents(thisNetworkComponent).size() == 2) {
+						
+						msgSend((String) toAsk.toArray()[0], content);
+						
+						toAsk.add(sender);
 					} else {
-						initiator = content.getInitiator();
-						if (alreadyReportedStations < toAsk.size()) {
-							content.setAnswer(false);
-							msgSend(toAsk.get(alreadyReportedStations), new SimplificationData(thisNetworkComponent.getId()));
-							alreadyReportedStations += 1;
+						if (end && thisNetworkComponent.getId().compareTo(content.getInitiator()) < 0 || !end) {
+							if (!duringACluster) {
+								duringACluster = true;
+								initiator = content.getInitiator();
+								if (alreadyReportedStations < toAsk.size()) {
+									temp.addAll(content.getWay());
+									msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(thisNetworkComponent.getId(),content.getWay(),false));
+									alreadyReportedStations += 1;
+								}
+							} else {
+								System.out.println(thisNetworkComponent.getId());
+								HashSet<String> newWay = new HashSet<String>();
+								newWay.addAll(content.getWay());
+								nextQuestionier.put(content.getInitiator(), newWay);
+							}
+						} else {
+							toAsk.add(sender);
 						}
 					}
 				}
 			}
 		}
-
 	}
 
-	private void setCluster(List<String> list) {
+	private void next() {
+		toAsk.clear();
+		toAsk.addAll(incoming);
+		toAsk.addAll(outgoing);
+		toAsk.addAll(dead);
+		alreadyReportedStations = 0;
+		duringACluster = false;
+		if (!nextQuestionier.isEmpty()) {
+			Entry<String, HashSet<String>> nextOne = nextQuestionier.entrySet().iterator().next();
+			nextQuestionier.remove(nextOne.getKey());
+			buildCluster(new SimplificationData(nextOne.getKey(), nextOne.getValue(), false), "");
+		}
+	}
+
+	private void setCluster(HashSet<String> list) {
 		HashSet<NetworkComponent> networkComponents = new HashSet<NetworkComponent>();
 		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(networkModel.getNetworkComponents().values())) {
 			for (Iterator<String> it = list.iterator(); it.hasNext();) {
@@ -173,10 +239,6 @@ public class FindSimplificationBehaviour extends TickerBehaviour {
 
 			}
 		}
-		// Wofür gibt es überhaupt die Notification, wenn sie
-		// nicht genutzt wird?
-//		 ClusterNotification cn = new ClusterNotification();
-//		 cn.setNotificationObject(networkModel.replaceComponentsByCluster(networkComponents));
 		System.out.println("Von " + thisNetworkComponent.getId() + " Cluster: " + list);
 		myAgent.sendManagerNotification(networkModel.replaceComponentsByCluster(networkComponents, true));
 

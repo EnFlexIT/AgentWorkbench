@@ -72,8 +72,10 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 	 * that the EnvironmentModel arrived already.
 	 */
 	private void setupAgent() {
+		
 		findDirectionBehaviour = new FindDirectionBehaviour(this, 20000, myEnvironmentModel);
 		this.addBehaviour(findDirectionBehaviour);
+		System.out.println("generic start" + this.getLocalName()+ "   "+this.getState()+ "   "+this.getAgentState()+ "   "+this.here()+"   "+this.getHap()+"   "+this.getQueueSize());
 	}
 	
 	/* (non-Javadoc)
@@ -86,7 +88,7 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 		if (notification.getNotification() instanceof AllocData) {
 			if (resourceAllocationBehaviour == null) {
 				notification.moveLastOrBlock(100);
-				System.out.println("=> Notification parked for 'AllocData' !");
+				System.out.println("=> Notification parked for 'AllocData' !Receiver: " + this.getLocalName());
 			} else {
 				resourceAllocationBehaviour.interpretMsg(notification);
 			}
@@ -94,7 +96,7 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 			sendManagerNotification(new StatusData(1));
 			if (findDirectionBehaviour == null) {
 				notification.moveLastOrBlock(100);
-				System.out.println("=> Notification parked for 'FindDirData' !");
+				System.out.println("=> Notification parked for 'FindDirData' ! Receiver: " + this.getLocalName());
 			} else {
 				findDirectionBehaviour.interpretMsg(notification);
 			}
@@ -102,7 +104,7 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 //			sendManagerNotification(new StatusData(2));
 			if (findSimplificationBehaviour == null) {
 				notification.moveLastOrBlock(100);
-				System.out.println("=> Notification parked for 'SimplificationData' !");
+				System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + this.getLocalName());
 			} else {
 				findSimplificationBehaviour.interpretMsg(notification);
 			}

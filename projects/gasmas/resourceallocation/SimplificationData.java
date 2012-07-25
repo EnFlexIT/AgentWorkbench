@@ -1,8 +1,7 @@
 package gasmas.resourceallocation;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 
 public class SimplificationData implements Serializable {
 
@@ -20,13 +19,13 @@ public class SimplificationData implements Serializable {
 		this.answer = answer;
 	}
 
-	private List<String> way = new ArrayList<String>();
+	private HashSet<String> way = new HashSet<String>();
 
 	public String getInitiator() {
 		return initiator;
 	}
 	
-	public List<String> getWay() {
+	public HashSet<String> getWay() {
 		return way;
 	}
 
@@ -34,7 +33,7 @@ public class SimplificationData implements Serializable {
 		this.way.add(station);
 	}
 
-	public void addAnotherWay(List<String> otherWay) {
+	public void addAnotherWay(HashSet<String> otherWay) {
 		this.way.addAll(otherWay);
 	}
 
@@ -47,7 +46,7 @@ public class SimplificationData implements Serializable {
 		this.initiator = initiator;
 	}
 
-	public SimplificationData(String initiator, List<String> way, boolean b) {
+	public SimplificationData(String initiator, HashSet<String> way, boolean b) {
 		this.initiator = initiator;
 		this.way = way;
 		this.answer = b;

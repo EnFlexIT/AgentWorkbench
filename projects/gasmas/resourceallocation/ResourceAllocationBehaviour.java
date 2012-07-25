@@ -17,16 +17,9 @@ public abstract class ResourceAllocationBehaviour extends CyclicBehaviour {
 	/** NetworkComponentNames, which has negative flow */
 	private List<String> outgoing = new ArrayList<String>();
 
-	/** NetworkComponentNames, which could have a positive or negative flow */
-	private List<String> optional = new ArrayList<String>();
-
 	/** NetworkComponentNames, which has positive flow */
 	private List<String> dead = new ArrayList<String>();
-
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6832321297597749277L;
 	/** HashMap which save the production of the neighbours */
 	protected HashMap<String, AllocData> max_initial = new HashMap<String, AllocData>();
@@ -36,6 +29,30 @@ public abstract class ResourceAllocationBehaviour extends CyclicBehaviour {
 
 	/** HashMap which save the usage of the neighbours */
 	protected HashMap<String, AllocData> use = new HashMap<String, AllocData>();
+	
+	public List<String> getIncoming() {
+		return incoming;
+	}
+
+	public void setIncoming(List<String> incoming) {
+		this.incoming = incoming;
+	}
+
+	public List<String> getOutgoing() {
+		return outgoing;
+	}
+
+	public void setOutgoing(List<String> outgoing) {
+		this.outgoing = outgoing;
+	}
+
+	public List<String> getDead() {
+		return dead;
+	}
+
+	public void setDead(List<String> dead) {
+		this.dead = dead;
+	}
 
 	@Override
 	public void action() {

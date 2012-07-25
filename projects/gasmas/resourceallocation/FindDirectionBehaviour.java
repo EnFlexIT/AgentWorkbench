@@ -1,15 +1,20 @@
 package gasmas.resourceallocation;
 
+import gasmas.agents.components.CompressorAgent;
+import gasmas.agents.components.ControlValveAgent;
 import gasmas.agents.components.EntryAgent;
 import gasmas.agents.components.ExitAgent;
 import gasmas.agents.components.GenericNetworkAgent;
+import gasmas.agents.components.PipeAgent;
+import gasmas.agents.components.PipeShortAgent;
+import gasmas.agents.components.SimpleValveAgent;
 import gasmas.ontology.DirectionSettingNotification;
+import jade.core.AID;
+import jade.core.behaviours.TickerBehaviour;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
 import agentgui.envModel.graph.networkModel.GraphEdgeDirection;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -18,8 +23,6 @@ import agentgui.envModel.graph.networkModel.NetworkComponentDirectionSettings;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
-import jade.core.AID;
-import jade.core.behaviours.TickerBehaviour;
 
 public class FindDirectionBehaviour extends TickerBehaviour {
 
@@ -28,22 +31,22 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	private static final int maxMsgAge = 10;
 
 	/** NetworkComponentNames, which has positive flow */
-	private List<String> incoming = new ArrayList<String>();
+	private HashSet<String> incoming = new HashSet<String>();
 
 	/** NetworkComponentNames, which has negative flow */
-	private List<String> outgoing = new ArrayList<String>();
+	private HashSet<String> outgoing = new HashSet<String>();
 
 	/** NetworkComponentNames, which could have a positive or negative flow */
-	private List<String> optional = new ArrayList<String>();
+	private HashSet<String> optional = new HashSet<String>();
 
 	/** NetworkComponentNames, which has no flow */
-	private List<String> dead = new ArrayList<String>();
+	private HashSet<String> dead = new HashSet<String>();
 
 	public void addDead(String dead) {
 		this.dead.add(dead);
 	}
 
-	public List<String> getDead() {
+	public HashSet<String> getDead() {
 		return dead;
 	}
 
@@ -51,7 +54,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		this.incoming.add(incoming);
 	}
 
-	public List<String> getIncoming() {
+	public HashSet<String> getIncoming() {
 		return incoming;
 	}
 
@@ -59,7 +62,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		this.outgoing.add(outgoing);
 	}
 
-	public List<String> getOutgoing() {
+	public HashSet<String> getOutgoing() {
 		return outgoing;
 	}
 
@@ -67,7 +70,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		this.optional.add(optional);
 	}
 
-	public List<String> getOptional() {
+	public HashSet<String> getOptional() {
 		return optional;
 	}
 
@@ -86,8 +89,14 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	/** My own NetworkComponent. */
 	private NetworkComponent thisNetworkComponent;
 
+	/** Shows, if this NetworkComponent already set the directions. */
+	private boolean done = false;
+
 	/** Overrides class Agent with the special GenericNetworkAgent */
 	private GenericNetworkAgent myAgent;
+
+	/** Shows if this component had started */
+	private boolean startdone = false;
 
 	/**
 	 * @param agent
@@ -99,6 +108,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		networkModel = (NetworkModel) this.environmentModel.getDisplayEnvironment();
 		myAgent = agent;
 		thisNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
+		System.out.println("construct " + myAgent.getLocalName());
 	}
 
 	/**
@@ -107,6 +117,8 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	 * @see jade.core.behaviours.Behaviour#onStart()
 	 */
 	public void onStart() {
+		System.out.println("start" + myAgent.getLocalName());
+		super.onStart();
 		String msg = "";
 		if (thisNetworkComponent.getAgentClassName().equals(EntryAgent.class.getName())) {
 			msg = "in";
@@ -114,15 +126,15 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		} else if (thisNetworkComponent.getAgentClassName().equals(ExitAgent.class.getName())) {
 			msg = "out";
 			sendall(msg);
-		} else if (thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.PipeAgent") || thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.PipeShortAgent")
-				|| thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.SimpleValveAgent")) {
+		} else if (thisNetworkComponent.getAgentClassName().equals(PipeAgent.class.getName()) || thisNetworkComponent.getAgentClassName().equals(PipeShortAgent.class.getName())
+				|| thisNetworkComponent.getAgentClassName().equals(SimpleValveAgent.class.getName())) {
 			if (networkModel.getNeighbourNetworkComponents(thisNetworkComponent).size() < 2) {
 				msg = "dead";
+
 				System.out.println(myAgent.getLocalName() + " is dead");
 				sendall(msg);
 			}
-		} else if (thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.ControlValveAgent")
-				|| thisNetworkComponent.getAgentClassName().equals("gasmas.agents.components.CompressorAgent")) {
+		} else if (thisNetworkComponent.getAgentClassName().equals(ControlValveAgent.class.getName()) || thisNetworkComponent.getAgentClassName().equals(CompressorAgent.class.getName())) {
 
 			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, thisNetworkComponent);
 			thisNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
@@ -142,16 +154,18 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			HashSet<NetworkComponent> netCompFromHash = netCompDirect.getNeighbourNetworkComponent(fromComGraphNode);
 			if (netCompToHash != null) {
 				NetworkComponent netCompTo = netCompToHash.iterator().next();
+				outgoing.add(netCompTo.getId());
 				msgSend(netCompTo.getId(), new FindDirData("in"));
 			}
 			if (netCompFromHash != null) {
 				NetworkComponent netCompFrom = netCompFromHash.iterator().next();
+				incoming.add(netCompFrom.getId());
 				msgSend(netCompFrom.getId(), new FindDirData("out"));
 			}
-
-			// myAgent.startRA();
-			// myAgent.removeBehaviour(this);
+			done = true;
 		}
+		System.out.println("done" + myAgent.getLocalName());
+		startdone = true;
 	}
 
 	private void sendall(String msg) {
@@ -159,6 +173,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		 * Add neighbour to receivers, which should be only one for Exits and
 		 * Entries and for dead pipes
 		 */
+		done = true;
 		Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
 		while (it1.hasNext()) {
 			String receiver = it1.next().getId();
@@ -166,7 +181,6 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			// System.out.println("Empänger: "+receiver + " Semder:" +
 			// myAgent.getLocalName());
 		}
-		// myAgent.startRA();
 	}
 
 	/**
@@ -176,6 +190,14 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	 * @see jade.core.behaviours.Behaviour#action()
 	 */
 	public synchronized void interpretMsg(EnvironmentNotification msg) {
+		while (!startdone) {
+			try {
+				wait(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+//			System.out.println("?" + myAgent.getLocalName() + "   "+myAgent.getState()+ "   "+myAgent.getAgentState()+ "   "+myAgent.here());
+		}
 		FindDirData content = (FindDirData) msg.getNotification();
 		String sender = msg.getSender().getLocalName();
 		// System.out.println("Agent: " + myAgent.getLocalName() +
@@ -250,9 +272,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		if ((p - i) == 1) {
 			addOutgoing(toInform);
 			msgSend(toInform, new FindDirData("in"));
-			System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
-					+ " OutMaybe: " + outgoingMaybe);
-//			setDirections();
+			setDirections();
 			return;
 
 		}
@@ -273,21 +293,22 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		if ((p - i) == 1) {
 			addIncoming(toInform);
 			msgSend(toInform, new FindDirData("out"));
-			System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
-					+ " OutMaybe: " + outgoingMaybe);
-//			setDirections();
+			setDirections();
 			return;
 
 		}
 
 	}
 
-	private void forwardingMaybe(String sender, FindDirData content, HashMap<String, String> temp1, HashMap<String, String> temp2, String msg1, String msg2, List<String> temp11, List<String> temp22) {
+	private void forwardingMaybe(String sender, FindDirData content, HashMap<String, String> temp1, HashMap<String, String> temp2, String msg1, String msg2, HashSet<String> hashSet,
+			HashSet<String> hashSet2) {
 		/* Check if the information is to "old", too many hops */
 		if (content.getWay().split("::").length < maxMsgAge) {
-			if (temp22.contains(sender)) {
+			if (hashSet2.contains(sender)) {
 				/* Information is wrong */
-				System.out.println(myAgent.getLocalName() + " got a wrong ? message from " + sender + ". Message get ignored");
+				// System.out.println(myAgent.getLocalName() +
+				// " got a wrong ? message from " + sender +
+				// ". Message get ignored");
 			} else {
 				boolean cycle = false;
 				if (content.getWay().split("::")[0].equals(myAgent.getLocalName())) {
@@ -299,58 +320,54 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 					 */
 					System.out.println("My own name in the way: " + myAgent.getLocalName() + " Way: " + content.getWay().toString());
 					Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
-					String inform="";
-					String direction="";
-					boolean found=false;
-					msg1="";
+					String inform = "";
+					String direction = "";
+					boolean found = false;
+					msg1 = "";
 					while (it1.hasNext()) {
 						String neighbour = it1.next().getId();
 						for (int i = 0; i < content.getWay().split("::").length; i++) {
 							if (content.getWay().split("::")[i].equals(neighbour)) {
-								inform+="::"+neighbour;
-								found=true;
+								inform += "::" + neighbour;
+								found = true;
 
 							}
 						}
-						if (!found){
-							direction=neighbour;
+						if (!found) {
+							direction = neighbour;
 						}
-						found=false;
+						found = false;
 					}
 					Iterator<String> it2 = incoming.iterator();
 					while (it2.hasNext()) {
-						String temp =  it2.next();
-						if (temp.equals(direction)){
-							msg1="in";
+						String temp = it2.next();
+						if (temp.equals(direction)) {
+							msg1 = "in";
 							break;
 						}
 					}
 					it2 = outgoing.iterator();
 					while (it2.hasNext()) {
-						String temp =  it2.next();
-						if (temp.equals(direction)){
-							msg1="out";
+						String temp = it2.next();
+						if (temp.equals(direction)) {
+							msg1 = "out";
 							break;
 						}
 					}
-					
-					if (!msg1.equals("")){
+
+					if (!msg1.equals("")) {
 						for (int i = 1; i < inform.split("::").length; i++) {
-							if (msg1.equals("in")){
+							if (msg1.equals("in")) {
 								outgoing.add(inform.split("::")[i]);
-							}else if (msg1.equals("out")){
+							} else if (msg1.equals("out")) {
 								incoming.add(inform.split("::")[i]);
 							}
 							msgSend(inform.split("::")[i], new FindDirData(msg1));
 						}
 						temp1.clear();
 						temp2.clear();
-						System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
-								+ " OutMaybe: " + outgoingMaybe);
-//						setDirections();
+						setDirections();
 					}
-					// myAgent.startRA();
-					// myAgent.removeBehaviour(this);
 				} else {
 					temp1.put(sender, content.getWay());
 
@@ -364,63 +381,70 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 
 						}
 					}
-					// }
 				}
 			}
-		} else
-			System.out.println("Message too old, " + myAgent.getLocalName());
-	}
-
-	public void setDirections() {
-		if (!incoming.isEmpty() || !outgoing.isEmpty()) {
-			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, thisNetworkComponent);
-			HashSet<GraphNode> outerNodes = netCompDirect.getOuterNodes();
-
-			HashSet<NetworkComponent> inComps = new HashSet<NetworkComponent>();
-			HashSet<NetworkComponent> outComps = new HashSet<NetworkComponent>();
-			
-			HashSet<NetworkComponent> outerComps = netCompDirect.translateGraphNodeHashSet(outerNodes);
-			for (Iterator<NetworkComponent> iterator = outerComps.iterator(); iterator.hasNext();) {
-				NetworkComponent outerComp = iterator.next();
-				for (Iterator<String> iterator2 = getIncoming().iterator(); iterator2.hasNext();) {
-					String incoming = iterator2.next();
-					if (incoming.equals(outerComp.getId()))
-						inComps.add(networkModel.getNetworkComponent(incoming));
-				}
-				for (Iterator<String> iterator2 = getOutgoing().iterator(); iterator2.hasNext();) {
-					String outgoing = iterator2.next();
-					if (outgoing.equals(outerComp.getId()))
-						outComps.add(networkModel.getNetworkComponent(outgoing));
-				}
-			}
-			netCompDirect.setGraphEdgeDirection(inComps, outComps);
-
-			thisNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
-			DirectionSettingNotification dsn = new DirectionSettingNotification();
-			dsn.setNotificationObject(thisNetworkComponent);
-			myAgent.sendManagerNotification(dsn);
+		} else {
+			/* Message is too old and get ignored */
+			// System.out.println("Message too old, " + myAgent.getLocalName());
 		}
 	}
 
-	private void forwarding(String sender, FindDirData content, List<String> temp1, List<String> temp2, String msg, HashMap<String, String> temp11, HashMap<String, String> temp22) {
-		if (temp1.contains(sender) == false) {
-			if (temp2.contains(sender)) {
+	public void setDirections() {
+		if (!done) {
+			if (!incoming.isEmpty() || !outgoing.isEmpty()) {
+				System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
+						+ " OutMaybe: " + outgoingMaybe);
+				NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, thisNetworkComponent);
+				HashSet<GraphNode> outerNodes = netCompDirect.getOuterNodes();
+
+				HashSet<NetworkComponent> inComps = new HashSet<NetworkComponent>();
+				HashSet<NetworkComponent> outComps = new HashSet<NetworkComponent>();
+
+				HashSet<NetworkComponent> outerComps = netCompDirect.translateGraphNodeHashSet(outerNodes);
+				for (Iterator<NetworkComponent> iterator = outerComps.iterator(); iterator.hasNext();) {
+					NetworkComponent outerComp = iterator.next();
+					for (Iterator<String> iterator2 = getIncoming().iterator(); iterator2.hasNext();) {
+						String incoming = iterator2.next();
+						if (incoming.equals(outerComp.getId()))
+							inComps.add(networkModel.getNetworkComponent(incoming));
+					}
+					for (Iterator<String> iterator2 = getOutgoing().iterator(); iterator2.hasNext();) {
+						String outgoing = iterator2.next();
+						if (outgoing.equals(outerComp.getId()))
+							outComps.add(networkModel.getNetworkComponent(outgoing));
+					}
+				}
+				netCompDirect.setGraphEdgeDirection(inComps, outComps);
+
+				thisNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
+				DirectionSettingNotification dsn = new DirectionSettingNotification();
+				dsn.setNotificationObject(thisNetworkComponent);
+				myAgent.sendManagerNotification(dsn);
+			}
+		}
+		done = true;
+
+	}
+
+	private void forwarding(String sender, FindDirData content, HashSet<String> hashSet2, HashSet<String> hashSet, String msg, HashMap<String, String> temp11, HashMap<String, String> temp22) {
+		if (hashSet.contains(sender) == false) {
+			if (hashSet2.contains(sender)) {
 				// Should never happen
-				temp2.remove(sender);
+				hashSet2.remove(sender);
 				getOptional().add(sender);
 				System.out.println("_______________________________Never happen...Optional edge found " + myAgent.getLocalName() + " to " + sender);
 
 			} else {
 				temp22.clear();
 				temp11.clear();
-				temp1.add(sender);
+				hashSet.add(sender);
 				int i = 0;
 				int p = 0;
 				String toInform = "";
 				Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
 				while (it1.hasNext()) {
 					String neighbour = it1.next().getId();
-					if (temp1.contains(neighbour) || getDead().contains(neighbour)) {
+					if (hashSet.contains(neighbour) || getDead().contains(neighbour)) {
 						i += 1;
 					} else {
 						toInform = neighbour;
@@ -429,16 +453,12 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 				}
 				if ((p - i) == 1) {
 
-					if (temp2.contains(toInform) == false) {
-						temp2.add(toInform);
+					if (hashSet2.contains(toInform) == false) {
+						hashSet2.add(toInform);
 
 						msgSend(toInform, new FindDirData(msg));
 					}
-					System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
-							+ " OutMaybe: " + outgoingMaybe);
-//					setDirections();
-					// myAgent.startRA();
-					// myAgent.removeBehaviour(this);
+					setDirections();
 				} else if ((p - i) > 1) {
 					// We try to guess the next step
 
@@ -462,7 +482,6 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		}
 
 	}
-	
 
 	@Override
 	protected void onTick() {

@@ -21,12 +21,6 @@ public class MessengerBehaviour extends ResourceAllocationBehaviour {
 
 	private static final long serialVersionUID = 2050608942933290538L;
 
-	/** NetworkComponentNames, which has positive flow */
-	private List<String> incoming;
-
-	/** NetworkComponentNames, which has negative flow */
-	private List<String> outgoing;
-
 	/** The environment model. */
 	private EnvironmentModel environmentModel;
 
@@ -37,7 +31,6 @@ public class MessengerBehaviour extends ResourceAllocationBehaviour {
 	private boolean checkneed = false;
 
 	/** My own NetworkComponent. */
-	@SuppressWarnings("unused")
 	private NetworkComponent thisNetworkComponent;
 
 	/** Overrides class Agent with the special GenericNetworkAgent */
@@ -72,14 +65,14 @@ public class MessengerBehaviour extends ResourceAllocationBehaviour {
 			Iterator<NetworkComponent> netCompToIt = netCompToHash.iterator();
 			while (netCompToIt.hasNext()) {
 				NetworkComponent netCompTo  = netCompToIt.next();
-				incoming.add(netCompTo.getId());
+				getIncoming().add(netCompTo.getId());
 			}
 		}
 		if (netCompFromHash != null) {
 			Iterator<NetworkComponent> netCompFromIt = netCompFromHash.iterator();
 			while (netCompFromIt.hasNext()) {
 				NetworkComponent netCompFrom  = netCompFromIt.next();
-				outgoing.add(netCompFrom.getId());
+				getOutgoing().add(netCompFrom.getId());
 			}
 		}
 
@@ -270,7 +263,7 @@ public class MessengerBehaviour extends ResourceAllocationBehaviour {
 		 * node has informed it about their production
 		 */
 		boolean all = true;
-		Iterator<String> it1 = incoming.iterator();
+		Iterator<String> it1 = getIncoming().iterator();
 		while (it1.hasNext()) {
 			if (max_initial.containsKey(it1.next()) == false)
 				all = false;
@@ -304,7 +297,7 @@ public class MessengerBehaviour extends ResourceAllocationBehaviour {
 			data.setReason("MAX_INITIAL");
 			data.setPerformative(ACLMessage.INFORM);
 			/* Add neighbours, which are consumers, to receivers */
-			Iterator<String> it11 = outgoing.iterator();
+			Iterator<String> it11 = getOutgoing().iterator();
 			while (it11.hasNext()) {
 				String receiver=it11.next();
 				msgSend(receiver, data);
