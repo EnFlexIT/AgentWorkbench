@@ -74,6 +74,7 @@ public class Zipper extends Thread {
 	private final int execUnZip = 2;
 	
 	private ZipperMonitor zipMonitor = null;
+	private boolean zipMonitorVisible = true;
 	
 	private String excludePattern = null;
 	private Vector<File> fileList = new Vector<File>();
@@ -248,6 +249,21 @@ public class Zipper extends Thread {
 		this.projectFolder2Open = projectFolder2Open;
 	}
 
+	/**
+	 * Sets the zip monitor visible.
+	 * @param zipMonitorVisible the new zip monitor visible
+	 */
+	public void setVisible(boolean zipMonitorVisible) {
+		this.zipMonitorVisible = zipMonitorVisible;
+	}
+	/**
+	 * Checks if is zip monitor visible.
+	 * @return true, if is zip monitor visible
+	 */
+	public boolean isVisible() {
+		return zipMonitorVisible;
+	}
+	
 	/**
 	 * This method will evaluate the zip-file in order to find the root-folder of the zip
 	 * @return Returns the root folder name of the zip-file

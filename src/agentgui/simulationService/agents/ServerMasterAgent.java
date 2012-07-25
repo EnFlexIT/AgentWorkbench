@@ -213,8 +213,6 @@ public class ServerMasterAgent extends Agent {
 
 		private static final long serialVersionUID = 1691633119254093555L;
 		
-		private DownloadServer downloadServer = null;
-		
 		/**
 		 * Instantiates a new webserver controller behaviour.
 		 *
@@ -223,7 +221,7 @@ public class ServerMasterAgent extends Agent {
 		 */
 		public WebserverControllerBehaviour(Agent agent, Date wakeupDate) {
 			super(agent, wakeupDate);
-			this.downloadServer = Application.startDownloadServer();
+			Application.startDownloadServer();
 		}
 		
 		/* (non-Javadoc)
@@ -240,7 +238,7 @@ public class ServerMasterAgent extends Agent {
 		 * @return the downloadServer
 		 */
 		public DownloadServer getDownloadServer() {
-			return downloadServer;
+			return Application.getDownloadServer();
 		}
 
 	}

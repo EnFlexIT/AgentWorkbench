@@ -142,7 +142,7 @@ public class AgentGuiUpdater extends Thread {
 	 */
 	private void setUpdateConfiguration() {
 		
-		if (this.manualyExecutedByUser==false) {
+		if (this.alternativeInfoLink==null && this.manualyExecutedByUser==false) {
 			long timeNow = System.currentTimeMillis();
 			long time4NextCheck = this.updateDateLastChecked + AgentGuiUpdater.UPDATE_CHECK_PERIOD;
 			if (timeNow<time4NextCheck) {
@@ -320,7 +320,7 @@ public class AgentGuiUpdater extends Thread {
 					if (isPreparedForInstallation()==true) {
 						// ------------------------------------------
 						// --- Unzip the downloaded file ------------
-						if (this.unzipUpdateFile()==true){
+						if (this.unzipUpdateFile(this.askBeforeProjectShutdownAndUnzip)==true){
 							// --- Clean up or Move to Server directory
 							this.handleDownloadedFilesAfterExtraction();
 							// --- Move AgentGuiUpdate.jar ---------- 
@@ -498,7 +498,7 @@ public class AgentGuiUpdater extends Thread {
 	 * Unzip the local update file.
 	 * @return true, if successful
 	 */
-	private boolean unzipUpdateFile() {
+	private boolean unzipUpdateFile(boolean visualizeUnzipping) {
 		
 		boolean done = false;
 		
@@ -510,6 +510,7 @@ public class AgentGuiUpdater extends Thread {
 			Zipper zipper = new Zipper();
 			zipper.setUnzipZipFolder(this.localUpdateZipFile);
 			zipper.setUnzipDestinationFolder(extractFolder);
+			zipper.setVisible(visualizeUnzipping);
 			zipper.doUnzipFolder();
 
 			while(zipper.isDone()==false) {

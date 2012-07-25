@@ -105,7 +105,7 @@ public class DownloadServer implements HttpConstants, Runnable {
 		} catch (IOException exept) {
 			if (exept instanceof SocketException) {
 				SocketException soEx = (SocketException) exept;
-				if (soEx.getMessage().equals("socket closed")==false) {
+				if (soEx.getMessage().equalsIgnoreCase("socket closed")==false) {
 					exept.printStackTrace();	
 				}
 			} else {

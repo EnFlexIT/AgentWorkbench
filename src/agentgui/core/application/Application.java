@@ -690,9 +690,22 @@ public class Application {
 
 		if (downloadServer!=null) {
 			synchronized (downloadServer) {
-				downloadServer.stop();	
-			}			
+				downloadServer.stop();
+			}
 			downloadServer = null;
+		}
+	}
+	/**
+	 * Returns the current SownloadServer instance.
+	 * @return the download server
+	 */
+	public static DownloadServer getDownloadServer() {
+		if (downloadServer==null) {
+			return downloadServer;
+		} else {
+			synchronized (downloadServer) {
+				return downloadServer;
+			}	
 		}
 	}
 	
