@@ -1448,7 +1448,8 @@ public class NetworkModel implements Serializable {
 		NetworkModel clusterNetworkModel = this.getCopy();
 		clusterNetworkModel.setAlternativeNetworkModel(null);
 		clusterNetworkModel.removeNetworkComponentsInverse(networkComponents);
-
+		clusterNetworkModel.resetGraphElementLayout();
+		
 		// ----------- Get outer GraphNode of the NetworkModel --------------------
 		Vector<GraphNode> outerNodes = clusterNetworkModel.getOuterNodes(distributionNodesAreOuterNodes);
 		
@@ -1470,6 +1471,7 @@ public class NetworkModel implements Serializable {
 		
 		this.addNetworkComponent(clusterComponent);
 		this.refreshGraphElements();
+		this.resetGraphElementLayout();
 		return clusterComponent;
 	}
 

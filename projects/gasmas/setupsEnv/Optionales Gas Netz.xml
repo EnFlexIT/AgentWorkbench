@@ -7,8 +7,8 @@
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n10_1</graphElementIDs>
-                <graphElementIDs>n10_2</graphElementIDs>
                 <graphElementIDs>n10_0</graphElementIDs>
+                <graphElementIDs>n10_2</graphElementIDs>
                 <graphElementIDs>PP20</graphElementIDs>
                 <graphElementIDs>PP37</graphElementIDs>
                 <graphElementIDs>PP33</graphElementIDs>
@@ -41,8 +41,8 @@
                 <graphElementIDs>PP20</graphElementIDs>
                 <graphElementIDs>PP27</graphElementIDs>
                 <graphElementIDs>n11_0</graphElementIDs>
-                <graphElementIDs>PP22</graphElementIDs>
                 <graphElementIDs>PP35</graphElementIDs>
+                <graphElementIDs>PP22</graphElementIDs>
                 <id>n11</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch3</type>
@@ -111,8 +111,8 @@
                 <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP33</graphElementIDs>
-                <graphElementIDs>n14</graphElementIDs>
                 <graphElementIDs>PP16</graphElementIDs>
+                <graphElementIDs>n14</graphElementIDs>
                 <id>n14</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Pipe</type>
@@ -123,9 +123,9 @@
             <value>
                 <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>PP35</graphElementIDs>
-                <graphElementIDs>n15</graphElementIDs>
                 <graphElementIDs>PP17</graphElementIDs>
+                <graphElementIDs>n15</graphElementIDs>
+                <graphElementIDs>PP35</graphElementIDs>
                 <id>n15</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Pipe</type>

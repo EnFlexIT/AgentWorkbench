@@ -74,13 +74,12 @@ public class ClusterGraphElement extends StarGraphElement {
 	 */
 	public HashSet<GraphElement> addToGraph(NetworkModel networkModel) {
 		
-		HashSet<GraphElement> elements = new HashSet<GraphElement>(outerNodes);
+		HashSet<GraphElement> elements = new HashSet<GraphElement>();
+		Vector<GraphNode> newOuterNodes = new Vector<GraphNode>();
 		
 		// --- Add central Node -----------------
 		GraphNode centralNode = new GraphNode();
 		centralNode.setId(networkModel.nextNodeID());
-		Rectangle2D rectangle = BasicGraphGui.getVerticesSpreadDimension(outerNodes);
-		centralNode.setPosition(new Point2D.Double(rectangle.getCenterX(), rectangle.getCenterY()));
 		networkModel.getGraph().addVertex(centralNode);
 		elements.add(centralNode);
 		
@@ -92,12 +91,21 @@ public class ClusterGraphElement extends StarGraphElement {
 			if (graphNode2Connect==null) {
 				graphNode2Connect = graphNode;
 			}
+			graphNode2Connect.setGraphElementLayout(null);
+			newOuterNodes.add(graphNode2Connect);
+			
 			// --- Add Edge ---------------------
 			GraphEdge edge = new GraphEdge(id + "_" + counter++, getType());
 			networkModel.getGraph().addEdge(edge, centralNode, graphNode2Connect, EdgeType.UNDIRECTED);
 			elements.add(edge);
 		}
 		
+		this.outerNodes = newOuterNodes;
+		
+		Rectangle2D rectangle = BasicGraphGui.getVerticesSpreadDimension(this.outerNodes);
+		centralNode.setPosition(new Point2D.Double(rectangle.getCenterX(), rectangle.getCenterY()));
+
+		elements.addAll(this.outerNodes);
 		return elements;
 		
 	}
