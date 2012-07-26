@@ -30,6 +30,9 @@ package agentgui.core.project;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
+
 /**
  * The Class AgentStartArgument is used in {@link Project} as attribute
  * for the start configuration and a single (of many) start arguments for
@@ -41,8 +44,11 @@ public class AgentStartArgument implements Serializable {
 
 	private static final long serialVersionUID = -1171812430048976361L;
 	
+	@XmlAttribute
 	private int position = 1;
+	@XmlAttribute
 	private String displayTitle = null;
+	@XmlAttribute
 	private String ontologyReference = null;
 	
 	
@@ -97,6 +103,7 @@ public class AgentStartArgument implements Serializable {
 	 * Returns the order position of the current start argument.
 	 * @return the position
 	 */
+	@XmlTransient
 	public int getPosition() {
 		return position;
 	}
@@ -112,6 +119,7 @@ public class AgentStartArgument implements Serializable {
 	 * Gets the ontology reference.
 	 * @return the ontology reference
 	 */
+	@XmlTransient
 	public String getOntologyReference() {
 		return ontologyReference;
 	}
@@ -127,6 +135,7 @@ public class AgentStartArgument implements Serializable {
 	 * Gets the display title.
 	 * @return the display title
 	 */
+	@XmlTransient
 	public String getDisplayTitle() {
 		return displayTitle;
 	}

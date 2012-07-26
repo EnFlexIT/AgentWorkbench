@@ -16,45 +16,27 @@
         <agentVector>
             <agent agentReference="gasmas.agents.components.ClusterNetworkAgent">
                 <startArgumentVector>
-                    <startArgument>
-                        <ontologyReference>gasmas.ontology.GasAnalysis</ontologyReference>
-                        <position>1</position>
-                    </startArgument>
-                    <startArgument>
-                        <ontologyReference>gasmas.ontology.FluidParameters</ontologyReference>
-                        <position>2</position>
-                    </startArgument>
-                    <startArgument>
-                        <ontologyReference>gasmas.ontology.FlowParameters</ontologyReference>
-                        <position>3</position>
-                    </startArgument>
+                    <startArgument ontologyReference="gasmas.ontology.GasAnalysis" position="1"/>
+                    <startArgument ontologyReference="gasmas.ontology.FluidParameters" position="2"/>
+                    <startArgument ontologyReference="gasmas.ontology.FlowParameters" position="3"/>
                 </startArgumentVector>
             </agent>
             <agent agentReference="gasmas.agents.components.BranchAgent">
                 <startArgumentVector>
-                    <startArgument>
-                        <ontologyReference>gasmas.ontology.FluidParameters</ontologyReference>
-                        <position>1</position>
-                    </startArgument>
-                    <startArgument>
-                        <ontologyReference>gasmas.ontology.GasAnalysis</ontologyReference>
-                        <position>2</position>
-                    </startArgument>
-                    <startArgument>
-                        <ontologyReference>gasmas.ontology.GeoCoordinate</ontologyReference>
-                        <position>3</position>
-                    </startArgument>
+                    <startArgument ontologyReference="gasmas.ontology.FluidParameters" position="1"/>
+                    <startArgument ontologyReference="gasmas.ontology.GasAnalysis" position="2"/>
+                    <startArgument ontologyReference="gasmas.ontology.GeoCoordinate" position="3"/>
                 </startArgumentVector>
             </agent>
         </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1126</useLocalPort>
+        <useLocalPort>1129</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.debugging.DebugService</service>
+            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -81,7 +63,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Optionales Gas Netz</simulationSetupCurrent>
+    <simulationSetupCurrent>HNord Complete</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>
@@ -112,24 +94,24 @@
             <value>smallclusters_3_large.xml</value>
         </entry>
         <entry>
-            <key>Testnetz 3</key>
-            <value>testnetz_3.xml</value>
-        </entry>
-        <entry>
             <key>SmallClusters (1) Small</key>
             <value>smallclusters_1_small.xml</value>
+        </entry>
+        <entry>
+            <key>Testnetz 3</key>
+            <value>testnetz_3.xml</value>
         </entry>
         <entry>
             <key>HNord</key>
             <value>hnord.xml</value>
         </entry>
         <entry>
-            <key>HNord (1) Small</key>
-            <value>hnord_1_small.xml</value>
-        </entry>
-        <entry>
             <key>TestImport</key>
             <value>testimport.xml</value>
+        </entry>
+        <entry>
+            <key>HNord (1) Small</key>
+            <value>hnord_1_small.xml</value>
         </entry>
         <entry>
             <key>MixedClusters (3) Large</key>
@@ -140,12 +122,12 @@
             <value>mixedclusters_1_small.xml</value>
         </entry>
         <entry>
-            <key>HNord (3) Large</key>
-            <value>hnord_3_large.xml</value>
-        </entry>
-        <entry>
             <key>HNord Complete</key>
             <value>hnord_complete.xml</value>
+        </entry>
+        <entry>
+            <key>HNord (3) Large</key>
+            <value>hnord_3_large.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>

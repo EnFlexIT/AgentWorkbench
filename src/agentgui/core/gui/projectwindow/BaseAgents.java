@@ -921,7 +921,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		
 	}
 	
-	
 	/**
 	 * Read selection from form.
 	 */
