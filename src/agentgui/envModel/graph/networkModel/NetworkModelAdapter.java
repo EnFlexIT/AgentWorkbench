@@ -549,7 +549,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 */
 	@Override
 	public ArrayList<ClusterNetworkComponent> getClusterComponents(Collection<NetworkComponent> components) {
-		return this.graphController.getNetworkModel().getClusterComponents(components);
+		return this.graphController.getNetworkModel().getClusterNetworkComponents(components);
 	}
 
 	/* (non-Javadoc)

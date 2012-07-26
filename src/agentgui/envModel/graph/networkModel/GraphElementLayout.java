@@ -70,8 +70,8 @@ public class GraphElementLayout {
 	}
 	
 	/**
-	 * Sets the network mdel.
-	 * @param networkModel the new network mdel
+	 * Sets the network model.
+	 * @param networkModel the new network model
 	 */
 	public void setNetworkModel(NetworkModel networkModel) {
 		this.networkModel = networkModel;
@@ -134,10 +134,10 @@ public class GraphElementLayout {
 				// -------------------------------------------------------
 				// --- Normal node or ClusterNode ------------------------
 				// -------------------------------------------------------
-				ArrayList<ClusterNetworkComponent> clusterHash = networkModel.getClusterComponents(componentHashSet);
-				if (componentHashSet.size() == 1 && clusterHash.size() == 1 && networkModel.isFreeGraphNode(graphNode)==false) {
+				ArrayList<ClusterNetworkComponent> clusterHash = networkModel.getClusterNetworkComponents(componentHashSet);
+				if (componentHashSet.size()==1 && clusterHash.size()==1 && networkModel.isFreeGraphNode(graphNode)==false) {
 					// ---------------------------------------------------
-					// --- This is a cluster component -------------------
+					// --- Central GraphNode of a cluster component ------
 					ClusterNetworkComponent cnc = clusterHash.get(0);
 					String domain = cnc.getDomain();
 					if (domain != null) {
@@ -161,18 +161,41 @@ public class GraphElementLayout {
 					// --- Normal node -----------------------------------
 					// ---------------------------------------------------
 					NetworkComponent component = componentHashSet.iterator().next();
-					myComponentTypeSettings = ctsHash.get(component.getType());
-					if (myComponentTypeSettings!=null) {
-						myDomain = domainHash.get(myComponentTypeSettings.getDomain());
+					if (component instanceof ClusterNetworkComponent) {
+						// --- Outer GraphNode of a cluster found --------
+						ClusterNetworkComponent cnc = (ClusterNetworkComponent) component;
+						String domain = cnc.getDomain();
+						if (domain != null) {
+							if (domain.equals("") == false) {
+								myDomain = domainHash.get(domain);
+							}
+						}
+						if (myDomain == null) {
+							myDomain = domainHash.get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
+						}
 						this.size = myDomain.getVertexSize();
 						this.color = new Color(Integer.parseInt(myDomain.getVertexColor()));
 						this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
-						this.labelText = myGraphElement.getId();
-						this.showLabel = myDomain.isShowLabel();
+						this.labelText = cnc.getId();
+						this.showLabel = myDomain.isShowLabel();;
 						this.imageReference = null;
-					}
+						
+					} else {
+						// --- 
+						myComponentTypeSettings = ctsHash.get(component.getType());
+						if (myComponentTypeSettings!=null) {
+							myDomain = domainHash.get(myComponentTypeSettings.getDomain());
+							this.size = myDomain.getVertexSize();
+							this.color = new Color(Integer.parseInt(myDomain.getVertexColor()));
+							this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
+							this.labelText = myGraphElement.getId();
+							this.showLabel = myDomain.isShowLabel();
+							this.imageReference = null;
+						}	
+					}// end (component instanceof ClusterNetworkComponent) 
+					
 				}
-			}
+			}//end (componentHashSet.iterator().hasNext())
 		}		
 	}
 	

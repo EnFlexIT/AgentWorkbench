@@ -1308,18 +1308,18 @@ public class NetworkModel implements Serializable {
 	* @return the cluster components
 	*/
 	public ArrayList<ClusterNetworkComponent> getClusterComponents() {
-		return getClusterComponents(new ArrayList<NetworkComponent>(this.networkComponents.values()));
+		return getClusterNetworkComponents(new ArrayList<NetworkComponent>(this.networkComponents.values()));
 	}
 
 	/**
 	 * Gets the cluster components of a collection of clusterComponents.
 	 *
-	 * @param components the components
+	 * @param collectionOfNetworkComponents the components
 	 * @return the cluster components
 	 */
-	public ArrayList<ClusterNetworkComponent> getClusterComponents(Collection<NetworkComponent> components) {
+	public ArrayList<ClusterNetworkComponent> getClusterNetworkComponents(Collection<NetworkComponent> collectionOfNetworkComponents) {
 		ArrayList<ClusterNetworkComponent> clusterComponents = new ArrayList<ClusterNetworkComponent>();
-		for (NetworkComponent networkComponent : components) {
+		for (NetworkComponent networkComponent : collectionOfNetworkComponents) {
 			if (networkComponent instanceof ClusterNetworkComponent) {
 				clusterComponents.add((ClusterNetworkComponent) networkComponent);
 			}
