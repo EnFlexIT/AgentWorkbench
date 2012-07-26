@@ -52,14 +52,15 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 	protected SimulationServiceHelper simHelper;
 	protected EnvironmentModel envModel;
 	protected NetworkModel myNetworkModel = null;
-	
+
 	/** Different Behaviours, which get messages */
 	protected ResourceAllocationBehaviour resourceAllocationBehaviour;
 	protected FindDirectionBehaviour findDirectionBehaviour;
 	protected FindSimplificationBehaviour findSimplificationBehaviour;
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see agentgui.simulationService.agents.SimulationAgent#setup()
 	 */
 	@Override
@@ -67,19 +68,23 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 		super.setup();
 		this.addBehaviour(new WaitForEnvironmentModelBehaviour(this, 100));
 	}
+
 	/**
-	 * Setup the agent here, in order to make sure 
-	 * that the EnvironmentModel arrived already.
+	 * Setup the agent here, in order to make sure that the EnvironmentModel
+	 * arrived already.
 	 */
 	private void setupAgent() {
-		
+
 		findDirectionBehaviour = new FindDirectionBehaviour(this, 20000, myEnvironmentModel);
-		this.addBehaviour(findDirectionBehaviour);
-		System.out.println("generic start" + this.getLocalName()+ "   "+this.getState()+ "   "+this.getAgentState()+ "   "+this.here()+"   "+this.getHap()+"   "+this.getQueueSize());
+		findDirectionBehaviour.start();
 	}
-	
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentNotification(agentgui.simulationService.transaction.EnvironmentNotification)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * agentgui.simulationService.agents.SimulationAgent#onEnvironmentNotification
+	 * (agentgui.simulationService.transaction.EnvironmentNotification)
 	 */
 	@Override
 	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
@@ -101,33 +106,34 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 				findDirectionBehaviour.interpretMsg(notification);
 			}
 		} else if (notification.getNotification() instanceof SimplificationData) {
-//			sendManagerNotification(new StatusData(2));
+			// sendManagerNotification(new StatusData(2));
 			if (findSimplificationBehaviour == null) {
 				notification.moveLastOrBlock(100);
 				System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + this.getLocalName());
 			} else {
 				findSimplificationBehaviour.interpretMsg(notification);
 			}
-		} else if (notification.getNotification() instanceof StatusData){
+		} else if (notification.getNotification() instanceof StatusData) {
 			startFindSimplificationBehaviour();
 		}
 		return notification;
 	}
-	
+
 	private void startFindSimplificationBehaviour() {
-		// The end of the the find direction behaviour, so I have to remove this behaviour
+		// The end of the the find direction behaviour, so I have to remove this
+		// behaviour
 		findDirectionBehaviour.setDirections();
-		this.removeBehaviour(findDirectionBehaviour);
-		
+
 		findSimplificationBehaviour = new FindSimplificationBehaviour(this, 20000, myEnvironmentModel);
-		// Because the internal structures can not save dead pipes, so I have to transfer the knowledge from one behaviour to another
+		// Because the internal structures can not save dead pipes, so I have to
+		// transfer the knowledge from one behaviour to another
 		findSimplificationBehaviour.setDead(findDirectionBehaviour.getDead());
 		findSimplificationBehaviour.setIncoming(findDirectionBehaviour.getIncoming());
 		findSimplificationBehaviour.setOutgoing(findDirectionBehaviour.getOutgoing());
 		// Start next behaviour, in this case, find simplifications
-		this.addBehaviour(findSimplificationBehaviour);
+		findSimplificationBehaviour.start();
 	}
-	
+
 	/**
 	 * The Behaviour class WaitForEnvironmentModelBehaviour.
 	 */
@@ -136,15 +142,21 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 		private static final long serialVersionUID = 7962972851532229620L;
 
 		/**
-		 * Instantiates a new behaviour that waits for the initial EnvironmentModel.
-		 * @param agent the agent
-		 * @param period the ticker period
+		 * Instantiates a new behaviour that waits for the initial
+		 * EnvironmentModel.
+		 * 
+		 * @param agent
+		 *            the agent
+		 * @param period
+		 *            the ticker period
 		 */
 		public WaitForEnvironmentModelBehaviour(Agent agent, long period) {
 			super(agent, period);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see jade.core.behaviours.TickerBehaviour#onTick()
 		 */
 		@Override
@@ -163,5 +175,5 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 			}
 		}
 	}
-	
+
 }

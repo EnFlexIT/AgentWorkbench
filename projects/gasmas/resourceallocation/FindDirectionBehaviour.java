@@ -114,11 +114,8 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	/**
 	 * Sends its initial flow to its neighbours
 	 * 
-	 * @see jade.core.behaviours.Behaviour#onStart()
 	 */
-	public void onStart() {
-		System.out.println("start" + myAgent.getLocalName());
-		super.onStart();
+	public void start() {
 		String msg = "";
 		if (thisNetworkComponent.getAgentClassName().equals(EntryAgent.class.getName())) {
 			msg = "in";
@@ -164,7 +161,6 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			}
 			done = true;
 		}
-		System.out.println("done" + myAgent.getLocalName());
 		startdone = true;
 	}
 
@@ -196,7 +192,6 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-//			System.out.println("?" + myAgent.getLocalName() + "   "+myAgent.getState()+ "   "+myAgent.getAgentState()+ "   "+myAgent.here());
 		}
 		FindDirData content = (FindDirData) msg.getNotification();
 		String sender = msg.getSender().getLocalName();
@@ -205,11 +200,11 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		// content.reason);
 		if (content.getReason().equals("in")) {
 
-			forwarding(sender, content, getIncoming(), getOutgoing(), "in", incomingMaybe, outgoingMaybe);
+			forwarding(sender, content, getOutgoing(), getIncoming(), "in", incomingMaybe, outgoingMaybe);
 
 		} else if (content.getReason().equals("out")) {
 
-			forwarding(sender, content, getOutgoing(), getIncoming(), "out", outgoingMaybe, incomingMaybe);
+			forwarding(sender, content, getIncoming(), getOutgoing(), "out", outgoingMaybe, incomingMaybe);
 
 		} else if (content.getReason().equals("dead")) {
 			deadPipe(sender);

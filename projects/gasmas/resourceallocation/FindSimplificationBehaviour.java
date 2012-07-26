@@ -106,10 +106,8 @@ public class FindSimplificationBehaviour extends TickerBehaviour {
 	/**
 	 * Sends its initial flow to its neighbours
 	 * 
-	 * @see jade.core.behaviours.Behaviour#onStart()
 	 */
-	public void onStart() {
-		super.onStart();
+	public void start() {
 		// Start from the network component, where we do not have all
 		// information
 		toAsk.addAll(incoming);
@@ -142,9 +140,6 @@ public class FindSimplificationBehaviour extends TickerBehaviour {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			// System.out.println("!" + myAgent.getLocalName() +
-			// "   "+myAgent.getState()+ "   "+myAgent.getAgentState()+
-			// "   "+myAgent.here());
 		}
 		SimplificationData content = (SimplificationData) msg.getNotification();
 		String sender = msg.getSender().getLocalName();
@@ -153,9 +148,6 @@ public class FindSimplificationBehaviour extends TickerBehaviour {
 	}
 
 	private void buildCluster(SimplificationData content, String sender) {
-		if (thisNetworkComponent.getId().equals("n37")){ 
-			System.out.println("sd");
-		}
 		if (content.isAnswer()) {
 
 			if (alreadyReportedStations < toAsk.size()) {
