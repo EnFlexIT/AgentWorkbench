@@ -51,7 +51,7 @@ import javax.swing.border.EtchedBorder;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
-import agentgui.core.project.AgentConfiguration;
+import agentgui.core.project.AgentStartConfiguration;
 
 /**
  * This class can be used to display a user interface thats allows to configure
@@ -66,7 +66,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	private int ontologyInstanceViewerConstructor = 0;
 	
 	private OntologyVisualisationHelper ontologyVisualisationHelper = null;
-	private AgentConfiguration agentConfiguration = null;
+	private AgentStartConfiguration agentStartConfiguration = null;
 	private String agentReference = null;
 	
 	private String[] ontologyClassReference = null;
@@ -101,13 +101,13 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 *
 	 * @param owner the owner
 	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
-	 * @param agentConfiguration the agent configuration
+	 * @param agentStartConfiguration the agent configuration
 	 * @param agentReference the agent reference
 	 */
-	public OntologyInstanceDialog(Frame owner, OntologyVisualisationHelper ontologyVisualisationHelper, AgentConfiguration agentConfiguration, String agentReference) {
+	public OntologyInstanceDialog(Frame owner, OntologyVisualisationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String agentReference) {
 		super(owner);
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
-		this.agentConfiguration = agentConfiguration;
+		this.agentStartConfiguration = agentStartConfiguration;
 		this.agentReference = agentReference;
 		this.ontologyInstanceViewerConstructor = 1;
 		initialize();
@@ -167,7 +167,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 		if(oiv==null) {
 			switch (this.ontologyInstanceViewerConstructor) {
 			case 1:
-				oiv = new OntologyInstanceViewer(this.ontologyVisualisationHelper, this.agentConfiguration, this.agentReference);
+				oiv = new OntologyInstanceViewer(this.ontologyVisualisationHelper, this.agentStartConfiguration, this.agentReference);
 				break;
 			case 2:
 				oiv = new OntologyInstanceViewer(this.ontologyVisualisationHelper, this.ontologyClassReference);

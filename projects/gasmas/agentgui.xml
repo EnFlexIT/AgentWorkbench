@@ -12,86 +12,44 @@
         <subOntology>gasmas.ontology.GasGridOntology</subOntology>
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
     </subOntologies>
-    <agentConfiguration>
-        <entry>
-            <key>gasmas.agents.components.CompressorAgent</key>
-            <value>gasmas.ontology.Compressor</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.components.ResistorAgent</key>
-            <value>gasmas.ontology.Resistor</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.ExitAgent</key>
-            <value>gasmas.ontology.Exit</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.components.BranchAgent</key>
-            <value>gasmas.ontology.Branch</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.ValveAgent</key>
-            <value>gasmas.ontology.Valve</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.StorageAgent</key>
-            <value>gasmas.ontology.Storage</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.components.PipeShortAgent</key>
-            <value>gasmas.ontology.ShortPipe</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.manager.NetworkManagerAgent</key>
-            <value>[Meine Name] gasmas.ontology.ControlValve|gasmas.ontology.GeoCoordinate</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.components.StorageAgent</key>
-            <value>gasmas.ontology.Storage</value>
-        </entry>
-        <entry>
-            <key>gasmas.ontology.PowerlineAgent</key>
-            <value>gasmas.ontology.PowerLine|gasmas.ontology.StructuralParameters</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.EntryAgent</key>
-            <value>gasmas.ontology.Entry</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.CompressorAgent</key>
-            <value>gasmas.ontology.Compressor</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.components.SimpleValveAgent</key>
-            <value>gasmas.ontology.Valve</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.components.ControlValveAgent</key>
-            <value>gasmas.ontology.ControlValve</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.components.EntryAgent</key>
-            <value>gasmas.ontology.Entry</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.components.PipeAgent</key>
-            <value>gasmas.ontology.Pipe</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.PipeAgent</key>
-            <value>gasmas.ontology.Pipe</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.components.ExitAgent</key>
-            <value>gasmas.ontology.Exit|[Output] agentgui.ontology.TimeSeries</value>
-        </entry>
-        <entry>
-            <key>gasmas.agents.BranchAgent</key>
-            <value>gasmas.ontology.Branch</value>
-        </entry>
-    </agentConfiguration>
+    <agentStartConfiguration>
+        <agentVector>
+            <agent agentReference="gasmas.agents.components.ClusterNetworkAgent">
+                <startArgumentVector>
+                    <startArgument>
+                        <ontologyReference>gasmas.ontology.GasAnalysis</ontologyReference>
+                        <position>1</position>
+                    </startArgument>
+                    <startArgument>
+                        <ontologyReference>gasmas.ontology.FluidParameters</ontologyReference>
+                        <position>2</position>
+                    </startArgument>
+                    <startArgument>
+                        <ontologyReference>gasmas.ontology.FlowParameters</ontologyReference>
+                        <position>3</position>
+                    </startArgument>
+                </startArgumentVector>
+            </agent>
+            <agent agentReference="gasmas.agents.components.BranchAgent">
+                <startArgumentVector>
+                    <startArgument>
+                        <ontologyReference>gasmas.ontology.FluidParameters</ontologyReference>
+                        <position>1</position>
+                    </startArgument>
+                    <startArgument>
+                        <ontologyReference>gasmas.ontology.GasAnalysis</ontologyReference>
+                        <position>2</position>
+                    </startArgument>
+                    <startArgument>
+                        <ontologyReference>gasmas.ontology.GeoCoordinate</ontologyReference>
+                        <position>3</position>
+                    </startArgument>
+                </startArgumentVector>
+            </agent>
+        </agentVector>
+    </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1125</useLocalPort>
+        <useLocalPort>1126</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>

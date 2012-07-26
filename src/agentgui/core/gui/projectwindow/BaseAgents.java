@@ -56,6 +56,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -70,6 +72,7 @@ import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.gui.OntologyInstanceDialog;
+import agentgui.core.project.AgentStartArgument;
 import agentgui.core.project.Project;
 
 /**
@@ -82,12 +85,9 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final static String PathImage = Application.getGlobalInfo().PathImageIntern();
 	
-	private Project currProject;
+	private Project currProject = null;
 	private OntologyClassTreeObject currOntoObject = null;
 	
-	private String agentConfig = null;  //  @jve:decl-index=0:
-	private Integer agentConfigPos = null;  //  @jve:decl-index=0:
-	private String agentConfigMask = null;  //  @jve:decl-index=0:
 	private String agentReference = null;  //  @jve:decl-index=0:
 	private String ontoReference = null;  //  @jve:decl-index=0:
 	
@@ -122,11 +122,11 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	/**
 	 * This is the default constructor
 	 */
-	public BaseAgents( Project CP ) {
+	public BaseAgents( Project project ) {
 		super();
-		this.currProject = CP;
-		this.currProject.addObserver(this);		
-		initialize();	
+		this.currProject = project;
+		this.currProject.addObserver(this);	
+		this.initialize();	
 		
 		// --- Übersetzung anschmeissen -------------------
 		jLabelAgent.setText(Language.translate("Agent:"));
@@ -164,10 +164,176 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		this.add(getJPanelWest(), BorderLayout.WEST);
 		this.add(getJPanelEast(), BorderLayout.CENTER);
 	}
+	/**
+	 * This method initializes jPanelEast	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelEast() {
+		if (jPanelEast == null) {
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			gridBagConstraints5.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints5.weightx = 1.0;
+			GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
+			gridBagConstraints16.fill = GridBagConstraints.BOTH;
+			gridBagConstraints16.gridy = 1;
+			gridBagConstraints16.weightx = 0.0;
+			gridBagConstraints16.weighty = 0.1;
+			gridBagConstraints16.gridwidth = 1;
+			gridBagConstraints16.gridx = 0;
+			jPanelEast = new JPanel();
+			jPanelEast.setLayout(new GridBagLayout());
+			jPanelEast.add(getJSplitEast(), gridBagConstraints16);
+			jPanelEast.add(getJPanelEastTop(), gridBagConstraints5);
+		}
+		return jPanelEast;
+	}
+	/**
+	 * This method initializes jPanelWest	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelWest() {
+		if (jPanelWest == null) {
+			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
+			gridBagConstraints18.fill = GridBagConstraints.BOTH;
+			gridBagConstraints18.gridy = 2;
+			gridBagConstraints18.weightx = 1.0;
+			gridBagConstraints18.weighty = 1.0;
+			gridBagConstraints18.gridwidth = 2;
+			gridBagConstraints18.insets = new Insets(0, 10, 0, 0);
+			gridBagConstraints18.ipady = 0;
+			gridBagConstraints18.gridx = 0;
+			
+			GridBagConstraints gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints.gridwidth = 1;
+			gridBagConstraints.gridx = 1;
+			gridBagConstraints.gridy = 1;
+			gridBagConstraints.weightx = 0.0;
+			gridBagConstraints.insets = new Insets(10, 1, 10, 0);
+			
+			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
+			gridBagConstraints9.insets = new Insets(10, 10, 10, 5);
+			gridBagConstraints9.gridy = 1;
+			gridBagConstraints9.gridx = 0;
+			
+			jPanelWest = new JPanel();
+			jPanelWest.setLayout(new GridBagLayout());
+			jPanelWest.add(getJAgentList(), gridBagConstraints18);
+			jPanelWest.add(jLabelAgent, gridBagConstraints9);
+			jPanelWest.add(getJTextAgent(), gridBagConstraints);
+		}
+		return jPanelWest;
+	}
+	/**
+	 * This method initializes jPanelEastTop	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelEastTop() {
+		if (jPanelEastTop == null) {
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.fill = GridBagConstraints.NONE;
+			gridBagConstraints4.gridx = -1;
+			gridBagConstraints4.gridy = -1;
+			gridBagConstraints4.insets = new Insets(0, 0, 0, 13);
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.fill = GridBagConstraints.NONE;
+			gridBagConstraints3.gridx = -1;
+			gridBagConstraints3.gridy = -1;
+			gridBagConstraints3.insets = new Insets(0, 5, 0, 5);
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints2.gridx = -1;
+			gridBagConstraints2.gridy = -1;
+			gridBagConstraints2.weightx = 0.1;
+			gridBagConstraints2.insets = new Insets(10, 0, 10, 0);
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.insets = new Insets(10, 10, 10, 5);
+			gridBagConstraints1.gridy = -1;
+			gridBagConstraints1.gridx = -1;
+			jPanelEastTop = new JPanel();
+			jPanelEastTop.setLayout(new GridBagLayout());
+			jPanelEastTop.add(jLabelStart, gridBagConstraints1);
+			jPanelEastTop.add(getJTextAgentStartAs(), gridBagConstraints2);
+			jPanelEastTop.add(getJButtonStartAgent(), gridBagConstraints3);
+			jPanelEastTop.add(getJButtonAgentListRefresh(), gridBagConstraints4);
+		}
+		return jPanelEastTop;
+	}
+	/**
+	 * This method initializes jSplitEast	
+	 * @return javax.swing.JSplitPane	
+	 */
+	private JSplitPane getJSplitEast() {
+		if (jSplitEast == null) {
+			jSplitEast = new JSplitPane();
+			jSplitEast.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			jSplitEast.setDividerSize(1);
+			jSplitEast.setResizeWeight(0.0D);
+			jSplitEast.setDividerLocation(160);
+			jSplitEast.setBottomComponent(getJSplitOntologie());
+			jSplitEast.setTopComponent(getJPanelReferences());
+		}
+		return jSplitEast;
+	}
+	/**
+	 * This method initializes jPanelOntology	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelOntology() {
+		if (jPanelOntology == null) {
+			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
+			gridBagConstraints14.gridx = 0;
+			gridBagConstraints14.anchor = GridBagConstraints.WEST;
+			gridBagConstraints14.insets = new Insets(0, 10, 0, 0);
+			gridBagConstraints14.gridy = 0;
+			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
+			gridBagConstraints13.fill = GridBagConstraints.BOTH;
+			gridBagConstraints13.weighty = 1.0;
+			gridBagConstraints13.insets = new Insets(0, 10, 0, 10);
+			gridBagConstraints13.gridy = 1;
+			gridBagConstraints13.weightx = 1.0;
+			
+			jLabelOntologie = new JLabel();
+			jLabelOntologie.setText("Projekt-Ontologie");
+			jLabelOntologie.setFont(new Font("Dialog", Font.BOLD, 12));
+			
+			jPanelOntology = new JPanel();
+			jPanelOntology.setLayout(new GridBagLayout());
+			jPanelOntology.add(getJScrollOntology(), gridBagConstraints13);
+			jPanelOntology.add(jLabelOntologie, gridBagConstraints14);
+		}
+		return jPanelOntology;
+	}
+	/**
+	 * This method initializes jSplitOntologie	
+	 * @return javax.swing.JSplitPane	
+	 */
+	private JSplitPane getJSplitOntologie() {
+		if (jSplitOntologie == null) {
+			jSplitOntologie = new JSplitPane();
+			jSplitOntologie.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			jSplitOntologie.setDividerSize(3);
+			jSplitOntologie.setDividerLocation(150);
+			jSplitOntologie.setResizeWeight(0.5D);
+			jSplitOntologie.setBottomComponent(getJPanelOntoSlots());
+			jSplitOntologie.setTopComponent(getJPanelOntology());
+		}
+		return jSplitOntologie;
+	}
 
 	/**
+	 * This method initializes jPanelOntoSlots	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelOntoSlots() {
+		if (jPanelOntoSlots == null) {
+			jPanelOntoSlots = new JPanel();
+			jPanelOntoSlots.setLayout(new GridBagLayout());
+		}
+		return jPanelOntoSlots;
+	}
+	/**
 	 * This method initializes jTextAgent	
-	 * 	
 	 * @return javax.swing.JTextField	
 	 */
 	private JTextField getJTextAgent() {
@@ -178,10 +344,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		}
 		return jTextAgent;
 	}
-
 	/**
 	 * This method initializes jTextAgentStartAs	
-	 * 	
 	 * @return javax.swing.JTextField	
 	 */
 	private JTextField getJTextAgentStartAs() {
@@ -192,10 +356,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		}
 		return jTextAgentStartAs;
 	}
-
 	/**
 	 * This method initializes jButtonStartAgent	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonStartAgent() {
@@ -210,10 +372,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		}
 		return jButtonStartAgent;
 	}
-
 	/**
 	 * This method initializes jButtonAgentListRefresh	
-	 * 	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonAgentListRefresh() {
@@ -226,80 +386,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			jButtonAgentListRefresh.addActionListener(this);			
 		}
 		return jButtonAgentListRefresh;
-	}
-
-	/**
-	 * This method initializes jAgentList	
-	 * @return javax.swing.JListClassSearcher
-	 */
-	private JListClassSearcher getJAgentList() {
-		if (jAgentList == null) {
-			jAgentList = new JListClassSearcher(ClassSearcher.CLASSES_AGENTS, currProject);
-			jAgentList.setToolTipText(Language.translate("Agenten in diesem Projekt"));
-			jAgentList.setPreferredSize(new Dimension(333, 300));
-			jAgentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			jAgentList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-				public void valueChanged(javax.swing.event.ListSelectionEvent se) {
-
-					if ( jAgentList.getSelectedValue() != null ) {
-						String toDisplay = jAgentList.getSelectedValue().toString();
-						//System.out.println("Agent: " + ToDisplay);
-						// -----------------------------------------------------
-						// --- Definierte Start-Referenzen anzeigen ------------ 
-						jListReferences.setListData( currProject.agentConfig.getListData(toDisplay) );
-						// -----------------------------------------------------
-						// --- Eintrag für den aktuellen Agenten vornehmen -----
-						int maxLenght = 30;
-						if ( toDisplay.length() > maxLenght ) {
-							String ToDisplayStart = toDisplay.substring(0, 4);
-							String ToDisplayEnde = toDisplay.substring( toDisplay.length() - maxLenght );
-							toDisplay = ToDisplayStart + "..." + ToDisplayEnde;
-						}
-						jTextAgent.setText(toDisplay);
-						// -----------------------------------------------------
-						// --- Vorschlag für den Ausführungsnamen finden -------
-						String startAs = jAgentList.getSelectedValue().toString();
-						startAs = startAs.substring(startAs.lastIndexOf(".")+1);
-						// -----------------------------------------------------
-						// --- Alle Großbuchstaben filtern ---------------------
-						String regExp = "[A-Z]";	
-						String startAsNew = ""; 
-						for (int i = 0; i < startAs.length(); i++) {
-							String sngChar = "" + startAs.charAt(i);
-							if (sngChar.matches(regExp)==true) {
-								startAsNew = startAsNew + sngChar;	
-								// --- ggf. den zweiten Buchstaben mitnehmen ---
-								if ( i < startAs.length()-1 ) {
-									String SngCharN = "" + startAs.charAt(i+1);
-									if ( SngCharN.matches( regExp ) == false ) {
-										startAsNew = startAsNew + SngCharN;	
-									}
-								}	
-								// ---------------------------------------------
-							}						
-					    }
-						if ( startAsNew != "" && startAsNew.length() >= 4 ) {
-							startAs = startAsNew;
-						}
-						// -----------------------------------------------------
-						// --- Check, ob es dieser Agent schon läuft -----------
-						int i = 1;
-						startAsNew = startAs;
-						while ( Application.getJadePlatform().jadeAgentIsRunning( startAs, currProject.getProjectFolder() ) == true ){
-							startAs = startAsNew + i;
-							i++; 
-						}
-						// -----------------------------------------------------
-						// --- Vorschlagsnamen einstellen ----------------------
-						jTextAgentStartAs.setText(startAs);
-					}
-					// ----------------------------------------------------
-					// --- Fertig -----------------------------------------
-					// ----------------------------------------------------
-				}
-			});
-		}
-		return jAgentList;
 	}
 	
 	/**
@@ -319,9 +405,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			gridBagConstraints15.insets = new Insets(0, 10, 0, 0);
 			gridBagConstraints15.gridwidth = 2;
 			gridBagConstraints15.gridy = 1;
-			jLabelRecerence = new JLabel();
-			jLabelRecerence.setText("Start-Objekte aus Projekt-Ontologie");
-			jLabelRecerence.setFont(new Font("Dialog", Font.BOLD, 12));
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			gridBagConstraints12.gridx = 1;
 			gridBagConstraints12.insets = new Insets(5, 5, 0, 0);
@@ -356,6 +439,11 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			gridBagConstraints6.gridwidth = 3;
 			gridBagConstraints6.gridy = 2;
 			gridBagConstraints6.weightx = 1.0;
+
+			jLabelRecerence = new JLabel();
+			jLabelRecerence.setText("Start-Objekte aus Projekt-Ontologie");
+			jLabelRecerence.setFont(new Font("Dialog", Font.BOLD, 12));
+
 			jPanelReferences = new JPanel();
 			jPanelReferences.setLayout(new GridBagLayout());
 			jPanelReferences.add(getJScrollReferences(), gridBagConstraints6);
@@ -381,7 +469,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		}
 		return jScrollReferences;
 	}
-
 	/**
 	 * This method initializes jListReferences	
 	 * @return javax.swing.JList	
@@ -495,24 +582,6 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		}
 		return jButtonReferencesRemove;
 	}
-
-	/**
-	 * This method initializes jSplitEast	
-	 * @return javax.swing.JSplitPane	
-	 */
-	private JSplitPane getJSplitEast() {
-		if (jSplitEast == null) {
-			jSplitEast = new JSplitPane();
-			jSplitEast.setOrientation(JSplitPane.VERTICAL_SPLIT);
-			jSplitEast.setDividerSize(1);
-			jSplitEast.setResizeWeight(0.0D);
-			jSplitEast.setDividerLocation(160);
-			jSplitEast.setBottomComponent(getJSplitOntologie());
-			jSplitEast.setTopComponent(getJPanelReferences());
-		}
-		return jSplitEast;
-	}
-
 	/**
 	 * This method initializes jScrollOntology	
 	 * @return javax.swing.JScrollPane	
@@ -531,9 +600,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 */
 	private JTree getJTreeOntology() {
 		if (jTreeOntology == null) {
-			jTreeOntology = new JTree();
-			//jTreeOntology = new JTree( CurrProject.Ontology.getOntologyTree() );
-			jTreeOntology = new JTree( currProject.getOntologyVisualisationHelper().getOntologyTree() );
+			jTreeOntology = new JTree(this.currProject.getOntologyVisualisationHelper().getOntologyTree());
 			jTreeOntology.setName("OntoTree");
 			jTreeOntology.setShowsRootHandles(false);
 			jTreeOntology.setRootVisible(true);
@@ -561,9 +628,13 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		}
 		return jTreeOntology;
 	}
-	// If expand is true, expands all nodes in the tree.
-    // Otherwise, collapses all nodes in the tree.
-    public void OntoTreeExpand2Level(Integer Up2TreeLevel, boolean expand ) {
+	
+	/**
+	 * If expand is true, expands all nodes in the tree, otherwise, collapses all nodes in the tree.
+	 * @param Up2TreeLevel the up2 tree level
+	 * @param expand the expand
+	 */
+	public void OntoTreeExpand2Level(Integer Up2TreeLevel, boolean expand ) {
     	Integer CurrNodeLevel = 1;
     	if ( Up2TreeLevel == null ) 
     		Up2TreeLevel = 1000;
@@ -598,239 +669,117 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
     }
     
 	/**
-	 * This method initializes jPanelOntology	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jAgentList	
+	 * @return javax.swing.JListClassSearcher
 	 */
-	private JPanel getJPanelOntology() {
-		if (jPanelOntology == null) {
-			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
-			gridBagConstraints14.gridx = 0;
-			gridBagConstraints14.anchor = GridBagConstraints.WEST;
-			gridBagConstraints14.insets = new Insets(0, 10, 0, 0);
-			gridBagConstraints14.gridy = 0;
-			jLabelOntologie = new JLabel();
-			jLabelOntologie.setText("Projekt-Ontologie");
-			jLabelOntologie.setFont(new Font("Dialog", Font.BOLD, 12));
-			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
-			gridBagConstraints13.fill = GridBagConstraints.BOTH;
-			gridBagConstraints13.weighty = 1.0;
-			gridBagConstraints13.insets = new Insets(0, 10, 0, 10);
-			gridBagConstraints13.gridy = 1;
-			gridBagConstraints13.weightx = 1.0;
-			jPanelOntology = new JPanel();
-			jPanelOntology.setLayout(new GridBagLayout());
-			jPanelOntology.add(getJScrollOntology(), gridBagConstraints13);
-			jPanelOntology.add(jLabelOntologie, gridBagConstraints14);
-		}
-		return jPanelOntology;
-	}
-	/**
-	 * This method initializes jSplitOntologie	
-	 * @return javax.swing.JSplitPane	
-	 */
-	private JSplitPane getJSplitOntologie() {
-		if (jSplitOntologie == null) {
-			jSplitOntologie = new JSplitPane();
-			jSplitOntologie.setOrientation(JSplitPane.VERTICAL_SPLIT);
-			jSplitOntologie.setDividerSize(3);
-			jSplitOntologie.setDividerLocation(150);
-			jSplitOntologie.setResizeWeight(0.5D);
-			jSplitOntologie.setBottomComponent(getJPanelOntoSlots());
-			jSplitOntologie.setTopComponent(getJPanelOntology());
-		}
-		return jSplitOntologie;
-	}
+	private JListClassSearcher getJAgentList() {
+		if (jAgentList == null) {
+			jAgentList = new JListClassSearcher(ClassSearcher.CLASSES_AGENTS, currProject);
+			jAgentList.setToolTipText(Language.translate("Agenten in diesem Projekt"));
+			jAgentList.setPreferredSize(new Dimension(333, 300));
+			jAgentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jAgentList.addListSelectionListener(new ListSelectionListener() {
+				public void valueChanged(ListSelectionEvent se) {
 
-	/**
-	 * This method initializes jPanelOntoSlots	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelOntoSlots() {
-		if (jPanelOntoSlots == null) {
-			jPanelOntoSlots = new JPanel();
-			jPanelOntoSlots.setLayout(new GridBagLayout());
+					if (se.getValueIsAdjusting()==true && jAgentList.getSelectedValue()!=null) {
+						
+						updateView4AgentConfig();
+						
+						//System.out.println("Agent: " + ToDisplay);
+						// -----------------------------------------------------
+						// --- Definierte Start-Referenzen anzeigen ------------ 
+						//jListReferences.setListData( currProject.agentConfig.getListData(agentReference) );
+						// -----------------------------------------------------
+						// --- Eintrag für den aktuellen Agenten vornehmen -----
+						int maxLenght = 30;
+						if ( agentReference.length() > maxLenght ) {
+							String ToDisplayStart = agentReference.substring(0, 4);
+							String ToDisplayEnde = agentReference.substring( agentReference.length() - maxLenght );
+							agentReference = ToDisplayStart + "..." + ToDisplayEnde;
+						}
+						jTextAgent.setText(agentReference);
+						// -----------------------------------------------------
+						// --- Vorschlag für den Ausführungsnamen finden -------
+						String startAs = jAgentList.getSelectedValue().toString();
+						startAs = startAs.substring(startAs.lastIndexOf(".")+1);
+						// -----------------------------------------------------
+						// --- Alle Großbuchstaben filtern ---------------------
+						String regExp = "[A-Z]";	
+						String startAsNew = ""; 
+						for (int i = 0; i < startAs.length(); i++) {
+							String sngChar = "" + startAs.charAt(i);
+							if (sngChar.matches(regExp)==true) {
+								startAsNew = startAsNew + sngChar;	
+								// --- ggf. den zweiten Buchstaben mitnehmen ---
+								if ( i < startAs.length()-1 ) {
+									String SngCharN = "" + startAs.charAt(i+1);
+									if ( SngCharN.matches( regExp ) == false ) {
+										startAsNew = startAsNew + SngCharN;	
+									}
+								}	
+								// ---------------------------------------------
+							}						
+					    }
+						if ( startAsNew != "" && startAsNew.length() >= 4 ) {
+							startAs = startAsNew;
+						}
+						// -----------------------------------------------------
+						// --- Check, ob es dieser Agent schon läuft -----------
+						int i = 1;
+						startAsNew = startAs;
+						while ( Application.getJadePlatform().jadeAgentIsRunning( startAs, currProject.getProjectFolder() ) == true ){
+							startAs = startAsNew + i;
+							i++; 
+						}
+						// -----------------------------------------------------
+						// --- Vorschlagsnamen einstellen ----------------------
+						jTextAgentStartAs.setText(startAs);
+						
+					}
+					// ----------------------------------------------------
+					// --- Fertig -----------------------------------------
+					// ----------------------------------------------------
+				}
+			});
 		}
-		return jPanelOntoSlots;
+		return jAgentList;
 	}
 	
-	
-	/**
-	 * updates the List of the AgetnReferences
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
-	private void updateView4AgentConfig() {
-		jListReferences.setListData( currProject.agentConfig.getListData(agentReference) );
-	}
-	/**
-	 * reads the currently selected AgentReference to var. agentConfig
-	 */
-	private void setCurrAgentConfig() {
-		if ( jListReferences.getSelectedValue() == null ) {
-			agentConfig = null;
-		} else {
-			agentConfig = jListReferences.getSelectedValue().toString();
-			String[] agentConfigArr = agentConfig.split(":");
-			agentConfigPos = Integer.valueOf(agentConfigArr[0].trim()).intValue();
-			agentConfig = agentConfigArr[1].trim();
-			if (agentConfig.contains("]")) {
-				int cutPos = agentConfig.indexOf("]");
-				agentConfigMask = agentConfig.substring(1, cutPos);
-			} else {
-				agentConfigMask = null;
-			}
-		}
-	}
-	
-	private void setTmpAgentConfig() {
-		// -- configure Var. agentReference -------------------------
-		if ( jAgentList.getSelectedValue() == null ) {
-			agentReference = null;
-		} else {
-			agentReference = jAgentList.getSelectedValue().toString();
-		}
-		// -- configure Var. ontoReference --------------------------		
-		if ( currOntoObject == null  ) {
-			ontoReference = null;
-		} else {
-			if ( currOntoObject.isClass() ) {
-				ontoReference = currOntoObject.getOntologySubClass().getName();	
-			} else {
-				ontoReference = null;	
-			}
-		}
-	}
-	
-	/**
-	 * This method initializes jPanelWest	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelWest() {
-		if (jPanelWest == null) {
-			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
-			gridBagConstraints18.fill = GridBagConstraints.BOTH;
-			gridBagConstraints18.gridy = 2;
-			gridBagConstraints18.weightx = 1.0;
-			gridBagConstraints18.weighty = 1.0;
-			gridBagConstraints18.gridwidth = 2;
-			gridBagConstraints18.insets = new Insets(0, 10, 0, 0);
-			gridBagConstraints18.ipady = 0;
-			gridBagConstraints18.gridx = 0;
-			
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints.gridwidth = 1;
-			gridBagConstraints.gridx = 1;
-			gridBagConstraints.gridy = 1;
-			gridBagConstraints.weightx = 0.0;
-			gridBagConstraints.insets = new Insets(10, 1, 10, 0);
-			
-			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-			gridBagConstraints9.insets = new Insets(10, 10, 10, 5);
-			gridBagConstraints9.gridy = 1;
-			gridBagConstraints9.gridx = 0;
-			
-			jPanelWest = new JPanel();
-			jPanelWest.setLayout(new GridBagLayout());
-			jPanelWest.add(getJAgentList(), gridBagConstraints18);
-			jPanelWest.add(jLabelAgent, gridBagConstraints9);
-			jPanelWest.add(getJTextAgent(), gridBagConstraints);
-		}
-		return jPanelWest;
-	}
-
-	/**
-	 * This method initializes jPanelEast	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelEast() {
-		if (jPanelEast == null) {
-			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-			gridBagConstraints5.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints5.weightx = 1.0;
-			GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
-			gridBagConstraints16.fill = GridBagConstraints.BOTH;
-			gridBagConstraints16.gridy = 1;
-			gridBagConstraints16.weightx = 0.0;
-			gridBagConstraints16.weighty = 0.1;
-			gridBagConstraints16.gridwidth = 1;
-			gridBagConstraints16.gridx = 0;
-			jPanelEast = new JPanel();
-			jPanelEast.setLayout(new GridBagLayout());
-			jPanelEast.add(getJSplitEast(), gridBagConstraints16);
-			jPanelEast.add(getJPanelEastTop(), gridBagConstraints5);
-		}
-		return jPanelEast;
-	}
-
-	/**
-	 * This method initializes jPanelEastTop	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelEastTop() {
-		if (jPanelEastTop == null) {
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.fill = GridBagConstraints.NONE;
-			gridBagConstraints4.gridx = -1;
-			gridBagConstraints4.gridy = -1;
-			gridBagConstraints4.insets = new Insets(0, 0, 0, 13);
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.fill = GridBagConstraints.NONE;
-			gridBagConstraints3.gridx = -1;
-			gridBagConstraints3.gridy = -1;
-			gridBagConstraints3.insets = new Insets(0, 5, 0, 5);
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints2.gridx = -1;
-			gridBagConstraints2.gridy = -1;
-			gridBagConstraints2.weightx = 0.1;
-			gridBagConstraints2.insets = new Insets(10, 0, 10, 0);
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.insets = new Insets(10, 10, 10, 5);
-			gridBagConstraints1.gridy = -1;
-			gridBagConstraints1.gridx = -1;
-			jPanelEastTop = new JPanel();
-			jPanelEastTop.setLayout(new GridBagLayout());
-			jPanelEastTop.add(jLabelStart, gridBagConstraints1);
-			jPanelEastTop.add(getJTextAgentStartAs(), gridBagConstraints2);
-			jPanelEastTop.add(getJButtonStartAgent(), gridBagConstraints3);
-			jPanelEastTop.add(getJButtonAgentListRefresh(), gridBagConstraints4);
-		}
-		return jPanelEastTop;
-	}
-	
-	
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
 		String ActCMD = ae.getActionCommand();
 		Object trigger = ae.getSource();
 
-		if ( trigger == jButtonAgentListRefresh ) {
+		if (trigger==jButtonAgentListRefresh) {
 			// --- AgentList aktualisieren ----------------
 			Application.getClassSearcher().reStartSearch(currProject, ClassSearcher.RESTART_AGENT_SEARCH);
 			
 			jTextAgent.setText(null);
 			jTextAgentStartAs.setText(null);
-			jListReferences.setListData(new Vector<String>());
-			this.setCurrAgentConfig();
-			this.setTmpAgentConfig();
+			jListReferences.setListData(new Vector<AgentStartArgument>());
 		}
-		else if ( trigger == jButtonStartAgent ) {
+		else if (trigger==jButtonStartAgent) {
 			// ------------------------------------------------------
 			// --- Start the selected agent -------------------------
 			// ------------------------------------------------------
 			Class<? extends Agent> selectedAgentClass = null;
 			String selectedAgentReference 			  = null;
 			String selectedAgentName				  = null;
+			
 			selectedAgentClass		= ((AgentClassElement)jAgentList.getSelectedValue()).getElementClass();
 			selectedAgentReference 	= selectedAgentClass.getName();
 			selectedAgentName		= jTextAgentStartAs.getText();
 			
 			if ( selectedAgentName.length() != 0 && selectedAgentClass != null) {
 				Object [] startArgs = null;
-				String startArgsConfigured = currProject.agentConfig.get(selectedAgentReference);
+				Vector<AgentStartArgument> startArgsConfigured = this.currProject.getAgentStartConfiguration().get(selectedAgentReference);
 				if (startArgsConfigured!=null) {
 					// --- If start-arguments are set, get them now -----
-					OntologyInstanceDialog oid = new OntologyInstanceDialog(Application.getMainWindow(), this.currProject.getOntologyVisualisationHelper(), this.currProject.agentConfig, selectedAgentReference);
+					OntologyInstanceDialog oid = new OntologyInstanceDialog(Application.getMainWindow(), this.currProject.getOntologyVisualisationHelper(), this.currProject.getAgentStartConfiguration(), selectedAgentReference);
 					oid.setTitle(Language.translate("Startargument definieren für Agent") + " '" + selectedAgentName + "' (" + selectedAgentClass.getSimpleName() + ")");
 					oid.setVisible(true);
 					// --- Wait ---
@@ -846,42 +795,74 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 				jTextAgentStartAs.setText(null);
 				jAgentList.clearSelection();
 			}
+			
+		} else if (trigger == jButtonReferencesAdd ) {
+			// --- Add start argument ---------------------
+			this.readSelectionFromForm();
+			int newPos = this.currProject.getAgentStartConfiguration().addReference(agentReference, ontoReference);
+			this.currProject.setAgentStartConfigurationUpdated();
+			if (newPos!=-1) {
+				this.getJListReferences().setSelectedIndex(newPos);
+			}
+			
+		} else if (trigger == jButtonReferencesRemove ) {
+			// --- Remove start argument ------------------
+			this.readSelectionFromForm();
+			int newPos = this.currProject.getAgentStartConfiguration().removeReference(this.agentReference, this.getJListReferences().getSelectedIndex());
+			this.currProject.setAgentStartConfigurationUpdated();		
+			if (newPos!=-1) {
+				this.getJListReferences().setSelectedIndex(newPos);
+			}
+		
+		} else if (trigger == jButtonRemoveAll) {
+			// --- Remove start arguments completely ------
+			this.readSelectionFromForm();
+			this.currProject.getAgentStartConfiguration().removeAllReferences(agentReference);
+			this.currProject.setAgentStartConfigurationUpdated();
+					
 		} else if (trigger == jButtonMoveUp ) {
-			// --- Agenten-Referenz eins höher ----------------------
-			setTmpAgentConfig();
-			setCurrAgentConfig();
-			if (currProject.agentConfig.movePosition(agentReference, agentConfig, agentConfigPos, -1) ){
-				jListReferences.setSelectedIndex(agentConfigPos-2);
+			// --- Move start argument up -----------------
+			this.readSelectionFromForm();
+			int newPos = this.currProject.getAgentStartConfiguration().movePosition(agentReference, jListReferences.getSelectedIndex(), -1); 
+			this.currProject.setAgentStartConfigurationUpdated();
+			if (newPos!=-1){
+				this.jListReferences.setSelectedIndex(newPos);
 			}
+			
 		} else if (trigger == jButtonMoveDown ) {
-			// --- Agenten-Referenz eins runter -----------
-			setTmpAgentConfig();
-			setCurrAgentConfig();
-			if (currProject.agentConfig.movePosition(agentReference, agentConfig, agentConfigPos, 1) ){
-				jListReferences.setSelectedIndex(agentConfigPos);
+			// --- Move start argument down ---------------
+			this.readSelectionFromForm();
+			int newPos = this.currProject.getAgentStartConfiguration().movePosition(agentReference, jListReferences.getSelectedIndex(), 1); 
+			this.currProject.setAgentStartConfigurationUpdated();
+			if (newPos!=-1){
+				this.jListReferences.setSelectedIndex(newPos);
 			}
+			
 		} else if (trigger == jButtonRename) {
 			// --- mask ontology-reference ----------------
 			String input = null;
 			String head  = null;
 			String msg   = null;
+			int selectedIndex = this.getJListReferences().getSelectedIndex(); 
 			
-			if (jListReferences.getSelectedValue()==null) {
+			if (selectedIndex==-1) {
 				head = Language.translate("Ontologie-Referenz auswählen!");
 				msg  = Language.translate("Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.");
 				JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			setTmpAgentConfig();
-			setCurrAgentConfig();
+			this.readSelectionFromForm();
 			
 			input = null;
 			head = Language.translate("Ontologie Referenz maskieren");
 			msg  = Language.translate("Bitte geben Sie einen Bezeichner für die Referenz an!");
-			if (agentConfigMask== null) {
+			
+			AgentStartArgument ageStartArg = this.currProject.getAgentStartConfiguration().get(this.agentReference).get(selectedIndex);
+			String displayTitle = ageStartArg.getDisplayTitle();
+			if (displayTitle==null) {
 				input = (String) JOptionPane.showInputDialog(Application.getMainWindow(), msg, head, JOptionPane.QUESTION_MESSAGE);	
 			} else {
-				input = (String) JOptionPane.showInputDialog(Application.getMainWindow(), msg, head, JOptionPane.QUESTION_MESSAGE, null, null, agentConfigMask);	
+				input = (String) JOptionPane.showInputDialog(Application.getMainWindow(), msg, head, JOptionPane.QUESTION_MESSAGE, null, null, displayTitle);	
 			}
 			if (input==null) {
 				return;
@@ -889,40 +870,27 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 				input = input.trim();
 				if (input.equals("")) input = null;
 			}
+			ageStartArg.setDisplayTitle(input);
 			
-			currProject.agentConfig.setReferenceMask(agentReference, agentConfigPos-1, input);
-			jListReferences.setSelectedIndex(agentConfigPos-1);
+			this.currProject.setAgentStartConfigurationUpdated();
 			
-		} else if (trigger == jButtonRemoveAll) {
-			// --- Agenten-Referenzen komplett entfernen --
-			setTmpAgentConfig();
-			currProject.agentConfig.removeReferencesComplete(agentReference);
-		} else if (trigger == jButtonReferencesAdd ) {
-			// --- Agenten-Referenzen hinzufügen ----------
-			setTmpAgentConfig();
-			currProject.agentConfig.addReference(agentReference, ontoReference);
-		} else if (trigger == jButtonReferencesRemove ) {
-			// --- Agenten-Referenzen entfernen -----------
-			setTmpAgentConfig();
-			setCurrAgentConfig();
-			currProject.agentConfig.removeReference(agentReference, agentConfig);
-		}
-		else {
+		} else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);	
 		};
 		this.repaint();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
 	@Override
 	public void update(Observable arg0, Object notifyObject) {
 		
 		String ObjectName = notifyObject.toString();
-		if ( ObjectName.equalsIgnoreCase( Project.CHANGED_StartArguments4BaseAgent ) ) {
-			// --- Liste der Agenten-Referenzen aktualisieren ---
+		if ( ObjectName.equalsIgnoreCase(Project.CHANGED_StartArguments4BaseAgent) ) {
 			this.updateView4AgentConfig();
 			
 		} else if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectOntology ) ) {
-			// --- Ansicht auf die projekt-Ontologie aktualisieren --
 			this.jTreeOntology.setModel( currProject.getOntologyVisualisationHelper().getOntologyTree() );
 			this.OntoTreeExpand2Level(3, true);
 		
@@ -934,6 +902,46 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		}
 	}
 
+	/**
+	 * Updates the List of the AgetnReferences
+	 */
+	private void updateView4AgentConfig() {
+		
+		this.readSelectionFromForm();
+		if (this.agentReference==null) {
+			this.getJListReferences().setListData(new Vector<AgentStartArgument>());
+		} else {
+			Vector<AgentStartArgument> arguments = this.currProject.getAgentStartConfiguration().get(this.agentReference);
+			if (arguments!=null) {
+				this.getJListReferences().setListData(arguments);		
+			} else {
+				this.getJListReferences().setListData(new Vector<AgentStartArgument>());
+			}
+		}
+		
+	}
 	
+	
+	/**
+	 * Read selection from form.
+	 */
+	private void readSelectionFromForm() {
+		// -- configure Var. agentReference -------------------------
+		if (jAgentList.getSelectedValue()==null) {
+			this.agentReference = null;
+		} else {
+			this.agentReference = this.jAgentList.getSelectedValue().toString();
+		}
+		// -- configure Var. ontoReference --------------------------		
+		if (this.currOntoObject==null) {
+			this.ontoReference = null;
+		} else {
+			if (this.currOntoObject.isClass()) {
+				this.ontoReference = this.currOntoObject.getOntologySubClass().getName();	
+			} else {
+				this.ontoReference = null;	
+			}
+		}
+	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

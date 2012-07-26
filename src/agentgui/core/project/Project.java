@@ -207,8 +207,8 @@ import agentgui.core.webserver.JarFileCreator;
 	 * This extended HashTable is used in order to save the relationship between an agent (agents class name)
 	 * and the classes (also class names) which can be used as start-argument for the agents   
 	 */
-	@XmlElementWrapper(name = "agentConfiguration")
-	public AgentConfiguration agentConfig = new AgentConfiguration(this);
+	@XmlElement(name="agentStartConfiguration")
+	private AgentStartConfiguration agentStartConfiguration = null;
 	
 	/**
 	 * This field manages the configuration of JADE (e. g. JADE-Port 1099 etc.)
@@ -788,15 +788,6 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 	
 	/**
-	 * Informs about changes at the AgentConfiguration 'AgentConfig'
-	 */
-	public void updateAgentReferences() {
-		isUnsaved = true;
-		setChanged();
-		notifyObservers(CHANGED_StartArguments4BaseAgent);
-	}
-	
-	/**
 	 * Gets the default environment setup folder
 	 * @return The default environment setup folder
 	 */
@@ -885,6 +876,35 @@ import agentgui.core.webserver.JarFileCreator;
 			this.setSubOntologies(this.ontologyVisualisationHelper.getSubOntologies());
 		}
 		return ontologyVisualisationHelper;
+	}
+
+	/**
+	 * Sets the agent configuration.
+	 * @param agentStartConfiguration the new agent configuration
+	 */
+	public void setAgentStartConfiguration(AgentStartConfiguration agentStartConfiguration) {
+		this.agentStartConfiguration = agentStartConfiguration;
+		this.setAgentStartConfigurationUpdated();
+	}
+	/**
+	 * Returns the agent configuration.
+	 * @return the agent configuration
+	 */
+	@XmlTransient
+	public AgentStartConfiguration getAgentStartConfiguration() {
+		if (this.agentStartConfiguration==null) {
+			this.agentStartConfiguration = new AgentStartConfiguration();
+			this.setAgentStartConfigurationUpdated();
+		}
+		return agentStartConfiguration;
+	}
+	/**
+	 * Informs all observers about changes at the AgentConfiguration 'AgentConfig'
+	 */
+	public void setAgentStartConfigurationUpdated() {
+		isUnsaved = true;
+		setChanged();
+		notifyObservers(CHANGED_StartArguments4BaseAgent);
 	}
 
 	/**

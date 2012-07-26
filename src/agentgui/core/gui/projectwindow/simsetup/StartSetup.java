@@ -374,7 +374,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 							jTextFieldStartAs.setText(agentSelected.getStartAsName());
 
 							// --- Show OntologyInstanceViewer for this agent -
-							OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getOntologyVisualisationHelper(), currProject.agentConfig, agentSelected.getAgentClassReference());
+							OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getOntologyVisualisationHelper(), currProject.getAgentStartConfiguration(), agentSelected.getAgentClassReference());
 							oiv.setConfigurationXML(agentSelected.getStartArguments());
 							setOntologyInstView(oiv);
 

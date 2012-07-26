@@ -48,7 +48,6 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -70,7 +69,8 @@ import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologySingleClassDescription;
 import agentgui.core.ontologies.OntologySingleClassSlotDescription;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
-import agentgui.core.project.AgentConfiguration;
+import agentgui.core.project.AgentStartConfiguration;
+import agentgui.core.project.AgentStartArgument;
 import agentgui.ontology.Chart;
 import agentgui.ontology.Formula;
 import agentgui.ontology.TimeSeries;
@@ -91,12 +91,12 @@ public class DynForm extends JPanel {
 	private boolean emptyForm = true;
 	
 	// --- Based on this vector the display will be created ---------
-	private Vector<String> currOnotologyClassReferenceList = new Vector<String>();
+	private Vector<AgentStartArgument> currOnotologyClassReferenceList = new Vector<AgentStartArgument>();
 	
 	// --- parameters which are coming from the constructor --------- 
 	//private Project currProject = null;
 	private OntologyVisualisationHelper ontologyVisualisationHelper = null;
-	private AgentConfiguration agentConfiguration = null;
+	private AgentStartConfiguration agentStartConfiguration = null;
 	private String currAgentReference = null;
 
 	// --- Runtime parameters of this  class ------------------------
@@ -117,37 +117,30 @@ public class DynForm extends JPanel {
 	 * Constructor of this class by using a project and an agent reference.
 	 *
 	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
-	 * @param agentConfiguration the {@link AgentConfiguration}
+	 * @param agentStartConfiguration the {@link AgentStartConfiguration}
 	 * @param agentReference the agent reference
 	 */
-	public DynForm(OntologyVisualisationHelper ontologyVisualisationHelper, AgentConfiguration agentConfiguration, String agentReference) {
+	public DynForm(OntologyVisualisationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String agentReference) {
 		
 		super();
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
-		this.agentConfiguration = agentConfiguration;
+		this.agentStartConfiguration = agentStartConfiguration;
 		this.currAgentReference = agentReference;
 	
 		// --- Set the preferences for the Main Panel ---------------
 		this.setLayout(null);
 		
 		// --- Prevent errors through empty agent references --------
-		if (currAgentReference!=null) {
+		if (this.currAgentReference!=null) {
 			// --- Find Agent in AgentConfig ------------------------
-			if (this.agentConfiguration.containsKey(currAgentReference)==true) {
+			if (this.agentStartConfiguration.containsKey(this.currAgentReference)==true) {
 				
 				// --- Which classes are configured for the Agent? -- 
-				TreeMap<Integer,String> startObjectList = this.agentConfiguration.getReferencesAsTreeMap(currAgentReference);
-				Vector<Integer> v = new Vector<Integer>(startObjectList.keySet()); 
-				Collections.sort(v);
-				
-				// --- Take them to the local Vector ----------------
-				Iterator<Integer> it = v.iterator();
-				while (it.hasNext()) {
-					Integer startPosition = it.next();
-					String startObjectClass = startObjectList.get(startPosition);
-					currOnotologyClassReferenceList.add(startObjectClass);
+				Vector<AgentStartArgument> startArgs = this.agentStartConfiguration.get(currAgentReference);
+				for (int i = 0; i < startArgs.size(); i++) {
+					currOnotologyClassReferenceList.add(startArgs.get(i));
 				}
-				
+
 				// --- Start building the GUI -----------------------
 				this.buildGUI();
 				this.emptyForm = false;
@@ -177,7 +170,8 @@ public class DynForm extends JPanel {
 		if (ontologyClassReferences!= null && ontologyClassReferences.length>0) {
 			// --- Take that to the local Vector --------------------
 			for (int i = 0; i < ontologyClassReferences.length; i++) {
-				this.currOnotologyClassReferenceList.add(ontologyClassReferences[i]);
+				AgentStartArgument startArgument = new AgentStartArgument(i+1, ontologyClassReferences[i]);
+				this.currOnotologyClassReferenceList.add(startArgument);
 			}
 
 			// --- Start building the GUI -----------------------
@@ -212,16 +206,17 @@ public class DynForm extends JPanel {
 		
 		// --- Iterate over the available Start-Objects ---
 		for (int i = 0; i < currOnotologyClassReferenceList.size(); i++) {
-			String startObjectClass = currOnotologyClassReferenceList.get(i);			
-			if (startObjectClass!=null) {
-
-				JPanel startObjectPanel = new JPanel(null);
-				String startObjectClassMask = null;
-				if (startObjectClass.contains("]")) {
-					int cutPos = startObjectClass.indexOf("]");
-					startObjectClassMask = startObjectClass.substring(1, cutPos);
-					startObjectClass = startObjectClass.substring(cutPos+1).trim();
+			AgentStartArgument agentStartArgument = currOnotologyClassReferenceList.get(i); 
+			if (agentStartArgument!=null) {
+				
+				int startObjectPosition = agentStartArgument.getPosition(); 
+				String startObjectClass = agentStartArgument.getOntologyReference();
+				String startObjectClassMask = startObjectPosition + ": ";
+				if (agentStartArgument.getDisplayTitle()!=null) {
+					startObjectClassMask += agentStartArgument.getDisplayTitle();
 				}
+				
+				JPanel startObjectPanel = new JPanel(null);
 				
 				// --- Get the info about the slots --------------------
 				OntologySingleClassDescription osc = this.ontologyVisualisationHelper.getSlots4ClassAsObject(startObjectClass);

@@ -53,7 +53,7 @@ import org.apache.commons.codec.binary.Base64;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
-import agentgui.core.project.AgentConfiguration;
+import agentgui.core.project.AgentStartConfiguration;
 
 /**
  * This class can be used to display a user interface thats allows to configure
@@ -69,7 +69,7 @@ private static final long serialVersionUID = 6748263753769300242L;
 	private ImageIcon imageEnlarge =  new ImageIcon(getClass().getResource(PathImage + "MBFullScreen.png"));  //  @jve:decl-index=0:
 	
 	private OntologyVisualisationHelper ontologyVisualisationHelper = null;
-	private AgentConfiguration agentConfiguration = null;
+	private AgentStartConfiguration agentStartConfiguration = null;
 	private String agentReference = null;
 	private String[] ontologyClassReference = null;
 	private boolean use4Agents =  false;
@@ -97,7 +97,7 @@ private static final long serialVersionUID = 6748263753769300242L;
 	 */
 	public OntologyInstanceViewer(OntologyVisualisationHelper ontologyVisualisationHelper) {
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
-		this.agentConfiguration = null; 
+		this.agentStartConfiguration = null; 
 		this.agentReference = null;
 		this.ontologyClassReference = null;
 		this.use4Agents = true;
@@ -108,13 +108,13 @@ private static final long serialVersionUID = 6748263753769300242L;
 	 * Instantiates a new ontology instance viewer.
 	 *
 	 * @param ontologyVisualisationHelper the ontology visualisation helper
-	 * @param agentConfiguration the agent configuration
+	 * @param agentStartConfiguration the agent configuration
 	 * @param currentAgentReference the current agent reference
 	 */
-	public OntologyInstanceViewer(OntologyVisualisationHelper ontologyVisualisationHelper, AgentConfiguration agentConfiguration, String currentAgentReference) {
+	public OntologyInstanceViewer(OntologyVisualisationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String currentAgentReference) {
 		super();
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
-		this.agentConfiguration = agentConfiguration;
+		this.agentStartConfiguration = agentStartConfiguration;
 		this.agentReference = currentAgentReference;
 		this.ontologyClassReference = null;
 		this.use4Agents = true;
@@ -130,7 +130,7 @@ private static final long serialVersionUID = 6748263753769300242L;
 	public OntologyInstanceViewer(OntologyVisualisationHelper ontologyVisualisationHelper, String[] currOntologyClassReference) {
 		super();
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
-		this.agentConfiguration = null;
+		this.agentStartConfiguration = null;
 		this.agentReference = null;
 		this.ontologyClassReference = currOntologyClassReference;
 		this.use4Agents = false;
@@ -407,7 +407,7 @@ private static final long serialVersionUID = 6748263753769300242L;
 	private DynForm getDynForm() {
 		if (dynForm==null) {
 			if (use4Agents==true) {
-				dynForm = new DynForm(this.ontologyVisualisationHelper, this.agentConfiguration, this.agentReference);
+				dynForm = new DynForm(this.ontologyVisualisationHelper, this.agentStartConfiguration, this.agentReference);
 			} else {
 				dynForm = new DynForm(this.ontologyVisualisationHelper, ontologyClassReference);
 			}
