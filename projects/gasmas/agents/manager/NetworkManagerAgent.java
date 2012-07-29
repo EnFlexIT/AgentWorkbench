@@ -30,6 +30,7 @@ package gasmas.agents.manager;
 
 import gasmas.clustering.analyse.ComponentFunctions;
 import gasmas.clustering.behaviours.ClusteringBehaviour;
+import gasmas.ontology.ClusterNotification;
 import gasmas.ontology.DirectionSettingNotification;
 import gasmas.resourceallocation.StatusData;
 import jade.core.AID;
@@ -65,6 +66,8 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	private NetworkModel myNetworkModel = null;
 	/** Time since the last action in the initial process. */
 	private long timeOfAction = -1;
+	/** Shows the actual step of the initial process. */
+	private int actualStep = 0;
 
 	/*
 	 * (non-Javadoc)
@@ -87,13 +90,13 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		// --- Remind the current network model ---------------------
 		this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
 		this.getClusteredModel();
-		
+
 		// --- Put the environment model into the SimulationService -
 		// --- in order to make it accessible for the whole agency --
 		this.notifyAboutEnvironmentChanges();
-		
+
 		// --- Start of Time-Behaviour -------------------------------
-		// --- To check if one step in the initial process is done  --
+		// --- To check if one step in the initial process is done --
 		this.addBehaviour(new CheckForNextStep(this, 5000));
 
 		ComponentFunctions.printAmountOfDiffernetTypesOfAgents("Global", myNetworkModel);
@@ -103,8 +106,11 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationManagerInterface#getInitialEnvironmentModel()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeagentgui.simulationService.agents.SimulationManagerInterface#
+	 * getInitialEnvironmentModel()
 	 */
 	@Override
 	public EnvironmentModel getInitialEnvironmentModel() {
@@ -120,7 +126,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		try {
 			currentlyDoing = GET_EnvCont;
 			GraphEnvironmentController graphEnvironmentController = (GraphEnvironmentController) currProject.getEnvironmentController();
-			
+
 			currentlyDoing = GET_NetworkModel;
 			networkModel = (NetworkModel) graphEnvironmentController.getEnvironmentModelCopy();
 			networkModel.getAlternativeNetworkModel().put(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME, networkModel.getCopy());
@@ -150,9 +156,11 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		return environmentModel;
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationManagerInterface#doSingleSimulationSequennce()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeagentgui.simulationService.agents.SimulationManagerInterface#
+	 * doSingleSimulationSequennce()
 	 */
 	@Override
 	public void doSingleSimulationSequennce() {
@@ -160,7 +168,8 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	}
 
 	/**
-	 * Notify all SimulationAgents about environment changes by using the SimulationService.
+	 * Notify all SimulationAgents about environment changes by using the
+	 * SimulationService.
 	 */
 	private void notifyAboutEnvironmentChanges() {
 		try {
@@ -169,55 +178,94 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			e.printStackTrace();
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationManagerAgent#onManagerNotification(agentgui.simulationService.transaction.EnvironmentNotification)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeagentgui.simulationService.agents.SimulationManagerAgent#
+	 * onManagerNotification
+	 * (agentgui.simulationService.transaction.EnvironmentNotification)
 	 */
+	@SuppressWarnings("unchecked")
+	// Do not see the reason, why there is a type safety warning by handling and
+	// casting the HashSet
 	@Override
 	protected void onManagerNotification(EnvironmentNotification notification) {
-		
-		if (notification.getNotification() instanceof ClusterNetworkComponent) {
 
-			// --- Got a ClusterNetworkComponent ----------------------------------------
+		if (notification.getNotification() instanceof ClusterNetworkComponent) {
+			// TODO - This if branch only exists because of backwards
+			// compatibility reasons, the old clustering behaviour is still
+			// using it
+
+			// --- Got a ClusterNetworkComponent
+			// ----------------------------------------
 			ClusterNetworkComponent clusterNetworkComponent = (ClusterNetworkComponent) notification.getNotification();
-			// --- Substitute the components that are covered by the cluster ------------   
+			// --- Substitute the components that are covered by the cluster
+			// ------------
 			clusterNetworkComponent = this.replaceNetworkModelPartWithCluster(clusterNetworkComponent, true);
-			// --- Rename the ClusterNetworkComponent -----------------------------------
+			// --- Rename the ClusterNetworkComponent
+			// -----------------------------------
 			String clusterNetCompIdOld = clusterNetworkComponent.getId();
 			String clusterNetCompIdNew = notification.getSender().getLocalName();
 			this.getClusteredModel().renameNetworkComponent(clusterNetCompIdOld, clusterNetCompIdNew);
-			
+
 			if (clusterNetworkComponent != null) {
 				this.myNetworkModel.getAlternativeNetworkModel().put(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 			}
 			this.notifyAboutEnvironmentChanges();
 			this.sendAgentNotification(notification.getSender(), clusterNetworkComponent);
 			ComponentFunctions.printAmountOfDiffernetTypesOfAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
-			
+
+		} else if (notification.getNotification() instanceof ClusterNotification) {
+
+			ClusterNotification cn = (ClusterNotification) notification.getNotification();
+			HashSet<NetworkComponent> clusterNetworkComponents = (HashSet<NetworkComponent>) cn.getNotificationObject();
+
+			NetworkModel clusterNetworkModel = this.getClusteredModel();
+			ClusterNetworkComponent clusterNetworkComponent = clusterNetworkModel.replaceComponentsByCluster(clusterNetworkComponents, true);
+
+			// --- Rename the ClusterNetworkComponent
+			// -----------------------------------
+			String clusterNetCompIdOld = clusterNetworkComponent.getId();
+			String clusterNetCompIdNew = notification.getSender().getLocalName();
+			this.getClusteredModel().renameNetworkComponent(clusterNetCompIdOld, clusterNetCompIdNew);
+
+			if (clusterNetworkComponent != null) {
+				this.myNetworkModel.getAlternativeNetworkModel().put(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
+			}
+			this.notifyAboutEnvironmentChanges();
+			this.sendAgentNotification(notification.getSender(), clusterNetworkComponent);
+			ComponentFunctions.printAmountOfDiffernetTypesOfAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
+
 		} else if (notification.getNotification() instanceof DirectionSettingNotification) {
-			
-			DirectionSettingNotification dsn = (DirectionSettingNotification)notification.getNotification();
-				
-			// --- Apply setting to the NetworkModel -------------------------------
+
+			DirectionSettingNotification dsn = (DirectionSettingNotification) notification.getNotification();
+
+			// --- Apply setting to the NetworkModel
+			// -------------------------------
 			NetworkComponent networkComponent = (NetworkComponent) dsn.getNotificationObject();
 			this.myNetworkModel.setDirectionsOfNetworkComponent(networkComponent);
 
-			// --- Update the NetworkModel over all container ----------------------
+			// --- Update the NetworkModel over all container
+			// ----------------------
 			// TODO
-			
-			// --- Send changes to the DisplayAgents ------------------------------- 
+
+			// --- Send changes to the DisplayAgents
+			// -------------------------------
 			NetworkComponentDirectionNotification ncdm = new NetworkComponentDirectionNotification(networkComponent);
 			this.sendDisplayAgentNotification(ncdm);
 		} else if (notification.getNotification() instanceof StatusData) {
+			actualStep = ((StatusData) notification.getNotification()).getPhase();
 			timeOfAction = System.currentTimeMillis();
 		}
-		
+
 	}
 
 	/**
 	 * Replace network model part with cluster.
-	 *
-	 * @param networkModel the network model
+	 * 
+	 * @param networkModel
+	 *            the network model
 	 * @return the cluster network component
 	 */
 	private ClusterNetworkComponent replaceNetworkModelPartWithCluster(ClusterNetworkComponent clusterNetworkComponent, boolean distributionNodesAreOuterNodes) {
@@ -231,11 +279,12 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 	/**
 	 * Returns the clustered model.
+	 * 
 	 * @return the clustered model
 	 */
 	private NetworkModel getClusteredModel() {
 		NetworkModel clusteredNM = this.myNetworkModel.getAlternativeNetworkModel().get(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME);
-		if (clusteredNM==null) {
+		if (clusteredNM == null) {
 			clusteredNM = this.myNetworkModel.getCopy();
 			clusteredNM.setAlternativeNetworkModel(null);
 			this.myNetworkModel.getAlternativeNetworkModel().put(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME, clusteredNM);
@@ -251,29 +300,38 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		private static final long serialVersionUID = -3436029671748149764L;
 
 		/**
-		 * Instantiates a new behaviour that waits for the initial EnvironmentModel.
-		 * @param agent the agent
-		 * @param period the ticker period
+		 * Instantiates a new behaviour that waits for the initial
+		 * EnvironmentModel.
+		 * 
+		 * @param agent
+		 *            the agent
+		 * @param period
+		 *            the ticker period
 		 */
 		public CheckForNextStep(Agent agent, long period) {
 			super(agent, period);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see jade.core.behaviours.TickerBehaviour#onTick()
 		 */
 		@Override
 		protected void onTick() {
 			if (System.currentTimeMillis() - timeOfAction >= 2000 && timeOfAction != -1) {
-				// We now inform every network component that we finished the first step
+				// We now inform every network component that we finished the
+				// first step
 				timeOfAction = -1;
 				System.out.println("Start of the next step");
 				for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(myNetworkModel.getNetworkComponents().values())) {
-					sendAgentNotification(new AID(networkComponent.getId(), AID.ISLOCALNAME), new StatusData(2));
+					while (!sendAgentNotification(new AID(networkComponent.getId(), AID.ISLOCALNAME), new StatusData(actualStep + 1))) {
+
+					}
 				}
-				
+
 			}
 		}
 	}
-	
+
 }

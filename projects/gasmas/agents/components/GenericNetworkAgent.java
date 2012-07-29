@@ -29,6 +29,7 @@
 package gasmas.agents.components;
 
 import gasmas.resourceallocation.AllocData;
+import gasmas.resourceallocation.CheckingClusterBehaviour;
 import gasmas.resourceallocation.FindDirData;
 import gasmas.resourceallocation.FindDirectionBehaviour;
 import gasmas.resourceallocation.FindSimplificationBehaviour;
@@ -57,6 +58,7 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 	protected ResourceAllocationBehaviour resourceAllocationBehaviour;
 	protected FindDirectionBehaviour findDirectionBehaviour;
 	protected FindSimplificationBehaviour findSimplificationBehaviour;
+	protected CheckingClusterBehaviour checkingClusterBehaviour;
 
 	/*
 	 * (non-Javadoc)
@@ -106,7 +108,7 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 				findDirectionBehaviour.interpretMsg(notification);
 			}
 		} else if (notification.getNotification() instanceof SimplificationData) {
-			// sendManagerNotification(new StatusData(2));
+			sendManagerNotification(new StatusData(2));
 			if (findSimplificationBehaviour == null) {
 				notification.moveLastOrBlock(100);
 				System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + this.getLocalName());
@@ -114,14 +116,24 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 				findSimplificationBehaviour.interpretMsg(notification);
 			}
 		} else if (notification.getNotification() instanceof StatusData) {
-			startFindSimplificationBehaviour();
+			if (((StatusData) notification.getNotification()).getPhase() == 2) {
+				startFindSimplificationBehaviour();
+			} else if (((StatusData) notification.getNotification()).getPhase() == 3) {
+//				startCheckingClusterBehaviour();
+			}
 		}
 		return notification;
+	}
+
+	private void startCheckingClusterBehaviour() {
+		checkingClusterBehaviour = new CheckingClusterBehaviour(this, 20000, myEnvironmentModel);
+		checkingClusterBehaviour.start();
 	}
 
 	private void startFindSimplificationBehaviour() {
 		// The end of the the find direction behaviour, so I have to remove this
 		// behaviour
+
 		findDirectionBehaviour.setDirections();
 
 		findSimplificationBehaviour = new FindSimplificationBehaviour(this, 20000, myEnvironmentModel);

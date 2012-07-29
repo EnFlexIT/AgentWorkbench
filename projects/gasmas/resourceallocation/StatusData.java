@@ -11,6 +11,10 @@ public class StatusData implements Serializable {
 
 	int phase = 0;
 
+	public int getPhase() {
+		return phase;
+	}
+
 	public StatusData(int step) {
 		phase = step;
 	}

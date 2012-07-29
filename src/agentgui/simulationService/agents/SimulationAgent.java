@@ -367,7 +367,8 @@ public abstract class SimulationAgent extends Agent {
 					moveAsLastElement = false;
 					this.block(notification.getProcessingInstruction().getBlockPeriod());
 					
-				} else if (notification.getProcessingInstruction().isMoveLast()) {
+				} 
+				if (notification.getProcessingInstruction().isMoveLast()) {
 					removeFirstElement = false;
 					moveAsLastElement = true;
 				}

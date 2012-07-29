@@ -108,7 +108,6 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		networkModel = (NetworkModel) this.environmentModel.getDisplayEnvironment();
 		myAgent = agent;
 		thisNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
-		System.out.println("construct " + myAgent.getLocalName());
 	}
 
 	/**
@@ -192,6 +191,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
 		}
 		FindDirData content = (FindDirData) msg.getNotification();
 		String sender = msg.getSender().getLocalName();
@@ -386,6 +386,8 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 
 	public void setDirections() {
 		if (!done) {
+			incomingMaybe.clear();
+			outgoingMaybe.clear();
 			if (!incoming.isEmpty() || !outgoing.isEmpty()) {
 				System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
 						+ " OutMaybe: " + outgoingMaybe);
@@ -424,10 +426,10 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	private void forwarding(String sender, FindDirData content, HashSet<String> hashSet2, HashSet<String> hashSet, String msg, HashMap<String, String> temp11, HashMap<String, String> temp22) {
 		if (hashSet.contains(sender) == false) {
 			if (hashSet2.contains(sender)) {
-				// Should never happen
-				hashSet2.remove(sender);
+//				TODO - Think of appropriate behaviour
+//				hashSet2.remove(sender);
 				getOptional().add(sender);
-				System.out.println("_______________________________Never happen...Optional edge found " + myAgent.getLocalName() + " to " + sender);
+				System.out.println("_______________________________Maybe error or optional edge found " + myAgent.getLocalName() + " to " + sender);
 
 			} else {
 				temp22.clear();
