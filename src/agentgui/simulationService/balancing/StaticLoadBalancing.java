@@ -117,7 +117,7 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 				AgentClassElement4SimStart agent2Start = iterator.next();
 				// --- Check for start arguments -------------------------
 				Object[] startArgs = this.getStartArguments(agent2Start);
-
+				
 				if (locationNames==null) {
 					// --- Just start the agent locally ------------------
 					this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs , null);

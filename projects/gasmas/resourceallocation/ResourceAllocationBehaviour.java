@@ -1,15 +1,21 @@
 package gasmas.resourceallocation;
 
+import jade.core.AID;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import gasmas.agents.components.GenericNetworkAgent;
+import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
 import agentgui.simulationService.transaction.EnvironmentNotification;
-import jade.core.AID;
-import jade.core.behaviours.CyclicBehaviour;
 
-public abstract class ResourceAllocationBehaviour extends CyclicBehaviour {
+public abstract class ResourceAllocationBehaviour {
+	
+	protected SimulationServiceBehaviour simServiceBehaviour;
+	protected NetworkModel networkModel;
+	protected NetworkComponent myNetworkComponent;
 	
 	/** NetworkComponentNames, which has positive flow */
 	private List<String> incoming = new ArrayList<String>();
@@ -29,6 +35,14 @@ public abstract class ResourceAllocationBehaviour extends CyclicBehaviour {
 
 	/** HashMap which save the usage of the neighbours */
 	protected HashMap<String, AllocData> use = new HashMap<String, AllocData>();
+	
+	
+	public ResourceAllocationBehaviour(SimulationServiceBehaviour simServiceBehaviour, NetworkModel networkModel, NetworkComponent networkComponent) {
+		this.simServiceBehaviour = simServiceBehaviour;
+		this.networkModel = networkModel;
+		this.myNetworkComponent = networkComponent;
+	}
+	
 	
 	public List<String> getIncoming() {
 		return incoming;
@@ -54,17 +68,12 @@ public abstract class ResourceAllocationBehaviour extends CyclicBehaviour {
 		this.dead = dead;
 	}
 
-	@Override
-	public void action() {
-
-	}
-	
 	public abstract void interpretMsg(EnvironmentNotification msg);
 
 	public abstract String Status();
 	
 	public void msgSend(String receiver, GenericMesssageData content) {
-		((GenericNetworkAgent) myAgent).sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), content);
+		simServiceBehaviour.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), content);
 
 	}
 }

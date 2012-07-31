@@ -106,7 +106,7 @@ public class ServiceActuator {
 		Object[] arrLocal = serviceSensors.toArray();
 		for (int i = arrLocal.length-1; i>=0; i--) {
 			ServiceSensor sensor = (ServiceSensor)arrLocal[i];
-			AID sensorAgentAID = sensor.myAgent.getAID();
+			AID sensorAgentAID = sensor.myServiceSensor.getAID();
 			if (sensorAgentAID.equals(aid)) {
 				return sensor;				
 			}
@@ -122,7 +122,7 @@ public class ServiceActuator {
 		AID[] sensorAgents = new AID[serviceSensors.size()];
 		Object[] arrLocal = serviceSensors.toArray();
 		for (int i = arrLocal.length-1; i>=0; i--) {
-			AID aid = ((ServiceSensor)arrLocal[i]).myAgent.getAID();
+			AID aid = ((ServiceSensor)arrLocal[i]).myServiceSensor.getAID();
 			sensorAgents[i] = aid;
 		}
 		return sensorAgents;
@@ -269,7 +269,7 @@ public class ServiceActuator {
 			
 			for(int i=0; i<this.size();i++) {
 				MigrationReminder migRem = this.get(i);
-				AID agentsAID = migRem.getSensor().myAgent.getAID();
+				AID agentsAID = migRem.getSensor().myServiceSensor.getAID();
 				if (agentsAID.getLocalName().equals(searchAID.getLocalName())) {
 					return this.get(i);
 				}

@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 import jade.lang.acl.ACLMessage;
 
@@ -18,30 +18,16 @@ public class EntryAgentBehaviour extends ResourceAllocationBehaviour {
 	/** Not used production */
 	private int open_prod = prod;
 
-	/** The environment model. */
-	private EnvironmentModel environmentModel;
-
-	/** The network model. */
-	private NetworkModel networkModel;
-
-	/** My own NetworkComponent. */
-	private NetworkComponent thisNetworkComponent;
-
 	/** Overrides class Agent with the special GenericNetworkAgent */
 	private GenericNetworkAgent myAgent;
 
-	/**
-	 * @param agent
-	 * @param environmentModel
-	 */
-	public EntryAgentBehaviour(GenericNetworkAgent agent, EnvironmentModel environmentModel) {
-		this.environmentModel = environmentModel;
-		networkModel = (NetworkModel) this.environmentModel.getDisplayEnvironment();
-		myAgent = agent;
-		thisNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
-
+	
+	
+	public EntryAgentBehaviour(SimulationServiceBehaviour simServiceBehaviour, NetworkModel networkModel, NetworkComponent networkComponent) {
+		super(simServiceBehaviour, networkModel, networkComponent);
+		myAgent = (GenericNetworkAgent) simServiceBehaviour.getAgent();
 	}
-
+	
 	/**
 	 * Sends its initial flow to its neighbours
 	 * 
@@ -49,7 +35,7 @@ public class EntryAgentBehaviour extends ResourceAllocationBehaviour {
 	 */
 	public void onStart() {
 
-		Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+		Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 		while (it1.hasNext()) {
 			msgSend(it1.next().getId(), new AllocData(prod, myAgent.getLocalName(), ACLMessage.INFORM, "MAX_INITIAL"));
 		}
@@ -59,17 +45,6 @@ public class EntryAgentBehaviour extends ResourceAllocationBehaviour {
 		// if (myAgent.getLocalName().equals("n9")) {
 		// open_prod = 10;
 		// }
-	}
-
-	/**
-	 * Get the messages from the queue and calls the appropriate method to deal
-	 * with this type of message
-	 * 
-	 * @see jade.core.behaviours.Behaviour#action()
-	 */
-	@Override
-	public void action() {
-
 	}
 
 	/**

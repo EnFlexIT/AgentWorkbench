@@ -4,37 +4,27 @@ import gasmas.agents.components.ClusterNetworkAgent;
 import gasmas.agents.components.GenericNetworkAgent;
 import gasmas.ontology.ClusterNotification;
 import jade.core.AID;
-import jade.core.behaviours.TickerBehaviour;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
-public class CheckingClusterBehaviour extends TickerBehaviour {
+public class CheckingClusterBehaviour {
 
 	private static final long serialVersionUID = -2365487643740457952L;
 
+	private SimulationServiceBehaviour simServiceBehaviour;
+	private NetworkModel networkModel;
+	private NetworkComponent myNetworkComponent;
+
 	/** NetworkComponentNames, which has positive flow */
 	private HashSet<String> toAsk = new HashSet<String>();
-
-	/** The environment model. */
-	private EnvironmentModel environmentModel;
-
-	/** The network model. */
-	private NetworkModel networkModel;
-
-	/** My own NetworkComponent. */
-	private NetworkComponent thisNetworkComponent;
-
-	/** Overrides class Agent with the special GenericNetworkAgent */
-	private GenericNetworkAgent myAgent;
 
 	/** Represents the station, which already contribute to the simplification */
 	private int alreadyReportedStations = 0;
@@ -55,12 +45,10 @@ public class CheckingClusterBehaviour extends TickerBehaviour {
 	 * @param agent
 	 * @param environmentModel
 	 */
-	public CheckingClusterBehaviour(GenericNetworkAgent agent, long period, EnvironmentModel environmentModel) {
-		super(agent, period);
-		this.environmentModel = environmentModel;
-		networkModel = (NetworkModel) this.environmentModel.getDisplayEnvironment();
-		myAgent = agent;
-		thisNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
+	public CheckingClusterBehaviour(SimulationServiceBehaviour simServiceBehaviour, NetworkModel networkModel, NetworkComponent networkComponent) {
+		this.simServiceBehaviour = simServiceBehaviour;
+		this.networkModel = networkModel;
+		this.myNetworkComponent = networkComponent;
 	}
 
 	/**
@@ -70,16 +58,16 @@ public class CheckingClusterBehaviour extends TickerBehaviour {
 	public void start() {
 		// Start from the network component, where we do not have all
 		// information
-		while (networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator().hasNext()) {
-			toAsk.add(networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator().next().getId());
+		while (networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator().hasNext()) {
+			toAsk.add(networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator().next().getId());
 		}
 
-		if (thisNetworkComponent.getAgentClassName().equals(ClusterNetworkAgent.class.getName()) && toAsk.size() > 1) {
+		if (myNetworkComponent.getAgentClassName().equals(ClusterNetworkAgent.class.getName()) && toAsk.size() > 1) {
 			duringACluster = true;
-			msgSend((String) toAsk.toArray()[alreadyReportedStations], new ClusterCheckData(thisNetworkComponent.getId()));
+			msgSend((String) toAsk.toArray()[alreadyReportedStations], new ClusterCheckData(myNetworkComponent.getId()));
 			alreadyReportedStations += 1;
-			System.out.println(thisNetworkComponent.getId() + " Start with " + toAsk.size() + "(" + toAsk + ")" + " and neighbours "
-					+ networkModel.getNeighbourNetworkComponents(thisNetworkComponent).size() );
+			System.out.println(myNetworkComponent.getId() + " Start with " + toAsk.size() + "(" + toAsk + ")" + " and neighbours "
+					+ networkModel.getNeighbourNetworkComponents(myNetworkComponent).size() );
 		}
 		if (toAsk.size() <= 1) {
 			noInformation = true;
@@ -88,7 +76,7 @@ public class CheckingClusterBehaviour extends TickerBehaviour {
 	}
 
 	public void msgSend(String receiver, ClusterCheckData clusterCheckData) {
-		while (myAgent.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), clusterCheckData) == false) {
+		while (simServiceBehaviour.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), clusterCheckData) == false) {
 
 		}
 
@@ -109,7 +97,7 @@ public class CheckingClusterBehaviour extends TickerBehaviour {
 	}
 
 	private void buildCluster(SimplificationData content, String sender) {
-		if (thisNetworkComponent.getId().equals("n68")) {
+		if (myNetworkComponent.getId().equals("n68")) {
 			System.out.println("eo");
 		}
 //		if (content.isAnswer()) {
@@ -225,16 +213,11 @@ public class CheckingClusterBehaviour extends TickerBehaviour {
 
 			}
 		}
-		System.out.println("Von " + thisNetworkComponent.getId() + " Cluster: " + list);
+		System.out.println("Von " + myNetworkComponent.getId() + " Cluster: " + list);
 		ClusterNotification cn = new ClusterNotification();
 		cn.setNotificationObject(networkComponents);
-		myAgent.sendManagerNotification(cn);
+		simServiceBehaviour.sendManagerNotification(cn);
 
-	}
-
-	@Override
-	protected void onTick() {
-		// Not used jet
 	}
 
 }

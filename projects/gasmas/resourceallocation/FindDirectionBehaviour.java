@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package gasmas.resourceallocation;
 
 import gasmas.agents.components.CompressorAgent;
@@ -10,7 +38,6 @@ import gasmas.agents.components.PipeShortAgent;
 import gasmas.agents.components.SimpleValveAgent;
 import gasmas.ontology.DirectionSettingNotification;
 import jade.core.AID;
-import jade.core.behaviours.TickerBehaviour;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,10 +48,10 @@ import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentDirectionSettings;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
-public class FindDirectionBehaviour extends TickerBehaviour {
+public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 
 	private static final long serialVersionUID = 4471250444116997490L;
 
@@ -42,103 +69,138 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	/** NetworkComponentNames, which has no flow */
 	private HashSet<String> dead = new HashSet<String>();
 
-	public void addDead(String dead) {
-		this.dead.add(dead);
-	}
-
-	public HashSet<String> getDead() {
-		return dead;
-	}
-
-	public void addIncoming(String incoming) {
-		this.incoming.add(incoming);
-	}
-
-	public HashSet<String> getIncoming() {
-		return incoming;
-	}
-
-	public void addOutgoing(String outgoing) {
-		this.outgoing.add(outgoing);
-	}
-
-	public HashSet<String> getOutgoing() {
-		return outgoing;
-	}
-
-	public void addOptional(String optional) {
-		this.optional.add(optional);
-	}
-
-	public HashSet<String> getOptional() {
-		return optional;
-	}
-
 	/** NetworkComponentNames, which has maybe positive flow */
 	private HashMap<String, String> incomingMaybe = new HashMap<String, String>();
 
 	/** NetworkComponentNames, which has maybe negative flow */
 	private HashMap<String, String> outgoingMaybe = new HashMap<String, String>();
 
-	/** The environment model. */
-	private EnvironmentModel environmentModel;
-
 	/** The network model. */
 	private NetworkModel networkModel;
 
 	/** My own NetworkComponent. */
-	private NetworkComponent thisNetworkComponent;
+	private NetworkComponent myNetworkComponent;
 
 	/** Shows, if this NetworkComponent already set the directions. */
 	private boolean done = false;
 
-	/** Overrides class Agent with the special GenericNetworkAgent */
-	private GenericNetworkAgent myAgent;
-
 	/** Shows if this component had started */
 	private boolean startdone = false;
 
+	/** Different Behaviours, which get messages */
+	protected ResourceAllocationBehaviour resourceAllocationBehaviour;
+	protected FindSimplificationBehaviour findSimplificationBehaviour;
+	protected CheckingClusterBehaviour checkingClusterBehaviour;
+	
+	
 	/**
 	 * @param agent
 	 * @param environmentModel
 	 */
-	public FindDirectionBehaviour(GenericNetworkAgent agent, long period, EnvironmentModel environmentModel) {
-		super(agent, period);
-		this.environmentModel = environmentModel;
-		networkModel = (NetworkModel) this.environmentModel.getDisplayEnvironment();
-		myAgent = agent;
-		thisNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
+	public FindDirectionBehaviour(GenericNetworkAgent agent) {
+		super(agent);
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationServiceBehaviour#onEnvironmentStimulus()
+	 */
+	@Override
+	protected void onEnvironmentStimulus() {
+		if (this.networkModel==null) {
+			this.networkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
+			this.myNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
+			this.start();
+		}
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationServiceBehaviour#onEnvironmentNotification(agentgui.simulationService.transaction.EnvironmentNotification)
+	 */
+	@Override
+	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
+		// System.out.println("Got Message " + this.getLocalName() + "...von..."
+		// + notification.getSender().getLocalName());
+		if (notification.getNotification() instanceof AllocData) {
+			if (resourceAllocationBehaviour == null) {
+				notification.moveLastOrBlock(100);
+				System.out.println("=> Notification parked for 'AllocData' !Receiver: " + myAgent.getLocalName());
+			} else {
+				resourceAllocationBehaviour.interpretMsg(notification);
+			}
+		} else if (notification.getNotification() instanceof FindDirData) {
+			sendManagerNotification(new StatusData(1));
+			this.interpretMsg(notification);
+			
+		} else if (notification.getNotification() instanceof SimplificationData) {
+			sendManagerNotification(new StatusData(2));
+			if (findSimplificationBehaviour == null) {
+				notification.moveLastOrBlock(100);
+				System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + myAgent.getLocalName());
+			} else {
+				findSimplificationBehaviour.interpretMsg(notification);
+			}
+		} else if (notification.getNotification() instanceof StatusData) {
+			if (((StatusData) notification.getNotification()).getPhase() == 2) {
+				startFindSimplificationBehaviour();
+			} else if (((StatusData) notification.getNotification()).getPhase() == 3) {
+//				startCheckingClusterBehaviour();
+			}
+		}
+		return notification;
+		
+	}
+	
+	private void startCheckingClusterBehaviour() {
+		checkingClusterBehaviour = new CheckingClusterBehaviour(this, networkModel, myNetworkComponent);
+		checkingClusterBehaviour.start();
+	}
+
+	private void startFindSimplificationBehaviour() {
+		// The end of the the find direction behaviour, so I have to remove this
+		// behaviour
+
+		this.setDirections();
+
+		findSimplificationBehaviour = new FindSimplificationBehaviour(this, networkModel, myNetworkComponent);
+		// Because the internal structures can not save dead pipes, so I have to
+		// transfer the knowledge from one behaviour to another
+		findSimplificationBehaviour.setDead(this.getDead());
+		findSimplificationBehaviour.setIncoming(this.getIncoming());
+		findSimplificationBehaviour.setOutgoing(this.getOutgoing());
+		// Start next behaviour, in this case, find simplifications
+		findSimplificationBehaviour.start();
+	}
+	
 	/**
 	 * Sends its initial flow to its neighbours
 	 * 
 	 */
 	public void start() {
 		String msg = "";
-		if (thisNetworkComponent.getAgentClassName().equals(EntryAgent.class.getName())) {
+		if (myNetworkComponent.getAgentClassName().equals(EntryAgent.class.getName())) {
 			msg = "in";
 			sendall(msg);
-		} else if (thisNetworkComponent.getAgentClassName().equals(ExitAgent.class.getName())) {
+		} else if (myNetworkComponent.getAgentClassName().equals(ExitAgent.class.getName())) {
 			msg = "out";
 			sendall(msg);
-		} else if (thisNetworkComponent.getAgentClassName().equals(PipeAgent.class.getName()) || thisNetworkComponent.getAgentClassName().equals(PipeShortAgent.class.getName())
-				|| thisNetworkComponent.getAgentClassName().equals(SimpleValveAgent.class.getName())) {
-			if (networkModel.getNeighbourNetworkComponents(thisNetworkComponent).size() < 2) {
+		} else if (myNetworkComponent.getAgentClassName().equals(PipeAgent.class.getName()) || myNetworkComponent.getAgentClassName().equals(PipeShortAgent.class.getName())
+				|| myNetworkComponent.getAgentClassName().equals(SimpleValveAgent.class.getName())) {
+			if (networkModel.getNeighbourNetworkComponents(myNetworkComponent).size() < 2) {
 				msg = "dead";
 
 				System.out.println(myAgent.getLocalName() + " is dead");
 				sendall(msg);
 			}
-		} else if (thisNetworkComponent.getAgentClassName().equals(ControlValveAgent.class.getName()) || thisNetworkComponent.getAgentClassName().equals(CompressorAgent.class.getName())) {
+		} else if (myNetworkComponent.getAgentClassName().equals(ControlValveAgent.class.getName()) || myNetworkComponent.getAgentClassName().equals(CompressorAgent.class.getName())) {
 
-			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, thisNetworkComponent);
-			thisNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
-			networkModel.setDirectionsOfNetworkComponent(thisNetworkComponent);
+			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, myNetworkComponent);
+			myNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
+			networkModel.setDirectionsOfNetworkComponent(myNetworkComponent);
 
 			DirectionSettingNotification dsn = new DirectionSettingNotification();
-			dsn.setNotificationObject(thisNetworkComponent);
-			myAgent.sendManagerNotification(dsn);
+			dsn.setNotificationObject(myNetworkComponent);
+			this.sendManagerNotification(dsn);
 
 			GraphEdgeDirection ged = netCompDirect.getEdgeDirections().values().iterator().next();
 			String toComGraphNodeID = ged.getGraphNodeIDTo();
@@ -169,7 +231,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		 * Entries and for dead pipes
 		 */
 		done = true;
-		Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+		Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 		while (it1.hasNext()) {
 			String receiver = it1.next().getId();
 			msgSend(receiver, new FindDirData(msg));
@@ -232,7 +294,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		int i = 0;
 		int p = 0;
 		String toInform = "";
-		Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+		Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 		while (it1.hasNext()) {
 			String neighbour = it1.next().getId();
 			if (getDead().contains(neighbour)) {
@@ -253,7 +315,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		i = 0;
 		p = 0;
 		toInform = "";
-		it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+		it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 		while (it1.hasNext()) {
 			String neighbour = it1.next().getId();
 			if (getDead().contains(neighbour) || getIncoming().contains(neighbour)) {
@@ -274,7 +336,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 		i = 0;
 		p = 0;
 		toInform = "";
-		it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+		it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 		while (it1.hasNext()) {
 			String neighbour = it1.next().getId();
 			if (getDead().contains(neighbour) || getOutgoing().contains(neighbour)) {
@@ -314,7 +376,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 					 * Got my own ? message, so this should be a cycle
 					 */
 					System.out.println("My own name in the way: " + myAgent.getLocalName() + " Way: " + content.getWay().toString());
-					Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+					Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 					String inform = "";
 					String direction = "";
 					boolean found = false;
@@ -367,7 +429,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 					temp1.put(sender, content.getWay());
 
 					/* The estimated information could be still wrong... */
-					Iterator<NetworkComponent> it11 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+					Iterator<NetworkComponent> it11 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 					while (it11.hasNext()) {
 						String neighbour = it11.next().getId();
 						if (neighbour.equals(sender) == false) {
@@ -391,7 +453,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 			if (!incoming.isEmpty() || !outgoing.isEmpty()) {
 				System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
 						+ " OutMaybe: " + outgoingMaybe);
-				NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, thisNetworkComponent);
+				NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, myNetworkComponent);
 				HashSet<GraphNode> outerNodes = netCompDirect.getOuterNodes();
 
 				HashSet<NetworkComponent> inComps = new HashSet<NetworkComponent>();
@@ -413,10 +475,10 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 				}
 				netCompDirect.setGraphEdgeDirection(inComps, outComps);
 
-				thisNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
+				myNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
 				DirectionSettingNotification dsn = new DirectionSettingNotification();
-				dsn.setNotificationObject(thisNetworkComponent);
-				myAgent.sendManagerNotification(dsn);
+				dsn.setNotificationObject(myNetworkComponent);
+				this.sendManagerNotification(dsn);
 			}
 		}
 		done = true;
@@ -438,7 +500,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 				int i = 0;
 				int p = 0;
 				String toInform = "";
-				Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+				Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 				while (it1.hasNext()) {
 					String neighbour = it1.next().getId();
 					if (hashSet.contains(neighbour) || getDead().contains(neighbour)) {
@@ -459,7 +521,7 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 				} else if ((p - i) > 1) {
 					// We try to guess the next step
 
-					Iterator<NetworkComponent> it11 = networkModel.getNeighbourNetworkComponents(thisNetworkComponent).iterator();
+					Iterator<NetworkComponent> it11 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 					while (it11.hasNext()) {
 						String neighbour = it11.next().getId();
 						if (neighbour.equals(sender) == false) {
@@ -474,15 +536,42 @@ public class FindDirectionBehaviour extends TickerBehaviour {
 	}
 
 	public void msgSend(String receiver, GenericMesssageData content) {
-		while (myAgent.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), content) == false) {
+		while (this.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), content) == false) {
 
 		}
 
 	}
 
-	@Override
-	protected void onTick() {
-		// Not used jet
+	public void addDead(String dead) {
+		this.dead.add(dead);
+	}
+
+	public HashSet<String> getDead() {
+		return dead;
+	}
+
+	public void addIncoming(String incoming) {
+		this.incoming.add(incoming);
+	}
+
+	public HashSet<String> getIncoming() {
+		return incoming;
+	}
+
+	public void addOutgoing(String outgoing) {
+		this.outgoing.add(outgoing);
+	}
+
+	public HashSet<String> getOutgoing() {
+		return outgoing;
+	}
+
+	public void addOptional(String optional) {
+		this.optional.add(optional);
+	}
+
+	public HashSet<String> getOptional() {
+		return optional;
 	}
 
 }

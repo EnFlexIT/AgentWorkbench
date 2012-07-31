@@ -26,41 +26,40 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package gasmas.agents.components;
+package agentgui.simulationService.sensoring;
 
-import gasmas.resourceallocation.FindDirectionBehaviour;
-import agentgui.envModel.graph.networkModel.NetworkModel;
+import java.io.Serializable;
+
 import agentgui.simulationService.agents.SimulationAgent;
+import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
-public abstract class GenericNetworkAgent extends SimulationAgent {
+/**
+ * This Sensor Listener can be used with the {@link SimulationAgent} or the {@link SimulationServiceBehaviour} class
+ * and enables to 
+ * 
+ * @see SimulationAgent#addSimulationServiceListener(ServiceSensorListener)
+ * @see SimulationAgent#removeSimulationServiceListener(ServiceSensorListener)
+ * or
+ * @see SimulationServiceBehaviour#addSimulationServiceListener(ServiceSensorListener)
+ * @see SimulationServiceBehaviour#removeSimulationServiceListener(ServiceSensorListener)
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
+public interface ServiceSensorListener extends Serializable {
 
-	private static final long serialVersionUID = 1743261783247570185L;
+	/**
+	 * Will be invoked, if the environment (model) changed.
+	 */
+	public void onEnvironmentStimulus();
 
-	protected NetworkModel myNetworkModel = null;
+	/**
+	 * If an environment notification arrives the Agent, this method will be invoked.
+	 *
+	 * @param notification the notification
+	 * @return the environment notification
+	 */
+	public EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification);
 	
-	/*
-	 * (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationAgent#setup()
-	 */
-	@Override
-	protected void setup() {
-		this.addBehaviour(new FindDirectionBehaviour(this));
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentStimulus()
-	 */
-	@Override
-	protected void onEnvironmentStimulus() {
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentNotification(agentgui.simulationService.transaction.EnvironmentNotification)
-	 */
-	@Override
-	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
-		return notification;
-	}
 	
 }

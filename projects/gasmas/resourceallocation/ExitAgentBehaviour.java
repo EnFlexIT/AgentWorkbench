@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 import jade.lang.acl.ACLMessage;
 
@@ -20,29 +20,13 @@ public class ExitAgentBehaviour extends ResourceAllocationBehaviour {
 	/** Not allocated need */
 	private int open_need = need;
 
-	/** The environment model. */
-	private EnvironmentModel environmentModel;
-
-	/** The network model. */
-	private NetworkModel networkModel;
-
-	/** My own NetworkComponent. */
-	@SuppressWarnings("unused")
-	private NetworkComponent thisNetworkComponent;
-
 	/** Overrides class Agent with the special GenericNetworkAgent */
 	private GenericNetworkAgent myAgent;
 
-	/**
-	 * @param agent
-	 * @param environmentModel
-	 */
-	public ExitAgentBehaviour(GenericNetworkAgent agent, EnvironmentModel environmentModel) {
-		this.environmentModel = environmentModel;
-		networkModel = (NetworkModel) this.environmentModel.getDisplayEnvironment();
-		myAgent = agent;
-		thisNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
-
+	
+	public ExitAgentBehaviour(SimulationServiceBehaviour simServiceBehaviour, NetworkModel networkModel, NetworkComponent networkComponent) {
+		super(simServiceBehaviour, networkModel, networkComponent);
+		myAgent = (GenericNetworkAgent) simServiceBehaviour.getAgent();
 	}
 
 	public void interpretMsg(EnvironmentNotification msg) {

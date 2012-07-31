@@ -45,14 +45,14 @@ import jade.core.Location;
  */
 public class ServiceSensor {
 
-	protected SimulationAgent myAgent;
+	protected ServiceSensorInterface myServiceSensor;
 	
 	/**
 	 * Instantiates a new service sensor.
 	 * @param agent the agent
 	 */
-	public ServiceSensor(SimulationAgent agent) {
-		myAgent = agent;		
+	public ServiceSensor(ServiceSensorInterface serviceSensor) {
+		myServiceSensor = serviceSensor;		
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class ServiceSensor {
 	 * @param aSynchron true, if synchronously
 	 */
 	public void putEnvironmentModel(EnvironmentModel environmentModel, boolean aSynchron) {
-		myAgent.setEnvironmentModel(environmentModel, aSynchron);
+		myServiceSensor.setEnvironmentModel(environmentModel, aSynchron);
 	}
 	
 	/**
@@ -69,14 +69,14 @@ public class ServiceSensor {
 	 * @param notification the EnvironmentNotification
 	 */
 	public void notifyAgent(EnvironmentNotification notification) {
-		myAgent.setNotification(notification);
+		myServiceSensor.setNotification(notification);
 	}
 
 	/**
 	 * Does the <code>doDelete()</code> method of the agent.
 	 */
 	public void doDelete() {
-		myAgent.doDelete();
+		myServiceSensor.doDelete();
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class ServiceSensor {
 	 * @param newLocation the new location
 	 */
 	public void putMigrationLocation(Location newLocation) {
-		myAgent.setMigration(newLocation);
+		myServiceSensor.setMigration(newLocation);
 	}
 
 	

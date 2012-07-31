@@ -75,7 +75,7 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 	
 	/**
 	 * This Method will be called right before the begin of the action() method and 
-	 * will start the visualization agent in the prepared tag of <b>Agent.GUI</b>.
+	 * will start the visualisation agent in the prepared tag of <b>Agent.GUI</b>.
 	 */
 	@Override
 	public void onStart() {
@@ -101,14 +101,32 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 	 * of 'Agent-Start' from the 'Simulation-Setup'.
 	 */
 	protected void startAgentsFromCurrAgentList() {
+		this.startAgentsFromCurrAgentList(false);
+	}
+	/**
+	 * This method will start all agents defined in the agent list
+	 * of 'Agent-Start' from the 'Simulation-Setup'.
+	 * @param printAgentStart2Console if true, every agent start will be printed in the console
+	 */
+	protected void startAgentsFromCurrAgentList(boolean printAgentStart2Console) {
+		
+		boolean debug = printAgentStart2Console;
+		int counter=1;
 		
 		for (Iterator<AgentClassElement4SimStart> iterator = currAgentList.iterator(); iterator.hasNext();) {
 			AgentClassElement4SimStart agent2Start = iterator.next();
 			// --- Check for start arguments -------------------------
 			Object[] startArgs = this.getStartArguments(agent2Start);
 			// --- Start the agent -----------------------------------
+			if (debug==true) {
+				System.out.println("Start Agent " + counter + ": " + agent2Start.getStartAsName() + " Class: " + agent2Start.getAgentClassReference());
+			}
 			this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs);
+			counter++;
 		} 
+		if (debug==true) {
+			System.out.println(counter + " Agents were started.");	
+		}
 	}
 
 	/**

@@ -52,32 +52,20 @@
         <agent>
             <postionNo>8</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
-            <startAsName>n86</startAsName>
-        </agent>
-        <agent>
-            <postionNo>9</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
             <startAsName>n87</startAsName>
         </agent>
         <agent>
-            <postionNo>10</postionNo>
+            <postionNo>9</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
             <startAsName>n88</startAsName>
         </agent>
         <agent>
-            <postionNo>11</postionNo>
+            <postionNo>10</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
             <startAsName>n89</startAsName>
-        </agent>
-        <agent>
-            <postionNo>12</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
-            <startAsName>n94</startAsName>
         </agent>
     </agentSetup>
     <environmentFileName>SmartGrid.graphml</environmentFileName>

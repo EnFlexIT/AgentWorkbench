@@ -1,6 +1,7 @@
 package gasmas.resourceallocation;
 
 import gasmas.agents.components.GenericNetworkAgent;
+import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,25 +14,16 @@ import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentDirectionSettings;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
 import agentgui.simulationService.transaction.EnvironmentNotification;
-import jade.lang.acl.ACLMessage;
 
 public class MessengerBehaviour extends ResourceAllocationBehaviour {
 
 	private static final long serialVersionUID = 2050608942933290538L;
 
-	/** The environment model. */
-	private EnvironmentModel environmentModel;
-
-	/** The network model. */
-	private NetworkModel networkModel;
 
 	/** Are we already checking a need request? */
 	private boolean checkneed = false;
-
-	/** My own NetworkComponent. */
-	private NetworkComponent thisNetworkComponent;
 
 	/** Overrides class Agent with the special GenericNetworkAgent */
 	private GenericNetworkAgent myAgent;
@@ -46,13 +38,11 @@ public class MessengerBehaviour extends ResourceAllocationBehaviour {
 	 * @param agent
 	 * @param environmentModel
 	 */
-	public MessengerBehaviour(GenericNetworkAgent agent, EnvironmentModel environmentModel) {
-		this.environmentModel = environmentModel;
-		networkModel = (NetworkModel) this.environmentModel.getDisplayEnvironment();
-		myAgent = agent;
-		thisNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
+	public MessengerBehaviour(SimulationServiceBehaviour simServiceBehaviour, NetworkModel networkModel, NetworkComponent networkComponent) {
+		super(simServiceBehaviour, networkModel, networkComponent);
+		myAgent = (GenericNetworkAgent) simServiceBehaviour.getAgent();
 		
-		NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, thisNetworkComponent);
+		NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, myNetworkComponent);
 		GraphEdgeDirection ged = netCompDirect.getEdgeDirections().values().iterator().next();
 		String toComGraphNodeID = ged.getGraphNodeIDTo();
 		GraphNode toComGraphNode = (GraphNode) networkModel.getGraphElement(toComGraphNodeID);
@@ -78,16 +68,6 @@ public class MessengerBehaviour extends ResourceAllocationBehaviour {
 
 	}
 	
-	/**
-	 * Get the messages from the queue and calls the appropriate method to deal
-	 * with this type of message
-	 * 
-	 * @see jade.core.behaviours.Behaviour#action()
-	 */
-	@Override
-	public void action() {
-
-	}
 
 	public void interpretMsg(EnvironmentNotification msg) {
 //		if (msg.getProtocol() != null && msg.getProtocol().equals("RA")) {
