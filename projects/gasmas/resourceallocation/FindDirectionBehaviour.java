@@ -106,6 +106,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 	 */
 	@Override
 	protected void onEnvironmentStimulus() {
+		// TODO: Consider that myEnvironmentModel will change from time to time ... !!
 		if (this.networkModel==null) {
 			this.networkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
 			this.myNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());

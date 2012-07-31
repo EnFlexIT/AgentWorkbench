@@ -48,6 +48,8 @@ import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDirectionNotification;
+import agentgui.simulationService.LoadService;
+import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelDiscrete;
@@ -91,6 +93,15 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
 		this.getClusteredModel();
 
+		// --- Make sure that the setup was started, before
+		this.addBehaviour(new WaitForTheEndOfSimulationStart(this, 200));
+	}
+
+	/**
+	 * Setup simulation.
+	 */
+	private void setupSimulation() {
+		
 		// --- Put the environment model into the SimulationService -
 		// --- in order to make it accessible for the whole agency --
 		this.notifyAboutEnvironmentChanges();
@@ -101,7 +112,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 		ComponentFunctions.printAmountOfDiffernetTypesOfAgents("Global", myNetworkModel);
 	}
-
+	
 	// ++++++++++++++ Some temporary test cases here +++++++++++++++++++++
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -264,8 +275,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	/**
 	 * Replace network model part with cluster.
 	 * 
-	 * @param networkModel
-	 *            the network model
+	 * @param networkModel the network model
 	 * @return the cluster network component
 	 */
 	private ClusterNetworkComponent replaceNetworkModelPartWithCluster(ClusterNetworkComponent clusterNetworkComponent, boolean distributionNodesAreOuterNodes) {
@@ -292,6 +302,64 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		return clusteredNM;
 	}
 
+	
+	/**
+	 * The Class WaitForTheEndOfSimulationStart.
+	 */
+	private class WaitForTheEndOfSimulationStart extends TickerBehaviour {
+
+		private static final long serialVersionUID = 2352299009087259189L;
+		private Integer noOfAgents=null;
+		
+		/**
+		 * Instantiates a new wait for the end of simulation start.
+		 *
+		 * @param agent the agent
+		 * @param period the period
+		 */
+		public WaitForTheEndOfSimulationStart(Agent agent, long period) {
+			super(agent, period);
+		}
+
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.TickerBehaviour#onTick()
+		 */
+		@Override
+		protected void onTick() {
+			
+			int runningAgents = this.getAgentsRunning();
+			if (noOfAgents==null) {
+				noOfAgents = runningAgents;
+			} else {
+				if (noOfAgents==runningAgents) {
+					setupSimulation();
+					this.stop();
+				} else {
+					noOfAgents=runningAgents;
+				}
+			}
+
+		}
+
+		/**
+		 * Returns the countable agents that are connected to teh simulation service.
+		 * @return the agents running
+		 */
+		private int getAgentsRunning() {
+			int noAgents = 0;
+			try {
+				LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
+				loadHelper.getAgentMap().getAgentsAtPlatform().size();
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+			return noAgents;
+		}
+		
+		
+	}
+	
+
 	/**
 	 * The Behaviour class WaitForNextStep.
 	 */
@@ -303,10 +371,8 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		 * Instantiates a new behaviour that waits for the initial
 		 * EnvironmentModel.
 		 * 
-		 * @param agent
-		 *            the agent
-		 * @param period
-		 *            the ticker period
+		 * @param agent the agent
+		 * @param period the ticker period
 		 */
 		public CheckForNextStep(Agent agent, long period) {
 			super(agent, period);
@@ -314,7 +380,6 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 		/*
 		 * (non-Javadoc)
-		 * 
 		 * @see jade.core.behaviours.TickerBehaviour#onTick()
 		 */
 		@Override

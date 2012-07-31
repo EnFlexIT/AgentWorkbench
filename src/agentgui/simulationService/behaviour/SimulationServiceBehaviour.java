@@ -111,7 +111,7 @@ public class SimulationServiceBehaviour extends Behaviour implements ServiceSens
 	 */
 	@Override
 	public void action() {
-		
+		this.block(5000);
 	}
 	
 	/* (non-Javadoc)
