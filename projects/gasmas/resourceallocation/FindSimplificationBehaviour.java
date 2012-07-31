@@ -4,10 +4,8 @@ import gasmas.agents.components.BranchAgent;
 import gasmas.ontology.ClusterNotification;
 import jade.core.AID;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map.Entry;
 
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -102,9 +100,11 @@ public class FindSimplificationBehaviour {
 		toAsk.addAll(incoming);
 		toAsk.addAll(outgoing);
 		toAsk.addAll(dead);
+System.out.println(networkModel.getNeighbourNetworkComponents(myNetworkComponent));
+System.out.println(networkModel);
+System.out.println(toAsk);
+		if (myNetworkComponent.getAgentClassName().equals(BranchAgent.class.getName()) && networkModel.getNeighbourNetworkComponents(myNetworkComponent).size() != toAsk.size() && toAsk.size() > 0) {
 
-		if (myNetworkComponent.getAgentClassName().equals(BranchAgent.class.getName()) && networkModel.getNeighbourNetworkComponents(myNetworkComponent).size() != toAsk.size()
-				&& toAsk.size() > 0) {
 			duringACluster = true;
 			duringAClusterUrInitiator = myNetworkComponent.getId();
 			msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(myNetworkComponent.getId(), true));
@@ -140,9 +140,7 @@ public class FindSimplificationBehaviour {
 	}
 
 	private void buildCluster(SimplificationData content, String sender) {
-		if (myNetworkComponent.getId().equals("n68")) {
-			System.out.println("eo");
-		}
+
 		if (content.isAnswer()) {
 			if (content.getSessionID() == sessionID) {
 				if (alreadyReportedStations < toAsk.size()) {
@@ -247,19 +245,21 @@ public class FindSimplificationBehaviour {
 	}
 
 	private void setCluster(HashSet<String> list) {
-		HashSet<NetworkComponent> networkComponents = new HashSet<NetworkComponent>();
-		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(networkModel.getNetworkComponents().values())) {
-			for (Iterator<String> it = list.iterator(); it.hasNext();) {
-				if (it.next().equals(networkComponent.getId())) {
-					networkComponents.add(networkComponent);
-				}
 
-			}
-		}
 		System.out.println("Von " + myNetworkComponent.getId() + " Cluster: " + list);
 		ClusterNotification cn = new ClusterNotification();
-		cn.setNotificationObject(networkComponents);
+		cn.setNotificationObject(list);
 		simServiceBehaviour.sendManagerNotification(cn);
+		if (myNetworkComponent.getId().equals("n0")) {
+			list=new HashSet<String>();
+			list.add("Cn0");
+			list.add("n2");
+			System.out.println("Von " + myNetworkComponent.getId() + " Cluster: " + list);
+			cn = new ClusterNotification();
+			cn.setNotificationObject(list);
+			simServiceBehaviour.sendManagerNotification(cn);
+
+		}
 
 	}
 

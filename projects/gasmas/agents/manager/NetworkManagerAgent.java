@@ -28,6 +28,9 @@
  */
 package gasmas.agents.manager;
 
+import gasmas.agents.components.ClusterNetworkAgent;
+import gasmas.agents.components.EntryAgent;
+import gasmas.agents.components.ExitAgent;
 import gasmas.clustering.analyse.ComponentFunctions;
 import gasmas.clustering.behaviours.ClusteringBehaviour;
 import gasmas.ontology.ClusterNotification;
@@ -40,6 +43,7 @@ import jade.core.behaviours.TickerBehaviour;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
@@ -101,7 +105,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	 * Setup simulation.
 	 */
 	private void setupSimulation() {
-		
+
 		// --- Put the environment model into the SimulationService -
 		// --- in order to make it accessible for the whole agency --
 		this.notifyAboutEnvironmentChanges();
@@ -112,7 +116,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 		ComponentFunctions.printAmountOfDiffernetTypesOfAgents("Global", myNetworkModel);
 	}
-	
+
 	// ++++++++++++++ Some temporary test cases here +++++++++++++++++++++
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -230,16 +234,27 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		} else if (notification.getNotification() instanceof ClusterNotification) {
 
 			ClusterNotification cn = (ClusterNotification) notification.getNotification();
-			HashSet<NetworkComponent> clusterNetworkComponents = (HashSet<NetworkComponent>) cn.getNotificationObject();
+			// --- Get a list of names of the NetworkComponents, which are a
+			// cluster ---
+			HashSet<String> clusterNetworkComponentIDs = (HashSet<String>) cn.getNotificationObject();
 
 			NetworkModel clusterNetworkModel = this.getClusteredModel();
+
+			// --- Get all NetworkComponents from the list of names ---
+			HashSet<NetworkComponent> clusterNetworkComponents = getClusterNetworkComponents(clusterNetworkComponentIDs, clusterNetworkModel);
+
+			// --- Find the new name for the ClusterNetworkComponent ---
+			String clusterNetCompIdNew = "C" + notification.getSender().getLocalName();
+			while (clusterNetworkModel.getNetworkComponent(clusterNetCompIdNew) != null || this.myNetworkModel.getNetworkComponent(clusterNetCompIdNew) != null) {
+				clusterNetCompIdNew = "C" + clusterNetCompIdNew;
+			}
+
+			// --- Replace the components by the cluster ---
 			ClusterNetworkComponent clusterNetworkComponent = clusterNetworkModel.replaceComponentsByCluster(clusterNetworkComponents, true);
 
-			// --- Rename the ClusterNetworkComponent
-			// -----------------------------------
+			// --- Rename the ClusterNetworkComponent ---
 			String clusterNetCompIdOld = clusterNetworkComponent.getId();
-			String clusterNetCompIdNew = notification.getSender().getLocalName();
-			this.getClusteredModel().renameNetworkComponent(clusterNetCompIdOld, clusterNetCompIdNew);
+			clusterNetworkModel.renameNetworkComponent(clusterNetCompIdOld, clusterNetCompIdNew);
 
 			if (clusterNetworkComponent != null) {
 				this.myNetworkModel.getAlternativeNetworkModel().put(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
@@ -272,10 +287,39 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 	}
 
+	private HashSet<NetworkComponent> getClusterNetworkComponents(HashSet<String> clusterNetworkComponentIDs, NetworkModel clusterNetworkModel) {
+		HashSet<NetworkComponent> clusterNetworkComponents = new HashSet<NetworkComponent>();
+
+		// --- Match the list of Strings to find the NetworkComponent ---
+		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(clusterNetworkModel.getNetworkComponents().values())) {
+
+			for (Iterator<String> it = clusterNetworkComponentIDs.iterator(); it.hasNext();) {
+				if (it.next().equals(networkComponent.getId())) {
+					// --- Add the NetworkComponent to the list of
+					// ClusterNetworkComponents ---
+					clusterNetworkComponents.add(networkComponent);
+
+					// --- If it is a cluster, you have to add also all Exits
+					// and Entrys of this cluster ---
+					if (networkComponent.getAgentClassName().equals(ClusterNetworkAgent.class.getName())) {
+						for (NetworkComponent networkComponent2 : clusterNetworkModel.getNeighbourNetworkComponents(networkComponent)) {
+							if (networkComponent2.getAgentClassName().equals(EntryAgent.class.getName()) || networkComponent2.getAgentClassName().equals(ExitAgent.class.getName())) {
+								clusterNetworkComponents.add(networkComponent2);
+							}
+						}
+					}
+					
+				}
+			}
+		}
+		return clusterNetworkComponents;
+	}
+
 	/**
 	 * Replace network model part with cluster.
 	 * 
-	 * @param networkModel the network model
+	 * @param networkModel
+	 *            the network model
 	 * @return the cluster network component
 	 */
 	private ClusterNetworkComponent replaceNetworkModelPartWithCluster(ClusterNetworkComponent clusterNetworkComponent, boolean distributionNodesAreOuterNodes) {
@@ -302,47 +346,52 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		return clusteredNM;
 	}
 
-	
 	/**
 	 * The Class WaitForTheEndOfSimulationStart.
 	 */
 	private class WaitForTheEndOfSimulationStart extends TickerBehaviour {
 
 		private static final long serialVersionUID = 2352299009087259189L;
-		private Integer noOfAgents=null;
-		
+		private Integer noOfAgents = null;
+
 		/**
 		 * Instantiates a new wait for the end of simulation start.
-		 *
-		 * @param agent the agent
-		 * @param period the period
+		 * 
+		 * @param agent
+		 *            the agent
+		 * @param period
+		 *            the period
 		 */
 		public WaitForTheEndOfSimulationStart(Agent agent, long period) {
 			super(agent, period);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see jade.core.behaviours.TickerBehaviour#onTick()
 		 */
 		@Override
 		protected void onTick() {
-			
+
 			int runningAgents = this.getAgentsRunning();
-			if (noOfAgents==null) {
+			if (noOfAgents == null) {
 				noOfAgents = runningAgents;
 			} else {
-				if (noOfAgents==runningAgents) {
+				if (noOfAgents == runningAgents) {
 					setupSimulation();
 					this.stop();
 				} else {
-					noOfAgents=runningAgents;
+					noOfAgents = runningAgents;
 				}
 			}
 
 		}
 
 		/**
-		 * Returns the countable agents that are connected to teh simulation service.
+		 * Returns the countable agents that are connected to teh simulation
+		 * service.
+		 * 
 		 * @return the agents running
 		 */
 		private int getAgentsRunning() {
@@ -355,10 +404,8 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			}
 			return noAgents;
 		}
-		
-		
+
 	}
-	
 
 	/**
 	 * The Behaviour class WaitForNextStep.
@@ -371,8 +418,10 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		 * Instantiates a new behaviour that waits for the initial
 		 * EnvironmentModel.
 		 * 
-		 * @param agent the agent
-		 * @param period the ticker period
+		 * @param agent
+		 *            the agent
+		 * @param period
+		 *            the ticker period
 		 */
 		public CheckForNextStep(Agent agent, long period) {
 			super(agent, period);
@@ -380,15 +429,17 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see jade.core.behaviours.TickerBehaviour#onTick()
 		 */
 		@Override
 		protected void onTick() {
-			if (System.currentTimeMillis() - timeOfAction >= 2000 && timeOfAction != -1) {
+			if (System.currentTimeMillis() - timeOfAction >= 3000 && timeOfAction != -1) {
 				// We now inform every network component that we finished the
 				// first step
 				timeOfAction = -1;
-				System.out.println("Start of the next step");
+				System.out.println("Start of the next step. Phase: " + (actualStep + 1));
+
 				for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(myNetworkModel.getNetworkComponents().values())) {
 					while (!sendAgentNotification(new AID(networkComponent.getId(), AID.ISLOCALNAME), new StatusData(actualStep + 1))) {
 
