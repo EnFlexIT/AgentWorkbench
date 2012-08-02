@@ -48,10 +48,9 @@ import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentDirectionSettings;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
-public class FindDirectionBehaviour extends SimulationServiceBehaviour {
+public class FindDirectionBehaviour {
 
 	private static final long serialVersionUID = 4471250444116997490L;
 
@@ -76,7 +75,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 	private HashMap<String, String> outgoingMaybe = new HashMap<String, String>();
 
 	/** The network model. */
-	private NetworkModel networkModel;
+	private NetworkModel myNetworkModel;
 
 	/** My own NetworkComponent. */
 	private NetworkComponent myNetworkComponent;
@@ -86,93 +85,24 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 
 	/** Shows if this component had started */
 	private boolean startdone = false;
+	
+	/** Shows if this component had started */
+	private GenericNetworkAgent myAgent;
 
-	/** Different Behaviours, which get messages */
-	protected ResourceAllocationBehaviour resourceAllocationBehaviour;
-	protected FindSimplificationBehaviour findSimplificationBehaviour;
-	protected CheckingClusterBehaviour checkingClusterBehaviour;
-	
-	
 	/**
 	 * @param agent
+	 * @param myNetworkComponent
+	 * @param myNetworkModel
+	 * @param myNetworkModel
 	 * @param environmentModel
 	 */
-	public FindDirectionBehaviour(GenericNetworkAgent agent) {
-		super(agent);
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationServiceBehaviour#onEnvironmentStimulus()
-	 */
-	@Override
-	protected void onEnvironmentStimulus() {
-		// TODO: Consider that myEnvironmentModel will change from time to time ... !!
-		if (this.networkModel==null) {
-			this.networkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
-			this.myNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
-			this.start();
-		}
+	public FindDirectionBehaviour(GenericNetworkAgent agent, NetworkModel myNetworkModel, NetworkComponent myNetworkComponent) {
+		this.myAgent=agent;
+		this.myNetworkModel = myNetworkModel;
+		this.myNetworkComponent = myNetworkComponent;
 		
 	}
-	
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationServiceBehaviour#onEnvironmentNotification(agentgui.simulationService.transaction.EnvironmentNotification)
-	 */
-	@Override
-	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
-		// System.out.println("Got Message " + this.getLocalName() + "...von..."
-		// + notification.getSender().getLocalName());
-		if (notification.getNotification() instanceof AllocData) {
-			if (resourceAllocationBehaviour == null) {
-				notification.moveLastOrBlock(100);
-				System.out.println("=> Notification parked for 'AllocData' !Receiver: " + myAgent.getLocalName());
-			} else {
-				resourceAllocationBehaviour.interpretMsg(notification);
-			}
-		} else if (notification.getNotification() instanceof FindDirData) {
-			sendManagerNotification(new StatusData(1));
-			this.interpretMsg(notification);
-			
-		} else if (notification.getNotification() instanceof SimplificationData) {
-			sendManagerNotification(new StatusData(2));
-			if (findSimplificationBehaviour == null) {
-				notification.moveLastOrBlock(100);
-				System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + myAgent.getLocalName());
-			} else {
-				findSimplificationBehaviour.interpretMsg(notification);
-			}
-		} else if (notification.getNotification() instanceof StatusData) {
-			if (((StatusData) notification.getNotification()).getPhase() == 2) {
-				startFindSimplificationBehaviour();
-			} else if (((StatusData) notification.getNotification()).getPhase() == 3) {
-//				startCheckingClusterBehaviour();
-			}
-		}
-		return notification;
-		
-	}
-	
-	private void startCheckingClusterBehaviour() {
-		checkingClusterBehaviour = new CheckingClusterBehaviour(this, networkModel, myNetworkComponent);
-		checkingClusterBehaviour.start();
-	}
 
-	private void startFindSimplificationBehaviour() {
-		// The end of the the find direction behaviour, so I have to remove this
-		// behaviour
-
-		this.setDirections();
-
-		findSimplificationBehaviour = new FindSimplificationBehaviour(this, networkModel, myNetworkComponent);
-		// Because the internal structures can not save dead pipes, so I have to
-		// transfer the knowledge from one behaviour to another
-		findSimplificationBehaviour.setDead(this.getDead());
-		findSimplificationBehaviour.setIncoming(this.getIncoming());
-		findSimplificationBehaviour.setOutgoing(this.getOutgoing());
-		// Start next behaviour, in this case, find simplifications
-		findSimplificationBehaviour.start();
-	}
-	
 	/**
 	 * Sends its initial flow to its neighbours
 	 * 
@@ -187,7 +117,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 			sendall(msg);
 		} else if (myNetworkComponent.getAgentClassName().equals(PipeAgent.class.getName()) || myNetworkComponent.getAgentClassName().equals(PipeShortAgent.class.getName())
 				|| myNetworkComponent.getAgentClassName().equals(SimpleValveAgent.class.getName())) {
-			if (networkModel.getNeighbourNetworkComponents(myNetworkComponent).size() < 2) {
+			if (myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent).size() < 2) {
 				msg = "dead";
 
 				System.out.println(myAgent.getLocalName() + " is dead");
@@ -195,21 +125,21 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 			}
 		} else if (myNetworkComponent.getAgentClassName().equals(ControlValveAgent.class.getName()) || myNetworkComponent.getAgentClassName().equals(CompressorAgent.class.getName())) {
 
-			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, myNetworkComponent);
+			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(myNetworkModel, myNetworkComponent);
 			myNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
-			networkModel.setDirectionsOfNetworkComponent(myNetworkComponent);
+			myNetworkModel.setDirectionsOfNetworkComponent(myNetworkComponent);
 
 			DirectionSettingNotification dsn = new DirectionSettingNotification();
 			dsn.setNotificationObject(myNetworkComponent);
-			this.sendManagerNotification(dsn);
+			myAgent.sendManagerNotification(dsn);
 
 			GraphEdgeDirection ged = netCompDirect.getEdgeDirections().values().iterator().next();
 			String toComGraphNodeID = ged.getGraphNodeIDTo();
-			GraphNode toComGraphNode = (GraphNode) networkModel.getGraphElement(toComGraphNodeID);
+			GraphNode toComGraphNode = (GraphNode) myNetworkModel.getGraphElement(toComGraphNodeID);
 			HashSet<NetworkComponent> netCompToHash = netCompDirect.getNeighbourNetworkComponent(toComGraphNode);
 
 			String fromComGraphNodeID = ged.getGraphNodeIDFrom();
-			GraphNode fromComGraphNode = (GraphNode) networkModel.getGraphElement(fromComGraphNodeID);
+			GraphNode fromComGraphNode = (GraphNode) myNetworkModel.getGraphElement(fromComGraphNodeID);
 			HashSet<NetworkComponent> netCompFromHash = netCompDirect.getNeighbourNetworkComponent(fromComGraphNode);
 			if (netCompToHash != null) {
 				NetworkComponent netCompTo = netCompToHash.iterator().next();
@@ -232,7 +162,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 		 * Entries and for dead pipes
 		 */
 		done = true;
-		Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
+		Iterator<NetworkComponent> it1 = myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 		while (it1.hasNext()) {
 			String receiver = it1.next().getId();
 			msgSend(receiver, new FindDirData(msg));
@@ -254,7 +184,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
+
 		}
 		FindDirData content = (FindDirData) msg.getNotification();
 		String sender = msg.getSender().getLocalName();
@@ -295,7 +225,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 		int i = 0;
 		int p = 0;
 		String toInform = "";
-		Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
+		Iterator<NetworkComponent> it1 = myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 		while (it1.hasNext()) {
 			String neighbour = it1.next().getId();
 			if (getDead().contains(neighbour)) {
@@ -316,7 +246,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 		i = 0;
 		p = 0;
 		toInform = "";
-		it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
+		it1 = myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 		while (it1.hasNext()) {
 			String neighbour = it1.next().getId();
 			if (getDead().contains(neighbour) || getIncoming().contains(neighbour)) {
@@ -337,7 +267,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 		i = 0;
 		p = 0;
 		toInform = "";
-		it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
+		it1 = myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 		while (it1.hasNext()) {
 			String neighbour = it1.next().getId();
 			if (getDead().contains(neighbour) || getOutgoing().contains(neighbour)) {
@@ -377,7 +307,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 					 * Got my own ? message, so this should be a cycle
 					 */
 					System.out.println("My own name in the way: " + myAgent.getLocalName() + " Way: " + content.getWay().toString());
-					Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
+					Iterator<NetworkComponent> it1 = myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 					String inform = "";
 					String direction = "";
 					boolean found = false;
@@ -430,7 +360,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 					temp1.put(sender, content.getWay());
 
 					/* The estimated information could be still wrong... */
-					Iterator<NetworkComponent> it11 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
+					Iterator<NetworkComponent> it11 = myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 					while (it11.hasNext()) {
 						String neighbour = it11.next().getId();
 						if (neighbour.equals(sender) == false) {
@@ -454,7 +384,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 			if (!incoming.isEmpty() || !outgoing.isEmpty()) {
 				System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead() + " Opt: " + getOptional() + " InMaybe: " + incomingMaybe
 						+ " OutMaybe: " + outgoingMaybe);
-				NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(networkModel, myNetworkComponent);
+				NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(myNetworkModel, myNetworkComponent);
 				HashSet<GraphNode> outerNodes = netCompDirect.getOuterNodes();
 
 				HashSet<NetworkComponent> inComps = new HashSet<NetworkComponent>();
@@ -466,12 +396,12 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 					for (Iterator<String> iterator2 = getIncoming().iterator(); iterator2.hasNext();) {
 						String incoming = iterator2.next();
 						if (incoming.equals(outerComp.getId()))
-							inComps.add(networkModel.getNetworkComponent(incoming));
+							inComps.add(myNetworkModel.getNetworkComponent(incoming));
 					}
 					for (Iterator<String> iterator2 = getOutgoing().iterator(); iterator2.hasNext();) {
 						String outgoing = iterator2.next();
 						if (outgoing.equals(outerComp.getId()))
-							outComps.add(networkModel.getNetworkComponent(outgoing));
+							outComps.add(myNetworkModel.getNetworkComponent(outgoing));
 					}
 				}
 				netCompDirect.setGraphEdgeDirection(inComps, outComps);
@@ -479,7 +409,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 				myNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
 				DirectionSettingNotification dsn = new DirectionSettingNotification();
 				dsn.setNotificationObject(myNetworkComponent);
-				this.sendManagerNotification(dsn);
+				myAgent.sendManagerNotification(dsn);
 			}
 		}
 		done = true;
@@ -489,8 +419,8 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 	private void forwarding(String sender, FindDirData content, HashSet<String> hashSet2, HashSet<String> hashSet, String msg, HashMap<String, String> temp11, HashMap<String, String> temp22) {
 		if (hashSet.contains(sender) == false) {
 			if (hashSet2.contains(sender)) {
-//				TODO - Think of appropriate behaviour
-//				hashSet2.remove(sender);
+				// TODO - Think of appropriate behaviour
+				// hashSet2.remove(sender);
 				getOptional().add(sender);
 				System.out.println("_______________________________Maybe error or optional edge found " + myAgent.getLocalName() + " to " + sender);
 
@@ -501,7 +431,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 				int i = 0;
 				int p = 0;
 				String toInform = "";
-				Iterator<NetworkComponent> it1 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
+				Iterator<NetworkComponent> it1 = myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 				while (it1.hasNext()) {
 					String neighbour = it1.next().getId();
 					if (hashSet.contains(neighbour) || getDead().contains(neighbour)) {
@@ -522,7 +452,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 				} else if ((p - i) > 1) {
 					// We try to guess the next step
 
-					Iterator<NetworkComponent> it11 = networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
+					Iterator<NetworkComponent> it11 = myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
 					while (it11.hasNext()) {
 						String neighbour = it11.next().getId();
 						if (neighbour.equals(sender) == false) {
@@ -537,7 +467,7 @@ public class FindDirectionBehaviour extends SimulationServiceBehaviour {
 	}
 
 	public void msgSend(String receiver, GenericMesssageData content) {
-		while (this.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), content) == false) {
+		while (myAgent.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), content) == false) {
 
 		}
 

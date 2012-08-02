@@ -2,7 +2,6 @@ package gasmas.resourceallocation;
 
 import gasmas.agents.components.ClusterNetworkAgent;
 import gasmas.agents.components.GenericNetworkAgent;
-import gasmas.ontology.ClusterNotification;
 import jade.core.AID;
 
 import java.util.ArrayList;
@@ -11,19 +10,17 @@ import java.util.Iterator;
 
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
-import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
 public class CheckingClusterBehaviour {
 
 	private static final long serialVersionUID = -2365487643740457952L;
 
-	private SimulationServiceBehaviour simServiceBehaviour;
+	private GenericNetworkAgent myAgent;
 	private NetworkModel networkModel;
 	private NetworkComponent myNetworkComponent;
 
-	/** NetworkComponentNames, which has positive flow */
+	/** NetworkComponentNames, which shows the stations, which can be asked */
 	private HashSet<String> toAsk = new HashSet<String>();
 
 	/** Represents the station, which already contribute to the simplification */
@@ -41,12 +38,18 @@ public class CheckingClusterBehaviour {
 	/** Shows if is during a cluster checking process */
 	private boolean duringACluster = false;
 
+	/** NetworkComponentNames, which are informed */
+	private HashSet<String> alreadyInformedStations = new HashSet<String>();
+
+	/** Shows if this station is a cluster, how tries to optimise itself */
+	private boolean askingCluster = false;
+
 	/**
 	 * @param agent
 	 * @param environmentModel
 	 */
-	public CheckingClusterBehaviour(SimulationServiceBehaviour simServiceBehaviour, NetworkModel networkModel, NetworkComponent networkComponent) {
-		this.simServiceBehaviour = simServiceBehaviour;
+	public CheckingClusterBehaviour(GenericNetworkAgent genericNetworkAgent, NetworkModel networkModel, NetworkComponent networkComponent) {
+		this.myAgent = genericNetworkAgent;
 		this.networkModel = networkModel;
 		this.myNetworkComponent = networkComponent;
 	}
@@ -58,16 +61,19 @@ public class CheckingClusterBehaviour {
 	public void start() {
 		// Start from the network component, where we do not have all
 		// information
-		while (networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator().hasNext()) {
-			toAsk.add(networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator().next().getId());
+		System.out.println(myNetworkComponent.getId() + "   " + myNetworkComponent.getAgentClassName());
+		Iterator<NetworkComponent> neighbours =networkModel.getNeighbourNetworkComponents(myNetworkComponent).iterator();
+		while (neighbours.hasNext()) {
+			toAsk.add(neighbours.next().getId());
 		}
 
 		if (myNetworkComponent.getAgentClassName().equals(ClusterNetworkAgent.class.getName()) && toAsk.size() > 1) {
 			duringACluster = true;
+			askingCluster = true;
 			msgSend((String) toAsk.toArray()[alreadyReportedStations], new ClusterCheckData(myNetworkComponent.getId()));
 			alreadyReportedStations += 1;
 			System.out.println(myNetworkComponent.getId() + " Start with " + toAsk.size() + "(" + toAsk + ")" + " and neighbours "
-					+ networkModel.getNeighbourNetworkComponents(myNetworkComponent).size() );
+					+ networkModel.getNeighbourNetworkComponents(myNetworkComponent).size());
 		}
 		if (toAsk.size() <= 1) {
 			noInformation = true;
@@ -76,7 +82,7 @@ public class CheckingClusterBehaviour {
 	}
 
 	public void msgSend(String receiver, ClusterCheckData clusterCheckData) {
-		while (simServiceBehaviour.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), clusterCheckData) == false) {
+		while (myAgent.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), clusterCheckData) == false) {
 
 		}
 
@@ -90,117 +96,83 @@ public class CheckingClusterBehaviour {
 				e.printStackTrace();
 			}
 		}
-		SimplificationData content = (SimplificationData) msg.getNotification();
+		ClusterCheckData content = (ClusterCheckData) msg.getNotification();
 		String sender = msg.getSender().getLocalName();
 		buildCluster(content, sender);
 
 	}
 
-	private void buildCluster(SimplificationData content, String sender) {
-		if (myNetworkComponent.getId().equals("n68")) {
-			System.out.println("eo");
-		}
-//		if (content.isAnswer()) {
-//			if (content.getSessionID() == sessionID) {
-//				if (alreadyReportedStations < toAsk.size()) {
-//
-//					content.setAnswer(false);
-//					content.setInitiator(thisNetworkComponent.getId());
-//					System.out.println("A branch " + thisNetworkComponent.getId() + " is asking the next station " + toAsk.toArray()[alreadyReportedStations] + ". Answer from " + sender
-//							+ " Initiator: " + content.getInitiator());
-//
-//					msgSend((String) toAsk.toArray()[alreadyReportedStations], content);
-//					alreadyReportedStations += 1;
-//
-//				} else {
-//					content.addStation(thisNetworkComponent.getId());
-//					if (content.getUrInitiator().equals(thisNetworkComponent.getId())) {
-//						System.out.println("Done: " + thisNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-//
-//						setCluster(content.getWay());
-//					} else {
-//						System.out.println("Done, branch: " + thisNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-//						content.setSessionID(sessionIDrec);
-//						msgSend(initiator, content);
-//						next();
-//					}
-//				}
-//			} else {
-//				System.out.println("Ignoring msg. Stop clustering: " + thisNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-//			}
-//		} else {
-//			if (noInformation) {
-//				content.setAnswer(true);
-//				content.addStation(thisNetworkComponent.getId());
-//				msgSend(content.getInitiator(), content);
-//			} else {
-//				if (content.getWay().contains(thisNetworkComponent.getId())) {
-//					content.setAnswer(true);
-//					System.out.println("Got an request, where I found myself in the line: " + thisNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-//					msgSend(content.getInitiator(), content);
-//				} else {
-//					toAsk.remove(sender);
-//
-//					if (networkModel.getNeighbourNetworkComponents(thisNetworkComponent).size() == 2) {
-//						System.out.println("Sending ahead: " + thisNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " To: " + toAsk.toArray()[0]);
-//						content.addStation(thisNetworkComponent.getId());
-//						msgSend((String) toAsk.toArray()[0], content);
-//						toAsk.add(sender);
-//					} else {
-//						if (!duringACluster) {
-//							System.out.println("Start clustering at: " + thisNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-//							// if
-//							// (thisNetworkComponent.getId().equals("n5")){
-//							// System.out.println("STOP clustering at: " +
-//							// thisNetworkComponent.getId() );
-//							// }else{
-//							content.addStation(thisNetworkComponent.getId());
-//							sessionIDrec = content.getSessionID();
-//							duringACluster = true;
-//							duringAClusterUrInitiator = content.getUrInitiator();
-//							initiator = content.getInitiator();
-//							if (alreadyReportedStations < toAsk.size()) {
-//								msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(thisNetworkComponent.getId(), content.getWay(), false, content.getUrInitiator(),
-//										sessionID));
-//								alreadyReportedStations += 1;
-//								// }
-//							}
-//						} else {
-//							toAsk.add(sender);
-//							if (content.getUrInitiator().compareTo(duringAClusterUrInitiator) < 0) {
-//								System.out.println("Got an second question for clustering with an higher prio: " + thisNetworkComponent.getId() + " from " + sender + " Initiator: "
-//										+ content.getInitiator() + " UrInitiator: " + content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
-//								nextQuestionier.put(sender, content);
-//								next();
-//							} else if (content.getUrInitiator().compareTo(duringAClusterUrInitiator) == 0) {
-//								System.out.println("Got an second question for clustering with an equal prio, answer directly (circle): " + thisNetworkComponent.getId() + " from " + sender
-//										+ " Initiator: " + content.getInitiator() + " UrInitiator: " + content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
-//								msgSend(sender, content);
-//							} else {
-//								System.out.println("Got an second question for clustering with a lower prio: " + thisNetworkComponent.getId() + " from " + sender + " Initiator: "
-//										+ content.getInitiator() + " UrInitiator: " + content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-	}
+	private void buildCluster(ClusterCheckData content, String sender) {
+		if (content.isAnswer()) {
+			if (!alreadyInformedStations.contains(sender)) {
 
-	private void next() {
-//		toAsk.clear();
-//		toAsk.addAll(incoming);
-//		toAsk.addAll(outgoing);
-//		toAsk.addAll(dead);
-//		alreadyReportedStations = 0;
-//		sessionID += 1;
-//		duringACluster = false;
-//		duringAClusterUrInitiator = "";
-//		if (!nextQuestionier.isEmpty()) {
-//			Entry<String, SimplificationData> nextOne = nextQuestionier.entrySet().iterator().next();
-//			nextQuestionier.remove(nextOne.getKey());
-//			buildCluster(nextOne.getValue(), nextOne.getKey());
-//		}
+				if (alreadyReportedStations < toAsk.size()) {
+					alreadyInformedStations.add(sender);
+					content.setAnswer(false);
+					content.setInitiator(myNetworkComponent.getId());
+					System.out.println("A branch " + myNetworkComponent.getId() + " is asking the next station " + toAsk.toArray()[alreadyReportedStations] + ". Answer from " + sender
+							+ " Initiator: " + content.getInitiator());
+
+					msgSend((String) toAsk.toArray()[alreadyReportedStations], content);
+					alreadyReportedStations += 1;
+
+				} else {
+					content.addStation(myNetworkComponent.getId());
+					if (askingCluster) {
+						System.out.println("Done: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
+
+						setCluster(content.getWay());
+					} else {
+						System.out.println("Done, branch: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
+						msgSend(initiator, content);
+					}
+				}
+			}
+		} else {
+			if (noInformation) {
+				content.setAnswer(true);
+				content.addStation(myNetworkComponent.getId());
+				msgSend(content.getInitiator(), content);
+			} else {
+				if (content.getWay().contains(myNetworkComponent.getId())) {
+					content.setAnswer(true);
+					System.out.println("Got an request, where I found myself in the line: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
+					msgSend(content.getInitiator(), content);
+				} else {
+					toAsk.remove(sender);
+
+					if (networkModel.getNeighbourNetworkComponents(myNetworkComponent).size() == 2) {
+						System.out.println("Sending ahead: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " To: " + toAsk.toArray()[0]);
+						content.addStation(myNetworkComponent.getId());
+						msgSend((String) toAsk.toArray()[0], content);
+						toAsk.add(sender);
+					} else {
+						if (!duringACluster) {
+							System.out.println("Start clustering at: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
+							// if
+							// (myNetworkComponent.getId().equals("n5")){
+							// System.out.println("STOP clustering at: " +
+							// myNetworkComponent.getId() );
+							// }else{
+							content.addStation(myNetworkComponent.getId());
+
+							duringACluster = true;
+							initiator = content.getInitiator();
+							if (alreadyReportedStations < toAsk.size()) {
+								msgSend((String) toAsk.toArray()[alreadyReportedStations], new ClusterCheckData(myNetworkComponent.getId(), content.getWay()));
+								alreadyReportedStations += 1;
+								// }
+							}
+						} else {
+
+							msgSend(sender, new ClusterCheckData(myNetworkComponent.getId(), true));
+							msgSend(initiator, new ClusterCheckData(myNetworkComponent.getId(), true));
+
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private void setCluster(HashSet<String> list) {
@@ -213,10 +185,10 @@ public class CheckingClusterBehaviour {
 
 			}
 		}
-		System.out.println("Von " + myNetworkComponent.getId() + " Cluster: " + list);
-		ClusterNotification cn = new ClusterNotification();
-		cn.setNotificationObject(networkComponents);
-		simServiceBehaviour.sendManagerNotification(cn);
+		System.out.println("________________________________________________Von " + myNetworkComponent.getId() + " Cluster: " + list);
+		// ClusterNotification cn = new ClusterNotification();
+		// cn.setNotificationObject(networkComponents);
+		// simServiceBehaviour.sendManagerNotification(cn);
 
 	}
 

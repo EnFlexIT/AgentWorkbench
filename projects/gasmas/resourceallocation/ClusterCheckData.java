@@ -11,6 +11,15 @@ public class ClusterCheckData implements Serializable {
 
 	private HashSet<String> way = new HashSet<String>();
 
+	private boolean answer = false;
+
+	public boolean isAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(boolean answer) {
+		this.answer = answer;
+	}
 
 	public void setInitiator(String initiator) {
 		this.initiator = initiator;
@@ -47,4 +56,8 @@ public class ClusterCheckData implements Serializable {
 		this.way = way;
 	}
 
+	public ClusterCheckData(String initiator, boolean answer) {
+		this.initiator = initiator;
+		this.answer = answer;
+	}
 }
