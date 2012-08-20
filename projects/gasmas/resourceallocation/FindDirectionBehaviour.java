@@ -1,0 +1,608 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
+package gasmas.resourceallocation;
+
+import gasmas.agents.components.BranchAgent;
+import gasmas.agents.components.CompressorAgent;
+import gasmas.agents.components.ControlValveAgent;
+import gasmas.agents.components.EntryAgent;
+import gasmas.agents.components.ExitAgent;
+import gasmas.agents.components.GenericNetworkAgent;
+import gasmas.agents.components.PipeAgent;
+import gasmas.agents.components.PipeShortAgent;
+import gasmas.agents.components.SimpleValveAgent;
+import gasmas.ontology.DirectionSettingNotification;
+import jade.core.AID;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Vector;
+
+import agentgui.envModel.graph.networkModel.GraphEdgeDirection;
+import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkComponentDirectionSettings;
+import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.simulationService.transaction.EnvironmentNotification;
+
+public class FindDirectionBehaviour {
+
+	private static final long serialVersionUID = 4471250444116997490L;
+
+	/** Integer, which holds the maximal age of a ?-message */
+	private static final int maxMsgAge = 8;
+
+	/** NetworkComponentNames, which has positive flow */
+	private HashSet<String> incoming = new HashSet<String>();
+
+	/** NetworkComponentNames, which has negative flow */
+	private HashSet<String> outgoing = new HashSet<String>();
+
+	/** NetworkComponentNames, which has no flow */
+	private HashSet<String> dead = new HashSet<String>();
+
+	/** The agent, how started the behaviour */
+	private GenericNetworkAgent myAgent;
+
+	/** The network model. */
+	private NetworkModel myNetworkModel;
+
+	/** My own NetworkComponent. */
+	private NetworkComponent myNetworkComponent;
+
+	/** Shows, if this NetworkComponent already set the directions. */
+	private boolean done = false;
+
+	/** Shows if this component had started */
+	private boolean startdone = false;
+
+	/** Shows if this component is allowed to guessing the next step */
+	private boolean tryToGuess = false;
+
+	/** Saves the neighbours of this component */
+	private Vector<NetworkComponent> myNeighbours;
+
+	public void addDead(String dead) {
+		this.dead.add(dead);
+	}
+
+	public HashSet<String> getDead() {
+		return dead;
+	}
+
+	public void addIncoming(String incoming) {
+		this.incoming.add(incoming);
+	}
+
+	public HashSet<String> getIncoming() {
+		return incoming;
+	}
+
+	public void addOutgoing(String outgoing) {
+		this.outgoing.add(outgoing);
+	}
+
+	public HashSet<String> getOutgoing() {
+		return outgoing;
+	}
+
+	/**
+	 * @param agent
+	 * @param myNetworkModel
+	 * @param myNetworkModel
+	 * @param environmentModel
+	 */
+	public FindDirectionBehaviour(GenericNetworkAgent agent, NetworkModel myNetworkModel) {
+		this.myAgent = agent;
+		this.myNetworkModel = myNetworkModel;
+		this.myNetworkComponent = myNetworkModel.getNetworkComponent(myAgent.getLocalName());
+		this.myNeighbours = myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent);
+
+	}
+
+	/**
+	 * Start of the behaviour, which start the find direction algorithm
+	 */
+	public void start() {
+		String flow = "";
+		if (myNetworkComponent.getAgentClassName().equals(EntryAgent.class.getName())) {
+			// --- Entry sends to all neighbours its flow ---
+			flow = "in";
+			sendToAllNeighbours(flow);
+		} else if (myNetworkComponent.getAgentClassName().equals(ExitAgent.class.getName())) {
+			// --- Exit sends to all neighbours its flow ---
+			flow = "out";
+			sendToAllNeighbours(flow);
+		} else if (myNetworkComponent.getAgentClassName().equals(PipeAgent.class.getName()) || myNetworkComponent.getAgentClassName().equals(PipeShortAgent.class.getName())
+				|| myNetworkComponent.getAgentClassName().equals(SimpleValveAgent.class.getName())) {
+			if (myNeighbours.size() < 2) {
+				// --- Pipe, how has only 1 neighbour knows, that it is dead, so inform neighbours ---
+				flow = "dead";
+				System.out.println(myAgent.getLocalName() + " is dead");
+				sendToAllNeighbours(flow);
+			}
+		} else if (myNetworkComponent.getAgentClassName().equals(ControlValveAgent.class.getName()) || myNetworkComponent.getAgentClassName().equals(CompressorAgent.class.getName())) {
+			// --- ControlValves and Compressors are directed, so get the information out of the network model ---
+			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(myNetworkModel, myNetworkComponent);
+			myNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
+			myNetworkModel.setDirectionsOfNetworkComponent(myNetworkComponent);
+
+			DirectionSettingNotification dsn = new DirectionSettingNotification();
+			dsn.setNotificationObject(myNetworkComponent);
+			myAgent.sendManagerNotification(dsn);
+
+			GraphEdgeDirection ged = netCompDirect.getEdgeDirections().values().iterator().next();
+			String toComGraphNodeID = ged.getGraphNodeIDTo();
+			GraphNode toComGraphNode = (GraphNode) myNetworkModel.getGraphElement(toComGraphNodeID);
+			HashSet<NetworkComponent> netCompToHash = netCompDirect.getNeighbourNetworkComponent(toComGraphNode);
+
+			String fromComGraphNodeID = ged.getGraphNodeIDFrom();
+			GraphNode fromComGraphNode = (GraphNode) myNetworkModel.getGraphElement(fromComGraphNodeID);
+			HashSet<NetworkComponent> netCompFromHash = netCompDirect.getNeighbourNetworkComponent(fromComGraphNode);
+
+			// --- Send these information to the appropriate neighbour ---
+			if (netCompToHash != null) {
+				NetworkComponent netCompTo = netCompToHash.iterator().next();
+				outgoing.add(netCompTo.getId());
+				msgSend(netCompTo.getId(), new FindDirData("in"));
+			}
+			if (netCompFromHash != null) {
+				NetworkComponent netCompFrom = netCompFromHash.iterator().next();
+				incoming.add(netCompFrom.getId());
+				msgSend(netCompFrom.getId(), new FindDirData("out"));
+			}
+			// --- Component is done ---
+			done = true;
+		}
+		// --- The start of the component is done ---
+		startdone = true;
+	}
+
+	/**
+	 * Start of the second step, where the component try to guess (to find cycles)
+	 */
+	public void startStep2() {
+		// --- Boolean to show the component, that guessing is allowed ---
+		tryToGuess = true;
+
+		// --- Check, if we have less or equal than two edges with no direction
+		// (so it could be start point of a cycle) ---
+		int i = 0;
+		int p = 0;
+		String toInform = "";
+		Iterator<NetworkComponent> it1 = myNeighbours.iterator();
+		while (it1.hasNext()) {
+			String neighbour = it1.next().getId();
+			if (incoming.contains(neighbour) || getDead().contains(neighbour) || outgoing.contains(neighbour)) {
+				i += 1;
+			} else {
+				toInform += "::" + neighbour;
+			}
+			p += 1;
+		}
+		if ((p - i) <= 2 && i > 0) {
+//			System.out.println("Start second step " + myAgent.getLocalName());
+			// --- Possible start point found, start guessing ---
+//			if (myAgent.getLocalName().equals("n53") || myAgent.getLocalName().equals("n49")|| myAgent.getLocalName().equals("n52")){
+			for (int k = 1; k < toInform.split("::").length; k++) {
+				msgSend(toInform.split("::")[k], new FindDirData(myAgent.getLocalName(), "?"));
+			}
+//		}
+		}
+	}
+
+	/**
+	 * Send its flow to the neighbours
+	 * 
+	 * @param flow
+	 */
+	private void sendToAllNeighbours(String flow) {
+		// --- Component is done ---
+		done = true;
+		// --- Send the flow to all neigbours ---
+		Iterator<NetworkComponent> it1 = myNeighbours.iterator();
+		while (it1.hasNext()) {
+			String receiver = it1.next().getId();
+			msgSend(receiver, new FindDirData(flow));
+		}
+	}
+
+	/**
+	 * Get the messages and calls the appropriate method to deal with this type of message
+	 * 
+	 * @param msg
+	 */
+	public synchronized void interpretMsg(EnvironmentNotification msg) {
+		// --- Wait until the start is done ---
+		while (!startdone) {
+			System.out.println("Start problem (FD) at " + myAgent.getLocalName());
+			try {
+				wait(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		FindDirData content = (FindDirData) msg.getNotification();
+		String sender = msg.getSender().getLocalName();
+		// --- Check the flow and call the appropriate method ---
+		if (content.getFlow().equals("in")) {
+			forwarding(sender, content, getOutgoing(), getIncoming(), "in");
+		} else if (content.getFlow().equals("out")) {
+			forwarding(sender, content, getIncoming(), getOutgoing(), "out");
+		} else if (content.getFlow().equals("dead")) {
+			deadPipe(sender);
+		} else if (content.getFlow().equals("?")) {
+			forwardingMaybe(sender, content);
+		}
+	}
+
+	/**
+	 * Method to interpret flow messages
+	 * 
+	 * @param sender
+	 * @param content
+	 * @param hashSet2
+	 * @param hashSet
+	 * @param msg
+	 */
+	private void forwarding(String sender, FindDirData content, HashSet<String> hashSet2, HashSet<String> hashSet, String msg) {
+		if (hashSet2.contains(sender)) {
+			// --- Information, which did not fit the information of this component, contradiction ---
+			System.out.println("Error, message with a wrong direction at " + myAgent.getLocalName() + " to " + sender);
+		} else {
+			done = false;
+			if (content.getWay().equals("")) {
+				if (hashSet.contains(sender) == false) {
+					// --- Information about the flow get add to the appropriate HashSet ---
+					hashSet.add(sender);
+				}
+			} else {
+				System.out.println(myAgent.getLocalName() + "   " + msg + "   " + sender + "   " + content.getWay());
+				hashSet.add(sender);
+				if (!myNetworkComponent.getAgentClassName().equals(BranchAgent.class.getName()) && !content.getWay().split("::")[0].equals("end")) {
+					hashSet2.add(content.getWay().split("::")[0]);
+					msgSend(content.getWay().split("::")[0], new FindDirData(deleteFirstStation(content.getWay()), msg));
+				}
+			}
+			// --- Try to interpret the information to find new information ---
+			int i = 0;
+			int p = 0;
+			String toInform = "";
+			Iterator<NetworkComponent> it1 = myNeighbours.iterator();
+			while (it1.hasNext()) {
+				String neighbour = it1.next().getId();
+				if (hashSet.contains(neighbour) || getDead().contains(neighbour)) {
+					i += 1;
+				} else {
+					toInform = neighbour;
+				}
+				p += 1;
+			}
+			if ((p - i) == 1) {
+				// --- Found the situation, that only one neighbour
+				// has no information and all other neighbours are incoming or outgoing ---
+				if (hashSet2.contains(toInform) == false) {
+					// --- Inform neighbour about this new information ---
+					hashSet2.add(toInform);
+					msgSend(toInform, new FindDirData(msg));
+				}
+				setDirections();
+			} else if ((p - i) > 1) {
+				// --- Try to guess the next step, only if the component is in the second step ---
+				if (tryToGuess) {
+					Iterator<NetworkComponent> it11 = myNeighbours.iterator();
+					while (it11.hasNext()) {
+						String neighbour = it11.next().getId();
+						if (neighbour.equals(sender) == false) {
+							msgSend(neighbour, new FindDirData(myAgent.getLocalName(), "?"));
+						}
+					}
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Method to interpret message, which inform about a dead component
+	 * 
+	 * @param sender
+	 */
+	private void deadPipe(String sender) {
+		// --- Information about the flow get add to the appropriate HashSet ---
+		addDead(sender);
+		System.out.println(myAgent.getLocalName() + " is partly dead, because of " + sender);
+		// --- Try to interpret the information to find new information ---
+		// --- First check, if all neighbours except one are dead ---
+		int i = 0;
+		int p = 0;
+		String toInform = "";
+		Iterator<NetworkComponent> it1 = myNeighbours.iterator();
+		while (it1.hasNext()) {
+			String neighbour = it1.next().getId();
+			if (getDead().contains(neighbour)) {
+				i += 1;
+			} else {
+				toInform = neighbour;
+			}
+			p += 1;
+		}
+
+		if ((p - i) == 1) {
+			// --- If all neighbours except one are dead, the other one is also dead ---
+			addDead(toInform);
+			msgSend(toInform, new FindDirData("dead"));
+			System.out.println(myAgent.getLocalName() + " All dead: " + getDead());
+			return;
+		}
+		// --- Second check, if all neighbours except one are dead or incoming ---
+		i = 0;
+		p = 0;
+		toInform = "";
+		it1 = myNeighbours.iterator();
+		while (it1.hasNext()) {
+			String neighbour = it1.next().getId();
+			if (getDead().contains(neighbour) || getIncoming().contains(neighbour)) {
+				i += 1;
+			} else {
+				toInform = neighbour;
+			}
+			p += 1;
+		}
+
+		if ((p - i) == 1) {
+			// --- If all neighbours except one are dead or incoming, then the one must be outgoing ---
+			addOutgoing(toInform);
+			msgSend(toInform, new FindDirData("in"));
+			setDirections();
+			return;
+
+		}
+		// --- Second check, if all neighbours except one are dead or outgoing ---
+		i = 0;
+		p = 0;
+		toInform = "";
+		it1 = myNeighbours.iterator();
+		while (it1.hasNext()) {
+			String neighbour = it1.next().getId();
+			if (getDead().contains(neighbour) || getOutgoing().contains(neighbour)) {
+				i += 1;
+			} else {
+				toInform = neighbour;
+			}
+			p += 1;
+		}
+
+		if ((p - i) == 1) {
+			// --- If all neighbours except one are dead or outgoing, then the one must be incoming ---
+			addIncoming(toInform);
+			msgSend(toInform, new FindDirData("out"));
+			setDirections();
+			return;
+
+		}
+
+	}
+
+	/**
+	 * Method to interpret guessed flow messages
+	 * 
+	 * @param sender
+	 * @param content
+	 * @param msg1
+	 * @param hashSet2
+	 */
+	private void forwardingMaybe(String sender, FindDirData content) {
+		// --- Check if the information is to "old", too many hops ---
+		if (content.getWay().split("::").length < maxMsgAge) {
+			if (content.getWay().split("::")[0].equals(myAgent.getLocalName())) {
+				// --- Got my own ? message, so this should be a cycle ---
+				System.out.println("My own name in the way: " + myAgent.getLocalName() + " Way: " + content.getWay().toString());
+				Iterator<NetworkComponent> it1 = myNeighbours.iterator();
+				String inform = "";
+				String direction = "";
+				boolean found = false;
+				String newFlow = "";
+				// --- Check, which neighbours have to inform about the cycle ---
+				// --- Check, which flow have to be assigned to the neighbours from outside ---
+				while (it1.hasNext()) {
+					String neighbour = it1.next().getId();
+					for (int i = 1; i < content.getWay().split("::").length; i++) {
+						if (content.getWay().split("::")[i].equals(neighbour)) {
+							inform += "::" + neighbour;
+							found = true;
+						}
+					}
+					if (!found) {
+						direction = neighbour;
+					}
+					found = false;
+				}
+				if (incoming.contains(direction)) {
+					newFlow = "in";
+				}
+				if (outgoing.contains(direction)) {
+					newFlow = "out";
+				}
+				// --- Check, which flow have to be assigned to the neighbours from inside ---
+				if (newFlow.equals("")) {
+					for (int i = 1; i < content.getWay().split("::").length; i++) {
+						if (incoming.contains(content.getWay().split("::")[i])) {
+							newFlow = "out";
+						}
+						if (outgoing.contains(content.getWay().split("::")[i])) {
+							newFlow = "in";
+						}
+						if (!newFlow.equals("")){
+							break;
+						}
+					}
+				}
+				if (!newFlow.equals("")) {
+					// --- Only use the information about a cycle, if we have 2 unknown neighbours ---
+					if (inform.split("::").length == 3) {
+						for (int i = 1; i < inform.split("::").length; i++) {
+							if (newFlow.equals("in")) {
+								outgoing.add(inform.split("::")[i]);
+							} else if (newFlow.equals("out")) {
+								incoming.add(inform.split("::")[i]);
+							}
+							System.out.println("Send direction from " + myAgent.getLocalName() + " to " +inform.split("::")[i] + " with " + newFlow);
+							if (!inform.split("::")[i].equals(content.getWay().split("::")[1])){
+								content.setWay(changeOrder(content.getWay()));
+							}
+							msgSend(inform.split("::")[i], new FindDirData(deleteFirstStation(deleteFirstStation(content.getWay())), newFlow));
+						}
+						// --- Component has new information, so done = false ---
+						done = false;
+						setDirections();
+					}
+				} else {
+					// --- Maybe found an cycle, but also did not know the direction of the third neighbour ---
+					System.out.println("No direction for my own way!" + myAgent.getLocalName() + "   " + direction);
+				}
+			} else {
+//				System.out.println(myAgent.getLocalName() + "    " + content.getWay());
+				// --- Check, if this station is two times in the way, but is not the start point ---
+				for (int i = 1; i < content.getWay().split("::").length; i++) {
+					if (content.getWay().split("::")[i].equals(myAgent.getLocalName())) {
+						// --- Kill this ?-message ---
+						return;
+					}
+				}
+				/*
+				 * The estimated information get forward to all neighbours, except the sender
+				 */
+				Iterator<NetworkComponent> it11 = myNeighbours.iterator();
+				while (it11.hasNext()) {
+					String neighbour = it11.next().getId();
+					if (neighbour.equals(sender) == false) {
+						msgSend(neighbour, new FindDirData(content.getWay() + "::" + myAgent.getLocalName(), "?"));
+
+					}
+				}
+			}
+		} else {
+			/* Message is too old and get ignored */
+//			System.out.println("Message too old, " + myAgent.getLocalName());
+		}
+	}
+
+	/**
+	 * Change the order of the stations
+	 * @param way
+	 * @return
+	 */
+	private String changeOrder(String way) {
+		String wayWithNewOrder = "";
+		for (int i = way.split("::").length-1; i > 1; i--) {
+			wayWithNewOrder += "::" + way.split("::")[i];
+		}
+		return wayWithNewOrder;
+	}
+
+	/**
+	 * Delete the first station from the way (so the first string in front of ::)
+	 * 
+	 * @param way
+	 * @return way without the first station
+	 */
+	private String deleteFirstStation(String way) {
+		String wayWithoutFirst = "";
+		for (int i = 1; i < way.split("::").length; i++) {
+			wayWithoutFirst += "::" + way.split("::")[i];
+		}
+		if (wayWithoutFirst.equals("")) {
+			return "end";
+		} else {
+			return wayWithoutFirst.substring(2);
+		}
+	}
+
+	/**
+	 * Set the directions to the network model / network manager
+	 */
+	public void setDirections() {
+		if (!done) {
+			// --- Delete the list of maybe flows ---
+			// --- Check, if we have information, which we can set in the network model ---
+			if (((!incoming.isEmpty() || !outgoing.isEmpty()) && this.myNeighbours.size() > 2) || (!incoming.isEmpty() && !outgoing.isEmpty() && this.myNeighbours.size() == 2)) {
+
+				System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead());
+
+				// --- Set information in the network model ---
+				NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(myNetworkModel, myNetworkComponent);
+				HashSet<GraphNode> outerNodes = netCompDirect.getOuterNodes();
+
+				HashSet<NetworkComponent> inComps = new HashSet<NetworkComponent>();
+				HashSet<NetworkComponent> outComps = new HashSet<NetworkComponent>();
+
+				HashSet<NetworkComponent> outerComps = netCompDirect.translateGraphNodeHashSet(outerNodes);
+				for (Iterator<NetworkComponent> iterator = outerComps.iterator(); iterator.hasNext();) {
+					NetworkComponent outerComp = iterator.next();
+					for (Iterator<String> iterator2 = getIncoming().iterator(); iterator2.hasNext();) {
+						String incoming = iterator2.next();
+						if (incoming.equals(outerComp.getId()))
+							inComps.add(myNetworkModel.getNetworkComponent(incoming));
+					}
+					for (Iterator<String> iterator2 = getOutgoing().iterator(); iterator2.hasNext();) {
+						String outgoing = iterator2.next();
+						if (outgoing.equals(outerComp.getId()))
+							outComps.add(myNetworkModel.getNetworkComponent(outgoing));
+					}
+				}
+				netCompDirect.setGraphEdgeDirection(inComps, outComps);
+
+				myNetworkComponent.setEdgeDirections(netCompDirect.getEdgeDirections());
+				// --- Send the information to the network manager, that the manager can distribute them ---
+				DirectionSettingNotification dsn = new DirectionSettingNotification();
+				dsn.setNotificationObject(myNetworkComponent);
+				myAgent.sendManagerNotification(dsn);
+			}
+
+		}
+		// --- Component is done ---
+		done = true;
+
+	}
+
+	/**
+	 * Send a message about the simulation service
+	 * 
+	 * @param receiver
+	 * @param content
+	 */
+	public void msgSend(String receiver, GenericMesssageData content) {
+		// --- Try to send the message until the method gives back true ---
+		while (myAgent.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), content) == false) {
+			System.out.println("PROBLEM (FD) to send a message to " + receiver + " from " + myAgent.getLocalName());
+		}
+
+	}
+}
