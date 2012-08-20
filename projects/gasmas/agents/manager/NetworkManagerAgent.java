@@ -45,6 +45,7 @@ import jade.wrapper.ControllerException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
@@ -75,6 +76,12 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	private long timeOfAction = -1;
 	/** Shows the actual step of the initial process. */
 	private int actualStep = 0;
+	/** Shows if in the actual step something changed. */
+	private boolean changeDuringStep = false;
+	/** The prefix for cluster components */
+	public static String clusterComponentPrefix = "C";
+	/** The suffix for cluster components, how are atomar */
+	public static String clusterComponentSuffix = "F";
 
 	/*
 	 * (non-Javadoc)
@@ -235,21 +242,51 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		} else if (notification.getNotification() instanceof ClusterNotification) {
 
 			ClusterNotification cn = (ClusterNotification) notification.getNotification();
-			// --- Get a list of names of the NetworkComponents, which are a
-			// cluster ---
+			String partOfCluster ="ClusterdNM";
+			String atomCluster = "";
+			
+			// --- Get a list of names of the NetworkComponents, which are in the cluster ---
 			HashSet<String> clusterNetworkComponentIDs = (HashSet<String>) cn.getNotificationObject();
-
-			NetworkModel clusterNetworkModel = this.getClusteredModel();
+			NetworkModel clusterNetworkModel = null;
+			
+			// --- Distinguish between different reasons of a cluster notification ---
+			if (cn.getReason().startsWith("newCluster")){
+				// --- New cluster found, so no special operations needed ---
+				clusterNetworkModel = this.getClusteredModel();
+				
+			}else if (cn.getReason().startsWith("rearrangeCluster")){
+				// --- Rearrange of an existing cluster ---
+				clusterNetworkModel = this.getClusteredModel();
+				// --- Remove the existing cluster ---
+				clusterNetworkComponentIDs.remove(notification.getSender().getLocalName());
+				ClusterNetworkComponent oldClusterNetworkComponent = (ClusterNetworkComponent) clusterNetworkModel.getNetworkComponent(notification.getSender().getLocalName());
+				// --- Add the network components, which are already in the cluster, to the new cluster ---
+				clusterNetworkComponentIDs.addAll(oldClusterNetworkComponent.getNetworkComponentIDs());
+				// --- Replace cluster by components in the network model ---
+				clusterNetworkModel.replaceClusterByComponents(oldClusterNetworkComponent);
+				// --- Delete alternative network model ---
+				this.myNetworkModel.getAlternativeNetworkModel().remove(oldClusterNetworkComponent.getId());
+			}else if (cn.getReason().startsWith("furtherClustering")){
+				// --- At least one new cluster found ---
+				changeDuringStep = true;
+				// --- The reason also got information about in which cluster, the algorithm found another cluster  ---
+				clusterNetworkModel = this.myNetworkModel.getAlternativeNetworkModel().get(cn.getReason().split("::")[1]);
+				partOfCluster = cn.getReason().split("::")[1];
+				// --- The algorithm only find minimal clusters, so no further clustering possible ---
+				atomCluster = clusterComponentSuffix;
+			}
 
 			// --- Get all NetworkComponents from the list of names ---
 			HashSet<NetworkComponent> clusterNetworkComponents = getClusterNetworkComponents(clusterNetworkComponentIDs, clusterNetworkModel);
 			if (clusterNetworkComponents.isEmpty()) {
-				System.err.println("Error while replacing cluster, list of cluster network components is empty. "+clusterNetworkComponentIDs);
-			}else{
+				System.err.println("Error while replacing cluster, list of cluster network components is empty. " + clusterNetworkComponentIDs);
+			} else {
+				String clusterNetCompIdNew = "";
+
 				// --- Find the new name for the ClusterNetworkComponent ---
-				String clusterNetCompIdNew = "C" + notification.getSender().getLocalName();
+				clusterNetCompIdNew = clusterComponentPrefix + notification.getSender().getLocalName() + atomCluster;
 				while (clusterNetworkModel.getNetworkComponent(clusterNetCompIdNew) != null || this.myNetworkModel.getNetworkComponent(clusterNetCompIdNew) != null) {
-					clusterNetCompIdNew = "C" + clusterNetCompIdNew;
+					clusterNetCompIdNew = clusterComponentPrefix + clusterNetCompIdNew;
 				}
 
 				// --- Replace the components by the cluster ---
@@ -258,15 +295,16 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 				// --- Rename the ClusterNetworkComponent ---
 				String clusterNetCompIdOld = clusterNetworkComponent.getId();
 				clusterNetworkModel.renameNetworkComponent(clusterNetCompIdOld, clusterNetCompIdNew);
-
+				
 				if (clusterNetworkComponent != null) {
 					this.myNetworkModel.getAlternativeNetworkModel().put(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
+					// Starts the agent to the cluster network component
+					this.startClusterAgent(clusterNetCompIdNew, clusterNetworkComponent, partOfCluster);
 				}
 
-				this.startClusterAgent(clusterNetCompIdNew);
-
 				this.notifyAboutEnvironmentChanges();
-				this.sendAgentNotification(notification.getSender(), clusterNetworkComponent);
+				// Set the actual time after the last clustering to see when the step is finished
+				timeOfAction = System.currentTimeMillis();
 				ComponentFunctions.printAmountOfDiffernetTypesOfAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 			}
 		} else if (notification.getNotification() instanceof DirectionSettingNotification) {
@@ -287,7 +325,9 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			NetworkComponentDirectionNotification ncdm = new NetworkComponentDirectionNotification(networkComponent);
 			this.sendDisplayAgentNotification(ncdm);
 		} else if (notification.getNotification() instanceof StatusData) {
+			// A agent is still working in a specific step
 			actualStep = ((StatusData) notification.getNotification()).getPhase();
+			// Set the actual time, where still somebody is working
 			timeOfAction = System.currentTimeMillis();
 		}
 
@@ -413,13 +453,18 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 	}
 
+
 	/**
-	 * Start cluster agent.
+	 * Starts cluster agent.
+	 * 
+	 * @param agentName
+	 * @param clusterNetworkComponent
+	 * @param partOfCluster
 	 */
-	public void startClusterAgent(String agentName) {
+	public void startClusterAgent(String agentName, ClusterNetworkComponent clusterNetworkComponent, String partOfCluster) {
 		try {
 			LoadServiceHelper loadHelper = (LoadServiceHelper) this.getHelper(LoadService.NAME);
-			Object[] params = new Object[] {false};
+			Object[] params = new Object[] { false, clusterNetworkComponent, partOfCluster };
 			try {
 				loadHelper.startAgent(agentName, gasmas.agents.components.ClusterNetworkComponentAgent.class.getName(), params, this.getContainerController().getContainerName());
 			} catch (ControllerException e) {
@@ -458,23 +503,50 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		 */
 		@Override
 		protected void onTick() {
-			if (System.currentTimeMillis() - timeOfAction >= 20000 && timeOfAction != -1) {
-				// We now inform every network component that we finished the
-				// first step
+			// Check, if the actual step is done
+			if (System.currentTimeMillis() - timeOfAction >= 5000 && timeOfAction != -1) {
+				// Step done -> inform network components about this
 				timeOfAction = -1;
-				System.out.println("Start of the next step. Phase: " + (actualStep + 1));
-				NetworkModel actualNetworkModel = null;
-				if (actualStep == 1) {
-					actualNetworkModel = myNetworkModel;
+				HashSet<String> networkComponentIDs = new HashSet<String>();
+				// Find the network components, how have to be informed about the end of the step
+				if (actualStep == 0 || actualStep == 1) {
+					networkComponentIDs.addAll(myNetworkModel.getNetworkComponents().keySet());
 				} else if (actualStep == 2) {
-					actualNetworkModel = getClusteredModel();
-				}
-				if (actualNetworkModel != null) {
-					for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(actualNetworkModel.getNetworkComponents().values())) {
-							while (!sendAgentNotification(new AID(networkComponent.getId(), AID.ISLOCALNAME), new StatusData(actualStep + 1))) {
-
+					networkComponentIDs.addAll(getClusteredModel().getNetworkComponents().keySet());
+				} else if (actualStep == 3) {
+					Iterator<NetworkModel> it = myNetworkModel.getAlternativeNetworkModel().values().iterator();
+					while (it.hasNext()) {
+						NetworkModel actualNetworkModel = it.next();
+						networkComponentIDs.addAll(actualNetworkModel.getNetworkComponents().keySet());
+					}
+				} else if (actualStep == 4) {
+					// Clustering Round until the clustering algorithm did not find anything new
+					if (changeDuringStep) {
+						Iterator<Entry<String, NetworkModel>> it = myNetworkModel.getAlternativeNetworkModel().entrySet().iterator();
+						while (it.hasNext()) {
+							Entry<String, NetworkModel> actualNetworkModel = it.next();
+							// Only clustering of clusters, how are not atomic
+							if (!actualNetworkModel.getKey().endsWith(clusterComponentSuffix)){
+								networkComponentIDs.addAll(actualNetworkModel.getValue().getNetworkComponents().keySet());
+							}
 						}
 					}
+					changeDuringStep = false;
+				}
+				// Now inform the specific network components about the next step
+				if (!networkComponentIDs.isEmpty()) {
+					System.out.println("----------------------------------------------------------------Start of the next step. Phase: " + (actualStep + 1));
+					Iterator<String> it = networkComponentIDs.iterator();
+					while (it.hasNext()) {
+						String networkComponentID = it.next();
+						while (!sendAgentNotification(new AID(networkComponentID, AID.ISLOCALNAME), new StatusData(actualStep + 1))) {
+							System.out.println("PROBLEM (NS) to send a message to " + networkComponentID + " from " + myAgent.getLocalName() + " Phase: " + (actualStep + 1));
+						}
+					}
+
+				} else {
+					// The last step of the initial process is done
+					System.out.println("----------------------------------------------------------------Finished the last step. Phase: " + actualStep);
 				}
 			}
 		}

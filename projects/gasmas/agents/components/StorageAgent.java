@@ -1,7 +1,5 @@
 package gasmas.agents.components;
 
-import gasmas.clustering.coalitions.PassiveNAResponderBehaviour;
-import agentgui.simulationService.agents.SimulationAgent;
 
 public class StorageAgent extends GenericNetworkAgent {
 
@@ -10,7 +8,6 @@ public class StorageAgent extends GenericNetworkAgent {
 	@Override
 	protected void setup() {
 		super.setup();
-//		this.addBehaviour(new PassiveNAResponderBehaviour(this));
 	}
 	
 	

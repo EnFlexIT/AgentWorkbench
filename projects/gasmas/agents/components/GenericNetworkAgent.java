@@ -28,17 +28,25 @@
  */
 package gasmas.agents.components;
 
+import gasmas.clustering.behaviours.CycleClusteringBehaviour;
+import gasmas.clustering.coalitions.CoalitionBehaviour;
+import gasmas.clustering.coalitions.PassiveNAResponderBehaviour;
 import gasmas.resourceallocation.AllocData;
 import gasmas.resourceallocation.CheckingClusterBehaviour;
+import gasmas.resourceallocation.ClusterCheckData;
 import gasmas.resourceallocation.FindDirData;
 import gasmas.resourceallocation.FindDirectionBehaviour;
 import gasmas.resourceallocation.FindSimplificationBehaviour;
 import gasmas.resourceallocation.ResourceAllocationBehaviour;
 import gasmas.resourceallocation.SimplificationData;
 import gasmas.resourceallocation.StatusData;
+import jade.core.ServiceException;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.SimulationAgent;
+import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
 public abstract class GenericNetworkAgent extends SimulationAgent {
@@ -47,16 +55,33 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 
 	protected NetworkModel myNetworkModel = null;
 
-	protected NetworkComponent myNetworkComponent = null;
+	/** My own NetworkComponent. */
+	protected NetworkComponent myNetworkComponent;
 
-	/** Different Behaviours, which get messages */
+	/** Different Behaviours */
 	protected ResourceAllocationBehaviour resourceAllocationBehaviour;
 	protected FindDirectionBehaviour findDirectionBehaviour;
 	protected FindSimplificationBehaviour findSimplificationBehaviour;
 	protected CheckingClusterBehaviour checkingClusterBehaviour;
+	protected CoalitionBehaviour coalitionBehaviour;
+	protected PassiveNAResponderBehaviour passiveClusteringBehaviour;
+
+	/** Contains a network component id, if the agent is part of a cluster */
+	protected String partOfCluster = "";
 
 	/** Shows, if this component need a normal initial process */
-	private boolean normalStart = true;
+	protected boolean normalStart = true;
+
+	/** Shows the internal step of the agent */
+	protected int step = -1;
+
+	public int getStep() {
+		return step;
+	}
+
+	public String getPartOfCluster() {
+		return partOfCluster;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -67,8 +92,23 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 	protected void setup() {
 		super.setup();
 
+		// Check for start arguments of the agent
 		if (this.getArguments() != null) {
+			// Used to give a cluster network component all information that are needed
 			normalStart = (Boolean) this.getArguments()[0];
+			this.myNetworkComponent = (NetworkComponent) this.getArguments()[1];
+			partOfCluster = (String) this.getArguments()[2];
+			try {
+				SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+				EnvironmentModel envModel = simHelper.getEnvironmentModel();
+				if (envModel != null) {
+					this.myEnvironmentModel = envModel;
+					this.myNetworkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
+
+				}
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -86,8 +126,9 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 		if (this.myNetworkModel == null) {
 			this.myNetworkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
 			this.myNetworkComponent = myNetworkModel.getNetworkComponent(this.getLocalName());
+			// Start of the initial start process 
 			if (normalStart) {
-				startNewStep(1);
+				reactOnStatusInformation(0, "");
 			}
 		}
 
@@ -105,68 +146,148 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 		if (notification.getNotification() instanceof AllocData) {
 			if (resourceAllocationBehaviour == null) {
 				notification.moveLastOrBlock(100);
-				System.out.println("=> Notification parked for 'AllocData' !Receiver: " + this.getLocalName());
+				System.out.println("=> Notification parked for 'AllocData'! Receiver: " + this.getLocalName() + " Sender: " + notification.getSender().getLocalName());
 			} else {
 				resourceAllocationBehaviour.interpretMsg(notification);
 			}
 		} else if (notification.getNotification() instanceof FindDirData) {
 			if (findDirectionBehaviour == null) {
 				notification.moveLastOrBlock(100);
-				System.out.println("=> Notification parked for 'FindDirData' !Receiver: " + this.getLocalName());
+				System.out.println("=> Notification parked for 'FindDirData' !Receiver: " + this.getLocalName() + " Sender: " + notification.getSender().getLocalName());
 			} else {
-				sendManagerNotification(new StatusData(1));
+				sendManagerNotification(new StatusData(step));
 				findDirectionBehaviour.interpretMsg(notification);
 			}
 		} else if (notification.getNotification() instanceof SimplificationData) {
-			sendManagerNotification(new StatusData(2));
+
 			if (findSimplificationBehaviour == null) {
 				notification.moveLastOrBlock(100);
-				System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + this.getLocalName());
+				System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + this.getLocalName() + " Sender: " + notification.getSender().getLocalName());
 			} else {
+				sendManagerNotification(new StatusData(step));
 				findSimplificationBehaviour.interpretMsg(notification);
 			}
+		} else if (notification.getNotification() instanceof ClusterCheckData) {
+
+			if (checkingClusterBehaviour == null) {
+				notification.moveLastOrBlock(100);
+				System.out.println("=> Notification parked for 'ClusterCheckData' ! Receiver: " + this.getLocalName() + " Sender: " + notification.getSender().getLocalName());
+			} else {
+				sendManagerNotification(new StatusData(step));
+				checkingClusterBehaviour.interpretMsg(notification);
+			}
 		} else if (notification.getNotification() instanceof StatusData) {
-			startNewStep(((StatusData) notification.getNotification()).getPhase());
+			// Got status information
+			reactOnStatusInformation(((StatusData) notification.getNotification()).getPhase(), ((StatusData) notification.getNotification()).getClusterName());
 		}
 		return notification;
 	}
 
-	private void startNewStep(int phase) {
+	/**
+	 * Method to interpret status information
+	 * 
+	 * @param phase
+	 * @param clusterName
+	 */
+	private void reactOnStatusInformation(int phase, String clusterName) {
 		if (myNetworkModel == null) {
-			System.err.println("Error: " + this.getLocalName() + " did not get the network model, so no Behaviour started");
+			// Got status information, but no network model is there, so ignoring of the message
+			System.err.println("Error: " + this.getLocalName() + " did not get the network model, so no status information are interpreted.");
 		} else {
-			if (phase == 1) {
+			if (phase == 0) {
+				// Starts the initial find direction process
+				step = 0;
 				startFindDirectionBehaviour();
+			} else if (phase == 1) {
+				// Starts the second find direction process to find cycles
+				step = 1;
+				findDirectionBehaviour.setDirections();
+				findDirectionBehaviour.startStep2();
 			} else if (phase == 2) {
+				// Starts a first clustering process, using information of the directions
+				step = 2;
+				findDirectionBehaviour.setDirections();
 				startFindSimplificationBehaviour();
 			} else if (phase == 3) {
-//				startCheckingClusterBehaviour();
+				// Starts a verification of the cluster found in step 2
+				step = 3;
+				sendManagerNotification(new StatusData(step));
+				startCheckingClusterBehaviour();
+			} else if (phase == 4) {
+				// Starts a second clustering process, using a special algorithm
+				step = 4;
+				startClusteringBehaviour();
+			} else if (phase == 5) {
+				// Starts a new clustering round, using a special algorithm
+				step = 4;
+				// Delete the behaviour of the last clustering round
+				if (coalitionBehaviour != null)
+					this.removeBehaviour(coalitionBehaviour);
+				if (passiveClusteringBehaviour != null)
+					this.removeBehaviour(passiveClusteringBehaviour);
+				startClusteringBehaviour();
+			} else if (!clusterName.isEmpty()) {
+				// Saves the name of the cluster in which this agent is
+				partOfCluster = clusterName;
 			}
 		}
 	}
 
+	/**
+	 * Starts the find direction behaviour
+	 */
 	private void startFindDirectionBehaviour() {
-		findDirectionBehaviour = new FindDirectionBehaviour(this, myNetworkModel, myNetworkComponent);
+		findDirectionBehaviour = new FindDirectionBehaviour(this, myNetworkModel);
 		findDirectionBehaviour.start();
 	}
 
+	/**
+	 * Starts the checking cluster behaviour
+	 */
 	private void startCheckingClusterBehaviour() {
-		checkingClusterBehaviour = new CheckingClusterBehaviour(this, myNetworkModel, myNetworkComponent);
+
+		checkingClusterBehaviour = new CheckingClusterBehaviour(this, myNetworkModel);
 		checkingClusterBehaviour.start();
 	}
 
-	private void startFindSimplificationBehaviour() {
-		// The end of the the find direction behaviour, so I have to remove this
-		// behaviour
+	/**
+	 * Starts the clustering behaviour
+	 */
+	protected void startClusteringBehaviour() {
+		// If this agent is not part of a cluster, it is part of the normal network model
+		if (partOfCluster.isEmpty()) {
+			partOfCluster = "ClusterdNM";
+		}
+		// Get the cluster network model, where the clustering algorithm should work
+		NetworkModel clusterNetworkModel = myNetworkModel.getAlternativeNetworkModel().get(partOfCluster);
+		
+		// The algorithm distinguishes between active and passive components, so different behaviours have to be started
+		if (myNetworkComponent.getAgentClassName().equals(CompressorAgent.class.getName()) || myNetworkComponent.getAgentClassName().equals(ControlValveAgent.class.getName())
+				 || myNetworkComponent.getAgentClassName().equals(ClusterNetworkAgent.class.getName())) {
+			//|| myNetworkComponent.getAgentClassName().equals(SimpleValveAgent.class.getName())
+			// Active component
+			coalitionBehaviour = new CoalitionBehaviour(this, myEnvironmentModel, clusterNetworkModel, new CycleClusteringBehaviour(this, clusterNetworkModel));
+			this.addBehaviour(coalitionBehaviour);
+		} else {
+			// Passive component
+			passiveClusteringBehaviour = new PassiveNAResponderBehaviour(this);
+			this.addBehaviour(passiveClusteringBehaviour);
 
-		findDirectionBehaviour.setDirections();
-		findSimplificationBehaviour = new FindSimplificationBehaviour(this, myNetworkModel, myNetworkComponent);
+		}
+	}
+	
+	/**
+	 * Starts the find simplification behaviour
+	 */
+	private void startFindSimplificationBehaviour() {
+		
+		findSimplificationBehaviour = new FindSimplificationBehaviour(this, myNetworkModel);
 		// Because the internal structures can not save dead pipes, so I have to
 		// transfer the knowledge from one behaviour to another
 		findSimplificationBehaviour.setDead(findDirectionBehaviour.getDead());
 		findSimplificationBehaviour.setIncoming(findDirectionBehaviour.getIncoming());
 		findSimplificationBehaviour.setOutgoing(findDirectionBehaviour.getOutgoing());
-		// Start next behaviour, in this case, find simplifications
+		// Start find simplification behaviour
 		findSimplificationBehaviour.start();
 	}
 

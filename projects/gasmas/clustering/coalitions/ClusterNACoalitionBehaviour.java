@@ -28,6 +28,7 @@
  */
 package gasmas.clustering.coalitions;
 
+import gasmas.ontology.ClusterNotification;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.ParallelBehaviour;
@@ -36,6 +37,7 @@ import jade.lang.acl.ACLMessage;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.simulationService.agents.SimulationAgent;
@@ -44,6 +46,8 @@ import agentgui.simulationService.agents.SimulationAgent;
  * The Class ClusterNetworkAgentCoalitionBehaviour.
  */
 public class ClusterNACoalitionBehaviour extends ParallelBehaviour {
+
+	private static final long serialVersionUID = -7320798990075791087L;
 
 	/** The network component map. */
 	private HashMap<String, Boolean> networkComponentMap;
@@ -116,7 +120,14 @@ public class ClusterNACoalitionBehaviour extends ParallelBehaviour {
 	 * Recreate cluster within the ClusterNetworkModel
 	 */
 	private void recreateCluster() {
-		clusterNetworkComponent.setId(myAgent.getLocalName());
-		((SimulationAgent) myAgent).sendManagerNotification(clusterNetworkComponent);
+// 		Old clustering notification
+//		clusterNetworkComponent.setId(myAgent.getLocalName());
+//		((SimulationAgent) myAgent).sendManagerNotification(clusterNetworkComponent);
+		// --- Send the cluster notification to the manager agent ---
+		HashSet<String> found = clusterNetworkComponent.getNetworkComponentIDs();
+		ClusterNotification cn = new ClusterNotification();
+		cn.setNotificationObject(found);
+		cn.setReason("furtherClustering::"+ clusterNetworkComponent.getId());
+		((SimulationAgent) myAgent).sendManagerNotification(cn);
 	}
 }

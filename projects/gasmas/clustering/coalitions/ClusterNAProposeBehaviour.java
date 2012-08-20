@@ -67,7 +67,7 @@ public class ClusterNAProposeBehaviour extends ProposeInitiator {
 	 */
 	@Override
 	protected void handleRejectProposal(ACLMessage reject_proposal) {
-		myAgent.doDelete();
+//		myAgent.doDelete();
 	}
 
 	/**

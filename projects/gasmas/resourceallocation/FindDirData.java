@@ -7,24 +7,27 @@ public class FindDirData extends GenericMesssageData {
 	 */
 	private static final long serialVersionUID = 3438711840630347490L;
 
+	/** String, which holds the way, how the message went */
 	protected String way = "";
-	protected String reason;
+	
+	/** String, which holds the initiator of the actual asking round */
+	protected String flow;
 
-	public void setReason(String reason) {
-		this.reason = reason;
+	public void setFlow(String reason) {
+		this.flow = reason;
 	}
 
-	public String getReason() {
-		return reason;
+	public String getFlow() {
+		return flow;
 	}
 
 	public FindDirData(String way, String reason) {
 		this.way = way;
-		this.reason = reason;
+		this.flow = reason;
 	}
 
 	public FindDirData(String reason) {
-		this.reason = reason;
+		this.flow = reason;
 	}
 
 	public String getWay() {

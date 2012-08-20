@@ -7,23 +7,16 @@ public class SimplificationData implements Serializable {
 
 	private static final long serialVersionUID = 827774764094560195L;
 
+	/** String, which holds the initiator of the actual asking round */
 	private String initiator = "";
 
+	/** String, which holds the initiator of the initial request */
 	private String urInitiator = "";
-
-	private boolean answer = false;
-
+	
+	/** HashSet, which holds the way, how the message went */
 	private HashSet<String> way = new HashSet<String>();
-
-	private int sessionID = 0;
-
-	public void setSessionID(int sessionID) {
-		this.sessionID = sessionID;
-	}
-
-	public int getSessionID() {
-		return sessionID;
-	}
+	/** Shows, if the message is an answer */
+	private boolean answer = false;
 
 	public boolean isAnswer() {
 		return answer;
@@ -74,12 +67,11 @@ public class SimplificationData implements Serializable {
 		}
 	}
 
-	public SimplificationData(String initiator, HashSet<String> way, boolean b, String urInitiator, int SID) {
+	public SimplificationData(String initiator, HashSet<String> way, boolean b, String urInitiator) {
 		this.initiator = initiator;
 		this.way = way;
 		this.answer = b;
 		this.urInitiator = urInitiator;
-		this.sessionID = SID;
 	}
 
 }

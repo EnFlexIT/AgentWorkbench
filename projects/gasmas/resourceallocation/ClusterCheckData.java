@@ -7,10 +7,16 @@ public class ClusterCheckData implements Serializable {
 
 	private static final long serialVersionUID = -3498150685713525063L;
 
+	/** String, which holds the initiator of the actual asking round */
 	private String initiator = "";
 
+	/** String, which holds the initiator of the initial request */
+	private String urInitiator = "";
+
+	/** HashSet, which holds the way, how the message went */
 	private HashSet<String> way = new HashSet<String>();
 
+	/** Shows, if the message is an answer */
 	private boolean answer = false;
 
 	public boolean isAnswer() {
@@ -28,6 +34,14 @@ public class ClusterCheckData implements Serializable {
 
 	public String getInitiator() {
 		return initiator;
+	}
+
+	public void setUrInitiator(String urInitiator) {
+		this.urInitiator = urInitiator;
+	}
+
+	public String getUrInitiator() {
+		return urInitiator;
 	}
 
 	public HashSet<String> getWay() {
@@ -49,15 +63,18 @@ public class ClusterCheckData implements Serializable {
 
 	public ClusterCheckData(String initiator) {
 		this.initiator = initiator;
+		this.urInitiator = initiator;
 	}
 
-	public ClusterCheckData(String initiator, HashSet<String> way) {
+	public ClusterCheckData(String initiator, HashSet<String> way, String urInitiator) {
 		this.initiator = initiator;
 		this.way = way;
+		this.urInitiator = urInitiator;
 	}
 
-	public ClusterCheckData(String initiator, boolean answer) {
+	public ClusterCheckData(String initiator, boolean answer, String urInitiator) {
 		this.initiator = initiator;
 		this.answer = answer;
+		this.urInitiator = urInitiator;
 	}
 }

@@ -28,12 +28,11 @@
  */
 package gasmas.clustering.coalitions;
 
-import gasmas.agents.components.ClusterNetworkAgent;
+import gasmas.agents.components.GenericNetworkAgent;
 import gasmas.clustering.analyse.ComponentFunctions;
 import gasmas.clustering.behaviours.ClusteringBehaviour;
 import jade.core.ServiceException;
 import jade.core.behaviours.ParallelBehaviour;
-import jade.wrapper.ControllerException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,8 +40,6 @@ import java.util.Collections;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.LoadService;
-import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.SimulationAgent;
@@ -92,7 +89,6 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 		this.environmentModel = environmentModel;
 		myAgent = agent;
 		thisNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
-
 		clusteringBehaviour.setCoalitionBehaviours(this);
 		addSubBehaviour(clusteringBehaviour);
 		addSubBehaviour(new ActiveNAResponderBehaviour(this, myAgent));
@@ -226,6 +222,7 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 		}
 		coalitionAuthorityBehaviour = new ActiveNAAuthorityBehaviour(this, activeNCs);
 		addSubBehaviour(coalitionAuthorityBehaviour);
+
 	}
 
 	/**
@@ -259,23 +256,30 @@ public class CoalitionBehaviour extends ParallelBehaviour {
 	 * Start cluster agent.
 	 */
 	public void startClusterAgent() {
-		try {		
-			LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
-			String agentName = "" + ClusterNetworkAgent.CLUSTER_AGENT_Prefix + ClusterNetworkAgent.getFreeID();
-			Object[] params = new Object[] {suggestedClusterNetworkComponent};
-			
-			String domain = this.suggestedClusterNetworkComponent.getDomain();
-			String agentClassReference = this.suggestedClusterNetworkComponent.getClusterNetworkModel().getGeneralGraphSettings4MAS().getDomainSettings().get(domain).getClusterAgent(); 
-			
-			try {
-				loadHelper.startAgent(agentName, agentClassReference, params, myAgent.getContainerController().getContainerName());
-			} catch (ControllerException e) {
-				e.printStackTrace();
-			}
-			
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
+		// --- Starts the last coalition behaviour to finalise the cluster ---
+		suggestedClusterNetworkComponent.setId(((GenericNetworkAgent) myAgent).getPartOfCluster());
+		this.addSubBehaviour(new ClusterNACoalitionBehaviour(myAgent, suggestedClusterNetworkComponent));
+		
+//		The old way was to set up an agent for the cluster, which is now done in the network manager agent
+//		try {		
+//			LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
+//			String agentName = "" + ClusterNetworkAgent.CLUSTER_AGENT_Prefix + ClusterNetworkAgent.getFreeID();
+//			Object[] params = new Object[] {suggestedClusterNetworkComponent};
+//			
+//			suggestedClusterNetworkComponent.setId(((GenericNetworkAgent) myAgent).getPartOfCluster());
+//			
+//			String domain = this.suggestedClusterNetworkComponent.getDomain();
+//			String agentClassReference = this.suggestedClusterNetworkComponent.getClusterNetworkModel().getGeneralGraphSettings4MAS().getDomainSettings().get(domain).getClusterAgent(); 
+//			
+//			try {
+//				loadHelper.startAgent(agentName, agentClassReference, params, myAgent.getContainerController().getContainerName());
+//			} catch (ControllerException e) {
+//				e.printStackTrace();
+//			}
+//			
+//		} catch (ServiceException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	/**

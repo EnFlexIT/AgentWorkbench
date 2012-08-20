@@ -28,10 +28,12 @@
  */
 package gasmas.clustering.behaviours;
 
+import gasmas.agents.components.GenericNetworkAgent;
 import gasmas.clustering.analyse.ClusterIdentifier;
 import gasmas.clustering.analyse.PathSearchBotRunner;
 import gasmas.clustering.analyse.PathSerachBotCycleAnalyser;
 import gasmas.clustering.analyse.Subgraph;
+import gasmas.resourceallocation.StatusData;
 import jade.core.Agent;
 
 import java.util.Date;
@@ -44,6 +46,10 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
  */
 public class CycleClusteringBehaviour extends ClusteringBehaviour {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1799480981045556451L;
 	/** The Constant STEPS. */
 	private static final int STEPS = 50;
 
@@ -66,7 +72,8 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 	public void analyseClusters() {
 		Date begin = new Date();
 		System.out.println("Begin CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + begin.getTime());
-
+		// Send information, that the algorithm is still working
+		((GenericNetworkAgent) myAgent).sendManagerNotification(new StatusData(((GenericNetworkAgent) myAgent).getStep()));
 		Subgraph subgraph = startPathAnalysis(networkModel);
 		if (subgraph != null) {
 			NetworkModel copyNetworkModel = getClusterNM();
@@ -74,6 +81,8 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 			coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent, true);
 		}
 		Date end = new Date();
+		// Send information, that the algorithm is still working
+		((GenericNetworkAgent) myAgent).sendManagerNotification(new StatusData(((GenericNetworkAgent) myAgent).getStep()));
 		System.out.println("End CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + end.getTime() + " Duration: " + (end.getTime() - begin.getTime()));
 	}
 

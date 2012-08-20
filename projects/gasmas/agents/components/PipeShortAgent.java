@@ -1,7 +1,5 @@
 package gasmas.agents.components;
 
-import gasmas.clustering.coalitions.PassiveNAResponderBehaviour;
-import agentgui.simulationService.agents.SimulationAgent;
 
 public class PipeShortAgent extends GenericNetworkAgent {
 
@@ -10,6 +8,5 @@ public class PipeShortAgent extends GenericNetworkAgent {
 	@Override
 	protected void setup() {
 		super.setup();
-//		this.addBehaviour(new PassiveNAResponderBehaviour(this));
 	}
 }

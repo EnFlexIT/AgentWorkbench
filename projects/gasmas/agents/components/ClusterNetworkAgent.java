@@ -55,8 +55,7 @@ public class ClusterNetworkAgent extends SimulationAgent {
 	@Override
 	protected void setup() {
 		super.setup();
-		System.out.println("WOEP");
-
+System.out.println("SDBaDGHaSDSDSDSDSDASDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
 		while (this.myEnvironmentModel == null) {
 
 			try {
