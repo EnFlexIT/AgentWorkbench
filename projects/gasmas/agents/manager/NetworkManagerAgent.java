@@ -106,7 +106,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		this.getClusteredModel();
 
 		// --- Make sure that the setup was started, before
-		this.addBehaviour(new WaitForTheEndOfSimulationStart(this, 200));
+		this.addBehaviour(new WaitForTheEndOfSimulationStart(this, 300));
 	}
 
 	/**
@@ -402,11 +402,8 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 		/**
 		 * Instantiates a new wait for the end of simulation start.
-		 * 
-		 * @param agent
-		 *            the agent
-		 * @param period
-		 *            the period
+		 * @param agent the agent
+		 * @param period  the period
 		 */
 		public WaitForTheEndOfSimulationStart(Agent agent, long period) {
 			super(agent, period);
@@ -444,7 +441,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			int noAgents = 0;
 			try {
 				LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
-				loadHelper.getAgentMap().getAgentsAtPlatform().size();
+				noAgents = loadHelper.getAgentMap().getAgentsAtPlatform().size();
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}

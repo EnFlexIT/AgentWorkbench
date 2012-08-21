@@ -142,19 +142,6 @@ public class ServiceActuator {
 		Runnable notifier = new Runnable() {
 			@Override
 			public void run() {
-				// Wait until all agents are registered
-				synchronized (this) {
-					int temp = 0;
-					while (temp != serviceSensors.size()) {
-						temp = serviceSensors.size();
-						try {
-							wait(300);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
 				Object[] arrLocal = serviceSensors.toArray();
 				for (int i = arrLocal.length-1; i>=0; i--) {
 					((ServiceSensor)arrLocal[i]).putEnvironmentModel(currEnvironmentModel, aSynchron);

@@ -274,6 +274,7 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 			this.addBehaviour(passiveClusteringBehaviour);
 
 		}
+		
 	}
 	
 	/**

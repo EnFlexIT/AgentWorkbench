@@ -65,6 +65,15 @@ public class GraphEdgeDirection implements Serializable {
 	}
 
 	/**
+	 * Returns a copy of the current instance.
+	 * @return the copy
+	 */
+	public GraphEdgeDirection getCopy() {
+		GraphEdgeDirection ged = new GraphEdgeDirection(this.graphEdgeID, this.graphNodeIDFrom, this.graphNodeIDTo, this.fixedDirected);
+		return ged;
+	}
+	
+	/**
 	 * Gets the graph edge id.
 	 * @return the graphEdgeID
 	 */

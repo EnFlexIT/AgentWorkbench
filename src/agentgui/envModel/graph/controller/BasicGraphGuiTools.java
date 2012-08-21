@@ -630,7 +630,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
 			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModelAdapter().getNetworkComponentsFullySelected(nodeSet);
 			
-			if(selectedComponents.size()>0){ 
+			if(selectedComponents!=null && selectedComponents.size()>0){ 
 				// --- Remove component and update graph ------------ 
 				this.graphController.getNetworkModelAdapter().removeNetworkComponents(selectedComponents);	
 				

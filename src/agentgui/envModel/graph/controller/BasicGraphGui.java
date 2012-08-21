@@ -225,7 +225,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Sets the initial scaling for the graph on the VisualizationViewer.
 	 */
 	private void setInitialScalingAndMovement() {
-
+		
 		if (this.visView == null) return;
 		if (this.allowInitialScaling == false) return;
 
@@ -496,7 +496,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		Rectangle2D rect = this.getGraphSpreadDimension(graph);
 		if (rect.getX() != this.graphMargin) moveX = (rect.getX() * (-1)) + this.graphMargin;
 		if (rect.getY() != this.graphMargin) moveY = (rect.getY() * (-1)) + this.graphMargin;
-		graph = this.correctGraphCoordinates(graph, moveX, moveY);
+		//graph = this.correctGraphCoordinates(graph, moveX, moveY);
 
 		// ----------------------------------------------------------------
 		// --- Define graph layout ----------------------------------------

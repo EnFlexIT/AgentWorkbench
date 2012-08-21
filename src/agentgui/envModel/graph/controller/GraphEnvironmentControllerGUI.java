@@ -102,6 +102,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 
     private static final long serialVersionUID = 7376906096627051173L;
 
+    private final String sourceTopologyTabName = "Topologie";
     private final static String pathImage = GraphGlobals.getPathImages();
     private String newLine = Application.getGlobalInfo().getNewLineSeparator();  //  @jve:decl-index=0:
     
@@ -112,7 +113,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     private JSplitPane jSplitPaneRoot = null;
     private JTabbedPane jTabbedPaneAltNetModels = null;
     private HashMap<String, GraphEnvironmentControllerGUI> networkModelTabs = null; // @jve:decl-index=0:
-
+    
+    
     private JPanel jPanelControls = null;
     private JScrollPane jScrollPaneComponentsTable = null;
     private JLabel jLabelTable = null;
@@ -198,8 +200,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    this.networkModelTabs = new HashMap<String, GraphEnvironmentControllerGUI>();
 	
 		    // --- Display the normal topology ------------
-		    jTabbedPaneAltNetModels.addTab(Language.translate("Topologie"), getJSplitPaneRoot());
-		    this.networkModelTabs.put(Language.translate("Topologie"), this);
+		    jTabbedPaneAltNetModels.addTab(Language.translate(this.sourceTopologyTabName), getJSplitPaneRoot());
+		    this.networkModelTabs.put(Language.translate(this.sourceTopologyTabName), this);
 	
 		}
 		return jTabbedPaneAltNetModels;
@@ -217,11 +219,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    this.remove(this.mainDisplayComponent);
 	
 		    if (this.useTabs == true) {
-			// --- NO tabs were displayed yet => show them now --
-			this.mainDisplayComponent = this.getJTabbedPaneAltNetModels();
+				// --- NO tabs were displayed yet => show them now --
+				this.mainDisplayComponent = this.getJTabbedPaneAltNetModels();
 		    } else {
-			// --- Tabs are displayed => remove them now --------
-			this.mainDisplayComponent = getJSplitPaneRoot();
+				// --- Tabs are displayed => remove them now --------
+				this.mainDisplayComponent = getJSplitPaneRoot();
 		    }
 	
 		    // --- Finally ------------------------------------------
@@ -662,6 +664,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    HashMap<String, NetworkModel> altNetModelHash = nm.getAlternativeNetworkModel();
 		    // --- Get the model names ordered ------------------------------------------
 		    Vector<String> altNetModels = new Vector<String>(altNetModelHash.keySet());
+		    Vector<String> altNetModelTabsToDelete = new Vector<String>(this.networkModelTabs.keySet());
 		    Collections.sort(altNetModels);
 	
 		    for (int i = 0; i < altNetModels.size(); i++) {
@@ -672,7 +675,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 				GraphEnvironmentControllerGUI graphControllerGUI = null;
 				GraphEnvironmentController graphController = null;
 		
-				if (networkModelTabs.get(altNetModelName) == null) {
+				if (this.networkModelTabs.get(altNetModelName) == null) {
 				    // --- Create a new Controller for the alternative NetworkModel -----
 				    graphController = new GraphEnvironmentController();
 				    graphController.setEnvironmentModel(altNetModel);
@@ -683,12 +686,12 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		
 				} else {
 				    // --- Get the Controller for the alternative NetworkModel ----------
-				    graphControllerGUI = networkModelTabs.get(altNetModelName);
+				    graphControllerGUI = this.networkModelTabs.get(altNetModelName);
 				    graphController = graphControllerGUI.getGraphController();
 				    graphController.setEnvironmentModel(altNetModel);
 		
 				}
-		
+				
 				// --- Set the appearance of the GUI to use or not use a JTabbedPane ----
 				if (altNetModel.getAlternativeNetworkModel().size() > 0) {
 				    graphControllerGUI.setUseTabs(true);
@@ -696,7 +699,22 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 				    graphControllerGUI.setUseTabs(false);
 				}
 	
+				// --- Remove the current tab name from the list of Tabs to delete ------
+				altNetModelTabsToDelete.remove(altNetModelName);
+				
+		    }//end for
+		    
+		    // --- Delete Tabs that are not longer element of the alternative Models ---- 
+		    for (String tabToDelete : altNetModelTabsToDelete) {
+		    	if (tabToDelete.equals(Language.translate(this.sourceTopologyTabName))==false) {
+		    		GraphEnvironmentControllerGUI graphControllerGUI = this.networkModelTabs.get(tabToDelete);
+			    	if (graphControllerGUI!=null) {
+			    		this.jTabbedPaneAltNetModels.remove(graphControllerGUI);
+				    	this.networkModelTabs.remove(tabToDelete);	
+			    	}	
+		    	}
 		    }
+		    
 		    // --------------------------------------------------------------------------
 		    // --------------------------------------------------------------------------
 		}

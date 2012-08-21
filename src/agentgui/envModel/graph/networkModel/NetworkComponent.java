@@ -97,11 +97,22 @@ public class NetworkComponent implements Serializable {
 	 * @return the copy
 	 */
 	public NetworkComponent getCopy() {
-		NetworkComponent copy = new NetworkComponent(this.id, this.type, this.prototypeClassName, this.agentClassName, null, this.directed);
+		
 		HashSet<String> gaphElementIDs = new HashSet<String>(this.getGraphElementIDs());
+		NetworkComponent copy = new NetworkComponent(this.id, this.type, this.prototypeClassName, this.agentClassName, null, this.directed);
 		copy.setGraphElementIDs(gaphElementIDs);
 		copy.setDataModel(this.dataModel);
 		copy.setDataModelBase64(this.dataModelBase64);
+
+		if (this.edgeDirections!=null && this.edgeDirections.size()!=0) {
+			HashMap<String, GraphEdgeDirection> edgeDirectionsCopy = new HashMap<String, GraphEdgeDirection>();
+			for (String graphEdgeID : this.edgeDirections.keySet()) {
+				GraphEdgeDirection ged = this.edgeDirections.get(graphEdgeID); 
+				edgeDirectionsCopy.put(graphEdgeID, ged.getCopy());
+			}
+			copy.setEdgeDirections(edgeDirectionsCopy);
+		}
+		
 		return copy;
 	}
 	

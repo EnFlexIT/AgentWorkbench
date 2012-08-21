@@ -384,34 +384,22 @@ public class NetworkModel implements Serializable {
 	 * @param networkComponent The NetworkComponent to remove
 	 */
 	public void removeNetworkComponent(NetworkComponent networkComponent) {
-
-		if (networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
-			// ----------------------------------------------------------------
-			// --- A DistributionNode has to be removed -----------------------
-			// ----------------------------------------------------------------
-			String graphElementID = networkComponent.getGraphElementIDs().iterator().next();
-			GraphNode graphNode = (GraphNode) this.getGraphElement(graphElementID);
-			this.splitNetworkModelAtNode(graphNode);
-			this.graph.removeVertex(graphNode);
-			this.graphElements.remove(graphNode.getId());
-			// ----------------------------------------------------------------
-		} else {
-			// ----------------------------------------------------------------
-			// --- Another element has to be removed --------------------------
-			// ----------------------------------------------------------------
-			for (String graphElementID : networkComponent.getGraphElementIDs()) {
-				GraphElement graphElement = this.getGraphElement(graphElementID);
-				if (graphElement instanceof GraphEdge) {
-					graph.removeEdge((GraphEdge) graphElement);
-				} else if (graphElement instanceof GraphNode) {
-					HashSet<NetworkComponent> networkComponents = this.getNetworkComponents((GraphNode) graphElement);
-					if (networkComponents.size() < 2) {
-						this.graph.removeVertex((GraphNode) graphElement);
-					}
-				}
+//		if (networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+		// ----------------------------------------------------------------
+		// --- Another element has to be removed --------------------------
+		// ----------------------------------------------------------------
+		for (String graphElementID : networkComponent.getGraphElementIDs()) {
+			GraphElement graphElement = this.getGraphElement(graphElementID);
+			if (graphElement instanceof GraphEdge) {
+				graph.removeEdge((GraphEdge) graphElement);
+			} else if (graphElement instanceof GraphNode) {
+				HashSet<NetworkComponent> networkComponents = this.getNetworkComponents((GraphNode) graphElement);
+				if (networkComponents.size() < 2) {
+					this.graph.removeVertex((GraphNode) graphElement);
+				} 
 			}
-			// ----------------------------------------------------------------
 		}
+		// ----------------------------------------------------------------
 		networkComponents.remove(networkComponent.getId());
 		this.refreshGraphElements();
 	}
@@ -1581,9 +1569,23 @@ public class NetworkModel implements Serializable {
 	 * @param networkComponent the NetworkComponent
 	 */
 	public void setDirectionsOfNetworkComponent(NetworkComponent networkComponent) {
+		
 		HashMap<String, GraphEdgeDirection> edgeHash = networkComponent.getEdgeDirections();
 		for (GraphEdgeDirection direction : edgeHash.values()) {
+			// --- Set direction in this NetworkModel -------------------------
 			this.setGraphEdgeDirection(direction);
+
+			// ----------------------------------------------------------------
+			// --- Set the direction also to the alternative NetworkModels ----
+			// ----------------------------------------------------------------
+			if (this.alternativeNetworkModel!=null && this.alternativeNetworkModel.size()>0) {
+				for (NetworkModel altNetModel : this.alternativeNetworkModel.values()) {
+					if (altNetModel.getNetworkComponent(networkComponent.getId())!=null) {
+						altNetModel.setGraphEdgeDirection(direction);
+					}
+				}
+			}
+			// ----------------------------------------------------------------
 		}
 	}
 	
