@@ -1,9 +1,8 @@
 package gasmas.resourceallocation;
 
-import java.io.Serializable;
 import java.util.HashSet;
 
-public class SimplificationData implements Serializable {
+public class SimplificationData extends GenericMesssageData {
 
 	private static final long serialVersionUID = 827774764094560195L;
 

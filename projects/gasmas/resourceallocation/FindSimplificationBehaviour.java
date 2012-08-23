@@ -3,7 +3,6 @@ package gasmas.resourceallocation;
 import gasmas.agents.components.BranchAgent;
 import gasmas.agents.components.GenericNetworkAgent;
 import gasmas.ontology.ClusterNotification;
-import jade.core.AID;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +34,7 @@ public class FindSimplificationBehaviour {
 
 	/** The agent, how started the behaviour */
 	private GenericNetworkAgent myAgent;
+	private InitialProcessBehaviour partentBehaviour;
 
 	/** The network model. */
 	private NetworkModel myNetworkModel;
@@ -92,11 +92,12 @@ public class FindSimplificationBehaviour {
 	 * @param agent
 	 * @param environmentModel
 	 */
-	public FindSimplificationBehaviour(GenericNetworkAgent genericNetworkAgent, NetworkModel networkModel) {
+	public FindSimplificationBehaviour(GenericNetworkAgent genericNetworkAgent, NetworkModel networkModel, InitialProcessBehaviour partentBehaviour) {
 		this.myAgent = genericNetworkAgent;
 		this.myNetworkModel = networkModel;
 		this.myNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
 		this.myNeighbours = this.myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent);
+		this.partentBehaviour = partentBehaviour;
 	}
 
 	/**
@@ -128,8 +129,7 @@ public class FindSimplificationBehaviour {
 	}
 
 	/**
-	 * Get the messages and calls the appropriate method to deal with this type
-	 * of message
+	 * Get the messages and calls the appropriate method to deal with this type of message
 	 * 
 	 * @param msg
 	 */
@@ -143,9 +143,16 @@ public class FindSimplificationBehaviour {
 				e.printStackTrace();
 			}
 		}
-		SimplificationData content = (SimplificationData) msg.getNotification();
+		SimplificationData content = (SimplificationData) ((InitialBehaviourMessageContainer) msg.getNotification()).getData();
 		String sender = msg.getSender().getLocalName();
 		buildCluster(content, sender);
+		// --- Send the information about a deleted message to the manager agent ---
+		try {
+			wait(5);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		myAgent.sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg-"));
 	}
 
 	/**
@@ -240,7 +247,7 @@ public class FindSimplificationBehaviour {
 								msgSend(initiator, content);
 							}
 						} else {
-							// --- Component get already a clustering question, check how to react --- 
+							// --- Component get already a clustering question, check how to react ---
 							toAsk.add(sender);
 							if (content.getUrInitiator().compareTo(duringAClusterUrInitiator) < 0) {
 								System.out.println("Got an second question for clustering with an higher prio: " + myNetworkComponent.getId() + " from " + sender + " Initiator: "
@@ -290,6 +297,7 @@ public class FindSimplificationBehaviour {
 
 	/**
 	 * Send the cluster to the manager agent
+	 * 
 	 * @param list
 	 */
 	private void setCluster(HashSet<String> list) {
@@ -300,6 +308,7 @@ public class FindSimplificationBehaviour {
 		// --- Cluster must be larger than the minimal cluster size ---
 		if (list.size() > minClusterSize) {
 			System.out.println("Von " + myNetworkComponent.getId() + " Cluster: " + list);
+			myAgent.sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg+"));
 			// --- Send the notification about the cluster to the manager agent ---
 			ClusterNotification cn = new ClusterNotification();
 			cn.setReason("newCluster");
@@ -314,11 +323,8 @@ public class FindSimplificationBehaviour {
 	 * @param receiver
 	 * @param content
 	 */
-	public void msgSend(String receiver, SimplificationData simplificationData) {
-		// --- Try to send the message until the method gives back true ---
-		while (myAgent.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), simplificationData) == false) {
-			System.out.println("PROBLEM (FS) to send a message to " + receiver + " from " + myAgent.getLocalName());
-		}
-
+	public void msgSend(String receiver, GenericMesssageData content) {
+		partentBehaviour.msgSend(receiver, content);
 	}
+
 }

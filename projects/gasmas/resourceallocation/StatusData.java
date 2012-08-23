@@ -15,12 +15,19 @@ public class StatusData implements Serializable {
 	/** Shows the name of a cluster, in which the receiver is */
 	String clusterName = "";
 
+	/** Shows the reason of the message */
+	String reason = "";
+	
 	public int getPhase() {
 		return phase;
 	}
 
 	public String getClusterName() {
 		return clusterName;
+	}
+	
+	public String getReason() {
+		return reason;
 	}
 
 	public StatusData(int step) {
@@ -30,6 +37,11 @@ public class StatusData implements Serializable {
 	public StatusData(String clusterName) {
 		this.phase = -1;
 		this.clusterName = clusterName;
+	}
+	
+	public StatusData(int step, String reason) {
+		this.phase = step;
+		this.reason = reason;
 	}
 
 }

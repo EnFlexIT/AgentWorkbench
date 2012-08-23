@@ -38,7 +38,6 @@ import gasmas.agents.components.PipeAgent;
 import gasmas.agents.components.PipeShortAgent;
 import gasmas.agents.components.SimpleValveAgent;
 import gasmas.ontology.DirectionSettingNotification;
-import jade.core.AID;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -69,6 +68,7 @@ public class FindDirectionBehaviour {
 
 	/** The agent, how started the behaviour */
 	private GenericNetworkAgent myAgent;
+	private InitialProcessBehaviour partentBehaviour;
 
 	/** The network model. */
 	private NetworkModel myNetworkModel;
@@ -78,6 +78,9 @@ public class FindDirectionBehaviour {
 
 	/** Shows, if this NetworkComponent already set the directions. */
 	private boolean done = false;
+
+	/** Shows, if this NetworkComponent has fixed directions. */
+	private boolean fixed = false;
 
 	/** Shows if this component had started */
 	private boolean startdone = false;
@@ -118,12 +121,12 @@ public class FindDirectionBehaviour {
 	 * @param myNetworkModel
 	 * @param environmentModel
 	 */
-	public FindDirectionBehaviour(GenericNetworkAgent agent, NetworkModel myNetworkModel) {
+	public FindDirectionBehaviour(GenericNetworkAgent agent, NetworkModel myNetworkModel, InitialProcessBehaviour partentBehaviour) {
 		this.myAgent = agent;
 		this.myNetworkModel = myNetworkModel;
 		this.myNetworkComponent = myNetworkModel.getNetworkComponent(myAgent.getLocalName());
 		this.myNeighbours = myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent);
-
+		this.partentBehaviour = partentBehaviour;
 	}
 
 	/**
@@ -178,6 +181,7 @@ public class FindDirectionBehaviour {
 				msgSend(netCompFrom.getId(), new FindDirData("out"));
 			}
 			// --- Component is done ---
+			fixed = true;
 			done = true;
 		}
 		// --- The start of the component is done ---
@@ -188,6 +192,7 @@ public class FindDirectionBehaviour {
 	 * Start of the second step, where the component try to guess (to find cycles)
 	 */
 	public void startStep2() {
+		System.out.println("SD");
 		// --- Boolean to show the component, that guessing is allowed ---
 		tryToGuess = true;
 
@@ -207,13 +212,11 @@ public class FindDirectionBehaviour {
 			p += 1;
 		}
 		if ((p - i) <= 2 && i > 0) {
-//			System.out.println("Start second step " + myAgent.getLocalName());
+			// System.out.println("Start second step " + myAgent.getLocalName());
 			// --- Possible start point found, start guessing ---
-//			if (myAgent.getLocalName().equals("n53") || myAgent.getLocalName().equals("n49")|| myAgent.getLocalName().equals("n52")){
 			for (int k = 1; k < toInform.split("::").length; k++) {
 				msgSend(toInform.split("::")[k], new FindDirData(myAgent.getLocalName(), "?"));
 			}
-//		}
 		}
 	}
 
@@ -248,7 +251,7 @@ public class FindDirectionBehaviour {
 				e.printStackTrace();
 			}
 		}
-		FindDirData content = (FindDirData) msg.getNotification();
+		FindDirData content = (FindDirData) ((InitialBehaviourMessageContainer) msg.getNotification()).getData();
 		String sender = msg.getSender().getLocalName();
 		// --- Check the flow and call the appropriate method ---
 		if (content.getFlow().equals("in")) {
@@ -260,6 +263,13 @@ public class FindDirectionBehaviour {
 		} else if (content.getFlow().equals("?")) {
 			forwardingMaybe(sender, content);
 		}
+		// --- Send the information about a deleted message to the manager agent ---
+		try {
+			wait(5);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		myAgent.sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg-"));
 	}
 
 	/**
@@ -278,10 +288,8 @@ public class FindDirectionBehaviour {
 		} else {
 			done = false;
 			if (content.getWay().equals("")) {
-				if (hashSet.contains(sender) == false) {
-					// --- Information about the flow get add to the appropriate HashSet ---
-					hashSet.add(sender);
-				}
+				// --- Information about the flow get add to the appropriate HashSet ---
+				hashSet.add(sender);
 			} else {
 				System.out.println(myAgent.getLocalName() + "   " + msg + "   " + sender + "   " + content.getWay());
 				hashSet.add(sender);
@@ -326,7 +334,6 @@ public class FindDirectionBehaviour {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -407,7 +414,6 @@ public class FindDirectionBehaviour {
 			return;
 
 		}
-
 	}
 
 	/**
@@ -459,7 +465,7 @@ public class FindDirectionBehaviour {
 						if (outgoing.contains(content.getWay().split("::")[i])) {
 							newFlow = "in";
 						}
-						if (!newFlow.equals("")){
+						if (!newFlow.equals("")) {
 							break;
 						}
 					}
@@ -473,8 +479,8 @@ public class FindDirectionBehaviour {
 							} else if (newFlow.equals("out")) {
 								incoming.add(inform.split("::")[i]);
 							}
-							System.out.println("Send direction from " + myAgent.getLocalName() + " to " +inform.split("::")[i] + " with " + newFlow);
-							if (!inform.split("::")[i].equals(content.getWay().split("::")[1])){
+							System.out.println("Send direction from " + myAgent.getLocalName() + " to " + inform.split("::")[i] + " with " + newFlow);
+							if (!inform.split("::")[i].equals(content.getWay().split("::")[1])) {
 								content.setWay(changeOrder(content.getWay()));
 							}
 							msgSend(inform.split("::")[i], new FindDirData(deleteFirstStation(deleteFirstStation(content.getWay())), newFlow));
@@ -488,7 +494,7 @@ public class FindDirectionBehaviour {
 					System.out.println("No direction for my own way!" + myAgent.getLocalName() + "   " + direction);
 				}
 			} else {
-//				System.out.println(myAgent.getLocalName() + "    " + content.getWay());
+				// System.out.println(myAgent.getLocalName() + "    " + content.getWay());
 				// --- Check, if this station is two times in the way, but is not the start point ---
 				for (int i = 1; i < content.getWay().split("::").length; i++) {
 					if (content.getWay().split("::")[i].equals(myAgent.getLocalName())) {
@@ -510,18 +516,19 @@ public class FindDirectionBehaviour {
 			}
 		} else {
 			/* Message is too old and get ignored */
-//			System.out.println("Message too old, " + myAgent.getLocalName());
+			// System.out.println("Message too old, " + myAgent.getLocalName());
 		}
 	}
 
 	/**
 	 * Change the order of the stations
+	 * 
 	 * @param way
 	 * @return
 	 */
 	private String changeOrder(String way) {
 		String wayWithNewOrder = "";
-		for (int i = way.split("::").length-1; i > 1; i--) {
+		for (int i = way.split("::").length - 1; i > 1; i--) {
 			wayWithNewOrder += "::" + way.split("::")[i];
 		}
 		return wayWithNewOrder;
@@ -549,7 +556,7 @@ public class FindDirectionBehaviour {
 	 * Set the directions to the network model / network manager
 	 */
 	public void setDirections() {
-		if (!done) {
+		if (!done && !fixed) {
 			// --- Delete the list of maybe flows ---
 			// --- Check, if we have information, which we can set in the network model ---
 			if (((!incoming.isEmpty() || !outgoing.isEmpty()) && this.myNeighbours.size() > 2) || (!incoming.isEmpty() && !outgoing.isEmpty() && this.myNeighbours.size() == 2)) {
@@ -599,10 +606,6 @@ public class FindDirectionBehaviour {
 	 * @param content
 	 */
 	public void msgSend(String receiver, GenericMesssageData content) {
-		// --- Try to send the message until the method gives back true ---
-		while (myAgent.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), content) == false) {
-			System.out.println("PROBLEM (FD) to send a message to " + receiver + " from " + myAgent.getLocalName());
-		}
-
+		partentBehaviour.msgSend(receiver, content);
 	}
 }

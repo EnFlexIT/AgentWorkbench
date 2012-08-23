@@ -127,7 +127,7 @@ public class ClusterNACoalitionBehaviour extends ParallelBehaviour {
 		HashSet<String> found = clusterNetworkComponent.getNetworkComponentIDs();
 		ClusterNotification cn = new ClusterNotification();
 		cn.setNotificationObject(found);
-		cn.setReason("furtherClustering::"+ clusterNetworkComponent.getId());
+		cn.setReason("furtherClustering//"+ clusterNetworkComponent.getId());
 		((SimulationAgent) myAgent).sendManagerNotification(cn);
 	}
 }

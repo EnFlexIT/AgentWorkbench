@@ -72,8 +72,6 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 	public void analyseClusters() {
 		Date begin = new Date();
 		System.out.println("Begin CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + begin.getTime());
-		// Send information, that the algorithm is still working
-		((GenericNetworkAgent) myAgent).sendManagerNotification(new StatusData(((GenericNetworkAgent) myAgent).getStep()));
 		Subgraph subgraph = startPathAnalysis(networkModel);
 		if (subgraph != null) {
 			NetworkModel copyNetworkModel = getClusterNM();
@@ -81,8 +79,6 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 			coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent, true);
 		}
 		Date end = new Date();
-		// Send information, that the algorithm is still working
-		((GenericNetworkAgent) myAgent).sendManagerNotification(new StatusData(((GenericNetworkAgent) myAgent).getStep()));
 		System.out.println("End CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + end.getTime() + " Duration: " + (end.getTime() - begin.getTime()));
 	}
 

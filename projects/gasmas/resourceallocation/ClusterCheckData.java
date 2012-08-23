@@ -1,9 +1,8 @@
 package gasmas.resourceallocation;
 
-import java.io.Serializable;
 import java.util.HashSet;
 
-public class ClusterCheckData implements Serializable {
+public class ClusterCheckData extends GenericMesssageData {
 
 	private static final long serialVersionUID = -3498150685713525063L;
 
