@@ -244,15 +244,28 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      */
     private void setFocusOnAlternativeTab(String tabTitle2Focus) {
     	
+    	// --- Try parent element -------------------------
     	if (this.getParent() instanceof JTabbedPane) {
     		JTabbedPane tabs = (JTabbedPane) this.getParent();
     		for (int i = 0; i < tabs.getTabCount(); i++) {
     			if (tabs.getTitleAt(i).equals(tabTitle2Focus)) {
     				tabs.setSelectedIndex(i);
-    				break;
+    				return;
     			}
 			}
     	}
+    	
+    	// --- Try current JTabbedPane -------------------- 
+    	if (this.jTabbedPaneAltNetModels!=null) {
+    		JTabbedPane tabs = this.getJTabbedPaneAltNetModels();
+    		for (int i = 0; i < tabs.getTabCount(); i++) {
+    			if (tabs.getTitleAt(i).equals(tabTitle2Focus)) {
+    				tabs.setSelectedIndex(i);
+    				return;
+    			}
+    		}	
+    	}
+
     }
     
     /**
@@ -362,7 +375,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      */
     private DefaultTableModel getDefaultTableModel4Components() {
     	if (componentsTableModel==null) {
-    		componentsTableModel = getDefaultTableModel4ComponentsNew();
+    		componentsTableModel = this.getDefaultTableModel4ComponentsNew();
     	}
     	return componentsTableModel;
     }
@@ -413,7 +426,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 				boolean toggle = false;
 				boolean extend = false;
 				// Selecting the cell in the table
-				getJTableComponents().changeSelection(viewRowIndex, viewColumnIndex, toggle, extend);
+				this.getJTableComponents().changeSelection(viewRowIndex, viewColumnIndex, toggle, extend);
 				break;
 		    }
 		}
