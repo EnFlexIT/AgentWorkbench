@@ -252,7 +252,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 				// --- New cluster found, so no special operations needed ---
 				clusterNetworkModel = this.getClusteredModel();
 				
-			}else if (cn.getReason().startsWith("rearrangeCluster")){
+			} else if (cn.getReason().startsWith("rearrangeCluster")){
 				// --- Rearrange of an existing cluster ---
 				clusterNetworkModel = this.getClusteredModel();
 				// --- Remove the existing cluster ---
@@ -264,7 +264,8 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 				clusterNetworkModel.replaceClusterByComponents(oldClusterNetworkComponent);
 				// --- Delete alternative network model ---
 				clusterNetworkModel.getAlternativeNetworkModel().remove(oldClusterNetworkComponent.getId());
-			}else if (cn.getReason().startsWith("furtherClustering")){
+				
+			} else if (cn.getReason().startsWith("furtherClustering")){
 				// --- At least one new cluster found ---
 				changeDuringStep = true;
 				// --- The reason also got information about in which cluster, the algorithm found another cluster  ---
@@ -315,6 +316,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 				this.setActualMessageFlow(new StatusData(-1, "msg-"));
 				ComponentFunctions.printAmountOfDiffernetTypesOfAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 			}
+			
 		} else if (notification.getNotification() instanceof DirectionSettingNotification) {
 
 			DirectionSettingNotification dsn = (DirectionSettingNotification) notification.getNotification();
@@ -332,6 +334,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			// -------------------------------
 			NetworkComponentDirectionNotification ncdm = new NetworkComponentDirectionNotification(networkComponent);
 			this.sendDisplayAgentNotification(ncdm);
+			
 		} else if (notification.getNotification() instanceof StatusData) {
 			StatusData information = ((StatusData) notification.getNotification());
 			// A agent is still working in a specific step

@@ -200,7 +200,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		    this.networkModelTabs = new HashMap<String, GraphEnvironmentControllerGUI>();
 	
 		    // --- Display the normal topology ------------
-		    jTabbedPaneAltNetModels.addTab(Language.translate(this.sourceTopologyTabName), getJSplitPaneRoot());
+		    this.jTabbedPaneAltNetModels.addTab(Language.translate(this.sourceTopologyTabName), this.getJSplitPaneRoot());
 		    this.networkModelTabs.put(Language.translate(this.sourceTopologyTabName), this);
 	
 		}
@@ -213,23 +213,28 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      */
     public void setUseTabs(boolean use) {
 
-		if (this.useTabs != use) {
+		if (this.useTabs!=use) {
 		    // --- Change the appearance of this tab ----------------
 		    this.useTabs = use;
 		    this.remove(this.mainDisplayComponent);
-	
-		    if (this.useTabs == true) {
+		    if (this.useTabs==true) {
 				// --- NO tabs were displayed yet => show them now --
 				this.mainDisplayComponent = this.getJTabbedPaneAltNetModels();
+				
 		    } else {
 				// --- Tabs are displayed => remove them now --------
-				this.mainDisplayComponent = getJSplitPaneRoot();
+		    	if (this.jTabbedPaneAltNetModels!=null) {
+		    		this.jTabbedPaneAltNetModels = null;
+		    	}
+		    	this.mainDisplayComponent = this.getJSplitPaneRoot();
+		    	
 		    }
-	
+		    
 		    // --- Finally ------------------------------------------
 		    this.add(this.mainDisplayComponent, null);
 		    this.validate();
 		    this.repaint();
+
 		}
     }
 
