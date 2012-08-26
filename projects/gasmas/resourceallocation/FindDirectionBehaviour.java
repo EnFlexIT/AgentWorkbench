@@ -192,7 +192,6 @@ public class FindDirectionBehaviour {
 	 * Start of the second step, where the component try to guess (to find cycles)
 	 */
 	public void startStep2() {
-		System.out.println("SD");
 		// --- Boolean to show the component, that guessing is allowed ---
 		tryToGuess = true;
 
@@ -291,8 +290,8 @@ public class FindDirectionBehaviour {
 				// --- Information about the flow get add to the appropriate HashSet ---
 				hashSet.add(sender);
 			} else {
-				System.out.println(myAgent.getLocalName() + "   " + msg + "   " + sender + "   " + content.getWay());
 				hashSet.add(sender);
+				done = true;
 				if (!myNetworkComponent.getAgentClassName().equals(BranchAgent.class.getName()) && !content.getWay().split("::")[0].equals("end")) {
 					hashSet2.add(content.getWay().split("::")[0]);
 					msgSend(content.getWay().split("::")[0], new FindDirData(deleteFirstStation(content.getWay()), msg));
@@ -428,70 +427,71 @@ public class FindDirectionBehaviour {
 		// --- Check if the information is to "old", too many hops ---
 		if (content.getWay().split("::").length < maxMsgAge) {
 			if (content.getWay().split("::")[0].equals(myAgent.getLocalName())) {
-				// --- Got my own ? message, so this should be a cycle ---
-				System.out.println("My own name in the way: " + myAgent.getLocalName() + " Way: " + content.getWay().toString());
-				Iterator<NetworkComponent> it1 = myNeighbours.iterator();
-				String inform = "";
-				String direction = "";
-				boolean found = false;
-				String newFlow = "";
-				// --- Check, which neighbours have to inform about the cycle ---
-				// --- Check, which flow have to be assigned to the neighbours from outside ---
-				while (it1.hasNext()) {
-					String neighbour = it1.next().getId();
-					for (int i = 1; i < content.getWay().split("::").length; i++) {
-						if (content.getWay().split("::")[i].equals(neighbour)) {
-							inform += "::" + neighbour;
-							found = true;
-						}
-					}
-					if (!found) {
-						direction = neighbour;
-					}
-					found = false;
-				}
-				if (incoming.contains(direction)) {
-					newFlow = "in";
-				}
-				if (outgoing.contains(direction)) {
-					newFlow = "out";
-				}
-				// --- Check, which flow have to be assigned to the neighbours from inside ---
-				if (newFlow.equals("")) {
-					for (int i = 1; i < content.getWay().split("::").length; i++) {
-						if (incoming.contains(content.getWay().split("::")[i])) {
-							newFlow = "out";
-						}
-						if (outgoing.contains(content.getWay().split("::")[i])) {
-							newFlow = "in";
-						}
-						if (!newFlow.equals("")) {
-							break;
-						}
-					}
-				}
-				if (!newFlow.equals("")) {
-					// --- Only use the information about a cycle, if we have 2 unknown neighbours ---
-					if (inform.split("::").length == 3) {
-						for (int i = 1; i < inform.split("::").length; i++) {
-							if (newFlow.equals("in")) {
-								outgoing.add(inform.split("::")[i]);
-							} else if (newFlow.equals("out")) {
-								incoming.add(inform.split("::")[i]);
+				if (incoming.size() + outgoing.size() + dead.size() != myNeighbours.size()) {
+					// --- Got my own ? message, so this should be a cycle ---
+					System.out.println("My own name in the way: " + myAgent.getLocalName() + " Way: " + content.getWay().toString());
+					Iterator<NetworkComponent> it1 = myNeighbours.iterator();
+					String inform = "";
+					String direction = "";
+					boolean found = false;
+					String newFlow = "";
+					// --- Check, which neighbours have to inform about the cycle ---
+					// --- Check, which flow have to be assigned to the neighbours from outside ---
+					while (it1.hasNext()) {
+						String neighbour = it1.next().getId();
+						for (int i = 1; i < content.getWay().split("::").length; i++) {
+							if (content.getWay().split("::")[i].equals(neighbour)) {
+								inform += "::" + neighbour;
+								found = true;
 							}
-							System.out.println("Send direction from " + myAgent.getLocalName() + " to " + inform.split("::")[i] + " with " + newFlow);
-							if (!inform.split("::")[i].equals(content.getWay().split("::")[1])) {
-								content.setWay(changeOrder(content.getWay()));
-							}
-							msgSend(inform.split("::")[i], new FindDirData(deleteFirstStation(deleteFirstStation(content.getWay())), newFlow));
 						}
-						// --- Component has new information, so done = false ---
-						done = false;
-						setDirections();
+						if (!found) {
+							direction = neighbour;
+						}
+						found = false;
 					}
-				} else {
-					// --- Maybe found an cycle, but also did not know the direction of the third neighbour ---
-					System.out.println("No direction for my own way!" + myAgent.getLocalName() + "   " + direction);
+					if (incoming.contains(direction)) {
+						newFlow = "in";
+					}
+					if (outgoing.contains(direction)) {
+						newFlow = "out";
+					}
+					// // --- Check, which flow have to be assigned to the neighbours from inside ---
+					// if (newFlow.equals("")) {
+					// for (int i = 1; i < content.getWay().split("::").length; i++) {
+					// if (incoming.contains(content.getWay().split("::")[i])) {
+					// newFlow = "out";
+					// }
+					// if (outgoing.contains(content.getWay().split("::")[i])) {
+					// newFlow = "in";
+					// }
+					// if (!newFlow.equals("")) {
+					// break;
+					// }
+					// }
+					// }
+					if (!newFlow.equals("")) {
+						// --- Only use the information about a cycle, if we have 2 unknown neighbours ---
+						if (inform.split("::").length == 3) {
+							for (int i = 1; i < inform.split("::").length; i++) {
+								if (newFlow.equals("in")) {
+									outgoing.add(inform.split("::")[i]);
+								} else if (newFlow.equals("out")) {
+									incoming.add(inform.split("::")[i]);
+								}
+								System.out.println("Send direction from " + myAgent.getLocalName() + " to " + inform.split("::")[i] + " with " + newFlow);
+								if (!inform.split("::")[i].equals(content.getWay().split("::")[1])) {
+									content.setWay(changeOrder(content.getWay()));
+								}
+								msgSend(inform.split("::")[i], new FindDirData(deleteFirstStation(deleteFirstStation(content.getWay())), newFlow));
+							}
+							done = true;
+							setDirections();
+						}
+					} else {
+						// --- Maybe found an cycle, but also did not know the direction of the third neighbour ---
+						System.out.println("No direction for my own way!" + myAgent.getLocalName() + "   " + direction);
+					}
 				}
 			} else {
 				// System.out.println(myAgent.getLocalName() + "    " + content.getWay());
@@ -528,10 +528,15 @@ public class FindDirectionBehaviour {
 	 */
 	private String changeOrder(String way) {
 		String wayWithNewOrder = "";
-		for (int i = way.split("::").length - 1; i > 1; i--) {
+		for (int i = way.split("::").length - 1; i >= 0; i--) {
 			wayWithNewOrder += "::" + way.split("::")[i];
 		}
-		return wayWithNewOrder;
+		if (wayWithNewOrder.startsWith("::" + myAgent.getLocalName())) {
+			return wayWithNewOrder.substring(2);
+		} else {
+			return myAgent.getLocalName() + wayWithNewOrder;
+		}
+
 	}
 
 	/**

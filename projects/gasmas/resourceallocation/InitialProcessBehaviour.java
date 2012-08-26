@@ -14,11 +14,10 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 
-
 public class InitialProcessBehaviour extends Behaviour {
 
 	private static final long serialVersionUID = -5824582916279166931L;
-	
+
 	protected GenericNetworkAgent myAgent;
 	/** Different Behaviours */
 	protected FindDirectionBehaviour findDirectionBehaviour;
@@ -26,19 +25,19 @@ public class InitialProcessBehaviour extends Behaviour {
 	protected CheckingClusterBehaviour checkingClusterBehaviour;
 	protected CoalitionBehaviour coalitionBehaviour;
 	protected PassiveNAResponderBehaviour passiveClusteringBehaviour;
-	
+
 	/** Shows the internal step of the agent */
 	private int step = -1;
 
 	public int getStep() {
 		return step;
 	}
-	
+
 	public InitialProcessBehaviour(GenericNetworkAgent myAgent) {
 		super();
 		this.myAgent = myAgent;
 	}
-	
+
 	/**
 	 * Starts the find direction behaviour
 	 */
@@ -61,25 +60,32 @@ public class InitialProcessBehaviour extends Behaviour {
 	 */
 	protected void startClusteringBehaviour() {
 		// Get the cluster network model, where the clustering algorithm should work
+		if (myAgent.getPartOfCluster().isEmpty()) {
+			myAgent.setPartOfCluster("ClusterdNM");
+		}
 		NetworkModel clusterNetworkModel = myAgent.myNetworkModel.getAlternativeNetworkModel().get(myAgent.getPartOfCluster().split("::")[0]);
 		for (int i = 1; i < myAgent.getPartOfCluster().split("::").length; i++) {
 			clusterNetworkModel = clusterNetworkModel.getAlternativeNetworkModel().get(myAgent.getPartOfCluster().split("::")[i]);
 		}
 
-		// The algorithm distinguishes between active and passive components, so different behaviours have to be started
-		if (myAgent.myNetworkComponent.getAgentClassName().equals(CompressorAgent.class.getName()) || myAgent.myNetworkComponent.getAgentClassName().equals(ControlValveAgent.class.getName())
-				|| myAgent.myNetworkComponent.getAgentClassName().equals(ClusterNetworkAgent.class.getName())) {
-			// || myNetworkComponent.getAgentClassName().equals(SimpleValveAgent.class.getName())
-			// Active component
-			coalitionBehaviour = new CoalitionBehaviour(myAgent, myAgent.getMyEnvironmentModel(), clusterNetworkModel, new CycleClusteringBehaviour(myAgent, clusterNetworkModel));
-			myAgent.addBehaviour(coalitionBehaviour);
+		if (clusterNetworkModel == null) {
+			System.err.println("No appropriate network model found at for clustering " + myAgent.getLocalName() + ". Should be part of cluster: " + myAgent.getPartOfCluster());
 		} else {
-			// Passive component
-			passiveClusteringBehaviour = new PassiveNAResponderBehaviour(myAgent);
-			myAgent.addBehaviour(passiveClusteringBehaviour);
+			// The algorithm distinguishes between active and passive components, so different behaviours have to be
+			// started
+			if (myAgent.myNetworkComponent.getAgentClassName().equals(CompressorAgent.class.getName()) || myAgent.myNetworkComponent.getAgentClassName().equals(ControlValveAgent.class.getName())
+					|| myAgent.myNetworkComponent.getAgentClassName().equals(ClusterNetworkAgent.class.getName())) {
+				// || myNetworkComponent.getAgentClassName().equals(SimpleValveAgent.class.getName())
+				// Active component
+				coalitionBehaviour = new CoalitionBehaviour(myAgent, myAgent.getMyEnvironmentModel(), clusterNetworkModel, new CycleClusteringBehaviour(myAgent, clusterNetworkModel));
+				myAgent.addBehaviour(coalitionBehaviour);
+			} else {
+				// Passive component
+				passiveClusteringBehaviour = new PassiveNAResponderBehaviour(myAgent);
+				myAgent.addBehaviour(passiveClusteringBehaviour);
 
+			}
 		}
-
 	}
 
 	/**
@@ -96,7 +102,7 @@ public class InitialProcessBehaviour extends Behaviour {
 		// Start find simplification behaviour
 		findSimplificationBehaviour.start();
 	}
-	
+
 	/**
 	 * Method to interpret status information
 	 * 
@@ -125,7 +131,6 @@ public class InitialProcessBehaviour extends Behaviour {
 			} else if (phase == 3) {
 				// Starts a verification of the cluster found in step 2
 				step = 3;
-				// sendManagerNotification(new StatusData(step));
 				startCheckingClusterBehaviour();
 			} else if (phase == 4) {
 				// Starts a second clustering process, using a special algorithm
@@ -147,7 +152,8 @@ public class InitialProcessBehaviour extends Behaviour {
 				if (myAgent.myNetworkComponent.getId().startsWith(NetworkManagerAgent.clusterComponentPrefix)) {
 					for (String networkComponentID : ((ClusterNetworkComponent) myAgent.myNetworkComponent).getNetworkComponentIDs()) {
 						int tries = 0;
-						while (myAgent.sendAgentNotification(new AID(networkComponentID, AID.ISLOCALNAME), new InitialBehaviourMessageContainer(new StatusData(myAgent.getPartOfCluster() + "::" + myAgent.myNetworkComponent.getId()))) == false) {
+						while (myAgent.sendAgentNotification(new AID(networkComponentID, AID.ISLOCALNAME), new InitialBehaviourMessageContainer(new StatusData(myAgent.getPartOfCluster() + "::"
+								+ myAgent.myNetworkComponent.getId()))) == false) {
 							tries++;
 							if (tries > 10) {
 								System.out.println("PROBLEM (GNA) to send a message to " + networkComponentID + " from " + myAgent.getLocalName());
@@ -162,7 +168,7 @@ public class InitialProcessBehaviour extends Behaviour {
 			}
 		}
 	}
-	
+
 	/**
 	 * Get the messages and calls the appropriate method to deal with this type of message
 	 * 
@@ -197,7 +203,7 @@ public class InitialProcessBehaviour extends Behaviour {
 		}
 		return notification;
 	}
-	
+
 	/**
 	 * Send a message about the simulation service
 	 * 
@@ -217,8 +223,10 @@ public class InitialProcessBehaviour extends Behaviour {
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jade.core.behaviours.Behaviour#action()
 	 */
 	@Override
@@ -226,7 +234,9 @@ public class InitialProcessBehaviour extends Behaviour {
 		reactOnStatusInformation(0, "");
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jade.core.behaviours.Behaviour#done()
 	 */
 	@Override

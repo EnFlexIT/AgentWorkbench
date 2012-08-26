@@ -307,6 +307,9 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 				clusterNetworkModel.renameNetworkComponent(clusterNetCompIdOld, clusterNetCompIdNew);
 				
 				if (clusterNetworkComponent != null) {
+					if (clusterNetworkComponent.getId().equals("CCn10FF")){
+						System.out.println(clusterNetworkComponent.getClusterNetworkModel().getAlternativeNetworkModel().get("Cn10F"));
+					}
 					clusterNetworkModel.getAlternativeNetworkModel().put(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 					// Starts the agent to the cluster network component
 					this.startClusterAgent(clusterNetCompIdNew, clusterNetworkComponent, partOfCluster);
@@ -352,7 +355,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			if (actualMessageFlow == 0) {
 				// --- Short delay, that all agents can proceed new information ---
 				try {
-					wait(50);
+					wait(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
