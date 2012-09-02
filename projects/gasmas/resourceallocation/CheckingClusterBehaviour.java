@@ -76,7 +76,8 @@ public class CheckingClusterBehaviour {
 	/**
 	 * Start of the behaviour, which start the checking cluster algorithm
 	 */
-	public void start() {
+	public synchronized void start() {
+		myAgent.sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg+"));
 		// Start from the clusters
 		Iterator<NetworkComponent> neighbours = myNeighbours.iterator();
 		while (neighbours.hasNext()) {
@@ -105,6 +106,13 @@ public class CheckingClusterBehaviour {
 				System.out.println(myNetworkComponent.getId() + " Start with " + toAsk.size() + "(" + toAsk + ")" + " and neighbours " + myNeighbours.size());
 			}
 		}
+		// --- Send the information about a deleted message to the manager agent ---
+		try {
+			wait(5);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		myAgent.sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg-"));
 		startdone = true;
 	}
 
