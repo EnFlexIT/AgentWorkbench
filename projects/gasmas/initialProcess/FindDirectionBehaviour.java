@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package gasmas.resourceallocation;
+package gasmas.initialProcess;
 
 import gasmas.agents.components.BranchAgent;
 import gasmas.agents.components.CompressorAgent;
@@ -50,24 +50,32 @@ import agentgui.envModel.graph.networkModel.NetworkComponentDirectionSettings;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
+/**
+ * The Class FindDirectionBehaviour.
+ * 
+ * @author Benjamin Schwartz - University of Duisburg - Essen
+ */
 public class FindDirectionBehaviour {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4471250444116997490L;
 
-	/** Integer, which holds the maximal age of a ?-message */
+	/** Integer, which holds the maximal age of a ?-message. */
 	private static final int maxMsgAge = 8;
 
-	/** NetworkComponentNames, which has positive flow */
+	/** NetworkComponentNames, which has positive flow. */
 	private HashSet<String> incoming = new HashSet<String>();
 
-	/** NetworkComponentNames, which has negative flow */
+	/** NetworkComponentNames, which has negative flow. */
 	private HashSet<String> outgoing = new HashSet<String>();
 
-	/** NetworkComponentNames, which has no flow */
+	/** NetworkComponentNames, which has no flow. */
 	private HashSet<String> dead = new HashSet<String>();
 
-	/** The agent, how started the behaviour */
+	/** The agent, how started the behaviour. */
 	private GenericNetworkAgent myAgent;
+	
+	/** The partent behaviour. */
 	private InitialProcessBehaviour partentBehaviour;
 
 	/** The network model. */
@@ -82,44 +90,75 @@ public class FindDirectionBehaviour {
 	/** Shows, if this NetworkComponent has fixed directions. */
 	private boolean fixed = false;
 
-	/** Shows if this component had started */
+	/** Shows if this component had started. */
 	private boolean startdone = false;
 
-	/** Shows if this component is allowed to guessing the next step */
+	/** Shows if this component is allowed to guessing the next step. */
 	private boolean tryToGuess = false;
 
-	/** Saves the neighbours of this component */
+	/** Saves the neighbours of this component. */
 	private Vector<NetworkComponent> myNeighbours;
 
+	/**
+	 * Adds the dead.
+	 *
+	 * @param dead the dead
+	 */
 	public void addDead(String dead) {
 		this.dead.add(dead);
 	}
 
+	/**
+	 * Gets the dead.
+	 *
+	 * @return the dead
+	 */
 	public HashSet<String> getDead() {
 		return dead;
 	}
 
+	/**
+	 * Adds the incoming.
+	 *
+	 * @param incoming the incoming
+	 */
 	public void addIncoming(String incoming) {
 		this.incoming.add(incoming);
 	}
 
+	/**
+	 * Gets the incoming.
+	 *
+	 * @return the incoming
+	 */
 	public HashSet<String> getIncoming() {
 		return incoming;
 	}
 
+	/**
+	 * Adds the outgoing.
+	 *
+	 * @param outgoing the outgoing
+	 */
 	public void addOutgoing(String outgoing) {
 		this.outgoing.add(outgoing);
 	}
 
+	/**
+	 * Gets the outgoing.
+	 *
+	 * @return the outgoing
+	 */
 	public HashSet<String> getOutgoing() {
 		return outgoing;
 	}
 
 	/**
-	 * @param agent
-	 * @param myNetworkModel
-	 * @param myNetworkModel
-	 * @param environmentModel
+	 * Instantiates a new find direction behaviour.
+	 *
+	 * @param agent the agent
+	 * @param myNetworkModel the my network model
+	 * @param partentBehaviour the partent behaviour
 	 */
 	public FindDirectionBehaviour(GenericNetworkAgent agent, NetworkModel myNetworkModel, InitialProcessBehaviour partentBehaviour) {
 		this.myAgent = agent;
@@ -130,7 +169,7 @@ public class FindDirectionBehaviour {
 	}
 
 	/**
-	 * Start of the behaviour, which start the find direction algorithm
+	 * Start of the behaviour, which start the find direction algorithm.
 	 */
 	public void start() {
 		String flow = "";
@@ -173,12 +212,12 @@ public class FindDirectionBehaviour {
 			if (netCompToHash != null) {
 				NetworkComponent netCompTo = netCompToHash.iterator().next();
 				outgoing.add(netCompTo.getId());
-				msgSend(netCompTo.getId(), new FindDirData("in"));
+				msgSend(netCompTo.getId(), new FindDirectionData("in"));
 			}
 			if (netCompFromHash != null) {
 				NetworkComponent netCompFrom = netCompFromHash.iterator().next();
 				incoming.add(netCompFrom.getId());
-				msgSend(netCompFrom.getId(), new FindDirData("out"));
+				msgSend(netCompFrom.getId(), new FindDirectionData("out"));
 			}
 			// --- Component is done ---
 			fixed = true;
@@ -189,7 +228,7 @@ public class FindDirectionBehaviour {
 	}
 
 	/**
-	 * Start of the second step, where the component try to guess (to find cycles)
+	 * Start of the second step, where the component try to guess (to find cycles).
 	 */
 	public void startStep2() {
 		// --- Boolean to show the component, that guessing is allowed ---
@@ -214,15 +253,15 @@ public class FindDirectionBehaviour {
 			// System.out.println("Start second step " + myAgent.getLocalName());
 			// --- Possible start point found, start guessing ---
 			for (int k = 1; k < toInform.split("::").length; k++) {
-				msgSend(toInform.split("::")[k], new FindDirData(myAgent.getLocalName(), "?"));
+				msgSend(toInform.split("::")[k], new FindDirectionData(myAgent.getLocalName(), "?"));
 			}
 		}
 	}
 
 	/**
-	 * Send its flow to the neighbours
-	 * 
-	 * @param flow
+	 * Send its flow to the neighbours.
+	 *
+	 * @param flow the flow
 	 */
 	private void sendToAllNeighbours(String flow) {
 		// --- Component is done ---
@@ -231,14 +270,14 @@ public class FindDirectionBehaviour {
 		Iterator<NetworkComponent> it1 = myNeighbours.iterator();
 		while (it1.hasNext()) {
 			String receiver = it1.next().getId();
-			msgSend(receiver, new FindDirData(flow));
+			msgSend(receiver, new FindDirectionData(flow));
 		}
 	}
 
 	/**
-	 * Get the messages and calls the appropriate method to deal with this type of message
-	 * 
-	 * @param msg
+	 * Get the messages and calls the appropriate method to deal with this type of message.
+	 *
+	 * @param msg the msg
 	 */
 	public synchronized void interpretMsg(EnvironmentNotification msg) {
 		// --- Wait until the start is done ---
@@ -250,7 +289,7 @@ public class FindDirectionBehaviour {
 				e.printStackTrace();
 			}
 		}
-		FindDirData content = (FindDirData) ((InitialBehaviourMessageContainer) msg.getNotification()).getData();
+		FindDirectionData content = (FindDirectionData) ((InitialBehaviourMessageContainer) msg.getNotification()).getData();
 		String sender = msg.getSender().getLocalName();
 		// --- Check the flow and call the appropriate method ---
 		if (content.getFlow().equals("in")) {
@@ -272,15 +311,15 @@ public class FindDirectionBehaviour {
 	}
 
 	/**
-	 * Method to interpret flow messages
-	 * 
-	 * @param sender
-	 * @param content
-	 * @param hashSet2
-	 * @param hashSet
-	 * @param msg
+	 * Method to interpret flow messages.
+	 *
+	 * @param sender the sender
+	 * @param content the content
+	 * @param hashSet2 the hash set2
+	 * @param hashSet the hash set
+	 * @param msg the msg
 	 */
-	private void forwarding(String sender, FindDirData content, HashSet<String> hashSet2, HashSet<String> hashSet, String msg) {
+	private void forwarding(String sender, FindDirectionData content, HashSet<String> hashSet2, HashSet<String> hashSet, String msg) {
 		if (hashSet2.contains(sender)) {
 			// --- Information, which did not fit the information of this component, contradiction ---
 			System.out.println("Error, message with a wrong direction at " + myAgent.getLocalName() + " to " + sender);
@@ -294,7 +333,7 @@ public class FindDirectionBehaviour {
 				done = true;
 				if (!myNetworkComponent.getAgentClassName().equals(BranchAgent.class.getName()) && !content.getWay().split("::")[0].equals("end")) {
 					hashSet2.add(content.getWay().split("::")[0]);
-					msgSend(content.getWay().split("::")[0], new FindDirData(deleteFirstStation(content.getWay()), msg));
+					msgSend(content.getWay().split("::")[0], new FindDirectionData(deleteFirstStation(content.getWay()), msg));
 				}
 			}
 			// --- Try to interpret the information to find new information ---
@@ -317,7 +356,7 @@ public class FindDirectionBehaviour {
 				if (hashSet2.contains(toInform) == false) {
 					// --- Inform neighbour about this new information ---
 					hashSet2.add(toInform);
-					msgSend(toInform, new FindDirData(msg));
+					msgSend(toInform, new FindDirectionData(msg));
 				}
 				setDirections();
 			} else if ((p - i) > 1) {
@@ -327,7 +366,7 @@ public class FindDirectionBehaviour {
 					while (it11.hasNext()) {
 						String neighbour = it11.next().getId();
 						if (neighbour.equals(sender) == false) {
-							msgSend(neighbour, new FindDirData(myAgent.getLocalName(), "?"));
+							msgSend(neighbour, new FindDirectionData(myAgent.getLocalName(), "?"));
 						}
 					}
 				}
@@ -336,9 +375,9 @@ public class FindDirectionBehaviour {
 	}
 
 	/**
-	 * Method to interpret message, which inform about a dead component
-	 * 
-	 * @param sender
+	 * Method to interpret message, which inform about a dead component.
+	 *
+	 * @param sender the sender
 	 */
 	private void deadPipe(String sender) {
 		// --- Information about the flow get add to the appropriate HashSet ---
@@ -363,7 +402,7 @@ public class FindDirectionBehaviour {
 		if ((p - i) == 1) {
 			// --- If all neighbours except one are dead, the other one is also dead ---
 			addDead(toInform);
-			msgSend(toInform, new FindDirData("dead"));
+			msgSend(toInform, new FindDirectionData("dead"));
 			System.out.println(myAgent.getLocalName() + " All dead: " + getDead());
 			return;
 		}
@@ -385,7 +424,7 @@ public class FindDirectionBehaviour {
 		if ((p - i) == 1) {
 			// --- If all neighbours except one are dead or incoming, then the one must be outgoing ---
 			addOutgoing(toInform);
-			msgSend(toInform, new FindDirData("in"));
+			msgSend(toInform, new FindDirectionData("in"));
 			setDirections();
 			return;
 
@@ -408,7 +447,7 @@ public class FindDirectionBehaviour {
 		if ((p - i) == 1) {
 			// --- If all neighbours except one are dead or outgoing, then the one must be incoming ---
 			addIncoming(toInform);
-			msgSend(toInform, new FindDirData("out"));
+			msgSend(toInform, new FindDirectionData("out"));
 			setDirections();
 			return;
 
@@ -416,14 +455,12 @@ public class FindDirectionBehaviour {
 	}
 
 	/**
-	 * Method to interpret guessed flow messages
-	 * 
-	 * @param sender
-	 * @param content
-	 * @param msg1
-	 * @param hashSet2
+	 * Method to interpret guessed flow messages.
+	 *
+	 * @param sender the sender
+	 * @param content the content
 	 */
-	private void forwardingMaybe(String sender, FindDirData content) {
+	private void forwardingMaybe(String sender, FindDirectionData content) {
 		// --- Check if the information is to "old", too many hops ---
 		if (content.getWay().split("::").length < maxMsgAge) {
 			if (content.getWay().split("::")[0].equals(myAgent.getLocalName())) {
@@ -483,7 +520,7 @@ public class FindDirectionBehaviour {
 								if (!inform.split("::")[i].equals(content.getWay().split("::")[1])) {
 									content.setWay(changeOrder(content.getWay()));
 								}
-								msgSend(inform.split("::")[i], new FindDirData(deleteFirstStation(deleteFirstStation(content.getWay())), newFlow));
+								msgSend(inform.split("::")[i], new FindDirectionData(deleteFirstStation(deleteFirstStation(content.getWay())), newFlow));
 							}
 							done = true;
 							setDirections();
@@ -509,7 +546,7 @@ public class FindDirectionBehaviour {
 				while (it11.hasNext()) {
 					String neighbour = it11.next().getId();
 					if (neighbour.equals(sender) == false) {
-						msgSend(neighbour, new FindDirData(content.getWay() + "::" + myAgent.getLocalName(), "?"));
+						msgSend(neighbour, new FindDirectionData(content.getWay() + "::" + myAgent.getLocalName(), "?"));
 
 					}
 				}
@@ -521,10 +558,10 @@ public class FindDirectionBehaviour {
 	}
 
 	/**
-	 * Change the order of the stations
-	 * 
-	 * @param way
-	 * @return
+	 * Change the order of the stations.
+	 *
+	 * @param way the way
+	 * @return the string
 	 */
 	private String changeOrder(String way) {
 		String wayWithNewOrder = "";
@@ -540,9 +577,9 @@ public class FindDirectionBehaviour {
 	}
 
 	/**
-	 * Delete the first station from the way (so the first string in front of ::)
-	 * 
-	 * @param way
+	 * Delete the first station from the way (so the first string in front of ::).
+	 *
+	 * @param way the way
 	 * @return way without the first station
 	 */
 	private String deleteFirstStation(String way) {
@@ -558,7 +595,7 @@ public class FindDirectionBehaviour {
 	}
 
 	/**
-	 * Set the directions to the network model / network manager
+	 * Set the directions to the network model / network manager.
 	 */
 	public void setDirections() {
 		if (!done && !fixed) {
@@ -605,10 +642,10 @@ public class FindDirectionBehaviour {
 	}
 
 	/**
-	 * Send a message about the simulation service
-	 * 
-	 * @param receiver
-	 * @param content
+	 * Send a message about the simulation service.
+	 *
+	 * @param receiver the receiver
+	 * @param content the content
 	 */
 	public void msgSend(String receiver, GenericMesssageData content) {
 		partentBehaviour.msgSend(receiver, content);

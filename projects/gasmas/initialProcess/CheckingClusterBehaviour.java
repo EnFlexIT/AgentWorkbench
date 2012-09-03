@@ -1,4 +1,32 @@
-package gasmas.resourceallocation;
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
+package gasmas.initialProcess;
 
 import gasmas.agents.components.ClusterNetworkAgent;
 import gasmas.agents.components.EntryAgent;
@@ -16,8 +44,14 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
+/**
+ * The Class CheckingClusterBehaviour.
+ * 
+ * @author Benjamin Schwartz - University of Duisburg - Essen
+ */
 public class CheckingClusterBehaviour {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2365487643740457952L;
 
 	/** The agent, how started the behaviour */
@@ -101,7 +135,7 @@ public class CheckingClusterBehaviour {
 				duringACluster = true;
 				askingCluster = true;
 				found.add(myNetworkComponent.getId());
-				msgSend((String) toAsk.toArray()[alreadyReportedStations], new ClusterCheckData(myNetworkComponent.getId()));
+				msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(myNetworkComponent.getId(), 2));
 				alreadyReportedStations += 1;
 				System.out.println(myNetworkComponent.getId() + " Start with " + toAsk.size() + "(" + toAsk + ")" + " and neighbours " + myNeighbours.size());
 			}
@@ -141,7 +175,7 @@ public class CheckingClusterBehaviour {
 				e.printStackTrace();
 			}
 		}
-		ClusterCheckData content = (ClusterCheckData) ((InitialBehaviourMessageContainer) msg.getNotification()).getData();
+		SimplificationData content = (SimplificationData) ((InitialBehaviourMessageContainer) msg.getNotification()).getData();
 		String sender = msg.getSender().getLocalName();
 		buildCluster(content, sender);
 		// --- Send the information about a deleted message to the manager agent ---
@@ -159,7 +193,7 @@ public class CheckingClusterBehaviour {
 	 * @param content
 	 * @param sender
 	 */
-	private void buildCluster(ClusterCheckData content, String sender) {
+	private void buildCluster(SimplificationData content, String sender) {
 		if (content.isAnswer()) {
 			// --- Message is a answer to an clustering question
 			if (content.getWay().isEmpty() && !myNetworkComponent.getId().startsWith(NetworkManagerAgent.clusterComponentPrefix)) {
@@ -246,7 +280,7 @@ public class CheckingClusterBehaviour {
 								// Component ask a neighbour about clustering possibilities
 								content.addStation(myNetworkComponent.getId());
 								if (alreadyReportedStations < toAsk.size()) {
-									msgSend((String) toAsk.toArray()[alreadyReportedStations], new ClusterCheckData(myNetworkComponent.getId(), content.getWay(), content.getUrInitiator()));
+									msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(myNetworkComponent.getId(), content.getWay(), content.getUrInitiator(), 2));
 									// --- Remind which neigbours are already asked ---
 									alreadyReportedStations += 1;
 								} else {
@@ -260,7 +294,7 @@ public class CheckingClusterBehaviour {
 								System.out.println("During clustering at, kill: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
 								// --- Get another request of clustering, which means is in between of two clusters ->
 								// no possible improvements ---
-								msgSend(content.getInitiator(), new ClusterCheckData(myNetworkComponent.getId(), true, content.getUrInitiator()));
+								msgSend(content.getInitiator(), new SimplificationData(myNetworkComponent.getId(), true, content.getUrInitiator(), 2));
 
 							}
 						}
@@ -276,7 +310,7 @@ public class CheckingClusterBehaviour {
 	 * @param content
 	 * @param sender
 	 */
-	private void nextRound(ClusterCheckData content, String sender) {
+	private void nextRound(SimplificationData content, String sender) {
 		if (alreadyReportedStations < toAsk.size()) {
 			// --- Component has still neighbours to ask about cluster possibilities ---
 			System.out.println("A branch " + myNetworkComponent.getId() + " is asking the next station " + toAsk.toArray()[alreadyReportedStations] + ". Answer from " + sender + " Initiator: "

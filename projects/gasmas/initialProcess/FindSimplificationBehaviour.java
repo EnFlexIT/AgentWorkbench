@@ -1,4 +1,32 @@
-package gasmas.resourceallocation;
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
+package gasmas.initialProcess;
 
 import gasmas.agents.components.BranchAgent;
 import gasmas.agents.components.GenericNetworkAgent;
@@ -13,27 +41,35 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
+/**
+ * The Class FindSimplificationBehaviour.
+ * 
+ * @author Benjamin Schwartz - University of Duisburg - Essen
+ */
 public class FindSimplificationBehaviour {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2365487643740457952L;
 
-	/** NetworkComponentNames, which has positive flow */
+	/** NetworkComponentNames, which has positive flow. */
 	private HashSet<String> incoming = new HashSet<String>();
 
-	/** NetworkComponentNames, which has negative flow */
+	/** NetworkComponentNames, which has negative flow. */
 	private HashSet<String> outgoing = new HashSet<String>();
 
-	/** NetworkComponentNames, which has no flow */
+	/** NetworkComponentNames, which has no flow. */
 	private HashSet<String> dead = new HashSet<String>();
 
-	/** NetworkComponentNames, which has positive flow */
+	/** NetworkComponentNames, which has positive flow. */
 	private HashSet<String> toAsk = new HashSet<String>();
 
-	/** Stores the next station, how asked because of a cluster */
+	/** Stores the next station, how asked because of a cluster. */
 	private HashMap<String, SimplificationData> nextQuestionier = new HashMap<String, SimplificationData>();
 
-	/** The agent, how started the behaviour */
+	/** The agent, how started the behaviour. */
 	private GenericNetworkAgent myAgent;
+	
+	/** The partent behaviour. */
 	private InitialProcessBehaviour partentBehaviour;
 
 	/** The network model. */
@@ -42,55 +78,90 @@ public class FindSimplificationBehaviour {
 	/** My own NetworkComponent. */
 	private NetworkComponent myNetworkComponent;
 
-	/** Represents the station, which already contribute to the simplification */
+	/** Represents the station, which already contribute to the simplification. */
 	private int alreadyReportedStations = 0;
 
-	/** Represents the initiator */
+	/** Represents the initiator. */
 	private String initiator = "";
 
-	/** Shows if this component has information */
+	/** Shows if this component has information. */
 	private boolean noInformation = false;
 
-	/** Shows if this component had started */
+	/** Shows if this component had started. */
 	private boolean startdone = false;
 
-	/** Shows if this component had started to build a cluster */
+	/** Shows if this component had started to build a cluster. */
 	private boolean duringACluster = false;
+	
+	/** The during a cluster ur initiator. */
 	private String duringAClusterUrInitiator = "";
 
-	/** Saves the neighbours of this component */
+	/** Saves the neighbours of this component. */
 	private Vector<NetworkComponent> myNeighbours;
 
-	/** Saves minimal cluster size */
+	/** Saves minimal cluster size. */
 	private final int minClusterSize = 4;
 
+	/**
+	 * Gets the incoming.
+	 *
+	 * @return the incoming
+	 */
 	public HashSet<String> getIncoming() {
 		return incoming;
 	}
 
+	/**
+	 * Sets the incoming.
+	 *
+	 * @param incoming the new incoming
+	 */
 	public void setIncoming(HashSet<String> incoming) {
 		this.incoming = incoming;
 	}
 
+	/**
+	 * Gets the outgoing.
+	 *
+	 * @return the outgoing
+	 */
 	public HashSet<String> getOutgoing() {
 		return outgoing;
 	}
 
+	/**
+	 * Sets the outgoing.
+	 *
+	 * @param outgoing the new outgoing
+	 */
 	public void setOutgoing(HashSet<String> outgoing) {
 		this.outgoing = outgoing;
 	}
 
+	/**
+	 * Gets the dead.
+	 *
+	 * @return the dead
+	 */
 	public HashSet<String> getDead() {
 		return dead;
 	}
 
+	/**
+	 * Sets the dead.
+	 *
+	 * @param dead the new dead
+	 */
 	public void setDead(HashSet<String> dead) {
 		this.dead = dead;
 	}
 
 	/**
-	 * @param agent
-	 * @param environmentModel
+	 * Instantiates a new find simplification behaviour.
+	 *
+	 * @param genericNetworkAgent the generic network agent
+	 * @param networkModel the network model
+	 * @param partentBehaviour the partent behaviour
 	 */
 	public FindSimplificationBehaviour(GenericNetworkAgent genericNetworkAgent, NetworkModel networkModel, InitialProcessBehaviour partentBehaviour) {
 		this.myAgent = genericNetworkAgent;
@@ -101,7 +172,7 @@ public class FindSimplificationBehaviour {
 	}
 
 	/**
-	 * Start of the behaviour, which start the find simplification algorithm
+	 * Start of the behaviour, which start the find simplification algorithm.
 	 */
 	public void start() {
 		// --- All flow information combined in one HashSet ---
@@ -115,7 +186,7 @@ public class FindSimplificationBehaviour {
 			duringACluster = true;
 			duringAClusterUrInitiator = myNetworkComponent.getId();
 			// --- Ask the first station about possible clusters ---
-			msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(myNetworkComponent.getId(), true));
+			msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(myNetworkComponent.getId(), true, 1));
 			alreadyReportedStations += 1;
 			System.out.println(myNetworkComponent.getId() + " Start with " + toAsk.size() + "(" + toAsk + ")" + " and neighbours " + myNeighbours.size() + " In: " + incoming + " Out: " + outgoing
 					+ " Dead: " + dead);
@@ -129,9 +200,9 @@ public class FindSimplificationBehaviour {
 	}
 
 	/**
-	 * Get the messages and calls the appropriate method to deal with this type of message
-	 * 
-	 * @param msg
+	 * Get the messages and calls the appropriate method to deal with this type of message.
+	 *
+	 * @param msg the msg
 	 */
 	public synchronized void interpretMsg(EnvironmentNotification msg) {
 		// --- Wait until the start is done ---
@@ -156,10 +227,10 @@ public class FindSimplificationBehaviour {
 	}
 
 	/**
-	 * Interpret the message, how to cluster
-	 * 
-	 * @param content
-	 * @param sender
+	 * Interpret the message, how to cluster.
+	 *
+	 * @param content the content
+	 * @param sender the sender
 	 */
 	private void buildCluster(SimplificationData content, String sender) {
 		if (content.isAnswer()) {
@@ -236,7 +307,7 @@ public class FindSimplificationBehaviour {
 							// Component ask a neighbour about clustering possibilities
 							content.addStation(myNetworkComponent.getId());
 							if (alreadyReportedStations < toAsk.size()) {
-								msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(myNetworkComponent.getId(), content.getWay(), false, content.getUrInitiator()));
+								msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(myNetworkComponent.getId(), content.getWay(), false, content.getUrInitiator(), 1));
 								// --- Remind which neigbours are already asked ---
 								alreadyReportedStations += 1;
 							} else {
@@ -276,7 +347,7 @@ public class FindSimplificationBehaviour {
 	}
 
 	/**
-	 * Stops the clustering and starts the clustering again for another component with an higher priority
+	 * Stops the clustering and starts the clustering again for another component with an higher priority.
 	 */
 	private void workOnHigherRequest() {
 		// --- Reset the internal variables ---
@@ -296,9 +367,9 @@ public class FindSimplificationBehaviour {
 	}
 
 	/**
-	 * Send the cluster to the manager agent
-	 * 
-	 * @param list
+	 * Send the cluster to the manager agent.
+	 *
+	 * @param list the new cluster
 	 */
 	private void setCluster(HashSet<String> list) {
 		// --- Add only station, how are fully part of the cluster ---
@@ -318,10 +389,10 @@ public class FindSimplificationBehaviour {
 	}
 
 	/**
-	 * Send a message about the simulation service
-	 * 
-	 * @param receiver
-	 * @param content
+	 * Send a message about the simulation service.
+	 *
+	 * @param receiver the receiver
+	 * @param content the content
 	 */
 	public void msgSend(String receiver, GenericMesssageData content) {
 		partentBehaviour.msgSend(receiver, content);

@@ -1,80 +1,135 @@
-package gasmas.resourceallocation;
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
+package gasmas.initialProcess;
 
 import gasmas.agents.components.ClusterNetworkAgent;
 import gasmas.agents.components.CompressorAgent;
 import gasmas.agents.components.ControlValveAgent;
 import gasmas.agents.components.GenericNetworkAgent;
-import gasmas.agents.manager.NetworkManagerAgent;
 import gasmas.clustering.behaviours.CycleClusteringBehaviour;
 import gasmas.clustering.coalitions.CoalitionBehaviour;
 import gasmas.clustering.coalitions.PassiveNAResponderBehaviour;
+import jade.core.AID;
+import jade.core.behaviours.OneShotBehaviour;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
-import jade.core.AID;
-import jade.core.behaviours.Behaviour;
 
-public class InitialProcessBehaviour extends Behaviour {
+/**
+ * The Class InitialProcessBehaviour is used for organizatoric issues of the initial process.
+ * 
+ * @author Benjamin Schwartz - University of Duisburg - Essen
+ */
+public class InitialProcessBehaviour extends OneShotBehaviour {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5824582916279166931L;
 
+	/** The my agent. */
 	protected GenericNetworkAgent myAgent;
-	/** Different Behaviours */
+	
+	/* Different Behaviours. */
+	/** The find direction behaviour. */
 	protected FindDirectionBehaviour findDirectionBehaviour;
+	
+	/** The find simplification behaviour. */
 	protected FindSimplificationBehaviour findSimplificationBehaviour;
+	
+	/** The checking cluster behaviour. */
 	protected CheckingClusterBehaviour checkingClusterBehaviour;
+	
+	/** The coalition behaviour. */
 	protected CoalitionBehaviour coalitionBehaviour;
+	
+	/** The passive clustering behaviour. */
 	protected PassiveNAResponderBehaviour passiveClusteringBehaviour;
 
-	/** Shows the internal step of the agent */
+	/** Shows the internal step of the agent. */
 	private int step = -1;
 
+	/**
+	 * Gets the step.
+	 *
+	 * @return the step
+	 */
 	public int getStep() {
 		return step;
 	}
 
+	/**
+	 * Instantiates a new initial process behaviour.
+	 *
+	 * @param myAgent the my agent
+	 */
 	public InitialProcessBehaviour(GenericNetworkAgent myAgent) {
 		super();
 		this.myAgent = myAgent;
 	}
 
 	/**
-	 * Starts the find direction behaviour
+	 * Starts the find direction behaviour.
 	 */
 	private void startFindDirectionBehaviour() {
-		findDirectionBehaviour = new FindDirectionBehaviour(myAgent, myAgent.myNetworkModel, this);
+		findDirectionBehaviour = new FindDirectionBehaviour(myAgent, myAgent.getMyNetworkModel(), this);
 		findDirectionBehaviour.start();
 	}
 
 	/**
-	 * Starts the checking cluster behaviour
+	 * Starts the checking cluster behaviour.
 	 */
 	private void startCheckingClusterBehaviour() {
 
-		checkingClusterBehaviour = new CheckingClusterBehaviour(myAgent, myAgent.myNetworkModel, this);
+		checkingClusterBehaviour = new CheckingClusterBehaviour(myAgent, myAgent.getMyNetworkModel(), this);
 		checkingClusterBehaviour.start();
 	}
 
 	/**
-	 * Starts the clustering behaviour
+	 * Starts the clustering behaviour.
 	 */
 	protected void startClusteringBehaviour() {
 		// Get the cluster network model, where the clustering algorithm should work
 		if (myAgent.getPartOfCluster().isEmpty()) {
 			myAgent.setPartOfCluster("ClusterdNM");
 		}
-		NetworkModel clusterNetworkModel = myAgent.myNetworkModel.getAlternativeNetworkModel().get(myAgent.getPartOfCluster().split("::")[0]);
+		NetworkModel clusterNetworkModel = myAgent.getMyNetworkModel().getAlternativeNetworkModel().get(myAgent.getPartOfCluster().split("::")[0]);
 		for (int i = 1; i < myAgent.getPartOfCluster().split("::").length; i++) {
 			clusterNetworkModel = clusterNetworkModel.getAlternativeNetworkModel().get(myAgent.getPartOfCluster().split("::")[i]);
 		}
 
 		if (clusterNetworkModel == null) {
-			System.err.println("No appropriate network model found at for clustering " + myAgent.getLocalName() + ". Should be part of cluster: " + myAgent.getPartOfCluster());
+			System.err.println("No appropriate network model found for clustering at " + myAgent.getLocalName() + ". Should be part of cluster: " + myAgent.getPartOfCluster());
 		} else {
 			// The algorithm distinguishes between active and passive components, so different behaviours have to be
 			// started
-			if (myAgent.myNetworkComponent.getAgentClassName().equals(CompressorAgent.class.getName()) || myAgent.myNetworkComponent.getAgentClassName().equals(ControlValveAgent.class.getName())
-					|| myAgent.myNetworkComponent.getAgentClassName().equals(ClusterNetworkAgent.class.getName())) {
+			if (myAgent.getMyNetworkComponent().getAgentClassName().equals(CompressorAgent.class.getName())
+					|| myAgent.getMyNetworkComponent().getAgentClassName().equals(ControlValveAgent.class.getName())
+					|| myAgent.getMyNetworkComponent().getAgentClassName().equals(ClusterNetworkAgent.class.getName())) {
 				// || myNetworkComponent.getAgentClassName().equals(SimpleValveAgent.class.getName())
 				// Active component
 				coalitionBehaviour = new CoalitionBehaviour(myAgent, myAgent.getMyEnvironmentModel(), clusterNetworkModel, new CycleClusteringBehaviour(myAgent, clusterNetworkModel));
@@ -89,11 +144,11 @@ public class InitialProcessBehaviour extends Behaviour {
 	}
 
 	/**
-	 * Starts the find simplification behaviour
+	 * Starts the find simplification behaviour.
 	 */
 	private void startFindSimplificationBehaviour() {
 
-		findSimplificationBehaviour = new FindSimplificationBehaviour(myAgent, myAgent.myNetworkModel, this);
+		findSimplificationBehaviour = new FindSimplificationBehaviour(myAgent, myAgent.getMyNetworkModel(), this);
 		// Because the internal structures can not save dead pipes, so I have to
 		// transfer the knowledge from one behaviour to another
 		findSimplificationBehaviour.setDead(findDirectionBehaviour.getDead());
@@ -104,13 +159,13 @@ public class InitialProcessBehaviour extends Behaviour {
 	}
 
 	/**
-	 * Method to interpret status information
-	 * 
-	 * @param phase
-	 * @param clusterName
+	 * Method to interpret status information.
+	 *
+	 * @param phase the phase
+	 * @param clusterName the cluster name
 	 */
 	private void reactOnStatusInformation(int phase, String clusterName) {
-		if (myAgent.myNetworkModel == null) {
+		if (myAgent.getMyNetworkModel() == null) {
 			// Got status information, but no network model is there, so ignoring of the message
 			System.err.println("Error: " + myAgent.getLocalName() + " did not get the network model, so no status information are interpreted.");
 		} else {
@@ -149,11 +204,11 @@ public class InitialProcessBehaviour extends Behaviour {
 				// Saves the name of the cluster in which this agent is
 				myAgent.setPartOfCluster(clusterName);
 				// If this component is a Cluster, it have to inform the network components about the cluster in cluster
-				if (myAgent.myNetworkComponent.getId().startsWith(NetworkManagerAgent.clusterComponentPrefix)) {
-					for (String networkComponentID : ((ClusterNetworkComponent) myAgent.myNetworkComponent).getNetworkComponentIDs()) {
+				if (myAgent.getMyNetworkComponent() instanceof ClusterNetworkComponent) {
+					for (String networkComponentID : ((ClusterNetworkComponent) myAgent.getMyNetworkComponent()).getNetworkComponentIDs()) {
 						int tries = 0;
 						while (myAgent.sendAgentNotification(new AID(networkComponentID, AID.ISLOCALNAME), new InitialBehaviourMessageContainer(new StatusData(myAgent.getPartOfCluster() + "::"
-								+ myAgent.myNetworkComponent.getId()))) == false) {
+								+ myAgent.getMyNetworkComponent().getId()))) == false) {
 							tries++;
 							if (tries > 10) {
 								System.out.println("PROBLEM (GNA) to send a message to " + networkComponentID + " from " + myAgent.getLocalName());
@@ -170,13 +225,14 @@ public class InitialProcessBehaviour extends Behaviour {
 	}
 
 	/**
-	 * Get the messages and calls the appropriate method to deal with this type of message
-	 * 
-	 * @param msg
+	 * Get the messages and calls the appropriate method to deal with this type of message.
+	 *
+	 * @param notification the notification
+	 * @return the environment notification
 	 */
 	public synchronized EnvironmentNotification interpretMsg(EnvironmentNotification notification) {
 		Object content = ((InitialBehaviourMessageContainer) notification.getNotification()).getData();
-		if (content instanceof FindDirData) {
+		if (content instanceof FindDirectionData) {
 			if (findDirectionBehaviour == null) {
 				notification.moveLastOrBlock(100);
 				System.out.println("=> Notification parked for 'FindDirData' !Receiver: " + myAgent.getLocalName() + " Sender: " + notification.getSender().getLocalName());
@@ -184,18 +240,18 @@ public class InitialProcessBehaviour extends Behaviour {
 				findDirectionBehaviour.interpretMsg(notification);
 			}
 		} else if (content instanceof SimplificationData) {
-			if (findSimplificationBehaviour == null) {
-				notification.moveLastOrBlock(100);
-				System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + myAgent.getLocalName() + " Sender: " + notification.getSender().getLocalName());
-			} else {
-				findSimplificationBehaviour.interpretMsg(notification);
-			}
-		} else if (content instanceof ClusterCheckData) {
-			if (checkingClusterBehaviour == null) {
-				notification.moveLastOrBlock(100);
-				System.out.println("=> Notification parked for 'ClusterCheckData' ! Receiver: " + myAgent.getLocalName() + " Sender: " + notification.getSender().getLocalName());
-			} else {
-				checkingClusterBehaviour.interpretMsg(notification);
+			if (((SimplificationData) content).getStep() == 1) {
+				if (findSimplificationBehaviour == null) {
+					notification.moveLastOrBlock(100);
+					System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + myAgent.getLocalName() + " Sender: " + notification.getSender().getLocalName());
+				} else
+					findSimplificationBehaviour.interpretMsg(notification);
+			} else if (((SimplificationData) content).getStep() == 2) {
+				if (checkingClusterBehaviour == null) {
+					notification.moveLastOrBlock(100);
+					System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + myAgent.getLocalName() + " Sender: " + notification.getSender().getLocalName());
+				} else
+					checkingClusterBehaviour.interpretMsg(notification);
 			}
 		} else if (content instanceof StatusData) {
 			// Got status information
@@ -205,10 +261,10 @@ public class InitialProcessBehaviour extends Behaviour {
 	}
 
 	/**
-	 * Send a message about the simulation service
-	 * 
-	 * @param receiver
-	 * @param content
+	 * Send a message about the simulation service.
+	 *
+	 * @param receiver the receiver
+	 * @param content the content
 	 */
 	public void msgSend(String receiver, GenericMesssageData content) {
 		// --- Send the information about a new message to the manager agent ---
@@ -231,17 +287,8 @@ public class InitialProcessBehaviour extends Behaviour {
 	 */
 	@Override
 	public void action() {
+		// Start with the first step
 		reactOnStatusInformation(0, "");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jade.core.behaviours.Behaviour#done()
-	 */
-	@Override
-	public boolean done() {
-		return false;
 	}
 
 }

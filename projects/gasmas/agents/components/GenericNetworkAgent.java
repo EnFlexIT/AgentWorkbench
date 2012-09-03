@@ -28,45 +28,88 @@
  */
 package gasmas.agents.components;
 
+import gasmas.initialProcess.InitialBehaviourMessageContainer;
+import gasmas.initialProcess.InitialProcessBehaviour;
 import gasmas.resourceallocation.AllocData;
-import gasmas.resourceallocation.InitialBehaviourMessageContainer;
-import gasmas.resourceallocation.InitialProcessBehaviour;
 import gasmas.resourceallocation.ResourceAllocationBehaviour;
-import jade.core.ServiceException;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.SimulationAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
+/**
+ * This class can be used as a basis class for network components.
+ * It is responsible for the notification handling and to keep up to
+ * date in which network model the network component is and to start 
+ * the initial process behaviour. 
+ *
+ * @author Benjamin Schwartz - University of Duisburg - Essen
+ */
 public abstract class GenericNetworkAgent extends SimulationAgent {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1743261783247570185L;
 
-	public NetworkModel myNetworkModel = null;
-
-	/** My own NetworkComponent. */
-	public NetworkComponent myNetworkComponent;
+	/** The my network component. */
+	protected NetworkComponent myNetworkComponent;
 	
-	/** Contains a network component id, if the agent is part of a cluster */
+	/** The my network model. */
+	protected NetworkModel myNetworkModel = null;
+
+	/** Contains a network component id, if the agent is part of a cluster. */
 	protected String partOfCluster = "";
 
-	/** Shows, if this component need a normal initial process */
+	/** Shows, if this component need a normal initial process. */
 	protected boolean normalStart = true;
+
+	/** The initial process behaviour. */
+	private InitialProcessBehaviour initialProcessBehaviour;
 	
-	protected InitialProcessBehaviour initialProcessBehaviour;
-	protected ResourceAllocationBehaviour resourceAllocationBehaviour;
-	
+	/** The resource allocation behaviour. */
+	private ResourceAllocationBehaviour resourceAllocationBehaviour;
+
+	/**
+	 * Gets the my network component.
+	 *
+	 * @return the my network component
+	 */
+	public NetworkComponent getMyNetworkComponent() {
+		return myNetworkComponent;
+	}
+
+	/**
+	 * Gets the my network model.
+	 *
+	 * @return the my network model
+	 */
+	public NetworkModel getMyNetworkModel() {
+		return myNetworkModel;
+	}
+
+	/**
+	 * Gets the part of cluster.
+	 *
+	 * @return the part of cluster
+	 */
 	public String getPartOfCluster() {
 		return partOfCluster;
 	}
-	
-	public void setPartOfCluster(String temp) {
-		partOfCluster = temp;
+
+	/**
+	 * Sets the part of cluster.
+	 *
+	 * @param partOfCluster the new part of cluster
+	 */
+	public void setPartOfCluster(String partOfCluster) {
+		this.partOfCluster = partOfCluster;
 	}
-	
+
+	/**
+	 * Gets the my environment model.
+	 *
+	 * @return the my environment model
+	 */
 	public EnvironmentModel getMyEnvironmentModel() {
 		return myEnvironmentModel;
 	}
@@ -80,30 +123,8 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 	protected void setup() {
 		super.setup();
 
-		// Check for start arguments of the agent
-		if (this.getArguments() != null) {
-			// Used to give a cluster network component all information that are needed
-			if (this.getArguments()[0]!=null && this.getArguments()[0] instanceof Boolean) {
-				this.normalStart = (Boolean) this.getArguments()[0];	
-				this.myNetworkComponent = (NetworkComponent) this.getArguments()[1];
-				this.partOfCluster = (String) this.getArguments()[2];
-			}
-
-			try {
-				SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-				EnvironmentModel envModel = simHelper.getEnvironmentModel();
-				if (envModel != null) {
-					this.myEnvironmentModel = envModel;
-					this.myNetworkModel = ((NetworkModel) this.myEnvironmentModel.getDisplayEnvironment());
-
-				}
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
-		}
-		
+		// --- Creates and add the initialProcessBehaviour, but did not start it ---
 		initialProcessBehaviour = new InitialProcessBehaviour(this);
-
 	}
 
 	/*
@@ -120,7 +141,7 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 			this.myNetworkComponent = myNetworkModel.getNetworkComponent(this.getLocalName());
 			// Start of the initial start process
 			if (normalStart) {
-				initialProcessBehaviour.action();
+				this.addBehaviour(initialProcessBehaviour);
 			}
 		}
 

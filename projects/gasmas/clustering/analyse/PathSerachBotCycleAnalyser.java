@@ -28,7 +28,6 @@
  */
 package gasmas.clustering.analyse;
 
-
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ public class PathSerachBotCycleAnalyser {
 	/** The coordinates map. */
 	private HashMap<String, Point2D> coordinatesMap = new HashMap<String, Point2D>();
 
-	
 	/** The subgraphs. */
 	private ArrayList<Subgraph> subgraphs;
 
@@ -58,9 +56,11 @@ public class PathSerachBotCycleAnalyser {
 
 	/**
 	 * Instantiates a new ant circle analyser.
-	 *
-	 * @param ants the ants
-	 * @param networkModel the network model
+	 * 
+	 * @param ants
+	 *            the ants
+	 * @param networkModel
+	 *            the network model
 	 */
 	public PathSerachBotCycleAnalyser(NetworkModel networkModel) {
 		this.networkModel = networkModel;
@@ -72,20 +72,30 @@ public class PathSerachBotCycleAnalyser {
 			return null;
 		}
 		Subgraph subgraph = subgraphs.get(0);
+		if (subgraph.getNetworkComponents().containsAll(networkModel.getNetworkComponents().keySet())) {
+			subgraph.getNetworkComponents().clear();
+		}
 		for (Subgraph subgraphInList : subgraphs) {
-			if (subgraphInList.getNetworkComponents().size() < subgraph.getNetworkComponents().size()) {
-				subgraph = subgraphInList;
+			if (subgraphInList.getNetworkComponents().size() > subgraph.getNetworkComponents().size()) {
+				if (!subgraphInList.getNetworkComponents().containsAll(networkModel.getNetworkComponents().keySet())) {
+					subgraph = subgraphInList;
+				}
 			}
 		}
+		if (subgraph.getNetworkComponents().isEmpty())
+			subgraph = null;
 		return subgraph;
 	}
 
 	/**
 	 * adds all networkComponents which are inside the circle, based coordinates.
-	 *
-	 * @param networkModel the network model
-	 * @param path the path
-	 * @param alternatives the alternatives
+	 * 
+	 * @param networkModel
+	 *            the network model
+	 * @param path
+	 *            the path
+	 * @param alternatives
+	 *            the alternatives
 	 * @return the subgraph
 	 */
 	private Subgraph findSubgraph(NetworkModel networkModel, ArrayList<String> path, ArrayList<String> alternatives) {
@@ -104,11 +114,11 @@ public class PathSerachBotCycleAnalyser {
 		return subgraph;
 	}
 
-
 	/**
 	 * Gets the polygon2 d.
-	 *
-	 * @param path the path
+	 * 
+	 * @param path
+	 *            the path
 	 * @return the polygon2 d
 	 */
 	private Path2D getPolygon2D(ArrayList<String> path) {
@@ -116,11 +126,11 @@ public class PathSerachBotCycleAnalyser {
 		Path2D polygon = new Path2D.Double();
 		for (String componentID : path) {
 			Point2D point = coordinatesMap.get(componentID);
-			if (firstPointDrawn==false) {
+			if (firstPointDrawn == false) {
 				polygon.moveTo(point.getX(), point.getY());
 				firstPointDrawn = true;
 			} else {
-				polygon.lineTo(point.getX(), point.getY());	
+				polygon.lineTo(point.getX(), point.getY());
 			}
 		}
 		polygon.closePath();
@@ -129,9 +139,11 @@ public class PathSerachBotCycleAnalyser {
 
 	/**
 	 * Calculates Subgraph for Circle and it's interfaces and adds it to the List if it's good
-	 *
-	 * @param ant the ant
-	 * @param circles the circles
+	 * 
+	 * @param ant
+	 *            the ant
+	 * @param circles
+	 *            the circles
 	 */
 	public void addPathSearchBotToSubgraphs(PathSearchBot ant) {
 		Subgraph subgraph = findSubgraph(networkModel, ant.getPath(), ant.getAlternativePaths());
@@ -146,8 +158,9 @@ public class PathSerachBotCycleAnalyser {
 
 	/**
 	 * translates components into Position2D.
-	 *
-	 * @param networkModel the network model
+	 * 
+	 * @param networkModel
+	 *            the network model
 	 */
 	private void buildCoordinatesMap(NetworkModel networkModel) {
 		for (NetworkComponent networkComponent : networkModel.getNetworkComponents().values()) {
@@ -166,8 +179,9 @@ public class PathSerachBotCycleAnalyser {
 
 	/**
 	 * calculates the center for a list of graphNodes.
-	 *
-	 * @param graphNodes the graph nodes
+	 * 
+	 * @param graphNodes
+	 *            the graph nodes
 	 * @return the point2 d
 	 */
 	private Point2D calculateCenter(Vector<GraphNode> graphNodes) {
@@ -182,8 +196,9 @@ public class PathSerachBotCycleAnalyser {
 
 	/**
 	 * calculates center of lines and triangle, 3 point circles.
-	 *
-	 * @param graphNodes the graph nodes
+	 * 
+	 * @param graphNodes
+	 *            the graph nodes
 	 * @return the point2 d
 	 */
 	private Point2D center(Vector<GraphNode> graphNodes) {
@@ -198,8 +213,9 @@ public class PathSerachBotCycleAnalyser {
 
 	/**
 	 * calculates Centroid.
-	 *
-	 * @param graphNodes the graph nodes
+	 * 
+	 * @param graphNodes
+	 *            the graph nodes
 	 * @return the point2 d
 	 */
 	private Point2D polygonCentroid(Vector<GraphNode> graphNodes) {

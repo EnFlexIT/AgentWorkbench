@@ -1,5 +1,6 @@
 package gasmas.resourceallocation;
 
+import gasmas.initialProcess.GenericMesssageData;
 import jade.core.AID;
 
 import java.util.ArrayList;
