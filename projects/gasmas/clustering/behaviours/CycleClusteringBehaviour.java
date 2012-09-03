@@ -28,12 +28,10 @@
  */
 package gasmas.clustering.behaviours;
 
-import gasmas.agents.components.GenericNetworkAgent;
 import gasmas.clustering.analyse.ClusterIdentifier;
 import gasmas.clustering.analyse.PathSearchBotRunner;
 import gasmas.clustering.analyse.PathSerachBotCycleAnalyser;
 import gasmas.clustering.analyse.Subgraph;
-import gasmas.resourceallocation.StatusData;
 import jade.core.Agent;
 
 import java.util.Date;
@@ -72,7 +70,7 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 	public void analyseClusters() {
 		Date begin = new Date();
 		System.out.println("Begin CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + begin.getTime());
-		Subgraph subgraph = startPathAnalysis(networkModel);
+		Subgraph subgraph = startPathAnalysis(networkModel.getCopy());
 		if (subgraph != null) {
 			NetworkModel copyNetworkModel = getClusterNM();
 			ClusterNetworkComponent clusterNetworkComponent = copyNetworkModel.replaceComponentsByCluster(subgraph.getNetworkComponents(copyNetworkModel), true);

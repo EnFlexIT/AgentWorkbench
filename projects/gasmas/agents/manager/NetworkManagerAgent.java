@@ -295,10 +295,9 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 				ClusterNetworkComponent clusterNetworkComponent = clusterNetworkModel.replaceComponentsByCluster(clusterNetworkComponents, true);
 				
 				for (NetworkComponent networkComponent : clusterNetworkComponents) {
-					if (networkComponent.getId().startsWith(clusterComponentPrefix)) {
-						clusterNetworkModel.getAlternativeNetworkModel().remove(networkComponent.getId());
-						clusterNetworkComponent.getClusterNetworkModel().getAlternativeNetworkModel().put(networkComponent.getId(),
-								((ClusterNetworkComponent) networkComponent).getClusterNetworkModel());
+					if (networkComponent instanceof ClusterNetworkComponent) {
+						NetworkModel nmRemoved = clusterNetworkModel.getAlternativeNetworkModel().remove(networkComponent.getId());
+						clusterNetworkComponent.getClusterNetworkModel().getAlternativeNetworkModel().put(networkComponent.getId(), nmRemoved);
 					}
 				}
 
@@ -375,13 +374,13 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			networkComponentIDs.addAll(getClusteredModel().getNetworkComponents().keySet());
 		} else if (actualStep == 3) {
 			getAllNetworkComponents(networkComponentIDs, myNetworkModel);
-			StartNextStepClustering startWaker = new StartNextStepClustering(this, 10000);
+			StartNextStepClustering startWaker = new StartNextStepClustering(this, 20000);
 			this.addBehaviour(startWaker);
 		} else if (actualStep == 4) {
 			// Clustering Round until the clustering algorithm did not find anything new
 			if (changeDuringStep) {
 				getAllNetworkComponents(networkComponentIDs, myNetworkModel);
-				StartNextStepClustering startWaker = new StartNextStepClustering(this, 10000);
+				StartNextStepClustering startWaker = new StartNextStepClustering(this, 20000);
 				this.addBehaviour(startWaker);
 			}
 			changeDuringStep = false;

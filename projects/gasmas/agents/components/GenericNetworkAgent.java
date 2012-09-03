@@ -83,9 +83,12 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 		// Check for start arguments of the agent
 		if (this.getArguments() != null) {
 			// Used to give a cluster network component all information that are needed
-			normalStart = (Boolean) this.getArguments()[0];
-			this.myNetworkComponent = (NetworkComponent) this.getArguments()[1];
-			partOfCluster = (String) this.getArguments()[2];
+			if (this.getArguments()[0]!=null && this.getArguments()[0] instanceof Boolean) {
+				this.normalStart = (Boolean) this.getArguments()[0];	
+				this.myNetworkComponent = (NetworkComponent) this.getArguments()[1];
+				this.partOfCluster = (String) this.getArguments()[2];
+			}
+
 			try {
 				SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 				EnvironmentModel envModel = simHelper.getEnvironmentModel();

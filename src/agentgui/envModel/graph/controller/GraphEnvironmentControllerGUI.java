@@ -699,7 +699,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 				    graphController.setEnvironmentModel(altNetModel);
 				    graphControllerGUI = (GraphEnvironmentControllerGUI) graphController.getEnvironmentPanel();
 
-				    this.jTabbedPaneAltNetModels.addTab(altNetModelName, graphControllerGUI);
+				    this.getJTabbedPaneAltNetModels().addTab(altNetModelName, graphControllerGUI);
 				    this.networkModelTabs.put(altNetModelName, graphControllerGUI);
 		
 				} else {
@@ -711,10 +711,10 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 				}
 				
 				// --- Set the appearance of the GUI to use or not use a JTabbedPane ----
-				if (altNetModel.getAlternativeNetworkModel().size() > 0) {
-				    graphControllerGUI.setUseTabs(true);
-				} else {
+				if (altNetModel==null || altNetModel.getAlternativeNetworkModel().size()==0) {
 				    graphControllerGUI.setUseTabs(false);
+				} else {
+				    graphControllerGUI.setUseTabs(true);
 				}
 	
 				// --- Remove the current tab name from the list of Tabs to delete ------
