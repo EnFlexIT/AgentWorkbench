@@ -100,7 +100,7 @@ public class ClusterNetworkAgent extends SimulationAgent {
 
 	private void startCoalitionBehaviour() {
 		NetworkModel clusteredNM = getClusteredModel().getCopy();
-		ClusteringBehaviour clusteringBehaviour = new CycleClusteringBehaviour(this, clusteredNM);
+		ClusteringBehaviour clusteringBehaviour = new CycleClusteringBehaviour(this, clusteredNM, null);
 		this.addBehaviour(new CoalitionBehaviour(this, myEnvironmentModel, clusteredNM, clusteringBehaviour));
 	}
 

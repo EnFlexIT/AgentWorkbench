@@ -28,12 +28,15 @@
  */
 package gasmas.agents.components;
 
+import jade.core.ServiceException;
 import gasmas.initialProcess.InitialBehaviourMessageContainer;
 import gasmas.initialProcess.InitialProcessBehaviour;
 import gasmas.resourceallocation.AllocData;
 import gasmas.resourceallocation.ResourceAllocationBehaviour;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.SimulationAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
@@ -122,8 +125,19 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 	@Override
 	protected void setup() {
 		super.setup();
-
-		// --- Creates and add the initialProcessBehaviour, but did not start it ---
+		
+		try {
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			EnvironmentModel envModel = simHelper.getEnvironmentModel();
+			if (envModel != null) {
+				this.myEnvironmentModel = envModel;
+				this.myNetworkModel = ((NetworkModel) this.myEnvironmentModel.getDisplayEnvironment());
+			}
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		
+		// --- Creates the initialProcessBehaviour, but did not start it ---
 		initialProcessBehaviour = new InitialProcessBehaviour(this);
 	}
 
@@ -141,7 +155,9 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 			this.myNetworkComponent = myNetworkModel.getNetworkComponent(this.getLocalName());
 			// Start of the initial start process
 			if (normalStart) {
-				this.addBehaviour(initialProcessBehaviour);
+//				Did not start the behaviour at every agent
+//				this.addBehaviour(initialProcessBehaviour);
+				initialProcessBehaviour.action();
 			}
 		}
 

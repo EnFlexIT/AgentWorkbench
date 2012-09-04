@@ -365,7 +365,12 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 					e.printStackTrace();
 				}
 				// --- Next step can be started ---
-				startNextStep();
+				if (actualStep == 4) {
+					StartNextStepClustering startWaker = new StartNextStepClustering(this, 3000);
+					this.addBehaviour(startWaker);
+				} else {
+					startNextStep();
+				}
 			}
 		}
 	}
@@ -384,14 +389,10 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			networkComponentIDs.addAll(getClusteredModel().getNetworkComponents().keySet());
 		} else if (actualStep == 3) {
 			getAllNetworkComponents(networkComponentIDs, myNetworkModel);
-			StartNextStepClustering startWaker = new StartNextStepClustering(this, 15000);
-			this.addBehaviour(startWaker);
 		} else if (actualStep == 4) {
 			// Clustering Round until the clustering algorithm did not find anything new
 			if (changeDuringStep) {
 				getAllNetworkComponents(networkComponentIDs, myNetworkModel);
-				StartNextStepClustering startWaker = new StartNextStepClustering(this, 15000);
-				this.addBehaviour(startWaker);
 			}
 			changeDuringStep = false;
 		}
@@ -407,6 +408,13 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 					if (tries > 10) {
 						System.err.println("PROBLEM (NS) to send a message to " + networkComponentID + " from " + this.getLocalName() + " Phase: " + (actualStep + 1));
 						break;
+					}
+					synchronized (this) {
+						try {
+							wait(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
@@ -573,7 +581,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		}
 
 		public void onWake(){
-			actualStep = 4;
+			actualMessageFlow = 0;
 			startNextStep();
 			this.stop();
 		}

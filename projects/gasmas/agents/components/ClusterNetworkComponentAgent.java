@@ -86,6 +86,13 @@ public class ClusterNetworkComponentAgent extends GenericNetworkAgent {
 					System.out.println("PROBLEM (CCCA) to send a message to " + networkComponentID + " from " + this.getLocalName());
 					break;
 				}
+				synchronized (this) {
+					try {
+						wait(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}

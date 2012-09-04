@@ -32,12 +32,15 @@ import gasmas.clustering.analyse.ClusterIdentifier;
 import gasmas.clustering.analyse.PathSearchBotRunner;
 import gasmas.clustering.analyse.PathSerachBotCycleAnalyser;
 import gasmas.clustering.analyse.Subgraph;
+import gasmas.initialProcess.InitialProcessBehaviour;
+import gasmas.initialProcess.StatusData;
 import jade.core.Agent;
 
 import java.util.Date;
 
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.simulationService.agents.SimulationAgent;
 
 /**
  * The Class PathCircleClusteringBehaviour.
@@ -50,13 +53,17 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 	private static final long serialVersionUID = -1799480981045556451L;
 	/** The Constant STEPS. */
 	private static final int STEPS = 50;
+	/** The initial process behaviour. */
+	private InitialProcessBehaviour partentBehaviour;
 
-
-	public CycleClusteringBehaviour(Agent agent, NetworkModel networkModel) {
+	public CycleClusteringBehaviour(Agent agent, NetworkModel networkModel, InitialProcessBehaviour partentBehaviour) {
 		super(agent, networkModel);
+		this.partentBehaviour = partentBehaviour;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jade.core.behaviours.Behaviour#action()
 	 */
 	@Override
@@ -68,6 +75,8 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 	 * Analyse clusters.
 	 */
 	public void analyseClusters() {
+		if (partentBehaviour != null)
+			((SimulationAgent) myAgent).sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg+"));
 		Date begin = new Date();
 		System.out.println("Begin CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + begin.getTime());
 		Subgraph subgraph = startPathAnalysis(networkModel.getCopy());
@@ -78,17 +87,28 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 		}
 		Date end = new Date();
 		System.out.println("End CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + end.getTime() + " Duration: " + (end.getTime() - begin.getTime()));
+		// --- Send the information about a deleted message to the manager agent ---
+		if (partentBehaviour != null)
+			synchronized (this) {
+				try {
+					wait(5);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				((SimulationAgent) myAgent).sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg-"));
+			}
 	}
 
 	/**
 	 * Start path analysis.
-	 *
-	 * @param newNetworkModel the new network model
+	 * 
+	 * @param newNetworkModel
+	 *            the new network model
 	 * @return the subgraph
 	 */
 	private Subgraph startPathAnalysis(NetworkModel newNetworkModel) {
-		PathSerachBotCycleAnalyser pathSerachBotCircleAnalyser = new PathSearchBotRunner().runBotsAndGetPathSerachBotCircleAnalyser(newNetworkModel, coalitionBehaviour.getThisNetworkComponent().getId(),
-				CycleClusteringBehaviour.STEPS);
+		PathSerachBotCycleAnalyser pathSerachBotCircleAnalyser = new PathSearchBotRunner().runBotsAndGetPathSerachBotCircleAnalyser(newNetworkModel, coalitionBehaviour.getThisNetworkComponent()
+				.getId(), CycleClusteringBehaviour.STEPS);
 		return pathSerachBotCircleAnalyser.getBestSubgraph();
 	}
 

@@ -132,13 +132,12 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 					|| myAgent.getMyNetworkComponent().getAgentClassName().equals(ClusterNetworkAgent.class.getName())) {
 				// || myNetworkComponent.getAgentClassName().equals(SimpleValveAgent.class.getName())
 				// Active component
-				coalitionBehaviour = new CoalitionBehaviour(myAgent, myAgent.getMyEnvironmentModel(), clusterNetworkModel, new CycleClusteringBehaviour(myAgent, clusterNetworkModel));
+				coalitionBehaviour = new CoalitionBehaviour(myAgent, myAgent.getMyEnvironmentModel(), clusterNetworkModel, new CycleClusteringBehaviour(myAgent, clusterNetworkModel, this));
 				myAgent.addBehaviour(coalitionBehaviour);
 			} else {
 				// Passive component
 				passiveClusteringBehaviour = new PassiveNAResponderBehaviour(myAgent);
 				myAgent.addBehaviour(passiveClusteringBehaviour);
-
 			}
 		}
 	}
@@ -214,6 +213,13 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 								System.out.println("PROBLEM (GNA) to send a message to " + networkComponentID + " from " + myAgent.getLocalName());
 								break;
 							}
+							synchronized (this) {
+								try {
+									wait(100);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
 						}
 					}
 				}
@@ -276,6 +282,13 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 			if (tries > 10) {
 				System.out.println("PROBLEM (IPB) to send a message to " + receiver + " from " + myAgent.getLocalName());
 				break;
+			}
+			synchronized (this) {
+				try {
+					wait(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
