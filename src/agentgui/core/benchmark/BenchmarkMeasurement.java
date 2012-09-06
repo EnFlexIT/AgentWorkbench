@@ -31,6 +31,8 @@ package agentgui.core.benchmark;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import javax.swing.SwingUtilities;
+
 import agentgui.core.application.Application;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.simulationService.load.LoadMeasureThread;
@@ -127,36 +129,37 @@ public class BenchmarkMeasurement extends Thread {
 		
 		// --- Anzeige für den Fortschritt --- ON ---------
 		benchGUI.setBenchmarkValue(benchValueOld);
-		benchGUI.setVisible(true);
 		benchGUI.jProgressBarBenchmark.setMinimum(0);
 		benchGUI.jProgressBarBenchmark.setMaximum(6);
 		benchGUI.jProgressBarBenchmark.setValue(0);
-
-		// --- Test durchführen ---------------------------
+		benchGUI.setVisible(true);
+		benchGUI.validate();
+		
+		// --- Start benchmark tests ----------------------
 		double res[] = new double[6];
 		Random R = new Random(Constants.RANDOM_SEED);
 
-		benchGUI.jProgressBarBenchmark.setValue(1);
+		this.setBenchmarkProgress(1);
 		res[1] = kernel.measureFFT(FFT_size, min_time, R);
 		if (this.isSkipAction()) return;
 		
-		benchGUI.jProgressBarBenchmark.setValue(2);
+		this.setBenchmarkProgress(2);
 		res[2] = kernel.measureSOR(SOR_size, min_time, R);
 		if (this.isSkipAction()) return;
 		
-		benchGUI.jProgressBarBenchmark.setValue(3);
+		this.setBenchmarkProgress(3);
 		res[3] = kernel.measureMonteCarlo(min_time, R);
 		if (this.isSkipAction()) return;
 		
-		benchGUI.jProgressBarBenchmark.setValue(4);
+		this.setBenchmarkProgress(4);
 		res[4] = kernel.measureSparseMatmult(Sparse_size_M, Sparse_size_nz, min_time, R);
 		if (this.isSkipAction()) return;
 		
-		benchGUI.jProgressBarBenchmark.setValue(5);
+		this.setBenchmarkProgress(5);
 		res[5] = kernel.measureLU(LU_size, min_time, R);
 		if (this.isSkipAction()) return;
 
-		benchGUI.jProgressBarBenchmark.setValue(6);
+		this.setBenchmarkProgress(6);
 		res[0] = (res[1] + res[2] + res[3] + res[4] + res[5]) / 5;
 		
 		System.out.println("=> Average Benchmark Result: " + Math.round(res[0]) + " Mflops");
@@ -191,6 +194,19 @@ public class BenchmarkMeasurement extends Thread {
 		if (Application.getClassSearcher() == null) {
 			Application.setClassSearcher(new ClassSearcher());
 		}
+	}
+	
+	/**
+	 * Sets the benchmark progress.
+	 * @param n the new benchmark progress
+	 */
+	private void setBenchmarkProgress(final int n) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				benchGUI.jProgressBarBenchmark.setValue(n);
+			}
+		});
 	}
 	
 	/**

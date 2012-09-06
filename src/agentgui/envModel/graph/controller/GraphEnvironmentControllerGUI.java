@@ -142,19 +142,13 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      * @return void
      */
     private void initialize() {
-		this.setLayout(new BorderLayout());
 	
-		if (this.getGraphController().getProject() != null) {
-		    this.mainDisplayComponent = getJSplitPaneRoot();
-		    this.useTabs = false;
-		} else {
-		    this.mainDisplayComponent = getJTabbedPaneAltNetModels();
-		    this.useTabs = true;
-		}
-		this.add(this.mainDisplayComponent, BorderLayout.CENTER);
+		this.setLayout(new BorderLayout());
+		this.add(this.getJComponentMainDisplay(), BorderLayout.CENTER);
 		this.setNumberOfComponents();
+    	this.setAlternativeNetworkModels();
+		
     }
-
     /**
      * ReLoads the network model.
      */
@@ -206,7 +200,24 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		}
 		return jTabbedPaneAltNetModels;
     }
-
+   
+    /**
+     * Returns the main display component.
+     * @return the main display component
+     */
+    private JComponent getJComponentMainDisplay() {
+    
+    	if (this.mainDisplayComponent==null) {
+    		if (this.getGraphController().getNetworkModel().getAlternativeNetworkModel().size()==0) {
+    		    this.mainDisplayComponent = getJSplitPaneRoot();
+    		    this.useTabs = false;
+    		} else {
+    		    this.mainDisplayComponent = getJTabbedPaneAltNetModels();
+    		    this.useTabs = true;
+    		}
+    	}
+    	return this.mainDisplayComponent;
+    }
     /**
      * Sets to use tabs or not.
      * @param use the new use
@@ -676,13 +687,15 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 	
     	NetworkModel nm = this.getGraphController().getNetworkModel();
 		if (nm.getAlternativeNetworkModel().size() > 0) {
-		    // --------------------------------------------------------------------------
+			
+			this.setUseTabs(true);
+			// --------------------------------------------------------------------------
 		    // --- Alternative NetworkModel's has to be displayed -----------------------
 		    // --------------------------------------------------------------------------
-		    HashMap<String, NetworkModel> altNetModelHash = nm.getAlternativeNetworkModel();
+			HashMap<String, NetworkModel> altNetModelHash = nm.getAlternativeNetworkModel();
 		    // --- Get the model names ordered ------------------------------------------
-		    Vector<String> altNetModels = new Vector<String>(altNetModelHash.keySet());
 		    Vector<String> altNetModelTabsToDelete = new Vector<String>(this.networkModelTabs.keySet());
+			Vector<String> altNetModels = new Vector<String>(altNetModelHash.keySet());
 		    Collections.sort(altNetModels);
 	
 		    for (int i = 0; i < altNetModels.size(); i++) {
@@ -694,29 +707,29 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 				GraphEnvironmentController graphController = null;
 		
 				if (this.networkModelTabs.get(altNetModelName) == null) {
-				    // --- Create a new Controller for the alternative NetworkModel -----
-				    graphController = new GraphEnvironmentController();
-				    graphController.setEnvironmentModel(altNetModel);
-				    graphControllerGUI = (GraphEnvironmentControllerGUI) graphController.getEnvironmentPanel();
-
-				    this.getJTabbedPaneAltNetModels().addTab(altNetModelName, graphControllerGUI);
-				    this.networkModelTabs.put(altNetModelName, graphControllerGUI);
-		
+				    // --- Create new controller for alternative NetworkModel -----------
+			    	graphController = new GraphEnvironmentController();
+			    	graphController.setEnvironmentModel(altNetModel);
+			    	graphControllerGUI = (GraphEnvironmentControllerGUI) graphController.getEnvironmentPanel();
+			    	
+			    	this.getJTabbedPaneAltNetModels().addTab(altNetModelName, graphControllerGUI);
+			    	this.networkModelTabs.put(altNetModelName, graphControllerGUI);
+			    	
 				} else {
 				    // --- Get the Controller for the alternative NetworkModel ----------
 				    graphControllerGUI = this.networkModelTabs.get(altNetModelName);
 				    graphController = graphControllerGUI.getGraphController();
 				    graphController.setEnvironmentModel(altNetModel);
+
+				    // --- Set the appearance of the GUI to use or not use a JTabbedPane ----
+					if (altNetModel.getAlternativeNetworkModel().size()==0) {
+					    graphControllerGUI.setUseTabs(false);
+					} else {
+					    graphControllerGUI.setUseTabs(true);
+					}
+				    
+				}
 		
-				}
-				
-				// --- Set the appearance of the GUI to use or not use a JTabbedPane ----
-				if (altNetModel==null || altNetModel.getAlternativeNetworkModel().size()==0) {
-				    graphControllerGUI.setUseTabs(false);
-				} else {
-				    graphControllerGUI.setUseTabs(true);
-				}
-	
 				// --- Remove the current tab name from the list of Tabs to delete ------
 				altNetModelTabsToDelete.remove(altNetModelName);
 				
@@ -732,7 +745,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 			    	}	
 		    	}
 		    }
-		    
+		    this.getJComponentMainDisplay().validate();
+		   
 		    // --------------------------------------------------------------------------
 		    // --------------------------------------------------------------------------
 		}

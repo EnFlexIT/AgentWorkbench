@@ -34,6 +34,7 @@ import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -71,7 +72,9 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	
 	private GraphEnvironmentController myGraphEnvironmentController = null;
 	private NetworkModel netModel = null;
-
+	
+	private Vector<NetworkModel> stimuliOfNetworkModel = null;
+	private Boolean stimuliAction = false;
 	
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
@@ -218,19 +221,55 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected void onEnvironmentStimulus() {
 		
-		try {
-			this.netModel = ((NetworkModel) myEnvironmentModel.getDisplayEnvironment()).getCopy();
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					myGraphEnvironmentController.setEnvironmentModel(netModel);
-				}
-			});
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		boolean runStimuliRemover = false;
+		
+		// --- Add the new NetorkModel to the Vector of not yet displayed NetworkModel's ----------
+		this.getStimuliOfNetworkModel().add(((NetworkModel) myEnvironmentModel.getDisplayEnvironment()).getCopy());
+
+		// --- Check if the Vector of NetworkModel's needs to be emptied -------------------------- 
+		synchronized (stimuliAction) {
+			if (this.stimuliAction==false) {
+				this.stimuliAction=true;
+				runStimuliRemover = true;
+			}
 		}
 		
+		
+		if (runStimuliRemover==true) {
+			// --- Empty the Vector of NetworkModel's ---------------------------------------------
+			while (this.getStimuliOfNetworkModel().size()!=0) {
+				try {
+					this.netModel = this.getStimuliOfNetworkModel().get(0);
+					this.getStimuliOfNetworkModel().remove(0);
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							myGraphEnvironmentController.setEnvironmentModel(netModel);
+						}
+					});
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			} // end while
+		}
+
+		// --- Set that the Vector of new NetworkModel's is empty now -----------------------------
+		synchronized (stimuliAction) {
+			this.stimuliAction=false;
+		}
+		
+	}
+	
+	/**
+	 * Returns the Vector of NetworkModels that arrived this agent by an EnvironmentStimulus.
+	 * @return the stimuli of network model
+	 */
+	private synchronized Vector<NetworkModel> getStimuliOfNetworkModel() {
+		if (this.stimuliOfNetworkModel==null) {
+			this.stimuliOfNetworkModel = new Vector<NetworkModel>();
+		}
+		return this.stimuliOfNetworkModel;
 	}
 	
 	/* (non-Javadoc)

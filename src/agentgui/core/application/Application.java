@@ -387,7 +387,7 @@ public class Application {
 			while(benchmarkRunning==true) {
 				Application.setStatusBar(Language.translate("Warte auf das Ende des Benchmarks ..."));
 				try {
-					Thread.sleep(500);
+					Thread.sleep(250);
 				} catch (InterruptedException ex) {
 					ex.printStackTrace();
 				}
@@ -427,6 +427,7 @@ public class Application {
 		// --- Start the Application as defined by 'isServer' -------
 		getJadePlatform();
 		getTrayIcon();
+		
 		if (isRunningAsServer()==true) {
 			// ------------------------------------------------------
 			// --- Start Server-Version of AgentGUI -----------------

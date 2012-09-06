@@ -496,7 +496,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 		Rectangle2D rect = this.getGraphSpreadDimension(graph);
 		if (rect.getX() != this.graphMargin) moveX = (rect.getX() * (-1)) + this.graphMargin;
 		if (rect.getY() != this.graphMargin) moveY = (rect.getY() * (-1)) + this.graphMargin;
-		//graph = this.correctGraphCoordinates(graph, moveX, moveY);
+		
+		// --- Correct graph position, if this is used in the setup -------
+		if (this.controller.getProject()!=null) {
+			graph = this.correctGraphCoordinates(graph, moveX, moveY);	
+		}
 
 		// ----------------------------------------------------------------
 		// --- Define graph layout ----------------------------------------
