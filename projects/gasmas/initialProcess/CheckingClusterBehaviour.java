@@ -29,17 +29,16 @@
 package gasmas.initialProcess;
 
 import gasmas.agents.components.ClusterNetworkAgent;
+import gasmas.agents.components.ClusterNetworkComponentAgent;
 import gasmas.agents.components.EntryAgent;
 import gasmas.agents.components.ExitAgent;
 import gasmas.agents.components.GenericNetworkAgent;
 import gasmas.agents.manager.NetworkManagerAgent;
-import gasmas.clustering.behaviours.ClusteringBehaviour;
 import gasmas.ontology.ClusterNotification;
 
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
 
+import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
@@ -56,10 +55,7 @@ public class CheckingClusterBehaviour {
 
 	/** The agent, how started the behaviour */
 	private GenericNetworkAgent myAgent;
-	private InitialProcessBehaviour partentBehaviour;
-
-	/** The cluster network model. */
-	private NetworkModel clusterNetworkModel;
+	private InitialProcessBehaviour parentBehaviour;
 
 	/** The network model. */
 	private NetworkModel myNetworkModel;
@@ -67,17 +63,8 @@ public class CheckingClusterBehaviour {
 	/** My own NetworkComponent. */
 	private NetworkComponent myNetworkComponent;
 
-	/** NetworkComponentNames, which shows the stations, which can be asked */
-	private HashSet<String> toAsk = new HashSet<String>();
-
 	/** NetworkComponentNames, which have to add to the cluster */
 	private HashSet<String> found = new HashSet<String>();
-
-	/** Represents the station, which already contribute to the simplification */
-	private int alreadyReportedStations = 0;
-
-	/** Represents the initiator */
-	private String initiator = "";
 
 	/** Shows if this component has information */
 	private boolean noInformation = false;
@@ -85,44 +72,49 @@ public class CheckingClusterBehaviour {
 	/** Shows if this component had started */
 	private boolean startdone = false;
 
-	/** Shows if is during a cluster checking process */
-	private boolean duringACluster = false;
-
-	/** Shows if this station is a cluster, how tries to optimise itself */
-	private boolean askingCluster = false;
-
 	/** Saves the neighbours of this component */
-	private Vector<NetworkComponent> myNeighbours;
+	private HashSet<NetworkComponent> myNeighbours = new HashSet<NetworkComponent>();
+
+	/** Shows the limit of age without cluster */
+	private int noClusterAge;
+
+	/** Shows the limit of age with cluster */
+	private int clusterAge;
 
 	/**
-	 * @param agent
-	 * @param environmentModel
+	 * Instantiates a new checking cluster behaviour.
+	 * 
+	 * @param genericNetworkAgent the generic network agent
+	 * @param networkModel the network model
+	 * @param parentBehaviour the parent behaviour
+	 * @param noClusterAge the no cluster age
+	 * @param clusterAge the cluster age
 	 */
-	public CheckingClusterBehaviour(GenericNetworkAgent genericNetworkAgent, NetworkModel networkModel, InitialProcessBehaviour partentBehaviour) {
+	public CheckingClusterBehaviour(GenericNetworkAgent genericNetworkAgent, NetworkModel networkModel, InitialProcessBehaviour parentBehaviour, boolean iterativeStep) {
 		this.myAgent = genericNetworkAgent;
 		this.myNetworkModel = networkModel;
-		this.clusterNetworkModel = this.myNetworkModel.getAlternativeNetworkModel().get(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME);
-		this.myNetworkComponent = clusterNetworkModel.getNetworkComponent(myAgent.getLocalName());
-		this.myNeighbours = this.clusterNetworkModel.getNeighbourNetworkComponents(myNetworkComponent);
-		this.partentBehaviour = partentBehaviour;
+		this.myNetworkComponent = this.myNetworkModel.getNetworkComponent(myAgent.getLocalName());
+		this.myNeighbours.addAll(this.myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent));
+		this.parentBehaviour = parentBehaviour;
+		if (iterativeStep) {
+			this.noClusterAge = 50;
+			this.clusterAge = 20;
+		} else {
+			this.noClusterAge = 25;
+			this.clusterAge = 0;
+		}
 	}
 
 	/**
 	 * Start of the behaviour, which start the checking cluster algorithm
 	 */
 	public synchronized void start() {
-		myAgent.sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg+"));
-		// Start from the clusters
-		Iterator<NetworkComponent> neighbours = myNeighbours.iterator();
-		while (neighbours.hasNext()) {
-			toAsk.add(neighbours.next().getId());
-		}
-
-		if (myNetworkComponent.getAgentClassName().equals(ExitAgent.class.getName()) || myNetworkComponent.getAgentClassName().equals(EntryAgent.class.getName())) {
-			// System.out.println("No Information: " +
-			// myNetworkComponent.getId() + " with " + toAsk);
+		myAgent.sendManagerNotification(new StatusData(parentBehaviour.getStep(), "msg+"));
+		if (myNeighbours.size() == 1) {
 			noInformation = true;
-		} else if (myNetworkComponent.getAgentClassName().equals(ClusterNetworkAgent.class.getName()) && toAsk.size() > 1) {
+		} else if (myNetworkComponent.getAgentClassName().equals(ClusterNetworkAgent.class.getName()) && myNeighbours.size() > 1) {
+			// Start from the clusters, which have more then one real neighbour
+			// (Exits / Entries do not help in this step, because they are already part of the cluster)
 			int i = 0;
 			for (NetworkComponent neighbour : myNeighbours) {
 				if (neighbour.getAgentClassName().equals(ExitAgent.class.getName()) || neighbour.getAgentClassName().equals(EntryAgent.class.getName())) {
@@ -132,21 +124,22 @@ public class CheckingClusterBehaviour {
 			if (myNeighbours.size() - i <= 1) {
 				noInformation = true;
 			} else {
-				duringACluster = true;
-				askingCluster = true;
+//				System.out.println("Start at " + myNetworkComponent.getId());
 				found.add(myNetworkComponent.getId());
-				msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(myNetworkComponent.getId(), 2));
-				alreadyReportedStations += 1;
-				System.out.println(myNetworkComponent.getId() + " Start with " + toAsk.size() + "(" + toAsk + ")" + " and neighbours " + myNeighbours.size());
+				for (NetworkComponent neighbour : myNeighbours) {
+					if (!neighbour.getAgentClassName().equals(ExitAgent.class.getName()) || !neighbour.getAgentClassName().equals(EntryAgent.class.getName())) {
+						msgSend(neighbour.getId(), new SimplificationData(myNetworkComponent.getId(), 2));
+					}
+				}
 			}
 		}
 		// --- Send the information about a deleted message to the manager agent ---
 		try {
-			wait(5);
+			wait(100);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		myAgent.sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg-"));
+		myAgent.sendManagerNotification(new StatusData(parentBehaviour.getStep(), "msg-"));
 		startdone = true;
 	}
 
@@ -157,7 +150,7 @@ public class CheckingClusterBehaviour {
 	 * @param content
 	 */
 	public void msgSend(String receiver, GenericMesssageData content) {
-		partentBehaviour.msgSend(receiver, content);
+		parentBehaviour.msgSend(receiver, content);
 	}
 
 	/**
@@ -184,118 +177,56 @@ public class CheckingClusterBehaviour {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		myAgent.sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg-"));
+		myAgent.sendManagerNotification(new StatusData(parentBehaviour.getStep(), "msg-"));
 	}
 
 	/**
-	 * Interpret the message, how the cluster has to extend
-	 * 
-	 * @param content
-	 * @param sender
+	 * Interpret the message, how the cluster has to extend.
+	 *
+	 * @param content the content
+	 * @param sender the sender
 	 */
 	private void buildCluster(SimplificationData content, String sender) {
-		if (content.isAnswer()) {
-			// --- Message is a answer to an clustering question
-			if (content.getWay().isEmpty() && !myNetworkComponent.getId().startsWith(NetworkManagerAgent.clusterComponentPrefix)) {
-				System.out.println("Done Kill, branch: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " RealInitiator: " + initiator + " UrInitiator: "
-						+ content.getUrInitiator());
-				content.setInitiator(initiator);
-				msgSend(initiator, content);
-			} else {
-				// --- Component is a cluster ---
-				nextRound(content, sender);
-			}
-		} else {
-			if (noInformation) {
-				// --- Component has no other neighbour, is a one way station ---
-				if (content.getInitiator().startsWith(NetworkManagerAgent.clusterComponentPrefix) && !myAgent.getLocalName().startsWith(NetworkManagerAgent.clusterComponentPrefix)) {
-					System.out.println("Kill: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-					// --- Is a distribution point, which is already "in" the cluster, no need to change something ---
-					content.setAnswer(true);
-					// --- Shows the receiver, that there is no need to change ---
-					content.getWay().clear();
-					msgSend(content.getInitiator(), content);
-				} else {
-					System.out.println("No Info: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-					// --- Is a cluster, how can be migrated to the other cluster ---
-					content.setAnswer(true);
+		if (content.getWay().size() < noClusterAge && containsCluster(content.getWay(), 2) || content.getWay().size() < clusterAge && containsCluster(content.getWay(), 4)) {
+			if (myAgent instanceof ClusterNetworkComponentAgent && !noInformation) {
+				// Check if the Cluster is how asked for information
+				if (content.getUrInitiator().equals(myNetworkComponent.getId())) {
+					// Find an cycle or a part of the network with no other connection
+					found.addAll(content.getWay());
+				} else if (content.getUrInitiator().compareTo(myNetworkComponent.getId()) < 0) {
 					content.addStation(myNetworkComponent.getId());
-					msgSend(content.getInitiator(), content);
+					if (myNeighbours.size() > 2)
+						// All Clusters have to add there own initiator, to verify which one sends the message head 
+						content.setInitiator(myNetworkComponent.getId());
+					// Sending ahead
+					for (NetworkComponent neighbour : myNeighbours) {
+						if (!neighbour.getId().equals(sender)) {
+							msgSend(neighbour.getId(), content.getCopy());
+						}
+					}
 				}
 			} else {
-				if (content.getWay().contains(myNetworkComponent.getId())) {
-					System.out.println("Got an request, where I found myself in the line: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-					// --- Cycle found -> send the initiator the answer back ---
-					content.setAnswer(true);
-					msgSend(content.getInitiator(), content);
-				} else {
-					if (myNetworkComponent.getId().startsWith(NetworkManagerAgent.clusterComponentPrefix)) {
-						// --- This component is a cluster ---
-						if (content.getUrInitiator().equals(myNetworkComponent.getId())) {
-							// --- Component is the initiator of the request
-							if (content.getInitiator().equals(myNetworkComponent.getId())) {
-								System.out.println("REAL Done: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-								// --- Component is the last initiator, which means that we found some components, that
-								// need to add to the cluster ---
-								found.addAll(content.getWay());
-								// --- Start the next round ---
-								nextRound(content, sender);
-							} else {
-								System.out.println("Cluster stop: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-								// --- Found a cycle, so send the initiator the answer back ---
-								content.setAnswer(true);
-								content.addStation(myNetworkComponent.getId());
-								msgSend(content.getInitiator(), content);
-							}
-						} else {
-							System.out.println("Kill Cluster: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " UrInitiator: "
-									+ content.getUrInitiator());
-							// --- Cluster get an request of another cluster, so stop clustering this branch, no
-							// possible improvements ---
-							content.setAnswer(true);
-							content.getWay().clear();
-							msgSend(content.getInitiator(), content);
-						}
-					} else {
-						if (myNeighbours.size() == 2) {
-							System.out.println("Sending ahead/back: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " To: " + toAsk.toArray()[0]);
-							// --- Component is e.g. a pipe, so only add itself to the route and send ahead
-							toAsk.remove(sender);
-							if (toAsk.isEmpty()) {
-								// Pipe only have one neighbour, e.g. dead pipe
-								toAsk.add(sender);
-							}
+				if (noInformation) {
+					// Dead end so it can be part of the cluster
+					if (content.getUrInitiator().equals(content.getInitiator())) {
+						// Only part, if the question comes directly from the cluster
+						if (!content.getWay().isEmpty()) {
+							// The way have to contain information, otherwise it is only an Entry or Exit
 							content.addStation(myNetworkComponent.getId());
-							msgSend((String) toAsk.toArray()[0], content);
-							// --- Reset pipe, so that the next request can proceed ---
-							toAsk.add(sender);
-						} else {
-							if (!duringACluster) {
-								System.out.println("Start clustering at: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-								// --- Remove the sender from the list of neighbours, how have to be asked ---
-								toAsk.remove(sender);
-								// --- Set the information about the actual clustering round ---
-								duringACluster = true;
-								initiator = content.getInitiator();
-								// Component ask a neighbour about clustering possibilities
-								content.addStation(myNetworkComponent.getId());
-								if (alreadyReportedStations < toAsk.size()) {
-									msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(myNetworkComponent.getId(), content.getWay(), content.getUrInitiator(), 2));
-									// --- Remind which neigbours are already asked ---
-									alreadyReportedStations += 1;
-								} else {
-									System.out.println("Done, branch: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " UrInitiator: "
-											+ content.getUrInitiator());
-									// --- No possible neighbours to ask, send back to the initiator ---
-									content.setAnswer(true);
-									msgSend(initiator, content);
-								}
-							} else {
-								System.out.println("During clustering at, kill: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-								// --- Get another request of clustering, which means is in between of two clusters ->
-								// no possible improvements ---
-								msgSend(content.getInitiator(), new SimplificationData(myNetworkComponent.getId(), true, content.getUrInitiator(), 2));
-
+							msgSend(content.getUrInitiator(), content);
+						}
+					}
+				} else {
+					if (!content.getWay().contains(myNetworkComponent.getId())) {
+						// Check, if this station was not already asked
+						content.addStation(myNetworkComponent.getId());
+						if (myNeighbours.size() > 2) 
+							// All branches have to add there own initiator, to verify which one sends the message head 
+							content.setInitiator(myNetworkComponent.getId());
+						// Sending ahead
+						for (NetworkComponent neighbour : myNeighbours) {
+							if (!neighbour.getId().equals(sender)) {
+								msgSend(neighbour.getId(), content.getCopy());
 							}
 						}
 					}
@@ -304,57 +235,60 @@ public class CheckingClusterBehaviour {
 		}
 	}
 
+	
 	/**
-	 * Starts the next asking round or finalised the cluster check in this component
-	 * 
-	 * @param content
-	 * @param sender
+	 * Checks, how many clusters are in the HashSet way and checks it against the number in j
+	 *
+	 * @param way the way
+	 * @param j the j
+	 * @return true, if the number of clusters in the HashSet is smaller than j
 	 */
-	private void nextRound(SimplificationData content, String sender) {
-		if (alreadyReportedStations < toAsk.size()) {
-			// --- Component has still neighbours to ask about cluster possibilities ---
-			System.out.println("A branch " + myNetworkComponent.getId() + " is asking the next station " + toAsk.toArray()[alreadyReportedStations] + ". Answer from " + sender + " Initiator: "
-					+ content.getInitiator());
-			if (askingCluster) {
-				// --- Component is a cluster, how tries to improve, so the found station get stored in a temporal
-				// HashSet ---
-				found.addAll(content.getWay());
-			}
-			// --- Send a message to the next station to ask for improvements ---
-			content.setAnswer(false);
-			content.setInitiator(myNetworkComponent.getId());
-			msgSend((String) toAsk.toArray()[alreadyReportedStations], content);
-			// --- Remind which neigbours are already asked ---
-			alreadyReportedStations += 1;
-
-		} else {
-			content.addStation(myNetworkComponent.getId());
-			if (askingCluster) {
-				System.out.println("Done: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
-				found.addAll(content.getWay());
-				rearrangeCluster();
-			} else {
-				System.out.println("Done, branch: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " \n " + content.getWay());
-				msgSend(initiator, content);
+	private boolean containsCluster(HashSet<String> way, int j) {
+		int i = 0;
+		for (String station : way) {
+			if (station.startsWith(NetworkManagerAgent.clusterComponentPrefix)) {
+				i++;
+				if (i == j)
+					return false;
 			}
 		}
+		return true;
 	}
 
 	/**
 	 * A cluster component finished asking the neighbours about improvements -> Send the information to the manager
 	 * agent
 	 */
-	private void rearrangeCluster() {
-		// --- Check, if the component find new components ---
-		if (found.size() > 1) {
-			System.out.println("________________________________________________Von " + myNetworkComponent.getId() + " Cluster: " + found);
-			myAgent.sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg+"));
-			// --- Send the information to the manager agent ---
-			ClusterNotification cn = new ClusterNotification();
-			cn.setReason("rearrangeCluster");
-			cn.setNotificationObject(found);
-			myAgent.sendManagerNotification(cn);
+	public synchronized void rearrangeCluster() {
+		myAgent.sendManagerNotification(new StatusData(parentBehaviour.getStep(), "msg+"));
+		if (myNetworkComponent instanceof ClusterNetworkComponent) {
+			// --- Check, if the component find new components ---
+			HashSet<String> tempFound = new HashSet<String>(found);
+			for (String temp : tempFound) {
+				if (((ClusterNetworkComponent) myNetworkComponent).getNetworkComponentIDs().contains(temp))
+					found.remove(temp);
+			}
+			if (found.size() > 1) {
+				System.out.println(myAgent.getLocalName() + " found " + found);
+				myAgent.sendManagerNotification(new StatusData(parentBehaviour.getStep(), "msg+"));
+				try {
+					wait(50);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				// --- Send the information to the manager agent ---
+				ClusterNotification cn = new ClusterNotification();
+				cn.setReason("rearrangeCluster");
+				cn.setNotificationObject(found);
+				myAgent.sendManagerNotification(cn);
+			}
 		}
+		try {
+			wait(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		myAgent.sendManagerNotification(new StatusData(parentBehaviour.getStep(), "msg-"));
 	}
 
 }

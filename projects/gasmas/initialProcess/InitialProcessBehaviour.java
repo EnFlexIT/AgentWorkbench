@@ -53,29 +53,29 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 
 	/** The my agent. */
 	protected GenericNetworkAgent myAgent;
-	
+
 	/* Different Behaviours. */
 	/** The find direction behaviour. */
 	protected FindDirectionBehaviour findDirectionBehaviour;
-	
+
 	/** The find simplification behaviour. */
 	protected FindSimplificationBehaviour findSimplificationBehaviour;
-	
+
 	/** The checking cluster behaviour. */
 	protected CheckingClusterBehaviour checkingClusterBehaviour;
-	
+
 	/** The coalition behaviour. */
 	protected CoalitionBehaviour coalitionBehaviour;
-	
+
 	/** The passive clustering behaviour. */
 	protected PassiveNAResponderBehaviour passiveClusteringBehaviour;
 
 	/** Shows the internal step of the agent. */
 	private int step = -1;
-
+	
 	/**
 	 * Gets the step.
-	 *
+	 * 
 	 * @return the step
 	 */
 	public int getStep() {
@@ -84,8 +84,9 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 
 	/**
 	 * Instantiates a new initial process behaviour.
-	 *
-	 * @param myAgent the my agent
+	 * 
+	 * @param myAgent
+	 *            the my agent
 	 */
 	public InitialProcessBehaviour(GenericNetworkAgent myAgent) {
 		super();
@@ -103,9 +104,16 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 	/**
 	 * Starts the checking cluster behaviour.
 	 */
-	private void startCheckingClusterBehaviour() {
-
-		checkingClusterBehaviour = new CheckingClusterBehaviour(myAgent, myAgent.getMyNetworkModel(), this);
+	private void startCheckingClusterBehaviour(boolean iterativeStep) {
+		if (myAgent.getPartOfCluster().isEmpty()) {
+			myAgent.setPartOfCluster("ClusterdNM");
+		}
+		NetworkModel clusterNetworkModel = myAgent.getMyNetworkModel().getAlternativeNetworkModel().get(myAgent.getPartOfCluster().split("::")[0]);
+		for (int i = 1; i < myAgent.getPartOfCluster().split("::").length; i++) {
+			clusterNetworkModel = clusterNetworkModel.getAlternativeNetworkModel().get(myAgent.getPartOfCluster().split("::")[i]);
+		}
+		
+		checkingClusterBehaviour = new CheckingClusterBehaviour(myAgent, clusterNetworkModel, this, iterativeStep);
 		checkingClusterBehaviour.start();
 	}
 
@@ -159,9 +167,11 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 
 	/**
 	 * Method to interpret status information.
-	 *
-	 * @param phase the phase
-	 * @param clusterName the cluster name
+	 * 
+	 * @param phase
+	 *            the phase
+	 * @param clusterName
+	 *            the cluster name
 	 */
 	private void reactOnStatusInformation(int phase, String clusterName) {
 		if (myAgent.getMyNetworkModel() == null) {
@@ -182,15 +192,22 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 				step = 2;
 				findDirectionBehaviour.setDirections();
 				startFindSimplificationBehaviour();
-			} else if (phase == 3) {
+			} else if (phase == 31) {
 				// Starts a verification of the cluster found in step 2
+				step = 31;
+				startCheckingClusterBehaviour(false);
+			} else if (phase == 32) {
+				// Starts a verification of the cluster found in step 2
+				step = 32;
+				startCheckingClusterBehaviour(true);
+			} else if (phase == 3) {
+				// Publish the results of the verification
 				step = 3;
-				startCheckingClusterBehaviour();
+				if (checkingClusterBehaviour != null) {
+					checkingClusterBehaviour.rearrangeCluster();
+					checkingClusterBehaviour = null;
+				}
 			} else if (phase == 4) {
-				// Starts a second clustering process, using a special algorithm
-				step = 4;
-				startClusteringBehaviour();
-			} else if (phase == 5) {
 				// Starts a new clustering round, using a special algorithm
 				step = 4;
 				// Delete the behaviour of the last clustering round
@@ -210,7 +227,7 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 								+ myAgent.getMyNetworkComponent().getId()))) == false) {
 							tries++;
 							if (tries > 10) {
-								System.out.println("PROBLEM (GNA) to send a message to " + networkComponentID + " from " + myAgent.getLocalName());
+								System.err.println("PROBLEM (GNA) to send a message to " + networkComponentID + " from " + myAgent.getLocalName());
 								break;
 							}
 							synchronized (this) {
@@ -232,16 +249,17 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 
 	/**
 	 * Get the messages and calls the appropriate method to deal with this type of message.
-	 *
-	 * @param notification the notification
+	 * 
+	 * @param notification
+	 *            the notification
 	 * @return the environment notification
 	 */
 	public synchronized EnvironmentNotification interpretMsg(EnvironmentNotification notification) {
 		Object content = ((InitialBehaviourMessageContainer) notification.getNotification()).getData();
 		if (content instanceof FindDirectionData) {
-			if (findDirectionBehaviour == null) {
+			if (findDirectionBehaviour == null || ((FindDirectionData) content).getFlow().equals("?") && !findDirectionBehaviour.isStep2()) {
 				notification.moveLastOrBlock(100);
-				System.out.println("=> Notification parked for 'FindDirData' !Receiver: " + myAgent.getLocalName() + " Sender: " + notification.getSender().getLocalName());
+//				System.out.println("=> Notification parked for 'FindDirData' !Receiver: " + myAgent.getLocalName() + " Sender: " + notification.getSender().getLocalName());
 			} else {
 				findDirectionBehaviour.interpretMsg(notification);
 			}
@@ -249,13 +267,13 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 			if (((SimplificationData) content).getStep() == 1) {
 				if (findSimplificationBehaviour == null) {
 					notification.moveLastOrBlock(100);
-					System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + myAgent.getLocalName() + " Sender: " + notification.getSender().getLocalName());
+//					System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + myAgent.getLocalName() + " Sender: " + notification.getSender().getLocalName());
 				} else
 					findSimplificationBehaviour.interpretMsg(notification);
 			} else if (((SimplificationData) content).getStep() == 2) {
 				if (checkingClusterBehaviour == null) {
 					notification.moveLastOrBlock(100);
-					System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + myAgent.getLocalName() + " Sender: " + notification.getSender().getLocalName());
+//					System.out.println("=> Notification parked for 'SimplificationData' ! Receiver: " + myAgent.getLocalName() + " Sender: " + notification.getSender().getLocalName());
 				} else
 					checkingClusterBehaviour.interpretMsg(notification);
 			}
@@ -268,9 +286,11 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 
 	/**
 	 * Send a message about the simulation service.
-	 *
-	 * @param receiver the receiver
-	 * @param content the content
+	 * 
+	 * @param receiver
+	 *            the receiver
+	 * @param content
+	 *            the content
 	 */
 	public void msgSend(String receiver, GenericMesssageData content) {
 		// --- Send the information about a new message to the manager agent ---
@@ -280,7 +300,7 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 		while (myAgent.sendAgentNotification(new AID(receiver, AID.ISLOCALNAME), new InitialBehaviourMessageContainer(content)) == false) {
 			tries++;
 			if (tries > 10) {
-				System.out.println("PROBLEM (IPB) to send a message to " + receiver + " from " + myAgent.getLocalName());
+				System.err.println("PROBLEM (IPB) to send a message to " + receiver + " from " + myAgent.getLocalName());
 				break;
 			}
 			synchronized (this) {

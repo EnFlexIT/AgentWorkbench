@@ -35,9 +35,6 @@ import gasmas.clustering.analyse.Subgraph;
 import gasmas.initialProcess.InitialProcessBehaviour;
 import gasmas.initialProcess.StatusData;
 import jade.core.Agent;
-
-import java.util.Date;
-
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.simulationService.agents.SimulationAgent;
@@ -54,11 +51,11 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 	/** The Constant STEPS. */
 	private static final int STEPS = 50;
 	/** The initial process behaviour. */
-	private InitialProcessBehaviour partentBehaviour;
+	private InitialProcessBehaviour parentBehaviour;
 
-	public CycleClusteringBehaviour(Agent agent, NetworkModel networkModel, InitialProcessBehaviour partentBehaviour) {
+	public CycleClusteringBehaviour(Agent agent, NetworkModel networkModel, InitialProcessBehaviour parentBehaviour) {
 		super(agent, networkModel);
-		this.partentBehaviour = partentBehaviour;
+		this.parentBehaviour = parentBehaviour;
 	}
 
 	/*
@@ -75,27 +72,27 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 	 * Analyse clusters.
 	 */
 	public void analyseClusters() {
-		if (partentBehaviour != null)
-			((SimulationAgent) myAgent).sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg+"));
-		Date begin = new Date();
-		System.out.println("Begin CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + begin.getTime());
-		Subgraph subgraph = startPathAnalysis(networkModel.getCopy());
+		if (parentBehaviour != null)
+			((SimulationAgent) myAgent).sendManagerNotification(new StatusData(parentBehaviour.getStep(), "msg+"));
+//		Date begin = new Date();
+//		System.out.println("Begin CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + begin.getTime());
+		NetworkModel copyNetworkModel = networkModel.getCopy();
+		Subgraph subgraph = startPathAnalysis(copyNetworkModel);
 		if (subgraph != null) {
-			NetworkModel copyNetworkModel = getClusterNM();
 			ClusterNetworkComponent clusterNetworkComponent = copyNetworkModel.replaceComponentsByCluster(subgraph.getNetworkComponents(copyNetworkModel), true);
 			coalitionBehaviour.checkSuggestedCluster(clusterNetworkComponent, true);
 		}
-		Date end = new Date();
-		System.out.println("End CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + end.getTime() + " Duration: " + (end.getTime() - begin.getTime()));
+//		Date end = new Date();
+//		System.out.println("End CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + end.getTime() + " Duration: " + (end.getTime() - begin.getTime()));
 		// --- Send the information about a deleted message to the manager agent ---
-		if (partentBehaviour != null)
+		if (parentBehaviour != null)
 			synchronized (this) {
 				try {
 					wait(5);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				((SimulationAgent) myAgent).sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg-"));
+				((SimulationAgent) myAgent).sendManagerNotification(new StatusData(parentBehaviour.getStep(), "msg-"));
 			}
 	}
 

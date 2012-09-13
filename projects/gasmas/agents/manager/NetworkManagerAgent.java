@@ -45,6 +45,7 @@ import jade.core.behaviours.WakerBehaviour;
 import jade.wrapper.ControllerException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -82,6 +83,13 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	private boolean changeDuringStep = false;
 	/** The prefix for cluster components */
 	public static String clusterComponentPrefix = "C";
+	/** List, how holds used cluster names globally */
+	private HashSet<String> usedClusterNames = new HashSet<String>();
+	/** StartTime of a local phase */
+	private long startTime;
+	/** StartTime of the initial process */
+	private long startTimeGlobal;
+	
 
 	/*
 	 * (non-Javadoc)
@@ -119,6 +127,9 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		this.notifyAboutEnvironmentChanges();
 
 		ComponentFunctions.printAmountOfDiffernetTypesOfAgents("Global", myNetworkModel);
+		ComponentFunctions.printAmountOfNodesEdgesAgents("Global", myNetworkModel);
+		startTime = new Date().getTime();
+		startTimeGlobal = new Date().getTime();
 	}
 
 	// ++++++++++++++ Some temporary test cases here +++++++++++++++++++++
@@ -243,7 +254,8 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			// --- Get a list of names of the NetworkComponents, which are in the cluster ---
 			HashSet<String> clusterNetworkComponentIDs = (HashSet<String>) cn.getNotificationObject();
 			NetworkModel clusterNetworkModel = null;
-			
+			// --- At least one new cluster found ---
+			changeDuringStep = true;
 			// --- Distinguish between different reasons of a cluster notification ---
 			if (cn.getReason().startsWith("newCluster")){
 				// --- New cluster found, so no special operations needed ---
@@ -251,20 +263,22 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 				
 			} else if (cn.getReason().startsWith("rearrangeCluster")){
 				// --- Rearrange of an existing cluster ---
-				clusterNetworkModel = this.getClusteredModel();
+				clusterNetworkModel = getClusteredModel();
 				// --- Remove the existing cluster ---
 				clusterNetworkComponentIDs.remove(notification.getSender().getLocalName());
 				ClusterNetworkComponent oldClusterNetworkComponent = (ClusterNetworkComponent) clusterNetworkModel.getNetworkComponent(notification.getSender().getLocalName());
+				if (oldClusterNetworkComponent == null) {
+					this.setActualMessageFlow(new StatusData(-1, "msg-"));
+					return;
+				}
 				// --- Add the network components, which are already in the cluster, to the new cluster ---
 				clusterNetworkComponentIDs.addAll(oldClusterNetworkComponent.getNetworkComponentIDs());
 				// --- Replace cluster by components in the network model ---
 				clusterNetworkModel.replaceClusterByComponents(oldClusterNetworkComponent);
 				// --- Delete alternative network model ---
 				clusterNetworkModel.getAlternativeNetworkModel().remove(oldClusterNetworkComponent.getId());
-				
+
 			} else if (cn.getReason().startsWith("furtherClustering")){
-				// --- At least one new cluster found ---
-				changeDuringStep = true;
 				// --- The reason also got information about in which cluster, the algorithm found another cluster  ---
 				partOfCluster = cn.getReason().split("//")[1];
 				clusterNetworkModel = myNetworkModel.getAlternativeNetworkModel().get(partOfCluster.split("::")[0]);
@@ -283,10 +297,11 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 					// --- Find the new name for the ClusterNetworkComponent ---
 					clusterNetCompIdNew = clusterComponentPrefix + notification.getSender().getLocalName();
-					while (clusterNetworkModel.getNetworkComponent(clusterNetCompIdNew) != null || this.myNetworkModel.getNetworkComponent(clusterNetCompIdNew) != null) {
+					while (usedClusterNames.contains(clusterNetCompIdNew)) {
 						clusterNetCompIdNew = clusterComponentPrefix + clusterNetCompIdNew;
-					}
-
+					}	
+					usedClusterNames.add(clusterNetCompIdNew);
+					
 					// --- Replace the components by the cluster ---
 					ClusterNetworkComponent clusterNetworkComponent = clusterNetworkModel.replaceComponentsByCluster(clusterNetworkComponents, true);
 
@@ -297,8 +312,9 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 					// --- Shift alternative models to the appropriate parent network model ---
 					for (NetworkComponent networkComponent : clusterNetworkComponents) {
 						if (networkComponent instanceof ClusterNetworkComponent) {
-							NetworkModel nmRemoved = clusterNetworkModel.getAlternativeNetworkModel().remove(networkComponent.getId());
-							clusterNetworkComponent.getClusterNetworkModel().getAlternativeNetworkModel().put(networkComponent.getId(), nmRemoved);
+							clusterNetworkModel.getAlternativeNetworkModel().remove(networkComponent.getId());
+							clusterNetworkComponent.getClusterNetworkModel().getAlternativeNetworkModel().put(networkComponent.getId(),
+									((ClusterNetworkComponent) networkComponent).getClusterNetworkModel());
 						}
 					}
 
@@ -309,8 +325,11 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 					}
 
 					this.notifyAboutEnvironmentChanges();
+//					ComponentFunctions.printAmountOfDiffernetTypesOfAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
+					ComponentFunctions.printAmountOfNodesEdgesAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
+					ComponentFunctions.printAmountOfConnectionsWithEnviroment(clusterNetworkComponent);
+					ComponentFunctions.printAmountOfFixedEdgeDirections(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 					this.setActualMessageFlow(new StatusData(-1, "msg-"));
-					ComponentFunctions.printAmountOfDiffernetTypesOfAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 				}
 			}
 			
@@ -335,9 +354,11 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		} else if (notification.getNotification() instanceof StatusData) {
 			StatusData information = ((StatusData) notification.getNotification());
 			// --- A agent is still working in a specific step ---
-			actualStep = information.getPhase();
-			// --- Record the message flow ---
-			setActualMessageFlow(information);
+			if (actualStep == information.getPhase()){
+				// --- Record the message flow ---
+				setActualMessageFlow(information);
+			}else
+				System.out.println("Step is" + actualStep + ", but got " + information.getPhase() +" "+ information.getReason()+ " from " + notification.getSender().getLocalName());
 		}
 
 	}
@@ -356,6 +377,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		} else if (information.getReason().equals("msg-")) {
 			// --- One less message is used by this step ---
 			actualMessageFlow--;
+			
 			if (actualMessageFlow == 0) {
 				// --- No message are in flow, so step is at its end ---
 				// --- Short delay, that all agents can proceed new information ---
@@ -380,33 +402,56 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	 */
 	private void startNextStep() {
 		// Step done -> inform network components about this
-
 		HashSet<String> networkComponentIDs = new HashSet<String>();
 		// Find the network components, how have to be informed about the end of the step
-		if (actualStep == 0 || actualStep == 1) {
+		if (actualStep == 0) {
 			networkComponentIDs.addAll(myNetworkModel.getNetworkComponents().keySet());
+			actualStep = 1;
+		} else if (actualStep == 1) {
+			System.out.println("Duration after step 2: " + (new Date().getTime() - startTime));
+			startTime = new Date().getTime();
+			networkComponentIDs.addAll(myNetworkModel.getNetworkComponents().keySet());
+			actualStep = 2;
 		} else if (actualStep == 2) {
+			ComponentFunctions.printAmountOfFixedEdgeDirections("Global", myNetworkModel);
 			networkComponentIDs.addAll(getClusteredModel().getNetworkComponents().keySet());
+			actualStep = 31;
 		} else if (actualStep == 3) {
+			if (changeDuringStep) {
+				networkComponentIDs.addAll(getClusteredModel().getNetworkComponents().keySet());
+				actualStep = 32;
+			} else {
+				System.out.println("Duration after step 4: " + (new Date().getTime() - startTime));
+				startTime = new Date().getTime();
+				getAllNetworkComponents(networkComponentIDs, myNetworkModel);
+				actualStep = 4;
+			}
+			changeDuringStep = false;
+		} else if (actualStep == 31) {
+			networkComponentIDs.addAll(getClusteredModel().getNetworkComponents().keySet());
+			actualStep = 3;
+		} else if (actualStep == 32) {
 			getAllNetworkComponents(networkComponentIDs, myNetworkModel);
+			actualStep = 3;
 		} else if (actualStep == 4) {
 			// Clustering Round until the clustering algorithm did not find anything new
 			if (changeDuringStep) {
 				getAllNetworkComponents(networkComponentIDs, myNetworkModel);
 			}
 			changeDuringStep = false;
+			actualStep = 4;
 		}
 		// Now inform the specific network components about the next step
 		if (!networkComponentIDs.isEmpty()) {
-			System.out.println("----------------------------------------------------------------Start of the next step. Phase: " + (actualStep + 1));
+			System.out.println("----------------------------------------------------------------Start of the next step. Phase: " + (actualStep));
 			Iterator<String> it = networkComponentIDs.iterator();
 			while (it.hasNext()) {
 				String networkComponentID = it.next();
 				int tries = 0;
-				while (!sendAgentNotification(new AID(networkComponentID, AID.ISLOCALNAME), new InitialBehaviourMessageContainer(new StatusData(actualStep + 1)))) {
+				while (!sendAgentNotification(new AID(networkComponentID, AID.ISLOCALNAME), new InitialBehaviourMessageContainer(new StatusData(actualStep)))) {
 					tries++;
 					if (tries > 10) {
-						System.err.println("PROBLEM (NS) to send a message to " + networkComponentID + " from " + this.getLocalName() + " Phase: " + (actualStep + 1));
+						System.err.println("PROBLEM (NS) to send a message to " + networkComponentID + " from " + this.getLocalName() + " Phase: " + (actualStep));
 						break;
 					}
 					synchronized (this) {
@@ -418,9 +463,11 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 					}
 				}
 			}
-
+			
 		} else {
 			// The last step of the initial process is done
+			System.out.println("Duration after step 5: " + (new Date().getTime() - startTime));
+			System.out.println("Duration after initial process: " + (new Date().getTime() - startTimeGlobal));
 			System.out.println("----------------------------------------------------------------Finished the last step. Phase: " + actualStep);
 		}
 	}
@@ -458,7 +505,8 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(clusterNetworkModel.getNetworkComponents().values())) {
 
 			for (Iterator<String> it = clusterNetworkComponentIDs.iterator(); it.hasNext();) {
-				if (it.next().equals(networkComponent.getId())) {
+				String temp = it.next(); 
+				if (temp.equals(networkComponent.getId())) {
 					// --- Add the NetworkComponent to the list of ClusterNetworkComponents ---
 					clusterNetworkComponents.add(networkComponent);
 

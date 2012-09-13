@@ -28,11 +28,19 @@
  */
 package gasmas.clustering.analyse;
 
+import gasmas.agents.components.EntryAgent;
+import gasmas.agents.components.ExitAgent;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
+import agentgui.envModel.graph.networkModel.GraphEdge;
+import agentgui.envModel.graph.networkModel.GraphEdgeDirection;
+import agentgui.envModel.graph.networkModel.GraphElement;
+import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 
@@ -91,5 +99,43 @@ public class ComponentFunctions {
 			System.out.println(entry.getKey() + " : " + entry.getValue());
 		}
 		System.out.println("Sum Components " + networkModel.getNetworkComponents().size());
+	}
+	
+	public static void printAmountOfNodesEdgesAgents(String name, NetworkModel networkModel) {
+		int numberGraphNodes = 0;
+		int numberGraphEdges = 0;
+		for (GraphElement graphElement : networkModel.getGraphElements().values()) {
+			if (graphElement instanceof GraphNode){
+				numberGraphNodes++;
+			}else if (graphElement instanceof GraphEdge){
+				numberGraphEdges++;
+			}
+		}
+		System.out.println("Number of agents / network components in " + name + ": " + networkModel.getNetworkComponents().keySet().size() +"\n Number of Nodes: " + numberGraphNodes   + " Number of Edges: " + numberGraphEdges);
+		
+	}
+	
+	public static void printAmountOfFixedEdgeDirections(String name, NetworkModel networkModel) {
+		int i = 0;
+		for (NetworkComponent networkComponent : networkModel.getNetworkComponents().values()) {
+			if (networkComponent.getEdgeDirections() != null){
+				for (GraphEdgeDirection iterable_element : networkComponent.getEdgeDirections().values()) {
+					if (iterable_element.getGraphNodeIDTo()!=null)
+						i++;
+				}
+					
+			}
+		}
+		System.out.println(" Number of directed egdes in " + name + ": " + i);
+	}
+	
+	public static void printAmountOfConnectionsWithEnviroment(ClusterNetworkComponent clusterNetworkComponent) {
+		int i = 0;
+		for (NetworkComponent networkComponent : clusterNetworkComponent.getConnectionNetworkComponents()) {
+			if (!networkComponent.getAgentClassName().equals(EntryAgent.class.getName()) && !networkComponent.getAgentClassName().equals(ExitAgent.class.getName())) {
+				i++;
+			}
+		}
+		System.out.println(" " + clusterNetworkComponent.getId() + " has " + i + " connections with the enviroment");
 	}
 }

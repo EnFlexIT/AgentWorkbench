@@ -70,7 +70,7 @@ public class FindSimplificationBehaviour {
 	private GenericNetworkAgent myAgent;
 	
 	/** The partent behaviour. */
-	private InitialProcessBehaviour partentBehaviour;
+	private InitialProcessBehaviour parentBehaviour;
 
 	/** The network model. */
 	private NetworkModel myNetworkModel;
@@ -161,14 +161,14 @@ public class FindSimplificationBehaviour {
 	 *
 	 * @param genericNetworkAgent the generic network agent
 	 * @param networkModel the network model
-	 * @param partentBehaviour the partent behaviour
+	 * @param parentBehaviour the partent behaviour
 	 */
-	public FindSimplificationBehaviour(GenericNetworkAgent genericNetworkAgent, NetworkModel networkModel, InitialProcessBehaviour partentBehaviour) {
+	public FindSimplificationBehaviour(GenericNetworkAgent genericNetworkAgent, NetworkModel networkModel, InitialProcessBehaviour parentBehaviour) {
 		this.myAgent = genericNetworkAgent;
 		this.myNetworkModel = networkModel;
 		this.myNetworkComponent = networkModel.getNetworkComponent(myAgent.getLocalName());
 		this.myNeighbours = this.myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent);
-		this.partentBehaviour = partentBehaviour;
+		this.parentBehaviour = parentBehaviour;
 	}
 
 	/**
@@ -188,8 +188,8 @@ public class FindSimplificationBehaviour {
 			// --- Ask the first station about possible clusters ---
 			msgSend((String) toAsk.toArray()[alreadyReportedStations], new SimplificationData(myNetworkComponent.getId(), true, 1));
 			alreadyReportedStations += 1;
-			System.out.println(myNetworkComponent.getId() + " Start with " + toAsk.size() + "(" + toAsk + ")" + " and neighbours " + myNeighbours.size() + " In: " + incoming + " Out: " + outgoing
-					+ " Dead: " + dead);
+//			System.out.println(myNetworkComponent.getId() + " Start with " + toAsk.size() + "(" + toAsk + ")" + " and neighbours " + myNeighbours.size() + " In: " + incoming + " Out: " + outgoing
+//					+ " Dead: " + dead);
 		} else if (toAsk.size() <= 1) {
 			// --- This component do not have information, that can help for
 			// this algorithm ---
@@ -207,7 +207,7 @@ public class FindSimplificationBehaviour {
 	public synchronized void interpretMsg(EnvironmentNotification msg) {
 		// --- Wait until the start is done ---
 		while (!startdone) {
-			System.out.println("Start problem (FS) at " + myAgent.getLocalName());
+			System.err.println("Start problem (FS) at " + myAgent.getLocalName());
 			try {
 				wait(500);
 			} catch (InterruptedException e) {
@@ -223,7 +223,7 @@ public class FindSimplificationBehaviour {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		myAgent.sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg-"));
+		myAgent.sendManagerNotification(new StatusData(parentBehaviour.getStep(), "msg-"));
 	}
 
 	/**
@@ -239,8 +239,8 @@ public class FindSimplificationBehaviour {
 				// --- Answer is actual ---
 				if (alreadyReportedStations < toAsk.size()) {
 					// --- Component has still neighbours to ask about cluster possibilities ---
-					System.out.println("A branch " + myNetworkComponent.getId() + " is asking the next station " + toAsk.toArray()[alreadyReportedStations] + ". Answer from " + sender
-							+ " Initiator: " + content.getInitiator() + " UrInitiator: " + content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
+//					System.out.println("A branch " + myNetworkComponent.getId() + " is asking the next station " + toAsk.toArray()[alreadyReportedStations] + ". Answer from " + sender
+//							+ " Initiator: " + content.getInitiator() + " UrInitiator: " + content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
 					// --- Send the question to the next neighbour ---
 					content.setAnswer(false);
 					content.setInitiator(myNetworkComponent.getId());
@@ -251,13 +251,13 @@ public class FindSimplificationBehaviour {
 				} else {
 					// --- Component is done, all neigbours are asked
 					if (content.getUrInitiator().equals(myNetworkComponent.getId())) {
-						System.out.println("Done: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
+//						System.out.println("Done: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
 						// --- Component initiated the request for clustering ->
 						// is the authority how set the cluster ---
 						setCluster(content.getWay());
 					} else {
-						System.out.println("Done, branch: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " UrInitiator: " + content.getUrInitiator()
-								+ " DuringInt: " + duringAClusterUrInitiator);
+//						System.out.println("Done, branch: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " UrInitiator: " + content.getUrInitiator()
+//								+ " DuringInt: " + duringAClusterUrInitiator);
 						// --- Component is only a intermediate station, so send
 						// the answer back to the next initiator ---
 						content.addStation(myNetworkComponent.getId());
@@ -267,8 +267,8 @@ public class FindSimplificationBehaviour {
 			} else {
 				// --- Answer is old, some higher priority question is actual ->
 				// ignoring ---
-				System.out.println("Ignoring msg. Stop clustering: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " UrInitiator: "
-						+ content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
+//				System.out.println("Ignoring msg. Stop clustering: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " UrInitiator: "
+//						+ content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
 			}
 		} else {
 			if (noInformation) {
@@ -282,7 +282,7 @@ public class FindSimplificationBehaviour {
 				msgSend(content.getInitiator(), content);
 			} else {
 				if (content.getWay().contains(myNetworkComponent.getId())) {
-					System.out.println("Got an request, where I found myself in the line: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
+//					System.out.println("Got an request, where I found myself in the line: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
 					// --- Cycle found -> send the initiator the answer back ---
 					content.setAnswer(true);
 					msgSend(content.getInitiator(), content);
@@ -291,7 +291,7 @@ public class FindSimplificationBehaviour {
 					toAsk.remove(sender);
 					if (myNeighbours.size() == 2) {
 						// --- Component is e.g. a pipe, so only add itself to the route and send ahead
-						System.out.println("Sending ahead: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " To: " + toAsk.toArray()[0]);
+//						System.out.println("Sending ahead: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " To: " + toAsk.toArray()[0]);
 						content.addStation(myNetworkComponent.getId());
 						msgSend((String) toAsk.toArray()[0], content);
 						// --- Reset pipe, so that the next request can proceed ---
@@ -299,7 +299,7 @@ public class FindSimplificationBehaviour {
 					} else {
 						if (!duringACluster) {
 							// --- First clustering question -> start clustering ---
-							System.out.println("Start clustering at: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
+//							System.out.println("Start clustering at: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator());
 							// --- Set the information about the actual clustering round ---
 							duringACluster = true;
 							duringAClusterUrInitiator = content.getUrInitiator();
@@ -311,8 +311,8 @@ public class FindSimplificationBehaviour {
 								// --- Remind which neigbours are already asked ---
 								alreadyReportedStations += 1;
 							} else {
-								System.out.println("Done, branch:: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " UrInitiator: "
-										+ content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
+//								System.out.println("Done, branch:: " + myNetworkComponent.getId() + " from " + sender + " Initiator: " + content.getInitiator() + " UrInitiator: "
+//										+ content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
 								// --- No possible neighbours to ask, send back to the initiator ---
 								content.setAnswer(true);
 								msgSend(initiator, content);
@@ -321,22 +321,22 @@ public class FindSimplificationBehaviour {
 							// --- Component get already a clustering question, check how to react ---
 							toAsk.add(sender);
 							if (content.getUrInitiator().compareTo(duringAClusterUrInitiator) < 0) {
-								System.out.println("Got an second question for clustering with an higher prio: " + myNetworkComponent.getId() + " from " + sender + " Initiator: "
-										+ content.getInitiator() + " UrInitiator: " + content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
+//								System.out.println("Got an second question for clustering with an higher prio: " + myNetworkComponent.getId() + " from " + sender + " Initiator: "
+//										+ content.getInitiator() + " UrInitiator: " + content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
 								// --- Question has an higher priority ---
 								// --- Put the request in a pool ---
 								nextQuestionier.put(sender, content);
 								// --- Reset component and get the request from the pool ---
 								workOnHigherRequest();
 							} else if (content.getUrInitiator().compareTo(duringAClusterUrInitiator) == 0) {
-								System.out.println("Got an second question for clustering with an equal prio, answer directly (circle): " + myNetworkComponent.getId() + " from " + sender
-										+ " Initiator: " + content.getInitiator() + " UrInitiator: " + content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
+//								System.out.println("Got an second question for clustering with an equal prio, answer directly (circle): " + myNetworkComponent.getId() + " from " + sender
+//										+ " Initiator: " + content.getInitiator() + " UrInitiator: " + content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
 								// --- Question comes from this network component -> cycle ---
 								// --- Send the request back to the local initiator ---
 								msgSend(sender, content);
 							} else {
-								System.out.println("Got an second question for clustering with a lower prio: " + myNetworkComponent.getId() + " from " + sender + " Initiator: "
-										+ content.getInitiator() + " UrInitiator: " + content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
+//								System.out.println("Got an second question for clustering with a lower prio: " + myNetworkComponent.getId() + " from " + sender + " Initiator: "
+//										+ content.getInitiator() + " UrInitiator: " + content.getUrInitiator() + " DuringInt: " + duringAClusterUrInitiator);
 								// --- Question with a lower priority -> ignoring ---
 							}
 						}
@@ -379,7 +379,7 @@ public class FindSimplificationBehaviour {
 		// --- Cluster must be larger than the minimal cluster size ---
 		if (list.size() > minClusterSize) {
 			System.out.println("Von " + myNetworkComponent.getId() + " Cluster: " + list);
-			myAgent.sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg+"));
+			myAgent.sendManagerNotification(new StatusData(parentBehaviour.getStep(), "msg+"));
 			// --- Send the notification about the cluster to the manager agent ---
 			ClusterNotification cn = new ClusterNotification();
 			cn.setReason("newCluster");
@@ -395,7 +395,7 @@ public class FindSimplificationBehaviour {
 	 * @param content the content
 	 */
 	public void msgSend(String receiver, GenericMesssageData content) {
-		partentBehaviour.msgSend(receiver, content);
+		parentBehaviour.msgSend(receiver, content);
 	}
 
 }

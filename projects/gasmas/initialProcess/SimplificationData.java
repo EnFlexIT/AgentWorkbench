@@ -127,7 +127,7 @@ public class SimplificationData extends GenericMesssageData {
 	public HashSet<String> getWay() {
 		return way;
 	}
-
+	
 	/**
 	 * Adds the station.
 	 *
@@ -136,26 +136,31 @@ public class SimplificationData extends GenericMesssageData {
 	public void addStation(String station) {
 		this.way.add(station);
 	}
-
+	
 	/**
-	 * Adds the another way.
+	 * Gets a copy of these data.
 	 *
-	 * @param otherWay the other way
+	 * @return the a copy
 	 */
-	public void addAnotherWay(HashSet<String> otherWay) {
-		this.way.addAll(otherWay);
+	public SimplificationData getCopy() {
+		SimplificationData temp = new SimplificationData(this.initiator, 2);
+		temp.setUrInitiator(this.urInitiator);
+		temp.getWay().clear();
+		temp.getWay().addAll(this.way);
+		temp.setAnswer(this.isAnswer());
+		return temp;
 	}
 
 	/**
 	 * Instantiates a new simplification data.
 	 *
 	 * @param initiator the initiator
-	 * @param station the station
 	 * @param step the step
 	 */
-	public SimplificationData(String initiator, String station, int step) {
+	public SimplificationData(String initiator, int step) {
 		this.initiator = initiator;
-		this.way.add(station);
+		this.urInitiator = initiator;
+		this.way.add(initiator);
 		this.step = step;
 	}
 
@@ -191,45 +196,4 @@ public class SimplificationData extends GenericMesssageData {
 		this.step = step;
 	}
 	
-	/**
-	 * Instantiates a new simplification data.
-	 *
-	 * @param initiator the initiator
-	 * @param step the step
-	 */
-	public SimplificationData(String initiator, int step) {
-		this.initiator = initiator;
-		this.urInitiator = initiator;
-		this.step = step;
-	}
-	
-	/**
-	 * Instantiates a new simplification data.
-	 *
-	 * @param initiator the initiator
-	 * @param way the way
-	 * @param urInitiator the ur initiator
-	 * @param step the step
-	 */
-	public SimplificationData(String initiator, HashSet<String> way, String urInitiator, int step) {
-		this.initiator = initiator;
-		this.way = way;
-		this.urInitiator = urInitiator;
-		this.step = step;
-	}
-
-	/**
-	 * Instantiates a new simplification data.
-	 *
-	 * @param initiator the initiator
-	 * @param answer the answer
-	 * @param urInitiator the ur initiator
-	 * @param step the step
-	 */
-	public SimplificationData(String initiator, boolean answer, String urInitiator, int step) {
-		this.initiator = initiator;
-		this.answer = answer;
-		this.urInitiator = urInitiator;
-		this.step = step;
-	}
 }

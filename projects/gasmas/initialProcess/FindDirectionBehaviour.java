@@ -76,7 +76,7 @@ public class FindDirectionBehaviour {
 	private GenericNetworkAgent myAgent;
 	
 	/** The partent behaviour. */
-	private InitialProcessBehaviour partentBehaviour;
+	private InitialProcessBehaviour parentBehaviour;
 
 	/** The network model. */
 	private NetworkModel myNetworkModel;
@@ -98,6 +98,15 @@ public class FindDirectionBehaviour {
 
 	/** Saves the neighbours of this component. */
 	private Vector<NetworkComponent> myNeighbours;
+
+	/**
+	 * Shows if this class is already in step 2
+	 *
+	 * @param dead the dead
+	 */
+	public boolean isStep2() {
+		return tryToGuess;
+	}
 
 	/**
 	 * Adds the dead.
@@ -158,14 +167,14 @@ public class FindDirectionBehaviour {
 	 *
 	 * @param agent the agent
 	 * @param myNetworkModel the my network model
-	 * @param partentBehaviour the partent behaviour
+	 * @param parentBehaviour the partent behaviour
 	 */
-	public FindDirectionBehaviour(GenericNetworkAgent agent, NetworkModel myNetworkModel, InitialProcessBehaviour partentBehaviour) {
+	public FindDirectionBehaviour(GenericNetworkAgent agent, NetworkModel myNetworkModel, InitialProcessBehaviour parentBehaviour) {
 		this.myAgent = agent;
 		this.myNetworkModel = myNetworkModel;
 		this.myNetworkComponent = myNetworkModel.getNetworkComponent(myAgent.getLocalName());
 		this.myNeighbours = myNetworkModel.getNeighbourNetworkComponents(myNetworkComponent);
-		this.partentBehaviour = partentBehaviour;
+		this.parentBehaviour = parentBehaviour;
 	}
 
 	/**
@@ -282,7 +291,7 @@ public class FindDirectionBehaviour {
 	public synchronized void interpretMsg(EnvironmentNotification msg) {
 		// --- Wait until the start is done ---
 		while (!startdone) {
-			System.out.println("Start problem (FD) at " + myAgent.getLocalName());
+			System.err.println("Start problem (FD) at " + myAgent.getLocalName());
 			try {
 				wait(500);
 			} catch (InterruptedException e) {
@@ -307,7 +316,7 @@ public class FindDirectionBehaviour {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		myAgent.sendManagerNotification(new StatusData(partentBehaviour.getStep(), "msg-"));
+		myAgent.sendManagerNotification(new StatusData(parentBehaviour.getStep(), "msg-"));
 	}
 
 	/**
@@ -322,7 +331,7 @@ public class FindDirectionBehaviour {
 	private void forwarding(String sender, FindDirectionData content, HashSet<String> hashSet2, HashSet<String> hashSet, String msg) {
 		if (hashSet2.contains(sender)) {
 			// --- Information, which did not fit the information of this component, contradiction ---
-			System.out.println("Error, message with a wrong direction at " + myAgent.getLocalName() + " to " + sender);
+//			System.out.println("Error, message with a wrong direction at " + myAgent.getLocalName() + " to " + sender);
 		} else {
 			done = false;
 			if (content.getWay().equals("")) {
@@ -382,7 +391,7 @@ public class FindDirectionBehaviour {
 	private void deadPipe(String sender) {
 		// --- Information about the flow get add to the appropriate HashSet ---
 		addDead(sender);
-		System.out.println(myAgent.getLocalName() + " is partly dead, because of " + sender);
+//		System.out.println(myAgent.getLocalName() + " is partly dead, because of " + sender);
 		// --- Try to interpret the information to find new information ---
 		// --- First check, if all neighbours except one are dead ---
 		int i = 0;
@@ -466,7 +475,7 @@ public class FindDirectionBehaviour {
 			if (content.getWay().split("::")[0].equals(myAgent.getLocalName())) {
 				if (incoming.size() + outgoing.size() + dead.size() != myNeighbours.size()) {
 					// --- Got my own ? message, so this should be a cycle ---
-					System.out.println("My own name in the way: " + myAgent.getLocalName() + " Way: " + content.getWay().toString());
+//					System.out.println("My own name in the way: " + myAgent.getLocalName() + " Way: " + content.getWay().toString());
 					Iterator<NetworkComponent> it1 = myNeighbours.iterator();
 					String inform = "";
 					String direction = "";
@@ -516,7 +525,7 @@ public class FindDirectionBehaviour {
 								} else if (newFlow.equals("out")) {
 									incoming.add(inform.split("::")[i]);
 								}
-								System.out.println("Send direction from " + myAgent.getLocalName() + " to " + inform.split("::")[i] + " with " + newFlow);
+//								System.out.println("Send direction from " + myAgent.getLocalName() + " to " + inform.split("::")[i] + " with " + newFlow);
 								if (!inform.split("::")[i].equals(content.getWay().split("::")[1])) {
 									content.setWay(changeOrder(content.getWay()));
 								}
@@ -527,7 +536,7 @@ public class FindDirectionBehaviour {
 						}
 					} else {
 						// --- Maybe found an cycle, but also did not know the direction of the third neighbour ---
-						System.out.println("No direction for my own way!" + myAgent.getLocalName() + "   " + direction);
+//						System.out.println("No direction for my own way!" + myAgent.getLocalName() + "   " + direction);
 					}
 				}
 			} else {
@@ -603,8 +612,7 @@ public class FindDirectionBehaviour {
 			// --- Check, if we have information, which we can set in the network model ---
 			if (((!incoming.isEmpty() || !outgoing.isEmpty()) && this.myNeighbours.size() > 2) || (!incoming.isEmpty() && !outgoing.isEmpty() && this.myNeighbours.size() == 2)) {
 
-				System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead());
-
+//				System.out.println(myAgent.getLocalName() + " In: " + getIncoming() + " Out: " + getOutgoing() + " Dead: " + getDead());
 				// --- Set information in the network model ---
 				NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(myNetworkModel, myNetworkComponent);
 				HashSet<GraphNode> outerNodes = netCompDirect.getOuterNodes();
@@ -648,6 +656,6 @@ public class FindDirectionBehaviour {
 	 * @param content the content
 	 */
 	public void msgSend(String receiver, GenericMesssageData content) {
-		partentBehaviour.msgSend(receiver, content);
+		parentBehaviour.msgSend(receiver, content);
 	}
 }

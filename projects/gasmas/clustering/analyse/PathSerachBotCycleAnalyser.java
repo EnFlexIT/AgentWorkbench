@@ -38,6 +38,7 @@ import java.util.Vector;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.prototypes.DistributionNode;
 
 /**
  * The Class AntCircleAnalyser.
@@ -51,6 +52,9 @@ public class PathSerachBotCycleAnalyser {
 
 	/** The subgraphs. */
 	private ArrayList<Subgraph> subgraphs;
+	
+	/** The network components without distribution points. */
+	private ArrayList<String> networkComponentIDs = new ArrayList<String>();
 
 	private int minConnections = 1000;
 
@@ -65,6 +69,11 @@ public class PathSerachBotCycleAnalyser {
 	public PathSerachBotCycleAnalyser(NetworkModel networkModel) {
 		this.networkModel = networkModel;
 		buildCoordinatesMap(networkModel);
+		for (NetworkComponent netComp : networkModel.getNetworkComponents().values()) {
+			if (!netComp.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+				networkComponentIDs.add(netComp.getId());
+			}
+		}
 	}
 
 	public Subgraph getBestSubgraph() {
@@ -72,12 +81,12 @@ public class PathSerachBotCycleAnalyser {
 			return null;
 		}
 		Subgraph subgraph = subgraphs.get(0);
-		if (subgraph.getNetworkComponents().containsAll(networkModel.getNetworkComponents().keySet())) {
+		if (subgraph.getNetworkComponents().containsAll(networkComponentIDs)) {
 			subgraph.getNetworkComponents().clear();
 		}
 		for (Subgraph subgraphInList : subgraphs) {
-			if (subgraphInList.getNetworkComponents().size() > subgraph.getNetworkComponents().size()) {
-				if (!subgraphInList.getNetworkComponents().containsAll(networkModel.getNetworkComponents().keySet())) {
+			if (subgraphInList.getNetworkComponents().size() < subgraph.getNetworkComponents().size()) {
+				if (!subgraphInList.getNetworkComponents().containsAll(networkComponentIDs)) {
 					subgraph = subgraphInList;
 				}
 			}
