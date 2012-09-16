@@ -30,6 +30,7 @@ package agentgui.envModel.graph.networkModel;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -76,6 +77,18 @@ public class ClusterNetworkComponent extends NetworkComponent {
 		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.agentClassName, null, this.directed, this.domain, this.clusterNetworkModel.getCopy());
 		HashSet<String> gaphElementIDs = new HashSet<String>(this.getGraphElementIDs());
 		copy.setGraphElementIDs(gaphElementIDs);
+		copy.setDataModel(this.dataModel);
+		copy.setDataModelBase64(this.dataModelBase64);
+
+		if (this.edgeDirections!=null && this.edgeDirections.size()!=0) {
+			HashMap<String, GraphEdgeDirection> edgeDirectionsCopy = new HashMap<String, GraphEdgeDirection>();
+			for (String graphEdgeID : this.edgeDirections.keySet()) {
+				GraphEdgeDirection ged = this.edgeDirections.get(graphEdgeID); 
+				edgeDirectionsCopy.put(graphEdgeID, ged.getCopy());
+			}
+			copy.setEdgeDirections(edgeDirectionsCopy);
+		}
+		
 		return copy;
 	}
 

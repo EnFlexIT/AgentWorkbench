@@ -168,7 +168,7 @@ public class AgentStartConfiguration implements Serializable {
 	 * Removes the reference.
 	 *
 	 * @param agentReference the agent reference
-	 * @param selectedIndexPosition the index position
+	 * @param selectedIndex the index position
 	 * @return the index of the new focus position
 	 */
 	public int removeReference(String agentReference, int selectedIndex) {

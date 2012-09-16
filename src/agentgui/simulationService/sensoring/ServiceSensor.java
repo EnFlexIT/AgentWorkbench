@@ -49,7 +49,7 @@ public class ServiceSensor {
 	
 	/**
 	 * Instantiates a new service sensor.
-	 * @param agent the agent
+	 * @param serviceSensor the service sensor
 	 */
 	public ServiceSensor(ServiceSensorInterface serviceSensor) {
 		myServiceSensor = serviceSensor;		

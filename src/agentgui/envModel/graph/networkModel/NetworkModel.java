@@ -188,39 +188,45 @@ public class NetworkModel implements Serializable {
 	 */
 	public NetworkModel getCopy() {
 
-		NetworkModel netModel = new NetworkModel();
-		netModel.setGraph(this.getGraphCopy());
-
-		// -- Create a copy of the networkComponents ----------------
-		HashMap<String, NetworkComponent> copyOfComponents = new HashMap<String, NetworkComponent>();
-		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
-			if (networkComponent instanceof ClusterNetworkComponent) {
-				ClusterNetworkComponent networkComponentCopy = ((ClusterNetworkComponent) networkComponent).getCopy();
-				copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
-			} else {
-				NetworkComponent networkComponentCopy = networkComponent.getCopy();
-				copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
+		synchronized (this) {
+			
+			NetworkModel netModel = new NetworkModel();
+			netModel.setGraph(this.getGraphCopy());
+	
+			// -- Create a copy of the networkComponents ----------------
+			HashMap<String, NetworkComponent> copyOfComponents = new HashMap<String, NetworkComponent>();
+			for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
+				if (networkComponent instanceof ClusterNetworkComponent) {
+					ClusterNetworkComponent networkComponentCopy = ((ClusterNetworkComponent) networkComponent).getCopy();
+					copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
+				} else {
+					NetworkComponent networkComponentCopy = networkComponent.getCopy();
+					copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
+				}
 			}
-		}
-		netModel.setNetworkComponents(copyOfComponents);
-		netModel.refreshGraphElements();
-
-		// -- Create a copy of the generalGraphSettings4MAS ---------
-		GeneralGraphSettings4MAS copyOfGeneralGraphSettings4MAS = null;
-		if (this.generalGraphSettings4MAS != null) {
-			copyOfGeneralGraphSettings4MAS = this.generalGraphSettings4MAS.getCopy();
-		}
-		netModel.setGeneralGraphSettings4MAS(copyOfGeneralGraphSettings4MAS);
-
-		// -- Create a copy of the alternativeNetworkModel ----------
-		HashMap<String, NetworkModel> copyOfAlternativeNetworkModel = null;
-		if (this.alternativeNetworkModel != null) {
-			copyOfAlternativeNetworkModel = new HashMap<String, NetworkModel>(this.alternativeNetworkModel);
-		}
-		netModel.setAlternativeNetworkModel(copyOfAlternativeNetworkModel);
-
-		return netModel;
-	}
+			netModel.setNetworkComponents(copyOfComponents);
+			netModel.refreshGraphElements();
+	
+			// -- Create a copy of the generalGraphSettings4MAS ---------
+			GeneralGraphSettings4MAS copyOfGeneralGraphSettings4MAS = null;
+			if (this.generalGraphSettings4MAS != null) {
+				copyOfGeneralGraphSettings4MAS = this.generalGraphSettings4MAS.getCopy();
+			}
+			netModel.setGeneralGraphSettings4MAS(copyOfGeneralGraphSettings4MAS);
+	
+			// -- Create a copy of the alternativeNetworkModel ----------
+			HashMap<String, NetworkModel> copyOfAlternativeNetworkModel = null;
+			if (this.alternativeNetworkModel != null) {
+				copyOfAlternativeNetworkModel = new HashMap<String, NetworkModel>();
+				for (String networkModelName : this.alternativeNetworkModel.keySet()) {
+					NetworkModel networkModel = this.alternativeNetworkModel.get(networkModelName).getCopy();
+					copyOfAlternativeNetworkModel.put(networkModelName, networkModel);
+				}
+			}
+			netModel.setAlternativeNetworkModel(copyOfAlternativeNetworkModel);
+			return netModel;
+		} // end synchronized
+	}// end method
 
 	/**
 	 * Copy graph and graph elements.
@@ -1499,7 +1505,7 @@ public class NetworkModel implements Serializable {
 	/**
 	 * Returns the outer, not connected GraphNodes of a NetworkModel.
 	 *
-	 * @param networkComponents the network components
+	 * @param setDistributionNodesToOuterNodes if true, distribution nodes will always set to outer nodes
 	 * @return the outer nodes
 	 */
 	public Vector<GraphNode> getOuterNodes(boolean setDistributionNodesToOuterNodes) {

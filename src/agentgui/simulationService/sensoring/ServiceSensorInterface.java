@@ -30,9 +30,19 @@ package agentgui.simulationService.sensoring;
 
 import jade.core.AID;
 import jade.core.Location;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.agents.SimulationAgent;
+import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
+/**
+ * This interface is the super class for connections to the {@link ServiceSensor}.
+ * It is used in the {@link SimulationAgent} or in the {@link SimulationServiceBehaviour} 
+ * in order to connect to the {@link SimulationService} and its sensor system.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public interface ServiceSensorInterface {
 
 	/**

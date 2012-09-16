@@ -291,6 +291,7 @@ de;Netz-Komponenten;Network Components
 de;Netz;Network
 de;Netzkomponente;Network component
 de;Netzwerk-Komponenten;Network Components;;;
+de;Netzwerkkomponente umbenennen;Rename network component;;;
 de;Netzwerkkomponente(n) entfernen;Remove network component (s) ;;;
 de;Netzwerkkomponente(n) hinzufügen;Add network component s);;;
 de;Neu laden;Reload;;;
@@ -518,6 +519,7 @@ de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Überspringen;Skip
 en;;Set mapping of external types to local components;;;
+en;;The component name already exists!<br>Choose a different one.;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agenten-Klasse;Agent class;;;

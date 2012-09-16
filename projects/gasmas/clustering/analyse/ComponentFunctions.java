@@ -115,7 +115,7 @@ public class ComponentFunctions {
 		
 	}
 	
-	public static void printAmountOfFixedEdgeDirections(String name, NetworkModel networkModel) {
+	public static int printAmountOfFixedEdgeDirections(String name, NetworkModel networkModel) {
 		int i = 0;
 		for (NetworkComponent networkComponent : networkModel.getNetworkComponents().values()) {
 			if (networkComponent.getEdgeDirections() != null){
@@ -127,6 +127,7 @@ public class ComponentFunctions {
 			}
 		}
 		System.out.println(" Number of directed egdes in " + name + ": " + i);
+		return i;
 	}
 	
 	public static void printAmountOfConnectionsWithEnviroment(ClusterNetworkComponent clusterNetworkComponent) {

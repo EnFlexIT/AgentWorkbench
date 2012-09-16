@@ -39,7 +39,6 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -241,12 +240,14 @@ public class DisplayAgent extends AbstractDisplayAgent {
 				try {
 					this.netModel = this.getStimuliOfNetworkModel().get(0);
 					this.getStimuliOfNetworkModel().remove(0);
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							myGraphEnvironmentController.setEnvironmentModel(netModel);
-						}
-					});
+					this.myGraphEnvironmentController.setEnvironmentModel(netModel);
+					
+//					SwingUtilities.invokeLater(new Runnable() {
+//						@Override
+//						public void run() {
+//							
+//						}
+//					});
 					
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -285,13 +286,8 @@ public class DisplayAgent extends AbstractDisplayAgent {
 			this.netModel.setDirectionsOfNetworkComponent(netComp);
 			
 		}
-		
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				myGraphEnvironmentController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));
-			}
-		});
+		myGraphEnvironmentController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));
+
 		return notification;
 	}
 	

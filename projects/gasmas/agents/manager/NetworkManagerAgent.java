@@ -113,7 +113,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
 		this.getClusteredModel();
 
-		// --- Make sure that the setup was started, before
+		// --- Make sure that all agents were started ---------------
 		this.addBehaviour(new WaitForTheEndOfSimulationStart(this, 300));
 	}
 
@@ -249,7 +249,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		} else if (notification.getNotification() instanceof ClusterNotification) {
 
 			ClusterNotification cn = (ClusterNotification) notification.getNotification();
-			String partOfCluster ="ClusterdNM";
+			String partOfCluster = "ClusterdNM";
 			
 			// --- Get a list of names of the NetworkComponents, which are in the cluster ---
 			HashSet<String> clusterNetworkComponentIDs = (HashSet<String>) cn.getNotificationObject();
@@ -313,8 +313,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 					for (NetworkComponent networkComponent : clusterNetworkComponents) {
 						if (networkComponent instanceof ClusterNetworkComponent) {
 							clusterNetworkModel.getAlternativeNetworkModel().remove(networkComponent.getId());
-							clusterNetworkComponent.getClusterNetworkModel().getAlternativeNetworkModel().put(networkComponent.getId(),
-									((ClusterNetworkComponent) networkComponent).getClusterNetworkModel());
+							clusterNetworkComponent.getClusterNetworkModel().getAlternativeNetworkModel().put(networkComponent.getId(), ((ClusterNetworkComponent) networkComponent).getClusterNetworkModel());
 						}
 					}
 
@@ -528,8 +527,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	/**
 	 * Replace network model part with cluster.
 	 * 
-	 * @param networkModel
-	 *            the network model
+	 * @param networkModel the network model
 	 * @return the cluster network component
 	 */
 	private ClusterNetworkComponent replaceNetworkModelPartWithCluster(ClusterNetworkComponent clusterNetworkComponent, boolean distributionNodesAreOuterNodes) {
@@ -543,7 +541,6 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 	/**
 	 * Returns the clustered model.
-	 * 
 	 * @return the clustered model
 	 */
 	private NetworkModel getClusteredModel() {

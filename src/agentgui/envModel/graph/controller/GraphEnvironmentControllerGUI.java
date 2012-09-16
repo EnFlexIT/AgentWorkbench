@@ -77,6 +77,7 @@ import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.envModel.graph.GraphGlobals;
+import agentgui.envModel.graph.commands.RenameNetworkComponent.NetworkComponentRenamed;
 import agentgui.envModel.graph.components.TableCellEditor4TableButton;
 import agentgui.envModel.graph.components.TableCellRenderer4Button;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
@@ -123,6 +124,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 
     private JTable jTableComponents = null;
     private DefaultTableModel componentsTableModel = null;
+    private boolean quiteTabelModelListener = false;
     
     /** The graph visualization component */
     private BasicGraphGui graphGUI = null;
@@ -412,7 +414,17 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 			    if (col == 1) {
 			    	return false;
 			    } else {
-			    	return true;	
+			    	if (getGraphController().getProject()!=null) {
+			    		// --- During Simulation Setup ----------
+			    		return true;	
+			    	} else {
+			    		// --- During simulation runtime --------
+			    		if (col==0) {
+			    			return false;
+			    		} else {
+			    			return true;
+			    		}
+			    	}
 			    }
 			}
 	    };
@@ -424,21 +436,27 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      * @param networkComponent
      */
     private void networkComponentSelect(NetworkComponent networkComponent) {
-		int rowCount = this.getDefaultTableModel4Components().getRowCount();
+		
+    	if (networkComponent==null) return;
+    	if (networkComponent.getId()==null) return;
+    	
+    	int rowCount = this.getDefaultTableModel4Components().getRowCount();
 		int row = -1;
 		// Searching all the rows in the table
 		for (row = 0; row < rowCount; row++) {
 		    String compId = (String) getJTableComponents().getModel().getValueAt(row, 0);
-		    // Checking for the matching component Id
-		    if (compId.equals(networkComponent.getId())) {
-				// Converting from model coordinates to view coordinates
-				int viewRowIndex = getJTableComponents().convertRowIndexToView(row);
-				int viewColumnIndex = getJTableComponents().convertColumnIndexToView(0);
-				boolean toggle = false;
-				boolean extend = false;
-				// Selecting the cell in the table
-				this.getJTableComponents().changeSelection(viewRowIndex, viewColumnIndex, toggle, extend);
-				break;
+		    if (compId!=null) {
+			    // Checking for the matching component Id
+			    if (compId.equals(networkComponent.getId())) {
+					// Converting from model coordinates to view coordinates
+					int viewRowIndex = getJTableComponents().convertRowIndexToView(row);
+					int viewColumnIndex = getJTableComponents().convertColumnIndexToView(0);
+					boolean toggle = false;
+					boolean extend = false;
+					// Selecting the cell in the table
+					this.getJTableComponents().changeSelection(viewRowIndex, viewColumnIndex, toggle, extend);
+					break;
+			    }
 		    }
 		}
     }
@@ -612,6 +630,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     @Override
     public void tableChanged(TableModelEvent tme) {
 
+    	if (this.quiteTabelModelListener==true) return;
+    	
 		int row = tme.getFirstRow();
 		int column = tme.getColumn();
 	
@@ -620,7 +640,6 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 	
 		    String oldCompID = this.currNetworkComponent.getId();
 			String newCompID = (String) model.getValueAt(row, column);
-	
 		    if (!oldCompID.equals(newCompID)) {
 	
 		    	String message = null;
@@ -659,7 +678,44 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		}
 		// System.out.println(row+","+column);
     }
-
+   
+    /**
+     * The action, when a Network component was renamed.
+     * @param renamedNetworkComponent the renamed network component
+     */
+    private void networkComponentRenamed(NetworkComponentRenamed renamedNetworkComponent) {
+    	
+    	if (renamedNetworkComponent==null) return;
+    	
+    	String oldID = renamedNetworkComponent.getOldNetworkComponentID();
+    	String newID = renamedNetworkComponent.getNewNetworkComponentID();
+    	
+    	int rowCount = this.getDefaultTableModel4Components().getRowCount();
+		int row = -1;
+		// --- Searching all the rows in the table ----------------------------
+		for (row = 0; row < rowCount; row++) {
+		    String compId = (String) getJTableComponents().getModel().getValueAt(row, 0);
+		    if (compId!=null) {
+			    // --- Checking for the matching to the old ID ----------------
+			    if (compId.equals(oldID)) {
+			    	// --- Set the new ID in the table model ------------------
+			    	this.quiteTabelModelListener = true;
+			    	this.getJTableComponents().getModel().setValueAt(newID, row, 0);
+			    	this.quiteTabelModelListener = false;
+			    	// --- Set focus on component -----------------------------
+					int viewRowIndex = getJTableComponents().convertRowIndexToView(row);
+					int viewColumnIndex = getJTableComponents().convertColumnIndexToView(0);
+					boolean toggle = false;
+					boolean extend = false;
+					// --- Select cell in the table ---------------------------
+					this.getJTableComponents().changeSelection(viewRowIndex, viewColumnIndex, toggle, extend);
+					break;
+			    }
+		    }
+		}
+    	
+    }
+    
     /**
      * Gets the graph visualization either for configuration or for displaying it during the simulation runtime.
      * @return the graph visualization
@@ -879,7 +935,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 			case NetworkModelNotification.NETWORK_MODEL_EditComponentSettings:
 				this.editComponentSettings(infoObject);
 				break;
-				
+			
+			case NetworkModelNotification.NETWORK_MODEL_Component_Renamed:
+				NetworkComponentRenamed renamed = (NetworkComponentRenamed) infoObject;
+				this.networkComponentRenamed(renamed);
+				break;
 			default:
 				break;
 			}
