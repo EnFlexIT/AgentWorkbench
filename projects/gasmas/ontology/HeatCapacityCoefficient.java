@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: HeatCapacityCoefficient
 * @author ontology bean generator
-* @version 2012/06/26, 14:32:24
+* @version 2012/08/14, 13:58:40
 */
 public class HeatCapacityCoefficient implements Concept {
 
@@ -24,17 +24,6 @@ public class HeatCapacityCoefficient implements Concept {
    }
 
    /**
-* Protege name: b
-   */
-   private float b;
-   public void setB(float value) { 
-    this.b=value;
-   }
-   public float getB() {
-     return this.b;
-   }
-
-   /**
 * Protege name: c
    */
    private float c;
@@ -43,6 +32,17 @@ public class HeatCapacityCoefficient implements Concept {
    }
    public float getC() {
      return this.c;
+   }
+
+   /**
+* Protege name: b
+   */
+   private float b;
+   public void setB(float value) { 
+    this.b=value;
+   }
+   public float getB() {
+     return this.b;
    }
 
 }

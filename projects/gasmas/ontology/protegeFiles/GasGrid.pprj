@@ -1,4 +1,4 @@
-; Tue Jun 26 14:33:07 CEST 2012
+; Tue Aug 14 23:42:31 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -38,25 +38,15 @@
 	(is_hidden FALSE)
 	(widget_class_name "edu.stanford.smi.protege.widget.FormsTab"))
 
-([GasGrid_ProjectKB_Instance_10183] of  Map_Entry
+([GasGrid_ProjectKB_Instance_133] of  Boolean
 
-	(key "change_tracking_active")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
+	(boolean_value FALSE)
+	(name "ButtonDisplayed-View References to Value"))
 
-([GasGrid_ProjectKB_Instance_10184] of  Map_Entry
+([GasGrid_ProjectKB_Instance_134] of  Boolean
 
-	(key "add_name_on_instance_form")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
-([GasGrid_ProjectKB_Instance_133] of  Property_List
-)
-
-([GasGrid_ProjectKB_Instance_134] of  Property_List
-)
+	(boolean_value FALSE)
+	(name "ButtonDisplayed-Delete Instance"))
 
 ([GasGrid_ProjectKB_Instance_135] of  Property_List
 )
@@ -64,46 +54,22 @@
 ([GasGrid_ProjectKB_Instance_136] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_137] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([GasGrid_ProjectKB_Instance_138] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([GasGrid_ProjectKB_Instance_139] of  Property_List
+([GasGrid_ProjectKB_Instance_137] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_140] of  Property_List
-)
+([GasGrid_ProjectKB_Instance_140] of  Map_Entry
 
-([GasGrid_ProjectKB_Instance_141] of  Property_List
-)
+	(key "change_tracking_active")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
 
-([GasGrid_ProjectKB_Instance_142] of  Property_List
-)
+([GasGrid_ProjectKB_Instance_141] of  Map_Entry
 
-([GasGrid_ProjectKB_Instance_143] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([GasGrid_ProjectKB_Instance_144] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([GasGrid_ProjectKB_Instance_145] of  Property_List
-)
-
-([GasGrid_ProjectKB_Instance_146] of  Property_List
-)
-
-([GasGrid_ProjectKB_Instance_147] of  Property_List
-)
+	(key "add_name_on_instance_form")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
 
 ([GasGrid_ProjectKB_Instance_202] of  Widget
 
@@ -432,8 +398,8 @@
 ([GasGrid_ProjectKB_Instance_289] of  Map
 
 	(entries
-		[GasGrid_ProjectKB_Instance_10183]
-		[GasGrid_ProjectKB_Instance_10184]))
+		[GasGrid_ProjectKB_Instance_140]
+		[GasGrid_ProjectKB_Instance_141]))
 
 ([GasGrid_ProjectKB_Instance_98] of  String
 

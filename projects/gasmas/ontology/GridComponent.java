@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: GridComponent
 * @author ontology bean generator
-* @version 2012/06/26, 14:32:24
+* @version 2012/08/14, 13:58:40
 */
 public class GridComponent implements Concept {
-
-   /**
-* Protege name: ID
-   */
-   private String iD;
-   public void setID(String value) { 
-    this.iD=value;
-   }
-   public String getID() {
-     return this.iD;
-   }
 
    /**
 * Protege name: alias
@@ -32,6 +21,17 @@ public class GridComponent implements Concept {
    }
    public String getAlias() {
      return this.alias;
+   }
+
+   /**
+* Protege name: ID
+   */
+   private String iD;
+   public void setID(String value) { 
+    this.iD=value;
+   }
+   public String getID() {
+     return this.iD;
    }
 
 }

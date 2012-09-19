@@ -30,31 +30,28 @@ package gasmas.transfer.zib;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import gasmas.ontology.Entry;
-import gasmas.ontology.Exit;
-import gasmas.ontology.GeoCoordinate;
-import gasmas.ontology.HeatCapacityCoefficient;
-import gasmas.ontology.Pipe;
-import gasmas.ontology.ValueType;
+import gasmas.ontology.Compressor;
+import gasmas.ontology.Valve;
+import gasmas.ontology.factory.CompressorFactory;
+import gasmas.ontology.factory.ControlValveFactory;
+import gasmas.ontology.factory.EntryFactory;
+import gasmas.ontology.factory.ExitFactory;
+import gasmas.ontology.factory.PipeFactory;
+import gasmas.ontology.factory.ShortPipeFactory;
+import gasmas.ontology.factory.ValveFactory;
 import gasmas.transfer.zib.cdf.CombinedDecisions;
 import gasmas.transfer.zib.cs.CompressorStationsType;
-import gasmas.transfer.zib.net.CalorificValueType;
+import gasmas.transfer.zib.cs.CompressorStationsType.CompressorStation;
 import gasmas.transfer.zib.net.CompressorStationType;
 import gasmas.transfer.zib.net.ControlValveType;
-import gasmas.transfer.zib.net.DensityType;
-import gasmas.transfer.zib.net.FlowType;
 import gasmas.transfer.zib.net.GasConnectionType;
 import gasmas.transfer.zib.net.GasNetwork;
 import gasmas.transfer.zib.net.GasNodeType;
-import gasmas.transfer.zib.net.HeatTransferType;
-import gasmas.transfer.zib.net.LengthType;
 import gasmas.transfer.zib.net.PipeType;
-import gasmas.transfer.zib.net.PressureType;
 import gasmas.transfer.zib.net.ResistorType;
 import gasmas.transfer.zib.net.ShortPipeType;
 import gasmas.transfer.zib.net.SinkType;
 import gasmas.transfer.zib.net.SourceType;
-import gasmas.transfer.zib.net.TemperatureType;
 import gasmas.transfer.zib.net.ValveType;
 
 import java.awt.Cursor;
@@ -68,6 +65,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -91,6 +89,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 	private HashMap<String, TypeDescription> GNW_Types4Mapping = null;
 	private HashMap<String, GasConnectionType> GNW_Connections = null;
 	private HashMap<String, GasNodeType> GNW_Nodes = null;
+	private Map<String, Compressor> compressors;
 	
 	/**
 	 * Instantiates a new OGE / ZIB GraphFileImporter.
@@ -125,11 +124,13 @@ public class OGE_Importer extends NetworkModelFileImporter {
 		// --------------------------------------------------------------------
 		// --- Import the *.net file ------------------------------------------
 		GasNetwork gasNetwork = importNetFile(netFile);
-		if (gasNetwork!=null) {
+		
+		if (gasNetwork != null) {
 			// --- Fill local HashMaps ----------------------------------------
 			fillLocalHashMaps(gasNetwork);
+			
 			// --- Get the user mapping for external/internal mapping ---------
-			if (getUserMapping4Components()==true) {
+			if (getUserMapping4Components() == true) {
 				translateGasNetwork2NetworkModel();
 			}
 		}
@@ -138,10 +139,18 @@ public class OGE_Importer extends NetworkModelFileImporter {
 		// --- Import the *.cs file -------------------------------------------
 		CompressorStationsType compressorStations = importCsFile(csFile);
 		
+		if (compressorStations != null) {
+			for (CompressorStation compressorStation : compressorStations.getCompressorStation()) {
+				Compressor compressor = compressors.get(compressorStation.getId());
+				compressor.setGasCoolerExisting(true);
+			}
+		}
+		
+		
 		// --------------------------------------------------------------------
 		// --- Import the *.cdf file ------------------------------------------
 		CombinedDecisions combinedDecisions = importCdfFile(cdfFile);
-				
+			
 			
 		// --------------------------------------------------------------------
 		this.graphController.getProject().projectWindow.setCursor(Cursor.getDefaultCursor());
@@ -154,6 +163,8 @@ public class OGE_Importer extends NetworkModelFileImporter {
 	 * Translate GasNetwork to NetworkNodel.
 	 */
 	private void translateGasNetwork2NetworkModel() {
+		
+		compressors = new HashMap<String, Compressor>();
 		
 		AddComponentDialog componentFactory = new AddComponentDialog(this.graphController);
 		HashMap<String, HashSet<GraphNode>> nodeConnections = new HashMap<String, HashSet<GraphNode>>();
@@ -193,150 +204,27 @@ public class OGE_Importer extends NetworkModelFileImporter {
 				
 				// --- Save information to agent setup ------------------------
 				if (gasNodeType instanceof SinkType) {
-					
-					SinkType sinkType = (SinkType) gasNodeType;
-					
-					Exit exit = new Exit();
-					exit.setID(sinkType.getId());
-					exit.setAlias(sinkType.getAlias());
-					
-					FlowType flowTypeMin = sinkType.getFlowMin();
-					ValueType valueType = new ValueType();
-					valueType.setValue((float) flowTypeMin.getValue());
-					valueType.setUnit(flowTypeMin.getUnit());
-					exit.setFlowMin(valueType);
-					
-					FlowType flowTypeMax = sinkType.getFlowMax();
-					ValueType flowMaxValueType = new ValueType();
-					flowMaxValueType.setValue((float)flowTypeMax.getValue());
-					flowMaxValueType.setUnit(flowTypeMax.getUnit());
-					exit.setFlowMax(flowMaxValueType);
-					
-					PressureType pressureTypeMin = sinkType.getPressureMin();
-					ValueType pressureMinValueType = new ValueType();
-					pressureMinValueType.setValue((float)pressureTypeMin.getValue());
-					pressureMinValueType.setUnit(pressureTypeMin.getUnit().value());
-					exit.setPressureMin(pressureMinValueType);
-					
-					PressureType pressureTypeMax = sinkType.getPressureMax();
-					ValueType pressureMaxValueType = new ValueType();
-					pressureMaxValueType.setValue((float)pressureTypeMax.getValue());
-					pressureMaxValueType.setUnit(pressureTypeMax.getUnit().value());
-					exit.setPressureMin(pressureMaxValueType);
-					
-					LengthType lengthType = sinkType.getHeight();
-					ValueType lengthValueType = new ValueType();
-					lengthValueType.setValue((float) lengthType.getValue());
-					lengthValueType.setUnit(lengthType.getUnit().value());
-					exit.setHeight(lengthValueType);
-					
-					GeoCoordinate geoCoordinate = new GeoCoordinate();	
-					geoCoordinate.setGeoX(sinkType.getX().floatValue());
-					geoCoordinate.setGeoY(sinkType.getY().floatValue());
-					exit.setGeoCoordinate(geoCoordinate);
-					
+									
 					// --------------------------------------------------
 					Object[] ontoArrayInstance = new Object[2];
-					ontoArrayInstance[0] = exit;
+					ontoArrayInstance[0] = ExitFactory.newInstance(gasNodeType);
 					ontoArrayInstance[1] = new TimeSeries();
 					netComp.setDataModel(ontoArrayInstance);
 
 					
 				} else if (gasNodeType instanceof SourceType) {
-					
-					SourceType sourceType = (SourceType) gasNodeType;
-					
-					Entry entry = new Entry();
-					entry.setAlias(sourceType.getAlias());
-					entry.setID(sourceType.getId());
-					
-					FlowType flowTypeMax = sourceType.getFlowMax();
-					ValueType flowMaxValueType = new ValueType();
-					flowMaxValueType.setValue((float)flowTypeMax.getValue());
-					flowMaxValueType.setUnit(flowTypeMax.getUnit());
-					entry.setFlowMax(flowMaxValueType);
-					
-					FlowType flowTypeMin = sourceType.getFlowMin();
-					ValueType valueType = new ValueType();
-					valueType.setValue((float) flowTypeMin.getValue());
-					valueType.setUnit(flowTypeMin.getUnit());
-					entry.setFlowMin(valueType);
-					
-					CalorificValueType calorificValueType =  sourceType.getCalorificValue();
-					ValueType calorificValue = new ValueType();
-					calorificValue.setUnit(calorificValueType.getUnit().value());
-					calorificValue.setValue((float)calorificValueType.getValue());
-					entry.setCalorificValue(calorificValue);
-					
-					TemperatureType temperatureType = sourceType.getGasTemperature();
-					ValueType gasTemperatureType = new ValueType();
-					gasTemperatureType.setUnit(temperatureType.getUnit().value());
-					gasTemperatureType.setValue((float) temperatureType.getValue());
-					entry.setGasTemperature(gasTemperatureType);
-					
-					GeoCoordinate geoCoordinate = new GeoCoordinate();	
-					geoCoordinate.setGeoX( sourceType.getX().floatValue());
-					geoCoordinate.setGeoX( sourceType.getY().floatValue());
-					entry.setGeoCoordinate(geoCoordinate);
-					
-
-					HeatCapacityCoefficient heatCapacityCoefficient = new HeatCapacityCoefficient();
-					heatCapacityCoefficient.setA((float) sourceType.getCoefficientAHeatCapacity().getValue());
-					heatCapacityCoefficient.setB((float) sourceType.getCoefficientBHeatCapacity().getValue());
-					heatCapacityCoefficient.setC((float) sourceType.getCoefficientCHeatCapacity().getValue());
-					entry.setHeatCapacityCoefficient(heatCapacityCoefficient);
-					
-					LengthType lengthType = sourceType.getHeight();
-					ValueType lengthValueType = new ValueType();
-					lengthValueType.setValue((float) lengthType.getValue());
-					lengthValueType.setUnit(lengthType.getUnit().value());
-					entry.setHeight(lengthValueType);
-					
-					entry.setMolarMass((float)sourceType.getMolarMass().getValue());
-					
-					DensityType densityType = sourceType.getNormDensity();
-					ValueType normDensity = new ValueType();
-					normDensity.setUnit(densityType.getUnit().value());
-					normDensity.setValue((float) densityType.getValue());
-					entry.setNormDensity(normDensity);
-					
-					PressureType pressureTypeMin = sourceType.getPressureMin();
-					ValueType pressureMinValueType = new ValueType();
-					pressureMinValueType.setValue((float)pressureTypeMin.getValue());
-					pressureMinValueType.setUnit(pressureTypeMin.getUnit().value());
-					entry.setPressureMin(pressureMinValueType);
-					
-					PressureType pressureTypeMax = sourceType.getPressureMax();
-					ValueType pressureMaxValueType = new ValueType();
-					pressureMaxValueType.setValue((float)pressureTypeMax.getValue());
-					pressureMaxValueType.setUnit(pressureTypeMax.getUnit().value());
-					entry.setPressureMin(pressureMaxValueType);
-					
-					PressureType pressureType = sourceType.getPseudocriticalPressure();
-					ValueType pressureValueType = new ValueType();
-					pressureValueType.setValue((float)pressureType.getValue());
-					pressureValueType.setUnit(pressureType.getUnit().value());
-					entry.setPseudocricalPressure(pressureValueType);
-					
-					TemperatureType ptemperatureType = sourceType.getPseudocriticalTemperature();
-					ValueType pGasTemperatureType = new ValueType();
-					pGasTemperatureType.setUnit(ptemperatureType.getUnit().value());
-					pGasTemperatureType.setValue((float) ptemperatureType.getValue());
-					entry.setPseudocriticalTemperature(pGasTemperatureType);
-					
+									
 					// --------------------------------------------------
-					Object[] ontoArrayInstance = new Object[1];
-					ontoArrayInstance[0] = entry;
+					Object[] ontoArrayInstance = new Object[2];
+					ontoArrayInstance[0] = EntryFactory.newInstance(gasNodeType);
+					ontoArrayInstance[1] = new TimeSeries();
 					netComp.setDataModel(ontoArrayInstance);
 					
 					
 				} else if (mapNode2Component.equalsIgnoreCase("Storage")) {
 					
 				}
-				
-				
 			}
-			
 		}
 		
 		// --------------------------------------------------------------------
@@ -420,65 +308,47 @@ public class OGE_Importer extends NetworkModelFileImporter {
 				// --- 
 				if (connection instanceof PipeType) {
 					
-					PipeType pipeType = (PipeType) connection;
-					
-					Pipe pipe = new Pipe();
-					pipe.setAlias(pipeType.getAlias());
-					pipe.setID(pipeType.getId());
-					pipe.setFrom(pipeType.getFrom());
-					
-					LengthType diameterType = pipeType.getDiameter();
-					ValueType diameter = new ValueType();
-					diameter.setUnit(diameterType.getUnit().value());
-					diameter.setValue((float) diameterType.getValue());
-					pipe.setDiameter(diameter);
-					
-					FlowType flowTypeMax = pipeType.getFlowMax();
-					ValueType maxFlow = new ValueType();
-					maxFlow.setUnit(flowTypeMax.getUnit());
-					maxFlow.setValue((float) flowTypeMax.getValue());
-					pipe.setFlowMax(maxFlow);
-					
-					FlowType flowTypeMin = pipeType.getFlowMin();
-					ValueType minFlow = new ValueType();
-					minFlow.setUnit(flowTypeMin.getUnit());
-					minFlow.setValue((float) flowTypeMin.getValue());
-					pipe.setFlowMax(minFlow);
-					
-					HeatTransferType heatTransferType = pipeType.getHeatTransferCoefficient();
-					ValueType heatTransferCoefficient = new ValueType();
-					heatTransferCoefficient.setUnit(heatTransferType.getUnit().value());
-					heatTransferCoefficient.setValue((float)heatTransferType.getValue());
-					pipe.setHeatTransferCoefficient(heatTransferCoefficient);
-					
-					LengthType lengthType = pipeType.getLength();
-					ValueType lengthValueType = new ValueType();
-					lengthValueType.setUnit(lengthType.getUnit().value());
-					lengthValueType.setValue((float) lengthType.getValue());
-					pipe.setLength(lengthValueType);
-					
-					LengthType lineOfSightType = pipeType.getLineOfSight();
-					ValueType lineOfSightValueType = new ValueType();
-					lineOfSightValueType.setUnit(lineOfSightType.getUnit().value());
-					lineOfSightValueType.setValue((float) lineOfSightType.getValue());
-					pipe.setLineOfSight(lineOfSightValueType);
-					
+					Object[] ontoArrayInstance = new Object[1];
+					ontoArrayInstance[0] = PipeFactory.newInstance(connection);
+					netComp.setDataModel(ontoArrayInstance);
 					
 				} else if (connection instanceof ShortPipeType) {
-				
+					
+					Object[] ontoArrayInstance = new Object[1];
+					ontoArrayInstance[0] = ShortPipeFactory.newInstance( connection);
+					netComp.setDataModel(ontoArrayInstance);
+					
 				} else if (connection instanceof ResistorType) {
+					
 					
 				} else if (connection instanceof ValveType) {
 					
+					Valve valve = ValveFactory.newInstance(connection);
+					
+					Object[] ontoArrayInstance = new Object[1];
+					ontoArrayInstance[0] = valve;
+					netComp.setDataModel(ontoArrayInstance);
+
+					
 				} else if (connection instanceof ControlValveType) {
-				
+					
+					Object[] ontoArrayInstance = new Object[1];
+					ontoArrayInstance[0] = ControlValveFactory.newInstance( connection);
+					netComp.setDataModel(ontoArrayInstance);
+			
+							
 				} else if (connection instanceof CompressorStationType) {
 					
+					Compressor compressor = CompressorFactory.newInstance((CompressorStationType) connection);
+					compressors.put(compressor.getID(), compressor);
+
+					Object[] ontoArrayInstance = new Object[1];
+					ontoArrayInstance[0] = compressor;
+					netComp.setDataModel(ontoArrayInstance);
+			
 				} else {
 					System.out.println("Unknown import Type: " + connection.getClass().getName() );	
 				}
-				
-				
 			}
 		}
 		

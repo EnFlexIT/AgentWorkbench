@@ -7,42 +7,9 @@ import jade.core.*;
 /**
 * Protege name: ControlValve
 * @author ontology bean generator
-* @version 2012/06/26, 14:32:24
+* @version 2012/08/14, 13:58:40
 */
 public class ControlValve extends Valve{ 
-
-   /**
-* Protege name: diameterIn
-   */
-   private ValueType diameterIn;
-   public void setDiameterIn(ValueType value) { 
-    this.diameterIn=value;
-   }
-   public ValueType getDiameterIn() {
-     return this.diameterIn;
-   }
-
-   /**
-* Protege name: increasedOutputTemperature
-   */
-   private ValueType increasedOutputTemperature;
-   public void setIncreasedOutputTemperature(ValueType value) { 
-    this.increasedOutputTemperature=value;
-   }
-   public ValueType getIncreasedOutputTemperature() {
-     return this.increasedOutputTemperature;
-   }
-
-   /**
-* Protege name: pressureDifferentialMin
-   */
-   private ValueType pressureDifferentialMin;
-   public void setPressureDifferentialMin(ValueType value) { 
-    this.pressureDifferentialMin=value;
-   }
-   public ValueType getPressureDifferentialMin() {
-     return this.pressureDifferentialMin;
-   }
 
    /**
 * Protege name: pressureSet
@@ -53,28 +20,6 @@ public class ControlValve extends Valve{
    }
    public ValueType getPressureSet() {
      return this.pressureSet;
-   }
-
-   /**
-* Protege name: internalBypassRequired
-   */
-   private boolean internalBypassRequired;
-   public void setInternalBypassRequired(boolean value) { 
-    this.internalBypassRequired=value;
-   }
-   public boolean getInternalBypassRequired() {
-     return this.internalBypassRequired;
-   }
-
-   /**
-* Protege name: dragFactorIn
-   */
-   private float dragFactorIn;
-   public void setDragFactorIn(float value) { 
-    this.dragFactorIn=value;
-   }
-   public float getDragFactorIn() {
-     return this.dragFactorIn;
    }
 
    /**
@@ -89,14 +34,14 @@ public class ControlValve extends Valve{
    }
 
    /**
-* Protege name: dragFactorOut
+* Protege name: internalBypassRequired
    */
-   private float dragFactorOut;
-   public void setDragFactorOut(float value) { 
-    this.dragFactorOut=value;
+   private boolean internalBypassRequired;
+   public void setInternalBypassRequired(boolean value) { 
+    this.internalBypassRequired=value;
    }
-   public float getDragFactorOut() {
-     return this.dragFactorOut;
+   public boolean getInternalBypassRequired() {
+     return this.internalBypassRequired;
    }
 
    /**
@@ -111,6 +56,28 @@ public class ControlValve extends Valve{
    }
 
    /**
+* Protege name: increasedOutputTemperature
+   */
+   private ValueType increasedOutputTemperature;
+   public void setIncreasedOutputTemperature(ValueType value) { 
+    this.increasedOutputTemperature=value;
+   }
+   public ValueType getIncreasedOutputTemperature() {
+     return this.increasedOutputTemperature;
+   }
+
+   /**
+* Protege name: diameterIn
+   */
+   private ValueType diameterIn;
+   public void setDiameterIn(ValueType value) { 
+    this.diameterIn=value;
+   }
+   public ValueType getDiameterIn() {
+     return this.diameterIn;
+   }
+
+   /**
 * Protege name: gasPreheheaterExisting
    */
    private boolean gasPreheheaterExisting;
@@ -122,6 +89,17 @@ public class ControlValve extends Valve{
    }
 
    /**
+* Protege name: dragFactorOut
+   */
+   private float dragFactorOut;
+   public void setDragFactorOut(float value) { 
+    this.dragFactorOut=value;
+   }
+   public float getDragFactorOut() {
+     return this.dragFactorOut;
+   }
+
+   /**
 * Protege name: pressureInMin
    */
    private ValueType pressureInMin;
@@ -130,6 +108,28 @@ public class ControlValve extends Valve{
    }
    public ValueType getPressureInMin() {
      return this.pressureInMin;
+   }
+
+   /**
+* Protege name: dragFactorIn
+   */
+   private float dragFactorIn;
+   public void setDragFactorIn(float value) { 
+    this.dragFactorIn=value;
+   }
+   public float getDragFactorIn() {
+     return this.dragFactorIn;
+   }
+
+   /**
+* Protege name: pressureDifferentialMin
+   */
+   private ValueType pressureDifferentialMin;
+   public void setPressureDifferentialMin(ValueType value) { 
+    this.pressureDifferentialMin=value;
+   }
+   public ValueType getPressureDifferentialMin() {
+     return this.pressureDifferentialMin;
    }
 
 }
