@@ -541,7 +541,7 @@ public class NetworkModel implements Serializable {
 	public HashSet<NetworkComponent> getNetworkComponents(Set<GraphNode> graphNodes) {
 		HashSet<NetworkComponent> networkComponents = new HashSet<NetworkComponent>();
 		for (GraphNode graphNode : graphNodes) {
-			networkComponents.addAll(getNetworkComponents(graphNode));
+			networkComponents.addAll(this.getNetworkComponents(graphNode));
 		}
 		return networkComponents;
 	}

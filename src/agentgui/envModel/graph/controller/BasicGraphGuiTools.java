@@ -71,6 +71,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JButton jButtonComponents = null;
     private JButton jButtonZoomFit2Window = null;
     private JButton jButtonZoomOne2One = null;
+    private JButton jButtonFocusNetworkComponent= null;
     private JButton jButtonZoomIn = null;
     private JButton jButtonZoomOut = null;
     private JButton jButtonSaveImage = null;
@@ -145,6 +146,9 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		    jToolBar.addSeparator();
 		    jToolBar.add(getJButtonZoomFit2Window());
 		    jToolBar.add(getJButtonZoomOne2One());
+		    jToolBar.add(getJButtonFocusNetworkComponent());
+		    jToolBar.add(getJButtonSaveImage());
+		    
 		    jToolBar.add(getJButtonSaveImage());
 		    jToolBar.add(getJButtonZoomIn());
 		    jToolBar.add(getJButtonZoomOut());
@@ -223,6 +227,21 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     }
 
     /**
+     * This method initializes jButtonFocusComponent
+     * @return javax.swing.JButton
+     */
+    private JButton getJButtonFocusNetworkComponent() {
+		if (jButtonFocusNetworkComponent == null) {
+			jButtonFocusNetworkComponent = new JButton();
+			jButtonFocusNetworkComponent.setIcon(new ImageIcon(getClass().getResource(pathImage + "FocusComponent.png")));
+			jButtonFocusNetworkComponent.setPreferredSize(jButtonSize);
+			jButtonFocusNetworkComponent.setToolTipText(Language.translate("Komponente zentrieren und fokussieren"));
+			jButtonFocusNetworkComponent.addActionListener(this);
+		}
+		return jButtonFocusNetworkComponent;
+    }
+    
+    /**
      * This method initializes jButtonZoomIn
      * @return javax.swing.JButton
      */
@@ -266,7 +285,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		}
 		return jButtonSaveImage;
     }
-
+   
     /**
      * This method initializes jButtonAddComponent
      * @return javax.swing.JButton
@@ -579,6 +598,11 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// ------------------------------------------------------
 			// --- Button Reset zoom --------------------------------
 			this.graphController.getNetworkModelAdapter().zoomOne2One();
+			
+		} else if (ae.getSource() == getJButtonFocusNetworkComponent()) {
+			// ------------------------------------------------------
+			// --- Button Focus Component ---------------------------
+			this.graphController.getNetworkModelAdapter().zoomNetworkComponent();
 			
 		} else if (ae.getSource() == getJButtonZoomIn()) {
 			// ------------------------------------------------------

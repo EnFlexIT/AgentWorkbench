@@ -233,6 +233,13 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 		this.notifyObservers(notification);
 	}
 	/**
+	 * Zoom to the currently selected NetworkComponent.
+	 */
+	public void zoomNetworkComponent() {
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Zoom_Component);
+		this.notifyObservers(notification);
+	}
+	/**
 	 * Zoom in.
 	 */
 	public void zoomIn() {

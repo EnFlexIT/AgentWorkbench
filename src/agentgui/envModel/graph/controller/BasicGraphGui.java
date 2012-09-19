@@ -113,7 +113,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private static final long serialVersionUID = 5764679914667183305L;
 
 	/** Environment model controller, to be passed by the parent GUI. */
-	private GraphEnvironmentController controller = null; // @jve:decl-index=0:
+	private GraphEnvironmentController graphController = null; // @jve:decl-index=0:
 
 	/** The GUI's main component, either the graph visualization, or an empty JPanel if no graph is loaded */
 	private Component centerComponent = null;
@@ -141,9 +141,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	public BasicGraphGui(GraphEnvironmentController controller) {
 		super();
-		this.controller = controller;
-		this.controller.addObserver(this);
-		this.graphGuiTools = new BasicGraphGuiTools(this.controller);
+		this.graphController = controller;
+		this.graphController.addObserver(this);
+		this.graphGuiTools = new BasicGraphGuiTools(this.graphController);
 		initialize();
 
 		this.reLoadGraph();
@@ -154,7 +154,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the controller
 	 */
 	public GraphEnvironmentController getGraphEnvironmentController() {
-		return controller;
+		return graphController;
 	}
 
 	/**
@@ -235,8 +235,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		Rectangle2D rectVis = this.visView.getVisibleRect();
 		if (rectVis.isEmpty()) return;
 
-		Point2D scaleAt = new Point2D.Double(rectGraph.getX(), rectGraph.getY());
-		scaleAt = new Point2D.Double(0, 0);
+		Point2D scaleAt = new Point2D.Double(0, 0);
 		this.setDefaultScaleAtPoint(scaleAt);
 
 		// --- Calculate the scaling --------------------------------
@@ -271,7 +270,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		// --- Set scaling ------------
 		if (scale != 0 && scale != 1) {
-			this.scalingControl.scale(this.visView, scale, this.getDefaultScaleAtPoint());
+			this.scalingControl.scale(this.visView, scale, scaleAt);
 		}
 		this.allowInitialScaling = false;
 
@@ -282,9 +281,12 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the default scale at point
 	 */
 	private Point2D getDefaultScaleAtPoint() {
+		Rectangle2D rectVis = this.visView.getVisibleRect();
+		if (rectVis.isEmpty()==false) {
+			this.defaultScaleAtPoint = new Point2D.Double(rectVis.getCenterX(), rectVis.getCenterY());
+		}
 		return defaultScaleAtPoint;
 	}
-
 	/**
 	 * Sets the default point to scale at for zooming..
 	 * @param scalePoint the new default scale at point
@@ -372,7 +374,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private void reLoadGraph() {
 
-		Graph<GraphNode, GraphEdge> graph = this.controller.getNetworkModelAdapter().getGraph();
+		Graph<GraphNode, GraphEdge> graph = this.graphController.getNetworkModelAdapter().getGraph();
 
 		// --- Remove the old component -------------------
 		if (centerComponent != null) {
@@ -404,7 +406,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Gets the current Graph and repaints the visualisation viewer.
 	 */
 	private void repaintGraph() {
-		visView.getGraphLayout().setGraph(this.controller.getNetworkModelAdapter().getGraph());
+		visView.getGraphLayout().setGraph(this.graphController.getNetworkModelAdapter().getGraph());
 		visView.repaint();
 	}
 
@@ -422,7 +424,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			this.setSizeTransformer(new Transformer<GraphNode, Integer>() {
 				@Override
 				public Integer transform(GraphNode node) {
-					return (int) node.getGraphElementLayout(controller.getNetworkModel()).getSize();
+					return (int) node.getGraphElementLayout(graphController.getNetworkModel()).getSize();
 				}
 			});
 		}
@@ -437,7 +439,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 			Shape shape = factory.getEllipse(node); // DEFAULT
 			
-			String shapeForm = node.getGraphElementLayout(controller.getNetworkModel()).getShapeForm();
+			String shapeForm = node.getGraphElementLayout(graphController.getNetworkModel()).getShapeForm();
 			if (shapeForm==null) {
 				// --- nothing to do here ----
 			} else  if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_RECTANGLE)) {
@@ -454,7 +456,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 				
 			} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_IMAGE_SHAPE)) {
 				
-				String imageRef = node.getGraphElementLayout(controller.getNetworkModel()).getImageReference();
+				String imageRef = node.getGraphElementLayout(graphController.getNetworkModel()).getImageReference();
 				shape = shapeMap.get(imageRef);
 				if (shape == null) {
 					ImageIcon imageIcon = GraphGlobals.getImageIcon(imageRef);
@@ -499,7 +501,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (rect.getY() != this.graphMargin) moveY = (rect.getY() * (-1)) + this.graphMargin;
 		
 		// --- Correct graph position, if this is used in the setup -------
-		if (this.controller.getProject()!=null) {
+		if (this.graphController.getProject()!=null) {
 			graph = this.correctGraphCoordinates(graph, moveX, moveY);	
 		}
 
@@ -551,7 +553,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			public Icon transform(GraphNode node) {
 
 				Icon icon = null;
-				GraphElementLayout nodeLayout = node.getGraphElementLayout(controller.getNetworkModel());
+				GraphElementLayout nodeLayout = node.getGraphElementLayout(graphController.getNetworkModel());
 				boolean picked = vViewer.getPickedVertexState().isPicked(node);
 				String nodeImagePath = nodeLayout.getImageReference();
 
@@ -596,9 +598,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			@Override
 			public Paint transform(GraphNode node) {
 				if (vViewer.getPickedVertexState().isPicked(node)) {
-					return node.getGraphElementLayout(controller.getNetworkModel()).getColorPicked();
+					return node.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
 				} 
-				return node.getGraphElementLayout(controller.getNetworkModel()).getColor();
+				return node.getGraphElementLayout(graphController.getNetworkModel()).getColor();
 			}
 		});
 
@@ -606,8 +608,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
 			@Override
 			public String transform(GraphNode node) {
-				if (node.getGraphElementLayout(controller.getNetworkModel()).isShowLabel()==true) {
-					return node.getGraphElementLayout(controller.getNetworkModel()).getLabelText();
+				if (node.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel()==true) {
+					return node.getGraphElementLayout(graphController.getNetworkModel()).getLabelText();
 				}
 				return null;
 			}
@@ -625,7 +627,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
 			@Override
 			public Stroke transform(GraphEdge edge) {
-				return new BasicStroke(edge.getGraphElementLayout(controller.getNetworkModel()).getSize());
+				return new BasicStroke(edge.getGraphElementLayout(graphController.getNetworkModel()).getSize());
 			}
 		});
 		
@@ -633,9 +635,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<GraphEdge, Paint>() {
 			@Override
 			public Paint transform(GraphEdge edge) {
-				Color initColor = edge.getGraphElementLayout(controller.getNetworkModel()).getColor();
+				Color initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColor();
 				if (vViewer.getPickedEdgeState().isPicked(edge)) {
-					initColor = edge.getGraphElementLayout(controller.getNetworkModel()).getColorPicked();
+					initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
 				}
 				return initColor;
 			}
@@ -646,13 +648,13 @@ public class BasicGraphGui extends JPanel implements Observer {
 			@Override
 			public String transform(GraphEdge edge) {
 				// --- Get the needed info --------------------------------
-				String imageRef = edge.getGraphElementLayout(controller.getNetworkModel()).getImageReference();
-				boolean showLabel = edge.getGraphElementLayout(controller.getNetworkModel()).isShowLabel();
+				String imageRef = edge.getGraphElementLayout(graphController.getNetworkModel()).getImageReference();
+				boolean showLabel = edge.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel();
 				// --- Configure color ------------------------------------
 				Color color = null;
 				String htmlColor = null;
 				if (vViewer.getPickedEdgeState().isPicked(edge)) {
-					color = edge.getGraphElementLayout(controller.getNetworkModel()).getColorPicked();
+					color = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
 					htmlColor = Integer.toHexString(color.getRed()) + Integer.toHexString(color.getGreen()) + Integer.toHexString(color.getBlue());
 				} else {
 					color = Color.BLACK;
@@ -686,15 +688,15 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer() {
 			@Override
 			public boolean isShowMarker(GraphEdge edge) {
-				return edge.getGraphElementLayout(controller.getNetworkModel()).isMarkerShow();
+				return edge.getGraphElementLayout(graphController.getNetworkModel()).isMarkerShow();
 			}
 			@Override
 			public float getMarkerStrokeWidth(GraphEdge edge) {
-				return edge.getGraphElementLayout(controller.getNetworkModel()).getMarkerStrokeWidth();
+				return edge.getGraphElementLayout(graphController.getNetworkModel()).getMarkerStrokeWidth();
 			}
 			@Override
 			public Color getMarkerColor(GraphEdge edge) {
-				return edge.getGraphElementLayout(controller.getNetworkModel()).getMarkerColor();
+				return edge.getGraphElementLayout(graphController.getNetworkModel()).getMarkerColor();
 			}
 		});
 		// --- Done -------------------------------------------------------
@@ -725,7 +727,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Notify about the editing request for a component ----- 
 		NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
 		nmNote.setInfoObject(pickedObject);
-		this.controller.notifyObservers(nmNote);
+		this.graphController.notifyObservers(nmNote);
 	}
 
 	/**
@@ -810,24 +812,24 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (object instanceof GraphNode) {
 			this.setPickedObject((GraphElement) object);
 			// --- Is that node a distribution node? ----------------
-			HashSet<NetworkComponent> netComps = controller.getNetworkModelAdapter().getNetworkComponents((GraphNode) object);
-			NetworkComponent disNode = controller.getNetworkModelAdapter().containsDistributionNode(netComps);
+			HashSet<NetworkComponent> netComps = graphController.getNetworkModelAdapter().getNetworkComponents((GraphNode) object);
+			NetworkComponent disNode = graphController.getNetworkModelAdapter().containsDistributionNode(netComps);
 			if (disNode != null) {
-				this.controller.getNetworkModelAdapter().selectNetworkComponent(disNode);
+				this.graphController.getNetworkModelAdapter().selectNetworkComponent(disNode);
 			}
 			if (netComps.size() == 1) {
-				this.controller.getNetworkModelAdapter().selectNetworkComponent(netComps.iterator().next());
+				this.graphController.getNetworkModelAdapter().selectNetworkComponent(netComps.iterator().next());
 				this.clearPickedObjects();
 				this.setPickedObject((GraphElement) object);
 			}
 
 		} else if (object instanceof GraphEdge) {
-			NetworkComponent netComp = controller.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object);
-			this.setPickedObjects(controller.getNetworkModelAdapter().getGraphElementsFromNetworkComponent(netComp));
-			this.controller.getNetworkModelAdapter().selectNetworkComponent(netComp);
+			NetworkComponent netComp = graphController.getNetworkModelAdapter().getNetworkComponent((GraphEdge) object);
+			this.setPickedObjects(graphController.getNetworkModelAdapter().getGraphElementsFromNetworkComponent(netComp));
+			this.graphController.getNetworkModelAdapter().selectNetworkComponent(netComp);
 
 		} else if (object instanceof NetworkComponent) {
-			this.setPickedObjects(controller.getNetworkModelAdapter().getGraphElementsFromNetworkComponent((NetworkComponent) object));
+			this.setPickedObjects(graphController.getNetworkModelAdapter().getGraphElementsFromNetworkComponent((NetworkComponent) object));
 		}
 	}
 
@@ -898,6 +900,42 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 	}
 
+	/**
+	 * Zoom component.
+	 */
+	private void zoomComponent() {
+		
+		Set<GraphNode> nodesPicked = this.visView.getPickedVertexState().getPicked();
+		if (nodesPicked.size()!=0) {
+			HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesPicked);
+			if (components.size()!=0) {
+				// --- Get dimensions of selection ------------------
+				Rectangle2D areaSelected = getVerticesSpreadDimension(nodesPicked);
+				// --- Set zoom factor to 1.0 -----------------------
+				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
+				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
+				// --- Center position of display in graph coordinates 
+				Point2D centerLocationOfDisplayOnVisView = this.visView.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.LAYOUT, this.visView.getCenter());
+				// --- Calculate movement ---------------------------
+				double moveXOnVisView = centerLocationOfDisplayOnVisView.getX() - areaSelected.getCenterX();
+				double moveYOnVisView = centerLocationOfDisplayOnVisView.getY() - areaSelected.getCenterY();
+				// --- Move the focused area ------------------------
+				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(moveXOnVisView, moveYOnVisView);
+			}
+		}
+	}
+
+	//TODO
+//	VisualizationViewer<GraphNode, GraphEdge> satellite = new SatelliteVisualizationViewer<GraphNode, GraphEdge>(this.visView, new Dimension(200,200));
+//	ScalingControl satelliteScaler = new CrossoverScalingControl();
+//	satellite.scaleToLayout(satelliteScaler);
+//	
+//	jDialogSatellite = new JDialog();
+//	jDialogSatellite.setSize(200,200);
+//	jDialogSatellite.add(satellite);
+//	jDialogSatellite.setVisible(true);
+	
+	
 	/**
 	 * Export the current graph as image by using specified parameters. 
 	 *
@@ -985,6 +1023,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
 				this.allowInitialScaling = true;
 				this.setInitialScalingAndMovement();
+				break;
+
+			case NetworkModelNotification.NETWORK_MODEL_Zoom_Component:
+				this.zoomComponent();
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_One2One:

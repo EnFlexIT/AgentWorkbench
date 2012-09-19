@@ -45,6 +45,7 @@ public class NetworkModelNotification {
 	public static final int NETWORK_MODEL_Zoom_Out = 6;
 	public static final int NETWORK_MODEL_Zoom_Fit2Window = 7;
 	public static final int NETWORK_MODEL_Zoom_One2One = 8;
+	public static final int NETWORK_MODEL_Zoom_Component = 9;
 	
 	public static final int NETWORK_MODEL_Merged_With_Supplement_NetworkModel = 10;
 	
