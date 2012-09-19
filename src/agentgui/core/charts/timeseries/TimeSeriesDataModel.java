@@ -59,7 +59,7 @@ public class TimeSeriesDataModel extends ChartDataModel{
 		cal.set(1970, 0, 1, 0, 0, 0);
 		this.startDate = cal.getTime();
 		
-		if(ts == null || ts.getValueAxisDescriptions().get(0).equals("")){
+		if(ts == null || (ts.getChartTitle()==null && ts.getTimeAxisLabel()==null && ts.getValueAxisLabel()==null) ){
 			// No or empty model passed, create new one
 			this.ontologyModel = new TimeSeries();
 			this.ontologyModel.setChartTitle(DEFAULT_CHART_TITLE);
