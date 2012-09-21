@@ -1,13 +1,18 @@
-; Mon May 07 21:26:22 CEST 2012
+; Fri Sep 21 16:08:32 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
 
 ([Chart] of  %3AJADE-CLASS
 
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   \n	   boolean wrongChartTitle = false;\n	   if (this.getVisualizationSettings().getChartTitle() == null|| this.getVisualizationSettings().getChartTitle().length()==0) {\n		   wrongChartTitle = true;\n	   }\n	   boolean wrongXAxisLabel = false;\n	   if (this.getVisualizationSettings().getXAxisLabel()==null || this.getVisualizationSettings().getXAxisLabel().length()==0) {\n		   wrongXAxisLabel = true;\n	   }\n	   boolean wrongYAxisLabel = false;\n	   if (this.getVisualizationSettings().getYAxisLabel()==null || this.getVisualizationSettings().getYAxisLabel().length()==0) {\n		   wrongYAxisLabel= true;\n	   }\n	   \n	   if (wrongChartTitle && wrongXAxisLabel && wrongYAxisLabel) {\n		   return true;\n	   }  else {\n		   return false;\n	   }\n   }"))
+
+([ChartSettingsGeneral] of  %3AJADE-CLASS
+
 	(%3AJADE-IGNORE FALSE))
 
-([ChartVisualizationSettings] of  %3AJADE-CLASS
+([ChartSettingSpecial] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -16,14 +21,6 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([Formula] of  %3AJADE-CLASS
-
-	(%3AJADE-IGNORE FALSE))
-
-([NumericDataColumn] of  %3AJADE-CLASS
-
-	(%3AJADE-IGNORE FALSE))
-
-([NumericDataTable] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -61,12 +58,38 @@
 
 ([TimeSeries] of  %3AJADE-CLASS
 
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getTimeSeriesValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }else{\n		   if(getTimeSeriesValuePairs().size() == 1){\n			   TimeSeriesValuePair vp = (TimeSeriesValuePair) getTimeSeriesValuePairs().get(0);\n			   if(vp.getValue().getFloatValue() == 0.0f && vp.getTimestamp().getStringLongValue().length() == 0){\n				   noValuePairs = true;\n			   }\n		   }\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n   }"))
+
+([TimeSeriesAdditionalSettings] of  %3AJADE-CLASS
+
 	(%3AJADE-IGNORE FALSE))
 
-([TimeSeriesChartVisualizationSettings] of  %3AJADE-CLASS
+([TimeSeriesChart] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
-([TimeValuePair] of  %3AJADE-CLASS
+([TimeSeriesValuePair] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ValuePair] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([VisualizationSettings] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([XyChart] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([XyDataSeries] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getXyValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }else{\n		   if(getXyValuePairs().size() == 1){\n			   XyValuePair vp = (XyValuePair) getXyValuePairs().get(0);\n			   if(vp.getXValue().getFloatValue() == 0.0f && vp.getYValue().getFloatValue() == 0.0f){\n				   noValuePairs = true;\n			   }\n		   }\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n   }"))
+
+([XyValuePair] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
