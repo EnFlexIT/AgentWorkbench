@@ -1,4 +1,4 @@
-; Fri Sep 21 16:08:32 CEST 2012
+; Fri Sep 21 16:39:07 CEST 2012
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -368,19 +368,19 @@
 ([AgentGUI-BaseOntology_ProjectKB_Instance_20147] of  Property_List
 )
 
-([AgentGUI-BaseOntology_ProjectKB_Instance_20148] of  String
+([AgentGUI-BaseOntology_ProjectKB_Instance_20151] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([AgentGUI-BaseOntology_ProjectKB_Instance_20149] of  Map_Entry
+([AgentGUI-BaseOntology_ProjectKB_Instance_20152] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([AgentGUI-BaseOntology_ProjectKB_Instance_20150] of  Map_Entry
+([AgentGUI-BaseOntology_ProjectKB_Instance_20153] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
@@ -402,8 +402,8 @@
 ([AgentGUI-BaseOntology_ProjectKB_Instance_221] of  Map
 
 	(entries
-		[AgentGUI-BaseOntology_ProjectKB_Instance_20149]
-		[AgentGUI-BaseOntology_ProjectKB_Instance_20150]))
+		[AgentGUI-BaseOntology_ProjectKB_Instance_20152]
+		[AgentGUI-BaseOntology_ProjectKB_Instance_20153]))
 
 ([AgentGUI-BaseOntology_ProjectKB_Instance_98] of  String
 
@@ -425,7 +425,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [AgentGUI-BaseOntology_ProjectKB_Instance_20148]))
+	(properties [AgentGUI-BaseOntology_ProjectKB_Instance_20151]))
 
 ([CLSES_TAB] of  Widget
 
