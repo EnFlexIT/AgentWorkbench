@@ -69,11 +69,10 @@ import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologySingleClassDescription;
 import agentgui.core.ontologies.OntologySingleClassSlotDescription;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
-import agentgui.core.project.AgentStartConfiguration;
 import agentgui.core.project.AgentStartArgument;
+import agentgui.core.project.AgentStartConfiguration;
 import agentgui.ontology.Chart;
 import agentgui.ontology.Formula;
-import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 
 /**
@@ -620,7 +619,7 @@ public class DynForm extends JPanel {
 		// --- Agent.GUI Base ontology							  ----
 		// ----------------------------------------------------------->
 		
-		if (object instanceof TimeSeries) {
+		if (object instanceof Chart) {
 			
 			Object userFormElement = this.userFormElements.get(node);
 			if (userFormElement!=null) {

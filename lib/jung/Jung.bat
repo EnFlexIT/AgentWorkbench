@@ -1,1 +1,1 @@
-java -cp jung-samples-2.0.1.jar edu.uci.ics.jung.samples.TwoModelDemo
+java -cp jung-samples-2.0.1.jar edu.uci.ics.jung.samples.InternalFrameSatelliteViewDemo

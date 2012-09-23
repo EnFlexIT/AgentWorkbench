@@ -149,7 +149,7 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 	public Project getCurrentProject() {
 		return this.getP2DController().getProject();
 	}
-
+	
 	/**
 	 * This method initializes this
 	 * @return void
@@ -185,6 +185,14 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 			rebuildTree();
 			environmentSettings.setScale(this.getP2DController().getEnvironmentModel().getScale());
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentPanel#dispose()
+	 */
+	@Override
+	public void dispose() {
+		
 	}
 	
 	private JSplitPane getJSplitPaneSetup() {

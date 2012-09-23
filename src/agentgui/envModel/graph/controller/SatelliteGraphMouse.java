@@ -26,36 +26,45 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package gasmas.adapter;
+package agentgui.envModel.graph.controller;
 
-import gasmas.ontology.Exit;
-import gasmas.ontology.GasGridOntology;
-
-import java.util.Vector;
-
-import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4Ontology;
-import agentgui.ontology.AgentGUI_BaseOntology;
-import agentgui.ontology.TimeSeriesChart;
+import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
+import edu.uci.ics.jung.visualization.control.ModalSatelliteGraphMouse;
+import edu.uci.ics.jung.visualization.control.SatelliteScalingGraphMousePlugin;
 
 /**
- * The Class ExitAdapterVisualisation.
+ * The Class SatelliteGraphMouse.
  */
-public class ExitDataModelAdapter extends NetworkComponentAdapter4Ontology {
+public class SatelliteGraphMouse extends ModalSatelliteGraphMouse {
 
-	@Override
-	public Vector<String> getOntologyBaseClasses() {
-		Vector<String> onotolgyRefs = new Vector<String>();
-		onotolgyRefs.add(GasGridOntology.class.getName());
-		onotolgyRefs.add(AgentGUI_BaseOntology.class.getName());
-		return onotolgyRefs;
-	}
+	/**
+	 * Instantiates a new satellite graph mouse.
+	 */
+	public SatelliteGraphMouse() {
+        this(1.1f, 1/1.1f);
+    }
 
-	@Override
-	public String[] getOntologyClassReferences() {
-		String[] onotolgyClassRefs  = new String[2];
-		onotolgyClassRefs[0] = Exit.class.getName();
-		onotolgyClassRefs[1] = TimeSeriesChart.class.getName();
-		return onotolgyClassRefs;
-	}
-
+    /**
+     * Instantiates a new satellite graph mouse.
+     *
+     * @param in the in
+     * @param out the out
+     */
+    public SatelliteGraphMouse(float in, float out) {
+        super(in, out);
+    }
+	
+    /* (non-Javadoc)
+     * @see edu.uci.ics.jung.visualization.control.ModalSatelliteGraphMouse#loadPlugins()
+     */
+    @Override
+    protected void loadPlugins() {
+    	super.loadPlugins();
+    	remove(scalingPlugin);
+    	scalingPlugin =  new SatelliteScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
+    	add(scalingPlugin);
+    	 
+    }
+    
+    
 }

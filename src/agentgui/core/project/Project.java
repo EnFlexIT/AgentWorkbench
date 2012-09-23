@@ -443,6 +443,9 @@ import agentgui.core.webserver.JarFileCreator;
 			return false;
 		}
 
+		// --- Clear/Dispose EnvironmentPanel -------------
+		this.getEnvironmentController().getEnvironmentPanel().dispose();
+		
 		// ------------------------------------------------		
 		// --- Projekt kann geschlossen werden ------------
 		// ------------------------------------------------

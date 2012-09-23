@@ -164,6 +164,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		this.netModel = null;
 		if (this.myGraphEnvironmentController!=null) {
 			this.myGraphEnvironmentController.getEnvironmentPanel().setVisible(false);
+			this.myGraphEnvironmentController.getEnvironmentPanel().dispose();
 			this.myGraphEnvironmentController = null;
 		}
 		if (this.useFrame != null) {

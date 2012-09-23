@@ -219,6 +219,14 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	}
 	
 	/**
+	 * Open satellite view.
+	 */
+	public void setSatelliteView(boolean visible) {
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Satellite_View);
+		notification.setInfoObject(((Boolean)visible));
+		this.notifyObservers(notification);
+	}
+	/**
 	 * Zoom fit to window.
 	 */
 	public void zoomFit2Window() {

@@ -518,6 +518,8 @@ de;Übersetzen ...;Translate ...
 de;Übersetzen;Translate
 de;Übersetzter Text;Text translated
 de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
+de;Übersicht;Overview;;;
+de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
 en;;Set mapping of external types to local components;;;
 en;;The component name already exists!<br>Choose a different one.;;;

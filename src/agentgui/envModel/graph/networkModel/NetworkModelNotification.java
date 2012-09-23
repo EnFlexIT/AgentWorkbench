@@ -41,6 +41,8 @@ public class NetworkModelNotification {
 	public static final int NETWORK_MODEL_Reload = 2;
 	public static final int NETWORK_MODEL_Repaint = 3;
 	
+	public static final int NETWORK_MODEL_Satellite_View = 4;
+	
 	public static final int NETWORK_MODEL_Zoom_In = 5;
 	public static final int NETWORK_MODEL_Zoom_Out = 6;
 	public static final int NETWORK_MODEL_Zoom_Fit2Window = 7;

@@ -69,6 +69,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 
     private JToolBar jToolBar = null;
     private JButton jButtonComponents = null;
+    private JToggleButton jButtonSatelliteView = null;
     private JButton jButtonZoomFit2Window = null;
     private JButton jButtonZoomOne2One = null;
     private JButton jButtonFocusNetworkComponent= null;
@@ -122,7 +123,12 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 
 		    // --- In case of editing the simulation setup ----------
 		    if (this.graphController.getProject() != null) {
-				jToolBar.addSeparator();
+				
+		    	jToolBar.addSeparator();
+		    	jToolBar.add(getJButtonImportGraph());
+		    	jToolBar.add(getJButtonClearGraph());
+		    	
+		    	jToolBar.addSeparator();
 				jToolBar.add(getJButtonAddComponent());
 				jToolBar.add(getJButtonRemoveComponent());
 				jToolBar.add(getJButtonMergeNodes());
@@ -144,24 +150,16 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		    bg.add(getJToggleMouseTransforming());
 		    
 		    jToolBar.addSeparator();
+		    jToolBar.add(getJToggleButtonSatelliteView());
 		    jToolBar.add(getJButtonZoomFit2Window());
 		    jToolBar.add(getJButtonZoomOne2One());
 		    jToolBar.add(getJButtonFocusNetworkComponent());
 		    jToolBar.add(getJButtonSaveImage());
 		    
-		    jToolBar.add(getJButtonSaveImage());
 		    jToolBar.add(getJButtonZoomIn());
 		    jToolBar.add(getJButtonZoomOut());
-	
+		    jToolBar.add(getJButtonSaveImage());
 
-		    // --- In case of editing the simulation setup ----------
-		    if (this.graphController.getProject() != null) {
-		    	jToolBar.addSeparator();
-				jToolBar.add(getJButtonImportGraph());
-		    	jToolBar.addSeparator();
-				jToolBar.add(getJButtonClearGraph());
-		    }
-		    
 		}
 		return jToolBar;
     }
@@ -196,6 +194,21 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		return jButtonComponents;
     }
 
+    /**
+     * This method initializes jButtonZoomReload
+     * @return javax.swing.JButton
+     */
+    private JToggleButton getJToggleButtonSatelliteView() {
+		if (jButtonSatelliteView == null) {
+		    jButtonSatelliteView = new JToggleButton();
+		    jButtonSatelliteView.setIcon(new ImageIcon(getClass().getResource(pathImage + "SatelliteView.png")));
+		    jButtonSatelliteView.setPreferredSize(jButtonSize);
+		    jButtonSatelliteView.setToolTipText(Language.translate("Übersichtsfenster ein- und ausblenden"));
+		    jButtonSatelliteView.addActionListener(this);
+		}
+		return jButtonSatelliteView;
+    }
+    
     /**
      * This method initializes jButtonZoomReload
      * @return javax.swing.JButton
@@ -535,7 +548,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private void setGraphGuiElements() {
     	if (this.graphControllerGUI==null) {
     		this.graphControllerGUI = (GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel();
-    		this.basicGraphGui = graphControllerGUI.getGraphGUI();	
+    		this.basicGraphGui = graphControllerGUI.getBasicGraphGui();	
     	}
     }
     
@@ -565,7 +578,24 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 	@Override
 	public void update(Observable observable, Object object) {
 		if (object instanceof NetworkModelNotification) {
+			
 			this.setUndoRedoButtonsEnabled();
+			
+			NetworkModelNotification nmNotification = (NetworkModelNotification) object;
+			int reason = nmNotification.getReason();
+			Object infoObject = nmNotification.getInfoObject();
+			
+			switch (reason) {
+			case NetworkModelNotification.NETWORK_MODEL_Satellite_View:
+				Boolean visible = (Boolean) infoObject;
+				if (this.getJToggleButtonSatelliteView().isSelected()==true && visible==false) {
+					this.getJToggleButtonSatelliteView().setSelected(false);
+				} else if (this.getJToggleButtonSatelliteView().isSelected()==false && visible==true) {
+					this.getJToggleButtonSatelliteView().setSelected(true);
+				}
+				break;
+			}
+			
 		}
 	}
     
@@ -588,7 +618,11 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			}
 			ctsDialog.dispose();
 			ctsDialog = null;
-
+		} else if (ae.getSource() == getJToggleButtonSatelliteView()) {
+			// ------------------------------------------------------
+			// --- Open satellite view ------------------------------
+			this.graphController.getNetworkModelAdapter().setSatelliteView(getJToggleButtonSatelliteView().isSelected());
+			
 		} else if (ae.getSource() == getJButtonZoomFit2Window()) {
 			// ------------------------------------------------------
 			// --- Button Reset zoom --------------------------------

@@ -37,10 +37,12 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.ContainerAdapter;
+import java.awt.event.ContainerEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -60,6 +62,7 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -90,12 +93,12 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
+import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
-import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
  * This class implements a GUI component for displaying visualizations for JUNG graphs. <br>
@@ -122,6 +125,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 	/** Graph visualization component */
 	private VisualizationViewer<GraphNode, GraphEdge> visView = null;
+	private SatelliteView satelliteView = null;
+	private SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite = null;
+	private Dimension visViewSatelliteDimension = new Dimension(250, 200);
+	
 	/** JUNG object handling zooming */
 	private ScalingControl scalingControl = new CrossoverScalingControl(); // @jve:decl-index=0:
 	/** the margin of the graph for the visualization */
@@ -150,30 +157,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 
 	/**
-	 * Gets the graph environment controller.
-	 * @return the controller
-	 */
-	public GraphEnvironmentController getGraphEnvironmentController() {
-		return graphController;
-	}
-
-	/**
-	 * Gets the VisualizationViewer
-	 * @return The VisualizationViewer
-	 */
-	public VisualizationViewer<GraphNode, GraphEdge> getVisView() {
-		return visView;
-	}
-
-	/**
-	 * Gets the scaling control.
-	 * @return the scalingControl
-	 */
-	private ScalingControl getScalingControl() {
-		return scalingControl;
-	}
-
-	/**
 	 * This method initializes this
 	 * @return void
 	 */
@@ -183,13 +166,63 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.setLayout(new BorderLayout());
 		this.add(this.graphGuiTools.getJToolBar(), BorderLayout.WEST);
 
-		// --- React on component changes ------------------
-		this.addComponentListener(new ComponentAdapter() {
+		this.addContainerListener(new ContainerAdapter() {
+			boolean doneAdded = false;
 			@Override
-			public void componentMoved(ComponentEvent ce) {
-				setInitialScalingAndMovement();
+			public void componentAdded(ContainerEvent ce) {
+				if (doneAdded==false) {
+					validate();
+					zoomSetInitialScalingAndMovement();
+					doneAdded=true;
+				}
 			}
 		});
+		
+	}
+	
+	/**
+	 * Dispose this panel.
+	 */
+	public void dispose() {
+		this.killSatelliteView();
+		this.visView = null;
+		this.visViewSatellite = null;
+	}
+	
+	/**
+	 * Gets the graph environment controller.
+	 * @return the controller
+	 */
+	public GraphEnvironmentController getGraphEnvironmentController() {
+		return this.graphController;
+	}
+	/**
+	 * Gets the VisualizationViewer
+	 * @return The VisualizationViewer
+	 */
+	public VisualizationViewer<GraphNode, GraphEdge> getVisView() {
+		return this.visView;
+	}
+	/**
+	 * Gets the VisualizationViewer for the satellite view
+	 * @return The VisualizationViewer
+	 */
+	public SatelliteVisualizationViewer<GraphNode, GraphEdge> getVisViewSatellite() {
+		return this.visViewSatellite;
+	}
+	/**
+	 * Returns the dimension of the SatelliteVisualizationViewer.
+	 * @return the vis view satellite dimension
+	 */
+	public Dimension getVisViewSatelliteDimension() {
+		return this.visViewSatelliteDimension;
+	}
+	/**
+	 * Gets the scaling control.
+	 * @return the scalingControl
+	 */
+	private ScalingControl getScalingControl() {
+		return this.scalingControl;
 	}
 
 	/**
@@ -220,60 +253,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 			defaultModalGraphMouse = new DefaultModalGraphMouse<GraphNode, GraphEdge>(1/1.1f, 1.1f);
 		}
 		return defaultModalGraphMouse;
-	}
-
-	/**
-	 * Sets the initial scaling for the graph on the VisualizationViewer.
-	 */
-	private void setInitialScalingAndMovement() {
-		
-		if (this.visView == null) return;
-		if (this.allowInitialScaling == false) return;
-
-		Graph<GraphNode, GraphEdge> currGraph = this.visView.getGraphLayout().getGraph();
-		Rectangle2D rectGraph = this.getGraphSpreadDimension(currGraph);
-		Rectangle2D rectVis = this.visView.getVisibleRect();
-		if (rectVis.isEmpty()) return;
-
-		Point2D scaleAt = new Point2D.Double(0, 0);
-		this.setDefaultScaleAtPoint(scaleAt);
-
-		// --- Calculate the scaling --------------------------------
-		double graphWidth = rectGraph.getWidth() + 2 * this.graphMargin;
-		double graphHeight = rectGraph.getHeight() + 2 * this.graphMargin;
-		double visWidth = rectVis.getWidth();
-		double visHeight = rectVis.getHeight();
-
-		float scaleX = (float) (visWidth / graphWidth);
-		float scaleY = (float) (visHeight / graphHeight);
-		if (scaleX > 1) scaleX = 1;
-		if (scaleY > 1) scaleY = 1;
-
-		float scale = scaleX;
-		if (scaleX > scaleY) {
-			scale = scaleY;
-		}
-
-		// --- Calculate the movement in the view -------------------
-		double moveX = 0;
-		double moveY = 0;
-		if (rectGraph.getX() != 0) {
-			moveX = rectGraph.getX() * (-1) + this.graphMargin;
-		}
-		if (rectGraph.getY() != 0) {
-			moveY = rectGraph.getY() * (-1) + this.graphMargin;
-		}
-
-		// --- Set movement -----------
-		MutableTransformer mtView = this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
-		mtView.translate(moveX, moveY);
-
-		// --- Set scaling ------------
-		if (scale != 0 && scale != 1) {
-			this.scalingControl.scale(this.visView, scale, scaleAt);
-		}
-		this.allowInitialScaling = false;
-
 	}
 
 	/**
@@ -381,24 +360,30 @@ public class BasicGraphGui extends JPanel implements Observer {
 			this.remove(centerComponent);
 			this.centerComponent = null;
 			this.visView = null;
+			this.visViewSatellite = null;
 		}
 
 		// --- Set the display ----------------------------
 		if (graph == null) {
 			// --- NO graph to display ----------
 			this.visView = null;
+			this.visViewSatellite = null;
+			this.killSatelliteView();
 			this.centerComponent = new JPanel();
 			this.add(centerComponent, BorderLayout.CENTER);
 
 		} else {
 			// --- Graph to display -------------
 			this.visView = this.getNewVisualizationViewer(graph);
+			this.visViewSatellite = this.getNewVisualizationViewerSatellite();
+			this.reloadSatelliteView();
 			this.centerComponent = new GraphZoomScrollPane(this.visView);
 			this.add(this.centerComponent, BorderLayout.CENTER);
 
 			this.allowInitialScaling = true;
 			this.validate();
-			this.setInitialScalingAndMovement();
+			this.zoomSetInitialScalingAndMovement();
+			this.zoomOneToOneMoveFocus(this.visViewSatellite);
 		}
 	}
 
@@ -496,9 +481,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 		double moveX = 0;
 		double moveY = 0;
 
-		Rectangle2D rect = this.getGraphSpreadDimension(graph);
-		if (rect.getX() != this.graphMargin) moveX = (rect.getX() * (-1)) + this.graphMargin;
-		if (rect.getY() != this.graphMargin) moveY = (rect.getY() * (-1)) + this.graphMargin;
+		Rectangle2D graphDimension = this.getGraphSpreadDimension(graph);
+		if (graphDimension.getX() != this.graphMargin) moveX = (graphDimension.getX() * (-1)) + this.graphMargin;
+		if (graphDimension.getY() != this.graphMargin) moveY = (graphDimension.getY() * (-1)) + this.graphMargin;
 		
 		// --- Correct graph position, if this is used in the setup -------
 		if (this.graphController.getProject()!=null) {
@@ -509,7 +494,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Define graph layout ----------------------------------------
 		// ----------------------------------------------------------------
 		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-		layout.setSize(new Dimension((int) (rect.getWidth() + 2 * graphMargin), (int) (rect.getHeight() + 2 * graphMargin)));
+		layout.setSize(new Dimension((int) (graphDimension.getWidth() + 2 * graphMargin), (int) (graphDimension.getHeight() + 2 * graphMargin)));
 		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
 			@Override
 			public Point2D transform(GraphNode node) {
@@ -699,10 +684,54 @@ public class BasicGraphGui extends JPanel implements Observer {
 				return edge.getGraphElementLayout(graphController.getNetworkModel()).getMarkerColor();
 			}
 		});
+		
 		// --- Done -------------------------------------------------------
 		return vViewer;
 	}
-
+	
+	/**
+	 * Returns the new SatelliteVisualizationViewer.
+	 * @return the new SatelliteVisualizationViewer
+	 */
+	private SatelliteVisualizationViewer<GraphNode, GraphEdge> getNewVisualizationViewerSatellite() {
+		
+		boolean debug = false;
+		SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite = null;
+		
+		// --- Set dimension and create a new SatelliteVisualizationViewer ----
+		visViewSatellite = new SatelliteVisualizationViewer<GraphNode, GraphEdge>(this.visView, this.getVisViewSatelliteDimension());
+		visViewSatellite.scaleToLayout(this.scalingControl);
+		visViewSatellite.setGraphMouse(new SatelliteGraphMouse(1/1.1f, 1.1f));
+		
+		// --- Configure the node shape and size ------------------------------
+		visViewSatellite.getRenderContext().setVertexShapeTransformer(this.visView.getRenderContext().getVertexShapeTransformer());
+		// --- Configure node icons, if configured ----------------------------
+		visViewSatellite.getRenderContext().setVertexIconTransformer(this.visView.getRenderContext().getVertexIconTransformer());
+		// --- Configure node colors ------------------------------------------
+		visViewSatellite.getRenderContext().setVertexFillPaintTransformer(this.visView.getRenderContext().getVertexFillPaintTransformer());
+		// --- Use straight lines as edges ------------------------------------
+		visViewSatellite.getRenderContext().setEdgeShapeTransformer(this.visView.getRenderContext().getEdgeShapeTransformer());
+		// --- Set edge width -------------------------------------------------
+		visViewSatellite.getRenderContext().setEdgeStrokeTransformer(this.visView.getRenderContext().getEdgeStrokeTransformer());
+		// --- Configure edge color -------------------------------------------
+		visViewSatellite.getRenderContext().setEdgeDrawPaintTransformer(this.visView.getRenderContext().getEdgeDrawPaintTransformer());
+		// --- Configure Edge Image Labels ------------------------------------
+		visViewSatellite.getRenderContext().setEdgeLabelTransformer(this.visView.getRenderContext().getEdgeLabelTransformer());
+		// --- Set edge renderer for a background color of an edge ------------
+		visViewSatellite.getRenderer().setEdgeRenderer(this.visView.getRenderer().getEdgeRenderer());
+		
+		// --- Just for debugging purposes ------------------------------------
+		if (debug==true) {
+			JDialog jDialogSatellite = new JDialog();
+			jDialogSatellite.setSize(300,300);
+			jDialogSatellite.setAlwaysOnTop(true);
+			jDialogSatellite.add(visViewSatellite);
+			jDialogSatellite.setVisible(true);
+		}
+		return visViewSatellite;
+	}
+	
+	
 	
 	/**
 	 * This method notifies the observers about a graph object selection
@@ -899,43 +928,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		} // end APPROVE_OPTION
 
 	}
-
-	/**
-	 * Zoom component.
-	 */
-	private void zoomComponent() {
-		
-		Set<GraphNode> nodesPicked = this.visView.getPickedVertexState().getPicked();
-		if (nodesPicked.size()!=0) {
-			HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesPicked);
-			if (components.size()!=0) {
-				// --- Get dimensions of selection ------------------
-				Rectangle2D areaSelected = getVerticesSpreadDimension(nodesPicked);
-				// --- Set zoom factor to 1.0 -----------------------
-				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
-				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
-				// --- Center position of display in graph coordinates 
-				Point2D centerLocationOfDisplayOnVisView = this.visView.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.LAYOUT, this.visView.getCenter());
-				// --- Calculate movement ---------------------------
-				double moveXOnVisView = centerLocationOfDisplayOnVisView.getX() - areaSelected.getCenterX();
-				double moveYOnVisView = centerLocationOfDisplayOnVisView.getY() - areaSelected.getCenterY();
-				// --- Move the focused area ------------------------
-				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(moveXOnVisView, moveYOnVisView);
-			}
-		}
-	}
-
-	//TODO
-//	VisualizationViewer<GraphNode, GraphEdge> satellite = new SatelliteVisualizationViewer<GraphNode, GraphEdge>(this.visView, new Dimension(200,200));
-//	ScalingControl satelliteScaler = new CrossoverScalingControl();
-//	satellite.scaleToLayout(satelliteScaler);
-//	
-//	jDialogSatellite = new JDialog();
-//	jDialogSatellite.setSize(200,200);
-//	jDialogSatellite.add(satellite);
-//	jDialogSatellite.setVisible(true);
-	
-	
 	/**
 	 * Export the current graph as image by using specified parameters. 
 	 *
@@ -980,7 +972,158 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 
 	}
+	
+	/**
+	 * Sets the initial scaling for the graph on the VisualizationViewer.
+	 */
+	private void zoomSetInitialScalingAndMovement() {
+		
+		if (this.visView == null) return;
+		if (this.allowInitialScaling == false) return;
 
+		Graph<GraphNode, GraphEdge> currGraph = this.visView.getGraphLayout().getGraph();
+		Rectangle2D rectGraph = this.getGraphSpreadDimension(currGraph);
+		Rectangle2D rectVis = this.visView.getVisibleRect();
+		if (rectVis.isEmpty()) return;
+
+		Point2D scaleAt = new Point2D.Double(0, 0);
+		this.setDefaultScaleAtPoint(scaleAt);
+
+		// --- Calculate the scaling --------------------------------
+		double graphWidth = rectGraph.getWidth() + 2 * this.graphMargin;
+		double graphHeight = rectGraph.getHeight() + 2 * this.graphMargin;
+		double visWidth = rectVis.getWidth();
+		double visHeight = rectVis.getHeight();
+
+		float scaleX = (float) (visWidth / graphWidth);
+		float scaleY = (float) (visHeight / graphHeight);
+		if (scaleX > 1) scaleX = 1;
+		if (scaleY > 1) scaleY = 1;
+
+		float scale = scaleX;
+		if (scaleX > scaleY) {
+			scale = scaleY;
+		}
+
+		// --- Calculate the movement in the view -------------------
+		double moveX = 0;
+		double moveY = 0;
+		if (rectGraph.getX() != 0) {
+			moveX = rectGraph.getX() * (-1) + this.graphMargin;
+		}
+		if (rectGraph.getY() != 0) {
+			moveY = rectGraph.getY() * (-1) + this.graphMargin;
+		}
+
+		// --- Set movement -----------
+		this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).translate(moveX, moveY);
+
+		// --- Set scaling ------------
+		if (scale != 0 && scale != 1) {
+			this.scalingControl.scale(this.visView, scale, scaleAt);
+		}
+		this.allowInitialScaling = false;
+
+	}
+	
+	/**
+	 * Zoom one to one and move the focus, so that the elements as visible.
+	 * @param visViewer the VisualizationViewer
+	 */
+	private void zoomOneToOneMoveFocus(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
+		
+		Graph<GraphNode, GraphEdge> graph = visViewer.getGraphLayout().getGraph();
+		Rectangle2D graphDimension = this.getGraphSpreadDimension(graph);
+		double moveXOnVisView = graphDimension.getX();
+		double moveYOnVisView = graphDimension.getX();
+		if (moveXOnVisView<=graphMargin) {
+			moveXOnVisView = 0;
+		} else {
+			moveXOnVisView = (graphMargin-graphDimension.getX());
+		}
+		if (moveYOnVisView<=graphMargin) {
+			moveYOnVisView = 0;
+		} else {
+			moveYOnVisView = (graphMargin-graphDimension.getY());
+		}
+		if ((moveXOnVisView!=0 || moveYOnVisView!=0)) {
+			visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(moveXOnVisView, moveYOnVisView);	
+		}
+
+	}
+	
+	/**
+	 * Zoom component.
+	 */
+	private void zoomComponent() {
+		
+		Set<GraphNode> nodesPicked = this.visView.getPickedVertexState().getPicked();
+		if (nodesPicked.size()!=0) {
+			HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesPicked);
+			if (components.size()!=0) {
+				// --- Get dimensions of selection ------------------
+				Rectangle2D areaSelected = getVerticesSpreadDimension(nodesPicked);
+				// --- Set zoom factor to 1.0 -----------------------
+				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
+				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
+				// --- Center position of display in graph coordinates 
+				Point2D centerLocationOfDisplayOnVisView = this.visView.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.LAYOUT, this.visView.getCenter());
+				// --- Calculate movement ---------------------------
+				double moveXOnVisView = centerLocationOfDisplayOnVisView.getX() - areaSelected.getCenterX();
+				double moveYOnVisView = centerLocationOfDisplayOnVisView.getY() - areaSelected.getCenterY();
+				// --- Move the focused area ------------------------
+				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(moveXOnVisView, moveYOnVisView);
+			}
+		}
+	}
+
+	/**
+	 * Returns the satellite view.
+	 * @return the satellite view
+	 */
+	private SatelliteView getSatelliteView() {
+		if (this.satelliteView ==null){
+			this.satelliteView = new SatelliteView(this.graphController, this);
+		}
+		return this.satelliteView;
+	}
+	/**
+	 * Sets the satellite view.
+	 * @param satelliteView the new satellite view
+	 */
+	private void setSatelliteView(SatelliteView satelliteView) {
+		this.satelliteView = satelliteView;
+	}
+	
+	/**
+	 * Reloads the satellite view, if it is open.
+	 */
+	private void reloadSatelliteView() {
+		if (this.getSatelliteView().isVisible()) {
+
+			Point currPosition = this.getSatelliteView().getLocation();
+			Rectangle rect = this.getSatelliteView().getBounds();
+			
+			this.killSatelliteView();
+			this.getSatelliteView().setBounds(rect);
+			this.getSatelliteView().setLocation(currPosition);
+			this.getSatelliteView().validate();
+			this.getSatelliteView().setVisible(true);
+			
+		} else {
+			this.killSatelliteView();
+		}
+	}
+	
+	/**
+	 * Disposes the satellite view.
+	 */
+	private void killSatelliteView() {
+		this.getSatelliteView().setVisible(false);
+		this.setSatelliteView(null);
+	}
+
+	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
@@ -998,6 +1141,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 				this.reLoadGraph();
 				break;
 
+			case NetworkModelNotification.NETWORK_MODEL_Satellite_View:
+				Boolean visible = (Boolean) infoObject;
+				this.getSatelliteView().setVisible(visible);
+				break;
+				
 			case NetworkModelNotification.NETWORK_MODEL_Repaint:
 			case NetworkModelNotification.NETWORK_MODEL_Component_Added:
 			case NetworkModelNotification.NETWORK_MODEL_Component_Removed:
@@ -1022,7 +1170,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
 				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
 				this.allowInitialScaling = true;
-				this.setInitialScalingAndMovement();
+				this.zoomSetInitialScalingAndMovement();
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Component:
@@ -1032,6 +1180,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_One2One:
 				visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
 				visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
+				this.zoomOneToOneMoveFocus(this.visView);
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_In:

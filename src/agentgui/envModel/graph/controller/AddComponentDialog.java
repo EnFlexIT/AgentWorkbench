@@ -160,7 +160,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     public AddComponentDialog(GraphEnvironmentController controller) {
 		super(Application.getMainWindow());
 		this.graphController = controller;
-		this.basicGraphGui = ((GraphEnvironmentControllerGUI)controller.getEnvironmentPanel()).getGraphGUI();
+		this.basicGraphGui = ((GraphEnvironmentControllerGUI)controller.getEnvironmentPanel()).getBasicGraphGui();
 		initialize();
     }
 

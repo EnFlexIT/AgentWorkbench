@@ -132,8 +132,8 @@ public class BenchmarkMeasurement extends Thread {
 		benchGUI.jProgressBarBenchmark.setMinimum(0);
 		benchGUI.jProgressBarBenchmark.setMaximum(6);
 		benchGUI.jProgressBarBenchmark.setValue(0);
-		benchGUI.setVisible(true);
 		benchGUI.validate();
+		benchGUI.setVisible(true);
 		
 		// --- Start benchmark tests ----------------------
 		double res[] = new double[6];
@@ -231,7 +231,7 @@ public class BenchmarkMeasurement extends Thread {
 	}
 	
 	/**
-	 * This method closes teh Monitor-GUI.
+	 * This method closes the benchmark monitor GUI.
 	 */
 	private void closeGUI() {
 		

@@ -133,7 +133,6 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.getContentPane().setPreferredSize(this.getSize());
 		this.setLocationRelativeTo(null);
-		this.setAlwaysOnTop(true);
 		
 		// --- Translations ----
 		jLabelBenchmark.setText(Language.translate("Bitte warten! Der Benchmark wird durchgeführt ..."));

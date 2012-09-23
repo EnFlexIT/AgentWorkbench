@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -71,5 +72,10 @@ public abstract class EnvironmentPanel extends JPanel implements Observer {
 	public void setEnvironmentController(EnvironmentController environmentController) {
 		this.environmentController = environmentController;
 	}
+	
+	/**
+	 * Should be invoked before an EnvironmentPanel has to be destroyed.
+	 */
+	public abstract void dispose();
 	
 }

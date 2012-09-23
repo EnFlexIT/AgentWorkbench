@@ -183,6 +183,32 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     	return (GraphEnvironmentController) this.environmentController;
     }
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentPanel#dispose()
+	 */
+	@Override
+	public void dispose() {
+		
+		if (this.networkModelTabs!=null) {
+			// --- Dispose / Remove sub tabs ----------------------------------
+			HashSet<String> tabNames = new HashSet<String>(this.networkModelTabs.keySet()); 
+			for (String tabName : tabNames) {
+				GraphEnvironmentControllerGUI graphGUI = this.networkModelTabs.get(tabName);
+				if (graphGUI!=this) {
+					graphGUI.dispose();
+					this.getJTabbedPaneAltNetModels().remove(graphGUI);
+					this.networkModelTabs.remove(tabName);	
+				}
+			}
+		}
+
+		// --- Kill the current GraphGui --------------------------------------
+		if (this.graphGUI!=null) {
+			this.graphGUI.dispose();	
+		}
+		
+	}
+    
     /**
      * Gets the JTabbedPane for alternative network models.
      * @return the JTabbedPane for alternative network models
@@ -721,14 +747,14 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      * @return the graph visualization
      */
     private JComponent getGraphVisualization() {
-    	return this.getGraphGUI();
+    	return this.getBasicGraphGui();
     }
 
     /**
      * Get the visualization component
      * @return the basic graph GUI which contains the graph visualization component
      */
-    public BasicGraphGui getGraphGUI() {
+    public BasicGraphGui getBasicGraphGui() {
 		if (graphGUI == null) {
 		    graphGUI = new BasicGraphGui(this.getGraphController());
 		}
@@ -798,6 +824,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 			    	if (graphControllerGUI!=null) {
 			    		this.jTabbedPaneAltNetModels.remove(graphControllerGUI);
 				    	this.networkModelTabs.remove(tabToDelete);	
+				    	graphControllerGUI.dispose();
+				    	graphControllerGUI = null;
 			    	}	
 		    	}
 		    }

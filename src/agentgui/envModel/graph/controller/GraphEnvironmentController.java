@@ -30,6 +30,7 @@ package agentgui.envModel.graph.controller;
 
 import jade.core.Agent;
 
+import java.awt.Cursor;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,6 +51,8 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.collections15.Transformer;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
+import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.project.Project;
@@ -312,9 +315,12 @@ public class GraphEnvironmentController extends EnvironmentController {
     @Override
     protected void loadEnvironment() {
 
-		this.networkModel = new NetworkModel();
-	
-		String fileName = getCurrentSimSetup().getEnvironmentFileName();
+    	this.networkModel = new NetworkModel();
+    	String fileName = getCurrentSimSetup().getEnvironmentFileName();
+    	
+    	Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    	Application.setStatusBar(Language.translate("Lade Setup") + " :" + fileName + " ...");
+    	
 		if (fileName != null) {
 	
 		    // --- register the list of agents, which has to be started with the environment ------
@@ -371,6 +377,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 		// --- Reset Undo-Manager -----------------------------------------------------------------
 		this.networkModelAdapter.getUndoManager().discardAllEdits();
 
+		Application.setStatusBar(Language.translate("Fertig"));
+		Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		
     }
 
     /**
