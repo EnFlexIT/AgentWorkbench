@@ -63,7 +63,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Language;
-import agentgui.core.charts.timeseries.TimeSeriesWidget;
+import agentgui.core.charts.timeseriesChart.gui.TimeSeriesWidget;
 import agentgui.core.ontologies.OntologyClassTree;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologySingleClassDescription;
@@ -74,6 +74,7 @@ import agentgui.core.project.AgentStartArgument;
 import agentgui.ontology.Chart;
 import agentgui.ontology.Formula;
 import agentgui.ontology.TimeSeries;
+import agentgui.ontology.TimeSeriesChart;
 
 /**
  * This class can be used in order to generate a Swing based user form, that represents
@@ -624,11 +625,11 @@ public class DynForm extends JPanel {
 			Object userFormElement = this.userFormElements.get(node);
 			if (userFormElement!=null) {
 				final TimeSeriesWidget tsw = (TimeSeriesWidget) userFormElement;
-				final TimeSeries timeSeries = (TimeSeries) object;
+				final TimeSeriesChart timeSeries = (TimeSeriesChart) object;
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						tsw.setTimeSeries(timeSeries);
+						tsw.setChart(timeSeries);
 					}
 				});
 			}
@@ -1224,7 +1225,8 @@ public class DynForm extends JPanel {
 		// ------------------------------------------------------------------------------
 		// --- Show the widget for the special type -------------------------------------
 		// ------------------------------------------------------------------------------
-		if (specialClass instanceof TimeSeries) {
+//		if (specialClass instanceof TimeSeries) {
+		if (specialClass instanceof Chart) {
 			// --- A TimeSeries has to be displayed -----------------
 			TimeSeriesWidget tsw = new TimeSeriesWidget(this, startArgIndex);
 			tsw.setBounds(feBounds.x, feBounds.y, feBounds.width, tsw.getHeight());

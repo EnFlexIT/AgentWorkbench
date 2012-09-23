@@ -1,4 +1,4 @@
-package agentgui.core.charts.timeseries;
+package agentgui.core.charts.timeseriesChart.gui;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -22,7 +22,7 @@ public class TableCellRenderer4Time extends DefaultTableCellRenderer {
 	 */
 	@Override
 	protected void setValue(Object value) {
-		Date date = new Date(((Float)value).longValue());
+		Date date = new Date((Long) value);
 		DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
 		setText(timeFormat.format(date));
 	}

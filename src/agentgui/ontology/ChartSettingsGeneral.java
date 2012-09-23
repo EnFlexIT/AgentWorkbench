@@ -8,20 +8,9 @@ import jade.core.*;
    * This class contains all data related to how a chart will be displayed
 * Protege name: ChartSettingsGeneral
 * @author ontology bean generator
-* @version 2012/09/21, 16:08:41
+* @version 2012/09/21, 17:08:25
 */
 public class ChartSettingsGeneral extends VisualizationSettings{ 
-
-   /**
-* Protege name: yAxisLabel
-   */
-   private String yAxisLabel;
-   public void setYAxisLabel(String value) { 
-    this.yAxisLabel=value;
-   }
-   public String getYAxisLabel() {
-     return this.yAxisLabel;
-   }
 
    /**
 * Protege name: yAxisLineWidth
@@ -45,6 +34,17 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    public void setYAxisLineWidth(List l) {yAxisLineWidth = l; }
 
    /**
+* Protege name: chartTitle
+   */
+   private String chartTitle;
+   public void setChartTitle(String value) { 
+    this.chartTitle=value;
+   }
+   public String getChartTitle() {
+     return this.chartTitle;
+   }
+
+   /**
 * Protege name: xAxisLabel
    */
    private String xAxisLabel;
@@ -53,6 +53,17 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    }
    public String getXAxisLabel() {
      return this.xAxisLabel;
+   }
+
+   /**
+* Protege name: yAxisLabel
+   */
+   private String yAxisLabel;
+   public void setYAxisLabel(String value) { 
+    this.yAxisLabel=value;
+   }
+   public String getYAxisLabel() {
+     return this.yAxisLabel;
    }
 
    /**
@@ -78,14 +89,15 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    public void setYAxisColors(List l) {yAxisColors = l; }
 
    /**
-* Protege name: chartTitle
+   * The renderer type to be used fpr rendering the plots
+* Protege name: rendererType
    */
-   private String chartTitle;
-   public void setChartTitle(String value) { 
-    this.chartTitle=value;
+   private String rendererType;
+   public void setRendererType(String value) { 
+    this.rendererType=value;
    }
-   public String getChartTitle() {
-     return this.chartTitle;
+   public String getRendererType() {
+     return this.rendererType;
    }
 
 }

@@ -8,7 +8,7 @@ import jade.core.*;
    * This class represents a time series, containing time related data.
 * Protege name: TimeSeries
 * @author ontology bean generator
-* @version 2012/09/21, 16:08:41
+* @version 2012/09/21, 17:08:25
 */
 public class TimeSeries extends DataSeries{ 
 

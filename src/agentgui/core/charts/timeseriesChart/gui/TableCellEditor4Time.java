@@ -1,4 +1,4 @@
-package agentgui.core.charts.timeseries;
+package agentgui.core.charts.timeseriesChart.gui;
 
 import java.awt.Component;
 import java.util.Calendar;
@@ -26,22 +26,40 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 
 	private JSpinner spinner = null;
 	
+	private JTable table;
+	
+	private int row2edit;
+	
+
 	@Override
 	public Object getCellEditorValue() {
+		
+		// Reset row height
+		table.setRowHeight(row2edit, (int) (table.getRowHeight(row2edit)/1.5));
+		
 		Date date = (Date) spinner.getValue();
-		return new Float(date.getTime());
+		return date.getTime();
 	}
 
 	@Override
 	public Component getTableCellEditorComponent(JTable table,
 			Object value, boolean isSelected, int row, int column) {
 		if(spinner == null){
+			this.table = table;
 			SpinnerDateModel sdm = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
 			spinner = new JSpinner(sdm);
 			JSpinner.DateEditor de = new JSpinner.DateEditor(spinner, "HH:mm");
 			spinner.setEditor(de);
 		}
-		long timeStamp = ((Float)table.getValueAt(row, column)).longValue();
+		
+		// Remember which row was edited
+		row2edit = row;	
+		
+		// Increase row height (the spinner needs more vertical space)
+		table.setRowHeight(row2edit, (int) (table.getRowHeight(row2edit)*1.5));
+		
+		// Init spinner
+		long timeStamp = (Long) table.getValueAt(row, column);
 		spinner.getModel().setValue(new Date(timeStamp));
 		
 		return spinner;

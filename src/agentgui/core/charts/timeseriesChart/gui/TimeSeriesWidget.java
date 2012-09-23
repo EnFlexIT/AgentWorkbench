@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.charts.timeseries;
+package agentgui.core.charts.timeseriesChart.gui;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -43,7 +43,8 @@ import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Language;
 import agentgui.core.ontologies.gui.DynForm;
-import agentgui.ontology.TimeSeries;
+import agentgui.ontology.Chart;
+import agentgui.ontology.TimeSeriesChart;
 
 /**
  * The Class TimeSeriesWidget.
@@ -56,8 +57,8 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 	private DynForm dynForm = null;  //  @jve:decl-index=0:
 	private int startArgIndex = -1;
 	
-	private TimeSeries currTimeSeries = null;  //  @jve:decl-index=0:
-	private TimeSeriesChartDialog tscd = null;
+	private TimeSeriesChart currChart = null;  //  @jve:decl-index=0:
+	private agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartDialog tscd = null;
 	
 	private JButton jButtonEdit = null;
 
@@ -111,19 +112,20 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 	 * Gets the time series chart dialog.
 	 * @return the time series chart dialog
 	 */
-	private TimeSeriesChartDialog getTimeSeriesChartDialog() {
+	private agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartDialog getTimeSeriesChartDialog() {
 		if (this.tscd==null) {
-			this.tscd = new TimeSeriesChartDialog(SwingUtilities.getWindowAncestor(this), this.currTimeSeries);
+//			this.tscd = new TimeSeriesChartDialog(SwingUtilities.getWindowAncestor(this), this.currTimeSeries);
+			this.tscd = new agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartDialog(SwingUtilities.getWindowAncestor(this), this.currChart);
 		}
 		return this.tscd;
 	}
 	
 	/**
 	 * Sets the time series.
-	 * @param timeSeries the new time series
+	 * @param chart the new Chart
 	 */
-	public void setTimeSeries(TimeSeries timeSeries) {
-		this.currTimeSeries = timeSeries;
+	public void setChart(TimeSeriesChart chart) {
+		this.currChart = chart;
 		ImageIcon icon = new ImageIcon(this.getTimeSeriesChartDialog().getChartThumb());
 		if(icon != null){
 			// Replace text by thumbnail if available
@@ -136,8 +138,8 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 	 * Gets the time series.
 	 * @return the time series
 	 */
-	public TimeSeries getTimeSeries() {
-		return currTimeSeries;
+	public Chart getChart() {
+		return this.currChart;
 	}
 	
 	/* (non-Javadoc)
@@ -151,11 +153,11 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 			
 			this.dynForm.save(true);
 			Object[] startArgs = this.dynForm.getOntoArgsInstance();
-			this.currTimeSeries = (TimeSeries) startArgs[this.startArgIndex];
+			this.currChart = (TimeSeriesChart) startArgs[this.startArgIndex];
 
 			this.getTimeSeriesChartDialog().setVisible(true);
 			if(! this.getTimeSeriesChartDialog().isCanceled()){
-				startArgs[this.startArgIndex] = this.getTimeSeriesChartDialog().getModel().getOntologyModel();
+				startArgs[this.startArgIndex] = this.getTimeSeriesChartDialog().getModel().getOntologyModel().getTimeSeriesChart();
 				this.dynForm.setOntoArgsInstance(startArgs);
 				if(this.getTimeSeriesChartDialog().getChartThumb() != null){
 					getJButtonEdit().setText("");
