@@ -52,23 +52,23 @@ public class InitialProcessBehaviour extends OneShotBehaviour {
 	private static final long serialVersionUID = -5824582916279166931L;
 
 	/** The my agent. */
-	protected GenericNetworkAgent myAgent;
+	private GenericNetworkAgent myAgent;
 
 	/* Different Behaviours. */
 	/** The find direction behaviour. */
-	protected FindDirectionBehaviour findDirectionBehaviour;
+	private FindDirectionBehaviour findDirectionBehaviour;
 
 	/** The find simplification behaviour. */
-	protected FindSimplificationBehaviour findSimplificationBehaviour;
+	private FindSimplificationBehaviour findSimplificationBehaviour;
 
 	/** The checking cluster behaviour. */
-	protected CheckingClusterBehaviour checkingClusterBehaviour;
+	private CheckingClusterBehaviour checkingClusterBehaviour;
 
 	/** The coalition behaviour. */
-	protected CoalitionBehaviour coalitionBehaviour;
+	private CoalitionBehaviour coalitionBehaviour;
 
 	/** The passive clustering behaviour. */
-	protected PassiveNAResponderBehaviour passiveClusteringBehaviour;
+	private PassiveNAResponderBehaviour passiveClusteringBehaviour;
 
 	/** Shows the internal step of the agent. */
 	private int step = -1;

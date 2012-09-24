@@ -50,6 +50,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import javax.swing.JOptionPane;
+
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -111,7 +113,6 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		this.envModel = this.getInitialEnvironmentModel();
 		// --- Remind the current network model ---------------------
 		this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
-		this.getClusteredModel();
 
 		// --- Make sure that all agents were started ---------------
 		this.addBehaviour(new WaitForTheEndOfSimulationStart(this, 300));
@@ -159,7 +160,6 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 			currentlyDoing = GET_NetworkModel;
 			networkModel = (NetworkModel) graphEnvironmentController.getEnvironmentModelCopy();
-			networkModel.getAlternativeNetworkModel().put(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME, networkModel.getCopy());
 
 			environmentModel.setTimeModel(myTimeModel);
 			environmentModel.setDisplayEnvironment(networkModel);
@@ -325,9 +325,10 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 					this.notifyAboutEnvironmentChanges();
 //					ComponentFunctions.printAmountOfDiffernetTypesOfAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
-					ComponentFunctions.printAmountOfNodesEdgesAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
-					ComponentFunctions.printAmountOfConnectionsWithEnviroment(clusterNetworkComponent);
-					ComponentFunctions.printAmountOfFixedEdgeDirections(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
+//					ComponentFunctions.printAmountOfNodesEdgesAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
+//					ComponentFunctions.printAmountOfConnectionsWithEnviroment(clusterNetworkComponent);
+//					ComponentFunctions.printAmountOfFixedEdgeDirections(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
+					System.out.println(clusterNetworkComponent.getId());
 					this.setActualMessageFlow(new StatusData(-1, "msg-"));
 				}
 			}
@@ -352,6 +353,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			
 		} else if (notification.getNotification() instanceof StatusData) {
 			StatusData information = ((StatusData) notification.getNotification());
+			if (actualStep == -2) return;
 			// --- A agent is still working in a specific step ---
 			if (actualStep == information.getPhase()){
 				// --- Record the message flow ---
@@ -370,6 +372,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	 * @param information the new actual message flow
 	 */
 	private synchronized void setActualMessageFlow(StatusData information) {
+		if (actualStep == -2) return;
 		if (information.getReason().equals("msg+")) {
 			// --- One more message is used by this step ---
 			actualMessageFlow++;
@@ -403,6 +406,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 		// Step done -> inform network components about this
 		HashSet<String> networkComponentIDs = new HashSet<String>();
 		// Find the network components, how have to be informed about the end of the step
+		if (actualStep == -2) return;
 		if (actualStep == 0) {
 			networkComponentIDs.addAll(myNetworkModel.getNetworkComponents().keySet());
 			actualStep = 1;
@@ -468,6 +472,9 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			System.out.println("Duration after step 5: " + (new Date().getTime() - startTime));
 			System.out.println("Duration after initial process: " + (new Date().getTime() - startTimeGlobal));
 			System.out.println("----------------------------------------------------------------Finished the last step. Phase: " + actualStep);
+			actualStep = -2;
+			ComponentFunctions.printNodesEdgesAgentsForAllNetworkModels("Global", myNetworkModel);
+			JOptionPane.showMessageDialog(null, "Initial process finished!", "Done", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 

@@ -41,14 +41,14 @@ public class InitialBehaviourMessageContainer implements Serializable {
 	private static final long serialVersionUID = 1326135126924738223L;
 	
 	/** The data. */
-	protected Object data;
+	protected GenericMesssageData data;
 	
 	/**
 	 * Gets the data.
 	 *
 	 * @return the data
 	 */
-	public Object getData() {
+	public GenericMesssageData getData() {
 		return data;
 	}
 
@@ -57,7 +57,7 @@ public class InitialBehaviourMessageContainer implements Serializable {
 	 *
 	 * @param data the data
 	 */
-	public InitialBehaviourMessageContainer(Object data) {
+	public InitialBehaviourMessageContainer(GenericMesssageData data) {
 		this.data = data;
 	}
 	

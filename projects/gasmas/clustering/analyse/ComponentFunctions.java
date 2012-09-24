@@ -34,6 +34,7 @@ import gasmas.agents.components.ExitAgent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
@@ -114,7 +115,16 @@ public class ComponentFunctions {
 		System.out.println("Number of agents / network components in " + name + ": " + networkModel.getNetworkComponents().keySet().size() +"\n Number of Nodes: " + numberGraphNodes   + " Number of Edges: " + numberGraphEdges);
 		
 	}
+	public static void printNodesEdgesAgentsForAllNetworkModels(String name, NetworkModel networkModel) {
+		ComponentFunctions.printAmountOfNodesEdgesAgents(name, networkModel);
+		Iterator<Entry<String, NetworkModel>> it = networkModel.getAlternativeNetworkModel().entrySet().iterator();
+		while (it.hasNext()) {
+			Entry<String, NetworkModel> actualNetworkModel = it.next();
 	
+			// --- Check, if there are alternative models in this network model ---
+			printNodesEdgesAgentsForAllNetworkModels(actualNetworkModel.getKey(), actualNetworkModel.getValue());
+		}
+	}
 	public static int printAmountOfFixedEdgeDirections(String name, NetworkModel networkModel) {
 		int i = 0;
 		for (NetworkComponent networkComponent : networkModel.getNetworkComponents().values()) {

@@ -28,26 +28,24 @@
  */
 package gasmas.initialProcess;
 
-import java.io.Serializable;
-
 /**
  * The Class StatusData, which is used to send information about the status in the initial process.
  * 
  * @author Benjamin Schwartz - University of Duisburg - Essen
  */
-public class StatusData implements Serializable {
+public class StatusData extends GenericMesssageData {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 827774764094560195L;
 
 	/** Shows the actual step. */
-	int phase = 0;
+	private int phase = 0;
 
 	/** Shows the name of a cluster, in which the receiver is. */
-	String clusterName = "";
+	private String clusterName = "";
 
 	/** Shows the reason of the message. */
-	String reason = "";
+	private String reason = "";
 	
 	/**
 	 * Gets the phase.

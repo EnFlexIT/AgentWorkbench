@@ -35,7 +35,7 @@ import java.io.Serializable;
  * 
  * @author Benjamin Schwartz - University of Duisburg - Essen
  */
-public class GenericMesssageData implements Serializable {
+public abstract class GenericMesssageData implements Serializable {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8173451609761822791L;

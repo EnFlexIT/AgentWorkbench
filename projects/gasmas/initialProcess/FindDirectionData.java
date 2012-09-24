@@ -39,19 +39,10 @@ public class FindDirectionData extends GenericMesssageData {
 	private static final long serialVersionUID = 3438711840630347490L;
 
 	/** String, which holds the way, how the message went. */
-	protected String way = "";
+	private String way = "";
 	
 	/** String, which holds the initiator of the actual asking round. */
-	protected String flow;
-
-	/**
-	 * Sets the flow.
-	 *
-	 * @param reason the new flow
-	 */
-	public void setFlow(String reason) {
-		this.flow = reason;
-	}
+	private String flow;
 
 	/**
 	 * Gets the flow.
