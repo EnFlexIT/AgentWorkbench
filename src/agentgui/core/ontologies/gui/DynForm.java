@@ -1226,7 +1226,6 @@ public class DynForm extends JPanel {
 		// ------------------------------------------------------------------------------
 		// --- Show the widget for the special type -------------------------------------
 		// ------------------------------------------------------------------------------
-//		if (specialClass instanceof TimeSeries) {
 		if (specialClass instanceof TimeSeriesChart) {
 			// --- A TimeSeries has to be displayed -----------------
 			TimeSeriesWidget tsw = new TimeSeriesWidget(this, startArgIndex);
