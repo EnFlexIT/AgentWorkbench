@@ -74,6 +74,7 @@ import agentgui.core.project.AgentStartConfiguration;
 import agentgui.ontology.Chart;
 import agentgui.ontology.Formula;
 import agentgui.ontology.TimeSeriesChart;
+import agentgui.ontology.XyChart;
 
 /**
  * This class can be used in order to generate a Swing based user form, that represents
@@ -619,7 +620,7 @@ public class DynForm extends JPanel {
 		// --- Agent.GUI Base ontology							  ----
 		// ----------------------------------------------------------->
 		
-		if (object instanceof Chart) {
+		if (object instanceof TimeSeriesChart) {
 			
 			Object userFormElement = this.userFormElements.get(node);
 			if (userFormElement!=null) {
@@ -633,7 +634,8 @@ public class DynForm extends JPanel {
 				});
 			}
 			
-			
+		} else if (object instanceof XyChart) {
+			//TODO for further improvements
 		}
 		
 		
@@ -1225,13 +1227,17 @@ public class DynForm extends JPanel {
 		// --- Show the widget for the special type -------------------------------------
 		// ------------------------------------------------------------------------------
 //		if (specialClass instanceof TimeSeries) {
-		if (specialClass instanceof Chart) {
+		if (specialClass instanceof TimeSeriesChart) {
 			// --- A TimeSeries has to be displayed -----------------
 			TimeSeriesWidget tsw = new TimeSeriesWidget(this, startArgIndex);
 			tsw.setBounds(feBounds.x, feBounds.y, feBounds.width, tsw.getHeight());
 			parentPanel.add(tsw);
 			
 			this.userFormElements.put(parentNode, tsw);
+			
+		} else if (specialClass instanceof XyChart) {
+			// --- A XY-Chart has to be displayed -------------------
+			//TODO for further improvements
 		}
 		
 		this.setPanelBounds(parentPanel);
