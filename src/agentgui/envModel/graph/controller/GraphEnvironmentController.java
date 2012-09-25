@@ -271,12 +271,12 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    break;
 	
 		case SimulationSetups.SIMULATION_SETUP_REMOVE:
-		    File graphFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".graphml");
+		    File graphFile = new File(getEnvFolderPath() + baseFileName + ".graphml");
 		    if (graphFile.exists()) {
 		    	graphFile.delete();
 		    }
 	
-		    File componentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
+		    File componentFile = new File(getEnvFolderPath() + baseFileName + ".xml");
 		    if (componentFile.exists()) {
 		    	componentFile.delete();
 		    }
@@ -284,15 +284,15 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    break;
 	
 		case SimulationSetups.SIMULATION_SETUP_RENAME:
-		    File oldGraphFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".graphml");
-		    File oldComponentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
+		    File oldGraphFile = new File(getEnvFolderPath() + baseFileName + ".graphml");
+		    File oldComponentFile = new File(getEnvFolderPath() + baseFileName + ".xml");
 		    updateGraphFileName();
 		    if (oldGraphFile.exists()) {
-				File newGraphFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".graphml");
+				File newGraphFile = new File(getEnvFolderPath() + baseFileName + ".graphml");
 				oldGraphFile.renameTo(newGraphFile);
 		    }
 		    if (oldComponentFile.exists()) {
-				File newComponentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
+				File newComponentFile = new File(getEnvFolderPath() + baseFileName + ".xml");
 				oldComponentFile.renameTo(newComponentFile);
 		    }
 		    break;
@@ -617,7 +617,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    try {
 				// Save the graph topology
 				String graphFileName = baseFileName + ".graphml";
-				File file = new File(getEnvFolderPath() + File.separator + graphFileName);
+				File file = new File(getEnvFolderPath() + graphFileName);
 				if (!file.exists()) {
 				    file.createNewFile();
 				}
@@ -625,7 +625,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 				getGraphMLWriter().save(networkModel.getGraph(), pw);
 		
 				// Save the network component definitions
-				File componentFile = new File(getEnvFolderPath() + File.separator + baseFileName + ".xml");
+				File componentFile = new File(getEnvFolderPath() + baseFileName + ".xml");
 				if (!componentFile.exists()) {
 				    componentFile.createNewFile();
 				}
@@ -692,7 +692,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     private void loadGeneralGraphSettings() {
 
 		try {
-		    File componentFile = new File(getEnvFolderPath() + File.separator + generalGraphSettings4MASFile + ".xml");
+		    File componentFile = new File(getEnvFolderPath() + generalGraphSettings4MASFile + ".xml");
 		    FileReader componentReader = new FileReader(componentFile);
 	
 		    JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
@@ -701,12 +701,15 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    this.networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
 		    componentReader.close();
 	
-		} catch (JAXBException e) {
-		    e.printStackTrace();
-		} catch (FileNotFoundException e) {
-		    e.printStackTrace();
-		} catch (IOException e) {
-		    e.printStackTrace();
+		} catch (JAXBException ex) {
+		    ex.printStackTrace();
+		} catch (FileNotFoundException ex) {
+		    // create the file for the GeneralGraphSettings
+			this.saveGeneralGraphSettings();
+			System.out.println("Created file " + getEnvFolderPath() + generalGraphSettings4MASFile + ".xml");
+			
+		} catch (IOException ex) {
+		    ex.printStackTrace();
 		}
     }
 
@@ -716,7 +719,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     private void saveGeneralGraphSettings() {
 
 		try {
-		    File componentFile = new File(getEnvFolderPath() + File.separator + generalGraphSettings4MASFile + ".xml");
+		    File componentFile = new File(getEnvFolderPath() + generalGraphSettings4MASFile + ".xml");
 		    if (!componentFile.exists()) {
 		    	componentFile.createNewFile();
 		    }
