@@ -37,6 +37,7 @@ import gasmas.ontology.factory.ControlValveFactory;
 import gasmas.ontology.factory.EntryFactory;
 import gasmas.ontology.factory.ExitFactory;
 import gasmas.ontology.factory.PipeFactory;
+import gasmas.ontology.factory.ResistorFactory;
 import gasmas.ontology.factory.ShortPipeFactory;
 import gasmas.ontology.factory.ValveFactory;
 import gasmas.transfer.zib.cdf.CombinedDecisions;
@@ -320,6 +321,9 @@ public class OGE_Importer extends NetworkModelFileImporter {
 					
 				} else if (connection instanceof ResistorType) {
 					
+					Object[] ontoArrayInstance = new Object[1];
+					ontoArrayInstance[0] = ResistorFactory.newInstance( connection);
+					netComp.setDataModel(ontoArrayInstance);
 					
 				} else if (connection instanceof ValveType) {
 					
