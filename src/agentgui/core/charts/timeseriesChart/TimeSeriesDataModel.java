@@ -9,6 +9,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import agentgui.core.charts.NoSuchSeriesException;
+import agentgui.core.charts.SeriesSettings;
 import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartTab;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
@@ -60,15 +61,19 @@ public class TimeSeriesDataModel implements TableModelListener{
 	 */
 	private TimeSeriesTableModel tableModel;
 	/**
+	 * Contains the settings for this chart
+	 */
+	private TimeSeriesChartSettings chartSettings;
+	/**
 	 * The number of series in this data model
 	 */
 	private int seriesCount = 0;
 	
 	/**
 	 * Constructor
-	 * @param model The ontology representation of the series to be displayed
+	 * @param timeSeriesChart The ontology representation of the series to be displayed
 	 */
-	public TimeSeriesDataModel(TimeSeriesChart model){
+	public TimeSeriesDataModel(TimeSeriesChart timeSeriesChart){
 		
 		// Initialize the start date
 		Calendar cal = Calendar.getInstance();
@@ -76,7 +81,7 @@ public class TimeSeriesDataModel implements TableModelListener{
 		this.startDate = cal.getTime();
 		
 		// Initialize the three sub models
-		this.ontologyModel = new TimeSeriesOntologyModel(model);
+		this.ontologyModel = new TimeSeriesOntologyModel(timeSeriesChart);
 		chartModel = new TimeSeriesChartModel();
 		tableModel = new TimeSeriesTableModel();
 		
@@ -116,6 +121,8 @@ public class TimeSeriesDataModel implements TableModelListener{
 		
 		// Register for table model events
 		tableModel.addTableModelListener(this);
+		
+		this.chartSettings = new TimeSeriesChartSettings(timeSeriesChart);
 	}
 
 	/**
@@ -160,37 +167,50 @@ public class TimeSeriesDataModel implements TableModelListener{
 		this.tableModel = tableModel;
 	}
 
+	public TimeSeriesChartSettings getChartSettings() {
+		return chartSettings;
+	}
+
+	public void setChartSettings(TimeSeriesChartSettings chartSettings) {
+		this.chartSettings = chartSettings;
+	}
+
 	@Override
 	public void tableChanged(TableModelEvent tme) {
+		System.out.println("TableModelEvent type "+tme.getType()+", Row "+tme.getFirstRow()+", Col "+tme.getColumn());
 		if(tme.getSource() == tableModel && tme.getFirstRow() >= 0){
 			
-			if(tme.getColumn() > 0){
-				
-				// A single value was edited
-				int seriesIndex = tme.getColumn()-1; // First column contains the time stamps.
-				long timeStamp = (Long) tableModel.getValueAt(tme.getFirstRow(), 0);
-				Float value = (Float) tableModel.getValueAt(tme.getFirstRow(), tme.getColumn());
-				
-				try {
-					if(value != null){
-						chartModel.addOrUpdateValuePair(seriesIndex, timeStamp, value);
-						ontologyModel.addOrUpdateValuePair(seriesIndex, timeStamp, value);
-					}else{
-						chartModel.removeValuePair(seriesIndex, timeStamp);
-						ontologyModel.removeValuePair(seriesIndex, timeStamp);
+			if(tme.getType() == 0){
+			
+				if(tme.getColumn() > 0){
+					
+					// A single value was edited
+					int seriesIndex = tme.getColumn()-1; // First column contains the time stamps.
+					long timeStamp = (Long) tableModel.getValueAt(tme.getFirstRow(), 0);
+					Float value = (Float) tableModel.getValueAt(tme.getFirstRow(), tme.getColumn());
+					
+					try {
+						if(value != null){
+							chartModel.addOrUpdateValuePair(seriesIndex, timeStamp, value);
+							ontologyModel.addOrUpdateValuePair(seriesIndex, timeStamp, value);
+						}else{
+							chartModel.removeValuePair(seriesIndex, timeStamp);
+							ontologyModel.removeValuePair(seriesIndex, timeStamp);
+						}
+					} catch (NoSuchSeriesException e) {
+						System.err.println("Error updating data model: Series "+seriesIndex+" does mot exist!");
+						e.printStackTrace();
 					}
-				} catch (NoSuchSeriesException e) {
-					System.err.println("Error updating data model: Series "+seriesIndex+" does mot exist!");
-					e.printStackTrace();
+				}else{
+					
+					// The time stamp was edited
+					
+					long oldTimestamp = (Long) tableModel.getLatestChangedValue();
+					long newTimeStamp = (Long) tableModel.getValueAt(tme.getFirstRow(), 0);
+					
+					ontologyModel.updateTimeStamp(oldTimestamp, newTimeStamp);
+					chartModel.updateTimeStamp(oldTimestamp, newTimeStamp);
 				}
-			}else{
-				
-				// The time stamp was edited
-				long oldTimestamp = (Long) tableModel.getLatestChangedValue();
-				long newTimeStamp = (Long) tableModel.getValueAt(tme.getFirstRow(), 0);
-				
-				ontologyModel.updateTimeStamp(oldTimestamp, newTimeStamp);
-				chartModel.updateTimeStamp(oldTimestamp, newTimeStamp);
 			}
 		}
 	}
@@ -215,6 +235,9 @@ public class TimeSeriesDataModel implements TableModelListener{
 		ontologyModel.getGeneralSettings().addYAxisColors(""+DEFAULT_COLORS[getSeriesCount() % DEFAULT_COLORS.length].getRGB());
 		ontologyModel.getGeneralSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
 		
+		SeriesSettings settings = new SeriesSettings(series.getLabel(), DEFAULT_COLORS[getSeriesCount() % DEFAULT_COLORS.length], DEFAULT_LINE_WIDTH);
+		chartSettings.addSeriesSettings(settings);
+		
 		seriesCount++;
 
 	}
@@ -228,7 +251,28 @@ public class TimeSeriesDataModel implements TableModelListener{
 		ontologyModel.removeSeries(seriesIndex);
 		chartModel.removeSeries(seriesIndex);
 		tableModel.removeSeries(seriesIndex);
+		
+		chartSettings.removeSeriesSettings(seriesIndex);
+		
 		seriesCount--;
+	}
+	
+	
+	/**
+	 * Removes the value pair with the given time stamp from every series that contains one. 
+	 * @param timestamp The time stamp
+	 */
+	public void removeValuePairsFromAllSeries(long timestamp){
+		for(int i=0; i<getSeriesCount(); i++){
+			try {
+				ontologyModel.removeValuePair(i, timestamp);
+				chartModel.removeValuePair(i, timestamp);
+				tableModel.removeRowByTimestamp(timestamp);
+			} catch (NoSuchSeriesException e) {
+				System.err.println("Trying to remove value pair from non-existant series "+i);
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/**

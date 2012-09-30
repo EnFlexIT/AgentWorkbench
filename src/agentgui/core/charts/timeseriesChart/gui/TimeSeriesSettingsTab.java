@@ -13,7 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.Observable;
 import java.util.Observer;
+import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -25,15 +27,17 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.JScrollPane;
 
+import agentgui.core.application.Language;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.SeriesSettings;
+import agentgui.core.charts.SettingsInfo;
 import agentgui.core.charts.timeseriesChart.TimeSeriesChartSettings;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.envModel.graph.components.TableCellEditor4Color;
 import agentgui.envModel.graph.components.TableCellRenderer4Color;
 import agentgui.ontology.TimeSeries;
 
-public class TimeSeriesSettingsTab extends JPanel implements ActionListener, TableModelListener, FocusListener{
+public class TimeSeriesSettingsTab extends JPanel implements ActionListener, TableModelListener, FocusListener, Observer{
 	/**
 	 * 
 	 */
@@ -59,7 +63,8 @@ public class TimeSeriesSettingsTab extends JPanel implements ActionListener, Tab
 		
 		this.model = model;
 		
-		this.settings = new TimeSeriesChartSettings(model.getOntologyModel().getTimeSeriesChart());
+		this.settings = model.getChartSettings();
+		this.settings.addObserver(this);
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
@@ -126,25 +131,25 @@ public class TimeSeriesSettingsTab extends JPanel implements ActionListener, Tab
 	}
 	private JLabel getLblChartTitle() {
 		if (lblChartTitle == null) {
-			lblChartTitle = new JLabel("Chart title");
+			lblChartTitle = new JLabel(Language.translate("Titel"));
 		}
 		return lblChartTitle;
 	}
 	private JLabel getLblXAxisLabel() {
 		if (lblXAxisLabel == null) {
-			lblXAxisLabel = new JLabel("X axis label");
+			lblXAxisLabel = new JLabel(Language.translate("Beschriftung X Achse"));
 		}
 		return lblXAxisLabel;
 	}
 	private JLabel getLblYAxisLabel() {
 		if (lblYAxisLabel == null) {
-			lblYAxisLabel = new JLabel("Y axis label");
+			lblYAxisLabel = new JLabel(Language.translate("Beschriftung Y Achse"));
 		}
 		return lblYAxisLabel;
 	}
 	private JLabel getLblRendererType() {
 		if (lblRendererType == null) {
-			lblRendererType = new JLabel("Renderer type");
+			lblRendererType = new JLabel(Language.translate("Art der Darstellung"));
 		}
 		return lblRendererType;
 	}
@@ -239,27 +244,9 @@ public class TimeSeriesSettingsTab extends JPanel implements ActionListener, Tab
 	
 	private DefaultTableModel initTableModel(){
 		DefaultTableModel tableModel = new DefaultTableModel();
-		tableModel.addColumn("Label");
-		tableModel.addColumn("Color");
-		tableModel.addColumn("LineWidth");
-		for(int i=0; i<settings.getSeriesSettings().size(); i++){
-			
-			try {
-				SeriesSettings ss = settings.getSeriesSettings(i);
-				String label = ss.getLabel();
-				Color color = ss.getColor();
-				Float lineWidth = ss.getLineWIdth();
-				
-				Object[] newRow = {label, color, lineWidth};
-				
-				tableModel.addRow(newRow);
-				
-			} catch (NoSuchSeriesException e) {
-				System.err.println("Error obtaining series settings for series "+i);
-				e.printStackTrace();
-			}
-			
-		}
+		tableModel.addColumn(Language.translate("Name"));
+		tableModel.addColumn(Language.translate("Farbe"));
+		tableModel.addColumn(Language.translate("Liniendicke"));
 		
 		tableModel.addTableModelListener(this);
 		return tableModel;
@@ -331,6 +318,28 @@ public class TimeSeriesSettingsTab extends JPanel implements ActionListener, Tab
 		}else if(e.getSource() == getCbRendererType()){
 			if(!getCbRendererType().getSelectedItem().equals(settings.getRendererType())){
 				settings.setRendererType((String) getCbRendererType().getSelectedItem());
+			}
+		}
+	}
+	@Override
+	public void update(Observable o, Object arg) {
+		if(o == this.settings && arg instanceof SettingsInfo){
+			SettingsInfo info = (SettingsInfo) arg;
+			if(info.getType() == SettingsInfo.SERIES_REMOVED){
+				int seriesIndex = info.getSeriesIndex();
+				DefaultTableModel tableModel = (DefaultTableModel) getTblSeriesSettings().getModel();
+				tableModel.removeRow(seriesIndex);
+			}else if(info.getType() == SettingsInfo.SERIES_ADDED){
+				SeriesSettings settings = (SeriesSettings) info.getData();
+				String label = settings.getLabel();
+				Color color = settings.getColor();
+				Float lineWidth = settings.getLineWIdth();
+				Vector<Object> newRow = new Vector<Object>();
+				newRow.add(label);
+				newRow.add(color);
+				newRow.add(lineWidth);
+				DefaultTableModel tableModel = (DefaultTableModel) getTblSeriesSettings().getModel();
+				tableModel.addRow(newRow);
 			}
 		}
 	}

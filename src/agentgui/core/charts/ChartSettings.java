@@ -30,6 +30,18 @@ public class ChartSettings extends Observable{
 
 	public void addSeriesSettings(SeriesSettings settings){
 		seriesSettings.add(settings);
+		setChanged();
+		SettingsInfo changeInfo = new SettingsInfo(SettingsInfo.SERIES_ADDED, settings);
+		notifyObservers(changeInfo);
+	}
+	
+	public void removeSeriesSettings(int seriesIndex){
+		if(seriesIndex < seriesSettings.size()){
+			seriesSettings.remove(seriesIndex);
+			setChanged();
+			SettingsInfo changeInfo = new SettingsInfo(SettingsInfo.SERIES_REMOVED, seriesIndex, null);
+			notifyObservers(changeInfo);
+		}
 	}
 
 	/**

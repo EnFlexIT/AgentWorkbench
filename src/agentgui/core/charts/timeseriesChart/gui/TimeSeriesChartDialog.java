@@ -218,7 +218,6 @@ public class TimeSeriesChartDialog extends JDialog implements ActionListener, Ob
 			
 			for(int j=0; j < importedSeries.length; j++){
 				model.addSeries(importedSeries[j]);
-				settingsTab.addSeries(importedSeries[j]);
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -352,6 +351,9 @@ public class TimeSeriesChartDialog extends JDialog implements ActionListener, Ob
 					System.err.println("Error setting color for series "+seriesIndex);
 					e.printStackTrace();
 				}
+			}else if(info.getType() == SettingsInfo.SERIES_ADDED){
+				getChartTab().applyColorSettings();
+				getChartTab().applyLineWidthsSettings();
 			}
 		}
 	}

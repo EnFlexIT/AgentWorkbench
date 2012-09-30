@@ -186,17 +186,30 @@ public class TimeSeriesTableModel extends AbstractTableModel {
 	 * @throws NoSuchSeriesException Will be thrown if there is no series with the specified index
 	 */
 	public void removeSeries(int seriesIndex) throws NoSuchSeriesException{
-		if(seriesIndex < this.getColumnCount()-1){
-			columnTitles.remove(seriesIndex);
+		int column2remove = seriesIndex+1;	// Column 0 contains the time stamps
+		if(column2remove < this.getColumnCount()){
+			columnTitles.remove(column2remove);
 			java.util.Iterator<Vector<Object>> rows = tableData.iterator();
 			while(rows.hasNext()){
-				rows.next().remove(seriesIndex);
+				rows.next().remove(column2remove);
 			}
 		}else{
 			throw new NoSuchSeriesException();
 		}
 		
 		fireTableStructureChanged();
+	}
+	
+	/**
+	 * Remove the table row with the given time stamp.
+	 * @param timestamp The time stamp
+	 */
+	public void removeRowByTimestamp(long timestamp){
+		int rowIndex = getRowIndexByTimestamp(timestamp);
+		if(rowIndex >= 0){
+			tableData.remove(rowIndex);
+			fireTableRowsDeleted(rowIndex, rowIndex);
+		}
 	}
 	
 	/**
@@ -284,6 +297,8 @@ public class TimeSeriesTableModel extends AbstractTableModel {
 		
 		// Add the new row
 		tableData.add(insertPos, newRow);
+		
+		fireTableRowsInserted(getRowCount()-1, getRowCount()-1);
 	}
 
 }

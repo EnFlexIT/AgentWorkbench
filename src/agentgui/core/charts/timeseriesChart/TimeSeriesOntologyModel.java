@@ -59,7 +59,9 @@ public class TimeSeriesOntologyModel {
 		if(seriesIndex < getSeriesCount()){
 			TimeSeries series = (TimeSeries) getChartData().get(seriesIndex);
 			int index = getIndexByTimestamp(series, timestamp);
-			series.getTimeSeriesValuePairs().remove(index);
+			if(index >= 0){
+				series.getTimeSeriesValuePairs().remove(index);
+			}
 		}else{
 			throw new NoSuchSeriesException();
 		}

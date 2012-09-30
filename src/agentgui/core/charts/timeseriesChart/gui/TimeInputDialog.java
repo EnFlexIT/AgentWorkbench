@@ -82,7 +82,10 @@ public class TimeInputDialog extends JDialog implements ActionListener{
 
 	private JSpinner getSpTimeInput() {
 		if (spTimeInput == null) {
-			SpinnerDateModel sdm = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
+			Date date = new Date();
+			date.setHours(0);
+			date.setMinutes(0);
+			SpinnerDateModel sdm = new SpinnerDateModel(date, null, null, Calendar.HOUR_OF_DAY);
 			spTimeInput = new JSpinner(sdm);
 			JSpinner.DateEditor de = new JSpinner.DateEditor(spTimeInput, "HH:mm");
 			spTimeInput.setEditor(de);

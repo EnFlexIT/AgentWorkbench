@@ -22,12 +22,14 @@ public class TableCellEditor4FloatObject extends AbstractCellEditor implements T
 	
 	private JTable table;
 	
+	private int originalHeight;
+	
 	private int row2edit;
 
 	@Override
 	public Object getCellEditorValue() {
 		// Reset row height
-		table.setRowHeight(row2edit, (int) (table.getRowHeight(row2edit)/1.5));
+		table.setRowHeight(row2edit, originalHeight);
 		
 		String newValue = textField.getText();
 		if(newValue.length() > 0){
@@ -47,8 +49,15 @@ public class TableCellEditor4FloatObject extends AbstractCellEditor implements T
 			textField = new JTextField();
 		}
 		
+		
+		// Initialize with current table cell value, if there is one 
+		if(table.getValueAt(row, column) != null){
+			textField.setText(table.getValueAt(row, column).toString());
+		}
+		
 		// Remember which row was edited
 		row2edit = row;	
+		originalHeight = table.getRowHeight(row2edit);
 		
 		// Increase row height (the spinner needs more vertical space)
 		table.setRowHeight(row2edit, (int) (table.getRowHeight(row2edit)*1.5));

@@ -30,12 +30,14 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 	
 	private int row2edit;
 	
+	private int originalHeight;
+	
 
 	@Override
 	public Object getCellEditorValue() {
 		
 		// Reset row height
-		table.setRowHeight(row2edit, (int) (table.getRowHeight(row2edit)/1.5));
+		table.setRowHeight(row2edit, originalHeight);
 		
 		Date date = (Date) spinner.getValue();
 		return date.getTime();
@@ -53,7 +55,8 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 		}
 		
 		// Remember which row was edited
-		row2edit = row;	
+		row2edit = row;
+		originalHeight = table.getRowHeight(row2edit);
 		
 		// Increase row height (the spinner needs more vertical space)
 		table.setRowHeight(row2edit, (int) (table.getRowHeight(row2edit)*1.5));

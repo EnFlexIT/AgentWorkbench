@@ -128,7 +128,7 @@ public class TimeSeriesChartTab extends ChartPanel {
 	/**
 	 * Applies the color settings from the ontology model
 	 */
-	private void applyColorSettings(){
+	void applyColorSettings(){
 		List colors = model.getOntologyModel().getGeneralSettings().getYAxisColors();
 		XYItemRenderer renderer = getChart().getXYPlot().getRenderer();
 		for(int i=0; i < colors.size(); i++){
@@ -140,7 +140,7 @@ public class TimeSeriesChartTab extends ChartPanel {
 	/**
 	 * Applies the line width settings from the ontology model
 	 */
-	private void applyLineWidthsSettings(){
+	void applyLineWidthsSettings(){
 		List lineWidths = model.getOntologyModel().getGeneralSettings().getYAxisLineWidth();
 		XYItemRenderer renderer = getChart().getXYPlot().getRenderer();
 		

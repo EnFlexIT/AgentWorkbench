@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import javax.swing.JToolBar;
 import java.awt.GridBagConstraints;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
@@ -21,7 +22,9 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesTableModel;
 import agentgui.ontology.Simple_Float;
@@ -37,6 +40,8 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, ListSe
 	 * Generated serialVersionUID
 	 */
 	private static final long serialVersionUID = 9156505881049717567L;
+	
+	private final String PathImage = Application.getGlobalInfo().PathImageIntern();
 	
 	private JScrollPane scrollPane;
 	
@@ -122,8 +127,8 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, ListSe
 				
 			};
 			table.setModel(model.getTableModel());
+			table.getSelectionModel().addListSelectionListener(this);
 			final TableRowSorter<TimeSeriesTableModel> sorter = new TableRowSorter<TimeSeriesTableModel>(model.getTableModel());
-			table.getColumnModel().getSelectionModel().addListSelectionListener(this);
 			table.setRowSorter(sorter);
 			
 		}
@@ -143,21 +148,27 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, ListSe
 	}
 	private JButton getBtnAddRow() {
 		if (btnAddRow == null) {
-			btnAddRow = new JButton("Add row");
+			btnAddRow = new JButton();
+			btnAddRow.setIcon(new ImageIcon(this.getClass().getResource( PathImage + "AddRow.png")));
+			btnAddRow.setToolTipText(Language.translate("Neuen Zeitpunkt hinzufügen"));
 			btnAddRow.addActionListener(this);
 		}
 		return btnAddRow;
 	}
 	private JButton getBtnAddColumn() {
 		if (btnAddColumn == null) {
-			btnAddColumn = new JButton("Add column");
+			btnAddColumn = new JButton();
+			btnAddColumn.setIcon(new ImageIcon(this.getClass().getResource( PathImage + "AddCol.png")));
+			btnAddColumn.setToolTipText(Language.translate("Neue Zeitreihe hinzufügen"));
 			btnAddColumn.addActionListener(this);
 		}
 		return btnAddColumn;
 	}
 	private JButton getBtnRemoveRow() {
 		if (btnRemoveRow == null) {
-			btnRemoveRow = new JButton("Remove row");
+			btnRemoveRow = new JButton();
+			btnRemoveRow.setIcon(new ImageIcon(this.getClass().getResource( PathImage + "RemoveRow.png")));
+			btnRemoveRow.setToolTipText(Language.translate("Markierten Zeitpunkt entfernen"));
 			btnRemoveRow.setEnabled(false);
 			btnRemoveRow.addActionListener(this);
 		}
@@ -165,7 +176,9 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, ListSe
 	}
 	private JButton getBtnRemoveColumn() {
 		if (btnRemoveColumn == null) {
-			btnRemoveColumn = new JButton("Remove column");
+			btnRemoveColumn = new JButton();
+			btnRemoveColumn.setIcon(new ImageIcon(this.getClass().getResource( PathImage + "RemoveCol.png")));
+			btnRemoveColumn.setToolTipText(Language.translate("Markierte Zeitreihe Entfernen"));
 			btnRemoveColumn.setEnabled(false);
 			btnRemoveColumn.addActionListener(this);
 		}
@@ -201,15 +214,32 @@ public class TimeSeriesTableTab extends JPanel implements ActionListener, ListSe
 				long timestamp = dialog.getTimestamp();
 				model.getTableModel().addEmptyRow(timestamp);
 			}
+		}else if(e.getSource() == getBtnRemoveColumn()){
+			if(table.getSelectedColumn() > 0){
+				int seriesIndex = table.getSelectedColumn()-1;
+				
+				try {
+					model.removeSeries(seriesIndex);
+				} catch (NoSuchSeriesException e1) {
+					System.err.println("Error removing series "+seriesIndex);
+					e1.printStackTrace();
+				}
+			}
+		}else if(e.getSource() == getBtnRemoveRow()){
+			long timestamp = (Long) table.getValueAt(table.getSelectedRow(), 0);
+			model.removeValuePairsFromAllSeries(timestamp);
+			getBtnRemoveColumn().setEnabled(false);
+			getBtnRemoveRow().setEnabled(false);
 		}
+		
 		
 	}
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if(e.getSource() == table.getColumnModel().getSelectionModel()){
-			if(e.getFirstIndex() > 0){
-				
-			}
-		}
+		// Enable btnRemoveRow if a row is selected
+		getBtnRemoveRow().setEnabled(table.getSelectedRow() >= 0);
+		
+		// Enable btnRemoveColumn if a non-timestamp column is selected
+		getBtnRemoveColumn().setEnabled(table.getSelectedColumn() > 0);
 	}
 }

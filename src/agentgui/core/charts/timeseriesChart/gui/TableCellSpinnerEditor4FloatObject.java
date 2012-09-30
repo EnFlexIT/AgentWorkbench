@@ -22,12 +22,14 @@ public class TableCellSpinnerEditor4FloatObject extends AbstractCellEditor imple
 	private JTable table;
 	
 	private int row2edit;
+	
+	private int originalHeight;
 
 	@Override
 	public Object getCellEditorValue(){
 		
 		// Reset row height
-		table.setRowHeight(row2edit, (int) (table.getRowHeight(row2edit)/1.5));
+		table.setRowHeight(row2edit, originalHeight);
 		
 		String value = ((DefaultEditor)spinner.getEditor()).getTextField().getText();
 		value = value.replace(",", ".");
@@ -44,7 +46,8 @@ public class TableCellSpinnerEditor4FloatObject extends AbstractCellEditor imple
 			spinner = new JSpinner(new SpinnerNumberModel(1.0, 0.1, 10.0, 0.1));
 		}
 		// Remember which row was edited
-		row2edit = row;	
+		row2edit = row;
+		originalHeight = table.getRowHeight(row2edit);
 		
 		// Increase row height (the spinner needs more vertical space)
 		table.setRowHeight(row2edit, (int) (table.getRowHeight(row2edit)*1.5));

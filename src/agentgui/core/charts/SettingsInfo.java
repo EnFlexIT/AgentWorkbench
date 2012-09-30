@@ -34,6 +34,14 @@ public class SettingsInfo {
 	 * Indicates change of a series line width
 	 */
 	public static final int SERIES_LINE_WIDTH_CHANGED = 6;
+	/**
+	 * Indicates that settings for a series have been added
+	 */
+	public static final int SERIES_ADDED = 7;
+	/**
+	 * Indicates that settings for a series have been removed
+	 */
+	public static final int SERIES_REMOVED = 8;
 	
 	/**
 	 * Indicates which setting changed
