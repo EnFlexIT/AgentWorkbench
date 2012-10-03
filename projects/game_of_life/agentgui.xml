@@ -12,19 +12,16 @@
     <subOntologies>
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
     </subOntologies>
-    <agentConfiguration>
-        <entry>
-            <key>game_of_life.SimService.agents.GameOfLifeAgent</key>
-            <value>[Toast] agentgui.ontology.Simple_Boolean|[Vollkorn] agentgui.ontology.Simple_Integer|agentgui.ontology.Simple_String</value>
-        </entry>
-    </agentConfiguration>
+    <agentStartConfiguration>
+        <agentVector/>
+    </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1117</useLocalPort>
+        <useLocalPort>1105</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -32,7 +29,7 @@
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>true</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
-        <numberOfAgents>800</numberOfAgents>
+        <numberOfAgents>60</numberOfAgents>
         <numberOfContainer>1</numberOfContainer>
         <staticLoadBalancingClass>gol.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
@@ -41,21 +38,69 @@
             <thCpuL>5</thCpuL>
             <thMemoH>80</thMemoH>
             <thMemoL>5</thMemoL>
-            <thNoThreadsH>1500</thNoThreadsH>
-            <thNoThreadsL>50</thNoThreadsL>
+            <thNoThreadsH>500</thNoThreadsH>
+            <thNoThreadsL>5</thNoThreadsL>
         </userThresholds>
     </distributionSetup>
     <remoteContainerConfiguration>
         <jvmMemAllocInitial>32m</jvmMemAllocInitial>
         <jvmMemAllocMaximum>128m</jvmMemAllocMaximum>
-        <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
+        <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Game of Life 360</simulationSetupCurrent>
+    <simulationSetupCurrent>0968 Agents</simulationSetupCurrent>
     <simulationSetups>
         <entry>
-            <key>Game of Life 360</key>
-            <value>game_of_life_360.xml</value>
+            <key>0242 Agents</key>
+            <value>0242_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0722 Agents</key>
+            <value>0722_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0072 Agents</key>
+            <value>0072_agents.xml</value>
+        </entry>
+        <entry>
+            <key>1250 Agents</key>
+            <value>1250_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0128 Agents</key>
+            <value>0128_agents.xml</value>
+        </entry>
+        <entry>
+            <key>2048 Agents</key>
+            <value>2048_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0968 Agents</key>
+            <value>0968_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0018 Agents</key>
+            <value>0018_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0032 Agents</key>
+            <value>0032_agents.xml</value>
+        </entry>
+        <entry>
+            <key>1800 Agents</key>
+            <value>1800_agents.xml</value>
+        </entry>
+        <entry>
+            <key>4050 Agents</key>
+            <value>4050_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0512 Agents</key>
+            <value>0512_agents.xml</value>
+        </entry>
+        <entry>
+            <key>1458 Agents</key>
+            <value>1458_agents.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
