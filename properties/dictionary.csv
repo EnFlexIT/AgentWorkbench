@@ -53,6 +53,7 @@ de;Anzeigesprache wechseln?;Change the GUI Language?
 de;Arbeitsspeicher für Remote-JVM;Memory for remote JVM;;;
 de;Arbeitsspeicher;Memory
 de;Argument;argument
+de;Art der Darstellung;;;;
 de;Ausgewählte JADE-Services;Selected JADE Services;;;
 de;Ausgewählte Klasse übernehmen!;Take selected class!
 de;Auslastungs-Grenzwerte manuell festlegen;Set load thresholds manually
@@ -66,6 +67,8 @@ de;Basis-Info;Basic info
 de;Bearbeiten;Edit
 de;Beenden;Quit
 de;Beschreibung;Description
+de;Beschriftung X Achse;;;;
+de;Beschriftung Y Achse;;;;
 de;Beschriftung anzeigen;Show label;;;
 de;Beschriftungen anzeigen;Show labels;;;
 de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
@@ -253,6 +256,7 @@ de;Lade SVG-Datei;Loading SVG file
 de;Lade Setup;;;;
 de;Lade Umgebung aus;Loading environment from
 de;Lade Umgebungsdatei;Getting environment file
+de;Liniendicke;;;;
 de;Load Monitor öffnen;Open load monitor
 de;Load Monitor;Load Monitor
 de;Log-Manager starten;Start Log Manager
@@ -264,6 +268,8 @@ de;MAS-Pause;MAS-Pause
 de;MAS-Start;MAS-Start;;;
 de;MAS-Stop;MAS-Stop
 de;MAS;MAS
+de;Markierte Zeitreihe Entfernen;;;;
+de;Markierten Zeitpunkt entfernen;;;;
 de;Maximale Geschwindigkeit;Maximum speed
 de;Maximieren;Maximize;;;
 de;Maßstab festlegen;Set scale
@@ -298,6 +304,8 @@ de;Netzwerkkomponente(n) entfernen;Remove network component (s) ;;;
 de;Netzwerkkomponente(n) hinzufügen;Add network component s);;;
 de;Neu laden;Reload;;;
 de;Neue Datenreihe(n) importieren;Import new data set (s) ;;;
+de;Neue Zeitreihe hinzufügen;;;;
+de;Neuen Zeitpunkt hinzufügen;;;;
 de;Neuer Agent;New agent
 de;Neuer Eintrag;New Entry
 de;Neues Hindernis;New obstacle
@@ -445,6 +453,7 @@ de;Tabelle;Table;;;
 de;Teil-Umgebung;environment part
 de;Teilnetze;Subnetworks;;;
 de;Text zur Übersetzung;Text to translate
+de;Titel;;;;
 de;Topologie;Topology;;;
 de;Typ-Bezeichner;Type-Specifier
 de;Typ;Type

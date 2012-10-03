@@ -20,8 +20,8 @@
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.debugging.DebugService</service>
+            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -83,12 +83,12 @@
             <value>0018_agents.xml</value>
         </entry>
         <entry>
-            <key>0032 Agents</key>
-            <value>0032_agents.xml</value>
-        </entry>
-        <entry>
             <key>1800 Agents</key>
             <value>1800_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0032 Agents</key>
+            <value>0032_agents.xml</value>
         </entry>
         <entry>
             <key>4050 Agents</key>

@@ -88,6 +88,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource(PathImage + "AgentGUI.png"));
 	private Image image = imageIcon.getImage();  //  @jve:decl-index=0:
 	
+	private Frame owner = null;
+	
 	private JSplitPane jSplitPaneMain = null;
 	private JTabbedPane jTabbedPaneRight = null;
 	private JScrollPane jScrollPaneLeft = null;
@@ -110,6 +112,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 */
 	public OptionDialog(Frame owner) {
 		super(owner);
+		this.owner = owner;
 		
 		// --- OptionTree vorbereiten -------------------------------
 		rootNode = new DefaultMutableTreeNode(Language.translate("Optionen"));
@@ -168,10 +171,12 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private void initialize() {
 		
 		this.setModal(true);
+		if (this.owner==null) {
+			this.setAlwaysOnTop(true);
+		}
 		this.setSize(977, 609);
 		this.setContentPane(getJPanelBase());
 		this.setTitle("Agent.GUI: Optionen");
-		this.setAlwaysOnTop(true);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.registerEscapeKeyStroke();
 		this.addWindowListener(new WindowAdapter() {

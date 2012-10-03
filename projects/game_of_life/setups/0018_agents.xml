@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup/>
+    <agentSetup>
+        <agent>
+            <postionNo>1</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>gol.SimService.agents.SimulationManager</agentClassReference>
+            <startAsName>SiMa</startAsName>
+        </agent>
+    </agentSetup>
     <environmentFileName>0018 Agents.xml</environmentFileName>
 </simulationSetup>
