@@ -81,14 +81,14 @@ public class ReflectClassFiles extends ArrayList<String> {
 	 */
 	private void setClasses() {
 		
-		String SearchPath = null;
+		String searchPath = null;
 		List<File> dirs = new ArrayList<File>();
 		ArrayList<String> classList = null;
 		//System.out.println("=> " + SearchINReference);
 		
 		// --- Try to find the resource of the given Reference ------
 		try {
-			dirs = getClassResources(searchINReference);
+			dirs = getClassResources(this.searchINReference);
 			//System.out.println( "=> " + dirs.toString());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -99,28 +99,33 @@ public class ReflectClassFiles extends ArrayList<String> {
 		// --- Look at the Result of the Resources-Search ----------
 		if (dirs.size()>0) {
 			File directory = dirs.get(0);
-			String PathOfFile = directory.toString();
-			String reference2JarFile = this.getJarReferenceFromPathOfFile(PathOfFile);
+			String pathOfFile = directory.toString();
+			String reference2JarFile = this.getJarReferenceFromPathOfFile(pathOfFile);
 			//System.out.println("=> " + directory.toString() + " <=> " + reference2JarFile); 
 			
-			if ( reference2JarFile!=null ) {
-				if (PathOfFile.startsWith("file:")) {
+			if (reference2JarFile!=null) {
+				if (pathOfFile.startsWith("file:")) {
 					// --- Path points to a jar-file ----------------
-					//System.out.println("Jar-Result: " + SearchINReference + " => " + reference2JarFile);
-					reference2JarFile = PathOfFile.substring(0, PathOfFile.lastIndexOf(reference2JarFile)) + reference2JarFile;
-					reference2JarFile = reference2JarFile.replace("file:\\", "");
-					classList = getJARClasses( reference2JarFile );
+					reference2JarFile = pathOfFile.substring(0, pathOfFile.lastIndexOf(reference2JarFile)) + reference2JarFile;
+					reference2JarFile = reference2JarFile.replace("file:", "");
+					if (System.getProperty("os.name").toLowerCase().contains("windows")==true) {
+						// --- Remove leading file separator --------
+						if (reference2JarFile.startsWith(File.separator)) {
+							reference2JarFile = reference2JarFile.substring(1);
+						}
+					} 
+					classList = getJARClasses(reference2JarFile);
 					
 				} else {
 					// --- Path points to an external IDE-path ------
-					SearchPath = reference2JarFile;
-					classList = getIDEClasses( SearchPath, SearchPath );
+					searchPath = reference2JarFile;
+					classList = getIDEClasses(searchPath, searchPath);
 				}
 				
 			} else {
 				// --- Points to the Agent.GUI IDE-Environment ------
-				SearchPath = Application.getGlobalInfo().PathBaseDirIDE_BIN();
-				classList = getIDEClasses( SearchPath, SearchPath );
+				searchPath = Application.getGlobalInfo().PathBaseDirIDE_BIN();
+				classList = getIDEClasses( searchPath, searchPath );
 			}
 			
 		}

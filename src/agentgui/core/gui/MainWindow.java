@@ -109,6 +109,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 	private JTabbedPane4Consoles jTabbedPane4Console;
 	private JPanelConsole jPanelConsoleLocal = Application.getConsole();;
 	private int oldDividerLocation;
+	private boolean allowProjectMaximization = true;
 	
 	private JMenuBar jMenuBarBase;
 	private JMenuBar jMenuBarMain;
@@ -410,8 +411,12 @@ public class MainWindow extends JFrame implements ComponentListener {
 				public void propertyChange(PropertyChangeEvent EventSource) {
 					// --- Deviderpositionierung abfangen ---
 					if (EventSource.getPropertyName() == "lastDividerLocation" ) {
-						if ( Application.getProjectsLoaded().count() != 0 ) {
-							Application.getProjectFocused().setMaximized();
+						if (Application.getProjectsLoaded().count()!=0) {
+							if (allowProjectMaximization==true) {
+								allowProjectMaximization=false;
+								Application.getProjectFocused().setMaximized();
+								allowProjectMaximization=true;
+							}
 						}
 					}
 				}
@@ -972,12 +977,12 @@ public class MainWindow extends JFrame implements ComponentListener {
 				Application.getProjectsLoaded().add( false );
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectClose") ) {
-				Project CurPro = Application.getProjectFocused();
-				if ( CurPro != null ) CurPro.close();				
+				Project currProject = Application.getProjectFocused();
+				if ( currProject != null ) currProject.close();				
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectSave") ) {
-				Project CurPro = Application.getProjectFocused();
-				if ( CurPro != null ) CurPro.save();
+				Project currProject = Application.getProjectFocused();
+				if ( currProject != null ) currProject.save();
 			}
 			else if ( ActCMD.equalsIgnoreCase("ProjectImport") ) {
 				Application.getProjectsLoaded().projectImport();

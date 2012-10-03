@@ -444,7 +444,13 @@ import agentgui.core.webserver.JarFileCreator;
 		}
 
 		// --- Clear/Dispose EnvironmentPanel -------------
-		this.getEnvironmentController().getEnvironmentPanel().dispose();
+		EnvironmentController envController = this.getEnvironmentController();
+		if (envController!=null) {
+			EnvironmentPanel envPanel = envController.getEnvironmentPanel();
+			if (envPanel!=null) {
+				envPanel.dispose();
+			}
+		}
 		
 		// ------------------------------------------------		
 		// --- Projekt kann geschlossen werden ------------
@@ -662,11 +668,11 @@ import agentgui.core.webserver.JarFileCreator;
 	 * Maximise the Project-Window within the AgenGUI-Application
 	 */
 	public void setMaximized() {
-		// --- Validate the min application window ------------------
+		// --- Validate the main application window -----------------
 		Application.getMainWindow().validate();
 		// --- Be sure that everything is there as needed ----------- 
 		if (projectWindow!=null && projectWindow.getParent()!=null) {
-			// --- maximize now -------------------------------------
+			// --- Maximise now -------------------------------------
 			((BasicInternalFrameUI) projectWindow.getUI()).setNorthPane(null);
 			DesktopManager dtm = Application.getMainWindow().getJDesktopPane4Projects().getDesktopManager();
 			if (dtm!=null) {

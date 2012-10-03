@@ -88,7 +88,7 @@ public class VersionInfo extends Properties {
 	 * Prints out the current version and build information.
 	 */
 	public void printVersionInfo() {
-		System.out.println(this.getFullVersionInfo(true, " "));
+		System.out.println(this.getFullVersionInfo(true, " ") + " on " + this.getJavaInfo() + "");
 		if (debug==true) {
 			System.out.println("Version.Mayor " + this.getVersionMajor());
 			System.out.println("Version.Minor " + this.getVersionMinor());
@@ -97,6 +97,16 @@ public class VersionInfo extends Properties {
 		}
 	}
 
+	/**
+	 * Returns the current java version and vendor.
+	 */
+	public String getJavaInfo() {
+		String javaVersion = System.getProperty("java.version");
+		String javaVendor = System.getProperty("java.vendor");
+		String javaInfo = "Java " + javaVersion + " of " + javaVendor;
+		return javaInfo;
+	}
+	
 	/**
 	 * This method returns the full version information of Agent.GUI.
 	 *

@@ -522,6 +522,7 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
+en;;Discrete squares environment;;;
 en;;Set mapping of external types to local components;;;
 en;;The component name already exists!<br>Choose a different one.;;;
 en;Abbruch;Cancel;;;

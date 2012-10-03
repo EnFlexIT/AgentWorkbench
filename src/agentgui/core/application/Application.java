@@ -302,9 +302,12 @@ public class Application {
 					// --------------------------------------------------------
 					// --- open a specified project --------------------------- 
 					remainingArgsVector.removeElement(args[i]);
-					
-					i++;
-					project2OpenAfterStart = args[i];
+					if ((args.length-1)>i) {
+						i++;
+						project2OpenAfterStart = args[i];	
+					} else {
+						System.err.println("Argument -project: Could not find project specification!");
+					}
 					
 				} else if (args[i].equalsIgnoreCase("-updated")) {
 					// --------------------------------------------------------
@@ -333,12 +336,13 @@ public class Application {
 				} else if (args[i].equalsIgnoreCase("-container") ||
 						   args[i].equalsIgnoreCase("-gui")) {
 					// --------------------------------------------------------
-					// --- do nothing in here ---------------------------------
-
+					// --- arguments without further arguments ----------------
+					// --- so, there is nothing to do here --------------------
+					
 				} else {
 					// --------------------------------------------------------
 					// --- just skip and remind the next start argument -------
-					if (args.length<i-1) {
+					if ((args.length-1)>i) {
 						i++;
 						remainingArgsVector.addElement(args[i]);
 					}
