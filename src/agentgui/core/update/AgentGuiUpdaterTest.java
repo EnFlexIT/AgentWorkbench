@@ -6,7 +6,7 @@ public class AgentGuiUpdaterTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new AgentGuiUpdater().start();
+		new AgentGuiUpdater(true).start();
 	}
 
 }

@@ -47,6 +47,9 @@ import agentgui.simulationService.distribution.DownloadThread;
  */
 public class AgentGuiUpdater extends Thread {
 
+	// --- For debugging this class set true  -------------
+	private boolean debuggingInIDE = false;
+	
 	public static final long UPDATE_CHECK_PERIOD = 1000*60*60*24; // - once a day -
 	public static final String UPDATE_SUB_FOLDER = "updates"; // - subfolder in the web server directory -
 	public static final String UPDATE_VERSION_INFO_FILE = "latestVersion.xml";
@@ -225,6 +228,14 @@ public class AgentGuiUpdater extends Thread {
 			System.out.println("Agent.GUI-Update: No updates in the IDE environment available.");
 		}
 		
+		// ------------------------------------------------
+		// --- Currently debugging this class ? -----------
+		if (this.debuggingInIDE==true) {
+			this.doUpdateProcedure=true;
+			this.askBeforeDownload=true;
+			this.askBeforeProjectShutdownAndUnzip=true;
+		}
+		
 	}
 	
 	/* (non-Javadoc)
@@ -390,10 +401,9 @@ public class AgentGuiUpdater extends Thread {
 	 */
 	private boolean moveAgentGuiUpdaterJar() {
 		
-		File zipFolderFile = new File(this.localUpdateZipFile);
-		String extractedFolder = zipFolderFile.getParent() + File.separator + this.localUpdateExtractedFolder;
+		String extractedFolder = globalInfo.PathDownloads(true) + this.localUpdateExtractedFolder;
 		String updaterFilePath = extractedFolder + File.separator + this.globalInfo.getFileNameUpdater(false);
-		System.out.println("Searching for " + updaterFilePath);
+		System.out.println("Trying to move file " + updaterFilePath);
 		File updaterFile = new File(updaterFilePath);
 		if (updaterFile.exists()==true) {
 			
