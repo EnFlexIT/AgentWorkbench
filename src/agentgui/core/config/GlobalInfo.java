@@ -159,7 +159,7 @@ public class GlobalInfo {
 	 */
 	public GlobalInfo() {
 
-		Integer  CutAt = 0;
+		Integer  cutAt = 0;
 		String[] JCP_Files = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
 		String[] JCP_Folders = JCP_Files.clone(); 
 		HashSet<String> Folders = new HashSet<String>();  
@@ -171,8 +171,10 @@ public class GlobalInfo {
 			if (JCP_Files[i].endsWith(localFileRunnableJar)) {
 				localAppExecutedOver = ExecutedOverAgentGuiJar;
 				
-				CutAt = JCP_Files[i].lastIndexOf(fileSeparator) + 1;
-				localBaseDir = JCP_Folders[i].substring(0, CutAt);	
+				File agentGuiJar = new File(JCP_Files[i]);
+				String agentGuiJarPath = agentGuiJar.getAbsolutePath(); 
+				cutAt = agentGuiJarPath.lastIndexOf(fileSeparator) + 1;
+				localBaseDir = agentGuiJarPath.substring(0, cutAt);	
 
 				// --- jade.jar in die ClassLoaderUtility einbinden ----------
 				String jadeJar = this.PathJade(true) + File.separator + localFileJade;
@@ -182,13 +184,13 @@ public class GlobalInfo {
 			if (JCP_Files[i].endsWith(".jar")) {
 				// ----------------------------------------------------------
 				// --- Dateinamen herausnehmen ------------------------------
-				CutAt = JCP_Files[i].lastIndexOf( fileSeparator );
-				if(CutAt!=-1){ //only if seperator was actually found
-					JCP_Folders[i] = JCP_Folders[i].substring(0, CutAt);
+				cutAt = JCP_Files[i].lastIndexOf( fileSeparator );
+				if(cutAt!=-1){ //only if seperator was actually found
+					JCP_Folders[i] = JCP_Folders[i].substring(0, cutAt);
 				}
 			}	
 			Folders.add(JCP_Folders[i]);						
-		}
+		} // end for
 		
 		if ( localAppExecutedOver.equals(ExecutedOverIDE)) {
 			// --------------------------------------------------------------
@@ -197,8 +199,8 @@ public class GlobalInfo {
 			for (int j = 0; j < JCP_Folders.length; j++) {				
 				if ( JCP_Folders[j].endsWith( localPathAgentGUI ) ) {
 					// --- bin-Verzeichnis gefunden ---					
-					CutAt = JCP_Folders[j].lastIndexOf( localPathAgentGUI );
-					localBaseDir = JCP_Folders[j].substring(0, CutAt);
+					cutAt = JCP_Folders[j].lastIndexOf( localPathAgentGUI );
+					localBaseDir = JCP_Folders[j].substring(0, cutAt);
 					break;
 				}
 			} // -- End 'for' --
@@ -947,7 +949,7 @@ public class GlobalInfo {
 		this.filePropServerMasterPort = serverMasterPort;
 	}
 	/**
-	 * This method returns the port on which s´the server.master can be reached 
+	 * This method returns the port on which sï¿½the server.master can be reached 
 	 * @return The port of the server.master
 	 * @see FileProperties
 	 */
