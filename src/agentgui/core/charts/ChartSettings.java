@@ -12,7 +12,7 @@ import agentgui.ontology.Chart;
  * @author Nils
  *
  */
-public class ChartSettings extends Observable{
+public abstract class ChartSettings extends Observable{
 	private String chartTitle;
 	private String xAxisLabel;
 	private String yAxisLabel;

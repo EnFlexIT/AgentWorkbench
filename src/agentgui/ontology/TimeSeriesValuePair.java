@@ -8,20 +8,9 @@ import jade.core.*;
    * One single data item in a time series.
 * Protege name: TimeSeriesValuePair
 * @author ontology bean generator
-* @version 2012/09/21, 17:08:25
+* @version 2012/10/23, 17:29:08
 */
 public class TimeSeriesValuePair extends ValuePair{ 
-
-   /**
-* Protege name: timestamp
-   */
-   private Simple_Long timestamp;
-   public void setTimestamp(Simple_Long value) { 
-    this.timestamp=value;
-   }
-   public Simple_Long getTimestamp() {
-     return this.timestamp;
-   }
 
    /**
 * Protege name: value
@@ -32,6 +21,17 @@ public class TimeSeriesValuePair extends ValuePair{
    }
    public Simple_Float getValue() {
      return this.value;
+   }
+
+   /**
+* Protege name: timestamp
+   */
+   private Simple_Long timestamp;
+   public void setTimestamp(Simple_Long value) { 
+    this.timestamp=value;
+   }
+   public Simple_Long getTimestamp() {
+     return this.timestamp;
    }
 
 }

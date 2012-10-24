@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: Chart
 * @author ontology bean generator
-* @version 2012/09/21, 17:08:25
+* @version 2012/10/23, 17:29:08
 */
 public class Chart implements Concept {
 

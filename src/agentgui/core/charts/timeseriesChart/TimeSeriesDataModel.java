@@ -1,33 +1,29 @@
 package agentgui.core.charts.timeseriesChart;
 
-import java.awt.Color;
 import java.util.Calendar;
 import java.util.Date;
 import jade.util.leap.Iterator;
+import jade.util.leap.List;
 
-import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import agentgui.core.charts.NoSuchSeriesException;
-import agentgui.core.charts.SeriesSettings;
-import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartTab;
+import agentgui.core.charts.DataModel;
+import agentgui.core.charts.gui.ChartTab;
+import agentgui.ontology.DataSeries;
+import agentgui.ontology.Simple_Float;
+import agentgui.ontology.Simple_Long;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
+import agentgui.ontology.TimeSeriesValuePair;
+import agentgui.ontology.ValuePair;
 
 /**
  * Container class managing the data models for the different time series representations.
  * @author Nils
  *
  */
-public class TimeSeriesDataModel implements TableModelListener{
-	/**
-	 * These colors will be used for newly added series
-	 */
-	public static final Color[] DEFAULT_COLORS = {Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.CYAN, Color.YELLOW};
-	/**
-	 * This line width will be used for newly added series
-	 */
-	public static final float DEFAULT_LINE_WIDTH = 1.0f;
+public class TimeSeriesDataModel extends DataModel implements TableModelListener{
+	
 	/**
 	 * This label with appended seriesCount+1 will be used for newly added series
 	 */
@@ -48,26 +44,6 @@ public class TimeSeriesDataModel implements TableModelListener{
 	 * This will be the basic date for relative time values
 	 */
 	private Date startDate;
-	/**
-	 * The ontology representation of the series data
-	 */
-	private TimeSeriesOntologyModel ontologyModel;
-	/**
-	 * The JFreeChart representation of the series data
-	 */
-	private TimeSeriesChartModel chartModel;
-	/**
-	 * The JTable representation of the series data
-	 */
-	private TimeSeriesTableModel tableModel;
-	/**
-	 * Contains the settings for this chart
-	 */
-	private TimeSeriesChartSettings chartSettings;
-	/**
-	 * The number of series in this data model
-	 */
-	private int seriesCount = 0;
 	
 	/**
 	 * Constructor
@@ -81,37 +57,43 @@ public class TimeSeriesDataModel implements TableModelListener{
 		this.startDate = cal.getTime();
 		
 		// Initialize the three sub models
-		this.ontologyModel = new TimeSeriesOntologyModel(timeSeriesChart);
+		this.ontologyModel = new TimeSeriesOntologyModel(timeSeriesChart, this);
 		chartModel = new TimeSeriesChartModel();
-		tableModel = new TimeSeriesTableModel();
+		tableModel = new TimeSeriesTableModel(this);
 		
-		if(this.ontologyModel.getTimeSeriesChart().isEmpty()){
+		TimeSeriesOntologyModel tsom = (TimeSeriesOntologyModel) this.ontologyModel;
+		
+		if(tsom.getTimeSeriesChart().isEmpty()){
 			
 			// The ontology model is empty. Do some initialization work.
 			
 			// Remove the empty elements created by DynForm from the lists 
-			this.ontologyModel.getTimeSeriesChart().getTimeSeriesChartData().clear();
-			this.ontologyModel.getGeneralSettings().getYAxisColors().clear();
-			this.ontologyModel.getGeneralSettings().getYAxisLineWidth().clear();
+			tsom.getTimeSeriesChart().getTimeSeriesChartData().clear();
+			this.ontologyModel.getChartSettings().getYAxisColors().clear();
+			this.ontologyModel.getChartSettings().getYAxisLineWidth().clear();
 			
 			// Set some default values
-			this.ontologyModel.getGeneralSettings().setChartTitle(DEFAULT_CHART_TITLE);
-			this.ontologyModel.getGeneralSettings().setXAxisLabel(DEFAULT_X_AXIS_LABEL);
-			this.ontologyModel.getGeneralSettings().setYAxisLabel(DEFAULT_Y_AXIS_LABEL);
-			this.ontologyModel.getGeneralSettings().setRendererType(TimeSeriesChartTab.DEFAULT_RENDERER);
+			this.ontologyModel.getChartSettings().setChartTitle(DEFAULT_CHART_TITLE);
+			this.ontologyModel.getChartSettings().setXAxisLabel(DEFAULT_X_AXIS_LABEL);
+			this.ontologyModel.getChartSettings().setYAxisLabel(DEFAULT_Y_AXIS_LABEL);
+			this.ontologyModel.getChartSettings().setRendererType(ChartTab.DEFAULT_RENDERER);
 			
 		}else{
 			
 			// The ontology model contains data, add it to the other sub models 
-			Iterator dataSeries = this.ontologyModel.getTimeSeriesChart().getAllTimeSeriesChartData();
+			Iterator dataSeries = tsom.getTimeSeriesChart().getAllTimeSeriesChartData();
 			while(dataSeries.hasNext()){
+				
 				TimeSeries nextSeries = (TimeSeries) dataSeries.next();
 				
-				if(seriesCount > this.ontologyModel.getGeneralSettings().getYAxisColors().size()){
-					this.ontologyModel.getGeneralSettings().addYAxisColors(""+DEFAULT_COLORS[seriesCount % DEFAULT_COLORS.length].getRGB());
+				// If there is no color specified for this series, use a default color
+				if(seriesCount > this.ontologyModel.getChartSettings().getYAxisColors().size()){
+					this.ontologyModel.getChartSettings().addYAxisColors(""+DEFAULT_COLORS[seriesCount % DEFAULT_COLORS.length].getRGB());
 				}
-				if(seriesCount > this.ontologyModel.getGeneralSettings().getYAxisLineWidth().size()){
-					this.ontologyModel.getGeneralSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
+				
+				// If there is no line width specified for this series, use a default line width
+				if(seriesCount > this.ontologyModel.getChartSettings().getYAxisLineWidth().size()){
+					this.ontologyModel.getChartSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
 				}
 				chartModel.addSeries(nextSeries);
 				tableModel.addSeries(nextSeries);
@@ -128,165 +110,122 @@ public class TimeSeriesDataModel implements TableModelListener{
 	/**
 	 * @return the ontologyModel
 	 */
-	public TimeSeriesOntologyModel getOntologyModel() {
-		return ontologyModel;
+	public TimeSeriesOntologyModel getTimeSeriesOntologyModel() {
+		return (TimeSeriesOntologyModel) ontologyModel;
 	}
 
 	/**
 	 * @param ontologyModel the ontologyModel to set
 	 */
-	public void setOntologyModel(TimeSeriesOntologyModel ontologyModel) {
+	public void setTimeSeriesOntologyModel(TimeSeriesOntologyModel ontologyModel) {
 		this.ontologyModel = ontologyModel;
 	}
 
 	/**
 	 * @return the chartModel
 	 */
-	public TimeSeriesChartModel getChartModel() {
-		return chartModel;
+	public TimeSeriesChartModel getTimeSeriesChartModel() {
+		return (TimeSeriesChartModel) chartModel;
 	}
 
 	/**
 	 * @param chartModel the chartModel to set
 	 */
-	public void setChartModel(TimeSeriesChartModel chartModel) {
+	public void setTimeSeriesChartModel(TimeSeriesChartModel chartModel) {
 		this.chartModel = chartModel;
 	}
 
 	/**
 	 * @return the tableModel
 	 */
-	public TimeSeriesTableModel getTableModel() {
-		return tableModel;
+	public TimeSeriesTableModel getTimeSeriesTableModel() {
+		return (TimeSeriesTableModel) tableModel;
 	}
 
 	/**
 	 * @param tableModel the tableModel to set
 	 */
-	public void setTableModel(TimeSeriesTableModel tableModel) {
+	public void setTimeSeriesTableModel(TimeSeriesTableModel tableModel) {
 		this.tableModel = tableModel;
 	}
 
-	public TimeSeriesChartSettings getChartSettings() {
-		return chartSettings;
+	public TimeSeriesChartSettings getTimeSeriesChartSettings() {
+		return (TimeSeriesChartSettings) chartSettings;
 	}
 
-	public void setChartSettings(TimeSeriesChartSettings chartSettings) {
+	public void setTimeSeriesChartSettings(TimeSeriesChartSettings chartSettings) {
 		this.chartSettings = chartSettings;
 	}
-
-	@Override
-	public void tableChanged(TableModelEvent tme) {
-		System.out.println("TableModelEvent type "+tme.getType()+", Row "+tme.getFirstRow()+", Col "+tme.getColumn());
-		if(tme.getSource() == tableModel && tme.getFirstRow() >= 0){
-			
-			if(tme.getType() == 0){
-			
-				if(tme.getColumn() > 0){
-					
-					// A single value was edited
-					int seriesIndex = tme.getColumn()-1; // First column contains the time stamps.
-					long timeStamp = (Long) tableModel.getValueAt(tme.getFirstRow(), 0);
-					Float value = (Float) tableModel.getValueAt(tme.getFirstRow(), tme.getColumn());
-					
-					try {
-						if(value != null){
-							chartModel.addOrUpdateValuePair(seriesIndex, timeStamp, value);
-							ontologyModel.addOrUpdateValuePair(seriesIndex, timeStamp, value);
-						}else{
-							chartModel.removeValuePair(seriesIndex, timeStamp);
-							ontologyModel.removeValuePair(seriesIndex, timeStamp);
-						}
-					} catch (NoSuchSeriesException e) {
-						System.err.println("Error updating data model: Series "+seriesIndex+" does mot exist!");
-						e.printStackTrace();
-					}
-				}else{
-					
-					// The time stamp was edited
-					
-					long oldTimestamp = (Long) tableModel.getLatestChangedValue();
-					long newTimeStamp = (Long) tableModel.getValueAt(tme.getFirstRow(), 0);
-					
-					ontologyModel.updateTimeStamp(oldTimestamp, newTimeStamp);
-					chartModel.updateTimeStamp(oldTimestamp, newTimeStamp);
-				}
-			}
-		}
-	}
 	
-	/**
-	 * Adds a new series to the data model
-	 * @param series The new series
-	 */
-	public void addSeries(TimeSeries series){
-		
-		// Set the default label if none is specified in the series
-		if(series.getLabel() == null || series.getLabel().length() == 0){
-			series.setLabel(DEFAULT_SERIES_LABEL+" "+(getSeriesCount()+1));
-		}
-		
-		// Add the data to the sub models
-		ontologyModel.addSeries(series);
-		chartModel.addSeries(series);
-		tableModel.addSeries(series);
-		
-		// Apply default settings
-		ontologyModel.getGeneralSettings().addYAxisColors(""+DEFAULT_COLORS[getSeriesCount() % DEFAULT_COLORS.length].getRGB());
-		ontologyModel.getGeneralSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
-		
-		SeriesSettings settings = new SeriesSettings(series.getLabel(), DEFAULT_COLORS[getSeriesCount() % DEFAULT_COLORS.length], DEFAULT_LINE_WIDTH);
-		chartSettings.addSeriesSettings(settings);
-		
-		seriesCount++;
-
-	}
-	
-	/**
-	 * Removes a series from the data model
-	 * @param seriesIndex The index of the series to be removed
-	 * @throws NoSuchSeriesException Thrown if there is no series with that index
-	 */
-	public void removeSeries(int seriesIndex) throws NoSuchSeriesException{
-		ontologyModel.removeSeries(seriesIndex);
-		chartModel.removeSeries(seriesIndex);
-		tableModel.removeSeries(seriesIndex);
-		
-		chartSettings.removeSeriesSettings(seriesIndex);
-		
-		seriesCount--;
-	}
-	
-	
-	/**
-	 * Removes the value pair with the given time stamp from every series that contains one. 
-	 * @param timestamp The time stamp
-	 */
-	public void removeValuePairsFromAllSeries(long timestamp){
-		for(int i=0; i<getSeriesCount(); i++){
-			try {
-				ontologyModel.removeValuePair(i, timestamp);
-				chartModel.removeValuePair(i, timestamp);
-				tableModel.removeRowByTimestamp(timestamp);
-			} catch (NoSuchSeriesException e) {
-				System.err.println("Trying to remove value pair from non-existant series "+i);
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	/**
-	 * @return The number of series in this data model.
-	 */
-	public int getSeriesCount() {
-		return seriesCount;
-	}
 
 	/**
 	 * @return the startDate
 	 */
 	public Date getStartDate() {
 		return startDate;
+	}
+
+	@Override
+	public ValuePair createNewValuePair(Number key, Number value) {
+		
+		long lTimestamp = key.longValue();
+		float fValue = value.floatValue();
+		
+		TimeSeriesValuePair tsvp = new TimeSeriesValuePair();
+		Simple_Long slTimestamp = new Simple_Long();
+		slTimestamp.setLongValue(lTimestamp);
+		Simple_Float sfValue = new Simple_Float();
+		sfValue.setFloatValue(fValue);
+		tsvp.setTimestamp(slTimestamp);
+		tsvp.setValue(sfValue);
+		
+		return tsvp;
+	}
+
+	@Override
+	public Number getKeyFromPair(ValuePair vp) {
+		TimeSeriesValuePair tsvp = (TimeSeriesValuePair) vp;
+		return tsvp.getTimestamp().getLongValue();
+	}
+
+	@Override
+	public Number getValueFromPair(ValuePair vp) {
+		TimeSeriesValuePair tsvp = (TimeSeriesValuePair) vp;
+		return tsvp.getValue().getFloatValue();
+	}
+
+	@Override
+	public List getValuePairsFromSeries(DataSeries series) {
+		TimeSeries ts = (TimeSeries) series;
+		return ts.getTimeSeriesValuePairs();
+	}
+
+	@Override
+	public void setKeyForPair(Number key, ValuePair vp) {
+		TimeSeriesValuePair tsvp = (TimeSeriesValuePair) vp;
+		Simple_Long newTimeStamp = new Simple_Long();
+		newTimeStamp.setLongValue(key.longValue());
+		tsvp.setTimestamp(newTimeStamp);
+	}
+
+	@Override
+	public void setValueForPair(Number value, ValuePair vp) {
+		TimeSeriesValuePair tsvp = (TimeSeriesValuePair) vp;
+		Simple_Float newValue = new Simple_Float();
+		newValue.setFloatValue(value.floatValue());
+		tsvp.setValue(newValue);
+	}
+
+	@Override
+	public String getDefaultSeriesLabel() {
+		return DEFAULT_SERIES_LABEL;
+	}
+
+	@Override
+	public TimeSeries createNewDataSeries(String label) {
+		TimeSeries newSeries = new TimeSeries();
+		newSeries.setLabel(label);
+		return newSeries;
 	}
 	
 }

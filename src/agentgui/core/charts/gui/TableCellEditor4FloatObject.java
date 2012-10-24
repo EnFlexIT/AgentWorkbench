@@ -1,4 +1,4 @@
-package agentgui.core.charts.timeseriesChart.gui;
+package agentgui.core.charts.gui;
 
 import java.awt.Component;
 

@@ -8,52 +8,9 @@ import jade.core.*;
    * This class contains all data related to how a chart will be displayed
 * Protege name: ChartSettingsGeneral
 * @author ontology bean generator
-* @version 2012/09/21, 17:08:25
+* @version 2012/10/23, 17:29:08
 */
 public class ChartSettingsGeneral extends VisualizationSettings{ 
-
-   /**
-* Protege name: yAxisLineWidth
-   */
-   private List yAxisLineWidth = new ArrayList();
-   public void addYAxisLineWidth(Float elem) { 
-     List oldList = this.yAxisLineWidth;
-     yAxisLineWidth.add(elem);
-   }
-   public boolean removeYAxisLineWidth(Float elem) {
-     List oldList = this.yAxisLineWidth;
-     boolean result = yAxisLineWidth.remove(elem);
-     return result;
-   }
-   public void clearAllYAxisLineWidth() {
-     List oldList = this.yAxisLineWidth;
-     yAxisLineWidth.clear();
-   }
-   public Iterator getAllYAxisLineWidth() {return yAxisLineWidth.iterator(); }
-   public List getYAxisLineWidth() {return yAxisLineWidth; }
-   public void setYAxisLineWidth(List l) {yAxisLineWidth = l; }
-
-   /**
-* Protege name: chartTitle
-   */
-   private String chartTitle;
-   public void setChartTitle(String value) { 
-    this.chartTitle=value;
-   }
-   public String getChartTitle() {
-     return this.chartTitle;
-   }
-
-   /**
-* Protege name: xAxisLabel
-   */
-   private String xAxisLabel;
-   public void setXAxisLabel(String value) { 
-    this.xAxisLabel=value;
-   }
-   public String getXAxisLabel() {
-     return this.xAxisLabel;
-   }
 
    /**
 * Protege name: yAxisLabel
@@ -64,6 +21,17 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    }
    public String getYAxisLabel() {
      return this.yAxisLabel;
+   }
+
+   /**
+* Protege name: chartTitle
+   */
+   private String chartTitle;
+   public void setChartTitle(String value) { 
+    this.chartTitle=value;
+   }
+   public String getChartTitle() {
+     return this.chartTitle;
    }
 
    /**
@@ -99,5 +67,37 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    public String getRendererType() {
      return this.rendererType;
    }
+
+   /**
+* Protege name: xAxisLabel
+   */
+   private String xAxisLabel;
+   public void setXAxisLabel(String value) { 
+    this.xAxisLabel=value;
+   }
+   public String getXAxisLabel() {
+     return this.xAxisLabel;
+   }
+
+   /**
+* Protege name: yAxisLineWidth
+   */
+   private List yAxisLineWidth = new ArrayList();
+   public void addYAxisLineWidth(Float elem) { 
+     List oldList = this.yAxisLineWidth;
+     yAxisLineWidth.add(elem);
+   }
+   public boolean removeYAxisLineWidth(Float elem) {
+     List oldList = this.yAxisLineWidth;
+     boolean result = yAxisLineWidth.remove(elem);
+     return result;
+   }
+   public void clearAllYAxisLineWidth() {
+     List oldList = this.yAxisLineWidth;
+     yAxisLineWidth.clear();
+   }
+   public Iterator getAllYAxisLineWidth() {return yAxisLineWidth.iterator(); }
+   public List getYAxisLineWidth() {return yAxisLineWidth; }
+   public void setYAxisLineWidth(List l) {yAxisLineWidth = l; }
 
 }

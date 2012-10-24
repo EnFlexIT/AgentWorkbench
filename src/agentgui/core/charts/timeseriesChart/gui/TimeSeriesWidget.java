@@ -42,6 +42,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Language;
+import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
 import agentgui.core.ontologies.gui.DynForm;
 import agentgui.ontology.Chart;
 import agentgui.ontology.TimeSeriesChart;
@@ -157,7 +158,7 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 
 			this.getTimeSeriesChartDialog().setVisible(true);
 			if(! this.getTimeSeriesChartDialog().isCanceled()){
-				startArgs[this.startArgIndex] = this.getTimeSeriesChartDialog().getModel().getOntologyModel().getTimeSeriesChart();
+				startArgs[this.startArgIndex] = ((TimeSeriesOntologyModel)this.getTimeSeriesChartDialog().getModel().getOntologyModel()).getTimeSeriesChart();
 				this.dynForm.setOntoArgsInstance(startArgs);
 				if(this.getTimeSeriesChartDialog().getChartThumb() != null){
 					getJButtonEdit().setText("");

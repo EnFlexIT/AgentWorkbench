@@ -1,4 +1,4 @@
-package agentgui.core.charts.timeseriesChart.gui;
+package agentgui.core.charts.gui;
 
 import javax.swing.JPanel;
 
@@ -28,16 +28,16 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.JScrollPane;
 
 import agentgui.core.application.Language;
+import agentgui.core.charts.DataModel;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.SeriesSettings;
+import agentgui.core.charts.ChartSettings;
 import agentgui.core.charts.SettingsInfo;
-import agentgui.core.charts.timeseriesChart.TimeSeriesChartSettings;
-import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.envModel.graph.components.TableCellEditor4Color;
 import agentgui.envModel.graph.components.TableCellRenderer4Color;
-import agentgui.ontology.TimeSeries;
+import agentgui.ontology.DataSeries;
 
-public class TimeSeriesSettingsTab extends JPanel implements ActionListener, TableModelListener, FocusListener, Observer{
+public class SettingsTab extends JPanel implements ActionListener, TableModelListener, FocusListener, Observer{
 	/**
 	 * 
 	 */
@@ -55,17 +55,20 @@ public class TimeSeriesSettingsTab extends JPanel implements ActionListener, Tab
 	private JScrollPane spTblSeriesSettings;
 	private JTable tblSeriesSettings;
 	
-	private TimeSeriesDataModel model;
+	private DataModel model;
 	
-	private TimeSeriesChartSettings settings;
+	private ChartSettings settings;
 
-	public TimeSeriesSettingsTab(TimeSeriesDataModel model) {
+	public SettingsTab(DataModel model) {
 		
 		this.model = model;
 		
 		this.settings = model.getChartSettings();
 		this.settings.addObserver(this);
 		
+		initialize();
+	}
+	private void initialize(){
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
@@ -186,7 +189,7 @@ public class TimeSeriesSettingsTab extends JPanel implements ActionListener, Tab
 	private JComboBox getCbRendererType() {
 		if (cbRendererType == null) {
 			cbRendererType = new JComboBox();
-			cbRendererType.setModel(new DefaultComboBoxModel(TimeSeriesChartTab.RENDERER_TYPES));
+			cbRendererType.setModel(new DefaultComboBoxModel(ChartTab.RENDERER_TYPES));
 			cbRendererType.setSelectedItem(settings.getRendererType());
 			cbRendererType.addActionListener(this);
 		}
@@ -252,11 +255,11 @@ public class TimeSeriesSettingsTab extends JPanel implements ActionListener, Tab
 		return tableModel;
 	}
 	
-	public void addSeries(TimeSeries series){
+	public void addSeries(DataSeries series){
 		
 		String label = series.getLabel();
-		Color color = new Color(Integer.parseInt((String) model.getOntologyModel().getGeneralSettings().getYAxisColors().get(model.getSeriesCount()-1)));
-		Float lineWidth = (Float) model.getOntologyModel().getGeneralSettings().getYAxisLineWidth().get(model.getSeriesCount()-1);
+		Color color = new Color(Integer.parseInt((String) model.getOntologyModel().getChartSettings().getYAxisColors().get(model.getSeriesCount()-1)));
+		Float lineWidth = (Float) model.getOntologyModel().getChartSettings().getYAxisLineWidth().get(model.getSeriesCount()-1);
 		
 		Object[] newRow = {label, color, lineWidth};
 		

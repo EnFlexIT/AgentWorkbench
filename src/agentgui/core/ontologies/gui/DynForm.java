@@ -64,6 +64,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Language;
 import agentgui.core.charts.timeseriesChart.gui.TimeSeriesWidget;
+import agentgui.core.charts.xyChart.gui.XyWidget;
 import agentgui.core.ontologies.OntologyClassTree;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologySingleClassDescription;
@@ -624,18 +625,28 @@ public class DynForm extends JPanel {
 			
 			Object userFormElement = this.userFormElements.get(node);
 			if (userFormElement!=null) {
-				final TimeSeriesWidget tsw = (TimeSeriesWidget) userFormElement;
-				final TimeSeriesChart timeSeries = (TimeSeriesChart) object;
+				final TimeSeriesWidget tsWidget = (TimeSeriesWidget) userFormElement;
+				final TimeSeriesChart tsChart = (TimeSeriesChart) object;
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						tsw.setChart(timeSeries);
+						tsWidget.setChart(tsChart);
 					}
 				});
 			}
 			
 		} else if (object instanceof XyChart) {
-			//TODO for further improvements
+			Object userFormElement = this.userFormElements.get(node);
+			if (userFormElement!=null) {
+				final XyWidget xyWidget = (XyWidget) userFormElement;
+				final XyChart xyChart = (XyChart) object;
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						xyWidget.setChart(xyChart);
+					}
+				});
+			}
 		}
 		
 		
@@ -1228,15 +1239,17 @@ public class DynForm extends JPanel {
 		// ------------------------------------------------------------------------------
 		if (specialClass instanceof TimeSeriesChart) {
 			// --- A TimeSeries has to be displayed -----------------
-			TimeSeriesWidget tsw = new TimeSeriesWidget(this, startArgIndex);
-			tsw.setBounds(feBounds.x, feBounds.y, feBounds.width, tsw.getHeight());
-			parentPanel.add(tsw);
+			TimeSeriesWidget tsWidget = new TimeSeriesWidget(this, startArgIndex);
+			tsWidget.setBounds(feBounds.x, feBounds.y, feBounds.width, tsWidget.getHeight());
+			parentPanel.add(tsWidget);
 			
-			this.userFormElements.put(parentNode, tsw);
+			this.userFormElements.put(parentNode, tsWidget);
 			
 		} else if (specialClass instanceof XyChart) {
 			// --- A XY-Chart has to be displayed -------------------
-			//TODO for further improvements
+			XyWidget xyWidget = new XyWidget(this, startArgIndex);
+			xyWidget.setBounds(feBounds.x, feBounds.y, feBounds.width, xyWidget.getHeight());
+			parentPanel.add(xyWidget);
 		}
 		
 		this.setPanelBounds(parentPanel);
