@@ -260,24 +260,23 @@ public class AboutDialog extends JDialog implements ActionListener{
 
 	/**
 	 * This method set the Look and Feel of this Dialog.
-	 *
-	 * @param NewLnF the new look and feel
+	 * @param newLnF the new look and feel
 	 */
-	private void setLookAndFeel( String NewLnF ) {
-		// --- Look and fell einstellen --------------- 
-		if ( NewLnF == null ) return;		
-		Application.getGlobalInfo().setAppLnf( NewLnF );
+	private void setLookAndFeel( String newLnF ) {
+ 
+		if (newLnF==null) return;		
+		Application.getGlobalInfo().setAppLnf(newLnF);
 		try {
 			String lnfClassname = Application.getGlobalInfo().getAppLnF();
 			if (lnfClassname == null)
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 				UIManager.setLookAndFeel(lnfClassname);
-				SwingUtilities.updateComponentTreeUI(this);				
-		} 
-		catch (Exception e) {
-				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF()
-					+ " on this platform:" + e.getMessage());
+				SwingUtilities.updateComponentTreeUI(this);
+				
+		} catch (Exception e) {
+				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF() + " on this platform:" + e.getMessage());
 		}
+		
 	}
 
 	/**

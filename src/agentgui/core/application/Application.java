@@ -40,6 +40,7 @@ import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
+import agentgui.core.gui.ChangeDialog;
 import agentgui.core.gui.MainWindow;
 import agentgui.core.gui.Translation;
 import agentgui.core.gui.options.OptionDialog;
@@ -450,7 +451,12 @@ public class Application {
 			getMainWindow().setStatusBar(Language.translate("Fertig"));
 			doBenchmark(false);
 			proceedStartArgumentOpenProject();
-			new AgentGuiUpdater().start();
+			if (agentGuiWasUpdated==true) {
+				showChangeDialog();
+			} else {
+				new AgentGuiUpdater().start();
+			}
+			
 		}
 	}
 	
@@ -560,6 +566,21 @@ public class Application {
 		about = null;		
 	}
 
+	/**
+	 * Will show the ChangeDialog that displays the latest changes.
+	 */
+	public static void showChangeDialog() {
+		ChangeDialog cd = null;
+		if (isRunningAsServer()==true) {
+			cd = new ChangeDialog(null);	
+		} else {
+			cd = new ChangeDialog(getMainWindow());
+		}
+		cd.setVisible(true);
+		// - - - Wait for user - - - - - - - - -
+		cd.dispose();
+	}
+	
 	/**
 	 * Adds a supplement to the application title
 	 * @param add2BasicTitel

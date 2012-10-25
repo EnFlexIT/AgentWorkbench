@@ -873,9 +873,11 @@ public class MainWindow extends JFrame implements ComponentListener {
 		if (jMenuMainHelp == null) {
 			jMenuMainHelp = new JMenu("Hilfe");
 			jMenuMainHelp.setText(Language.translate("Hilfe"));
-			jMenuMainHelp.add( new CWMenueItem( "HelpUpdate", Language.translate("Nach Update suchen ..."), null ));
-			jMenuMainHelp.addSeparator();
 			jMenuMainHelp.add( new CWMenueItem( "HelpAbout", Language.translate("Über..."), null ));
+			jMenuMainHelp.add( new CWMenueItem( "HelpChanges", Language.translate("Letzte Änderungen"), null ));
+			jMenuMainHelp.addSeparator();
+			jMenuMainHelp.add( new CWMenueItem( "HelpUpdate", Language.translate("Nach Update suchen") + " !", null ));
+			
 		}
 		return jMenuMainHelp;
 	}
@@ -1056,6 +1058,9 @@ public class MainWindow extends JFrame implements ComponentListener {
 			// --- Menü Hilfe ---------------------------------
 			else if ( ActCMD.equalsIgnoreCase("HelpUpdate") ) {
 				new AgentGuiUpdater(true).start();
+			}
+			else if ( ActCMD.equalsIgnoreCase("HelpChanges") ) {
+				Application.showChangeDialog();
 			}
 			else if ( ActCMD.equalsIgnoreCase("HelpAbout") ) {
 				Application.showAboutDialog();

@@ -53,7 +53,7 @@ de;Anzeigesprache wechseln?;Change the GUI Language?
 de;Arbeitsspeicher für Remote-JVM;Memory for remote JVM;;;
 de;Arbeitsspeicher;Memory
 de;Argument;argument
-de;Art der Darstellung;;;;
+de;Art der Darstellung;Type of display;;;
 de;Ausgewählte JADE-Services;Selected JADE Services;;;
 de;Ausgewählte Klasse übernehmen!;Take selected class!
 de;Auslastungs-Grenzwerte manuell festlegen;Set load thresholds manually
@@ -67,8 +67,8 @@ de;Basis-Info;Basic info
 de;Bearbeiten;Edit
 de;Beenden;Quit
 de;Beschreibung;Description
-de;Beschriftung X Achse;;;;
-de;Beschriftung Y Achse;;;;
+de;Beschriftung X Achse;Label X axis ;;;
+de;Beschriftung Y Achse;Label Y axis ;;;
 de;Beschriftung anzeigen;Show label;;;
 de;Beschriftungen anzeigen;Show labels;;;
 de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
@@ -252,11 +252,13 @@ de;Konsole ein- oder ausblenden;Show / hide console
 de;Konsole: kann ein- bzw. ausgeblendet werden;Console: Can be shown or hidden
 de;Konsole;Console
 de;Kontinuierliches 2D-Umgebungsmodell;Continuous 2D environment model
+de;Label;Label;;;
 de;Lade SVG-Datei;Loading SVG file
-de;Lade Setup;;;;
+de;Lade Setup;Load Setup;;;
 de;Lade Umgebung aus;Loading environment from
 de;Lade Umgebungsdatei;Getting environment file
-de;Liniendicke;;;;
+de;Letzte Änderungen;Recent changes;;;
+de;Liniendicke;Line thickness;;;
 de;Load Monitor öffnen;Open load monitor
 de;Load Monitor;Load Monitor
 de;Log-Manager starten;Start Log Manager
@@ -268,8 +270,8 @@ de;MAS-Pause;MAS-Pause
 de;MAS-Start;MAS-Start;;;
 de;MAS-Stop;MAS-Stop
 de;MAS;MAS
-de;Markierte Zeitreihe Entfernen;;;;
-de;Markierten Zeitpunkt entfernen;;;;
+de;Markierte Zeitreihe Entfernen;Remove selected time series;;;
+de;Markierten Zeitpunkt entfernen;Remove marked time;;;
 de;Maximale Geschwindigkeit;Maximum speed
 de;Maximieren;Maximize;;;
 de;Maßstab festlegen;Set scale
@@ -290,8 +292,8 @@ de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hier
 de;Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?;Do you want to take over the CSV version of the dictionary now?;;;
 de;Möchten Sie einen weiteren Agenten dieser Art starten?;Do you want to start another agent of this kind?
 de;N - Threads;N - Threads
-de;Nach Update suchen ...;Check for Update ...;;;
-de;Nach Updates suchen:;Check for updates:;;;
+de;Nach Update suchen ...;;;;
+de;Nach Update suchen;Check for Update;;;
 de;Nach Updates suchen;Search for updates;;;
 de;Name bereits vorhanden!;Name already exists!
 de;Name ungültig!;Invalid name!
@@ -304,8 +306,9 @@ de;Netzwerkkomponente(n) entfernen;Remove network component (s) ;;;
 de;Netzwerkkomponente(n) hinzufügen;Add network component s);;;
 de;Neu laden;Reload;;;
 de;Neue Datenreihe(n) importieren;Import new data set (s) ;;;
-de;Neue Zeitreihe hinzufügen;;;;
-de;Neuen Zeitpunkt hinzufügen;;;;
+de;Neue Zeitreihe hinzufügen;Add new time series;;;
+de;Neue Zeitreihe;New time series;;;
+de;Neuen Zeitpunkt hinzufügen;Add new time;;;
 de;Neuer Agent;New agent
 de;Neuer Eintrag;New Entry
 de;Neues Hindernis;New obstacle
@@ -453,7 +456,7 @@ de;Tabelle;Table;;;
 de;Teil-Umgebung;environment part
 de;Teilnetze;Subnetworks;;;
 de;Text zur Übersetzung;Text to translate
-de;Titel;;;;
+de;Titel;Title;;;
 de;Topologie;Topology;;;
 de;Typ-Bezeichner;Type-Specifier
 de;Typ;Type
@@ -498,6 +501,7 @@ de;Warte auf das Ende des Benchmarks ...;Waiting for the end of the benchmark ..
 de;Wiederherstellen;Restore;;;
 de;Wollen Sie das aktuelle Setup wirklich löschen?;Do you want to delete the current Setup?
 de;Wörterbuch;Dictionary
+de;X Wert;X value;;;
 de;XML-Dateien;XML files
 de;XML;XML
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
