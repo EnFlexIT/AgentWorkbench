@@ -30,6 +30,8 @@ package agentgui.simulationService.time;
 
 /**
  * The Class TimeModelContinuous.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class TimeModelContinuous extends TimeModel {
 
@@ -37,9 +39,6 @@ public class TimeModelContinuous extends TimeModel {
 
 	private long timeDiff = 0;
 
-	private long stopWatchStart = 0;
-	private long stopWatchStop = 0;
-		
 	/**
 	 * Instantiates a new time model continuous.
 	 */
@@ -76,70 +75,4 @@ public class TimeModelContinuous extends TimeModel {
 		return timeDiff;
 	}
 	
-	
-	/**
-	 * Stop watch start.
-	 */
-	public void stopWatchStart() {
-		this.stopWatchStart = System.currentTimeMillis();
-	}
-	/**
-	 * Stop watch stop.
-	 */
-	public void stopWatchStop() {
-		this.stopWatchStop = System.currentTimeMillis();
-	}
-	/**
-	 * Stop watch restart. Works only, if   
-	 * the clock was stopped and not reseted 
-	 */
-	public void stopWatchRestart() {
-		if (this.stopWatchStop!=0) {
-			this.stopWatchStart = System.currentTimeMillis() - this.stopWatchGetTime(); 
-			this.stopWatchStop = 0;	
-		}
-	}
-	/**
-	 * Stop watch reset.
-	 */
-	public void stopWatchReset() {
-		this.stopWatchStart = 0;
-		this.stopWatchStop = 0;
-	}
-	/**
-	 * Returns the currently stopped time.
-	 * @return the long
-	 */
-	public long stopWatchGetTime() {
-		long stopWatchTime = 0;
-		if (stopWatchStart==0 && stopWatchStop==0) {
-			// --- Stop watch is not running ----
-			// => Do nothing
-		} else if (stopWatchStart!=0 && stopWatchStop!=0) {
-			// --- Stop watch was stopped -------
-			stopWatchTime = stopWatchStop - stopWatchStart;
-		} else if (stopWatchStart==0 && stopWatchStop!=0) {
-			// --- Something wrong --------------
-			// => Do nothing
-		} else if (stopWatchStart!=0 && stopWatchStop==0) {
-			// --- Clock is running ! -----------
-			stopWatchTime = System.currentTimeMillis() - stopWatchStart;
-		}
-		return stopWatchTime;
-	}
-	
-	/**
-	 * This method does nothing in this TimeModel
-	 */
-	@Override
-	public void step() {
-	}
-
-	/**
-	 * This method does nothing in this TimeModel
-	 */
-	@Override
-	public void stepBack() {
-	}
-
 }

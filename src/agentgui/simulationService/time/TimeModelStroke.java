@@ -55,16 +55,16 @@ public class TimeModelStroke extends TimeModel {
 		this.counter = counterStart;
 	}
 
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.time.TimeModelInterface#step()
+	/**
+	 * Steps the counter plus 1.
 	 */
 	public void step() {
 		counter++;
 	}
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.time.TimeModelInterface#stepBack()
+	
+	/**
+	 * Steps the counter minus 1.
 	 */
-	@Override
 	public void stepBack() {
 		counter--;
 	}

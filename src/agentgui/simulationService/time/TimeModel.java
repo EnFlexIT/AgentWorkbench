@@ -35,18 +35,34 @@ import jade.util.leap.Serializable;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public abstract class TimeModel implements TimeModelInterface, Serializable {
+public abstract class TimeModel implements Serializable {
 
 	private static final long serialVersionUID = 4597561080133786915L;
 	
-	public static final int STROKE = 1;
-	public static final int DISCRETE_TIME = 2;
+	private StopWatch stopWatch = null;
 	
 	/**
 	 * Instantiates a new time model.
 	 */
 	public TimeModel(){
 	}
-		
+
+	/**
+	 * Sets the stopwatch.
+	 * @param stopWatch the new stopwatch
+	 */
+	public void setStopWatch(StopWatch stopWatch) {
+		this.stopWatch = stopWatch;
+	}
+	/**
+	 * Returns the current or a new stopwatch.
+	 * @return the stop watch
+	 */
+	public StopWatch getStopWatch() {
+		if (this.stopWatch==null) {
+			this.stopWatch = new StopWatch();
+		}
+		return stopWatch;
+	}
 		
 }

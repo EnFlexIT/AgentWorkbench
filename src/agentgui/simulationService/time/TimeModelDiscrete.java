@@ -62,16 +62,16 @@ public class TimeModelDiscrete extends TimeModel {
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.time.TimeModelInterface#step()
+	/**
+	 * Steps the time with the given time step.
 	 */
 	public void step() {
 		this.time = this.time + step;
 	}
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.time.TimeModelInterface#stepBack()
+
+	/**
+	 * Steps back the time with the given time step.
 	 */
-	@Override
 	public void stepBack() {
 		this.time = this.time - step;		
 	}
