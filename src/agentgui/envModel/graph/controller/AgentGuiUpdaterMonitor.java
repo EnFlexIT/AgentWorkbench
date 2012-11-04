@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.update;
+package agentgui.envModel.graph.controller;
 
 import java.awt.Dimension;
 import java.awt.Font;

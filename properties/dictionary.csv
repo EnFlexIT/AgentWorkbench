@@ -535,10 +535,6 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
-en;;Discrete squares environment;;;
-en;;Set mapping of external types to local components;;;
-en;;The component name already exists!<br>Choose a different one.;;;
-en;;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agenten-Klasse;Agent class;;;
@@ -546,6 +542,7 @@ en;Aktuelles Bild entfernen;Remove current image;;;
 en;Anzahl;Count;;;
 en;Ausgewählte Komponente entfernen;Remove selected component;;;
 en;Auswahl Netzwerk-Komonente!;Select Network Component to Add;;;
+en;Base64-Kodierung des Datenmodells für;Base64-encoding of data model for;;;
 en;Beschriftung zeigen;Show label;;;
 en;Bestätigung;Confirmation;;;
 en;Bild;Image;;;
@@ -563,6 +560,7 @@ en;Bitte, wählen Sie die Netzwerk-Komponente aus, die Sie hinzufügen möchten!;Pl
 en;Breite;Width;;;
 en;Cluster-Agent;Cluster agent;;;
 en;Cluster-Form;Cluster shape;;;
+en;Der Komponentename existiert bereits! <br> Bitte wählen Sie einen anderen.;The component name already exists!<br>Choose a different one.;;;
 en;Der ausgewählte Knoten des Netzwerkes enthält bereits eine Komponente
 vom Typ 'DistributionNode'. Dies ist für einen Knoten jedoch nur einmal zulässig!;The selection in the main graph already contains a component of
 the type 'DistributionNode'. This is only allowed once at one node!;;;
@@ -571,6 +569,7 @@ en;Der ausgewählte Knoten sollte zwischen zwei Komponenten liegen !;The select V
 en;Die Komponente ist bereits vorhanden!
   Bitte wählen Sie einen anderen Namen.;The component name already exists!
  Choose a different one.;;;
+en;Die aktuelle Auswahl im Graphen stellt bereits eine Komponente vom <br>Typ 'DistributionNode' dar. Dies ist an einem Knoten nur einmalig zulässigt!;The selection in the main graph already contains a component of<br>the type 'DistributionNode'. This is only allowed once at one node!;;;
 en;Drücken Sie die Umschalttaste und wählen Sie mindesten zwei Knoten!;Use Shift and click on two vertices at least!;;;
 en;Eigenschaften bearbeiten;Edit Properties;;;
 en;Ein Agent.GUI-Update ist verfügbar.<br>Wollen Sie es jetzt herunterladen?;An Agent.GUI-Update is available. Download now?;;;
@@ -583,6 +582,7 @@ en;Graph löschen;Clear graph;;;
 en;Graph-Prototyp;Graph-prototype;;;
 en;Halten Sie die Umschalttaste gedrückt und klicken mit der rechten Maustaste auf  zwei Knoten;Use Shift and Right click two vertices;;;
 en;Icon auswählen;Choose Icon;;;
+en;Initiiere Netzwerkkomponenten;Initiating network components;;;
 en;Kanten-Breite;Edge Width;;;
 en;Kantenfarbe;Edge Color;;;
 en;Klicken;Click;;;
@@ -596,10 +596,14 @@ en;Komponente hinzufügen;Add new component;;;
 en;Komponente löschen;Delete Component;;;
 en;Komponenten-Typ;Component Type;;;
 en;Komponentensuche;Search Components;;;
+en;Lesen;Reading;;;
 en;Name;Name;;;
+en;Netzwerk-Komponenten vorbereiten;Preparing network components;;;
+en;Netzwerkkomponente und Datenmodell initiieren;Initiating network components and setting data model;;;
 en;Ontologie-Klasse;Ontology class;;;
 en;Optionen;Options;;;
 en;Rückgängig;Undo Action;;;
+en;Setze Datenmodell für;Setting data model for;;;
 en;Sind Sie sicher, dass Sie den Graphen löschen wollen?;Are you sure that you want to clear the graph?;;;
 en;Teilnetz;Subnetwork;;;
 en;Typen-Bezeichnung;Type-Specifier;;;
@@ -607,6 +611,7 @@ en;Umschalten auf Picking-Modus;Switch to Picking mode;;;
 en;Unschalten auf Transorming-Modus;Switch to Transforming mode;;;
 en;Verbindungsknoten in zwei Knoten aufteilen;Split the node into two nodes;;;
 en;Verbindungsknoten trennen;Split Node;;;
+en;Vorbereiten der Netzwerk-Komponenten zur Speicherung;Preparing and encoding network components for saving;;;
 en;Warnung;Warning;;;
 en;Wiederholen;Redo Action;;;
 en;Wählen Sie die Netzwerkkomponente, die hinzugefügt werden soll;Select a Network Component to Add;;;
@@ -614,6 +619,7 @@ en;Wählen Sie eine Netzwerkkomponente;Select a network component;;;
 en;Wählen Sie einen Knoten, um diese zu verbinden;Select a vertex to merge;;;
 en;Wählen Sie einen gültigen Knoten;Select a valid vertex;;;
 en;Wählen Sie genau zwei Knoten mit Hilfe der Umschalttaste.;Use Shift and click two vertices;;;
+en;Zuordnung von externen Typen zu lokalen Komponenten;Set mapping of external types to local components;;;
 en;Zur Zeit steht kein Agent.GUI-Update zur Verfügung!;There is no Agent.GUI-Update available!;;;
 en;ist verfügbar;is available;;;
 en;wurde heruntergeladen;was downloaded;;;

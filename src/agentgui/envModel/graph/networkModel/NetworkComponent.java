@@ -31,7 +31,10 @@ package agentgui.envModel.graph.networkModel;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Vector;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -66,7 +69,9 @@ public class NetworkComponent implements Serializable {
 	@XmlTransient
 	protected Object dataModel;
 	/** The data model for this NetworkComponent encoded as Base64 String*/
-	protected String dataModelBase64;
+	@XmlElementWrapper(name = "dataModelsBase64")
+	@XmlElement(name="dataModelBase64")
+	protected Vector<String> dataModelBase64;
 	
 	/**
 	 * Instantiates a new network component.
@@ -256,14 +261,15 @@ public class NetworkComponent implements Serializable {
 	 * Returns the data model Base64 encoded.
 	 * @return the dataModelBase64
 	 */
-	public String getDataModelBase64() {
+	@XmlTransient
+	public Vector<String> getDataModelBase64() {
 		return dataModelBase64;
 	}
 	/**
 	 * Sets the data model Base64 encoded.
 	 * @param dataModelBase64 the dataModelBase64 to set
 	 */
-	public void setDataModelBase64(String dataModelBase64) {
+	public void setDataModelBase64(Vector<String> dataModelBase64) {
 		this.dataModelBase64 = dataModelBase64;
 	}	
 	

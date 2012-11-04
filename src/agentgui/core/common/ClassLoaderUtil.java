@@ -50,9 +50,6 @@ import java.util.jar.JarFile;
  */
 public class ClassLoaderUtil {
 
-	// Log object
-
-	// Parameters
 	private static final Class<? extends Object>[] parameters = new Class<?>[] { URL.class };
 
 	/**

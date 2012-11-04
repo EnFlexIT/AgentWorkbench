@@ -39,6 +39,7 @@ import agentgui.core.common.Zipper;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.config.VersionInfo;
+import agentgui.core.gui.ProgressMonitor;
 import agentgui.simulationService.distribution.Download;
 import agentgui.simulationService.distribution.DownloadThread;
 
@@ -80,7 +81,7 @@ public class AgentGuiUpdater extends Thread {
 	private String localUpdateExtractedFolder = null;
 
 	private DownloadThread downloadThread4Update = null;
-	private AgentGuiUpdaterMonitor progressMonitor = null;
+	private ProgressMonitor progressMonitor = null;
 
 	private boolean manualyExecutedByUser = false;
 	private boolean doUpdateProcedure = true;
@@ -548,7 +549,7 @@ public class AgentGuiUpdater extends Thread {
 			if (this.updateInformation.getDownloadLink()!=null) {
 				
 				System.out.println("Agent.GUI-Update: Start download ...");
-				this.progressMonitor = new AgentGuiUpdaterMonitor();
+				this.progressMonitor = new ProgressMonitor("Agent.GUI - Update", "Agent.GUI - Update", "Download");
 				if (this.askBeforeDownload==true) {
 					this.progressMonitor.setVisible(true);	
 				}

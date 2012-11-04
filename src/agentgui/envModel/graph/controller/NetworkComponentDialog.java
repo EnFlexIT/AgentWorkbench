@@ -38,6 +38,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -68,7 +69,7 @@ public class NetworkComponentDialog extends JDialog implements ActionListener {
 
 	private NetworkComponent networkComponent = null;
 	private NetworkComponentAdapter networkComponentAdapter = null;
-	private NetworkComponentAdapter4DataModel adapterView = null;
+	private NetworkComponentAdapter4DataModel adapter4DataModel = null;
 	
 	private JPanel jPanelContent = null;
 	private JButton jButtonApply = null;
@@ -170,13 +171,24 @@ public class NetworkComponentDialog extends JDialog implements ActionListener {
 			
 			if (this.networkComponentAdapter== null) {
 				this.jPanelContent.remove(this.getJButtonApply());
+				
 			} else {
-				adapterView = this.networkComponentAdapter.invokeGetDataModelAdapter();
-				if (adapterView == null) {
+				this.adapter4DataModel = this.networkComponentAdapter.invokeGetDataModelAdapter();
+				if (this.adapter4DataModel == null) {
 					this.jPanelContent.remove(this.getJButtonApply());
+					
 				} else {
-					adapterView.setDataModel(this.networkComponent.getDataModel());
-					JComponent visualisation = adapterView.getVisualisationComponent();
+					Object dataModel = null;
+					// --- Get the Base64 encoded Vector<String> ---- 
+					Vector<String> dataModelBase64 = this.networkComponent.getDataModelBase64();
+					if (dataModelBase64!=null) {
+    					// --- Get Base64 decoded Object ------------
+    					dataModel = this.adapter4DataModel.getDataModelBase64Decoded(dataModelBase64);
+    					this.networkComponent.setDataModel(dataModel);
+	    			}
+					
+					this.adapter4DataModel.setDataModel(this.networkComponent.getDataModel());
+					JComponent visualisation = this.adapter4DataModel.getVisualisationComponent();
 					visualisation.validate();
 					jPanelContent.add(visualisation, gridBagConstraints11);
 				}
@@ -225,14 +237,23 @@ public class NetworkComponentDialog extends JDialog implements ActionListener {
 
 		if (e.getSource().equals(this.getJButtonApply())) {
 			// --- Confirmed, apply changes -----
-			this.adapterView.save();
-			Object dataModel = this.adapterView.getDataModel();
-			this.networkComponent.setDataModel(dataModel);			
+			this.adapter4DataModel.save();
+			
+			Object dataModel = this.adapter4DataModel.getDataModel();
+			Vector<String> dataModelBase64 = this.adapter4DataModel.getDataModelBase64Encoded(dataModel);
+
+			this.networkComponent.setDataModel(dataModel);
+			this.networkComponent.setDataModelBase64(dataModelBase64);
+			
 			this.graphController.getNetworkModel().getNetworkComponent(this.networkComponent.getId()).setDataModel(dataModel);
+			this.graphController.getNetworkModel().getNetworkComponent(this.networkComponent.getId()).setDataModelBase64(dataModelBase64);
+			
+			this.setVisible(false);
 			this.dispose();
 
 		} else if (e.getSource().equals(getJButtonAbort())) {
 			// --- Cancelled, discard changes ----
+			this.setVisible(false);
 			this.dispose();
 		}
 	}

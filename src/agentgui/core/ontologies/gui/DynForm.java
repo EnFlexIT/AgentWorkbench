@@ -737,6 +737,8 @@ public class DynForm extends JPanel {
 	 */
 	private boolean hasObjectMethod(Object ontologyObject, Method methode2check) {
 		
+		if (ontologyObject==null) return false;
+		
 		Method[] meths = ontologyObject.getClass().getMethods();
 		for (int i = 0; i < meths.length; i++) {
 			Method meth = meths[i];

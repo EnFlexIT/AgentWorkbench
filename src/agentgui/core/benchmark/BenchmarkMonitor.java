@@ -62,46 +62,24 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-	/** The Constant PathImage. */
 	private final static String PathImage = Application.getGlobalInfo().PathImageIntern();
-	
-	/** The icon agent gui. */
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
-	
-	/** The image agent gui. */
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 
-	/** The j content pane. */
 	private JPanel jContentPane = null;
-	
-	/** The j panel bottom right. */
 	private JPanel jPanelBottomRight = null;
-	
-	/** The j label benchmark. */
-	private JLabel jLabelBenchmark = null;
-	
-	/** The j panel bottom left. */
 	private JPanel jPanelBottomLeft = null;
 	
-	/** The j label benchmark old caption. */
+	private JLabel jLabelBenchmark = null;
 	private JLabel jLabelBenchmarkOldCaption = null;
-	
-	/** The j label benchmark old value. */
 	private JLabel jLabelBenchmarkOldValue = null;
 	
-	/** The progress bar of the benchmark window. */
 	public JProgressBar jProgressBarBenchmark = null;
 	
-	/** A button in order to skip the current benchmark execution. */
 	public JButton jButtonSkip = null;
-	
-	/** A button in order to always skip the benchmark execution (if possible). */
 	public JButton jButtonSkipAllways = null;
 	
-	/** Indicator to skip the current benchmark execution. */
 	public boolean actionSkip = false;
-	
-	/** Indicator to always skip the benchmark execution (if possible). */
 	public boolean actionSkipAllways = false;
 
 	

@@ -78,7 +78,7 @@ public class StopWatch implements Serializable {
 		this.stopWatchStop = 0;
 	}
 	/**
-	 * Returns the currently stopped time.
+	 * Returns the currently stopped time in milliseconds.
 	 * @return the long
 	 */
 	public long getTimeMeasured() {

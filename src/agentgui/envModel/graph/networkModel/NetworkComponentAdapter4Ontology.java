@@ -45,7 +45,6 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	
 	private OntologyVisualisationHelper ovh = null;
 	private OntologyInstanceViewer oiv = null;
-	private final String base64Seperator = "\n";
 	
 	
 	/**
@@ -135,30 +134,34 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	 * @see agentgui.envModel.graph.networkModel.NetworkComponentDataModelAdapter#getDataModelBase64Encoded(java.lang.Object)
 	 */
 	@Override
-	public String getDataModelBase64Encoded(Object dataModel) {
+	public Vector<String> getDataModelBase64Encoded(Object dataModel) {
 		
 		this.setDataModel(dataModel);
 		
-		String base64 = new String();
+		Vector<String> base64Vector = new Vector<String>();
 		String[] base64Array = this.getOntologyInstanceViewer().getConfigurationXML64();
 		for (int i = 0; i < base64Array.length; i++) {
-			if (base64.equals("")==false) {
-				base64 = base64 + base64Seperator;
+			if (base64Array[i]!=null) {
+				if (base64Array[i].equals("")==false) {
+					base64Vector.addElement(base64Array[i]);
+				}
 			}
-			base64 = base64 + base64Array[i];
 		} 
-		if (base64.equals("")) {
-			base64 = null;
+		if (base64Vector.isEmpty()) {
+			base64Vector=null;
+		} else if (base64Vector.size()==0) {
+			base64Vector=null;
 		}
-		return base64;
+		return base64Vector;
 	}
 
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkComponentDataModelAdapter#getDataModelBase64Decoded(java.lang.String)
 	 */
 	@Override
-	public Object getDataModelBase64Decoded(String dataModel) {
-		String[] base64Array = dataModel.split(base64Seperator);
+	public Object getDataModelBase64Decoded(Vector<String> dataModel) {
+		String[] base64Array = new String[dataModel.size()];
+		dataModel.toArray(base64Array);
 		this.getOntologyInstanceViewer().setConfigurationXML64(base64Array);
 		return this.getOntologyInstanceViewer().getConfigurationInstances();
 	}

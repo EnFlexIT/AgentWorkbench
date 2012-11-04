@@ -1,17 +1,17 @@
-<class-diagram version="1.0.7" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
-  realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
+<class-diagram version="1.0.10" icons="true" automaticImage="PNG" always-add-relationships="false" 
+  generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" corner="BOTTOM_RIGHT" language="java" name="agentgui.envModel.graph.networkModel.NetworkModel" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkModel.java" binary="false">    
     <position x="648" y="95" width="-1" height="-1"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
   </class>  
   <class id="2" corner="BOTTOM_RIGHT" language="java" name="agentgui.envModel.graph.networkModel.NetworkModelAdapter" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkModelAdapter.java" binary="false">    
-    <position x="648" y="289" width="-1" height="-1"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <position x="660" y="306" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -19,34 +19,34 @@
   <class id="3" corner="BOTTOM_RIGHT" language="java" 
     name="agentgui.envModel.graph.controller.GraphEnvironmentController" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentController.java" binary="false">    
-    <position x="249" y="158" width="-1" height="-1"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <position x="205" y="159" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
   </class>  
   <association id="4">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="5" name="graphController"/>      
-      <multiplicity id="6" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="7">    
     <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="8" name="networkModelAdapter"/>      
-      <multiplicity id="9" minimum="0" maximum="1"/>    
+      <attribute id="5" name="networkModelAdapter"/>      
+      <multiplicity id="6" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="10">    
+  <association id="7">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="11" name="alternativeNetworkModel"/>      
-      <multiplicity id="12" minimum="0" maximum="2147483647"/>    
+      <attribute id="8" name="alternativeNetworkModel"/>      
+      <multiplicity id="9" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="10">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="11" name="graphController"/>      
+      <multiplicity id="12" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="13">    
@@ -57,7 +57,8 @@
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <classifier-display autosize="true" package="true" initial-value="false" signature="true" visibility="true">    
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    visibility="true">    
     <attributes public="true" package="true" protected="true" private="true"/>    
     <operations public="true" package="true" protected="true" private="true"/>  
   </classifier-display>  

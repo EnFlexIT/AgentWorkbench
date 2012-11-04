@@ -55,6 +55,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
+import agentgui.core.gui.ProgressMonitor;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
@@ -333,7 +334,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    	baseFileName = fileName.substring(0, fileName.lastIndexOf('.'));
 				try {
 				    // Load graph topology
-				    networkModel.setGraph(getGraphMLReader(graphFile).readGraph());
+				    this.networkModel.setGraph(getGraphMLReader(graphFile).readGraph());
 		
 				} catch (FileNotFoundException e) {
 				    e.printStackTrace();
@@ -351,7 +352,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 				    JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
 				    Unmarshaller unmarsh = context.createUnmarshaller();
 				    NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(componentReader);
-				    networkModel.setNetworkComponents(compList.getComponentList());
+				    this.networkModel.setNetworkComponents(compList.getComponentList());
 		
 				    componentReader.close();
 		
@@ -368,12 +369,12 @@ public class GraphEnvironmentController extends EnvironmentController {
 		// --- Loading component type settings from the simulation setup --------------------------
 		this.loadGeneralGraphSettings();
 	
-		// --- Decode the data models that are Base64 encoded in the moment -----------------------  
-		this.setNetworkComponentDataModelBase64Decoded();
-		
 		// --- Use the local method in order to inform the observer -------------------------------
 		this.setEnvironmentModel(this.networkModel);
 
+		// --- Decode the data models that are Base64 encoded in the moment -----------------------  
+		this.setNetworkComponentDataModelBase64Decoded();
+		
 		// --- Reset Undo-Manager -----------------------------------------------------------------
 		this.networkModelAdapter.getUndoManager().discardAllEdits();
 
@@ -610,9 +611,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 		this.validateNetworkComponentAndAgents2Start();
 		this.saveGeneralGraphSettings();
 		if (networkModel != null && networkModel.getGraph() != null) {
-	
-			// --- Encode the DataModels of the NetworkComponents ---  
-			this.setNetworkComponentDataModelBase64Encoded();
 			
 		    try {
 				// Save the graph topology
@@ -748,7 +746,7 @@ public class GraphEnvironmentController extends EnvironmentController {
      */
     public Vector<NetworkModelFileImporter> getImportAdapter() {
     	if (this.importAdapter.size()==0) {
-    		importAdapter.add(new YedGraphMLFileImporter(this, "graphml", "yEd GraphML"));
+    		this.importAdapter.add(new YedGraphMLFileImporter(this, "graphml", "yEd GraphML"));
     	}
     	return this.importAdapter;
     }
@@ -762,6 +760,9 @@ public class GraphEnvironmentController extends EnvironmentController {
     	NetworkModel newNetworkModel = importer.importGraphFromFile(file);
     	if (newNetworkModel!=null) {
     		this.setNetworkModel(newNetworkModel);
+    		// --- Initially translate the data models of the  ------
+    		// --- NetworkComponents to Base64 encoded Strings ------
+    		this.setNetworkComponentDataModelBase64Encoded();
     	}
     }
     
@@ -881,62 +882,124 @@ public class GraphEnvironmentController extends EnvironmentController {
     }
     
     /**
-     * Sets the network component Base64 encoded data models to a instance.
+     * Sets the network component Base64 encoded data models to concrete instances.
      */
     private void setNetworkComponentDataModelBase64Decoded() {
     	
-    	NetworkModel networkModel = this.getNetworkModel();
-    	HashMap<String, NetworkComponent> netComps = networkModel.getNetworkComponents();
-    	for (NetworkComponent netComp : netComps.values()) {
-    		
-    		NetworkComponentAdapter netCompAdapter = networkModel.getNetworkComponentAdapter(netComp);
-    		if (netCompAdapter!=null) {
-    			String dataModelBase64 = netComp.getDataModelBase64();
-    			if (dataModelBase64!=null) {
-    				// --- Get DataModelAdapter ---------------------
-    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.invokeGetDataModelAdapter();
-    				if (netCompDataModelAdapter!=null) {
-    					// --- Get Base64 decoded Object ------------
-    					Object dataModel = netCompDataModelAdapter.getDataModelBase64Decoded(dataModelBase64);
-    	    			netComp.setDataModel(dataModel);
-    				}
-    			}
-    		}
-    		
-    	} // end for ---
+    	String title = Language.translate("Initiating network components", Language.EN);
+    	String header = Language.translate("Initiating network components and setting data model", Language.EN);
+    	String progress = Language.translate("Reading", Language.EN) + "...";
     	
+    	final ProgressMonitor pm = new ProgressMonitor(Application.getMainWindow(), title, header, progress);
+    	pm.setAllow2Cancel(false);
+    	pm.setAlwaysOnTop(true);
+    	pm.setVisible(true);
+    	
+    	Runnable decode = new Runnable() {
+			public void run() {
+				
+				String progressRun = Language.translate("Setting data model for", Language.EN) + " ";
+				
+				NetworkModel networkModel = getNetworkModel();
+		    	Object[] netCompArr = networkModel.getNetworkComponents().values().toArray();
+		    	int netCompCount = netCompArr.length;
+		    	for (int i = 0; i<netCompCount; i++) {
+		    	
+		    		NetworkComponent netComp = (NetworkComponent) netCompArr[i];
+		    		
+		    		// --- Set Progress monitor -----------------------------
+		    		float progress = (float) (((float)i/(float)netCompCount) * 100.0);
+		    		int progressInt = Math.round(progress);
+		    		pm.setProgress(progressInt);
+		    		pm.setProgressText(progressRun + netComp.getId());
+
+		    		// --- Set the components data model instance ----------- 
+		    		NetworkComponentAdapter netCompAdapter = networkModel.getNetworkComponentAdapter(netComp);
+		    		if (netCompAdapter!=null) {
+		    			Vector<String> dataModelBase64 = netComp.getDataModelBase64();
+		    			if (dataModelBase64!=null) {
+		    				// --- Get DataModelAdapter ---------------------
+		    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.invokeGetDataModelAdapter();
+		    				if (netCompDataModelAdapter!=null) {
+		    					// --- Get Base64 decoded Object ------------
+		    					Object dataModel = netCompDataModelAdapter.getDataModelBase64Decoded(dataModelBase64);
+		    	    			netComp.setDataModel(dataModel);
+		    				}
+		    			}
+		    		}
+		    		
+		    	} // end for ---
+		    	pm.setVisible(false);
+		    	pm.dispose();
+		    	
+			}
+		};
+		Thread decoder = new Thread(decode);
+		decoder.start();
+		
     }
 
     /**
-     * Sets the data models of NetworkComponent to a Base64 encoded String.
+     * Sets the instances of the NetworkComponents data models to a Base64 encoded String.
      */
     private void setNetworkComponentDataModelBase64Encoded() {
     	
-    	NetworkModel networkModel = this.getNetworkModel();
-    	HashMap<String, NetworkComponent> netComps = networkModel.getNetworkComponents();
-    	for (NetworkComponent netComp : netComps.values()) {
-    		
-    		NetworkComponentAdapter netCompAdapter = networkModel.getNetworkComponentAdapter(netComp);
-    		if (netCompAdapter!=null) {
-    			Object dataModel = netComp.getDataModel();
-    			if (dataModel==null) {
-    				// --- No data model ----------------------------
-    				netComp.setDataModelBase64(null);
-    			} else {
-    				// --- Get DataModelAdapter ---------------------
-    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.invokeGetDataModelAdapter();
-    				if (netCompDataModelAdapter==null) {
-    					// --- No DataModelAdapter found ------------
-    					netComp.setDataModelBase64(null);	
-    				} else {
-    					// --- Get Base64 encoded String ------------
-    					String dataModelBase64 = netCompDataModelAdapter.getDataModelBase64Encoded(dataModel);
-    	    			netComp.setDataModelBase64(dataModelBase64);
-    				}
-    			}
-    		}
-    		
-    	} // end for ---
+    	String title = Language.translate("Preparing network components", Language.EN);
+    	String header = Language.translate("Preparing and encoding network components for saving", Language.EN);
+    	String progress = Language.translate("Reading", Language.EN) + "...";
+    	
+    	final ProgressMonitor pm = new ProgressMonitor(Application.getMainWindow(), title, header, progress);
+    	pm.setAllow2Cancel(false);
+    	pm.setAlwaysOnTop(true);
+    	pm.setVisible(true);
+    	
+    	Runnable encode = new Runnable() {
+			public void run() {
+				
+				String progressRun = Language.translate("Base64-encoding of data model for", Language.EN) + " ";
+				
+				NetworkModel networkModel = getNetworkModel();
+		    	Object[] netCompArr = networkModel.getNetworkComponents().values().toArray();
+		    	int netCompCount = netCompArr.length;
+		    	for (int i = 0; i<netCompCount; i++) {
+		    		
+		    		NetworkComponent netComp = (NetworkComponent) netCompArr[i];
+		    		
+		    		// --- Set Progress monitor -----------------------------
+		    		float progress = (float) (((float)i/(float)netCompCount) * 100.0);
+		    		int progressInt = Math.round(progress);
+		    		pm.setProgress(progressInt);
+		    		pm.setProgressText(progressRun + netComp.getId());
+		    		
+		    		// --- Set the components data model as Base64 ----------
+		    		NetworkComponentAdapter netCompAdapter = networkModel.getNetworkComponentAdapter(netComp);
+		    		if (netCompAdapter!=null) {
+		    			Object dataModel = netComp.getDataModel();
+		    			if (dataModel==null) {
+		    				// --- No data model ----------------------------
+		    				netComp.setDataModelBase64(null);
+		    			} else {
+		    				// --- Get DataModelAdapter ---------------------
+		    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.invokeGetDataModelAdapter();
+		    				if (netCompDataModelAdapter==null) {
+		    					// --- No DataModelAdapter found ------------
+		    					netComp.setDataModelBase64(null);	
+		    				} else {
+		    					// --- Get Base64 encoded String ------------
+		    					Vector<String> dataModelBase64 = netCompDataModelAdapter.getDataModelBase64Encoded(dataModel);
+		    	    			netComp.setDataModelBase64(dataModelBase64);
+		    				}
+		    			}
+		    		}
+		    		
+		    	} // end for ---
+		    	pm.setVisible(false);
+		    	pm.dispose();
+
+			}
+    	};
+		Thread encoder = new Thread(encode);
+		encoder.start();
     	
     }
 

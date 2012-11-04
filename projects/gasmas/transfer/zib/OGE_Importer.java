@@ -155,7 +155,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 			
 		// --------------------------------------------------------------------
 		this.graphController.getProject().projectWindow.setCursor(Cursor.getDefaultCursor());
-		return null;
+		return this.graphController.getNetworkModel();
 	}
 
 	

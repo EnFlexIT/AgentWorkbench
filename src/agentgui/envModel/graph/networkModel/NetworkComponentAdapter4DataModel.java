@@ -28,6 +28,8 @@
  */
 package agentgui.envModel.graph.networkModel;
 
+import java.util.Vector;
+
 import jade.content.Concept;
 
 import javax.swing.JComponent;
@@ -79,15 +81,15 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * @param dataModel the data model
 	 * @return the data model encoded as Base64 String
 	 */
-	public abstract String getDataModelBase64Encoded(Object dataModel);
+	public abstract Vector<String> getDataModelBase64Encoded(Object dataModel);
 	
 	/**
 	 * Returns the data model of a {@link NetworkComponent} as Object 
 	 * specified by a Base64 encoded String.
 	 *
-	 * @param dataModel the data model
+	 * @param dataModel the data model as String Vector
 	 * @return the data model base64 decode
 	 */
-	public abstract Object getDataModelBase64Decoded(String dataModel);
+	public abstract Object getDataModelBase64Decoded(Vector<String> dataModel);
 	
 }
