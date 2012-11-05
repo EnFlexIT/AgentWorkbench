@@ -58,29 +58,31 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private Project CurrProject;
+	private Project currProject;
+
+	private JLabel jLableTitleProject = null;
+	private JLabel jLableDescription = null;
+	private JLabel jLableFolder = null;
 	
-	private JTextField ProjectName = null;
-	private DocumentListener ProjectNameDocumentListener;  //  @jve:decl-index=0:
-	private JLabel TitleProject = null;
+	private JTextField projectName = null;
 	private JScrollPane jScrollPane = null;
-	private JTextArea ProjectDescription = null;
-	private JTextField ProjectFolder = null;
-	private JLabel TitleDescription = null;
-	private JLabel TitleFolder = null;
+	private JTextArea jTextAreaProjectDescription = null;
+	private DocumentListener projectNameDocumentListener;  //  @jve:decl-index=0:
+	private JTextField jTextFieldProjectFolder = null;
+	
 	/**
 	 * This is the default constructor
 	 */
 	public ProjectInfo( Project CP ) {
 		super();
-		this.CurrProject = CP;
-		this.CurrProject.addObserver(this);		
+		this.currProject = CP;
+		this.currProject.addObserver(this);		
 		initialize();
 		
 		// --- Sprachspezifische Einstellungen -----------------
-		TitleProject.setText( Language.translate("Projekttitel") );
-		TitleDescription.setText( Language.translate("Beschreibung") );
-		TitleFolder.setText( Language.translate("Verzeichnis") );
+		jLableTitleProject.setText( Language.translate("Projekttitel") );
+		jLableDescription.setText( Language.translate("Beschreibung") );
+		jLableFolder.setText( Language.translate("Verzeichnis") );
 	}
 
 	/**
@@ -95,19 +97,19 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		gridBagConstraints5.insets = new Insets(0, 10, 10, 5);
 		gridBagConstraints5.anchor = GridBagConstraints.WEST;
 		gridBagConstraints5.gridy = 2;
-		TitleFolder = new JLabel();
-		TitleFolder.setText("JLabel");
-		TitleFolder.setFont(new Font("Dialog", Font.BOLD, 14));
-		TitleFolder.setText( Language.translate("Beschreibung") );
+		jLableFolder = new JLabel();
+		jLableFolder.setText("JLabel");
+		jLableFolder.setFont(new Font("Dialog", Font.BOLD, 14));
+		jLableFolder.setText( Language.translate("Beschreibung") );
 		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 		gridBagConstraints4.gridx = 0;
 		gridBagConstraints4.anchor = GridBagConstraints.NORTHWEST;
 		gridBagConstraints4.insets = new Insets(2, 10, 0, 5);
 		gridBagConstraints4.gridy = 1;
-		TitleDescription = new JLabel();
-		TitleDescription.setText("JLabel");
-		TitleDescription.setFont(new Font("Dialog", Font.BOLD, 14));
-		TitleDescription.setText( Language.translate("Beschreibung") );		
+		jLableDescription = new JLabel();
+		jLableDescription.setText("JLabel");
+		jLableDescription.setFont(new Font("Dialog", Font.BOLD, 14));
+		jLableDescription.setText( Language.translate("Beschreibung") );		
 		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 		gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints3.gridy = 2;
@@ -127,9 +129,9 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		gridBagConstraints1.insets = new Insets(0, 10, 0, 5);
 		gridBagConstraints1.anchor = GridBagConstraints.WEST;
 		gridBagConstraints1.gridy = 0;
-		TitleProject = new JLabel();
-		TitleProject.setText("JLabel");
-		TitleProject.setFont(new Font("Dialog", Font.BOLD, 14));
+		jLableTitleProject = new JLabel();
+		jLableTitleProject.setText("JLabel");
+		jLableTitleProject.setFont(new Font("Dialog", Font.BOLD, 14));
 		GridBagConstraints gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.gridx = 2;
@@ -138,11 +140,11 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		this.setSize(557, 329);
 		this.setLayout(new GridBagLayout());
 		this.add(getProjectName(), gridBagConstraints);
-		this.add(TitleProject, gridBagConstraints1);
+		this.add(jLableTitleProject, gridBagConstraints1);
 		this.add(getJScrollPane(), gridBagConstraints2);
 		this.add(getProjectFolder(), gridBagConstraints3);
-		this.add(TitleDescription, gridBagConstraints4);
-		this.add(TitleFolder, gridBagConstraints5);
+		this.add(jLableDescription, gridBagConstraints4);
+		this.add(jLableFolder, gridBagConstraints5);
 	}
 
 	/**
@@ -151,27 +153,27 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	 * @return javax.swing.JTextField	
 	 */
 	private JTextField getProjectName() {
-		if (ProjectName == null) {
-			ProjectName = new JTextField();
-			ProjectName.setBounds(new Rectangle(140, 15, 520, 26));
-			ProjectName.setName("ProjectTitel");
-			ProjectName.setFont(new Font("Dialog", Font.PLAIN, 12));
-			ProjectName.setText( CurrProject.getProjectName() );
-			ProjectNameDocumentListener = new DocumentListener() {
+		if (projectName == null) {
+			projectName = new JTextField();
+			projectName.setBounds(new Rectangle(140, 15, 520, 26));
+			projectName.setName("ProjectTitel");
+			projectName.setFont(new Font("Dialog", Font.PLAIN, 12));
+			projectName.setText( currProject.getProjectName() );
+			projectNameDocumentListener = new DocumentListener() {
 				public void removeUpdate(DocumentEvent e) {
-					CurrProject.setProjectName( ProjectName.getText() );
+					currProject.setProjectName( projectName.getText() );
 				}
 				public void insertUpdate(DocumentEvent e) {
-					CurrProject.setProjectName( ProjectName.getText() );
+					currProject.setProjectName( projectName.getText() );
 				}
 				public void changedUpdate(DocumentEvent e) {
-					CurrProject.setProjectName( ProjectName.getText() );
+					currProject.setProjectName( projectName.getText() );
 				}
 			};
-			ProjectName.getDocument().addDocumentListener(ProjectNameDocumentListener);
+			projectName.getDocument().addDocumentListener(projectNameDocumentListener);
 			
 		}
-		return ProjectName;
+		return projectName;
 	}
 
 	/**
@@ -193,28 +195,28 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	 * @return javax.swing.JTextArea	
 	 */
 	private JTextArea getProjectDescription() {
-		if (ProjectDescription == null) {
-			ProjectDescription = new JTextArea();
-			ProjectDescription.setName("ProjectDescription");
-			ProjectDescription.setColumns(0);
-			ProjectDescription.setLineWrap(true);
-			ProjectDescription.setWrapStyleWord(true);
-			ProjectDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
-			ProjectDescription.setText( CurrProject.getProjectDescription() );
-			ProjectDescription.setCaretPosition(0);
-			ProjectDescription.getDocument().addDocumentListener( new DocumentListener() {
+		if (jTextAreaProjectDescription == null) {
+			jTextAreaProjectDescription = new JTextArea();
+			jTextAreaProjectDescription.setName("ProjectDescription");
+			jTextAreaProjectDescription.setColumns(0);
+			jTextAreaProjectDescription.setLineWrap(true);
+			jTextAreaProjectDescription.setWrapStyleWord(true);
+			jTextAreaProjectDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextAreaProjectDescription.setText( currProject.getProjectDescription() );
+			jTextAreaProjectDescription.setCaretPosition(0);
+			jTextAreaProjectDescription.getDocument().addDocumentListener( new DocumentListener() {
 				public void removeUpdate(DocumentEvent e) {
-					CurrProject.setProjectDescription( ProjectDescription.getText() );
+					currProject.setProjectDescription( jTextAreaProjectDescription.getText() );
 				}
 				public void insertUpdate(DocumentEvent e) {
-					CurrProject.setProjectDescription( ProjectDescription.getText() );
+					currProject.setProjectDescription( jTextAreaProjectDescription.getText() );
 				}
 				public void changedUpdate(DocumentEvent e) {
-					CurrProject.setProjectDescription( ProjectDescription.getText() );
+					currProject.setProjectDescription( jTextAreaProjectDescription.getText() );
 				}
 			});
 		}
-		return ProjectDescription;
+		return jTextAreaProjectDescription;
 	}
 
 	/**
@@ -223,15 +225,15 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	 * @return javax.swing.JTextField	
 	 */
 	private JTextField getProjectFolder() {
-		if (ProjectFolder == null) {
-			ProjectFolder = new JTextField();
-			ProjectFolder.setName("ProjectFolder");
-			ProjectFolder.setBounds(new Rectangle(140, 285, 520, 26));
-			ProjectFolder.setFont(new Font("Dialog", Font.PLAIN, 12));
-			ProjectFolder.setEditable( false );
-			ProjectFolder.setText( CurrProject.getProjectFolderFullPath() );			
+		if (jTextFieldProjectFolder == null) {
+			jTextFieldProjectFolder = new JTextField();
+			jTextFieldProjectFolder.setName("ProjectFolder");
+			jTextFieldProjectFolder.setBounds(new Rectangle(140, 285, 520, 26));
+			jTextFieldProjectFolder.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldProjectFolder.setEditable( false );
+			jTextFieldProjectFolder.setText( currProject.getProjectFolderFullPath() );			
 		}
-		return ProjectFolder;
+		return jTextFieldProjectFolder;
 	}
 	
 	@Override
@@ -242,13 +244,13 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		
 		String ObjectName = OName.toString();
 		if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectName ) ) {
-			if ( ProjectName.isFocusOwner() == false ) {
-				ProjectName.setText( CurrProject.getProjectName() );				
+			if ( projectName.isFocusOwner() == false ) {
+				projectName.setText( currProject.getProjectName() );				
 			}								
 		}			
 		else if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectDescription ) ) {
-			if ( ProjectDescription.isFocusOwner() == false ) {
-				ProjectDescription.setText( CurrProject.getProjectDescription() );
+			if ( jTextAreaProjectDescription.isFocusOwner() == false ) {
+				jTextAreaProjectDescription.setText( currProject.getProjectDescription() );
 			}
 		}			
 		else {
@@ -266,14 +268,14 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		//System.out.println( "Auslöser => " + Trigger );
 
 		// --- Fallunterscheidung 'Auslöser' -----------------------------
-		if ( Trigger == ProjectName ) {
-			CurrProject.setProjectName( ae.getActionCommand() );
+		if ( Trigger == projectName ) {
+			currProject.setProjectName( ae.getActionCommand() );
 		}
-		else if ( Trigger == ProjectFolder ) {
-			CurrProject.setProjectFolder( ae.getActionCommand() );
+		else if ( Trigger == jTextFieldProjectFolder ) {
+			currProject.setProjectFolder( ae.getActionCommand() );
 		}
-		else if ( Trigger == ProjectDescription ) {
-			CurrProject.setProjectDescription( ae.getActionCommand() );
+		else if ( Trigger == jTextAreaProjectDescription ) {
+			currProject.setProjectDescription( ae.getActionCommand() );
 		}
 		else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);

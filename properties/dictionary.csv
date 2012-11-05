@@ -292,7 +292,7 @@ de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hier
 de;Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?;Do you want to take over the CSV version of the dictionary now?;;;
 de;Möchten Sie einen weiteren Agenten dieser Art starten?;Do you want to start another agent of this kind?
 de;N - Threads;N - Threads
-de;Nach Update suchen ...;;;;
+de;Nach Update suchen ...;Search for Update ...;;;
 de;Nach Update suchen;Check for Update;;;
 de;Nach Updates suchen;Search for updates;;;
 de;Name bereits vorhanden!;Name already exists!
@@ -504,6 +504,8 @@ de;Wörterbuch;Dictionary
 de;X Wert;X value;;;
 de;XML-Dateien;XML files
 de;XML;XML
+de;Zeitmodell verwenden;Use a time model;;;
+de;Zeitmodell;Time model;;;
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
 de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project .;null;null;null
 de;Zurücksetzen;Reset

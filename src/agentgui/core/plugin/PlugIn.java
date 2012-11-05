@@ -352,6 +352,8 @@ public abstract class PlugIn implements Observer {
 			this.onProjectChangedEnvironmentModel();
 		} else if (updateObject.equals(Project.CHANGED_StartArguments4BaseAgent)) {
 			this.onProjectChangedAgentStartConfiguration();
+		} else if (updateObject.equals(Project.CHANGED_TimeModelClass)) {
+			this.onProjectChangedTimeModelConfiguration();
 		} else if (updateObject.equals(Project.CHANGED_ProjectOntology)) {
 			this.onProjectChangedProjectOntology();
 		} else if (updateObject.equals(Project.CHANGED_ProjectResources)) {
@@ -439,6 +441,9 @@ public abstract class PlugIn implements Observer {
 	
 	/** On project changed agent start configuration. */
 	protected void onProjectChangedAgentStartConfiguration() { }
+	
+	/** On project changed TimeModel configuration. */
+	protected void onProjectChangedTimeModelConfiguration() { }
 	
 	/** On project changed project resources. */
 	protected void onProjectChangedProjectResources() {	}

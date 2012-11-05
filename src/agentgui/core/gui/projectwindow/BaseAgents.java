@@ -122,7 +122,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	/**
 	 * This is the default constructor
 	 */
-	public BaseAgents( Project project ) {
+	public BaseAgents(Project project) {
 		super();
 		this.currProject = project;
 		this.currProject.addObserver(this);	

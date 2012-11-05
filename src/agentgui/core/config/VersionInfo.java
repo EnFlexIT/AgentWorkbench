@@ -129,7 +129,7 @@ public class VersionInfo extends Properties {
 
 		versionInfo += this.getVersionMajor() + "." + this.getVersionMinor() + " " + newLineString;
 		versionInfo += "revision " + this.getVersionBuild() + " (" + dateString + ")"; 
-		return versionInfo;
+		return versionInfo.replaceAll("  ", " ");
 	}
 	
 	/**

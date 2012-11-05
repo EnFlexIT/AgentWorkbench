@@ -107,6 +107,8 @@ import agentgui.core.webserver.JarFileCreator;
 	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_StartArguments4BaseAgent = "StartArguments4BaseAgents";
 	/** Constant value in order to inform the Observer about changes of this kind */
+	@XmlTransient public static final String CHANGED_TimeModelClass = "TimeModelConfiguration";
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectOntology = "ProjectOntology";
 	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectResources = "ProjectResources";
@@ -209,6 +211,12 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	@XmlElement(name="agentStartConfiguration")
 	private AgentStartConfiguration agentStartConfiguration = null;
+	
+	/**
+	 * Configuration settings for the TimeModel used in this Project  
+	 */
+	@XmlElement(name="timeModelClass")
+	private String timeModelClass;
 	
 	/**
 	 * This field manages the configuration of JADE (e. g. JADE-Port 1099 etc.)
@@ -914,6 +922,25 @@ import agentgui.core.webserver.JarFileCreator;
 		isUnsaved = true;
 		setChanged();
 		notifyObservers(CHANGED_StartArguments4BaseAgent);
+	}
+
+	/**
+	 * Sets the time model class and configuration for this project.
+	 * @param timeModelConfiguration the new time model class
+	 */
+	public void setTimeModelClass(String timeModelClass) {
+		this.timeModelClass = timeModelClass;
+		isUnsaved = true;
+		setChanged();
+		notifyObservers(CHANGED_TimeModelClass);
+	}
+	/**
+	 * Returns the time model class and configuration for this Project.
+	 * @return the time model class
+	 */
+	@XmlTransient
+	public String getTimeModelClass() {
+		return timeModelClass;
 	}
 
 	/**

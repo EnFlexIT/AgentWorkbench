@@ -2,7 +2,7 @@
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" corner="BOTTOM_RIGHT" language="java" name="agentgui.simulationService.time.TimeModel" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/time/TimeModel.java" binary="false">    
-    <position x="492" y="122" width="-1" height="-1"/>    
+    <position x="512" y="122" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -10,7 +10,7 @@
   </class>  
   <class id="2" corner="BOTTOM_RIGHT" language="java" name="agentgui.simulationService.time.TimeModelContinuous" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/time/TimeModelContinuous.java" binary="false">    
-    <position x="732" y="368" width="-1" height="-1"/>    
+    <position x="848" y="368" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -18,7 +18,7 @@
   </class>  
   <class id="3" corner="BOTTOM_RIGHT" language="java" name="agentgui.simulationService.time.TimeModelDiscrete" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/time/TimeModelDiscrete.java" binary="false">    
-    <position x="492" y="402" width="-1" height="-1"/>    
+    <position x="512" y="402" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -26,7 +26,7 @@
   </class>  
   <class id="4" corner="BOTTOM_RIGHT" language="java" name="agentgui.simulationService.time.TimeModelStroke" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/time/TimeModelStroke.java" binary="false">    
-    <position x="268" y="376" width="-1" height="-1"/>    
+    <position x="165" y="376" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -34,30 +34,30 @@
   </class>  
   <class id="5" corner="BOTTOM_RIGHT" language="java" name="agentgui.simulationService.time.StopWatch" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/time/StopWatch.java" binary="false">    
-    <position x="731" y="123" width="-1" height="-1"/>    
+    <position x="848" y="122" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <association id="6">    
+  <generalization id="6">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="7">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <association id="8">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="7" name="stopWatch"/>      
-      <multiplicity id="8" minimum="0" maximum="1"/>    
+      <attribute id="9" name="stopWatch"/>      
+      <multiplicity id="10" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="9">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <generalization id="10">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
   <generalization id="11">    
-    <end type="SOURCE" refId="2"/>    
+    <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

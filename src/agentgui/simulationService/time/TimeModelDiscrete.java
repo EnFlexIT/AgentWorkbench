@@ -28,6 +28,7 @@
  */
 package agentgui.simulationService.time;
 
+
 /**
  * This is a discrete time model, which can either start from 0 or 
  * from a specified time. Additionally the step width in time has to 
@@ -104,6 +105,21 @@ public class TimeModelDiscrete extends TimeModel {
 	 */
 	public void setStep(Long step) {
 		this.step = step;
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration()
+	 */
+	@Override
+	public DisplayJPanel4Configuration getJPanel4Configuration() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
+	 */
+	@Override
+	public DisplayJToolBar4Execution getJToolBar4Execution() {
+		return null;
 	}
 	
 }

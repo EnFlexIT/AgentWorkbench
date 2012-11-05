@@ -23,8 +23,9 @@
             </agent>
         </agentVector>
     </agentStartConfiguration>
+    <timeModelClass>agentgui.simulationService.time.TimeModelDiscrete</timeModelClass>
     <jadeConfiguration>
-        <useLocalPort>1298</useLocalPort>
+        <useLocalPort>1099</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -56,7 +57,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>TestImport</simulationSetupCurrent>
+    <simulationSetupCurrent>Einfaches Netz</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>

@@ -34,6 +34,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -50,6 +51,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import agentgui.core.application.Application;
@@ -61,6 +63,7 @@ import agentgui.core.plugin.PlugInListElement;
 import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.project.Project;
 import agentgui.core.resources.Resources2Display;
+import agentgui.simulationService.time.TimeModel;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'Resources'
@@ -98,21 +101,30 @@ public class ProjectResources extends JPanel implements Observer {
 	private JLabel jLabelEnvTyp = null;
 	private JLabel jLabelResources = null;
 	private JLabel jLabelPlugIns = null;
+
+	private JPanel jPanelTimeModelSelection = null;
+	private JLabel jLabelTimeModelClass = null;
+	private JTextField jTextFieldTimeModelClass = null;
+	private JButton jButtonDefaultTimeModel = null;
+	private JButton jButtonSelectTimeModel = null;
 	
 	
 	/**
 	 * This is the default constructor
 	 */
-	public ProjectResources(Project cp) {
+	public ProjectResources(Project project) {
 		super();
-		this.currProject = cp;
+		this.currProject = project;
 		this.currProject.addObserver(this);
 		
 		this.initialize();
 		
 		// --- Fill the list model for the external resources -------
 		jListResources.setModel(currProject.getProjectResources().getResourcesListModel());
-
+		
+		// --- Display the current TimeModel class ------------------
+		jTextFieldTimeModelClass.setText(this.currProject.getTimeModelClass());
+		
 		// --- Set the translations ---------------------------------
 		jLabelEnvTyp.setText(Language.translate("Umgebungstyp bzw. -modell für Simulation und Visualisierung"));
 		jLabelResources.setText(Language.translate("Externe jar-Ressourcen"));
@@ -128,6 +140,11 @@ public class ProjectResources extends JPanel implements Observer {
 		
 	}
 
+	/**
+	 * Adjust string.
+	 * @param path the path
+	 * @return the string
+	 */
 	private String adjustString(String path) {
 		final String projectFolder = currProject.getProjectFolderFullPath();
 		if (path.startsWith(projectFolder)) {
@@ -137,11 +154,19 @@ public class ProjectResources extends JPanel implements Observer {
 		}
 		return path;
 	}
-
+	/**
+	 * Already there.
+	 * @param path the path
+	 * @return true, if successful
+	 */
 	private boolean alreadyThere(String path) {
 		return currProject.getProjectResources().contains(path);
 	}
-
+	/**
+	 * Adjust paths.
+	 * @param files the files
+	 * @return the vector
+	 */
 	private Vector<String> adjustPaths(File[] files) {
 		
 		Vector<String> result = new Vector<String>();
@@ -172,79 +197,11 @@ public class ProjectResources extends JPanel implements Observer {
 		}
 		return result;
 	}
-
 	/**
-	 * This method initializes this
-	 * 
-	 * @return void
+	 * Handle directories.
+	 * @param dir the dir
+	 * @return the vector
 	 */
-	private void initialize() {
-		GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
-		gridBagConstraints31.gridx = 1;
-		gridBagConstraints31.anchor = GridBagConstraints.NORTH;
-		gridBagConstraints31.insets = new Insets(5, 5, 5, 10);
-		gridBagConstraints31.gridy = 5;
-		GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
-		gridBagConstraints22.fill = GridBagConstraints.BOTH;
-		gridBagConstraints22.gridy = 5;
-		gridBagConstraints22.weightx = 1.0;
-		gridBagConstraints22.weighty = 0.5;
-		gridBagConstraints22.insets = new Insets(5, 10, 0, 5);
-		gridBagConstraints22.anchor = GridBagConstraints.NORTH;
-		gridBagConstraints22.gridx = 0;
-		GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
-		gridBagConstraints13.gridx = 0;
-		gridBagConstraints13.insets = new Insets(10, 10, 0, 0);
-		gridBagConstraints13.anchor = GridBagConstraints.WEST;
-		gridBagConstraints13.gridy = 4;
-		jLabelPlugIns = new JLabel();
-		jLabelPlugIns.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelPlugIns.setText("PlugIns");
-		GridBagConstraints gridBagConstraints32 = new GridBagConstraints();
-		gridBagConstraints32.gridx = 0;
-		gridBagConstraints32.anchor = GridBagConstraints.WEST;
-		gridBagConstraints32.insets = new Insets(10, 10, 0, 0);
-		gridBagConstraints32.gridy = 2;
-		jLabelResources = new JLabel();
-		jLabelResources.setText("Externe jar-Ressourcen");
-		jLabelResources.setFont(new Font("Dialog", Font.BOLD, 12));
-		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
-		gridBagConstraints21.gridx = 0;
-		gridBagConstraints21.insets = new Insets(10, 10, 0, 5);
-		gridBagConstraints21.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints21.gridy = 1;
-		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-		gridBagConstraints11.fill = GridBagConstraints.BOTH;
-		gridBagConstraints11.weighty = 0.5;
-		gridBagConstraints11.gridx = 0;
-		gridBagConstraints11.gridy = 3;
-		gridBagConstraints11.insets = new Insets(5, 10, 0, 5);
-		gridBagConstraints11.anchor = GridBagConstraints.NORTH;
-		gridBagConstraints11.weightx = 1.0;
-		GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
-		gridBagConstraints12.gridx = 1;
-		gridBagConstraints12.fill = GridBagConstraints.NONE;
-		gridBagConstraints12.insets = new Insets(5, 5, 5, 10);
-		gridBagConstraints12.anchor = GridBagConstraints.NORTH;
-		gridBagConstraints12.gridy = 3;
-		GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.fill = GridBagConstraints.BOTH;
-		gridBagConstraints.gridy = 0;
-		gridBagConstraints.weightx = 1.0;
-		gridBagConstraints.weighty = 1.0;
-		gridBagConstraints.insets = new Insets(10, 10, 5, 10);
-		gridBagConstraints.gridx = 0;
-		this.setSize(727, 392);
-		this.setLayout(new GridBagLayout());
-		this.add(getJPanelRight(), gridBagConstraints12);
-		this.add(getJScrollPane(), gridBagConstraints11);
-		this.add(getJPanelSimulationEnvironment(), gridBagConstraints21);
-		this.add(jLabelResources, gridBagConstraints32);
-		this.add(jLabelPlugIns, gridBagConstraints13);
-		this.add(getJScrollPanePlugIns(), gridBagConstraints22);
-		this.add(getJPanelRightPlugIns(), gridBagConstraints31);
-	}
-
 	private Vector<String> handleDirectories(File dir) {
 		Vector<String> result = new Vector<String>();
 		try {
@@ -254,6 +211,85 @@ public class ProjectResources extends JPanel implements Observer {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	/**
+	 * Initialize this JPanel.
+	 */
+	private void initialize() {
+		
+		GridBagConstraints gridBagConstraints34 = new GridBagConstraints();
+		gridBagConstraints34.gridx = 0;
+		gridBagConstraints34.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints34.insets = new Insets(10, 10, 0, 5);
+		gridBagConstraints34.gridy = 2;
+		GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
+		gridBagConstraints31.gridx = 1;
+		gridBagConstraints31.anchor = GridBagConstraints.NORTH;
+		gridBagConstraints31.insets = new Insets(5, 5, 5, 10);
+		gridBagConstraints31.gridy = 6;
+		GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
+		gridBagConstraints22.fill = GridBagConstraints.BOTH;
+		gridBagConstraints22.gridy = 6;
+		gridBagConstraints22.weightx = 1.0;
+		gridBagConstraints22.weighty = 0.5;
+		gridBagConstraints22.insets = new Insets(5, 10, 0, 5);
+		gridBagConstraints22.anchor = GridBagConstraints.NORTH;
+		gridBagConstraints22.gridx = 0;
+		GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
+		gridBagConstraints13.gridx = 0;
+		gridBagConstraints13.insets = new Insets(10, 10, 0, 0);
+		gridBagConstraints13.anchor = GridBagConstraints.WEST;
+		gridBagConstraints13.gridy = 5;
+		GridBagConstraints gridBagConstraints32 = new GridBagConstraints();
+		gridBagConstraints32.gridx = 0;
+		gridBagConstraints32.anchor = GridBagConstraints.WEST;
+		gridBagConstraints32.insets = new Insets(10, 10, 0, 0);
+		gridBagConstraints32.gridy = 3;
+		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
+		gridBagConstraints21.gridx = 0;
+		gridBagConstraints21.insets = new Insets(10, 10, 0, 5);
+		gridBagConstraints21.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints21.gridy = 1;
+		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+		gridBagConstraints11.fill = GridBagConstraints.BOTH;
+		gridBagConstraints11.weighty = 0.5;
+		gridBagConstraints11.gridx = 0;
+		gridBagConstraints11.gridy = 4;
+		gridBagConstraints11.insets = new Insets(5, 10, 0, 5);
+		gridBagConstraints11.anchor = GridBagConstraints.NORTH;
+		gridBagConstraints11.weightx = 1.0;
+		GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
+		gridBagConstraints12.gridx = 1;
+		gridBagConstraints12.fill = GridBagConstraints.NONE;
+		gridBagConstraints12.insets = new Insets(5, 5, 5, 10);
+		gridBagConstraints12.anchor = GridBagConstraints.NORTH;
+		gridBagConstraints12.gridy = 4;
+		GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.fill = GridBagConstraints.BOTH;
+		gridBagConstraints.gridy = 0;
+		gridBagConstraints.weightx = 1.0;
+		gridBagConstraints.weighty = 1.0;
+		gridBagConstraints.insets = new Insets(10, 10, 5, 10);
+		gridBagConstraints.gridx = 0;
+		
+		jLabelPlugIns = new JLabel();
+		jLabelPlugIns.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabelPlugIns.setText("PlugIns");
+		jLabelResources = new JLabel();
+		jLabelResources.setText("Externe jar-Ressourcen");
+		jLabelResources.setFont(new Font("Dialog", Font.BOLD, 12));
+		
+		this.setSize(727, 392);
+		this.setLayout(new GridBagLayout());
+		this.add(getJPanelRight(), gridBagConstraints12);
+		this.add(getJScrollPane(), gridBagConstraints11);
+		this.add(getJPanelSimulationEnvironment(), gridBagConstraints21);
+		this.add(jLabelResources, gridBagConstraints32);
+		this.add(jLabelPlugIns, gridBagConstraints13);
+		this.add(getJScrollPanePlugIns(), gridBagConstraints22);
+		this.add(getJPanelRightPlugIns(), gridBagConstraints31);
+		this.add(getJPanelTimeModelSelection(), gridBagConstraints34);
 	}
 
 	/**
@@ -625,6 +661,132 @@ public class ProjectResources extends JPanel implements Observer {
 		}
 	}
 
+	/**
+	 * This method initializes jPanelTimeModelSelection	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelTimeModelSelection() {
+		if (jPanelTimeModelSelection == null) {
+			GridBagConstraints gridBagConstraints29 = new GridBagConstraints();
+			gridBagConstraints29.insets = new Insets(5, 5, 0, 0);
+			gridBagConstraints29.gridy = 1;
+			gridBagConstraints29.gridx = 1;
+			GridBagConstraints gridBagConstraints51 = new GridBagConstraints();
+			gridBagConstraints51.fill = GridBagConstraints.NONE;
+			gridBagConstraints51.gridx = 2;
+			gridBagConstraints51.gridy = 1;
+			gridBagConstraints51.insets = new Insets(5, 5, 0, 0);
+			GridBagConstraints gridBagConstraints33 = new GridBagConstraints();
+			gridBagConstraints33.anchor = GridBagConstraints.WEST;
+			gridBagConstraints33.insets = new Insets(5, 0, 0, 0);
+			gridBagConstraints33.gridx = 0;
+			gridBagConstraints33.gridy = 1;
+			gridBagConstraints33.weightx = 1.0;
+			gridBagConstraints33.fill = GridBagConstraints.BOTH;
+			GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
+			gridBagConstraints41.anchor = GridBagConstraints.WEST;
+			gridBagConstraints41.gridy = 0;
+			gridBagConstraints41.gridx = 0;
+			
+			jLabelTimeModelClass = new JLabel();
+			jLabelTimeModelClass.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelTimeModelClass.setText("Zeitmodell");
+			jLabelTimeModelClass.setText(Language.translate(jLabelTimeModelClass.getText()));
+			
+			jPanelTimeModelSelection = new JPanel();
+			jPanelTimeModelSelection.setLayout(new GridBagLayout());
+			jPanelTimeModelSelection.add(jLabelTimeModelClass, gridBagConstraints41);
+			jPanelTimeModelSelection.add(getJTextFieldTimeModelClass(), gridBagConstraints33);
+			jPanelTimeModelSelection.add(getJButtonDefaultTimeModel(), gridBagConstraints51);
+			jPanelTimeModelSelection.add(getJButtonSelectTimeModel(), gridBagConstraints29);
+		}
+		return jPanelTimeModelSelection;
+	}
+	/**
+	 * This method initializes jTextFieldTimeModelClass	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getJTextFieldTimeModelClass() {
+		if (jTextFieldTimeModelClass == null) {
+			jTextFieldTimeModelClass = new JTextField();
+			jTextFieldTimeModelClass.setPreferredSize(new Dimension(400, 26));
+			jTextFieldTimeModelClass.setEditable(false);
+		}
+		return jTextFieldTimeModelClass;
+	}
+	/**
+	 * This method initializes jButtonDefaultTimeModel	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonDefaultTimeModel() {
+		if (jButtonDefaultTimeModel == null) {
+			jButtonDefaultTimeModel = new JButton();
+			jButtonDefaultTimeModel.setPreferredSize(new Dimension(45, 26));
+			jButtonDefaultTimeModel.setBounds(new Rectangle(120, 121, 80, 26));
+			jButtonDefaultTimeModel.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
+			jButtonDefaultTimeModel.setToolTipText("Agent.GUI - Standard verwenden");
+			jButtonDefaultTimeModel.setToolTipText(Language.translate(jButtonDefaultTimeModel.getToolTipText()));
+			jButtonDefaultTimeModel.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					currProject.setTimeModelClass(null);
+				}
+			});
+		}
+		return jButtonDefaultTimeModel;
+	}
+	/**
+	 * This method initializes jButtonSelectTimeModel	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonSelectTimeModel() {
+		if (jButtonSelectTimeModel == null) {
+			jButtonSelectTimeModel = new JButton();
+			jButtonSelectTimeModel.setPreferredSize(new Dimension(45, 26));
+			jButtonSelectTimeModel.setIcon(new ImageIcon(getClass().getResource(PathImage + "Search.png")));
+			jButtonSelectTimeModel.setToolTipText("Klasse auswählen");
+			jButtonSelectTimeModel.setToolTipText(Language.translate(jButtonSelectTimeModel.getToolTipText()));
+			jButtonSelectTimeModel.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					selectTimeModelClass();
+				}
+			});
+			
+		}
+		return jButtonSelectTimeModel;
+	}
+
+	/**
+	 * Select the TimeModel class for this Project.
+	 * @return the selected TimeModel class 
+	 */
+	private void selectTimeModelClass() {
+		
+		Class<?> search4Class = null;
+		String 	 search4CurrentValue = null;
+		String 	 search4DefaultValue = null;
+		String   search4Description = null;
+
+		search4Class = TimeModel.class;
+		search4CurrentValue = this.currProject.getTimeModelClass();
+		search4DefaultValue = null;
+		search4Description = jLabelTimeModelClass.getText();
+
+		ClassSelector cs = new ClassSelector(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
+		cs.setVisible(true);
+		// --- act in the dialog ... --------------------
+		if (cs.isCanceled()==false) {
+			this.currProject.setTimeModelClass(cs.getClassSelected());
+		}
+		cs.dispose();
+		cs = null;
+		// ----------------------------------------------
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
 	@Override
 	public void update(Observable o, Object updated) {
 		
@@ -645,9 +807,11 @@ public class ProjectResources extends JPanel implements Observer {
 				this.getJComboBoxEnvironmentModelSelector().setSelectedItem(this.currProject.getEnvironmentModelType());	
 			}
 		
-		}
+		} else if (updated.equals(Project.CHANGED_TimeModelClass)) {
+			this.getJTextFieldTimeModelClass().setText(this.currProject.getTimeModelClass());
+			
+		} 
 		
 	}
-
 	
 } //  @jve:decl-index=0:visual-constraint="-105,-76"

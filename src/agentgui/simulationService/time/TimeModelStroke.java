@@ -28,8 +28,6 @@
  */
 package agentgui.simulationService.time;
 
-import agentgui.simulationService.environment.EnvironmentModel;
-
 /**
  * This is a stroke time model, which inherits just a simple counter and can
  * be used in an {@link EnvironmentModel}
@@ -82,6 +80,21 @@ public class TimeModelStroke extends TimeModel {
 	 */
 	public Integer getCounter() {
 		return counter;
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration()
+	 */
+	@Override
+	public DisplayJPanel4Configuration getJPanel4Configuration() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
+	 */
+	@Override
+	public DisplayJToolBar4Execution getJToolBar4Execution() {
+		return null;
 	}
 	
 } // --- End of Sub-Class -----

@@ -65,4 +65,18 @@ public abstract class TimeModel implements Serializable {
 		return stopWatch;
 	}
 		
+	/**
+	 * Returns the DisplayJPanel4Configuration.java (an extended JPanel) for the configuration 
+	 * of a TimeModel (before the agency is executed).
+	 * @return the DisplayJPanel4Configuration.java for the TimeModel configuration
+	 */
+	public abstract DisplayJPanel4Configuration getJPanel4Configuration();
+	
+	/**
+	 * Returns a DisplayJToolBar4Execution (an extended JToolBar) that consists of the necessary 
+	 * tools to handle a TimeModel during execution.
+	 * @return the DisplayJToolBar4Execution with tools that can be used during the runtime of the agency
+	 */
+	public abstract DisplayJToolBar4Execution getJToolBar4Execution();
+	
 }

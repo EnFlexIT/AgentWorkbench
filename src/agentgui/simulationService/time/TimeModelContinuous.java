@@ -28,6 +28,7 @@
  */
 package agentgui.simulationService.time;
 
+
 /**
  * The Class TimeModelContinuous.
  * 
@@ -73,6 +74,21 @@ public class TimeModelContinuous extends TimeModel {
 	 */
 	public long getTimeDiff() {
 		return timeDiff;
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration()
+	 */
+	@Override
+	public DisplayJPanel4Configuration getJPanel4Configuration() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
+	 */
+	@Override
+	public DisplayJToolBar4Execution getJToolBar4Execution() {
+		return null;
 	}
 	
 }
