@@ -72,6 +72,7 @@ import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.gui.projectwindow.TabForSubPanels;
 import agentgui.core.gui.projectwindow.simsetup.SimulationEnvironment;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.plugin.PlugIn;
@@ -213,12 +214,6 @@ import agentgui.core.webserver.JarFileCreator;
 	private AgentStartConfiguration agentStartConfiguration = null;
 	
 	/**
-	 * Configuration settings for the TimeModel used in this Project  
-	 */
-	@XmlElement(name="timeModelClass")
-	private String timeModelClass;
-	
-	/**
 	 * This field manages the configuration of JADE (e. g. JADE-Port 1099 etc.)
 	 */
 	@XmlElement(name="jadeConfiguration")
@@ -253,11 +248,16 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlElementWrapper(name = "simulationSetups")
 	public SimulationSetups simulationSetups = new SimulationSetups(this, simulationSetupCurrent);
 
-	/**
-	 * The environment controllerGUI of the project. Usually a subclass of {@link EnvironmentPanel}.
-	 */
+	/** The environment controllerGUI of the project. Usually a subclass of {@link EnvironmentPanel}. */
 	@XmlTransient
 	private EnvironmentController environmentController = null;
+	
+	/** Configuration settings for the TimeModel used in this Project */
+	@XmlElement(name="timeModelClass")
+	private String timeModelClass = null;
+	/** The TimeModelController controls the display of the selected TimModel. */
+	@XmlTransient
+	private TimeModelController timeModelController = null;
 	
 	/**
 	 * This model contains all known environment types of the application 
@@ -341,6 +341,9 @@ import agentgui.core.webserver.JarFileCreator;
 		pwt.add();
 		projectWindow.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_SimSetup, pwt);
 		
+			// --- Maybe a TimeModel has to be displayed --
+			this.getTimeModelController();
+			
 			// --- start configuration for agents ---------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 					   Language.translate("Agenten-Start"), null, null, 
@@ -941,6 +944,18 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient
 	public String getTimeModelClass() {
 		return timeModelClass;
+	}
+
+	/**
+	 * Returns the TimeModelController of this Project.
+	 * @return the TimeModelController
+	 */
+	@XmlTransient
+	public TimeModelController getTimeModelController() {
+		if (this.timeModelController==null) {
+			this.timeModelController = new TimeModelController(this);
+		}
+		return timeModelController;
 	}
 
 	/**

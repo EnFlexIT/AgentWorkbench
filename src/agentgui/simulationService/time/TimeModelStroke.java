@@ -28,9 +28,16 @@
  */
 package agentgui.simulationService.time;
 
+import java.util.HashMap;
+
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
+
 /**
  * This is a stroke time model, which inherits just a simple counter and can
  * be used in an {@link EnvironmentModel}
+ * 
+ * @see TimeModelController
+ * @see TimeModelStrokeConfiguration
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -38,7 +45,10 @@ public class TimeModelStroke extends TimeModel {
 
 	private static final long serialVersionUID = -63223704339241994L;
 
-	private int counter = 0;
+	private int counterStart = 1;
+	private int counterStop = 9999;
+	private int counter = 1;
+	
 	
 	/**
 	 * Instantiates a new time model stroke.
@@ -47,35 +57,77 @@ public class TimeModelStroke extends TimeModel {
 	}
 	/**
 	 * Instantiates a new time model stroke.
-	 * @param counterStart the position number the counter has to start from
+	 * @param currentCounterValue the position number the counter is currently set
 	 */
-	public TimeModelStroke(Integer counterStart) {
-		this.counter = counterStart;
+	public TimeModelStroke(Integer currentCounterValue) {
+		this.counter = currentCounterValue;
 	}
-
 	/**
-	 * Steps the counter plus 1.
+	 * Instantiates a new time model stroke.
+	 * @param counterValueStart the counter start value
+	 * @param counterValueStop the counter stop value
 	 */
+	public TimeModelStroke(Integer counterValueStart, Integer counterValueStop) {
+		this.counter = counterValueStart;
+		this.counterStart = counterValueStart;
+		this.counterStop = counterValueStop;
+	}
+		
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#step()
+	 */
+	@Override
 	public void step() {
 		counter++;
 	}
-	
-	/**
-	 * Steps the counter minus 1.
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#stepBack()
 	 */
+	@Override
 	public void stepBack() {
 		counter--;
 	}
 
 	/**
-	 * Sets the counter.
+	 * Sets the value at which the TimeModel starts.
+	 * @param counterStart the new counter start
+	 */
+	public void setCounterStart(int counterStart) {
+		this.counterStart = counterStart;
+	}
+	/**
+	 * Returns the value at which the TimeModel starts.
+	 * @return the counter start
+	 */
+	public int getCounterStart() {
+		return counterStart;
+	}
+	
+	/**
+	 * Sets the value to stop the TimeModel.
+	 * @param counterStop the new counter stop
+	 */
+	public void setCounterStop(int counterStop) {
+		this.counterStop = counterStop;
+	}
+	/**
+	 * Returns the value to stop the TimeModel.
+	 * @return the counter stop
+	 */
+	public int getCounterStop() {
+		return counterStop;
+	}
+	
+	/**
+	 * Sets the current counter.
 	 * @param counter the counter to set
 	 */
 	public void setCounter(Integer counter) {
 		this.counter = counter;
 	}
 	/**
-	 * Returns the counter.
+	 * Returns the current counter.
 	 * @return the counter
 	 */
 	public Integer getCounter() {
@@ -87,13 +139,28 @@ public class TimeModelStroke extends TimeModel {
 	 */
 	@Override
 	public DisplayJPanel4Configuration getJPanel4Configuration() {
-		return null;
+		return new TimeModelStrokeConfiguration();
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
 	 */
 	@Override
 	public DisplayJToolBar4Execution getJToolBar4Execution() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#setSetupConfiguration(java.util.HashMap)
+	 */
+	@Override
+	public void setSetupConfiguration(HashMap<String, String> timeModelSetupConfiguration) {
+		
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getSetupConfiguration()
+	 */
+	@Override
+	public HashMap<String, String> getSetupConfiguration() {
 		return null;
 	}
 	

@@ -28,7 +28,7 @@
  */
 package agentgui.simulationService.time;
 
-import javax.swing.JToolBar;
+import javax.swing.JPanel;
 
 /**
  * The Class TimeModelConfiguration has to be extended in order to
@@ -38,7 +38,7 @@ import javax.swing.JToolBar;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
-public abstract class DisplayJPanel4Configuration extends JToolBar {
+public abstract class DisplayJPanel4Configuration extends JPanel {
 
 	private static final long serialVersionUID = 4966720402773236025L;
 

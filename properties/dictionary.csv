@@ -105,6 +105,7 @@ de;Daten bearbeiten;Edit Data;;;
 de;Datenbank erfolgreich angelegt!;Database created successfully!
 de;Datenbank nicht vorhanden!;Database does not exist!
 de;Datenfeld;Data field
+de;Datum;Date;;;
 de;Der Agent ';The Agent '
 de;Der Agent 'rma' ist bereits geöffnet!;The agent 'rma' is already running
 de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wählen Sie einen anderen Namen für den Agenten.;The name '@' is already used in the start list!<br>Please select another name for the agent.
@@ -121,10 +122,12 @@ de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbanks
 de;Dieser Eintrag ist ein notwendiger Systemparameter, der 
 nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter, which
 can not be deleted or renamed!;;;
+de;Diskretes Zeitmodell mit Schrittweite sowie Start- und Endzeitpunkt.;Incremental discrete-time model with start and stop time.;;;
 de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
 de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;;;
 de;Eigene Auslastungsgrenzwerte verwenden;Use own threshold values
+de;Einfach zählendes Zeitmodell (z. B. 1 ... 9999);Simple counting time model (e. g. 1 ... 9999);;;
 de;Einheit;Unit
 de;Einstellungen;Settings;;;
 de;Element-Typ;Element type
@@ -214,6 +217,7 @@ de;JAR;JAR
 de;JVM Heap-Memory;JVM Heap Memory
 de;JVM-Heap;JVM Heap
 de;Jade wurde beendet!;JADE was stopped!
+de;Jahre;Years;;;
 de;Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteilung;Java class for the start of the simulation agents and the static load balancing
 de;Java-Klasse für die dynamische Lastverteilung;Java class for dynamic load balancing
 de;Kein Projekt geöffnet !;No open project!
@@ -280,7 +284,10 @@ de;Mess-Agenten anhalten;Stop load measure agent
 de;Mess-Agenten starten;Start load measure agent
 de;Messung aufzeichnen;Record measurement
 de;Messungsaufzeichnung beenden;Stop recording measurement
+de;Millisekunden;Milliseconds;;;
+de;Minuten;Minutes;;;
 de;Mitwirkende;Contributors;;;
+de;Monate;Months;;;
 de;MySQL-Datenbank für den Hauptserver (server.master);MySQL-Database for the main server module (server.master);;;
 de;MySQL-Fehler:;MySQL-Error:
 de;MySQL-Fehler;MySQL-Error
@@ -390,6 +397,7 @@ de;SVG-Datei;SVG file
 de;SVG-Dateien;SVG files
 de;SVG-Elementtyp;SVG element type
 de;Schließen;Close
+de;Schrittweite;Increment;;;
 de;SciMark 2.0 - Benchmark;SciMark 2.0 - Benchmark
 de;Sekunden;Seconds
 de;Server-Dienst (Master / Slave);Server (Master / Slave)
@@ -428,6 +436,8 @@ de;Sprache:;Language:
 de;Sprache;Language
 de;Standard verwenden;Use Default;;;
 de;Standardkonfiguration verwenden;Use default configuration;;;
+de;Start bei:;Start at:;;;
+de;Start bei;Start at;;;
 de;Start-Argumente für den ausgewählten Agenten;Start-arguments for the selected agent
 de;Start-Konfiguration;Start-Configuration
 de;Start-Liste:;Start list:;;;
@@ -445,7 +455,10 @@ de;Statische Lastverteilung aktivieren;Enable static load balancing
 de;Status laden;Load status
 de;Status speichern;Save status
 de;Stop Agent.GUI - Service;Stop Agent.GUI - Service
+de;Stop bei:;Stop at:;;;
+de;Stop bei;Stop at;;;
 de;Stop;Stop
+de;Stunden;Hours;;;
 de;Suche & Auswahl;Search & Selection;;;
 de;Suche nach Agenten beendet...;Search for agents finished...
 de;Suche nach der nächsten fehlenden Übersetzung (STRG+F);Search for the next missing translation (CTRL + F)
@@ -453,6 +466,7 @@ de;Suche;Search
 de;Summe einblenden;Show Sum ;;;
 de;Summe;Sum;;;
 de;Tabelle;Table;;;
+de;Tage;Days;;;
 de;Teil-Umgebung;environment part
 de;Teilnetze;Subnetworks;;;
 de;Text zur Übersetzung;Text to translate
@@ -460,6 +474,7 @@ de;Titel;Title;;;
 de;Topologie;Topology;;;
 de;Typ-Bezeichner;Type-Specifier
 de;Typ;Type
+de;Uhrzeit;Time of day;;;
 de;Umbenennen;Rename
 de;Umgebung speichern;Save environment
 de;Umgebung;Environment
@@ -498,12 +513,15 @@ de;Voriger Datensatz (STRG+UP);Previous Record (CTRL + UP)
 de;Warte auf Agentenliste...;Waiting for agent list...
 de;Warte auf Ontologie-Liste...;Waiting for ontology list...
 de;Warte auf das Ende des Benchmarks ...;Waiting for the end of the benchmark ...;;;
+de;Wert;Value;;;
 de;Wiederherstellen;Restore;;;
+de;Wochen;Weeks;;;
 de;Wollen Sie das aktuelle Setup wirklich löschen?;Do you want to delete the current Setup?
 de;Wörterbuch;Dictionary
 de;X Wert;X value;;;
 de;XML-Dateien;XML files
 de;XML;XML
+de;Zeit-Konfiguration;Time Configuration;;;
 de;Zeitmodell verwenden;Use a time model;;;
 de;Zeitmodell;Time model;;;
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
@@ -537,6 +555,7 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
+en;;Discrete squares environment;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agenten-Klasse;Agent class;;;

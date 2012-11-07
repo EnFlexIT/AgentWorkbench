@@ -609,32 +609,8 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	}
 	
 	/**
-	 * Listens to the Data-Model of this Project (MVC-Pattern)
+	 * Setup load.
 	 */
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		
-		if ( arg1.toString().equalsIgnoreCase(SimulationSetups.CHANGED)) {
-			// --- Change inside the simulation setup ---------------
-			SimulationSetupsChangeNotification scn = (SimulationSetupsChangeNotification) arg1;
-			switch (scn.getUpdateReason()) {
-			case SimulationSetups.SIMULATION_SETUP_SAVED:
-				break;
-			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
-				this.jListModelAgents2Start = new DefaultListModel();
-				this.currSimSetup.setAgentDefaultListModel(SimulationSetup.AGENT_LIST_ManualConfiguration, this.jListModelAgents2Start);
-				this.setupLoad();
-				break;
-			default:
-				this.setupLoad();	
-				break;
-			}
-			
-		} else {
-			//System.out.println( this.getClass().getName() + ": " + arg1.toString() );	
-		}
-	}
-
 	private void setupLoad() {
 	
 		// --- Load the current SimulationSetup ---------------------
@@ -812,6 +788,33 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		}
 		this.currSimSetup.save();
 		
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		
+		if ( arg1.toString().equalsIgnoreCase(SimulationSetups.CHANGED)) {
+			// --- Change inside the simulation setup ---------------
+			SimulationSetupsChangeNotification scn = (SimulationSetupsChangeNotification) arg1;
+			switch (scn.getUpdateReason()) {
+			case SimulationSetups.SIMULATION_SETUP_SAVED:
+				break;
+			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
+				this.jListModelAgents2Start = new DefaultListModel();
+				this.currSimSetup.setAgentDefaultListModel(SimulationSetup.AGENT_LIST_ManualConfiguration, this.jListModelAgents2Start);
+				this.setupLoad();
+				break;
+			default:
+				this.setupLoad();	
+				break;
+			}
+			
+		} else {
+			//System.out.println( this.getClass().getName() + ": " + arg1.toString() );	
+		}
 	}
 	
 	/**

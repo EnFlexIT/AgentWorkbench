@@ -28,10 +28,13 @@
  */
 package agentgui.simulationService.time;
 
+import java.util.HashMap;
+
+
 import jade.util.leap.Serializable;
 
 /**
- * This is the abstract base class for a time model.
+ * This is the abstract base class for any time model.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -47,6 +50,15 @@ public abstract class TimeModel implements Serializable {
 	public TimeModel(){
 	}
 
+	/**
+	 * Steps the TimeModel.
+	 */
+	public abstract void step();
+	/**
+	 * Steps the TimeModel.
+	 */
+	public abstract void stepBack();
+	
 	/**
 	 * Sets the stopwatch.
 	 * @param stopWatch the new stopwatch
@@ -78,5 +90,19 @@ public abstract class TimeModel implements Serializable {
 	 * @return the DisplayJToolBar4Execution with tools that can be used during the runtime of the agency
 	 */
 	public abstract DisplayJToolBar4Execution getJToolBar4Execution();
+	
+	
+	/**
+	 * Sets the setup configuration as HashSet<String, String> (property, value) to the TimeModel.
+	 * @param timeModelSetupConfiguration the time model setup configuration as HashSet<String, String> (property, value)
+	 */
+	public abstract void setSetupConfiguration(HashMap<String, String> timeModelSetupConfiguration);
+	
+	/**
+	 * Returns the setup configuration of the TimeModel as HashSet<String, String> consisting of (property, value).
+	 * @return the setup configuration as HashSet<String, String> consisting of (property, value)
+	 */
+	public abstract HashMap<String, String> getSetupConfiguration();
+	
 	
 }
