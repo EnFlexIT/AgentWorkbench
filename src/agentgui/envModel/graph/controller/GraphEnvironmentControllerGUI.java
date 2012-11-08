@@ -689,7 +689,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 				    JOptionPane.showMessageDialog(this, Language.translate(message, Language.EN), Language.translate(title, Language.EN), JOptionPane.WARNING_MESSAGE);
 				    getJTableComponents().getModel().setValueAt(oldCompID, row, column);
 		
-				} else if (this.getGraphController().getProject().simulationSetups.getCurrSimSetup().isAgentNameExists(newCompID)) {
+				} else if (this.getGraphController().getProject().getSimulationSetups().getCurrSimSetup().isAgentNameExists(newCompID)) {
 				    // --- Check if the agent name already exists in the simulation setup
 					message = "An agent with the name already exists in the simulation setup!" + newLine + " Choose a different one.";
 					JOptionPane.showMessageDialog(this, Language.translate(message, Language.EN), Language.translate(title, Language.EN), JOptionPane.WARNING_MESSAGE);

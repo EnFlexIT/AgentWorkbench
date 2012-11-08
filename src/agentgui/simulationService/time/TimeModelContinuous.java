@@ -30,6 +30,8 @@ package agentgui.simulationService.time;
 
 import java.util.HashMap;
 
+import agentgui.core.project.Project;
+
 
 /**
  * The Class TimeModelContinuous.
@@ -97,7 +99,7 @@ public class TimeModelContinuous extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration()
 	 */
 	@Override
-	public DisplayJPanel4Configuration getJPanel4Configuration() {
+	public DisplayJPanel4Configuration getJPanel4Configuration(Project project) {
 		return null;
 	}
 	/* (non-Javadoc)
@@ -113,14 +115,14 @@ public class TimeModelContinuous extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#setSetupConfiguration(java.util.HashMap)
 	 */
 	@Override
-	public void setSetupConfiguration(HashMap<String, String> timeModelSetupConfiguration) {
+	public void setTimeModelSettings(HashMap<String, String> timeModelSetupConfiguration) {
 		
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#getSetupConfiguration()
 	 */
 	@Override
-	public HashMap<String, String> getSetupConfiguration() {
+	public HashMap<String, String> getTimeModelSetting() {
 		return null;
 	}
 	

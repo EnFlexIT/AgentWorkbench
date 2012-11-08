@@ -55,6 +55,7 @@ import javax.swing.event.ChangeListener;
 
 import agentgui.core.application.Language;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
+import agentgui.core.project.Project;
 
 /**
  * The Class TimeModelStrokeConfiguration.
@@ -98,13 +99,15 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 	private JSpinner jSpinnerDateStop = null;
 	private JSpinner jSpinnerTimeStop = null;
 	private JSpinner jSpinnerMillisStop = null;
+
 	
 	/**
-	 * This method initializes 
+	 * Instantiates a new time model discrete configuration.
+	 * @param project the project
 	 */
-	public TimeModelDiscreteConfiguration() {
-		super();
-		initialize();
+	public TimeModelDiscreteConfiguration(Project project) {
+		super(project);
+		this.initialize();
 	}
 
 	/**
@@ -560,6 +563,8 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 		return tmd;
 	}
 	
+	
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -573,9 +578,7 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 	 */
 	@Override
 	public void stateChanged(ChangeEvent ce) {
-	
-		TimeModelDiscrete tmd = (TimeModelDiscrete) this.getTimeModel();
-		
+		this.saveTimeModelInSimulationSetup(getTimeModel());
 	}
 	
 	

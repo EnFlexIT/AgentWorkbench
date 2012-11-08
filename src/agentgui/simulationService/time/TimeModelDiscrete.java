@@ -30,6 +30,8 @@ package agentgui.simulationService.time;
 
 import java.util.HashMap;
 
+import agentgui.core.project.Project;
+
 
 /**
  * This is a discrete time model, which can either start from 0 or 
@@ -41,6 +43,12 @@ import java.util.HashMap;
 public class TimeModelDiscrete extends TimeModel {
 
 	private static final long serialVersionUID = 3931340225354221294L;
+	
+	public final static String PROP_TimeCurrent = "TimeCurrent";
+	public final static String PROP_TimeStart = "TimeStart";
+	public final static String PROP_TimeStop = "TimeStop";
+	public final static String PROP_StepWidth = "StepWidth";
+	public final static String PROP_DisplayUnitIndex = "DisplayUnitIndex";
 	
 	private long timeStart = System.currentTimeMillis();
 	private long timeStop = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
@@ -172,9 +180,57 @@ public class TimeModelDiscrete extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration()
 	 */
 	@Override
-	public DisplayJPanel4Configuration getJPanel4Configuration() {
-		return new TimeModelDiscreteConfiguration();
+	public DisplayJPanel4Configuration getJPanel4Configuration(Project project) {
+		return new TimeModelDiscreteConfiguration(project);
 	}
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#setSetupConfiguration(java.util.HashMap)
+	 */
+	@Override
+	public void setTimeModelSettings(HashMap<String, String> timeModelSettings) {
+		
+		try {
+			String stringTimeCurrent = timeModelSettings.get(PROP_TimeCurrent);
+			String stringTimeStart = timeModelSettings.get(PROP_TimeStart);
+			String stringTimeStop = timeModelSettings.get(PROP_TimeStop);
+			String stringStepWidth = timeModelSettings.get(PROP_StepWidth);
+			String stringDisplayUnitIndex = timeModelSettings.get(PROP_DisplayUnitIndex);
+
+			if (stringTimeCurrent!=null) {
+				this.time = Long.parseLong(stringTimeCurrent);	
+			}
+			if (stringTimeStart!=null) {
+				this.timeStart = Long.parseLong(stringTimeStart);	
+			}
+			if (stringTimeStop!=null) {
+				this.timeStop = Long.parseLong(stringTimeStop);	
+			}
+			if (stringStepWidth!=null) {
+				this.step = Long.parseLong(stringStepWidth);	
+			}
+			if (stringDisplayUnitIndex!=null) {
+				this.stepDisplayUnitAsIndexOfTimeUnitVector = Integer.parseInt(stringDisplayUnitIndex);	
+			}
+	
+		} catch (Exception ex) {
+			System.err.println("Error while converting TimeModel settings from setup");
+		}
+				
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getSetupConfiguration()
+	 */
+	@Override
+	public HashMap<String, String> getTimeModelSetting() {
+		HashMap<String, String> hash = new HashMap<String, String>();
+		hash.put(PROP_TimeCurrent, ((Long) this.time).toString());
+		hash.put(PROP_TimeStart, ((Long) this.timeStart).toString());
+		hash.put(PROP_TimeStop, ((Long) this.timeStop).toString());
+		hash.put(PROP_StepWidth, ((Long) this.step).toString());
+		hash.put(PROP_DisplayUnitIndex, ((Integer) this.stepDisplayUnitAsIndexOfTimeUnitVector).toString());
+		return hash;
+	}
+
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
 	 */
@@ -182,20 +238,4 @@ public class TimeModelDiscrete extends TimeModel {
 	public DisplayJToolBar4Execution getJToolBar4Execution() {
 		return null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.time.TimeModel#setSetupConfiguration(java.util.HashMap)
-	 */
-	@Override
-	public void setSetupConfiguration(HashMap<String, String> timeModelSetupConfiguration) {
-		
-	}
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.time.TimeModel#getSetupConfiguration()
-	 */
-	@Override
-	public HashMap<String, String> getSetupConfiguration() {
-		return null;
-	}
-	
 }

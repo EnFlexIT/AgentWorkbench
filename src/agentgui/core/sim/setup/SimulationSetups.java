@@ -66,6 +66,8 @@ public class SimulationSetups extends Hashtable<String, String> {
 
 	private static final long serialVersionUID = -9078535303459653695L;
 
+	public static final String DEFAULT_SETUP_NAME = "default";
+	
 	public static final String CHANGED = "SimSetups";
 	public static final int SIMULATION_SETUP_LOAD = 0;
 	public static final int SIMULATION_SETUP_ADD_NEW = 1;
@@ -82,7 +84,6 @@ public class SimulationSetups extends Hashtable<String, String> {
 	private String currSimSetupName = null;
 	private String currSimXMLFile = null;
 
-	
 	/**
 	 * Constructor of this class.
 	 *
@@ -93,7 +94,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		currProject = project;
 		currSimSetupName = currentSimulationSetup;
 	}
-	
+
 	/**
 	 * This Method creates the 'default' - Simulation-Setup.
 	 */
@@ -102,11 +103,11 @@ public class SimulationSetups extends Hashtable<String, String> {
 		String xmlFile = null;
 		String XMLPathName = null;
 						
-		this.currSimSetupName = "default";
-		xmlFile = currProject.simulationSetups.getSuggestSetupFile(currSimSetupName);
+		this.currSimSetupName = SimulationSetups.DEFAULT_SETUP_NAME;
+		xmlFile = currProject.getSimulationSetups().getSuggestSetupFile(currSimSetupName);
 		
 		this.put(currSimSetupName, xmlFile);
-		currProject.simulationSetupCurrent = currSimSetupName;
+		currProject.setSimulationSetupCurrent(currSimSetupName);
 		
 		currSimSetup = new SimulationSetup(currProject); 
 		
@@ -247,7 +248,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		
 		// --- Aktuelles Setup auf Input 'name' -----------
 		currSimSetupName = name;
-		currProject.simulationSetupCurrent = name;
+		currProject.setSimulationSetupCurrent(name);
 		currSimXMLFile = currProject.getSubFolder4Setups(true) + this.get(currSimSetupName);
 		
 		// --- 'SimulationSetup'-Objekt neu instanziieren -

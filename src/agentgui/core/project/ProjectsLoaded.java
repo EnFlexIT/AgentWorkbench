@@ -57,7 +57,6 @@ import agentgui.core.common.Zipper;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectNewOpen;
 import agentgui.core.gui.ProjectWindow;
-import agentgui.core.sim.setup.SimulationSetups;
 
 /**
  * This class holds the list of the projects, that are currently open
@@ -253,10 +252,9 @@ public class ProjectsLoaded {
 		newProject.JadeConfiguration.setProject(newProject);
 		
 		// --- Is there already a simulation setup? ---------------------------
-		if (newProject.simulationSetups.size()==0) {
+		if (newProject.getSimulationSetups().size()==0) {
 			// --- Create default simulations setup ---------------------------
-			newProject.simulationSetups = new SimulationSetups(newProject, "default");
-			newProject.simulationSetups.setupCreateDefault();			
+			newProject.getSimulationSetups().setupCreateDefault();			
 		}
 
 		// --- Instantiate project-window and the default tabs ----------------

@@ -31,6 +31,7 @@ package agentgui.simulationService.time;
 import java.util.HashMap;
 
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
+import agentgui.core.project.Project;
 
 /**
  * This is a stroke time model, which inherits just a simple counter and can
@@ -138,8 +139,8 @@ public class TimeModelStroke extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration()
 	 */
 	@Override
-	public DisplayJPanel4Configuration getJPanel4Configuration() {
-		return new TimeModelStrokeConfiguration();
+	public DisplayJPanel4Configuration getJPanel4Configuration(Project project) {
+		return new TimeModelStrokeConfiguration(project);
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
@@ -153,14 +154,14 @@ public class TimeModelStroke extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#setSetupConfiguration(java.util.HashMap)
 	 */
 	@Override
-	public void setSetupConfiguration(HashMap<String, String> timeModelSetupConfiguration) {
+	public void setTimeModelSettings(HashMap<String, String> timeModelSetupConfiguration) {
 		
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#getSetupConfiguration()
 	 */
 	@Override
-	public HashMap<String, String> getSetupConfiguration() {
+	public HashMap<String, String> getTimeModelSetting() {
 		return null;
 	}
 	

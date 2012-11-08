@@ -240,13 +240,12 @@ import agentgui.core.webserver.JarFileCreator;
 	 * This attribute holds the instance of the currently selected SimulationSetup
 	 */
 	@XmlElement(name="simulationSetupCurrent")
-	public String simulationSetupCurrent = null;
+	private String simulationSetupCurrent = null;
 	/**
 	 * This extended HashTable is used in order to store the SimulationsSetup's names 
 	 * and their file names 
 	 */
-	@XmlElementWrapper(name = "simulationSetups")
-	public SimulationSetups simulationSetups = new SimulationSetups(this, simulationSetupCurrent);
+	private SimulationSetups simulationSetups = null;
 
 	/** The environment controllerGUI of the project. Usually a subclass of {@link EnvironmentPanel}. */
 	@XmlTransient
@@ -405,7 +404,7 @@ import agentgui.core.webserver.JarFileCreator;
 		    }
 		    
 			// --- Save the current SimulationSetup -------
-			this.simulationSetups.setupSave();
+			this.getSimulationSetups().setupSave();
 			
 			this.isUnsaved = false;			
 
@@ -490,6 +489,34 @@ import agentgui.core.webserver.JarFileCreator;
 		}
 		Application.setStatusBar("");
 		return true;
+	}
+
+	/**
+	 * Gets the list of simulation setups.
+	 * @return the simulation setups
+	 */
+	@XmlElementWrapper(name = "simulationSetups")
+	public SimulationSetups getSimulationSetups() {
+		if (this.simulationSetups==null) {
+			this.simulationSetups=new SimulationSetups(this, getSimulationSetupCurrent());
+		}
+		return this.simulationSetups;
+	}
+
+	/**
+	 * Sets the simulation setup current.
+	 * @param simulationSetupCurrent the new simulation setup current
+	 */
+	public void setSimulationSetupCurrent(String simulationSetupCurrent) {
+		this.simulationSetupCurrent = simulationSetupCurrent;
+	}
+	/**
+	 * Gets the simulation setup current.
+	 * @return the simulation setup current
+	 */
+	@XmlTransient
+	public String getSimulationSetupCurrent() {
+		return simulationSetupCurrent;
 	}
 
 	// ----------------------------------------------------------------------------------

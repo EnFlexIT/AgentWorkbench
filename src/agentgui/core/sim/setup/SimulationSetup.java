@@ -86,11 +86,16 @@ import agentgui.core.project.Project;
 	/** The environment file name. */
 	private String environmentFileName = null;
 	
+	/** The time model settings. */
+	@XmlElementWrapper(name = "timeModelSettings")
+	private HashMap<String, String> timeModelSettings = null;
+	
 	/**
 	 * This field can be used in order to provide customised objects during
 	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
 	 */
-	@XmlTransient private Serializable userRuntimeObject = null;
+	@XmlTransient 
+	private Serializable userRuntimeObject = null;
 	
 	/**
 	 * Constructor without arguments (This is first of all
@@ -157,7 +162,7 @@ import agentgui.core.project.Project;
 			pm.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 
-			Writer pw = new FileWriter( currProject.simulationSetups.getCurrSimXMLFile() );
+			Writer pw = new FileWriter( currProject.getSimulationSetups().getCurrSimXMLFile() );
 			pm.marshal(this, pw);
 			pw.close();
 			
@@ -169,7 +174,7 @@ import agentgui.core.project.Project;
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
 		    try  {
-		    	String binFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currProject.simulationSetups.getCurrSimXMLFile()); 
+		    	String binFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currProject.getSimulationSetups().getCurrSimXMLFile()); 
 		    	fos = new FileOutputStream(binFileName);
 		    	out = new ObjectOutputStream(fos);
 		    	out.writeObject(this.userRuntimeObject);
@@ -429,6 +434,24 @@ import agentgui.core.project.Project;
 		}
 		return newAgentName;
 	}
-	
 
+	/**
+	 * Sets the time model settings.
+	 * @param newTimeModelSettings the new time model settings
+	 */
+	public void setTimeModelSettings(HashMap<String, String> newTimeModelSettings) {
+		this.timeModelSettings = newTimeModelSettings;
+	}
+	/**
+	 * Gets the time model settings.
+	 * @return the time model settings
+	 */
+	@XmlTransient
+	public HashMap<String,String> getTimeModelSettings() {
+		if (this.timeModelSettings==null) {
+			this.timeModelSettings= new HashMap<String, String>();
+		}
+		return this.timeModelSettings;
+	}
+	
 }

@@ -44,6 +44,7 @@ import javax.swing.JPanel;
 
 import agentgui.core.application.Language;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
+import agentgui.core.project.Project;
 
 /**
  * The Class TimeModelStrokeConfiguration.
@@ -64,17 +65,18 @@ public class TimeModelStrokeConfiguration extends DisplayJPanel4Configuration im
 	private JLabel jLabelHeader2 = null;
 	private JPanel jPanelDummy = null;
 	
-
+	
 	/**
-	 * This method initializes 
+	 * Instantiates a new time model stroke configuration.
+	 * @param project the project
 	 */
-	public TimeModelStrokeConfiguration() {
-		super();
-		initialize();
+	public TimeModelStrokeConfiguration(Project project) {
+		super(project);
+		this.initialize();
 	}
-
+	
 	/**
-	 * This method initializes this
+	 * Initializes this JPanel.
 	 */
 	private void initialize() {
 		
@@ -244,7 +246,6 @@ public class TimeModelStrokeConfiguration extends DisplayJPanel4Configuration im
 	public void actionPerformed(ActionEvent e) {
 		
 	}
-	
-	
+
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

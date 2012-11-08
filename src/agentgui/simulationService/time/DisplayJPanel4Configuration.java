@@ -30,6 +30,9 @@ package agentgui.simulationService.time;
 
 import javax.swing.JPanel;
 
+import agentgui.core.project.Project;
+import agentgui.core.sim.setup.SimulationSetup;
+
 /**
  * The Class TimeModelConfiguration has to be extended in order to
  * provide a specific JPanle for the configuration of a TimeModel.
@@ -42,6 +45,27 @@ public abstract class DisplayJPanel4Configuration extends JPanel {
 
 	private static final long serialVersionUID = 4966720402773236025L;
 
+	private Project currProject = null;
+	
+	/**
+	 * Instantiates a new display j panel4 configuration.
+	 * @param project the project
+	 */
+	public DisplayJPanel4Configuration(Project project) {
+		this.currProject = project;
+	}
+	
+	/**
+	 * Save the current TimeModel.
+	 * @param timeModel the TimeModel
+	 */
+	protected void saveTimeModelInSimulationSetup(TimeModel timeModel) {
+		SimulationSetup simSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
+		if (simSetup!=null) {
+			simSetup.setTimeModelSettings(timeModel.getTimeModelSetting());	
+		}
+	}
+	
 	/**
 	 * Sets the TimeModel.
 	 * @param timeModel the new TimeModel

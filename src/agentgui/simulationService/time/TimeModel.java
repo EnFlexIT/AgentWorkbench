@@ -30,6 +30,8 @@ package agentgui.simulationService.time;
 
 import java.util.HashMap;
 
+import agentgui.core.project.Project;
+
 
 import jade.util.leap.Serializable;
 
@@ -78,11 +80,24 @@ public abstract class TimeModel implements Serializable {
 	}
 		
 	/**
-	 * Returns the DisplayJPanel4Configuration.java (an extended JPanel) for the configuration 
+	 * Returns the DisplayJPanel4Configuration.java (an extended JPanel) for the configuration
 	 * of a TimeModel (before the agency is executed).
+	 * @param project the current Agent.GUI Project
 	 * @return the DisplayJPanel4Configuration.java for the TimeModel configuration
 	 */
-	public abstract DisplayJPanel4Configuration getJPanel4Configuration();
+	public abstract DisplayJPanel4Configuration getJPanel4Configuration(Project project);
+	
+	/**
+	 * Sets the setup configuration as HashSet<String, String> (property, value) to the TimeModel.
+	 * @param timeModelSettings the time model setup configuration as HashSet<String, String> (property, value)
+	 */
+	public abstract void setTimeModelSettings(HashMap<String, String> timeModelSettings);
+	
+	/**
+	 * Returns the setup configuration of the TimeModel as HashSet<String, String> consisting of (property, value).
+	 * @return the setup configuration as HashSet<String, String> consisting of (property, value)
+	 */
+	public abstract HashMap<String, String> getTimeModelSetting();
 	
 	/**
 	 * Returns a DisplayJToolBar4Execution (an extended JToolBar) that consists of the necessary 
@@ -90,19 +105,6 @@ public abstract class TimeModel implements Serializable {
 	 * @return the DisplayJToolBar4Execution with tools that can be used during the runtime of the agency
 	 */
 	public abstract DisplayJToolBar4Execution getJToolBar4Execution();
-	
-	
-	/**
-	 * Sets the setup configuration as HashSet<String, String> (property, value) to the TimeModel.
-	 * @param timeModelSetupConfiguration the time model setup configuration as HashSet<String, String> (property, value)
-	 */
-	public abstract void setSetupConfiguration(HashMap<String, String> timeModelSetupConfiguration);
-	
-	/**
-	 * Returns the setup configuration of the TimeModel as HashSet<String, String> consisting of (property, value).
-	 * @return the setup configuration as HashSet<String, String> consisting of (property, value)
-	 */
-	public abstract HashMap<String, String> getSetupConfiguration();
 	
 	
 }

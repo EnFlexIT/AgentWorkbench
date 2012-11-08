@@ -257,8 +257,8 @@ public class SetupSelectorToolbar implements ActionListener {
 		// --- Fallunterscheidung 'Auslöser' -----------------------------
 		if ( trigger == jComboBoxSetupSelector ) {
 			if (jComboBoxSetupSelector.getSelectedItem()!= null) {
-				currProject.simulationSetups.setupSave();
-				currProject.simulationSetups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, jComboBoxSetupSelector.getSelectedItem().toString(), false);
+				currProject.getSimulationSetups().setupSave();
+				currProject.getSimulationSetups().setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, jComboBoxSetupSelector.getSelectedItem().toString(), false);
 			}
 			
 		} else if ( trigger == jButtonSetupRename ) {
@@ -310,14 +310,14 @@ public class SetupSelectorToolbar implements ActionListener {
 		if (this.currProject==null) return;
 		
 		// --- Aktuelles Setup ermitteln ------------------
-		String currSetup = this.currProject.simulationSetupCurrent;
-		String currSetupFile = this.currProject.simulationSetups.get(currSetup);
+		String currSetup = this.currProject.getSimulationSetupCurrent();
+		String currSetupFile = this.currProject.getSimulationSetups().get(currSetup);
 		
 		// --- ComboBoxModel neu aufbauen -----------------
 		jComboBoxSetupSelector.removeActionListener(this);
 		jComboBoxModel4Setups.removeAllElements();
 		
-		Vector<String> v = new Vector<String>(this.currProject.simulationSetups.keySet());
+		Vector<String> v = new Vector<String>(this.currProject.getSimulationSetups().keySet());
 		Collections.sort(v, String.CASE_INSENSITIVE_ORDER);
 		Iterator<String> it = v.iterator();
 		while (it.hasNext()) {
@@ -334,10 +334,10 @@ public class SetupSelectorToolbar implements ActionListener {
 		jComboBoxSetupSelector.addActionListener(this);
 		
 		// --- Das akuelle DefaultListModel laden ---------
-		currSimSetup = currProject.simulationSetups.getCurrSimSetup();
+		currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
 		if ( currSimSetup==null ) {
-			currProject.simulationSetups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, currProject.simulationSetupCurrent, false);
-			currSimSetup = currProject.simulationSetups.getCurrSimSetup();
+			currProject.getSimulationSetups().setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, currProject.getSimulationSetupCurrent(), false);
+			currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
 		}
 	}
 
@@ -383,7 +383,7 @@ public class SetupSelectorToolbar implements ActionListener {
 			if (input.equalsIgnoreCase("")) return null;
 			
 			// --- Kann der Name in einen gültigen Dateinamen umbenannt werden? ----
-			newFileName = currProject.simulationSetups.getSuggestSetupFile(input);
+			newFileName = currProject.getSimulationSetups().getSuggestSetupFile(input);
 			if (newFileName.length() < 8) {
 				head = Language.translate("Setup-Name zu kurz!");
 				msg  = "Name: '" + input + "' " + Language.translate("zu Datei") + ": '" + newFileName + ".xml':";
@@ -394,7 +394,7 @@ public class SetupSelectorToolbar implements ActionListener {
 			}
 
 			// --- Wird der Name bereits verwendet ---------------------------------
-			if (currProject.simulationSetups.containsSetupName(input)) {
+			if (currProject.getSimulationSetups().containsSetupName(input)) {
 				head = Language.translate("Setup-Name wird bereits verwendet!");
 				msg  = Language.translate("Der Name") + " '" + input + "' " + Language.translate("wird bereits verwendet.");
 				msg += Language.translate("<br>Bitte geben Sie einen anderen Namen für das Setup an.");
@@ -414,9 +414,9 @@ public class SetupSelectorToolbar implements ActionListener {
 		
 		String nameNew = this.setupAskUser4SetupName(this.SETUP_add, null);
 		if (nameNew==null) return;
-		String fileNameNew = currProject.simulationSetups.getSuggestSetupFile(nameNew); 
+		String fileNameNew = currProject.getSimulationSetups().getSuggestSetupFile(nameNew); 
 
-		currProject.simulationSetups.setupAddNew(nameNew, fileNameNew);
+		currProject.getSimulationSetups().setupAddNew(nameNew, fileNameNew);
 
 	}
 	
@@ -429,9 +429,9 @@ public class SetupSelectorToolbar implements ActionListener {
 		String nameNew = this.setupAskUser4SetupName(this.SETUP_rename, nameOld);
 		if (nameNew==null) return;
 		if (nameNew.equalsIgnoreCase(nameOld)) return;
-		String fileNameNew = currProject.simulationSetups.getSuggestSetupFile(nameNew);
+		String fileNameNew = currProject.getSimulationSetups().getSuggestSetupFile(nameNew);
 
-		currProject.simulationSetups.setupRename(nameOld, nameNew, fileNameNew);
+		currProject.getSimulationSetups().setupRename(nameOld, nameNew, fileNameNew);
 		
 	}
 	
@@ -443,9 +443,9 @@ public class SetupSelectorToolbar implements ActionListener {
 		String nameOld = jComboBoxSetupSelector.getSelectedItem().toString();
 		String nameNew = this.setupAskUser4SetupName(this.SETUP_copy, nameOld + " (Copy)");
 		if (nameNew==null) return;
-		String fileNameNew = currProject.simulationSetups.getSuggestSetupFile(nameNew);
+		String fileNameNew = currProject.getSimulationSetups().getSuggestSetupFile(nameNew);
 
-		currProject.simulationSetups.setupCopy(nameOld, nameNew, fileNameNew);
+		currProject.getSimulationSetups().setupCopy(nameOld, nameNew, fileNameNew);
 	}
 	
 	/**
@@ -461,7 +461,7 @@ public class SetupSelectorToolbar implements ActionListener {
 		msg  = Language.translate("Wollen Sie das aktuelle Setup wirklich löschen?");
 		input = JOptionPane.showConfirmDialog(Application.getMainWindow(), msg, head, JOptionPane.YES_NO_OPTION);
 		if (input == JOptionPane.YES_OPTION) {
-			currProject.simulationSetups.setupRemove(jComboBoxSetupSelector.getSelectedItem().toString());
+			currProject.getSimulationSetups().setupRemove(jComboBoxSetupSelector.getSelectedItem().toString());
 		}		
 	}
 	

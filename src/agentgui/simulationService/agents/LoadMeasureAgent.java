@@ -421,7 +421,7 @@ public class LoadMeasureAgent extends Agent {
 				return;
 			} 
 			// --- Get the current simulation setup ---------------------------
-			currSimSetup = currProject.simulationSetups.getCurrSimSetup();
+			currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
 			// --- Get the current distribution setup -------------------------
 			currDisSetup = currProject.getDistributionSetup();
 			

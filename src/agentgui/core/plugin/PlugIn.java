@@ -375,7 +375,7 @@ public abstract class PlugIn implements Observer {
 			
 			SimulationSetupsChangeNotification sscn = (SimulationSetupsChangeNotification) updateObject;
 			int sscnUpdate = sscn.getUpdateReason();
-			SimulationSetup simSetup = project.simulationSetups.getCurrSimSetup();
+			SimulationSetup simSetup = project.getSimulationSetups().getCurrSimSetup();
 			if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_ADD_NEW) {
 				this.onSimSetupChangedAddNew(simSetup);
 			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_COPY) {

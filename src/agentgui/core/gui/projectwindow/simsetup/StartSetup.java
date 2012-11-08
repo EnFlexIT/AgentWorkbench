@@ -614,10 +614,12 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private void setupLoad() {
 	
 		// --- Load the current SimulationSetup ---------------------
-		currSimSetup = currProject.simulationSetups.getCurrSimSetup();
+		currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
 		if ( currSimSetup==null ) {
-			currProject.simulationSetups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, currProject.simulationSetupCurrent, false);
-			currSimSetup = currProject.simulationSetups.getCurrSimSetup();
+			SimulationSetups setups = currProject.getSimulationSetups();
+			String currSimSetupName = currProject.getSimulationSetupCurrent();
+			setups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, currSimSetupName, false);
+			currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
 		}
 		// --- Load the current DefaultListModel laden --------------
 		this.jListModelAgents2Start = this.currSimSetup.getAgentDefaultListModel(this.jListModelAgents2Start, SimulationSetup.AGENT_LIST_ManualConfiguration);

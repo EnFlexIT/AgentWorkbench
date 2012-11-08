@@ -34,6 +34,7 @@ import java.util.Observer;
 import agentgui.core.application.Language;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.Project;
+import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.simulationService.time.DisplayJPanel4Configuration;
@@ -87,7 +88,7 @@ public class TimeModelController implements Observer {
 					@SuppressWarnings("unchecked")
 					Class<? extends TimeModel> timeModelClass = (Class<? extends TimeModel>) Class.forName(this.currTimeModelClass);
 					TimeModel timeModel = (TimeModel) timeModelClass.newInstance();
-					this.display4TimeModel = timeModel.getJPanel4Configuration();
+					this.display4TimeModel = timeModel.getJPanel4Configuration(this.currProject);
 					
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
@@ -141,11 +142,21 @@ public class TimeModelController implements Observer {
 		}
 	}
 	
+	/**
+	 * Setup load.
+	 */
 	private void setupLoad() {
+
+		// --- Get the current SimulationSetup ------------
+		SimulationSetup simSetup = currProject.getSimulationSetups().getCurrSimSetup();
+		// --- Get the right time model -------------------
+		TimeModel timeModel = this.getDisplayJPanel4Configuration().getTimeModel();
+		// --- Set the configuration from setup -----------
+		timeModel.setTimeModelSettings(simSetup.getTimeModelSettings());
+		// --- Set the TimeModel to the display -----------
+		this.getDisplayJPanel4Configuration().setTimeModel(timeModel);
 		
 	}
-	
-	
 	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)

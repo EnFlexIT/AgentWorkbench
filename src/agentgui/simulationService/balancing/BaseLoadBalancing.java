@@ -103,7 +103,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		super(agent);
 		currProject = Application.getProjectFocused();		
 		if (currProject!=null) {
-			currSimSetup = currProject.simulationSetups.getCurrSimSetup();
+			currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
 			currDisSetup = currProject.getDistributionSetup();
 		}
 		this.setLoadHelper();
