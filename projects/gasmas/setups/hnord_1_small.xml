@@ -434,5 +434,27 @@
             <startAsName>n71</startAsName>
         </agent>
     </agentSetup>
+    <timeModelSettings>
+        <entry>
+            <key>StepWidth</key>
+            <value>60000</value>
+        </entry>
+        <entry>
+            <key>TimeStart</key>
+            <value>1352797453437</value>
+        </entry>
+        <entry>
+            <key>TimeCurrent</key>
+            <value>1352797453437</value>
+        </entry>
+        <entry>
+            <key>DisplayUnitIndex</key>
+            <value>1</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1352883853437</value>
+        </entry>
+    </timeModelSettings>
     <environmentFileName>HNord (1) Small.graphml</environmentFileName>
 </simulationSetup>

@@ -178,12 +178,9 @@ public class TimeModelController implements Observer {
 		} else if (updateObject instanceof SimulationSetupsChangeNotification) {
 			// --- Change inside the simulation setup ---------------
 			SimulationSetupsChangeNotification scn = (SimulationSetupsChangeNotification) updateObject;
-			switch (scn.getUpdateReason()) {
+			int updateReason=scn.getUpdateReason();
+			switch (updateReason) {
 			case SimulationSetups.SIMULATION_SETUP_SAVED:
-				break;
-				
-			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
-				this.setupLoad();
 				break;
 				
 			default:

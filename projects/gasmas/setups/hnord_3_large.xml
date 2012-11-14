@@ -776,5 +776,27 @@
             <startAsName>n130</startAsName>
         </agent>
     </agentSetup>
+    <timeModelSettings>
+        <entry>
+            <key>StepWidth</key>
+            <value>60000</value>
+        </entry>
+        <entry>
+            <key>TimeStart</key>
+            <value>1352797402156</value>
+        </entry>
+        <entry>
+            <key>TimeCurrent</key>
+            <value>1352797402156</value>
+        </entry>
+        <entry>
+            <key>DisplayUnitIndex</key>
+            <value>1</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1352883802156</value>
+        </entry>
+    </timeModelSettings>
     <environmentFileName>HNord (3) Large.graphml</environmentFileName>
 </simulationSetup>

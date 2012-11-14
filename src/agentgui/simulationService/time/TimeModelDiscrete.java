@@ -190,6 +190,17 @@ public class TimeModelDiscrete extends TimeModel {
 	public void setTimeModelSettings(HashMap<String, String> timeModelSettings) {
 		
 		try {
+			
+			if (timeModelSettings.size()==0) {
+				// --- Use Default values -----------------
+				this.timeStart = System.currentTimeMillis();
+				this.timeStop = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
+				this.time = new Long(0);
+				this.step = new Long(1000 * 60);
+				this.stepDisplayUnitAsIndexOfTimeUnitVector = 1;
+				return;
+			}
+			
 			String stringTimeCurrent = timeModelSettings.get(PROP_TimeCurrent);
 			String stringTimeStart = timeModelSettings.get(PROP_TimeStart);
 			String stringTimeStop = timeModelSettings.get(PROP_TimeStop);

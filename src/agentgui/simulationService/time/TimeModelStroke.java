@@ -46,6 +46,10 @@ public class TimeModelStroke extends TimeModel {
 
 	private static final long serialVersionUID = -63223704339241994L;
 
+	public final static String PROP_CounterStart= "CounterStart";
+	public final static String PROP_CounterStop = "CounterStop";
+	public final static String PROP_CounterCurrent = "CounterCurrent";
+	
 	private int counterStart = 1;
 	private int counterStop = 9999;
 	private int counter = 1;
@@ -154,7 +158,35 @@ public class TimeModelStroke extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#setSetupConfiguration(java.util.HashMap)
 	 */
 	@Override
-	public void setTimeModelSettings(HashMap<String, String> timeModelSetupConfiguration) {
+	public void setTimeModelSettings(HashMap<String, String> timeModelSettings) {
+		
+		try {
+			
+			if (timeModelSettings.size()==0) {
+				// --- Use Default values -----------------
+				this.counterStart = 1;
+				this.counterStop = 9999;
+				this.counter = 0;
+				return;
+			}
+			
+			String stringCounterStart = timeModelSettings.get(PROP_CounterStart);
+			String stringCounterStop = timeModelSettings.get(PROP_CounterStop);
+			String stringCounter = timeModelSettings.get(PROP_CounterCurrent);
+
+			if (stringCounterStart!=null) {
+				this.counterStart = Integer.parseInt(stringCounterStart);	
+			}
+			if (stringCounterStop!=null) {
+				this.counterStop = Integer.parseInt(stringCounterStop);	
+			}
+			if (stringCounter!=null) {
+				this.counter = Integer.parseInt(stringCounter);	
+			}
+	
+		} catch (Exception ex) {
+			System.err.println("Error while converting TimeModel settings from setup");
+		}
 		
 	}
 	/* (non-Javadoc)
@@ -162,7 +194,11 @@ public class TimeModelStroke extends TimeModel {
 	 */
 	@Override
 	public HashMap<String, String> getTimeModelSetting() {
-		return null;
+		HashMap<String, String> hash = new HashMap<String, String>();
+		hash.put(PROP_CounterStart, ((Integer) this.counterStart).toString());
+		hash.put(PROP_CounterStop, ((Integer) this.counterStop).toString());
+		hash.put(PROP_CounterCurrent, ((Integer) this.counter).toString());
+		return hash;
 	}
 	
 } // --- End of Sub-Class -----

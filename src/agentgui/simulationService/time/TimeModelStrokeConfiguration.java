@@ -29,18 +29,18 @@
 package agentgui.simulationService.time;
 
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
-import javax.swing.JTextField;
-import java.awt.Insets;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import agentgui.core.application.Language;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
@@ -54,7 +54,7 @@ import agentgui.core.project.Project;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeModelStrokeConfiguration extends DisplayJPanel4Configuration implements ActionListener {
+public class TimeModelStrokeConfiguration extends DisplayJPanel4Configuration implements DocumentListener {
 
 	private static final long serialVersionUID = -1170433671816358910L;
 	private JLabel jLabelCounterStop = null;
@@ -174,6 +174,7 @@ public class TimeModelStrokeConfiguration extends DisplayJPanel4Configuration im
 					}
 				 }				 
 			});
+			jTextFieldCounterStart.getDocument().addDocumentListener(this);
 		}
 		return jTextFieldCounterStart;
 	}
@@ -196,6 +197,7 @@ public class TimeModelStrokeConfiguration extends DisplayJPanel4Configuration im
 					}
 				 }				 
 			});
+			jTextFieldCounterStop.getDocument().addDocumentListener(this);
 		}
 		return jTextFieldCounterStop;
 	}
@@ -233,19 +235,49 @@ public class TimeModelStrokeConfiguration extends DisplayJPanel4Configuration im
 	 */
 	@Override
 	public TimeModel getTimeModel() {
-		int counterStart = Integer.parseInt(this.getJTextFieldCounterStart().getText());
-		int counterStop  = Integer.parseInt(this.getJTextFieldCounterStop().getText());
+		
+		int counterStart = 0;
+		int counterStop = 0;
+		
+		String counterStartString = this.getJTextFieldCounterStart().getText();
+		String counterStopString  = this.getJTextFieldCounterStop().getText();
+		
+		if (counterStartString==null || counterStartString.length()==0) {
+			counterStart = 0;	
+		} else {
+			counterStart = Integer.parseInt(counterStartString);
+		}
+		if (counterStopString==null || counterStopString.length()==0) {
+			counterStop = 0;	
+		} else {
+			counterStop = Integer.parseInt(counterStopString);
+		}
+		
 		TimeModelStroke tms = new TimeModelStroke(counterStart, counterStop);
 		return tms;
 	}
 
+	
 	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 * @see javax.swing.event.DocumentListener#insertUpdate(javax.swing.event.DocumentEvent)
 	 */
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		
+	public void insertUpdate(DocumentEvent e) {
+		this.saveTimeModelInSimulationSetup(getTimeModel());
 	}
-
+	/* (non-Javadoc)
+	 * @see javax.swing.event.DocumentListener#removeUpdate(javax.swing.event.DocumentEvent)
+	 */
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		this.saveTimeModelInSimulationSetup(getTimeModel());
+	}
+	/* (non-Javadoc)
+	 * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.DocumentEvent)
+	 */
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		this.saveTimeModelInSimulationSetup(getTimeModel());
+	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

@@ -34,16 +34,11 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -67,7 +62,7 @@ import agentgui.core.project.Project;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration implements ChangeListener {
+public class TimeModelContinuousConfiguration extends DisplayJPanel4Configuration implements ChangeListener {
 
 	private static final long serialVersionUID = -1170433671816358910L;
 	
@@ -75,39 +70,25 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 	private JLabel jLabelHeader2 = null;
 	private JPanel jPanelDummy = null;
 	
-	private JLabel jLabelStop = null;
 	private JLabel jLabelStart = null;
-	private JLabel jLabelStartDate = null;
 	private JLabel jLabelStopDate = null;
-	private JLabel jLabelStartTime = null;
 	private JLabel jLabelStopTime = null;
-	private JLabel jLabelStartMillis = null;
 	private JLabel jLabelStopMillis = null;
 	
 	private JPanel jPanelStartSettings = null;
-	private JPanel jPanelStopSettings = null;
 	private JPanel jPanelWidthSettings = null;
 	
 	private JLabel jLabelWidth = null;
 	private JLabel jLabelWidthStep = null;
-	private JLabel jLabelWidthUnit = null;
-
 	private JTextField jTextFieldWidthValue = null;
-	private JComboBox jComboBoxWidthUnit = null;
-
 	private JSpinner jSpinnerDateStart = null;
 	private JSpinner jSpinnerTimeStart = null;
 	private JSpinner jSpinnerMillisStart = null;
-	private JSpinner jSpinnerDateStop = null;
-	private JSpinner jSpinnerTimeStop = null;
-	private JSpinner jSpinnerMillisStop = null;
-
-	
 	/**
 	 * Instantiates a new time model discrete configuration.
 	 * @param project the project
 	 */
-	public TimeModelDiscreteConfiguration(Project project) {
+	public TimeModelContinuousConfiguration(Project project) {
 		super(project);
 		this.initialize();
 	}
@@ -126,11 +107,6 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 		gridBagConstraints4.gridx = 0;
 		gridBagConstraints4.insets = new Insets(0, 10, 0, 0);
 		gridBagConstraints4.gridy = 8;
-		GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
-		gridBagConstraints16.gridx = 0;
-		gridBagConstraints16.insets = new Insets(0, 10, 0, 0);
-		gridBagConstraints16.anchor = GridBagConstraints.WEST;
-		gridBagConstraints16.gridy = 7;
 		GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
 		gridBagConstraints15.gridx = 0;
 		gridBagConstraints15.insets = new Insets(0, 10, 0, 0);
@@ -142,13 +118,6 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 		gridBagConstraints141.anchor = GridBagConstraints.WEST;
 		gridBagConstraints141.insets = new Insets(10, 5, 10, 0);
 		gridBagConstraints141.gridy = 4;
-		GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
-		gridBagConstraints13.gridx = 1;
-		gridBagConstraints13.fill = GridBagConstraints.NONE;
-		gridBagConstraints13.gridwidth = 8;
-		gridBagConstraints13.anchor = GridBagConstraints.WEST;
-		gridBagConstraints13.insets = new Insets(10, 5, 10, 0);
-		gridBagConstraints13.gridy = 7;
 		GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
 		gridBagConstraints8.gridx = 2;
 		gridBagConstraints8.gridy = 0;
@@ -178,31 +147,15 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 		gridBagConstraints1.gridy = 0;
 		
 		jLabelHeader1 = new JLabel();
-		jLabelHeader1.setText("TimeModelDiscrete");
+		jLabelHeader1.setText("TimeModelContinuous");
 		jLabelHeader1.setFont(new Font("Dialog", Font.BOLD, 14));
 		jLabelHeader2 = new JLabel();
-		jLabelHeader2.setText("Diskretes Zeitmodell mit Schrittweite sowie Start- und Endzeitpunkt.");
+		jLabelHeader2.setText("Kontinuierlich fortschreitende Zeit.");
 		jLabelHeader2.setText(Language.translate(jLabelHeader2.getText()));
-		
 		jLabelStart = new JLabel();
 		jLabelStart.setText("Start bei");
 		jLabelStart.setText(Language.translate(jLabelStart.getText()) + ":");
 		jLabelStart.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelStartDate = new JLabel();
-		jLabelStartDate.setText("Datum");
-		jLabelStartDate.setPreferredSize(new Dimension(40, 16));
-		jLabelStartDate.setText(Language.translate(jLabelStartDate.getText())+ ":");
-		jLabelStartTime = new JLabel();
-		jLabelStartTime.setText("Uhrzeit");
-		jLabelStartTime.setText(Language.translate(jLabelStartTime.getText())+ ":");
-		jLabelStartMillis = new JLabel();
-		jLabelStartMillis.setText("Millisekunden");
-		jLabelStartMillis.setText(Language.translate(jLabelStartMillis.getText())+ ":");
-		
-		jLabelStop = new JLabel();
-		jLabelStop.setText("Stop bei");
-		jLabelStop.setText(Language.translate(jLabelStop.getText())+ ":");
-		jLabelStop.setFont(new Font("Dialog", Font.BOLD, 12));
 		jLabelStopDate = new JLabel();
 		jLabelStopDate.setText("Datum");
 		jLabelStopDate.setPreferredSize(new Dimension(40, 16));
@@ -213,29 +166,22 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 		jLabelStopMillis = new JLabel();
 		jLabelStopMillis.setText("Millisekunden");
 		jLabelStopMillis.setText(Language.translate(jLabelStopMillis.getText())+ ":");
-
 		jLabelWidth = new JLabel();
 		jLabelWidth.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelWidth.setText("Schrittweite");
+		jLabelWidth.setText("Faktor");
 		jLabelWidth.setText(Language.translate(jLabelWidth.getText())+ ":");
 		jLabelWidthStep = new JLabel();
 		jLabelWidthStep.setText("Wert");
 		jLabelWidthStep.setPreferredSize(new Dimension(40, 16));
 		jLabelWidthStep.setText(Language.translate(jLabelWidthStep.getText())+ ":");
-		jLabelWidthUnit = new JLabel();
-		jLabelWidthUnit.setText("Einheit");
-		jLabelWidthUnit.setText(Language.translate(jLabelWidthUnit.getText())+ ":");
-
 		
 		this.setSize(new Dimension(609, 252));
         this.setLayout(new GridBagLayout());
         this.add(jLabelHeader1, gridBagConstraints5);
         this.add(jLabelHeader2, gridBagConstraints6);
         this.add(getJPanelDummy(), gridBagConstraints7);
-        this.add(getJPanelStartSettings(), gridBagConstraints13);
-        this.add(getJPanelStopSettings(), gridBagConstraints141);
+        this.add(getJPanelStartSettings(), gridBagConstraints141);
         this.add(jLabelStart, gridBagConstraints15);
-        this.add(jLabelStop, gridBagConstraints16);
         this.add(jLabelWidth, gridBagConstraints4);
         this.add(getJPanelWidthSettings(), gridBagConstraints9);
         			
@@ -281,46 +227,6 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 		return jSpinnerMillisStart;
 	}
 	/**
-	 * Gets the JSpinner date stop.
-	 * @return the JSpinner date stop
-	 */
-	private JSpinner getJSpinnerDateStop() {
-		if (jSpinnerDateStop==null) {
-			jSpinnerDateStop = new JSpinner(new SpinnerDateModel());
-			jSpinnerDateStop.setEditor(new JSpinner.DateEditor(jSpinnerDateStop, "dd.MM.yyyy"));
-			jSpinnerDateStop.setPreferredSize(new Dimension(100, 28));
-			jSpinnerDateStop.addChangeListener(this);
-		}
-		return jSpinnerDateStop;
-	}
-	/**
-	 * Gets the JSpinner time stop.
-	 * @return the JSpinner time stop
-	 */
-	private JSpinner getJSpinnerTimeStop() {
-		if (jSpinnerTimeStop==null) {
-			jSpinnerTimeStop = new JSpinner(new SpinnerDateModel());
-			jSpinnerTimeStop.setEditor(new JSpinner.DateEditor(jSpinnerTimeStop, "HH:mm:ss"));
-			jSpinnerTimeStop.setPreferredSize(new Dimension(80, 28));
-			jSpinnerTimeStop.addChangeListener(this);
-		}
-		return jSpinnerTimeStop;
-	}
-	/**
-	 * Gets the JSpinner milliseconds stop.
-	 * @return the JSpinner milliseconds stop
-	 */
-	private JSpinner getJSpinnerMillisStop() {
-		if (jSpinnerMillisStop==null) {
-			jSpinnerMillisStop = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
-			jSpinnerMillisStop.setEditor(new JSpinner.NumberEditor(jSpinnerMillisStop, "000"));
-			jSpinnerMillisStop.setPreferredSize(new Dimension(60, 28));
-			jSpinnerMillisStop.addChangeListener(this);
-		}
-		return jSpinnerMillisStop;
-	}
-	
-	/**
 	 * This method initializes jPanelDummy	
 	 * @return javax.swing.JPanel	
 	 */
@@ -331,42 +237,13 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 		}
 		return jPanelDummy;
 	}
+	
 	/**
 	 * This method initializes jPanelStartSettings	
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getJPanelStartSettings() {
 		if (jPanelStartSettings == null) {
-			FlowLayout flowLayout2 = new FlowLayout();
-			flowLayout2.setVgap(0);
-			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
-			gridBagConstraints14.anchor = GridBagConstraints.WEST;
-			gridBagConstraints14.gridx = -1;
-			gridBagConstraints14.gridy = -1;
-			gridBagConstraints14.insets = new Insets(10, 10, 0, 0);
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.anchor = GridBagConstraints.WEST;
-			gridBagConstraints2.gridx = -1;
-			gridBagConstraints2.gridy = -1;
-			gridBagConstraints2.insets = new Insets(10, 10, 0, 0);
-			
-			jPanelStartSettings = new JPanel();
-			jPanelStartSettings.setLayout(flowLayout2);
-			jPanelStartSettings.add(jLabelStartDate, null);
-			jPanelStartSettings.add(getJSpinnerDateStop(), null);
-			jPanelStartSettings.add(jLabelStartTime, null);
-			jPanelStartSettings.add(getJSpinnerTimeStop(), null);
-			jPanelStartSettings.add(jLabelStartMillis, null);
-			jPanelStartSettings.add(getJSpinnerMillisStop(), null);
-		}
-		return jPanelStartSettings;
-	}
-	/**
-	 * This method initializes jPanelStopSettings	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelStopSettings() {
-		if (jPanelStopSettings == null) {
 			FlowLayout flowLayout = new FlowLayout();
 			flowLayout.setAlignment(java.awt.FlowLayout.CENTER);
 			flowLayout.setVgap(0);
@@ -382,16 +259,16 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 			gridBagConstraints.gridy = -1;
 			gridBagConstraints.insets = new Insets(10, 10, 0, 0);
 			
-			jPanelStopSettings = new JPanel();
-			jPanelStopSettings.setLayout(flowLayout);
-			jPanelStopSettings.add(jLabelStopDate, null);
-			jPanelStopSettings.add(getJSpinnerDateStart(), null);
-			jPanelStopSettings.add(jLabelStopTime, null);
-			jPanelStopSettings.add(getJSpinnerTimeStart(), null);
-			jPanelStopSettings.add(jLabelStopMillis, null);
-			jPanelStopSettings.add(getJSpinnerMillisStart(), null);
+			jPanelStartSettings = new JPanel();
+			jPanelStartSettings.setLayout(flowLayout);
+			jPanelStartSettings.add(jLabelStopDate, null);
+			jPanelStartSettings.add(getJSpinnerDateStart(), null);
+			jPanelStartSettings.add(jLabelStopTime, null);
+			jPanelStartSettings.add(getJSpinnerTimeStart(), null);
+			jPanelStartSettings.add(jLabelStopMillis, null);
+			jPanelStartSettings.add(getJSpinnerMillisStart(), null);
 		}
-		return jPanelStopSettings;
+		return jPanelStartSettings;
 	}
 
 	/**
@@ -407,8 +284,6 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 			jPanelWidthSettings.setLayout(flowLayout1);
 			jPanelWidthSettings.add(jLabelWidthStep, null);
 			jPanelWidthSettings.add(getJTextFieldWidthValue(), null);
-			jPanelWidthSettings.add(jLabelWidthUnit, null);
-			jPanelWidthSettings.add(getJComboBoxWidthUnit(), null);
 		}
 		return jPanelWidthSettings;
 	}
@@ -452,26 +327,6 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 		return jTextFieldWidthValue;
 	}
 
-	/**
-	 * This method initializes jComboBoxWidthUnit	
-	 * @return javax.swing.JComboBox	
-	 */
-	private JComboBox getJComboBoxWidthUnit() {
-		if (jComboBoxWidthUnit == null) {
-			DefaultComboBoxModel cbm = new DefaultComboBoxModel(new TimeUnitVector());
-			jComboBoxWidthUnit = new JComboBox(cbm);
-			jComboBoxWidthUnit.setPreferredSize(new Dimension(120, 26));
-			jComboBoxWidthUnit.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jComboBoxWidthUnit.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					saveTimeModelInSimulationSetup(getTimeModel());
-				}
-			}); 
-		}
-		return jComboBoxWidthUnit;
-	}
-	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.DisplayJPanel4Configuration#setTimeModel(agentgui.simulationService.time.TimeModel)
 	 */
@@ -480,35 +335,22 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 		
 		Calendar calendarWork = Calendar.getInstance();
 		
-		TimeModelDiscrete timeModelDiscrete=null; 
+		TimeModelContinuous timeModelDiscrete=null; 
 		if (timeModel==null) {
-			timeModelDiscrete = new TimeModelDiscrete();
+			timeModelDiscrete = new TimeModelContinuous();
 		} else {
-			timeModelDiscrete = (TimeModelDiscrete) timeModel;
+			timeModelDiscrete = (TimeModelContinuous) timeModel;
 		}
 		
 		// --- Start settings ---------------------------------------
-		Date startDate = new Date(timeModelDiscrete.getTimeStart());
+		Date startDate = new Date(timeModelDiscrete.getStartTime());
 		calendarWork.setTime(startDate);
 		this.getJSpinnerDateStart().setValue(startDate);
 		this.getJSpinnerTimeStart().setValue(startDate);
 		this.getJSpinnerMillisStart().setValue(calendarWork.get(Calendar.MILLISECOND));
 		
-		// --- Stop settings ----------------------------------------
-		Date stopDate = new Date(timeModelDiscrete.getTimeStop());
-		calendarWork.setTime(stopDate);
-		this.getJSpinnerDateStop().setValue(stopDate);
-		this.getJSpinnerTimeStop().setValue(stopDate);
-		this.getJSpinnerMillisStop().setValue(calendarWork.get(Calendar.MILLISECOND));
-		
 		// --- Settings for the step width --------------------------
-		long step = timeModelDiscrete.getStep();
-		int unitSelection = timeModelDiscrete.getStepDisplayUnitAsIndexOfTimeUnitVector();
-		TimeUnit timeUnit = (TimeUnit) this.getJComboBoxWidthUnit().getModel().getElementAt(unitSelection);
-		Long stepInUnit = step / timeUnit.getFactorToMilliseconds();
-		
-		this.getJTextFieldWidthValue().setText(stepInUnit.toString());
-		this.getJComboBoxWidthUnit().setSelectedIndex(unitSelection);		
+		long step = 1;
 		
 	}
 	/* (non-Javadoc)
@@ -537,52 +379,20 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 		Date start = startCalenderMerged.getTime();
 		Long startLong = start.getTime();
 		
-		// --- Getting Stop time as Long ----------------------------
-		Calendar stopCalenderMerged = Calendar.getInstance();
-		Date stopDate = (Date) this.getJSpinnerDateStop().getValue();
-		Date stopTime = (Date) this.getJSpinnerTimeStop().getValue();
-		int stopMillis = (Integer) this.getJSpinnerMillisStop().getValue();
-
-		calendarWork.setTime(stopDate);
-		stopCalenderMerged.set(Calendar.DAY_OF_MONTH, calendarWork.get(Calendar.DAY_OF_MONTH));
-		stopCalenderMerged.set(Calendar.MONTH, calendarWork.get(Calendar.MONTH));
-		stopCalenderMerged.set(Calendar.YEAR, calendarWork.get(Calendar.YEAR));
-		calendarWork.setTime(stopTime);
-		stopCalenderMerged.set(Calendar.HOUR_OF_DAY, calendarWork.get(Calendar.HOUR_OF_DAY));
-		stopCalenderMerged.set(Calendar.MINUTE, calendarWork.get(Calendar.MINUTE));
-		stopCalenderMerged.set(Calendar.SECOND, calendarWork.get(Calendar.SECOND));
-		stopCalenderMerged.set(Calendar.MILLISECOND, stopMillis);
-		Date stop = stopCalenderMerged.getTime();
-		Long stopLong = stop.getTime();
-		
-		// --- Get the current index of the unit list ---------------
-		ComboBoxModel cbm = this.getJComboBoxWidthUnit().getModel();
-		TimeUnit timeUnit = (TimeUnit) cbm.getSelectedItem();
-		int indexSelected = 0;
-		for (int i = 0; i < cbm.getSize(); i++) {
-			if (cbm.getElementAt(i)==timeUnit) {
-				indexSelected = i;
-				break;
-			}
-		}
-		
 		// --- Getting step width -----------------------------------
 		String stepString = this.getJTextFieldWidthValue().getText();
 		long step;
-		long stepInUnit;
 		if (stepString==null) {
 			step = new Long(0);
 		} else if (stepString.equals("")) {
 			step = new Long(0);
 		} else {
-			stepInUnit = Long.parseLong(this.getJTextFieldWidthValue().getText());
-			step = stepInUnit * timeUnit.getFactorToMilliseconds();
+			
 		}
 		
 		// --- Set TimeModel ----------------------------------------
-		TimeModelDiscrete  timeModelDiscrete = new TimeModelDiscrete(startLong, stopLong, step);
-		timeModelDiscrete.setStepDisplayUnitAsIndexOfTimeUnitVector(indexSelected);
-		return timeModelDiscrete;
+		TimeModelContinuous tmc = new TimeModelContinuous(startLong);
+		return tmc;
 	}
 	
 	/* (non-Javadoc)

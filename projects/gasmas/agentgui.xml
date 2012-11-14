@@ -56,7 +56,8 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Einfaches Netz</simulationSetupCurrent>
+    <simulationSetupCurrent>HNord Complete</simulationSetupCurrent>
+    <timeModelClass>agentgui.simulationService.time.TimeModelDiscrete</timeModelClass>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>
@@ -123,6 +124,5 @@
             <value>hnord_complete.xml</value>
         </entry>
     </simulationSetups>
-    <timeModelClass>agentgui.simulationService.time.TimeModelDiscrete</timeModelClass>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
 </project>

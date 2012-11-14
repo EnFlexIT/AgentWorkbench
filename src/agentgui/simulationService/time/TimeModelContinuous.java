@@ -28,9 +28,14 @@
  */
 package agentgui.simulationService.time;
 
+import jade.core.Agent;
+import jade.core.ServiceException;
+
 import java.util.HashMap;
 
 import agentgui.core.project.Project;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.SimulationServiceHelper;
 
 
 /**
@@ -42,34 +47,105 @@ public class TimeModelContinuous extends TimeModel {
 
 	private static final long serialVersionUID = -6787156387409895035L;
 
+	private transient SimulationServiceHelper simHelper = null;
+	
+	private long startTime = 0;
+	
+	private boolean executed = false;
+	private long stopTime = 0;
 	private long timeDiff = 0;
-
+	
+	
 	/**
-	 * Instantiates a new time model continuous.
+	 * Instantiates a new continuous TimeModel .
 	 */
 	public TimeModelContinuous() {
-	
 	}
 	/**
-	 * Instantiates a new time model continuous.
-	 * @param startTime the start time
+	 * Instantiates a new continuous TimeModel ..
+	 * @param startTime the start time for the time model
 	 */
 	public TimeModelContinuous(Long startTime) {
-		this.setTimeDiff(System.currentTimeMillis() - startTime);
+		this.setStartTime(startTime);
+	}
+		
+	/**
+	 * Sets the start time of the time model.
+	 * @param startTime the new start time
+	 */
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+		this.setStopTime(startTime);
 	}
 	/**
-	 * Returns the time as long.
-	 * @return the time
+	 * Returns the start time of the time model.
+	 * @return the start time
 	 */
-	public long getTime() {
-		return System.currentTimeMillis() - timeDiff;
+	public long getStartTime() {
+		return startTime;
+	}
+
+	/**
+	 * Sets the stop time of the time model.
+	 * @param stopTime the new stop time
+	 */
+	private void setStopTime(long stopTime) {
+		this.stopTime = stopTime;
+	}
+	/**
+	 * Returns the stop time of the time model.
+	 * @return the stop time
+	 */
+	private long getStopTime() {
+		if (this.stopTime==0) {
+			this.stopTime=this.getStartTime();
+		}
+		return stopTime;
+	}
+	
+	/**
+	 * Sets the time model to be executed in order to forward the time in the  model.
+	 * In this method the local system time will be used to set the timeDiff.
+	 * @param executed the new executed
+	 */
+	public void setExecutedLocal(boolean executeTimeModel) {
+		if (executeTimeModel==true) {
+			this.setTimeDiff(this.getSystemTime() - this.getStartTime());	
+		} else {
+			this.setStopTime(this.getTimeLocal());
+		}
+		this.executed=executeTimeModel;
+	}
+	
+	/**
+	 * Sets the time model to be executed in order to forward the time in the  model.
+	 * In this method the platform time (provided by the SimulationService) will be used 
+	 * to set the timeDiff.
+	 * @param executeTimeModel the executed
+	 * @param currentAgent the current agent
+	 */
+	public void setExecutedPlatform(boolean executeTimeModel, Agent currentAgent) {
+		if (executeTimeModel==true) {
+			this.setTimeDiff(this.getSystemTimeSynchronized(currentAgent) - this.getStartTime());
+		} else {
+			this.setStopTime(this.getTimePlatform(currentAgent));
+		}
+		this.executed=executeTimeModel;
+	}
+	
+	/**
+	 * Checks if this time model is executed and so, if time is moving forward.
+	 * @return true, if is executed
+	 */
+	public boolean isExecuted() {
+		return executed;
 	}
 	
 	/**
 	 * Sets the time difference.
 	 * @param timeDiff the timeDiff to set
 	 */
-	public void setTimeDiff(long timeDiff) {
+	private void setTimeDiff(long timeDiff) {
 		this.timeDiff = timeDiff;
 	}
 	/**
@@ -79,6 +155,95 @@ public class TimeModelContinuous extends TimeModel {
 	public long getTimeDiff() {
 		return timeDiff;
 	}
+	
+	/**
+	 * Returns the local time as long including the currently set timeDiff.
+	 * @return the time
+	 */
+	public long getTimeLocal() {
+		long currTime;
+		if (isExecuted()==true) {
+			currTime = this.getSystemTime() - getTimeDiff();
+		} else {
+			currTime = this.getStopTime();
+		}
+		return currTime;
+	}
+	
+	/**
+	 * Returns the synchronized platform time, if available, or the local time including the timeDiff. 
+	 * Platform time requires that JADE is running and that the SimulationService is available.
+	 *
+	 * @see SimulationServiceHelper#getSynchTimeMillis()
+	 * 
+	 * @param currentAgent the current agent who is asking for the platform time
+	 * @return the time 
+	 */
+	public long getTimePlatform(Agent currentAgent) {
+		long currTime;
+		if (isExecuted()==true) {
+			currTime = this.getSystemTimeSynchronized(currentAgent) - getTimeDiff();
+		} else {
+			currTime = this.getStopTime();
+		}
+		return currTime;
+	}
+	
+
+	/**
+	 * Returns the local system time. 
+	 * @return the system time
+	 */
+	private long getSystemTime() {
+		return System.currentTimeMillis();
+	}
+	
+	/**
+	 * Returns the system time, which is either the synchronized time of the SimulationService 
+	 * or, in case of an inactive JADE platform, the time of the local machine. 
+	 *
+	 * @see SimulationServiceHelper#getSynchTimeMillis()
+	 * 
+	 * @param agent the agent
+	 * @return the synchronized system time
+	 */
+	private long getSystemTimeSynchronized(Agent currentAgent) {
+		long sysTime;
+		if (currentAgent==null) {
+			// --- Just take the local time -------------------------
+			sysTime = System.currentTimeMillis();
+			System.err.println("No agent was set. Took local time!");
+			
+		} else {
+			// --- Try to get the synchronized platform time --------
+			try {
+				sysTime = this.getSimulationServiceHelper(currentAgent).getSynchTimeMillis();
+				
+			} catch (ServiceException se) {
+				System.err.println("Could not get synchronized platform time. Took local time!");
+				sysTime = System.currentTimeMillis();
+			}
+		}
+		return sysTime;
+	}
+	
+	/**
+	 * Returns the SimulationServiceHelper that allows to connect to the SimulationService.
+	 * @see SimulationService
+	 * @see SimulationServiceHelper
+	 * @return the SimulationServiceHelper
+	 */
+	private SimulationServiceHelper getSimulationServiceHelper(Agent currentAgent) {
+		if (this.simHelper==null) {
+			try {
+				this.simHelper = (SimulationServiceHelper) currentAgent.getHelper(SimulationService.NAME);
+			} catch (ServiceException se) {
+				System.err.println("Could not connect to SimulationService!");
+			}
+		}
+		return this.simHelper;
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#step()
@@ -100,7 +265,7 @@ public class TimeModelContinuous extends TimeModel {
 	 */
 	@Override
 	public DisplayJPanel4Configuration getJPanel4Configuration(Project project) {
-		return null;
+		return new TimeModelContinuousConfiguration(project);
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()

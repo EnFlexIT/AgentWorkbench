@@ -1,4 +1,4 @@
-<class-diagram version="1.0.10" icons="true" automaticImage="PNG" always-add-relationships="false" 
+<class-diagram version="1.0.11" icons="true" automaticImage="PNG" always-add-relationships="false" 
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" corner="BOTTOM_RIGHT" language="java" name="agentgui.simulationService.time.TimeModel" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/time/TimeModel.java" binary="false">    
@@ -18,7 +18,7 @@
   </class>  
   <class id="3" corner="BOTTOM_RIGHT" language="java" name="agentgui.simulationService.time.TimeModelDiscrete" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/time/TimeModelDiscrete.java" binary="false">    
-    <position x="523" y="513" width="-1" height="-1"/>    
+    <position x="523" y="571" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -41,15 +41,15 @@
     </display>  
   </class>  
   <generalization id="6">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <generalization id="7">    
     <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
-  <generalization id="8">    
+  <generalization id="7">    
     <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="8">    
+    <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
   <association id="9">    

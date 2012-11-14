@@ -144,6 +144,7 @@ de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
 de;Externe jar-Ressourcen;External jar resources;;;
 de;Extras;Extras
+de;Faktor;Factor;;;
 de;Farbe;Color;;;
 de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!
 de;Fehlende Auswahl !;Missing Selection !;;;
@@ -255,6 +256,7 @@ de;Konfiguration;Configuration
 de;Konsole ein- oder ausblenden;Show / hide console
 de;Konsole: kann ein- bzw. ausgeblendet werden;Console: Can be shown or hidden
 de;Konsole;Console
+de;Kontinuierlich fortschreitende Zeit.;Continuously progressing time.;;;
 de;Kontinuierliches 2D-Umgebungsmodell;Continuous 2D environment model
 de;Label;Label;;;
 de;Lade SVG-Datei;Loading SVG file
