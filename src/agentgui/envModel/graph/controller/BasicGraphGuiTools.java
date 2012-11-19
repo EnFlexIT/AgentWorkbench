@@ -618,6 +618,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			}
 			ctsDialog.dispose();
 			ctsDialog = null;
+			
 		} else if (ae.getSource() == getJToggleButtonSatelliteView()) {
 			// ------------------------------------------------------
 			// --- Open satellite view ------------------------------

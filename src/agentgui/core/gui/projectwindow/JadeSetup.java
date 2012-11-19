@@ -315,7 +315,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 	private JList getJListServicesChosen() {
 		if (jListServicesChosen == null) {
 			jListServicesChosen = new JList();
-			jListServicesChosen.setModel(currProject.JadeConfiguration.getListModelServices());
+			jListServicesChosen.setModel(currProject.getJadeConfiguration().getListModelServices());
 		}
 		return jListServicesChosen;
 	}
@@ -438,13 +438,13 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 	 */
 	private void refreshDataView() {
 		
-		Integer currPort = currProject.JadeConfiguration.getLocalPort();
+		Integer currPort = currProject.getJadeConfiguration().getLocalPort();
 		if (currPort==null || currPort==0) {
 			currPort = Application.getGlobalInfo().getJadeLocalPort();
-			currProject.JadeConfiguration.setLocalPort(currPort);
+			currProject.getJadeConfiguration().setLocalPort(currPort);
 		}
 		jTextFieldDefaultPort.setText(currPort.toString());
-		this.jListServicesChosen.setModel(currProject.JadeConfiguration.getListModelServices());
+		this.jListServicesChosen.setModel(currProject.getJadeConfiguration().getListModelServices());
 	}
 	
 	@Override
@@ -470,11 +470,11 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			newPort.setVisible(true);
 			// === Go ahead =====================
 			if ( newPort.isCanceled() == false ) {
-				Integer oldLocalPort = currProject.JadeConfiguration.getLocalPort();
+				Integer oldLocalPort = currProject.getJadeConfiguration().getLocalPort();
 				Integer newLocalPort = newPort.getNewLocalPort4Jade();
 				if (newLocalPort!=oldLocalPort) {
 					// --- Set changes ----------
-					currProject.JadeConfiguration.setLocalPort(newLocalPort);
+					currProject.getJadeConfiguration().setLocalPort(newLocalPort);
 					jTextFieldDefaultPort.setText(newPort.getNewLocalPort4Jade().toString());
 				}
 			}
@@ -483,7 +483,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			
 			
 		} else if (trigger==jButtonSetPortDefault) {
-			currProject.JadeConfiguration.setLocalPort(Application.getGlobalInfo().getJadeLocalPort());
+			currProject.getJadeConfiguration().setLocalPort(Application.getGlobalInfo().getJadeLocalPort());
 			jTextFieldDefaultPort.setText( Application.getGlobalInfo().getJadeLocalPort().toString() );
 			
 		} else if (trigger==jButtonServiceAdd) {
@@ -491,7 +491,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 				Object[] selections = jListServicesAvailable.getSelectedValues();
 				for (int i = 0; i < selections.length; i++) {
 					ClassElement2Display serviceElement = (ClassElement2Display) selections[i];
-					currProject.JadeConfiguration.addService(serviceElement.toString());	
+					currProject.getJadeConfiguration().addService(serviceElement.toString());	
 				}
 			}
 			
@@ -500,7 +500,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 				Object[] selections = jListServicesChosen.getSelectedValues();
 				for (int i = 0; i < selections.length; i++) {
 					String serviceReference = (String) selections[i];
-					currProject.JadeConfiguration.removeService(serviceReference);
+					currProject.getJadeConfiguration().removeService(serviceReference);
 				}
 			}
 			
@@ -510,7 +510,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			PlatformJadeConfig defaultConfig = Application.getGlobalInfo().getJadeDefaultPlatformConfig();
 
 			// --- Clean current profile configuration --------------
-			PlatformJadeConfig currConfig = currProject.JadeConfiguration;
+			PlatformJadeConfig currConfig = currProject.getJadeConfiguration();
 			currConfig.removeAllServices();
 			
 			// --- Set the current model to the default one ---------

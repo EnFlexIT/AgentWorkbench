@@ -32,6 +32,7 @@ import javax.swing.JDesktopPane;
 import javax.swing.JTabbedPane;
 
 import agentgui.core.project.Project;
+import java.awt.Dimension;
 
 /**
  * Represents the tab 'Project Desktop'.<br>
@@ -47,11 +48,11 @@ public class ProjectDesktop extends JDesktopPane {
 	/**
 	 * This is the default constructor
 	 */
-	public ProjectDesktop( Project project ) {
+	public ProjectDesktop(Project project) {
 		super();
 		this.currProject = project;
-		initialize();	
-		this.currProject.projectDesktop = this;
+		this.currProject.setProjectDesktop(this);
+		initialize();
 	}
 
 	/**
@@ -61,6 +62,7 @@ public class ProjectDesktop extends JDesktopPane {
 	private void initialize() {
 		
 		this.setAutoscrolls(true);		
+		this.setSize(new Dimension(300, 200));
 		this.addContainerListener(new java.awt.event.ContainerListener() {
 			public void componentAdded(java.awt.event.ContainerEvent e) {
 				//System.out.println( e.getSource() );

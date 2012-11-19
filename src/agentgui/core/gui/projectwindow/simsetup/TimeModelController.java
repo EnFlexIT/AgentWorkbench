@@ -28,6 +28,7 @@
  */
 package agentgui.core.gui.projectwindow.simsetup;
 
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -37,7 +38,7 @@ import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
-import agentgui.simulationService.time.DisplayJPanel4Configuration;
+import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
 import agentgui.simulationService.time.TimeModel;
 
 /**
@@ -55,7 +56,7 @@ public class TimeModelController implements Observer {
 	
 	private String currTimeModelClass = null;
 	private ProjectWindowTab pwt = null;
-	private DisplayJPanel4Configuration display4TimeModel = null;
+	private JPanel4TimeModelConfiguration display4TimeModel = null;
 	
 	
 	/**
@@ -71,14 +72,14 @@ public class TimeModelController implements Observer {
 	 * Sets the display for the selected TimeModel.
 	 * @param display4TimeModel the new DisplayJPanel4Configuration
 	 */
-	public void setDisplay4TimeModel(DisplayJPanel4Configuration display4TimeModel) {
+	public void setDisplay4TimeModel(JPanel4TimeModelConfiguration display4TimeModel) {
 		this.display4TimeModel = display4TimeModel;
 	}
 	/**
 	 * Returns the configuration display for the TimeModel.
 	 * @return the DisplayJPanel4Configuration
 	 */
-	public DisplayJPanel4Configuration getDisplayJPanel4Configuration() {
+	public JPanel4TimeModelConfiguration getDisplayJPanel4Configuration() {
 		if (display4TimeModel==null) {
 			
 			this.currTimeModelClass = this.currProject.getTimeModelClass();
@@ -117,7 +118,7 @@ public class TimeModelController implements Observer {
 			this.display4TimeModel = null;
 		}
 		
-		DisplayJPanel4Configuration configPanel = this.getDisplayJPanel4Configuration();
+		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
 		if (configPanel!=null) {
 
 			this.pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, 
@@ -150,11 +151,17 @@ public class TimeModelController implements Observer {
 		// --- Get the current SimulationSetup ------------
 		SimulationSetup simSetup = currProject.getSimulationSetups().getCurrSimSetup();
 		// --- Get the right time model -------------------
-		TimeModel timeModel = this.getDisplayJPanel4Configuration().getTimeModel();
-		// --- Set the configuration from setup -----------
-		timeModel.setTimeModelSettings(simSetup.getTimeModelSettings());
-		// --- Set the TimeModel to the display -----------
-		this.getDisplayJPanel4Configuration().setTimeModel(timeModel);
+		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
+		if (configPanel!=null) {
+			TimeModel timeModel = configPanel.getTimeModel();
+			// --- Set the configuration from setup -------
+			HashMap<String, String> configHash = simSetup.getTimeModelSettings();
+			if (configHash!=null) {
+				timeModel.setTimeModelSettings(configHash);
+				// --- Set the TimeModel to the display ---
+				this.getDisplayJPanel4Configuration().setTimeModel(timeModel);	
+			}	
+		}
 		
 	}
 	
@@ -173,6 +180,7 @@ public class TimeModelController implements Observer {
 			} else if (this.currProject.getTimeModelClass().equals(this.currTimeModelClass)==false) {
 				// --- Display the new TimeModel display ------------
 				this.addTimeModelDisplayToProjectWindow();
+				this.setupLoad();
 			}
 		
 		} else if (updateObject instanceof SimulationSetupsChangeNotification) {

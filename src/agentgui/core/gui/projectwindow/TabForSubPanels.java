@@ -87,8 +87,8 @@ public class TabForSubPanels extends JPanel  {
 		if (jTabbedPaneIntern == null) {
 			jTabbedPaneIntern = new JTabbedPane();
 			jTabbedPaneIntern.setFont(new Font("Dialog", Font.BOLD, 12));
-			jTabbedPaneIntern.addMouseListener(currProject.projectWindow.getTabMouseListener());
-			jTabbedPaneIntern.addChangeListener(currProject.projectWindow.getTabSelectionListener());
+			jTabbedPaneIntern.addMouseListener(currProject.getProjectWindow().getTabMouseListener());
+			jTabbedPaneIntern.addChangeListener(currProject.getProjectWindow().getTabSelectionListener());
 		}
 		return jTabbedPaneIntern;
 	}

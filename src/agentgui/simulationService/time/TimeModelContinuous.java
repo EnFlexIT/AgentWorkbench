@@ -47,12 +47,18 @@ public class TimeModelContinuous extends TimeModel {
 
 	private static final long serialVersionUID = -6787156387409895035L;
 
+	public final static String PROP_TimeStart = "TimeStart";
+	public final static String PROP_TimeStop = "TimeStop";
+	public final static String PROP_AccelerationFactor = "AccelerationFactor";
+	
 	private transient SimulationServiceHelper simHelper = null;
 	
 	private long startTime = 0;
+	private long stopTime = 0;
+	private double accelerationFactor = 1.F;
 	
 	private boolean executed = false;
-	private long stopTime = 0;
+	private long pauseTime = 0;
 	private long timeDiff = 0;
 	
 	
@@ -65,8 +71,9 @@ public class TimeModelContinuous extends TimeModel {
 	 * Instantiates a new continuous TimeModel ..
 	 * @param startTime the start time for the time model
 	 */
-	public TimeModelContinuous(Long startTime) {
+	public TimeModelContinuous(Long startTime, Long stopTime) {
 		this.setStartTime(startTime);
+		this.setStopTime(stopTime);
 	}
 		
 	/**
@@ -75,7 +82,7 @@ public class TimeModelContinuous extends TimeModel {
 	 */
 	public void setStartTime(long startTime) {
 		this.startTime = startTime;
-		this.setStopTime(startTime);
+		this.setPauseTime(startTime);
 	}
 	/**
 	 * Returns the start time of the time model.
@@ -86,21 +93,51 @@ public class TimeModelContinuous extends TimeModel {
 	}
 
 	/**
-	 * Sets the stop time of the time model.
-	 * @param stopTime the new stop time
+	 * Returns the stop time for the time model.
+	 * @return the stopTime
 	 */
-	private void setStopTime(long stopTime) {
-		this.stopTime = stopTime;
+	public long getStopTime() {
+		return stopTime;
 	}
 	/**
-	 * Returns the stop time of the time model.
-	 * @return the stop time
+	 * Sets the stop time for the time model.
+	 * @param stopTime the stopTime to set
 	 */
-	private long getStopTime() {
-		if (this.stopTime==0) {
-			this.stopTime=this.getStartTime();
+	public void setStopTime(long stopTime) {
+		this.stopTime = stopTime;
+	}
+	
+	/**
+	 * Gets the acceleration factor.
+	 * @return the accelerationFactor
+	 */
+	public double getAccelerationFactor() {
+		return accelerationFactor;
+	}
+	/**
+	 * Sets the acceleration factor.
+	 * @param accelerationFactor the accelerationFactor to set
+	 */
+	public void setAccelerationFactor(double accelerationFactor) {
+		this.accelerationFactor = accelerationFactor;
+	}
+
+	/**
+	 * Sets the time, where the time model was paused.
+	 * @param pauseTime the new pause time
+	 */
+	private void setPauseTime(long pauseTime) {
+		this.pauseTime = pauseTime;
+	}
+	/**
+	 * Returns the time, where the time model was paused.
+	 * @return the pause time
+	 */
+	private long getPauseTime() {
+		if (this.pauseTime==0) {
+			this.pauseTime=this.getStartTime();
 		}
-		return stopTime;
+		return pauseTime;
 	}
 	
 	/**
@@ -112,7 +149,7 @@ public class TimeModelContinuous extends TimeModel {
 		if (executeTimeModel==true) {
 			this.setTimeDiff(this.getSystemTime() - this.getStartTime());	
 		} else {
-			this.setStopTime(this.getTimeLocal());
+			this.setPauseTime(this.getTimeLocal());
 		}
 		this.executed=executeTimeModel;
 	}
@@ -128,7 +165,7 @@ public class TimeModelContinuous extends TimeModel {
 		if (executeTimeModel==true) {
 			this.setTimeDiff(this.getSystemTimeSynchronized(currentAgent) - this.getStartTime());
 		} else {
-			this.setStopTime(this.getTimePlatform(currentAgent));
+			this.setPauseTime(this.getTimePlatform(currentAgent));
 		}
 		this.executed=executeTimeModel;
 	}
@@ -165,7 +202,7 @@ public class TimeModelContinuous extends TimeModel {
 		if (isExecuted()==true) {
 			currTime = this.getSystemTime() - getTimeDiff();
 		} else {
-			currTime = this.getStopTime();
+			currTime = this.getPauseTime();
 		}
 		return currTime;
 	}
@@ -184,7 +221,7 @@ public class TimeModelContinuous extends TimeModel {
 		if (isExecuted()==true) {
 			currTime = this.getSystemTimeSynchronized(currentAgent) - getTimeDiff();
 		} else {
-			currTime = this.getStopTime();
+			currTime = this.getPauseTime();
 		}
 		return currTime;
 	}
@@ -264,7 +301,7 @@ public class TimeModelContinuous extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration()
 	 */
 	@Override
-	public DisplayJPanel4Configuration getJPanel4Configuration(Project project) {
+	public JPanel4TimeModelConfiguration getJPanel4Configuration(Project project) {
 		return new TimeModelContinuousConfiguration(project);
 	}
 	/* (non-Javadoc)
@@ -280,7 +317,37 @@ public class TimeModelContinuous extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#setSetupConfiguration(java.util.HashMap)
 	 */
 	@Override
-	public void setTimeModelSettings(HashMap<String, String> timeModelSetupConfiguration) {
+	public void setTimeModelSettings(HashMap<String, String> timeModelSettings) {
+		
+		try {
+			
+			if (timeModelSettings.size()==0) {
+				// --- Use Default values -----------------
+				this.startTime = System.currentTimeMillis();
+				this.stopTime = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
+				this.accelerationFactor = 1;
+				return;
+			}
+			
+			String stringStartTime = timeModelSettings.get(PROP_TimeStart);
+			String stringStopTime = timeModelSettings.get(PROP_TimeStop);
+			String stringAccelerationFactor = timeModelSettings.get(PROP_AccelerationFactor);
+
+			if (stringStartTime!=null) {
+				this.startTime = Long.parseLong(stringStartTime);	
+			}
+			if (stringStopTime!=null) {
+				this.stopTime = Long.parseLong(stringStopTime);	
+			}
+			if (stringAccelerationFactor!=null) {
+				this.accelerationFactor = Float.parseFloat(stringAccelerationFactor);	
+			} else {
+				this.accelerationFactor = 1;
+			}
+	
+		} catch (Exception ex) {
+			System.err.println("Error while converting TimeModel settings from setup");
+		}
 		
 	}
 	/* (non-Javadoc)
@@ -288,8 +355,11 @@ public class TimeModelContinuous extends TimeModel {
 	 */
 	@Override
 	public HashMap<String, String> getTimeModelSetting() {
-		return null;
+		HashMap<String, String> hash = new HashMap<String, String>();
+		hash.put(PROP_TimeStart, ((Long) this.startTime).toString());
+		hash.put(PROP_TimeStop, ((Long) this.stopTime).toString());
+		hash.put(PROP_AccelerationFactor, ((Double) this.accelerationFactor).toString());
+		return hash;
 	}
-	
 	
 }

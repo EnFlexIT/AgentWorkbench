@@ -246,10 +246,10 @@ public class ProjectsLoaded {
 		
 		// --- Maybe take over Agent.GUI default JADE configuration -----------
 		if(addNew==true) {
-			newProject.JadeConfiguration = Application.getGlobalInfo().getJadeDefaultPlatformConfig();
+			newProject.setJadeConfiguration(Application.getGlobalInfo().getJadeDefaultPlatformConfig());
 		}
 		// --- Set Project reference to the current JADE configuration -------- 
-		newProject.JadeConfiguration.setProject(newProject);
+		newProject.getJadeConfiguration().setProject(newProject);
 		
 		// --- Is there already a simulation setup? ---------------------------
 		if (newProject.getSimulationSetups().size()==0) {
@@ -258,7 +258,6 @@ public class ProjectsLoaded {
 		}
 
 		// --- Instantiate project-window and the default tabs ----------------
-		newProject.projectWindow = new ProjectWindow(newProject);
 		newProject.addDefaultTabs();
 
 		// --- Load configured PlugIns ----------------------------------------
@@ -280,7 +279,7 @@ public class ProjectsLoaded {
 			newProject.save();   	
 		} else {
 			// --- Set Project to unsaved ------------
-			newProject.isUnsaved = false;
+			newProject.setUnsaved(false);
 		}
 		
 		// --- In case of an environment model in a PlugIn --------------------
@@ -424,7 +423,7 @@ public class ProjectsLoaded {
 				viewEndUser.setSelected(false);
 				viewDeveloper.setSelected(true);
 			}
-			Application.getProjectFocused().projectWindow.setView();
+			Application.getProjectFocused().getProjectWindow().setView();
 		}
 	}
 	

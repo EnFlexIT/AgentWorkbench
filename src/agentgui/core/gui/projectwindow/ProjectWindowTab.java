@@ -106,7 +106,7 @@ public class ProjectWindowTab {
 	 * Adds the current Tab-object to the project window.
 	 */
 	public void add() {
-		this.currProject.projectWindow.addProjectTab(this);	
+		this.currProject.getProjectWindow().addProjectTab(this);	
 	}
 	
 	/**
@@ -116,14 +116,14 @@ public class ProjectWindowTab {
 	 * @param indexPositionGreaterOne the index position greater one
 	 */
 	public void add(int indexPositionGreaterOne) {
-		this.currProject.projectWindow.addProjectTab(this, indexPositionGreaterOne);	
+		this.currProject.getProjectWindow().addProjectTab(this, indexPositionGreaterOne);	
 	}
 	
 	/**
 	 * This removes the current Tab from the project window.
 	 */
 	public void remove() {
-		this.currProject.projectWindow.remove(this);
+		this.currProject.getProjectWindow().remove(this);
 	}
 	
 	/**

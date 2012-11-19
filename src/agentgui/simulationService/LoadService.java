@@ -1218,7 +1218,7 @@ public class LoadService extends BaseService {
 		// --- If defined, find external jar-Files for ClassPath ----
 		jade.util.leap.List extJars = null;
 		if (Application.getProjectFocused()!=null) {
-			for (String link : Application.getProjectFocused().downloadResources) {
+			for (String link : Application.getProjectFocused().getDownloadResources()) {
 				if (extJars == null) {
 					extJars = new ArrayList();
 				}

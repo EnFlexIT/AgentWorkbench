@@ -143,7 +143,7 @@ public class TimeModelStroke extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#getJPanel4Configuration()
 	 */
 	@Override
-	public DisplayJPanel4Configuration getJPanel4Configuration(Project project) {
+	public JPanel4TimeModelConfiguration getJPanel4Configuration(Project project) {
 		return new TimeModelStrokeConfiguration(project);
 	}
 	/* (non-Javadoc)

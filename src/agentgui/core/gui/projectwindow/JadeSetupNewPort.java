@@ -89,7 +89,7 @@ public class JadeSetupNewPort extends JDialog implements ActionListener {
 		initialize();
 		
 		// --- Take the "To-use-Port" from the current Project ------
-		localJadePort = currProject.JadeConfiguration.getLocalPort();
+		localJadePort = currProject.getJadeConfiguration().getLocalPort();
 		this.jTextFieldDefaultPort.setText(localJadePort.toString());
 	}
 

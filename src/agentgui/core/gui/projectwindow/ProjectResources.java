@@ -540,7 +540,7 @@ public class ProjectResources extends JPanel implements Observer {
 					if (classSelected.equals("")==false) {
 						// --- add the class to the project PlugIns -
 						currProject.plugInLoad(classSelected, true);
-						currProject.isUnsaved=true;
+						currProject.setUnsaved(true);
 					}
 					
 				}
@@ -567,11 +567,11 @@ public class ProjectResources extends JPanel implements Observer {
 					if (pile==null) return;
 					
 					// --- Get the PlugIn -----------------
-					PlugIn pi = currProject.plugInsLoaded.getPlugIn(pile.getPlugInName());
+					PlugIn pi = currProject.getPlugInsLoaded().getPlugIn(pile.getPlugInName());
 
 					// --- Remove the PlugIn --------------
 					currProject.plugInRemove(pi, true);
-					currProject.isUnsaved=true;
+					currProject.setUnsaved(true);
 					
 				}
 			}); 

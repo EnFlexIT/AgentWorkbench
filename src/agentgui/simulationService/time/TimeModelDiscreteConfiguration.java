@@ -67,7 +67,7 @@ import agentgui.core.project.Project;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration implements ChangeListener {
+public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguration implements ChangeListener {
 
 	private static final long serialVersionUID = -1170433671816358910L;
 	
@@ -102,6 +102,7 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 	private JSpinner jSpinnerTimeStop = null;
 	private JSpinner jSpinnerMillisStop = null;
 
+	private boolean enabledChangeListener = true;
 	
 	/**
 	 * Instantiates a new time model discrete configuration.
@@ -232,8 +233,8 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
         this.add(jLabelHeader1, gridBagConstraints5);
         this.add(jLabelHeader2, gridBagConstraints6);
         this.add(getJPanelDummy(), gridBagConstraints7);
-        this.add(getJPanelStartSettings(), gridBagConstraints13);
-        this.add(getJPanelStopSettings(), gridBagConstraints141);
+        this.add(getJPanelStopSettings(), gridBagConstraints13);
+        this.add(getJPanelStartSettings(), gridBagConstraints141);
         this.add(jLabelStart, gridBagConstraints15);
         this.add(jLabelStop, gridBagConstraints16);
         this.add(jLabelWidth, gridBagConstraints4);
@@ -332,11 +333,11 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 		return jPanelDummy;
 	}
 	/**
-	 * This method initializes jPanelStartSettings	
+	 * This method initializes jPanelStopSettings	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getJPanelStartSettings() {
-		if (jPanelStartSettings == null) {
+	private JPanel getJPanelStopSettings() {
+		if (jPanelStopSettings == null) {
 			FlowLayout flowLayout2 = new FlowLayout();
 			flowLayout2.setVgap(0);
 			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
@@ -350,23 +351,23 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 			gridBagConstraints2.gridy = -1;
 			gridBagConstraints2.insets = new Insets(10, 10, 0, 0);
 			
-			jPanelStartSettings = new JPanel();
-			jPanelStartSettings.setLayout(flowLayout2);
-			jPanelStartSettings.add(jLabelStartDate, null);
-			jPanelStartSettings.add(getJSpinnerDateStop(), null);
-			jPanelStartSettings.add(jLabelStartTime, null);
-			jPanelStartSettings.add(getJSpinnerTimeStop(), null);
-			jPanelStartSettings.add(jLabelStartMillis, null);
-			jPanelStartSettings.add(getJSpinnerMillisStop(), null);
+			jPanelStopSettings = new JPanel();
+			jPanelStopSettings.setLayout(flowLayout2);
+			jPanelStopSettings.add(jLabelStopDate, null);
+			jPanelStopSettings.add(getJSpinnerDateStop(), null);
+			jPanelStopSettings.add(jLabelStopTime, null);
+			jPanelStopSettings.add(getJSpinnerTimeStop(), null);
+			jPanelStopSettings.add(jLabelStopMillis, null);
+			jPanelStopSettings.add(getJSpinnerMillisStop(), null);
 		}
-		return jPanelStartSettings;
+		return jPanelStopSettings;
 	}
 	/**
-	 * This method initializes jPanelStopSettings	
+	 * This method initializes jPanelStartSettings	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getJPanelStopSettings() {
-		if (jPanelStopSettings == null) {
+	private JPanel getJPanelStartSettings() {
+		if (jPanelStartSettings == null) {
 			FlowLayout flowLayout = new FlowLayout();
 			flowLayout.setAlignment(java.awt.FlowLayout.CENTER);
 			flowLayout.setVgap(0);
@@ -382,16 +383,16 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 			gridBagConstraints.gridy = -1;
 			gridBagConstraints.insets = new Insets(10, 10, 0, 0);
 			
-			jPanelStopSettings = new JPanel();
-			jPanelStopSettings.setLayout(flowLayout);
-			jPanelStopSettings.add(jLabelStopDate, null);
-			jPanelStopSettings.add(getJSpinnerDateStart(), null);
-			jPanelStopSettings.add(jLabelStopTime, null);
-			jPanelStopSettings.add(getJSpinnerTimeStart(), null);
-			jPanelStopSettings.add(jLabelStopMillis, null);
-			jPanelStopSettings.add(getJSpinnerMillisStart(), null);
+			jPanelStartSettings = new JPanel();
+			jPanelStartSettings.setLayout(flowLayout);
+			jPanelStartSettings.add(jLabelStartDate, null);
+			jPanelStartSettings.add(getJSpinnerDateStart(), null);
+			jPanelStartSettings.add(jLabelStartTime, null);
+			jPanelStartSettings.add(getJSpinnerTimeStart(), null);
+			jPanelStartSettings.add(jLabelStartMillis, null);
+			jPanelStartSettings.add(getJSpinnerMillisStart(), null);
 		}
-		return jPanelStopSettings;
+		return jPanelStartSettings;
 	}
 
 	/**
@@ -487,6 +488,7 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 			timeModelDiscrete = (TimeModelDiscrete) timeModel;
 		}
 		
+		this.enabledChangeListener = false;
 		// --- Start settings ---------------------------------------
 		Date startDate = new Date(timeModelDiscrete.getTimeStart());
 		calendarWork.setTime(startDate);
@@ -508,7 +510,9 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 		Long stepInUnit = step / timeUnit.getFactorToMilliseconds();
 		
 		this.getJTextFieldWidthValue().setText(stepInUnit.toString());
-		this.getJComboBoxWidthUnit().setSelectedIndex(unitSelection);		
+		this.getJComboBoxWidthUnit().setSelectedIndex(unitSelection);
+		
+		this.enabledChangeListener = true;
 		
 	}
 	/* (non-Javadoc)
@@ -590,9 +594,11 @@ public class TimeModelDiscreteConfiguration extends DisplayJPanel4Configuration 
 	 */
 	@Override
 	public void stateChanged(ChangeEvent ce) {
-		Object ceTrigger = ce.getSource();
-		if (ceTrigger instanceof JSpinner) {
-			this.saveTimeModelInSimulationSetup(getTimeModel());	
+		if (this.enabledChangeListener==true) {
+			Object ceTrigger = ce.getSource();
+			if (ceTrigger instanceof JSpinner) {
+				this.saveTimeModelInSimulationSetup(getTimeModel());	
+			}	
 		}
 	}
 	

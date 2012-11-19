@@ -120,7 +120,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	}
 	
 	/**
-	 * Gets the project.
+	 * Gets the current project.
 	 * @return the project
 	 */
 	public Project getProject() {

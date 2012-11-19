@@ -302,5 +302,27 @@
             <startAsName>n16</startAsName>
         </agent>
     </agentSetup>
+    <timeModelSettings>
+        <entry>
+            <key>StepWidth</key>
+            <value>60000</value>
+        </entry>
+        <entry>
+            <key>TimeStart</key>
+            <value>1353066196125</value>
+        </entry>
+        <entry>
+            <key>TimeCurrent</key>
+            <value>1353066196125</value>
+        </entry>
+        <entry>
+            <key>DisplayUnitIndex</key>
+            <value>1</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1353152596125</value>
+        </entry>
+    </timeModelSettings>
     <environmentFileName>MixedClusters (1) Small.graphml</environmentFileName>
 </simulationSetup>

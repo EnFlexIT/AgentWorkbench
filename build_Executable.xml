@@ -83,8 +83,11 @@
 	<!-- Version - Information - - - - -  -->
 	<property name="versionPropertyFile" value="${sourceDir}\agentgui\version.properties"/>
 	<property name="versionBuildNumberFile" value="${sourceDir}\agentgui\build.number"/>
+	<property name="versionChangesFile" value="${sourceDir}\agentgui\build.changes.html"/>
+	
 	<property name="destinVersionPropertyFile" value="${binaryDirANT}\agentgui\version.properties"/>
-
+	<property name="destinVersionChangesFile"  value="${binaryDirANT}\agentgui\build.changes.html"/>
+	
 	
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
           target: execute => Create and start the AgentGui.jar executable                        
@@ -174,6 +177,7 @@
     	
     	<!-- Version information to ANT folder -->
     	<copy tofile="${destinVersionPropertyFile}" file="${versionPropertyFile}" />
+    	<copy tofile="${destinVersionChangesFile}" file="${versionChangesFile}" />
     		
     </target>
 	

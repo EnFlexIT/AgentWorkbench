@@ -54,7 +54,7 @@ import agentgui.core.project.Project;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeModelStrokeConfiguration extends DisplayJPanel4Configuration implements DocumentListener {
+public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration implements DocumentListener {
 
 	private static final long serialVersionUID = -1170433671816358910L;
 	private JLabel jLabelCounterStop = null;

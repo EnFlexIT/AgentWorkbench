@@ -259,9 +259,9 @@ public class Platform extends Object {
 			System.out.println("JADE-Profile: Use AgentGUI-defaults");
 		} else {
 			// --- Take the Profile of the current Project ----------
-			jadeContainerProfile = currProject.JadeConfiguration.getNewInstanceOfProfilImpl();	
+			jadeContainerProfile = currProject.getJadeConfiguration().getNewInstanceOfProfilImpl();	
 			// --- Invoke the Profile configuration in the plug-ins -- 
-			jadeContainerProfile = currProject.plugInsLoaded.getJadeProfile(jadeContainerProfile);
+			jadeContainerProfile = currProject.getPlugInsLoaded().getJadeProfile(jadeContainerProfile);
 			System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );
 			
 			// --- Start Download-Server for project-resources ------

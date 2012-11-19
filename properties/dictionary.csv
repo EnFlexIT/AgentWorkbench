@@ -66,6 +66,7 @@ de;Basis-Agenten;Base agents
 de;Basis-Info;Basic info
 de;Bearbeiten;Edit
 de;Beenden;Quit
+de;Beschleunigungsfaktor;Acceleration factor;;;
 de;Beschreibung;Description
 de;Beschriftung X Achse;Label X axis ;;;
 de;Beschriftung Y Achse;Label Y axis ;;;
@@ -287,6 +288,7 @@ de;Mess-Agenten starten;Start load measure agent
 de;Messung aufzeichnen;Record measurement
 de;Messungsaufzeichnung beenden;Stop recording measurement
 de;Millisekunden;Milliseconds;;;
+de;Minute;Minute;;;
 de;Minuten;Minutes;;;
 de;Mitwirkende;Contributors;;;
 de;Monate;Months;;;
@@ -401,6 +403,7 @@ de;SVG-Elementtyp;SVG element type
 de;Schließen;Close
 de;Schrittweite;Increment;;;
 de;SciMark 2.0 - Benchmark;SciMark 2.0 - Benchmark
+de;Sekunde;Second;;;
 de;Sekunden;Seconds
 de;Server-Dienst (Master / Slave);Server (Master / Slave)
 de;Server-Dienst beim Programmstart automatisch initialisieren;Automatically initialize Server at startup
@@ -460,6 +463,7 @@ de;Stop Agent.GUI - Service;Stop Agent.GUI - Service
 de;Stop bei:;Stop at:;;;
 de;Stop bei;Stop at;;;
 de;Stop;Stop
+de;Stunde;Hour;;;
 de;Stunden;Hours;;;
 de;Suche & Auswahl;Search & Selection;;;
 de;Suche nach Agenten beendet...;Search for agents finished...
@@ -539,6 +543,8 @@ de;nicht gefunden.;not found.
 de;nicht gefunden;not found
 de;nicht unterstützt;not supported
 de;physikalisch;physical
+de;realer Zeit;of real time;;;
+de;simulierte;simulated;;;
 de;speichern;save
 de;um;at;;;
 de;wird bereits verwendet.;is already in use.

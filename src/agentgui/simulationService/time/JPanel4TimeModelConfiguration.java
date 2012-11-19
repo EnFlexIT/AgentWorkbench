@@ -41,7 +41,7 @@ import agentgui.core.sim.setup.SimulationSetup;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
-public abstract class DisplayJPanel4Configuration extends JPanel {
+public abstract class JPanel4TimeModelConfiguration extends JPanel {
 
 	private static final long serialVersionUID = 4966720402773236025L;
 
@@ -51,7 +51,7 @@ public abstract class DisplayJPanel4Configuration extends JPanel {
 	 * Instantiates a new display j panel4 configuration.
 	 * @param project the project
 	 */
-	public DisplayJPanel4Configuration(Project project) {
+	public JPanel4TimeModelConfiguration(Project project) {
 		this.currProject = project;
 	}
 	

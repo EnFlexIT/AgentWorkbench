@@ -601,7 +601,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 			setChanged();
 			notifyObservers(new Integer(OBJECTS_CHANGED));
 			
-			this.getProject().isUnsaved = true;
+			this.getProject().setUnsaved(true);
 		}
 		
 		return success;
@@ -893,7 +893,7 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		}
 		setChanged();
 		notifyObservers(new Integer(SCALE_CHANGED));
-		this.getProject().isUnsaved = true;
+		this.getProject().setUnsaved(true);
 	}
 
 

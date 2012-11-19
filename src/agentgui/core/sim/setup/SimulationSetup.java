@@ -60,23 +60,27 @@ import agentgui.core.project.Project;
  */
 @XmlRootElement public class SimulationSetup {
 
-	/** The refernece to the current project. */
+	/**
+	 * Lists the possible reasons why a SimulationSetup can be changed and unsaved  
+	 */
+	public enum CHANGED {
+		TimeModelSettings,
+		AgentConfiguration,
+		UserRuntimeObject
+	}
+	
 	@XmlTransient private Project currProject = null;
 	
-	/** Standard name for an agent start list if the current start element was configured in the tab 'Simulation-Setup' => 'Agent-Start'. */
 	@XmlTransient public static final String AGENT_LIST_ManualConfiguration = "01 AgentStartManual";
-	
-	/** Standard name for an agent start list if the current start element was configured for a predefined environment model in the tab 'Simulation-Setup' => 'Simulation Environment'. */
 	@XmlTransient public static final String AGENT_LIST_EnvironmentConfiguration = "02 AgentStartEnvironment";
 	
 	/** This Hash holds the instances of all agent start lists. */
 	@XmlTransient private HashMap<String, DefaultListModel> hashMap4AgentDefaulListModels = new HashMap<String, DefaultListModel>();
-	
-	/** The combo box model4 agent lists. */
+	/** The ComboBoxModel for agent lists. */
 	@XmlTransient private DefaultComboBoxModel comboBoxModel4AgentLists = new DefaultComboBoxModel();
 	
 	
-	/** The agent list. */
+	/** The agent list to save. */
 	@XmlElementWrapper(name = "agentSetup")
 	@XmlElement(name="agent")
 	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
@@ -97,6 +101,7 @@ import agentgui.core.project.Project;
 	@XmlTransient 
 	private Serializable userRuntimeObject = null;
 	
+	
 	/**
 	 * Constructor without arguments (This is first of all
 	 * for the JAXB-Context and should not be used by any
@@ -104,10 +109,8 @@ import agentgui.core.project.Project;
 	 */	
 	public SimulationSetup() {
 	}
-	
 	/**
 	 * Default Constructor of this class.
-	 *
 	 * @param project the project
 	 */
 	public SimulationSetup(Project project) {
@@ -116,33 +119,22 @@ import agentgui.core.project.Project;
 	
 	/**
 	 * Sets the current project.
-	 *
 	 * @param project the currProject to set
 	 */
-	public void setCurrProject(Project project) {
+	public void setProject(Project project) {
 		this.currProject = project;
 	}
-	
 	/**
-	 * Will merge all default list models to one array list.
+	 * Sets the current project to be unsaved.
+	 * @see CHANGED
+	 * @param reason the new project unsaved
 	 */
-	private void mergeListModels(){
-
-		agentList = new ArrayList<AgentClassElement4SimStart>();
-
-		// ------------------------------------------------
-		// --- Write Data from GUI to the local variable --
-		Set<String> agentListNamesSet = hashMap4AgentDefaulListModels.keySet();
-		Vector<String> agentListNames = new Vector<String>();
-		agentListNames.addAll(agentListNamesSet);
-		Collections.sort(agentListNames);
-		
-		for (int i = 0; i < agentListNames.size(); i++) {
-			DefaultListModel dlm = hashMap4AgentDefaulListModels.get(agentListNames.get(i));
-			this.setAgentList(dlm);
+	private void setProjectUnsaved(Object reason) {
+		if (this.currProject!=null) {
+			this.currProject.setChangedAndNotify(reason);
 		}
 	}
-	
+
 	/**
 	 * This method saves the current Simulation-Setup.
 	 *
@@ -196,7 +188,6 @@ import agentgui.core.project.Project;
 	
 	/**
 	 * Gets the agent list.
-	 *
 	 * @return the agentList
 	 */
 	@XmlTransient
@@ -206,12 +197,23 @@ import agentgui.core.project.Project;
 	}
 	
 	/**
-	 * Sets the agent list.
-	 *
-	 * @param agentList the agentList to set
+	 * Will merge all default list models to one array list.
 	 */
-	public void setAgentList(ArrayList<AgentClassElement4SimStart> agentList) {
-		this.agentList = agentList;
+	private void mergeListModels(){
+
+		this.agentList = new ArrayList<AgentClassElement4SimStart>();
+
+		// ------------------------------------------------
+		// --- Write Data from GUI to the local variable --
+		Set<String> agentListNamesSet = this.hashMap4AgentDefaulListModels.keySet();
+		Vector<String> agentListNames = new Vector<String>();
+		agentListNames.addAll(agentListNamesSet);
+		Collections.sort(agentListNames);
+		
+		for (int i = 0; i < agentListNames.size(); i++) {
+			DefaultListModel dlm = this.hashMap4AgentDefaulListModels.get(agentListNames.get(i));
+			this.addToAgentList(dlm);
+		}
 	}
 	
 	/**
@@ -219,13 +221,22 @@ import agentgui.core.project.Project;
 	 * the localArrayList 'agentList' which is a
 	 * type of 'AgentClassElement4SimStart'.
 	 *
-	 * @param lm the new agent list
+	 * @param lm the DefaultListModel that has to be added to the overall agent list
 	 */
-	public void setAgentList(DefaultListModel lm) {
+	private void addToAgentList(DefaultListModel lm) {
 		if (lm==null) return;
 		for (int i = 0; i < lm.size(); i++) {
-			agentList.add((AgentClassElement4SimStart) lm.get(i));
+			this.agentList.add((AgentClassElement4SimStart) lm.get(i));
 		}		
+	}
+	
+	/**
+	 * Sets the agent list.
+	 * @param agentList the agentList to set
+	 */
+	public void setAgentList(ArrayList<AgentClassElement4SimStart> agentList) {
+		this.agentList = agentList;
+		this.setProjectUnsaved(CHANGED.AgentConfiguration);
 	}
 	
 	/**
@@ -236,16 +247,15 @@ import agentgui.core.project.Project;
 	 */
 	public void createHashMap4AgentDefaulListModelsFromAgentList() {
 
-		DefaultListModel dlm = null;
-		
 		if (this.hashMap4AgentDefaulListModels==null) {
 			this.hashMap4AgentDefaulListModels = new HashMap<String, DefaultListModel>();
 		}
 		
 		// --- Rebuild the ComboBoxModel for all start lists --------
-		comboBoxModel4AgentLists = new DefaultComboBoxModel();
+		this.comboBoxModel4AgentLists = new DefaultComboBoxModel();
 		
 		// --- Run through the list of all configured agent --------- 
+		DefaultListModel dlm = null;
 		for (int i = 0; i < agentList.size(); i++) {
 			
 			AgentClassElement4SimStart ace4ss = agentList.get(i);
@@ -261,6 +271,38 @@ import agentgui.core.project.Project;
 		
 	}
 	
+	/**
+	 * Here a complete agent start list (DefaultListModel) can be added to the simulation setup.
+	 *
+	 * @param listName the list name
+	 * @param defaultListModel4AgentStarts the default list model4 agent starts
+	 */
+	public void setAgentDefaultListModel(String listName, DefaultListModel defaultListModel4AgentStarts) {
+		if (listName!=null) {
+			this.hashMap4AgentDefaulListModels.put(listName, defaultListModel4AgentStarts);
+			if (this.comboBoxModel4AgentLists.getIndexOf(listName)==-1) {
+				this.comboBoxModel4AgentLists.addElement(listName);	
+				this.sortComboBoxModel4AgentLists();
+			}
+		}
+	}
+	
+	/**
+	 * Sets the ComboBoxModel for agent lists.
+	 * @param comboBoxModel4AgentLists the comboBoxModel4AgentLists to set
+	 */
+	public void setComboBoxModel4AgentLists(DefaultComboBoxModel comboBoxModel4AgentLists) {
+		this.comboBoxModel4AgentLists = comboBoxModel4AgentLists;
+	}
+	
+	/**
+	 * Gets the combo box model4 agent lists.
+	 * @return the comboBoxModel4AgentLists
+	 */
+	@XmlTransient
+	public DefaultComboBoxModel getComboBoxModel4AgentLists() {
+		return comboBoxModel4AgentLists;
+	}
 	/**
 	 * Sort ComboBoxModel for agent lists.
 	 */
@@ -287,22 +329,6 @@ import agentgui.core.project.Project;
 	}
 	
 	/**
-	 * Here a complete agent start list (DefaultListModel) can be added to the simulation setup.
-	 *
-	 * @param listName the list name
-	 * @param defaultListModel4AgentStarts the default list model4 agent starts
-	 */
-	public void setAgentDefaultListModel(String listName, DefaultListModel defaultListModel4AgentStarts) {
-		if (listName!=null) {
-			this.hashMap4AgentDefaulListModels.put(listName, defaultListModel4AgentStarts);
-			if (this.comboBoxModel4AgentLists.getIndexOf(listName)==-1) {
-				this.comboBoxModel4AgentLists.addElement(listName);	
-				this.sortComboBoxModel4AgentLists();
-			}
-		}
-	}
-	
-	/**
 	 * This method can be used in order to get an agents start list for the
 	 * simulation, given by.
 	 *
@@ -318,12 +344,13 @@ import agentgui.core.project.Project;
 	 * The list will be filled with elements of the type {@link AgentClassElement4SimStart} coming from
 	 * the stored setup file and will be later on also stored in the file of the simulation setup.
 	 *
+	 * @see AgentClassElement4SimStart AgentClassElement4SimStart - The type to use within a concrete list model
+	 * 
 	 * @param newDefaultListModel4AgentStarts the new DefaultListModel to set
 	 * @param listName the name of the list to be assigned.
 	 * Consider the use of one of the constants {@link #AGENT_LIST_ManualConfiguration} or {@link #AGENT_LIST_EnvironmentConfiguration}
 	 * or just use an individual name
-	 * @return the agent default list model
-	 * @see AgentClassElement4SimStart AgentClassElement4SimStart - The type to use within a concrete list model
+	 * @return the DefaultListModel of agents to be started for the specified list
 	 */
 	public DefaultListModel getAgentDefaultListModel(DefaultListModel newDefaultListModel4AgentStarts, String listName) {
 
@@ -333,23 +360,6 @@ import agentgui.core.project.Project;
 			this.setAgentDefaultListModel(listName, dlm);			
 		}
 		return dlm;
-	}
-	
-	/**
-	 * Sets the ComboBoxModel for agent lists.
-	 * @param comboBoxModel4AgentLists the comboBoxModel4AgentLists to set
-	 */
-	public void setComboBoxModel4AgentLists(DefaultComboBoxModel comboBoxModel4AgentLists) {
-		this.comboBoxModel4AgentLists = comboBoxModel4AgentLists;
-	}
-	
-	/**
-	 * Gets the combo box model4 agent lists.
-	 * @return the comboBoxModel4AgentLists
-	 */
-	@XmlTransient
-	public DefaultComboBoxModel getComboBoxModel4AgentLists() {
-		return comboBoxModel4AgentLists;
 	}
 	
 	/**
@@ -373,8 +383,8 @@ import agentgui.core.project.Project;
 	 */
 	public void setUserRuntimeObject(Serializable userRuntimeObject) {
 		this.userRuntimeObject = userRuntimeObject;
+		this.setProjectUnsaved(CHANGED.UserRuntimeObject);
 	}
-	
 	/**
 	 * Gets the user runtime object.
 	 * @return the userRuntimeObject
@@ -441,6 +451,7 @@ import agentgui.core.project.Project;
 	 */
 	public void setTimeModelSettings(HashMap<String, String> newTimeModelSettings) {
 		this.timeModelSettings = newTimeModelSettings;
+		this.setProjectUnsaved(CHANGED.TimeModelSettings);
 	}
 	/**
 	 * Gets the time model settings.

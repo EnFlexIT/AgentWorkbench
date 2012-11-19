@@ -81,6 +81,7 @@ import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.resources.VectorOfProjectResources;
 import agentgui.core.sim.setup.SimulationSetups;
+import agentgui.core.webserver.DownloadServer;
 import agentgui.core.webserver.JarFileCreator;
 
 /**
@@ -128,32 +129,23 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient public static final String VIEW_Maximize = "MaximizeView";
 	@XmlTransient public static final String VIEW_Restore = "RestoreView";
 	
-	// --- private statics -------------------------------------
-	@XmlTransient private static final String newLine = Application.getGlobalInfo().getNewLineSeparator();	
-	
 	// --- Constants -------------------------------------------
 	@XmlTransient private String defaultSubFolder4Setups   = "setups";
 	@XmlTransient private String defaultSubFolderEnvSetups = "setupsEnv";
-	@XmlTransient private String[] defaultSubFolders	   = {defaultSubFolder4Setups,
-															  defaultSubFolderEnvSetups, 
-															  };
+	@XmlTransient private final String[] defaultSubFolders	   	 = {defaultSubFolder4Setups,
+															  		defaultSubFolderEnvSetups, 
+															  		};
 	
 	
 	/** This is the 'view' in the context of the mentioned MVC pattern */
-	@XmlTransient public ProjectWindow projectWindow = null;
+	@XmlTransient private ProjectWindow projectWindow = null;
 	/** This panel holds the instance of environment model display */
 	@XmlTransient private JPanel4Visualisation visualisationTab4SetupExecution = null;
-	/**
-	 * This JDesktopPane can be used in order to allow further user interactions within the project
-	 * by using individual JInternalFrames. If frames are added to this desktop, the focus will be 
-	 * set to it.
-	 */
-	@XmlTransient public JDesktopPane projectDesktop = null;
+	/** This JDesktopPane that can be used as project desktop. */
+	@XmlTransient private JDesktopPane projectDesktop = null;
 	
-
 	/** Indicates that the project is unsaved or not */
-	@XmlTransient public boolean isUnsaved = false;
-	
+	@XmlTransient private boolean isUnsaved = false;
 
 	@XmlTransient private String projectFolder;
 	@XmlTransient private String projectFolderFullPath;
@@ -161,7 +153,7 @@ import agentgui.core.webserver.JarFileCreator;
 	// --- Variables saved within the project file -------------
 	@XmlElement(name="projectName")			private String projectName;
 	@XmlElement(name="projectDescription")	private String projectDescription;
-	@XmlElement(name="projectView")			private String projectView;			// --- Developer / End-User ---
+	@XmlElement(name="projectView")			private String projectView;			// --- View for developer or end-user ---
 
 	@XmlElement(name="environmentModel")	private String environmentModelName;	
 	
@@ -179,18 +171,18 @@ import agentgui.core.webserver.JarFileCreator;
 	 * be distributed to a remote location, where such jar-files will be added automatically 
 	 * to the ClassPath of the starting JVM.         
 	 */
-	@XmlTransient public Vector<String> downloadResources = new Vector<String>();
+	@XmlTransient private Vector<String> downloadResources = new Vector<String>();
 	
 	/**
 	 * This Vector will store the class names of the PlugIns which are used within the project
 	 */
 	@XmlElementWrapper(name="plugins")
 	@XmlElement(name="className")
-	public Vector<String> plugIns_Classes = new Vector<String>();
+	private Vector<String> plugIns_Classes = new Vector<String>();
 	/**
 	 * This extended Vector will hold the concrete instances of the PLugIns loaded in this project 
 	 */
-	@XmlTransient public PlugInsLoaded plugInsLoaded = new PlugInsLoaded();
+	@XmlTransient private PlugInsLoaded plugInsLoaded = new PlugInsLoaded();
 	@XmlTransient private boolean plugInVectorLoaded = false;
 	
 	/**
@@ -217,11 +209,11 @@ import agentgui.core.webserver.JarFileCreator;
 	 * This field manages the configuration of JADE (e. g. JADE-Port 1099 etc.)
 	 */
 	@XmlElement(name="jadeConfiguration")
-	public PlatformJadeConfig JadeConfiguration = new PlatformJadeConfig();
+	private PlatformJadeConfig jadeConfiguration = new PlatformJadeConfig();
 	
 	/** The distribution setup. */
 	@XmlElement(name="distributionSetup")
-	public DistributionSetup distributionSetup = new DistributionSetup();
+	private DistributionSetup distributionSetup = new DistributionSetup();
 	
 	/**
 	 * This field manages the configuration of remote container if needed
@@ -303,7 +295,7 @@ import agentgui.core.webserver.JarFileCreator;
 				   Language.translate("Konfiguration"), null, null, 
 				   new TabForSubPanels(this), null);
 		pwt.add();
-		projectWindow.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Configuration, pwt);
+		getProjectWindow().registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Configuration, pwt);
 		
 		
 			// --- External Resources -------------------------
@@ -338,7 +330,7 @@ import agentgui.core.webserver.JarFileCreator;
 				   Language.translate("Simulations-Setup"), null, null, 
 				   new TabForSubPanels(this), null);
 		pwt.add();
-		projectWindow.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_SimSetup, pwt);
+		getProjectWindow().registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_SimSetup, pwt);
 		
 			// --- Maybe a TimeModel has to be displayed --
 			this.getTimeModelController();
@@ -368,7 +360,7 @@ import agentgui.core.webserver.JarFileCreator;
 		pwt.add();
 		
 		// --- Expand the tree view -----------------------
-		this.projectWindow.projectTreeExpand2Level(3, true);
+		this.getProjectWindow().projectTreeExpand2Level(3, true);
 		
 	}
 	
@@ -406,7 +398,7 @@ import agentgui.core.webserver.JarFileCreator;
 			// --- Save the current SimulationSetup -------
 			this.getSimulationSetups().setupSave();
 			
-			this.isUnsaved = false;			
+			this.setUnsaved(false);			
 
 			// --- Notification ---------------------------
 			this.setNotChangedButNotify(Project.SAVED);
@@ -432,11 +424,11 @@ import agentgui.core.webserver.JarFileCreator;
 		Integer msgAnswer = 0;
 		
 		Application.getMainWindow().setStatusBar(Language.translate("Projekt schließen") + " ...");
-		if ( isUnsaved == true ) {
+		if (isUnsaved()==true) {
 			msgHead = Language.translate("Projekt '@' speichern?");
 			msgHead = msgHead.replace( "'@'", "'" + projectName + "'");			
 			msgText = Language.translate(
-						"Das aktuelle Projekt '@' ist noch nicht gespeichert!" + newLine + 
+						"Das aktuelle Projekt '@' ist noch nicht gespeichert!" + Application.getGlobalInfo().getNewLineSeparator() + 
 						"Möchten Sie es nun speichern ?");
 			msgText = msgText.replace( "'@'", "'" + projectName + "'");
 			
@@ -473,7 +465,7 @@ import agentgui.core.webserver.JarFileCreator;
 		// --- Close Project ------------------------------
 		ProjectsLoaded loadedProjects = Application.getProjectsLoaded();
 		int Index = loadedProjects.getIndexByName(projectName); // --- Merker Index ---		
-		projectWindow.dispose();
+		getProjectWindow().dispose();
 		loadedProjects.remove(this);
 		
 		int nProjects = loadedProjects.count();
@@ -489,6 +481,21 @@ import agentgui.core.webserver.JarFileCreator;
 		}
 		Application.setStatusBar("");
 		return true;
+	}
+
+	/**
+	 * Sets the the Project configuration to be saved or unsaved.
+	 * @param isUnsaved the new unsaved
+	 */
+	public void setUnsaved(boolean isUnsaved) {
+		this.isUnsaved = isUnsaved;
+	}
+	/**
+	 * Checks if the Project is unsaved.
+	 * @return true, if is unsaved
+	 */
+	public boolean isUnsaved() {
+		return isUnsaved;
 	}
 
 	/**
@@ -547,8 +554,8 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	private void plugInVectorRemove() {
 		// --- unload/remove all plugins configured in 'plugIns_Loaded' -----------
-		for (int i = this.plugInsLoaded.size(); i>0; i--) {
-			this.plugInRemove(this.plugInsLoaded.get(i-1), false);
+		for (int i = this.getPlugInsLoaded().size(); i>0; i--) {
+			this.plugInRemove(this.getPlugInsLoaded().get(i-1), false);
 		}
 		this.plugInVectorLoaded = false;
 	}
@@ -559,7 +566,7 @@ import agentgui.core.webserver.JarFileCreator;
 		// --- remove all loaded PlugIns ------------------
 		this.plugInVectorRemove();
 		// --- re-initialise the 'PlugInsLoaded'-Vector ---
-		plugInsLoaded = new PlugInsLoaded();
+		setPlugInsLoaded(new PlugInsLoaded());
 		// --- load all configured PlugIns to the project -
 		this.plugInVectorLoad();
 		
@@ -574,18 +581,18 @@ import agentgui.core.webserver.JarFileCreator;
 		String MsgText = "";
 			
 		try {
-			if (plugInsLoaded.isLoaded(pluginReference)==true) {
+			if (getPlugInsLoaded().isLoaded(pluginReference)==true) {
 				// --- PlugIn can't be loaded because it's already there ------
-				PlugIn ppi = plugInsLoaded.getPlugIn(pluginReference);
+				PlugIn ppi = getPlugInsLoaded().getPlugIn(pluginReference);
 				
 				MsgHead = Language.translate("Fehler - PlugIn: ") + ppi.getName() + " !" ;
 				MsgText = Language.translate("Das PlugIn wurde bereits in das Projekt integriert " +
 						"und kann deshalb nicht erneut hinzugefügt werden!");
-				JOptionPane.showInternalMessageDialog( this.projectWindow, MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showInternalMessageDialog( this.getProjectWindow(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
 				
 			} else {
 				// --- PlugIn can be loaded -----------------------------------
-				PlugIn ppi = plugInsLoaded.loadPlugin(this, pluginReference);
+				PlugIn ppi = getPlugInsLoaded().loadPlugin(this, pluginReference);
 				this.setNotChangedButNotify(new PlugInNotification(PlugIn.ADDED, ppi));
 				if (add2PlugInReferenceVector) {
 					this.plugIns_Classes.add(pluginReference);	
@@ -607,11 +614,27 @@ import agentgui.core.webserver.JarFileCreator;
 	 * @param removeFromProjectReferenceVector 
 	 */
 	public void plugInRemove(PlugIn plugIn, boolean removeFromProjectReferenceVector) {
-		this.plugInsLoaded.removePlugIn(plugIn);
+		this.getPlugInsLoaded().removePlugIn(plugIn);
 		this.setNotChangedButNotify(new PlugInNotification(PlugIn.REMOVED, plugIn));
 		if (removeFromProjectReferenceVector) {
 			this.plugIns_Classes.remove(plugIn.getClassReference());
 		}
+	}
+	
+	/**
+	 * Sets PlugInsLoaded, a Vector<PlugIn> that describes, which PlugIn's has to loaded.
+	 * @param plugInsLoaded the PlugInsLoaded
+	 */
+	public void setPlugInsLoaded(PlugInsLoaded plugInsLoaded) {
+		this.plugInsLoaded = plugInsLoaded;
+	}
+	/**
+	 * Returns PlugInsLoaded, a Vector<PlugIn> that describes, which PlugIn's were loaded.
+	 * @return the PlugInsLoaded
+	 */
+	@XmlTransient
+	public PlugInsLoaded getPlugInsLoaded() {
+		return plugInsLoaded;
 	}
 	// ----------------------------------------------------------------------------------
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -619,6 +642,30 @@ import agentgui.core.webserver.JarFileCreator;
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ----------------------------------------------------------------------------------
 	
+
+	/**
+	 * Sets the download resources for this Project. This Vector represents the list of resources that 
+	 * should be downloadable in case of distributed executions. The idea is, that for example external 
+	 * jar-files can distributed to a remote location, where such jar-files will be added automatically
+	 * to the ClassPath of the starting JVM.
+	 * @see DownloadServer#setProjectDownloadResources(Project)
+	 * @param downloadResources the new download resources
+	 */
+	public void setDownloadResources(Vector<String> downloadResources) {
+		this.downloadResources = downloadResources;
+	}
+	/**
+	 * Returns the download resources for the project. This Vector represents the list of resources that 
+	 * should be downloadable in case of distributed executions. The idea is, that for example external 
+	 * jar-files can distributed to a remote location, where such jar-files will be added automatically
+	 * to the ClassPath of the starting JVM.
+	 *
+	 * @return the download resources
+	 */
+	public Vector<String> getDownloadResources() {
+		return downloadResources;
+	}
+
 	/**
 	 * This Procedure creates the default Project-Structure  for a new project. It creates the 
 	 * default folders ('agents' 'ontology' 'envSetups' 'resources') and creates default files
@@ -634,27 +681,26 @@ import agentgui.core.webserver.JarFileCreator;
 	 */	
 	public boolean checkCreateSubFolders() {
 		
-		String NewDirName = null;
-		File f = null;
-		boolean Error = false;
+		String newDirName = null;
+		File file = null;
+		boolean error = false;
 		
 		for (int i=0; i< this.defaultSubFolders.length; i++  ) {
-			// --- ggf. Verzeichnis anlegen ---------------
-			NewDirName = this.projectFolderFullPath + defaultSubFolders[i];
-			f = new File(NewDirName);
-			if ( f.isDirectory() == false) {
-				// --- Verzeichnis anlegen ----------------
-				if ( f.mkdir() == false ) {
-					Error = true;	
+			// --- Does teh default folder exists ---------
+			newDirName = this.projectFolderFullPath + defaultSubFolders[i];
+			file = new File(newDirName);
+			if (file.isDirectory()==false) {
+				// --- create directors -------------------
+				if (file.mkdir() == false) {
+					error = true;	
 				}				
 			}
 		};
 		
-		// --- Set Return-Value ---------------------------
-		if ( Error == true ) {
+		// --- Indicate if successful or not --------------
+		if (error==true) {
 			return false;
-		}
-		else {
+		} else {
 			return true;	
 		}		
 	}
@@ -672,7 +718,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 * @param reason
 	 */
 	public void setChangedAndNotify(Object reason) {
-		isUnsaved = true;
+		setUnsaved(true);
 		setChanged();
 		notifyObservers(reason);		
 	}
@@ -691,7 +737,7 @@ import agentgui.core.webserver.JarFileCreator;
 			this.resourcesRemove();
 		}
 		
-		this.projectWindow.moveToFront();
+		this.getProjectWindow().moveToFront();
 		Application.setTitelAddition(projectName);
 		Application.setProjectFocused(this);
 		Application.getProjectsLoaded().setProjectView();
@@ -709,12 +755,12 @@ import agentgui.core.webserver.JarFileCreator;
 		// --- Validate the main application window -----------------
 		Application.getMainWindow().validate();
 		// --- Be sure that everything is there as needed ----------- 
-		if (projectWindow!=null && projectWindow.getParent()!=null) {
+		if (getProjectWindow()!=null && getProjectWindow().getParent()!=null) {
 			// --- Maximise now -------------------------------------
-			((BasicInternalFrameUI) projectWindow.getUI()).setNorthPane(null);
+			((BasicInternalFrameUI) getProjectWindow().getUI()).setNorthPane(null);
 			DesktopManager dtm = Application.getMainWindow().getJDesktopPane4Projects().getDesktopManager();
 			if (dtm!=null) {
-				dtm.maximizeFrame(projectWindow);	
+				dtm.maximizeFrame(getProjectWindow());	
 			}
 		}
 	}
@@ -725,7 +771,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public void setProjectName(String newProjectName) {
 		projectName = newProjectName;
-		isUnsaved = true;
+		setUnsaved(true);
 		setChanged();
 		notifyObservers(CHANGED_ProjectName);
 	}
@@ -742,7 +788,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public void setProjectDescription(String newProjectDescription) {
 		projectDescription = newProjectDescription;
-		isUnsaved = true;
+		setUnsaved(true);
 		setChanged();
 		notifyObservers(CHANGED_ProjectDescription);
 	}
@@ -790,13 +836,44 @@ import agentgui.core.webserver.JarFileCreator;
 		tmpFile.deleteOnExit();
 		return tmpFolder;
 	}
+	
+	/**
+	 * Gets the project window.
+	 * @return the project window
+	 */
+	@XmlTransient
+	public ProjectWindow getProjectWindow() {
+		if (this.projectWindow==null) {
+			this.projectWindow = new ProjectWindow(this);
+		}
+		return projectWindow;
+	}
+
+	/**
+	 * Sets the project desktop in the ProjectWindow.
+	 * @param projectDesktop the JDesktopPane usable as project desktop
+	 */
+	public void setProjectDesktop(JDesktopPane projectDesktop) {
+		this.projectDesktop = projectDesktop;
+	}
+	/**
+	 * Returns the project desktop for the current project. This JDesktopPane can be used in order 
+	 * to allow further user interactions within the project by using individual JInternalFrames. 
+	 * If frames are added to this desktop, the focus will be set to it.
+	 * @return the project desktop
+	 */
+	@XmlTransient
+	public JDesktopPane getProjectDesktop() {
+		return projectDesktop;
+	}
+
 	/**
 	 * @param projectView the projectView to set
 	 */
 	@XmlTransient
 	public void setProjectView(String projectView) {
 		this.projectView = projectView;
-		isUnsaved = true;
+		setUnsaved(true);
 		setChanged();
 		notifyObservers(CHANGED_ProjectView);
 	}
@@ -817,7 +894,7 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient
 	public void setEnvironmentModelName(String environmentModel) {
 		this.environmentModelName = environmentModel;
-		this.isUnsaved = true;
+		this.setUnsaved(true);
 		setChanged();
 		notifyObservers(CHANGED_EnvironmentModel);
 	}
@@ -846,7 +923,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 * @param newSubFolder4Setups the defaultSubFolderOntology to set
 	 */
 	public void setSubFolder4Setups(String newSubFolder4Setups) {
-		defaultSubFolder4Setups = newSubFolder4Setups;
+		this.defaultSubFolder4Setups = newSubFolder4Setups;
 	}
 	/**
 	 * @return the defaultSubFolderSetups
@@ -896,7 +973,7 @@ import agentgui.core.webserver.JarFileCreator;
 		if (this.getSubOntologies().contains(newSubOntology)==false) {
 			this.getSubOntologies().add(newSubOntology);
 			this.getOntologyVisualisationHelper().addSubOntology(newSubOntology);
-			isUnsaved = true;
+			setUnsaved(true);
 			setChanged();
 			notifyObservers(CHANGED_ProjectOntology);
 		} 
@@ -908,7 +985,7 @@ import agentgui.core.webserver.JarFileCreator;
 	public void subOntologyRemove(String subOntology2Remove) {
 		this.getSubOntologies().remove(subOntology2Remove);
 		this.getOntologyVisualisationHelper().removeSubOntology(subOntology2Remove);
-		isUnsaved = true;
+		setUnsaved(true);
 		setChanged();
 		notifyObservers(CHANGED_ProjectOntology);
 	}
@@ -949,7 +1026,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 * Informs all observers about changes at the AgentConfiguration 'AgentConfig'
 	 */
 	public void setAgentStartConfigurationUpdated() {
-		isUnsaved = true;
+		setUnsaved(true);
 		setChanged();
 		notifyObservers(CHANGED_StartArguments4BaseAgent);
 	}
@@ -960,7 +1037,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public void setTimeModelClass(String timeModelClass) {
 		this.timeModelClass = timeModelClass;
-		isUnsaved = true;
+		setUnsaved(true);
 		setChanged();
 		notifyObservers(CHANGED_TimeModelClass);
 	}
@@ -1123,22 +1200,41 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 
 	/**
-	 * Gets the distribution setup.
-	 * @return the distributionSetup
+	 * Sets the jade configuration.
+	 * @param jadeConfiguration the new jade configuration
+	 */
+	public void setJadeConfiguration(PlatformJadeConfig jadeConfiguration) {
+		this.jadeConfiguration = jadeConfiguration;
+	}
+	/**
+	 * Gets the jade configuration.
+	 * @return the jade configuration
 	 */
 	@XmlTransient
-	public DistributionSetup getDistributionSetup() {
-		return distributionSetup;
+	public PlatformJadeConfig getJadeConfiguration() {
+		if (this.jadeConfiguration==null) {
+			this.jadeConfiguration = new PlatformJadeConfig();
+		}
+		return this.jadeConfiguration;
 	}
+
 	/**
 	 * Sets the distribution setup.
 	 * @param distributionSetup the distributionSetup to set
 	 */
 	public void setDistributionSetup(DistributionSetup distributionSetup) {
 		this.distributionSetup = distributionSetup;
-		isUnsaved = true;
+		setUnsaved(true);
 		setChanged();
 		notifyObservers(CHANGED_DistributionSetup);
+	}
+	/**
+	 * Gets the distribution setup.
+	 * @return the distributionSetup
+	 */
+	@XmlTransient
+	public DistributionSetup getDistributionSetup() {
+		return distributionSetup;
 	}
 	
 	/**
@@ -1153,7 +1249,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public void setRemoteContainerConfiguration(RemoteContainerConfiguration remoteContainerConfiguration) {
 		this.remoteContainerConfiguration = remoteContainerConfiguration;
-		isUnsaved = true;
+		setUnsaved(true);
 		setChanged();
 		notifyObservers(CHANGED_RemoteContainerConfiguration);
 	}
@@ -1170,7 +1266,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public void setUserRuntimeObject(Serializable userRuntimeObject) {
 		this.userRuntimeObject = userRuntimeObject;
-		isUnsaved = true;
+		setUnsaved(true);
 		setChanged();
 		notifyObservers(CHANGED_UserRuntimeObject);
 	}

@@ -46,21 +46,17 @@ package agentgui.core.sim.setup;
  */
 public class SimulationSetupsChangeNotification {
 	
-	/** The update reason. */
 	private int updateReason;
 	
 	/**
 	 * Instantiates a new simulation setups change notification.
-	 *
 	 * @param reason the reason
 	 */
 	public SimulationSetupsChangeNotification(int reason) {
 		updateReason = reason;
 	}
-	
 	/**
 	 * Sets the update reason.
-	 *
 	 * @param updateReason the new update reason
 	 */
 	public void setUpdateReason(int updateReason) {
@@ -68,7 +64,6 @@ public class SimulationSetupsChangeNotification {
 	}
 	/**
 	 * Gets the update reason.
-	 *
 	 * @return the update reason
 	 */
 	public int getUpdateReason() {

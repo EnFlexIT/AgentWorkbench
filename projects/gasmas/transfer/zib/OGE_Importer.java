@@ -120,7 +120,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 		// --------------------------------------------------------------------
 		// --- Build the new NetworkModel (in an own thread) ------------------
 		// --------------------------------------------------------------------
-		this.graphController.getProject().projectWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		this.graphController.getProject().getProjectWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
 		// --------------------------------------------------------------------
 		// --- Import the *.net file ------------------------------------------
@@ -154,7 +154,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 			
 			
 		// --------------------------------------------------------------------
-		this.graphController.getProject().projectWindow.setCursor(Cursor.getDefaultCursor());
+		this.graphController.getProject().getProjectWindow().setCursor(Cursor.getDefaultCursor());
 		return this.graphController.getNetworkModel();
 	}
 

@@ -84,9 +84,9 @@ public class SimulationSetups extends Hashtable<String, String> {
 	private String currSimSetupName = null;
 	private String currSimXMLFile = null;
 
+	
 	/**
-	 * Constructor of this class.
-	 *
+	 * Constructor for this class.
 	 * @param project the project
 	 * @param currentSimulationSetup the current simulation setup 
 	 */
@@ -120,7 +120,6 @@ public class SimulationSetups extends Hashtable<String, String> {
 	
 	/**
 	 * Adds a new Setup to this Hashtable.
-	 *
 	 * @param name the name
 	 * @param newFileName the new file name
 	 */
@@ -138,7 +137,6 @@ public class SimulationSetups extends Hashtable<String, String> {
 
 	/**
 	 * Removes a Setup form this Hashtable.
-	 *
 	 * @param name the new up remove
 	 */
 	public void setupRemove(String name) {
@@ -266,7 +264,6 @@ public class SimulationSetups extends Hashtable<String, String> {
 	
 	/**
 	 * Finds and returns the first Setup name using an alphabetic order.
-	 *
 	 * @return the first Setup name using an alphabetic order
 	 */
 	public String getFirstSetup() {
@@ -385,7 +382,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		}
 
 		// --- Set the project to the simulation setup -----------------------------
-		currSimSetup.setCurrProject(currProject);
+		currSimSetup.setProject(currProject);
 		
 		//--- Reading the serializable user object of the simsetup from the 'agentgui_userobject.bin' ---
 		String userObjectFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currSimXMLFile);
@@ -418,7 +415,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 			// --- there and initialize the corresponding attribute -------
 			agentList.get(i).toString();
 		}
-		currSimSetup.setCurrProject(currProject);
+		currSimSetup.setProject(currProject);
 	}
 
 	/**
@@ -454,16 +451,13 @@ public class SimulationSetups extends Hashtable<String, String> {
 	
 	/**
 	 * Gets the curr sim setup.
-	 *
 	 * @return the currSimSetup
 	 */
 	public SimulationSetup getCurrSimSetup() {
 		return currSimSetup;
 	}
-	
 	/**
 	 * Sets the curr sim setup.
-	 *
 	 * @param currSimSetup the currSimSetup to set
 	 */
 	public void setCurrSimSetup(SimulationSetup currSimSetup) {
@@ -472,16 +466,13 @@ public class SimulationSetups extends Hashtable<String, String> {
 
 	/**
 	 * Sets the curr sim xml file.
-	 *
 	 * @param currSimXMLFile the currSimXMLFile to set
 	 */
 	public void setCurrSimXMLFile(String currSimXMLFile) {
 		this.currSimXMLFile = currSimXMLFile;
 	}
-	
 	/**
 	 * Gets the curr sim xml file.
-	 *
 	 * @return the currSimXMLFile
 	 */
 	public String getCurrSimXMLFile() {

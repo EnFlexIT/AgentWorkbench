@@ -185,7 +185,7 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 				this.startAgent("DisplayAgent", displayAgentClass, startArg);
 				
 				// --- Set the focus on Visualisation-Tab ---------------------
-				currProject.projectWindow.setFocus2Tab(Language.translate("Simulations-Visualisierung"));
+				currProject.getProjectWindow().setFocus2Tab(Language.translate("Simulations-Visualisierung"));
 			}
 			// ----------------------------------------------------------------
 		}

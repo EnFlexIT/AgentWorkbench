@@ -293,7 +293,7 @@ public class DownloadServer implements HttpConstants, Runnable {
 		}
     	
     	// --- Store the download links of the resources in the Project-Instance ---
-    	project.downloadResources = downloadLinks;
+    	project.setDownloadResources(downloadLinks);
     }
     
     /**

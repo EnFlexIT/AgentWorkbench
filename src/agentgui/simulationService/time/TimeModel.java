@@ -85,7 +85,7 @@ public abstract class TimeModel implements Serializable {
 	 * @param project the current Agent.GUI Project
 	 * @return the DisplayJPanel4Configuration.java for the TimeModel configuration
 	 */
-	public abstract DisplayJPanel4Configuration getJPanel4Configuration(Project project);
+	public abstract JPanel4TimeModelConfiguration getJPanel4Configuration(Project project);
 	
 	/**
 	 * Sets the setup configuration as HashSet<String, String> (property, value) to the TimeModel.

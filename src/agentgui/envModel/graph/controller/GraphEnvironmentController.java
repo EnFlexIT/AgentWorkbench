@@ -154,7 +154,7 @@ public class GraphEnvironmentController extends EnvironmentController {
      */
     public void setProjectUnsaved() {
     	if (this.getProject() != null) {
-		    this.getProject().isUnsaved = true;
+		    this.getProject().setUnsaved(true);
 		}
     }
     
@@ -269,7 +269,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		case SimulationSetups.SIMULATION_SETUP_COPY:
 		    this.updateGraphFileName();
 		    this.saveEnvironment();
-		    this.getProject().isUnsaved = true;
+		    this.getProject().setUnsaved(true);
 		    break;
 	
 		case SimulationSetups.SIMULATION_SETUP_REMOVE:
