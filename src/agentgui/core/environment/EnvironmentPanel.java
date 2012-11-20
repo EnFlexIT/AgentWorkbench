@@ -45,28 +45,27 @@ public abstract class EnvironmentPanel extends JPanel implements Observer {
 
 	private static final long serialVersionUID = -5522022346976174783L;
 
-	/**
-	 * The environment controller which is to be used for managing the environment model.
-	 */
+	/** The environment controller that is used for the management of the environment model. */
 	protected EnvironmentController environmentController = null;
-	
+
 	
 	/**
 	 * Constructor for displaying the current environment model during a running simulation.
 	 */
 	public EnvironmentPanel(EnvironmentController controller){
 		super();
-		this.environmentController = controller;
-		this.environmentController.addObserver(this);
+		this.setEnvironmentController(controller);
+		this.getEnvironmentController().addObserver(this);
 	}
-	
 	/**
+	 * Returns the {@link EnvironmentController}
 	 * @return the environmentController
 	 */
 	public EnvironmentController getEnvironmentController() {
 		return environmentController;
 	}
 	/**
+	 * Sets the new {@link EnvironmentController}.
 	 * @param environmentController the environmentController to set
 	 */
 	public void setEnvironmentController(EnvironmentController environmentController) {
@@ -77,5 +76,6 @@ public abstract class EnvironmentPanel extends JPanel implements Observer {
 	 * Should be invoked before an EnvironmentPanel has to be destroyed.
 	 */
 	public abstract void dispose();
+	
 	
 }

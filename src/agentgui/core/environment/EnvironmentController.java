@@ -40,6 +40,9 @@ import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
+import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
+import agentgui.simulationService.time.TimeModel;
 
 /**
  * This class has to be extended if you are writing your own environment model and visulization.
@@ -50,12 +53,12 @@ import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
  */
 public abstract class EnvironmentController extends Observable implements Observer {
 
-	
-	/** The current environment panel. */
-	private EnvironmentPanel myEnvironmentPanel = null;
-	
 	/** The current project */
 	private Project currProject = null;
+	/** The current environment panel. */
+	private EnvironmentPanel myEnvironmentPanel = null;
+	/** The current TimeModel. */
+	private TimeModel myTimeModel = null;
 	
 	/**
 	 * The path to the folder where all environment related files are stored.
@@ -74,7 +77,6 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * during a running simulation.
 	 */
 	public EnvironmentController() { }
-	
 	/**
 	 * Constructor for a controller within the Agent.GUI application.
 	 * @param project the current project
@@ -261,13 +263,9 @@ public abstract class EnvironmentController extends Observable implements Observ
 	protected abstract void handleSimSetupChange(SimulationSetupsChangeNotification sscn);
 	
 	
-	/**
-	 * Load environment model from files
-	 */
+	/** Load environment model from files */
 	protected abstract void loadEnvironment();
-	/**
-	 * Save environment model to files
-	 */
+	/** Save environment model to files */
 	protected abstract void saveEnvironment();
 	
 	
@@ -275,17 +273,77 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * Set the environment object 
 	 * @param environmentObject the environment model
 	 */
-	public abstract void setEnvironmentModel(Object environmentObject);
+	public abstract void setEnvironmentDataObject(Object environmentObject);
 	/**
 	 * Get the current environment object
 	 * @return the current instance of the environment model
 	 */
-	public abstract Object getEnvironmentModel();
+	public abstract Object getEnvironmentDataObject();
 	 /**
 	  * Get the current environment object as a copy
 	  * @return a copy of the environment model
 	  */
-	public abstract Object getEnvironmentModelCopy();
+	public abstract Object getEnvironmentDataObjectCopy();
 	
+	
+	/**
+	 * Sets the environment model.
+	 * @param environmentModel the new environment model
+	 */
+	public void setEnvironmentModel(EnvironmentModel environmentModel) {
+		this.setTimeModel(environmentModel.getTimeModel());
+		this.setEnvironmentDataObject(environmentModel.getDisplayEnvironment());
+	}
+	/**
+	 * Returns the current instances of the EnvironmentModel.
+	 * @return the environment model
+	 */
+	public EnvironmentModel getEnvironmentModel() {
+		EnvironmentModel envModel = new EnvironmentModel();
+		envModel.setTimeModel(this.getTimeModel());
+		envModel.setDisplayEnvironment(this.getEnvironmentDataObject());
+		return envModel;
+	}
+	/**
+	 * Returns the current instances of the EnvironmentModel.
+	 * @return the environment model
+	 */
+	public EnvironmentModel getEnvironmentModelCopy() {
+		EnvironmentModel envModel = new EnvironmentModel();
+		envModel.setTimeModel(this.getTimeModelCopy());
+		envModel.setDisplayEnvironment(this.getEnvironmentDataObjectCopy());
+		return envModel;
+	}
+	
+	/**
+	 * Sets the TimeModel.
+	 * @param mewTimeModel the new TimeModel
+	 */
+	public void setTimeModel(TimeModel mewTimeModel) {
+		this.myTimeModel = mewTimeModel;
+	}
+	/**
+	 * Gets the TimeModel.
+	 * @return the TimeModel
+	 */
+	public TimeModel getTimeModel() {
+		if (this.getProject()!=null) {
+			JPanel4TimeModelConfiguration configPanel = this.getProject().getTimeModelController().getDisplayJPanel4Configuration(); 
+			if (configPanel!=null) {
+				this.myTimeModel = configPanel.getTimeModel();	
+			}
+		}
+		return this.myTimeModel;
+	}
+	/**
+	 * Gets the TimeModel copy.
+	 * @return the TimeModel copy
+	 */
+	public TimeModel getTimeModelCopy() {
+		if (this.getTimeModel()==null) {
+			return null;
+		} 
+		return this.getTimeModel().getCopy();
+	}
 	
 }

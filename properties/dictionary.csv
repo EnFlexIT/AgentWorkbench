@@ -528,12 +528,14 @@ de;X Wert;X value;;;
 de;XML-Dateien;XML files
 de;XML;XML
 de;Zeit-Konfiguration;Time Configuration;;;
+de;Zeit;Time;;;
 de;Zeitmodell verwenden;Use a time model;;;
 de;Zeitmodell;Time model;;;
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
 de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project .;null;null;null
 de;Zurücksetzen;Reset
 de;Zyklisch !;Cyclic!
+de;Zähler;Counter;;;
 de;bereit;ready
 de;für das Setup;for the setup
 de;in Datei;In file

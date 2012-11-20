@@ -34,7 +34,7 @@ import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 
 /**
- * The Class TimeModelConfiguration has to be extended in order to
+ * The Class JPanel4TimeModelConfiguration has to be extended in order to
  * provide a specific JPanle for the configuration of a TimeModel.
  * 
  * @see TimeModel

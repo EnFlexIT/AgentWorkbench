@@ -239,8 +239,15 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	private SimulationSetups simulationSetups = null;
 
-	/** The environment controllerGUI of the project. Usually a subclass of {@link EnvironmentPanel}. */
+	/**
+	 * This model contains all known environment types of the application 
+	 * and can be also used for tailored environment models / types
+	 */
 	@XmlTransient
+	private DefaultComboBoxModel environmentsComboBoxModel = null;
+	
+	/** The EnvironmentController of the project. */
+	@XmlTransient 
 	private EnvironmentController environmentController = null;
 	
 	/** Configuration settings for the TimeModel used in this Project */
@@ -250,12 +257,6 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient
 	private TimeModelController timeModelController = null;
 	
-	/**
-	 * This model contains all known environment types of the application 
-	 * and can be used for tailored environment models / types
-	 */
-	@XmlTransient
-	private DefaultComboBoxModel environmentsComboBoxModel = null;
 	
 	
 	/**
@@ -1272,7 +1273,8 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 
 	/**
-	 * Returns the current environment controller
+	 * Returns the EnvironmentController of the project - an 
+	 * extended class of {@link EnvironmentController}.
 	 * @return the environment controller 
 	 */
 	@XmlTransient
@@ -1280,7 +1282,8 @@ import agentgui.core.webserver.JarFileCreator;
 		return this.environmentController;
 	}
 	/**
-	 * Sets the environment controller 
+	 * Sets the EnvironmentController of the project - an 
+	 * extended class of {@link EnvironmentController}. 
 	 * @param environmentController
 	 */
 	public void setEnvironmentController(EnvironmentController environmentController) {

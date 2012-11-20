@@ -80,12 +80,10 @@ public abstract class TimeModel implements Serializable {
 	}
 		
 	/**
-	 * Returns the DisplayJPanel4Configuration.java (an extended JPanel) for the configuration
-	 * of a TimeModel (before the agency is executed).
-	 * @param project the current Agent.GUI Project
-	 * @return the DisplayJPanel4Configuration.java for the TimeModel configuration
+	 * Returns a copy of the current TimeModel.
+	 * @return the copy of the current TimeModel 
 	 */
-	public abstract JPanel4TimeModelConfiguration getJPanel4Configuration(Project project);
+	public abstract TimeModel getCopy();
 	
 	/**
 	 * Sets the setup configuration as HashSet<String, String> (property, value) to the TimeModel.
@@ -100,11 +98,18 @@ public abstract class TimeModel implements Serializable {
 	public abstract HashMap<String, String> getTimeModelSetting();
 	
 	/**
+	 * Returns the DisplayJPanel4Configuration.java (an extended JPanel) for the configuration
+	 * of a TimeModel (before the agency is executed).
+	 * @param project the current Agent.GUI Project
+	 * @return the DisplayJPanel4Configuration.java for the TimeModel configuration
+	 */
+	public abstract JPanel4TimeModelConfiguration getJPanel4Configuration(Project project);
+	
+	/**
 	 * Returns a DisplayJToolBar4Execution (an extended JToolBar) that consists of the necessary 
 	 * tools to handle a TimeModel during execution.
 	 * @return the DisplayJToolBar4Execution with tools that can be used during the runtime of the agency
 	 */
-	public abstract DisplayJToolBar4Execution getJToolBar4Execution();
-	
+	public abstract JToolBarElements4TimeModelExecution getJToolBarElements4TimeModelExecution();
 	
 }

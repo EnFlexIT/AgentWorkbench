@@ -78,6 +78,17 @@ public class TimeModelStroke extends TimeModel {
 		this.counterStop = counterValueStop;
 	}
 		
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getCopy()
+	 */
+	@Override
+	public TimeModel getCopy() {
+		TimeModelStroke tms = new TimeModelStroke();
+		tms.setCounterStart(this.counterStart);
+		tms.setCounterStop(this.counterStop);
+		tms.setCounter(this.counter);
+		return tms;
+	}
 	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#step()
@@ -150,8 +161,8 @@ public class TimeModelStroke extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
 	 */
 	@Override
-	public DisplayJToolBar4Execution getJToolBar4Execution() {
-		return null;
+	public JToolBarElements4TimeModelExecution getJToolBarElements4TimeModelExecution() {
+		return new TimeModelStrokeExecutionElements();
 	}
 	
 	/* (non-Javadoc)
@@ -200,5 +211,6 @@ public class TimeModelStroke extends TimeModel {
 		hash.put(PROP_CounterCurrent, ((Integer) this.counter).toString());
 		return hash;
 	}
+	
 	
 } // --- End of Sub-Class -----

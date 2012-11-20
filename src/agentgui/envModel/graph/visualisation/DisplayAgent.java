@@ -28,28 +28,17 @@
  */
 package agentgui.envModel.graph.visualisation;
 
-import jade.core.ServiceException;
-
-import java.awt.BorderLayout;
-import java.awt.Image;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import agentgui.envModel.graph.GraphGlobals;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDirectionNotification;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.AbstractDisplayAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /**
@@ -64,155 +53,56 @@ public class DisplayAgent extends AbstractDisplayAgent {
 
 	private static final long serialVersionUID = -766291673903767678L;
 
-	private final String pathImage = GraphGlobals.getPathImages();
-	
-	private JFrame useFrame = null;
-	private JPanel usePanel = null;
-	
 	private GraphEnvironmentController myGraphEnvironmentController = null;
-	private NetworkModel netModel = null;
+	private NetworkModel networkModel = null;
 	
-	private Vector<NetworkModel> stimuliOfNetworkModel = null;
+	private Vector<EnvironmentModel> stimuliOfNetworkModel = null;
 	private Boolean stimuliAction = false;
 	
+	
 	/* (non-Javadoc)
-	 * @see jade.core.Agent#setup()
+	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#createEnvironmentController()
+	 */
+	@Override
+	protected EnvironmentController createNewEnvironmentController() {
+		return new GraphEnvironmentController();
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#setup()
 	 */
 	@Override
 	protected void setup() {
 		super.setup();
-		
-		Object[] startArgs = getArguments();
-		if (startArgs == null || startArgs.length == 0) {
-			// --- started in a normal way ----------------
-			this.useFrame = this.getIndependentFrame();
-			
-			this.myEnvironmentModel = this.grabEnvironmentModelFromSimulationService(); 
-			if (this.myEnvironmentModel!=null) {
-				NetworkModel tmpNetModel = (NetworkModel) myEnvironmentModel.getDisplayEnvironment();
-				this.netModel = tmpNetModel.getCopy();	
-			}
-
-		} else {
-			// --- started from Agent.GUI -----------------
-			this.usePanel = (JPanel) startArgs[0];
-			
-			GraphEnvironmentController startController = (GraphEnvironmentController) startArgs[1];
-			this.netModel = (NetworkModel) startController.getEnvironmentModelCopy();
-			
-		}
-		// --- Build the visual components ----------------
-		this.buildVisualizationGUI();
-		
+		this.myGraphEnvironmentController = (GraphEnvironmentController) myEnvironmentController;
+		this.networkModel = this.myGraphEnvironmentController.getNetworkModel().getCopy();
 	}
 	/* (non-Javadoc)
-	 * @see jade.core.Agent#takeDown()
-	 */
-	@Override
-	protected void takeDown() {
-		this.destroyVisualizationGUI();
-		super.takeDown();
-	}
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationAgent#beforeMove()
-	 */
-	@Override
-	protected void beforeMove() {
-		this.destroyVisualizationGUI();
-		super.beforeMove();
-		
-	}
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationAgent#afterMove()
+	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#afterMove()
 	 */
 	@Override
 	protected void afterMove() {
-		this.useFrame = this.getIndependentFrame();
-		EnvironmentModel envModel = this.grabEnvironmentModelFromSimulationService(); 
-		NetworkModel tmpNetModel = (NetworkModel) envModel.getDisplayEnvironment();
-		this.netModel = tmpNetModel.getCopy();
-		this.buildVisualizationGUI();
 		super.afterMove();
+		this.myGraphEnvironmentController = (GraphEnvironmentController) this.myEnvironmentController;
+		this.networkModel = this.myGraphEnvironmentController.getNetworkModel().getCopy();
 	}
-	
-	/**
-	 * Builds the visualization GUI.
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#takeDown()
 	 */
-	private void buildVisualizationGUI() {
-		
-		// --- Build the new Controller GUI ---------------
-		this.myGraphEnvironmentController = new GraphEnvironmentController();
-		this.myGraphEnvironmentController.setEnvironmentModel(this.netModel);
-		
-		if (this.useFrame!=null) {
-			this.useFrame.setContentPane(myGraphEnvironmentController.getEnvironmentPanel());
-			this.useFrame.pack();
-			this.useFrame.setVisible(true);
-		} else {
-			this.usePanel.add(myGraphEnvironmentController.getEnvironmentPanel(), BorderLayout.CENTER);
-			this.usePanel.validate();
-			this.usePanel.repaint();
-		}
-		
+	@Override
+	protected void takeDown() {
+		this.myGraphEnvironmentController=null;
+		this.networkModel=null;
+		super.takeDown();
 	}
-	
-	/**
-	 * Destroys the visualization GUI.
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#beforeMove()
 	 */
-	private void destroyVisualizationGUI() {
-		
-		this.netModel = null;
-		if (this.myGraphEnvironmentController!=null) {
-			this.myGraphEnvironmentController.getEnvironmentPanel().setVisible(false);
-			this.myGraphEnvironmentController.getEnvironmentPanel().dispose();
-			this.myGraphEnvironmentController = null;
-		}
-		if (this.useFrame != null) {
-			this.useFrame.dispose();
-			this.useFrame = null;
-		}
-		if (this.usePanel != null) {
-			this.usePanel = null;
-		}
-		
-	}
-	
-	/**
-	 * Gets the independent frame.
-	 * @return the independent frame
-	 */
-	private JFrame getIndependentFrame() {
-
-		ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUI.png"));
-		Image imageAgentGUI = iconAgentGUI.getImage();
-
-		JFrame frame = new JFrame();
-		frame.setSize(1150, 640);
-		frame.setTitle("DisplayAgent: " + getLocalName());
-		frame.setIconImage(imageAgentGUI);		
-		frame.setLocationRelativeTo(null);
-		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent we) {
-				DisplayAgent.this.doDelete();
-			}
-		});
-		return frame;
-	}
-		
-	/**
-	 * Grab the environment model from the simulation service.
-	 * @return the environment model
-	 */
-	private EnvironmentModel grabEnvironmentModelFromSimulationService(){
-		EnvironmentModel envModel = null;
-		try {
-			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			envModel = simHelper.getEnvironmentModel();
-		} catch (ServiceException e) {
-			System.err.println(getLocalName() +  " - Error: Could not retrieve SimulationServiceHelper, shutting down!");
-			this.doDelete();
-		}
-		return envModel;
+	@Override
+	protected void beforeMove() {
+		this.myGraphEnvironmentController=null;
+		this.networkModel=null;
+		super.beforeMove();
 	}
 	
 	/* (non-Javadoc)
@@ -224,7 +114,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		boolean runStimuliRemover = false;
 		
 		// --- Add the new NetorkModel to the Vector of not yet displayed NetworkModel's ----------
-		this.getStimuliOfNetworkModel().add(((NetworkModel) myEnvironmentModel.getDisplayEnvironment()).getCopy());
+		this.getStimuliOfNetworkModel().add(myEnvironmentModel);
 
 		// --- Check if the Vector of NetworkModel's needs to be emptied -------------------------- 
 		synchronized (stimuliAction) {
@@ -234,21 +124,20 @@ public class DisplayAgent extends AbstractDisplayAgent {
 			}
 		}
 		
-		
 		if (runStimuliRemover==true) {
 			// --- Empty the Vector of NetworkModel's ---------------------------------------------
 			while (this.getStimuliOfNetworkModel().size()!=0) {
 				try {
-					this.netModel = this.getStimuliOfNetworkModel().get(0);
+					EnvironmentModel envModel = this.getStimuliOfNetworkModel().get(0);
+
+					TimeModel timeModel = envModel.getTimeModel();
+					NetworkModel netModel = (NetworkModel) envModel.getDisplayEnvironment();
+					this.networkModel = netModel.getCopy();
+
 					this.getStimuliOfNetworkModel().remove(0);
-					this.myGraphEnvironmentController.setEnvironmentModel(netModel);
 					
-//					SwingUtilities.invokeLater(new Runnable() {
-//						@Override
-//						public void run() {
-//							
-//						}
-//					});
+					this.setTimeModelDisplay(timeModel);
+					this.myGraphEnvironmentController.setEnvironmentDataObject(this.networkModel);
 					
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -264,12 +153,12 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	}
 	
 	/**
-	 * Returns the Vector of NetworkModels that arrived this agent by an EnvironmentStimulus.
+	 * Returns the Vector of EnvironmentModel's that arrived this agent by an EnvironmentStimulus.
 	 * @return the stimuli of network model
 	 */
-	private synchronized Vector<NetworkModel> getStimuliOfNetworkModel() {
+	private synchronized Vector<EnvironmentModel> getStimuliOfNetworkModel() {
 		if (this.stimuliOfNetworkModel==null) {
-			this.stimuliOfNetworkModel = new Vector<NetworkModel>();
+			this.stimuliOfNetworkModel = new Vector<EnvironmentModel>();
 		}
 		return this.stimuliOfNetworkModel;
 	}
@@ -284,7 +173,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 			
 			NetworkComponentDirectionNotification ncdm = (NetworkComponentDirectionNotification) notification.getNotification();
 			NetworkComponent netComp = ncdm.getNetworkComponent();
-			this.netModel.setDirectionsOfNetworkComponent(netComp);
+			this.networkModel.setDirectionsOfNetworkComponent(netComp);
 			
 		}
 		myGraphEnvironmentController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));

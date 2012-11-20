@@ -28,17 +28,19 @@
  */
 package agentgui.simulationService.time;
 
-import javax.swing.JToolBar;
+import java.util.Vector;
+
+import javax.swing.JComponent;
 
 /**
- * The Class TimeModelConfiguration has to be extended in order to
- * provide a specific JPanle for the configuration of a TimeModel.
+ * The Class JToolBarElements4TimeModelExecution has to be extended in order to
+ * provide a specific display for a TimeModel during the execution of an agency.
  * 
  * @see TimeModel
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
-public abstract class DisplayJToolBar4Execution extends JToolBar {
+public abstract class JToolBarElements4TimeModelExecution extends Vector<JComponent> {
 
 	private static final long serialVersionUID = 4966720402773236025L;
 

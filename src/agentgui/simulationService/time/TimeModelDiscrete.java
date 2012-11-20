@@ -83,6 +83,18 @@ public class TimeModelDiscrete extends TimeModel {
 		this.time = this.timeStart;
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getCopy()
+	 */
+	@Override
+	public TimeModel getCopy() {
+		TimeModelDiscrete tmd = new TimeModelDiscrete();
+		tmd.setTimeStart(this.timeStart);
+		tmd.setTimeStop(this.timeStop);
+		tmd.setTime(this.time);
+		tmd.setStep(this.step);
+		return tmd;
+	}
 	
 	/**
 	 * Steps the time with the given time step.
@@ -246,7 +258,8 @@ public class TimeModelDiscrete extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
 	 */
 	@Override
-	public DisplayJToolBar4Execution getJToolBar4Execution() {
+	public JToolBarElements4TimeModelExecution getJToolBarElements4TimeModelExecution() {
 		return null;
 	}
+	
 }

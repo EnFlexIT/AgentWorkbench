@@ -159,7 +159,7 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 			GraphEnvironmentController graphEnvironmentController = (GraphEnvironmentController) currProject.getEnvironmentController();
 
 			currentlyDoing = GET_NetworkModel;
-			networkModel = (NetworkModel) graphEnvironmentController.getEnvironmentModelCopy();
+			networkModel = (NetworkModel) graphEnvironmentController.getEnvironmentDataObjectCopy();
 
 			environmentModel.setTimeModel(myTimeModel);
 			environmentModel.setDisplayEnvironment(networkModel);

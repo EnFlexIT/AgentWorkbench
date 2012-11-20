@@ -1082,11 +1082,10 @@ public class MainWindow extends JFrame implements ComponentListener {
 	// --- Symbolleiste erstellen - START -------------------------
 	// ------------------------------------------------------------
 	/**
-	 * This method will return the current instance of the applications tool bar.
-	 *
-	 * @return the j tool bar application
+	 * Returns the main JToolBar of the application window.
+	 * @return the main JToolBar of the application window
 	 */
-	private JToolBar getJToolBarApplication() {
+	public JToolBar getJToolBarApplication() {
 
 		if ( jToolBarApplication == null) {
 			
@@ -1184,7 +1183,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 	 * @param myComponent the my component
 	 */
 	public void addJToolbarComponent(JComponent myComponent) {
-		jToolBarApplication.add(myComponent);
+		this.getJToolBarApplication().add(myComponent);
 		this.validate();
 	}
 	
@@ -1193,7 +1192,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 	 * @param myComponent the my component
 	 */
 	public void removeJToolbarComponent(JComponent myComponent) {
-		jToolBarApplication.remove(myComponent);
+		this.getJToolBarApplication().remove(myComponent);
 		this.validate();
 	}
 	// ------------------------------------------------------------

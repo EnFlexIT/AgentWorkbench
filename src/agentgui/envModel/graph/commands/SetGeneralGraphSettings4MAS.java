@@ -99,7 +99,7 @@ public class SetGeneralGraphSettings4MAS extends AbstractUndoableEdit {
 	@Override
 	public void undo() throws CannotUndoException {
 		super.undo();
-		this.graphController.setEnvironmentModel(oldNetworkModel.getCopy());
+		this.graphController.setEnvironmentDataObject(oldNetworkModel.getCopy());
 	}
 	
 	

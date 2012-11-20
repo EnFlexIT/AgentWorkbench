@@ -76,6 +76,25 @@ public class TimeModelContinuous extends TimeModel {
 		this.setStopTime(stopTime);
 	}
 		
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getCopy()
+	 */
+	@Override
+	public TimeModel getCopy() {
+		TimeModelContinuous tmc = new TimeModelContinuous();
+		// ------------------------------------------------
+		// --- Do this first to avoid side effects --------
+		tmc.setExecutedLocal(this.executed);
+		tmc.setPauseTime(this.pauseTime);
+		tmc.setTimeDiff(this.timeDiff);
+		// --- Do this first to avoid side effects --------
+		// ------------------------------------------------		
+		tmc.setStartTime(this.startTime);
+		tmc.setStopTime(this.stopTime);
+		tmc.setAccelerationFactor(this.accelerationFactor);
+		return tmc;
+	}
+	
 	/**
 	 * Sets the start time of the time model.
 	 * @param startTime the new start time
@@ -308,7 +327,7 @@ public class TimeModelContinuous extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
 	 */
 	@Override
-	public DisplayJToolBar4Execution getJToolBar4Execution() {
+	public JToolBarElements4TimeModelExecution getJToolBarElements4TimeModelExecution() {
 		return null;
 	}
 	

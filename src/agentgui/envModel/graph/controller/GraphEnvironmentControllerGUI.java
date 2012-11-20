@@ -791,7 +791,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 				if (this.networkModelTabs.get(altNetModelName) == null) {
 				    // --- Create new controller for alternative NetworkModel -----------
 			    	graphController = new GraphEnvironmentController();
-			    	graphController.setEnvironmentModel(altNetModel);
+			    	graphController.setEnvironmentDataObject(altNetModel);
 			    	graphControllerGUI = (GraphEnvironmentControllerGUI) graphController.getEnvironmentPanel();
 			    	
 			    	this.getJTabbedPaneAltNetModels().addTab(altNetModelName, graphControllerGUI);
@@ -801,7 +801,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 				    // --- Get the Controller for the alternative NetworkModel ----------
 				    graphControllerGUI = this.networkModelTabs.get(altNetModelName);
 				    graphController = graphControllerGUI.getGraphController();
-				    graphController.setEnvironmentModel(altNetModel);
+				    graphController.setEnvironmentDataObject(altNetModel);
 
 				    // --- Set the appearance of the GUI to use or not use a JTabbedPane ----
 					if (altNetModel.getAlternativeNetworkModel().size()==0) {

@@ -37,13 +37,12 @@ public class TimeInputDialog extends KeyInputDialog{
 
 	protected JSpinner getInputComponent() {
 		if (spTimeInput == null) {
-			Date date = new Date();
-			date.setHours(0);
-			date.setMinutes(0);
-			SpinnerDateModel sdm = new SpinnerDateModel(date, null, null, Calendar.HOUR_OF_DAY);
-			spTimeInput = new JSpinner(sdm);
-			JSpinner.DateEditor de = new JSpinner.DateEditor(spTimeInput, "HH:mm");
-			spTimeInput.setEditor(de);
+			Calendar workCalendar = Calendar.getInstance();
+			workCalendar.setTime(new Date());
+			workCalendar.set(Calendar.HOUR, 0);
+			workCalendar.set(Calendar.MINUTE, 0);
+			spTimeInput = new JSpinner(new SpinnerDateModel(workCalendar.getTime(), null, null, Calendar.HOUR_OF_DAY));
+			spTimeInput.setEditor(new JSpinner.DateEditor(spTimeInput, "HH:mm"));
 		}
 		return spTimeInput;
 	}

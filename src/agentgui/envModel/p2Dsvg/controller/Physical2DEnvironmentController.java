@@ -181,16 +181,16 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 	 * @see agentgui.core.environment.EnvironmentController#setEnvironment(java.lang.Object)
 	 */
 	@Override
-	public void setEnvironmentModel(Object environmentObject) {
+	public void setEnvironmentDataObject(Object environmentObject) {
 	}
 	/**
 	 * @return The current projects Environment
 	 */
-	public Physical2DEnvironment getEnvironmentModel() {
+	public Physical2DEnvironment getEnvironmentDataObject() {
 		return environment;
 	}
 		
-	public Physical2DEnvironment getEnvironmentModelCopy() {
+	public Physical2DEnvironment getEnvironmentDataObjectCopy() {
 		// --- Datei kopieren ---
 		String fileSrc   = getEnvFolderPath() + getCurrentSimSetup().getEnvironmentFileName();
 		String fileDest  = fileSrc.substring(0, fileSrc.length()-4) + "_tmp.xml";

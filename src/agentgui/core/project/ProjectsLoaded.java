@@ -56,7 +56,6 @@ import agentgui.core.application.Language;
 import agentgui.core.common.Zipper;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectNewOpen;
-import agentgui.core.gui.ProjectWindow;
 
 /**
  * This class holds the list of the projects, that are currently open

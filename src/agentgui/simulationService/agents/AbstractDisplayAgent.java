@@ -29,29 +29,62 @@
 package agentgui.simulationService.agents;
 
 import jade.core.ServiceException;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
+
+import agentgui.core.application.Application;
+import agentgui.core.environment.EnvironmentController;
+import agentgui.core.environment.EnvironmentPanel;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.time.JToolBarElements4TimeModelExecution;
+import agentgui.simulationService.time.TimeModel;
 
 /**
  * The Class VisualisationAgent can be used in order to build agents
  * that are passively observing environment changes that have to be
  * displayed by an extended VisualisationAgent.<br>
  * If the SimulationService is running, the VisualisationAgent will 
- * register there as a displaying agent. Furthermore the service holds<br>
- * In an extended SimulationMangerAgent
+ * register there as a displaying agent. 
  * 
  * @see SimulationAgent
+ * @see EnvironmentModel
+ * @see EnvironmentController
+ * @see EnvironmentPanel
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public abstract class AbstractDisplayAgent extends SimulationAgent {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -6499021588257662334L;
+	
+	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
+
+	protected EnvironmentController myEnvironmentController = null;
+	private boolean isAgentGuiEmbedded = false;
+	
+	private JFrame jFrameStandalone = null;
+	private JPanel usePanel = null;
+
+	/** The display elements for the current TimeModel */
+	private JToolBar jToolBar4TimeModel = null;
+	private JToolBarElements4TimeModelExecution timeModelCompVector = null;
 
 	
 	/**
-	 * Instantiates a new visualisation agent.
+	 * Instantiates a new visualisation agent for an EnvironmentModel.
 	 */
 	public AbstractDisplayAgent() {
 		// --- Initialise this agent as a passive ---------
@@ -65,14 +98,65 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	@Override
 	protected void setup() {
 		super.setup();
+		
+		Object[] startArgs = getArguments();
+		if (startArgs == null || startArgs.length == 0) {
+			// --- Started as independent display -------------------
+			this.setAgentGuiEmbedded(false);
+			this.jFrameStandalone = this.getJFrameStandalone();
+			this.myEnvironmentModel = this.grabEnvironmentModelFromSimulationService();
+
+			this.myEnvironmentController = this.createNewEnvironmentController();
+			if (this.myEnvironmentModel!=null) {
+				this.myEnvironmentController .setEnvironmentModel(this.myEnvironmentModel);	
+			}
+			
+		} else {
+			// --- Started from Agent.GUI ---------------------------
+			this.setAgentGuiEmbedded(true);
+			// --- Get info from Agent.GUI configuration ------------
+			this.usePanel = (JPanel) startArgs[0];
+			EnvironmentController envController = (EnvironmentController) startArgs[1];
+			this.myEnvironmentModel = envController.getEnvironmentModelCopy();
+			
+			// --- Create new environment controller in -------------
+			// --- order to be independent from Agent.GUI -----------    
+			this.myEnvironmentController = this.createNewEnvironmentController();
+			if (this.myEnvironmentModel!=null) {
+				this.myEnvironmentController.setEnvironmentModel(this.myEnvironmentModel);	
+			}
+			
+		}
+		// --- Build the visual components ----------------
+		this.buildVisualizationGUI();
+		// --- Register as Displaying Agent ---------------
 		this.registerAsDisplayAgent();
+		
 	}
 	
+	/**
+	 * Returns a new environment controller that depends on the actual EnvironmentModel.<br> 
+	 * As Example: In case of the 'Graph and Network Environment' a new 
+	 * {@link GraphEnvironmentController} will be created and returned.
+	 * @return the new environment controller
+	 */
+	protected abstract EnvironmentController createNewEnvironmentController();
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationAgent#takeDown()
+	 */
+	@Override
+	protected void takeDown() {
+		this.destroyVisualizationGUI();
+		this.unregisterAsDisplayAgent();
+		super.takeDown();
+	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationAgent#beforeMove()
 	 */
 	@Override
 	protected void beforeMove() {
+		this.destroyVisualizationGUI();
 		this.unregisterAsDisplayAgent();
 		super.beforeMove();
 	}
@@ -83,6 +167,13 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	@Override
 	protected void afterMove() {
 		super.afterMove();
+		this.jFrameStandalone = this.getJFrameStandalone();
+		this.myEnvironmentModel = this.grabEnvironmentModelFromSimulationService();
+		this.myEnvironmentController = this.createNewEnvironmentController();
+		if (this.myEnvironmentModel!=null) {
+			this.myEnvironmentController .setEnvironmentModel(this.myEnvironmentModel);	
+		}
+		this.buildVisualizationGUI();
 		this.registerAsDisplayAgent();
 	}
 	
@@ -91,16 +182,10 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	 */
 	@Override
 	protected void afterClone() {
+		this.destroyVisualizationGUI();
 		super.afterClone();
 		this.registerAsDisplayAgent();
 	}
-	
-	@Override
-	protected void takeDown() {
-		this.unregisterAsDisplayAgent();
-		super.takeDown();
-	}
-	
 	
 	/**
 	 * Register this agent as DisplayAgent at the SimulationServie.
@@ -124,5 +209,213 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Sets the Agent.GUI embedded.
+	 * @param isAgentGuiEmbedded the new agent gui embeded
+	 */
+	public void setAgentGuiEmbedded(boolean isAgentGuiEmbedded) {
+		this.isAgentGuiEmbedded = isAgentGuiEmbedded;
+	}
+	/**
+	 * Checks if is the current display is embedded into the Agent.GUI main window.
+	 * @return true, if is embedded into Agent.GUI 
+	 */
+	public boolean isAgentGuiEmbedded() {
+		return isAgentGuiEmbedded;
+	}
+
+	/**
+	 * Builds the visualization GUI.
+	 */
+	private void buildVisualizationGUI() {
+		// --- Build the new Controller GUI ---------------
+		if (this.jFrameStandalone!=null) {
+			this.jFrameStandalone.getContentPane().add(this.myEnvironmentController.getEnvironmentPanel(), BorderLayout.CENTER);
+			this.jFrameStandalone.pack();
+			this.jFrameStandalone.validate();
+			this.jFrameStandalone.setVisible(true);
+		} else {
+			this.usePanel.add(this.myEnvironmentController.getEnvironmentPanel(), BorderLayout.CENTER);
+			this.usePanel.validate();
+			this.usePanel.repaint();
+		}
+	}
+
+	/**
+	 * Destroys the visualization GUI.
+	 */
+	private void destroyVisualizationGUI() {
+		
+		if (this.myEnvironmentController!=null) {
+			this.removeTimeModelDisplay();
+			this.myEnvironmentController.getEnvironmentPanel().setVisible(false);
+			this.myEnvironmentController = null;
+		}
+		if (this.jFrameStandalone!=null) {
+			this.jFrameStandalone.setVisible(false);
+		}
+		
+		this.jFrameStandalone = null;
+		this.usePanel = null;
+		this.jToolBar4TimeModel = null;
+		
+		this.setAgentGuiEmbedded(false);
+		
+	}
+
+	/**
+	 * Gets an independent frame in order to display the current environment model.
+	 * @return the independent frame
+	 */
+	protected JFrame getJFrameStandalone() {
+		if (this.jFrameStandalone==null) {
+			
+			ImageIcon iconAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
+			Image imageAgentGUI = iconAgentGUI.getImage();
+
+			// --- Define the content pane ----------
+			JPanel jContentPane = new JPanel();
+			jContentPane.setLayout(new BorderLayout());
+			
+			// --- Define the Frame itself ----------
+			this.jFrameStandalone= new JFrame();
+			this.jFrameStandalone.setContentPane(jContentPane);
+			this.jFrameStandalone.setSize(1150, 640);
+			this.jFrameStandalone.setTitle("DisplayAgent: " + getLocalName());
+			this.jFrameStandalone.setIconImage(imageAgentGUI);		
+			this.jFrameStandalone.setLocationRelativeTo(null);
+			this.jFrameStandalone.addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent we) {
+					doDelete();
+				}
+			});
+		}
+		return this.jFrameStandalone;
+	}
+	
+	/**
+	 * Grab the environment model from the simulation service.
+	 * @return the current EnvironmentModel
+	 */
+	protected EnvironmentModel grabEnvironmentModelFromSimulationService(){
+		EnvironmentModel envModel = null;
+		try {
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			envModel = simHelper.getEnvironmentModel();
+		} catch (ServiceException e) {
+			System.err.println(getLocalName() +  " - Error: Could not retrieve SimulationServiceHelper, shutting down!");
+			this.doDelete();
+		}
+		return envModel;
+	}
+	
+	
+	/**
+	 * Sets the time model display.
+	 */
+	protected void setTimeModelDisplay(TimeModel timeModel) {
+		
+		if (this.jToolBar4TimeModel==null) {
+			if (this.jFrameStandalone!=null) {
+				this.jToolBar4TimeModel = getJToolBarNew();
+				this.jFrameStandalone.getContentPane().add(this.jToolBar4TimeModel, BorderLayout.NORTH);
+			} else {
+				this.jToolBar4TimeModel = Application.getMainWindow().getJToolBarApplication();
+			}
+		}
+		this.setTimeModelDisplay(timeModel, this.jToolBar4TimeModel);
+		
+	}
+
+	/**
+	 * Returns a new empty JToolBar for the display of a TimeModel 
+	 * @return the new JToolBar
+	 */
+	private JToolBar getJToolBarNew() {
+		JToolBar toolBar = new JToolBar("TimeModel-Display"); 
+		toolBar.setPreferredSize(new Dimension(100, 28));
+		toolBar.setFloatable(false);
+		return toolBar;
+	}
+	
+	/**
+	 * This method can be used in order to display the current TimeModel.
+	 *
+	 * @param timeModel the current time model
+	 * @param jToolBar2Display the j tool bar2 display
+	 * @see TimeModel#getJToolBarElements4TimeModelExecution()
+	 */
+	private void setTimeModelDisplay(TimeModel timeModel, JToolBar jToolBar2DisplayTimeModel) {
+	
+		if (timeModel!=null) {
+			
+			// ------------------------------------------------------
+			// --- Set the JToolBar to display the TimeModel --------
+			if (jToolBar2DisplayTimeModel==null && this.jToolBar4TimeModel==null) {
+				// --- No place for displaying the TimeModel --------
+				return;
+			} else {
+				// --- Set the JToolBar for the display elements ---- 
+				if (this.jToolBar4TimeModel==null) {
+					this.jToolBar4TimeModel = jToolBar2DisplayTimeModel;
+					
+				} else {
+					if (jToolBar2DisplayTimeModel!=null) {
+						if (this.jToolBar4TimeModel!=jToolBar2DisplayTimeModel) {
+							this.removeTimeModelDisplay();
+							this.jToolBar4TimeModel = jToolBar2DisplayTimeModel;
+						}	
+					}
+					
+				}
+			}
+
+			// ------------------------------------------------------
+			// --- Remind the components to display the TimeModel --- 
+			if (this.timeModelCompVector==null) {
+				this.timeModelCompVector = timeModel.getJToolBarElements4TimeModelExecution();	
+				if (this.timeModelCompVector!=null && this.timeModelCompVector.size()>0) {
+					// --- Display the elements in the toolbar ------
+					for (int i = 0; i < this.timeModelCompVector.size(); i++) {
+						JComponent comp = this.timeModelCompVector.get(i);
+						this.jToolBar4TimeModel.add(comp);
+					}
+				}
+			}
+
+			// ------------------------------------------------------
+			// --- Display the current Time Model -------------------
+			if (this.timeModelCompVector!=null) {
+				this.timeModelCompVector.setTimeModel(timeModel);
+			}
+			
+		}
+	}
+	
+	/**
+	 * Removes the time model display.
+	 */
+	protected void removeTimeModelDisplay() {
+		
+		if (this.jToolBar4TimeModel!=null && this.timeModelCompVector!=null) {
+			for (int i = 0; i < this.timeModelCompVector.size(); i++) {
+				JComponent comp = this.timeModelCompVector.get(i);
+				this.jToolBar4TimeModel.remove(comp);
+			}	
+			this.jToolBar4TimeModel.validate();
+			this.jToolBar4TimeModel.repaint();
+		}
+		
+		if (this.getJFrameStandalone()!=null) {
+			this.getJFrameStandalone().remove(this.jToolBar4TimeModel);
+			this.jToolBar4TimeModel=null;
+		}
+		
+		this.timeModelCompVector=null;
+		this.jToolBar4TimeModel=null;
+		
+	}
+	
 	
 }
