@@ -37,7 +37,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
@@ -80,7 +79,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 
 	/** The display elements for the current TimeModel */
 	private JToolBar jToolBar4TimeModel = null;
-	private JToolBarElements4TimeModelExecution timeModelCompVector = null;
+	private JToolBarElements4TimeModelExecution jToolBarElements4TimeModel = null;
 
 	
 	/**
@@ -373,21 +372,18 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 
 			// ------------------------------------------------------
 			// --- Remind the components to display the TimeModel --- 
-			if (this.timeModelCompVector==null) {
-				this.timeModelCompVector = timeModel.getJToolBarElements4TimeModelExecution();	
-				if (this.timeModelCompVector!=null && this.timeModelCompVector.size()>0) {
+			if (this.jToolBarElements4TimeModel==null) {
+				this.jToolBarElements4TimeModel = timeModel.getJToolBarElements4TimeModelExecution();	
+				if (this.jToolBarElements4TimeModel!=null) {
 					// --- Display the elements in the toolbar ------
-					for (int i = 0; i < this.timeModelCompVector.size(); i++) {
-						JComponent comp = this.timeModelCompVector.get(i);
-						this.jToolBar4TimeModel.add(comp);
-					}
+					this.jToolBarElements4TimeModel.addToolbarElements(this.jToolBar4TimeModel);
 				}
 			}
 
 			// ------------------------------------------------------
 			// --- Display the current Time Model -------------------
-			if (this.timeModelCompVector!=null) {
-				this.timeModelCompVector.setTimeModel(timeModel);
+			if (this.jToolBarElements4TimeModel!=null) {
+				this.jToolBarElements4TimeModel.setTimeModel(timeModel);
 			}
 			
 		}
@@ -398,11 +394,8 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	 */
 	protected void removeTimeModelDisplay() {
 		
-		if (this.jToolBar4TimeModel!=null && this.timeModelCompVector!=null) {
-			for (int i = 0; i < this.timeModelCompVector.size(); i++) {
-				JComponent comp = this.timeModelCompVector.get(i);
-				this.jToolBar4TimeModel.remove(comp);
-			}	
+		if (this.jToolBar4TimeModel!=null && this.jToolBarElements4TimeModel!=null) {
+			this.jToolBarElements4TimeModel.removeToolbarElements();
 			this.jToolBar4TimeModel.validate();
 			this.jToolBar4TimeModel.repaint();
 		}
@@ -412,7 +405,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			this.jToolBar4TimeModel=null;
 		}
 		
-		this.timeModelCompVector=null;
+		this.jToolBarElements4TimeModel=null;
 		this.jToolBar4TimeModel=null;
 		
 	}

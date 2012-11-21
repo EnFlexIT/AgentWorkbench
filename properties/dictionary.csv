@@ -90,6 +90,7 @@ de;CSV-Dateien;CSV files;;;
 de;CSV-Version des Wörterbuchs übernehmen?;Take over the csv-version of the dictionary?;;;
 de;Class not found:;Class not found:
 de;Container;Container
+de;Countdown-Ansicht;Countdown view;;;
 de;DF (Directory Facilitator) starten;Start DF (Directory Facilitator)
 de;DF anzeigen;Show DF GUI
 de;Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht erneut hinzugefügt werden!;The plugin is already integrated into the project and therefore can not be added again!
@@ -476,6 +477,7 @@ de;Tage;Days;;;
 de;Teil-Umgebung;environment part
 de;Teilnetze;Subnetworks;;;
 de;Text zur Übersetzung;Text to translate
+de;Timer-Ansicht;Timer view;;;
 de;Titel;Title;;;
 de;Topologie;Topology;;;
 de;Typ-Bezeichner;Type-Specifier
