@@ -120,7 +120,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 
     /**
      * The constructor for the GraphEnvironmentController for displaying the current environment 
-     * model during a running simulation. Use {@link #setEnvironmentDataObject(Object)}, in order to 
+     * model during a running simulation. Use {@link #setDisplayEnvironmentModel(Object)}, in order to 
      * set the current {@link NetworkModel}.
      */
     public GraphEnvironmentController() {
@@ -258,7 +258,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 			this.updateGraphFileName();
 		    networkModel = new NetworkModel();
 		    networkModel.setGeneralGraphSettings4MAS(generalGraphSettings4MAS);
-		    this.setEnvironmentDataObject(this.networkModel);
+		    this.setDisplayEnvironmentModel(this.networkModel);
 		    
 		    // --- register a new list of agents, which has to be started with the environment ------
 		    this.setAgents2Start(new DefaultListModel());
@@ -371,7 +371,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		this.loadGeneralGraphSettings();
 	
 		// --- Use the local method in order to inform the observer -------------------------------
-		this.setEnvironmentDataObject(this.networkModel);
+		this.setDisplayEnvironmentModel(this.networkModel);
 
 		// --- Decode the data models that are Base64 encoded in the moment -----------------------  
 		this.setNetworkComponentDataModelBase64Decoded();
@@ -653,7 +653,7 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @see agentgui.core.environment.EnvironmentController#setEnvironmentModel(java.lang.Object)
      */
     @Override
-    public void setEnvironmentDataObject(Object environmentObject) {
+    public void setDisplayEnvironmentModel(Object environmentObject) {
 		try {
 		    if (environmentObject == null) {
 		    	this.setNetworkModel(null);
@@ -671,7 +671,7 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @see agentgui.core.environment.EnvironmentController#getEnvironmentModel()
      */
     @Override
-    public Object getEnvironmentDataObject() {
+    public Object getDisplayEnvironmentModel() {
     	return this.networkModel;
     }
 
@@ -680,7 +680,7 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @see agentgui.core.environment.EnvironmentController#getEnvironmentModelCopy()
      */
     @Override
-    public Object getEnvironmentDataObjectCopy() {
+    public Object getDisplayEnvironmentModelCopy() {
 		NetworkModel netModel = this.networkModel.getCopy();
 		return netModel;
     }

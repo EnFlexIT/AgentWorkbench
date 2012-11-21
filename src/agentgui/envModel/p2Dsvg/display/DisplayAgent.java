@@ -121,7 +121,7 @@ public class DisplayAgent extends Agent {
 			usePanel = (JPanel) startArgs[0];
 
 			Physical2DEnvironmentController p2DCont = (Physical2DEnvironmentController) startArgs[1];
-			environment = p2DCont.getEnvironmentDataObjectCopy();
+			environment = p2DCont.getDisplayEnvironmentModelCopy();
 			svgDoc = p2DCont.getSvgDocCopy();
 			
 			// --- Set the environment globally -----------

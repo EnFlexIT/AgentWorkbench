@@ -69,7 +69,7 @@ public class SetNetworkModel extends AbstractUndoableEdit {
 	 * Do the wished edit.
 	 */
 	private void doEdit() {
-		this.graphController.setEnvironmentDataObject(this.newNetworkModel.getCopy());
+		this.graphController.setDisplayEnvironmentModel(this.newNetworkModel.getCopy());
 	}
 	
 	/* (non-Javadoc)
@@ -92,7 +92,7 @@ public class SetNetworkModel extends AbstractUndoableEdit {
 	@Override
 	public void undo() throws CannotUndoException {
 		super.undo();
-		this.graphController.setEnvironmentDataObject(this.oldNetworkModel);
+		this.graphController.setDisplayEnvironmentModel(this.oldNetworkModel);
 	}
 	
 }

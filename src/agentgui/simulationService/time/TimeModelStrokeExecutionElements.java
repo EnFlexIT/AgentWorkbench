@@ -217,9 +217,11 @@ public class TimeModelStrokeExecutionElements extends JToolBarElements4TimeModel
 			
 		} else if (trigger==this.getJMenuItemViewTimer()) {
 			this.view = viewTimer;
+			this.setTimeModel(this.getTimeModel());
 			
 		} else if (trigger==this.getJMenuItemViewCountdown()) {
 			this.view = viewCountdown;
+			this.setTimeModel(this.getTimeModel());
 		}
 		
 	}

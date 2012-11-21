@@ -271,19 +271,19 @@ public abstract class EnvironmentController extends Observable implements Observ
 	
 	/**
 	 * Set the environment object 
-	 * @param environmentObject the environment model
+	 * @param displayEnvironmentModel the environment model
 	 */
-	public abstract void setEnvironmentDataObject(Object environmentObject);
+	public abstract void setDisplayEnvironmentModel(Object displayEnvironmentModel);
 	/**
 	 * Get the current environment object
 	 * @return the current instance of the environment model
 	 */
-	public abstract Object getEnvironmentDataObject();
+	public abstract Object getDisplayEnvironmentModel();
 	 /**
 	  * Get the current environment object as a copy
 	  * @return a copy of the environment model
 	  */
-	public abstract Object getEnvironmentDataObjectCopy();
+	public abstract Object getDisplayEnvironmentModelCopy();
 	
 	
 	/**
@@ -292,7 +292,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 */
 	public void setEnvironmentModel(EnvironmentModel environmentModel) {
 		this.setTimeModel(environmentModel.getTimeModel());
-		this.setEnvironmentDataObject(environmentModel.getDisplayEnvironment());
+		this.setDisplayEnvironmentModel(environmentModel.getDisplayEnvironment());
 	}
 	/**
 	 * Returns the current instances of the EnvironmentModel.
@@ -301,7 +301,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	public EnvironmentModel getEnvironmentModel() {
 		EnvironmentModel envModel = new EnvironmentModel();
 		envModel.setTimeModel(this.getTimeModel());
-		envModel.setDisplayEnvironment(this.getEnvironmentDataObject());
+		envModel.setDisplayEnvironment(this.getDisplayEnvironmentModel());
 		return envModel;
 	}
 	/**
@@ -311,7 +311,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	public EnvironmentModel getEnvironmentModelCopy() {
 		EnvironmentModel envModel = new EnvironmentModel();
 		envModel.setTimeModel(this.getTimeModelCopy());
-		envModel.setDisplayEnvironment(this.getEnvironmentDataObjectCopy());
+		envModel.setDisplayEnvironment(this.getDisplayEnvironmentModelCopy());
 		return envModel;
 	}
 	

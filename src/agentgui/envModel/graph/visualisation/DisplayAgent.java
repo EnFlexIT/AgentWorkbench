@@ -137,7 +137,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 					this.getStimuliOfNetworkModel().remove(0);
 					
 					this.setTimeModelDisplay(timeModel);
-					this.myGraphEnvironmentController.setEnvironmentDataObject(this.networkModel);
+					this.myGraphEnvironmentController.setDisplayEnvironmentModel(this.networkModel);
 					
 				} catch (Exception ex) {
 					ex.printStackTrace();

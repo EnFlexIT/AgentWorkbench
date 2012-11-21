@@ -181,9 +181,9 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 		if(this.getP2DController().getSvgDoc() != null){
 			setSVGDocument(this.getP2DController().getSvgDoc());
 		}
-		if(this.getP2DController().getEnvironmentDataObject()!= null){
+		if(this.getP2DController().getDisplayEnvironmentModel()!= null){
 			rebuildTree();
-			environmentSettings.setScale(this.getP2DController().getEnvironmentDataObject().getScale());
+			environmentSettings.setScale(this.getP2DController().getDisplayEnvironmentModel().getScale());
 		}
 	}
 	
@@ -294,8 +294,8 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 	 * Rebuilding treeEnvironment's tree model
 	 */
 	private void rebuildTree(){
-		if(this.getP2DController().getEnvironmentDataObject() != null){
-			DefaultMutableTreeNode rootNode = getPlaygroundNode(this.getP2DController().getEnvironmentDataObject().getRootPlayground());
+		if(this.getP2DController().getDisplayEnvironmentModel() != null){
+			DefaultMutableTreeNode rootNode = getPlaygroundNode(this.getP2DController().getDisplayEnvironmentModel().getRootPlayground());
 			getTreeEnvironment().setModel(new DefaultTreeModel(rootNode));
 		}else{
 			DefaultMutableTreeNode dummyNode = new DefaultMutableTreeNode(Language.translate("Keine Umgebung definiert"));
@@ -494,13 +494,13 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 			
 			if(eventCode == Physical2DEnvironmentController.ENVIRONMENT_CHANGED){
 				rebuildTree();
-				if(this.getP2DController().getEnvironmentDataObject() != null){
-					environmentSettings.setScale(this.getP2DController().getEnvironmentDataObject().getScale());
+				if(this.getP2DController().getDisplayEnvironmentModel() != null){
+					environmentSettings.setScale(this.getP2DController().getDisplayEnvironmentModel().getScale());
 				}
 			}
 			if(eventCode == Physical2DEnvironmentController.SCALE_CHANGED){
-				environmentSettings.setScale(this.getP2DController().getEnvironmentDataObject().getScale());
-				objectSettings.setUnit(this.getP2DController().getEnvironmentDataObject().getScale().getRealWorldUntiName());
+				environmentSettings.setScale(this.getP2DController().getDisplayEnvironmentModel().getScale());
+				objectSettings.setUnit(this.getP2DController().getDisplayEnvironmentModel().getScale().getRealWorldUntiName());
 			}
 			if(eventCode == Physical2DEnvironmentController.OBJECTS_CHANGED){
 				rebuildTree();
@@ -597,8 +597,8 @@ public class Physical2DEnvironmentControllerGUI extends EnvironmentPanel impleme
 		@Override
 		public void run() {
 			elem.setAttributeNS(null, "id", id);
-			EnvironmentHelper.setSizeFromStrings(elem, getP2DController().getEnvironmentDataObject().getScale(), width, height);
-			EnvironmentHelper.setPosFromStrings(elem, getP2DController().getEnvironmentDataObject().getScale(), xPos, yPos, width, height);
+			EnvironmentHelper.setSizeFromStrings(elem, getP2DController().getDisplayEnvironmentModel().getScale(), width, height);
+			EnvironmentHelper.setPosFromStrings(elem, getP2DController().getDisplayEnvironmentModel().getScale(), xPos, yPos, width, height);
 		}
 		
 	}

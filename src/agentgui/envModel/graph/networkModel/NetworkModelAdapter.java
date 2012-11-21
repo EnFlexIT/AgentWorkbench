@@ -299,7 +299,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * Clears the current NetworModel.
 	 */
 	public void clearNetworkModel() {
-		this.graphController.setEnvironmentDataObject(null);
+		this.graphController.setDisplayEnvironmentModel(null);
 		this.graphController.getAgents2Start().clear();
 	}
 	
