@@ -43,7 +43,7 @@ import agentgui.simulationService.SimulationServiceHelper;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeModelContinuous extends TimeModel {
+public class TimeModelContinuous extends TimeModelDateBased {
 
 	private static final long serialVersionUID = -6787156387409895035L;
 
@@ -51,10 +51,9 @@ public class TimeModelContinuous extends TimeModel {
 	public final static String PROP_TimeStop = "TimeStop";
 	public final static String PROP_AccelerationFactor = "AccelerationFactor";
 	
+	private transient Agent timeAskingAgent = null;
 	private transient SimulationServiceHelper simHelper = null;
 	
-	private long startTime = 0;
-	private long stopTime = 0;
 	private double accelerationFactor = 1.F;
 	
 	private boolean executed = false;
@@ -72,8 +71,8 @@ public class TimeModelContinuous extends TimeModel {
 	 * @param startTime the start time for the time model
 	 */
 	public TimeModelContinuous(Long startTime, Long stopTime) {
-		this.setStartTime(startTime);
-		this.setStopTime(stopTime);
+		this.setTimeStart(startTime);
+		this.setTimeStop(stopTime);
 	}
 		
 	/* (non-Javadoc)
@@ -84,46 +83,15 @@ public class TimeModelContinuous extends TimeModel {
 		TimeModelContinuous tmc = new TimeModelContinuous();
 		// ------------------------------------------------
 		// --- Do this first to avoid side effects --------
-		tmc.setExecutedLocal(this.executed);
+		tmc.setExecuted(this.executed);
 		tmc.setPauseTime(this.pauseTime);
 		tmc.setTimeDiff(this.timeDiff);
 		// --- Do this first to avoid side effects --------
 		// ------------------------------------------------		
-		tmc.setStartTime(this.startTime);
-		tmc.setStopTime(this.stopTime);
+		tmc.setTimeStart(this.timeStart);
+		tmc.setTimeStop(this.timeStop);
 		tmc.setAccelerationFactor(this.accelerationFactor);
 		return tmc;
-	}
-	
-	/**
-	 * Sets the start time of the time model.
-	 * @param startTime the new start time
-	 */
-	public void setStartTime(long startTime) {
-		this.startTime = startTime;
-		this.setPauseTime(startTime);
-	}
-	/**
-	 * Returns the start time of the time model.
-	 * @return the start time
-	 */
-	public long getStartTime() {
-		return startTime;
-	}
-
-	/**
-	 * Returns the stop time for the time model.
-	 * @return the stopTime
-	 */
-	public long getStopTime() {
-		return stopTime;
-	}
-	/**
-	 * Sets the stop time for the time model.
-	 * @param stopTime the stopTime to set
-	 */
-	public void setStopTime(long stopTime) {
-		this.stopTime = stopTime;
 	}
 	
 	/**
@@ -154,41 +122,39 @@ public class TimeModelContinuous extends TimeModel {
 	 */
 	private long getPauseTime() {
 		if (this.pauseTime==0) {
-			this.pauseTime=this.getStartTime();
+			this.pauseTime=this.getTimeStart();
 		}
 		return pauseTime;
 	}
 	
 	/**
 	 * Sets the time model to be executed in order to forward the time in the  model.
-	 * In this method the local system time will be used to set the timeDiff.
-	 * @param executed the new executed
-	 */
-	public void setExecutedLocal(boolean executeTimeModel) {
-		if (executeTimeModel==true) {
-			this.setTimeDiff(this.getSystemTime() - this.getStartTime());	
-		} else {
-			this.setPauseTime(this.getTimeLocal());
-		}
-		this.executed=executeTimeModel;
-	}
-	
-	/**
-	 * Sets the time model to be executed in order to forward the time in the  model.
 	 * In this method the platform time (provided by the SimulationService) will be used 
 	 * to set the timeDiff.
-	 * @param executeTimeModel the executed
-	 * @param currentAgent the current agent
+	 *
+	 * @param executeTimeModel the new executed
 	 */
-	public void setExecutedPlatform(boolean executeTimeModel, Agent currentAgent) {
-		if (executeTimeModel==true) {
-			this.setTimeDiff(this.getSystemTimeSynchronized(currentAgent) - this.getStartTime());
+	public void setExecuted(boolean executeTimeModel) {
+		
+		if (this.getTimeAskingAgent()==null) {
+			// --- Work on local time settings ----------------------
+			if (executeTimeModel==true) {
+				this.setTimeDiff(this.getSystemTime() - this.getTimeStart());	
+			} else {
+				this.setPauseTime(this.getTimeLocal());
+			}
+			
 		} else {
-			this.setPauseTime(this.getTimePlatform(currentAgent));
+			// --- Work on the synchronised platform time -----------
+			if (executeTimeModel==true) {
+				this.setTimeDiff(this.getSystemTimeSynchronized() - this.getTimeStart());
+			} else {
+				this.setPauseTime(this.getTimePlatform());
+			}
+			
 		}
-		this.executed=executeTimeModel;
+		this.executed=executeTimeModel;		
 	}
-	
 	/**
 	 * Checks if this time model is executed and so, if time is moving forward.
 	 * @return true, if is executed
@@ -213,10 +179,31 @@ public class TimeModelContinuous extends TimeModel {
 	}
 	
 	/**
+	 * Returns the current time depending on the simulation setup. If an agent was set to the instance 
+	 * of the class the synchronized platform time will be used. If no agent is set, the time based 
+	 * on the local system time will be returned  
+	 * 
+	 * @see #setTimeAskingAgent(Agent)
+	 * @see SimulationServiceHelper#getSynchTimeMillis()
+	 * 
+	 * @return the time 
+	 */
+	@Override
+	public long getTime() {
+		long timeAnswer=0;
+		if (this.getTimeAskingAgent()==null) {
+			timeAnswer=this.getTimeLocal();
+		} else {
+			timeAnswer=this.getTimePlatform();
+		}
+		return timeAnswer;
+	}
+	
+	/**
 	 * Returns the local time as long including the currently set timeDiff.
 	 * @return the time
 	 */
-	public long getTimeLocal() {
+	private long getTimeLocal() {
 		long currTime;
 		if (isExecuted()==true) {
 			currTime = this.getSystemTime() - getTimeDiff();
@@ -232,19 +219,17 @@ public class TimeModelContinuous extends TimeModel {
 	 *
 	 * @see SimulationServiceHelper#getSynchTimeMillis()
 	 * 
-	 * @param currentAgent the current agent who is asking for the platform time
 	 * @return the time 
 	 */
-	public long getTimePlatform(Agent currentAgent) {
+	private long getTimePlatform() {
 		long currTime;
 		if (isExecuted()==true) {
-			currTime = this.getSystemTimeSynchronized(currentAgent) - getTimeDiff();
+			currTime = this.getSystemTimeSynchronized() - getTimeDiff();
 		} else {
 			currTime = this.getPauseTime();
 		}
 		return currTime;
 	}
-	
 
 	/**
 	 * Returns the local system time. 
@@ -263,9 +248,9 @@ public class TimeModelContinuous extends TimeModel {
 	 * @param agent the agent
 	 * @return the synchronized system time
 	 */
-	private long getSystemTimeSynchronized(Agent currentAgent) {
+	private long getSystemTimeSynchronized() {
 		long sysTime;
-		if (currentAgent==null) {
+		if (this.getTimeAskingAgent()==null) {
 			// --- Just take the local time -------------------------
 			sysTime = System.currentTimeMillis();
 			System.err.println("No agent was set. Took local time!");
@@ -273,7 +258,7 @@ public class TimeModelContinuous extends TimeModel {
 		} else {
 			// --- Try to get the synchronized platform time --------
 			try {
-				sysTime = this.getSimulationServiceHelper(currentAgent).getSynchTimeMillis();
+				sysTime = this.getSimulationServiceHelper().getSynchTimeMillis();
 				
 			} catch (ServiceException se) {
 				System.err.println("Could not get synchronized platform time. Took local time!");
@@ -284,15 +269,35 @@ public class TimeModelContinuous extends TimeModel {
 	}
 	
 	/**
+	 * Gets the agent.
+	 * @return the agent
+	 */
+	public Agent getTimeAskingAgent() {
+		return this.timeAskingAgent;
+	}
+	/**
+	 * Sets the agent.
+	 * @param askingAgent the new agent
+	 */
+	public void setTimeAskingAgent(Agent askingAgent) {
+		this.timeAskingAgent = askingAgent;
+	}
+	
+	/**
 	 * Returns the SimulationServiceHelper that allows to connect to the SimulationService.
 	 * @see SimulationService
 	 * @see SimulationServiceHelper
 	 * @return the SimulationServiceHelper
 	 */
-	private SimulationServiceHelper getSimulationServiceHelper(Agent currentAgent) {
+	private SimulationServiceHelper getSimulationServiceHelper() {
+		
+		if (this.getTimeAskingAgent()==null) {
+			return null;
+		}
+		
 		if (this.simHelper==null) {
 			try {
-				this.simHelper = (SimulationServiceHelper) currentAgent.getHelper(SimulationService.NAME);
+				this.simHelper = (SimulationServiceHelper) this.getTimeAskingAgent().getHelper(SimulationService.NAME);
 			} catch (ServiceException se) {
 				System.err.println("Could not connect to SimulationService!");
 			}
@@ -327,8 +332,8 @@ public class TimeModelContinuous extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
 	 */
 	@Override
-	public JToolBarElements4TimeModelExecution getJToolBarElements4TimeModelExecution() {
-		return null;
+	public TimeModelBaseExecutionElements getJToolBarElements4TimeModelExecution() {
+		return new TimeModelContinuousExecutionElements();
 	}
 	
 	
@@ -342,8 +347,8 @@ public class TimeModelContinuous extends TimeModel {
 			
 			if (timeModelSettings.size()==0) {
 				// --- Use Default values -----------------
-				this.startTime = System.currentTimeMillis();
-				this.stopTime = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
+				this.timeStart = System.currentTimeMillis();
+				this.timeStop = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
 				this.accelerationFactor = 1;
 				return;
 			}
@@ -353,10 +358,10 @@ public class TimeModelContinuous extends TimeModel {
 			String stringAccelerationFactor = timeModelSettings.get(PROP_AccelerationFactor);
 
 			if (stringStartTime!=null) {
-				this.startTime = Long.parseLong(stringStartTime);	
+				this.timeStart = Long.parseLong(stringStartTime);	
 			}
 			if (stringStopTime!=null) {
-				this.stopTime = Long.parseLong(stringStopTime);	
+				this.timeStop = Long.parseLong(stringStopTime);	
 			}
 			if (stringAccelerationFactor!=null) {
 				this.accelerationFactor = Float.parseFloat(stringAccelerationFactor);	
@@ -375,8 +380,8 @@ public class TimeModelContinuous extends TimeModel {
 	@Override
 	public HashMap<String, String> getTimeModelSetting() {
 		HashMap<String, String> hash = new HashMap<String, String>();
-		hash.put(PROP_TimeStart, ((Long) this.startTime).toString());
-		hash.put(PROP_TimeStop, ((Long) this.stopTime).toString());
+		hash.put(PROP_TimeStart, ((Long) this.timeStart).toString());
+		hash.put(PROP_TimeStop, ((Long) this.timeStop).toString());
 		hash.put(PROP_AccelerationFactor, ((Double) this.accelerationFactor).toString());
 		return hash;
 	}

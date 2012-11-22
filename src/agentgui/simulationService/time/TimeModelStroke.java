@@ -52,7 +52,7 @@ public class TimeModelStroke extends TimeModel {
 	
 	private int counterStart = 1;
 	private int counterStop = 9999;
-	private int counter = 1;
+	private int counter = 0;
 	
 	
 	/**
@@ -73,7 +73,6 @@ public class TimeModelStroke extends TimeModel {
 	 * @param counterValueStop the counter stop value
 	 */
 	public TimeModelStroke(Integer counterValueStart, Integer counterValueStop) {
-		this.counter = counterValueStart;
 		this.counterStart = counterValueStart;
 		this.counterStop = counterValueStop;
 	}
@@ -161,7 +160,7 @@ public class TimeModelStroke extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
 	 */
 	@Override
-	public JToolBarElements4TimeModelExecution getJToolBarElements4TimeModelExecution() {
+	public TimeModelBaseExecutionElements getJToolBarElements4TimeModelExecution() {
 		return new TimeModelStrokeExecutionElements();
 	}
 	

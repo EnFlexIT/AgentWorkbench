@@ -21,8 +21,8 @@
                 <directed>false</directed>
                 <graphElementIDs>PP19</graphElementIDs>
                 <graphElementIDs>n10_1</graphElementIDs>
-                <graphElementIDs>n10_2</graphElementIDs>
                 <graphElementIDs>n10_0</graphElementIDs>
+                <graphElementIDs>n10_2</graphElementIDs>
                 <graphElementIDs>PP20</graphElementIDs>
                 <graphElementIDs>PP22</graphElementIDs>
                 <graphElementIDs>PP23</graphElementIDs>
@@ -101,9 +101,9 @@
             <value>
                 <agentClassName>agas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>PP9</graphElementIDs>
-                <graphElementIDs>PP10</graphElementIDs>
                 <graphElementIDs>n3_1</graphElementIDs>
+                <graphElementIDs>PP10</graphElementIDs>
+                <graphElementIDs>PP9</graphElementIDs>
                 <graphElementIDs>n3_0</graphElementIDs>
                 <graphElementIDs>PP4</graphElementIDs>
                 <graphElementIDs>PP7</graphElementIDs>
@@ -121,10 +121,10 @@
                 <graphElementIDs>PP4</graphElementIDs>
                 <graphElementIDs>PP6</graphElementIDs>
                 <graphElementIDs>n2_0</graphElementIDs>
-                <graphElementIDs>PP3</graphElementIDs>
                 <graphElementIDs>n2_1</graphElementIDs>
-                <graphElementIDs>n2_2</graphElementIDs>
+                <graphElementIDs>PP3</graphElementIDs>
                 <graphElementIDs>PP2</graphElementIDs>
+                <graphElementIDs>n2_2</graphElementIDs>
                 <id>n2</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch3</type>
@@ -175,8 +175,8 @@
                 <graphElementIDs>PP10</graphElementIDs>
                 <graphElementIDs>PP13</graphElementIDs>
                 <graphElementIDs>PP14</graphElementIDs>
-                <graphElementIDs>PP15</graphElementIDs>
                 <graphElementIDs>n6_2</graphElementIDs>
+                <graphElementIDs>PP15</graphElementIDs>
                 <graphElementIDs>n6_1</graphElementIDs>
                 <graphElementIDs>n6_0</graphElementIDs>
                 <id>n6</id>

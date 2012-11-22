@@ -52,7 +52,7 @@ import agentgui.envModel.p2Dsvg.provider.EnvironmentProviderService;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public abstract class SimulationManagerAgentPhysical2D extends SimulationManagerAgent implements SimulationManagerInterface {
+public abstract class SimulationManagerAgentPhysical2D extends SimulationManagerAgent {
 
 	private static final long serialVersionUID = 5867692143523662021L;
 
@@ -90,7 +90,7 @@ public abstract class SimulationManagerAgentPhysical2D extends SimulationManager
 			
 		} else {
 			
-			Object obj = this.envModel.getDisplayEnvironment();
+			Object obj = this.myEnvironmentModel.getDisplayEnvironment();
 			if(obj==null) {
 				return null;
 			}		

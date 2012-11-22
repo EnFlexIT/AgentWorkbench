@@ -29,28 +29,28 @@
 package agentgui.simulationService.time;
 
 import java.awt.Color;
-import java.awt.Dimension;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import agentgui.core.application.Language;
 
 /**
- * The Class TimeModelStrokeExecutionElements.
+ * The Class TimeModelContinuousExecutionElements.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeModelStrokeExecutionElements extends TimeModelBaseExecutionElements {
+public class TimeModelContinuousExecutionElements extends TimeModelBaseExecutionElements {
 
 	private static final long serialVersionUID = 385807623783469748L;
 
-	private TimeModelStroke timeModelStroke = null;
+	private TimeModelContinuous timeModelContinuous = null;
 	
-		
+	
 	/**
-	 * Instantiates a new time model stroke execution elements.
+	 * Instantiates a new time model discrete execution elements.
 	 */
-	public TimeModelStrokeExecutionElements() {
-		this.setIntroHeader(Language.translate("Zähler"));
-		this.getJLabelTimeDisplay().setPreferredSize(new Dimension(60, 26));
+	public TimeModelContinuousExecutionElements() {
+		this.setIntroHeader(Language.translate("Zeit"));
 	}
 	
 	/* (non-Javadoc)
@@ -59,16 +59,18 @@ public class TimeModelStrokeExecutionElements extends TimeModelBaseExecutionElem
 	@Override
 	public void setTimeModel(TimeModel timeModel) {
 		
-		this.timeModelStroke = (TimeModelStroke) timeModel;
-		if (this.timeModelStroke==null) {
+		this.timeModelContinuous = (TimeModelContinuous) timeModel;
+		if (this.timeModelContinuous==null) {
 			this.getJLabelTimeDisplay().setText("");			
 
 		} else {
 			
-			Integer counter = this.timeModelStroke.getCounter();
-			Integer counterStop = this.timeModelStroke.getCounterStop();
+			long time = this.timeModelContinuous.getTime();
+			long timeStop = this.timeModelContinuous.getTimeStop();
+			String timeFormat = this.timeModelContinuous.getTimeFormat();
+			
 			// --- Set color of time display --------------
-			if (counter<=counterStop) {
+			if (time<=timeStop) {
 				this.getJLabelTimeDisplay().setForeground(new Color(0, 153, 0));
 			} else {
 				this.getJLabelTimeDisplay().setForeground(new Color(255, 51, 0));	
@@ -77,19 +79,19 @@ public class TimeModelStrokeExecutionElements extends TimeModelBaseExecutionElem
 			switch (this.view) {
 			case ViewCOUNTDOWN:
 				// --- countdown view ---------------------
-				counter = counterStop-counter;
-				if (counter<=0) {
+				time = timeStop-time;
+				if (time<=0) {
 					this.view = ViewTIMER;
 					this.setTimeModel(timeModel);
 					return;
 				}
-				this.getJLabelTimeDisplay().setText((counter.toString()));
+				this.getJLabelTimeDisplay().setText(new SimpleDateFormat(timeFormat).format(new Date(time)));
 				this.getJButtonTimeConfig().setText(this.getJMenuItemViewCountdown().getText());
 				break;
 				
 			default:
 				// --- timer view -------------------------
-				this.getJLabelTimeDisplay().setText(counter.toString());
+				this.getJLabelTimeDisplay().setText(new SimpleDateFormat(timeFormat).format(new Date(time)));
 				this.getJButtonTimeConfig().setText(this.getJMenuItemViewTimer().getText());
 				break;
 			}
@@ -103,7 +105,8 @@ public class TimeModelStrokeExecutionElements extends TimeModelBaseExecutionElem
 	 */
 	@Override
 	public TimeModel getTimeModel() {
-		return this.timeModelStroke;
+		return this.timeModelContinuous;
 	}
 	
+
 }

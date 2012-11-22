@@ -26,31 +26,65 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.simulationService.agents;
-
-import agentgui.simulationService.environment.EnvironmentModel;
+package agentgui.simulationService.time;
 
 /**
- * The SimulationManagerInterface used in the {@link SimulationManagerAgent}.
- * 
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ * The Class TimeModelDateBased.
  */
-public interface SimulationManagerInterface {
+public abstract class TimeModelDateBased extends TimeModel {
 
-	/**
-	 * This method is used for initialising the simulation during the .setup()-method of the agent.
-	 * Here the environment model (see class agentgui.simulationService.environment.EnvironmentModel)
-	 * should be set.
-	 *
-	 * @return the initial environment model
-	 */
-	public EnvironmentModel getInitialEnvironmentModel();
+	private static final long serialVersionUID = 6116787943288451141L;
+
+	protected long timeStart = System.currentTimeMillis();
+	protected long timeStop = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
+	protected String timeFormat = "dd.MM.yyyy HH:mm:ss.SSS";
+	
+	
+	public abstract long getTime();
 	
 	/**
-	 * 	The logic of the simulation is implemented here. It's highly recommended to use 
-	 *  the provided methods for implementing the logic.
+	 * Sets the start time .
+	 * @param timeStart the new start time
 	 */
-	public abstract void doSingleSimulationSequennce();
+	public void setTimeStart(long timeStart) {
+		this.timeStart = timeStart;
+	}
+	/**
+	 * Gets the start time.
+	 * @return the start time 
+	 */
+	public long getTimeStart() {
+		return timeStart;
+	}
 	
+	/**
+	 * Sets the stop time.
+	 * @param timeStop the new stop time
+	 */
+	public void setTimeStop(long timeStop) {
+		this.timeStop = timeStop;
+	}
+	/**
+	 * Gets the stop time.
+	 * @return the stop time 
+	 */
+	public long getTimeStop() {
+		return timeStop;
+	}
+	
+	/**
+	 * Sets the time format.
+	 * @param timeFormat the new time format
+	 */
+	public void setTimeFormat(String timeFormat) {
+		this.timeFormat = timeFormat;
+	}
+	/**
+	 * Gets the time format.
+	 * @return the time format
+	 */
+	public String getTimeFormat() {
+		return timeFormat;
+	}
 	
 }

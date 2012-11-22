@@ -41,7 +41,6 @@ import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
 import agentgui.simulationService.time.TimeModel;
 
 /**
@@ -328,10 +327,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 */
 	public TimeModel getTimeModel() {
 		if (this.getProject()!=null) {
-			JPanel4TimeModelConfiguration configPanel = this.getProject().getTimeModelController().getDisplayJPanel4Configuration(); 
-			if (configPanel!=null) {
-				this.myTimeModel = configPanel.getTimeModel();	
-			}
+			this.myTimeModel = this.getProject().getTimeModelController().getTimeModel();	
 		}
 		return this.myTimeModel;
 	}
@@ -340,10 +336,12 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * @return the TimeModel copy
 	 */
 	public TimeModel getTimeModelCopy() {
-		if (this.getTimeModel()==null) {
+		TimeModel timeModel = this.getTimeModel(); 
+		if (timeModel==null) {
 			return null;
 		} 
-		return this.getTimeModel().getCopy();
+		System.out.println("Test");
+		return timeModel.getCopy();
 	}
 	
 }

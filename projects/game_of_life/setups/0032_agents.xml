@@ -10,16 +10,16 @@
     </agentSetup>
     <timeModelSettings>
         <entry>
-            <key>CounterCurrent</key>
-            <value>1</value>
+            <key>TimeStart</key>
+            <value>1353538800000</value>
         </entry>
         <entry>
-            <key>CounterStop</key>
-            <value>9999</value>
+            <key>AccelerationFactor</key>
+            <value>1.0</value>
         </entry>
         <entry>
-            <key>CounterStart</key>
-            <value>1</value>
+            <key>TimeStop</key>
+            <value>1353538810000</value>
         </entry>
     </timeModelSettings>
     <environmentFileName>0032 Agents.xml</environmentFileName>

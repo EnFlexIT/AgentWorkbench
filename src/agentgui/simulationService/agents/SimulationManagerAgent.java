@@ -37,6 +37,9 @@ import jade.core.behaviours.OneShotBehaviour;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import agentgui.core.application.Application;
+import agentgui.core.environment.EnvironmentController;
+import agentgui.core.project.Project;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
@@ -51,7 +54,7 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public abstract class SimulationManagerAgent extends Agent implements SimulationManagerInterface {
+public abstract class SimulationManagerAgent extends Agent {
 	
 	private static final long serialVersionUID = -7398714332312572026L;
 
@@ -61,26 +64,30 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	protected ServiceSensorManager mySensor = null;
 	
 	/** The environment model which contains an abstract and a displayable environment model as well as a time model */
-	protected EnvironmentModel envModel = new EnvironmentModel();
+	protected EnvironmentModel myEnvironmentModel = new EnvironmentModel();
 	
 	/** The answers/next state of all involved agents. */
 	protected Hashtable<AID, Object> agentAnswers = null;
 
 	/** The CyclicSimulationBehavior. */
 	private CyclicSimulationBehaviour simBehaviour = null;
-
 	/** The CyclicNotificationHandler for incoming notification. */
 	private CyclicNotificationHandler notifyHandler = null;
-	
 	/** The notifications, which arrived at this agent . */
 	private Vector<EnvironmentNotification> notifications = new Vector<EnvironmentNotification>();
 	
+	
+
 	/**
 	 * Mandatory setup()-functionality.
 	 */
 	@Override
 	protected void setup() {		  
-		// --- get the helper for the SimulationService -------------
+		
+		// --- get the initial EnvironmentModel from Agent.GUI setup ----------
+		this.setEnvironmentModel(this.getEnvironmentModelFromSetup());
+		
+		// --- get the helper for the SimulationService -----------------------
 		try {
 		  simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 		  simHelper.setManagerAgent(this.getAID());
@@ -135,7 +142,7 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	protected void addSimulationBehaviour() {
 		// --- Start the cyclic SimulationBehavior of this manager --
 		if (this.simBehaviour==null) {
-			this.simBehaviour = new CyclicSimulationBehaviour();	
+			this.simBehaviour = new CyclicSimulationBehaviour(this);	
 		}		
 		this.addBehaviour(this.simBehaviour);
 	}
@@ -160,12 +167,10 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 		
 		/**
 		 * Instantiates a new cyclic simulation behaviour.
+		 * @param simulationManagerAgent 
 		 */
-		public CyclicSimulationBehaviour() {
-			// --- Get the initial Environment Model locally ------------
-			if (getEnvironmentModel().isEmpty()) {
-				setEnvironmentModel(getInitialEnvironmentModel());	
-			}
+		public CyclicSimulationBehaviour(SimulationManagerAgent simulationManagerAgent) {
+			super(simulationManagerAgent);
 		}
 		
 		/* (non-Javadoc)
@@ -177,6 +182,46 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 			block();
 		}
 	}
+	
+	/**
+	 * This method is used for initialising the simulation during the .setup()-method of the agent.
+	 * Here the environment model (see class agentgui.simulationService.environment.EnvironmentModel)
+	 * will be set out of the current SimulationSetup.
+	 * In case that you want to fill the EnvironmentModel with your own data, just overwrite this method. 
+	 *
+	 * @return the initial environment model
+	 */
+	protected EnvironmentModel getEnvironmentModelFromSetup(){
+		
+		EnvironmentModel envModel = null;
+		TimeModel timeModel = null;
+		Object displayEnvironmentModel = null;
+		
+		Project currProject = Application.getProjectFocused();
+		if (currProject!=null) {
+			// --- Get the time model configuration -------
+			timeModel = currProject.getTimeModelController().getTimeModelCopy();
+			
+			// --- Get the displayable environment model --
+			EnvironmentController envController = currProject.getEnvironmentController();
+			if (envController!=null) {
+				displayEnvironmentModel = envController.getDisplayEnvironmentModelCopy();
+			}
+			// --- Configure the EnvironmentModel ---------
+			if (timeModel!=null || displayEnvironmentModel!=null) {
+				envModel = new EnvironmentModel();
+				envModel.setTimeModel(timeModel);
+				envModel.setDisplayEnvironment(displayEnvironmentModel);
+			}
+		}
+		return envModel;
+	}
+	
+	/**
+	 * The logic of the simulation is implemented here. It's highly recommended 
+	 * to use this methods for implementing the individual logic.
+	 */
+	public abstract void doSingleSimulationSequennce();
 	
 	/**
 	 * This method has to be called if the next simulation step can be executed.
@@ -192,7 +237,7 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	 * @throws ServiceException the ServiceException
 	 */
 	protected void stepSimulation(int answersExpected) throws ServiceException {
-		simHelper.stepSimulation(this.envModel, answersExpected);
+		simHelper.stepSimulation(this.getEnvironmentModel(), answersExpected);
 	}
 	
 	/**
@@ -204,12 +249,11 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	 */
 	protected void stepSimulation(EnvironmentModel environmentModel, int answersExpected) throws ServiceException {
 		this.setEnvironmentModel(environmentModel);
-		simHelper.stepSimulation(this.envModel, answersExpected);
+		simHelper.stepSimulation(this.getEnvironmentModel(), answersExpected);
 	}
 
 	/**
 	 * Resets the answers of the agents in the simulation service to an empty Hashtable.
-	 *
 	 * @throws ServiceException ServiceException
 	 */
 	protected void resetEnvironmentInstanceNextParts() throws ServiceException {
@@ -248,7 +292,6 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 		
 		/**
 		 * Instantiates a new agent answer stimulus.
-		 *
 		 * @param answersHash the answers hash
 		 */
 		public AgentAnswerStimulus(Hashtable<AID, Object> answersHash) {
@@ -297,7 +340,7 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	 */
 	protected void sendDisplayAgentNotificationUpdateEnvironmentModel() {
 		try {
-			simHelper.displayAgentSetEnvironmentModel(this.envModel);
+			simHelper.displayAgentSetEnvironmentModel(this.getEnvironmentModel());
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -397,75 +440,66 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	// ----------------------------------------------------------------------
 	/**
 	 * Provides the environment model.
-	 *
 	 * @return the environment model
 	 */
 	protected EnvironmentModel getEnvironmentModel() {
-		return envModel;
+		return myEnvironmentModel;
 	}
 	/**
 	 * Sets the environment model.
-	 *
 	 * @param environmentModel the new environment model
 	 */
 	protected void setEnvironmentModel(EnvironmentModel environmentModel) {
-		this.envModel = environmentModel;
+		this.myEnvironmentModel = environmentModel;
 	}
 	
 	/**
 	 * Provides the current time model.
-	 *
 	 * @return the time model
 	 */
 	protected TimeModel getTimeModel() {
-		return this.envModel.getTimeModel();
+		return this.getEnvironmentModel().getTimeModel();
 	}
 	/**
 	 * Sets the current time model.
-	 *
 	 * @param timeModel the new time model
 	 */
 	protected void setTimeModel(TimeModel timeModel) {
-		this.envModel.setTimeModel(timeModel);
+		this.getEnvironmentModel().setTimeModel(timeModel);
 	}
 	
 	/**
 	 * Returns the current abstract environment model.
-	 *
 	 * @return the abstract environment
 	 */
 	protected Object getAbstractEnvironment() {
-		return this.envModel.getAbstractEnvironment();
+		return this.getEnvironmentModel().getAbstractEnvironment();
 	}
 	/**
 	 * Sets the abstract environment.
-	 *
 	 * @param abstractEnvironment the new abstract environment
 	 */
 	protected void setAbstractEnvironment(Object abstractEnvironment) {
-		this.envModel.setAbstractEnvironment(abstractEnvironment);
+		this.getEnvironmentModel().setAbstractEnvironment(abstractEnvironment);
 	}
 
 	/**
 	 * Returns the current display environment.
-	 *
 	 * @return the display environment
 	 */
 	protected Object getDisplayEnvironment() {
-		return this.envModel.getDisplayEnvironment();
+		return this.getEnvironmentModel().getDisplayEnvironment();
 	}
 	/**
 	 * Sets the display environment.
-	 *
 	 * @param displayEnvironment the new display environment
 	 */
 	protected void setDisplayEnvironment(Object displayEnvironment) {
-		this.envModel.setDisplayEnvironment(displayEnvironment);
+		this.getEnvironmentModel().setDisplayEnvironment(displayEnvironment);
 	}
 
 	/**
 	 * Gets the agent answers.
-	 *
 	 * @return the agent answers
 	 */
 	protected Hashtable<AID, Object> getAgentAnswers() {
@@ -473,7 +507,6 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	}
 	/**
 	 * Sets the agent answers.
-	 *
 	 * @param agentAnswers the agent answers
 	 */
 	protected void setAgentAnswers(Hashtable<AID, Object> agentAnswers) {
@@ -481,8 +514,7 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	}
 	
 	/**
-	 * tReturns the Vector of current EnvironmentNotification's.
-	 *
+	 * Returns the Vector of current EnvironmentNotification's.
 	 * @return the notifications
 	 */
 	public Vector<EnvironmentNotification> getNotifications() {
@@ -490,7 +522,6 @@ public abstract class SimulationManagerAgent extends Agent implements Simulation
 	}
 	/**
 	 * Sets the notifications.
-	 *
 	 * @param notifications the new notifications
 	 */
 	public void setNotifications(Vector<EnvironmentNotification> notifications) {

@@ -110,6 +110,6 @@ public abstract class TimeModel implements Serializable {
 	 * tools to handle a TimeModel during execution.
 	 * @return the DisplayJToolBar4Execution with tools that can be used during the runtime of the agency
 	 */
-	public abstract JToolBarElements4TimeModelExecution getJToolBarElements4TimeModelExecution();
+	public abstract TimeModelBaseExecutionElements getJToolBarElements4TimeModelExecution();
 	
 }

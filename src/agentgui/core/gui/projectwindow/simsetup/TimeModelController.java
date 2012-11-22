@@ -68,6 +68,42 @@ public class TimeModelController implements Observer {
 		this.addTimeModelDisplayToProjectWindow();
 	}
 	
+	
+	/**
+	 * Returns the current time model.
+	 * @return the time model
+	 */
+	public TimeModel getTimeModel() {
+		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
+		if (configPanel!=null) {
+			return configPanel.getTimeModel();
+		} 
+		return null;
+	}
+	/**
+	 * Returns, if available,  a copy of the current TimeModel.
+	 * @return the TimeModel copy
+	 */
+	public TimeModel getTimeModelCopy() {
+		TimeModel timeModelCopy = null;
+		if (this.getTimeModel()!=null) {
+			timeModelCopy = this.getTimeModel().getCopy();
+		}
+		return timeModelCopy;
+	}
+
+	
+	/**
+	 * Sets the time model.
+	 * @param newTimeModel the new time model
+	 */
+	public void setTimeModel(TimeModel newTimeModel) {
+		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
+		if (configPanel!=null) {
+			configPanel.setTimeModel(newTimeModel);
+		} 
+	}
+	
 	/**
 	 * Sets the display for the selected TimeModel.
 	 * @param display4TimeModel the new DisplayJPanel4Configuration
@@ -126,7 +162,7 @@ public class TimeModelController implements Observer {
 					   configPanel, Language.translate("Simulations-Setup"));
 			this.pwt.add(0);
 			
-			configPanel.setTimeModel(null);
+			this.setTimeModel(null);
 		}
 		
 	}
@@ -134,7 +170,7 @@ public class TimeModelController implements Observer {
 	/**
 	 * Removes the time model display to project window.
 	 */
-	private void removeTimeModelDisplayToProjectWindow() {
+	private void removeTimeModelDisplayFromProjectWindow() {
 		if (this.pwt!=null) {
 			this.pwt.remove();
 			this.pwt = null;
@@ -151,15 +187,14 @@ public class TimeModelController implements Observer {
 		// --- Get the current SimulationSetup ------------
 		SimulationSetup simSetup = currProject.getSimulationSetups().getCurrSimSetup();
 		// --- Get the right time model -------------------
-		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
-		if (configPanel!=null) {
-			TimeModel timeModel = configPanel.getTimeModel();
+		TimeModel timeModel = this.getTimeModel();
+		if (timeModel!=null) {
 			// --- Set the configuration from setup -------
 			HashMap<String, String> configHash = simSetup.getTimeModelSettings();
 			if (configHash!=null) {
 				timeModel.setTimeModelSettings(configHash);
 				// --- Set the TimeModel to the display ---
-				this.getDisplayJPanel4Configuration().setTimeModel(timeModel);	
+				this.setTimeModel(timeModel);	
 			}	
 		}
 		
@@ -175,7 +210,7 @@ public class TimeModelController implements Observer {
 			// --- Changes in the TimeModel class of the project ----   
 			if (this.currProject.getTimeModelClass()==null) {
 				// --- Remove the Displaying parts, if there any ----
-				this.removeTimeModelDisplayToProjectWindow();
+				this.removeTimeModelDisplayFromProjectWindow();
 				
 			} else if (this.currProject.getTimeModelClass().equals(this.currTimeModelClass)==false) {
 				// --- Display the new TimeModel display ------------
@@ -198,5 +233,4 @@ public class TimeModelController implements Observer {
 		}
 	}
 
-	
 }

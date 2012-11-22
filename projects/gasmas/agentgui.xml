@@ -24,12 +24,12 @@
         </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1101</useLocalPort>
+        <useLocalPort>1102</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.debugging.DebugService</service>
+            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -58,6 +58,7 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>MixedClusters (1) Small</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelDiscrete</timeModelClass>
+    <downloadResources>http://rudel1.cs.uni-due.de:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>
@@ -88,24 +89,24 @@
             <value>smallclusters_3_large.xml</value>
         </entry>
         <entry>
-            <key>Testnetz 3</key>
-            <value>testnetz_3.xml</value>
-        </entry>
-        <entry>
             <key>SmallClusters (1) Small</key>
             <value>smallclusters_1_small.xml</value>
+        </entry>
+        <entry>
+            <key>Testnetz 3</key>
+            <value>testnetz_3.xml</value>
         </entry>
         <entry>
             <key>HNord</key>
             <value>hnord.xml</value>
         </entry>
         <entry>
-            <key>HNord (1) Small</key>
-            <value>hnord_1_small.xml</value>
-        </entry>
-        <entry>
             <key>TestImport</key>
             <value>testimport.xml</value>
+        </entry>
+        <entry>
+            <key>HNord (1) Small</key>
+            <value>hnord_1_small.xml</value>
         </entry>
         <entry>
             <key>MixedClusters (3) Large</key>
@@ -116,13 +117,14 @@
             <value>mixedclusters_1_small.xml</value>
         </entry>
         <entry>
-            <key>HNord (3) Large</key>
-            <value>hnord_3_large.xml</value>
-        </entry>
-        <entry>
             <key>HNord Complete</key>
             <value>hnord_complete.xml</value>
         </entry>
+        <entry>
+            <key>HNord (3) Large</key>
+            <value>hnord_3_large.xml</value>
+        </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
+    <unsaved>false</unsaved>
 </project>

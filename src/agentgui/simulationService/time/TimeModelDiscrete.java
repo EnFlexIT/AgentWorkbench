@@ -40,7 +40,7 @@ import agentgui.core.project.Project;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeModelDiscrete extends TimeModel {
+public class TimeModelDiscrete extends TimeModelDateBased {
 
 	private static final long serialVersionUID = 3931340225354221294L;
 	
@@ -50,9 +50,7 @@ public class TimeModelDiscrete extends TimeModel {
 	public final static String PROP_StepWidth = "StepWidth";
 	public final static String PROP_DisplayUnitIndex = "DisplayUnitIndex";
 	
-	private long timeStart = System.currentTimeMillis();
-	private long timeStop = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
-	private long time = new Long(0);
+	private long time = timeStart;
 	private long step = new Long(1000 * 60);
 	private int stepDisplayUnitAsIndexOfTimeUnitVector = 1;
 	
@@ -97,6 +95,22 @@ public class TimeModelDiscrete extends TimeModel {
 	}
 	
 	/**
+	 * Sets the current time of the model.
+	 * @param counter the counter to set
+	 */
+	public void setTime(long counter) {
+		this.time = counter;
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModelDateBased#getTime()
+	 */
+	@Override
+	public long getTime() {
+		return time;
+	}
+	
+	/**
 	 * Steps the time with the given time step.
 	 */
 	@Override
@@ -109,51 +123,6 @@ public class TimeModelDiscrete extends TimeModel {
 	@Override
 	public void stepBack() {
 		this.time = this.time - this.step;		
-	}
-	
-	/**
-	 * Sets the start time .
-	 * @param timeStart the new start time
-	 */
-	public void setTimeStart(long timeStart) {
-		this.timeStart = timeStart;
-	}
-	/**
-	 * Gets the start time.
-	 * @return the start time 
-	 */
-	public long getTimeStart() {
-		return timeStart;
-	}
-	
-	/**
-	 * Sets the stop time.
-	 * @param timeStop the new stop time
-	 */
-	public void setTimeStop(long timeStop) {
-		this.timeStop = timeStop;
-	}
-	/**
-	 * Gets the stop time.
-	 * @return the stop time 
-	 */
-	public long getTimeStop() {
-		return timeStop;
-	}
-	
-	/**
-	 * Sets the current time of the model.
-	 * @param counter the counter to set
-	 */
-	public void setTime(long counter) {
-		this.time = counter;
-	}
-	/**
-	 * Returns the time as long.
-	 * @return the time
-	 */
-	public long getTime() {
-		return time;
 	}
 	
 	/**
@@ -258,8 +227,8 @@ public class TimeModelDiscrete extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
 	 */
 	@Override
-	public JToolBarElements4TimeModelExecution getJToolBarElements4TimeModelExecution() {
-		return null;
+	public TimeModelBaseExecutionElements getJToolBarElements4TimeModelExecution() {
+		return new TimeModelDiscreteExecutionElements();
 	}
 	
 }

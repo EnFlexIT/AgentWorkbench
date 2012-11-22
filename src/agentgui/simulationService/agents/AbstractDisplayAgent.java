@@ -48,7 +48,7 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.time.JToolBarElements4TimeModelExecution;
+import agentgui.simulationService.time.TimeModelBaseExecutionElements;
 import agentgui.simulationService.time.TimeModel;
 
 /**
@@ -79,7 +79,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 
 	/** The display elements for the current TimeModel */
 	private JToolBar jToolBar4TimeModel = null;
-	private JToolBarElements4TimeModelExecution jToolBarElements4TimeModel = null;
+	private TimeModelBaseExecutionElements jToolBarElements4TimeModel = null;
 
 	
 	/**
@@ -400,9 +400,8 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			this.jToolBar4TimeModel.repaint();
 		}
 		
-		if (this.getJFrameStandalone()!=null) {
+		if (this.getJFrameStandalone()!=null && this.jToolBar4TimeModel!=null) {
 			this.getJFrameStandalone().remove(this.jToolBar4TimeModel);
-			this.jToolBar4TimeModel=null;
 		}
 		
 		this.jToolBarElements4TimeModel=null;

@@ -563,14 +563,14 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		this.enabledChangeListener = false;
 		
 		// --- Start settings ---------------------------------------
-		Date startDate = new Date(timeModelContinuous.getStartTime());
+		Date startDate = new Date(timeModelContinuous.getTimeStart());
 		calendarWork.setTime(startDate);
 		this.getJSpinnerDateStart().setValue(startDate);
 		this.getJSpinnerTimeStart().setValue(startDate);
 		this.getJSpinnerMillisStart().setValue(calendarWork.get(Calendar.MILLISECOND));
 		
 		// --- Stop settings ----------------------------------------
-		Date stopDate = new Date(timeModelContinuous.getStopTime());
+		Date stopDate = new Date(timeModelContinuous.getTimeStop());
 		calendarWork.setTime(stopDate);
 		this.getJSpinnerDateStop().setValue(stopDate);
 		this.getJSpinnerTimeStop().setValue(stopDate);
