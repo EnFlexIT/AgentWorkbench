@@ -343,7 +343,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	 *
 	 * @param timeModel the current time model
 	 * @param jToolBar2Display the j tool bar2 display
-	 * @see TimeModel#getJToolBarElements4TimeModelExecution()
+	 * @see TimeModel#getDisplayElements4Execution()
 	 */
 	private void setTimeModelDisplay(TimeModel timeModel, JToolBar jToolBar2DisplayTimeModel) {
 	
@@ -373,7 +373,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			// ------------------------------------------------------
 			// --- Remind the components to display the TimeModel --- 
 			if (this.jToolBarElements4TimeModel==null) {
-				this.jToolBarElements4TimeModel = timeModel.getJToolBarElements4TimeModelExecution();	
+				this.jToolBarElements4TimeModel = timeModel.getDisplayElements4Execution();	
 				if (this.jToolBarElements4TimeModel!=null) {
 					// --- Display the elements in the toolbar ------
 					this.jToolBarElements4TimeModel.addToolbarElements(this.jToolBar4TimeModel);

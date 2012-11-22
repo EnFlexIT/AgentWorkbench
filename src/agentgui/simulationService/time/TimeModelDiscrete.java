@@ -165,6 +165,13 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 		return new TimeModelDiscreteConfiguration(project);
 	}
 	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
+	 */
+	@Override
+	public TimeModelBaseExecutionElements getDisplayElements4Execution() {
+		return new TimeModelDiscreteExecutionElements();
+	}
+	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#setSetupConfiguration(java.util.HashMap)
 	 */
 	@Override
@@ -223,12 +230,4 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 		return hash;
 	}
 
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
-	 */
-	@Override
-	public TimeModelBaseExecutionElements getJToolBarElements4TimeModelExecution() {
-		return new TimeModelDiscreteExecutionElements();
-	}
-	
 }

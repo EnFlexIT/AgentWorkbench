@@ -160,7 +160,7 @@ public class TimeModelStroke extends TimeModel {
 	 * @see agentgui.simulationService.time.TimeModel#getJToolBar4Execution()
 	 */
 	@Override
-	public TimeModelBaseExecutionElements getJToolBarElements4TimeModelExecution() {
+	public TimeModelBaseExecutionElements getDisplayElements4Execution() {
 		return new TimeModelStrokeExecutionElements();
 	}
 	
