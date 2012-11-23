@@ -108,6 +108,7 @@ de;Datenbank erfolgreich angelegt!;Database created successfully!
 de;Datenbank nicht vorhanden!;Database does not exist!
 de;Datenfeld;Data field
 de;Datum;Date;;;
+de;Datumsformat;Date Format;;;
 de;Der Agent ';The Agent '
 de;Der Agent 'rma' ist bereits geöffnet!;The agent 'rma' is already running
 de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wählen Sie einen anderen Namen für den Agenten.;The name '@' is already used in the start list!<br>Please select another name for the agent.
@@ -174,6 +175,7 @@ de;Folgende Add-On-Dienste starten:;Start the following add-on services:
 de;Folgende Agent.GUI-Dienste starten:;Start the following Agent.GUI services:
 de;Folgende Jade-Dienste starten:;Start the following JADE-services:
 de;Folgende Plattform-Dienste starten:;Start the following platform-services:
+de;Format;Format;;;
 de;Formular;Form
 de;Französisch;French
 de;Google - Übersetzung;Google translation;;;
@@ -518,6 +520,7 @@ de;Visualisierung;Visualization
 de;Vor dem Löschen exportieren!;Export before deleting!;;;
 de;Vorhandene Projektverzeichnisse;Available project folders;;;
 de;Voriger Datensatz (STRG+UP);Previous Record (CTRL + UP)
+de;Vorlagen;Templates;;;
 de;Warte auf Agentenliste...;Waiting for agent list...
 de;Warte auf Ontologie-Liste...;Waiting for ontology list...
 de;Warte auf das Ende des Benchmarks ...;Waiting for the end of the benchmark ...;;;

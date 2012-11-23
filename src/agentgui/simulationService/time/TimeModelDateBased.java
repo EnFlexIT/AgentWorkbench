@@ -30,6 +30,8 @@ package agentgui.simulationService.time;
 
 /**
  * The Class TimeModelDateBased.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public abstract class TimeModelDateBased extends TimeModel {
 
@@ -38,7 +40,7 @@ public abstract class TimeModelDateBased extends TimeModel {
 	protected long timeStart = System.currentTimeMillis();
 	protected long timeStop = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
 	protected String timeFormat = "dd.MM.yyyy HH:mm:ss.SSS";
-	
+	protected String timeFormatCountdown = "dd.MM.yyyy HH:mm:ss.SSS";
 	
 	public abstract long getTime();
 	
@@ -85,6 +87,21 @@ public abstract class TimeModelDateBased extends TimeModel {
 	 */
 	public String getTimeFormat() {
 		return timeFormat;
+	}
+	
+	/**
+	 * Sets the time format for the countdown view.
+	 * @param timeFormat the new time format
+	 */
+	public void setTimeFormatCountdown(String timeFormatCountdown) {
+		this.timeFormatCountdown = timeFormatCountdown;
+	}
+	/**
+	 * Returns the time format for the countdown view.
+	 * @return the time format
+	 */
+	public String getTimeFormatCountdown() {
+		return timeFormatCountdown;
 	}
 	
 }
