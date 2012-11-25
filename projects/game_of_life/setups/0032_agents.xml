@@ -11,23 +11,27 @@
     <timeModelSettings>
         <entry>
             <key>StepWidth</key>
-            <value>60000</value>
+            <value>3600000</value>
         </entry>
         <entry>
             <key>TimeStart</key>
-            <value>1353685170015</value>
+            <value>1325372400000</value>
         </entry>
         <entry>
             <key>TimeCurrent</key>
-            <value>1353685170015</value>
+            <value>1325372400000</value>
         </entry>
         <entry>
             <key>DisplayUnitIndex</key>
-            <value>1</value>
+            <value>3</value>
         </entry>
         <entry>
             <key>TimeStop</key>
-            <value>1353771570015</value>
+            <value>1356994799999</value>
+        </entry>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss Müll</value>
         </entry>
     </timeModelSettings>
     <environmentFileName>0032 Agents.xml</environmentFileName>

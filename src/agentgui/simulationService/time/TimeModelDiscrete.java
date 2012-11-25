@@ -49,6 +49,7 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 	public final static String PROP_TimeStop = "TimeStop";
 	public final static String PROP_StepWidth = "StepWidth";
 	public final static String PROP_DisplayUnitIndex = "DisplayUnitIndex";
+	public final static String PROP_TimeFormat = "TimeFormat";
 	
 	private long time = timeStart;
 	private long step = new Long(1000 * 60);
@@ -91,6 +92,7 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 		tmd.setTimeStop(this.timeStop);
 		tmd.setTime(this.time);
 		tmd.setStep(this.step);
+		tmd.setTimeFormat(this.timeFormat);
 		return tmd;
 	}
 	
@@ -186,6 +188,7 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 				this.time = new Long(0);
 				this.step = new Long(1000 * 60);
 				this.stepDisplayUnitAsIndexOfTimeUnitVector = 1;
+				this.timeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
 				return;
 			}
 			
@@ -194,6 +197,7 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 			String stringTimeStop = timeModelSettings.get(PROP_TimeStop);
 			String stringStepWidth = timeModelSettings.get(PROP_StepWidth);
 			String stringDisplayUnitIndex = timeModelSettings.get(PROP_DisplayUnitIndex);
+			String stringTimeFormat = timeModelSettings.get(PROP_TimeFormat);
 
 			if (stringTimeCurrent!=null) {
 				this.time = Long.parseLong(stringTimeCurrent);	
@@ -210,7 +214,10 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 			if (stringDisplayUnitIndex!=null) {
 				this.stepDisplayUnitAsIndexOfTimeUnitVector = Integer.parseInt(stringDisplayUnitIndex);	
 			}
-	
+			if (stringTimeFormat!=null) {
+				this.timeFormat = stringTimeFormat;
+			}
+			
 		} catch (Exception ex) {
 			System.err.println("Error while converting TimeModel settings from setup");
 		}
@@ -227,6 +234,7 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 		hash.put(PROP_TimeStop, ((Long) this.timeStop).toString());
 		hash.put(PROP_StepWidth, ((Long) this.step).toString());
 		hash.put(PROP_DisplayUnitIndex, ((Integer) this.stepDisplayUnitAsIndexOfTimeUnitVector).toString());
+		hash.put(PROP_TimeFormat, this.timeFormat);
 		return hash;
 	}
 

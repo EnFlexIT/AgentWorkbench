@@ -37,10 +37,12 @@ public abstract class TimeModelDateBased extends TimeModel {
 
 	private static final long serialVersionUID = 6116787943288451141L;
 
+	public static final String DEFAULT_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss.SSS";
+	
 	protected long timeStart = System.currentTimeMillis();
 	protected long timeStop = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
 	protected String timeFormat = "dd.MM.yyyy HH:mm:ss.SSS";
-	protected String timeFormatCountdown = "dd.MM.yyyy HH:mm:ss.SSS";
+
 	
 	public abstract long getTime();
 	
@@ -86,22 +88,14 @@ public abstract class TimeModelDateBased extends TimeModel {
 	 * @return the time format
 	 */
 	public String getTimeFormat() {
-		return timeFormat;
-	}
-	
-	/**
-	 * Sets the time format for the countdown view.
-	 * @param timeFormat the new time format
-	 */
-	public void setTimeFormatCountdown(String timeFormatCountdown) {
-		this.timeFormatCountdown = timeFormatCountdown;
-	}
-	/**
-	 * Returns the time format for the countdown view.
-	 * @return the time format
-	 */
-	public String getTimeFormatCountdown() {
-		return timeFormatCountdown;
+		if (this.timeFormat==null) {
+			this.timeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
+		} else {
+			if (this.timeFormat.equals("")) {
+				this.timeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
+			}
+		}
+		return this.timeFormat;
 	}
 	
 }

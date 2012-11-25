@@ -32,6 +32,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -164,6 +166,46 @@ public abstract class TimeModelBaseExecutionElements implements ActionListener {
 	}
 	
 	/**
+	 * Returns a time formatted.
+	 *
+	 * @param time the time
+	 * @param timeFormat the time format
+	 * @return the time formated
+	 */
+	protected String getTimeFormatted(long time, String timeFormat) {
+		String timeString = null;
+		try {
+			timeString = new SimpleDateFormat(timeFormat).format(new Date(time));	
+		} catch (Exception ex) {
+			// Retry below
+		}
+		if (timeString==null) {
+			timeString = new SimpleDateFormat(TimeModelDateBased.DEFAULT_TIME_FORMAT).format(new Date(time));
+		}
+		return timeString;
+	}
+	
+	/**
+	 * Returns a time duration formatted.
+	 *
+	 * @param duration the time difference
+	 * @param timeFormat the time format
+	 * @return the time formated
+	 */
+	protected String getTimeDurationFormatted(long duration, String timeFormat) {
+		String timeString = null;
+		try {
+			timeString = new TimeDurationFormat(timeFormat).format(duration);	
+		} catch (Exception ex) {
+			// Retry below
+		}
+		if (timeString==null) {
+			timeString = new TimeDurationFormat(TimeModelDateBased.DEFAULT_TIME_FORMAT).format(duration);
+		}
+		return timeString;
+	}
+	
+	/**
 	 * Gets the intro.
 	 * @return the time intro
 	 */
@@ -183,7 +225,6 @@ public abstract class TimeModelBaseExecutionElements implements ActionListener {
 			jLabelTimeDisplay = new JLabel();
 			jLabelTimeDisplay.setFont(new Font("Dialog", Font.BOLD, 12));
 			jLabelTimeDisplay.setForeground(new Color(0, 153, 0));
-//			jLabelTimeDisplay.setPreferredSize(new Dimension(60, 26));
 		}
 		return this.jLabelTimeDisplay;
 	}

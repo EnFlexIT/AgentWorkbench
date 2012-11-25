@@ -29,8 +29,6 @@
 package agentgui.simulationService.time;
 
 import java.awt.Color;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import agentgui.core.application.Language;
 
@@ -79,19 +77,21 @@ public class TimeModelDiscreteExecutionElements extends TimeModelBaseExecutionEl
 			switch (this.view) {
 			case ViewCOUNTDOWN:
 				// --- countdown view ---------------------
-				time = timeStop-time;
-				if (time<=0) {
+				long timeDiff = timeStop-time;
+				if (timeDiff<=0) {
 					this.view = ViewTIMER;
 					this.setTimeModel(timeModel);
 					return;
 				}
-				this.getJLabelTimeDisplay().setText(new SimpleDateFormat(timeFormat).format(new Date(time)));
+
+				// --- Set display for the current time --- 
+				this.getJLabelTimeDisplay().setText(this.getTimeDurationFormatted(timeDiff, timeFormat));
 				this.getJButtonTimeConfig().setText(this.getJMenuItemViewCountdown().getText());
 				break;
 				
 			default:
 				// --- timer view -------------------------
-				this.getJLabelTimeDisplay().setText(new SimpleDateFormat(timeFormat).format(new Date(time)));
+				this.getJLabelTimeDisplay().setText(this.getTimeFormatted(time, timeFormat));
 				this.getJButtonTimeConfig().setText(this.getJMenuItemViewTimer().getText());
 				break;
 			}

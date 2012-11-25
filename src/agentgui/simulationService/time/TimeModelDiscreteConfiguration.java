@@ -103,12 +103,8 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 	private JSpinner jSpinnerMillisStop = null;
 
 	private TimeFormatSelection timeFormater = null;
-	private TimeFormatSelection timeFormaterCountdown = null;
-	
 	private boolean enabledChangeListener = true;
 
-	private JPanel jPanelFormats = null;
-	
 	/**
 	 * Instantiates a new time model discrete configuration.
 	 * @param project the project
@@ -123,13 +119,13 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 	 */
 	private void initialize() {
 		
-		GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
-		gridBagConstraints10.gridx = 0;
-		gridBagConstraints10.fill = GridBagConstraints.NONE;
-		gridBagConstraints10.gridwidth = 2;
-		gridBagConstraints10.anchor = GridBagConstraints.WEST;
-		gridBagConstraints10.insets = new Insets(10, 0, 0, 0);
-		gridBagConstraints10.gridy = 9;
+		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+		gridBagConstraints11.fill = GridBagConstraints.NONE;
+		gridBagConstraints11.gridy = 9;
+		gridBagConstraints11.anchor = GridBagConstraints.WEST;
+		gridBagConstraints11.gridwidth = 2;
+		gridBagConstraints11.insets = new Insets(10, 0, 0, 0);
+		gridBagConstraints11.gridx = 0;
 		GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
 		gridBagConstraints9.gridx = 1;
 		gridBagConstraints9.anchor = GridBagConstraints.WEST;
@@ -241,9 +237,9 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		jLabelWidthUnit.setText(Language.translate(jLabelWidthUnit.getText())+ ":");
 
 		
-		this.setSize(new Dimension(810, 416));
+		this.setSize(new Dimension(559, 350));
         this.setLayout(new GridBagLayout());
-        this.setPreferredSize(new Dimension(800, 322));
+        this.setPreferredSize(new Dimension(600, 322));
         this.setPreferredSize(new Dimension(810, 322));
         this.add(jLabelHeader1, gridBagConstraints5);
         this.add(jLabelHeader2, gridBagConstraints6);
@@ -254,7 +250,7 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
         this.add(jLabelStop, gridBagConstraints16);
         this.add(jLabelWidth, gridBagConstraints4);
         this.add(getJPanelWidthSettings(), gridBagConstraints9);
-        this.add(getJPanelFormats(), gridBagConstraints10);
+        this.add(getTimeFormater(), gridBagConstraints11);
         			
 	}
 
@@ -495,30 +491,18 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 	 */
 	private TimeFormatSelection getTimeFormater() {
 		if (timeFormater==null) {
-			String header = Language.translate("Datumsformat") + " - Timer";
-			String defaultTimeFormat = null;
-			String currentTimeFormat = null; 
-			timeFormater = new TimeFormatSelection(header, defaultTimeFormat, currentTimeFormat);
+			String header = Language.translate("Datumsformat");
+			timeFormater = new TimeFormatSelection(header);
 			timeFormater.setPreferredSize(new Dimension(400, 120));
+			timeFormater.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					saveTimeModelInSimulationSetup(getTimeModel());					
+				}
+			});
 		}
 		return timeFormater;
 	}
-	/**
-	 * Gets the time formater for the countdown view.
-	 * @return the time formater for the countdown view
-	 */
-	private TimeFormatSelection getTimeFormaterCountdown() {
-		if (timeFormaterCountdown==null) {
-			String header = Language.translate("Datumsformat") + " - Countdown";
-			String defaultTimeFormat = null;
-			String currentTimeFormat = null; 
-			timeFormaterCountdown = new TimeFormatSelection(header, defaultTimeFormat, currentTimeFormat);
-			timeFormaterCountdown.setPreferredSize(new Dimension(400, 120));
-		}
-		return timeFormaterCountdown;
-	}
-
-	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.DisplayJPanel4Configuration#setTimeModel(agentgui.simulationService.time.TimeModel)
 	 */
@@ -557,6 +541,9 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		
 		this.getJTextFieldWidthValue().setText(stepInUnit.toString());
 		this.getJComboBoxWidthUnit().setSelectedIndex(unitSelection);
+		
+		// --- Settings for the time format -------------------------
+		this.getTimeFormater().setTimeFormat(timeModelDiscrete.getTimeFormat());
 		
 		this.enabledChangeListener = true;
 		
@@ -629,9 +616,13 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 			step = stepInUnit * timeUnit.getFactorToMilliseconds();
 		}
 		
+		// --- Getting the time format ------------------------------
+		String timeFormat = this.getTimeFormater().getTimeFormat();
+		
 		// --- Set TimeModel ----------------------------------------
 		TimeModelDiscrete  timeModelDiscrete = new TimeModelDiscrete(startLong, stopLong, step);
 		timeModelDiscrete.setStepDisplayUnitAsIndexOfTimeUnitVector(indexSelected);
+		timeModelDiscrete.setTimeFormat(timeFormat);
 		return timeModelDiscrete;
 	}
 	
@@ -646,28 +637,6 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 				this.saveTimeModelInSimulationSetup(getTimeModel());	
 			}	
 		}
-	}
-
-	/**
-	 * This method initializes jPanelFormats	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelFormats() {
-		if (jPanelFormats == null) {
-			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
-			gridBagConstraints12.insets = new Insets(0, 0, 0, 0);
-			gridBagConstraints12.gridy = 0;
-			gridBagConstraints12.gridx = 1;
-			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-			gridBagConstraints11.fill = GridBagConstraints.NONE;
-			jPanelFormats = new JPanel();
-			jPanelFormats.setLayout(new GridBagLayout());
-			jPanelFormats.setPreferredSize(new Dimension(800, 120));
-			jPanelFormats.add(getTimeFormater(), gridBagConstraints11);
-			jPanelFormats.add(getTimeFormaterCountdown(), gridBagConstraints12);
-		}
-		return jPanelFormats;
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="3,10"

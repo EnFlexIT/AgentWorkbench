@@ -29,34 +29,38 @@
 package agentgui.simulationService.time;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import java.awt.Font;
+import agentgui.core.gui.components.JComboBoxWide;
+import agentgui.core.gui.components.JPanelForActions;
 
 /**
  * The Class TimeFormatSelection.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeFormatSelection extends JPanel {
+public class TimeFormatSelection extends JPanelForActions {
 
 	private static final long serialVersionUID = 1L;
 	
 	final static String PathImage = Application.getGlobalInfo().PathImageIntern();
-	
-	private String timeFormatDefault = null;  //  @jve:decl-index=0:
 	
 	private JLabel jLabelHeader = null;
 	private JLabel jLabelFormat = null;
@@ -64,20 +68,17 @@ public class TimeFormatSelection extends JPanel {
 	
 	private JTextField jTextFieldTimeFormat = null;
 	private JButton jButtonTimeFormatDefault = null;
-	private JComboBox jComboBoxTimeFormat = null;
+	private JComboBoxWide jComboBoxTimeFormat = null;
 
 	private JPanel jPanelDummy = null;
 
 	/**
 	 * This is the default constructor.
 	 */
-	public TimeFormatSelection(String headerText, String defaultTimeFormat, String currentTimeFormat) {
+	public TimeFormatSelection(String headerText) {
 		super();
 		initialize();
-		
 		this.setHeaderText(headerText);
-		this.setTimeFormat(currentTimeFormat);
-		this.setTimeFormatDefault(defaultTimeFormat);
 	}
 
 	/**
@@ -95,7 +96,7 @@ public class TimeFormatSelection extends JPanel {
 		gridBagConstraints41.gridy = 3;
 		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
 		gridBagConstraints21.gridx = 0;
-		gridBagConstraints21.insets = new Insets(10, 10, 0, 0);
+		gridBagConstraints21.insets = new Insets(10, 10, 5, 0);
 		gridBagConstraints21.anchor = GridBagConstraints.WEST;
 		gridBagConstraints21.gridwidth = 2;
 		gridBagConstraints21.gridy = 0;
@@ -159,6 +160,20 @@ public class TimeFormatSelection extends JPanel {
 		if (jTextFieldTimeFormat == null) {
 			jTextFieldTimeFormat = new JTextField();
 			jTextFieldTimeFormat.setPreferredSize(new Dimension(30, 26));
+			jTextFieldTimeFormat.getDocument().addDocumentListener(new DocumentListener() {
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					fireActionEvent();
+				}
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					fireActionEvent();
+				}
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					fireActionEvent();
+				}
+			});
 		}
 		return jTextFieldTimeFormat;
 	}
@@ -174,7 +189,13 @@ public class TimeFormatSelection extends JPanel {
 			jButtonTimeFormatDefault.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
 			jButtonTimeFormatDefault.setToolTipText("Agent.GUI - Standard verwenden");
 			jButtonTimeFormatDefault.setToolTipText(Language.translate(jButtonTimeFormatDefault.getToolTipText()));
-			jButtonTimeFormatDefault.addActionListener(null);
+			jButtonTimeFormatDefault.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					getJTextFieldTimeFormat().setText(TimeModelDateBased.DEFAULT_TIME_FORMAT);
+					fireActionEvent();
+				}
+			});
 		}
 		return jButtonTimeFormatDefault;
 	}
@@ -182,10 +203,18 @@ public class TimeFormatSelection extends JPanel {
 	 * This method initializes jComboBoxTimeFormat.
 	 * @return javax.swing.JComboBox
 	 */
-	private JComboBox getJComboBoxTimeFormat() {
+	private JComboBoxWide getJComboBoxTimeFormat() {
 		if (jComboBoxTimeFormat == null) {
-			jComboBoxTimeFormat = new JComboBox();
-			jComboBoxTimeFormat.setPreferredSize(new Dimension(30, 26));
+			final DefaultComboBoxModel cbm = new DefaultComboBoxModel(new TimeFormatVector());
+			jComboBoxTimeFormat = new JComboBoxWide(cbm);
+			jComboBoxTimeFormat.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					TimeFormat tf = (TimeFormat) cbm.getSelectedItem();
+					getJTextFieldTimeFormat().setText(tf.getFormat());
+					fireActionEvent();
+				}
+			});
 		}
 		return jComboBoxTimeFormat;
 	}
@@ -237,21 +266,22 @@ public class TimeFormatSelection extends JPanel {
 		}
 		return this.getJTextFieldTimeFormat().getText();
 	}
-
+	
 	/**
-	 * Sets the default time format.
-	 * @param newDefaultTimeFormat the new default time format
-	 */
-	public void setTimeFormatDefault(String newDefaultTimeFormat) {
-		this.timeFormatDefault = newDefaultTimeFormat;
-	}
-	/**
-	 * Gets the default time format.
+	 * Returns the default time format.
 	 * @return the default time format
 	 */
 	public String getTimeFormatDefault() {
-		return this.timeFormatDefault;
+		return TimeModelDateBased.DEFAULT_TIME_FORMAT;
 	}
-		
+	
+	/**
+	 * Fires a action event for this panel.
+	 */
+	private void fireActionEvent() {
+		ActionEvent ae = new ActionEvent(this, 0, "DateFormatChnaged");
+		this.fireUpdate(ae);
+	}
+	
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"
