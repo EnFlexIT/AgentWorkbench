@@ -135,9 +135,8 @@ public class TimeDurationFormat {
 		
 		Vector<Integer> countingVector = new Vector<Integer>();
 		long workDuration = duration;
-		int fragment = 0;
 		
-		while (workDuration>0) {
+		for (int fragment=0; fragment<this.factorVector.size(); fragment++) {
 			
 			// --- Count the number of years, months, days etc. in this duration -------- 
 			int noOfFragments = this.calculateTimeFragment(workDuration, this.factorVector.get(fragment));
@@ -146,16 +145,11 @@ public class TimeDurationFormat {
 			// --- Reduce the amount of milliseconds in the duration -------------------- 
 			workDuration = workDuration - (noOfFragments * this.factorVector.get(fragment));
 			
-			// --- Use the next smaller time fragment -----------------------------------
-			fragment++;
-			
-			if (fragment>=this.factorVector.size()) {
-				// --- End of the factor vector (seconds) reached: finalise -------------
-				countingVector.add((int) workDuration);
-				workDuration = 0;
-			}
-			
 		}
+		
+		// --- End of the factor vector (seconds) reached: finalise ---------------------
+		countingVector.add((int) workDuration);
+		
 		return countingVector;
 		
 	}
@@ -171,11 +165,8 @@ public class TimeDurationFormat {
 		if (duration<factor) {
 			return 0;
 		} else {
-			int nFragments = 0;
-			while ((duration-(factor * nFragments)) > factor) {
-				nFragments++;
-			}
-			return nFragments--;
+			float nFrags = (float) duration / (float) factor;
+			return (int) nFrags;
 		}
 	}
 	

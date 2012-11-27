@@ -16,7 +16,7 @@
         <agentVector/>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1206</useLocalPort>
+        <useLocalPort>1213</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -50,8 +50,8 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>0032 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelDiscrete</timeModelClass>
-    <downloadResources>http://rudel1:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
-    <downloadResources>http://rudel1:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
+    <downloadResources>http://rudel1.cs.uni-due.de:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
+    <downloadResources>http://rudel1.cs.uni-due.de:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>0242 Agents</key>
@@ -107,5 +107,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>false</unsaved>
+    <unsaved>true</unsaved>
 </project>

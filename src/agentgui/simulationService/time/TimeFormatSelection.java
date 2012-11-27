@@ -134,14 +134,14 @@ public class TimeFormatSelection extends JPanelForActions {
 		jLabelFormat = new JLabel();
 		jLabelFormat.setFont(new Font("Dialog", Font.BOLD, 12));
 		jLabelFormat.setText("Format");
-		jLabelFormat.setText(Language.translate(jLabelFormat.getText()));
+		jLabelFormat.setText(Language.translate(jLabelFormat.getText()) + ":");
 		
 		jLabelTimeFormatPredefined = new JLabel();
 		jLabelTimeFormatPredefined.setFont(new Font("Dialog", Font.BOLD, 12));
 		jLabelTimeFormatPredefined.setText("Vorlagen");
-		jLabelTimeFormatPredefined.setText(Language.translate(jLabelTimeFormatPredefined.getText()));
+		jLabelTimeFormatPredefined.setText(Language.translate(jLabelTimeFormatPredefined.getText())+ ":");
 
-		this.setSize(427, 137);
+		this.setSize(427, 123);
 		this.setLayout(new GridBagLayout());
 		this.add(jLabelFormat, gridBagConstraints);
 		this.add(getJTextFieldTimeFormat(), gridBagConstraints1);
