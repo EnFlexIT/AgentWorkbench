@@ -8,6 +8,12 @@
             <startAsName>NeMaAg</startAsName>
         </agent>
         <agent>
+            <postionNo>2</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>agas.agents.components.ControlAgent</agentClassReference>
+            <startAsName>CoAg</startAsName>
+        </agent>
+        <agent>
             <postionNo>1</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>agas.agents.components.EntryAgent</agentClassReference>
@@ -96,6 +102,36 @@
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>agas.agents.components.CompressorAgent</agentClassReference>
             <startAsName>n14</startAsName>
+        </agent>
+        <agent>
+            <postionNo>16</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>agas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n15</startAsName>
+        </agent>
+        <agent>
+            <postionNo>17</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>agas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n16</startAsName>
+        </agent>
+        <agent>
+            <postionNo>18</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>agas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n17</startAsName>
+        </agent>
+        <agent>
+            <postionNo>19</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>agas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n18</startAsName>
+        </agent>
+        <agent>
+            <postionNo>20</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>agas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n19</startAsName>
         </agent>
     </agentSetup>
     <timeModelSettings>

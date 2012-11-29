@@ -9,10 +9,20 @@
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
     </subOntologies>
     <agentStartConfiguration>
-        <agentVector/>
+        <agentVector>
+            <agent agentReference="agas.agents.components.ControlAgent">
+                <startArgumentVector>
+                    <startArgument ontologyReference="gasmas.ontology.FlowParameters" displayTitle="test2" position="1"/>
+                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" displayTitle="test1" position="2"/>
+                </startArgumentVector>
+            </agent>
+            <agent agentReference="agas.agents.components.ControllerAgent">
+                <startArgumentVector/>
+            </agent>
+        </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1102</useLocalPort>
+        <useLocalPort>1113</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -44,14 +54,35 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Case 1</simulationSetupCurrent>
+    <simulationSetupCurrent>Case 4</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelDiscrete</timeModelClass>
+    <downloadResources>http://sascha:8080/agas/agas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>Case 1</key>
             <value>case_1.xml</value>
         </entry>
+        <entry>
+            <key>Case 6</key>
+            <value>case_6.xml</value>
+        </entry>
+        <entry>
+            <key>Case 5</key>
+            <value>case_5.xml</value>
+        </entry>
+        <entry>
+            <key>Case 4</key>
+            <value>case_4.xml</value>
+        </entry>
+        <entry>
+            <key>Case 3</key>
+            <value>case_3.xml</value>
+        </entry>
+        <entry>
+            <key>Case 2</key>
+            <value>case_2.xml</value>
+        </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>false</unsaved>
+    <unsaved>true</unsaved>
 </project>

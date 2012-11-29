@@ -7,31 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Pipe
 * @author ontology bean generator
-* @version 2012/08/14, 13:58:40
+* @version 2012/10/24, 18:22:29
 */
 public class Pipe extends Connection{ 
-
-   /**
-* Protege name: heatTransferCoefficient
-   */
-   private ValueType heatTransferCoefficient;
-   public void setHeatTransferCoefficient(ValueType value) { 
-    this.heatTransferCoefficient=value;
-   }
-   public ValueType getHeatTransferCoefficient() {
-     return this.heatTransferCoefficient;
-   }
-
-   /**
-* Protege name: roughness
-   */
-   private ValueType roughness;
-   public void setRoughness(ValueType value) { 
-    this.roughness=value;
-   }
-   public ValueType getRoughness() {
-     return this.roughness;
-   }
 
    /**
 * Protege name: lineOfSight
@@ -45,14 +23,14 @@ public class Pipe extends Connection{
    }
 
    /**
-* Protege name: pressureMax
+* Protege name: heatTransferCoefficient
    */
-   private ValueType pressureMax;
-   public void setPressureMax(ValueType value) { 
-    this.pressureMax=value;
+   private ValueType heatTransferCoefficient;
+   public void setHeatTransferCoefficient(ValueType value) { 
+    this.heatTransferCoefficient=value;
    }
-   public ValueType getPressureMax() {
-     return this.pressureMax;
+   public ValueType getHeatTransferCoefficient() {
+     return this.heatTransferCoefficient;
    }
 
    /**
@@ -67,6 +45,17 @@ public class Pipe extends Connection{
    }
 
    /**
+* Protege name: pressureMax
+   */
+   private ValueType pressureMax;
+   public void setPressureMax(ValueType value) { 
+    this.pressureMax=value;
+   }
+   public ValueType getPressureMax() {
+     return this.pressureMax;
+   }
+
+   /**
 * Protege name: Diameter
    */
    private ValueType diameter;
@@ -75,6 +64,17 @@ public class Pipe extends Connection{
    }
    public ValueType getDiameter() {
      return this.diameter;
+   }
+
+   /**
+* Protege name: roughness
+   */
+   private ValueType roughness;
+   public void setRoughness(ValueType value) { 
+    this.roughness=value;
+   }
+   public ValueType getRoughness() {
+     return this.roughness;
    }
 
 }

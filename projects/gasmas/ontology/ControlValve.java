@@ -7,64 +7,9 @@ import jade.core.*;
 /**
 * Protege name: ControlValve
 * @author ontology bean generator
-* @version 2012/08/14, 13:58:40
+* @version 2012/10/24, 18:22:29
 */
 public class ControlValve extends Valve{ 
-
-   /**
-* Protege name: pressureSet
-   */
-   private ValueType pressureSet;
-   public void setPressureSet(ValueType value) { 
-    this.pressureSet=value;
-   }
-   public ValueType getPressureSet() {
-     return this.pressureSet;
-   }
-
-   /**
-* Protege name: pressureOutMax
-   */
-   private ValueType pressureOutMax;
-   public void setPressureOutMax(ValueType value) { 
-    this.pressureOutMax=value;
-   }
-   public ValueType getPressureOutMax() {
-     return this.pressureOutMax;
-   }
-
-   /**
-* Protege name: internalBypassRequired
-   */
-   private boolean internalBypassRequired;
-   public void setInternalBypassRequired(boolean value) { 
-    this.internalBypassRequired=value;
-   }
-   public boolean getInternalBypassRequired() {
-     return this.internalBypassRequired;
-   }
-
-   /**
-* Protege name: diameterOut
-   */
-   private ValueType diameterOut;
-   public void setDiameterOut(ValueType value) { 
-    this.diameterOut=value;
-   }
-   public ValueType getDiameterOut() {
-     return this.diameterOut;
-   }
-
-   /**
-* Protege name: increasedOutputTemperature
-   */
-   private ValueType increasedOutputTemperature;
-   public void setIncreasedOutputTemperature(ValueType value) { 
-    this.increasedOutputTemperature=value;
-   }
-   public ValueType getIncreasedOutputTemperature() {
-     return this.increasedOutputTemperature;
-   }
 
    /**
 * Protege name: diameterIn
@@ -75,6 +20,17 @@ public class ControlValve extends Valve{
    }
    public ValueType getDiameterIn() {
      return this.diameterIn;
+   }
+
+   /**
+* Protege name: pressureDifferentialMin
+   */
+   private ValueType pressureDifferentialMin;
+   public void setPressureDifferentialMin(ValueType value) { 
+    this.pressureDifferentialMin=value;
+   }
+   public ValueType getPressureDifferentialMin() {
+     return this.pressureDifferentialMin;
    }
 
    /**
@@ -89,17 +45,6 @@ public class ControlValve extends Valve{
    }
 
    /**
-* Protege name: dragFactorOut
-   */
-   private float dragFactorOut;
-   public void setDragFactorOut(float value) { 
-    this.dragFactorOut=value;
-   }
-   public float getDragFactorOut() {
-     return this.dragFactorOut;
-   }
-
-   /**
 * Protege name: pressureInMin
    */
    private ValueType pressureInMin;
@@ -108,6 +53,28 @@ public class ControlValve extends Valve{
    }
    public ValueType getPressureInMin() {
      return this.pressureInMin;
+   }
+
+   /**
+* Protege name: internalBypassRequired
+   */
+   private boolean internalBypassRequired;
+   public void setInternalBypassRequired(boolean value) { 
+    this.internalBypassRequired=value;
+   }
+   public boolean getInternalBypassRequired() {
+     return this.internalBypassRequired;
+   }
+
+   /**
+* Protege name: pressureSet
+   */
+   private ValueType pressureSet;
+   public void setPressureSet(ValueType value) { 
+    this.pressureSet=value;
+   }
+   public ValueType getPressureSet() {
+     return this.pressureSet;
    }
 
    /**
@@ -122,14 +89,47 @@ public class ControlValve extends Valve{
    }
 
    /**
-* Protege name: pressureDifferentialMin
+* Protege name: diameterOut
    */
-   private ValueType pressureDifferentialMin;
-   public void setPressureDifferentialMin(ValueType value) { 
-    this.pressureDifferentialMin=value;
+   private ValueType diameterOut;
+   public void setDiameterOut(ValueType value) { 
+    this.diameterOut=value;
    }
-   public ValueType getPressureDifferentialMin() {
-     return this.pressureDifferentialMin;
+   public ValueType getDiameterOut() {
+     return this.diameterOut;
+   }
+
+   /**
+* Protege name: dragFactorOut
+   */
+   private float dragFactorOut;
+   public void setDragFactorOut(float value) { 
+    this.dragFactorOut=value;
+   }
+   public float getDragFactorOut() {
+     return this.dragFactorOut;
+   }
+
+   /**
+* Protege name: increasedOutputTemperature
+   */
+   private ValueType increasedOutputTemperature;
+   public void setIncreasedOutputTemperature(ValueType value) { 
+    this.increasedOutputTemperature=value;
+   }
+   public ValueType getIncreasedOutputTemperature() {
+     return this.increasedOutputTemperature;
+   }
+
+   /**
+* Protege name: pressureOutMax
+   */
+   private ValueType pressureOutMax;
+   public void setPressureOutMax(ValueType value) { 
+    this.pressureOutMax=value;
+   }
+   public ValueType getPressureOutMax() {
+     return this.pressureOutMax;
    }
 
 }

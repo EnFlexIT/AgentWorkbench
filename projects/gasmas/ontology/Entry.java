@@ -7,9 +7,20 @@ import jade.core.*;
 /**
 * Protege name: Entry
 * @author ontology bean generator
-* @version 2012/08/14, 13:58:40
+* @version 2012/10/24, 18:22:29
 */
 public class Entry extends Exit{ 
+
+   /**
+* Protege name: normDensity
+   */
+   private ValueType normDensity;
+   public void setNormDensity(ValueType value) { 
+    this.normDensity=value;
+   }
+   public ValueType getNormDensity() {
+     return this.normDensity;
+   }
 
    /**
 * Protege name: pseudocriticalTemperature
@@ -34,17 +45,6 @@ public class Entry extends Exit{
    }
 
    /**
-* Protege name: heatCapacityCoefficient
-   */
-   private HeatCapacityCoefficient heatCapacityCoefficient;
-   public void setHeatCapacityCoefficient(HeatCapacityCoefficient value) { 
-    this.heatCapacityCoefficient=value;
-   }
-   public HeatCapacityCoefficient getHeatCapacityCoefficient() {
-     return this.heatCapacityCoefficient;
-   }
-
-   /**
 * Protege name: gasTemperature
    */
    private ValueType gasTemperature;
@@ -56,14 +56,14 @@ public class Entry extends Exit{
    }
 
    /**
-* Protege name: calorificValue
+* Protege name: heatCapacityCoefficient
    */
-   private ValueType calorificValue;
-   public void setCalorificValue(ValueType value) { 
-    this.calorificValue=value;
+   private HeatCapacityCoefficient heatCapacityCoefficient;
+   public void setHeatCapacityCoefficient(HeatCapacityCoefficient value) { 
+    this.heatCapacityCoefficient=value;
    }
-   public ValueType getCalorificValue() {
-     return this.calorificValue;
+   public HeatCapacityCoefficient getHeatCapacityCoefficient() {
+     return this.heatCapacityCoefficient;
    }
 
    /**
@@ -78,14 +78,14 @@ public class Entry extends Exit{
    }
 
    /**
-* Protege name: normDensity
+* Protege name: calorificValue
    */
-   private ValueType normDensity;
-   public void setNormDensity(ValueType value) { 
-    this.normDensity=value;
+   private ValueType calorificValue;
+   public void setCalorificValue(ValueType value) { 
+    this.calorificValue=value;
    }
-   public ValueType getNormDensity() {
-     return this.normDensity;
+   public ValueType getCalorificValue() {
+     return this.calorificValue;
    }
 
 }

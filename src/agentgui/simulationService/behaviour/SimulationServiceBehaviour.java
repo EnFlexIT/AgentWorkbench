@@ -35,6 +35,10 @@ import jade.core.ServiceException;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 
 import java.util.Vector;
 
@@ -464,4 +468,74 @@ public class SimulationServiceBehaviour extends Behaviour implements ServiceSens
 		this.getSimulationServiceListeners().remove(simulationServiceListener);
 	}
 
+	/**
+	 * Registers a service for the agency to the DFService of JADE.
+	 * @param type the type
+	 * @param name the name
+	 */
+	protected void registerDFService(String type, String name, String ownership) {
+		DFAgentDescription agentDescription = createAgentDescription(type, name, ownership);
+		try {
+			DFService.register(this.myAgent, agentDescription);
+		} catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Unregisters a service for the agency to the DFService of JADE.
+	 */
+	protected void deregisterDFService() {
+		try {
+			DFService.deregister(this.myAgent);
+		} catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Returns the Agent description for the DF-Service of JADE
+	 * @param type the service type
+	 * @param name AID address or name of the agent
+	 * @param ownership the ownership
+	 * @return the DFAgentDescription for the JADE DF 
+	 */
+	private DFAgentDescription createAgentDescription(String type, String name, String ownership) {
+		DFAgentDescription agentDescription = new DFAgentDescription();
+		agentDescription.setName(getAID());
+		
+		ServiceDescription serviceDescription = new ServiceDescription();
+		serviceDescription.setType(type);
+		serviceDescription.setName(name);
+		serviceDescription.setOwnership(ownership);
+		agentDescription.addServices(serviceDescription);
+		
+		return agentDescription;
+	}
+	
+	/**
+	 * Find and returns agents by a service type.
+	 *
+	 * @param serviceType the service type
+	 * @return the dF agent description[]
+	 */
+	protected DFAgentDescription[] findAgentsByServiceType(String serviceType) {
+	
+		DFAgentDescription[] dfAgentDescriptions = null;
+		
+		try {
+			DFAgentDescription agentDescription = new DFAgentDescription();
+			ServiceDescription serviceDescription = new ServiceDescription();
+			serviceDescription.setType(serviceType);
+			agentDescription.addServices(serviceDescription);
+
+			dfAgentDescriptions = DFService.search(this.myAgent, agentDescription);
+			
+		} catch (FIPAException fe) {
+			//fe.printStackTrace();
+			System.err.println("DFService: Error while requesting the DFService!");
+		}
+		return dfAgentDescriptions;
+	}
+	
 }

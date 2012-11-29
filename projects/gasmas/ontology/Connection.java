@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Connection
 * @author ontology bean generator
-* @version 2012/08/14, 13:58:40
+* @version 2012/10/24, 18:22:29
 */
 public class Connection extends GridComponent{ 
 
@@ -23,14 +23,14 @@ public class Connection extends GridComponent{
    }
 
    /**
-* Protege name: flowMax
+* Protege name: to
    */
-   private ValueType flowMax;
-   public void setFlowMax(ValueType value) { 
-    this.flowMax=value;
+   private String to;
+   public void setTo(String value) { 
+    this.to=value;
    }
-   public ValueType getFlowMax() {
-     return this.flowMax;
+   public String getTo() {
+     return this.to;
    }
 
    /**
@@ -56,14 +56,14 @@ public class Connection extends GridComponent{
    }
 
    /**
-* Protege name: to
+* Protege name: flowMax
    */
-   private String to;
-   public void setTo(String value) { 
-    this.to=value;
+   private ValueType flowMax;
+   public void setFlowMax(ValueType value) { 
+    this.flowMax=value;
    }
-   public String getTo() {
-     return this.to;
+   public ValueType getFlowMax() {
+     return this.flowMax;
    }
 
 }

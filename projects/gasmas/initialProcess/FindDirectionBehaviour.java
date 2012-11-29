@@ -182,22 +182,27 @@ public class FindDirectionBehaviour {
 	 */
 	public void start() {
 		String flow = "";
+		
 		if (myNetworkComponent.getAgentClassName().equals(EntryAgent.class.getName())) {
 			// --- Entry sends to all neighbours its flow ---
 			flow = "in";
 			sendToAllNeighbours(flow);
+		
 		} else if (myNetworkComponent.getAgentClassName().equals(ExitAgent.class.getName())) {
 			// --- Exit sends to all neighbours its flow ---
 			flow = "out";
 			sendToAllNeighbours(flow);
+		
 		} else if (myNetworkComponent.getAgentClassName().equals(PipeAgent.class.getName()) || myNetworkComponent.getAgentClassName().equals(PipeShortAgent.class.getName())
 				|| myNetworkComponent.getAgentClassName().equals(SimpleValveAgent.class.getName())) {
+			
 			if (myNeighbours.size() < 2) {
 				// --- Pipe, how has only 1 neighbour knows, that it is dead, so inform neighbours ---
 				flow = "dead";
 				System.out.println(myAgent.getLocalName() + " is dead");
 				sendToAllNeighbours(flow);
 			}
+		
 		} else if (myNetworkComponent.getAgentClassName().equals(ControlValveAgent.class.getName()) || myNetworkComponent.getAgentClassName().equals(CompressorAgent.class.getName())) {
 			// --- ControlValves and Compressors are directed, so get the information out of the network model ---
 			NetworkComponentDirectionSettings netCompDirect = new NetworkComponentDirectionSettings(myNetworkModel, myNetworkComponent);

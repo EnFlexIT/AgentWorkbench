@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<simulationSetup>
+    <agentSetup>
+        <agent>
+            <postionNo>1</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>agas.agents.components.EntryAgent</agentClassReference>
+            <startAsName>n0</startAsName>
+        </agent>
+        <agent>
+            <postionNo>2</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>agas.agents.components.ControlValveAgent</agentClassReference>
+            <startAsName>n1</startAsName>
+        </agent>
+        <agent>
+            <postionNo>3</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>agas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n2</startAsName>
+        </agent>
+        <agent>
+            <postionNo>4</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>agas.agents.components.ControlValveAgent</agentClassReference>
+            <startAsName>n3</startAsName>
+        </agent>
+        <agent>
+            <postionNo>5</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>agas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n4</startAsName>
+        </agent>
+    </agentSetup>
+    <timeModelSettings/>
+    <environmentFileName>Case 3.graphml</environmentFileName>
+</simulationSetup>

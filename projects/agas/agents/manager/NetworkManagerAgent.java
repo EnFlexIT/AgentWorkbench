@@ -121,7 +121,6 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
 	/*
 	 * (non-Javadoc)
 	 * 

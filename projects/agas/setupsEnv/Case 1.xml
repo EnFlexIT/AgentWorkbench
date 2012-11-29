@@ -185,6 +185,39 @@
             </value>
         </entry>
         <entry>
+            <key>n17</key>
+            <value>
+                <agentClassName>agas.agents.components.ExitAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP39</graphElementIDs>
+                <id>n17</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Exit</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n18</key>
+            <value>
+                <agentClassName>agas.agents.components.ExitAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP40</graphElementIDs>
+                <id>n18</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Exit</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n19</key>
+            <value>
+                <agentClassName>agas.agents.components.ExitAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP41</graphElementIDs>
+                <id>n19</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Exit</type>
+            </value>
+        </entry>
+        <entry>
             <key>n13</key>
             <value>
                 <agentClassName>agas.agents.components.PipeShortAgent</agentClassName>
@@ -208,6 +241,42 @@
                 <id>n14</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>Compressor</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n15</key>
+            <value>
+                <agentClassName>agas.agents.components.BranchAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP31</graphElementIDs>
+                <graphElementIDs>n15_1</graphElementIDs>
+                <graphElementIDs>PP30</graphElementIDs>
+                <graphElementIDs>n15_2</graphElementIDs>
+                <graphElementIDs>n15_0</graphElementIDs>
+                <graphElementIDs>PP27</graphElementIDs>
+                <graphElementIDs>PP33</graphElementIDs>
+                <id>n15</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
+                <type>Branch3</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n16</key>
+            <value>
+                <agentClassName>agas.agents.components.BranchAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP41</graphElementIDs>
+                <graphElementIDs>PP40</graphElementIDs>
+                <graphElementIDs>PP39</graphElementIDs>
+                <graphElementIDs>n16_2</graphElementIDs>
+                <graphElementIDs>PP33</graphElementIDs>
+                <graphElementIDs>PP34</graphElementIDs>
+                <graphElementIDs>n16_3</graphElementIDs>
+                <graphElementIDs>n16_0</graphElementIDs>
+                <graphElementIDs>n16_1</graphElementIDs>
+                <id>n16</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star4GraphElement</prototypeClassName>
+                <type>Branch4</type>
             </value>
         </entry>
     </componentList>
