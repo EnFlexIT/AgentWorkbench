@@ -102,8 +102,10 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 	private JSpinner jSpinnerTimeStop = null;
 	private JSpinner jSpinnerMillisStop = null;
 
-	private TimeFormatSelection timeFormater = null;
+	private TimeFormatSelection jPanelTimeFormater = null;
 	private boolean enabledChangeListener = true;
+
+	private JLabel jLabeDateFormat = null;
 
 	/**
 	 * Instantiates a new time model discrete configuration.
@@ -119,46 +121,50 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 	 */
 	private void initialize() {
 		
+		GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
+		gridBagConstraints10.gridx = 0;
+		gridBagConstraints10.anchor = GridBagConstraints.NORTHWEST;
+		gridBagConstraints10.insets = new Insets(15, 10, 0, 0);
+		gridBagConstraints10.gridy = 5;
 		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-		gridBagConstraints11.fill = GridBagConstraints.NONE;
-		gridBagConstraints11.gridy = 9;
+		gridBagConstraints11.gridy = 5;
 		gridBagConstraints11.anchor = GridBagConstraints.WEST;
-		gridBagConstraints11.gridwidth = 2;
-		gridBagConstraints11.insets = new Insets(10, 0, 0, 0);
-		gridBagConstraints11.gridx = 0;
+		gridBagConstraints11.gridwidth = 1;
+		gridBagConstraints11.insets = new Insets(10, 5, 0, 0);
+		gridBagConstraints11.gridx = 1;
 		GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
 		gridBagConstraints9.gridx = 1;
 		gridBagConstraints9.anchor = GridBagConstraints.WEST;
 		gridBagConstraints9.insets = new Insets(10, 5, 10, 0);
-		gridBagConstraints9.gridy = 8;
+		gridBagConstraints9.gridy = 4;
 		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 		gridBagConstraints4.gridx = 0;
 		gridBagConstraints4.insets = new Insets(0, 10, 0, 0);
 		gridBagConstraints4.anchor = GridBagConstraints.WEST;
-		gridBagConstraints4.gridy = 8;
+		gridBagConstraints4.gridy = 4;
 		GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
 		gridBagConstraints16.gridx = 0;
 		gridBagConstraints16.insets = new Insets(0, 10, 0, 0);
 		gridBagConstraints16.anchor = GridBagConstraints.WEST;
-		gridBagConstraints16.gridy = 7;
+		gridBagConstraints16.gridy = 3;
 		GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
 		gridBagConstraints15.gridx = 0;
 		gridBagConstraints15.insets = new Insets(0, 10, 0, 0);
 		gridBagConstraints15.anchor = GridBagConstraints.WEST;
-		gridBagConstraints15.gridy = 4;
+		gridBagConstraints15.gridy = 2;
 		GridBagConstraints gridBagConstraints141 = new GridBagConstraints();
 		gridBagConstraints141.gridx = 1;
 		gridBagConstraints141.gridwidth = 5;
 		gridBagConstraints141.anchor = GridBagConstraints.WEST;
 		gridBagConstraints141.insets = new Insets(10, 5, 10, 0);
-		gridBagConstraints141.gridy = 4;
+		gridBagConstraints141.gridy = 2;
 		GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
 		gridBagConstraints13.gridx = 1;
 		gridBagConstraints13.fill = GridBagConstraints.NONE;
 		gridBagConstraints13.gridwidth = 8;
 		gridBagConstraints13.anchor = GridBagConstraints.WEST;
 		gridBagConstraints13.insets = new Insets(10, 5, 10, 0);
-		gridBagConstraints13.gridy = 7;
+		gridBagConstraints13.gridy = 3;
 		GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
 		gridBagConstraints8.gridx = 2;
 		gridBagConstraints8.gridy = 0;
@@ -168,7 +174,7 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		gridBagConstraints7.weightx = 1.0;
 		gridBagConstraints7.weighty = 1.0;
 		gridBagConstraints7.gridwidth = 2;
-		gridBagConstraints7.gridy = 10;
+		gridBagConstraints7.gridy = 6;
 		GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 		gridBagConstraints6.gridx = 0;
 		gridBagConstraints6.insets = new Insets(0, 10, 0, 0);
@@ -236,6 +242,10 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		jLabelWidthUnit.setText("Einheit");
 		jLabelWidthUnit.setText(Language.translate(jLabelWidthUnit.getText())+ ":");
 
+		jLabeDateFormat = new JLabel();
+		jLabeDateFormat.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabeDateFormat.setText("Ansicht");
+		jLabeDateFormat.setText(Language.translate(jLabeDateFormat.getText()) + ":");
 		
 		this.setSize(new Dimension(559, 350));
         this.setLayout(new GridBagLayout());
@@ -250,7 +260,8 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
         this.add(jLabelStop, gridBagConstraints16);
         this.add(jLabelWidth, gridBagConstraints4);
         this.add(getJPanelWidthSettings(), gridBagConstraints9);
-        this.add(getTimeFormater(), gridBagConstraints11);
+        this.add(getJPanelTimeFormater(), gridBagConstraints11);
+        this.add(jLabeDateFormat, gridBagConstraints10);
         			
 	}
 
@@ -489,19 +500,18 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 	 * Gets the time formater.
 	 * @return the time formater
 	 */
-	private TimeFormatSelection getTimeFormater() {
-		if (timeFormater==null) {
-			String header = Language.translate("Datumsformat");
-			timeFormater = new TimeFormatSelection(header);
-			timeFormater.setPreferredSize(new Dimension(400, 120));
-			timeFormater.addActionListener(new ActionListener() {
+	private TimeFormatSelection getJPanelTimeFormater() {
+		if (jPanelTimeFormater==null) {
+			jPanelTimeFormater = new TimeFormatSelection();
+			jPanelTimeFormater.setPreferredSize(new Dimension(360, 80));
+			jPanelTimeFormater.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
 					saveTimeModelInSimulationSetup(getTimeModel());					
 				}
 			});
 		}
-		return timeFormater;
+		return jPanelTimeFormater;
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.DisplayJPanel4Configuration#setTimeModel(agentgui.simulationService.time.TimeModel)
@@ -543,7 +553,7 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		this.getJComboBoxWidthUnit().setSelectedIndex(unitSelection);
 		
 		// --- Settings for the time format -------------------------
-		this.getTimeFormater().setTimeFormat(timeModelDiscrete.getTimeFormat());
+		this.getJPanelTimeFormater().setTimeFormat(timeModelDiscrete.getTimeFormat());
 		
 		this.enabledChangeListener = true;
 		
@@ -617,7 +627,7 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		}
 		
 		// --- Getting the time format ------------------------------
-		String timeFormat = this.getTimeFormater().getTimeFormat();
+		String timeFormat = this.getJPanelTimeFormater().getTimeFormat();
 		
 		// --- Set TimeModel ----------------------------------------
 		TimeModelDiscrete  timeModelDiscrete = new TimeModelDiscrete(startLong, stopLong, step);

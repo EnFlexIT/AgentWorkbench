@@ -108,6 +108,7 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 	@Override
 	protected void beforeMove() {
 		super.beforeMove();
+		this.removeNotificationHandler();
 		this.sensorPlugOut();
 	}
 	
@@ -119,6 +120,7 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 		this.myNewLocation = null;
 		super.afterMove();		
 		this.sensorPlugIn();
+		this.addNotificationHandler();
 		this.checkAndActOnEnvironmentChanges();
 	}
 	
@@ -128,6 +130,7 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 	@Override
 	protected void beforeClone() {
 		super.beforeClone();
+		this.removeNotificationHandler();
 		this.sensorPlugOut();
 	}
 	
@@ -184,22 +187,35 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 		}
 		mySensor = null;
 	}
+	
+	/**
+	 * Grab the environment model from the simulation service.
+	 * @return the current EnvironmentModel
+	 */
+	protected EnvironmentModel getEnvironmentModelFromSimulationService(){
+		EnvironmentModel envModel = null;
+		try {
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			envModel = simHelper.getEnvironmentModel();
+		} catch (ServiceException e) {
+			System.err.println(getLocalName() +  " - Error: Could not retrieve SimulationServiceHelper, shutting down!");
+			this.doDelete();
+		}
+		return envModel;
+	}
+
 	/**
 	 * This Method checks if the environment changed in the meantime.
 	 * If so, the method 'onEnvironmentStimulus' will be fired
 	 */
 	protected void checkAndActOnEnvironmentChanges() {
 		// --- Has the EnvironmentModel changed? ----------------
-		try {
-			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			EnvironmentModel tmpEnvMode =  simHelper.getEnvironmentModel();
-			if (tmpEnvMode!=null) {
-				if (tmpEnvMode.equals(myEnvironmentModel)==false) {
-					this.onEnvironmentStimulusIntern();	
-				}				
-			}
-		} catch (ServiceException e) {
-			e.printStackTrace();
+		EnvironmentModel tmpEnvMode = this.getEnvironmentModelFromSimulationService();
+		if (tmpEnvMode!=null) {
+			if (tmpEnvMode.equals(this.myEnvironmentModel)==false) {
+				this.myEnvironmentModel = tmpEnvMode;
+				this.onEnvironmentStimulusIntern();	
+			}				
 		}
 	}
 	
@@ -336,7 +352,8 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 	 */
 	private void removeNotificationHandler() {
 		if (this.notificationHandler!=null) {
-			this.removeBehaviour(this.notificationHandler);	
+			this.removeBehaviour(this.notificationHandler);
+			this.notificationHandler=null;
 		}
 	}
 

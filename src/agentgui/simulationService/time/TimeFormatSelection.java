@@ -29,7 +29,6 @@
 package agentgui.simulationService.time;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -62,10 +61,7 @@ public class TimeFormatSelection extends JPanelForActions {
 	
 	final static String PathImage = Application.getGlobalInfo().PathImageIntern();
 	
-	private JLabel jLabelHeader = null;
 	private JLabel jLabelFormat = null;
-	private JLabel jLabelTimeFormatPredefined = null;
-	
 	private JTextField jTextFieldTimeFormat = null;
 	private JButton jButtonTimeFormatDefault = null;
 	private JComboBoxWide jComboBoxTimeFormat = null;
@@ -75,10 +71,9 @@ public class TimeFormatSelection extends JPanelForActions {
 	/**
 	 * This is the default constructor.
 	 */
-	public TimeFormatSelection(String headerText) {
+	public TimeFormatSelection() {
 		super();
 		initialize();
-		this.setHeaderText(headerText);
 	}
 
 	/**
@@ -92,63 +87,41 @@ public class TimeFormatSelection extends JPanelForActions {
 		gridBagConstraints41.weightx = 1.0;
 		gridBagConstraints41.weighty = 1.0;
 		gridBagConstraints41.gridwidth = 3;
-		gridBagConstraints41.insets = new Insets(10, 0, 0, 0);
+		gridBagConstraints41.insets = new Insets(0, 0, 0, 0);
 		gridBagConstraints41.gridy = 3;
-		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
-		gridBagConstraints21.gridx = 0;
-		gridBagConstraints21.insets = new Insets(10, 10, 5, 0);
-		gridBagConstraints21.anchor = GridBagConstraints.WEST;
-		gridBagConstraints21.gridwidth = 2;
-		gridBagConstraints21.gridy = 0;
-		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-		gridBagConstraints4.gridx = 0;
-		gridBagConstraints4.insets = new Insets(10, 10, 0, 0);
-		gridBagConstraints4.anchor = GridBagConstraints.WEST;
-		gridBagConstraints4.gridy = 2;
 		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 		gridBagConstraints3.fill = GridBagConstraints.BOTH;
 		gridBagConstraints3.gridy = 2;
 		gridBagConstraints3.weightx = 1.0;
-		gridBagConstraints3.insets = new Insets(10, 5, 0, 0);
+		gridBagConstraints3.insets = new Insets(7, 5, 0, 0);
 		gridBagConstraints3.gridx = 1;
 		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 		gridBagConstraints2.gridx = 2;
-		gridBagConstraints2.insets = new Insets(10, 5, 0, 10);
+		gridBagConstraints2.insets = new Insets(0, 5, 0, 5);
 		gridBagConstraints2.gridy = 1;
 		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 		gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints1.gridy = 1;
 		gridBagConstraints1.weightx = 1.0;
-		gridBagConstraints1.insets = new Insets(10, 5, 0, 0);
+		gridBagConstraints1.insets = new Insets(0, 5, 0, 0);
 		gridBagConstraints1.gridx = 1;
 		GridBagConstraints gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 0;
-		gridBagConstraints.insets = new Insets(10, 10, 0, 0);
+		gridBagConstraints.insets = new Insets(0, 5, 0, 0);
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.gridy = 1;
 		
-		jLabelHeader = new JLabel();
-		jLabelHeader.setText("Datumsformat");
-		jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 12));
-
 		jLabelFormat = new JLabel();
-		jLabelFormat.setFont(new Font("Dialog", Font.BOLD, 12));
 		jLabelFormat.setText("Format");
+		jLabelFormat.setPreferredSize(new Dimension(40, 16));
 		jLabelFormat.setText(Language.translate(jLabelFormat.getText()) + ":");
 		
-		jLabelTimeFormatPredefined = new JLabel();
-		jLabelTimeFormatPredefined.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelTimeFormatPredefined.setText("Vorlagen");
-		jLabelTimeFormatPredefined.setText(Language.translate(jLabelTimeFormatPredefined.getText())+ ":");
-
-		this.setSize(427, 123);
+		this.setSize(427, 65);
 		this.setLayout(new GridBagLayout());
 		this.add(jLabelFormat, gridBagConstraints);
 		this.add(getJTextFieldTimeFormat(), gridBagConstraints1);
 		this.add(getJButtonTimeFormatDefault(), gridBagConstraints2);
 		this.add(getJComboBoxTimeFormat(), gridBagConstraints3);
-		this.add(jLabelTimeFormatPredefined, gridBagConstraints4);
-		this.add(jLabelHeader, gridBagConstraints21);
 		this.add(getJPanelDummy(), gridBagConstraints41);
 	}
 
@@ -207,6 +180,8 @@ public class TimeFormatSelection extends JPanelForActions {
 		if (jComboBoxTimeFormat == null) {
 			final DefaultComboBoxModel cbm = new DefaultComboBoxModel(new TimeFormatVector());
 			jComboBoxTimeFormat = new JComboBoxWide(cbm);
+			jComboBoxTimeFormat.setToolTipText("Vorlagen");
+			jComboBoxTimeFormat.setToolTipText(Language.translate(jComboBoxTimeFormat.getToolTipText()));
 			jComboBoxTimeFormat.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
@@ -230,21 +205,6 @@ public class TimeFormatSelection extends JPanelForActions {
 		return jPanelDummy;
 	}
 
-	/**
-	 * Sets the header text.
-	 * @param newHeaderText the new header text
-	 */
-	public void setHeaderText(String newHeaderText){
-		this.jLabelHeader.setText(newHeaderText);
-	}
-	/**
-	 * Gets the header text.
-	 * @return the header text
-	 */
-	public String getHeaderText(){
-		return this.jLabelHeader.getText();
-	}
-	
 	/**
 	 * Sets the time format.
 	 * @param newTimeFormat the new time format

@@ -50,6 +50,10 @@ import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelBaseExecutionElements;
 import agentgui.simulationService.time.TimeModel;
+import agentgui.simulationService.time.TimeModelContinuous;
+import agentgui.simulationService.time.TimeModelContinuousExecutionElements;
+import agentgui.simulationService.time.TimeModelDiscrete;
+import agentgui.simulationService.time.TimeModelStroke;
 
 /**
  * The Class VisualisationAgent can be used in order to build agents
@@ -71,7 +75,11 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	
 	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
 
-	protected EnvironmentController myEnvironmentController = null;
+	private transient int oldTimeModelStateStroke = -1;
+	private transient long oldTimeModelStateDiscrete = -1;
+	private transient boolean oldTimeModelStateContinuous = false; 
+	
+	private EnvironmentController myEnvironmentController = null;
 	private boolean isAgentGuiEmbedded = false;
 	
 	private JFrame jFrameStandalone = null;
@@ -102,12 +110,10 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 		if (startArgs == null || startArgs.length == 0) {
 			// --- Started as independent display -------------------
 			this.setAgentGuiEmbedded(false);
-			this.jFrameStandalone = this.getJFrameStandalone();
-			this.myEnvironmentModel = this.grabEnvironmentModelFromSimulationService();
+			this.myEnvironmentModel = this.getEnvironmentModelFromSimulationService();
 
-			this.myEnvironmentController = this.createNewEnvironmentController();
 			if (this.myEnvironmentModel!=null) {
-				this.myEnvironmentController .setEnvironmentModel(this.myEnvironmentModel);	
+				this.getEnvironmentController() .setEnvironmentModel(this.myEnvironmentModel);	
 			}
 			
 		} else {
@@ -120,9 +126,8 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			
 			// --- Create new environment controller in -------------
 			// --- order to be independent from Agent.GUI -----------    
-			this.myEnvironmentController = this.createNewEnvironmentController();
 			if (this.myEnvironmentModel!=null) {
-				this.myEnvironmentController.setEnvironmentModel(this.myEnvironmentModel);	
+				this.getEnvironmentController().setEnvironmentModel(this.myEnvironmentModel);	
 			}
 			
 		}
@@ -130,17 +135,36 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 		this.buildVisualizationGUI();
 		// --- Register as Displaying Agent ---------------
 		this.registerAsDisplayAgent();
-		
+		// --- Display the current TimeModel --------------
+		this.displayTimeModel();
 	}
 	
 	/**
 	 * Returns a new environment controller that depends on the actual EnvironmentModel.<br> 
 	 * As Example: In case of the 'Graph and Network Environment' a new 
 	 * {@link GraphEnvironmentController} will be created and returned.
-	 * @return the new environment controller
+	 * @return the new EnvironmentController
 	 */
 	protected abstract EnvironmentController createNewEnvironmentController();
 	
+	/**
+	 * Sets the current EnvironmentController.
+	 * @param myEnvironmentController the new environment controller
+	 */
+	protected void setEnvironmentController(EnvironmentController myEnvironmentController) {
+		this.myEnvironmentController = myEnvironmentController;
+	}
+	/**
+	 * Returns the current or creates a new EnvironmentController.
+	 * @return the environment controller
+	 */
+	protected EnvironmentController getEnvironmentController() {
+		if (this.myEnvironmentController==null) {
+			this.myEnvironmentController = this.createNewEnvironmentController();
+		}
+		return myEnvironmentController;
+	}
+
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationAgent#takeDown()
 	 */
@@ -167,13 +191,13 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	protected void afterMove() {
 		super.afterMove();
 		this.jFrameStandalone = this.getJFrameStandalone();
-		this.myEnvironmentModel = this.grabEnvironmentModelFromSimulationService();
-		this.myEnvironmentController = this.createNewEnvironmentController();
+		this.myEnvironmentModel = this.getEnvironmentModelFromSimulationService();
 		if (this.myEnvironmentModel!=null) {
-			this.myEnvironmentController .setEnvironmentModel(this.myEnvironmentModel);	
+			this.getEnvironmentController().setEnvironmentModel(this.myEnvironmentModel);	
 		}
 		this.buildVisualizationGUI();
 		this.registerAsDisplayAgent();
+		this.displayTimeModel();
 	}
 	
 	/* (non-Javadoc)
@@ -229,15 +253,15 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	 */
 	private void buildVisualizationGUI() {
 		// --- Build the new Controller GUI ---------------
-		if (this.jFrameStandalone!=null) {
-			this.jFrameStandalone.getContentPane().add(this.myEnvironmentController.getEnvironmentPanel(), BorderLayout.CENTER);
-			this.jFrameStandalone.pack();
-			this.jFrameStandalone.validate();
-			this.jFrameStandalone.setVisible(true);
-		} else {
-			this.usePanel.add(this.myEnvironmentController.getEnvironmentPanel(), BorderLayout.CENTER);
+		if (this.isAgentGuiEmbedded()==true) {
+			this.usePanel.add(this.getEnvironmentController().getEnvironmentPanel(), BorderLayout.CENTER);
 			this.usePanel.validate();
 			this.usePanel.repaint();
+		} else {
+			this.getJFrameStandalone().getContentPane().add(this.getEnvironmentController().getEnvironmentPanel(), BorderLayout.CENTER);
+			this.getJFrameStandalone().pack();
+			this.getJFrameStandalone().validate();
+			this.getJFrameStandalone().setVisible(true);
 		}
 	}
 
@@ -246,18 +270,18 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	 */
 	private void destroyVisualizationGUI() {
 		
-		if (this.myEnvironmentController!=null) {
+		if (this.getEnvironmentController()!=null) {
 			this.removeTimeModelDisplay();
-			this.myEnvironmentController.getEnvironmentPanel().setVisible(false);
-			this.myEnvironmentController = null;
+			this.getEnvironmentController().getEnvironmentPanel().setVisible(false);
+			this.setEnvironmentController(null);
 		}
 		if (this.jFrameStandalone!=null) {
 			this.jFrameStandalone.setVisible(false);
 		}
 		
-		this.jFrameStandalone = null;
-		this.usePanel = null;
 		this.jToolBar4TimeModel = null;
+		this.usePanel = null;
+		this.jFrameStandalone = null;
 		
 		this.setAgentGuiEmbedded(false);
 		
@@ -294,21 +318,56 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	}
 	
 	/**
-	 * Grab the environment model from the simulation service.
-	 * @return the current EnvironmentModel
+	 * Displays the current TimeModel, if available.
 	 */
-	protected EnvironmentModel grabEnvironmentModelFromSimulationService(){
-		EnvironmentModel envModel = null;
-		try {
-			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			envModel = simHelper.getEnvironmentModel();
-		} catch (ServiceException e) {
-			System.err.println(getLocalName() +  " - Error: Could not retrieve SimulationServiceHelper, shutting down!");
-			this.doDelete();
+	private void displayTimeModel() {
+		if (this.myEnvironmentModel!=null) {
+			if (myEnvironmentModel.getTimeModel()!=null) {
+				if (myEnvironmentModel.getTimeModel() instanceof TimeModelContinuous) {
+					// --- Set this agent to the TimeModel in order to use ----
+					// --- the synchronized platform time ---------------------
+					((TimeModelContinuous)myEnvironmentModel.getTimeModel()).setTimeAskingAgent(this);
+				}
+				this.setTimeModelDisplay(myEnvironmentModel.getTimeModel());
+			}
 		}
-		return envModel;
 	}
 	
+	/**
+	 * Checks if the TimeModel changed in comparison to the previous state.
+	 *
+	 * @param timeModel the time model
+	 * @return true, if is time model changed
+	 */
+	protected boolean isTimeModelChanged(TimeModel timeModel) {
+		
+		boolean changed = false;
+		if (timeModel instanceof TimeModelStroke) {
+			TimeModelStroke tms = (TimeModelStroke) timeModel;
+			int newCounter = tms.getCounter(); 
+			if (newCounter!=this.oldTimeModelStateStroke) {
+				changed=true;
+				this.oldTimeModelStateStroke = newCounter;
+			}
+			
+		} else if (timeModel instanceof TimeModelDiscrete) {
+			TimeModelDiscrete tmd = (TimeModelDiscrete) timeModel;
+			long newTime= tmd.getTime();; 
+			if (newTime!=this.oldTimeModelStateDiscrete) {
+				changed=true;
+				this.oldTimeModelStateDiscrete = newTime;
+			}
+			
+		} else if (timeModel instanceof TimeModelContinuous) {
+			TimeModelContinuous tmc = (TimeModelContinuous) timeModel;
+			boolean executed = tmc.isExecuted();
+			if (executed!=this.oldTimeModelStateContinuous) {
+				changed=true;
+				this.oldTimeModelStateContinuous=executed;
+			}
+		}
+		return changed;
+	}
 	
 	/**
 	 * Sets the time model display.
@@ -316,14 +375,17 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	protected void setTimeModelDisplay(TimeModel timeModel) {
 		
 		if (this.jToolBar4TimeModel==null) {
-			if (this.jFrameStandalone!=null) {
+			if (this.isAgentGuiEmbedded()==false) {
 				this.jToolBar4TimeModel = getJToolBarNew();
-				this.jFrameStandalone.getContentPane().add(this.jToolBar4TimeModel, BorderLayout.NORTH);
+				this.getJFrameStandalone().getContentPane().add(this.jToolBar4TimeModel, BorderLayout.NORTH);
 			} else {
 				this.jToolBar4TimeModel = Application.getMainWindow().getJToolBarApplication();
 			}
 		}
-		this.setTimeModelDisplay(timeModel, this.jToolBar4TimeModel);
+		
+		if (isTimeModelChanged(timeModel)==true) {
+			this.setTimeModelDisplay(timeModel, this.jToolBar4TimeModel);	
+		}
 		
 	}
 
@@ -395,6 +457,10 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	protected void removeTimeModelDisplay() {
 		
 		if (this.jToolBar4TimeModel!=null && this.jToolBarElements4TimeModel!=null) {
+			if (this.jToolBarElements4TimeModel instanceof TimeModelContinuousExecutionElements) {
+				// --- Stop the time displaying thread ------------------------
+				((TimeModelContinuousExecutionElements)this.jToolBarElements4TimeModel).getTimeSettingThread().setClockRunning(false);
+			}
 			this.jToolBarElements4TimeModel.removeToolbarElements();
 			this.jToolBar4TimeModel.validate();
 			this.jToolBar4TimeModel.repaint();

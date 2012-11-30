@@ -34,6 +34,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -97,6 +99,10 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 	private JSpinner jSpinnerAcceleration = null;
 
 	private boolean enabledChangeListener = true;
+
+	private JLabel jLabeDateFormat = null;
+
+	private TimeFormatSelection jPanelTimeFormater = null;
 	
 	/**
 	 * Instantiates a new time model discrete configuration.
@@ -112,12 +118,22 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 	 */
 	private void initialize() {
 		
+		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
+		gridBagConstraints21.gridx = 1;
+		gridBagConstraints21.anchor = GridBagConstraints.WEST;
+		gridBagConstraints21.insets = new Insets(10, 5, 0, 0);
+		gridBagConstraints21.gridy = 6;
+		GridBagConstraints gridBagConstraints20 = new GridBagConstraints();
+		gridBagConstraints20.gridx = 0;
+		gridBagConstraints20.insets = new Insets(15, 10, 0, 0);
+		gridBagConstraints20.anchor = GridBagConstraints.NORTHWEST;
+		gridBagConstraints20.gridy = 6;
 		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 		gridBagConstraints4.gridx = 0;
 		gridBagConstraints4.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints4.insets = new Insets(5, 7, 5, 20);
 		gridBagConstraints4.gridwidth = 2;
-		gridBagConstraints4.gridy = 6;
+		gridBagConstraints4.gridy = 7;
 		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 		gridBagConstraints11.gridx = 1;
 		gridBagConstraints11.anchor = GridBagConstraints.WEST;
@@ -135,7 +151,7 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		gridBagConstraints9.insets = new Insets(10, 10, 10, 10);
 		gridBagConstraints9.gridwidth = 2;
 		gridBagConstraints9.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints9.gridy = 8;
+		gridBagConstraints9.gridy = 9;
 		GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
 		gridBagConstraints15.gridx = 0;
 		gridBagConstraints15.insets = new Insets(0, 10, 0, 0);
@@ -156,7 +172,7 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		gridBagConstraints7.weightx = 1.0;
 		gridBagConstraints7.weighty = 1.0;
 		gridBagConstraints7.gridwidth = 2;
-		gridBagConstraints7.gridy = 10;
+		gridBagConstraints7.gridy = 11;
 		GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 		gridBagConstraints6.gridx = 0;
 		gridBagConstraints6.insets = new Insets(0, 10, 0, 0);
@@ -192,12 +208,17 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		jLabelStop.setText(Language.translate(jLabelStop.getText()) + ":");
 		jLabelStop.setFont(new Font("Dialog", Font.BOLD, 12));
 
+		jLabeDateFormat = new JLabel();
+		jLabeDateFormat.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabeDateFormat.setText("Ansicht");
+		jLabeDateFormat.setText(Language.translate(jLabeDateFormat.getText()) + ":");
+
 		jLabelAcceleration = new JLabel();
 		jLabelAcceleration.setFont(new Font("Dialog", Font.BOLD, 12));
 		jLabelAcceleration.setText("Beschleunigungsfaktor");
 		jLabelAcceleration.setText(Language.translate(jLabelAcceleration.getText())+ ":");
 		
-		this.setSize(new Dimension(615, 322));
+		this.setSize(new Dimension(615, 367));
         this.setLayout(new GridBagLayout());
         this.add(jLabelHeader1, gridBagConstraints5);
         this.add(jLabelHeader2, gridBagConstraints6);
@@ -208,6 +229,8 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
         this.add(jLabelStop, gridBagConstraints10);
         this.add(getJPanelStopSettings(), gridBagConstraints11);
         this.add(getJPanelDivider(), gridBagConstraints4);
+        this.add(jLabeDateFormat, gridBagConstraints20);
+        this.add(getJPanelTimeFormater(), gridBagConstraints21);
 	}
 
 	/**
@@ -374,7 +397,24 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		}
 		return jSpinnerMillisStop;
 	}
-	
+	/**
+	 * This method initializes timeFormater	
+	 * @return agentgui.simulationService.time.TimeFormatSelection	
+	 */
+	private TimeFormatSelection getJPanelTimeFormater() {
+		if (jPanelTimeFormater == null) {
+			jPanelTimeFormater = new TimeFormatSelection();
+			jPanelTimeFormater.setPreferredSize(new Dimension(360, 80));
+			jPanelTimeFormater.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					saveTimeModelInSimulationSetup(getTimeModel());					
+				}
+			});
+
+		}
+		return jPanelTimeFormater;
+	}
 	/**
 	 * This method initializes jPanelWidthSettings	
 	 * @return javax.swing.JPanel	
@@ -576,7 +616,10 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		this.getJSpinnerTimeStop().setValue(stopDate);
 		this.getJSpinnerMillisStop().setValue(calendarWork.get(Calendar.MILLISECOND));
 
-		// --- Settings for the step width --------------------------
+		// --- Settings for the time format -------------------------
+		this.getJPanelTimeFormater().setTimeFormat(timeModelContinuous.getTimeFormat());
+		
+		// --- Settings for the acceleration of the time ------------
 		Double factor = timeModelContinuous.getAccelerationFactor();
 		this.getJSpinnerAcceleration().setValue(factor);
 		this.setFactorExplanationText(factor);
@@ -628,12 +671,16 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		Date stop = stopCalenderMerged.getTime();
 		Long stopLong = stop.getTime();
 		
+		// --- Getting the time format ------------------------------
+		String timeFormat = this.getJPanelTimeFormater().getTimeFormat();
+		
 		// --- Getting acceleration for the time --------------------
 		Double factor = (Double) this.getJSpinnerAcceleration().getValue();
 		
 		// --- Set TimeModel ----------------------------------------
 		TimeModelContinuous tmc = new TimeModelContinuous(startLong, stopLong);
 		tmc.setAccelerationFactor(factor);
+		tmc.setTimeFormat(timeFormat);
 		return tmc;
 	}
 	

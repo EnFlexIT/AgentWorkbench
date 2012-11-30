@@ -50,15 +50,18 @@ public class TimeModelContinuous extends TimeModelDateBased {
 	public final static String PROP_TimeStart = "TimeStart";
 	public final static String PROP_TimeStop = "TimeStop";
 	public final static String PROP_AccelerationFactor = "AccelerationFactor";
+	public final static String PROP_TimeFormat = "TimeFormat";
 	
 	private transient Agent timeAskingAgent = null;
 	private transient SimulationServiceHelper simHelper = null;
 	
-	private double accelerationFactor = 1.F;
-	
 	private boolean executed = false;
 	private long pauseTime = 0;
 	private long timeDiff = 0;
+
+	private double accelerationFactor = 1.F;
+	private long timeMeasuredAcceleratedLast = 0;
+	private long timeMeasuredLast = 0;
 	
 	
 	/**
@@ -180,6 +183,39 @@ public class TimeModelContinuous extends TimeModelDateBased {
 	}
 	
 	/**
+	 * Gets the accelerated time.
+	 * @return the accelerated time
+	 */
+	private long getAcceleratedTime(long measuredTime) {
+		
+		long acceleratedTime = 0;
+		if (this.timeMeasuredLast==0) this.timeMeasuredLast = measuredTime;
+		if (this.timeMeasuredAcceleratedLast==0) this.timeMeasuredAcceleratedLast = measuredTime;
+		
+		if (this.accelerationFactor==1.000) {
+			acceleratedTime = measuredTime;
+			
+		} else {
+			// --- get the real time interval between now and -----------------
+			// --- the last time where the time was measured ------------------
+			long timeInterval = measuredTime - this.timeMeasuredLast;
+			
+			// --- get the new value to add to the last return value ----------
+			double timeAdditionDouble = this.accelerationFactor * (double)timeInterval;
+			long timeAddition = Math.round(timeAdditionDouble);
+
+			// --- add the calculated value to the old value ------------------
+			acceleratedTime = this.timeMeasuredAcceleratedLast + timeAddition;
+			
+		}
+
+		this.timeMeasuredLast = measuredTime;
+		this.timeMeasuredAcceleratedLast = acceleratedTime;
+		return acceleratedTime;
+		
+	}
+	
+	/**
 	 * Returns the current time depending on the simulation setup. If an agent was set to the instance 
 	 * of the class the synchronized platform time will be used. If no agent is set, the time based 
 	 * on the local system time will be returned  
@@ -197,6 +233,9 @@ public class TimeModelContinuous extends TimeModelDateBased {
 		} else {
 			timeAnswer=this.getTimePlatform();
 		}
+		// --- Consider the factor of acceleration --------
+		timeAnswer = this.getAcceleratedTime(timeAnswer);
+		// --- Done ---------------------------------------
 		return timeAnswer;
 	}
 	
@@ -351,13 +390,15 @@ public class TimeModelContinuous extends TimeModelDateBased {
 				this.timeStart = System.currentTimeMillis();
 				this.timeStop = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
 				this.accelerationFactor = 1;
+				this.timeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
 				return;
 			}
 			
 			String stringStartTime = timeModelSettings.get(PROP_TimeStart);
 			String stringStopTime = timeModelSettings.get(PROP_TimeStop);
 			String stringAccelerationFactor = timeModelSettings.get(PROP_AccelerationFactor);
-
+			String stringTimeModelFormat= timeModelSettings.get(PROP_TimeFormat);
+			
 			if (stringStartTime!=null) {
 				this.timeStart = Long.parseLong(stringStartTime);	
 			}
@@ -368,6 +409,11 @@ public class TimeModelContinuous extends TimeModelDateBased {
 				this.accelerationFactor = Float.parseFloat(stringAccelerationFactor);	
 			} else {
 				this.accelerationFactor = 1;
+			}
+			if (stringTimeModelFormat!=null) {
+				this.timeFormat = stringTimeModelFormat;
+			} else {
+				this.timeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
 			}
 	
 		} catch (Exception ex) {
@@ -384,6 +430,7 @@ public class TimeModelContinuous extends TimeModelDateBased {
 		hash.put(PROP_TimeStart, ((Long) this.timeStart).toString());
 		hash.put(PROP_TimeStop, ((Long) this.timeStop).toString());
 		hash.put(PROP_AccelerationFactor, ((Double) this.accelerationFactor).toString());
+		hash.put(PROP_TimeFormat, this.timeFormat);
 		return hash;
 	}
 	

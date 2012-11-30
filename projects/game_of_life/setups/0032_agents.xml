@@ -10,28 +10,20 @@
     </agentSetup>
     <timeModelSettings>
         <entry>
-            <key>StepWidth</key>
-            <value>60000</value>
-        </entry>
-        <entry>
             <key>TimeStart</key>
-            <value>1325372400000</value>
+            <value>1354280969521</value>
         </entry>
         <entry>
-            <key>TimeCurrent</key>
-            <value>1325372400000</value>
-        </entry>
-        <entry>
-            <key>DisplayUnitIndex</key>
-            <value>2</value>
+            <key>AccelerationFactor</key>
+            <value>1.0</value>
         </entry>
         <entry>
             <key>TimeStop</key>
-            <value>1356994799999</value>
+            <value>1354367369521</value>
         </entry>
         <entry>
             <key>TimeFormat</key>
-            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
+            <value>dd.MM.yyyy HH:mm:ss</value>
         </entry>
     </timeModelSettings>
     <environmentFileName>0032 Agents.xml</environmentFileName>

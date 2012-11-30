@@ -74,7 +74,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected void setup() {
 		super.setup();
-		this.myGraphEnvironmentController = (GraphEnvironmentController) myEnvironmentController;
+		this.myGraphEnvironmentController = (GraphEnvironmentController) getEnvironmentController();
 		this.networkModel = this.myGraphEnvironmentController.getNetworkModel().getCopy();
 	}
 	/* (non-Javadoc)
@@ -83,7 +83,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected void afterMove() {
 		super.afterMove();
-		this.myGraphEnvironmentController = (GraphEnvironmentController) this.myEnvironmentController;
+		this.myGraphEnvironmentController = (GraphEnvironmentController) this.getEnvironmentController();
 		this.networkModel = this.myGraphEnvironmentController.getNetworkModel().getCopy();
 	}
 	/* (non-Javadoc)
