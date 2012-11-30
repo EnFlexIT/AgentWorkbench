@@ -118,6 +118,11 @@ public class GraphEnvironmentController extends EnvironmentController {
     /** The GraphMLWriter used to save the graph */
     private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter = null;
 
+    
+    /** The abstract environment model is just an open slot, where individual things can be placed. */
+    private Object abstractEnvironmentModel = null;
+    
+    
     /**
      * The constructor for the GraphEnvironmentController for displaying the current environment 
      * model during a running simulation. Use {@link #setDisplayEnvironmentModel(Object)}, in order to 
@@ -649,7 +654,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 
     /*
      * (non-Javadoc)
-     * 
      * @see agentgui.core.environment.EnvironmentController#setEnvironmentModel(java.lang.Object)
      */
     @Override
@@ -684,7 +688,30 @@ public class GraphEnvironmentController extends EnvironmentController {
 		NetworkModel netModel = this.networkModel.getCopy();
 		return netModel;
     }
+    
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#setAbstractEnvironmentModel(java.lang.Object)
+	 */
+	@Override
+	public void setAbstractEnvironmentModel(Object abstractEnvironmentModel) {
+		this.abstractEnvironmentModel = abstractEnvironmentModel;
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModel()
+	 */
+	@Override
+	public Object getAbstractEnvironmentModel() {
+		return this.abstractEnvironmentModel;
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModelCopy()
+	 */
+	@Override
+	public Object getAbstractEnvironmentModelCopy() {
+		return this.abstractEnvironmentModel;
+	}
 
+	
     /**
      * Load general graph settings.
      */

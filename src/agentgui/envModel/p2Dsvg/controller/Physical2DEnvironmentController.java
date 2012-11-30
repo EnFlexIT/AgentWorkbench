@@ -82,67 +82,47 @@ import agentgui.envModel.p2Dsvg.utils.EnvironmentHelper;
 import agentgui.envModel.p2Dsvg.utils.EnvironmentWrapper;
 
 /**
+ * This class controls/manages the environment. You can get a copy of the current environment, load and save SVG files.
+ * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
- * This class controlls/manages the enviroment. You can get a copy of the current enviroment, load and save SVG files.
- *
  */
 public class Physical2DEnvironmentController extends EnvironmentController implements Observer {
-	/**
-	 * Observable event code: New environment instance assigned
-	 */
+	
+	/** Observable event code: New environment instance assigned */
 	public static final int ENVIRONMENT_CHANGED = 0;
-	/**
-	 * Observable event code: Scale settings changed
-	 */
+	/** Observable event code: Scale settings changed */
 	public static final int SCALE_CHANGED = 1;
-	/**
-	 * Observable event code: New environment object created
-	 */
+	/** Observable event code: New environment object created */
 	public static final int OBJECTS_CHANGED = 2;
-	/**
-	 * Observable event code: SVG document changed
-	 */
+	/** Observable event code: SVG document changed */
 	public static final int SVG_CHANGED = 3;
-	/**
-	 * An error occured  
-	 */
+	/** An error occured */
 	public static final int EC_ERROR = 4;
 	
-	/**
-	 * This EnvironmentController's GUI
-	 */
+	/** This EnvironmentController's GUI */
 	private Physical2DEnvironmentControllerGUI myGUI = null;
 
-	/**
-	 * Path for saving the SVG
-	 */
+	/** Path for saving the SVG	 */
 	private String currentSVGPath = null;
-	/**
-	 * Path for saving the environment
-	 */
+	/** Path for saving the environment	 */
 	private String currentEnvironmentPath = null;
-	/**
-	 * The environment instance encapsulated by this EnvironmentController
-	 */
+	/** The environment instance encapsulated by this EnvironmentController	*/
 	private Physical2DEnvironment environment;
-	/**
-	 * Wrapper for easier handling of the environment
-	 */
+	/** Wrapper for easier handling of the environment */
 	private EnvironmentWrapper envWrap = null;
-	/**
-	 * The SVG document representing this environment; 
-	 */
+	/** The SVG document representing this environment; */
 	private Document svgDoc = null;	
-	/** 
-	 * The SVG file name. 
-	 */
+	/** The SVG file name. */
 	private String svgFileName = null;
-	/**
-	 * The Physical2DObject currently selected for editing
-	 */
+	/** The Physical2DObject currently selected for editing */
 	private Physical2DObject selectedObject = null;
 	
 	private String lastErrorMessage;
+	
+	 /** The abstract environment model is just an open slot, where individual things can be placed. */
+    private Object abstractEnvironmentModel = null;
+   
+	
 	/**
 	 * Constructor
 	 * @param project The Agent.GUI project
@@ -204,6 +184,31 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 		// --- Rückgabe ---------
 		return p2de;
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#setAbstractEnvironmentModel(java.lang.Object)
+	 */
+	@Override
+	public void setAbstractEnvironmentModel(Object abstractEnvironmentModel) {
+		this.abstractEnvironmentModel = abstractEnvironmentModel;
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModel()
+	 */
+	@Override
+	public Object getAbstractEnvironmentModel() {
+		return this.abstractEnvironmentModel;
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModelCopy()
+	 */
+	@Override
+	public Object getAbstractEnvironmentModelCopy() {
+		return this.abstractEnvironmentModel;
+	}
+
+	
+	
 	/**
 	 * @return EnvironmentWrapped containing the current project's environment 
 	 */
@@ -538,30 +543,22 @@ public class Physical2DEnvironmentController extends EnvironmentController imple
 			this.removeFromAgentList(selectedObject);
 			String id = settings.get(Physical2DEnvironmentControllerGUI.SETTINGS_KEY_ID).toString();
 			this.addToAgentList(createObjectForList(settings));
-		
 	}
 	
-	private void removeFromAgentList(Physical2DObject  obj)
-	{	
-		if(obj instanceof ActiveObject)
-		{	        	
-			
-				for(int i=0;i<this.getAgents2Start().size();i++)
-				{
-					
-				AgentClassElement4SimStart cmprElement= (AgentClassElement4SimStart) this.getAgents2Start().get(i);
-				
-				if(cmprElement.getStartAsName().equals(obj.getId()))
-				{
+	/**
+	 * Removes the from agent list.
+	 * @param obj the obj
+	 */
+	private void removeFromAgentList(Physical2DObject  obj) 	{	
+		if (obj instanceof ActiveObject) {
+			for (int i = 0; i < this.getAgents2Start().size(); i++) {
+				AgentClassElement4SimStart cmprElement = (AgentClassElement4SimStart) this.getAgents2Start().get(i);
+				if (cmprElement.getStartAsName().equals(obj.getId())) {
 					this.getAgents2Start().remove(i);
-					
 					break;
 				}
-				
-		 }
-				
-		  this.updatePositionNr();	
-		   
+			}
+			this.updatePositionNr();
 		}
 	}
 	

@@ -257,7 +257,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	}
 	/**
 	 * Invoked by the project when the simulation setup change event occurs.
-	 * @param sscn
+	 * @param sscn the SimulationSetupsChangeNotification that can be differentiated by its globals
 	 */
 	protected abstract void handleSimSetupChange(SimulationSetupsChangeNotification sscn);
 	
@@ -269,29 +269,13 @@ public abstract class EnvironmentController extends Observable implements Observ
 	
 	
 	/**
-	 * Set the environment object 
-	 * @param displayEnvironmentModel the environment model
-	 */
-	public abstract void setDisplayEnvironmentModel(Object displayEnvironmentModel);
-	/**
-	 * Get the current environment object
-	 * @return the current instance of the environment model
-	 */
-	public abstract Object getDisplayEnvironmentModel();
-	 /**
-	  * Get the current environment object as a copy
-	  * @return a copy of the environment model
-	  */
-	public abstract Object getDisplayEnvironmentModelCopy();
-	
-	
-	/**
 	 * Sets the environment model.
 	 * @param environmentModel the new environment model
 	 */
 	public void setEnvironmentModel(EnvironmentModel environmentModel) {
 		this.setTimeModel(environmentModel.getTimeModel());
 		this.setDisplayEnvironmentModel(environmentModel.getDisplayEnvironment());
+		this.setAbstractEnvironmentModel(environmentModel.getAbstractEnvironment());
 	}
 	/**
 	 * Returns the current instances of the EnvironmentModel.
@@ -301,6 +285,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 		EnvironmentModel envModel = new EnvironmentModel();
 		envModel.setTimeModel(this.getTimeModel());
 		envModel.setDisplayEnvironment(this.getDisplayEnvironmentModel());
+		envModel.setAbstractEnvironment(this.getAbstractEnvironmentModel());
 		return envModel;
 	}
 	/**
@@ -311,6 +296,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 		EnvironmentModel envModel = new EnvironmentModel();
 		envModel.setTimeModel(this.getTimeModelCopy());
 		envModel.setDisplayEnvironment(this.getDisplayEnvironmentModelCopy());
+		envModel.setAbstractEnvironment(this.getAbstractEnvironmentModelCopy());
 		return envModel;
 	}
 	
@@ -322,7 +308,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 		this.myTimeModel = mewTimeModel;
 	}
 	/**
-	 * Gets the TimeModel.
+	 * Returns the TimeModel.
 	 * @return the TimeModel
 	 */
 	public TimeModel getTimeModel() {
@@ -332,7 +318,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 		return this.myTimeModel;
 	}
 	/**
-	 * Gets the TimeModel copy.
+	 * Returns the TimeModel copy.
 	 * @return the TimeModel copy
 	 */
 	public TimeModel getTimeModelCopy() {
@@ -340,8 +326,39 @@ public abstract class EnvironmentController extends Observable implements Observ
 		if (timeModel==null) {
 			return null;
 		} 
-		System.out.println("Test");
 		return timeModel.getCopy();
 	}
+	
+	/**
+	 * Set the displayable environment object of the EnvironmentModel 
+	 * @param displayEnvironmentModel the environment model
+	 */
+	public abstract void setDisplayEnvironmentModel(Object displayEnvironmentModel);
+	/**
+	 * Returns the displayable environment object of the EnvironmentModel
+	 * @return the current instance of the environment model
+	 */
+	public abstract Object getDisplayEnvironmentModel();
+	 /**
+	  * Returns a copy of the displayable environment object of the EnvironmentModel
+	  * @return a copy of the environment model
+	  */
+	public abstract Object getDisplayEnvironmentModelCopy();
+	
+	/**
+	 * Set the abstract (and individual) environment object of the EnvironmentModel 
+	 * @param abstractEnvironmentModel the environment model
+	 */
+	public abstract void setAbstractEnvironmentModel(Object abstractEnvironmentModel);
+	/**
+	 * Returns the abstract (and individual) environment object of the EnvironmentModel
+	 * @return the current instance of the environment model
+	 */
+	public abstract Object getAbstractEnvironmentModel();
+	 /**
+	  * Returns a copy of the abstract (and individual) environment object of the EnvironmentModel
+	  * @return a copy of the environment model
+	  */
+	public abstract Object getAbstractEnvironmentModelCopy();
 	
 }
