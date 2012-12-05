@@ -42,6 +42,7 @@ public class TimeModelStrokeExecutionElements extends TimeModelBaseExecutionElem
 
 	private static final long serialVersionUID = 385807623783469748L;
 
+	private final String toolBarTitle = Language.translate("Zähler");
 	private TimeModelStroke timeModelStroke = null;
 	
 		
@@ -49,8 +50,15 @@ public class TimeModelStrokeExecutionElements extends TimeModelBaseExecutionElem
 	 * Instantiates a new time model stroke execution elements.
 	 */
 	public TimeModelStrokeExecutionElements() {
-		this.setIntroHeader(Language.translate("Zähler"));
 		this.getJLabelTimeDisplay().setPreferredSize(new Dimension(60, 26));
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModelBaseExecutionElements#getToolBarTitle()
+	 */
+	@Override
+	public String getToolBarTitle() {
+		return this.toolBarTitle;
 	}
 	
 	/* (non-Javadoc)
@@ -105,5 +113,5 @@ public class TimeModelStrokeExecutionElements extends TimeModelBaseExecutionElem
 	public TimeModel getTimeModel() {
 		return this.timeModelStroke;
 	}
-	
+
 }

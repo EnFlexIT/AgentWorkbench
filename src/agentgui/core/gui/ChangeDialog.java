@@ -29,6 +29,7 @@
 package agentgui.core.gui;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -41,6 +42,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
@@ -55,6 +58,8 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -225,6 +230,27 @@ public class ChangeDialog extends JDialog implements ActionListener {
 			jEditorPaneChanges.setBackground(new Color(255, 255, 255));
 			jEditorPaneChanges.setPreferredSize(new Dimension(400, 100));
 			jEditorPaneChanges.setEditable(false);
+			jEditorPaneChanges.addHyperlinkListener(new HyperlinkListener() {
+				@Override
+				public void hyperlinkUpdate(HyperlinkEvent he) {
+					if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+						URL linkURL = null;
+						URI linkURI = null;
+						try {
+							linkURL = he.getURL();
+							linkURI = new URI(linkURL.toString());
+							Desktop.getDesktop().browse(linkURI);
+							
+						} catch (IOException ioe) {
+							System.err.println("Could not find: '" + linkURI + "'");
+//							ioe.printStackTrace();
+						} catch (URISyntaxException urie) {
+							System.err.println("Could not find: '" + linkURI +"'");
+//							urie.printStackTrace();
+						}
+					}
+				}
+			});
 		}
 		return jEditorPaneChanges;
 	}

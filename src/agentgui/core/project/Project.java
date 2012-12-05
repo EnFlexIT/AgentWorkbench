@@ -1034,7 +1034,7 @@ import agentgui.core.webserver.JarFileCreator;
 
 	/**
 	 * Sets the time model class and configuration for this project.
-	 * @param timeModelConfiguration the new time model class
+	 * @param timeModelClass the new time model class
 	 */
 	public void setTimeModelClass(String timeModelClass) {
 		this.timeModelClass = timeModelClass;

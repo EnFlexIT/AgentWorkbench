@@ -41,6 +41,7 @@ public class TimeModelDiscreteExecutionElements extends TimeModelBaseExecutionEl
 
 	private static final long serialVersionUID = 385807623783469748L;
 
+	private final String toolBarTitle = Language.translate("Zeit");
 	private TimeModelDiscrete timeModelDiscrete = null;
 	
 	
@@ -48,9 +49,16 @@ public class TimeModelDiscreteExecutionElements extends TimeModelBaseExecutionEl
 	 * Instantiates a new time model discrete execution elements.
 	 */
 	public TimeModelDiscreteExecutionElements() {
-		this.setIntroHeader(Language.translate("Zeit"));
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.time.TimeModelBaseExecutionElements#getToolBarTitle()
+	 */
+	@Override
+	public String getToolBarTitle() {
+		return this.toolBarTitle;
+	}
+
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModelBaseExecutionElements#setTimeModel(agentgui.simulationService.time.TimeModel)
 	 */

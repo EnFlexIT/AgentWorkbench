@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.charts;
 
 import jade.util.leap.List;
@@ -6,9 +34,14 @@ import agentgui.ontology.ChartSettingsGeneral;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 
+/**
+ * The Class OntologyModel manages the translation between the ontology classes 
+ * {@link Chart} and {@link DataModel} and the actual classes for the chart
+ * representation.
+ */
 public abstract class OntologyModel {
-	protected Chart chart;
 	
+	protected Chart chart;
 	protected DataModel parent;
 	
 	/**
@@ -29,9 +62,10 @@ public abstract class OntologyModel {
 	
 	public abstract DataSeries getSeries(int seriesIndex) throws NoSuchSeriesException;
 	
+	
 	/**
-	 * Gets the chart settings for this chart
-	 * @return
+	 * Gets the chart settings for this chart.
+	 * @return the general chart settings
 	 */
 	public ChartSettingsGeneral getChartSettings(){
 		return chart.getVisualizationSettings();
@@ -56,6 +90,13 @@ public abstract class OntologyModel {
 		return -1;
 	}
 	
+	/**
+	 * Removes a value pair.
+	 *
+	 * @param seriesIndex the series index
+	 * @param key the key
+	 * @throws NoSuchSeriesException the no such series exception
+	 */
 	public void removeValuePair(int seriesIndex, Number key) throws NoSuchSeriesException{
 		if(seriesIndex < getSeriesCount()){
 			List seriesData = getSeriesData(seriesIndex);
@@ -68,6 +109,14 @@ public abstract class OntologyModel {
 		}
 	}
 	
+	/**
+	 * Adds or updates a value pair.
+	 *
+	 * @param seriesIndex the series index
+	 * @param key the key
+	 * @param value the value
+	 * @throws NoSuchSeriesException the no such series exception
+	 */
 	public void addOrUpdateValuePair(int seriesIndex, Number key, Number value) throws NoSuchSeriesException{
 		if(seriesIndex < getSeriesCount()){
 			List seriesData = getSeriesData(seriesIndex);

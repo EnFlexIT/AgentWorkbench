@@ -16,40 +16,37 @@
 		margin-top: 0pt;
 		}
 	ul {
-		margin-left: 15pt;
+		margin-left: 30pt;
 		}
 	
 </style>
 </head>
 <body>
 
-	<b>Version 0.99 Revision 198</b>
-	<br>
+	<b>General</b>
 	<ul>
 		<li>Integrated this dialog in order to inform about recent changes.</li>
-		
-		<li>Updated the example projects 'Game of Life' and 'Agent.GUI PlugIn Example' in order to include the below 
-		described changes. To keep these projects executable for your Agent.GUI installation, please download 
-		the latest version from our web site!<br>
-		See http://www.agentgui.org/index.php/download/viewcategory/6-agentgui-projects</li>
-		
 		<li>Refactored the main class <i>agentgui.core.project.Project</i>: public attributes are now encapsulated
 		into corresponding getter and setter methods.</li>
 		
+	</ul>
+
+	<b>Environment Models</b>
+	<ul>
 		<li>Implemented selections and visual representations for <i>TimeModel</i>'s in the 'Resources' tab 
 		and in the tab 'Simulation-Setup'. It's now possible to select and configure a <i>TimeModel</i> for 
 		a project that can be used during the execution of an agency. For this Agent.GUI now provides three
 		extendable base classes that are representing either a simple counter, a discrete time/date-based model 
 		or a continuous time/date based model, where the real system time can be accelerated or be retarded.<br> 
 		In order to get an impression of these TimeModel's', you can play around with the 'Time model' settings 
-		in the 'Game of Life' 'Resources' tab. Since the Game of Life not really needs to have a time line, we
-		extended the game for a demonstration. Further information will follow in a tutorial.</li>
-		
-		<li>In order to allow a unified handling of environments (or maybe better 'environment models'), we focused
+		in the 'Game of Life' 'Resources' tab. Since the Game of Life not really needs to have a time line we
+		extended the game for demonstration purposes. Further information will follow in a tutorial.</li>
+	
+		<li>In order to allow a unified handling of environments (or maybe better 'environment models') we focused
 		this topic in the class <i>agentgui.simulationService.environment.EnvironmentModel</i>.<br>
 		That means that a general environment model for the configuration and the later execution will consist of
 		a TimeModel, a displayable data object and an abstract data object.</li>
-		
+	
 		<li>For the above described reason we refactored several classes like<br>
 		- <i>agentgui.simulationService.environment.EnvironmentModel</i>,<br>
 		- <i>agentgui.core.environment.EnvironmentController</i>,<br>
@@ -60,11 +57,23 @@
 		
 		<li>Redesigned the abstract DisplayAgent for EnvironmentModel's'</li>
 		<li>Redesigned the abstract SimulationManagerAgent for EnvironmentModel's</li>
-		
+	
+	</ul>
+
+	<b>Graph or Network</b>
+	<ul>
 		<li>Extended the saving procedure for individual data models of network components and included a  
 		dialog that informs about the progress of saving.</li>
-		
 	</ul>
+
+	<b>Agent.GUI - Projects</b>
+	<ul>
+		<li>Updated the example projects 'Game of Life' and 'Agent.GUI PlugIn Example' in order to include the above 
+		described changes. To keep these projects executable for your Agent.GUI installation, please download 
+		the latest version from our web site (see <a href="http://www.agentgui.org/index.php/download/viewcategory/6-agentgui-projects">Agent.GUI - Projects</a>)!
+		</li>
+	</ul>
+	
 
 </body>
 </html>

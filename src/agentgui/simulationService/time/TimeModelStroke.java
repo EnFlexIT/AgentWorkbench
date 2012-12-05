@@ -32,6 +32,7 @@ import java.util.HashMap;
 
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
+import agentgui.simulationService.environment.EnvironmentModel;
 
 /**
  * This is a stroke time model, which inherits just a simple counter and can

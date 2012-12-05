@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.charts.gui;
 
 import java.awt.Color;
@@ -33,11 +61,12 @@ import agentgui.ontology.Chart;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 
+/**
+ * The abstract Class ChartDialog can be used as super class for any type of
+ * chart dialog.
+ */
 public abstract class ChartDialog extends JDialog implements ActionListener, Observer {
 
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = -6509600926902216133L;
 	
 	// Swing components
@@ -167,9 +196,10 @@ public abstract class ChartDialog extends JDialog implements ActionListener, Obs
 	 * @return The key / x value
 	 */
 	protected abstract Number parseKey(String key);
+	
 	/**
-	 * Get a (y) value of the correct type for this chart from a string representation. 
-	 * @param key The string representation of the (y) value
+	 * Get a (y) value of the correct type for this chart from a string representation.
+	 * @param value the string representation of the (y) value
 	 * @return The (y) value
 	 */
 	protected abstract Number parseValue(String value);

@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.charts;
 
 import jade.util.leap.Iterator;
@@ -13,13 +41,10 @@ import agentgui.ontology.ValuePair;
  * Abstract superclass for the table representation of chart data.  
  * 
  * @author Nils
- *
  */
 public abstract class TableModel extends AbstractTableModel {
 
-	/**
-	 * Generated serialVersionUID
-	 */
+
 	private static final long serialVersionUID = -6719770378777635821L;
 	/**
 	 * The column titles
@@ -38,6 +63,9 @@ public abstract class TableModel extends AbstractTableModel {
 	 */
 	protected DataModel parent;
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getColumnCount()
+	 */
 	@Override
 	public int getColumnCount() {
 		if(tableData.size() > 0){
@@ -47,11 +75,17 @@ public abstract class TableModel extends AbstractTableModel {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getRowCount()
+	 */
 	@Override
 	public int getRowCount() {
 		return tableData.size();
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getValueAt(int, int)
+	 */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		return tableData.get(rowIndex).get(columnIndex);
@@ -143,10 +177,11 @@ public abstract class TableModel extends AbstractTableModel {
 	}
 	
 	/**
-	 * Returns the index of the row with the given key / x value, or -1 if the time stamp does 
-	 * not exist in the table. 
-	 * @param key
-	 * @return
+	 * Returns the index of the row with the given key / x value, or -1 if the 
+	 * time stamp does not exist in the table.
+	 *
+	 * @param key the key
+	 * @return the row index by key
 	 */
 	public int getRowIndexByKey(Number key){
 		for(int i=0;i<getRowCount();i++){

@@ -79,7 +79,6 @@ public abstract class TimeModelBaseExecutionElements implements ActionListener {
 	 * Instantiates a new time model base execution elements.
 	 */
 	public TimeModelBaseExecutionElements() {
-		this.setIntroHeader(Language.translate("Zeit"));
 	}
 	
 	/**
@@ -93,6 +92,27 @@ public abstract class TimeModelBaseExecutionElements implements ActionListener {
 	 */
 	public abstract TimeModel getTimeModel();
 	
+	/**
+	 * Returns the tool bar title as for example 'Time' or 'Counter'.
+	 * Place here a name of your choice.
+	 * @return the tool bar title
+	 */
+	public abstract String getToolBarTitle();
+	
+	/**
+	 * Sets the introduction header for the tools.
+	 * @param newIntroHeader the new introduction header for the GUI representation
+	 */
+	protected void setIntroductionHeader(String newIntroHeader) {
+		this.getJLabelIntro().setText(" " + newIntroHeader + ": ");
+	}
+	/**
+	 * Returns the introduction header of the tools.
+	 * @return the introduction header
+	 */
+	protected String getIntroductionHeader() {
+		return this.getJLabelIntro().getText();
+	}
 	
 	/**
 	 * Adds the custom toolbar elements.
@@ -151,21 +171,6 @@ public abstract class TimeModelBaseExecutionElements implements ActionListener {
 	}
 	
 	/**
-	 * Sets the introduction header for the tools.
-	 * @param header the new introduction header
-	 */
-	protected void setIntroHeader(String newIntroHeader) {
-		this.getJLabelIntro().setText(" " + newIntroHeader + ": ");
-	}
-	/**
-	 * Returns the introduction header of the tools.
-	 * @return the introduction header
-	 */
-	protected String getIntroHeader() {
-		return this.getJLabelIntro().getText();
-	}
-	
-	/**
 	 * Returns a time formatted.
 	 *
 	 * @param time the time
@@ -206,13 +211,14 @@ public abstract class TimeModelBaseExecutionElements implements ActionListener {
 	}
 	
 	/**
-	 * Gets the intro.
-	 * @return the time intro
+	 * Returns the JLabel for the introduction of the TimeModel's display.
+	 * @return the JLabel for the introduction 
 	 */
 	protected JLabel getJLabelIntro() {
 		if (this.jLabelIntro==null) {
 			jLabelIntro = new JLabel("");
 			jLabelIntro.setFont(new Font("Dialog", Font.BOLD, 12));
+			this.setIntroductionHeader(this.getToolBarTitle());
 		}
 		return this.jLabelIntro;
 	}

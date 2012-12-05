@@ -44,11 +44,10 @@ public class TimeFormat implements Serializable {
 	private String format = null;
 	private Date displayFormat = null;
 	
+	
 	/**
 	 * Instantiates a new time unit.
-	 *
-	 * @param unit the unit
-	 * @param numberOfDigits the number of digits
+	 * @param format the String representation of the time format
 	 */
 	public TimeFormat(String format) {
 		this.format = format;
