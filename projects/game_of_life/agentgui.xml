@@ -13,10 +13,16 @@
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
     </subOntologies>
     <agentStartConfiguration>
-        <agentVector/>
+        <agentVector>
+            <agent agentReference="gol.acl.agents.GameOfLifeAgent">
+                <startArgumentVector>
+                    <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="1"/>
+                </startArgumentVector>
+            </agent>
+        </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1259</useLocalPort>
+        <useLocalPort>1266</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -30,7 +36,7 @@
         <doStaticLoadBalancing>true</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <numberOfAgents>60</numberOfAgents>
-        <numberOfContainer>1</numberOfContainer>
+        <numberOfContainer>2</numberOfContainer>
         <staticLoadBalancingClass>gol.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
@@ -48,10 +54,10 @@
         <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>0032 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>1250 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
-    <downloadResources>http://rudel1.cs.uni-due.de:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
-    <downloadResources>http://rudel1.cs.uni-due.de:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
+    <downloadResources>http://RUDEL1:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
+    <downloadResources>http://RUDEL1:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>0242 Agents</key>
