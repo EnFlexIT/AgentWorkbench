@@ -1,9 +1,14 @@
 package agas.agents.components;
 
+import static agas.agents.components.ConversationId.COMPRESSOR_CHANGE_PRESSURE;
+import static agas.agents.components.ConversationId.COMPRESSOR_DATA;
 import static agas.agents.components.ConversationId.ENTRY_PROPOSAL;
 import static agas.agents.components.ConversationId.EXIT_PROPOSAL;
 import static agas.agents.components.ConversationId.PIPE_DATA;
-import static agas.agents.components.DFAgentDescriptionID.CONTROLLER;
+import static agas.agents.components.ServiceType.COMPRESSOR;
+import static agas.agents.components.ServiceType.CONTROLLER;
+import static agas.agents.components.ServiceType.PIPE;
+import gasmas.ontology.Compressor;
 import gasmas.ontology.Pipe;
 import jade.core.AID;
 import jade.core.Agent;
@@ -18,20 +23,28 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import agentgui.simulationService.agents.SimulationAgent;
 
+/**
+ * The ControllerAgent class controls and coordinates the behaviour of network
+ * components.
+ * 
+ * @author Oleksandr Turchyn - University of Duisburg - Essen
+ */
 public class ControllerAgent extends SimulationAgent {
 
 	private static final long serialVersionUID = 2040238832853890724L;
 
-	private Map<AID, Pipe> pipes = new HashMap<AID, Pipe>();
+	private static Logger logger = Logger.getLogger(ControllerAgent.class.getName());
+
+	private NetworkCluster networkCluster;
+
 	private List<AID> pipeAgentNames = new ArrayList<AID>();
 	private List<AID> compressorAgentNames = new ArrayList<AID>();
-	private float currentGasAmount;
 
 	@Override
 	protected void setup() {
@@ -40,6 +53,10 @@ public class ControllerAgent extends SimulationAgent {
 		this.registerDFService(CONTROLLER.name(), getLocalName(), null);
 
 		addBehaviour(new StartControllerBehavior(this, 500));
+
+		networkCluster = new NetworkCluster();
+
+		logger.log(Level.INFO, String.format("ControllerAgent %s started.", getLocalName()));
 	}
 
 	@Override
@@ -51,23 +68,26 @@ public class ControllerAgent extends SimulationAgent {
 
 	private class StartControllerBehavior extends WakerBehaviour {
 
+		private static final long serialVersionUID = -6864364939035635998L;
+
 		public StartControllerBehavior(Agent agent, long timeout) {
 			super(agent, timeout);
 		}
 
 		@Override
 		protected void onWake() {
-			myAgent.addBehaviour(new ControllerBehaviour(myAgent));
+			myAgent.addBehaviour(new ControllerBehaviour());
 		}
 	}
 
 	private class ControllerBehaviour extends FSMBehaviour {
 
-		public ControllerBehaviour(Agent agent) {
-			super(agent);
+		private static final long serialVersionUID = -6172610484458567236L;
 
-			registerFirstState(new FindNetworkComponentsBehavior(agent), "FindNetworkComponents");
-			registerState(new CollectDataBehavior(agent), "CollectData");
+		public ControllerBehaviour() {
+
+			registerFirstState(new FindNetworkComponentsBehavior(), "FindNetworkComponents");
+			registerState(new CollectDataBehavior(), "CollectData");
 			registerState(new ProcessEntryProposalBehavior(), "ProcessEntryProposal");
 			registerState(new ProcessExitProposalBehavior(), "ProcessExitProposal");
 
@@ -80,74 +100,67 @@ public class ControllerAgent extends SimulationAgent {
 
 	private class FindNetworkComponentsBehavior extends OneShotBehaviour {
 
-		public FindNetworkComponentsBehavior(Agent agent) {
-			super(agent);
-		}
+		private static final long serialVersionUID = 2079405765535308334L;
 
 		@Override
 		public void action() {
-			System.out.println("ControllerAgent : FindNetworkComponentsBehavior : started");
-
 			findPipes();
 			findCompressors();
-			System.out.println("ControllerAgent : FindNetworkComponentsBehavior : ended");
 		}
 
 		private void findPipes() {
-		//Null Überprüfung hinzufügen
-			DFAgentDescription[] pipeAgentDescriptions = findAgentsByServiceType(DFAgentDescriptionID.PIPE.name());
-			for (DFAgentDescription pipeAgentDescription : pipeAgentDescriptions) {
-				AID pipeName = pipeAgentDescription.getName();
-				pipeAgentNames.add(pipeName);
-				System.out.println(String.format("pipe %s found", pipeName.getLocalName()));
-			}
 
+			DFAgentDescription[] pipeAgentDescriptions = findAgentsByServiceType(PIPE.name());
+
+			for (DFAgentDescription pipeAgentDescription : pipeAgentDescriptions) {
+				AID pipeAgentName = pipeAgentDescription.getName();
+				pipeAgentNames.add(pipeAgentName);
+
+				logger.log(Level.INFO, String.format("PipeAgent %s found", pipeAgentName.getLocalName()));
+			}
 		}
+
 		private void findCompressors() {
 
-			DFAgentDescription[] compressorAgentDescriptions = findAgentsByServiceType(DFAgentDescriptionID.COMPRESSOR.name());
-			for (DFAgentDescription compressorAgentDescription : compressorAgentDescriptions) {
-				AID compressorName = compressorAgentDescription.getName();
-				compressorAgentNames.add(compressorName);
-				System.out.println(String.format("compressor %s found", compressorName.getLocalName()));
-			}
+			DFAgentDescription[] compressorAgentDescriptions = findAgentsByServiceType(COMPRESSOR.name());
 
+			for (DFAgentDescription compressorAgentDescription : compressorAgentDescriptions) {
+				AID compressorAgentName = compressorAgentDescription.getName();
+				compressorAgentNames.add(compressorAgentName);
+
+				logger.log(Level.INFO, String.format("CompressorAgent %s found", compressorAgentName.getLocalName()));
+			}
 		}
 	}
 
 	private class CollectDataBehavior extends SequentialBehaviour {
 
-		public CollectDataBehavior(Agent agent) {
-			super(agent);
-			
-			addSubBehaviour(new CollectPipeDataBehavior(agent));
-			//addSubBehaviour(new CollectCompressorDataBehavior(agent));
+		private static final long serialVersionUID = -3221400514290392523L;
+
+		public CollectDataBehavior() {
+			addSubBehaviour(new CollectPipeDataBehavior());
+			addSubBehaviour(new CollectCompressorDataBehavior());
 		}
 	}
-	
+
 	private class CollectPipeDataBehavior extends Behaviour {
+
+		private static final long serialVersionUID = 8528698924480101089L;
 
 		private int repliesCount = 0;
 		private int step = 1;
 
-		public CollectPipeDataBehavior(Agent agent) {
-			super(agent);
-		}
-
 		@Override
 		public void action() {
 
-			System.out.println("ControllerAgent : CollectPipeDataBehavior : started : step : " + step);
-
 			switch (step) {
 			case 1:
-				sendRequest();
+				sendPipeDataRequest();
 				step = 2;
 				break;
 
 			case 2:
 				receivePipeData();
-				System.out.println("ControllerAgent : CollectPipeDataBehavior : ended");
 				break;
 			}
 		}
@@ -157,7 +170,7 @@ public class ControllerAgent extends SimulationAgent {
 			return repliesCount == pipeAgentNames.size();
 		}
 
-		private void sendRequest() {
+		private void sendPipeDataRequest() {
 
 			ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 
@@ -169,8 +182,7 @@ public class ControllerAgent extends SimulationAgent {
 
 			send(request);
 
-			System.out.println("ControllerAgent: request pipe-data sended");
-
+			logger.log(Level.INFO, "ControllerAgent : request for pipe data sended");
 		}
 
 		private void receivePipeData() {
@@ -181,140 +193,186 @@ public class ControllerAgent extends SimulationAgent {
 			ACLMessage msg = myAgent.receive(msgTemplate);
 
 			if (msg != null) {
-				System.out.println("ControllerAgent : CollectPipeDataBehavior : msg  received");
 
 				try {
 					Pipe pipe = (Pipe) msg.getContentObject();
 					repliesCount++;
 
-					System.out.println(
+					logger.log(
+							Level.INFO,
 							String.format(
-									"ControllerAgent %s : CollectPipeDataBehavior : pipe data from  %s recieved : %s",
+									"ControllerAgent %s : pipe data from  %s recieved : %s",
 									myAgent.getLocalName(),
 									msg.getSender().getLocalName(),
 									pipe));
 
+					networkCluster.addPipeData(pipe);
+
 				} catch (UnreadableException e) {
-					e.printStackTrace();
+					logger.log(Level.SEVERE, e.getMessage());
 				}
 
 			} else {
 				block();
-				System.out.println("ControllerAgent : CollectPipeDataBehavior : wating for msg ");
+				logger.log(Level.INFO, "ControllerAgent : CollectPipeDataBehavior : wating for message");
+			}
+		}
+	}
+
+	private class CollectCompressorDataBehavior extends Behaviour {
+
+		private static final long serialVersionUID = 8746869153084580026L;
+
+		private int repliesCount = 0;
+		private int step = 1;
+
+		@Override
+		public void action() {
+
+			switch (step) {
+			case 1:
+				sendCompressorDataRequest();
+				step = 2;
+				break;
+
+			case 2:
+				receiveCompressorData();
+				break;
+			}
+		}
+
+		private void sendCompressorDataRequest() {
+
+			ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+
+			for (AID compressorAgentName : compressorAgentNames) {
+				request.addReceiver(compressorAgentName);
+			}
+
+			request.setConversationId(COMPRESSOR_DATA.name());
+
+			send(request);
+
+			logger.log(Level.INFO, "ControllerAgent : request for compressor data sended");
+		}
+
+		@Override
+		public boolean done() {
+			return repliesCount == compressorAgentNames.size();
+		}
+
+		private void receiveCompressorData() {
+
+			MessageTemplate msgTemplate =
+					MessageTemplate.MatchConversationId(COMPRESSOR_DATA.name());
+
+			ACLMessage msg = myAgent.receive(msgTemplate);
+
+			if (msg != null) {
+				try {
+					Compressor compressor = (Compressor) msg.getContentObject();
+					repliesCount++;
+
+					logger.log(
+							Level.INFO,
+							String.format(
+									"ControllerAgent %s : compressor data from  %s recieved : %s",
+									getLocalName(),
+									msg.getSender().getLocalName(),
+									compressor));
+
+					networkCluster.addCompressorData(compressor);
+
+				} catch (UnreadableException e) {
+					logger.log(Level.SEVERE, e.getMessage());
+				}
+
+			} else {
+				block();
+				logger.log(Level.INFO, "ControllerAgent : CollectCompressorDataBehavior : wating for message");
 			}
 		}
 	}
 
 	public class ProcessEntryProposalBehavior extends OneShotBehaviour {
 
+		private static final long serialVersionUID = -6438505932833056215L;
+
 		@Override
 		public void action() {
 
-			MessageTemplate msgTemplate = 
-				MessageTemplate.MatchConversationId(ENTRY_PROPOSAL.name());
+			MessageTemplate msgTemplate =
+					MessageTemplate.MatchConversationId(ENTRY_PROPOSAL.name());
 
-			ACLMessage msg = myAgent.receive(msgTemplate);
+			ACLMessage msg = receive(msgTemplate);
 
 			if (msg != null) {
 
-				float proposalGasAmount = Float.parseFloat(msg.getContent());
+				float proposalIncomingGasVolume = Float.parseFloat(msg.getContent());
 
-				System.out.println(String.format(
-						"ControllerAgent %s : gas amount recieved: %s",
-						myAgent.getLocalName(), proposalGasAmount));
-				
-				float acceptedIncomingGasAmount = 
-					calculateAcceptedIncomingGasAmount(proposalGasAmount);
+				logger.log(Level.INFO,
+						String.format("ControllerAgent %s : proposal incoming gas volume: %s", getLocalName(), proposalIncomingGasVolume));
 
-				if (acceptedIncomingGasAmount > 0 ) {
+				float acceptedIncomingGasVolume =
+						networkCluster.calculateAcceptedIncomingGasVolume(proposalIncomingGasVolume);
 
-					sendAcceptProposalMessage(msg.getSender(), acceptedIncomingGasAmount, ENTRY_PROPOSAL.name());
+				if (acceptedIncomingGasVolume > 0) {
 
-					addIncomingGasAmount(acceptedIncomingGasAmount);
+					sendAcceptProposalMessage(msg.getSender(), acceptedIncomingGasVolume, ENTRY_PROPOSAL.name());
+
+					networkCluster.addIncomingGasVolume(acceptedIncomingGasVolume);
 
 				} else {
-					sendRejectProposalMessage(msg.getSender(), ConversationId.ENTRY_PROPOSAL.name());
+					sendRejectProposalMessage(msg.getSender(), ENTRY_PROPOSAL.name());
 				}
 			}
 		}
 	}
 
-	// TODO oturchyn 2012-11-25 : implement
-	private float calculateAcceptedIncomingGasAmount(float proposalGasAmount) {
-		
-		//calculateIncomingFlow 1000m_cube_per_hour
-		
-		//checkCurrentFlow 1000m_cube_per_hour
-
-		//checkCurrentPressure barg
-		
-		//calculatePressureWithIncomingGasAmount barg
-		
-		//if newPressure > maxPressure // not OK
-		// calculateMaxPossibleIncomingGasAmount
-		
-		//calculatePressureDifference
-		
-		//if difference != 0
-		// changeCompressorParameters ? pressure or flow
-		// sendCompressorParameters
-		
-		// return maxPossibleIncomingGasAmount
-		// nicht größer als proposalGasAmount		
-		return proposalGasAmount;
-	}
-
-	private void addIncomingGasAmount(float incomingGasAmount) {
-		
-		currentGasAmount += incomingGasAmount;
-		
-		System.out.println(String.format(
-				"ControllerAgent %s : current gas amount : %s",
-				getLocalName(), currentGasAmount));
-	}
-
 	public class ProcessExitProposalBehavior extends OneShotBehaviour {
+
+		private static final long serialVersionUID = 6094971177585657573L;
 
 		@Override
 		public void action() {
 
-			MessageTemplate msgTemplate = 
-				MessageTemplate.MatchConversationId(EXIT_PROPOSAL.name());
+			MessageTemplate msgTemplate =
+					MessageTemplate.MatchConversationId(EXIT_PROPOSAL.name());
 
 			ACLMessage msg = myAgent.receive(msgTemplate);
 
 			if (msg != null) {
 
-				float requestedGasAmount = Float.parseFloat(msg.getContent());
+				float proposalOutgoingGasVolume = Float.parseFloat(msg.getContent());
 
-				System.out.println(String.format("ControllerAgent %s : gas amount requested: %s", myAgent.getLocalName(), requestedGasAmount));
+				logger.log(Level.INFO,
+						String.format("ControllerAgent %s : proposal outgoing gas volume : %s", getLocalName(), proposalOutgoingGasVolume));
 
-				if (currentGasAmount >= requestedGasAmount) {
+				float acceptedOutgoingGasVolume =
+						networkCluster.calculateAcceptedOutgoingGasVolume(proposalOutgoingGasVolume);
 
-					// calculate accepted gas amount
-					float acceptedGasAmount = requestedGasAmount;
-					sendAcceptProposalMessage(msg.getSender(), acceptedGasAmount, EXIT_PROPOSAL.name());
+				if (acceptedOutgoingGasVolume > 0) {
 
-					currentGasAmount -= requestedGasAmount;
+					sendAcceptProposalMessage(msg.getSender(), acceptedOutgoingGasVolume, EXIT_PROPOSAL.name());
 
-					System.out.println(String.format("ControllerAgent %s : current gas amount : %s", myAgent.getLocalName(), currentGasAmount));
+					networkCluster.removeOutgoingGasVolume(acceptedOutgoingGasVolume);
 
 				} else {
 					sendRejectProposalMessage(msg.getSender(), EXIT_PROPOSAL.name());
 				}
-			} 
+			}
 		}
 	}
 
-	private void sendAcceptProposalMessage(AID receiver, float acceptedGasAmount, String conversationId) {
+	private void sendAcceptProposalMessage(AID receiver, float acceptedGasVolume, String conversationId) {
 
 		ACLMessage msg = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
 		msg.addReceiver(receiver);
 		msg.setConversationId(conversationId);
-		msg.setContent(Float.toString(acceptedGasAmount));
+		msg.setContent(Float.toString(acceptedGasVolume));
 		send(msg);
 
-		System.out.println("ControllerAgent: Accept :" + acceptedGasAmount);
+		logger.log(Level.INFO, String.format("ControllerAgent %s : accept gas volume : %s", getLocalName(), acceptedGasVolume));
 	}
 
 	private void sendRejectProposalMessage(AID receiver, String conversationId) {
@@ -324,7 +382,195 @@ public class ControllerAgent extends SimulationAgent {
 		msg.setConversationId(conversationId);
 		send(msg);
 
-		System.out.println("ControllerAgent: reject proposal");
+		logger.log(Level.INFO, String.format("ControllerAgent %s : reject proposal", getLocalName()));
 	}
 
+	private void sendRequestForChangePressure(float targetPressure) {
+		ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+
+		for (AID compressorAgentName : compressorAgentNames) {
+			request.addReceiver(compressorAgentName);
+		}
+
+		request.setConversationId(COMPRESSOR_CHANGE_PRESSURE.name());
+		request.setContent(Float.toString(targetPressure));
+
+		send(request);
+
+		logger.log(Level.INFO, String.format("ControllerAgent : request for change pressure send to compressor(s) : targetPressure %s", targetPressure));
+	}
+
+	private class NetworkCluster {
+
+		private static final float ENTRY_PRESSURE = 75.0f; // barg
+		private static final float EXIT_PRESSURE = 75.0f; // barg
+
+		private float networkPipeVolume; // m_cube
+		private float networkPipePressureMax; // barg
+		private float networkPipePressureCurrent; // barg
+
+		private float networkCompressorPressureInMin; // barg
+		private float networkCompressorPressureOutMax; // barg
+
+		protected float calculateAcceptedIncomingGasVolume(float proposalIncomingGasVolume) {
+
+			float forecastNetworkPressure = calculatePressureWithIncomingGasVolume(proposalIncomingGasVolume);
+
+			if (forecastNetworkPressure > networkPipePressureMax) {
+				return calculatePossibleIncomingGasVolume();
+			}
+
+			return proposalIncomingGasVolume;
+		}
+
+		public float calculateAcceptedOutgoingGasVolume(float proposalOutgoingGasVolume) {
+
+			if (shouldOutgoingPressureBeCorrected()) {
+
+				if (canOutgoingPressureBeCorrected()) {
+					sendRequestForChangePressure(EXIT_PRESSURE);
+
+				} else {
+					return 0;
+				}
+			}
+
+			float possibleOutgoingGasVolume = calculatePossibleOutomingGasVolume();
+
+			if (possibleOutgoingGasVolume > proposalOutgoingGasVolume) {
+				return proposalOutgoingGasVolume;
+
+			} else {
+				return possibleOutgoingGasVolume;
+			}
+		}
+
+		private boolean shouldOutgoingPressureBeCorrected() {
+			return networkPipePressureCurrent < EXIT_PRESSURE;
+		}
+
+		private boolean canOutgoingPressureBeCorrected() {
+			return networkPipePressureCurrent >= networkCompressorPressureInMin
+					&& networkCompressorPressureOutMax >= EXIT_PRESSURE;
+		}
+
+		private float calculatePossibleIncomingGasVolume() {
+			return networkPipeVolume * (networkPipePressureMax - networkPipePressureCurrent) / ENTRY_PRESSURE;
+		}
+
+		private float calculatePossibleOutomingGasVolume() {
+			return networkPipeVolume * networkPipePressureCurrent / EXIT_PRESSURE;
+		}
+
+		protected void addIncomingGasVolume(float incomingGasVolume) {
+
+			networkPipePressureCurrent = calculatePressureWithIncomingGasVolume(incomingGasVolume);
+
+			logCurrentPressure();
+		}
+
+		public void removeOutgoingGasVolume(float outgoingGasVolume) {
+
+			networkPipePressureCurrent = calculatePressureWithOutgoingGasVolume(outgoingGasVolume);
+
+			logCurrentPressure();
+		}
+
+		private float calculatePressureWithIncomingGasVolume(float incomingGasVolume) {
+			return (incomingGasVolume * ENTRY_PRESSURE + networkPipeVolume * networkPipePressureCurrent)
+					/ networkPipeVolume;
+		}
+
+		private float calculatePressureWithOutgoingGasVolume(float outgoingGasVolume) {
+			return (networkPipeVolume * networkPipePressureCurrent - outgoingGasVolume * EXIT_PRESSURE)
+					/ networkPipeVolume;
+		}
+
+		private void logCurrentPressure() {
+			logger.log(Level.INFO, String.format("ControllerAgent %s : current pressure : %s", getLocalName(), networkPipePressureCurrent));
+		}
+
+		protected void addPipeData(Pipe pipe) {
+
+			if (pipe != null) {
+				addPipePressureMax(pipe);
+				addPipeVolume(pipe);
+			} else {
+				logger.log(Level.WARNING, "Pipe data not definded");
+			}
+		}
+
+		private void addPipePressureMax(Pipe pipe) {
+
+			float pipePressureMax = pipe.getPressureMax().getValue();
+
+			logger.log(Level.INFO, String.format("Pipe PressureMax : %s", pipePressureMax));
+
+			if (networkPipePressureMax == 0.0f || networkPipePressureMax > pipePressureMax) {
+				networkPipePressureMax = pipePressureMax;
+			}
+
+			logger.log(Level.INFO, String.format("NetworkCluster PipePressureMax : %s", networkPipePressureMax));
+		}
+
+		private void addPipeVolume(Pipe pipe) {
+
+			float pipeVolume = calculatePipeVolume(pipe);
+
+			logger.log(Level.INFO, String.format("Pipe Volume : %s", pipeVolume));
+
+			networkPipeVolume += pipeVolume;
+
+			logger.log(Level.INFO, String.format("NetworkCluster Volume : %s", networkPipeVolume));
+		}
+
+		private float calculatePipeVolume(Pipe pipe) {
+
+			float pipeLength = pipe.getLength().getValue() * 1000; // km->m
+			float pipeDiameter = pipe.getDiameter().getValue() / 1000; // mm->m
+
+			float pipeRadius = pipeDiameter / 2; // m
+
+			double pipeSquare = Math.pow(pipeRadius, 2) * Math.PI; // m_squared
+
+			double pipeVolume = pipeSquare * pipeLength; // m_cube
+
+			return (float) pipeVolume;
+		}
+
+		protected void addCompressorData(Compressor compressor) {
+
+			if (compressor != null) {
+				addCompressorPressureOutMax(compressor);
+				addCompressorPressureInMin(compressor);
+
+			} else {
+				logger.log(Level.WARNING, "Compressor data not definded");
+			}
+		}
+
+		private void addCompressorPressureOutMax(Compressor compressor) {
+			float compressorPressureOutMax = compressor.getPressureOutMax().getValue();
+
+			logger.log(Level.INFO, String.format("Compressor PressureOutMax : %s", compressorPressureOutMax));
+
+			if (networkCompressorPressureOutMax == 0.0f || networkCompressorPressureOutMax > compressorPressureOutMax) {
+				networkCompressorPressureOutMax = compressorPressureOutMax;
+			}
+
+			logger.log(Level.INFO, String.format("NetworkCluster CompressorPressureOutMax : %s", networkCompressorPressureOutMax));
+		}
+
+		private void addCompressorPressureInMin(Compressor compressor) {
+			float compressorPressureInMin = compressor.getPressureInMin().getValue();
+
+			logger.log(Level.INFO, String.format("Compressor PressureInMin : %s", compressorPressureInMin));
+
+			if (networkCompressorPressureInMin == 0.0f || networkCompressorPressureInMin < compressorPressureInMin) {
+				networkCompressorPressureInMin = compressorPressureInMin;
+			}
+
+			logger.log(Level.INFO, String.format("NetworkCluster CompressorPressureInMin : %s", networkCompressorPressureInMin));
+		}
+	}
 }

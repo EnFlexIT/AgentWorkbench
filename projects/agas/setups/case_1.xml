@@ -1,139 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup>
-        <agent>
-            <postionNo>1</postionNo>
-            <listMembership>01 AgentStartManual</listMembership>
-            <agentClassReference>agas.agents.manager.NetworkManagerAgent</agentClassReference>
-            <startAsName>NeMaAg</startAsName>
-        </agent>
-        <agent>
-            <postionNo>2</postionNo>
-            <listMembership>01 AgentStartManual</listMembership>
-            <agentClassReference>agas.agents.components.ControlAgent</agentClassReference>
-            <startAsName>CoAg</startAsName>
-        </agent>
-        <agent>
-            <postionNo>1</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.EntryAgent</agentClassReference>
-            <startAsName>n0</startAsName>
-        </agent>
-        <agent>
-            <postionNo>2</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.PipeAgent</agentClassReference>
-            <startAsName>n1</startAsName>
-        </agent>
-        <agent>
-            <postionNo>3</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.BranchAgent</agentClassReference>
-            <startAsName>n2</startAsName>
-        </agent>
-        <agent>
-            <postionNo>4</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.BranchAgent</agentClassReference>
-            <startAsName>n3</startAsName>
-        </agent>
-        <agent>
-            <postionNo>5</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.PipeAgent</agentClassReference>
-            <startAsName>n4</startAsName>
-        </agent>
-        <agent>
-            <postionNo>6</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>n5</startAsName>
-        </agent>
-        <agent>
-            <postionNo>7</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.BranchAgent</agentClassReference>
-            <startAsName>n6</startAsName>
-        </agent>
-        <agent>
-            <postionNo>8</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.PipeAgent</agentClassReference>
-            <startAsName>n7</startAsName>
-        </agent>
-        <agent>
-            <postionNo>9</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>n8</startAsName>
-        </agent>
-        <agent>
-            <postionNo>10</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.PipeAgent</agentClassReference>
-            <startAsName>n9</startAsName>
-        </agent>
-        <agent>
-            <postionNo>11</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.BranchAgent</agentClassReference>
-            <startAsName>n10</startAsName>
-        </agent>
-        <agent>
-            <postionNo>12</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.PipeShortAgent</agentClassReference>
-            <startAsName>n11</startAsName>
-        </agent>
-        <agent>
-            <postionNo>13</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.CompressorAgent</agentClassReference>
-            <startAsName>n12</startAsName>
-        </agent>
-        <agent>
-            <postionNo>14</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.PipeShortAgent</agentClassReference>
-            <startAsName>n13</startAsName>
-        </agent>
-        <agent>
-            <postionNo>15</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.CompressorAgent</agentClassReference>
-            <startAsName>n14</startAsName>
-        </agent>
-        <agent>
-            <postionNo>16</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.BranchAgent</agentClassReference>
-            <startAsName>n15</startAsName>
-        </agent>
-        <agent>
-            <postionNo>17</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.BranchAgent</agentClassReference>
-            <startAsName>n16</startAsName>
-        </agent>
-        <agent>
-            <postionNo>18</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>n17</startAsName>
-        </agent>
-        <agent>
-            <postionNo>19</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>n18</startAsName>
-        </agent>
-        <agent>
-            <postionNo>20</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>agas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>n19</startAsName>
-        </agent>
-    </agentSetup>
+    <agentSetup/>
     <timeModelSettings>
         <entry>
             <key>StepWidth</key>
@@ -141,11 +8,11 @@
         </entry>
         <entry>
             <key>TimeStart</key>
-            <value>1352377098846</value>
+            <value>1354518384703</value>
         </entry>
         <entry>
             <key>TimeCurrent</key>
-            <value>1352377098846</value>
+            <value>1354518384703</value>
         </entry>
         <entry>
             <key>DisplayUnitIndex</key>
@@ -153,7 +20,11 @@
         </entry>
         <entry>
             <key>TimeStop</key>
-            <value>1352463498846</value>
+            <value>1354604784703</value>
+        </entry>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
         </entry>
     </timeModelSettings>
     <environmentFileName>Case 1.graphml</environmentFileName>

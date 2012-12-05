@@ -11,11 +11,11 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <default></default>
 </key>
 <graph edgedefault="directed">
-<node id="PP0">
-<data key="pos">25.0:25.0</data>
-</node>
 <node id="PP3">
 <data key="pos">315.0:25.0</data>
+</node>
+<node id="PP0">
+<data key="pos">25.0:25.0</data>
 </node>
 <edge id="n1" directed="false" source="PP3" target="PP0">
 <desc>Pipe</desc>

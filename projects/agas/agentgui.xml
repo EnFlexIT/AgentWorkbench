@@ -22,12 +22,12 @@
         </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1113</useLocalPort>
+        <useLocalPort>1119</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -56,7 +56,7 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>Case 4</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelDiscrete</timeModelClass>
-    <downloadResources>http://sascha:8080/agas/agas_IDE.jar</downloadResources>
+    <downloadResources>http://localhost:8080/agas/agas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>Case 1</key>
@@ -84,5 +84,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>true</unsaved>
+    <unsaved>false</unsaved>
 </project>

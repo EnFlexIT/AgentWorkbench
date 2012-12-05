@@ -1,5 +1,5 @@
 package agas.agents.components;
 
-public enum DFAgentDescriptionID {
+public enum ServiceType {
 	CONTROLLER, COMPRESSOR, PIPE
 }

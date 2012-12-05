@@ -26,6 +26,31 @@
             <startAsName>n2</startAsName>
         </agent>
     </agentSetup>
-    <timeModelSettings/>
+    <timeModelSettings>
+        <entry>
+            <key>StepWidth</key>
+            <value>60000</value>
+        </entry>
+        <entry>
+            <key>TimeStart</key>
+            <value>1354462609718</value>
+        </entry>
+        <entry>
+            <key>TimeCurrent</key>
+            <value>1354462609718</value>
+        </entry>
+        <entry>
+            <key>DisplayUnitIndex</key>
+            <value>1</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1354549009718</value>
+        </entry>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
+        </entry>
+    </timeModelSettings>
     <environmentFileName>Case 2.graphml</environmentFileName>
 </simulationSetup>
