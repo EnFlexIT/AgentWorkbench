@@ -10,16 +10,24 @@
     </agentSetup>
     <timeModelSettings>
         <entry>
-            <key>TimeStart</key>
-            <value>1354280969521</value>
+            <key>StepWidth</key>
+            <value>60000</value>
         </entry>
         <entry>
-            <key>AccelerationFactor</key>
-            <value>1.0</value>
+            <key>TimeStart</key>
+            <value>1354735216421</value>
+        </entry>
+        <entry>
+            <key>TimeCurrent</key>
+            <value>1354735216421</value>
+        </entry>
+        <entry>
+            <key>DisplayUnitIndex</key>
+            <value>1</value>
         </entry>
         <entry>
             <key>TimeStop</key>
-            <value>1354367369521</value>
+            <value>1354821616421</value>
         </entry>
         <entry>
             <key>TimeFormat</key>

@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulationSetup>
-    <agentSetup/>
+    <agentSetup>
+        <agent>
+            <postionNo>1</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>gol.SimService.agents.SimulationManager</agentClassReference>
+            <startAsName>SiMa</startAsName>
+        </agent>
+    </agentSetup>
+    <timeModelSettings>
+        <entry>
+            <key>TimeStart</key>
+            <value>1354788415296</value>
+        </entry>
+        <entry>
+            <key>AccelerationFactor</key>
+            <value>10.0</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1354874815296</value>
+        </entry>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss</value>
+        </entry>
+    </timeModelSettings>
     <environmentFileName>0242 Agents.xml</environmentFileName>
 </simulationSetup>
