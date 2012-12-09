@@ -39,6 +39,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import agentgui.simulationService.SimulationService;
@@ -74,6 +75,7 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 	private Vector<EnvironmentNotification> notifications = new Vector<EnvironmentNotification>();
 
 	private Vector<ServiceSensorListener> simulationServiceListeners = null;
+
 	
 	
 	/**
@@ -518,7 +520,7 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 	 */
 	protected DFAgentDescription[] findAgentsByServiceType(String serviceType) {
 	
-		DFAgentDescription[] dfAgentDescriptions = null;
+		DFAgentDescription[] dfAgentDescriptions = new DFAgentDescription[0];
 		
 		try {
 			DFAgentDescription agentDescription = new DFAgentDescription();
