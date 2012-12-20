@@ -57,4 +57,13 @@ public class CalcConstant extends CalcExpression {
 	public double getValue() {
 		return this.value;
 	}
+	
+	/**
+	 * Sets the value.
+	 * @param newValue the new value
+	 */
+	public void setValue(double newValue) {
+		this.value = newValue;
+	}
+	
 }

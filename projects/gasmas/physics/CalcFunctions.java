@@ -86,7 +86,7 @@ public class CalcFunctions {
 	 * @param precision the precision
 	 * @return the double
 	 */
-	public static double round(double doubleValue, int precision) {
+	public static double round(double doubleValue, double precision) {
 		return Math.round(doubleValue * Math.pow(10, precision)) / Math.pow(10, precision);
 	}
 	

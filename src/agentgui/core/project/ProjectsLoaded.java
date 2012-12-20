@@ -91,7 +91,7 @@ public class ProjectsLoaded {
 	 * @param selectedProjectFolder
 	 * @return The Project-instance that was added here
 	 */
-	private Project add (boolean addNew, String selectedProjectFolder) {
+	private Project add(boolean addNew, String selectedProjectFolder) {
 
 		int action = 0;
 		String actionTitel = null;
@@ -166,8 +166,8 @@ public class ProjectsLoaded {
 		
 		// ------------------------------------------------
 		// --- Projektvariablen setzen --------------------
-		newProject.setProjectName( localTmpProjectName );
-		newProject.setProjectFolder( localTmpProjectFolder );
+		newProject.setProjectName(localTmpProjectName);
+		newProject.setProjectFolder(localTmpProjectFolder);
 
 		if (addNew==true) {			
 			// --- Create default project structure -------
@@ -247,8 +247,6 @@ public class ProjectsLoaded {
 		if(addNew==true) {
 			newProject.setJadeConfiguration(Application.getGlobalInfo().getJadeDefaultPlatformConfig());
 		}
-		// --- Set Project reference to the current JADE configuration -------- 
-		newProject.getJadeConfiguration().setProject(newProject);
 		
 		// --- Is there already a simulation setup? ---------------------------
 		if (newProject.getSimulationSetups().size()==0) {
@@ -269,7 +267,7 @@ public class ProjectsLoaded {
 		// --- Configure the project view in the main application -------------
 		Application.getProjectsLoaded().setProjectView();		
 		Application.getMainWindow().setCloseButtonPosition(true);
-		Application.setTitelAddition( newProject.getProjectName() );
+		Application.setTitelAddition(newProject.getProjectName());
 		Application.setStatusBar(Language.translate("Fertig"));	
 		newProject.setMaximized();
 		

@@ -97,9 +97,7 @@ public class PlatformJadeConfig implements Serializable {
 	// --- Add-On-Services ----------------------------------------------------
 	public static final String SERVICE_InterPlatformMobilityService = jade.core.migration.InterPlatformMobilityService.class.getName();
 	
-	/**
-	 * Array of services, which will be started with JADE in every case
-	 */
+	/** Array of services, which will be started with JADE in every case */
 	private static final String[] autoServices = {SERVICE_MessagingService, SERVICE_AgentManagementService};
 	private static final String AUTOSERVICE_TextAddition = "Startet automatisch !";
 	 
@@ -120,12 +118,25 @@ public class PlatformJadeConfig implements Serializable {
 	 * Constructor of this class.
 	 */
 	public PlatformJadeConfig() {
-	
+	}
+
+	/**
+	 * Returns the current project.
+	 * @return the project
+	 */
+	public Object getProject() {
+		return this.currProject;
+	}
+	/**
+	 * Sets the current project.
+	 * @param project the new project
+	 */
+	public void setProject(Project project) {
+		this.currProject = project;
 	}
 	
 	/**
 	 * This method returns the TextAddition if a Service is an automatically starting service of JADE.
-	 *
 	 * @return the auto service text addition
 	 */
 	public static String getAutoServiceTextAddition() {
@@ -134,7 +145,6 @@ public class PlatformJadeConfig implements Serializable {
 	
 	/**
 	 * Returns if a service generally starts while JADE is starting.
-	 *
 	 * @param serviceReference the service reference
 	 * @return true, if is auto service
 	 */
@@ -148,18 +158,8 @@ public class PlatformJadeConfig implements Serializable {
 	}
 	
 	/**
-	 * Sets the project.
-	 *
-	 * @param project the new project
-	 */
-	public void setProject(Project project) {
-		this.currProject = project;
-	}
-
-	/**
 	 * This Method returns a new Instance of Profil, which
 	 * can be used for starting a new JADE-Container.
-	 *
 	 * @return jade.core.Profile
 	 */
 	public Profile getNewInstanceOfProfilImpl(){
@@ -403,6 +403,5 @@ public class PlatformJadeConfig implements Serializable {
 		bugOut += "Services:" + getServiceListArgument();
 		return bugOut;
 	}
-	
-	
+
 }

@@ -1216,6 +1216,9 @@ import agentgui.core.webserver.JarFileCreator;
 		if (this.jadeConfiguration==null) {
 			this.jadeConfiguration = new PlatformJadeConfig();
 		}
+		if (this.jadeConfiguration.getProject()==null) {
+			this.jadeConfiguration.setProject(this);
+		}
 		return this.jadeConfiguration;
 	}
 

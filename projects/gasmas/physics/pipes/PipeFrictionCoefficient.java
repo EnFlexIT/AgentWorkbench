@@ -63,10 +63,12 @@ public class PipeFrictionCoefficient extends CalcFormula {
 	 *
 	 * @param reynolds the reynolds number
 	 * @param pipeRoughness the pipe roughness
+	 * @param pipeDiameter the pipe diameter
 	 */
-	public PipeFrictionCoefficient(CalcExpression reynolds, CalcExpression pipeRoughness) {
+	public PipeFrictionCoefficient(CalcExpression reynolds, CalcExpression pipeRoughness, CalcExpression pipeDiameter) {
 		this.setReynolds(reynolds);
 		this.setPipeRoughness(pipeRoughness);
+		this.setPipeDiameter(pipeDiameter);
 	}
 	
 	/**
@@ -76,11 +78,13 @@ public class PipeFrictionCoefficient extends CalcFormula {
 	 *
 	 * @param reynolds the reynolds number
 	 * @param pipeRoughness the pipe roughness
+	 * @param pipeDiameter the pipe diameter
 	 * @param precision the number of digits after the decimal point
 	 */
-	public PipeFrictionCoefficient(CalcExpression reynolds, CalcExpression pipeRoughness, CalcExpression precision) {
+	public PipeFrictionCoefficient(CalcExpression reynolds, CalcExpression pipeRoughness, CalcExpression pipeDiameter, CalcExpression precision) {
 		this.setReynolds(reynolds);
 		this.setPipeRoughness(pipeRoughness);
+		this.setPipeDiameter(pipeDiameter);
 		this.setPrecision(precision);
 	}
 	
@@ -122,7 +126,7 @@ public class PipeFrictionCoefficient extends CalcFormula {
 
 			} else {
 				// --- hydraulically rough --------------------------
-				pipeFrictionCoefficient = pipeFrictionCoefficient;
+				pipeFrictionCoefficient = pipeFrictionCoefficient_Colebroke_White(dblReynolds, dblDiameter, dblPipeRoughness, dblPrecision);
 				
 			}
 		}		
@@ -130,7 +134,6 @@ public class PipeFrictionCoefficient extends CalcFormula {
 		pipeFrictionCoefficient = Math.round(pipeFrictionCoefficient * Math.pow(10, this.precision.getValue())) / Math.pow(10, this.precision.getValue());
 		return pipeFrictionCoefficient;
 	}
-		
 	
 	
 	/**
@@ -171,6 +174,7 @@ public class PipeFrictionCoefficient extends CalcFormula {
 	 * Applies for Re>=2.5*10^6 (turbulent flow) in hydraulically smooth pipes
 	 *
 	 * @param reynoldsNumber the reynolds number
+	 * @param precision the precision
 	 * @return the double
 	 */
 	public double pipeFrictionCoefficient_Prandtl_Karman(double reynoldsNumber, double precision) {
@@ -214,6 +218,57 @@ public class PipeFrictionCoefficient extends CalcFormula {
 	}
 	
 	
+	/**
+	 * Pipe friction coefficient according to Colebroke-White.
+	 *
+	 * @param reynoldsNumber the reynolds number
+	 * @param diameter the diameter
+	 * @param pipeRoughness the pipe roughness
+	 * @return the double
+	 */
+	public double pipeFrictionCoefficient_Colebroke_White(double reynoldsNumber, double diameter, double pipeRoughness, double precision) {
+
+		// --- Set accuracy of interpolation ---- 
+		double diffTerminateAt = Math.pow(10, (-1) * precision);
+
+		// --- Define start value ---------------
+		double lambda = 0.03;
+		// --- Get an idea about the scale ------
+		double lambdaScale = -2.0;
+
+		double xValue1 = CalcFunctions.round(Math.pow(lambda, 0.5), 2.0);
+		double xValue2 = 0.0;
+		double xValueStep = Math.pow(10, lambdaScale);
+		
+		double diff = 100;
+		double diffOld = -10;
+		
+		while (Math.abs(diff) > diffTerminateAt) {
+			
+			xValue2 = -0.5 * (1 / Math.log10((2.51/(reynoldsNumber*xValue1)) + (pipeRoughness/(3.71*diameter))));
+			diff = xValue1-xValue2;
+			
+			// --- Did the sign change ? --------
+			if (Math.signum(diff)!=Math.signum(diffOld)) {
+				lambdaScale--;
+				xValueStep = Math.pow(10, lambdaScale);
+			}
+			
+			if (diff<0) {
+				// --- positive value ---
+				xValue1 = xValue1 + xValueStep;
+			} else {
+				// --- negative value ---
+				xValue1 = xValue1 - xValueStep;
+			}
+			diffOld = diff;
+		}
+		
+		lambda = Math.pow(xValue1, 2);
+		return lambda;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see agentgui.math.calculation.CalcFormula#addParameter(java.lang.String, agentgui.math.calculation.CalcExpression)
 	 */
@@ -221,7 +276,7 @@ public class PipeFrictionCoefficient extends CalcFormula {
 		super.addParameter(name, expression);
 		if (name.equals("reynolds")){
 			this.reynolds=expression;
-		} else if (name.equals("diameter")){
+		} else if (name.equals("pipeDiameter")){
 			this.diameter = expression;
 		} else if (name.equals("pipeRoughness")){
 			this.pipeRoughness=expression;
@@ -241,8 +296,8 @@ public class PipeFrictionCoefficient extends CalcFormula {
 	 * Sets the CalcExpression for the diameter of the pipe.
 	 * @param diameter the new diameter
 	 */
-	public void setDiameter(CalcExpression diameter) {
-		this.addParameter("diameter", diameter);
+	public void setPipeDiameter(CalcExpression diameter) {
+		this.addParameter("pipeDiameter", diameter);
 	}
 	/**
 	 * Sets the CalcExpression for the pipe roughness.

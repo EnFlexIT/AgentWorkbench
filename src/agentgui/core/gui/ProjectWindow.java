@@ -148,7 +148,9 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
 		
 		this.setVisible(true);
-		this.moveToFront();		
+		this.moveToFront();	
+
+		// --- Add this ProjectWindow to the JDesktopPane of the MainWindow ---
 		Application.getMainWindow().getJDesktopPane4Projects().add(this);		
 	}
 

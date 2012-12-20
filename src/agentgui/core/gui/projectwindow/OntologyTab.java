@@ -86,9 +86,9 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	/**
 	 * This is the default constructor
 	 */
-	public OntologyTab( Project CP ) {
+	public OntologyTab(Project project) {
 		super();
-		this.currProject = CP;
+		this.currProject = project;
 		this.currProject.addObserver(this);		
 		
 		// --- Form aufbauen -------------------------------------

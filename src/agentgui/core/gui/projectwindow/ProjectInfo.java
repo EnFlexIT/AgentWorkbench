@@ -73,9 +73,9 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	/**
 	 * This is the default constructor
 	 */
-	public ProjectInfo( Project CP ) {
+	public ProjectInfo(Project project) {
 		super();
-		this.currProject = CP;
+		this.currProject = project;
 		this.currProject.addObserver(this);		
 		initialize();
 		
