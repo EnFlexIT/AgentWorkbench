@@ -46,7 +46,7 @@ public class CompressibilityNumber extends CalcExpression {
 		if(initialPreasure == null){
 			throw new CalcParameterNotSetException();
 		}else{
-			return 1 - initialPreasure.getValue() / 450;
+			return 1 - initialPreasure.getValue() / 450e5;
 		}
 	}
 

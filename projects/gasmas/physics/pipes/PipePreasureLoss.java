@@ -196,9 +196,9 @@ public class PipePreasureLoss extends CalcExpression{
 			double w = fluidVelocity.getValue();
 			double k = compressibilityNumber.getValue();
 			
-			double radicand = 1 - lambda * ( l / d ) * ( ro / p ) * w * k;
+			double radicand = 1 - lambda * ( l / d ) * ( ro / p ) * Math.pow(w, 2) * k;
 			
-			return p * ( 1 - Math.pow(radicand, 0.5));
+			return p * ( 1 - Math.pow(radicand, 0.5) );
 		}else{
 			throw new CalcParameterNotSetException();
 		}

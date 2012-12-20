@@ -38,8 +38,8 @@ public class CalcTest {
 		
 		
 		CalcExpression normGasDensity = new CalcConstant(0.829);
-//		CalcExpression initialPreasure = new CalcConstant(21e5);
-		CalcExpression initialPreasure = new CalcConstant(21);
+		CalcExpression initialPreasure = new CalcConstant(21e5);
+//		CalcExpression initialPreasure = new CalcConstant(21);
 		CalcExpression temperature = new CalcConstant(278.15);
 		CalcExpression diameter = new CalcConstant(0.2101);
 		CalcExpression normVolumeFlow = new CalcConstant(16000);

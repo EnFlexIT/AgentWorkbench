@@ -33,7 +33,7 @@ public class GasDensity extends CalcExpression {
 		 this.realPreasure = realPreasure;
 		 this.realTemperature = realTemperature;
 		 this.normTemperature = new CalcConstant(273);		// Norm temperature 273 K
-		 this.normPreasure = new CalcConstant(1.01325); 	// Norm preasure 1.01325 bar 
+		 this.normPreasure = new CalcConstant(1.01325e5); 	// Norm preasure 1.01325 bar 
 	 }
 	
 	 
