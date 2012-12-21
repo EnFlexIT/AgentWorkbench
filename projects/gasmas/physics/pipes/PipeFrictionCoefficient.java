@@ -58,6 +58,17 @@ public class PipeFrictionCoefficient extends CalcFormula {
 	}
 	
 	/**
+	 * Instantiates a new pipe friction coefficient.
+	 *
+	 * @param reynolds the reynolds
+	 * @param precision the precision
+	 */
+	public PipeFrictionCoefficient(CalcExpression reynolds, CalcExpression precision) {
+		this.setReynolds(reynolds);
+		this.setPrecision(precision);
+	}
+	
+	/**
 	 * Instantiates a new pipe friction coefficient based on the
 	 * reynold number for pipes with a given pipeRoughness.
 	 *
@@ -232,7 +243,7 @@ public class PipeFrictionCoefficient extends CalcFormula {
 		double diffTerminateAt = Math.pow(10, (-1) * precision);
 
 		// --- Define start value ---------------
-		double lambda = 0.03;
+		double lambda = 0.01;
 		// --- Get an idea about the scale ------
 		double lambdaScale = -2.0;
 
