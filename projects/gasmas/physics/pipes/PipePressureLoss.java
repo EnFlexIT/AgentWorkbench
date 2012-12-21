@@ -8,7 +8,7 @@ import agentgui.math.calculation.CalcParameterNotSetException;
  * @author Nils
  *
  */
-public class PipePreasureLoss extends CalcExpression{
+public class PipePressureLoss extends CalcExpression{
 
 	/**
 	 * Generated serialVersionUID
@@ -58,7 +58,7 @@ public class PipePreasureLoss extends CalcExpression{
 	/**
 	 * @param initialPreasure the initialPreasure to set
 	 */
-	public void setInitialPreasure(CalcExpression initialPreasure) {
+	public void setInitialPressure(CalcExpression initialPreasure) {
 		this.initialPreasure = initialPreasure;
 	}
 
