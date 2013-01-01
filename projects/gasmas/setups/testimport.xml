@@ -6532,5 +6532,5 @@
             <value>dd.MM.yyyy HH:mm:ss.SSS</value>
         </entry>
     </timeModelSettings>
-    <environmentFileName>Testimport 123.graphml</environmentFileName>
+    <environmentFileName>Testimport.graphml</environmentFileName>
 </simulationSetup>
