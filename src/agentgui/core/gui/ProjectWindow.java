@@ -331,7 +331,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 				public void mouseClicked(MouseEvent me) {
 					
 					if (me.getClickCount()==2 & SwingUtilities.isLeftMouseButton(me)) {
-						if (isMaximizedTab) {
+						if (isMaximizedTab==true) {
 							currProject.setNotChangedButNotify(Project.VIEW_Restore);
 						} else {
 							currProject.setNotChangedButNotify(Project.VIEW_Maximize);
@@ -382,7 +382,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	 */
 	private MaximizedTab getMaximizedTab() {
 		if (maxTab==null) {
-			// --- Get and remove the currently selcted tab ---------
+			// --- Get and remove the currently selected tab --------
 			this.maxProjectWindowTab = this.getProjectWindowTabSelected();
 			this.remove(this.maxProjectWindowTab);
 			// --- Create the extra JInternalFrame ------------------
@@ -428,7 +428,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		if (this.maxTab!=null) {
 
 			// --- Remove toolbar button --------------------------------------
-			Application.getMainWindow().removeJToolbarComponent(getMaximizedTab().getJButtonRestore4MainToolBar());
+			Application.getMainWindow().removeJToolbarComponent(this.getMaximizedTab().getJButtonRestore4MainToolBar());
 			this.maxTab.setVisible(false);
 
 			// --- Place the enlarged tab back to the other one ---------------
@@ -577,22 +577,10 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	public void addProjectTab(ProjectWindowTab projectWindowTab, int indexPositionGreaterOne) {
 
 		int newIndexPos = indexPositionGreaterOne;
-		boolean add2RootNode = false;
 		
-		String parentName = projectWindowTab.getParentName();
-		if (parentName==null) {
-			add2RootNode = true;
-		} else  {
-			DefaultMutableTreeNode pareNode = getTreeNode(parentName);
-			if (pareNode==this.rootNode) {
-				add2RootNode = true;
-			}
-		} 
-
-		if (add2RootNode==true && (newIndexPos==0 || newIndexPos==1)) {
-			newIndexPos = 2;
-		} else if (newIndexPos==-1) {
+		if (newIndexPos<0) {
 			newIndexPos = projectViewRightTabs.getTabCount(); // Default
+			String parentName = projectWindowTab.getParentName();
 			if (parentName!=null) {
 				ProjectWindowTab parentPWT = this.getProjectWindowTab(parentName);
 				newIndexPos = parentPWT.getCompForChildComp().getTabCount();	

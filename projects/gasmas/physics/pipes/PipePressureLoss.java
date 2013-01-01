@@ -3,16 +3,13 @@ package gasmas.physics.pipes;
 import agentgui.math.calculation.CalcExeption;
 import agentgui.math.calculation.CalcExpression;
 import agentgui.math.calculation.CalcParameterNotSetException;
+
 /**
  * Calculates the preasure loss for a pipe 
  * @author Nils
- *
  */
 public class PipePressureLoss extends CalcExpression{
 
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = 9077387906331047779L;
 	
 	// Parameters

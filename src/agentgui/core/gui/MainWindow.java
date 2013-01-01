@@ -233,7 +233,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 		setStatusJadeRunning( false );
 		
 	    // --- Rechter Teil --------------------- 
-	    JPanel RightPart = new JPanel( new BorderLayout() );
+	    JPanel RightPart = new JPanel(new BorderLayout());
 	    RightPart.add(new JLabel(new AngledLinesWindowsCornerIcon()), BorderLayout.SOUTH);
 	    RightPart.setOpaque( false );
 	    		

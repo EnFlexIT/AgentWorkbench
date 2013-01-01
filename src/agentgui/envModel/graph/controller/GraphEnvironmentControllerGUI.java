@@ -37,6 +37,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,6 +53,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -127,6 +129,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     private boolean quiteTabelModelListener = false;
     
     /** The graph visualization component */
+    private JLayeredPane jLayeredPaneGraphWorkspace = null;
     private BasicGraphGui graphGUI = null;
 
     private NetworkComponent currNetworkComponent = null;
@@ -315,9 +318,15 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
 		if (jSplitPaneRoot == null) {
 		    jSplitPaneRoot = new JSplitPane();
 		    jSplitPaneRoot.setOneTouchExpandable(true);
-		    jSplitPaneRoot.setLeftComponent(getPnlControlls());
-		    jSplitPaneRoot.setRightComponent(getGraphVisualization());
+		    jSplitPaneRoot.setLeftComponent(this.getJPanelControlls());
+		    jSplitPaneRoot.setRightComponent(this.getJLayeredPaneGraphWorkspace());
 		    jSplitPaneRoot.setDividerLocation(230);
+		    
+		    try {
+				this.getBasicGraphGui().setMaximum(true);
+			} catch (PropertyVetoException e) {
+				e.printStackTrace();
+			}
 		}
 		return jSplitPaneRoot;
     }
@@ -326,7 +335,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
      * This method initializes pnlControlls
      * @return javax.swing.JPanel
      */
-    private JPanel getPnlControlls() {
+    private JPanel getJPanelControlls() {
 		if (jPanelControls == null) {
 		    GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 		    gridBagConstraints1.gridx = 1;
@@ -743,13 +752,17 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements L
     }
     
     /**
-     * Gets the graph visualization either for configuration or for displaying it during the simulation runtime.
-     * @return the graph visualization
+     * Gets the layered pane of the graph workspace.
+     * @return the JLayeredPane of the graph workspace
      */
-    private JComponent getGraphVisualization() {
-    	return this.getBasicGraphGui();
+    public JLayeredPane getJLayeredPaneGraphWorkspace() {
+    	if (jLayeredPaneGraphWorkspace==null) {
+    		jLayeredPaneGraphWorkspace = new JLayeredPane();
+    		jLayeredPaneGraphWorkspace.add(this.getBasicGraphGui(), JLayeredPane.DEFAULT_LAYER);
+    	}
+    	return jLayeredPaneGraphWorkspace;
     }
-
+    
     /**
      * Get the visualization component
      * @return the basic graph GUI which contains the graph visualization component

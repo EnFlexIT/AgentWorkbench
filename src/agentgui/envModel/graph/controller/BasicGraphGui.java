@@ -60,12 +60,15 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import org.apache.commons.collections15.Transformer;
 
@@ -111,7 +114,7 @@ import edu.uci.ics.jung.visualization.renderers.Checkmark;
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class BasicGraphGui extends JPanel implements Observer {
+public class BasicGraphGui extends JInternalFrame implements Observer {
 
 	private static final long serialVersionUID = 5764679914667183305L;
 
@@ -151,8 +154,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.graphController = controller;
 		this.graphController.addObserver(this);
 		this.graphGuiTools = new BasicGraphGuiTools(this.graphController);
-		initialize();
-
+		
+		this.initialize();
 		this.reLoadGraph();
 	}
 
@@ -162,8 +165,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private void initialize() {
 
+		// --- Set appearance -----------------------------
+		this.setVisible(true);
 		this.setSize(300, 300);
 		this.setLayout(new BorderLayout());
+		((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
+		this.setBorder(BorderFactory.createEmptyBorder());
+
+		// --- Add components -----------------------------
 		this.add(this.graphGuiTools.getJToolBar(), BorderLayout.WEST);
 
 		this.addContainerListener(new ContainerAdapter() {
@@ -210,6 +219,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	public SatelliteVisualizationViewer<GraphNode, GraphEdge> getVisViewSatellite() {
 		return this.visViewSatellite;
 	}
+	
 	/**
 	 * Returns the dimension of the SatelliteVisualizationViewer.
 	 * @return the vis view satellite dimension

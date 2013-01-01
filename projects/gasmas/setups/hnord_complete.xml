@@ -6533,6 +6533,10 @@
             <key>TimeStop</key>
             <value>1352883497437</value>
         </entry>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
+        </entry>
     </timeModelSettings>
     <environmentFileName>HNord Complete.graphml</environmentFileName>
 </simulationSetup>

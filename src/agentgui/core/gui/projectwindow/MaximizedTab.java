@@ -32,7 +32,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyVetoException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -58,6 +62,8 @@ public class MaximizedTab extends JInternalFrame {
 
 	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
 	private final ImageIcon iconRestore = new ImageIcon( this.getClass().getResource( pathImage + "RestoreView.png") );
+	
+	private ComponentListener myComponentListenerOfMainWindow = null;
 	
 	private ProjectWindow projectWindow = null;
 	private JButton jButtonRestore4MainToolBar = null;
@@ -96,13 +102,58 @@ public class MaximizedTab extends JInternalFrame {
 			 */
 			@Override
 			public void internalFrameDeactivated(InternalFrameEvent e) {
-				projectWindow.tabRestore();
+//				projectWindow.tabRestore();
 				super.internalFrameDeactivated(e);
 			}
 			
 		});
 		((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
 	
+		// --- Add ComponentListener to MainWindow -------- 
+		this.addComponentListenerOfMainWindow();
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JInternalFrame#dispose()
+	 */
+	@Override
+	public void dispose() {
+		super.dispose();
+		this.removeComponentListenerOfMainWindow();
+	}
+	
+	/**
+	 * Adds a component listener to the main window.
+	 */
+	private void addComponentListenerOfMainWindow() {
+		Application.getMainWindow().addComponentListener(this.getComponentListenerOfMainWindow());
+	}
+	/**
+	 * Removes the component listener of main window.
+	 */
+	private void removeComponentListenerOfMainWindow() {
+		Application.getMainWindow().removeComponentListener(this.getComponentListenerOfMainWindow());
+	}
+	/**
+	 * Gets a component listener for the main window.
+	 * @return the component listener of main window
+	 */
+	private ComponentListener getComponentListenerOfMainWindow() {
+		if (myComponentListenerOfMainWindow==null) {
+			myComponentListenerOfMainWindow = new ComponentAdapter() {
+				@Override
+				public void componentResized(ComponentEvent ce) {
+					moveToFront();
+					try {
+						setMaximum(true);
+					} catch (PropertyVetoException pvex) {
+						pvex.printStackTrace();
+					}
+				}
+			};
+		}
+		return myComponentListenerOfMainWindow; 
 	}
 	
 	 /**

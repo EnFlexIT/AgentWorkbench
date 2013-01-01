@@ -96,7 +96,6 @@ public class DynForm extends JPanel {
 	private Vector<AgentStartArgument> currOnotologyClassReferenceList = new Vector<AgentStartArgument>();
 	
 	// --- parameters which are coming from the constructor --------- 
-	//private Project currProject = null;
 	private OntologyVisualisationHelper ontologyVisualisationHelper = null;
 	private AgentStartConfiguration agentStartConfiguration = null;
 	private String currAgentReference = null;
@@ -394,10 +393,10 @@ public class DynForm extends JPanel {
 		
 		try {
 			objectInstance = codec.decodeObject(ontology, xmlString);
-		} catch (CodecException e) {
-			e.printStackTrace();
-		} catch (OntologyException e) {
-			e.printStackTrace();
+		} catch (CodecException ce) {
+			ce.printStackTrace();
+		} catch (OntologyException oe) {
+			oe.printStackTrace();
 		}		
 		return objectInstance;
 	}
@@ -1170,7 +1169,6 @@ public class DynForm extends JPanel {
 		DynType dynType = new DynType(oscsd, DynType.typeInnerClassType, startObjectClassName, dataPanel, oscsd.getSlotName());
 		final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
 		parentNode.add(newNode);
-		//parentNode = newNode;
 		
 		// --- if the inner class has got a multi cardinality create an add-button		
 		if(oscsd.getSlotCardinality().equals("multiple")) {

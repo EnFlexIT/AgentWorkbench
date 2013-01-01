@@ -60,6 +60,12 @@ import agentgui.envModel.graph.networkModel.GraphNodePairs;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 
+/**
+ * The Class BasicGraphGuiTools consists on additional visual tools for 
+ * the configuration of the Graph- and Network model.
+ * 
+ * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen
+ */
 public class BasicGraphGuiTools implements ActionListener, Observer {
 
     private static final long serialVersionUID = 7033208567874447367L;

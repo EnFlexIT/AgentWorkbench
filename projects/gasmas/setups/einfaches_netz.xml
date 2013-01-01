@@ -77,6 +77,10 @@
             <key>TimeStop</key>
             <value>1352883489468</value>
         </entry>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
+        </entry>
     </timeModelSettings>
     <environmentFileName>Einfaches Netz.graphml</environmentFileName>
 </simulationSetup>

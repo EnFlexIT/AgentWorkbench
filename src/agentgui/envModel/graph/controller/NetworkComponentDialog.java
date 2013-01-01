@@ -131,9 +131,11 @@ public class NetworkComponentDialog extends JDialog implements ActionListener {
 		nmn.setInfoObject(this.networkComponent);
 		this.graphController.notifyObservers(nmn);
 
-		// --- Some layout stuff ------------------------------------ 
+		// --- Some layout stuff ----------------------------------- 
 		this.setTitle("Network component: " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")");
 		this.setSize(new Dimension(450, 450));
+
+		// --- Set content pane and set visible --------------------
 		this.setContentPane(getJPanelContent());
 		this.setVisible(true);
 		

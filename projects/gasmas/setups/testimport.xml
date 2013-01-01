@@ -3,12 +3,6 @@
     <agentSetup>
         <agent>
             <postionNo>1</postionNo>
-            <listMembership>01 AgentStartManual</listMembership>
-            <agentClassReference>gasmas.agents.manager.NetworkManagerAgent</agentClassReference>
-            <startAsName>NeMaAg</startAsName>
-        </agent>
-        <agent>
-            <postionNo>1</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
             <startAsName>nN_1739</startAsName>
@@ -6519,11 +6513,11 @@
         </entry>
         <entry>
             <key>TimeStart</key>
-            <value>1352797106500</value>
+            <value>1356623076000</value>
         </entry>
         <entry>
             <key>TimeCurrent</key>
-            <value>1352797106500</value>
+            <value>1356623076000</value>
         </entry>
         <entry>
             <key>DisplayUnitIndex</key>
@@ -6531,8 +6525,12 @@
         </entry>
         <entry>
             <key>TimeStop</key>
-            <value>1352883506500</value>
+            <value>1356709476000</value>
+        </entry>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
         </entry>
     </timeModelSettings>
-    <environmentFileName>TestImport.graphml</environmentFileName>
+    <environmentFileName>Testimport.graphml</environmentFileName>
 </simulationSetup>

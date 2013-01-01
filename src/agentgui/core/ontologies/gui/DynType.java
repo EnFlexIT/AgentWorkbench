@@ -58,7 +58,7 @@ public class DynType {
 	
 	
 	/**
-	 * Instantiates this class
+	 * Instantiates a new DynType.
 	 *
 	 * @param curOSCSD the current OntologySingleClassSlotDescription
 	 * @param typeName the type name
@@ -77,7 +77,7 @@ public class DynType {
 	}
 	
 	/**
-	 * Instantiates a new dyn type.
+	 * Instantiates a new DynType.
 	 *
 	 * @param curOSCSD the current OntologySingleClassSlotDescription
 	 * @param typeName the type name
@@ -138,16 +138,13 @@ public class DynType {
 	
 	/**
 	 * Provides the OntologySingleClassSlotDescription.
-	 *
 	 * @return the oSCSD
 	 */
 	public OntologySingleClassSlotDescription getOntologySingleClassSlotDescription() {
 		return oscsd;
 	}
-	
 	/**
 	 * Sets the OntologySingleClassSlotDescription.
-	 *
 	 * @param curOSCSD the new oSCSD
 	 */
 	public void setOntologySingleClassSlotDescription(OntologySingleClassSlotDescription curOSCSD) {
@@ -156,16 +153,13 @@ public class DynType {
 
 	/**
 	 * Gets the class name.
-	 *
 	 * @return the class name
 	 */
 	public String getClassName() {
 		return className;
 	}
-	
 	/**
 	 * Sets the class name.
-	 *
 	 * @param className the new class name
 	 */
 	public void setClassName(String className) {
@@ -174,16 +168,13 @@ public class DynType {
 
 	/**
 	 * Gets the type name.
-	 *
 	 * @return the type name
 	 */
 	public String getTypeName() {
 		return typeName;
 	}
-	
 	/**
 	 * Sets the type name.
-	 *
 	 * @param typeName the new type name
 	 */
 	public void setTypeName(String typeName) {
@@ -192,16 +183,13 @@ public class DynType {
 
 	/**
 	 * Gets the field name.
-	 *
 	 * @return the field name
 	 */
 	public String getFieldName() {
 		return fieldName;
 	}
-	
 	/**
 	 * Sets the field name.
-	 *
 	 * @param fieldName the new field name
 	 */
 	public void setFieldName(String fieldName) {
@@ -210,16 +198,13 @@ public class DynType {
 
 	/**
 	 * Sets the panel.
-	 *
 	 * @param panel the new panel
 	 */
 	public void setPanel(JPanel panel) {
 		this.panel = panel;
 	}
-	
 	/**
 	 * Gets the panel.
-	 *
 	 * @return the panel
 	 */
 	public JPanel getPanel() {
@@ -228,16 +213,13 @@ public class DynType {
 
 	/**
 	 * Gets the field display.
-	 *
 	 * @return the field display
 	 */
 	public JComponent getFieldDisplay() {
 		return fieldDisplay;
 	}
-	
 	/**
 	 * Sets the field display.
-	 *
 	 * @param fieldValue the new field display
 	 */
 	public void setFieldDisplay(JComponent fieldValue) {

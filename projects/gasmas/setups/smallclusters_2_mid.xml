@@ -428,5 +428,31 @@
             <startAsName>n68</startAsName>
         </agent>
     </agentSetup>
+    <timeModelSettings>
+        <entry>
+            <key>StepWidth</key>
+            <value>60000</value>
+        </entry>
+        <entry>
+            <key>TimeStart</key>
+            <value>1356623789781</value>
+        </entry>
+        <entry>
+            <key>TimeCurrent</key>
+            <value>1356623789781</value>
+        </entry>
+        <entry>
+            <key>DisplayUnitIndex</key>
+            <value>1</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1356710189781</value>
+        </entry>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
+        </entry>
+    </timeModelSettings>
     <environmentFileName>SmallClusters (2) Mid.graphml</environmentFileName>
 </simulationSetup>
