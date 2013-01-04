@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.envModel.graph.controller;
+package agentgui.envModel.graph.networkModel;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -34,8 +34,7 @@ import java.util.Iterator;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
-import agentgui.envModel.graph.networkModel.DomainSettings;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import jade.util.leap.Serializable;
 
 /**

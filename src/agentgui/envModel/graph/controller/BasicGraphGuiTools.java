@@ -554,7 +554,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private void setGraphGuiElements() {
     	if (this.graphControllerGUI==null) {
     		this.graphControllerGUI = (GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel();
-    		this.basicGraphGui = graphControllerGUI.getBasicGraphGui();	
+    		this.basicGraphGui = graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui();	
     	}
     }
     

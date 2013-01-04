@@ -46,7 +46,6 @@ import agentgui.envModel.graph.commands.RenameNetworkComponent;
 import agentgui.envModel.graph.commands.SetGeneralGraphSettings4MAS;
 import agentgui.envModel.graph.commands.SetNetworkModel;
 import agentgui.envModel.graph.commands.SplitNetworkComponent;
-import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;

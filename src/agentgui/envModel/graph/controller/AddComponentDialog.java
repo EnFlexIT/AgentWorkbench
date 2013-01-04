@@ -78,6 +78,7 @@ import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.components.ComponentTypeListElement;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
+import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -160,7 +161,7 @@ public class AddComponentDialog extends JDialog implements ActionListener {
     public AddComponentDialog(GraphEnvironmentController controller) {
 		super(Application.getMainWindow());
 		this.graphController = controller;
-		this.basicGraphGui = ((GraphEnvironmentControllerGUI)controller.getEnvironmentPanel()).getBasicGraphGui();
+		this.basicGraphGui = ((GraphEnvironmentControllerGUI)controller.getEnvironmentPanel()).getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
 		initialize();
     }
 

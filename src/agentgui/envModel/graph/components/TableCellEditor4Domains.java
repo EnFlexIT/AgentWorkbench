@@ -40,7 +40,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
-import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
+import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 
 /**
  * This class is used in the {@link ComponentTypeDialog} for showing the agent class selector dialog 

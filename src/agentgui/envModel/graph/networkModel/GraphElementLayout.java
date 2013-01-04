@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 
 /**
  * The Class GraphElementLayout.

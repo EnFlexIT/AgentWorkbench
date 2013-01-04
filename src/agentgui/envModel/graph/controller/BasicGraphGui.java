@@ -60,15 +60,12 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import org.apache.commons.collections15.Transformer;
 
@@ -79,6 +76,7 @@ import agentgui.core.gui.imaging.ImagePreview;
 import agentgui.core.gui.imaging.ImageUtils;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.commands.RenameNetworkComponent.NetworkComponentRenamed;
+import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphElementLayout;
@@ -114,7 +112,7 @@ import edu.uci.ics.jung.visualization.renderers.Checkmark;
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class BasicGraphGui extends JInternalFrame implements Observer {
+public class BasicGraphGui extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 5764679914667183305L;
 
@@ -169,8 +167,6 @@ public class BasicGraphGui extends JInternalFrame implements Observer {
 		this.setVisible(true);
 		this.setSize(300, 300);
 		this.setLayout(new BorderLayout());
-		((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
-		this.setBorder(BorderFactory.createEmptyBorder());
 
 		// --- Add components -----------------------------
 		this.add(this.graphGuiTools.getJToolBar(), BorderLayout.WEST);

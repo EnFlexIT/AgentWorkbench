@@ -1259,13 +1259,15 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 	
 	/**
-	 * @return the userRuntimeObject
+	 * Returns the user runtime object.
+	 * @return the userRuntimeObject, any kind of serializable object
 	 */
 	@XmlTransient
 	public Object getUserRuntimeObject() {
 		return userRuntimeObject;
 	}
 	/**
+	 * Can be used in order to set any kind of runtime object that it is serializable by Java.
 	 * @param userRuntimeObject the userRuntimeObject to set
 	 */
 	public void setUserRuntimeObject(Serializable userRuntimeObject) {

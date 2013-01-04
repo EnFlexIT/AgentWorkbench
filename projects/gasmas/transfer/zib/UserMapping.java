@@ -67,8 +67,8 @@ import javax.swing.table.TableRowSorter;
 
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.components.TableCellEditor4Combo;
-import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
+import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 
 public class UserMapping extends JDialog implements ActionListener {
 

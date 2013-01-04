@@ -30,7 +30,6 @@ package agentgui.envModel.graph.networkModel;
 
 import java.io.Serializable;
 
-import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 
 /**

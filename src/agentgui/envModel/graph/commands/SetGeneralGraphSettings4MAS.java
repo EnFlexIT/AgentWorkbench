@@ -33,8 +33,8 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import agentgui.core.application.Language;
-import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 

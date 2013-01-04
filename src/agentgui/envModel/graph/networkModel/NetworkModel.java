@@ -40,7 +40,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
-import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.prototypes.ClusterGraphElement;
 import agentgui.envModel.graph.prototypes.DistributionNode;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;

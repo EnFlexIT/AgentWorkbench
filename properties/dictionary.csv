@@ -571,6 +571,8 @@ de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
 en;;Discrete squares environment;;;
+en;;Save and Exit;;;
+en;;Save;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agenten-Klasse;Agent class;;;

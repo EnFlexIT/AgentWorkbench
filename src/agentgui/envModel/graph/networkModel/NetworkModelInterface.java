@@ -36,7 +36,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import edu.uci.ics.jung.graph.Graph;
 
 public interface NetworkModelInterface {

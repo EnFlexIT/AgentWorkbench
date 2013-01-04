@@ -35,7 +35,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import agentgui.envModel.graph.controller.BasicGraphGui;
-import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
+import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;

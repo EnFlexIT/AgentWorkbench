@@ -85,9 +85,9 @@ import agentgui.core.application.Language;
 import agentgui.core.gui.imaging.MissingIcon;
 import agentgui.core.project.Project;
 import agentgui.envModel.graph.GraphGlobals;
-import agentgui.envModel.graph.controller.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
+import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 

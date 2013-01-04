@@ -281,7 +281,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		GraphEdge pickedEdge = ps.getEdge(this.getVisViewer().getGraphLayout(), position.getX(), position.getY());
 		
 		if (SwingUtilities.isRightMouseButton(me)) {
-			if(pickedNode == null && pickedEdge==null){		
+			if(pickedNode==null && pickedEdge==null){		
 				this.movePanelWithRightAction = true;
 				this.getVisViewer().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			} 
