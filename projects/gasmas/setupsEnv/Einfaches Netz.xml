@@ -7,8 +7,8 @@
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n0_0</graphElementIDs>
-                <graphElementIDs>n0_2</graphElementIDs>
                 <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>n0_2</graphElementIDs>
                 <graphElementIDs>n0_1</graphElementIDs>
                 <graphElementIDs>PP1</graphElementIDs>
                 <graphElementIDs>PP3</graphElementIDs>
@@ -23,8 +23,8 @@
             <value>
                 <agentClassName>gasmas.agents.components.ControlValveAgent</agentClassName>
                 <directed>true</directed>
-                <graphElementIDs>n5</graphElementIDs>
                 <graphElementIDs>PP9</graphElementIDs>
+                <graphElementIDs>n5</graphElementIDs>
                 <graphElementIDs>PP17</graphElementIDs>
                 <id>n5</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
@@ -47,6 +47,9 @@
         <entry>
             <key>n3</key>
             <value>
+                <dataModelsBase64>
+                    <dataModelBase64>PENvbXByZXNzb3IgSUQ9IlRlc3RlaW50cmFnIiBhbGlhcz0iVGVzdGVpbnRyYWcgZGVyIElJIiB0bz0iIiBmcm9tPSIiIGZsb3dEaXJlY3Rpb249InRydWUiIGludGVybmFsQnlwYXNzUmVxdWlyZWQ9InRydWUiIGRyYWdGYWN0b3JPdXQ9IjAuMEYiIHZhbHVlPSJmYWxzZSIgZ2FzQ29vbGVyRXhpc3Rpbmc9InRydWUiIGRyYWdGYWN0b3JJbj0iMC4wRiIgZnVlbEdhc1ZlcnRleD0iIj4KCTxmbG93TWluPgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9mbG93TWluPgoJPGN1cnJlbnRGbG93PgoJCTxGbG93UGFyYW1ldGVycyBmbHVpZFZlbG9jaXR5PSIwLjJGIiB0ZW1wZXJhdHVyZT0iMjczLjE1RiIgZmxvdz0iMC4xRiIgcHJlc3N1cmU9IjAuNEYiIHJleW5vbGRzTnVtYmVyPSI5OTkiIG1hc3NGbG93PSIwLjNGIi8+Cgk8L2N1cnJlbnRGbG93PgoJPGZsb3dNYXg+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L2Zsb3dNYXg+Cgk8ZGlhbWV0ZXJJbj4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvZGlhbWV0ZXJJbj4KCTxkaWFtZXRlck91dD4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvZGlhbWV0ZXJPdXQ+Cgk8cHJlc3N1cmVPdXRNYXg+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L3ByZXNzdXJlT3V0TWF4PgoJPGNvb2xlZE91dHB1dFRlbXBlcmF0dXJlPgoJCTxWYWx1ZVR5cGUgVW5pdD0iV8O8cnN0ZSIgVmFsdWU9IjEuNUYiLz4KCTwvY29vbGVkT3V0cHV0VGVtcGVyYXR1cmU+Cgk8cHJlc3N1cmVJbk1pbj4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvcHJlc3N1cmVJbk1pbj4KCTxwcmVzc3VyZUxvc3NJbj4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvcHJlc3N1cmVMb3NzSW4+Cgk8cHJlc3N1cmVMb3NzT3V0PgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9wcmVzc3VyZUxvc3NPdXQ+CjwvQ29tcHJlc3Nvcj4K</dataModelBase64>
+                </dataModelsBase64>
                 <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
                 <directed>true</directed>
                 <graphElementIDs>n3</graphElementIDs>
@@ -95,8 +98,8 @@
             <value>
                 <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>PP6</graphElementIDs>
                 <graphElementIDs>n6</graphElementIDs>
+                <graphElementIDs>PP6</graphElementIDs>
                 <graphElementIDs>PP15</graphElementIDs>
                 <id>n6</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>

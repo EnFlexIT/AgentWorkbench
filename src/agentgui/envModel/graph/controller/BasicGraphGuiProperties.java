@@ -106,7 +106,7 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 		this.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
 		
 		this.setTitle("NetworkComponent");
-		this.setSize(new Dimension(450, 450));
+		this.setSize(new Dimension(300, 450));
 		
 		this.configureForGraphObject();
 		this.setContentPane(getJContentPane());

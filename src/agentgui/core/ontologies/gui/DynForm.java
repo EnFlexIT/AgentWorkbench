@@ -93,7 +93,7 @@ public class DynForm extends JPanel {
 	private boolean emptyForm = true;
 	
 	// --- Based on this vector the display will be created ---------
-	private Vector<AgentStartArgument> currOnotologyClassReferenceList = new Vector<AgentStartArgument>();
+	private Vector<AgentStartArgument> currOntologyClassReferenceList = new Vector<AgentStartArgument>();
 	
 	// --- parameters which are coming from the constructor --------- 
 	private OntologyVisualisationHelper ontologyVisualisationHelper = null;
@@ -104,9 +104,10 @@ public class DynForm extends JPanel {
 	private int einrueckungProUntereEbene = 5;
 	private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Root");
 	private DefaultTreeModel objectTree = new DefaultTreeModel(rootNode);
+	private HashMap<DynType, DefaultMutableTreeNode> treeNodesByDynType = new HashMap<DynType, DefaultMutableTreeNode>();
+	
 	private Object[] ontoArgsInstance = null; 
 	private String[] ontoArgsXML = null; 
-	
 	
 	private NumberWatcher numWatcherFloat = new NumberWatcher(true);
 	private NumberWatcher numWatcherInteger = new NumberWatcher(false);
@@ -139,7 +140,7 @@ public class DynForm extends JPanel {
 				// --- Which classes are configured for the Agent? -- 
 				Vector<AgentStartArgument> startArgs = this.agentStartConfiguration.get(currAgentReference);
 				for (int i = 0; i < startArgs.size(); i++) {
-					currOnotologyClassReferenceList.add(startArgs.get(i));
+					this.currOntologyClassReferenceList.add(startArgs.get(i));
 				}
 
 				// --- Start building the GUI -----------------------
@@ -172,7 +173,7 @@ public class DynForm extends JPanel {
 			// --- Take that to the local Vector --------------------
 			for (int i = 0; i < ontologyClassReferences.length; i++) {
 				AgentStartArgument startArgument = new AgentStartArgument(i+1, ontologyClassReferences[i]);
-				this.currOnotologyClassReferenceList.add(startArgument);
+				this.currOntologyClassReferenceList.add(startArgument);
 			}
 
 			// --- Start building the GUI -----------------------
@@ -184,6 +185,42 @@ public class DynForm extends JPanel {
 			}
 			
 		}
+	}
+	
+	/**
+	 * Gets the object tree with all elements to display.
+	 * @return the object tree
+	 */
+	public DefaultTreeModel getObjectTree() {
+		return this.objectTree;
+	}
+	/**
+	 * Returns the HshMap of tree nodes by DynType.
+	 * @return the HshMap of tree nodes by DynType
+	 */
+	public HashMap<DynType, DefaultMutableTreeNode> getTreeNodesByDynType() {
+		if (this.treeNodesByDynType==null) {
+			this.treeNodesByDynType = new HashMap<DynType, DefaultMutableTreeNode>();
+			// TODO !!!
+		}
+		return this.treeNodesByDynType;
+	}
+	/**
+	 * Returns a tree node, specified by the user object ({@link DynType}).
+	 *
+	 * @param dynType the DynType
+	 * @return the object tree node
+	 */
+	public DefaultMutableTreeNode getTreeNodeByDynType(DynType dynType) {
+		return this.getTreeNodesByDynType().get(dynType);
+	}
+
+	/**
+	 * Gets the ontology class reference list.
+	 * @return the ontology class reference list
+	 */
+	public Vector<AgentStartArgument> getOntologyClassReferenceList() {
+		return this.currOntologyClassReferenceList;
 	}
 	
 	/**
@@ -201,13 +238,13 @@ public class DynForm extends JPanel {
 		int yPos = 0;
 		
 		// --- Maybe a debug print to the console ---------
-		if (debug==true && currOnotologyClassReferenceList.size()!=0) {
+		if (debug==true && currOntologyClassReferenceList.size()!=0) {
 			System.out.println("Creating GUI");	
 		}	
 		
 		// --- Iterate over the available Start-Objects ---
-		for (int i = 0; i < currOnotologyClassReferenceList.size(); i++) {
-			AgentStartArgument agentStartArgument = currOnotologyClassReferenceList.get(i); 
+		for (int i = 0; i < currOntologyClassReferenceList.size(); i++) {
+			AgentStartArgument agentStartArgument = currOntologyClassReferenceList.get(i); 
 			if (agentStartArgument!=null) {
 				
 				int startObjectPosition = agentStartArgument.getPosition(); 
@@ -1035,6 +1072,7 @@ public class DynForm extends JPanel {
 				DynType dynType = new DynType(null, DynType.typeClass, startObjectClass, parentPanel, startObjectClassName);
 				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
 				parentNode.add(newNode);
+				this.getTreeNodesByDynType().put(dynType, newNode);
 				parentNode = newNode;
 				
 			} else {
@@ -1169,6 +1207,7 @@ public class DynForm extends JPanel {
 		DynType dynType = new DynType(oscsd, DynType.typeInnerClassType, startObjectClassName, dataPanel, oscsd.getSlotName());
 		final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType);
 		parentNode.add(newNode);
+		this.getTreeNodesByDynType().put(dynType, newNode);
 		
 		// --- if the inner class has got a multi cardinality create an add-button		
 		if(oscsd.getSlotCardinality().equals("multiple")) {
@@ -1250,6 +1289,7 @@ public class DynForm extends JPanel {
 			XyWidget xyWidget = new XyWidget(this, startArgIndex);
 			xyWidget.setBounds(feBounds.x, feBounds.y, feBounds.width, xyWidget.getHeight());
 			parentPanel.add(xyWidget);
+
 		}
 		
 		this.setPanelBounds(parentPanel);
@@ -1321,6 +1361,7 @@ public class DynForm extends JPanel {
 		DynType dynType = new DynType(oscsd, DynType.typeRawType, oscsd.getSlotVarTypeCorrected(), dataPanel, oscsd.getSlotName(), valueDisplay);
 		final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dynType); 
 		parentNode.add(newNode);
+		this.getTreeNodesByDynType().put(dynType, newNode);
 
 		// --- if the inner class has got a multiple cardinality create an add-button
 		if(oscsd.getSlotCardinality().equals("multiple")) {
@@ -1421,7 +1462,7 @@ public class DynForm extends JPanel {
 	 * @param valueType the value type
 	 * @return the visual component
 	 */
-	private JComponent getVisualComponent(String valueType) {
+	public JComponent getVisualComponent(String valueType) {
 	
 		JComponent valueField = null;
 		if(valueType.equals("String")){
@@ -1547,8 +1588,10 @@ public class DynForm extends JPanel {
 		int movement = (deletePanel.getHeight() + 2) * (-1);
 		
 		// --- Remove node from the parent node and panel -------------------------------
+		DynType dyntype = (DynType) node.getUserObject();
 		node.setUserObject(null);
 		parentNode.remove(node);
+		this.getTreeNodesByDynType().remove(dyntype);
 		
 		// --- remove the panel from the parent -----------------------------------------
 		parentPanel.remove(deletePanel);

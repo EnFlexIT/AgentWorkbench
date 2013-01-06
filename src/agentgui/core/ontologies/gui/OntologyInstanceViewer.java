@@ -77,6 +77,7 @@ private static final long serialVersionUID = 6748263753769300242L;
 	private JScrollPane jScrollPaneDynForm = null;
 	private JScrollPane jScrollPaneTextVersion = null;
 	
+	private DynTableJPanel dynTablePanel = null;
 	private DynForm dynForm = null;
 	private JTextArea jTextArea = null;
 	
@@ -155,6 +156,9 @@ private static final long serialVersionUID = 6748263753769300242L;
 		this.setPreferredSize(new Dimension(150, 57));
 		this.setTabPlacement(JTabbedPane.BOTTOM);
 		
+		// --- Add the Table Tab --------------------------
+		this.addTab("Tabelle", getDynTableJPanel());
+		
 		// --- Add the Form Tab ---------------------------		
 		this.addTab("Formular", getJScrollPaneDynForm());
 		
@@ -167,8 +171,9 @@ private static final long serialVersionUID = 6748263753769300242L;
 		}
 
 		// --- Configure Translations ---------------------
-		this.setTitleAt(0, "  " + Language.translate("Formular") + "  ");
-		this.setTitleAt(1, "    " + Language.translate("XML") + "    ");
+		this.setTitleAt(0, "  " + Language.translate("Tabelle") + "   ");
+		this.setTitleAt(1, "  " + Language.translate("Formular") + "  ");
+		this.setTitleAt(2, "    " + Language.translate("XML") + "     ");
 		
 	}
 	
@@ -181,17 +186,23 @@ private static final long serialVersionUID = 6748263753769300242L;
 	@Override
 	public void setSelectedIndex(int index) {
 	
-		if (index==2) {
+		if (index==3) {
 			this.setEnlargedView();
 			
 		} else {
 			// --- Refresh the view to the data -----------
 			if (this.getSelectedIndex()==0) {
-				// --- Refresh XML-View --------------
+				// --- Refresh Table-View ------------
+				this.stopDynTableCellEditing();
 				this.save();
 				this.setXMLText();
 				
 			} else if (this.getSelectedIndex()==1) {
+				// --- Refresh XML-View --------------
+				this.save();
+				this.setXMLText();
+				
+			} else if (this.getSelectedIndex()==2) {
 				// --- Refresh Form-View -------------
 				String currConfigText = jTextArea.getText();
 				String [] currConfig = this.getXMLParts(currConfigText);
@@ -259,10 +270,10 @@ private static final long serialVersionUID = 6748263753769300242L;
 	 * @param allowEnlargement the new allow view enlargement
 	 */
 	public void setAllowViewEnlargement(boolean allowEnlargement) {
-		if (this.getTabCount()==3 && allowEnlargement==false) {
+		if (this.getTabCount()==4 && allowEnlargement==false) {
 			this.removeEnlargeTab();
 		}
-		if (this.getTabCount()<3 && allowEnlargement==true) {
+		if (this.getTabCount()<4 && allowEnlargement==true) {
 			this.addEnlargeTab();
 		}
 	}
@@ -387,7 +398,7 @@ private static final long serialVersionUID = 6748263753769300242L;
 	 */
 	private void addEnlargeTab() {
 		this.addTab("Vergrößern", getJPanelEnlarege());
-		this.setTabComponentAt(2, this.getJLabelTitleEnlarge());
+		this.setTabComponentAt(3, this.getJLabelTitleEnlarge());
 		this.jLabelTitleEnlarge.setText("  " + Language.translate("Vergrößern ...") + "  ");
 	}
 	
@@ -396,6 +407,24 @@ private static final long serialVersionUID = 6748263753769300242L;
 	 */
 	private void removeEnlargeTab() {
 		this.remove(jPanelEnlarege);
+	}
+	
+	/**
+	 * This method initialises dynTableJPanel.
+	 * @return the DynTableJPanel
+	 */
+	private DynTableJPanel getDynTableJPanel() {
+		if (dynTablePanel==null) {
+			dynTablePanel = new DynTableJPanel(this.getDynForm());
+		}
+		return dynTablePanel;
+	}
+	
+	/**
+	 * Stop the cell editing in the DynTable.
+	 */
+	private void stopDynTableCellEditing() {
+		this.getDynTableJPanel().stopDynTableCellEditing();
 	}
 	
 	/**
@@ -494,16 +523,23 @@ private static final long serialVersionUID = 6748263753769300242L;
 		
 		// --- Save configuration depending on the current view -----
 		if (this.getSelectedIndex()==0) {
-			// --- Form view ------------------------------
+			// --- Table view -----------------------------
+			this.stopDynTableCellEditing();
 			this.dynForm.save(true);
 			
 		} else if (this.getSelectedIndex()==1) {
+			// --- Form view ------------------------------
+			this.dynForm.save(true);
+			this.dynTablePanel.refreshTableModel();
+			
+		} else if (this.getSelectedIndex()==2) {
 			// --- XML view -------------------------------
 			String currConfigText = jTextArea.getText();
 			String [] currConfig = this.getXMLParts(currConfigText);
 			this.setConfigurationXML(currConfig);
 
 			this.dynForm.save(false);
+			this.dynTablePanel.refreshTableModel();
 		}
 		
 	}
