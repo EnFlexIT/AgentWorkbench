@@ -8,6 +8,12 @@
             <startAsName>NeMaAg</startAsName>
         </agent>
         <agent>
+            <postionNo>2</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>gasmas.agents.components.ClusterNetworkAgent</agentClassReference>
+            <startAsName>ClNeAg</startAsName>
+        </agent>
+        <agent>
             <postionNo>1</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>

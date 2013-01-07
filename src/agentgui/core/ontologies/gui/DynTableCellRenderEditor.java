@@ -54,6 +54,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import agentgui.core.ontologies.OntologySingleClassSlotDescription;
 import agentgui.core.project.AgentStartArgument;
 import agentgui.envModel.graph.GraphGlobals;
+import agentgui.ontology.TimeSeriesChart;
+import agentgui.ontology.XyChart;
 
 /**
  * The Class DynTableCellRenderer.
@@ -68,8 +70,9 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 	private DynTable dynTable = null;
 	private DynType dynType = null;  //  @jve:decl-index=0:
 	private boolean isSelected = false;
-	private int row = -1;
-
+	private int rowTable = -1;
+	private int rowModel = -1;
+	
 	private JPanel jPanelToDisplay = null;
 	private JComponent displayComponent = null;
 	private JButton jButtonMultipleOnDynForm = null;
@@ -92,12 +95,13 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 		this.dynTable = (DynTable) table;
 		this.dynType  = (DynType) value;
 		this.isSelected = isSelected;
-		this.row = row;
+		this.rowTable = row;
+		this.rowModel = table.convertRowIndexToModel(row);
 
 		if (column==0) {
-			return this.getFirstDisplay();
+			return this.getFirstColumnDisplay();
 		} else {
-			return this.getSecondDisplayAndEditPanel();	
+			return this.getSecondColumnDisplayAndEditPanel();	
 		}
 	}
 	
@@ -110,9 +114,10 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 		this.dynTable = (DynTable) table;
 		this.dynType  = (DynType) value;
 		this.isSelected = isSelected;
-		this.row = row;
-
-		return this.getSecondDisplayAndEditPanel();	
+		this.rowTable = row;
+		this.rowModel = table.convertRowIndexToModel(row);
+		
+		return this.getSecondColumnDisplayAndEditPanel();	
 		
 	}
 	
@@ -130,7 +135,7 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 	 * Gets the display for the first column (index=0).
 	 * @return the first display
 	 */
-	private JLabel getFirstDisplay() {
+	private JLabel getFirstColumnDisplay() {
 	
 		Vector<AgentStartArgument> classReferenceList = this.dynForm.getOntologyClassReferenceList();
 		
@@ -173,7 +178,7 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 		} else {
 			jLabelDisplay.setFont(new Font("Arial", Font.BOLD, 12));
 		}
-		GraphGlobals.Colors.setTableCellRendererColors(jLabelDisplay, this.row, this.isSelected);
+		GraphGlobals.Colors.setTableCellRendererColors(jLabelDisplay, this.rowTable, this.isSelected);
 		
 		return jLabelDisplay;
 	}
@@ -193,7 +198,7 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 	 * Gets the display and edit panel for the second column (index=0).
 	 * @return the display and edit panel
 	 */
-	private JPanel getSecondDisplayAndEditPanel() {
+	private JPanel getSecondColumnDisplayAndEditPanel() {
 		
 		this.jPanelToDisplay = new JPanel();
 		this.jPanelToDisplay.setLayout(new BorderLayout());
@@ -202,7 +207,7 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 		OntologySingleClassSlotDescription oscsd = this.dynType.getOntologySingleClassSlotDescription();
 
 		if (this.dynType.getTypeName().equals(DynType.typeRawType)) {
-			
+			// --- A field for the user input is needed -----------------------
 			this.displayComponent = this.dynForm.getVisualComponent(oscsd.getSlotVarType());
 			//this.displayComponent.setOpaque(true); // Here we have a Nimbus-bug and its workaround !!
 			this.displayComponent.setBorder(BorderFactory.createEmptyBorder());
@@ -211,26 +216,42 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 			this.setValueOfDisplayComponent(this.displayComponent);
 
 			this.jPanelToDisplay.add(this.displayComponent, BorderLayout.CENTER);
+		
+		} else {
+			// --- Are special classes for visualisation ? --------------------
+			String specialClassTitle=null;
+			if (this.dynType.getClassName().equals(TimeSeriesChart.class.getName())) {
+				specialClassTitle=TimeSeriesChart.class.getSimpleName();
+			} else if (this.dynType.getClassName().equals(XyChart.class.getName())) {
+				specialClassTitle=XyChart.class.getSimpleName();
+			} 
+
+			if (specialClassTitle!=null) {
+				this.displayComponent = this.getJButtonSpecialClass(this.dynType, specialClassTitle);
+				this.jPanelToDisplay.add(this.displayComponent, BorderLayout.CENTER);
+				this.dynTable.getEditableRowsVector().add(this.rowModel);	
+			}
+			
 		}
 		
 		// --- Multiple Button ? ----------------------------------------------
 		if (oscsd!=null) {
 			if (oscsd.isSlotCardinalityIsMultiple()) {
-				this.jPanelToDisplay.add(getJButtonTest(), BorderLayout.EAST);
+				this.jPanelToDisplay.add(getJButtonMultiple(), BorderLayout.EAST);
 				// --- Ensure that this cell is editable ----------------------
-				this.dynTable.getEditableRowsVector().add(this.row);
+				this.dynTable.getEditableRowsVector().add(this.rowModel);
 			}
 		}
 		
-		GraphGlobals.Colors.setTableCellRendererColors(this.jPanelToDisplay, this.row, this.isSelected);
+		GraphGlobals.Colors.setTableCellRendererColors(this.jPanelToDisplay, this.rowTable, this.isSelected);
 		return this.jPanelToDisplay;
 	}
 
 	/**
-	 * This method initializes jButtonTest	
+	 * This method initializes jButtonMultiple	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getJButtonTest() {
+	private JButton getJButtonMultiple() {
 			
 		JButton jButtonMultiple = null;
 		
@@ -262,18 +283,37 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 	}
 
 	/**
+	 * Gets the JButton for a special class like TimeSeries or XyChart.
+	 * @param text the text to set on the Button
+	 * @return the JButton for special class
+	 */
+	private JButton getJButtonSpecialClass(DynType dynTypeInstance, String text) {
+		
+		final DynType dynTypeCurrent = dynTypeInstance;
+		
+		JButton jButtonSpecialClass = new JButton();
+		jButtonSpecialClass.setFont(new Font("Arial", Font.BOLD, 11));
+		jButtonSpecialClass.setText(text);
+		jButtonSpecialClass.setToolTipText("Edit " + text + "");
+		jButtonSpecialClass.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dynTable.setSpecialClassVisible(dynTypeCurrent);
+			}
+		});
+		return jButtonSpecialClass;
+	}
+	
+	/**
 	 * Sets the value of display component.
 	 * @param displComponent the new valoe of display component
 	 */
 	private void setValueOfDisplayComponent(JComponent displayComponent) {
-		
 		JComponent dynFormComponent = this.dynType.getFieldDisplay();
 		if (displayComponent instanceof JTextField) {
 			((JTextField) displayComponent).setText(((JTextField) dynFormComponent).getText());
-			
 		} else if (displayComponent instanceof JCheckBox) {
 			((JCheckBox)displayComponent).setSelected(((JCheckBox)dynFormComponent).isSelected());
-			
 		}
 	}
 
@@ -282,14 +322,11 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 	 * @param displayComponent the current displayComponent
 	 */
 	private void setValueOfDynFormComponent(JComponent displayComponent) {
-
 		JComponent dynFormComponent = this.dynType.getFieldDisplay();
 		if (displayComponent instanceof JTextField) {
 			((JTextField) dynFormComponent).setText(((JTextField) displayComponent).getText());
-			
 		} else if (displayComponent instanceof JCheckBox) {
 			((JCheckBox)dynFormComponent).setSelected(((JCheckBox)displayComponent).isSelected());
-			
 		}
 	}
 	

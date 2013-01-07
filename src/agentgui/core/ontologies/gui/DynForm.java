@@ -104,7 +104,7 @@ public class DynForm extends JPanel {
 	private int einrueckungProUntereEbene = 5;
 	private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Root");
 	private DefaultTreeModel objectTree = new DefaultTreeModel(rootNode);
-	private HashMap<DynType, DefaultMutableTreeNode> treeNodesByDynType = new HashMap<DynType, DefaultMutableTreeNode>();
+	private HashMap<DynType, DefaultMutableTreeNode> treeNodesByDynType = null;
 	
 	private Object[] ontoArgsInstance = null; 
 	private String[] ontoArgsXML = null; 
@@ -112,7 +112,7 @@ public class DynForm extends JPanel {
 	private NumberWatcher numWatcherFloat = new NumberWatcher(true);
 	private NumberWatcher numWatcherInteger = new NumberWatcher(false);
 	
-	private HashMap<DefaultMutableTreeNode, Object> userFormElements = new HashMap<DefaultMutableTreeNode, Object>();
+	private HashMap<DefaultMutableTreeNode, JComponent> userFormElements = null;
 
 	
 	/**
@@ -194,6 +194,26 @@ public class DynForm extends JPanel {
 	public DefaultTreeModel getObjectTree() {
 		return this.objectTree;
 	}
+	
+	/**
+	 * Returns the form components for all current special Agent.GUI class.
+	 * @return the HashMap<DefaultMutableTreeNode, JComponent>
+	 */
+	public HashMap<DefaultMutableTreeNode, JComponent> getFormComponents4AgentGUISpecialClass() {
+		if (this.userFormElements==null) {
+			this.userFormElements = new HashMap<DefaultMutableTreeNode, JComponent>();
+		}
+		return this.userFormElements;
+	}
+	/**
+	 * Returns the form component for a special Agent.GUI class.
+	 * @param node the current node
+	 * @return the corresponding JComponent 
+	 */
+	public JComponent getFormComponent4AgentGUISpecialClass(DefaultMutableTreeNode node) {
+		return this.getFormComponents4AgentGUISpecialClass().get(node);
+	}
+	
 	/**
 	 * Returns the HshMap of tree nodes by DynType.
 	 * @return the HshMap of tree nodes by DynType
@@ -201,7 +221,6 @@ public class DynForm extends JPanel {
 	public HashMap<DynType, DefaultMutableTreeNode> getTreeNodesByDynType() {
 		if (this.treeNodesByDynType==null) {
 			this.treeNodesByDynType = new HashMap<DynType, DefaultMutableTreeNode>();
-			// TODO !!!
 		}
 		return this.treeNodesByDynType;
 	}
@@ -658,8 +677,7 @@ public class DynForm extends JPanel {
 		// ----------------------------------------------------------->
 		
 		if (object instanceof TimeSeriesChart) {
-			
-			Object userFormElement = this.userFormElements.get(node);
+			JComponent userFormElement = this.getFormComponents4AgentGUISpecialClass().get(node);
 			if (userFormElement!=null) {
 				final TimeSeriesWidget tsWidget = (TimeSeriesWidget) userFormElement;
 				final TimeSeriesChart tsChart = (TimeSeriesChart) object;
@@ -672,7 +690,7 @@ public class DynForm extends JPanel {
 			}
 			
 		} else if (object instanceof XyChart) {
-			Object userFormElement = this.userFormElements.get(node);
+			JComponent userFormElement = this.getFormComponents4AgentGUISpecialClass().get(node);
 			if (userFormElement!=null) {
 				final XyWidget xyWidget = (XyWidget) userFormElement;
 				final XyChart xyChart = (XyChart) object;
@@ -1263,15 +1281,15 @@ public class DynForm extends JPanel {
 	 * Creates the outer element for a Agent.GUI special class.
 	 *
 	 * @param specialClass the special class
-	 * @param parentNode the parent node
+	 * @param curentNode the parent node
 	 * @param parentPanel the parent panel
 	 */
-	private void createOuterElement4AgentGUISpecialClass(int startArgIndex, Object specialClass, DefaultMutableTreeNode parentNode, JPanel parentPanel){
+	private void createOuterElement4AgentGUISpecialClass(int startArgIndex, Object specialClass, DefaultMutableTreeNode curentNode, JPanel parentPanel){
 		
 		// ------------------------------------------------------------------------------
 		// --- Make all of the created panels invisible and reduce their height ---------
 		// ------------------------------------------------------------------------------
-		Rectangle feBounds = this.setJPanelInvisibleAndSmall(parentNode);
+		Rectangle feBounds = this.setJPanelInvisibleAndSmall(curentNode);
 		
 		// ------------------------------------------------------------------------------
 		// --- Show the widget for the special type -------------------------------------
@@ -1279,17 +1297,18 @@ public class DynForm extends JPanel {
 		if (specialClass instanceof TimeSeriesChart) {
 			// --- A TimeSeries has to be displayed -----------------
 			TimeSeriesWidget tsWidget = new TimeSeriesWidget(this, startArgIndex);
-			tsWidget.setBounds(feBounds.x, feBounds.y, feBounds.width, tsWidget.getHeight());
+			tsWidget.setBounds(feBounds.x, feBounds.y, tsWidget.getWidth(), tsWidget.getHeight());
 			parentPanel.add(tsWidget);
 			
-			this.userFormElements.put(parentNode, tsWidget);
+			this.getFormComponents4AgentGUISpecialClass().put(curentNode, tsWidget);
 			
 		} else if (specialClass instanceof XyChart) {
 			// --- A XY-Chart has to be displayed -------------------
 			XyWidget xyWidget = new XyWidget(this, startArgIndex);
-			xyWidget.setBounds(feBounds.x, feBounds.y, feBounds.width, xyWidget.getHeight());
+			xyWidget.setBounds(feBounds.x, feBounds.y, xyWidget.getWidth(), xyWidget.getHeight());
 			parentPanel.add(xyWidget);
-
+			
+			this.getFormComponents4AgentGUISpecialClass().put(curentNode, xyWidget);
 		}
 		
 		this.setPanelBounds(parentPanel);

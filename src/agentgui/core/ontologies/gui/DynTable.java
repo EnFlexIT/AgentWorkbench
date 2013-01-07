@@ -30,12 +30,21 @@ package agentgui.core.ontologies.gui;
 
 import java.util.Vector;
 
+import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+
+import agentgui.core.charts.timeseriesChart.gui.TimeSeriesWidget;
+import agentgui.core.charts.xyChart.gui.XyWidget;
+import agentgui.ontology.Chart;
+import agentgui.ontology.TimeSeriesChart;
+import agentgui.ontology.XyChart;
 
 /**
  * The Class DynTable.
@@ -46,10 +55,12 @@ public class DynTable extends JTable {
 
 	private static final long serialVersionUID = 2625919645764324098L;
 
+	private DynTableJPanel dynTableJPanel = null;
 	private DynForm dynForm = null;
 	private DefaultTableModel tabelModel = null;
 	
 	private int rowCounter = 0;
+	private TableRowSorter<DefaultTableModel> rowSorter = null; 
 	private Vector<Integer> editableRows = null;
 	
 	
@@ -57,12 +68,16 @@ public class DynTable extends JTable {
 	 * Instantiates a new DynTable.
 	 * @param dynForm the current DynForm
 	 */
-	public DynTable(DynForm dynForm) {
+	public DynTable(DynForm dynForm, DynTableJPanel dynTableJPanel) {
 		super();
 		this.dynForm = dynForm;
+		this.dynTableJPanel = dynTableJPanel;
 		this.initialize();
 	}
-	/** Initialize this. */
+	
+	/** 
+	 * Initialize this. 
+	 */
 	private void initialize() {
 		this.setSize(200, 200);
 		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -77,8 +92,14 @@ public class DynTable extends JTable {
 		this.rowCounter=0;
 		this.tabelModel=null;
 		this.getEditableRowsVector().removeAllElements();
-		this.setModel(this.getTableModel());	
 		
+		this.setModel(this.getTableModel());	
+		this.setRowSorter(this.getMyRowSorter());
+		this.setFilterInvisibleSlots();
+		
+		this.getTableHeader().setReorderingAllowed(false);
+		
+		// --- Set Renderer, Editors and layout -----------
 		TableColumn propColumn = this.getColumnModel().getColumn(0);
 		propColumn.setCellRenderer(new DynTableCellRenderEditor(this.dynForm));
 		
@@ -86,8 +107,8 @@ public class DynTable extends JTable {
 		valueColumn.setCellEditor(new DynTableCellRenderEditor(this.dynForm));
 		valueColumn.setCellRenderer(new DynTableCellRenderEditor(this.dynForm));
 		
-		this.getColumnModel().getColumn(0).setPreferredWidth(180);
-		this.getColumnModel().getColumn(1).setPreferredWidth(120);
+		this.getColumnModel().getColumn(0).setPreferredWidth(170);
+		this.getColumnModel().getColumn(1).setPreferredWidth(60);
 		
 	}
 	
@@ -121,6 +142,32 @@ public class DynTable extends JTable {
 	}
 	
 	/**
+	 * Gets the local RowSorter for the table.
+	 * @return the local RowSorter
+	 */
+	public TableRowSorter<DefaultTableModel> getMyRowSorter() {
+		if (rowSorter==null) {
+			rowSorter = new TableRowSorter<DefaultTableModel>(this.getTableModel()) {
+				public void toggleSortOrder(int column) {};
+			};
+		}
+		return rowSorter;
+	}
+	
+	/**
+	 * Sets the filter so that invisible declared slots disappear.
+	 */
+	public void setFilterInvisibleSlots() {
+		RowFilter<DefaultTableModel, Integer> rowFilter = new RowFilter<DefaultTableModel, Integer>(){
+			@Override
+			public boolean include(Entry<? extends DefaultTableModel, ? extends Integer> entry) {
+				return ((DynType) entry.getValue(0)).isVisibleInTableView();
+			};
+		};
+		this.getMyRowSorter().setRowFilter(rowFilter);
+	}
+
+	/**
 	 * Gets the editable rows vector.
 	 * @return the editable rows vector
 	 */
@@ -141,27 +188,43 @@ public class DynTable extends JTable {
 		DefaultTreeModel objectTree = this.dynForm.getObjectTree();
 		DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) objectTree.getRoot();
 		
-		Vector<Object> rows = this.getChildNodeVector(rootNode);
+		Vector<Object> rows = this.getChildNodeVector(rootNode, true);
 		dataVector.addAll(rows);
 		
 		return dataVector;
 	}
 	
-	
 	/**
 	 * Gets the child node vector.
 	 * @return the child node vector
 	 */
-	private Vector<Object> getChildNodeVector(DefaultMutableTreeNode parentNode) {
+	private Vector<Object> getChildNodeVector(DefaultMutableTreeNode parentNode, boolean visibleInTableView) {
 		
 		Vector<Object> childVector = new Vector<Object>();
+		boolean childNodesVisible = true;
 		for (int i=0; i<parentNode.getChildCount(); i++) {
 
 			// --------------------------------------------
 			// --- Create data row for this node ----------
 			DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) parentNode.getChildAt(i);
 			DynType dynType = (DynType) childNode.getUserObject();
-
+			dynType.setVisibleInTableView(visibleInTableView);
+			
+			if (visibleInTableView==true) {
+				// --- Are child slots visible in the table ---
+				if (dynType.getClassName().equals(TimeSeriesChart.class.getName())) {
+					childNodesVisible = false;
+				} else if (dynType.getClassName().equals(XyChart.class.getName())) {
+					childNodesVisible = false;
+				} else {
+					childNodesVisible = true;
+				}
+				
+			} else {
+				// --- nodes and sub node are invisible ---
+				childNodesVisible = visibleInTableView;
+			}
+			
 			// --- Create data row ------------------------
 			Vector<Object> dataRow = new Vector<Object>();			
 			dataRow.add(dynType);
@@ -180,11 +243,41 @@ public class DynTable extends JTable {
 			// --- Add the Child nodes, if available ------
 			if (childNode.getChildCount()!=0) {
 				// --- get child nodes first --------------
-				childVector.addAll(this.getChildNodeVector(childNode));
+				childVector.addAll(this.getChildNodeVector(childNode, childNodesVisible));
 			}
 			
 		}
 		return childVector;
+	}
+	
+	/**
+	 * Sets the special class visible.
+	 * @param dynTyp the new special class visible
+	 */
+	public void setSpecialClassVisible(DynType dynType) {
+		
+		DefaultMutableTreeNode currNode = this.dynForm.getTreeNodeByDynType(dynType);;
+		JComponent comp = this.dynForm.getFormComponent4AgentGUISpecialClass(currNode);
+		Chart chart = null; 
+			
+		if (comp instanceof TimeSeriesWidget) {
+			TimeSeriesWidget tsw = (TimeSeriesWidget) comp;
+			chart = tsw.getChart();
+			
+		} else if (comp instanceof XyWidget) {
+			XyWidget xyw = (XyWidget) comp;
+			chart = xyw.getChart();
+		}
+		
+		if (chart==null) {
+			
+		} else {
+			System.out.println(chart.toString());
+			System.out.println(dynType.getClassName());	
+		}
+		
+		this.dynTableJPanel.setSpecialClassVisible(true);
+		
 	}
 	
 }

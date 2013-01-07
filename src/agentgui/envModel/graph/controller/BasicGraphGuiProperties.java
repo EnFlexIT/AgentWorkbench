@@ -45,6 +45,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.GraphGlobals;
@@ -104,9 +105,11 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 		
 		this.setClosable(true);
 		this.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
+		this.setTitle("Component");
+		this.setSize(new Dimension(230, 450));
 		
-		this.setTitle("NetworkComponent");
-		this.setSize(new Dimension(300, 450));
+		BasicInternalFrameUI ui = (BasicInternalFrameUI)this.getUI();
+		ui.getNorthPane().remove(0);
 		
 		this.configureForGraphObject();
 		this.setContentPane(getJContentPane());
@@ -185,7 +188,7 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 		this.graphController.notifyObservers(nmn);
 
 		// --- Some layout stuff ----------------------------------- 
-		this.setTitle("Network Component: " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")");
+		this.setTitle("Comp.: " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")");
 
 	}
 	

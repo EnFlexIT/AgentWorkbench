@@ -34,11 +34,8 @@ import agentgui.core.charts.gui.ChartDialog;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.ontology.TimeSeriesChart;
 
-public class TimeSeriesChartDialog extends ChartDialog{
+public class TimeSeriesChartDialog extends ChartDialog {
 
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = -2712116890492352158L;
 	
 	/**

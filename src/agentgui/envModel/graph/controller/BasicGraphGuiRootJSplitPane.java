@@ -407,6 +407,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    jTableComponents.setCellSelectionEnabled(true);
 		    jTableComponents.setShowGrid(false);
 		    jTableComponents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		    jTableComponents.getTableHeader().setReorderingAllowed(false);
 		    
 		    jTableComponents.getModel().addTableModelListener(this);
 		    jTableComponents.getSelectionModel().addListSelectionListener(this);

@@ -86,7 +86,7 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         
-        this.setSize(new Dimension(500, 250));
+        this.setSize(new Dimension(315, 250));
         this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
         
         this.setLayout(new GridBagLayout());
@@ -113,10 +113,10 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 	 * Gets the time series chart dialog.
 	 * @return the time series chart dialog
 	 */
-	private agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartDialog getTimeSeriesChartDialog() {
+	private TimeSeriesChartDialog getTimeSeriesChartDialog() {
 		if (this.tscd==null) {
 //			this.tscd = new TimeSeriesChartDialog(SwingUtilities.getWindowAncestor(this), this.currTimeSeries);
-			this.tscd = new agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartDialog(SwingUtilities.getWindowAncestor(this), this.currChart);
+			this.tscd = new TimeSeriesChartDialog(SwingUtilities.getWindowAncestor(this), this.currChart);
 		}
 		return this.tscd;
 	}

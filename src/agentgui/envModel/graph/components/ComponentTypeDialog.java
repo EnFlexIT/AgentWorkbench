@@ -626,6 +626,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jTableDomainTypes.setModel(getTableModel4Domains());
 			jTableDomainTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jTableDomainTypes.setAutoCreateRowSorter(true);
+			jTableDomainTypes.getTableHeader().setReorderingAllowed(false);
 			
 			// --- Define the sorter ----------------------
 			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(getTableModel4Domains());
@@ -924,6 +925,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jTableComponentTypes.setModel(getTableModel4ComponentTypes());
 			jTableComponentTypes.setAutoCreateRowSorter(true);
 			jTableComponentTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jTableComponentTypes.getTableHeader().setReorderingAllowed(false);
 			
 			// --- Define the sorter ------------------------------------------
 			TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(getTableModel4ComponentTypes());

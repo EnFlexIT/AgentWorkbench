@@ -56,6 +56,7 @@ public class DynType {
 	private JPanel panel = null;
 	private JComponent fieldDisplay = null;
 	
+	private boolean visibleInTableView = true;
 	
 	/**
 	 * Instantiates a new DynType.
@@ -228,28 +229,39 @@ public class DynType {
 
 	/**
 	 * Checks if is class.
-	 *
 	 * @return true, if is class
 	 */
 	public boolean isClass(){
 		return typeName.equalsIgnoreCase(typeClass);
 	}
-	
 	/**
 	 * Checks if is inner class type.
-	 *
 	 * @return true, if is inner class type
 	 */
 	public boolean isInnerClassType(){
 		return typeName.equalsIgnoreCase(typeInnerClassType);
 	}
-	
 	/**
 	 * Checks if is raw type.
-	 *
 	 * @return true, if is raw type
 	 */
 	public boolean isRawType(){
 		return typeName.equalsIgnoreCase(typeRawType);
 	}
+
+	/**
+	 * Sets the visibility for the table view.
+	 * @param visible the new visible in table view
+	 */
+	public void setVisibleInTableView(boolean visible) {
+		this.visibleInTableView = visible;
+	}
+	/**
+	 * Checks if is visible in table view.
+	 * @return true, if is visible in table view
+	 */
+	public boolean isVisibleInTableView() {
+		return visibleInTableView;
+	}
+	
 }
