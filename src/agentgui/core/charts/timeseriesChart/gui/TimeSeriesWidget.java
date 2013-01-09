@@ -43,7 +43,6 @@ import agentgui.core.application.Language;
 import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
 import agentgui.core.ontologies.gui.DynForm;
 import agentgui.core.ontologies.gui.OntologyClassWidget;
-import agentgui.ontology.Chart;
 import agentgui.ontology.TimeSeriesChart;
 
 /**
