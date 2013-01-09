@@ -43,6 +43,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -62,9 +63,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.charts.timeseriesChart.gui.TimeSeriesWidget;
-import agentgui.core.charts.xyChart.gui.XyWidget;
 import agentgui.core.ontologies.OntologyClassTree;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologySingleClassDescription;
@@ -74,8 +74,6 @@ import agentgui.core.project.AgentStartArgument;
 import agentgui.core.project.AgentStartConfiguration;
 import agentgui.ontology.Chart;
 import agentgui.ontology.Formula;
-import agentgui.ontology.TimeSeriesChart;
-import agentgui.ontology.XyChart;
 
 /**
  * This class can be used in order to generate a Swing based user form, that represents
@@ -675,34 +673,19 @@ public class DynForm extends JPanel {
 		// --- Capture special classes, which are coming from the ----
 		// --- Agent.GUI Base ontology							  ----
 		// ----------------------------------------------------------->
-		
-		if (object instanceof TimeSeriesChart) {
+		if (Application.getGlobalInfo().isOntologyClassVisualisation(object)) {
 			JComponent userFormElement = this.getFormComponents4AgentGUISpecialClass().get(node);
 			if (userFormElement!=null) {
-				final TimeSeriesWidget tsWidget = (TimeSeriesWidget) userFormElement;
-				final TimeSeriesChart tsChart = (TimeSeriesChart) object;
+				final OntologyClassWidget widget = (OntologyClassWidget) userFormElement;
+				final Object objectInstance = object;
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						tsWidget.setChart(tsChart);
-					}
-				});
-			}
-			
-		} else if (object instanceof XyChart) {
-			JComponent userFormElement = this.getFormComponents4AgentGUISpecialClass().get(node);
-			if (userFormElement!=null) {
-				final XyWidget xyWidget = (XyWidget) userFormElement;
-				final XyChart xyChart = (XyChart) object;
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						xyWidget.setChart(xyChart);
+						widget.setOntologyClassInstance(objectInstance);
 					}
 				});
 			}
 		}
-		
 		
 	}
 	
@@ -1294,23 +1277,50 @@ public class DynForm extends JPanel {
 		// ------------------------------------------------------------------------------
 		// --- Show the widget for the special type -------------------------------------
 		// ------------------------------------------------------------------------------
-		if (specialClass instanceof TimeSeriesChart) {
-			// --- A TimeSeries has to be displayed -----------------
-			TimeSeriesWidget tsWidget = new TimeSeriesWidget(this, startArgIndex);
-			tsWidget.setBounds(feBounds.x, feBounds.y, tsWidget.getWidth(), tsWidget.getHeight());
-			parentPanel.add(tsWidget);
+		if (Application.getGlobalInfo().isOntologyClassVisualisation(specialClass)) {
 			
-			this.getFormComponents4AgentGUISpecialClass().put(curentNode, tsWidget);
+			OntologyClassVisualisation ontoClassVis = Application.getGlobalInfo().getOntologyClassVisualisation(specialClass);
+			Class<? extends OntologyClassWidget> widgetClass = ontoClassVis.getWidgetClass();
+			OntologyClassWidget widget = null;
 			
-		} else if (specialClass instanceof XyChart) {
-			// --- A XY-Chart has to be displayed -------------------
-			XyWidget xyWidget = new XyWidget(this, startArgIndex);
-			xyWidget.setBounds(feBounds.x, feBounds.y, xyWidget.getWidth(), xyWidget.getHeight());
-			parentPanel.add(xyWidget);
+			try {
+				Class<?>[] conParameter = new Class[2];
+				conParameter[0] = DynForm.class;
+				conParameter[1] = int.class;
+				
+				// --- Get the constructor ------------------------------	
+				Constructor<?> widgetConstructor = widgetClass.getConstructor(conParameter);
+	
+				// --- Define the argument for the newInstance call ----- 
+				Object[] args = new Object[2];
+				args[0] = this;
+				args[1] = startArgIndex;
+					
+				widget = (OntologyClassWidget) widgetConstructor.newInstance(args);
+
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+
+			if (widget!=null) {
+				
+				widget.setBounds(feBounds.x, feBounds.y, widget.getWidth(), widget.getHeight());
+				parentPanel.add(widget);
+				
+				this.getFormComponents4AgentGUISpecialClass().put(curentNode, widget);
+			}
 			
-			this.getFormComponents4AgentGUISpecialClass().put(curentNode, xyWidget);
 		}
-		
 		this.setPanelBounds(parentPanel);
 	}
 	

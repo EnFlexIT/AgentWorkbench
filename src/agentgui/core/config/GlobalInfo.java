@@ -35,16 +35,20 @@ import jade.wrapper.AgentContainer;
 import java.awt.Color;
 import java.io.File;
 import java.util.HashSet;
+import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.benchmark.BenchmarkMeasurement;
+import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
+import agentgui.core.charts.xyChart.XyChartVisualisation;
 import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.environment.EnvironmentTypes;
 import agentgui.core.jade.Platform;
 import agentgui.core.network.JadeUrlChecker;
+import agentgui.core.ontologies.gui.OntologyClassVisualisation;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
@@ -106,7 +110,10 @@ public class GlobalInfo {
 	private static String localFileJade = "jade.jar";
 	
 	// --- Known EnvironmentTypes of Agent.GUI ------------------------------
-	private EnvironmentTypes knowEnvironmentTypes =  new EnvironmentTypes();
+	private EnvironmentTypes knownEnvironmentTypes =  new EnvironmentTypes();
+	
+	// --- Known OntologyClassVisualisation's of Agent.GUI ------------------
+	private Vector<OntologyClassVisualisation> knownOntologyClassVisualisation = null;
 	
 	// --- File-Properties --------------------------------------------------
 	private boolean filePropRunAsServer = false;
@@ -243,6 +250,11 @@ public class GlobalInfo {
 		displayAgentClass = DisplayAgent.class;
 		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
 		addEnvironmentType(envType);
+		
+		// ------------------------------------------------------------------
+		// --- Add the known OntologyClassVisualisation's of Agent.GUI ------
+		this.registerOntologyClassVisualisation(new TimeSeriesVisualisation());
+		this.registerOntologyClassVisualisation(new XyChartVisualisation());
 		
 	}
 	/**
@@ -1069,7 +1081,9 @@ public class GlobalInfo {
 		return returnFolder;
 	}
 	
-	// ---- Methods for EnvironmentTypes ----------------------------
+	// -------------------------------------------------------------------------
+	// ---- Methods for EnvironmentTypes ---------------------------------------
+	// -------------------------------------------------------------------------
 	/**
 	 * This method can be used in order to define the predefined environment types of Agent.GUI
 	 * @param knownEnvironmentTypes the knowEnvironmentTypes to set
@@ -1077,7 +1091,7 @@ public class GlobalInfo {
 	 * @see EnvironmentTypes
 	 */
 	public void setKnownEnvironmentTypes(EnvironmentTypes knownEnvironmentTypes) {
-		this.knowEnvironmentTypes = knownEnvironmentTypes;
+		this.knownEnvironmentTypes = knownEnvironmentTypes;
 	}
 	/**
 	 * This method returns all EnvironmentTypes known by Agent.GUI 
@@ -1086,7 +1100,7 @@ public class GlobalInfo {
 	 * @see EnvironmentTypes
 	 */
 	public EnvironmentTypes getKnownEnvironmentTypes() {
-		return knowEnvironmentTypes;
+		return knownEnvironmentTypes;
 	}
 	/**
 	 * This method can be used in order to add a tailored environment type
@@ -1095,7 +1109,7 @@ public class GlobalInfo {
 	 * @see EnvironmentType
 	 */
 	public void addEnvironmentType(EnvironmentType envType ) {
-		this.knowEnvironmentTypes.add(envType);
+		this.knownEnvironmentTypes.add(envType);
 	}
 	/**
 	 * This method can be used in order to remove a tailored environment type
@@ -1103,7 +1117,7 @@ public class GlobalInfo {
 	 * @see EnvironmentType
 	 */
 	public void removeEnvironmentType(EnvironmentType envType) {
-		this.knowEnvironmentTypes.remove(envType);
+		this.knownEnvironmentTypes.remove(envType);
 	}
 	/**
 	 * This method can be used in order to remove a tailored environment type
@@ -1111,10 +1125,101 @@ public class GlobalInfo {
 	 * @see EnvironmentType
 	 */
 	public void removeEnvironmentType(String envTypeKey) {
-		EnvironmentType envType = this.knowEnvironmentTypes.getEnvironmentTypeByKey(envTypeKey);
+		EnvironmentType envType = this.knownEnvironmentTypes.getEnvironmentTypeByKey(envTypeKey);
 		this.removeEnvironmentType(envType);
 	}
-
+	
+	// -------------------------------------------------------------------------
+	// ---- Methods for OntologyClassVisualisations ----------------------------
+	// -------------------------------------------------------------------------
+	/**
+	 * Register ontology class visualisation.
+	 * @param ontoClassVisualisation the onto class visualisation
+	 */
+	public void registerOntologyClassVisualisation (OntologyClassVisualisation ontoClassVisualisation) {
+		this.getKnownOntologyClassVisualisations().add(ontoClassVisualisation);
+	}
+	/**
+	 * Returns the known ontology class visualisations.
+	 * @return the Vector of known ontology class visualisations
+	 */
+	public Vector<OntologyClassVisualisation> getKnownOntologyClassVisualisations() {
+		if (knownOntologyClassVisualisation==null) {
+			knownOntologyClassVisualisation = new Vector<OntologyClassVisualisation>();
+		}
+		return knownOntologyClassVisualisation;
+	}
+	/**
+	 * Checks if a given object can be visualized by a special OntologyClassVisualisation.
+	 *
+	 * @param checkObject the object to check
+	 * @return true, if the given Object is ontology class visualisation
+	 */
+	public boolean isOntologyClassVisualisation(Object checkObject) {
+		
+		if (checkObject==null) return false;
+		
+		Class<?> checkObjectClass = checkObject.getClass();
+		boolean isVisClass = false;
+		
+		Vector<OntologyClassVisualisation> ontoClassViss = this.getKnownOntologyClassVisualisations();
+		for (int i=0; i<ontoClassViss.size(); i++) {
+			OntologyClassVisualisation ontoClassVis = ontoClassViss.get(i);
+			Class<?> visClass = ontoClassVis.getOntologyClass();
+			if (visClass==checkObjectClass) {
+				isVisClass=true;
+				break;
+			}
+		}
+		return isVisClass;
+	}
+	/**
+	 * Checks if a given object can be visualized by a special OntologyClassVisualisation.
+	 *
+	 * @param checkObject the object to check
+	 * @return true, if the given className is ontology class visualisation
+	 */
+	public boolean isOntologyClassVisualisation(String className) {
+		
+		boolean isVisClass = false;
+		
+		Vector<OntologyClassVisualisation> ontoClassViss = this.getKnownOntologyClassVisualisations();
+		for (int i=0; i<ontoClassViss.size(); i++) {
+			OntologyClassVisualisation ontoClassVis = ontoClassViss.get(i);
+			String visClassName = ontoClassVis.getOntologyClass().getName();
+			if (visClassName.equals(className)) {
+				isVisClass=true;
+				break;
+			}
+		}
+		return isVisClass;
+	}
+	/**
+	 * Returns the OntologyClassVisualisation for a given object.
+	 *
+	 * @param checkObject the check object
+	 * @return the ontology class visualisation
+	 */
+	public OntologyClassVisualisation getOntologyClassVisualisation(Object checkObject) {
+		
+		OntologyClassVisualisation ontoClassVisFound = null;
+		Class<?> checkObjectClass = checkObject.getClass();
+		
+		Vector<OntologyClassVisualisation> ontoClassViss = this.getKnownOntologyClassVisualisations();
+		for (int i=0; i<ontoClassViss.size(); i++) {
+			OntologyClassVisualisation ontoClassVis = ontoClassViss.get(i);
+			Class<?> visClass = ontoClassVis.getOntologyClass();
+			if (visClass==checkObjectClass) {
+				ontoClassVisFound=ontoClassVis;
+				break;
+			}
+		}
+		return ontoClassVisFound;
+	}
+	
+	// -------------------------------------------------------------------------
+	// ---- Methods for the API Key for the Google Tranlation ------------------
+	// -------------------------------------------------------------------------
 	/**
 	 * Returns the API key for Google.
 	 * @return the API key for Google

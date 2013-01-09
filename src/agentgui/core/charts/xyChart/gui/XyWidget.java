@@ -28,7 +28,6 @@
  */
 package agentgui.core.charts.xyChart.gui;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -37,30 +36,24 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Language;
 import agentgui.core.charts.xyChart.XyOntologyModel;
 import agentgui.core.ontologies.gui.DynForm;
-import agentgui.ontology.Chart;
+import agentgui.core.ontologies.gui.OntologyClassWidget;
 import agentgui.ontology.XyChart;
 
-public class XyWidget extends JPanel implements ActionListener {
+public class XyWidget extends OntologyClassWidget implements ActionListener {
 
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = -9148282428244484633L;
 	
-	private DynForm dynForm = null;  //  @jve:decl-index=0:
-	private int startArgIndex = -1;
-	
 	private XyChart currChart = null;  //  @jve:decl-index=0:
-	private agentgui.core.charts.xyChart.gui.XyChartDialog xycd = null;
+	private XyChartDialog xycd = null;
 	
 	private JButton jButtonEdit = null;
+	
 	
 	/**
 	 * Instantiates a new xy widget.
@@ -69,9 +62,7 @@ public class XyWidget extends JPanel implements ActionListener {
 	 * @param startArgIndex the current start argument index
 	 */
 	public XyWidget(DynForm dynForm, int startArgIndex) {
-		super();
-		this.dynForm = dynForm;
-		this.startArgIndex = startArgIndex;
+		super(dynForm, startArgIndex);
 		initialize();
 	}
 	
@@ -84,7 +75,6 @@ public class XyWidget extends JPanel implements ActionListener {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         
-        this.setSize(new Dimension(315, 250));
         this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
         
         this.setLayout(new GridBagLayout());
@@ -111,19 +101,20 @@ public class XyWidget extends JPanel implements ActionListener {
 	 * Gets the xy chart dialog.
 	 * @return the xy chart dialog
 	 */
-	private agentgui.core.charts.xyChart.gui.XyChartDialog getXyChartDialog() {
+	private XyChartDialog getXyChartDialog() {
 		if (this.xycd==null) {
-			this.xycd = new agentgui.core.charts.xyChart.gui.XyChartDialog(SwingUtilities.getWindowAncestor(this), this.currChart);
+			this.xycd = new XyChartDialog(SwingUtilities.getWindowAncestor(this), this.currChart);
 		}
 		return this.xycd;
 	}
 	
-	/**
-	 * Sets the xy series.
-	 * @param chart the new Chart
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.timeseriesChart.gui.OntologyClassWidget#setOntologyClassInstance(java.lang.Object)
 	 */
-	public void setChart(XyChart chart) {
-		this.currChart = chart;
+	@Override
+	public void setOntologyClassInstance(Object objectInstance) {
+		this.currChart = (XyChart) objectInstance;
 		ImageIcon icon = new ImageIcon(this.getXyChartDialog().getChartThumb());
 		if(icon != null){
 			// Replace text by thumbnail if available
@@ -131,15 +122,17 @@ public class XyWidget extends JPanel implements ActionListener {
 			this.getJButtonEdit().setIcon(icon);
 		}
 	}
-	
-	/**
-	 * Gets the chart.
-	 * @return the chart
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.timeseriesChart.gui.OntologyClassWidget#getOntologyClassInstance()
 	 */
-	public Chart getChart() {
+	@Override
+	public Object getOntologyClassInstance() {
 		return this.currChart;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		Object source = ae.getSource();

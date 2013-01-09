@@ -31,6 +31,7 @@ package agentgui.core.ontologies.gui;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
@@ -168,6 +169,7 @@ public class DynTableJPanel extends JPanel {
 	private void expandMainFrame(boolean doExpand) {
 		
 		if (this.mainFrame!=null && this.expansionDirection==EXPANSION_Horizontal) {
+			
 			if (doExpand==true) {
 				double newWidth = this.mainFrameOldSize.getWidth() + (4.0/3.0) * this.mainFrameOldSize.getHeight();
 
@@ -178,6 +180,15 @@ public class DynTableJPanel extends JPanel {
 			} else {
 				this.mainFrame.setSize(mainFrameOldSize);
 			}	
+
+			// --- Center, if dialog ------------------------------------
+			if (this.mainFrame instanceof JDialog) {
+				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+				int top = (screenSize.height - this.mainFrame.getHeight()) / 2; 
+			    int left = (screenSize.width - this.mainFrame.getWidth()) / 2; 
+			    this.mainFrame.setLocation(left, top);	
+			}
+
 		}
 		
 	}
@@ -212,6 +223,7 @@ public class DynTableJPanel extends JPanel {
 				}
 			}
 		}
+		
 		// --- Set the expansion direction --------------------------
 		if (isExtraDialog==true) {
 			this.expansionDirection = EXPANSION_Horizontal;

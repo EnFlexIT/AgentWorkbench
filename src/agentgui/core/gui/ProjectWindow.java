@@ -47,7 +47,6 @@ import java.util.Vector;
 import javax.swing.DesktopManager;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -398,7 +397,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	private void tabMaximize() {
 
 		// --- Maximize the main window ---------------------------------------
-		Application.getMainWindow().setExtendedState(JFrame.MAXIMIZED_BOTH);
+		//Application.getMainWindow().setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 		// --- Open a new JInteraFrame with the current tab enlarged ---------- 
 		SwingUtilities.invokeLater(new Runnable() {

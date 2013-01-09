@@ -28,7 +28,6 @@
  */
 package agentgui.core.charts.timeseriesChart.gui;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -37,13 +36,13 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Language;
 import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
 import agentgui.core.ontologies.gui.DynForm;
+import agentgui.core.ontologies.gui.OntologyClassWidget;
 import agentgui.ontology.Chart;
 import agentgui.ontology.TimeSeriesChart;
 
@@ -51,12 +50,9 @@ import agentgui.ontology.TimeSeriesChart;
  * The Class TimeSeriesWidget.
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeSeriesWidget extends JPanel implements ActionListener {
+public class TimeSeriesWidget extends OntologyClassWidget implements ActionListener {
 
 	private static final long serialVersionUID = -6165412456864146609L;
-	
-	private DynForm dynForm = null;  //  @jve:decl-index=0:
-	private int startArgIndex = -1;
 	
 	private TimeSeriesChart currChart = null;  //  @jve:decl-index=0:
 	private agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartDialog tscd = null;
@@ -71,9 +67,7 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 	 * @param startArgIndex the current start argument index
 	 */
 	public TimeSeriesWidget(DynForm dynForm, int startArgIndex) {
-		super();
-		this.dynForm = dynForm;
-		this.startArgIndex = startArgIndex;
+		super(dynForm, startArgIndex);
 		initialize();
 	}
 
@@ -86,9 +80,7 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         
-        this.setSize(new Dimension(315, 250));
         this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-        
         this.setLayout(new GridBagLayout());
         this.add(getJButtonEdit(), gridBagConstraints);
 			
@@ -121,12 +113,12 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 		return this.tscd;
 	}
 	
-	/**
-	 * Sets the time series.
-	 * @param chart the new Chart
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.timeseriesChart.gui.OntologyClassWidget#setOntologyClassInstance(java.lang.Object)
 	 */
-	public void setChart(TimeSeriesChart chart) {
-		this.currChart = chart;
+	@Override
+	public void setOntologyClassInstance(Object objectInstance) {
+		this.currChart = (TimeSeriesChart) objectInstance;
 		ImageIcon icon = new ImageIcon(this.getTimeSeriesChartDialog().getChartThumb());
 		if(icon != null){
 			// Replace text by thumbnail if available
@@ -134,14 +126,14 @@ public class TimeSeriesWidget extends JPanel implements ActionListener {
 			this.getJButtonEdit().setIcon(icon);
 		}
 	}
-	
-	/**
-	 * Gets the time series.
-	 * @return the time series
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.timeseriesChart.gui.OntologyClassWidget#getOntologyClassInstance()
 	 */
-	public Chart getChart() {
+	@Override
+	public Object getOntologyClassInstance() {
 		return this.currChart;
 	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)

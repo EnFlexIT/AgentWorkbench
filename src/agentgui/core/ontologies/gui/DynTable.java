@@ -40,11 +40,7 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import agentgui.core.charts.timeseriesChart.gui.TimeSeriesWidget;
-import agentgui.core.charts.xyChart.gui.XyWidget;
-import agentgui.ontology.Chart;
-import agentgui.ontology.TimeSeriesChart;
-import agentgui.ontology.XyChart;
+import agentgui.core.application.Application;
 
 /**
  * The Class DynTable.
@@ -212,9 +208,7 @@ public class DynTable extends JTable {
 			
 			if (visibleInTableView==true) {
 				// --- Are child slots visible in the table ---
-				if (dynType.getClassName().equals(TimeSeriesChart.class.getName())) {
-					childNodesVisible = false;
-				} else if (dynType.getClassName().equals(XyChart.class.getName())) {
+				if (Application.getGlobalInfo().isOntologyClassVisualisation(dynType.getClassName())) {
 					childNodesVisible = false;
 				} else {
 					childNodesVisible = true;
@@ -258,21 +252,17 @@ public class DynTable extends JTable {
 		
 		DefaultMutableTreeNode currNode = this.dynForm.getTreeNodeByDynType(dynType);;
 		JComponent comp = this.dynForm.getFormComponent4AgentGUISpecialClass(currNode);
-		Chart chart = null; 
-			
-		if (comp instanceof TimeSeriesWidget) {
-			TimeSeriesWidget tsw = (TimeSeriesWidget) comp;
-			chart = tsw.getChart();
-			
-		} else if (comp instanceof XyWidget) {
-			XyWidget xyw = (XyWidget) comp;
-			chart = xyw.getChart();
+		Object ontoClassInstance=null; 
+		
+		if (comp instanceof OntologyClassWidget) {
+			OntologyClassWidget ontoClassWidget = (OntologyClassWidget) comp;
+			ontoClassInstance = ontoClassWidget.getOntologyClassInstance();
 		}
 		
-		if (chart==null) {
+		if (ontoClassInstance==null) {
 			
 		} else {
-			System.out.println(chart.toString());
+			System.out.println(ontoClassInstance.toString());
 			System.out.println(dynType.getClassName());	
 		}
 		
