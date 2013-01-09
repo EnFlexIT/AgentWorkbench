@@ -251,6 +251,7 @@ public class GlobalInfo {
 		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
+		
 		// ------------------------------------------------------------------
 		// --- Add the known OntologyClassVisualisation's of Agent.GUI ------
 		this.registerOntologyClassVisualisation(new TimeSeriesVisualisation());

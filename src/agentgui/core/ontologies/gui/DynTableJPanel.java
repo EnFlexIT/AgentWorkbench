@@ -126,10 +126,12 @@ public class DynTableJPanel extends JPanel {
 	// --------------------------------------------------------------
 	// --- Below methods for the expansion view and revert ---------- 
 	// --------------------------------------------------------------	
+	
 	/**
-	 * Sets the given special class visible.
+	 * Sets the ontology class-visualsation visible.
+	 * @param visible the new ontology class-visualsation visible
 	 */
-	public void setSpecialClassVisible(boolean visible) {
+	public void setOntologyClassVisualsationVisible(boolean visible) {
 		if (this.expanded==true) {
 			this.setJPanelConfiguration(false);	
 		} else {

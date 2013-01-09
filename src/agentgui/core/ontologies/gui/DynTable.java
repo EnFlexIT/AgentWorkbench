@@ -30,7 +30,6 @@ package agentgui.core.ontologies.gui;
 
 import java.util.Vector;
 
-import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
@@ -245,17 +244,16 @@ public class DynTable extends JTable {
 	}
 	
 	/**
-	 * Sets the special class visible.
+	 * Sets the OntologyClassVisualsation visible.
 	 * @param dynTyp the new special class visible
 	 */
-	public void setSpecialClassVisible(DynType dynType) {
+	public void setOntologyClassVisualsationVisible(DynType dynType) {
 		
 		DefaultMutableTreeNode currNode = this.dynForm.getTreeNodeByDynType(dynType);;
-		JComponent comp = this.dynForm.getFormComponent4AgentGUISpecialClass(currNode);
+		OntologyClassWidget ontoClassWidget = this.dynForm.getOntologyClassWidget(currNode);
 		Object ontoClassInstance=null; 
 		
-		if (comp instanceof OntologyClassWidget) {
-			OntologyClassWidget ontoClassWidget = (OntologyClassWidget) comp;
+		if (ontoClassWidget!=null) {
 			ontoClassInstance = ontoClassWidget.getOntologyClassInstance();
 		}
 		
@@ -266,7 +264,7 @@ public class DynTable extends JTable {
 			System.out.println(dynType.getClassName());	
 		}
 		
-		this.dynTableJPanel.setSpecialClassVisible(true);
+		this.dynTableJPanel.setOntologyClassVisualsationVisible(true);
 		
 	}
 	

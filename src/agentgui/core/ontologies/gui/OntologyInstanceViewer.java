@@ -242,7 +242,7 @@ private static final long serialVersionUID = 6748263753769300242L;
 	    dialog.setLocation(left, top);	
 		
 	    // --- Remind and remove THIS from the parent -----
-	    this.getDynTableJPanel().setSpecialClassVisible(false);
+	    this.getDynTableJPanel().setOntologyClassVisualsationVisible(false);
 	    Container parentContainer = this.getParent();
 	    parentContainer.remove(this);
 	    parentContainer.validate();
@@ -258,7 +258,7 @@ private static final long serialVersionUID = 6748263753769300242L;
 	    this.addEnlargeTab();
 		
 	    // --- Add THIS again to the parent ---------------
-	    this.getDynTableJPanel().setSpecialClassVisible(false);
+	    this.getDynTableJPanel().setOntologyClassVisualsationVisible(false);
 	    parentContainer.add(this);
 	    parentContainer.validate();
 	    parentContainer.repaint();

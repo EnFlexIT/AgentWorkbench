@@ -2,17 +2,6 @@
 <generalGraphSettings4MAS>
     <currentCTS>
         <entry>
-            <key>Lignite Plant</key>
-            <value>
-                <color>-3381760</color>
-                <domain>Electricity</domain>
-                <edgeImage>/gasmas/img/power_plant_lignite.png</edgeImage>
-                <edgeWidth>20.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>false</showLabel>
-            </value>
-        </entry>
-        <entry>
             <key>Valve</key>
             <value>
                 <adapterClass>gasmas.adapter.ValveAdapter</adapterClass>
@@ -26,15 +15,13 @@
             </value>
         </entry>
         <entry>
-            <key>Pipe-Short</key>
+            <key>Lignite Plant</key>
             <value>
-                <adapterClass>gasmas.adapter.ShortPipeAdapter</adapterClass>
-                <agentClass>gasmas.agents.components.PipeShortAgent</agentClass>
-                <color>-16777216</color>
-                <domain>Gas network</domain>
-                <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
+                <color>-3381760</color>
+                <domain>Electricity</domain>
+                <edgeImage>/gasmas/img/power_plant_lignite.png</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -47,6 +34,19 @@
                 <domain>Gas network</domain>
                 <edgeWidth>10.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Pipe-Short</key>
+            <value>
+                <adapterClass>gasmas.adapter.ShortPipeAdapter</adapterClass>
+                <agentClass>gasmas.agents.components.PipeShortAgent</agentClass>
+                <color>-16777216</color>
+                <domain>Gas network</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -134,18 +134,6 @@
             </value>
         </entry>
         <entry>
-            <key>Branch7</key>
-            <value>
-                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
-                <color>-16777216</color>
-                <domain>Gas network</domain>
-                <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>gasmas.graphprototypes.Star7GraphElement</graphPrototype>
-                <showLabel>false</showLabel>
-            </value>
-        </entry>
-        <entry>
             <key>Entry</key>
             <value>
                 <adapterClass>gasmas.adapter.EntryAdapter</adapterClass>
@@ -154,6 +142,18 @@
                 <domain>Gas network</domain>
                 <edgeWidth>10.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Branch7</key>
+            <value>
+                <agentClass>gasmas.agents.components.BranchAgent</agentClass>
+                <color>-16777216</color>
+                <domain>Gas network</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>gasmas.graphprototypes.Star7GraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>

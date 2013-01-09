@@ -110,7 +110,7 @@ public class DynForm extends JPanel {
 	private NumberWatcher numWatcherFloat = new NumberWatcher(true);
 	private NumberWatcher numWatcherInteger = new NumberWatcher(false);
 	
-	private HashMap<DefaultMutableTreeNode, JComponent> userFormElements = null;
+	private HashMap<DefaultMutableTreeNode, OntologyClassWidget> ontologyClassWidget = null;
 
 	
 	/**
@@ -194,22 +194,22 @@ public class DynForm extends JPanel {
 	}
 	
 	/**
-	 * Returns the form components for all current special Agent.GUI class.
-	 * @return the HashMap<DefaultMutableTreeNode, JComponent>
+	 * Returns the OntologyClassWidget's for all current OntologyClassVisualisation's.
+	 * @return the HashMap<DefaultMutableTreeNode, OntologyClassWidget>
 	 */
-	public HashMap<DefaultMutableTreeNode, JComponent> getFormComponents4AgentGUISpecialClass() {
-		if (this.userFormElements==null) {
-			this.userFormElements = new HashMap<DefaultMutableTreeNode, JComponent>();
+	public HashMap<DefaultMutableTreeNode, OntologyClassWidget> getOntologyClassWidgets() {
+		if (this.ontologyClassWidget==null) {
+			this.ontologyClassWidget = new HashMap<DefaultMutableTreeNode, OntologyClassWidget>();
 		}
-		return this.userFormElements;
+		return this.ontologyClassWidget;
 	}
 	/**
-	 * Returns the form component for a special Agent.GUI class.
+	 * Returns the form component for a OntologyClassVisualisation.
 	 * @param node the current node
-	 * @return the corresponding JComponent 
+	 * @return the corresponding OntologyClassWidget 
 	 */
-	public JComponent getFormComponent4AgentGUISpecialClass(DefaultMutableTreeNode node) {
-		return this.getFormComponents4AgentGUISpecialClass().get(node);
+	public OntologyClassWidget getOntologyClassWidget(DefaultMutableTreeNode node) {
+		return this.getOntologyClassWidgets().get(node);
 	}
 	
 	/**
@@ -674,7 +674,7 @@ public class DynForm extends JPanel {
 		// --- Agent.GUI Base ontology							  ----
 		// ----------------------------------------------------------->
 		if (Application.getGlobalInfo().isOntologyClassVisualisation(object)) {
-			JComponent userFormElement = this.getFormComponents4AgentGUISpecialClass().get(node);
+			JComponent userFormElement = this.getOntologyClassWidgets().get(node);
 			if (userFormElement!=null) {
 				final OntologyClassWidget widget = (OntologyClassWidget) userFormElement;
 				final Object objectInstance = object;
@@ -1317,7 +1317,7 @@ public class DynForm extends JPanel {
 				widget.setBounds(feBounds.x, feBounds.y, widget.getWidth(), widget.getHeight());
 				parentPanel.add(widget);
 				
-				this.getFormComponents4AgentGUISpecialClass().put(curentNode, widget);
+				this.getOntologyClassWidgets().put(curentNode, widget);
 			}
 			
 		}

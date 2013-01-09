@@ -51,11 +51,10 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import agentgui.core.application.Application;
 import agentgui.core.ontologies.OntologySingleClassSlotDescription;
 import agentgui.core.project.AgentStartArgument;
 import agentgui.envModel.graph.GraphGlobals;
-import agentgui.ontology.TimeSeriesChart;
-import agentgui.ontology.XyChart;
 
 /**
  * The Class DynTableCellRenderer.
@@ -219,17 +218,10 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 		
 		} else {
 			// --- Are special classes for visualisation ? --------------------
-			String specialClassTitle=null;
-			if (this.dynType.getClassName().equals(TimeSeriesChart.class.getName())) {
-				specialClassTitle=TimeSeriesChart.class.getSimpleName();
-			} else if (this.dynType.getClassName().equals(XyChart.class.getName())) {
-				specialClassTitle=XyChart.class.getSimpleName();
-			} 
-
-			if (specialClassTitle!=null) {
-				this.displayComponent = this.getJButtonSpecialClass(this.dynType, specialClassTitle);
+			if (Application.getGlobalInfo().isOntologyClassVisualisation(this.dynType.getClassName())) {
+				this.displayComponent = this.getJButtonOntologyClassVisualsation(this.dynType);
 				this.jPanelToDisplay.add(this.displayComponent, BorderLayout.CENTER);
-				this.dynTable.getEditableRowsVector().add(this.rowModel);	
+				this.dynTable.getEditableRowsVector().add(this.rowModel);
 			}
 			
 		}
@@ -283,22 +275,21 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 	}
 
 	/**
-	 * Gets the JButton for a special class like TimeSeries or XyChart.
+	 * Returns the JButton for a OntologyClassVisualsation like for TimeSeries or XyChart's.
 	 * @param text the text to set on the Button
 	 * @return the JButton for special class
 	 */
-	private JButton getJButtonSpecialClass(DynType dynTypeInstance, String text) {
+	private JButton getJButtonOntologyClassVisualsation(DynType dynTypeInstance) {
 		
 		final DynType dynTypeCurrent = dynTypeInstance;
 		
 		JButton jButtonSpecialClass = new JButton();
 		jButtonSpecialClass.setFont(new Font("Arial", Font.BOLD, 11));
-		jButtonSpecialClass.setText(text);
-		jButtonSpecialClass.setToolTipText("Edit " + text + "");
+		jButtonSpecialClass.setText("Edit");
 		jButtonSpecialClass.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dynTable.setSpecialClassVisible(dynTypeCurrent);
+				dynTable.setOntologyClassVisualsationVisible(dynTypeCurrent);
 			}
 		});
 		return jButtonSpecialClass;
