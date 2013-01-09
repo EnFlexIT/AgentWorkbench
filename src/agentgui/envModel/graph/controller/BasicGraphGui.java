@@ -167,7 +167,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.setVisible(true);
 		this.setSize(300, 300);
 		this.setLayout(new BorderLayout());
-
+		
 		// --- Add components -----------------------------
 		this.add(this.graphGuiTools.getJToolBar(), BorderLayout.WEST);
 
@@ -362,7 +362,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		Graph<GraphNode, GraphEdge> graph = this.graphController.getNetworkModelAdapter().getGraph();
 
 		// --- Remove the old component -------------------
-		if (centerComponent != null) {
+		if (this.centerComponent!=null) {
 			this.remove(centerComponent);
 			this.centerComponent = null;
 			this.visView = null;
@@ -370,7 +370,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 
 		// --- Set the display ----------------------------
-		if (graph == null) {
+		if (graph==null) {
 			// --- NO graph to display ----------
 			this.visView = null;
 			this.visViewSatellite = null;
@@ -513,7 +513,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// ----------------------------------------------------------------
 		final VisualizationViewer<GraphNode, GraphEdge> vViewer = new VisualizationViewer<GraphNode, GraphEdge>(layout);
 		vViewer.setBackground(Color.WHITE);
-
+		vViewer.setDoubleBuffered(true);
+		
 		// --- Configure mouse interaction --------------------------------
 		this.defaultModalGraphMouse = null; // Reset new VisualizationViewer
 		this.pluggableGraphMouse = null; // Reset new VisualizationViewer

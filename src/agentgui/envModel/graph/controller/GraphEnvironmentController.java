@@ -43,7 +43,6 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
-import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -920,15 +919,15 @@ public class GraphEnvironmentController extends EnvironmentController {
     	String title = Language.translate("Initiating network components", Language.EN);
     	String header = Language.translate("Initiating network components and setting data model", Language.EN);
     	String progress = Language.translate("Reading", Language.EN) + "...";
-    	final String progressRun = Language.translate("Setting data model for", Language.EN) + " ";
     	
     	final ProgressMonitor pm = new ProgressMonitor(Application.getMainWindow(), title, header, progress);
     	pm.setAllow2Cancel(false);
     	pm.setAlwaysOnTop(true);
     	
     	Runnable decode = new Runnable() {
-			public void run() {
+    		public void run() {
 		    	
+    			int progressIntOld = -1;
 				NetworkModel networkModel = getNetworkModel();
 		    	Object[] netCompArr = networkModel.getNetworkComponents().values().toArray();
 		    	int netCompCount = netCompArr.length;
@@ -936,27 +935,21 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    	
 		    		NetworkComponent netComp = (NetworkComponent) netCompArr[i];
 		    		
-		    		// --- Only display progress, if procedure is to long ---
+		    		// --- Only display progress, if procedure is to long -----
 		    		if (System.currentTimeMillis() > displayTime) {
 		    			if (pm.isVisible()==false) {
 		    				pm.setVisible(true);
 		    		    	pm.validate();
 		    		    	pm.repaint();
 		    			}
-		    			// --- Set Progress monitor -----------------------------
+		    			// --- Set Progress monitor ---------------------------
 			    		float progressCalc = (float) (((float)i/(float)netCompCount) * 100.0);
 			    		final int progressInt = Math.round(progressCalc);
-			    		final String netCompID = netComp.getId();
+			    		if (progressInt!=progressIntOld) {
+			    			progressIntOld = progressInt;
+							pm.setProgress(progressInt);
+			    		}
 			    		
-			    		SwingUtilities.invokeLater( new Runnable() {
-							@Override
-							public void run() {
-								synchronized (pm) {
-									pm.setProgress(progressInt);
-							    	pm.setProgressText(progressRun +  netCompID);								
-								};
-							}
-						});
 		    		}
 		    		
 		    		// --- Set the components data model instance ----------- 
@@ -968,7 +961,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.invokeGetDataModelAdapter();
 		    				if (netCompDataModelAdapter!=null) {
 		    					// --- Get Base64 decoded Object ------------
-		    					Object dataModel = netCompDataModelAdapter.getDataModelBase64Decoded(dataModelBase64);
+		    					Object dataModel = netCompDataModelAdapter.getDataModelBase64Decoded(dataModelBase64, true);
 		    	    			netComp.setDataModel(dataModel);
 		    				}
 		    			}
@@ -996,16 +989,16 @@ public class GraphEnvironmentController extends EnvironmentController {
     	String title = Language.translate("Preparing network components", Language.EN);
     	String header = Language.translate("Preparing and encoding network components for saving", Language.EN);
     	String progress = Language.translate("Reading", Language.EN) + "...";
-    	final String progressRun = Language.translate("Base64-encoding of data model for", Language.EN) + " ";
     	
     	final ProgressMonitor pm = new ProgressMonitor(Application.getMainWindow(), title, header, progress);
     	pm.setAllow2Cancel(false);
     	pm.setAlwaysOnTop(true);
     	
     	Runnable encode = new Runnable() {
-			public void run() {
-				
-				NetworkModel networkModel = getNetworkModel();
+    		public void run() {
+
+    			int progressIntOld = -1;
+    			NetworkModel networkModel = getNetworkModel();
 		    	Object[] netCompArr = networkModel.getNetworkComponents().values().toArray();
 		    	int netCompCount = netCompArr.length;
 		    	for (int i = 0; i<netCompCount; i++) {
@@ -1022,17 +1015,11 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    			// --- Set Progress monitor -----------------------------
 			    		float progressCalc = (float) (((float)i/(float)netCompCount) * 100.0);
 			    		final int progressInt = Math.round(progressCalc);
-			    		final String netCompID = netComp.getId();
+			    		if (progressInt!=progressIntOld) {
+			    			progressIntOld = progressInt;
+			    			pm.setProgress(progressInt);
+			    		}
 			    		
-			    		SwingUtilities.invokeLater(new Runnable() {
-							@Override
-							public void run() {
-					    		synchronized (pm) {
-					    			pm.setProgress(progressInt);
-							    	pm.setProgressText(progressRun + netCompID);	
-								}
-							}
-						});
 		    		}
 		    		
 		    		// --- Set the components data model as Base64 ----------

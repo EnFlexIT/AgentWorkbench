@@ -83,13 +83,25 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 */
 	public abstract Vector<String> getDataModelBase64Encoded(Object dataModel);
 	
+	
 	/**
-	 * Returns the data model of a {@link NetworkComponent} as Object 
+	 * Returns the data model of a {@link NetworkComponent} as Object
 	 * specified by a Base64 encoded String.
 	 *
 	 * @param dataModel the data model as String Vector
 	 * @return the data model base64 decode
 	 */
-	public abstract Object getDataModelBase64Decoded(Vector<String> dataModel);
+	public Object getDataModelBase64Decoded(Vector<String> dataModel) {
+		return this.getDataModelBase64Decoded(dataModel, false);
+	}
+	/**
+	 * Returns the data model of a {@link NetworkComponent} as Object
+	 * specified by a Base64 encoded String.
+	 *
+	 * @param dataModel the data model as String Vector
+	 * @param avoidGuiUpdate true, if a GUI-update should be avoided 
+	 * @return the data model base64 decode
+	 */
+	public abstract Object getDataModelBase64Decoded(Vector<String> dataModel, boolean avoidGuiUpdate);
 	
 }

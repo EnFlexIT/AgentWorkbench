@@ -369,6 +369,14 @@ public class DynForm extends JPanel {
 	 * arguments, fills the form and creates the instances.
 	 */
 	private void setInstancesFromXML() {
+		this.setInstancesFromXML(false);
+	}
+	/**
+	 * This method reads the current XML configuration of the
+	 * arguments, fills the form and creates the instances.
+	 * @param avoidGuiUpdate the new instances from xml
+	 */
+	private void setInstancesFromXML(boolean avoidGuiUpdate) {
 		
 		if (this.ontoArgsXML==null) return;
 		
@@ -396,7 +404,9 @@ public class DynForm extends JPanel {
 				Object obj = getInstanceOfXML(ontoArgsXML[i], onto);
 				if (obj!=null) {
 					// --- Set the current instance to the form -----
-					this.setFormState(obj, currNode);
+					if (avoidGuiUpdate==false) {
+						this.setFormState(obj, currNode);	
+					}
 					// --- Remind object state as instance ----------
 					this.ontoArgsInstance[i] = obj;
 				}
@@ -1803,13 +1813,22 @@ public class DynForm extends JPanel {
 	public String[] getOntoArgsXML() {
 		return ontoArgsXML;
 	}
+	
 	/**
 	 * Sets the ontology arguments as XML string-array.
 	 * @param ontoArgsXML the new onto args xml
 	 */
 	public void setOntoArgsXML(String[] ontoArgsXML) {
+		this.setOntoArgsXML(ontoArgsXML, false);
+	}
+	/**
+	 * Sets the ontology arguments as XML string-array.
+	 * @param ontoArgsXML the new onto args xml
+	 * @param avoidGuiUpdate the avoid gui update
+	 */
+	public void setOntoArgsXML(String[] ontoArgsXML, boolean avoidGuiUpdate) {
 		this.ontoArgsXML = ontoArgsXML;
-		this.setInstancesFromXML();
+		this.setInstancesFromXML(avoidGuiUpdate);
 	}
 
 	/**

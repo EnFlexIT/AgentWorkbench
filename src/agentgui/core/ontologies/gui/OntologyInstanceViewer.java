@@ -569,10 +569,17 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	
 	/**
 	 * Sets the configuration in XML in a Base64 decode form.
-	 *
 	 * @param configurationXML64 the new configuration xm l64
 	 */
 	public void setConfigurationXML64(String[] configurationXML64) {
+		this.setConfigurationXML64(configurationXML64, false);
+	}
+	/**
+	 * Sets the configuration in XML in a Base64 decode form.
+	 * @param configurationXML64 the new configuration xm l64
+	 * @param avoidGuiUpdate the avoid gui update
+	 */
+	public void setConfigurationXML64(String[] configurationXML64, boolean avoidGuiUpdate) {
 		
 		String[] configXML = new String[configurationXML64.length];
 		for (int i = 0; i < configurationXML64.length; i++) {
@@ -583,10 +590,14 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			}
 		}
 		
-		this.dynForm.setOntoArgsXML(configXML);
-		if (this.getSelectedIndex()==1) {
-			this.setXMLText();
+		this.dynForm.setOntoArgsXML(configXML, avoidGuiUpdate);
+		
+		if (avoidGuiUpdate==false) {
+			if (this.getSelectedIndex()==1) {
+				this.setXMLText();
+			}
 		}
+		
 	}
 	
 	/**
@@ -617,9 +628,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		return configXML64;
 	}
 	
+	
 	/**
-	 * Sets the configuration instances.
-	 *
+	 * Sets the configuration instances, but a GUI will be avoided.
 	 * @param configurationInstances the configurationInstances to set
 	 */
 	public void setConfigurationInstances(Object[] configurationInstances) {
@@ -628,10 +639,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			this.setXMLText();
 		}
 	}
-	
 	/**
 	 * Gets the configuration instances.
-	 *
 	 * @return the configurationInstances
 	 */
 	public Object[] getConfigurationInstances() {
