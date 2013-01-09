@@ -91,6 +91,8 @@ public class TimeSeriesDataModel extends DataModel implements TableModelListener
 		
 		TimeSeriesOntologyModel tsom = (TimeSeriesOntologyModel) this.ontologyModel;
 		
+		// TODO chart == null abfangen
+		
 		if(tsom.getTimeSeriesChart().isEmpty()){
 			
 			// The ontology model is empty. Do some initialization work.
@@ -132,7 +134,7 @@ public class TimeSeriesDataModel extends DataModel implements TableModelListener
 		// Register for table model events
 		tableModel.addTableModelListener(this);
 		
-		this.chartSettings = new TimeSeriesChartSettings(timeSeriesChart);
+		this.chartSettings = new TimeSeriesChartSettings(tsom.getTimeSeriesChart());
 	}
 
 	/**

@@ -96,6 +96,8 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 			jButtonEdit.setText(Language.translate(jButtonEdit.getText()));
 			jButtonEdit.setToolTipText(Language.translate("Daten bearbeiten"));
 			jButtonEdit.addActionListener(this);
+			getJButtonEdit().setText("");
+			getJButtonEdit().setIcon(new ImageIcon(this.getTimeSeriesChartDialog().getChartThumb()));
 		}
 		return jButtonEdit;
 	}

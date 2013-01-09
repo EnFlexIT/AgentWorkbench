@@ -31,6 +31,7 @@ package agentgui.core.charts.timeseriesChart;
 import jade.util.leap.List;
 import agentgui.core.charts.OntologyModel;
 import agentgui.core.charts.NoSuchSeriesException;
+import agentgui.ontology.ChartSettingsGeneral;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesAdditionalSettings;
@@ -39,7 +40,12 @@ import agentgui.ontology.TimeSeriesChart;
 public class TimeSeriesOntologyModel extends OntologyModel{
 	
 	public TimeSeriesOntologyModel(TimeSeriesChart timeSeriesChart, TimeSeriesDataModel parent){
-		this.chart = timeSeriesChart;
+		if(timeSeriesChart != null){
+			this.chart = timeSeriesChart;
+		}else{
+			this.chart = new TimeSeriesChart();
+			this.chart.setVisualizationSettings(new ChartSettingsGeneral());
+		}
 		this.parent = parent;
 	}
 
