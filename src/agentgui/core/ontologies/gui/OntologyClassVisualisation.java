@@ -46,8 +46,6 @@ import agentgui.core.config.GlobalInfo;
  */
 public abstract class OntologyClassVisualisation {
 
-	protected Class<?> ontologyClass = null;
-	
 	
 	/**
 	 * Returns the class out of an ontology that can be visualized .
@@ -63,7 +61,18 @@ public abstract class OntologyClassVisualisation {
 	public abstract Class<? extends OntologyClassWidget> getWidgetClass();
 
 	
+	/**
+	 * Returns the OntologyClassEditorJPanel class that extends JPanel.
+	 * @return the editor OntologyClassEditorJPanel class
+	 */
+	public abstract Class<? extends OntologyClassEditorJPanel> getEditorJPanelClass();
 	
+	
+	/**
+	 * Returns the OntologyClassEditorJDialog class that extends JDialog.
+	 * @return the OntologyClassEditorJDialog class
+	 */
+	public abstract Class<? extends OntologyClassEditorJDialog> getEditorJDialogClass();
 	
 	
 }
