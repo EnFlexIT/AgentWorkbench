@@ -68,6 +68,15 @@ public abstract class OntologyClassWidget extends JPanel {
 		this.setSize(new Dimension(315, 250));
 	}
 	
+	/**
+	 * Sets the new ontology class instance to the DynForm.
+	 * @param newOntologyClassInstance the new new ontology class instance
+	 */
+	public void setNewOntologyClassInstance(Object newOntologyClassInstance) {
+		Object[] startArgs = this.dynForm.getOntoArgsInstance();
+		startArgs[this.startArgIndex] = newOntologyClassInstance;
+		this.dynForm.setOntoArgsInstance(startArgs);
+	}
 	
 	/**
 	 * Sets the ontology class instance.
@@ -80,15 +89,4 @@ public abstract class OntologyClassWidget extends JPanel {
 	 */
 	public abstract Object getOntologyClassInstance();
 
-	
-	/**
-	 * Sets the new ontology class instance to the DynForm.
-	 * @param newOntologyClassInstance the new new ontology class instance
-	 */
-	public void setNewOntologyClassInstance(Object newOntologyClassInstance) {
-		Object[] startArgs = this.dynForm.getOntoArgsInstance();
-		startArgs[this.startArgIndex] = newOntologyClassInstance;
-		this.dynForm.setOntoArgsInstance(startArgs);
-	}
-	
 }

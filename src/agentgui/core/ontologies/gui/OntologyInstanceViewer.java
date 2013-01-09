@@ -63,7 +63,7 @@ import agentgui.core.project.AgentStartConfiguration;
  */
 public class OntologyInstanceViewer extends JTabbedPane {
 
-private static final long serialVersionUID = 6748263753769300242L;
+	private static final long serialVersionUID = 6748263753769300242L;
 	
 	final static String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
 	private ImageIcon imageEnlarge =  new ImageIcon(getClass().getResource(PathImage + "MBFullScreen.png"));  //  @jve:decl-index=0:

@@ -28,8 +28,6 @@
  */
 package agentgui.core.ontologies.gui;
 
-import java.awt.Dimension;
-
 import javax.swing.JPanel;
 
 /**
@@ -61,7 +59,16 @@ public abstract class OntologyClassEditorJPanel extends JPanel {
 		Object newOntologyClassInstance =  startArgs[this.startArgIndex];
 		this.setOntologyClassInstance(newOntologyClassInstance);
 		
-		this.setSize(new Dimension(315, 250));
+	}
+	
+	/**
+	 * Sets the new ontology class instance to the DynForm.
+	 * @param newOntologyClassInstance the new new ontology class instance
+	 */
+	public void setNewOntologyClassInstance(Object newOntologyClassInstance) {
+		Object[] startArgs = this.dynForm.getOntoArgsInstance();
+		startArgs[this.startArgIndex] = newOntologyClassInstance;
+		this.dynForm.setOntoArgsInstance(startArgs);
 	}
 	
 	/**
@@ -75,13 +82,4 @@ public abstract class OntologyClassEditorJPanel extends JPanel {
 	 */
 	public abstract Object getOntologyClassInstance();
 	
-	/**
-	 * Sets the new ontology class instance to the DynForm.
-	 * @param newOntologyClassInstance the new new ontology class instance
-	 */
-	public void setNewOntologyClassInstance(Object newOntologyClassInstance) {
-		Object[] startArgs = this.dynForm.getOntoArgsInstance();
-		startArgs[this.startArgIndex] = newOntologyClassInstance;
-		this.dynForm.setOntoArgsInstance(startArgs);
-	}
 }
