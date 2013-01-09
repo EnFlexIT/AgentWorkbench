@@ -143,14 +143,12 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 		Object source = ae.getSource();
 		if (source==jButtonEdit) {
 			
-			this.dynForm.save(true);
-			Object[] startArgs = this.dynForm.getOntoArgsInstance();
-			this.currChart = (TimeSeriesChart) startArgs[this.startArgIndex];
-
 			this.getTimeSeriesChartDialog().setVisible(true);
 			if(! this.getTimeSeriesChartDialog().isCanceled()){
-				startArgs[this.startArgIndex] = ((TimeSeriesOntologyModel)this.getTimeSeriesChartDialog().getModel().getOntologyModel()).getTimeSeriesChart();
-				this.dynForm.setOntoArgsInstance(startArgs);
+				
+				TimeSeriesChart timeSeriesChart = ((TimeSeriesOntologyModel)this.getTimeSeriesChartDialog().getModel().getOntologyModel()).getTimeSeriesChart();
+				this.setNewOntologyClassInstance(timeSeriesChart);
+				
 				if(this.getTimeSeriesChartDialog().getChartThumb() != null){
 					getJButtonEdit().setText("");
 					getJButtonEdit().setIcon(new ImageIcon(this.getTimeSeriesChartDialog().getChartThumb()));

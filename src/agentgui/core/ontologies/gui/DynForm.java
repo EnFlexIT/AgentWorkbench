@@ -1284,6 +1284,7 @@ public class DynForm extends JPanel {
 			OntologyClassWidget widget = null;
 			
 			try {
+				
 				Class<?>[] conParameter = new Class[2];
 				conParameter[0] = DynForm.class;
 				conParameter[1] = int.class;
@@ -1295,7 +1296,7 @@ public class DynForm extends JPanel {
 				Object[] args = new Object[2];
 				args[0] = this;
 				args[1] = startArgIndex;
-					
+				
 				widget = (OntologyClassWidget) widgetConstructor.newInstance(args);
 
 			} catch (SecurityException e) {

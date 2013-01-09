@@ -138,14 +138,12 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 		Object source = ae.getSource();
 		if (source==jButtonEdit) {
 			
-			this.dynForm.save(true);
-			Object[] startArgs = this.dynForm.getOntoArgsInstance();
-			this.currChart = (XyChart) startArgs[this.startArgIndex];
-
 			this.getXyChartDialog().setVisible(true);
 			if(! this.getXyChartDialog().isCanceled()){
-				startArgs[this.startArgIndex] = ((XyOntologyModel)this.getXyChartDialog().getModel().getOntologyModel()).getXyChart();
-				this.dynForm.setOntoArgsInstance(startArgs);
+				
+				XyChart xyChart =  ((XyOntologyModel)this.getXyChartDialog().getModel().getOntologyModel()).getXyChart();
+				this.setNewOntologyClassInstance(xyChart);
+				
 				if(this.getXyChartDialog().getChartThumb() != null){
 					getJButtonEdit().setText("");
 					getJButtonEdit().setIcon(new ImageIcon(this.getXyChartDialog().getChartThumb()));

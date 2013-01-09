@@ -10,7 +10,7 @@
   </class>  
   <class id="2" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.OntologyClassWidget" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/core/ontologies/gui/OntologyClassWidget.java" binary="false">    
-    <position x="173" y="269" width="-1" height="-1"/>    
+    <position x="173" y="271" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -18,7 +18,7 @@
   </class>  
   <class id="3" corner="BOTTOM_RIGHT" language="java" name="javax.swing.JPanel" project="AgentGUI" 
     file="C:/Programme/Java/jdk1.6.0_14/jre/lib/rt.jar" binary="true">    
-    <position x="330" y="407" width="-1" height="-1"/>    
+    <position x="331" y="422" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -26,7 +26,7 @@
   </class>  
   <class id="4" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.OntologyClassEditorJPanel" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/core/ontologies/gui/OntologyClassEditorJPanel.java" binary="false">    
-    <position x="483" y="252" width="-1" height="-1"/>    
+    <position x="485" y="271" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -34,7 +34,7 @@
   </class>  
   <class id="5" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.ontologies.gui.OntologyClassEditorJDialog" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/core/ontologies/gui/OntologyClassEditorJDialog.java" binary="false">    
-    <position x="788" y="252" width="-1" height="-1"/>    
+    <position x="788" y="271" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -42,7 +42,7 @@
   </class>  
   <class id="6" corner="BOTTOM_RIGHT" language="java" name="javax.swing.JDialog" project="AgentGUI" 
     file="C:/Programme/Java/jdk1.6.0_14/jre/lib/rt.jar" binary="true">    
-    <position x="788" y="407" width="-1" height="-1"/>    
+    <position x="789" y="422" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -60,34 +60,34 @@
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="3"/>  
   </generalization>  
-  <dependency id="9">    
+  <generalization id="9">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <dependency id="10">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <generalization id="11">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <dependency id="12">    
     <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="2"/>  
   </dependency>  
-  <association id="10">    
+  <association id="13">    
     <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="11" name="knownOntologyClassVisualisation"/>      
-      <multiplicity id="12" minimum="0" maximum="2147483647"/>    
+      <attribute id="14" name="knownOntologyClassVisualisation"/>      
+      <multiplicity id="15" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="13">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="6"/>  
-  </generalization>  
-  <dependency id="14">    
+  <dependency id="16">    
     <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="4"/>  
   </dependency>  
-  <dependency id="15">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="5"/>  
-  </dependency>  
-  <generalization id="16">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     visibility="true">    
     <attributes public="true" package="true" protected="true" private="true"/>    
