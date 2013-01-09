@@ -31,6 +31,7 @@ package agentgui.core.charts.xyChart;
 import jade.util.leap.List;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.OntologyModel;
+import agentgui.ontology.ChartSettingsGeneral;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.XyChart;
 import agentgui.ontology.XyDataSeries;
@@ -38,7 +39,13 @@ import agentgui.ontology.XyDataSeries;
 public class XyOntologyModel extends OntologyModel {
 	
 	public XyOntologyModel(XyChart chart, XyDataModel parent){
-		this.chart = chart;
+		if(chart != null){
+			this.chart = chart;
+		}else{
+			this.chart = new XyChart();
+			this.chart.setVisualizationSettings(new ChartSettingsGeneral());
+		}
+		
 		this.parent = parent;
 	}
 	

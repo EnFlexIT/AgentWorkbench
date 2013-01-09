@@ -93,6 +93,8 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 			jButtonEdit.setText(Language.translate(jButtonEdit.getText()));
 			jButtonEdit.setToolTipText(Language.translate("Daten bearbeiten"));
 			jButtonEdit.addActionListener(this);
+			getJButtonEdit().setText("");
+			getJButtonEdit().setIcon(new ImageIcon(this.getXyChartDialog().getChartThumb()));
 		}
 		return jButtonEdit;
 	}

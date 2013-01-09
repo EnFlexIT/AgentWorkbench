@@ -107,7 +107,7 @@ public class XyDataModel extends DataModel {
 		// Register for table model events
 		tableModel.addTableModelListener(this);
 		
-		this.chartSettings = new XyChartSettings(chart);
+		this.chartSettings = new XyChartSettings(xyom.getXyChart());
 	}
 
 	@Override
