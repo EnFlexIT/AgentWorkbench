@@ -281,7 +281,7 @@ public class OntologyClassTreeObject extends Object {
 	    	osd.setSlotMethodList(currSlot.MethodList);
 	    	
 	    	// --- An Auflistung anfügen ----------------------------
-	    	ocd.arrayList4SlotDescriptions.add(osd);
+	    	ocd.getArrayList4SlotDescriptions().add(osd);
 	    }		
 	    
 	    // ----------------------------------------------------------
@@ -289,8 +289,8 @@ public class OntologyClassTreeObject extends Object {
 	    // ----------------------------------------------------------
 	    if (parentOntologyClassTreeObject!=null) {
 	    	OntologySingleClassDescription subOCD = parentOntologyClassTreeObject.getClassDescription();
-	    	ocd.arrayList4SlotDescriptions.addAll(subOCD.arrayList4SlotDescriptions);
-	    	Sorter.sortSlotDescriptionArray(ocd.arrayList4SlotDescriptions);
+	    	ocd.getArrayList4SlotDescriptions().addAll(subOCD.getArrayList4SlotDescriptions());
+	    	Sorter.sortSlotDescriptionArray(ocd.getArrayList4SlotDescriptions());
 	    }
 	    // ----------------------------------------------------------
 		return ocd;

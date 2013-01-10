@@ -30,6 +30,7 @@ package agentgui.core.ontologies.gui;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -121,36 +122,40 @@ public class Sorter {
 	 */
 	public static void sortSlotDescriptionArray(ArrayList<OntologySingleClassSlotDescription> array2Sort, boolean ascending) {
 
-		Vector<String> keyVector = new Vector<String>();
-		HashMap<String, OntologySingleClassSlotDescription> keyHash = new HashMap<String, OntologySingleClassSlotDescription>();
-
-		int maxIndex = array2Sort.size();
-		for (int i = 0; i < maxIndex; i++) {
-			// --------------------------------------------
-			OntologySingleClassSlotDescription oscsd = array2Sort.get(0);
-			String key = oscsd.getSlotName();
-			// --------------------------------------------
-			keyVector.add(key);
-			keyHash.put(key, oscsd);
-			// --------------------------------------------
-			array2Sort.remove(0);
-		}
-		
-		// --- Sort the keyVector -------------------------
-		Collections.sort(keyVector);
-		if (ascending==false) {
-			Collections.reverse(keyVector);
-		}
-		
-		
-		// --- Build the TableModel newly ----------------- 
-		for (int i = 0; i < keyVector.size(); i++) {
-			// --------------------------------------------
-			String key = keyVector.get(i);
-			OntologySingleClassSlotDescription oscsd = keyHash.get(key);
-			array2Sort.add(oscsd);
-		}		
-
+		Comparator<OntologySingleClassSlotDescription> comperator = new Comparator<OntologySingleClassSlotDescription>() {
+			@Override
+			public int compare(OntologySingleClassSlotDescription oscsd1, OntologySingleClassSlotDescription oscsd2) {
+				
+				boolean isRawType1 = false; 
+				if (oscsd1.getSlotVarType().startsWith("Instance of")) {
+					isRawType1 = false;
+				} else {
+					isRawType1 = true;
+				}
+				boolean isRawType2 = false; 
+				if (oscsd2.getSlotVarType().startsWith("Instance of")) {
+					isRawType2 = false;
+				} else {
+					isRawType2 = true;
+				}
+				
+				if (isRawType1==isRawType2) {
+					// --- both true or both false ---
+					String stringComp1 = oscsd1.getSlotName();
+					String stringComp2 = oscsd2.getSlotName();
+					return stringComp1.compareTo(stringComp2);
+				} else {
+					// --- one true and one false ---------
+					if (isRawType1==true) {
+						return -1;
+					} else {
+						return 1;
+					}
+				}
+			
+			}
+		};
+		Collections.sort(array2Sort, comperator);
 	}
 	
 	

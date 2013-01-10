@@ -38,7 +38,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
@@ -423,24 +422,27 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
      */
     private void setLayout4JTableComponents() {
     	
+    	// --- Define Comparators for Component table -----
+//    	Comparator<String> col1Comparator = new Comparator<String>() {
+//			@Override
+//			public int compare(String o1, String o2) {
+//				Long o1Int = extractNumericalValue(o1);
+//				Long o2Int = extractNumericalValue(o2);
+//				if (o1Int!=null && o2Int!=null) {
+//					return o1Int.compareTo(o2Int);
+//				} else if (o1Int==null && o2Int!=null) {
+//					return -1;
+//				} else if (o1Int!=null && o2Int==null) {
+//					return 1;
+//				} else {
+//					return o1.compareTo(o2);	
+//				}
+//			}
+//		};
+		
     	// --- Set Sorter for the table -------------------
-    	TableRowSorter<DefaultTableModel> tblSorter = new TableRowSorter<DefaultTableModel>(this.getDefaultTableModel4Components());
-	    tblSorter.setComparator(0, new Comparator<String>() {
-			@Override
-			public int compare(String o1, String o2) {
-				Long o1Int = extractNumericalValue(o1);
-				Long o2Int = extractNumericalValue(o2);
-				if (o1Int!=null && o2Int!=null) {
-					return o1Int.compareTo(o2Int);
-				} else if (o1Int==null && o2Int!=null) {
-					return -1;
-				} else if (o1Int!=null && o2Int==null) {
-					return 1;
-				} else {
-					return o1.compareTo(o2);	
-				}
-			}
-		});
+		TableRowSorter<DefaultTableModel> tblSorter = new TableRowSorter<DefaultTableModel>(this.getDefaultTableModel4Components());
+    	//tblSorter.setComparator(0, col1Comparator);
 	    this.getJTableComponents().setRowSorter(tblSorter);		    
 
 	    // --- Define the first sort order ----------------
@@ -465,7 +467,8 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
      * @param expression the expression
      * @return the integer value
      */
-    private Long extractNumericalValue(String expression) {
+    @SuppressWarnings("unused")
+	private Long extractNumericalValue(String expression) {
     	String  numericString = "";
     	Long 	numeric = null;
     	for (int i = 0; i < expression.length(); i++) {

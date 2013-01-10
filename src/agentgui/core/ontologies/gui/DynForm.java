@@ -244,6 +244,7 @@ public class DynForm extends JPanel {
 	public boolean isEmptyForm() {
 		return emptyForm;
 	}
+	
 	/**
 	 * This method starts building the Swing GUI.
 	 */
@@ -1101,7 +1102,7 @@ public class DynForm extends JPanel {
 			this.setPanelBounds(parentPanel);
 			
 			// --- go through each field / inner class ----
-			Iterator<OntologySingleClassSlotDescription> iterator = oscd.arrayList4SlotDescriptions.iterator();
+			Iterator<OntologySingleClassSlotDescription> iterator = oscd.getArrayList4SlotDescriptions().iterator();
 			while (iterator.hasNext()) {
 				
 				OntologySingleClassSlotDescription oscsd = iterator.next();

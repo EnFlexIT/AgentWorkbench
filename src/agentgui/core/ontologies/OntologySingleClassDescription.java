@@ -45,7 +45,7 @@ public class OntologySingleClassDescription {
 	/**
 	 * Holds all slot descriptions for the current single ontology class  
 	 */
-	public ArrayList<OntologySingleClassSlotDescription> arrayList4SlotDescriptions = new ArrayList<OntologySingleClassSlotDescription>();
+	private ArrayList<OntologySingleClassSlotDescription> arrayList4SlotDescriptions = null;
 	
 	
 	/**
@@ -56,12 +56,14 @@ public class OntologySingleClassDescription {
 	}
 	
 	/**
+	 * Sets the current class.
 	 * @param clazz the class to set
 	 */
 	public void setClazz(Class<?> clazz) {
 		this.clazz = clazz;
 	}
 	/**
+	 * Returns the current class.
 	 * @return the class
 	 */
 	public Class<?> getClazz() {
@@ -69,12 +71,15 @@ public class OntologySingleClassDescription {
 	}
 
 	/**
+	 * Gets the class reference.
 	 * @return the reference
 	 */
 	public String getClassReference() {
 		return reference;
 	}
+	
 	/**
+	 * Sets the class reference, the package name and the class name.
 	 * @param classReference the reference to set
 	 */
 	public void setClassReference(String classReference) {
@@ -86,12 +91,14 @@ public class OntologySingleClassDescription {
 	}
 
 	/**
+	 * Returns the class name.
 	 * @return the className
 	 */
 	public String getClassName() {
 		return className;
 	}
 	/**
+	 * Sets the class name.
 	 * @param className the className to set
 	 */
 	public void setClassName(String className) {
@@ -99,16 +106,36 @@ public class OntologySingleClassDescription {
 	}
 
 	/**
+	 * Returns the package name.
 	 * @return the packageName
 	 */
 	public String getPackageName() {
 		return packageName;
 	}
 	/**
+	 * Sets the package name.
 	 * @param packageName the packageName to set
 	 */
 	public void setPackageName(String packageName) {
 		this.packageName = packageName;
+	}
+
+	/**
+	 * Sets the array list for slot descriptions.
+	 * @param arrayList4SlotDescriptions the new array list4 slot descriptions
+	 */
+	public void setArrayList4SlotDescriptions(ArrayList<OntologySingleClassSlotDescription> arrayList4SlotDescriptions) {
+		this.arrayList4SlotDescriptions = arrayList4SlotDescriptions;
+	}
+	/**
+	 * Returns the array list4 slot descriptions.
+	 * @return the array list4 slot descriptions
+	 */
+	public ArrayList<OntologySingleClassSlotDescription> getArrayList4SlotDescriptions() {
+		if (arrayList4SlotDescriptions==null) {
+			 arrayList4SlotDescriptions=new ArrayList<OntologySingleClassSlotDescription>();
+		}
+		return arrayList4SlotDescriptions;
 	}
 
 }
