@@ -102,8 +102,8 @@ public class DynTable extends JTable {
 		valueColumn.setCellEditor(new DynTableCellRenderEditor(this.dynForm));
 		valueColumn.setCellRenderer(new DynTableCellRenderEditor(this.dynForm));
 		
-		this.getColumnModel().getColumn(0).setPreferredWidth(170);
-		this.getColumnModel().getColumn(1).setPreferredWidth(60);
+		this.getColumnModel().getColumn(0).setPreferredWidth(180);
+		this.getColumnModel().getColumn(1).setPreferredWidth(80);
 		
 	}
 	

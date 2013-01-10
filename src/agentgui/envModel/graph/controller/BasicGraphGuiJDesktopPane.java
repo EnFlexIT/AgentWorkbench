@@ -49,6 +49,7 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	private static final long serialVersionUID = 5733873560749370049L;
 	
 	private HashMap<Object, BasicGraphGuiProperties> propertyWindows = null;  //  @jve:decl-index=0:
+	private BasicGraphGuiProperties lastOpenedBasicGraphGuiProperties = null;
 	private ComponentListener myComponentAdapter = null;  //  @jve:decl-index=0:
 	
 	
@@ -83,13 +84,17 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 */
 	public void registerBasicGraphGuiProperties(BasicGraphGuiProperties basicGraphGuiProperties) {
 		this.getHashMapBasicGraphGuiProperties().put(basicGraphGuiProperties.getGraphObject(), basicGraphGuiProperties);
+		this.setLastOpenedBasicGraphGuiProperties(basicGraphGuiProperties);
 	}
 	/**
 	 * Unregisters a property window for components or nodes
 	 * @param basicGraphGuiProperties the BasicGraphGuiProperties to unregister
 	 */
 	public void unregisterBasicGraphGuiProperties(BasicGraphGuiProperties basicGraphGuiProperties) {
-		this.getHashMapBasicGraphGuiProperties().remove(basicGraphGuiProperties.getGraphObject());		
+		this.getHashMapBasicGraphGuiProperties().remove(basicGraphGuiProperties.getGraphObject());
+		if (basicGraphGuiProperties==this.getLastOpenedBasicGraphGuiProperties()) {
+			this.setLastOpenedBasicGraphGuiProperties(null);
+		}
 	}
 	/**
 	 * Returns the BasicGraphGuiProperties for a graphObject, if available
@@ -99,6 +104,22 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	public BasicGraphGuiProperties getBasicGraphGuiProperties(Object graphObject) {
 		return this.getHashMapBasicGraphGuiProperties().get(graphObject);
 	}
+
+	/**
+	 * Sets the last opened BasicGraphGuiProperties.
+	 * @param lastOpenedFrame the new last opened BasicGraphGuiProperties
+	 */
+	private void setLastOpenedBasicGraphGuiProperties(BasicGraphGuiProperties lastOpenedFrame) {
+		this.lastOpenedBasicGraphGuiProperties = lastOpenedFrame;
+	}
+	/**
+	 * Gets the last opened BasicGraphGuiProperties.
+	 * @return the last opened BasicGraphGuiProperties
+	 */
+	public BasicGraphGuiProperties getLastOpenedBasicGraphGuiProperties() {
+		return lastOpenedBasicGraphGuiProperties;
+	}
+	
 	/**
 	 * Will close all open property windows.
 	 */
@@ -115,6 +136,8 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 			}
 		}
 	}
+	
+	
 	
 	/**
 	 * Gets the component listener.
@@ -141,6 +164,9 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 
 		private static final long serialVersionUID = -7839103861123261921L;
 
+		/* (non-Javadoc)
+		 * @see javax.swing.DefaultDesktopManager#iconifyFrame(javax.swing.JInternalFrame)
+		 */
 		@Override
 		public void iconifyFrame(JInternalFrame f) {
 			super.iconifyFrame(f);

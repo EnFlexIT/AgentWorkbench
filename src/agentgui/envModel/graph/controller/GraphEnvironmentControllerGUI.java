@@ -356,6 +356,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     	ClusterNetworkComponent cnc = this.evaluateForClusterNetworkComponent(graphObject);
     	if (cnc!=null) {
 			this.setFocusOnAlternativeTab(cnc.getId());
+			
     	} else {
     		BasicGraphGuiProperties compProps = this.getBasicGraphGuiJDesktopPane().getBasicGraphGuiProperties(graphObject); 
     		if (compProps==null) {
@@ -369,6 +370,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 					pve.printStackTrace();
 				}
     		}
+    		
     	}
     }
    
