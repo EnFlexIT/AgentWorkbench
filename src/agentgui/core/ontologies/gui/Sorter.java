@@ -122,9 +122,13 @@ public class Sorter {
 	 */
 	public static void sortSlotDescriptionArray(ArrayList<OntologySingleClassSlotDescription> array2Sort, boolean ascending) {
 
+		final boolean ascendingSort = ascending;
+		
 		Comparator<OntologySingleClassSlotDescription> comperator = new Comparator<OntologySingleClassSlotDescription>() {
 			@Override
 			public int compare(OntologySingleClassSlotDescription oscsd1, OntologySingleClassSlotDescription oscsd2) {
+				
+				int returnValue = 0;
 				
 				boolean isRawType1 = false; 
 				if (oscsd1.getSlotVarType().startsWith("Instance of")) {
@@ -140,17 +144,26 @@ public class Sorter {
 				}
 				
 				if (isRawType1==isRawType2) {
-					// --- both true or both false ---
+					// --- both true or both false --------
 					String stringComp1 = oscsd1.getSlotName();
 					String stringComp2 = oscsd2.getSlotName();
-					return stringComp1.compareTo(stringComp2);
+					returnValue = stringComp1.compareTo(stringComp2);
+					
 				} else {
 					// --- one true and one false ---------
 					if (isRawType1==true) {
-						return -1;
+						returnValue = -1;
 					} else {
-						return 1;
+						returnValue=  1;
 					}
+					
+				}
+				
+				// --- set return value -------------------
+				if (ascendingSort==true) {
+					return returnValue;
+				} else {
+					return returnValue * (-1);
 				}
 			
 			}

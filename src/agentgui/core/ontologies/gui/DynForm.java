@@ -274,6 +274,7 @@ public class DynForm extends JPanel {
 				// --- Get the info about the slots --------------------
 				OntologySingleClassDescription osc = this.ontologyVisualisationHelper.getSlots4ClassAsObject(startObjectClass);
 				if(osc!=null) {
+					Sorter.sortSlotDescriptionArray(osc.getArrayList4SlotDescriptions());
 					this.createGUI(osc, i, 0, startObjectClass, startObjectClassMask, (DefaultMutableTreeNode) rootNode, startObjectPanel);
 				} else {
 					System.out.println("Could not get OntologySingleClassDescription for " + startObjectClass);
