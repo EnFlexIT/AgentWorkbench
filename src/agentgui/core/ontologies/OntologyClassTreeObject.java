@@ -191,7 +191,7 @@ public class OntologyClassTreeObject extends Object {
 		tm4s.addColumn("Type");
 		tm4s.addColumn("Other Facets");		
 
-		if ( ontologySubClass == null ) {
+		if (ontologySubClass == null) {
 			return tm4s;
 		}
 		
