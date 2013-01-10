@@ -1150,6 +1150,7 @@ public class GlobalInfo {
 		}
 		return knownOntologyClassVisualisation;
 	}
+	
 	/**
 	 * Checks if a given object can be visualized by a special OntologyClassVisualisation.
 	 *
@@ -1157,27 +1158,23 @@ public class GlobalInfo {
 	 * @return true, if the given Object is ontology class visualisation
 	 */
 	public boolean isOntologyClassVisualisation(Object checkObject) {
-		
 		if (checkObject==null) return false;
-		
-		Class<?> checkObjectClass = checkObject.getClass();
-		boolean isVisClass = false;
-		
-		Vector<OntologyClassVisualisation> ontoClassViss = this.getKnownOntologyClassVisualisations();
-		for (int i=0; i<ontoClassViss.size(); i++) {
-			OntologyClassVisualisation ontoClassVis = ontoClassViss.get(i);
-			Class<?> visClass = ontoClassVis.getOntologyClass();
-			if (visClass==checkObjectClass) {
-				isVisClass=true;
-				break;
-			}
-		}
-		return isVisClass;
+		return this.isOntologyClassVisualisation(checkObject.getClass());
 	}
 	/**
-	 * Checks if a given object can be visualized by a special OntologyClassVisualisation.
+	 * Checks if a given class can be visualized by a special OntologyClassVisualisation.
 	 *
 	 * @param checkObject the object to check
+	 * @return true, if the given Object is ontology class visualisation
+	 */
+	public boolean isOntologyClassVisualisation(Class<?> checkClass) {
+		if (checkClass==null) return false;
+		return this.isOntologyClassVisualisation(checkClass.getName());
+	}
+	/**
+	 * Checks class, given by its name, can be visualized by a special OntologyClassVisualisation.
+	 *
+	 * @param className the object to check
 	 * @return true, if the given className is ontology class visualisation
 	 */
 	public boolean isOntologyClassVisualisation(String className) {
@@ -1201,10 +1198,10 @@ public class GlobalInfo {
 	 * @param checkObject the check object
 	 * @return the ontology class visualisation
 	 */
-	public OntologyClassVisualisation getOntologyClassVisualisation(Object checkObject) {
+	public OntologyClassVisualisation getOntologyClassVisualisation(Class<?> checkObject) {
 		
 		OntologyClassVisualisation ontoClassVisFound = null;
-		Class<?> checkObjectClass = checkObject.getClass();
+		Class<?> checkObjectClass = checkObject;
 		
 		Vector<OntologyClassVisualisation> ontoClassViss = this.getKnownOntologyClassVisualisations();
 		for (int i=0; i<ontoClassViss.size(); i++) {

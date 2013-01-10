@@ -43,7 +43,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -72,8 +71,6 @@ import agentgui.core.ontologies.OntologySingleClassSlotDescription;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.project.AgentStartArgument;
 import agentgui.core.project.AgentStartConfiguration;
-import agentgui.ontology.Chart;
-import agentgui.ontology.Formula;
 
 /**
  * This class can be used in order to generate a Swing based user form, that represents
@@ -1051,20 +1048,21 @@ public class DynForm extends JPanel {
 	 * This method adds the class to a panel and initiates to add
 	 * possible inner classes and fields also to the panel or its sub panels.
 	 *
-	 * @param osc the osc
+	 * @param oscd the OntologySingleClassDescription
+	 * @param startArgIndex the start arg index
+	 * @param depth the depth of the node
 	 * @param startObjectClass the start object class
 	 * @param startObjectClassMask the start object class mask
-	 * @param parentPanel the parent panel
-	 * @param depth the depth
 	 * @param parentNode the parent node
+	 * @param parentPanel the parent panel
 	 */
-	private void createGUI(OntologySingleClassDescription osc, int startArgIndex, int depth, String startObjectClass, String startObjectClassMask,  DefaultMutableTreeNode parentNode, JPanel parentPanel){
+	private void createGUI(OntologySingleClassDescription oscd, int startArgIndex, int depth, String startObjectClass, String startObjectClassMask,  DefaultMutableTreeNode parentNode, JPanel parentPanel){
 		
 		String startObjectClassName = startObjectClass.substring(startObjectClass.lastIndexOf(".") + 1, startObjectClass.length());
 		String startObjectPackage = startObjectClass.substring(0, startObjectClass.lastIndexOf("."));
 
 		JLabel objectLabelName = new JLabel();		
-		if (osc != null) {
+		if (oscd != null) {
 			// --- if we are on the main panel -> add the class name to it !
 			// --- Create a JPanel in which the class name (JLabel) and its innerclasses
 			// --- and/or fields are added instead of mainPanel - class name - innerclasses/fields
@@ -1103,7 +1101,7 @@ public class DynForm extends JPanel {
 			this.setPanelBounds(parentPanel);
 			
 			// --- go through each field / inner class ----
-			Iterator<OntologySingleClassSlotDescription> iterator = osc.arrayList4SlotDescriptions.iterator();
+			Iterator<OntologySingleClassSlotDescription> iterator = oscd.arrayList4SlotDescriptions.iterator();
 			while (iterator.hasNext()) {
 				
 				OntologySingleClassSlotDescription oscsd = iterator.next();
@@ -1145,10 +1143,12 @@ public class DynForm extends JPanel {
 		
 		// ---------------------------------------------------------------------
 		// --- Is the current ontology class a special case of Agent.GUI ? -----
-		Object specialClass = isAgentGUISpecialClass(startObjectPackage, startObjectClassName); 
-		if (specialClass!=null){
-			this.createOuterElement4AgentGUISpecialClass(startArgIndex, specialClass, parentNode, parentPanel);
-			
+//		Object specialClass = isAgentGUISpecialClass(startObjectPackage, startObjectClassName); 
+//		if (specialClass!=null){
+//			this.createOuterElement4OntologyClassVisualisation(startArgIndex, specialClass, parentNode, parentPanel);
+//		}
+		if (Application.getGlobalInfo().isOntologyClassVisualisation(startObjectClass)==true) {
+			this.createOuterElement4OntologyClassVisualisation(startArgIndex, oscd.getClazz(), parentNode, parentPanel);
 		}
 		// ---------------------------------------------------------------------
 		
@@ -1277,7 +1277,7 @@ public class DynForm extends JPanel {
 	 * @param curentNode the parent node
 	 * @param parentPanel the parent panel
 	 */
-	private void createOuterElement4AgentGUISpecialClass(int startArgIndex, Object specialClass, DefaultMutableTreeNode curentNode, JPanel parentPanel){
+	private void createOuterElement4OntologyClassVisualisation(int startArgIndex, Class<?> specialClass, DefaultMutableTreeNode curentNode, JPanel parentPanel){
 		
 		// ------------------------------------------------------------------------------
 		// --- Make all of the created panels invisible and reduce their height ---------
@@ -1290,41 +1290,8 @@ public class DynForm extends JPanel {
 		if (Application.getGlobalInfo().isOntologyClassVisualisation(specialClass)) {
 			
 			OntologyClassVisualisation ontoClassVis = Application.getGlobalInfo().getOntologyClassVisualisation(specialClass);
-			Class<? extends OntologyClassWidget> widgetClass = ontoClassVis.getWidgetClass();
-			OntologyClassWidget widget = null;
-			
-			try {
-				
-				Class<?>[] conParameter = new Class[2];
-				conParameter[0] = DynForm.class;
-				conParameter[1] = int.class;
-				
-				// --- Get the constructor ------------------------------	
-				Constructor<?> widgetConstructor = widgetClass.getConstructor(conParameter);
-	
-				// --- Define the argument for the newInstance call ----- 
-				Object[] args = new Object[2];
-				args[0] = this;
-				args[1] = startArgIndex;
-				
-				widget = (OntologyClassWidget) widgetConstructor.newInstance(args);
-
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
-
+			OntologyClassWidget widget = ontoClassVis.getWidget(this, startArgIndex);
 			if (widget!=null) {
-				
 				widget.setBounds(feBounds.x, feBounds.y, widget.getWidth(), widget.getHeight());
 				parentPanel.add(widget);
 				
@@ -1720,45 +1687,6 @@ public class DynForm extends JPanel {
 		}
 	}
 	
-	
-	/**
-	 * Checks if the current class is an Agent.GUI special 
-	 * class, like for Formulas or Charts.
-	 *
-	 * @param packageName the package name
-	 * @param objectType the object type
-	 * @return true, if the current request was for an Agent.GUI special class
-	 */
-	private Object isAgentGUISpecialClass(String packageName, String objectType) {
-
-		if (isRawType(objectType)==false) {
-			
-			String testReference = packageName + "." + objectType;
-			Class<?> testClass = null;
-			Object testObject = null; 
-			try {
-				testClass  = Class.forName(testReference);
-				testObject = testClass.newInstance();
-				
-			} catch (ClassNotFoundException e) {
-				//e.printStackTrace();
-			} catch (InstantiationException e) {
-				//e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				//e.printStackTrace();
-			}
-			
-			if (testObject!=null) {
-				if (testObject instanceof Chart) {
-					return testObject;
-				} else if (testObject instanceof Formula) {
-					return testObject;
-				}
-			}
-		}
-		return null;
-	}
-	
 	/**
 	 * This method checks if the type of the field is a raw type
 	 * (String, int, float, ...)
@@ -1872,12 +1800,19 @@ public class DynForm extends JPanel {
 				// --- Float values -----------------------
 				if (singleChar.equals(".") || singleChar.equals(",")) {
 					if (currValue!=null) {
-						if ( currValue.contains(".") || currValue.contains("," )) {
+						if (currValue.contains(".") || currValue.contains("," )) {
 							kT.consume();	
 							return;
 						}
 					}
-				} else  if ( singleChar.matches( "[0-9]" ) == false) {
+				} else  if (singleChar.equalsIgnoreCase("e")) {
+					if (currValue!=null) {
+						if (currValue.contains("e")) {
+							kT.consume();	
+							return;
+						}	
+					}
+				} else  if (singleChar.matches( "[0-9]" ) == false) {
 					kT.consume();	
 					return;
 				}
