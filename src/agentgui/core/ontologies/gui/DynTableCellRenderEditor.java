@@ -74,8 +74,6 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 	
 	private JPanel jPanelToDisplay = null;
 	private JComponent displayComponent = null;
-	private JButton jButtonMultipleOnDynForm = null;
-	
 	
 	/**
 	 * Instantiates a new cell renderer and editor for the DynTable.
@@ -228,10 +226,13 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 		
 		// --- Multiple Button ? ----------------------------------------------
 		if (oscsd!=null) {
-			if (oscsd.isSlotCardinalityIsMultiple()) {
-				this.jPanelToDisplay.add(getJButtonMultiple(), BorderLayout.EAST);
-				// --- Ensure that this cell is editable ----------------------
-				this.dynTable.getEditableRowsVector().add(this.rowModel);
+			if (oscsd.isSlotCardinalityIsMultiple()==true) {
+				JButton jButtonMultiple = getJButtonMultiple();
+				if (jButtonMultiple!=null) {
+					this.jPanelToDisplay.add(jButtonMultiple, BorderLayout.EAST);
+					// --- Ensure that this cell is editable ----------------------
+					this.dynTable.getEditableRowsVector().add(this.rowModel);	
+				}
 			}
 		}
 		
@@ -240,26 +241,39 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 	}
 
 	/**
+	 * Returns, if exists the multiple (+|-) JButton multiple of the DynForm.
+	 *
+	 * @param dynType the DynType
+	 * @return the JButton multiple of the DynForm
+	 */
+	private JButton getJButtonMultipleOnDynForm(DynType dynType) {
+		JButton jButtonMultipleOnDynForm = null;
+		if (dynType!=null) {
+			JPanel dynFormPanel = this.dynType.getPanel();
+			for (int i=0; i < dynFormPanel.getComponentCount(); i++) {
+				if (dynFormPanel.getComponent(i) instanceof JButton) {
+					jButtonMultipleOnDynForm = (JButton) dynFormPanel.getComponent(i);
+					break;
+				}
+			}
+		}
+		return jButtonMultipleOnDynForm;
+	}
+	
+	/**
 	 * This method initializes jButtonMultiple	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonMultiple() {
 			
 		JButton jButtonMultiple = null;
-		
-		JPanel dynFormPanel = this.dynType.getPanel();
-		for (int i=0; i < dynFormPanel.getComponentCount(); i++) {
-			if (dynFormPanel.getComponent(i) instanceof JButton) {
-				this.jButtonMultipleOnDynForm = (JButton) dynFormPanel.getComponent(i);
-				break;
-			}
-		}
-		
-		if (this.jButtonMultipleOnDynForm ==null) {
+
+		final JButton jButtonMultipleOnDynForm = this.getJButtonMultipleOnDynForm(this.dynType);
+		if (jButtonMultipleOnDynForm==null) {
 			jButtonMultiple=null;
 
 		} else {
-			jButtonMultiple = new JButton(this.jButtonMultipleOnDynForm.getText());
+			jButtonMultiple = new JButton(jButtonMultipleOnDynForm.getText());
 			jButtonMultiple.setBounds(new Rectangle(new Dimension(25, 15)));
 			jButtonMultiple.setFont(new Font("Monospaced", Font.BOLD, 12));
 			jButtonMultiple.addActionListener(new ActionListener() {

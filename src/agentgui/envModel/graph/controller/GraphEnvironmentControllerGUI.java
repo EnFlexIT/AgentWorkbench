@@ -361,14 +361,15 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     		BasicGraphGuiProperties compProps = this.getBasicGraphGuiJDesktopPane().getBasicGraphGuiProperties(graphObject); 
     		if (compProps==null) {
     			compProps = new BasicGraphGuiProperties(this.getGraphController(), this.getBasicGraphGuiJDesktopPane(), graphObject);    			
-    		}
-    		if (compProps!=null) {
+    		
+    		} else {
     			compProps.moveToFront();
     			try {
 					compProps.setSelected(true);
 				} catch (PropertyVetoException pve) {
 					pve.printStackTrace();
 				}
+				
     		}
     		
     	}

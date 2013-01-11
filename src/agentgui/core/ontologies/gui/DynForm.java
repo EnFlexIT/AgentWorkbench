@@ -1782,6 +1782,23 @@ public class DynForm extends JPanel {
 			this.isFloatValue = floatValue;
 		}
 
+		/**
+		 * Count occurrences of a character in a given search string.
+		 * @param searchString the String to search in
+		 * @param searchCharacter to search for
+		 * @return the number of occurrences of searchCharacter in searchString 
+		 */
+		public int countCharsInString(String searchString, char searchCharacter) {
+			if (searchString==null) return 0; 
+			int count = 0;
+		    for (int i=0; i < searchString.length(); i++) {
+		        if (searchString.charAt(i)==searchCharacter) {
+		             count++;
+		        }
+		    }
+		    return count;
+		}
+		
 		/* (non-Javadoc)
 		 * @see java.awt.event.KeyAdapter#keyTyped(java.awt.event.KeyEvent)
 		 */
@@ -1795,9 +1812,18 @@ public class DynForm extends JPanel {
 			int caretPosition = displayField.getCaretPosition();
 
 			// --- Allow negative values ------------------
-			if (singleChar.equals("-") && caretPosition==0 && currValue.startsWith("-")==false) {
-				return;
+			if (this.isFloatValue==true) {
+				// --- Float values -----------------------
+				if (singleChar.equals("-") && countCharsInString(currValue, charackter)<2) {
+					return;
+				}
+			} else {
+				// --- Integer values ---------------------
+				if (singleChar.equals("-") && caretPosition==0 && currValue.startsWith("-")==false) {
+					return;
+				}
 			}
+			
 			if (this.isFloatValue==true) {
 				// --- Float values -----------------------
 				if (singleChar.equals(".") || singleChar.equals(",")) {

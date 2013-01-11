@@ -766,11 +766,19 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			// ------------------------------------------------------
 			// --- Start the selected agent -------------------------
 			// ------------------------------------------------------
+			AgentClassElement selectedValue			  = null;
 			Class<? extends Agent> selectedAgentClass = null;
 			String selectedAgentReference 			  = null;
 			String selectedAgentName				  = null;
 			
-			selectedAgentClass		= ((AgentClassElement)jAgentList.getSelectedValue()).getElementClass();
+			selectedValue = (AgentClassElement)jAgentList.getSelectedValue();
+			if (selectedValue==null) {
+				String head = Language.translate("Agent auswählen!");
+				String msg  = Language.translate("Bitte wählen Sie den Agenten aus, den Sie starten wollen.");
+				JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			selectedAgentClass		= selectedValue.getElementClass();
 			selectedAgentReference 	= selectedAgentClass.getName();
 			selectedAgentName		= jTextAgentStartAs.getText();
 			
@@ -799,6 +807,12 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		} else if (trigger == jButtonReferencesAdd ) {
 			// --- Add start argument ---------------------
 			this.readSelectionFromForm();
+			if (agentReference==null || ontoReference==null) {
+				String head = Language.translate("Agent und Ontologie-Referenz auswählen!");
+				String msg  = Language.translate("Bitte wählen Sie einen Agenten und eine Ontologie-Referenz aus den entsprechenden Listen.");
+				JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.WARNING_MESSAGE);
+				return;
+			}
 			int newPos = this.currProject.getAgentStartConfiguration().addReference(agentReference, ontoReference);
 			this.currProject.setAgentStartConfigurationUpdated();
 			if (newPos!=-1) {

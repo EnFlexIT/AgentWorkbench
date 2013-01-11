@@ -308,7 +308,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * This method will separate the.
+	 * This method will separate the XML part from the text .
 	 *
 	 * @param currText the current text
 	 * @return the XML parts
@@ -346,6 +346,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 					tagIdentifier = tag1.substring(1,space);	
 					
 				}
+				tagIdentifier = "</" + tagIdentifier + ">";
 				cut2 = workText.indexOf(tagIdentifier, cut2);
 				cut2 = workText.indexOf(">", cut2)+1;
 				

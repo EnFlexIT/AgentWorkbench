@@ -11,9 +11,11 @@ de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;
 de;Abtastintervall;Sampling rate;;;
+de;Agent auswählen!;Select an Agent!;;;
 de;Agent nach oben verschieben;Move up agent
 de;Agent nach unten verschieben;Move down agent
 de;Agent starten...;Start agent...
+de;Agent und Ontologie-Referenz auswählen!;Select an agent and an ontology reference!;;;
 de;Agent.GUI - Projekt öffnen;Agent.GUI – Open project
 de;Agent.GUI - Standard verwenden;Use Agent.GUI defaults
 de;Agent.GUI - Update;Agent.GUI - Update;;;
@@ -79,9 +81,12 @@ de;Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type o
 de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark is running ...
 de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.
 de;Bitte wählen Sie das gewünschte Projekt aus!;Please select the desired project!
+de;Bitte wählen Sie den Agenten aus, den Sie starten wollen.;Please select the agent you want to start.;;;
 de;Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please select the ontology, which has to be added to your project!
 de;Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.;Please select one of the mapped ontology references from the list.;;;
 de;Bitte wählen Sie eine einzelne Netzwerkkomponente !;Please select a single network component!;;;
+de;Bitte wählen Sie einen Agenten aus der Liste.;Please select an agent from the list.;;;
+de;Bitte wählen Sie einen Agenten und eine Ontologie-Referenz aus den entsprechenden Listen.;Please select an agent and an ontology reference from the corresponding lists.;;;
 de;Bitte wählen Sie einen Namen für den Agenten!;Please choose a name for the agent!
 de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please check your database settings!
 de;CPU-Auslastung;CPU-Load

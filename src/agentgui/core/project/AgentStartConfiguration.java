@@ -76,10 +76,12 @@ public class AgentStartConfiguration implements Serializable {
 	 * @return the agent start arguments
 	 */
 	public AgentStartArguments getAgentStartArguments(String agentReference) {
-		for (AgentStartArguments agentArguments:this.getAgentStartArguments()) {
- 			if (agentArguments.getAgentReference().equals(agentReference)) {
- 				return agentArguments;
- 			}
+		if (agentReference!=null) {
+			for (AgentStartArguments agentArguments:this.getAgentStartArguments()) {
+	 			if (agentArguments.getAgentReference().equals(agentReference)) {
+	 				return agentArguments;
+	 			}
+			}	
 		}
 		return null;
 	}
