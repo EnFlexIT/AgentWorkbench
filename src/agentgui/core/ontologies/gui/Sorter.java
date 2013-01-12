@@ -147,7 +147,7 @@ public class Sorter {
 					// --- both true or both false --------
 					String stringComp1 = oscsd1.getSlotName();
 					String stringComp2 = oscsd2.getSlotName();
-					returnValue = stringComp1.compareTo(stringComp2);
+					returnValue = stringComp1.compareToIgnoreCase(stringComp2);
 					
 				} else {
 					// --- one true and one false ---------

@@ -64,6 +64,7 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 */
 	private void initialize() {
 		this.setSize(new Dimension(300, 300));
+		this.setAutoscrolls(false);
 		this.addComponentListener(this.getComponentListener());
 		this.setDesktopManager(new BasicGraphGuiGraphWorkspaceDesktopManager());
 	}
