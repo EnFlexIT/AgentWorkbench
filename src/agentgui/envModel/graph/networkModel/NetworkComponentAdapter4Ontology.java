@@ -75,7 +75,11 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	 */
 	public OntologyVisualisationHelper getOntologyVisualisationHelper() {
 		if (this.ovh==null) {
-			this.ovh = new OntologyVisualisationHelper(this.getOntologyBaseClasses());
+			if (this.getOntologyBaseClasses()==null) {
+				throw new NullPointerException("The ontology base classes of the NetworkComponentAdapter were not defined!");
+			} else {
+				this.ovh = new OntologyVisualisationHelper(this.getOntologyBaseClasses());	
+			}
 		}
 		return this.ovh;
 	}

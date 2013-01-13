@@ -27,7 +27,6 @@ public class GasMasPlugIn extends PlugIn {
 		OGE_Importer ogeImporter = new OGE_Importer(this.graphController, "net", "OGE / ZIB-Gas Netzwerk");
 		this.graphController.getImportAdapter().add(ogeImporter);
 		
-		
 	}
 	
 	

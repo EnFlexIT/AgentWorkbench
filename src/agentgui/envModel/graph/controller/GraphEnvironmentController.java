@@ -101,8 +101,8 @@ public class GraphEnvironmentController extends EnvironmentController {
     /** The key string used for saving the position in the GraphML file */
     private static final String KEY_POSITION_PROPERTY = "pos";
     /** The key string used for saving the ontology representation in the GraphML file */
-    private static final String KEY_ONTOLOGY_REPRESENTATION_PROPERTY = "ontoRepr";
-
+    private static final String KEY_DATA_MODEL_BASE64_PROPERTY = "dataModelVectorBase64Encoded";
+    
     /** The base file name used for saving the graph and the components (without suffix) */
     private String baseFileName = null;
     /** The network model currently loaded */
@@ -113,10 +113,13 @@ public class GraphEnvironmentController extends EnvironmentController {
     private static final String generalGraphSettings4MASFile = "~GeneralGraphSettings~";
     
     
-    /** Known adapter for the import of network models */
-    private Vector<NetworkModelFileImporter> importAdapter = new Vector<NetworkModelFileImporter>();
+    /** Separator used for the local graphMLWriter **/
+    private static final String GraphML_NewLine = System.getProperty("line.separator");  
+    private static final String GraphML_VectorBrackets = "[conent]";
     /** The GraphMLWriter used to save the graph */
     private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter = null;
+    /** Known adapter for the import of network models */
+    private Vector<NetworkModelFileImporter> importAdapter = new Vector<NetworkModelFileImporter>();
 
     
     /** The abstract environment model is just an open slot, where individual things can be placed. */
@@ -803,40 +806,49 @@ public class GraphEnvironmentController extends EnvironmentController {
 		if (graphMLWriter == null) {
 		    graphMLWriter = new GraphMLWriter<GraphNode, GraphEdge>();
 		    graphMLWriter.setEdgeIDs(new Transformer<GraphEdge, String>() {
-	
-			@Override
-			public String transform(GraphEdge arg0) {
-			    return arg0.getId();
-			}
+				@Override
+				public String transform(GraphEdge arg0) {
+				    return arg0.getId();
+				}
 		    });
 		    graphMLWriter.setEdgeDescriptions(new Transformer<GraphEdge, String>() {
-	
-			@Override
-			public String transform(GraphEdge arg0) {
-			    return arg0.getComponentType();
-			}
+				@Override
+				public String transform(GraphEdge graphEdge) {
+				    return graphEdge.getComponentType();
+				}
 		    });
 		    graphMLWriter.setVertexIDs(new Transformer<GraphNode, String>() {
-	
-			@Override
-			public String transform(GraphNode arg0) {
-			    return arg0.getId();
-			}
+				@Override
+				public String transform(GraphNode graphNode) {
+				    return graphNode.getId();
+				}
 		    });
 		    graphMLWriter.addVertexData(KEY_POSITION_PROPERTY, "position", "", new Transformer<GraphNode, String>() {
-	
-			@Override
-			public String transform(GraphNode node) {
-			    String pos = node.getPosition().getX() + ":" + node.getPosition().getY();
-			    return pos;
-			}
+				@Override
+				public String transform(GraphNode graphNode) {
+				    String pos = graphNode.getPosition().getX() + ":" + graphNode.getPosition().getY();
+				    return pos;
+				}
 		    });
-		    graphMLWriter.addVertexData(KEY_ONTOLOGY_REPRESENTATION_PROPERTY, "Base64 encoded ontology representation", "", new Transformer<GraphNode, String>() {
-	
-			@Override
-			public String transform(GraphNode arg0) {
-			    return arg0.getEncodedOntologyRepresentation();
-			}
+		    graphMLWriter.addVertexData(KEY_DATA_MODEL_BASE64_PROPERTY, "Base64 encoded individual data model", "", new Transformer<GraphNode, String>() {
+				@Override
+				public String transform(GraphNode graphNode) {
+					String dmBase64StringSave = null;
+					if (graphNode.getDataModelBase64()!=null) {
+						for (String dmBase64String : graphNode.getDataModelBase64()) {
+							dmBase64String = GraphML_VectorBrackets.replace("conent", dmBase64String);
+							if (dmBase64StringSave==null) {
+								dmBase64StringSave = dmBase64String;
+							} else {
+								dmBase64StringSave = dmBase64StringSave + GraphML_NewLine + dmBase64String;
+							}
+						}
+					}
+					if (dmBase64StringSave!=null) {
+						dmBase64StringSave = GraphML_NewLine + dmBase64StringSave + GraphML_NewLine;
+					}
+					return dmBase64StringSave;
+				}
 		    });
 	
 		}
@@ -860,35 +872,50 @@ public class GraphEnvironmentController extends EnvironmentController {
 		};
 	
 		Transformer<NodeMetadata, GraphNode> nodeTransformer = new Transformer<NodeMetadata, GraphNode>() {
-	
 		    @Override
 		    public GraphNode transform(NodeMetadata nmd) {
-	
-			GraphNode gn = new GraphNode();
-			gn.setId(nmd.getId());
-			gn.setEncodedOntologyRepresentation(nmd.getProperty(KEY_ONTOLOGY_REPRESENTATION_PROPERTY));
-	
-			Point2D pos = null;
-			String posString = nmd.getProperty(KEY_POSITION_PROPERTY);
-			if (posString != null) {
-			    String[] coords = posString.split(":");
-			    if (coords.length == 2) {
-				double xPos = Double.parseDouble(coords[0]);
-				double yPos = Double.parseDouble(coords[1]);
-				pos = new Point2D.Double(xPos, yPos);
-			    }
-			}
-			if (pos == null) {
-			    System.err.println("Keine Position definiert für Knoten " + nmd.getId());
-			    pos = new Point2D.Double(0, 0);
-			}
-			gn.setPosition(pos);
-			return gn;
+
+				// --- Create GraphNode instance and set ID ---------
+		    	GraphNode graphNode = new GraphNode();
+				graphNode.setId(nmd.getId());
+
+				// --- Load the individual data model ---------------
+		    	String dmBase64StringSaved = nmd.getProperty(KEY_DATA_MODEL_BASE64_PROPERTY);
+		    	if (dmBase64StringSaved!=null) {
+		    		Vector<String> base64Vector = new Vector<String>();
+		    		while (dmBase64StringSaved.contains("]")) {
+		    			int cutAtOpen = dmBase64StringSaved.indexOf("[")+1;
+		    			int cutAtClose = dmBase64StringSaved.indexOf("]");
+			    		String singleString = dmBase64StringSaved.substring(cutAtOpen, cutAtClose);
+			    		base64Vector.add(singleString);
+			    		dmBase64StringSaved = dmBase64StringSaved.substring(cutAtClose+1);
+			    	}
+			    	if (base64Vector.size()>0) {
+			    		graphNode.setDataModelBase64(base64Vector);	
+			    	}
+		    	}
+
+		    	// --- Set the position of the node -----------------
+				Point2D pos = null;
+				String posString = nmd.getProperty(KEY_POSITION_PROPERTY);
+				if (posString!=null) {
+				    String[] coords = posString.split(":");
+				    if (coords.length == 2) {
+						double xPos = Double.parseDouble(coords[0]);
+						double yPos = Double.parseDouble(coords[1]);
+						pos = new Point2D.Double(xPos, yPos);
+				    }
+				}
+				if (pos == null) {
+				    System.err.println("Keine Position definiert für Knoten " + nmd.getId());
+				    pos = new Point2D.Double(0, 0);
+				}
+				graphNode.setPosition(pos);
+				return graphNode;
 		    }
 		};
 	
 		Transformer<EdgeMetadata, GraphEdge> edgeTransformer = new Transformer<EdgeMetadata, GraphEdge>() {
-	
 		    @Override
 		    public GraphEdge transform(EdgeMetadata emd) {
 		    	return new GraphEdge(emd.getId(), emd.getDescription());
@@ -896,7 +923,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 		};
 	
 		Transformer<HyperEdgeMetadata, GraphEdge> hyperEdgeTransformer = new Transformer<HyperEdgeMetadata, GraphEdge>() {
-	
 		    @Override
 		    public GraphEdge transform(HyperEdgeMetadata arg0) {
 		    	return null;

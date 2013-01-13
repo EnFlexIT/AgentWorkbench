@@ -10,9 +10,14 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 
 public class ValveAdapter extends NetworkComponentAdapter {
 
+	private ValveDataModelAdapter valveDataModelAdapter=null;
+	
 	@Override
 	public NetworkComponentAdapter4DataModel getDataModelAdapter() {
-		return new ValveDataModelAdapter();
+		if (valveDataModelAdapter==null) {
+			valveDataModelAdapter=new ValveDataModelAdapter();
+		}
+		return valveDataModelAdapter;
 	}
 
 	@Override

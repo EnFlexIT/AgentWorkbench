@@ -10,9 +10,14 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 
 public class ResistorAdapter extends NetworkComponentAdapter {
 
+	private ResistorDataModelAdapter resistorDataModelAdapter=null;
+	
 	@Override
 	public NetworkComponentAdapter4DataModel getDataModelAdapter() {
-		return new ResistorDataModelAdapter();
+		if (resistorDataModelAdapter==null) {
+			resistorDataModelAdapter = new ResistorDataModelAdapter();
+		}
+		return resistorDataModelAdapter;
 	}
 
 	@Override

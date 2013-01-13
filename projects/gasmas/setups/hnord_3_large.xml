@@ -797,6 +797,10 @@
             <key>TimeStop</key>
             <value>1352883802156</value>
         </entry>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
+        </entry>
     </timeModelSettings>
     <environmentFileName>HNord (3) Large.graphml</environmentFileName>
 </simulationSetup>

@@ -1,14 +1,14 @@
 package gasmas.adapter;
 
-import gasmas.ontology.Compressor;
 import gasmas.ontology.GasGridOntology;
+import gasmas.ontology.Innode;
 
 import java.util.Vector;
 
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4Ontology;
 import agentgui.ontology.AgentGUI_BaseOntology;
 
-public class CompressorDataModelAdapter extends NetworkComponentAdapter4Ontology {
+public class GasNodeDataModelAdapter extends NetworkComponentAdapter4Ontology {
 
 	private Vector<String> ontologyBaseClasses = null;
 	private String[] ontologyClassReferences = null;
@@ -22,14 +22,14 @@ public class CompressorDataModelAdapter extends NetworkComponentAdapter4Ontology
 		}
 		return this.ontologyBaseClasses;
 	}
-	
+
 	@Override
 	public String[] getOntologyClassReferences() {
 		if (ontologyClassReferences==null) {
 			this.ontologyClassReferences = new String[1];
-			this.ontologyClassReferences[0] = Compressor.class.getName();
+			this.ontologyClassReferences[0] = Innode.class.getName();
 		}
 		return this.ontologyClassReferences;
 	}
-
+	
 }

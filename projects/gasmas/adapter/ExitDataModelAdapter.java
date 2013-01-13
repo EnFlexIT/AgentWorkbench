@@ -42,20 +42,27 @@ import agentgui.ontology.TimeSeriesChart;
  */
 public class ExitDataModelAdapter extends NetworkComponentAdapter4Ontology {
 
+	private Vector<String> ontologyBaseClasses = null;
+	private String[] ontologyClassReferences = null;
+	
 	@Override
 	public Vector<String> getOntologyBaseClasses() {
-		Vector<String> onotolgyRefs = new Vector<String>();
-		onotolgyRefs.add(GasGridOntology.class.getName());
-		onotolgyRefs.add(AgentGUI_BaseOntology.class.getName());
-		return onotolgyRefs;
+		if (this.ontologyBaseClasses==null) {
+			this.ontologyBaseClasses = new Vector<String>();
+			this.ontologyBaseClasses.add(GasGridOntology.class.getName());
+			this.ontologyBaseClasses.add(AgentGUI_BaseOntology.class.getName());
+		}
+		return this.ontologyBaseClasses;
 	}
 
 	@Override
 	public String[] getOntologyClassReferences() {
-		String[] onotolgyClassRefs  = new String[2];
-		onotolgyClassRefs[0] = Exit.class.getName();
-		onotolgyClassRefs[1] = TimeSeriesChart.class.getName();
-		return onotolgyClassRefs;
+		if (ontologyClassReferences==null) {
+			this.ontologyClassReferences = new String[2];
+			this.ontologyClassReferences[0] = Exit.class.getName();
+			this.ontologyClassReferences[1] = TimeSeriesChart.class.getName();
+		}
+		return this.ontologyClassReferences;
 	}
-
+	
 }

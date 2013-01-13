@@ -7,17 +7,16 @@ import javax.swing.JMenuItem;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 
+public class GasNodeAdapter extends NetworkComponentAdapter {
 
-public class ControlValveAdapter extends NetworkComponentAdapter {
-
-	private ControlValveDataModelAdapter controlValveDataModelAdapter=null;
+	private GasNodeDataModelAdapter gasNodeDataModelAdapter = null;
 	
 	@Override
 	public NetworkComponentAdapter4DataModel getDataModelAdapter() {
-		if (controlValveDataModelAdapter==null) {
-			controlValveDataModelAdapter=new ControlValveDataModelAdapter();
+		if (gasNodeDataModelAdapter==null) {
+			gasNodeDataModelAdapter = new GasNodeDataModelAdapter();
 		}
-		return controlValveDataModelAdapter;
+		return gasNodeDataModelAdapter;
 	}
 
 	@Override
@@ -25,7 +24,5 @@ public class ControlValveAdapter extends NetworkComponentAdapter {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
 
 }

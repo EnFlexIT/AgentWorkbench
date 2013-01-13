@@ -300,9 +300,9 @@
         <entry>
             <key>Gas network</key>
             <value>
+                <adapterClass>gasmas.adapter.GasNodeAdapter</adapterClass>
                 <clusterAgent>gasmas.agents.components.ClusterNetworkAgent</clusterAgent>
                 <clusterShape>Rectangle</clusterShape>
-                <ontologyClass>gasmas.ontology.Innode</ontologyClass>
                 <showLabel>false</showLabel>
                 <vertexColor>-26368</vertexColor>
                 <vertexColorPicked>-205</vertexColorPicked>
@@ -313,7 +313,6 @@
             <key>Default Domain</key>
             <value>
                 <clusterShape>Rectangle</clusterShape>
-                <ontologyClass></ontologyClass>
                 <showLabel>false</showLabel>
                 <vertexColor>-65536</vertexColor>
                 <vertexColorPicked>-65281</vertexColorPicked>

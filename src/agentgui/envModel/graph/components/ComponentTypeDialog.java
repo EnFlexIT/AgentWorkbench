@@ -28,7 +28,6 @@
  */
 package agentgui.envModel.graph.components;
 
-import jade.content.Concept;
 import jade.core.Agent;
 
 import java.awt.Color;
@@ -105,6 +104,16 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	
 	private final String pathImage = GraphGlobals.getPathImages();
 	
+	private Vector<String> columnHeaderDomains 		= null;  //  @jve:decl-index=0:
+	public final String COL_D_DomainName 			= Language.translate("Name", Language.EN);  			//  @jve:decl-index=0:
+	public final String COL_D_AdapterClass			= Language.translate("Adapter class", Language.EN); 	//  @jve:decl-index=0:
+	public final String COL_D_VertexSize 			= Language.translate("Vertex size", Language.EN);  		//  @jve:decl-index=0:
+	public final String COL_D_VertexColor			= Language.translate("Color", Language.EN);  			//  @jve:decl-index=0:
+	public final String COL_D_VertexColorPicked 	= Language.translate("Color picked", Language.EN);  	//  @jve:decl-index=0:
+	public final String COL_D_ShowLable				= Language.translate("Show label", Language.EN);  		//  @jve:decl-index=0:
+	public final String COL_D_ClusterShape			= Language.translate("Cluster shape", Language.EN);  	//  @jve:decl-index=0:
+	public final String COL_D_ClusterAgent			= Language.translate("Cluster agent", Language.EN);  	//  @jve:decl-index=0:
+	
 	private Vector<String> columnHeaderComponents 	= null;  //  @jve:decl-index=0:
 	public final String COL_TypeSpecifier 			= Language.translate("Type-Specifier", Language.EN);  	//  @jve:decl-index=0:
 	public final String COL_Domain 					= Language.translate("Subnetwork", Language.EN);  		//  @jve:decl-index=0:
@@ -116,16 +125,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	public final String COL_EdgeWidth 				= Language.translate("Width", Language.EN);  			//  @jve:decl-index=0:
 	public final String COL_EdgeColor 				= Language.translate("Color", Language.EN);  			//  @jve:decl-index=0:
 
-	
-	private Vector<String> columnHeaderDomains 		= null;  //  @jve:decl-index=0:
-	public final String COL_D_DomainName 			= Language.translate("Name", Language.EN);  			//  @jve:decl-index=0:
-	public final String COL_D_OntologyClass			= Language.translate("Ontology class", Language.EN); 	//  @jve:decl-index=0:
-	public final String COL_D_VertexSize 			= Language.translate("Vertex size", Language.EN);  		//  @jve:decl-index=0:
-	public final String COL_D_VertexColor			= Language.translate("Color", Language.EN);  			//  @jve:decl-index=0:
-	public final String COL_D_VertexColorPicked 	= Language.translate("Color picked", Language.EN);  	//  @jve:decl-index=0:
-	public final String COL_D_ShowLable				= Language.translate("Show label", Language.EN);  		//  @jve:decl-index=0:
-	public final String COL_D_ClusterShape			= Language.translate("Cluster shape", Language.EN);  	//  @jve:decl-index=0:
-	public final String COL_D_ClusterAgent			= Language.translate("Cluster agent", Language.EN);  	//  @jve:decl-index=0:
 	
 	private HashMap<String, ComponentTypeSettings> currCompTypSettings = null;
 	private HashMap<String, DomainSettings> currDomainSettings = null;
@@ -164,7 +163,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private DefaultTableModel domainTableModel = null;
 	
 	private TableCellEditor4ClassSelector agentClassesCellEditor = null;  		//  @jve:decl-index=0:
-	private TableCellEditor4ClassSelector ontologyClassesCellEditor = null;  	//  @jve:decl-index=0:
 	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  	//  @jve:decl-index=0:
 	private TableCellEditor4ClassSelector adapterClassesCellEditor = null;  	//  @jve:decl-index=0:
 	
@@ -307,7 +305,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		if (columnHeaderDomains==null) {
 			columnHeaderDomains = new Vector<String>();
 			columnHeaderDomains.add(COL_D_DomainName);
-			columnHeaderDomains.add(COL_D_OntologyClass);
+			columnHeaderDomains.add(COL_D_AdapterClass);
 			columnHeaderDomains.add(COL_D_ShowLable);	
 			columnHeaderDomains.add(COL_D_VertexSize);
 			columnHeaderDomains.add(COL_D_VertexColor);
@@ -619,11 +617,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		if (jTableDomainTypes == null) {
 			
 			jTableDomainTypes = new JTable();
+			jTableDomainTypes.setModel(getTableModel4Domains());
 			jTableDomainTypes.setFillsViewportHeight(true);
 			jTableDomainTypes.setShowGrid(false);
 			jTableDomainTypes.setRowHeight(20);
 			jTableDomainTypes.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTableDomainTypes.setModel(getTableModel4Domains());
 			jTableDomainTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jTableDomainTypes.setAutoCreateRowSorter(true);
 			jTableDomainTypes.getTableHeader().setReorderingAllowed(false);
@@ -677,8 +675,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			domainColumn.setCellEditor(new TableCellEditor4Domains(this));
 
 			//Set up renderer and editor for the agent class column
-			TableColumn agentClassColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_OntologyClass));
-			agentClassColumn.setCellEditor(this.getOntologyClassesCellEditor());
+			TableColumn agentClassColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_AdapterClass));
+			agentClassColumn.setCellEditor(this.getAdapterClassesCellEditor());
 			agentClassColumn.setCellRenderer(new TableCellRenderer4Label());
 
 			//Set up renderer and editor for Graph prototype column
@@ -735,7 +733,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 					String domainName = domainIterator.next();
 					
 					DomainSettings domSetting = this.currDomainSettings.get(domainName);
-					String ontologyClass = domSetting.getOntologyClass();
+					String ontologyClass = domSetting.getAdapterClass();
 					Integer vertexSize = domSetting.getVertexSize();
 					if (vertexSize==0) {
 						vertexSize = GeneralGraphSettings4MAS.DEFAULT_VERTEX_SIZE;
@@ -751,7 +749,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 					for (int i = 0; i < this.getColumnHeaderDomains().size(); i++) {
 						if (i == getColumnHeaderIndexDomains(COL_D_DomainName)) {
 							newRow.add(domainName);
-						} else if (i == getColumnHeaderIndexDomains(COL_D_OntologyClass)) {
+						} else if (i == getColumnHeaderIndexDomains(COL_D_AdapterClass)) {
 							newRow.add(ontologyClass);
 						} else if (i == getColumnHeaderIndexDomains(COL_D_VertexSize)) {
 							newRow.add(vertexSize);
@@ -806,7 +804,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		for (int i = 0; i < this.getColumnHeaderDomains().size(); i++) {
 			if (i == getColumnHeaderIndexDomains(COL_D_DomainName)) {
 				newRow.add(null);
-			} else if (i == getColumnHeaderIndexDomains(COL_D_OntologyClass)) {
+			} else if (i == getColumnHeaderIndexDomains(COL_D_AdapterClass)) {
 				newRow.add(null);
 			} else if (i == getColumnHeaderIndexDomains(COL_D_ShowLable)) {
 				newRow.add(true);
@@ -1153,16 +1151,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return agentClassesCellEditor;
 	}
 	/**
-	 * Returns the ClassSelector cell editor for Concept classes.
-	 * @return cell editor for the class selection
-	 */
-	private TableCellEditor4ClassSelector getOntologyClassesCellEditor(){
-		if(ontologyClassesCellEditor == null){
-			ontologyClassesCellEditor = new TableCellEditor4ClassSelector(Application.getMainWindow(), Concept.class, "", "", Language.translate("Ontologie-Klasse für Übergabepunkte"), true);
-		}
-		return ontologyClassesCellEditor;
-	}
-	/**
 	 * Returns the ClassSelector cell editor for NetworkComponentAdapter classes.
 	 * @return cell editor for the class selection
 	 */
@@ -1422,7 +1410,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				String name = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_DomainName));
 				if(name!=null && name.length()!=0){
 					
-					String ontoClass 	 = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_OntologyClass));
+					String adapterClass  = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_AdapterClass));
 					boolean showLabel 	 = (Boolean)dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_ShowLable));
 					Integer vertexSize 	 = (Integer)dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_VertexSize));
 					Color color 		 = (Color)  dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_VertexColor));
@@ -1433,7 +1421,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 					String clusterAgent  = (String) dtmDomains.getValueAt(row, this.getColumnHeaderIndexDomains(COL_D_ClusterAgent));
 					
 					DomainSettings ds = new DomainSettings();
-					ds.setOntologyClass(ontoClass);
+					ds.setAdapterClass(adapterClass);
 					ds.setShowLabel(showLabel);
 					ds.setVertexSize(vertexSize);
 					ds.setVertexColor(colorStr);

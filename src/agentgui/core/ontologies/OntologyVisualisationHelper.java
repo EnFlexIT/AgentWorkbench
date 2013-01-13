@@ -70,7 +70,7 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 	 */
 	public OntologyVisualisationHelper(Vector<String> subOntologies) {
 		this.subOntologies = subOntologies;	
-		this.setOntologyTree();
+		this.setOntologyTree();	
 	}
 	
 	/**
@@ -97,28 +97,35 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 	 */
 	private void setOntologyTree() {
 		
-		Vector<String> subOntologiesCorrected = new Vector<String>();
-		
-		// --- Run through Sub-Ontologies -----------------------
-		Iterator<String> it = this.subOntologies.iterator();
-		while (it.hasNext()) {
-			// --- Get reference of current Sub-Ontology --------
-			String subOntologyReference = it.next();	
-			// --- Build OntologyClass-Object for Ontology ------
-			OntologyClass onCla = new OntologyClass(subOntologyReference);
-			// --- Remember this class locally ------------------
-			this.put(onCla.getOntologyMainClass(), onCla);
-			subOntologiesCorrected.add(onCla.getOntologyMainClass());
-		}
-		// ------------------------------------------------------------------------------------
-		// --- Correct the Vector of the Sub-Ontologies inside the Project-Class            ---
-		// --- because of the possible missing Main-Class inside the Ontology-Reference.    ---
-		// --- E.g. it is possible to point to an Ontology by just using 'contmas.ontology' ---
-		// ------------------------------------------------------------------------------------
-		this.subOntologies = subOntologiesCorrected;
+		if (this.subOntologies==null) {
+			throw new NullPointerException("The ontology base classes are not defined!");
 
-		// --- Build the OntologyTree (DefaultTreeModel) --------
-		this.buildOntologyTree();
+		} else {
+			Vector<String> subOntologiesCorrected = new Vector<String>();
+			
+			// --- Run through Sub-Ontologies -----------------------
+			Iterator<String> it = this.subOntologies.iterator();
+			while (it.hasNext()) {
+				// --- Get reference of current Sub-Ontology --------
+				String subOntologyReference = it.next();	
+				// --- Build OntologyClass-Object for Ontology ------
+				OntologyClass onCla = new OntologyClass(subOntologyReference);
+				// --- Remember this class locally ------------------
+				this.put(onCla.getOntologyMainClass(), onCla);
+				subOntologiesCorrected.add(onCla.getOntologyMainClass());
+			}
+			// ------------------------------------------------------------------------------------
+			// --- Correct the Vector of the Sub-Ontologies inside the Project-Class            ---
+			// --- because of the possible missing Main-Class inside the Ontology-Reference.    ---
+			// --- E.g. it is possible to point to an Ontology by just using 'contmas.ontology' ---
+			// ------------------------------------------------------------------------------------
+			this.subOntologies = subOntologiesCorrected;
+
+			// --- Build the OntologyTree (DefaultTreeModel) --------
+			this.buildOntologyTree();
+			
+		}
+		
 	}
 	
 	/**

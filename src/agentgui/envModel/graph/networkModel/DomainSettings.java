@@ -41,13 +41,17 @@ public class DomainSettings implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 469880829860930598L;
 	
-	private String ontologyClass = null;
+	private boolean showLabel = true;
 	private Integer vertexSize = GeneralGraphSettings4MAS.DEFAULT_VERTEX_SIZE; 
 	private String vertexColor = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR.getRGB());
 	private String vertexColorPicked = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR.getRGB());
-	private boolean showLabel = true;
-	private String clusterShape = GeneralGraphSettings4MAS.SHAPE_DEFAULT_4_CLUSTER;
+	/** The adapter class that can extend functionalities for a NetworkComponent  */
+	private String adapterClass = null;
+	/**	The Agent that has to be started in case that a cluster was generated */
 	private String clusterAgent = null;
+	/**	The shape that has to be used for the visual representation of a cluster */
+	private String clusterShape = GeneralGraphSettings4MAS.SHAPE_DEFAULT_4_CLUSTER;
+	
 	
 	/**
 	 * Instantiates a new domain settings.
@@ -61,8 +65,8 @@ public class DomainSettings implements Serializable {
 	 */
 	public DomainSettings getCopy() {
 		DomainSettings copy = new DomainSettings();
-		if (ontologyClass!=null) {
-			copy.setOntologyClass(new String(ontologyClass));	
+		if (adapterClass!=null) {
+			copy.setAdapterClass(new String(adapterClass));	
 		}
 		copy.setShowLabel(showLabel);
 		copy.setVertexSize(new Integer(vertexSize));
@@ -82,18 +86,18 @@ public class DomainSettings implements Serializable {
 	}
 	
 	/**
-	 * Gets the ontology class.
-	 * @return the ontologyClass
+	 * Returns the class of the type {@link NetworkComponentAdapter} used for the GraphNodes in this Domain.
+	 * @return the assigned NetworkComponentAdapter-class 
 	 */
-	public String getOntologyClass() {
-		return ontologyClass;
+	public String getAdapterClass() {
+		return adapterClass;
 	}
 	/**
-	 * Sets the ontology class.
-	 * @param ontologyClass the ontologyClass to set
+	 * Sets the class of the type {@link NetworkComponentAdapter} that has to be used for the GraphNodes in this Domain.
+	 * @param adapterClass the new NetworkComponentAdapter-class
 	 */
-	public void setOntologyClass(String ontologyClass) {
-		this.ontologyClass = ontologyClass;
+	public void setAdapterClass(String adapterClass) {
+		this.adapterClass = adapterClass;
 	}
 
 	/**

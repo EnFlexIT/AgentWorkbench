@@ -29,6 +29,7 @@
 package agentgui.envModel.graph.networkModel;
 
 import java.awt.geom.Point2D;
+import java.util.Vector;
 
 /**
  * This class represents a graph node in an environment model of the type graph / network
@@ -42,44 +43,56 @@ import java.awt.geom.Point2D;
 public class GraphNode extends GraphElement {
 
 	private static final long serialVersionUID = 7676853104978228247L;
-
+	
+	public final static String GRAPH_NODE_PREFIX = "PP";
+	
 	/** The GraphNode's position in a visualization */
 	private Point2D position = null;
-	/** The ontology object instance representing this component, serialized as a base64 encoded String for saving via JAXB	 */
-	private String encodedOntologyRepresentation;
 
-	public final static String GRAPH_NODE_PREFIX = "PP";
+	/**	The data model for this GraphNode.*/
+	private Object dataModel;
+	/** The data model for this GraphNode encoded as Base64 String*/
+	private Vector<String> dataModelBase64;
 
+	
 	/**
-	 * Default constructor
+	 * Default constructor with a default position of (Point2D.Double(50.0, 50.0)).
 	 */
 	public GraphNode() {
 		this.position = new Point2D.Double(50.0, 50.0);
 	}
 
+	/**
+	 * Instantiates a new graph node.
+	 *
+	 * @param id the ID of this GraphNode
+	 * @param position the position of the GraphNode
+	 */
 	public GraphNode(String id, Point2D position) {
 		this.id = id;
 		this.position = position;
 	}
-
-	/**
-	 * Gets the copy of the current instance.
-	 * @return the copy
+	
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.GraphElement#getCopy()
 	 */
 	@Override
 	public GraphNode getCopy() {
-		GraphNode nodeCopy = new GraphNode(id, new Point2D.Double(position.getX(), this.position.getY()));
-		nodeCopy.setEncodedOntologyRepresentation(this.encodedOntologyRepresentation);
+		GraphNode nodeCopy = new GraphNode(this.id, new Point2D.Double(this.position.getX(), this.position.getY()));
+		nodeCopy.setDataModel(this.dataModel);
+		nodeCopy.setDataModelBase64(this.dataModelBase64);	
 		return nodeCopy;
 	}
 
 	/**
+	 * Sets the position of this GraphNode.
 	 * @param point2d the position to set
 	 */
 	public void setPosition(Point2D point2d) {
 		this.position = point2d;
 	}
 	/**
+	 * Returns the position.
 	 * @return the position
 	 */
 	public Point2D getPosition() {
@@ -87,16 +100,33 @@ public class GraphNode extends GraphElement {
 	}
 
 	/**
-	 * @return the encodedOntologyRepresentation
+	 * Sets the current data model.
+	 * @param dataModel the new Object instance of the data model
 	 */
-	public String getEncodedOntologyRepresentation() {
-		return encodedOntologyRepresentation;
+	public void setDataModel(Object dataModel) {
+		this.dataModel = dataModel;
 	}
 	/**
-	 * @param encodedOntologyRepresentation the encodedOntologyRepresentation to set
+	 * Returns the current data model as Object instance.
+	 * @return the data model
 	 */
-	public void setEncodedOntologyRepresentation(String encodedOntologyRepresentation) {
-		this.encodedOntologyRepresentation = encodedOntologyRepresentation;
+	public Object getDataModel() {
+		return dataModel;
+	}
+
+	/**
+	 * Sets the data model as Vector of Base64 encoded Strings.
+	 * @param dataModelBase64 the new data model base64 
+	 */
+	public void setDataModelBase64(Vector<String> dataModelBase64) {
+		this.dataModelBase64 = dataModelBase64;
+	}
+	/**
+	 * Returns the data model as Vector of Base64 encoded Strings.
+	 * @return the data model base64
+	 */
+	public Vector<String> getDataModelBase64() {
+		return dataModelBase64;
 	}
 
 }
