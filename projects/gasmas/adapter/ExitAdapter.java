@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
@@ -13,7 +14,7 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 public class ExitAdapter extends NetworkComponentAdapter implements ActionListener {
 
 	private ExitDataModelAdapter exitDataModelAdapter=null;
-	private Vector<JMenuItem> menuItems=null; 
+	private Vector<JComponent> menuItems=null; 
 	private JMenuItem jMenueItemExitClose=null;
 	private JMenuItem jMenueItemExitFailure=null;
 	
@@ -27,9 +28,9 @@ public class ExitAdapter extends NetworkComponentAdapter implements ActionListen
 	}
 
 	@Override
-	public Vector<JMenuItem> getJPopupMenuElements() {
+	public Vector<JComponent> getJPopupMenuElements() {
 		if (menuItems==null) {
-			menuItems = new Vector<JMenuItem>();
+			menuItems = new Vector<JComponent>();
 			menuItems.add(this.getJMenuItemExitFailure());	
 			menuItems.add(this.getJMenuItemExitClose());	
 		}

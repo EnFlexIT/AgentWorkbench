@@ -30,7 +30,7 @@ package agentgui.envModel.graph.networkModel;
 
 import java.util.Vector;
 
-import javax.swing.JMenuItem;
+import javax.swing.JComponent;
 
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
@@ -93,7 +93,7 @@ public abstract class NetworkComponentAdapter {
 	 * @param graphController the current GraphEnvironmentController
 	 * @return the vector of menu elements
 	 */
-	public Vector<JMenuItem> invokeGetJPopupMenuElements(GraphEnvironmentController graphController, NetworkComponent networkComponent) {
+	public Vector<JComponent> invokeGetJPopupMenuElements(GraphEnvironmentController graphController, NetworkComponent networkComponent) {
 		this.graphController = graphController;
 		this.networkComponent = networkComponent;
 		return this.getJPopupMenuElements();
@@ -103,7 +103,7 @@ public abstract class NetworkComponentAdapter {
 	 * Returns the JPopup menu elements for this kind of NetworkComponent.
 	 * @return the JPopup menu elements
 	 */
-	public abstract Vector<JMenuItem> getJPopupMenuElements();
+	public abstract Vector<JComponent> getJPopupMenuElements();
 	
 	
 }

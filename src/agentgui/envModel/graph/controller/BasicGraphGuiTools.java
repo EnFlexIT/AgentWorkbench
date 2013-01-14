@@ -491,7 +491,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JMenuItem getJMenuItemNodeProp() {
 		if (jMenuItemNodeProp == null) {
 		    jMenuItemNodeProp = new JMenuItem();
-		    jMenuItemNodeProp.setText(Language.translate("Edit Properties", Language.EN));
+		    jMenuItemNodeProp.setText(Language.translate("Edit Vertex Properties", Language.EN));
 		    jMenuItemNodeProp.setIcon(new ImageIcon(getClass().getResource(pathImage + "Properties.jpg")));
 		    jMenuItemNodeProp.addActionListener(this);
 		}
