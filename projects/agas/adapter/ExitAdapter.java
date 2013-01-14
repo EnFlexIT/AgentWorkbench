@@ -12,19 +12,27 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 
 public class ExitAdapter extends NetworkComponentAdapter implements ActionListener {
 
-	private JMenuItem jMenueItemExitClose;
-	private JMenuItem jMenueItemExitFailure;
+	private ExitDataModelAdapter exitDataModelAdapter=null;
+	private Vector<JMenuItem> menuItems=null; 
+	private JMenuItem jMenueItemExitClose=null;
+	private JMenuItem jMenueItemExitFailure=null;
+	
 	
 	@Override
 	public NetworkComponentAdapter4DataModel getDataModelAdapter() {
-		return new ExitDataModelAdapter();
+		if (exitDataModelAdapter==null) {
+			exitDataModelAdapter=new ExitDataModelAdapter();
+		}
+		return exitDataModelAdapter;
 	}
 
 	@Override
 	public Vector<JMenuItem> getJPopupMenuElements() {
-		Vector<JMenuItem> menuItems = new Vector<JMenuItem>();
-		menuItems.add(this.getJMenuItemExitFailure());	
-		menuItems.add(this.getJMenuItemExitClose());
+		if (menuItems==null) {
+			menuItems = new Vector<JMenuItem>();
+			menuItems.add(this.getJMenuItemExitFailure());	
+			menuItems.add(this.getJMenuItemExitClose());	
+		}
 		return menuItems;
 	}
 	

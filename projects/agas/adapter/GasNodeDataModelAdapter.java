@@ -1,4 +1,7 @@
-package gasmas.adapter;
+package agas.adapter;
+
+import gasmas.ontology.GasGridOntology;
+import gasmas.ontology.Innode;
 
 import jade.content.onto.Ontology;
 
@@ -6,10 +9,8 @@ import java.util.Vector;
 
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4Ontology;
 import agentgui.ontology.AgentGUI_BaseOntology;
-import gasmas.ontology.GasGridOntology;
-import gasmas.ontology.Valve;
 
-public class ValveDataModelAdapter extends NetworkComponentAdapter4Ontology {
+public class GasNodeDataModelAdapter extends NetworkComponentAdapter4Ontology {
 
 	private Vector<Class<? extends Ontology>> ontologyBaseClasses = null;
 	private String[] ontologyClassReferences = null;
@@ -28,7 +29,7 @@ public class ValveDataModelAdapter extends NetworkComponentAdapter4Ontology {
 	public String[] getOntologyClassReferences() {
 		if (ontologyClassReferences==null) {
 			this.ontologyClassReferences = new String[1];
-			this.ontologyClassReferences[0] = Valve.class.getName();
+			this.ontologyClassReferences[0] = Innode.class.getName();
 		}
 		return this.ontologyClassReferences;
 	}

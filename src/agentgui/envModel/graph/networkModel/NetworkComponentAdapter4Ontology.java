@@ -28,6 +28,8 @@
  */
 package agentgui.envModel.graph.networkModel;
 
+import jade.content.onto.Ontology;
+
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -48,12 +50,25 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	
 	
 	/**
-	 * Define the Vector of the needed Ontologies for
-	 * this type of NetworkComponent.
-	 *
-	 * @return the references to ontologies
+	 * Define the Vector of the needed Ontologies for this type of NetworkComponent.
+	 * @return the Vector of ontology classes 
 	 */
-	public abstract Vector<String> getOntologyBaseClasses();
+	public abstract Vector<Class<? extends Ontology>> getOntologyBaseClasses();
+	
+	/**
+	 * Returns the ontology base class references.
+	 * @return the ontology base class references
+	 */
+	public Vector<String> getOntologyBaseClassReferences() {
+		Vector<String> classReferences = null;
+		if (this.getOntologyBaseClasses()!=null) {
+			classReferences = new Vector<String>();
+			for (Class<? extends Ontology> ontoClass : this.getOntologyBaseClasses()) {
+				classReferences.add(ontoClass.getName());
+			}
+		}
+		return classReferences;
+	}
 	
 	/**
 	 * Gets the ontology class references.
@@ -78,7 +93,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 			if (this.getOntologyBaseClasses()==null) {
 				throw new NullPointerException("The ontology base classes of the NetworkComponentAdapter were not defined!");
 			} else {
-				this.ovh = new OntologyVisualisationHelper(this.getOntologyBaseClasses());	
+				this.ovh = new OntologyVisualisationHelper(this.getOntologyBaseClassReferences());	
 			}
 		}
 		return this.ovh;
@@ -90,8 +105,12 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	 */
 	private OntologyInstanceViewer getOntologyInstanceViewer() {
 		if (this.oiv == null) {
-			this.oiv = new OntologyInstanceViewer(this.getOntologyVisualisationHelper(), this.getOntologyClassReferences());
-			this.oiv.setAllowViewEnlargement(false);
+			if (this.getOntologyClassReferences()==null) {
+				throw new NullPointerException("The references to the classes out of the configured ontologies are not set!");
+			} else {
+				this.oiv = new OntologyInstanceViewer(this.getOntologyVisualisationHelper(), this.getOntologyClassReferences());
+				this.oiv.setAllowViewEnlargement(false);	
+			}
 		}
 		return this.oiv;
 	}
