@@ -105,6 +105,7 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 		this.setClosable(true);
 		this.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
 		this.setTitle("Component");
+		this.setSize(300, 450);
 		this.setInitialSize();
 		
 		BasicInternalFrameUI ui = (BasicInternalFrameUI)this.getUI();
@@ -127,20 +128,19 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 		int defaultWidth=300;
 		int defaultHeight=450;
 		
-		// --- Configure the size of the frame --------
+		// --- Configure the size of the frame ------------
 		if (this.graphDesktop!=null) {
-			BasicGraphGuiProperties lastOpened = this.graphDesktop.getLastOpenedBasicGraphGuiProperties();
-			if (lastOpened==null) {
+			if (this.graphDesktop.getLastOpenedBasicGraphGuiProperties()==null) {
 				Dimension desktopSize = this.graphDesktop.getSize();
 				Dimension newSize = new Dimension(defaultWidth, (int) (desktopSize.getHeight()*(2.0/3.0)));
 				this.setSize(newSize);
 			} else {
-				this.setSize(lastOpened.getSize());
+				this.setSize(this.graphDesktop.getLastOpenedBasicGraphGuiProperties().getSize());
 			}
 		} else {
 			this.setSize(new Dimension(defaultWidth, defaultHeight));
 		}
-		// --- Set also the preffered size ----------------
+		// --- Set also the preferred size ----------------
 		this.setPreferredSize(this.getSize());
 	}
 	

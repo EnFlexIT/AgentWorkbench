@@ -953,14 +953,13 @@ public class GraphEnvironmentController extends EnvironmentController {
     	Runnable decode = new Runnable() {
     		public void run() {
 		    	
-    			int progressIntOld = -1;
-				NetworkModel networkModel = getNetworkModel();
-		    	Object[] netCompArr = networkModel.getNetworkComponents().values().toArray();
-		    	int netCompCount = netCompArr.length;
-		    	for (int i = 0; i<netCompCount; i++) {
+		    	Object[] netCompArr =  getNetworkModel().getNetworkComponents().values().toArray();
+		    	Object[] graphNodeArr =  getNetworkModel().getGraph().getVertices().toArray();
 		    	
-		    		NetworkComponent netComp = (NetworkComponent) netCompArr[i];
-		    		
+		    	int progressIntOld = -1;
+		    	int netCompCount = netCompArr.length + graphNodeArr.length;
+		    	for (int i=0; i<netCompCount; i++) {
+		    	
 		    		// --- Only display progress, if procedure is to long -----
 		    		if (System.currentTimeMillis() > displayTime) {
 		    			if (pm.isVisible()==false) {
@@ -975,20 +974,39 @@ public class GraphEnvironmentController extends EnvironmentController {
 			    			progressIntOld = progressInt;
 							pm.setProgress(progressInt);
 			    		}
-			    		
 		    		}
 		    		
-		    		// --- Set the components data model instance ----------- 
-		    		NetworkComponentAdapter netCompAdapter = networkModel.getNetworkComponentAdapter(netComp);
+		    		// --- Find the corresponding NetworkComponentAdapter -----
+		    		NetworkComponentAdapter netCompAdapter=null;
+		    		NetworkComponent netComp = null;
+		    		GraphNode graphNode = null;
+		    		if (i<netCompArr.length) {
+		    			netComp = (NetworkComponent) netCompArr[i];		
+		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(netComp);
+		    		} else {
+		    			graphNode = (GraphNode) graphNodeArr[i-netCompArr.length];
+		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphNode);	
+		    		}
+		    		
+		    		// --- Set the components data model instance -------------
 		    		if (netCompAdapter!=null) {
-		    			Vector<String> dataModelBase64 = netComp.getDataModelBase64();
+		    			Vector<String> dataModelBase64 = null;
+		    			if (graphNode!=null) {
+		    				dataModelBase64 = graphNode.getDataModelBase64();
+		    			} else {
+		    				dataModelBase64 = netComp.getDataModelBase64();
+		    			}
 		    			if (dataModelBase64!=null) {
-		    				// --- Get DataModelAdapter ---------------------
+		    				// --- Get DataModelAdapter -----------------------
 		    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
 		    				if (netCompDataModelAdapter!=null) {
-		    					// --- Get Base64 decoded Object ------------
+		    					// --- Get Base64 decoded Object --------------
 		    					Object dataModel = netCompDataModelAdapter.getDataModelBase64Decoded(dataModelBase64, true);
-		    	    			netComp.setDataModel(dataModel);
+		    					if (graphNode!=null) {
+				    				graphNode.setDataModel(dataModel);
+				    			} else {
+				    				netComp.setDataModel(dataModel);
+				    			}
 		    				}
 		    			}
 		    		}
@@ -1023,48 +1041,76 @@ public class GraphEnvironmentController extends EnvironmentController {
     	Runnable encode = new Runnable() {
     		public void run() {
 
-    			int progressIntOld = -1;
-    			NetworkModel networkModel = getNetworkModel();
-		    	Object[] netCompArr = networkModel.getNetworkComponents().values().toArray();
-		    	int netCompCount = netCompArr.length;
+		    	Object[] netCompArr =  getNetworkModel().getNetworkComponents().values().toArray();
+		    	Object[] graphNodeArr =  getNetworkModel().getGraph().getVertices().toArray();
+		    	
+		    	int progressIntOld = -1;
+		    	int netCompCount = netCompArr.length + graphNodeArr.length;
 		    	for (int i = 0; i<netCompCount; i++) {
 		    		
-		    		NetworkComponent netComp = (NetworkComponent) netCompArr[i];
-		    		
-		    		// --- Only display progress, if procedure is to long ---
+		    		// --- Only display progress, if procedure is to long -----
 		    		if (System.currentTimeMillis() > displayTime) {
 		    			if (pm.isVisible()==false) {
 		    				pm.setVisible(true);
 		    		    	pm.validate();
 		    		    	pm.repaint();
 		    			}
-		    			// --- Set Progress monitor -----------------------------
+		    			// --- Set Progress monitor ---------------------------
 			    		float progressCalc = (float) (((float)i/(float)netCompCount) * 100.0);
 			    		final int progressInt = Math.round(progressCalc);
 			    		if (progressInt!=progressIntOld) {
 			    			progressIntOld = progressInt;
 			    			pm.setProgress(progressInt);
 			    		}
-			    		
+		    		}
+
+		    		// --- Find the corresponding NetworkComponentAdapter -----
+		    		NetworkComponentAdapter netCompAdapter=null;
+		    		NetworkComponent netComp = null;
+		    		GraphNode graphNode = null;
+		    		if (i<netCompArr.length) {
+		    			netComp = (NetworkComponent) netCompArr[i];		
+		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(netComp);
+		    		} else {
+		    			graphNode = (GraphNode) graphNodeArr[i-netCompArr.length];
+		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphNode);	
 		    		}
 		    		
-		    		// --- Set the components data model as Base64 ----------
-		    		NetworkComponentAdapter netCompAdapter = networkModel.getNetworkComponentAdapter(netComp);
+		    		// --- Set the components data model as Base64 ------------
 		    		if (netCompAdapter!=null) {
-		    			Object dataModel = netComp.getDataModel();
-		    			if (dataModel==null) {
-		    				// --- No data model ----------------------------
-		    				netComp.setDataModelBase64(null);
+		    			Object dataModel = null;
+		    			if (graphNode!=null) {
+		    				dataModel = graphNode.getDataModel();
 		    			} else {
-		    				// --- Get DataModelAdapter ---------------------
+		    				dataModel = netComp.getDataModel();
+		    			}
+		    			if (dataModel==null) {
+		    				// --- No data model ------------------------------
+		    				if (graphNode!=null) {
+			    				graphNode.setDataModelBase64(null);
+			    			} else {
+			    				netComp.setDataModelBase64(null);;
+			    			}
+		    			} else {
+		    				// --- Get DataModelAdapter -----------------------
 		    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
 		    				if (netCompDataModelAdapter==null) {
-		    					// --- No DataModelAdapter found ------------
-		    					netComp.setDataModelBase64(null);	
+		    					// --- No DataModelAdapter found --------------
+		    					if (graphNode!=null) {
+				    				graphNode.setDataModelBase64(null);
+				    			} else {
+				    				netComp.setDataModelBase64(null);
+				    			}
+		    						
 		    				} else {
 		    					// --- Get Base64 encoded String ------------
 		    					Vector<String> dataModelBase64 = netCompDataModelAdapter.getDataModelBase64Encoded(dataModel);
-		    	    			netComp.setDataModelBase64(dataModelBase64);
+		    					if (graphNode!=null) {
+				    				graphNode.setDataModelBase64(dataModelBase64);
+				    			} else {
+				    				netComp.setDataModelBase64(dataModelBase64);
+				    			}
+		    					
 		    				}
 		    			}
 		    		}

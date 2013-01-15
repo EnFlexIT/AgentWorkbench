@@ -982,10 +982,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 		Graphics2D graphics = bi.createGraphics();
 		graphics.fillRect(0, 0, width, height);
 
-		// vv.setDoubleBuffered(false);
+		boolean wasDoubleBuffered=vv.isDoubleBuffered();
+		vv.setDoubleBuffered(false);
 		vv.paint(graphics);
 		vv.paintComponents(graphics);
-		// vv.setDoubleBuffered(true);
+		vv.setDoubleBuffered(wasDoubleBuffered);
 
 		try {
 			ImageIO.write(bi, extension, writeFile);

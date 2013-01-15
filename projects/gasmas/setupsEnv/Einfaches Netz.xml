@@ -2,19 +2,6 @@
 <networkComponentList>
     <componentList>
         <entry>
-            <key>n10</key>
-            <value>
-                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>n10</graphElementIDs>
-                <graphElementIDs>PP20</graphElementIDs>
-                <graphElementIDs>PP16</graphElementIDs>
-                <id>n10</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Pipe</type>
-            </value>
-        </entry>
-        <entry>
             <key>n0</key>
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
@@ -29,29 +16,6 @@
                 <id>n0</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch3</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n12</key>
-            <value>
-                <agentClassName></agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>n12</graphElementIDs>
-                <graphElementIDs>PP20</graphElementIDs>
-                <graphElementIDs>PP22</graphElementIDs>
-                <id>n12</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Power Line</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n11</key>
-            <value>
-                <directed>false</directed>
-                <graphElementIDs>PP20</graphElementIDs>
-                <id>n11</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Power2Gas</type>
             </value>
         </entry>
         <entry>
@@ -73,8 +37,8 @@
                 <agentClassName>gasmas.agents.components.ControlValveAgent</agentClassName>
                 <directed>true</directed>
                 <graphElementIDs>n4</graphElementIDs>
+                <graphElementIDs>PP26</graphElementIDs>
                 <graphElementIDs>PP1</graphElementIDs>
-                <graphElementIDs>PP16</graphElementIDs>
                 <id>n4</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>ControlValve</type>
@@ -114,13 +78,9 @@
         <entry>
             <key>n8</key>
             <value>
-                <dataModelsBase64>
-                    <dataModelBase64>PEVudHJ5IElEPSJUZXN0ZWludHJhZyIgYWxpYXM9IiIgbW9sYXJNYXNzPSIwLjBGIj4KCTxnZW9Db29yZGluYXRlPgoJCTxHZW9Db29yZGluYXRlIGdlb1o9IjAuMEYiIGdlb1c9IjAuMEYiIGdlb1g9IjAuMEYiIGdlb1k9IjAuMEYiLz4KCTwvZ2VvQ29vcmRpbmF0ZT4KCTxoZWlnaHQ+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L2hlaWdodD4KCTxwcmVzc3VyZU1heD4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvcHJlc3N1cmVNYXg+Cgk8cHJlc3N1cmVNaW4+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L3ByZXNzdXJlTWluPgoJPGZsb3dNaW4+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L2Zsb3dNaW4+Cgk8Zmxvd01heD4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvZmxvd01heD4KCTxub3JtRGVuc2l0eT4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvbm9ybURlbnNpdHk+Cgk8cHNldWRvY3JpdGljYWxUZW1wZXJhdHVyZT4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvcHNldWRvY3JpdGljYWxUZW1wZXJhdHVyZT4KCTxwc2V1ZG9jcmljYWxQcmVzc3VyZT4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvcHNldWRvY3JpY2FsUHJlc3N1cmU+Cgk8Z2FzVGVtcGVyYXR1cmU+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L2dhc1RlbXBlcmF0dXJlPgoJPGhlYXRDYXBhY2l0eUNvZWZmaWNpZW50PgoJCTxIZWF0Q2FwYWNpdHlDb2VmZmljaWVudCBiPSIwLjBGIiBhPSIwLjBGIiBjPSIwLjBGIi8+Cgk8L2hlYXRDYXBhY2l0eUNvZWZmaWNpZW50PgoJPGNhbG9yaWZpY1ZhbHVlPgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9jYWxvcmlmaWNWYWx1ZT4KPC9FbnRyeT4K</dataModelBase64>
-                    <dataModelBase64>PFRpbWVTZXJpZXNDaGFydD4KCTx2aXN1YWxpemF0aW9uU2V0dGluZ3M+CgkJPENoYXJ0U2V0dGluZ3NHZW5lcmFsIHlBeGlzTGFiZWw9IlZhbHVlIiBjaGFydFRpdGxlPSJUaW1lIFNlcmllcyBDaGFydCIgcmVuZGVyZXJUeXBlPSJTdGVwIFJlbmRlcmVyIiB4QXhpc0xhYmVsPSJUaW1lIj4KCQkJPHlBeGlzQ29sb3JzPgoJCQkJPHByaW1pdGl2ZSB0eXBlPSJCT19TdHJpbmciIHZhbHVlPSItNjU1MzYiLz4KCQkJCTxwcmltaXRpdmUgdHlwZT0iQk9fU3RyaW5nIiB2YWx1ZT0iLTE2Nzc2OTYxIi8+CgkJCTwveUF4aXNDb2xvcnM+CgkJCTx5QXhpc0xpbmVXaWR0aD4KCQkJCTxwcmltaXRpdmUgdHlwZT0iQk9fRmxvYXQiIHZhbHVlPSIxLjBGIi8+CgkJCQk8cHJpbWl0aXZlIHR5cGU9IkJPX0Zsb2F0IiB2YWx1ZT0iMS4wRiIvPgoJCQk8L3lBeGlzTGluZVdpZHRoPgoJCTwvQ2hhcnRTZXR0aW5nc0dlbmVyYWw+Cgk8L3Zpc3VhbGl6YXRpb25TZXR0aW5ncz4KCTx0aW1lU2VyaWVzQWRkaXRpb25hbFNldHRpbmdzPgoJCTxUaW1lU2VyaWVzQWRkaXRpb25hbFNldHRpbmdzPgoJCQk8dGltZUZvcm1hdD4KCQkJCTxwcmltaXRpdmUgdHlwZT0iQk9fU3RyaW5nIiB2YWx1ZT0iIi8+CgkJCTwvdGltZUZvcm1hdD4KCQk8L1RpbWVTZXJpZXNBZGRpdGlvbmFsU2V0dGluZ3M+Cgk8L3RpbWVTZXJpZXNBZGRpdGlvbmFsU2V0dGluZ3M+Cgk8dGltZVNlcmllc0NoYXJ0RGF0YT4KCQk8VGltZVNlcmllcyBsYWJlbD0iVGltZSBTZXJpZXMgMSIgdW5pdD0iIj4KCQkJPHRpbWVTZXJpZXNWYWx1ZVBhaXJzPgoJCQkJPFRpbWVTZXJpZXNWYWx1ZVBhaXI+CgkJCQkJPHZhbHVlPgoJCQkJCQk8U2ltcGxlX0Zsb2F0IEZsb2F0VmFsdWU9IjQwMC4wRiIvPgoJCQkJCTwvdmFsdWU+CgkJCQkJPHRpbWVzdGFtcD4KCQkJCQkJPFNpbXBsZV9Mb25nIFN0cmluZ0xvbmdWYWx1ZT0iLTM1OTkwOTQiLz4KCQkJCQk8L3RpbWVzdGFtcD4KCQkJCTwvVGltZVNlcmllc1ZhbHVlUGFpcj4KCQkJCTxUaW1lU2VyaWVzVmFsdWVQYWlyPgoJCQkJCTx2YWx1ZT4KCQkJCQkJPFNpbXBsZV9GbG9hdCBGbG9hdFZhbHVlPSIyMDAwLjBGIi8+CgkJCQkJPC92YWx1ZT4KCQkJCQk8dGltZXN0YW1wPgoJCQkJCQk8U2ltcGxlX0xvbmcgU3RyaW5nTG9uZ1ZhbHVlPSItMjY5OTA5NCIvPgoJCQkJCTwvdGltZXN0YW1wPgoJCQkJPC9UaW1lU2VyaWVzVmFsdWVQYWlyPgoJCQkJPFRpbWVTZXJpZXNWYWx1ZVBhaXI+CgkJCQkJPHZhbHVlPgoJCQkJCQk8U2ltcGxlX0Zsb2F0IEZsb2F0VmFsdWU9IjgwMC4wRiIvPgoJCQkJCTwvdmFsdWU+CgkJCQkJPHRpbWVzdGFtcD4KCQkJCQkJPFNpbXBsZV9Mb25nIFN0cmluZ0xvbmdWYWx1ZT0iLTE3OTkwOTQiLz4KCQkJCQk8L3RpbWVzdGFtcD4KCQkJCTwvVGltZVNlcmllc1ZhbHVlUGFpcj4KCQkJCTxUaW1lU2VyaWVzVmFsdWVQYWlyPgoJCQkJCTx2YWx1ZT4KCQkJCQkJPFNpbXBsZV9GbG9hdCBGbG9hdFZhbHVlPSI0MDAuMEYiLz4KCQkJCQk8L3ZhbHVlPgoJCQkJCTx0aW1lc3RhbXA+CgkJCQkJCTxTaW1wbGVfTG9uZyBTdHJpbmdMb25nVmFsdWU9Ii04OTkwOTQiLz4KCQkJCQk8L3RpbWVzdGFtcD4KCQkJCTwvVGltZVNlcmllc1ZhbHVlUGFpcj4KCQkJCTxUaW1lU2VyaWVzVmFsdWVQYWlyPgoJCQkJCTx2YWx1ZT4KCQkJCQkJPFNpbXBsZV9GbG9hdCBGbG9hdFZhbHVlPSIwLjBGIi8+CgkJCQkJPC92YWx1ZT4KCQkJCQk8dGltZXN0YW1wPgoJCQkJCQk8U2ltcGxlX0xvbmcgU3RyaW5nTG9uZ1ZhbHVlPSIxODAwOTA2Ii8+CgkJCQkJPC90aW1lc3RhbXA+CgkJCQk8L1RpbWVTZXJpZXNWYWx1ZVBhaXI+CgkJCTwvdGltZVNlcmllc1ZhbHVlUGFpcnM+CgkJPC9UaW1lU2VyaWVzPgoJCTxUaW1lU2VyaWVzIGxhYmVsPSJUaW1lIFNlcmllcyAyIiB1bml0PSIiPgoJCQk8dGltZVNlcmllc1ZhbHVlUGFpcnM+CgkJCQk8VGltZVNlcmllc1ZhbHVlUGFpcj4KCQkJCQk8dmFsdWU+CgkJCQkJCTxTaW1wbGVfRmxvYXQgRmxvYXRWYWx1ZT0iNTAwLjBGIi8+CgkJCQkJPC92YWx1ZT4KCQkJCQk8dGltZXN0YW1wPgoJCQkJCQk8U2ltcGxlX0xvbmcgU3RyaW5nTG9uZ1ZhbHVlPSItMzU5OTA5NCIvPgoJCQkJCTwvdGltZXN0YW1wPgoJCQkJPC9UaW1lU2VyaWVzVmFsdWVQYWlyPgoJCQkJPFRpbWVTZXJpZXNWYWx1ZVBhaXI+CgkJCQkJPHZhbHVlPgoJCQkJCQk8U2ltcGxlX0Zsb2F0IEZsb2F0VmFsdWU9IjE1MDAuMEYiLz4KCQkJCQk8L3ZhbHVlPgoJCQkJCTx0aW1lc3RhbXA+CgkJCQkJCTxTaW1wbGVfTG9uZyBTdHJpbmdMb25nVmFsdWU9Ii0xNzk5MDk0Ii8+CgkJCQkJPC90aW1lc3RhbXA+CgkJCQk8L1RpbWVTZXJpZXNWYWx1ZVBhaXI+CgkJCQk8VGltZVNlcmllc1ZhbHVlUGFpcj4KCQkJCQk8dmFsdWU+CgkJCQkJCTxTaW1wbGVfRmxvYXQgRmxvYXRWYWx1ZT0iMzAwLjBGIi8+CgkJCQkJPC92YWx1ZT4KCQkJCQk8dGltZXN0YW1wPgoJCQkJCQk8U2ltcGxlX0xvbmcgU3RyaW5nTG9uZ1ZhbHVlPSItODk5MDk0Ii8+CgkJCQkJPC90aW1lc3RhbXA+CgkJCQk8L1RpbWVTZXJpZXNWYWx1ZVBhaXI+CgkJCQk8VGltZVNlcmllc1ZhbHVlUGFpcj4KCQkJCQk8dmFsdWU+CgkJCQkJCTxTaW1wbGVfRmxvYXQgRmxvYXRWYWx1ZT0iNTAwLjBGIi8+CgkJCQkJPC92YWx1ZT4KCQkJCQk8dGltZXN0YW1wPgoJCQkJCQk8U2ltcGxlX0xvbmcgU3RyaW5nTG9uZ1ZhbHVlPSI5MDYiLz4KCQkJCQk8L3RpbWVzdGFtcD4KCQkJCTwvVGltZVNlcmllc1ZhbHVlUGFpcj4KCQkJCTxUaW1lU2VyaWVzVmFsdWVQYWlyPgoJCQkJCTx2YWx1ZT4KCQkJCQkJPFNpbXBsZV9GbG9hdCBGbG9hdFZhbHVlPSIyMDAuMEYiLz4KCQkJCQk8L3ZhbHVlPgoJCQkJCTx0aW1lc3RhbXA+CgkJCQkJCTxTaW1wbGVfTG9uZyBTdHJpbmdMb25nVmFsdWU9IjE4MDA5MDYiLz4KCQkJCQk8L3RpbWVzdGFtcD4KCQkJCTwvVGltZVNlcmllc1ZhbHVlUGFpcj4KCQkJCTxUaW1lU2VyaWVzVmFsdWVQYWlyPgoJCQkJCTx2YWx1ZT4KCQkJCQkJPFNpbXBsZV9GbG9hdCBGbG9hdFZhbHVlPSIwLjBGIi8+CgkJCQkJPC92YWx1ZT4KCQkJCQk8dGltZXN0YW1wPgoJCQkJCQk8U2ltcGxlX0xvbmcgU3RyaW5nTG9uZ1ZhbHVlPSIzNjAwOTA2Ii8+CgkJCQkJPC90aW1lc3RhbXA+CgkJCQk8L1RpbWVTZXJpZXNWYWx1ZVBhaXI+CgkJCTwvdGltZVNlcmllc1ZhbHVlUGFpcnM+CgkJPC9UaW1lU2VyaWVzPgoJPC90aW1lU2VyaWVzQ2hhcnREYXRhPgo8L1RpbWVTZXJpZXNDaGFydD4K</dataModelBase64>
-                </dataModelsBase64>
                 <agentClassName>gasmas.agents.components.EntryAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>PP16</graphElementIDs>
+                <graphElementIDs>PP26</graphElementIDs>
                 <id>n8</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Entry</type>
@@ -148,16 +108,6 @@
                 <id>n6</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Pipe</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n13</key>
-            <value>
-                <directed>false</directed>
-                <graphElementIDs>PP22</graphElementIDs>
-                <id>n13</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Transformator</type>
             </value>
         </entry>
     </componentList>
