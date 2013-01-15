@@ -49,12 +49,14 @@ import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
+import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
+import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 /**
@@ -324,7 +326,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 */
 	@Override
 	public void mouseDragged(MouseEvent me){
-		super.mouseDragged(me);
+		this.mouseDraggedSuperAction(me);
 		
 		MutableTransformer modelTransformer = this.getVisViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
 		
@@ -389,6 +391,45 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		
 	}
 
+	/**
+	 * This is the MouseDragged super action of the super class (because of several exceptions).
+	 * @param me the MouseEvent
+	 */
+	private void mouseDraggedSuperAction(MouseEvent me) {
+	
+		if(locked == false) {
+            VisualizationViewer<GraphNode,GraphEdge> vv = this.graphGUI.getVisView();;
+            if(vertex != null) {
+                Point p = me.getPoint();
+                Point2D graphPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
+                Point2D graphDown = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
+                Layout<GraphNode,GraphEdge> layout = vv.getGraphLayout();
+                double dx = graphPoint.getX()-graphDown.getX();
+                double dy = graphPoint.getY()-graphDown.getY();
+                PickedState<GraphNode> ps = vv.getPickedVertexState();
+                
+                for(GraphNode v : ps.getPicked()) {
+                    Point2D vp = layout.transform(v);
+                    vp.setLocation(vp.getX()+dx, vp.getY()+dy);
+                    layout.setLocation(v, vp);
+                }
+                down = p;
+
+            } else {
+                Point2D out = me.getPoint();
+                if(me.getModifiers() == this.addToSelectionModifiers || me.getModifiers() == modifiers) {
+                    if (down!=null) {
+                    	rect.setFrameFromDiagonal(down,out);	
+                    }
+                }
+            }
+            if(vertex != null) me.consume();
+            vv.repaint();
+        }
+	}
+
+
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.MouseWheelListener#mouseWheelMoved(java.awt.event.MouseWheelEvent)
 	 */

@@ -10,14 +10,9 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 
 public class CompressorAdapter extends NetworkComponentAdapter {
 
-	private CompressorDataModelAdapter compressorDataModelAdapter=null;
-	
 	@Override
-	public NetworkComponentAdapter4DataModel getDataModelAdapter() {
-		if (compressorDataModelAdapter==null) {
-			compressorDataModelAdapter=new CompressorDataModelAdapter();
-		}
-		return compressorDataModelAdapter;
+	public NetworkComponentAdapter4DataModel getNewDataModelAdapter() {
+		return new CompressorDataModelAdapter();
 	}
 
 	@Override

@@ -13,18 +13,14 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 
 public class EntryAdapter extends NetworkComponentAdapter implements ActionListener {
 
-	private EntryDataModelAdapter entryDataModelAdapter=null;
 	private Vector<JComponent> menuItems=null;
 	private JMenuItem jMenueItemEntryClose=null;
 	private JMenuItem jMenueItemEntryFailure=null;
 	
 	
 	@Override
-	public NetworkComponentAdapter4DataModel getDataModelAdapter() {
-		if(entryDataModelAdapter==null){
-			entryDataModelAdapter = new EntryDataModelAdapter();
-		}
-		return entryDataModelAdapter;
+	public NetworkComponentAdapter4DataModel getNewDataModelAdapter() {
+		return new EntryDataModelAdapter();
 	}
 
 	@Override

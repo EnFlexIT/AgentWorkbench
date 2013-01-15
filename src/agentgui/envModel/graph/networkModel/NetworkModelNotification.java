@@ -62,7 +62,8 @@ public class NetworkModelNotification {
 	
 	public static final int NETWORK_MODEL_GraphMouse_Picking = 20;
 	public static final int NETWORK_MODEL_GraphMouse_Transforming = 21;
-
+	public static final int NETWORK_MODEL_ShowPopUpMenue = 22;
+	
 	public static final int NETWORK_MODEL_EditComponentSettings = 25;
 	
 	public static final int NETWORK_MODEL_ExportGraphAsImage = 30;

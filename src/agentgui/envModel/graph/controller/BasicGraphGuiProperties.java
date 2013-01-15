@@ -32,7 +32,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
@@ -42,7 +41,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -68,7 +66,8 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 	private GraphEnvironmentController graphController = null;
 	private BasicGraphGuiJDesktopPane graphDesktop = null;
 	
-	private Object graphObject = null;
+	private Object graphObject = null;  //  @jve:decl-index=0:
+	private GraphNode graphNode = null;
 	private NetworkComponent networkComponent = null;
 	private NetworkComponentAdapter networkComponentAdapter = null;
 	private NetworkComponentAdapter4DataModel adapter4DataModel = null;
@@ -116,7 +115,8 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 		this.setVisible(true);
 		
 		this.graphDesktop.add(this, JDesktopPane.PALETTE_LAYER);
-		this.graphDesktop.registerBasicGraphGuiProperties(this);
+		this.graphDesktop.registerBasicGraphGuiProperties(this);	
+		
 	}
 	
 	/**
@@ -173,48 +173,44 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 	 */
 	private void configureForGraphObject() {
 
-		if (graphObject instanceof GraphNode) {
-			// --- Is the GraphNode a DistributionNode ? ------------
-			this.networkComponent = this.graphController.getNetworkModel().isDistributionNode((GraphNode) this.graphObject);
-			if (this.networkComponent==null) {
-				// --- Check for central GraphNode element ----------
-				// --- or single outer GraphNodes		   ----------
-				HashSet<NetworkComponent> netComps = this.graphController.getNetworkModel().getNetworkComponents((GraphNode) this.graphObject);
-				if (netComps.size()==1) {
-					this.networkComponent = netComps.iterator().next();
-				}
-			}
+		String title2Set = null;
+		if (this.getGraphObject()==null) {
+			title2Set = "No valid selection!";
 			
-		} else if (graphObject instanceof GraphEdge) {
+		} else if (this.getGraphObject() instanceof GraphNode) {
+			// --- Set the local variable ---------------------------
+			this.graphNode = (GraphNode) this.getGraphObject();
+			// --- Get the corresponding NetworkComponentAdapter ----			
+			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter((GraphNode) this.getGraphObject());
+			title2Set = "Vertex: " + this.graphNode.getId();
+			
+		} else if (this.getGraphObject() instanceof GraphEdge) {
 			// --- Just get the corresponding NetworkComponent ------ 
-			this.networkComponent = this.graphController.getNetworkModel().getNetworkComponent((GraphEdge) this.graphObject);
+			this.networkComponent = this.graphController.getNetworkModel().getNetworkComponent((GraphEdge) this.getGraphObject());
+			// --- Get the corresponding NetworkComponentAdapter ---- 
+			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.networkComponent);
+			title2Set = "Comp.: " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")";
 			
-		} else if (graphObject instanceof NetworkComponent) {
+		} else if (this.getGraphObject() instanceof NetworkComponent) {
 			// --- Cast to NetworkComponent -------------------------
-			this.networkComponent = this.graphController.getNetworkModel().getNetworkComponent(((NetworkComponent) this.graphObject).getId());
-			
+			this.networkComponent = this.graphController.getNetworkModel().getNetworkComponent(((NetworkComponent) this.getGraphObject()).getId());
+			// --- Get the corresponding NetworkComponentAdapter ---- 
+			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.networkComponent);
+			title2Set = "Comp.: " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")";
 		}
-		
-		// --- NetworkComponent selected ? -------------------------- 
-		if (this.networkComponent==null) {
-			String msgHead = Language.translate("Nicht eindeutige Komponentenauswahl !");
-			String msgText = Language.translate("Bitte wählen Sie eine einzelne Netzwerkkomponente !");			
-			JOptionPane.showMessageDialog(null, msgText, msgHead, JOptionPane.WARNING_MESSAGE);
-			this.dispose();
-			return;
-		}
-		
-		// --- Get the corresponding NetworkComponentAdapter -------- 
-		this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.networkComponent);
 
-		// --- Mark / Select NetworkComponent for user --------------
-		NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Select);
-		nmn.setInfoObject(this.networkComponent);
-		this.graphController.notifyObservers(nmn);
+		if (this.networkComponent!=null) {
+			// --- Mark / Select NetworkComponent for user --------------
+			NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Select);
+			nmn.setInfoObject(this.networkComponent);
+			this.graphController.notifyObservers(nmn);
+		}
 
 		// --- Some layout stuff ----------------------------------- 
-		this.setTitle("Comp.: " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")");
-
+		if (title2Set!=null) {
+			this.setTitle(title2Set);	
+		}
+		
 	}
 	
 	/**
@@ -229,22 +225,45 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 				this.getJToolBarButtonSaveAndExit().setEnabled(false);
 				
 			} else {
-				this.adapter4DataModel = this.networkComponentAdapter.invokeGetDataModelAdapter();
+				this.adapter4DataModel = this.networkComponentAdapter.getNewDataModelAdapter();
 				if (this.adapter4DataModel == null) {
+					if (this.graphNode!=null) {
+						this.graphNode.setDataModel(null);
+						this.graphNode.setDataModelBase64(null);
+					} else {
+						this.networkComponent.setDataModel(null);
+						this.networkComponent.setDataModelBase64(null);	
+					}
+					// --- Disable save-actions ---------------------
 					this.getJToolBarButtonSave().setEnabled(false);
 					this.getJToolBarButtonSaveAndExit().setEnabled(false);
 					
 				} else {
 					Object dataModel = null;
+					Vector<String> dataModelBase64 = null;
 					// --- Get the Base64 encoded Vector<String> ---- 
-					Vector<String> dataModelBase64 = this.networkComponent.getDataModelBase64();
-					if (dataModelBase64!=null) {
-    					// --- Get Base64 decoded Object ------------
-    					dataModel = this.adapter4DataModel.getDataModelBase64Decoded(dataModelBase64);
-    					this.networkComponent.setDataModel(dataModel);
-	    			}
+					if (this.graphNode!=null) {
+						dataModel = this.graphNode.getDataModel();
+						dataModelBase64 = this.graphNode.getDataModelBase64();
+					} else {
+						dataModel = this.networkComponent.getDataModel();
+						dataModelBase64 = this.networkComponent.getDataModelBase64();	
+					}
 					
-					this.adapter4DataModel.setDataModel(this.networkComponent.getDataModel());
+					if (dataModel==null && dataModelBase64!=null) {
+    					// --- Convert Base64 decoded Object --------
+    					dataModel = this.adapter4DataModel.getDataModelBase64Decoded(dataModelBase64);
+    					if (this.graphNode!=null) {
+    						this.graphNode.setDataModel(dataModel);
+    					} else {
+    						this.networkComponent.setDataModel(dataModel);
+    					}
+	    			}
+					if (this.graphNode!=null) {
+						this.adapter4DataModel.setDataModel(dataModel);
+					} else {
+						this.adapter4DataModel.setDataModel(dataModel);
+					}
 					JComponent visualisation = this.adapter4DataModel.getVisualisationComponent();
 					visualisation.validate();
 					this.jComponentContent = visualisation;
@@ -375,11 +394,23 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 			Object dataModel = this.adapter4DataModel.getDataModel();
 			Vector<String> dataModelBase64 = this.adapter4DataModel.getDataModelBase64Encoded(dataModel);
 
-			this.networkComponent.setDataModel(dataModel);
-			this.networkComponent.setDataModelBase64(dataModelBase64);
-			
-			this.graphController.getNetworkModel().getNetworkComponent(this.networkComponent.getId()).setDataModel(dataModel);
-			this.graphController.getNetworkModel().getNetworkComponent(this.networkComponent.getId()).setDataModelBase64(dataModelBase64);
+			if (this.graphNode!=null) {
+				this.graphNode.setDataModel(dataModel);
+				this.graphNode.setDataModelBase64(dataModelBase64);
+
+				GraphNode modelGraphNode = (GraphNode) this.graphController.getNetworkModel().getGraphElement(this.graphNode.getId());
+				modelGraphNode.setDataModel(dataModel);
+				modelGraphNode.setDataModelBase64(dataModelBase64);
+				
+			} else {
+				this.networkComponent.setDataModel(dataModel);
+				this.networkComponent.setDataModelBase64(dataModelBase64);
+
+				NetworkComponent modelNetworkComponent = this.graphController.getNetworkModel().getNetworkComponent(this.networkComponent.getId()); 
+				modelNetworkComponent.setDataModel(dataModel);
+				modelNetworkComponent.setDataModelBase64(dataModelBase64);
+
+			}
 			
 		}
 		

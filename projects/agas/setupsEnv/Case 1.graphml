@@ -2,8 +2,8 @@
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
 xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
-<key id="ontoRepr" for="node">
-<desc>Base64 encoded ontology representation</desc>
+<key id="dataModelVectorBase64Encoded" for="node">
+<desc>Base64 encoded individual data model</desc>
 <default></default>
 </key>
 <key id="pos" for="node">

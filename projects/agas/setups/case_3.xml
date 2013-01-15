@@ -32,6 +32,31 @@
             <startAsName>n4</startAsName>
         </agent>
     </agentSetup>
-    <timeModelSettings/>
+    <timeModelSettings>
+        <entry>
+            <key>StepWidth</key>
+            <value>60000</value>
+        </entry>
+        <entry>
+            <key>TimeStart</key>
+            <value>1358170390421</value>
+        </entry>
+        <entry>
+            <key>TimeCurrent</key>
+            <value>1358170390421</value>
+        </entry>
+        <entry>
+            <key>DisplayUnitIndex</key>
+            <value>1</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1358256790421</value>
+        </entry>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
+        </entry>
+    </timeModelSettings>
     <environmentFileName>Case 3.graphml</environmentFileName>
 </simulationSetup>

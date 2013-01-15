@@ -28,6 +28,7 @@
  */
 package agentgui.core.ontologies.gui;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
@@ -262,6 +263,26 @@ public class DynType {
 	 */
 	public boolean isVisibleInTableView() {
 		return visibleInTableView;
+	}
+
+	/**
+	 * Returns, if exists the multiple (+|-) JButton multiple of the DynForm.
+	 *
+	 * @param dynType the DynType
+	 * @return the JButton multiple of the DynForm
+	 */
+	public JButton getJButtonMultipleOnDynFormPanel() {
+		JButton jButtonMultipleOnDynForm = null;
+		JPanel dynFormPanel = this.getPanel();
+		if (dynFormPanel!=null) {
+			for (int i=0; i < dynFormPanel.getComponentCount(); i++) {
+				if (dynFormPanel.getComponent(i) instanceof JButton) {
+					jButtonMultipleOnDynForm = (JButton) dynFormPanel.getComponent(i);
+					break;
+				}
+			}	
+		}
+		return jButtonMultipleOnDynForm;
 	}
 	
 }

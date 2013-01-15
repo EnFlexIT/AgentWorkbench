@@ -7,8 +7,8 @@
                 <agentClassName>agas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>n10_1</graphElementIDs>
-                <graphElementIDs>n10_2</graphElementIDs>
                 <graphElementIDs>n10_0</graphElementIDs>
+                <graphElementIDs>n10_2</graphElementIDs>
                 <graphElementIDs>PP21</graphElementIDs>
                 <graphElementIDs>PP20</graphElementIDs>
                 <graphElementIDs>PP6</graphElementIDs>
@@ -87,12 +87,12 @@
                 <agentClassName>agas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP12</graphElementIDs>
-                <graphElementIDs>PP13</graphElementIDs>
                 <graphElementIDs>n7_0</graphElementIDs>
-                <graphElementIDs>PP14</graphElementIDs>
+                <graphElementIDs>PP13</graphElementIDs>
                 <graphElementIDs>n7_1</graphElementIDs>
-                <graphElementIDs>PP15</graphElementIDs>
+                <graphElementIDs>PP14</graphElementIDs>
                 <graphElementIDs>n7_2</graphElementIDs>
+                <graphElementIDs>PP15</graphElementIDs>
                 <id>n7</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch3</type>

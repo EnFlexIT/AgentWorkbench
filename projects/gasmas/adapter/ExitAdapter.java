@@ -13,18 +13,14 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 
 public class ExitAdapter extends NetworkComponentAdapter implements ActionListener {
 
-	private ExitDataModelAdapter exitDataModelAdapter=null;
 	private Vector<JComponent> menuItems=null; 
 	private JMenuItem jMenueItemExitClose=null;
 	private JMenuItem jMenueItemExitFailure=null;
 	
 	
 	@Override
-	public NetworkComponentAdapter4DataModel getDataModelAdapter() {
-		if (exitDataModelAdapter==null) {
-			exitDataModelAdapter=new ExitDataModelAdapter();
-		}
-		return exitDataModelAdapter;
+	public NetworkComponentAdapter4DataModel getNewDataModelAdapter() {
+		return new ExitDataModelAdapter();
 	}
 
 	@Override

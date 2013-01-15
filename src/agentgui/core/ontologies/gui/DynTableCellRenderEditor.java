@@ -241,26 +241,6 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 	}
 
 	/**
-	 * Returns, if exists the multiple (+|-) JButton multiple of the DynForm.
-	 *
-	 * @param dynType the DynType
-	 * @return the JButton multiple of the DynForm
-	 */
-	private JButton getJButtonMultipleOnDynForm(DynType dynType) {
-		JButton jButtonMultipleOnDynForm = null;
-		if (dynType!=null) {
-			JPanel dynFormPanel = this.dynType.getPanel();
-			for (int i=0; i < dynFormPanel.getComponentCount(); i++) {
-				if (dynFormPanel.getComponent(i) instanceof JButton) {
-					jButtonMultipleOnDynForm = (JButton) dynFormPanel.getComponent(i);
-					break;
-				}
-			}
-		}
-		return jButtonMultipleOnDynForm;
-	}
-	
-	/**
 	 * This method initializes jButtonMultiple	
 	 * @return javax.swing.JButton	
 	 */
@@ -268,7 +248,7 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 			
 		JButton jButtonMultiple = null;
 
-		final JButton jButtonMultipleOnDynForm = this.getJButtonMultipleOnDynForm(this.dynType);
+		final JButton jButtonMultipleOnDynForm = this.dynType.getJButtonMultipleOnDynFormPanel();
 		if (jButtonMultipleOnDynForm==null) {
 			jButtonMultiple=null;
 

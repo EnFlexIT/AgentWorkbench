@@ -2,6 +2,19 @@
 <networkComponentList>
     <componentList>
         <entry>
+            <key>n10</key>
+            <value>
+                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n10</graphElementIDs>
+                <graphElementIDs>PP20</graphElementIDs>
+                <graphElementIDs>PP16</graphElementIDs>
+                <id>n10</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Pipe</type>
+            </value>
+        </entry>
+        <entry>
             <key>n0</key>
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
@@ -16,6 +29,29 @@
                 <id>n0</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch3</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n12</key>
+            <value>
+                <agentClassName></agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n12</graphElementIDs>
+                <graphElementIDs>PP20</graphElementIDs>
+                <graphElementIDs>PP22</graphElementIDs>
+                <id>n12</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Power Line</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n11</key>
+            <value>
+                <directed>false</directed>
+                <graphElementIDs>PP20</graphElementIDs>
+                <id>n11</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Power2Gas</type>
             </value>
         </entry>
         <entry>
@@ -112,6 +148,16 @@
                 <id>n6</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Pipe</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n13</key>
+            <value>
+                <directed>false</directed>
+                <graphElementIDs>PP22</graphElementIDs>
+                <id>n13</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Transformator</type>
             </value>
         </entry>
     </componentList>

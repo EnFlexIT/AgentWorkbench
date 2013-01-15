@@ -81,6 +81,9 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	/** Default shapes for a central cluster node */
 	public static final String SHAPE_DEFAULT_4_CLUSTER = SHAPE_RECTANGLE;
 	
+	/** The prefix name for the NetworkComponentAdapter of a GraphNode */
+	public static final String GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX = "GraphNodeAdapter_";
+	
 	
 	/** The component type settings used in the {@link GraphEnvironmentController} */
 	private HashMap<String, ComponentTypeSettings> currentCTS = null;

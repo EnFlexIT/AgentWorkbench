@@ -1623,6 +1623,21 @@ public class NetworkModel implements Serializable {
 	}
 
 	/**
+	 * Returns the NetworkComponentAdapter for the specified GraphNode.
+	 *
+	 * @param graphNode the graph node
+	 * @return the network component adapter
+	 */
+	public NetworkComponentAdapter getNetworkComponentAdapter(GraphNode graphNode) {
+		String domain = this.getDomain(graphNode);
+		if (domain!=null) {
+			String searchFor = GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX + domain;
+			return this.getNetworkComponentAdapter(searchFor);
+		}
+		return null;
+	}
+	
+	/**
 	 * Returns the NetworkComponentAdapter for the specified type of component.
 	 *
 	 * @param componentTypeName the component type name
@@ -1633,11 +1648,32 @@ public class NetworkModel implements Serializable {
 		if (this.networkComponentAdapterHash==null) {
 			this.networkComponentAdapterHash = new HashMap<String, NetworkComponentAdapter>();
 		}
+		
 		NetworkComponentAdapter netCompAdapter = this.networkComponentAdapterHash.get(componentTypeName);
 		if (netCompAdapter==null) {
-			// --- Create the NetworkComponentAdapter, if it exists -----------
-			ComponentTypeSettings cts = this.generalGraphSettings4MAS.getCurrentCTS().get(componentTypeName);
-			String adapterClassname = cts.getAdapterClass();
+			// --------------------------------------------------------------------------
+			// --- Find and initialize the corresponding NetworkComponentAdapter --------
+			// --------------------------------------------------------------------------
+			String adapterClassname = null;
+			if (componentTypeName.startsWith(GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX)) {
+				// --- Find the NetworkComponentAdapter for the GraphNode ---------------
+				String searchFor = componentTypeName.replace(GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX, "");
+				DomainSettings ds = this.generalGraphSettings4MAS.getDomainSettings().get(searchFor);
+				if (ds!=null) {
+					adapterClassname = ds.getAdapterClass();	
+				}
+				
+			} else {
+				// --- Create the NetworkComponentAdapter, if it exists -----------------
+				ComponentTypeSettings cts = this.generalGraphSettings4MAS.getCurrentCTS().get(componentTypeName);
+				if (cts!=null) {
+					adapterClassname = cts.getAdapterClass();	
+				}
+				
+			}
+			// --------------------------------------------------------------------------
+			// --- Initialize the found NetworkComponentAdapter -------------------------
+			// --------------------------------------------------------------------------
 			if (adapterClassname!=null) {
 				try {
 					@SuppressWarnings("unchecked")
@@ -1649,8 +1685,46 @@ public class NetworkModel implements Serializable {
 					ex.printStackTrace();
 				}
 			}
+		
 		}
 		return netCompAdapter;
+	}
+	
+	/**
+	 * Gets the domain of a GraphElement.
+	 *
+	 * @param graphElement the graph element
+	 * @return the domain
+	 */
+	public String getDomain(Object graphElement) {
+		
+		String domain = null;
+		if (graphElement instanceof GraphNode) {
+			// --- Have a look if every component is in the same domain -------
+			String domainIitial = null;
+			String domainTmp = null;
+			HashSet<NetworkComponent> netComps = this.getNetworkComponents((GraphNode) graphElement);
+			for (NetworkComponent netComp : netComps) {
+				domainTmp = this.generalGraphSettings4MAS.getCurrentCTS().get(netComp.getType()).getDomain();;
+				if (domainIitial==null) {
+					// --- Remind that value ----------------------------------
+					domainIitial=domainTmp;
+				} else {
+					if (domainTmp.equalsIgnoreCase(domainIitial)==false) {
+						domainIitial=null;
+						break;
+					}
+				}
+			}
+			domain = domainIitial;
+			
+		} else if (graphElement instanceof GraphEdge) {
+			// --- Get the corresponding NetworkComponent and have a look ----- 
+			NetworkComponent networkComponent = this.getNetworkComponent((GraphEdge) graphElement);
+			domain = this.generalGraphSettings4MAS.getCurrentCTS().get(networkComponent.getType()).getDomain();;
+			
+		}
+		return domain;
 	}
 	
 }

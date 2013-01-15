@@ -31,12 +31,16 @@ package agentgui.envModel.graph.controller;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -49,6 +53,7 @@ import javax.swing.JSeparator;
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.networkModel.GraphEdge;
+import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
@@ -67,13 +72,14 @@ import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
  * 
  * @author <br>Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
  */
-public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePlugin {
+public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePlugin implements Observer {
 	
 	private final String MENU_ITEM_NAME_PREFIX = "~TmpItem~";
 	private final String IMAGE_PATH = GraphGlobals.getPathImages(); // @jve:decl-index=0:
 	
 	private BasicGraphGui basicGraphGui = null;
-
+	private GraphEnvironmentController graphController = null;
+	
     private JPopupMenu edgePopup;
     private JPopupMenu vertexPopup;
 
@@ -82,34 +88,79 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     public GraphEnvironmentPopupPlugin(BasicGraphGui parentGUI) {
         super(MouseEvent.BUTTON3_MASK);
         this.basicGraphGui = parentGUI;
+        this.graphController = this.basicGraphGui.getGraphEnvironmentController();
+        this.graphController.addObserver(this);
+    }
+    
+    /**
+     * Shows the pop up menu for a given component.
+     * @param graphObject the graph object
+     */
+    public void showPopUp(Object graphObject) {
+    	
+    	VisualizationViewer<GraphNode, GraphEdge> visView = this.basicGraphGui.getVisView();
+    	Point locationMouse = MouseInfo.getPointerInfo().getLocation();
+    	Point locationPanel = visView.getLocationOnScreen();
+    	Point locationOnPanel = new Point(locationMouse.x - locationPanel.x, locationMouse.y - locationPanel.y);
+    	
+    	if (graphObject instanceof GraphNode) {
+    	
+    		GraphNode graphNode = (GraphNode) graphObject;
+    		this.updateVertexMenu(graphNode);
+    		vertexPopup.validate();
+    		vertexPopup.show(visView, locationOnPanel.x, locationOnPanel.y);
+            basicGraphGui.handleObjectRightClick(graphNode);
+            
+    	} else if (graphObject instanceof GraphEdge) {
+    		
+    		GraphEdge graphEdge = (GraphEdge) graphObject;
+    		GraphNode graphNode = null;
+    		
+    		NetworkModel networkModel = this.graphController.getNetworkModel();
+    		NetworkComponent netComp = networkModel.getNetworkComponent(graphEdge);
+    		Vector<GraphElement> graphElements = networkModel.getGraphElementsFromNetworkComponent(netComp);
+    		for(GraphElement graphElement : graphElements){
+    			if (graphElement instanceof GraphNode) {
+    				graphNode = (GraphNode) graphElement;
+    			}
+    		}
+    		
+    		if (graphNode!=null) {
+    			this.updateEdgeMenu(graphEdge);
+    			edgePopup.validate();
+    			edgePopup.show(visView, locationOnPanel.x, locationOnPanel.y);
+                basicGraphGui.handleObjectRightClick(graphEdge);	
+    		}
+            
+    	}
+    	
     }
     
     /**
      * Implementation of the AbstractPopupGraphMousePlugin method. This is where the 
      * work gets done. You shouldn't have to modify unless you really want to...
-     * @param me 
+     * @param me the MousEvent
      */
     protected void handlePopup(MouseEvent me) {
         
-    	@SuppressWarnings("unchecked")
-		final VisualizationViewer<V,E> vv = (VisualizationViewer<V,E>)me.getSource();
-        Point2D p = me.getPoint();
-        
-        GraphElementAccessor<V,E> pickSupport = vv.getPickSupport();
+    	Point2D p = me.getPoint();
+    	
+		VisualizationViewer<GraphNode,GraphEdge> visView = this.basicGraphGui.getVisView();
+        GraphElementAccessor<GraphNode,GraphEdge> pickSupport = visView.getPickSupport();
         if(pickSupport != null) {
-            final V vertex = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
+            GraphNode vertex = (GraphNode) pickSupport.getVertex(visView.getGraphLayout(), p.getX(), p.getY());
             if(vertex != null) {
                 //System.out.println("Vertex " + v + " was right clicked");
-                this.updateVertexMenu(vertex, vv, p);
-                vertexPopup.show(vv, me.getX(), me.getY());
+                this.updateVertexMenu(vertex);
+                vertexPopup.show(visView, me.getX(), me.getY());
                 basicGraphGui.handleObjectRightClick(vertex);
                 
             } else {
-                final E edge = pickSupport.getEdge(vv.getGraphLayout(), p.getX(), p.getY());
+                GraphEdge edge = (GraphEdge) pickSupport.getEdge(visView.getGraphLayout(), p.getX(), p.getY());
                 if(edge != null) {
                     //System.out.println("Edge " + edge + " was right clicked");
-                	this.updateEdgeMenu(edge, vv, p);
-                    edgePopup.show(vv, me.getX(), me.getY());
+                	this.updateEdgeMenu(edge);
+                    edgePopup.show(visView, me.getX(), me.getY());
                     basicGraphGui.handleObjectRightClick(edge);  
                 }
             }
@@ -118,12 +169,9 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     
     /**
      * Update edge menu with context sensitive menu items.
-     *
-     * @param edge the edge
-     * @param vv the VisualizationViewer
-     * @param point the point
+     * @param graphEdge the current GraphEdge
      */
-    private void updateEdgeMenu(E edge, VisualizationViewer<V, E> vv, Point2D point) {
+    private void updateEdgeMenu(GraphEdge graphEdge) {
         
     	if (this.edgePopup == null) return;
     	
@@ -137,7 +185,7 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
 		}
     	
     	// --- Evaluate for a NetworkComponent -----------------
-    	Vector<NetworkComponent> netComps = this.getNetworkComponents(edge);
+    	Vector<NetworkComponent> netComps = this.getNetworkComponents(graphEdge);
     	if (netComps!=null) {
     		// --- Add the context sensitive JMenueItems -------
     		NetworkComponent netComp = netComps.iterator().next();
@@ -163,12 +211,9 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     
     /**
      * Update vertex menu with context sensitive menu items.
-     *
-     * @param vertex the vertex
-     * @param vv the VisualizationViewer
-     * @param point the point
+     * @param graphNode the GraphNode
      */
-    private void updateVertexMenu(V vertex, VisualizationViewer<V, E> vv, Point2D point) {
+    private void updateVertexMenu(GraphNode graphNode) {
         
     	if (this.vertexPopup == null) return;
     	
@@ -182,7 +227,7 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
 		}
     	
     	// --- Evaluate for a NetworkComponent -----------------
-    	Vector<NetworkComponent> netComps = this.getNetworkComponents(vertex);
+    	Vector<NetworkComponent> netComps = this.getNetworkComponents(graphNode);
     	if (netComps!=null) {
     		
     		for (NetworkComponent netComp : netComps) {
@@ -321,5 +366,25 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     public void setVertexPopup(JPopupMenu vertexPopup) {
         this.vertexPopup = vertexPopup;
     }
+
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable observable, Object object) {
+		
+		if (object instanceof NetworkModelNotification) {
+    		
+    		NetworkModelNotification nmNotification = (NetworkModelNotification) object;
+    		int reason = nmNotification.getReason();
+    		Object infoObject = nmNotification.getInfoObject();
+
+			switch (reason) {
+			case NetworkModelNotification.NETWORK_MODEL_ShowPopUpMenue:
+				this.showPopUp(infoObject);
+				break;
+			}
+		}
+	}
 
 }

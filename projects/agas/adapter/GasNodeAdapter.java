@@ -9,14 +9,10 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 
 public class GasNodeAdapter extends NetworkComponentAdapter {
 
-	private GasNodeDataModelAdapter gasNodeDataModelAdapter = null;
 	
 	@Override
-	public NetworkComponentAdapter4DataModel getDataModelAdapter() {
-		if (gasNodeDataModelAdapter==null) {
-			gasNodeDataModelAdapter = new GasNodeDataModelAdapter();
-		}
-		return gasNodeDataModelAdapter;
+	public NetworkComponentAdapter4DataModel getNewDataModelAdapter() {
+		return new GasNodeDataModelAdapter();
 	}
 
 	@Override

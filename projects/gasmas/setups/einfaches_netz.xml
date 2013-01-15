@@ -55,6 +55,12 @@
             <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
             <startAsName>n9</startAsName>
         </agent>
+        <agent>
+            <postionNo>9</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n10</startAsName>
+        </agent>
     </agentSetup>
     <timeModelSettings>
         <entry>

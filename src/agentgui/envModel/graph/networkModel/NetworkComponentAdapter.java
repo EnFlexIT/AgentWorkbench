@@ -53,6 +53,33 @@ public abstract class NetworkComponentAdapter {
 	/** The OntologyVisualisationHelper, for ontologies. */
 	private OntologyVisualisationHelper ovHelper = null;
 	
+	/** The stored NetworkComponentAdapter4DataModel for accelerating the load and save process of NetworkModel's */
+	private NetworkComponentAdapter4DataModel networkComponentAdapter4DataModel=null;
+	
+	
+	/**
+	 * Returns the data model adapter for the {@link NetworkComponent}.
+	 * @return the adapter visualisation
+	 */
+	public abstract NetworkComponentAdapter4DataModel getNewDataModelAdapter();
+	
+	/**
+	 * Returns a stored (not new) NetworkComponentAdapter4DataModel. 
+	 * The idea to store one instance of the NetworkComponentAdapter4DataModel comes from
+	 * the fact that the instantiation of such Object can be quit time consuming. In order 
+	 * to accelerate the load process of a NetworkModel (with possibly hundreds of similar
+	 * components) one instance will be stored here.  
+	 * @return the stored data model adapter
+	 */
+	public NetworkComponentAdapter4DataModel getStoredDataModelAdapter() {
+		if (networkComponentAdapter4DataModel==null) {
+			networkComponentAdapter4DataModel = getNewDataModelAdapter();
+			if (networkComponentAdapter4DataModel!=null && networkComponentAdapter4DataModel instanceof NetworkComponentAdapter4Ontology){
+				this.storeOntologyVisualisationHelper(networkComponentAdapter4DataModel);
+			}
+		}
+		return networkComponentAdapter4DataModel;
+	}
 	
 	/**
 	 * Returns the NetworkComponentAdapter4DataModel for the application.<br>
@@ -60,31 +87,16 @@ public abstract class NetworkComponentAdapter {
 	 * 
 	 * @return the NetworkComponentAdapter4DataModel 
 	 */
-	public NetworkComponentAdapter4DataModel invokeGetDataModelAdapter() {
-		
-		// --- Get the DataModel Adapter in a regular manner ----------------------------
-		NetworkComponentAdapter4DataModel nca4dm = this.getDataModelAdapter();
-		if (nca4dm instanceof NetworkComponentAdapter4Ontology) {
-
-			NetworkComponentAdapter4Ontology nca4Onto = (NetworkComponentAdapter4Ontology) nca4dm;
-			if (this.ovHelper!=null) {
-				nca4Onto.setOntologyVisualisationHelper(this.ovHelper);
-			} else {
-				// --- Remind this for later ------------------------------------------------ 
-				OntologyInstanceViewer oiv = (OntologyInstanceViewer) nca4Onto.getVisualisationComponent();
-				this.ovHelper = oiv.getOntologyVisualisationHelper();	
-			}
+	private void storeOntologyVisualisationHelper(NetworkComponentAdapter4DataModel nca4dm) {
+		NetworkComponentAdapter4Ontology nca4Onto = (NetworkComponentAdapter4Ontology) nca4dm;
+		if (this.ovHelper!=null) {
+			nca4Onto.setOntologyVisualisationHelper(this.ovHelper);
+		} else {
+			// --- Remind this for later ------------------------------------------------ 
+			OntologyInstanceViewer oiv = (OntologyInstanceViewer) nca4Onto.getVisualisationComponent();
+			this.ovHelper = oiv.getOntologyVisualisationHelper();	
 		}
-		return nca4dm;
 	}
-	
-	/**
-	 * Returns the data model adapter for the {@link NetworkComponent}.
-	 * @return the adapter visualisation
-	 */
-	public abstract NetworkComponentAdapter4DataModel getDataModelAdapter();
-	
-	
 	
 	/**
 	 * Invokes to get the JPopup menu elements for this kind of NetworkComponent.

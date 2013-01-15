@@ -10,13 +10,10 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 
 public class ShortPipeAdapter extends NetworkComponentAdapter {
 
-	private ShortPipeDataModelAdapter shortPipeDataModelAdapter=null;
+	
 	@Override
-	public NetworkComponentAdapter4DataModel getDataModelAdapter() {
-		if (shortPipeDataModelAdapter==null) {
-			shortPipeDataModelAdapter=new ShortPipeDataModelAdapter();
-		}
-		return shortPipeDataModelAdapter;
+	public NetworkComponentAdapter4DataModel getNewDataModelAdapter() {
+		return new ShortPipeDataModelAdapter();
 	}
 
 	@Override
@@ -24,7 +21,5 @@ public class ShortPipeAdapter extends NetworkComponentAdapter {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
 
 }

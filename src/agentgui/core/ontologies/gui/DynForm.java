@@ -1021,6 +1021,49 @@ public class DynForm extends JPanel {
 	}
 
 	/**
+	 * Resets the form values.
+	 */
+	private void resetValuesOnForm() {
+		
+		int noOfSubNodes = this.rootNode.getChildCount();
+		for (int i=0; i < noOfSubNodes; i++) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.rootNode.getChildAt(i);
+			this.resetValuesOnSubForm(node);
+		}
+		this.save(true);
+	}
+	
+	/**
+	 * Reset sub object.
+	 * @param node the node
+	 */
+	private void resetValuesOnSubForm(DefaultMutableTreeNode node) {
+		
+		// --- Set the value to null ----------------------
+		DynType dynType = (DynType) node.getUserObject(); 
+		this.setSingleValue(dynType, null);
+		
+		// --- Is there a multiple button to remove? ------
+		JButton multipleButton = dynType.getJButtonMultipleOnDynFormPanel();
+		if (multipleButton!=null) {
+			if (multipleButton.getText().equals("+")==false) {
+				multipleButton.doClick();
+			}
+		}
+
+		// --- Are there any sub nodes available? ---------
+		if (node.getChildCount()>0) {
+			int noOfSubClasses = node.getChildCount();
+			for (int i=0; i < noOfSubClasses; i++) {
+				DefaultMutableTreeNode subNode = (DefaultMutableTreeNode) node.getChildAt(i);
+				this.resetValuesOnSubForm(subNode);
+			}
+		}
+		
+	}
+	
+	
+	/**
 	 * Sets the bounds of the given panel, depending on the child components on this panel.
 	 *
 	 * @param panel the new panel bounds
@@ -1726,10 +1769,9 @@ public class DynForm extends JPanel {
 	 * @param ontologyInstances the new instances of the ontology arguments
 	 */
 	public void setOntoArgsInstance(Object[] ontologyInstances) {
-		if (this.ontoArgsInstance==null) {
-			this.save(true);
-		} 
-		if (ontologyInstances!=null) {
+		if (ontologyInstances==null) {
+			this.resetValuesOnForm();
+		} else {
 			this.ontoArgsInstance = ontologyInstances;
 			this.setXMLFromInstances();
 			this.setInstancesFromXML();	

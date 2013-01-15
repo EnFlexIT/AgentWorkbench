@@ -10,14 +10,10 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 
 public class PipeAdapter extends NetworkComponentAdapter {
 
-	private PipeDataModelAdapter pipeDataModelAdapter=null;
 	
 	@Override
-	public NetworkComponentAdapter4DataModel getDataModelAdapter() {
-		if (pipeDataModelAdapter==null) {
-			pipeDataModelAdapter=new PipeDataModelAdapter();
-		}
-		return pipeDataModelAdapter;
+	public NetworkComponentAdapter4DataModel getNewDataModelAdapter() {
+		return new PipeDataModelAdapter();
 	}
 
 	@Override
@@ -25,7 +21,5 @@ public class PipeAdapter extends NetworkComponentAdapter {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
 
 }

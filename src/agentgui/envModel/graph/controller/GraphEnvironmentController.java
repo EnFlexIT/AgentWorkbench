@@ -984,7 +984,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    			Vector<String> dataModelBase64 = netComp.getDataModelBase64();
 		    			if (dataModelBase64!=null) {
 		    				// --- Get DataModelAdapter ---------------------
-		    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.invokeGetDataModelAdapter();
+		    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
 		    				if (netCompDataModelAdapter!=null) {
 		    					// --- Get Base64 decoded Object ------------
 		    					Object dataModel = netCompDataModelAdapter.getDataModelBase64Decoded(dataModelBase64, true);
@@ -1057,7 +1057,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    				netComp.setDataModelBase64(null);
 		    			} else {
 		    				// --- Get DataModelAdapter ---------------------
-		    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.invokeGetDataModelAdapter();
+		    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
 		    				if (netCompDataModelAdapter==null) {
 		    					// --- No DataModelAdapter found ------------
 		    					netComp.setDataModelBase64(null);	

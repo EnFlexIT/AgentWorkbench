@@ -759,7 +759,23 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param pickedObject
 	 */
 	public void handleObjectDoubleClick(Object pickedObject) {
+		
 		this.selectObject(pickedObject);
+		
+		if (pickedObject instanceof GraphNode) {
+			// --- Set the local variable ---------------------------
+			GraphNode graphNode = (GraphNode) pickedObject;
+			// --- Is the GraphNode a DistributionNode ? ------------
+			NetworkComponent networkComponent = this.graphController.getNetworkModel().isDistributionNode(graphNode);
+			if (networkComponent!=null) {
+				// --- Yes! Show the PopUp menu for this node -------
+				NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_ShowPopUpMenue);
+				nmn.setInfoObject(pickedObject);
+				this.graphController.notifyObservers(nmn);
+				return;
+			}
+		}
+		
 		// --- Notify about the editing request for a component ----- 
 		NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
 		nmNote.setInfoObject(pickedObject);

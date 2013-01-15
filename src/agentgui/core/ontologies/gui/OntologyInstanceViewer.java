@@ -549,7 +549,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	
 	/**
 	 * Sets the configuration in XML.
-	 *
 	 * @param configurationXML the configurationXML to set
 	 */
 	public void setConfigurationXML(String[] configurationXML) {
@@ -558,10 +557,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			this.setXMLText();
 		}
 	}
-	
 	/**
-	 * Gets the configuration in XML.
-	 *
+	 * Returns the configuration in XML.
 	 * @return the configurationXML
 	 */
 	public String[] getConfigurationXML() {
@@ -602,8 +599,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	}
 	
 	/**
-	 * Gets the configuration in XML in a Base64 encoded form.
-	 *
+	 * Returns the configuration as XML in a Base64 encoded form.
 	 * @return the configurationXML as Base64-String
 	 */
 	public String[] getConfigurationXML64() {
