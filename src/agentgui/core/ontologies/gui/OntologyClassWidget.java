@@ -80,7 +80,7 @@ public abstract class OntologyClassWidget extends JPanel {
 	
 	/**
 	 * Sets the ontology class instance.
-	 * @param chart the new ontology class instance
+	 * @param objectInstance the new ontology class instance
 	 */
 	public abstract void setOntologyClassInstance(Object objectInstance);
 	/**

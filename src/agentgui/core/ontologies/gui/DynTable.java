@@ -245,7 +245,7 @@ public class DynTable extends JTable {
 	
 	/**
 	 * Sets the OntologyClassVisualsation visible.
-	 * @param dynTyp the new special class visible
+	 * @param dynType the new special class visible
 	 */
 	public void setOntologyClassVisualsationVisible(DynType dynType) {
 		

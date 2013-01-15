@@ -1164,7 +1164,7 @@ public class GlobalInfo {
 	/**
 	 * Checks if a given class can be visualized by a special OntologyClassVisualisation.
 	 *
-	 * @param checkObject the object to check
+	 * @param checkClass the class to check
 	 * @return true, if the given Object is ontology class visualisation
 	 */
 	public boolean isOntologyClassVisualisation(Class<?> checkClass) {

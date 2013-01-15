@@ -31,6 +31,8 @@ package agentgui.core.ontologies.gui;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import agentgui.core.config.GlobalInfo;
+
 
 /**
  * The Class OntologyClassVisualisation can be used in order to name a 
@@ -41,8 +43,8 @@ import java.lang.reflect.InvocationTargetException;
  * 
  * @see GlobalInfo#registerOntologyClassVisualisation(OntologyClassVisualisation)
  * @see GlobalInfo#getKnownOntologyClassVisualisations()
- * @see GlobalInfo#isOntologyClassVisualisation(Object)
- * @see GlobalInfo#getOntologyClassVisualisation(Object)
+ * @see GlobalInfo#isOntologyClassVisualisation(Class)
+ * @see GlobalInfo#getOntologyClassVisualisation(Class)
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

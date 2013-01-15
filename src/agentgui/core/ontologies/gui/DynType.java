@@ -267,8 +267,6 @@ public class DynType {
 
 	/**
 	 * Returns, if exists the multiple (+|-) JButton multiple of the DynForm.
-	 *
-	 * @param dynType the DynType
 	 * @return the JButton multiple of the DynForm
 	 */
 	public JButton getJButtonMultipleOnDynFormPanel() {

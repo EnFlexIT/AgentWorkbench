@@ -55,13 +55,32 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 
 /**
- * The Class BasicGraphGuiProperties.
+ * The Class BasicGraphGuiProperties is used as dialog in order to configure
+ * properties of {@link NetworkComponent}'s or {@link GraphNode}'s. Therefore, this 
+ * Dialog searches first for the corresponding {@link NetworkComponentAdapter}.
+ * As a second step it reads the data model instance from the GraphNode or 
+ * NetworkComponent and passes this instance to the component for visualising.
+ * In the end the changed instance will be transfered back to the specific
+ * GraphNode or NetworkComponent.
+ * 
+ * @see NetworkComponent
+ * @see NetworkComponent#getDataModel()
+ * @see GraphNode
+ * @see GraphNode#getDataModel()
+ * @see NetworkComponentAdapter
+ * @see NetworkComponentAdapter4DataModel
+ * @see NetworkComponentAdapter4DataModel#getVisualisationComponent()
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class BasicGraphGuiProperties extends JInternalFrame implements Observer, ActionListener {
 
 	private static final long serialVersionUID = -868257113588339559L;
 
 	private final String pathImage = GraphGlobals.getPathImages();
+	
+	private int defaultWidth = 300;
+	private int defaultHeight= 450;
 	
 	private GraphEnvironmentController graphController = null;
 	private BasicGraphGuiJDesktopPane graphDesktop = null;
@@ -105,7 +124,7 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 		this.setClosable(true);
 		this.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
 		this.setTitle("Component");
-		this.setSize(300, 450);
+		this.setSize(this.defaultWidth, this.defaultHeight);
 		this.setInitialSize();
 		
 		BasicInternalFrameUI ui = (BasicInternalFrameUI)this.getUI();
@@ -125,20 +144,17 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 	 */
 	private void setInitialSize() {
 
-		int defaultWidth=300;
-		int defaultHeight=450;
-		
 		// --- Configure the size of the frame ------------
 		if (this.graphDesktop!=null) {
 			if (this.graphDesktop.getLastOpenedBasicGraphGuiProperties()==null) {
 				Dimension desktopSize = this.graphDesktop.getSize();
-				Dimension newSize = new Dimension(defaultWidth, (int) (desktopSize.getHeight()*(2.0/3.0)));
+				Dimension newSize = new Dimension(this.defaultWidth, (int) (desktopSize.getHeight()*(2.0/3.0)));
 				this.setSize(newSize);
 			} else {
 				this.setSize(this.graphDesktop.getLastOpenedBasicGraphGuiProperties().getSize());
 			}
 		} else {
-			this.setSize(new Dimension(defaultWidth, defaultHeight));
+			this.setSize(new Dimension(this.defaultWidth, this.defaultHeight));
 		}
 		// --- Set also the preferred size ----------------
 		this.setPreferredSize(this.getSize());
