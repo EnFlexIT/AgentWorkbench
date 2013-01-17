@@ -217,8 +217,7 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 		} else {
 			// --- Are special classes for visualisation ? --------------------
 			if (Application.getGlobalInfo().isOntologyClassVisualisation(this.dynType.getClassName())) {
-				// TODO
-				this.displayComponent = this.getJButtonOntologyClassVisualsation(this.dynType, 1);
+				this.displayComponent = this.getJButtonOntologyClassVisualsation(this.dynType);
 				this.jPanelToDisplay.add(this.displayComponent, BorderLayout.CENTER);
 				this.dynTable.getEditableRowsVector().add(this.rowModel);
 			}
@@ -276,10 +275,9 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 	 * @param startArgIndex the start argument index
 	 * @return the JButton for special class
 	 */
-	private JButton getJButtonOntologyClassVisualsation(DynType dynType,  int startArgIndex) {
+	private JButton getJButtonOntologyClassVisualsation(DynType dynType) {
 		
 		final DynType dynTypeCurrent = dynType;
-		final int startArgumentIndex = startArgIndex;
 		 
 		JButton jButtonSpecialClass = new JButton();
 		jButtonSpecialClass.setFont(new Font("Arial", Font.BOLD, 11));
@@ -287,7 +285,7 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 		jButtonSpecialClass.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dynTable.setOntologyClassVisualsationVisible(dynTypeCurrent, startArgumentIndex);
+				dynTable.setOntologyClassVisualsationVisible(dynTypeCurrent);
 			}
 		});
 		return jButtonSpecialClass;

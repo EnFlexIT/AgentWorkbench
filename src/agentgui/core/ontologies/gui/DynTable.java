@@ -249,8 +249,8 @@ public class DynTable extends JTable {
 	 * @param dynType the new special class visible
 	 * @param startArgIndex the start arg index
 	 */
-	public void setOntologyClassVisualsationVisible(DynType dynType, int startArgIndex) {
-		this.dynTableJPanel.setOntologyClassVisualsationVisible(dynType, startArgIndex);
+	public void setOntologyClassVisualsationVisible(DynType dynType) {
+		this.dynTableJPanel.setOntologyClassVisualsationVisible(dynType);
 	}
 	
 }

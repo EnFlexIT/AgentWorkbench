@@ -242,7 +242,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	    dialog.setLocation(left, top);	
 		
 	    // --- Remind and remove THIS from the parent -----
-	    this.getDynTableJPanel().setOntologyClassVisualsationVisible(null, 0);
+	    this.getDynTableJPanel().setOntologyClassVisualsationVisible(null);
 	    Container parentContainer = this.getParent();
 	    parentContainer.remove(this);
 	    parentContainer.validate();
@@ -258,7 +258,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	    this.addEnlargeTab();
 		
 	    // --- Add THIS again to the parent ---------------
-	    this.getDynTableJPanel().setOntologyClassVisualsationVisible(null, 0);
+	    this.getDynTableJPanel().setOntologyClassVisualsationVisible(null);
 	    parentContainer.add(this);
 	    parentContainer.validate();
 	    parentContainer.repaint();
