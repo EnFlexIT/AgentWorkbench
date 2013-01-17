@@ -36,6 +36,8 @@ import agentgui.core.charts.xyChart.XyDataModel;
 import agentgui.ontology.XyChart;
 
 public class XyChartDialog extends ChartDialog {
+	
+	// TODO This class is obsolete, it is replaced by XyChartEditorJDialog. Remove after changing all uses to XyChartEditorJDialog.
 
 	/**
 	 * Generated serialVersionUID

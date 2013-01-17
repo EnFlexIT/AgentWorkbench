@@ -35,6 +35,8 @@ import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.ontology.TimeSeriesChart;
 
 public class TimeSeriesChartDialog extends ChartDialog {
+	
+	// TODO This class is obsolete, it is replaced by TimeSeriesChartEditorJDialog. Remove after changing all uses to TimeSeriesChartEditorJDialog.
 
 	private static final long serialVersionUID = -2712116890492352158L;
 	
