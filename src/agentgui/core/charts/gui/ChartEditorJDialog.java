@@ -2,6 +2,8 @@ package agentgui.core.charts.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JButton;
@@ -14,7 +16,7 @@ import agentgui.core.ontologies.gui.DynForm;
  * @author Nils
  *
  */
-public abstract class ChartEditorJDialog extends JDialog {
+public abstract class ChartEditorJDialog extends JDialog implements ActionListener{
 
 	/**
 	 * Generated serialVersionUID
@@ -32,6 +34,8 @@ public abstract class ChartEditorJDialog extends JDialog {
 	
 	protected DynForm dynForm = null;  //  @jve:decl-index=0:
 	protected int startArgIndex = -1;
+	
+	private boolean canceled = false;
 	
 	public ChartEditorJDialog(DynForm dynForm, int startArgIndex) {
 		
@@ -59,7 +63,7 @@ public abstract class ChartEditorJDialog extends JDialog {
 	protected JButton getBtnApply(){
 		if(btnApply == null){
 			btnApply = new JButton("OK");
-			btnApply.addActionListener(this.contentPane);
+			btnApply.addActionListener(this);
 		}
 		return btnApply;
 	}
@@ -67,11 +71,18 @@ public abstract class ChartEditorJDialog extends JDialog {
 	protected JButton getBtnCancel(){
 		if(btnCancel == null){
 			btnCancel = new JButton("Cancel");
-			btnCancel.addActionListener(this.contentPane);
+			btnCancel.addActionListener(this);
 		}
 		return btnCancel;
 	}
 	
+	/**
+	 * @return the canceled
+	 */
+	public boolean isCanceled() {
+		return canceled;
+	}
+
 	public BufferedImage getChartThumb(){
 		return this.contentPane.getChartThumb();
 	}
@@ -80,5 +91,21 @@ public abstract class ChartEditorJDialog extends JDialog {
 	 * Gets the dialogs content pane, which must be a ChartEditorJPanel implementation. 
 	 */
 	public abstract ChartEditorJPanel getContentPane();
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		if(ae.getSource() == getBtnApply()){
+			this.canceled = false;
+			this.setVisible(false);
+		}else if(ae.getSource() == getBtnCancel()){
+			this.canceled = true;
+			this.setVisible(false);
+		}
+	}
+	
+	
 
 }

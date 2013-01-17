@@ -157,6 +157,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 				
 				// Import data
 				importDataSeriesFromCSV(csvFile);
+				setNewOntologyClassInstance(this.getOntologyClassInstance());
 			}
 		}
 
@@ -294,5 +295,5 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	public BufferedImage getChartThumb(){
 		return this.getChartTab().getChartThumb();
 	}
-
+	
 }

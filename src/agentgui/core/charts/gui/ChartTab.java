@@ -74,27 +74,12 @@ public abstract class ChartTab extends ChartPanel {
 	protected DataModel model;
 	
 	/**
-	 * A thumbnail of the current chart
-	 */
-	protected BufferedImage chartThumb = null;
-	
-	/**
-	 * Gets the current chartThumb. If this is null, it will be initialized before.
-	 * @return The chartThumb
-	 */
-	public BufferedImage getChartThumb(){
-		return this.getChartThumb(false);
-	}
-	/**
 	 * Gets the current chartThumb. If this null or forceRefresh is true, it will be initialized/refreshed before. 
 	 * @param forceRefresh If true, a new chartThumb will be created before returning it.
 	 * @return The chartThumb
 	 */
-	public BufferedImage getChartThumb(boolean forceRefresh){
-		if(this.chartThumb == null || forceRefresh){
-			this.chartThumb = createChartThumb();
-		}
-		return this.chartThumb;
+	public BufferedImage getChartThumb(){
+		return this.createChartThumb();
 	}
 	
 	public ChartTab(JFreeChart chart) {
@@ -105,7 +90,7 @@ public abstract class ChartTab extends ChartPanel {
 	 * Creates a thumbnail of the chart
 	 * @return The thumbnail
 	 */
-	public BufferedImage createChartThumb() {
+	private BufferedImage createChartThumb() {
 		// Remove legend while creating the thumb
 		LegendTitle legend = getChart().getLegend();
 		getChart().removeLegend();

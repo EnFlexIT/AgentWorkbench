@@ -26,11 +26,6 @@ public class TimeSeriesChartEditorJDialog extends ChartEditorJDialog {
 		return this.contentPane.getOntologyClassInstance();
 	}
 
-	public boolean isCanceled() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
 	@Override
 	public ChartEditorJPanel getContentPane() {
 		if(contentPane == null){
