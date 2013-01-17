@@ -1,5 +1,7 @@
 package agentgui.core.charts.xyChart;
 
+import agentgui.core.charts.xyChart.gui.XyChartEditorJDialog;
+import agentgui.core.charts.xyChart.gui.XyChartEditorJPanel;
 import agentgui.core.charts.xyChart.gui.XyWidget;
 import agentgui.core.ontologies.gui.OntologyClassEditorJDialog;
 import agentgui.core.ontologies.gui.OntologyClassEditorJPanel;
@@ -21,14 +23,12 @@ public class XyChartVisualisation extends OntologyClassVisualisation {
 
 	@Override
 	public Class<? extends OntologyClassEditorJPanel> getEditorJPanelClass() {
-		// TODO Auto-generated method stub
-		return null;
+		return XyChartEditorJPanel.class;
 	}
 
 	@Override
 	public Class<? extends OntologyClassEditorJDialog> getEditorJDialogClass() {
-		// TODO Auto-generated method stub
-		return null;
+		return XyChartEditorJDialog.class;
 	}
 
 }

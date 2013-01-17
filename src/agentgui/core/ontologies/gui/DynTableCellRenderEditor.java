@@ -217,7 +217,8 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 		} else {
 			// --- Are special classes for visualisation ? --------------------
 			if (Application.getGlobalInfo().isOntologyClassVisualisation(this.dynType.getClassName())) {
-				this.displayComponent = this.getJButtonOntologyClassVisualsation(this.dynType);
+				// TODO
+				this.displayComponent = this.getJButtonOntologyClassVisualsation(this.dynType, 1);
 				this.jPanelToDisplay.add(this.displayComponent, BorderLayout.CENTER);
 				this.dynTable.getEditableRowsVector().add(this.rowModel);
 			}
@@ -270,20 +271,23 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 
 	/**
 	 * Returns the JButton for a OntologyClassVisualsation like for TimeSeries or XyChart's.
-	 * @param text the text to set on the Button
+	 *
+	 * @param dynType the current DynType
+	 * @param startArgIndex the start argument index
 	 * @return the JButton for special class
 	 */
-	private JButton getJButtonOntologyClassVisualsation(DynType dynTypeInstance) {
+	private JButton getJButtonOntologyClassVisualsation(DynType dynType,  int startArgIndex) {
 		
-		final DynType dynTypeCurrent = dynTypeInstance;
-		
+		final DynType dynTypeCurrent = dynType;
+		final int startArgumentIndex = startArgIndex;
+		 
 		JButton jButtonSpecialClass = new JButton();
 		jButtonSpecialClass.setFont(new Font("Arial", Font.BOLD, 11));
 		jButtonSpecialClass.setText("Edit");
 		jButtonSpecialClass.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dynTable.setOntologyClassVisualsationVisible(dynTypeCurrent);
+				dynTable.setOntologyClassVisualsationVisible(dynTypeCurrent, startArgumentIndex);
 			}
 		});
 		return jButtonSpecialClass;

@@ -1,5 +1,7 @@
 package agentgui.core.charts.timeseriesChart;
 
+import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartEditorJDialog;
+import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartEditorJPanel;
 import agentgui.core.charts.timeseriesChart.gui.TimeSeriesWidget;
 import agentgui.core.ontologies.gui.OntologyClassEditorJDialog;
 import agentgui.core.ontologies.gui.OntologyClassEditorJPanel;
@@ -21,14 +23,12 @@ public class TimeSeriesVisualisation extends OntologyClassVisualisation {
 
 	@Override
 	public Class<? extends OntologyClassEditorJPanel> getEditorJPanelClass() {
-		// TODO Auto-generated method stub
-		return null;
+		return TimeSeriesChartEditorJPanel.class;
 	}
 
 	@Override
 	public Class<? extends OntologyClassEditorJDialog> getEditorJDialogClass() {
-		// TODO Auto-generated method stub
-		return null;
+		return TimeSeriesChartEditorJDialog.class;
 	}
 
 }

@@ -34,6 +34,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -42,6 +43,7 @@ import javax.swing.JSplitPane;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableCellEditor;
 
+import agentgui.core.application.Application;
 import agentgui.core.gui.ProjectWindow;
 
 /**
@@ -53,8 +55,8 @@ public class DynTableJPanel extends JPanel {
 
 	private static final long serialVersionUID = 6175657447251980498L;
 
-	private static int EXPANSION_Horizontal = 0;
-	private static int EXPANSION_Vertical = 1;
+	private static final int EXPANSION_Horizontal = 0;
+	private static final int EXPANSION_Vertical = 1;
 	
 	private int expansionDirection = -1;
 	
@@ -129,13 +131,16 @@ public class DynTableJPanel extends JPanel {
 	
 	/**
 	 * Sets the ontology class-visualsation visible.
-	 * @param visible the new ontology class-visualsation visible
+	 *
+	 * @param dynType the DynType
+	 * @param startArgIndex the start argument index
 	 */
-	public void setOntologyClassVisualsationVisible(boolean visible) {
+	public void setOntologyClassVisualsationVisible(DynType dynType, int startArgIndex) {
+		
 		if (this.expanded==true) {
-			this.setJPanelConfiguration(false);	
+			this.setJPanelConfiguration(dynType, startArgIndex, false);	
 		} else {
-			this.setJPanelConfiguration(true);
+			this.setJPanelConfiguration(dynType, startArgIndex, true);
 		}
 
 		this.validate();
@@ -144,18 +149,51 @@ public class DynTableJPanel extends JPanel {
 
 	/**
 	 * Sets the panel configuration.
+	 *
+	 * @param dynType the DynType
+	 * @param startArgIndex the start argument index
 	 * @param doExpand the new frame configuration
 	 */
-	private void setJPanelConfiguration(boolean doExpand) {
+	private void setJPanelConfiguration(DynType dynType, int startArgIndex, boolean doExpand) {
 		
-		if (doExpand==this.expanded) return; // --- nothing to do here ---
+		if (dynType==null) doExpand=false;
+		if (doExpand==this.expanded) return; // --- nothing to do here --------
 		
 		this.removeAll();
 		if (doExpand==true) {
+			// --- Expand view and show widget or editor panel ----------------
 			this.configureExpansionDirection();
 			this.add(this.getJSplitPaneExpanded(), BorderLayout.CENTER);
 			
+			JComponent jComponent2Add = null;			
+			OntologyClassVisualisation ontoClassVis = Application.getGlobalInfo().getOntologyClassVisualisation(dynType.getClassName());
+			switch (this.expansionDirection) {
+			case DynTableJPanel.EXPANSION_Horizontal:
+				OntologyClassEditorJPanel ocej = ontoClassVis.getEditorJPanel(this.dynForm, startArgIndex);
+				jComponent2Add = ocej;
+				break;
+
+			case DynTableJPanel.EXPANSION_Vertical:
+				OntologyClassWidget ocw = ontoClassVis.getWidget(this.dynForm, startArgIndex);
+				jComponent2Add = ocw;
+				break;
+			}
+			
+			// --- Add the component to the JSplitPane -----
+			if (jComponent2Add!=null) {
+				switch (this.expansionDirection) {
+				case DynTableJPanel.EXPANSION_Horizontal:
+					this.getJSplitPaneExpanded().setRightComponent(jComponent2Add);
+					break;
+
+				case DynTableJPanel.EXPANSION_Vertical:
+					this.getJSplitPaneExpanded().setBottomComponent(jComponent2Add);
+					break;
+				}
+			}
+						
 		} else {
+			// --- Remove the Split view --------------------------------------
 			this.jSplitPaneExpanded=null;
 			this.add(this.getJScrollPaneDynTable(), BorderLayout.CENTER);
 			
@@ -242,22 +280,25 @@ public class DynTableJPanel extends JPanel {
 	 */
 	private JSplitPane getJSplitPaneExpanded() {
 		
-		this.jSplitPaneExpanded = new JSplitPane(); 
-		this.jSplitPaneExpanded.setOneTouchExpandable(true);
-		this.jSplitPaneExpanded.setBorder(BorderFactory.createEmptyBorder());
-		
-		if (this.expansionDirection==EXPANSION_Horizontal) {
-			this.jSplitPaneExpanded.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-			this.jSplitPaneExpanded.setDividerLocation((int)this.mainFrameOldSize.getWidth()-this.jSplitPaneExpanded.getDividerSize());
-			this.jSplitPaneExpanded.setLeftComponent(this.getJScrollPaneDynTable());
-			//splitPaneExpanded.setRightComponent();
+		if (this.jSplitPaneExpanded==null) {
+			this.jSplitPaneExpanded = new JSplitPane(); 
+			this.jSplitPaneExpanded.setOneTouchExpandable(true);
+			this.jSplitPaneExpanded.setBorder(BorderFactory.createEmptyBorder());
 			
-		} else {
-			int dividerPosition = (int) (this.mainFrameOldSize.getHeight() - ((9.0/16.0) * this.mainFrameOldSize.getWidth()));
-			this.jSplitPaneExpanded.setOrientation(JSplitPane.VERTICAL_SPLIT);
-			this.jSplitPaneExpanded.setDividerLocation(dividerPosition);
-			this.jSplitPaneExpanded.setTopComponent(this.getJScrollPaneDynTable());
-			//splitPaneExpanded.setBottomComponent();
+			if (this.expansionDirection==EXPANSION_Horizontal) {
+				this.jSplitPaneExpanded.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+				this.jSplitPaneExpanded.setDividerLocation((int)this.mainFrameOldSize.getWidth()-this.jSplitPaneExpanded.getDividerSize());
+				this.jSplitPaneExpanded.setLeftComponent(this.getJScrollPaneDynTable());
+				//splitPaneExpanded.setRightComponent();
+				
+			} else {
+				int dividerPosition = (int) (this.mainFrameOldSize.getHeight() - ((9.0/16.0) * this.mainFrameOldSize.getWidth()));
+				this.jSplitPaneExpanded.setOrientation(JSplitPane.VERTICAL_SPLIT);
+				this.jSplitPaneExpanded.setDividerLocation(dividerPosition);
+				this.jSplitPaneExpanded.setTopComponent(this.getJScrollPaneDynTable());
+				//splitPaneExpanded.setBottomComponent();
+			}
+
 		}
 		return jSplitPaneExpanded;
 	}

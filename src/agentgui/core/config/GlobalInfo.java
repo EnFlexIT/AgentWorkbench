@@ -1192,6 +1192,7 @@ public class GlobalInfo {
 		}
 		return isVisClass;
 	}
+	
 	/**
 	 * Returns the OntologyClassVisualisation for a given object.
 	 *
@@ -1199,15 +1200,22 @@ public class GlobalInfo {
 	 * @return the ontology class visualisation
 	 */
 	public OntologyClassVisualisation getOntologyClassVisualisation(Class<?> checkObject) {
+		return this.getOntologyClassVisualisation(checkObject.getName());
+	}
+	/**
+	 * Returns the OntologyClassVisualisation for a given class, specified by its name.
+	 *
+	 * @param className the class name
+	 * @return the OntologyClassVisualisation
+	 */
+	public OntologyClassVisualisation getOntologyClassVisualisation(String className) {
 		
 		OntologyClassVisualisation ontoClassVisFound = null;
-		Class<?> checkObjectClass = checkObject;
-		
 		Vector<OntologyClassVisualisation> ontoClassViss = this.getKnownOntologyClassVisualisations();
 		for (int i=0; i<ontoClassViss.size(); i++) {
 			OntologyClassVisualisation ontoClassVis = ontoClassViss.get(i);
-			Class<?> visClass = ontoClassVis.getOntologyClass();
-			if (visClass==checkObjectClass) {
+			String compareWith = ontoClassVis.getOntologyClass().getName();
+			if (compareWith.equals(className)==true) {
 				ontoClassVisFound=ontoClassVis;
 				break;
 			}
@@ -1215,6 +1223,7 @@ public class GlobalInfo {
 		return ontoClassVisFound;
 	}
 	
+
 	// -------------------------------------------------------------------------
 	// ---- Methods for the API Key for the Google Tranlation ------------------
 	// -------------------------------------------------------------------------

@@ -245,27 +245,12 @@ public class DynTable extends JTable {
 	
 	/**
 	 * Sets the OntologyClassVisualsation visible.
+	 *
 	 * @param dynType the new special class visible
+	 * @param startArgIndex the start arg index
 	 */
-	public void setOntologyClassVisualsationVisible(DynType dynType) {
-		
-		DefaultMutableTreeNode currNode = this.dynForm.getTreeNodeByDynType(dynType);;
-		OntologyClassWidget ontoClassWidget = this.dynForm.getOntologyClassWidget(currNode);
-		Object ontoClassInstance=null; 
-		
-		if (ontoClassWidget!=null) {
-			ontoClassInstance = ontoClassWidget.getOntologyClassInstance();
-		}
-		
-		if (ontoClassInstance==null) {
-			
-		} else {
-			System.out.println(ontoClassInstance.toString());
-			System.out.println(dynType.getClassName());	
-		}
-		
-		this.dynTableJPanel.setOntologyClassVisualsationVisible(true);
-		
+	public void setOntologyClassVisualsationVisible(DynType dynType, int startArgIndex) {
+		this.dynTableJPanel.setOntologyClassVisualsationVisible(dynType, startArgIndex);
 	}
 	
 }
