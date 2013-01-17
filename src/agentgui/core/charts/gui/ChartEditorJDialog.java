@@ -2,18 +2,19 @@ package agentgui.core.charts.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import agentgui.core.ontologies.gui.DynForm;
-import agentgui.core.ontologies.gui.OntologyClassEditorJDialog;
 /**
  * Abstract super class for chart implementations of OntologyClassEditorJDialog
  * @author Nils
  *
  */
-public abstract class ChartEditorJDialog extends OntologyClassEditorJDialog {
+public abstract class ChartEditorJDialog extends JDialog {
 
 	/**
 	 * Generated serialVersionUID
@@ -29,10 +30,18 @@ public abstract class ChartEditorJDialog extends OntologyClassEditorJDialog {
 	protected JButton btnApply;
 	protected JButton btnCancel;
 	
+	protected DynForm dynForm = null;  //  @jve:decl-index=0:
+	protected int startArgIndex = -1;
+	
 	public ChartEditorJDialog(DynForm dynForm, int startArgIndex) {
-		super(dynForm, startArgIndex);
+		
+		this.dynForm = dynForm;
+		this.startArgIndex = startArgIndex;
+		
+		this.setContentPane(this.getContentPane());
+		this.getContentPane().add(getButtonPane(), BorderLayout.SOUTH);
+		
 		setModal(true);
-		this.contentPane.add(getButtonPane(), BorderLayout.SOUTH);
 		setSize(600, 450);
 		
 	}
@@ -62,5 +71,14 @@ public abstract class ChartEditorJDialog extends OntologyClassEditorJDialog {
 		}
 		return btnCancel;
 	}
+	
+	public BufferedImage getChartThumb(){
+		return this.contentPane.getChartThumb();
+	}
+	
+	/**
+	 * Gets the dialogs content pane, which must be a ChartEditorJPanel implementation. 
+	 */
+	public abstract ChartEditorJPanel getContentPane();
 
 }

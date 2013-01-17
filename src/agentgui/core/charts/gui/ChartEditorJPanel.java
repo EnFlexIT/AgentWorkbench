@@ -58,10 +58,6 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	 * The data model for this chart
 	 */
 	protected DataModel model;
-	/**
-	 * A thumbnail of the current chart
-	 */
-	protected BufferedImage chartThumb = null;
 
 	public ChartEditorJPanel(DynForm dynForm, int startArgIndex) {
 		super(dynForm, startArgIndex);
@@ -207,16 +203,6 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	}
 	
 	/**
-	 * @return A thumbnail of the chart
-	 */
-	public BufferedImage getChartThumb() {
-		if(chartThumb == null){
-			chartThumb = chartTab.createChartThumb();
-		}
-		return chartThumb;
-	}
-	
-	/**
 	 * @return the model
 	 */
 	public DataModel getModel() {
@@ -303,6 +289,10 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public BufferedImage getChartThumb(){
+		return this.getChartTab().getChartThumb();
 	}
 
 }

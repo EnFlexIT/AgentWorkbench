@@ -36,11 +36,9 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Language;
-import agentgui.core.charts.xyChart.XyOntologyModel;
 import agentgui.core.ontologies.gui.DynForm;
 import agentgui.core.ontologies.gui.OntologyClassWidget;
 import agentgui.ontology.XyChart;
@@ -50,7 +48,7 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 	private static final long serialVersionUID = -9148282428244484633L;
 	
 	private XyChart currChart = null;  //  @jve:decl-index=0:
-	private XyChartDialog xycd = null;
+	private XyChartEditorJDialog xycejd = null;
 	
 	private JButton jButtonEdit = null;
 	
@@ -94,22 +92,20 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 			jButtonEdit.setToolTipText(Language.translate("Daten bearbeiten"));
 			jButtonEdit.addActionListener(this);
 			getJButtonEdit().setText("");
-			getJButtonEdit().setIcon(new ImageIcon(this.getXyChartDialog().getChartThumb()));
+			getJButtonEdit().setIcon(new ImageIcon(this.getXyChartEditorJDialog().getChartThumb()));
 		}
 		return jButtonEdit;
 	}
 	
 	/**
-	 * Gets the xy chart dialog.
-	 * @return the xy chart dialog
+	 * @return the xycejd
 	 */
-	private XyChartDialog getXyChartDialog() {
-		if (this.xycd==null) {
-			this.xycd = new XyChartDialog(SwingUtilities.getWindowAncestor(this), this.currChart);
+	private XyChartEditorJDialog getXyChartEditorJDialog() {
+		if(xycejd == null){
+			xycejd = new XyChartEditorJDialog(dynForm, startArgIndex);
 		}
-		return this.xycd;
+		return xycejd;
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.timeseriesChart.gui.OntologyClassWidget#setOntologyClassInstance(java.lang.Object)
@@ -117,7 +113,7 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
 		this.currChart = (XyChart) objectInstance;
-		ImageIcon icon = new ImageIcon(this.getXyChartDialog().getChartThumb());
+		ImageIcon icon = new ImageIcon(this.getXyChartEditorJDialog().getChartThumb());
 		if(icon != null){
 			// Replace text by thumbnail if available
 			this.getJButtonEdit().setText("");
@@ -140,17 +136,17 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 		Object source = ae.getSource();
 		if (source==jButtonEdit) {
 			
-			this.getXyChartDialog().setVisible(true);
-			if(! this.getXyChartDialog().isCanceled()){
+			this.getXyChartEditorJDialog().setVisible(true);
+//			if(! this.getXyChartDialog().isCanceled()){
 				
-				XyChart xyChart =  ((XyOntologyModel)this.getXyChartDialog().getModel().getOntologyModel()).getXyChart();
+				XyChart xyChart =  (XyChart) this.getXyChartEditorJDialog().getOntologyClassInstance();
 				this.setNewOntologyClassInstance(xyChart);
 				
-				if(this.getXyChartDialog().getChartThumb() != null){
+				if(this.getXyChartEditorJDialog().getChartThumb() != null){
 					getJButtonEdit().setText("");
-					getJButtonEdit().setIcon(new ImageIcon(this.getXyChartDialog().getChartThumb()));
+					getJButtonEdit().setIcon(new ImageIcon(this.getXyChartEditorJDialog().getChartThumb()));
 				}
-			}
+//			}
 		}
 
 	}

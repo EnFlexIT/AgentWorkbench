@@ -1,6 +1,7 @@
 package agentgui.core.charts.timeseriesChart.gui;
 
 import agentgui.core.charts.gui.ChartEditorJDialog;
+import agentgui.core.charts.gui.ChartEditorJPanel;
 import agentgui.core.ontologies.gui.DynForm;
 /**
  * OntologyClassEditorJDialog implementation for time series charts.
@@ -15,17 +16,27 @@ public class TimeSeriesChartEditorJDialog extends ChartEditorJDialog {
 
 	public TimeSeriesChartEditorJDialog(DynForm dynForm, int startArgIndex) {
 		super(dynForm, startArgIndex);
-		this.contentPane = new TimeSeriesChartEditorJPanel(dynForm, startArgIndex);
 	}
 
-	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
 		this.contentPane.setOntologyClassInstance(objectInstance);
 	}
 
-	@Override
 	public Object getOntologyClassInstance() {
 		return this.contentPane.getOntologyClassInstance();
+	}
+
+	public boolean isCanceled() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public ChartEditorJPanel getContentPane() {
+		if(contentPane == null){
+			contentPane = new TimeSeriesChartEditorJPanel(dynForm, startArgIndex);
+		}
+		return contentPane;
 	}
 
 }

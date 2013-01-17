@@ -36,11 +36,9 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Language;
-import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
 import agentgui.core.ontologies.gui.DynForm;
 import agentgui.core.ontologies.gui.OntologyClassWidget;
 import agentgui.ontology.TimeSeriesChart;
@@ -54,7 +52,7 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 	private static final long serialVersionUID = -6165412456864146609L;
 	
 	private TimeSeriesChart currChart = null;  //  @jve:decl-index=0:
-	private agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartDialog tscd = null;
+	private TimeSeriesChartEditorJDialog tscejd = null;
 	
 	private JButton jButtonEdit = null;
 
@@ -97,30 +95,28 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 			jButtonEdit.setToolTipText(Language.translate("Daten bearbeiten"));
 			jButtonEdit.addActionListener(this);
 			getJButtonEdit().setText("");
-			getJButtonEdit().setIcon(new ImageIcon(this.getTimeSeriesChartDialog().getChartThumb()));
+			getJButtonEdit().setIcon(new ImageIcon(this.getTimeSeriesChartEditorJDialog().getChartThumb()));
 		}
 		return jButtonEdit;
 	}
 
 	/**
-	 * Gets the time series chart dialog.
-	 * @return the time series chart dialog
+	 * @return the tscejd
 	 */
-	private TimeSeriesChartDialog getTimeSeriesChartDialog() {
-		if (this.tscd==null) {
-//			this.tscd = new TimeSeriesChartDialog(SwingUtilities.getWindowAncestor(this), this.currTimeSeries);
-			this.tscd = new TimeSeriesChartDialog(SwingUtilities.getWindowAncestor(this), this.currChart);
+	private TimeSeriesChartEditorJDialog getTimeSeriesChartEditorJDialog() {
+		if(tscejd == null){
+			tscejd = new TimeSeriesChartEditorJDialog(dynForm, startArgIndex);
 		}
-		return this.tscd;
+		return tscejd;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.timeseriesChart.gui.OntologyClassWidget#setOntologyClassInstance(java.lang.Object)
 	 */
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
 		this.currChart = (TimeSeriesChart) objectInstance;
-		ImageIcon icon = new ImageIcon(this.getTimeSeriesChartDialog().getChartThumb());
+		ImageIcon icon = new ImageIcon(this.getTimeSeriesChartEditorJDialog().getChartThumb());
 		if(icon != null){
 			// Replace text by thumbnail if available
 			this.getJButtonEdit().setText("");
@@ -145,15 +141,15 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 		Object source = ae.getSource();
 		if (source==jButtonEdit) {
 			
-			this.getTimeSeriesChartDialog().setVisible(true);
-			if(! this.getTimeSeriesChartDialog().isCanceled()){
+			this.getTimeSeriesChartEditorJDialog().setVisible(true);
+			if(! this.getTimeSeriesChartEditorJDialog().isCanceled()){
 				
-				TimeSeriesChart timeSeriesChart = ((TimeSeriesOntologyModel)this.getTimeSeriesChartDialog().getModel().getOntologyModel()).getTimeSeriesChart();
+				TimeSeriesChart timeSeriesChart = (TimeSeriesChart) getTimeSeriesChartEditorJDialog().getOntologyClassInstance();
 				this.setNewOntologyClassInstance(timeSeriesChart);
 				
-				if(this.getTimeSeriesChartDialog().getChartThumb() != null){
+				if(this.getTimeSeriesChartEditorJDialog().getChartThumb() != null){
 					getJButtonEdit().setText("");
-					getJButtonEdit().setIcon(new ImageIcon(this.getTimeSeriesChartDialog().getChartThumb()));
+					getJButtonEdit().setIcon(new ImageIcon(this.getTimeSeriesChartEditorJDialog().getChartThumb()));
 				}
 			}
 		}

@@ -68,7 +68,34 @@ public abstract class ChartTab extends ChartPanel {
 	 */
 	public static final String DEFAULT_RENDERER = RENDERER_TYPES[3];
 	
+	/**
+	 * The data model (containing ontology-, chart- and tablemodel) for this chart
+	 */
 	protected DataModel model;
+	
+	/**
+	 * A thumbnail of the current chart
+	 */
+	protected BufferedImage chartThumb = null;
+	
+	/**
+	 * Gets the current chartThumb. If this is null, it will be initialized before.
+	 * @return The chartThumb
+	 */
+	public BufferedImage getChartThumb(){
+		return this.getChartThumb(false);
+	}
+	/**
+	 * Gets the current chartThumb. If this null or forceRefresh is true, it will be initialized/refreshed before. 
+	 * @param forceRefresh If true, a new chartThumb will be created before returning it.
+	 * @return The chartThumb
+	 */
+	public BufferedImage getChartThumb(boolean forceRefresh){
+		if(this.chartThumb == null || forceRefresh){
+			this.chartThumb = createChartThumb();
+		}
+		return this.chartThumb;
+	}
 	
 	public ChartTab(JFreeChart chart) {
 		super(chart);

@@ -1,6 +1,7 @@
 package agentgui.core.charts.xyChart.gui;
 
 import agentgui.core.charts.gui.ChartEditorJDialog;
+import agentgui.core.charts.gui.ChartEditorJPanel;
 import agentgui.core.ontologies.gui.DynForm;
 
 public class XyChartEditorJDialog extends ChartEditorJDialog {
@@ -12,17 +13,22 @@ public class XyChartEditorJDialog extends ChartEditorJDialog {
 
 	public XyChartEditorJDialog(DynForm dynForm, int startArgIndex) {
 		super(dynForm, startArgIndex);
-		this.contentPane = new XyChartEditorJPanel(dynForm, startArgIndex);
 	}
 
-	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
 		this.contentPane.setOntologyClassInstance(objectInstance);
 	}
 
-	@Override
 	public Object getOntologyClassInstance() {
 		return this.contentPane.getOntologyClassInstance();
+	}
+
+	@Override
+	public ChartEditorJPanel getContentPane() {
+		if(contentPane == null){
+			contentPane = new XyChartEditorJPanel(dynForm, startArgIndex);
+		}
+		return contentPane;
 	}
 
 }

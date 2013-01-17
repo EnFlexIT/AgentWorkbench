@@ -70,14 +70,7 @@ public abstract class OntologyClassVisualisation {
 	 */
 	public abstract Class<? extends OntologyClassEditorJPanel> getEditorJPanelClass();
 	
-	
-	/**
-	 * Returns the OntologyClassEditorJDialog class that extends JDialog.
-	 * @return the OntologyClassEditorJDialog class
-	 */
-	public abstract Class<? extends OntologyClassEditorJDialog> getEditorJDialogClass();
-	
-	
+		
 	
 	/**
 	 * Returns the widget instance from the configured class .
@@ -169,51 +162,6 @@ public abstract class OntologyClassVisualisation {
 		}
 		return editor;
 	}
-	/**
-	 * Returns the Editor-JDialog for instance of the configured class .
-
-	 * @param dynForm the current DynForm
-	 * @param startArgIndex the index of the start argument 
-	 * @return the OntologyClassEditorJDialog
-	 */
-	public OntologyClassEditorJDialog getEditorJDialog(DynForm dynForm, int startArgIndex) {
 		
-		OntologyClassEditorJDialog editor = null;
-		Class<? extends OntologyClassEditorJDialog> editorClass = this.getEditorJDialogClass();
-		if (editorClass!=null) {
-			
-			try {
-				Class<?>[] conParameter = new Class[2];
-				conParameter[0] = DynForm.class;
-				conParameter[1] = int.class;
-				
-				// --- Get the constructor ------------------------------	
-				Constructor<?> editorConstructor = editorClass.getConstructor(conParameter);
-	
-				// --- Define the argument for the newInstance call ----- 
-				Object[] args = new Object[2];
-				args[0] = dynForm;
-				args[1] = startArgIndex;
-				
-				editor = (OntologyClassEditorJDialog) editorConstructor.newInstance(args);
-
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
-			
-		}
-		return editor;
-	}
-	
 	
 }
