@@ -158,11 +158,8 @@ public class DynTableJPanel extends JPanel {
 		
 		if (this.getDynType()==dynType) {
 			// --- Same element, disappear ----------------
-			if (this.expanded==true) {
-				this.setJPanelConfiguration(false);	
-			} else {
-				this.setJPanelConfiguration(true);
-			}	
+			this.setJPanelConfiguration(false);	
+			this.setDynType(null);
 			
 		} else {
 			// --- Display element ------------------------
@@ -186,6 +183,8 @@ public class DynTableJPanel extends JPanel {
 		if (this.getDynType()==null) doExpand=false;
 		
 		this.removeAll();
+		this.jSplitPaneExpanded=null;
+		
 		if (doExpand==true) {
 			// --- Expand view and show widget or editor panel ----------------
 			this.add(this.getJSplitPaneExpanded(), BorderLayout.CENTER);
@@ -229,7 +228,6 @@ public class DynTableJPanel extends JPanel {
 						
 		} else {
 			// --- Remove the Split view --------------------------------------
-			this.jSplitPaneExpanded=null;
 			this.add(this.getJScrollPaneDynTable(), BorderLayout.CENTER);
 			
 		}
@@ -318,14 +316,12 @@ public class DynTableJPanel extends JPanel {
 				this.jSplitPaneExpanded.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 				this.jSplitPaneExpanded.setDividerLocation((int)this.getContainerMainFrameOldSize().getWidth()-this.jSplitPaneExpanded.getDividerSize());
 				this.jSplitPaneExpanded.setLeftComponent(this.getJScrollPaneDynTable());
-				//splitPaneExpanded.setRightComponent();
 				
 			} else {
 				int dividerPosition = (int) (this.getContainerMainFrameOldSize().getHeight() - ((9.0/16.0) * this.getContainerMainFrameOldSize().getWidth()));
 				this.jSplitPaneExpanded.setOrientation(JSplitPane.VERTICAL_SPLIT);
 				this.jSplitPaneExpanded.setDividerLocation(dividerPosition);
 				this.jSplitPaneExpanded.setTopComponent(this.getJScrollPaneDynTable());
-				//splitPaneExpanded.setBottomComponent();
 			}
 
 		}
