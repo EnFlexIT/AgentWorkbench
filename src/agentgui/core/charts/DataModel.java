@@ -29,6 +29,7 @@
 package agentgui.core.charts;
 
 import java.awt.Color;
+import java.util.Observable;
 
 import jade.util.leap.List;
 
@@ -38,7 +39,16 @@ import javax.swing.event.TableModelListener;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 
-public abstract class DataModel implements TableModelListener {
+/**
+ * This class manages the data models for different chart visualizations. 
+ * This is an abstract super class that provides general functionality. As
+ * different chart types might require different data types and functionality
+ * there must be chart type specific implementation for every type of chart.
+ *  
+ * @author Nils
+ *
+ */
+public abstract class DataModel extends Observable implements TableModelListener {
 	
 	/**
 	 * These colors will be used for newly added series
@@ -215,6 +225,9 @@ public abstract class DataModel implements TableModelListener {
 					chartModel.updateKey(oldKey, newKey);
 				}
 			}
+			
+			setChanged();
+			notifyObservers();
 		}
 
 	}

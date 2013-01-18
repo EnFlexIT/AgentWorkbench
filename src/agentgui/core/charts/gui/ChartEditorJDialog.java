@@ -12,7 +12,11 @@ import javax.swing.JPanel;
 
 import agentgui.core.ontologies.gui.DynForm;
 /**
- * Abstract super class for chart implementations of OntologyClassEditorJDialog
+ * Abstract super class for dialogs for chart viewing and editing. 
+ * ChartEditorDialogs are containers for ChartEditorJPanel implementations for 
+ * the corresponding type of chart, all functionality should be implemented in
+ * the panel.
+ * 
  * @author Nils
  *
  */

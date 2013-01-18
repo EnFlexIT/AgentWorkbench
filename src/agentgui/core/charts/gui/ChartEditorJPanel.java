@@ -65,79 +65,90 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		this.setLayout(new BorderLayout());
 		this.add(getToolBar(), BorderLayout.NORTH);
 		this.add(getTabbedPane(), BorderLayout.CENTER);
+		
+		this.model.addObserver(this);
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
-		// Handle settings changes
-		if(arg instanceof SettingsInfo){
-			SettingsInfo info = (SettingsInfo) arg;
-			if(info.getType() == SettingsInfo.RENDERER_CHANGED){
-				chartTab.setRenderer((String) info.getData());
-			}else if(info.getType() == SettingsInfo.CHART_TITLE_CHANGED){
-				String title = (String) info.getData();
-				model.getOntologyModel().getChartSettings().setChartTitle(title);
-				chartTab.getChart().setTitle(title);
-			}else if(info.getType() == SettingsInfo.X_AXIS_LABEL_CHANGED){
-				String label = (String) info.getData();
-				model.getOntologyModel().getChartSettings().setXAxisLabel(label);
-				chartTab.setXAxisLabel(label);
-				model.getTableModel().setKeyColumnLabel(label);
-			}else if(info.getType() == SettingsInfo.Y_AXIS_LABEL_CHANGED){
-				String label = (String) info.getData();
-				model.getOntologyModel().getChartSettings().setYAxisLabel(label);
-				chartTab.setYAxisLabel(label);
-			}else if(info.getType() == SettingsInfo.SERIES_LABEL_CHANGED){
-				String label = (String) info.getData();
-				int seriesIndex = info.getSeriesIndex();
-				try {
-					if(seriesIndex < model.getSeriesCount()){
-						model.getTableModel().setSeriesLabel(seriesIndex, label);
-						DataSeries series = model.getOntologyModel().getSeries(seriesIndex);
-						series.setLabel(label);
-						model.getChartModel().getSeries(seriesIndex).setKey(label);
-					}else{
-						throw new NoSuchSeriesException();
-					}
-				} catch (NoSuchSeriesException e) {
-					System.err.println("Error setting label for series "+seriesIndex);
-					e.printStackTrace();
-				}
-				
-			}else if(info.getType() == SettingsInfo.SERIES_COLOR_CHANGED){
-				Color color = (Color) info.getData();
-				int seriesIndex = info.getSeriesIndex();
-				try {
-					if(seriesIndex < model.getSeriesCount()){
-						model.getOntologyModel().getChartSettings().getYAxisColors().remove(seriesIndex);
-						model.getOntologyModel().getChartSettings().getYAxisColors().add(seriesIndex, ""+color.getRGB());
-						chartTab.setSeriesColor(seriesIndex, color);
-					}else{
+		
+		// --- Handle changes of the chart data 
+		if(o == this.model){
+			setNewOntologyClassInstance(this.getOntologyClassInstance());
+		}
+		
+		
+		// --- Handle changes of the chart settings
+		else if (o == this.model.getChartSettings()){
+			if(arg instanceof SettingsInfo){
+				SettingsInfo info = (SettingsInfo) arg;
+				if(info.getType() == SettingsInfo.RENDERER_CHANGED){
+					chartTab.setRenderer((String) info.getData());
+				}else if(info.getType() == SettingsInfo.CHART_TITLE_CHANGED){
+					String title = (String) info.getData();
+					model.getOntologyModel().getChartSettings().setChartTitle(title);
+					chartTab.getChart().setTitle(title);
+				}else if(info.getType() == SettingsInfo.X_AXIS_LABEL_CHANGED){
+					String label = (String) info.getData();
+					model.getOntologyModel().getChartSettings().setXAxisLabel(label);
+					chartTab.setXAxisLabel(label);
+					model.getTableModel().setKeyColumnLabel(label);
+				}else if(info.getType() == SettingsInfo.Y_AXIS_LABEL_CHANGED){
+					String label = (String) info.getData();
+					model.getOntologyModel().getChartSettings().setYAxisLabel(label);
+					chartTab.setYAxisLabel(label);
+				}else if(info.getType() == SettingsInfo.SERIES_LABEL_CHANGED){
+					String label = (String) info.getData();
+					int seriesIndex = info.getSeriesIndex();
+					try {
+						if(seriesIndex < model.getSeriesCount()){
+							model.getTableModel().setSeriesLabel(seriesIndex, label);
+							DataSeries series = model.getOntologyModel().getSeries(seriesIndex);
+							series.setLabel(label);
+							model.getChartModel().getSeries(seriesIndex).setKey(label);
+						}else{
 							throw new NoSuchSeriesException();
+						}
+					} catch (NoSuchSeriesException e) {
+						System.err.println("Error setting label for series "+seriesIndex);
+						e.printStackTrace();
 					}
-				} catch (NoSuchSeriesException e) {
-					System.err.println("Error setting color for series "+seriesIndex);
-					e.printStackTrace();
-				}
-			}else if(info.getType() == SettingsInfo.SERIES_LINE_WIDTH_CHANGED){
-				float lineWidth = (Float) info.getData();
-				int seriesIndex = info.getSeriesIndex();
-				
-				try {
-					if(seriesIndex < model.getSeriesCount()){
-						model.getOntologyModel().getChartSettings().getYAxisLineWidth().remove(seriesIndex);
-						model.getOntologyModel().getChartSettings().getYAxisLineWidth().add(seriesIndex, lineWidth);
-						chartTab.setSeriesLineWidth(seriesIndex, lineWidth);
-					}else{
-							throw new NoSuchSeriesException();
+					
+				}else if(info.getType() == SettingsInfo.SERIES_COLOR_CHANGED){
+					Color color = (Color) info.getData();
+					int seriesIndex = info.getSeriesIndex();
+					try {
+						if(seriesIndex < model.getSeriesCount()){
+							model.getOntologyModel().getChartSettings().getYAxisColors().remove(seriesIndex);
+							model.getOntologyModel().getChartSettings().getYAxisColors().add(seriesIndex, ""+color.getRGB());
+							chartTab.setSeriesColor(seriesIndex, color);
+						}else{
+								throw new NoSuchSeriesException();
+						}
+					} catch (NoSuchSeriesException e) {
+						System.err.println("Error setting color for series "+seriesIndex);
+						e.printStackTrace();
 					}
-				} catch (NoSuchSeriesException e) {
-					System.err.println("Error setting color for series "+seriesIndex);
-					e.printStackTrace();
+				}else if(info.getType() == SettingsInfo.SERIES_LINE_WIDTH_CHANGED){
+					float lineWidth = (Float) info.getData();
+					int seriesIndex = info.getSeriesIndex();
+					
+					try {
+						if(seriesIndex < model.getSeriesCount()){
+							model.getOntologyModel().getChartSettings().getYAxisLineWidth().remove(seriesIndex);
+							model.getOntologyModel().getChartSettings().getYAxisLineWidth().add(seriesIndex, lineWidth);
+							chartTab.setSeriesLineWidth(seriesIndex, lineWidth);
+						}else{
+								throw new NoSuchSeriesException();
+						}
+					} catch (NoSuchSeriesException e) {
+						System.err.println("Error setting color for series "+seriesIndex);
+						e.printStackTrace();
+					}
+				}else if(info.getType() == SettingsInfo.SERIES_ADDED){
+					getChartTab().applyColorSettings();
+					getChartTab().applyLineWidthsSettings();
 				}
-			}else if(info.getType() == SettingsInfo.SERIES_ADDED){
-				getChartTab().applyColorSettings();
-				getChartTab().applyLineWidthsSettings();
 			}
 		}
 	}
