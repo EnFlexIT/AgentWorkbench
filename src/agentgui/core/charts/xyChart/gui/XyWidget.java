@@ -32,6 +32,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -46,6 +47,10 @@ import agentgui.ontology.XyChart;
 public class XyWidget extends OntologyClassWidget implements ActionListener {
 
 	private static final long serialVersionUID = -9148282428244484633L;
+	
+	// --- The dimension of the thumbnail that is displayed in the widget
+	private static final int THUMBNAIL_WIDTH = 260;
+	private static final int THUMBNAIL_HEIGHT = 175;
 	
 	private XyChart currChart = null;  //  @jve:decl-index=0:
 	private XyChartEditorJDialog xycejd = null;
@@ -92,7 +97,7 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 			jButtonEdit.setToolTipText(Language.translate("Daten bearbeiten"));
 			jButtonEdit.addActionListener(this);
 			getJButtonEdit().setText("");
-			getJButtonEdit().setIcon(new ImageIcon(this.getXyChartEditorJDialog().getChartThumb()));
+			getJButtonEdit().setIcon(new ImageIcon(this.getChartThumb()));
 		}
 		return jButtonEdit;
 	}
@@ -113,7 +118,7 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
 		this.currChart = (XyChart) objectInstance;
-		ImageIcon icon = new ImageIcon(this.getXyChartEditorJDialog().getChartThumb());
+		ImageIcon icon = new ImageIcon(this.getChartThumb());
 		if(icon != null){
 			// Replace text by thumbnail if available
 			this.getJButtonEdit().setText("");
@@ -140,13 +145,17 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 			if(! this.getXyChartEditorJDialog().isCanceled()){
 				
 				// --- Refrech the thumbnail
-				if(this.getXyChartEditorJDialog().getChartThumb() != null){
+				if(this.getChartThumb() != null){
 					getJButtonEdit().setText("");
-					getJButtonEdit().setIcon(new ImageIcon(this.getXyChartEditorJDialog().getChartThumb()));
+					getJButtonEdit().setIcon(new ImageIcon(this.getChartThumb()));
 				}
 			}
 		}
 
+	}
+	
+	private BufferedImage getChartThumb(){
+		return this.getXyChartEditorJDialog().getContentPane().exportChartAsImage(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
 	}
 
 }

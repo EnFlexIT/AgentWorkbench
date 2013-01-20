@@ -57,7 +57,8 @@ public class TimeSeriesChartTab extends ChartTab {
 		));
 		
 		this.model = model;
-		this.getChart().setBackgroundPaint(this.getBackground());
+//		this.getChart().setBackgroundPaint(this.getBackground());
+//		this.getChart().getPlot().setBackgroundPaint(Color.WHITE);
 		
 		setRenderer(DEFAULT_RENDERER);	// Use step renderer by default
 		

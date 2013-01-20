@@ -79,24 +79,45 @@ public abstract class ChartTab extends ChartPanel {
 	 * @return The chartThumb
 	 */
 	public BufferedImage getChartThumb(){
-		return this.createChartThumb();
-	}
-	
-	public ChartTab(JFreeChart chart) {
-		super(chart);
+		return this.exportAsImage(260, 175, true);
 	}
 	
 	/**
-	 * Creates a thumbnail of the chart
-	 * @return The thumbnail
+	 * Constructor
+	 * @param chart The chart to be displayed
 	 */
-	private BufferedImage createChartThumb() {
-		// Remove legend while creating the thumb
-		LegendTitle legend = getChart().getLegend();
-		getChart().removeLegend();
-		BufferedImage thumb = getChart().createBufferedImage(260, 175, 600, 400, null);
+	public ChartTab(JFreeChart chart) {
+		super(chart);
+		this.setBackground(Color.WHITE);								// Component background
+		this.getChart().getPlot().setBackgroundPaint(Color.WHITE);		// Chart background
 		
-		getChart().addLegend(legend);
+		// Background grid color
+		this.getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
+		this.getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
+	}
+	
+	/**
+	 * Exports the current chart as an image.
+	 * @param width The width of the image
+	 * @param height The height of the image
+	 * @param hideLegend If true, the image will not contain the legend
+	 * @return The image
+	 */
+	public BufferedImage exportAsImage(int width, int height, boolean hideLegend){
+		
+		LegendTitle legend = null;
+		if(hideLegend){
+			// Remove legend while exporting the image
+			legend = getChart().getLegend();
+			getChart().removeLegend();
+		}
+		
+		BufferedImage thumb = getChart().createBufferedImage(width, height, 600, 400, null);
+		
+		if(hideLegend){
+			// If the legend was removed, add it after exporting the image 
+			getChart().addLegend(legend);
+		}
 		return thumb;
 	}
 	

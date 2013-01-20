@@ -32,6 +32,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -50,6 +51,10 @@ import agentgui.ontology.TimeSeriesChart;
 public class TimeSeriesWidget extends OntologyClassWidget implements ActionListener {
 
 	private static final long serialVersionUID = -6165412456864146609L;
+	
+	// --- The dimension of the thumbnail that is displayed in the widget
+	private static final int THUMBNAIL_WIDTH = 260;
+	private static final int THUMBNAIL_HEIGHT = 175;
 	
 	private TimeSeriesChart currChart = null;  //  @jve:decl-index=0:
 	private TimeSeriesChartEditorJDialog tscejd = null;
@@ -95,7 +100,7 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 			jButtonEdit.setToolTipText(Language.translate("Daten bearbeiten"));
 			jButtonEdit.addActionListener(this);
 			getJButtonEdit().setText("");
-			getJButtonEdit().setIcon(new ImageIcon(this.getTimeSeriesChartEditorJDialog().getChartThumb()));
+			getJButtonEdit().setIcon(new ImageIcon(this.getChartThumb()));
 		}
 		return jButtonEdit;
 	}
@@ -116,7 +121,7 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
 		this.currChart = (TimeSeriesChart) objectInstance;
-		ImageIcon icon = new ImageIcon(this.getTimeSeriesChartEditorJDialog().getChartThumb());
+		ImageIcon icon = new ImageIcon(this.getChartThumb());
 		if(icon != null){
 			// Replace text by thumbnail if available
 			this.getJButtonEdit().setText("");
@@ -145,13 +150,16 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 			if(! this.getTimeSeriesChartEditorJDialog().isCanceled()){
 
 				// --- Refrech the thumbnail
-				if(this.getTimeSeriesChartEditorJDialog().getChartThumb() != null){
+				if(this.getChartThumb() != null){
 					getJButtonEdit().setText("");
-					getJButtonEdit().setIcon(new ImageIcon(this.getTimeSeriesChartEditorJDialog().getChartThumb()));
+					getJButtonEdit().setIcon(new ImageIcon(this.getChartThumb()));
 				}
 			}
 		}
-		
+	}
+	
+	private BufferedImage getChartThumb(){
+		return this.getTimeSeriesChartEditorJDialog().getContentPane().exportChartAsImage(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
 	}
 
 	

@@ -2,6 +2,7 @@ package agentgui.core.charts.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -13,9 +14,11 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -25,6 +28,10 @@ import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.SettingsInfo;
+import agentgui.core.gui.imaging.ConfigurableFileFilter;
+import agentgui.core.gui.imaging.ImageFileView;
+import agentgui.core.gui.imaging.ImagePreview;
+import agentgui.core.gui.imaging.ImageUtils;
 import agentgui.core.ontologies.gui.DynForm;
 import agentgui.core.ontologies.gui.OntologyClassEditorJPanel;
 import agentgui.envModel.graph.GraphGlobals;
@@ -44,10 +51,17 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	 */
 	private static final long serialVersionUID = -306986715544317480L;
 	
+	private final String pathImage = GraphGlobals.getPathImages(); // @jve:decl-index=0:
+    private final Dimension jButtonSize = new Dimension(26, 26); // @jve:decl-index=0:
+    
+    private static final int EXPORT_FILE_WIDTH = 640;
+    private static final int EXPORT_FILE_HEIGHT = 480;
+	
 	// Swing components
 	protected JToolBar toolBar;
 	protected JTabbedPane tabbedPane;
 	protected JButton btnImport;
+	protected JButton btnSaveImage = null;
 	
 	// Tab contents
 	protected ChartTab chartTab;
@@ -170,6 +184,8 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 				importDataSeriesFromCSV(csvFile);
 				setNewOntologyClassInstance(this.getOntologyClassInstance());
 			}
+		}else if(ae.getSource() == btnSaveImage){
+			saveAsImage();
 		}
 
 	}
@@ -178,6 +194,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		if(toolBar == null){
 			toolBar = new JToolBar();
 			toolBar.add(getBtnImport());
+			toolBar.add(getBtnSaveImage());
 		}
 		return toolBar;
 	}
@@ -207,12 +224,28 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	protected JButton getBtnImport() {
 		if (btnImport == null) {
 			btnImport = new JButton("");
-			btnImport.setIcon(new ImageIcon(getClass().getResource(GraphGlobals.getPathImages() + "import.png")));
+			btnImport.setIcon(new ImageIcon(getClass().getResource(pathImage + "import.png")));
+			btnImport.setPreferredSize(jButtonSize);
 			btnImport.setToolTipText(Language.translate("Neue Datenreihe(n) importieren"));
 			btnImport.addActionListener(this);
 		}
 		return btnImport;
 	}
+	
+	/**
+     * This method initializes jButtonSaveImage
+     * @return javax.swing.JButton
+     */
+    protected JButton getBtnSaveImage() {
+		if (btnSaveImage == null) {
+			btnSaveImage = new JButton();
+			btnSaveImage.setIcon(new ImageIcon(getClass().getResource(pathImage + "SaveAsImage.png")));
+			btnSaveImage.setPreferredSize(jButtonSize);
+			btnSaveImage.setToolTipText(Language.translate("Als Bild exportieren"));
+			btnSaveImage.addActionListener(this);
+		}
+		return btnSaveImage;
+    }
 	
 	/**
 	 * @return the model
@@ -303,8 +336,88 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		}
 	}
 	
-	public BufferedImage getChartThumb(){
-		return this.getChartTab().getChartThumb();
+	public BufferedImage exportChartAsImage(int width, int height){
+		return this.getChartTab().exportAsImage(width, height, false);
+	}
+	
+	private void saveAsImage(){
+		String currentFolder = null;
+		if (Application.getGlobalInfo() != null) {
+			// --- Get the last selected folder of Agent.GUI ---
+			currentFolder = Application.getGlobalInfo().getLastSelectedFolderAsString();
+		}
+
+		// --- Create instance of JFileChooser -----------------
+		JFileChooser jfc = new JFileChooser();
+		jfc.setMultiSelectionEnabled(false);
+		jfc.setAcceptAllFileFilterUsed(false);
+
+		// --- Add custom icons for file types. ----------------
+		jfc.setFileView(new ImageFileView());
+		// --- Add the preview pane. ---------------------------
+		jfc.setAccessory(new ImagePreview(jfc));
+
+		// --- Set the file filter -----------------------------
+		String[] extensionsJPEG = { ImageUtils.jpg, ImageUtils.jpeg };
+
+		ConfigurableFileFilter filterJPG = new ConfigurableFileFilter(extensionsJPEG, "JPEG - Image");
+		ConfigurableFileFilter filterPNG = new ConfigurableFileFilter(ImageUtils.png, "PNG - File");
+		ConfigurableFileFilter filterGIF = new ConfigurableFileFilter(ImageUtils.gif, "GIF - Image");
+
+		jfc.addChoosableFileFilter(filterGIF);
+		jfc.addChoosableFileFilter(filterJPG);
+		jfc.addChoosableFileFilter(filterPNG);
+
+		jfc.setFileFilter(filterPNG);
+
+		// --- Maybe set the current directory -----------------
+		if (currentFolder != null) {
+			jfc.setCurrentDirectory(new File(currentFolder));
+		}
+
+		// === Show dialog and wait on user action =============
+		int state = jfc.showSaveDialog(this);
+		
+		if (state == JFileChooser.APPROVE_OPTION) {
+			ConfigurableFileFilter cff = (ConfigurableFileFilter) jfc.getFileFilter();
+			String selectedExtension = cff.getFileExtension()[0];
+			String mustExtension = "." + selectedExtension;
+
+			File selectedFile = jfc.getSelectedFile();
+			if (selectedFile != null) {
+				String selectedPath = selectedFile.getAbsolutePath();
+				if (selectedPath.endsWith(mustExtension) == false) {
+					selectedPath = selectedPath + mustExtension;
+				}
+				
+				BufferedImage image = this.exportChartAsImage(EXPORT_FILE_WIDTH, EXPORT_FILE_HEIGHT);
+				writeImageFile(image, selectedPath, selectedExtension);
+				
+				if (Application.getGlobalInfo() != null) {
+					Application.getGlobalInfo().setLastSelectedFolder(jfc.getCurrentDirectory());
+				}
+			}
+		}
+	}
+	
+	private void writeImageFile(BufferedImage image, String path, String extension){
+		// --- Overwrite existing file ? ------------------
+		File writeFile = new File(path);
+		if (writeFile.exists()) {
+			String msgHead = "Overwrite?";
+			String msgText = "Overwrite existing file?";
+			int msgAnswer = JOptionPane.showInternalConfirmDialog(this, msgText, msgHead, JOptionPane.YES_NO_OPTION);
+			if (msgAnswer == JOptionPane.NO_OPTION) {
+				return;
+			}
+		}
+		
+		try {
+			ImageIO.write(image, extension, writeFile);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

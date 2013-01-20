@@ -87,10 +87,6 @@ public abstract class ChartEditorJDialog extends JDialog implements ActionListen
 		return canceled;
 	}
 
-	public BufferedImage getChartThumb(){
-		return this.contentPane.getChartThumb();
-	}
-	
 	/**
 	 * Gets the dialogs content pane, which must be a ChartEditorJPanel implementation. 
 	 */
