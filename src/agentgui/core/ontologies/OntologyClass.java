@@ -110,8 +110,15 @@ public class OntologyClass extends Object implements Serializable {
 	 */
 	private void setOntologyTree() {
 		OntologyClassTreeObject octo = new OntologyClassTreeObject(this, "Root");
-		DefaultMutableTreeNode RootNode = new DefaultMutableTreeNode( octo );
-		projectOntologieTree = new OntologyClassTree(RootNode, this, currOntologySrcPackage);			
+		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode( octo );
+		try {
+			this.projectOntologieTree = new OntologyClassTree(rootNode, this, currOntologySrcPackage);	
+			
+		} catch (Exception ex) {
+			System.err.println("Error while creating the ontology tree for " + this.currOntologySrcPackage + ":");
+			ex.printStackTrace();
+		}
+					
 	}
 	
 	/**

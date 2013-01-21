@@ -135,10 +135,10 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 		
 		// --- get Root-Node for the whole project ontology -----
 		OntologyClassTreeObject root4ProjektOntology = new OntologyClassTreeObject(null, "Project ontology");
-		DefaultMutableTreeNode RootNode = new DefaultMutableTreeNode( root4ProjektOntology );
+		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode( root4ProjektOntology );
 		
 		// --- Create Tree-Object with it -----------------------
-		projectOntologyTree = new DefaultTreeModel(RootNode);
+		projectOntologyTree = new DefaultTreeModel(rootNode);
 		
 		// --- Create new ErrorStack ----------------------------
 		this.errorStack = new ArrayList<String>();
@@ -154,13 +154,19 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 			if (onCla==null) {
 				String errText = "ERROR: " + subOntologyReference;
 				OntologyClassTreeObject errSubRootNode = new OntologyClassTreeObject(null, errText);
-				subRootNode = new DefaultMutableTreeNode( errSubRootNode );
+				subRootNode = new DefaultMutableTreeNode(errSubRootNode);
 			} else {
-				subRootNode = (DefaultMutableTreeNode) onCla.getOntologyTree().getRoot();
+				if (onCla.getOntologyTree()!=null) {
+					subRootNode = (DefaultMutableTreeNode) onCla.getOntologyTree().getRoot();	
+				}
 			}
-			RootNode.add(subRootNode);
+			
+			if (subRootNode!=null) {
+				rootNode.add(subRootNode);	
+			}
+			
 			// --- Fehler in Sub-Ontologie? ---------------------
-			if ( onCla.ontologyErrorStack.equalsIgnoreCase("")==false ) {
+			if (onCla.ontologyErrorStack.equalsIgnoreCase("")==false) {
 				this.errorStack.add(onCla.ontologyErrorStack); 
 			}
 		}

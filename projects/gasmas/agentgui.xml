@@ -14,21 +14,20 @@
     </subOntologies>
     <agentStartConfiguration>
         <agentVector>
-            <agent agentReference="gasmas.agents.components.ClusterNetworkAgent">
-                <startArgumentVector>
-                    <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="1"/>
-                    <startArgument ontologyReference="agentgui.ontology.XyChart" position="2"/>
-                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" position="3"/>
-                    <startArgument ontologyReference="agentgui.ontology.Simple_String" position="4"/>
-                </startArgumentVector>
-            </agent>
             <agent agentReference="gasmas.agents.components.ClusterNetworkComponentAgent">
                 <startArgumentVector/>
+            </agent>
+            <agent agentReference="gasmas.agents.components.ClusterNetworkAgent">
+                <startArgumentVector>
+                    <startArgument ontologyReference="agentgui.test34.XyChart" position="1"/>
+                    <startArgument ontologyReference="agentgui.test34.Simple_Boolean" position="2"/>
+                    <startArgument ontologyReference="agentgui.test34.ChartSettingsGeneral" position="3"/>
+                </startArgumentVector>
             </agent>
         </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1102</useLocalPort>
+        <useLocalPort>1099</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -62,7 +61,7 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>Einfaches Netz</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelDiscrete</timeModelClass>
-    <downloadResources>http://rudel1:8080/gasmas/gasmas_IDE.jar</downloadResources>
+    <downloadResources>http://0.1.0.5:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>

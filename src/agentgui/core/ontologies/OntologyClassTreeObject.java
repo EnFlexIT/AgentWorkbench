@@ -51,11 +51,19 @@ public class OntologyClassTreeObject extends Object {
 	private OntologyClass ontologyClass = null;
 	private Class<?> ontologySubClass = null;
 	private String objectTitle = null;
+	
+	private Class<?> parentOntologySubClass = null;
+	private OntologyClassTreeObject parentOntologyClassTreeObject = null;
+	
+	
+	
+	private boolean isBaseOntology = false;
+	private boolean isAID = false;
+	
 	private boolean isAConcept = false;
 	private boolean isAAgentAction = false;
 	private boolean isAPredicate = false;
-	private OntologyClassTreeObject parentOntologyClassTreeObject = null;
-
+	
 	
 	/**
 	 * Defines the Class belonging to the represented node.
@@ -297,17 +305,44 @@ public class OntologyClassTreeObject extends Object {
 	}
 	
 	/**
+	 * Sets the checks if is base ontology.
+	 * @param isBaseOntology the new checks if is base ontology
+	 */
+	public void setIsBaseOntology(boolean isBaseOntology) {
+		this.isBaseOntology = isBaseOntology;
+	}
+	/**
+	 * Checks if is base ontology.
+	 * @return true, if is base ontology
+	 */
+	public boolean isBaseOntology() {
+		return isBaseOntology;
+	}
+
+	/**
+	 * Sets the checks if is aid.
+	 * @param isAID the new checks if is aid
+	 */
+	public void setIsAID(boolean isAID) {
+		this.isAID = isAID;
+	}
+	/**
+	 * Checks if is a AID.
+	 * @return true, if is aid
+	 */
+	public boolean isAID() {
+		return isAID;
+	}
+
+	/**
 	 * Sets the checks if is concept.
-	 *
 	 * @param isConcept the new checks if is concept
 	 */
 	public void setIsConcept(boolean isConcept) {
 		this.isAConcept = isConcept;
 	}
-	
 	/**
 	 * Checks if is concept.
-	 *
 	 * @return the isAConcept
 	 */
 	public boolean isConcept() {
@@ -316,16 +351,13 @@ public class OntologyClassTreeObject extends Object {
 	
 	/**
 	 * Sets the checks if is agent action.
-	 *
 	 * @param isAgentAction the new checks if is agent action
 	 */
 	public void setIsAgentAction(boolean isAgentAction) {
 		this.isAAgentAction = isAgentAction;
 	}
-	
 	/**
 	 * Checks if is agent action.
-	 *
 	 * @return the isAAgentAction
 	 */
 	public boolean isAgentAction() {
@@ -334,16 +366,13 @@ public class OntologyClassTreeObject extends Object {
 	
 	/**
 	 * Sets the checks if is predicate.
-	 *
 	 * @param isPredicate the new checks if is predicate
 	 */
 	public void setIsPredicate(boolean isPredicate) {
 		this.isAPredicate = isPredicate;
 	}
-	
 	/**
 	 * Checks if is predicate.
-	 *
 	 * @return the isAPredicate
 	 */
 	public boolean isPredicate() {
@@ -352,20 +381,32 @@ public class OntologyClassTreeObject extends Object {
 	
 	/**
 	 * Sets the parent ontology class tree object.
-	 *
 	 * @param parentOntologyClassTreeObject the parentOntologyClassTreeObject to set
 	 */
 	public void setParentOntologyClassTreeObject(OntologyClassTreeObject parentOntologyClassTreeObject) {
 		this.parentOntologyClassTreeObject = parentOntologyClassTreeObject;
 	}
-	
 	/**
 	 * Gets the parent ontology class tree object.
-	 *
 	 * @return the parentOntologyClassTreeObject
 	 */
 	public OntologyClassTreeObject getParentOntologyClassTreeObject() {
 		return parentOntologyClassTreeObject;
+	}
+	
+	/**
+	 * Gets the parent ontology sub class.
+	 * @return the parent ontology sub class
+	 */
+	public Class<?> getParentOntologySubClass() {
+		return parentOntologySubClass;
+	}
+	/**
+	 * Sets the parent ontology sub class.
+	 * @param parentOntologySubClass the new parent ontology sub class
+	 */
+	public void setParentOntologySubClass(Class<?> parentOntologySubClass) {
+		this.parentOntologySubClass = parentOntologySubClass;
 	}
 	
 }

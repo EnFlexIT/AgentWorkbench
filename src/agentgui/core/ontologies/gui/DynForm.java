@@ -428,7 +428,15 @@ public class DynForm extends JPanel {
 		XMLCodec codec = new XMLCodec();
 		String xmlRepresentation = null;
 		try {
+//			String ontologyClassName = ontologyObject.getClass().getName();
+//			if (ontologyClassName.contains(".impl.Default")==true) {
+//				// --- OntologyBeanGenerator for Protege 3.4 -------------
+//				ontologyClassName = ontologyClassName.replace(".impl.Default", ".");
+//				Class<?> ontologyClass = Class.forName(ontologyClassName);
+//			}
+			// --- OntologyBeanGenerator for Protege 3.3.1 ---------------
 			xmlRepresentation = codec.encodeObject(ontology, ontologyObject, true);
+			
 		} catch (CodecException e) {
 			e.printStackTrace();
 		} catch (OntologyException e) {
@@ -462,6 +470,43 @@ public class DynForm extends JPanel {
 			oe.printStackTrace();
 		}		
 		return objectInstance;
+	}
+	
+	/**
+	 * This method returns a new instance of a given class given by its full class name.
+	 *
+	 * @param className the class name
+	 * @return the new class instance
+	 */
+	private Object getNewClassInstance(String className) {
+		
+		Class<?> clazz = null;
+		Object obj = null;
+		try {
+			
+			clazz = Class.forName(className);
+			if (clazz.isInterface()==false) {
+				// --- OntologyBeanGenerator for Protege 3.3.1 ---------------- 
+				obj = clazz.newInstance();	
+				
+			} else {
+				// --- OntologyBeanGenerator  Protege 3.4 ---------------------
+				String packageName = clazz.getPackage().getName();
+				String clazzNameSimple = clazz.getSimpleName();
+				String defaultClass = packageName + ".impl.Default" + clazzNameSimple;
+				
+				clazz = Class.forName(defaultClass);
+				obj = clazz.newInstance();
+			}
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return obj;
 	}
 	
 	/**
@@ -986,31 +1031,6 @@ public class DynForm extends JPanel {
 		return methodFound;		
 	}
 
-	/**
-	 * This method returns a new instance of a given class given by its full class name.
-	 *
-	 * @param className the class name
-	 * @return the new class instance
-	 */
-	private Object getNewClassInstance(String className) {
-		
-		Class<?> clazz = null;
-		Object obj = null;
-		try {
-			clazz = Class.forName(className);
-			obj = clazz.newInstance();
-			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return obj;
-	}
-	
-	
 	
 	/**
 	 * Shows the object tree in a visual way in a JDialog, if the internal debug value is set to be true.
