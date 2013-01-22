@@ -48,6 +48,8 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -83,6 +85,11 @@ public class DynForm extends JPanel {
 
 	private static final long serialVersionUID = 7942028680794127910L;
 
+	public final static String UPDATED_DataModel = "UPDATED_DataModel";
+	private DynFormObservable dynFormObservable = null; 
+
+	
+	// --- For debugging purposes -----------------------------------
 	private boolean debug = false;
 	private DynTreeViewer dtv = null;
 	private boolean emptyForm = true;
@@ -181,6 +188,50 @@ public class DynForm extends JPanel {
 			
 		}
 	}
+	
+	/**
+	 * The Class DynFormObservable.
+	 */
+	private class DynFormObservable extends Observable {
+		public void setChanngedAndNotify(Object reason) {
+			this.setChanged();
+			this.notifyObservers(reason);
+		}
+	}
+	/**
+	 * Returns an asynchronous update interface for receiving notifications
+	 * about DynForm information as the DynForm is constructed.
+	 *
+	 * @return the current instance of the DynFormObservable
+	 */
+	public DynFormObservable getDynFormObservable() {
+		if (dynFormObservable==null) {
+    		dynFormObservable= new DynFormObservable();
+    	}
+		return dynFormObservable;
+	}
+    /**
+     * Adds an observer to this DynForm.
+     * @param observer the observer
+     */
+    public void addObserver(Observer observer) {
+    	this.getDynFormObservable().addObserver(observer);
+    }
+    /**
+     * Deletes an observer from this DynForm.
+     * @param observer the observer
+     */
+    public void deleteObserver(Observer observer) {
+    	this.getDynFormObservable().deleteObserver(observer);
+    }
+	/**
+	 * Notify observer.
+	 * @param reason the reason
+	 */
+	public void notifyObserver(Object reason) {
+		this.getDynFormObservable().setChanngedAndNotify(reason);
+	}
+	
 	
 	/**
 	 * Gets the object tree with all elements to display.
@@ -361,6 +412,7 @@ public class DynForm extends JPanel {
 			ontoArgsXML[i] = getXMLOfInstance(obj, onto);
 			
 		}
+		this.notifyObserver(DynForm.UPDATED_DataModel);
 	}
 	
 	/**
@@ -412,6 +464,7 @@ public class DynForm extends JPanel {
 			}
 
 		} // --- end for ---
+		this.notifyObserver(DynForm.UPDATED_DataModel);
 	}
 	
 	/**
@@ -1244,9 +1297,6 @@ public class DynForm extends JPanel {
 	 * This method creates inner elements (for inner classes).
 	 *
 	 * @param oscsd the oscsd
-	 * @param dataItemName the data item name
-	 * @param dataItemVarType the data item var type
-	 * @param dataItemCardinality the data item cardinality
 	 * @param startObjectClassName the start object class name
 	 * @param tiefe the depth
 	 * @param parentPanel the parent panel
@@ -1338,6 +1388,7 @@ public class DynForm extends JPanel {
 	/**
 	 * Creates the outer element for a Agent.GUI special class.
 	 *
+	 * @param startArgIndex the start arg index
 	 * @param specialClass the special class
 	 * @param curentNode the parent node
 	 * @param parentPanel the parent panel
@@ -1370,7 +1421,9 @@ public class DynForm extends JPanel {
 	
 	/**
 	 * Sets the invisible.
+	 *
 	 * @param parentNode the new invisible
+	 * @return the rectangle
 	 */
 	private Rectangle setJPanelInvisibleAndSmall(DefaultMutableTreeNode parentNode) {
 		
@@ -1487,12 +1540,9 @@ public class DynForm extends JPanel {
 	 * in an endless loop.
 	 *
 	 * @param oscsd the oscsd
-	 * @param dataItemName the data item name
-	 * @param dataItemVarType the data item var type
-	 * @param dataItemCardinality the data item cardinality
 	 * @param className the class name
-	 * @param pan the pan
 	 * @param depth the depth
+	 * @param pan the pan
 	 * @param node the node
 	 */
 	private void createOuterDeadEnd(OntologySingleClassSlotDescription oscsd, String className, int depth, JPanel pan, DefaultMutableTreeNode node){
@@ -1794,7 +1844,8 @@ public class DynForm extends JPanel {
 		} else {
 			this.ontoArgsInstance = ontologyInstances;
 			this.setXMLFromInstances();
-			this.setInstancesFromXML();	
+			this.setInstancesFromXML();
+			this.notifyObserver(DynForm.UPDATED_DataModel);
 		}
 	}
 
@@ -1834,6 +1885,7 @@ public class DynForm extends JPanel {
 	 */
 	private class NumberWatcher extends KeyAdapter {
 		
+		/** The is float value. */
 		private boolean isFloatValue = false;
 		
 		/**

@@ -29,6 +29,8 @@
 package agentgui.core.ontologies.gui;
 
 import java.awt.Dimension;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JPanel;
 
@@ -41,7 +43,7 @@ import javax.swing.JPanel;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public abstract class OntologyClassWidget extends JPanel {
+public abstract class OntologyClassWidget extends JPanel implements Observer {
 
 	private static final long serialVersionUID = -6783920742718563526L;
 
@@ -61,6 +63,8 @@ public abstract class OntologyClassWidget extends JPanel {
 		this.startArgIndex = startArgIndex;
 		
 		this.dynForm.save(true);
+		this.dynForm.addObserver(this);
+		
 		Object[] startArgs = this.dynForm.getOntoArgsInstance();
 		Object newOntologyClassInstance =  startArgs[this.startArgIndex];
 		this.setOntologyClassInstance(newOntologyClassInstance);
@@ -89,4 +93,19 @@ public abstract class OntologyClassWidget extends JPanel {
 	 */
 	public abstract Object getOntologyClassInstance();
 
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable observable, Object object) {
+		if (object instanceof String) {
+			String notification = (String) object;
+			if (notification.equals(DynForm.UPDATED_DataModel)==true) {
+				Object[] startArgs = this.dynForm.getOntoArgsInstance();
+				Object newOntologyClassInstance =  startArgs[this.startArgIndex];
+				this.setOntologyClassInstance(newOntologyClassInstance);	
+			}
+		}
+	}
+	
 }
