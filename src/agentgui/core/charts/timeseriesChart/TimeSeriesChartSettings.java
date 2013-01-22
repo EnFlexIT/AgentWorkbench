@@ -48,6 +48,8 @@ public class TimeSeriesChartSettings extends ChartSettings {
 			String colorString = (String) chart.getVisualizationSettings().getYAxisColors().get(i);
 			settings.setColor(new Color(Integer.parseInt(colorString)));
 			settings.setLineWIdth((Float) chart.getVisualizationSettings().getYAxisLineWidth().get(i));
+			
+			this.addSeriesSettings(settings);
 		}
 	}
 

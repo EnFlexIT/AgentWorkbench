@@ -273,11 +273,33 @@ public class SettingsTab extends JPanel implements ActionListener, TableModelLis
 		return tblSeriesSettings;
 	}
 	
+	/**
+	 * Creates the table model for the settings table
+	 * @return The table model
+	 */
 	private DefaultTableModel initTableModel(){
+		// --- Initialize model and columns ---------------
 		DefaultTableModel tableModel = new DefaultTableModel();
 		tableModel.addColumn(Language.translate("Name"));
 		tableModel.addColumn(Language.translate("Farbe"));
 		tableModel.addColumn(Language.translate("Liniendicke"));
+		
+		// --- Add rows containing the series specific settings
+		for(int i=0; i < model.getSeriesCount(); i++){
+			SeriesSettings settings;
+			try {
+				settings = model.getChartSettings().getSeriesSettings(i);
+				String seriesLabel = settings.getLabel();
+				Color seriesColor = settings.getColor();
+				Float seriesLineWidth = settings.getLineWIdth();
+				tableModel.addRow(new Object[]{seriesLabel, seriesColor, seriesLineWidth});
+			} catch (NoSuchSeriesException e) {
+				System.err.println("Error: No settings for data series "+i+" found!");
+				e.printStackTrace();
+			}
+			
+			
+		}
 		
 		tableModel.addTableModelListener(this);
 		return tableModel;
