@@ -86,6 +86,8 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	@Override
 	public void update(Observable o, Object arg) {
 		
+		if (this.model==null) return;
+		
 		// --- Handle changes of the chart data 
 		if(o == this.model){
 			setNewOntologyClassInstance(this.getOntologyClassInstance());

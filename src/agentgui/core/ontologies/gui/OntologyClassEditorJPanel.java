@@ -45,19 +45,21 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 	protected DynForm dynForm = null;  //  @jve:decl-index=0:
 	protected int startArgIndex = -1;
 	
+	private boolean pauseObserver = false;
+	
 	
 	/**
 	 * Instantiates a new ontology class editor JPanel.
 	 *
-	 * @param dynForm the dyn form
-	 * @param startArgIndex the start arg index
+	 * @param dynForm the DynForm
+	 * @param startArgIndex the start argument index
 	 */
 	public OntologyClassEditorJPanel(DynForm dynForm, int startArgIndex) {
 		super();
 		this.dynForm = dynForm;
 		this.startArgIndex = startArgIndex;
 		
-		this.dynForm.save(true);
+//		this.dynForm.save(true);
 		this.dynForm.addObserver(this);
 		
 		Object[] startArgs = this.dynForm.getOntoArgsInstance();
@@ -71,9 +73,11 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 	 * @param newOntologyClassInstance the new new ontology class instance
 	 */
 	protected void setNewOntologyClassInstance(Object newOntologyClassInstance) {
+		this.setPauseObserver(true);
 		Object[] startArgs = this.dynForm.getOntoArgsInstance();
 		startArgs[this.startArgIndex] = newOntologyClassInstance;
 		this.dynForm.setOntoArgsInstance(startArgs);
+		this.setPauseObserver(false);
 	}
 	
 	/**
@@ -93,6 +97,9 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 	 */
 	@Override
 	public void update(Observable observable, Object object) {
+		
+		if (this.isPauseObserver()==true) return;
+		
 		if (object instanceof String) {
 			String notification = (String) object;
 			if (notification.equals(DynForm.UPDATED_DataModel)==true) {
@@ -102,5 +109,27 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 			}
 		}
 	}
-	
+
+	/**
+	 * Sets the observer to be paused or not.
+	 * @param pauseNow the new pause observer
+	 */
+	protected void setPauseObserver(boolean pauseNow) {
+		this.pauseObserver = pauseNow;
+	}
+	/**
+	 * Checks if is pause observer.
+	 * @return true, if the observer is paused 
+	 */
+	protected boolean isPauseObserver() {
+		return this.pauseObserver;
+	}
+
+	/**
+	 * Removes this widget from the DynForm observer.
+	 */
+	public void removeFromObserver() {
+		this.dynForm.deleteObserver(this);
+	}
+
 }

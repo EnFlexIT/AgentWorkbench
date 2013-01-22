@@ -75,6 +75,8 @@ public class DynTableJPanel extends JPanel {
 	private DynTable dynTable = null;
 	private DynType dynType = null;  //  @jve:decl-index=0:
 	
+	private JComponent jComponent2Add = null;
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -181,10 +183,20 @@ public class DynTableJPanel extends JPanel {
 	private void setJPanelConfiguration(boolean doExpand) {
 		
 		if (this.getDynType()==null) doExpand=false;
-		
+
+		// --- Clean up the old instances -------------------------------------
 		this.removeAll();
 		this.jSplitPaneExpanded=null;
+		if (this.jComponent2Add!=null) {
+			if (this.jComponent2Add instanceof OntologyClassWidget) {
+				((OntologyClassWidget)this.jComponent2Add).removeFromObserver(); 
+			} else if (this.jComponent2Add instanceof OntologyClassEditorJPanel) {
+				((OntologyClassEditorJPanel)this.jComponent2Add).removeFromObserver();
+			}
+			this.jComponent2Add=null;
+		}
 		
+		// --- Do expand the view (or not) ------------------------------------
 		if (doExpand==true) {
 			// --- Expand view and show widget or editor panel ----------------
 			this.add(this.getJSplitPaneExpanded(), BorderLayout.CENTER);
@@ -193,7 +205,6 @@ public class DynTableJPanel extends JPanel {
 			int startArgIndex = this.getStartArgumentIndex(this.getDynType());
 			
 			// --- Configure the component for the display --------------------
-			JComponent jComponent2Add = null;	
 			String missingText = Language.translate("Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!");
 			OntologyClassVisualisation ontoClassVis = Application.getGlobalInfo().getOntologyClassVisualisation(this.getDynType().getClassName());
 			if (ontoClassVis!=null) {
@@ -201,18 +212,18 @@ public class DynTableJPanel extends JPanel {
 				case DynTableJPanel.EXPANSION_Horizontal:
 					missingText = Language.translate("Das Editor-Panel für die Klasse ist nicht definiert!");
 					OntologyClassEditorJPanel ocej = ontoClassVis.getEditorJPanel(this.dynForm, startArgIndex);
-					jComponent2Add = ocej;
+					this.jComponent2Add = ocej;
 					break;
 
 				case DynTableJPanel.EXPANSION_Vertical:
 					missingText = Language.translate("Das Widget für die Klasse ist nicht definiert!");
 					OntologyClassWidget ocw = ontoClassVis.getWidget(this.dynForm, startArgIndex);
-					jComponent2Add = ocw;
+					this.jComponent2Add = ocw;
 					break;
 				}
 			} 
-			if (jComponent2Add==null) {
-				jComponent2Add = getJPanelEmpty(missingText);
+			if (this.jComponent2Add==null) {
+				this.jComponent2Add = getJPanelEmpty(missingText);
 			}
 			
 			// --- Add the component to the JSplitPane ------------------------
