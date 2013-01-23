@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,11 +17,15 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.imageio.ImageIO;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -42,10 +48,12 @@ import agentgui.ontology.ValuePair;
  * General superclass for OntologyClassEditorJPanel implementations for charts.
  * @author Nils
  */
-public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implements ActionListener, Observer {
+public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implements ActionListener, FocusListener, Observer {
+	
 	
 	// TODO Import-Zeugs ins Model?
-
+	
+	
 	/**
 	 * Generated serialVersionUID
 	 */
@@ -54,14 +62,14 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	private final String pathImage = GraphGlobals.getPathImages(); // @jve:decl-index=0:
     private final Dimension jButtonSize = new Dimension(26, 26); // @jve:decl-index=0:
     
-    private static final int EXPORT_FILE_WIDTH = 640;
-    private static final int EXPORT_FILE_HEIGHT = 480;
-	
 	// Swing components
 	protected JToolBar toolBar;
 	protected JTabbedPane tabbedPane;
 	protected JButton btnImport;
 	protected JButton btnSaveImage = null;
+	protected JComboBox cbImageAspectRatio = null;
+	protected JTextField tfImageWidth = null;
+	protected JTextField tfImageHeight= null;
 	
 	// Tab contents
 	protected ChartTab chartTab;
@@ -187,19 +195,68 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 				setNewOntologyClassInstance(this.getOntologyClassInstance());
 			}
 		}else if(ae.getSource() == btnSaveImage){
+			
+			// --- Export the image
 			saveAsImage();
+			
+		}else if(ae.getSource() == tfImageWidth){
+			
+			// -- Recalculate image size when enter was pressed
+			recalculateImageHeight();
+			
+		}else if(ae.getSource() == tfImageHeight){
+			// -- Recalculate image size when enter was pressed
+			recalculateImageWidth();
+		}else if(ae.getSource() == cbImageAspectRatio){
+			// -- Recalculate image size when the aspect ratio was changed
+			recalculateImageHeight();
 		}
 
+	}
+
+	
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
+	 */
+	@Override
+	public void focusGained(FocusEvent arg0) {
+		// --- Not required --------------------
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
+	 */
+	@Override
+	public void focusLost(FocusEvent arg0) {
+		
+		// --- Recalculate image size when leaving one of the text fields
+		
+		if(arg0.getSource() == tfImageWidth){
+			recalculateImageHeight();
+		}else if(arg0.getSource() == tfImageHeight){
+			recalculateImageWidth();
+		}
 	}
 
 	protected JToolBar getToolBar(){
 		if(toolBar == null){
 			toolBar = new JToolBar();
 			toolBar.add(getBtnImport());
+			toolBar.addSeparator();
+			toolBar.add(new JLabel(Language.translate("Export:")));
+			toolBar.add(getCbImageAspectRatio());
+			toolBar.add(getTfImageWidth());
+			toolBar.add(new JLabel("x"));
+			toolBar.add(getTfImageHeight());
+			
 			toolBar.add(getBtnSaveImage());
 		}
 		return toolBar;
 	}
+	
+	
 	
 	protected JTabbedPane getTabbedPane(){
 		if(tabbedPane == null){
@@ -247,6 +304,38 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 			btnSaveImage.addActionListener(this);
 		}
 		return btnSaveImage;
+    }
+    
+    protected JComboBox getCbImageAspectRatio(){
+    	if(cbImageAspectRatio == null){
+    		DefaultComboBoxModel formatsModel = new DefaultComboBoxModel(new String[]{"4:3", "16:9"});
+    		cbImageAspectRatio = new JComboBox(formatsModel);
+    		cbImageAspectRatio.setToolTipText(Language.translate("Das Seitenverhältnis des exportierten Bildes"));
+    		cbImageAspectRatio.addActionListener(this);
+    	}
+    	return cbImageAspectRatio;
+    }
+    
+	protected JTextField getTfImageWidth() {
+		if(tfImageWidth == null){
+			tfImageWidth = new JTextField("640");
+			tfImageWidth.setToolTipText(Language.translate("Die Breite des exportieren Bildes"));
+			tfImageWidth.addActionListener(this);
+			tfImageWidth.addFocusListener(this);
+		}
+		return tfImageWidth;
+	}
+    
+	protected JTextField getTfImageHeight(){
+    	if(tfImageHeight == null){
+    		tfImageHeight = new JTextField("480");
+    		tfImageHeight.setToolTipText(Language.translate("Die Höhe des exportieren Bildes"));
+    		tfImageHeight.addActionListener(this);
+    		tfImageHeight.addFocusListener(this);
+    		
+    	}
+    	
+    	return tfImageHeight;
     }
 	
 	/**
@@ -376,6 +465,16 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		if (currentFolder != null) {
 			jfc.setCurrentDirectory(new File(currentFolder));
 		}
+		
+		// --- Determine image size ----------------------------
+		int imageWidth, imageHeight;
+		try{
+			imageWidth = Integer.parseInt(getTfImageWidth().getText());
+			imageHeight = Integer.parseInt(getTfImageHeight().getText());
+		}catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(this, Language.translate("Bitte nur ganze Zahlen eingeben!"), Language.translate("Fehlerhafte Eingabe"), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
 		// === Show dialog and wait on user action =============
 		int state = jfc.showSaveDialog(this);
@@ -392,7 +491,9 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 					selectedPath = selectedPath + mustExtension;
 				}
 				
-				BufferedImage image = this.exportChartAsImage(EXPORT_FILE_WIDTH, EXPORT_FILE_HEIGHT);
+				
+				
+				BufferedImage image = this.exportChartAsImage(imageWidth, imageHeight);
 				writeImageFile(image, selectedPath, selectedExtension);
 				
 				if (Application.getGlobalInfo() != null) {
@@ -422,4 +523,39 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		}
 	}
 	
+	private void recalculateImageWidth(){
+		try{
+			int imageHeight = Integer.parseInt(getTfImageHeight().getText());
+			getTfImageWidth().setText(""+calculateImageWidth(imageHeight));
+		}catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(this, Language.translate("Bitte nur ganze Zahlen eingeben!"), Language.translate("Fehlerhafte Eingabe"), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+	}
+	
+	private void recalculateImageHeight(){
+		try{
+			int imageWidth = Integer.parseInt(getTfImageWidth().getText());
+			getTfImageHeight().setText(""+calculateHeightWidth(imageWidth));
+		}catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(this, Language.translate("Bitte nur ganze Zahlen eingeben!"), Language.translate("Fehlerhafte Eingabe"), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+	}
+	
+	private int calculateImageWidth(int imageHeight){
+		if(getCbImageAspectRatio().getSelectedItem().equals("4:3")){
+			return imageHeight / 3 * 4;
+		}else{
+			return imageHeight / 9 * 16;
+		}
+	}
+	
+	private int calculateHeightWidth(int imageWidth){
+		if(getCbImageAspectRatio().getSelectedItem().equals("4:3")){
+			return imageWidth / 4 * 3;
+		}else{
+			return imageWidth / 16 * 9;
+		}
+	}
 }

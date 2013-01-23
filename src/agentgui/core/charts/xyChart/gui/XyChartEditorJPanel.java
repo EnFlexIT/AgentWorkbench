@@ -47,6 +47,10 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
 		this.model = new XyDataModel((XyChart) objectInstance);
+		this.getChartTab().replaceModel(this.model);
+		this.getTableTab().replaceModel(this.model);
+		this.getSettingsTab().replaceModel(this.model);
+		this.model.addObserver(this);
 	}
 
 	@Override

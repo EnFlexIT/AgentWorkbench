@@ -214,7 +214,7 @@ public abstract class DataModel extends Observable implements TableModelListener
 						System.err.println("Error updating data model: Series "+seriesIndex+" does mot exist!");
 						e.printStackTrace();
 					}
-				}else{
+				}else if(tme.getColumn() == 0) {
 					
 					// The time stamp was edited
 					

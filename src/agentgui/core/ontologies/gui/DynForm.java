@@ -412,7 +412,7 @@ public class DynForm extends JPanel {
 			ontoArgsXML[i] = getXMLOfInstance(obj, onto);
 			
 		}
-		this.notifyObserver(DynForm.UPDATED_DataModel);
+//		this.notifyObserver(DynForm.UPDATED_DataModel);
 	}
 	
 	/**
@@ -464,7 +464,7 @@ public class DynForm extends JPanel {
 			}
 
 		} // --- end for ---
-		this.notifyObserver(DynForm.UPDATED_DataModel);
+//		this.notifyObserver(DynForm.UPDATED_DataModel);
 	}
 	
 	/**

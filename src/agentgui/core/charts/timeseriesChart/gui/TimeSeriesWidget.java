@@ -42,7 +42,6 @@ import javax.swing.border.EtchedBorder;
 import agentgui.core.application.Language;
 import agentgui.core.ontologies.gui.DynForm;
 import agentgui.core.ontologies.gui.OntologyClassWidget;
-import agentgui.ontology.TimeSeriesChart;
 
 /**
  * The Class TimeSeriesWidget.
@@ -56,7 +55,7 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 	private static final int THUMBNAIL_WIDTH = 260;
 	private static final int THUMBNAIL_HEIGHT = 175;
 	
-	private TimeSeriesChart currChart = null;  //  @jve:decl-index=0:
+//	private TimeSeriesChart currChart = null;  //  @jve:decl-index=0:
 	private TimeSeriesChartEditorJDialog tscejd = null;
 	
 	private JButton jButtonEdit = null;
@@ -120,7 +119,8 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 	 */
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
-		this.currChart = (TimeSeriesChart) objectInstance;
+//		this.currChart = (TimeSeriesChart) objectInstance;
+		this.getTimeSeriesChartEditorJDialog().setOntologyClassInstance(objectInstance);
 		ImageIcon icon = new ImageIcon(this.getChartThumb());
 		if(icon != null){
 			// Replace text by thumbnail if available
@@ -133,7 +133,8 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 	 */
 	@Override
 	public Object getOntologyClassInstance() {
-		return this.currChart;
+//		return this.currChart;
+		return this.getTimeSeriesChartEditorJDialog().getOntologyClassInstance();
 	}
 	
 	

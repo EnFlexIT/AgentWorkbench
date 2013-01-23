@@ -29,6 +29,7 @@
 package agentgui.core.charts.timeseriesChart.gui;
 
 import org.jfree.chart.ChartFactory;
+import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartTab;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 
@@ -57,8 +58,24 @@ public class TimeSeriesChartTab extends ChartTab {
 		));
 		
 		this.model = model;
-//		this.getChart().setBackgroundPaint(this.getBackground());
-//		this.getChart().getPlot().setBackgroundPaint(Color.WHITE);
+		
+		setRenderer(DEFAULT_RENDERER);	// Use step renderer by default
+		
+		applyColorSettings();
+		applyLineWidthsSettings();
+	}
+
+	@Override
+	public void replaceModel(DataModel newModel) {
+		this.model = newModel;
+		
+		this.setChart(ChartFactory.createTimeSeriesChart(
+				this.model.getOntologyModel().getChartSettings().getChartTitle(), 
+				this.model.getOntologyModel().getChartSettings().getXAxisLabel(), 
+				this.model.getOntologyModel().getChartSettings().getYAxisLabel(), 
+				((TimeSeriesDataModel)this.model).getTimeSeriesChartModel(), 
+				true, false, false
+		));
 		
 		setRenderer(DEFAULT_RENDERER);	// Use step renderer by default
 		

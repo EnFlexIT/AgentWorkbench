@@ -396,4 +396,9 @@ public class SettingsTab extends JPanel implements ActionListener, TableModelLis
 			}
 		}
 	}
+	
+	public void replaceModel(DataModel newModel){
+		this.model = newModel;
+		this.getTblSeriesSettings().setModel(initTableModel());
+	}
 }

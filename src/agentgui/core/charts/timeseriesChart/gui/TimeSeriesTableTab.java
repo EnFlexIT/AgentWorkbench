@@ -59,7 +59,11 @@ public class TimeSeriesTableTab extends TableTab{
 	}
 	@Override
 	protected JTable getTable() {
-		if (table == null) {
+		return this.getTable(true);
+	}
+	@Override
+	protected JTable getTable(boolean forceRebuild) {
+		if (table == null || forceRebuild) {
 			table = new JTable(){
 
 				/**

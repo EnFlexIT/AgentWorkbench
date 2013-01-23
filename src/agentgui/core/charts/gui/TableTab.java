@@ -85,6 +85,11 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 	 */
 	protected abstract JTable getTable();
 	/**
+	 * Creates a JTable with the correct renderer and editor classes for the type of chart data
+	 * @return The table
+	 */
+	protected abstract JTable getTable(boolean forceRebuild);
+	/**
 	 * When adding a new row, this method provides an input dialog asking for a key / x value for the new row.
 	 * @param title The dialog's title
 	 * @return The KeyInputDialog
@@ -223,6 +228,17 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		
 		// Enable btnRemoveColumn if a non-key column is selected
 		getBtnRemoveColumn().setEnabled(table.getSelectedColumn() > 0);
+	}
+	
+	public void replaceModel(DataModel newModel){
+		this.model = newModel;
+		
+//		this.getTable().setModel(this.model.getTableModel());
+		if(this.model.getSeriesCount() > 0){
+			this.getScrollPane().setViewportView(getTable(true));
+		}
+		
+		
 	}
 
 }

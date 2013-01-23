@@ -209,5 +209,7 @@ public abstract class ChartTab extends ChartPanel {
 			throw new NoSuchSeriesException();
 		}
 	}
+	
+	public abstract void replaceModel(DataModel newModel);
 
 }

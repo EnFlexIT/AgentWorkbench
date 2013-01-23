@@ -82,6 +82,7 @@ public class TimeSeriesDataModel extends DataModel implements TableModelListener
 		// Initialize the start date
 		Calendar cal = Calendar.getInstance();
 		cal.set(1970, 0, 1, 0, 0, 0);
+		
 		this.startDate = cal.getTime();
 		
 		// Initialize the three sub models

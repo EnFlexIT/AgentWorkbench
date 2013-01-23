@@ -55,6 +55,11 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
 		this.model = new TimeSeriesDataModel((TimeSeriesChart) objectInstance);
+		
+		this.getChartTab().replaceModel(this.model);
+		this.getTableTab().replaceModel(this.model);
+		this.getSettingsTab().replaceModel(this.model);
+		this.model.addObserver(this);
 	}
 
 	@Override

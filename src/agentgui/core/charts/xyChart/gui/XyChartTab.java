@@ -32,6 +32,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYDataset;
 
+import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartTab;
 import agentgui.core.charts.xyChart.XyDataModel;
 
@@ -59,11 +60,30 @@ public class XyChartTab extends ChartTab {
 		
 		
 		this.model = model;
-		this.getChart().setBackgroundPaint(this.getBackground());
 		
 		setRenderer(DEFAULT_RENDERER);	// Use step renderer by default
 		
 		applyColorSettings();
 		applyLineWidthsSettings();
+	}
+	@Override
+	public void replaceModel(DataModel newModel) {
+		this.model = newModel;
+		
+		this.setChart(ChartFactory.createXYLineChart(
+				model.getOntologyModel().getChartSettings().getChartTitle(), 
+				model.getOntologyModel().getChartSettings().getXAxisLabel(), 
+				model.getOntologyModel().getChartSettings().getYAxisLabel(), 
+				(XYDataset) model.getChartModel(), 
+				PlotOrientation.VERTICAL, 
+				true, false, false
+		));
+		
+		
+setRenderer(DEFAULT_RENDERER);	// Use step renderer by default
+		
+		applyColorSettings();
+		applyLineWidthsSettings();
+		
 	}
 }
