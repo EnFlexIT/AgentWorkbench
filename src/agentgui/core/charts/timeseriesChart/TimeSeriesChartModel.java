@@ -28,6 +28,8 @@
  */
 package agentgui.core.charts.timeseriesChart;
 
+import java.util.TimeZone;
+
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -43,6 +45,11 @@ import agentgui.ontology.TimeSeriesValuePair;
  *
  */
 public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartModel{
+	
+	public TimeSeriesChartModel(){
+		super(TimeZone.getTimeZone("GMT"));
+		System.out.println();
+	}
 
 	/**
 	 * Generated serialVersionUID

@@ -28,7 +28,6 @@
  */
 package agentgui.core.charts.timeseriesChart;
 
-import java.util.Calendar;
 import java.util.Date;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
@@ -80,10 +79,12 @@ public class TimeSeriesDataModel extends DataModel implements TableModelListener
 	public TimeSeriesDataModel(TimeSeriesChart timeSeriesChart){
 		
 		// Initialize the start date
-		Calendar cal = Calendar.getInstance();
-		cal.set(1970, 0, 1, 0, 0, 0);
+//		Calendar cal = Calendar.getInstance();
+//		cal.set(1970, 0, 1, 0, 0, 0);
+//		
+//		this.startDate = cal.getTime();
 		
-		this.startDate = cal.getTime();
+		this.startDate = new Date(0);
 		
 		// Initialize the three sub models
 		this.ontologyModel = new TimeSeriesOntologyModel(timeSeriesChart, this);

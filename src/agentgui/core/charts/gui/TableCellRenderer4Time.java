@@ -30,6 +30,7 @@ package agentgui.core.charts.gui;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -52,6 +53,7 @@ public class TableCellRenderer4Time extends DefaultTableCellRenderer {
 	protected void setValue(Object value) {
 		Date date = new Date((Long) value);
 		DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+		timeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		setText(timeFormat.format(date));
 	}
 

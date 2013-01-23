@@ -31,6 +31,7 @@ package agentgui.core.charts.gui;
 import java.awt.Component;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JSpinner;
@@ -79,6 +80,7 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 			SpinnerDateModel sdm = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
 			spinner = new JSpinner(sdm);
 			JSpinner.DateEditor de = new JSpinner.DateEditor(spinner, "HH:mm");
+			de.getFormat().setTimeZone(TimeZone.getTimeZone("GMT"));
 			spinner.setEditor(de);
 		}
 		

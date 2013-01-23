@@ -28,7 +28,11 @@
  */
 package agentgui.core.charts.timeseriesChart.gui;
 
+import java.util.TimeZone;
+
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.axis.DateAxis;
+
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartTab;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
@@ -63,6 +67,9 @@ public class TimeSeriesChartTab extends ChartTab {
 		
 		applyColorSettings();
 		applyLineWidthsSettings();
+
+		DateAxis da = (DateAxis) getChart().getXYPlot().getDomainAxis();
+		da.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
 	@Override
@@ -81,5 +88,8 @@ public class TimeSeriesChartTab extends ChartTab {
 		
 		applyColorSettings();
 		applyLineWidthsSettings();
+		
+		DateAxis da = (DateAxis) getChart().getXYPlot().getDomainAxis();
+		da.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 }
