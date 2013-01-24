@@ -84,6 +84,7 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.ontology.TimeSeries;
+import agentgui.ontology.TimeSeriesChart;
 
 public class OGE_Importer extends NetworkModelFileImporter {
 
@@ -209,7 +210,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 					// --------------------------------------------------
 					Object[] ontoArrayInstance = new Object[2];
 					ontoArrayInstance[0] = ExitFactory.newInstance(gasNodeType);
-					ontoArrayInstance[1] = new TimeSeries();
+					ontoArrayInstance[1] = null;
 					netComp.setDataModel(ontoArrayInstance);
 
 					
@@ -218,7 +219,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 					// --------------------------------------------------
 					Object[] ontoArrayInstance = new Object[2];
 					ontoArrayInstance[0] = EntryFactory.newInstance(gasNodeType);
-					ontoArrayInstance[1] = new TimeSeries();
+					ontoArrayInstance[1] = null;
 					netComp.setDataModel(ontoArrayInstance);
 					
 					

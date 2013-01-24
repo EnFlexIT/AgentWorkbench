@@ -464,7 +464,12 @@ public class DynForm extends JPanel {
 			}
 
 		} // --- end for ---
-		this.notifyObserver(DynForm.UPDATED_DataModel);
+		
+		// --- Notify observer about new model ----------------------
+		if (avoidGuiUpdate==false) {
+			this.notifyObserver(DynForm.UPDATED_DataModel);	
+		}
+		
 	}
 	
 	/**
@@ -512,16 +517,19 @@ public class DynForm extends JPanel {
 	 */
 	private Object getInstanceOfXML(String xmlString, Ontology ontology) {
 		
-		XMLCodec codec = new XMLCodec();
 		Object objectInstance = null;
-		
-		try {
-			objectInstance = codec.decodeObject(ontology, xmlString);
-		} catch (CodecException ce) {
-			ce.printStackTrace();
-		} catch (OntologyException oe) {
-			oe.printStackTrace();
-		}		
+
+		if (xmlString!=null && xmlString.equals("")==false) {
+			try {
+				XMLCodec codec = new XMLCodec();
+				objectInstance = codec.decodeObject(ontology, xmlString);
+				
+			} catch (CodecException ce) {
+				ce.printStackTrace();
+			} catch (OntologyException oe) {
+				oe.printStackTrace();
+			}		
+		}
 		return objectInstance;
 	}
 	

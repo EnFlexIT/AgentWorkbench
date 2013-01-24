@@ -183,7 +183,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	 */
 	@Override
 	public Object getDataModelBase64Decoded(Vector<String> dataModel, boolean avoidGuiUpdate) {
-		String[] base64Array = new String[dataModel.size()];
+		String[] base64Array = new String[this.getOntologyClassReferences().length];
 		dataModel.toArray(base64Array);
 		this.getOntologyInstanceViewer().setConfigurationXML64(base64Array, avoidGuiUpdate);
 		return this.getOntologyInstanceViewer().getConfigurationInstances();

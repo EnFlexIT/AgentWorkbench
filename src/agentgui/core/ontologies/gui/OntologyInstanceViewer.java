@@ -582,7 +582,12 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		String[] configXML = new String[configurationXML64.length];
 		for (int i = 0; i < configurationXML64.length; i++) {
 			try {
-				configXML[i] = new String(Base64.decodeBase64(configurationXML64[i].getBytes()), "UTF8");
+				if (configurationXML64[i]==null || configurationXML64[i].equals("")) {
+					configXML[i] = null;
+				} else {
+					configXML[i] = new String(Base64.decodeBase64(configurationXML64[i].getBytes()), "UTF8");	
+				}
+				
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}

@@ -140,7 +140,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.setClosable(true);
 		this.setMaximizable(true);
-		this.setResizable(true);
+		this.setResizable(false);
 		this.setAutoscrolls(true);		
 		this.setBorder(null);
 		this.setFocusable(true);

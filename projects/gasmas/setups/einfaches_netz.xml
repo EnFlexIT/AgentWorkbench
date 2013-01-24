@@ -40,20 +40,20 @@
         <agent>
             <postionNo>6</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>n7</startAsName>
+            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
+            <startAsName>n9</startAsName>
         </agent>
         <agent>
             <postionNo>7</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
-            <startAsName>n9</startAsName>
+            <startAsName>n8</startAsName>
         </agent>
         <agent>
             <postionNo>8</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
-            <startAsName>n8</startAsName>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n7</startAsName>
         </agent>
     </agentSetup>
     <timeModelSettings>
