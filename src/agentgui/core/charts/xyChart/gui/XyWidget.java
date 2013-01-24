@@ -142,14 +142,7 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 		if (source==jButtonEdit) {
 			
 			this.getXyChartEditorJDialog().setVisible(true);
-			if(! this.getXyChartEditorJDialog().isCanceled()){
 				
-				// --- Refrech the thumbnail
-				if(this.getChartThumb() != null){
-					getJButtonEdit().setText("");
-					getJButtonEdit().setIcon(new ImageIcon(this.getChartThumb()));
-				}
-			}
 		}
 
 	}

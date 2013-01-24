@@ -148,14 +148,7 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 		if (source==jButtonEdit) {
 			
 			this.getTimeSeriesChartEditorJDialog().setVisible(true);
-			if(! this.getTimeSeriesChartEditorJDialog().isCanceled()){
 
-				// --- Refrech the thumbnail
-				if(this.getChartThumb() != null){
-					getJButtonEdit().setText("");
-					getJButtonEdit().setIcon(new ImageIcon(this.getChartThumb()));
-				}
-			}
 		}
 	}
 	

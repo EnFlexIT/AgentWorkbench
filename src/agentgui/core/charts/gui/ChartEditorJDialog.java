@@ -32,13 +32,10 @@ public abstract class ChartEditorJDialog extends JDialog implements ActionListen
 	
 	// Swing components
 	protected JPanel buttonPane;
-	protected JButton btnApply;
-	protected JButton btnCancel;
+	protected JButton btnClose;
 	
 	protected DynForm dynForm = null;  //  @jve:decl-index=0:
 	protected int startArgIndex = -1;
-	
-	private boolean canceled = false;
 	
 	public ChartEditorJDialog(DynForm dynForm, int startArgIndex) {
 		
@@ -57,34 +54,19 @@ public abstract class ChartEditorJDialog extends JDialog implements ActionListen
 		if(buttonPane == null){
 			buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			buttonPane.add(getBtnApply());
-			buttonPane.add(getBtnCancel());
+			buttonPane.add(getBtnClose());
 		}
 		return buttonPane;
 	}
 	
-	protected JButton getBtnApply(){
-		if(btnApply == null){
-			btnApply = new JButton("OK");
-			btnApply.addActionListener(this);
+	protected JButton getBtnClose(){
+		if(btnClose == null){
+			btnClose = new JButton("Close");
+			btnClose.addActionListener(this);
 		}
-		return btnApply;
+		return btnClose;
 	}
 	
-	protected JButton getBtnCancel(){
-		if(btnCancel == null){
-			btnCancel = new JButton("Cancel");
-			btnCancel.addActionListener(this);
-		}
-		return btnCancel;
-	}
-	
-	/**
-	 * @return the canceled
-	 */
-	public boolean isCanceled() {
-		return canceled;
-	}
 
 	/**
 	 * Gets the dialogs content pane, which must be a ChartEditorJPanel implementation. 
@@ -96,11 +78,7 @@ public abstract class ChartEditorJDialog extends JDialog implements ActionListen
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		if(ae.getSource() == getBtnApply()){
-			this.canceled = false;
-			this.setVisible(false);
-		}else if(ae.getSource() == getBtnCancel()){
-			this.canceled = true;
+		if(ae.getSource() == getBtnClose()){
 			this.setVisible(false);
 		}
 	}

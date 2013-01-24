@@ -174,6 +174,8 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 					getChartTab().applyLineWidthsSettings();
 				}
 			}
+		}else{
+			super.update(o, arg);
 		}
 	}
 
