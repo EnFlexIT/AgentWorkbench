@@ -101,6 +101,7 @@ de;DF anzeigen;Show DF GUI
 de;Das Editor-Panel für die Klasse ist nicht definiert!;The editor panel of this class is not defined!;;;
 de;Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht erneut hinzugefügt werden!;The plugin is already integrated into the project and therefore can not be added again!
 de;Das Projekt wird nun geschlossen!;The project will be closed now!;;;
+de;Das Seitenverhältnis des exportierten Bildes;;;;
 de;Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The directory already exists. The import is interrupted.
 de;Das Widget für die Klasse ist nicht definiert!;The widget of this class is not defined!;;;
 de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet! <br>Save it now?
@@ -123,11 +124,13 @@ de;Der Name;The name
 de;Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.;The maximum memory must be greater than the initial memory.;;;
 de;Deutsch;German
 de;Dicke;Thickness;;;
+de;Die Breite des exportieren Bildes;;;;
 de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
 de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
 de;Die Datei;The file
 de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht werden diese nun anzulegen?;The database for the Server.Master is not available. <br> Try to create it now?
 de;Die Google-Übersetzungsfunktion wurde deaktiviert!;Google's translation feature has been disabled!;;;
+de;Die Höhe des exportieren Bildes;;;;
 de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The class of the type 'OntologyClassVisualisation' was not found!;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.<br><br>Möchten Sie die Konfiguration nun vornehmen?;The system configuration does not contain valid information about the<br>database server. The launch of JADE is therefore interrupted.<br> Please configure a valid MySQL database server and restart the Server.Master.<br><br> Would you like to configure this now?;;;
 de;Dieser Eintrag ist ein notwendiger Systemparameter, der 
@@ -153,6 +156,7 @@ de;Entwickler-Ansicht;Developer view
 de;Erweiterungsadapter für Netzwerkkomponenten;Extension adapter for network components;;;
 de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
+de;Export:;;;;
 de;Externe jar-Ressourcen;External jar resources;;;
 de;Extras;Extras
 de;Faktor;Factor;;;

@@ -252,11 +252,13 @@ public class MainWindow extends JFrame implements ComponentListener {
 	 * @param message the new status bar
 	 */
 	public void setStatusBar(String message) {
-		if ( message == null ) {
+		if (message==null) {
 			statusBar.setText("  ");
 		} else {
 			statusBar.setText("  " + message);
 		};	
+		statusBar.validate();
+		statusBar.repaint();
 	}
 	
 	/**
@@ -266,7 +268,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 	 * @param add2BasicTitel the new titel addition
 	 */
 	public void setTitelAddition(String add2BasicTitel) {
-		if ( add2BasicTitel != "" ) {
+		if (add2BasicTitel!="") {
 			this.setTitle( Application.getGlobalInfo().getApplicationTitle() + ": " + add2BasicTitel );	
 		} else {
 			this.setTitle( Application.getGlobalInfo().getApplicationTitle() );
@@ -280,7 +282,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 	 * @param isRunning the new status jade running
 	 */
 	public void setStatusJadeRunning(boolean isRunning) {
-		if ( isRunning == false ) { 
+		if (isRunning==false) { 
 			statusJade.setText( Language.translate("JADE wurde noch nicht gestartet.") );
 			statusJade.setIcon(iconRed);			
 		} else {
@@ -296,7 +298,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 	 */
 	public void setLookAndFeel(String newLnF) {
 		// --- Look and fell einstellen --------------- 
-		if ( newLnF == null ) return;		
+		if (newLnF==null) return;		
 		Application.getGlobalInfo().setAppLnf(newLnF);
 		try {
 			String lnfClassname = Application.getGlobalInfo().getAppLnF();
@@ -310,15 +312,15 @@ public class MainWindow extends JFrame implements ComponentListener {
 				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF()
 					+ " on this platform:" + e.getMessage());
 		}
-		if ( jMenuExtraLnF != null ){
+		if (jMenuExtraLnF!=null){
 			jMenuExtraLnF.removeAll();
 			setjMenuExtraLnF();
 		}
-		if ( jMenuExtraLang != null ) {
+		if (jMenuExtraLang!=null) {
 			jMenuExtraLang.removeAll();
 			setjMenuExtraLang();
 		}
-		if (Application.getProjectFocused() != null) {
+		if (Application.getProjectFocused()!=null) {
 			Application.getProjectFocused().setMaximized();
 		}
 	}		

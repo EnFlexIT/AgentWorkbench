@@ -48,7 +48,6 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	
 	public TimeSeriesChartModel(){
 		super(TimeZone.getTimeZone("GMT"));
-		System.out.println();
 	}
 
 	/**
