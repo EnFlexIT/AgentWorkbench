@@ -61,10 +61,7 @@ public class XyChartTab extends ChartTab {
 		
 		this.model = model;
 		
-		setRenderer(DEFAULT_RENDERER);	// Use step renderer by default
-		
-		applyColorSettings();
-		applyLineWidthsSettings();
+		applySettings();
 	}
 	@Override
 	public void replaceModel(DataModel newModel) {
@@ -80,10 +77,7 @@ public class XyChartTab extends ChartTab {
 		));
 		
 		
-setRenderer(DEFAULT_RENDERER);	// Use step renderer by default
-		
-		applyColorSettings();
-		applyLineWidthsSettings();
+		applySettings();
 		
 	}
 }

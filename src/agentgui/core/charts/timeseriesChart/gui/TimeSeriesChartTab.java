@@ -63,13 +63,7 @@ public class TimeSeriesChartTab extends ChartTab {
 		
 		this.model = model;
 		
-		setRenderer(DEFAULT_RENDERER);	// Use step renderer by default
-		
-		applyColorSettings();
-		applyLineWidthsSettings();
-
-		DateAxis da = (DateAxis) getChart().getXYPlot().getDomainAxis();
-		da.setTimeZone(TimeZone.getTimeZone("GMT"));
+		applySettings();
 	}
 
 	@Override
@@ -84,12 +78,20 @@ public class TimeSeriesChartTab extends ChartTab {
 				true, false, false
 		));
 		
-		setRenderer(DEFAULT_RENDERER);	// Use step renderer by default
+		applySettings();
 		
-		applyColorSettings();
-		applyLineWidthsSettings();
-		
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartTab#applySettings()
+	 */
+	@Override
+	protected void applySettings() {
+		super.applySettings();
 		DateAxis da = (DateAxis) getChart().getXYPlot().getDomainAxis();
 		da.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
+	
+	
+	
 }

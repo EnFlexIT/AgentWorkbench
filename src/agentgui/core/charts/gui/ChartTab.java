@@ -211,5 +211,19 @@ public abstract class ChartTab extends ChartPanel {
 	}
 	
 	public abstract void replaceModel(DataModel newModel);
+	
+	/**
+	 * Applies some settings for chart visualization. If chart type specific settings are required, override this method.
+	 */
+	protected void applySettings(){
+		setRenderer(DEFAULT_RENDERER);	// Use step renderer by default
+		
+		applyColorSettings();
+		applyLineWidthsSettings();
+		
+		this.getChart().getPlot().setBackgroundPaint(Color.WHITE);		// Chart background
+		this.getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
+		this.getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
+	}
 
 }
