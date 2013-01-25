@@ -1,0 +1,112 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
+package agentgui.envModel.graph.controller;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.RenderingHints;
+
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.visualization.VisualizationModel;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+
+/**
+ * The Class BasicGraphGuiVisualizationViewer was basically created to
+ * apply and test {@link RenderingHints} for the {@link VisualizationViewer}.
+ *
+ * @param <V> the value type
+ * @param <E> the element type
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
+public class BasicGraphGuiVisualizationViewer<V,E> extends VisualizationViewer<V,E> {
+
+	private static final long serialVersionUID = 8187230173732284770L;
+	
+	/**
+	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
+	 * @param layout the layout
+	 */
+	public BasicGraphGuiVisualizationViewer(Layout<V,E> layout) {
+		super(layout);
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
+	 * @param layout the layout
+	 * @param preferredSize the preferred size
+	 */
+	public BasicGraphGuiVisualizationViewer(Layout<V,E>layout, Dimension preferredSize) {
+		super(layout, preferredSize);
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
+	 * @param model the model
+	 */
+	public BasicGraphGuiVisualizationViewer(VisualizationModel<V,E>model) {
+		super(model);
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
+	 * @param model the model
+	 * @param preferredSize the preferred size
+	 */
+	public BasicGraphGuiVisualizationViewer(VisualizationModel<V,E> model, Dimension preferredSize) {
+		super(model, preferredSize);
+		this.initialize();
+	}
+
+
+	/**
+	 * This Initializes the VisualizationViewer.
+	 */
+	private void initialize() {
+		
+		this.setBackground(Color.WHITE);
+		this.setDoubleBuffered(true);
+		
+		// --- Configure some rendering hints in order to accelerate the visualisation --
+		this.renderingHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+		this.renderingHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+		this.renderingHints.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+		this.renderingHints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+
+		this.renderingHints.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DEFAULT);
+		this.renderingHints.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+		
+		this.renderingHints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+		
+		// --- useful and faster, but it makes the image quite unclear --------!!
+//		this.renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF); 
+		
+	}
+
+}

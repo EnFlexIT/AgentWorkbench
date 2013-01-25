@@ -167,6 +167,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.setVisible(true);
 		this.setSize(300, 300);
 		this.setLayout(new BorderLayout());
+		this.setDoubleBuffered(true);
 		
 		// --- Add components -----------------------------
 		this.add(this.graphGuiTools.getJToolBar(), BorderLayout.WEST);
@@ -511,7 +512,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// ----------------------------------------------------------------
 		// --- Create a new VisualizationViewer instance ------------------
 		// ----------------------------------------------------------------
-		final VisualizationViewer<GraphNode, GraphEdge> vViewer = new VisualizationViewer<GraphNode, GraphEdge>(layout);
+//		final VisualizationViewer<GraphNode, GraphEdge> vViewer = new VisualizationViewer<GraphNode, GraphEdge>(layout);
+		final VisualizationViewer<GraphNode, GraphEdge> vViewer = new BasicGraphGuiVisualizationViewer<GraphNode, GraphEdge>(layout);
 		vViewer.setBackground(Color.WHITE);
 		vViewer.setDoubleBuffered(true);
 		
@@ -1097,6 +1099,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 				double moveYOnVisView = centerLocationOfDisplayOnVisView.getY() - areaSelected.getCenterY();
 				// --- Move the focused area ------------------------
 				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(moveXOnVisView, moveYOnVisView);
+				// --- Set the zoom factor to the old value ---------
+//				this.scalingControl.scale(this.visView, scale, getDefaultScaleAtPoint());
 			}
 		}
 	}
