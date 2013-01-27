@@ -1087,20 +1087,21 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (nodesPicked.size()!=0) {
 			HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesPicked);
 			if (components.size()!=0) {
-				// --- Get dimensions of selection ------------------
-				Rectangle2D areaSelected = getVerticesSpreadDimension(nodesPicked);
-				// --- Set zoom factor to 1.0 -----------------------
-				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
-				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
-				// --- Center position of display in graph coordinates 
-				Point2D centerLocationOfDisplayOnVisView = this.visView.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.LAYOUT, this.visView.getCenter());
+				// --- Get the dimension of the selected nodes ------ 
+				Rectangle2D areaSelected = BasicGraphGui.getVerticesSpreadDimension(nodesPicked);
+				Point2D areaCenter = new Point2D.Double(areaSelected.getCenterX(), areaSelected.getCenterY());
+				// --- Create temporary GraphNode -------------------
+				GraphNode tmpNode = new GraphNode("tmPCenter", areaCenter);
+				this.visView.getGraphLayout().getGraph().addVertex(tmpNode);
+				// --- Get the needed positions ---------------------
+				Point2D tmpNodePos = this.visView.getGraphLayout().transform(tmpNode);
+				Point2D visViewCenter = this.visView.getRenderContext().getMultiLayerTransformer().inverseTransform(this.visView.getCenter());
 				// --- Calculate movement ---------------------------
-				double moveXOnVisView = centerLocationOfDisplayOnVisView.getX() - areaSelected.getCenterX();
-				double moveYOnVisView = centerLocationOfDisplayOnVisView.getY() - areaSelected.getCenterY();
-				// --- Move the focused area ------------------------
-				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(moveXOnVisView, moveYOnVisView);
-				// --- Set the zoom factor to the old value ---------
-//				this.scalingControl.scale(this.visView, scale, getDefaultScaleAtPoint());
+				final double dx = (visViewCenter.getX() - tmpNodePos.getX());
+				final double dy = (visViewCenter.getY() - tmpNodePos.getY());
+				// --- Remove temporary GraphNode and move view -----
+				this.visView.getGraphLayout().getGraph().removeVertex(tmpNode);
+				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy); 
 			}
 		}
 	}

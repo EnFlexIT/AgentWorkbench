@@ -8,5 +8,23 @@
             <startAsName>SiMa</startAsName>
         </agent>
     </agentSetup>
+    <timeModelSettings>
+        <entry>
+            <key>TimeStart</key>
+            <value>1359295409875</value>
+        </entry>
+        <entry>
+            <key>AccelerationFactor</key>
+            <value>1.0</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1359381809875</value>
+        </entry>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
+        </entry>
+    </timeModelSettings>
     <environmentFileName>4050 Agents.xml</environmentFileName>
 </simulationSetup>

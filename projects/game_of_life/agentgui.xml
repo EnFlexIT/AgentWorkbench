@@ -22,7 +22,7 @@
         </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1286</useLocalPort>
+        <useLocalPort>1299</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -36,7 +36,7 @@
         <doStaticLoadBalancing>true</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <numberOfAgents>60</numberOfAgents>
-        <numberOfContainer>1</numberOfContainer>
+        <numberOfContainer>2</numberOfContainer>
         <staticLoadBalancingClass>gol.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
@@ -51,13 +51,13 @@
     <remoteContainerConfiguration>
         <jvmMemAllocInitial>32m</jvmMemAllocInitial>
         <jvmMemAllocMaximum>128m</jvmMemAllocMaximum>
-        <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
+        <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>0242 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>1800 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
-    <downloadResources>http://rudel1.cs.uni-due.de:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
-    <downloadResources>http://rudel1.cs.uni-due.de:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
+    <downloadResources>http://rudel1:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
+    <downloadResources>http://rudel1:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>0242 Agents</key>
@@ -113,5 +113,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>false</unsaved>
+    <unsaved>true</unsaved>
 </project>

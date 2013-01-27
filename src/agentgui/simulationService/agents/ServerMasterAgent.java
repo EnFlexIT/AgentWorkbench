@@ -785,9 +785,9 @@ public class ServerMasterAgent extends Agent {
 		
 		try {
 			// --- Do we have a SQL-result ? ----------------------------------
-			if ( res.wasNull() )   
+			if (res.wasNull())   
 				exitRequest = true;
-			if ( exitRequest == false && dbConn.getRowCount(res)==0 ) 
+			if (exitRequest==false && dbConn.getRowCount(res)==0) 
 				exitRequest = true;
 			
 			if ( exitRequest == true ) {
