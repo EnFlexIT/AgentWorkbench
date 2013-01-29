@@ -29,11 +29,6 @@
 package agentgui.core.ontologies.gui;
 
 import java.awt.Dimension;
-import java.util.Observable;
-import java.util.Observer;
-
-import javax.swing.JPanel;
-
 
 /**
  * The Class OntologyClassWidget has to be used in order to build
@@ -43,15 +38,10 @@ import javax.swing.JPanel;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public abstract class OntologyClassWidget extends JPanel implements Observer {
+public abstract class OntologyClassWidget extends OntologyClassEditorJPanel {
 
 	private static final long serialVersionUID = -6783920742718563526L;
 
-	protected DynForm dynForm = null;  //  @jve:decl-index=0:
-	protected int startArgIndex = -1;
-	
-	private boolean pauseObserver = false;
-	
 	
 	/**
 	 * Instantiates a new ontology class widget.
@@ -60,81 +50,9 @@ public abstract class OntologyClassWidget extends JPanel implements Observer {
 	 * @param startArgIndex the start argument index
 	 */
 	public OntologyClassWidget(DynForm dynForm, int startArgIndex) {
-		super();
-		this.dynForm = dynForm;
-		this.startArgIndex = startArgIndex;
-		
+		super(dynForm, startArgIndex);
 		this.dynForm.save(true);
-		this.dynForm.addObserver(this);
-		
-		Object[] startArgs = this.dynForm.getOntoArgsInstance();
-		Object newOntologyClassInstance =  startArgs[this.startArgIndex];
-		this.setOntologyClassInstance(newOntologyClassInstance);
-		
 		this.setSize(new Dimension(315, 250));
-	}
-	
-	/**
-	 * Sets the new ontology class instance to the DynForm.
-	 * @param newOntologyClassInstance the new new ontology class instance
-	 */
-	protected void setNewOntologyClassInstance(Object newOntologyClassInstance) {
-		this.setPauseObserver(true);
-		Object[] startArgs = this.dynForm.getOntoArgsInstance();
-		startArgs[this.startArgIndex] = newOntologyClassInstance;
-		this.dynForm.setOntoArgsInstance(startArgs);
-		this.setPauseObserver(false);
-	}
-	
-	/**
-	 * Sets the ontology class instance.
-	 * @param objectInstance the new ontology class instance
-	 */
-	public abstract void setOntologyClassInstance(Object objectInstance);
-	/**
-	 * Returns the ontology class instance.
-	 * @return the current ontology class instance
-	 */
-	public abstract Object getOntologyClassInstance();
-
-	/* (non-Javadoc)
-	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-	 */
-	@Override
-	public void update(Observable observable, Object object) {
-		
-		if (this.isPauseObserver()==true) return;
-		
-		if (object instanceof String) {
-			String notification = (String) object;
-			if (notification.equals(DynForm.UPDATED_DataModel)==true) {
-				Object[] startArgs = this.dynForm.getOntoArgsInstance();
-				Object newOntologyClassInstance =  startArgs[this.startArgIndex];
-				this.setOntologyClassInstance(newOntologyClassInstance);	
-			}
-		}
-	}
-
-	/**
-	 * Sets the observer to be paused or not.
-	 * @param pauseNow the new pause observer
-	 */
-	protected void setPauseObserver(boolean pauseNow) {
-		this.pauseObserver = pauseNow;
-	}
-	/**
-	 * Checks if is pause observer.
-	 * @return true, if the observer is paused 
-	 */
-	protected boolean isPauseObserver() {
-		return this.pauseObserver;
-	}
-	
-	/**
-	 * Removes this widget from the DynForm observer.
-	 */
-	public void removeFromObserver() {
-		this.dynForm.deleteObserver(this);
 	}
 	
 }

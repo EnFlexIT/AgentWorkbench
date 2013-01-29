@@ -73,6 +73,7 @@ import agentgui.core.ontologies.OntologySingleClassSlotDescription;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.project.AgentStartArgument;
 import agentgui.core.project.AgentStartConfiguration;
+import agentgui.simulationService.time.TimeModelDateBased;
 
 /**
  * This class can be used in order to generate a Swing based user form, that represents
@@ -1978,5 +1979,12 @@ public class DynForm extends JPanel {
 			
 		 }				 
 	} // --- end sub class ----
+	
+	
+	public String getDefaultTimeFormat() {
+		//TODO
+		String format = TimeModelDateBased.DEFAULT_TIME_FORMAT;
+		return format;
+	}
 	
 }

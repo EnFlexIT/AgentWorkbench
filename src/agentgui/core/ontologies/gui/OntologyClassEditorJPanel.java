@@ -36,6 +36,8 @@ import javax.swing.JPanel;
 /**
  * The Class OntologyClassEditorJPanel.
  * 
+ * @see OntologyClassVisualisation
+ * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public abstract class OntologyClassEditorJPanel extends JPanel implements Observer {
@@ -63,9 +65,11 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 		this.dynForm.addObserver(this);
 		
 		Object[] startArgs = this.dynForm.getOntoArgsInstance();
-		Object newOntologyClassInstance =  startArgs[this.startArgIndex];
+		Object newOntologyClassInstance = null;
+		if (startArgs!=null) {
+			newOntologyClassInstance =  startArgs[this.startArgIndex];
+		}
 		this.setOntologyClassInstance(newOntologyClassInstance);
-		
 	}
 	
 	/**
@@ -105,6 +109,14 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 			if (notification.equals(DynForm.UPDATED_DataModel)==true) {
 				Object[] startArgs = this.dynForm.getOntoArgsInstance();
 				Object newOntologyClassInstance =  startArgs[this.startArgIndex];
+				
+				// --- Is the 
+				Object currentInstance = this.getOntologyClassInstance().getClass();
+				if (newOntologyClassInstance.getClass().equals(currentInstance) ) {
+					System.out.println("Same class");
+				} else {
+					System.out.println("Not the same class");
+				}
 				this.setOntologyClassInstance(newOntologyClassInstance);	
 			}
 		}
@@ -132,4 +144,12 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 		this.dynForm.deleteObserver(this);
 	}
 
+	/**
+	 * Returns the default time format.
+	 * @return the default time format
+	 */
+	protected String getDefaultTimeFormat() {
+		return this.dynForm.getDefaultTimeFormat();
+	}
+	
 }

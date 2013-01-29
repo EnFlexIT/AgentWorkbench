@@ -158,7 +158,7 @@ public class DynTableJPanel extends JPanel {
 	 */
 	public void setOntologyClassVisualsationVisible(DynType dynType) {
 		
-		if (this.getDynType()==dynType) {
+		if (dynType==null || this.getDynType()==dynType) {
 			// --- Same element, disappear ----------------
 			this.setJPanelConfiguration(false);	
 			this.setDynType(null);

@@ -10,7 +10,7 @@
   </class>  
   <class id="2" corner="BOTTOM_RIGHT" language="java" name="agentgui.simulationService.time.TimeModelContinuous" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/time/TimeModelContinuous.java" binary="false">    
-    <position x="630" y="548" width="-1" height="-1"/>    
+    <position x="660" y="586" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -18,7 +18,7 @@
   </class>  
   <class id="3" corner="BOTTOM_RIGHT" language="java" name="agentgui.simulationService.time.TimeModelDiscrete" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/time/TimeModelDiscrete.java" binary="false">    
-    <position x="316" y="539" width="-1" height="-1"/>    
+    <position x="319" y="566" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -49,23 +49,23 @@
     </display>  
   </class>  
   <generalization id="7">    
-    <end type="SOURCE" refId="2"/>    
+    <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="6"/>  
   </generalization>  
-  <generalization id="8">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <association id="9">    
+  <association id="8">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="10" name="stopWatch"/>      
-      <multiplicity id="11" minimum="0" maximum="1"/>    
+      <attribute id="9" name="stopWatch"/>      
+      <multiplicity id="10" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <generalization id="11">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
   <generalization id="12">    
-    <end type="SOURCE" refId="3"/>    
+    <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="6"/>  
   </generalization>  
   <generalization id="13">    
