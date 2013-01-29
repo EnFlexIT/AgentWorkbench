@@ -1991,7 +1991,6 @@ public class DynForm extends JPanel {
 	 */
 	public void setEnvironmentController(EnvironmentController environmentController) {
 		this.environmentController = environmentController;
-		System.out.println("=> Default Time Format: " + this.getDefaultTimeFormat());
 	}
 	/**
 	 * Returns the environment controller.
