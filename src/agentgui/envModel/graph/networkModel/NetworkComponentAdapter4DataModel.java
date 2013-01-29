@@ -28,13 +28,14 @@
  */
 package agentgui.envModel.graph.networkModel;
 
-import java.util.Vector;
-
 import jade.content.Concept;
+
+import java.util.Vector;
 
 import javax.swing.JComponent;
 
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 
 /**
  * The Class NetworkComponentAdapterVisualisation can be used in order  
@@ -50,6 +51,31 @@ import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 public abstract class NetworkComponentAdapter4DataModel {
 
 	private static final long serialVersionUID = -5222516718157004730L;
+
+	private GraphEnvironmentController graphController = null;
+
+	/**
+	 * Instantiates a new network component data model adapter.
+	 * @param environmentController the environment controller
+	 */
+	public NetworkComponentAdapter4DataModel(GraphEnvironmentController graphController) {
+		this.setGraphEnvironmentController(graphController);
+	}
+	
+	/**
+	 * Sets the current GraphEnvironmentController.
+	 * @param environmentController the new environment controller
+	 */
+	public void setGraphEnvironmentController(GraphEnvironmentController graphController) {
+		this.graphController = graphController;
+	}
+	/**
+	 * Returns the current GraphEnvironmentController.
+	 * @return the GraphEnvironmentController
+	 */
+	public GraphEnvironmentController getGraphEnvironmentController() {
+		return this.graphController;
+	}
 
 	/**
 	 * Returns the JComponent for the visualisation of the data model.

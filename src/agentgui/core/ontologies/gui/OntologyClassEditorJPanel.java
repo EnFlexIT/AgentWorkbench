@@ -33,6 +33,8 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
+import agentgui.core.environment.EnvironmentController;
+
 /**
  * The Class OntologyClassEditorJPanel.
  * 
@@ -70,6 +72,14 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 			newOntologyClassInstance =  startArgs[this.startArgIndex];
 		}
 		this.setOntologyClassInstance(newOntologyClassInstance);
+	}
+	
+	/**
+	 * Returns the current EnvironmentController.
+	 * @return the environment controller
+	 */
+	protected EnvironmentController getEnvironmentController() {
+		return this.dynForm.getEnvironmentController();
 	}
 	
 	/**

@@ -179,7 +179,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 			return null;
 		} else {
 			String selectedAgentReference = ace4SimStart.getElementClass().getName();
-			OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getOntologyVisualisationHelper(), currProject.getAgentStartConfiguration(), selectedAgentReference);
+			OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getEnvironmentController(), currProject.getOntologyVisualisationHelper(), currProject.getAgentStartConfiguration(), selectedAgentReference);
 			oiv.setConfigurationXML(ace4SimStart.getStartArguments());
 			
 			Object[] startArgs = oiv.getConfigurationInstances();

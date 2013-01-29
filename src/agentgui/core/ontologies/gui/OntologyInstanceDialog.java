@@ -50,6 +50,7 @@ import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.project.AgentStartConfiguration;
 
@@ -65,6 +66,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	
 	private int ontologyInstanceViewerConstructor = 0;
 	
+	protected EnvironmentController environmentController = null;
 	private OntologyVisualisationHelper ontologyVisualisationHelper = null;
 	private AgentStartConfiguration agentStartConfiguration = null;
 	private String agentReference = null;
@@ -80,6 +82,11 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	private JPanel jPanelBottom = null;
 
 	private boolean cancelled = false;
+	
+	public OntologyInstanceDialog(Frame owner, EnvironmentController environmentController, OntologyVisualisationHelper ontologyVisualisationHelper) {
+		this(owner,ontologyVisualisationHelper);
+		this.environmentController = environmentController;
+	}
 	
 	/**
 	 * Instantiates a new ontology instance dialog. In this special case an empty
@@ -167,13 +174,13 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 		if(oiv==null) {
 			switch (this.ontologyInstanceViewerConstructor) {
 			case 1:
-				oiv = new OntologyInstanceViewer(this.ontologyVisualisationHelper, this.agentStartConfiguration, this.agentReference);
+				oiv = new OntologyInstanceViewer(this.environmentController, this.ontologyVisualisationHelper, this.agentStartConfiguration, this.agentReference);
 				break;
 			case 2:
-				oiv = new OntologyInstanceViewer(this.ontologyVisualisationHelper, this.ontologyClassReference);
+				oiv = new OntologyInstanceViewer(this.environmentController, this.ontologyVisualisationHelper, this.ontologyClassReference);
 				break;
 			default:
-				oiv = new OntologyInstanceViewer(this.ontologyVisualisationHelper);
+				oiv = new OntologyInstanceViewer(this.environmentController, this.ontologyVisualisationHelper);
 				break;
 			}
 		}

@@ -36,10 +36,13 @@ import javax.swing.JComponent;
 
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 
 
 /**
  * The Class NetworkComponentAdapter4Ontology.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentAdapter4DataModel {
 
@@ -47,8 +50,17 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	
 	private OntologyVisualisationHelper ovh = null;
 	private OntologyInstanceViewer oiv = null;
-	
-	
+
+
+	/**
+	 * Instantiates a new network component adapter4 ontology.
+	 *
+	 * @param graphController the graph controller
+	 */
+	public NetworkComponentAdapter4Ontology(GraphEnvironmentController graphController) {
+		super(graphController);
+	}
+
 	/**
 	 * Define the Vector of the needed Ontologies for this type of NetworkComponent.
 	 * @return the Vector of ontology classes 
@@ -108,7 +120,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 			if (this.getOntologyClassReferences()==null) {
 				throw new NullPointerException("The references to the classes out of the configured ontologies are not set!");
 			} else {
-				this.oiv = new OntologyInstanceViewer(this.getOntologyVisualisationHelper(), this.getOntologyClassReferences());
+				this.oiv = new OntologyInstanceViewer(this.getGraphEnvironmentController(), this.getOntologyVisualisationHelper(), this.getOntologyClassReferences());
 				this.oiv.setAllowViewEnlargement(false);	
 			}
 		}

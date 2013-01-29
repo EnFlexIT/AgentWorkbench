@@ -66,6 +66,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.ontologies.OntologyClassTree;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologySingleClassDescription;
@@ -73,6 +74,7 @@ import agentgui.core.ontologies.OntologySingleClassSlotDescription;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.project.AgentStartArgument;
 import agentgui.core.project.AgentStartConfiguration;
+import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
 
 /**
@@ -94,6 +96,9 @@ public class DynForm extends JPanel {
 	private boolean debug = false;
 	private DynTreeViewer dtv = null;
 	private boolean emptyForm = true;
+	
+	// --- In case that one deals with time formats -----------------
+	private EnvironmentController environmentController = null;
 	
 	// --- Based on this vector the display will be created ---------
 	private Vector<AgentStartArgument> currOntologyClassReferenceList = new Vector<AgentStartArgument>();
@@ -1980,11 +1985,37 @@ public class DynForm extends JPanel {
 		 }				 
 	} // --- end sub class ----
 	
-	
-	public String getDefaultTimeFormat() {
-		//TODO
-		String format = TimeModelDateBased.DEFAULT_TIME_FORMAT;
-		return format;
+	/**
+	 * Sets the current environment controller.
+	 * @param environmentController the new environment controller
+	 */
+	public void setEnvironmentController(EnvironmentController environmentController) {
+		this.environmentController = environmentController;
+		System.out.println("=> Default Time Format: " + this.getDefaultTimeFormat());
 	}
+	/**
+	 * Returns the environment controller.
+	 * @return the environment controller
+	 */
+	public EnvironmentController getEnvironmentController() {
+		return environmentController;
+	}
+	
+	/**
+	 * Returns the default time/date  format.
+	 * @return the default time format
+	 */
+	public String getDefaultTimeFormat() {
+		String defaultTimeModelFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
+		if (this.environmentController!=null) {
+			TimeModel timeModel = this.environmentController.getTimeModel();
+			if (timeModel!=null) {
+				if (timeModel instanceof TimeModelDateBased) {
+					defaultTimeModelFormat = ((TimeModelDateBased)timeModel).getTimeFormat();
+				}	
+			}
+		}
+		return defaultTimeModelFormat;
+	}	
 	
 }

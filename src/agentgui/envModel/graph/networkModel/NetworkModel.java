@@ -30,6 +30,7 @@ package agentgui.envModel.graph.networkModel;
 
 import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,6 +41,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.prototypes.ClusterGraphElement;
 import agentgui.envModel.graph.prototypes.DistributionNode;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
@@ -1618,8 +1620,8 @@ public class NetworkModel implements Serializable {
 	 * @param networkComponent the NetworkComponent
 	 * @return the network component adapter
 	 */
-	public NetworkComponentAdapter getNetworkComponentAdapter(NetworkComponent networkComponent) {
-		return this.getNetworkComponentAdapter(networkComponent.getType());
+	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, NetworkComponent networkComponent) {
+		return this.getNetworkComponentAdapter(graphController, networkComponent.getType());
 	}
 
 	/**
@@ -1628,11 +1630,11 @@ public class NetworkModel implements Serializable {
 	 * @param graphNode the graph node
 	 * @return the network component adapter
 	 */
-	public NetworkComponentAdapter getNetworkComponentAdapter(GraphNode graphNode) {
+	public NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, GraphNode graphNode) {
 		String domain = this.getDomain(graphNode);
 		if (domain!=null) {
 			String searchFor = GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX + domain;
-			return this.getNetworkComponentAdapter(searchFor);
+			return this.getNetworkComponentAdapter(graphController, searchFor);
 		}
 		return null;
 	}
@@ -1643,7 +1645,7 @@ public class NetworkModel implements Serializable {
 	 * @param componentTypeName the component type name
 	 * @return the network component adapter
 	 */
-	public NetworkComponentAdapter getNetworkComponentAdapter(String componentTypeName) {
+	private NetworkComponentAdapter getNetworkComponentAdapter(GraphEnvironmentController graphController, String componentTypeName) {
 		
 		if (this.networkComponentAdapterHash==null) {
 			this.networkComponentAdapterHash = new HashMap<String, NetworkComponentAdapter>();
@@ -1676,9 +1678,22 @@ public class NetworkModel implements Serializable {
 			// --------------------------------------------------------------------------
 			if (adapterClassname!=null) {
 				try {
+				
 					@SuppressWarnings("unchecked")
 					Class<? extends NetworkComponentAdapter> nca = (Class<? extends NetworkComponentAdapter>) Class.forName(adapterClassname);
-					netCompAdapter = nca.newInstance();
+					
+					// --- look for the right constructor parameter ---------
+					Class<?>[] conParameter = new Class[1];
+					conParameter[0] = GraphEnvironmentController.class;
+				
+					// --- Get the constructor ------------------------------	
+					Constructor<?> ncaConstructor = nca.getConstructor(conParameter);
+					
+					// --- Define the argument for the newInstance call ----- 
+					Object[] args = new Object[1];
+					args[0] = graphController;
+					
+					netCompAdapter = (NetworkComponentAdapter) ncaConstructor.newInstance(args);
 					this.networkComponentAdapterHash.put(componentTypeName, netCompAdapter);
 					
 				} catch (Exception ex) {

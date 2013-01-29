@@ -58,6 +58,14 @@ public abstract class NetworkComponentAdapter {
 	
 	
 	/**
+	 * Instantiates a new network component adapter.
+	 * @param graphEnvironmentController the graph environment controller
+	 */
+	public NetworkComponentAdapter(GraphEnvironmentController graphEnvironmentController) {
+		this.graphController = graphEnvironmentController;
+	}
+	
+	/**
 	 * Returns the data model adapter for the {@link NetworkComponent}.
 	 * @return the adapter visualisation
 	 */
@@ -101,12 +109,11 @@ public abstract class NetworkComponentAdapter {
 	/**
 	 * Invokes to get the JPopup menu elements for this kind of NetworkComponent.
 	 * DO NOT OVERRIDE !!!
-	 * 
-	 * @param graphController the current GraphEnvironmentController
+	 *
+	 * @param networkComponent the current NetworkComponent
 	 * @return the vector of menu elements
 	 */
-	public Vector<JComponent> invokeGetJPopupMenuElements(GraphEnvironmentController graphController, NetworkComponent networkComponent) {
-		this.graphController = graphController;
+	public Vector<JComponent> invokeGetJPopupMenuElements(NetworkComponent networkComponent) {
 		this.networkComponent = networkComponent;
 		return this.getJPopupMenuElements();
 	}
@@ -116,6 +123,5 @@ public abstract class NetworkComponentAdapter {
 	 * @return the JPopup menu elements
 	 */
 	public abstract Vector<JComponent> getJPopupMenuElements();
-	
 	
 }

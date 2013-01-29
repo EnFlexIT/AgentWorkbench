@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 
@@ -16,11 +17,15 @@ public class EntryAdapter extends NetworkComponentAdapter implements ActionListe
 	private Vector<JComponent> menuItems=null;
 	private JMenuItem jMenueItemEntryClose=null;
 	private JMenuItem jMenueItemEntryFailure=null;
-	
+
+
+	public EntryAdapter(GraphEnvironmentController graphEnvironmentController) {
+		super(graphEnvironmentController);
+	}
 	
 	@Override
 	public NetworkComponentAdapter4DataModel getNewDataModelAdapter() {
-		return new EntryDataModelAdapter();
+		return new EntryDataModelAdapter(this.graphController);
 	}
 
 	@Override

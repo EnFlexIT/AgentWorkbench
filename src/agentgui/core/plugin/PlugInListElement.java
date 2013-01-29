@@ -75,8 +75,7 @@ public class PlugInListElement {
 	public boolean equals(Object obj) {
 		try {
 			PlugInListElement pile = (PlugInListElement) obj;
-			if (this.getPlugInName().equals(pile.getPlugInName()) 
-				&& this.getPlugInClassReference().equals(pile.getPlugInClassReference())) {
+			if (this.getPlugInName().equals(pile.getPlugInName()) && this.getPlugInClassReference().equals(pile.getPlugInClassReference())) {
 				return true;
 			}
 			

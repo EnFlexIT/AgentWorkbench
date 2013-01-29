@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 
@@ -16,11 +17,14 @@ public class ExitAdapter extends NetworkComponentAdapter implements ActionListen
 	private Vector<JComponent> menuItems=null; 
 	private JMenuItem jMenueItemExitClose=null;
 	private JMenuItem jMenueItemExitFailure=null;
-	
+
+	public ExitAdapter(GraphEnvironmentController graphEnvironmentController) {
+		super(graphEnvironmentController);
+	}
 	
 	@Override
 	public NetworkComponentAdapter4DataModel getNewDataModelAdapter() {
-		return new ExitDataModelAdapter();
+		return new ExitDataModelAdapter(this.graphController);
 	}
 
 	@Override

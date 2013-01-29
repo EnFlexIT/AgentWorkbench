@@ -941,6 +941,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     private void setNetworkComponentDataModelBase64Decoded() {
     	
     	final Long displayTime = System.currentTimeMillis() + new Long(1000);
+    	final GraphEnvironmentController graphController = this;
     	
     	String title = Language.translate("Initiating network components", Language.EN);
     	String header = Language.translate("Initiating network components and setting data model", Language.EN);
@@ -982,10 +983,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    		GraphNode graphNode = null;
 		    		if (i<netCompArr.length) {
 		    			netComp = (NetworkComponent) netCompArr[i];		
-		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(netComp);
+		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphController, netComp);
 		    		} else {
 		    			graphNode = (GraphNode) graphNodeArr[i-netCompArr.length];
-		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphNode);	
+		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphController, graphNode);	
 		    		}
 		    		
 		    		// --- Set the components data model instance -------------
@@ -1029,6 +1030,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     private void setNetworkComponentDataModelBase64Encoded() {
     	
     	final Long displayTime = System.currentTimeMillis() + new Long(1000);
+    	final GraphEnvironmentController graphController = this;
     	
     	String title = Language.translate("Preparing network components", Language.EN);
     	String header = Language.translate("Preparing and encoding network components for saving", Language.EN);
@@ -1070,10 +1072,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    		GraphNode graphNode = null;
 		    		if (i<netCompArr.length) {
 		    			netComp = (NetworkComponent) netCompArr[i];		
-		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(netComp);
+		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphController, netComp);
 		    		} else {
 		    			graphNode = (GraphNode) graphNodeArr[i-netCompArr.length];
-		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphNode);	
+		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphController, graphNode);	
 		    		}
 		    		
 		    		// --- Set the components data model as Base64 ------------

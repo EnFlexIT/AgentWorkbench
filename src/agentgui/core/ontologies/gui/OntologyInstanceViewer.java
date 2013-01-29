@@ -52,6 +52,7 @@ import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.project.AgentStartConfiguration;
 
@@ -65,8 +66,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 	private static final long serialVersionUID = 6748263753769300242L;
 	
-	final static String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
-	private ImageIcon imageEnlarge =  new ImageIcon(getClass().getResource(PathImage + "MBFullScreen.png"));  //  @jve:decl-index=0:
+	final static String pathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
+	private ImageIcon imageEnlarge =  new ImageIcon(getClass().getResource(pathImage + "MBFullScreen.png"));  //  @jve:decl-index=0:
 	
 	private OntologyVisualisationHelper ontologyVisualisationHelper = null;
 	private AgentStartConfiguration agentStartConfiguration = null;
@@ -90,7 +91,41 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	private JPanel jContentPane = null;
 	private JPanel jPanel4TouchDown = null;
 
-
+	
+	/**
+	 * This is the constructor in case that nothing should be displayed (no form, no slots).
+	 *
+	 * @param environmentController the environment controller
+	 * @param ontologyVisualisationHelper the ontology visualisation helper
+	 */
+	public OntologyInstanceViewer(EnvironmentController environmentController, OntologyVisualisationHelper ontologyVisualisationHelper) {
+		this(ontologyVisualisationHelper);
+		this.setEnvironmentController(environmentController);		
+	}
+	/**
+	 * Instantiates a new ontology instance viewer.
+	 *
+	 * @param environmentController the environment controller
+	 * @param ontologyVisualisationHelper the ontology visualisation helper
+	 * @param agentStartConfiguration the agent configuration
+	 * @param currentAgentReference the current agent reference
+	 */
+	public OntologyInstanceViewer(EnvironmentController environmentController, OntologyVisualisationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String currentAgentReference) {
+		this(ontologyVisualisationHelper, agentStartConfiguration, currentAgentReference);
+		this.setEnvironmentController(environmentController);
+	}
+	/**
+	 * Instantiates a new ontology instance viewer.
+	 *
+	 * @param environmentController the environment controller
+	 * @param ontologyVisualisationHelper the ontology visualisation helper
+	 * @param currOntologyClassReference the current ontology class reference
+	 */
+	public OntologyInstanceViewer(EnvironmentController environmentController, OntologyVisualisationHelper ontologyVisualisationHelper, String[] currOntologyClassReference) {
+		this(ontologyVisualisationHelper, currOntologyClassReference);
+		this.setEnvironmentController(environmentController);
+	}
+	
 	/**
 	 * This is the constructor in case that nothing should be displayed (no form, no slots).
 	 *
@@ -137,7 +172,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		this.use4Agents = false;
 		initialize();
 	}
-
+	
 	/**
 	 * Returns the current OntologyVisualisationHelper.
 	 * @return the OntologyVisualisationHelper
@@ -146,6 +181,21 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		return this.ontologyVisualisationHelper;
 	}
 	
+	/**
+	 * Sets the current environment controller 
+	 * @param environmentController the new environment controller
+	 */
+	public void setEnvironmentController(EnvironmentController environmentController) {
+		this.getDynForm().setEnvironmentController(environmentController);
+	}
+	/**
+	 * Returns the current environment controller.
+	 * @return the environment controller
+	 */
+	public EnvironmentController getEnvironmentController() {
+		return this.getDynForm().getEnvironmentController();
+	}
+
 	/**
 	 * This method initialises this.
 	 * @return void

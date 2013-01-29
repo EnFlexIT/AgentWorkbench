@@ -190,10 +190,10 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     		// --- Add the context sensitive JMenueItems -------
     		NetworkComponent netComp = netComps.iterator().next();
     		NetworkModel netModel = this.basicGraphGui.getGraphEnvironmentController().getNetworkModel();
-    		NetworkComponentAdapter adapter = netModel.getNetworkComponentAdapter(netComp);
+    		NetworkComponentAdapter adapter = netModel.getNetworkComponentAdapter(this.graphController, netComp);
     		if (adapter!=null) {
     			// --- Get the context menu items -------------- 
-    			Vector<JComponent> adapterJComponents2Add = adapter.invokeGetJPopupMenuElements(this.basicGraphGui.getGraphEnvironmentController(), netComp);
+    			Vector<JComponent> adapterJComponents2Add = adapter.invokeGetJPopupMenuElements(netComp);
         		if (adapterJComponents2Add!=null) {
         			if (adapterJComponents2Add.size()>0) {
         				// --- Add Separator
@@ -238,10 +238,10 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     			
     			// --- Add the context sensitive JMenueItems for the single element -------
         		NetworkModel netModel = this.basicGraphGui.getGraphEnvironmentController().getNetworkModel();
-        		NetworkComponentAdapter adapter = netModel.getNetworkComponentAdapter(netComp);
+        		NetworkComponentAdapter adapter = netModel.getNetworkComponentAdapter(this.graphController, netComp);
         		if (adapter!=null) {
         			// --- Get the context menu items --------------
-        			Vector<JComponent> adapterJComponents2Add = adapter.invokeGetJPopupMenuElements(this.basicGraphGui.getGraphEnvironmentController(), netComp);
+        			Vector<JComponent> adapterJComponents2Add = adapter.invokeGetJPopupMenuElements(netComp);
         			if (adapterJComponents2Add!=null) {
         				if (adapterJComponents2Add.size()>0) {
         					this.vertexPopup.add(this.getNewSeparator(netComp.getId()+ "Adapter"));

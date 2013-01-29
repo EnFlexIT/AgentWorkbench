@@ -79,7 +79,7 @@
         </entry>
         <entry>
             <key>TimeFormat</key>
-            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
+            <value>dd.MM.yy HH:mm</value>
         </entry>
     </timeModelSettings>
     <environmentFileName>Einfaches Netz.graphml</environmentFileName>

@@ -197,21 +197,21 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 			// --- Set the local variable ---------------------------
 			this.graphNode = (GraphNode) this.getGraphObject();
 			// --- Get the corresponding NetworkComponentAdapter ----			
-			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter((GraphNode) this.getGraphObject());
+			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, (GraphNode) this.getGraphObject());
 			title2Set = "Vertex: " + this.graphNode.getId();
 			
 		} else if (this.getGraphObject() instanceof GraphEdge) {
 			// --- Just get the corresponding NetworkComponent ------ 
 			this.networkComponent = this.graphController.getNetworkModel().getNetworkComponent((GraphEdge) this.getGraphObject());
 			// --- Get the corresponding NetworkComponentAdapter ---- 
-			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.networkComponent);
+			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, this.networkComponent);
 			title2Set = "Comp.: " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")";
 			
 		} else if (this.getGraphObject() instanceof NetworkComponent) {
 			// --- Cast to NetworkComponent -------------------------
 			this.networkComponent = this.graphController.getNetworkModel().getNetworkComponent(((NetworkComponent) this.getGraphObject()).getId());
 			// --- Get the corresponding NetworkComponentAdapter ---- 
-			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.networkComponent);
+			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, this.networkComponent);
 			title2Set = "Comp.: " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")";
 		}
 

@@ -4,6 +4,7 @@ import jade.content.onto.Ontology;
 
 import java.util.Vector;
 
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4Ontology;
 import agentgui.ontology.AgentGUI_BaseOntology;
 import gasmas.ontology.GasGridOntology;
@@ -14,6 +15,11 @@ public class ResistorDataModelAdapter extends NetworkComponentAdapter4Ontology {
 	private Vector<Class<? extends Ontology>> ontologyBaseClasses = null;
 	private String[] ontologyClassReferences = null;
 	
+
+	public ResistorDataModelAdapter(GraphEnvironmentController graphController) {
+		super(graphController);
+	}
+
 	@Override
 	public Vector<Class<? extends Ontology>> getOntologyBaseClasses() {
 		if (this.ontologyBaseClasses==null) {
