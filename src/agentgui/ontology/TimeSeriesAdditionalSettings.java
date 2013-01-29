@@ -7,29 +7,19 @@ import jade.core.*;
 /**
 * Protege name: TimeSeriesAdditionalSettings
 * @author ontology bean generator
-* @version 2012/10/23, 17:29:08
+* @version 2013/01/29, 13:35:51
 */
 public class TimeSeriesAdditionalSettings extends ChartSettingSpecial{ 
 
    /**
 * Protege name: timeFormat
    */
-   private List timeFormat = new ArrayList();
-   public void addTimeFormat(String elem) { 
-     List oldList = this.timeFormat;
-     timeFormat.add(elem);
+   private String timeFormat;
+   public void setTimeFormat(String value) { 
+    this.timeFormat=value;
    }
-   public boolean removeTimeFormat(String elem) {
-     List oldList = this.timeFormat;
-     boolean result = timeFormat.remove(elem);
-     return result;
+   public String getTimeFormat() {
+     return this.timeFormat;
    }
-   public void clearAllTimeFormat() {
-     List oldList = this.timeFormat;
-     timeFormat.clear();
-   }
-   public Iterator getAllTimeFormat() {return timeFormat.iterator(); }
-   public List getTimeFormat() {return timeFormat; }
-   public void setTimeFormat(List l) {timeFormat = l; }
 
 }

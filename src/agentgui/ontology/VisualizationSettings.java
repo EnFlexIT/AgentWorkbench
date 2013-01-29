@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: VisualizationSettings
 * @author ontology bean generator
-* @version 2012/10/23, 17:29:08
+* @version 2013/01/29, 13:35:51
 */
 public class VisualizationSettings implements Concept {
 

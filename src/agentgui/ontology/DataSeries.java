@@ -9,9 +9,20 @@ import jade.core.*;
    * This class represents one data series, containing x and y values
 * Protege name: DataSeries
 * @author ontology bean generator
-* @version 2012/10/23, 17:29:08
+* @version 2013/01/29, 13:35:51
 */
 public class DataSeries implements Concept {
+
+   /**
+* Protege name: unit
+   */
+   private String unit;
+   public void setUnit(String value) { 
+    this.unit=value;
+   }
+   public String getUnit() {
+     return this.unit;
+   }
 
    /**
    * The data series label
@@ -23,17 +34,6 @@ public class DataSeries implements Concept {
    }
    public String getLabel() {
      return this.label;
-   }
-
-   /**
-* Protege name: unit
-   */
-   private String unit;
-   public void setUnit(String value) { 
-    this.unit=value;
-   }
-   public String getUnit() {
-     return this.unit;
    }
 
 }

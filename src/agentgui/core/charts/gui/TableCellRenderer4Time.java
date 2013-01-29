@@ -29,6 +29,7 @@
 package agentgui.core.charts.gui;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -40,11 +41,17 @@ import javax.swing.table.DefaultTableCellRenderer;
  *
  */
 public class TableCellRenderer4Time extends DefaultTableCellRenderer {
+	
+	private String timeFormat;
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7378047653825108279L;
+	
+	public TableCellRenderer4Time(String timeFormat){
+		this.timeFormat = timeFormat;
+	}
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.table.DefaultTableCellRenderer#setValue(java.lang.Object)
@@ -52,9 +59,16 @@ public class TableCellRenderer4Time extends DefaultTableCellRenderer {
 	@Override
 	protected void setValue(Object value) {
 		Date date = new Date((Long) value);
-		DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+		DateFormat timeFormat = new SimpleDateFormat(this.timeFormat);
 		timeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		setText(timeFormat.format(date));
+	}
+
+	/**
+	 * @param timeFormat the timeFormat to set
+	 */
+	public void setTimeFormat(String timeFormat) {
+		this.timeFormat = timeFormat;
 	}
 
 }

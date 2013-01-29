@@ -45,6 +45,7 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 		}else{
 			this.chart = new TimeSeriesChart();
 			this.chart.setVisualizationSettings(new ChartSettingsGeneral());
+			((TimeSeriesChart)this.chart).setTimeSeriesAdditionalSettings(new TimeSeriesAdditionalSettings());
 		}
 		this.parent = parent;
 	}

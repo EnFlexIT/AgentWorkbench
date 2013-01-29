@@ -74,7 +74,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	// Tab contents
 	protected ChartTab chartTab;
 	protected TableTab tableTab;
-	protected SettingsTab settingsTab;
+	protected ChartSettingsTab settingsTab;
 	
 	/**
 	 * The data model for this chart
@@ -89,6 +89,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		this.add(getTabbedPane(), BorderLayout.CENTER);
 		
 		this.model.addObserver(this);
+		this.model.getChartSettings().addObserver(this);
 	}
 
 	@Override
@@ -276,13 +277,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	
 	protected abstract TableTab getTableTab();
 	
-	protected SettingsTab getSettingsTab(){
-		if(settingsTab == null){
-			settingsTab = new SettingsTab(model);
-			settingsTab.addObserver(this);
-		}
-		return settingsTab;
-	}
+	protected abstract ChartSettingsTab getSettingsTab();
 	
 	protected JButton getBtnImport() {
 		if (btnImport == null) {

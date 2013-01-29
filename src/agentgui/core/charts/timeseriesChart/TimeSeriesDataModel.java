@@ -76,13 +76,7 @@ public class TimeSeriesDataModel extends DataModel implements TableModelListener
 	 * Constructor
 	 * @param timeSeriesChart The ontology representation of the series to be displayed
 	 */
-	public TimeSeriesDataModel(TimeSeriesChart timeSeriesChart){
-		
-		// Initialize the start date
-//		Calendar cal = Calendar.getInstance();
-//		cal.set(1970, 0, 1, 0, 0, 0);
-//		
-//		this.startDate = cal.getTime();
+	public TimeSeriesDataModel(TimeSeriesChart timeSeriesChart, String defaultTimeFormat){
 		
 		this.startDate = new Date(0);
 		
@@ -109,6 +103,7 @@ public class TimeSeriesDataModel extends DataModel implements TableModelListener
 			this.ontologyModel.getChartSettings().setXAxisLabel(DEFAULT_X_AXIS_LABEL);
 			this.ontologyModel.getChartSettings().setYAxisLabel(DEFAULT_Y_AXIS_LABEL);
 			this.ontologyModel.getChartSettings().setRendererType(ChartTab.DEFAULT_RENDERER);
+			((TimeSeriesOntologyModel)this.ontologyModel).getAdditionalSettings().setTimeFormat(defaultTimeFormat);
 			
 		}else{
 			
@@ -136,7 +131,7 @@ public class TimeSeriesDataModel extends DataModel implements TableModelListener
 		// Register for table model events
 		tableModel.addTableModelListener(this);
 		
-		this.chartSettings = new TimeSeriesChartSettings(tsom.getTimeSeriesChart());
+		this.chartSettings = new TimeSeriesChartSettings(tsom.getTimeSeriesChart(), defaultTimeFormat);
 	}
 
 	/**
@@ -195,6 +190,20 @@ public class TimeSeriesDataModel extends DataModel implements TableModelListener
 	 */
 	public Date getStartDate() {
 		return startDate;
+	}
+
+	/**
+	 * @return the timeFormat
+	 */
+	public String getTimeFormat() {
+		return ((TimeSeriesChartSettings)this.chartSettings).getTimeFormat();
+	}
+
+	/**
+	 * @param timeFormat the timeFormat to set
+	 */
+	public void setTimeFormat(String timeFormat) {
+		((TimeSeriesChartSettings)this.chartSettings).setTimeFormat(timeFormat);
 	}
 
 	@Override

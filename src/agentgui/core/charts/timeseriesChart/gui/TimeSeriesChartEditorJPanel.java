@@ -28,6 +28,9 @@
  */
 package agentgui.core.charts.timeseriesChart.gui;
 
+import java.util.Observable;
+
+import agentgui.core.charts.SettingsInfo;
 import javax.swing.JToolBar;
 
 import agentgui.core.charts.gui.ChartEditorJPanel;
@@ -67,6 +70,13 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 		}
 		return (TimeSeriesTableTab) tableTab;
 	}
+	
+	protected TimeSeriesChartSettingsTab getSettingsTab(){
+		if(this.settingsTab == null){
+			this.settingsTab = new TimeSeriesChartSettingsTab(this.model, this);
+		}
+		return (TimeSeriesChartSettingsTab) settingsTab;
+	}
 
 	@Override
 	protected Number parseKey(String key) {
@@ -84,7 +94,7 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
-		this.model = new TimeSeriesDataModel((TimeSeriesChart) objectInstance);
+		this.model = new TimeSeriesDataModel((TimeSeriesChart) objectInstance, this.getDefaultTimeFormat());
 		
 		this.getChartTab().replaceModel(this.model);
 		this.getTableTab().replaceModel(this.model);
@@ -98,11 +108,42 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	}
 
 	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable o, Object arg) {
+		if(o == this.model.getChartSettings() || arg instanceof SettingsInfo){
+			SettingsInfo info = (SettingsInfo) arg;
+			if(info.getType() == SettingsInfo.TIME_FORMAT_CHANGED){
+				String newTimeFormat = (String) info.getData();
+				
+				// Set the time format for the GUI components
+				this.getChartTab().applySettings();
+				
+				// Set the time format for the ontology-based data model
+				TimeSeriesOntologyModel tsom = ((TimeSeriesOntologyModel)this.model.getOntologyModel());
+				
+				if(newTimeFormat.equals(getDefaultTimeFormat())){
+					// Use project default if nothing different set
+					tsom.getAdditionalSettings().setTimeFormat(null);
+				}else{
+					// Use set format if != project default
+					tsom.getAdditionalSettings().setTimeFormat(newTimeFormat);
+				}
+				
+				return;
+			}
+		}
+		super.update(o, arg);
+	}
+	
+	/* (non-Javadoc)
 	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#getJToolBarUserFunctions()
 	 */
 	@Override
 	public JToolBar getJToolBarUserFunctions() {
 		return this.getToolBar();
 	}
+
 
 }

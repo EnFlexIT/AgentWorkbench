@@ -32,14 +32,20 @@ import java.awt.Color;
 
 import agentgui.core.charts.ChartSettings;
 import agentgui.core.charts.SeriesSettings;
+import agentgui.core.charts.SettingsInfo;
 import agentgui.ontology.Chart;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 
 public class TimeSeriesChartSettings extends ChartSettings {
+	
+	private String timeFormat;
 
-	public TimeSeriesChartSettings(Chart chart) {
+	public TimeSeriesChartSettings(Chart chart, String timeFormat) {
 		super(chart);
+		this.timeFormat = timeFormat;
+		
+		// TODO In die Oberklasse?
 		TimeSeriesChart tsChart = (TimeSeriesChart) chart;
 		for(int i=0; i< tsChart.getTimeSeriesChartData().size(); i++){
 			TimeSeries series = (TimeSeries) tsChart.getTimeSeriesChartData().get(i);
@@ -51,6 +57,23 @@ public class TimeSeriesChartSettings extends ChartSettings {
 			
 			this.addSeriesSettings(settings);
 		}
+	}
+
+	/**
+	 * @return the timeFormat
+	 */
+	public String getTimeFormat() {
+		return timeFormat;
+	}
+
+	/**
+	 * @param timeFormat the timeFormat to set
+	 */
+	public void setTimeFormat(String timeFormat) {
+		this.timeFormat = timeFormat;
+		SettingsInfo info = new SettingsInfo(SettingsInfo.TIME_FORMAT_CHANGED, timeFormat);
+		setChanged();
+		notifyObservers(info);
 	}
 
 }

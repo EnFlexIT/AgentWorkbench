@@ -65,7 +65,7 @@ import agentgui.envModel.graph.components.TableCellEditor4Color;
 import agentgui.envModel.graph.components.TableCellRenderer4Color;
 import agentgui.ontology.DataSeries;
 
-public class SettingsTab extends JPanel implements ActionListener, TableModelListener, FocusListener, Observer{
+public class ChartSettingsTab extends JPanel implements ActionListener, TableModelListener, FocusListener, Observer{
 	/**
 	 * 
 	 */
@@ -83,20 +83,14 @@ public class SettingsTab extends JPanel implements ActionListener, TableModelLis
 	private JScrollPane spTblSeriesSettings;
 	private JTable tblSeriesSettings;
 	
-	private DataModel model;
+	protected DataModel model;
 	
-	private ChartSettings settings;
+	protected ChartSettings settings;
 
-	public SettingsTab(DataModel model) {
-		
-		this.model = model;
-		
-		this.settings = model.getChartSettings();
-		this.settings.addObserver(this);
-		
-		initialize();
-	}
-	private void initialize(){
+	/**
+	 * Initializes the Swing components that are the same for all chart types
+	 */
+	protected void initialize(){
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
@@ -160,31 +154,31 @@ public class SettingsTab extends JPanel implements ActionListener, TableModelLis
 		gbc_spTblSeriesSettings.gridy = 4;
 		add(getSpTblSeriesSettings(), gbc_spTblSeriesSettings);
 	}
-	private JLabel getLblChartTitle() {
+	protected JLabel getLblChartTitle() {
 		if (lblChartTitle == null) {
 			lblChartTitle = new JLabel(Language.translate("Titel"));
 		}
 		return lblChartTitle;
 	}
-	private JLabel getLblXAxisLabel() {
+	protected JLabel getLblXAxisLabel() {
 		if (lblXAxisLabel == null) {
 			lblXAxisLabel = new JLabel(Language.translate("Beschriftung X Achse"));
 		}
 		return lblXAxisLabel;
 	}
-	private JLabel getLblYAxisLabel() {
+	protected JLabel getLblYAxisLabel() {
 		if (lblYAxisLabel == null) {
 			lblYAxisLabel = new JLabel(Language.translate("Beschriftung Y Achse"));
 		}
 		return lblYAxisLabel;
 	}
-	private JLabel getLblRendererType() {
+	protected JLabel getLblRendererType() {
 		if (lblRendererType == null) {
 			lblRendererType = new JLabel(Language.translate("Art der Darstellung"));
 		}
 		return lblRendererType;
 	}
-	private JTextField getTfChartTitle() {
+	protected JTextField getTfChartTitle() {
 		if (tfChartTitle == null) {
 			tfChartTitle = new JTextField();
 			tfChartTitle.setColumns(10);
@@ -194,7 +188,7 @@ public class SettingsTab extends JPanel implements ActionListener, TableModelLis
 		}
 		return tfChartTitle;
 	}
-	private JTextField getTfXAxisLabel() {
+	protected JTextField getTfXAxisLabel() {
 		if (tfXAxisLabel == null) {
 			tfXAxisLabel = new JTextField();
 			tfXAxisLabel.setColumns(10);
@@ -204,7 +198,7 @@ public class SettingsTab extends JPanel implements ActionListener, TableModelLis
 		}
 		return tfXAxisLabel;
 	}
-	private JTextField getTfYAxisLabel() {
+	protected JTextField getTfYAxisLabel() {
 		if (tfYAxisLabel == null) {
 			tfYAxisLabel = new JTextField();
 			tfYAxisLabel.setColumns(10);
@@ -214,7 +208,7 @@ public class SettingsTab extends JPanel implements ActionListener, TableModelLis
 		}
 		return tfYAxisLabel;
 	}
-	private JComboBox getCbRendererType() {
+	protected JComboBox getCbRendererType() {
 		if (cbRendererType == null) {
 			cbRendererType = new JComboBox();
 			cbRendererType.setModel(new DefaultComboBoxModel(ChartTab.RENDERER_TYPES));
@@ -223,14 +217,14 @@ public class SettingsTab extends JPanel implements ActionListener, TableModelLis
 		}
 		return cbRendererType;
 	}
-	private JScrollPane getSpTblSeriesSettings() {
+	protected JScrollPane getSpTblSeriesSettings() {
 		if (spTblSeriesSettings == null) {
 			spTblSeriesSettings = new JScrollPane();
 			spTblSeriesSettings.setViewportView(getTblSeriesSettings());
 		}
 		return spTblSeriesSettings;
 	}
-	private JTable getTblSeriesSettings() {
+	protected JTable getTblSeriesSettings() {
 		if (tblSeriesSettings == null) {
 			tblSeriesSettings = new JTable(){
 

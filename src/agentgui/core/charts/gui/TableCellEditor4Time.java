@@ -61,6 +61,12 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 	
 	private int originalHeight;
 	
+	private String timeFormat;
+	
+	public TableCellEditor4Time(String timeFormat){
+		this.timeFormat = timeFormat;
+	}
+	
 
 	@Override
 	public Object getCellEditorValue() {
@@ -79,7 +85,7 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 			this.table = table;
 			SpinnerDateModel sdm = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
 			spinner = new JSpinner(sdm);
-			JSpinner.DateEditor de = new JSpinner.DateEditor(spinner, "HH:mm");
+			JSpinner.DateEditor de = new JSpinner.DateEditor(spinner, timeFormat);
 			de.getFormat().setTimeZone(TimeZone.getTimeZone("GMT"));
 			spinner.setEditor(de);
 		}

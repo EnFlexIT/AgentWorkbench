@@ -63,6 +63,14 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 		}
 		return (XyTableTab) tableTab;
 	}
+	
+	protected XyChartSettingsTab getSettingsTab(){
+		if(this.settingsTab == null){
+			this.settingsTab = new XyChartSettingsTab(this.model);
+		}
+		
+		return (XyChartSettingsTab) this.settingsTab;
+	}
 
 	@Override
 	protected Number parseKey(String key) {

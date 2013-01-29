@@ -70,6 +70,10 @@ public class SettingsInfo {
 	 * Indicates that settings for a series have been removed
 	 */
 	public static final int SERIES_REMOVED = 8;
+	/**
+	 * Indicates that the time format hasbeen changed
+	 */
+	public static final int TIME_FORMAT_CHANGED = 9;
 	
 	/**
 	 * Indicates which setting changed

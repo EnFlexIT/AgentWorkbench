@@ -77,7 +77,7 @@ public class TimeSeriesTableTab extends TableTab{
 				@Override
 				public TableCellEditor getCellEditor(int row, int column) {
 					if(column == 0){
-						return new TableCellEditor4Time();
+						return new TableCellEditor4Time(((TimeSeriesDataModel)model).getTimeFormat());
 					}else{
 						return new TableCellEditor4FloatObject();
 					}
@@ -89,7 +89,7 @@ public class TimeSeriesTableTab extends TableTab{
 				@Override
 				public TableCellRenderer getCellRenderer(int row, int column) {
 					if(column == 0){
-						return new TableCellRenderer4Time();
+						return new TableCellRenderer4Time(((TimeSeriesDataModel)model).getTimeFormat());
 					}else{
 						return super.getCellRenderer(row, column);
 					}

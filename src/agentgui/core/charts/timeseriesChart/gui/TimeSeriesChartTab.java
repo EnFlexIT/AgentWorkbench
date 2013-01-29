@@ -28,6 +28,8 @@
  */
 package agentgui.core.charts.timeseriesChart.gui;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 import org.jfree.chart.ChartFactory;
@@ -89,7 +91,10 @@ public class TimeSeriesChartTab extends ChartTab {
 	protected void applySettings() {
 		super.applySettings();
 		DateAxis da = (DateAxis) getChart().getXYPlot().getDomainAxis();
-		da.setTimeZone(TimeZone.getTimeZone("GMT"));
+		
+		DateFormat dateFormat = new SimpleDateFormat(((TimeSeriesDataModel)model).getTimeFormat());
+		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		da.setDateFormatOverride(dateFormat);
 	}
 	
 	

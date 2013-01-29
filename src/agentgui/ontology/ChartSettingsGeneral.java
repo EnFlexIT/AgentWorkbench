@@ -8,7 +8,7 @@ import jade.core.*;
    * This class contains all data related to how a chart will be displayed
 * Protege name: ChartSettingsGeneral
 * @author ontology bean generator
-* @version 2012/10/23, 17:29:08
+* @version 2013/01/29, 13:35:51
 */
 public class ChartSettingsGeneral extends VisualizationSettings{ 
 
@@ -21,17 +21,6 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    }
    public String getYAxisLabel() {
      return this.yAxisLabel;
-   }
-
-   /**
-* Protege name: chartTitle
-   */
-   private String chartTitle;
-   public void setChartTitle(String value) { 
-    this.chartTitle=value;
-   }
-   public String getChartTitle() {
-     return this.chartTitle;
    }
 
    /**
@@ -57,29 +46,6 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    public void setYAxisColors(List l) {yAxisColors = l; }
 
    /**
-   * The renderer type to be used fpr rendering the plots
-* Protege name: rendererType
-   */
-   private String rendererType;
-   public void setRendererType(String value) { 
-    this.rendererType=value;
-   }
-   public String getRendererType() {
-     return this.rendererType;
-   }
-
-   /**
-* Protege name: xAxisLabel
-   */
-   private String xAxisLabel;
-   public void setXAxisLabel(String value) { 
-    this.xAxisLabel=value;
-   }
-   public String getXAxisLabel() {
-     return this.xAxisLabel;
-   }
-
-   /**
 * Protege name: yAxisLineWidth
    */
    private List yAxisLineWidth = new ArrayList();
@@ -99,5 +65,39 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    public Iterator getAllYAxisLineWidth() {return yAxisLineWidth.iterator(); }
    public List getYAxisLineWidth() {return yAxisLineWidth; }
    public void setYAxisLineWidth(List l) {yAxisLineWidth = l; }
+
+   /**
+* Protege name: xAxisLabel
+   */
+   private String xAxisLabel;
+   public void setXAxisLabel(String value) { 
+    this.xAxisLabel=value;
+   }
+   public String getXAxisLabel() {
+     return this.xAxisLabel;
+   }
+
+   /**
+* Protege name: chartTitle
+   */
+   private String chartTitle;
+   public void setChartTitle(String value) { 
+    this.chartTitle=value;
+   }
+   public String getChartTitle() {
+     return this.chartTitle;
+   }
+
+   /**
+   * The renderer type to be used fpr rendering the plots
+* Protege name: rendererType
+   */
+   private String rendererType;
+   public void setRendererType(String value) { 
+    this.rendererType=value;
+   }
+   public String getRendererType() {
+     return this.rendererType;
+   }
 
 }
