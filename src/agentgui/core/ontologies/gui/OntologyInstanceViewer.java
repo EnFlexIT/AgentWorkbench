@@ -244,7 +244,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			if (this.getSelectedIndex()==0) {
 				// --- Refresh Table-View ------------
 				this.stopDynTableCellEditing();
-				this.getDynTableJPanel().setOntologyClassVisualsationVisible(null);
 				this.save();
 				this.setXMLText();
 				

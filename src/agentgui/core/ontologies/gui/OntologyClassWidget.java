@@ -30,6 +30,8 @@ package agentgui.core.ontologies.gui;
 
 import java.awt.Dimension;
 
+import javax.swing.JToolBar;
+
 /**
  * The Class OntologyClassWidget has to be used in order to build
  * a widget for the configuration of a special ontology class.
@@ -51,8 +53,15 @@ public abstract class OntologyClassWidget extends OntologyClassEditorJPanel {
 	 */
 	public OntologyClassWidget(DynForm dynForm, int startArgIndex) {
 		super(dynForm, startArgIndex);
-		this.dynForm.save(true);
 		this.setSize(new Dimension(315, 250));
+	}
+	
+	/**
+	 * Not usable for widgets
+	 */
+	@Override
+	public JToolBar getJToolBarUserFunctions() {
+		return null;
 	}
 	
 }

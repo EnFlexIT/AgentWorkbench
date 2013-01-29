@@ -245,6 +245,8 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	protected JToolBar getToolBar(){
 		if(toolBar == null){
 			toolBar = new JToolBar();
+			toolBar.setFloatable(false);
+			toolBar.setRollover(true);
 			toolBar.add(getBtnImport());
 			toolBar.addSeparator();
 			toolBar.add(new JLabel(Language.translate("Export:")));

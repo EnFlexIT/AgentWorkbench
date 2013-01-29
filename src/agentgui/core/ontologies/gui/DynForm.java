@@ -349,6 +349,7 @@ public class DynForm extends JPanel {
 		}
 		// --- Justify the Preferred Size of this Panel ---
 		this.setPreferredSize(this);
+		this.save(true);
 	}
 	
 	/**
@@ -1409,25 +1410,19 @@ public class DynForm extends JPanel {
 	 */
 	private void createOuterElement4OntologyClassVisualisation(int startArgIndex, Class<?> specialClass, DefaultMutableTreeNode curentNode, JPanel parentPanel){
 		
-		// ------------------------------------------------------------------------------
+		this.save(true);
+		
 		// --- Make all of the created panels invisible and reduce their height ---------
-		// ------------------------------------------------------------------------------
 		Rectangle feBounds = this.setJPanelInvisibleAndSmall(curentNode);
 		
-		// ------------------------------------------------------------------------------
 		// --- Show the widget for the special type -------------------------------------
-		// ------------------------------------------------------------------------------
-		if (Application.getGlobalInfo().isOntologyClassVisualisation(specialClass)) {
+		OntologyClassVisualisation ontoClassVis = Application.getGlobalInfo().getOntologyClassVisualisation(specialClass);
+		OntologyClassWidget widget = ontoClassVis.getWidget(this, startArgIndex);
+		if (widget!=null) {
+			widget.setBounds(feBounds.x, feBounds.y, widget.getWidth(), widget.getHeight());
+			parentPanel.add(widget);
 			
-			OntologyClassVisualisation ontoClassVis = Application.getGlobalInfo().getOntologyClassVisualisation(specialClass);
-			OntologyClassWidget widget = ontoClassVis.getWidget(this, startArgIndex);
-			if (widget!=null) {
-				widget.setBounds(feBounds.x, feBounds.y, widget.getWidth(), widget.getHeight());
-				parentPanel.add(widget);
-				
-				this.getOntologyClassWidgets().put(curentNode, widget);
-			}
-			
+			this.getOntologyClassWidgets().put(curentNode, widget);
 		}
 		this.setPanelBounds(parentPanel);
 	}

@@ -34,7 +34,6 @@ import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartTab;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.Simple_Float;
-import agentgui.ontology.TimeSeries;
 import agentgui.ontology.ValuePair;
 import agentgui.ontology.XyChart;
 import agentgui.ontology.XyDataSeries;
@@ -87,7 +86,7 @@ public class XyDataModel extends DataModel {
 			Iterator dataSeries = xyom.getXyChart().getAllXyChartData();
 			while(dataSeries.hasNext()){
 				
-				TimeSeries nextSeries = (TimeSeries) dataSeries.next();
+				XyDataSeries nextSeries = (XyDataSeries) dataSeries.next();
 				
 				// If there is no color specified for this series, use a default color
 				if(seriesCount > this.ontologyModel.getChartSettings().getYAxisColors().size()){

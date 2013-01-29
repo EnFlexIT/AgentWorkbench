@@ -782,12 +782,12 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			selectedAgentReference 	= selectedAgentClass.getName();
 			selectedAgentName		= jTextAgentStartAs.getText();
 			
-			if ( selectedAgentName.length() != 0 && selectedAgentClass != null) {
+			if (selectedAgentName.length()!=0 && selectedAgentClass != null) {
 				Object [] startArgs = null;
 				Vector<AgentStartArgument> startArgsConfigured = this.currProject.getAgentStartConfiguration().get(selectedAgentReference);
 				if (startArgsConfigured!=null) {
 					// --- If start-arguments are set, get them now -----
-					OntologyInstanceDialog oid = new OntologyInstanceDialog(Application.getMainWindow(), this.currProject.getOntologyVisualisationHelper(), this.currProject.getAgentStartConfiguration(), selectedAgentReference);
+					OntologyInstanceDialog oid = new OntologyInstanceDialog(Application.getMainWindow(), this.currProject.getEnvironmentController(), this.currProject.getOntologyVisualisationHelper(), this.currProject.getAgentStartConfiguration(), selectedAgentReference);
 					oid.setTitle(Language.translate("Startargument definieren für Agent") + " '" + selectedAgentName + "' (" + selectedAgentClass.getSimpleName() + ")");
 					oid.setVisible(true);
 					// --- Wait ---

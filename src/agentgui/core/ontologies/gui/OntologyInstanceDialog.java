@@ -83,9 +83,58 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 
 	private boolean cancelled = false;
 	
+	
+	// --- Start of constructor section  ------------------
+	/**
+	 * Instantiates a new ontology instance dialog. In this special case an empty
+	 * form will be created, because of missing references to special ontology classes.
+	 *
+	 * @param owner the owner
+	 * @param environmentController the EnvironmentController
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
+	 */
 	public OntologyInstanceDialog(Frame owner, EnvironmentController environmentController, OntologyVisualisationHelper ontologyVisualisationHelper) {
-		this(owner,ontologyVisualisationHelper);
+		super(owner);
 		this.environmentController = environmentController;
+		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
+		this.ontologyInstanceViewerConstructor = 0;
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new ontology instance dialog. The dialog will be created depending
+	 * on the start arguments configured for an agent.
+	 *
+	 * @param owner the owner
+	 * @param environmentController the EnvironmentController
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
+	 * @param agentStartConfiguration the agent configuration
+	 * @param agentReference the agent reference
+	 */
+	public OntologyInstanceDialog(Frame owner, EnvironmentController environmentController, OntologyVisualisationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String agentReference) {
+		super(owner);
+		this.environmentController = environmentController;
+		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
+		this.agentStartConfiguration = agentStartConfiguration;
+		this.agentReference = agentReference;
+		this.ontologyInstanceViewerConstructor = 1;
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new ontology instance dialog. The dialog will be created depending
+	 * on the class references. This classes have to be part of an ontology.
+	 *
+	 * @param owner the owner
+	 * @param environmentController the EnvironmentController
+	 * @param ontologyVisualisationHelper the {@link OntologyVisualisationHelper}
+	 * @param ontologyClassReference the ontology class reference
+	 */
+	public OntologyInstanceDialog(Frame owner, EnvironmentController environmentController, OntologyVisualisationHelper ontologyVisualisationHelper, String[] ontologyClassReference) {
+		super(owner);
+		this.environmentController = environmentController;
+		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
+		this.ontologyClassReference = ontologyClassReference;
+		this.ontologyInstanceViewerConstructor = 2;
+		this.initialize();
 	}
 	
 	/**
@@ -99,9 +148,8 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 		super(owner);
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
 		this.ontologyInstanceViewerConstructor = 0;
-		initialize();
+		this.initialize();
 	}
-	
 	/**
 	 * Instantiates a new ontology instance dialog. The dialog will be created depending
 	 * on the start arguments configured for an agent.
@@ -117,9 +165,8 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 		this.agentStartConfiguration = agentStartConfiguration;
 		this.agentReference = agentReference;
 		this.ontologyInstanceViewerConstructor = 1;
-		initialize();
+		this.initialize();
 	}
-	
 	/**
 	 * Instantiates a new ontology instance dialog. The dialog will be created depending
 	 * on the class references. This classes have to be part of an ontology.
@@ -133,11 +180,12 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
 		this.ontologyClassReference = ontologyClassReference;
 		this.ontologyInstanceViewerConstructor = 2;
-		initialize();
+		this.initialize();
 	}
+	// --- End of constructor section  --------------------
 	
 	/**
-	 * This method initialises this.
+	 * This method initialises this dialog.
 	 */
 	private void initialize() {
 		

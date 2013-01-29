@@ -32,6 +32,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
 
 import agentgui.core.environment.EnvironmentController;
 
@@ -61,10 +62,8 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 	public OntologyClassEditorJPanel(DynForm dynForm, int startArgIndex) {
 		super();
 		this.dynForm = dynForm;
-		this.startArgIndex = startArgIndex;
-		
-//		this.dynForm.save(true);
 		this.dynForm.addObserver(this);
+		this.startArgIndex = startArgIndex;
 		
 		Object[] startArgs = this.dynForm.getOntoArgsInstance();
 		Object newOntologyClassInstance = null;
@@ -72,14 +71,6 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 			newOntologyClassInstance =  startArgs[this.startArgIndex];
 		}
 		this.setOntologyClassInstance(newOntologyClassInstance);
-	}
-	
-	/**
-	 * Returns the current EnvironmentController.
-	 * @return the environment controller
-	 */
-	protected EnvironmentController getEnvironmentController() {
-		return this.dynForm.getEnvironmentController();
 	}
 	
 	/**
@@ -105,6 +96,12 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 	 */
 	public abstract Object getOntologyClassInstance();
 	
+	/**
+	 * Gets the JToolBar with the user functions.
+	 * @return the JToolBar user functions
+	 */
+	public abstract JToolBar getJToolBarUserFunctions();
+	
 
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
@@ -119,14 +116,6 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 			if (notification.equals(DynForm.UPDATED_DataModel)==true) {
 				Object[] startArgs = this.dynForm.getOntoArgsInstance();
 				Object newOntologyClassInstance =  startArgs[this.startArgIndex];
-				
-				// --- Is the 
-				Object currentInstance = this.getOntologyClassInstance().getClass();
-				if (newOntologyClassInstance.getClass().equals(currentInstance) ) {
-					System.out.println("Same class");
-				} else {
-					System.out.println("Not the same class");
-				}
 				this.setOntologyClassInstance(newOntologyClassInstance);	
 			}
 		}
@@ -155,10 +144,17 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 	}
 
 	/**
+	 * Returns the current EnvironmentController.
+	 * @return the environment controller
+	 */
+	protected EnvironmentController getEnvironmentController() {
+		return this.dynForm.getEnvironmentController();
+	}
+	/**
 	 * Returns the default time format.
 	 * @return the default time format
 	 */
-	protected String getDefaultTimeFormat() {
+	public String getDefaultTimeFormat() {
 		return this.dynForm.getDefaultTimeFormat();
 	}
 	
