@@ -29,10 +29,12 @@
 package agentgui.core.ontologies.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -42,6 +44,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableCellEditor;
@@ -64,7 +67,7 @@ public class DynTableJPanel extends JPanel {
 	private static final int EXPANSION_Vertical = 1;
 	
 	private Container mainFrame = null;
-	private Dimension mainFrameOldSize = null;
+	private Dimension mainFrameOldSize = null;  //  @jve:decl-index=0:
 	private int expansionDirection = -1;
 	
 	private boolean expanded = false;
@@ -76,6 +79,12 @@ public class DynTableJPanel extends JPanel {
 	private DynType dynType = null;  //  @jve:decl-index=0:
 	
 	private JComponent jComponent2Add = null;
+	
+	private JToolBar jToolBar4UserFunction = null;
+	private JToolBar.Separator jSeparator4UserFunctions1 = null;
+	private JToolBar.Separator jSeparator4UserFunctions2 = null;
+	private JLabel jLabelHeader4UserFunctions = null;
+	private Vector<Component> stolenComponentsFromJToolBar = null;  //  @jve:decl-index=0:
 	
 	/**
 	 * This is the default constructor
@@ -187,6 +196,9 @@ public class DynTableJPanel extends JPanel {
 		// --- Clean up the old instances -------------------------------------
 		this.removeAll();
 		this.jSplitPaneExpanded=null;
+		
+		this.removeUserFunctions2JToolBar4UserFunction();
+		this.stolenComponentsFromJToolBar=null;
 		if (this.jComponent2Add!=null) {
 			if (this.jComponent2Add instanceof OntologyClassWidget) {
 				((OntologyClassWidget)this.jComponent2Add).removeFromObserver(); 
@@ -213,6 +225,11 @@ public class DynTableJPanel extends JPanel {
 					missingText = Language.translate("Das Editor-Panel für die Klasse ist nicht definiert!");
 					OntologyClassEditorJPanel ocej = ontoClassVis.getEditorJPanel(this.dynForm, startArgIndex);
 					this.jComponent2Add = ocej;
+					
+					Object ocejInstance = this.dynForm.getOntoArgsInstance()[startArgIndex];
+					String clazzName = ocejInstance.getClass().getSimpleName();
+					this.stealJToolBarFromOntologyClassEditorJPanel(ocej);
+					this.addUserFunctions2JToolBar4UserFunction(clazzName);
 					break;
 
 				case DynTableJPanel.EXPANSION_Vertical:
@@ -229,6 +246,7 @@ public class DynTableJPanel extends JPanel {
 			// --- Add the component to the JSplitPane ------------------------
 			switch (this.getExpansionDirection()) {
 			case DynTableJPanel.EXPANSION_Horizontal:
+				
 				this.getJSplitPaneExpanded().setRightComponent(jComponent2Add);
 				break;
 
@@ -246,6 +264,95 @@ public class DynTableJPanel extends JPanel {
 		this.expandMainFrame(doExpand);
 
 	}
+	
+	/**
+	 * Can be used to specify a JToolBar where user functions of 
+	 * a {@link OntologyClassEditorJPanel} can be placed.
+	 *
+	 * @param jToolBar4UserFunction the new JToolBar for user function
+	 */
+	public void setJToolBar4UserFunctions(JToolBar jToolBar4UserFunction) {
+		this.jToolBar4UserFunction = jToolBar4UserFunction;
+	}
+	
+	/**
+	 * Steal the components of a JToolBar for a {@link OntologyClassEditorJPanel}.
+	 * @param ocep the OntologyClassEditorJPanel
+	 */
+	private void stealJToolBarFromOntologyClassEditorJPanel(OntologyClassEditorJPanel ocep) {
+		
+		if (ocep==null) return;
+		if (this.jToolBar4UserFunction==null) return;
+		
+		JToolBar jToolBarUserFunctions = ocep.getJToolBarUserFunctions();
+		Container containerUserFunctions = jToolBarUserFunctions.getParent();
+		while (jToolBarUserFunctions.getComponentCount()>0) {
+			Component comp = jToolBarUserFunctions.getComponent(0);
+			this.getStolenComponentsFromJToolBarOfOntologyClassEditorJPanel().add(comp);
+			jToolBarUserFunctions.remove(comp);
+		}
+		containerUserFunctions.remove(jToolBarUserFunctions);
+		ocep.validate();
+		ocep.repaint();
+	}
+	/**
+	 * Returns the Vector of the stolen components from the customized JToolBar of a OntologyClassEditorJPanel.
+	 * @return the stolen components from a JToolBar of a OntologyClassEditorJPanel
+	 */
+	public Vector<Component> getStolenComponentsFromJToolBarOfOntologyClassEditorJPanel() {
+		if (this.stolenComponentsFromJToolBar==null) {
+			this.stolenComponentsFromJToolBar = new Vector<Component>();
+		}
+		return stolenComponentsFromJToolBar;
+	}
+	
+	/**
+	 * Adds the user functions to the locally specified jToolBar4UserFunction.
+	 * @param headerText the header text
+	 */
+	private void addUserFunctions2JToolBar4UserFunction(String headerText) {
+		
+		if (this.jToolBar4UserFunction==null) return;
+		if (this.getStolenComponentsFromJToolBarOfOntologyClassEditorJPanel().size()==0) return;
+		
+		this.jSeparator4UserFunctions1 = new JToolBar.Separator();
+		this.jToolBar4UserFunction.add(this.jSeparator4UserFunctions1);
+		
+		this.jLabelHeader4UserFunctions = new JLabel(headerText + ":");
+		this.jLabelHeader4UserFunctions.setFont(new Font("Arial", Font.BOLD, 12));
+		this.jToolBar4UserFunction.add(this.jLabelHeader4UserFunctions);
+		
+		this.jSeparator4UserFunctions2 = new JToolBar.Separator();
+		this.jToolBar4UserFunction.add(this.jSeparator4UserFunctions2);
+		
+		Vector<Component> comps = this.getStolenComponentsFromJToolBarOfOntologyClassEditorJPanel();
+		for (int i = 0; i < comps.size(); i++) {
+			this.jToolBar4UserFunction.add(comps.get(i));
+		}
+		this.jToolBar4UserFunction.validate();
+		this.jToolBar4UserFunction.repaint();
+	}
+	/**
+	 * Removes the user functions from the locally specified jToolBar4UserFunction.
+	 */
+	private void removeUserFunctions2JToolBar4UserFunction() {
+		
+		if (this.jToolBar4UserFunction==null) return;
+		if (this.getStolenComponentsFromJToolBarOfOntologyClassEditorJPanel().size()==0) return;
+		
+		Vector<Component> comps = this.getStolenComponentsFromJToolBarOfOntologyClassEditorJPanel();
+		for (int i = 0; i < comps.size(); i++) {
+			this.jToolBar4UserFunction.remove(comps.get(i));
+		}
+		
+		this.jToolBar4UserFunction.remove(this.jSeparator4UserFunctions2);
+		this.jToolBar4UserFunction.remove(this.jLabelHeader4UserFunctions);
+		this.jToolBar4UserFunction.remove(this.jSeparator4UserFunctions1);
+		
+		this.jToolBar4UserFunction.validate();
+		this.jToolBar4UserFunction.repaint();
+	}
+	
 	
 	/**
 	 * Gets the start argument index of the current {@link DynType}.
@@ -285,20 +392,21 @@ public class DynTableJPanel extends JPanel {
 		if (this.getContainerMainFrame()!=null && this.getExpansionDirection()==EXPANSION_Horizontal) {
 			
 			if (doExpand!=this.expanded) {
+				Dimension newMainFrameSize = new Dimension();
 				if (doExpand==true) {
+					// --- Expand view ------------------------------
+					this.setContainerMainFrameOldSize(this.getContainerMainFrame().getSize());
 					double newWidth = this.getContainerMainFrameOldSize().getWidth() + (4.0/3.0) * this.getContainerMainFrameOldSize().getHeight();
-
-					Dimension mainFrameNewSize = new Dimension();
-					mainFrameNewSize.setSize(newWidth, this.getContainerMainFrameOldSize().getHeight());
-					this.getContainerMainFrame().setSize(mainFrameNewSize);
-					
+					newMainFrameSize.setSize(newWidth, this.getContainerMainFrameOldSize().getHeight());
 				} else {
-					this.getContainerMainFrame().setSize(this.getContainerMainFrameOldSize());
+					// --- Restore view -----------------------------
+					newMainFrameSize.setSize(this.getContainerMainFrameOldSize().getWidth(), this.getContainerMainFrame().getSize().getHeight());
 				}	
+				this.getContainerMainFrame().setSize(newMainFrameSize);
 				this.expanded=doExpand;
 			}
 			
-			// --- Center, if dialog ------------------------------------
+			// --- Center, if dialog --------------------------------
 			if (this.getContainerMainFrame() instanceof JDialog) {
 				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 				int top = (screenSize.height - this.getContainerMainFrame().getHeight()) / 2; 
@@ -350,14 +458,22 @@ public class DynTableJPanel extends JPanel {
 		return mainFrame;
 	}
 	/**
+	 * Sets the old size of main frame container .
+	 * @param oldSize the new old size of the main frame container 
+	 */
+	private void setContainerMainFrameOldSize(Dimension oldSize) {
+		if (oldSize==null) return;
+		this.mainFrameOldSize=oldSize;
+	}
+	/**
 	 * Returns the old size of main container .
 	 * @return the returns the container main frame old size
 	 */
 	private Dimension getContainerMainFrameOldSize() {
-		if (mainFrameOldSize==null) {
+		if (this.mainFrameOldSize==null) {
 			this.configureExpansionDirection();
 		}
-		return mainFrameOldSize;
+		return this.mainFrameOldSize;
 	}
 	/**
 	 * Returns the expansion direction.
@@ -409,6 +525,5 @@ public class DynTableJPanel extends JPanel {
 			this.expansionDirection = EXPANSION_Vertical;
 		}	
 	}
-
 	
 }

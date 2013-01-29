@@ -195,6 +195,7 @@
         <entry>
             <key>Branch3</key>
             <value>
+                <adapterClass>agas.adapter.BranchAdapter</adapterClass>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
                 <domain>Gas network</domain>

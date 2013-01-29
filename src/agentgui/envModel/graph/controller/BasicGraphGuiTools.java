@@ -433,7 +433,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JButton getJButtonImportGraph() {
 		if (jButtonImportGraph == null) {
 		    jButtonImportGraph = new JButton();
-		    jButtonImportGraph.setIcon(new ImageIcon(getClass().getResource(pathImage + "import.png")));
+		    jButtonImportGraph.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBtransImport.png")));
 		    jButtonImportGraph.setPreferredSize(jButtonSize);
 		    jButtonImportGraph.setToolTipText(Language.translate("Import Graph from file", Language.EN));
 		    jButtonImportGraph.addActionListener(this);

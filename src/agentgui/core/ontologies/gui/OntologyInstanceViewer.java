@@ -46,6 +46,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JToolBar;
 import javax.swing.border.EtchedBorder;
 
 import org.apache.commons.codec.binary.Base64;
@@ -196,6 +197,16 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		return this.getDynForm().getEnvironmentController();
 	}
 
+	/**
+	 * Can be used to specify a JToolBar where user functions of 
+	 * a {@link OntologyClassEditorJPanel} can be placed.
+	 *
+	 * @param jToolBar4UserFunction the new JToolBar for user function
+	 */
+	public void setJToolBar4UserFunctions(JToolBar jToolBar4UserFunction) {
+		this.getDynTableJPanel().setJToolBar4UserFunctions(jToolBar4UserFunction);
+	}
+	
 	/**
 	 * This method initialises this.
 	 * @return void

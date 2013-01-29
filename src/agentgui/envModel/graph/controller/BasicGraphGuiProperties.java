@@ -46,6 +46,7 @@ import javax.swing.JToolBar;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import agentgui.core.application.Language;
+import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -281,6 +282,9 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 						this.adapter4DataModel.setDataModel(dataModel);
 					}
 					JComponent visualisation = this.adapter4DataModel.getVisualisationComponent();
+					if (visualisation instanceof OntologyInstanceViewer) {
+						((OntologyInstanceViewer)visualisation).setJToolBar4UserFunctions(this.getJJToolBarBarNorth());
+					}
 					visualisation.validate();
 					this.jComponentContent = visualisation;
 				}
