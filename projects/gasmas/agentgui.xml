@@ -19,9 +19,10 @@
             </agent>
             <agent agentReference="gasmas.agents.components.ClusterNetworkAgent">
                 <startArgumentVector>
-                    <startArgument ontologyReference="agentgui.ontology.XyChart" position="1"/>
-                    <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="2"/>
-                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" position="3"/>
+                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" position="1"/>
+                    <startArgument ontologyReference="agentgui.ontology.TimeSeries" position="2"/>
+                    <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="3"/>
+                    <startArgument ontologyReference="agentgui.ontology.Simple_Float" position="4"/>
                 </startArgumentVector>
             </agent>
         </agentVector>

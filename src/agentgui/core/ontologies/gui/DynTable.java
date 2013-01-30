@@ -52,10 +52,12 @@ public class DynTable extends JTable {
 
 	private DynTableJPanel dynTableJPanel = null;
 	private DynForm dynForm = null;
-	private DefaultTableModel tabelModel = null;
 	
+	private DefaultTableModel myTabelModel = null;
+	private TableRowSorter<DefaultTableModel> myRowSorter = null; 
+	private RowFilter<DefaultTableModel, Object> myRowFilter = null; 
+
 	private int rowCounter = 0;
-	private TableRowSorter<DefaultTableModel> rowSorter = null; 
 	private Vector<Integer> editableRows = null;
 	
 	
@@ -77,6 +79,7 @@ public class DynTable extends JTable {
 		this.setSize(200, 200);
 		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		this.refreshTableModel();
+		this.getTableHeader().setReorderingAllowed(false);
 	}
 	
 	/**
@@ -84,15 +87,14 @@ public class DynTable extends JTable {
 	 */
 	public void refreshTableModel() {
 		
-		this.rowCounter=0;
-		this.tabelModel=null;
+		this.rowCounter = 0;
+		this.myTabelModel = null;
+		this.myRowSorter  = null;
+		this.myRowFilter  = null;
 		this.getEditableRowsVector().removeAllElements();
 		
 		this.setModel(this.getTableModel());	
 		this.setRowSorter(this.getMyRowSorter());
-		this.setFilterInvisibleSlots();
-		
-		this.getTableHeader().setReorderingAllowed(false);
 		
 		// --- Set Renderer, Editors and layout -----------
 		TableColumn propColumn = this.getColumnModel().getColumn(0);
@@ -112,13 +114,13 @@ public class DynTable extends JTable {
 	 * @return the table model
 	 */
 	private DefaultTableModel getTableModel(){
-		if (this.tabelModel==null) {
+		if (this.myTabelModel==null) {
 			
 			Vector<String> columnNames = new Vector<String>();
 			columnNames.add(" ");
 			columnNames.add(" ");
 			
-			this.tabelModel = new DefaultTableModel(this.getDataVector(), columnNames) {
+			this.myTabelModel = new DefaultTableModel(this.getDataVector(), columnNames) {
 				private static final long serialVersionUID = 1217406328326262128L;
 				public boolean isCellEditable(int row, int column) {
 					if (column==0) {
@@ -133,33 +135,37 @@ public class DynTable extends JTable {
 				};
 			};
 		}
-		return this.tabelModel;
+		return this.myTabelModel;
 	}
 	
 	/**
 	 * Gets the local RowSorter for the table.
 	 * @return the local RowSorter
 	 */
-	public TableRowSorter<DefaultTableModel> getMyRowSorter() {
-		if (rowSorter==null) {
-			rowSorter = new TableRowSorter<DefaultTableModel>(this.getTableModel()) {
+	private TableRowSorter<DefaultTableModel> getMyRowSorter() {
+		if (myRowSorter==null) {
+			myRowSorter = new TableRowSorter<DefaultTableModel>(this.getTableModel()) {
 				public void toggleSortOrder(int column) {};
 			};
+			myRowSorter.setRowFilter(this.getMyRowFilter());
 		}
-		return rowSorter;
+		return myRowSorter;
 	}
 	
 	/**
 	 * Sets the filter so that invisible declared slots disappear.
 	 */
-	public void setFilterInvisibleSlots() {
-		RowFilter<DefaultTableModel, Integer> rowFilter = new RowFilter<DefaultTableModel, Integer>(){
-			@Override
-			public boolean include(Entry<? extends DefaultTableModel, ? extends Integer> entry) {
-				return ((DynType) entry.getValue(0)).isVisibleInTableView();
+	private RowFilter<DefaultTableModel, Object> getMyRowFilter() {
+		if (myRowFilter==null) {
+			this.myRowFilter = new RowFilter<DefaultTableModel, Object>(){
+				@Override
+				public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
+					DynType dynType = (DynType) entry.getValue(0);
+					return dynType.isVisibleInTableView();
+				};
 			};
-		};
-		this.getMyRowSorter().setRowFilter(rowFilter);
+		}
+		return myRowFilter;
 	}
 
 	/**
