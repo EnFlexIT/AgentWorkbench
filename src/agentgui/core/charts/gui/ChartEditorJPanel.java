@@ -305,7 +305,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
     protected JButton getBtnSaveImage() {
 		if (btnSaveImage == null) {
 			btnSaveImage = new JButton();
-			btnSaveImage.setIcon(new ImageIcon(pathImage + "SaveAsImage.png"));
+			btnSaveImage.setIcon(new ImageIcon(getClass().getResource(pathImage  + "SaveAsImage.png")));
 			btnSaveImage.setPreferredSize(jButtonSize);
 			btnSaveImage.setToolTipText(Language.translate("Als Bild exportieren"));
 			btnSaveImage.addActionListener(this);

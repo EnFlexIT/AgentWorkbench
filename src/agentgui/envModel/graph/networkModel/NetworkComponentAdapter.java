@@ -81,7 +81,7 @@ public abstract class NetworkComponentAdapter {
 	 */
 	public NetworkComponentAdapter4DataModel getStoredDataModelAdapter() {
 		if (networkComponentAdapter4DataModel==null) {
-			networkComponentAdapter4DataModel = getNewDataModelAdapter();
+			networkComponentAdapter4DataModel = this.getNewDataModelAdapter();
 			if (networkComponentAdapter4DataModel!=null && networkComponentAdapter4DataModel instanceof NetworkComponentAdapter4Ontology){
 				this.storeOntologyVisualisationHelper(networkComponentAdapter4DataModel);
 			}
