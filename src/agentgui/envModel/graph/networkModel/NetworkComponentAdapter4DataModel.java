@@ -54,6 +54,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 
 	private GraphEnvironmentController graphController = null;
 
+	
 	/**
 	 * Instantiates a new network component data model adapter.
 	 * @param environmentController the environment controller
@@ -61,6 +62,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	public NetworkComponentAdapter4DataModel(GraphEnvironmentController graphController) {
 		this.setGraphEnvironmentController(graphController);
 	}
+	
 	
 	/**
 	 * Sets the current GraphEnvironmentController.
@@ -77,38 +79,39 @@ public abstract class NetworkComponentAdapter4DataModel {
 		return this.graphController;
 	}
 
+	
 	/**
 	 * Returns the JComponent for the visualisation of the data model.
 	 * @return the visualisation component
 	 */
 	public abstract JComponent getVisualisationComponent();
 	
+	
+	/**
+	 * Save the current settings in the visualisation component.
+	 */
+	public abstract void save();
+	
+	
 	/**
 	 * Sets the data model to the visualisation component.
 	 * @param dataModel the new data model
 	 */
 	public abstract void setDataModel(Object dataModel);
-
 	/**
 	 * Returns the data model from the visualisation component.
 	 * @return the data model
 	 */
 	public abstract Object getDataModel();
 	
-	/**
-	 * Save the current settings in the visualisation component.
-	 */
-	public abstract void save();
-
 	
 	/**
-	 * Returns the data model of a {@link NetworkComponent} as Base64 encoded String.
+	 * Returns the data model of a {@link NetworkComponent} as Vector of Base64 encoded String.
 	 * 
 	 * @param dataModel the data model
 	 * @return the data model encoded as Base64 String
 	 */
 	public abstract Vector<String> getDataModelBase64Encoded(Object dataModel);
-	
 	
 	/**
 	 * Returns the data model of a {@link NetworkComponent} as Object

@@ -13,12 +13,13 @@ import agentgui.ontology.AgentGUI_BaseOntology;
 
 public class GasNodeDataModelAdapter extends NetworkComponentAdapter4Ontology {
 
+	private Vector<Class<? extends Ontology>> ontologyBaseClasses = null;
+	private String[] ontologyClassReferences = null;
+
+	
 	public GasNodeDataModelAdapter(GraphEnvironmentController graphController) {
 		super(graphController);
 	}
-
-	private Vector<Class<? extends Ontology>> ontologyBaseClasses = null;
-	private String[] ontologyClassReferences = null;
 	
 	@Override
 	public Vector<Class<? extends Ontology>> getOntologyBaseClasses() {

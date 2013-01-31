@@ -49,6 +49,8 @@ public abstract class NetworkComponentAdapter {
 	protected GraphEnvironmentController graphController;
 	/** The current NetworkComponent */
 	protected NetworkComponent networkComponent;
+	/** The current GraphNode */
+	protected GraphNode graphNode;
 	
 	/** The OntologyVisualisationHelper, for ontologies. */
 	private OntologyVisualisationHelper ovHelper = null;
@@ -110,11 +112,18 @@ public abstract class NetworkComponentAdapter {
 	 * Invokes to get the JPopup menu elements for this kind of NetworkComponent.
 	 * DO NOT OVERRIDE !!!
 	 *
-	 * @param networkComponent the current NetworkComponent
+	 * @param networkComponentOrGraphNode the current NetworkComponent
 	 * @return the vector of menu elements
 	 */
-	public Vector<JComponent> invokeGetJPopupMenuElements(NetworkComponent networkComponent) {
-		this.networkComponent = networkComponent;
+	public Vector<JComponent> invokeGetJPopupMenuElements(Object networkComponentOrGraphNode) {
+		
+		if (networkComponentOrGraphNode instanceof NetworkComponent) {
+			this.networkComponent = (NetworkComponent) networkComponentOrGraphNode;
+			this.graphNode = null;
+		} else if (networkComponentOrGraphNode instanceof GraphNode) {
+			this.networkComponent = null;
+			this.graphNode = (GraphNode) networkComponentOrGraphNode;
+		}
 		return this.getJPopupMenuElements();
 	}
 	

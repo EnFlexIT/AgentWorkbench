@@ -39,8 +39,13 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 
 import agentgui.core.application.Application;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
+import agentgui.core.ontologies.gui.OntologyClassEditorJPanel;
+import agentgui.core.ontologies.gui.OntologyClassVisualisation;
+import agentgui.core.ontologies.gui.OntologyClassWidget;
+import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetups;
@@ -67,6 +72,7 @@ public abstract class PlugIn implements Observer {
 	private Vector<JComponent> customJComponent = new Vector<JComponent>();
 	private Vector<ProjectWindowTab> customProjectWindowTab = new Vector<ProjectWindowTab>();
 	private Vector<EnvironmentType> customEnvironmentTypes = new Vector<EnvironmentType>();
+	private Vector<OntologyClassVisualisation> customOntologyClassVisualisation = new Vector<OntologyClassVisualisation>();
 	
 	/**
 	 * Default constructor for this class.
@@ -238,6 +244,32 @@ public abstract class PlugIn implements Observer {
 			customEnvironmentTypes.add(envType);
 		}
 	}
+	
+	/**
+	 * Adds a OntologyClassVisualisation to the global settings. The idea of such an object is
+	 * that you are able to mask / visualise a specified class of your Ontology in order to allow 
+	 * a more common or simplified access its data.
+	 * 
+	 * @see OntologyClassVisualisation
+	 * @see OntologyClassWidget
+	 * @see OntologyClassEditorJPanel
+	 * 
+	 * @see GlobalInfo
+	 * @see GlobalInfo#registerOntologyClassVisualisation(String)
+	 * @see GlobalInfo#isOntologyClassVisualisation(String)
+	 * @see OntologyInstanceViewer
+	 *
+	 * @param classNameOfOntologyClassVisualisation the class name of an OntologyClassVisualisation
+	 */
+	protected void addOntologyClassVisualisation(String classNameOfOntologyClassVisualisation) {
+		if (classNameOfOntologyClassVisualisation!=null) {
+			OntologyClassVisualisation ontoClassVis = Application.getGlobalInfo().registerOntologyClassVisualisation(classNameOfOntologyClassVisualisation);
+			if (ontoClassVis!=null) {
+				this.customOntologyClassVisualisation.add(ontoClassVis);
+			}
+		}
+	}
+	
 	// --- End of adding functions --------------
 	
 	/**
@@ -253,12 +285,14 @@ public abstract class PlugIn implements Observer {
 			container.remove(component);
 		}
 		customJComponent = new Vector<JComponent>();
+		
 		// --- remove custom Tab-elements -----------------
 		for (int i = customProjectWindowTab.size()-1; i>-1; i--) {
 			ProjectWindowTab pwt = customProjectWindowTab.get(i);
 			pwt.remove();
 		}
 		customProjectWindowTab = new Vector<ProjectWindowTab>();
+		
 		// --- remove custom environment types ------------
 		for (int i = customEnvironmentTypes.size()-1; i>-1; i--) {
 			EnvironmentType envType = customEnvironmentTypes.get(i);
@@ -268,8 +302,19 @@ public abstract class PlugIn implements Observer {
 			project.getEnvironmentsComboBoxModel().removeElement(envType);
 			Application.getGlobalInfo().removeEnvironmentType(envType);
 		}
-		// --- validate/repaint the CorwWindow ------------
+		customEnvironmentTypes = new Vector<EnvironmentType>();
+		
+		// --- remove custom Ontolo environment types -----
+		for (int i = customOntologyClassVisualisation.size()-1; i>-1; i--) {
+			OntologyClassVisualisation ontoClVis = customOntologyClassVisualisation.get(i);
+			Application.getGlobalInfo().unregisterOntologyClassVisualisation(ontoClVis);
+		}
+		customOntologyClassVisualisation = new Vector<OntologyClassVisualisation>();
+		
+		// --- validate/repaint the main window -----------
 		Application.getMainWindow().validate();
+		Application.getMainWindow().repaint();
+		
 	}
 	// --------------------------------------------------------------
 	// --- Handling of custom elements for the GUI -------- END -----

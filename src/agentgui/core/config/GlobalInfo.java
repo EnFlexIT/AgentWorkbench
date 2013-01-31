@@ -254,8 +254,8 @@ public class GlobalInfo {
 		
 		// ------------------------------------------------------------------
 		// --- Add the known OntologyClassVisualisation's of Agent.GUI ------
-		this.registerOntologyClassVisualisation(new TimeSeriesVisualisation());
-		this.registerOntologyClassVisualisation(new XyChartVisualisation());
+		this.registerOntologyClassVisualisation(TimeSeriesVisualisation.class.getName());
+		this.registerOntologyClassVisualisation(XyChartVisualisation.class.getName());
 		
 	}
 	/**
@@ -1134,12 +1134,44 @@ public class GlobalInfo {
 	// ---- Methods for OntologyClassVisualisations ----------------------------
 	// -------------------------------------------------------------------------
 	/**
-	 * Register ontology class visualisation.
-	 * @param ontoClassVisualisation the onto class visualisation
+	 * Register an OntologyClassVisualisation.
+	 * @param classNameOfOntologyClassVisualisation the class name of the OntologyClassVisualisation
 	 */
-	public void registerOntologyClassVisualisation (OntologyClassVisualisation ontoClassVisualisation) {
-		this.getKnownOntologyClassVisualisations().add(ontoClassVisualisation);
+	public OntologyClassVisualisation registerOntologyClassVisualisation(String classNameOfOntologyClassVisualisation) {
+		
+		try {
+			if (this.isOntologyClassVisualisation(classNameOfOntologyClassVisualisation)==false) {
+				Class<?> clazz = Class.forName(classNameOfOntologyClassVisualisation);
+				OntologyClassVisualisation ontoClassVisualisation = (OntologyClassVisualisation) clazz.newInstance();
+				this.getKnownOntologyClassVisualisations().add(ontoClassVisualisation);	
+				return ontoClassVisualisation;
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
 	}
+	/**
+	 * Unregister an OntologyClassVisualisation.
+	 * @param classNameOfOntologyClassVisualisation the class name of the OntologyClassVisualisation
+	 */
+	public void unregisterOntologyClassVisualisation(String classNameOfOntologyClassVisualisation) {
+		if (this.isOntologyClassVisualisation(classNameOfOntologyClassVisualisation)==true) {
+			OntologyClassVisualisation ontoClassVisualisation=getOntologyClassVisualisation(classNameOfOntologyClassVisualisation);
+			this.getKnownOntologyClassVisualisations().add(ontoClassVisualisation);	
+		}
+	}
+	/**
+	 * Unregister an OntologyClassVisualisation.
+	 * @param classNameOfOntologyClassVisualisation the class name of the OntologyClassVisualisation
+	 */
+	public void unregisterOntologyClassVisualisation(OntologyClassVisualisation ontologyClassVisualisation) {
+		if (this.isOntologyClassVisualisation(ontologyClassVisualisation)==true) {
+			this.getKnownOntologyClassVisualisations().add(ontologyClassVisualisation);	
+		}
+	}
+	
 	/**
 	 * Returns the known ontology class visualisations.
 	 * @return the Vector of known ontology class visualisations
@@ -1225,7 +1257,7 @@ public class GlobalInfo {
 	
 
 	// -------------------------------------------------------------------------
-	// ---- Methods for the API Key for the Google Tranlation ------------------
+	// ---- Methods for the API Key for the Google Translation -----------------
 	// -------------------------------------------------------------------------
 	/**
 	 * Returns the API key for Google.

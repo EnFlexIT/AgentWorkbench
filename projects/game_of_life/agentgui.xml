@@ -22,7 +22,7 @@
         </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1307</useLocalPort>
+        <useLocalPort>1311</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -54,7 +54,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>1458 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>0512 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
     <downloadResources>http://rudel1.cs.uni-due.de:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
     <downloadResources>http://rudel1.cs.uni-due.de:8080/game_of_life/game_of_life_IDE.jar</downloadResources>

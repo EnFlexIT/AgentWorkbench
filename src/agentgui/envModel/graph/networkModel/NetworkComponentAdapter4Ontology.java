@@ -38,7 +38,6 @@ import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 
-
 /**
  * The Class NetworkComponentAdapter4Ontology.
  * 
@@ -126,6 +125,14 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 		}
 		return this.oiv;
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapterVisualisation#save()
+	 */
+	@Override
+	public void save() {
+		this.getOntologyInstanceViewer().save();
+	}
 
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapterVisualisation#getVisualisation()
@@ -148,21 +155,12 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 			ex.printStackTrace();
 		}
 	}
-
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapterVisualisation#getDataModel()
 	 */
 	@Override
 	public Object getDataModel() {
 		return this.getOntologyInstanceViewer().getConfigurationInstances();
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapterVisualisation#save()
-	 */
-	@Override
-	public void save() {
-		this.getOntologyInstanceViewer().save();
 	}
 
 	/* (non-Javadoc)
