@@ -29,7 +29,6 @@
 package agentgui.envModel.graph.controller;
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -57,6 +56,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
@@ -65,6 +65,8 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
@@ -97,7 +99,6 @@ import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.LayeredIcon;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
@@ -106,7 +107,8 @@ import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
-import edu.uci.ics.jung.visualization.transform.MutableTransformer;
+import javax.swing.SwingConstants;
+import java.awt.Rectangle;
 
 /**
  * Dialog for adding a new network component to the model.<br>
@@ -123,20 +125,30 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 public class AddComponentDialog extends JInternalFrame implements ActionListener {
 
     private static final long serialVersionUID = -7481141098749690137L;
+    private final String pathImage = GraphGlobals.getPathImages(); // @jve:decl-index=0:
+    
+    private JLabel jLabelFilter = null;
+    private JLabel jLabelInstructionMerge = null;
+    private JLabel jLabelInstructionSelect = null;
 
-	private JPanel jPanelCenter = null;
-	private JPanel jPanelSouth = null;
+    private JComboBox jComboBoxFilter = null;
+    
+    private JPanel jPanelFilter = null;
+	private JPanel jPanelVisView = null;
 
-	private JPanel jContentPane = null;
+	private JPanel jPanelTop = null;
     private JPanel jPanelBottom = null;
-    private JPanel jPanelViewer = null;
     private JScrollPane jScrollPane = null;
     
     private JList jListComponentTypes = null;
     private Vector<ComponentTypeListElement> componentTypeList = null;  
     
-    private JLabel jLabelInstructionMerge = null;
-    private JLabel jLabelInstructionSelect = null;
+    private JToolBar jJToolBarBarVisViewLeft = null;
+
+	private JButton jButtonSpin45 = null;
+	private JButton jButtonSpin90 = null;
+	private JButton jButtonSpin270 = null;
+	private JButton jButtonSpin315 = null;
     
     private JButton jButtonAdd = null;
     private JButton jButtonClose = null;
@@ -148,15 +160,20 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
     
     private VisualizationViewer<GraphNode, GraphEdge> visViewer = null;
 
-    private NetworkModel currNetworkModel = null;
+    private NetworkModel currNetworkModel = null;  //  @jve:decl-index=0:
     private ComponentTypeListElement currCtsListElement;
 	private DomainSettings currDomainSetings;
 	
 	/** The graph element prototype of the selected component type. */
     private GraphElementPrototype currGraphElementPrototype = null; // @jve:decl-index=0:
 	private GraphNode currGraphNodeSelected = null;
-	
 
+	private JSplitPane jSplitPaneContent = null;
+
+	private JPanel jPanelSplitBottom = null;
+	private JToolBar jJToolBarBarVisViewRight = null;
+
+	
 	/**
      * Gets the parent object and initializes.
      * @param controller the GraphEnvironmentController
@@ -175,8 +192,9 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
      */
     private void initialize() {
 		
-    	this.setSize(380, 500);
-		this.setTitle("Select a Network Component to Add");
+    	this.setContentPane(getJSplitPaneContent());
+		this.setTitle("Add Network Component");
+		this.setBounds(new Rectangle(0, 0, 240, 410));
 		this.setTitle(Language.translate(this.getTitle(), Language.EN));
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.registerEscapeKeyStroke();
@@ -191,7 +209,6 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 		BasicInternalFrameUI ui = (BasicInternalFrameUI)this.getUI();
 		ui.getNorthPane().remove(0);
 		
-		this.setContentPane(getJContentPane());
 		
     }
     
@@ -202,8 +219,15 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
     public void setVisible(boolean aFlag) {
     	if (aFlag==true) {
     		if (this.graphDesktop!=null && this.isVisible()==false) {
-        		this.graphDesktop.add(this, JDesktopPane.PALETTE_LAYER);
-//        		this.graphDesktop.registerEditor(this);	
+    			// --- Add to the desktop ---------------------------
+    			this.graphDesktop.add(this, JDesktopPane.PALETTE_LAYER);
+    			// --- remind the old inverse divider location ------
+    			int oldInverseDividerLocation = this.getHeight() - this.getJSplitPaneContent().getDividerLocation();
+    			// --- calculate and set the new size ---------------
+    			this.setSize(new Dimension(this.getWidth(), this.graphDesktop.getHeight()));
+    			// --- set the new divider position -----------------
+    			int newDividerLocation = this.graphDesktop.getHeight() - oldInverseDividerLocation;
+    			this.getJSplitPaneContent().setDividerLocation(newDividerLocation);
         	}	
     	} 
 		super.setVisible(aFlag);
@@ -224,93 +248,100 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
     }
     
     /**
-	 * This method initializes jContentPane	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jSplitPaneContent	
+	 * @return javax.swing.JSplitPane	
 	 */
-	private JPanel getJContentPane() {
-		if (jContentPane == null) {
-			jContentPane = new JPanel();
-			jContentPane.setLayout(new BorderLayout());
-			jContentPane.add(getJPanelCenter(), BorderLayout.CENTER);
-			jContentPane.add(getJPanelSouth(), BorderLayout.SOUTH);
+	private JSplitPane getJSplitPaneContent() {
+		if (jSplitPaneContent == null) {
+			jSplitPaneContent = new JSplitPane();
+			jSplitPaneContent.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			jSplitPaneContent.setDividerSize(0);
+			jSplitPaneContent.setDividerLocation(160);
+			jSplitPaneContent.setContinuousLayout(true);
+			jSplitPaneContent.setPreferredSize(new Dimension(234, 603));
+			jSplitPaneContent.setTopComponent(getJPanelTop());
+			jSplitPaneContent.setBottomComponent(getJPanelSplitBottom());
+			jSplitPaneContent.setResizeWeight(1.0D);
 		}
-		return jContentPane;
-	}
-	
-	/**
-	 * This method initializes jPanelSouth	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelSouth() {
-		if (jPanelSouth == null) {
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.fill = GridBagConstraints.BOTH;
-			gridBagConstraints2.gridx = 0;
-			gridBagConstraints2.gridy = 0;
-			gridBagConstraints2.insets = new Insets(15, 15, 0, 15);
-			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-			gridBagConstraints6.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints6.gridx = 0;
-			gridBagConstraints6.gridy = 2;
-			gridBagConstraints6.ipadx = 0;
-			gridBagConstraints6.insets = new Insets(15, 15, 15, 15);
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints3.insets = new Insets(5, 15, 0, 15);
-			gridBagConstraints3.gridx = -1;
-			gridBagConstraints3.gridy = 1;
-			gridBagConstraints3.ipadx = 0;
-			gridBagConstraints3.weightx = 1.0;
-			gridBagConstraints3.weighty = 0.0;
-			gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
-			
-			jLabelInstructionMerge = new JLabel();
-		    jLabelInstructionMerge.setText("Select a vertex to merge");
-		    jLabelInstructionMerge.setFont(new Font("Dialog", Font.BOLD, 12));
-		    jLabelInstructionMerge.setText(Language.translate(jLabelInstructionMerge.getText(), Language.EN));
-		
-			jPanelSouth = new JPanel();
-			jPanelSouth.setLayout(new GridBagLayout());
-			jPanelSouth.add(getJViewerPanel(), gridBagConstraints3);
-			jPanelSouth.add(getJPanelBottom(), gridBagConstraints6);
-			jPanelSouth.add(jLabelInstructionMerge, gridBagConstraints2);
-		}
-		return jPanelSouth;
+		return jSplitPaneContent;
 	}
 
-	/**
-	 * This method initializes jPanelCenter	
+    /**
+	 * This method initializes jPanelTop	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getJPanelCenter() {
-		if (jPanelCenter == null) {
+	private JPanel getJPanelTop() {
+		if (jPanelTop == null) {
+			
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 			gridBagConstraints1.fill = GridBagConstraints.BOTH;
 			gridBagConstraints1.gridx = 0;
-			gridBagConstraints1.gridy = 1;
+			gridBagConstraints1.gridy = 2;
 			gridBagConstraints1.weightx = 1.0;
-			gridBagConstraints1.weighty = 1.0;
-			gridBagConstraints1.insets = new Insets(5, 15, 0, 15);
+			gridBagConstraints1.weighty = 0.1;
+			gridBagConstraints1.insets = new Insets(5, 10, 0, 10);
+			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
+			gridBagConstraints9.gridx = 0;
+			gridBagConstraints9.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints9.weightx = 1.0;
+			gridBagConstraints9.insets = new Insets(10, 10, 0, 10);
+			gridBagConstraints9.gridy = 0;
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 			gridBagConstraints7.fill = GridBagConstraints.BOTH;
 			gridBagConstraints7.gridx = -1;
-			gridBagConstraints7.gridy = -1;
-			gridBagConstraints7.insets = new Insets(15, 15, 0, 15);
+			gridBagConstraints7.gridy = 1;
+			gridBagConstraints7.insets = new Insets(10, 10, 0, 10);
 			
 			jLabelInstructionSelect = new JLabel();
 			jLabelInstructionSelect.setText("Select a network component");
 			jLabelInstructionSelect.setFont(new Font("Dialog", Font.BOLD, 12));
 			jLabelInstructionSelect.setText(Language.translate(jLabelInstructionSelect.getText(), Language.EN));
-
-			jPanelCenter = new JPanel();
-			jPanelCenter.setLayout(new GridBagLayout());
-			jPanelCenter.add(jLabelInstructionSelect, gridBagConstraints7);
-			jPanelCenter.add(getJScrollPane(), gridBagConstraints1);
+			
+			jPanelTop = new JPanel();
+			jPanelTop.setLayout(new GridBagLayout());
+			jPanelTop.add(jLabelInstructionSelect, gridBagConstraints7);
+			jPanelTop.add(getJPanelFilter(), gridBagConstraints9);
+			jPanelTop.add(getJScrollPane(), gridBagConstraints1);
 		}
-		return jPanelCenter;
+		return jPanelTop;
 	}
 	
+	/**
+	 * This method initializes jPanelNorth	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelFilter() {
+		if (jPanelFilter == null) {
+			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
+			gridBagConstraints10.fill = GridBagConstraints.BOTH;
+			gridBagConstraints10.gridy = 0;
+			gridBagConstraints10.weightx = 1.0;
+			gridBagConstraints10.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints10.gridx = 1;
+			
+			jLabelFilter = new JLabel();
+			jLabelFilter.setText("Domain Filter:");
+			jLabelFilter.setFont(new Font("Dialog", Font.BOLD, 12));
+			
+			jPanelFilter = new JPanel();
+			jPanelFilter.setLayout(new GridBagLayout());
+			jPanelFilter.add(jLabelFilter, new GridBagConstraints());
+			jPanelFilter.add(getJComboBoxFilter(), gridBagConstraints10);
+		}
+		return jPanelFilter;
+	}
+
+	/**
+	 * This method initializes jComboBoxFilter	
+	 * @return javax.swing.JComboBox	
+	 */
+	private JComboBox getJComboBoxFilter() {
+		if (jComboBoxFilter == null) {
+			jComboBoxFilter = new JComboBox();
+			jComboBoxFilter.setPreferredSize(new Dimension(100, 26));
+		}
+		return jComboBoxFilter;
+	}
 	 /**
      * This method initializes jScrollPane
      * @return javax.swing.JScrollPane
@@ -323,75 +354,6 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 		}
 		return jScrollPane;
     }
-
-    /**
-     * This method initializes btnOK
-     * @return javax.swing.JButton
-     */
-    private JButton getJButtonAdd() {
-		if (jButtonAdd == null) {
-		    jButtonAdd = new JButton();
-		    jButtonAdd.setText(Language.translate("Add", Language.EN));
-		    jButtonAdd.setPreferredSize(new Dimension(80, 26));
-		    jButtonAdd.setForeground(new Color(0, 153, 0));
-		    jButtonAdd.setFont(new Font("Dialog", Font.BOLD, 12));
-		    jButtonAdd.addActionListener(this);
-		}
-		return jButtonAdd;
-    }
-    /**
-     * This method initializes jBottomPanel
-     * @return javax.swing.JPanel
-     */
-    private JPanel getJPanelBottom() {
-		if (jPanelBottom == null) {
-		    GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-		    gridBagConstraints5.insets = new Insets(5, 25, 5, 0);
-		    GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-		    gridBagConstraints4.insets = new Insets(5, 0, 5, 25);
-		    jPanelBottom = new JPanel();
-		    jPanelBottom.setLayout(new GridBagLayout());
-		    jPanelBottom.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		    jPanelBottom.add(getJButtonAdd(), gridBagConstraints4);
-		    jPanelBottom.add(getJButtonClose(), gridBagConstraints5);
-		}
-		return jPanelBottom;
-    }
-
-    /**
-     * This method initializes btnCancel
-     * @return javax.swing.JButton
-     */
-    private JButton getJButtonClose() {
-		if (jButtonClose == null) {
-		    jButtonClose = new JButton();
-		    jButtonClose.setText(Language.translate("Close", Language.EN));
-		    jButtonClose.setPreferredSize(new Dimension(80, 26));
-		    jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));
-		    jButtonClose.setForeground(new Color(153, 0, 0));
-		    jButtonClose.addActionListener(this);
-		}
-		return jButtonClose;
-    }
-
-    /**
-     * This method initializes jViewerPanel
-     * @return javax.swing.JPanel
-     */
-    private JPanel getJViewerPanel() {
-		if (jPanelViewer == null) {
-		    GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		    gridBagConstraints.fill = GridBagConstraints.BOTH;
-		    gridBagConstraints.weighty = 1.0;
-		    gridBagConstraints.weightx = 1.0;
-		    jPanelViewer = new JPanel();
-		    jPanelViewer.setLayout(new GridBagLayout());
-		    jPanelViewer.setPreferredSize(new Dimension(20, 150));
-		    jPanelViewer.add(getVisualizationViewer(), gridBagConstraints);
-		}
-		return jPanelViewer;
-    }
-    
     /**
      * This method initializes componentTypesList
      * @return javax.swing.JList
@@ -424,7 +386,7 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 						} else {
 							String msg = Language.translate("The definition of the component contains no graph prototyp definition.", Language.EN);
 							String titel = Language.translate("Missing definition of the Graph prototype for '" + currCtsListElement.getComponentName() + "'!", Language.EN);
-							JOptionPane.showMessageDialog(getJContentPane(), msg, titel, JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(getJPanelTop(), msg, titel, JOptionPane.WARNING_MESSAGE);
 						}
 				    }
 				}
@@ -432,7 +394,146 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 		}
 		return jListComponentTypes;
     }
+    
+	/**
+	 * This method initializes jPanelSplitBottom	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelSplitBottom() {
+		if (jPanelSplitBottom == null) {
+			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
+			gridBagConstraints6.gridx = 0;
+			gridBagConstraints6.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints6.insets = new Insets(5, 10, 0, 10);
+			gridBagConstraints6.gridy = 0;
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			gridBagConstraints5.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints5.gridx = 0;
+			gridBagConstraints5.gridy = 4;
+			gridBagConstraints5.ipadx = 0;
+			gridBagConstraints5.weightx = 1.0;
+			gridBagConstraints5.insets = new Insets(10, 10, 10, 10);
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.fill = GridBagConstraints.BOTH;
+			gridBagConstraints3.gridx = -1;
+			gridBagConstraints3.gridy = 1;
+			gridBagConstraints3.weighty = 0.05;
+			gridBagConstraints3.insets = new Insets(5, 10, 0, 10);
 
+			jLabelInstructionMerge = new JLabel();
+		    jLabelInstructionMerge.setText("Select a vertex to merge");
+		    jLabelInstructionMerge.setHorizontalTextPosition(SwingConstants.TRAILING);
+		    jLabelInstructionMerge.setHorizontalAlignment(SwingConstants.CENTER);
+		    jLabelInstructionMerge.setFont(new Font("Dialog", Font.BOLD, 12));
+		    jLabelInstructionMerge.setText(Language.translate(jLabelInstructionMerge.getText(), Language.EN));
+
+			jPanelSplitBottom = new JPanel();
+			jPanelSplitBottom.setLayout(new GridBagLayout());
+			jPanelSplitBottom.add(jLabelInstructionMerge, gridBagConstraints6);
+			jPanelSplitBottom.add(getJPanelVisView(), gridBagConstraints3);
+			jPanelSplitBottom.add(getJPanelBottom(), gridBagConstraints5);
+			
+		}
+		return jPanelSplitBottom;
+	}
+	
+	/**
+	 * This method initializes jPanelVisView	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelVisView() {
+		if (jPanelVisView == null) {
+			
+			GridBagConstraints gridBagConstraintsLeft = new GridBagConstraints();
+			gridBagConstraintsLeft.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraintsLeft.gridx = 0;
+			gridBagConstraintsLeft.gridy = 0;
+			gridBagConstraintsLeft.weighty = 0.0;
+			gridBagConstraintsLeft.insets = new Insets(0, 0, 0, 5);
+			
+			GridBagConstraints gridBagConstraintsCenter = new GridBagConstraints();
+			gridBagConstraintsCenter.fill = GridBagConstraints.BOTH;
+			gridBagConstraintsCenter.gridx = 1;
+			gridBagConstraintsCenter.gridy = 0;
+			gridBagConstraintsCenter.weightx = 1.0;
+			gridBagConstraintsCenter.weighty = 1.0;
+
+			GridBagConstraints gridBagConstraintsRight = new GridBagConstraints();
+			gridBagConstraintsRight.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraintsRight.gridx = 2;
+			gridBagConstraintsRight.gridy = 0;
+			gridBagConstraintsRight.weightx = 0.0;
+			gridBagConstraintsRight.insets = new Insets(0, 5, 0, 0);
+
+			jPanelVisView = new JPanel();
+			jPanelVisView.setPreferredSize(new Dimension(100, 250));
+			jPanelVisView.setLayout(new GridBagLayout());
+			jPanelVisView.add(getJJToolBarBarVisViewLeft(), gridBagConstraintsLeft);
+			jPanelVisView.add(getVisualizationViewer(), gridBagConstraintsCenter);
+			jPanelVisView.add(getJJToolBarBarVisViewRight(), gridBagConstraintsRight);
+		}
+		return jPanelVisView;
+	}
+
+    /**
+     * This method initializes jBottomPanel
+     * @return javax.swing.JPanel
+     */
+    private JPanel getJPanelBottom() {
+		if (jPanelBottom == null) {
+		    GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+		    gridBagConstraints11.anchor = GridBagConstraints.NORTHEAST;
+		    gridBagConstraints11.gridx = 2;
+		    gridBagConstraints11.gridy = 0;
+		    gridBagConstraints11.ipadx = 0;
+		    gridBagConstraints11.insets = new Insets(5, 5, 5, 0);
+		    GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+		    gridBagConstraints4.insets = new Insets(5, 0, 5, 5);
+		    gridBagConstraints4.gridy = 0;
+		    gridBagConstraints4.ipadx = 0;
+		    gridBagConstraints4.gridx = 1;
+		    
+		    jPanelBottom = new JPanel();
+		    jPanelBottom.setLayout(new GridBagLayout());
+		    jPanelBottom.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		    jPanelBottom.add(getJButtonClose(), gridBagConstraints4);
+		    jPanelBottom.add(getJButtonAdd(), gridBagConstraints11);
+		}
+		return jPanelBottom;
+    }
+    /**
+     * This method initializes btnCancel
+     * @return javax.swing.JButton
+     */
+    private JButton getJButtonClose() {
+		if (jButtonClose == null) {
+		    jButtonClose = new JButton();
+		    jButtonClose.setText("Close");
+		    jButtonClose.setText(Language.translate(jButtonClose.getText(), Language.EN));
+		    jButtonClose.setPreferredSize(new Dimension(95, 26));
+		    jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));
+		    jButtonClose.setForeground(new Color(153, 0, 0));
+		    jButtonClose.addActionListener(this);
+		}
+		return jButtonClose;
+    }
+    /**
+     * This method initializes btnOK
+     * @return javax.swing.JButton
+     */
+    private JButton getJButtonAdd() {
+		if (jButtonAdd == null) {
+		    jButtonAdd = new JButton();
+		    jButtonAdd.setText("Add");
+		    jButtonAdd.setText(Language.translate(jButtonAdd.getText(), Language.EN));
+		    jButtonAdd.setPreferredSize(new Dimension(95, 26));
+		    jButtonAdd.setForeground(new Color(0, 153, 0));
+		    jButtonAdd.setFont(new Font("Dialog", Font.BOLD, 12));
+		    jButtonAdd.addActionListener(this);
+		}
+		return jButtonAdd;
+    }
+    
     /**
      * Initializes the VisualizationViewer
      * @return The VisualizationViewer
@@ -457,11 +558,12 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 		    visViewer.setGraphMouse(pgm);
 		    visViewer.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 			visViewer.setBackground(Color.WHITE);
-			visViewer.setPreferredSize(new Dimension(200, 200));
+			visViewer.setSize(new Dimension(150, 150));
+			visViewer.setPreferredSize(new Dimension(250, 250));
 		    
 		    // --- Define a 
-			MutableTransformer mutableLayout = visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
-			mutableLayout.translate(120, 10);
+//			MutableTransformer mutableLayout = visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+//			mutableLayout.translate(120, 10);
 	
 			// --- Configure the vertex shape and size ------------------------
 			visViewer.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<GraphNode, GraphEdge>());
@@ -648,6 +750,7 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 		return visViewer;
     }
     
+    // --- Begin sub class ----------------------
     /**
 	 * Controls the shape, size, and aspect ratio for each vertex.
 	 * 
@@ -656,13 +759,10 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 	 */
 	private final class VertexShapeSizeAspect<V, E> extends AbstractVertexShapeTransformer<GraphNode> implements Transformer<GraphNode, Shape> {
 
-		/**
-		 * Instantiates a new vertex shape size aspect.
-		 */
+		/** Instantiates a new vertex shape size aspect. */
 		public VertexShapeSizeAspect() {
 
 			this.setSizeTransformer(new Transformer<GraphNode, Integer>() {
-
 				@Override
 				public Integer transform(GraphNode node) {
 
@@ -699,8 +799,97 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 			return factory.getEllipse(node); // DEFAULT;
 		}
 	}
+    // --- End sub class ------------------------
 	
-    /**
+	/**
+	 * This method initializes jJToolBarBarVisView	
+	 * @return javax.swing.JToolBar	
+	 */
+	private JToolBar getJJToolBarBarVisViewLeft() {
+		if (jJToolBarBarVisViewLeft == null) {
+			jJToolBarBarVisViewLeft = new JToolBar();
+			jJToolBarBarVisViewLeft.setFloatable(false);
+			jJToolBarBarVisViewLeft.setSize(new Dimension(26, 260));
+			jJToolBarBarVisViewLeft.setPreferredSize(new Dimension(26, 260));
+			jJToolBarBarVisViewLeft.setOrientation(JToolBar.VERTICAL);
+			jJToolBarBarVisViewLeft.setBorder(BorderFactory.createEmptyBorder());
+			jJToolBarBarVisViewLeft.add(getJButtonSpin315());
+			jJToolBarBarVisViewLeft.add(getJButtonSpin270());
+			
+		}
+		return jJToolBarBarVisViewLeft;
+	}
+	/**
+	 * This method initializes jJToolBarBarVisViewRight	
+	 * @return javax.swing.JToolBar	
+	 */
+	private JToolBar getJJToolBarBarVisViewRight() {
+		if (jJToolBarBarVisViewRight == null) {
+			jJToolBarBarVisViewRight = new JToolBar();
+			jJToolBarBarVisViewRight.setFloatable(false);
+			jJToolBarBarVisViewRight.setSize(new Dimension(26, 26));
+			jJToolBarBarVisViewRight.setPreferredSize(new Dimension(26, 26));
+			jJToolBarBarVisViewRight.setOrientation(JToolBar.VERTICAL);
+			jJToolBarBarVisViewRight.setBorder(BorderFactory.createEmptyBorder());
+			jJToolBarBarVisViewRight.add(getJButtonSpin45());
+			jJToolBarBarVisViewRight.add(getJButtonSpin90());
+		}
+		return jJToolBarBarVisViewRight;
+	}
+	/**
+	 * This method initializes jButtonSpin45	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonSpin45() {
+		if (jButtonSpin45 == null) {
+			jButtonSpin45 = new JButton();
+			jButtonSpin45.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate45.png")));
+			jButtonSpin45.setToolTipText("Rotate 45°");
+			jButtonSpin45.addActionListener(this);
+		}
+		return jButtonSpin45;
+	}
+	/**
+	 * This method initializes jButtonSpin90	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonSpin90() {
+		if (jButtonSpin90 == null) {
+			jButtonSpin90 = new JButton();
+			jButtonSpin90.setToolTipText("Rotate 90°");
+			jButtonSpin90.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate90.png")));
+			jButtonSpin90.addActionListener(this);
+		}
+		return jButtonSpin90;
+	}
+	/**
+	 * This method initializes jButtonSpin315	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonSpin315() {
+		if (jButtonSpin315 == null) {
+			jButtonSpin315 = new JButton();
+			jButtonSpin315.setToolTipText("Rotate -45°");
+			jButtonSpin315.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate315.png")));
+			jButtonSpin315.addActionListener(this);
+		}
+		return jButtonSpin315;
+	}
+	/**
+	 * This method initializes jButtonSpin270	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonSpin270() {
+		if (jButtonSpin270 == null) {
+			jButtonSpin270 = new JButton();
+			jButtonSpin270.setToolTipText("Rotate -90°");
+			jButtonSpin270.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate270.png")));
+			jButtonSpin270.addActionListener(this);
+		}
+		return jButtonSpin270;
+	}
+
+	 /**
      * This method takes the GraphPrototype class name as string and creates a graph of the prototype and shows a preview in the visualizationViewer
      * @param graphPrototype
      */
@@ -771,7 +960,7 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
     	
 		// --- Define default layout ------------
     	Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
-		layout.setSize(new Dimension(100, 100));
+//		layout.setSize(new Dimension(100, 100));
 		
 		// --------------------------------------
 		// --- Some special cases ---------------
@@ -781,7 +970,7 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 			// --- Case DistributionNodes -------
 			// ----------------------------------
 			GraphNode node = graph.getVertices().iterator().next();
-			node.setPosition(new Point2D.Double(50, 50));
+//			node.setPosition(new Point2D.Double(50, 50));
 			
 			layout = new StaticLayout<GraphNode, GraphEdge>(graph);
 			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
@@ -856,7 +1045,7 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 		// --- Set the graph to the layout ------
 		visViewer.setGraphLayout(layout);
 		visViewer.repaint();
-		jContentPane.repaint();
+		jPanelTop.repaint();
     }
 
     /**
@@ -1056,7 +1245,7 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 			// --- the position of the currently selected node in the    ------  
 			// --- current setup									 	 ------
 			// ----------------------------------------------------------------			
-			this.applyNodeShift2MergeWithNetworkModel(this.basicGraphGui.getPickedSingleNode(), this.currGraphNodeSelected);
+			this.applyNodeShift2MergeWithNetworkModel(graphNodeSelectedInMainGraph, this.currGraphNodeSelected);
 			
 			// --- Create the merge description -------------------------------
 			HashSet<GraphNode> nodes2Add = new HashSet<GraphNode>();
@@ -1072,6 +1261,6 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 		    this.dispose();
 		}
     }
+	
 
-
-} // @jve:decl-index=0:visual-constraint="18,-13"
+}  //  @jve:decl-index=0:visual-constraint="78,-20"
