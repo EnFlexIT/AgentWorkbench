@@ -233,18 +233,19 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     		
     	// --- Evaluate for a GraphNode context menu -----------
     	adapter = netModel.getNetworkComponentAdapter(this.graphController, graphNode);
-    	adapterJComponents2Add = adapter.invokeGetJPopupMenuElements(graphNode);
-    	if (adapterJComponents2Add!=null) {
-			if (adapterJComponents2Add.size()>0) {
-				this.vertexPopup.add(this.getNewSeparator(graphNode.getId()+ "Adapter"));
-				for (int i = 0; i < adapterJComponents2Add.size(); i++) {
-					JComponent item = adapterJComponents2Add.get(i);
-					item.setName(MENU_ITEM_NAME_PREFIX + graphNode.getId()+ i);
-					this.vertexPopup.add(item);
-				}
-			}
-		}
-    	
+    	if (adapter!=null) {
+    		adapterJComponents2Add = adapter.invokeGetJPopupMenuElements(graphNode);
+        	if (adapterJComponents2Add!=null) {
+    			if (adapterJComponents2Add.size()>0) {
+    				this.vertexPopup.add(this.getNewSeparator(graphNode.getId()+ "Adapter"));
+    				for (int i = 0; i < adapterJComponents2Add.size(); i++) {
+    					JComponent item = adapterJComponents2Add.get(i);
+    					item.setName(MENU_ITEM_NAME_PREFIX + graphNode.getId()+ i);
+    					this.vertexPopup.add(item);
+    				}
+    			}
+    		}	
+    	}
     	
     	// --- Evaluate for a NetworkComponent -----------------
     	Vector<NetworkComponent> netComps = this.getNetworkComponents(graphNode);

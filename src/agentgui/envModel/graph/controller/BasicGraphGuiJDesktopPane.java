@@ -48,8 +48,8 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 
 	private static final long serialVersionUID = 5733873560749370049L;
 	
-	private HashMap<Object, BasicGraphGuiProperties> propertyWindows = null;  //  @jve:decl-index=0:
-	private BasicGraphGuiProperties lastOpenedBasicGraphGuiProperties = null;
+	private HashMap<Object, JInternalFrame> editorFrames = null;  //  @jve:decl-index=0:
+	private JInternalFrame lastOpenedEditor = null;
 	private ComponentListener myComponentAdapter = null;  //  @jve:decl-index=0:
 	
 	
@@ -70,66 +70,83 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	}
 
 	/**
-	 * Returns a HashMap with all open property windows.
+	 * Returns a HashMap with all open editor windows.
 	 * @return the local a HashMap with all open property windows
 	 */
-	public HashMap<Object, BasicGraphGuiProperties> getHashMapBasicGraphGuiProperties() {
-		if (this.propertyWindows==null) {
-			propertyWindows = new HashMap<Object, BasicGraphGuiProperties>();
+	public HashMap<Object, JInternalFrame> getHashMapEditorFrames() {
+		if (this.editorFrames==null) {
+			editorFrames = new HashMap<Object, JInternalFrame>();
 		}
-		return propertyWindows;
+		return editorFrames;
 	}
 	/**
 	 * Can be used in order to register a property window for components or nodes.
-	 * @param basicGraphGuiProperties the BasicGraphGuiProperties to register
+	 * @param internalFrame the JInternalFrame to register
 	 */
-	public void registerBasicGraphGuiProperties(BasicGraphGuiProperties basicGraphGuiProperties) {
-		this.getHashMapBasicGraphGuiProperties().put(basicGraphGuiProperties.getGraphObject(), basicGraphGuiProperties);
-		this.setLastOpenedBasicGraphGuiProperties(basicGraphGuiProperties);
+	public void registerEditor(JInternalFrame internalFrame) {
+		
+		if (internalFrame instanceof BasicGraphGuiProperties) {
+			BasicGraphGuiProperties bggp = (BasicGraphGuiProperties) internalFrame;
+			this.getHashMapEditorFrames().put(bggp.getGraphObject(), internalFrame);
+			
+		} else {
+			String title = internalFrame.getTitle();
+			this.getHashMapEditorFrames().put(title, internalFrame);
+			
+		}
+		this.setLastOpenedEditor(internalFrame);
 	}
 	/**
 	 * Unregisters a property window for components or nodes
-	 * @param basicGraphGuiProperties the BasicGraphGuiProperties to unregister
+	 * @param jInternalFrame the JInternalFrame to unregister
 	 */
-	public void unregisterBasicGraphGuiProperties(BasicGraphGuiProperties basicGraphGuiProperties) {
-		this.getHashMapBasicGraphGuiProperties().remove(basicGraphGuiProperties.getGraphObject());
-		if (basicGraphGuiProperties==this.getLastOpenedBasicGraphGuiProperties()) {
-			this.setLastOpenedBasicGraphGuiProperties(null);
+	public void unregisterEditor(JInternalFrame internalFrame) {
+		
+		if (internalFrame instanceof BasicGraphGuiProperties) {
+			BasicGraphGuiProperties bggp = (BasicGraphGuiProperties) internalFrame;
+			this.getHashMapEditorFrames().remove(bggp.getGraphObject());
+			
+		} else {
+			String title = internalFrame.getTitle();
+			this.getHashMapEditorFrames().remove(title);
+		}
+		if (internalFrame==this.getLastOpenedEditor()) {
+			this.setLastOpenedEditor(null);
 		}
 	}
 	/**
-	 * Returns the BasicGraphGuiProperties for a graphObject, if available
+	 * Returns, if available, the JInternalFrame for an object like GraphNode, NetworkComponet 
 	 * @param graphObject the graph object (NetworkComponent or Node)
-	 * @return the instances of the related BasicGraphGuiProperties, if available
+	 * @return the instances of the related JInternalFrame, if available
 	 */
-	public BasicGraphGuiProperties getBasicGraphGuiProperties(Object graphObject) {
-		return this.getHashMapBasicGraphGuiProperties().get(graphObject);
+	public JInternalFrame getEditor(Object graphObject) {
+		return this.getHashMapEditorFrames().get(graphObject);
 	}
 
 	/**
-	 * Sets the last opened BasicGraphGuiProperties.
-	 * @param lastOpenedFrame the new last opened BasicGraphGuiProperties
+	 * Sets the last opened JInternalFrame.
+	 * @param lastOpenedEditorFrame the new last opened JInternalFrame
 	 */
-	private void setLastOpenedBasicGraphGuiProperties(BasicGraphGuiProperties lastOpenedFrame) {
-		this.lastOpenedBasicGraphGuiProperties = lastOpenedFrame;
+	private void setLastOpenedEditor(JInternalFrame lastOpenedEditorFrame) {
+		this.lastOpenedEditor = lastOpenedEditorFrame;
 	}
 	/**
-	 * Gets the last opened BasicGraphGuiProperties.
-	 * @return the last opened BasicGraphGuiProperties
+	 * Gets the last opened JInternalFrame.
+	 * @return the last opened JInternalFrame
 	 */
-	public BasicGraphGuiProperties getLastOpenedBasicGraphGuiProperties() {
-		return lastOpenedBasicGraphGuiProperties;
+	public JInternalFrame getLastOpenedEditor() {
+		return lastOpenedEditor;
 	}
 	
 	/**
 	 * Will close all open property windows.
 	 */
-	public void closeAllBasicGraphGuiProperties() {
+	public void closeAllEditors() {
 		
-		HashMap<Object, BasicGraphGuiProperties> copyOfPropertyWindows = new HashMap<Object, BasicGraphGuiProperties>(this.getHashMapBasicGraphGuiProperties());
+		HashMap<Object, JInternalFrame> copyOfPropertyWindows = new HashMap<Object, JInternalFrame>(this.getHashMapEditorFrames());
 		Set<Object> propWindowsGraphObjects = copyOfPropertyWindows.keySet();
 		for (Object graphObject : propWindowsGraphObjects) {
-			BasicGraphGuiProperties propWindow = this.getHashMapBasicGraphGuiProperties().get(graphObject);
+			JInternalFrame propWindow = this.getHashMapEditorFrames().get(graphObject);
 			try {
 				propWindow.setClosed(true);
 			} catch (PropertyVetoException pve) {
@@ -137,8 +154,6 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 			}
 		}
 	}
-	
-	
 	
 	/**
 	 * Gets the component listener.
@@ -172,7 +187,6 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 		public void iconifyFrame(JInternalFrame f) {
 			super.iconifyFrame(f);
 		}
-		
 		
 	}
 	

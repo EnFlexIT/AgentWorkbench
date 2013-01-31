@@ -673,22 +673,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if (ae.getSource() == getJButtonAddComponent() || ae.getSource() == getJMenuItemAddComp()) {
 			// ------------------------------------------------------
 			// --- Add Component Button Clicked ---------------------
-			if(this.graphController.getNetworkModelAdapter().getGraph().getVertexCount()==0){
-				// --- If the graph is empty - starting from scratch -
-				this.showAddComponentDialog();	
-				
-			} else if(basicGraphGui.getPickedSingleNode()!=null) {
-				// --- Picked a vertex ------------------------------
-					if(this.graphController.getNetworkModelAdapter().isFreeGraphNode(basicGraphGui.getPickedSingleNode())) {
-						this.showAddComponentDialog();
-					} else {
-						JOptionPane.showMessageDialog(this.graphControllerGUI, Language.translate("Select a valid vertex", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
-					};
-			} else {
-				// --- No vertex is picked ---------------------------
-				JOptionPane.showMessageDialog(this.graphControllerGUI, Language.translate("Select a valid vertex first", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
-			}
-			
+			this.showAddComponentDialog();
+						
 		} else if (ae.getSource() == getJButtonRemoveComponent() || ae.getSource() == getJMenuItemDeleteComp()) {
 			// ------------------------------------------------------
 			// --- Remove Component Button clicked ------------------

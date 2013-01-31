@@ -586,8 +586,12 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
+en;;Add;;;
+en;;Close;;;
 en;;Discrete squares environment;;;
 en;;Edit Vertex Properties;;;
+en;;Please, select one free vertex in the overall network!;;;
+en;;Please, select one free vertex of the network component that you want to add!;;;
 en;;Save and Exit;;;
 en;;Save;;;
 en;Abbruch;Cancel;;;
