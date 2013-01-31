@@ -1263,4 +1263,4 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
     }
 	
 
-}  //  @jve:decl-index=0:visual-constraint="78,-20"
+}  //  @jve:decl-index=0:visual-constraint="30,-18"
