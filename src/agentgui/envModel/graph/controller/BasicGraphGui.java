@@ -513,7 +513,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// --- Create a new VisualizationViewer instance ------------------
 		// ----------------------------------------------------------------
 //		final VisualizationViewer<GraphNode, GraphEdge> vViewer = new VisualizationViewer<GraphNode, GraphEdge>(layout);
-		final VisualizationViewer<GraphNode, GraphEdge> vViewer = new BasicGraphGuiVisualizationViewer<GraphNode, GraphEdge>(layout);
+		final VisualizationViewer<GraphNode, GraphEdge> vViewer = new BasicGraphGuiVisViewer<GraphNode, GraphEdge>(layout);
 		vViewer.setBackground(Color.WHITE);
 		vViewer.setDoubleBuffered(true);
 		

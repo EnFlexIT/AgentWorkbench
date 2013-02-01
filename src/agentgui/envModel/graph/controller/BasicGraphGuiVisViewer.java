@@ -45,7 +45,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class BasicGraphGuiVisualizationViewer<V,E> extends VisualizationViewer<V,E> {
+public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 
 	private static final long serialVersionUID = 8187230173732284770L;
 	
@@ -53,7 +53,7 @@ public class BasicGraphGuiVisualizationViewer<V,E> extends VisualizationViewer<V
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
 	 * @param layout the layout
 	 */
-	public BasicGraphGuiVisualizationViewer(Layout<V,E> layout) {
+	public BasicGraphGuiVisViewer(Layout<V,E> layout) {
 		super(layout);
 		this.initialize();
 	}
@@ -62,7 +62,7 @@ public class BasicGraphGuiVisualizationViewer<V,E> extends VisualizationViewer<V
 	 * @param layout the layout
 	 * @param preferredSize the preferred size
 	 */
-	public BasicGraphGuiVisualizationViewer(Layout<V,E>layout, Dimension preferredSize) {
+	public BasicGraphGuiVisViewer(Layout<V,E>layout, Dimension preferredSize) {
 		super(layout, preferredSize);
 		this.initialize();
 	}
@@ -70,7 +70,7 @@ public class BasicGraphGuiVisualizationViewer<V,E> extends VisualizationViewer<V
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
 	 * @param model the model
 	 */
-	public BasicGraphGuiVisualizationViewer(VisualizationModel<V,E>model) {
+	public BasicGraphGuiVisViewer(VisualizationModel<V,E>model) {
 		super(model);
 		this.initialize();
 	}
@@ -79,7 +79,7 @@ public class BasicGraphGuiVisualizationViewer<V,E> extends VisualizationViewer<V
 	 * @param model the model
 	 * @param preferredSize the preferred size
 	 */
-	public BasicGraphGuiVisualizationViewer(VisualizationModel<V,E> model, Dimension preferredSize) {
+	public BasicGraphGuiVisViewer(VisualizationModel<V,E> model, Dimension preferredSize) {
 		super(model, preferredSize);
 		this.initialize();
 	}

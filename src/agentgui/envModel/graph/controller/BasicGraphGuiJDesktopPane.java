@@ -33,7 +33,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentListener;
 import java.beans.PropertyVetoException;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.Vector;
 
 import javax.swing.DefaultDesktopManager;
 import javax.swing.JDesktopPane;
@@ -48,7 +48,7 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 
 	private static final long serialVersionUID = 5733873560749370049L;
 	
-	private HashMap<Object, JInternalFrame> editorFrames = null;  //  @jve:decl-index=0:
+	private HashMap<String, JInternalFrame> editorFrames = null;  //  @jve:decl-index=0:
 	private JInternalFrame lastOpenedEditor = null;
 	private ComponentListener myComponentAdapter = null;  //  @jve:decl-index=0:
 	
@@ -73,9 +73,9 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 * Returns a HashMap with all open editor windows.
 	 * @return the local a HashMap with all open property windows
 	 */
-	public HashMap<Object, JInternalFrame> getHashMapEditorFrames() {
+	public HashMap<String, JInternalFrame> getHashMapEditorFrames() {
 		if (this.editorFrames==null) {
-			editorFrames = new HashMap<Object, JInternalFrame>();
+			editorFrames = new HashMap<String, JInternalFrame>();
 		}
 		return editorFrames;
 	}
@@ -84,16 +84,7 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 * @param internalFrame the JInternalFrame to register
 	 */
 	public void registerEditor(JInternalFrame internalFrame) {
-		
-		if (internalFrame instanceof BasicGraphGuiProperties) {
-			BasicGraphGuiProperties bggp = (BasicGraphGuiProperties) internalFrame;
-			this.getHashMapEditorFrames().put(bggp.getGraphObject(), internalFrame);
-			
-		} else {
-			String title = internalFrame.getTitle();
-			this.getHashMapEditorFrames().put(title, internalFrame);
-			
-		}
+		this.getHashMapEditorFrames().put(internalFrame.getTitle(), internalFrame);
 		this.setLastOpenedEditor(internalFrame);
 	}
 	/**
@@ -101,26 +92,18 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 * @param jInternalFrame the JInternalFrame to unregister
 	 */
 	public void unregisterEditor(JInternalFrame internalFrame) {
-		
-		if (internalFrame instanceof BasicGraphGuiProperties) {
-			BasicGraphGuiProperties bggp = (BasicGraphGuiProperties) internalFrame;
-			this.getHashMapEditorFrames().remove(bggp.getGraphObject());
-			
-		} else {
-			String title = internalFrame.getTitle();
-			this.getHashMapEditorFrames().remove(title);
-		}
+		this.getHashMapEditorFrames().remove(internalFrame.getTitle());
 		if (internalFrame==this.getLastOpenedEditor()) {
 			this.setLastOpenedEditor(null);
 		}
 	}
 	/**
 	 * Returns, if available, the JInternalFrame for an object like GraphNode, NetworkComponet 
-	 * @param graphObject the graph object (NetworkComponent or Node)
+	 * @param editorTitle the graph object (NetworkComponent or Node)
 	 * @return the instances of the related JInternalFrame, if available
 	 */
-	public JInternalFrame getEditor(Object graphObject) {
-		return this.getHashMapEditorFrames().get(graphObject);
+	public JInternalFrame getEditor(String editorTitle) {
+		return this.getHashMapEditorFrames().get(editorTitle);
 	}
 
 	/**
@@ -139,18 +122,18 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	}
 	
 	/**
-	 * Will close all open property windows.
+	 * Will close all open property windows for GraphNodes and NetworkCoponents.
 	 */
-	public void closeAllEditors() {
-		
-		HashMap<Object, JInternalFrame> copyOfPropertyWindows = new HashMap<Object, JInternalFrame>(this.getHashMapEditorFrames());
-		Set<Object> propWindowsGraphObjects = copyOfPropertyWindows.keySet();
-		for (Object graphObject : propWindowsGraphObjects) {
-			JInternalFrame propWindow = this.getHashMapEditorFrames().get(graphObject);
-			try {
-				propWindow.setClosed(true);
-			} catch (PropertyVetoException pve) {
-				pve.printStackTrace();
+	public void closeAllBasicGraphGuiProperties() {
+		Vector<String> internalFramesTitles = new Vector<String>(this.getHashMapEditorFrames().keySet());
+		for (String internalFrameTitles : internalFramesTitles) {
+			JInternalFrame internalFrame = this.getHashMapEditorFrames().get(internalFrameTitles);
+			if (internalFrame instanceof BasicGraphGuiProperties) {
+				try {
+					internalFrame.setClosed(true);
+				} catch (PropertyVetoException pve) {
+					pve.printStackTrace();
+				}
 			}
 		}
 	}

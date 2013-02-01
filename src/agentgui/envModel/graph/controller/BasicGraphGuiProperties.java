@@ -39,8 +39,6 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -74,7 +72,7 @@ import agentgui.envModel.graph.networkModel.NetworkModelNotification;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class BasicGraphGuiProperties extends JInternalFrame implements Observer, ActionListener {
+public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame implements Observer, ActionListener {
 
 	private static final long serialVersionUID = -868257113588339559L;
 
@@ -82,9 +80,6 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 	
 	private int defaultWidth = 300;
 	private int defaultHeight= 450;
-	
-	private GraphEnvironmentController graphController = null;
-	private BasicGraphGuiJDesktopPane graphDesktop = null;
 	
 	private Object graphObject = null;  //  @jve:decl-index=0:
 	private GraphNode graphNode = null;
@@ -100,14 +95,13 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 
 
 	/**
-	 * Instantiates a new basic graph gui properties.
+	 * Instantiates a new properties dialog for GraphNodes or NetworkComponents.
 	 * @param graphController the graph controller
 	 */
 	public BasicGraphGuiProperties(GraphEnvironmentController graphController, BasicGraphGuiJDesktopPane desktop, Object graphObject) {
-		this.graphController = graphController;
+		super(graphController);
 		this.graphController.addObserver(this);
-		this.graphDesktop    = desktop;
-		this.graphObject     = graphObject;
+		this.graphObject = graphObject;
 		this.initialize();
 	}
 
@@ -133,10 +127,10 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 		
 		this.configureForGraphObject();
 		this.setContentPane(getJContentPane());
-		this.setVisible(true);
 		
-		this.graphDesktop.add(this, JDesktopPane.PALETTE_LAYER);
-		this.graphDesktop.registerEditor(this);	
+		// --- Call to the super-class ----------
+		this.registerAtDesktopAndSetVisible();
+			
 		
 	}
 	
@@ -161,15 +155,6 @@ public class BasicGraphGuiProperties extends JInternalFrame implements Observer,
 		this.setPreferredSize(this.getSize());
 	}
 	
-	/* (non-Javadoc)
-	 * @see javax.swing.JInternalFrame#dispose()
-	 */
-	@Override
-	public void dispose() {
-		this.graphDesktop.unregisterEditor(this);
-		super.dispose();
-	}
-
 	/**
 	 * Returns the graph object.
 	 * @return the graphObject

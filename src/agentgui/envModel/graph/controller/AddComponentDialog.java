@@ -37,6 +37,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Paint;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
@@ -58,8 +59,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -69,6 +68,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionListener;
@@ -107,8 +107,6 @@ import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
-import javax.swing.SwingConstants;
-import java.awt.Rectangle;
 
 /**
  * Dialog for adding a new network component to the model.<br>
@@ -122,7 +120,7 @@ import java.awt.Rectangle;
  * @author Satyadeep - CSE - Indian Institute of Technology, Guwahati
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AddComponentDialog extends JInternalFrame implements ActionListener {
+public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements ActionListener {
 
     private static final long serialVersionUID = -7481141098749690137L;
     private final String pathImage = GraphGlobals.getPathImages(); // @jve:decl-index=0:
@@ -153,11 +151,7 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
     private JButton jButtonAdd = null;
     private JButton jButtonClose = null;
 
-    private GraphEnvironmentController graphController = null;
-    private GraphEnvironmentControllerGUI graphControllerGUI = null;
-    private BasicGraphGuiJDesktopPane graphDesktop = null;
     private BasicGraphGui basicGraphGui = null;
-    
     private VisualizationViewer<GraphNode, GraphEdge> visViewer = null;
 
     private NetworkModel currNetworkModel = null;  //  @jve:decl-index=0:
@@ -178,10 +172,8 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
      * Gets the parent object and initializes.
      * @param controller the GraphEnvironmentController
      */
-    public AddComponentDialog(GraphEnvironmentController controller) {
-		this.graphController = controller;
-		this.graphControllerGUI = (GraphEnvironmentControllerGUI)controller.getEnvironmentPanel();
-		this.graphDesktop = this.graphControllerGUI.getBasicGraphGuiJDesktopPane();
+    public AddComponentDialog(GraphEnvironmentController graphController) {
+    	super(graphController);
 		this.basicGraphGui = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
 		initialize();
     }
@@ -209,6 +201,8 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
 		BasicInternalFrameUI ui = (BasicInternalFrameUI)this.getUI();
 		ui.getNorthPane().remove(0);
 		
+		// --- Call to the super-class ----------
+		this.registerAtDesktopAndSetVisible();
 		
     }
     
@@ -219,8 +213,6 @@ public class AddComponentDialog extends JInternalFrame implements ActionListener
     public void setVisible(boolean aFlag) {
     	if (aFlag==true) {
     		if (this.graphDesktop!=null && this.isVisible()==false) {
-    			// --- Add to the desktop ---------------------------
-    			this.graphDesktop.add(this, JDesktopPane.PALETTE_LAYER);
     			// --- remind the old inverse divider location ------
     			int oldInverseDividerLocation = this.getHeight() - this.getJSplitPaneContent().getDividerLocation();
     			// --- calculate and set the new size ---------------

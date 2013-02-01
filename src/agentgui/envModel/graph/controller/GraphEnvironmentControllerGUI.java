@@ -40,7 +40,6 @@ import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JTabbedPane;
 
@@ -103,7 +102,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
      */
     private void reLoad() {
     	// --- Close all property windows -----------------
-    	this.getBasicGraphGuiJDesktopPane().closeAllEditors();
+    	this.getBasicGraphGuiJDesktopPane().closeAllBasicGraphGuiProperties();
     	
     	// --- Set alternative NetworkModel's -------------
     	this.setAlternativeNetworkModels();
@@ -359,20 +358,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			this.setFocusOnAlternativeTab(cnc.getId());
 			
     	} else {
-    		JInternalFrame compProps = this.getBasicGraphGuiJDesktopPane().getEditor(graphObject); 
-    		if (compProps==null) {
-    			compProps = new BasicGraphGuiProperties(this.getGraphController(), this.getBasicGraphGuiJDesktopPane(), graphObject);    			
-    		
-    		} else {
-    			compProps.moveToFront();
-    			try {
-					compProps.setSelected(true);
-				} catch (PropertyVetoException pve) {
-					pve.printStackTrace();
-				}
-				
-    		}
-    		
+    		new BasicGraphGuiProperties(this.getGraphController(), this.getBasicGraphGuiJDesktopPane(), graphObject);
     	}
     }
    
