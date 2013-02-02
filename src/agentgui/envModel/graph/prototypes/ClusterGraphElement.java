@@ -34,7 +34,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.Vector;
 
-import agentgui.envModel.graph.controller.BasicGraphGui;
+import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
@@ -102,7 +102,7 @@ public class ClusterGraphElement extends StarGraphElement {
 		
 		this.outerNodes = newOuterNodes;
 		
-		Rectangle2D rectangle = BasicGraphGui.getVerticesSpreadDimension(this.outerNodes);
+		Rectangle2D rectangle = GraphGlobals.getGraphSpreadDimension(this.outerNodes);
 		centralNode.setPosition(new Point2D.Double(rectangle.getCenterX(), rectangle.getCenterY()));
 
 		elements.addAll(this.outerNodes);

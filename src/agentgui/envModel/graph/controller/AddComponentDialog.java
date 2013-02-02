@@ -902,6 +902,63 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		return this.localNetworkModel;
 	}
     
+    /**
+     * Rotates the current graph around itself.
+     * @param rotateAngle the angle on which the graph should rotate 
+     */
+    private void rotateGraph(double rotateAngle) {
+    	
+    	if (this.localNetworkModel!=null) {
+    		Graph<GraphNode, GraphEdge> graph = this.localNetworkModel.getGraph();
+    		if (graph!=null) {
+    			Vector<GraphNode> graphNodes = new Vector<GraphNode>(graph.getVertices());
+    			if (graphNodes.size()>1) {
+    				
+        	    	double centerX = this.getVisualizationViewer().getCenter().getX();
+        	    	double centerY = this.getVisualizationViewer().getCenter().getY();
+        			
+        			// --- Get all GraphNodes and rotate then around the center ---
+        			for (GraphNode graphNode : graphNodes) {
+        				
+        				double newX = 0;
+        				double newY = 0;
+        				double oldX = graphNode.getPosition().getX() - centerX;
+        				double oldY = graphNode.getPosition().getY() - centerY;
+        				
+        				double hypotenuse = Math.pow((Math.pow(oldX, 2) + Math.pow(oldY, 2)), 0.5); 
+        				double oldAngle = Math.atan(oldY / oldX);
+        				if (Double.isNaN(oldAngle)==false) {
+        					if (oldX < 0 && oldY >= 0) {
+            					oldAngle += Math.PI;
+            				} else if (oldX < 0 && oldY < 0){
+            					oldAngle += Math.PI;
+            				}else if (oldX >= 0 && oldY < 0){
+            					oldAngle += 2*Math.PI;
+            				}
+            				double newAngle = oldAngle + rotateAngle;
+            				newX = Math.cos(newAngle) * hypotenuse;
+            				newY = Math.sin(newAngle) * hypotenuse;
+            				
+        				}
+        				Point2D newPosition = new Point2D.Double(centerX+newX, centerY+newY);
+        				graphNode.setPosition(newPosition);
+        				
+        			}
+        			
+    				Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
+    				layout.setInitializer(new Transformer<GraphNode, Point2D>() {
+    					public Point2D transform(GraphNode node) {
+    						return node.getPosition(); // The position is specified in the GraphNode instance
+    					}
+    				});
+    				this.getVisualizationViewer().setGraphLayout(layout);
+        			this.getVisualizationViewer().repaint();
+        			
+    			}
+    		}
+    	}
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -985,13 +1042,25 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 
 			// --- Add the new element to the current NetworkModel ------------
 			this.graphController.getNetworkModelAdapter().mergeNetworkModel(this.localNetworkModel, nodeCouples);
-			
 		   
 		} else if (ae.getSource()==getJButtonClose()) {
 		    // --- Cancel button ------------------------------------
 		    this.dispose();
+		    
+		} else if (ae.getSource()==getJButtonSpin45()) {
+			this.rotateGraph((2*Math.PI)/8);
+			
+		} else if (ae.getSource()==getJButtonSpin90()) {
+			this.rotateGraph((2*Math.PI)/4);
+			
+		} else if (ae.getSource()==getJButtonSpin315()) {
+			this.rotateGraph(-(2*Math.PI)/8);
+
+		} else if (ae.getSource()==getJButtonSpin270()) {
+			this.rotateGraph(-(2*Math.PI)/4);
+			
+			
 		}
     }
-	
 
 }  //  @jve:decl-index=0:visual-constraint="30,-18"

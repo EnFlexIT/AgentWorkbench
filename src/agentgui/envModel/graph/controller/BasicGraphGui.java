@@ -282,54 +282,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 
 	/**
-	 * Gets the vertices spread dimension.
-	 *
-	 * @param graphNodes the graph nodes
-	 * @return the vertices spread dimension
-	 */
-	public static Rectangle2D getVerticesSpreadDimension(Collection<GraphNode> graphNodes) {
-
-		int count = 0;
-		double x_min = 0;
-		double x_max = 0;
-		double y_min = 0;
-		double y_max = 0;
-
-		GraphNode[] nodes = graphNodes.toArray(new GraphNode[graphNodes.size()]);
-		for (GraphNode node : nodes) {
-			double x = node.getPosition().getX();
-			double y = node.getPosition().getY();
-
-			if (count == 0) {
-				x_min = x;
-				x_max = x;
-				y_min = y;
-				y_max = y;
-			}
-
-			if (x < x_min) x_min = x;
-			if (x > x_max) x_max = x;
-			if (y < y_min) y_min = y;
-			if (y > y_max) y_max = y;
-			count++;
-		}
-		return new Rectangle2D.Double(x_min, y_min, x_max - x_min, y_max - y_min);
-	}
-
-	/**
-	 * Gets the graph spread as Rectangle.
-	 * 
-	 * @param graph the graph
-	 * @return the graph spread
-	 */
-	private Rectangle2D getGraphSpreadDimension(Graph<GraphNode, GraphEdge> graph) {
-		if (graph == null) {
-			return new Rectangle2D.Double(0, 0, 0, 0);
-		}
-		return getVerticesSpreadDimension(graph.getVertices());
-	}
-
-	/**
 	 * Sets the graph coordinates to values bigger than 0 for the x and the y axis.
 	 * 
 	 * @param graph the graph
@@ -488,7 +440,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		double moveX = 0;
 		double moveY = 0;
 
-		Rectangle2D graphDimension = this.getGraphSpreadDimension(graph);
+		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
 		if (graphDimension.getX() != this.graphMargin) moveX = (graphDimension.getX() * (-1)) + this.graphMargin;
 		if (graphDimension.getY() != this.graphMargin) moveY = (graphDimension.getY() * (-1)) + this.graphMargin;
 		
@@ -1008,7 +960,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (this.allowInitialScaling == false) return;
 
 		Graph<GraphNode, GraphEdge> currGraph = this.visView.getGraphLayout().getGraph();
-		Rectangle2D rectGraph = this.getGraphSpreadDimension(currGraph);
+		Rectangle2D rectGraph = GraphGlobals.getGraphSpreadDimension(currGraph);
 		Rectangle2D rectVis = this.visView.getVisibleRect();
 		if (rectVis.isEmpty()) return;
 
@@ -1059,7 +1011,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private void zoomOneToOneMoveFocus(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
 		
 		Graph<GraphNode, GraphEdge> graph = visViewer.getGraphLayout().getGraph();
-		Rectangle2D graphDimension = this.getGraphSpreadDimension(graph);
+		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
 		double moveXOnVisView = graphDimension.getX();
 		double moveYOnVisView = graphDimension.getX();
 		if (moveXOnVisView<=graphMargin) {
@@ -1088,7 +1040,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesPicked);
 			if (components.size()!=0) {
 				// --- Get the dimension of the selected nodes ------ 
-				Rectangle2D areaSelected = BasicGraphGui.getVerticesSpreadDimension(nodesPicked);
+				Rectangle2D areaSelected = GraphGlobals.getGraphSpreadDimension(nodesPicked);
 				Point2D areaCenter = new Point2D.Double(areaSelected.getCenterX(), areaSelected.getCenterY());
 				// --- Create temporary GraphNode -------------------
 				GraphNode tmpNode = new GraphNode("tmPCenter", areaCenter);

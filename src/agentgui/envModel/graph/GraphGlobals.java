@@ -29,10 +29,12 @@
 package agentgui.envModel.graph;
 
 import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +43,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
+import edu.uci.ics.jung.graph.Graph;
+
 import agentgui.core.common.PathHandling;
+import agentgui.envModel.graph.networkModel.GraphEdge;
+import agentgui.envModel.graph.networkModel.GraphNode;
 
 /**
  * The Class Globals for global constant values of the Graph or Network model.
@@ -145,6 +151,53 @@ public final class GraphGlobals {
     }
 	
 	
+ 	/**
+	 * Gets the graph spread as Rectangle.
+	 * 
+	 * @param graph the graph
+	 * @return the graph spread
+	 */
+	public static Rectangle2D getGraphSpreadDimension(Graph<GraphNode, GraphEdge> graph) {
+		if (graph == null) {
+			return new Rectangle2D.Double(0, 0, 0, 0);
+		}
+		return getGraphSpreadDimension(graph.getVertices());
+	}
+	/**
+	 * Gets the vertices spread dimension.
+	 *
+	 * @param graphNodes the graph nodes
+	 * @return the vertices spread dimension
+	 */
+	public static Rectangle2D getGraphSpreadDimension(Collection<GraphNode> graphNodes) {
+
+		int count = 0;
+		double x_min = 0;
+		double x_max = 0;
+		double y_min = 0;
+		double y_max = 0;
+
+		GraphNode[] nodes = graphNodes.toArray(new GraphNode[graphNodes.size()]);
+		for (GraphNode node : nodes) {
+			double x = node.getPosition().getX();
+			double y = node.getPosition().getY();
+
+			if (count == 0) {
+				x_min = x;
+				x_max = x;
+				y_min = y;
+				y_max = y;
+			}
+
+			if (x < x_min) x_min = x;
+			if (x > x_max) x_max = x;
+			if (y < y_min) y_min = y;
+			if (y > y_max) y_max = y;
+			count++;
+		}
+		return new Rectangle2D.Double(x_min, y_min, x_max - x_min, y_max - y_min);
+	}
+ 	
 	/**
 	 * The Class Colors.
 	 */
