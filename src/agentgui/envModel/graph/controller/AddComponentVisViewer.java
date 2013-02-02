@@ -330,26 +330,11 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
     }
     
 	/**
-	 * Returns the GraphEnvironmentController.
-	 * @return the graphController
-	 */
-	public GraphEnvironmentController getGraphController() {
-		return graphController;
-	}
-	/**
 	 * Sets the GraphEnvironmentController.
 	 * @param graphController the graphController to set
 	 */
 	public void setGraphController(GraphEnvironmentController graphController) {
 		this.graphController = graphController;
-	}
-	
-	/**
-	 * Returns the current ComponentTypeListElement.
-	 * @return the localComponentTypeListElement
-	 */
-	public ComponentTypeListElement getComponentTypeListElement() {
-		return localComponentTypeListElement;
 	}
 	/**
 	 * Sets the current ComponentTypeListElement.
@@ -357,14 +342,6 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 	 */
 	public void setComponentTypeListElement(ComponentTypeListElement newComponentTypeListElement) {
 		this.localComponentTypeListElement = newComponentTypeListElement;
-	}
-	
-	/**
-	 * Returns the current DomainSettings.
-	 * @return the localDomainSetings
-	 */
-	public DomainSettings getDomainSetings() {
-		return localDomainSetings;
 	}
 	/**
 	 * Sets the DomainSettings.
@@ -374,7 +351,7 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 		this.localDomainSetings = newDomainSetings;
 	}
 
-
+	
 	// --- Begin sub class ----------------------
     /**
 	 * Controls the shape, size, and aspect ratio for each vertex.
