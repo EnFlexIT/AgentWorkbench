@@ -49,6 +49,8 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -110,9 +112,10 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements ActionListener {
 
     private static final long serialVersionUID = -7481141098749690137L;
+    
+    public static final String NoFilterString = Language.translate("No Filter!", Language.EN);  //  @jve:decl-index=0:
     private final String pathImage = GraphGlobals.getPathImages(); // @jve:decl-index=0:
     
-
     private BasicGraphGui basicGraphGui = null;
     private AddComponentVisViewer<GraphNode, GraphEdge> visViewer = null;
 
@@ -131,6 +134,8 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     private JLabel jLabelInstructionSelect = null;
 
     private JComboBox jComboBoxFilter = null;
+    private DefaultComboBoxModel comboBoxModeFilter = null;
+    private String filterString = AddComponentDialog.NoFilterString;  //  @jve:decl-index=0:
     
     private JPanel jPanelTop = null;
     private JPanel jPanelFilter = null;
@@ -140,15 +145,15 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     private JPanel jPanelBottom = null;
 
     private JScrollPane jScrollPane = null;
-    private Vector<ComponentTypeListElement> componentTypeList = null;
+    private DefaultListModel componentTypeList = null;
     private JList jListComponentTypes = null;
     
     private JToolBar jJToolBarBarVisViewLeft = null;
     private JToolBar jJToolBarBarVisViewRight = null;
-	private JButton jButtonSpin45 = null;
-	private JButton jButtonSpin90 = null;
-	private JButton jButtonSpin270 = null;
-	private JButton jButtonSpin315 = null;
+	private JButton jButtonRotate45 = null;
+	private JButton jButtonRotate90 = null;
+	private JButton jButtonRotate270 = null;
+	private JButton jButtonRotate315 = null;
     
     private JButton jButtonAdd = null;
     private JButton jButtonClose = null;
@@ -315,11 +320,37 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	 */
 	private JComboBox getJComboBoxFilter() {
 		if (jComboBoxFilter == null) {
-			jComboBoxFilter = new JComboBox();
+			jComboBoxFilter = new JComboBox(this.getNewComboBoxModelFilter());
 			jComboBoxFilter.setPreferredSize(new Dimension(100, 26));
+			jComboBoxFilter.addActionListener(this);
 		}
 		return jComboBoxFilter;
 	}
+
+	/**
+	 * Gets the ComboBoxModel filter.
+	 * @return the ComboBoxModel filter
+	 */
+	private DefaultComboBoxModel getNewComboBoxModelFilter() {
+
+		Vector<String> filterStrings = new Vector<String>();
+		DefaultListModel typeList = this.getListModelComponentTypes();
+		for (int i=0; i < typeList.size(); i++) {
+			ComponentTypeListElement ctle = (ComponentTypeListElement) typeList.getElementAt(i);
+			if (filterStrings.contains(ctle.getDomain())==false) {
+				filterStrings.add(ctle.getDomain());
+			}
+		}
+		Collections.sort(filterStrings);
+		
+		comboBoxModeFilter = new DefaultComboBoxModel();
+		comboBoxModeFilter.addElement(AddComponentDialog.NoFilterString);
+		for (String filterString : filterStrings) {
+			comboBoxModeFilter.addElement(filterString);
+		}
+		return comboBoxModeFilter;
+	}
+	
 	 /**
      * This method initializes jScrollPane
      * @return javax.swing.JScrollPane
@@ -338,7 +369,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
      */
     private JList getJListComponentTypes() {
 		if (jListComponentTypes == null) {
-		    jListComponentTypes = new JList(this.getComponentTypeList());
+		    jListComponentTypes = new JList(this.getListModelComponentTypes());
 		    jListComponentTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		    jListComponentTypes.addListSelectionListener(new ListSelectionListener() {
 				public void valueChanged(ListSelectionEvent lse) {
@@ -459,8 +490,8 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 			jJToolBarBarVisViewLeft.setPreferredSize(new Dimension(26, 260));
 			jJToolBarBarVisViewLeft.setOrientation(JToolBar.VERTICAL);
 			jJToolBarBarVisViewLeft.setBorder(BorderFactory.createEmptyBorder());
-			jJToolBarBarVisViewLeft.add(getJButtonSpin315());
-			jJToolBarBarVisViewLeft.add(getJButtonSpin270());
+			jJToolBarBarVisViewLeft.add(getJButtonRotate315());
+			jJToolBarBarVisViewLeft.add(getJButtonRotate270());
 			
 		}
 		return jJToolBarBarVisViewLeft;
@@ -477,8 +508,8 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 			jJToolBarBarVisViewRight.setPreferredSize(new Dimension(26, 26));
 			jJToolBarBarVisViewRight.setOrientation(JToolBar.VERTICAL);
 			jJToolBarBarVisViewRight.setBorder(BorderFactory.createEmptyBorder());
-			jJToolBarBarVisViewRight.add(getJButtonSpin45());
-			jJToolBarBarVisViewRight.add(getJButtonSpin90());
+			jJToolBarBarVisViewRight.add(getJButtonRotate45());
+			jJToolBarBarVisViewRight.add(getJButtonRotate90());
 		}
 		return jJToolBarBarVisViewRight;
 	}
@@ -486,53 +517,53 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	 * This method initializes jButtonSpin45	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getJButtonSpin45() {
-		if (jButtonSpin45 == null) {
-			jButtonSpin45 = new JButton();
-			jButtonSpin45.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate45.png")));
-			jButtonSpin45.setToolTipText("Rotate 45°");
-			jButtonSpin45.addActionListener(this);
+	private JButton getJButtonRotate45() {
+		if (jButtonRotate45 == null) {
+			jButtonRotate45 = new JButton();
+			jButtonRotate45.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate45.png")));
+			jButtonRotate45.setToolTipText("Rotate 45°");
+			jButtonRotate45.addActionListener(this);
 		}
-		return jButtonSpin45;
+		return jButtonRotate45;
 	}
 	/**
 	 * This method initializes jButtonSpin90	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getJButtonSpin90() {
-		if (jButtonSpin90 == null) {
-			jButtonSpin90 = new JButton();
-			jButtonSpin90.setToolTipText("Rotate 90°");
-			jButtonSpin90.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate90.png")));
-			jButtonSpin90.addActionListener(this);
+	private JButton getJButtonRotate90() {
+		if (jButtonRotate90 == null) {
+			jButtonRotate90 = new JButton();
+			jButtonRotate90.setToolTipText("Rotate 90°");
+			jButtonRotate90.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate90.png")));
+			jButtonRotate90.addActionListener(this);
 		}
-		return jButtonSpin90;
+		return jButtonRotate90;
 	}
 	/**
 	 * This method initializes jButtonSpin315	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getJButtonSpin315() {
-		if (jButtonSpin315 == null) {
-			jButtonSpin315 = new JButton();
-			jButtonSpin315.setToolTipText("Rotate -45°");
-			jButtonSpin315.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate315.png")));
-			jButtonSpin315.addActionListener(this);
+	private JButton getJButtonRotate315() {
+		if (jButtonRotate315 == null) {
+			jButtonRotate315 = new JButton();
+			jButtonRotate315.setToolTipText("Rotate -45°");
+			jButtonRotate315.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate315.png")));
+			jButtonRotate315.addActionListener(this);
 		}
-		return jButtonSpin315;
+		return jButtonRotate315;
 	}
 	/**
 	 * This method initializes jButtonSpin270	
 	 * @return javax.swing.JButton	
 	 */
-	private JButton getJButtonSpin270() {
-		if (jButtonSpin270 == null) {
-			jButtonSpin270 = new JButton();
-			jButtonSpin270.setToolTipText("Rotate -90°");
-			jButtonSpin270.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate270.png")));
-			jButtonSpin270.addActionListener(this);
+	private JButton getJButtonRotate270() {
+		if (jButtonRotate270 == null) {
+			jButtonRotate270 = new JButton();
+			jButtonRotate270.setToolTipText("Rotate -90°");
+			jButtonRotate270.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate270.png")));
+			jButtonRotate270.addActionListener(this);
 		}
-		return jButtonSpin270;
+		return jButtonRotate270;
 	}
 
 	/**
@@ -644,7 +675,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     	
 		try {
 		    Class<?> theClass = Class.forName(graphPrototype);
-		    localGraphElementPrototype = (GraphElementPrototype) theClass.newInstance();
+		    this.localGraphElementPrototype = (GraphElementPrototype) theClass.newInstance();
 		} catch (ClassNotFoundException ex) {
 		    System.err.println("GraphElementPrototype class must be in class path.\n" + ex);
 		} catch (InstantiationException ex) {
@@ -826,22 +857,22 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
      * @see ComponentTypeListElement
      * @return Object[] - array of component types
      */
-    private Vector<ComponentTypeListElement> getComponentTypeList() {
+    private DefaultListModel getListModelComponentTypes() {
 		
     	if (this.componentTypeList==null) {
-    		// --- Create the Vector ----------------
-        	this.componentTypeList = new Vector<ComponentTypeListElement>();
+    		// --- Create a work Vector -----------------------------
+    		Vector<ComponentTypeListElement> componentTypeVector = new Vector<ComponentTypeListElement>();
         	HashMap<String, ComponentTypeSettings> ctsHash = this.graphController.getComponentTypeSettings();
     		if (ctsHash != null) {
     			Iterator<String> ctsIt = ctsHash.keySet().iterator();
     		    while (ctsIt.hasNext()) {
     		    	String componentName = ctsIt.next(); 
     		    	ComponentTypeSettings cts = ctsHash.get(componentName); 
-    		    	this.componentTypeList.add(new ComponentTypeListElement(componentName, cts));
+    		    	componentTypeVector.add(new ComponentTypeListElement(componentName, cts));
     		    }
     		} 
-    		// --- Sort the Vector ------------------
-    		Collections.sort(this.componentTypeList, new Comparator<ComponentTypeListElement>() {
+    		// --- Sort the Vector ----------------------------------
+    		Collections.sort(componentTypeVector, new Comparator<ComponentTypeListElement>() {
     			@Override
     			public int compare(ComponentTypeListElement cts1, ComponentTypeListElement cts2) {
     				if (cts1.getDomain().equals(cts2.getDomain())) {
@@ -851,6 +882,19 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     				}
     			}
     		});
+    		// --- Add the Vector elements to the ListModel ---------
+    		this.componentTypeList = new DefaultListModel();
+    		for (ComponentTypeListElement ctle : componentTypeVector) {
+    			if (this.filterString.equals(AddComponentDialog.NoFilterString)) {
+    				// --- No filter applied --------------
+    				this.componentTypeList.addElement(ctle);	
+    			} else {
+    				// --- Filter applied -----------------
+    				if (ctle.getDomain().equals(this.filterString)) {
+    					this.componentTypeList.addElement(ctle);
+    				}
+    			}
+    		}
     	}
 		return this.componentTypeList;
     }
@@ -891,7 +935,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 
     	this.getJListComponentTypes().clearSelection();
     	// --- Select the right element from the list ---------------
-    	Vector<ComponentTypeListElement> listModel = this.getComponentTypeList();
+    	DefaultListModel listModel = this.getListModelComponentTypes();
     	for (int i = 0; i < listModel.size(); i++) {
         	ComponentTypeListElement ctsElement = (ComponentTypeListElement) listModel.get(i);
         	if (ctsElement.getComponentName().equalsIgnoreCase(componentName)) {
@@ -959,6 +1003,86 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     	}
     }
     
+    /**
+     * Adds the component.
+     */
+    public void addComponent() {
+    	
+    	String msg = null;
+    	// --------------------------------------------------------------------------
+		// --- Evaluate the node to which the user want to add a component ---------- 
+		// --------------------------------------------------------------------------
+		GraphNode graphNodeSelectedInMainGraph = this.basicGraphGui.getPickedSingleNode();
+		if (this.graphController.getNetworkModel().getGraph().getVertexCount()!=0) {
+			if (graphNodeSelectedInMainGraph==null) {
+		    	msg = "Please, select one free vertex in the overall network!";
+		    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+		    	return;
+		    } else {
+				if(this.graphController.getNetworkModel().isFreeGraphNode(graphNodeSelectedInMainGraph)==false) {
+					msg = "Please, select one free vertex in the overall network!";
+					JOptionPane.showMessageDialog(this.graphControllerGUI, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+					return;
+				};
+		    }
+		}
+
+		// --------------------------------------------------------------------------
+		// --- Evaluate the NetworkComponent that has to be added -------------------
+		// --------------------------------------------------------------------------
+		this.setSelectedGraphNode();
+	    if (this.localNetworkModel==null) {
+	    	msg = "Please, select the network component that you would like to add!";
+	    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+	    	return;
+	    }
+	    if (this.localGraphNodeSelected==null) {
+	    	msg = "Please, select one free vertex of the network component that you want to add!";
+	    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+	    	return;
+	    }
+
+	    
+		if (this.localGraphElementPrototype instanceof Star3GraphElement) {
+		    // If the picked vertex is the center of the star, cannot add
+		    Graph<GraphNode, GraphEdge> graph = getVisualizationViewer().getGraphLayout().getGraph();
+		    // All the edges in the graph or incident on the pickedVertex => It is a center
+		    if (graph.getEdgeCount() == graph.getIncidentEdges(this.localGraphNodeSelected).size()) {
+		    	msg = "Select a vertex other than the center of the star";
+		    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+		    	return;
+		    }
+		    
+		} else if (this.localGraphElementPrototype instanceof DistributionNode) {
+			// --- If the current selection of the main graph is also a DistributionNode => disallow ---
+			HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(graphNodeSelectedInMainGraph);
+			NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
+			if (containsDistributionNode!=null) {
+				String newLine = Application.getGlobalInfo().getNewLineSeparator();
+				msg  = "The selection in the main graph already contains a component of" + newLine;
+				msg += "the type 'DistributionNode'. This is only allowed once at one node! ";
+				JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+		}
+		
+		// ----------------------------------------------------------------
+		// --- Apply a shift for the new elements, in order to match ------ 
+		// --- the position of the currently selected node in the    ------  
+		// --- current setup									 	 ------
+		// ----------------------------------------------------------------			
+		this.applyNodeShift2MergeWithNetworkModel(graphNodeSelectedInMainGraph, this.localGraphNodeSelected);
+		
+		// --- Create the merge description -------------------------------
+		HashSet<GraphNode> nodes2Add = new HashSet<GraphNode>();
+		nodes2Add.add(this.localGraphNodeSelected);
+		GraphNodePairs nodeCouples = new GraphNodePairs(this.basicGraphGui.getPickedSingleNode(), nodes2Add);
+
+		// --- Add the new element to the current NetworkModel ------------
+		this.graphController.getNetworkModelAdapter().mergeNetworkModel(this.localNetworkModel, nodeCouples);
+
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -967,96 +1091,27 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     @Override
     public void actionPerformed(ActionEvent ae) {
 
-    	String msg = null;
-
     	if (ae.getSource()==this.getJButtonAdd() ) {
-    		
-    		// --------------------------------------------------------------------------
-    		// --- Evaluate the node to which the user want to add a component ---------- 
-    		// --------------------------------------------------------------------------
-    		GraphNode graphNodeSelectedInMainGraph = this.basicGraphGui.getPickedSingleNode();
-    		if (this.graphController.getNetworkModel().getGraph().getVertexCount()!=0) {
-    			if (graphNodeSelectedInMainGraph==null) {
-    		    	msg = "Please, select one free vertex in the overall network!";
-    		    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-    		    	return;
-    		    } else {
-    				if(this.graphController.getNetworkModel().isFreeGraphNode(graphNodeSelectedInMainGraph)==false) {
-    					msg = "Please, select one free vertex in the overall network!";
-    					JOptionPane.showMessageDialog(this.graphControllerGUI, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
-    					return;
-    				};
-    		    }
-			}
-
-    		// --------------------------------------------------------------------------
-    		// --- Evaluate the NetworkComponent that has to be added -------------------
-    		// --------------------------------------------------------------------------
-    		this.setSelectedGraphNode();
-		    if (this.localNetworkModel==null) {
-		    	msg = "Please, select the network component that you would like to add!";
-		    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-		    	return;
-		    }
-		    if (this.localGraphNodeSelected==null) {
-		    	msg = "Please, select one free vertex of the network component that you want to add!";
-		    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-		    	return;
-		    }
-
-		    
-			if (this.localGraphElementPrototype instanceof Star3GraphElement) {
-			    // If the picked vertex is the center of the star, cannot add
-			    Graph<GraphNode, GraphEdge> graph = getVisualizationViewer().getGraphLayout().getGraph();
-			    // All the edges in the graph or incident on the pickedVertex => It is a center
-			    if (graph.getEdgeCount() == graph.getIncidentEdges(this.localGraphNodeSelected).size()) {
-			    	msg = "Select a vertex other than the center of the star";
-			    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-			    	return;
-			    }
-			    
-			} else if (this.localGraphElementPrototype instanceof DistributionNode) {
-				// --- If the current selection of the main graph is also a DistributionNode => disallow ---
-				HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponents(graphNodeSelectedInMainGraph);
-				NetworkComponent containsDistributionNode = this.graphController.getNetworkModelAdapter().containsDistributionNode(components);
-				if (containsDistributionNode!=null) {
-					String newLine = Application.getGlobalInfo().getNewLineSeparator();
-					msg  = "The selection in the main graph already contains a component of" + newLine;
-					msg += "the type 'DistributionNode'. This is only allowed once at one node! ";
-					JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-			}
-			
-			// ----------------------------------------------------------------
-			// --- Apply a shift for the new elements, in order to match ------ 
-			// --- the position of the currently selected node in the    ------  
-			// --- current setup									 	 ------
-			// ----------------------------------------------------------------			
-			this.applyNodeShift2MergeWithNetworkModel(graphNodeSelectedInMainGraph, this.localGraphNodeSelected);
-			
-			// --- Create the merge description -------------------------------
-			HashSet<GraphNode> nodes2Add = new HashSet<GraphNode>();
-			nodes2Add.add(this.localGraphNodeSelected);
-			GraphNodePairs nodeCouples = new GraphNodePairs(this.basicGraphGui.getPickedSingleNode(), nodes2Add);
-
-			// --- Add the new element to the current NetworkModel ------------
-			this.graphController.getNetworkModelAdapter().mergeNetworkModel(this.localNetworkModel, nodeCouples);
-		   
+    		this.addComponent();
+    				   
 		} else if (ae.getSource()==getJButtonClose()) {
-		    // --- Cancel button ------------------------------------
 		    this.dispose();
-		    
-		} else if (ae.getSource()==getJButtonSpin45()) {
+		 
+		} else if (ae.getSource()==getJComboBoxFilter()) {
+			this.filterString = (String) getJComboBoxFilter().getSelectedItem(); 
+			this.componentTypeList = null;
+			this.getJListComponentTypes().setModel(this.getListModelComponentTypes());
+			
+		} else if (ae.getSource()==getJButtonRotate45()) {
 			this.rotateGraph((2*Math.PI)/8);
 			
-		} else if (ae.getSource()==getJButtonSpin90()) {
+		} else if (ae.getSource()==getJButtonRotate90()) {
 			this.rotateGraph((2*Math.PI)/4);
 			
-		} else if (ae.getSource()==getJButtonSpin315()) {
+		} else if (ae.getSource()==getJButtonRotate315()) {
 			this.rotateGraph(-(2*Math.PI)/8);
 
-		} else if (ae.getSource()==getJButtonSpin270()) {
+		} else if (ae.getSource()==getJButtonRotate270()) {
 			this.rotateGraph(-(2*Math.PI)/4);
 			
 			
