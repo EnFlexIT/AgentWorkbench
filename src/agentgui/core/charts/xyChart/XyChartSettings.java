@@ -28,8 +28,13 @@
  */
 package agentgui.core.charts.xyChart;
 
+import java.awt.Color;
+
 import agentgui.core.charts.ChartSettings;
+import agentgui.core.charts.SeriesSettings;
 import agentgui.ontology.Chart;
+import agentgui.ontology.XyChart;
+import agentgui.ontology.XyDataSeries;
 
 /**
  * Settings handler class for XY charts. No additional functionality needed, 
@@ -43,6 +48,19 @@ public class XyChartSettings extends ChartSettings {
 
 	public XyChartSettings(Chart chart) {
 		super(chart);
+		
+		// TODO In die Oberklasse?
+		XyChart tsChart = (XyChart) chart;
+		for(int i=0; i< tsChart.getXyChartData().size(); i++){
+			XyDataSeries series = (XyDataSeries) tsChart.getXyChartData().get(i);
+			SeriesSettings settings = new SeriesSettings();
+			settings.setLabel(series.getLabel());
+			String colorString = (String) chart.getVisualizationSettings().getYAxisColors().get(i);
+			settings.setColor(new Color(Integer.parseInt(colorString)));
+			settings.setLineWIdth((Float) chart.getVisualizationSettings().getYAxisLineWidth().get(i));
+			
+			this.addSeriesSettings(settings);
+		}
 	}
 
 }
