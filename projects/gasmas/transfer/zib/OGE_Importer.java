@@ -83,8 +83,6 @@ import agentgui.envModel.graph.networkModel.GraphNodePairs;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
-import agentgui.ontology.TimeSeries;
-import agentgui.ontology.TimeSeriesChart;
 
 public class OGE_Importer extends NetworkModelFileImporter {
 
@@ -168,7 +166,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 		
 		compressors = new HashMap<String, Compressor>();
 		
-		AddComponentDialog componentFactory = new AddComponentDialog(this.graphController);
+		AddComponentDialog componentFactory = new AddComponentDialog(this.graphController, true);
 		HashMap<String, HashSet<GraphNode>> nodeConnections = new HashMap<String, HashSet<GraphNode>>();
 		double stretchFactor = 4.0;
 		double branchMovement = 4.0;

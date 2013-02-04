@@ -259,8 +259,8 @@ public class NetworkModel implements Serializable {
 
 			GraphNode copyFirst = graphNodeCopies.get(first.getId());
 			GraphNode copySecond = graphNodeCopies.get(second.getId());
-			copyGraph.addEdge(edge, copyFirst, copySecond, edgeType);
-
+			GraphEdge copyEdge = edge.getCopy();
+			copyGraph.addEdge(copyEdge, copyFirst, copySecond, edgeType);
 		}
 		return copyGraph;
 	}

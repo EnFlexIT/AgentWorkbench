@@ -59,29 +59,26 @@ public class GraphEdge extends GraphElement {
 	}
 
 	/**
-	 * Gets the copy of the GraphNode.
-	 * 
-	 * @return the copy
+	 * Returns a copy of the current GraphEdge.
+	 * @return a copy of the current GraphEdge
 	 */
 	@Override
 	public GraphEdge getCopy() {
 		GraphEdge edgceCopy = new GraphEdge(new String(this.id), new String(this.componentType));
 		edgceCopy.setComponentType(this.getComponentType());
+		edgceCopy.setWeight(this.weight);
 		return edgceCopy;
 	}
 
 	/**
 	 * Gets the component type.
-	 * 
 	 * @return the componentType
 	 */
 	public String getComponentType() {
 		return componentType;
 	}
-
 	/**
 	 * Sets the component type.
-	 * 
 	 * @param componentType the componentType to set
 	 */
 	public void setComponentType(String componentType) {
@@ -90,29 +87,17 @@ public class GraphEdge extends GraphElement {
 
 	/**
 	 * Gets the weight.
-	 * 
 	 * @return the weight
 	 */
 	public float getWeight() {
 		return weight;
 	}
-
 	/**
 	 * Sets the weight.
-	 * 
 	 * @param weight the weight to set
 	 */
 	public void setWeight(float weight) {
 		this.weight = weight;
 	}
-
-	/**
-	 * Change component in id keeps only the last part after a "_" split, it's no of the edge
-	 * 
-	 * @param componentID the component id
-	 */
-	public void changeComponentInID(String componentID) {
-		String[] idArray = id.split("_");
-		id = componentID + "_" + idArray[idArray.length - 1];
-	}
+	
 }

@@ -38,8 +38,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -126,7 +129,9 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     private GraphElementPrototype localGraphElementPrototype = null; // @jve:decl-index=0:
 	private GraphNode localGraphNodeSelected = null;  //  @jve:decl-index=0:
 
-
+	private boolean isHiddenFactory = false;
+	private ComponentAdapter desktopAdapter = null;  //  @jve:decl-index=0:
+	
 	private JSplitPane jSplitPaneContent = null;
 	
 	private JLabel jLabelFilter = null;
@@ -145,7 +150,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     private JPanel jPanelBottom = null;
 
     private JScrollPane jScrollPane = null;
-    private DefaultListModel componentTypeList = null;
+    private DefaultListModel listModelComponentTypes = null;
     private JList jListComponentTypes = null;
     
     private JToolBar jJToolBarBarVisViewLeft = null;
@@ -160,7 +165,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 
 	
 	/**
-     * Gets the parent object and initializes.
+     * Instantiates a new AddComponentDialog and displays it for the user.
      * @param controller the GraphEnvironmentController
      */
     public AddComponentDialog(GraphEnvironmentController graphController) {
@@ -169,6 +174,20 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		initialize();
     }
 
+    /**
+     * Instantiates a new AddComponentDialog that can be used as hidden Factory
+     * for imports and other.
+     *
+     * @param graphController the graph controller
+     * @param asHiddenFactoryDialog the as hidden factory dialog
+     */
+    public AddComponentDialog(GraphEnvironmentController graphController, boolean isHiddenFactory) {
+    	super(graphController);
+		this.basicGraphGui = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
+		this.isHiddenFactory = isHiddenFactory;
+		initialize();
+    }
+    
     /**
      * This method initializes this
      * @return void
@@ -193,7 +212,10 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		ui.getNorthPane().remove(0);
 		
 		// --- Call to the super-class ----------
-		this.registerAtDesktopAndSetVisible();
+		if (this.isHiddenFactory==false) {
+			this.registerAtDesktopAndSetVisible();	
+			this.graphDesktop.addComponentListener(this.getComponentAdapter4Desktop());
+		}
 		
     }
     
@@ -228,6 +250,22 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
         };
         final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
         this.getRootPane().registerKeyboardAction(listener, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+    
+    /**
+     * Returns a ComponentAdapter for the current desktop object.
+     * @return the ComponentAdapter 
+     */
+    private ComponentAdapter getComponentAdapter4Desktop() {
+    	if (this.desktopAdapter==null) {
+    		desktopAdapter = new ComponentAdapter() {
+    			@Override
+    			public void componentResized(ComponentEvent ce) {
+    				setSize(new Dimension( (int)getSize().getWidth(), (int)graphDesktop.getSize().getHeight() ));
+    			}
+			};
+    	}
+    	return desktopAdapter;
     }
     
     /**
@@ -652,7 +690,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     	// --- Paint GraphPrototype, if available ---  
     	String graphPrototype = localComponentTypeListElement.getComponentTypeSettings().getGraphPrototype();
     	if (graphPrototype!=null) {
-			setPrototypePreview();	
+			this.setPrototypePreview();	
 		} else {
 			String msg = Language.translate("The definition of the component contains no graph prototyp definition.", Language.EN);
 			String titel = Language.translate("Missing definition of the Graph prototype for '" + localComponentTypeListElement.getComponentName() + "'!", Language.EN);
@@ -684,7 +722,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		    System.err.println("GraphElementPrototype class must have a no-arg constructor.\n" + ex);
 		}
 	
-		if (localGraphElementPrototype!=null) {
+		if (this.localGraphElementPrototype!=null) {
 		    
 			// --- Create a new local NetworkModel ------------------
 			this.localNetworkModel = new NetworkModel();
@@ -694,9 +732,6 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 			this.localGraphElementPrototype.setId(this.localNetworkModel.nextNetworkComponentID());
 			this.localGraphElementPrototype.setType(componentName);
 			this.localGraphElementPrototype.addToGraph(this.localNetworkModel.getGraph());
-		    
-		    // --- Paint and Layout the graph -----------------------
-		    this.paintGraph();
 		    
 		    // --- Create the needed NetworkComponent --------------- 
 	    	ComponentTypeSettings cts = this.localComponentTypeListElement.getComponentTypeSettings();
@@ -713,6 +748,9 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	    	
 			// --- Create a NetworkComponent for the local NetworkModel -
 			this.localNetworkModel.addNetworkComponent(new NetworkComponent(localGraphElementPrototype.getId(), componentName, graphPrototype, cts.getAgentClass(), elements, localGraphElementPrototype.isDirected()));
+		    
+			// --- Paint and Layout the graph -----------------------
+		    this.paintGraph();
 		    
 		    // --- Set current selected node ------------------------ 
 		    this.setSelectedGraphNode();
@@ -753,9 +791,6 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 					return node.getPosition(); // The position is specified in the GraphNode instance
 				}
 			});
-			// --- Pick node -------------------- 
-			this.getVisualizationViewer().getPickedVertexState().pick(node, true);
-
 			
 		} else if (graph.getEdgeCount()==1) {
 			// ----------------------------------
@@ -820,8 +855,50 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		// --- Set the graph to the layout ------
 		this.getVisualizationViewer().setGraphLayout(layout);
 		this.getVisualizationViewer().repaint();
+		this.pickFirstGraphNode();
     }
 
+    /**
+     * Picks the first graph node.
+     */
+    private void pickFirstGraphNode() {
+
+    	GraphNode graphNodeSelect = null;
+    	Collection<GraphNode> graphNodes = this.localNetworkModel.getGraph().getVertices();
+    	for (GraphNode graphNode : graphNodes) {
+    		
+    		if (graphNodeSelect==null) {
+    			graphNodeSelect = graphNode;
+    		} else {
+    			
+    			double selectedX = graphNodeSelect.getPosition().getX();
+    			double selectedY = graphNodeSelect.getPosition().getY();
+    			
+    			double currentX = graphNode.getPosition().getX();
+    			double currentY = graphNode.getPosition().getY();
+    			
+    			if (currentX<selectedX) {
+    				graphNodeSelect = graphNode;
+    			} else if (currentX==selectedX && currentY<selectedY) {
+    				graphNodeSelect = graphNode;
+    			} else if (currentX==selectedX && currentY==selectedY) {
+    				
+    				int comparedID = graphNode.getId().compareTo(graphNodeSelect.getId());
+    				if (comparedID<0) {
+    					graphNodeSelect = graphNode;
+    				}
+    				
+    			}
+    		}
+    		
+    	}
+    	
+    	if (graphNodeSelect!=null) {
+    		this.getVisualizationViewer().getPickedVertexState().pick(graphNodeSelect, true);	
+    	}
+    	
+    }
+    
     /**
      * Evaluates the current graph and sets the selected GraphNode.
      */
@@ -836,14 +913,14 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     	
     	// --- Update position information of current graph ---------
     	Graph<GraphNode, GraphEdge> currGraph = this.localNetworkModel.getGraph();    	
-		for (GraphNode vertex : currGraph.getVertices()) {
-			int x = (int) getVisualizationViewer().getGraphLayout().transform(vertex).getX();
-			int y = (int) getVisualizationViewer().getGraphLayout().transform(vertex).getY();
-			vertex.setPosition(new Point(x, y));
+		for (GraphNode graphNode : currGraph.getVertices()) {
+			int x = (int) getVisualizationViewer().getGraphLayout().transform(graphNode).getX();
+			int y = (int) getVisualizationViewer().getGraphLayout().transform(graphNode).getY();
+			graphNode.setPosition(new Point(x, y));
 		}
 		
     	Set<GraphNode> nodeSet = getVisualizationViewer().getPickedVertexState().getPicked();
-    	if (nodeSet.size() == 1) {
+    	if (nodeSet.size()>=1) {
     		this.localGraphNodeSelected = nodeSet.iterator().next();
     	} else {
     		this.localGraphNodeSelected = null;
@@ -859,7 +936,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
      */
     private DefaultListModel getListModelComponentTypes() {
 		
-    	if (this.componentTypeList==null) {
+    	if (this.listModelComponentTypes==null) {
     		// --- Create a work Vector -----------------------------
     		Vector<ComponentTypeListElement> componentTypeVector = new Vector<ComponentTypeListElement>();
         	HashMap<String, ComponentTypeSettings> ctsHash = this.graphController.getComponentTypeSettings();
@@ -883,20 +960,20 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     			}
     		});
     		// --- Add the Vector elements to the ListModel ---------
-    		this.componentTypeList = new DefaultListModel();
+    		this.listModelComponentTypes = new DefaultListModel();
     		for (ComponentTypeListElement ctle : componentTypeVector) {
     			if (this.filterString.equals(AddComponentDialog.NoFilterString)) {
     				// --- No filter applied --------------
-    				this.componentTypeList.addElement(ctle);	
+    				this.listModelComponentTypes.addElement(ctle);	
     			} else {
     				// --- Filter applied -----------------
     				if (ctle.getDomain().equals(this.filterString)) {
-    					this.componentTypeList.addElement(ctle);
+    					this.listModelComponentTypes.addElement(ctle);
     				}
     			}
     		}
     	}
-		return this.componentTypeList;
+		return this.listModelComponentTypes;
     }
     
     /**
@@ -906,7 +983,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
      * @param graphNode1 the graph node1
      * @param graphNode2 the graph node2
      */
-    private void applyNodeShift2MergeWithNetworkModel(GraphNode graphNode1, GraphNode graphNode2) {
+    private void applyNodeShift2MergeWithNetworkModel(NetworkModel networkModel, GraphNode graphNode1, GraphNode graphNode2) {
     	
     	double shiftX = 0;
 		double shiftY = 0;
@@ -915,11 +992,12 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 			shiftY = graphNode1.getPosition().getY() - graphNode2.getPosition().getY();
 		}
 		
-		for (GraphNode node : this.localNetworkModel.getGraph().getVertices()) {
+		Collection<GraphNode> graphNodes = networkModel.getGraph().getVertices();
+		for (GraphNode node : graphNodes) {
 			double posX = node.getPosition().getX() + shiftX;
 			double posY = node.getPosition().getY() + shiftY;
 			node.setPosition(new Point2D.Double(posX, posY));			
-		}
+		}	
 		
     }
     
@@ -1066,20 +1144,26 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 			}
 		}
 		
+		
+		// ----------------------------------------------------------------
+		// --- Get a copy of the local NetworkModel -----------------------
+		NetworkModel networkModelCopy = this.localNetworkModel.getCopy();
+		GraphNode graphNodeCopy = (GraphNode) networkModelCopy.getGraphElement(this.localGraphNodeSelected.getId());
+
 		// ----------------------------------------------------------------
 		// --- Apply a shift for the new elements, in order to match ------ 
 		// --- the position of the currently selected node in the    ------  
-		// --- current setup									 	 ------
+		// --- main graph / current setup							 ------
 		// ----------------------------------------------------------------			
-		this.applyNodeShift2MergeWithNetworkModel(graphNodeSelectedInMainGraph, this.localGraphNodeSelected);
+		this.applyNodeShift2MergeWithNetworkModel(networkModelCopy, graphNodeSelectedInMainGraph, this.localGraphNodeSelected);
 		
 		// --- Create the merge description -------------------------------
 		HashSet<GraphNode> nodes2Add = new HashSet<GraphNode>();
-		nodes2Add.add(this.localGraphNodeSelected);
-		GraphNodePairs nodeCouples = new GraphNodePairs(this.basicGraphGui.getPickedSingleNode(), nodes2Add);
+		nodes2Add.add(graphNodeCopy);
+		GraphNodePairs nodeCouples = new GraphNodePairs(graphNodeSelectedInMainGraph, nodes2Add);
 
 		// --- Add the new element to the current NetworkModel ------------
-		this.graphController.getNetworkModelAdapter().mergeNetworkModel(this.localNetworkModel, nodeCouples);
+		this.graphController.getNetworkModelAdapter().mergeNetworkModel(networkModelCopy, nodeCouples);
 
     }
     
@@ -1099,7 +1183,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		 
 		} else if (ae.getSource()==getJComboBoxFilter()) {
 			this.filterString = (String) getJComboBoxFilter().getSelectedItem(); 
-			this.componentTypeList = null;
+			this.listModelComponentTypes = null;
 			this.getJListComponentTypes().setModel(this.getListModelComponentTypes());
 			
 		} else if (ae.getSource()==getJButtonRotate45()) {
@@ -1114,8 +1198,9 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		} else if (ae.getSource()==getJButtonRotate270()) {
 			this.rotateGraph(-(2*Math.PI)/4);
 			
-			
 		}
+    	
     }
 
+    
 }  //  @jve:decl-index=0:visual-constraint="30,-18"
