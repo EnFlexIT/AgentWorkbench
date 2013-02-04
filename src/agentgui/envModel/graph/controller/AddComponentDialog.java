@@ -765,6 +765,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
      */
     private void paintGraph() {
 		
+    	boolean graphNodePositionsSet = false;
     	int rasterSize = 50;
     	double centerX = this.getVisualizationViewer().getCenter().getX();
     	double centerY = this.getVisualizationViewer().getCenter().getY();
@@ -772,30 +773,28 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     	Graph<GraphNode, GraphEdge> graph = this.localNetworkModel.getGraph();
     	
 		// --- Define default layout ------------
-    	Layout<GraphNode, GraphEdge> layout = new CircleLayout<GraphNode, GraphEdge>(graph);
-		((CircleLayout<GraphNode, GraphEdge>)layout).setRadius(rasterSize);
+    	Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
+		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
+			public Point2D transform(GraphNode node) {
+				return node.getPosition(); // The position is specified in the GraphNode instance
+			}
+		});
 		
-		// --------------------------------------
-		// --- Some special cases ---------------
-		// --------------------------------------
+		// ------------------------------------------------
+		// --- Some special cases -------------------------
+		// ------------------------------------------------
 		if (graph.getEdgeCount()==0 && graph.getVertexCount()==1) {
-			// ----------------------------------
-			// --- Case DistributionNodes -------
-			// ----------------------------------
+			// --------------------------------------------
+			// --- Case DistributionNodes -----------------
+			// --------------------------------------------
 			GraphNode node = graph.getVertices().iterator().next();
 			node.setPosition(new Point2D.Double(centerX, centerY));
-			
-			layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-				public Point2D transform(GraphNode node) {
-					return node.getPosition(); // The position is specified in the GraphNode instance
-				}
-			});
+			graphNodePositionsSet = true;
 			
 		} else if (graph.getEdgeCount()==1) {
-			// ----------------------------------
-			// --- Case directed Graph ----------
-			// ----------------------------------
+			// --------------------------------------------
+			// --- Case directed Graph --------------------
+			// --------------------------------------------
 			GraphEdge edge = graph.getEdges().iterator().next();
 			EdgeType edgeType = graph.getEdgeType(edge);
 			if (edgeType==EdgeType.DIRECTED) {
@@ -804,16 +803,11 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 				GraphNode nodeDestin = graph.getDest(edge);
 				nodeSource.setPosition(new Point2D.Double(centerX-rasterSize, centerY));
 				nodeDestin.setPosition(new Point2D.Double(centerX+rasterSize, centerY));
-				
-				layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-				layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-					public Point2D transform(GraphNode node) {
-						return node.getPosition(); // The position is specified in the GraphNode instance
-					}
-				});
+				graphNodePositionsSet = true;
 			}
-		}
-
+			
+		} 
+		
 		if (this.localGraphElementPrototype instanceof StarGraphElement) {
 			// ----------------------------------
 			// --- Case StarGraphElement --------
@@ -840,15 +834,23 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 					angle += angleStep;
 				}
 			}
+			graphNodePositionsSet = true;
+		}
+		
+		if (graphNodePositionsSet==false) {
+			// --- Distribute the GraphNodes in a cycle ---
+			double angle = 0;
+			double angleStep = 2 * Math.PI / graph.getVertices().size();
+			for (GraphNode graphNode : graph.getVertices()) {
 			
-			layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-				public Point2D transform(GraphNode node) {
-					return node.getPosition(); // The position is specified in the GraphNode instance
-				}
-			});
-			
-			
+				double x = centerX + rasterSize * Math.cos(angle); 
+				double y = centerY + rasterSize * Math.sin(angle);
+				
+				Point2D position = new Point2D.Double(x, y);
+				graphNode.setPosition(position);
+				angle+=angleStep;
+			}
+			graphNodePositionsSet = true;
 		}
 		
 		// --------------------------------------
@@ -1125,10 +1127,13 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		    // If the picked vertex is the center of the star, cannot add
 		    Graph<GraphNode, GraphEdge> graph = getVisualizationViewer().getGraphLayout().getGraph();
 		    // All the edges in the graph or incident on the pickedVertex => It is a center
-		    if (graph.getEdgeCount() == graph.getIncidentEdges(this.localGraphNodeSelected).size()) {
-		    	msg = "Select a vertex other than the center of the star";
-		    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
-		    	return;
+		    Collection<GraphEdge> incidentEdges = graph.getIncidentEdges(this.localGraphNodeSelected);
+		    if (incidentEdges!=null) {
+			    if (graph.getEdgeCount()==incidentEdges.size()) {
+			    	msg = "Select a vertex other than the center of the star";
+			    	JOptionPane.showMessageDialog(this, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN), JOptionPane.WARNING_MESSAGE);
+			    	return;
+			    }
 		    }
 		    
 		} else if (this.localGraphElementPrototype instanceof DistributionNode) {
@@ -1155,7 +1160,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		// --- the position of the currently selected node in the    ------  
 		// --- main graph / current setup							 ------
 		// ----------------------------------------------------------------			
-		this.applyNodeShift2MergeWithNetworkModel(networkModelCopy, graphNodeSelectedInMainGraph, this.localGraphNodeSelected);
+		this.applyNodeShift2MergeWithNetworkModel(networkModelCopy, graphNodeSelectedInMainGraph, graphNodeCopy);
 		
 		// --- Create the merge description -------------------------------
 		HashSet<GraphNode> nodes2Add = new HashSet<GraphNode>();
