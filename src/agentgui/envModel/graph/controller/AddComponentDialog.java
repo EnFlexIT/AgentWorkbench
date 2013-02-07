@@ -34,7 +34,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -895,6 +894,8 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     		
     	}
     	
+    	// --- Clear the overall selection and set the selected GraphNode -----
+    	this.getVisualizationViewer().getPickedVertexState().clear();
     	if (graphNodeSelect!=null) {
     		this.getVisualizationViewer().getPickedVertexState().pick(graphNodeSelect, true);	
     	}
@@ -913,14 +914,6 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     		return;
     	}
     	
-    	// --- Update position information of current graph ---------
-    	Graph<GraphNode, GraphEdge> currGraph = this.localNetworkModel.getGraph();    	
-		for (GraphNode graphNode : currGraph.getVertices()) {
-			int x = (int) getVisualizationViewer().getGraphLayout().transform(graphNode).getX();
-			int y = (int) getVisualizationViewer().getGraphLayout().transform(graphNode).getY();
-			graphNode.setPosition(new Point(x, y));
-		}
-		
     	Set<GraphNode> nodeSet = getVisualizationViewer().getPickedVertexState().getPicked();
     	if (nodeSet.size()>=1) {
     		this.localGraphNodeSelected = nodeSet.iterator().next();
@@ -1049,7 +1042,8 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
         				double oldX = graphNode.getPosition().getX() - centerX;
         				double oldY = graphNode.getPosition().getY() - centerY;
         				
-        				double hypotenuse = Math.pow((Math.pow(oldX, 2) + Math.pow(oldY, 2)), 0.5); 
+        				double hypotenuse = Math.pow((Math.pow(oldX, 2) + Math.pow(oldY, 2)), 0.5);
+        				hypotenuse = Math.round(hypotenuse*10)/10;
         				double oldAngle = Math.atan(oldY / oldX);
         				if (Double.isNaN(oldAngle)==false) {
         					if (oldX < 0 && oldY >= 0) {
@@ -1086,7 +1080,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     /**
      * Adds the component.
      */
-    public void addComponent() {
+    private void addComponent() {
     	
     	String msg = null;
     	// --------------------------------------------------------------------------
