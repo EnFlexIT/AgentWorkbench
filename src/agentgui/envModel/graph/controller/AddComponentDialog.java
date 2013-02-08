@@ -98,6 +98,7 @@ import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 /**
  * Dialog for adding a new network component to the model.<br>
@@ -127,7 +128,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	
     private GraphElementPrototype localGraphElementPrototype = null; // @jve:decl-index=0:
 	private GraphNode localGraphNodeSelected = null;  //  @jve:decl-index=0:
-
+	
 	private boolean isHiddenFactory = false;
 	private ComponentAdapter desktopAdapter = null;  //  @jve:decl-index=0:
 	
@@ -418,6 +419,54 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		    });
 		}
 		return jListComponentTypes;
+    }
+    
+    /**
+     * Gets the list of componentTypeSettings from the controller and 
+     * returns it as a Vector<ComponentTypeListElement>
+     * @see ComponentTypeListElement
+     * @return Object[] - array of component types
+     */
+    private DefaultListModel getListModelComponentTypes() {
+		
+    	if (this.listModelComponentTypes==null) {
+    		// --- Create a work Vector -----------------------------
+    		Vector<ComponentTypeListElement> componentTypeVector = new Vector<ComponentTypeListElement>();
+        	HashMap<String, ComponentTypeSettings> ctsHash = this.graphController.getComponentTypeSettings();
+    		if (ctsHash != null) {
+    			Iterator<String> ctsIt = ctsHash.keySet().iterator();
+    		    while (ctsIt.hasNext()) {
+    		    	String componentName = ctsIt.next(); 
+    		    	ComponentTypeSettings cts = ctsHash.get(componentName); 
+    		    	componentTypeVector.add(new ComponentTypeListElement(componentName, cts));
+    		    }
+    		} 
+    		// --- Sort the Vector ----------------------------------
+    		Collections.sort(componentTypeVector, new Comparator<ComponentTypeListElement>() {
+    			@Override
+    			public int compare(ComponentTypeListElement cts1, ComponentTypeListElement cts2) {
+    				if (cts1.getDomain().equals(cts2.getDomain())) {
+    					return cts1.getComponentName().compareTo(cts2.getComponentName());
+    				} else {
+    					return cts1.getDomain().compareTo(cts2.getDomain());
+    				}
+    			}
+    		});
+    		// --- Add the Vector elements to the ListModel ---------
+    		this.listModelComponentTypes = new DefaultListModel();
+    		for (ComponentTypeListElement ctle : componentTypeVector) {
+    			if (this.filterString.equals(AddComponentDialog.NoFilterString)) {
+    				// --- No filter applied --------------
+    				this.listModelComponentTypes.addElement(ctle);	
+    			} else {
+    				// --- Filter applied -----------------
+    				if (ctle.getDomain().equals(this.filterString)) {
+    					this.listModelComponentTypes.addElement(ctle);
+    				}
+    			}
+    		}
+    	}
+		return this.listModelComponentTypes;
     }
     
 	/**
@@ -924,51 +973,51 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     }
     
     /**
-     * Gets the list of componentTypeSettings from the controller and 
-     * returns it as a Vector<ComponentTypeListElement>
-     * @see ComponentTypeListElement
-     * @return Object[] - array of component types
+     * This will select the next (possible) GraphNode in main graph.
      */
-    private DefaultListModel getListModelComponentTypes() {
-		
-    	if (this.listModelComponentTypes==null) {
-    		// --- Create a work Vector -----------------------------
-    		Vector<ComponentTypeListElement> componentTypeVector = new Vector<ComponentTypeListElement>();
-        	HashMap<String, ComponentTypeSettings> ctsHash = this.graphController.getComponentTypeSettings();
-    		if (ctsHash != null) {
-    			Iterator<String> ctsIt = ctsHash.keySet().iterator();
-    		    while (ctsIt.hasNext()) {
-    		    	String componentName = ctsIt.next(); 
-    		    	ComponentTypeSettings cts = ctsHash.get(componentName); 
-    		    	componentTypeVector.add(new ComponentTypeListElement(componentName, cts));
-    		    }
-    		} 
-    		// --- Sort the Vector ----------------------------------
-    		Collections.sort(componentTypeVector, new Comparator<ComponentTypeListElement>() {
-    			@Override
-    			public int compare(ComponentTypeListElement cts1, ComponentTypeListElement cts2) {
-    				if (cts1.getDomain().equals(cts2.getDomain())) {
-    					return cts1.getComponentName().compareTo(cts2.getComponentName());
-    				} else {
-    					return cts1.getDomain().compareTo(cts2.getDomain());
-    				}
+    private void selectNextNodeInMainGraph(NetworkModel networkModelThatWasAdded, GraphNode selectedGraphNode) {
+    	
+    	GraphNode graphNodeSelect = null;
+    	VisualizationViewer<GraphNode, GraphEdge> mainVisView = this.basicGraphGui.getVisView();
+    	
+    	Collection<GraphNode> possibleGraphNode = networkModelThatWasAdded.getGraph().getVertices();
+    	if (possibleGraphNode.size()==1) {
+    		graphNodeSelect = selectedGraphNode;
+    		
+    	} else if (possibleGraphNode.size()>1) {
+    		
+    		for (GraphNode graphNode : possibleGraphNode) {
+        		
+    			if (graphNode!=selectedGraphNode) {
+    				if (graphNodeSelect==null) {
+            			graphNodeSelect = graphNode;
+            		} else {
+            			
+            			double selectedX = graphNodeSelect.getPosition().getX();
+            			double selectedY = graphNodeSelect.getPosition().getY();
+            			
+            			double currentX = graphNode.getPosition().getX();
+            			double currentY = graphNode.getPosition().getY();
+            			
+            			if (currentX>selectedX) {
+            				graphNodeSelect = graphNode;
+            			} else if (currentX==selectedX && currentY>selectedY) {
+            				graphNodeSelect = graphNode;
+            			}
+            		}    			
     			}
-    		});
-    		// --- Add the Vector elements to the ListModel ---------
-    		this.listModelComponentTypes = new DefaultListModel();
-    		for (ComponentTypeListElement ctle : componentTypeVector) {
-    			if (this.filterString.equals(AddComponentDialog.NoFilterString)) {
-    				// --- No filter applied --------------
-    				this.listModelComponentTypes.addElement(ctle);	
-    			} else {
-    				// --- Filter applied -----------------
-    				if (ctle.getDomain().equals(this.filterString)) {
-    					this.listModelComponentTypes.addElement(ctle);
-    				}
-    			}
+    			
     		}
+    		
     	}
-		return this.listModelComponentTypes;
+    	
+    	// --- Select in the main graph -------------------
+    	mainVisView.getPickedVertexState().clear();
+    	if (graphNodeSelect!=null) {
+    		mainVisView.getPickedVertexState().pick(graphNodeSelect, true);	
+    	}
+    	
+    	
     }
     
     /**
@@ -1164,6 +1213,9 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		// --- Add the new element to the current NetworkModel ------------
 		this.graphController.getNetworkModelAdapter().mergeNetworkModel(networkModelCopy, nodeCouples);
 
+		// --- Select the next GraphNode in the main graph ----------------
+		this.selectNextNodeInMainGraph(networkModelCopy, graphNodeCopy);
+		
     }
     
     /*
