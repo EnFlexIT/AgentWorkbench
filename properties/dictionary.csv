@@ -92,7 +92,7 @@ de;Bitte wählen Sie einen Namen für den Agenten!;Please choose a name for the ag
 de;Bitte überprüfen Sie die Datenbank-Einstellungen!;Please check your database settings!
 de;CPU-Auslastung;CPU-Load
 de;CPU;CPU
-de;CSV-Datei importieren;;;;
+de;CSV-Datei importieren;Import CSV file;;;
 de;CSV-Dateien;CSV files;;;
 de;CSV-Version des Wörterbuchs übernehmen?;Take over the csv-version of the dictionary?;;;
 de;Class not found:;Class not found:
@@ -547,7 +547,7 @@ de;Wörterbuch;Dictionary
 de;X Wert;X value;;;
 de;XML-Dateien;XML files
 de;XML;XML
-de;Zeit-Format;;;;
+de;Zeit-Format;Time format;;;
 de;Zeit-Konfiguration;Time Configuration;;;
 de;Zeit;Time;;;
 de;Zeitmodell verwenden;Use a time model;;;

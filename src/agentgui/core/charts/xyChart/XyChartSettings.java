@@ -33,8 +33,10 @@ import java.awt.Color;
 import agentgui.core.charts.ChartSettings;
 import agentgui.core.charts.SeriesSettings;
 import agentgui.ontology.Chart;
+import agentgui.ontology.Simple_Float;
 import agentgui.ontology.XyChart;
 import agentgui.ontology.XyDataSeries;
+import agentgui.ontology.XyValuePair;
 
 /**
  * Settings handler class for XY charts. No additional functionality needed, 
@@ -50,17 +52,49 @@ public class XyChartSettings extends ChartSettings {
 		super(chart);
 		
 		// TODO In die Oberklasse?
-		XyChart tsChart = (XyChart) chart;
-		for(int i=0; i< tsChart.getXyChartData().size(); i++){
-			XyDataSeries series = (XyDataSeries) tsChart.getXyChartData().get(i);
-			SeriesSettings settings = new SeriesSettings();
-			settings.setLabel(series.getLabel());
-			String colorString = (String) chart.getVisualizationSettings().getYAxisColors().get(i);
-			settings.setColor(new Color(Integer.parseInt(colorString)));
-			settings.setLineWIdth((Float) chart.getVisualizationSettings().getYAxisLineWidth().get(i));
+		XyChart xyChart = (XyChart) chart;
+		for(int i=0; i< xyChart.getXyChartData().size(); i++){
 			
-			this.addSeriesSettings(settings);
+			XyDataSeries series = (XyDataSeries) xyChart.getXyChartData().get(i);
+			if (this.isValidXyDataSeries(series)==true) {
+
+				SeriesSettings settings = new SeriesSettings();
+				settings.setLabel(series.getLabel());
+				String colorString = (String) chart.getVisualizationSettings().getYAxisColors().get(i);
+				settings.setColor(new Color(Integer.parseInt(colorString)));
+				settings.setLineWIdth((Float) chart.getVisualizationSettings().getYAxisLineWidth().get(i));
+				
+				this.addSeriesSettings(settings);	
+			}
+			
 		}
 	}
 
+	/**
+	 * Checks if is valid xy data series.
+	 *
+	 * @param series the series
+	 * @return true, if is valid xy data series
+	 */
+	private boolean isValidXyDataSeries(XyDataSeries series) {
+	
+		boolean isXyDataSeries = true;
+		// --- Test if this is a real XY series -----------
+		int seriesSize = series.getXyValuePairs().size();
+		if (seriesSize==0) {
+			return false;
+			
+		} else  if (seriesSize==1) {
+			XyValuePair valuePair = (XyValuePair) series.getXyValuePairs().get(0);
+			Simple_Float x = valuePair.getXValue();
+			Simple_Float y = valuePair.getXValue();
+			
+			if (x.getFloatValue()==0.0 && y.getFloatValue()==0.0) {
+				return false;
+			}
+			
+		}
+		return isXyDataSeries;
+	}
+	
 }

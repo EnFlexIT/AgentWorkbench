@@ -114,9 +114,17 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 		if (object instanceof String) {
 			String notification = (String) object;
 			if (notification.equals(DynForm.UPDATED_DataModel)==true) {
-				Object[] startArgs = this.dynForm.getOntoArgsInstance();
-				Object newOntologyClassInstance =  startArgs[this.startArgIndex];
-				this.setOntologyClassInstance(newOntologyClassInstance);	
+				
+				try {
+					// --- Try to set the new instance --------------
+					Object[] startArgs = this.dynForm.getOntoArgsInstance();
+					Object newOntologyClassInstance =  startArgs[this.startArgIndex];
+					this.setOntologyClassInstance(newOntologyClassInstance);
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+					
 			}
 		}
 	}
