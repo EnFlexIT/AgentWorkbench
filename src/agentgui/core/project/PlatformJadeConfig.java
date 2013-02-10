@@ -92,7 +92,6 @@ public class PlatformJadeConfig implements Serializable {
 	public static final String SERVICE_DebugService = jade.debugging.DebugService.class.getName();
 	public static final String SERVICE_AgentGUI_LoadService = agentgui.simulationService.LoadService.class.getName();
 	public static final String SERVICE_AgentGUI_SimulationService = agentgui.simulationService.SimulationService.class.getName();
-	public static final String SERVICE_AgentGUI_P2DEnvironmentProviderService = agentgui.envModel.p2Dsvg.provider.EnvironmentProviderService.class.getName();
 	
 	// --- Add-On-Services ----------------------------------------------------
 	public static final String SERVICE_InterPlatformMobilityService = jade.core.migration.InterPlatformMobilityService.class.getName();

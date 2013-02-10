@@ -52,7 +52,6 @@ import agentgui.core.ontologies.gui.OntologyClassVisualisation;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
-import agentgui.envModel.p2Dsvg.controller.Physical2DEnvironmentController;
 
 /**
  * This class is for constant values or variables, which can
@@ -230,15 +229,6 @@ public class GlobalInfo {
 		envDisplayNameLanguage = Language.DE;
 		envControllerClass = null;
 		displayAgentClass = null;
-		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
-		addEnvironmentType(envType);
-		
-		// --- Continuous 2D environment ------------------------------------
-		envKey = "continous2Denvironment";
-		envDisplayName = "Kontinuierliches 2D-Umgebungsmodell";
-		envDisplayNameLanguage = Language.DE;
-		envControllerClass = Physical2DEnvironmentController.class;
-		displayAgentClass = agentgui.envModel.p2Dsvg.display.DisplayAgent.class;
 		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
