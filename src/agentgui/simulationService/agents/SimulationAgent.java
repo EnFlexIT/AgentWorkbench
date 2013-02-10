@@ -39,7 +39,6 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
-import java.util.ArrayList;
 import java.util.Vector;
 
 import agentgui.simulationService.SimulationService;
