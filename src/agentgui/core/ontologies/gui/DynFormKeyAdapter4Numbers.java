@@ -47,7 +47,7 @@ public class DynFormKeyAdapter4Numbers extends KeyAdapter {
 	
 	/**
 	 * Instantiates a new number watcher.
-	 * @param floatValue indicates, if this watcher is used for Float values. If not Integer values are assumed.
+	 * @param isFloatValue indicates, if this watcher is used for Float values. If not Integer values are assumed.
 	 */
 	public DynFormKeyAdapter4Numbers (boolean isFloatValue) {
 		this.isFloatValue = isFloatValue;

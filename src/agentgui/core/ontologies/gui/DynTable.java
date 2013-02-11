@@ -42,7 +42,8 @@ import javax.swing.tree.DefaultTreeModel;
 import agentgui.core.application.Application;
 
 /**
- * The Class DynTable.
+ * The Class DynTable provides an alternative view to the slots of an ontology
+ * and is strongly related to the {@link DynForm}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -251,9 +252,7 @@ public class DynTable extends JTable {
 	
 	/**
 	 * Sets the OntologyClassVisualsation visible.
-	 *
 	 * @param dynType the new special class visible
-	 * @param startArgIndex the start arg index
 	 */
 	public void setOntologyClassVisualsationVisible(DynType dynType) {
 		this.dynTableJPanel.setOntologyClassVisualsationVisible(dynType);

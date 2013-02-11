@@ -203,9 +203,9 @@ public class GlobalInfo {
 			// --- Verzeichnis-Eintraege eindeutig (unique) machen ----------
 			JCP_Folders = (String[])Folders.toArray(new String[Folders.size()]);
 			for (int j = 0; j < JCP_Folders.length; j++) {				
-				if ( JCP_Folders[j].endsWith( localPathAgentGUI ) ) {
+				if (JCP_Folders[j].endsWith(localPathAgentGUI)) {
 					// --- bin-Verzeichnis gefunden ---					
-					cutAt = JCP_Folders[j].lastIndexOf( localPathAgentGUI );
+					cutAt = JCP_Folders[j].lastIndexOf(localPathAgentGUI);
 					localBaseDir = JCP_Folders[j].substring(0, cutAt);
 					break;
 				}
@@ -1154,7 +1154,7 @@ public class GlobalInfo {
 	}
 	/**
 	 * Unregister an OntologyClassVisualisation.
-	 * @param classNameOfOntologyClassVisualisation the class name of the OntologyClassVisualisation
+	 * @param ontologyClassVisualisation the OntologyClassVisualisation to unregister
 	 */
 	public void unregisterOntologyClassVisualisation(OntologyClassVisualisation ontologyClassVisualisation) {
 		if (this.isOntologyClassVisualisation(ontologyClassVisualisation)==true) {

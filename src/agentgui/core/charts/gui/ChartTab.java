@@ -75,7 +75,6 @@ public abstract class ChartTab extends ChartPanel {
 	
 	/**
 	 * Gets the current chartThumb. If this null or forceRefresh is true, it will be initialized/refreshed before. 
-	 * @param forceRefresh If true, a new chartThumb will be created before returning it.
 	 * @return The chartThumb
 	 */
 	public BufferedImage getChartThumb(){

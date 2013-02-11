@@ -55,7 +55,8 @@ import agentgui.core.application.Language;
 import agentgui.core.gui.ProjectWindow;
 
 /**
- * The Class DynTableJPanel.
+ * The Class DynTableJPanel is the base for the visualisation of the {@link DynTable}.
+ * It manages among others to show {@link OntologyClassWidget}'s related the DynTable.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -159,11 +160,10 @@ public class DynTableJPanel extends JPanel {
 	private DynType getDynType() {
 		return dynType;
 	}
+	
 	/**
 	 * Sets the ontology class-visualsation visible.
-	 *
 	 * @param dynType the DynType
-	 * @param startArgIndex the start argument index
 	 */
 	public void setOntologyClassVisualsationVisible(DynType dynType) {
 		

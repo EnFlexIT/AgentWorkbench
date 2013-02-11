@@ -166,7 +166,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	
 	/**
      * Instantiates a new AddComponentDialog and displays it for the user.
-     * @param controller the GraphEnvironmentController
+     * @param graphController the GraphEnvironmentController
      */
     public AddComponentDialog(GraphEnvironmentController graphController) {
     	super(graphController);
@@ -179,7 +179,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
      * for imports and other.
      *
      * @param graphController the graph controller
-     * @param asHiddenFactoryDialog the as hidden factory dialog
+     * @param isHiddenFactory indicates if the dialog is used a invisible factory dialog (e. g. for a customized import function)
      */
     public AddComponentDialog(GraphEnvironmentController graphController, boolean isHiddenFactory) {
     	super(graphController);

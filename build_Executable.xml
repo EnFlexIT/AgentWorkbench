@@ -52,8 +52,6 @@
 					lib/googleTranslateAPI/google-api-translate-java-0.97.jar
 					lib/googleTranslateAPI/json-20090211.jar
 		
-					lib/batik/batik.jar
-		
 					lib/jung/collections-generic-4.01.jar
 					lib/jung/colt-1.2.0.jar
 					lib/jung/concurrent-1.3.4.jar
@@ -83,10 +81,9 @@
 	<!-- Version - Information - - - - -  -->
 	<property name="versionPropertyFile" value="${sourceDir}\agentgui\version.properties"/>
 	<property name="versionBuildNumberFile" value="${sourceDir}\agentgui\build.number"/>
-	<property name="versionChangesFile" value="${sourceDir}\agentgui\build.changes.html"/>
+	<property name="versionInfoFiles" value="${sourceDir}\agentgui"/>
 	
-	<property name="destinVersionPropertyFile" value="${binaryDirANT}\agentgui\version.properties"/>
-	<property name="destinVersionChangesFile"  value="${binaryDirANT}\agentgui\build.changes.html"/>
+	<property name="destinVersionInfoFiles"  value="${binaryDirANT}\agentgui"/>
 	
 	
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -176,9 +173,13 @@
     	<copy tofile="${binaryFileProjectOntology}" file="${sourceFileProjectOntology}" />
     	
     	<!-- Version information to ANT folder -->
-    	<copy tofile="${destinVersionPropertyFile}" file="${versionPropertyFile}" />
-    	<copy tofile="${destinVersionChangesFile}" file="${versionChangesFile}" />
-    		
+    	<copy toDir="${destinVersionInfoFiles}">
+    		<fileset dir="${versionInfoFiles}" >
+    			<include name="**/*.html" />
+    			<include name="**/*.properties" />
+    		</fileset>
+    	</copy>
+    	
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

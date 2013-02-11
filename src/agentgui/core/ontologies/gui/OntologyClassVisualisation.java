@@ -41,7 +41,7 @@ import agentgui.core.config.GlobalInfo;
  * In order to register your own OntologyClassVisualisation use the register method
  * in the GlobalInfo of the Application (see links below).
  * 
- * @see GlobalInfo#registerOntologyClassVisualisation(OntologyClassVisualisation)
+ * @see GlobalInfo#registerOntologyClassVisualisation(String)
  * @see GlobalInfo#getKnownOntologyClassVisualisations()
  * @see GlobalInfo#isOntologyClassVisualisation(Class)
  * @see GlobalInfo#getOntologyClassVisualisation(Class)

@@ -200,8 +200,8 @@ public abstract class DynFormBase extends JPanel {
 		return emptyForm;
 	}
 	/**
-	 * Sets the empty form.
-	 * @param emptyForm the emptyForm to set
+	 * Sets the indicator if the DynForm is empty.
+	 * @param isEmptyForm the indicator if the DynForm is empty or not
 	 */
 	protected void setIsEmptyForm(boolean isEmptyForm) {
 		this.emptyForm = isEmptyForm;
@@ -873,7 +873,7 @@ public abstract class DynFormBase extends JPanel {
 	/**
 	 * This method has to create a copy of the passed JPanel and adds it.
 	 *
-	 * @param node the node
+	 * @param currNode the current node
 	 * @param isInnerClass the is inner class
 	 * @return the default mutable tree node
 	 */

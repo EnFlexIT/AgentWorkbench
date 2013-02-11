@@ -408,12 +408,17 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Create the DefaultListModels for the current agent configuration ---- 
 		currSimSetup.createHashMap4AgentDefaulListModelsFromAgentList();
 
+		
 		// --- Set the agent classes in the agentSetup -----------------------------
 		ArrayList<AgentClassElement4SimStart> agentList = currSimSetup.getAgentList();
 		for (int i = 0; i < agentList.size(); i++) {
-			// --- The .toSting method will check if the class is ---------   
-			// --- there and initialize the corresponding attribute -------
-			agentList.get(i).toString();
+			try {
+				// --- The .toSting method will check if the class exists ----------
+				agentList.get(i).toString();
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 		currSimSetup.setProject(currProject);
 	}

@@ -106,7 +106,11 @@ public class ProjectWindowTab {
 	 * Adds the current Tab-object to the project window.
 	 */
 	public void add() {
-		this.currProject.getProjectWindow().addProjectTab(this);	
+		try {
+			this.currProject.getProjectWindow().addProjectTab(this);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	/**

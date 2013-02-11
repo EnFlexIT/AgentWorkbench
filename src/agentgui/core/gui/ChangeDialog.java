@@ -41,17 +41,27 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Vector;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -66,7 +76,7 @@ import agentgui.core.application.Language;
 
 
 /**
- * The Class ChangesDialog.
+ * The Class ChangesDialog will display the changes.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -80,12 +90,17 @@ public class ChangeDialog extends JDialog implements ActionListener {
 	private JPanel jContentPane = null;
 	private JScrollPane jScrollPane = null;
 	private JEditorPane jEditorPaneChanges = null;
+	
+	private JPanel jPanelBottom = null;
+	private JLabel jLabelVersion = null;
+	private JComboBox jComboBoxVersions = null;
+	private JLabel jLabelDummy = null;
 	private JButton jButtonClose = null;
 	
 	/** The HTML file with the version changes. */
-	private String changesFile = "agentgui/build.changes.html";  //  @jve:decl-index=0:
+	private String changeFilesPackage = "agentgui/";  //  @jve:decl-index=0:
 	
-	
+
 	/**
 	 * Instantiates a new changes dialog.
 	 * @param owner the owner
@@ -93,7 +108,6 @@ public class ChangeDialog extends JDialog implements ActionListener {
 	public ChangeDialog(Frame owner) {
 		super(owner);
 		this.initialize();
-		this.loadBuildChanges();
 	}
 
 	/**
@@ -132,10 +146,11 @@ public class ChangeDialog extends JDialog implements ActionListener {
 	 * Load the file 'build.changes.html' that is located in
 	 * the package agentgui.
 	 */
-	private void loadBuildChanges() {
+	private void loadBuildChanges(String versionNumber) {
 		
 		try {
-			URL changesFileURL = getClass().getClassLoader().getResource(changesFile);
+			String versionFile = changeFilesPackage + "build." + versionNumber + ".changes.html";
+			URL changesFileURL = getClass().getClassLoader().getResource(versionFile);
 			this.getJEditorPaneChanges().setPage(changesFileURL);
 			
 		} catch (IOException ex) {
@@ -184,11 +199,11 @@ public class ChangeDialog extends JDialog implements ActionListener {
 	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.gridx = 0;
-			gridBagConstraints1.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints1.insets = new Insets(0, 0, 20, 0);
-			gridBagConstraints1.gridy = 1;
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.gridx = 0;
+			gridBagConstraints2.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints2.insets = new Insets(0, 17, 20, 15);
+			gridBagConstraints2.gridy = 1;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.BOTH;
 			gridBagConstraints.gridy = 0;
@@ -199,7 +214,7 @@ public class ChangeDialog extends JDialog implements ActionListener {
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
 			jContentPane.add(getJScrollPane(), gridBagConstraints);
-			jContentPane.add(getJButtonClose(), gridBagConstraints1);
+			jContentPane.add(getJPanelBottom(), gridBagConstraints2);
 		}
 		return jContentPane;
 	}
@@ -243,10 +258,8 @@ public class ChangeDialog extends JDialog implements ActionListener {
 							
 						} catch (IOException ioe) {
 							System.err.println("Could not find: '" + linkURI + "'");
-//							ioe.printStackTrace();
 						} catch (URISyntaxException urie) {
 							System.err.println("Could not find: '" + linkURI +"'");
-//							urie.printStackTrace();
 						}
 					}
 				}
@@ -255,6 +268,145 @@ public class ChangeDialog extends JDialog implements ActionListener {
 		return jEditorPaneChanges;
 	}
 
+	/**
+	 * This method initializes jPanelBottom	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelBottom() {
+		if (jPanelBottom == null) {
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.gridx = 0;
+			gridBagConstraints4.gridy = 0;
+
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraints3.gridy = 0;
+			gridBagConstraints3.weightx = 0.0;
+			gridBagConstraints3.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints3.gridx = 1;
+			
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			gridBagConstraints5.gridx = 2;
+			gridBagConstraints5.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints5.weightx = 1.0;
+			gridBagConstraints5.gridy = 0;
+			
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.anchor = GridBagConstraints.CENTER;
+			gridBagConstraints1.gridx = 3;
+			gridBagConstraints1.gridy = -1;
+			gridBagConstraints1.insets = new Insets(0, 0, 0, 0);
+
+			jLabelVersion = new JLabel();
+			jLabelVersion.setText("Version:");
+			jLabelVersion.setFont(new Font("Dialog", Font.BOLD, 12));
+			
+			jLabelDummy = new JLabel();
+			jLabelDummy.setText("");
+			
+			jPanelBottom = new JPanel();
+			jPanelBottom.setLayout(new GridBagLayout());
+			jPanelBottom.add(jLabelVersion, gridBagConstraints4);
+			jPanelBottom.add(getJComboBoxVersions(), gridBagConstraints3);
+			jPanelBottom.add(jLabelDummy, gridBagConstraints5);			
+			jPanelBottom.add(getJButtonClose(), gridBagConstraints1);
+
+		}
+		return jPanelBottom;
+	}
+	
+	/**
+	 * Gets the combo box model for the versions.
+	 * @return the combo box model
+	 */
+	private DefaultComboBoxModel getComboBoxModel() {
+
+		DefaultComboBoxModel cbm = new DefaultComboBoxModel();
+		Vector<String> versionNumbers = new Vector<String>(); 
+
+		// --- Find all files in the package 'agentgui/ -------------
+		Vector<String> fileNameFound = new Vector<String>();
+		URL changeFilesURL = getClass().getClassLoader().getResource(this.changeFilesPackage);
+		if (changeFilesURL!=null) {
+			if (changeFilesURL.getProtocol().equals("file")) {
+				// --- Happens in the IDE ---------------------------
+				try {
+					String[] tmpFileNameFound = new File(changeFilesURL.toURI()).list();
+					for (int i = 0; i < tmpFileNameFound.length; i++) {
+						fileNameFound.add(tmpFileNameFound[i]);
+					}
+					
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}	
+			
+			} else if(changeFilesURL.getProtocol().equals("jar")) {
+				// --- Happens in the AgentGui.jar ------------------
+				try {
+					JarInputStream jarFile = new JarInputStream(new FileInputStream(Application.getGlobalInfo().getFileRunnableJar(true)));
+					int pathSepPosition = this.changeFilesPackage.indexOf("/");
+					while(true) {
+						JarEntry jarEntry=jarFile.getNextJarEntry ();
+						if(jarEntry==null) break;
+
+						String jarEntryName = jarEntry.getName();
+						if((jarEntryName.startsWith(this.changeFilesPackage)) && jarEntryName.lastIndexOf("/")<=pathSepPosition) {
+							fileNameFound.add(jarEntryName);
+						}
+					}
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		} 
+		
+		if (fileNameFound!=null) {
+			// --- Files found - get the version files -------------- 
+			versionNumbers = new Vector<String>();
+			for (int i = 0; i < fileNameFound.size(); i++) {
+				String fileName = fileNameFound.get(i);
+				if (fileName.endsWith(".html")) {
+					int cut1 = fileName.indexOf("build") + 6;
+					int cut2 = fileName.indexOf("changes") - 1;
+					String versionNumber = fileName.substring(cut1, cut2);
+					versionNumbers.addElement(versionNumber);
+				}
+			}
+			// --- Sort result descending ---------------------------
+			Collections.sort(versionNumbers, new Comparator<String>() {
+				public int compare(String version1, String version2) {
+					int compared = 0;
+					Integer buildNo1 = Integer.parseInt(version1.substring(version1.indexOf("-")+1));
+					Integer buildNo2 = Integer.parseInt(version2.substring(version2.indexOf("-")+1));
+					compared = buildNo1.compareTo(buildNo2);
+					return compared*-1;
+				};
+			});
+			// --- Fill the combo box model -------------------------
+			cbm = new DefaultComboBoxModel(versionNumbers);
+			
+			// --- set the current file -----------------------------
+			this.loadBuildChanges(versionNumbers.get(0));
+		}
+		return cbm;
+	}
+	
+	/**
+	 * This method initializes jComboBoxVersions	
+	 * @return javax.swing.JComboBox	
+	 */
+	private JComboBox getJComboBoxVersions() {
+		if (jComboBoxVersions == null) {
+			jComboBoxVersions = new JComboBox(this.getComboBoxModel());
+			jComboBoxVersions.setPreferredSize(new Dimension(120, 26));
+			jComboBoxVersions.addActionListener(this);
+		}
+		return jComboBoxVersions;
+	}
+	
 	/**
 	 * This method initializes jButtonClose.
 	 * @return javax.swing.JButton
@@ -280,8 +432,13 @@ public class ChangeDialog extends JDialog implements ActionListener {
 		
 		if (ae.getSource()==this.getJButtonClose()) {
 			this.setVisible(false);
+		} else if (ae.getSource()==this.getJComboBoxVersions()) {
+			String versionNumber = (String) this.getJComboBoxVersions().getSelectedItem();
+			this.loadBuildChanges(versionNumber);
 		}
 		
 	}
+
+	
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

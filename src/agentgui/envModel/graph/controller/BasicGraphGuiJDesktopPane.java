@@ -89,7 +89,7 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	}
 	/**
 	 * Unregisters a property window for components or nodes
-	 * @param jInternalFrame the JInternalFrame to unregister
+	 * @param internalFrame the JInternalFrame to unregister
 	 */
 	public void unregisterEditor(JInternalFrame internalFrame) {
 		this.getHashMapEditorFrames().remove(internalFrame.getTitle());

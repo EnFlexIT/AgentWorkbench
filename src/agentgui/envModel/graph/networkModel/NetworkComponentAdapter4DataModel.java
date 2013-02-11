@@ -57,7 +57,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	
 	/**
 	 * Instantiates a new network component data model adapter.
-	 * @param environmentController the environment controller
+	 * @param graphController the GraphEnvironmentController
 	 */
 	public NetworkComponentAdapter4DataModel(GraphEnvironmentController graphController) {
 		this.setGraphEnvironmentController(graphController);
@@ -66,7 +66,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	
 	/**
 	 * Sets the current GraphEnvironmentController.
-	 * @param environmentController the new environment controller
+	 * @param graphController the new GraphEnvironmentController
 	 */
 	public void setGraphEnvironmentController(GraphEnvironmentController graphController) {
 		this.graphController = graphController;
