@@ -30,6 +30,7 @@ package agentgui.envModel.graph.controller;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
@@ -39,6 +40,7 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -222,9 +224,25 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	private JComponent getJPanelContent() {
 		if (this.jComponentContent==null) {
 			
-			if (this.networkComponentAdapter== null) {
+			if (this.networkComponentAdapter==null) {
 				this.getJToolBarButtonSave().setEnabled(false);
 				this.getJToolBarButtonSaveAndExit().setEnabled(false);
+
+				String displayText = null;
+				if (this.networkComponent!=null) {
+					displayText = "<html><center>" + Language.translate("No NetworkComponentAdapter\nwas defined for the\n NetworkComponent", Language.EN) + " " + this.networkComponent.getId() + " (" +  this.networkComponent.getType() + ")!<br><br> </center></html>";
+				} else if (this.graphNode!=null) {
+					String domain = this.graphController.getNetworkModel().getDomain(this.graphNode); 
+					displayText = "<html><center>" + Language.translate("No NetworkComponentAdapter\nwas defined for\n the GraphNodes of the Domain", Language.EN) + " '" + domain + "'!<br><br> </center></html>";
+				}
+				
+				JLabel jLabelNoAdapter = new JLabel();
+				jLabelNoAdapter.setText(displayText);
+				jLabelNoAdapter.setFont(new Font("Dialog", Font.BOLD, 12));
+				jLabelNoAdapter.setHorizontalAlignment(JLabel.CENTER);
+				jLabelNoAdapter.setSize(new Dimension(200, 260));
+				
+				this.jComponentContent = jLabelNoAdapter;
 				
 			} else {
 				this.adapter4DataModel = this.networkComponentAdapter.getNewDataModelAdapter();

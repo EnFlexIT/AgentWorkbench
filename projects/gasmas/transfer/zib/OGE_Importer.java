@@ -73,7 +73,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import agentgui.core.application.Application;
 import agentgui.envModel.graph.controller.AddComponentDialog;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.controller.NetworkModelFileImporter;
@@ -124,14 +123,13 @@ public class OGE_Importer extends NetworkModelFileImporter {
 		// --------------------------------------------------------------------
 		// --- Import the *.net file ------------------------------------------
 		GasNetwork gasNetwork = importNetFile(netFile);
-		
-		if (gasNetwork != null) {
+		if (gasNetwork!=null) {
 			// --- Fill local HashMaps ----------------------------------------
-			fillLocalHashMaps(gasNetwork);
+			this.fillLocalHashMaps(gasNetwork);
 			
 			// --- Get the user mapping for external/internal mapping ---------
-			if (getUserMapping4Components() == true) {
-				translateGasNetwork2NetworkModel();
+			if (this.getUserMapping4Components()==true) {
+				this.translateGasNetwork2NetworkModel();
 			}
 		}
 		
@@ -520,15 +518,55 @@ public class OGE_Importer extends NetworkModelFileImporter {
 	 */
 	private boolean getUserMapping4Components() {
 		
-		//System.out.println(this.GNW_Types4Mapping.toString());
-		UserMapping userMapping = new UserMapping(Application.getMainWindow(), this.GNW_Types4Mapping, this.graphController.getGeneralGraphSettings4MAS());
-		userMapping.setVisible(true);
-		// --- Wait -------------------
-		if (userMapping.isCancelled()==true) {
-			return false;
-		}
+//		UserMapping userMapping = new UserMapping(Application.getMainWindow(), this.GNW_Types4Mapping, this.graphController.getGeneralGraphSettings4MAS());
+//		userMapping.setVisible(true);
+//		// --- Wait -------------------
+//		if (userMapping.isCancelled()==true) {
+//			return false;
+//		}
+//		
+//		this.GNW_Types4Mapping = userMapping.getExternalTypes();
 		
-		this.GNW_Types4Mapping = userMapping.getExternalTypes();
+		// --- Manually Assign the external types to the internal one ----
+		String classNameShort = null;
+		TypeDescription typeDesc = null;
+		
+		classNameShort = "CompressorStationType";
+		typeDesc = this.GNW_Types4Mapping.get(classNameShort);
+		typeDesc.setMapToComponent("Compressor");
+		
+		classNameShort = "ControlValveType";
+		typeDesc = this.GNW_Types4Mapping.get(classNameShort);
+		typeDesc.setMapToComponent("ControlValve");
+		
+		classNameShort = "InnodeType";
+		typeDesc = this.GNW_Types4Mapping.get(classNameShort);
+		typeDesc.setMapToComponent(null);
+		
+		classNameShort = "PipeType";
+		typeDesc = this.GNW_Types4Mapping.get(classNameShort);
+		typeDesc.setMapToComponent("Pipe");
+		
+		classNameShort = "ShortPipeType";
+		typeDesc = this.GNW_Types4Mapping.get(classNameShort);
+		typeDesc.setMapToComponent("Pipe-Short");
+		
+		classNameShort = "ResistorType";
+		typeDesc = this.GNW_Types4Mapping.get(classNameShort);
+		typeDesc.setMapToComponent("Resistor");
+		
+		classNameShort = "ValveType";
+		typeDesc = this.GNW_Types4Mapping.get(classNameShort);
+		typeDesc.setMapToComponent("Valve");
+		
+		classNameShort = "SinkType";
+		typeDesc = this.GNW_Types4Mapping.get(classNameShort);
+		typeDesc.setMapToComponent("Exit");
+		
+		classNameShort = "SourceType";
+		typeDesc = this.GNW_Types4Mapping.get(classNameShort);
+		typeDesc.setMapToComponent("Entry");
+		
 		return true;
 	}
 	

@@ -586,16 +586,6 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
-en;;Add Network Component;;;
-en;;Add;;;
-en;;Close;;;
-en;;Discrete squares environment;;;
-en;;Edit Vertex Properties;;;
-en;;No Filter!;;;
-en;;Please, select one free vertex in the overall network!;;;
-en;;Please, select one free vertex of the network component that you want to add!;;;
-en;;Save and Exit;;;
-en;;Save;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agenten-Klasse;Agent class;;;
@@ -612,6 +602,8 @@ en;Bitte wählen Sie einen Knoten !;Select one vertex !;;;
 en;Bitte wählen Sie einen Knoten ausserhalb des Zentrums;Select a vertex other than the center of the star;;;
 en;Bitte wählen Sie einen Knoten!;Select one vertex please!;;;
 en;Bitte wählen Sie einen Knoten.;Select one vertex;;;
+en;Bitte wählen Sie einen freien Knoten aus dem Gesamtnetzwerk!;Please, select one free vertex in the overall network!;;;
+en;Bitte wählen Sie einen freien Knoten der Netzwerk-Komponente, die Sie hinzufügen möchten!;Please, select one free vertex of the network component that you want to add!;;;
 en;Bitte wählen Sie einen gültigen Knoten;Select a valid vertex first;;;
 en;Bitte wählen Sie mindestens zwei gültige Knoten!;Select at least two valid vertices!;;;
 en;Bitte wählen Sie zuerst eine Kante;Select an edge first;;;
@@ -642,13 +634,28 @@ en;Graph importieren;Import Graph from file;;;
 en;Graph löschen;Clear graph;;;
 en;Graph-Prototyp;Graph-prototype;;;
 en;Halten Sie die Umschalttaste gedrückt und klicken mit der rechten Maustaste auf  zwei Knoten;Use Shift and Right click two vertices;;;
+en;Hinzufügen;Add;;;
 en;Icon auswählen;Choose Icon;;;
 en;Initiiere Netzwerkkomponenten;Initiating network components;;;
 en;Kanten-Breite;Edge Width;;;
 en;Kantenfarbe;Edge Color;;;
+en;Kein Filter!;No Filter!;;;
+en;Kein NetworkComponentAdapter
+definiert für die
+ Netzwerkkomponente
+;No NetworkComponentAdapter
+was defined for the
+ NetworkComponent;;;
+en;Kein NetworkComponentAdapter
+definiert für die
+ die Knoten der Domain
+;No NetworkComponentAdapter
+was defined for
+ the GraphNodes of the Domain;;;
 en;Klicken;Click;;;
 en;Knoten verbinden;Merge two nodes;;;
 en;Knoten zusammenlegen;Merge nodes;;;
+en;Knoten-Eigenschaften bearbeiten;Edit Vertex Properties;;;
 en;Knotenfarbe;Vertex Color;;;
 en;Knotengröße;Vertex Size;;;
 en;Knotengröße;Vertex size;;;
@@ -660,12 +667,16 @@ en;Komponentensuche;Search Components;;;
 en;Lesen;Reading;;;
 en;Name;Name;;;
 en;Netzwerk-Komponenten vorbereiten;Preparing network components;;;
+en;Netzwerkkomponente hinzufügen;Add Network Component;;;
 en;Netzwerkkomponente und Datenmodell initiieren;Initiating network components and setting data model;;;
 en;Ontologie-Klasse;Ontology class;;;
 en;Optionen;Options;;;
 en;Rückgängig;Undo Action;;;
+en;Schließen;Close;;;
 en;Setze Datenmodell für;Setting data model for;;;
 en;Sind Sie sicher, dass Sie den Graphen löschen wollen?;Are you sure that you want to clear the graph?;;;
+en;Speichern und Schließen;Save and Exit;;;
+en;Speichern;Save;;;
 en;Teilnetz;Subnetwork;;;
 en;Typen-Bezeichnung;Type-Specifier;;;
 en;Umschalten auf Picking-Modus;Switch to Picking mode;;;
