@@ -1,4 +1,4 @@
-package gasmas.ontology.factory;
+package gasmas.transfer.zib.factory;
 
 import gasmas.ontology.ShortPipe;
 import gasmas.transfer.zib.net.GasConnectionType;

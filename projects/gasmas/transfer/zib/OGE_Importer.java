@@ -32,22 +32,25 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import gasmas.ontology.Compressor;
 import gasmas.ontology.Valve;
-import gasmas.ontology.factory.CompressorFactory;
-import gasmas.ontology.factory.ControlValveFactory;
-import gasmas.ontology.factory.EntryFactory;
-import gasmas.ontology.factory.ExitFactory;
-import gasmas.ontology.factory.PipeFactory;
-import gasmas.ontology.factory.ResistorFactory;
-import gasmas.ontology.factory.ShortPipeFactory;
-import gasmas.ontology.factory.ValveFactory;
 import gasmas.transfer.zib.cdf.CombinedDecisions;
 import gasmas.transfer.zib.cs.CompressorStationsType;
 import gasmas.transfer.zib.cs.CompressorStationsType.CompressorStation;
+import gasmas.transfer.zib.factory.CompressorFactory;
+import gasmas.transfer.zib.factory.ControlValveFactory;
+import gasmas.transfer.zib.factory.EntryFactory;
+import gasmas.transfer.zib.factory.ExitFactory;
+import gasmas.transfer.zib.factory.InnodeFactory;
+import gasmas.transfer.zib.factory.PipeFactory;
+import gasmas.transfer.zib.factory.ResistorFactory;
+import gasmas.transfer.zib.factory.ShortPipeFactory;
+import gasmas.transfer.zib.factory.ValveFactory;
+import gasmas.transfer.zib.net.BoundaryNodeType;
 import gasmas.transfer.zib.net.CompressorStationType;
 import gasmas.transfer.zib.net.ControlValveType;
 import gasmas.transfer.zib.net.GasConnectionType;
 import gasmas.transfer.zib.net.GasNetwork;
 import gasmas.transfer.zib.net.GasNodeType;
+import gasmas.transfer.zib.net.InnodeType;
 import gasmas.transfer.zib.net.PipeType;
 import gasmas.transfer.zib.net.ResistorType;
 import gasmas.transfer.zib.net.ShortPipeType;
@@ -162,7 +165,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 	 */
 	private void translateGasNetwork2NetworkModel() {
 		
-		compressors = new HashMap<String, Compressor>();
+		this.compressors = new HashMap<String, Compressor>();
 		
 		AddComponentDialog componentFactory = new AddComponentDialog(this.graphController, true);
 		HashMap<String, HashSet<GraphNode>> nodeConnections = new HashMap<String, HashSet<GraphNode>>();
@@ -184,13 +187,14 @@ public class OGE_Importer extends NetworkModelFileImporter {
 				NetworkComponent netComp = compNetModel.getNetworkComponents().values().iterator().next();
 				// --- Get the new GraphNode ----------------------------------
 				GraphNode graphNode = compNetModel.getGraph().getVertices().iterator().next();
+				graphNode.setDataModel(InnodeFactory.getInnodeAsDataModel4NetworkComponentAdapter(gasNodeType));
 				
 				// ------------------------------------------------------------
 				// --- Do renaming of NetworkComponent and GraphNode ----------
 				compNetModel.renameNetworkComponent(netComp.getId(), gasNodeType.getId());
 				compNetModel.renameGraphNode(graphNode.getId(), gasNodeType.getId());
 				
-				// --- Define the right position ------------------------------
+				// --- Define the GraphNode position --------------------------
 				double newX = stretchFactor * gasNodeType.getX().doubleValue();
 				double newY = stretchFactor * gasNodeType.getY().doubleValue() * (-1);
 				Point2D pos = new Point2D.Double(newX, newY);
@@ -202,25 +206,21 @@ public class OGE_Importer extends NetworkModelFileImporter {
 				
 				// --- Save information to agent setup ------------------------
 				if (gasNodeType instanceof SinkType) {
-									
 					// --------------------------------------------------
+					// --- Exit -----------------------------------------
 					Object[] ontoArrayInstance = new Object[2];
 					ontoArrayInstance[0] = ExitFactory.newInstance(gasNodeType);
 					ontoArrayInstance[1] = null;
 					netComp.setDataModel(ontoArrayInstance);
-
 					
 				} else if (gasNodeType instanceof SourceType) {
-									
 					// --------------------------------------------------
+					// --- Entry ----------------------------------------
 					Object[] ontoArrayInstance = new Object[2];
 					ontoArrayInstance[0] = EntryFactory.newInstance(gasNodeType);
 					ontoArrayInstance[1] = null;
 					netComp.setDataModel(ontoArrayInstance);
-					
-					
-				} else if (mapNode2Component.equalsIgnoreCase("Storage")) {
-					
+
 				}
 			}
 		}
@@ -248,6 +248,9 @@ public class OGE_Importer extends NetworkModelFileImporter {
 				Iterator<GraphNode> nodeIt = compNetModel.getGraph().getVertices().iterator();
 				GraphNode compNetGraphNodeFrom = nodeIt.next();
 				GraphNode compNetGraphNodeTo = nodeIt.next();
+				// --- Set the data models for the GraphNodes -----------------
+				compNetGraphNodeFrom.setDataModel(InnodeFactory.getInnodeAsDataModel4NetworkComponentAdapter(gasNodeFrom));
+				compNetGraphNodeTo.setDataModel(InnodeFactory.getInnodeAsDataModel4NetworkComponentAdapter(gasNodeTo));
 				
 				// ------------------------------------------------------------
 				// --- Do renaming of NetworkComponent and GraphNode ----------
@@ -278,14 +281,14 @@ public class OGE_Importer extends NetworkModelFileImporter {
 				pos = new Point2D.Double(newX, newY);
 				compNetGraphNodeTo.setPosition(pos);
 				
-				// --- Is one oft the GraphNodes already there ? --------------
+				// --- Is one of the GraphNodes already there ? ---------------
 				GraphNode nmGraphNodeFrom = (GraphNode) this.graphController.getNetworkModel().getGraphElement(compNetGraphNodeFrom.getId());
 				if (nmGraphNodeFrom!=null) {
 					String nodeID = compNetGraphNodeFrom.getId();
 					String tmpNodeID = this.getTmpNodeID(nodeID);
 					compNetModel.renameGraphNode(nodeID, tmpNodeID);
 					nmGraphNodeFrom = (GraphNode) compNetModel.getGraphElement(tmpNodeID);
-					remindTmpNodeConnection(nodeConnections, nodeID, nmGraphNodeFrom);
+					this.remindTmpNodeConnection(nodeConnections, nodeID, nmGraphNodeFrom);
 				}
 
 				GraphNode nmGraphNodeTo = (GraphNode) this.graphController.getNetworkModel().getGraphElement(compNetGraphNodeTo.getId());				
@@ -294,7 +297,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 					String tmpNodeID = this.getTmpNodeID(nodeID);
 					compNetModel.renameGraphNode(nodeID, tmpNodeID);
 					nmGraphNodeTo = (GraphNode) compNetModel.getGraphElement(tmpNodeID);
-					remindTmpNodeConnection(nodeConnections, nodeID, nmGraphNodeTo);
+					this.remindTmpNodeConnection(nodeConnections, nodeID, nmGraphNodeTo);
 				}
 				
 				
@@ -303,7 +306,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 				this.graphController.addAgent(netComp);
 				
 				
-				// --- 
+				// --- Set the data model of the component --------------------
 				if (connection instanceof PipeType) {
 					
 					Object[] ontoArrayInstance = new Object[1];
@@ -341,7 +344,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 				} else if (connection instanceof CompressorStationType) {
 					
 					Compressor compressor = CompressorFactory.newInstance((CompressorStationType) connection);
-					compressors.put(compressor.getID(), compressor);
+					this.compressors.put(compressor.getID(), compressor);
 
 					Object[] ontoArrayInstance = new Object[1];
 					ontoArrayInstance[0] = compressor;

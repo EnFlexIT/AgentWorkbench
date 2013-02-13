@@ -1,4 +1,4 @@
-package gasmas.ontology.factory;
+package gasmas.transfer.zib.factory;
 
 import gasmas.ontology.Compressor;
 import gasmas.transfer.zib.net.CompressorStationType;

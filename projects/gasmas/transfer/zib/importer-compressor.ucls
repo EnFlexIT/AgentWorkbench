@@ -16,8 +16,8 @@
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
   </class>  
-  <class id="3" corner="BOTTOM_RIGHT" language="java" name="gasmas.ontology.factory.CompressorFactory" 
-    project="AgentGUI" file="/AgentGUI/projects/gasmas/ontology/factory/CompressorFactory.java" binary="false">    
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="gasmas.transfer.zib.factory.CompressorFactory" 
+    project="AgentGUI" file="/AgentGUI/projects/gasmas/transfer/zib/factory/CompressorFactory.java" binary="false">    
     <position x="429" y="157" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
