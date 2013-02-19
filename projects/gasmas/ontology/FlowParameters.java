@@ -9,7 +9,7 @@ import jade.core.*;
    * A set of parameters describing the current gas flow at a PropagationPoint.
 * Protege name: FlowParameters
 * @author ontology bean generator
-* @version 2012/10/24, 18:22:30
+* @version 2013/02/19, 16:35:18
 */
 public class FlowParameters implements Concept {
 
@@ -25,14 +25,14 @@ public class FlowParameters implements Concept {
    }
 
    /**
-* Protege name: temperature
+* Protege name: pressure
    */
-   private float temperature;
-   public void setTemperature(float value) { 
-    this.temperature=value;
+   private float pressure;
+   public void setPressure(float value) { 
+    this.pressure=value;
    }
-   public float getTemperature() {
-     return this.temperature;
+   public float getPressure() {
+     return this.pressure;
    }
 
    /**
@@ -47,14 +47,25 @@ public class FlowParameters implements Concept {
    }
 
    /**
-* Protege name: pressure
+* Protege name: massFlow
    */
-   private float pressure;
-   public void setPressure(float value) { 
-    this.pressure=value;
+   private float massFlow;
+   public void setMassFlow(float value) { 
+    this.massFlow=value;
    }
-   public float getPressure() {
-     return this.pressure;
+   public float getMassFlow() {
+     return this.massFlow;
+   }
+
+   /**
+* Protege name: temperature
+   */
+   private float temperature;
+   public void setTemperature(float value) { 
+    this.temperature=value;
+   }
+   public float getTemperature() {
+     return this.temperature;
    }
 
    /**
@@ -66,17 +77,6 @@ public class FlowParameters implements Concept {
    }
    public int getReynoldsNumber() {
      return this.reynoldsNumber;
-   }
-
-   /**
-* Protege name: massFlow
-   */
-   private float massFlow;
-   public void setMassFlow(float value) { 
-    this.massFlow=value;
-   }
-   public float getMassFlow() {
-     return this.massFlow;
    }
 
 }

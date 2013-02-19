@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: ValueType
 * @author ontology bean generator
-* @version 2012/10/24, 18:22:30
+* @version 2013/02/19, 16:35:18
 */
 public class ValueType implements Concept {
-
-   /**
-* Protege name: Unit
-   */
-   private String unit;
-   public void setUnit(String value) { 
-    this.unit=value;
-   }
-   public String getUnit() {
-     return this.unit;
-   }
 
    /**
 * Protege name: Value
@@ -32,6 +21,17 @@ public class ValueType implements Concept {
    }
    public float getValue() {
      return this.value;
+   }
+
+   /**
+* Protege name: Unit
+   */
+   private String unit;
+   public void setUnit(String value) { 
+    this.unit=value;
+   }
+   public String getUnit() {
+     return this.unit;
    }
 
 }

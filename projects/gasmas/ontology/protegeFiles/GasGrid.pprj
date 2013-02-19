@@ -1,4 +1,4 @@
-; Thu Oct 25 20:42:19 CEST 2012
+; Tue Feb 19 16:34:59 CET 2013
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -18,7 +18,8 @@
 	(y 0))
 
 ([BROWSER_SLOT_NAMES] of  Property_List
-)
+
+	(properties [GasGrid_ProjectKB_Instance_189]))
 
 ([CLSES_TAB] of  Widget
 
@@ -57,16 +58,21 @@
 ([GasGrid_ProjectKB_Instance_137] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_140] of  Map_Entry
+([GasGrid_ProjectKB_Instance_189] of  String
 
-	(key "change_tracking_active")
+	(name "Calc9Parameter")
+	(string_value "coeff_4_9"))
+
+([GasGrid_ProjectKB_Instance_190] of  Map_Entry
+
+	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([GasGrid_ProjectKB_Instance_141] of  Map_Entry
+([GasGrid_ProjectKB_Instance_191] of  Map_Entry
 
-	(key "add_name_on_instance_form")
+	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
@@ -398,8 +404,8 @@
 ([GasGrid_ProjectKB_Instance_289] of  Map
 
 	(entries
-		[GasGrid_ProjectKB_Instance_140]
-		[GasGrid_ProjectKB_Instance_141]))
+		[GasGrid_ProjectKB_Instance_190]
+		[GasGrid_ProjectKB_Instance_191]))
 
 ([GasGrid_ProjectKB_Instance_98] of  String
 
@@ -609,11 +615,11 @@
 
 	(browser_slot_names [BROWSER_SLOT_NAMES])
 	(customized_instance_widgets
-		[STANDARD_SLOT_FORM_WIDGET]
+		[PAL_FORM_WIDGET]
 		[STANDARD_CLASS_FORM_WIDGET]
-		[STANDARD_FACET_FORM_WIDGET]
 		[INSTANCE_ANNOTATION_FORM_WIDGET]
-		[PAL_FORM_WIDGET])
+		[STANDARD_SLOT_FORM_WIDGET]
+		[STANDARD_FACET_FORM_WIDGET])
 	(default_cls_metaclass ":STANDARD-CLASS")
 	(default_facet_metaclass ":STANDARD-FACET")
 	(default_instance_widget_class_name "edu.stanford.smi.protege.widget.FormWidget")

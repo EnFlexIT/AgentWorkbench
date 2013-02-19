@@ -119,7 +119,6 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     public static final String NoFilterString = Language.translate("No Filter!", Language.EN);  //  @jve:decl-index=0:
     private final String pathImage = GraphGlobals.getPathImages(); // @jve:decl-index=0:
     
-    private BasicGraphGui basicGraphGui = null;
     private AddComponentVisViewer<GraphNode, GraphEdge> visViewer = null;
 
     private NetworkModel localNetworkModel = null;  //  @jve:decl-index=0:
@@ -170,7 +169,6 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
      */
     public AddComponentDialog(GraphEnvironmentController graphController) {
     	super(graphController);
-		this.basicGraphGui = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
 		initialize();
     }
 

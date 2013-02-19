@@ -326,15 +326,16 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 */
 	@Override
 	public void mouseDragged(MouseEvent me){
+
+		// --- Execute the normal (but corrected) super method ------
 		this.mouseDraggedSuperAction(me);
-		
-		MutableTransformer modelTransformer = this.getVisViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
 		
 		// ----------------------------------------------------------------------------------------
 		// --- Action if the right mouse button is pressed and no graph element is selected -------
 		// ----------------------------------------------------------------------------------------
 		if (movePanelWithRightAction==true) {
-			
+
+			MutableTransformer modelTransformer = this.getVisViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
             try {
                 Point2D q = this.getVisViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(down);
                 Point2D p = this.getVisViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(me.getPoint());
@@ -348,9 +349,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
                 System.err.println("down = "+down+", e = "+me);
                 throw ex;
             }
-        
             me.consume();
-            this.getVisViewer().repaint();
 		}
 		
 		// ----------------------------------------------------------------------------------------
@@ -386,7 +385,6 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				
 			}
 			me.consume();
-	        this.getVisViewer().repaint();
 		}
 		
 	}
@@ -414,17 +412,18 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
                     layout.setLocation(v, vp);
                 }
                 down = p;
-
+                me.consume();
+                vv.repaint();
+                
             } else {
                 Point2D out = me.getPoint();
                 if(me.getModifiers() == this.addToSelectionModifiers || me.getModifiers() == modifiers) {
                     if (down!=null) {
-                    	rect.setFrameFromDiagonal(down,out);	
+                    	rect.setFrameFromDiagonal(down,out);
+                    	vv.repaint();
                     }
                 }
             }
-            if(vertex != null) me.consume();
-            vv.repaint();
         }
 	}
 
@@ -455,7 +454,6 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			}
          }
          me.consume();
-         this.getVisViewer().repaint();
 		
 	}
 	

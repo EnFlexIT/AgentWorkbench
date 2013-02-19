@@ -28,6 +28,7 @@
  */
 package gasmas.adapter;
 
+import gasmas.ontology.CompStat;
 import gasmas.ontology.Compressor;
 import gasmas.ontology.GasGridOntology;
 
@@ -62,8 +63,9 @@ public class CompressorDataModelAdapter extends NetworkComponentAdapter4Ontology
 	@Override
 	public String[] getOntologyClassReferences() {
 		if (ontologyClassReferences==null) {
-			this.ontologyClassReferences = new String[1];
+			this.ontologyClassReferences = new String[2];
 			this.ontologyClassReferences[0] = Compressor.class.getName();
+			this.ontologyClassReferences[1] = CompStat.class.getName();
 		}
 		return this.ontologyClassReferences;
 	}

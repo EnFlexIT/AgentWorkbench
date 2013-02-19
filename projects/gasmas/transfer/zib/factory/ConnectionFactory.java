@@ -8,8 +8,13 @@ public class ConnectionFactory {
 	
 	public static void setConnectionAttributes(Connection connection, GasConnectionType gasConnectionType) {
 		
-		connection.setAlias(gasConnectionType.getAlias());
+		
 		connection.setID(gasConnectionType.getId());
+		if (gasConnectionType.getAlias()==null || gasConnectionType.getAlias().equals("")) {
+			connection.setAlias(gasConnectionType.getId());
+		} else {
+			connection.setAlias(gasConnectionType.getAlias());	
+		}
 		connection.setFrom(gasConnectionType.getFrom());
 		connection.setTo(gasConnectionType.getTo());
 		connection.setFlowMin(ValueTypeFactory.newInstance(gasConnectionType.getFlowMin()));

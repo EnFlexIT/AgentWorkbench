@@ -7,30 +7,30 @@ import jade.core.*;
 /**
 * Protege name: Entry
 * @author ontology bean generator
-* @version 2012/10/24, 18:22:29
+* @version 2013/02/19, 16:35:18
 */
 public class Entry extends Exit{ 
 
    /**
-* Protege name: normDensity
+* Protege name: heatCapacityCoefficient
    */
-   private ValueType normDensity;
-   public void setNormDensity(ValueType value) { 
-    this.normDensity=value;
+   private HeatCapacityCoefficient heatCapacityCoefficient;
+   public void setHeatCapacityCoefficient(HeatCapacityCoefficient value) { 
+    this.heatCapacityCoefficient=value;
    }
-   public ValueType getNormDensity() {
-     return this.normDensity;
+   public HeatCapacityCoefficient getHeatCapacityCoefficient() {
+     return this.heatCapacityCoefficient;
    }
 
    /**
-* Protege name: pseudocriticalTemperature
+* Protege name: calorificValue
    */
-   private ValueType pseudocriticalTemperature;
-   public void setPseudocriticalTemperature(ValueType value) { 
-    this.pseudocriticalTemperature=value;
+   private ValueType calorificValue;
+   public void setCalorificValue(ValueType value) { 
+    this.calorificValue=value;
    }
-   public ValueType getPseudocriticalTemperature() {
-     return this.pseudocriticalTemperature;
+   public ValueType getCalorificValue() {
+     return this.calorificValue;
    }
 
    /**
@@ -45,25 +45,14 @@ public class Entry extends Exit{
    }
 
    /**
-* Protege name: gasTemperature
+* Protege name: normDensity
    */
-   private ValueType gasTemperature;
-   public void setGasTemperature(ValueType value) { 
-    this.gasTemperature=value;
+   private ValueType normDensity;
+   public void setNormDensity(ValueType value) { 
+    this.normDensity=value;
    }
-   public ValueType getGasTemperature() {
-     return this.gasTemperature;
-   }
-
-   /**
-* Protege name: heatCapacityCoefficient
-   */
-   private HeatCapacityCoefficient heatCapacityCoefficient;
-   public void setHeatCapacityCoefficient(HeatCapacityCoefficient value) { 
-    this.heatCapacityCoefficient=value;
-   }
-   public HeatCapacityCoefficient getHeatCapacityCoefficient() {
-     return this.heatCapacityCoefficient;
+   public ValueType getNormDensity() {
+     return this.normDensity;
    }
 
    /**
@@ -78,14 +67,25 @@ public class Entry extends Exit{
    }
 
    /**
-* Protege name: calorificValue
+* Protege name: pseudocriticalTemperature
    */
-   private ValueType calorificValue;
-   public void setCalorificValue(ValueType value) { 
-    this.calorificValue=value;
+   private ValueType pseudocriticalTemperature;
+   public void setPseudocriticalTemperature(ValueType value) { 
+    this.pseudocriticalTemperature=value;
    }
-   public ValueType getCalorificValue() {
-     return this.calorificValue;
+   public ValueType getPseudocriticalTemperature() {
+     return this.pseudocriticalTemperature;
+   }
+
+   /**
+* Protege name: gasTemperature
+   */
+   private ValueType gasTemperature;
+   public void setGasTemperature(ValueType value) { 
+    this.gasTemperature=value;
+   }
+   public ValueType getGasTemperature() {
+     return this.gasTemperature;
    }
 
 }

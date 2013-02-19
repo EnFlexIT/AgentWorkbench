@@ -33,9 +33,11 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 import gasmas.ontology.Compressor;
 import gasmas.ontology.Valve;
 import gasmas.transfer.zib.cdf.CombinedDecisions;
+import gasmas.transfer.zib.cdf.DecisionGroup;
 import gasmas.transfer.zib.cs.CompressorStationsType;
 import gasmas.transfer.zib.cs.CompressorStationsType.CompressorStation;
 import gasmas.transfer.zib.factory.CompressorFactory;
+import gasmas.transfer.zib.factory.CompressorStationFactory;
 import gasmas.transfer.zib.factory.ControlValveFactory;
 import gasmas.transfer.zib.factory.EntryFactory;
 import gasmas.transfer.zib.factory.ExitFactory;
@@ -44,13 +46,11 @@ import gasmas.transfer.zib.factory.PipeFactory;
 import gasmas.transfer.zib.factory.ResistorFactory;
 import gasmas.transfer.zib.factory.ShortPipeFactory;
 import gasmas.transfer.zib.factory.ValveFactory;
-import gasmas.transfer.zib.net.BoundaryNodeType;
 import gasmas.transfer.zib.net.CompressorStationType;
 import gasmas.transfer.zib.net.ControlValveType;
 import gasmas.transfer.zib.net.GasConnectionType;
 import gasmas.transfer.zib.net.GasNetwork;
 import gasmas.transfer.zib.net.GasNodeType;
-import gasmas.transfer.zib.net.InnodeType;
 import gasmas.transfer.zib.net.PipeType;
 import gasmas.transfer.zib.net.ResistorType;
 import gasmas.transfer.zib.net.ShortPipeType;
@@ -69,7 +69,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -91,7 +90,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 	private HashMap<String, TypeDescription> GNW_Types4Mapping = null;
 	private HashMap<String, GasConnectionType> GNW_Connections = null;
 	private HashMap<String, GasNodeType> GNW_Nodes = null;
-	private Map<String, Compressor> compressors;
+	//private Map<String, Compressor> compressors;
 	
 	/**
 	 * Instantiates a new OGE / ZIB GraphFileImporter.
@@ -139,33 +138,63 @@ public class OGE_Importer extends NetworkModelFileImporter {
 		// --------------------------------------------------------------------
 		// --- Import the *.cs file -------------------------------------------
 		CompressorStationsType compressorStations = importCsFile(csFile);
-		
 		if (compressorStations != null) {
-			for (CompressorStation compressorStation : compressorStations.getCompressorStation()) {
-				Compressor compressor = compressors.get(compressorStation.getId());
-				compressor.setGasCoolerExisting(true);
-			}
+			this.translateCompressorStations(compressorStations);
 		}
 		
 		
 		// --------------------------------------------------------------------
 		// --- Import the *.cdf file ------------------------------------------
 		CombinedDecisions combinedDecisions = importCdfFile(cdfFile);
-			
+		if (combinedDecisions != null) {
+			this.translateCombinedDecisions(combinedDecisions);
+		}	
 			
 		// --------------------------------------------------------------------
 		this.graphController.getProject().getProjectWindow().setCursor(Cursor.getDefaultCursor());
 		return this.graphController.getNetworkModel();
 	}
 
+	/**
+	 * Translate combined decisions.
+	 */
+	private void translateCombinedDecisions(CombinedDecisions combinedDecisions) {
+		
+		for (DecisionGroup decisionGroup : combinedDecisions.getDecisionGroup()) {
+			
+			System.out.println("Combined Decision: " + decisionGroup.getId());
+			
+		}
+	}
 	
+	/**
+	 * Translate compressor stations.
+	 */
+	private void translateCompressorStations(CompressorStationsType compressorStations) {
+		
+		for (CompressorStation compressorStation : compressorStations.getCompressorStation()) {
+		
+			NetworkModel networkModel = this.graphController.getNetworkModel();
+			NetworkComponent netComponent = networkModel.getNetworkComponent(compressorStation.getId());
+			if (netComponent!=null) {
+				// --- Extend the existing data model for the compressor ------  
+				System.out.println("Import Compressor: " + netComponent.getId());
+				
+				Object[] ontoArrayInstance = (Object[]) netComponent.getDataModel();
+//				ontoArrayInstance[0] = already done before !!! ;
+				ontoArrayInstance[1] = CompressorStationFactory.newInstance(compressorStation);
+				
+			} else {
+				System.err.println("Could not find Compressor '" + compressorStation.getId() + "'");
+			}
+		}
+		
+	}
 
 	/**
 	 * Translate GasNetwork to NetworkNodel.
 	 */
 	private void translateGasNetwork2NetworkModel() {
-		
-		this.compressors = new HashMap<String, Compressor>();
 		
 		AddComponentDialog componentFactory = new AddComponentDialog(this.graphController, true);
 		HashMap<String, HashSet<GraphNode>> nodeConnections = new HashMap<String, HashSet<GraphNode>>();
@@ -344,9 +373,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 				} else if (connection instanceof CompressorStationType) {
 					
 					Compressor compressor = CompressorFactory.newInstance((CompressorStationType) connection);
-					this.compressors.put(compressor.getID(), compressor);
-
-					Object[] ontoArrayInstance = new Object[1];
+					Object[] ontoArrayInstance = new Object[2];
 					ontoArrayInstance[0] = compressor;
 					netComp.setDataModel(ontoArrayInstance);
 			
