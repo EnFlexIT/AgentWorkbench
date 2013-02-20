@@ -7,31 +7,9 @@ import jade.core.*;
 /**
 * Protege name: TurboCompressor
 * @author ontology bean generator
-* @version 2013/02/19, 16:35:18
+* @version 2013/02/20, 13:32:45
 */
 public class TurboCompressor extends CompStatCompressor{ 
-
-   /**
-* Protege name: eta_ad_isoline_coeff
-   */
-   private Calc9Parameter eta_ad_isoline_coeff;
-   public void setEta_ad_isoline_coeff(Calc9Parameter value) { 
-    this.eta_ad_isoline_coeff=value;
-   }
-   public Calc9Parameter getEta_ad_isoline_coeff() {
-     return this.eta_ad_isoline_coeff;
-   }
-
-   /**
-* Protege name: n_isoline_coeff
-   */
-   private Calc9Parameter n_isoline_coeff;
-   public void setN_isoline_coeff(Calc9Parameter value) { 
-    this.n_isoline_coeff=value;
-   }
-   public Calc9Parameter getN_isoline_coeff() {
-     return this.n_isoline_coeff;
-   }
 
    /**
 * Protege name: chokeline_coeff
@@ -42,6 +20,38 @@ public class TurboCompressor extends CompStatCompressor{
    }
    public Calc3Parameter getChokeline_coeff() {
      return this.chokeline_coeff;
+   }
+
+   /**
+* Protege name: characteristicDiagramMeasurements
+   */
+   private List characteristicDiagramMeasurements = new ArrayList();
+   public void addCharacteristicDiagramMeasurements(CompStatAdiabaticEfficiency elem) { 
+     List oldList = this.characteristicDiagramMeasurements;
+     characteristicDiagramMeasurements.add(elem);
+   }
+   public boolean removeCharacteristicDiagramMeasurements(CompStatAdiabaticEfficiency elem) {
+     List oldList = this.characteristicDiagramMeasurements;
+     boolean result = characteristicDiagramMeasurements.remove(elem);
+     return result;
+   }
+   public void clearAllCharacteristicDiagramMeasurements() {
+     List oldList = this.characteristicDiagramMeasurements;
+     characteristicDiagramMeasurements.clear();
+   }
+   public Iterator getAllCharacteristicDiagramMeasurements() {return characteristicDiagramMeasurements.iterator(); }
+   public List getCharacteristicDiagramMeasurements() {return characteristicDiagramMeasurements; }
+   public void setCharacteristicDiagramMeasurements(List l) {characteristicDiagramMeasurements = l; }
+
+   /**
+* Protege name: efficiencyOfChokeline
+   */
+   private float efficiencyOfChokeline;
+   public void setEfficiencyOfChokeline(float value) { 
+    this.efficiencyOfChokeline=value;
+   }
+   public float getEfficiencyOfChokeline() {
+     return this.efficiencyOfChokeline;
    }
 
    /**
@@ -77,35 +87,25 @@ public class TurboCompressor extends CompStatCompressor{
    }
 
    /**
-* Protege name: efficiencyOfChokeline
+* Protege name: n_isoline_coeff
    */
-   private float efficiencyOfChokeline;
-   public void setEfficiencyOfChokeline(float value) { 
-    this.efficiencyOfChokeline=value;
+   private Calc9Parameter n_isoline_coeff;
+   public void setN_isoline_coeff(Calc9Parameter value) { 
+    this.n_isoline_coeff=value;
    }
-   public float getEfficiencyOfChokeline() {
-     return this.efficiencyOfChokeline;
+   public Calc9Parameter getN_isoline_coeff() {
+     return this.n_isoline_coeff;
    }
 
    /**
-* Protege name: characteristicDiagramMeasurements
+* Protege name: eta_ad_isoline_coeff
    */
-   private List characteristicDiagramMeasurements = new ArrayList();
-   public void addCharacteristicDiagramMeasurements(CompStatAdiabaticEfficiency elem) { 
-     List oldList = this.characteristicDiagramMeasurements;
-     characteristicDiagramMeasurements.add(elem);
+   private Calc9Parameter eta_ad_isoline_coeff;
+   public void setEta_ad_isoline_coeff(Calc9Parameter value) { 
+    this.eta_ad_isoline_coeff=value;
    }
-   public boolean removeCharacteristicDiagramMeasurements(CompStatAdiabaticEfficiency elem) {
-     List oldList = this.characteristicDiagramMeasurements;
-     boolean result = characteristicDiagramMeasurements.remove(elem);
-     return result;
+   public Calc9Parameter getEta_ad_isoline_coeff() {
+     return this.eta_ad_isoline_coeff;
    }
-   public void clearAllCharacteristicDiagramMeasurements() {
-     List oldList = this.characteristicDiagramMeasurements;
-     characteristicDiagramMeasurements.clear();
-   }
-   public Iterator getAllCharacteristicDiagramMeasurements() {return characteristicDiagramMeasurements.iterator(); }
-   public List getCharacteristicDiagramMeasurements() {return characteristicDiagramMeasurements; }
-   public void setCharacteristicDiagramMeasurements(List l) {characteristicDiagramMeasurements = l; }
 
 }

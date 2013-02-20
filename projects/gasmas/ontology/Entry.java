@@ -7,9 +7,20 @@ import jade.core.*;
 /**
 * Protege name: Entry
 * @author ontology bean generator
-* @version 2013/02/19, 16:35:18
+* @version 2013/02/20, 13:32:45
 */
 public class Entry extends Exit{ 
+
+   /**
+* Protege name: pseudocriticalTemperature
+   */
+   private ValueType pseudocriticalTemperature;
+   public void setPseudocriticalTemperature(ValueType value) { 
+    this.pseudocriticalTemperature=value;
+   }
+   public ValueType getPseudocriticalTemperature() {
+     return this.pseudocriticalTemperature;
+   }
 
    /**
 * Protege name: heatCapacityCoefficient
@@ -34,17 +45,6 @@ public class Entry extends Exit{
    }
 
    /**
-* Protege name: pseudocricalPressure
-   */
-   private ValueType pseudocricalPressure;
-   public void setPseudocricalPressure(ValueType value) { 
-    this.pseudocricalPressure=value;
-   }
-   public ValueType getPseudocricalPressure() {
-     return this.pseudocricalPressure;
-   }
-
-   /**
 * Protege name: normDensity
    */
    private ValueType normDensity;
@@ -56,25 +56,14 @@ public class Entry extends Exit{
    }
 
    /**
-* Protege name: molarMass
+* Protege name: pseudocricalPressure
    */
-   private float molarMass;
-   public void setMolarMass(float value) { 
-    this.molarMass=value;
+   private ValueType pseudocricalPressure;
+   public void setPseudocricalPressure(ValueType value) { 
+    this.pseudocricalPressure=value;
    }
-   public float getMolarMass() {
-     return this.molarMass;
-   }
-
-   /**
-* Protege name: pseudocriticalTemperature
-   */
-   private ValueType pseudocriticalTemperature;
-   public void setPseudocriticalTemperature(ValueType value) { 
-    this.pseudocriticalTemperature=value;
-   }
-   public ValueType getPseudocriticalTemperature() {
-     return this.pseudocriticalTemperature;
+   public ValueType getPseudocricalPressure() {
+     return this.pseudocricalPressure;
    }
 
    /**
@@ -86,6 +75,17 @@ public class Entry extends Exit{
    }
    public ValueType getGasTemperature() {
      return this.gasTemperature;
+   }
+
+   /**
+* Protege name: molarMass
+   */
+   private float molarMass;
+   public void setMolarMass(float value) { 
+    this.molarMass=value;
+   }
+   public float getMolarMass() {
+     return this.molarMass;
    }
 
 }

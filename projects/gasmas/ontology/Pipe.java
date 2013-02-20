@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Pipe
 * @author ontology bean generator
-* @version 2013/02/19, 16:35:18
+* @version 2013/02/20, 13:32:45
 */
 public class Pipe extends Connection{ 
 
@@ -20,6 +20,17 @@ public class Pipe extends Connection{
    }
    public ValueType getLineOfSight() {
      return this.lineOfSight;
+   }
+
+   /**
+* Protege name: pressureMax
+   */
+   private ValueType pressureMax;
+   public void setPressureMax(ValueType value) { 
+    this.pressureMax=value;
+   }
+   public ValueType getPressureMax() {
+     return this.pressureMax;
    }
 
    /**
@@ -45,17 +56,6 @@ public class Pipe extends Connection{
    }
 
    /**
-* Protege name: Length
-   */
-   private ValueType length;
-   public void setLength(ValueType value) { 
-    this.length=value;
-   }
-   public ValueType getLength() {
-     return this.length;
-   }
-
-   /**
 * Protege name: Diameter
    */
    private ValueType diameter;
@@ -67,14 +67,14 @@ public class Pipe extends Connection{
    }
 
    /**
-* Protege name: pressureMax
+* Protege name: Length
    */
-   private ValueType pressureMax;
-   public void setPressureMax(ValueType value) { 
-    this.pressureMax=value;
+   private ValueType length;
+   public void setLength(ValueType value) { 
+    this.length=value;
    }
-   public ValueType getPressureMax() {
-     return this.pressureMax;
+   public ValueType getLength() {
+     return this.length;
    }
 
 }

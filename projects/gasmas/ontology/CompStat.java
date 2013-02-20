@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: CompStat
 * @author ontology bean generator
-* @version 2013/02/19, 16:35:18
+* @version 2013/02/20, 13:32:45
 */
 public class CompStat extends GridComponent{ 
 
@@ -36,7 +36,7 @@ public List getCompressor() {
  */
 public List getDrives() {
 	ArrayList drives = new ArrayList();
-	ArrayList gasTurbines = (ArrayList) this.getGasturbines();
+	ArrayList gasTurbines = (ArrayList) this.getGasTurbines();
 	for (int i=0; i<gasTurbines.size(); i++) {
 		drives.add(gasTurbines.get(i));
 	}
@@ -55,17 +55,6 @@ public List getDrives() {
 	return drives;
 }
    /**
-* Protege name: buildingCosts
-   */
-   private float buildingCosts;
-   public void setBuildingCosts(float value) { 
-    this.buildingCosts=value;
-   }
-   public float getBuildingCosts() {
-     return this.buildingCosts;
-   }
-
-   /**
 * Protege name: upgradeCosts
    */
    private float upgradeCosts;
@@ -77,46 +66,15 @@ public List getDrives() {
    }
 
    /**
-* Protege name: steamTurbines
+* Protege name: buildingCosts
    */
-   private List steamTurbines = new ArrayList();
-   public void addSteamTurbines(SteamTurbine elem) { 
-     List oldList = this.steamTurbines;
-     steamTurbines.add(elem);
+   private float buildingCosts;
+   public void setBuildingCosts(float value) { 
+    this.buildingCosts=value;
    }
-   public boolean removeSteamTurbines(SteamTurbine elem) {
-     List oldList = this.steamTurbines;
-     boolean result = steamTurbines.remove(elem);
-     return result;
+   public float getBuildingCosts() {
+     return this.buildingCosts;
    }
-   public void clearAllSteamTurbines() {
-     List oldList = this.steamTurbines;
-     steamTurbines.clear();
-   }
-   public Iterator getAllSteamTurbines() {return steamTurbines.iterator(); }
-   public List getSteamTurbines() {return steamTurbines; }
-   public void setSteamTurbines(List l) {steamTurbines = l; }
-
-   /**
-* Protege name: electricMotors
-   */
-   private List electricMotors = new ArrayList();
-   public void addElectricMotors(ElectricMotor elem) { 
-     List oldList = this.electricMotors;
-     electricMotors.add(elem);
-   }
-   public boolean removeElectricMotors(ElectricMotor elem) {
-     List oldList = this.electricMotors;
-     boolean result = electricMotors.remove(elem);
-     return result;
-   }
-   public void clearAllElectricMotors() {
-     List oldList = this.electricMotors;
-     electricMotors.clear();
-   }
-   public Iterator getAllElectricMotors() {return electricMotors.iterator(); }
-   public List getElectricMotors() {return electricMotors; }
-   public void setElectricMotors(List l) {electricMotors = l; }
 
    /**
 * Protege name: turboCompressor
@@ -140,6 +98,48 @@ public List getDrives() {
    public void setTurboCompressor(List l) {turboCompressor = l; }
 
    /**
+* Protege name: pistonCompressor
+   */
+   private List pistonCompressor = new ArrayList();
+   public void addPistonCompressor(PistonCompressor elem) { 
+     List oldList = this.pistonCompressor;
+     pistonCompressor.add(elem);
+   }
+   public boolean removePistonCompressor(PistonCompressor elem) {
+     List oldList = this.pistonCompressor;
+     boolean result = pistonCompressor.remove(elem);
+     return result;
+   }
+   public void clearAllPistonCompressor() {
+     List oldList = this.pistonCompressor;
+     pistonCompressor.clear();
+   }
+   public Iterator getAllPistonCompressor() {return pistonCompressor.iterator(); }
+   public List getPistonCompressor() {return pistonCompressor; }
+   public void setPistonCompressor(List l) {pistonCompressor = l; }
+
+   /**
+* Protege name: steamTurbines
+   */
+   private List steamTurbines = new ArrayList();
+   public void addSteamTurbines(SteamTurbine elem) { 
+     List oldList = this.steamTurbines;
+     steamTurbines.add(elem);
+   }
+   public boolean removeSteamTurbines(SteamTurbine elem) {
+     List oldList = this.steamTurbines;
+     boolean result = steamTurbines.remove(elem);
+     return result;
+   }
+   public void clearAllSteamTurbines() {
+     List oldList = this.steamTurbines;
+     steamTurbines.clear();
+   }
+   public Iterator getAllSteamTurbines() {return steamTurbines.iterator(); }
+   public List getSteamTurbines() {return steamTurbines; }
+   public void setSteamTurbines(List l) {steamTurbines = l; }
+
+   /**
 * Protege name: gasDrivenMotors
    */
    private List gasDrivenMotors = new ArrayList();
@@ -161,25 +161,25 @@ public List getDrives() {
    public void setGasDrivenMotors(List l) {gasDrivenMotors = l; }
 
    /**
-* Protege name: gasturbines
+* Protege name: electricMotors
    */
-   private List gasturbines = new ArrayList();
-   public void addGasturbines(GasTurbine elem) { 
-     List oldList = this.gasturbines;
-     gasturbines.add(elem);
+   private List electricMotors = new ArrayList();
+   public void addElectricMotors(ElectricMotor elem) { 
+     List oldList = this.electricMotors;
+     electricMotors.add(elem);
    }
-   public boolean removeGasturbines(GasTurbine elem) {
-     List oldList = this.gasturbines;
-     boolean result = gasturbines.remove(elem);
+   public boolean removeElectricMotors(ElectricMotor elem) {
+     List oldList = this.electricMotors;
+     boolean result = electricMotors.remove(elem);
      return result;
    }
-   public void clearAllGasturbines() {
-     List oldList = this.gasturbines;
-     gasturbines.clear();
+   public void clearAllElectricMotors() {
+     List oldList = this.electricMotors;
+     electricMotors.clear();
    }
-   public Iterator getAllGasturbines() {return gasturbines.iterator(); }
-   public List getGasturbines() {return gasturbines; }
-   public void setGasturbines(List l) {gasturbines = l; }
+   public Iterator getAllElectricMotors() {return electricMotors.iterator(); }
+   public List getElectricMotors() {return electricMotors; }
+   public void setElectricMotors(List l) {electricMotors = l; }
 
    /**
 * Protege name: configurations
@@ -203,24 +203,24 @@ public List getDrives() {
    public void setConfigurations(List l) {configurations = l; }
 
    /**
-* Protege name: pistonCompressor
+* Protege name: gasTurbines
    */
-   private List pistonCompressor = new ArrayList();
-   public void addPistonCompressor(PistonCompressor elem) { 
-     List oldList = this.pistonCompressor;
-     pistonCompressor.add(elem);
+   private List gasTurbines = new ArrayList();
+   public void addGasTurbines(GasTurbine elem) { 
+     List oldList = this.gasTurbines;
+     gasTurbines.add(elem);
    }
-   public boolean removePistonCompressor(PistonCompressor elem) {
-     List oldList = this.pistonCompressor;
-     boolean result = pistonCompressor.remove(elem);
+   public boolean removeGasTurbines(GasTurbine elem) {
+     List oldList = this.gasTurbines;
+     boolean result = gasTurbines.remove(elem);
      return result;
    }
-   public void clearAllPistonCompressor() {
-     List oldList = this.pistonCompressor;
-     pistonCompressor.clear();
+   public void clearAllGasTurbines() {
+     List oldList = this.gasTurbines;
+     gasTurbines.clear();
    }
-   public Iterator getAllPistonCompressor() {return pistonCompressor.iterator(); }
-   public List getPistonCompressor() {return pistonCompressor; }
-   public void setPistonCompressor(List l) {pistonCompressor = l; }
+   public Iterator getAllGasTurbines() {return gasTurbines.iterator(); }
+   public List getGasTurbines() {return gasTurbines; }
+   public void setGasTurbines(List l) {gasTurbines = l; }
 
 }

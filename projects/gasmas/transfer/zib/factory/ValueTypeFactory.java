@@ -30,8 +30,10 @@ package gasmas.transfer.zib.factory;
 
 import gasmas.ontology.ValueType;
 import gasmas.transfer.zib.cs.CompressorSpeedType;
-import gasmas.transfer.zib.cs.GasTurbineType.MaximalPowerMeasurements.AmbientTemperature;
+import gasmas.transfer.zib.cs.ElectricMotorType;
+import gasmas.transfer.zib.cs.GasTurbineType;
 import gasmas.transfer.zib.cs.MpMeasurementType.MaximalPower;
+import gasmas.transfer.zib.cs.PowerType;
 import gasmas.transfer.zib.cs.SECMeasurementsType.Measurement.CompressorPower;
 import gasmas.transfer.zib.cs.SECMeasurementsType.Measurement.FuelConsumption;
 import gasmas.transfer.zib.cs.TcMeasurementType.AdiabaticHead;
@@ -223,14 +225,26 @@ public class ValueTypeFactory {
 		return valueType;
 	}
 
-	public static ValueType newInstance(AmbientTemperature ogeAmbType) {
+	public static ValueType newInstance(ElectricMotorType.MaximalPowerMeasurements.AmbientTemperature ogeAmbientTemperature) {
 		ValueType valueType = new ValueType();
-		if(ogeAmbType == null) {
-			valueType.setUnit("kW");
+		if(ogeAmbientTemperature == null) {
+			valueType.setUnit("K");
 			valueType.setValue(0);
 		} else {
-			valueType.setUnit(ogeAmbType.getUnit());
-			valueType.setValue((float) ogeAmbType.getValue());			
+			valueType.setUnit(ogeAmbientTemperature.getUnit());
+			valueType.setValue((float) ogeAmbientTemperature.getValue());			
+		}
+		return valueType;
+	}
+	
+	public static ValueType newInstance(GasTurbineType.MaximalPowerMeasurements.AmbientTemperature ogeAmbientTemperature) {
+		ValueType valueType = new ValueType();
+		if(ogeAmbientTemperature == null) {
+			valueType.setUnit("K");
+			valueType.setValue(0);
+		} else {
+			valueType.setUnit(ogeAmbientTemperature.getUnit());
+			valueType.setValue((float) ogeAmbientTemperature.getValue());			
 		}
 		return valueType;
 	}
@@ -243,6 +257,18 @@ public class ValueTypeFactory {
 		} else {
 			valueType.setUnit(maximalPower.getUnit());
 			valueType.setValue((float) maximalPower.getValue());			
+		}
+		return valueType;
+	}
+
+	public static ValueType newInstance(PowerType powerType) {
+		ValueType valueType = new ValueType();
+		if(powerType == null) {
+			valueType.setUnit("kW");
+			valueType.setValue(0);
+		} else {
+			valueType.setUnit(powerType.getUnit().value());
+			valueType.setValue((float) powerType.getValue());			
 		}
 		return valueType;
 	}

@@ -38,6 +38,7 @@ import java.util.Vector;
 
 import javax.swing.undo.UndoManager;
 
+import agentgui.envModel.graph.commands.ImportNetworkModel;
 import agentgui.envModel.graph.commands.MergeNetworkComponents;
 import agentgui.envModel.graph.commands.MergeNetworkModel;
 import agentgui.envModel.graph.commands.MoveGraphNodes;
@@ -295,10 +296,20 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	}
 	
 	/**
+	 * Import a network model from a file.
+	 */
+	public void importNetworkModel() {
+		ImportNetworkModel importNM = new ImportNetworkModel(this.graphController);
+		if (importNM.wasCanceled()==false) {
+			this.undoManager.addEdit(importNM);	
+		}
+	}
+	/**
 	 * Clears the current NetworModel.
 	 */
 	public void clearNetworkModel() {
 		this.graphController.setDisplayEnvironmentModel(null);
+		this.graphController.setAbstractEnvironmentModel(null);
 		this.graphController.getAgents2Start().clear();
 	}
 	

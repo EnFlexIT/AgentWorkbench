@@ -32,20 +32,24 @@ import gasmas.ontology.Calc3Parameter;
 import gasmas.ontology.Calc9Parameter;
 import gasmas.ontology.CompStat;
 import gasmas.ontology.CompStatAdiabaticEfficiency;
+import gasmas.ontology.CompStatMaxP;
 import gasmas.ontology.CompStatMaxPmeasurment;
 import gasmas.ontology.CompStatMaxPtoAmbientTemperature;
 import gasmas.ontology.CompStatSECmeasurment;
 import gasmas.ontology.CompStatTcMeasurement;
+import gasmas.ontology.ElectricMotor;
+import gasmas.ontology.GasDrivenMotor;
 import gasmas.ontology.GasTurbine;
 import gasmas.ontology.PistonCompressor;
+import gasmas.ontology.SteamTurbine;
 import gasmas.ontology.TurboCompressor;
 import gasmas.transfer.zib.cs.CompressorStationsType.CompressorStation;
 import gasmas.transfer.zib.cs.CompressorStationsType.CompressorStation.Compressors;
 import gasmas.transfer.zib.cs.CompressorStationsType.CompressorStation.Drives;
 import gasmas.transfer.zib.cs.ElectricMotorType;
+import gasmas.transfer.zib.cs.ElectricMotorType.MaximalPowerMeasurements;
 import gasmas.transfer.zib.cs.GasDrivenMotorType;
 import gasmas.transfer.zib.cs.GasTurbineType;
-import gasmas.transfer.zib.cs.GasTurbineType.MaximalPowerMeasurements.AmbientTemperature;
 import gasmas.transfer.zib.cs.MpMeasurementType;
 import gasmas.transfer.zib.cs.PistonCompressorType;
 import gasmas.transfer.zib.cs.SECMeasurementsType.Measurement;
@@ -56,7 +60,7 @@ import gasmas.transfer.zib.cs.TurboCompressorType.CharacteristicDiagramMeasureme
 import gasmas.transfer.zib.cs.TurboCompressorType.CharacteristicDiagramMeasurements.AdiabaticEfficiency;
 import gasmas.transfer.zib.cs.TurboCompressorType.SettlelineMeasurements;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CompressorStationFactory {
 
@@ -98,28 +102,28 @@ public class CompressorStationFactory {
 	private static void setDrives(CompStat localCompressorStation, Drives ogeDrives) {
 	
 		// --- Gas Turbine -------------------------------- 
-		ArrayList<GasTurbineType> ogeGasTurbines = (ArrayList<GasTurbineType>) ogeDrives.getGasTurbine();
+		List<GasTurbineType> ogeGasTurbines = ogeDrives.getGasTurbine();
 		if (ogeGasTurbines.size()>0) {
 			setGasTurbines(localCompressorStation, ogeGasTurbines);
 		}
 		// --- Gas driven Motor ---------------------------
-		ArrayList<GasDrivenMotorType> ogeGasDrivenMotors = (ArrayList<GasDrivenMotorType>) ogeDrives.getGasDrivenMotor();
+		List<GasDrivenMotorType> ogeGasDrivenMotors = ogeDrives.getGasDrivenMotor();
 		if (ogeGasDrivenMotors.size()>0) {
 			setGasDrivenMotors(localCompressorStation, ogeGasDrivenMotors);
 		}
 		// --- Electric Motor -----------------------------
-		ArrayList<ElectricMotorType> ogeElectricMotors = (ArrayList<ElectricMotorType>) ogeDrives.getElectricMotor();
+		List<ElectricMotorType> ogeElectricMotors = ogeDrives.getElectricMotor();
 		if (ogeElectricMotors.size()>0) {
 			setElectricMotors(localCompressorStation, ogeElectricMotors);
 		}
 		// --- Steam turbine ------------------------------
-		ArrayList<SteamTurbineType> ogeSteamTurbines = (ArrayList<SteamTurbineType>) ogeDrives.getSteamTurbine();
+		List<SteamTurbineType> ogeSteamTurbines = ogeDrives.getSteamTurbine();
 		if (ogeSteamTurbines.size()>0) {
 			setSteamTurbines(localCompressorStation, ogeSteamTurbines);
 		}
 	}
 	
-	private static void setGasTurbines(CompStat localCompressorStation, ArrayList<GasTurbineType> ogeGasTurbines) {
+	private static void setGasTurbines(CompStat localCompressorStation, List<GasTurbineType> ogeGasTurbines) {
 		
 		jade.util.leap.ArrayList gasTurbines = new jade.util.leap.ArrayList();
 		for (int i=0; i<ogeGasTurbines.size(); i++) {
@@ -152,7 +156,7 @@ public class CompressorStationFactory {
 			
 			// --- Specific energy consumption ------------
 			jade.util.leap.ArrayList secMeasurements = new jade.util.leap.ArrayList();
-			ArrayList<Measurement> ogeSECMeasurements = (ArrayList<Measurement>) ogeGasTurbine.getSpecificEnergyConsumptionMeasurements().getMeasurement();
+			List<Measurement> ogeSECMeasurements = ogeGasTurbine.getSpecificEnergyConsumptionMeasurements().getMeasurement();
 			for (int j=0; j<ogeSECMeasurements.size(); j++) {
 				Measurement ogeMeasurement = ogeSECMeasurements.get(j);
 				
@@ -168,15 +172,15 @@ public class CompressorStationFactory {
 			
 			// --- maximal power measurements -------------
 			jade.util.leap.ArrayList maxPow2AmbientTemps = new jade.util.leap.ArrayList();
-			ArrayList<AmbientTemperature> ogeAmbientTempType = (ArrayList<AmbientTemperature>) ogeGasTurbine.getMaximalPowerMeasurements().getAmbientTemperature();
+			List<GasTurbineType.MaximalPowerMeasurements.AmbientTemperature> ogeAmbientTempType = ogeGasTurbine.getMaximalPowerMeasurements().getAmbientTemperature();
 			for (int j = 0; j < ogeAmbientTempType.size(); j++) {
-				AmbientTemperature ogeAmbType = ogeAmbientTempType.get(j);
+				GasTurbineType.MaximalPowerMeasurements.AmbientTemperature ogeAmbType = ogeAmbientTempType.get(j);
 				
 				CompStatMaxPtoAmbientTemperature singleMaxPow2AmbientTemp = new CompStatMaxPtoAmbientTemperature();
 				singleMaxPow2AmbientTemp.setTemperatureMP(ValueTypeFactory.newInstance(ogeAmbType));
 				
 				jade.util.leap.ArrayList maxPowMeasurments = new jade.util.leap.ArrayList();
-				ArrayList<MpMeasurementType> ogeMaxPowMeasurments = (ArrayList<MpMeasurementType>) ogeAmbType.getMeasurement(); 
+				List<MpMeasurementType> ogeMaxPowMeasurments = ogeAmbType.getMeasurement(); 
 				for (int k=0; k<ogeMaxPowMeasurments.size(); k++) {
 					MpMeasurementType ogeMaxPowMeasurement = ogeMaxPowMeasurments.get(k);
 					
@@ -200,44 +204,207 @@ public class CompressorStationFactory {
 			gasTurbines.add(gasTurbine);
 		}
 		if (gasTurbines.size()>0) {
-			localCompressorStation.setGasturbines(gasTurbines);	
+			localCompressorStation.setGasTurbines(gasTurbines);	
 		}
 	}
 
-	private static void setGasDrivenMotors(CompStat localCompressorStation, ArrayList<GasDrivenMotorType> ogeGasDrivenMotors) {
+	private static void setGasDrivenMotors(CompStat localCompressorStation, List<GasDrivenMotorType> ogeGasDrivenMotors) {
 
 		jade.util.leap.ArrayList gasDrivenMotors = new jade.util.leap.ArrayList();
 		for (int i=0; i<ogeGasDrivenMotors.size(); i++) {
 			GasDrivenMotorType ogeGasDrivenMotor = ogeGasDrivenMotors.get(i);
 			
+			// --- new instance of GasDrivenMotor --------- 
+			GasDrivenMotor gasDrivenMotor = new GasDrivenMotor();
+			gasDrivenMotor.setID(ogeGasDrivenMotor.getId());
+			gasDrivenMotor.setAlias(ogeGasDrivenMotor.getId());
+			
+			// --- energy rate ----------------------------
+			Calc3Parameter energyRate = new Calc3Parameter();
+			energyRate.setCoeff_1_3((float) ogeGasDrivenMotor.getEnergyRateFunCoeff1().getValue());
+			energyRate.setCoeff_2_3((float) ogeGasDrivenMotor.getEnergyRateFunCoeff2().getValue());
+			energyRate.setCoeff_3_3((float) ogeGasDrivenMotor.getEnergyRateFunCoeff3().getValue());
+			gasDrivenMotor.setEnergyRateFunCoeff(energyRate);
+
+			// --- powerFunCoeff --------------------------
+			Calc3Parameter powerFunCoeff = new Calc3Parameter();
+			powerFunCoeff.setCoeff_1_3((float) ogeGasDrivenMotor.getPowerFunCoeff1().getValue());
+			powerFunCoeff.setCoeff_2_3((float) ogeGasDrivenMotor.getPowerFunCoeff2().getValue());
+			powerFunCoeff.setCoeff_3_3((float) ogeGasDrivenMotor.getPowerFunCoeff3().getValue());
+			gasDrivenMotor.setGmPowerFunCoeff(powerFunCoeff);
+			
+			// --- specific energy consumption ------------
+			jade.util.leap.ArrayList secMeasures = new jade.util.leap.ArrayList();
+			List<Measurement> ogeSecMeasures = ogeGasDrivenMotor.getSpecificEnergyConsumptionMeasurements().getMeasurement();
+			for (int j = 0; j < ogeSecMeasures.size(); j++) {
+				Measurement ogeSecMeasurement = ogeSecMeasures.get(j);
+				
+				CompStatSECmeasurment secMeasurement = new CompStatSECmeasurment();
+				secMeasurement.setComressorPower(ValueTypeFactory.newInstance(ogeSecMeasurement.getCompressorPower()));
+				secMeasurement.setFuelConsumption(ValueTypeFactory.newInstance(ogeSecMeasurement.getFuelConsumption()));
+				
+				secMeasures.add(secMeasurement);
+			}
+			gasDrivenMotor.setGmSpecificEnergyConsumptionMeasurements(secMeasures);
+			
+			// --- maximal power measurements -------------
+			jade.util.leap.ArrayList maxPow2Measures = new jade.util.leap.ArrayList();
+			List<MpMeasurementType> ogeMaxPowMeasures = ogeGasDrivenMotor.getMaximalPowerMeasurements().getMeasurement();
+			for (int j = 0; j < ogeMaxPowMeasures.size(); j++) {
+				MpMeasurementType ogeMaxPowMeasure = ogeMaxPowMeasures.get(j);
+				
+				CompStatMaxPmeasurment maxPowMeasure = new CompStatMaxPmeasurment();
+				maxPowMeasure.setSpeeMP(ValueTypeFactory.newInstance(ogeMaxPowMeasure.getSpeed()));
+				maxPowMeasure.setMaximalPower(ValueTypeFactory.newInstance(ogeMaxPowMeasure.getMaximalPower()));
+				
+				maxPow2Measures.add(maxPowMeasure);
+			}
+			gasDrivenMotor.setGmMaximalPowerMeasurements(maxPow2Measures);
+
+			// --- Add to compressor station --------------
+			gasDrivenMotors.add(gasDrivenMotor);
 		}
-		
 		if (gasDrivenMotors.size()>0) {
 			localCompressorStation.setGasDrivenMotors(gasDrivenMotors);	
 		}
 	}
 
-	private static void setElectricMotors(CompStat localCompressorStation, ArrayList<ElectricMotorType> ogeElectricMotors) {
+	private static void setElectricMotors(CompStat localCompressorStation, List<ElectricMotorType> ogeElectricMotors) {
 		
+		// Definition of the electric motor type. Depending on whether this
+		// electric motor is modeled as a gas turbine or a gas motor, nine or three
+		// dimensionless coefficients are given for the (bi)quadratic power function. For
+		// details, see the corresponding documentation in the gas turbine and gas motor type
+		// definitions. 
 		jade.util.leap.ArrayList electricMotors = new jade.util.leap.ArrayList();
 		for (int i=0; i<ogeElectricMotors.size(); i++) {
 			ElectricMotorType ogeElectricMotor = ogeElectricMotors.get(i);
 			
+			ElectricMotor electricMotor = new ElectricMotor();
+			electricMotor.setID(ogeElectricMotor.getId());
+			electricMotor.setAlias(ogeElectricMotor.getId());
+			
+			// --- energy rate ----------------------------
+			Calc3Parameter energyRate = new Calc3Parameter();
+			energyRate.setCoeff_1_3((float) ogeElectricMotor.getEnergyRateFunCoeff1().getValue());
+			energyRate.setCoeff_2_3((float) ogeElectricMotor.getEnergyRateFunCoeff2().getValue());
+			energyRate.setCoeff_3_3((float) ogeElectricMotor.getEnergyRateFunCoeff3().getValue());
+			electricMotor.setEnergyRateFunCoeff(energyRate);
+
+			// --- Power function coefficient -------------
+			Calc9Parameter powerFunCoeff = new Calc9Parameter();
+			powerFunCoeff.setCoeff_1_9((float) ogeElectricMotor.getPowerFunCoeff1().getValue());
+			powerFunCoeff.setCoeff_2_9((float) ogeElectricMotor.getPowerFunCoeff2().getValue());
+			powerFunCoeff.setCoeff_3_9((float) ogeElectricMotor.getPowerFunCoeff3().getValue());
+			if (ogeElectricMotor.getPowerFunCoeff4()!=null) {
+				powerFunCoeff.setCoeff_4_9((float) ogeElectricMotor.getPowerFunCoeff4().getValue());
+				powerFunCoeff.setCoeff_5_9((float) ogeElectricMotor.getPowerFunCoeff5().getValue());
+				powerFunCoeff.setCoeff_6_9((float) ogeElectricMotor.getPowerFunCoeff6().getValue());
+				powerFunCoeff.setCoeff_7_9((float) ogeElectricMotor.getPowerFunCoeff7().getValue());
+				powerFunCoeff.setCoeff_8_9((float) ogeElectricMotor.getPowerFunCoeff8().getValue());
+				powerFunCoeff.setCoeff_9_9((float) ogeElectricMotor.getPowerFunCoeff9().getValue());
+			}
+			electricMotor.setEmPowerFunCoeff(powerFunCoeff);
+
+			// --- Specific energy consumption ------------
+			jade.util.leap.ArrayList secMeasurements = new jade.util.leap.ArrayList();
+			List<Measurement> ogeSECMeasurements = ogeElectricMotor.getSpecificEnergyConsumptionMeasurements().getMeasurement();
+			for (int j=0; j<ogeSECMeasurements.size(); j++) {
+				Measurement ogeMeasurement = ogeSECMeasurements.get(j);
+				
+				CompStatSECmeasurment measurement = new CompStatSECmeasurment();
+				measurement.setComressorPower(ValueTypeFactory.newInstance(ogeMeasurement.getCompressorPower()));
+				measurement.setFuelConsumption(ValueTypeFactory.newInstance(ogeMeasurement.getFuelConsumption()));
+				
+				secMeasurements.add(measurement);
+			}
+			if (secMeasurements.size()>0) {
+				electricMotor.setEmSpecificEnergyConsumptionMeasurements(secMeasurements);	
+			}
+			
+			// --- maximal power measurements -------------
+			CompStatMaxP compStatMaxP = new CompStatMaxP();
+			MaximalPowerMeasurements ogeElectricMotorPowerMeasurements = ogeElectricMotor.getMaximalPowerMeasurements();
+			// --- 1: CompStatMaxPmeasurment --------------
+			jade.util.leap.ArrayList maxPmeasurements = new jade.util.leap.ArrayList();
+			List<MpMeasurementType> ogeMeasurments = ogeElectricMotorPowerMeasurements.getMeasurement();
+			for (int j = 0; j < ogeMeasurments.size(); j++) {
+				MpMeasurementType ogeMpMeasurement = ogeMeasurments.get(j);
+				
+				CompStatMaxPmeasurment maxPmeasurement = new CompStatMaxPmeasurment();
+				maxPmeasurement.setMaximalPower(ValueTypeFactory.newInstance(ogeMpMeasurement.getMaximalPower()));
+				maxPmeasurement.setSpeeMP(ValueTypeFactory.newInstance(ogeMpMeasurement.getSpeed()));
+				
+				maxPmeasurements.add(maxPmeasurement);
+			}
+			if (maxPmeasurements.size()>0) {
+				compStatMaxP.setMeasurementsType(maxPmeasurements);
+			}
+			
+			// --- 2: CompStatMaxPtoAmbientTemperature ----
+			jade.util.leap.ArrayList ambientTemperatures = new jade.util.leap.ArrayList();	
+			List<ElectricMotorType.MaximalPowerMeasurements.AmbientTemperature> ogeAmbientTemperatures = ogeElectricMotorPowerMeasurements.getAmbientTemperature();
+			for (int j = 0; j < ogeAmbientTemperatures.size(); j++) {
+				ElectricMotorType.MaximalPowerMeasurements.AmbientTemperature ogeAmbientTemperature = ogeAmbientTemperatures.get(j);
+
+				CompStatMaxPtoAmbientTemperature ambientTemperature = new CompStatMaxPtoAmbientTemperature();
+				ambientTemperature.setTemperatureMP(ValueTypeFactory.newInstance(ogeAmbientTemperature));
+				
+				// --- Work on the measurements -----------
+				jade.util.leap.ArrayList ambientTTemperatureMeasurements = new jade.util.leap.ArrayList();
+				List<MpMeasurementType> ogeAmbientTemperatureMeasurements = ogeAmbientTemperature.getMeasurement();
+				for (int k = 0; k < ogeAmbientTemperatureMeasurements.size(); k++) {
+					MpMeasurementType ogeMeasurment = ogeAmbientTemperatureMeasurements.get(k);
+					
+					CompStatMaxPmeasurment measurment = new CompStatMaxPmeasurment();
+					measurment.setMaximalPower(ValueTypeFactory.newInstance(ogeMeasurment.getMaximalPower()));
+					measurment.setSpeeMP(ValueTypeFactory.newInstance(ogeMeasurment.getSpeed()));
+					
+					ambientTTemperatureMeasurements.add(measurment);
+				}
+				if (ambientTTemperatureMeasurements.size()>0) {
+					ambientTemperature.setMeasurementsMP(ambientTTemperatureMeasurements);	
+				}
+				// ----------------------------------------
+				
+				ambientTemperatures.add(ambientTemperature);
+			}
+			if (ambientTemperatures.size()>0) {
+				compStatMaxP.setAmbientTemperature(ambientTemperatures);
+			}
+			electricMotor.setEmMaximalPowerMeasurements(compStatMaxP);
+			
+			// --- Add to the list of electric motors -----
+			electricMotors.add(electricMotor);
 		}
-		
 		if (electricMotors.size()>0) {
 			localCompressorStation.setElectricMotors(electricMotors);	
 		}
 	}
 	
-	private static void setSteamTurbines(CompStat localCompressorStation, ArrayList<SteamTurbineType> ogeSteamTurbines) {
+	private static void setSteamTurbines(CompStat localCompressorStation, List<SteamTurbineType> ogeSteamTurbines) {
 		
 		jade.util.leap.ArrayList steamTurbines = new jade.util.leap.ArrayList();
 		for (int i=0; i<ogeSteamTurbines.size(); i++) {
 			SteamTurbineType ogeSteamTurbine = ogeSteamTurbines.get(i);
 			
+			SteamTurbine steamTurbine = new SteamTurbine();
+			steamTurbine.setID(ogeSteamTurbine.getId());
+			steamTurbine.setAlias(ogeSteamTurbine.getId());
+			
+			// --- energy rate ----------------------------
+			Calc3Parameter energyRate = new Calc3Parameter();
+			energyRate.setCoeff_1_3((float) ogeSteamTurbine.getEnergyRateFunCoeff1().getValue());
+			energyRate.setCoeff_2_3((float) ogeSteamTurbine.getEnergyRateFunCoeff2().getValue());
+			energyRate.setCoeff_3_3((float) ogeSteamTurbine.getEnergyRateFunCoeff3().getValue());
+			steamTurbine.setEnergyRateFunCoeff(energyRate);
+
+			steamTurbine.setExplicit(ogeSteamTurbine.isExplicit());
+			steamTurbine.setPowerMin(ValueTypeFactory.newInstance(ogeSteamTurbine.getPowerMin()));
+			steamTurbine.setPowerMax(ValueTypeFactory.newInstance(ogeSteamTurbine.getPowerMax()));
+			
+			steamTurbines.add(steamTurbine);
 		}
-		
 		if (steamTurbines.size()>0) {
 			localCompressorStation.setSteamTurbines(steamTurbines);	
 		}
@@ -252,7 +419,7 @@ public class CompressorStationFactory {
 		jade.util.leap.ArrayList localPistonComps = new jade.util.leap.ArrayList();
 		
 		// --- Turbo compressor ---------------------------
-		ArrayList<TurboCompressorType> ogeTurboComps = (ArrayList<TurboCompressorType>) ogeCompressors.getTurboCompressor();
+		List<TurboCompressorType> ogeTurboComps = ogeCompressors.getTurboCompressor();
 		for (int i=0; i<ogeTurboComps.size(); i++) {
 			
 			TurboCompressorType ogeTurboComp = (TurboCompressorType) ogeTurboComps.get(i);
@@ -313,7 +480,7 @@ public class CompressorStationFactory {
 			// --- Settleline measurements ----------------
 			jade.util.leap.ArrayList settlelineMeasurements = new jade.util.leap.ArrayList();
 			SettlelineMeasurements ogeSetMes = ogeTurboComp.getSettlelineMeasurements();
-			ArrayList<TcMeasurementType> ogeSetMeasurments = (ArrayList<TcMeasurementType>) ogeSetMes.getMeasurement();
+			List<TcMeasurementType> ogeSetMeasurments = ogeSetMes.getMeasurement();
 			for (int j=0; j<ogeSetMeasurments.size(); j++) {
 				TcMeasurementType ogeSetMeasure = ogeSetMeasurments.get(j);
 				
@@ -331,7 +498,7 @@ public class CompressorStationFactory {
 			// --- Characteristic Diagram Measurements ----
 			jade.util.leap.ArrayList adiabaticEfficincies = new jade.util.leap.ArrayList();
 			CharacteristicDiagramMeasurements ogeCharDiaMes = ogeTurboComp.getCharacteristicDiagramMeasurements();
-			ArrayList<AdiabaticEfficiency> ogeAdiabaticEffics = (ArrayList<AdiabaticEfficiency>) ogeCharDiaMes.getAdiabaticEfficiency();
+			List<AdiabaticEfficiency> ogeAdiabaticEffics = ogeCharDiaMes.getAdiabaticEfficiency();
 			for (int j=0; j<ogeAdiabaticEffics.size(); j++) {
 				AdiabaticEfficiency ogeAdiaEff = ogeAdiabaticEffics.get(j);
 				
@@ -339,7 +506,7 @@ public class CompressorStationFactory {
 				adiaEff.setAdiabaticEfficiency(ogeAdiaEff.getValue());
 				// --- Measurements --- Start -------------
 				jade.util.leap.ArrayList adiaEffMeasures = new jade.util.leap.ArrayList();
-				ArrayList<TcMeasurementType> ogeMeasures = (ArrayList<TcMeasurementType>) ogeAdiaEff.getMeasurement();
+				List<TcMeasurementType> ogeMeasures = ogeAdiaEff.getMeasurement();
 				for (int k=0; k < ogeMeasures.size(); k++) {
 					TcMeasurementType ogeTCMeasure = ogeMeasures.get(k);
 					
@@ -366,7 +533,7 @@ public class CompressorStationFactory {
 		}
 		
 		// --- Piston compressor --------------------------		
-		ArrayList<PistonCompressorType> ogePistonComps = (ArrayList<PistonCompressorType>) ogeCompressors.getPistonCompressor();
+		List<PistonCompressorType> ogePistonComps = ogeCompressors.getPistonCompressor();
 		for (int i=0; i<ogePistonComps.size(); i++) {
 			
 			PistonCompressorType ogePistonComp = (PistonCompressorType) ogePistonComps.get(i);

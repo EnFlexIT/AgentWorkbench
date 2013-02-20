@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: HeatCapacityCoefficient
 * @author ontology bean generator
-* @version 2013/02/19, 16:35:18
+* @version 2013/02/20, 13:32:45
 */
 public class HeatCapacityCoefficient implements Concept {
 

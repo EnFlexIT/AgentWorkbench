@@ -1,4 +1,4 @@
-; Tue Feb 19 16:34:59 CET 2013
+; Wed Feb 20 15:24:14 CET 2013
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -26,7 +26,7 @@
 ([CompStat] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE)
-	(%3AJADE-JAVA-CODE "/**\n * Returns the list of all compressor (turbo compressor as well as piston compressor).\n * @return the list of all compressor\n */\npublic List getCompressor() {\n	ArrayList compressor = new ArrayList();\n	ArrayList turboCompressor = (ArrayList) this.getTurboCompressor();\n	for (int i=0; i<turboCompressor.size(); i++) {\n		compressor.add(turboCompressor.get(i));\n	}\n	ArrayList pistonCompressor = (ArrayList) this.getPistonCompressor();\n	for (int i=0; i<pistonCompressor.size(); i++) {\n		compressor.add(pistonCompressor.get(i));\n	}\n	return compressor;\n}\n\n/**\n * Returns the list of all drives for this compressor station \n * (gas turbines, gas driven motors, electric motors and steam turbines).\n * @return the list of all drives for this compressor station\n */\npublic List getDrives() {\n	ArrayList drives = new ArrayList();\n	ArrayList gasTurbines = (ArrayList) this.getGasturbines();\n	for (int i=0; i<gasTurbines.size(); i++) {\n		drives.add(gasTurbines.get(i));\n	}\n	ArrayList gasDrivenMotors = (ArrayList) this.getGasDrivenMotors();\n	for (int i=0; i<gasDrivenMotors.size(); i++) {\n		drives.add(gasDrivenMotors.get(i));\n	}\n	ArrayList electricMotors = (ArrayList) this.getElectricMotors();\n	for (int i=0; i<electricMotors.size(); i++) {\n		drives.add(electricMotors.get(i));\n	}\n	ArrayList steamTurbines = (ArrayList) this.getSteamTurbines();\n	for (int i=0; i<steamTurbines.size(); i++) {\n		drives.add(steamTurbines.get(i));\n	}\n	return drives;\n}"))
+	(%3AJADE-JAVA-CODE "/**\n * Returns the list of all compressor (turbo compressor as well as piston compressor).\n * @return the list of all compressor\n */\npublic List getCompressor() {\n	ArrayList compressor = new ArrayList();\n	ArrayList turboCompressor = (ArrayList) this.getTurboCompressor();\n	for (int i=0; i<turboCompressor.size(); i++) {\n		compressor.add(turboCompressor.get(i));\n	}\n	ArrayList pistonCompressor = (ArrayList) this.getPistonCompressor();\n	for (int i=0; i<pistonCompressor.size(); i++) {\n		compressor.add(pistonCompressor.get(i));\n	}\n	return compressor;\n}\n\n/**\n * Returns the list of all drives for this compressor station \n * (gas turbines, gas driven motors, electric motors and steam turbines).\n * @return the list of all drives for this compressor station\n */\npublic List getDrives() {\n	ArrayList drives = new ArrayList();\n	ArrayList gasTurbines = (ArrayList) this.getGasTurbines();\n	for (int i=0; i<gasTurbines.size(); i++) {\n		drives.add(gasTurbines.get(i));\n	}\n	ArrayList gasDrivenMotors = (ArrayList) this.getGasDrivenMotors();\n	for (int i=0; i<gasDrivenMotors.size(); i++) {\n		drives.add(gasDrivenMotors.get(i));\n	}\n	ArrayList electricMotors = (ArrayList) this.getElectricMotors();\n	for (int i=0; i<electricMotors.size(); i++) {\n		drives.add(electricMotors.get(i));\n	}\n	ArrayList steamTurbines = (ArrayList) this.getSteamTurbines();\n	for (int i=0; i<steamTurbines.size(); i++) {\n		drives.add(steamTurbines.get(i));\n	}\n	return drives;\n}"))
 
 ([CompStatAdiabaticEfficiency] of  %3AJADE-CLASS
 
@@ -52,15 +52,15 @@
 
 	(%3AJADE-IGNORE FALSE))
 
+([CompStatMaxP] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
 ([CompStatMaxPmeasurment] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
 ([CompStatMaxPtoAmbientTemperature] of  %3AJADE-CLASS
-
-	(%3AJADE-IGNORE FALSE))
-
-([CompStatMP] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 

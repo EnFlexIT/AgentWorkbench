@@ -7,9 +7,20 @@ import jade.core.*;
 /**
 * Protege name: ElectricMotor
 * @author ontology bean generator
-* @version 2013/02/19, 16:35:18
+* @version 2013/02/20, 13:32:45
 */
 public class ElectricMotor extends CompStatDrive{ 
+
+   /**
+* Protege name: emMaximalPowerMeasurements
+   */
+   private CompStatMaxP emMaximalPowerMeasurements;
+   public void setEmMaximalPowerMeasurements(CompStatMaxP value) { 
+    this.emMaximalPowerMeasurements=value;
+   }
+   public CompStatMaxP getEmMaximalPowerMeasurements() {
+     return this.emMaximalPowerMeasurements;
+   }
 
    /**
 * Protege name: emPowerFunCoeff
@@ -25,23 +36,22 @@ public class ElectricMotor extends CompStatDrive{
    /**
 * Protege name: emSpecificEnergyConsumptionMeasurements
    */
-   private CompStatSECmeasurment emSpecificEnergyConsumptionMeasurements;
-   public void setEmSpecificEnergyConsumptionMeasurements(CompStatSECmeasurment value) { 
-    this.emSpecificEnergyConsumptionMeasurements=value;
+   private List emSpecificEnergyConsumptionMeasurements = new ArrayList();
+   public void addEmSpecificEnergyConsumptionMeasurements(CompStatSECmeasurment elem) { 
+     List oldList = this.emSpecificEnergyConsumptionMeasurements;
+     emSpecificEnergyConsumptionMeasurements.add(elem);
    }
-   public CompStatSECmeasurment getEmSpecificEnergyConsumptionMeasurements() {
-     return this.emSpecificEnergyConsumptionMeasurements;
+   public boolean removeEmSpecificEnergyConsumptionMeasurements(CompStatSECmeasurment elem) {
+     List oldList = this.emSpecificEnergyConsumptionMeasurements;
+     boolean result = emSpecificEnergyConsumptionMeasurements.remove(elem);
+     return result;
    }
-
-   /**
-* Protege name: emMaximalPowerMeasurements
-   */
-   private CompStatMP emMaximalPowerMeasurements;
-   public void setEmMaximalPowerMeasurements(CompStatMP value) { 
-    this.emMaximalPowerMeasurements=value;
+   public void clearAllEmSpecificEnergyConsumptionMeasurements() {
+     List oldList = this.emSpecificEnergyConsumptionMeasurements;
+     emSpecificEnergyConsumptionMeasurements.clear();
    }
-   public CompStatMP getEmMaximalPowerMeasurements() {
-     return this.emMaximalPowerMeasurements;
-   }
+   public Iterator getAllEmSpecificEnergyConsumptionMeasurements() {return emSpecificEnergyConsumptionMeasurements.iterator(); }
+   public List getEmSpecificEnergyConsumptionMeasurements() {return emSpecificEnergyConsumptionMeasurements; }
+   public void setEmSpecificEnergyConsumptionMeasurements(List l) {emSpecificEnergyConsumptionMeasurements = l; }
 
 }

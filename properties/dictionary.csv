@@ -333,6 +333,7 @@ de;Netzwerk-Komponenten;Network Components;;;
 de;Netzwerkkomponente umbenennen;Rename network component;;;
 de;Netzwerkkomponente(n) entfernen;Remove network component (s) ;;;
 de;Netzwerkkomponente(n) hinzufügen;Add network component s);;;
+de;Netzwerkmodell importieren;;;;
 de;Neu laden;Reload;;;
 de;Neue Datenreihe(n) importieren;Import new data set (s) ;;;
 de;Neue Zeitreihe hinzufügen;Add new time series;;;

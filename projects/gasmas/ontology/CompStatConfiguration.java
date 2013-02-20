@@ -8,30 +8,9 @@ import jade.core.*;
 /**
 * Protege name: CompStatConfiguration
 * @author ontology bean generator
-* @version 2013/02/19, 16:35:18
+* @version 2013/02/20, 13:32:45
 */
 public class CompStatConfiguration implements Concept {
-
-   /**
-* Protege name: stages
-   */
-   private List stages = new ArrayList();
-   public void addStages(CompStatStage elem) { 
-     List oldList = this.stages;
-     stages.add(elem);
-   }
-   public boolean removeStages(CompStatStage elem) {
-     List oldList = this.stages;
-     boolean result = stages.remove(elem);
-     return result;
-   }
-   public void clearAllStages() {
-     List oldList = this.stages;
-     stages.clear();
-   }
-   public Iterator getAllStages() {return stages.iterator(); }
-   public List getStages() {return stages; }
-   public void setStages(List l) {stages = l; }
 
    /**
 * Protege name: confID
@@ -54,5 +33,26 @@ public class CompStatConfiguration implements Concept {
    public int getNrOfSerialStages() {
      return this.nrOfSerialStages;
    }
+
+   /**
+* Protege name: stages
+   */
+   private List stages = new ArrayList();
+   public void addStages(CompStatStage elem) { 
+     List oldList = this.stages;
+     stages.add(elem);
+   }
+   public boolean removeStages(CompStatStage elem) {
+     List oldList = this.stages;
+     boolean result = stages.remove(elem);
+     return result;
+   }
+   public void clearAllStages() {
+     List oldList = this.stages;
+     stages.clear();
+   }
+   public Iterator getAllStages() {return stages.iterator(); }
+   public List getStages() {return stages; }
+   public void setStages(List l) {stages = l; }
 
 }

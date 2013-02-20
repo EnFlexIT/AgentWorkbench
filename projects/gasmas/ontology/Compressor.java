@@ -7,42 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Compressor
 * @author ontology bean generator
-* @version 2013/02/19, 16:35:18
+* @version 2013/02/20, 13:32:45
 */
 public class Compressor extends Connection{ 
-
-   /**
-* Protege name: fuelGasVertex
-   */
-   private String fuelGasVertex;
-   public void setFuelGasVertex(String value) { 
-    this.fuelGasVertex=value;
-   }
-   public String getFuelGasVertex() {
-     return this.fuelGasVertex;
-   }
-
-   /**
-* Protege name: flowDirection
-   */
-   private boolean flowDirection;
-   public void setFlowDirection(boolean value) { 
-    this.flowDirection=value;
-   }
-   public boolean getFlowDirection() {
-     return this.flowDirection;
-   }
-
-   /**
-* Protege name: pressureLossIn
-   */
-   private ValueType pressureLossIn;
-   public void setPressureLossIn(ValueType value) { 
-    this.pressureLossIn=value;
-   }
-   public ValueType getPressureLossIn() {
-     return this.pressureLossIn;
-   }
 
    /**
 * Protege name: dragFactorIn
@@ -53,39 +20,6 @@ public class Compressor extends Connection{
    }
    public float getDragFactorIn() {
      return this.dragFactorIn;
-   }
-
-   /**
-* Protege name: pressureInMin
-   */
-   private ValueType pressureInMin;
-   public void setPressureInMin(ValueType value) { 
-    this.pressureInMin=value;
-   }
-   public ValueType getPressureInMin() {
-     return this.pressureInMin;
-   }
-
-   /**
-* Protege name: diameterIn
-   */
-   private ValueType diameterIn;
-   public void setDiameterIn(ValueType value) { 
-    this.diameterIn=value;
-   }
-   public ValueType getDiameterIn() {
-     return this.diameterIn;
-   }
-
-   /**
-* Protege name: pressureOutMax
-   */
-   private ValueType pressureOutMax;
-   public void setPressureOutMax(ValueType value) { 
-    this.pressureOutMax=value;
-   }
-   public ValueType getPressureOutMax() {
-     return this.pressureOutMax;
    }
 
    /**
@@ -100,6 +34,61 @@ public class Compressor extends Connection{
    }
 
    /**
+* Protege name: flowDirection
+   */
+   private boolean flowDirection;
+   public void setFlowDirection(boolean value) { 
+    this.flowDirection=value;
+   }
+   public boolean getFlowDirection() {
+     return this.flowDirection;
+   }
+
+   /**
+* Protege name: pressureOutMax
+   */
+   private ValueType pressureOutMax;
+   public void setPressureOutMax(ValueType value) { 
+    this.pressureOutMax=value;
+   }
+   public ValueType getPressureOutMax() {
+     return this.pressureOutMax;
+   }
+
+   /**
+* Protege name: pressureInMin
+   */
+   private ValueType pressureInMin;
+   public void setPressureInMin(ValueType value) { 
+    this.pressureInMin=value;
+   }
+   public ValueType getPressureInMin() {
+     return this.pressureInMin;
+   }
+
+   /**
+* Protege name: fuelGasVertex
+   */
+   private String fuelGasVertex;
+   public void setFuelGasVertex(String value) { 
+    this.fuelGasVertex=value;
+   }
+   public String getFuelGasVertex() {
+     return this.fuelGasVertex;
+   }
+
+   /**
+* Protege name: diameterIn
+   */
+   private ValueType diameterIn;
+   public void setDiameterIn(ValueType value) { 
+    this.diameterIn=value;
+   }
+   public ValueType getDiameterIn() {
+     return this.diameterIn;
+   }
+
+   /**
 * Protege name: value
    */
    private boolean value;
@@ -111,14 +100,14 @@ public class Compressor extends Connection{
    }
 
    /**
-* Protege name: diameterOut
+* Protege name: pressureLossIn
    */
-   private ValueType diameterOut;
-   public void setDiameterOut(ValueType value) { 
-    this.diameterOut=value;
+   private ValueType pressureLossIn;
+   public void setPressureLossIn(ValueType value) { 
+    this.pressureLossIn=value;
    }
-   public ValueType getDiameterOut() {
-     return this.diameterOut;
+   public ValueType getPressureLossIn() {
+     return this.pressureLossIn;
    }
 
    /**
@@ -152,6 +141,17 @@ public class Compressor extends Connection{
    }
    public ValueType getPressureLossOut() {
      return this.pressureLossOut;
+   }
+
+   /**
+* Protege name: diameterOut
+   */
+   private ValueType diameterOut;
+   public void setDiameterOut(ValueType value) { 
+    this.diameterOut=value;
+   }
+   public ValueType getDiameterOut() {
+     return this.diameterOut;
    }
 
    /**

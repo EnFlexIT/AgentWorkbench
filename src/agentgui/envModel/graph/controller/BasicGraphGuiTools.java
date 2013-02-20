@@ -31,7 +31,6 @@ package agentgui.envModel.graph.controller;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
@@ -40,14 +39,12 @@ import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.undo.UndoManager;
 
 import agentgui.core.application.Application;
@@ -782,28 +779,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			}
 		
 		} else if (ae.getSource() == getJButtonImportGraph()) {
-			// ------------------------------------------------------
-			// --- Button Import graph from file --------------------
-			JFileChooser graphFC = new JFileChooser();
-			graphFC.removeChoosableFileFilter(graphFC.getAcceptAllFileFilter());
-			// --- Add defined FileFilters --------------------------
-			for (NetworkModelFileImporter importer : this.graphController.getImportAdapter()){
-				graphFC.addChoosableFileFilter(importer.getFileFilter());
-			}
-			graphFC.setFileFilter(graphFC.getChoosableFileFilters()[0]);
-			graphFC.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
-			// --- Show FileChooser ---------------------------------
-			if(graphFC.showOpenDialog(this.getJToolBar()) == JFileChooser.APPROVE_OPTION){
-				Application.getGlobalInfo().setLastSelectedFolder(graphFC.getCurrentDirectory());
-				File selectedFile = graphFC.getSelectedFile();
-				FileFilter selectedFileFilter = graphFC.getFileFilter();
-				for (NetworkModelFileImporter importer : this.graphController.getImportAdapter()){
-					if (selectedFileFilter==importer.getFileFilter()) {
-						this.graphController.importNetworkModel(importer, selectedFile);
-						break;
-					}
-				}	
-			}
+			// --- Import networkModel from a file ------------------
+			this.graphController.getNetworkModelAdapter().importNetworkModel();
 			
 		} else if(ae.getSource() == getJMenuItemNodeProp()) {
 			// ------------------------------------------------------

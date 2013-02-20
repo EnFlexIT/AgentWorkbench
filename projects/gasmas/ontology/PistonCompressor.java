@@ -7,9 +7,31 @@ import jade.core.*;
 /**
 * Protege name: PistonCompressor
 * @author ontology bean generator
-* @version 2013/02/19, 16:35:18
+* @version 2013/02/20, 13:32:45
 */
 public class PistonCompressor extends CompStatCompressor{ 
+
+   /**
+* Protege name: adiabaticEfficiencyPiston
+   */
+   private float adiabaticEfficiencyPiston;
+   public void setAdiabaticEfficiencyPiston(float value) { 
+    this.adiabaticEfficiencyPiston=value;
+   }
+   public float getAdiabaticEfficiencyPiston() {
+     return this.adiabaticEfficiencyPiston;
+   }
+
+   /**
+* Protege name: additionalReductionVolFlow
+   */
+   private float additionalReductionVolFlow;
+   public void setAdditionalReductionVolFlow(float value) { 
+    this.additionalReductionVolFlow=value;
+   }
+   public float getAdditionalReductionVolFlow() {
+     return this.additionalReductionVolFlow;
+   }
 
    /**
 * Protege name: operatingVolume
@@ -42,28 +64,6 @@ public class PistonCompressor extends CompStatCompressor{
    }
    public float getMaximalCompressionRatio() {
      return this.maximalCompressionRatio;
-   }
-
-   /**
-* Protege name: adiabaticEfficiencyPiston
-   */
-   private float adiabaticEfficiencyPiston;
-   public void setAdiabaticEfficiencyPiston(float value) { 
-    this.adiabaticEfficiencyPiston=value;
-   }
-   public float getAdiabaticEfficiencyPiston() {
-     return this.adiabaticEfficiencyPiston;
-   }
-
-   /**
-* Protege name: additionalReductionVolFlow
-   */
-   private float additionalReductionVolFlow;
-   public void setAdditionalReductionVolFlow(float value) { 
-    this.additionalReductionVolFlow=value;
-   }
-   public float getAdditionalReductionVolFlow() {
-     return this.additionalReductionVolFlow;
    }
 
 }

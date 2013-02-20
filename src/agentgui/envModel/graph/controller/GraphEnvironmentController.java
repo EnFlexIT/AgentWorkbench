@@ -777,24 +777,10 @@ public class GraphEnvironmentController extends EnvironmentController {
      */
     public Vector<NetworkModelFileImporter> getImportAdapter() {
     	if (this.importAdapter.size()==0) {
+    		// --- Here the default import adapter are defined ------ 
     		this.importAdapter.add(new YedGraphMLFileImporter(this, "graphml", "yEd GraphML"));
     	}
     	return this.importAdapter;
-    }
-    /**
-     * This method imports a new network model using the GraphFileImporter
-     * @param file The file defining the new graph.
-     */
-    public void importNetworkModel(NetworkModelFileImporter importer, File file) {
-    	this.getAgents2Start().clear();
-    	this.setNetworkModel(null);
-    	NetworkModel newNetworkModel = importer.importGraphFromFile(file);
-    	if (newNetworkModel!=null) {
-    		this.setNetworkModel(newNetworkModel);
-    		// --- Initially translate the data models of the  ------
-    		// --- NetworkComponents to Base64 encoded Strings ------
-    		this.setNetworkComponentDataModelBase64Encoded();
-    	}
     }
     
     /**
@@ -938,7 +924,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     /**
      * Sets the network component Base64 encoded data models to concrete instances.
      */
-    private void setNetworkComponentDataModelBase64Decoded() {
+    public void setNetworkComponentDataModelBase64Decoded() {
     	
     	final Long displayTime = System.currentTimeMillis() + new Long(1000);
     	final GraphEnvironmentController graphController = this;
@@ -1027,7 +1013,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     /**
      * Sets the instances of the NetworkComponents data models to a Base64 encoded String.
      */
-    private void setNetworkComponentDataModelBase64Encoded() {
+    public void setNetworkComponentDataModelBase64Encoded() {
     	
     	final Long displayTime = System.currentTimeMillis() + new Long(1000);
     	final GraphEnvironmentController graphController = this;

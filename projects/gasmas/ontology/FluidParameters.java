@@ -9,7 +9,7 @@ import jade.core.*;
    * A set of parameters describing properties of a gas.
 * Protege name: FluidParameters
 * @author ontology bean generator
-* @version 2013/02/19, 16:35:18
+* @version 2013/02/20, 13:32:45
 */
 public class FluidParameters implements Concept {
 
