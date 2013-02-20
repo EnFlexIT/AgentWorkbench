@@ -637,7 +637,7 @@ public class Application {
 
 		String newLine = getGlobalInfo().getNewLineSeparator();
 		
-		if (askUser) {
+		if (askUser==true) {
 			// --- Sind die neue und die alte Anzeigesprach gleich ? ----
 			Integer newLangIndex = Language.getIndexOfLanguage(newLang);
 			if ( newLangIndex == Language.currLanguageIndex ) return; 
@@ -656,8 +656,8 @@ public class Application {
 		// --- JADE stoppen -----------------------------------------		
 		getJadePlatform().jadeStop();
 		// --- Projekte schliessen ----------------------------------
-		if ( getProjectsLoaded() != null ) {
-			if ( getProjectsLoaded().closeAll() == false ) return;	
+		if (getProjectsLoaded()!=null) {
+			if (getProjectsLoaded().closeAll()==false) return;	
 		}
 		// --- Sprache umstellen ------------------------------------
 		Language.changeApplicationLanguageTo(newLang);

@@ -60,7 +60,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Einfaches Netz (Copy)</simulationSetupCurrent>
+    <simulationSetupCurrent>Einfaches Netz</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelDiscrete</timeModelClass>
     <downloadResources>http://rudel1.cs.uni-due.de:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
@@ -79,10 +79,6 @@
         <entry>
             <key>Einfaches Netz</key>
             <value>einfaches_netz.xml</value>
-        </entry>
-        <entry>
-            <key>Einfaches Netz (Copy)</key>
-            <value>einfaches_netz_copy.xml</value>
         </entry>
         <entry>
             <key>SmartGrid</key>

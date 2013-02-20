@@ -38,6 +38,7 @@ import java.util.Vector;
 
 import javax.swing.undo.UndoManager;
 
+import agentgui.envModel.graph.commands.ClearNetworkModel;
 import agentgui.envModel.graph.commands.ImportNetworkModel;
 import agentgui.envModel.graph.commands.MergeNetworkComponents;
 import agentgui.envModel.graph.commands.MergeNetworkModel;
@@ -300,7 +301,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 */
 	public void importNetworkModel() {
 		ImportNetworkModel importNM = new ImportNetworkModel(this.graphController);
-		if (importNM.wasCanceled()==false) {
+		if (importNM.isCanceled()==false) {
 			this.undoManager.addEdit(importNM);	
 		}
 	}
@@ -308,9 +309,10 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * Clears the current NetworModel.
 	 */
 	public void clearNetworkModel() {
-		this.graphController.setDisplayEnvironmentModel(null);
-		this.graphController.setAbstractEnvironmentModel(null);
-		this.graphController.getAgents2Start().clear();
+		ClearNetworkModel clearNM = new ClearNetworkModel(this.graphController);
+		if (clearNM.isCanceled()==false) {
+			this.undoManager.addEdit(clearNM);
+		}
 	}
 	
 	/* (non-Javadoc)

@@ -47,7 +47,6 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.undo.UndoManager;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.components.ComponentTypeDialog;
@@ -757,32 +756,21 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Select one vertex !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 			}
 		
-		} else if (ae.getSource() == getJButtonUndo()) {
+		} else if (ae.getSource()==getJButtonUndo()) {
 			this.graphController.getNetworkModelAdapter().undo();
 			this.setUndoRedoButtonsEnabled();
 			
-		} else if (ae.getSource() == getJButtonRedo()) {
+		} else if (ae.getSource()==getJButtonRedo()) {
 			this.graphController.getNetworkModelAdapter().redo();
 			this.setUndoRedoButtonsEnabled();
 			
-		} else if (ae.getSource() == getJButtonClearGraph()) {
-			// ------------------------------------------------------
-			// --- Button Clear graph -------------------------------
-			int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(),
-						 Language.translate("Are you sure that you want to clear the graph?", Language.EN), 
-						 Language.translate("Confirmation", Language.EN), 
-						 JOptionPane.YES_NO_OPTION);
-
-			if (answer == JOptionPane.YES_OPTION) {
-				// --- Clearing the actual Network and Graph model ------------
-				this.graphController.getNetworkModelAdapter().clearNetworkModel();
-			}
-		
-		} else if (ae.getSource() == getJButtonImportGraph()) {
-			// --- Import networkModel from a file ------------------
+		} else if (ae.getSource()==getJButtonImportGraph()) {
 			this.graphController.getNetworkModelAdapter().importNetworkModel();
 			
-		} else if(ae.getSource() == getJMenuItemNodeProp()) {
+		} else if (ae.getSource()==getJButtonClearGraph()) {
+			this.graphController.getNetworkModelAdapter().clearNetworkModel();
+		
+		} else if(ae.getSource()==getJMenuItemNodeProp()) {
 			// ------------------------------------------------------
 			// --- Popup Menu Item Node properties clicked ----------
 			GraphNode pickedVertex = basicGraphGui.getPickedSingleNode();

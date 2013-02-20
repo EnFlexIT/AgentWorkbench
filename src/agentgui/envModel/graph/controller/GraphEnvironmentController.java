@@ -933,9 +933,8 @@ public class GraphEnvironmentController extends EnvironmentController {
     	String header = Language.translate("Initiating network components and setting data model", Language.EN);
     	String progress = Language.translate("Reading", Language.EN) + "...";
     	
-    	final ProgressMonitor pm = new ProgressMonitor(Application.getMainWindow(), title, header, progress);
+    	final ProgressMonitor pm = new ProgressMonitor(title, header, progress);
     	pm.setAllow2Cancel(false);
-    	pm.setAlwaysOnTop(true);
     	
     	Runnable decode = new Runnable() {
     		public void run() {
@@ -1000,7 +999,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    		
 		    	} // end for ---
 		    	pm.setVisible(false);
-		    	pm.dispose();
 		    	
 			}
 		};
@@ -1022,9 +1020,8 @@ public class GraphEnvironmentController extends EnvironmentController {
     	String header = Language.translate("Preparing and encoding network components for saving", Language.EN);
     	String progress = Language.translate("Reading", Language.EN) + "...";
     	
-    	final ProgressMonitor pm = new ProgressMonitor(Application.getMainWindow(), title, header, progress);
+    	final ProgressMonitor pm = new ProgressMonitor(title, header, progress);
     	pm.setAllow2Cancel(false);
-    	pm.setAlwaysOnTop(true);
     	
     	Runnable encode = new Runnable() {
     		public void run() {
@@ -1105,7 +1102,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    		
 		    	} // end for ---
 		    	pm.setVisible(false);
-		    	pm.dispose();
 
 			}
     	};

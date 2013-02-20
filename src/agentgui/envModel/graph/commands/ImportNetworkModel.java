@@ -39,16 +39,17 @@ import javax.swing.undo.CannotUndoException;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
-import agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI;
 import agentgui.envModel.graph.controller.NetworkModelFileImporter;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 
+/**
+ * The AbstractUndoableEdit 'ImportNetworkModel' imports a selected file.
+ */
 public class ImportNetworkModel extends AbstractUndoableEdit {
 
 	private static final long serialVersionUID = -409810728677898514L;
 
 	private GraphEnvironmentController graphController = null;
-	private GraphEnvironmentControllerGUI graphControllerGui = null;
 	
 	private boolean canceled = false;
 	private NetworkModelFileImporter networkModelFileImporter = null;
@@ -58,9 +59,12 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 	private NetworkModel oldNetworkModel = null; 
 
 	
+	/**
+	 * Instantiates a new import network model.
+	 * @param graphController the graph controller
+	 */
 	public ImportNetworkModel(GraphEnvironmentController graphController) {
 		this.graphController = graphController;
-		this.graphControllerGui = (GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel();
 		this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
 		
 		// --- Define the import adapter and the file to import -----
@@ -78,7 +82,6 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			
 			this.graphController.getAgents2Start().clear();
 			this.graphController.setDisplayEnvironmentModel(null);
-			this.graphController.setAbstractEnvironmentModel(null);
 			
 			if (this.newNetworkModel==null) {
 				// --- Import directly from the selected file -------------------------------------
@@ -145,7 +148,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 		graphFC.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
 		
 		// --- Show FileChooser ---------------------------------
-		if(graphFC.showOpenDialog(this.graphControllerGui)==JFileChooser.APPROVE_OPTION){
+		if(graphFC.showOpenDialog(Application.getMainWindow())==JFileChooser.APPROVE_OPTION){
 			Application.getGlobalInfo().setLastSelectedFolder(graphFC.getCurrentDirectory());
 			File selectedFile = graphFC.getSelectedFile();
 			FileFilter selectedFileFilter = graphFC.getFileFilter();
@@ -171,7 +174,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 	 * Returns true, if this action was canceled.
 	 * @return true, if successful
 	 */
-	public boolean wasCanceled() {
+	public boolean isCanceled() {
 		return canceled;
 	}
 	

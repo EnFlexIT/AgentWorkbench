@@ -28,6 +28,7 @@
  */
 package agentgui.core.gui;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -38,11 +39,14 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyVetoException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDesktopPane;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -55,13 +59,15 @@ import agentgui.core.application.Language;
 /**
  * The Class AgentGuiUpdaterProgress.
  */
-public class ProgressMonitor extends JDialog implements ActionListener {
+public class ProgressMonitor implements ActionListener {
 
 	private static final long serialVersionUID = -5215083407952353606L;
 
 	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( pathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
+	
+	private Container progressMonitorContainer = null;
 	
 	private JPanel jContentPane = null;
 	private JLabel jLabelHeader = null;
@@ -84,28 +90,12 @@ public class ProgressMonitor extends JDialog implements ActionListener {
 	/**
 	 * Instantiates a new progress monitor.
 	 *
-	 * @param owner the owner
-	 * @param windowTitle the window title
-	 * @param headerText the header text
-	 * @param progressText the progress text
-	 */
-	public ProgressMonitor(Frame owner, String windowTitle, String headerText, String progressText) {
-		super(owner);
-		this.owner = owner;
-		this.windowTitle = windowTitle;
-		this.headerText = headerText;
-		this.progressText = progressText;
-		initialize();
-	}
-	/**
-	 * Instantiates a new progress monitor.
-	 *
 	 * @param windowTitle the window title
 	 * @param headerText the header text
 	 * @param progressText the progress text
 	 */
 	public ProgressMonitor(String windowTitle, String headerText, String progressText) {
-		super();
+		this.owner = Application.getMainWindow();
 		this.windowTitle = windowTitle;
 		this.headerText = headerText;
 		this.progressText = progressText;
@@ -118,29 +108,99 @@ public class ProgressMonitor extends JDialog implements ActionListener {
 	 */
 	private void initialize() {
 		
-		this.setSize(571, 188);
-		this.setResizable(false);
-		
-		this.setTitle(this.windowTitle);
-		this.setIconImage(imageAgentGUI);	
-		this.setContentPane(getJContentPane());
-		
+		Dimension defaultSize = new Dimension(570, 188);
 		if (this.owner==null) {
-			this.setLookAndFeel();	
+			JDialog jDialog = new JDialog();	
+			jDialog.setSize(defaultSize);
+			jDialog.setResizable(false);
+			jDialog.setAlwaysOnTop(true);
+			
+			jDialog.setTitle(this.windowTitle);
+			jDialog.setIconImage(imageAgentGUI);	
+			jDialog.setContentPane(getJContentPane());
+			jDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			if (this.owner==null) {
+				this.setLookAndFeel();	
+			}
+			
+			this.progressMonitorContainer = jDialog; 
+				
+		} else {
+			JInternalFrame jInternalFrame = new JInternalFrame();
+			jInternalFrame.setSize(defaultSize);
+			jInternalFrame.setResizable(false);
+			
+			jInternalFrame.setTitle(this.windowTitle);
+			jInternalFrame.setFrameIcon(iconAgentGUI);	
+			jInternalFrame.setContentPane(getJContentPane());
+			jInternalFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			
+			this.progressMonitorContainer = jInternalFrame;
 		}
-		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); 
-		
-		// --- Centre download dialog -----------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);
-	    
-		// --- Translations ---------------------
-		jButtonCancel.setText(Language.translate(jButtonCancel.getText()));
 		
 	}
 
+	/**
+	 * Sets the progress dialog visible.
+	 * @param visible the new visible
+	 */
+	public void setVisible(boolean visible) {
+		if (this.progressMonitorContainer instanceof JDialog) {
+			((JDialog) this.progressMonitorContainer).setVisible(visible);
+			// --- Centre dialog ----------------
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+			int top = (screenSize.height - this.progressMonitorContainer.getHeight()) / 2; 
+		    int left = (screenSize.width - this.progressMonitorContainer.getWidth()) / 2; 
+		    this.progressMonitorContainer.setLocation(left, top);
+		    
+		} else if (this.progressMonitorContainer instanceof JInternalFrame) {
+			JInternalFrame internalFrame = ((JInternalFrame) this.progressMonitorContainer);
+			if (visible==true) {
+				JDesktopPane desktop = Application.getMainWindow().getJDesktopPane4Projects(); 
+				desktop.add(internalFrame, JDesktopPane.POPUP_LAYER);
+				// --- Centre dialog ------------				
+				int top = (desktop.getHeight() - internalFrame.getHeight()) / 2; 
+			    int left = (desktop.getWidth() - internalFrame.getWidth()) / 2; 
+			    internalFrame.setLocation(left, top);
+			    try {
+			    	internalFrame.moveToFront();
+			    	internalFrame.setSelected(true);
+			    	internalFrame.repaint();
+				} catch (PropertyVetoException ex) {
+					ex.printStackTrace();
+				}
+			}
+			internalFrame.setVisible(visible);
+		}
+	}
+	/**
+	 * Checks if is visible.
+	 * @return true, if is visible
+	 */
+	public boolean isVisible() {
+		return this.progressMonitorContainer.isVisible();
+	}
+	/**
+	 * Validate the progress monitor.
+	 */
+	public void validate() {
+		this.progressMonitorContainer.validate();
+	}
+	/**
+	 * Repaint the progress monitor.
+	 */
+	public void repaint() {
+		this.progressMonitorContainer.repaint();
+	}
+	/**
+	 * Dispose the progress monitor.
+	 */
+	public void dispose() {
+		if (this.progressMonitorContainer instanceof JDialog) {
+			((JDialog) this.progressMonitorContainer).dispose();
+		}
+	}
+	
 	/**
 	 * Sets the window title.
 	 * @param windowTitle the new window title
@@ -165,7 +225,6 @@ public class ProgressMonitor extends JDialog implements ActionListener {
 		this.progressText = progressText;
 		this.jLabelProgress.setText(progressText);
 	}
-	
 	/**
 	 * Can be used to set the progress in percent.
 	 * @param progress the new progress in percent
@@ -174,7 +233,18 @@ public class ProgressMonitor extends JDialog implements ActionListener {
 		this.getJProgressBarDownload().setValue(progress);
 		this.setTitle(this.windowTitle + " (" + progress + "%)");
 	}
-	
+	/**
+	 * Sets the title.
+	 * @param title the new title
+	 */
+	private void setTitle(String title) {
+		if (this.progressMonitorContainer instanceof JDialog) {
+			((JDialog) this.progressMonitorContainer).setTitle(title);
+		} else if (this.progressMonitorContainer instanceof JInternalFrame) {
+			((JInternalFrame) this.progressMonitorContainer).setTitle(title);
+		}
+	}
+
 	/**
 	 * Sets the permission to cancel an action via the progress dialog.
 	 */
@@ -205,7 +275,7 @@ public class ProgressMonitor extends JDialog implements ActionListener {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 			}	
 			UIManager.setLookAndFeel(lnfClassname);
-			SwingUtilities.updateComponentTreeUI(this);				
+			SwingUtilities.updateComponentTreeUI(this.progressMonitorContainer);				
 		
 		} catch (Exception e) {
 				System.err.println("Cannot install " + lnfClassname + " on this platform:" + e.getMessage());
@@ -290,6 +360,7 @@ public class ProgressMonitor extends JDialog implements ActionListener {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton();
 			jButtonCancel.setText("Abbruch");
+			jButtonCancel.setText(Language.translate(jButtonCancel.getText()));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCancel.setPreferredSize(new Dimension(100, 26));
 			jButtonCancel.addActionListener(this);
