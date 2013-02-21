@@ -30,6 +30,8 @@ package agentgui.envModel.graph.controller;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -48,6 +50,8 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 
 	private static final long serialVersionUID = 8187230173732284770L;
+	
+	private boolean actionOnTop = false;
 	
 	/**
 	 * Instantiates a new VisualizationViewer for the BasicGraphGui.
@@ -108,5 +112,42 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 //		this.renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF); 
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see edu.uci.ics.jung.visualization.BasicVisualizationServer#paintComponent(java.awt.Graphics)
+	 */
+	@Override
+	protected void paintComponent(Graphics g) {
 
+		Graphics2D g2d = (Graphics2D)g;
+		if (isActionOnTop()==true) {
+			g2d.drawImage(offscreen, null, 0, 0);
+			
+		} else {
+			super.paintComponent(g);
+			if(doubleBuffered) {
+			    checkOffscreenImage(getSize());
+				renderGraph(offscreenG2d);
+			    g2d.drawImage(offscreen, null, 0, 0);
+			} else {
+			    renderGraph(g2d);
+			}
+		}
+	}
+	
+	/**
+	 * Setter to indicate, if there is an action on the top of the graph visualisation.
+	 * @param actionOnTop the new indicator for an action on top
+	 */
+	public void setActionOnTop(boolean actionOnTop) {
+		this.actionOnTop = actionOnTop;
+	}
+	/**
+	 * Checks if there is an action on top of this graph visualisation.
+	 * @return true, if there is currently an action on top 
+	 */
+	public boolean isActionOnTop() {
+		return actionOnTop;
+	}
+	
 }

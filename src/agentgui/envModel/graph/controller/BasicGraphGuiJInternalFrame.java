@@ -79,7 +79,6 @@ public abstract class BasicGraphGuiJInternalFrame extends JInternalFrame {
 		this.basicGraphGui = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui();
 	}
 	
-	
 	/**
 	 * Register at the graph desktop and set this extended JInternalFrame visible.
 	 */

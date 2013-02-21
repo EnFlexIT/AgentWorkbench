@@ -118,14 +118,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 	/** Environment model controller, to be passed by the parent GUI. */
 	private GraphEnvironmentController graphController = null; // @jve:decl-index=0:
-
+	
 	/** The GUI's main component, either the graph visualization, or an empty JPanel if no graph is loaded */
 	private Component centerComponent = null;
 	/** The ToolBar for this component */
 	private BasicGraphGuiTools graphGuiTools = null;
 
 	/** Graph visualization component */
-	private VisualizationViewer<GraphNode, GraphEdge> visView = null;
+	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visView = null;
 	private SatelliteView satelliteView = null;
 	private SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite = null;
 	private Dimension visViewSatelliteDimension = new Dimension(250, 200);
@@ -206,7 +206,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Gets the VisualizationViewer
 	 * @return The VisualizationViewer
 	 */
-	public VisualizationViewer<GraphNode, GraphEdge> getVisView() {
+	public BasicGraphGuiVisViewer<GraphNode, GraphEdge> getVisView() {
 		return this.visView;
 	}
 	/**
@@ -343,7 +343,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 			this.validate();
 			this.zoomSetInitialScalingAndMovement();
 			this.zoomOneToOneMoveFocus(this.visViewSatellite);
+			
 		}
+		// --- Register current BasicGraphGuiVisViewer at desktop --- 
+//		GraphEnvironmentControllerGUI graphControllerGUI = (GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel();
+//		graphControllerGUI.getBasicGraphGuiJDesktopPane().setBasicGraphGuiVisViewer(this.visView);
 	}
 
 	/**
@@ -432,7 +436,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param graph the graph
 	 * @return the new VisualizationViewer
 	 */
-	private VisualizationViewer<GraphNode, GraphEdge> getNewVisualizationViewer(Graph<GraphNode, GraphEdge> graph) {
+	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> getNewVisualizationViewer(Graph<GraphNode, GraphEdge> graph) {
 
 		// ----------------------------------------------------------------
 		// --- Get the spread of the graph and correct the positions ------
@@ -464,8 +468,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		// ----------------------------------------------------------------
 		// --- Create a new VisualizationViewer instance ------------------
 		// ----------------------------------------------------------------
-//		final VisualizationViewer<GraphNode, GraphEdge> vViewer = new VisualizationViewer<GraphNode, GraphEdge>(layout);
-		final VisualizationViewer<GraphNode, GraphEdge> vViewer = new BasicGraphGuiVisViewer<GraphNode, GraphEdge>(layout);
+		final BasicGraphGuiVisViewer<GraphNode, GraphEdge> vViewer = new BasicGraphGuiVisViewer<GraphNode, GraphEdge>(layout);
 		vViewer.setBackground(Color.WHITE);
 		vViewer.setDoubleBuffered(true);
 		
@@ -911,7 +914,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param vv the VisualizationViewer
 	 * @param file the current file to export to
 	 */
-	private void exportAsImage(VisualizationViewer<GraphNode, GraphEdge> vv, String path2File, String extension) {
+	private void exportAsImage(BasicGraphGuiVisViewer<GraphNode, GraphEdge> vv, String path2File, String extension) {
 
 		// --- If the VisualizationViewer is null ---------
 		if (vv == null) {

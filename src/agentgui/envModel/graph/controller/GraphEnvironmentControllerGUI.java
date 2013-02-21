@@ -246,15 +246,13 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
      */
     public BasicGraphGuiJDesktopPane getBasicGraphGuiJDesktopPane() {
     	if (basicGraphGuiJDesktopPane==null) {
-    		basicGraphGuiJDesktopPane = new BasicGraphGuiJDesktopPane();
+    		basicGraphGuiJDesktopPane = new BasicGraphGuiJDesktopPane((GraphEnvironmentController) this.environmentController);
     		basicGraphGuiJDesktopPane.add(this.getBasicGraphGuiRootJSplitPane(), JLayeredPane.DEFAULT_LAYER);
-    		
     		try {
 				this.getBasicGraphGuiRootJSplitPane().setMaximum(true);
 			} catch (PropertyVetoException pvex) {
 				pvex.printStackTrace();
 			}
-    		
     	}
     	return basicGraphGuiJDesktopPane;
     }

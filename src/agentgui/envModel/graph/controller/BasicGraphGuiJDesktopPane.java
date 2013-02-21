@@ -36,8 +36,12 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.DefaultDesktopManager;
+import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
+
+import agentgui.envModel.graph.networkModel.GraphEdge;
+import agentgui.envModel.graph.networkModel.GraphNode;
 
 /**
  * The Class BasicGraphGuiJDesktopPane.
@@ -48,15 +52,18 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 
 	private static final long serialVersionUID = 5733873560749370049L;
 	
+	private GraphEnvironmentController graphController = null;
+	
 	private HashMap<String, JInternalFrame> editorFrames = null;  //  @jve:decl-index=0:
 	private JInternalFrame lastOpenedEditor = null;
 	private ComponentListener myComponentAdapter = null;  //  @jve:decl-index=0:
-	
+
 	
 	/**
 	 * Instantiates a new BasicGraphGuiJLayeredPane.
 	 */
-	public BasicGraphGuiJDesktopPane() {
+	public BasicGraphGuiJDesktopPane(GraphEnvironmentController graphController) {
+		this.graphController = graphController;
 		this.initialize();
 	}	
 	/**
@@ -64,6 +71,7 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 */
 	private void initialize() {
 		this.setSize(new Dimension(300, 300));
+		this.setDoubleBuffered(true);
 		this.setAutoscrolls(false);
 		this.addComponentListener(this.getComponentListener());
 		this.setDesktopManager(new BasicGraphGuiGraphWorkspaceDesktopManager());
@@ -164,11 +172,58 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 		private static final long serialVersionUID = -7839103861123261921L;
 
 		/* (non-Javadoc)
-		 * @see javax.swing.DefaultDesktopManager#iconifyFrame(javax.swing.JInternalFrame)
+		 * @see javax.swing.DefaultDesktopManager#beginDraggingFrame(javax.swing.JComponent)
 		 */
 		@Override
-		public void iconifyFrame(JInternalFrame f) {
-			super.iconifyFrame(f);
+		public void beginDraggingFrame(JComponent f) {
+			if (getBasicGraphGuiVisViewer()!=null) {
+				getBasicGraphGuiVisViewer().setActionOnTop(true);	
+			}
+			super.beginDraggingFrame(f);
+		}
+		/* (non-Javadoc)
+		 * @see javax.swing.DefaultDesktopManager#endDraggingFrame(javax.swing.JComponent)
+		 */
+		@Override
+		public void endDraggingFrame(JComponent f) {
+			if (getBasicGraphGuiVisViewer()!=null) {
+				getBasicGraphGuiVisViewer().setActionOnTop(false);	
+			}
+			super.endDraggingFrame(f);
+		}
+		
+		/* (non-Javadoc)
+		 * @see javax.swing.DefaultDesktopManager#beginResizingFrame(javax.swing.JComponent, int)
+		 */
+		@Override
+		public void beginResizingFrame(JComponent f, int direction) {
+			if (getBasicGraphGuiVisViewer()!=null) {
+				getBasicGraphGuiVisViewer().setActionOnTop(true);	
+			}
+			super.beginResizingFrame(f, direction);
+		}
+		/* (non-Javadoc)
+		 * @see javax.swing.DefaultDesktopManager#endResizingFrame(javax.swing.JComponent)
+		 */
+		@Override
+		public void endResizingFrame(JComponent f) {
+			if (getBasicGraphGuiVisViewer()!=null) {
+				getBasicGraphGuiVisViewer().setActionOnTop(false);	
+			}
+			super.endResizingFrame(f);
+		}
+		/**
+		 * Gets the current BasicGraphGuiVisViewer.
+		 * @return the current BasicGraphGuiVisViewer
+		 */
+		private BasicGraphGuiVisViewer<GraphNode, GraphEdge> getBasicGraphGuiVisViewer() {
+			BasicGraphGuiVisViewer<GraphNode, GraphEdge> basicGraphGuiVisViewer = null;
+			try {
+				basicGraphGuiVisViewer = ((GraphEnvironmentControllerGUI) graphController.getEnvironmentPanel()).getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisView();
+			} catch (Exception ex) {
+//				ex.printStackTrace();
+			}
+			return basicGraphGuiVisViewer;
 		}
 		
 	}
