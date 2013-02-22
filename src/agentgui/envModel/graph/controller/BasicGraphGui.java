@@ -345,9 +345,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			this.zoomOneToOneMoveFocus(this.visViewSatellite);
 			
 		}
-		// --- Register current BasicGraphGuiVisViewer at desktop --- 
-//		GraphEnvironmentControllerGUI graphControllerGUI = (GraphEnvironmentControllerGUI) this.graphController.getEnvironmentPanel();
-//		graphControllerGUI.getBasicGraphGuiJDesktopPane().setBasicGraphGuiVisViewer(this.visView);
+
 	}
 
 	/**

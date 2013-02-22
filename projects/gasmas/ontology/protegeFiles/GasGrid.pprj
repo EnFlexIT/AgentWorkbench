@@ -1,4 +1,4 @@
-; Wed Feb 20 15:24:17 CET 2013
+; Fri Feb 22 17:15:06 CET 2013
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -19,7 +19,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [GasGrid_ProjectKB_Instance_150]))
+	(properties [GasGrid_ProjectKB_Instance_147]))
 
 ([CLSES_TAB] of  Widget
 
@@ -58,19 +58,19 @@
 ([GasGrid_ProjectKB_Instance_137] of  Property_List
 )
 
-([GasGrid_ProjectKB_Instance_150] of  String
+([GasGrid_ProjectKB_Instance_147] of  String
 
 	(name "Calc9Parameter")
 	(string_value "coeff_4_9"))
 
-([GasGrid_ProjectKB_Instance_151] of  Map_Entry
+([GasGrid_ProjectKB_Instance_148] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([GasGrid_ProjectKB_Instance_152] of  Map_Entry
+([GasGrid_ProjectKB_Instance_149] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
@@ -404,8 +404,8 @@
 ([GasGrid_ProjectKB_Instance_289] of  Map
 
 	(entries
-		[GasGrid_ProjectKB_Instance_151]
-		[GasGrid_ProjectKB_Instance_152]))
+		[GasGrid_ProjectKB_Instance_148]
+		[GasGrid_ProjectKB_Instance_149]))
 
 ([GasGrid_ProjectKB_Instance_98] of  String
 

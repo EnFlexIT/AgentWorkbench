@@ -8,30 +8,9 @@ import jade.core.*;
 /**
 * Protege name: CompStatMaxP
 * @author ontology bean generator
-* @version 2013/02/20, 13:32:45
+* @version 2013/02/22, 16:57:41
 */
 public class CompStatMaxP implements Concept {
-
-   /**
-* Protege name: ambientTemperature
-   */
-   private List ambientTemperature = new ArrayList();
-   public void addAmbientTemperature(CompStatMaxPtoAmbientTemperature elem) { 
-     List oldList = this.ambientTemperature;
-     ambientTemperature.add(elem);
-   }
-   public boolean removeAmbientTemperature(CompStatMaxPtoAmbientTemperature elem) {
-     List oldList = this.ambientTemperature;
-     boolean result = ambientTemperature.remove(elem);
-     return result;
-   }
-   public void clearAllAmbientTemperature() {
-     List oldList = this.ambientTemperature;
-     ambientTemperature.clear();
-   }
-   public Iterator getAllAmbientTemperature() {return ambientTemperature.iterator(); }
-   public List getAmbientTemperature() {return ambientTemperature; }
-   public void setAmbientTemperature(List l) {ambientTemperature = l; }
 
    /**
 * Protege name: measurementsType
@@ -53,5 +32,26 @@ public class CompStatMaxP implements Concept {
    public Iterator getAllMeasurementsType() {return measurementsType.iterator(); }
    public List getMeasurementsType() {return measurementsType; }
    public void setMeasurementsType(List l) {measurementsType = l; }
+
+   /**
+* Protege name: ambientTemperature
+   */
+   private List ambientTemperature = new ArrayList();
+   public void addAmbientTemperature(CompStatMaxPtoAmbientTemperature elem) { 
+     List oldList = this.ambientTemperature;
+     ambientTemperature.add(elem);
+   }
+   public boolean removeAmbientTemperature(CompStatMaxPtoAmbientTemperature elem) {
+     List oldList = this.ambientTemperature;
+     boolean result = ambientTemperature.remove(elem);
+     return result;
+   }
+   public void clearAllAmbientTemperature() {
+     List oldList = this.ambientTemperature;
+     ambientTemperature.clear();
+   }
+   public Iterator getAllAmbientTemperature() {return ambientTemperature.iterator(); }
+   public List getAmbientTemperature() {return ambientTemperature; }
+   public void setAmbientTemperature(List l) {ambientTemperature = l; }
 
 }

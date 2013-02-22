@@ -9,9 +9,53 @@ import jade.core.*;
    * A set of parameters describing the current gas flow at a PropagationPoint.
 * Protege name: FlowParameters
 * @author ontology bean generator
-* @version 2013/02/20, 13:32:45
+* @version 2013/02/22, 16:57:41
 */
 public class FlowParameters implements Concept {
+
+   /**
+* Protege name: pressure
+   */
+   private float pressure;
+   public void setPressure(float value) { 
+    this.pressure=value;
+   }
+   public float getPressure() {
+     return this.pressure;
+   }
+
+   /**
+* Protege name: reynoldsNumber
+   */
+   private int reynoldsNumber;
+   public void setReynoldsNumber(int value) { 
+    this.reynoldsNumber=value;
+   }
+   public int getReynoldsNumber() {
+     return this.reynoldsNumber;
+   }
+
+   /**
+* Protege name: flow
+   */
+   private float flow;
+   public void setFlow(float value) { 
+    this.flow=value;
+   }
+   public float getFlow() {
+     return this.flow;
+   }
+
+   /**
+* Protege name: fluidVelocity
+   */
+   private float fluidVelocity;
+   public void setFluidVelocity(float value) { 
+    this.fluidVelocity=value;
+   }
+   public float getFluidVelocity() {
+     return this.fluidVelocity;
+   }
 
    /**
 * Protege name: massFlow
@@ -33,50 +77,6 @@ public class FlowParameters implements Concept {
    }
    public float getTemperature() {
      return this.temperature;
-   }
-
-   /**
-* Protege name: reynoldsNumber
-   */
-   private int reynoldsNumber;
-   public void setReynoldsNumber(int value) { 
-    this.reynoldsNumber=value;
-   }
-   public int getReynoldsNumber() {
-     return this.reynoldsNumber;
-   }
-
-   /**
-* Protege name: pressure
-   */
-   private float pressure;
-   public void setPressure(float value) { 
-    this.pressure=value;
-   }
-   public float getPressure() {
-     return this.pressure;
-   }
-
-   /**
-* Protege name: fluidVelocity
-   */
-   private float fluidVelocity;
-   public void setFluidVelocity(float value) { 
-    this.fluidVelocity=value;
-   }
-   public float getFluidVelocity() {
-     return this.fluidVelocity;
-   }
-
-   /**
-* Protege name: flow
-   */
-   private float flow;
-   public void setFlow(float value) { 
-    this.flow=value;
-   }
-   public float getFlow() {
-     return this.flow;
    }
 
 }

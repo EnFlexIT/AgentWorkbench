@@ -7,9 +7,20 @@ import jade.core.*;
 /**
 * Protege name: Entry
 * @author ontology bean generator
-* @version 2013/02/20, 13:32:45
+* @version 2013/02/22, 16:57:41
 */
 public class Entry extends Exit{ 
+
+   /**
+* Protege name: pseudocricalPressure
+   */
+   private ValueType pseudocricalPressure;
+   public void setPseudocricalPressure(ValueType value) { 
+    this.pseudocricalPressure=value;
+   }
+   public ValueType getPseudocricalPressure() {
+     return this.pseudocricalPressure;
+   }
 
    /**
 * Protege name: pseudocriticalTemperature
@@ -34,36 +45,14 @@ public class Entry extends Exit{
    }
 
    /**
-* Protege name: calorificValue
+* Protege name: molarMass
    */
-   private ValueType calorificValue;
-   public void setCalorificValue(ValueType value) { 
-    this.calorificValue=value;
+   private float molarMass;
+   public void setMolarMass(float value) { 
+    this.molarMass=value;
    }
-   public ValueType getCalorificValue() {
-     return this.calorificValue;
-   }
-
-   /**
-* Protege name: normDensity
-   */
-   private ValueType normDensity;
-   public void setNormDensity(ValueType value) { 
-    this.normDensity=value;
-   }
-   public ValueType getNormDensity() {
-     return this.normDensity;
-   }
-
-   /**
-* Protege name: pseudocricalPressure
-   */
-   private ValueType pseudocricalPressure;
-   public void setPseudocricalPressure(ValueType value) { 
-    this.pseudocricalPressure=value;
-   }
-   public ValueType getPseudocricalPressure() {
-     return this.pseudocricalPressure;
+   public float getMolarMass() {
+     return this.molarMass;
    }
 
    /**
@@ -78,14 +67,25 @@ public class Entry extends Exit{
    }
 
    /**
-* Protege name: molarMass
+* Protege name: normDensity
    */
-   private float molarMass;
-   public void setMolarMass(float value) { 
-    this.molarMass=value;
+   private ValueType normDensity;
+   public void setNormDensity(ValueType value) { 
+    this.normDensity=value;
    }
-   public float getMolarMass() {
-     return this.molarMass;
+   public ValueType getNormDensity() {
+     return this.normDensity;
+   }
+
+   /**
+* Protege name: calorificValue
+   */
+   private ValueType calorificValue;
+   public void setCalorificValue(ValueType value) { 
+    this.calorificValue=value;
+   }
+   public ValueType getCalorificValue() {
+     return this.calorificValue;
    }
 
 }

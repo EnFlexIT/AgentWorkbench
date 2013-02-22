@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: GasTurbine
 * @author ontology bean generator
-* @version 2013/02/20, 13:32:45
+* @version 2013/02/22, 16:57:41
 */
 public class GasTurbine extends CompStatDrive{ 
 
@@ -21,27 +21,6 @@ public class GasTurbine extends CompStatDrive{
    public Calc9Parameter getGtPowerFunCoeff() {
      return this.gtPowerFunCoeff;
    }
-
-   /**
-* Protege name: gtSpecificEnergyConsumptionMeasurements
-   */
-   private List gtSpecificEnergyConsumptionMeasurements = new ArrayList();
-   public void addGtSpecificEnergyConsumptionMeasurements(CompStatSECmeasurment elem) { 
-     List oldList = this.gtSpecificEnergyConsumptionMeasurements;
-     gtSpecificEnergyConsumptionMeasurements.add(elem);
-   }
-   public boolean removeGtSpecificEnergyConsumptionMeasurements(CompStatSECmeasurment elem) {
-     List oldList = this.gtSpecificEnergyConsumptionMeasurements;
-     boolean result = gtSpecificEnergyConsumptionMeasurements.remove(elem);
-     return result;
-   }
-   public void clearAllGtSpecificEnergyConsumptionMeasurements() {
-     List oldList = this.gtSpecificEnergyConsumptionMeasurements;
-     gtSpecificEnergyConsumptionMeasurements.clear();
-   }
-   public Iterator getAllGtSpecificEnergyConsumptionMeasurements() {return gtSpecificEnergyConsumptionMeasurements.iterator(); }
-   public List getGtSpecificEnergyConsumptionMeasurements() {return gtSpecificEnergyConsumptionMeasurements; }
-   public void setGtSpecificEnergyConsumptionMeasurements(List l) {gtSpecificEnergyConsumptionMeasurements = l; }
 
    /**
 * Protege name: gtMaximalPowerMeasurements
@@ -63,5 +42,26 @@ public class GasTurbine extends CompStatDrive{
    public Iterator getAllGtMaximalPowerMeasurements() {return gtMaximalPowerMeasurements.iterator(); }
    public List getGtMaximalPowerMeasurements() {return gtMaximalPowerMeasurements; }
    public void setGtMaximalPowerMeasurements(List l) {gtMaximalPowerMeasurements = l; }
+
+   /**
+* Protege name: gtSpecificEnergyConsumptionMeasurements
+   */
+   private List gtSpecificEnergyConsumptionMeasurements = new ArrayList();
+   public void addGtSpecificEnergyConsumptionMeasurements(CompStatSECmeasurment elem) { 
+     List oldList = this.gtSpecificEnergyConsumptionMeasurements;
+     gtSpecificEnergyConsumptionMeasurements.add(elem);
+   }
+   public boolean removeGtSpecificEnergyConsumptionMeasurements(CompStatSECmeasurment elem) {
+     List oldList = this.gtSpecificEnergyConsumptionMeasurements;
+     boolean result = gtSpecificEnergyConsumptionMeasurements.remove(elem);
+     return result;
+   }
+   public void clearAllGtSpecificEnergyConsumptionMeasurements() {
+     List oldList = this.gtSpecificEnergyConsumptionMeasurements;
+     gtSpecificEnergyConsumptionMeasurements.clear();
+   }
+   public Iterator getAllGtSpecificEnergyConsumptionMeasurements() {return gtSpecificEnergyConsumptionMeasurements.iterator(); }
+   public List getGtSpecificEnergyConsumptionMeasurements() {return gtSpecificEnergyConsumptionMeasurements; }
+   public void setGtSpecificEnergyConsumptionMeasurements(List l) {gtSpecificEnergyConsumptionMeasurements = l; }
 
 }

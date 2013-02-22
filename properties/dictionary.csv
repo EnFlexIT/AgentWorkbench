@@ -486,8 +486,11 @@ de;Stop;Stop
 de;Stunde;Hour;;;
 de;Stunden;Hours;;;
 de;Suche & Auswahl;Search & Selection;;;
+de;Suche löschen;;;;
 de;Suche nach Agenten beendet...;Search for agents finished...
 de;Suche nach der nächsten fehlenden Übersetzung (STRG+F);Search for the next missing translation (CTRL + F)
+de;Suche rückwärts;;;;
+de;Suche vorwärts;;;;
 de;Suche;Search
 de;Summe einblenden;Show Sum ;;;
 de;Summe;Sum;;;

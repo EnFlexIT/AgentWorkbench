@@ -7,19 +7,19 @@ import jade.core.*;
 /**
 * Protege name: Calc3Parameter
 * @author ontology bean generator
-* @version 2013/02/20, 13:32:45
+* @version 2013/02/22, 16:57:41
 */
 public class Calc3Parameter extends CompStatCalcCoefficient{ 
 
    /**
-* Protege name: coeff_2_3
+* Protege name: coeff_1_3
    */
-   private float coeff_2_3;
-   public void setCoeff_2_3(float value) { 
-    this.coeff_2_3=value;
+   private float coeff_1_3;
+   public void setCoeff_1_3(float value) { 
+    this.coeff_1_3=value;
    }
-   public float getCoeff_2_3() {
-     return this.coeff_2_3;
+   public float getCoeff_1_3() {
+     return this.coeff_1_3;
    }
 
    /**
@@ -34,14 +34,14 @@ public class Calc3Parameter extends CompStatCalcCoefficient{
    }
 
    /**
-* Protege name: coeff_1_3
+* Protege name: coeff_2_3
    */
-   private float coeff_1_3;
-   public void setCoeff_1_3(float value) { 
-    this.coeff_1_3=value;
+   private float coeff_2_3;
+   public void setCoeff_2_3(float value) { 
+    this.coeff_2_3=value;
    }
-   public float getCoeff_1_3() {
-     return this.coeff_1_3;
+   public float getCoeff_2_3() {
+     return this.coeff_2_3;
    }
 
 }

@@ -7,9 +7,20 @@ import jade.core.*;
 /**
 * Protege name: Pipe
 * @author ontology bean generator
-* @version 2013/02/20, 13:32:45
+* @version 2013/02/22, 16:57:41
 */
 public class Pipe extends Connection{ 
+
+   /**
+* Protege name: Diameter
+   */
+   private ValueType diameter;
+   public void setDiameter(ValueType value) { 
+    this.diameter=value;
+   }
+   public ValueType getDiameter() {
+     return this.diameter;
+   }
 
    /**
 * Protege name: lineOfSight
@@ -20,6 +31,17 @@ public class Pipe extends Connection{
    }
    public ValueType getLineOfSight() {
      return this.lineOfSight;
+   }
+
+   /**
+* Protege name: Length
+   */
+   private ValueType length;
+   public void setLength(ValueType value) { 
+    this.length=value;
+   }
+   public ValueType getLength() {
+     return this.length;
    }
 
    /**
@@ -53,28 +75,6 @@ public class Pipe extends Connection{
    }
    public ValueType getHeatTransferCoefficient() {
      return this.heatTransferCoefficient;
-   }
-
-   /**
-* Protege name: Diameter
-   */
-   private ValueType diameter;
-   public void setDiameter(ValueType value) { 
-    this.diameter=value;
-   }
-   public ValueType getDiameter() {
-     return this.diameter;
-   }
-
-   /**
-* Protege name: Length
-   */
-   private ValueType length;
-   public void setLength(ValueType value) { 
-    this.length=value;
-   }
-   public ValueType getLength() {
-     return this.length;
    }
 
 }

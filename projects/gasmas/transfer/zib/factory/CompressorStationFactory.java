@@ -32,10 +32,13 @@ import gasmas.ontology.Calc3Parameter;
 import gasmas.ontology.Calc9Parameter;
 import gasmas.ontology.CompStat;
 import gasmas.ontology.CompStatAdiabaticEfficiency;
+import gasmas.ontology.CompStatCompressorWithSpeed;
+import gasmas.ontology.CompStatConfiguration;
 import gasmas.ontology.CompStatMaxP;
 import gasmas.ontology.CompStatMaxPmeasurment;
 import gasmas.ontology.CompStatMaxPtoAmbientTemperature;
 import gasmas.ontology.CompStatSECmeasurment;
+import gasmas.ontology.CompStatStage;
 import gasmas.ontology.CompStatTcMeasurement;
 import gasmas.ontology.ElectricMotor;
 import gasmas.ontology.GasDrivenMotor;
@@ -45,7 +48,10 @@ import gasmas.ontology.SteamTurbine;
 import gasmas.ontology.TurboCompressor;
 import gasmas.transfer.zib.cs.CompressorStationsType.CompressorStation;
 import gasmas.transfer.zib.cs.CompressorStationsType.CompressorStation.Compressors;
+import gasmas.transfer.zib.cs.CompressorStationsType.CompressorStation.Configurations;
 import gasmas.transfer.zib.cs.CompressorStationsType.CompressorStation.Drives;
+import gasmas.transfer.zib.cs.ConfigurationType;
+import gasmas.transfer.zib.cs.ConfigurationType.Stage;
 import gasmas.transfer.zib.cs.ElectricMotorType;
 import gasmas.transfer.zib.cs.ElectricMotorType.MaximalPowerMeasurements;
 import gasmas.transfer.zib.cs.GasDrivenMotorType;
@@ -87,10 +93,65 @@ public class CompressorStationFactory {
 		}
 		
 		// --- Set up the configurations ----------------------------
-		
-		
+		Configurations configurations = ogeCompressorStation.getConfigurations();
+		if (configurations!=null) {
+			setConfigurations(compressorStation, configurations);
+		}
 		
 		return compressorStation;
+	}
+	
+	/**
+	 * Sets the configurations.
+	 *
+	 * @param localCompressorStation the local compressor station
+	 * @param configurations the configurations
+	 */
+	private static void setConfigurations(CompStat localCompressorStation, Configurations ogeConfigurations) {
+		
+		jade.util.leap.ArrayList configurations = new jade.util.leap.ArrayList();
+		for (int i = 0; i < ogeConfigurations.getConfiguration().size(); i++) {
+			ConfigurationType ogeConfiguration = ogeConfigurations.getConfiguration().get(i); 
+
+			CompStatConfiguration configuration = new CompStatConfiguration();
+			configuration.setConfID(ogeConfiguration.getConfId());
+			configuration.setNrOfSerialStages(ogeConfiguration.getNrOfSerialStages().intValue());
+
+			jade.util.leap.ArrayList stages = new jade.util.leap.ArrayList();
+			List<Stage> ogeStages = ogeConfiguration.getStage();
+			for (int j = 0; j < ogeStages.size(); j++) {
+				Stage ogeStage =  ogeStages.get(j);
+				
+				CompStatStage stage = new CompStatStage();
+				stage.setStageNo(ogeStage.getStageNr().intValue());
+				stage.setNoOfParallelUnits(ogeStage.getNrOfParallelUnits().intValue());
+				
+				jade.util.leap.ArrayList compressors = new jade.util.leap.ArrayList();
+				List<ConfigurationType.Stage.Compressor> ogeCompressors = ogeStage.getCompressor();
+				for (int k = 0; k < ogeCompressors.size(); k++) {
+					ConfigurationType.Stage.Compressor ogeCompressor = ogeCompressors.get(k);
+					
+					CompStatCompressorWithSpeed compressor = new CompStatCompressorWithSpeed();
+					compressor.setID(ogeCompressor.getId());
+					compressor.setNominalSpeed(ogeCompressor.getNominalSpeed().intValue());
+					
+					compressors.add(compressor);
+				}
+				if (compressors.size()>0) {
+					stage.setCompressor(compressors);	
+				}
+				
+				stages.add(stage);
+			}
+			if (stages.size()>0) {
+				configuration.setStages(stages);	
+			}
+
+			configurations.add(configuration);
+		}
+		if (configurations.size()>0) {
+			localCompressorStation.setConfigurations(configurations);
+		}
 	}
 	
 	/**

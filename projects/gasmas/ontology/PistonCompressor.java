@@ -7,41 +7,19 @@ import jade.core.*;
 /**
 * Protege name: PistonCompressor
 * @author ontology bean generator
-* @version 2013/02/20, 13:32:45
+* @version 2013/02/22, 16:57:41
 */
 public class PistonCompressor extends CompStatCompressor{ 
 
    /**
-* Protege name: adiabaticEfficiencyPiston
+* Protege name: maximalCompressionRatio
    */
-   private float adiabaticEfficiencyPiston;
-   public void setAdiabaticEfficiencyPiston(float value) { 
-    this.adiabaticEfficiencyPiston=value;
+   private float maximalCompressionRatio;
+   public void setMaximalCompressionRatio(float value) { 
+    this.maximalCompressionRatio=value;
    }
-   public float getAdiabaticEfficiencyPiston() {
-     return this.adiabaticEfficiencyPiston;
-   }
-
-   /**
-* Protege name: additionalReductionVolFlow
-   */
-   private float additionalReductionVolFlow;
-   public void setAdditionalReductionVolFlow(float value) { 
-    this.additionalReductionVolFlow=value;
-   }
-   public float getAdditionalReductionVolFlow() {
-     return this.additionalReductionVolFlow;
-   }
-
-   /**
-* Protege name: operatingVolume
-   */
-   private ValueType operatingVolume;
-   public void setOperatingVolume(ValueType value) { 
-    this.operatingVolume=value;
-   }
-   public ValueType getOperatingVolume() {
-     return this.operatingVolume;
+   public float getMaximalCompressionRatio() {
+     return this.maximalCompressionRatio;
    }
 
    /**
@@ -56,14 +34,36 @@ public class PistonCompressor extends CompStatCompressor{
    }
 
    /**
-* Protege name: maximalCompressionRatio
+* Protege name: operatingVolume
    */
-   private float maximalCompressionRatio;
-   public void setMaximalCompressionRatio(float value) { 
-    this.maximalCompressionRatio=value;
+   private ValueType operatingVolume;
+   public void setOperatingVolume(ValueType value) { 
+    this.operatingVolume=value;
    }
-   public float getMaximalCompressionRatio() {
-     return this.maximalCompressionRatio;
+   public ValueType getOperatingVolume() {
+     return this.operatingVolume;
+   }
+
+   /**
+* Protege name: additionalReductionVolFlow
+   */
+   private float additionalReductionVolFlow;
+   public void setAdditionalReductionVolFlow(float value) { 
+    this.additionalReductionVolFlow=value;
+   }
+   public float getAdditionalReductionVolFlow() {
+     return this.additionalReductionVolFlow;
+   }
+
+   /**
+* Protege name: adiabaticEfficiencyPiston
+   */
+   private float adiabaticEfficiencyPiston;
+   public void setAdiabaticEfficiencyPiston(float value) { 
+    this.adiabaticEfficiencyPiston=value;
+   }
+   public float getAdiabaticEfficiencyPiston() {
+     return this.adiabaticEfficiencyPiston;
    }
 
 }

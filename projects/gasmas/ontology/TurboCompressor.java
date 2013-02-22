@@ -7,19 +7,19 @@ import jade.core.*;
 /**
 * Protege name: TurboCompressor
 * @author ontology bean generator
-* @version 2013/02/20, 13:32:45
+* @version 2013/02/22, 16:57:41
 */
 public class TurboCompressor extends CompStatCompressor{ 
 
    /**
-* Protege name: chokeline_coeff
+* Protege name: n_isoline_coeff
    */
-   private Calc3Parameter chokeline_coeff;
-   public void setChokeline_coeff(Calc3Parameter value) { 
-    this.chokeline_coeff=value;
+   private Calc9Parameter n_isoline_coeff;
+   public void setN_isoline_coeff(Calc9Parameter value) { 
+    this.n_isoline_coeff=value;
    }
-   public Calc3Parameter getChokeline_coeff() {
-     return this.chokeline_coeff;
+   public Calc9Parameter getN_isoline_coeff() {
+     return this.n_isoline_coeff;
    }
 
    /**
@@ -55,6 +55,17 @@ public class TurboCompressor extends CompStatCompressor{
    }
 
    /**
+* Protege name: chokeline_coeff
+   */
+   private Calc3Parameter chokeline_coeff;
+   public void setChokeline_coeff(Calc3Parameter value) { 
+    this.chokeline_coeff=value;
+   }
+   public Calc3Parameter getChokeline_coeff() {
+     return this.chokeline_coeff;
+   }
+
+   /**
 * Protege name: settlelineMeasurements
    */
    private List settlelineMeasurements = new ArrayList();
@@ -84,17 +95,6 @@ public class TurboCompressor extends CompStatCompressor{
    }
    public Calc3Parameter getSurgeline_coeff() {
      return this.surgeline_coeff;
-   }
-
-   /**
-* Protege name: n_isoline_coeff
-   */
-   private Calc9Parameter n_isoline_coeff;
-   public void setN_isoline_coeff(Calc9Parameter value) { 
-    this.n_isoline_coeff=value;
-   }
-   public Calc9Parameter getN_isoline_coeff() {
-     return this.n_isoline_coeff;
    }
 
    /**

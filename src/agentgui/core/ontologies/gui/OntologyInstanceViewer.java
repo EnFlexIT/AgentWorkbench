@@ -31,7 +31,6 @@ package agentgui.core.ontologies.gui;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -45,7 +44,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.border.EtchedBorder;
 
@@ -77,11 +75,10 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	private boolean use4Agents =  false;
 
 	private JScrollPane jScrollPaneDynForm = null;
-	private JScrollPane jScrollPaneTextVersion = null;
 	
 	private DynTableJPanel dynTablePanel = null;
 	private DynForm dynForm = null;
-	private JTextArea jTextArea = null;
+	private DynFormText dynFormText = null;
 	
 	private final String newLine = Application.getGlobalInfo().getNewLineSeparator();
 	private final String separatorLine = "------------------------------------------";  //  @jve:decl-index=0:
@@ -224,7 +221,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		this.addTab("Formular", getJScrollPaneDynForm());
 		
 		// --- Add the XML-Tab to the ---------------------
-		this.addTab("XML", getJScrollPaneTextVersion());
+		this.addTab("XML", getDynFormText());
 
 		// --- Add Enlarge-Tab ----------------------------
 		if (this.getDynForm().isEmptyForm()==false) {
@@ -265,7 +262,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 				
 			} else if (this.getSelectedIndex()==2) {
 				// --- Refresh Form-View -------------
-				String currConfigText = jTextArea.getText();
+				String currConfigText = this.getDynFormText().getText();
 				String [] currConfig = this.getXMLParts(currConfigText);
 				this.setConfigurationXML(currConfig);
 				
@@ -364,8 +361,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			config += xmlConfig[i] + newLine;					
 			newText += config;
 		}
-		this.jTextArea.setText(newText);
-		this.jTextArea.setCaretPosition(0);
+		this.getDynFormText().setText(newText);
 	}
 	
 	/**
@@ -522,34 +518,11 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		return jScrollPaneDynForm;
 	}
 
-	/**
-	 * This method initialises jScrollPaneTextVersion.
-	 *
-	 * @return javax.swing.JScrollPane
-	 */
-	private JScrollPane getJScrollPaneTextVersion() {
-		if (jScrollPaneTextVersion == null) {
-			jScrollPaneTextVersion = new JScrollPane();
-			jScrollPaneTextVersion.setViewportView(getJTextArea());
+	private DynFormText getDynFormText() {
+		if (dynFormText==null) {
+			dynFormText = new DynFormText(this.getDynForm());
 		}
-		return jScrollPaneTextVersion;
-	}
-
-	/**
-	 * This method initialises jTextArea.
-	 *
-	 * @return javax.swing.JTextArea
-	 */
-	private JTextArea getJTextArea() {
-		if (jTextArea == null) {
-			jTextArea = new JTextArea();
-			jTextArea.setFont(new Font("Courier New", Font.PLAIN, 12));
-			if (this.getDynForm().isEmptyForm()==true){
-				jTextArea.setEditable(false);
-			}
-
-		}
-		return jTextArea;
+		return dynFormText;
 	}
 	
 	/**
@@ -598,7 +571,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			
 		} else if (this.getSelectedIndex()==2) {
 			// --- XML view -------------------------------
-			String currConfigText = jTextArea.getText();
+			String currConfigText = this.getDynFormText().getText();
 			String [] currConfig = this.getXMLParts(currConfigText);
 			this.setConfigurationXML(currConfig);
 

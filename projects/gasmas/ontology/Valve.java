@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Valve
 * @author ontology bean generator
-* @version 2013/02/20, 13:32:45
+* @version 2013/02/22, 16:57:41
 */
 public class Valve extends Connection{ 
-
-   /**
-* Protege name: flowDirection
-   */
-   private boolean flowDirection;
-   public void setFlowDirection(boolean value) { 
-    this.flowDirection=value;
-   }
-   public boolean getFlowDirection() {
-     return this.flowDirection;
-   }
 
    /**
 * Protege name: pressureDifferentialMax
@@ -31,6 +20,17 @@ public class Valve extends Connection{
    }
    public ValueType getPressureDifferentialMax() {
      return this.pressureDifferentialMax;
+   }
+
+   /**
+* Protege name: flowDirection
+   */
+   private boolean flowDirection;
+   public void setFlowDirection(boolean value) { 
+    this.flowDirection=value;
+   }
+   public boolean getFlowDirection() {
+     return this.flowDirection;
    }
 
    /**

@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Innode
 * @author ontology bean generator
-* @version 2013/02/20, 13:32:45
+* @version 2013/02/22, 16:57:41
 */
 public class Innode extends GridComponent{ 
 
@@ -23,14 +23,14 @@ public class Innode extends GridComponent{
    }
 
    /**
-* Protege name: pressureMax
+* Protege name: geoCoordinate
    */
-   private ValueType pressureMax;
-   public void setPressureMax(ValueType value) { 
-    this.pressureMax=value;
+   private GeoCoordinate geoCoordinate;
+   public void setGeoCoordinate(GeoCoordinate value) { 
+    this.geoCoordinate=value;
    }
-   public ValueType getPressureMax() {
-     return this.pressureMax;
+   public GeoCoordinate getGeoCoordinate() {
+     return this.geoCoordinate;
    }
 
    /**
@@ -45,14 +45,14 @@ public class Innode extends GridComponent{
    }
 
    /**
-* Protege name: geoCoordinate
+* Protege name: pressureMax
    */
-   private GeoCoordinate geoCoordinate;
-   public void setGeoCoordinate(GeoCoordinate value) { 
-    this.geoCoordinate=value;
+   private ValueType pressureMax;
+   public void setPressureMax(ValueType value) { 
+    this.pressureMax=value;
    }
-   public GeoCoordinate getGeoCoordinate() {
-     return this.geoCoordinate;
+   public ValueType getPressureMax() {
+     return this.pressureMax;
    }
 
 }

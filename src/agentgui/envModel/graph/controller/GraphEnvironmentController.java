@@ -1152,13 +1152,14 @@ public class GraphEnvironmentController extends EnvironmentController {
     	
     	BasicGraphGuiVisViewer<GraphNode, GraphEdge> basicGraphGuiVisViewer = null;
 		try {
-			((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).setEnabled(actionOnTopIsRunning);
-			basicGraphGuiVisViewer = ((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisView();
+			GraphEnvironmentControllerGUI graphControllerGUI = (GraphEnvironmentControllerGUI) this.getEnvironmentPanel(); 
+			basicGraphGuiVisViewer = graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisView();
 			basicGraphGuiVisViewer.setActionOnTop(actionOnTopIsRunning);
 			if (actionOnTopIsRunning==false) {
 				basicGraphGuiVisViewer.repaint();
 				basicGraphGuiVisViewer.requestFocus();
 			}
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

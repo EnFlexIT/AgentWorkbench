@@ -1,4 +1,4 @@
-; Wed Feb 20 15:24:14 CET 2013
+; Fri Feb 22 17:15:06 CET 2013
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -40,7 +40,7 @@
 
 	(%3AJADE-IGNORE FALSE))
 
-([CompStatCompressorSpeed] of  %3AJADE-CLASS
+([CompStatCompressorWithSpeed] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
