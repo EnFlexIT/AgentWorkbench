@@ -939,6 +939,9 @@ public class GraphEnvironmentController extends EnvironmentController {
     	Runnable decode = new Runnable() {
     		public void run() {
 		    	
+				long nextGraphRenderingInterval = 500; // ms
+				long nextGraphRendering = System.currentTimeMillis() + nextGraphRenderingInterval;
+					
 		    	Object[] netCompArr =  getNetworkModel().getNetworkComponents().values().toArray();
 		    	Object[] graphNodeArr =  getNetworkModel().getGraph().getVertices().toArray();
 		    	
@@ -946,60 +949,73 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    	int netCompCount = netCompArr.length + graphNodeArr.length;
 		    	for (int i=0; i<netCompCount; i++) {
 		    	
-		    		// --- Only display progress, if procedure is to long -----
-		    		if (System.currentTimeMillis() > displayTime) {
-		    			if (pm.isVisible()==false) {
-		    				pm.setVisible(true);
-		    		    	pm.validate();
-		    		    	pm.repaint();
-		    			}
-		    			// --- Set Progress monitor ---------------------------
-			    		float progressCalc = (float) (((float)i/(float)netCompCount) * 100.0);
-			    		final int progressInt = Math.round(progressCalc);
-			    		if (progressInt!=progressIntOld) {
-			    			progressIntOld = progressInt;
-							pm.setProgress(progressInt);
+		    		try {
+		    			// --- Only display progress, if procedure is to long -----
+			    		if (System.currentTimeMillis() > displayTime) {
+			    			if (pm.isVisible()==false) {
+			    				pm.setVisible(true);
+			    		    	pm.validate();
+			    		    	pm.repaint();
+			    			}
+			    			// --- Set Progress monitor ---------------------------
+				    		float progressCalc = (float) (((float)i/(float)netCompCount) * 100.0);
+				    		final int progressInt = Math.round(progressCalc);
+				    		if (progressInt!=progressIntOld) {
+				    			progressIntOld = progressInt;
+								pm.setProgress(progressInt);
+				    		}
 			    		}
-		    		}
-		    		
-		    		// --- Find the corresponding NetworkComponentAdapter -----
-		    		NetworkComponentAdapter netCompAdapter=null;
-		    		NetworkComponent netComp = null;
-		    		GraphNode graphNode = null;
-		    		if (i<netCompArr.length) {
-		    			netComp = (NetworkComponent) netCompArr[i];		
-		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphController, netComp);
-		    		} else {
-		    			graphNode = (GraphNode) graphNodeArr[i-netCompArr.length];
-		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphController, graphNode);	
-		    		}
-		    		
-		    		// --- Set the components data model instance -------------
-		    		if (netCompAdapter!=null) {
-		    			Vector<String> dataModelBase64 = null;
-		    			if (graphNode!=null) {
-		    				dataModelBase64 = graphNode.getDataModelBase64();
-		    			} else {
-		    				dataModelBase64 = netComp.getDataModelBase64();
-		    			}
-		    			if (dataModelBase64!=null) {
-		    				// --- Get DataModelAdapter -----------------------
-		    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
-		    				if (netCompDataModelAdapter!=null) {
-		    					// --- Get Base64 decoded Object --------------
-		    					Object dataModel = netCompDataModelAdapter.getDataModelBase64Decoded(dataModelBase64, true);
-		    					if (graphNode!=null) {
-				    				graphNode.setDataModel(dataModel);
-				    			} else {
-				    				netComp.setDataModel(dataModel);
-				    			}
-		    				}
-		    			}
-		    		}
+
+			    		// --- Render/paint graph ---------------------------------
+			    		if (System.currentTimeMillis()>=nextGraphRendering) {
+			    			setBasicGraphGuiVisViewerActionOnTop(false);
+			    			setBasicGraphGuiVisViewerActionOnTop(true);
+			    			nextGraphRendering = System.currentTimeMillis() + nextGraphRenderingInterval;
+			    		}
+			    		
+			    		// --- Find the corresponding NetworkComponentAdapter -----
+			    		NetworkComponentAdapter netCompAdapter=null;
+			    		NetworkComponent netComp = null;
+			    		GraphNode graphNode = null;
+			    		if (i<netCompArr.length) {
+			    			netComp = (NetworkComponent) netCompArr[i];		
+			    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphController, netComp);
+			    		} else {
+			    			graphNode = (GraphNode) graphNodeArr[i-netCompArr.length];
+			    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphController, graphNode);	
+			    		}
+			    		
+			    		// --- Set the components data model instance -------------
+			    		if (netCompAdapter!=null) {
+			    			Vector<String> dataModelBase64 = null;
+			    			if (graphNode!=null) {
+			    				dataModelBase64 = graphNode.getDataModelBase64();
+			    			} else {
+			    				dataModelBase64 = netComp.getDataModelBase64();
+			    			}
+			    			if (dataModelBase64!=null) {
+			    				// --- Get DataModelAdapter -----------------------
+			    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
+			    				if (netCompDataModelAdapter!=null) {
+			    					// --- Get Base64 decoded Object --------------
+			    					Object dataModel = netCompDataModelAdapter.getDataModelBase64Decoded(dataModelBase64, true);
+			    					if (graphNode!=null) {
+					    				graphNode.setDataModel(dataModel);
+					    			} else {
+					    				netComp.setDataModel(dataModel);
+					    			}
+			    				}
+			    			}
+			    		}
+			    		
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 		    		
 		    	} // end for ---
 		    	pm.setVisible(false);
-		    	
+		    	pm.dispose();
+		    	setBasicGraphGuiVisViewerActionOnTop(false);
 			}
 		};
 		Thread decoder = new Thread(decode);
@@ -1026,6 +1042,9 @@ public class GraphEnvironmentController extends EnvironmentController {
     	Runnable encode = new Runnable() {
     		public void run() {
 
+    			long nextGraphRenderingInterval = 500; // ms
+				long nextGraphRendering = System.currentTimeMillis() + nextGraphRenderingInterval;
+    			
 		    	Object[] netCompArr =  getNetworkModel().getNetworkComponents().values().toArray();
 		    	Object[] graphNodeArr =  getNetworkModel().getGraph().getVertices().toArray();
 		    	
@@ -1033,76 +1052,90 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    	int netCompCount = netCompArr.length + graphNodeArr.length;
 		    	for (int i = 0; i<netCompCount; i++) {
 		    		
-		    		// --- Only display progress, if procedure is to long -----
-		    		if (System.currentTimeMillis() > displayTime) {
-		    			if (pm.isVisible()==false) {
-		    				pm.setVisible(true);
-		    		    	pm.validate();
-		    		    	pm.repaint();
-		    			}
-		    			// --- Set Progress monitor ---------------------------
-			    		float progressCalc = (float) (((float)i/(float)netCompCount) * 100.0);
-			    		final int progressInt = Math.round(progressCalc);
-			    		if (progressInt!=progressIntOld) {
-			    			progressIntOld = progressInt;
-			    			pm.setProgress(progressInt);
-			    		}
-		    		}
-
-		    		// --- Find the corresponding NetworkComponentAdapter -----
-		    		NetworkComponentAdapter netCompAdapter=null;
-		    		NetworkComponent netComp = null;
-		    		GraphNode graphNode = null;
-		    		if (i<netCompArr.length) {
-		    			netComp = (NetworkComponent) netCompArr[i];		
-		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphController, netComp);
-		    		} else {
-		    			graphNode = (GraphNode) graphNodeArr[i-netCompArr.length];
-		    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphController, graphNode);	
-		    		}
-		    		
-		    		// --- Set the components data model as Base64 ------------
-		    		if (netCompAdapter!=null) {
-		    			Object dataModel = null;
-		    			if (graphNode!=null) {
-		    				dataModel = graphNode.getDataModel();
-		    			} else {
-		    				dataModel = netComp.getDataModel();
-		    			}
-		    			if (dataModel==null) {
-		    				// --- No data model ------------------------------
-		    				if (graphNode!=null) {
-			    				graphNode.setDataModelBase64(null);
-			    			} else {
-			    				netComp.setDataModelBase64(null);;
+		    		try {
+		    			// --- Only display progress, if procedure is to long -----
+			    		if (System.currentTimeMillis() > displayTime) {
+			    			if (pm.isVisible()==false) {
+			    				pm.setVisible(true);
+			    		    	pm.validate();
+			    		    	pm.repaint();
 			    			}
-		    			} else {
-		    				// --- Get DataModelAdapter -----------------------
-		    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
-		    				if (netCompDataModelAdapter==null) {
-		    					// --- No DataModelAdapter found --------------
-		    					if (graphNode!=null) {
+			    			// --- Set Progress monitor ---------------------------
+				    		float progressCalc = (float) (((float)i/(float)netCompCount) * 100.0);
+				    		final int progressInt = Math.round(progressCalc);
+				    		if (progressInt!=progressIntOld) {
+				    			progressIntOld = progressInt;
+				    			pm.setProgress(progressInt);
+				    		}
+			    		}
+
+			    		// --- Render/paint graph ---------------------------------
+			    		if (System.currentTimeMillis()>=nextGraphRendering) {
+			    			setBasicGraphGuiVisViewerActionOnTop(false);
+			    			setBasicGraphGuiVisViewerActionOnTop(true);
+			    			nextGraphRendering = System.currentTimeMillis() + nextGraphRenderingInterval;
+			    		}
+			    		
+			    		// --- Find the corresponding NetworkComponentAdapter -----
+			    		NetworkComponentAdapter netCompAdapter=null;
+			    		NetworkComponent netComp = null;
+			    		GraphNode graphNode = null;
+			    		if (i<netCompArr.length) {
+			    			netComp = (NetworkComponent) netCompArr[i];		
+			    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphController, netComp);
+			    		} else {
+			    			graphNode = (GraphNode) graphNodeArr[i-netCompArr.length];
+			    			netCompAdapter = getNetworkModel().getNetworkComponentAdapter(graphController, graphNode);	
+			    		}
+			    		
+			    		// --- Set the components data model as Base64 ------------
+			    		if (netCompAdapter!=null) {
+			    			Object dataModel = null;
+			    			if (graphNode!=null) {
+			    				dataModel = graphNode.getDataModel();
+			    			} else {
+			    				dataModel = netComp.getDataModel();
+			    			}
+			    			if (dataModel==null) {
+			    				// --- No data model ------------------------------
+			    				if (graphNode!=null) {
 				    				graphNode.setDataModelBase64(null);
 				    			} else {
-				    				netComp.setDataModelBase64(null);
+				    				netComp.setDataModelBase64(null);;
 				    			}
-		    						
-		    				} else {
-		    					// --- Get Base64 encoded String ------------
-		    					Vector<String> dataModelBase64 = netCompDataModelAdapter.getDataModelBase64Encoded(dataModel);
-		    					if (graphNode!=null) {
-				    				graphNode.setDataModelBase64(dataModelBase64);
-				    			} else {
-				    				netComp.setDataModelBase64(dataModelBase64);
-				    			}
-		    					
-		    				}
-		    			}
-		    		}
+			    			} else {
+			    				// --- Get DataModelAdapter -----------------------
+			    				NetworkComponentAdapter4DataModel netCompDataModelAdapter = netCompAdapter.getStoredDataModelAdapter();
+			    				if (netCompDataModelAdapter==null) {
+			    					// --- No DataModelAdapter found --------------
+			    					if (graphNode!=null) {
+					    				graphNode.setDataModelBase64(null);
+					    			} else {
+					    				netComp.setDataModelBase64(null);
+					    			}
+			    						
+			    				} else {
+			    					// --- Get Base64 encoded String ------------
+			    					Vector<String> dataModelBase64 = netCompDataModelAdapter.getDataModelBase64Encoded(dataModel);
+			    					if (graphNode!=null) {
+					    				graphNode.setDataModelBase64(dataModelBase64);
+					    			} else {
+					    				netComp.setDataModelBase64(dataModelBase64);
+					    			}
+			    					
+			    				}
+			    			}
+			    		}
+			    		
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 		    		
 		    	} // end for ---
 		    	pm.setVisible(false);
-
+		    	pm.dispose();
+		    	setBasicGraphGuiVisViewerActionOnTop(false);
+		    	
 			}
     	};
 		Thread encoder = new Thread(encode);
@@ -1111,4 +1144,25 @@ public class GraphEnvironmentController extends EnvironmentController {
     	
     }
 
+    /**
+     * Sets the indicator that an action on top is running, in order to prevent permanently (re-)paint actions.
+     * @param actionOnTopIsRunning the indicator that an action on top of the graph is running or not
+     */
+    private void setBasicGraphGuiVisViewerActionOnTop(boolean actionOnTopIsRunning) {
+    	
+    	BasicGraphGuiVisViewer<GraphNode, GraphEdge> basicGraphGuiVisViewer = null;
+		try {
+			((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).setEnabled(actionOnTopIsRunning);
+			basicGraphGuiVisViewer = ((GraphEnvironmentControllerGUI) this.getEnvironmentPanel()).getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisView();
+			basicGraphGuiVisViewer.setActionOnTop(actionOnTopIsRunning);
+			if (actionOnTopIsRunning==false) {
+				basicGraphGuiVisViewer.repaint();
+				basicGraphGuiVisViewer.requestFocus();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+    	
+    }
+    
 }
