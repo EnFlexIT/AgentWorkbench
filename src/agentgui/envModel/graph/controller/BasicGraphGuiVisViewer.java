@@ -118,20 +118,11 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 */
 	@Override
 	protected void paintComponent(Graphics g) {
-
 		Graphics2D g2d = (Graphics2D)g;
 		if (isActionOnTop()==true) {
 			g2d.drawImage(offscreen, null, 0, 0);
-			
 		} else {
 			super.paintComponent(g);
-			if(doubleBuffered) {
-			    checkOffscreenImage(getSize());
-				renderGraph(offscreenG2d);
-			    g2d.drawImage(offscreen, null, 0, 0);
-			} else {
-			    renderGraph(g2d);
-			}
 		}
 	}
 	
