@@ -183,7 +183,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 				ontoArrayInstance[1] = CompressorStationFactory.newInstance(compressorStation);
 				
 			} else {
-				System.err.println("Could not find Compressor '" + compressorStation.getId() + "'");
+				System.err.println("Could not find Compressor '" + compressorStation.getId() + "' in the loaded network!");
 			}
 		}
 		
