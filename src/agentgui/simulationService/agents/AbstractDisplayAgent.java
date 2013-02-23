@@ -254,11 +254,11 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	private void buildVisualizationGUI() {
 		// --- Build the new Controller GUI ---------------
 		if (this.isAgentGuiEmbedded()==true) {
-			this.usePanel.add(this.getEnvironmentController().getEnvironmentPanel(), BorderLayout.CENTER);
+			this.usePanel.add(this.getEnvironmentController().getOrCreateEnvironmentPanel(), BorderLayout.CENTER);
 			this.usePanel.validate();
 			this.usePanel.repaint();
 		} else {
-			this.getJFrameStandalone().getContentPane().add(this.getEnvironmentController().getEnvironmentPanel(), BorderLayout.CENTER);
+			this.getJFrameStandalone().getContentPane().add(this.getEnvironmentController().getOrCreateEnvironmentPanel(), BorderLayout.CENTER);
 			this.getJFrameStandalone().pack();
 			this.getJFrameStandalone().validate();
 			this.getJFrameStandalone().setVisible(true);
@@ -272,7 +272,11 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 		
 		if (this.getEnvironmentController()!=null) {
 			this.removeTimeModelDisplay();
-			this.getEnvironmentController().getEnvironmentPanel().setVisible(false);
+			EnvironmentPanel envPanel = this.getEnvironmentController().getEnvironmentPanel();
+			if (envPanel!=null) {
+				envPanel.setVisible(false);
+				envPanel.dispose();	
+			}
 			this.setEnvironmentController(null);
 		}
 		if (this.jFrameStandalone!=null) {

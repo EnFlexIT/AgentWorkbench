@@ -626,8 +626,8 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     }
     
     /**
-     * Get the visualization component
-     * @return the basic graph GUI which contains the graph visualization component
+     * Gets the BasicGraphGui, which is the visualisation component for the graph.
+     * @return the basic graph GUI that contains the graph visualisation component
      */
     public BasicGraphGui getBasicGraphGui() {
 		if (graphGUI == null) {
@@ -635,7 +635,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		}
 		return graphGUI;
     }
-
+    
     /**
      * This method initializes jTextFieldSearch Search box - Used for filtering the components
      * 

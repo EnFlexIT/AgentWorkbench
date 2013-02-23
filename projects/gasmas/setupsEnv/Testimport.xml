@@ -796,8 +796,8 @@
                 <graphElementIDs>nN_CS_003O_B3_1</graphElementIDs>
                 <graphElementIDs>nN_CS_003O_B3_2</graphElementIDs>
                 <graphElementIDs>nN_CS_003O_C</graphElementIDs>
-                <graphElementIDs>nN_CS_003O_3</graphElementIDs>
                 <graphElementIDs>nN_CS_003O_2</graphElementIDs>
+                <graphElementIDs>nN_CS_003O_3</graphElementIDs>
                 <id>nN_CS_003O_B3</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch3</type>
@@ -4261,8 +4261,8 @@
                 <graphElementIDs>nN_2071_B3_0</graphElementIDs>
                 <graphElementIDs>nN_2071_2</graphElementIDs>
                 <graphElementIDs>nN_2071_C</graphElementIDs>
-                <graphElementIDs>nN_2071</graphElementIDs>
                 <graphElementIDs>nN_2071_3</graphElementIDs>
+                <graphElementIDs>nN_2071</graphElementIDs>
                 <graphElementIDs>nN_2071_B3_2</graphElementIDs>
                 <id>nN_2071_B3</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
@@ -4423,8 +4423,8 @@
                 <graphElementIDs>nN_8529_B9_1</graphElementIDs>
                 <graphElementIDs>nN_8529_B9_0</graphElementIDs>
                 <graphElementIDs>nN_8529_B9_7</graphElementIDs>
-                <graphElementIDs>nN_8529_B9_6</graphElementIDs>
                 <graphElementIDs>nN_8529_C</graphElementIDs>
+                <graphElementIDs>nN_8529_B9_6</graphElementIDs>
                 <graphElementIDs>nN_8529_B9_5</graphElementIDs>
                 <graphElementIDs>nN_8529_B9_4</graphElementIDs>
                 <graphElementIDs>nN_8529_B9_8</graphElementIDs>
@@ -4854,8 +4854,8 @@
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>nN_8622_2</graphElementIDs>
-                <graphElementIDs>nN_8622</graphElementIDs>
                 <graphElementIDs>nN_8622_3</graphElementIDs>
+                <graphElementIDs>nN_8622</graphElementIDs>
                 <graphElementIDs>nN_8622_B3_2</graphElementIDs>
                 <graphElementIDs>nN_8622_C</graphElementIDs>
                 <graphElementIDs>nN_8622_B3_0</graphElementIDs>
@@ -7155,8 +7155,8 @@
                 <graphElementIDs>nN_2643_C</graphElementIDs>
                 <graphElementIDs>nN_2643_B3_1</graphElementIDs>
                 <graphElementIDs>nN_2643_B3_2</graphElementIDs>
-                <graphElementIDs>nN_2643_2</graphElementIDs>
                 <graphElementIDs>nN_2643</graphElementIDs>
+                <graphElementIDs>nN_2643_2</graphElementIDs>
                 <graphElementIDs>nN_2643_3</graphElementIDs>
                 <graphElementIDs>nN_2643_B3_0</graphElementIDs>
                 <id>nN_2643_B3</id>
@@ -9916,8 +9916,8 @@
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>nN_8507S1_C</graphElementIDs>
-                <graphElementIDs>nN_8507S1</graphElementIDs>
                 <graphElementIDs>nN_8507S1_2</graphElementIDs>
+                <graphElementIDs>nN_8507S1</graphElementIDs>
                 <graphElementIDs>nN_8507S1_3</graphElementIDs>
                 <graphElementIDs>nN_8507S1_B3_2</graphElementIDs>
                 <graphElementIDs>nN_8507S1_B3_1</graphElementIDs>
@@ -10772,8 +10772,8 @@
                 <graphElementIDs>nN_8521_2</graphElementIDs>
                 <graphElementIDs>nN_8521_3</graphElementIDs>
                 <graphElementIDs>nN_8521</graphElementIDs>
-                <graphElementIDs>nN_8521_B6_0</graphElementIDs>
                 <graphElementIDs>nN_8521_C</graphElementIDs>
+                <graphElementIDs>nN_8521_B6_0</graphElementIDs>
                 <graphElementIDs>nN_8521_B6_2</graphElementIDs>
                 <graphElementIDs>nN_8521_B6_1</graphElementIDs>
                 <graphElementIDs>nN_8521_B6_4</graphElementIDs>
@@ -11231,8 +11231,8 @@
                 <graphElementIDs>nN_6002_B3_2</graphElementIDs>
                 <graphElementIDs>nN_6002_2</graphElementIDs>
                 <graphElementIDs>nN_6002_C</graphElementIDs>
-                <graphElementIDs>nN_6002</graphElementIDs>
                 <graphElementIDs>nN_6002_3</graphElementIDs>
+                <graphElementIDs>nN_6002</graphElementIDs>
                 <graphElementIDs>nN_6002_B3_0</graphElementIDs>
                 <graphElementIDs>nN_6002_B3_1</graphElementIDs>
                 <id>nN_6002_B3</id>
@@ -12727,8 +12727,8 @@
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>nN_9900_4</graphElementIDs>
                 <graphElementIDs>nN_9900</graphElementIDs>
+                <graphElementIDs>nN_9900_4</graphElementIDs>
                 <graphElementIDs>nN_9900_5</graphElementIDs>
                 <graphElementIDs>nN_9900_2</graphElementIDs>
                 <graphElementIDs>nN_9900_3</graphElementIDs>
@@ -14739,8 +14739,8 @@
                 <graphElementIDs>nN_8504_B4_3</graphElementIDs>
                 <graphElementIDs>nN_8504_B4_0</graphElementIDs>
                 <graphElementIDs>nN_8504_B4_1</graphElementIDs>
-                <graphElementIDs>nN_8504</graphElementIDs>
                 <graphElementIDs>nN_8504_2</graphElementIDs>
+                <graphElementIDs>nN_8504</graphElementIDs>
                 <graphElementIDs>nN_8504_C</graphElementIDs>
                 <graphElementIDs>nN_8504_4</graphElementIDs>
                 <graphElementIDs>nN_8504_3</graphElementIDs>
@@ -15280,8 +15280,8 @@
                 <graphElementIDs>nN_PI_079_B4_2</graphElementIDs>
                 <graphElementIDs>nN_PI_079_B4_3</graphElementIDs>
                 <graphElementIDs>nN_PI_079_2</graphElementIDs>
-                <graphElementIDs>nN_PI_079</graphElementIDs>
                 <graphElementIDs>nN_PI_079_3</graphElementIDs>
+                <graphElementIDs>nN_PI_079</graphElementIDs>
                 <graphElementIDs>nN_PI_079_B4_0</graphElementIDs>
                 <graphElementIDs>nN_PI_079_C</graphElementIDs>
                 <id>nN_PI_079_B4</id>
@@ -15429,8 +15429,8 @@
                 <graphElementIDs>nN_PI_313_B3_0</graphElementIDs>
                 <graphElementIDs>nN_PI_313_B3_1</graphElementIDs>
                 <graphElementIDs>nN_PI_313_B3_2</graphElementIDs>
-                <graphElementIDs>nN_PI_313</graphElementIDs>
                 <graphElementIDs>nN_PI_313_3</graphElementIDs>
+                <graphElementIDs>nN_PI_313</graphElementIDs>
                 <graphElementIDs>nN_PI_313_C</graphElementIDs>
                 <graphElementIDs>nN_PI_313_2</graphElementIDs>
                 <id>nN_PI_313_B3</id>
@@ -15884,10 +15884,10 @@
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>nN_8724_2</graphElementIDs>
-                <graphElementIDs>nN_8724_B6_5</graphElementIDs>
                 <graphElementIDs>nN_8724_4</graphElementIDs>
-                <graphElementIDs>nN_8724_B6_4</graphElementIDs>
+                <graphElementIDs>nN_8724_B6_5</graphElementIDs>
                 <graphElementIDs>nN_8724_3</graphElementIDs>
+                <graphElementIDs>nN_8724_B6_4</graphElementIDs>
                 <graphElementIDs>nN_8724_6</graphElementIDs>
                 <graphElementIDs>nN_8724_5</graphElementIDs>
                 <graphElementIDs>nN_8724_B6_1</graphElementIDs>
@@ -16194,8 +16194,8 @@
                 <directed>false</directed>
                 <graphElementIDs>nN_8583_5</graphElementIDs>
                 <graphElementIDs>nN_8583_B5_4</graphElementIDs>
-                <graphElementIDs>nN_8583_4</graphElementIDs>
                 <graphElementIDs>nN_8583</graphElementIDs>
+                <graphElementIDs>nN_8583_4</graphElementIDs>
                 <graphElementIDs>nN_8583_3</graphElementIDs>
                 <graphElementIDs>nN_8583_2</graphElementIDs>
                 <graphElementIDs>nN_8583_C</graphElementIDs>

@@ -73,7 +73,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	/** The parent BasicGraphGUI */
 	private BasicGraphGui graphGUI = null;
 	/** The current VisualizationViewer	*/
-	private VisualizationViewer<GraphNode,GraphEdge> visViewer = null; 	
+	private BasicGraphGuiVisViewer<GraphNode,GraphEdge> visViewer = null; 	
 	
 	/** Move panel with right currently ? */
 	private boolean movePanelWithRightAction = false;
@@ -107,7 +107,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 * Gets the vis viewer.
 	 * @return the vis viewer
 	 */
-	private VisualizationViewer<GraphNode, GraphEdge> getVisViewer(){
+	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> getVisViewer(){
 		if (this.visViewer==null) {
 			this.visViewer = this.graphGUI.getVisView();
 		}

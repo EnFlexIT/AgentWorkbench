@@ -219,7 +219,7 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 		private BasicGraphGuiVisViewer<GraphNode, GraphEdge> getBasicGraphGuiVisViewer() {
 			BasicGraphGuiVisViewer<GraphNode, GraphEdge> basicGraphGuiVisViewer = null;
 			try {
-				basicGraphGuiVisViewer = ((GraphEnvironmentControllerGUI) graphController.getEnvironmentPanel()).getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisView();
+				basicGraphGuiVisViewer = graphController.getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisView();
 			} catch (Exception ex) {
 //				ex.printStackTrace();
 			}

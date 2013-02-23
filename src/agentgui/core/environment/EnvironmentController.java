@@ -100,6 +100,13 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * @return the myEnvironmentPanel
 	 */
 	public EnvironmentPanel getEnvironmentPanel() {
+		return this.myEnvironmentPanel;
+	}
+	/**
+	 * Gets the environment panel for displaying the data model or creates it new.
+	 * @return the myEnvironmentPanel
+	 */
+	public EnvironmentPanel getOrCreateEnvironmentPanel() {
 		if (this.myEnvironmentPanel==null) {
 			this.myEnvironmentPanel = createEnvironmentPanel();
 		}

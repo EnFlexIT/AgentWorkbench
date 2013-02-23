@@ -140,11 +140,10 @@ public class GraphEnvironmentController extends EnvironmentController {
      */
     public GraphEnvironmentController(Project project) {
 		super(project);
-		if (this.getProject() != null) {
+		if (this.getProject()!=null) {
 		    this.updateGraphFileName();
 		    this.loadEnvironment();
 		}
-		
     }
 
     /*
@@ -152,16 +151,23 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @see agentgui.core.environment.EnvironmentController#createEnvironmentPanel()
      */
     @Override
-    protected EnvironmentPanel createEnvironmentPanel() {
-    	GraphEnvironmentControllerGUI graphDisplay = new GraphEnvironmentControllerGUI(this);
-    	return graphDisplay;
+    public EnvironmentPanel createEnvironmentPanel() {
+    	return new GraphEnvironmentControllerGUI(this);
     }
 
+    /**
+     * Gets the GraphEnvironmentControllerGUI.
+     * @return the current GraphEnvironmentControllerGUI
+     */
+    public GraphEnvironmentControllerGUI getGraphEnvironmentControllerGUI() {
+    	return (GraphEnvironmentControllerGUI) this.getEnvironmentPanel();
+    }
+    
     /**
      * Sets the project unsaved.
      */
     public void setProjectUnsaved() {
-    	if (this.getProject() != null) {
+    	if (this.getProject()!=null) {
 		    this.getProject().setUnsaved(true);
 		}
     }
@@ -1152,13 +1158,15 @@ public class GraphEnvironmentController extends EnvironmentController {
     	
     	BasicGraphGuiVisViewer<GraphNode, GraphEdge> basicGraphGuiVisViewer = null;
 		try {
-			GraphEnvironmentControllerGUI graphControllerGUI = (GraphEnvironmentControllerGUI) this.getEnvironmentPanel(); 
-			basicGraphGuiVisViewer = graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisView();
-			basicGraphGuiVisViewer.setActionOnTop(actionOnTopIsRunning);
-			if (actionOnTopIsRunning==false) {
-				basicGraphGuiVisViewer.repaint();
-				basicGraphGuiVisViewer.requestFocus();
-			}
+			GraphEnvironmentControllerGUI graphControllerGUI = this.getGraphEnvironmentControllerGUI();
+			if (graphControllerGUI!=null) {
+				basicGraphGuiVisViewer = graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisView();
+				basicGraphGuiVisViewer.setActionOnTop(actionOnTopIsRunning);
+				if (actionOnTopIsRunning==false) {
+					basicGraphGuiVisViewer.repaint();
+					basicGraphGuiVisViewer.requestFocus();
+				}	
+			} 
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();

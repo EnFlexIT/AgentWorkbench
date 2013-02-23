@@ -115,7 +115,7 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 			
 			EnvironmentController envController = (EnvironmentController) envPanelClassConstructor.newInstance(args);
 			currProject.setEnvironmentController(envController);
-			environmentControllerGUI = envController.getEnvironmentPanel();
+			environmentControllerGUI = envController.getOrCreateEnvironmentPanel();
 			
 		} catch (SecurityException e) {
 			e.printStackTrace();

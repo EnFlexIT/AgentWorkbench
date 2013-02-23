@@ -299,7 +299,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 				    // --- Create new controller for alternative NetworkModel -----------
 			    	graphController = new GraphEnvironmentController();
 			    	graphController.setDisplayEnvironmentModel(altNetModel);
-			    	graphControllerGUI = (GraphEnvironmentControllerGUI) graphController.getEnvironmentPanel();
+			    	graphControllerGUI = (GraphEnvironmentControllerGUI) graphController.getOrCreateEnvironmentPanel();
 			    	
 			    	this.getJTabbedPaneAltNetModels().addTab(altNetModelName, graphControllerGUI);
 			    	this.networkModelTabs.put(altNetModelName, graphControllerGUI);
