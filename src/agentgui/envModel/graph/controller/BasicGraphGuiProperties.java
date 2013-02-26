@@ -132,7 +132,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		// --- Call to the super-class ----------
 		this.registerAtDesktopAndSetVisible();
-			
 		
 	}
 	

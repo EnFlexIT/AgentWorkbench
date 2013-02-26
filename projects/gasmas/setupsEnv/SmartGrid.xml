@@ -251,6 +251,17 @@
             </value>
         </entry>
         <entry>
+            <key>n94</key>
+            <value>
+                <agentClassName>gasmas.agents.components.EntryAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP93</graphElementIDs>
+                <id>n94</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Entry</type>
+            </value>
+        </entry>
+        <entry>
             <key>n47</key>
             <value>
                 <directed>false</directed>
@@ -347,8 +358,8 @@
             <value>
                 <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
                 <directed>true</directed>
-                <graphElementIDs>PP92</graphElementIDs>
                 <graphElementIDs>PP40</graphElementIDs>
+                <graphElementIDs>PP93</graphElementIDs>
                 <graphElementIDs>n72</graphElementIDs>
                 <id>n72</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>

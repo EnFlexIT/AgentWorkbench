@@ -421,12 +421,10 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	
 	/**
 	 * This method initialises jContentPane.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
-			
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.insets = new Insets(20, 20, 5, 20);
 			gridBagConstraints.weightx = 1.0;
@@ -438,10 +436,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		}
 		return jContentPane;
 	}
-	
 	/**
 	 * This method initialises jPanel4TouchDown.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel4TouchDown() {
@@ -452,7 +448,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		}
 		return jPanel4TouchDown;
 	}
-	
 	/**
 	 * This method adds the Enlarge-View-Tab to THIS TabbedPane.
 	 */
@@ -461,14 +456,12 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		this.setTabComponentAt(3, this.getJLabelTitleEnlarge());
 		this.jLabelTitleEnlarge.setText("  " + Language.translate("Vergrößern ...") + "  ");
 	}
-	
 	/**
 	 * This method removes the Enlarge-View-Tab to THIS TabbedPane.
 	 */
 	private void removeEnlargeTab() {
 		this.remove(jPanelEnlarege);
 	}
-	
 	/**
 	 * This method initialises dynTableJPanel.
 	 * @return the DynTableJPanel
@@ -479,7 +472,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		}
 		return dynTablePanel;
 	}
-	
 	/**
 	 * Stop the cell editing in the DynTable.
 	 */
@@ -503,10 +495,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		}
 		return dynForm;
 	}
-	
 	/**
 	 * This method initialises jScrollPaneDynForm.
-	 *
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneDynForm() {
@@ -517,17 +507,18 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		}
 		return jScrollPaneDynForm;
 	}
-
+	/**
+	 * Returns the DynFormText.
+	 * @return the DynFormText
+	 */
 	private DynFormText getDynFormText() {
 		if (dynFormText==null) {
 			dynFormText = new DynFormText(this.getDynForm());
 		}
 		return dynFormText;
 	}
-	
 	/**
 	 * This method initialises jPanelEnlarege.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelEnlarege() {
@@ -537,10 +528,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		}
 		return jPanelEnlarege;
 	}
-
 	/**
 	 * This method initialises jLabelTitleEnlarge.
-	 *
 	 * @return javax.swing.JLabel
 	 */
 	private JLabel getJLabelTitleEnlarge() {
@@ -562,12 +551,12 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		if (this.getSelectedIndex()==0) {
 			// --- Table view -----------------------------
 			this.stopDynTableCellEditing();
-			this.dynForm.save(true);
+			this.getDynForm().save(true);
 			
 		} else if (this.getSelectedIndex()==1) {
 			// --- Form view ------------------------------
-			this.dynForm.save(true);
-			this.dynTablePanel.refreshTableModel();
+			this.getDynForm().save(true);
+			this.getDynTableJPanel().refreshTableModel();
 			
 		} else if (this.getSelectedIndex()==2) {
 			// --- XML view -------------------------------
@@ -575,8 +564,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			String [] currConfig = this.getXMLParts(currConfigText);
 			this.setConfigurationXML(currConfig);
 
-			this.dynForm.save(false);
-			this.dynTablePanel.refreshTableModel();
+			this.getDynForm().save(false);
+			this.getDynTableJPanel().refreshTableModel();
 		}
 		
 	}
@@ -596,7 +585,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * @return the configurationXML
 	 */
 	public String[] getConfigurationXML() {
-		return this.dynForm.getOntoArgsXML();
+		return this.getDynForm().getOntoArgsXML();
 	}
 	
 	/**
@@ -627,9 +616,10 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			}
 		}
 		
-		this.dynForm.setOntoArgsXML(configXML, avoidGuiUpdate);
+		this.getDynForm().setOntoArgsXML(configXML, avoidGuiUpdate);
 		
 		if (avoidGuiUpdate==false) {
+			this.getDynTableJPanel().refreshTableModel();
 			if (this.getSelectedIndex()==1) {
 				this.setXMLText();
 			}
@@ -643,7 +633,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 */
 	public String[] getConfigurationXML64() {
 		
-		String[] configXML = this.dynForm.getOntoArgsXML();
+		String[] configXML = this.getDynForm().getOntoArgsXML();
 		String[] configXML64 = new String[configXML.length];
 		
 		for (int i = 0; i < configXML.length; i++) {
@@ -666,11 +656,12 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	
 	
 	/**
-	 * Sets the configuration instances, but a GUI will be avoided.
+	 * Sets the configuration instances of the ontology objects.
 	 * @param configurationInstances the configurationInstances to set
 	 */
 	public void setConfigurationInstances(Object[] configurationInstances) {
-		this.dynForm.setOntoArgsInstance(configurationInstances);
+		this.getDynForm().setOntoArgsInstance(configurationInstances);
+		this.getDynTableJPanel().refreshTableModel();
 		if (this.getSelectedIndex()==1) {
 			this.setXMLText();
 		}
@@ -680,7 +671,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * @return the configurationInstances
 	 */
 	public Object[] getConfigurationInstances() {
-		return this.dynForm.getOntoArgsInstance();
+		return this.getDynForm().getOntoArgsInstance();
 	}
 
 }
