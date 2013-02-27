@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: CompStatConfiguration
 * @author ontology bean generator
-* @version 2013/02/22, 16:57:41
+* @version 2013/02/26, 16:41:10
 */
 public class CompStatConfiguration implements Concept {
 
    /**
-* Protege name: nrOfSerialStages
+* Protege name: confID
    */
-   private int nrOfSerialStages;
-   public void setNrOfSerialStages(int value) { 
-    this.nrOfSerialStages=value;
+   private String confID;
+   public void setConfID(String value) { 
+    this.confID=value;
    }
-   public int getNrOfSerialStages() {
-     return this.nrOfSerialStages;
+   public String getConfID() {
+     return this.confID;
    }
 
    /**
@@ -45,14 +45,14 @@ public class CompStatConfiguration implements Concept {
    public void setStages(List l) {stages = l; }
 
    /**
-* Protege name: confID
+* Protege name: nrOfSerialStages
    */
-   private String confID;
-   public void setConfID(String value) { 
-    this.confID=value;
+   private int nrOfSerialStages;
+   public void setNrOfSerialStages(int value) { 
+    this.nrOfSerialStages=value;
    }
-   public String getConfID() {
-     return this.confID;
+   public int getNrOfSerialStages() {
+     return this.nrOfSerialStages;
    }
 
 }

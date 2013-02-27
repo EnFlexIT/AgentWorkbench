@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: Notification
 * @author ontology bean generator
-* @version 2013/02/22, 16:57:41
+* @version 2013/02/26, 16:41:10
 */
 public class Notification implements AgentAction {
-
-   /**
-* Protege name: notificationObject
-   */
-   private Object notificationObject;
-   public void setNotificationObject(Object value) { 
-    this.notificationObject=value;
-   }
-   public Object getNotificationObject() {
-     return this.notificationObject;
-   }
 
    /**
 * Protege name: reason
@@ -32,6 +21,17 @@ public class Notification implements AgentAction {
    }
    public String getReason() {
      return this.reason;
+   }
+
+   /**
+* Protege name: notificationObject
+   */
+   private Object notificationObject;
+   public void setNotificationObject(Object value) { 
+    this.notificationObject=value;
+   }
+   public Object getNotificationObject() {
+     return this.notificationObject;
    }
 
 }

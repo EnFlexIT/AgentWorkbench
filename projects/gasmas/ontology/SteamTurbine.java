@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: SteamTurbine
 * @author ontology bean generator
-* @version 2013/02/22, 16:57:41
+* @version 2013/02/26, 16:41:10
 */
 public class SteamTurbine extends CompStatDrive{ 
-
-   /**
-* Protege name: powerMin
-   */
-   private ValueType powerMin;
-   public void setPowerMin(ValueType value) { 
-    this.powerMin=value;
-   }
-   public ValueType getPowerMin() {
-     return this.powerMin;
-   }
 
    /**
 * Protege name: powerMax
@@ -31,6 +20,17 @@ public class SteamTurbine extends CompStatDrive{
    }
    public ValueType getPowerMax() {
      return this.powerMax;
+   }
+
+   /**
+* Protege name: powerMin
+   */
+   private ValueType powerMin;
+   public void setPowerMin(ValueType value) { 
+    this.powerMin=value;
+   }
+   public ValueType getPowerMin() {
+     return this.powerMin;
    }
 
    /**

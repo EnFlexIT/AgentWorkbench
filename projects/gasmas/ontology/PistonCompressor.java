@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: PistonCompressor
 * @author ontology bean generator
-* @version 2013/02/22, 16:57:41
+* @version 2013/02/26, 16:41:10
 */
 public class PistonCompressor extends CompStatCompressor{ 
-
-   /**
-* Protege name: maximalCompressionRatio
-   */
-   private float maximalCompressionRatio;
-   public void setMaximalCompressionRatio(float value) { 
-    this.maximalCompressionRatio=value;
-   }
-   public float getMaximalCompressionRatio() {
-     return this.maximalCompressionRatio;
-   }
 
    /**
 * Protege name: maximalTorque
@@ -34,14 +23,25 @@ public class PistonCompressor extends CompStatCompressor{
    }
 
    /**
-* Protege name: operatingVolume
+* Protege name: adiabaticEfficiencyPiston
    */
-   private ValueType operatingVolume;
-   public void setOperatingVolume(ValueType value) { 
-    this.operatingVolume=value;
+   private float adiabaticEfficiencyPiston;
+   public void setAdiabaticEfficiencyPiston(float value) { 
+    this.adiabaticEfficiencyPiston=value;
    }
-   public ValueType getOperatingVolume() {
-     return this.operatingVolume;
+   public float getAdiabaticEfficiencyPiston() {
+     return this.adiabaticEfficiencyPiston;
+   }
+
+   /**
+* Protege name: maximalCompressionRatio
+   */
+   private float maximalCompressionRatio;
+   public void setMaximalCompressionRatio(float value) { 
+    this.maximalCompressionRatio=value;
+   }
+   public float getMaximalCompressionRatio() {
+     return this.maximalCompressionRatio;
    }
 
    /**
@@ -56,14 +56,14 @@ public class PistonCompressor extends CompStatCompressor{
    }
 
    /**
-* Protege name: adiabaticEfficiencyPiston
+* Protege name: operatingVolume
    */
-   private float adiabaticEfficiencyPiston;
-   public void setAdiabaticEfficiencyPiston(float value) { 
-    this.adiabaticEfficiencyPiston=value;
+   private ValueType operatingVolume;
+   public void setOperatingVolume(ValueType value) { 
+    this.operatingVolume=value;
    }
-   public float getAdiabaticEfficiencyPiston() {
-     return this.adiabaticEfficiencyPiston;
+   public ValueType getOperatingVolume() {
+     return this.operatingVolume;
    }
 
 }

@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: GasTurbine
 * @author ontology bean generator
-* @version 2013/02/22, 16:57:41
+* @version 2013/02/26, 16:41:10
 */
 public class GasTurbine extends CompStatDrive{ 
-
-   /**
-* Protege name: gtPowerFunCoeff
-   */
-   private Calc9Parameter gtPowerFunCoeff;
-   public void setGtPowerFunCoeff(Calc9Parameter value) { 
-    this.gtPowerFunCoeff=value;
-   }
-   public Calc9Parameter getGtPowerFunCoeff() {
-     return this.gtPowerFunCoeff;
-   }
 
    /**
 * Protege name: gtMaximalPowerMeasurements
@@ -63,5 +52,16 @@ public class GasTurbine extends CompStatDrive{
    public Iterator getAllGtSpecificEnergyConsumptionMeasurements() {return gtSpecificEnergyConsumptionMeasurements.iterator(); }
    public List getGtSpecificEnergyConsumptionMeasurements() {return gtSpecificEnergyConsumptionMeasurements; }
    public void setGtSpecificEnergyConsumptionMeasurements(List l) {gtSpecificEnergyConsumptionMeasurements = l; }
+
+   /**
+* Protege name: gtPowerFunCoeff
+   */
+   private Calc9Parameter gtPowerFunCoeff;
+   public void setGtPowerFunCoeff(Calc9Parameter value) { 
+    this.gtPowerFunCoeff=value;
+   }
+   public Calc9Parameter getGtPowerFunCoeff() {
+     return this.gtPowerFunCoeff;
+   }
 
 }

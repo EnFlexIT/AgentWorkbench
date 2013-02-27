@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Resistor
 * @author ontology bean generator
-* @version 2013/02/22, 16:57:41
+* @version 2013/02/26, 16:41:10
 */
 public class Resistor extends Connection{ 
 

@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: CompStatMaxPmeasurment
 * @author ontology bean generator
-* @version 2013/02/22, 16:57:41
+* @version 2013/02/26, 16:41:10
 */
 public class CompStatMaxPmeasurment implements Concept {
-
-   /**
-* Protege name: maximalPower
-   */
-   private ValueType maximalPower;
-   public void setMaximalPower(ValueType value) { 
-    this.maximalPower=value;
-   }
-   public ValueType getMaximalPower() {
-     return this.maximalPower;
-   }
 
    /**
 * Protege name: speeMP
@@ -32,6 +21,17 @@ public class CompStatMaxPmeasurment implements Concept {
    }
    public ValueType getSpeeMP() {
      return this.speeMP;
+   }
+
+   /**
+* Protege name: maximalPower
+   */
+   private ValueType maximalPower;
+   public void setMaximalPower(ValueType value) { 
+    this.maximalPower=value;
+   }
+   public ValueType getMaximalPower() {
+     return this.maximalPower;
    }
 
 }

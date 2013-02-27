@@ -7,53 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Compressor
 * @author ontology bean generator
-* @version 2013/02/22, 16:57:41
+* @version 2013/02/26, 16:41:10
 */
 public class Compressor extends Connection{ 
-
-   /**
-* Protege name: fuelGasVertex
-   */
-   private String fuelGasVertex;
-   public void setFuelGasVertex(String value) { 
-    this.fuelGasVertex=value;
-   }
-   public String getFuelGasVertex() {
-     return this.fuelGasVertex;
-   }
-
-   /**
-* Protege name: pressureOutMax
-   */
-   private ValueType pressureOutMax;
-   public void setPressureOutMax(ValueType value) { 
-    this.pressureOutMax=value;
-   }
-   public ValueType getPressureOutMax() {
-     return this.pressureOutMax;
-   }
-
-   /**
-* Protege name: dragFactorOut
-   */
-   private float dragFactorOut;
-   public void setDragFactorOut(float value) { 
-    this.dragFactorOut=value;
-   }
-   public float getDragFactorOut() {
-     return this.dragFactorOut;
-   }
-
-   /**
-* Protege name: pressureInMin
-   */
-   private ValueType pressureInMin;
-   public void setPressureInMin(ValueType value) { 
-    this.pressureInMin=value;
-   }
-   public ValueType getPressureInMin() {
-     return this.pressureInMin;
-   }
 
    /**
 * Protege name: pressureLossIn
@@ -64,6 +20,17 @@ public class Compressor extends Connection{
    }
    public ValueType getPressureLossIn() {
      return this.pressureLossIn;
+   }
+
+   /**
+* Protege name: dragFactorIn
+   */
+   private float dragFactorIn;
+   public void setDragFactorIn(float value) { 
+    this.dragFactorIn=value;
+   }
+   public float getDragFactorIn() {
+     return this.dragFactorIn;
    }
 
    /**
@@ -78,14 +45,69 @@ public class Compressor extends Connection{
    }
 
    /**
-* Protege name: dragFactorIn
+* Protege name: diameterIn
    */
-   private float dragFactorIn;
-   public void setDragFactorIn(float value) { 
-    this.dragFactorIn=value;
+   private ValueType diameterIn;
+   public void setDiameterIn(ValueType value) { 
+    this.diameterIn=value;
    }
-   public float getDragFactorIn() {
-     return this.dragFactorIn;
+   public ValueType getDiameterIn() {
+     return this.diameterIn;
+   }
+
+   /**
+* Protege name: pressureOutMax
+   */
+   private ValueType pressureOutMax;
+   public void setPressureOutMax(ValueType value) { 
+    this.pressureOutMax=value;
+   }
+   public ValueType getPressureOutMax() {
+     return this.pressureOutMax;
+   }
+
+   /**
+* Protege name: internalBypassRequired
+   */
+   private boolean internalBypassRequired;
+   public void setInternalBypassRequired(boolean value) { 
+    this.internalBypassRequired=value;
+   }
+   public boolean getInternalBypassRequired() {
+     return this.internalBypassRequired;
+   }
+
+   /**
+* Protege name: dragFactorOut
+   */
+   private float dragFactorOut;
+   public void setDragFactorOut(float value) { 
+    this.dragFactorOut=value;
+   }
+   public float getDragFactorOut() {
+     return this.dragFactorOut;
+   }
+
+   /**
+* Protege name: value
+   */
+   private boolean value;
+   public void setValue(boolean value) { 
+    this.value=value;
+   }
+   public boolean getValue() {
+     return this.value;
+   }
+
+   /**
+* Protege name: fuelGasVertex
+   */
+   private String fuelGasVertex;
+   public void setFuelGasVertex(String value) { 
+    this.fuelGasVertex=value;
+   }
+   public String getFuelGasVertex() {
+     return this.fuelGasVertex;
    }
 
    /**
@@ -111,14 +133,14 @@ public class Compressor extends Connection{
    }
 
    /**
-* Protege name: diameterIn
+* Protege name: diameterOut
    */
-   private ValueType diameterIn;
-   public void setDiameterIn(ValueType value) { 
-    this.diameterIn=value;
+   private ValueType diameterOut;
+   public void setDiameterOut(ValueType value) { 
+    this.diameterOut=value;
    }
-   public ValueType getDiameterIn() {
-     return this.diameterIn;
+   public ValueType getDiameterOut() {
+     return this.diameterOut;
    }
 
    /**
@@ -133,36 +155,14 @@ public class Compressor extends Connection{
    }
 
    /**
-* Protege name: internalBypassRequired
+* Protege name: pressureInMin
    */
-   private boolean internalBypassRequired;
-   public void setInternalBypassRequired(boolean value) { 
-    this.internalBypassRequired=value;
+   private ValueType pressureInMin;
+   public void setPressureInMin(ValueType value) { 
+    this.pressureInMin=value;
    }
-   public boolean getInternalBypassRequired() {
-     return this.internalBypassRequired;
-   }
-
-   /**
-* Protege name: diameterOut
-   */
-   private ValueType diameterOut;
-   public void setDiameterOut(ValueType value) { 
-    this.diameterOut=value;
-   }
-   public ValueType getDiameterOut() {
-     return this.diameterOut;
-   }
-
-   /**
-* Protege name: value
-   */
-   private boolean value;
-   public void setValue(boolean value) { 
-    this.value=value;
-   }
-   public boolean getValue() {
-     return this.value;
+   public ValueType getPressureInMin() {
+     return this.pressureInMin;
    }
 
 }

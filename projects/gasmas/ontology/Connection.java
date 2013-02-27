@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Connection
 * @author ontology bean generator
-* @version 2013/02/22, 16:57:41
+* @version 2013/02/26, 16:41:10
 */
 public class Connection extends GridComponent{ 
-
-   /**
-* Protege name: flowMax
-   */
-   private ValueType flowMax;
-   public void setFlowMax(ValueType value) { 
-    this.flowMax=value;
-   }
-   public ValueType getFlowMax() {
-     return this.flowMax;
-   }
 
    /**
 * Protege name: currentFlow
@@ -45,17 +34,6 @@ public class Connection extends GridComponent{
    }
 
    /**
-* Protege name: flowMin
-   */
-   private ValueType flowMin;
-   public void setFlowMin(ValueType value) { 
-    this.flowMin=value;
-   }
-   public ValueType getFlowMin() {
-     return this.flowMin;
-   }
-
-   /**
 * Protege name: from
    */
    private String from;
@@ -64,6 +42,28 @@ public class Connection extends GridComponent{
    }
    public String getFrom() {
      return this.from;
+   }
+
+   /**
+* Protege name: flowMax
+   */
+   private ValueType flowMax;
+   public void setFlowMax(ValueType value) { 
+    this.flowMax=value;
+   }
+   public ValueType getFlowMax() {
+     return this.flowMax;
+   }
+
+   /**
+* Protege name: flowMin
+   */
+   private ValueType flowMin;
+   public void setFlowMin(ValueType value) { 
+    this.flowMin=value;
+   }
+   public ValueType getFlowMin() {
+     return this.flowMin;
    }
 
 }

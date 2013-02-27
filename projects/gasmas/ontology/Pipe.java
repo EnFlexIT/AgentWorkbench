@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Pipe
 * @author ontology bean generator
-* @version 2013/02/22, 16:57:41
+* @version 2013/02/26, 16:41:10
 */
 public class Pipe extends Connection{ 
-
-   /**
-* Protege name: Diameter
-   */
-   private ValueType diameter;
-   public void setDiameter(ValueType value) { 
-    this.diameter=value;
-   }
-   public ValueType getDiameter() {
-     return this.diameter;
-   }
 
    /**
 * Protege name: lineOfSight
@@ -31,17 +20,6 @@ public class Pipe extends Connection{
    }
    public ValueType getLineOfSight() {
      return this.lineOfSight;
-   }
-
-   /**
-* Protege name: Length
-   */
-   private ValueType length;
-   public void setLength(ValueType value) { 
-    this.length=value;
-   }
-   public ValueType getLength() {
-     return this.length;
    }
 
    /**
@@ -56,6 +34,17 @@ public class Pipe extends Connection{
    }
 
    /**
+* Protege name: heatTransferCoefficient
+   */
+   private ValueType heatTransferCoefficient;
+   public void setHeatTransferCoefficient(ValueType value) { 
+    this.heatTransferCoefficient=value;
+   }
+   public ValueType getHeatTransferCoefficient() {
+     return this.heatTransferCoefficient;
+   }
+
+   /**
 * Protege name: roughness
    */
    private ValueType roughness;
@@ -67,14 +56,25 @@ public class Pipe extends Connection{
    }
 
    /**
-* Protege name: heatTransferCoefficient
+* Protege name: Diameter
    */
-   private ValueType heatTransferCoefficient;
-   public void setHeatTransferCoefficient(ValueType value) { 
-    this.heatTransferCoefficient=value;
+   private ValueType diameter;
+   public void setDiameter(ValueType value) { 
+    this.diameter=value;
    }
-   public ValueType getHeatTransferCoefficient() {
-     return this.heatTransferCoefficient;
+   public ValueType getDiameter() {
+     return this.diameter;
+   }
+
+   /**
+* Protege name: Length
+   */
+   private ValueType length;
+   public void setLength(ValueType value) { 
+    this.length=value;
+   }
+   public ValueType getLength() {
+     return this.length;
    }
 
 }
