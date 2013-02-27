@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.ontologies.gui;
+package agentgui.core.common;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -41,7 +41,7 @@ import javax.swing.JTextField;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class DynFormKeyAdapter4Numbers extends KeyAdapter {
+public class KeyAdapter4Numbers extends KeyAdapter {
 
 	private boolean isFloatValue = false;
 	
@@ -49,7 +49,7 @@ public class DynFormKeyAdapter4Numbers extends KeyAdapter {
 	 * Instantiates a new number watcher.
 	 * @param isFloatValue indicates, if this watcher is used for Float values. If not Integer values are assumed.
 	 */
-	public DynFormKeyAdapter4Numbers (boolean isFloatValue) {
+	public KeyAdapter4Numbers(boolean isFloatValue) {
 		this.isFloatValue = isFloatValue;
 	}
 

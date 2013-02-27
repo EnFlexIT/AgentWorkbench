@@ -1,4 +1,4 @@
-; Fri Feb 22 17:15:06 CET 2013
+; Wed Feb 27 23:19:04 CET 2013
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -127,7 +127,8 @@
 
 ([GridComponent] of  %3AJADE-CLASS
 
-	(%3AJADE-IGNORE FALSE))
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	if (this.iD==null | this.iD.equals(\"\")) {\n		return true;\n	}\n	return false;\n}"))
 
 ([HeatCapacityCoefficient] of  %3AJADE-CLASS
 

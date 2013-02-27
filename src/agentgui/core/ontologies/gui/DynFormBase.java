@@ -55,6 +55,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Application;
+import agentgui.core.common.KeyAdapter4Numbers;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologySingleClassSlotDescription;
@@ -100,9 +101,9 @@ public abstract class DynFormBase extends JPanel {
 	/** The instance of the Observable of the DynForm */
 	private DynFormObservable dynFormObservable = null;
 	/** The KeyAdapter for float values */
-	protected DynFormKeyAdapter4Numbers numWatcherFloat = new DynFormKeyAdapter4Numbers(true);
+	protected KeyAdapter4Numbers numWatcherFloat = new KeyAdapter4Numbers(true);
 	/** The KeyAdapter for Integer values */
-	protected DynFormKeyAdapter4Numbers numWatcherInteger = new DynFormKeyAdapter4Numbers(false);
+	protected KeyAdapter4Numbers numWatcherInteger = new KeyAdapter4Numbers(false);
 
  
 	/** The root node for the class hierarchy of the current ontology configuration */ 
@@ -364,7 +365,6 @@ public abstract class DynFormBase extends JPanel {
 	protected void setXMLFromInstances(){
 	
 		int numOfChilds = rootNode.getChildCount();
-		//this.ontoArgsInstance = new Object[numOfChilds];
 		this.ontoArgsXML = new String[numOfChilds];
 		
 		// ----------------------------------------------------------
@@ -489,7 +489,7 @@ public abstract class DynFormBase extends JPanel {
 	 * @param ontology the ontology
 	 * @return the instance of xml
 	 */
-	private Object getInstanceOfXML(String xmlString, Ontology ontology) {
+	protected Object getInstanceOfXML(String xmlString, Ontology ontology) {
 		
 		Object objectInstance = null;
 
@@ -656,7 +656,7 @@ public abstract class DynFormBase extends JPanel {
 	 * @param object the object
 	 * @param node the node
 	 */
-	private void setFormState(Object object, DefaultMutableTreeNode node) {
+	protected void setFormState(Object object, DefaultMutableTreeNode node) {
 		
 		int skipChilds = 0;
 		int numOfChilds = node.getChildCount();

@@ -591,7 +591,15 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
+en;;Building costs;;;
+en;;Characteristic Diagram;;;
+en;;Data;;;
 en;;Discrete squares environment;;;
+en;;Error while gather compressor station model;;;
+en;;Error;;;
+en;;General;;;
+en;;The following error occured:;;;
+en;;Upgrade costs;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agenten-Klasse;Agent class;;;

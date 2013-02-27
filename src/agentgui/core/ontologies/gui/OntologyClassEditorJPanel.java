@@ -52,7 +52,7 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 	
 	private boolean pauseObserver = false;
 	
-	
+
 	/**
 	 * Instantiates a new ontology class editor JPanel.
 	 *
@@ -67,6 +67,22 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 	}
 	
 	/**
+	 * Sets the ontology class instance.
+	 * @param objectInstance the new ontology class instance
+	 */
+	public abstract void setOntologyClassInstance(Object objectInstance);
+	/**
+	 * Returns the ontology class instance.
+	 * @return the current ontology class instance
+	 */
+	public abstract Object getOntologyClassInstance();
+	/**
+	 * Gets the JToolBar with the user functions.
+	 * @return the JToolBar user functions
+	 */
+	public abstract JToolBar getJToolBarUserFunctions();
+	
+	/**
 	 * Sets the new ontology class instance to the DynForm.
 	 * @param newOntologyClassInstance the new new ontology class instance
 	 */
@@ -78,24 +94,6 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 		this.setPauseObserver(false);
 	}
 	
-	/**
-	 * Sets the ontology class instance.
-	 * @param objectInstance the new ontology class instance
-	 */
-	public abstract void setOntologyClassInstance(Object objectInstance);
-	/**
-	 * Returns the ontology class instance.
-	 * @return the current ontology class instance
-	 */
-	public abstract Object getOntologyClassInstance();
-	
-	/**
-	 * Gets the JToolBar with the user functions.
-	 * @return the JToolBar user functions
-	 */
-	public abstract JToolBar getJToolBarUserFunctions();
-	
-
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
@@ -104,24 +102,38 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 		
 		if (this.isPauseObserver()==true) return;
 		
-		if (object instanceof String) {
-			String notification = (String) object;
-			if (notification.equals(DynForm.UPDATED_DataModel)==true) {
+		if (this.isUpdateModelAction(object)) {
+			// --- The data model was updated -------------
+			try {
+				// --- Try to set the new instance --------
+				Object[] startArgs = this.dynForm.getOntoArgsInstance();
+				Object newOntologyClassInstance =  startArgs[this.startArgIndex];
+				this.setOntologyClassInstance(newOntologyClassInstance);
 				
-				try {
-					// --- Try to set the new instance --------------
-					Object[] startArgs = this.dynForm.getOntoArgsInstance();
-					Object newOntologyClassInstance =  startArgs[this.startArgIndex];
-					this.setOntologyClassInstance(newOntologyClassInstance);
-					
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-					
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
-		}
+		} 
+		
 	}
 
+	/**
+	 * Checks if the update object of an Observable is a notification of an 'updated data model'.
+	 * @see #update(Observable, Object)
+	 *
+	 * @param observableObject the observable object
+	 * @return true, if is update model
+	 */
+	protected boolean isUpdateModelAction(Object observableObject) {
+		if (observableObject instanceof String) {
+			String notification = (String) observableObject;
+			if (notification.equals(DynForm.UPDATED_DataModel)==true) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Sets the observer to be paused or not.
 	 * @param pauseNow the new pause observer

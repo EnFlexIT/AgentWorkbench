@@ -64,8 +64,8 @@ public class CompressorDataModelAdapter extends NetworkComponentAdapter4Ontology
 	public String[] getOntologyClassReferences() {
 		if (ontologyClassReferences==null) {
 			this.ontologyClassReferences = new String[2];
-			this.ontologyClassReferences[0] = Compressor.class.getName();
-			this.ontologyClassReferences[1] = CompStat.class.getName();
+			this.ontologyClassReferences[0] = CompStat.class.getName();
+			this.ontologyClassReferences[1] = Compressor.class.getName();
 		}
 		return this.ontologyClassReferences;
 	}

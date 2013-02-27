@@ -26,46 +26,49 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package gasmas.compStat;
+package gasmas.compStat.display;
 
-import gasmas.ontology.CompStat;
-import agentgui.core.ontologies.gui.DynForm;
-import agentgui.core.ontologies.gui.OntologyClassWidget;
+import java.util.Vector;
+
+import javax.swing.JPanel;
 
 /**
- * The Class CompressorStationWidget.
+ * The abstract Class CalcParameterDisplay.
  */
-public class CompressorStationWidget extends OntologyClassWidget {
+public abstract class CalcParameterDisplay extends JPanel {
 
-	private static final long serialVersionUID = -8424882669417358903L;
+	private static final long serialVersionUID = 849112163626006292L;
 
-	private CompStat compressorStationModel = null;
+	protected Vector<CalcParameterListener> calcParameterListener = new Vector<CalcParameterListener>(); 
+	
 	
 	/**
-	 * Instantiates a new compressor station widget.
+	 * Adds a CalcParameterListener to this instance.
+	 */
+	public void addCalcParameterListener(CalcParameterListener listener) {
+		if (this.calcParameterListener==null) {
+			this.calcParameterListener = new Vector<CalcParameterListener>();
+		}
+		this.calcParameterListener.add(listener);
+	}
+	
+	
+	/**
+	 * Returns a parameter value.
 	 *
-	 * @param dynForm the dyn form
-	 * @param startArgIndex the start arg index
+	 * @param noOfParameter the no of parameter
+	 * @return the parameter
 	 */
-	public CompressorStationWidget(DynForm dynForm, int startArgIndex) {
-		super(dynForm, startArgIndex);
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#setOntologyClassInstance(java.lang.Object)
+	public abstract Float getParameter(int positionOfParameter);
+	
+	/**
+	 * Sets a parameter value.
+	 *
+	 * @param noOfParameter the no of parameter
+	 * @return the parameter
 	 */
-	@Override
-	public void setOntologyClassInstance(Object objectInstance) {
-		this.compressorStationModel = (CompStat) objectInstance;
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#getOntologyClassInstance()
-	 */
-	@Override
-	public Object getOntologyClassInstance() {
-		return this.compressorStationModel;
-	}
-
+	public abstract void setParameter(int positionOfParameter, Float value);
+	
+	
 	
 }

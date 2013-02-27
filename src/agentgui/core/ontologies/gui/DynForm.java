@@ -185,6 +185,7 @@ public class DynForm extends DynFormBase {
 		// --- Justify the Preferred Size of this Panel ---
 		this.setPreferredSize(this);
 		this.save(true);
+		
 	}
 	
 	/**

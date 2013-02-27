@@ -179,8 +179,8 @@ public class OGE_Importer extends NetworkModelFileImporter {
 			if (netComponent!=null) {
 				// --- Extend the existing data model for the compressor ------  
 				Object[] ontoArrayInstance = (Object[]) netComponent.getDataModel();
-//				ontoArrayInstance[0] = already done before !!! ;
-				ontoArrayInstance[1] = CompressorStationFactory.newInstance(compressorStation);
+				ontoArrayInstance[0] = CompressorStationFactory.newInstance(compressorStation);
+//				ontoArrayInstance[1] = already done before !!! ;
 				
 			} else {
 				System.err.println("Could not find Compressor '" + compressorStation.getId() + "' in the loaded network!");
@@ -372,7 +372,8 @@ public class OGE_Importer extends NetworkModelFileImporter {
 					
 					Compressor compressor = CompressorFactory.newInstance((CompressorStationType) connection);
 					Object[] ontoArrayInstance = new Object[2];
-					ontoArrayInstance[0] = compressor;
+					ontoArrayInstance[1] = null;
+					ontoArrayInstance[1] = compressor;
 					netComp.setDataModel(ontoArrayInstance);
 			
 				} else {

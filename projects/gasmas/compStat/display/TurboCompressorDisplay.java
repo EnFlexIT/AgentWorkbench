@@ -53,7 +53,7 @@ public class TurboCompressorDisplay extends JTabbedPane {
 	 * @param turboCompressor the turbo compressor
 	 */
 	public TurboCompressorDisplay() {
-		
+		this.initialize();
 	}
 	
 	/**
@@ -62,17 +62,26 @@ public class TurboCompressorDisplay extends JTabbedPane {
 	private void initialize() {
         this.setSize(new Dimension(480, 270));
         this.setTabPlacement(JTabbedPane.BOTTOM);
-        this.addTab(Language.translate("Characteristic Diagram ", Language.EN), null, getJPanelCharacteristicDiagram(), null);
-        this.addTab(Language.translate("Data", Language.EN), null, getJPanelData(), null);
+		this.addTab(Language.translate("Characteristic Diagram ", Language.EN), null, getJPanelCharacteristicDiagram(), null);	
+		this.addTab(Language.translate("Data", Language.EN), null, getJPanelData(), null);			
 	}
+	
+	/**
+	 * Sets the visualisation.
+	 */
+	private void setData2Visualisation() {
+		
+		
 
+	}
+	
 	/**
 	 * Sets the turbo compressor.
 	 * @param turboCompressor the new turbo compressor
 	 */
 	public void setTurboCompressor(TurboCompressor turboCompressor) {
 		this.myTurboCompressor = turboCompressor;
-		this.initialize();
+		this.setData2Visualisation();
 	}
 	/**
 	 * Gets the turbo compressor.
@@ -100,8 +109,7 @@ public class TurboCompressorDisplay extends JTabbedPane {
 	 */
 	private JPanel getJPanelData() {
 		if (jPanelData == null) {
-			jPanelData = new JPanel();
-			jPanelData.setLayout(new GridBagLayout());
+			jPanelData = new TurboCompressorDisplayData();
 		}
 		return jPanelData;
 	}
