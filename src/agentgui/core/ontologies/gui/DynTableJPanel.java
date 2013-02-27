@@ -285,15 +285,18 @@ public class DynTableJPanel extends JPanel {
 		if (this.jToolBar4UserFunction==null) return;
 		
 		JToolBar jToolBarUserFunctions = ocep.getJToolBarUserFunctions();
-		Container containerUserFunctions = jToolBarUserFunctions.getParent();
-		while (jToolBarUserFunctions.getComponentCount()>0) {
-			Component comp = jToolBarUserFunctions.getComponent(0);
-			this.getStolenComponentsFromJToolBarOfOntologyClassEditorJPanel().add(comp);
-			jToolBarUserFunctions.remove(comp);
+		if (jToolBarUserFunctions!=null) {
+			Container containerUserFunctions = jToolBarUserFunctions.getParent();
+			while (jToolBarUserFunctions.getComponentCount()>0) {
+				Component comp = jToolBarUserFunctions.getComponent(0);
+				this.getStolenComponentsFromJToolBarOfOntologyClassEditorJPanel().add(comp);
+				jToolBarUserFunctions.remove(comp);
+			}
+			containerUserFunctions.remove(jToolBarUserFunctions);
+			ocep.validate();
+			ocep.repaint();	
 		}
-		containerUserFunctions.remove(jToolBarUserFunctions);
-		ocep.validate();
-		ocep.repaint();
+		
 	}
 	/**
 	 * Returns the Vector of the stolen components from the customized JToolBar of a OntologyClassEditorJPanel.

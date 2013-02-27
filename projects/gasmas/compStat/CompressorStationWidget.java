@@ -26,44 +26,45 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.ontologies.gui;
+package gasmas.compStat;
 
-import java.awt.Dimension;
-
-import javax.swing.BorderFactory;
-import javax.swing.JToolBar;
+import gasmas.ontology.CompStat;
+import agentgui.core.ontologies.gui.DynForm;
+import agentgui.core.ontologies.gui.OntologyClassWidget;
 
 /**
- * The Class OntologyClassWidget has to be used in order to build
- * a widget for the configuration of a special ontology class.
- * 
- * @see OntologyClassVisualisation
- * 
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ * The Class CompressorStationWidget.
  */
-public abstract class OntologyClassWidget extends OntologyClassEditorJPanel {
+public class CompressorStationWidget extends OntologyClassWidget {
 
-	private static final long serialVersionUID = -6783920742718563526L;
+	private static final long serialVersionUID = -8424882669417358903L;
 
+	private CompStat compressorStationModel = null;
 	
 	/**
-	 * Instantiates a new ontology class widget.
+	 * Instantiates a new compressor station widget.
 	 *
-	 * @param dynForm the current DynForm
-	 * @param startArgIndex the start argument index
+	 * @param dynForm the dyn form
+	 * @param startArgIndex the start arg index
 	 */
-	public OntologyClassWidget(DynForm dynForm, int startArgIndex) {
+	public CompressorStationWidget(DynForm dynForm, int startArgIndex) {
 		super(dynForm, startArgIndex);
-		this.setBorder(BorderFactory.createEtchedBorder());
-		this.setSize(new Dimension(315, 250));
 	}
-	
-	/**
-	 * Not usable for widgets
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#setOntologyClassInstance(java.lang.Object)
 	 */
 	@Override
-	public JToolBar getJToolBarUserFunctions() {
-		return null;
+	public void setOntologyClassInstance(Object objectInstance) {
+		this.compressorStationModel = (CompStat) objectInstance;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#getOntologyClassInstance()
+	 */
+	@Override
+	public Object getOntologyClassInstance() {
+		return this.compressorStationModel;
+	}
+
 }

@@ -64,13 +64,6 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 		this.dynForm = dynForm;
 		this.dynForm.addObserver(this);
 		this.startArgIndex = startArgIndex;
-		
-		Object[] startArgs = this.dynForm.getOntoArgsInstance();
-		Object newOntologyClassInstance = null;
-		if (startArgs!=null) {
-			newOntologyClassInstance =  startArgs[this.startArgIndex];
-		}
-		this.setOntologyClassInstance(newOntologyClassInstance);
 	}
 	
 	/**

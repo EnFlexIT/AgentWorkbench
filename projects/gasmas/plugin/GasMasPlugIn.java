@@ -1,5 +1,6 @@
 package gasmas.plugin;
 
+import gasmas.compStat.CompressorStationVisualisation;
 import gasmas.transfer.zib.OGE_Importer;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.project.Project;
@@ -26,6 +27,9 @@ public class GasMasPlugIn extends PlugIn {
 		// --- Add the customized import methods to the import methods --------
 		OGE_Importer ogeImporter = new OGE_Importer(this.graphController, "net", "OGE / ZIB-Gas Netzwerk");
 		this.graphController.getImportAdapter().add(ogeImporter);
+		
+		// --- Add the visual representation for compressor stations ----------
+		this.addOntologyClassVisualisation(CompressorStationVisualisation.class.getName());
 		
 	}
 	

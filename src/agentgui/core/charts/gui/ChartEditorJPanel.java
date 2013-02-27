@@ -112,6 +112,9 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	public ChartEditorJPanel(DynForm dynForm, int startArgIndex) {
 		super(dynForm, startArgIndex);
 		
+		// --- TODO: Inserted after a refactoring in the super class (Works, but has to be checked by Nils) 
+		this.setOntologyClassInstance(dynForm.getOntoArgsInstance()[startArgIndex]);
+		
 		this.setLayout(new BorderLayout());
 		this.add(getToolBar(), BorderLayout.NORTH);
 		this.add(getTabbedPane(), BorderLayout.CENTER);

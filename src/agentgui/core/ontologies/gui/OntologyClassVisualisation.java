@@ -99,6 +99,7 @@ public abstract class OntologyClassVisualisation {
 				args[1] = startArgIndex;
 				
 				widget = (OntologyClassWidget) widgetConstructor.newInstance(args);
+				widget.setOntologyClassInstance(this.getOntologyClassInstance(dynForm, startArgIndex));
 
 			} catch (SecurityException e) {
 				e.printStackTrace();
@@ -144,7 +145,8 @@ public abstract class OntologyClassVisualisation {
 				args[1] = startArgIndex;
 				
 				editor = (OntologyClassEditorJPanel) editorConstructor.newInstance(args);
-
+				editor.setOntologyClassInstance(this.getOntologyClassInstance(dynForm, startArgIndex));
+				
 			} catch (SecurityException e) {
 				e.printStackTrace();
 			} catch (NoSuchMethodException e) {
@@ -163,5 +165,20 @@ public abstract class OntologyClassVisualisation {
 		return editor;
 	}
 		
+	/**
+	 * Returns the concrete ontology class instance.
+	 *
+	 * @param dynForm the current DynForm
+	 * @param startArgIndex the start argument index
+	 * @return the instance of the corresponding ontology class 
+	 */
+	public Object getOntologyClassInstance(DynForm dynForm, int startArgIndex) {
+		Object ontologyClassInstance = null;
+		Object[] startArgs = dynForm.getOntoArgsInstance();
+		if (startArgs!=null) {
+			ontologyClassInstance =  startArgs[startArgIndex];
+		}
+		return ontologyClassInstance;
+	}
 	
 }
