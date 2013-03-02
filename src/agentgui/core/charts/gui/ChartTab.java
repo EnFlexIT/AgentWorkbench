@@ -164,9 +164,12 @@ public abstract class ChartTab extends ChartPanel {
 		List colors = model.getOntologyModel().getChartSettings().getYAxisColors();
 		XYItemRenderer renderer = getChart().getXYPlot().getRenderer();
 		for(int i=0; i < colors.size(); i++){
-			Color newColor = new Color(Integer.parseInt((String) colors.get(i)));
-			renderer.setSeriesPaint(i, newColor);
-		}
+			String colorString = (String) colors.get(i);
+			if (colorString!=null && colorString.equals("")==false) {
+				Color newColor = new Color(Integer.parseInt((String) colors.get(i)));
+				renderer.setSeriesPaint(i, newColor);	
+			}
+		}	
 	}
 	
 	/**

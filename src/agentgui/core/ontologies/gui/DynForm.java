@@ -812,7 +812,6 @@ public class DynForm extends DynFormBase {
 			this.ontoArgsInstance = ontologyInstances;
 			this.setXMLFromInstances();
 			this.setInstancesFromXML();
-			this.notifyObserver(DynForm.UPDATED_DataModel);
 		}
 	}
 

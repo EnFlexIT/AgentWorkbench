@@ -66,9 +66,7 @@ import agentgui.envModel.graph.components.TableCellRenderer4Color;
 import agentgui.ontology.DataSeries;
 
 public class ChartSettingsTab extends JPanel implements ActionListener, TableModelListener, FocusListener, Observer{
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 2476599044804448243L;
 	
 	// Swing components
@@ -87,6 +85,16 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	
 	protected ChartSettings settings;
 
+	// -------------------------------------------------------------------------------------------------
+	// --- Only activate this constructor if you want to redesign this dialog with a visual editor !! --
+	// -------------------------------------------------------------------------------------------------
+//	public ChartSettingsTab() {
+//		this.initialize(); 
+//	}
+	// -------------------------------------------------------------------------------------------------
+	// --- Only activate this constructor if you want to redesign this dialog with a visual editor !! --
+	// -------------------------------------------------------------------------------------------------
+	
 	/**
 	 * Initializes the Swing components that are the same for all chart types
 	 */
@@ -228,9 +236,6 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 		if (tblSeriesSettings == null) {
 			tblSeriesSettings = new JTable(){
 
-				/**
-				 * 
-				 */
 				private static final long serialVersionUID = -2409483712205505262L;
 
 				/* (non-Javadoc)

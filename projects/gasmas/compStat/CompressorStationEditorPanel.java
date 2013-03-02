@@ -71,6 +71,8 @@ public class CompressorStationEditorPanel extends OntologyClassEditorJPanel impl
 	
 	private JTabbedPane jTabbedPaneComponents = null;
 	private JPanel jPanelGeneralInformation = null;  //  @jve:decl-index=0:visual-constraint="122,10"
+	private JPanel jPanelGeneralWest = null;
+	private JPanel jPanelGeneralEast = null;
 
 	private JLabel jLabelHeader = null;
 	private JLabel jLabelID = null;
@@ -86,9 +88,6 @@ public class CompressorStationEditorPanel extends OntologyClassEditorJPanel impl
 	private JTextField jTextFieldBuildingCosts = null;
 	private JTextField jTextFieldUpgradeCosts = null;
 
-	private JPanel jPanelGeneralWest = null;
-
-	private JPanel jPanelGeneralEast = null;
 
 	
 
@@ -156,12 +155,6 @@ public class CompressorStationEditorPanel extends OntologyClassEditorJPanel impl
 		return this.compressorStationModel;
 	}
 	
-	/**
-	 * Sets the new ontology class instance.
-	 */
-	private void setNewOntologyClassInstance() {
-		super.setNewOntologyClassInstance(this.getOntologyClassInstance());
-	}
 	
 	/* (non-Javadoc)
 	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#getJToolBarUserFunctions()
@@ -193,7 +186,7 @@ public class CompressorStationEditorPanel extends OntologyClassEditorJPanel impl
         // --- General Information ------------------------
 		JComponent generalInformation = this.getDisplayComponents().get(Language.translate("General", Language.EN));
 		if (generalInformation==null) {
-			generalInformation = new TurboCompressorDisplay();
+			generalInformation = getJPanelGeneralInformation();
 			this.registerDisplay(Language.translate("General", Language.EN), getJPanelGeneralInformation());
 		}
         this.setGeneralInformation();
@@ -505,7 +498,7 @@ public class CompressorStationEditorPanel extends OntologyClassEditorJPanel impl
 		if (myKeyAdapter==null) {
 			myKeyAdapter = new KeyAdapter() {
 				public void keyReleased(KeyEvent e) {
-					setNewOntologyClassInstance();
+//					setNewOntologyClassInstance();
 				};
 			};
 		}
@@ -521,7 +514,6 @@ public class CompressorStationEditorPanel extends OntologyClassEditorJPanel impl
 			actor==this.getJTextFieldBuildingCosts() || 
 			actor==this.getJTextFieldUpgradeCosts() ) {
 			// --- Set the current status to the DynForm -------
-			this.setNewOntologyClassInstance();
 			
 		}
 		

@@ -1,14 +1,22 @@
 package agentgui.core.charts.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.ontologies.gui.DynForm;
 /**
  * Abstract super class for dialogs for chart viewing and editing. 
@@ -21,10 +29,12 @@ import agentgui.core.ontologies.gui.DynForm;
  */
 public abstract class ChartEditorJDialog extends JDialog implements ActionListener{
 
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = 1820851101239120387L;
+	
+	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
+	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUI.png"));
+	private final Image imageAgentGUI = iconAgentGUI.getImage();
+	
 	/**
 	 * The Dialog is just a container for a ChartEditorJPanel implementation that "does the work"
 	 */
@@ -42,12 +52,21 @@ public abstract class ChartEditorJDialog extends JDialog implements ActionListen
 		this.dynForm = dynForm;
 		this.startArgIndex = startArgIndex;
 		
-		this.setContentPane(this.getContentPane());
+		this.setModal(true);
+		this.setSize(600, 450);
+		this.setIconImage(imageAgentGUI);
+		this.setTitle(Language.translate("Edit Chart", Language.EN));
+		
+		// --- center dialog --------------------
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+		int top = (screenSize.height - this.getHeight()) / 2; 
+	    int left = (screenSize.width - this.getWidth()) / 2; 
+	    this.setLocation(left, top);	
+
+
+	    this.setContentPane(this.getContentPane());
 		this.getContentPane().add(getButtonPane(), BorderLayout.SOUTH);
-		
-		setModal(true);
-		setSize(600, 450);
-		
+
 	}
 	
 	protected JPanel getButtonPane(){
@@ -61,7 +80,9 @@ public abstract class ChartEditorJDialog extends JDialog implements ActionListen
 	
 	protected JButton getBtnClose(){
 		if(btnClose == null){
-			btnClose = new JButton("Close");
+			btnClose = new JButton(Language.translate("Close", Language.EN));
+			btnClose.setFont(new Font("Dialog", Font.BOLD, 12));
+			btnClose.setForeground(new Color(0, 0 ,153));
 			btnClose.addActionListener(this);
 		}
 		return btnClose;
@@ -83,6 +104,4 @@ public abstract class ChartEditorJDialog extends JDialog implements ActionListen
 		}
 	}
 	
-	
-
 }

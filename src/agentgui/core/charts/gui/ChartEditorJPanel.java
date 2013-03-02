@@ -55,6 +55,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -98,6 +99,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	protected JTextField tfImageWidth = null;
 	protected JLabel jLabelX = null;
 	protected JTextField tfImageHeight= null;
+	protected JScrollPane scrollPane4SettingTab = null;
 	
 	// Tab contents
 	protected ChartTab chartTab;
@@ -130,7 +132,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		
 		// --- Handle changes of the chart data 
 		if(o == this.model){
-			setNewOntologyClassInstance(this.getOntologyClassInstance());
+			setOntologyClassInstance(this.getOntologyClassInstance());
 		}
 		
 		
@@ -206,8 +208,6 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 					getChartTab().applyLineWidthsSettings();
 				}
 			}
-		}else{
-			super.update(o, arg);
 		}
 	}
 
@@ -225,7 +225,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 				
 				// --- Import data ------------------------
 				this.importDataSeriesFromCSV(csvFile);
-				setNewOntologyClassInstance(this.getOntologyClassInstance());
+				this.setOntologyClassInstance(this.getOntologyClassInstance());
 			}
 			
 		} else if(ae.getSource() == btnSaveImage) {
@@ -279,9 +279,16 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 			tabbedPane = new JTabbedPane();
 			tabbedPane.addTab("Chart", getChartTab());
 			tabbedPane.addTab("Table", getTableTab());
-			tabbedPane.addTab("Settings", getSettingsTab());
+			tabbedPane.addTab("Settings", getJScrollPane4SettingTab());
 		}
 		return tabbedPane;
+	}
+	protected JScrollPane getJScrollPane4SettingTab() {
+		if (scrollPane4SettingTab==null) {
+			scrollPane4SettingTab = new JScrollPane();
+			scrollPane4SettingTab.setViewportView(this.getSettingsTab());
+		}
+		return scrollPane4SettingTab;
 	}
 	
 	protected abstract ChartTab getChartTab();

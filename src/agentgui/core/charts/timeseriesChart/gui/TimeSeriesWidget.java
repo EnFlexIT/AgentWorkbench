@@ -109,7 +109,7 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 	 */
 	private TimeSeriesChartEditorJDialog getTimeSeriesChartEditorJDialog() {
 		if(tscejd == null){
-			tscejd = new TimeSeriesChartEditorJDialog(dynForm, startArgIndex);
+			tscejd = new TimeSeriesChartEditorJDialog(this.getDynForm(), this.getArgumentIndex());
 		}
 		return tscejd;
 	}
@@ -148,7 +148,9 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 		if (source==jButtonEdit) {
 			
 			this.getTimeSeriesChartEditorJDialog().setVisible(true);
-
+			// --- wait until the modal dialog is closed --
+			this.setOntologyClassInstance(this.getTimeSeriesChartEditorJDialog().getOntologyClassInstance());
+			
 		}
 	}
 	

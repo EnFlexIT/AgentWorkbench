@@ -25,7 +25,7 @@ import agentgui.simulationService.time.TimeFormat;
 import agentgui.simulationService.time.TimeFormatVector;
 import agentgui.simulationService.time.TimeModelDateBased;
 
-public class TimeFormatSelector  extends JPanelForActions {
+public class TimeFormatSelector extends JPanelForActions {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -68,17 +68,17 @@ public class TimeFormatSelector  extends JPanelForActions {
 		gridBagConstraints3.fill = GridBagConstraints.BOTH;
 		gridBagConstraints3.gridy = 2;
 		gridBagConstraints3.weightx = 1.0;
-		gridBagConstraints3.insets = new Insets(7, 5, 0, 0);
+		gridBagConstraints3.insets = new Insets(7, 0, 0, 0);
 		gridBagConstraints3.gridx = 1;
 		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 		gridBagConstraints2.gridx = 2;
-		gridBagConstraints2.insets = new Insets(0, 5, 0, 5);
+		gridBagConstraints2.insets = new Insets(0, 5, 0, 0);
 		gridBagConstraints2.gridy = 1;
 		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 		gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints1.gridy = 1;
 		gridBagConstraints1.weightx = 1.0;
-		gridBagConstraints1.insets = new Insets(0, 5, 0, 0);
+		gridBagConstraints1.insets = new Insets(0, 0, 0, 0);
 		gridBagConstraints1.gridx = 1;
 		GridBagConstraints gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 0;
@@ -86,16 +86,18 @@ public class TimeFormatSelector  extends JPanelForActions {
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.gridy = 1;
 		
-		jLabelFormat = new JLabel();
-		jLabelFormat.setText("Format");
-		jLabelFormat.setPreferredSize(new Dimension(40, 16));
-		jLabelFormat.setText(Language.translate(jLabelFormat.getText()) + ":");
+//		jLabelFormat = new JLabel();
+//		jLabelFormat.setText("Format");
+//		jLabelFormat.setPreferredSize(new Dimension(40, 16));
+//		jLabelFormat.setText(Language.translate(jLabelFormat.getText()) + ":");
 		
 		this.setSize(427, 65);
 		this.setLayout(new GridBagLayout());
-		this.add(jLabelFormat, gridBagConstraints);
 		this.add(getJTextFieldTimeFormat(), gridBagConstraints1);
 		this.add(getJButtonTimeFormatDefault(), gridBagConstraints2);
+		if (jLabelFormat!=null) {
+			this.add(jLabelFormat, gridBagConstraints);	
+		}
 		this.add(getJComboBoxTimeFormat(), gridBagConstraints3);
 		this.add(getJPanelDummy(), gridBagConstraints41);
 	}

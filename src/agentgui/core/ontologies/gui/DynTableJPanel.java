@@ -147,6 +147,71 @@ public class DynTableJPanel extends JPanel {
 	// --- Below methods for the expansion view and revert ---------- 
 	// --------------------------------------------------------------	
 	/**
+	 * Sets the current instance of the ontology class to the OntologyClassWidget or OntologyClassEditorJPanel.
+	 * 
+	 * @see OntologyClassWidget
+	 * @see OntologyClassEditorJPanel
+	 * @return the ontology class instance of widget or panel
+	 */
+	public void setOntologyClassInstanceToOntologyClassVisualisation(){
+		// --- Only do the following if the DynTableJPanel is expanded ---
+		if (this.expanded==true && this.jComponent2Add!=null) {
+			
+			DefaultMutableTreeNode node = this.dynForm.getTreeNodeByDynType(this.getDynType());
+			OntologyClassWidget dynFormWidget = this.dynForm.getOntologyClassWidget(node);
+			Object classInstance = dynFormWidget.getOntologyClassInstance();
+			
+			if (this.jComponent2Add instanceof OntologyClassWidget) {
+				OntologyClassWidget widget = (OntologyClassWidget) this.jComponent2Add; 
+				widget.setOntologyClassInstance(classInstance);
+			} else if (this.jComponent2Add instanceof OntologyClassEditorJPanel) {
+				OntologyClassEditorJPanel editorPanel = (OntologyClassEditorJPanel) this.jComponent2Add;
+				editorPanel.setOntologyClassInstance(classInstance);
+			}
+		
+		}
+	}
+	
+	/**
+	 * Sets the ontology class instance to the DynForm.
+	 */
+	public void setOntologyClassInstanceToDynForm() {
+		// --- Only do the following if the DynTableJPanel is expanded ---
+		if (this.expanded==true) {
+			
+			int argumentIndex = this.getStartArgumentIndex(this.getDynType());
+			DefaultMutableTreeNode node = this.dynForm.getTreeNodeByDynType(this.getDynType());
+			OntologyClassWidget dynFormWidget = this.dynForm.getOntologyClassWidget(node);
+			
+			Object classInstance = this.getOntologyClassInstanceOfOntologyClassVisualisation();
+			this.dynForm.getOntoArgsInstance()[argumentIndex] = classInstance;
+			this.dynForm.setFormState(classInstance, node);
+			dynFormWidget.setOntologyClassInstance(classInstance);
+		}
+	}
+
+	/**
+	 * Gets the current instance of the ontology class edited in the OntologyClassWidget or OntologyClassEditorJPanel.
+	 * 
+	 * @see OntologyClassWidget
+	 * @see OntologyClassEditorJPanel
+	 * @return the ontology class instance of widget or panel
+	 */
+	private Object getOntologyClassInstanceOfOntologyClassVisualisation(){
+		Object classInstance = null;
+		if (this.jComponent2Add!=null) {
+			if (this.jComponent2Add instanceof OntologyClassWidget) {
+				OntologyClassWidget widget = (OntologyClassWidget) this.jComponent2Add; 
+				classInstance = widget.getOntologyClassInstance();
+			} else if (this.jComponent2Add instanceof OntologyClassEditorJPanel) {
+				OntologyClassEditorJPanel editorPanel = (OntologyClassEditorJPanel) this.jComponent2Add;
+				classInstance = editorPanel.getOntologyClassInstance();
+			}
+		}
+		return classInstance;
+	}
+
+	/**
 	 * Sets the current DynType.
 	 * @param dynType the new DynType
 	 */
@@ -166,6 +231,9 @@ public class DynTableJPanel extends JPanel {
 	 * @param dynType the DynType
 	 */
 	public void setOntologyClassVisualsationVisible(DynType dynType) {
+		
+		// --- Save an open OntologyClassVisualisation to the DynForm ---------
+		this.setOntologyClassInstanceToDynForm();
 		
 		if (dynType==null || this.getDynType()==dynType) {
 			// --- Same element, disappear ----------------
@@ -199,14 +267,7 @@ public class DynTableJPanel extends JPanel {
 		
 		this.removeUserFunctions2JToolBar4UserFunction();
 		this.stolenComponentsFromJToolBar=null;
-		if (this.jComponent2Add!=null) {
-			if (this.jComponent2Add instanceof OntologyClassWidget) {
-				((OntologyClassWidget)this.jComponent2Add).removeFromObserver(); 
-			} else if (this.jComponent2Add instanceof OntologyClassEditorJPanel) {
-				((OntologyClassEditorJPanel)this.jComponent2Add).removeFromObserver();
-			}
-			this.jComponent2Add=null;
-		}
+		this.jComponent2Add=null;
 		
 		// --- Do expand the view (or not) ------------------------------------
 		if (doExpand==true) {
@@ -302,7 +363,7 @@ public class DynTableJPanel extends JPanel {
 	 * Returns the Vector of the stolen components from the customized JToolBar of a OntologyClassEditorJPanel.
 	 * @return the stolen components from a JToolBar of a OntologyClassEditorJPanel
 	 */
-	public Vector<Component> getStolenComponentsFromJToolBarOfOntologyClassEditorJPanel() {
+	private Vector<Component> getStolenComponentsFromJToolBarOfOntologyClassEditorJPanel() {
 		if (this.stolenComponentsFromJToolBar==null) {
 			this.stolenComponentsFromJToolBar = new Vector<Component>();
 		}
@@ -432,6 +493,7 @@ public class DynTableJPanel extends JPanel {
 		if (this.jSplitPaneExpanded==null) {
 			this.jSplitPaneExpanded = new JSplitPane(); 
 			this.jSplitPaneExpanded.setOneTouchExpandable(true);
+			this.jSplitPaneExpanded.setResizeWeight(0);
 			this.jSplitPaneExpanded.setBorder(BorderFactory.createEmptyBorder());
 			
 			if (this.getExpansionDirection()==EXPANSION_Horizontal) {

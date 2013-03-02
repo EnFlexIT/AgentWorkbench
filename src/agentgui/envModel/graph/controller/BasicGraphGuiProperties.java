@@ -433,7 +433,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 				modelNetworkComponent.setDataModelBase64(dataModelBase64);
 
 			}
-			
+			this.graphController.setProjectUnsaved();
 		}
 		
 		if (actionCommand.equals("SaveAndExit")) {

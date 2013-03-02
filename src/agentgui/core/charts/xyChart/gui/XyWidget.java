@@ -107,7 +107,7 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 	 */
 	private XyChartEditorJDialog getXyChartEditorJDialog() {
 		if(xycejd == null){
-			xycejd = new XyChartEditorJDialog(dynForm, startArgIndex);
+			xycejd = new XyChartEditorJDialog(this.getDynForm(), this.getArgumentIndex());
 		}
 		return xycejd;
 	}
@@ -142,7 +142,8 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 		if (source==jButtonEdit) {
 			
 			this.getXyChartEditorJDialog().setVisible(true);
-				
+			// --- wait until the modal dialog is closed --
+			this.setOntologyClassInstance(this.getXyChartEditorJDialog().getOntologyClassInstance());
 		}
 
 	}

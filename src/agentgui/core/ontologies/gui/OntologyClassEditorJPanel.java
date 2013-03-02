@@ -28,9 +28,6 @@
  */
 package agentgui.core.ontologies.gui;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
@@ -43,27 +40,39 @@ import agentgui.core.environment.EnvironmentController;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public abstract class OntologyClassEditorJPanel extends JPanel implements Observer {
+public abstract class OntologyClassEditorJPanel extends JPanel {
 
 	private static final long serialVersionUID = -2371432709285440820L;
 
-	protected DynForm dynForm = null;  //  @jve:decl-index=0:
-	protected int startArgIndex = -1;
-	
-	private boolean pauseObserver = false;
+	private DynForm dynForm = null;  //  @jve:decl-index=0:
+	private int startArgIndex = -1;
 	
 
 	/**
 	 * Instantiates a new ontology class editor JPanel.
 	 *
 	 * @param dynForm the DynForm
-	 * @param startArgIndex the start argument index
+	 * @param startArgIndex the argument index
 	 */
 	public OntologyClassEditorJPanel(DynForm dynForm, int startArgIndex) {
 		super();
 		this.dynForm = dynForm;
-		this.dynForm.addObserver(this);
 		this.startArgIndex = startArgIndex;
+	}
+	
+	/**
+	 * Returns the configured DynForm.
+	 * @return the DynForm
+	 */
+	public DynForm getDynForm(){
+		return this.dynForm;
+	}
+	/**
+	 * Returns the configured argument index.
+	 * @return the argument index
+	 */
+	public int getArgumentIndex() {
+		return this.startArgIndex;
 	}
 	
 	/**
@@ -81,80 +90,6 @@ public abstract class OntologyClassEditorJPanel extends JPanel implements Observ
 	 * @return the JToolBar user functions
 	 */
 	public abstract JToolBar getJToolBarUserFunctions();
-	
-	/**
-	 * Sets the new ontology class instance to the DynForm.
-	 * @param newOntologyClassInstance the new new ontology class instance
-	 */
-	protected void setNewOntologyClassInstance(Object newOntologyClassInstance) {
-		this.setPauseObserver(true);
-		Object[] startArgs = this.dynForm.getOntoArgsInstance();
-		startArgs[this.startArgIndex] = newOntologyClassInstance;
-		this.dynForm.setOntoArgsInstance(startArgs);
-		this.setPauseObserver(false);
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-	 */
-	@Override
-	public void update(Observable observable, Object object) {
-		
-		if (this.isPauseObserver()==true) return;
-		
-		if (this.isUpdateModelAction(object)) {
-			// --- The data model was updated -------------
-			try {
-				// --- Try to set the new instance --------
-				Object[] startArgs = this.dynForm.getOntoArgsInstance();
-				Object newOntologyClassInstance =  startArgs[this.startArgIndex];
-				this.setOntologyClassInstance(newOntologyClassInstance);
-				
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		} 
-		
-	}
-
-	/**
-	 * Checks if the update object of an Observable is a notification of an 'updated data model'.
-	 * @see #update(Observable, Object)
-	 *
-	 * @param observableObject the observable object
-	 * @return true, if is update model
-	 */
-	protected boolean isUpdateModelAction(Object observableObject) {
-		if (observableObject instanceof String) {
-			String notification = (String) observableObject;
-			if (notification.equals(DynForm.UPDATED_DataModel)==true) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Sets the observer to be paused or not.
-	 * @param pauseNow the new pause observer
-	 */
-	protected void setPauseObserver(boolean pauseNow) {
-		this.pauseObserver = pauseNow;
-	}
-	/**
-	 * Checks if is pause observer.
-	 * @return true, if the observer is paused 
-	 */
-	protected boolean isPauseObserver() {
-		return this.pauseObserver;
-	}
-
-	/**
-	 * Removes this widget from the DynForm observer.
-	 */
-	public void removeFromObserver() {
-		this.dynForm.deleteObserver(this);
-	}
 
 	/**
 	 * Returns the current EnvironmentController.

@@ -41,8 +41,6 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -80,8 +78,6 @@ public abstract class DynFormBase extends JPanel {
 
 	private static final long serialVersionUID = 7690503315848756188L;
 
-	public final static String UPDATED_DataModel = "UPDATED_DataModel";
-	
 	/** Necessary parameter that comes from the constructor */
 	protected OntologyVisualisationHelper ontologyVisualisationHelper = null;
 	/** Constructor parameter  */
@@ -98,8 +94,6 @@ public abstract class DynFormBase extends JPanel {
 	/** True, if no class has to be visualised on the DynForm */
 	private boolean emptyForm = true;
 	
-	/** The instance of the Observable of the DynForm */
-	private DynFormObservable dynFormObservable = null;
 	/** The KeyAdapter for float values */
 	protected KeyAdapter4Numbers numWatcherFloat = new KeyAdapter4Numbers(true);
 	/** The KeyAdapter for Integer values */
@@ -295,60 +289,8 @@ public abstract class DynFormBase extends JPanel {
 		return defaultTimeModelFormat;
 	}
 	
-	
-	// ----------------------------------------------------
-	// --- START Methods for the DynForm Observable ------- 
-	// ----------------------------------------------------
-	/**
-	 * The Class DynFormObservable.
-	 */
-	private class DynFormObservable extends Observable {
-		public void setChanngedAndNotify(Object reason) {
-			this.setChanged();
-			this.notifyObservers(reason);
-		}
-	}
-	/**
-	 * Returns an asynchronous update interface for receiving notifications
-	 * about DynForm information as the DynForm is constructed.
-	 *
-	 * @return the current instance of the DynFormObservable
-	 */
-	public DynFormObservable getDynFormObservable() {
-		if (dynFormObservable==null) {
-    		dynFormObservable= new DynFormObservable();
-    	}
-		return dynFormObservable;
-	}
-    /**
-     * Adds an observer to this DynForm.
-     * @param observer the observer
-     */
-    public void addObserver(Observer observer) {
-    	this.getDynFormObservable().addObserver(observer);
-    }
-    /**
-     * Deletes an observer from this DynForm.
-     * @param observer the observer
-     */
-    public void deleteObserver(Observer observer) {
-    	this.getDynFormObservable().deleteObserver(observer);
-    }
-	/**
-	 * Notify observer.
-	 * @param reason the reason
-	 */
-	public void notifyObserver(Object reason) {
-		this.getDynFormObservable().setChanngedAndNotify(reason);
-	}
-	// ----------------------------------------------------
-	// --- END Methods for the DynForm Observable --------- 
-	// ----------------------------------------------------
-
-	
 	/**
 	 * This method can be invoked to generate the instance of the current configuration.
-	 *
 	 * @param fromForm the from form
 	 */
 	public void save(boolean fromForm) {
@@ -426,23 +368,24 @@ public abstract class DynFormBase extends JPanel {
 			
 			// --- Generate instance for this argument --------------
 			if ((i+1)<=numOfXMLArgs) {
-				Object obj = getInstanceOfXML(ontoArgsXML[i], onto);
-				if (obj!=null) {
+				Object argumentInstance = getInstanceOfXML(ontoArgsXML[i], onto);
+				if (argumentInstance!=null) {
 					// --- Set the current instance to the form -----
 					if (avoidGuiUpdate==false) {
-						this.setFormState(obj, currNode);	
+						this.setFormState(argumentInstance, currNode);
+						if (Application.getGlobalInfo().isOntologyClassVisualisation(className)==true) {
+							OntologyClassWidget widget = this.getOntologyClassWidget(currNode);
+							if (widget!=null) {
+								widget.setOntologyClassInstance(argumentInstance);	
+							}
+						}
 					}
 					// --- Remind object state as instance ----------
-					this.ontoArgsInstance[i] = obj;
+					this.ontoArgsInstance[i] = argumentInstance;
 				}
 			}
 
 		} // --- end for ---
-		
-		// --- Notify observer about new model ----------------------
-		if (avoidGuiUpdate==false) {
-			this.notifyObserver(DynForm.UPDATED_DataModel);	
-		}
 		
 	}
 	
@@ -533,17 +476,38 @@ public abstract class DynFormBase extends JPanel {
 			Ontology onto = octo.getOntologyClass().getOntologyInstance();
 			
 			// --- Generate instance of this object -----------------
-			Object obj = this.getNewClassInstance(className);
-			
-			// --- configure the object instance --------------------
-			this.setObjectState(obj, currNode);
+			Object argumentInstance = null;
+			if (Application.getGlobalInfo().isOntologyClassVisualisation(className)==true) {
+				// --- Get the instance from the widget -------------
+				OntologyClassWidget widget = this.getOntologyClassWidget(currNode);
+				if (widget==null) {
+					// --- Generate an empty instance of the object -
+					argumentInstance = this.getNewClassInstance(className);
+					// --- Read and set from regular form -----------
+					this.setObjectStateFromFormState(argumentInstance, currNode);
+
+				} else {
+					// --- The widget is available ----------------------
+					argumentInstance = widget.getOntologyClassInstance();
+					if (argumentInstance==null) {
+						argumentInstance = this.getNewClassInstance(className);
+					}
+					this.setFormState(argumentInstance, currNode);
+				}
+				
+			} else {
+				// --- Generate an empty instance of the object -----
+				argumentInstance = this.getNewClassInstance(className);
+				// --- read and set from regular form ---------------
+				this.setObjectStateFromFormState(argumentInstance, currNode);
+				
+			}
 			
 			// --- Remind object state as instance and XML ---------- 
-			ontoArgsInstance[i] = obj;
-			ontoArgsXML[i] = getXMLOfInstance(obj, onto);
-			
+			ontoArgsInstance[i] = argumentInstance;
+			ontoArgsXML[i] = getXMLOfInstance(argumentInstance, onto);
 		}
-		this.notifyObserver(DynForm.UPDATED_DataModel);
+		
 	}
 	
 	/**
@@ -589,7 +553,7 @@ public abstract class DynFormBase extends JPanel {
 	 * @param ontologyObject the ontology object
 	 * @param node the node
 	 */
-	private void setObjectState(Object ontologyObject, DefaultMutableTreeNode node) {
+	private void setObjectStateFromFormState(Object ontologyObject, DefaultMutableTreeNode node) {
 		
 		Method methodFound = null;
 		Object[] subObjectOrValue = new Object[1];
@@ -610,7 +574,7 @@ public abstract class DynFormBase extends JPanel {
 				// --- Generate Instance of this class --------------
 				subObjectOrValue[0] = this.getNewClassInstance(className);
 				// --- Set their values -----------------------------
-				this.setObjectState(subObjectOrValue[0], currNode);				
+				this.setObjectStateFromFormState(subObjectOrValue[0], currNode);				
 				// --- Get the set-method for this slot -------------
 				methodFound = this.getSingleSetMethod(oscsd);
 				// --- Set the value for this slot ------------------

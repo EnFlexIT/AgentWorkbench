@@ -39,7 +39,7 @@ import javax.swing.JLabel;
 /**
  * The Class Calc9Parameter.
  */
-public class Calc9ParameterDisplay extends CalcParameterDisplay implements CalcParameterListener {
+public class Calc9ParameterDisplay extends ParameterDisplay implements ParameterListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -204,9 +204,9 @@ public class Calc9ParameterDisplay extends CalcParameterDisplay implements CalcP
 	 * @param textField the text field
 	 */
 	private void informListener(int noOfParameter, Float value) {
-		if (this.calcParameterListener!=null) {
-			for (int i = 0; i < calcParameterListener.size(); i++) {
-				CalcParameterListener listener = calcParameterListener.get(i);
+		if (this.parameterListener!=null) {
+			for (int i = 0; i < parameterListener.size(); i++) {
+				ParameterListener listener = parameterListener.get(i);
 				listener.parameterChanged(this, noOfParameter, value);
 			}
 		}
@@ -216,7 +216,7 @@ public class Calc9ParameterDisplay extends CalcParameterDisplay implements CalcP
 	 * @see gasmas.compStat.display.CalcParameterListener#parameterChanged(int, java.lang.Float)
 	 */
 	@Override
-	public void parameterChanged(CalcParameterDisplay display, int noOfParameter, Float value) {
+	public void parameterChanged(ParameterDisplay display, int noOfParameter, Float value) {
 		this.informListener(noOfParameter, value);
 		System.out.println("Changed " + noOfParameter + " - value: " + value);
 	}

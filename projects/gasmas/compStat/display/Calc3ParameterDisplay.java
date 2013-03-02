@@ -43,7 +43,7 @@ import agentgui.core.common.KeyAdapter4Numbers;
 /**
  * The Class Calc3ParameterDisplay.
  */
-public class Calc3ParameterDisplay extends CalcParameterDisplay {
+public class Calc3ParameterDisplay extends ParameterDisplay {
 
 	private static final long serialVersionUID = -8338576946309181639L;
 
@@ -108,9 +108,9 @@ public class Calc3ParameterDisplay extends CalcParameterDisplay {
 	 * @param textField the text field
 	 */
 	private void informListener(JTextField textField) {
-		if (this.calcParameterListener!=null) {
-			for (int i = 0; i < calcParameterListener.size(); i++) {
-				CalcParameterListener listener = calcParameterListener.get(i);
+		if (this.parameterListener!=null) {
+			for (int i = 0; i < parameterListener.size(); i++) {
+				ParameterListener listener = parameterListener.get(i);
 				int noOfParameter = this.getParameterNo(textField);
 				String stringValue = textField.getText();
 				Float value = Float.parseFloat(stringValue);

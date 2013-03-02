@@ -49,13 +49,15 @@ public class TimeSeriesChartSettings extends ChartSettings {
 		TimeSeriesChart tsChart = (TimeSeriesChart) chart;
 		for(int i=0; i< tsChart.getTimeSeriesChartData().size(); i++){
 			TimeSeries series = (TimeSeries) tsChart.getTimeSeriesChartData().get(i);
-			SeriesSettings settings = new SeriesSettings();
-			settings.setLabel(series.getLabel());
-			String colorString = (String) chart.getVisualizationSettings().getYAxisColors().get(i);
-			settings.setColor(new Color(Integer.parseInt(colorString)));
-			settings.setLineWIdth((Float) chart.getVisualizationSettings().getYAxisLineWidth().get(i));
-			
-			this.addSeriesSettings(settings);
+			if (series.isEmpty()==false) {
+				SeriesSettings settings = new SeriesSettings();
+				settings.setLabel(series.getLabel());
+				String colorString = (String) chart.getVisualizationSettings().getYAxisColors().get(i);
+				settings.setColor(new Color(Integer.parseInt(colorString)));
+				settings.setLineWIdth((Float) chart.getVisualizationSettings().getYAxisLineWidth().get(i));
+				
+				this.addSeriesSettings(settings);
+			}
 		}
 	}
 

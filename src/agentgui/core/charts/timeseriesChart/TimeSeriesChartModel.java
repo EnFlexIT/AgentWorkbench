@@ -28,6 +28,8 @@
  */
 package agentgui.core.charts.timeseriesChart;
 
+import jade.util.leap.List;
+
 import java.util.TimeZone;
 
 import org.jfree.data.time.FixedMillisecond;
@@ -37,6 +39,8 @@ import org.jfree.data.time.TimeSeriesDataItem;
 
 import agentgui.core.charts.ChartModel;
 import agentgui.core.charts.NoSuchSeriesException;
+import agentgui.ontology.Simple_Float;
+import agentgui.ontology.Simple_Long;
 import agentgui.ontology.TimeSeriesValuePair;
 
 /**
@@ -56,15 +60,24 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	private static final long serialVersionUID = 2315036788757231999L;
 	
 	public void addSeries(agentgui.ontology.DataSeries series){
+		
 		org.jfree.data.time.TimeSeries newSeries = new org.jfree.data.time.TimeSeries(series.getLabel());
 		
-		jade.util.leap.Iterator valuePairs = ((agentgui.ontology.TimeSeries)series).getAllTimeSeriesValuePairs();
-		while(valuePairs.hasNext()){
-			TimeSeriesValuePair valuePair = (TimeSeriesValuePair) valuePairs.next();
-			TimeSeriesDataItem newItem = new TimeSeriesDataItem(new FixedMillisecond(valuePair.getTimestamp().getLongValue()), valuePair.getValue().getFloatValue());
-			newSeries.add(newItem);
+		List valuePairs = ((agentgui.ontology.TimeSeries)series).getTimeSeriesValuePairs();
+		for (int i = 0; i < valuePairs.size(); i++) {
+			
+			TimeSeriesValuePair valuePair = (TimeSeriesValuePair) valuePairs.get(i);
+			Simple_Long simpleLong = valuePair.getTimestamp();
+			Simple_Float simpleFloat = valuePair.getValue();
+			
+			Long timeStampLong = simpleLong.getLongValue();
+			Float floatValue = simpleFloat.getFloatValue();
+			if (timeStampLong!=null) {
+				TimeSeriesDataItem newItem = new TimeSeriesDataItem(new FixedMillisecond(timeStampLong), floatValue);
+				newSeries.add(newItem);	
+			}
+			
 		}
-		
 		this.addSeries(newSeries);
 	}
 	

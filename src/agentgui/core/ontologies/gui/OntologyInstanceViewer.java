@@ -248,25 +248,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			this.setEnlargedView();
 			
 		} else {
-			// --- Refresh the view to the data -----------
-			if (this.getSelectedIndex()==0) {
-				// --- Refresh Table-View ------------
-				this.stopDynTableCellEditing();
-				this.save();
-				this.setXMLText();
-				
-			} else if (this.getSelectedIndex()==1) {
-				// --- Refresh XML-View --------------
-				this.save();
-				this.setXMLText();
-				
-			} else if (this.getSelectedIndex()==2) {
-				// --- Refresh Form-View -------------
-				String currConfigText = this.getDynFormText().getText();
-				String [] currConfig = this.getXMLParts(currConfigText);
-				this.setConfigurationXML(currConfig);
-				
-			}
+			// --- Save current settings ------------------
+			this.save();
+			this.setXMLText();
 			
 			// --- Now do the focus change ----------------
 			super.setSelectedIndex(index);
@@ -349,19 +333,23 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		String argumentLine = "";
 		int seperatorLength = separatorLine.length();
 		
-		for (int i = 0; i < xmlConfig.length; i++) {
-			
-			argumentLine = "--- Argument " + (i+1) + " ";
-			argumentLine+= separatorLine.substring(0, seperatorLength-argumentLine.length());
-			
-			String config = ""; 
-			config += separatorLine + newLine;
-			config += argumentLine;
-			config += newLine + separatorLine + newLine;
-			config += xmlConfig[i] + newLine;					
-			newText += config;
+		if (xmlConfig!=null) {
+			// --- Write down the XML-Array as String -----
+			for (int i = 0; i < xmlConfig.length; i++) {
+				
+				argumentLine = "--- Argument " + (i+1) + " ";
+				argumentLine+= separatorLine.substring(0, seperatorLength-argumentLine.length());
+				
+				String config = ""; 
+				config += separatorLine + newLine;
+				config += argumentLine;
+				config += newLine + separatorLine + newLine;
+				config += xmlConfig[i] + newLine;					
+				newText += config;
+			}
+			this.getDynFormText().setText(newText);
 		}
-		this.getDynFormText().setText(newText);
+		
 	}
 	
 	/**
@@ -475,8 +463,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	/**
 	 * Stop the cell editing in the DynTable.
 	 */
-	private void stopDynTableCellEditing() {
+	private void stopDynTableCellEditingAndSaveOntologyClassInstanceOfOntologyClassWidgetOrOntologyClassEditorJPanel() {
 		this.getDynTableJPanel().stopDynTableCellEditing();
+		this.getDynTableJPanel().setOntologyClassInstanceToDynForm();
 	}
 	
 	/**
@@ -550,13 +539,14 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		// --- Save configuration depending on the current view -----
 		if (this.getSelectedIndex()==0) {
 			// --- Table view -----------------------------
-			this.stopDynTableCellEditing();
+			this.stopDynTableCellEditingAndSaveOntologyClassInstanceOfOntologyClassWidgetOrOntologyClassEditorJPanel();
 			this.getDynForm().save(true);
 			
 		} else if (this.getSelectedIndex()==1) {
 			// --- Form view ------------------------------
 			this.getDynForm().save(true);
 			this.getDynTableJPanel().refreshTableModel();
+			this.getDynTableJPanel().setOntologyClassInstanceToOntologyClassVisualisation();
 			
 		} else if (this.getSelectedIndex()==2) {
 			// --- XML view -------------------------------
@@ -566,6 +556,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 			this.getDynForm().save(false);
 			this.getDynTableJPanel().refreshTableModel();
+			this.getDynTableJPanel().setOntologyClassInstanceToOntologyClassVisualisation();
 		}
 		
 	}

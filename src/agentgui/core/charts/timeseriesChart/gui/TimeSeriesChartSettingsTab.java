@@ -59,7 +59,7 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 		gbcLblTimeFormatSelector.gridx = 0;
 		gbcLblTimeFormatSelector.gridy = oldY;
 		gbcLblTimeFormatSelector.anchor = GridBagConstraints.NORTHWEST;
-		gbcLblTimeFormatSelector.insets = new Insets(5, 5, 5, 5);
+		gbcLblTimeFormatSelector.insets = new Insets(8, 5, 5, 5);
 		this.add(getLblTimeFormatSelector(), gbcLblTimeFormatSelector);
 		
 		// --- Add format selector component
@@ -67,6 +67,8 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 		gbcTimeFormatSelector.gridx = 1;
 		gbcTimeFormatSelector.gridy = oldY;
 		gbcTimeFormatSelector.anchor = GridBagConstraints.WEST;
+		gbcTimeFormatSelector.fill = GridBagConstraints.HORIZONTAL;
+		gbcTimeFormatSelector.insets = new Insets(3, 0, 0, 0);
 		this.add(getTimeFormatSelector(), gbcTimeFormatSelector);
 		
 	}

@@ -35,21 +35,21 @@ import javax.swing.JPanel;
 /**
  * The abstract Class CalcParameterDisplay.
  */
-public abstract class CalcParameterDisplay extends JPanel {
+public abstract class ParameterDisplay extends JPanel {
 
 	private static final long serialVersionUID = 849112163626006292L;
 
-	protected Vector<CalcParameterListener> calcParameterListener = new Vector<CalcParameterListener>(); 
+	protected Vector<ParameterListener> parameterListener = new Vector<ParameterListener>(); 
 	
 	
 	/**
 	 * Adds a CalcParameterListener to this instance.
 	 */
-	public void addCalcParameterListener(CalcParameterListener listener) {
-		if (this.calcParameterListener==null) {
-			this.calcParameterListener = new Vector<CalcParameterListener>();
+	public void addCalcParameterListener(ParameterListener listener) {
+		if (this.parameterListener==null) {
+			this.parameterListener = new Vector<ParameterListener>();
 		}
-		this.calcParameterListener.add(listener);
+		this.parameterListener.add(listener);
 	}
 	
 	

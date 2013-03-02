@@ -37,6 +37,7 @@ import javax.swing.JPanel;
 import agentgui.core.application.Language;
 
 import java.awt.GridBagLayout;
+import javax.swing.JScrollPane;
 
 public class TurboCompressorDisplay extends JTabbedPane {
 
@@ -46,6 +47,8 @@ public class TurboCompressorDisplay extends JTabbedPane {
 
 	private JPanel jPanelCharacteristicDiagram = null;
 	private JPanel jPanelData = null;
+
+	private JScrollPane jScrollPaneData = null;
 
 
 	/**
@@ -60,10 +63,10 @@ public class TurboCompressorDisplay extends JTabbedPane {
 	 * This method initializes this
 	 */
 	private void initialize() {
-        this.setSize(new Dimension(480, 270));
+        this.setSize(new Dimension(554, 427));
         this.setTabPlacement(JTabbedPane.BOTTOM);
-		this.addTab(Language.translate("Characteristic Diagram ", Language.EN), null, getJPanelCharacteristicDiagram(), null);	
-		this.addTab(Language.translate("Data", Language.EN), null, getJPanelData(), null);			
+		this.addTab(Language.translate("Characteristic Diagram", Language.EN), null, getJPanelCharacteristicDiagram(), null);	
+		this.addTab(Language.translate("Data", Language.EN), null, getJScrollPaneData(), null);
 	}
 	
 	/**
@@ -112,6 +115,19 @@ public class TurboCompressorDisplay extends JTabbedPane {
 			jPanelData = new TurboCompressorDisplayData();
 		}
 		return jPanelData;
+	}
+
+	/**
+	 * This method initializes jScrollPaneData	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getJScrollPaneData() {
+		if (jScrollPaneData == null) {
+			jScrollPaneData = new JScrollPane();
+			jScrollPaneData.setViewportView(getJPanelData());
+		}
+		return jScrollPaneData;
 	}
 
 	
