@@ -347,8 +347,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 				config += xmlConfig[i] + newLine;					
 				newText += config;
 			}
-			this.getDynFormText().setText(newText);
 		}
+		this.getDynFormText().setText(newText);
 		
 	}
 	

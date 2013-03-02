@@ -159,14 +159,14 @@ public class DynTableJPanel extends JPanel {
 			
 			DefaultMutableTreeNode node = this.dynForm.getTreeNodeByDynType(this.getDynType());
 			OntologyClassWidget dynFormWidget = this.dynForm.getOntologyClassWidget(node);
-			Object classInstance = dynFormWidget.getOntologyClassInstance();
+			Object classInstance = dynFormWidget.invokeGetOntologyClassInstance();
 			
 			if (this.jComponent2Add instanceof OntologyClassWidget) {
 				OntologyClassWidget widget = (OntologyClassWidget) this.jComponent2Add; 
-				widget.setOntologyClassInstance(classInstance);
+				widget.invokeSetOntologyClassInstance(classInstance);
 			} else if (this.jComponent2Add instanceof OntologyClassEditorJPanel) {
 				OntologyClassEditorJPanel editorPanel = (OntologyClassEditorJPanel) this.jComponent2Add;
-				editorPanel.setOntologyClassInstance(classInstance);
+				editorPanel.invokeSetOntologyClassInstance(classInstance);
 			}
 		
 		}
@@ -186,7 +186,7 @@ public class DynTableJPanel extends JPanel {
 			Object classInstance = this.getOntologyClassInstanceOfOntologyClassVisualisation();
 			this.dynForm.getOntoArgsInstance()[argumentIndex] = classInstance;
 			this.dynForm.setFormState(classInstance, node);
-			dynFormWidget.setOntologyClassInstance(classInstance);
+			dynFormWidget.invokeSetOntologyClassInstance(classInstance);
 		}
 	}
 
@@ -202,10 +202,10 @@ public class DynTableJPanel extends JPanel {
 		if (this.jComponent2Add!=null) {
 			if (this.jComponent2Add instanceof OntologyClassWidget) {
 				OntologyClassWidget widget = (OntologyClassWidget) this.jComponent2Add; 
-				classInstance = widget.getOntologyClassInstance();
+				classInstance = widget.invokeGetOntologyClassInstance();
 			} else if (this.jComponent2Add instanceof OntologyClassEditorJPanel) {
 				OntologyClassEditorJPanel editorPanel = (OntologyClassEditorJPanel) this.jComponent2Add;
-				classInstance = editorPanel.getOntologyClassInstance();
+				classInstance = editorPanel.invokeGetOntologyClassInstance();
 			}
 		}
 		return classInstance;

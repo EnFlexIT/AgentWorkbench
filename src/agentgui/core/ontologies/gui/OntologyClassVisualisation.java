@@ -99,7 +99,7 @@ public abstract class OntologyClassVisualisation {
 				args[1] = startArgIndex;
 				
 				widget = (OntologyClassWidget) widgetConstructor.newInstance(args);
-				widget.setOntologyClassInstance(this.getOntologyClassInstance(dynForm, startArgIndex));
+				widget.invokeSetOntologyClassInstance(this.getOntologyClassInstance(dynForm, startArgIndex));
 
 			} catch (SecurityException e) {
 				e.printStackTrace();
@@ -145,7 +145,7 @@ public abstract class OntologyClassVisualisation {
 				args[1] = startArgIndex;
 				
 				editor = (OntologyClassEditorJPanel) editorConstructor.newInstance(args);
-				editor.setOntologyClassInstance(this.getOntologyClassInstance(dynForm, startArgIndex));
+				editor.invokeSetOntologyClassInstance(this.getOntologyClassInstance(dynForm, startArgIndex));
 				
 			} catch (SecurityException e) {
 				e.printStackTrace();

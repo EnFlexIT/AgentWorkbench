@@ -376,7 +376,7 @@ public abstract class DynFormBase extends JPanel {
 						if (Application.getGlobalInfo().isOntologyClassVisualisation(className)==true) {
 							OntologyClassWidget widget = this.getOntologyClassWidget(currNode);
 							if (widget!=null) {
-								widget.setOntologyClassInstance(argumentInstance);	
+								widget.invokeSetOntologyClassInstance(argumentInstance);	
 							}
 						}
 					}
@@ -488,7 +488,7 @@ public abstract class DynFormBase extends JPanel {
 
 				} else {
 					// --- The widget is available ----------------------
-					argumentInstance = widget.getOntologyClassInstance();
+					argumentInstance = widget.invokeGetOntologyClassInstance();
 					if (argumentInstance==null) {
 						argumentInstance = this.getNewClassInstance(className);
 					}
@@ -773,7 +773,7 @@ public abstract class DynFormBase extends JPanel {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						widget.setOntologyClassInstance(objectInstance);
+						widget.invokeSetOntologyClassInstance(objectInstance);
 					}
 				});
 			}

@@ -76,6 +76,40 @@ public abstract class OntologyClassEditorJPanel extends JPanel {
 	}
 	
 	/**
+	 * Invokes the method {@link #setOntologyClassInstance(Object)} with the new instance of the ontology class.
+	 * This method was basically created in order to intercept errors when the method 
+	 * {@link #setOntologyClassInstance(Object)} is invoked and in case that an error occurs.<br>
+	 * <b>DO NOT OVERWRITE!</b>  
+	 * 
+	 * @param objectInstance the new object instance
+	 */
+	public void invokeSetOntologyClassInstance(Object objectInstance) {
+		try {
+			this.setOntologyClassInstance(objectInstance);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Invokes the method {@link #getOntologyClassInstance()} and returns the current instance
+	 * of the ontology class. This method was basically created in order to intercept errors when 
+	 * the method {@link #getOntologyClassInstance()} is invoked and in case that an error occurs.<br>
+	 * <b>DO NOT OVERWRITE!</b>
+	 * 
+	 * @return the object
+	 */
+	public Object invokeGetOntologyClassInstance() {
+		Object objectInstance = null;
+		try {
+			objectInstance = this.getOntologyClassInstance();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return objectInstance;
+	}
+	
+	/**
 	 * Sets the ontology class instance.
 	 * @param objectInstance the new ontology class instance
 	 */
