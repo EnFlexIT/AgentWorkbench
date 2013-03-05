@@ -353,7 +353,9 @@ public class DynTableJPanel extends JPanel {
 				this.getStolenComponentsFromJToolBarOfOntologyClassEditorJPanel().add(comp);
 				jToolBarUserFunctions.remove(comp);
 			}
-			containerUserFunctions.remove(jToolBarUserFunctions);
+			if (containerUserFunctions!=null) {
+				containerUserFunctions.remove(jToolBarUserFunctions);	
+			}
 			ocep.validate();
 			ocep.repaint();	
 		}

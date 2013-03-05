@@ -47,6 +47,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -133,8 +135,8 @@ public class MainWindow extends JFrame implements ComponentListener {
 	
 	private JToolBar jToolBarApplication;
 		private SetupSelectorToolbar setupSelectorToolbar;
-		private JButton JadeTools;	
-		private JPopupMenu JadeToolsPopUp;
+		private JButton jButtonJadeTools;	
+		private JPopupMenu jPopupMenuJadeTools;
 		
 		private JButton jButtonSimStart;
 		private JButton jButtonSimPause;
@@ -1092,14 +1094,14 @@ public class MainWindow extends JFrame implements ComponentListener {
 		if ( jToolBarApplication == null) {
 			
 			// --- PopUp-Menü zum Button 'JadeTools' definieren (s. u.) ---
-			JadeToolsPopUp = new JPopupMenu("SubBar");
-			JadeToolsPopUp.setBorder( BorderFactory.createEtchedBorder(EtchedBorder.LOWERED) );
-			JadeToolsPopUp.add( new CWMenueItem( "PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif" )) ;
-			JadeToolsPopUp.add( new CWMenueItem( "PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif" )) ;
-			JadeToolsPopUp.add( new CWMenueItem( "PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif" )) ;
-			JadeToolsPopUp.add( new CWMenueItem( "PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif" )) ;
-			JadeToolsPopUp.add( new CWMenueItem( "PopIntrospec", Language.translate("Introspector-Agent starten"), "MBJadeIntrospector.gif" )) ;
-			JadeToolsPopUp.add( new CWMenueItem( "PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif" )) ;
+			jPopupMenuJadeTools = new JPopupMenu("SubBar");
+			jPopupMenuJadeTools.setBorder( BorderFactory.createEtchedBorder(EtchedBorder.LOWERED) );
+			jPopupMenuJadeTools.add( new CWMenueItem( "PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif" )) ;
+			jPopupMenuJadeTools.add( new CWMenueItem( "PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif" )) ;
+			jPopupMenuJadeTools.add( new CWMenueItem( "PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif" )) ;
+			jPopupMenuJadeTools.add( new CWMenueItem( "PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif" )) ;
+			jPopupMenuJadeTools.add( new CWMenueItem( "PopIntrospec", Language.translate("Introspector-Agent starten"), "MBJadeIntrospector.gif" )) ;
+			jPopupMenuJadeTools.add( new CWMenueItem( "PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif" )) ;
 			
 			// --- Symbolleisten-Definition -------------------------------
 			jToolBarApplication = new JToolBar("MainBar");
@@ -1117,8 +1119,19 @@ public class MainWindow extends JFrame implements ComponentListener {
 			jToolBarApplication.add(new JToolBarButton( "JadeStart", Language.translate("JADE starten"), null, "MBJadeOn.png" ));
 			jToolBarApplication.add(new JToolBarButton( "JadeStop", Language.translate("JADE stoppen"), null, "MBJadeOff.png" ));
 			jToolBarApplication.addSeparator();
-			JadeTools = new JToolBarButton( "JadeTools", Language.translate("JADE-Tools..."), null, "MBJadeTools.png" );
-			jToolBarApplication.add(JadeTools);
+			
+			jButtonJadeTools = new JToolBarButton( "JadeTools", Language.translate("JADE-Tools..."), null, "MBJadeTools.png" );
+			jButtonJadeTools.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					showJPopupMenuJadeTools();
+				}
+				@Override
+				public void mousePressed(MouseEvent e) {
+					showJPopupMenuJadeTools();
+				}
+			});
+			jToolBarApplication.add(jButtonJadeTools);
 			jToolBarApplication.addSeparator();
 			
 			// --- Add Simulation Setup -----------------------------------
@@ -1136,11 +1149,17 @@ public class MainWindow extends JFrame implements ComponentListener {
 
 			jToolBarApplication.add(new JToolBarButton( "ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), null, "MBLoadMonitor.png" ));
 			jToolBarApplication.addSeparator();
-
 			
 		};		
 		return jToolBarApplication;
 	}	
+	
+	/**
+	 * Shows the popup menu of the JADE tools.
+	 */
+	private void showJPopupMenuJadeTools() {
+		this.jPopupMenuJadeTools.show(jButtonJadeTools, 0, jButtonJadeTools.getHeight());
+	}
 	
 	/**
 	 * Gets the setup selector toolbar.
@@ -1221,10 +1240,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 		 * @param altText the alt text
 		 * @param imgName the img name
 		 */
-		private JToolBarButton( String actionCommand, 
-								String toolTipText, 
-								String altText, 
-								String imgName ) {
+		private JToolBarButton(String actionCommand, String toolTipText, String altText, String imgName) {
 				
 			this.setText(altText);
 			this.setToolTipText(toolTipText);
@@ -1259,46 +1275,47 @@ public class MainWindow extends JFrame implements ComponentListener {
 			// ------------------------------------------------
 			if ( ActCMD.equalsIgnoreCase("New") ) {
 				Application.getProjectsLoaded().add(true);
-			}
-			else if ( ActCMD.equalsIgnoreCase("Open") ) {
-				Application.getProjectsLoaded().add(false);			}
-			else if ( ActCMD.equalsIgnoreCase("Save") ) {
+				
+			} else if ( ActCMD.equalsIgnoreCase("Open") ) {
+				Application.getProjectsLoaded().add(false);
+				
+			} else if ( ActCMD.equalsIgnoreCase("Save") ) {
 				Project CurPro = Application.getProjectFocused();
 				if ( CurPro != null ) CurPro.save();
-			}
+			
 			// ------------------------------------------------
-			else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) { 
+			} else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) { 
 				Application.getMainWindow().doSwitchConsole();
-			}
+			
 			// ------------------------------------------------
-			else if ( ActCMD.equalsIgnoreCase("JadeStart") ) { 
-				Application.getJadePlatform().jadeStart();				
-			}
-			else if ( ActCMD.equalsIgnoreCase("JadeStop") ) {
-				Application.getJadePlatform().jadeStop();				
-			}
-			else if ( ActCMD.equalsIgnoreCase("JadeTools") ) { 
-				JadeToolsPopUp.show( JadeTools, 0, JadeTools.getHeight() );
-			}
-			else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
+			} else if ( ActCMD.equalsIgnoreCase("JadeStart") ) { 
+				Application.getJadePlatform().jadeStart();
+				
+			} else if ( ActCMD.equalsIgnoreCase("JadeStop") ) {
+				Application.getJadePlatform().jadeStop();
+				
+			} else if ( ActCMD.equalsIgnoreCase("JadeTools") ) { 
+				showJPopupMenuJadeTools();
+				
+			} else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
 				Application.getJadePlatform().jadeSystemAgentOpen("loadMonitor", null);
-			}
+			
 			// ------------------------------------------------
-			else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {
+			} else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
 				Application.getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
-			}
-			else if ( ActCMD.equalsIgnoreCase("SimulationPause") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("SimulationPause") ) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Pause;
 				Application.getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
-			}
-			else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
 				Application.getJadePlatform().jadeStop();
-			}
+			
 			// ------------------------------------------------
-			else { 
+			} else { 
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);
 			};
 			
