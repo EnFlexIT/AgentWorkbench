@@ -28,6 +28,8 @@
  */
 package gasmas.compStat.display;
 
+import gasmas.compStat.CompressorStationEditorPanel;
+import gasmas.compStat.CompressorStationModel;
 import gasmas.ontology.TurboCompressor;
 
 import javax.swing.JTabbedPane;
@@ -43,6 +45,8 @@ public class TurboCompressorDisplay extends JTabbedPane {
 
 	private static final long serialVersionUID = 1083283970878896562L;
 
+	private CompressorStationEditorPanel compressorStationEditorPanel = null;
+	private CompressorStationModel compressorStationModel = null; // @jve:decl-index=0:
 	private TurboCompressor myTurboCompressor = null;
 
 	private JPanel jPanelCharacteristicDiagram = null;
@@ -55,7 +59,10 @@ public class TurboCompressorDisplay extends JTabbedPane {
 	 * Instantiates a new turbo compressor display.
 	 * @param turboCompressor the turbo compressor
 	 */
-	public TurboCompressorDisplay() {
+	public TurboCompressorDisplay(CompressorStationEditorPanel compressorStationEditorPanel, TurboCompressor turboCompressor) {
+		this.compressorStationEditorPanel = compressorStationEditorPanel;
+		this.compressorStationModel = this.compressorStationEditorPanel.getCompressorStationModel();
+		this.myTurboCompressor = turboCompressor;
 		this.initialize();
 	}
 	
@@ -112,7 +119,7 @@ public class TurboCompressorDisplay extends JTabbedPane {
 	 */
 	private JPanel getJPanelData() {
 		if (jPanelData == null) {
-			jPanelData = new TurboCompressorDisplayData();
+			jPanelData = new TurboCompressorDisplayData(this.compressorStationEditorPanel, myTurboCompressor);
 		}
 		return jPanelData;
 	}

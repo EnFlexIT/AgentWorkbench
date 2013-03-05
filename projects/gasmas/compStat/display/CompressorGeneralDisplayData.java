@@ -28,6 +28,8 @@
  */
 package gasmas.compStat.display;
 
+import gasmas.compStat.CompressorStationEditorPanel;
+import gasmas.compStat.CompressorStationModel;
 import gasmas.ontology.CompStatCompressor;
 
 import java.awt.Dimension;
@@ -36,20 +38,23 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import agentgui.core.application.Language;
+
 
 /**
  * The Class TurboCompressorDisplayData.
  */
-public class CompressorDisplayData extends JPanel {
+public class CompressorGeneralDisplayData extends JPanel {
 
 	private static final long serialVersionUID = -6812298324933666113L;
 	
+	private CompressorStationEditorPanel compressorStationEditorPanel = null;
+	private CompressorStationModel compressorStationModel = null; // @jve:decl-index=0:
 	private CompStatCompressor myCompressor = null;  //  @jve:decl-index=0:
 	
 	private JPanel jPanelSpeedPanel = null;
@@ -61,21 +66,33 @@ public class CompressorDisplayData extends JPanel {
 	private JTextField jTextFieldID;
 	private JTextField jTextFieldAlias = null;
 
-	private JLabel jLabelSpeedMin = null;
-	private JLabel jLabelSpeedMax = null;
-
+	private final Dimension speedDescriptionSize = new Dimension(65, 26);
 	private ValueTypeDisplay valueTypeDisplaySpeedMin = null;
 	private ValueTypeDisplay valueTypeDisplaySpeedMax = null;
 
 	private JComboBox jComboBoxDrive = null;
-	private JButton jButtonDriveNew = null;
-	
+
 	
 	/**
-	 * This is the default constructor
+	 * Instantiates a new compressor display data.
 	 */
-	public CompressorDisplayData() {
-		super();
+	public CompressorGeneralDisplayData() {
+		this.initialize();
+	}
+	/**
+	 * This is the default constructor.
+	 *
+	 * @param compressorStationEditorPanel the compressor station editor panel
+	 * @param compressor the compressor
+	 */
+	public CompressorGeneralDisplayData(CompressorStationEditorPanel compressorStationEditorPanel, CompStatCompressor compressor) {
+		this.compressorStationEditorPanel = compressorStationEditorPanel;
+		if (this.compressorStationModel!=null) {
+			this.compressorStationModel = this.compressorStationEditorPanel.getCompressorStationModel();	
+		}
+		if (compressor!=null) {
+			this.setCompStatCompressor(compressor);	
+		}
 		this.initialize();
 	}
 	
@@ -87,8 +104,8 @@ public class CompressorDisplayData extends JPanel {
 		this.myCompressor = compressor;
 		this.getJTextFieldID().setText(myCompressor.getID());
 		this.getJTextFieldAlias().setText(myCompressor.getAlias());
-		this.getJTextFieldSpeedMin().setValueType(myCompressor.getSpeedMin());
-		this.getJTextFieldSpeedMax().setValueType(myCompressor.getSpeedMax());
+		this.getValueTypeDisplaySpeedMin().setValueType(myCompressor.getSpeedMin());
+		this.getValueTypeDisplaySpeedMax().setValueType(myCompressor.getSpeedMax());
 		this.getJComboBoxDrive().setSelectedItem(myCompressor.getDrive());
 	}
 	
@@ -100,8 +117,8 @@ public class CompressorDisplayData extends JPanel {
 	public CompStatCompressor getCompStatCompressor(CompStatCompressor compressor) {
 		myCompressor.setID(this.getJTextFieldID().getText());
 		myCompressor.setAlias(this.getJTextFieldAlias().getText());
-		myCompressor.setSpeedMin(this.getJTextFieldSpeedMin().getValueType());
-		myCompressor.setSpeedMax(this.getJTextFieldSpeedMax().getValueType());
+		myCompressor.setSpeedMin(this.getValueTypeDisplaySpeedMin().getValueType());
+		myCompressor.setSpeedMax(this.getValueTypeDisplaySpeedMax().getValueType());
 		myCompressor.setDrive((String) this.getJComboBoxDrive().getSelectedItem());
 		return this.myCompressor;
 	}
@@ -112,25 +129,28 @@ public class CompressorDisplayData extends JPanel {
 	 */
 	private void initialize() {
 		
-		GridBagConstraints gridBagConstraints23 = new GridBagConstraints();
-		gridBagConstraints23.anchor = GridBagConstraints.NORTHWEST;
-		gridBagConstraints23.insets = new Insets(5, 5, 0, 5);
-		gridBagConstraints23.gridx = -1;
-		gridBagConstraints23.gridy = -1;
-		gridBagConstraints23.weightx = 1.0;
-		gridBagConstraints23.fill = GridBagConstraints.HORIZONTAL;
-		GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
-		gridBagConstraints22.anchor = GridBagConstraints.NORTHWEST;
-		gridBagConstraints22.insets = new Insets(5, 5, 5, 5);
-		gridBagConstraints22.gridx = -1;
-		gridBagConstraints22.gridy = -1;
-		gridBagConstraints22.weightx = 0.5;
-		gridBagConstraints22.fill = GridBagConstraints.BOTH;
+		GridBagConstraints gridBagConstraintsGeneral = new GridBagConstraints();
+		gridBagConstraintsGeneral.anchor = GridBagConstraints.NORTH;
+		gridBagConstraintsGeneral.insets = new Insets(5, 5, 0, 5);
+		gridBagConstraintsGeneral.gridx = -1;
+		gridBagConstraintsGeneral.gridy = -1;
+		gridBagConstraintsGeneral.weightx = 0.4;
+		gridBagConstraintsGeneral.gridheight = 2;
+		gridBagConstraintsGeneral.fill = GridBagConstraints.BOTH;
+
+		GridBagConstraints gridBagConstraintsSpeed = new GridBagConstraints();
+		gridBagConstraintsSpeed.anchor = GridBagConstraints.NORTHWEST;
+		gridBagConstraintsSpeed.insets = new Insets(5, 5, 0, 5);
+		gridBagConstraintsSpeed.gridx = -1;
+		gridBagConstraintsSpeed.gridy = -1;
+		gridBagConstraintsSpeed.weightx = 0.6;
+		gridBagConstraintsSpeed.fill = GridBagConstraints.HORIZONTAL;
 		
-		this.setSize(515, 126);
+		this.setSize(500, 88);
 		this.setLayout(new GridBagLayout());
-		this.add(getJPanelGeneralInfo(), gridBagConstraints22);
-		this.add(getJPanelSpeedPanel(), gridBagConstraints23);
+		this.add(getJPanelGeneralInfo(), gridBagConstraintsGeneral);
+		this.add(getJPanelSpeedPanel(), gridBagConstraintsSpeed);
+		
 	}
 	/**
 	 * This method initializes jPanelGeneralInfo	
@@ -138,48 +158,48 @@ public class CompressorDisplayData extends JPanel {
 	 */
 	private JPanel getJPanelGeneralInfo() {
 		if (jPanelGeneralInfo == null) {
-			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
-			gridBagConstraints12.gridx = 2;
-			gridBagConstraints12.insets = new Insets(5, 5, 0, 0);
-			gridBagConstraints12.gridy = 2;
-			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-			gridBagConstraints11.fill = GridBagConstraints.BOTH;
-			gridBagConstraints11.gridy = 2;
-			gridBagConstraints11.weightx = 0.1;
-			gridBagConstraints11.insets = new Insets(5, 5, 0, 0);
-			gridBagConstraints11.gridx = 1;
-			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
-			gridBagConstraints10.anchor = GridBagConstraints.WEST;
-			gridBagConstraints10.gridy = 2;
-			gridBagConstraints10.insets = new Insets(5, 0, 0, 0);
-			gridBagConstraints10.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints10.gridx = 0;
-			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-			gridBagConstraints8.fill = GridBagConstraints.BOTH;
-			gridBagConstraints8.gridy = 1;
-			gridBagConstraints8.weightx = 0.0;
-			gridBagConstraints8.gridwidth = 2;
-			gridBagConstraints8.insets = new Insets(5, 5, 0, 0);
-			gridBagConstraints8.gridx = 1;
+			
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.anchor = GridBagConstraints.WEST;
+			gridBagConstraints2.gridx = 0;
+			gridBagConstraints2.gridy = 0;
+			gridBagConstraints2.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints2.insets = new Insets(0, 0, 0, 0);
+			
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.fill = GridBagConstraints.BOTH;
+			gridBagConstraints3.gridx = 1;
+			gridBagConstraints3.gridy = 0;
+			gridBagConstraints3.weightx = 1.0;
+			gridBagConstraints3.insets = new Insets(0, 5, 0, 0);
+			
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			gridBagConstraints5.anchor = GridBagConstraints.WEST;
 			gridBagConstraints5.gridx = 0;
 			gridBagConstraints5.gridy = 1;
 			gridBagConstraints5.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints5.insets = new Insets(5, 0, 0, 0);
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.fill = GridBagConstraints.BOTH;
-			gridBagConstraints3.gridx = 1;
-			gridBagConstraints3.gridy = 0;
-			gridBagConstraints3.weightx = 1.0;
-			gridBagConstraints3.gridwidth = 2;
-			gridBagConstraints3.insets = new Insets(0, 5, 0, 0);
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.anchor = GridBagConstraints.WEST;
-			gridBagConstraints2.gridx = -1;
-			gridBagConstraints2.gridy = -1;
-			gridBagConstraints2.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints2.insets = new Insets(0, 0, 0, 0);
+			
+			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
+			gridBagConstraints8.fill = GridBagConstraints.BOTH;
+			gridBagConstraints8.gridx = 1;
+			gridBagConstraints8.gridy = 1;
+			gridBagConstraints8.weightx = 0.0;
+			gridBagConstraints8.insets = new Insets(5, 5, 0, 0);
+			
+			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
+			gridBagConstraints10.anchor = GridBagConstraints.WEST;
+			gridBagConstraints10.gridx = 0;
+			gridBagConstraints10.gridy = 2;
+			gridBagConstraints10.insets = new Insets(5, 0, 0, 0);
+			gridBagConstraints10.fill = GridBagConstraints.HORIZONTAL;
+			
+			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+			gridBagConstraints11.fill = GridBagConstraints.BOTH;
+			gridBagConstraints11.gridx = 1;
+			gridBagConstraints11.gridy = 2;
+			gridBagConstraints11.weightx = 0.1;
+			gridBagConstraints11.insets = new Insets(5, 5, 0, 0);
 			
 			jLabelID = new JLabel();
 			jLabelID.setText("ID");
@@ -189,8 +209,6 @@ public class CompressorDisplayData extends JPanel {
 			jLabelDrive.setText("Drive");
 
 			jPanelGeneralInfo = new JPanel();
-			jPanelGeneralInfo.setSize(new Dimension(100, 88));
-			jPanelGeneralInfo.setPreferredSize(new Dimension(100, 88));
 			jPanelGeneralInfo.setBorder(BorderFactory.createEmptyBorder());
 			jPanelGeneralInfo.setLayout(new GridBagLayout());
 			jPanelGeneralInfo.add(jLabelID, gridBagConstraints2);
@@ -199,7 +217,6 @@ public class CompressorDisplayData extends JPanel {
 			jPanelGeneralInfo.add(getJTextFieldAlias(), gridBagConstraints8);
 			jPanelGeneralInfo.add(jLabelDrive, gridBagConstraints10);
 			jPanelGeneralInfo.add(getJComboBoxDrive(), gridBagConstraints11);
-			jPanelGeneralInfo.add(getJButtonDriveNew(), gridBagConstraints12);
 		}
 		return jPanelGeneralInfo;
 	}
@@ -210,7 +227,7 @@ public class CompressorDisplayData extends JPanel {
 	private JTextField getJTextFieldID() {
 		if (jTextFieldID==null) {
 			jTextFieldID = new JTextField();
-			jTextFieldID.setSize(new Dimension(80, 26));
+			jTextFieldID.setSize(new Dimension(100, 26));
 		}
 		return jTextFieldID;
 	}
@@ -236,19 +253,6 @@ public class CompressorDisplayData extends JPanel {
 		}
 		return jComboBoxDrive;
 	}
-	/**
-	 * This method initializes jButtonDriveNew	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getJButtonDriveNew() {
-		if (jButtonDriveNew == null) {
-			jButtonDriveNew = new JButton();
-			jButtonDriveNew.setSize(new Dimension(26, 26));
-			jButtonDriveNew.setText(" + ");
-		}
-		return jButtonDriveNew;
-	}
-	
 	/**
 	 * This method initializes jPanelSpeedPanel	
 	 * @return javax.swing.JPanel	
@@ -283,10 +287,8 @@ public class CompressorDisplayData extends JPanel {
 			jPanelSpeedPanel = new JPanel();
 			jPanelSpeedPanel.setBorder(BorderFactory.createEmptyBorder());
 			jPanelSpeedPanel.setLayout(new GridBagLayout());
-			jPanelSpeedPanel.add(getJTextFieldSpeedMin(), gridBagConstraints7);
-			jPanelSpeedPanel.add(getJTextFieldSpeedMax(), gridBagConstraints9);
-			jPanelSpeedPanel.add(jLabelSpeedMax, gridBagConstraints1);
-			jPanelSpeedPanel.add(jLabelSpeedMin, gridBagConstraints4);
+			jPanelSpeedPanel.add(getValueTypeDisplaySpeedMin(), gridBagConstraints7);
+			jPanelSpeedPanel.add(getValueTypeDisplaySpeedMax(), gridBagConstraints9);
 		}
 		return jPanelSpeedPanel;
 	}
@@ -294,9 +296,9 @@ public class CompressorDisplayData extends JPanel {
 	 * This method initializes jTextFieldSpeedMin	
 	 * @return javax.swing.JTextField	
 	 */
-	private ValueTypeDisplay getJTextFieldSpeedMin() {
+	private ValueTypeDisplay getValueTypeDisplaySpeedMin() {
 		if (valueTypeDisplaySpeedMin == null) {
-			valueTypeDisplaySpeedMin = new ValueTypeDisplay();
+			valueTypeDisplaySpeedMin = new ValueTypeDisplay(Language.translate("Speed Min", Language.EN), this.speedDescriptionSize);
 			valueTypeDisplaySpeedMin.setSize(new Dimension(100, 36));
 		}
 		return valueTypeDisplaySpeedMin;
@@ -305,9 +307,9 @@ public class CompressorDisplayData extends JPanel {
 	 * This method initializes jTextFieldSpeedMax	
 	 * @return javax.swing.JTextField	
 	 */
-	private ValueTypeDisplay getJTextFieldSpeedMax() {
+	private ValueTypeDisplay getValueTypeDisplaySpeedMax() {
 		if (valueTypeDisplaySpeedMax == null) {
-			valueTypeDisplaySpeedMax = new ValueTypeDisplay();
+			valueTypeDisplaySpeedMax = new ValueTypeDisplay(Language.translate("Speed Max", Language.EN), this.speedDescriptionSize);
 			valueTypeDisplaySpeedMax.setSize(new Dimension(100, 36));
 		}
 		return valueTypeDisplaySpeedMax;

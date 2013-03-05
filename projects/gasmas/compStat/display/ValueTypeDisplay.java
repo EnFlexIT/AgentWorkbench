@@ -41,26 +41,31 @@ import agentgui.core.common.KeyAdapter4Numbers;
 
 import java.awt.Insets;
 import java.awt.event.KeyAdapter;
+import java.awt.BorderLayout;
 
 public class ValueTypeDisplay extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
+	private String descriptionText = null;
+	private Dimension descriptionTextSize = new Dimension(60, 26);
 	private ValueType myValueType = null;  //  @jve:decl-index=0:
 	
+	private JPanel jPanelNumberDisplay = null;
 	private JLabel jLabelValue = null;
 	private JTextField jTextFieldValue = null;
-	private JLabel jLabelUnit = null;
 	private JTextField jTextFieldUnit = null;
 
 	private KeyAdapter4Numbers keyAdapter4FloatNumbers = null;  //  @jve:decl-index=0:
 	
+	
 	/**
 	 * This is the default constructor
 	 */
-	public ValueTypeDisplay() {
-		super();
-		initialize();
+	public ValueTypeDisplay(String descriptionText, Dimension descriptionTextSize) {
+		this.descriptionText = descriptionText;
+		this.descriptionTextSize = descriptionTextSize;
+		this.initialize();
 	}
 
 	/**
@@ -99,41 +104,46 @@ public class ValueTypeDisplay extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
-		GridBagConstraints gridBagConstraints25 = new GridBagConstraints();
-		gridBagConstraints25.fill = GridBagConstraints.BOTH;
-		gridBagConstraints25.gridy = 0;
-		gridBagConstraints25.weightx = 1.0;
-		gridBagConstraints25.insets = new Insets(0, 5, 0, 5);
-		gridBagConstraints25.gridx = 3;
-		GridBagConstraints gridBagConstraints24 = new GridBagConstraints();
-		gridBagConstraints24.gridx = 2;
-		gridBagConstraints24.insets = new Insets(0, 10, 0, 0);
-		gridBagConstraints24.gridy = 0;
-		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-		gridBagConstraints1.fill = GridBagConstraints.BOTH;
-		gridBagConstraints1.gridy = 0;
-		gridBagConstraints1.weightx = 1.0;
-		gridBagConstraints1.insets = new Insets(0, 5, 0, 0);
-		gridBagConstraints1.gridx = 1;
-		GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.gridx = 0;
-		gridBagConstraints.insets = new Insets(0, 5, 0, 0);
-		gridBagConstraints.gridy = 0;
-
-		jLabelUnit = new JLabel();
-		jLabelUnit.setText("Unit");
-
+		
 		jLabelValue = new JLabel();
-		jLabelValue.setText("Value");
+		jLabelValue.setText(this.descriptionText + ":");
+		if (this.descriptionTextSize!=null) {
+			jLabelValue.setSize(this.descriptionTextSize);
+			jLabelValue.setPreferredSize(this.descriptionTextSize);
+		}
 		
 		this.setSize(220, 26);
-		this.setLayout(new GridBagLayout());
-		this.add(jLabelValue, gridBagConstraints);
-		this.add(getJTextFieldValue(), gridBagConstraints1);
-		this.add(jLabelUnit, gridBagConstraints24);
-		this.add(getJTextFieldUnit(), gridBagConstraints25);
+		this.setLayout(new BorderLayout());
+		this.add(jLabelValue, BorderLayout.WEST);
+		this.add(getJPanelNumberDisplay(), BorderLayout.CENTER);
 	}
 
+	/**
+	 * This method initializes jPanelNumberDisplay	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelNumberDisplay() {
+		if (jPanelNumberDisplay == null) {
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints2.gridx = -1;
+			gridBagConstraints2.gridy = -1;
+			gridBagConstraints2.weightx = 0.5;
+			gridBagConstraints2.insets = new Insets(0, 5, 0, 5);
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints1.gridx = -1;
+			gridBagConstraints1.gridy = -1;
+			gridBagConstraints1.weightx = 0.5;
+			gridBagConstraints1.insets = new Insets(0, 5, 0, 0);
+			
+			jPanelNumberDisplay = new JPanel();
+			jPanelNumberDisplay.setLayout(new GridBagLayout());
+			jPanelNumberDisplay.add(getJTextFieldValue(), gridBagConstraints1);
+			jPanelNumberDisplay.add(getJTextFieldUnit(), gridBagConstraints2);
+		}
+		return jPanelNumberDisplay;
+	}
 	/**
 	 * This method initializes jTextFieldValue	
 	 * @return javax.swing.JTextField	
@@ -141,7 +151,7 @@ public class ValueTypeDisplay extends JPanel {
 	private JTextField getJTextFieldValue() {
 		if (jTextFieldValue == null) {
 			jTextFieldValue = new JTextField();
-			jTextFieldValue.setSize(new Dimension(100,26));
+			jTextFieldValue.setPreferredSize(new Dimension(100, 26));
 			jTextFieldValue.addKeyListener(this.getKeyAdapter4FloatNumbers());
 		}
 		return jTextFieldValue;
@@ -153,11 +163,10 @@ public class ValueTypeDisplay extends JPanel {
 	private JTextField getJTextFieldUnit() {
 		if (jTextFieldUnit == null) {
 			jTextFieldUnit = new JTextField();
-			jTextFieldUnit.setSize(new Dimension(100,26));
+			jTextFieldUnit.setPreferredSize(new Dimension(100, 26));
 		}
 		return jTextFieldUnit;
 	}
-
 	/**
 	 * Returns a key adapter for integer numbers.
 	 * @return the key adapter for integer numbers
