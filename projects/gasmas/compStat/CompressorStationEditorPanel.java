@@ -77,7 +77,6 @@ public class CompressorStationEditorPanel extends OntologyClassEditorJPanel impl
 	private static final long serialVersionUID = -1085905726626008322L;
 
 	private CompressorStationModel compressorStationModel = null; // @jve:decl-index=0:
-
 	private HashMap<String, JComponent> displayComponents = null; // @jve:decl-index=0:
 
 	private CompressorStationToolBar compressorStationToolBar = null;

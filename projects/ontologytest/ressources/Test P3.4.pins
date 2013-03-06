@@ -1,8 +1,0 @@
-; Mon Jan 21 11:11:06 CET 2013
-; 
-;+ (version "3.4")
-;+ (build "Build 533")
-
-([TestClass] of  %3AJADE-CLASS
-
-	(%3AJADE-IGNORE FALSE))
