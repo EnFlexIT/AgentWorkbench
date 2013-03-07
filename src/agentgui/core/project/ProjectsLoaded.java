@@ -141,8 +141,8 @@ public class ProjectsLoaded {
 			newProDia.setProjectFolder(projectFolderTest);
 			newProDia.setVisible(true);
 			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
-			if ( newProDia.isCanceled() == true ) {
-				Application.setStatusBar( Language.translate("Fertig") );
+			if (newProDia.isCanceled()==true) {
+				Application.setStatusBar(Language.translate("Fertig"));
 				return null;
 			} else {
 				localTmpProjectName = newProDia.getProjectName();
@@ -183,7 +183,14 @@ public class ProjectsLoaded {
 			// --- Does the file exists -------------------
 			File xmlFile = new File(XMLFileName);
 			if (xmlFile.exists()==false) {
-				System.out.println(Language.translate("Verzeichnis wurde nicht gefunden:") + " " + XMLFileName);
+				
+				System.out.println(Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + " " + XMLFileName);
+				Application.setStatusBar(Language.translate("Fertig"));
+				
+				String title = Language.translate("Projekt-Ladefehler!");
+				String message = Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + "\n";
+				message += XMLFileName;
+				JOptionPane.showInternalMessageDialog(Application.getMainWindow().getJDesktopPane4Projects(), message, title, JOptionPane.WARNING_MESSAGE);
 				return null;
 			}
 			

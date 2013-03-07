@@ -9,7 +9,7 @@ import jade.core.*;
    * A set of parameters describing the current gas flow at a PropagationPoint.
 * Protege name: FlowParameters
 * @author ontology bean generator
-* @version 2013/02/26, 16:41:10
+* @version 2013/03/7, 00:03:01
 */
 public class FlowParameters implements Concept {
 
@@ -22,39 +22,6 @@ public class FlowParameters implements Concept {
    }
    public float getMassFlow() {
      return this.massFlow;
-   }
-
-   /**
-* Protege name: flow
-   */
-   private float flow;
-   public void setFlow(float value) { 
-    this.flow=value;
-   }
-   public float getFlow() {
-     return this.flow;
-   }
-
-   /**
-* Protege name: temperature
-   */
-   private float temperature;
-   public void setTemperature(float value) { 
-    this.temperature=value;
-   }
-   public float getTemperature() {
-     return this.temperature;
-   }
-
-   /**
-* Protege name: pressure
-   */
-   private float pressure;
-   public void setPressure(float value) { 
-    this.pressure=value;
-   }
-   public float getPressure() {
-     return this.pressure;
    }
 
    /**
@@ -77,6 +44,39 @@ public class FlowParameters implements Concept {
    }
    public float getFluidVelocity() {
      return this.fluidVelocity;
+   }
+
+   /**
+* Protege name: temperature
+   */
+   private float temperature;
+   public void setTemperature(float value) { 
+    this.temperature=value;
+   }
+   public float getTemperature() {
+     return this.temperature;
+   }
+
+   /**
+* Protege name: flow
+   */
+   private float flow;
+   public void setFlow(float value) { 
+    this.flow=value;
+   }
+   public float getFlow() {
+     return this.flow;
+   }
+
+   /**
+* Protege name: pressure
+   */
+   private float pressure;
+   public void setPressure(float value) { 
+    this.pressure=value;
+   }
+   public float getPressure() {
+     return this.pressure;
    }
 
 }

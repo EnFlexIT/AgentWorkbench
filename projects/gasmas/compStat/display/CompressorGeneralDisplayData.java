@@ -28,11 +28,14 @@
  */
 package gasmas.compStat.display;
 
-import gasmas.compStat.CompressorStationEditorPanel;
 import gasmas.compStat.CompressorStationModel;
 import gasmas.ontology.CompStatCompressor;
+import gasmas.ontology.PistonCompressor;
+import gasmas.ontology.TurboCompressor;
+import gasmas.ontology.ValueType;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -45,32 +48,34 @@ import javax.swing.JTextField;
 
 import agentgui.core.application.Language;
 
-
 /**
  * The Class TurboCompressorDisplayData.
  */
-public class CompressorGeneralDisplayData extends JPanel {
+public class CompressorGeneralDisplayData extends ParameterDisplay implements ParameterListener {
 
 	private static final long serialVersionUID = -6812298324933666113L;
 	
-	private CompressorStationEditorPanel compressorStationEditorPanel = null;
+	public static final String changeDescription = "GeneralCompressorDescription";  //  @jve:decl-index=0:
+	
 	private CompressorStationModel compressorStationModel = null; // @jve:decl-index=0:
+	private String compressorID = null;
 	private CompStatCompressor myCompressor = null;  //  @jve:decl-index=0:
 	
 	private JPanel jPanelSpeedPanel = null;
 	private JPanel jPanelGeneralInfo = null;
+	
+	private JLabel jLabelHeader = null;
 	private JLabel jLabelID;
 	private JLabel jLabelAlias = null;
 	private JLabel jLabelDrive = null;
 	
 	private JTextField jTextFieldID;
 	private JTextField jTextFieldAlias = null;
-
+	private JComboBox jComboBoxDrive = null;
+	
 	private final Dimension speedDescriptionSize = new Dimension(65, 26);
 	private ValueTypeDisplay valueTypeDisplaySpeedMin = null;
 	private ValueTypeDisplay valueTypeDisplaySpeedMax = null;
-
-	private JComboBox jComboBoxDrive = null;
 
 	
 	/**
@@ -85,15 +90,11 @@ public class CompressorGeneralDisplayData extends JPanel {
 	 * @param compressorStationEditorPanel the compressor station editor panel
 	 * @param compressor the compressor
 	 */
-	public CompressorGeneralDisplayData(CompressorStationEditorPanel compressorStationEditorPanel, CompStatCompressor compressor) {
-		this.compressorStationEditorPanel = compressorStationEditorPanel;
-		if (this.compressorStationModel!=null) {
-			this.compressorStationModel = this.compressorStationEditorPanel.getCompressorStationModel();	
-		}
-		if (compressor!=null) {
-			this.setCompStatCompressor(compressor);	
-		}
+	public CompressorGeneralDisplayData(CompressorStationModel compressorStationModel, String compressorID) {
+		this.compressorStationModel = compressorStationModel;
+		this.compressorID = compressorID;
 		this.initialize();
+		this.setCompStatCompressor((CompStatCompressor) this.compressorStationModel.getComponent(this.compressorID));
 	}
 	
 	/**
@@ -102,11 +103,11 @@ public class CompressorGeneralDisplayData extends JPanel {
 	 */
 	public void setCompStatCompressor(CompStatCompressor compressor) {
 		this.myCompressor = compressor;
-		this.getJTextFieldID().setText(myCompressor.getID());
-		this.getJTextFieldAlias().setText(myCompressor.getAlias());
-		this.getValueTypeDisplaySpeedMin().setValueType(myCompressor.getSpeedMin());
-		this.getValueTypeDisplaySpeedMax().setValueType(myCompressor.getSpeedMax());
-		this.getJComboBoxDrive().setSelectedItem(myCompressor.getDrive());
+		this.getJTextFieldID().setText(compressor.getID());
+		this.getJTextFieldAlias().setText(compressor.getAlias());
+		this.getValueTypeDisplaySpeedMin().setValueType(compressor.getSpeedMin());
+		this.getValueTypeDisplaySpeedMax().setValueType(compressor.getSpeedMax());
+		this.getJComboBoxDrive().setSelectedItem(compressor.getDrive());
 	}
 	
 	/**
@@ -115,11 +116,11 @@ public class CompressorGeneralDisplayData extends JPanel {
 	 * @return the compressor
 	 */
 	public CompStatCompressor getCompStatCompressor(CompStatCompressor compressor) {
-		myCompressor.setID(this.getJTextFieldID().getText());
-		myCompressor.setAlias(this.getJTextFieldAlias().getText());
-		myCompressor.setSpeedMin(this.getValueTypeDisplaySpeedMin().getValueType());
-		myCompressor.setSpeedMax(this.getValueTypeDisplaySpeedMax().getValueType());
-		myCompressor.setDrive((String) this.getJComboBoxDrive().getSelectedItem());
+		this.myCompressor.setID(this.getJTextFieldID().getText());
+		this.myCompressor.setAlias(this.getJTextFieldAlias().getText());
+		this.myCompressor.setSpeedMin(this.getValueTypeDisplaySpeedMin().getValueType());
+		this.myCompressor.setSpeedMax(this.getValueTypeDisplaySpeedMax().getValueType());
+		this.myCompressor.setDrive((String) this.getJComboBoxDrive().getSelectedItem());
 		return this.myCompressor;
 	}
 	
@@ -129,27 +130,47 @@ public class CompressorGeneralDisplayData extends JPanel {
 	 */
 	private void initialize() {
 		
+		GridBagConstraints gridBagConstraintsHeader = new GridBagConstraints();
+		gridBagConstraintsHeader.gridx = 0;
+		gridBagConstraintsHeader.anchor = GridBagConstraints.WEST;
+		gridBagConstraintsHeader.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraintsHeader.gridwidth = 2;
+		gridBagConstraintsHeader.gridy = 0;
+		
 		GridBagConstraints gridBagConstraintsGeneral = new GridBagConstraints();
 		gridBagConstraintsGeneral.anchor = GridBagConstraints.NORTH;
-		gridBagConstraintsGeneral.insets = new Insets(5, 5, 0, 5);
+		gridBagConstraintsGeneral.insets = new Insets(5, 0, 0, 0);
 		gridBagConstraintsGeneral.gridx = -1;
-		gridBagConstraintsGeneral.gridy = -1;
+		gridBagConstraintsGeneral.gridy = 1;
 		gridBagConstraintsGeneral.weightx = 0.4;
 		gridBagConstraintsGeneral.gridheight = 2;
 		gridBagConstraintsGeneral.fill = GridBagConstraints.BOTH;
 
 		GridBagConstraints gridBagConstraintsSpeed = new GridBagConstraints();
 		gridBagConstraintsSpeed.anchor = GridBagConstraints.NORTHWEST;
-		gridBagConstraintsSpeed.insets = new Insets(5, 5, 0, 5);
+		gridBagConstraintsSpeed.insets = new Insets(5, 5, 0, 0);
 		gridBagConstraintsSpeed.gridx = -1;
-		gridBagConstraintsSpeed.gridy = -1;
+		gridBagConstraintsSpeed.gridy = 1;
 		gridBagConstraintsSpeed.weightx = 0.6;
 		gridBagConstraintsSpeed.fill = GridBagConstraints.HORIZONTAL;
 		
-		this.setSize(500, 88);
+		jLabelHeader = new JLabel();
+		if (this.myCompressor instanceof TurboCompressor) {
+			jLabelHeader.setText("Turbo Compressor");	
+		} else if (this.myCompressor instanceof PistonCompressor) {
+			jLabelHeader.setText("Piston Compressor");
+		} else {
+			jLabelHeader.setText("Compressor");
+		}
+		jLabelHeader.setText(Language.translate(jLabelHeader.getText(), Language.EN));
+		jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 12));
+		
+		this.setSize(500, 109);
 		this.setLayout(new GridBagLayout());
+		this.add(jLabelHeader, gridBagConstraintsHeader);
 		this.add(getJPanelGeneralInfo(), gridBagConstraintsGeneral);
 		this.add(getJPanelSpeedPanel(), gridBagConstraintsSpeed);
+		
 		
 	}
 	/**
@@ -209,6 +230,7 @@ public class CompressorGeneralDisplayData extends JPanel {
 			jLabelDrive.setText("Drive");
 
 			jPanelGeneralInfo = new JPanel();
+			jPanelGeneralInfo.setSize(new Dimension(80, 88));
 			jPanelGeneralInfo.setBorder(BorderFactory.createEmptyBorder());
 			jPanelGeneralInfo.setLayout(new GridBagLayout());
 			jPanelGeneralInfo.add(jLabelID, gridBagConstraints2);
@@ -227,7 +249,9 @@ public class CompressorGeneralDisplayData extends JPanel {
 	private JTextField getJTextFieldID() {
 		if (jTextFieldID==null) {
 			jTextFieldID = new JTextField();
-			jTextFieldID.setSize(new Dimension(100, 26));
+			jTextFieldID.setSize(new Dimension(60, 26));
+			jTextFieldID.setPreferredSize(new Dimension(60, 26));
+			jTextFieldID.addKeyListener(getKeyAdapter4Changes());
 		}
 		return jTextFieldID;
 	}
@@ -238,7 +262,9 @@ public class CompressorGeneralDisplayData extends JPanel {
 	private JTextField getJTextFieldAlias() {
 		if (jTextFieldAlias == null) {
 			jTextFieldAlias = new JTextField();
-			jTextFieldAlias.setSize(new Dimension(100, 26));
+			jTextFieldAlias.setSize(new Dimension(80, 26));
+			jTextFieldAlias.setPreferredSize(new Dimension(80, 26));
+			jTextFieldAlias.addKeyListener(getKeyAdapter4Changes());
 		}
 		return jTextFieldAlias;
 	}
@@ -249,7 +275,7 @@ public class CompressorGeneralDisplayData extends JPanel {
 	private JComboBox getJComboBoxDrive() {
 		if (jComboBoxDrive == null) {
 			jComboBoxDrive = new JComboBox();
-			jComboBoxDrive.setSize(new Dimension(100, 26));
+			jComboBoxDrive.setSize(new Dimension(60, 26));
 		}
 		return jComboBoxDrive;
 	}
@@ -263,14 +289,14 @@ public class CompressorGeneralDisplayData extends JPanel {
 			gridBagConstraints9.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints9.gridy = 1;
 			gridBagConstraints9.weightx = 0.0;
-			gridBagConstraints9.insets = new Insets(5, 0, 0, 0);
+			gridBagConstraints9.insets = new Insets(0, 0, 0, 0);
 			gridBagConstraints9.gridx = 1;
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 			gridBagConstraints7.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints7.gridy = 0;
 			gridBagConstraints7.weightx = 1.0;
 			gridBagConstraints7.gridwidth = 1;
-			gridBagConstraints7.insets = new Insets(0, 0, 0, 0);
+			gridBagConstraints7.insets = new Insets(0, 0, 5, 0);
 			gridBagConstraints7.gridx = 1;
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 			gridBagConstraints4.anchor = GridBagConstraints.WEST;
@@ -285,6 +311,8 @@ public class CompressorGeneralDisplayData extends JPanel {
 			gridBagConstraints1.gridx = 0;
 			
 			jPanelSpeedPanel = new JPanel();
+			jPanelSpeedPanel.setSize(new Dimension(100, 57));
+			jPanelSpeedPanel.setPreferredSize(new Dimension(100, 57));
 			jPanelSpeedPanel.setBorder(BorderFactory.createEmptyBorder());
 			jPanelSpeedPanel.setLayout(new GridBagLayout());
 			jPanelSpeedPanel.add(getValueTypeDisplaySpeedMin(), gridBagConstraints7);
@@ -299,7 +327,8 @@ public class CompressorGeneralDisplayData extends JPanel {
 	private ValueTypeDisplay getValueTypeDisplaySpeedMin() {
 		if (valueTypeDisplaySpeedMin == null) {
 			valueTypeDisplaySpeedMin = new ValueTypeDisplay(Language.translate("Speed Min", Language.EN), this.speedDescriptionSize);
-			valueTypeDisplaySpeedMin.setSize(new Dimension(100, 36));
+			valueTypeDisplaySpeedMin.setSize(new Dimension(100, 26));
+			valueTypeDisplaySpeedMin.addParameterListener(this);
 		}
 		return valueTypeDisplaySpeedMin;
 	}
@@ -310,9 +339,53 @@ public class CompressorGeneralDisplayData extends JPanel {
 	private ValueTypeDisplay getValueTypeDisplaySpeedMax() {
 		if (valueTypeDisplaySpeedMax == null) {
 			valueTypeDisplaySpeedMax = new ValueTypeDisplay(Language.translate("Speed Max", Language.EN), this.speedDescriptionSize);
-			valueTypeDisplaySpeedMax.setSize(new Dimension(100, 36));
+			valueTypeDisplaySpeedMax.setSize(new Dimension(100, 26));
+			valueTypeDisplaySpeedMax.addParameterListener(this);
 		}
 		return valueTypeDisplaySpeedMax;
+	}
+	
+	@Override
+	public Object getParameter(String parameterDescription) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void setParameter(String parameterDescription, Object value) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see gasmas.compStat.display.ParameterListener#parameterChanged(gasmas.compStat.display.ParameterDisplay, java.lang.String, java.lang.Object)
+	 */
+	@Override
+	public void subParameterChanged(ParameterDisplay display, String parameterDescription, Object value) {
+		
+		if (display==this.getValueTypeDisplaySpeedMin()) {
+			ValueType valueType = (ValueType) value;
+			this.myCompressor.setSpeedMin(valueType);
+			
+		} else if (display==this.getValueTypeDisplaySpeedMax()) {
+			ValueType valueType = (ValueType) value;
+			this.myCompressor.setSpeedMax(valueType);
+		}
+		this.informListener(changeDescription, this.myCompressor);
+	}
+	
+	/* (non-Javadoc)
+	 * @see gasmas.compStat.display.ParameterDisplay#valueChangedInJTextField(javax.swing.JTextField)
+	 */
+	@Override
+	public void valueChangedInJTextField(JTextField source) {
+		
+		if (source == this.getJTextFieldID()) {
+			this.myCompressor.setID(this.getJTextFieldID().getText());
+			
+		} else if (source == this.getJTextFieldAlias()) {
+			this.myCompressor.setAlias(this.getJTextFieldAlias().getText());
+		}
+		this.informListener(changeDescription, this.myCompressor);
 	}
 	
 	

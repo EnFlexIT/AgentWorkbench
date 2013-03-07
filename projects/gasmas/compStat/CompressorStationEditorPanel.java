@@ -29,7 +29,6 @@
 package gasmas.compStat;
 
 import gasmas.compStat.CompressorStationModel.Notification;
-import gasmas.compStat.display.CompressorStationToolBar;
 import gasmas.compStat.display.TurboCompressorDisplay;
 import gasmas.ontology.CompStat;
 import gasmas.ontology.GridComponent;
@@ -249,7 +248,7 @@ public class CompressorStationEditorPanel extends OntologyClassEditorJPanel impl
 				if (tc.isEmpty() == false) {
 					TurboCompressorDisplay tcDisplay = (TurboCompressorDisplay) this.getDisplayComponents().get(tc.getID());
 					if (tcDisplay == null) {
-						tcDisplay = new TurboCompressorDisplay(this, tc);
+						tcDisplay = new TurboCompressorDisplay(this.getCompressorStationModel(), tc.getID());
 						this.displayRegister(tc.getID(), tcDisplay);
 					}
 					tcDisplay.setTurboCompressor(tc);

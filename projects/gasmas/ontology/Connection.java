@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Connection
 * @author ontology bean generator
-* @version 2013/02/26, 16:41:10
+* @version 2013/03/7, 00:03:01
 */
 public class Connection extends GridComponent{ 
 
@@ -20,28 +20,6 @@ public class Connection extends GridComponent{
    }
    public FlowParameters getCurrentFlow() {
      return this.currentFlow;
-   }
-
-   /**
-* Protege name: to
-   */
-   private String to;
-   public void setTo(String value) { 
-    this.to=value;
-   }
-   public String getTo() {
-     return this.to;
-   }
-
-   /**
-* Protege name: from
-   */
-   private String from;
-   public void setFrom(String value) { 
-    this.from=value;
-   }
-   public String getFrom() {
-     return this.from;
    }
 
    /**
@@ -64,6 +42,28 @@ public class Connection extends GridComponent{
    }
    public ValueType getFlowMin() {
      return this.flowMin;
+   }
+
+   /**
+* Protege name: to
+   */
+   private String to;
+   public void setTo(String value) { 
+    this.to=value;
+   }
+   public String getTo() {
+     return this.to;
+   }
+
+   /**
+* Protege name: from
+   */
+   private String from;
+   public void setFrom(String value) { 
+    this.from=value;
+   }
+   public String getFrom() {
+     return this.from;
    }
 
 }

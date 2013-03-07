@@ -2,6 +2,6 @@ package gasmas.compStat.display;
 
 public interface ParameterListener {
 
-	public void parameterChanged(ParameterDisplay display, int noOfParameter, Float value);
+	public void subParameterChanged(ParameterDisplay display, String parameterDescription, Object value);
 	
 }

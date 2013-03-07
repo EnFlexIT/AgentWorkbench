@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: CompStatTcMeasurement
 * @author ontology bean generator
-* @version 2013/02/26, 16:41:10
+* @version 2013/03/7, 00:03:01
 */
 public class CompStatTcMeasurement implements Concept {
+
+   /**
+* Protege name: speed
+   */
+   private ValueType speed;
+   public void setSpeed(ValueType value) { 
+    this.speed=value;
+   }
+   public ValueType getSpeed() {
+     return this.speed;
+   }
 
    /**
 * Protege name: volumetricFlowrate
@@ -32,17 +43,6 @@ public class CompStatTcMeasurement implements Concept {
    }
    public ValueType getAdiabaticHead() {
      return this.adiabaticHead;
-   }
-
-   /**
-* Protege name: speed
-   */
-   private ValueType speed;
-   public void setSpeed(ValueType value) { 
-    this.speed=value;
-   }
-   public ValueType getSpeed() {
-     return this.speed;
    }
 
 }

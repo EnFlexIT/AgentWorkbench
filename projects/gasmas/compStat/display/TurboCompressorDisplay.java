@@ -28,42 +28,40 @@
  */
 package gasmas.compStat.display;
 
-import gasmas.compStat.CompressorStationEditorPanel;
 import gasmas.compStat.CompressorStationModel;
 import gasmas.ontology.TurboCompressor;
 
-import javax.swing.JTabbedPane;
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
+
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 import agentgui.core.application.Language;
 
-import java.awt.GridBagLayout;
-import javax.swing.JScrollPane;
-
-public class TurboCompressorDisplay extends JTabbedPane {
+public class TurboCompressorDisplay extends JTabbedPane implements ParameterListener {
 
 	private static final long serialVersionUID = 1083283970878896562L;
 
-	private CompressorStationEditorPanel compressorStationEditorPanel = null;
 	private CompressorStationModel compressorStationModel = null; // @jve:decl-index=0:
-	private TurboCompressor myTurboCompressor = null;
+	private String turboCompressorID = null;
+	private TurboCompressor myTurboCompressor = null;  //  @jve:decl-index=0:
 
 	private JPanel jPanelCharacteristicDiagram = null;
-	private JPanel jPanelData = null;
-
 	private JScrollPane jScrollPaneData = null;
-
+	private TurboCompressorDisplayData jPanelData = null;
+	
 
 	/**
 	 * Instantiates a new turbo compressor display.
 	 * @param turboCompressor the turbo compressor
 	 */
-	public TurboCompressorDisplay(CompressorStationEditorPanel compressorStationEditorPanel, TurboCompressor turboCompressor) {
-		this.compressorStationEditorPanel = compressorStationEditorPanel;
-		this.compressorStationModel = this.compressorStationEditorPanel.getCompressorStationModel();
-		this.myTurboCompressor = turboCompressor;
+	public TurboCompressorDisplay(CompressorStationModel compressorStationModel, String turboCompressorID) {
+		this.compressorStationModel = compressorStationModel;
+		this.turboCompressorID = turboCompressorID;
 		this.initialize();
+		this.setTurboCompressor((TurboCompressor) this.compressorStationModel.getComponent(this.turboCompressorID));
 	}
 	
 	/**
@@ -77,21 +75,13 @@ public class TurboCompressorDisplay extends JTabbedPane {
 	}
 	
 	/**
-	 * Sets the visualisation.
-	 */
-	private void setData2Visualisation() {
-		
-		
-
-	}
-	
-	/**
 	 * Sets the turbo compressor.
 	 * @param turboCompressor the new turbo compressor
 	 */
 	public void setTurboCompressor(TurboCompressor turboCompressor) {
 		this.myTurboCompressor = turboCompressor;
-		this.setData2Visualisation();
+		this.turboCompressorID = this.myTurboCompressor.getID();
+		this.getJPanelData().setTurboCompressor(this.myTurboCompressor);
 	}
 	/**
 	 * Gets the turbo compressor.
@@ -114,28 +104,39 @@ public class TurboCompressorDisplay extends JTabbedPane {
 	}
 
 	/**
-	 * This method initializes jPanelData	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelData() {
-		if (jPanelData == null) {
-			jPanelData = new TurboCompressorDisplayData(this.compressorStationEditorPanel, myTurboCompressor);
-		}
-		return jPanelData;
-	}
-
-	/**
 	 * This method initializes jScrollPaneData	
-	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getJScrollPaneData() {
 		if (jScrollPaneData == null) {
 			jScrollPaneData = new JScrollPane();
-			jScrollPaneData.setViewportView(getJPanelData());
+			jScrollPaneData.setViewportView(this.getJPanelData());
 		}
 		return jScrollPaneData;
 	}
+	/**
+	 * This method initializes jPanelData	
+	 * @return javax.swing.JPanel	
+	 */
+	private TurboCompressorDisplayData getJPanelData() {
+		if (jPanelData == null) {
+			jPanelData = new TurboCompressorDisplayData(compressorStationModel, turboCompressorID);
+			jPanelData.addParameterListener(this);
+		}
+		return jPanelData;
+	}
 
+	@Override
+	public void subParameterChanged(ParameterDisplay display, String parameterDescription, Object value) {
+		
+		if (display == this.getJPanelData()) {
+			// --- An update in the TurboCompressor was set ---------
+			TurboCompressor newTurboCompressor = (TurboCompressor) value;
+			this.myTurboCompressor = newTurboCompressor;
+			this.compressorStationModel.updateComponent(this.myTurboCompressor);
+		}
+		
+	}
+	
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

@@ -109,6 +109,7 @@ de;Das Widget für die Klasse ist nicht definiert!;The widget of this class is no
 de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet! <br>Save it now?
 de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
 de;Datei nicht gefunden!;File not found!;;;
+de;Datei oder Verzeichnis wurde nicht gefunden:;File or directory not found:;;;
 de;Datei überschreiben?;Overwrite file?;;;
 de;Datei:;File:
 de;Dateien einbinden;Include Files
@@ -402,6 +403,7 @@ de;Projekt öffnen;Open Project
 de;Projekt-Agenten;Project-Agents
 de;Projekt-Desktop;Project Desktop
 de;Projekt-Info;Project info
+de;Projekt-Ladefehler!;Error while loading project!;;;
 de;Projekt-Ontologie;Project ontology
 de;Projekt-Ressourcen;Project Resources
 de;Projekte;Projects
@@ -486,11 +488,11 @@ de;Stop;Stop
 de;Stunde;Hour;;;
 de;Stunden;Hours;;;
 de;Suche & Auswahl;Search & Selection;;;
-de;Suche löschen;;;;
+de;Suche löschen;Clear Search;;;
 de;Suche nach Agenten beendet...;Search for agents finished...
 de;Suche nach der nächsten fehlenden Übersetzung (STRG+F);Search for the next missing translation (CTRL + F)
-de;Suche rückwärts;;;;
-de;Suche vorwärts;;;;
+de;Suche rückwärts;Search backwards;;;
+de;Suche vorwärts;Search forwards;;;
 de;Suche;Search
 de;Summe einblenden;Show Sum ;;;
 de;Summe;Sum;;;
@@ -533,7 +535,6 @@ de;Verteilung + Grenzwerte;Distribution + Thresholds
 de;Verteilung;Distribution
 de;Verzeichnis bereits vorhanden!;Directory already exists!
 de;Verzeichnis gepackt zu;Folder packed to;;;
-de;Verzeichnis wurde nicht gefunden:;Directory was not found:
 de;Verzeichnis;Folder
 de;Vis.-Geschwindigkeit;Visualisation speed
 de;Visualisierung;Visualization

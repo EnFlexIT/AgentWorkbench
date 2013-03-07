@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Resistor
 * @author ontology bean generator
-* @version 2013/02/26, 16:41:10
+* @version 2013/03/7, 00:03:01
 */
 public class Resistor extends Connection{ 
 
@@ -23,17 +23,6 @@ public class Resistor extends Connection{
    }
 
    /**
-* Protege name: dragFactor
-   */
-   private float dragFactor;
-   public void setDragFactor(float value) { 
-    this.dragFactor=value;
-   }
-   public float getDragFactor() {
-     return this.dragFactor;
-   }
-
-   /**
 * Protege name: pressureLoss
    */
    private ValueType pressureLoss;
@@ -42,6 +31,17 @@ public class Resistor extends Connection{
    }
    public ValueType getPressureLoss() {
      return this.pressureLoss;
+   }
+
+   /**
+* Protege name: dragFactor
+   */
+   private float dragFactor;
+   public void setDragFactor(float value) { 
+    this.dragFactor=value;
+   }
+   public float getDragFactor() {
+     return this.dragFactor;
    }
 
 }

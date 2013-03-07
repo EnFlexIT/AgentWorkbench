@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: CompStatStage
 * @author ontology bean generator
-* @version 2013/02/26, 16:41:10
+* @version 2013/03/7, 00:03:01
 */
 public class CompStatStage implements Concept {
 
@@ -21,6 +21,17 @@ public class CompStatStage implements Concept {
    }
    public int getNoOfParallelUnits() {
      return this.noOfParallelUnits;
+   }
+
+   /**
+* Protege name: stageNo
+   */
+   private int stageNo;
+   public void setStageNo(int value) { 
+    this.stageNo=value;
+   }
+   public int getStageNo() {
+     return this.stageNo;
    }
 
    /**
@@ -43,16 +54,5 @@ public class CompStatStage implements Concept {
    public Iterator getAllCompressor() {return compressor.iterator(); }
    public List getCompressor() {return compressor; }
    public void setCompressor(List l) {compressor = l; }
-
-   /**
-* Protege name: stageNo
-   */
-   private int stageNo;
-   public void setStageNo(int value) { 
-    this.stageNo=value;
-   }
-   public int getStageNo() {
-     return this.stageNo;
-   }
 
 }

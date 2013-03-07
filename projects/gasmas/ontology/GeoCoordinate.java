@@ -9,7 +9,7 @@ import jade.core.*;
    * A set of parameters describing the physical properties of a PropagationPoint.
 * Protege name: GeoCoordinate
 * @author ontology bean generator
-* @version 2013/02/26, 16:41:10
+* @version 2013/03/7, 00:03:01
 */
 public class GeoCoordinate implements Concept {
 
@@ -38,6 +38,17 @@ public class GeoCoordinate implements Concept {
    }
 
    /**
+* Protege name: geoW
+   */
+   private float geoW;
+   public void setGeoW(float value) { 
+    this.geoW=value;
+   }
+   public float getGeoW() {
+     return this.geoW;
+   }
+
+   /**
    * The geographical z coordinate of the propagation point.
 * Protege name: geoZ
    */
@@ -47,17 +58,6 @@ public class GeoCoordinate implements Concept {
    }
    public float getGeoZ() {
      return this.geoZ;
-   }
-
-   /**
-* Protege name: geoW
-   */
-   private float geoW;
-   public void setGeoW(float value) { 
-    this.geoW=value;
-   }
-   public float getGeoW() {
-     return this.geoW;
    }
 
 }

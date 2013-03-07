@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: Calc9Parameter
 * @author ontology bean generator
-* @version 2013/02/26, 16:41:10
+* @version 2013/03/7, 00:03:01
 */
 public class Calc9Parameter extends CompStatCalcCoefficient{ 
 
@@ -23,47 +23,14 @@ public class Calc9Parameter extends CompStatCalcCoefficient{
    }
 
    /**
-* Protege name: coeff_8_9
+* Protege name: coeff_6_9
    */
-   private float coeff_8_9;
-   public void setCoeff_8_9(float value) { 
-    this.coeff_8_9=value;
+   private float coeff_6_9;
+   public void setCoeff_6_9(float value) { 
+    this.coeff_6_9=value;
    }
-   public float getCoeff_8_9() {
-     return this.coeff_8_9;
-   }
-
-   /**
-* Protege name: coeff_5_9
-   */
-   private float coeff_5_9;
-   public void setCoeff_5_9(float value) { 
-    this.coeff_5_9=value;
-   }
-   public float getCoeff_5_9() {
-     return this.coeff_5_9;
-   }
-
-   /**
-* Protege name: coeff_1_9
-   */
-   private float coeff_1_9;
-   public void setCoeff_1_9(float value) { 
-    this.coeff_1_9=value;
-   }
-   public float getCoeff_1_9() {
-     return this.coeff_1_9;
-   }
-
-   /**
-* Protege name: coeff_4_9
-   */
-   private float coeff_4_9;
-   public void setCoeff_4_9(float value) { 
-    this.coeff_4_9=value;
-   }
-   public float getCoeff_4_9() {
-     return this.coeff_4_9;
+   public float getCoeff_6_9() {
+     return this.coeff_6_9;
    }
 
    /**
@@ -78,14 +45,47 @@ public class Calc9Parameter extends CompStatCalcCoefficient{
    }
 
    /**
-* Protege name: coeff_6_9
+* Protege name: coeff_8_9
    */
-   private float coeff_6_9;
-   public void setCoeff_6_9(float value) { 
-    this.coeff_6_9=value;
+   private float coeff_8_9;
+   public void setCoeff_8_9(float value) { 
+    this.coeff_8_9=value;
    }
-   public float getCoeff_6_9() {
-     return this.coeff_6_9;
+   public float getCoeff_8_9() {
+     return this.coeff_8_9;
+   }
+
+   /**
+* Protege name: coeff_2_9
+   */
+   private float coeff_2_9;
+   public void setCoeff_2_9(float value) { 
+    this.coeff_2_9=value;
+   }
+   public float getCoeff_2_9() {
+     return this.coeff_2_9;
+   }
+
+   /**
+* Protege name: coeff_1_9
+   */
+   private float coeff_1_9;
+   public void setCoeff_1_9(float value) { 
+    this.coeff_1_9=value;
+   }
+   public float getCoeff_1_9() {
+     return this.coeff_1_9;
+   }
+
+   /**
+* Protege name: coeff_5_9
+   */
+   private float coeff_5_9;
+   public void setCoeff_5_9(float value) { 
+    this.coeff_5_9=value;
+   }
+   public float getCoeff_5_9() {
+     return this.coeff_5_9;
    }
 
    /**
@@ -100,14 +100,14 @@ public class Calc9Parameter extends CompStatCalcCoefficient{
    }
 
    /**
-* Protege name: coeff_2_9
+* Protege name: coeff_4_9
    */
-   private float coeff_2_9;
-   public void setCoeff_2_9(float value) { 
-    this.coeff_2_9=value;
+   private float coeff_4_9;
+   public void setCoeff_4_9(float value) { 
+    this.coeff_4_9=value;
    }
-   public float getCoeff_2_9() {
-     return this.coeff_2_9;
+   public float getCoeff_4_9() {
+     return this.coeff_4_9;
    }
 
 }

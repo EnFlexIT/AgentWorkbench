@@ -7,31 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Entry
 * @author ontology bean generator
-* @version 2013/02/26, 16:41:10
+* @version 2013/03/7, 00:03:01
 */
 public class Entry extends Exit{ 
-
-   /**
-* Protege name: normDensity
-   */
-   private ValueType normDensity;
-   public void setNormDensity(ValueType value) { 
-    this.normDensity=value;
-   }
-   public ValueType getNormDensity() {
-     return this.normDensity;
-   }
-
-   /**
-* Protege name: molarMass
-   */
-   private float molarMass;
-   public void setMolarMass(float value) { 
-    this.molarMass=value;
-   }
-   public float getMolarMass() {
-     return this.molarMass;
-   }
 
    /**
 * Protege name: gasTemperature
@@ -42,28 +20,6 @@ public class Entry extends Exit{
    }
    public ValueType getGasTemperature() {
      return this.gasTemperature;
-   }
-
-   /**
-* Protege name: calorificValue
-   */
-   private ValueType calorificValue;
-   public void setCalorificValue(ValueType value) { 
-    this.calorificValue=value;
-   }
-   public ValueType getCalorificValue() {
-     return this.calorificValue;
-   }
-
-   /**
-* Protege name: heatCapacityCoefficient
-   */
-   private HeatCapacityCoefficient heatCapacityCoefficient;
-   public void setHeatCapacityCoefficient(HeatCapacityCoefficient value) { 
-    this.heatCapacityCoefficient=value;
-   }
-   public HeatCapacityCoefficient getHeatCapacityCoefficient() {
-     return this.heatCapacityCoefficient;
    }
 
    /**
@@ -78,6 +34,39 @@ public class Entry extends Exit{
    }
 
    /**
+* Protege name: normDensity
+   */
+   private ValueType normDensity;
+   public void setNormDensity(ValueType value) { 
+    this.normDensity=value;
+   }
+   public ValueType getNormDensity() {
+     return this.normDensity;
+   }
+
+   /**
+* Protege name: heatCapacityCoefficient
+   */
+   private HeatCapacityCoefficient heatCapacityCoefficient;
+   public void setHeatCapacityCoefficient(HeatCapacityCoefficient value) { 
+    this.heatCapacityCoefficient=value;
+   }
+   public HeatCapacityCoefficient getHeatCapacityCoefficient() {
+     return this.heatCapacityCoefficient;
+   }
+
+   /**
+* Protege name: molarMass
+   */
+   private float molarMass;
+   public void setMolarMass(float value) { 
+    this.molarMass=value;
+   }
+   public float getMolarMass() {
+     return this.molarMass;
+   }
+
+   /**
 * Protege name: pseudocricalPressure
    */
    private ValueType pseudocricalPressure;
@@ -86,6 +75,17 @@ public class Entry extends Exit{
    }
    public ValueType getPseudocricalPressure() {
      return this.pseudocricalPressure;
+   }
+
+   /**
+* Protege name: calorificValue
+   */
+   private ValueType calorificValue;
+   public void setCalorificValue(ValueType value) { 
+    this.calorificValue=value;
+   }
+   public ValueType getCalorificValue() {
+     return this.calorificValue;
    }
 
 }

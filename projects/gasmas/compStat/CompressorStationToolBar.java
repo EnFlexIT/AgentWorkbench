@@ -26,10 +26,8 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package gasmas.compStat.display;
+package gasmas.compStat;
 
-import gasmas.compStat.CompressorStationEditorPanel;
-import gasmas.compStat.CompressorStationModel;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;

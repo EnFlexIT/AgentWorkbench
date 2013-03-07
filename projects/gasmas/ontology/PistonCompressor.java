@@ -7,9 +7,31 @@ import jade.core.*;
 /**
 * Protege name: PistonCompressor
 * @author ontology bean generator
-* @version 2013/02/26, 16:41:10
+* @version 2013/03/7, 00:03:01
 */
 public class PistonCompressor extends CompStatCompressor{ 
+
+   /**
+* Protege name: operatingVolume
+   */
+   private ValueType operatingVolume;
+   public void setOperatingVolume(ValueType value) { 
+    this.operatingVolume=value;
+   }
+   public ValueType getOperatingVolume() {
+     return this.operatingVolume;
+   }
+
+   /**
+* Protege name: maximalCompressionRatio
+   */
+   private float maximalCompressionRatio;
+   public void setMaximalCompressionRatio(float value) { 
+    this.maximalCompressionRatio=value;
+   }
+   public float getMaximalCompressionRatio() {
+     return this.maximalCompressionRatio;
+   }
 
    /**
 * Protege name: maximalTorque
@@ -34,17 +56,6 @@ public class PistonCompressor extends CompStatCompressor{
    }
 
    /**
-* Protege name: maximalCompressionRatio
-   */
-   private float maximalCompressionRatio;
-   public void setMaximalCompressionRatio(float value) { 
-    this.maximalCompressionRatio=value;
-   }
-   public float getMaximalCompressionRatio() {
-     return this.maximalCompressionRatio;
-   }
-
-   /**
 * Protege name: additionalReductionVolFlow
    */
    private float additionalReductionVolFlow;
@@ -53,17 +64,6 @@ public class PistonCompressor extends CompStatCompressor{
    }
    public float getAdditionalReductionVolFlow() {
      return this.additionalReductionVolFlow;
-   }
-
-   /**
-* Protege name: operatingVolume
-   */
-   private ValueType operatingVolume;
-   public void setOperatingVolume(ValueType value) { 
-    this.operatingVolume=value;
-   }
-   public ValueType getOperatingVolume() {
-     return this.operatingVolume;
    }
 
 }

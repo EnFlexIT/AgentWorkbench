@@ -7,30 +7,20 @@ import jade.core.*;
 /**
 * Protege name: GasTurbine
 * @author ontology bean generator
-* @version 2013/02/26, 16:41:10
+* @version 2013/03/7, 00:03:01
 */
 public class GasTurbine extends CompStatDrive{ 
 
    /**
-* Protege name: gtMaximalPowerMeasurements
+* Protege name: gtPowerFunCoeff
    */
-   private List gtMaximalPowerMeasurements = new ArrayList();
-   public void addGtMaximalPowerMeasurements(CompStatMaxPtoAmbientTemperature elem) { 
-     List oldList = this.gtMaximalPowerMeasurements;
-     gtMaximalPowerMeasurements.add(elem);
+   private Calc9Parameter gtPowerFunCoeff;
+   public void setGtPowerFunCoeff(Calc9Parameter value) { 
+    this.gtPowerFunCoeff=value;
    }
-   public boolean removeGtMaximalPowerMeasurements(CompStatMaxPtoAmbientTemperature elem) {
-     List oldList = this.gtMaximalPowerMeasurements;
-     boolean result = gtMaximalPowerMeasurements.remove(elem);
-     return result;
+   public Calc9Parameter getGtPowerFunCoeff() {
+     return this.gtPowerFunCoeff;
    }
-   public void clearAllGtMaximalPowerMeasurements() {
-     List oldList = this.gtMaximalPowerMeasurements;
-     gtMaximalPowerMeasurements.clear();
-   }
-   public Iterator getAllGtMaximalPowerMeasurements() {return gtMaximalPowerMeasurements.iterator(); }
-   public List getGtMaximalPowerMeasurements() {return gtMaximalPowerMeasurements; }
-   public void setGtMaximalPowerMeasurements(List l) {gtMaximalPowerMeasurements = l; }
 
    /**
 * Protege name: gtSpecificEnergyConsumptionMeasurements
@@ -54,14 +44,24 @@ public class GasTurbine extends CompStatDrive{
    public void setGtSpecificEnergyConsumptionMeasurements(List l) {gtSpecificEnergyConsumptionMeasurements = l; }
 
    /**
-* Protege name: gtPowerFunCoeff
+* Protege name: gtMaximalPowerMeasurements
    */
-   private Calc9Parameter gtPowerFunCoeff;
-   public void setGtPowerFunCoeff(Calc9Parameter value) { 
-    this.gtPowerFunCoeff=value;
+   private List gtMaximalPowerMeasurements = new ArrayList();
+   public void addGtMaximalPowerMeasurements(CompStatMaxPtoAmbientTemperature elem) { 
+     List oldList = this.gtMaximalPowerMeasurements;
+     gtMaximalPowerMeasurements.add(elem);
    }
-   public Calc9Parameter getGtPowerFunCoeff() {
-     return this.gtPowerFunCoeff;
+   public boolean removeGtMaximalPowerMeasurements(CompStatMaxPtoAmbientTemperature elem) {
+     List oldList = this.gtMaximalPowerMeasurements;
+     boolean result = gtMaximalPowerMeasurements.remove(elem);
+     return result;
    }
+   public void clearAllGtMaximalPowerMeasurements() {
+     List oldList = this.gtMaximalPowerMeasurements;
+     gtMaximalPowerMeasurements.clear();
+   }
+   public Iterator getAllGtMaximalPowerMeasurements() {return gtMaximalPowerMeasurements.iterator(); }
+   public List getGtMaximalPowerMeasurements() {return gtMaximalPowerMeasurements; }
+   public void setGtMaximalPowerMeasurements(List l) {gtMaximalPowerMeasurements = l; }
 
 }

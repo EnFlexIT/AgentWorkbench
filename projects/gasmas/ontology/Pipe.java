@@ -7,42 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Pipe
 * @author ontology bean generator
-* @version 2013/02/26, 16:41:10
+* @version 2013/03/7, 00:03:01
 */
 public class Pipe extends Connection{ 
-
-   /**
-* Protege name: lineOfSight
-   */
-   private ValueType lineOfSight;
-   public void setLineOfSight(ValueType value) { 
-    this.lineOfSight=value;
-   }
-   public ValueType getLineOfSight() {
-     return this.lineOfSight;
-   }
-
-   /**
-* Protege name: pressureMax
-   */
-   private ValueType pressureMax;
-   public void setPressureMax(ValueType value) { 
-    this.pressureMax=value;
-   }
-   public ValueType getPressureMax() {
-     return this.pressureMax;
-   }
-
-   /**
-* Protege name: heatTransferCoefficient
-   */
-   private ValueType heatTransferCoefficient;
-   public void setHeatTransferCoefficient(ValueType value) { 
-    this.heatTransferCoefficient=value;
-   }
-   public ValueType getHeatTransferCoefficient() {
-     return this.heatTransferCoefficient;
-   }
 
    /**
 * Protege name: roughness
@@ -53,6 +20,17 @@ public class Pipe extends Connection{
    }
    public ValueType getRoughness() {
      return this.roughness;
+   }
+
+   /**
+* Protege name: Length
+   */
+   private ValueType length;
+   public void setLength(ValueType value) { 
+    this.length=value;
+   }
+   public ValueType getLength() {
+     return this.length;
    }
 
    /**
@@ -67,14 +45,36 @@ public class Pipe extends Connection{
    }
 
    /**
-* Protege name: Length
+* Protege name: heatTransferCoefficient
    */
-   private ValueType length;
-   public void setLength(ValueType value) { 
-    this.length=value;
+   private ValueType heatTransferCoefficient;
+   public void setHeatTransferCoefficient(ValueType value) { 
+    this.heatTransferCoefficient=value;
    }
-   public ValueType getLength() {
-     return this.length;
+   public ValueType getHeatTransferCoefficient() {
+     return this.heatTransferCoefficient;
+   }
+
+   /**
+* Protege name: pressureMax
+   */
+   private ValueType pressureMax;
+   public void setPressureMax(ValueType value) { 
+    this.pressureMax=value;
+   }
+   public ValueType getPressureMax() {
+     return this.pressureMax;
+   }
+
+   /**
+* Protege name: lineOfSight
+   */
+   private ValueType lineOfSight;
+   public void setLineOfSight(ValueType value) { 
+    this.lineOfSight=value;
+   }
+   public ValueType getLineOfSight() {
+     return this.lineOfSight;
    }
 
 }

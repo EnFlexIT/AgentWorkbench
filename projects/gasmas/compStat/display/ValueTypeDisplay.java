@@ -30,20 +30,17 @@ package gasmas.compStat.display;
 
 import gasmas.ontology.ValueType;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import agentgui.core.common.KeyAdapter4Numbers;
-
-import java.awt.Insets;
-import java.awt.event.KeyAdapter;
-import java.awt.BorderLayout;
-
-public class ValueTypeDisplay extends JPanel {
+public class ValueTypeDisplay extends ParameterDisplay {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -56,9 +53,6 @@ public class ValueTypeDisplay extends JPanel {
 	private JTextField jTextFieldValue = null;
 	private JTextField jTextFieldUnit = null;
 
-	private KeyAdapter4Numbers keyAdapter4FloatNumbers = null;  //  @jve:decl-index=0:
-	
-	
 	/**
 	 * This is the default constructor
 	 */
@@ -129,7 +123,7 @@ public class ValueTypeDisplay extends JPanel {
 			gridBagConstraints2.gridx = -1;
 			gridBagConstraints2.gridy = -1;
 			gridBagConstraints2.weightx = 0.5;
-			gridBagConstraints2.insets = new Insets(0, 5, 0, 5);
+			gridBagConstraints2.insets = new Insets(0, 2, 0, 0);
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 			gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints1.gridx = -1;
@@ -151,8 +145,9 @@ public class ValueTypeDisplay extends JPanel {
 	private JTextField getJTextFieldValue() {
 		if (jTextFieldValue == null) {
 			jTextFieldValue = new JTextField();
-			jTextFieldValue.setPreferredSize(new Dimension(100, 26));
+			jTextFieldValue.setPreferredSize(new Dimension(60, 26));
 			jTextFieldValue.addKeyListener(this.getKeyAdapter4FloatNumbers());
+			jTextFieldValue.addKeyListener(this.getKeyAdapter4Changes());
 		}
 		return jTextFieldValue;
 	}
@@ -163,19 +158,38 @@ public class ValueTypeDisplay extends JPanel {
 	private JTextField getJTextFieldUnit() {
 		if (jTextFieldUnit == null) {
 			jTextFieldUnit = new JTextField();
-			jTextFieldUnit.setPreferredSize(new Dimension(100, 26));
+			jTextFieldUnit.setPreferredSize(new Dimension(60, 26));
+			jTextFieldUnit.addKeyListener(this.getKeyAdapter4Changes());
 		}
 		return jTextFieldUnit;
 	}
-	/**
-	 * Returns a key adapter for integer numbers.
-	 * @return the key adapter for integer numbers
+
+	/* (non-Javadoc)
+	 * @see gasmas.compStat.display.ParameterDisplay#valueChangedInJTextField(java.lang.Object)
 	 */
-	private KeyAdapter getKeyAdapter4FloatNumbers(){
-		if (keyAdapter4FloatNumbers==null) {
-			keyAdapter4FloatNumbers = new KeyAdapter4Numbers(true);
+	@Override
+	public void valueChangedInJTextField(JTextField source) {
+		String parameterDescription = "valueType";
+		if (source==this.getJTextFieldValue()) {
+			Float floatValue = this.parseFloat(getJTextFieldValue().getText());
+			this.myValueType.setValue(floatValue);
+			
+		} else if (source==this.getJTextFieldUnit()) {
+			this.myValueType.setUnit(getJTextFieldUnit().getText());
 		}
-		return keyAdapter4FloatNumbers;
+		this.informListener(parameterDescription, this.myValueType);
+	}
+	
+	@Override
+	public Object getParameter(String parameterDescription) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setParameter(String parameterDescription, Object value) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

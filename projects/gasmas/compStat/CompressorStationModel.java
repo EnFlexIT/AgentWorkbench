@@ -34,6 +34,7 @@ import gasmas.ontology.CompStatDrive;
 import gasmas.ontology.ElectricMotor;
 import gasmas.ontology.GasDrivenMotor;
 import gasmas.ontology.GasTurbine;
+import gasmas.ontology.GridComponent;
 import gasmas.ontology.PistonCompressor;
 import gasmas.ontology.SteamTurbine;
 import gasmas.ontology.TurboCompressor;
@@ -300,6 +301,56 @@ public class CompressorStationModel extends Observable {
 		}
 		
 	}
-	
+
+	/**
+	 * Returns a compressor station component specified by its ID.
+	 *
+	 * @param componentID the compressor id
+	 * @return the component
+	 */
+	public GridComponent getComponent(String componentID) {
+		GridComponent component = null;
+		List compressorStationComponents = this.getCompStat().getCompressorStationComponents();
+		for (int i = 0; i < compressorStationComponents.size(); i++) {
+			GridComponent listComponent = (GridComponent) compressorStationComponents.get(i);
+			if (listComponent.getID().equals(componentID)) {
+				component = listComponent;
+				break;
+			}
+		}
+		return component;
+	}
+
+	/**
+	 * Update component.
+	 * @param updatedComponent the component
+	 */
+	public void updateComponent(GridComponent updatedComponent) {
+		
+		List componentList = null;
+		if (updatedComponent instanceof TurboCompressor) {
+			componentList = this.getCompStat().getTurboCompressor();
+		} else if (updatedComponent instanceof PistonCompressor) {
+			componentList = this.getCompStat().getPistonCompressor();
+		} else if (updatedComponent instanceof GasTurbine) {
+			componentList = this.getCompStat().getGasTurbines();
+		} else if (updatedComponent instanceof GasDrivenMotor) {
+			componentList = this.getCompStat().getGasDrivenMotors();
+		} else if (updatedComponent instanceof ElectricMotor) {
+			componentList = this.getCompStat().getElectricMotors();
+		} else if (updatedComponent instanceof SteamTurbine) {
+			componentList = this.getCompStat().getSteamTurbines();
+		}
+		
+		// --- Run through the list found -----------------
+		for (int i = 0; i < componentList.size(); i++) {
+			GridComponent listComponent = (GridComponent) componentList.get(i);
+			if (listComponent.getID().equals(updatedComponent.getID())) {
+				listComponent = updatedComponent;
+				break;
+			}
+		}
+
+	}
 	
 }

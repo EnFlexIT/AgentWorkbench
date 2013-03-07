@@ -7,41 +7,20 @@ import jade.core.*;
 /**
 * Protege name: TurboCompressor
 * @author ontology bean generator
-* @version 2013/02/26, 16:41:10
+* @version 2013/03/7, 00:03:01
 */
 public class TurboCompressor extends CompStatCompressor{ 
 
    /**
-* Protege name: efficiencyOfChokeline
+* Protege name: surgeline_coeff
    */
-   private float efficiencyOfChokeline;
-   public void setEfficiencyOfChokeline(float value) { 
-    this.efficiencyOfChokeline=value;
+   private Calc3Parameter surgeline_coeff;
+   public void setSurgeline_coeff(Calc3Parameter value) { 
+    this.surgeline_coeff=value;
    }
-   public float getEfficiencyOfChokeline() {
-     return this.efficiencyOfChokeline;
+   public Calc3Parameter getSurgeline_coeff() {
+     return this.surgeline_coeff;
    }
-
-   /**
-* Protege name: settlelineMeasurements
-   */
-   private List settlelineMeasurements = new ArrayList();
-   public void addSettlelineMeasurements(CompStatTcMeasurement elem) { 
-     List oldList = this.settlelineMeasurements;
-     settlelineMeasurements.add(elem);
-   }
-   public boolean removeSettlelineMeasurements(CompStatTcMeasurement elem) {
-     List oldList = this.settlelineMeasurements;
-     boolean result = settlelineMeasurements.remove(elem);
-     return result;
-   }
-   public void clearAllSettlelineMeasurements() {
-     List oldList = this.settlelineMeasurements;
-     settlelineMeasurements.clear();
-   }
-   public Iterator getAllSettlelineMeasurements() {return settlelineMeasurements.iterator(); }
-   public List getSettlelineMeasurements() {return settlelineMeasurements; }
-   public void setSettlelineMeasurements(List l) {settlelineMeasurements = l; }
 
    /**
 * Protege name: chokeline_coeff
@@ -76,6 +55,38 @@ public class TurboCompressor extends CompStatCompressor{
    public void setCharacteristicDiagramMeasurements(List l) {characteristicDiagramMeasurements = l; }
 
    /**
+* Protege name: settlelineMeasurements
+   */
+   private List settlelineMeasurements = new ArrayList();
+   public void addSettlelineMeasurements(CompStatTcMeasurement elem) { 
+     List oldList = this.settlelineMeasurements;
+     settlelineMeasurements.add(elem);
+   }
+   public boolean removeSettlelineMeasurements(CompStatTcMeasurement elem) {
+     List oldList = this.settlelineMeasurements;
+     boolean result = settlelineMeasurements.remove(elem);
+     return result;
+   }
+   public void clearAllSettlelineMeasurements() {
+     List oldList = this.settlelineMeasurements;
+     settlelineMeasurements.clear();
+   }
+   public Iterator getAllSettlelineMeasurements() {return settlelineMeasurements.iterator(); }
+   public List getSettlelineMeasurements() {return settlelineMeasurements; }
+   public void setSettlelineMeasurements(List l) {settlelineMeasurements = l; }
+
+   /**
+* Protege name: efficiencyOfChokeline
+   */
+   private float efficiencyOfChokeline;
+   public void setEfficiencyOfChokeline(float value) { 
+    this.efficiencyOfChokeline=value;
+   }
+   public float getEfficiencyOfChokeline() {
+     return this.efficiencyOfChokeline;
+   }
+
+   /**
 * Protege name: n_isoline_coeff
    */
    private Calc9Parameter n_isoline_coeff;
@@ -95,17 +106,6 @@ public class TurboCompressor extends CompStatCompressor{
    }
    public Calc9Parameter getEta_ad_isoline_coeff() {
      return this.eta_ad_isoline_coeff;
-   }
-
-   /**
-* Protege name: surgeline_coeff
-   */
-   private Calc3Parameter surgeline_coeff;
-   public void setSurgeline_coeff(Calc3Parameter value) { 
-    this.surgeline_coeff=value;
-   }
-   public Calc3Parameter getSurgeline_coeff() {
-     return this.surgeline_coeff;
    }
 
 }
