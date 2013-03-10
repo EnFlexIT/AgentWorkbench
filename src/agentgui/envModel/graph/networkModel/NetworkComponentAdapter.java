@@ -28,6 +28,9 @@
  */
 package agentgui.envModel.graph.networkModel;
 
+import jade.core.AID;
+import jade.lang.acl.ACLMessage;
+
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -35,6 +38,7 @@ import javax.swing.JComponent;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.visualisation.DisplayAgent;
 
 /**
  * The Class NetworkComponentAdapter can be used in order to extend the local 
@@ -132,5 +136,62 @@ public abstract class NetworkComponentAdapter {
 	 * @return the JPopup menu elements
 	 */
 	public abstract Vector<JComponent> getJPopupMenuElements();
+
+	
+	/**
+	 * Gets the current display agent.
+	 * @see DisplayAgent
+	 * 
+	 * @return the display agent
+	 */
+	public DisplayAgent getDisplayAgent() {
+		DisplayAgent displayAgent = null;
+		if (graphController!=null) {
+			displayAgent = (DisplayAgent) this.graphController.getEnvironmentControllerAgent();
+		}
+		return displayAgent;
+	}
+	/**
+	 * This method can be used to transfer any kind of information to the Manager of the current environment model.
+	 *
+	 * @param notification the notification
+	 * @return true, if successful
+	 */
+	public boolean sendManagerNotification(Object notification) {
+		boolean successful = false;
+		DisplayAgent displayAgent = this.getDisplayAgent();
+		if (displayAgent!=null) {
+			successful = displayAgent.sendManagerNotification(notification);
+		}
+		return successful;
+	}
+	/**
+	 * This method can be used to transfer any kind of information to one member of the current environment model.
+	 *
+	 * @param receiverAID the AID of receiver agent
+	 * @param notification the notification
+	 * @return true, if successful
+	 */
+	public boolean sendAgentNotification(AID receiverAID, Object notification) {
+		boolean successful = false;
+		DisplayAgent displayAgent = this.getDisplayAgent();
+		if (displayAgent!=null) {
+			successful = displayAgent.sendAgentNotification(receiverAID, notification);
+		}
+		return successful;
+	}
+	/**
+	 *  Send an <b>ACL</b> message to another agent. This methods sends	 a message to the agent specified 
+	 *  in <code>:receiver</code> message field (more than one agent can be specified as message receiver).
+	 *  
+	 *  @see jade.lang.acl.ACLMessage
+	 *  @param msg An ACL message object containing the actual message to send.	 
+	 */
+	public void send(ACLMessage msg) {
+		DisplayAgent displayAgent = this.getDisplayAgent();
+		if (displayAgent!=null) {
+			displayAgent.send(msg);
+		}
+	}
 	
 }

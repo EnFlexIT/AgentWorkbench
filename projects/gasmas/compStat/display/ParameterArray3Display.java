@@ -169,10 +169,12 @@ public class ParameterArray3Display extends ParameterDisplay {
 		return idealSize;
 	}
 
-	/* (non-Javadoc)
-	 * @see gasmas.compStat.display.ParameterDisplay#getParameter(java.lang.String)
+	/**
+	 * Returns a parameter value specified by its display number as String.
+	 *
+	 * @param parameterDescription the parameter description
+	 * @return the parameter
 	 */
-	@Override
 	public Object getParameter(String parameterDescription) {
 		Float currValue = null;
 		int noOfParameter = Integer.parseInt(parameterDescription);
@@ -183,10 +185,12 @@ public class ParameterArray3Display extends ParameterDisplay {
 		return currValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see gasmas.compStat.display.ParameterDisplay#setParameter(java.lang.String, java.lang.Object)
+	/**
+	 * Sets a parameter value specified by its display number as String.
+	 *
+	 * @param parameterDescription the parameter description
+	 * @param value the value
 	 */
-	@Override
 	public void setParameter(String parameterDescription, Object value) {
 		int noOfParameter = Integer.parseInt(parameterDescription);
 		JTextField jTextFieldCoeff = this.parameterFields.get(noOfParameter);

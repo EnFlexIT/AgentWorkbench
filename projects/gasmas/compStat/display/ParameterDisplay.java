@@ -85,24 +85,6 @@ public abstract class ParameterDisplay extends JPanel {
 	}
 	
 	/**
-	 * Returns a parameter value.
-	 *
-	 * @param parameterDescription the parameter description
-	 * @return the parameter
-	 */
-	public abstract Object getParameter(String parameterDescription);
-	
-	/**
-	 * Sets a parameter value.
-	 *
-	 * @param parameterDescription the parameter description
-	 * @param value the value
-	 * @return the parameter
-	 */
-	public abstract void setParameter(String parameterDescription, Object value);
-	
-	
-	/**
 	 * Gets the key adapter that is listening to changes in a JComponent.
 	 * Basically this can be applied to JTextFields 
 	 * @return the key adapter for changes

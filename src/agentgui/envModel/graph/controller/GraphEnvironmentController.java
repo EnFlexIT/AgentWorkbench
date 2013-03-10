@@ -321,7 +321,7 @@ public class GraphEnvironmentController extends EnvironmentController {
      */
     private void updateGraphFileName() {
 		this.baseFileName = this.getProject().getSimulationSetupCurrent();
-		this.getCurrentSimSetup().setEnvironmentFileName(baseFileName + ".graphml");
+		this.getCurrentSimulationSetup().setEnvironmentFileName(baseFileName + ".graphml");
     }
 
     /*
@@ -332,7 +332,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     protected void loadEnvironment() {
 
     	this.networkModel = new NetworkModel();
-    	String fileName = getCurrentSimSetup().getEnvironmentFileName();
+    	String fileName = getCurrentSimulationSetup().getEnvironmentFileName();
     	
     	Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     	Application.setStatusBar(Language.translate("Lade Setup") + " :" + fileName + " ...");

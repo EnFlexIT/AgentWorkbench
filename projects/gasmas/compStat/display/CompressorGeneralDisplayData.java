@@ -345,17 +345,6 @@ public class CompressorGeneralDisplayData extends ParameterDisplay implements Pa
 		return valueTypeDisplaySpeedMax;
 	}
 	
-	@Override
-	public Object getParameter(String parameterDescription) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public void setParameter(String parameterDescription, Object value) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	/* (non-Javadoc)
 	 * @see gasmas.compStat.display.ParameterListener#parameterChanged(gasmas.compStat.display.ParameterDisplay, java.lang.String, java.lang.Object)
 	 */

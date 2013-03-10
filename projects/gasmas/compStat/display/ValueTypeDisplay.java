@@ -180,16 +180,4 @@ public class ValueTypeDisplay extends ParameterDisplay {
 		this.informListener(parameterDescription, this.myValueType);
 	}
 	
-	@Override
-	public Object getParameter(String parameterDescription) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setParameter(String parameterDescription, Object value) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

@@ -48,8 +48,8 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.time.TimeModelBaseExecutionElements;
 import agentgui.simulationService.time.TimeModel;
+import agentgui.simulationService.time.TimeModelBaseExecutionElements;
 import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelContinuousExecutionElements;
 import agentgui.simulationService.time.TimeModelDiscrete;
@@ -148,19 +148,35 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	protected abstract EnvironmentController createNewEnvironmentController();
 	
 	/**
-	 * Sets the current EnvironmentController.
-	 * @param myEnvironmentController the new environment controller
+	 * Sets the current EnvironmentController of the agent. In case that the EnvironmentController 
+	 * is not null, in turn this agent will be set as the controlling instance of the EnvironmentController.
+	 * 
+	 * @see EnvironmentController#setEnvironmentControllerAgent(AbstractDisplayAgent)
+	 * 
+	 * @param newEnvironmentController the new environment controller
 	 */
-	protected void setEnvironmentController(EnvironmentController myEnvironmentController) {
-		this.myEnvironmentController = myEnvironmentController;
+	protected void setEnvironmentController(EnvironmentController newEnvironmentController) {
+		this.myEnvironmentController = newEnvironmentController;
+		if (this.myEnvironmentController!=null) {
+			this.myEnvironmentController.setEnvironmentControllerAgent(this);	
+		}
 	}
 	/**
-	 * Returns the current or creates a new EnvironmentController.
+	 * Returns the current EnvironmentController. In case that the EnvrionmentController is null, this
+	 * method will invoke {@link #createNewEnvironmentController()} and will set this agent as the 
+	 * controlling instance of the EnvironmentController.
+	 * 
+	 * @see #createNewEnvironmentController()
+	 * @see EnvironmentController#setEnvironmentControllerAgent(AbstractDisplayAgent)
+	 * 
 	 * @return the environment controller
 	 */
 	protected EnvironmentController getEnvironmentController() {
 		if (this.myEnvironmentController==null) {
 			this.myEnvironmentController = this.createNewEnvironmentController();
+			if (this.myEnvironmentController!=null) {
+				this.myEnvironmentController.setEnvironmentControllerAgent(this);	
+			}
 		}
 		return myEnvironmentController;
 	}

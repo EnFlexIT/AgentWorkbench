@@ -28,6 +28,8 @@
  */
 package agentgui.core.environment;
 
+import jade.lang.acl.ACLMessage;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.Observable;
@@ -40,11 +42,13 @@ import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
+import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.agents.AbstractDisplayAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModel;
 
 /**
- * This class has to be extended if you are writing your own environment model and visulization.
+ * This class has to be extended if you are writing your own environment model and visualisation.
  * This class manages the environment model and notifies the observers about the changes to the environment model.
  * 
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
@@ -54,6 +58,10 @@ public abstract class EnvironmentController extends Observable implements Observ
 
 	/** The current project */
 	private Project currProject = null;
+
+	/** The {@link AbstractDisplayAgent} that is currently using this EnvironmentController. */
+	private AbstractDisplayAgent myEnvironmentControllerAgent = null;
+
 	/** The current environment panel. */
 	private EnvironmentPanel myEnvironmentPanel = null;
 	/** The current TimeModel. */
@@ -70,12 +78,14 @@ public abstract class EnvironmentController extends Observable implements Observ
 	private DefaultListModel agents2Start = new DefaultListModel();
 
 	
+	
 	/**
 	 * Constructor for a new environment controller
 	 * for displaying the current environment model
 	 * during a running simulation.
 	 */
-	public EnvironmentController() { }
+	public EnvironmentController() {
+	}
 	/**
 	 * Constructor for a controller within the Agent.GUI application.
 	 * @param project the current project
@@ -123,8 +133,11 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * Returns the current simulation setup
 	 * @return the current simulation setup
 	 */
-	protected SimulationSetup getCurrentSimSetup(){
-		return currProject.getSimulationSetups().getCurrSimSetup();
+	protected SimulationSetup getCurrentSimulationSetup(){
+		if (currProject!=null) {
+			return currProject.getSimulationSetups().getCurrSimSetup();
+		}
+		return null;
 	}
 	
 	/**
@@ -236,7 +249,6 @@ public abstract class EnvironmentController extends Observable implements Observ
 			 ac4s = (AgentClassElement4SimStart) this.agents2Start.getElementAt(i); 
 			 ac4s.setPostionNo(counter);
 			 counter++;
-			 //this.agents2Start.setElementAt(ac4s, i);
 		}
 	}
 	
@@ -248,7 +260,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * or just use an individual name   
 	 */
 	protected void registerDefaultListModel4SimulationStart(String listName) {
-		this.agents2Start = this.getCurrentSimSetup().getAgentDefaultListModel(this.agents2Start, listName);
+		this.agents2Start = this.getCurrentSimulationSetup().getAgentDefaultListModel(this.agents2Start, listName);
 	}
 	
 	/**
@@ -367,5 +379,29 @@ public abstract class EnvironmentController extends Observable implements Observ
 	  * @return a copy of the environment model
 	  */
 	public abstract Object getAbstractEnvironmentModelCopy();
+	
+	
+	/**
+	 * Sets the {@link AbstractDisplayAgent} that is using this {@link EnvironmentController} 
+	 * In case that the agency is executed. Using this instance you're able to translate 
+	 * user interactions into {@link ACLMessage} and {@link SimulationService}-notifications
+	 * that can change settings and parameters during the runtime of the agency.
+	 * 
+	 * @param myEnvironmentControllerAgent the environment controller agent
+	 */
+	public void setEnvironmentControllerAgent(AbstractDisplayAgent myEnvironmentControllerAgent) {
+		this.myEnvironmentControllerAgent = myEnvironmentControllerAgent;
+	}
+	/**
+	 * Returns the {@link AbstractDisplayAgent} that is using this EnvironmentController 
+	 * in case that the agency is executed. Using this instance you're able to translate 
+	 * user interactions into {@link ACLMessage} and {@link SimulationService}-notifications 
+	 * that can change settings and parameters during the runtime of the agency.
+	 * 
+	 * @return the environment controller agent
+	 */
+	public AbstractDisplayAgent getEnvironmentControllerAgent() {
+		return myEnvironmentControllerAgent;
+	}
 	
 }

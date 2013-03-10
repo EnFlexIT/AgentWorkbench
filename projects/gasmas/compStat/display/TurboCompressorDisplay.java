@@ -52,6 +52,9 @@ public class TurboCompressorDisplay extends JTabbedPane implements ParameterList
 	private JScrollPane jScrollPaneData = null;
 	private TurboCompressorDisplayData jPanelData = null;
 	
+	private JScrollPane jScrollPaneMeasurements = null;
+	private TurboCompressorDisplayMeasurments jPanelMeasurements = null;
+	
 
 	/**
 	 * Instantiates a new turbo compressor display.
@@ -71,7 +74,8 @@ public class TurboCompressorDisplay extends JTabbedPane implements ParameterList
         this.setSize(new Dimension(554, 427));
         this.setTabPlacement(JTabbedPane.BOTTOM);
 		this.addTab(Language.translate("Characteristic Diagram", Language.EN), null, getJPanelCharacteristicDiagram(), null);	
-		this.addTab(Language.translate("Data", Language.EN), null, getJScrollPaneData(), null);
+		this.addTab(Language.translate("Settings", Language.EN), null, getJScrollPaneData(), null);
+		this.addTab(Language.translate("Measurments", Language.EN), null, getJScrollPaneMeasurements(), null);
 	}
 	
 	/**
@@ -125,7 +129,33 @@ public class TurboCompressorDisplay extends JTabbedPane implements ParameterList
 		}
 		return jPanelData;
 	}
-
+	
+	/**
+	 * This method initializes jScrollPaneData	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getJScrollPaneMeasurements() {
+		if (jScrollPaneMeasurements == null) {
+			jScrollPaneMeasurements = new JScrollPane();
+			jScrollPaneMeasurements.setViewportView(this.getJPanelMeasurements());
+		}
+		return jScrollPaneMeasurements;
+	}
+	/**
+	 * This method initializes jPanelData	
+	 * @return javax.swing.JPanel	
+	 */
+	private TurboCompressorDisplayMeasurments getJPanelMeasurements() {
+		if (jPanelMeasurements == null) {
+			jPanelMeasurements = new TurboCompressorDisplayMeasurments(compressorStationModel, turboCompressorID);
+			jPanelMeasurements.addParameterListener(this);
+		}
+		return jPanelMeasurements;
+	}
+	
+	/* (non-Javadoc)
+	 * @see gasmas.compStat.display.ParameterListener#subParameterChanged(gasmas.compStat.display.ParameterDisplay, java.lang.String, java.lang.Object)
+	 */
 	@Override
 	public void subParameterChanged(ParameterDisplay display, String parameterDescription, Object value) {
 		

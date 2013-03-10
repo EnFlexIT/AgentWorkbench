@@ -171,10 +171,12 @@ public class ParameterArray9Display extends ParameterDisplay implements Paramete
 		return idealSize;
 	}
 	
-	/* (non-Javadoc)
-	 * @see gasmas.compStat.display.ParameterDisplay#getParameter(java.lang.String)
+	/**
+	 * Returns a parameter value specified by its display number as String.
+	 *
+	 * @param parameterDescription the parameter description
+	 * @return the parameter
 	 */
-	@Override
 	public Object getParameter(String parameterDescription) {
 		Integer noOfParameter = Integer.parseInt(parameterDescription);
 		Float currValue = null;
@@ -188,10 +190,12 @@ public class ParameterArray9Display extends ParameterDisplay implements Paramete
 		return currValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see gasmas.compStat.display.ParameterDisplay#setParameter(java.lang.String, java.lang.Object)
+	/**
+	 * Sets a parameter value specified by its display number as String.
+	 *
+	 * @param parameterDescription the parameter description
+	 * @param value the value
 	 */
-	@Override
 	public void setParameter(String parameterDescription, Object value) {
 		Integer noOfParameter = Integer.parseInt(parameterDescription);
 		if (noOfParameter>0 && noOfParameter<=3) {
