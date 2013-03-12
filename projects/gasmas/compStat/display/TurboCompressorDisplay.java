@@ -34,7 +34,6 @@ import gasmas.ontology.TurboCompressor;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
@@ -48,10 +47,9 @@ public class TurboCompressorDisplay extends JTabbedPane implements ParameterList
 	private String turboCompressorID = null;
 	private TurboCompressor myTurboCompressor = null;  //  @jve:decl-index=0:
 
-	private JPanel jPanelCharacteristicDiagram = null;
+	private TurboCompressorDisplayChart jPanelCharacteristicDiagram = null;
 	private JScrollPane jScrollPaneData = null;
 	private TurboCompressorDisplayData jPanelData = null;
-	
 	private TurboCompressorDisplayMeasurements jPanelMeasurements = null;
 	
 
@@ -98,9 +96,9 @@ public class TurboCompressorDisplay extends JTabbedPane implements ParameterList
 	 * This method initializes jPanelCharacteristicDiagram	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getJPanelCharacteristicDiagram() {
+	private TurboCompressorDisplayChart getJPanelCharacteristicDiagram() {
 		if (jPanelCharacteristicDiagram == null) {
-			jPanelCharacteristicDiagram = new JPanel();
+			jPanelCharacteristicDiagram = new TurboCompressorDisplayChart(compressorStationModel, turboCompressorID);
 			jPanelCharacteristicDiagram.setLayout(new GridBagLayout());
 		}
 		return jPanelCharacteristicDiagram;
