@@ -1,4 +1,4 @@
-; Thu Mar 07 00:30:11 CET 2013
+; Tue Mar 12 13:19:18 CET 2013
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -179,7 +179,8 @@
 
 ([ValueType] of  %3AJADE-CLASS
 
-	(%3AJADE-IGNORE FALSE))
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "@Override\npublic String toString() {\n	String display = ((Float)this.getValue()).toString();\n	if (this.getUnit()==null || this.getUnit().equals(\"\")) {\n		display += \" []\";\n	} else {\n		display += \" [\" + this.getUnit() + \"]\";\n	}\n	return display;\n}"))
 
 ([Valve] of  %3AJADE-CLASS
 

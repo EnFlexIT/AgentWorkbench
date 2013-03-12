@@ -7,9 +7,64 @@ import jade.core.*;
 /**
 * Protege name: ControlValve
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:56
 */
 public class ControlValve extends Valve{ 
+
+   /**
+* Protege name: gasPreheheaterExisting
+   */
+   private boolean gasPreheheaterExisting;
+   public void setGasPreheheaterExisting(boolean value) { 
+    this.gasPreheheaterExisting=value;
+   }
+   public boolean getGasPreheheaterExisting() {
+     return this.gasPreheheaterExisting;
+   }
+
+   /**
+* Protege name: dragFactorOut
+   */
+   private float dragFactorOut;
+   public void setDragFactorOut(float value) { 
+    this.dragFactorOut=value;
+   }
+   public float getDragFactorOut() {
+     return this.dragFactorOut;
+   }
+
+   /**
+* Protege name: pressureInMin
+   */
+   private ValueType pressureInMin;
+   public void setPressureInMin(ValueType value) { 
+    this.pressureInMin=value;
+   }
+   public ValueType getPressureInMin() {
+     return this.pressureInMin;
+   }
+
+   /**
+* Protege name: pressureDifferentialMin
+   */
+   private ValueType pressureDifferentialMin;
+   public void setPressureDifferentialMin(ValueType value) { 
+    this.pressureDifferentialMin=value;
+   }
+   public ValueType getPressureDifferentialMin() {
+     return this.pressureDifferentialMin;
+   }
+
+   /**
+* Protege name: diameterOut
+   */
+   private ValueType diameterOut;
+   public void setDiameterOut(ValueType value) { 
+    this.diameterOut=value;
+   }
+   public ValueType getDiameterOut() {
+     return this.diameterOut;
+   }
 
    /**
 * Protege name: increasedOutputTemperature
@@ -56,58 +111,14 @@ public class ControlValve extends Valve{
    }
 
    /**
-* Protege name: dragFactorOut
+* Protege name: dragFactorIn
    */
-   private float dragFactorOut;
-   public void setDragFactorOut(float value) { 
-    this.dragFactorOut=value;
+   private float dragFactorIn;
+   public void setDragFactorIn(float value) { 
+    this.dragFactorIn=value;
    }
-   public float getDragFactorOut() {
-     return this.dragFactorOut;
-   }
-
-   /**
-* Protege name: pressureDifferentialMin
-   */
-   private ValueType pressureDifferentialMin;
-   public void setPressureDifferentialMin(ValueType value) { 
-    this.pressureDifferentialMin=value;
-   }
-   public ValueType getPressureDifferentialMin() {
-     return this.pressureDifferentialMin;
-   }
-
-   /**
-* Protege name: pressureInMin
-   */
-   private ValueType pressureInMin;
-   public void setPressureInMin(ValueType value) { 
-    this.pressureInMin=value;
-   }
-   public ValueType getPressureInMin() {
-     return this.pressureInMin;
-   }
-
-   /**
-* Protege name: gasPreheheaterExisting
-   */
-   private boolean gasPreheheaterExisting;
-   public void setGasPreheheaterExisting(boolean value) { 
-    this.gasPreheheaterExisting=value;
-   }
-   public boolean getGasPreheheaterExisting() {
-     return this.gasPreheheaterExisting;
-   }
-
-   /**
-* Protege name: diameterOut
-   */
-   private ValueType diameterOut;
-   public void setDiameterOut(ValueType value) { 
-    this.diameterOut=value;
-   }
-   public ValueType getDiameterOut() {
-     return this.diameterOut;
+   public float getDragFactorIn() {
+     return this.dragFactorIn;
    }
 
    /**
@@ -119,17 +130,6 @@ public class ControlValve extends Valve{
    }
    public boolean getInternalBypassRequired() {
      return this.internalBypassRequired;
-   }
-
-   /**
-* Protege name: dragFactorIn
-   */
-   private float dragFactorIn;
-   public void setDragFactorIn(float value) { 
-    this.dragFactorIn=value;
-   }
-   public float getDragFactorIn() {
-     return this.dragFactorIn;
    }
 
 }

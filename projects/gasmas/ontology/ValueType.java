@@ -8,10 +8,21 @@ import jade.core.*;
 /**
 * Protege name: ValueType
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:57
 */
 public class ValueType implements Concept {
 
+//////////////////////////// User code
+@Override
+public String toString() {
+	String display = ((Float)this.getValue()).toString();
+	if (this.getUnit()==null || this.getUnit().equals("")) {
+		display += " []";
+	} else {
+		display += " [" + this.getUnit() + "]";
+	}
+	return display;
+}
    /**
 * Protege name: Unit
    */

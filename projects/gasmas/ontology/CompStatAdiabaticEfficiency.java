@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: CompStatAdiabaticEfficiency
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:57
 */
 public class CompStatAdiabaticEfficiency implements Concept {
+
+   /**
+* Protege name: adiabaticEfficiency
+   */
+   private String adiabaticEfficiency;
+   public void setAdiabaticEfficiency(String value) { 
+    this.adiabaticEfficiency=value;
+   }
+   public String getAdiabaticEfficiency() {
+     return this.adiabaticEfficiency;
+   }
 
    /**
 * Protege name: measurements
@@ -32,16 +43,5 @@ public class CompStatAdiabaticEfficiency implements Concept {
    public Iterator getAllMeasurements() {return measurements.iterator(); }
    public List getMeasurements() {return measurements; }
    public void setMeasurements(List l) {measurements = l; }
-
-   /**
-* Protege name: adiabaticEfficiency
-   */
-   private String adiabaticEfficiency;
-   public void setAdiabaticEfficiency(String value) { 
-    this.adiabaticEfficiency=value;
-   }
-   public String getAdiabaticEfficiency() {
-     return this.adiabaticEfficiency;
-   }
 
 }

@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: CompStatMaxPtoAmbientTemperature
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:56
 */
 public class CompStatMaxPtoAmbientTemperature implements Concept {
-
-   /**
-* Protege name: temperatureMP
-   */
-   private ValueType temperatureMP;
-   public void setTemperatureMP(ValueType value) { 
-    this.temperatureMP=value;
-   }
-   public ValueType getTemperatureMP() {
-     return this.temperatureMP;
-   }
 
    /**
 * Protege name: measurementsMP
@@ -43,5 +32,16 @@ public class CompStatMaxPtoAmbientTemperature implements Concept {
    public Iterator getAllMeasurementsMP() {return measurementsMP.iterator(); }
    public List getMeasurementsMP() {return measurementsMP; }
    public void setMeasurementsMP(List l) {measurementsMP = l; }
+
+   /**
+* Protege name: temperatureMP
+   */
+   private ValueType temperatureMP;
+   public void setTemperatureMP(ValueType value) { 
+    this.temperatureMP=value;
+   }
+   public ValueType getTemperatureMP() {
+     return this.temperatureMP;
+   }
 
 }

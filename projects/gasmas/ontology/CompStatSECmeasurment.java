@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: CompStatSECmeasurment
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:56
 */
 public class CompStatSECmeasurment implements Concept {
-
-   /**
-* Protege name: fuelConsumption
-   */
-   private ValueType fuelConsumption;
-   public void setFuelConsumption(ValueType value) { 
-    this.fuelConsumption=value;
-   }
-   public ValueType getFuelConsumption() {
-     return this.fuelConsumption;
-   }
 
    /**
 * Protege name: comressorPower
@@ -32,6 +21,17 @@ public class CompStatSECmeasurment implements Concept {
    }
    public ValueType getComressorPower() {
      return this.comressorPower;
+   }
+
+   /**
+* Protege name: fuelConsumption
+   */
+   private ValueType fuelConsumption;
+   public void setFuelConsumption(ValueType value) { 
+    this.fuelConsumption=value;
+   }
+   public ValueType getFuelConsumption() {
+     return this.fuelConsumption;
    }
 
 }

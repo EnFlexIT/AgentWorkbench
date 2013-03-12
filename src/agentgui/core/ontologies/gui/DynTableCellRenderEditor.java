@@ -171,9 +171,9 @@ public class DynTableCellRenderEditor extends AbstractCellEditor implements Tabl
 		// --- Create final display element ------------------------- 
 		JLabel jLabelDisplay = new JLabel(displayNamePrefix + displayName);
 		if (this.dynType.getTypeName().equals(DynType.typeRawType)==true) {
-			jLabelDisplay.setFont(new Font("Arial", Font.PLAIN, 12));
+			jLabelDisplay.setFont(new Font("Dialog", Font.PLAIN, 12));
 		} else {
-			jLabelDisplay.setFont(new Font("Arial", Font.BOLD, 12));
+			jLabelDisplay.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		GraphGlobals.Colors.setTableCellRendererColors(jLabelDisplay, this.rowTable, this.isSelected);
 		

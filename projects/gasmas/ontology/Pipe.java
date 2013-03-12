@@ -7,42 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Pipe
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:56
 */
 public class Pipe extends Connection{ 
-
-   /**
-* Protege name: roughness
-   */
-   private ValueType roughness;
-   public void setRoughness(ValueType value) { 
-    this.roughness=value;
-   }
-   public ValueType getRoughness() {
-     return this.roughness;
-   }
-
-   /**
-* Protege name: Length
-   */
-   private ValueType length;
-   public void setLength(ValueType value) { 
-    this.length=value;
-   }
-   public ValueType getLength() {
-     return this.length;
-   }
-
-   /**
-* Protege name: Diameter
-   */
-   private ValueType diameter;
-   public void setDiameter(ValueType value) { 
-    this.diameter=value;
-   }
-   public ValueType getDiameter() {
-     return this.diameter;
-   }
 
    /**
 * Protege name: heatTransferCoefficient
@@ -75,6 +42,39 @@ public class Pipe extends Connection{
    }
    public ValueType getLineOfSight() {
      return this.lineOfSight;
+   }
+
+   /**
+* Protege name: Diameter
+   */
+   private ValueType diameter;
+   public void setDiameter(ValueType value) { 
+    this.diameter=value;
+   }
+   public ValueType getDiameter() {
+     return this.diameter;
+   }
+
+   /**
+* Protege name: roughness
+   */
+   private ValueType roughness;
+   public void setRoughness(ValueType value) { 
+    this.roughness=value;
+   }
+   public ValueType getRoughness() {
+     return this.roughness;
+   }
+
+   /**
+* Protege name: Length
+   */
+   private ValueType length;
+   public void setLength(ValueType value) { 
+    this.length=value;
+   }
+   public ValueType getLength() {
+     return this.length;
    }
 
 }

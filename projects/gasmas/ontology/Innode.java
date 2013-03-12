@@ -7,19 +7,19 @@ import jade.core.*;
 /**
 * Protege name: Innode
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:57
 */
 public class Innode extends GridComponent{ 
 
    /**
-* Protege name: geoCoordinate
+* Protege name: height
    */
-   private GeoCoordinate geoCoordinate;
-   public void setGeoCoordinate(GeoCoordinate value) { 
-    this.geoCoordinate=value;
+   private ValueType height;
+   public void setHeight(ValueType value) { 
+    this.height=value;
    }
-   public GeoCoordinate getGeoCoordinate() {
-     return this.geoCoordinate;
+   public ValueType getHeight() {
+     return this.height;
    }
 
    /**
@@ -34,17 +34,6 @@ public class Innode extends GridComponent{
    }
 
    /**
-* Protege name: height
-   */
-   private ValueType height;
-   public void setHeight(ValueType value) { 
-    this.height=value;
-   }
-   public ValueType getHeight() {
-     return this.height;
-   }
-
-   /**
 * Protege name: pressureMin
    */
    private ValueType pressureMin;
@@ -53,6 +42,17 @@ public class Innode extends GridComponent{
    }
    public ValueType getPressureMin() {
      return this.pressureMin;
+   }
+
+   /**
+* Protege name: geoCoordinate
+   */
+   private GeoCoordinate geoCoordinate;
+   public void setGeoCoordinate(GeoCoordinate value) { 
+    this.geoCoordinate=value;
+   }
+   public GeoCoordinate getGeoCoordinate() {
+     return this.geoCoordinate;
    }
 
 }

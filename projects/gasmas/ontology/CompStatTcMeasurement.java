@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: CompStatTcMeasurement
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:56
 */
 public class CompStatTcMeasurement implements Concept {
 
    /**
-* Protege name: speed
+* Protege name: adiabaticHead
    */
-   private ValueType speed;
-   public void setSpeed(ValueType value) { 
-    this.speed=value;
+   private ValueType adiabaticHead;
+   public void setAdiabaticHead(ValueType value) { 
+    this.adiabaticHead=value;
    }
-   public ValueType getSpeed() {
-     return this.speed;
+   public ValueType getAdiabaticHead() {
+     return this.adiabaticHead;
    }
 
    /**
@@ -35,14 +35,14 @@ public class CompStatTcMeasurement implements Concept {
    }
 
    /**
-* Protege name: adiabaticHead
+* Protege name: speed
    */
-   private ValueType adiabaticHead;
-   public void setAdiabaticHead(ValueType value) { 
-    this.adiabaticHead=value;
+   private ValueType speed;
+   public void setSpeed(ValueType value) { 
+    this.speed=value;
    }
-   public ValueType getAdiabaticHead() {
-     return this.adiabaticHead;
+   public ValueType getSpeed() {
+     return this.speed;
    }
 
 }

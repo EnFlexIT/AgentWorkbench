@@ -84,12 +84,6 @@ public class ValueTypeDisplay extends ParameterDisplay {
 		if (this.myValueType==null) {
 			this.myValueType = new ValueType();
 		}
-		if (this.getJTextFieldValue().getText()==null || this.getJTextFieldValue().getText().equals("")) {
-			this.myValueType.setValue(0.0F);
-		} else {
-			this.myValueType.setValue(Float.parseFloat(this.getJTextFieldValue().getText()));
-		}
-		this.myValueType.setUnit(this.getJTextFieldUnit().getText());
 		return this.myValueType;
 	}
 	
@@ -172,12 +166,12 @@ public class ValueTypeDisplay extends ParameterDisplay {
 		String parameterDescription = "valueType";
 		if (source==this.getJTextFieldValue()) {
 			Float floatValue = this.parseFloat(getJTextFieldValue().getText());
-			this.myValueType.setValue(floatValue);
+			this.getValueType().setValue(floatValue);
 			
 		} else if (source==this.getJTextFieldUnit()) {
-			this.myValueType.setUnit(getJTextFieldUnit().getText());
+			this.getValueType().setUnit(getJTextFieldUnit().getText());
 		}
-		this.informListener(parameterDescription, this.myValueType);
+		this.informListener(parameterDescription, this.getValueType());
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

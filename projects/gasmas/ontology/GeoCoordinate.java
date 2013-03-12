@@ -9,33 +9,9 @@ import jade.core.*;
    * A set of parameters describing the physical properties of a PropagationPoint.
 * Protege name: GeoCoordinate
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:57
 */
 public class GeoCoordinate implements Concept {
-
-   /**
-   * The geographical y coordinate of the propagation point.
-* Protege name: geoY
-   */
-   private float geoY;
-   public void setGeoY(float value) { 
-    this.geoY=value;
-   }
-   public float getGeoY() {
-     return this.geoY;
-   }
-
-   /**
-   * The geographical x coordinate of the propagation point.
-* Protege name: geoX
-   */
-   private float geoX;
-   public void setGeoX(float value) { 
-    this.geoX=value;
-   }
-   public float getGeoX() {
-     return this.geoX;
-   }
 
    /**
 * Protege name: geoW
@@ -58,6 +34,30 @@ public class GeoCoordinate implements Concept {
    }
    public float getGeoZ() {
      return this.geoZ;
+   }
+
+   /**
+   * The geographical x coordinate of the propagation point.
+* Protege name: geoX
+   */
+   private float geoX;
+   public void setGeoX(float value) { 
+    this.geoX=value;
+   }
+   public float getGeoX() {
+     return this.geoX;
+   }
+
+   /**
+   * The geographical y coordinate of the propagation point.
+* Protege name: geoY
+   */
+   private float geoY;
+   public void setGeoY(float value) { 
+    this.geoY=value;
+   }
+   public float getGeoY() {
+     return this.geoY;
    }
 
 }

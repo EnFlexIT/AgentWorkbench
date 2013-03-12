@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: GridComponent
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:57
 */
 public class GridComponent implements Concept {
 
@@ -20,17 +20,6 @@ public boolean isEmpty() {
 	return false;
 }
    /**
-* Protege name: ID
-   */
-   private String iD;
-   public void setID(String value) { 
-    this.iD=value;
-   }
-   public String getID() {
-     return this.iD;
-   }
-
-   /**
 * Protege name: alias
    */
    private String alias;
@@ -39,6 +28,17 @@ public boolean isEmpty() {
    }
    public String getAlias() {
      return this.alias;
+   }
+
+   /**
+* Protege name: ID
+   */
+   private String iD;
+   public void setID(String value) { 
+    this.iD=value;
+   }
+   public String getID() {
+     return this.iD;
    }
 
 }

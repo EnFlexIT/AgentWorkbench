@@ -7,41 +7,9 @@ import jade.core.*;
 /**
 * Protege name: GasDrivenMotor
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:57
 */
 public class GasDrivenMotor extends CompStatDrive{ 
-
-   /**
-* Protege name: gmSpecificEnergyConsumptionMeasurements
-   */
-   private List gmSpecificEnergyConsumptionMeasurements = new ArrayList();
-   public void addGmSpecificEnergyConsumptionMeasurements(CompStatSECmeasurment elem) { 
-     List oldList = this.gmSpecificEnergyConsumptionMeasurements;
-     gmSpecificEnergyConsumptionMeasurements.add(elem);
-   }
-   public boolean removeGmSpecificEnergyConsumptionMeasurements(CompStatSECmeasurment elem) {
-     List oldList = this.gmSpecificEnergyConsumptionMeasurements;
-     boolean result = gmSpecificEnergyConsumptionMeasurements.remove(elem);
-     return result;
-   }
-   public void clearAllGmSpecificEnergyConsumptionMeasurements() {
-     List oldList = this.gmSpecificEnergyConsumptionMeasurements;
-     gmSpecificEnergyConsumptionMeasurements.clear();
-   }
-   public Iterator getAllGmSpecificEnergyConsumptionMeasurements() {return gmSpecificEnergyConsumptionMeasurements.iterator(); }
-   public List getGmSpecificEnergyConsumptionMeasurements() {return gmSpecificEnergyConsumptionMeasurements; }
-   public void setGmSpecificEnergyConsumptionMeasurements(List l) {gmSpecificEnergyConsumptionMeasurements = l; }
-
-   /**
-* Protege name: gmPowerFunCoeff
-   */
-   private Calc3Parameter gmPowerFunCoeff;
-   public void setGmPowerFunCoeff(Calc3Parameter value) { 
-    this.gmPowerFunCoeff=value;
-   }
-   public Calc3Parameter getGmPowerFunCoeff() {
-     return this.gmPowerFunCoeff;
-   }
 
    /**
 * Protege name: gmMaximalPowerMeasurements
@@ -63,5 +31,37 @@ public class GasDrivenMotor extends CompStatDrive{
    public Iterator getAllGmMaximalPowerMeasurements() {return gmMaximalPowerMeasurements.iterator(); }
    public List getGmMaximalPowerMeasurements() {return gmMaximalPowerMeasurements; }
    public void setGmMaximalPowerMeasurements(List l) {gmMaximalPowerMeasurements = l; }
+
+   /**
+* Protege name: gmPowerFunCoeff
+   */
+   private Calc3Parameter gmPowerFunCoeff;
+   public void setGmPowerFunCoeff(Calc3Parameter value) { 
+    this.gmPowerFunCoeff=value;
+   }
+   public Calc3Parameter getGmPowerFunCoeff() {
+     return this.gmPowerFunCoeff;
+   }
+
+   /**
+* Protege name: gmSpecificEnergyConsumptionMeasurements
+   */
+   private List gmSpecificEnergyConsumptionMeasurements = new ArrayList();
+   public void addGmSpecificEnergyConsumptionMeasurements(CompStatSECmeasurment elem) { 
+     List oldList = this.gmSpecificEnergyConsumptionMeasurements;
+     gmSpecificEnergyConsumptionMeasurements.add(elem);
+   }
+   public boolean removeGmSpecificEnergyConsumptionMeasurements(CompStatSECmeasurment elem) {
+     List oldList = this.gmSpecificEnergyConsumptionMeasurements;
+     boolean result = gmSpecificEnergyConsumptionMeasurements.remove(elem);
+     return result;
+   }
+   public void clearAllGmSpecificEnergyConsumptionMeasurements() {
+     List oldList = this.gmSpecificEnergyConsumptionMeasurements;
+     gmSpecificEnergyConsumptionMeasurements.clear();
+   }
+   public Iterator getAllGmSpecificEnergyConsumptionMeasurements() {return gmSpecificEnergyConsumptionMeasurements.iterator(); }
+   public List getGmSpecificEnergyConsumptionMeasurements() {return gmSpecificEnergyConsumptionMeasurements; }
+   public void setGmSpecificEnergyConsumptionMeasurements(List l) {gmSpecificEnergyConsumptionMeasurements = l; }
 
 }

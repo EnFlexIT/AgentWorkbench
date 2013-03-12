@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: GasAnalysis
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:57
 */
 public class GasAnalysis implements Concept {
 

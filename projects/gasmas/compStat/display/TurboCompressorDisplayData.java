@@ -143,7 +143,6 @@ public class TurboCompressorDisplayData extends ParameterDisplay implements Para
 		gridBagConstraints.fill = GridBagConstraints.BOTH;
 		gridBagConstraints.weighty = 1.0;
 		gridBagConstraints.gridy = 5;
-	
 		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 		gridBagConstraints3.gridx = 0;
 		gridBagConstraints3.insets = new Insets(5, 20, 10, 0);
@@ -176,13 +175,11 @@ public class TurboCompressorDisplayData extends ParameterDisplay implements Para
 		gridBagConstraintsGeneral.gridwidth = 3;
 		gridBagConstraintsGeneral.weightx = 1.0;
 		gridBagConstraintsGeneral.insets = new Insets(5, 5, 0, 5);
-		
 		GridBagConstraints gridBagConstraintsNisoLineCoeff = new GridBagConstraints();
 		gridBagConstraintsNisoLineCoeff.gridx = 0;
 		gridBagConstraintsNisoLineCoeff.gridy = 1;
 		gridBagConstraintsNisoLineCoeff.anchor = GridBagConstraints.WEST;
 		gridBagConstraintsNisoLineCoeff.insets = new Insets(5, 5, 0, 0);
-
 		GridBagConstraints gridBagConstraintsAdiabaticEffCoeff = new GridBagConstraints();
 		gridBagConstraintsAdiabaticEffCoeff.gridx = 0;
 		gridBagConstraintsAdiabaticEffCoeff.gridy = 4;
@@ -196,7 +193,7 @@ public class TurboCompressorDisplayData extends ParameterDisplay implements Para
 		jLabelDummy = new JLabel();
 		jLabelDummy.setText("");
 		
-		this.setSize(537, 540);
+		this.setSize(540, 500);
 		this.setLayout(new GridBagLayout());
 		this.add(getGeneralCompressorInfo(), gridBagConstraintsGeneral);
 		this.add(getNisoLineCoeff(), gridBagConstraintsNisoLineCoeff);

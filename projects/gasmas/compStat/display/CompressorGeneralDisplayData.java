@@ -115,13 +115,11 @@ public class CompressorGeneralDisplayData extends ParameterDisplay implements Pa
 	 * @param compressor the compressor
 	 * @return the compressor
 	 */
-	public CompStatCompressor getCompStatCompressor(CompStatCompressor compressor) {
-		this.myCompressor.setID(this.getJTextFieldID().getText());
-		this.myCompressor.setAlias(this.getJTextFieldAlias().getText());
-		this.myCompressor.setSpeedMin(this.getValueTypeDisplaySpeedMin().getValueType());
-		this.myCompressor.setSpeedMax(this.getValueTypeDisplaySpeedMax().getValueType());
-		this.myCompressor.setDrive((String) this.getJComboBoxDrive().getSelectedItem());
-		return this.myCompressor;
+	public CompStatCompressor getCompStatCompressor() {
+		if (myCompressor==null) {
+			myCompressor = new CompStatCompressor();
+		}
+		return myCompressor;
 	}
 	
 	/**

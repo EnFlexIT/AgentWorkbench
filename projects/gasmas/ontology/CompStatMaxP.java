@@ -8,30 +8,9 @@ import jade.core.*;
 /**
 * Protege name: CompStatMaxP
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:57
 */
 public class CompStatMaxP implements Concept {
-
-   /**
-* Protege name: measurementsType
-   */
-   private List measurementsType = new ArrayList();
-   public void addMeasurementsType(CompStatMaxPmeasurment elem) { 
-     List oldList = this.measurementsType;
-     measurementsType.add(elem);
-   }
-   public boolean removeMeasurementsType(CompStatMaxPmeasurment elem) {
-     List oldList = this.measurementsType;
-     boolean result = measurementsType.remove(elem);
-     return result;
-   }
-   public void clearAllMeasurementsType() {
-     List oldList = this.measurementsType;
-     measurementsType.clear();
-   }
-   public Iterator getAllMeasurementsType() {return measurementsType.iterator(); }
-   public List getMeasurementsType() {return measurementsType; }
-   public void setMeasurementsType(List l) {measurementsType = l; }
 
    /**
 * Protege name: ambientTemperature
@@ -53,5 +32,26 @@ public class CompStatMaxP implements Concept {
    public Iterator getAllAmbientTemperature() {return ambientTemperature.iterator(); }
    public List getAmbientTemperature() {return ambientTemperature; }
    public void setAmbientTemperature(List l) {ambientTemperature = l; }
+
+   /**
+* Protege name: measurementsType
+   */
+   private List measurementsType = new ArrayList();
+   public void addMeasurementsType(CompStatMaxPmeasurment elem) { 
+     List oldList = this.measurementsType;
+     measurementsType.add(elem);
+   }
+   public boolean removeMeasurementsType(CompStatMaxPmeasurment elem) {
+     List oldList = this.measurementsType;
+     boolean result = measurementsType.remove(elem);
+     return result;
+   }
+   public void clearAllMeasurementsType() {
+     List oldList = this.measurementsType;
+     measurementsType.clear();
+   }
+   public Iterator getAllMeasurementsType() {return measurementsType.iterator(); }
+   public List getMeasurementsType() {return measurementsType; }
+   public void setMeasurementsType(List l) {measurementsType = l; }
 
 }

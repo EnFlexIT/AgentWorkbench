@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: CompStatCompressor
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:57
 */
 public class CompStatCompressor extends GridComponent{ 
-
-   /**
-* Protege name: drive
-   */
-   private String drive;
-   public void setDrive(String value) { 
-    this.drive=value;
-   }
-   public String getDrive() {
-     return this.drive;
-   }
 
    /**
 * Protege name: speedMax
@@ -42,6 +31,17 @@ public class CompStatCompressor extends GridComponent{
    }
    public ValueType getSpeedMin() {
      return this.speedMin;
+   }
+
+   /**
+* Protege name: drive
+   */
+   private String drive;
+   public void setDrive(String value) { 
+    this.drive=value;
+   }
+   public String getDrive() {
+     return this.drive;
    }
 
 }

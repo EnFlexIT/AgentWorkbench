@@ -216,7 +216,7 @@ public final class GraphGlobals {
 		public final static Color TB_TEXTFOREGROUND_SELECTED = UIManager.getColor("Table[Enabled+Selected].textForeground");
 
 		/**
-		 * Sets the color for a component, which is located in a JTable cell.
+		 * Sets the color for a component that is located in a cell of a JTable.
 		 *
 		 * @param comp the JComponent
 		 * @param row the row

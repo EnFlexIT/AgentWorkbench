@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Exit
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:57
 */
 public class Exit extends Innode{ 
-
-   /**
-* Protege name: flowMax
-   */
-   private ValueType flowMax;
-   public void setFlowMax(ValueType value) { 
-    this.flowMax=value;
-   }
-   public ValueType getFlowMax() {
-     return this.flowMax;
-   }
 
    /**
 * Protege name: flowMin
@@ -31,6 +20,17 @@ public class Exit extends Innode{
    }
    public ValueType getFlowMin() {
      return this.flowMin;
+   }
+
+   /**
+* Protege name: flowMax
+   */
+   private ValueType flowMax;
+   public void setFlowMax(ValueType value) { 
+    this.flowMax=value;
+   }
+   public ValueType getFlowMax() {
+     return this.flowMax;
    }
 
 }

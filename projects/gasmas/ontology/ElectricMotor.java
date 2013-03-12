@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: ElectricMotor
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:57
 */
 public class ElectricMotor extends CompStatDrive{ 
 
@@ -20,6 +20,17 @@ public class ElectricMotor extends CompStatDrive{
    }
    public Calc9Parameter getEmPowerFunCoeff() {
      return this.emPowerFunCoeff;
+   }
+
+   /**
+* Protege name: emMaximalPowerMeasurements
+   */
+   private CompStatMaxP emMaximalPowerMeasurements;
+   public void setEmMaximalPowerMeasurements(CompStatMaxP value) { 
+    this.emMaximalPowerMeasurements=value;
+   }
+   public CompStatMaxP getEmMaximalPowerMeasurements() {
+     return this.emMaximalPowerMeasurements;
    }
 
    /**
@@ -42,16 +53,5 @@ public class ElectricMotor extends CompStatDrive{
    public Iterator getAllEmSpecificEnergyConsumptionMeasurements() {return emSpecificEnergyConsumptionMeasurements.iterator(); }
    public List getEmSpecificEnergyConsumptionMeasurements() {return emSpecificEnergyConsumptionMeasurements; }
    public void setEmSpecificEnergyConsumptionMeasurements(List l) {emSpecificEnergyConsumptionMeasurements = l; }
-
-   /**
-* Protege name: emMaximalPowerMeasurements
-   */
-   private CompStatMaxP emMaximalPowerMeasurements;
-   public void setEmMaximalPowerMeasurements(CompStatMaxP value) { 
-    this.emMaximalPowerMeasurements=value;
-   }
-   public CompStatMaxP getEmMaximalPowerMeasurements() {
-     return this.emMaximalPowerMeasurements;
-   }
 
 }

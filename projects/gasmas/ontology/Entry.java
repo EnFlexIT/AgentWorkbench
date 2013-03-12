@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: Entry
 * @author ontology bean generator
-* @version 2013/03/7, 00:03:01
+* @version 2013/03/10, 21:16:57
 */
 public class Entry extends Exit{ 
-
-   /**
-* Protege name: gasTemperature
-   */
-   private ValueType gasTemperature;
-   public void setGasTemperature(ValueType value) { 
-    this.gasTemperature=value;
-   }
-   public ValueType getGasTemperature() {
-     return this.gasTemperature;
-   }
 
    /**
 * Protege name: pseudocriticalTemperature
@@ -31,6 +20,17 @@ public class Entry extends Exit{
    }
    public ValueType getPseudocriticalTemperature() {
      return this.pseudocriticalTemperature;
+   }
+
+   /**
+* Protege name: calorificValue
+   */
+   private ValueType calorificValue;
+   public void setCalorificValue(ValueType value) { 
+    this.calorificValue=value;
+   }
+   public ValueType getCalorificValue() {
+     return this.calorificValue;
    }
 
    /**
@@ -45,14 +45,14 @@ public class Entry extends Exit{
    }
 
    /**
-* Protege name: heatCapacityCoefficient
+* Protege name: pseudocricalPressure
    */
-   private HeatCapacityCoefficient heatCapacityCoefficient;
-   public void setHeatCapacityCoefficient(HeatCapacityCoefficient value) { 
-    this.heatCapacityCoefficient=value;
+   private ValueType pseudocricalPressure;
+   public void setPseudocricalPressure(ValueType value) { 
+    this.pseudocricalPressure=value;
    }
-   public HeatCapacityCoefficient getHeatCapacityCoefficient() {
-     return this.heatCapacityCoefficient;
+   public ValueType getPseudocricalPressure() {
+     return this.pseudocricalPressure;
    }
 
    /**
@@ -67,25 +67,25 @@ public class Entry extends Exit{
    }
 
    /**
-* Protege name: pseudocricalPressure
+* Protege name: gasTemperature
    */
-   private ValueType pseudocricalPressure;
-   public void setPseudocricalPressure(ValueType value) { 
-    this.pseudocricalPressure=value;
+   private ValueType gasTemperature;
+   public void setGasTemperature(ValueType value) { 
+    this.gasTemperature=value;
    }
-   public ValueType getPseudocricalPressure() {
-     return this.pseudocricalPressure;
+   public ValueType getGasTemperature() {
+     return this.gasTemperature;
    }
 
    /**
-* Protege name: calorificValue
+* Protege name: heatCapacityCoefficient
    */
-   private ValueType calorificValue;
-   public void setCalorificValue(ValueType value) { 
-    this.calorificValue=value;
+   private HeatCapacityCoefficient heatCapacityCoefficient;
+   public void setHeatCapacityCoefficient(HeatCapacityCoefficient value) { 
+    this.heatCapacityCoefficient=value;
    }
-   public ValueType getCalorificValue() {
-     return this.calorificValue;
+   public HeatCapacityCoefficient getHeatCapacityCoefficient() {
+     return this.heatCapacityCoefficient;
    }
 
 }

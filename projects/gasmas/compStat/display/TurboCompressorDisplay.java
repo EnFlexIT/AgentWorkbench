@@ -52,8 +52,7 @@ public class TurboCompressorDisplay extends JTabbedPane implements ParameterList
 	private JScrollPane jScrollPaneData = null;
 	private TurboCompressorDisplayData jPanelData = null;
 	
-	private JScrollPane jScrollPaneMeasurements = null;
-	private TurboCompressorDisplayMeasurments jPanelMeasurements = null;
+	private TurboCompressorDisplayMeasurements jPanelMeasurements = null;
 	
 
 	/**
@@ -75,7 +74,7 @@ public class TurboCompressorDisplay extends JTabbedPane implements ParameterList
         this.setTabPlacement(JTabbedPane.BOTTOM);
 		this.addTab(Language.translate("Characteristic Diagram", Language.EN), null, getJPanelCharacteristicDiagram(), null);	
 		this.addTab(Language.translate("Settings", Language.EN), null, getJScrollPaneData(), null);
-		this.addTab(Language.translate("Measurments", Language.EN), null, getJScrollPaneMeasurements(), null);
+		this.addTab(Language.translate("Measurments", Language.EN), null, getJPanelMeasurements(), null);
 	}
 	
 	/**
@@ -131,23 +130,12 @@ public class TurboCompressorDisplay extends JTabbedPane implements ParameterList
 	}
 	
 	/**
-	 * This method initializes jScrollPaneData	
-	 * @return javax.swing.JScrollPane	
-	 */
-	private JScrollPane getJScrollPaneMeasurements() {
-		if (jScrollPaneMeasurements == null) {
-			jScrollPaneMeasurements = new JScrollPane();
-			jScrollPaneMeasurements.setViewportView(this.getJPanelMeasurements());
-		}
-		return jScrollPaneMeasurements;
-	}
-	/**
 	 * This method initializes jPanelData	
 	 * @return javax.swing.JPanel	
 	 */
-	private TurboCompressorDisplayMeasurments getJPanelMeasurements() {
+	private TurboCompressorDisplayMeasurements getJPanelMeasurements() {
 		if (jPanelMeasurements == null) {
-			jPanelMeasurements = new TurboCompressorDisplayMeasurments(compressorStationModel, turboCompressorID);
+			jPanelMeasurements = new TurboCompressorDisplayMeasurements(compressorStationModel, turboCompressorID);
 			jPanelMeasurements.addParameterListener(this);
 		}
 		return jPanelMeasurements;
@@ -159,11 +147,18 @@ public class TurboCompressorDisplay extends JTabbedPane implements ParameterList
 	@Override
 	public void subParameterChanged(ParameterDisplay display, String parameterDescription, Object value) {
 		
-		if (display == this.getJPanelData()) {
+		if (display==this.getJPanelData()) {
 			// --- An update in the TurboCompressor was set ---------
 			TurboCompressor newTurboCompressor = (TurboCompressor) value;
 			this.myTurboCompressor = newTurboCompressor;
 			this.compressorStationModel.updateComponent(this.myTurboCompressor);
+			
+		} else if (display==this.getJPanelMeasurements()) {
+			TurboCompressor newTurboCompressor = (TurboCompressor) value;
+			this.myTurboCompressor.setCharacteristicDiagramMeasurements(newTurboCompressor.getCharacteristicDiagramMeasurements());
+			this.myTurboCompressor.setSettlelineMeasurements(newTurboCompressor.getSettlelineMeasurements());
+			this.compressorStationModel.updateComponent(this.myTurboCompressor);
+			
 		}
 		
 	}
