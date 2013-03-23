@@ -2149,19 +2149,19 @@
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
+                <graphElementIDs>nN_8591_3</graphElementIDs>
+                <graphElementIDs>nN_8591_4</graphElementIDs>
                 <graphElementIDs>nN_8591_C</graphElementIDs>
+                <graphElementIDs>nN_8591_5</graphElementIDs>
+                <graphElementIDs>nN_8591_6</graphElementIDs>
                 <graphElementIDs>nN_8591_B6_5</graphElementIDs>
+                <graphElementIDs>nN_8591</graphElementIDs>
                 <graphElementIDs>nN_8591_B6_4</graphElementIDs>
+                <graphElementIDs>nN_8591_2</graphElementIDs>
                 <graphElementIDs>nN_8591_B6_1</graphElementIDs>
                 <graphElementIDs>nN_8591_B6_0</graphElementIDs>
                 <graphElementIDs>nN_8591_B6_3</graphElementIDs>
                 <graphElementIDs>nN_8591_B6_2</graphElementIDs>
-                <graphElementIDs>nN_8591_3</graphElementIDs>
-                <graphElementIDs>nN_8591_4</graphElementIDs>
-                <graphElementIDs>nN_8591_5</graphElementIDs>
-                <graphElementIDs>nN_8591_6</graphElementIDs>
-                <graphElementIDs>nN_8591</graphElementIDs>
-                <graphElementIDs>nN_8591_2</graphElementIDs>
                 <id>nN_8591_B6</id>
                 <prototypeClassName>gasmas.graphprototypes.Star6GraphElement</prototypeClassName>
                 <type>Branch6</type>
@@ -4423,8 +4423,8 @@
                 <graphElementIDs>nN_8529_B9_1</graphElementIDs>
                 <graphElementIDs>nN_8529_B9_0</graphElementIDs>
                 <graphElementIDs>nN_8529_B9_7</graphElementIDs>
-                <graphElementIDs>nN_8529_C</graphElementIDs>
                 <graphElementIDs>nN_8529_B9_6</graphElementIDs>
+                <graphElementIDs>nN_8529_C</graphElementIDs>
                 <graphElementIDs>nN_8529_B9_5</graphElementIDs>
                 <graphElementIDs>nN_8529_B9_4</graphElementIDs>
                 <graphElementIDs>nN_8529_B9_8</graphElementIDs>
@@ -6075,20 +6075,6 @@
             </value>
         </entry>
         <entry>
-            <key>nN_8508</key>
-            <value>
-                <dataModelsBase64>
-                    <dataModelBase64>PEV4aXQgYWxpYXM9IiIgSUQ9Im5OXzg1MDgiPgoJPHByZXNzdXJlTWF4PgoJCTxWYWx1ZVR5cGUgVW5pdD0iYmFyZyIgVmFsdWU9IjEwMC4wRiIvPgoJPC9wcmVzc3VyZU1heD4KCTxoZWlnaHQ+CgkJPFZhbHVlVHlwZSBVbml0PSJtIiBWYWx1ZT0iMC4xRiIvPgoJPC9oZWlnaHQ+Cgk8cHJlc3N1cmVNaW4+CgkJPFZhbHVlVHlwZSBVbml0PSJiYXJnIiBWYWx1ZT0iMC4wRiIvPgoJPC9wcmVzc3VyZU1pbj4KCTxnZW9Db29yZGluYXRlPgoJCTxHZW9Db29yZGluYXRlIGdlb1k9IjAuMEYiIGdlb1g9IjAuMEYiIGdlb1o9IjAuMEYiIGdlb1c9IjAuMEYiLz4KCTwvZ2VvQ29vcmRpbmF0ZT4KCTxmbG93TWF4PgoJCTxWYWx1ZVR5cGUgVW5pdD0iMTAwMG1fY3ViZV9wZXJfaG91ciIgVmFsdWU9IjEwMDAwLjBGIi8+Cgk8L2Zsb3dNYXg+Cgk8Zmxvd01pbj4KCQk8VmFsdWVUeXBlIFVuaXQ9IjEwMDBtX2N1YmVfcGVyX2hvdXIiIFZhbHVlPSItMTAwMDAuMEYiLz4KCTwvZmxvd01pbj4KPC9FeGl0Pgo=</dataModelBase64>
-                </dataModelsBase64>
-                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>nN_8508</graphElementIDs>
-                <id>nN_8508</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Exit</type>
-            </value>
-        </entry>
-        <entry>
             <key>nN_PI_01_B3</key>
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
@@ -6103,6 +6089,20 @@
                 <id>nN_PI_01_B3</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch3</type>
+            </value>
+        </entry>
+        <entry>
+            <key>nN_8508</key>
+            <value>
+                <dataModelsBase64>
+                    <dataModelBase64>PEV4aXQgYWxpYXM9IiIgSUQ9Im5OXzg1MDgiPgoJPHByZXNzdXJlTWF4PgoJCTxWYWx1ZVR5cGUgVW5pdD0iYmFyZyIgVmFsdWU9IjEwMC4wRiIvPgoJPC9wcmVzc3VyZU1heD4KCTxoZWlnaHQ+CgkJPFZhbHVlVHlwZSBVbml0PSJtIiBWYWx1ZT0iMC4xRiIvPgoJPC9oZWlnaHQ+Cgk8cHJlc3N1cmVNaW4+CgkJPFZhbHVlVHlwZSBVbml0PSJiYXJnIiBWYWx1ZT0iMC4wRiIvPgoJPC9wcmVzc3VyZU1pbj4KCTxnZW9Db29yZGluYXRlPgoJCTxHZW9Db29yZGluYXRlIGdlb1k9IjAuMEYiIGdlb1g9IjAuMEYiIGdlb1o9IjAuMEYiIGdlb1c9IjAuMEYiLz4KCTwvZ2VvQ29vcmRpbmF0ZT4KCTxmbG93TWF4PgoJCTxWYWx1ZVR5cGUgVW5pdD0iMTAwMG1fY3ViZV9wZXJfaG91ciIgVmFsdWU9IjEwMDAwLjBGIi8+Cgk8L2Zsb3dNYXg+Cgk8Zmxvd01pbj4KCQk8VmFsdWVUeXBlIFVuaXQ9IjEwMDBtX2N1YmVfcGVyX2hvdXIiIFZhbHVlPSItMTAwMDAuMEYiLz4KCTwvZmxvd01pbj4KPC9FeGl0Pgo=</dataModelBase64>
+                </dataModelsBase64>
+                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>nN_8508</graphElementIDs>
+                <id>nN_8508</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Exit</type>
             </value>
         </entry>
         <entry>
@@ -10769,12 +10769,12 @@
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>nN_8521_2</graphElementIDs>
-                <graphElementIDs>nN_8521_3</graphElementIDs>
-                <graphElementIDs>nN_8521</graphElementIDs>
                 <graphElementIDs>nN_8521_C</graphElementIDs>
                 <graphElementIDs>nN_8521_B6_0</graphElementIDs>
+                <graphElementIDs>nN_8521_2</graphElementIDs>
+                <graphElementIDs>nN_8521_3</graphElementIDs>
                 <graphElementIDs>nN_8521_B6_2</graphElementIDs>
+                <graphElementIDs>nN_8521</graphElementIDs>
                 <graphElementIDs>nN_8521_B6_1</graphElementIDs>
                 <graphElementIDs>nN_8521_B6_4</graphElementIDs>
                 <graphElementIDs>nN_8521_B6_3</graphElementIDs>
@@ -15884,10 +15884,10 @@
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>nN_8724_2</graphElementIDs>
-                <graphElementIDs>nN_8724_4</graphElementIDs>
                 <graphElementIDs>nN_8724_B6_5</graphElementIDs>
-                <graphElementIDs>nN_8724_3</graphElementIDs>
+                <graphElementIDs>nN_8724_4</graphElementIDs>
                 <graphElementIDs>nN_8724_B6_4</graphElementIDs>
+                <graphElementIDs>nN_8724_3</graphElementIDs>
                 <graphElementIDs>nN_8724_6</graphElementIDs>
                 <graphElementIDs>nN_8724_5</graphElementIDs>
                 <graphElementIDs>nN_8724_B6_1</graphElementIDs>

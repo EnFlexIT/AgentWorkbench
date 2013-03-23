@@ -36,6 +36,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -57,21 +58,19 @@ public class ReflectClassFiles extends ArrayList<String> {
 
 	private static final long serialVersionUID = -256361698681180954L;
 
-	private String searchINReference = null;
+	private String searchInPackage = null;
 	private String[] searchINPathParts = null;
 
 	private Vector<String> classPathExternalJars = null;
 	
 	/**
 	 * Constructor of this class.
-	 * @param searchInPackage the reference to the package in that the search has to be executed
+	 * @param searchInPackage the reference to the package in which the search has to be executed
 	 */
 	public ReflectClassFiles(String searchInPackage) {
-
-		// --- Verzeichnis, in dem die Ontologie liegt auslesen ---
-		this.searchINReference = searchInPackage;
-		if ( !(searchINReference == null) ) {
-			searchINPathParts = searchINReference.split("\\.");
+		this.searchInPackage = searchInPackage;
+		if (this.searchInPackage!= null) {
+			this.searchINPathParts = this.searchInPackage.split("\\.");
 		}
 		this.setClasses();
 	}
@@ -88,8 +87,8 @@ public class ReflectClassFiles extends ArrayList<String> {
 		
 		// --- Try to find the resource of the given Reference ------
 		try {
-			dirs = getClassResources(this.searchINReference);
-			//System.out.println( "=> " + dirs.toString());
+			dirs = this.getClassResources(this.searchInPackage);
+			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -97,40 +96,36 @@ public class ReflectClassFiles extends ArrayList<String> {
 		}
 
 		// --- Look at the Result of the Resources-Search ----------
-		if (dirs.size()>0) {
-			File directory = dirs.get(0);
-			String pathOfFile = directory.toString();
-			String reference2JarFile = this.getJarReferenceFromPathOfFile(pathOfFile);
-			//System.out.println("=> " + directory.toString() + " <=> " + reference2JarFile); 
+		for (int i = 0; i < dirs.size(); i++) {
 			
-			if (reference2JarFile!=null) {
-				if (pathOfFile.startsWith("file:")) {
-					// --- Path points to a jar-file ----------------
-					reference2JarFile = pathOfFile.substring(0, pathOfFile.lastIndexOf(reference2JarFile)) + reference2JarFile;
-					reference2JarFile = reference2JarFile.replace("file:", "");
-					if (System.getProperty("os.name").toLowerCase().contains("windows")==true) {
-						// --- Remove leading file separator --------
-						if (reference2JarFile.startsWith(File.separator)) {
-							reference2JarFile = reference2JarFile.substring(1);
-						}
-					} 
-					classList = getJARClasses(reference2JarFile);
+			File directoryFile = dirs.get(i);
+			if (directoryFile.exists()) {
+				
+				String pathOfFile = directoryFile.getAbsolutePath();
+				String reference2JarFile = this.getJarReferenceFromPathOfFile(pathOfFile);
+				if (reference2JarFile!=null) {
+					if (pathOfFile.startsWith("file:") || pathOfFile.endsWith(".jar")) {
+						// --- Path points to a jar-file ----------------
+						classList = getJARClasses(directoryFile);
+						
+					} else {
+						// --- Path points to an external IDE-path ------
+						searchPath = reference2JarFile;
+						classList = getIDEClasses(searchPath, searchPath);
+					}
 					
 				} else {
-					// --- Path points to an external IDE-path ------
-					searchPath = reference2JarFile;
+					// --- Points to the Agent.GUI IDE-Environment ------
+					searchPath = Application.getGlobalInfo().PathBaseDirIDE_BIN();
 					classList = getIDEClasses(searchPath, searchPath);
 				}
 				
-			} else {
-				// --- Points to the Agent.GUI IDE-Environment ------
-				searchPath = Application.getGlobalInfo().PathBaseDirIDE_BIN();
-				classList = getIDEClasses( searchPath, searchPath );
 			}
 			
-		}
+		}// --- end for ---
+			
 		if(classList!=null){
-			this.addAll( classList );
+			this.addAll(classList);
 		}
 	}
 
@@ -141,7 +136,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 	 * @param path2Reference the path2 reference
 	 * @return the jar reference from path of file
 	 */
-	private String getJarReferenceFromPathOfFile( String path2Reference ) {
+	private String getJarReferenceFromPathOfFile(String path2Reference) {
 		for (String classPathSingle : this.getClassPathExternalJars()) {
 			if (path2Reference.contains(classPathSingle)==true) {
 				return classPathSingle;
@@ -178,18 +173,29 @@ public class ReflectClassFiles extends ArrayList<String> {
 	 */
 	private List<File> getClassResources(String packageName) throws ClassNotFoundException, IOException {
 		
-		String path = packageName.replace('.', '/');
-		
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		assert classLoader != null;
+		assert classLoader != null : "ClassLoader not found!";
 		
-		Enumeration<URL> resources = classLoader.getResources(path);
+		String path = packageName.replace('.', '/');
 		List<File> dirs = new ArrayList<File>();
+
+		Enumeration<URL> resources = classLoader.getResources(path);
 		while (resources.hasMoreElements()) {
 			URL resource = resources.nextElement();
 			String fileName = resource.getFile();
 			String fileNameDecoded = URLDecoder.decode(fileName, "UTF-8");
 			dirs.add(new File(fileNameDecoded));
+		}
+		
+		if (dirs.size()==0) {
+			// --- In case that no Resources were found ---
+			String pathSep = System.getProperty("path.separator");
+			String classpath = System.getProperty("java.class.path");
+
+			StringTokenizer st = new StringTokenizer(classpath, pathSep);
+			while (st.hasMoreTokens()) {
+				dirs.add(new File(st.nextToken()));
+			}
 		}
 		return dirs;
 	}
@@ -198,17 +204,16 @@ public class ReflectClassFiles extends ArrayList<String> {
 	 * Reading the Classes from the inside of a jar-file.
 	 *
 	 * @param jarName the jar name
-	 * @return the jAR classes
+	 * @return the jar-classes
 	 */
-	private ArrayList<String> getJARClasses(String jarName) {
+	private ArrayList<String> getJARClasses(File jarFileInstance) {
 		
-		String CurrClass   = "";
+		String clazz = null;
 		ArrayList<String> classes = new ArrayList<String>();
 		
 		try {
 			
-			File file = new File(jarName);
-			URL jar = file.toURI().toURL();
+			URL jar = jarFileInstance.toURI().toURL();
 			jar = new URL("jar:" + jar.toExternalForm() + "!/");
 			
 			JarURLConnection conn = (JarURLConnection) jar.openConnection();
@@ -221,18 +226,19 @@ public class ReflectClassFiles extends ArrayList<String> {
 				JarEntry jarEntry = enu.nextElement();
 
 				if ((jarEntry.getName().endsWith(".class"))) {
-					CurrClass = jarEntry.getName().replaceAll("/", "\\.");
-					CurrClass = CurrClass.substring(0, CurrClass.length() - (".class").length());
+					clazz = jarEntry.getName().replaceAll("/", "\\.");
+					clazz = clazz.substring(0, clazz.length() - (".class").length());
 					// --- Klasse in die Auflistung aufnehmen ? ---
-					if (searchINReference == null) {
-						classes.add( CurrClass );	
+					if (searchInPackage == null) {
+						classes.add(clazz);	
 					} else {
-						if (CurrClass.startsWith(searchINReference) ) {
-							classes.add( CurrClass );
+						if (clazz.startsWith(searchInPackage) ) {
+							classes.add( clazz );
 						}		
 					}
 				}
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -265,7 +271,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 				if ( files[i].isDirectory()==true ) {
 					// ----------------------------------------------------------------
 					// --- System.out.print(" (Unterordner)\n");
-					if ( searchINReference == null ) {
+					if ( searchInPackage == null ) {
 						// ------------------------------------------------------------
 						// --- Falls nach nichts konkretem gesucht wird, dann --------- 
 						// --- alles in die Ergebnisliste aufnehmen 		  ---------
@@ -310,10 +316,10 @@ public class ReflectClassFiles extends ArrayList<String> {
 							currClass = currClass.substring(1, currClass.length());
 						}
 						// --- Klasse in die Auflistung aufnehmen ? -------------------
-						if ( searchINReference == null ) {
+						if ( searchInPackage == null ) {
 							FileList.add( currClass );	
 						} else {
-							if (currClass.startsWith( searchINReference ) ) {
+							if (currClass.startsWith( searchInPackage ) ) {
 								FileList.add( currClass );
 							}		
 						}

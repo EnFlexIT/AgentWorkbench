@@ -19,21 +19,21 @@
             </agent>
             <agent agentReference="gasmas.agents.components.ClusterNetworkAgent">
                 <startArgumentVector>
-                    <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="1"/>
-                    <startArgument ontologyReference="agentgui.ontology.XyChart" position="2"/>
-                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" position="3"/>
-                    <startArgument ontologyReference="agentgui.ontology.Simple_Integer" position="4"/>
+                    <startArgument position="1" ontologyReference="agentgui.ontology.TimeSeriesChart"/>
+                    <startArgument position="2" ontologyReference="agentgui.ontology.XyChart"/>
+                    <startArgument position="3" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                    <startArgument position="4" ontologyReference="agentgui.ontology.Simple_Integer"/>
                 </startArgumentVector>
             </agent>
         </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1100</useLocalPort>
+        <useLocalPort>1101</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.debugging.DebugService</service>
+            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -93,24 +93,24 @@
             <value>smallclusters_3_large.xml</value>
         </entry>
         <entry>
-            <key>Testnetz 3</key>
-            <value>testnetz_3.xml</value>
-        </entry>
-        <entry>
             <key>SmallClusters (1) Small</key>
             <value>smallclusters_1_small.xml</value>
+        </entry>
+        <entry>
+            <key>Testnetz 3</key>
+            <value>testnetz_3.xml</value>
         </entry>
         <entry>
             <key>HNord</key>
             <value>hnord.xml</value>
         </entry>
         <entry>
-            <key>HNord (1) Small</key>
-            <value>hnord_1_small.xml</value>
-        </entry>
-        <entry>
             <key>Testimport</key>
             <value>testimport.xml</value>
+        </entry>
+        <entry>
+            <key>HNord (1) Small</key>
+            <value>hnord_1_small.xml</value>
         </entry>
         <entry>
             <key>MixedClusters (3) Large</key>
@@ -121,12 +121,12 @@
             <value>mixedclusters_1_small.xml</value>
         </entry>
         <entry>
-            <key>HNord (3) Large</key>
-            <value>hnord_3_large.xml</value>
-        </entry>
-        <entry>
             <key>HNord Complete</key>
             <value>hnord_complete.xml</value>
+        </entry>
+        <entry>
+            <key>HNord (3) Large</key>
+            <value>hnord_3_large.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>

@@ -45,6 +45,7 @@ import agentgui.core.application.Application;
 import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.gui.components.ClassElement2Display;
 import agentgui.core.gui.components.JListClassSearcher;
+import agentgui.core.gui.components.JListWithProgressBar;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.Project;
 
@@ -62,14 +63,15 @@ public class ClassSearcherSingle {
 	
 	private Project currProject = null;
 	
-	/** The packages in project. */
+	/** The packages in the project. */
 	private Vector<String> packagesInProject = new Vector<String>();
 	
 	private ClassUpdater cu = null;
 	private Class<?> class2Search4;
 	private String classname;
 	private ClassFinderFilter classfilter;
-	
+	private List<Object> searchErrorStack = null;
+		
 	private boolean busy = false;
 
 	private boolean classesLoaded = false;
@@ -125,9 +127,10 @@ public class ClassSearcherSingle {
 	}
 	
 	/**
-	 * Register j list with progress.
-	 *
-	 * @param jListClassSearcher the j list class searcher
+	 * Registers a JListWithProgress to this search process
+	 * 
+	 * @see JListWithProgressBar
+	 * @param jListClassSearcher the JListWithProgress
 	 */
 	public void registerJListWithProgress(JListClassSearcher jListClassSearcher) {
 		if (this.jListProgress.contains(jListClassSearcher)==false) {
@@ -137,7 +140,7 @@ public class ClassSearcherSingle {
 	}
 	
 	/**
-	 * Sets the busy.
+	 * Sets the this search process to busy or not.
 	 *
 	 * @param isBusy the new busy
 	 */
@@ -226,7 +229,8 @@ public class ClassSearcherSingle {
 	 * @param list the list
 	 */
 	private void appendToList(List<Class<?>> list) {
-		synchronized (classesFound) {
+		
+		synchronized (this.classesFound) {
 			
 			if (list.size() > 0) {
 				
@@ -303,7 +307,7 @@ public class ClassSearcherSingle {
 	}
 	
 	/**
-	 * Gets the j list model classes found.
+	 * Returns a DefaultListModel of the classes found.
 	 *
 	 * @return the jListModelClassesFound
 	 */
@@ -316,7 +320,7 @@ public class ClassSearcherSingle {
 	}
 	
 	/**
-	 * Gets the j list model classes found project.
+	 * Returns a DefaultListModel of classes found for the current project.
 	 *
 	 * @return the jListModelClassesFoundProject
 	 */
@@ -328,6 +332,33 @@ public class ClassSearcherSingle {
 		}
 	}
 
+	/**
+	 * Returns the errors of the search process.
+	 * @return the errors
+	 */
+	public List<Object> getErrors() {
+		return this.searchErrorStack;
+	}
+	/**
+	 * Sets the errors of the search process. Errors of the kind 
+	 * NoClassDefFoundError are eliminated, because they happen naturally 
+	 * while searching classes. 
+	 * @param errorStack the new errors
+	 */
+	public void setErrors(List<Object> errorStack) {
+		if (errorStack==null) {
+			this.searchErrorStack = null;
+		} else {
+			this.searchErrorStack = new ArrayList<Object>();
+			for (Object error : errorStack) {
+				if (error instanceof NoClassDefFoundError) {
+					// --- Skip ---
+				} else {
+					this.searchErrorStack.add(error);
+				}
+			}
+		}
+	}
 	
 	// ------------------------------------------------------------------------
 	// --- Sub-Class - 'ClassUpdater' --- S T A R T ---------------------------
@@ -392,6 +423,7 @@ public class ClassSearcherSingle {
 		/* (non-Javadoc)
 		 * @see java.lang.Thread#run()
 		 */
+		@SuppressWarnings("unchecked")
 		public void run() {
 			
 			Thread.currentThread().setName("ClassSearch-" + class2Search4.getSimpleName());
@@ -400,9 +432,12 @@ public class ClassSearcherSingle {
 			numberOfClasses = 0;
 			
 			try {
+				// Reset error Stack
+				setErrors(null);
 				// Start the ClassFinder
 				cf = new ClassFinder();
 				cf.findSubclasses(classname, this, classfilter);
+				// in case of remaining results
 				if (classNamesCache.size() > 0) {
 					appendToList(classNamesCache);
 					classNamesCache.clear();
@@ -414,6 +449,7 @@ public class ClassSearcherSingle {
 				exception.printStackTrace();
 			}
 			
+			setErrors(cf.getErrors());
 			classNamesCache = null;
 			classesLoaded = true;
 			setBusy(false);

@@ -171,7 +171,7 @@ public class ClassLoaderUtil {
 	 * @param newJarFile
 	 */
 	public static void addJarToClassPath(String newJarFile) {
-		String cPath = System.getProperty("java.class.path")	+ System.getProperty("path.separator") + newJarFile;
+		String cPath = System.getProperty("java.class.path") + System.getProperty("path.separator") + newJarFile;
 		cPath = cPath.replace(";;", ";");
 		System.setProperty("java.class.path", cPath);
 	}

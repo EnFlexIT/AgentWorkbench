@@ -40,7 +40,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import org.jfree.chart.ChartFactory;
@@ -54,6 +53,10 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+
+/**
+ * The Class TurboCompressorDisplayChart.
+ */
 public class TurboCompressorDisplayChart extends ChartPanel {
 
 	private static final long serialVersionUID = 1L;

@@ -70,7 +70,7 @@ public class OntologyClass extends Object implements Serializable {
 
 		// --------------------------------------------------------------------
 		// --- Is this the Reference to the Main-class of the ontology? -------
-		if ( referenceIsClass(ontologyReference)==true ) {
+		if (referenceIsClass(ontologyReference)==true) {
 			// --- Yes, it is -------------------------
 			currOntologyMainClass  = ontologyReference;
 			currOntologySrcPackage = currOntologyMainClass.substring(0, currOntologyMainClass.lastIndexOf("."));

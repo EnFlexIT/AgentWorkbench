@@ -100,19 +100,16 @@ public class ProjectsLoaded {
 		String localTmpProjectName = null;
 		String localTmpProjectFolder = null;
 		
-		// ------------------------------------------------
 		// --- Define a new Project-Instance -------------- 
 		Project newProject = new Project();
 		
-		// ------------------------------------------------
-		// --- Startbedingenen für "New" oder "Open" ------
+		// --- Start argument for "New" oder "Open" -------
 		if (addNew == true){
-			// --------------------------------------------
-			// --- Anlegen eines neuen Projekts -----------
+			// --- New Project ----------------------------
 			action = ProjectNewOpen.ACTION_NewProject;
 			actionTitel = Language.translate("Neues Projekt anlegen");
 			
-			// --- Neuen, allgemeinen Projektnamen finden -----		
+			// --- Define an initial project name ---------		
 			String ProjectNamePrefix = Language.translate("Neues Projekt");
 			projectNameTest = ProjectNamePrefix;
 			int Index = Application.getProjectsLoaded().getIndexByName(projectNameTest);
@@ -125,8 +122,7 @@ public class ProjectsLoaded {
 			projectFolderTest = projectNameTest.toLowerCase().replace(" ", "_");
 		
 		} else {
-			// --------------------------------------------
-			// --- Öffnen eine vorhandenen Projekts -------
+			// --- Open existing project ------------------
 			action = ProjectNewOpen.ACTION_OpenProject;
 			actionTitel = Language.translate("Projekt öffnen");			
 		}
@@ -134,13 +130,12 @@ public class ProjectsLoaded {
 		
 		
 		if (selectedProjectFolder==null) {
-			// ------------------------------------------------
-			// --- Benutzer-Dialog öffnen ---------------------
+			// --- Open user dialog -----------------------
 			ProjectNewOpen newProDia = new ProjectNewOpen(Application.getMainWindow(), Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, action);
 			newProDia.setProjectName(projectNameTest);
 			newProDia.setProjectFolder(projectFolderTest);
 			newProDia.setVisible(true);
-			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
+			// === Wait for user here =====================
 			if (newProDia.isCanceled()==true) {
 				Application.setStatusBar(Language.translate("Fertig"));
 				return null;
@@ -152,20 +147,17 @@ public class ProjectsLoaded {
 			newProDia = null;	
 			
 		} else {
-			// ------------------------------------------------
-			// --- Projekt aus Startparameter übernehmen ------
+			// --- project folder from start argument -----
 			localTmpProjectName = null;
 			localTmpProjectFolder = selectedProjectFolder;
 		}
 
-		// ------------------------------------------------
-		// --- ClassLoader entladen -----------------------
+		// --- ClassLoader unload -------------------------
 		if(projectsOpen.size()!=0) {
 			Application.getProjectFocused().resourcesRemove();
 		}
 		
-		// ------------------------------------------------
-		// --- Projektvariablen setzen --------------------
+		// --- Set project variables ----------------------
 		newProject.setProjectName(localTmpProjectName);
 		newProject.setProjectFolder(localTmpProjectFolder);
 
@@ -298,8 +290,8 @@ public class ProjectsLoaded {
 	 * @return Returns true on success
 	 */
 	public boolean closeAll() {		
-		while ( Application.getProjectFocused() != null ) {
-			if ( Application.getProjectFocused().close() == false  ) {
+		while (Application.getProjectFocused()!=null) {
+			if (Application.getProjectFocused().close()==false) {
 				return false;
 			}
 		}

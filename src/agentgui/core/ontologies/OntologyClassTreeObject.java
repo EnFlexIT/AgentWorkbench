@@ -96,14 +96,14 @@ public class OntologyClassTreeObject extends Object {
 	 * @return the string
 	 */
 	public String toString() {
-		if ( ontologySubClass == null) {
-			if ( objectTitle == null ) {
+		if (ontologySubClass==null) {
+			if (objectTitle==null) {
 				return "-";	
 			} else {
 				return objectTitle;
 			}			
 		} else {
-			if ( objectTitle == null ) {
+			if (objectTitle==null) {
 				return getClassTextSimple();
 			} else {
 				return objectTitle;	
@@ -118,7 +118,7 @@ public class OntologyClassTreeObject extends Object {
 	 * @return boolean
 	 */
 	public boolean isClass() {
-		if (ontologySubClass == null) {
+		if (ontologySubClass==null) {
 			return false;
 		} else {
 			return true;
