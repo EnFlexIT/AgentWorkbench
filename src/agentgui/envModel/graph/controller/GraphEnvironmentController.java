@@ -1161,11 +1161,13 @@ public class GraphEnvironmentController extends EnvironmentController {
 			GraphEnvironmentControllerGUI graphControllerGUI = this.getGraphEnvironmentControllerGUI();
 			if (graphControllerGUI!=null) {
 				basicGraphGuiVisViewer = graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisView();
-				basicGraphGuiVisViewer.setActionOnTop(actionOnTopIsRunning);
-				if (actionOnTopIsRunning==false) {
-					basicGraphGuiVisViewer.repaint();
-					basicGraphGuiVisViewer.requestFocus();
-				}	
+				if (basicGraphGuiVisViewer!=null) {
+					basicGraphGuiVisViewer.setActionOnTop(actionOnTopIsRunning);
+					if (actionOnTopIsRunning==false) {
+						basicGraphGuiVisViewer.repaint();
+						basicGraphGuiVisViewer.requestFocus();
+					}	
+				}
 			} 
 			
 		} catch (Exception ex) {

@@ -472,6 +472,21 @@ public class DBConnection {
 		return true;		
 	}
 	
+	/**
+	 * Gets the connection instance to the database.
+	 * @return the connection
+	 */
+	public Connection getConnection() {
+		return connection;
+	}
+	/**
+	 * Sets the connection instance to the database.
+	 * @param connection the connection to set
+	 */
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+	
 	// ------------------------------
 	// --- Start Sub-Class ----------
 	// ------------------------------
