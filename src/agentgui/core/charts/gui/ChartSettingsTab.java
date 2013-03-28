@@ -41,10 +41,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Vector;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
@@ -59,13 +55,11 @@ import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.SeriesSettings;
-import agentgui.core.charts.ChartSettings;
-import agentgui.core.charts.SettingsInfo;
 import agentgui.envModel.graph.components.TableCellEditor4Color;
 import agentgui.envModel.graph.components.TableCellRenderer4Color;
 import agentgui.ontology.DataSeries;
 
-public class ChartSettingsTab extends JPanel implements ActionListener, TableModelListener, FocusListener, Observer{
+public class ChartSettingsTab extends JPanel implements ActionListener, TableModelListener, FocusListener{
 	
 	private static final long serialVersionUID = 2476599044804448243L;
 	
@@ -83,7 +77,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	
 	protected DataModel model;
 	
-	protected ChartSettings settings;
+//	protected ChartSettings settings;
 
 	// -------------------------------------------------------------------------------------------------
 	// --- Only activate this constructor if you want to redesign this dialog with a visual editor !! --
@@ -190,7 +184,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 		if (tfChartTitle == null) {
 			tfChartTitle = new JTextField();
 			tfChartTitle.setColumns(10);
-			tfChartTitle.setText(settings.getChartTitle());
+			tfChartTitle.setText(model.getChartSettings().getChartTitle());
 			tfChartTitle.addActionListener(this);
 			tfChartTitle.addFocusListener(this);
 		}
@@ -200,7 +194,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 		if (tfXAxisLabel == null) {
 			tfXAxisLabel = new JTextField();
 			tfXAxisLabel.setColumns(10);
-			tfXAxisLabel.setText(settings.getxAxisLabel());
+			tfXAxisLabel.setText(model.getChartSettings().getxAxisLabel());
 			tfXAxisLabel.addActionListener(this);
 			tfXAxisLabel.addFocusListener(this);
 		}
@@ -210,7 +204,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 		if (tfYAxisLabel == null) {
 			tfYAxisLabel = new JTextField();
 			tfYAxisLabel.setColumns(10);
-			tfYAxisLabel.setText(settings.getyAxisLabel());
+			tfYAxisLabel.setText(model.getChartSettings().getyAxisLabel());
 			tfYAxisLabel.addActionListener(this);
 			tfYAxisLabel.addFocusListener(this);
 		}
@@ -220,7 +214,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 		if (cbRendererType == null) {
 			cbRendererType = new JComboBox();
 			cbRendererType.setModel(new DefaultComboBoxModel(ChartTab.RENDERER_TYPES));
-			cbRendererType.setSelectedItem(settings.getRendererType());
+			cbRendererType.setSelectedItem(model.getChartSettings().getRendererType());
 			cbRendererType.addActionListener(this);
 		}
 		return cbRendererType;
@@ -314,23 +308,20 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 		
 		((DefaultTableModel)getTblSeriesSettings().getModel()).addRow(newRow);
 		
-		settings.getSeriesSettings().add(new SeriesSettings(label, color, lineWidth));
+		model.getChartSettings().getSeriesSettings().add(new SeriesSettings(label, color, lineWidth));
 		
 	}
 	
-	public void addObserver(Observer observer){
-		settings.addObserver(observer);
-	}
 	@Override
 	public void tableChanged(TableModelEvent tme) {
 		int seriesIndex = tme.getFirstRow();
 		try{
 			if(tme.getColumn() == 0){
-				settings.setSeriesLabel(seriesIndex, (String) tblSeriesSettings.getModel().getValueAt(seriesIndex, 0));
+				model.getChartSettings().setSeriesLabel(seriesIndex, (String) tblSeriesSettings.getModel().getValueAt(seriesIndex, 0));
 			}else if(tme.getColumn() == 1){
-				settings.setSeriesColor(seriesIndex, (Color) tblSeriesSettings.getModel().getValueAt(seriesIndex, 1));
+				model.getChartSettings().setSeriesColor(seriesIndex, (Color) tblSeriesSettings.getModel().getValueAt(seriesIndex, 1));
 			}else if(tme.getColumn() == 2){
-				settings.setSeriesLineWidth(seriesIndex, (Float) tblSeriesSettings.getModel().getValueAt(seriesIndex, 2));
+				model.getChartSettings().setSeriesLineWidth(seriesIndex, (Float) tblSeriesSettings.getModel().getValueAt(seriesIndex, 2));
 			}
 		}catch (NoSuchSeriesException ex) {
 			System.err.println("Error changing settings for series "+seriesIndex);
@@ -356,42 +347,20 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	 */
 	private void handleEvent(AWTEvent e){
 		if(e.getSource() == getTfChartTitle()){
-			if(!getTfChartTitle().getText().equals(settings.getChartTitle())){
-				settings.setChartTitle(getTfChartTitle().getText());
+			if(!getTfChartTitle().getText().equals(model.getChartSettings().getChartTitle())){
+				model.getChartSettings().setChartTitle(getTfChartTitle().getText());
 			}
 		}else if(e.getSource() == getTfXAxisLabel()){
-			if(!getTfXAxisLabel().equals(settings.getxAxisLabel())){
-				settings.setxAxisLabel(getTfXAxisLabel().getText());
+			if(!getTfXAxisLabel().equals(model.getChartSettings().getxAxisLabel())){
+				model.getChartSettings().setxAxisLabel(getTfXAxisLabel().getText());
 			}
 		}else if(e.getSource() == getTfYAxisLabel()){
-			if(!getTfYAxisLabel().equals(settings.getyAxisLabel())){
-				settings.setyAxisLabel(getTfYAxisLabel().getText());
+			if(!getTfYAxisLabel().equals(model.getChartSettings().getyAxisLabel())){
+				model.getChartSettings().setyAxisLabel(getTfYAxisLabel().getText());
 			}
 		}else if(e.getSource() == getCbRendererType()){
-			if(!getCbRendererType().getSelectedItem().equals(settings.getRendererType())){
-				settings.setRendererType((String) getCbRendererType().getSelectedItem());
-			}
-		}
-	}
-	@Override
-	public void update(Observable o, Object arg) {
-		if(o == this.settings && arg instanceof SettingsInfo){
-			SettingsInfo info = (SettingsInfo) arg;
-			if(info.getType() == SettingsInfo.SERIES_REMOVED){
-				int seriesIndex = info.getSeriesIndex();
-				DefaultTableModel tableModel = (DefaultTableModel) getTblSeriesSettings().getModel();
-				tableModel.removeRow(seriesIndex);
-			}else if(info.getType() == SettingsInfo.SERIES_ADDED){
-				SeriesSettings settings = (SeriesSettings) info.getData();
-				String label = settings.getLabel();
-				Color color = settings.getColor();
-				Float lineWidth = settings.getLineWIdth();
-				Vector<Object> newRow = new Vector<Object>();
-				newRow.add(label);
-				newRow.add(color);
-				newRow.add(lineWidth);
-				DefaultTableModel tableModel = (DefaultTableModel) getTblSeriesSettings().getModel();
-				tableModel.addRow(newRow);
+			if(!getCbRendererType().getSelectedItem().equals(model.getChartSettings().getRendererType())){
+				model.getChartSettings().setRendererType((String) getCbRendererType().getSelectedItem());
 			}
 		}
 	}

@@ -112,4 +112,12 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 			throw new NoSuchSeriesException();
 		}
 	}
+	
+	/**
+	 * Sets the time format in the settings object
+	 * @param timeFormat
+	 */
+	void setTimeFormat(String timeFormat){
+		getAdditionalSettings().setTimeFormat(timeFormat);
+	}
 }

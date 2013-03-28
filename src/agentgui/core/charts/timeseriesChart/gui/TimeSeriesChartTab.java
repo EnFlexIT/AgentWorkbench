@@ -97,6 +97,16 @@ public class TimeSeriesChartTab extends ChartTab {
 		da.setDateFormatOverride(dateFormat);
 	}
 	
-	
+	/**
+	 * Sets the time format for the time axis label ticks
+	 * @param timeFormat
+	 */
+	void setTimeFormat(String timeFormat){
+		DateAxis da = (DateAxis) getChart().getXYPlot().getDomainAxis();
+		
+		DateFormat dateFormat = new SimpleDateFormat(timeFormat);
+		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		da.setDateFormatOverride(dateFormat);
+	}
 	
 }

@@ -12,10 +12,6 @@ public class XyChartSettingsTab extends ChartSettingsTab{
 
 	public XyChartSettingsTab(DataModel model) {
 		this.model = model;
-		
-		this.settings = model.getChartSettings();
-		this.settings.addObserver(this);
-		
 		initialize();
 	}
 

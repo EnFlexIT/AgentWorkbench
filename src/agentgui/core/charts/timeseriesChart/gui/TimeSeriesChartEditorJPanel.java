@@ -28,12 +28,11 @@
  */
 package agentgui.core.charts.timeseriesChart.gui;
 
-import java.util.Observable;
-
-import agentgui.core.charts.SettingsInfo;
+import agentgui.core.charts.ChartSettings;
 import javax.swing.JToolBar;
 
 import agentgui.core.charts.gui.ChartEditorJPanel;
+import agentgui.core.charts.timeseriesChart.TimeSeriesChartSettings;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
 import agentgui.core.ontologies.gui.DynForm;
@@ -107,35 +106,6 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 		return ((TimeSeriesOntologyModel)this.getModel().getOntologyModel()).getTimeSeriesChart();
 	}
 
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.gui.ChartEditorJPanel#update(java.util.Observable, java.lang.Object)
-	 */
-	@Override
-	public void update(Observable o, Object arg) {
-		if(o == this.model.getChartSettings() || arg instanceof SettingsInfo){
-			SettingsInfo info = (SettingsInfo) arg;
-			if(info.getType() == SettingsInfo.TIME_FORMAT_CHANGED){
-				String newTimeFormat = (String) info.getData();
-				
-				// Set the time format for the GUI components
-				this.getChartTab().applySettings();
-				
-				// Set the time format for the ontology-based data model
-				TimeSeriesOntologyModel tsom = ((TimeSeriesOntologyModel)this.model.getOntologyModel());
-				
-				if(newTimeFormat.equals(getDefaultTimeFormat())){
-					// Use project default if nothing different set
-					tsom.getAdditionalSettings().setTimeFormat(null);
-				}else{
-					// Use set format if != project default
-					tsom.getAdditionalSettings().setTimeFormat(newTimeFormat);
-				}
-				
-				return;
-			}
-		}
-		super.update(o, arg);
-	}
 	
 	/* (non-Javadoc)
 	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#getJToolBarUserFunctions()
@@ -144,6 +114,22 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	public JToolBar getJToolBarUserFunctions() {
 		return this.getToolBar();
 	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#applyChartSettings(agentgui.core.charts.ChartSettings)
+	 */
+	@Override
+	protected void applyChartSettings(ChartSettings newSettings) {
+		// Apply general chart settings
+		super.applyChartSettings(newSettings);
+		
+		// Apply time format settings
+		String newTimeFormat = ((TimeSeriesChartSettings)newSettings).getTimeFormat();
+		getChartTab().setTimeFormat(newTimeFormat);
+		
+	}
+	
+	
 
 
 }

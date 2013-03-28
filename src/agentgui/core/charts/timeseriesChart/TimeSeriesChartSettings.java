@@ -32,7 +32,6 @@ import java.awt.Color;
 
 import agentgui.core.charts.ChartSettings;
 import agentgui.core.charts.SeriesSettings;
-import agentgui.core.charts.SettingsInfo;
 import agentgui.ontology.Chart;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
@@ -73,9 +72,6 @@ public class TimeSeriesChartSettings extends ChartSettings {
 	 */
 	public void setTimeFormat(String timeFormat) {
 		this.timeFormat = timeFormat;
-		SettingsInfo info = new SettingsInfo(SettingsInfo.TIME_FORMAT_CHANGED, timeFormat);
-		setChanged();
-		notifyObservers(info);
 	}
 
 }

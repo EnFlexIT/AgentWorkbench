@@ -30,9 +30,6 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 		this.model = model;
 		this.parent = parent;
 		
-		this.settings = model.getChartSettings();
-		this.settings.addObserver(this);
-		
 		initialize();
 	}
 	
@@ -82,7 +79,7 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 		if (timeFormatSelector==null) {
 			timeFormatSelector = new TimeFormatSelector(this);
 			timeFormatSelector.setPreferredSize(new Dimension(360, 80));
-			timeFormatSelector.setTimeFormat(((TimeSeriesChartSettings)settings).getTimeFormat());
+			timeFormatSelector.setTimeFormat(((TimeSeriesChartSettings)model.getChartSettings()).getTimeFormat());
 			timeFormatSelector.addActionListener(this);
 		}
 		return timeFormatSelector;
@@ -108,7 +105,7 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == getTimeFormatSelector()){
-			((TimeSeriesChartSettings)settings).setTimeFormat(getTimeFormatSelector().getTimeFormat());
+			((TimeSeriesChartSettings)model.getChartSettings()).setTimeFormat(getTimeFormatSelector().getTimeFormat());
 		}else{
 			super.actionPerformed(e);
 		}
@@ -122,7 +119,7 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	@Override
 	public void focusLost(FocusEvent e) {
 		if(e.getSource() == getTimeFormatSelector()){
-			((TimeSeriesChartSettings)settings).setTimeFormat(getTimeFormatSelector().getTimeFormat());
+			((TimeSeriesChartSettings)model.getChartSettings()).setTimeFormat(getTimeFormatSelector().getTimeFormat());
 		}else{
 			super.focusLost(e);
 		}

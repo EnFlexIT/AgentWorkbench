@@ -29,11 +29,12 @@
 package agentgui.core.charts.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -63,9 +64,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.charts.ChartSettings;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.NoSuchSeriesException;
-import agentgui.core.charts.SettingsInfo;
+import agentgui.core.charts.SeriesSettings;
 import agentgui.core.gui.imaging.ConfigurableFileFilter;
 import agentgui.core.gui.imaging.ImageFileView;
 import agentgui.core.gui.imaging.ImagePreview;
@@ -122,7 +124,6 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		this.add(getTabbedPane(), BorderLayout.CENTER);
 		
 		this.model.addObserver(this);
-		this.model.getChartSettings().addObserver(this);
 	}
 
 	@Override
@@ -133,81 +134,6 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		// --- Handle changes of the chart data 
 		if(o == this.model){
 			setOntologyClassInstance(this.getOntologyClassInstance());
-		}
-		
-		
-		// --- Handle changes of the chart settings
-		else if (o == this.model.getChartSettings()){
-			if(arg instanceof SettingsInfo){
-				SettingsInfo info = (SettingsInfo) arg;
-				if(info.getType() == SettingsInfo.RENDERER_CHANGED){
-					chartTab.setRenderer((String) info.getData());
-				}else if(info.getType() == SettingsInfo.CHART_TITLE_CHANGED){
-					String title = (String) info.getData();
-					model.getOntologyModel().getChartSettings().setChartTitle(title);
-					chartTab.getChart().setTitle(title);
-				}else if(info.getType() == SettingsInfo.X_AXIS_LABEL_CHANGED){
-					String label = (String) info.getData();
-					model.getOntologyModel().getChartSettings().setXAxisLabel(label);
-					chartTab.setXAxisLabel(label);
-					model.getTableModel().setKeyColumnLabel(label);
-				}else if(info.getType() == SettingsInfo.Y_AXIS_LABEL_CHANGED){
-					String label = (String) info.getData();
-					model.getOntologyModel().getChartSettings().setYAxisLabel(label);
-					chartTab.setYAxisLabel(label);
-				}else if(info.getType() == SettingsInfo.SERIES_LABEL_CHANGED){
-					String label = (String) info.getData();
-					int seriesIndex = info.getSeriesIndex();
-					try {
-						if(seriesIndex < model.getSeriesCount()){
-							model.getTableModel().setSeriesLabel(seriesIndex, label);
-							DataSeries series = model.getOntologyModel().getSeries(seriesIndex);
-							series.setLabel(label);
-							model.getChartModel().getSeries(seriesIndex).setKey(label);
-						}else{
-							throw new NoSuchSeriesException();
-						}
-					} catch (NoSuchSeriesException e) {
-						System.err.println("Error setting label for series "+seriesIndex);
-						e.printStackTrace();
-					}
-					
-				}else if(info.getType() == SettingsInfo.SERIES_COLOR_CHANGED){
-					Color color = (Color) info.getData();
-					int seriesIndex = info.getSeriesIndex();
-					try {
-						if(seriesIndex < model.getSeriesCount()){
-							model.getOntologyModel().getChartSettings().getYAxisColors().remove(seriesIndex);
-							model.getOntologyModel().getChartSettings().getYAxisColors().add(seriesIndex, ""+color.getRGB());
-							chartTab.setSeriesColor(seriesIndex, color);
-						}else{
-								throw new NoSuchSeriesException();
-						}
-					} catch (NoSuchSeriesException e) {
-						System.err.println("Error setting color for series "+seriesIndex);
-						e.printStackTrace();
-					}
-				}else if(info.getType() == SettingsInfo.SERIES_LINE_WIDTH_CHANGED){
-					float lineWidth = (Float) info.getData();
-					int seriesIndex = info.getSeriesIndex();
-					
-					try {
-						if(seriesIndex < model.getSeriesCount()){
-							model.getOntologyModel().getChartSettings().getYAxisLineWidth().remove(seriesIndex);
-							model.getOntologyModel().getChartSettings().getYAxisLineWidth().add(seriesIndex, lineWidth);
-							chartTab.setSeriesLineWidth(seriesIndex, lineWidth);
-						}else{
-								throw new NoSuchSeriesException();
-						}
-					} catch (NoSuchSeriesException e) {
-						System.err.println("Error setting color for series "+seriesIndex);
-						e.printStackTrace();
-					}
-				}else if(info.getType() == SettingsInfo.SERIES_ADDED){
-					getChartTab().applyColorSettings();
-					getChartTab().applyLineWidthsSettings();
-				}
-			}
 		}
 	}
 
@@ -279,11 +205,26 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 			tabbedPane = new JTabbedPane();
 			tabbedPane.addTab("Chart", getChartTab());
 			tabbedPane.addTab("Table", getTableTab());
-			tabbedPane.addTab("Settings", getJScrollPane4SettingTab());
+			tabbedPane.addTab("Settings", getJScrollPane4SettingsTab());
+			
+			// Add ComponentListener for applying chart settings when the settings tab is left
+			getJScrollPane4SettingsTab().addComponentListener(new ComponentAdapter() {
+
+				/* (non-Javadoc)
+				 * @see java.awt.event.ComponentAdapter#componentHidden(java.awt.event.ComponentEvent)
+				 */
+				@Override
+				public void componentHidden(ComponentEvent e) {
+					if(e.getSource() == getJScrollPane4SettingsTab()){
+						applyChartSettings(model.getChartSettings());
+					}
+				}
+
+			});
 		}
 		return tabbedPane;
 	}
-	protected JScrollPane getJScrollPane4SettingTab() {
+	protected JScrollPane getJScrollPane4SettingsTab() {
 		if (scrollPane4SettingTab==null) {
 			scrollPane4SettingTab = new JScrollPane();
 			scrollPane4SettingTab.setViewportView(this.getSettingsTab());
@@ -644,6 +585,62 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * After the chart settings have been changed, this method applies the new settings.
+	 * This method handles general chart settings only. If your chart has chart type 
+	 * specific settings too, override it in the chart type specific ChartEditorJPanel 
+	 * implementation.  
+	 * @param newSettings
+	 */
+	protected void applyChartSettings(ChartSettings newSettings){
+		// Chart title
+		getChartTab().getChart().setTitle(newSettings.getChartTitle());
+		model.getOntologyModel().getChartSettings().setChartTitle(newSettings.getChartTitle());
+		
+		// X axis label
+		model.getOntologyModel().getChartSettings().setXAxisLabel(newSettings.getxAxisLabel());
+		chartTab.setXAxisLabel(newSettings.getxAxisLabel());
+		model.getTableModel().setKeyColumnLabel(newSettings.getxAxisLabel());
+		
+		// Y axis label
+		model.getOntologyModel().getChartSettings().setYAxisLabel(newSettings.getyAxisLabel());
+		chartTab.setYAxisLabel(newSettings.getyAxisLabel());
+		
+		// Renderer type
+		getChartTab().setRenderer(newSettings.getRendererType());
+		
+		// Series specific settings
+		for(int i=0; i<model.getSeriesCount(); i++){
+			try {
+				SeriesSettings seriesSettings = newSettings.getSeriesSettings(i);
+				
+				// Series label
+				model.getTableModel().setSeriesLabel(i, seriesSettings.getLabel());
+				DataSeries series = model.getOntologyModel().getSeries(i);
+				series.setLabel(seriesSettings.getLabel());
+				model.getChartModel().getSeries(i).setKey(seriesSettings.getLabel());
+				
+				// Plot color
+				model.getOntologyModel().getChartSettings().getYAxisColors().remove(i);
+				model.getOntologyModel().getChartSettings().getYAxisColors().add(i, ""+seriesSettings.getColor().getRGB());
+				chartTab.setSeriesColor(i, seriesSettings.getColor());
+				
+				// Plot line width
+				model.getOntologyModel().getChartSettings().getYAxisLineWidth().remove(i);
+				model.getOntologyModel().getChartSettings().getYAxisLineWidth().add(i, seriesSettings.getLineWIdth());
+				chartTab.setSeriesLineWidth(i, seriesSettings.getLineWIdth());
+				
+				
+				
+			} catch (NoSuchSeriesException e) {
+				System.err.println("Error setting series settings, could not find series "+i);
+				e.printStackTrace();
+			}
+			
+		}
+		
 	}
 	
 }
