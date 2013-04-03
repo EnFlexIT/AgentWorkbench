@@ -189,8 +189,14 @@ public class TimeFormatSelector extends JPanelForActions {
 	public void setTimeFormat(String newTimeFormat) {
 		if (newTimeFormat==null) {
 			this.getJTextFieldTimeFormat().setText(this.getTimeFormatDefault());
+			if(! this.getJComboBoxTimeFormat().getSelectedItem().equals(this.getTimeFormatDefault())){
+				this.getJComboBoxTimeFormat().setSelectedItem(this.getTimeFormatDefault());
+			}
 		} else {
-			this.getJTextFieldTimeFormat().setText(newTimeFormat);	
+			this.getJTextFieldTimeFormat().setText(newTimeFormat);
+			if(! this.getJComboBoxTimeFormat().getSelectedItem().equals(newTimeFormat)){
+				this.getJComboBoxTimeFormat().setSelectedItem(newTimeFormat);
+			}
 		}
 	}
 	/**

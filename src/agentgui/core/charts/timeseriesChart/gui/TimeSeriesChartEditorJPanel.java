@@ -126,6 +126,7 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 		// Apply time format settings
 		String newTimeFormat = ((TimeSeriesChartSettings)newSettings).getTimeFormat();
 		getChartTab().setTimeFormat(newTimeFormat);
+		((TimeSeriesOntologyModel)model.getOntologyModel()).getAdditionalSettings().setTimeFormat(newTimeFormat);
 		
 	}
 	

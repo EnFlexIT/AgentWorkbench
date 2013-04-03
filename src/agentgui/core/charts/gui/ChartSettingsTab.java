@@ -262,6 +262,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 			};
 			tblSeriesSettings.setFillsViewportHeight(true);
 			tblSeriesSettings.setModel(initTableModel());
+			tblSeriesSettings.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		}
 		return tblSeriesSettings;
 	}

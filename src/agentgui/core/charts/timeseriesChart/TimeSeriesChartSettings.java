@@ -32,7 +32,6 @@ import java.awt.Color;
 
 import agentgui.core.charts.ChartSettings;
 import agentgui.core.charts.SeriesSettings;
-import agentgui.ontology.Chart;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 
@@ -40,9 +39,9 @@ public class TimeSeriesChartSettings extends ChartSettings {
 	
 	private String timeFormat;
 
-	public TimeSeriesChartSettings(Chart chart, String timeFormat) {
+	public TimeSeriesChartSettings(TimeSeriesChart chart) {
 		super(chart);
-		this.timeFormat = timeFormat;
+		this.timeFormat = chart.getTimeSeriesAdditionalSettings().getTimeFormat();
 		
 		// TODO In die Oberklasse?
 		TimeSeriesChart tsChart = (TimeSeriesChart) chart;

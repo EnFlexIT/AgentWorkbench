@@ -131,7 +131,7 @@ public class TimeSeriesDataModel extends DataModel implements TableModelListener
 		// Register for table model events
 		tableModel.addTableModelListener(this);
 		
-		this.chartSettings = new TimeSeriesChartSettings(tsom.getTimeSeriesChart(), defaultTimeFormat);
+		this.chartSettings = new TimeSeriesChartSettings(tsom.getTimeSeriesChart());
 	}
 
 	/**
