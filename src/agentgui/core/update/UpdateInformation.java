@@ -210,10 +210,10 @@ public class UpdateInformation {
 		
 		if (this.majorRevision>localMajorRevision) {
 			return true;
-		} else {
+		} else if (this.majorRevision==localMajorRevision) {
 			if (this.minorRevision>localMinorRevision) {
 				return true;
-			} else {
+			} else if (this.minorRevision==localMinorRevision) {
 				if (this.build>localBuild) {
 					return true;
 				}

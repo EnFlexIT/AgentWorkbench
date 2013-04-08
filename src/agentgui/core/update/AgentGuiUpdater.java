@@ -48,11 +48,11 @@ import agentgui.simulationService.distribution.DownloadThread;
  */
 public class AgentGuiUpdater extends Thread {
 
-	// --- For debugging this class set true  -------------
+	// --- For the debugging of this class set true -------------
 	private boolean debuggingInIDE = false;
 	
-	public static final long UPDATE_CHECK_PERIOD = 1000*60*60*24; // - once a day -
-	public static final String UPDATE_SUB_FOLDER = "updates"; // - subfolder in the web server directory -
+	public static final long UPDATE_CHECK_PERIOD = 1000*60*60*24; 	// - once a day -
+	public static final String UPDATE_SUB_FOLDER = "updates"; 		// - subfolder in the web server directory -
 	public static final String UPDATE_VERSION_INFO_FILE = "latestVersion.xml";
 	
 	private final String updateSiteAddition = "?key=xml";
