@@ -65,6 +65,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 	 * @param searchInPackage the reference to the package in which the search has to be executed
 	 */
 	public ReflectClassFiles(String searchInPackage) {
+
 		this.searchInPackage = searchInPackage;
 		if (this.searchInPackage!= null) {
 			this.searchINPathParts = this.searchInPackage.split("\\.");
@@ -99,8 +100,9 @@ public class ReflectClassFiles extends ArrayList<String> {
 				
 				String pathOfFile = directoryFile.getAbsolutePath();
 				String reference2JarFile = this.getJarReferenceFromPathOfFile(pathOfFile);
-				//System.out.println("=> Reference to JarFile: From " + pathOfFile + " to  " + reference2JarFile);
+//				System.out.println("=> Reference to JarFile: From " + pathOfFile + " to  " + reference2JarFile);
 				if (reference2JarFile!=null) {
+					// --- Points to a jar file ---------------------
 					if (pathOfFile.startsWith("file:") || pathOfFile.endsWith(".jar")) {
 						// --- Path points to a jar-file ----------------
 						classList = getJARClasses(directoryFile);
@@ -124,7 +126,9 @@ public class ReflectClassFiles extends ArrayList<String> {
 					
 				}
 				
-			}// --- end file exists ---
+			} else {
+				System.err.println("Reflect classes in '" + this.searchInPackage + "': Could not find " + directoryFile);
+			}
 			
 		}// --- end for ---
 			
@@ -186,6 +190,12 @@ public class ReflectClassFiles extends ArrayList<String> {
 			URL resource = resources.nextElement();
 			String fileName = resource.getFile();
 			String fileNameDecoded = URLDecoder.decode(fileName, "UTF-8");
+			if (fileNameDecoded.startsWith("file:")) {
+				fileNameDecoded = fileNameDecoded.substring(5);
+			}
+			if (fileNameDecoded.contains(".jar!")) {
+				fileNameDecoded = fileNameDecoded.substring(0, fileNameDecoded.indexOf(".jar!")+4);
+			}
 			dirs.add(new File(fileNameDecoded));
 		}
 		
@@ -234,7 +244,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 						classes.add(clazz);	
 					} else {
 						if (clazz.startsWith(searchInPackage) ) {
-							classes.add( clazz );
+							classes.add(clazz);
 						}		
 					}
 				}
