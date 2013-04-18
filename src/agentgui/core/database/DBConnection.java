@@ -435,8 +435,16 @@ public class DBConnection {
 		try {
 			
 			Properties props = new Properties();
-			props.setProperty("user", dbUser);
-			props.setProperty("password", dbPswd);
+			if (dbUser!=null) {
+				props.setProperty("user", dbUser);
+			} else {
+				props.setProperty("user", "");
+			}
+			if (dbPswd!=null) {
+				props.setProperty("password", dbPswd);
+			} else {
+				props.setProperty("password", "");
+			}
 			props.setProperty("useUnicode","true");
 			props.setProperty("characterEncoding","UTF-8");
 			props.setProperty("connectionCollation","utf8_general_ci");
