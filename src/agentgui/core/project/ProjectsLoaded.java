@@ -112,11 +112,11 @@ public class ProjectsLoaded {
 			// --- Define an initial project name ---------		
 			String ProjectNamePrefix = Language.translate("Neues Projekt");
 			projectNameTest = ProjectNamePrefix;
-			int Index = Application.getProjectsLoaded().getIndexByName(projectNameTest);
+			int index = Application.getProjectsLoaded().getIndexByName(projectNameTest);
 			int i = 2;
-			while ( Index != -1 ) {
+			while (index!=-1) {
 				projectNameTest = ProjectNamePrefix + " " + i;
-				Index = Application.getProjectsLoaded().getIndexByName( projectNameTest );
+				index = Application.getProjectsLoaded().getIndexByName(projectNameTest);
 				i++;
 			}
 			projectFolderTest = projectNameTest.toLowerCase().replace(" ", "_");

@@ -379,7 +379,7 @@ import agentgui.core.webserver.JarFileCreator;
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 			//pm.marshal( this, System.out );
 			// --- Write values to xml-File ---------------
-			Writer pw = new FileWriter( projectFolderFullPath + Application.getGlobalInfo().getFileNameProject() );
+			Writer pw = new FileWriter(this.getProjectFolderFullPath() + Application.getGlobalInfo().getFileNameProject() );
 			pm.marshal(this, pw);
 			pw.close();
 			
@@ -387,7 +387,7 @@ import agentgui.core.webserver.JarFileCreator;
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
 		    try {
-		       fos = new FileOutputStream(projectFolderFullPath + Application.getGlobalInfo().getFilenameProjectUserObject());
+		       fos = new FileOutputStream(this.getProjectFolderFullPath() + Application.getGlobalInfo().getFilenameProjectUserObject());
 		       out = new ObjectOutputStream(fos);
 		       out.writeObject(this.userRuntimeObject);
 		       out.close();
@@ -687,8 +687,8 @@ import agentgui.core.webserver.JarFileCreator;
 		boolean error = false;
 		
 		for (int i=0; i< this.defaultSubFolders.length; i++  ) {
-			// --- Does teh default folder exists ---------
-			newDirName = this.projectFolderFullPath + defaultSubFolders[i];
+			// --- Does the default folder exists ---------
+			newDirName = this.getProjectFolderFullPath() + defaultSubFolders[i];
 			file = new File(newDirName);
 			if (file.isDirectory()==false) {
 				// --- create directors -------------------
@@ -806,7 +806,6 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient
 	public void setProjectFolder(String newProjectFolder) {
 		projectFolder = newProjectFolder;
-		projectFolderFullPath = Application.getGlobalInfo().PathProjects(true) + projectFolder + File.separator;
 		setChanged();
 		notifyObservers(CHANGED_ProjectFolder);
 	}
@@ -820,6 +819,9 @@ import agentgui.core.webserver.JarFileCreator;
 	 * @return the ProjectFolderFullPath
 	 */
 	public String getProjectFolderFullPath() {
+		if (projectFolderFullPath==null) {
+			projectFolderFullPath = Application.getGlobalInfo().PathProjects(true) + projectFolder + File.separator;
+		}
 		return projectFolderFullPath;
 	}
 	
@@ -917,7 +919,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 * @return The default environment setup folder
 	 */
 	public String getEnvSetupPath(){
-		return projectFolderFullPath + defaultSubFolderEnvSetups;
+		return this.getProjectFolderFullPath() + defaultSubFolderEnvSetups;
 	}		
 	
 	/**
@@ -1084,7 +1086,7 @@ import agentgui.core.webserver.JarFileCreator;
 
 		for(String jarFile4Display : this.getProjectResources()) {
 
-			jarFile4Display = PathHandling.getPathName4LocalFileSystem(jarFile4Display);
+			jarFile4Display = PathHandling.getPathName4LocalSystem(jarFile4Display);
 			
 			String prefixText = null;
 			String suffixText = null;

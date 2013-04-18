@@ -261,27 +261,20 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
-		String ActCMD = ae.getActionCommand();
-		Object Trigger = ae.getSource();
-		//System.out.println( "ActCMD/Wert => " + ActCMD );
-		//System.out.println( "Auslöser => " + Trigger );
 
-		// --- Fallunterscheidung 'Auslöser' -----------------------------
-		if ( Trigger == projectName ) {
-			currProject.setProjectName( ae.getActionCommand() );
-		}
-		else if ( Trigger == jTextFieldProjectFolder ) {
-			currProject.setProjectFolder( ae.getActionCommand() );
-		}
-		else if ( Trigger == jTextAreaProjectDescription ) {
-			currProject.setProjectDescription( ae.getActionCommand() );
-		}
-		else {
-			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);
+		String actCMD = ae.getActionCommand();
+		Object trigger = ae.getSource();
+
+		if (trigger==projectName) {
+			currProject.setProjectName(ae.getActionCommand());
+		} else if (trigger == jTextFieldProjectFolder) {
+			currProject.setProjectFolder(ae.getActionCommand());
+		} else if (trigger==jTextAreaProjectDescription) {
+			currProject.setProjectDescription(ae.getActionCommand());
+		} else {
+			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actCMD);
 		};
 	}
-	
 	
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

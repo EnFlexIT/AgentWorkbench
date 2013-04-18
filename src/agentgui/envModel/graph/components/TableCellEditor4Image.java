@@ -132,7 +132,7 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	            	// --- If file exists make it selected in the file chosser ----------
 	            	String fileDesc = this.currentImageIcon.getDescription().substring(1).replace(project.getProjectFolder(), "").substring(1);
 	            	String filePath = project.getProjectFolderFullPath() + fileDesc;
-	            	filePath = PathHandling.getPathName4LocalFileSystem(filePath);
+	            	filePath = PathHandling.getPathName4LocalSystem(filePath);
 	            	File testFile = new File(filePath);
 	            	if (testFile.exists()==true) {
 	            		this.getFileChooser().setSelectedFile(testFile);
@@ -142,15 +142,15 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	            int returnVal = this.getFileChooser().showDialog(button, Language.translate("Choose Icon", Language.EN));
 	            // - - Wait for the end of the dialog - - - - - - -
 	            if (returnVal == JFileChooser.APPROVE_OPTION) {
-	            	// --- Choosen a file -----------------------------------------------
+	            	// --- Chosen a file ------------------------------------------------
 		            Application.getGlobalInfo().setLastSelectedFolder(fileChooser.getCurrentDirectory());
 	            
 	            	File file = this.getFileChooser().getSelectedFile();	               
-	                String filePath = file.getPath();
+	                String filePath = file.getAbsolutePath();
 	                
-	                // --- Checking the prefix of the choosen file path -----------------
+	                // --- Checking the prefix of the chosen file path ------------------
 	                if(filePath.startsWith(project.getProjectFolderFullPath())){
-	                	// --- The image is inside project folder or its subfolder ------
+	                	// --- The image is inside project folder or its sub folder -----
 	                	String path = filePath.replace(project.getProjectFolderFullPath(), "");
 	                    // --- Constructing the relative resource path ------------------
 	                	path = "/"+ project.getProjectFolder() + "/"  + path.replace(File.separatorChar, '/');

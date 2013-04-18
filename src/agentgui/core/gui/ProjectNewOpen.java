@@ -100,10 +100,10 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	private JTextField jTextFieldProjectFolder = null;
 	
 	private JScrollPane jScrollTree = null;
-	private JTree ProTree = null;
-	private DefaultTreeModel ProjectTreeModel;
-	private DefaultMutableTreeNode RootNode;
-	private DefaultMutableTreeNode CurrentNode;  
+	private JTree projectTree = null;
+	private DefaultTreeModel projectTreeModel;
+	private DefaultMutableTreeNode rootNode;
+	private DefaultMutableTreeNode currentNode;  
 	
 	private JCheckBox jCheckBoxExportBefore = null;
 	
@@ -127,8 +127,8 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 		this.actionCode = currentAction;
 		
 		//--- TreeModel initialisieren --------------------------
-		RootNode = new DefaultMutableTreeNode( "... " + Application.getGlobalInfo().PathProjects(false) );
-		ProjectTreeModel = new DefaultTreeModel( RootNode );	
+		rootNode = new DefaultMutableTreeNode("... " + Application.getGlobalInfo().PathProjects(false, false));
+		projectTreeModel = new DefaultTreeModel(rootNode);	
 		this.initialize();
 
 		// --- Dialog zentrieren ------------------------------------
@@ -433,7 +433,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 		if (jScrollTree == null) {
 			jScrollTree = new JScrollPane();
 			jScrollTree.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			jScrollTree.setViewportView( getProTree() );
+			jScrollTree.setViewportView(getProTree());
 		}
 		return jScrollTree;
 	}
@@ -443,27 +443,27 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	 * @return javax.swing.JTextArea
 	 */
 	private JTree getProTree() {
-		if (ProTree == null) {
-			ProTree = new JTree( ProjectTreeModel );
-			ProTree.setName("ProTree");
-			ProTree.setBounds(new Rectangle(16, 135, 258, 179));			
-			ProTree.setShowsRootHandles(false);
-			ProTree.setRootVisible(true);
-			ProTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		if (projectTree == null) {
+			projectTree = new JTree( projectTreeModel );
+			projectTree.setName("ProTree");
+			projectTree.setBounds(new Rectangle(16, 135, 258, 179));			
+			projectTree.setShowsRootHandles(false);
+			projectTree.setRootVisible(true);
+			projectTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			// --- Node-Objekte einfügen ------------------
-			String[] IDEProjects = Application.getGlobalInfo().getIDEProjects();
-			if (IDEProjects!=null) {
-				for ( String Pro : IDEProjects ) {
-					CurrentNode = new DefaultMutableTreeNode( Pro );
-					RootNode.add( CurrentNode );
+			String[] ideProjects = Application.getGlobalInfo().getIDEProjects();
+			if (ideProjects!=null) {
+				for (String projectFolder : ideProjects) {
+					currentNode = new DefaultMutableTreeNode( projectFolder );
+					rootNode.add(currentNode);
 				}
 			}
-			TreePath TreePathRoot = new TreePath(RootNode);
-			ProTree.expandPath( TreePathRoot );	
+			TreePath TreePathRoot = new TreePath(rootNode);
+			projectTree.expandPath( TreePathRoot );	
 			
 			// --- Falls ein Projekt geöffnet werden soll - START ---
 			if (actionCode!=ACTION_NewProject) {
-				ProTree.addTreeSelectionListener(new TreeSelectionListener() {
+				projectTree.addTreeSelectionListener(new TreeSelectionListener() {
 					@Override
 					public void valueChanged(TreeSelectionEvent ts) {
 						
@@ -480,7 +480,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 						
 					}
 				});
-				ProTree.addMouseListener( new MouseAdapter() {
+				projectTree.addMouseListener( new MouseAdapter() {
 					public void mouseClicked(MouseEvent me) {
 						if (me.getClickCount() == 2 ) {
 							jButtonOK.doClick();	
@@ -491,7 +491,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			// --- Falls ein Projekt geöffnet werden soll - ENDE ----
 			
 		}
-		return ProTree;
+		return projectTree;
 	}
 
 	/**

@@ -305,7 +305,7 @@ public class Application {
 					remainingArgsVector.removeElement(args[i]);
 					if ((args.length-1)>i) {
 						i++;
-						project2OpenAfterStart = args[i];	
+						project2OpenAfterStart = args[i].toLowerCase();	
 					} else {
 						System.err.println("Argument -project: Could not find project specification!");
 					}

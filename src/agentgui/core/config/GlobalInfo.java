@@ -456,24 +456,37 @@ public class GlobalInfo {
 			return PathProperty(false) + localFileProperties;
 		}
 	}
+	
 	/**
-	 * This method will return the path to the project folder ('project\')
+	 * This method will return the path to the project folder ('project\').
+	 * If the path does not exists, the path will be created.
 	 * @param absolute set true if you want to get the full path to this
 	 * @return the path to the project folder
 	 */
 	public String PathProjects(boolean absolute){
-		String retunPath = null;
+		return this.PathProjects(absolute, true);
+	}
+	
+	/**
+	 * This method will return the path to the project folder ('project\').
+	 *
+	 * @param absolute set true if you want to get the full path to this
+	 * @param forcePathCreation if true, the path will be created if it not already exists
+	 * @return the path to the project folder
+	 */
+	public String PathProjects(boolean absolute, boolean forcePathCreation){
+		String returnPath = null;
 		if (absolute == true) { 
-			retunPath = FilePath2Absolute( localPathProjects );
+			returnPath = FilePath2Absolute(localPathProjects);
 		} else {
-			retunPath = localPathProjects;	
+			returnPath = localPathProjects;	
 		}
 		// --- See if the folder exists. If not create ---------
-		File testFile = new File(retunPath);
+		File testFile = new File(returnPath);
 		if (testFile.exists()==false) {
 			testFile.mkdir();
 		}
-		return retunPath;
+		return returnPath;
 	}
 	
 	/**
