@@ -19,10 +19,10 @@
             </agent>
             <agent agentReference="gasmas.agents.components.ClusterNetworkAgent">
                 <startArgumentVector>
-                    <startArgument position="1" ontologyReference="agentgui.ontology.TimeSeriesChart"/>
-                    <startArgument position="2" ontologyReference="agentgui.ontology.XyChart"/>
-                    <startArgument position="3" ontologyReference="agentgui.ontology.Simple_Boolean"/>
-                    <startArgument position="4" ontologyReference="agentgui.ontology.Simple_Integer"/>
+                    <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="1"/>
+                    <startArgument ontologyReference="agentgui.ontology.XyChart" position="2"/>
+                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" position="3"/>
+                    <startArgument ontologyReference="agentgui.ontology.Simple_Integer" position="4"/>
                 </startArgumentVector>
             </agent>
         </agentVector>
@@ -60,7 +60,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Einfaches Netz</simulationSetupCurrent>
+    <simulationSetupCurrent>Simple Net</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelDiscrete</timeModelClass>
     <downloadResources>http://rudel1.cs.uni-due.de:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
@@ -77,10 +77,6 @@
             <value>hnord_2_mid.xml</value>
         </entry>
         <entry>
-            <key>Einfaches Netz</key>
-            <value>einfaches_netz.xml</value>
-        </entry>
-        <entry>
             <key>SmartGrid</key>
             <value>smartgrid.xml</value>
         </entry>
@@ -93,16 +89,20 @@
             <value>smallclusters_3_large.xml</value>
         </entry>
         <entry>
-            <key>SmallClusters (1) Small</key>
-            <value>smallclusters_1_small.xml</value>
-        </entry>
-        <entry>
             <key>Testnetz 3</key>
             <value>testnetz_3.xml</value>
         </entry>
         <entry>
+            <key>SmallClusters (1) Small</key>
+            <value>smallclusters_1_small.xml</value>
+        </entry>
+        <entry>
             <key>HNord</key>
             <value>hnord.xml</value>
+        </entry>
+        <entry>
+            <key>Simple Net</key>
+            <value>simple_net.xml</value>
         </entry>
         <entry>
             <key>Testimport</key>
@@ -119,6 +119,10 @@
         <entry>
             <key>MixedClusters (1) Small</key>
             <value>mixedclusters_1_small.xml</value>
+        </entry>
+        <entry>
+            <key>Simple Net Two Entries</key>
+            <value>simple_net_two_entries.xml</value>
         </entry>
         <entry>
             <key>HNord Complete</key>

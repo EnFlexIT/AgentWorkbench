@@ -73,7 +73,7 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 	}
 
 	@Override
-	protected Number parseKey(String key) {
+	protected Number parseKey(String key, String keyFormat) {
 		return Float.parseFloat(key);
 	}
 

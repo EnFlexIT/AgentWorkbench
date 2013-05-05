@@ -28,6 +28,11 @@
  */
 package agentgui.core.charts.timeseriesChart.gui;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import agentgui.core.charts.ChartSettings;
 import javax.swing.JToolBar;
 
@@ -78,11 +83,17 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	}
 
 	@Override
-	protected Number parseKey(String key) {
-		// TODO This implementation expects time to be in minutes, should be made configurable
-		// TODO Move to the model class?
-		int minutes = Integer.parseInt(key);
-		Long timestamp = ((TimeSeriesDataModel)model).getStartDate().getTime() + minutes * 60000;
+	protected Number parseKey(String key, String keyFormat) {
+
+		Long timestamp = (long) 0; 
+		try {
+			DateFormat df = new SimpleDateFormat(keyFormat);
+			Date dateParsed =  df.parse(key);
+			timestamp = dateParsed.getTime();
+			
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}  
 		return timestamp;
 	}
 

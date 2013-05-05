@@ -37,11 +37,11 @@ public class TimeFormatSelector extends JPanelForActions {
 	private JComboBoxWide jComboBoxTimeFormat = null;
 
 	private JPanel jPanelDummy = null;
-	/**
-	 * The parent GUI component
-	 */
+
+	/** The parent GUI component */
 	private TimeSeriesChartSettingsTab parent = null;
 
+	
 	/**
 	 * This is the default constructor.
 	 */

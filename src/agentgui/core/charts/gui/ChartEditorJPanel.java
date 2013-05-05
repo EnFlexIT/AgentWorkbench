@@ -68,6 +68,8 @@ import agentgui.core.charts.ChartSettings;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.SeriesSettings;
+import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
+import agentgui.core.charts.timeseriesChart.gui.TimeFormatImportConfiguration;
 import agentgui.core.gui.imaging.ConfigurableFileFilter;
 import agentgui.core.gui.imaging.ImageFileView;
 import agentgui.core.gui.imaging.ImagePreview;
@@ -148,8 +150,21 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 				Application.getGlobalInfo().setLastSelectedFolder(jFileChooserImportCSV.getCurrentDirectory());
 				File csvFile = jFileChooserImportCSV.getSelectedFile();
 				
-				// --- Import data ------------------------
-				this.importDataSeriesFromCSV(csvFile);
+				// --- Separate DataModel --------------------------- 
+				if (this.getModel() instanceof TimeSeriesDataModel) {
+					// --- Ask for time format ----------------------
+					TimeFormatImportConfiguration importFormatDialog = new TimeFormatImportConfiguration(Application.getMainWindow(), csvFile); 
+					importFormatDialog.setVisible(true);
+					// - - - - - - - - - - - - - - - - - - - - - - -  
+					if (importFormatDialog.isCanceled()==true) return;
+					// --- Import data ------------------------------
+					this.importDataSeriesFromCSV(csvFile, importFormatDialog.getTimeFormat());
+					
+				} else {
+					// --- Import data ------------------------------
+					this.importDataSeriesFromCSV(csvFile, null);	
+					
+				}
 				this.setOntologyClassInstance(this.getOntologyClassInstance());
 			}
 			
@@ -415,7 +430,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	 * @param key The string representation of the key / x value
 	 * @return The key / x value
 	 */
-	protected abstract Number parseKey(String key);
+	protected abstract Number parseKey(String key, String keyFormat);
 	
 	/**
 	 * Get a (y) value of the correct type for this chart from a string representation.
@@ -428,20 +443,31 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	 * Imports a data series from a CSV file.
 	 * @param csvFile The CSV file
 	 */
-	protected void importDataSeriesFromCSV(File csvFile) {
+	protected void importDataSeriesFromCSV(File csvFile, String timeFormat) {
 		// Read the CSV data
-		BufferedReader csvFileReader;
-		System.out.println("Importing CSV data from "+csvFile.getName());
-		
+		BufferedReader csvFileReader = null;
 		DataSeries[] importedSeries = null;
+		boolean validLine = false;
+		System.out.println("Importing CSV data from " + csvFile.getName());
 		
 		// Read the data from the file
 		try {
 			csvFileReader = new BufferedReader(new FileReader(csvFile));
 			String inBuffer = null;
 			while((inBuffer = csvFileReader.readLine()) != null){
-				// Regex matches two or more numbers (with or without decimals) separated by ;
-				if(inBuffer.matches("[\\d]+\\.?[\\d]*[;[\\d]+\\.?[\\d]*]+")){
+					
+				// --- Do we have a valid line from the file here? ------------
+				if (timeFormat!=null) {
+					// -- Case TimeSeries -----------------
+					String residualInBuffer = "1234.567;" + inBuffer.substring(inBuffer.indexOf(";")+1);
+					validLine = residualInBuffer.matches("[\\d]+\\.?[\\d]*[;[\\d]+\\.?[\\d]*]+");					
+				} else {
+					// -- Case Else -----------------------
+					validLine = inBuffer.matches("[\\d]+\\.?[\\d]*[;[\\d]+\\.?[\\d]*]+");
+				}
+				
+				// --- Valid lines are to proceed -----------------------------
+				if(validLine==true){
 					String[] parts = inBuffer.split(";");
 					if(importedSeries == null && parts.length > 0){
 						importedSeries = new DataSeries[parts.length-1];
@@ -452,7 +478,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 					}
 					
 					// First column contains the key / x value
-					Number key = parseKey(parts[0]);
+					Number key = parseKey(parts[0], timeFormat);
 					
 					// Later columns contain data
 					for(int i=1; i<parts.length; i++){

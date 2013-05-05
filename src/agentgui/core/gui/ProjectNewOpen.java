@@ -505,8 +505,6 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			gridBagConstraints10.fill = GridBagConstraints.VERTICAL;
 			gridBagConstraints10.weighty = 0.1;
 			gridBagConstraints10.gridy = 3;
-			jLabelDummy = new JLabel();
-			jLabelDummy.setText("");
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
 			gridBagConstraints9.gridx = 0;
 			gridBagConstraints9.insets = new Insets(20, 0, 0, 0);
@@ -519,6 +517,10 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			gridBagConstraints8.weightx = 1.0;
 			gridBagConstraints8.insets = new Insets(0, 0, 0, 0);
 			gridBagConstraints8.gridy = 0;
+
+			jLabelDummy = new JLabel();
+			jLabelDummy.setText("");
+
 			jPanelButtons = new JPanel();
 			jPanelButtons.setLayout(new GridBagLayout());
 			jPanelButtons.add(getJButtonOK(), gridBagConstraints8);

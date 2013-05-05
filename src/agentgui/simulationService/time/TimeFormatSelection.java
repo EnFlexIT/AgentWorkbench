@@ -51,7 +51,9 @@ import agentgui.core.gui.components.JComboBoxWide;
 import agentgui.core.gui.components.JPanelForActions;
 
 /**
- * The Class TimeFormatSelection.
+ * The Class TimeFormatSelection can be used as widget in order to
+ * configure Strings of time format. Just add this to a appropriate parent
+ * container and add an ActionListener to register changes in the widget. 
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -60,6 +62,7 @@ public class TimeFormatSelection extends JPanelForActions {
 	private static final long serialVersionUID = 1L;
 	
 	final static String PathImage = Application.getGlobalInfo().PathImageIntern();
+	private boolean showLable = false;
 	
 	private JLabel jLabelFormat = null;
 	private JTextField jTextFieldTimeFormat = null;
@@ -68,61 +71,86 @@ public class TimeFormatSelection extends JPanelForActions {
 
 	private JPanel jPanelDummy = null;
 
+	
 	/**
-	 * This is the default constructor.
+	 * Instantiates a new time format selection.
 	 */
 	public TimeFormatSelection() {
+		this(true);
+	}
+	/**
+	 * Instantiates a new time format selection.
+	 * @param showFormatLabel set true if the introductory label is to be displayed
+	 */
+	public TimeFormatSelection(boolean showFormatLabel) {
 		super();
+		this.showLable=showFormatLabel;
 		initialize();
 	}
-
 	/**
 	 * This method initializes this.
 	 * @return void
 	 */
 	private void initialize() {
-		GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
-		gridBagConstraints41.gridx = 0;
-		gridBagConstraints41.fill = GridBagConstraints.BOTH;
-		gridBagConstraints41.weightx = 1.0;
-		gridBagConstraints41.weighty = 1.0;
-		gridBagConstraints41.gridwidth = 3;
-		gridBagConstraints41.insets = new Insets(0, 0, 0, 0);
-		gridBagConstraints41.gridy = 3;
-		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-		gridBagConstraints3.fill = GridBagConstraints.BOTH;
-		gridBagConstraints3.gridy = 2;
-		gridBagConstraints3.weightx = 1.0;
-		gridBagConstraints3.insets = new Insets(7, 5, 0, 0);
-		gridBagConstraints3.gridx = 1;
-		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-		gridBagConstraints2.gridx = 2;
-		gridBagConstraints2.insets = new Insets(0, 5, 0, 5);
-		gridBagConstraints2.gridy = 1;
-		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-		gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints1.gridy = 1;
-		gridBagConstraints1.weightx = 1.0;
-		gridBagConstraints1.insets = new Insets(0, 5, 0, 0);
-		gridBagConstraints1.gridx = 1;
-		GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.gridx = 0;
-		gridBagConstraints.insets = new Insets(0, 5, 0, 0);
-		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		gridBagConstraints.gridy = 1;
 		
-		jLabelFormat = new JLabel();
-		jLabelFormat.setText("Format");
-		jLabelFormat.setPreferredSize(new Dimension(40, 16));
-		jLabelFormat.setText(Language.translate(jLabelFormat.getText()) + ":");
+		GridBagConstraints gridBagConstraintLabel = new GridBagConstraints();
+		gridBagConstraintLabel.gridx = 0;
+		gridBagConstraintLabel.insets = new Insets(0, 5, 0, 0);
+		gridBagConstraintLabel.anchor = GridBagConstraints.WEST;
+		gridBagConstraintLabel.gridy = 1;
+		
+		GridBagConstraints gridBagConstraintButtonDefault = new GridBagConstraints();
+		gridBagConstraintButtonDefault.gridx = 2;
+		gridBagConstraintButtonDefault.insets = new Insets(0, 5, 0, 5);
+		gridBagConstraintButtonDefault.gridy = 1;
+		
+		GridBagConstraints gridBagConstraintTextField = new GridBagConstraints();
+		gridBagConstraintTextField.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraintTextField.gridx = 1;
+		gridBagConstraintTextField.gridy = 1;
+		gridBagConstraintTextField.weightx = 1.0;
+		if (this.showLable==true) {
+			gridBagConstraintTextField.insets = new Insets(0, 5, 0, 0);			
+		} else {
+			gridBagConstraintTextField.insets = new Insets(0, 0, 0, 0);
+		}
+		
+		GridBagConstraints gridBagConstraintComboBox = new GridBagConstraints();
+		gridBagConstraintComboBox.fill = GridBagConstraints.BOTH;
+		gridBagConstraintComboBox.gridx = 1;
+		gridBagConstraintComboBox.gridy = 2;
+		gridBagConstraintComboBox.weightx = 1.0;
+		if (this.showLable==true) {
+			gridBagConstraintComboBox.insets = new Insets(7, 5, 0, 0);
+		} else {
+			gridBagConstraintComboBox.insets = new Insets(7, 0, 0, 0);
+		}
+		
+		GridBagConstraints gridBagConstraintDummy = new GridBagConstraints();
+		gridBagConstraintDummy.gridx = 0;
+		gridBagConstraintDummy.fill = GridBagConstraints.BOTH;
+		gridBagConstraintDummy.weightx = 1.0;
+		gridBagConstraintDummy.weighty = 1.0;
+		gridBagConstraintDummy.gridwidth = 3;
+		gridBagConstraintDummy.insets = new Insets(0, 0, 0, 0);
+		gridBagConstraintDummy.gridy = 3;
+		
+		if (showLable==true) {
+			jLabelFormat = new JLabel();
+			jLabelFormat.setText("Format");
+			jLabelFormat.setText(Language.translate(jLabelFormat.getText()) + ":");
+			jLabelFormat.setPreferredSize(new Dimension(40, 16));
+		}
 		
 		this.setSize(427, 65);
 		this.setLayout(new GridBagLayout());
-		this.add(jLabelFormat, gridBagConstraints);
-		this.add(getJTextFieldTimeFormat(), gridBagConstraints1);
-		this.add(getJButtonTimeFormatDefault(), gridBagConstraints2);
-		this.add(getJComboBoxTimeFormat(), gridBagConstraints3);
-		this.add(getJPanelDummy(), gridBagConstraints41);
+		if (showLable==true) {
+			this.add(jLabelFormat, gridBagConstraintLabel);	
+		}
+		this.add(getJTextFieldTimeFormat(), gridBagConstraintTextField);
+		this.add(getJComboBoxTimeFormat(), gridBagConstraintComboBox);
+		this.add(getJButtonTimeFormatDefault(), gridBagConstraintButtonDefault);
+		this.add(getJPanelDummy(), gridBagConstraintDummy);
 	}
 
 	/**
