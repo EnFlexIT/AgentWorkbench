@@ -600,6 +600,8 @@ en;;Add Gas Turbine;;;
 en;;Add Piston Compressor;;;
 en;;Add Steam Turbine;;;
 en;;Add Turbo Compressor;;;
+en;;An error occurred while parsing the given time String!
+Do you want to proceed anyway?;;;
 en;;Are you sure that you want to delete this component?;;;
 en;;Building costs;;;
 en;;CSV-File;;;
@@ -613,6 +615,7 @@ en;;Drives;;;
 en;;Edit Chart;;;
 en;;Electric Motor;;;
 en;;Error while gather compressor station model;;;
+en;;Error while parsing the time information!;;;
 en;;Error;;;
 en;;Example String from file;;;
 en;;Gas Driven Motor;;;

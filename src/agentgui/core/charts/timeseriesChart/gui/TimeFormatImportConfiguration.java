@@ -50,13 +50,16 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -85,6 +88,8 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	public static final String CsvTimeFormatProperty = "CSV_IMPORT_TIMEFORMAT";
 	
 	private boolean canceled = false;
+	private boolean error = false;
+	
 	private File csvFile = null;
 	private String dataExampleFromFile = null;
 	
@@ -121,7 +126,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	 */
 	private void initialize() {
 
-		this.setSize(481, 246);
+		this.setSize(540, 245);
 		this.setTitle(Language.translate("CSV-File", Language.EN) + " Import: " + Language.translate("Time Format", Language.EN));
 		this.setIconImage(imageAgentGUI);
 		
@@ -205,6 +210,21 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	}
 
 	/**
+	 * Sets that parsing results an error.
+	 * @param error the new error
+	 */
+	public void setError(boolean error) {
+		this.error = error;
+	}
+	/**
+	 * Checks if parsing results to an error.
+	 * @return true, if is error
+	 */
+	public boolean isError() {
+		return error;
+	}
+
+	/**
 	 * Gets the file property for the CSV time format.
 	 * @return the file property for the CSV time format
 	 */
@@ -273,14 +293,20 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 				// --- Try to display the date in a standard way ----
 				DateFormat dfParsed = new SimpleDateFormat("dd:MM:yyyy HH:mm:ss,SSS");
 				this.getJTextFieldParsed().setText(dfParsed.format(dateParsed).toString());
+				this.setError(false);
+				this.getJTextFieldParsed().setForeground(new Color(0, 0, 0));
+				this.jLabelParsed.setForeground(new Color(0, 0, 0));
 				
 			} catch (ParseException pe) {
-//				pe.printStackTrace();
+				// --- Error while parsing --------------------------
 				String exceptionShort = ExceptionHandling.getFirstTextLineOfException(pe);
 				if (exceptionShort.contains(":")==true) {
 					exceptionShort = exceptionShort.substring(exceptionShort.indexOf(":")+1);
 				}
 				this.getJTextFieldParsed().setText(exceptionShort);
+				this.setError(true);
+				this.getJTextFieldParsed().setForeground(new Color(255, 0, 0));
+				this.jLabelParsed.setForeground(new Color(255, 0, 0));
 			}  
 			
 		}
@@ -501,6 +527,24 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 			this.setVisible(false);
 			
 		} else if (trigger==this.getJButtonOK()) {
+			
+			if (isError()==true) {
+				
+				String title = Language.translate("Error while parsing the time information!", Language.EN);
+				String msg = "An error occurred while parsing the given time String!\n";
+				msg += "Do you want to proceed anyway?";
+				msg = Language.translate(msg, Language.EN);
+				
+				List<Object> options = new ArrayList<Object>();
+				options.add(UIManager.getString("OptionPane.yesButtonText"));
+				options.add(UIManager.getString("OptionPane.noButtonText"));
+				Object defaultOption = UIManager.getString("OptionPane.noButtonText");
+				int userAnswer = JOptionPane.showOptionDialog(null, msg, title, JOptionPane.ERROR_MESSAGE, JOptionPane.YES_NO_OPTION, null, options.toArray(), defaultOption);
+				if (userAnswer==1) {
+					return;
+				}
+				
+			}
 			this.setCanceled(false);
 			this.setFilePropertyCsvTimeFormat(this.getTimeFormat());
 			this.setVisible(false);
