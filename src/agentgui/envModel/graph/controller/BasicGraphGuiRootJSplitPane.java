@@ -37,6 +37,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -412,7 +414,15 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    
 		    jTableComponents.getModel().addTableModelListener(this);
 		    jTableComponents.getSelectionModel().addListSelectionListener(this);
-
+		    jTableComponents.addMouseListener(new MouseAdapter() {
+		    	@Override
+		    	public void mouseClicked(MouseEvent me) {
+		    		if (me.getClickCount()==2) {
+		    			getGraphController().getNetworkModelAdapter().zoomNetworkComponent();
+		    		}
+		    	}
+			});
+		    
 		    this.setLayout4JTableComponents();
 		    
 		}

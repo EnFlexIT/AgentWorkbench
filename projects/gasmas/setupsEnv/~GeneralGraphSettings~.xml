@@ -59,7 +59,7 @@
                 <domain>Gas network</domain>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
-                <showLabel>true</showLabel>
+                <showLabel>false</showLabel>
             </value>
         </entry>
         <entry>

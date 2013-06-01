@@ -11,7 +11,7 @@
             <postionNo>1</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
-            <startAsName>Pipe1</startAsName>
+            <startAsName>Pipe11</startAsName>
         </agent>
         <agent>
             <postionNo>2</postionNo>
@@ -29,7 +29,7 @@
             <postionNo>4</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
-            <startAsName>Pipe2</startAsName>
+            <startAsName>Pipe22</startAsName>
         </agent>
         <agent>
             <postionNo>5</postionNo>

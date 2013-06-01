@@ -57,7 +57,7 @@ import agentgui.envModel.graph.networkModel.GraphNode;
 public final class GraphGlobals {
 
 	private static String pathImages = "/agentgui/envModel/graph/img/";
-	private static boolean debug = true;
+	private static boolean debug = false;
 	private static boolean colorPropertiesAlreadyPrinted = false;
 
 	/**
