@@ -163,18 +163,34 @@ public class TurboCompressorDisplayChart extends ChartPanel {
 		for (int i = 0; i < charDiaMeasurements.size(); i++) {
 			CompStatAdiabaticEfficiency adiabaticEff = (CompStatAdiabaticEfficiency) charDiaMeasurements.get(i);
 			
+			// --- Using efficiency as key, already there? - 
+			XYSeries adiabaticEfficiencySeries = null;
 			String efficiency = adiabaticEff.getAdiabaticEfficiency();
-			XYSeries adiabaticEfficiencySeries = new XYSeries(efficiency);
+			int seriesIndex = xyData.getSeriesIndex(efficiency);
+			if (seriesIndex==-1) {
+				adiabaticEfficiencySeries = new XYSeries(efficiency);
+			} else {
+				adiabaticEfficiencySeries = xyData.getSeries(seriesIndex);	
+			}
+
 			if (efficiency!=null && efficiency.equals("")==false) {
 				jade.util.leap.List measurements = adiabaticEff.getMeasurements();
 				for (int j = 0; j < measurements.size(); j++) {
 					CompStatTcMeasurement measurement = (CompStatTcMeasurement) measurements.get(j);
-					adiabaticEfficiencySeries.add(getDouble(measurement.getVolumetricFlowrate()), getDouble(measurement.getAdiabaticHead()));
+
+					double volumetricFlowrate = getDouble(measurement.getVolumetricFlowrate());
+					double adiabaticHead = getDouble(measurement.getAdiabaticHead());
+					if (volumetricFlowrate!=0 && adiabaticHead!=0) {
+						adiabaticEfficiencySeries.add(volumetricFlowrate, adiabaticHead);	
+					}
+					
 					// --- Add to speed series ------------
 					this.addToSpeedSeries(measurement.getSpeed(), measurement.getVolumetricFlowrate(), measurement.getAdiabaticHead());
 				}
 				// --- Add to series collection -----------
-				xyData.addSeries(adiabaticEfficiencySeries);
+				if (seriesIndex==-1) {
+					xyData.addSeries(adiabaticEfficiencySeries);	
+				}
 			}
 		}
 		
@@ -215,12 +231,14 @@ public class TurboCompressorDisplayChart extends ChartPanel {
     	Double flowRate = this.getDouble(flowRateVT);
     	Double adiabaticHead = this.getDouble(adiabaticHeadVT);
     	
-    	XYSeries series = this.getSpeedXYSeries().get(speed);
-    	if (series==null) {
-    		series = new XYSeries(speed);
-    		this.getSpeedXYSeries().put(speed, series);
+    	if (speed!=0 && flowRate!=0 && adiabaticHead!=0) {
+    		XYSeries series = this.getSpeedXYSeries().get(speed);
+        	if (series==null) {
+        		series = new XYSeries(speed);
+        		this.getSpeedXYSeries().put(speed, series);
+        	}
+        	series.add(flowRate, adiabaticHead);	
     	}
-    	series.add(flowRate, adiabaticHead);
     	
     }
     

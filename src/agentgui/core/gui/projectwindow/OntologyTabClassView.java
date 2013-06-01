@@ -156,7 +156,7 @@ public class OntologyTabClassView extends JPanel {
 	private JScrollPane getJScrollPaneClassSlots() {
 		if (JScrollPaneClassSlots == null) {
 			JScrollPaneClassSlots = new JScrollPane();
-			JScrollPaneClassSlots.setViewportView( getJTableClassSlots() );
+			JScrollPaneClassSlots.setViewportView(getJTableClassSlots());
 		}
 		return JScrollPaneClassSlots;
 	}
@@ -168,7 +168,7 @@ public class OntologyTabClassView extends JPanel {
 		if (jTableClassSlots == null) {
 			jTableClassSlots = new JTable(this.currOntoObject.getTableModel4Slot());
 			jTableClassSlots.setEnabled(true);
-			jTableClassSlots.setShowGrid(true);
+			jTableClassSlots.setShowGrid(false);
 		}
 		return jTableClassSlots;
 	}

@@ -56,10 +56,9 @@ import agentgui.envModel.graph.networkModel.GraphNode;
  */
 public final class GraphGlobals {
 
-	/** The path images. */
 	private static String pathImages = "/agentgui/envModel/graph/img/";
-	private static boolean debug = false;
-	private static boolean colorPropertiesPrinted = false;
+	private static boolean debug = true;
+	private static boolean colorPropertiesAlreadyPrinted = false;
 
 	/**
 	 * Gets the path for images.
@@ -203,17 +202,29 @@ public final class GraphGlobals {
 	 */
 	public final static class Colors {
 
+//		/** The Constant TB_BACKGROUND. */
+//		public final static Color TB_BACKGROUND = UIManager.getColor("Table.background");
+//		/** The Constant TB_ALTERNATEROWCOLOR. */
+//		public final static Color TB_ALTERNATEROWCOLOR = UIManager.getColor("Table.alternateRowColor");
+//		/** The Constant TB_HIGHLIGHT. */
+//		public final static Color TB_HIGHLIGHT = UIManager.getColor("Table[Enabled+Selected].textBackground");
+//		
+//		/** The Constant TB_TEXTFOREGROUND. */
+//		public final static Color TB_TEXTFOREGROUND = UIManager.getColor("Table.textForeground");
+//		/** The Constant TB_TEXTFOREGROUND_SELECTED. */
+//		public final static Color TB_TEXTFOREGROUND_SELECTED = UIManager.getColor("Table[Enabled+Selected].textForeground");
+		
 		/** The Constant TB_BACKGROUND. */
-		public final static Color TB_BACKGROUND = UIManager.getColor("Table.background");
+		public final static Color TB_BACKGROUND = Color.WHITE;
 		/** The Constant TB_ALTERNATEROWCOLOR. */
-		public final static Color TB_ALTERNATEROWCOLOR = Color.WHITE;
+		public final static Color TB_ALTERNATEROWCOLOR = new Color(242, 242, 242);
 		/** The Constant TB_HIGHLIGHT. */
-		public final static Color TB_HIGHLIGHT = UIManager.getColor("Table[Enabled+Selected].textBackground");
+		public final static Color TB_HIGHLIGHT = new Color(57, 105, 138);
 
 		/** The Constant TB_TEXTFOREGROUND. */
-		public final static Color TB_TEXTFOREGROUND = UIManager.getColor("Table.textForeground");
+		public final static Color TB_TEXTFOREGROUND = new Color(35, 35, 36);
 		/** The Constant TB_TEXTFOREGROUND_SELECTED. */
-		public final static Color TB_TEXTFOREGROUND_SELECTED = UIManager.getColor("Table[Enabled+Selected].textForeground");
+		public final static Color TB_TEXTFOREGROUND_SELECTED = Color.WHITE;
 
 		/**
 		 * Sets the color for a component that is located in a cell of a JTable.
@@ -232,20 +243,19 @@ public final class GraphGlobals {
 
 			} else {
 				comp.setForeground(GraphGlobals.Colors.TB_TEXTFOREGROUND);
-				if (row % 2 == 0) {
-					comp.setBackground(GraphGlobals.Colors.TB_BACKGROUND);
-				} else {
+				if (row%2==0) {
 					comp.setBackground(GraphGlobals.Colors.TB_ALTERNATEROWCOLOR);
+				} else {
+					comp.setBackground(GraphGlobals.Colors.TB_BACKGROUND);					
 				}
-
 			}
 
 			// --- In case of debugging ---------
-			if (debug == false) {
+			if (debug==false) {
 				return;
 
 			}
-			if (colorPropertiesPrinted == false) {
+			if (colorPropertiesAlreadyPrinted==false) {
 				List<String> colors = new ArrayList<String>();
 				for (Map.Entry<Object, Object> entry : UIManager.getDefaults().entrySet()) {
 					if (entry.getValue() instanceof Color) {
@@ -253,14 +263,42 @@ public final class GraphGlobals {
 					}
 				}
 				Collections.sort(colors);
-				for (String name : colors)
+				for (String name : colors) {
 					System.out.println(name);
+				}
+				
+				// --- Print the current color setting ----
+				printColorSetting();
 
-				colorPropertiesPrinted = true;
+				colorPropertiesAlreadyPrinted = true;
 			}
 
 		}
+		
+		/**
+		 * Prints the color settings for table cells.
+		 */
+		public static void printColorSetting() {
+			
+			Color color = TB_BACKGROUND;
+			System.out.println("TB_BACKGROUND => " + " new Color(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ");");
+
+			color = TB_ALTERNATEROWCOLOR;
+			System.out.println("TB_ALTERNATEROWCOLOR => " + " new Color(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ");");
+			
+			color = TB_HIGHLIGHT;
+			System.out.println("TB_HIGHLIGHT => " + " new Color(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ");");
+
+			color = TB_TEXTFOREGROUND;
+			System.out.println("TB_TEXTFOREGROUND => " + " new Color(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ");");
+			
+			color = TB_TEXTFOREGROUND_SELECTED;
+			System.out.println("TB_TEXTFOREGROUND_SELECTED => " + " new Color(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ");");
+			
+		}
+		
 
 	} // end color sub class
 
+	
 } // end class

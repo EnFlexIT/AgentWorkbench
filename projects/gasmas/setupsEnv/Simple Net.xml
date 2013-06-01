@@ -2,20 +2,33 @@
 <networkComponentList>
     <componentList>
         <entry>
-            <key>n5</key>
+            <key>Pipe1</key>
             <value>
                 <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP30</graphElementIDs>
-                <graphElementIDs>n5</graphElementIDs>
+                <graphElementIDs>Pipe1</graphElementIDs>
                 <graphElementIDs>PP33</graphElementIDs>
-                <id>n5</id>
+                <id>Pipe1</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Pipe</type>
             </value>
         </entry>
         <entry>
-            <key>n4</key>
+            <key>Pipe2</key>
+            <value>
+                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>Pipe2</graphElementIDs>
+                <graphElementIDs>PP6</graphElementIDs>
+                <graphElementIDs>PP15</graphElementIDs>
+                <id>Pipe2</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Pipe</type>
+            </value>
+        </entry>
+        <entry>
+            <key>Entry1</key>
             <value>
                 <dataModelsBase64>
                     <dataModelBase64>PEVudHJ5IGFsaWFzPSIiIElEPSIiIG1vbGFyTWFzcz0iMC4wRiI+Cgk8aGVpZ2h0PgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9oZWlnaHQ+Cgk8cHJlc3N1cmVNYXg+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L3ByZXNzdXJlTWF4PgoJPHByZXNzdXJlTWluPgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9wcmVzc3VyZU1pbj4KCTxnZW9Db29yZGluYXRlPgoJCTxHZW9Db29yZGluYXRlIGdlb1c9IjAuMEYiIGdlb1o9IjAuMEYiIGdlb1g9IjAuMEYiIGdlb1k9IjAuMEYiLz4KCTwvZ2VvQ29vcmRpbmF0ZT4KCTxmbG93TWluPgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9mbG93TWluPgoJPGZsb3dNYXg+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L2Zsb3dNYXg+Cgk8cHNldWRvY3JpdGljYWxUZW1wZXJhdHVyZT4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvcHNldWRvY3JpdGljYWxUZW1wZXJhdHVyZT4KCTxjYWxvcmlmaWNWYWx1ZT4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvY2Fsb3JpZmljVmFsdWU+Cgk8bm9ybURlbnNpdHk+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L25vcm1EZW5zaXR5PgoJPHBzZXVkb2NyaWNhbFByZXNzdXJlPgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9wc2V1ZG9jcmljYWxQcmVzc3VyZT4KCTxnYXNUZW1wZXJhdHVyZT4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvZ2FzVGVtcGVyYXR1cmU+Cgk8aGVhdENhcGFjaXR5Q29lZmZpY2llbnQ+CgkJPEhlYXRDYXBhY2l0eUNvZWZmaWNpZW50IGE9IjAuMEYiIGM9IjAuMEYiIGI9IjAuMEYiLz4KCTwvaGVhdENhcGFjaXR5Q29lZmZpY2llbnQ+CjwvRW50cnk+Cg==</dataModelBase64>
@@ -24,13 +37,13 @@
                 <agentClassName>gasmas.agents.components.EntryAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP30</graphElementIDs>
-                <id>n4</id>
+                <id>Entry1</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Entry</type>
             </value>
         </entry>
         <entry>
-            <key>n3</key>
+            <key>Comp1</key>
             <value>
                 <dataModelsBase64>
                     <dataModelBase64>PENvbXBTdGF0IGFsaWFzPSJEYXMgaXN0IEIiIElEPSJEYXMgaXN0IEEiIHVwZ3JhZGVDb3N0cz0iMi4zRiIgYnVpbGRpbmdDb3N0cz0iMS4yRiI+Cgk8Z2FzRHJpdmVuTW90b3JzPgoJCTxHYXNEcml2ZW5Nb3RvciBhbGlhcz0iIiBJRD0iIj4KCQkJPGVuZXJneVJhdGVGdW5Db2VmZj4KCQkJCTxDYWxjM1BhcmFtZXRlciBjb2VmZl8zXzM9IjAuMEYiIGNvZWZmXzFfMz0iMC4wRiIgY29lZmZfMl8zPSIwLjBGIi8+CgkJCTwvZW5lcmd5UmF0ZUZ1bkNvZWZmPgoJCQk8Z21NYXhpbWFsUG93ZXJNZWFzdXJlbWVudHM+CgkJCQk8Q29tcFN0YXRNYXhQbWVhc3VybWVudD4KCQkJCQk8bWF4aW1hbFBvd2VyPgoJCQkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJCQk8L21heGltYWxQb3dlcj4KCQkJCQk8c3BlZU1QPgoJCQkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJCQk8L3NwZWVNUD4KCQkJCTwvQ29tcFN0YXRNYXhQbWVhc3VybWVudD4KCQkJPC9nbU1heGltYWxQb3dlck1lYXN1cmVtZW50cz4KCQkJPGdtUG93ZXJGdW5Db2VmZj4KCQkJCTxDYWxjM1BhcmFtZXRlciBjb2VmZl8zXzM9IjAuMEYiIGNvZWZmXzFfMz0iMC4wRiIgY29lZmZfMl8zPSIwLjBGIi8+CgkJCTwvZ21Qb3dlckZ1bkNvZWZmPgoJCQk8Z21TcGVjaWZpY0VuZXJneUNvbnN1bXB0aW9uTWVhc3VyZW1lbnRzPgoJCQkJPENvbXBTdGF0U0VDbWVhc3VybWVudD4KCQkJCQk8Y29tcmVzc29yUG93ZXI+CgkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCTwvY29tcmVzc29yUG93ZXI+CgkJCQkJPGZ1ZWxDb25zdW1wdGlvbj4KCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJPC9mdWVsQ29uc3VtcHRpb24+CgkJCQk8L0NvbXBTdGF0U0VDbWVhc3VybWVudD4KCQkJPC9nbVNwZWNpZmljRW5lcmd5Q29uc3VtcHRpb25NZWFzdXJlbWVudHM+CgkJPC9HYXNEcml2ZW5Nb3Rvcj4KCTwvZ2FzRHJpdmVuTW90b3JzPgoJPGdhc1R1cmJpbmVzPgoJCTxHYXNUdXJiaW5lIGFsaWFzPSIiIElEPSIiPgoJCQk8ZW5lcmd5UmF0ZUZ1bkNvZWZmPgoJCQkJPENhbGMzUGFyYW1ldGVyIGNvZWZmXzNfMz0iMC4wRiIgY29lZmZfMV8zPSIwLjBGIiBjb2VmZl8yXzM9IjAuMEYiLz4KCQkJPC9lbmVyZ3lSYXRlRnVuQ29lZmY+CgkJCTxndFBvd2VyRnVuQ29lZmY+CgkJCQk8Q2FsYzlQYXJhbWV0ZXIgY29lZmZfN185PSIwLjBGIiBjb2VmZl8xXzk9IjAuMEYiIGNvZWZmXzVfOT0iMC4wRiIgY29lZmZfMl85PSIwLjBGIiBjb2VmZl80Xzk9IjAuMEYiIGNvZWZmXzNfOT0iMC4wRiIgY29lZmZfNl85PSIwLjBGIiBjb2VmZl85Xzk9IjAuMEYiIGNvZWZmXzhfOT0iMC4wRiIvPgoJCQk8L2d0UG93ZXJGdW5Db2VmZj4KCQkJPGd0U3BlY2lmaWNFbmVyZ3lDb25zdW1wdGlvbk1lYXN1cmVtZW50cz4KCQkJCTxDb21wU3RhdFNFQ21lYXN1cm1lbnQ+CgkJCQkJPGNvbXJlc3NvclBvd2VyPgoJCQkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJCQk8L2NvbXJlc3NvclBvd2VyPgoJCQkJCTxmdWVsQ29uc3VtcHRpb24+CgkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCTwvZnVlbENvbnN1bXB0aW9uPgoJCQkJPC9Db21wU3RhdFNFQ21lYXN1cm1lbnQ+CgkJCTwvZ3RTcGVjaWZpY0VuZXJneUNvbnN1bXB0aW9uTWVhc3VyZW1lbnRzPgoJCQk8Z3RNYXhpbWFsUG93ZXJNZWFzdXJlbWVudHM+CgkJCQk8Q29tcFN0YXRNYXhQdG9BbWJpZW50VGVtcGVyYXR1cmU+CgkJCQkJPG1lYXN1cmVtZW50c01QPgoJCQkJCQk8Q29tcFN0YXRNYXhQbWVhc3VybWVudD4KCQkJCQkJCTxtYXhpbWFsUG93ZXI+CgkJCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJCQk8L21heGltYWxQb3dlcj4KCQkJCQkJCTxzcGVlTVA+CgkJCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJCQk8L3NwZWVNUD4KCQkJCQkJPC9Db21wU3RhdE1heFBtZWFzdXJtZW50PgoJCQkJCTwvbWVhc3VyZW1lbnRzTVA+CgkJCQkJPHRlbXBlcmF0dXJlTVA+CgkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCTwvdGVtcGVyYXR1cmVNUD4KCQkJCTwvQ29tcFN0YXRNYXhQdG9BbWJpZW50VGVtcGVyYXR1cmU+CgkJCTwvZ3RNYXhpbWFsUG93ZXJNZWFzdXJlbWVudHM+CgkJPC9HYXNUdXJiaW5lPgoJPC9nYXNUdXJiaW5lcz4KCTxwaXN0b25Db21wcmVzc29yPgoJCTxQaXN0b25Db21wcmVzc29yIGFsaWFzPSIiIElEPSIiIGRyaXZlPSIiIGFkZGl0aW9uYWxSZWR1Y3Rpb25Wb2xGbG93PSIwLjBGIiBtYXhpbWFsQ29tcHJlc3Npb25SYXRpbz0iMC4wRiIgYWRpYWJhdGljRWZmaWNpZW5jeVBpc3Rvbj0iMC4wRiI+CgkJCTxzcGVlZE1heD4KCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQk8L3NwZWVkTWF4PgoJCQk8c3BlZWRNaW4+CgkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJPC9zcGVlZE1pbj4KCQkJPG9wZXJhdGluZ1ZvbHVtZT4KCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQk8L29wZXJhdGluZ1ZvbHVtZT4KCQkJPG1heGltYWxUb3JxdWU+CgkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJPC9tYXhpbWFsVG9ycXVlPgoJCTwvUGlzdG9uQ29tcHJlc3Nvcj4KCTwvcGlzdG9uQ29tcHJlc3Nvcj4KCTxlbGVjdHJpY01vdG9ycz4KCQk8RWxlY3RyaWNNb3RvciBhbGlhcz0iIiBJRD0iIj4KCQkJPGVuZXJneVJhdGVGdW5Db2VmZj4KCQkJCTxDYWxjM1BhcmFtZXRlciBjb2VmZl8zXzM9IjAuMEYiIGNvZWZmXzFfMz0iMC4wRiIgY29lZmZfMl8zPSIwLjBGIi8+CgkJCTwvZW5lcmd5UmF0ZUZ1bkNvZWZmPgoJCQk8ZW1Qb3dlckZ1bkNvZWZmPgoJCQkJPENhbGM5UGFyYW1ldGVyIGNvZWZmXzdfOT0iMC4wRiIgY29lZmZfMV85PSIwLjBGIiBjb2VmZl81Xzk9IjAuMEYiIGNvZWZmXzJfOT0iMC4wRiIgY29lZmZfNF85PSIwLjBGIiBjb2VmZl8zXzk9IjAuMEYiIGNvZWZmXzZfOT0iMC4wRiIgY29lZmZfOV85PSIwLjBGIiBjb2VmZl84Xzk9IjAuMEYiLz4KCQkJPC9lbVBvd2VyRnVuQ29lZmY+CgkJCTxlbU1heGltYWxQb3dlck1lYXN1cmVtZW50cz4KCQkJCTxDb21wU3RhdE1heFA+CgkJCQkJPGFtYmllbnRUZW1wZXJhdHVyZT4KCQkJCQkJPENvbXBTdGF0TWF4UHRvQW1iaWVudFRlbXBlcmF0dXJlPgoJCQkJCQkJPG1lYXN1cmVtZW50c01QPgoJCQkJCQkJCTxDb21wU3RhdE1heFBtZWFzdXJtZW50PgoJCQkJCQkJCQk8bWF4aW1hbFBvd2VyPgoJCQkJCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJCQkJCTwvbWF4aW1hbFBvd2VyPgoJCQkJCQkJCQk8c3BlZU1QPgoJCQkJCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJCQkJCTwvc3BlZU1QPgoJCQkJCQkJCTwvQ29tcFN0YXRNYXhQbWVhc3VybWVudD4KCQkJCQkJCTwvbWVhc3VyZW1lbnRzTVA+CgkJCQkJCQk8dGVtcGVyYXR1cmVNUD4KCQkJCQkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJCQkJCTwvdGVtcGVyYXR1cmVNUD4KCQkJCQkJPC9Db21wU3RhdE1heFB0b0FtYmllbnRUZW1wZXJhdHVyZT4KCQkJCQk8L2FtYmllbnRUZW1wZXJhdHVyZT4KCQkJCQk8bWVhc3VyZW1lbnRzVHlwZT4KCQkJCQkJPENvbXBTdGF0TWF4UG1lYXN1cm1lbnQ+CgkJCQkJCQk8bWF4aW1hbFBvd2VyPgoJCQkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCQkJPC9tYXhpbWFsUG93ZXI+CgkJCQkJCQk8c3BlZU1QPgoJCQkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCQkJPC9zcGVlTVA+CgkJCQkJCTwvQ29tcFN0YXRNYXhQbWVhc3VybWVudD4KCQkJCQk8L21lYXN1cmVtZW50c1R5cGU+CgkJCQk8L0NvbXBTdGF0TWF4UD4KCQkJPC9lbU1heGltYWxQb3dlck1lYXN1cmVtZW50cz4KCQkJPGVtU3BlY2lmaWNFbmVyZ3lDb25zdW1wdGlvbk1lYXN1cmVtZW50cz4KCQkJCTxDb21wU3RhdFNFQ21lYXN1cm1lbnQ+CgkJCQkJPGNvbXJlc3NvclBvd2VyPgoJCQkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJCQk8L2NvbXJlc3NvclBvd2VyPgoJCQkJCTxmdWVsQ29uc3VtcHRpb24+CgkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCTwvZnVlbENvbnN1bXB0aW9uPgoJCQkJPC9Db21wU3RhdFNFQ21lYXN1cm1lbnQ+CgkJCTwvZW1TcGVjaWZpY0VuZXJneUNvbnN1bXB0aW9uTWVhc3VyZW1lbnRzPgoJCTwvRWxlY3RyaWNNb3Rvcj4KCTwvZWxlY3RyaWNNb3RvcnM+Cgk8Y29uZmlndXJhdGlvbnM+CgkJPENvbXBTdGF0Q29uZmlndXJhdGlvbiBuck9mU2VyaWFsU3RhZ2VzPSIwIiBjb25mSUQ9IiI+CgkJCTxzdGFnZXM+CgkJCQk8Q29tcFN0YXRTdGFnZSBzdGFnZU5vPSIwIiBub09mUGFyYWxsZWxVbml0cz0iMCI+CgkJCQkJPGNvbXByZXNzb3I+CgkJCQkJCTxDb21wU3RhdENvbXByZXNzb3JXaXRoU3BlZWQgYWxpYXM9IiIgSUQ9IiIgbm9taW5hbFNwZWVkPSIwIi8+CgkJCQkJPC9jb21wcmVzc29yPgoJCQkJPC9Db21wU3RhdFN0YWdlPgoJCQk8L3N0YWdlcz4KCQk8L0NvbXBTdGF0Q29uZmlndXJhdGlvbj4KCTwvY29uZmlndXJhdGlvbnM+Cgk8dHVyYm9Db21wcmVzc29yPgoJCTxUdXJib0NvbXByZXNzb3IgYWxpYXM9IlR1cmJ5IiBJRD0iVHVyYnkiIGRyaXZlPSIiIGVmZmljaWVuY3lPZkNob2tlbGluZT0iMC4xMjM0RiI+CgkJCTxzcGVlZE1heD4KCQkJCTxWYWx1ZVR5cGUgVW5pdD0icnBtIiBWYWx1ZT0iMjY0MjMuMEYiLz4KCQkJPC9zcGVlZE1heD4KCQkJPHNwZWVkTWluPgoJCQkJPFZhbHVlVHlwZSBVbml0PSJycG0iIFZhbHVlPSIyNDMxLjBGIi8+CgkJCTwvc3BlZWRNaW4+CgkJCTxjaG9rZWxpbmVfY29lZmY+CgkJCQk8Q2FsYzNQYXJhbWV0ZXIgY29lZmZfM18zPSIzMy4wRiIgY29lZmZfMV8zPSIxMS4wRiIgY29lZmZfMl8zPSIyMi4wRiIvPgoJCQk8L2Nob2tlbGluZV9jb2VmZj4KCQkJPGV0YV9hZF9pc29saW5lX2NvZWZmPgoJCQkJPENhbGM5UGFyYW1ldGVyIGNvZWZmXzdfOT0iNy4wRiIgY29lZmZfMV85PSIxLjBGIiBjb2VmZl81Xzk9IjUuMEYiIGNvZWZmXzJfOT0iMi4wRiIgY29lZmZfNF85PSI0LjBGIiBjb2VmZl8zXzk9IjMuMEYiIGNvZWZmXzZfOT0iNi4wRiIgY29lZmZfOV85PSI5LjBGIiBjb2VmZl84Xzk9IjguMEYiLz4KCQkJPC9ldGFfYWRfaXNvbGluZV9jb2VmZj4KCQkJPHNldHRsZWxpbmVNZWFzdXJlbWVudHM+CgkJCQk8Q29tcFN0YXRUY01lYXN1cmVtZW50PgoJCQkJCTxhZGlhYmF0aWNIZWFkPgoJCQkJCQk8VmFsdWVUeXBlIFVuaXQ9ImtKX3Blcl9rZyIgVmFsdWU9IjM0LjVGIi8+CgkJCQkJPC9hZGlhYmF0aWNIZWFkPgoJCQkJCTx2b2x1bWV0cmljRmxvd3JhdGU+CgkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0ibV9jdWJlX3Blcl9zIiBWYWx1ZT0iMS4wRiIvPgoJCQkJCTwvdm9sdW1ldHJpY0Zsb3dyYXRlPgoJCQkJCTxzcGVlZD4KCQkJCQkJPFZhbHVlVHlwZSBVbml0PSJQRVJfTUlOIiBWYWx1ZT0iMTAwLjBGIi8+CgkJCQkJPC9zcGVlZD4KCQkJCTwvQ29tcFN0YXRUY01lYXN1cmVtZW50PgoJCQkJPENvbXBTdGF0VGNNZWFzdXJlbWVudD4KCQkJCQk8YWRpYWJhdGljSGVhZD4KCQkJCQkJPFZhbHVlVHlwZSBVbml0PSJrSl9wZXJfa2ciIFZhbHVlPSI4MC4wRiIvPgoJCQkJCTwvYWRpYWJhdGljSGVhZD4KCQkJCQk8dm9sdW1ldHJpY0Zsb3dyYXRlPgoJCQkJCQk8VmFsdWVUeXBlIFVuaXQ9Im1fY3ViZV9wZXJfcyIgVmFsdWU9IjEuNUYiLz4KCQkJCQk8L3ZvbHVtZXRyaWNGbG93cmF0ZT4KCQkJCQk8c3BlZWQ+CgkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iUEVSX01JTiIgVmFsdWU9IjI1LjBGIi8+CgkJCQkJPC9zcGVlZD4KCQkJCTwvQ29tcFN0YXRUY01lYXN1cmVtZW50PgoJCQk8L3NldHRsZWxpbmVNZWFzdXJlbWVudHM+CgkJCTxuX2lzb2xpbmVfY29lZmY+CgkJCQk8Q2FsYzlQYXJhbWV0ZXIgY29lZmZfN185PSIzLjBGIiBjb2VmZl8xXzk9IjkuMEYiIGNvZWZmXzVfOT0iNS4wRiIgY29lZmZfMl85PSI4LjBGIiBjb2VmZl80Xzk9IjYuMEYiIGNvZWZmXzNfOT0iNy4wRiIgY29lZmZfNl85PSI0LjBGIiBjb2VmZl85Xzk9IjEuMEYiIGNvZWZmXzhfOT0iMi4wRiIvPgoJCQk8L25faXNvbGluZV9jb2VmZj4KCQkJPHN1cmdlbGluZV9jb2VmZj4KCQkJCTxDYWxjM1BhcmFtZXRlciBjb2VmZl8zXzM9IjcuMEYiIGNvZWZmXzFfMz0iOS4wRiIgY29lZmZfMl8zPSI4LjBGIi8+CgkJCTwvc3VyZ2VsaW5lX2NvZWZmPgoJCTwvVHVyYm9Db21wcmVzc29yPgoJPC90dXJib0NvbXByZXNzb3I+Cgk8c3RlYW1UdXJiaW5lcz4KCQk8U3RlYW1UdXJiaW5lIGFsaWFzPSIiIElEPSIiIGV4cGxpY2l0PSJmYWxzZSI+CgkJCTxlbmVyZ3lSYXRlRnVuQ29lZmY+CgkJCQk8Q2FsYzNQYXJhbWV0ZXIgY29lZmZfM18zPSIwLjBGIiBjb2VmZl8xXzM9IjAuMEYiIGNvZWZmXzJfMz0iMC4wRiIvPgoJCQk8L2VuZXJneVJhdGVGdW5Db2VmZj4KCQkJPHBvd2VyTWluPgoJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCTwvcG93ZXJNaW4+CgkJCTxwb3dlck1heD4KCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQk8L3Bvd2VyTWF4PgoJCTwvU3RlYW1UdXJiaW5lPgoJPC9zdGVhbVR1cmJpbmVzPgo8L0NvbXBTdGF0Pgo=</dataModelBase64>
@@ -38,36 +51,23 @@
                 </dataModelsBase64>
                 <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
                 <directed>true</directed>
-                <graphElementIDs>n3</graphElementIDs>
+                <graphElementIDs>Comp1</graphElementIDs>
                 <graphElementIDs>PP6</graphElementIDs>
                 <graphElementIDs>PP33</graphElementIDs>
-                <id>n3</id>
+                <id>Comp1</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>Compressor</type>
             </value>
         </entry>
         <entry>
-            <key>n7</key>
+            <key>Exit11</key>
             <value>
                 <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP15</graphElementIDs>
-                <id>n7</id>
+                <id>Exit11</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Exit</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n6</key>
-            <value>
-                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>n6</graphElementIDs>
-                <graphElementIDs>PP6</graphElementIDs>
-                <graphElementIDs>PP15</graphElementIDs>
-                <id>n6</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Pipe</type>
             </value>
         </entry>
     </componentList>

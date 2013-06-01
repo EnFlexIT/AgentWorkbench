@@ -116,6 +116,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 
     private NetworkComponent currNetworkComponent = null;
     
+    
     /**
      * This is the default constructor for just displaying the current environment model during a running simulation
      */
@@ -144,27 +145,6 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		
     }
     /**
-     * ReLoads the network model.
-     */
-    private void reLoad() {
-    	
-    	// --- Refresh the list of components -------------
-    	SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-		    	componentsTableModel = getDefaultTableModel4ComponentsNew();
-		    	getJTableComponents().setModel(componentsTableModel);
-		    	setLayout4JTableComponents();
-				// --- Clear search field -----------------
-		    	getJTextFieldSearch().setText(null);
-				// --- Refresh number of components -------
-		    	setNumberOfComponents();
-			}
-		});
-    	
-    }
-    
-    /**
      * Returns the graph environment controller.
      * @return the graph environment controller
      */
@@ -177,12 +157,11 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 	 */
 	@Override
 	public void dispose() {
-
-		// --- Kill the current GraphGui --------------------------------------
 		if (this.graphGUI!=null) {
-			this.graphGUI.dispose();	
+			// --- Destroy the current GraphGui -----
+			this.graphGUI.dispose();
+			this.graphGUI = null;
 		}
-		
 	}
     
     /**
@@ -235,8 +214,8 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		    gridBagConstraints.gridx = 0;
 
 		    jLabelTable = new JLabel();
-		    jLabelTable.setText("Search Components");
 		    jLabelTable.setFont(new Font("Dialog", Font.BOLD, 12));
+		    jLabelTable.setText("Search Components");
 		    jLabelTable.setText(Language.translate(jLabelTable.getText(), Language.EN));
 
 		    jPanelControls = new JPanel();
@@ -248,7 +227,6 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		}
 		return jPanelControls;
     }
-
     /**
      * This method initializes scpComponentTable
      * @return javax.swing.JScrollPane
@@ -260,7 +238,32 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		}
 		return jScrollPaneComponentsTable;
     }
-
+    
+    /**
+     * ReLoads the network model.
+     */
+    private void reLoad() {
+    	
+    	// --- Refresh the list of components -------------
+    	final BasicGraphGuiRootJSplitPane thisInstance = this;
+    	SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				componentsTableModel.removeTableModelListener(thisInstance);
+				componentsTableModel = null;
+				componentsTableModel = getDefaultTableModel4ComponentsNew();
+		    	componentsTableModel.addTableModelListener(thisInstance);
+		    	getJTableComponents().setModel(componentsTableModel);
+		    	setLayout4JTableComponents();
+				// --- Clear search field -----------------
+		    	getJTextFieldSearch().setText(null);
+				// --- Refresh number of components -------
+		    	setNumberOfComponents();
+			}
+		});
+    	
+    }
+    
     /**
      * This method builds the tblComponents' contents based on the controllers GridModel
      * @return The grid components' IDs and class names
@@ -307,7 +310,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 	    Vector<String> titles = new Vector<String>();
 	    titles.add(Language.translate("Komponente"));
 	    titles.add(Language.translate("Typ"));
-	    titles.add(Language.translate("Options", Language.EN));
+	    titles.add(Language.translate("Edit", Language.EN));
 
 	    // --- Set DataVector -----------------------------------
 	    final Vector<Vector<String>> data = getComponentTableContents();
@@ -315,7 +318,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 			private static final long serialVersionUID = 1636744550817904118L;
 			@Override
 			public boolean isCellEditable(int row, int col) {
-			    if (col == 1) {
+			    if (col==1) {
 			    	return false;
 			    } else {
 			    	if (getGraphController().getProject()!=null) {
@@ -400,10 +403,9 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
      */
     private JTable getJTableComponents() {
 		if (jTableComponents == null) {
-	
 		    jTableComponents = new JTable(this.getDefaultTableModel4Components());
 		    jTableComponents.setFillsViewportHeight(true);
-		    jTableComponents.setCellSelectionEnabled(true);
+		    //jTableComponents.setRowSelectionAllowed(true);
 		    jTableComponents.setShowGrid(false);
 		    jTableComponents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		    jTableComponents.getTableHeader().setReorderingAllowed(false);
@@ -454,10 +456,16 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		
 		// --- Define the column widths -------------------
 		TableColumnModel colModel = this.getJTableComponents().getColumnModel();
-		colModel.getColumn(0).setPreferredWidth(20);
+		colModel.getColumn(0).setPreferredWidth(40);
+		colModel.getColumn(0).setCellRenderer(new BasicGraphGuiTableCellRenderEditor());
+		colModel.getColumn(0).setCellEditor(new BasicGraphGuiTableCellRenderEditor());			
+		
+		colModel.getColumn(1).setPreferredWidth(40);
+		colModel.getColumn(1).setCellRenderer(new BasicGraphGuiTableCellRenderEditor());
+		
 		colModel.getColumn(2).setPreferredWidth(30);
-		colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(getGraphController(), jTableComponents));			
 		colModel.getColumn(2).setCellRenderer(new TableCellRenderer4Button());
+		colModel.getColumn(2).setCellEditor(new TableCellEditor4TableButton(getGraphController(), jTableComponents));			
 		
     }
     

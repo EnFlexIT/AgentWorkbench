@@ -17,7 +17,7 @@
             <postionNo>2</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
-            <startAsName>n3</startAsName>
+            <startAsName>Compressor</startAsName>
         </agent>
         <agent>
             <postionNo>3</postionNo>

@@ -11,31 +11,31 @@
             <postionNo>1</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
-            <startAsName>n5</startAsName>
+            <startAsName>Pipe1</startAsName>
         </agent>
         <agent>
             <postionNo>2</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
-            <startAsName>n4</startAsName>
+            <startAsName>Entry1</startAsName>
         </agent>
         <agent>
             <postionNo>3</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
-            <startAsName>n3</startAsName>
+            <startAsName>Comp1</startAsName>
         </agent>
         <agent>
             <postionNo>4</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
-            <startAsName>n6</startAsName>
+            <startAsName>Pipe2</startAsName>
         </agent>
         <agent>
             <postionNo>5</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>n7</startAsName>
+            <startAsName>Exit11</startAsName>
         </agent>
     </agentSetup>
     <timeModelSettings>

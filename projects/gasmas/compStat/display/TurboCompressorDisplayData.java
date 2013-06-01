@@ -94,6 +94,7 @@ public class TurboCompressorDisplayData extends ParameterDisplay implements Para
 		this.turboCompressorID = this.myTurboCompressor.getID();
 		this.getGeneralCompressorInfo().setCompStatCompressor(this.myTurboCompressor);
 		
+		if (this.myTurboCompressor.getEta_ad_isoline_coeff()==null) this.myTurboCompressor.setEta_ad_isoline_coeff(new Calc9Parameter());
 		this.getAdiabaticEffCoeff().setParameter("1", this.myTurboCompressor.getEta_ad_isoline_coeff().getCoeff_1_9());
 		this.getAdiabaticEffCoeff().setParameter("2", this.myTurboCompressor.getEta_ad_isoline_coeff().getCoeff_2_9());
 		this.getAdiabaticEffCoeff().setParameter("3", this.myTurboCompressor.getEta_ad_isoline_coeff().getCoeff_3_9());
@@ -104,6 +105,7 @@ public class TurboCompressorDisplayData extends ParameterDisplay implements Para
 		this.getAdiabaticEffCoeff().setParameter("8", this.myTurboCompressor.getEta_ad_isoline_coeff().getCoeff_8_9());
 		this.getAdiabaticEffCoeff().setParameter("9", this.myTurboCompressor.getEta_ad_isoline_coeff().getCoeff_9_9());
 		
+		if (this.myTurboCompressor.getN_isoline_coeff()==null) this.myTurboCompressor.setN_isoline_coeff(new Calc9Parameter());
 		this.getNisoLineCoeff().setParameter("1", this.myTurboCompressor.getN_isoline_coeff().getCoeff_1_9());
 		this.getNisoLineCoeff().setParameter("2", this.myTurboCompressor.getN_isoline_coeff().getCoeff_2_9());
 		this.getNisoLineCoeff().setParameter("3", this.myTurboCompressor.getN_isoline_coeff().getCoeff_3_9());
@@ -114,15 +116,18 @@ public class TurboCompressorDisplayData extends ParameterDisplay implements Para
 		this.getNisoLineCoeff().setParameter("8", this.myTurboCompressor.getN_isoline_coeff().getCoeff_8_9());
 		this.getNisoLineCoeff().setParameter("9", this.myTurboCompressor.getN_isoline_coeff().getCoeff_9_9());
 		
+		if (this.myTurboCompressor.getChokeline_coeff()==null) this.myTurboCompressor.setChokeline_coeff(new Calc3Parameter());
 		this.getChokeLineDisplay().setParameter("1", this.myTurboCompressor.getChokeline_coeff().getCoeff_1_3());
 		this.getChokeLineDisplay().setParameter("2", this.myTurboCompressor.getChokeline_coeff().getCoeff_2_3());
 		this.getChokeLineDisplay().setParameter("3", this.myTurboCompressor.getChokeline_coeff().getCoeff_3_3());
 		
+		if (this.myTurboCompressor.getSurgeline_coeff()==null) this.myTurboCompressor.setSurgeline_coeff(new Calc3Parameter());
 		this.getSurgeLineDisplay().setParameter("1", this.myTurboCompressor.getSurgeline_coeff().getCoeff_1_3());
 		this.getSurgeLineDisplay().setParameter("2", this.myTurboCompressor.getSurgeline_coeff().getCoeff_2_3());
 		this.getSurgeLineDisplay().setParameter("3", this.myTurboCompressor.getSurgeline_coeff().getCoeff_3_3());
 
 		this.getJTextFieldChokeLineEfficiency().setText(((Float)this.myTurboCompressor.getEfficiencyOfChokeline()).toString());
+		
 	}
 	/**
 	 * Gets the turbo compressor.

@@ -39,7 +39,7 @@ public class CompressorStationWidget extends OntologyClassWidget {
 
 	private static final long serialVersionUID = -8424882669417358903L;
 
-	private CompStat compressorStationModel = null;
+	private CompressorStationModel compressorStationModel = null; // @jve:decl-index=0:
 	
 	/**
 	 * Instantiates a new compressor station widget.
@@ -56,7 +56,7 @@ public class CompressorStationWidget extends OntologyClassWidget {
 	 */
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
-		this.compressorStationModel = (CompStat) objectInstance;
+		this.getCompressorStationModel().setCompStat((CompStat) objectInstance);
 	}
 
 	/* (non-Javadoc)
@@ -64,8 +64,18 @@ public class CompressorStationWidget extends OntologyClassWidget {
 	 */
 	@Override
 	public Object getOntologyClassInstance() {
+		return this.getCompressorStationModel().getCompStat();
+	}
+	
+	/**
+	 * Gets the compressor station model.
+	 * @return the compressor station model
+	 */
+	private CompressorStationModel getCompressorStationModel() {
+		if (this.compressorStationModel == null) {
+			this.compressorStationModel = new CompressorStationModel();
+		}
 		return this.compressorStationModel;
 	}
-
 	
 }

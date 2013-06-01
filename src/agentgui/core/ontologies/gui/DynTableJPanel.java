@@ -287,8 +287,14 @@ public class DynTableJPanel extends JPanel {
 					OntologyClassEditorJPanel ocej = ontoClassVis.getEditorJPanel(this.dynForm, startArgIndex);
 					this.jComponent2Add = ocej;
 					
-					Object ocejInstance = this.dynForm.getOntoArgsInstance()[startArgIndex];
-					String clazzName = ocejInstance.getClass().getSimpleName();
+					DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) this.dynForm.getObjectTree().getRoot();
+					DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) rootNode.getChildAt(startArgIndex);
+					DynType dynType = (DynType) childNode.getUserObject();
+					
+					String clazzName = dynType.getClassName();
+					if (clazzName.contains(".")==true) {
+						clazzName = clazzName.substring(clazzName.lastIndexOf(".")+1);
+					}
 					this.stealJToolBarFromOntologyClassEditorJPanel(ocej);
 					this.addUserFunctions2JToolBar4UserFunction(clazzName);
 					break;

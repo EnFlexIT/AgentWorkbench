@@ -2,12 +2,23 @@
 <generalGraphSettings4MAS>
     <currentCTS>
         <entry>
-            <key>Smartmeter</key>
+            <key>Dishwasher</key>
             <value>
                 <color>-16777216</color>
                 <domain>ElectricalNetwork</domain>
-                <edgeImage>/smart_house/images/EN_SmartMeter.jpg</edgeImage>
+                <edgeImage>/smart_house/images/EN_DishWasher.png</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>Fuse Box</key>
+            <value>
+                <color>-16777216</color>
+                <domain>ElectricalNetwork</domain>
+                <edgeImage>/smart_house/images/EN_FuseBox.jpg</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
@@ -24,22 +35,11 @@
             </value>
         </entry>
         <entry>
-            <key>Fuse Box</key>
+            <key>Smartmeter</key>
             <value>
                 <color>-16777216</color>
                 <domain>ElectricalNetwork</domain>
-                <edgeImage>/smart_house/images/EN_FuseBox.jpg</edgeImage>
-                <edgeWidth>20.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>false</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>Dishwasher</key>
-            <value>
-                <color>-16777216</color>
-                <domain>ElectricalNetwork</domain>
-                <edgeImage>/smart_house/images/EN_DishWasher.png</edgeImage>
+                <edgeImage>/smart_house/images/EN_SmartMeter.jpg</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>false</showLabel>

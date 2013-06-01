@@ -90,7 +90,6 @@ public class OGE_Importer extends NetworkModelFileImporter {
 	private HashMap<String, TypeDescription> GNW_Types4Mapping = null;
 	private HashMap<String, GasConnectionType> GNW_Connections = null;
 	private HashMap<String, GasNodeType> GNW_Nodes = null;
-	//private Map<String, Compressor> compressors;
 	
 	/**
 	 * Instantiates a new OGE / ZIB GraphFileImporter.
@@ -343,13 +342,13 @@ public class OGE_Importer extends NetworkModelFileImporter {
 				} else if (connection instanceof ShortPipeType) {
 					
 					Object[] ontoArrayInstance = new Object[1];
-					ontoArrayInstance[0] = ShortPipeFactory.newInstance( connection);
+					ontoArrayInstance[0] = ShortPipeFactory.newInstance(connection);
 					netComp.setDataModel(ontoArrayInstance);
 					
 				} else if (connection instanceof ResistorType) {
 					
 					Object[] ontoArrayInstance = new Object[1];
-					ontoArrayInstance[0] = ResistorFactory.newInstance( connection);
+					ontoArrayInstance[0] = ResistorFactory.newInstance(connection);
 					netComp.setDataModel(ontoArrayInstance);
 					
 				} else if (connection instanceof ValveType) {
@@ -372,7 +371,7 @@ public class OGE_Importer extends NetworkModelFileImporter {
 					
 					Compressor compressor = CompressorFactory.newInstance((CompressorStationType) connection);
 					Object[] ontoArrayInstance = new Object[2];
-					ontoArrayInstance[1] = null;
+					ontoArrayInstance[0] = null;
 					ontoArrayInstance[1] = compressor;
 					netComp.setDataModel(ontoArrayInstance);
 			
