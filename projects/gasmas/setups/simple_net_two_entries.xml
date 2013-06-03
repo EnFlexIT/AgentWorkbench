@@ -23,7 +23,7 @@
             <postionNo>3</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
-            <startAsName>n6</startAsName>
+            <startAsName>Pipe</startAsName>
         </agent>
         <agent>
             <postionNo>4</postionNo>

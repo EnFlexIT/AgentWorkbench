@@ -346,39 +346,44 @@ public class NetworkModel implements Serializable {
 	}
 
 	/**
-	 * Rename component.
+	 * Renames a NetworkComponent.
 	 * 
-	 * @param oldCompID the old comp id
-	 * @param newCompID the new comp id
+	 * @param oldCompID the old ID of the NetworkComponent 
+	 * @param newCompID the new ID of the NetworkComponent
 	 */
 	public void renameNetworkComponent(String oldCompID, String newCompID) {
 		
 		NetworkComponent networkComponent = this.networkComponents.get(oldCompID);
 		if (networkComponent!=null) {
 			HashSet<String> newGraphElementIDs = new HashSet<String>(networkComponent.getGraphElementIDs());
-			// --- Rename the corresponding edges of the network component --------
+			// --- Rename the corresponding edges of the network component ----
 			for (String oldGraphElementID : networkComponent.getGraphElementIDs()) {
 				String newGraphElementID = oldGraphElementID.replaceFirst(oldCompID, newCompID);
 				if (newGraphElementID.equals(oldGraphElementID)==false) {
-					// --- Delete old reference -------------------------
+					// --- Delete old reference -------------------------------
 					newGraphElementIDs.remove(oldGraphElementID);
-					// --- rename the edges ----------------------------- 
+					// --- rename the edges ----------------------------------- 
 					GraphElement graphElement = this.graphElements.get(oldGraphElementID);
 					if (graphElement instanceof GraphEdge) {
 						this.graphElements.remove(oldGraphElementID);
 						graphElement.setId(newGraphElementID);
 						this.graphElements.put(newGraphElementID, graphElement);	
 					}
-					// --- Add new reference ----------------------------
+					// --- Add new reference ----------------------------------
 					newGraphElementIDs.add(newGraphElementID);	
 				}
 			}
 
-			// Updating the network component
+			// --- Update the NetworkComponent --------------------------------
 			networkComponent.setGraphElementIDs(newGraphElementIDs);
 			networkComponent.setId(newCompID);
 			this.networkComponents.remove(oldCompID);
 			this.networkComponents.put(newCompID, networkComponent);
+			
+			// --- Update the NetworkComponent-Layout -------------------------
+			for (String graphElementID : networkComponent.getGraphElementIDs()) {
+				this.graphElements.get(graphElementID).resetGraphElementLayout(this);
+			}
 			
 		}
 		

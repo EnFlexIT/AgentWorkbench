@@ -107,22 +107,37 @@ public class GraphElementLayout {
 		GraphNode graphNode = (GraphNode) this.myGraphElement;
 		HashSet<NetworkComponent> componentHashSet = this.networkModel.getNetworkComponents(graphNode);
 		NetworkComponent distributionNode = networkModel.containsDistributionNode(componentHashSet);
-		if (distributionNode != null) {
+		if (distributionNode!=null) {
 			// -----------------------------------------------------------
 			// --- DistributionNode --------------------------------------
 			// -----------------------------------------------------------
 			myComponentTypeSettings = ctsHash.get(distributionNode.getType());
 			if (myComponentTypeSettings!=null) {
-				myDomain = domainHash.get(myComponentTypeSettings.getDomain());
 				
+				this.myDomain = this.domainHash.get(myComponentTypeSettings.getDomain());
+				
+				String labelText = null;
+				boolean showNodeLabel = this.myDomain.isShowLabel();
+				boolean showComponentlabel = myComponentTypeSettings.isShowLabel();
+				if (showComponentlabel==true) {
+					labelText = distributionNode.getId();
+				}
+				if (showNodeLabel==true) {
+					if (labelText==null) {
+						labelText = this.myGraphElement.getId();
+					} else {
+						labelText += " (" + this.myGraphElement.getId() + ")";
+					}
+				}
+				
+				this.showLabel = showNodeLabel | showComponentlabel;
+				this.labelText = labelText;
 				this.size = (int) myComponentTypeSettings.getEdgeWidth();
 				this.color = new Color(Integer.parseInt(myComponentTypeSettings.getColor()));
 				this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
-				this.labelText = this.myGraphElement.getId();
-				this.showLabel = myComponentTypeSettings.isShowLabel();
 				this.imageReference = myComponentTypeSettings.getEdgeImage();
 				if (this.imageReference != null) {
-					if (this.imageReference.equals("MissingIcon") == false) {
+					if (this.imageReference.equals("MissingIcon")==false) {
 						this.shapeForm = GeneralGraphSettings4MAS.SHAPE_IMAGE_SHAPE;
 					}
 				}
