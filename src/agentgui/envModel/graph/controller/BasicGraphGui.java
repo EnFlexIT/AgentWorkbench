@@ -665,12 +665,16 @@ public class BasicGraphGui extends JPanel implements Observer {
 		visViewSatellite.scaleToLayout(this.scalingControl);
 		visViewSatellite.setGraphMouse(new SatelliteGraphMouse(1/1.1f, 1.1f));
 		
+		
 		// --- Configure the node shape and size ------------------------------
 		visViewSatellite.getRenderContext().setVertexShapeTransformer(this.visView.getRenderContext().getVertexShapeTransformer());
 		// --- Configure node icons, if configured ----------------------------
 		visViewSatellite.getRenderContext().setVertexIconTransformer(this.visView.getRenderContext().getVertexIconTransformer());
 		// --- Configure node colors ------------------------------------------
 		visViewSatellite.getRenderContext().setVertexFillPaintTransformer(this.visView.getRenderContext().getVertexFillPaintTransformer());
+		// --- Configure node label transformer -------------------------------
+		visViewSatellite.getRenderContext().setVertexLabelTransformer(this.visView.getRenderContext().getVertexLabelTransformer());
+		
 		// --- Use straight lines as edges ------------------------------------
 		visViewSatellite.getRenderContext().setEdgeShapeTransformer(this.visView.getRenderContext().getEdgeShapeTransformer());
 		// --- Set edge width -------------------------------------------------
