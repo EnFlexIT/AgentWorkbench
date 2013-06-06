@@ -542,11 +542,11 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 			String stringMinutes = Language.translate("Minuten");
 			String stringHours = Language.translate("Stunden");
 			
-			Double relationSeconds = this.round(1.0 / factor);
+			Double relationSeconds = 1.0 / factor;
 			Double relationMinutes = 0.0;
 			Double relationHours = 0.0;
 
-			String textSeconds =  relationSeconds + " " + stringSeconds+ " " + stringrealTime;
+			String textSeconds =  this.round(relationSeconds) + " " + stringSeconds+ " " + stringrealTime;
 			String textMinutes = null;
 			String textHours = null;
 			
@@ -558,10 +558,10 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 				textHours = relationHours + " " + stringMinutes + " " + stringrealTime;
 				
 			} else {
-				relationMinutes = relationSeconds;
+				relationMinutes = this.round(relationSeconds);
 				textMinutes = relationMinutes + " " + stringMinutes + " " + stringrealTime;
 				
-				relationHours = relationSeconds;
+				relationHours = this.round(relationSeconds);
 				textHours = relationHours + " " + stringHours + " " + stringrealTime;
 				
 			}

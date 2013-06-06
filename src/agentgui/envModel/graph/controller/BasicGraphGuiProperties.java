@@ -40,9 +40,14 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.WindowConstants;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import agentgui.core.application.Language;
@@ -95,7 +100,8 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	private JToolBarButton jToolBarButtonSaveAndExit = null;
 	private JComponent jComponentContent = null;
 
-
+	private Vector<Integer> dataModelBase64InitialHashCodes = null;
+	
 	/**
 	 * Instantiates a new properties dialog for GraphNodes or NetworkComponents.
 	 * @param graphController the graph controller
@@ -119,7 +125,41 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		this.setIconifiable(true);
 		
 		this.setClosable(true);
-		this.setDefaultCloseOperation(BasicGraphGuiProperties.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		final JInternalFrame thisFrame = this;
+		this.addInternalFrameListener(new InternalFrameAdapter() {
+			@Override
+			public void internalFrameClosing(InternalFrameEvent ife) {
+				
+				if (hasChanged()==true) {
+					// --- Data model has changed ! --------
+					String diaTitle = Language.translate("Close Properties", Language.EN);
+					String diaQuestion = Language.translate("Save Changes to network model?", Language.EN);
+					int diaAnswer = JOptionPane.showInternalConfirmDialog(thisFrame, diaQuestion, diaTitle, JOptionPane.YES_NO_CANCEL_OPTION);
+					if (diaAnswer==JOptionPane.YES_OPTION) {
+						save();
+						thisFrame.setVisible(false);
+						thisFrame.dispose();
+						
+					} else if (diaAnswer==JOptionPane.NO_OPTION){
+						thisFrame.setVisible(false);
+						thisFrame.dispose();
+						
+					} else if (diaAnswer==JOptionPane.CANCEL_OPTION){
+						// --- Do nothing ---- 
+					}
+					
+				} else {
+					// --- Data model has NOT changed ! ---
+					thisFrame.setVisible(false);
+					thisFrame.dispose();
+				
+				}
+				
+			}
+		});
+
+		
 		this.setTitle("Component");
 		this.setSize(this.defaultWidth, this.defaultHeight);
 		this.setInitialSize();
@@ -283,6 +323,16 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 					} else {
 						this.adapter4DataModel.setDataModel(dataModel);
 					}
+					// --- Remind the initial HashCodes of the Base64 data model vector ------
+					if (dataModelBase64!=null) {
+						this.dataModelBase64InitialHashCodes = new Vector<Integer>();
+						for (int i=0; i < dataModelBase64.size(); i++) {
+							String singleDataModel = dataModelBase64.get(i);
+							int singleDataModelHashCode = singleDataModel.hashCode();
+							this.dataModelBase64InitialHashCodes.add(singleDataModelHashCode);	
+						}
+					}
+					// --- Get the visualization component -----------------------------------
 					JComponent visualisation = this.adapter4DataModel.getVisualisationComponent();
 					if (visualisation instanceof OntologyInstanceViewer) {
 						((OntologyInstanceViewer)visualisation).setJToolBar4UserFunctions(this.getJJToolBarBarNorth());
@@ -350,6 +400,74 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	}
 	
 	/**
+	 * Checks if the current settings have changed.
+	 * @return true, if the data model was changed
+	 */
+	private boolean hasChanged() {
+		
+		boolean changed = false;
+
+		this.adapter4DataModel.save();
+		Object dataModel = this.adapter4DataModel.getDataModel();
+		Vector<String> dataModelBase64 = this.adapter4DataModel.getDataModelBase64Encoded(dataModel);
+		
+		if (dataModelBase64==null && this.dataModelBase64InitialHashCodes==null) {
+			changed = false;
+			
+		} else if (dataModelBase64==null && this.dataModelBase64InitialHashCodes!=null) {
+			changed = true;
+			
+		} else {
+			for (int i = 0; i < dataModelBase64.size(); i++) {
+				String singleDataModel = dataModelBase64.get(i);
+				int singleDataModelHashCode = singleDataModel.hashCode();
+				if (this.dataModelBase64InitialHashCodes!=null && this.dataModelBase64InitialHashCodes.size()==dataModelBase64.size()) {
+					if (singleDataModelHashCode!=this.dataModelBase64InitialHashCodes.get(i)) {
+						changed=true;
+						break;
+					}
+				} else {
+					changed = true;
+					break;
+				}
+			}
+			
+		}
+		return changed;
+	}
+	
+	/**
+	 * Saves the current settings.
+	 */
+	private void save() {
+		
+		this.adapter4DataModel.save();
+		
+		Object dataModel = this.adapter4DataModel.getDataModel();
+		Vector<String> dataModelBase64 = this.adapter4DataModel.getDataModelBase64Encoded(dataModel);
+
+		if (this.graphNode!=null) {
+			this.graphNode.setDataModel(dataModel);
+			this.graphNode.setDataModelBase64(dataModelBase64);
+
+			GraphNode modelGraphNode = (GraphNode) this.graphController.getNetworkModel().getGraphElement(this.graphNode.getId());
+			modelGraphNode.setDataModel(dataModel);
+			modelGraphNode.setDataModelBase64(dataModelBase64);
+			
+		} else {
+			this.networkComponent.setDataModel(dataModel);
+			this.networkComponent.setDataModelBase64(dataModelBase64);
+
+			NetworkComponent modelNetworkComponent = this.graphController.getNetworkModel().getNetworkComponent(this.networkComponent.getId()); 
+			modelNetworkComponent.setDataModel(dataModel);
+			modelNetworkComponent.setDataModelBase64(dataModelBase64);
+
+		}
+		this.graphController.setProjectUnsaved();
+		
+	}
+	
+	/**
 	 * The Class JToolBarButton.
 	 */
 	public class JToolBarButton extends JButton {
@@ -408,34 +526,9 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	public void actionPerformed(ActionEvent ae) {
 		
 		String actionCommand = ae.getActionCommand();
-		
 		if (actionCommand.equals("Save") || actionCommand.equals("SaveAndExit")) {
-			// --- Confirmed, apply changes -----
-			this.adapter4DataModel.save();
-			
-			Object dataModel = this.adapter4DataModel.getDataModel();
-			Vector<String> dataModelBase64 = this.adapter4DataModel.getDataModelBase64Encoded(dataModel);
-
-			if (this.graphNode!=null) {
-				this.graphNode.setDataModel(dataModel);
-				this.graphNode.setDataModelBase64(dataModelBase64);
-
-				GraphNode modelGraphNode = (GraphNode) this.graphController.getNetworkModel().getGraphElement(this.graphNode.getId());
-				modelGraphNode.setDataModel(dataModel);
-				modelGraphNode.setDataModelBase64(dataModelBase64);
-				
-			} else {
-				this.networkComponent.setDataModel(dataModel);
-				this.networkComponent.setDataModelBase64(dataModelBase64);
-
-				NetworkComponent modelNetworkComponent = this.graphController.getNetworkModel().getNetworkComponent(this.networkComponent.getId()); 
-				modelNetworkComponent.setDataModel(dataModel);
-				modelNetworkComponent.setDataModelBase64(dataModelBase64);
-
-			}
-			this.graphController.setProjectUnsaved();
+			this.save();
 		}
-		
 		if (actionCommand.equals("SaveAndExit")) {
 			this.setVisible(false);
 			this.dispose();

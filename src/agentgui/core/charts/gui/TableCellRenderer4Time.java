@@ -65,7 +65,6 @@ public class TableCellRenderer4Time extends DefaultTableCellRenderer {
 			date = new Date((Long) value);	
 		}
 		DateFormat timeFormat = new SimpleDateFormat(this.timeFormat);
-		timeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		setText(timeFormat.format(date));
 	}
 

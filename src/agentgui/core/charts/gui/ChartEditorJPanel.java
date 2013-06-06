@@ -158,11 +158,11 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 					// - - - - - - - - - - - - - - - - - - - - - - -  
 					if (importFormatDialog.isCanceled()==true) return;
 					// --- Import data ------------------------------
-					this.importDataSeriesFromCSV(csvFile, importFormatDialog.getTimeFormat());
+					this.importDataSeriesFromCSV(csvFile, importFormatDialog.getTimeFormat(), importFormatDialog.getTimeOffset());
 					
 				} else {
 					// --- Import data ------------------------------
-					this.importDataSeriesFromCSV(csvFile, null);	
+					this.importDataSeriesFromCSV(csvFile, null, null);	
 					
 				}
 				this.setOntologyClassInstance(this.getOntologyClassInstance());
@@ -426,11 +426,14 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	}
 	
 	/**
-	 * Get a key / x value of the correct type for this chart from a string representation. 
+	 * Get a key / x value of the correct type for this chart from a string representation.
+	 *
 	 * @param key The string representation of the key / x value
+	 * @param keyFormat the key format
+	 * @param keyOffset the key offset
 	 * @return The key / x value
 	 */
-	protected abstract Number parseKey(String key, String keyFormat);
+	protected abstract Number parseKey(String key, String keyFormat, Number keyOffset);
 	
 	/**
 	 * Get a (y) value of the correct type for this chart from a string representation.
@@ -441,9 +444,12 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	
 	/**
 	 * Imports a data series from a CSV file.
+	 *
 	 * @param csvFile The CSV file
+	 * @param keyFormat the key format
 	 */
-	protected void importDataSeriesFromCSV(File csvFile, String timeFormat) {
+	protected void importDataSeriesFromCSV(File csvFile, String keyFormat, Number keyOffset) {
+		
 		// Read the CSV data
 		BufferedReader csvFileReader = null;
 		DataSeries[] importedSeries = null;
@@ -457,7 +463,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 			while((inBuffer = csvFileReader.readLine()) != null){
 					
 				// --- Do we have a valid line from the file here? ------------
-				if (timeFormat!=null) {
+				if (keyFormat!=null) {
 					// -- Case TimeSeries -----------------
 					String residualInBuffer = "1234.567;" + inBuffer.substring(inBuffer.indexOf(";")+1);
 					validLine = residualInBuffer.matches("[\\d]+\\.?[\\d]*[;[\\d]+\\.?[\\d]*]+");					
@@ -478,7 +484,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 					}
 					
 					// First column contains the key / x value
-					Number key = parseKey(parts[0], timeFormat);
+					Number key = parseKey(parts[0], keyFormat, keyOffset);
 					
 					// Later columns contain data
 					for(int i=1; i<parts.length; i++){
@@ -492,7 +498,6 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 					
 				}
 			}
-			
 			csvFileReader.close();
 			
 			for(int j=0; j < importedSeries.length; j++){

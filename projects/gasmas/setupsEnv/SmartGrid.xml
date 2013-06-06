@@ -505,21 +505,21 @@
             </value>
         </entry>
         <entry>
-            <key>n0</key>
-            <value>
-                <directed>false</directed>
-                <graphElementIDs>PP0</graphElementIDs>
-                <id>n0</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Wind turbine</type>
-            </value>
-        </entry>
-        <entry>
             <key>n22</key>
             <value>
                 <directed>false</directed>
                 <graphElementIDs>PP14</graphElementIDs>
                 <id>n22</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Wind turbine</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n0</key>
+            <value>
+                <directed>false</directed>
+                <graphElementIDs>PP0</graphElementIDs>
+                <id>n0</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Wind turbine</type>
             </value>

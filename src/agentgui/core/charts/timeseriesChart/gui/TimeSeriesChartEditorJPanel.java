@@ -83,13 +83,17 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	}
 
 	@Override
-	protected Number parseKey(String key, String keyFormat) {
+	protected Number parseKey(String key, String keyFormat, Number keyOffset) {
 
 		Long timestamp = (long) 0; 
 		try {
 			DateFormat df = new SimpleDateFormat(keyFormat);
 			Date dateParsed =  df.parse(key);
 			timestamp = dateParsed.getTime();
+			if (keyOffset!=null) {
+				timestamp = timestamp + (Long) keyOffset;	
+			}
+			// System.out.println( "=> " + new Date(timestamp) );
 			
 		} catch (ParseException e) {
 			e.printStackTrace();

@@ -31,7 +31,6 @@ package agentgui.core.charts.gui;
 import java.awt.Component;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JSpinner;
@@ -44,24 +43,18 @@ import javax.swing.table.TableCellEditor;
  * Uses JCalendarCombo as editor component, returns the timestamp as Float object
  * 
  * @author Nils
- *
  */
 public class TableCellEditor4Time extends AbstractCellEditor implements TableCellEditor{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1536069679238018382L;
 
-	private JSpinner spinner = null;
-	
 	private JTable table;
 	
-	private int row2edit;
-	
-	private int originalHeight;
-	
+	private JSpinner spinner = null;
 	private String timeFormat;
+	private int row2edit;
+	private int originalHeight;
+
 	
 	public TableCellEditor4Time(String timeFormat){
 		this.timeFormat = timeFormat;
@@ -86,7 +79,6 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 			SpinnerDateModel sdm = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
 			spinner = new JSpinner(sdm);
 			JSpinner.DateEditor de = new JSpinner.DateEditor(spinner, timeFormat);
-			de.getFormat().setTimeZone(TimeZone.getTimeZone("GMT"));
 			spinner.setEditor(de);
 		}
 		

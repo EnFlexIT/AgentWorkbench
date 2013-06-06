@@ -2,17 +2,6 @@
 <networkComponentList>
     <componentList>
         <entry>
-            <key>Exit</key>
-            <value>
-                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP15</graphElementIDs>
-                <id>Exit</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Exit</type>
-            </value>
-        </entry>
-        <entry>
             <key>Entry</key>
             <value>
                 <dataModelsBase64>
@@ -25,6 +14,17 @@
                 <id>Entry</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Entry</type>
+            </value>
+        </entry>
+        <entry>
+            <key>Exit</key>
+            <value>
+                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP15</graphElementIDs>
+                <id>Exit</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Exit</type>
             </value>
         </entry>
         <entry>

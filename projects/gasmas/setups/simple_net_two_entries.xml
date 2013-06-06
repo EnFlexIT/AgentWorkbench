@@ -29,19 +29,19 @@
             <postionNo>4</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
-            <startAsName>n9</startAsName>
+            <startAsName>Entry2</startAsName>
         </agent>
         <agent>
             <postionNo>5</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
-            <startAsName>n8</startAsName>
+            <startAsName>Entry1</startAsName>
         </agent>
         <agent>
             <postionNo>6</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>n7</startAsName>
+            <startAsName>Exit</startAsName>
         </agent>
     </agentSetup>
     <timeModelSettings>

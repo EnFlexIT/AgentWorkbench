@@ -30,6 +30,7 @@ package agentgui.core.charts.timeseriesChart.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -51,33 +52,46 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.ExceptionHandling;
 import agentgui.simulationService.time.TimeFormatSelection;
+import agentgui.simulationService.time.TimeModel;
+import agentgui.simulationService.time.TimeModelDateBased;
 
 /**
  * The Dialog TimeFormatImportConfiguration is used to set the 
- * format of timestamps for the import to a TimeSeriesChart.
+ * format of the time stamps for the import to a TimeSeriesChart.
+ * Additionally a time shift can be applied in order to match the 
+ * current simulation setup or another specifiable time. 
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TimeFormatImportConfiguration extends JDialog implements ActionListener {
+public class TimeFormatImportConfiguration extends JDialog implements ActionListener, ChangeListener {
 
 	private static final long serialVersionUID = -7271198574951719361L;
 	
@@ -85,13 +99,22 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 
-	public static final String CsvTimeFormatProperty = "CSV_IMPORT_TIMEFORMAT";
+	public static final String PROP_CsvTimeFormat = "CSV_IMPORT_TIMEFORMAT";  //  @jve:decl-index=0:
+	public static final String PROP_TimeOffSet = "TIME_OFFSET";  //  @jve:decl-index=0:
+	public static final String PROP_TimeOffSetSimulationSetup = "TIME_OFFSET_SIMULATION_SETUP";  //  @jve:decl-index=0:
+	public static final String PROP_TimeOffSetManual = "TIME_OFFSET_MANUAL";  //  @jve:decl-index=0:
+	public static final String PROP_TimeOffSetManualStartTime = "TIME_OFFSET_MANUAL_START_TIME";  //  @jve:decl-index=0:
 	
 	private boolean canceled = false;
 	private boolean error = false;
 	
 	private File csvFile = null;
-	private String dataExampleFromFile = null;
+	private String csvFileFirstTimeStamp = null;
+	
+	private Long timeOffset = null;  //  @jve:decl-index=0:
+	private Long timeExampleFromFile = null;
+	private Long timeStartSimSetup = null;  //  @jve:decl-index=0:
+	private String timeFormatSimSetup = null;  //  @jve:decl-index=0:
 	
 	private JPanel jContentPane = null;
 	private JLabel jLabelHeader = null;
@@ -102,14 +125,28 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	private JTextField jTextFieldFromFile = null;
 	private JLabel jLabelParsed = null;
 	private JTextField jTextFieldParsed = null;
+	private JPanel jPanelLine1 = null;
+
+	private JCheckBox jCheckBoxTimeShiftAdjust = null;
+	private JCheckBox jCheckBoxTimeShiftUseSimulationSetup = null;
+	private JLabel jLabelSimStart = null;
+	private JCheckBox jCheckBoxTimeShiftAdjustToTime = null;
+	
+	private JPanel jPanelStartSettings = null;
+	private JLabel jLabelStartDate = null;
+	private JLabel jLabelStartTime = null;
+	private JLabel jLabelStartMillis = null;
+	private JSpinner jSpinnerDateStart = null;
+	private JSpinner jSpinnerTimeStart = null;
+	private JSpinner jSpinnerMillisStart = null;
+	private JPanel jPanelLine2 = null;
 
 	private JPanel jPanelButtons = null;
 	private JButton jButtonOK = null;
 	private JButton jButtonCancel = null;
-
 	private JLabel jLabelDummy = null;
 
-	
+
 	/**
 	 * Instantiates a new time format import configuration.
 	 * @param owner the owner
@@ -126,8 +163,8 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	 */
 	private void initialize() {
 
-		this.setSize(540, 245);
-		this.setTitle(Language.translate("CSV-File", Language.EN) + " Import: " + Language.translate("Time Format", Language.EN));
+		this.setSize(600, 400);
+		this.setTitle(Language.translate("CSV-File", Language.EN) + " Import: " + Language.translate("Time Format and Offset", Language.EN));
 		this.setIconImage(imageAgentGUI);
 		
 		this.setModal(true);
@@ -141,6 +178,16 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 		});
 
 		// --- Set dialog -------------------------------------------
+		if (Application.getProjectFocused()!=null) {
+			TimeModel currTimeModel = Application.getProjectFocused().getTimeModelController().getTimeModel();
+			if (currTimeModel!=null && currTimeModel instanceof TimeModelDateBased) {
+				this.timeStartSimSetup = ((TimeModelDateBased)currTimeModel).getTimeStart();
+				this.timeFormatSimSetup = ((TimeModelDateBased)currTimeModel).getTimeFormat();
+			}
+		}
+		this.loadCheckBoxConfiguration();
+		this.setJSpinnerTime(Long.parseLong(this.getFilePropertyManualStartTimeForOffset()));
+		
 		this.setContentPane(getJContentPane());
 		this.getTimeFormatSelector().setTimeFormat(this.getFilePropertyCsvTimeFormat());
 		this.setExampleFileData();
@@ -159,6 +206,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	    int left = (screenSize.width - this.getWidth()) / 2; 
 	    this.setLocation(left, top);			
 		
+	    
 	}
 	/**
      * Registers the escape key stroke in order to close this dialog.
@@ -225,19 +273,66 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	}
 
 	/**
+	 * Gets the time offset for the import.
+	 * @return the time offset
+	 */
+	public long getTimeOffset() {
+		
+		this.timeOffset = new Long(0);
+		
+		if (this.getJCheckBoxTimeShiftAdjust().isSelected()==true) {
+			// --- An offset is wished --------------------
+			if (this.getJCheckBoxTimeShiftUseSimulationSetup().isSelected()==true) {
+				if (this.timeStartSimSetup!=null) {
+					this.timeOffset = this.timeStartSimSetup - this.timeExampleFromFile;
+				}
+			} else if (this.getJCheckBoxTimeShiftAdjustToTime().isSelected()==true) {
+				this.timeOffset = this.getJSpinnerTime() - this.timeExampleFromFile;
+			}
+		} 
+		//System.out.println( "=> " + new Date(((long) this.timeExampleFromFile)+((long) this.timeOffset)).toString() );
+		return timeOffset;
+	}
+	
+	/**
 	 * Gets the file property for the CSV time format.
 	 * @return the file property for the CSV time format
 	 */
 	private String getFilePropertyCsvTimeFormat() {
-		return Application.getGlobalInfo().getFileProperties().getProperty(CsvTimeFormatProperty, this.getTimeFormatSelector().getTimeFormatDefault());
+		return Application.getGlobalInfo().getFileProperties().getProperty(PROP_CsvTimeFormat, this.getTimeFormatSelector().getTimeFormatDefault());
 	}
 	/**
 	 * Sets the file property of the CSV time format.
 	 * @param newCsvTimeFormat the new file property for the CSV time format
 	 */
 	private void setFilePropertyCsvTimeFormat(String newCsvTimeFormat) {
-		Application.getGlobalInfo().getFileProperties().setProperty(CsvTimeFormatProperty, newCsvTimeFormat);
+		Application.getGlobalInfo().getFileProperties().setProperty(PROP_CsvTimeFormat, newCsvTimeFormat);
 	}
+	
+	
+	
+	/**
+	 * Gets the file property for the manual start time for offset.
+	 * @return the file property manual start time for offset
+	 */
+	private String getFilePropertyManualStartTimeForOffset() {
+		String defaultValue = null;
+		if (this.timeStartSimSetup==null) {
+			defaultValue = ((Long) new Date().getTime()).toString();	
+		} else {
+			defaultValue = this.timeStartSimSetup.toString();
+		}
+		return Application.getGlobalInfo().getFileProperties().getProperty(PROP_TimeOffSetManualStartTime, defaultValue);
+	}
+	/**
+	 * Sets the file property for the manual start time for offset.
+	 * @param newStartTimeAsLong the new file property for the manual start time for offset
+	 */
+	private void setFilePropertyManualStartTimeForOffset(String newStartTimeAsLong) {
+		Application.getGlobalInfo().getFileProperties().setProperty(PROP_TimeOffSetManualStartTime, newStartTimeAsLong);
+	}
+	
+	
 	
 	/**
 	 * Returns the configured time format.
@@ -262,7 +357,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 				String timeStamp = inBuffer.substring(0, timeStampCut);
 				inBuffer = "1234.567;" + inBuffer.substring(timeStampCut+1);
 				if(inBuffer.matches("[\\d]+\\.?[\\d]*[;[\\d]+\\.?[\\d]*]+")){
-					this.dataExampleFromFile = timeStamp;
+					this.csvFileFirstTimeStamp = timeStamp;
 					this.getJTextFieldFromFile().setText(timeStamp);
 					break;
 				}
@@ -281,17 +376,18 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	 */
 	private void setExampleParse() {
 
-		if (dataExampleFromFile==null) {
+		if (csvFileFirstTimeStamp==null) {
 			this.getJTextFieldParsed().setText("null");
 			
 		} else {
 			try {
 				// --- Try to parse the example String first --------
 				DateFormat df = new SimpleDateFormat(this.getTimeFormat());
-				Date dateParsed =  df.parse(this.dataExampleFromFile);
+				Date dateParsed =  df.parse(this.csvFileFirstTimeStamp);
+				this.timeExampleFromFile = dateParsed.getTime();
 				
 				// --- Try to display the date in a standard way ----
-				DateFormat dfParsed = new SimpleDateFormat("dd:MM:yyyy HH:mm:ss,SSS");
+				DateFormat dfParsed = new SimpleDateFormat(TimeModelDateBased.DEFAULT_TIME_FORMAT);
 				this.getJTextFieldParsed().setText(dfParsed.format(dateParsed).toString());
 				this.setError(false);
 				this.getJTextFieldParsed().setForeground(new Color(0, 0, 0));
@@ -319,12 +415,48 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
+			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
+			gridBagConstraints12.gridx = 1;
+			gridBagConstraints12.anchor = GridBagConstraints.WEST;
+			gridBagConstraints12.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints12.insets = new Insets(5, 32, 0, 10);
+			gridBagConstraints12.gridy = 8;
+			GridBagConstraints gridBagConstraints71 = new GridBagConstraints();
+			gridBagConstraints71.gridx = 1;
+			gridBagConstraints71.insets = new Insets(15, 10, 0, 10);
+			gridBagConstraints71.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints71.gridy = 11;
+			GridBagConstraints gridBagConstraints61 = new GridBagConstraints();
+			gridBagConstraints61.gridx = 1;
+			gridBagConstraints61.anchor = GridBagConstraints.WEST;
+			gridBagConstraints61.insets = new Insets(0, 27, 0, 0);
+			gridBagConstraints61.gridy = 10;
+			GridBagConstraints gridBagConstraints51 = new GridBagConstraints();
+			gridBagConstraints51.gridx = 1;
+			gridBagConstraints51.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints51.insets = new Insets(15, 10, 0, 10);
+			gridBagConstraints51.gridy = 5;
+			GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
+			gridBagConstraints31.gridx = 1;
+			gridBagConstraints31.insets = new Insets(5, 10, 0, 0);
+			gridBagConstraints31.anchor = GridBagConstraints.WEST;
+			gridBagConstraints31.gridy = 9;
+			GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
+			gridBagConstraints21.gridx = 1;
+			gridBagConstraints21.insets = new Insets(5, 10, 0, 0);
+			gridBagConstraints21.anchor = GridBagConstraints.WEST;
+			gridBagConstraints21.gridy = 7;
+			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+			gridBagConstraints11.gridx = 1;
+			gridBagConstraints11.anchor = GridBagConstraints.WEST;
+			gridBagConstraints11.insets = new Insets(10, 10, 0, 0);
+			gridBagConstraints11.gridy = 6;
 			GridBagConstraints gridBagConstraints91 = new GridBagConstraints();
 			gridBagConstraints91.gridx = 1;
 			gridBagConstraints91.fill = GridBagConstraints.BOTH;
 			gridBagConstraints91.weighty = 1.0;
 			gridBagConstraints91.weightx = 1.0;
-			gridBagConstraints91.gridy = 7;
+			gridBagConstraints91.gridy = 13;
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
 			gridBagConstraints8.gridx = 1;
 			gridBagConstraints8.fill = GridBagConstraints.HORIZONTAL;
@@ -336,7 +468,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 			gridBagConstraints7.insets = new Insets(15, 10, 10, 10);
 			gridBagConstraints7.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints7.anchor = GridBagConstraints.EAST;
-			gridBagConstraints7.gridy = 6;
+			gridBagConstraints7.gridy = 12;
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.gridx = 1;
 			gridBagConstraints2.insets = new Insets(10, 10, 0, 0);
@@ -370,6 +502,13 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 			jContentPane.add(getJPanelButtons(), gridBagConstraints7);
 			jContentPane.add(getJPanelTextExample(), gridBagConstraints8);
 			jContentPane.add(jLabelDummy, gridBagConstraints91);
+			jContentPane.add(getJCheckBoxTimeShiftAdjust(), gridBagConstraints11);
+			jContentPane.add(getJCheckBoxTimeShiftUseSimulationSetup(), gridBagConstraints21);
+			jContentPane.add(getJLabelSimulationStartTime(), gridBagConstraints12);
+			jContentPane.add(getJCheckBoxTimeShiftAdjustToTime(), gridBagConstraints31);
+			jContentPane.add(getJPanelLine1(), gridBagConstraints51);
+			jContentPane.add(getJPanelStartSettings(), gridBagConstraints61);
+			jContentPane.add(getJPanelLine2(), gridBagConstraints71);
 		}
 		return jContentPane;
 	}
@@ -409,6 +548,178 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 			jTextFieldParsed.setPreferredSize(new Dimension(100, 26));
 		}
 		return jTextFieldParsed;
+	}
+	
+	/**
+	 * This method initializes jPanelLine	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelLine1() {
+		if (jPanelLine1 == null) {
+			jPanelLine1 = new JPanel();
+			jPanelLine1.setLayout(new GridBagLayout());
+			jPanelLine1.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+			jPanelLine1.setPreferredSize(new Dimension(100, 2));
+		}
+		return jPanelLine1;
+	}
+	/**
+	 * This method initializes jCheckBoxTimeShiftAdjust	
+	 * @return javax.swing.JCheckBox	
+	 */
+	private JCheckBox getJCheckBoxTimeShiftAdjust() {
+		if (jCheckBoxTimeShiftAdjust == null) {
+			jCheckBoxTimeShiftAdjust = new JCheckBox();
+			jCheckBoxTimeShiftAdjust.setText("Set new start time and apply offset to the timestamps of the file data");
+			jCheckBoxTimeShiftAdjust.setText(Language.translate(jCheckBoxTimeShiftAdjust.getText(), Language.EN));
+			jCheckBoxTimeShiftAdjust.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckBoxTimeShiftAdjust.addActionListener(this);
+		}
+		return jCheckBoxTimeShiftAdjust;
+	}
+	/**
+	 * This method initializes jCheckBoxTimeShiftUseSimulationSetup	
+	 * @return javax.swing.JCheckBox	
+	 */
+	private JCheckBox getJCheckBoxTimeShiftUseSimulationSetup() {
+		if (jCheckBoxTimeShiftUseSimulationSetup == null) {
+			String displayText = Language.translate("Use configured start time of the simulation setup!", Language.EN);
+			jCheckBoxTimeShiftUseSimulationSetup = new JCheckBox();
+			jCheckBoxTimeShiftUseSimulationSetup.setText(displayText);
+			jCheckBoxTimeShiftUseSimulationSetup.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckBoxTimeShiftUseSimulationSetup.addActionListener(this);
+		}
+		return jCheckBoxTimeShiftUseSimulationSetup;
+	}
+	/**
+	 * Gets the JLabel for the simulation start time.
+	 * @return the JLabel simulation start time
+	 */
+	private JLabel getJLabelSimulationStartTime() {
+		if (jLabelSimStart==null) {
+			String displayText = "<html><b>" + Language.translate("Start Time:", Language.EN) + "</b>"; 
+			if (this.timeStartSimSetup==null) {
+				displayText += " [" + Language.translate("Not defined!", Language.EN) + "]";
+			} else {
+				displayText += " " + new SimpleDateFormat(TimeModelDateBased.DEFAULT_TIME_FORMAT).format(new Date(this.timeStartSimSetup));
+				displayText += " - <b>" + Language.translate("Formatted as", Language.EN) + ":</b> " + new SimpleDateFormat(timeFormatSimSetup).format(new Date(this.timeStartSimSetup)) + "";
+			}
+			displayText += "</html>";
+			
+			jLabelSimStart = new JLabel();
+			jLabelSimStart.setText(displayText);
+		}
+		return jLabelSimStart;
+	}
+	/**
+	 * This method initializes jCheckBoxTimeShiftAdjustToTime	
+	 * @return javax.swing.JCheckBox	
+	 */
+	private JCheckBox getJCheckBoxTimeShiftAdjustToTime() {
+		if (jCheckBoxTimeShiftAdjustToTime == null) {
+			jCheckBoxTimeShiftAdjustToTime = new JCheckBox();
+			jCheckBoxTimeShiftAdjustToTime.setText("Adjust time shift to the following start time:");
+			jCheckBoxTimeShiftAdjustToTime.setText(Language.translate(jCheckBoxTimeShiftAdjustToTime.getText(), Language.EN));
+			jCheckBoxTimeShiftAdjustToTime.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckBoxTimeShiftAdjustToTime.addActionListener(this);
+		}
+		return jCheckBoxTimeShiftAdjustToTime;
+	}
+	/**
+	 * This method initializes jPanelStartSettings	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelStartSettings() {
+		if (jPanelStartSettings == null) {
+			FlowLayout flowLayout = new FlowLayout();
+			flowLayout.setAlignment(java.awt.FlowLayout.CENTER);
+			flowLayout.setVgap(0);
+			flowLayout.setHgap(5);
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.anchor = GridBagConstraints.WEST;
+			gridBagConstraints3.gridx = 1;
+			gridBagConstraints3.gridy = 0;
+			gridBagConstraints3.insets = new Insets(10, 10, 0, 0);
+			GridBagConstraints gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.anchor = GridBagConstraints.WEST;
+			gridBagConstraints.gridx = -1;
+			gridBagConstraints.gridy = -1;
+			gridBagConstraints.insets = new Insets(10, 10, 0, 0);
+			
+			jLabelStartDate = new JLabel();
+			jLabelStartDate.setText("Datum");
+			jLabelStartDate.setPreferredSize(new Dimension(40, 16));
+			jLabelStartDate.setText(Language.translate(jLabelStartDate.getText())+ ":");
+			jLabelStartTime = new JLabel();
+			jLabelStartTime.setText("Uhrzeit");
+			jLabelStartTime.setText(Language.translate(jLabelStartTime.getText())+ ":");
+			jLabelStartMillis = new JLabel();
+			jLabelStartMillis.setText("Millisekunden");
+			jLabelStartMillis.setText(Language.translate(jLabelStartMillis.getText())+ ":");
+
+			jPanelStartSettings = new JPanel();
+			jPanelStartSettings.setLayout(flowLayout);
+			jPanelStartSettings.add(jLabelStartDate, null);
+			jPanelStartSettings.add(getJSpinnerDateStart(), null);
+			jPanelStartSettings.add(jLabelStartTime, null);
+			jPanelStartSettings.add(getJSpinnerTimeStart(), null);
+			jPanelStartSettings.add(jLabelStartMillis, null);
+			jPanelStartSettings.add(getJSpinnerMillisStart(), null);
+		}
+		return jPanelStartSettings;
+	}
+	/**
+	 * Gets the JSpinner date start.
+	 * @return the JSpinner date start
+	 */
+	private JSpinner getJSpinnerDateStart() {
+		if (jSpinnerDateStart==null) {
+			jSpinnerDateStart = new JSpinner(new SpinnerDateModel());
+			jSpinnerDateStart.setEditor(new JSpinner.DateEditor(jSpinnerDateStart, "dd.MM.yyyy"));
+			jSpinnerDateStart.setPreferredSize(new Dimension(100, 28));
+			jSpinnerDateStart.addChangeListener(this);
+		}
+		return jSpinnerDateStart;
+	}
+	/**
+	 * Gets the JSpinner time start.
+	 * @return the JSpinner time start
+	 */
+	private JSpinner getJSpinnerTimeStart() {
+		if (jSpinnerTimeStart==null) {
+			jSpinnerTimeStart = new JSpinner(new SpinnerDateModel());
+			jSpinnerTimeStart.setEditor(new JSpinner.DateEditor(jSpinnerTimeStart, "HH:mm:ss"));
+			jSpinnerTimeStart.setPreferredSize(new Dimension(80, 28));
+			jSpinnerTimeStart.addChangeListener(this);
+		}
+		return jSpinnerTimeStart;
+	}
+	/**
+	 * Gets the JSpinner milliseconds start.
+	 * @return the JSpinner milliseconds start
+	 */
+	private JSpinner getJSpinnerMillisStart() {
+		if (jSpinnerMillisStart==null) {
+			jSpinnerMillisStart = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
+			jSpinnerMillisStart.setEditor(new JSpinner.NumberEditor(jSpinnerMillisStart, "000"));
+			jSpinnerMillisStart.setPreferredSize(new Dimension(60, 28));
+			jSpinnerMillisStart.addChangeListener(this);
+		}
+		return jSpinnerMillisStart;
+	}
+	
+	/**
+	 * This method initializes jPanelLine2	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelLine2() {
+		if (jPanelLine2 == null) {
+			jPanelLine2 = new JPanel();
+			jPanelLine2.setLayout(new GridBagLayout());
+			jPanelLine2.setPreferredSize(new Dimension(100, 2));
+			jPanelLine2.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		}
+		return jPanelLine2;
 	}
 	/**
 	 * This method initializes jButtonOK	
@@ -512,6 +823,119 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 		return jPanelTextExample;
 	}
 	
+	/**
+	 * Load the check box configuration from the file properties.
+	 */
+	private void loadCheckBoxConfiguration() {
+		
+		Boolean timeOffset = Boolean.parseBoolean(Application.getGlobalInfo().getFileProperties().getProperty(PROP_TimeOffSet, ((Boolean)false).toString()));
+		Boolean timeOffsetSimSetup = Boolean.parseBoolean(Application.getGlobalInfo().getFileProperties().getProperty(PROP_TimeOffSetSimulationSetup, ((Boolean)false).toString()));
+		Boolean timeOffsetManual = Boolean.parseBoolean(Application.getGlobalInfo().getFileProperties().getProperty(PROP_TimeOffSetManual, ((Boolean)false).toString()));
+		
+		this.getJCheckBoxTimeShiftAdjust().setSelected(timeOffset);
+		this.getJCheckBoxTimeShiftUseSimulationSetup().setSelected(timeOffsetSimSetup);
+		this.getJCheckBoxTimeShiftAdjustToTime().setSelected(timeOffsetManual);
+		this.doCheckBoxConfiguration(this.getJCheckBoxTimeShiftAdjust());
+		
+	}
+	/**
+	 * Sets the check box configuration.
+	 */
+	private void doCheckBoxConfiguration(JCheckBox initiator) {
+		
+		if (initiator==this.getJCheckBoxTimeShiftAdjust()) {
+			if (initiator.isSelected()==true) {
+				this.getJCheckBoxTimeShiftUseSimulationSetup().setEnabled(true);
+				this.getJCheckBoxTimeShiftAdjustToTime().setEnabled(true);
+				
+			} else {
+				this.getJCheckBoxTimeShiftUseSimulationSetup().setEnabled(false);
+				this.getJCheckBoxTimeShiftAdjustToTime().setEnabled(false);
+				this.getJSpinnerDateStart().setEnabled(false);
+				this.getJSpinnerTimeStart().setEnabled(false);
+				this.getJSpinnerMillisStart().setEnabled(false);
+			}
+			
+		} else if (initiator==this.getJCheckBoxTimeShiftUseSimulationSetup()) {
+			this.getJCheckBoxTimeShiftAdjustToTime().setSelected(!initiator.isSelected());
+			
+		} else if (initiator==this.getJCheckBoxTimeShiftAdjustToTime()) {
+			this.getJCheckBoxTimeShiftUseSimulationSetup().setSelected(!initiator.isSelected());
+			
+		}
+		
+		// --- In case nothing is selected ------------------------------------
+		if (this.getJCheckBoxTimeShiftUseSimulationSetup().isSelected()==false && this.getJCheckBoxTimeShiftAdjustToTime().isSelected()==false) {
+			this.getJCheckBoxTimeShiftUseSimulationSetup().setSelected(true);
+		}
+		
+		// --- Set the JSpinner for the date configuration enabled or not -----  
+		if (this.getJCheckBoxTimeShiftAdjust().isSelected() & this.getJCheckBoxTimeShiftAdjustToTime().isSelected()) {
+			this.getJSpinnerDateStart().setEnabled(true);
+			this.getJSpinnerTimeStart().setEnabled(true);
+			this.getJSpinnerMillisStart().setEnabled(true);
+		} else {
+			this.getJSpinnerDateStart().setEnabled(false);
+			this.getJSpinnerTimeStart().setEnabled(false);
+			this.getJSpinnerMillisStart().setEnabled(false);
+		}
+	
+		// --- Save the current check box settings ----------------------------
+		Application.getGlobalInfo().getFileProperties().setProperty(PROP_TimeOffSet, ((Boolean)this.getJCheckBoxTimeShiftAdjust().isSelected()).toString());
+		Application.getGlobalInfo().getFileProperties().setProperty(PROP_TimeOffSetSimulationSetup, ((Boolean)this.getJCheckBoxTimeShiftUseSimulationSetup().isSelected()).toString());
+		Application.getGlobalInfo().getFileProperties().setProperty(PROP_TimeOffSetManual, ((Boolean)this.getJCheckBoxTimeShiftAdjustToTime().isSelected()).toString());
+		
+	}
+	
+	/**
+	 * Sets the time displayed in the JSpinner.
+	 * @param timeStamp the new timestamp as long value
+	 */
+	private void setJSpinnerTime(long timeStamp) {
+		Calendar calendarWork = Calendar.getInstance();
+		Date startDate = new Date(timeStamp);
+		calendarWork.setTime(startDate);
+		this.getJSpinnerDateStart().setValue(startDate);
+		this.getJSpinnerTimeStart().setValue(startDate);
+		this.getJSpinnerMillisStart().setValue(calendarWork.get(Calendar.MILLISECOND));
+	}
+	/**
+	 * Returns the time configured in the JSpinner as long.
+	 * @return the time configured in the JSpinner as long.
+	 */
+	private Long getJSpinnerTime() {
+
+		Calendar calendarWork = Calendar.getInstance();
+		Calendar startCalenderMerged = Calendar.getInstance();
+		Date startDate = (Date) this.getJSpinnerDateStart().getValue();
+		Date startTime = (Date) this.getJSpinnerTimeStart().getValue();
+		int startMillis = (Integer) this.getJSpinnerMillisStart().getValue();
+		
+		calendarWork.setTime(startDate);
+		startCalenderMerged.set(Calendar.DAY_OF_MONTH, calendarWork.get(Calendar.DAY_OF_MONTH));
+		startCalenderMerged.set(Calendar.MONTH, calendarWork.get(Calendar.MONTH));
+		startCalenderMerged.set(Calendar.YEAR, calendarWork.get(Calendar.YEAR));
+		calendarWork.setTime(startTime);
+		startCalenderMerged.set(Calendar.HOUR_OF_DAY, calendarWork.get(Calendar.HOUR_OF_DAY));
+		startCalenderMerged.set(Calendar.MINUTE, calendarWork.get(Calendar.MINUTE));
+		startCalenderMerged.set(Calendar.SECOND, calendarWork.get(Calendar.SECOND));
+		startCalenderMerged.set(Calendar.MILLISECOND, startMillis);
+		Date start = startCalenderMerged.getTime();
+		Long startLong = start.getTime();
+		return startLong;
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
+	 */
+	@Override
+	public void stateChanged(ChangeEvent ce) {
+		Object ceTrigger = ce.getSource();
+		if (ceTrigger instanceof JSpinner) {
+			this.setFilePropertyManualStartTimeForOffset(this.getJSpinnerTime().toString());
+		}	
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -519,8 +943,16 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	public void actionPerformed(ActionEvent ae) {
 		
 		Object trigger = ae.getSource();
+		
 		if (trigger==this.getTimeFormatSelector()) {
 			this.setExampleParse();
+	
+		} else if (trigger==this.getJCheckBoxTimeShiftAdjust()) {
+			this.doCheckBoxConfiguration(this.getJCheckBoxTimeShiftAdjust());
+		} else  if (trigger==this.getJCheckBoxTimeShiftUseSimulationSetup()) {
+			this.doCheckBoxConfiguration(this.getJCheckBoxTimeShiftUseSimulationSetup());
+		} else  if (trigger==this.getJCheckBoxTimeShiftAdjustToTime()) {
+			this.doCheckBoxConfiguration(this.getJCheckBoxTimeShiftAdjustToTime());
 			
 		} else if (trigger==this.getJButtonCancel()) {
 			this.setCanceled(true);
@@ -552,5 +984,6 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 		}
 		
 	}
+
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

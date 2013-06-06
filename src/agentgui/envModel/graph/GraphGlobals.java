@@ -202,18 +202,6 @@ public final class GraphGlobals {
 	 */
 	public final static class Colors {
 
-//		/** The Constant TB_BACKGROUND. */
-//		public final static Color TB_BACKGROUND = UIManager.getColor("Table.background");
-//		/** The Constant TB_ALTERNATEROWCOLOR. */
-//		public final static Color TB_ALTERNATEROWCOLOR = UIManager.getColor("Table.alternateRowColor");
-//		/** The Constant TB_HIGHLIGHT. */
-//		public final static Color TB_HIGHLIGHT = UIManager.getColor("Table[Enabled+Selected].textBackground");
-//		
-//		/** The Constant TB_TEXTFOREGROUND. */
-//		public final static Color TB_TEXTFOREGROUND = UIManager.getColor("Table.textForeground");
-//		/** The Constant TB_TEXTFOREGROUND_SELECTED. */
-//		public final static Color TB_TEXTFOREGROUND_SELECTED = UIManager.getColor("Table[Enabled+Selected].textForeground");
-		
 		/** The Constant TB_BACKGROUND. */
 		public final static Color TB_BACKGROUND = Color.WHITE;
 		/** The Constant TB_ALTERNATEROWCOLOR. */

@@ -61,7 +61,7 @@
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
     <simulationSetupCurrent>Simple Net</simulationSetupCurrent>
-    <timeModelClass>agentgui.simulationService.time.TimeModelDiscrete</timeModelClass>
+    <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
     <downloadResources>http://rudel1.cs.uni-due.de:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
@@ -134,5 +134,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>true</unsaved>
+    <unsaved>false</unsaved>
 </project>

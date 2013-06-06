@@ -19,6 +19,28 @@
             </value>
         </entry>
         <entry>
+            <key>Exit</key>
+            <value>
+                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP15</graphElementIDs>
+                <id>Exit</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Exit</type>
+            </value>
+        </entry>
+        <entry>
+            <key>Entry1</key>
+            <value>
+                <agentClassName>gasmas.agents.components.EntryAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP26</graphElementIDs>
+                <id>Entry1</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Entry</type>
+            </value>
+        </entry>
+        <entry>
             <key>Pipe</key>
             <value>
                 <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
@@ -32,7 +54,7 @@
             </value>
         </entry>
         <entry>
-            <key>n9</key>
+            <key>Entry2</key>
             <value>
                 <dataModelsBase64>
                     <dataModelBase64>PEVudHJ5IGFsaWFzPSIiIElEPSIiIG1vbGFyTWFzcz0iMC4wRiI+Cgk8cHJlc3N1cmVNYXg+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L3ByZXNzdXJlTWF4PgoJPGhlaWdodD4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvaGVpZ2h0PgoJPHByZXNzdXJlTWluPgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9wcmVzc3VyZU1pbj4KCTxnZW9Db29yZGluYXRlPgoJCTxHZW9Db29yZGluYXRlIGdlb1k9IjAuMEYiIGdlb1g9IjAuMEYiIGdlb1o9IjAuMEYiIGdlb1c9IjAuMEYiLz4KCTwvZ2VvQ29vcmRpbmF0ZT4KCTxmbG93TWF4PgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9mbG93TWF4PgoJPGZsb3dNaW4+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L2Zsb3dNaW4+Cgk8bm9ybURlbnNpdHk+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L25vcm1EZW5zaXR5PgoJPGdhc1RlbXBlcmF0dXJlPgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9nYXNUZW1wZXJhdHVyZT4KCTxjYWxvcmlmaWNWYWx1ZT4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvY2Fsb3JpZmljVmFsdWU+Cgk8aGVhdENhcGFjaXR5Q29lZmZpY2llbnQ+CgkJPEhlYXRDYXBhY2l0eUNvZWZmaWNpZW50IGE9IjAuMEYiIGI9IjAuMEYiIGM9IjAuMEYiLz4KCTwvaGVhdENhcGFjaXR5Q29lZmZpY2llbnQ+Cgk8cHNldWRvY3JpdGljYWxUZW1wZXJhdHVyZT4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvcHNldWRvY3JpdGljYWxUZW1wZXJhdHVyZT4KCTxwc2V1ZG9jcmljYWxQcmVzc3VyZT4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvcHNldWRvY3JpY2FsUHJlc3N1cmU+CjwvRW50cnk+Cg==</dataModelBase64>
@@ -41,31 +63,9 @@
                 <agentClassName>gasmas.agents.components.EntryAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP17</graphElementIDs>
-                <id>n9</id>
+                <id>Entry2</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Entry</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n8</key>
-            <value>
-                <agentClassName>gasmas.agents.components.EntryAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP26</graphElementIDs>
-                <id>n8</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Entry</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n7</key>
-            <value>
-                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP15</graphElementIDs>
-                <id>n7</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Exit</type>
             </value>
         </entry>
         <entry>
