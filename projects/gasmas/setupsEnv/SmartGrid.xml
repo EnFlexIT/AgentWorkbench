@@ -228,6 +228,19 @@
             </value>
         </entry>
         <entry>
+            <key>n95</key>
+            <value>
+                <agentClassName></agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n95</graphElementIDs>
+                <graphElementIDs>PP26</graphElementIDs>
+                <graphElementIDs>PP25</graphElementIDs>
+                <id>n95</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Power Line</type>
+            </value>
+        </entry>
+        <entry>
             <key>n49</key>
             <value>
                 <directed>false</directed>

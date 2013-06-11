@@ -485,21 +485,26 @@ public class NetworkModel implements Serializable {
 	}
 
 	/**
-	 * Gets the neighbour NetworkComponents.
+	 * Returns the neighbour NetworkComponent's based on a Vector of NetworkComponent's.
 	 *
 	 * @param networkComponents the network components
 	 * @return the neighbour network components
 	 */
-	public HashSet<NetworkComponent> getNeighbourNetworkComponents(HashSet<NetworkComponent> networkComponents) {
-		HashSet<NetworkComponent> neighbourNetworkComponents = new HashSet<NetworkComponent>();
+	public Vector<NetworkComponent> getNeighbourNetworkComponents(Vector<NetworkComponent> networkComponents) {
+		Vector<NetworkComponent> neighbourNetworkComponents = new Vector<NetworkComponent>();
 		for (NetworkComponent networkComponent : networkComponents) {
-			neighbourNetworkComponents.addAll(getNeighbourNetworkComponents(networkComponent));
+			Vector<NetworkComponent> neighboursFound = getNeighbourNetworkComponents(networkComponent);
+			for (NetworkComponent neighbour : neighboursFound) {
+				if (neighbourNetworkComponents.contains(neighbour)==false) {
+					neighbourNetworkComponents.add(neighbour);	
+				}
+			}
 		}
 		return neighbourNetworkComponents;
 	}
 
 	/**
-	 * Gets the neighbour network components.
+	 * Returns the neighbour NetworkComponent's of a single NetworkComponent.
 	 * 
 	 * @param networkComponent the network component
 	 * @return the neighbour network components
@@ -513,9 +518,8 @@ public class NetworkModel implements Serializable {
 				// --- check if the component contains the current node -------
 				if (netComponent.getGraphElementIDs().contains(node.getId())) {
 					// --- Add component to result list -----------------------
-					if (netComponent != networkComponent) {
+					if (netComponent != networkComponent && comps.contains(netComponent)==false) {
 						comps.add(netComponent);
-						break;
 					}
 				}
 			}

@@ -778,20 +778,12 @@
     </agentSetup>
     <timeModelSettings>
         <entry>
-            <key>StepWidth</key>
-            <value>60000</value>
-        </entry>
-        <entry>
             <key>TimeStart</key>
             <value>1352797402156</value>
         </entry>
         <entry>
-            <key>TimeCurrent</key>
-            <value>1352797402156</value>
-        </entry>
-        <entry>
-            <key>DisplayUnitIndex</key>
-            <value>1</value>
+            <key>AccelerationFactor</key>
+            <value>1.0</value>
         </entry>
         <entry>
             <key>TimeStop</key>

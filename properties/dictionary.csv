@@ -201,7 +201,6 @@ de;Graph Laden;Load Graph
 de;Graph bzw. Netzwerk;Graph or Network
 de;Graph speichern;Save Graph
 de;Graph-Datei;Graph file
-de;Graph-Komponenten;Graph-Component;;;
 de;Graph-Prototyp;Graph-prototype
 de;Graph-Prototypen;Graph-prototypes
 de;GraphML-Dateien;GraphML-Files
@@ -603,6 +602,8 @@ en;;Building costs;;;
 en;;Characteristic Diagram;;;
 en;;Close Properties;;;
 en;;Compressor;;;
+en;;Copy Selection;;;
+en;;Cut Selection;;;
 en;;Drives;;;
 en;;Electric Motor;;;
 en;;Error while gather compressor station model;;;
@@ -610,6 +611,7 @@ en;;Gas Driven Motor;;;
 en;;Gas Turbine;;;
 en;;General;;;
 en;;Measurments;;;
+en;;Paste Selection;;;
 en;;Piston Compressor;;;
 en;;Please, select the tab of the component that you want to delete!;;;
 en;;Please, specifiy the ID for the new Electric Motor!;;;

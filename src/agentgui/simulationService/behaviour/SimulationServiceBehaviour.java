@@ -203,7 +203,7 @@ public class SimulationServiceBehaviour extends Behaviour implements ServiceSens
 			EnvironmentModel tmpEnvMode =  simHelper.getEnvironmentModel();
 			if (tmpEnvMode!=null) {
 				if (tmpEnvMode.equals(myEnvironmentModel)==false) {
-					this.onEnvironmentStimulusIntern();	
+					this.setEnvironmentModel(tmpEnvMode, false);
 				}				
 			}
 		} catch (ServiceException e) {

@@ -31,6 +31,8 @@ package agentgui.envModel.graph.controller;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
@@ -69,7 +71,12 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private final String pathImage = GraphGlobals.getPathImages(); // @jve:decl-index=0:
     private final Dimension jButtonSize = new Dimension(26, 26); // @jve:decl-index=0:
 
-    private JToolBar jToolBar = null;
+    private boolean isPasteAction = false;
+    private KeyAdapter keyAdapterPasteActionStop = null; 
+    
+    private JToolBar jToolBarEdit = null;
+    private JToolBar jToolBarView = null;
+    
     private JButton jButtonComponents = null;
     private JToggleButton jButtonSatelliteView = null;
     private JButton jButtonZoomFit2Window = null;
@@ -88,7 +95,10 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JButton jButtonUndo = null;
     private JButton jButtonClearGraph = null;
     private JButton jButtonImportGraph = null;
-
+    private JButton jButtonCut = null;
+    private JButton jButtonCopy = null;
+    private JButton jButtonPaste = null;
+    
     private JPopupMenu edgePopup = null;
     private JMenuItem jMenuItemDeleteComp = null;
     private JMenuItem jMenuItemEdgeProp = null;
@@ -111,61 +121,102 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     }
 
     /**
-     * Gets the toolbar for the BasicGraphGui.
-     * @return the toolbar
+     * Gets the key adapter paste action stop.
+     * @return the key adapter paste action stop
      */
-    public JToolBar getJToolBar() {
-		if (jToolBar == null) {
-		    jToolBar = new JToolBar();
-		    jToolBar.setOrientation(JToolBar.VERTICAL);
-		    jToolBar.setFloatable(false);
-		    jToolBar.setPreferredSize(new Dimension(30, 30));
-
-		    jToolBar.add(getJButtonComponents());
-
-		    // --- In case of editing the simulation setup ----------
-		    if (this.graphController.getProject() != null) {
-				
-		    	jToolBar.addSeparator();
-		    	jToolBar.add(getJButtonImportGraph());
-		    	jToolBar.add(getJButtonClearGraph());
-		    	
-		    	jToolBar.addSeparator();
-				jToolBar.add(getJButtonAddComponent());
-				jToolBar.add(getJButtonRemoveComponent());
-				jToolBar.add(getJButtonMergeNodes());
-				jToolBar.add(getJButtonSplitNode());
-				
-				jToolBar.addSeparator();
-				jToolBar.add(getJButtonUndo());
-				jToolBar.add(getJButtonRedo());
-				this.setUndoRedoButtonsEnabled();
-				
-		    }
-		    
-		    jToolBar.addSeparator();
-		    jToolBar.add(getJToggleMousePicking());
-		    jToolBar.add(getJToggleMouseTransforming());
-
-		    ButtonGroup bg = new ButtonGroup();
-		    bg.add(getJToggleMousePicking());
-		    bg.add(getJToggleMouseTransforming());
-		    
-		    jToolBar.addSeparator();
-		    jToolBar.add(getJToggleButtonSatelliteView());
-		    jToolBar.add(getJButtonZoomFit2Window());
-		    jToolBar.add(getJButtonZoomOne2One());
-		    jToolBar.add(getJButtonFocusNetworkComponent());
-		    jToolBar.add(getJButtonSaveImage());
-		    
-		    jToolBar.add(getJButtonZoomIn());
-		    jToolBar.add(getJButtonZoomOut());
-		    jToolBar.add(getJButtonSaveImage());
-
-		}
-		return jToolBar;
+    private KeyAdapter getKeyAdapterPasteActionStop() {
+    	if (keyAdapterPasteActionStop==null) {
+    		keyAdapterPasteActionStop= new KeyAdapter() {
+    			@Override
+    			public void keyTyped(KeyEvent ke) {
+    				if (isPasteAction==true) {
+    					isPasteAction = false;
+    					NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Paste_Action_Stop);
+    					graphController.notifyObservers(nmNote);
+    				}
+    			}
+    		};	
+    	}
+    	return keyAdapterPasteActionStop;
     }
 
+    /**
+     * Gets the Edit toolbar for the BasicGraphGui.
+     * @return the toolbar
+     */
+    public JToolBar getJToolBarEdit() {
+    	if (jToolBarEdit == null) {
+    		jToolBarEdit = new JToolBar();
+    		jToolBarEdit.setOrientation(JToolBar.VERTICAL);
+    		jToolBarEdit.setFloatable(false);
+    		jToolBarEdit.setPreferredSize(new Dimension(30, 30));
+    		jToolBarEdit.addKeyListener(this.getKeyAdapterPasteActionStop());
+    		
+    		jToolBarEdit.add(getJButtonUndo());
+    		jToolBarEdit.add(getJButtonRedo());
+			this.setUndoRedoButtonsEnabled();
+
+    		jToolBarEdit.addSeparator();
+    		jToolBarEdit.add(getJButtonAddComponent());
+    		jToolBarEdit.add(getJButtonRemoveComponent());
+
+    		jToolBarEdit.addSeparator();
+    		jToolBarEdit.add(getJButtonCut());
+    		jToolBarEdit.add(getJButtonCopy());
+    		jToolBarEdit.add(getJButtonPaste());
+    		
+    		jToolBarEdit.addSeparator();
+    		jToolBarEdit.add(getJButtonMergeNodes());
+    		jToolBarEdit.add(getJButtonSplitNode());
+
+			jToolBarEdit.addSeparator();
+			jToolBarEdit.add(getJButtonImportGraph());
+    		jToolBarEdit.add(getJButtonClearGraph());
+	    	
+    	}
+    	return jToolBarEdit;
+    }
+
+    /**
+     * Gets the View toolbar for the BasicGraphGui.
+     * @return the toolbar
+     */
+    public JToolBar getJToolBarView() {
+    	if (jToolBarView == null) {
+    		jToolBarView = new JToolBar();
+    		jToolBarView.setOrientation(JToolBar.VERTICAL);
+    		jToolBarView.setFloatable(false);
+    		jToolBarView.setPreferredSize(new Dimension(30, 30));
+
+    		jToolBarView.add(getJButtonComponents());
+    		jToolBarView.addSeparator();
+
+    		jToolBarView.add(getJToggleMousePicking());
+    		jToolBarView.add(getJToggleMouseTransforming());
+
+  		    ButtonGroup bg = new ButtonGroup();
+  		    bg.add(getJToggleMousePicking());
+  		    bg.add(getJToggleMouseTransforming());
+  		    
+  		    jToolBarView.addSeparator();
+  		    jToolBarView.add(getJButtonZoomIn());
+		    jToolBarView.add(getJButtonZoomOut());
+
+  		    jToolBarView.addSeparator();
+  		    jToolBarView.add(getJButtonZoomFit2Window());
+  		    jToolBarView.add(getJButtonZoomOne2One());
+  		    jToolBarView.add(getJButtonFocusNetworkComponent());
+
+  		    jToolBarView.addSeparator();
+  		    jToolBarView.add(getJToggleButtonSatelliteView());
+
+  		    jToolBarView.addSeparator();
+  		    jToolBarView.add(getJButtonSaveImage());
+  		    
+    	}
+    	return jToolBarView;
+    }
+    
     /**
      * This method initializes jButtonClearGraph
      * @return javax.swing.JButton
@@ -190,7 +241,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		    jButtonComponents = new JButton();
 		    jButtonComponents.setPreferredSize(jButtonSize);
 		    jButtonComponents.setIcon(new ImageIcon(getClass().getResource(pathImage + "components.gif")));
-		    jButtonComponents.setToolTipText(Language.translate("Graph-Komponenten"));
+		    jButtonComponents.setToolTipText(Language.translate("Netzwerk-Komponenten"));
 		    jButtonComponents.addActionListener(this);
 		}
 		return jButtonComponents;
@@ -423,6 +474,50 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     }
     
     /**
+     * This method initializes jButtonCut
+     * @return javax.swing.JButton
+     */
+    private JButton getJButtonCut() {
+		if (jButtonCut == null) {
+			jButtonCut = new JButton();
+			jButtonCut.setIcon(new ImageIcon(getClass().getResource(pathImage + "Cut.png")));
+			jButtonCut.setPreferredSize(jButtonSize);
+			jButtonCut.setToolTipText(Language.translate("Cut Selection", Language.EN));
+			jButtonCut.addActionListener(this);
+		}
+		return jButtonCut;
+    }
+    /**
+     * This method initializes jButtonCopy
+     * @return javax.swing.JButton
+     */
+    private JButton getJButtonCopy() {
+		if (jButtonCopy == null) {
+			jButtonCopy = new JButton();
+			jButtonCopy.setIcon(new ImageIcon(getClass().getResource(pathImage + "Copy.png")));
+			jButtonCopy.setPreferredSize(jButtonSize);
+			jButtonCopy.setToolTipText(Language.translate("Copy Selection", Language.EN));
+			jButtonCopy.addActionListener(this);
+		}
+		return jButtonCopy;
+    }
+    /**
+     * This method initializes jButtonPaste
+     * @return avax.swing.JButton
+     */
+    private JButton getJButtonPaste() {
+		if (jButtonPaste == null) {
+			jButtonPaste = new JButton();
+			jButtonPaste.setIcon(new ImageIcon(getClass().getResource(pathImage + "Paste.png")));
+			jButtonPaste.setPreferredSize(jButtonSize);
+			jButtonPaste.setToolTipText(Language.translate("Paste Selection", Language.EN));
+			jButtonPaste.addActionListener(this);
+			jButtonPaste.addKeyListener(this.getKeyAdapterPasteActionStop());
+		}
+		return jButtonPaste;
+    }
+    
+    /**
      * This method initializes jButtonImportGraph
      * @return javax.swing.JButton
      */
@@ -596,6 +691,10 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 					this.getJToggleButtonSatelliteView().setSelected(true);
 				}
 				break;
+			
+			case NetworkModelNotification.NETWORK_MODEL_Paste_Action_Do:
+				this.isPasteAction=true;
+				break;
 			}
 			
 		}
@@ -651,6 +750,33 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// --- Button Zoom out ----------------------------------
 			this.graphController.getNetworkModelAdapter().zoomOut();
 
+		} else if (ae.getSource() == getJButtonCut()) {
+			// ------------------------------------------------------
+			// --- Cut Action ---------------------------------------
+			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
+			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModelAdapter().getNetworkComponentsFullySelected(nodeSet);
+			if(selectedComponents!=null && selectedComponents.size()>0){
+				// --- Copy to clipboard ----------------------------
+				this.graphController.copyToClipboard(selectedComponents);
+				// --- Remove component and update graph ------------ 
+				this.graphController.getNetworkModelAdapter().removeNetworkComponents(selectedComponents);
+			}
+			
+		} else if (ae.getSource() == getJButtonCopy()) {
+			// ------------------------------------------------------
+			// --- Copy Action --------------------------------------
+			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
+			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModelAdapter().getNetworkComponentsFullySelected(nodeSet);
+			this.graphController.copyToClipboard(selectedComponents);
+			
+		} else if (ae.getSource() == getJButtonPaste()) {
+			// ------------------------------------------------------
+			// --- Paste Action -------------------------------------
+			if (this.graphController.getClipboardNetworkModel()!=null) {
+				NetworkModelNotification nmNote = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Paste_Action_Do);
+				this.graphController.notifyObservers(nmNote);	
+			}
+			
 		} else if (ae.getSource() == getJButtonSaveImage()) {
 			// ------------------------------------------------------
 			// --- Save graph as Image ------------------------------

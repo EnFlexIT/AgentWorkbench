@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -107,6 +108,8 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	 */
 	private void setupSimulation() {
 
+		//this.debug();
+		
 		// --- Put the environment model into the SimulationService -
 		// --- in order to make it accessible for the whole agency --
 		this.notifyAboutEnvironmentChanges();
@@ -118,7 +121,23 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	}
 
 	// ++++++++++++++ Some temporary test cases here +++++++++++++++++++++
-
+	@SuppressWarnings("unused")
+	private void debug() {
+		
+		Vector<NetworkComponent> searchVector = new Vector<NetworkComponent>();
+		searchVector.add(this.myNetworkModel.getNetworkComponent("n47"));
+		searchVector.add(this.myNetworkModel.getNetworkComponent("n49"));
+		
+		Vector<NetworkComponent> neighbours = this.myNetworkModel.getNeighbourNetworkComponents(searchVector);
+		
+		System.out.println("=> Number of neighbours for " + searchVector.toString() + ": " + neighbours.size());
+		for (NetworkComponent netCompNeigghbour : neighbours) {
+			System.out.println("=> Neighbour: " + netCompNeigghbour.getId());
+		}
+		System.out.println("=> ");
+		
+		
+	}
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/*

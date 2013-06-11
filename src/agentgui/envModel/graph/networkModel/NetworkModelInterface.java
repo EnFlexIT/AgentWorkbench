@@ -163,8 +163,14 @@ public interface NetworkModelInterface {
 	 */
 	public abstract NetworkComponent getNetworkComponent(String id);
 
-	public abstract HashSet<NetworkComponent> getNeighbourNetworkComponents(
-			HashSet<NetworkComponent> networkComponents);
+
+	/**
+	 * Gets the neighbour network components.
+	 *
+	 * @param networkComponents the network components
+	 * @return the neighbour network components
+	 */
+	public abstract Vector<NetworkComponent> getNeighbourNetworkComponents(Vector<NetworkComponent> networkComponents);
 
 	/**
 	 * Gets the neighbour network components.
@@ -172,8 +178,7 @@ public interface NetworkModelInterface {
 	 * @param networkComponent the network component
 	 * @return the neighbour network components
 	 */
-	public abstract Vector<NetworkComponent> getNeighbourNetworkComponents(
-			NetworkComponent networkComponent);
+	public abstract Vector<NetworkComponent> getNeighbourNetworkComponents(NetworkComponent networkComponent);
 
 	/**
 	 * Gets the network component by graph edge id.

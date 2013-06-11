@@ -460,10 +460,10 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getNeighbourNetworkComponents(java.util.HashSet)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getNeighbourNetworkComponents(java.util.Vector)
 	 */
 	@Override
-	public HashSet<NetworkComponent> getNeighbourNetworkComponents(HashSet<NetworkComponent> networkComponents) {
+	public Vector<NetworkComponent> getNeighbourNetworkComponents(Vector<NetworkComponent> networkComponents) {
 		return this.graphController.getNetworkModel().getNeighbourNetworkComponents(networkComponents);
 	}
 

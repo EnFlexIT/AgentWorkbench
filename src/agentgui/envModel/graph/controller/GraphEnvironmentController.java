@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -98,29 +99,30 @@ import edu.uci.ics.jung.io.graphml.NodeMetadata;
  */
 public class GraphEnvironmentController extends EnvironmentController {
 
-    /** The key string used for saving the position in the GraphML file */
-    private static final String KEY_POSITION_PROPERTY = "pos";
-    /** The key string used for saving the ontology representation in the GraphML file */
-    private static final String KEY_DATA_MODEL_BASE64_PROPERTY = "dataModelVectorBase64Encoded";
-    
-    /** The base file name used for saving the graph and the components (without suffix) */
-    private String baseFileName = null;
-    /** The network model currently loaded */
-    private NetworkModel networkModel = null;
-    private NetworkModelAdapter networkModelAdapter = new NetworkModelAdapter(this);
-    
-    /** Custom user object to be placed in the project object. Used here for storing the current component type settings. */
-    private static final String generalGraphSettings4MASFile = "~GeneralGraphSettings~";
-    
-    
     /** Separator used for the local graphMLWriter **/
     private static final String GraphML_NewLine = System.getProperty("line.separator");  
     private static final String GraphML_VectorBrackets = "[conent]";
+
+	/** The key string used for saving the position in the GraphML file */
+    private static final String KEY_POSITION_PROPERTY = "pos";
+    /** The key string used for saving the ontology representation in the GraphML file */
+    private static final String KEY_DATA_MODEL_BASE64_PROPERTY = "dataModelVectorBase64Encoded";
+    /** Custom user object to be placed in the project object. Used here for storing the current component type settings. */
+    private static final String generalGraphSettings4MASFile = "~GeneralGraphSettings~";
+
+    /** The base file name used for saving the graph and the components (without suffix) */
+    private String baseFileName = null;
     /** The GraphMLWriter used to save the graph */
     private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter = null;
     /** Known adapter for the import of network models */
     private Vector<NetworkModelFileImporter> importAdapter = new Vector<NetworkModelFileImporter>();
 
+    /** The network model currently loaded */
+    private NetworkModel networkModel = null;
+    private NetworkModelAdapter networkModelAdapter = new NetworkModelAdapter(this);
+    
+    /** The NetworkModel that is stored in the clipboard */
+    private NetworkModel clipboardNetworkModel = null;
     
     /** The abstract environment model is just an open slot, where individual things can be placed. */
     private Object abstractEnvironmentModel = null;
@@ -234,7 +236,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     public NetworkModel getNetworkModel() {
     	return networkModel;
     }
-    /**
+	/**
      * Gets the network model for actions.
      * @return the network model action
      */
@@ -246,6 +248,41 @@ public class GraphEnvironmentController extends EnvironmentController {
     }
     
     /**
+     * Copies  to clipboard.
+     *
+     * @param sourceNetworkModel the source network model
+     * @param networkComponentsForClipboard the network components
+     */
+    public void copyToClipboard(HashSet<NetworkComponent> networkComponentsForClipboard) {
+    	
+    	if (networkComponentsForClipboard==null) return;
+    	if (this.getNetworkModel()==null) return;
+
+    	// ---------- Prepare for the Clipboard ---------------------
+		NetworkModel clipNetworkModel = this.getNetworkModel().getCopy();
+		clipNetworkModel.setAlternativeNetworkModel(null);
+		clipNetworkModel.removeNetworkComponentsInverse(networkComponentsForClipboard);
+		clipNetworkModel.resetGraphElementLayout();
+
+    	this.setClipboardNetworkModel(clipNetworkModel);
+    }
+    
+    /**
+     * Sets a NetworkModel to the clipboard.
+     * @param newClipboardNetworkModel the new clipboard network model
+     */
+    public void setClipboardNetworkModel(NetworkModel newClipboardNetworkModel) {
+		this.clipboardNetworkModel = newClipboardNetworkModel;
+	}
+	/**
+	 * Returns the NetworkModel from the clipboard .
+	 * @return the clipboard NetworkModel
+	 */
+	public NetworkModel getClipboardNetworkModel() {
+		return clipboardNetworkModel;
+	}
+
+	/**
      * This method handles the SimulationSetupChangeNotifications sent from the project
      * @param sscn The SimulationSetupChangeNotifications to handle
      */

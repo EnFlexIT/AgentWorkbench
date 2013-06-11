@@ -30,13 +30,19 @@
 package agentgui.envModel.graph.controller;
 
 import java.awt.Cursor;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.Vector;
 
@@ -48,6 +54,7 @@ import agentgui.envModel.graph.networkModel.GraphElementLayout;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelAdapter;
+import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -68,12 +75,17 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
-public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNode, GraphEdge> implements MouseWheelListener {
+public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNode, GraphEdge> implements MouseWheelListener, KeyListener, Observer {
 	
+	/** The GraphEnvironmentController **/
+	private GraphEnvironmentController graphController = null;
 	/** The parent BasicGraphGUI */
 	private BasicGraphGui graphGUI = null;
 	/** The current VisualizationViewer	*/
 	private BasicGraphGuiVisViewer<GraphNode,GraphEdge> visViewer = null; 	
+	
+	private boolean isPasteAction = false;
+	private Cursor oldCursor = null;
 	
 	/** Move panel with right currently ? */
 	private boolean movePanelWithRightAction = false;
@@ -93,7 +105,6 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	/** the amount to zoom out by */
 	protected float out = 1/1.1f;
 	
-	
 	/**
 	 * Constructor.
 	 * @param basicGraphGui the BasicGraphGui
@@ -101,6 +112,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	public GraphEnvironmentMousePlugin(BasicGraphGui basicGraphGui) {
 		super();
 		this.graphGUI = basicGraphGui;
+		this.getGraphController().addObserver(this);
 	}
 	
 	/**
@@ -112,6 +124,17 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			this.visViewer = this.graphGUI.getVisView();
 		}
 		return this.visViewer;
+	}
+	
+	/**
+	 * Returns the current GraphEnvironmentController.
+	 * @return the graph controller
+	 */
+	private GraphEnvironmentController getGraphController() {
+		if (graphController==null) {
+			graphController=this.graphGUI.getGraphEnvironmentController();
+		}
+		return graphController;		
 	}
 	
 	/**
@@ -456,5 +479,65 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
          me.consume();
 		
 	}
+
+	/**
+	 * Sets the paste cursor.
+	 */
+	private void setPasteAction(boolean doPaste) {
+		
+		System.out.println("=> Do Paste action now : " + doPaste );
+		if (doPaste==true) {
+			
+			this.oldCursor=getCursor();
+			
+			Toolkit toolkit = Toolkit.getDefaultToolkit();
+			Image image = toolkit.getImage("D:\\00 Tmp\\Dsc00008_30.jpg");  
+			Point hotSpot = new Point(0,0);  
+			
+			Cursor cursor = toolkit.createCustomCursor(image, hotSpot, "Pencil"); 
+			this.setCursor(cursor);
+			
+		} else {
+			this.setCursor(this.oldCursor);
+		}
+		this.isPasteAction = doPaste;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable observable, Object object) {
+		
+		if (object instanceof NetworkModelNotification) {
+			NetworkModelNotification nmNotification = (NetworkModelNotification) object;
+			switch (nmNotification.getReason()) {
+			case NetworkModelNotification.NETWORK_MODEL_Paste_Action_Do:
+				this.setPasteAction(true);
+				break;
+			case NetworkModelNotification.NETWORK_MODEL_Paste_Action_Stop:
+				this.setPasteAction(false);
+				break;
+			}
+		}
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyTyped(KeyEvent ke) {
+		if (isPasteAction==true) {
+			this.setPasteAction(false);
+		}
+	}
+	@Override
+	public void keyPressed(KeyEvent ke) {
+	}
+	@Override
+	public void keyReleased(KeyEvent ke) {
+	}
+
 	
 }

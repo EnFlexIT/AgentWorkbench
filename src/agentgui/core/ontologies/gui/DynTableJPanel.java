@@ -151,7 +151,6 @@ public class DynTableJPanel extends JPanel {
 	 * 
 	 * @see OntologyClassWidget
 	 * @see OntologyClassEditorJPanel
-	 * @return the ontology class instance of widget or panel
 	 */
 	public void setOntologyClassInstanceToOntologyClassVisualisation(){
 		// --- Only do the following if the DynTableJPanel is expanded ---
