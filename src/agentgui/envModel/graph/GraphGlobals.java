@@ -99,6 +99,7 @@ public final class GraphGlobals {
  		// ----------------------------------------------------------
 		// --- 1. Search in the loaded packages ---------------------
  		// ----------------------------------------------------------
+		// --- 1b. Try the direct way -------------------------------
 		try {
 			URL url = GraphGlobals.class.getResource(path2Image);
 			imageIcon = new ImageIcon(url);
@@ -108,6 +109,18 @@ public final class GraphGlobals {
 			imageIcon = null;
 		}
 
+		// --- 1b. Try the image package of the GraphEnvironement ---
+		if (imageIcon==null) {
+			try {
+				URL url = GraphGlobals.class.getResource(getPathImages() + path2Image);
+				imageIcon = new ImageIcon(url);
+				
+			} catch (Exception ex) {
+				//System.err.println("Could not find image for '" + description + "' in packages");
+				imageIcon = null;
+			}
+		}
+		
  		// ----------------------------------------------------------
 		// --- 2. Try folder locations ------------------------------
  		// ----------------------------------------------------------

@@ -274,7 +274,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Gets the PluggableGraphMouse.
 	 * @return the pluggableGraphMouse
 	 */
-	private PluggableGraphMouse getPluggableGraphMouse() {
+	public PluggableGraphMouse getPluggableGraphMouse() {
 		if (pluggableGraphMouse == null) {
 
 			// --- Create the context menu Plugin ---------

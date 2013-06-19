@@ -65,6 +65,9 @@ public class GraphEdge extends GraphElement {
 	@Override
 	public GraphEdge getCopy() {
 		GraphEdge edgceCopy = new GraphEdge(new String(this.id), new String(this.componentType));
+		if (this.graphElementLayout!=null) {
+			edgceCopy.setGraphElementLayout(this.graphElementLayout.getCopy(edgceCopy));	
+		}
 		edgceCopy.setComponentType(this.getComponentType());
 		edgceCopy.setWeight(this.weight);
 		return edgceCopy;

@@ -48,6 +48,9 @@ public class GraphElementLayout {
 	private DomainSettings myDomain = null;
 	private ComponentTypeSettings myComponentTypeSettings = null;
 	
+	private boolean distributionNode = false;
+	private boolean clusterComponent = false;
+	
 	private boolean markerShow = false;
 	private float markerStrokeWidth = 0;
 	private Color markerColor = new Color(255,0,0, 140);
@@ -103,6 +106,9 @@ public class GraphElementLayout {
 		this.imageReference = null;
 		this.shapeForm = GeneralGraphSettings4MAS.SHAPE_ELLIPSE;
 		
+		this.setDistributionNode(false);
+		this.setClusterComponent(false);
+		
 		// --- Evaluate the GraphNode ------------------------------------
 		GraphNode graphNode = (GraphNode) this.myGraphElement;
 		HashSet<NetworkComponent> componentHashSet = this.networkModel.getNetworkComponents(graphNode);
@@ -113,6 +119,8 @@ public class GraphElementLayout {
 			// -----------------------------------------------------------
 			myComponentTypeSettings = ctsHash.get(distributionNode.getType());
 			if (myComponentTypeSettings!=null) {
+				
+				this.setDistributionNode(true);
 				
 				this.myDomain = this.domainHash.get(myComponentTypeSettings.getDomain());
 				
@@ -148,10 +156,12 @@ public class GraphElementLayout {
 				// -------------------------------------------------------
 				// --- Normal node or ClusterNode ------------------------
 				// -------------------------------------------------------
-				ArrayList<ClusterNetworkComponent> clusterHash = networkModel.getClusterNetworkComponents(componentHashSet);
-				if (componentHashSet.size()==1 && clusterHash.size()==1 && networkModel.isFreeGraphNode(graphNode)==false) {
+				ArrayList<ClusterNetworkComponent> clusterHash = this.networkModel.getClusterNetworkComponents(componentHashSet);
+				if (componentHashSet.size()==1 && clusterHash.size()==1 && this.networkModel.isFreeGraphNode(graphNode)==false) {
 					// ---------------------------------------------------
 					// --- Central GraphNode of a cluster component ------
+					this.setClusterComponent(true);
+					
 					ClusterNetworkComponent cnc = clusterHash.get(0);
 					String domain = cnc.getDomain();
 					if (domain != null) {
@@ -196,7 +206,7 @@ public class GraphElementLayout {
 						
 					} else {
 						// --- 
-						myComponentTypeSettings = ctsHash.get(component.getType());
+						this.myComponentTypeSettings = ctsHash.get(component.getType());
 						if (myComponentTypeSettings!=null) {
 							myDomain = domainHash.get(myComponentTypeSettings.getDomain());
 							this.size = myDomain.getVertexSize();
@@ -226,6 +236,9 @@ public class GraphElementLayout {
 		this.showLabel = true;
 		this.imageReference = null;
 		
+		this.setDistributionNode(false);
+		this.setClusterComponent(false);
+
 		// --- Evaluate the GraphEdge ------------------------------------
 		GraphEdge graphEdge = (GraphEdge) this.myGraphElement;
 		NetworkComponent networkComponent = this.networkModel.getNetworkComponent(graphEdge);
@@ -234,9 +247,11 @@ public class GraphElementLayout {
 			return;
 		}
 		if (networkComponent instanceof ClusterNetworkComponent) {
-
+			
+			this.setClusterComponent(true);
+			
 			ClusterNetworkComponent clusterNetworkComponent = (ClusterNetworkComponent) networkComponent;
-			myDomain = domainHash.get(clusterNetworkComponent.getDomain());
+			this.myDomain = domainHash.get(clusterNetworkComponent.getDomain());
 			
 			//this.size = myComponentTypeSettings.getEdgeWidth();
 			//this.color = new Color(Integer.parseInt(myComponentTypeSettings.getColor()));
@@ -247,8 +262,8 @@ public class GraphElementLayout {
 			
 		} else {
 			
-			myComponentTypeSettings = ctsHash.get(networkComponent.getType());
-			myDomain = domainHash.get(myComponentTypeSettings.getDomain());
+			this.myComponentTypeSettings = ctsHash.get(networkComponent.getType());
+			this.myDomain = domainHash.get(myComponentTypeSettings.getDomain());
 			
 			this.size = myComponentTypeSettings.getEdgeWidth();
 			this.color = new Color(Integer.parseInt(myComponentTypeSettings.getColor()));
@@ -259,6 +274,106 @@ public class GraphElementLayout {
 			
 		}
 		
+	}
+	
+	/**
+	 * Returns a copy of the current layout.
+	 *
+	 * @param graphElement the graph element
+	 * @return the copy
+	 */
+	public GraphElementLayout getCopy(GraphElement graphElement) {
+		
+		if (isDistributionNode()==true || isClusterComponent()==true) {
+			return null;
+		}
+		
+		// --- Create a copy of the Layout --------------------------
+		GraphElementLayout copy = new GraphElementLayout(graphElement);
+		
+		copy.setShowLabel(this.isShowLabel());
+		if (this.getLabelText()!=null) {
+			copy.setLabelText(new String(this.getLabelText()));	
+		}
+		
+		copy.setSize(this.getSize());
+		
+		if (this.getImageReference()!=null) {
+			copy.setImageReference(new String(this.getImageReference()));	
+		}
+		
+		copy.setColor(new Color(this.getColor().getRed(), this.getColor().getGreen(), this.getColor().getBlue()));
+		copy.setColorPicked(new Color(this.getColorPicked().getRed(), this.getColorPicked().getGreen(), this.getColorPicked().getBlue()));
+		
+		copy.setMarkerShow(this.isMarkerShow());
+		copy.setMarkerColor(new Color(this.getMarkerColor().getRed(), this.getMarkerColor().getGreen(), this.getMarkerColor().getBlue()));
+		copy.setMarkerStrokeWidth(this.getMarkerStrokeWidth());
+		
+		if (this.getShapeForm()!=null) {
+			copy.setShapeForm(new String(this.getShapeForm()));	
+		}
+		return copy;
+	}
+	
+	
+	/**
+	 * Sets the DistributionNode.
+	 * @param isDistributionNode the new distribution node
+	 */
+	public void setDistributionNode(boolean isDistributionNode) {
+		this.distributionNode = isDistributionNode;
+	}
+	/**
+	 * Checks if the current GraphElement is a DistributionNode.
+	 * @return true, if this is a DistributionNode
+	 */
+	public boolean isDistributionNode() {
+		return distributionNode;
+	}
+
+	/**
+	 * Sets, if this component belongs to a cluster component.
+	 * @param isClusterComponent 
+	 */
+	public void setClusterComponent(boolean isClusterComponent) {
+		this.clusterComponent = isClusterComponent;
+	}
+	/**
+	 * Checks if the current GraphElement belongs to a cluster component.
+	 * @return true, if this GraphElement belongs to a cluster component
+	 */
+	public boolean isClusterComponent() {
+		return clusterComponent;
+	}
+
+	/**
+	 * Gets the label text.
+	 * @return the labelText
+	 */
+	public String getLabelText() {
+		return labelText;
+	}
+	/**
+	 * Sets the label text.
+	 * @param labelText the new label text
+	 */
+	public void setLabelText(String labelText) {
+		this.labelText = labelText;
+	}
+
+	/**
+	 * Checks if is show label.
+	 * @return the showLable
+	 */
+	public boolean isShowLabel() {
+		return showLabel;
+	}
+	/**
+	 * Sets the show label.
+	 * @param showLabel the new show label
+	 */
+	public void setShowLabel(boolean showLabel) {
+		this.showLabel = showLabel;
 	}
 	
 	/**
@@ -304,37 +419,6 @@ public class GraphElementLayout {
 	 */
 	public void setColorPicked(Color colorPicked) {
 		this.colorPicked = colorPicked;
-	}
-
-	/**
-	 * Gets the label text.
-	 * @return the labelText
-	 */
-	public String getLabelText() {
-		return labelText;
-	}
-	/**
-	 * Sets the label text.
-	 * @param labelText the new label text
-	 */
-	public void setLabelText(String labelText) {
-		this.labelText = labelText;
-	}
-
-	/**
-	 * Checks if is show lable.
-	 * @return the showLable
-	 */
-	public boolean isShowLabel() {
-		return showLabel;
-	}
-	
-	/**
-	 * Sets the show lable.
-	 * @param showLabel the new show label
-	 */
-	public void setShowLabel(boolean showLabel) {
-		this.showLabel = showLabel;
 	}
 
 	/**

@@ -36,8 +36,6 @@ import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
-import edu.uci.ics.jung.graph.Graph;
-
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.GraphEdge;
@@ -47,6 +45,7 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.prototypes.DistributionNode;
+import edu.uci.ics.jung.graph.Graph;
 
 /**
  * This action can be used in order to remove a NetworkComponent.
@@ -57,12 +56,15 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 
 	private static final long serialVersionUID = -4772137855514690242L;
 
+	private int noOfComponents4ModelStorage = 100;
+	
 	private GraphEnvironmentController graphController = null;
 	private Vector<NetworkComponent> networkComponents2Remove = null;
 	
 	private NetworkModel extractedNetworkModel = null;
 	private HashMap<NetworkComponent, Vector<GraphNodePairs>> nodeConnections = null; 
-	
+
+	private NetworkModel oldNetworkModel = null;
 	
 	/**
 	 * Instantiates the new action in order to remove a set of NetworkComponents's.
@@ -81,7 +83,18 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 	 * Do the wished edit.
 	 */
 	private void doEdit() {
-		
+		if (this.networkComponents2Remove.size()<=this.noOfComponents4ModelStorage) {
+			this.doEditSmallerThanNoOfComponents4ModelStorage();
+		} else {
+			this.doEditBiggerThanNoOfComponents4ModelStorage();
+		}
+	}
+	/**
+	 * Do edit if the number of components is SMALLER than the number in 'noOfComponents4ModelStorage'
+	 */
+	private void doEditSmallerThanNoOfComponents4ModelStorage() {
+	
+		HashSet<NetworkComponent> netCompsRemoved = new HashSet<NetworkComponent>();
 		this.nodeConnections = new HashMap<NetworkComponent, Vector<GraphNodePairs>>();
 		this.extractedNetworkModel = new NetworkModel();
 		
@@ -90,17 +103,18 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 			NetworkComponent networkComponent = this.networkComponents2Remove.get(i);
 			
 			this.transfer2localNetworkModel(networkComponent);
-			this.graphController.getNetworkModel().removeNetworkComponent(networkComponent);
+			this.graphController.getNetworkModel().removeNetworkComponent(networkComponent, false);
 			this.graphController.removeAgent(networkComponent);
-			
-			NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
-			notification.setInfoObject(networkComponent);
-			this.graphController.notifyObservers(notification);
+			netCompsRemoved.add(networkComponent);
 		}
+		this.graphController.getNetworkModel().refreshGraphElements();
+		
+		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
+		notification.setInfoObject(netCompsRemoved);
+		this.graphController.notifyObservers(notification);
 		this.graphController.setProjectUnsaved();
 		
 	}
-	
 	/**
 	 * Transfer the components to remove to the local temporal NetworkModel.
 	 * @param networkComponent the NetworkComponent
@@ -121,7 +135,7 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		for (String nodeID: nodeIDs) {
 			GraphNode node2SplitAt = (GraphNode) sourceNetworkModel.getGraphElement(nodeID);
 			// --- Split the connection node ------------------------
-			GraphNodePairs couples = sourceNetworkModel.splitNetworkModelAtNode(node2SplitAt, false);
+			GraphNodePairs couples = sourceNetworkModel.splitNetworkModelAtNode(node2SplitAt, false, false);
 			// --- Remind the connections of this node --------------
 			if (couples.getGraphNode2Hash().size()>0) {
 				nodeConnections4Component.add(couples);	
@@ -171,7 +185,19 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 	@Override
 	public void undo() throws CannotUndoException {
 		super.undo();
-
+		if (this.networkComponents2Remove.size()<=this.noOfComponents4ModelStorage) {
+			this.doUndoSmallerThanNoOfComponents4ModelStorage();
+		} else {
+			this.doUndoBiggerThanNoOfComponents4ModelStorage();
+		}
+	}
+	/**
+	 * Undo action if the number of components a SMALLER than the number in 'noOfComponents4ModelStorage'
+	 */
+	private void doUndoSmallerThanNoOfComponents4ModelStorage() {
+		
+		HashSet<NetworkComponent> netCompsAdded = new HashSet<NetworkComponent>();
+		
 		for (int i = this.networkComponents2Remove.size()-1; i > -1; i--) {
 
 			NetworkComponent networkComponent = this.networkComponents2Remove.get(i);
@@ -179,15 +205,15 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 			
 			this.graphController.getNetworkModel().addNetworkComponent(networkComponent);
 			this.graphController.addAgent(networkComponent);
-			
-			NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Added);
-			notification.setInfoObject(networkComponent);
-			this.graphController.notifyObservers(notification);
+			netCompsAdded.add(networkComponent);
 		}
-		this.graphController.setProjectUnsaved();
-	
-	}
 
+		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Added);
+		notification.setInfoObject(netCompsAdded);
+		this.graphController.notifyObservers(notification);
+		this.graphController.setProjectUnsaved();
+		
+	}
 	/**
 	 * Transfer the components that have been removed back to the global NetworkModel.
 	 * @param networkComponent the NetworkComponent
@@ -228,6 +254,39 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 			destinNetworkModel.mergeNodes(conection);
 		}
 		
+	}
+	
+	/**
+	 * Do edit if the number of components is BIGGER than the number in 'noOfComponents4ModelStorage'
+	 */
+	private void doEditBiggerThanNoOfComponents4ModelStorage() {
+		
+		this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
+		
+		HashSet<NetworkComponent> netCompsRemoved = new HashSet<NetworkComponent>();
+		for (int i = 0; i < this.networkComponents2Remove.size(); i++) {
+
+			NetworkComponent networkComponent = this.networkComponents2Remove.get(i);
+			
+			this.graphController.getNetworkModel().removeNetworkComponent(networkComponent, false);
+			this.graphController.removeAgent(networkComponent);
+			netCompsRemoved.add(networkComponent);
+		}
+		this.graphController.getNetworkModel().refreshGraphElements();
+		
+		NetworkModelNotification  notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Removed);
+		notification.setInfoObject(netCompsRemoved);
+		this.graphController.notifyObservers(notification);
+		this.graphController.setProjectUnsaved();
+		
+	}
+
+	/**
+	 * Undo action if the number of components a BIGGER than the number in 'noOfComponents4ModelStorage'
+	 */
+	private void doUndoBiggerThanNoOfComponents4ModelStorage() {
+		this.graphController.setDisplayEnvironmentModel(this.oldNetworkModel);
+		this.graphController.setProjectUnsaved();
 	}
 	
 }

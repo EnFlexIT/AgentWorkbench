@@ -286,7 +286,7 @@ public class NetworkModel implements Serializable {
 	/**
 	 * Reloads the the GraphElementsMap.
 	 */
-	private void refreshGraphElements() {
+	public void refreshGraphElements() {
 		if (this.graph != null) {
 			this.graphElements = new HashMap<String, GraphElement>();
 			this.register(graph.getVertices().toArray(new GraphNode[0]));
@@ -311,8 +311,21 @@ public class NetworkModel implements Serializable {
 	 * @return the network component
 	 */
 	public NetworkComponent addNetworkComponent(NetworkComponent networkComponent) {
-		networkComponents.put(networkComponent.getId(), networkComponent);
-		this.refreshGraphElements();
+		return this.addNetworkComponent(networkComponent, true);
+	}
+	
+	/**
+	 * Adds a network component to the NetworkModel.
+	 *
+	 * @param networkComponent the network component
+	 * @param refreshGraphElements set true, if the graph elements have to be refreshed
+	 * @return the network component
+	 */
+	public NetworkComponent addNetworkComponent(NetworkComponent networkComponent, boolean refreshGraphElements) {
+		this.networkComponents.put(networkComponent.getId(), networkComponent);
+		if (refreshGraphElements==true) {
+			this.refreshGraphElements();
+		}
 		return networkComponent;
 	}
 
@@ -396,7 +409,17 @@ public class NetworkModel implements Serializable {
 	 * @param networkComponent The NetworkComponent to remove
 	 */
 	public void removeNetworkComponent(NetworkComponent networkComponent) {
-//		if (networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+		this.removeNetworkComponent(networkComponent, true);
+	}
+	
+	/**
+	 * This method removes a NetworkComponent from the GridModel's networkComponents
+	 * HashMap, using its' ID as key.
+	 *
+	 * @param networkComponent The NetworkComponent to remove
+	 * @param refreshGraphElements true, if the graph elements have to be refreshed
+	 */
+	public void removeNetworkComponent(NetworkComponent networkComponent, boolean refreshGraphElements) {
 		// ----------------------------------------------------------------
 		// --- Another element has to be removed --------------------------
 		// ----------------------------------------------------------------
@@ -412,18 +435,54 @@ public class NetworkModel implements Serializable {
 			}
 		}
 		// ----------------------------------------------------------------
-		networkComponents.remove(networkComponent.getId());
-		this.refreshGraphElements();
+		this.networkComponents.remove(networkComponent.getId());
+		if (refreshGraphElements==true) {
+			this.refreshGraphElements();
+		}
 	}
 
 	/**
-	 * Removes the network components.
+	 * Removes a set of network components.
 	 * @param networkComponents the network components
 	 */
 	public HashSet<NetworkComponent> removeNetworkComponents(HashSet<NetworkComponent> networkComponents) {
+		
+		HashSet<GraphElement> graphNodes2Remove = new HashSet<GraphElement>();
+		HashSet<GraphElement> graphEdges2Remove = new HashSet<GraphElement>();
+		
 		for (NetworkComponent networkComponent : networkComponents) {
-			this.removeNetworkComponent(networkComponent);
+			
+			// --- Remove from the list of NetworkComponents --------
+			this.networkComponents.remove(networkComponent.getId());
+			
+			// --- Get graph elements of the components -------------
+			for (String graphElemID : networkComponent.getGraphElementIDs()) {
+				GraphElement graphElement = this.getGraphElement(graphElemID);
+				if (graphElement instanceof GraphNode) {
+					if (graphNodes2Remove.contains(graphElement)==false) {
+						graphNodes2Remove.add(graphElement);
+					}
+				} else if (graphElement instanceof GraphEdge) {
+					if (graphEdges2Remove.contains(graphElement)==false) {
+						graphEdges2Remove.add(graphElement);
+					}
+				}
+			}
 		}
+		
+		// --- Remove edges from the graph --------------------------
+		for (GraphElement graphElement : graphEdges2Remove) {
+			this.graph.removeEdge((GraphEdge) graphElement);
+		}
+		// --- Remove edges from the graph --------------------------
+		for (GraphElement graphElement : graphNodes2Remove) {
+			GraphNode graphNode = (GraphNode) graphElement;
+			if (this.graph.getIncidentEdges(graphNode).size() < 2) {
+				this.graph.removeVertex(graphNode);
+			} 
+		}
+		
+		this.refreshGraphElements();
 		return networkComponents;
 	}
 
@@ -606,6 +665,7 @@ public class NetworkModel implements Serializable {
 	 * Extract graph node IDs.
 	 *
 	 * @param networkComponent the network component
+	 * @param searchForInstance the search for instance
 	 * @return the hash set
 	 */
 	public HashSet<String> extractGraphElementIDs(NetworkComponent networkComponent, GraphElement searchForInstance) {
@@ -644,13 +704,17 @@ public class NetworkModel implements Serializable {
 	 * @return HashSet<NetworkComponent> - The set of components which contain the node
 	 */
 	public HashSet<NetworkComponent> getNetworkComponents(GraphNode graphNode) {
-		HashSet<NetworkComponent> networkComponents = new HashSet<NetworkComponent>();
-		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
+		
+		HashSet<NetworkComponent> networkComponentsFound = new HashSet<NetworkComponent>();
+		NetworkComponent[] netComps = new NetworkComponent[this.networkComponents.values().size()];
+		this.networkComponents.values().toArray(netComps);
+		for (int i = 0; i < netComps.length; i++) {
+			NetworkComponent networkComponent = netComps[i];
 			if (networkComponent.getGraphElementIDs().contains(graphNode.getId())) {
-				networkComponents.add(networkComponent);
+				networkComponentsFound.add(networkComponent);
 			}
 		}
-		return networkComponents;
+		return networkComponentsFound;
 	}
 
 	/**
@@ -730,10 +794,14 @@ public class NetworkModel implements Serializable {
 
 		// --- Get the graph and component information ------------------------
 		Vector<String> netCompNames = new Vector<String>(supplementNetworkModel.getNetworkComponents().keySet());
-		Collections.sort(netCompNames, this.getComparator4PrefixedNames());
+		if (netCompNames.size()<=512) {
+			Collections.sort(netCompNames, this.getComparator4PrefixedNames());	
+		}
 		Graph<GraphNode, GraphEdge> graph = supplementNetworkModel.getGraph();
 		Vector<GraphNode> nodes = new Vector<GraphNode>(graph.getVertices());
-		Collections.sort(nodes, this.getComparator4Nodes());
+		if (nodes.size()<=512) {
+			Collections.sort(nodes, this.getComparator4Nodes());	
+		}
 		Vector<GraphEdge> edges = new Vector<GraphEdge>(graph.getEdges());
 
 		// --- Reminder for changed names of nodes and edges ------------------
@@ -968,9 +1036,10 @@ public class NetworkModel implements Serializable {
 
 		// --- 3. Add the NetworkComponents to the model ------------------------------------------
 		for (String netCompName : srcNM.getNetworkComponents().keySet()) {
-			this.addNetworkComponent(srcNM.getNetworkComponents().get(netCompName));
+			this.addNetworkComponent(srcNM.getNetworkComponents().get(netCompName), false);
 		}
-
+		this.refreshGraphElements();
+		
 		// --- 4. Merge the specified nodes -------------------------------------------------------
 		return this.mergeNodes(nodes2Merge);
 
@@ -1149,6 +1218,18 @@ public class NetworkModel implements Serializable {
 	 * @return the GraphNodePairs that can be used to undo this operation
 	 */
 	public GraphNodePairs splitNetworkModelAtNode(GraphNode node2SplitAt, boolean moveOppositeNode) {
+		return this.splitNetworkModelAtNode(node2SplitAt, moveOppositeNode, true);
+	}
+	
+	/**
+	 * Splits the network model at a specified node.
+	 *
+	 * @param node2SplitAt the node
+	 * @param moveOppositeNode the move opposite node
+	 * @param refreshGraphElements the refresh graph elements
+	 * @return the GraphNodePairs that can be used to undo this operation
+	 */
+	public GraphNodePairs splitNetworkModelAtNode(GraphNode node2SplitAt, boolean moveOppositeNode, boolean refreshGraphElements) {
 		
 		GraphNodePairs graphNodePair = null;
 		HashSet<GraphNode> graphNodeConnections = new HashSet<GraphNode>();

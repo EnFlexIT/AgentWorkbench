@@ -510,7 +510,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			jButtonPaste = new JButton();
 			jButtonPaste.setIcon(new ImageIcon(getClass().getResource(pathImage + "Paste.png")));
 			jButtonPaste.setPreferredSize(jButtonSize);
-			jButtonPaste.setToolTipText(Language.translate("Paste Selection", Language.EN));
+			jButtonPaste.setToolTipText(Language.translate("Paste from Clipboard", Language.EN));
 			jButtonPaste.addActionListener(this);
 			jButtonPaste.addKeyListener(this.getKeyAdapterPasteActionStop());
 		}

@@ -40,6 +40,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
@@ -384,6 +385,44 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		
     }
     /**
+     * Adds a new network component to the list of components in the table.
+     * @param networkComponent the network component
+     */
+    private void networkComponentAdd(HashSet<NetworkComponent> networkComponents) {
+    	for (NetworkComponent networkComponent : networkComponents) {
+    		Vector<String> compData = new Vector<String>();
+    		compData.add(networkComponent.getId());
+    		compData.add(networkComponent.getType());
+    		compData.add("Edit"); // For the edit properties button
+    		this.getDefaultTableModel4Components().addRow(compData);	
+    	}
+		this.setNumberOfComponents();
+    }
+    
+    /**
+     * Removes a set of NetworkComponent's from the list of components in the table.
+     * @param networkComponents the network components
+     */
+    private void networkComponentRemove(HashSet<NetworkComponent> networkComponents) {
+    
+    	// --- Get a list of all NetworkComponent Id's ----
+    	HashSet<String> networkComponentIDs = new HashSet<String>();
+    	for (NetworkComponent netComponent : networkComponents) {
+    		networkComponentIDs.add(netComponent.getId());
+    	}
+    	
+    	for (int row = 0; row<this.getDefaultTableModel4Components().getRowCount(); row++) {
+    		String entry = (String) this.getDefaultTableModel4Components().getValueAt(row, 0);
+    		if (networkComponentIDs.contains(entry)) {
+    			this.getDefaultTableModel4Components().removeRow(row);
+    			row--;
+    		}
+		}
+    	this.setNumberOfComponents();
+    	
+    }
+    
+    /**
      * Removes a network component from the list of components in the table.
      * @param networkComponent the network component
      */
@@ -716,13 +755,26 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     			break;
 				
     		case NetworkModelNotification.NETWORK_MODEL_Component_Added:
-				networkComponent = (NetworkComponent) infoObject;
-				this.networkComponentAdd(networkComponent);
+    			if (infoObject instanceof NetworkComponent) {
+    				networkComponent = (NetworkComponent) infoObject;
+    				this.networkComponentAdd(networkComponent);	
+    			} else if (infoObject instanceof HashSet<?>) {
+					@SuppressWarnings("unchecked")
+					HashSet<NetworkComponent> networkComponentHash = (HashSet<NetworkComponent>) infoObject;
+					this.networkComponentAdd(networkComponentHash);
+    			}
 				break;
 				
 			case NetworkModelNotification.NETWORK_MODEL_Component_Removed:
-				networkComponent = (NetworkComponent) infoObject;
-				this.networkComponentRemove(networkComponent);				
+				if (infoObject instanceof NetworkComponent) {
+					networkComponent = (NetworkComponent) infoObject;
+					this.networkComponentRemove(networkComponent);
+				
+				} else if (infoObject instanceof HashSet<?>) {
+					@SuppressWarnings("unchecked")
+					HashSet<NetworkComponent> networkComponentHash = (HashSet<NetworkComponent>) infoObject;
+					this.networkComponentRemove(networkComponentHash);
+				}
 				break;
 			
 			case NetworkModelNotification.NETWORK_MODEL_Component_Select:

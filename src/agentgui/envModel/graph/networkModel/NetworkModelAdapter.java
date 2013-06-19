@@ -43,6 +43,7 @@ import agentgui.envModel.graph.commands.ImportNetworkModel;
 import agentgui.envModel.graph.commands.MergeNetworkComponents;
 import agentgui.envModel.graph.commands.MergeNetworkModel;
 import agentgui.envModel.graph.commands.MoveGraphNodes;
+import agentgui.envModel.graph.commands.PasteNetworkModel;
 import agentgui.envModel.graph.commands.RemoveNetworkComponent;
 import agentgui.envModel.graph.commands.RenameNetworkComponent;
 import agentgui.envModel.graph.commands.SetGeneralGraphSettings4MAS;
@@ -441,6 +442,14 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 */
 	public void setGraphNodesMoved(VisualizationViewer<GraphNode,GraphEdge> visViewer, HashMap<String, Point2D> nodesMovedOldPositions) {
 		this.undoManager.addEdit(new MoveGraphNodes(this.graphController, visViewer, nodesMovedOldPositions));
+	}
+	
+	/**
+	 * Sets a paste action to the undo manager.
+	 * @param networkModelPasted the network model pasted
+	 */
+	public void pasteNetworkModel(NetworkModel networkModelPasted) {
+		this.undoManager.addEdit(new PasteNetworkModel(this.graphController, networkModelPasted));
 	}
 	
 	/* (non-Javadoc)
