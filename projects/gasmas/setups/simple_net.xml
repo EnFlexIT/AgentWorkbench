@@ -10,32 +10,32 @@
         <agent>
             <postionNo>1</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
-            <startAsName>Pipe1</startAsName>
+            <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
+            <startAsName>n5</startAsName>
         </agent>
         <agent>
             <postionNo>2</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
-            <startAsName>Entry</startAsName>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n9</startAsName>
         </agent>
         <agent>
             <postionNo>3</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.CompressorAgent</agentClassReference>
-            <startAsName>Compressor</startAsName>
+            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
+            <startAsName>n8</startAsName>
         </agent>
         <agent>
             <postionNo>4</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
-            <startAsName>Pipe2</startAsName>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n7</startAsName>
         </agent>
         <agent>
             <postionNo>5</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>Exit</startAsName>
+            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
+            <startAsName>n6</startAsName>
         </agent>
     </agentSetup>
     <timeModelSettings>

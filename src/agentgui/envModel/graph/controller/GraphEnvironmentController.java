@@ -260,7 +260,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 
     	// ---------- Prepare for the Clipboard ---------------------
 		NetworkModel clipNetworkModel = this.getNetworkModel().getCopy();
-		clipNetworkModel.setAlternativeNetworkModel(null);
 		clipNetworkModel.removeNetworkComponentsInverse(networkComponentsForClipboard);
 		clipNetworkModel.resetGraphElementLayout();
 

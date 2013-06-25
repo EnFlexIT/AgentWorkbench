@@ -215,6 +215,7 @@ public class NetworkModel implements Serializable {
 			}
 			netModel.setGeneralGraphSettings4MAS(copyOfGeneralGraphSettings4MAS);
 	
+			// ----------------------------------------------------------
 			// -- Create a copy of the alternativeNetworkModel ----------
 			HashMap<String, NetworkModel> copyOfAlternativeNetworkModel = null;
 			if (this.alternativeNetworkModel != null) {
@@ -274,7 +275,7 @@ public class NetworkModel implements Serializable {
 	public Vector<GraphElement> getGraphElementsFromNetworkComponent(NetworkComponent networkComponent) {
 		Vector<GraphElement> elements = new Vector<GraphElement>();
 		for (String graphElementID : networkComponent.getGraphElementIDs()) {
-			GraphElement ge = getGraphElement(graphElementID);
+			GraphElement ge = this.getGraphElement(graphElementID);
 			if (ge != null) {
 				elements.add(ge);
 			}
@@ -829,8 +830,10 @@ public class NetworkModel implements Serializable {
 			HashSet<String> graphElementsNew = new HashSet<String>();
 
 			for (String elementNameOld : graphElementsOld) {
+				
 				String elementNameNew = null;
-				if (elementNameOld.startsWith(GraphNode.GRAPH_NODE_PREFIX)) {
+				GraphElement graphElement = supplementNetworkModel.getGraphElement(elementNameOld);
+				if (graphElement instanceof GraphNode) {
 					// --- Node name to change ------------
 					elementNameNew = mapNodeIDs.get(elementNameOld);
 				} else {
@@ -861,7 +864,8 @@ public class NetworkModel implements Serializable {
 		}
 		// --- Set the list of NetworkComponent's -----------------------------
 		supplementNetworkModel.setNetworkComponents(newNetworkCoponents);
-
+		supplementNetworkModel.refreshGraphElements();
+		
 		return supplementNetworkModel;
 	}
 
