@@ -59,8 +59,10 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 	public TableCellEditor4Time(String timeFormat){
 		this.timeFormat = timeFormat;
 	}
-	
 
+	/* (non-Javadoc)
+	 * @see javax.swing.CellEditor#getCellEditorValue()
+	 */
 	@Override
 	public Object getCellEditorValue() {
 		
@@ -71,9 +73,12 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 		return date.getTime();
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
+	 */
 	@Override
-	public Component getTableCellEditorComponent(JTable table,
-			Object value, boolean isSelected, int row, int column) {
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+		
 		if(spinner == null){
 			this.table = table;
 			SpinnerDateModel sdm = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);

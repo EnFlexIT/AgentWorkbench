@@ -45,20 +45,21 @@ import agentgui.ontology.TimeSeriesValuePair;
 
 /**
  * Data model for the JFreeChart representation of a time series
+ * 
  * @author Nils
- *
  */
 public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartModel{
 	
+	private static final long serialVersionUID = 2315036788757231999L;
+
 	public TimeSeriesChartModel(){
 		super(TimeZone.getTimeZone("GMT"));
 	}
-
-	/**
-	 * Generated serialVersionUID
-	 */
-	private static final long serialVersionUID = 2315036788757231999L;
 	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#addSeries(agentgui.ontology.DataSeries)
+	 */
+	@Override
 	public void addSeries(agentgui.ontology.DataSeries series){
 		
 		org.jfree.data.time.TimeSeries newSeries = new org.jfree.data.time.TimeSeries(series.getLabel());
@@ -81,9 +82,11 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 		this.addSeries(newSeries);
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#addOrUpdateValuePair(int, java.lang.Number, java.lang.Number)
+	 */
 	@Override
-	public void addOrUpdateValuePair(int seriesIndex, Number key, Number value)
-			throws NoSuchSeriesException {
+	public void addOrUpdateValuePair(int seriesIndex, Number key, Number value) throws NoSuchSeriesException {
 		if(seriesIndex < this.getSeriesCount()){
 			org.jfree.data.time.TimeSeries series = this.getSeries(seriesIndex);
 			series.addOrUpdate(new FixedMillisecond(key.longValue()), value.floatValue());
@@ -93,7 +96,9 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 		
 	}
 
-
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#updateKey(java.lang.Number, java.lang.Number)
+	 */
 	@Override
 	public void updateKey(Number oldKey, Number newKey) {
 		@SuppressWarnings("unchecked")
@@ -117,10 +122,11 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 		
 	}
 
-
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#removeValuePair(int, java.lang.Number)
+	 */
 	@Override
-	public void removeValuePair(int seriesIndex, Number key)
-			throws NoSuchSeriesException {
+	public void removeValuePair(int seriesIndex, Number key) throws NoSuchSeriesException {
 		if(seriesIndex < this.getSeriesCount()){
 			org.jfree.data.time.TimeSeries series = (TimeSeries) getSeries().get(seriesIndex);
 			series.delete(new FixedMillisecond(key.longValue()));

@@ -28,26 +28,30 @@
  */
 package agentgui.core.charts.timeseriesChart.gui;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import agentgui.core.application.Language;
-import agentgui.core.charts.gui.KeyInputDialog;
 import agentgui.core.charts.gui.TableCellEditor4FloatObject;
 import agentgui.core.charts.gui.TableCellEditor4Time;
 import agentgui.core.charts.gui.TableCellRenderer4Time;
 import agentgui.core.charts.gui.TableTab;
-import agentgui.core.charts.gui.TimeInputDialog;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 
-public class TimeSeriesTableTab extends TableTab{
-	/**
-	 * Generated serialVersionUID
-	 */
+/**
+ * The Class TimeSeriesTableTab.
+ */
+public class TimeSeriesTableTab extends TableTab {
+	
 	private static final long serialVersionUID = 9156505881049717567L;
 
 	/**
@@ -66,9 +70,6 @@ public class TimeSeriesTableTab extends TableTab{
 		if (table == null || forceRebuild) {
 			table = new JTable(){
 
-				/**
-				 * 
-				 */
 				private static final long serialVersionUID = 4259474557660027403L;
 
 				/* (non-Javadoc)
@@ -97,15 +98,40 @@ public class TimeSeriesTableTab extends TableTab{
 				
 			};
 			table.setModel(model.getTableModel());
+			table.setShowGrid(false);
+			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			table.getTableHeader().setReorderingAllowed(false);
 			table.getSelectionModel().addListSelectionListener(this);
+			
 			final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model.getTableModel());
+			if (model.getTableModel().getColumnCount()>0) {
+				sorter.setComparator(0, new Comparator<Number>() {
+					@Override
+					public int compare(Number value1, Number value2) {
+						if (value1 instanceof Float || value1 instanceof Double || value2 instanceof Float || value2 instanceof Double) {
+							Double dblValue1 = value1.doubleValue();
+							Double dblValue2 = value2.doubleValue();
+							return dblValue1.compareTo(dblValue2);
+							
+						} else {
+							Long lngValue1 = value1.longValue();
+							Long lngValue2 = value2.longValue();
+							return lngValue1.compareTo(lngValue2);
+						}
+					}
+				});				
+			}
 			table.setRowSorter(sorter);
+			
+			// --- Initially sort by key ------------
+			List<SortKey> sortKeys = new ArrayList<SortKey>();
+			for (int i = 0; i < table.getColumnCount(); i++) {
+			    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
+			}
+			table.getRowSorter().setSortKeys(sortKeys);
 			
 		}
 		return table;
 	}
-	@Override
-	protected KeyInputDialog getKeyInputDialog(String title) {
-		return new TimeInputDialog(SwingUtilities.getWindowAncestor(this), title, Language.translate("Zeit"));
-	}
+		
 }

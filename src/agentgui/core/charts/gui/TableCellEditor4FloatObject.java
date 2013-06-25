@@ -42,22 +42,22 @@ import javax.swing.table.TableCellEditor;
  */
 public class TableCellEditor4FloatObject extends AbstractCellEditor implements TableCellEditor{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3915816882186813928L;
+
 	private JTextField textField;
-	
 	private JTable table;
 	
 	private int originalHeight;
-	
 	private int row2edit;
 
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.CellEditor#getCellEditorValue()
+	 */
 	@Override
 	public Object getCellEditorValue() {
 		// Reset row height
-		table.setRowHeight(row2edit, originalHeight);
+		this.table.setRowHeight(row2edit, originalHeight);
 		
 		String newValue = textField.getText();
 		if(newValue.length() > 0){
@@ -65,18 +65,15 @@ public class TableCellEditor4FloatObject extends AbstractCellEditor implements T
 		}else{
 			return null;
 		}
-		
 	}
 
 	@Override
-	public Component getTableCellEditorComponent(JTable table,
-			Object value, boolean isSelected, int row, int column) {
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		
 		if(textField == null){
 			this.table = table;
 			textField = new JTextField();
 		}
-		
 		
 		// Initialize with current table cell value, if there is one 
 		if(table.getValueAt(row, column) != null){

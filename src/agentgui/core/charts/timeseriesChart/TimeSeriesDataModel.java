@@ -28,11 +28,10 @@
  */
 package agentgui.core.charts.timeseriesChart;
 
-import java.util.Date;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 
-import javax.swing.event.TableModelListener;
+import java.util.Date;
 
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartTab;
@@ -49,32 +48,26 @@ import agentgui.ontology.ValuePair;
  * @author Nils
  *
  */
-public class TimeSeriesDataModel extends DataModel implements TableModelListener{
+public class TimeSeriesDataModel extends DataModel {
 	
-	/**
-	 * This label with appended seriesCount+1 will be used for newly added series
-	 */
+	/** This label with appended seriesCount+1 will be used for newly added series */
 	public static final String DEFAULT_SERIES_LABEL = "Time Series";
-	/**
-	 * This title will be used for the chart if none is specified
-	 */
+	/** This title will be used for the chart if none is specified */
 	public static final String DEFAULT_CHART_TITLE = "Time Series Chart";
-	/**
-	 * This x axis label will be used for the chart if none is specified
-	 */
+	/** This x axis label will be used for the chart if none is specified */
 	public static final String DEFAULT_X_AXIS_LABEL = "Time";
-	/**
-	 * This y axis label will be used for the chart if none is specified
-	 */
+	/** This y axis label will be used for the chart if none is specified */
 	public static final String DEFAULT_Y_AXIS_LABEL = "Value";
-	/**
-	 * This will be the basic date for relative time values
-	 */
+	
+	/** This will be the basic date for relative time values */
 	private Date startDate;
 	
+	
 	/**
-	 * Constructor
+	 * Constructor.
+	 *
 	 * @param timeSeriesChart The ontology representation of the series to be displayed
+	 * @param defaultTimeFormat the default time format
 	 */
 	public TimeSeriesDataModel(TimeSeriesChart timeSeriesChart, String defaultTimeFormat){
 		
@@ -82,8 +75,8 @@ public class TimeSeriesDataModel extends DataModel implements TableModelListener
 		
 		// Initialize the three sub models
 		this.ontologyModel = new TimeSeriesOntologyModel(timeSeriesChart, this);
-		chartModel = new TimeSeriesChartModel();
-		tableModel = new TimeSeriesTableModel(this);
+		this.chartModel = new TimeSeriesChartModel();
+		this.tableModel = new TimeSeriesTableModel(this);
 		
 		TimeSeriesOntologyModel tsom = (TimeSeriesOntologyModel) this.ontologyModel;
 		
@@ -105,7 +98,7 @@ public class TimeSeriesDataModel extends DataModel implements TableModelListener
 			this.ontologyModel.getChartSettings().setRendererType(ChartTab.DEFAULT_RENDERER);
 			((TimeSeriesOntologyModel)this.ontologyModel).getAdditionalSettings().setTimeFormat(defaultTimeFormat);
 			
-		}else{
+		} else {
 			
 			// The ontology model contains data, add it to the other sub models 
 			Iterator dataSeries = tsom.getTimeSeriesChart().getAllTimeSeriesChartData();

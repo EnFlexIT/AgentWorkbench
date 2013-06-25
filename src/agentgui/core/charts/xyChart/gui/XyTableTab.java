@@ -28,25 +28,26 @@
  */
 package agentgui.core.charts.xyChart.gui;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import agentgui.core.application.Language;
-import agentgui.core.charts.gui.FloatInputDialog;
-import agentgui.core.charts.gui.KeyInputDialog;
 import agentgui.core.charts.gui.TableCellEditor4FloatObject;
 import agentgui.core.charts.gui.TableTab;
 import agentgui.core.charts.xyChart.XyDataModel;
 
 public class XyTableTab extends TableTab {
 
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = -5737806366707646814L;
+	
 	
 	public XyTableTab(XyDataModel model){
 		this.model = model;
@@ -63,10 +64,7 @@ public class XyTableTab extends TableTab {
 		if(table == null || forceRebuild){
 			table = new JTable(){
 
-				/**
-				 * Generated serialVersionUID
-				 */
-				private static final long serialVersionUID = 1L;
+				private static final long serialVersionUID = 3537626788187543327L;
 
 				@Override
 				public TableCellEditor getCellEditor(int row, int column) {
@@ -75,18 +73,40 @@ public class XyTableTab extends TableTab {
 				}
 			};
 		}
-		
 		table.setModel(model.getTableModel());
+		table.setShowGrid(false);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().addListSelectionListener(this);
-		final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
+		
+		final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model.getTableModel());
+		if (model.getTableModel().getColumnCount()>0) {
+			sorter.setComparator(0, new Comparator<Number>() {
+				@Override
+				public int compare(Number value1, Number value2) {
+					if (value1 instanceof Float || value1 instanceof Double || value2 instanceof Float || value2 instanceof Double) {
+						Double dblValue1 = value1.doubleValue();
+						Double dblValue2 = value2.doubleValue();
+						return dblValue1.compareTo(dblValue2);
+						
+					} else {
+						Long lngValue1 = value1.longValue();
+						Long lngValue2 = value2.longValue();
+						return lngValue1.compareTo(lngValue2);
+					}
+				}
+			});				
+		}
 		table.setRowSorter(sorter);
 		
+		// --- Initially sort by key ------------
+		List<SortKey> sortKeys = new ArrayList<SortKey>();
+		for (int i = 0; i < table.getColumnCount(); i++) {
+		    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
+		}
+		table.getRowSorter().setSortKeys(sortKeys);
+		
 		return table;
-	}
-
-	@Override
-	protected KeyInputDialog getKeyInputDialog(String title) {
-		return new FloatInputDialog(SwingUtilities.getWindowAncestor(this), title, Language.translate("X Wert"));
 	}
 
 }

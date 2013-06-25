@@ -21,8 +21,6 @@
                 <startArgumentVector>
                     <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="1"/>
                     <startArgument ontologyReference="agentgui.ontology.XyChart" position="2"/>
-                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" position="3"/>
-                    <startArgument ontologyReference="agentgui.ontology.Simple_Integer" position="4"/>
                 </startArgumentVector>
             </agent>
         </agentVector>

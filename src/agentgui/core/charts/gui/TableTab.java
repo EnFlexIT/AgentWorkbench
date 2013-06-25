@@ -61,13 +61,9 @@ import agentgui.ontology.ValuePair;
  */
 public abstract class TableTab extends JPanel implements ActionListener, ListSelectionListener {
 
-	/**
-	 * Generated serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
-	/**
-	 * The path for icon images
-	 */
+	private static final long serialVersionUID = -8682335989453677658L;
+
+	/** The path for icon images */
 	protected final String PathImage = Application.getGlobalInfo().PathImageIntern();
 
 	// Swing components
@@ -79,25 +75,26 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 	protected JButton btnRemoveRow;
 	protected JButton btnRemoveColumn;
 	protected JSeparator separator;
+	
+	protected DataModel model;
+	
+	
 	/**
 	 * Creates a JTable with the correct renderer and editor classes for the type of chart data
 	 * @return The table
 	 */
 	protected abstract JTable getTable();
+	
 	/**
 	 * Creates a JTable with the correct renderer and editor classes for the type of chart data
 	 * @return The table
 	 */
 	protected abstract JTable getTable(boolean forceRebuild);
+	
+	
 	/**
-	 * When adding a new row, this method provides an input dialog asking for a key / x value for the new row.
-	 * @param title The dialog's title
-	 * @return The KeyInputDialog
+	 * Initialize.
 	 */
-	protected abstract KeyInputDialog getKeyInputDialog(String title);
-	
-	protected DataModel model;
-	
 	protected void initialize(){
 		getTable().setModel(this.model.getTableModel());
 		
@@ -142,8 +139,8 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 	private JButton getBtnAddRow() {
 		if (btnAddRow == null) {
 			btnAddRow = new JButton();
-			btnAddRow.setIcon(new ImageIcon(this.getClass().getResource( PathImage + "AddRow.png")));
-			btnAddRow.setToolTipText(Language.translate("Neuen Zeitpunkt hinzufügen"));
+			btnAddRow.setIcon(new ImageIcon(this.getClass().getResource(PathImage + "AddRow.png")));
+			btnAddRow.setToolTipText(Language.translate("Zeile hinzufügen"));
 			btnAddRow.addActionListener(this);
 		}
 		return btnAddRow;
@@ -152,7 +149,7 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		if (btnAddColumn == null) {
 			btnAddColumn = new JButton();
 			btnAddColumn.setIcon(new ImageIcon(this.getClass().getResource( PathImage + "AddCol.png")));
-			btnAddColumn.setToolTipText(Language.translate("Neue Zeitreihe hinzufügen"));
+			btnAddColumn.setToolTipText(Language.translate("Spalte hinzufügen"));
 			btnAddColumn.addActionListener(this);
 		}
 		return btnAddColumn;
@@ -161,7 +158,7 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		if (btnRemoveRow == null) {
 			btnRemoveRow = new JButton();
 			btnRemoveRow.setIcon(new ImageIcon(this.getClass().getResource( PathImage + "RemoveRow.png")));
-			btnRemoveRow.setToolTipText(Language.translate("Markierten Zeitpunkt entfernen"));
+			btnRemoveRow.setToolTipText(Language.translate("Zeile entfernen"));
 			btnRemoveRow.setEnabled(false);
 			btnRemoveRow.addActionListener(this);
 		}
@@ -171,7 +168,7 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		if (btnRemoveColumn == null) {
 			btnRemoveColumn = new JButton();
 			btnRemoveColumn.setIcon(new ImageIcon(this.getClass().getResource( PathImage + "RemoveCol.png")));
-			btnRemoveColumn.setToolTipText(Language.translate("Markierte Zeitreihe Entfernen"));
+			btnRemoveColumn.setToolTipText(Language.translate("Spalte entfernen"));
 			btnRemoveColumn.setEnabled(false);
 			btnRemoveColumn.addActionListener(this);
 		}
@@ -183,44 +180,54 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		}
 		return separator;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		
 		if(e.getSource() == getBtnAddColumn()){
-			String seriesLabel = JOptionPane.showInputDialog(this, Language.translate("Label"), Language.translate("Neue Zeitreihe"), JOptionPane.QUESTION_MESSAGE);
+			
+			String seriesLabel = JOptionPane.showInputDialog(this, Language.translate("Label"), Language.translate("Neue Datenreihe"), JOptionPane.QUESTION_MESSAGE);
 			DataSeries newSeries = model.createNewDataSeries(seriesLabel);
-			
+
 			// As JFreeChart doesn't work with empty data series, one value pair must be added
-			
 			ValuePair initialValuePair = model.createNewValuePair((Number) model.getTableModel().getValueAt(0, 0), 0);
 			model.getValuePairsFromSeries(newSeries).add(initialValuePair);
 			model.addSeries(newSeries);
 			
-		}else if(e.getSource() == getBtnAddRow()){
-			KeyInputDialog dialog = getKeyInputDialog(Language.translate("Neuer Eintrag"));
-			if(! dialog.isCanceled()){
-				Number key = dialog.getValue();
-				model.getTableModel().addEmptyRow(key);
-			}
-		}else if(e.getSource() == getBtnRemoveColumn()){
+		} else if(e.getSource() == getBtnAddRow()){
+			model.getTableModel().addEmptyRow(getTable(false));
+
+		} else if(e.getSource() == getBtnRemoveColumn()){
+			
 			if(table.getSelectedColumn() > 0){
 				int seriesIndex = table.getSelectedColumn()-1;
-				
 				try {
-					model.removeSeries(seriesIndex);
+					this.model.removeSeries(seriesIndex);	
+					getBtnRemoveRow().setEnabled(false);
+					getBtnRemoveColumn().setEnabled(false);
+
 				} catch (NoSuchSeriesException e1) {
-					System.err.println("Error removing series "+seriesIndex);
+					System.err.println("Error removing series " + seriesIndex);
 					e1.printStackTrace();
 				}
 			}
-		}else if(e.getSource() == getBtnRemoveRow()){
+			
+		} else if(e.getSource() == getBtnRemoveRow()){
 			Number key = (Number) table.getValueAt(table.getSelectedRow(), 0);
 			model.removeValuePairsFromAllSeries(key);
 			getBtnRemoveColumn().setEnabled(false);
 			getBtnRemoveRow().setEnabled(false);
+			
 		}
 		
-		
 	}
+
+	/* (non-Javadoc)
+	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
+	 */
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		// Enable btnRemoveRow if a row is selected
@@ -230,9 +237,13 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		getBtnRemoveColumn().setEnabled(table.getSelectedColumn() > 0);
 	}
 	
+	/**
+	 * Replaces the data model.
+	 * @param newModel the new DataModel model
+	 */
 	public void replaceModel(DataModel newModel){
+
 		this.model = newModel;
-		
 //		this.getTable().setModel(this.model.getTableModel());
 		if(this.model.getSeriesCount() > 0){
 			this.getScrollPane().setViewportView(getTable(true));

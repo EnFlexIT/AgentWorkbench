@@ -294,8 +294,6 @@ de;MAS-Pause;MAS-Pause
 de;MAS-Start;MAS-Start;;;
 de;MAS-Stop;MAS-Stop
 de;MAS;MAS
-de;Markierte Zeitreihe Entfernen;Remove selected time series;;;
-de;Markierten Zeitpunkt entfernen;Remove marked time;;;
 de;Maximale Geschwindigkeit;Maximum speed
 de;Maximieren;Maximize;;;
 de;Maßstab festlegen;Set scale
@@ -336,9 +334,9 @@ de;Netzwerkmodell importieren;Import network model ;;;
 de;Netzwerkmodell leeren;Clear network model;;;
 de;Neu laden;Reload;;;
 de;Neue Datenreihe(n) importieren;Import new data set (s) ;;;
-de;Neue Zeitreihe hinzufügen;Add new time series;;;
-de;Neue Zeitreihe;New time series;;;
-de;Neuen Zeitpunkt hinzufügen;Add new time;;;
+de;Neue Datenreihe;;;;
+de;Neue Serie;New Series;;;
+de;Neue Werte;;;;
 de;Neuer Agent;New agent
 de;Neuer Eintrag;New Entry
 de;Neues Hindernis;New obstacle
@@ -452,6 +450,8 @@ de;Simulations-Visualisierung;Simulation-Visualization
 de;Simulationsumgebung;Simulation Environment
 de;Simulationszeit;Simulation time
 de;Sniffer-Agenten starten;Start Sniffer agent
+de;Spalte entfernen;Remove Column;;;
+de;Spalte hinzufügen;Add Column;;;
 de;Spanisch;Spanish
 de;Speichere SVG nach;Save SVG to
 de;Speichere Umgebung nach;Saving environment to
@@ -551,6 +551,8 @@ de;Wörterbuch;Dictionary
 de;X Wert;X value;;;
 de;XML-Dateien;XML files
 de;XML;XML
+de;Zeile entfernen;Remove Row;;;
+de;Zeile hinzufügen;Add Row;;;
 de;Zeit-Format;Time format;;;
 de;Zeit-Konfiguration;Time Configuration;;;
 de;Zeit;Time;;;

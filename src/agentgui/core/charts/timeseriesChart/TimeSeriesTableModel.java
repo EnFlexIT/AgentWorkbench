@@ -38,9 +38,6 @@ import agentgui.core.charts.TableModel;
  */
 public class TimeSeriesTableModel extends TableModel {
 
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = 7951673309652098789L;
 	
 	private static final String DEFAULT_TIME_COLUMN_TITLE = "Time";
@@ -49,13 +46,18 @@ public class TimeSeriesTableModel extends TableModel {
 	 * Constructor
 	 */
 	public TimeSeriesTableModel(TimeSeriesDataModel parent){
-		this.parent = parent;
+		this.dataModel = parent;
+		this.initilizeTabelModel();
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.TableModel#initilizeTabelModel()
+	 */
+	public void initilizeTabelModel() {
 		columnTitles = new Vector<String>();
 		columnTitles.add(DEFAULT_TIME_COLUMN_TITLE);
 		tableData = new Vector<Vector<Object>>();
 	}
-
-	
 
 	/* (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
@@ -69,7 +71,6 @@ public class TimeSeriesTableModel extends TableModel {
 		}
 	}
 	
-	
 	/**
 	 * @return the defaultTimeColumnTitle
 	 */
@@ -77,8 +78,5 @@ public class TimeSeriesTableModel extends TableModel {
 		return DEFAULT_TIME_COLUMN_TITLE;
 	}
 
-	
-	
-	
 	
 }

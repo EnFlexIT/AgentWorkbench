@@ -32,8 +32,10 @@ import jade.util.leap.Iterator;
 
 import java.util.Vector;
 
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import agentgui.core.application.Language;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 
@@ -44,25 +46,25 @@ import agentgui.ontology.ValuePair;
  */
 public abstract class TableModel extends AbstractTableModel {
 
-
 	private static final long serialVersionUID = -6719770378777635821L;
-	/**
-	 * The column titles
-	 */
+	
+	/** The column titles */
 	protected Vector<String> columnTitles;
-	/**
-	 * The table data
-	 */
+	/** The table data */
 	protected Vector<Vector<Object>> tableData;
-	/**
-	 * The old value of the last changed table cell
-	 */
+	/** The old value of the last changed table cell */
 	protected Object latestChangedValue;
-	/**
-	 * The parent ChartDataModel this ChartTableModel is part of. 
-	 */
-	protected DataModel parent;
+	/** The parent ChartDataModel this ChartTableModel is part of. */
+	protected DataModel dataModel;
 
+	
+	/**
+	 * Initialises the local table model and (re)sets the local values 
+	 * for {@link TableModel#columnTitles} and {@link TableModel#tableData}, .
+	 */
+	public abstract void initilizeTabelModel();
+	
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
@@ -123,17 +125,24 @@ public abstract class TableModel extends AbstractTableModel {
 	 * @throws NoSuchSeriesException Will be thrown if there is no series with the specified index
 	 */
 	public void removeSeries(int seriesIndex) throws NoSuchSeriesException{
-		int column2remove = seriesIndex+1;	// Column 0 contains the time stamps
-		if(column2remove < this.getColumnCount()){
-			columnTitles.remove(column2remove);
-			java.util.Iterator<Vector<Object>> rows = tableData.iterator();
-			while(rows.hasNext()){
-				rows.next().remove(column2remove);
-			}
-		}else{
-			throw new NoSuchSeriesException();
-		}
 		
+		if (this.getColumnCount()==2) {
+			// --- The last series has to be removed ------
+			this.initilizeTabelModel();
+			
+		} else {
+			int column2remove = seriesIndex+1;	// Column 0 contains the time stamps
+			if(column2remove < this.getColumnCount()){
+				columnTitles.remove(column2remove);
+				java.util.Iterator<Vector<Object>> rows = tableData.iterator();
+				while(rows.hasNext()){
+					rows.next().remove(column2remove);
+				}
+			}else{
+				throw new NoSuchSeriesException();
+			}
+			
+		}
 		fireTableStructureChanged();
 	}
 	
@@ -143,7 +152,6 @@ public abstract class TableModel extends AbstractTableModel {
 	public Object getLatestChangedValue() {
 		return latestChangedValue;
 	}
-
 	/**
 	 * @param latestChangedValue the latestChangedValue to set
 	 */
@@ -152,28 +160,62 @@ public abstract class TableModel extends AbstractTableModel {
 	}
 	
 	/**
-	 * Adds a new empty row to the table model
-	 * @param key
+	 * Adds a new empty row to the table model.
+	 * @param jTable the current JTable
 	 */
-	public void addEmptyRow(Number key){
+	public void addEmptyRow(JTable jTable){
 		
-		// Create a new row with the given time stamp and empty fields for all series
-		Vector<Object> newRow = new Vector<Object>();
-		newRow.add(key);
-		for(int i=1; i<getColumnCount(); i++){
-			newRow.add(null);
+		// --- Get current position in the table model ----
+		Vector<Object> rowSelected = null;
+		Vector<Object> newRow = null;
+		Number currKey = null;
+		Number newKey = null;
+		Number newValue = 0f;
+		
+		int tableRowSelected = jTable.getSelectedRow();
+		if (tableRowSelected==-1) {
+			tableRowSelected = jTable.getRowCount()-1;
 		}
+		int modelLineSelected = jTable.convertRowIndexToModel(tableRowSelected);
 		
-		// Find the right position to insert the row
-		int insertPos = 0;
-		while(insertPos < getRowCount() && ((Number)getValueAt(insertPos, 0)).doubleValue() < key.doubleValue()){
-			insertPos++;
+		if (tableData.size()==0) {
+			// --- Create new data series -------
+			DataSeries newSeries = dataModel.createNewDataSeries(Language.translate("Neue Serie"));
+			
+			ValuePair initialValuePair = dataModel.createNewValuePair(0L, newValue);
+			dataModel.getValuePairsFromSeries(newSeries).add(initialValuePair);
+			dataModel.addSeries(newSeries);
+			
+		} else {
+			// --- Get current selection --------
+			rowSelected = tableData.get(modelLineSelected);
+			currKey = (Number) rowSelected.get(0);
+			
+			if (currKey instanceof Long || currKey instanceof Integer) {
+				newKey = currKey.longValue() + 1L;
+			} else {
+				newKey = currKey.floatValue() + 1;
+			}
+			newRow = new Vector<Object>();
+			newRow.add(newKey);
+			for(int i=1; i<getColumnCount(); i++){
+				newRow.add(newValue);
+				try {
+					dataModel.getChartModel().addOrUpdateValuePair(i-1, newKey, newValue);
+					dataModel.getOntologyModel().addOrUpdateValuePair(i-1, newKey, newValue);
+				} catch (NoSuchSeriesException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		
+			// --- Add the new row ----
+			tableData.add(modelLineSelected+1, newRow);
+			
 		}
-		
-		// Add the new row
-		tableData.add(insertPos, newRow);
-		
 		fireTableRowsInserted(getRowCount()-1, getRowCount()-1);
+		
+		jTable.setRowSelectionInterval(tableRowSelected, tableRowSelected);
 	}
 	
 	/**
@@ -200,7 +242,7 @@ public abstract class TableModel extends AbstractTableModel {
 		
 		columnTitles.add(newSeries.getLabel());
 		
-		Iterator valuePairs = parent.getValuePairsFromSeries(newSeries).iterator();
+		Iterator valuePairs = dataModel.getValuePairsFromSeries(newSeries).iterator();
 		 
 		if(getRowCount() == 0){
 			
@@ -210,8 +252,8 @@ public abstract class TableModel extends AbstractTableModel {
 				ValuePair vp = (ValuePair) valuePairs.next();
 				
 				Vector<Object> newRow = new Vector<Object>();
-				newRow.add(parent.getKeyFromPair(vp));
-				newRow.add(parent.getValueFromPair(vp));
+				newRow.add(dataModel.getKeyFromPair(vp));
+				newRow.add(dataModel.getValueFromPair(vp));
 				
 				tableData.add(newRow);
 			}
@@ -225,32 +267,32 @@ public abstract class TableModel extends AbstractTableModel {
 				ValuePair vp = (ValuePair) valuePairs.next();
 				
 				// Check if there is a row with this time stamp
-				int rowIndex = getRowIndexByKey(parent.getKeyFromPair(vp));
+				int rowIndex = getRowIndexByKey(dataModel.getKeyFromPair(vp));
 				
 				if(rowIndex >= 0){
 					
 					// There is one, append the new value
-					tableData.get(rowIndex).add(parent.getValueFromPair(vp));
+					tableData.get(rowIndex).add(dataModel.getValueFromPair(vp));
 					
 				}else{
 					// There is not, add a new row
 					Vector<Object> newRow = new Vector<Object>();
 					
 					// First column contains the time stamp
-					newRow.add(parent.getKeyFromPair(vp));
+					newRow.add(dataModel.getKeyFromPair(vp));
 					
 					// There is no value for this time stamp in the old series
 					while(newRow.size() < oldColCount){
 						newRow.add(null);
 					}
 					// Append the new value at the end of the row
-					newRow.add(parent.getValueFromPair(vp));
+					newRow.add(dataModel.getValueFromPair(vp));
 					
 					// Find the right place to insert the new row:
 					int insertAt = getRowCount();	// At the end of the table...
 					for(int i=0;i<getRowCount();i++){
 						double compareValue = ((Number) tableData.get(i).get(0)).doubleValue();
-						if(compareValue > parent.getKeyFromPair(vp).doubleValue()){
+						if(compareValue > dataModel.getKeyFromPair(vp).doubleValue()){
 							insertAt = i;			// ... or before the first one with a higher time stamp
 						}
 					}
@@ -326,4 +368,65 @@ public abstract class TableModel extends AbstractTableModel {
 			fireTableRowsDeleted(rowIndex, rowIndex);
 		}
 	}
+
+	/**
+	 * Returns the row specified by the index.
+	 * 
+-	 * @param rowIndex the row index
+	 * @return the row
+	 */
+	public Vector<Object> getRow(int rowIndex) {
+		return this.tableData.get(rowIndex);
+	}
+	
+	/**
+	 * Checks if a row, given by it's index is empty.
+	 *
+	 * @param rowIndex the row index
+	 * @return true, if it is an empty TableModel row
+	 */
+	public boolean isEmptyTableModelRow(int rowIndex) {
+		return isEmptyTableModelRow(this.getRow(rowIndex));
+	}
+	
+	/**
+	 * Checks if a given row is empty.
+	 *
+	 * @param rowVector the row vector
+	 * @return true, if is empty row
+	 */
+	public boolean isEmptyTableModelRow(Vector<Object> rowVector) {
+		
+		boolean empty = false;
+		
+		if (rowVector==null) {
+			empty = true;
+			
+		} else if (rowVector.size()<=1) {
+			empty = true;
+			
+		} else {
+			if (rowVector.get(0)==null) {
+				empty = true;
+				
+			} else {
+				// --- Check values -----------------------
+				int nullCount = 0;
+				for (int i=1; i < rowVector.size(); i++) {
+					Object currValue = rowVector.get(i);
+					if (currValue==null) {
+						nullCount++;
+					}
+				}
+				// --- Finally check, if empty row --------
+				if (nullCount>=(rowVector.size()-1)) {
+					empty = true;
+				}
+				
+			}
+		}
+		return empty;
+	}
+	
+	
 }

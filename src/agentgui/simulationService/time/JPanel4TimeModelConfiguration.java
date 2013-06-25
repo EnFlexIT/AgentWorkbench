@@ -45,10 +45,10 @@ public abstract class JPanel4TimeModelConfiguration extends JPanel {
 
 	private static final long serialVersionUID = 4966720402773236025L;
 
-	private Project currProject = null;
+	protected Project currProject = null;
 	
 	/**
-	 * Instantiates a new display j panel4 configuration.
+	 * Instantiates a new display panel for the configuration of the current time model.
 	 * @param project the project
 	 */
 	public JPanel4TimeModelConfiguration(Project project) {

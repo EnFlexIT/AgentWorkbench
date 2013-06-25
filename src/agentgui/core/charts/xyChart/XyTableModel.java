@@ -41,7 +41,14 @@ public class XyTableModel extends TableModel {
 	private static final String DEFAULT_KEY_COLUMN_TITLE = "X value";
 	
 	public XyTableModel(XyDataModel parent){
-		this.parent = parent;
+		this.dataModel = parent;
+		this.initilizeTabelModel();
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.TableModel#initilizeTabelModel()
+	 */
+	public void initilizeTabelModel() {
 		columnTitles = new Vector<String>();
 		columnTitles.add(DEFAULT_KEY_COLUMN_TITLE);
 		tableData = new Vector<Vector<Object>>();

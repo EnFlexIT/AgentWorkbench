@@ -40,6 +40,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -48,6 +49,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.DateFormatter;
+import javax.swing.text.NumberFormatter;
 
 import agentgui.core.application.Language;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
@@ -286,6 +289,9 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 			jSpinnerDateStart.setEditor(new JSpinner.DateEditor(jSpinnerDateStart, "dd.MM.yyyy"));
 			jSpinnerDateStart.setPreferredSize(new Dimension(100, 28));
 			jSpinnerDateStart.addChangeListener(this);
+			// --- Just allow number to be typed --------------------
+			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerDateStart.getEditor()).getTextField();
+			((DateFormatter) formattedTextField.getFormatter()).setAllowsInvalid(false);
 		}
 		return jSpinnerDateStart;
 	}
@@ -299,6 +305,9 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 			jSpinnerTimeStart.setEditor(new JSpinner.DateEditor(jSpinnerTimeStart, "HH:mm:ss"));
 			jSpinnerTimeStart.setPreferredSize(new Dimension(80, 28));
 			jSpinnerTimeStart.addChangeListener(this);
+			// --- Just allow number to be typed --------------------
+			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerTimeStart.getEditor()).getTextField();
+			((DateFormatter) formattedTextField.getFormatter()).setAllowsInvalid(false);
 		}
 		return jSpinnerTimeStart;
 	}
@@ -312,6 +321,9 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 			jSpinnerMillisStart.setEditor(new JSpinner.NumberEditor(jSpinnerMillisStart, "000"));
 			jSpinnerMillisStart.setPreferredSize(new Dimension(60, 28));
 			jSpinnerMillisStart.addChangeListener(this);
+			// --- Just allow number to be typed --------------------
+			JFormattedTextField formattedTextField = ((JSpinner.DefaultEditor) jSpinnerMillisStart.getEditor()).getTextField();
+			((NumberFormatter) formattedTextField.getFormatter()).setAllowsInvalid(false);
 		}
 		return jSpinnerMillisStart;
 	}
@@ -368,6 +380,9 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 			jSpinnerDateStop.setEditor(new JSpinner.DateEditor(jSpinnerDateStop, "dd.MM.yyyy"));
 			jSpinnerDateStop.setPreferredSize(new Dimension(100, 28));
 			jSpinnerDateStop.addChangeListener(this);
+			// --- Just allow number to be typed --------------------
+			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerDateStop.getEditor()).getTextField();
+			((DateFormatter) formattedTextField.getFormatter()).setAllowsInvalid(false);
 		}
 		return jSpinnerDateStop;
 	}
@@ -381,6 +396,9 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 			jSpinnerTimeStop.setEditor(new JSpinner.DateEditor(jSpinnerTimeStop, "HH:mm:ss"));
 			jSpinnerTimeStop.setPreferredSize(new Dimension(80, 28));
 			jSpinnerTimeStop.addChangeListener(this);
+			// --- Just allow number to be typed --------------------
+			JFormattedTextField formattedTextField = ((JSpinner.DateEditor) jSpinnerTimeStop.getEditor()).getTextField();
+			((DateFormatter) formattedTextField.getFormatter()).setAllowsInvalid(false);
 		}
 		return jSpinnerTimeStop;
 	}
@@ -394,6 +412,9 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 			jSpinnerMillisStop.setEditor(new JSpinner.NumberEditor(jSpinnerMillisStop, "000"));
 			jSpinnerMillisStop.setPreferredSize(new Dimension(60, 28));
 			jSpinnerMillisStop.addChangeListener(this);
+			// --- Just allow number to be typed --------------------
+			JFormattedTextField formattedTextField = ((JSpinner.DefaultEditor) jSpinnerMillisStop.getEditor()).getTextField();
+			((NumberFormatter) formattedTextField.getFormatter()).setAllowsInvalid(false);
 		}
 		return jSpinnerMillisStop;
 	}
@@ -408,7 +429,9 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 			jPanelTimeFormater.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					saveTimeModelInSimulationSetup(getTimeModel());					
+					if (enabledChangeListener==true) {
+						saveTimeModelInSimulationSetup(getTimeModel());	
+					}
 				}
 			});
 
@@ -496,6 +519,9 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 					setFactorExplanationText(factor);
 				}
 			});
+			// --- Just allow number to be typed --------------------
+			JFormattedTextField formattedTextField = ((JSpinner.DefaultEditor) jSpinnerAcceleration.getEditor()).getTextField();
+			((NumberFormatter) formattedTextField.getFormatter()).setAllowsInvalid(false);
 		}
 		return jSpinnerAcceleration;
 	}

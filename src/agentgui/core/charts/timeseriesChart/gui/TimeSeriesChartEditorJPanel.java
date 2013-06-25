@@ -45,20 +45,27 @@ import agentgui.ontology.TimeSeriesChart;
 
 /**
  * Implementation of OntologyClassEditorJPanel for TimeSeriesChart
+ * 
  * @author Nils
- *
  */
 public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = 6342520178418229017L;
 
+
+	/**
+	 * Instantiates a new time series chart editor j panel.
+	 *
+	 * @param dynForm the dyn form
+	 * @param startArgIndex the start arg index
+	 */
 	public TimeSeriesChartEditorJPanel(DynForm dynForm, int startArgIndex) {
 		super(dynForm, startArgIndex);
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#getChartTab()
+	 */
 	@Override
 	protected TimeSeriesChartTab getChartTab(){
 		if(chartTab == null){
@@ -67,6 +74,9 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 		return (TimeSeriesChartTab) chartTab;
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#getTableTab()
+	 */
 	@Override
 	protected TimeSeriesTableTab getTableTab(){
 		if(tableTab == null){
@@ -75,6 +85,10 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 		return (TimeSeriesTableTab) tableTab;
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#getSettingsTab()
+	 */
+	@Override
 	protected TimeSeriesChartSettingsTab getSettingsTab(){
 		if(this.settingsTab == null){
 			this.settingsTab = new TimeSeriesChartSettingsTab(this.model, this);
@@ -82,6 +96,9 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 		return (TimeSeriesChartSettingsTab) settingsTab;
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#parseKey(java.lang.String, java.lang.String, java.lang.Number)
+	 */
 	@Override
 	protected Number parseKey(String key, String keyFormat, Number keyOffset) {
 
@@ -101,11 +118,17 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 		return timestamp;
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#parseValue(java.lang.String)
+	 */
 	@Override
 	protected Number parseValue(String value) {
 		return Float.parseFloat(value);
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#setOntologyClassInstance(java.lang.Object)
+	 */
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
 		this.model = new TimeSeriesDataModel((TimeSeriesChart) objectInstance, this.getDefaultTimeFormat());
@@ -144,8 +167,5 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 		((TimeSeriesOntologyModel)model.getOntologyModel()).getAdditionalSettings().setTimeFormat(newTimeFormat);
 		
 	}
-	
-	
-
 
 }

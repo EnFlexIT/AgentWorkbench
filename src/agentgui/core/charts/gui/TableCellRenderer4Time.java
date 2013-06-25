@@ -61,7 +61,12 @@ public class TableCellRenderer4Time extends DefaultTableCellRenderer {
 		if (value==null) {
 			date = new Date(0);
 		} else {
-			date = new Date((Long) value);	
+			if (value instanceof Number) {
+				Long lngValue = ((Number) value).longValue();
+				date = new Date(lngValue);
+			} else {
+				date = new Date(0);	
+			}
 		}
 		DateFormat timeFormat = new SimpleDateFormat(this.timeFormat);
 		setText(timeFormat.format(date));
