@@ -833,15 +833,17 @@ public class NetworkModel implements Serializable {
 				
 				String elementNameNew = null;
 				GraphElement graphElement = supplementNetworkModel.getGraphElement(elementNameOld);
-				if (graphElement instanceof GraphNode) {
-					// --- Node name to change ------------
-					elementNameNew = mapNodeIDs.get(elementNameOld);
-				} else {
-					// --- Edge Name to change ------------
-					elementNameNew = elementNameOld.replace(netCompNameOld, netCompNameNew);
-					mapEdgeIDs.put(elementNameOld, elementNameNew); // --- Remind ---
+				if (graphElement!=null) {
+					if (graphElement instanceof GraphNode) {
+						// --- Node name to change ------------
+						elementNameNew = mapNodeIDs.get(elementNameOld);
+					} else {
+						// --- Edge Name to change ------------
+						elementNameNew = elementNameOld.replace(netCompNameOld, netCompNameNew);
+						mapEdgeIDs.put(elementNameOld, elementNameNew); // --- Remind ---
+					}
+					graphElementsNew.add(elementNameNew);
 				}
-				graphElementsNew.add(elementNameNew);
 			}
 
 			// --- Remove component from supplement NetworkModel --------------
