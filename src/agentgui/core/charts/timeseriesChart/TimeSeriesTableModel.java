@@ -46,7 +46,7 @@ public class TimeSeriesTableModel extends TableModel {
 	 * Constructor
 	 */
 	public TimeSeriesTableModel(TimeSeriesDataModel parent){
-		this.dataModel = parent;
+		this.parentDataModel = parent;
 		this.initilizeTabelModel();
 	}
 

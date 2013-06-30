@@ -41,6 +41,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import agentgui.core.charts.gui.ChartEditorJPanel;
 import agentgui.core.charts.gui.TableCellEditor4FloatObject;
 import agentgui.core.charts.gui.TableCellEditor4Time;
 import agentgui.core.charts.gui.TableCellRenderer4Time;
@@ -57,7 +58,8 @@ public class TimeSeriesTableTab extends TableTab {
 	/**
 	 * Create the TimeSeriesTableTab.
 	 */
-	public TimeSeriesTableTab(TimeSeriesDataModel model) {
+	public TimeSeriesTableTab(TimeSeriesDataModel model, ChartEditorJPanel parentChartEditor) {
+		super(parentChartEditor);
 		this.model = model;
 		initialize();
 	}
@@ -95,6 +97,7 @@ public class TimeSeriesTableTab extends TableTab {
 						return super.getCellRenderer(row, column);
 					}
 				}
+
 				
 			};
 			table.setModel(model.getTableModel());

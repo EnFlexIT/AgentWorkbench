@@ -41,7 +41,7 @@ public class XyTableModel extends TableModel {
 	private static final String DEFAULT_KEY_COLUMN_TITLE = "X value";
 	
 	public XyTableModel(XyDataModel parent){
-		this.dataModel = parent;
+		this.parentDataModel = parent;
 		this.initilizeTabelModel();
 	}
 	

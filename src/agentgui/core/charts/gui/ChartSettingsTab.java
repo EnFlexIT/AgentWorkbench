@@ -71,7 +71,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	private JLabel lblRendererType;
 	private JTextField tfXAxisLabel;
 	private JTextField tfYAxisLabel;
-	private JComboBox cbRendererType;
+	private JComboBox<String> cbRendererType;
 	private JScrollPane spTblSeriesSettings;
 	private JTable tblSeriesSettings;
 	
@@ -210,10 +210,10 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 		}
 		return tfYAxisLabel;
 	}
-	protected JComboBox getCbRendererType() {
+	protected JComboBox<String> getCbRendererType() {
 		if (cbRendererType == null) {
-			cbRendererType = new JComboBox();
-			cbRendererType.setModel(new DefaultComboBoxModel(ChartTab.RENDERER_TYPES));
+			cbRendererType = new JComboBox<String>();
+			cbRendererType.setModel(new DefaultComboBoxModel<String>(ChartTab.RENDERER_TYPES));
 			cbRendererType.setSelectedItem(model.getChartSettings().getRendererType());
 			cbRendererType.addActionListener(this);
 		}

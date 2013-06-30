@@ -33,7 +33,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -59,7 +58,7 @@ import agentgui.ontology.ValuePair;
  * @author Nils
  *
  */
-public abstract class TableTab extends JPanel implements ActionListener, ListSelectionListener {
+public abstract class TableTab extends JPanel implements ActionListener, ListSelectionListener{
 
 	private static final long serialVersionUID = -8682335989453677658L;
 
@@ -78,6 +77,8 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 	
 	protected DataModel model;
 	
+	protected ChartEditorJPanel parentChartEditor;
+	
 	
 	/**
 	 * Creates a JTable with the correct renderer and editor classes for the type of chart data
@@ -90,6 +91,10 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 	 * @return The table
 	 */
 	protected abstract JTable getTable(boolean forceRebuild);
+	
+	public TableTab(ChartEditorJPanel parentChartEditor){
+		this.parentChartEditor = parentChartEditor;
+	}
 	
 	
 	/**
@@ -190,13 +195,24 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		if(e.getSource() == getBtnAddColumn()){
 			
 			String seriesLabel = JOptionPane.showInputDialog(this, Language.translate("Label"), Language.translate("Neue Datenreihe"), JOptionPane.QUESTION_MESSAGE);
+//			String seriesLabel = model.getDefaultSeriesLabel();
+			
 			DataSeries newSeries = model.createNewDataSeries(seriesLabel);
 
 			// As JFreeChart doesn't work with empty data series, one value pair must be added
-			ValuePair initialValuePair = model.createNewValuePair((Number) model.getTableModel().getValueAt(0, 0), 0);
+			ValuePair initialValuePair;
+			if(model.getSeriesCount() > 0){
+				// If there is already data in the model, use the first existing key 
+				initialValuePair = model.createNewValuePair((Number) model.getTableModel().getValueAt(0, 0), 0);
+			}else{
+				// If not, use 0 as time stamp
+				initialValuePair = model.createNewValuePair(0, 0);
+			}
+			
 			model.getValuePairsFromSeries(newSeries).add(initialValuePair);
 			model.addSeries(newSeries);
 			
+			parentChartEditor.setOntologyClassInstance(parentChartEditor.getOntologyClassInstance());
 		} else if(e.getSource() == getBtnAddRow()){
 			model.getTableModel().addEmptyRow(getTable(false));
 
@@ -216,10 +232,25 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 			}
 			
 		} else if(e.getSource() == getBtnRemoveRow()){
+			if(table.isEditing()){
+				table.getCellEditor().cancelCellEditing();
+			}
 			Number key = (Number) table.getValueAt(table.getSelectedRow(), 0);
 			model.removeValuePairsFromAllSeries(key);
+			if(table.getRowCount() == 0){
+				for(int i=0; i<model.getSeriesCount(); i++){
+					try {
+						model.removeSeries(i);
+					} catch (NoSuchSeriesException e1) {
+						System.err.println("The data series you tried to remove does not exist");
+						e1.printStackTrace();
+					}
+				}
+			}
 			getBtnRemoveColumn().setEnabled(false);
 			getBtnRemoveRow().setEnabled(false);
+			
+			parentChartEditor.setOntologyClassInstance(parentChartEditor.getOntologyClassInstance());
 			
 		}
 		

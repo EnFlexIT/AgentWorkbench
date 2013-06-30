@@ -245,8 +245,8 @@ public abstract class DataModel extends Observable implements TableModelListener
 				setChanged();
 				notifyObservers();
 			}
-//			setChanged();
-//			notifyObservers();
+			setChanged();
+			notifyObservers();
 		}
 
 	}
@@ -259,7 +259,7 @@ public abstract class DataModel extends Observable implements TableModelListener
 		
 		// Set the default label if none is specified in the series
 		if(series.getLabel() == null || series.getLabel().length() == 0){
-			series.setLabel(getDefaultSeriesLabel()+" "+(getSeriesCount()+1));
+			series.setLabel(getDefaultSeriesLabel());
 		}
 		
 		// Add the data to the sub models
@@ -304,14 +304,13 @@ public abstract class DataModel extends Observable implements TableModelListener
 			try {
 				ontologyModel.removeValuePair(i, key);
 				chartModel.removeValuePair(i, key);
-				tableModel.removeRowByKey(key);
-				
 			} catch (NoSuchSeriesException e) {
 				System.err.println("Trying to remove value pair from non-existant series "+i);
 				e.printStackTrace();
 			}
 		}
 		
+		tableModel.removeRowByKey(key);
 	}
 	
 }

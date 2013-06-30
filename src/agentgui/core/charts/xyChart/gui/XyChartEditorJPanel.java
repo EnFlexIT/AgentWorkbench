@@ -59,7 +59,7 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 	@Override
 	protected XyTableTab getTableTab() {
 		if(tableTab == null){
-			tableTab = new XyTableTab((XyDataModel) model);
+			tableTab = new XyTableTab((XyDataModel) model, this);
 		}
 		return (XyTableTab) tableTab;
 	}

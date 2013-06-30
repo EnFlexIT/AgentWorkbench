@@ -40,6 +40,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import agentgui.core.charts.gui.ChartEditorJPanel;
 import agentgui.core.charts.gui.TableCellEditor4FloatObject;
 import agentgui.core.charts.gui.TableTab;
 import agentgui.core.charts.xyChart.XyDataModel;
@@ -49,7 +50,8 @@ public class XyTableTab extends TableTab {
 	private static final long serialVersionUID = -5737806366707646814L;
 	
 	
-	public XyTableTab(XyDataModel model){
+	public XyTableTab(XyDataModel model, ChartEditorJPanel parentChartEditor){
+		super(parentChartEditor);
 		this.model = model;
 		initialize();
 	}

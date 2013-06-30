@@ -252,7 +252,7 @@ public class TimeSeriesDataModel extends DataModel {
 
 	@Override
 	public String getDefaultSeriesLabel() {
-		return DEFAULT_SERIES_LABEL;
+		return DEFAULT_SERIES_LABEL+" "+(getSeriesCount()+1);
 	}
 
 	@Override

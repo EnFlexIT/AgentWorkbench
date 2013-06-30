@@ -29,6 +29,8 @@
 package agentgui.core.charts.gui;
 
 import java.awt.Component;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -44,7 +46,7 @@ import javax.swing.table.TableCellEditor;
  * 
  * @author Nils
  */
-public class TableCellEditor4Time extends AbstractCellEditor implements TableCellEditor{
+public class TableCellEditor4Time extends AbstractCellEditor implements TableCellEditor, KeyListener{
 
 	private static final long serialVersionUID = 1536069679238018382L;
 
@@ -72,6 +74,15 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 		Date date = (Date) spinner.getValue();
 		return date.getTime();
 	}
+	
+	
+
+	@Override
+	public void cancelCellEditing() {
+		// Reset row height
+		table.setRowHeight(row2edit, originalHeight);
+		super.cancelCellEditing();
+	}
 
 	/* (non-Javadoc)
 	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
@@ -84,6 +95,7 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 			SpinnerDateModel sdm = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
 			spinner = new JSpinner(sdm);
 			JSpinner.DateEditor de = new JSpinner.DateEditor(spinner, timeFormat);
+			de.getTextField().addKeyListener(this);
 			spinner.setEditor(de);
 		}
 		
@@ -99,6 +111,26 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 		spinner.getModel().setValue(new Date(timeStamp));
 		
 		return spinner;
+	}
+
+	
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// Due to a java bug, the callback method is not called automatically when pressing escape.  
+		if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+			cancelCellEditing();
+		}
+	}
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// Method required by the interface, but not needed here.
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// Method required by the interface, but not needed here.
 	}
 
 }

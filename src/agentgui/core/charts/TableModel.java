@@ -35,7 +35,6 @@ import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import agentgui.core.application.Language;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 
@@ -55,7 +54,7 @@ public abstract class TableModel extends AbstractTableModel {
 	/** The old value of the last changed table cell */
 	protected Object latestChangedValue;
 	/** The parent ChartDataModel this ChartTableModel is part of. */
-	protected DataModel dataModel;
+	protected DataModel parentDataModel;
 
 	
 	/**
@@ -132,15 +131,16 @@ public abstract class TableModel extends AbstractTableModel {
 			
 		} else {
 			int column2remove = seriesIndex+1;	// Column 0 contains the time stamps
-			if(column2remove < this.getColumnCount()){
+			if(column2remove <= this.getColumnCount()){
 				columnTitles.remove(column2remove);
 				java.util.Iterator<Vector<Object>> rows = tableData.iterator();
 				while(rows.hasNext()){
 					rows.next().remove(column2remove);
 				}
-			}else{
-				throw new NoSuchSeriesException();
 			}
+//			else{
+//				throw new NoSuchSeriesException();
+//			}
 			
 		}
 		fireTableStructureChanged();
@@ -176,18 +176,19 @@ public abstract class TableModel extends AbstractTableModel {
 		if (tableRowSelected==-1) {
 			tableRowSelected = jTable.getRowCount()-1;
 		}
-		int modelLineSelected = jTable.convertRowIndexToModel(tableRowSelected);
+		
 		
 		if (tableData.size()==0) {
 			// --- Create new data series -------
-			DataSeries newSeries = dataModel.createNewDataSeries(Language.translate("Neue Serie"));
+			DataSeries newSeries = parentDataModel.createNewDataSeries(parentDataModel.getDefaultSeriesLabel());
 			
-			ValuePair initialValuePair = dataModel.createNewValuePair(0L, newValue);
-			dataModel.getValuePairsFromSeries(newSeries).add(initialValuePair);
-			dataModel.addSeries(newSeries);
+			ValuePair initialValuePair = parentDataModel.createNewValuePair(0L, newValue);
+			parentDataModel.getValuePairsFromSeries(newSeries).add(initialValuePair);
+			parentDataModel.addSeries(newSeries);
 			
 		} else {
 			// --- Get current selection --------
+			int modelLineSelected = jTable.convertRowIndexToModel(tableRowSelected);
 			rowSelected = tableData.get(modelLineSelected);
 			currKey = (Number) rowSelected.get(0);
 			
@@ -201,8 +202,8 @@ public abstract class TableModel extends AbstractTableModel {
 			for(int i=1; i<getColumnCount(); i++){
 				newRow.add(newValue);
 				try {
-					dataModel.getChartModel().addOrUpdateValuePair(i-1, newKey, newValue);
-					dataModel.getOntologyModel().addOrUpdateValuePair(i-1, newKey, newValue);
+					parentDataModel.getChartModel().addOrUpdateValuePair(i-1, newKey, newValue);
+					parentDataModel.getOntologyModel().addOrUpdateValuePair(i-1, newKey, newValue);
 				} catch (NoSuchSeriesException e) {
 					e.printStackTrace();
 				}
@@ -215,7 +216,9 @@ public abstract class TableModel extends AbstractTableModel {
 		}
 		fireTableRowsInserted(getRowCount()-1, getRowCount()-1);
 		
-		jTable.setRowSelectionInterval(tableRowSelected, tableRowSelected);
+		if(tableRowSelected >= 0){
+			jTable.setRowSelectionInterval(tableRowSelected, tableRowSelected);
+		}
 	}
 	
 	/**
@@ -242,7 +245,7 @@ public abstract class TableModel extends AbstractTableModel {
 		
 		columnTitles.add(newSeries.getLabel());
 		
-		Iterator valuePairs = dataModel.getValuePairsFromSeries(newSeries).iterator();
+		Iterator valuePairs = parentDataModel.getValuePairsFromSeries(newSeries).iterator();
 		 
 		if(getRowCount() == 0){
 			
@@ -252,8 +255,8 @@ public abstract class TableModel extends AbstractTableModel {
 				ValuePair vp = (ValuePair) valuePairs.next();
 				
 				Vector<Object> newRow = new Vector<Object>();
-				newRow.add(dataModel.getKeyFromPair(vp));
-				newRow.add(dataModel.getValueFromPair(vp));
+				newRow.add(parentDataModel.getKeyFromPair(vp));
+				newRow.add(parentDataModel.getValueFromPair(vp));
 				
 				tableData.add(newRow);
 			}
@@ -267,32 +270,32 @@ public abstract class TableModel extends AbstractTableModel {
 				ValuePair vp = (ValuePair) valuePairs.next();
 				
 				// Check if there is a row with this time stamp
-				int rowIndex = getRowIndexByKey(dataModel.getKeyFromPair(vp));
+				int rowIndex = getRowIndexByKey(parentDataModel.getKeyFromPair(vp));
 				
 				if(rowIndex >= 0){
 					
 					// There is one, append the new value
-					tableData.get(rowIndex).add(dataModel.getValueFromPair(vp));
+					tableData.get(rowIndex).add(parentDataModel.getValueFromPair(vp));
 					
 				}else{
 					// There is not, add a new row
 					Vector<Object> newRow = new Vector<Object>();
 					
 					// First column contains the time stamp
-					newRow.add(dataModel.getKeyFromPair(vp));
+					newRow.add(parentDataModel.getKeyFromPair(vp));
 					
 					// There is no value for this time stamp in the old series
 					while(newRow.size() < oldColCount){
 						newRow.add(null);
 					}
 					// Append the new value at the end of the row
-					newRow.add(dataModel.getValueFromPair(vp));
+					newRow.add(parentDataModel.getValueFromPair(vp));
 					
 					// Find the right place to insert the new row:
 					int insertAt = getRowCount();	// At the end of the table...
 					for(int i=0;i<getRowCount();i++){
 						double compareValue = ((Number) tableData.get(i).get(0)).doubleValue();
-						if(compareValue > dataModel.getKeyFromPair(vp).doubleValue()){
+						if(compareValue > parentDataModel.getKeyFromPair(vp).doubleValue()){
 							insertAt = i;			// ... or before the first one with a higher time stamp
 						}
 					}

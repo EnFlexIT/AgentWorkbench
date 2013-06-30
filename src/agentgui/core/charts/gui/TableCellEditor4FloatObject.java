@@ -29,6 +29,8 @@
 package agentgui.core.charts.gui;
 
 import java.awt.Component;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
@@ -40,7 +42,7 @@ import javax.swing.table.TableCellEditor;
  * @author Nils
  *
  */
-public class TableCellEditor4FloatObject extends AbstractCellEditor implements TableCellEditor{
+public class TableCellEditor4FloatObject extends AbstractCellEditor implements TableCellEditor, KeyListener{
 
 	private static final long serialVersionUID = -3915816882186813928L;
 
@@ -66,6 +68,13 @@ public class TableCellEditor4FloatObject extends AbstractCellEditor implements T
 			return null;
 		}
 	}
+	
+	@Override
+	public void cancelCellEditing() {
+		// Reset row height
+		table.setRowHeight(row2edit, originalHeight);
+		super.cancelCellEditing();
+	}
 
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
@@ -73,6 +82,7 @@ public class TableCellEditor4FloatObject extends AbstractCellEditor implements T
 		if(textField == null){
 			this.table = table;
 			textField = new JTextField();
+			textField.addKeyListener(this);
 		}
 		
 		// Initialize with current table cell value, if there is one 
@@ -88,6 +98,24 @@ public class TableCellEditor4FloatObject extends AbstractCellEditor implements T
 		table.setRowHeight(row2edit, (int) (table.getRowHeight(row2edit)*1.5));
 		
 		return textField;
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// Due to a java bug, the callback method is not called automatically when pressing escape.  
+		if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+			cancelCellEditing();
+		}
+	}
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// Method required by the interface, but not needed here.
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// Method required by the interface, but not needed here.
 	}
 
 }
