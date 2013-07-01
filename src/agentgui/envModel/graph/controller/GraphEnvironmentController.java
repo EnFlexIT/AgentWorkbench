@@ -248,9 +248,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     }
     
     /**
-     * Copies  to clipboard.
-     *
-     * @param sourceNetworkModel the source network model
+     * Copies a set of NetworkComponent's as independent NetworkModel to the clipboard.
      * @param networkComponentsForClipboard the network components
      */
     public void copyToClipboard(HashSet<NetworkComponent> networkComponentsForClipboard) {

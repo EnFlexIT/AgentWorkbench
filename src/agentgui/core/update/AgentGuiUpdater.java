@@ -285,7 +285,7 @@ public class AgentGuiUpdater extends Thread {
 			// --- Load the UpdateInformation -----------------------
 			this.updateInformation = new UpdateInformation();
 			this.updateInformation.loadUpdateInformation(this.latestVersionInfoFullPath);
-			if (this.updateInformation!=null && this.updateInformation.isNewerVersion(this.versionInfo)) {
+			if (this.updateInformation!=null && this.updateInformation.isError()==false && this.updateInformation.isNewerVersion(this.versionInfo)==true) {
 				// --------------------------------------------------
 				// --- Set name of the update zip file --------------
 				this.localUpdateZipFile = this.localDownloadPath + this.updateInformation.getDownloadFile();
@@ -388,6 +388,9 @@ public class AgentGuiUpdater extends Thread {
 					// --- Inform user ------------------------------
 					String title = "Agent.GUI-Updater!";
 					String message = Language.translate("There is no Agent.GUI-Update available!", Language.EN);
+					if (this.updateInformation.isError()==true) {
+						message = this.updateInformation.getErrorMessage();
+					}
 					JOptionPane.showMessageDialog(Application.getMainWindow(), message, title, JOptionPane.INFORMATION_MESSAGE);	
 				}
 				

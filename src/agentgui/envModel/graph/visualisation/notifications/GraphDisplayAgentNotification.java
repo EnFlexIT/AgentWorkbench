@@ -26,33 +26,20 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.simulationService.transaction;
+package agentgui.envModel.graph.visualisation.notifications;
 
-import java.io.Serializable;
-
-import agentgui.envModel.graph.controller.GraphEnvironmentController;
-import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.envModel.graph.visualisation.DisplayAgent;
-import agentgui.simulationService.agents.SimulationManagerAgent;
-import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.simulationService.transaction.DisplayAgentNotification;
 
 /**
- * The abstract Class DisplayAgentNotification is the base class for notifications that can 
- * be directed to display agents that are working on an environment model, located in
- * {@link EnvironmentModel#getDisplayEnvironment()}. 
- * For the possible notifications that can be send to specialised display agents, have 
- * a look at the corresponding packages of the special environment model. 
- * As example see the links of 'See also:'
- *  
- * @see SimulationManagerAgent#sendDisplayAgentNotification()
- * @see GraphEnvironmentController#getDisplayEnvironmentModel()
- * @see NetworkModel
- * @see DisplayAgent
+ * The Class GraphDisplayAgentNotification is the super class for
+ * all Notifications that can be found in this package.
  * 
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
-public abstract class DisplayAgentNotification implements Serializable {
+public class GraphDisplayAgentNotification extends DisplayAgentNotification {
 
-	private static final long serialVersionUID = -2755204178753148481L;
+	private static final long serialVersionUID = -2215484234200157434L;
+
+	
 	
 }

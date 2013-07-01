@@ -148,7 +148,7 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o.equals(currProject) && arg.equals(Project.CHANGED_EnvironmentModel)){
+		if(o.equals(currProject) && arg.equals(Project.CHANGED_EnvironmentModelType)){
 			this.switchEnvironmentMode(currProject.getEnvironmentModelName());
 		}
 	}

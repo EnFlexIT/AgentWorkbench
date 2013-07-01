@@ -26,7 +26,7 @@
         </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1103</useLocalPort>
+        <useLocalPort>1105</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -60,7 +60,7 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>MixedClusters (1) Small</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
-    <downloadResources>http://rudel1:8080/gasmas/gasmas_IDE.jar</downloadResources>
+    <downloadResources>http://rudel1.cs.uni-due.de:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>

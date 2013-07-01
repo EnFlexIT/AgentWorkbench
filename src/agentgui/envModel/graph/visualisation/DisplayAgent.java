@@ -34,18 +34,19 @@ import agentgui.core.environment.EnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.envModel.graph.networkModel.NetworkModelNotification;
-import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDirectionNotification;
+import agentgui.envModel.graph.visualisation.notifications.GraphDisplayAgentNotification;
 import agentgui.simulationService.agents.AbstractDisplayAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /**
- * This agent can be used in order to display the current network model
- * during a running simulation. It is not necessary that this agent is
- * used within the application window - it is also possible to just start 
- * this agent anywhere else.  
+ * This agent can be used in order to display the current network model during a 
+ * running simulation. It is not necessary that this agent is used within the 
+ * application window - it is also possible to just start this agent by using 
+ * the JADE RMA.
+ * For displaying changes of single agents that are representing {@link NetworkComponent}'s 
+ * see the classes that are inherit from {@link GraphDisplayAgentNotification}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -59,6 +60,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	private Vector<EnvironmentModel> stimuliOfNetworkModel = null;
 	private Boolean stimuliAction = false;
 	
+	private DisplayAgentNotificationHandler myDisplayAgentNotificationHandler = null;
 	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#createEnvironmentController()
@@ -93,6 +95,9 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	protected void takeDown() {
 		this.myGraphEnvironmentController=null;
 		this.networkModel=null;
+		this.stimuliOfNetworkModel=null;
+		this.stimuliAction = null;
+		this.myDisplayAgentNotificationHandler = null;
 		super.takeDown();
 	}
 	/* (non-Javadoc)
@@ -102,6 +107,9 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	protected void beforeMove() {
 		this.myGraphEnvironmentController=null;
 		this.networkModel=null;
+		this.stimuliOfNetworkModel=null;
+		this.stimuliAction = null;
+		this.myDisplayAgentNotificationHandler = null;
 		super.beforeMove();
 	}
 	
@@ -163,21 +171,40 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		return this.stimuliOfNetworkModel;
 	}
 	
+	/**
+	 * Gets the notification handler for the agent.
+	 * @return the display agent notification handler
+	 */
+	private DisplayAgentNotificationHandler getDisplayAgentNotificationHandler() {
+		if (myDisplayAgentNotificationHandler==null) {
+			myDisplayAgentNotificationHandler = new DisplayAgentNotificationHandler(this);
+		}
+		return myDisplayAgentNotificationHandler;
+	}
+	
+	/**
+	 * Returns the current network model.
+	 * @return the network model
+	 */
+	protected NetworkModel getNetworkModel() {
+		return this.networkModel;
+	}
+	/**
+	 * Returns the current GraphEnvironmentController.
+	 * @return the graph environment controller
+	 */
+	protected GraphEnvironmentController getGraphEnvironmentController() {
+		return this.myGraphEnvironmentController;
+	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentNotification(agentgui.simulationService.transaction.EnvironmentNotification)
 	 */
 	@Override
 	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
-		
-		if (notification.getNotification() instanceof NetworkComponentDirectionNotification) {
-			
-			NetworkComponentDirectionNotification ncdm = (NetworkComponentDirectionNotification) notification.getNotification();
-			NetworkComponent netComp = ncdm.getNetworkComponent();
-			this.networkModel.setDirectionsOfNetworkComponent(netComp);
-			
+		if (notification.getNotification() instanceof GraphDisplayAgentNotification) {
+			notification = this.getDisplayAgentNotificationHandler().setDisplayNotification(notification);
 		}
-		myGraphEnvironmentController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));
-
 		return notification;
 	}
 	

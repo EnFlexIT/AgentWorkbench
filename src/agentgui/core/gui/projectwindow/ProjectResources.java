@@ -800,7 +800,7 @@ public class ProjectResources extends JPanel implements Observer {
 				this.removePlugInElement2List(pin.getPlugIn());
 			}
 			
-		} else if (updated.equals(Project.CHANGED_EnvironmentModel)) {
+		} else if (updated.equals(Project.CHANGED_EnvironmentModelType)) {
 			EnvironmentType envTypeOld = (EnvironmentType) this.getJComboBoxEnvironmentModelSelector().getSelectedItem();
 			EnvironmentType envTypeNew = this.currProject.getEnvironmentModelType();
 			if (envTypeOld.equals(envTypeNew)==false) {

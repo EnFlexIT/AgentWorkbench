@@ -396,7 +396,10 @@ public class NetworkModel implements Serializable {
 			
 			// --- Update the NetworkComponent-Layout -------------------------
 			for (String graphElementID : networkComponent.getGraphElementIDs()) {
-				this.graphElements.get(graphElementID).resetGraphElementLayout(this);
+				GraphElement graphElement = this.graphElements.get(graphElementID);
+				if (graphElement!=null) {
+					graphElement.resetGraphElementLayout(this);
+				}
 			}
 			
 		}

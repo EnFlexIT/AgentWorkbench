@@ -40,9 +40,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.codec.binary.Base64;
 
+import agentgui.core.application.Language;
 import agentgui.core.config.VersionInfo;
 
 /**
@@ -58,6 +60,9 @@ public class UpdateInformation {
 	private String downloadLink = null; 
 	private String downloadFile = null;
 	private Integer downloadSize = null;
+	
+	@XmlTransient private boolean error = false;
+	@XmlTransient private String errorMsg = null;
 	
 	
 	/**
@@ -158,11 +163,21 @@ public class UpdateInformation {
 		    componentReader.close();
 		    
 		} catch (JAXBException ex) {
-		    ex.printStackTrace();
+//			ex.printStackTrace();
+			String msg = "Error while parsing the update information from the configured update server!";
+		    msg = Language.translate(msg, Language.EN); 
+			System.err.println(msg);
+		    this.setError(true);
+		    this.setErrorMessage(msg);
+		    return;
 		} catch (FileNotFoundException ex) {
 		    ex.printStackTrace();
+		    this.setError(true);
+		    return;
 		} catch (IOException ex) {
 		    ex.printStackTrace();
+		    this.setError(true);
+		    return;
 		}
 
 		// --- Decode downloadLink and downloadFile -------
@@ -311,6 +326,38 @@ public class UpdateInformation {
 	 */
 	public Integer getDownloadSize() {
 		return downloadSize;
+	}
+
+	/**
+	 * Sets that there is an error.
+	 * @param error the new error
+	 */
+	public void setError(boolean error) {
+		this.error = error;
+	}
+	/**
+	 * Checks if there is an error.
+	 * @return true, if there is an error
+	 */
+	@XmlTransient 
+	public boolean isError() {
+		return error;
+	}
+
+	/**
+	 * Sets the error message.
+	 * @param errorMsg the new error message
+	 */
+	public void setErrorMessage(String errorMsg) {
+		this.errorMsg = errorMsg;
+	}
+	/**
+	 * Gets the error message.
+	 * @return the error message
+	 */
+	@XmlTransient 
+	public String getErrorMessage() {
+		return errorMsg;
 	}
 
 }

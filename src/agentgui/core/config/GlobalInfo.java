@@ -34,6 +34,7 @@ import jade.wrapper.AgentContainer;
 
 import java.awt.Color;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -169,6 +170,14 @@ public class GlobalInfo {
 		String[] JCP_Files = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
 		String[] JCP_Folders = JCP_Files.clone(); 
 		HashSet<String> Folders = new HashSet<String>();  
+		
+		File thisFile = new File(GlobalInfo.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+		try {
+			thisFile = new File(GlobalInfo.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+		} catch (URISyntaxException uriEx) {
+			uriEx.printStackTrace();
+		}
+		localBaseDir = thisFile.getParent() + File.separator;
 		
 		// ------------------------------------------------------------------
 		// --- Class-Path untersuchen ---------------------------------------

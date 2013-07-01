@@ -28,10 +28,7 @@
  */
 package agentgui.envModel.graph.visualisation.notifications;
 
-import java.io.Serializable;
-
 import agentgui.envModel.graph.networkModel.NetworkComponent;
-import agentgui.simulationService.transaction.DisplayAgentNotification;
 
 /**
  * The Class NetworkComponentDirectionMessage can be used in order to 
@@ -40,7 +37,7 @@ import agentgui.simulationService.transaction.DisplayAgentNotification;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class NetworkComponentDirectionNotification extends DisplayAgentNotification implements Serializable {
+public class NetworkComponentDirectionNotification extends GraphDisplayAgentNotification {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5845301152343373848L;

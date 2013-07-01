@@ -393,7 +393,7 @@ public abstract class PlugIn implements Observer {
 			// this.onProjectChangedProjectFolder();
 		} else if (updateObject.equals(Project.CHANGED_ProjectView)) {
 			this.onProjectChangedProjectView();
-		} else if (updateObject.equals(Project.CHANGED_EnvironmentModel)) {
+		} else if (updateObject.equals(Project.CHANGED_EnvironmentModelType)) {
 			this.onProjectChangedEnvironmentModel();
 		} else if (updateObject.equals(Project.CHANGED_StartArguments4BaseAgent)) {
 			this.onProjectChangedAgentStartConfiguration();

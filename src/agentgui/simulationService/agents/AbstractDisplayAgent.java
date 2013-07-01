@@ -77,7 +77,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 
 	private transient int oldTimeModelStateStroke = -1;
 	private transient long oldTimeModelStateDiscrete = -1;
-	private transient boolean oldTimeModelStateContinuous = false; 
+	private transient long oldTimeModelStateContinuous = -1; 
 	
 	private EnvironmentController myEnvironmentController = null;
 	private boolean isAgentGuiEmbedded = false;
@@ -275,7 +275,6 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			this.usePanel.repaint();
 		} else {
 			this.getJFrameStandalone().getContentPane().add(this.getEnvironmentController().getOrCreateEnvironmentPanel(), BorderLayout.CENTER);
-			this.getJFrameStandalone().pack();
 			this.getJFrameStandalone().validate();
 			this.getJFrameStandalone().setVisible(true);
 		}
@@ -341,7 +340,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	 * Displays the current TimeModel, if available.
 	 */
 	private void displayTimeModel() {
-		if (this.myEnvironmentModel!=null) {
+		if (myEnvironmentModel!=null) {
 			if (myEnvironmentModel.getTimeModel()!=null) {
 				if (myEnvironmentModel.getTimeModel() instanceof TimeModelContinuous) {
 					// --- Set this agent to the TimeModel in order to use ----
@@ -380,10 +379,10 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			
 		} else if (timeModel instanceof TimeModelContinuous) {
 			TimeModelContinuous tmc = (TimeModelContinuous) timeModel;
-			boolean executed = tmc.isExecuted();
-			if (executed!=this.oldTimeModelStateContinuous) {
+			long newTime = tmc.getTime();
+			if (newTime!=this.oldTimeModelStateContinuous) {
 				changed=true;
-				this.oldTimeModelStateContinuous=executed;
+				this.oldTimeModelStateContinuous=newTime;
 			}
 		}
 		return changed;
@@ -403,7 +402,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			}
 		}
 		
-		if (isTimeModelChanged(timeModel)==true) {
+		if (this.isTimeModelChanged(timeModel)==true) {
 			this.setTimeModelDisplay(timeModel, this.jToolBar4TimeModel);	
 		}
 		

@@ -542,7 +542,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		} else if (ObjectName.equals(Project.CHANGED_ProjectView)) {
 			this.setView();			
 			
-		} else if (ObjectName.equals(Project.CHANGED_EnvironmentModel)) {
+		} else if (ObjectName.equals(Project.CHANGED_EnvironmentModelType)) {
 			this.setView();			
 			
 		} else if (ObjectName.equals(Project.VIEW_Maximize)) {

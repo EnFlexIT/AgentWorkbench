@@ -105,7 +105,7 @@ import agentgui.core.webserver.JarFileCreator;
 	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectView = "ProjectView";
 	/** Constant value in order to inform the Observer about changes of this kind */
-	@XmlTransient public static final String CHANGED_EnvironmentModel= "EnvironmentModel";
+	@XmlTransient public static final String CHANGED_EnvironmentModelType= "EnvironmentModelType";
 	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_StartArguments4BaseAgent = "StartArguments4BaseAgents";
 	/** Constant value in order to inform the Observer about changes of this kind */
@@ -899,7 +899,7 @@ import agentgui.core.webserver.JarFileCreator;
 		this.environmentModelName = environmentModel;
 		this.setUnsaved(true);
 		setChanged();
-		notifyObservers(CHANGED_EnvironmentModel);
+		notifyObservers(CHANGED_EnvironmentModelType);
 	}
 	/**
 	 * @return the environmentModel

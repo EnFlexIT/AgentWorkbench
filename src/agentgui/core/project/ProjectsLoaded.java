@@ -280,7 +280,7 @@ public class ProjectsLoaded {
 		
 		// --- In case of an environment model in a PlugIn --------------------
 		if (envModelName!=null && reloadEnvironmentType==true) {
-			newProject.setNotChangedButNotify(Project.CHANGED_EnvironmentModel);		
+			newProject.setNotChangedButNotify(Project.CHANGED_EnvironmentModelType);		
 		}
 		return newProject;
 	}
