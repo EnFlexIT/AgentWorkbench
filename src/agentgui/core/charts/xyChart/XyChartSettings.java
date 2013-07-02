@@ -84,16 +84,17 @@ public class XyChartSettings extends ChartSettings {
 		if (seriesSize==0) {
 			return false;
 			
-		} else  if (seriesSize==1) {
-			XyValuePair valuePair = (XyValuePair) series.getXyValuePairs().get(0);
-			Simple_Float x = valuePair.getXValue();
-			Simple_Float y = valuePair.getXValue();
-			
-			if (x.getFloatValue()==0.0 && y.getFloatValue()==0.0) {
-				return false;
-			}
-			
 		}
+//		else  if (seriesSize==1) {
+//			XyValuePair valuePair = (XyValuePair) series.getXyValuePairs().get(0);
+//			Simple_Float x = valuePair.getXValue();
+//			Simple_Float y = valuePair.getXValue();
+//			
+//			if (x.getFloatValue()==0.0 && y.getFloatValue()==0.0) {
+//				return false;
+//			}
+//			
+//		}
 		return isXyDataSeries;
 	}
 	

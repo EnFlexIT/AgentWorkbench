@@ -342,6 +342,10 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 		handleEvent(e);
 	}
 	
+	public void seriesRemoved(int seriesIndex){
+		((DefaultTableModel)getTblSeriesSettings().getModel()).removeRow(seriesIndex);
+	}
+	
 	/**
 	 * ActionEvent and FocusEvent are handled the same way 
 	 * @param e

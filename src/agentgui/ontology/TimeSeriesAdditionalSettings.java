@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: TimeSeriesAdditionalSettings
 * @author ontology bean generator
-* @version 2013/01/29, 13:35:51
+* @version 2013/07/2, 23:36:43
 */
 public class TimeSeriesAdditionalSettings extends ChartSettingSpecial{ 
 

@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: XyDataSeries
 * @author ontology bean generator
-* @version 2013/01/29, 13:35:51
+* @version 2013/07/2, 23:36:43
 */
 public class XyDataSeries extends DataSeries{ 
 
@@ -20,13 +20,6 @@ public boolean isEmpty() {
 	   boolean noValuePairs = false;
 	   if(getXyValuePairs().size() == 0){
 		   noValuePairs = true;
-	   }else{
-		   if(getXyValuePairs().size() == 1){
-			   XyValuePair vp = (XyValuePair) getXyValuePairs().get(0);
-			   if(vp.getXValue().getFloatValue() == 0.0f && vp.getYValue().getFloatValue() == 0.0f){
-				   noValuePairs = true;
-			   }
-		   }
 	   }
 	   
 	   return wrongLabel && noValuePairs;

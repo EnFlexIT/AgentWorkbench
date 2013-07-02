@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -194,8 +193,8 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		
 		if(e.getSource() == getBtnAddColumn()){
 			
-			String seriesLabel = JOptionPane.showInputDialog(this, Language.translate("Label"), Language.translate("Neue Datenreihe"), JOptionPane.QUESTION_MESSAGE);
-//			String seriesLabel = model.getDefaultSeriesLabel();
+//			String seriesLabel = JOptionPane.showInputDialog(this, Language.translate("Label"), Language.translate("Neue Datenreihe"), JOptionPane.QUESTION_MESSAGE);
+			String seriesLabel = model.getDefaultSeriesLabel();
 			
 			DataSeries newSeries = model.createNewDataSeries(seriesLabel);
 
@@ -221,7 +220,8 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 			if(table.getSelectedColumn() > 0){
 				int seriesIndex = table.getSelectedColumn()-1;
 				try {
-					this.model.removeSeries(seriesIndex);	
+					this.model.removeSeries(seriesIndex);
+					parentChartEditor.getSettingsTab().seriesRemoved(seriesIndex);
 					getBtnRemoveRow().setEnabled(false);
 					getBtnRemoveColumn().setEnabled(false);
 
@@ -235,17 +235,17 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 			if(table.isEditing()){
 				table.getCellEditor().cancelCellEditing();
 			}
-			Number key = (Number) table.getValueAt(table.getSelectedRow(), 0);
-			model.removeValuePairsFromAllSeries(key);
-			if(table.getRowCount() == 0){
-				for(int i=0; i<model.getSeriesCount(); i++){
+			if(table.getRowCount() == 1){
+				while(model.getSeriesCount() > 0){
 					try {
-						model.removeSeries(i);
+						model.removeSeries(0);
 					} catch (NoSuchSeriesException e1) {
-						System.err.println("The data series you tried to remove does not exist");
-						e1.printStackTrace();
+						// This cannot happen, as there where clause prevents empty models  
 					}
 				}
+			}else{
+				Number key = (Number) table.getValueAt(table.getSelectedRow(), 0);
+				model.removeValuePairsFromAllSeries(key);
 			}
 			getBtnRemoveColumn().setEnabled(false);
 			getBtnRemoveRow().setEnabled(false);

@@ -1,4 +1,4 @@
-; Tue Jan 29 13:35:41 CET 2013
+; Tue Jul 02 23:36:54 CEST 2013
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -88,7 +88,7 @@
 ([XyDataSeries] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE)
-	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getXyValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }else{\n		   if(getXyValuePairs().size() == 1){\n			   XyValuePair vp = (XyValuePair) getXyValuePairs().get(0);\n			   if(vp.getXValue().getFloatValue() == 0.0f && vp.getYValue().getFloatValue() == 0.0f){\n				   noValuePairs = true;\n			   }\n		   }\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n   }"))
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getXyValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n   }"))
 
 ([XyValuePair] of  %3AJADE-CLASS
 
