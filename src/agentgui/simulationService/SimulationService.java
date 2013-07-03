@@ -275,12 +275,6 @@ public class SimulationService extends BaseService {
 			// --- block or unblock the simulation ------------
 			Service.Slice[] slices = getAllSlices();
 			broadcastPauseSimulation(pause, slices);
-			if (pause==false) {
-				// --- Reset next parts of the environement ---
-				this.resetEnvironmentInstanceNextParts();
-				// --- Restart simulation  --------------------
-				this.stepSimulation(environmentModel, environmentInstanceNextPartsExpected);
-			}
 		}
 		
 		// ----------------------------------------------------------
@@ -289,7 +283,6 @@ public class SimulationService extends BaseService {
 		 * @see agentgui.simulationService.SimulationServiceHelper#setManagerAgent(jade.core.AID)
 		 */
 		public void setManagerAgent(AID agentAddress) throws ServiceException {
-			
 			EnvironmentManagerDescription envManager = new EnvironmentManagerDescription(agentAddress, myContainer.here());
 			Service.Slice[] slices = getAllSlices();
 			broadcastManagerAgent(envManager, slices);
@@ -365,36 +358,26 @@ public class SimulationService extends BaseService {
 		 * @see agentgui.simulationService.SimulationServiceHelper#stepSimulation(agentgui.simulationService.environment.EnvironmentModel, int, boolean)
 		 */
 		public void stepSimulation(EnvironmentModel envModel, int answersExpected, boolean aSynchron) throws ServiceException {
-			if (pauseSimulation==false) {
-				// --- step forward the transaction map -------
-				transactionMap.put(environmentModel);
-				// --- next step for the simulation -----------
-				Service.Slice[] slices = getAllSlices();
-				if (answersExpected!=environmentInstanceNextPartsExpected) {
-					broadcastAnswersExpected(answersExpected, slices);	
-				}
-				broadcastStepSimulation(envModel, aSynchron, slices);
+			// --- step forward the transaction map -------
+			transactionMap.put(environmentModel);
+			// --- next step for the simulation -----------
+			Service.Slice[] slices = getAllSlices();
+			if (answersExpected!=environmentInstanceNextPartsExpected) {
+				broadcastAnswersExpected(answersExpected, slices);	
 			}
+			broadcastStepSimulation(envModel, aSynchron, slices);
 		}
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#notifySensorAgent(jade.core.AID, agentgui.simulationService.transaction.EnvironmentNotification)
 		 */
 		public boolean notifySensorAgent(AID agentAID, EnvironmentNotification notification) throws ServiceException {
-			if (pauseSimulation==true) {
-				return false;
-			} else {
-				return broadcastNotifyAgent(agentAID, notification, getAllSlices());	
-			}
+			return broadcastNotifyAgent(agentAID, notification, getAllSlices());	
 		}
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#notifyManagerAgent(agentgui.simulationService.transaction.EnvironmentNotification)
 		 */
 		public boolean notifyManagerAgent(EnvironmentNotification notification) throws ServiceException {
-			if (pauseSimulation==true) {
-				return false;
-			} else {
-				return broadcastNotifyManager(notification);	
-			}
+			return broadcastNotifyManager(notification);	
 		}
 		
 		/* (non-Javadoc)
@@ -1234,6 +1217,8 @@ public class SimulationService extends BaseService {
 		 */
 		private void setPauseSimulation(boolean pause) {
 			pauseSimulation = pause;
+			localServiceActuator.notifySensorPauseSimulation(pauseSimulation);
+			localServiceActuator4Manager.notifyManagerPauseSimulation(pauseSimulation);
 		}
 		
 		/**

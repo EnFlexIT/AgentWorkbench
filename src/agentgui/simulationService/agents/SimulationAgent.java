@@ -47,6 +47,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.sensoring.ServiceSensor;
 import agentgui.simulationService.sensoring.ServiceSensorInterface;
 import agentgui.simulationService.sensoring.ServiceSensorListener;
+import agentgui.simulationService.transaction.DisplayAgentNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /**
@@ -322,7 +323,21 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 		return send;
 	}
 	
-	
+	/**
+	 * Notify display agents about changes with a {@link DisplayAgentNotification}.
+	 * 
+	 * @param displayAgentNotification the display agent message
+	 */
+	public void sendDisplayAgentNotification(DisplayAgentNotification displayAgentNotification) {
+		try {
+			EnvironmentNotification notification = new EnvironmentNotification(getAID(), true, displayAgentNotification);
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			simHelper.displayAgentNotification(notification);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationServiceListener#setNotification(agentgui.simulationService.transaction.EnvironmentNotification)
 	 */

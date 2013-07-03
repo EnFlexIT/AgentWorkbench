@@ -391,7 +391,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Gets the current Graph and repaints the visualisation viewer.
 	 */
 	private void repaintGraph() {
-		visView.getGraphLayout().setGraph(this.graphController.getNetworkModelAdapter().getGraph());
+		if (visView.getGraphLayout().getGraph()!=this.graphController.getNetworkModelAdapter().getGraph()) {
+			visView.getGraphLayout().setGraph(this.graphController.getNetworkModelAdapter().getGraph());
+		}
 		visView.repaint();
 	}
 
@@ -609,7 +611,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		// --- Use straight lines as edges --------------------------------
 		vViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
-
+		
 		// --- Set edge width ---------------------------------------------
 		vViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
 			@Override
@@ -619,7 +621,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		});
 		
 		// --- Configure edge color ---------------------------------------
-		vViewer.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<GraphEdge, Paint>() {
+		Transformer<GraphEdge, Paint> edgeColorTransformer = new Transformer<GraphEdge, Paint>() {
 			@Override
 			public Paint transform(GraphEdge edge) {
 				Color initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColor();
@@ -627,8 +629,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 					initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
 				}
 				return initColor;
-			}
-		});
+			}}; 
+		vViewer.getRenderContext().setEdgeDrawPaintTransformer(edgeColorTransformer);
+		vViewer.getRenderContext().setArrowFillPaintTransformer(edgeColorTransformer);
+		vViewer.getRenderContext().setArrowDrawPaintTransformer(edgeColorTransformer);
 		
 		// --- Configure Edge Image Labels --------------------------------
 		vViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
@@ -721,6 +725,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 		visViewSatellite.getRenderContext().setEdgeStrokeTransformer(this.visView.getRenderContext().getEdgeStrokeTransformer());
 		// --- Configure edge color -------------------------------------------
 		visViewSatellite.getRenderContext().setEdgeDrawPaintTransformer(this.visView.getRenderContext().getEdgeDrawPaintTransformer());
+		visViewSatellite.getRenderContext().setArrowFillPaintTransformer(this.visView.getRenderContext().getEdgeDrawPaintTransformer());
+		visViewSatellite.getRenderContext().setArrowDrawPaintTransformer(this.visView.getRenderContext().getEdgeDrawPaintTransformer());
+
 		// --- Configure Edge Image Labels ------------------------------------
 		visViewSatellite.getRenderContext().setEdgeLabelTransformer(this.visView.getRenderContext().getEdgeLabelTransformer());
 		// --- Set edge renderer for a background color of an edge ------------

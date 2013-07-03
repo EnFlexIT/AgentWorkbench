@@ -10,5 +10,10 @@ public class EntryAgent extends GenericNetworkAgent {
 		super.setup();
 	}
 	
+	@Override
+	public void setPauseSimulation(boolean isPauseSimulation) {
+		// TODO Auto-generated method stub
+	}
+
 	
 }

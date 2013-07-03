@@ -382,6 +382,8 @@ public abstract class PlugIn implements Observer {
 		// ----------------------------------------------------------
 		if (updateObject==null) {
 			return;			
+		} else if (updateObject.equals(Project.PREPARE_FOR_SAVING)) {
+			this.onPrepareForSaving();
 		} else if (updateObject.equals(Project.SAVED)) {
 			this.onProjectSaved();
 		} else if (updateObject.equals(Project.CHANGED_ProjectName)) {
@@ -472,6 +474,9 @@ public abstract class PlugIn implements Observer {
 	// ------------------------------------------------------------------------
 	
 	// --- Changes in the project configuration --------------------------
+	/**On notification to do the preparations to save a project or simulation setup. */
+	protected void onPrepareForSaving() { };
+
 	/**On project saved. */
 	protected void onProjectSaved() { }
 	

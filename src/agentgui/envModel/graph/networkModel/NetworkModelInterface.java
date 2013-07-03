@@ -206,14 +206,41 @@ public interface NetworkModelInterface {
 	 */
 	public abstract HashSet<NetworkComponent> getNetworkComponentsFullySelected(Set<GraphNode> graphNodes);
 	
+	
+	/**
+	 * Extracts the ID's of the GraphElements of the specified NetworkComponent. The parameter 'searchForInstance' can be
+	 * an exemplary instance of {@link GraphNode}, {@link GraphEdge} or null. This can be seen as a filter. 
+	 * If a {@link GraphNode} is specified, the method will return all GraphNodes of the {@link NetworkComponent}. 
+	 * The same applies for an instance of {@link GraphEdge}, while with Null the method will returns all
+	 * {@link GraphElement}'s.
+	 *
+	 * @param networkComponent the network component
+	 * @param searchForInstance the search for instance
+	 * @return the HashSet of the GraphElement ID's
+	 */
+	public abstract HashSet<String> extractGraphElementIDs(NetworkComponent networkComponent, GraphElement searchForInstance);
+	
+		
+	/**
+	 * Returns the graph elements of a specified NetworkComponent. The parameter 'searchForInstance' can be
+	 * an exemplary instance of {@link GraphNode}, {@link GraphEdge} or null. This can be seen as a filter. 
+	 * If a {@link GraphNode} is specified, the method will return all GraphNodes of the {@link NetworkComponent}. 
+	 * The same applies for an instance of {@link GraphEdge}, while with Null the method will returns all
+	 * {@link GraphElement}'s.
+	 *
+	 * @param networkComponent the network component
+	 * @param searchForInstance the search for instance
+	 * @return the graph elements of network component
+	 */
+	public abstract HashSet<GraphElement> getGraphElementsOfNetworkComponent(NetworkComponent networkComponent, GraphElement searchForInstance);
+	
 	/**
 	 * Gives the set of network components containing the given node.
 	 * 
 	 * @param graphNode - A GraphNode
 	 * @return HashSet<NetworkComponent> - The set of components which contain the node
 	 */
-	public abstract HashSet<NetworkComponent> getNetworkComponents(
-			GraphNode graphNode);
+	public abstract HashSet<NetworkComponent> getNetworkComponents(GraphNode graphNode);
 
 	/**
 	 * Gets the network components.

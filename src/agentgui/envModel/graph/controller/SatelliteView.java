@@ -47,7 +47,7 @@ public class SatelliteView extends JDialog {
 	private static final long serialVersionUID = -4309439744074827584L;
 
 	private final String pathImage = GraphGlobals.getPathImages();
-	private final ImageIcon iconAgentGUI = new ImageIcon(this.getClass().getResource( pathImage + "AgentGUI.png"));
+	private final ImageIcon iconAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 	
 	private GraphEnvironmentController graphController = null;

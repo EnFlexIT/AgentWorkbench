@@ -54,6 +54,14 @@ public interface ServiceSensorInterface {
 	public abstract void setMigration(Location newLocation);
 
 	/**
+	 * This method will be used by the ServiceActuator (class) to inform
+	 * that the simulation is paused or not.
+	 *
+	 * @param isPauseSimulation the new pause simulation
+	 */
+	public abstract void setPauseSimulation(boolean isPauseSimulation);
+	
+	/**
 	 * This method will be used by the {@link ServiceActuator} to inform
 	 * this agent about changes in the environment. It can be either used
 	 * to do this asynchronously or synchronously. It is highly recommended 
@@ -73,7 +81,6 @@ public interface ServiceSensorInterface {
 	 */
 	public abstract void setNotification(EnvironmentNotification notification);
 
-	
 	/**
 	 * Will delete/kill the current agent.
 	 */

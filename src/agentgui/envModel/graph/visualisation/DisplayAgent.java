@@ -34,10 +34,9 @@ import agentgui.core.environment.EnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.envModel.graph.visualisation.notifications.GraphDisplayAgentNotification;
+import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
 import agentgui.simulationService.agents.AbstractDisplayAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /**
@@ -46,7 +45,7 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
  * application window - it is also possible to just start this agent by using 
  * the JADE RMA.
  * For displaying changes of single agents that are representing {@link NetworkComponent}'s 
- * see the classes that are inherit from {@link GraphDisplayAgentNotification}.
+ * see the classes that are inherit from {@link DisplayAgentNotificationGraph}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -55,12 +54,12 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	private static final long serialVersionUID = -766291673903767678L;
 
 	private GraphEnvironmentController myGraphEnvironmentController = null;
-	private NetworkModel networkModel = null;
 	
 	private Vector<EnvironmentModel> stimuliOfNetworkModel = null;
 	private Boolean stimuliAction = false;
 	
 	private DisplayAgentNotificationHandler myDisplayAgentNotificationHandler = null;
+	
 	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#createEnvironmentController()
@@ -76,8 +75,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected void setup() {
 		super.setup();
-		this.myGraphEnvironmentController = (GraphEnvironmentController) getEnvironmentController();
-		this.networkModel = this.myGraphEnvironmentController.getNetworkModel().getCopy();
+		this.myGraphEnvironmentController = (GraphEnvironmentController) this.getEnvironmentController();
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#afterMove()
@@ -86,7 +84,6 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	protected void afterMove() {
 		super.afterMove();
 		this.myGraphEnvironmentController = (GraphEnvironmentController) this.getEnvironmentController();
-		this.networkModel = this.myGraphEnvironmentController.getNetworkModel().getCopy();
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#takeDown()
@@ -94,7 +91,6 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected void takeDown() {
 		this.myGraphEnvironmentController=null;
-		this.networkModel=null;
 		this.stimuliOfNetworkModel=null;
 		this.stimuliAction = null;
 		this.myDisplayAgentNotificationHandler = null;
@@ -106,13 +102,20 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected void beforeMove() {
 		this.myGraphEnvironmentController=null;
-		this.networkModel=null;
 		this.stimuliOfNetworkModel=null;
 		this.stimuliAction = null;
 		this.myDisplayAgentNotificationHandler = null;
 		super.beforeMove();
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#setPauseSimulation(boolean)
+	 */
+	@Override
+	public void setPauseSimulation(boolean isPauseSimulation) {
+		super.setPauseSimulation(isPauseSimulation);
+	}
+
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentStimulus()
 	 */
@@ -137,15 +140,11 @@ public class DisplayAgent extends AbstractDisplayAgent {
 			while (this.getStimuliOfNetworkModel().size()!=0) {
 				try {
 					EnvironmentModel envModel = this.getStimuliOfNetworkModel().get(0);
-
-					TimeModel timeModel = envModel.getTimeModel();
-					NetworkModel netModel = (NetworkModel) envModel.getDisplayEnvironment();
-					this.networkModel = netModel.getCopy();
-
+					this.myEnvironmentModel = envModel.getCopy();
 					this.getStimuliOfNetworkModel().remove(0);
 					
-					this.setTimeModelDisplay(timeModel);
-					this.myGraphEnvironmentController.setDisplayEnvironmentModel(this.networkModel);
+					this.setTimeModelDisplay(this.myEnvironmentModel.getTimeModel());
+					this.myGraphEnvironmentController.setDisplayEnvironmentModel(this.myEnvironmentModel.getDisplayEnvironment());
 					
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -177,7 +176,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 */
 	private DisplayAgentNotificationHandler getDisplayAgentNotificationHandler() {
 		if (myDisplayAgentNotificationHandler==null) {
-			myDisplayAgentNotificationHandler = new DisplayAgentNotificationHandler(this);
+			myDisplayAgentNotificationHandler = new DisplayAgentNotificationHandler();
 		}
 		return myDisplayAgentNotificationHandler;
 	}
@@ -187,7 +186,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 * @return the network model
 	 */
 	protected NetworkModel getNetworkModel() {
-		return this.networkModel;
+		return this.getGraphEnvironmentController().getNetworkModel();
 	}
 	/**
 	 * Returns the current GraphEnvironmentController.
@@ -202,10 +201,10 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 */
 	@Override
 	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
-		if (notification.getNotification() instanceof GraphDisplayAgentNotification) {
-			notification = this.getDisplayAgentNotificationHandler().setDisplayNotification(notification);
+		if (notification.getNotification() instanceof DisplayAgentNotificationGraph) {
+			notification = this.getDisplayAgentNotificationHandler().setDisplayNotification(this.getGraphEnvironmentController(), notification);
 		}
 		return notification;
 	}
-	
+
 }

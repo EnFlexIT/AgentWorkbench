@@ -54,6 +54,8 @@ import org.apache.commons.collections15.Transformer;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.environment.AbstractEnvironmentModel;
+import agentgui.core.environment.DisplaytEnvironmentModel;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.gui.ProgressMonitor;
@@ -125,7 +127,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     private NetworkModel clipboardNetworkModel = null;
     
     /** The abstract environment model is just an open slot, where individual things can be placed. */
-    private Object abstractEnvironmentModel = null;
+    private AbstractEnvironmentModel abstractEnvironmentModel = null;
     
     
     /**
@@ -700,12 +702,12 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @see agentgui.core.environment.EnvironmentController#setEnvironmentModel(java.lang.Object)
      */
     @Override
-    public void setDisplayEnvironmentModel(Object environmentObject) {
+    public void setDisplayEnvironmentModel(DisplaytEnvironmentModel displaytEnvironmentModel) {
 		try {
-		    if (environmentObject == null) {
+		    if (displaytEnvironmentModel == null) {
 		    	this.setNetworkModel(null);
 		    } else {
-		    	this.setNetworkModel((NetworkModel) environmentObject);
+		    	this.setNetworkModel((NetworkModel) displaytEnvironmentModel);
 		    }
 	
 		} catch (Exception ex) {
@@ -718,7 +720,7 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @see agentgui.core.environment.EnvironmentController#getEnvironmentModel()
      */
     @Override
-    public Object getDisplayEnvironmentModel() {
+    public DisplaytEnvironmentModel getDisplayEnvironmentModel() {
     	return this.networkModel;
     }
 
@@ -727,7 +729,7 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @see agentgui.core.environment.EnvironmentController#getEnvironmentModelCopy()
      */
     @Override
-    public Object getDisplayEnvironmentModelCopy() {
+    public DisplaytEnvironmentModel getDisplayEnvironmentModelCopy() {
 		NetworkModel netModel = this.networkModel.getCopy();
 		return netModel;
     }
@@ -736,22 +738,26 @@ public class GraphEnvironmentController extends EnvironmentController {
 	 * @see agentgui.core.environment.EnvironmentController#setAbstractEnvironmentModel(java.lang.Object)
 	 */
 	@Override
-	public void setAbstractEnvironmentModel(Object abstractEnvironmentModel) {
+	public void setAbstractEnvironmentModel(AbstractEnvironmentModel abstractEnvironmentModel) {
 		this.abstractEnvironmentModel = abstractEnvironmentModel;
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModel()
 	 */
 	@Override
-	public Object getAbstractEnvironmentModel() {
+	public AbstractEnvironmentModel getAbstractEnvironmentModel() {
 		return this.abstractEnvironmentModel;
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModelCopy()
 	 */
 	@Override
-	public Object getAbstractEnvironmentModelCopy() {
-		return this.abstractEnvironmentModel;
+	public AbstractEnvironmentModel getAbstractEnvironmentModelCopy() {
+		if (this.abstractEnvironmentModel==null) {
+			return null;
+		} else {
+			return this.abstractEnvironmentModel.getCopy();	
+		}
 	}
 
 	

@@ -38,6 +38,8 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
+import agentgui.core.environment.AbstractEnvironmentModel;
+import agentgui.core.environment.DisplaytEnvironmentModel;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.project.Project;
 import agentgui.simulationService.SimulationService;
@@ -194,24 +196,15 @@ public abstract class SimulationManagerAgent extends Agent {
 	protected EnvironmentModel getEnvironmentModelFromSetup(){
 		
 		EnvironmentModel envModel = null;
-		TimeModel timeModel = null;
-		Object displayEnvironmentModel = null;
-		
 		Project currProject = Application.getProjectFocused();
 		if (currProject!=null) {
-			// --- Get the time model configuration -------
-			timeModel = currProject.getTimeModelController().getTimeModelCopy();
-			
-			// --- Get the displayable environment model --
+			// --- Get the environment model from the controller --
 			EnvironmentController envController = currProject.getEnvironmentController();
 			if (envController!=null) {
-				displayEnvironmentModel = envController.getDisplayEnvironmentModelCopy();
-			}
-			// --- Configure the EnvironmentModel ---------
-			if (timeModel!=null || displayEnvironmentModel!=null) {
-				envModel = new EnvironmentModel();
-				envModel.setTimeModel(timeModel);
-				envModel.setDisplayEnvironment(displayEnvironmentModel);
+				EnvironmentModel envModelTmp = envController.getEnvironmentModel();
+				if (envModelTmp!=null) {
+					envModel = envModelTmp.getCopy();
+				}
 			}
 		}
 		return envModel;
@@ -433,6 +426,11 @@ public abstract class SimulationManagerAgent extends Agent {
 	protected void onManagerNotification(EnvironmentNotification notification) {};
 	
 	
+	/**
+	 * Notifies the manager to pause or restart the simulation.
+	 * @param isPauseSimulation the is pause simulation
+	 */
+	public abstract void setPauseSimulation(boolean isPauseSimulation);
 	
 	
 	// ----------------------------------------------------------------------
@@ -472,14 +470,14 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * Returns the current abstract environment model.
 	 * @return the abstract environment
 	 */
-	protected Object getAbstractEnvironment() {
+	protected AbstractEnvironmentModel getAbstractEnvironment() {
 		return this.getEnvironmentModel().getAbstractEnvironment();
 	}
 	/**
 	 * Sets the abstract environment.
 	 * @param abstractEnvironment the new abstract environment
 	 */
-	protected void setAbstractEnvironment(Object abstractEnvironment) {
+	protected void setAbstractEnvironment(AbstractEnvironmentModel abstractEnvironment) {
 		this.getEnvironmentModel().setAbstractEnvironment(abstractEnvironment);
 	}
 
@@ -487,14 +485,14 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * Returns the current display environment.
 	 * @return the display environment
 	 */
-	protected Object getDisplayEnvironment() {
+	protected DisplaytEnvironmentModel getDisplayEnvironment() {
 		return this.getEnvironmentModel().getDisplayEnvironment();
 	}
 	/**
 	 * Sets the display environment.
 	 * @param displayEnvironment the new display environment
 	 */
-	protected void setDisplayEnvironment(Object displayEnvironment) {
+	protected void setDisplayEnvironment(DisplaytEnvironmentModel displayEnvironment) {
 		this.getEnvironmentModel().setDisplayEnvironment(displayEnvironment);
 	}
 
@@ -527,5 +525,5 @@ public abstract class SimulationManagerAgent extends Agent {
 	public void setNotifications(Vector<EnvironmentNotification> notifications) {
 		this.notifications = notifications;
 	}
-	
+
 }

@@ -164,8 +164,8 @@ public class ProjectsLoaded {
 		if (addNew==true) {			
 			// --- Create default project structure -------
 			newProject.createDefaultProjectStructure();
-		} 
-		else {
+			
+		} else {
 			// --- Get data model from file ---------------
 			JAXBContext pc;
 			Unmarshaller um = null;
@@ -210,6 +210,7 @@ public class ProjectsLoaded {
 					in = new ObjectInputStream(fis);
 					userObject = (Serializable)in.readObject();
 					in.close();
+					
 				} catch(IOException ex) {
 					ex.printStackTrace();
 				} catch(ClassNotFoundException ex) {

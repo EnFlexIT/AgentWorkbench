@@ -68,11 +68,12 @@ public class TimeModelContinuousExecutionElements extends TimeModelBaseExecution
 	@Override
 	public void setTimeModel(TimeModel timeModel) {
 		
-		this.timeModelContinuous = (TimeModelContinuous) timeModel;
-		if (this.timeModelContinuous==null) {
+		
+		if (timeModel==null) {
 			this.getJLabelTimeDisplay().setText("");			
 
 		} else {
+			this.timeModelContinuous = (TimeModelContinuous) timeModel;
 			
 			// --- Configure how often the time display refreshes --- 
 			if (timeSettingThreadUpdateTime==0) {

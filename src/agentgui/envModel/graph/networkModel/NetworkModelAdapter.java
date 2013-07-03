@@ -509,6 +509,20 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	}
 	
 	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#extractGraphElementIDs(agentgui.envModel.graph.networkModel.NetworkComponent, agentgui.envModel.graph.networkModel.GraphElement)
+	 */
+	public HashSet<String> extractGraphElementIDs(NetworkComponent networkComponent, GraphElement searchForInstance) {
+		return this.graphController.getNetworkModel().extractGraphElementIDs(networkComponent, searchForInstance);
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getGraphElementsOfNetworkComponent(agentgui.envModel.graph.networkModel.NetworkComponent, agentgui.envModel.graph.networkModel.GraphElement)
+	 */
+	public HashSet<GraphElement> getGraphElementsOfNetworkComponent(NetworkComponent networkComponent, GraphElement searchForInstance) {
+		return this.graphController.getNetworkModel().getGraphElementsOfNetworkComponent(networkComponent, searchForInstance);
+	}
+	
+	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getNetworkComponents(agentgui.envModel.graph.networkModel.GraphNode)
 	 */
 	@Override

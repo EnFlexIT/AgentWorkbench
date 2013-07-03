@@ -52,8 +52,6 @@ import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelBaseExecutionElements;
 import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelContinuousExecutionElements;
-import agentgui.simulationService.time.TimeModelDiscrete;
-import agentgui.simulationService.time.TimeModelStroke;
 
 /**
  * The Class VisualisationAgent can be used in order to build agents
@@ -75,9 +73,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	
 	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
 
-	private transient int oldTimeModelStateStroke = -1;
-	private transient long oldTimeModelStateDiscrete = -1;
-	private transient long oldTimeModelStateContinuous = -1; 
+	protected boolean isPausedSimulation = false;
 	
 	private EnvironmentController myEnvironmentController = null;
 	private boolean isAgentGuiEmbedded = false;
@@ -107,35 +103,35 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 		super.setup();
 		
 		Object[] startArgs = getArguments();
+		EnvironmentModel tmpEnvironmentModel = null;
+			
 		if (startArgs == null || startArgs.length == 0) {
 			// --- Started as independent display -------------------
 			this.setAgentGuiEmbedded(false);
-			this.myEnvironmentModel = this.getEnvironmentModelFromSimulationService();
-
-			if (this.myEnvironmentModel!=null) {
-				this.getEnvironmentController() .setEnvironmentModel(this.myEnvironmentModel);	
-			}
+			// --- Get environment from SimulationService -----------
+			tmpEnvironmentModel = this.getEnvironmentModelFromSimulationService();
 			
 		} else {
 			// --- Started from Agent.GUI ---------------------------
 			this.setAgentGuiEmbedded(true);
 			// --- Get info from Agent.GUI configuration ------------
 			this.usePanel = (JPanel) startArgs[0];
+			// --- Get environment from given controller -------------
 			EnvironmentController envController = (EnvironmentController) startArgs[1];
-			this.myEnvironmentModel = envController.getEnvironmentModelCopy();
-			
-			// --- Create new environment controller in -------------
-			// --- order to be independent from Agent.GUI -----------    
-			if (this.myEnvironmentModel!=null) {
-				this.getEnvironmentController().setEnvironmentModel(this.myEnvironmentModel);	
-			}
+			tmpEnvironmentModel = envController.getEnvironmentModel();
 			
 		}
-		// --- Build the visual components ----------------
+		// --- Set a copy of the EnvironmentModel to the local one --
+		if (tmpEnvironmentModel!=null) {
+			this.myEnvironmentModel = tmpEnvironmentModel.getCopy();
+			this.getEnvironmentController().setEnvironmentModel(this.myEnvironmentModel);
+		}
+		
+		// --- Build the visual components --------------------------
 		this.buildVisualizationGUI();
-		// --- Register as Displaying Agent ---------------
+		// --- Register as Displaying Agent -------------------------
 		this.registerAsDisplayAgent();
-		// --- Display the current TimeModel --------------
+		// --- Display the current TimeModel ------------------------
 		this.displayTimeModel();
 	}
 	
@@ -224,6 +220,15 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 		this.destroyVisualizationGUI();
 		super.afterClone();
 		this.registerAsDisplayAgent();
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#setPauseSimulation(boolean)
+	 */
+	@Override
+	public void setPauseSimulation(boolean isPauseSimulation) {
+		this.isPausedSimulation = isPauseSimulation;
+		this.setTimeModelDisplay(this.myEnvironmentModel.getTimeModel());
 	}
 	
 	/**
@@ -353,42 +358,6 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	}
 	
 	/**
-	 * Checks if the TimeModel changed in comparison to the previous state.
-	 *
-	 * @param timeModel the time model
-	 * @return true, if is time model changed
-	 */
-	protected boolean isTimeModelChanged(TimeModel timeModel) {
-		
-		boolean changed = false;
-		if (timeModel instanceof TimeModelStroke) {
-			TimeModelStroke tms = (TimeModelStroke) timeModel;
-			int newCounter = tms.getCounter(); 
-			if (newCounter!=this.oldTimeModelStateStroke) {
-				changed=true;
-				this.oldTimeModelStateStroke = newCounter;
-			}
-			
-		} else if (timeModel instanceof TimeModelDiscrete) {
-			TimeModelDiscrete tmd = (TimeModelDiscrete) timeModel;
-			long newTime= tmd.getTime();; 
-			if (newTime!=this.oldTimeModelStateDiscrete) {
-				changed=true;
-				this.oldTimeModelStateDiscrete = newTime;
-			}
-			
-		} else if (timeModel instanceof TimeModelContinuous) {
-			TimeModelContinuous tmc = (TimeModelContinuous) timeModel;
-			long newTime = tmc.getTime();
-			if (newTime!=this.oldTimeModelStateContinuous) {
-				changed=true;
-				this.oldTimeModelStateContinuous=newTime;
-			}
-		}
-		return changed;
-	}
-	
-	/**
 	 * Sets the time model display.
 	 */
 	protected void setTimeModelDisplay(TimeModel timeModel) {
@@ -401,10 +370,17 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 				this.jToolBar4TimeModel = Application.getMainWindow().getJToolBarApplication();
 			}
 		}
-		
-		if (this.isTimeModelChanged(timeModel)==true) {
-			this.setTimeModelDisplay(timeModel, this.jToolBar4TimeModel);	
+	
+		// --- Just for a continuous time model --------------------- 
+		if (timeModel instanceof TimeModelContinuous) {
+			TimeModelContinuous tmc = (TimeModelContinuous) timeModel;
+			if (this.isPausedSimulation==tmc.isExecuted()) {
+				tmc.setExecuted(!this.isPausedSimulation);
+			} 
 		}
+		
+		// --- Set the TimeModel to the display ---------------------
+		this.setTimeModelDisplay(timeModel, this.jToolBar4TimeModel);	
 		
 	}
 

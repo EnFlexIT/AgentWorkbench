@@ -1,316 +1,297 @@
-<class-diagram version="1.0.11" icons="true" automaticImage="PNG" always-add-relationships="false" 
-  generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" corner="BOTTOM_RIGHT" language="java" 
-    name="agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentControllerGUI.java" binary="false">    
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.3" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+  realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentControllerGUI" 
+    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentControllerGUI.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position x="757" y="157" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" corner="BOTTOM_RIGHT" language="java" 
-    name="agentgui.envModel.graph.controller.GraphEnvironmentController" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentController.java" binary="false">    
+  <class id="2" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentController" project="AgentGUI" 
+    file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentController.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position x="156" y="157" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.environment.EnvironmentController" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/core/environment/EnvironmentController.java" binary="false">    
+  <class id="3" language="java" name="agentgui.core.environment.EnvironmentController" project="AgentGUI" 
+    file="/AgentGUI/src/agentgui/core/environment/EnvironmentController.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="157" y="56" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.environment.EnvironmentPanel" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/core/environment/EnvironmentPanel.java" binary="false">    
+  <class id="4" language="java" name="agentgui.core.environment.EnvironmentPanel" project="AgentGUI" 
+    file="/AgentGUI/src/agentgui/core/environment/EnvironmentPanel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="756" y="56" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" corner="BOTTOM_RIGHT" language="java" 
-    name="agentgui.envModel.graph.controller.BasicGraphGuiRootJSplitPane" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiRootJSplitPane.java" binary="false">    
+  <class id="5" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiRootJSplitPane" project="AgentGUI" 
+    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiRootJSplitPane.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position x="459" y="252" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="6" corner="BOTTOM_RIGHT" language="java" 
-    name="agentgui.envModel.graph.controller.BasicGraphGui.VertexShapeSizeAspect" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGui.java" binary="false">    
+  <class id="6" language="java" name="agentgui.envModel.graph.controller.BasicGraphGui.VertexShapeSizeAspect" 
+    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGui.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position x="158" y="475" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="7" corner="BOTTOM_RIGHT" language="java" name="agentgui.envModel.graph.controller.BasicGraphGui" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGui.java" binary="false">    
+  <class id="7" language="java" name="agentgui.envModel.graph.controller.BasicGraphGui" project="AgentGUI" 
+    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGui.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="158" y="375" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" corner="BOTTOM_RIGHT" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiTools" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiTools.java" binary="false">    
+  <class id="8" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiTools" project="AgentGUI" 
+    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiTools.java" binary="false" corner="BOTTOM_RIGHT">    
     <position x="459" y="375" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="9" corner="BOTTOM_RIGHT" language="java" 
-    name="agentgui.envModel.graph.controller.GraphEnvironmentMousePlugin" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentMousePlugin.java" binary="false">    
+  <class id="9" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentMousePlugin" project="AgentGUI" 
+    file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentMousePlugin.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position x="438" y="588" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="10" corner="BOTTOM_RIGHT" language="java" 
-    name="agentgui.envModel.graph.controller.GraphEnvironmentPopupPlugin" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentPopupPlugin.java" binary="false">    
+  <class id="10" language="java" name="agentgui.envModel.graph.controller.GraphEnvironmentPopupPlugin" 
+    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/GraphEnvironmentPopupPlugin.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position x="438" y="475" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="11" corner="BOTTOM_RIGHT" language="java" 
+  <class id="11" language="java" 
     name="agentgui.envModel.graph.controller.BasicGraphGuiJDesktopPane.BasicGraphGuiGraphWorkspaceDesktopManager" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiJDesktopPane.java" 
-    binary="false">    
+    binary="false" corner="BOTTOM_RIGHT">    
     <position x="758" y="475" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="12" corner="BOTTOM_RIGHT" language="java" 
-    name="agentgui.envModel.graph.controller.BasicGraphGuiJDesktopPane" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiJDesktopPane.java" binary="false">    
+  <class id="12" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiJDesktopPane" project="AgentGUI" 
+    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiJDesktopPane.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position x="758" y="375" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="13" corner="BOTTOM_RIGHT" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiProperties" 
-    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiProperties.java" 
-    binary="false">    
+  <class id="13" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiProperties" project="AgentGUI" 
+    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiProperties.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position x="1000" y="252" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="14" corner="BOTTOM_RIGHT" language="java" 
-    name="agentgui.envModel.graph.controller.BasicGraphGuiProperties.JToolBarButton" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiProperties.java" binary="false">    
+  <class id="14" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiProperties.JToolBarButton" 
+    project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiProperties.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position x="999" y="375" width="-1" height="-1"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
   <association id="15">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="16" name="graphDesktop"/>      
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="16" name="graphGuiTools"/>      
       <multiplicity id="17" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="18">    
-    <end type="SOURCE" refId="12" navigable="false">      
-      <attribute id="19" name="propertyWindows"/>      
-      <multiplicity id="20" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="13" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="21">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="14"/>  
-  </nesting>  
-  <association id="22">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="23" name="graphController">        
-        <position x="159" y="212" width="81" height="15"/>      
-      </attribute>      
-      <multiplicity id="24" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="25">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="26" name="networkModelTabs"/>      
-      <multiplicity id="27" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="28">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="29" name="jToolBarButtonSave"/>      
-      <multiplicity id="30" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="31">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="11"/>  
-  </nesting>  
-  <association id="32">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="33" name="graphController"/>      
-      <multiplicity id="34" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="35">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="36" name="basicGraphGuiJDesktopPane"/>      
-      <multiplicity id="37" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="38">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="39" name="jToolBarButtonSaveAndExit"/>      
-      <multiplicity id="40" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="41">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="42" name="graphController">        
-        <position x="65" y="212" width="81" height="15"/>      
-      </attribute>      
-      <multiplicity id="43" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="44">    
-    <bendpoint x="460" y="31"/>    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="45" name="myEnvironmentPanel">        
-        <position x="549" y="21" width="106" height="15"/>      
-      </attribute>      
-      <multiplicity id="46" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="47">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="48" name="basicGraphGui"/>      
-      <multiplicity id="49" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="50">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="51" name="graphEnvironmentController"/>      
-      <multiplicity id="52" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="53">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="54" name="graphGUI"/>      
-      <multiplicity id="55" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="56">    
-    <bendpoint x="459" y="84"/>    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="57" name="environmentController">        
-        <position x="282" y="87" width="114" height="15"/>      
-      </attribute>      
-      <multiplicity id="58" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="59">    
-    <bendpoint x="287" y="507"/>    
-    <bendpoint x="287" y="457"/>    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="60" name="graphGUI"/>      
-      <multiplicity id="61" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="62">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <association id="63">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="64" name="graphGuiTools"/>      
-      <multiplicity id="65" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="66">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="4"/>  
-  </generalization>  
-  <association id="67">    
+  <association id="18">    
     <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="68" name="graphControllerGUI"/>      
-      <multiplicity id="69" minimum="0" maximum="1"/>    
+      <attribute id="19" name="graphControllerGUI"/>      
+      <multiplicity id="20" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="70">    
+  <association id="21">    
+    <bendpoint x="460" y="31"/>    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="22" name="myEnvironmentPanel">        
+        <position x="549" y="21" width="106" height="15"/>      
+      </attribute>      
+      <multiplicity id="23" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="24">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="71" name="graphGUI"/>      
-      <multiplicity id="72" minimum="0" maximum="1"/>    
+      <attribute id="25" name="graphGUI"/>      
+      <multiplicity id="26" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="73">    
-    <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="74" name="basicGraphGui"/>      
-      <multiplicity id="75" minimum="0" maximum="1"/>    
+  <nesting id="27">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="11"/>  
+  </nesting>  
+  <association id="28">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="29" name="basicGraphGui"/>      
+      <multiplicity id="30" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="76">    
+  <association id="31">    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="32" name="basicGraphGui"/>      
+      <multiplicity id="33" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="34">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="35" name="graphGUI"/>      
+      <multiplicity id="36" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="37">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="38" name="graphController">        
+        <position x="159" y="212" width="81" height="15"/>      
+      </attribute>      
+      <multiplicity id="39" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="40">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="41" name="basicGraphGuiJDesktopPane"/>      
+      <multiplicity id="42" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="43">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="44" name="graphEnvironmentController"/>      
+      <multiplicity id="45" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="46">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="47" name="networkModelTabs"/>      
+      <multiplicity id="48" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="49">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="50" name="jToolBarButtonSaveAndExit"/>      
+      <multiplicity id="51" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="52">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="4"/>  
+  </generalization>  
+  <generalization id="53">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <nesting id="54">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="14"/>  
+  </nesting>  
+  <nesting id="55">    
     <end type="SOURCE" refId="7"/>    
     <end type="TARGET" refId="6"/>  
   </nesting>  
+  <association id="56">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="57" name="jToolBarButtonSave"/>      
+      <multiplicity id="58" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="59">    
+    <bendpoint x="459" y="84"/>    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="60" name="environmentController">        
+        <position x="282" y="87" width="114" height="15"/>      
+      </attribute>      
+      <multiplicity id="61" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="62">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="63" name="graphController">        
+        <position x="65" y="212" width="81" height="15"/>      
+      </attribute>      
+      <multiplicity id="64" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-    visibility="true">    
-    <attributes public="true" package="true" protected="true" private="false"/>    
-    <operations public="false" package="false" protected="false" private="false"/>  
+    accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="false" static="true"/>    
+    <operations public="false" package="false" protected="false" private="false" static="true"/>  
   </classifier-display>  
   <association-display labels="true" multiplicity="true"/>
 </class-diagram>

@@ -75,5 +75,13 @@ public class ServiceSensorManager {
 	public void notifyManager(EnvironmentNotification notification) {
 		myManager.setManagerNotification(notification);
 	}
+
+	/**
+	 * Notifies the manager to pause the simulation.
+	 * @param isPauseSimulation the is pause simulation
+	 */
+	public void notifyPauseSimulation(boolean isPauseSimulation) {
+		myManager.setPauseSimulation(isPauseSimulation);
+	}
 	
 }

@@ -75,6 +75,11 @@ public class ClusterNetworkAgent extends SimulationAgent {
 		this.addBehaviour(clusterNACoalitionBehaviour);
 	}
 
+	@Override
+	public void setPauseSimulation(boolean isPauseSimulation) {
+		// TODO Auto-generated method stub
+	}
+	
 	public static int getFreeID() {
 		return clusterIDCounter++;
 	}
@@ -109,4 +114,6 @@ public class ClusterNetworkAgent extends SimulationAgent {
 		NetworkModel clusteredNM = networkModel.getAlternativeNetworkModel().get(ClusteringBehaviour.CLUSTER_NETWORK_MODL_NAME);
 		return clusteredNM;
 	}
+
+	
 }

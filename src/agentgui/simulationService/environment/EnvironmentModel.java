@@ -30,6 +30,8 @@ package agentgui.simulationService.environment;
 
 import java.io.Serializable;
 
+import agentgui.core.environment.AbstractEnvironmentModel;
+import agentgui.core.environment.DisplaytEnvironmentModel;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.time.TimeModel;
@@ -50,8 +52,8 @@ public class EnvironmentModel implements Serializable {
 	private static final long serialVersionUID = -2845036237763599630L;
 	
 	private TimeModel timeModel = null;
-	private Object abstractEnvironment = null;
-	private Object displayEnvironment	= null;	
+	private AbstractEnvironmentModel abstractEnvironment = null;
+	private DisplaytEnvironmentModel displayEnvironment	= null;	
 
 	
 	/**
@@ -85,14 +87,14 @@ public class EnvironmentModel implements Serializable {
 	 * Gets the abstract environment.
 	 * @return the abstract environment
 	 */
-	public Object getAbstractEnvironment() {
+	public AbstractEnvironmentModel getAbstractEnvironment() {
 		return abstractEnvironment;
 	}
 	/**
 	 * Sets the abstract environment.
 	 * @param newAbstractEnvironment the new abstract environment
 	 */
-	public void setAbstractEnvironment(Object newAbstractEnvironment) {
+	public void setAbstractEnvironment(AbstractEnvironmentModel newAbstractEnvironment) {
 		this.abstractEnvironment = newAbstractEnvironment;
 	}
 	
@@ -100,15 +102,38 @@ public class EnvironmentModel implements Serializable {
 	 * Gets the display environment.
 	 * @return the display environment
 	 */
-	public Object getDisplayEnvironment() {
+	public DisplaytEnvironmentModel getDisplayEnvironment() {
 		return displayEnvironment;
 	}
 	/**
 	 * Sets the display environment.
 	 * @param displayEnvironment the new display environment
 	 */
-	public void setDisplayEnvironment(Object displayEnvironment) {
+	public void setDisplayEnvironment(DisplaytEnvironmentModel displayEnvironment) {
 		this.displayEnvironment = displayEnvironment;
+	}
+
+	/**
+	 * Returns a copy of the current environment model.
+	 * @return the copy
+	 */
+	public EnvironmentModel getCopy() {
+		
+		if (this.isEmpty()==true) {
+			return null;
+		}
+				
+		EnvironmentModel copy = new EnvironmentModel();
+		if (this.timeModel!=null) {
+			copy.setTimeModel(this.timeModel.getCopy());
+		}
+		if (this.displayEnvironment!=null) {
+			copy.setDisplayEnvironment(this.displayEnvironment.getCopy());
+		}
+		if (this.abstractEnvironment!=null) {
+			copy.setAbstractEnvironment(this.abstractEnvironment.getCopy());
+		}
+		return copy;
 	}
 
 }

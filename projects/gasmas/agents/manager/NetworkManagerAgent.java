@@ -140,6 +140,11 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	}
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+	@Override
+	public void setPauseSimulation(boolean isPauseSimulation) {
+		// TODO Auto-generated method stub
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

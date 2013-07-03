@@ -29,66 +29,110 @@
 package agentgui.envModel.graph.visualisation;
 
 import jade.core.AID;
+import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import agentgui.envModel.graph.networkModel.GraphElement;
+import agentgui.envModel.graph.networkModel.GraphElementLayout;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
-import agentgui.envModel.graph.visualisation.notifications.GraphDisplayAgentNotification;
+import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
+import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
+import agentgui.envModel.graph.visualisation.notifications.GraphLayoutNotification;
 import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDirectionNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /**
  * The Class DisplayAgentNotificationHandler is used by the {@link DisplayAgent}
- * and applies the {@link GraphDisplayAgentNotification}'s to current visualisation.
+ * and applies the {@link DisplayAgentNotificationGraph}'s to current visualisation.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
 public class DisplayAgentNotificationHandler {
 
-	private DisplayAgent myDisplayAgent = null;
-	
+
 	
 	/**
 	 * Instantiates a new display agent notification handler.
-	 * @param displayAgent the display agent
 	 */
-	public DisplayAgentNotificationHandler(DisplayAgent displayAgent) {
-		this.myDisplayAgent = displayAgent;
+	public DisplayAgentNotificationHandler() {
 	}
 	
 	/**
 	 * Translates a display notification into a visual representation.
 	 * @param environmentNotification the new display notification
 	 */
-	public EnvironmentNotification setDisplayNotification(EnvironmentNotification notification) {
+	public EnvironmentNotification setDisplayNotification(GraphEnvironmentController graphController, EnvironmentNotification notification) {
 		
 		AID senderAID = notification.getSender();
-		GraphDisplayAgentNotification displayNotification = (GraphDisplayAgentNotification) notification.getNotification();
-		try {
-			// --- Try to apply the current settings ------
-			this.doDisplayAction(senderAID, displayNotification);
+		
+		if (notification.getNotification() instanceof DisplayAgentNotificationGraphMultiple) {
+			// ------------------------------------------------------
+			// --- Work on multiple notifications -------------------
+			DisplayAgentNotificationGraphMultiple displayNotifications = (DisplayAgentNotificationGraphMultiple) notification.getNotification();
+			for (int i = 0; i < displayNotifications.getDisplayNotifications().size(); i++) {
+				// --- Work on a single notification ----------------
+				DisplayAgentNotificationGraph displayNotification =  displayNotifications.getDisplayNotifications().get(i);
+				try {
+					// --- Try to apply the current settings --------
+					this.doDisplayAction(graphController, senderAID, displayNotification);
+					
+				} catch (Exception ex) {
+					System.out.println("=> Error in DisplayAgent!");
+					ex.printStackTrace();
+				}
+			}
 			
-		} catch (Exception ex) {
-			System.out.println("Error in DisplayAgent '" + this.myDisplayAgent.getLocalName() + "':");
-			ex.printStackTrace();
-		}
+		} else if (notification.getNotification() instanceof DisplayAgentNotificationGraph) {
+			// ------------------------------------------------------
+			// --- Work on a single notification --------------------
+			DisplayAgentNotificationGraph displayNotification = (DisplayAgentNotificationGraph) notification.getNotification();
+			try {
+				// --- Try to apply the current settings ------------
+				this.doDisplayAction(graphController, senderAID, displayNotification);
+				
+			} catch (Exception ex) {
+				System.out.println("=> Error in DisplayAgent!");
+				ex.printStackTrace();
+			}
+			
+		} 
 		return notification;
 	}
 	
 	/**
-	 * Do display action.
+	 * Do the concrete display action.
 	 *
 	 * @param senderAID the sender aid
 	 * @param displayNotification the GraphDisplayAgentNotification
 	 */
-	private void doDisplayAction(AID senderAID, GraphDisplayAgentNotification displayNotification) {
+	private void doDisplayAction(GraphEnvironmentController graphController, AID senderAID, DisplayAgentNotificationGraph displayNotification) {
 		
 		if (displayNotification instanceof NetworkComponentDirectionNotification) {
-			// --- Set directions of the current NetworkComponent --- 
+			// ------------------------------------------------------
+			// --- Set directions of the current NetworkComponent ---
+			// ------------------------------------------------------
 			NetworkComponentDirectionNotification netCompDirection = (NetworkComponentDirectionNotification) displayNotification;
 			NetworkComponent netComp = netCompDirection.getNetworkComponent();
-			this.myDisplayAgent.getNetworkModel().setDirectionsOfNetworkComponent(netComp);
+			graphController.getNetworkModel().setDirectionsOfNetworkComponent(netComp);
+
+		} else if (displayNotification instanceof GraphLayoutNotification) {
+			// ------------------------------------------------------
+			// --- Set the layout changes to the GraphElements ------
+			// ------------------------------------------------------
+			GraphLayoutNotification layoutNotifications = (GraphLayoutNotification) displayNotification;
+			for (int i = 0; i < layoutNotifications.getGraphElementLayouts().size(); i++) {
+				
+				GraphElementLayout graphElementLayout = layoutNotifications.getGraphElementLayouts().get(i);
+				String graphElementID = graphElementLayout.getGraphElement().getId();
+				
+				// --- Get the local element and apply the layout ---
+				GraphElement localGrahElement = graphController.getNetworkModel().getGraphElement(graphElementID);
+				graphElementLayout.setGraphElement(localGrahElement);
+				localGrahElement.setGraphElementLayout(graphElementLayout);
+			}
 
 		}
-		this.myDisplayAgent.getGraphEnvironmentController().notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));
+		// --- Repaint the Graph ------------------------------------
+		graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));
 
 	}
 	

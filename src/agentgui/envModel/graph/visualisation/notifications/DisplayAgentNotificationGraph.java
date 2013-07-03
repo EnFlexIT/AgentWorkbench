@@ -31,15 +31,13 @@ package agentgui.envModel.graph.visualisation.notifications;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 
 /**
- * The Class GraphDisplayAgentNotification is the super class for
+ * The Class DisplayAgentNotificationGraph is the super class for
  * all Notifications that can be found in this package.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
-public class GraphDisplayAgentNotification extends DisplayAgentNotification {
+public class DisplayAgentNotificationGraph extends DisplayAgentNotification {
 
 	private static final long serialVersionUID = -2215484234200157434L;
-
-	
 	
 }

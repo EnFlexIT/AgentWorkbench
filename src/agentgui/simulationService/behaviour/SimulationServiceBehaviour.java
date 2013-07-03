@@ -50,6 +50,7 @@ import agentgui.simulationService.sensoring.ServiceActuator;
 import agentgui.simulationService.sensoring.ServiceSensor;
 import agentgui.simulationService.sensoring.ServiceSensorInterface;
 import agentgui.simulationService.sensoring.ServiceSensorListener;
+import agentgui.simulationService.transaction.DisplayAgentNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /**
@@ -59,7 +60,7 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class SimulationServiceBehaviour extends Behaviour implements ServiceSensorInterface {
+public abstract class SimulationServiceBehaviour extends Behaviour implements ServiceSensorInterface {
 
 	private static final long serialVersionUID = 1782853782362543057L;
 
@@ -125,15 +126,18 @@ public class SimulationServiceBehaviour extends Behaviour implements ServiceSens
 		return this.myAgent.getAID();
 	}
 	
-	/**
-	 * Do delete.
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.sensoring.ServiceSensorInterface#doDelete()
 	 */
+	@Override
 	public void doDelete() {
 		this.done=true;
 		this.removeNotificationHandler();
 		this.sensorPlugOut();
 		this.myAgent.doDelete();
 	}
+	
 	/* (non-Javadoc)
 	 * @see jade.core.behaviours.Behaviour#done()
 	 */
@@ -321,6 +325,21 @@ public class SimulationServiceBehaviour extends Behaviour implements ServiceSens
 			e.printStackTrace();
 		}
 		return send;
+	}
+	
+	/**
+	 * Notify display agents about changes with a {@link DisplayAgentNotification}.
+	 * 
+	 * @param displayAgentNotification the display agent message
+	 */
+	public void sendDisplayAgentNotification(DisplayAgentNotification displayAgentNotification) {
+		try {
+			EnvironmentNotification notification = new EnvironmentNotification(getAID(), true, displayAgentNotification);
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) this.myAgent.getHelper(SimulationService.NAME);
+			simHelper.displayAgentNotification(notification);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -537,5 +556,6 @@ public class SimulationServiceBehaviour extends Behaviour implements ServiceSens
 		}
 		return dfAgentDescriptions;
 	}
+
 	
 }

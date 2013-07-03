@@ -81,7 +81,7 @@ public abstract class GraphElement implements Serializable {
 	 * @return the graph element layout
 	 */
 	public GraphElementLayout getGraphElementLayout(NetworkModel networkModel) {
-		if (this.graphElementLayout==null) {
+		if (this.graphElementLayout==null && networkModel!=null) {
 			this.graphElementLayout = new GraphElementLayout(this);
 			this.graphElementLayout.setNetworkModel(networkModel);
 		}

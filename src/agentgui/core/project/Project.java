@@ -95,6 +95,8 @@ import agentgui.core.webserver.JarFileCreator;
 
 	// --- public statics --------------------------------------
 	/** Constant value in order to inform the Observer about changes of this kind */
+	@XmlTransient public static final String PREPARE_FOR_SAVING = "ProjectPrepare4Saving";
+	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String SAVED = "ProjectSaved";
 	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectName = "ProjectName";
@@ -371,9 +373,12 @@ import agentgui.core.webserver.JarFileCreator;
 	public boolean save() {
 		// --- Save the current project -------------------
 		Application.getMainWindow().setStatusBar( projectName + ": " + Language.translate("speichern") + " ... ");
+		this.setNotChangedButNotify(Project.PREPARE_FOR_SAVING);		
+		
 		try {			
-			// --- prepare Context and Marshaller ---------
-			JAXBContext pc = JAXBContext.newInstance( this.getClass() ); 
+			// --------------------------------------------
+			// --- Prepare Context and Marshaller ---------
+			JAXBContext pc = JAXBContext.newInstance(this.getClass()); 
 			Marshaller pm = pc.createMarshaller(); 
 			pm.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
@@ -383,7 +388,8 @@ import agentgui.core.webserver.JarFileCreator;
 			pm.marshal(this, pw);
 			pw.close();
 			
-			// --- Save the userRuntimeObject in the Project into a different file as a serializable binary object.
+			// --- Save the userRuntimeObject into a different 
+			// --- file as a serializable binary object.
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
 		    try {

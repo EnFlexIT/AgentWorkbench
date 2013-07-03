@@ -72,10 +72,32 @@ public class GraphElementLayout {
 	}
 	
 	/**
+	 * Returns the graph element.
+	 * @return the myGraphElement
+	 */
+	public GraphElement getGraphElement() {
+		return myGraphElement;
+	}
+	/**
+	 * Sets the graph element.
+	 * @param myGraphElement the myGraphElement to set
+	 */
+	public void setGraphElement(GraphElement myGraphElement) {
+		this.myGraphElement = myGraphElement;
+	}
+	
+	/**
 	 * Sets the network model.
 	 * @param networkModel the new network model
 	 */
 	public void setNetworkModel(NetworkModel networkModel) {
+		
+		if (networkModel==null) {
+			// --- There is nothing we can do -------------
+			return;
+		}
+		
+		// --- Set the Layout of the component ------------
 		this.networkModel = networkModel;
 		this.domainHash = this.networkModel.getGeneralGraphSettings4MAS().getDomainSettings();
 		this.ctsHash = this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();

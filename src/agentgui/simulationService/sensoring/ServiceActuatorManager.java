@@ -126,5 +126,21 @@ public class ServiceActuatorManager {
 			return true;
 		}		
 	}
+	/**
+	 * Notify that simulation has to be paused or not.
+	 * @param isPauseSimulation the is pause simulation
+	 */
+	public void notifyManagerPauseSimulation(final boolean isPauseSimulation) {
+		Runnable notifier = new Runnable() {
+			@Override
+			public void run() {
+				Object[] arrLocal = serviceSensors.toArray();
+				for (int i = arrLocal.length-1; i>=0; i--) {
+					((ServiceSensorManager)arrLocal[i]).notifyPauseSimulation(isPauseSimulation);
+				}
+			}
+		};
+		notifier.run();		
+	}
 	
 }

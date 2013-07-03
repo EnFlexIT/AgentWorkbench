@@ -11,9 +11,9 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="agentgui.envModel.graph.visualisation.notifications.GraphDisplayAgentNotification" 
+  <class id="2" language="java" name="agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph" 
     project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/envModel/graph/visualisation/notifications/GraphDisplayAgentNotification.java" 
+    file="/AgentGUI/src/agentgui/envModel/graph/visualisation/notifications/DisplayAgentNotificationGraph.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position x="177" y="189" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 

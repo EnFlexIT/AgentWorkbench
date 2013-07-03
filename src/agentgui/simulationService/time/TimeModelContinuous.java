@@ -56,7 +56,7 @@ public class TimeModelContinuous extends TimeModelDateBased {
 	private transient SimulationServiceHelper simHelper = null;
 	
 	private boolean executed = false;
-	private long pauseTime = 0;
+	private Long pauseTime = null;
 	private long timeDiff = 0;
 
 	private double accelerationFactor = 1.F;
@@ -117,17 +117,14 @@ public class TimeModelContinuous extends TimeModelDateBased {
 	 * Sets the time, where the time model was paused.
 	 * @param pauseTime the new pause time
 	 */
-	private void setPauseTime(long pauseTime) {
+	private void setPauseTime(Long pauseTime) {
 		this.pauseTime = pauseTime;
 	}
 	/**
 	 * Returns the time, where the time model was paused.
 	 * @return the pause time
 	 */
-	private long getPauseTime() {
-		if (this.pauseTime==0) {
-			this.pauseTime=this.getTimeStart();
-		}
+	private Long getPauseTime() {
 		return pauseTime;
 	}
 	
@@ -143,7 +140,11 @@ public class TimeModelContinuous extends TimeModelDateBased {
 		if (this.getTimeAskingAgent()==null) {
 			// --- Work on local time settings ----------------------
 			if (executeTimeModel==true) {
-				this.setTimeDiff(this.getSystemTime() - this.getTimeStart());	
+				if (this.getPauseTime()==null) {
+					this.setTimeDiff(this.getSystemTime() - this.getTimeStart());	
+				} else {
+					this.setTimeDiff(this.getSystemTime() - this.getPauseTime());
+				}
 			} else {
 				this.setPauseTime(this.getTimeLocal());
 			}
@@ -151,7 +152,11 @@ public class TimeModelContinuous extends TimeModelDateBased {
 		} else {
 			// --- Work on the synchronised platform time -----------
 			if (executeTimeModel==true) {
-				this.setTimeDiff(this.getSystemTimeSynchronized() - this.getTimeStart());
+				if (this.getPauseTime()==null) {
+					this.setTimeDiff(this.getSystemTimeSynchronized() - this.getTimeStart());	
+				} else {
+					this.setTimeDiff(this.getSystemTimeSynchronized() - this.getPauseTime());
+				}
 			} else {
 				this.setPauseTime(this.getTimePlatform());
 			}
@@ -246,9 +251,13 @@ public class TimeModelContinuous extends TimeModelDateBased {
 	private long getTimeLocal() {
 		long currTime;
 		if (isExecuted()==true) {
-			currTime = this.getSystemTime() - getTimeDiff();
+			currTime = this.getSystemTime() - this.getTimeDiff();
 		} else {
-			currTime = this.getPauseTime();
+			if (this.getPauseTime()==null) {
+				currTime = this.getTimeStart();
+			} else {
+				currTime = this.getPauseTime();
+			}
 		}
 		return currTime;
 	}
@@ -264,9 +273,13 @@ public class TimeModelContinuous extends TimeModelDateBased {
 	private long getTimePlatform() {
 		long currTime;
 		if (isExecuted()==true) {
-			currTime = this.getSystemTimeSynchronized() - getTimeDiff();
+			currTime = this.getSystemTimeSynchronized() - this.getTimeDiff();
 		} else {
-			currTime = this.getPauseTime();
+			if (this.getPauseTime()==null) {
+				currTime = this.getTimeStart();
+			} else {
+				currTime = this.getPauseTime();
+			}
 		}
 		return currTime;
 	}

@@ -80,6 +80,14 @@ public class ServiceSensor {
 	}
 	
 	/**
+	 * Sets that the simulation is to be paused or not.
+	 * @param isPauseSimulation the new pause simulation
+	 */
+	public void setPauseSimulation(boolean isPauseSimulation ) {
+		myServiceSensor.setPauseSimulation(isPauseSimulation);
+	}
+	
+	/**
 	 * Puts the Location to the agent, where the agent has to migrate to.
 	 * @param newLocation the new location
 	 */

@@ -606,6 +606,7 @@ en;;Close Properties;;;
 en;;Compressor;;;
 en;;Copy Selection;;;
 en;;Cut Selection;;;
+en;;Discrete squares environment;;;
 en;;Drives;;;
 en;;Electric Motor;;;
 en;;Error while gather compressor station model;;;

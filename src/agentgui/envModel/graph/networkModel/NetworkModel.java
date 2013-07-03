@@ -29,7 +29,6 @@
 package agentgui.envModel.graph.networkModel;
 
 import java.awt.geom.Point2D;
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +40,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import agentgui.core.environment.DisplaytEnvironmentModel;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.prototypes.ClusterGraphElement;
 import agentgui.envModel.graph.prototypes.DistributionNode;
@@ -58,7 +58,7 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class NetworkModel implements Serializable {
+public class NetworkModel extends DisplaytEnvironmentModel {
 
 	private static final long serialVersionUID = -5712689010090750522L;
 
@@ -666,7 +666,11 @@ public class NetworkModel implements Serializable {
 	
 	
 	/**
-	 * Extract graph node IDs.
+	 * Extracts the ID's of the GraphElements of the specified NetworkComponent. The parameter 'searchForInstance' can be
+	 * an exemplary instance of {@link GraphNode}, {@link GraphEdge} or null. This can be seen as a filter. 
+	 * If a {@link GraphNode} is specified, the method will return all GraphNodes of the {@link NetworkComponent}. 
+	 * The same applies for an instance of {@link GraphEdge}, while with Null the method will returns all
+	 * {@link GraphElement}'s.
 	 *
 	 * @param networkComponent the network component
 	 * @param searchForInstance the search for instance
@@ -699,6 +703,36 @@ public class NetworkModel implements Serializable {
 			}
 		}
 		return elementIDsFound;
+	}
+	
+	/**
+	 * Returns the graph elements of a specified NetworkComponent. The parameter 'searchForInstance' can be
+	 * an exemplary instance of {@link GraphNode}, {@link GraphEdge} or null. This can be seen as a filter. 
+	 * If a {@link GraphNode} is specified, the method will return all GraphNodes of the {@link NetworkComponent}. 
+	 * The same applies for an instance of {@link GraphEdge}, while with Null the method will returns all
+	 * {@link GraphElement}'s.
+	 *
+	 * @param networkComponent the network component
+	 * @param searchForInstance the search for instance
+	 * @return the graph elements of network component
+	 */
+	public HashSet<GraphElement> getGraphElementsOfNetworkComponent(NetworkComponent networkComponent, GraphElement searchForInstance) {
+		
+		HashSet<GraphElement> graphElements = null;
+		HashSet<String> graphElementIDs = this.extractGraphElementIDs(networkComponent, searchForInstance);
+		if (graphElementIDs!=null & graphElementIDs.size()!=0) {
+			graphElements = new HashSet<GraphElement>();
+			for (String graphElementID : graphElementIDs) {
+				GraphElement graphElement = this.getGraphElement(graphElementID);
+				if (graphElement!=null) {
+					if (graphElements==null) {
+						graphElements = new HashSet<GraphElement>();
+					}
+					graphElements.add(graphElement);
+				}
+			}
+		}
+		return graphElements;
 	}
 	
 	/**

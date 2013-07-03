@@ -117,7 +117,7 @@ public class KeyAdapter4Numbers extends KeyAdapter {
 			}
 			
 		} else {
-			// --- Integer values ---------------------
+			// --- Integer or Long values ---------------------
 			if ( singleChar.matches( "[0-9]" ) == false ) {
 				kT.consume();	
 				return;

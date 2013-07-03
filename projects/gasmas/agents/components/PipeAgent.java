@@ -8,4 +8,10 @@ public class PipeAgent extends GenericNetworkAgent {
 	protected void setup() {
 		super.setup();
 	}
+	
+	@Override
+	public void setPauseSimulation(boolean isPauseSimulation) {
+		// TODO Auto-generated method stub
+	}
+
 }

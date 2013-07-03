@@ -407,6 +407,8 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		boolean changed = false;
 
+		if (this.adapter4DataModel==null) return false;
+		
 		this.adapter4DataModel.save();
 		Object dataModel = this.adapter4DataModel.getDataModel();
 		Vector<String> dataModelBase64 = this.adapter4DataModel.getDataModelBase64Encoded(dataModel);

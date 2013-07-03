@@ -229,8 +229,15 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 		}
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.sensoring.ServiceSensorInterface#setPauseSimulation(boolean)
+	 */
+	@Override
+	public void setPauseSimulation(boolean isPauseSimulation) {
+		System.out.println("No pause action for " + this.getLocalName() + " specified!");
+	}
 
+	
 	/**
 	 * The Class SynchTimeGUI.
 	 */
@@ -385,5 +392,5 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 		}
 
 	}
-	
+
 } 
