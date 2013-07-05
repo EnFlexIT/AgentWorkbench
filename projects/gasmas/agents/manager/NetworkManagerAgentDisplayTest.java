@@ -132,7 +132,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 			Object[] dataModelArr = (Object[]) dataModel;
 			
 			Exit exit = (Exit) dataModelArr[0];
-			exit.setAlias("TestWert");
+			exit.setAlias("Test Nr. 2");
 			
 			TimeSeriesChart tsc = (TimeSeriesChart) dataModelArr[1];
 			tsc.getVisualizationSettings().setChartTitle("This is a test notification");

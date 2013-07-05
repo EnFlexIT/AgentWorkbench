@@ -77,7 +77,7 @@ public class GraphNode extends GraphElement {
 	 */
 	@Override
 	public GraphNode getCopy(NetworkModel networkModel) {
-		GraphNode nodeCopy = new GraphNode(this.id, new Point2D.Double(this.position.getX(), this.position.getY()));
+		GraphNode nodeCopy = new GraphNode(new String(this.id), new Point2D.Double(this.position.getX(), this.position.getY()));
 		if (this.graphElementLayout!=null) {
 			nodeCopy.setGraphElementLayout(this.graphElementLayout.getCopy(nodeCopy));	
 		}

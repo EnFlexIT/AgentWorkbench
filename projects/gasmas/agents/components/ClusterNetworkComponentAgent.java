@@ -106,9 +106,5 @@ public class ClusterNetworkComponentAgent extends GenericNetworkAgent {
 	public void setMigration(Location newLocation) {
 		// TODO Auto-generated method stub
 	}
-	@Override
-	public void onEnvironmentStimulus() {
-		// TODO Auto-generated method stub
-	}
 	
 }

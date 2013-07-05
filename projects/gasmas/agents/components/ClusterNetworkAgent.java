@@ -97,11 +97,8 @@ public class ClusterNetworkAgent extends SimulationAgent {
 		this.clusterNetworkComponent=clusterNetworkComponent;
 	}
 
-	/**
-	 * This method will be executed if a ManagerNotification arrives this agent.
-	 *
-	 * @param notification the notification
-	 * @return the environment notification
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentNotification(agentgui.simulationService.transaction.EnvironmentNotification)
 	 */
 	@Override
 	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {

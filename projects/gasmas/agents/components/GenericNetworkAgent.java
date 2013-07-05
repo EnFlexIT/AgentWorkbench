@@ -132,13 +132,15 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 			if (envModel != null) {
 				this.myEnvironmentModel = envModel;
 				this.myNetworkModel = ((NetworkModel) this.myEnvironmentModel.getDisplayEnvironment());
+				this.myNetworkComponent = myNetworkModel.getNetworkComponent(this.getLocalName());
+				// --- Creates the initialProcessBehaviour, but did not start it ---
+				this.initialProcessBehaviour = new InitialProcessBehaviour(this);
+				this.addBehaviour(initialProcessBehaviour);
 			}
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
 		
-		// --- Creates the initialProcessBehaviour, but did not start it ---
-		initialProcessBehaviour = new InitialProcessBehaviour(this);
 	}
 
 	/*
@@ -155,9 +157,8 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 			this.myNetworkComponent = myNetworkModel.getNetworkComponent(this.getLocalName());
 			// Start of the initial start process
 			if (normalStart) {
-//				Did not start the behaviour at every agent
-//				this.addBehaviour(initialProcessBehaviour);
-				initialProcessBehaviour.action();
+				this.initialProcessBehaviour = new InitialProcessBehaviour(this);
+				this.addBehaviour(initialProcessBehaviour);
 			}
 		}
 

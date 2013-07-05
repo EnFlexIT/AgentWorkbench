@@ -150,7 +150,11 @@ public class DisplayAgent extends AbstractDisplayAgent {
 			while (this.getStimuliOfNetworkModel().size()!=0) {
 				try {
 					EnvironmentModel envModel = this.getStimuliOfNetworkModel().get(0);
-					this.myEnvironmentModel = envModel.getCopy();
+					if (this.myEnvironmentModel==envModel) {
+						this.myEnvironmentModel = envModel.getCopy();	
+					} else {
+						this.myEnvironmentModel = envModel;
+					}
 					this.getStimuliOfNetworkModel().remove(0);
 					
 					this.setTimeModelDisplay(this.myEnvironmentModel.getTimeModel());

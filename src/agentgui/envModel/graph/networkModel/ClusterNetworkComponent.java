@@ -76,7 +76,7 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	@Override
 	public ClusterNetworkComponent getCopy(NetworkModel networkModel) {
 		
-		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.agentClassName, null, this.directed, this.domain, this.clusterNetworkModel.getCopy());
+		ClusterNetworkComponent copy = new ClusterNetworkComponent(new String(this.id), new String(this.type), new String(this.agentClassName), null, this.directed, new String(this.domain), this.clusterNetworkModel.getCopy());
 		HashSet<String> gaphElementIDs = new HashSet<String>(this.getGraphElementIDs());
 		copy.setGraphElementIDs(gaphElementIDs);
 		

@@ -106,7 +106,7 @@ public class NetworkComponent implements Serializable {
 	public NetworkComponent getCopy(NetworkModel networkModel) {
 		
 		HashSet<String> gaphElementIDs = new HashSet<String>(this.getGraphElementIDs());
-		NetworkComponent copy = new NetworkComponent(this.id, this.type, this.prototypeClassName, this.agentClassName, null, this.directed);
+		NetworkComponent copy = new NetworkComponent(new String(this.id), new String(this.type), new String(this.prototypeClassName), new String(this.agentClassName), null, this.directed);
 		copy.setGraphElementIDs(gaphElementIDs);
 		
 		// --- Copy the data model ------------------------

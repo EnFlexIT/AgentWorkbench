@@ -93,6 +93,7 @@ public abstract class SimulationManagerAgent extends Agent {
 		try {
 		  simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 		  simHelper.setManagerAgent(this.getAID());
+		  
 		} catch(ServiceException ex) {
 			  ex.printStackTrace();
 			  this.doDelete();
