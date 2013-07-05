@@ -28,6 +28,8 @@
  */
 package gasmas.agents.manager;
 
+import gasmas.ontology.Exit;
+
 import java.awt.Color;
 import java.util.HashSet;
 
@@ -41,6 +43,8 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
 import agentgui.envModel.graph.visualisation.notifications.GraphLayoutNotification;
+import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDataModelNotification;
+import agentgui.ontology.TimeSeriesChart;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.agents.SimulationManagerAgent;
@@ -84,7 +88,9 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		
 		// ----------------------------------------------------------
 		// --- Create a set of display notifications ----------------
+		// ----------------------------------------------------------
 		DisplayAgentNotificationGraphMultiple notifications = new DisplayAgentNotificationGraphMultiple();
+		// ----------------------------------------------------------
 		
 		
 		// ----------------------------------------------------------
@@ -110,10 +116,30 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 					
 					layoutNotification.addGraphElementLayout(layout);
 				}
-				notifications.addDisplayNotification(layoutNotification);
 
 			}
 			
+		}
+		notifications.addDisplayNotification(layoutNotification);
+		
+		// ----------------------------------------------------------
+		// --- Second example: Set data model of a NetworkModel -----
+		// ----------------------------------------------------------
+		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38");
+		if (netComp!=null) {
+			
+			Object dataModel = netComp.getDataModel();
+			Object[] dataModelArr = (Object[]) dataModel;
+			
+			Exit exit = (Exit) dataModelArr[0];
+			exit.setAlias("TestWert");
+			
+			TimeSeriesChart tsc = (TimeSeriesChart) dataModelArr[1];
+			tsc.getVisualizationSettings().setChartTitle("This is a test notification");
+			
+			NetworkComponentDataModelNotification dmNote = new NetworkComponentDataModelNotification(netComp);
+			dmNote.setDataModelPartUpdateIndex(0);
+			notifications.addDisplayNotification(dmNote);
 		}
 		
 		// ----------------------------------------------------------

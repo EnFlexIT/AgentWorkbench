@@ -205,6 +205,8 @@ public interface SimulationServiceSlice extends Service.Slice {
 	static final String SERVICE_STOP_SIMULATION_AGENTS = "stop-simulation-agents";
 	/** The Constant SIM_PAUSE_SIMULATION. */
 	static final String SIM_PAUSE_SIMULATION = "sim-pause";
+	/** The Constant SERVICE_SET_AGENT_MIGRATION. */
+	static final String SERVICE_SET_AGENT_MIGRATION = "set-agent-migration";
 	
 	/**
 	 * Stops the simulation agents.
@@ -220,11 +222,6 @@ public interface SimulationServiceSlice extends Service.Slice {
 	 */
 	public void setPauseSimulation(boolean pauseSimulation) throws IMTPException;
 	
-	
-	// ----------------------------------------------------------
-	// --- Methods for load-informations of all containers ------
-	/** The Constant SERVICE_SET_AGENT_MIGRATION. */
-	static final String SERVICE_SET_AGENT_MIGRATION = "set-agent-migration";
 	/**
 	 * Sets the new locations to the agents.
 	 *

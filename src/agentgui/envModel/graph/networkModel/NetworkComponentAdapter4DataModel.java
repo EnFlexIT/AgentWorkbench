@@ -103,7 +103,11 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * @return the data model
 	 */
 	public abstract Object getDataModel();
-	
+	/**
+	 * Requires to implement a copy method for the current data model of the visualisation component.
+	 * @return the copy of the current data model
+	 */
+	public abstract Object getDataModelCopy();
 	
 	/**
 	 * Returns the data model of a {@link NetworkComponent} as Vector of Base64 encoded String.

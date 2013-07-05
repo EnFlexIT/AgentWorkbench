@@ -1,5 +1,7 @@
 package gasmas.agents.components;
 
+import jade.core.Location;
+
 
 public class BranchAgent extends GenericNetworkAgent {
 
@@ -14,6 +16,12 @@ public class BranchAgent extends GenericNetworkAgent {
 
 	@Override
 	public void setPauseSimulation(boolean isPauseSimulation) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMigration(Location newLocation) {
 		// TODO Auto-generated method stub
 		
 	}

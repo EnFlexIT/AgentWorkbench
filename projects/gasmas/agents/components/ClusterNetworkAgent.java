@@ -32,6 +32,7 @@ import gasmas.clustering.behaviours.ClusteringBehaviour;
 import gasmas.clustering.behaviours.CycleClusteringBehaviour;
 import gasmas.clustering.coalitions.ClusterNACoalitionBehaviour;
 import gasmas.clustering.coalitions.CoalitionBehaviour;
+import jade.core.Location;
 import jade.core.ServiceException;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
@@ -77,6 +78,14 @@ public class ClusterNetworkAgent extends SimulationAgent {
 
 	@Override
 	public void setPauseSimulation(boolean isPauseSimulation) {
+		// TODO Auto-generated method stub
+	}
+	@Override
+	public void setMigration(Location newLocation) {
+		// TODO Auto-generated method stub
+	}
+	@Override
+	public void onEnvironmentStimulus() {
 		// TODO Auto-generated method stub
 	}
 	

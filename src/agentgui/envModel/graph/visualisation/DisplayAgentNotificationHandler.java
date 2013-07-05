@@ -32,11 +32,13 @@ import jade.core.AID;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphElementLayout;
+import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
 import agentgui.envModel.graph.visualisation.notifications.GraphLayoutNotification;
+import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDataModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDirectionNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
@@ -130,6 +132,101 @@ public class DisplayAgentNotificationHandler {
 				localGrahElement.setGraphElementLayout(graphElementLayout);
 			}
 
+		} else if (displayNotification instanceof NetworkComponentDataModelNotification) {
+			// ------------------------------------------------------
+			// --- Set data model of NetworkComponent or GraphNode --
+			// ------------------------------------------------------
+			NetworkComponentDataModelNotification dmNote = (NetworkComponentDataModelNotification) displayNotification;
+			if (dmNote.isEmpty()==false) {
+
+				if (dmNote.isNetworkComponentConfiguration()==true) {
+					// ----------------------------------------------
+					// --- Case NetworkComponent --------------------
+					NetworkComponent netCompSend  = dmNote.getNetworkComponent();
+					NetworkComponent netCompLocal = graphController.getNetworkModel().getNetworkComponent(netCompSend.getId());
+					if (dmNote.isUseDataModelBase64Encoded()==true) {
+						// --- Case Base64 -------------------------- 
+						if (dmNote.getDataModelPartUpdateIndex()==-1) {
+							// --- Take everything ------------------
+							netCompLocal.setDataModelBase64(netCompSend.getDataModelBase64());
+						} else {
+							// --- Just take a specified detail -----
+							int updateIndex = dmNote.getDataModelPartUpdateIndex();
+							String updateString = netCompSend.getDataModelBase64().get(updateIndex);
+							netCompLocal.getDataModelBase64().setElementAt(updateString, updateIndex);
+						}
+						
+					} else {
+						// --- Case Object instance -----------------
+						if (dmNote.getDataModelPartUpdateIndex()==-1) {
+							// --- Take everything ------------------
+							netCompLocal.setDataModel(netCompSend.getDataModel());
+						} else {
+							// --- Just take a specified detail -----
+							Object dataModelSend = netCompSend.getDataModel();
+							Object dataModelLocal = netCompLocal.getDataModel();
+							
+							if (dataModelSend instanceof Object[] && dataModelLocal instanceof Object[]) {
+								// --- Just take a specified detail -
+								Object[] dataModelSendArr = (Object[]) dataModelSend;
+								Object[] dataModelLocalArr = (Object[]) dataModelLocal;
+								int updateIndex = dmNote.getDataModelPartUpdateIndex();
+								dataModelLocalArr[updateIndex] = dataModelSendArr[updateIndex];
+							} else {
+								// --- Worst Case: Take everything --
+								netCompLocal.setDataModel(netCompSend.getDataModel());
+							}
+						}
+						
+					}
+					// --- Case NetworkComponent - End --------------
+					// ----------------------------------------------
+					
+				} else {
+					// ----------------------------------------------
+					// --- Case GraphNode ---------------------------
+					GraphNode graphNodeSend  = dmNote.getGraphNode();
+					GraphNode graphNodeLocal = (GraphNode) graphController.getNetworkModel().getGraphElement(graphNodeSend.getId());
+					if (dmNote.isUseDataModelBase64Encoded()==true) {
+						// --- Case Base64 -------------------------- 
+						if (dmNote.getDataModelPartUpdateIndex()==-1) {
+							// --- Take everything ------------------
+							graphNodeLocal.setDataModelBase64(graphNodeSend.getDataModelBase64());
+						} else {
+							int updateIndex = dmNote.getDataModelPartUpdateIndex();
+							String updateString = graphNodeSend.getDataModelBase64().get(updateIndex);
+							graphNodeLocal.getDataModelBase64().setElementAt(updateString, updateIndex);
+						}
+						
+					} else {
+						// --- Case Object instance -----------------
+						if (dmNote.getDataModelPartUpdateIndex()==-1) {
+							// --- Take everything ------------------
+							graphNodeLocal.setDataModel(graphNodeSend.getDataModel());
+						} else {
+							// --- Just take a specified detail -----
+							Object dataModelSend = graphNodeSend.getDataModel();
+							Object dataModelLocal = graphNodeLocal.getDataModel();
+							
+							if (dataModelSend instanceof Object[] && dataModelLocal instanceof Object[]) {
+								// --- Just take a specified detail -
+								Object[] dataModelSendArr = (Object[]) dataModelSend;
+								Object[] dataModelLocalArr = (Object[]) dataModelLocal;
+								int updateIndex = dmNote.getDataModelPartUpdateIndex();
+								dataModelLocalArr[updateIndex] = dataModelSendArr[updateIndex];
+							} else {
+								// --- Worst Case: Take everything --
+								graphNodeLocal.setDataModel(graphNodeSend.getDataModel());
+							}
+						}
+					}
+					// --- Case GraphNode - End ---------------------
+					// ----------------------------------------------
+				}
+				
+			}
+			
+			
 		}
 		// --- Repaint the Graph ------------------------------------
 		graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));

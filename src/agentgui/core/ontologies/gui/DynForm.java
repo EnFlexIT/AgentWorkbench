@@ -802,6 +802,14 @@ public class DynForm extends DynFormBase {
 		return ontoArgsInstance;
 	}
 	/**
+	 * Returns a copy of the current ontology arguments instances.
+	 * @return the agentArgsInstance
+	 */
+	public Object[] getOntoArgsInstanceCopy() {
+		return this.getInstancesFromXML(ontoArgsXML, true);
+	}
+	
+	/**
 	 * Sets the instances of the ontology arguments.
 	 * @param ontologyInstances the new instances of the ontology arguments
 	 */

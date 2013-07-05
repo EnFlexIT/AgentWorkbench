@@ -658,11 +658,18 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		}
 	}
 	/**
-	 * Gets the configuration instances.
+	 * Returns the configuration instances.
 	 * @return the configurationInstances
 	 */
 	public Object[] getConfigurationInstances() {
 		return this.getDynForm().getOntoArgsInstance();
 	}
 
+	/**
+	 * Returns the configuration instances.
+	 * @return the configurationInstances
+	 */
+	public Object[] getConfigurationInstancesCopy() {
+		return this.getDynForm().getOntoArgsInstanceCopy();
+	}
 }

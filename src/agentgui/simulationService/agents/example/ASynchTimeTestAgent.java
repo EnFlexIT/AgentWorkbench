@@ -29,6 +29,7 @@
 package agentgui.simulationService.agents.example;
 
 import jade.core.Agent;
+import jade.core.Location;
 import jade.core.ServiceException;
 import jade.core.behaviours.TickerBehaviour;
 
@@ -213,7 +214,7 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentStimulus()
 	 */
 	@Override
-	protected void onEnvironmentStimulus() {
+	public void onEnvironmentStimulus() {
 		
 		SimulationServiceHelper simHelper = null;
 		try {
@@ -236,6 +237,11 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 	public void setPauseSimulation(boolean isPauseSimulation) {
 		System.out.println("No pause action for " + this.getLocalName() + " specified!");
 	}
+	@Override
+	public void setMigration(Location newLocation) {
+		System.out.println("No migration action for " + this.getLocalName() + " specified!");
+	}
+
 
 	
 	/**
@@ -392,5 +398,6 @@ public class ASynchTimeTestAgent extends SimulationAgent {
 		}
 
 	}
+
 
 } 

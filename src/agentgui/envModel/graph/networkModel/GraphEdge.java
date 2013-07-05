@@ -37,14 +37,10 @@ package agentgui.envModel.graph.networkModel;
  */
 public class GraphEdge extends GraphElement {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1043215558300713661L;
 
 	/** The type identifier of the network component represented by this edge. */
 	private String componentType;
-
-	/** The weight / costs of this edge / component. */
-	private float weight;
 
 	/**
 	 * Constructor.
@@ -58,18 +54,16 @@ public class GraphEdge extends GraphElement {
 		this.componentType = componentType;
 	}
 
-	/**
-	 * Returns a copy of the current GraphEdge.
-	 * @return a copy of the current GraphEdge
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.GraphElement#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
 	@Override
-	public GraphEdge getCopy() {
+	public GraphEdge getCopy(NetworkModel networkModel) {
 		GraphEdge edgceCopy = new GraphEdge(new String(this.id), new String(this.componentType));
 		if (this.graphElementLayout!=null) {
 			edgceCopy.setGraphElementLayout(this.graphElementLayout.getCopy(edgceCopy));	
 		}
 		edgceCopy.setComponentType(this.getComponentType());
-		edgceCopy.setWeight(this.weight);
 		return edgceCopy;
 	}
 
@@ -88,19 +82,4 @@ public class GraphEdge extends GraphElement {
 		this.componentType = componentType;
 	}
 
-	/**
-	 * Gets the weight.
-	 * @return the weight
-	 */
-	public float getWeight() {
-		return weight;
-	}
-	/**
-	 * Sets the weight.
-	 * @param weight the weight to set
-	 */
-	public void setWeight(float weight) {
-		this.weight = weight;
-	}
-	
 }

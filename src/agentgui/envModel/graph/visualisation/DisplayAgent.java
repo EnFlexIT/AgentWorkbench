@@ -28,6 +28,8 @@
  */
 package agentgui.envModel.graph.visualisation;
 
+import jade.core.Location;
+
 import java.util.Vector;
 
 import agentgui.core.environment.EnvironmentController;
@@ -109,6 +111,14 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	}
 	
 	/* (non-Javadoc)
+	 * @see agentgui.simulationService.sensoring.ServiceSensorInterface#setMigration(jade.core.Location)
+	 */
+	@Override
+	public void setMigration(Location newLocation) {
+		System.out.println("No action specified for the migratioin of this DisplayAgent: " + this.getLocalName());
+	}
+
+	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#setPauseSimulation(boolean)
 	 */
 	@Override
@@ -120,7 +130,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentStimulus()
 	 */
 	@Override
-	protected void onEnvironmentStimulus() {
+	public void onEnvironmentStimulus() {
 		
 		boolean runStimuliRemover = false;
 		

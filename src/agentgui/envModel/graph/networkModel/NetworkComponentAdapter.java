@@ -35,6 +35,7 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 
+import agentgui.core.environment.EnvironmentController;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -65,6 +66,20 @@ public abstract class NetworkComponentAdapter {
 	
 	/**
 	 * Instantiates a new network component adapter.
+	 */
+	public NetworkComponentAdapter() {
+
+	}
+	/**
+	 * Instantiates a new network component adapter that allows access 
+	 * to the controlling agent if there is one.
+	 * 
+	 * @see EnvironmentController#getEnvironmentControllerAgent()
+	 * @see EnvironmentController#setEnvironmentControllerAgent(agentgui.simulationService.agents.AbstractDisplayAgent)
+	 * 
+	 * @see GraphEnvironmentController#getEnvironmentControllerAgent()
+	 * @see GraphEnvironmentController#setEnvironmentControllerAgent(agentgui.simulationService.agents.AbstractDisplayAgent)
+	 * 
 	 * @param graphEnvironmentController the graph environment controller
 	 */
 	public NetworkComponentAdapter(GraphEnvironmentController graphEnvironmentController) {
@@ -82,7 +97,9 @@ public abstract class NetworkComponentAdapter {
 	 * The idea to store one instance of the NetworkComponentAdapter4DataModel comes from
 	 * the fact that the instantiation of such Object can be quit time consuming. In order 
 	 * to accelerate the load process of a NetworkModel (with possibly hundreds of similar
-	 * components) one instance will be stored here.  
+	 * components) one instance will be stored here. In case that no data model adapter is
+	 * found, the method will created a new one by invoking {@link #getNewDataModelAdapter()}.
+	 * 
 	 * @return the stored data model adapter
 	 */
 	public NetworkComponentAdapter4DataModel getStoredDataModelAdapter() {

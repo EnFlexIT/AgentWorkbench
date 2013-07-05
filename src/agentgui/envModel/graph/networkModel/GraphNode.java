@@ -38,7 +38,6 @@ import java.util.Vector;
  * @see GraphElement
  * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
- * 
  */
 public class GraphNode extends GraphElement {
 
@@ -74,16 +73,32 @@ public class GraphNode extends GraphElement {
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.GraphElement#getCopy()
+	 * @see agentgui.envModel.graph.networkModel.GraphElement#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
 	@Override
-	public GraphNode getCopy() {
+	public GraphNode getCopy(NetworkModel networkModel) {
 		GraphNode nodeCopy = new GraphNode(this.id, new Point2D.Double(this.position.getX(), this.position.getY()));
 		if (this.graphElementLayout!=null) {
 			nodeCopy.setGraphElementLayout(this.graphElementLayout.getCopy(nodeCopy));	
 		}
-		nodeCopy.setDataModel(this.dataModel);
-		nodeCopy.setDataModelBase64(this.dataModelBase64);	
+		// --- Copy the data model ------------------------
+		if (this.dataModel!=null) {
+			NetworkComponentAdapter adapter = networkModel.getNetworkComponentAdapter(null, this);
+			Object dataModelCopy = adapter.getStoredDataModelAdapter().getDataModelCopy();
+			nodeCopy.setDataModel(dataModelCopy);
+		}
+		// --- Copy the Base64 data model -----------------
+		if (this.dataModelBase64!=null) {
+			Vector<String> dataModelCopy64 = new Vector<String>();
+			for (String single64 : this.dataModelBase64) {
+				if (single64!=null & single64.equals("")==false) {
+					dataModelCopy64.add(new String(single64));
+				} else {
+					dataModelCopy64.add(null);
+				}
+			}
+			nodeCopy.setDataModelBase64(dataModelCopy64);
+		}
 		return nodeCopy;
 	}
 

@@ -198,10 +198,10 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			HashMap<String, NetworkComponent> copyOfComponents = new HashMap<String, NetworkComponent>();
 			for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
 				if (networkComponent instanceof ClusterNetworkComponent) {
-					ClusterNetworkComponent networkComponentCopy = ((ClusterNetworkComponent) networkComponent).getCopy();
+					ClusterNetworkComponent networkComponentCopy = ((ClusterNetworkComponent) networkComponent).getCopy(this);
 					copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
 				} else {
-					NetworkComponent networkComponentCopy = networkComponent.getCopy();
+					NetworkComponent networkComponentCopy = networkComponent.getCopy(this);
 					copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
 				}
 			}
@@ -244,7 +244,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		HashMap<String, GraphNode> graphNodeCopies = new HashMap<String, GraphNode>();
 		for (int i = 0; i < nodes.length; i++) {
 			GraphNode node = nodes[i];
-			GraphNode nodeCopy = node.getCopy();
+			GraphNode nodeCopy = node.getCopy(this);
 			graphNodeCopies.put(node.getId(), nodeCopy);
 			copyGraph.addVertex(nodeCopy);
 		}
@@ -260,7 +260,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 
 			GraphNode copyFirst = graphNodeCopies.get(first.getId());
 			GraphNode copySecond = graphNodeCopies.get(second.getId());
-			GraphEdge copyEdge = edge.getCopy();
+			GraphEdge copyEdge = edge.getCopy(this);
 			copyGraph.addEdge(copyEdge, copyFirst, copySecond, edgeType);
 		}
 		return copyGraph;
@@ -544,7 +544,11 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return The NetworkComponent
 	 */
 	public NetworkComponent getNetworkComponent(String id) {
-		return networkComponents.get(id);
+		if (id==null | id.equals("")) {
+			return null;
+		} else {
+			return networkComponents.get(id);	
+		}
 	}
 
 	/**
@@ -1613,7 +1617,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		for( GraphNode graphNode : clusterNetworkComponent.getClusterNetworkModel().getGraph().getVertices()) {
 			
 			if (getGraphElement(graphNode.getId()) == null) {
-				GraphNode graphNodeCopy = graphNode.getCopy();
+				GraphNode graphNodeCopy = graphNode.getCopy(this);
 				graph.addVertex(graphNodeCopy);
 				graphElements.put(graphNodeCopy.getId(), graphNodeCopy);
 			}

@@ -62,11 +62,14 @@ public abstract class GraphElement implements Serializable {
 
 	/**
 	 * Returns a copy of the current GraphElement (GraphNode or GraphEdge).
+	 * 
 	 * @see GraphNode
 	 * @see GraphEdge
+	 *
+	 * @param networkModel the current network model (required because of the {@link NetworkComponentAdapter})
 	 * @return the copy of the current instance
 	 */
-	public abstract GraphElement getCopy();
+	public abstract GraphElement getCopy(NetworkModel networkModel);
 
 	
 	/**

@@ -30,7 +30,6 @@ package agentgui.simulationService.agents;
 
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.Location;
 import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
@@ -68,8 +67,6 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 	protected ServiceSensor mySensor;
 	/** The current EnvironmentModel. */
 	protected EnvironmentModel myEnvironmentModel;
-	/** The location, where the agent has to migrate to. */
-	protected Location myNewLocation;
 	
 	private CyclicNotificationHandler notificationHandler = null;
 	private Vector<EnvironmentNotification> notifications = new Vector<EnvironmentNotification>();
@@ -119,7 +116,6 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 	 */
 	@Override
 	protected void afterMove() {
-		this.myNewLocation = null;
 		super.afterMove();		
 		this.sensorPlugIn();
 		this.addNotificationHandler();
@@ -222,13 +218,6 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationServiceListener#setMigration(jade.core.Location)
-	 */
-	public void setMigration(Location newLocation) {
-		myNewLocation = newLocation;
-	}
-	
-	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationServiceListener#setEnvironmentModel(agentgui.simulationService.environment.EnvironmentModel, boolean)
 	 */
 	public void setEnvironmentModel(EnvironmentModel envModel, boolean aSynchron) {
@@ -267,8 +256,7 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 	 * This method is called if a stimulus from the outside reached this agent.
 	 * It can be overwritten in the child class to act on environment changes. 
 	 */
-	protected void onEnvironmentStimulus() {
-	}
+	public abstract void onEnvironmentStimulus();
 	
 	
 	/**

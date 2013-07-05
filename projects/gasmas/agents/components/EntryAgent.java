@@ -1,5 +1,7 @@
 package gasmas.agents.components;
 
+import jade.core.Location;
+
 
 public class EntryAgent extends GenericNetworkAgent {
 
@@ -14,6 +16,13 @@ public class EntryAgent extends GenericNetworkAgent {
 	public void setPauseSimulation(boolean isPauseSimulation) {
 		// TODO Auto-generated method stub
 	}
-
+	@Override
+	public void setMigration(Location newLocation) {
+		// TODO Auto-generated method stub
+	}
+	@Override
+	public void onEnvironmentStimulus() {
+		// TODO Auto-generated method stub
+	}
 	
 }

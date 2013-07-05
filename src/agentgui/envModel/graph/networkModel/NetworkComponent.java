@@ -98,16 +98,35 @@ public class NetworkComponent implements Serializable {
 	}
 	
 	/**
-	 * Gets the copy.
+	 * Returns a copy of the current NetworkComponent.
+	 *
+	 * @param networkModel the current network model (required because of the {@link NetworkComponentAdapter))
 	 * @return the copy
 	 */
-	public NetworkComponent getCopy() {
+	public NetworkComponent getCopy(NetworkModel networkModel) {
 		
 		HashSet<String> gaphElementIDs = new HashSet<String>(this.getGraphElementIDs());
 		NetworkComponent copy = new NetworkComponent(this.id, this.type, this.prototypeClassName, this.agentClassName, null, this.directed);
 		copy.setGraphElementIDs(gaphElementIDs);
-		copy.setDataModel(this.dataModel);
-		copy.setDataModelBase64(this.dataModelBase64);
+		
+		// --- Copy the data model ------------------------
+		if (this.dataModel!=null) {
+			NetworkComponentAdapter adapter = networkModel.getNetworkComponentAdapter(null, this);
+			Object dataModelCopy = adapter.getStoredDataModelAdapter().getDataModelCopy();
+			copy.setDataModel(dataModelCopy);
+		}
+		// --- Copy the Base64 data model -----------------
+		if (this.dataModelBase64!=null) {
+			Vector<String> dataModelCopy64 = new Vector<String>();
+			for (String single64 : this.dataModelBase64) {
+				if (single64!=null & single64.equals("")==false) {
+					dataModelCopy64.add(new String(single64));
+				} else {
+					dataModelCopy64.add(null);
+				}
+			}
+			copy.setDataModelBase64(dataModelCopy64);
+		}
 
 		if (this.edgeDirections!=null && this.edgeDirections.size()!=0) {
 			HashMap<String, GraphEdgeDirection> edgeDirectionsCopy = new HashMap<String, GraphEdgeDirection>();
@@ -117,7 +136,6 @@ public class NetworkComponent implements Serializable {
 			}
 			copy.setEdgeDirections(edgeDirectionsCopy);
 		}
-		
 		return copy;
 	}
 	

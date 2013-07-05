@@ -341,14 +341,26 @@ public abstract class DynFormBase extends JPanel {
 	/**
 	 * This method reads the current XML configuration of the
 	 * arguments, fills the form and creates the instances.
-	 * @param avoidGuiUpdate the new instances from xml
+	 * @param avoidGuiUpdate the new instances from XML
 	 */
 	protected void setInstancesFromXML(boolean avoidGuiUpdate) {
+		this.ontoArgsInstance = this.getInstancesFromXML(this.ontoArgsXML, avoidGuiUpdate);
+	}
+
+	/**
+	 * This method reads the given XML configuration of the arguments, fills 
+	 * the form and creates the instances.
+	 *
+	 * @param ontoArgsXML the ontology arguments as String array containing XML
+	 * @param avoidGuiUpdate set true, if you want to avoid an update of the UI
+	 * @return the concrete instances from the XML argument description
+	 */
+	protected Object[] getInstancesFromXML(String[] ontoArgsXML, boolean avoidGuiUpdate ) {
 		
-		if (this.ontoArgsXML==null) return;
+		if (ontoArgsXML==null) return null;
 		
 		int numOfXMLArgs = ontoArgsXML.length;
-		this.ontoArgsInstance = new Object[numOfXMLArgs];
+		Object[] newOntoArgsInstance = new Object[numOfXMLArgs];
 		
 		// ----------------------------------------------------------
 		// --- Walk through the objectTree, which was generated ----- 
@@ -381,12 +393,12 @@ public abstract class DynFormBase extends JPanel {
 						}
 					}
 					// --- Remind object state as instance ----------
-					this.ontoArgsInstance[i] = argumentInstance;
+					newOntoArgsInstance[i] = argumentInstance;
 				}
 			}
 
 		} // --- end for ---
-		
+		return newOntoArgsInstance;
 	}
 	
 	/**

@@ -33,10 +33,8 @@ import java.awt.Color;
 import agentgui.core.charts.ChartSettings;
 import agentgui.core.charts.SeriesSettings;
 import agentgui.ontology.Chart;
-import agentgui.ontology.Simple_Float;
 import agentgui.ontology.XyChart;
 import agentgui.ontology.XyDataSeries;
-import agentgui.ontology.XyValuePair;
 
 /**
  * Settings handler class for XY charts. No additional functionality needed, 

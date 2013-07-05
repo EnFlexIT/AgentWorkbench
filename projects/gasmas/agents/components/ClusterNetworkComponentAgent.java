@@ -31,6 +31,7 @@ package gasmas.agents.components;
 import gasmas.initialProcess.InitialBehaviourMessageContainer;
 import gasmas.initialProcess.StatusData;
 import jade.core.AID;
+import jade.core.Location;
 import jade.core.ServiceException;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -101,6 +102,13 @@ public class ClusterNetworkComponentAgent extends GenericNetworkAgent {
 	public void setPauseSimulation(boolean isPauseSimulation) {
 		// TODO Auto-generated method stub
 	}
-
+	@Override
+	public void setMigration(Location newLocation) {
+		// TODO Auto-generated method stub
+	}
+	@Override
+	public void onEnvironmentStimulus() {
+		// TODO Auto-generated method stub
+	}
 	
 }

@@ -32,6 +32,7 @@ package agentgui.envModel.graph.networkModel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Vector;
 
 /**
  * The Class ClusterNetworkComponent.
@@ -73,12 +74,30 @@ public class ClusterNetworkComponent extends NetworkComponent {
 	 * @see agentgui.envModel.graph.networkModel.NetworkComponent#getCopy()
 	 */
 	@Override
-	public ClusterNetworkComponent getCopy() {
+	public ClusterNetworkComponent getCopy(NetworkModel networkModel) {
+		
 		ClusterNetworkComponent copy = new ClusterNetworkComponent(this.id, this.type, this.agentClassName, null, this.directed, this.domain, this.clusterNetworkModel.getCopy());
 		HashSet<String> gaphElementIDs = new HashSet<String>(this.getGraphElementIDs());
 		copy.setGraphElementIDs(gaphElementIDs);
-		copy.setDataModel(this.dataModel);
-		copy.setDataModelBase64(this.dataModelBase64);
+		
+		// --- Copy the data model ------------------------
+		if (this.dataModel!=null) {
+			NetworkComponentAdapter adapter = networkModel.getNetworkComponentAdapter(null, this);
+			Object dataModelCopy = adapter.getStoredDataModelAdapter().getDataModelCopy();
+			copy.setDataModel(dataModelCopy);
+		}
+		// --- Copy the Base64 data model -----------------
+		if (this.dataModelBase64!=null) {
+			Vector<String> dataModelCopy64 = new Vector<String>();
+			for (String single64 : this.dataModelBase64) {
+				if (single64!=null & single64.equals("")==false) {
+					dataModelCopy64.add(new String(single64));
+				} else {
+					dataModelCopy64.add(null);
+				}
+			}
+			copy.setDataModelBase64(dataModelCopy64);
+		}
 
 		if (this.edgeDirections!=null && this.edgeDirections.size()!=0) {
 			HashMap<String, GraphEdgeDirection> edgeDirectionsCopy = new HashMap<String, GraphEdgeDirection>();
@@ -88,7 +107,6 @@ public class ClusterNetworkComponent extends NetworkComponent {
 			}
 			copy.setEdgeDirections(edgeDirectionsCopy);
 		}
-		
 		return copy;
 	}
 

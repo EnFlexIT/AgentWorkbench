@@ -71,8 +71,6 @@ public abstract class SimulationServiceBehaviour extends Behaviour implements Se
 	protected ServiceSensor mySensor;
 	/** The current EnvironmentModel. */
 	protected EnvironmentModel myEnvironmentModel;
-	/** The location, where the agent has to migrate to. */
-	protected Location myNewLocation;
 	
 	private CyclicNotificationHandler notificationHandler = null;
 	private Vector<EnvironmentNotification> notifications = new Vector<EnvironmentNotification>();
@@ -221,9 +219,7 @@ public abstract class SimulationServiceBehaviour extends Behaviour implements Se
 	 *
 	 * @param newLocation the new Location for the migration
 	 */
-	public void setMigration(Location newLocation) {
-		myNewLocation = newLocation;
-	}
+	public abstract void setMigration(Location newLocation);
 	
 	/**
 	 * This method will be used by the {@link ServiceActuator} to inform
@@ -271,8 +267,7 @@ public abstract class SimulationServiceBehaviour extends Behaviour implements Se
 	 * This method is called if a stimulus from the outside reached this agent.
 	 * It can be overwritten in the child class to act on environment changes. 
 	 */
-	protected void onEnvironmentStimulus() {
-	}
+	public abstract void onEnvironmentStimulus();
 	
 	
 	/**

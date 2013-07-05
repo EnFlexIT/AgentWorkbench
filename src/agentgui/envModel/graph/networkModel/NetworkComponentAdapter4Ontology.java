@@ -162,7 +162,13 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	public Object getDataModel() {
 		return this.getOntologyInstanceViewer().getConfigurationInstances();
 	}
-
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getDataModelCopy()
+	 */
+	public Object getDataModelCopy(){
+		return this.getOntologyInstanceViewer().getConfigurationInstancesCopy();
+	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkComponentDataModelAdapter#getDataModelBase64Encoded(java.lang.Object)
 	 */

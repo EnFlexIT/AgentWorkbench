@@ -147,7 +147,7 @@ public abstract class GenericNetworkAgent extends SimulationAgent {
 	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentStimulus()
 	 */
 	@Override
-	protected void onEnvironmentStimulus() {
+	public void onEnvironmentStimulus() {
 		// TODO: Consider that myEnvironmentModel will change from time to time
 		// ... !!
 		if (this.myNetworkModel == null) {
