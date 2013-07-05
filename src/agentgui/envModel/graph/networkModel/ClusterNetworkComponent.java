@@ -83,7 +83,9 @@ public class ClusterNetworkComponent extends NetworkComponent {
 		// --- Copy the data model ------------------------
 		if (this.dataModel!=null) {
 			NetworkComponentAdapter adapter = networkModel.getNetworkComponentAdapter(null, this);
-			Object dataModelCopy = adapter.getStoredDataModelAdapter().getDataModelCopy();
+			NetworkComponentAdapter4DataModel adapter4DataModel = adapter.getStoredDataModelAdapter();
+			adapter4DataModel.setDataModel(this.dataModel);
+			Object dataModelCopy = adapter4DataModel.getDataModelCopy();
 			copy.setDataModel(dataModelCopy);
 		}
 		// --- Copy the Base64 data model -----------------
