@@ -127,7 +127,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapterVisualisation#save()
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#save()
 	 */
 	@Override
 	public void save() {
@@ -135,7 +135,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapterVisualisation#getVisualisation()
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getVisualisationComponent()
 	 */
 	@Override
 	public JComponent getVisualisationComponent() {
@@ -143,30 +143,19 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapterVisualisation#setDataModel(java.lang.Object)
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#setDataModel(java.lang.Object)
 	 */
 	@Override
 	public void setDataModel(Object dataModel) {
-		try {
-			Object[] dataModelArray = (Object[]) dataModel;
-			this.getOntologyInstanceViewer().setConfigurationInstances(dataModelArray);
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		Object[] dataModelArray = (Object[]) dataModel;
+		this.getOntologyInstanceViewer().setConfigurationInstances(dataModelArray);
 	}
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapterVisualisation#getDataModel()
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getDataModel()
 	 */
 	@Override
 	public Object getDataModel() {
 		return this.getOntologyInstanceViewer().getConfigurationInstances();
-	}
-	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getDataModelCopy()
-	 */
-	public Object getDataModelCopy(){
-		return this.getOntologyInstanceViewer().getConfigurationInstancesCopy();
 	}
 	
 	/* (non-Javadoc)

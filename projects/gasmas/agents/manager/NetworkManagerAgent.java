@@ -280,7 +280,9 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 						this.startClusterAgent(clusterNetCompIdNew, clusterNetworkComponent, partOfCluster);
 					}
 
+					// -- Update the environment for all agents -----
 					this.notifyAboutEnvironmentChanges();
+					
 //					ComponentFunctions.printAmountOfDiffernetTypesOfAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 //					ComponentFunctions.printAmountOfNodesEdgesAgents(clusterNetworkComponent.getId(), clusterNetworkComponent.getClusterNetworkModel());
 //					ComponentFunctions.printAmountOfConnectionsWithEnviroment(clusterNetworkComponent);

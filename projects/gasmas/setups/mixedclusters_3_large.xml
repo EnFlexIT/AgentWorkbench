@@ -796,12 +796,12 @@
             <value>1357150077765</value>
         </entry>
         <entry>
-            <key>DisplayUnitIndex</key>
-            <value>1</value>
-        </entry>
-        <entry>
             <key>TimeStop</key>
             <value>1357236477765</value>
+        </entry>
+        <entry>
+            <key>DisplayUnitIndex</key>
+            <value>1</value>
         </entry>
         <entry>
             <key>TimeFormat</key>

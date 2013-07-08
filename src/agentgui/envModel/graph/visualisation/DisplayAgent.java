@@ -216,7 +216,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
 		if (notification.getNotification() instanceof DisplayAgentNotificationGraph) {
-			notification = this.getDisplayAgentNotificationHandler().setDisplayNotification(this.getGraphEnvironmentController(), notification);
+			notification = this.getDisplayAgentNotificationHandler().setDisplayNotification(notification, this.getGraphEnvironmentController().getNetworkModel(), this.getGraphEnvironmentController());
 		}
 		return notification;
 	}

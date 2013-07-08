@@ -38,7 +38,7 @@ import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 
 /**
- * The Class NetworkComponentAdapterVisualisation can be used in order  
+ * The Class NetworkComponentAdapter4DataModel can be used in order  
  * to add a customized data model dialog to a specific {@link NetworkComponent}.<br>
  * Furthermore it can be used to define ontology sub classes (for JADE these
  * are extended {@link Concept} classes) that have to be displayed for component 
@@ -92,22 +92,53 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 */
 	public abstract void save();
 	
-	
+	/**
+	 * Sets the data model of a NetworkComponent to the visualisation component.
+	 * @param networkComponent the NetworkComponent
+	 */
+	public void setDataModel(NetworkComponent networkComponent) {
+		try {
+			this.setDataModel(networkComponent.getDataModel());
+		} catch (Exception ex) {
+			System.err.println("Error while setting data model of NetworkComponent '" + networkComponent.getId() + "'!");
+			ex.printStackTrace();
+		}
+	}
+	/**
+	 * Sets the data model of a GraphNode to the visualisation component.
+	 * @param graphNode the GraphNode
+	 */
+	public void setDataModel(GraphNode graphNode) {
+		try {
+			this.setDataModel(graphNode.getDataModel());
+		} catch (Exception ex) {
+			System.err.println("Error while setting data model of GraphNode '" + graphNode.getId() + "'!");
+			ex.printStackTrace();
+		}
+	}
+	/**
+	 * Sets the data model of a ClusterNetworkComponent to the visualisation component.
+	 * @param clusterNetworkComponent the ClusterNetworkComponent
+	 */
+	public void setDataModel(ClusterNetworkComponent clusterNetworkComponent) {
+		try {
+			this.setDataModel(clusterNetworkComponent.getDataModel());
+		} catch (Exception ex) {
+			System.err.println("Error while setting data model of ClusterNetworkComponent '" + clusterNetworkComponent.getId() + "'!");
+			ex.printStackTrace();
+		}
+	}
 	/**
 	 * Sets the data model to the visualisation component.
 	 * @param dataModel the new data model
 	 */
 	public abstract void setDataModel(Object dataModel);
+	
 	/**
 	 * Returns the data model from the visualisation component.
 	 * @return the data model
 	 */
 	public abstract Object getDataModel();
-	/**
-	 * Requires to implement a copy method for the current data model of the visualisation component.
-	 * @return the copy of the current data model
-	 */
-	public abstract Object getDataModelCopy();
 	
 	/**
 	 * Returns the data model of a {@link NetworkComponent} as Vector of Base64 encoded String.

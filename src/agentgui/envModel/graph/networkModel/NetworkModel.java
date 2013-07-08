@@ -189,45 +189,54 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	public NetworkModel getCopy() {
 
+		NetworkModel netModel = new NetworkModel();
 		synchronized (this) {
 			
-			NetworkModel netModel = new NetworkModel();
 			netModel.setGraph(this.getGraphCopy());
 	
-			// -- Create a copy of the networkComponents ----------------
+			// -- Create a copy of the networkComponents ------------
 			HashMap<String, NetworkComponent> copyOfComponents = new HashMap<String, NetworkComponent>();
 			for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
-				if (networkComponent instanceof ClusterNetworkComponent) {
-					ClusterNetworkComponent networkComponentCopy = ((ClusterNetworkComponent) networkComponent).getCopy(this);
-					copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
-				} else {
-					NetworkComponent networkComponentCopy = networkComponent.getCopy(this);
-					copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
+				try {
+					// --- Copy NetworkComponent -------------------- 
+					if (networkComponent instanceof ClusterNetworkComponent) {
+						ClusterNetworkComponent networkComponentCopy = ((ClusterNetworkComponent) networkComponent).getCopy(this);
+						copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
+					} else {
+						NetworkComponent networkComponentCopy = networkComponent.getCopy(this);
+						copyOfComponents.put(networkComponentCopy.getId(), networkComponentCopy);
+					}
+					
+				} catch (Exception ex) {
+					System.err.println("Error during copy of network component " + networkComponent.getId());
+					ex.printStackTrace();
 				}
 			}
 			netModel.setNetworkComponents(copyOfComponents);
 			netModel.refreshGraphElements();
 	
-			// -- Create a copy of the generalGraphSettings4MAS ---------
+			// -- Create a copy of the generalGraphSettings4MAS -----
 			GeneralGraphSettings4MAS copyOfGeneralGraphSettings4MAS = null;
 			if (this.generalGraphSettings4MAS != null) {
 				copyOfGeneralGraphSettings4MAS = this.generalGraphSettings4MAS.getCopy();
 			}
 			netModel.setGeneralGraphSettings4MAS(copyOfGeneralGraphSettings4MAS);
 	
-			// ----------------------------------------------------------
-			// -- Create a copy of the alternativeNetworkModel ----------
+			// -----------------------------------------------------
+			// -- Create a copy of the alternativeNetworkModel -----
 			HashMap<String, NetworkModel> copyOfAlternativeNetworkModel = null;
 			if (this.alternativeNetworkModel != null) {
 				copyOfAlternativeNetworkModel = new HashMap<String, NetworkModel>();
-				for (String networkModelName : this.alternativeNetworkModel.keySet()) {
+				Vector<String> altNetModelsName = new Vector<String>(this.alternativeNetworkModel.keySet());
+				for (String networkModelName : altNetModelsName) {
 					NetworkModel networkModel = this.alternativeNetworkModel.get(networkModelName).getCopy();
 					copyOfAlternativeNetworkModel.put(networkModelName, networkModel);
 				}
 			}
 			netModel.setAlternativeNetworkModel(copyOfAlternativeNetworkModel);
-			return netModel;
 		} // end synchronized
+		
+		return netModel;
 	}// end method
 
 	/**
@@ -577,19 +586,22 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the neighbour network components
 	 */
 	public Vector<NetworkComponent> getNeighbourNetworkComponents(NetworkComponent networkComponent) {
-		Vector<NetworkComponent> comps = new Vector<NetworkComponent>();
-		Vector<GraphNode> nodes = this.getNodesFromNetworkComponent(networkComponent);
-		for (int i = 0; i < nodes.size(); i++) {
-			GraphNode node = nodes.get(i);
-			for (NetworkComponent netComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
-				// --- check if the component contains the current node -------
-				if (netComponent.getGraphElementIDs().contains(node.getId())) {
-					// --- Add component to result list -----------------------
-					if (netComponent != networkComponent && comps.contains(netComponent)==false) {
-						comps.add(netComponent);
+		Vector<NetworkComponent> comps = null;
+		if (networkComponent!=null) {
+			comps = new Vector<NetworkComponent>();
+			Vector<GraphNode> nodes = this.getNodesFromNetworkComponent(networkComponent);
+			for (int i = 0; i < nodes.size(); i++) {
+				GraphNode node = nodes.get(i);
+				for (NetworkComponent netComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
+					// --- check if the component contains the current node -------
+					if (netComponent.getGraphElementIDs().contains(node.getId())) {
+						// --- Add component to result list -----------------------
+						if (netComponent != networkComponent && comps.contains(netComponent)==false) {
+							comps.add(netComponent);
+						}
 					}
 				}
-			}
+			}			
 		}
 		return comps;
 	}

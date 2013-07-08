@@ -43,7 +43,7 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
 import agentgui.envModel.graph.visualisation.notifications.GraphLayoutNotification;
-import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDataModelNotification;
+import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
@@ -137,7 +137,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 			TimeSeriesChart tsc = (TimeSeriesChart) dataModelArr[1];
 			tsc.getVisualizationSettings().setChartTitle("This is a test notification");
 			
-			NetworkComponentDataModelNotification dmNote = new NetworkComponentDataModelNotification(netComp);
+			DataModelNotification dmNote = new DataModelNotification(netComp);
 			dmNote.setDataModelPartUpdateIndex(0);
 			notifications.addDisplayNotification(dmNote);
 		}

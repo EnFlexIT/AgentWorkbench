@@ -4,8 +4,8 @@
         <agent>
             <postionNo>1</postionNo>
             <listMembership>01 AgentStartManual</listMembership>
-            <agentClassReference>gasmas.agents.manager.NetworkManagerAgent</agentClassReference>
-            <startAsName>NeMaAg</startAsName>
+            <agentClassReference>gasmas.agents.manager.NetworkManagerAgentDisplayTest</agentClassReference>
+            <startAsName>NeMaAgDiTe</startAsName>
         </agent>
         <agent>
             <postionNo>1</postionNo>

@@ -33,15 +33,14 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 
 
 /**
- * The Class NetworkComponentDataModelNotification can be used in order
- * to transfer data model changes of GraphNodes or NetworkComponents to 
- * the {@link DisplayAgent}.
+ * The Class DataModelNotification can be used in order to transfer data model 
+ * changes of GraphNodes or NetworkComponents to the {@link DisplayAgent}.
  * In case that just a single part of the data model has to be updated,
  * specify the index by using the method {@link #setDataModelPartUpdateIndex(int)}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class NetworkComponentDataModelNotification extends DisplayAgentNotificationGraph {
+public class DataModelNotification extends DisplayAgentNotificationGraph {
 
 	private static final long serialVersionUID = -4596694664751915164L;
 
@@ -57,7 +56,7 @@ public class NetworkComponentDataModelNotification extends DisplayAgentNotificat
 	 * Instantiates a new network component data model notification.
 	 * @param networkComponent the network component
 	 */
-	public NetworkComponentDataModelNotification(NetworkComponent networkComponent) {
+	public DataModelNotification(NetworkComponent networkComponent) {
 		this.networkComponent = networkComponent;
 	}
 	/**
@@ -65,7 +64,7 @@ public class NetworkComponentDataModelNotification extends DisplayAgentNotificat
 	 * @param networkComponent the network component
 	 * @param useDataModelBase64Encoded the use data model base64 encoded
 	 */
-	public NetworkComponentDataModelNotification(NetworkComponent networkComponent, boolean useDataModelBase64Encoded) {
+	public DataModelNotification(NetworkComponent networkComponent, boolean useDataModelBase64Encoded) {
 		this.networkComponent = networkComponent;
 		this.useDataModelBase64Encoded = useDataModelBase64Encoded;
 	}
@@ -74,7 +73,7 @@ public class NetworkComponentDataModelNotification extends DisplayAgentNotificat
 	 * Instantiates a new network component data model notification.
 	 * @param graphNode the graph node
 	 */
-	public NetworkComponentDataModelNotification(GraphNode graphNode) {
+	public DataModelNotification(GraphNode graphNode) {
 		this.graphNode = graphNode;
 	}
 	/**
@@ -82,7 +81,7 @@ public class NetworkComponentDataModelNotification extends DisplayAgentNotificat
 	 * @param graphNode the graph node
 	 * @param useDataModelBase64Encoded the use data model base64 encoded
 	 */
-	public NetworkComponentDataModelNotification(GraphNode graphNode, boolean useDataModelBase64Encoded) {
+	public DataModelNotification(GraphNode graphNode, boolean useDataModelBase64Encoded) {
 		this.graphNode = graphNode;
 	}
 

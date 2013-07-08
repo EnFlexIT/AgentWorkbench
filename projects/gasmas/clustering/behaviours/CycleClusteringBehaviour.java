@@ -44,9 +44,6 @@ import agentgui.simulationService.agents.SimulationAgent;
  */
 public class CycleClusteringBehaviour extends ClusteringBehaviour {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1799480981045556451L;
 	/** The Constant STEPS. */
 	private static final int STEPS = 50;
@@ -72,8 +69,11 @@ public class CycleClusteringBehaviour extends ClusteringBehaviour {
 	 * Analyse clusters.
 	 */
 	public void analyseClusters() {
-		if (parentBehaviour != null)
+		
+		if (parentBehaviour != null){
 			((SimulationAgent) myAgent).sendManagerNotification(new StatusData(parentBehaviour.getStep(), "msg+"));
+		}
+		
 //		Date begin = new Date();
 //		System.out.println("Begin CircleClusteringBehaviour for " + myAgent.getLocalName() + " " + begin.getTime());
 		NetworkModel copyNetworkModel = networkModel.getCopy();

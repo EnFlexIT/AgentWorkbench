@@ -34,11 +34,12 @@ import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphElementLayout;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
 import agentgui.envModel.graph.visualisation.notifications.GraphLayoutNotification;
-import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDataModelNotification;
+import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDirectionNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
@@ -58,14 +59,42 @@ public class DisplayAgentNotificationHandler {
 	public DisplayAgentNotificationHandler() {
 	}
 	
+	public EnvironmentNotification setDisplayNotification(EnvironmentNotification notification, NetworkModel networkModel) {
+		return this.setDisplayNotification(notification, networkModel, null);
+	}
+	
 	/**
 	 * Translates a display notification into a visual representation.
-	 * @param environmentNotification the new display notification
+	 *
+	 * @param networkModel the network model
+	 * @param notification the notification
+	 * @param graphController the current GraphEnvironmentController, if available (can also be null)
+	 * @return the environment notification
 	 */
-	public EnvironmentNotification setDisplayNotification(GraphEnvironmentController graphController, EnvironmentNotification notification) {
+	public EnvironmentNotification setDisplayNotification(EnvironmentNotification notification, NetworkModel networkModel, GraphEnvironmentController graphController) {
 		
-		AID senderAID = notification.getSender();
+		// ----------------------------------------------------------
+		// --- Check for missing information ------------------------
+		// ----------------------------------------------------------
+		if (notification==null || networkModel==null) {
+			try {
+				String exceptionText = null;
+				if (notification==null) {
+					exceptionText = "EnvironmentNotification was not set or is null!";
+				} else if (networkModel==null) {
+					exceptionText = "There is no NetworkModel defined!";
+				}
+				throw new NullPointerException(exceptionText);
+			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return notification; 
+		}
 		
+		// ----------------------------------------------------------
+		// --- Separate cases single or multiple notifications ------ 
+		// ----------------------------------------------------------
 		if (notification.getNotification() instanceof DisplayAgentNotificationGraphMultiple) {
 			// ------------------------------------------------------
 			// --- Work on multiple notifications -------------------
@@ -75,7 +104,7 @@ public class DisplayAgentNotificationHandler {
 				DisplayAgentNotificationGraph displayNotification =  displayNotifications.getDisplayNotifications().get(i);
 				try {
 					// --- Try to apply the current settings --------
-					this.doDisplayAction(graphController, senderAID, displayNotification);
+					this.doDisplayAction(networkModel, notification.getSender(), displayNotification);
 					
 				} catch (Exception ex) {
 					System.out.println("=> Error in DisplayAgent!");
@@ -89,7 +118,7 @@ public class DisplayAgentNotificationHandler {
 			DisplayAgentNotificationGraph displayNotification = (DisplayAgentNotificationGraph) notification.getNotification();
 			try {
 				// --- Try to apply the current settings ------------
-				this.doDisplayAction(graphController, senderAID, displayNotification);
+				this.doDisplayAction(networkModel, notification.getSender(), displayNotification);
 				
 			} catch (Exception ex) {
 				System.out.println("=> Error in DisplayAgent!");
@@ -97,6 +126,13 @@ public class DisplayAgentNotificationHandler {
 			}
 			
 		} 
+		
+		// ----------------------------------------------------------
+		// --- Repaint the Graph ------------------------------------
+		// ----------------------------------------------------------
+		if (graphController!=null) {
+			graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));	
+		}
 		return notification;
 	}
 	
@@ -106,7 +142,7 @@ public class DisplayAgentNotificationHandler {
 	 * @param senderAID the sender aid
 	 * @param displayNotification the GraphDisplayAgentNotification
 	 */
-	private void doDisplayAction(GraphEnvironmentController graphController, AID senderAID, DisplayAgentNotificationGraph displayNotification) {
+	private void doDisplayAction(NetworkModel networkModel, AID senderAID, DisplayAgentNotificationGraph displayNotification) {
 		
 		if (displayNotification instanceof NetworkComponentDirectionNotification) {
 			// ------------------------------------------------------
@@ -114,7 +150,7 @@ public class DisplayAgentNotificationHandler {
 			// ------------------------------------------------------
 			NetworkComponentDirectionNotification netCompDirection = (NetworkComponentDirectionNotification) displayNotification;
 			NetworkComponent netComp = netCompDirection.getNetworkComponent();
-			graphController.getNetworkModel().setDirectionsOfNetworkComponent(netComp);
+			networkModel.setDirectionsOfNetworkComponent(netComp);
 
 		} else if (displayNotification instanceof GraphLayoutNotification) {
 			// ------------------------------------------------------
@@ -127,23 +163,23 @@ public class DisplayAgentNotificationHandler {
 				String graphElementID = graphElementLayout.getGraphElement().getId();
 				
 				// --- Get the local element and apply the layout ---
-				GraphElement localGrahElement = graphController.getNetworkModel().getGraphElement(graphElementID);
+				GraphElement localGrahElement = networkModel.getGraphElement(graphElementID);
 				graphElementLayout.setGraphElement(localGrahElement);
 				localGrahElement.setGraphElementLayout(graphElementLayout);
 			}
 
-		} else if (displayNotification instanceof NetworkComponentDataModelNotification) {
+		} else if (displayNotification instanceof DataModelNotification) {
 			// ------------------------------------------------------
 			// --- Set data model of NetworkComponent or GraphNode --
 			// ------------------------------------------------------
-			NetworkComponentDataModelNotification dmNote = (NetworkComponentDataModelNotification) displayNotification;
+			DataModelNotification dmNote = (DataModelNotification) displayNotification;
 			if (dmNote.isEmpty()==false) {
 
 				if (dmNote.isNetworkComponentConfiguration()==true) {
 					// ----------------------------------------------
 					// --- Case NetworkComponent --------------------
 					NetworkComponent netCompSend  = dmNote.getNetworkComponent();
-					NetworkComponent netCompLocal = graphController.getNetworkModel().getNetworkComponent(netCompSend.getId());
+					NetworkComponent netCompLocal = networkModel.getNetworkComponent(netCompSend.getId());
 					if (dmNote.isUseDataModelBase64Encoded()==true) {
 						// --- Case Base64 -------------------------- 
 						if (dmNote.getDataModelPartUpdateIndex()==-1) {
@@ -186,7 +222,7 @@ public class DisplayAgentNotificationHandler {
 					// ----------------------------------------------
 					// --- Case GraphNode ---------------------------
 					GraphNode graphNodeSend  = dmNote.getGraphNode();
-					GraphNode graphNodeLocal = (GraphNode) graphController.getNetworkModel().getGraphElement(graphNodeSend.getId());
+					GraphNode graphNodeLocal = (GraphNode) networkModel.getGraphElement(graphNodeSend.getId());
 					if (dmNote.isUseDataModelBase64Encoded()==true) {
 						// --- Case Base64 -------------------------- 
 						if (dmNote.getDataModelPartUpdateIndex()==-1) {
@@ -223,13 +259,9 @@ public class DisplayAgentNotificationHandler {
 					// --- Case GraphNode - End ---------------------
 					// ----------------------------------------------
 				}
-				
 			}
 			
-			
-		}
-		// --- Repaint the Graph ------------------------------------
-		graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));
+		} // end of case separation
 
 	}
 	
