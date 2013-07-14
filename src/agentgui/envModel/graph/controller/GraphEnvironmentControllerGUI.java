@@ -52,6 +52,7 @@ import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
+import agentgui.envModel.graph.visualisation.notifications.DataModelOpenViewNotification;
 
 /**
  * The GUI for a GraphEnvironmentController. This contains a pane showing the NetworkComponents table and the BasicGraphGUI. The main class which associates with the components table, the environment
@@ -410,6 +411,22 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     			this.reLoad();
     			break;
 				
+    		case NetworkModelNotification.NETWORK_MODEL_Repaint:
+    			if (infoObject instanceof DataModelOpenViewNotification) {
+    				// --- Open the view to a specified data model --
+    				DataModelOpenViewNotification dmovn = (DataModelOpenViewNotification) infoObject;
+    				if (dmovn.isEmpty()==false) {
+    					if (dmovn.isGraphNodeView()) {
+    						GraphNode graphNode = (GraphNode) this.getGraphController().getNetworkModel().getGraphElement(dmovn.getGraphNodeID());
+    						this.editComponentSettings(graphNode);
+    					} else if (dmovn.isNetworkComponentView()) {
+    						NetworkComponent netComp = this.getGraphController().getNetworkModel().getNetworkComponent(dmovn.getNetworkComponentID());
+    						this.editComponentSettings(netComp);
+    					}
+    				}
+    			}
+    			break;
+    			
     		case NetworkModelNotification.NETWORK_MODEL_Component_Added:
 				break;
 				

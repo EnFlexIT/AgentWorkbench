@@ -36,6 +36,7 @@ import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
+import agentgui.envModel.graph.visualisation.notifications.DataModelOpenViewNotification;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
 import agentgui.envModel.graph.visualisation.notifications.GraphLayoutNotification;
@@ -93,18 +94,23 @@ public class DisplayAgentNotificationHandler {
 		}
 		
 		// ----------------------------------------------------------
+		// --- Single or multiple DisplayAgentNotificationGraph ----- 
+		DisplayAgentNotificationGraph displayNotification = null;
+		DisplayAgentNotificationGraphMultiple displayNotificationMultiple = null;
+			
+		// ----------------------------------------------------------
 		// --- Separate cases single or multiple notifications ------ 
 		// ----------------------------------------------------------
 		if (notification.getNotification() instanceof DisplayAgentNotificationGraphMultiple) {
 			// ------------------------------------------------------
 			// --- Work on multiple notifications -------------------
-			DisplayAgentNotificationGraphMultiple displayNotifications = (DisplayAgentNotificationGraphMultiple) notification.getNotification();
-			for (int i = 0; i < displayNotifications.getDisplayNotifications().size(); i++) {
+			displayNotificationMultiple = (DisplayAgentNotificationGraphMultiple) notification.getNotification();
+			for (int i = 0; i < displayNotificationMultiple.getDisplayNotifications().size(); i++) {
 				// --- Work on a single notification ----------------
-				DisplayAgentNotificationGraph displayNotification =  displayNotifications.getDisplayNotifications().get(i);
+				DisplayAgentNotificationGraph displayNotificationSingle =  displayNotificationMultiple.getDisplayNotifications().get(i);
 				try {
 					// --- Try to apply the current settings --------
-					this.doDisplayAction(networkModel, notification.getSender(), displayNotification);
+					this.doDisplayAction(networkModel, notification.getSender(), displayNotificationSingle);
 					
 				} catch (Exception ex) {
 					System.out.println("=> Error in DisplayAgent!");
@@ -115,7 +121,7 @@ public class DisplayAgentNotificationHandler {
 		} else if (notification.getNotification() instanceof DisplayAgentNotificationGraph) {
 			// ------------------------------------------------------
 			// --- Work on a single notification --------------------
-			DisplayAgentNotificationGraph displayNotification = (DisplayAgentNotificationGraph) notification.getNotification();
+			displayNotification = (DisplayAgentNotificationGraph) notification.getNotification();
 			try {
 				// --- Try to apply the current settings ------------
 				this.doDisplayAction(networkModel, notification.getSender(), displayNotification);
@@ -131,7 +137,13 @@ public class DisplayAgentNotificationHandler {
 		// --- Repaint the Graph ------------------------------------
 		// ----------------------------------------------------------
 		if (graphController!=null) {
-			graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint));	
+			NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint);
+			if (displayNotification!=null) {
+				nmn.setInfoObject(displayNotification);
+			} else if (displayNotificationMultiple!=null) {
+				nmn.setInfoObject(displayNotificationMultiple);	
+			}
+			graphController.notifyObservers(nmn);	
 		}
 		return notification;
 	}
@@ -146,7 +158,7 @@ public class DisplayAgentNotificationHandler {
 		
 		if (displayNotification instanceof NetworkComponentDirectionNotification) {
 			// ------------------------------------------------------
-			// --- Set directions of the current NetworkComponent ---
+			// => Set directions of the current NetworkComponent ----
 			// ------------------------------------------------------
 			NetworkComponentDirectionNotification netCompDirection = (NetworkComponentDirectionNotification) displayNotification;
 			NetworkComponent netComp = netCompDirection.getNetworkComponent();
@@ -154,7 +166,7 @@ public class DisplayAgentNotificationHandler {
 
 		} else if (displayNotification instanceof GraphLayoutNotification) {
 			// ------------------------------------------------------
-			// --- Set the layout changes to the GraphElements ------
+			// => Set the layout changes to the GraphElements -------
 			// ------------------------------------------------------
 			GraphLayoutNotification layoutNotifications = (GraphLayoutNotification) displayNotification;
 			for (int i = 0; i < layoutNotifications.getGraphElementLayouts().size(); i++) {
@@ -168,9 +180,17 @@ public class DisplayAgentNotificationHandler {
 				localGrahElement.setGraphElementLayout(graphElementLayout);
 			}
 
+		} else if (displayNotification instanceof DataModelOpenViewNotification) {
+			// ------------------------------------------------------
+			// => Open the data model visualisation of a component --
+			// ------------------------------------------------------
+			// Here is nothing to do with the data model. The notification will
+			// be forwarded to the displaying components and the observer pattern
+			// of the GraphEnvironmentController.
+			
 		} else if (displayNotification instanceof DataModelNotification) {
 			// ------------------------------------------------------
-			// --- Set data model of NetworkComponent or GraphNode --
+			// => Set data model of NetworkComponent or GraphNode --
 			// ------------------------------------------------------
 			DataModelNotification dmNote = (DataModelNotification) displayNotification;
 			if (dmNote.isEmpty()==false) {
@@ -218,7 +238,7 @@ public class DisplayAgentNotificationHandler {
 					// --- Case NetworkComponent - End --------------
 					// ----------------------------------------------
 					
-				} else {
+				} else if (dmNote.isGraphNodeConfiguration()==true) {
 					// ----------------------------------------------
 					// --- Case GraphNode ---------------------------
 					GraphNode graphNodeSend  = dmNote.getGraphNode();

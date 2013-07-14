@@ -192,9 +192,19 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		NetworkModel netModel = new NetworkModel();
 		synchronized (this) {
 			
+			// --- Create a copy of the generalGraphSettings4MAS ----
+			GeneralGraphSettings4MAS copyOfGeneralGraphSettings4MAS = null;
+			if (this.generalGraphSettings4MAS != null) {
+				copyOfGeneralGraphSettings4MAS = this.generalGraphSettings4MAS.getCopy();
+			}
+			netModel.setGeneralGraphSettings4MAS(copyOfGeneralGraphSettings4MAS);
+
+			// --- copy the 
+			
+			// --- Copy the graph -----------------------------------
 			netModel.setGraph(this.getGraphCopy());
 	
-			// -- Create a copy of the networkComponents ------------
+			// --- Create a copy of the networkComponents -----------
 			HashMap<String, NetworkComponent> copyOfComponents = new HashMap<String, NetworkComponent>();
 			for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
 				try {
@@ -215,21 +225,16 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			netModel.setNetworkComponents(copyOfComponents);
 			netModel.refreshGraphElements();
 	
-			// -- Create a copy of the generalGraphSettings4MAS -----
-			GeneralGraphSettings4MAS copyOfGeneralGraphSettings4MAS = null;
-			if (this.generalGraphSettings4MAS != null) {
-				copyOfGeneralGraphSettings4MAS = this.generalGraphSettings4MAS.getCopy();
-			}
-			netModel.setGeneralGraphSettings4MAS(copyOfGeneralGraphSettings4MAS);
-	
-			// -----------------------------------------------------
-			// -- Create a copy of the alternativeNetworkModel -----
+			// ------------------------------------------------------
+			// -- Create a copy of the alternativeNetworkModel ------
+			// ------------------------------------------------------
 			HashMap<String, NetworkModel> copyOfAlternativeNetworkModel = null;
 			if (this.alternativeNetworkModel != null) {
 				copyOfAlternativeNetworkModel = new HashMap<String, NetworkModel>();
 				Vector<String> altNetModelsName = new Vector<String>(this.alternativeNetworkModel.keySet());
 				for (String networkModelName : altNetModelsName) {
-					NetworkModel networkModel = this.alternativeNetworkModel.get(networkModelName).getCopy();
+					NetworkModel networkModel = this.alternativeNetworkModel.get(networkModelName);
+					networkModel = networkModel.getCopy();
 					copyOfAlternativeNetworkModel.put(networkModelName, networkModel);
 				}
 			}
@@ -1776,6 +1781,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	/**
 	 * Returns the NetworkComponentAdapter for the specified GraphNode.
 	 *
+	 * @param graphController the current graph controller, if there is one. Can also be null.
 	 * @param graphNode the graph node
 	 * @return the network component adapter
 	 */
@@ -1869,7 +1875,13 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			String domainTmp = null;
 			HashSet<NetworkComponent> netComps = this.getNetworkComponents((GraphNode) graphElement);
 			for (NetworkComponent netComp : netComps) {
-				domainTmp = this.generalGraphSettings4MAS.getCurrentCTS().get(netComp.getType()).getDomain();;
+				
+				if (netComp instanceof ClusterNetworkComponent) {
+					domainTmp = ((ClusterNetworkComponent)netComp).getDomain();
+				} else {
+					domainTmp = this.generalGraphSettings4MAS.getCurrentCTS().get(netComp.getType()).getDomain();	
+				}
+				
 				if (domainIitial==null) {
 					// --- Remind that value ----------------------------------
 					domainIitial=domainTmp;

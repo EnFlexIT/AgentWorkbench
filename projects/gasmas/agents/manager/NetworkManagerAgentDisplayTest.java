@@ -29,21 +29,22 @@
 package gasmas.agents.manager;
 
 import gasmas.ontology.Exit;
+import jade.core.Agent;
+import jade.core.ServiceException;
+import jade.core.behaviours.TickerBehaviour;
 
 import java.awt.Color;
 import java.util.HashSet;
 
-import jade.core.Agent;
-import jade.core.ServiceException;
-import jade.core.behaviours.TickerBehaviour;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphElementLayout;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
+import agentgui.envModel.graph.visualisation.notifications.DataModelOpenViewNotification;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
 import agentgui.envModel.graph.visualisation.notifications.GraphLayoutNotification;
-import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
@@ -57,7 +58,6 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 
 	private static final long serialVersionUID = 1823164338744218569L;
 
-	/** The my network model. */
 	private NetworkModel myNetworkModel = null;
 	
 
@@ -86,12 +86,14 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		((TimeModelContinuous) this.getTimeModel()).setExecuted(true);
 		this.notifyAboutEnvironmentChanges();
 		
+		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38");
+		this.sendDisplayAgentNotification(new DataModelOpenViewNotification(netComp));
+		
 		// ----------------------------------------------------------
 		// --- Create a set of display notifications ----------------
 		// ----------------------------------------------------------
 		DisplayAgentNotificationGraphMultiple notifications = new DisplayAgentNotificationGraphMultiple();
 		// ----------------------------------------------------------
-		
 		
 		// ----------------------------------------------------------
 		// --- First example: Color all NetworkComponents -----------
@@ -100,54 +102,62 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		GraphLayoutNotification layoutNotification = new GraphLayoutNotification();
 
 		// --- Get all NetworkComponents ----------------------------
-		for (NetworkComponent netComp : this.myNetworkModel.getNetworkComponents().values()) {
-			
-			HashSet<GraphElement> graphElements = this.myNetworkModel.getGraphElementsOfNetworkComponent(netComp, new GraphEdge(null, null));
+		for (NetworkComponent netCompSingle : this.myNetworkModel.getNetworkComponents().values()) {
+			HashSet<GraphElement> graphElements = this.myNetworkModel.getGraphElementsOfNetworkComponent(netCompSingle, new GraphEdge(null, null));
 			if (graphElements!=null) {
-
 				for (GraphElement graphElement : graphElements) {
-
 					GraphEdge graphEdge = (GraphEdge) graphElement;
-					
 					GraphElementLayout layout = graphEdge.getGraphElementLayout(this.myNetworkModel);
 					layout.setMarkerShow(true);
 					layout.setMarkerStrokeWidth(15.0f);
 					layout.setMarkerColor(Color.green);
-					
 					layoutNotification.addGraphElementLayout(layout);
 				}
-
 			}
-			
 		}
 		notifications.addDisplayNotification(layoutNotification);
+		// --- Send the notifications now ---------------------------
+		this.sendDisplayAgentNotification(notifications);
 		
 		// ----------------------------------------------------------
 		// --- Second example: Set data model of a NetworkModel -----
 		// ----------------------------------------------------------
-		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38");
-		if (netComp!=null) {
-			
-			Object dataModel = netComp.getDataModel();
-			Object[] dataModelArr = (Object[]) dataModel;
-			
-			Exit exit = (Exit) dataModelArr[0];
-			exit.setAlias("Test Nr. 2");
-			
-			TimeSeriesChart tsc = (TimeSeriesChart) dataModelArr[1];
-			tsc.getVisualizationSettings().setChartTitle("This is a test notification");
-			
-			DataModelNotification dmNote = new DataModelNotification(netComp);
-			dmNote.setDataModelPartUpdateIndex(0);
-			notifications.addDisplayNotification(dmNote);
-		}
-		
-		// ----------------------------------------------------------
-		// --- Send the notifications now ---------------------------
-		this.sendDisplayAgentNotification(notifications);
+		this.runDataModelUpdate();
 		
 	}
 
+	private void runDataModelUpdate() {
+		
+		for (int i=0; i < 15; i++) {
+			
+			NetworkComponent netCompCopy = this.myNetworkModel.getNetworkComponent("n38").getCopy(this.myNetworkModel);
+			if (netCompCopy!=null) {
+				
+				// -- Get the data model of the 
+				Object dataModel = netCompCopy.getDataModel();
+				Object[] dataModelArr = (Object[]) dataModel;
+				
+				Exit exit = (Exit) dataModelArr[0];
+				exit.setAlias("Test Nr. " + (i +1));
+				
+				TimeSeriesChart tsc = (TimeSeriesChart) dataModelArr[1];
+				tsc.getVisualizationSettings().setChartTitle("This is a test notification");
+			
+				DataModelNotification dmNote = new DataModelNotification(netCompCopy);
+				dmNote.setDataModelPartUpdateIndex(0);
+				this.sendDisplayAgentNotification(dmNote);
+				
+			}
+			// --- Just wait a little -----------
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
 	@Override
 	public void setPauseSimulation(boolean isPauseSimulation) {
 		// TODO Auto-generated method stub

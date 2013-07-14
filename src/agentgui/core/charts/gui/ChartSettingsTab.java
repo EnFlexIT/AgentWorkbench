@@ -75,6 +75,8 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	private JScrollPane spTblSeriesSettings;
 	private JTable tblSeriesSettings;
 	
+	private DefaultTableModel myTableModel;
+	
 	protected DataModel model;
 	
 //	protected ChartSettings settings;
@@ -261,7 +263,8 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 				
 			};
 			tblSeriesSettings.setFillsViewportHeight(true);
-			tblSeriesSettings.setModel(initTableModel());
+			tblSeriesSettings.setModel(this.getTableModel());
+			this.refreshTableModel();
 			tblSeriesSettings.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		}
 		return tblSeriesSettings;
@@ -271,14 +274,24 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	 * Creates the table model for the settings table
 	 * @return The table model
 	 */
-	private DefaultTableModel initTableModel(){
+	private DefaultTableModel getTableModel(){
 		// --- Initialize model and columns ---------------
-		DefaultTableModel tableModel = new DefaultTableModel();
-		tableModel.addColumn(Language.translate("Name"));
-		tableModel.addColumn(Language.translate("Farbe"));
-		tableModel.addColumn(Language.translate("Liniendicke"));
+		if (this.myTableModel==null) {
+			myTableModel = new DefaultTableModel();
+			myTableModel.addColumn(Language.translate("Name"));
+			myTableModel.addColumn(Language.translate("Farbe"));
+			myTableModel.addColumn(Language.translate("Liniendicke"));
+			myTableModel.addTableModelListener(this);
+		}
+		return myTableModel;
+	}
+
+	private void refreshTableModel() {
+
+		// --- Remove all elements first ----------------------------
+		this.getTableModel().getDataVector().removeAllElements();
 		
-		// --- Add rows containing the series specific settings
+		// --- Add rows containing the series specific settings -----
 		for(int i=0; i < model.getSeriesCount(); i++){
 			SeriesSettings settings;
 			try {
@@ -286,17 +299,13 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 				String seriesLabel = settings.getLabel();
 				Color seriesColor = settings.getColor();
 				Float seriesLineWidth = settings.getLineWIdth();
-				tableModel.addRow(new Object[]{seriesLabel, seriesColor, seriesLineWidth});
+				this.getTableModel().addRow(new Object[]{seriesLabel, seriesColor, seriesLineWidth});
+				
 			} catch (NoSuchSeriesException e) {
 				System.err.println("Error: No settings for data series "+i+" found!");
 				e.printStackTrace();
 			}
-			
-			
 		}
-		
-		tableModel.addTableModelListener(this);
-		return tableModel;
 	}
 	
 	public void addSeries(DataSeries series){
@@ -372,6 +381,10 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	
 	public void replaceModel(DataModel newModel){
 		this.model = newModel;
-		this.getTblSeriesSettings().setModel(initTableModel());
+		DefaultTableModel dtm = (DefaultTableModel) this.getTblSeriesSettings().getModel();
+		if (dtm.getColumnCount()==0) {
+			this.getTblSeriesSettings().setModel(getTableModel());
+		}
+		this.refreshTableModel();
 	}
 }

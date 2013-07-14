@@ -86,15 +86,36 @@ public class DynTable extends JTable {
 	/**
 	 * Refreshes the local table model by reloading the data from the DynForm.
 	 */
+	@SuppressWarnings("unchecked")
 	public void refreshTableModel() {
 		
 		this.rowCounter = 0;
-		this.myTabelModel = null;
 		this.myRowSorter  = null;
 		this.myRowFilter  = null;
+		int previouslySelectedRow = this.getSelectedRow();
+		
 		this.getEditableRowsVector().removeAllElements();
 		
-		this.setModel(this.getTableModel());	
+		DefaultTableModel dtm = (DefaultTableModel) this.getModel();
+		Vector<Object> dataVector = this.getDataVector();
+		if (dtm.getColumnCount()==0) {
+
+			Vector<String> columnNames = new Vector<String>();
+			columnNames.add(" ");
+			columnNames.add(" ");
+			
+			dtm = this.getTableModel();
+			dtm.setDataVector(dataVector, columnNames);
+			this.setModel(dtm);
+			
+		} else {
+			
+			dtm = (DefaultTableModel) this.getModel();
+			dtm.getDataVector().removeAllElements();
+			dtm.getDataVector().addAll(dataVector);
+			dtm.fireTableDataChanged();
+			
+		}
 		this.setRowSorter(this.getMyRowSorter());
 		
 		// --- Set Renderer, Editors and layout -----------
@@ -108,6 +129,10 @@ public class DynTable extends JTable {
 		this.getColumnModel().getColumn(0).setPreferredWidth(180);
 		this.getColumnModel().getColumn(1).setPreferredWidth(80);
 		
+		if (previouslySelectedRow>-1) {
+			this.setRowSelectionInterval(previouslySelectedRow, previouslySelectedRow);
+		}
+		
 	}
 	
 	/**
@@ -116,12 +141,7 @@ public class DynTable extends JTable {
 	 */
 	private DefaultTableModel getTableModel(){
 		if (this.myTabelModel==null) {
-			
-			Vector<String> columnNames = new Vector<String>();
-			columnNames.add(" ");
-			columnNames.add(" ");
-			
-			this.myTabelModel = new DefaultTableModel(this.getDataVector(), columnNames) {
+			this.myTabelModel = new DefaultTableModel() {
 				private static final long serialVersionUID = 1217406328326262128L;
 				public boolean isCellEditable(int row, int column) {
 					if (column==0) {

@@ -59,6 +59,9 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
+import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
+import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
+import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
 
 /**
  * The Class BasicGraphGuiProperties is used as dialog in order to configure
@@ -513,14 +516,76 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 	}
 	
+	/**
+	 * Sets the display agent notification graph.
+	 */
+	private void setDisplayAgentNotificationGraph(DisplayAgentNotificationGraph displayAgentNotificationGraph) {
+		
+		if (displayAgentNotificationGraph instanceof DataModelNotification) {
+			// --- DataModelNotification: Is that mine? -------------
+			DataModelNotification dmn = (DataModelNotification) displayAgentNotificationGraph;
+			if (this.graphNode!=null && dmn.isGraphNodeConfiguration()==true) {
+				// -- Update the model of the current GraphNode ? -------------
+				if (dmn.getGraphNode().getId().equals(this.graphNode.getId())) {
+					if (dmn.isUseDataModelBase64Encoded()==true) {
+						this.adapter4DataModel.getDataModelBase64Decoded(dmn.getGraphNode().getDataModelBase64());
+					} else {
+						this.adapter4DataModel.setDataModel(dmn.getGraphNode());	
+					}
+				}// end current GraphNode
+			}// end GraphNode
+			
+			if (this.networkComponent!=null && dmn.isNetworkComponentConfiguration()==true) {
+				// -- Update the model of the current NetworkComponent ? ------
+				if (dmn.getNetworkComponent().getId().equals(this.networkComponent.getId())) {
+					if (dmn.isUseDataModelBase64Encoded()==true) {
+						this.adapter4DataModel.getDataModelBase64Decoded(dmn.getNetworkComponent().getDataModelBase64());
+					} else {
+						this.adapter4DataModel.setDataModel(dmn.getNetworkComponent());
+					}
+				} // end current NetworkComponent  
+			}// end NetworkComponent
+			
+		}// end DisplayAgentNotificationGraph
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
 	public void update(Observable observable, Object object) {
 		
-	}
+		if (object instanceof NetworkModelNotification) {
+			NetworkModelNotification nmn = (NetworkModelNotification) object;
+			if (nmn.getReason()==NetworkModelNotification.NETWORK_MODEL_Repaint) {
+				// --- Repaint graph: also a data model update? -----
+				if (nmn.getInfoObject()==null) {
+					// --- Nothing to do here -----------------------
+					
+				} else if (nmn.getInfoObject() instanceof DisplayAgentNotificationGraph) {
+					// --- Got a DisplayAgentNotificationGraph ------
+					DisplayAgentNotificationGraph dang = (DisplayAgentNotificationGraph) nmn.getInfoObject();
+					// --- Single or multiple notification ? --------
+					if (dang instanceof DisplayAgentNotificationGraphMultiple) {
+						DisplayAgentNotificationGraphMultiple dangMultiple = (DisplayAgentNotificationGraphMultiple) dang;
+						for (int i = 0; i < dangMultiple.getDisplayNotifications().size(); i++) {
+							// --- Work on a single notification ----
+							this.setDisplayAgentNotificationGraph(dangMultiple.getDisplayNotifications().get(i));
+						}
+						
+					} else {
+						// --- Work on a single notification --------
+						this.setDisplayAgentNotificationGraph(dang);
+					}
 
+				} // end InfoObject
+				
+			}// end NetworkModelNotification.NETWORK_MODEL_Repaint
+		} // end NetworkModelNotification
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */

@@ -54,35 +54,39 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	
 	/**
 	 * Instantiates a new network component data model notification.
-	 * @param networkComponent the network component
+	 * @param networkComponentCopy a copy of the concrete NetworkComponent 
+	 * @see NetworkComponent#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
-	public DataModelNotification(NetworkComponent networkComponent) {
-		this.networkComponent = networkComponent;
+	public DataModelNotification(NetworkComponent networkComponentCopy) {
+		this.networkComponent = networkComponentCopy;
 	}
 	/**
 	 * Instantiates a new network component data model notification.
-	 * @param networkComponent the network component
+	 * @param networkComponentCopy a copy of the concrete NetworkComponent
 	 * @param useDataModelBase64Encoded the use data model base64 encoded
+	 * @see NetworkComponent#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
-	public DataModelNotification(NetworkComponent networkComponent, boolean useDataModelBase64Encoded) {
-		this.networkComponent = networkComponent;
+	public DataModelNotification(NetworkComponent networkComponentCopy, boolean useDataModelBase64Encoded) {
+		this.networkComponent = networkComponentCopy;
 		this.useDataModelBase64Encoded = useDataModelBase64Encoded;
 	}
 	
 	/**
 	 * Instantiates a new network component data model notification.
-	 * @param graphNode the graph node
+	 * @param graphNodeCopy a copy of the concrete GraphNode
+	 * @see GraphNode#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
-	public DataModelNotification(GraphNode graphNode) {
-		this.graphNode = graphNode;
+	public DataModelNotification(GraphNode graphNodeCopy) {
+		this.graphNode = graphNodeCopy;
 	}
 	/**
 	 * Instantiates a new network component data model notification.
-	 * @param graphNode the graph node
+	 * @param graphNodeCopy a copy of the concrete GraphNode
 	 * @param useDataModelBase64Encoded the use data model base64 encoded
+	 * @see GraphNode#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
-	public DataModelNotification(GraphNode graphNode, boolean useDataModelBase64Encoded) {
-		this.graphNode = graphNode;
+	public DataModelNotification(GraphNode graphNodeCopy, boolean useDataModelBase64Encoded) {
+		this.graphNode = graphNodeCopy;
 	}
 
 	/**

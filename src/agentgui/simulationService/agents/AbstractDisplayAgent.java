@@ -73,10 +73,9 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	
 	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
 
-	protected boolean isPausedSimulation = false;
-	
-	private EnvironmentController myEnvironmentController = null;
+	protected boolean isPausedSimulation = true;
 	private boolean isAgentGuiEmbedded = false;
+	private EnvironmentController myEnvironmentController = null;
 	
 	private JFrame jFrameStandalone = null;
 	private JPanel usePanel = null;
@@ -228,7 +227,11 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	@Override
 	public void setPauseSimulation(boolean isPauseSimulation) {
 		this.isPausedSimulation = isPauseSimulation;
-		this.setTimeModelDisplay(this.myEnvironmentModel.getTimeModel());
+		if (this.myEnvironmentModel.getTimeModel() instanceof TimeModelContinuous) {
+			TimeModelContinuous tmc = (TimeModelContinuous)this.myEnvironmentModel.getTimeModel();
+			tmc.setExecuted(!this.isPausedSimulation);
+			this.setTimeModelDisplay(this.myEnvironmentModel.getTimeModel());	
+		}
 	}
 	
 	/**
@@ -374,8 +377,9 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 		// --- Just for a continuous time model --------------------- 
 		if (timeModel instanceof TimeModelContinuous) {
 			TimeModelContinuous tmc = (TimeModelContinuous) timeModel;
+			tmc.setTimeAskingAgent(this);
 			if (this.isPausedSimulation==tmc.isExecuted()) {
-				tmc.setExecuted(!this.isPausedSimulation);
+				this.isPausedSimulation=!tmc.isExecuted();
 			} 
 		}
 		
