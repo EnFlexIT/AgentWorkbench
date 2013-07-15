@@ -51,10 +51,14 @@ import agentgui.core.charts.NoSuchSeriesException;
 
 public abstract class ChartTab extends ChartPanel {
 
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = -7678959452705514151L;
+	
+	public static final int RENDERER_Area_Renderer = 0;
+	public static final int RENDERER_Line_Renderer = 1;
+	public static final int RENDERER_Line_And_Shape_Renderer = 2;
+	public static final int RENDERER_Step_Renderer = 3;
+	public static final int RENDERER_Step_Area_Renderer = 4;
+	
 	public static final String[] RENDERER_TYPES= {
 		"Area Renderer",
 		"Line Renderer",
@@ -63,15 +67,28 @@ public abstract class ChartTab extends ChartPanel {
 		"Step Area Renderer"
 	};
 	
-	/**
-	 * Use the step renderer by default.
-	 */
-	public static final String DEFAULT_RENDERER = RENDERER_TYPES[3];
+	/** Use the step renderer by default. */
+	public static final String DEFAULT_RENDERER = RENDERER_TYPES[RENDERER_Step_Renderer];
+	
+	/** The data model (containing ontology-, chart- and tablemodel) for this chart	 */
+	protected DataModel model;
+	
 	
 	/**
-	 * The data model (containing ontology-, chart- and tablemodel) for this chart
+	 * Gets the render type.
+	 *
+	 * @param const_Of_Class_ChartTab_RENDERER a constant of this class
+	 * @see ChartTab#RENDERER_Area_Renderer
+	 * @see ChartTab#RENDERER_Line_Renderer
+	 * @see ChartTab#RENDERER_Line_And_Shape_Renderer
+	 * @see ChartTab#RENDERER_Step_Renderer
+	 * @see ChartTab#RENDERER_Step_Area_Renderer
+	 * 
+	 * @return the render type
 	 */
-	protected DataModel model;
+	public static String getRenderType(int const_Of_Class_ChartTab_RENDERER){
+		return ChartTab.RENDERER_TYPES[const_Of_Class_ChartTab_RENDERER];
+	}
 	
 	/**
 	 * Gets the current chartThumb. If this null or forceRefresh is true, it will be initialized/refreshed before. 
