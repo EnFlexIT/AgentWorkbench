@@ -625,6 +625,7 @@ en;;Please, specifiy the ID for the new Piston Compressor!;;;
 en;;Please, specifiy the ID for the new Turbo Compressor!;;;
 en;;Remove Component;;;
 en;;Remove Turbo Compressor;;;
+en;;Save and send data model changes to agent(s)?;;;
 en;;Speed Max;;;
 en;;Speed Min;;;
 en;;The following error occured:;;;

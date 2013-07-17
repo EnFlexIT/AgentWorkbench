@@ -28,11 +28,14 @@
  */
 package agentgui.envModel.graph.controller;
 
+import jade.core.AID;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
@@ -136,12 +139,27 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			public void internalFrameClosing(InternalFrameEvent ife) {
 				
 				if (hasChanged()==true) {
-					// --- Data model has changed ! --------
+					// --- Data model has changed ! ---------------------------
 					String diaTitle = Language.translate("Close Properties", Language.EN);
-					String diaQuestion = Language.translate("Save Changes to network model?", Language.EN);
+					String diaQuestion = null;
+					if (graphController.getProject()!=null) {
+						// --- Setup case -------------
+						diaQuestion = Language.translate("Save changes to network model?", Language.EN);
+					} else {
+						// --- Execution case ---------
+						diaQuestion = Language.translate("Save and send data model changes to agent(s)?", Language.EN);
+					}
+
+					// --- User request ---------------------------------------
 					int diaAnswer = JOptionPane.showInternalConfirmDialog(thisFrame, diaQuestion, diaTitle, JOptionPane.YES_NO_CANCEL_OPTION);
 					if (diaAnswer==JOptionPane.YES_OPTION) {
-						save();
+						if (graphController.getProject()!=null) {
+							// --- Setup case -------------
+							save();	
+						} else {
+							// --- Execution case ---------
+							save(true);
+						}
 						thisFrame.setVisible(false);
 						thisFrame.dispose();
 						
@@ -206,13 +224,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 */
 	public Object getGraphObject() {
 		return graphObject;
-	}
-	/**
-	 * Sets the graph object.
-	 * @param graphObject the graphObject to set
-	 */
-	public void setGraphObject(Object graphObject) {
-		this.graphObject = graphObject;
 	}
 	
 	/**
@@ -331,20 +342,14 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 					// --- Set model to visualisation ------------------------------
 					// --- and get initial base64 values ---------------------------
 					// -------------------------------------------------------------
-					Vector<String> initialBase64Values = this.adapter4DataModel.getDataModelBase64Encoded(dataModel);
+					Vector<String> initialBase64EncodedValues = this.adapter4DataModel.getDataModelBase64Encoded(dataModel);
 
 					// -------------------------------------------------------------
 					// --- Remind the initial HashCodes ----------------------------
 					// --- of the Base64 data model vector -------------------------
 					// -------------------------------------------------------------
-					if (initialBase64Values!=null) {
-						this.dataModelBase64InitialHashCodes = new Vector<Integer>();
-						for (int i=0; i < initialBase64Values.size(); i++) {
-							String singleDataModel = initialBase64Values.get(i);
-							int singleDataModelHashCode = singleDataModel.hashCode();
-							this.dataModelBase64InitialHashCodes.add(singleDataModelHashCode);	
-						}
-					}
+					this.setDataModelBase64InitialHashCodes(initialBase64EncodedValues);
+
 					// --- Get the visualisation component -------------------------
 					JComponent visualisation = this.adapter4DataModel.getVisualisationComponent();
 					if (visualisation instanceof OntologyInstanceViewer) {
@@ -356,6 +361,21 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			}
 		}
 		return this.jComponentContent;
+	}
+	
+	/**
+	 * Sets the initial hash codes for a given DataModel that is Base64 encoded.
+	 * @param initialBase64Values the new initial DataModel Base64 encoded 
+	 */
+	private void setDataModelBase64InitialHashCodes(Vector<String> initialBase64EncodedValues) {
+		if (initialBase64EncodedValues!=null) {
+			this.dataModelBase64InitialHashCodes = new Vector<Integer>();
+			for (int i=0; i < initialBase64EncodedValues.size(); i++) {
+				String singleDataModel = initialBase64EncodedValues.get(i);
+				int singleDataModelHashCode = singleDataModel.hashCode();
+				this.dataModelBase64InitialHashCodes.add(singleDataModelHashCode);	
+			}
+		}
 	}
 	
 	/**
@@ -452,9 +472,16 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	}
 	
 	/**
-	 * Saves the current settings.
+	 * Saves the current settings without sending them to the agent(s).
 	 */
 	private void save() {
+		this.save(false);
+	}
+	/**
+	 * Saves the current settings.
+	 * @param sendChangesToAgent set true, if you want to send the changes to the agent(s) during execution
+	 */
+	private void save(boolean sendChangesToAgent) {
 		
 		this.adapter4DataModel.save();
 		
@@ -478,50 +505,39 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			modelNetworkComponent.setDataModelBase64(dataModelBase64);
 
 		}
-		this.graphController.setProjectUnsaved();
+		if (this.graphController.getProject()!=null) {
+			this.graphController.setProjectUnsaved();
+		} else if (this.graphController.getProject()==null && sendChangesToAgent==true) {
+			this.sendChangesToAgent();
+		}
 		
 	}
-	
+
 	/**
-	 * The Class JToolBarButton.
+	 * Send changes to agent.
 	 */
-	public class JToolBarButton extends JButton {
-
-		/** The Constant serialVersionUID. */
-		private static final long serialVersionUID = 1L;
- 
-		/**
-		 * Instantiates a new j tool bar button.
-		 *
-		 * @param actionCommand the action command
-		 * @param toolTipText the tool tip text
-		 * @param altText the alt text
-		 * @param imgName the image name
-		 * @param actionListener the ActionListener
-		 */
-		private JToolBarButton(String actionCommand, String toolTipText, String altText, String imgName, ActionListener actionListener) {
-				
-			this.setText(altText);
-			this.setToolTipText(toolTipText);
-			this.setSize(36, 36);
+	private void sendChangesToAgent() {
+		
+		DataModelNotification dmNote = null;
+		HashSet<NetworkComponent> comps = new HashSet<NetworkComponent>();
+		if (this.graphNode!=null) {
+			dmNote = new DataModelNotification(this.graphNode, this.graphController.getNetworkModel());
+			// --- Get the NetworkComponent's connected to this GraphNode -----
+			comps = this.graphController.getNetworkModel().getNetworkComponents(this.graphNode);
 			
-			if (imgName!=null) {
-				this.setPreferredSize(new Dimension(26,26));
-			} else {
-				this.setPreferredSize(null);	
+		} else {
+			dmNote = new DataModelNotification(this.networkComponent, this.graphController.getNetworkModel());
+			comps.add(this.networkComponent);
+		}
+		
+		if (dmNote!=null) {
+			for (NetworkComponent netComp : comps) {
+				// --- Send notifications -------
+				boolean done = this.networkComponentAdapter.sendAgentNotification(new AID(netComp.getId(), AID.ISLOCALNAME), dmNote);
+				if (done==false) {
+					System.err.println("DataModelNotification to agent '" + netComp.getId() + "' could not be send.");
+				}
 			}
-
-			if (imgName!=null) {
-				try {
-					ImageIcon imageIcon = new ImageIcon( this.getClass().getResource(pathImage + imgName), altText);
-					this.setIcon(imageIcon);
-					
-				} catch (Exception err) {
-					System.err.println(Language.translate("Fehler beim Laden des Bildes: ") + err.getMessage());
-				}				
-			}
-			this.addActionListener(actionListener);	
-			this.setActionCommand(actionCommand);
 		}
 		
 	}
@@ -545,6 +561,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 							} else {
 								adapter4DataModel.setDataModel(dmn.getGraphNode());	
 							}
+							setDataModelBase64InitialHashCodes(adapter4DataModel.getDataModelBase64Encoded(adapter4DataModel.getDataModel()));
 						}
 					});
 				}// end current GraphNode
@@ -561,6 +578,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 							} else {
 								adapter4DataModel.setDataModel(dmn.getNetworkComponent());
 							}
+							setDataModelBase64InitialHashCodes(adapter4DataModel.getDataModelBase64Encoded(adapter4DataModel.getDataModel()));
 						}
 					});
 				} // end current NetworkComponent  
@@ -614,11 +632,60 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		String actionCommand = ae.getActionCommand();
 		if (actionCommand.equals("Save") || actionCommand.equals("SaveAndExit")) {
-			this.save();
+			if (this.graphController.getProject()!=null) {
+				this.save();	
+			} else {
+				this.save(true);
+			}
 		}
 		if (actionCommand.equals("SaveAndExit")) {
 			this.setVisible(false);
 			this.dispose();
+		}
+		
+	}
+
+	
+	/**
+	 * The Class JToolBarButton.
+	 */
+	private class JToolBarButton extends JButton {
+
+		/** The Constant serialVersionUID. */
+		private static final long serialVersionUID = 1L;
+ 
+		/**
+		 * Instantiates a new j tool bar button.
+		 *
+		 * @param actionCommand the action command
+		 * @param toolTipText the tool tip text
+		 * @param altText the alt text
+		 * @param imgName the image name
+		 * @param actionListener the ActionListener
+		 */
+		private JToolBarButton(String actionCommand, String toolTipText, String altText, String imgName, ActionListener actionListener) {
+				
+			this.setText(altText);
+			this.setToolTipText(toolTipText);
+			this.setSize(36, 36);
+			
+			if (imgName!=null) {
+				this.setPreferredSize(new Dimension(26,26));
+			} else {
+				this.setPreferredSize(null);	
+			}
+
+			if (imgName!=null) {
+				try {
+					ImageIcon imageIcon = new ImageIcon( this.getClass().getResource(pathImage + imgName), altText);
+					this.setIcon(imageIcon);
+					
+				} catch (Exception err) {
+					System.err.println(Language.translate("Fehler beim Laden des Bildes: ") + err.getMessage());
+				}				
+			}
+			this.addActionListener(actionListener);	
+			this.setActionCommand(actionCommand);
 		}
 		
 	}

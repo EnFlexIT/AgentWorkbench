@@ -1,5 +1,7 @@
 package gasmas.agents.components;
 
+import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
+import agentgui.simulationService.transaction.EnvironmentNotification;
 import jade.core.Location;
 
 public class ExitAgent extends GenericNetworkAgent {
@@ -18,6 +20,17 @@ public class ExitAgent extends GenericNetworkAgent {
 	@Override
 	public void setMigration(Location newLocation) {
 		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
+		
+		if (notification.getNotification() instanceof DataModelNotification) {
+			System.out.println(this.getLocalName() + ": Data Model update received!");
+		}
+		
+		
+		return super.onEnvironmentNotification(notification);
 	}
 	
 }
