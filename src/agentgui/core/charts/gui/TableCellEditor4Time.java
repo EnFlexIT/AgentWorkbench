@@ -29,16 +29,11 @@
 package agentgui.core.charts.gui;
 
 import java.awt.Component;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.AbstractCellEditor;
 import javax.swing.JSpinner;
-import javax.swing.JTable;
 import javax.swing.SpinnerDateModel;
-import javax.swing.table.TableCellEditor;
 
 /**
  * Cell Editor for date fields.
@@ -46,17 +41,11 @@ import javax.swing.table.TableCellEditor;
  * 
  * @author Nils
  */
-public class TableCellEditor4Time extends AbstractCellEditor implements TableCellEditor, KeyListener{
+public class TableCellEditor4Time extends BasicCellEditor{
 
 	private static final long serialVersionUID = 1536069679238018382L;
 
-	private JTable table;
-	
-	private JSpinner spinner = null;
 	private String timeFormat;
-	private int row2edit;
-	private int originalHeight;
-
 	
 	public TableCellEditor4Time(String timeFormat){
 		this.timeFormat = timeFormat;
@@ -68,69 +57,25 @@ public class TableCellEditor4Time extends AbstractCellEditor implements TableCel
 	@Override
 	public Object getCellEditorValue() {
 		
-		// Reset row height
-		table.setRowHeight(row2edit, originalHeight);
-		
-		Date date = (Date) spinner.getValue();
+		Date date = (Date) ((JSpinner)editorComponent).getValue();
 		return date.getTime();
 	}
-	
-	
 
 	@Override
-	public void cancelCellEditing() {
-		// Reset row height
-		table.setRowHeight(row2edit, originalHeight);
-		super.cancelCellEditing();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
-	 */
-	@Override
-	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		
-		if(spinner == null){
-			this.table = table;
+	protected Component getEditorComponent(Object value) {
+		if(this.editorComponent == null){
 			SpinnerDateModel sdm = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
-			spinner = new JSpinner(sdm);
-			JSpinner.DateEditor de = new JSpinner.DateEditor(spinner, timeFormat);
+			editorComponent = new JSpinner(sdm);
+			JSpinner.DateEditor de = new JSpinner.DateEditor((JSpinner) editorComponent, timeFormat);
 			de.getTextField().addKeyListener(this);
-			spinner.setEditor(de);
+			((JSpinner)editorComponent).setEditor(de);
 		}
-		
-		// Remember which row was edited
-		row2edit = row;
-		originalHeight = table.getRowHeight(row2edit);
-		
-		// Increase row height (the spinner needs more vertical space)
-		table.setRowHeight(row2edit, (int) (table.getRowHeight(row2edit)*1.5));
 		
 		// Init spinner
-		long timeStamp = (Long) table.getValueAt(row, column);
-		spinner.getModel().setValue(new Date(timeStamp));
+		long timeStamp = (Long) value;
+		((JSpinner)editorComponent).getModel().setValue(new Date(timeStamp));
 		
-		return spinner;
-	}
-
-	
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// Due to a java bug, the callback method is not called automatically when pressing escape.  
-		if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
-			cancelCellEditing();
-		}
-	}
-	
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// Method required by the interface, but not needed here.
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// Method required by the interface, but not needed here.
+		return this.editorComponent;
 	}
 
 }

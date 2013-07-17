@@ -13,6 +13,7 @@ import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartSettingsTab;
 import agentgui.core.charts.timeseriesChart.TimeSeriesChartSettings;
+import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
 
 public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	
@@ -105,7 +106,9 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == getTimeFormatSelector()){
-			((TimeSeriesChartSettings)model.getChartSettings()).setTimeFormat(getTimeFormatSelector().getTimeFormat());
+			String newTimeFormat = getTimeFormatSelector().getTimeFormat();
+			((TimeSeriesChartSettings)model.getChartSettings()).setTimeFormat(newTimeFormat);
+			((TimeSeriesOntologyModel) model.getOntologyModel()).getAdditionalSettings().setTimeFormat(newTimeFormat);
 		}else{
 			super.actionPerformed(e);
 		}

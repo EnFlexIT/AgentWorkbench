@@ -97,12 +97,17 @@ public class TimeSeriesTableTab extends TableTab {
 						return super.getCellRenderer(row, column);
 					}
 				}
+				
+				
 
 				
 			};
 			table.setModel(model.getTableModel());
 			table.setShowGrid(false);
-			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			table.setCellSelectionEnabled(true);
+			table.setRowSelectionAllowed(true);
+			table.setColumnSelectionAllowed(true);
 			table.getTableHeader().setReorderingAllowed(false);
 			table.getSelectionModel().addListSelectionListener(this);
 			

@@ -134,7 +134,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		
 		// --- Handle changes of the chart data 
 		if(o == this.model){
-			setOntologyClassInstance(this.getOntologyClassInstance());
+//			setOntologyClassInstance(this.getOntologyClassInstance());
 		}
 	}
 
@@ -627,15 +627,12 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	protected void applyChartSettings(ChartSettings newSettings){
 		// Chart title
 		getChartTab().getChart().setTitle(newSettings.getChartTitle());
-		model.getOntologyModel().getChartSettings().setChartTitle(newSettings.getChartTitle());
 		
 		// X axis label
-		model.getOntologyModel().getChartSettings().setXAxisLabel(newSettings.getxAxisLabel());
 		chartTab.setXAxisLabel(newSettings.getxAxisLabel());
 		model.getTableModel().setKeyColumnLabel(newSettings.getxAxisLabel());
 		
 		// Y axis label
-		model.getOntologyModel().getChartSettings().setYAxisLabel(newSettings.getyAxisLabel());
 		chartTab.setYAxisLabel(newSettings.getyAxisLabel());
 		
 		// Renderer type
@@ -648,21 +645,13 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 				
 				// Series label
 				model.getTableModel().setSeriesLabel(i, seriesSettings.getLabel());
-				DataSeries series = model.getOntologyModel().getSeries(i);
-				series.setLabel(seriesSettings.getLabel());
 				model.getChartModel().getSeries(i).setKey(seriesSettings.getLabel());
 				
 				// Plot color
-				model.getOntologyModel().getChartSettings().getYAxisColors().remove(i);
-				model.getOntologyModel().getChartSettings().getYAxisColors().add(i, ""+seriesSettings.getColor().getRGB());
 				chartTab.setSeriesColor(i, seriesSettings.getColor());
 				
 				// Plot line width
-				model.getOntologyModel().getChartSettings().getYAxisLineWidth().remove(i);
-				model.getOntologyModel().getChartSettings().getYAxisLineWidth().add(i, seriesSettings.getLineWIdth());
 				chartTab.setSeriesLineWidth(i, seriesSettings.getLineWIdth());
-				
-				
 				
 			} catch (NoSuchSeriesException e) {
 				System.err.println("Error setting series settings, could not find series "+i);

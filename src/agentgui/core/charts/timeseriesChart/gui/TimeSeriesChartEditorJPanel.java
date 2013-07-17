@@ -131,6 +131,7 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	 */
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
+//		applyChartSettings(model.getChartSettings());
 		this.model = new TimeSeriesDataModel((TimeSeriesChart) objectInstance, this.getDefaultTimeFormat());
 		
 		this.getChartTab().replaceModel(this.model);
@@ -164,8 +165,6 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 		// Apply time format settings
 		String newTimeFormat = ((TimeSeriesChartSettings)newSettings).getTimeFormat();
 		getChartTab().setTimeFormat(newTimeFormat);
-		((TimeSeriesOntologyModel)model.getOntologyModel()).getAdditionalSettings().setTimeFormat(newTimeFormat);
-		
 	}
 
 }

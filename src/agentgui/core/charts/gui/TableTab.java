@@ -35,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -191,27 +192,29 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		if(e.getSource() == getBtnAddColumn()){
+		if(e.getSource() == getBtnAddColumn() || (e.getSource() == getBtnAddRow() && getTable().getRowCount() == 0)){
 			
-//			String seriesLabel = JOptionPane.showInputDialog(this, Language.translate("Label"), Language.translate("Neue Datenreihe"), JOptionPane.QUESTION_MESSAGE);
-			String seriesLabel = model.getDefaultSeriesLabel();
+			String seriesLabel = (String) JOptionPane.showInputDialog(this, Language.translate("Label"), Language.translate("Neue Datenreihe"), JOptionPane.QUESTION_MESSAGE, null, null, model.getDefaultSeriesLabel());
 			
-			DataSeries newSeries = model.createNewDataSeries(seriesLabel);
-
-			// As JFreeChart doesn't work with empty data series, one value pair must be added
-			ValuePair initialValuePair;
-			if(model.getSeriesCount() > 0){
-				// If there is already data in the model, use the first existing key 
-				initialValuePair = model.createNewValuePair((Number) model.getTableModel().getValueAt(0, 0), 0);
-			}else{
-				// If not, use 0 as time stamp
-				initialValuePair = model.createNewValuePair(0, 0);
+			if(seriesLabel != null){
+			
+				DataSeries newSeries = model.createNewDataSeries(seriesLabel);
+	
+				// As JFreeChart doesn't work with empty data series, one value pair must be added
+				ValuePair initialValuePair;
+				if(model.getSeriesCount() > 0){
+					// If there is already data in the model, use the first existing key 
+					initialValuePair = model.createNewValuePair((Number) model.getTableModel().getValueAt(0, 0), 0);
+				}else{
+					// If not, use 0 as time stamp
+					initialValuePair = model.createNewValuePair(0, 0);
+				}
+				
+				model.getValuePairsFromSeries(newSeries).add(initialValuePair);
+				model.addSeries(newSeries);
+				
+				parentChartEditor.setOntologyClassInstance(parentChartEditor.getOntologyClassInstance());
 			}
-			
-			model.getValuePairsFromSeries(newSeries).add(initialValuePair);
-			model.addSeries(newSeries);
-			
-			parentChartEditor.setOntologyClassInstance(parentChartEditor.getOntologyClassInstance());
 		} else if(e.getSource() == getBtnAddRow()){
 			model.getTableModel().addEmptyRow(getTable(false));
 
@@ -232,6 +235,8 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 			}
 			
 		} else if(e.getSource() == getBtnRemoveRow()){
+			int rowNum = table.getSelectedRow();
+			int colNum = table.getSelectedColumn();
 			if(table.isEditing()){
 				table.getCellEditor().cancelCellEditing();
 			}
@@ -250,7 +255,14 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 			getBtnRemoveColumn().setEnabled(false);
 			getBtnRemoveRow().setEnabled(false);
 			
+			// TODO Check if necessary
 			parentChartEditor.setOntologyClassInstance(parentChartEditor.getOntologyClassInstance());
+			
+			if(rowNum < table.getRowCount()){
+				table.changeSelection(rowNum, colNum, false, false);
+			}else if(table.getRowCount() > 0){
+				table.changeSelection(table.getRowCount(), colNum, false, false);
+			}
 			
 		}
 		

@@ -29,28 +29,16 @@
 package agentgui.core.charts.gui;
 
 import java.awt.Component;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-import javax.swing.AbstractCellEditor;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.TableCellEditor;
 
 /**
  * JTextField-based table cell editor for Float objects.
  * @author Nils
  *
  */
-public class TableCellEditor4FloatObject extends AbstractCellEditor implements TableCellEditor, KeyListener{
+public class TableCellEditor4FloatObject extends BasicCellEditor{
 
 	private static final long serialVersionUID = -3915816882186813928L;
-
-	private JTextField textField;
-	private JTable table;
-	
-	private int originalHeight;
-	private int row2edit;
 
 	
 	/* (non-Javadoc)
@@ -58,10 +46,7 @@ public class TableCellEditor4FloatObject extends AbstractCellEditor implements T
 	 */
 	@Override
 	public Object getCellEditorValue() {
-		// Reset row height
-		this.table.setRowHeight(row2edit, originalHeight);
-		
-		String newValue = textField.getText();
+		String newValue = ((JTextField)editorComponent).getText();
 		if(newValue.length() > 0){
 			return new Float(newValue);
 		}else{
@@ -72,50 +57,22 @@ public class TableCellEditor4FloatObject extends AbstractCellEditor implements T
 	@Override
 	public void cancelCellEditing() {
 		// Reset row height
-		table.setRowHeight(row2edit, originalHeight);
+		table.setRowHeight(row, originalRowHeight);
 		super.cancelCellEditing();
 	}
 
 	@Override
-	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		
-		if(textField == null){
-			this.table = table;
-			textField = new JTextField();
-			textField.addKeyListener(this);
+	protected Component getEditorComponent(Object value) {
+		if(editorComponent == null){
+			editorComponent = new JTextField();
+			editorComponent.addKeyListener(this);
 		}
-		
-		// Initialize with current table cell value, if there is one 
-		if(table.getValueAt(row, column) != null){
-			textField.setText(table.getValueAt(row, column).toString());
+		if(value != null){
+			((JTextField)editorComponent).setText(""+((Float)value));
+		}else{
+			((JTextField)editorComponent).setText("");
 		}
-		
-		// Remember which row was edited
-		row2edit = row;	
-		originalHeight = table.getRowHeight(row2edit);
-		
-		// Increase row height (the spinner needs more vertical space)
-		table.setRowHeight(row2edit, (int) (table.getRowHeight(row2edit)*1.5));
-		
-		return textField;
-	}
-	
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// Due to a java bug, the callback method is not called automatically when pressing escape.  
-		if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
-			cancelCellEditing();
-		}
-	}
-	
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// Method required by the interface, but not needed here.
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// Method required by the interface, but not needed here.
+		return editorComponent;
 	}
 
 }

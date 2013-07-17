@@ -235,7 +235,13 @@ public abstract class ChartTab extends ChartPanel {
 	 * Applies some settings for chart visualization. If chart type specific settings are required, override this method.
 	 */
 	protected void applySettings(){
-		setRenderer(DEFAULT_RENDERER);	// Use step renderer by default
+		if(model.getOntologyModel().getChartSettings().getRendererType() != null){
+			// If a renderer type is specified, use that
+			setRenderer(model.getOntologyModel().getChartSettings().getRendererType());
+		}else{
+			// If not, use the default renderer for this chart type
+			setRenderer(DEFAULT_RENDERER);
+		}
 		
 		applyColorSettings();
 		applyLineWidthsSettings();

@@ -29,58 +29,39 @@
 package agentgui.core.charts.gui;
 
 import java.awt.Component;
-import javax.swing.AbstractCellEditor;
 import javax.swing.JSpinner;
-import javax.swing.JSpinner.DefaultEditor;
-import javax.swing.JTable;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.table.TableCellEditor;
 /**
  * JSpinner-based table cell editor for Float objects
  * @author Nils
  *
  */
-public class TableCellSpinnerEditor4FloatObject extends AbstractCellEditor implements TableCellEditor{
+public class TableCellSpinnerEditor4FloatObject extends BasicCellEditor{
 	/**
-	 * 
+	 * Generated serialVersionUID
 	 */
 	private static final long serialVersionUID = 7758086423044836617L;
-	private JSpinner spinner;
 	
-	private JTable table;
-	
-	private int row2edit;
-	
-	private int originalHeight;
-
 	@Override
 	public Object getCellEditorValue(){
+		Object value = ((JSpinner)editorComponent).getValue();
+		// If the value is a String or Double, convert it to Float
+		if(value instanceof String){
+			value = ((String)value).replace(",", ".");
+			value = (Float.parseFloat(((String)value)));
+		}else if(value instanceof Double){
+			value = ((Double)value).floatValue();
+		}
 		
-		// Reset row height
-		table.setRowHeight(row2edit, originalHeight);
-		
-		String value = ((DefaultEditor)spinner.getEditor()).getTextField().getText();
-		value = value.replace(",", ".");
-		
-		return new Float(Float.parseFloat(value));
+		return value;
 	}
 
 	@Override
-	public Component getTableCellEditorComponent(JTable table,
-			Object value, boolean isSelected, int row, int column) {
-		
-		if(spinner == null){
-			this.table = table;
-			spinner = new JSpinner(new SpinnerNumberModel(1.0, 0.1, 10.0, 0.1));
+	protected Component getEditorComponent(Object value) {
+		if(editorComponent == null){
+			editorComponent = new JSpinner(new SpinnerNumberModel(1.0, 0.1, 10.0, 0.1));
 		}
-		// Remember which row was edited
-		row2edit = row;
-		originalHeight = table.getRowHeight(row2edit);
-		
-		// Increase row height (the spinner needs more vertical space)
-		table.setRowHeight(row2edit, (int) (table.getRowHeight(row2edit)*1.5));
-				
-		spinner.setValue(table.getValueAt(row, column));
-		return spinner;
+		((JSpinner)editorComponent).setValue(value);
+		return editorComponent;
 	}
 }

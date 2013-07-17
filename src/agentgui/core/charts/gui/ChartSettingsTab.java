@@ -331,14 +331,23 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	
 	@Override
 	public void tableChanged(TableModelEvent tme) {
+		// Handle changes of series-specific settings
 		int seriesIndex = tme.getFirstRow();
 		try{
 			if(tme.getColumn() == 0){
-				model.getChartSettings().setSeriesLabel(seriesIndex, (String) tblSeriesSettings.getModel().getValueAt(seriesIndex, 0));
+				String newLabel = (String) tblSeriesSettings.getModel().getValueAt(seriesIndex, 0); 
+				model.getChartSettings().setSeriesLabel(seriesIndex, newLabel);
+				model.getOntologyModel().getSeries(seriesIndex).setLabel(newLabel);
 			}else if(tme.getColumn() == 1){
-				model.getChartSettings().setSeriesColor(seriesIndex, (Color) tblSeriesSettings.getModel().getValueAt(seriesIndex, 1));
+				Color newColor = (Color) tblSeriesSettings.getModel().getValueAt(seriesIndex, 1);
+				model.getChartSettings().setSeriesColor(seriesIndex, newColor);
+				model.getOntologyModel().getChartSettings().getYAxisColors().remove(seriesIndex);
+				model.getOntologyModel().getChartSettings().getYAxisColors().add(seriesIndex, ""+newColor.getRGB());
 			}else if(tme.getColumn() == 2){
-				model.getChartSettings().setSeriesLineWidth(seriesIndex, (Float) tblSeriesSettings.getModel().getValueAt(seriesIndex, 2));
+				Float newLineWidth = (Float) tblSeriesSettings.getModel().getValueAt(seriesIndex, 2);
+				model.getChartSettings().setSeriesLineWidth(seriesIndex, newLineWidth);
+				model.getOntologyModel().getChartSettings().getYAxisLineWidth().remove(seriesIndex);
+				model.getOntologyModel().getChartSettings().getYAxisLineWidth().add(seriesIndex, newLineWidth);
 			}
 		}catch (NoSuchSeriesException ex) {
 			System.err.println("Error changing settings for series "+seriesIndex);
@@ -367,21 +376,30 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	 * @param e
 	 */
 	private void handleEvent(AWTEvent e){
+		// Handle changes of settings affecting the whole chart
 		if(e.getSource() == getTfChartTitle()){
 			if(!getTfChartTitle().getText().equals(model.getChartSettings().getChartTitle())){
-				model.getChartSettings().setChartTitle(getTfChartTitle().getText());
+				String newTitle = getTfChartTitle().getText();
+				model.getChartSettings().setChartTitle(newTitle);
+				model.getOntologyModel().getChartSettings().setChartTitle(newTitle);
 			}
 		}else if(e.getSource() == getTfXAxisLabel()){
 			if(!getTfXAxisLabel().equals(model.getChartSettings().getxAxisLabel())){
-				model.getChartSettings().setxAxisLabel(getTfXAxisLabel().getText());
+				String newXAxisLabel = getTfXAxisLabel().getText();
+				model.getChartSettings().setxAxisLabel(newXAxisLabel);
+				model.getOntologyModel().getChartSettings().setXAxisLabel(newXAxisLabel);
 			}
 		}else if(e.getSource() == getTfYAxisLabel()){
 			if(!getTfYAxisLabel().equals(model.getChartSettings().getyAxisLabel())){
-				model.getChartSettings().setyAxisLabel(getTfYAxisLabel().getText());
+				String newYAxisLabel = getTfYAxisLabel().getText();
+				model.getChartSettings().setyAxisLabel(newYAxisLabel);
+				model.getOntologyModel().getChartSettings().setYAxisLabel(newYAxisLabel);
 			}
 		}else if(e.getSource() == getCbRendererType()){
 			if(!getCbRendererType().getSelectedItem().equals(model.getChartSettings().getRendererType())){
-				model.getChartSettings().setRendererType((String) getCbRendererType().getSelectedItem());
+				String newRendererType  = (String) getCbRendererType().getSelectedItem(); 
+				model.getChartSettings().setRendererType(newRendererType);
+				model.getOntologyModel().getChartSettings().setRendererType(newRendererType);
 			}
 		}
 	}
