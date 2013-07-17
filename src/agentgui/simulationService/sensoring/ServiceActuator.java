@@ -31,6 +31,7 @@ package agentgui.simulationService.sensoring;
 import jade.core.AID;
 import jade.core.Location;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 import agentgui.simulationService.SimulationService;
@@ -61,6 +62,10 @@ public class ServiceActuator {
 
 	private Vector<ServiceSensor> serviceSensors = new Vector<ServiceSensor>();
 	private Vector<ServiceSensor> serviceSensorsPassive = new Vector<ServiceSensor>();
+
+	private ServiceSensor[] serviceSensorArray = null;
+	private HashMap<String, ServiceSensor> sensorSearchHash = null;
+	
 	
 	/**
 	 * Method for agents to plug-in to this actuator.
@@ -76,7 +81,7 @@ public class ServiceActuator {
 	 * @param currSensor the ServiceSensor to plug-in
 	 */
 	public void plugInPassive(ServiceSensor currSensor) {
-		serviceSensors.addElement(currSensor);	
+		serviceSensors.addElement(currSensor);
 		serviceSensorsPassive.addElement(currSensor);
 	}
 	/**
@@ -96,27 +101,38 @@ public class ServiceActuator {
 	 * @return the ServiceSensor
 	 */
 	public ServiceSensor getSensor(AID aid) {
-		
-		Object[] arrLocal = serviceSensors.toArray();
-		for (int i = arrLocal.length-1; i>=0; i--) {
-			ServiceSensor sensor = (ServiceSensor)arrLocal[i];
-			AID sensorAgentAID = sensor.myServiceSensor.getAID();
-			if (sensorAgentAID.equals(aid)) {
-				return sensor;				
+		String searchFor = aid.getLocalName();
+		if (this.sensorSearchHash==null || this.sensorSearchHash.size()!=this.getServiceSensorArray().length) {
+			this.sensorSearchHash = new HashMap<String, ServiceSensor>();
+			ServiceSensor[] sensors = this.getServiceSensorArray();
+			for (int i=0; i<sensors.length; i++) {
+				this.sensorSearchHash.put(sensors[i].getServiceSensor().getAID().getLocalName(), sensors[i]);
 			}
 		}
-		return null;
+		return this.sensorSearchHash.get(searchFor);
 	}
+	
+	/**
+	 * Returns all registered ServiceSensor arrays.
+	 * @return the sensors
+	 */
+	public ServiceSensor[] getServiceSensorArray() {
+		if (this.serviceSensorArray==null || this.serviceSensors.size()!=serviceSensorArray.length) {
+			this.serviceSensorArray = new ServiceSensor[this.serviceSensors.size()];
+			this.serviceSensors.toArray(this.serviceSensorArray);
+		}
+		return serviceSensorArray;
+	}
+	
 	/**
 	 * Returns all agents registered to this actuator by a sensor.
 	 * @return the sensor agents
 	 */
 	public AID[] getSensorAgents() {
-		AID[] sensorAgents = new AID[serviceSensors.size()];
-		Object[] arrLocal = serviceSensors.toArray();
-		for (int i = arrLocal.length-1; i>=0; i--) {
-			AID aid = ((ServiceSensor)arrLocal[i]).myServiceSensor.getAID();
-			sensorAgents[i] = aid;
+		ServiceSensor[] sensors = this.getServiceSensorArray();
+		AID[] sensorAgents = new AID[sensors.length];
+		for (int i = 0; i < sensors.length; i++) {
+			sensorAgents[i] = sensors[i].getServiceSensor().getAID();
 		}
 		return sensorAgents;
 	}
@@ -139,13 +155,12 @@ public class ServiceActuator {
 	 * @param aSynchron true, if this should be don asynchronously
 	 */
 	public void notifySensors(final EnvironmentModel currEnvironmentModel, final boolean aSynchron) {
-		
+		final ServiceSensor[] sensors = getServiceSensorArray();
 		Runnable notifier = new Runnable() {
 			@Override
 			public void run() {
-				Object[] arrLocal = serviceSensors.toArray();
-				for (int i = arrLocal.length-1; i>=0; i--) {
-					((ServiceSensor)arrLocal[i]).putEnvironmentModel(currEnvironmentModel, aSynchron);
+				for (int i = sensors.length-1; i>=0; i--) {
+					sensors[i].putEnvironmentModel(currEnvironmentModel, aSynchron);
 				}
 			}
 		};
@@ -176,12 +191,12 @@ public class ServiceActuator {
 	 * to provide a faster(!) shut-down of the system.
 	 */
 	public void notifySensorAgentsDoDelete() {
+		final ServiceSensor[] sensors = getServiceSensorArray();
 		Runnable notifier = new Runnable() {
 			@Override
 			public void run() {
-				Object[] arrLocal = serviceSensors.toArray();
-				for (int i = arrLocal.length-1; i>=0; i--) {
-					((ServiceSensor)arrLocal[i]).doDelete();
+				for (int i = sensors.length-1; i>=0; i--) {
+					sensors[i].doDelete();
 				}
 			}
 		};
@@ -193,12 +208,12 @@ public class ServiceActuator {
 	 * @param isPauseSimulation the is pause simulation
 	 */
 	public void notifySensorPauseSimulation(final boolean isPauseSimulation) {
+		final ServiceSensor[] sensors = getServiceSensorArray();
 		Runnable notifier = new Runnable() {
 			@Override
 			public void run() {
-				Object[] arrLocal = serviceSensors.toArray();
-				for (int i = arrLocal.length-1; i>=0; i--) {
-					((ServiceSensor)arrLocal[i]).setPauseSimulation(isPauseSimulation);
+				for (int i = sensors.length-1; i>=0; i--) {
+					sensors[i].setPauseSimulation(isPauseSimulation);
 				}
 			}
 		};

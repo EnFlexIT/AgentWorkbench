@@ -371,7 +371,7 @@ public class SimulationService extends BaseService {
 		 * @see agentgui.simulationService.SimulationServiceHelper#notifySensorAgent(jade.core.AID, agentgui.simulationService.transaction.EnvironmentNotification)
 		 */
 		public boolean notifySensorAgent(AID agentAID, EnvironmentNotification notification) throws ServiceException {
-			return broadcastNotifyAgent(agentAID, notification, getAllSlices());	
+			return broadcastNotifyAgent(agentAID, notification);	
 		}
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#notifyManagerAgent(agentgui.simulationService.transaction.EnvironmentNotification)
@@ -526,7 +526,7 @@ public class SimulationService extends BaseService {
 			if (myLogger.isLoggable(Logger.FINER)) {
 				myLogger.log(Logger.FINER, "Sending agent-answer of environment-change to " + sliceName);
 			}
-			slice.setEnvironmentInstanceNextPart(environmentInstanceNextPartsLocal);
+			slice.setEnvironmentInstanceNextPart(nextPartsLocal);
 		}
 		catch(Throwable t) {
 			myLogger.log(Logger.WARNING, "Error while sending agent-answer of environment-change to slice  " + sliceName, t);
@@ -603,7 +603,11 @@ public class SimulationService extends BaseService {
 			if (myLogger.isLoggable(Logger.FINER)) {
 				myLogger.log(Logger.FINER, "Sending new EnvironmentModel to " + sliceName);
 			}
-			envModel = this.setEnvironmentModel2Slice(slice, envModel, notifySensorAgents);
+			if (slice.getNode().getName().equals(this.myContainer.getNodeDescriptor().getName())==true) {
+				this.localServiceActuator.notifySensors(envModel, notifySensorAgents);
+			} else {
+				this.setEnvironmentModel2Slice(slice, envModel, notifySensorAgents);	
+			}
 		}
 	}
 
@@ -703,26 +707,36 @@ public class SimulationService extends BaseService {
 	 * @return true, if successful
 	 * @throws ServiceException the service exception
 	 */
-	private boolean broadcastNotifyAgent(AID agentAID, EnvironmentNotification notification, Service.Slice[] slices) throws ServiceException {
+	private boolean broadcastNotifyAgent(AID agentAID, EnvironmentNotification notification) throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Sending notfication to agent '" + agentAID.getLocalName() + "'!");
 		}
-		for (int i = 0; i < slices.length; i++) {
-			String sliceName = null;
-			try {
-				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
-				sliceName = slice.getNode().getName();
-				if (myLogger.isLoggable(Logger.FINER)) {
-					myLogger.log(Logger.FINER, "Try sending notfication to agent '" + agentAID.getLocalName() + "' at " + sliceName + "!");
+		// --- First try to find the agent locally -------- 
+		boolean notified = this.localServiceActuator.notifySensorAgent(agentAID, notification);
+		if (notified==true) {
+			// --- Found locally - done! ----------------------------
+			return notified;
+			
+		} else {
+			// --- Try to find the agent in remote container --------
+			Service.Slice[] slices = getAllSlices();
+			for (int i = 0; i < slices.length; i++) {
+				String sliceName = null;
+				try {
+					SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+					sliceName = slice.getNode().getName();
+					if (myLogger.isLoggable(Logger.FINER)) {
+						myLogger.log(Logger.FINER, "Try sending notfication to agent '" + agentAID.getLocalName() + "' at " + sliceName + "!");
+					}
+					notified = slice.notifyAgent(agentAID, notification);
+					if (notified==true) {
+						return notified;	
+					}
 				}
-				boolean notified = slice.notifyAgent(agentAID, notification);
-				if (notified==true) {
-					return notified;	
+				catch(Throwable t) {
+					myLogger.log(Logger.WARNING, "Error while sending a notification to agent '" + agentAID.getLocalName() + "' at slice " + sliceName, t);
 				}
-			}
-			catch(Throwable t) {
-				myLogger.log(Logger.WARNING, "Error while sending a notification to agent '" + agentAID.getLocalName() + "' at slice " + sliceName, t);
 			}
 		}
 		return false;
@@ -1399,16 +1413,12 @@ public class SimulationService extends BaseService {
 	 * @return the environment model
 	 * @throws ServiceException the service exception
 	 */
-	private EnvironmentModel setEnvironmentModel2Slice(SimulationServiceSlice simSlice, EnvironmentModel envModel, boolean notifySensorAgents) throws ServiceException {
-		
+	private void setEnvironmentModel2Slice(SimulationServiceSlice simSlice, EnvironmentModel envModel, boolean notifySensorAgents) throws ServiceException {
 		try {
 			simSlice.setEnvironmentModel(envModel, notifySensorAgents);
-			return envModel;
-			
 		} catch (IMTPException err) {
 			myLogger.log(Logger.WARNING, "Error while sending the new EnvironmentModel to slice " + simSlice.getNode().getName(), err);
 		}
-		return null;
 	}
 	
 	/**

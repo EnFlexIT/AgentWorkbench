@@ -41,6 +41,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.Vector;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
@@ -289,17 +291,22 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	private void refreshTableModel() {
 
 		// --- Remove all elements first ----------------------------
-		this.getTableModel().getDataVector().removeAllElements();
+		while(this.getTableModel().getRowCount()>0) {
+			this.getTableModel().removeRow(0);
+		}
 		
 		// --- Add rows containing the series specific settings -----
 		for(int i=0; i < model.getSeriesCount(); i++){
 			SeriesSettings settings;
 			try {
 				settings = model.getChartSettings().getSeriesSettings(i);
-				String seriesLabel = settings.getLabel();
-				Color seriesColor = settings.getColor();
-				Float seriesLineWidth = settings.getLineWIdth();
-				this.getTableModel().addRow(new Object[]{seriesLabel, seriesColor, seriesLineWidth});
+				
+				Vector<Object> rowVector = new Vector<Object>();
+				rowVector.add(settings.getLabel());
+				rowVector.add(settings.getColor());
+				rowVector.add(settings.getLineWIdth());
+				
+				this.getTableModel().addRow(rowVector);
 				
 			} catch (NoSuchSeriesException e) {
 				System.err.println("Error: No settings for data series "+i+" found!");

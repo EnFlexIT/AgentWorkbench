@@ -814,12 +814,21 @@ public class DynForm extends DynFormBase {
 	 * @param ontologyInstances the new instances of the ontology arguments
 	 */
 	public void setOntoArgsInstance(Object[] ontologyInstances) {
+		this.setOntoArgsInstance(ontologyInstances, false);
+	}
+	/**
+	 * Sets the instances of the ontology arguments.
+	 * @param ontologyInstances the new instances of the ontology arguments
+	 */
+	public void setOntoArgsInstance(Object[] ontologyInstances, boolean avoidGuiUpdate) {
 		if (ontologyInstances==null) {
 			this.resetValuesOnForm();
 		} else {
 			this.ontoArgsInstance = ontologyInstances;
 			this.setXMLFromInstances();
-			this.setInstancesFromXML();
+			if (avoidGuiUpdate==false) {
+				this.setInstancesFromXML();
+			}
 		}
 	}
 

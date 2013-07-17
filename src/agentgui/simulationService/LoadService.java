@@ -776,7 +776,7 @@ public class LoadService extends BaseService {
 					myLogger.log(Logger.FINER, "Try to get Sensor-AID's from " + sliceName);
 				}
 				AID[] aidList = slice.getAIDListSensorAgents();
-				loadInfo.sensorAgents.addAll( new Vector<AID>(Arrays.asList(aidList)) );
+				loadInfo.sensorAgents.addAll(new Vector<AID>(Arrays.asList(aidList)) );
 			}
 			catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 

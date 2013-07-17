@@ -116,23 +116,20 @@ public abstract class NetworkComponentAdapter4DataModel {
 			ex.printStackTrace();
 		}
 	}
+	
 	/**
-	 * Sets the data model of a ClusterNetworkComponent to the visualisation component.
-	 * @param clusterNetworkComponent the ClusterNetworkComponent
-	 */
-	public void setDataModel(ClusterNetworkComponent clusterNetworkComponent) {
-		try {
-			this.setDataModel(clusterNetworkComponent.getDataModel());
-		} catch (Exception ex) {
-			System.err.println("Error while setting data model of ClusterNetworkComponent '" + clusterNetworkComponent.getId() + "'!");
-			ex.printStackTrace();
-		}
-	}
-	/**
-	 * Sets the data model to the visualisation component.
+	 * Sets the data model to the visualisation component and will refresh the visualisation.
 	 * @param dataModel the new data model
 	 */
-	public abstract void setDataModel(Object dataModel);
+	public void setDataModel(Object dataModel) {
+		this.setDataModel(dataModel, false);
+	}
+	/**
+	 * Sets the data model to the visualisation component and will refresh the visualisation.
+	 * @param dataModel the new data model
+	 * @param avoidGuiUpdate set true, if you want to avoid an update of the GUI
+	 */
+	public abstract void setDataModel(Object dataModel, boolean avoidGuiUpdate);
 	
 	/**
 	 * Returns the data model from the visualisation component.
@@ -146,7 +143,17 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * @param dataModel the data model
 	 * @return the data model encoded as Base64 String
 	 */
-	public abstract Vector<String> getDataModelBase64Encoded(Object dataModel);
+	public Vector<String> getDataModelBase64Encoded(Object dataModel) {
+		return this.getDataModelBase64Encoded(dataModel, false);
+	}
+	/**
+	 * Returns the data model of a {@link NetworkComponent} as Vector of Base64 encoded String.
+	 *
+	 * @param dataModel the data model
+	 * @param avoidGuiUpdate the avoid gui update
+	 * @return the data model encoded as Base64 String
+	 */
+	public abstract Vector<String> getDataModelBase64Encoded(Object dataModel, boolean avoidGuiUpdate);
 	
 	/**
 	 * Returns the data model of a {@link NetworkComponent} as Object

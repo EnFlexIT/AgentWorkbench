@@ -45,6 +45,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -267,6 +268,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		if (this.jComponentContent==null) {
 			
 			if (this.networkComponentAdapter==null) {
+				// --- No network component adapter was defined -------------------------
 				this.getJToolBarButtonSave().setEnabled(false);
 				this.getJToolBarButtonSaveAndExit().setEnabled(false);
 
@@ -287,8 +289,10 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 				this.jComponentContent = jLabelNoAdapter;
 				
 			} else {
+				// --- There is a network component adapter available -------------------
 				this.adapter4DataModel = this.networkComponentAdapter.getNewDataModelAdapter();
 				if (this.adapter4DataModel == null) {
+					// --- No DataModelAdapter was defined -------------------------
 					if (this.graphNode!=null) {
 						this.graphNode.setDataModel(null);
 						this.graphNode.setDataModelBase64(null);
@@ -296,14 +300,15 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 						this.networkComponent.setDataModel(null);
 						this.networkComponent.setDataModelBase64(null);	
 					}
-					// --- Disable save-actions ---------------------
+					// --- Disable save-actions ------------------------------------
 					this.getJToolBarButtonSave().setEnabled(false);
 					this.getJToolBarButtonSaveAndExit().setEnabled(false);
 					
 				} else {
+					// --- There was a DataModelAdapter defined --------------------
 					Object dataModel = null;
 					Vector<String> dataModelBase64 = null;
-					// --- Get the Base64 encoded Vector<String> ---- 
+					// --- Get the Base64 encoded Vector<String> -------------- 
 					if (this.graphNode!=null) {
 						dataModel = this.graphNode.getDataModel();
 						dataModelBase64 = this.graphNode.getDataModelBase64();
@@ -313,7 +318,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 					}
 					
 					if (dataModel==null && dataModelBase64!=null) {
-    					// --- Convert Base64 decoded Object --------
+    					// --- Convert Base64 decoded Object ------------------
     					dataModel = this.adapter4DataModel.getDataModelBase64Decoded(dataModelBase64);
     					if (this.graphNode!=null) {
     						this.graphNode.setDataModel(dataModel);
@@ -321,21 +326,26 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
     						this.networkComponent.setDataModel(dataModel);
     					}
 	    			}
-					if (this.graphNode!=null) {
-						this.adapter4DataModel.setDataModel(dataModel);
-					} else {
-						this.adapter4DataModel.setDataModel(dataModel);
-					}
-					// --- Remind the initial HashCodes of the Base64 data model vector ------
-					if (dataModelBase64!=null) {
+					
+					// -------------------------------------------------------------
+					// --- Set model to visualisation ------------------------------
+					// --- and get initial base64 values ---------------------------
+					// -------------------------------------------------------------
+					Vector<String> initialBase64Values = this.adapter4DataModel.getDataModelBase64Encoded(dataModel);
+
+					// -------------------------------------------------------------
+					// --- Remind the initial HashCodes ----------------------------
+					// --- of the Base64 data model vector -------------------------
+					// -------------------------------------------------------------
+					if (initialBase64Values!=null) {
 						this.dataModelBase64InitialHashCodes = new Vector<Integer>();
-						for (int i=0; i < dataModelBase64.size(); i++) {
-							String singleDataModel = dataModelBase64.get(i);
+						for (int i=0; i < initialBase64Values.size(); i++) {
+							String singleDataModel = initialBase64Values.get(i);
 							int singleDataModelHashCode = singleDataModel.hashCode();
 							this.dataModelBase64InitialHashCodes.add(singleDataModelHashCode);	
 						}
 					}
-					// --- Get the visualization component -----------------------------------
+					// --- Get the visualisation component -------------------------
 					JComponent visualisation = this.adapter4DataModel.getVisualisationComponent();
 					if (visualisation instanceof OntologyInstanceViewer) {
 						((OntologyInstanceViewer)visualisation).setJToolBar4UserFunctions(this.getJJToolBarBarNorth());
@@ -523,26 +533,36 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		if (displayAgentNotificationGraph instanceof DataModelNotification) {
 			// --- DataModelNotification: Is that mine? -------------
-			DataModelNotification dmn = (DataModelNotification) displayAgentNotificationGraph;
+			final DataModelNotification dmn = (DataModelNotification) displayAgentNotificationGraph;
 			if (this.graphNode!=null && dmn.isGraphNodeConfiguration()==true) {
 				// -- Update the model of the current GraphNode ? -------------
 				if (dmn.getGraphNode().getId().equals(this.graphNode.getId())) {
-					if (dmn.isUseDataModelBase64Encoded()==true) {
-						this.adapter4DataModel.getDataModelBase64Decoded(dmn.getGraphNode().getDataModelBase64());
-					} else {
-						this.adapter4DataModel.setDataModel(dmn.getGraphNode());	
-					}
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							if (dmn.isUseDataModelBase64Encoded()==true) {
+								adapter4DataModel.getDataModelBase64Decoded(dmn.getGraphNode().getDataModelBase64());
+							} else {
+								adapter4DataModel.setDataModel(dmn.getGraphNode());	
+							}
+						}
+					});
 				}// end current GraphNode
 			}// end GraphNode
 			
 			if (this.networkComponent!=null && dmn.isNetworkComponentConfiguration()==true) {
 				// -- Update the model of the current NetworkComponent ? ------
 				if (dmn.getNetworkComponent().getId().equals(this.networkComponent.getId())) {
-					if (dmn.isUseDataModelBase64Encoded()==true) {
-						this.adapter4DataModel.getDataModelBase64Decoded(dmn.getNetworkComponent().getDataModelBase64());
-					} else {
-						this.adapter4DataModel.setDataModel(dmn.getNetworkComponent());
-					}
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							if (dmn.isUseDataModelBase64Encoded()==true) {
+								adapter4DataModel.getDataModelBase64Decoded(dmn.getNetworkComponent().getDataModelBase64());
+							} else {
+								adapter4DataModel.setDataModel(dmn.getNetworkComponent());
+							}
+						}
+					});
 				} // end current NetworkComponent  
 			}// end NetworkComponent
 			

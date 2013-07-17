@@ -45,7 +45,7 @@ import jade.core.Location;
  */
 public class ServiceSensor {
 
-	protected ServiceSensorInterface myServiceSensor;
+	private ServiceSensorInterface myServiceSensor;
 	
 	/**
 	 * Instantiates a new service sensor.
@@ -53,6 +53,14 @@ public class ServiceSensor {
 	 */
 	public ServiceSensor(ServiceSensorInterface serviceSensor) {
 		myServiceSensor = serviceSensor;		
+	}
+	
+	/**
+	 * Gets the current service sensor.
+	 * @return the service sensor
+	 */
+	public ServiceSensorInterface getServiceSensor() {
+		return myServiceSensor;
 	}
 	
 	/**

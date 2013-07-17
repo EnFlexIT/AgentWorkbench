@@ -83,9 +83,9 @@ public abstract class OntologyClassEditorJPanel extends JPanel {
 	 * 
 	 * @param objectInstance the new object instance
 	 */
-	public void invokeSetOntologyClassInstance(Object objectInstance) {
+	public void invokeSetOntologyClassInstance(final Object objectInstance) {
 		try {
-			this.setOntologyClassInstance(objectInstance);
+			setOntologyClassInstance(objectInstance);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

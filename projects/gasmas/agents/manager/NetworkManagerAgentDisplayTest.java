@@ -130,7 +130,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		
 		for (int i=0; i < 15; i++) {
 			
-			NetworkComponent netCompCopy = this.myNetworkModel.getNetworkComponent("n38").getCopy(this.myNetworkModel);
+			NetworkComponent netCompCopy = this.myNetworkModel.getNetworkComponent("n38");
 			if (netCompCopy!=null) {
 				
 				// -- Get the data model of the 
@@ -143,7 +143,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 				TimeSeriesChart tsc = (TimeSeriesChart) dataModelArr[1];
 				tsc.getVisualizationSettings().setChartTitle("This is a test notification");
 			
-				DataModelNotification dmNote = new DataModelNotification(netCompCopy);
+				DataModelNotification dmNote = new DataModelNotification(netCompCopy, this.myNetworkModel);
 				dmNote.setDataModelPartUpdateIndex(0);
 				this.sendDisplayAgentNotification(dmNote);
 				

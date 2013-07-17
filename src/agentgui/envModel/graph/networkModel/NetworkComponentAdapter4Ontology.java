@@ -143,12 +143,12 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#setDataModel(java.lang.Object)
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#setDataModel(java.lang.Object, boolean)
 	 */
 	@Override
-	public void setDataModel(Object dataModel) {
+	public void setDataModel(Object dataModel, boolean avoidGuiUpdate) {
 		Object[] dataModelArray = (Object[]) dataModel;
-		this.getOntologyInstanceViewer().setConfigurationInstances(dataModelArray);
+		this.getOntologyInstanceViewer().setConfigurationInstances(dataModelArray, avoidGuiUpdate);
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getDataModel()
@@ -159,12 +159,12 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkComponentDataModelAdapter#getDataModelBase64Encoded(java.lang.Object)
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getDataModelBase64Encoded(java.lang.Object, boolean)
 	 */
 	@Override
-	public Vector<String> getDataModelBase64Encoded(Object dataModel) {
+	public Vector<String> getDataModelBase64Encoded(Object dataModel, boolean avoidGuiUpdate) {
 		
-		this.setDataModel(dataModel);
+		this.setDataModel(dataModel, avoidGuiUpdate);
 		
 		Vector<String> base64Vector = new Vector<String>();
 		String[] base64Array = this.getOntologyInstanceViewer().getConfigurationXML64();

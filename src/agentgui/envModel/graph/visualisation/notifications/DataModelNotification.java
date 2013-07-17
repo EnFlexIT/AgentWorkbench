@@ -30,6 +30,8 @@ package agentgui.envModel.graph.visualisation.notifications;
 
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
+import agentgui.envModel.graph.networkModel.NetworkModel;
 
 
 /**
@@ -53,40 +55,53 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	
 	
 	/**
-	 * Instantiates a new network component data model notification.
-	 * @param networkComponentCopy a copy of the concrete NetworkComponent 
+	 * Instantiates a new data model notification for a NetworkComponent.
+	 *
+	 * @param networkComponent the NetworkComponent that contains the data model
+	 * @param networkModel the current network model
 	 * @see NetworkComponent#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
-	public DataModelNotification(NetworkComponent networkComponentCopy) {
-		this.networkComponent = networkComponentCopy;
+	public DataModelNotification(NetworkComponent networkComponent, NetworkModel networkModel) {
+		NetworkComponentAdapter4DataModel adapter4DataModel = networkModel.getNetworkComponentAdapter(null, networkComponent).getStoredDataModelAdapter();
+		networkComponent.setDataModelBase64(adapter4DataModel.getDataModelBase64Encoded(networkComponent.getDataModel(), true));
+		this.networkComponent = networkComponent.getCopy(networkModel);
 	}
 	/**
-	 * Instantiates a new network component data model notification.
-	 * @param networkComponentCopy a copy of the concrete NetworkComponent
+	 * Instantiates a new data model notification for a NetworkComponent.
+	 *
+	 * @param networkComponent the NetworkComponent that contains the data model
+	 * @param networkModel the current network model
 	 * @param useDataModelBase64Encoded the use data model base64 encoded
 	 * @see NetworkComponent#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
-	public DataModelNotification(NetworkComponent networkComponentCopy, boolean useDataModelBase64Encoded) {
-		this.networkComponent = networkComponentCopy;
+	public DataModelNotification(NetworkComponent networkComponent, NetworkModel networkModel, boolean useDataModelBase64Encoded) {
+		this.networkComponent = networkComponent.getCopy(networkModel);
 		this.useDataModelBase64Encoded = useDataModelBase64Encoded;
 	}
 	
 	/**
-	 * Instantiates a new network component data model notification.
-	 * @param graphNodeCopy a copy of the concrete GraphNode
+	 * Instantiates a new data model notification for a GraphNode.
+	 *
+	 * @param graphNode the GraphNode that contains the data model
+	 * @param networkModel the current network model
 	 * @see GraphNode#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
-	public DataModelNotification(GraphNode graphNodeCopy) {
-		this.graphNode = graphNodeCopy;
+	public DataModelNotification(GraphNode graphNode, NetworkModel networkModel) {
+		NetworkComponentAdapter4DataModel adapter4DataModel = networkModel.getNetworkComponentAdapter(null, graphNode).getStoredDataModelAdapter();
+		graphNode.setDataModelBase64(adapter4DataModel.getDataModelBase64Encoded(graphNode.getDataModel(), true));
+		this.graphNode = graphNode.getCopy(networkModel);
 	}
 	/**
-	 * Instantiates a new network component data model notification.
-	 * @param graphNodeCopy a copy of the concrete GraphNode
+	 * Instantiates a new data model notification for a GraphNode.
+	 *
+	 * @param graphNode the GraphNode that contains the data model
+	 * @param networkModel the current network model
 	 * @param useDataModelBase64Encoded the use data model base64 encoded
 	 * @see GraphNode#getCopy(agentgui.envModel.graph.networkModel.NetworkModel)
 	 */
-	public DataModelNotification(GraphNode graphNodeCopy, boolean useDataModelBase64Encoded) {
-		this.graphNode = graphNodeCopy;
+	public DataModelNotification(GraphNode graphNode, NetworkModel networkModel, boolean useDataModelBase64Encoded) {
+		this.graphNode = graphNode.getCopy(networkModel);
+		this.useDataModelBase64Encoded = useDataModelBase64Encoded;
 	}
 
 	/**
