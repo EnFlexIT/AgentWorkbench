@@ -12,13 +12,16 @@ import javax.swing.JLabel;
 import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartSettingsTab;
-import agentgui.core.charts.timeseriesChart.TimeSeriesChartSettings;
+import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
-
+/**
+ * ChartSettingsTab-implementation for time series charts, adding the possibility 
+ * to set the time format. 
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
+ *
+ */
 public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	
-	TimeSeriesChartEditorJPanel parent; 
-
 	/**
 	 * Generated serialVersionUID
 	 */
@@ -28,10 +31,7 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	private TimeFormatSelector timeFormatSelector = null;
 
 	public TimeSeriesChartSettingsTab(DataModel model, TimeSeriesChartEditorJPanel parent) {
-		this.model = model;
-		this.parent = parent;
-		
-		initialize();
+		super(model, parent);
 	}
 	
 	
@@ -80,7 +80,8 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 		if (timeFormatSelector==null) {
 			timeFormatSelector = new TimeFormatSelector(this);
 			timeFormatSelector.setPreferredSize(new Dimension(360, 80));
-			timeFormatSelector.setTimeFormat(((TimeSeriesChartSettings)model.getChartSettings()).getTimeFormat());
+//			timeFormatSelector.setTimeFormat(((TimeSeriesChartSettings)model.getChartSettings()).getTimeFormat());
+			timeFormatSelector.setTimeFormat(((TimeSeriesOntologyModel)model.getOntologyModel()).getAdditionalSettings().getTimeFormat());
 			timeFormatSelector.addActionListener(this);
 		}
 		return timeFormatSelector;
@@ -106,9 +107,7 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == getTimeFormatSelector()){
-			String newTimeFormat = getTimeFormatSelector().getTimeFormat();
-			((TimeSeriesChartSettings)model.getChartSettings()).setTimeFormat(newTimeFormat);
-			((TimeSeriesOntologyModel) model.getOntologyModel()).getAdditionalSettings().setTimeFormat(newTimeFormat);
+			setTimeFormat(getTimeFormatSelector().getTimeFormat());
 		}else{
 			super.actionPerformed(e);
 		}
@@ -122,15 +121,26 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	@Override
 	public void focusLost(FocusEvent e) {
 		if(e.getSource() == getTimeFormatSelector()){
-			((TimeSeriesChartSettings)model.getChartSettings()).setTimeFormat(getTimeFormatSelector().getTimeFormat());
+			setTimeFormat(getTimeFormatSelector().getTimeFormat());
 		}else{
 			super.focusLost(e);
 		}
 		
 	}
-	
+	/**
+	 * @return The default time format
+	 */
 	public String getDefaultTimeFormat(){
 		return parent.getDefaultTimeFormat();
+	}
+	
+	/**
+	 * Sets the time format for the chart
+	 * @param newTimeFormat The new time format
+	 */
+	private void setTimeFormat(String newTimeFormat){
+		((TimeSeriesOntologyModel) model.getOntologyModel()).getAdditionalSettings().setTimeFormat(newTimeFormat);
+		((TimeSeriesChartEditorJPanel)parent).getChartTab().setTimeFormat(newTimeFormat);
 	}
 
 

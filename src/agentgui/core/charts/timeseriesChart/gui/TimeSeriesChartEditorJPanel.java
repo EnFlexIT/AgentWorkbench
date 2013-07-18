@@ -33,11 +33,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import agentgui.core.charts.ChartSettings;
 import javax.swing.JToolBar;
 
 import agentgui.core.charts.gui.ChartEditorJPanel;
-import agentgui.core.charts.timeseriesChart.TimeSeriesChartSettings;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
 import agentgui.core.ontologies.gui.DynForm;
@@ -46,7 +44,7 @@ import agentgui.ontology.TimeSeriesChart;
 /**
  * Implementation of OntologyClassEditorJPanel for TimeSeriesChart
  * 
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  */
 public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 
@@ -131,13 +129,11 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	 */
 	@Override
 	public void setOntologyClassInstance(Object objectInstance) {
-//		applyChartSettings(model.getChartSettings());
 		this.model = new TimeSeriesDataModel((TimeSeriesChart) objectInstance, this.getDefaultTimeFormat());
 		
 		this.getChartTab().replaceModel(this.model);
 		this.getTableTab().replaceModel(this.model);
 		this.getSettingsTab().replaceModel(this.model);
-		this.model.addObserver(this);
 	}
 
 	@Override
@@ -152,19 +148,6 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	@Override
 	public JToolBar getJToolBarUserFunctions() {
 		return this.getToolBar();
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.gui.ChartEditorJPanel#applyChartSettings(agentgui.core.charts.ChartSettings)
-	 */
-	@Override
-	protected void applyChartSettings(ChartSettings newSettings) {
-		// Apply general chart settings
-		super.applyChartSettings(newSettings);
-		
-		// Apply time format settings
-		String newTimeFormat = ((TimeSeriesChartSettings)newSettings).getTimeFormat();
-		getChartTab().setTimeFormat(newTimeFormat);
 	}
 
 }

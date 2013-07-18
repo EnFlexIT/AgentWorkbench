@@ -41,7 +41,7 @@ import agentgui.ontology.ValuePair;
 /**
  * Abstract superclass for the table representation of chart data.  
  * 
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  */
 public abstract class TableModel extends AbstractTableModel {
 

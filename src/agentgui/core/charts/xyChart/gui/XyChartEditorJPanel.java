@@ -35,7 +35,11 @@ import agentgui.core.charts.xyChart.XyDataModel;
 import agentgui.core.charts.xyChart.XyOntologyModel;
 import agentgui.core.ontologies.gui.DynForm;
 import agentgui.ontology.XyChart;
-
+/**
+ * Implementation of OntologyClassEditorJPanel for XyCharts
+ * 
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
+ */
 public class XyChartEditorJPanel extends ChartEditorJPanel {
 
 	/**
@@ -66,7 +70,7 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 	
 	protected XyChartSettingsTab getSettingsTab(){
 		if(this.settingsTab == null){
-			this.settingsTab = new XyChartSettingsTab(this.model);
+			this.settingsTab = new XyChartSettingsTab(this.model, this);
 		}
 		
 		return (XyChartSettingsTab) this.settingsTab;
@@ -88,7 +92,6 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 		this.getChartTab().replaceModel(this.model);
 		this.getTableTab().replaceModel(this.model);
 		this.getSettingsTab().replaceModel(this.model);
-		this.model.addObserver(this);
 	}
 
 	@Override

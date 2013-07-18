@@ -44,7 +44,11 @@ import agentgui.core.charts.gui.ChartEditorJPanel;
 import agentgui.core.charts.gui.TableCellEditor4FloatObject;
 import agentgui.core.charts.gui.TableTab;
 import agentgui.core.charts.xyChart.XyDataModel;
-
+/**
+ * TableTab-implementation for XY-charts.
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
+ *
+ */
 public class XyTableTab extends TableTab {
 
 	private static final long serialVersionUID = -5737806366707646814L;

@@ -29,7 +29,6 @@
 package agentgui.core.charts;
 
 import java.awt.Color;
-import java.util.Observable;
 import java.util.Vector;
 
 import jade.util.leap.List;
@@ -46,9 +45,9 @@ import agentgui.ontology.ValuePair;
  * different chart types might require different data types and functionality
  * there must be chart type specific implementation for every type of chart.
  *  
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  */
-public abstract class DataModel extends Observable implements TableModelListener {
+public abstract class DataModel implements TableModelListener {
 	
 	/** These colors will be used for newly added series */
 	public static final Color[] DEFAULT_COLORS = {Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.YELLOW, Color.PINK, Color.CYAN, Color.MAGENTA, Color.LIGHT_GRAY, Color.DARK_GRAY, Color.BLACK};
@@ -61,8 +60,6 @@ public abstract class DataModel extends Observable implements TableModelListener
 	protected ChartModel chartModel;
 	/** The JTable representation of the series data */
 	protected TableModel tableModel;
-	/** Contains the settings for this chart */
-	protected ChartSettings chartSettings;
 	
 	/** The number of series in this data model	 */
 	protected int seriesCount = 0;
@@ -165,13 +162,6 @@ public abstract class DataModel extends Observable implements TableModelListener
 	}
 
 	/**
-	 * @return the chartSettings
-	 */
-	public ChartSettings getChartSettings() {
-		return chartSettings;
-	}
-
-	/**
 	 * @return the seriesCount
 	 */
 	public int getSeriesCount() {
@@ -242,11 +232,7 @@ public abstract class DataModel extends Observable implements TableModelListener
 				
 			} else {
 				// --- Insert or Delete events in the table ---------
-				setChanged();
-				notifyObservers();
 			}
-			setChanged();
-			notifyObservers();
 		}
 
 	}
@@ -271,9 +257,6 @@ public abstract class DataModel extends Observable implements TableModelListener
 		ontologyModel.getChartSettings().addYAxisColors(""+DEFAULT_COLORS[getSeriesCount() % DEFAULT_COLORS.length].getRGB());
 		ontologyModel.getChartSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
 		
-		SeriesSettings settings = new SeriesSettings(series.getLabel(), DEFAULT_COLORS[getSeriesCount() % DEFAULT_COLORS.length], DEFAULT_LINE_WIDTH);
-		chartSettings.addSeriesSettings(settings);
-		
 		seriesCount++;
 
 	}
@@ -287,8 +270,6 @@ public abstract class DataModel extends Observable implements TableModelListener
 		ontologyModel.removeSeries(seriesIndex);
 		chartModel.removeSeries(seriesIndex);
 		tableModel.removeSeries(seriesIndex);
-		
-		chartSettings.removeSeriesSettings(seriesIndex);
 		
 		seriesCount--;
 	}

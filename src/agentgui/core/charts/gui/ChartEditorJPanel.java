@@ -33,8 +33,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -45,9 +43,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Observable;
-import java.util.Observer;
-
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -64,10 +59,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.charts.ChartSettings;
 import agentgui.core.charts.DataModel;
-import agentgui.core.charts.NoSuchSeriesException;
-import agentgui.core.charts.SeriesSettings;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.gui.TimeFormatImportConfiguration;
 import agentgui.core.gui.imaging.ConfigurableFileFilter;
@@ -81,9 +73,9 @@ import agentgui.ontology.ValuePair;
 
 /**
  * General superclass for OntologyClassEditorJPanel implementations for charts.
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  */
-public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implements ActionListener, FocusListener, Observer {
+public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implements ActionListener, FocusListener{
 	
 	private static final long serialVersionUID = -306986715544317480L;
 	
@@ -123,19 +115,6 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		this.setLayout(new BorderLayout());
 		this.add(getToolBar(), BorderLayout.NORTH);
 		this.add(getTabbedPane(), BorderLayout.CENTER);
-		
-		this.model.addObserver(this);
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		
-		if (this.model==null) return;
-		
-		// --- Handle changes of the chart data 
-		if(o == this.model){
-//			setOntologyClassInstance(this.getOntologyClassInstance());
-		}
 	}
 
 	@Override
@@ -220,21 +199,6 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 			tabbedPane.addTab("Chart", getChartTab());
 			tabbedPane.addTab("Table", getTableTab());
 			tabbedPane.addTab("Settings", getJScrollPane4SettingsTab());
-			
-			// Add ComponentListener for applying chart settings when the settings tab is left
-			getJScrollPane4SettingsTab().addComponentListener(new ComponentAdapter() {
-
-				/* (non-Javadoc)
-				 * @see java.awt.event.ComponentAdapter#componentHidden(java.awt.event.ComponentEvent)
-				 */
-				@Override
-				public void componentHidden(ComponentEvent e) {
-					if(e.getSource() == getJScrollPane4SettingsTab()){
-						applyChartSettings(model.getChartSettings());
-					}
-				}
-
-			});
 		}
 		return tabbedPane;
 	}
@@ -616,50 +580,4 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 			e.printStackTrace();
 		}
 	}
-	
-	/**
-	 * After the chart settings have been changed, this method applies the new settings.
-	 * This method handles general chart settings only. If your chart has chart type 
-	 * specific settings too, override it in the chart type specific ChartEditorJPanel 
-	 * implementation.  
-	 * @param newSettings
-	 */
-	protected void applyChartSettings(ChartSettings newSettings){
-		// Chart title
-		getChartTab().getChart().setTitle(newSettings.getChartTitle());
-		
-		// X axis label
-		chartTab.setXAxisLabel(newSettings.getxAxisLabel());
-		model.getTableModel().setKeyColumnLabel(newSettings.getxAxisLabel());
-		
-		// Y axis label
-		chartTab.setYAxisLabel(newSettings.getyAxisLabel());
-		
-		// Renderer type
-		getChartTab().setRenderer(newSettings.getRendererType());
-		
-		// Series specific settings
-		for(int i=0; i<model.getSeriesCount(); i++){
-			try {
-				SeriesSettings seriesSettings = newSettings.getSeriesSettings(i);
-				
-				// Series label
-				model.getTableModel().setSeriesLabel(i, seriesSettings.getLabel());
-				model.getChartModel().getSeries(i).setKey(seriesSettings.getLabel());
-				
-				// Plot color
-				chartTab.setSeriesColor(i, seriesSettings.getColor());
-				
-				// Plot line width
-				chartTab.setSeriesLineWidth(i, seriesSettings.getLineWIdth());
-				
-			} catch (NoSuchSeriesException e) {
-				System.err.println("Error setting series settings, could not find series "+i);
-				e.printStackTrace();
-			}
-			
-		}
-		
-	}
-	
 }

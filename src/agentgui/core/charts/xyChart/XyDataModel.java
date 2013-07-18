@@ -38,7 +38,11 @@ import agentgui.ontology.ValuePair;
 import agentgui.ontology.XyChart;
 import agentgui.ontology.XyDataSeries;
 import agentgui.ontology.XyValuePair;
-
+/**
+ * Container class managing the data models for the different XY data series representations.
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
+ *
+ */
 public class XyDataModel extends DataModel {
 	
 	/**
@@ -105,8 +109,6 @@ public class XyDataModel extends DataModel {
 		
 		// Register for table model events
 		tableModel.addTableModelListener(this);
-		
-		this.chartSettings = new XyChartSettings(xyom.getXyChart());
 	}
 
 	@Override

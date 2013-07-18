@@ -45,7 +45,7 @@ import agentgui.ontology.ValuePair;
 
 /**
  * Container class managing the data models for the different time series representations.
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  *
  */
 public class TimeSeriesDataModel extends DataModel {
@@ -123,8 +123,6 @@ public class TimeSeriesDataModel extends DataModel {
 		
 		// Register for table model events
 		tableModel.addTableModelListener(this);
-		
-		this.chartSettings = new TimeSeriesChartSettings(tsom.getTimeSeriesChart());
 	}
 
 	/**
@@ -169,15 +167,6 @@ public class TimeSeriesDataModel extends DataModel {
 		this.tableModel = tableModel;
 	}
 
-	public TimeSeriesChartSettings getTimeSeriesChartSettings() {
-		return (TimeSeriesChartSettings) chartSettings;
-	}
-
-	public void setTimeSeriesChartSettings(TimeSeriesChartSettings chartSettings) {
-		this.chartSettings = chartSettings;
-	}
-	
-
 	/**
 	 * @return the startDate
 	 */
@@ -189,14 +178,14 @@ public class TimeSeriesDataModel extends DataModel {
 	 * @return the timeFormat
 	 */
 	public String getTimeFormat() {
-		return ((TimeSeriesChartSettings)this.chartSettings).getTimeFormat();
+		return ((TimeSeriesOntologyModel)getOntologyModel()).getAdditionalSettings().getTimeFormat();
 	}
 
 	/**
 	 * @param timeFormat the timeFormat to set
 	 */
 	public void setTimeFormat(String timeFormat) {
-		((TimeSeriesChartSettings)this.chartSettings).setTimeFormat(timeFormat);
+		((TimeSeriesOntologyModel)getOntologyModel()).getAdditionalSettings().setTimeFormat(timeFormat);
 	}
 
 	@Override

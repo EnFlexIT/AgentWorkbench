@@ -49,7 +49,9 @@ import agentgui.core.charts.gui.TableTab;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 
 /**
- * The Class TimeSeriesTableTab.
+ * TableTab-implementation for time series charts.
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
+ *
  */
 public class TimeSeriesTableTab extends TableTab {
 	
@@ -65,7 +67,7 @@ public class TimeSeriesTableTab extends TableTab {
 	}
 	@Override
 	protected JTable getTable() {
-		return this.getTable(true);
+		return this.getTable(false);
 	}
 	@Override
 	protected JTable getTable(boolean forceRebuild) {
@@ -104,12 +106,14 @@ public class TimeSeriesTableTab extends TableTab {
 			};
 			table.setModel(model.getTableModel());
 			table.setShowGrid(false);
-//			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			table.setCellSelectionEnabled(true);
 			table.setRowSelectionAllowed(true);
 			table.setColumnSelectionAllowed(true);
 			table.getTableHeader().setReorderingAllowed(false);
+			
 			table.getSelectionModel().addListSelectionListener(this);
+			table.getColumnModel().getSelectionModel().addListSelectionListener(this);
 			
 			final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model.getTableModel());
 			if (model.getTableModel().getColumnCount()>0) {

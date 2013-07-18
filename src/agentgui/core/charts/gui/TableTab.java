@@ -55,7 +55,7 @@ import agentgui.ontology.ValuePair;
 /**
  * Generic superclass for a Swing component showing the table representation of chart data and 
  * providing means for editing the data.
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  *
  */
 public abstract class TableTab extends JPanel implements ActionListener, ListSelectionListener{
@@ -216,8 +216,7 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 				parentChartEditor.setOntologyClassInstance(parentChartEditor.getOntologyClassInstance());
 			}
 		} else if(e.getSource() == getBtnAddRow()){
-			model.getTableModel().addEmptyRow(getTable(false));
-
+			model.getTableModel().addEmptyRow(getTable());
 		} else if(e.getSource() == getBtnRemoveColumn()){
 			
 			if(table.getSelectedColumn() > 0){
@@ -225,8 +224,6 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 				try {
 					this.model.removeSeries(seriesIndex);
 					parentChartEditor.getSettingsTab().seriesRemoved(seriesIndex);
-					getBtnRemoveRow().setEnabled(false);
-					getBtnRemoveColumn().setEnabled(false);
 
 				} catch (NoSuchSeriesException e1) {
 					System.err.println("Error removing series " + seriesIndex);
@@ -252,8 +249,6 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 				Number key = (Number) table.getValueAt(table.getSelectedRow(), 0);
 				model.removeValuePairsFromAllSeries(key);
 			}
-			getBtnRemoveColumn().setEnabled(false);
-			getBtnRemoveRow().setEnabled(false);
 			
 			// TODO Check if necessary
 			parentChartEditor.setOntologyClassInstance(parentChartEditor.getOntologyClassInstance());

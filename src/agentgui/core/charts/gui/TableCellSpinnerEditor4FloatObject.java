@@ -29,11 +29,15 @@
 package agentgui.core.charts.gui;
 
 import java.awt.Component;
+import java.awt.event.KeyEvent;
+import java.text.ParseException;
+
 import javax.swing.JSpinner;
+import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.SpinnerNumberModel;
 /**
  * JSpinner-based table cell editor for Float objects
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  *
  */
 public class TableCellSpinnerEditor4FloatObject extends BasicCellEditor{
@@ -60,8 +64,34 @@ public class TableCellSpinnerEditor4FloatObject extends BasicCellEditor{
 	protected Component getEditorComponent(Object value) {
 		if(editorComponent == null){
 			editorComponent = new JSpinner(new SpinnerNumberModel(1.0, 0.1, 10.0, 0.1));
+			editorComponent.addKeyListener(this);
+			DefaultEditor edit = (DefaultEditor) ((JSpinner)editorComponent).getEditor();
+			edit.getTextField().addKeyListener(this);
 		}
 		((JSpinner)editorComponent).setValue(value);
 		return editorComponent;
 	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.BasicCellEditor#keyPressed(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_TAB){
+			try {
+				((JSpinner)editorComponent).commitEdit();
+			} catch (ParseException e1) {
+				DefaultEditor de = (DefaultEditor) ((JSpinner)editorComponent).getEditor();
+				String text = de.getTextField().getText();
+				if(text.matches("^\\d+(\\.\\d*)?")){
+					((JSpinner)editorComponent).setValue(Float.parseFloat(text));
+				}else{
+					System.err.println("Invalid input - ignoring");
+				}
+			}
+		}
+		super.keyPressed(e);
+	}
+	
+	
 }
