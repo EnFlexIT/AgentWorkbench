@@ -302,8 +302,20 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 				
 			// Extract series settings from the ontology model
 			DataSeries series = (DataSeries) model.getOntologyModel().getChartData().get(i);
-			String rgb = (String) model.getOntologyModel().getChartSettings().getYAxisColors().get(i);
-			Float width =  (Float) model.getOntologyModel().getChartSettings().getYAxisLineWidth().get(i);
+			
+			String rgb = null;
+			if (model.getOntologyModel().getChartSettings().getYAxisColors().size() < (i+1)) {
+				rgb = ((Integer) DataModel.DEFAULT_COLORS[i].getRGB()).toString();
+			} else {
+				rgb = (String) model.getOntologyModel().getChartSettings().getYAxisColors().get(i);
+			}
+			
+			Float width = null; 
+			if (model.getOntologyModel().getChartSettings().getYAxisLineWidth().size() < (i+1)) {
+				width = DataModel.DEFAULT_LINE_WIDTH;
+			} else {
+				width = (Float) model.getOntologyModel().getChartSettings().getYAxisLineWidth().get(i);
+			}
 			
 			// Create a table row for the series
 			Vector<Object> rowVector = new Vector<Object>();
