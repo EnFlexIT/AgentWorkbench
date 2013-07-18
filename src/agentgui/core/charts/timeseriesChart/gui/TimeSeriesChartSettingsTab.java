@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartSettingsTab;
-import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
 /**
  * ChartSettingsTab-implementation for time series charts, adding the possibility 
