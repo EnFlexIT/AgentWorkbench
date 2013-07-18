@@ -51,7 +51,7 @@ import agentgui.ontology.ValuePair;
 public abstract class DataModel extends Observable implements TableModelListener {
 	
 	/** These colors will be used for newly added series */
-	public static final Color[] DEFAULT_COLORS = {Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.CYAN, Color.YELLOW};
+	public static final Color[] DEFAULT_COLORS = {Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.YELLOW, Color.PINK, Color.CYAN, Color.MAGENTA, Color.LIGHT_GRAY, Color.DARK_GRAY, Color.BLACK};
 	/** This line width will be used for newly added series */
 	public static final float DEFAULT_LINE_WIDTH = 1.0f;
 	
