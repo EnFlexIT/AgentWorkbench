@@ -32,6 +32,8 @@ import jade.core.Location;
 
 import java.util.Vector;
 
+import javax.swing.SwingUtilities;
+
 import agentgui.core.environment.EnvironmentController;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -95,6 +97,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		this.myGraphEnvironmentController=null;
 		this.stimuliOfNetworkModel=null;
 		this.stimuliAction = null;
+		this.disposeDisplayAgentNotificationHandler();
 		this.myDisplayAgentNotificationHandler = null;
 		super.takeDown();
 	}
@@ -106,6 +109,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		this.myGraphEnvironmentController=null;
 		this.stimuliOfNetworkModel=null;
 		this.stimuliAction = null;
+		this.disposeDisplayAgentNotificationHandler();
 		this.myDisplayAgentNotificationHandler = null;
 		super.beforeMove();
 	}
@@ -158,7 +162,13 @@ public class DisplayAgent extends AbstractDisplayAgent {
 					this.getStimuliOfNetworkModel().remove(0);
 					
 					this.setTimeModelDisplay(this.myEnvironmentModel.getTimeModel());
-					this.myGraphEnvironmentController.setDisplayEnvironmentModel(this.myEnvironmentModel.getDisplayEnvironment());
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							myGraphEnvironmentController.setDisplayEnvironmentModel(myEnvironmentModel.getDisplayEnvironment());
+						}
+					});
+					
 					
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -196,6 +206,16 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	}
 	
 	/**
+	 * Disposes the current DisplayAgentNotificationHandler.
+	 */
+	private void disposeDisplayAgentNotificationHandler() {
+		if (this.myDisplayAgentNotificationHandler!=null) {
+			this.myDisplayAgentNotificationHandler.getDisplayNotificationStack().removeAllElements();
+			this.myDisplayAgentNotificationHandler.dispose();
+		}
+	}
+	
+	/**
 	 * Returns the current network model.
 	 * @return the network model
 	 */
@@ -216,7 +236,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
 		if (notification.getNotification() instanceof DisplayAgentNotificationGraph) {
-			notification = this.getDisplayAgentNotificationHandler().setDisplayNotification(notification, this.getGraphEnvironmentController().getNetworkModel(), this.getGraphEnvironmentController());
+			notification = this.getDisplayAgentNotificationHandler().setDisplayNotification(this.getGraphEnvironmentController(), this.getGraphEnvironmentController().getNetworkModel(), notification);
 		}
 		return notification;
 	}

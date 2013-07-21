@@ -204,6 +204,37 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 		}
 		return false;
 	}
-
+	
+	/**
+	 * Checks if the local settings are designated for a specified NetworkComponent.
+	 *
+	 * @param networkComponent the NetworkComponent
+	 * @return true, if is for network component
+	 */
+	public boolean isForNetworkComponent(NetworkComponent networkComponent) {
+		if (networkComponent==null) return false;
+		if (this.networkComponent==null) return false;
+		if (this.networkComponent.getId().equals(networkComponent.getId())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Checks if the local settings are designated for a specified GraphNode.
+	 *
+	 * @param graphNode the GraphNode
+	 * @return true, if is for graph node
+	 */
+	public boolean isForGraphNode(GraphNode graphNode) {
+		if (graphNode==null) return false;
+		if (this.graphNode==null) return false;
+		if (this.graphNode.getId().equals(graphNode.getId())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 }

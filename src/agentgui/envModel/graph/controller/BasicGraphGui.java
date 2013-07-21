@@ -792,8 +792,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Clears the picked nodes and edges
 	 */
 	private void clearPickedObjects() {
-		visView.getPickedVertexState().clear();
-		visView.getPickedEdgeState().clear();
+		if (visView!=null) {
+			visView.getPickedVertexState().clear();
+			visView.getPickedEdgeState().clear();	
+		}
 	}
 
 	/**

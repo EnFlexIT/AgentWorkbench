@@ -546,7 +546,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			// --- Form view ------------------------------
 			this.getDynForm().save(true);
 			this.getDynTableJPanel().refreshTableModel();
-			this.getDynTableJPanel().setOntologyClassInstanceToOntologyClassVisualisation();
 			
 		} else if (this.getSelectedIndex()==2) {
 			// --- XML view -------------------------------
@@ -556,7 +555,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 			this.getDynForm().save(false);
 			this.getDynTableJPanel().refreshTableModel();
-			this.getDynTableJPanel().setOntologyClassInstanceToOntologyClassVisualisation();
 		}
 		
 	}

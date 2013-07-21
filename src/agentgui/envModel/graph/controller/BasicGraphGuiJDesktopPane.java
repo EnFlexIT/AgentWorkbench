@@ -42,6 +42,7 @@ import javax.swing.JInternalFrame;
 
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
 
 /**
  * The Class BasicGraphGuiJDesktopPane.
@@ -224,6 +225,24 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 //				ex.printStackTrace();
 			}
 			return basicGraphGuiVisViewer;
+		}
+		
+	}
+
+	/**
+	 * Sets the data model update.
+	 * @param dataModelNotification the new data model update
+	 */
+	public void setDataModelNotification(DataModelNotification dataModelNotification) {
+		
+		Vector<String> internalFramesTitles = new Vector<String>(this.getHashMapEditorFrames().keySet());
+		for (String internalFrameTitles : internalFramesTitles) {
+			JInternalFrame internalFrame = this.getHashMapEditorFrames().get(internalFrameTitles);
+			if (internalFrame instanceof BasicGraphGuiProperties) {
+				// --- Put notification into the property dialog ---- 
+				BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;
+				basicProperties.setDataModelNotification(dataModelNotification);
+			}
 		}
 		
 	}

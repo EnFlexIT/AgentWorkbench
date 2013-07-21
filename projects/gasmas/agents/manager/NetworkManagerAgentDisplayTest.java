@@ -45,7 +45,11 @@ import agentgui.envModel.graph.visualisation.notifications.DataModelNotification
 import agentgui.envModel.graph.visualisation.notifications.DataModelOpenViewNotification;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
 import agentgui.envModel.graph.visualisation.notifications.GraphLayoutNotification;
+import agentgui.ontology.Simple_Float;
+import agentgui.ontology.Simple_Long;
+import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
+import agentgui.ontology.TimeSeriesValuePair;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.agents.SimulationManagerAgent;
@@ -120,12 +124,68 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		this.sendDisplayAgentNotification(notifications);
 		
 		// ----------------------------------------------------------
-		// --- Second example: Set data model of a NetworkModel -----
+		// --- Second example: Update a TimeSeriesChart -------------
+		// ----------------------------------------------------------
+		this.runTimeSeriesupdates();
+		
+		// ----------------------------------------------------------
+		// --- Third example: Set data model of a NetworkModel ------
 		// ----------------------------------------------------------
 		this.runDataModelUpdate();
 		
 	}
 
+	private void runTimeSeriesupdates() {
+		
+		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
+		Object dataModel = netComp.getDataModel();
+		Object[] dataModelArr = (Object[]) dataModel;
+		
+		// --- Get the TimeSeries -------------------------
+		Exit exit = (Exit) dataModelArr[0];
+		TimeSeriesChart tsc = (TimeSeriesChart) dataModelArr[1];
+		TimeSeries ts = null;
+		if (tsc.getTimeSeriesChartData().size()==0) {
+			ts = new TimeSeries();
+			ts.setLabel("Energy Consumption");
+			ts.setUnit("Consumption [W]");
+			tsc.addTimeSeriesChartData(ts);
+			
+		} else {
+			ts = (TimeSeries) tsc.getTimeSeriesChartData().get(0);
+		}
+		
+		// --- Run through updates of the TimeSeriesChart -----
+		for (int i=0; i < 1000; i++) {
+			
+			exit.setAlias("Test Nr. " + (i +1));
+			
+			TimeSeriesValuePair tsvp = new TimeSeriesValuePair();
+			
+			Simple_Long sLong = new Simple_Long();
+			sLong.setLongValue(System.currentTimeMillis());		
+			Simple_Float sFloat = new Simple_Float();
+			sFloat.setFloatValue((i*i)/1.5f);
+
+			tsvp.setTimestamp(sLong);
+			tsvp.setValue(sFloat);			
+			
+			ts.addTimeSeriesValuePairs(tsvp);
+			
+			DataModelNotification dmNote = new DataModelNotification(netComp, this.myNetworkModel);
+			this.sendDisplayAgentNotification(dmNote);
+			
+			// --- Just wait a little -----------
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+	
 	private void runDataModelUpdate() {
 		
 		for (int i=0; i < 15; i++) {
@@ -150,7 +210,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 			}
 			// --- Just wait a little -----------
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(250);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

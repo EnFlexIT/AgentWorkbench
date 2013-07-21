@@ -85,6 +85,9 @@ public class GraphNode extends GraphElement {
 		if (this.dataModel!=null) {
 			NetworkComponentAdapter adapter = networkModel.getNetworkComponentAdapter(null, this);
 			NetworkComponentAdapter4DataModel adapter4DataModel = adapter.getStoredDataModelAdapter();
+			if (this.dataModelBase64==null) {
+				this.dataModelBase64 = adapter4DataModel.getDataModelBase64Encoded(this.dataModel, true);
+			} 
 			Object dataModelCopy = adapter4DataModel.getDataModelBase64Decoded(this.dataModelBase64, true);
 			nodeCopy.setDataModel(dataModelCopy);
 		}

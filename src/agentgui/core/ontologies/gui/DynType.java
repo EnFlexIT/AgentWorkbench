@@ -119,8 +119,13 @@ public class DynType {
 		if (object instanceof DynType) {
 			
 			DynType compare = (DynType) object;
-			if (this.oscsd.equals(compare.oscsd)==false) {
+			if ((this.oscsd==null) != (compare.oscsd==null)) {
 				return false;
+			} 
+			if (this.oscsd!=null) {
+				if (this.oscsd.equals(compare.oscsd)==false) {
+					return false;
+				}	
 			}
 			if (this.typeName.equals(compare.typeName)==false) {
 				return false;

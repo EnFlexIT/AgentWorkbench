@@ -36,8 +36,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -48,7 +46,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -64,8 +61,6 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
-import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
-import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
 
 /**
  * The Class BasicGraphGuiProperties is used as dialog in order to configure
@@ -86,7 +81,7 @@ import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificat
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame implements Observer, ActionListener {
+public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame implements ActionListener {
 
 	private static final long serialVersionUID = -868257113588339559L;
 
@@ -105,9 +100,14 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	private JToolBar jJToolBarBarNorth = null;
 	private JToolBarButton jToolBarButtonSave = null;
 	private JToolBarButton jToolBarButtonSaveAndExit = null;
+	private JToolBarButton jToolBarButtonDisableRuntimeUpdates = null;
 	private JComponent jComponentContent = null;
 
-	private Vector<Integer> dataModelBase64InitialHashCodes = null;
+	private Vector<Integer> dataModelBase64InitialHashCodes = null;  //  @jve:decl-index=0:
+	
+	private boolean dataModelNotificationEnabled = true; 
+	private DataModelNotification dataModelNotificationLast = null;  //  @jve:decl-index=0:
+	
 	
 	/**
 	 * Instantiates a new properties dialog for GraphNodes or NetworkComponents.
@@ -115,7 +115,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 */
 	public BasicGraphGuiProperties(GraphEnvironmentController graphController, BasicGraphGuiJDesktopPane desktop, Object graphObject) {
 		super(graphController);
-		this.graphController.addObserver(this);
 		this.graphObject = graphObject;
 		this.initialize();
 	}
@@ -406,6 +405,11 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			jJToolBarBarNorth.setRollover(true);
 			jJToolBarBarNorth.add(this.getJToolBarButtonSave());
 			jJToolBarBarNorth.add(this.getJToolBarButtonSaveAndExit());
+			jJToolBarBarNorth.addSeparator();
+			if (this.graphController.getProject()==null) {
+				// --- During runtime ---------------------
+				jJToolBarBarNorth.add(this.getJToolBarButtonDisableRuntimeUpdates());
+			}
 		}
 		return jJToolBarBarNorth;
 	}
@@ -420,7 +424,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		}
 		return this.jToolBarButtonSave;
 	}
-	
 	/**
 	 * Returns the JToolBarButton for the save and exit action.
 	 * @return the JToolBarButton for the save and exit action
@@ -430,6 +433,16 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			this.jToolBarButtonSaveAndExit=new JToolBarButton("SaveAndExit", Language.translate("Save and Exit", Language.EN), null, "MBsaveAndExit.png", this);
 		}
 		return this.jToolBarButtonSaveAndExit;
+	}
+	/**
+	 * Gets the JToolBarButton prevent runtime updates.
+	 * @return the JToolBarButton prevent runtime updates
+	 */
+	private JToolBarButton getJToolBarButtonDisableRuntimeUpdates() {
+		if (this.jToolBarButtonDisableRuntimeUpdates==null) {
+			this.jToolBarButtonDisableRuntimeUpdates=new JToolBarButton("DisableRuntimeUpdates", Language.translate("Disable / Enable runtime updates", Language.EN), null, "Refresh.png", this);
+		}
+		return this.jToolBarButtonDisableRuntimeUpdates;
 	}
 	
 	/**
@@ -505,9 +518,13 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			modelNetworkComponent.setDataModelBase64(dataModelBase64);
 
 		}
+		
 		if (this.graphController.getProject()!=null) {
+			// --- Setup case -------------------
 			this.graphController.setProjectUnsaved();
+			
 		} else if (this.graphController.getProject()==null && sendChangesToAgent==true) {
+			// --- Execution case ---------------			
 			this.sendChangesToAgent();
 		}
 		
@@ -543,85 +560,71 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	}
 	
 	/**
-	 * Sets the display agent notification graph.
+	 * Checks if is data model notification enabled.
+	 * @return true, if is data model notification enabled
 	 */
-	private void setDisplayAgentNotificationGraph(DisplayAgentNotificationGraph displayAgentNotificationGraph) {
+	private boolean isDataModelNotificationEnabled(){
+		return this.dataModelNotificationEnabled;
+	}
+	/**
+	 * Sets the data model notification enabled.
+	 * @param enable the new data model notification enabled
+	 */
+	private void setDataModelNotificationEnabled(boolean enable) {
+		String imgName = null;
+		if (enable==true) {
+			imgName = "Refresh.png";
+		} else {
+			imgName = "RefreshNot.png";
+		}
+		ImageIcon imageIcon = new ImageIcon(this.getClass().getResource(pathImage + imgName), null);
+		this.getJToolBarButtonDisableRuntimeUpdates().setIcon(imageIcon);
 		
-		if (displayAgentNotificationGraph instanceof DataModelNotification) {
-			// --- DataModelNotification: Is that mine? -------------
-			final DataModelNotification dmn = (DataModelNotification) displayAgentNotificationGraph;
-			if (this.graphNode!=null && dmn.isGraphNodeConfiguration()==true) {
-				// -- Update the model of the current GraphNode ? -------------
-				if (dmn.getGraphNode().getId().equals(this.graphNode.getId())) {
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							if (dmn.isUseDataModelBase64Encoded()==true) {
-								adapter4DataModel.getDataModelBase64Decoded(dmn.getGraphNode().getDataModelBase64());
-							} else {
-								adapter4DataModel.setDataModel(dmn.getGraphNode());	
-							}
-							setDataModelBase64InitialHashCodes(adapter4DataModel.getDataModelBase64Encoded(adapter4DataModel.getDataModel()));
-						}
-					});
-				}// end current GraphNode
-			}// end GraphNode
-			
-			if (this.networkComponent!=null && dmn.isNetworkComponentConfiguration()==true) {
-				// -- Update the model of the current NetworkComponent ? ------
-				if (dmn.getNetworkComponent().getId().equals(this.networkComponent.getId())) {
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							if (dmn.isUseDataModelBase64Encoded()==true) {
-								adapter4DataModel.getDataModelBase64Decoded(dmn.getNetworkComponent().getDataModelBase64());
-							} else {
-								adapter4DataModel.setDataModel(dmn.getNetworkComponent());
-							}
-							setDataModelBase64InitialHashCodes(adapter4DataModel.getDataModelBase64Encoded(adapter4DataModel.getDataModel()));
-						}
-					});
-				} // end current NetworkComponent  
-			}// end NetworkComponent
-			
-		}// end DisplayAgentNotificationGraph
+		this.dataModelNotificationEnabled = enable;
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	/**
+	 * Puts a data model notification into this property window.
+	 * @param dataModelNotification the DataModelNotification
 	 */
-	@Override
-	public void update(Observable observable, Object object) {
+	public void setDataModelNotification(DataModelNotification dmn) {
 		
-		if (object instanceof NetworkModelNotification) {
-			NetworkModelNotification nmn = (NetworkModelNotification) object;
-			if (nmn.getReason()==NetworkModelNotification.NETWORK_MODEL_Repaint) {
-				// --- Repaint graph: also a data model update? -----
-				if (nmn.getInfoObject()==null) {
-					// --- Nothing to do here -----------------------
-					
-				} else if (nmn.getInfoObject() instanceof DisplayAgentNotificationGraph) {
-					// --- Got a DisplayAgentNotificationGraph ------
-					DisplayAgentNotificationGraph dang = (DisplayAgentNotificationGraph) nmn.getInfoObject();
-					// --- Single or multiple notification ? --------
-					if (dang instanceof DisplayAgentNotificationGraphMultiple) {
-						DisplayAgentNotificationGraphMultiple dangMultiple = (DisplayAgentNotificationGraphMultiple) dang;
-						for (int i = 0; i < dangMultiple.getDisplayNotifications().size(); i++) {
-							// --- Work on a single notification ----
-							this.setDisplayAgentNotificationGraph(dangMultiple.getDisplayNotifications().get(i));
-						}
-						
-					} else {
-						// --- Work on a single notification --------
-						this.setDisplayAgentNotificationGraph(dang);
-					}
+		if (dmn==null) return;
+		
+		// --- Is the notification relevant for this view ? ---------------
+		if (dmn.isForGraphNode(this.graphNode)==false && dmn.isForNetworkComponent(this.networkComponent)==false) {
+			return;
+		}
 
-				} // end InfoObject
-				
-			}// end NetworkModelNotification.NETWORK_MODEL_Repaint
-		} // end NetworkModelNotification
+		// --- Updates allowed? -------------------------------------------
+		if (this.isDataModelNotificationEnabled()==true) {
+			this.dataModelNotificationLast = null;
+		} else {
+			this.dataModelNotificationLast = dmn;
+			return;
+		}
 		
+		if (dmn.isForGraphNode(this.graphNode)==true) {
+			// -- Update the model of the current GraphNode ? -------------
+			if (dmn.isUseDataModelBase64Encoded()==true) {
+				this.adapter4DataModel.getDataModelBase64Decoded(dmn.getGraphNode().getDataModelBase64());
+			} else {
+				this.adapter4DataModel.setDataModel(dmn.getGraphNode());	
+			}
+			setDataModelBase64InitialHashCodes(adapter4DataModel.getDataModelBase64Encoded(adapter4DataModel.getDataModel()));
+		}
+		
+		if (dmn.isForNetworkComponent(this.networkComponent)==true) {
+			// -- Update the model of the current NetworkComponent ? ------
+			if (dmn.isUseDataModelBase64Encoded()==true) {
+				this.adapter4DataModel.getDataModelBase64Decoded(dmn.getNetworkComponent().getDataModelBase64());
+			} else {
+				this.adapter4DataModel.setDataModel(dmn.getNetworkComponent());
+			}
+			setDataModelBase64InitialHashCodes(adapter4DataModel.getDataModelBase64Encoded(adapter4DataModel.getDataModel()));
+		}
+
 	}
 	
 	/* (non-Javadoc)
@@ -641,6 +644,15 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		if (actionCommand.equals("SaveAndExit")) {
 			this.setVisible(false);
 			this.dispose();
+		}
+		
+		if (actionCommand.equals("DisableRuntimeUpdates")) {
+			if (this.isDataModelNotificationEnabled()==false) {
+				this.setDataModelNotificationEnabled(true);
+				this.setDataModelNotification(this.dataModelNotificationLast);
+			} else {
+				this.setDataModelNotificationEnabled(false);
+			}
 		}
 		
 	}

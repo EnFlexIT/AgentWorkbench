@@ -62,13 +62,13 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jFreeChart/iText-2.1.5.jar"/>
-	<classpathentry kind="lib" path="lib/jFreeChart/jcommon-1.0.17.jar"/>
-	<classpathentry kind="lib" path="lib/jFreeChart/jfreechart-1.0.14.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/AgentGUI/lib/jFreeChart/jfreechart-1.0.14-javadocs.zip!/jfreechart-1.0.14-javadocs"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/googleTranslateAPI/google-api-translate-java-0.97.jar"/>
 	<classpathentry kind="lib" path="lib/googleTranslateAPI/json-20090211.jar"/>
+	<classpathentry kind="lib" path="lib/jFreeChart/jcommon-1.0.18.jar"/>
+	<classpathentry kind="lib" path="lib/jFreeChart/jfreechart-1.0.15.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/AgentGUI/lib/jFreeChart/jfreechart-1.0.15-javadocs.zip!/jfreechart-1.0.15-javadocs"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

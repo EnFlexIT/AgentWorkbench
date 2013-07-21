@@ -29,18 +29,20 @@
 package agentgui.envModel.graph.visualisation;
 
 import jade.core.AID;
+
+import java.util.Vector;
+
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphElementLayout;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
-import agentgui.envModel.graph.networkModel.NetworkModelNotification;
+import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DataModelOpenViewNotification;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
 import agentgui.envModel.graph.visualisation.notifications.GraphLayoutNotification;
-import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDirectionNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
@@ -52,16 +54,18 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
  */
 public class DisplayAgentNotificationHandler {
 
-
+	private Vector<DisplayAgentNotificationGraph> displayNotifications = null;  //  @jve:decl-index=0:
+	private DisplayAgentNotificationThread displayUpdater = null;
 	
 	/**
-	 * Instantiates a new display agent notification handler.
+	 * Translates a display notification into a visual representation.
+	 *
+	 * @param notification the notification
+	 * @param networkModel the network model
+	 * @return the environment notification
 	 */
-	public DisplayAgentNotificationHandler() {
-	}
-	
-	public EnvironmentNotification setDisplayNotification(EnvironmentNotification notification, NetworkModel networkModel) {
-		return this.setDisplayNotification(notification, networkModel, null);
+	public EnvironmentNotification setDisplayNotification(NetworkModel networkModel, EnvironmentNotification notification ) {
+		return this.setDisplayNotification(null, networkModel, notification);
 	}
 	
 	/**
@@ -72,7 +76,7 @@ public class DisplayAgentNotificationHandler {
 	 * @param graphController the current GraphEnvironmentController, if available (can also be null)
 	 * @return the environment notification
 	 */
-	public EnvironmentNotification setDisplayNotification(EnvironmentNotification notification, NetworkModel networkModel, GraphEnvironmentController graphController) {
+	public EnvironmentNotification setDisplayNotification(GraphEnvironmentController graphController, NetworkModel networkModel, EnvironmentNotification notification) {
 		
 		// ----------------------------------------------------------
 		// --- Check for missing information ------------------------
@@ -110,7 +114,7 @@ public class DisplayAgentNotificationHandler {
 				DisplayAgentNotificationGraph displayNotificationSingle =  displayNotificationMultiple.getDisplayNotifications().get(i);
 				try {
 					// --- Try to apply the current settings --------
-					this.doDisplayAction(networkModel, notification.getSender(), displayNotificationSingle);
+					this.setDisplayAction(graphController, networkModel, displayNotificationSingle, notification.getSender());
 					
 				} catch (Exception ex) {
 					System.out.println("=> Error in DisplayAgent!");
@@ -124,37 +128,24 @@ public class DisplayAgentNotificationHandler {
 			displayNotification = (DisplayAgentNotificationGraph) notification.getNotification();
 			try {
 				// --- Try to apply the current settings ------------
-				this.doDisplayAction(networkModel, notification.getSender(), displayNotification);
+				this.setDisplayAction(graphController, networkModel, displayNotification, notification.getSender());
 				
 			} catch (Exception ex) {
 				System.out.println("=> Error in DisplayAgent!");
 				ex.printStackTrace();
 			}
-			
-		} 
-		
-		// ----------------------------------------------------------
-		// --- Repaint the Graph ------------------------------------
-		// ----------------------------------------------------------
-		if (graphController!=null) {
-			NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Repaint);
-			if (displayNotification!=null) {
-				nmn.setInfoObject(displayNotification);
-			} else if (displayNotificationMultiple!=null) {
-				nmn.setInfoObject(displayNotificationMultiple);	
-			}
-			graphController.notifyObservers(nmn);	
+
 		}
 		return notification;
 	}
 	
 	/**
-	 * Do the concrete display action.
+	 * Sets the concrete, single display action to the NetworkModel first and invokes a visualisation update afterwards.
 	 *
 	 * @param senderAID the sender aid
 	 * @param displayNotification the GraphDisplayAgentNotification
 	 */
-	private void doDisplayAction(NetworkModel networkModel, AID senderAID, DisplayAgentNotificationGraph displayNotification) {
+	private void setDisplayAction(GraphEnvironmentController graphController, NetworkModel networkModel, DisplayAgentNotificationGraph displayNotification, AID senderAID) {
 		
 		if (displayNotification instanceof NetworkComponentDirectionNotification) {
 			// ------------------------------------------------------
@@ -279,10 +270,60 @@ public class DisplayAgentNotificationHandler {
 					// --- Case GraphNode - End ---------------------
 					// ----------------------------------------------
 				}
-			}
+			}// --- end dmNote.isEmpty ------------------------------
 			
+
 		} // end of case separation
 
+		// --- Update visualisation ---------------------------------
+		this.putDisplayAgentNotificationGraphToDisplayStack(graphController, displayNotification);
+		
+	}
+	
+	/**
+	 * Returns the stack for incoming DisplayNotifications.
+	 * @return the display notifications
+	 */
+	public synchronized Vector<DisplayAgentNotificationGraph> getDisplayNotificationStack() {
+		if (displayNotifications==null) {
+			displayNotifications = new Vector<DisplayAgentNotificationGraph>();
+		}
+		return displayNotifications;
+	}
+	
+	/**
+	 * Put display agent notification graph to display stack.
+	 * @param displayNotification the display notification
+	 */
+	private void putDisplayAgentNotificationGraphToDisplayStack(GraphEnvironmentController graphController, DisplayAgentNotificationGraph displayNotification) {
+		if (graphController!=null && graphController.getGraphEnvironmentControllerGUI()!=null) {
+			this.getDisplayNotificationStack().add(displayNotification);
+			if (this.displayUpdater==null) {
+				this.startDisplayUpdater(graphController);
+			}
+		}
+	}
+	
+	/**
+	 * Gets the display updater.
+	 * @return the display updater
+	 */
+	private Thread startDisplayUpdater(GraphEnvironmentController graphController) {
+		if (this.displayUpdater==null) {
+			this.displayUpdater = new DisplayAgentNotificationThread(this, graphController);
+			this.displayUpdater.start();
+		}
+		return this.displayUpdater;
+	}
+
+	/**
+	 * Dispose.
+	 */
+	public void dispose() {
+		if (this.displayUpdater!=null) {
+			this.displayUpdater.dispose();
+		}
 	}
 	
 }
+

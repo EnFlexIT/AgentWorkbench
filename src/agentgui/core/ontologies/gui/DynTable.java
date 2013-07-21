@@ -36,10 +36,6 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-
-import agentgui.core.application.Application;
 
 /**
  * The Class DynTable provides an alternative view to the slots of an ontology
@@ -54,12 +50,10 @@ public class DynTable extends JTable {
 	private DynTableJPanel dynTableJPanel = null;
 	private DynForm dynForm = null;
 	
+	private DynTableDataVector dataVector = null;
 	private DefaultTableModel myTabelModel = null;
 	private TableRowSorter<DefaultTableModel> myRowSorter = null; 
 	private RowFilter<DefaultTableModel, Object> myRowFilter = null; 
-
-	private int rowCounter = 0;
-	private Vector<Integer> editableRows = null;
 	
 	
 	/**
@@ -89,35 +83,74 @@ public class DynTable extends JTable {
 	@SuppressWarnings("unchecked")
 	public void refreshTableModel() {
 		
-		this.rowCounter = 0;
-		this.myRowSorter  = null;
-		this.myRowFilter  = null;
 		int previouslySelectedRow = this.getSelectedRow();
 		
-		this.getEditableRowsVector().removeAllElements();
-		
 		DefaultTableModel dtm = (DefaultTableModel) this.getModel();
-		Vector<Object> dataVector = this.getDataVector();
 		if (dtm.getColumnCount()==0) {
-
+			// --- Create a new table model -----
 			Vector<String> columnNames = new Vector<String>();
 			columnNames.add(" ");
 			columnNames.add(" ");
 			
 			dtm = this.getTableModel();
-			dtm.setDataVector(dataVector, columnNames);
+			dtm.setDataVector(this.getDataVector(), columnNames);
 			this.setModel(dtm);
+			this.setRendererAndEditors();
+			this.setRowSorter(this.getMyRowSorter());
 			
 		} else {
-			
-			dtm = (DefaultTableModel) this.getModel();
-			dtm.getDataVector().removeAllElements();
-			dtm.getDataVector().addAll(dataVector);
-			dtm.fireTableDataChanged();
+			// --- Exchange or re-new the data model ------
+			DynTableDataVector newDataVector = new DynTableDataVector(this.dynForm);
+			if (newDataVector.isEqualStructure(dtm.getDataVector())==false) {
+				// --- exchange data completely -----------
+				this.setDataVector(newDataVector);
+				dtm.getDataVector().removeAllElements();
+				dtm.getDataVector().addAll(this.getDataVector());
+				dtm.fireTableDataChanged();
+				this.setRowSorter(this.getMyRowSorter());
+				
+			} else {
+				// --- Same structure! -------------------- 
+				// --- => Just exchange different values --
+				
+// 				// --- THIS IS JUST A BACKUP SOLUTION ----- 				
+//				for (int i=0; i < this.getDataVector().size(); i++) {
+//					
+//					Object objectThisRow = this.getDataVector().get(i);
+//					Vector<Object> rowThis = (Vector<Object>) objectThisRow;
+//					DynType dynTypeThis = (DynType) rowThis.get(0);
+//					JComponent jCompThis = dynTypeThis.getFieldDisplay();
+//					
+//					Object objectNewRow = newDataVector.get(i);
+//					Vector<Object> rowNew = (Vector<Object>) objectNewRow;
+//					DynType dynTypeNew = (DynType) rowNew.get(0);
+//					JComponent jCompNew = dynTypeNew.getFieldDisplay();
+//					
+//					if ((jCompThis!=null && jCompNew!=null) && jCompThis.getClass().getName().equals(jCompNew.getClass().getName())==true) {
+//						if (jCompThis instanceof JTextField) {
+//							((JTextField) jCompThis).setText(((JTextField) jCompNew).getText());
+//						} else if (jCompThis instanceof JCheckBox) {
+//							((JCheckBox) jCompThis).setSelected(((JCheckBox) jCompNew).isSelected());
+//						}
+//					}
+//					
+//				}
+				dtm.fireTableDataChanged();
+				
+			}
 			
 		}
-		this.setRowSorter(this.getMyRowSorter());
 		
+		if (previouslySelectedRow>-1) {
+			this.setRowSelectionInterval(previouslySelectedRow, previouslySelectedRow);
+		}
+		
+	}
+	
+	/**
+	 * Sets the renderer and editor for the table.
+	 */
+	private void setRendererAndEditors() {
 		// --- Set Renderer, Editors and layout -----------
 		TableColumn propColumn = this.getColumnModel().getColumn(0);
 		propColumn.setCellRenderer(new DynTableCellRenderEditor(this.dynForm));
@@ -128,11 +161,6 @@ public class DynTable extends JTable {
 		
 		this.getColumnModel().getColumn(0).setPreferredWidth(180);
 		this.getColumnModel().getColumn(1).setPreferredWidth(80);
-		
-		if (previouslySelectedRow>-1) {
-			this.setRowSelectionInterval(previouslySelectedRow, previouslySelectedRow);
-		}
-		
 	}
 	
 	/**
@@ -190,84 +218,28 @@ public class DynTable extends JTable {
 	}
 
 	/**
-	 * Gets the editable rows vector.
-	 * @return the editable rows vector
+	 * Sets the data vector.
+	 * @param newDynTableDataVector the new data vector
 	 */
-	public Vector<Integer> getEditableRowsVector() {
-		if (this.editableRows==null) {
-			this.editableRows = new Vector<Integer>();
-		}
-		return this.editableRows;
+	private void setDataVector(DynTableDataVector newDynTableDataVector) {
+		this.dataVector = newDynTableDataVector;
 	}
-	
 	/**
 	 * Returns the data vector for the table.
 	 * @return the data vector
 	 */
-	private Vector<Object> getDataVector() {
-		
-		Vector<Object> dataVector = new Vector<Object>();
-		DefaultTreeModel objectTree = this.dynForm.getObjectTree();
-		DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) objectTree.getRoot();
-		
-		Vector<Object> rows = this.getChildNodeVector(rootNode, true);
-		dataVector.addAll(rows);
-		
+	private DynTableDataVector getDataVector() {
+		if (dataVector==null) {
+			dataVector = new DynTableDataVector(this.dynForm);
+		}
 		return dataVector;
 	}
-	
 	/**
-	 * Gets the child node vector.
-	 * @return the child node vector
+	 * Gets the editable rows vector.
+	 * @return the editable rows vector
 	 */
-	private Vector<Object> getChildNodeVector(DefaultMutableTreeNode parentNode, boolean visibleInTableView) {
-		
-		Vector<Object> childVector = new Vector<Object>();
-		boolean childNodesVisible = true;
-		for (int i=0; i<parentNode.getChildCount(); i++) {
-
-			// --------------------------------------------
-			// --- Create data row for this node ----------
-			DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) parentNode.getChildAt(i);
-			DynType dynType = (DynType) childNode.getUserObject();
-			dynType.setVisibleInTableView(visibleInTableView);
-			
-			if (visibleInTableView==true) {
-				// --- Are child slots visible in the table ---
-				if (Application.getGlobalInfo().isOntologyClassVisualisation(dynType.getClassName())) {
-					childNodesVisible = false;
-				} else {
-					childNodesVisible = true;
-				}
-				
-			} else {
-				// --- nodes and sub node are invisible ---
-				childNodesVisible = visibleInTableView;
-			}
-			
-			// --- Create data row ------------------------
-			Vector<Object> dataRow = new Vector<Object>();			
-			dataRow.add(dynType);
-			dataRow.add(dynType);
-			// --- Add to mainVector ----------------------
-			childVector.add(dataRow);
-			
-			// --------------------------------------------
-			// --- Remind the row number as editable!? ----
-			if (dynType.getTypeName().equals(DynType.typeRawType)) {
-				this.getEditableRowsVector().add(this.rowCounter);
-			}
-			this.rowCounter++;
-			
-			// --------------------------------------------
-			// --- Add the Child nodes, if available ------
-			if (childNode.getChildCount()!=0) {
-				// --- get child nodes first --------------
-				childVector.addAll(this.getChildNodeVector(childNode, childNodesVisible));
-			}
-			
-		}
-		return childVector;
+	public Vector<Integer> getEditableRowsVector() {
+		return this.getDataVector().getEditableRowsVector();
 	}
 	
 	/**

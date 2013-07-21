@@ -141,6 +141,7 @@ public class DynTableJPanel extends JPanel {
 	 */
 	public void refreshTableModel() {
 		this.getDynTable().refreshTableModel();
+		this.setOntologyClassInstanceToOntologyClassVisualisation();
 	}
 	
 	// --------------------------------------------------------------
