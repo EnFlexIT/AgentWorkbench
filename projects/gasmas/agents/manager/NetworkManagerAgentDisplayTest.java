@@ -45,6 +45,7 @@ import agentgui.envModel.graph.visualisation.notifications.DataModelNotification
 import agentgui.envModel.graph.visualisation.notifications.DataModelOpenViewNotification;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
 import agentgui.envModel.graph.visualisation.notifications.GraphLayoutNotification;
+import agentgui.envModel.graph.visualisation.notifications.UpdateTimeSeries;
 import agentgui.ontology.Simple_Float;
 import agentgui.ontology.Simple_Long;
 import agentgui.ontology.TimeSeries;
@@ -128,13 +129,66 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		// ----------------------------------------------------------
 		this.runTimeSeriesupdates();
 		
-		// ----------------------------------------------------------
-		// --- Third example: Set data model of a NetworkModel ------
-		// ----------------------------------------------------------
-		this.runDataModelUpdate();
+		
 		
 	}
 
+	private void runTimeSeriesEdits() {
+		
+		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
+		Object dataModel = netComp.getDataModel();
+		Object[] dataModelArr = (Object[]) dataModel;
+		
+		// --- Get the TimeSeries -------------------------
+		Exit exit = (Exit) dataModelArr[0];
+		TimeSeriesChart tsc = (TimeSeriesChart) dataModelArr[1];
+		tsc.getVisualizationSettings().setChartTitle("This is a test notification");
+		
+		TimeSeries ts = null;
+		if (tsc.getTimeSeriesChartData().size()==0) {
+			ts = new TimeSeries();
+			ts.setLabel("Energy Consumption");
+			ts.setUnit("Consumption [W]");
+			tsc.addTimeSeriesChartData(ts);
+			
+		} else {
+			ts = (TimeSeries) tsc.getTimeSeriesChartData().get(0);
+		}
+		
+
+		for (int i=0; i<100; i++) {
+		
+			exit.setAlias("Test Nr. " + (i +1));
+			
+			TimeSeries tmpSeries = new TimeSeries();
+			
+			Simple_Long sLong = new Simple_Long();
+			sLong.setLongValue(System.currentTimeMillis());		
+			Simple_Float sFloat = new Simple_Float();
+			sFloat.setFloatValue((i*i)/1.5f);
+
+			TimeSeriesValuePair tsvp = new TimeSeriesValuePair();
+			tsvp.setTimestamp(sLong);
+			tsvp.setValue(sFloat);			
+			
+			tmpSeries.addTimeSeriesValuePairs(tsvp);
+			
+			UpdateTimeSeries uts = new UpdateTimeSeries(netComp, 1);
+			uts.addTimeSeries(tmpSeries);
+			
+			this.sendDisplayAgentNotification(uts);
+			
+			// --- Just wait a little -----------
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+	
 	private void runTimeSeriesupdates() {
 		
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
@@ -144,6 +198,8 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		// --- Get the TimeSeries -------------------------
 		Exit exit = (Exit) dataModelArr[0];
 		TimeSeriesChart tsc = (TimeSeriesChart) dataModelArr[1];
+		tsc.getVisualizationSettings().setChartTitle("This is a test notification");
+		
 		TimeSeries ts = null;
 		if (tsc.getTimeSeriesChartData().size()==0) {
 			ts = new TimeSeries();
@@ -156,7 +212,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		}
 		
 		// --- Run through updates of the TimeSeriesChart -----
-		for (int i=0; i < 1000; i++) {
+		for (int i=0; i < 100; i++) {
 			
 			exit.setAlias("Test Nr. " + (i +1));
 			
@@ -182,38 +238,6 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 				e.printStackTrace();
 			}
 			
-		}
-		
-	}
-	
-	private void runDataModelUpdate() {
-		
-		for (int i=0; i < 15; i++) {
-			
-			NetworkComponent netCompCopy = this.myNetworkModel.getNetworkComponent("n38");
-			if (netCompCopy!=null) {
-				
-				// -- Get the data model of the 
-				Object dataModel = netCompCopy.getDataModel();
-				Object[] dataModelArr = (Object[]) dataModel;
-				
-				Exit exit = (Exit) dataModelArr[0];
-				exit.setAlias("Test Nr. " + (i +1));
-				
-				TimeSeriesChart tsc = (TimeSeriesChart) dataModelArr[1];
-				tsc.getVisualizationSettings().setChartTitle("This is a test notification");
-			
-				DataModelNotification dmNote = new DataModelNotification(netCompCopy, this.myNetworkModel);
-				dmNote.setDataModelPartUpdateIndex(0);
-				this.sendDisplayAgentNotification(dmNote);
-				
-			}
-			// --- Just wait a little -----------
-			try {
-				Thread.sleep(250);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 		
 	}

@@ -125,17 +125,15 @@ public class DisplayAgentNotificationThread extends Thread {
 				} // end proceed==true
 				
 			} // end while for jobs
+
+			// --- Exit while-loop ------
+			if (this.dispose==true) break;
 			
 			try {
-				System.gc();
 				Thread.sleep(250);
-				
 			} catch (InterruptedException ie) {
 				ie.printStackTrace();
 			}
-			
-			// --- Exit while-loop ------
-			if (dispose==true) break;
 			
 		} // end endless while
 		

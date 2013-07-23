@@ -119,9 +119,8 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 */
 	@Override
 	public void setMigration(Location newLocation) {
-		System.out.println("No action specified for the migratioin of this DisplayAgent: " + this.getLocalName());
+		System.out.println("No action specified for the 'setMigratioin()' method of the DisplayAgent: " + this.getLocalName());
 	}
-
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#setPauseSimulation(boolean)
 	 */
@@ -130,6 +129,32 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		super.setPauseSimulation(isPauseSimulation);
 	}
 
+	/**
+	 * Returns the current network model.
+	 * @return the network model
+	 */
+	protected NetworkModel getNetworkModel() {
+		return this.getGraphEnvironmentController().getNetworkModel();
+	}
+	/**
+	 * Returns the current GraphEnvironmentController.
+	 * @return the graph environment controller
+	 */
+	protected GraphEnvironmentController getGraphEnvironmentController() {
+		return this.myGraphEnvironmentController;
+	}
+	
+	/**
+	 * Returns the Vector of EnvironmentModel's that arrived this agent by an EnvironmentStimulus.
+	 * @return the stimuli of network model
+	 */
+	private synchronized Vector<EnvironmentModel> getStimuliOfNetworkModel() {
+		if (this.stimuliOfNetworkModel==null) {
+			this.stimuliOfNetworkModel = new Vector<EnvironmentModel>();
+		}
+		return this.stimuliOfNetworkModel;
+	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentStimulus()
 	 */
@@ -183,15 +208,15 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		
 	}
 	
-	/**
-	 * Returns the Vector of EnvironmentModel's that arrived this agent by an EnvironmentStimulus.
-	 * @return the stimuli of network model
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentNotification(agentgui.simulationService.transaction.EnvironmentNotification)
 	 */
-	private synchronized Vector<EnvironmentModel> getStimuliOfNetworkModel() {
-		if (this.stimuliOfNetworkModel==null) {
-			this.stimuliOfNetworkModel = new Vector<EnvironmentModel>();
+	@Override
+	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
+		if (notification.getNotification() instanceof DisplayAgentNotificationGraph) {
+			notification = this.getDisplayAgentNotificationHandler().setDisplayNotification(this.getGraphEnvironmentController(), this.getGraphEnvironmentController().getNetworkModel(), notification);
 		}
-		return this.stimuliOfNetworkModel;
+		return notification;
 	}
 	
 	/**
@@ -212,33 +237,8 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		if (this.myDisplayAgentNotificationHandler!=null) {
 			this.myDisplayAgentNotificationHandler.getDisplayNotificationStack().removeAllElements();
 			this.myDisplayAgentNotificationHandler.dispose();
+			this.myDisplayAgentNotificationHandler = null;
 		}
 	}
 	
-	/**
-	 * Returns the current network model.
-	 * @return the network model
-	 */
-	protected NetworkModel getNetworkModel() {
-		return this.getGraphEnvironmentController().getNetworkModel();
-	}
-	/**
-	 * Returns the current GraphEnvironmentController.
-	 * @return the graph environment controller
-	 */
-	protected GraphEnvironmentController getGraphEnvironmentController() {
-		return this.myGraphEnvironmentController;
-	}
-	
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationAgent#onEnvironmentNotification(agentgui.simulationService.transaction.EnvironmentNotification)
-	 */
-	@Override
-	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
-		if (notification.getNotification() instanceof DisplayAgentNotificationGraph) {
-			notification = this.getDisplayAgentNotificationHandler().setDisplayNotification(this.getGraphEnvironmentController(), this.getGraphEnvironmentController().getNetworkModel(), notification);
-		}
-		return notification;
-	}
-
 }
