@@ -32,6 +32,7 @@ import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 import agentgui.envModel.graph.networkModel.NetworkModel;
+import agentgui.envModel.graph.visualisation.DisplayAgent;
 
 
 /**

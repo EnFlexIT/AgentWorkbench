@@ -144,7 +144,7 @@ public class DynTableDataVector extends Vector<Object> {
 	/**
 	 * Checks if the structure is equal.
 	 *
-	 * @param compareTo the compare to object
+	 * @param compareToObject the compare object
 	 * @return true, if is equal structure
 	 */
 	public boolean isEqualStructure(Object compareToObject) {

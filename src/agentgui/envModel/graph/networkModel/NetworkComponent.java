@@ -100,7 +100,7 @@ public class NetworkComponent implements Serializable {
 	/**
 	 * Returns a copy of the current NetworkComponent.
 	 *
-	 * @param networkModel the current network model (required because of the {@link NetworkComponentAdapter))
+	 * @param networkModel the current network model (required because of the {@link NetworkComponentAdapter}
 	 * @return the copy
 	 */
 	public NetworkComponent getCopy(NetworkModel networkModel) {

@@ -44,7 +44,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
  * a look at the corresponding packages of the special environment model. 
  * As example see the links of 'See also:'
  *  
- * @see SimulationManagerAgent#sendDisplayAgentNotification()
+ * @see SimulationManagerAgent
  * @see GraphEnvironmentController#getDisplayEnvironmentModel()
  * @see NetworkModel
  * @see DisplayAgent

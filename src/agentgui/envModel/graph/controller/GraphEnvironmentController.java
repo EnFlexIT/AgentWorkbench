@@ -132,7 +132,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     
     /**
      * The constructor for the GraphEnvironmentController for displaying the current environment 
-     * model during a running simulation. Use {@link #setDisplayEnvironmentModel(Object)}, in order to 
+     * model during a running simulation. Use {@link #setDisplayEnvironmentModel(DisplaytEnvironmentModel)}, in order to 
      * set the current {@link NetworkModel}.
      */
     public GraphEnvironmentController() {

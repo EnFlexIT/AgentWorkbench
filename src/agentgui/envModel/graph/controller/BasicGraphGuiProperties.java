@@ -586,7 +586,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	
 	/**
 	 * Puts a data model notification into this property window.
-	 * @param dataModelNotification the DataModelNotification
+	 * @param dmn the DataModelNotification
 	 */
 	public void setDataModelNotification(DataModelNotification dmn) {
 		

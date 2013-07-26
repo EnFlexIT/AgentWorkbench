@@ -61,8 +61,8 @@
 						lib/hyperic-sigar/sigar-bin/lib/log4j.jar;
 						lib/hyperic-sigar/sigar-bin/lib/sigar.jar;
 						lib/jFreeChart/iText-2.1.5.jar;
-						lib/jFreeChart/jcommon-1.0.17.jar;
-						lib/jFreeChart/jfreechart-1.0.14.jar;
+						lib/jFreeChart/jcommon-1.0.18.jar;
+						lib/jFreeChart/jfreechart-1.0.15.jar;
 						lib/jep-2.3.1/jep-2.3.1.jar;
 						lib/jung/collections-generic-4.01.jar;lib/batik/lib/pdf-transcoder.jar
 						lib/jung/colt-1.2.0.jar;lib/jung/jung-samples-2.0.1.jar;

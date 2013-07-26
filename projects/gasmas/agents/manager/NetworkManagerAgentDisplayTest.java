@@ -127,9 +127,9 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		// ----------------------------------------------------------
 		// --- Second example: Update a TimeSeriesChart -------------
 		// ----------------------------------------------------------
-		this.runTimeSeriesupdates();
+		this.runTimeSeriesEdits();
 		
-		
+		this.runTimeSeriesUpdates();
 		
 	}
 
@@ -154,7 +154,6 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		} else {
 			ts = (TimeSeries) tsc.getTimeSeriesChartData().get(0);
 		}
-		
 
 		for (int i=0; i<100; i++) {
 		
@@ -189,7 +188,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		
 	}
 	
-	private void runTimeSeriesupdates() {
+	private void runTimeSeriesUpdates() {
 		
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
 		Object dataModel = netComp.getDataModel();

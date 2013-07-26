@@ -48,17 +48,16 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 	 *
 	 * @param networkComponent the network component
 	 * @param targetDataModelIndex the target data model index
-	 * @param targetDataSeriesIndex the target data series index
 	 */
 	public UpdateTimeSeries(NetworkComponent networkComponent, int targetDataModelIndex) {
 		super(networkComponent, targetDataModelIndex);
 	}
+	
 	/**
 	 * Instantiates a new update time series.
 	 *
 	 * @param graphNode the graph node
 	 * @param targetDataModelIndex the target data model index
-	 * @param targetDataSeriesIndex the target data series index
 	 */
 	public UpdateTimeSeries(GraphNode graphNode, int targetDataModelIndex) {
 		super(graphNode, targetDataModelIndex);
@@ -109,24 +108,32 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 	
 	/**
 	 * Edits the time series.
-	 * @param timeSeries2Add the time series2 add
+	 *
+	 * @param dataSeriesIndex the data series index
+	 * @param timeSeriesData2Add the time series data2 add
 	 */
 	public void editTimeSeriesAddTimeSeriesData(int dataSeriesIndex, TimeSeries timeSeriesData2Add) {
 		this.setTargetAction(UPDATE_ACTION.EditDataSeriesAddData);
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
 		this.setSpecifiedTimeSeries(timeSeriesData2Add);
 	}
+	
 	/**
 	 * Edits the time series add or exchange time series data.
-	 * @param timeSeries2AddOrExchange the time series2 add or exchange
+	 *
+	 * @param dataSeriesIndex the data series index
+	 * @param timeSeriesData2AddOrExchange the time series data2 add or exchange
 	 */
 	public void editTimeSeriesAddOrExchangeTimeSeriesData(int dataSeriesIndex, TimeSeries timeSeriesData2AddOrExchange) {
 		this.setTargetAction(UPDATE_ACTION.EditDataSeriesAddOrExchangeData);
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
 		this.setSpecifiedTimeSeries(timeSeriesData2AddOrExchange);
 	}
+	
 	/**
 	 * Edits the time series remove time series data.
+	 *
+	 * @param dataSeriesIndex the data series index
 	 * @param timeSeriesData2Remove the time series data2 remove
 	 */
 	public void editTimeSeriesRemoveTimeSeriesData(int dataSeriesIndex, TimeSeries timeSeriesData2Remove) {
