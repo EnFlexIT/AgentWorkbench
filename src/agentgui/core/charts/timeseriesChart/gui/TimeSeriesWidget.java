@@ -107,7 +107,7 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 	/**
 	 * @return the tscejd
 	 */
-	private TimeSeriesChartEditorJDialog getTimeSeriesChartEditorJDialog() {
+	public TimeSeriesChartEditorJDialog getTimeSeriesChartEditorJDialog() {
 		if(tscejd == null){
 			tscejd = new TimeSeriesChartEditorJDialog(this.getDynForm(), this.getArgumentIndex());
 		}

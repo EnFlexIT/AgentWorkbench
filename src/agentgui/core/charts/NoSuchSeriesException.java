@@ -33,9 +33,6 @@ package agentgui.core.charts;
  */
 public class NoSuchSeriesException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5200624191049455250L;
 	
 	public NoSuchSeriesException(){

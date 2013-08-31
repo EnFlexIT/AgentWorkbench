@@ -91,7 +91,11 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		((TimeModelContinuous) this.getTimeModel()).setExecuted(true);
 		this.notifyAboutEnvironmentChanges();
 		
+		// ----------------------------------------------------------
+		// --- Get the network component for the test ---------------
+		// ----------------------------------------------------------
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38");
+		// --- Open the property window for the component -----------
 		this.sendDisplayAgentNotification(new DataModelOpenViewNotification(netComp));
 		
 		// ----------------------------------------------------------
@@ -127,68 +131,91 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		// ----------------------------------------------------------
 		// --- Second example: Update a TimeSeriesChart -------------
 		// ----------------------------------------------------------
-		this.runTimeSeriesEdits();
-		
-		this.runTimeSeriesUpdates();
+//		this.runDataModelNotificationUpdates();
+
+		this.updateTimeSeries_AddTimeSeries();
 		
 	}
 
-	private void runTimeSeriesEdits() {
+	/**
+	 * Update time series: add time series.
+	 */
+	private void updateTimeSeries_AddTimeSeries() {
 		
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
-		Object dataModel = netComp.getDataModel();
-		Object[] dataModelArr = (Object[]) dataModel;
-		
-		// --- Get the TimeSeries -------------------------
-		Exit exit = (Exit) dataModelArr[0];
-		TimeSeriesChart tsc = (TimeSeriesChart) dataModelArr[1];
-		tsc.getVisualizationSettings().setChartTitle("This is a test notification");
-		
-		TimeSeries ts = null;
-		if (tsc.getTimeSeriesChartData().size()==0) {
-			ts = new TimeSeries();
-			ts.setLabel("Energy Consumption");
-			ts.setUnit("Consumption [W]");
-			tsc.addTimeSeriesChartData(ts);
-			
-		} else {
-			ts = (TimeSeries) tsc.getTimeSeriesChartData().get(0);
-		}
+		Long startTime = System.currentTimeMillis();
 
-		for (int i=0; i<100; i++) {
+		for (int i=0; i<10; i++) {
 		
-			exit.setAlias("Test Nr. " + (i +1));
-			
+			// --- Produce a TimeSeries ---------
 			TimeSeries tmpSeries = new TimeSeries();
+			tmpSeries.setLabel("TimeSeries " + (i+1));
+			tmpSeries.setUnit("Random Integer");
 			
-			Simple_Long sLong = new Simple_Long();
-			sLong.setLongValue(System.currentTimeMillis());		
-			Simple_Float sFloat = new Simple_Float();
-			sFloat.setFloatValue((i*i)/1.5f);
+			// --- Create some value pairs ------
+			for (int j = 0; j<10; j++) {
+				
+				Simple_Long sLong = new Simple_Long();
+				sLong.setLongValue(startTime + (j*1000));		
 
-			TimeSeriesValuePair tsvp = new TimeSeriesValuePair();
-			tsvp.setTimestamp(sLong);
-			tsvp.setValue(sFloat);			
+				Simple_Float sFloat = new Simple_Float();
+				sFloat.setFloatValue(this.getRandomInteger(-10, 10));
+
+				TimeSeriesValuePair tsvp = new TimeSeriesValuePair();
+				tsvp.setTimestamp(sLong);
+				tsvp.setValue(sFloat);			
+				
+				tmpSeries.addTimeSeriesValuePairs(tsvp);
+				
+			}
 			
-			tmpSeries.addTimeSeriesValuePairs(tsvp);
-			
+			// --- Create an UpdateTimeSeries instance ----
 			UpdateTimeSeries uts = new UpdateTimeSeries(netComp, 1);
-			uts.addTimeSeries(tmpSeries);
-			
+			if (i==0) {
+				// --- Set what to do ---------------
+				uts.addTimeSeries(tmpSeries);
+			} else {
+				// --- Set what to do ---------------
+				uts.exchangeTimeSeries(tmpSeries, 0);
+			}
+			// --- Send update to the display ---
 			this.sendDisplayAgentNotification(uts);
+			
+//			if (i>2) {
+//				// --- Remove last TimeSeries ---
+//				UpdateTimeSeries utsRemove = new UpdateTimeSeries(netComp, 1);
+//				utsRemove.removeTimeSeries(2);
+//				this.sendDisplayAgentNotification(utsRemove);
+//			}
 			
 			// --- Just wait a little -----------
 			try {
-				Thread.sleep(100);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		
+		System.out.println("=> 'updateTimeSeries' test is done!");
 		
 	}
 	
-	private void runTimeSeriesUpdates() {
+	/**
+	 * Returns a random integer.
+	 *
+	 * @param fromBound the from bound
+	 * @param toBound the to bound
+	 * @return the random integer
+	 */
+	public int getRandomInteger(int fromBound, int toBound) {   
+		toBound++;   
+		return (int) (Math.random() * (toBound - fromBound) + fromBound);   
+	} 
+	
+	/**
+	 * Run data model notification updates.
+	 */
+	@SuppressWarnings("unused")
+	private void runDataModelNotificationUpdates() {
 		
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
 		Object dataModel = netComp.getDataModel();

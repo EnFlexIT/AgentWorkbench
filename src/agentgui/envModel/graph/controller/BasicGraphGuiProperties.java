@@ -61,6 +61,8 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
+import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries;
+import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeriesException;
 
 /**
  * The Class BasicGraphGuiProperties is used as dialog in order to configure
@@ -132,6 +134,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		this.setClosable(true);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		
 		final JInternalFrame thisFrame = this;
 		this.addInternalFrameListener(new InternalFrameAdapter() {
 			@Override
@@ -179,7 +182,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 				
 			}
 		});
-
 		
 		this.setTitle("Component");
 		this.setSize(this.defaultWidth, this.defaultHeight);
@@ -189,7 +191,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		ui.getNorthPane().remove(0);
 		
 		this.configureForGraphObject();
-		this.setContentPane(getJContentPane());
+		this.setContentPane(this.getJContentPane());
 		
 		// --- Call to the super-class ----------
 		this.registerAtDesktopAndSetVisible();
@@ -301,7 +303,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			} else {
 				// --- There is a network component adapter available -------------------
 				this.adapter4DataModel = this.networkComponentAdapter.getNewDataModelAdapter();
-				if (this.adapter4DataModel == null) {
+				if (this.adapter4DataModel==null) {
 					// --- No DataModelAdapter was defined -------------------------
 					if (this.graphNode!=null) {
 						this.graphNode.setDataModel(null);
@@ -588,13 +590,13 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 * Puts a data model notification into this property window.
 	 * @param dmn the DataModelNotification
 	 */
-	public void setDataModelNotification(DataModelNotification dmn) {
+	public boolean setDataModelNotification(DataModelNotification dmn) {
 		
-		if (dmn==null) return;
+		if (dmn==null) return true;
 		
 		// --- Is the notification relevant for this view ? ---------------
 		if (dmn.isForGraphNode(this.graphNode)==false && dmn.isForNetworkComponent(this.networkComponent)==false) {
-			return;
+			return false;
 		}
 
 		// --- Updates allowed? -------------------------------------------
@@ -602,7 +604,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			this.dataModelNotificationLast = null;
 		} else {
 			this.dataModelNotificationLast = dmn;
-			return;
+			return true;
 		}
 		
 		if (dmn.isForGraphNode(this.graphNode)==true) {
@@ -612,7 +614,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			} else {
 				this.adapter4DataModel.setDataModel(dmn.getGraphNode());	
 			}
-			setDataModelBase64InitialHashCodes(adapter4DataModel.getDataModelBase64Encoded(adapter4DataModel.getDataModel()));
+			this.setDataModelBase64InitialHashCodes(adapter4DataModel.getDataModelBase64Encoded(adapter4DataModel.getDataModel()));
 		}
 		
 		if (dmn.isForNetworkComponent(this.networkComponent)==true) {
@@ -622,9 +624,51 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			} else {
 				this.adapter4DataModel.setDataModel(dmn.getNetworkComponent());
 			}
-			setDataModelBase64InitialHashCodes(adapter4DataModel.getDataModelBase64Encoded(adapter4DataModel.getDataModel()));
+			this.setDataModelBase64InitialHashCodes(adapter4DataModel.getDataModelBase64Encoded(adapter4DataModel.getDataModel()));
 		}
-
+		return true;
+		
+	}
+	
+	/**
+	 * Sets an update of a data series.
+	 *
+	 * @param uds the actual update of the data series
+	 * @return true, if the update was for this property window
+	 */
+	public boolean setUpdateDataSeries(UpdateDataSeries uds) {
+		
+		if (uds==null) return true;
+		
+		// --- Check if the update is for the current property window ---------
+		boolean applyUpdate = false;
+		switch (uds.getComponentType()) {
+		case GraphNode:
+			if (this.graphNode!=null && this.graphNode.getId().equals(uds.getComponentID())) {
+				applyUpdate = true;
+			}
+			break;
+		case NetworkComponent:
+			if (this.networkComponent!=null && this.networkComponent.getId().equals(uds.getComponentID())) {
+				applyUpdate = true;
+			}
+			break;
+		}
+		
+		// --- Apply the Update -----------------------------------------------
+		if (applyUpdate==true) {
+			try {
+				// --- Update the view --------------------
+				OntologyInstanceViewer ontoViewer = (OntologyInstanceViewer) this.adapter4DataModel.getVisualisationComponent();
+				uds.applyToOntologyInstanceViewer(ontoViewer);
+				
+			} catch (UpdateDataSeriesException udse) {
+				System.err.println("=> Error in Property Dialog!");
+				udse.printStackTrace();
+			}
+		}
+		return applyUpdate;
+		
 	}
 	
 	/* (non-Javadoc)

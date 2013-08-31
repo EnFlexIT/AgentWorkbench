@@ -28,9 +28,19 @@
  */
 package agentgui.envModel.graph.visualisation.notifications;
 
+import java.util.Vector;
+
+import agentgui.core.charts.DataModel;
+import agentgui.core.charts.NoSuchSeriesException;
+import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartEditorJPanel;
+import agentgui.core.charts.timeseriesChart.gui.TimeSeriesWidget;
+import agentgui.core.ontologies.gui.OntologyClassEditorJPanel;
+import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.ontology.TimeSeries;
+import agentgui.ontology.TimeSeriesChart;
 
 /**
  * The Class UpdateTimeSeries.
@@ -72,12 +82,23 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 		this.setSpecifiedTimeSeries(newTimeSeries);
 	}
 	/**
-	 * Exchanges a Time Series at a specified data series index.
+	 * Adds or exchanges a Time Series at a specified data series index.
 	 * @param newTimeSeries the new time series
 	 * @param dataSeriesIndex the data series index
 	 */
 	public void addOrExchangeTimeSeries(TimeSeries newTimeSeries, int dataSeriesIndex) {
 		this.setTargetAction(UPDATE_ACTION.AddOrExchangeDataSeries);
+		this.setSpecifiedTimeSeries(newTimeSeries);
+		this.setTargetDataSeriesIndex(dataSeriesIndex);
+	}
+	/**
+	 * Exchange exchanges a Time Series at a specified data series index.
+	 * If the specified index can not be found, nothing will be done.
+	 * @param newTimeSeries the new time series
+	 * @param dataSeriesIndex the data series index
+	 */
+	public void exchangeTimeSeries(TimeSeries newTimeSeries, int dataSeriesIndex) {
+		this.setTargetAction(UPDATE_ACTION.ExchangeDataSeries);
 		this.setSpecifiedTimeSeries(newTimeSeries);
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
 	}
@@ -107,7 +128,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 	
 	
 	/**
-	 * Edits the time series.
+	 * Edits the time series: adds new data to a time series.
 	 *
 	 * @param dataSeriesIndex the data series index
 	 * @param timeSeriesData2Add the time series data2 add
@@ -119,7 +140,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 	}
 	
 	/**
-	 * Edits the time series add or exchange time series data.
+	 * Edits the time series: adds or exchanges time series data.
 	 *
 	 * @param dataSeriesIndex the data series index
 	 * @param timeSeriesData2AddOrExchange the time series data2 add or exchange
@@ -129,9 +150,21 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
 		this.setSpecifiedTimeSeries(timeSeriesData2AddOrExchange);
 	}
+	/**
+	 * Edits the time series: exchanges time series data. If the specified timestamps 
+	 * can not be found, nothing will be done.
+	 *
+	 * @param dataSeriesIndex the data series index
+	 * @param timeSeriesData2AddOrExchange the time series data2 add or exchange
+	 */
+	public void editTimeSeriesExchangeTimeSeriesData(int dataSeriesIndex, TimeSeries timeSeriesData2AddOrExchange) {
+		this.setTargetAction(UPDATE_ACTION.EditDataSeriesExchangeData);
+		this.setTargetDataSeriesIndex(dataSeriesIndex);
+		this.setSpecifiedTimeSeries(timeSeriesData2AddOrExchange);
+	}
 	
 	/**
-	 * Edits the time series remove time series data.
+	 * Edits the time series: removes time series data specified by the timestamps.
 	 *
 	 * @param dataSeriesIndex the data series index
 	 * @param timeSeriesData2Remove the time series data2 remove
@@ -141,5 +174,184 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
 		this.setSpecifiedTimeSeries(timeSeriesData2Remove);
 	}
+
+	
+
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries#applyToNetworkModelOnly(agentgui.envModel.graph.networkModel.NetworkModel)
+	 */
+	@Override
+	public void applyToNetworkModelOnly(NetworkModel networkModel) throws UpdateDataSeriesException {
+
+		String compID = this.getComponentID();
+		String compType = null;
+		Object dataModel = null;
+		switch (this.getComponentType()) {
+		case GraphNode:
+			compType = "GraphNode";
+			GraphNode node =(GraphNode)networkModel.getGraphElement(compID);
+			if (node==null) {
+				throw new UpdateDataSeriesException("GraphNode '" + compID + "' could not be found in the NetworkModel!");
+			}
+			dataModel = node.getDataModel();
+			break;
+		case NetworkComponent:
+			compType = "NetworkComponent";
+			NetworkComponent networkComponent = networkModel.getNetworkComponent(compID);
+			if (networkComponent==null) {
+				throw new UpdateDataSeriesException("NetworkComponent '" + compID + "' could not be found in the NetworkModel!");
+			}
+			dataModel = networkComponent.getDataModel();
+			break;
+		} 
+
+		if (dataModel==null) {
+			throw new UpdateDataSeriesException("NullPointerException: The data model of " + compType + " '" + compID + "' is null!");
+		}
+		
+		// --- Get the right data model part -------------------- 
+		try {
+			Object[] objectArr = (Object[]) dataModel; 
+			TimeSeriesChart tsc = (TimeSeriesChart) objectArr[this.getTargetDataModelIndex()];
+			this.applyUpdate(tsc);
+			
+		} catch (Exception ex) {
+			throw new UpdateDataSeriesException(this.getTargetDataModelIndex(), compType, compID, ex);
+		}
+		
+	}
+	
+	/**
+	 * Apply the update configured in this class.
+	 * @param timeSeriesChart the actual time series chart
+	 */
+	private void applyUpdate(TimeSeriesChart timeSeriesChart) {
+		
+		switch (this.getTargetAction()) {
+		case AddDataSeries:
+			timeSeriesChart.getTimeSeriesChartData().add(this.getSpecifiedTimeSeries());
+			break;
+			
+		case AddOrExchangeDataSeries:
+			if (this.getTargetDataSeriesIndex()<=timeSeriesChart.getTimeSeriesChartData().size()-1) {
+				timeSeriesChart.getTimeSeriesChartData().remove(this.getTargetDataSeriesIndex());	
+				timeSeriesChart.getTimeSeriesChartData().add(this.getTargetDataSeriesIndex(), this.getSpecifiedTimeSeries());
+			} else {
+				timeSeriesChart.getTimeSeriesChartData().add(this.getSpecifiedTimeSeries());
+			}
+			break;
+
+		case ExchangeDataSeries:
+			if (this.getTargetDataSeriesIndex()<=timeSeriesChart.getTimeSeriesChartData().size()-1) {
+				timeSeriesChart.getTimeSeriesChartData().remove(this.getTargetDataSeriesIndex());
+				timeSeriesChart.getTimeSeriesChartData().add(this.getTargetDataSeriesIndex(), this.getSpecifiedTimeSeries());
+			} 
+			break;
+			
+		case RemoveDataSeries:
+			if (this.getTargetDataSeriesIndex()<=timeSeriesChart.getTimeSeriesChartData().size()-1) {
+				timeSeriesChart.getTimeSeriesChartData().remove(this.getTargetDataSeriesIndex());	
+			}
+			break;
+
+		// ------------------------------------------------	
+		// --- From here: Edits of single TimeSeries ------
+		// ------------------------------------------------
+		case EditDataSeriesAddData:
+			
+			break;
+
+		case EditDataSeriesAddOrExchangeData:
+			
+			break;
+			
+		case EditDataSeriesRemoveData:
+	
+			break;
+		}
+
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries#applyToOntologyInstanceViewer(agentgui.core.ontologies.gui.OntologyInstanceViewer)
+	 */
+	@Override
+	public void applyToOntologyInstanceViewer(OntologyInstanceViewer ontologyInstanceViewer) throws UpdateDataSeriesException {
+		
+		Vector<OntologyClassEditorJPanel> ontoVisPanel = ontologyInstanceViewer.getOntologyClassEditorJPanel(this.getTargetDataModelIndex());
+		if (ontoVisPanel==null || ontoVisPanel.size()==0) {
+			// ----------------------------------------------------------------
+			// --- Apply just to the data model -------------------------------
+			// ----------------------------------------------------------------
+			Object[] objectArr = ontologyInstanceViewer.getConfigurationInstances();
+			TimeSeriesChart tsc = (TimeSeriesChart) objectArr[this.getTargetDataModelIndex()];
+			this.applyUpdate(tsc);
+			
+		} else {
+			// ----------------------------------------------------------------
+			// --- Apply to the visualisation ---------------------------------
+			// ----------------------------------------------------------------
+			for (int i = 0; i < ontoVisPanel.size(); i++) {
+				
+				DataModel dataModelTimeSeries = null;
+				OntologyClassEditorJPanel ontoVisPanelSingle = ontoVisPanel.get(i);
+				// --- Get the data model of the chart --------
+				if (ontoVisPanelSingle instanceof TimeSeriesChartEditorJPanel) {
+					TimeSeriesChartEditorJPanel tscep = (TimeSeriesChartEditorJPanel) ontoVisPanelSingle;
+					dataModelTimeSeries = tscep.getModel();
+					
+				} else if (ontoVisPanelSingle instanceof TimeSeriesWidget) {
+					TimeSeriesWidget tsw = (TimeSeriesWidget) ontoVisPanelSingle;
+					TimeSeriesChartEditorJPanel tscep = (TimeSeriesChartEditorJPanel) tsw.getTimeSeriesChartEditorJDialog().getContentPane();
+					dataModelTimeSeries = tscep.getModel();
+				}
+				
+				// --- Apply Changes --------------------------
+				switch (this.getTargetAction()) {
+				case AddDataSeries:
+					dataModelTimeSeries.addSeries(this.getSpecifiedTimeSeries());
+					break;
+					
+				case AddOrExchangeDataSeries:
+					//TODO
+					//dataModelTimeSeries.
+					break;
+
+				case ExchangeDataSeries:
+					//TODO					
+					break;
+
+				case RemoveDataSeries:
+					try {
+						if (this.getTargetDataSeriesIndex()<=dataModelTimeSeries.getSeriesCount()-1) {
+							dataModelTimeSeries.removeSeries(this.getTargetDataSeriesIndex());	
+						}
+						
+					} catch (NoSuchSeriesException nsse) {
+						nsse.printStackTrace();
+					}
+					break;
+					
+				// ------------------------------------------------	
+				// --- From here: Edits of single TimeSeries ------
+				// ------------------------------------------------
+				case EditDataSeriesAddData:
+					
+					break;
+
+				case EditDataSeriesAddOrExchangeData:
+					
+					break;
+					
+				case EditDataSeriesRemoveData:
+			
+					break;
+					
+				} // end switch
+			} // end apply to visualisation
+		}
+		
+	} // end method
+	
 	
 }

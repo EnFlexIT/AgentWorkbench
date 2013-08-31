@@ -44,7 +44,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /**
- * This agent can be used in order to display the current network model during a 
+ * This agent type can be used in order to display the current network model during a 
  * running simulation. It is not necessary that this agent is used within the 
  * application window - it is also possible to just start this agent by using 
  * the JADE RMA.

@@ -108,7 +108,7 @@ public class TimeSeriesDataModel extends DataModel {
 				
 				// If there is no color specified for this series, use a default color
 				if(seriesCount > this.ontologyModel.getChartSettings().getYAxisColors().size()){
-					this.ontologyModel.getChartSettings().addYAxisColors(""+DEFAULT_COLORS[seriesCount % DEFAULT_COLORS.length].getRGB());
+					this.ontologyModel.getChartSettings().addYAxisColors(""+DEFAULT_COLORS[(seriesCount-1) % DEFAULT_COLORS.length].getRGB());
 				}
 				
 				// If there is no line width specified for this series, use a default line width

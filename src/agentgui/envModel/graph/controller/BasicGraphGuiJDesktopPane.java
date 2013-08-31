@@ -43,6 +43,8 @@ import javax.swing.JInternalFrame;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
+import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries;
+import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeriesException;
 
 /**
  * The Class BasicGraphGuiJDesktopPane.
@@ -241,10 +243,43 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 			if (internalFrame instanceof BasicGraphGuiProperties) {
 				// --- Put notification into the property dialog ---- 
 				BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;
-				basicProperties.setDataModelNotification(dataModelNotification);
+				if (basicProperties.setDataModelNotification(dataModelNotification)==true) {
+					return; // --- Done ! ---
+				}
 			}
 		}
-		
 	}
+	
+	/**
+	 * Sets an {@link UpdateDataSeries} to a data model.
+	 * @param updateDataSeries the new update data series
+	 */
+	public void setUpdateDataSeries(UpdateDataSeries updateDataSeries) {
+		
+		// ----------------------------------------------------------
+		// --- Apply the update to the NetworkModel first -----------
+		try {
+			updateDataSeries.applyToNetworkModelOnly(this.graphController.getNetworkModel());
+			
+		} catch (UpdateDataSeriesException udse) {
+			udse.printStackTrace();
+			return;
+		}
+
+		// ----------------------------------------------------------
+		// --- Apply to an open property window, if there is one ----
+		Vector<String> internalFramesTitles = new Vector<String>(this.getHashMapEditorFrames().keySet());
+		for (String internalFrameTitles : internalFramesTitles) {
+			JInternalFrame internalFrame = this.getHashMapEditorFrames().get(internalFrameTitles);
+			if (internalFrame instanceof BasicGraphGuiProperties) {
+				// --- Put notification into the property dialog ---- 
+				BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;
+				if (basicProperties.setUpdateDataSeries(updateDataSeries)==true) {
+					return; // --- Done ! ---
+				}
+			}
+		}
+	}
+	
 	
 }

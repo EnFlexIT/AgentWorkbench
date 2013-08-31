@@ -285,6 +285,7 @@ public abstract class DataModel implements TableModelListener {
 			try {
 				ontologyModel.removeValuePair(i, key);
 				chartModel.removeValuePair(i, key);
+				//TODO
 			} catch (NoSuchSeriesException e) {
 				System.err.println("Trying to remove value pair from non-existant series "+i);
 				e.printStackTrace();

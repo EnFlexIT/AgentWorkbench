@@ -28,8 +28,10 @@
  */
 package agentgui.envModel.graph.visualisation.notifications;
 
+import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkModel;
 
 /**
  * The abstract Class UpdateDataSeries.
@@ -40,7 +42,7 @@ public abstract class UpdateDataSeries extends DisplayAgentNotificationGraph {
 
 	private static final long serialVersionUID = 4688700854113446061L;
 
-		/** The Enumeration COMPONENT_Type. */
+	/** The Enumeration for the addressed component type. */
 	public static enum COMPONENT_TYPE {
 		NetworkComponent,
 		GraphNode
@@ -49,9 +51,12 @@ public abstract class UpdateDataSeries extends DisplayAgentNotificationGraph {
 	public static enum UPDATE_ACTION {
 		AddDataSeries,
 		AddOrExchangeDataSeries,
+		ExchangeDataSeries,
 		RemoveDataSeries,
+		
 		EditDataSeriesAddData,
 		EditDataSeriesAddOrExchangeData,
+		EditDataSeriesExchangeData,
 		EditDataSeriesRemoveData
 	}
 
@@ -143,5 +148,22 @@ public abstract class UpdateDataSeries extends DisplayAgentNotificationGraph {
 	public int getTargetDataSeriesIndex() {
 		return targetDataSeriesIndex;
 	}
-
+	
+	/**
+	 * Applies this update to the NetworkModel only.
+	 *
+	 * @param networkModel the network model
+	 * @throws UpdateDataSeriesException the update data series exception
+	 */
+	public abstract void applyToNetworkModelOnly(NetworkModel networkModel) throws UpdateDataSeriesException;
+	
+	/**
+	 * Applies this update to a specified OntologyInstanceViewer.
+	 *
+	 * @param ontologyInstanceViewer the ontology instance viewer
+	 * @throws UpdateDataSeriesException the update data series exception
+	 */
+	public abstract void applyToOntologyInstanceViewer(OntologyInstanceViewer ontologyInstanceViewer) throws UpdateDataSeriesException;
+	
+	
 }

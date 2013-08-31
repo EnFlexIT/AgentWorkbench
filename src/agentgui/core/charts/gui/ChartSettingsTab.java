@@ -305,7 +305,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 			
 			String rgb = null;
 			if (model.getOntologyModel().getChartSettings().getYAxisColors().size() < (i+1)) {
-				rgb = ((Integer) DataModel.DEFAULT_COLORS[i].getRGB()).toString();
+				rgb = ((Integer) DataModel.DEFAULT_COLORS[i % DataModel.DEFAULT_COLORS.length].getRGB()).toString();
 			} else {
 				rgb = (String) model.getOntologyModel().getChartSettings().getYAxisColors().get(i);
 			}
@@ -342,7 +342,10 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	@Override
 	public void tableChanged(TableModelEvent tme) {
 		// Handle changes of series-specific settings
+		
 		int seriesIndex = tme.getFirstRow();
+		seriesIndex = tblSeriesSettings.convertRowIndexToModel(tblSeriesSettings.getSelectedRow());
+		
 		try{
 			if(tme.getColumn() == 0){
 				setSeriesLabel(seriesIndex, (String) tblSeriesSettings.getModel().getValueAt(seriesIndex, 0));

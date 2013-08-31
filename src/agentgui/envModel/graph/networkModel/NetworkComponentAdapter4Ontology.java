@@ -115,7 +115,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	 * @return the ontology instance viewer
 	 */
 	private OntologyInstanceViewer getOntologyInstanceViewer() {
-		if (this.oiv == null) {
+		if (this.oiv==null) {
 			if (this.getOntologyClassReferences()==null) {
 				throw new NullPointerException("The references to the classes out of the configured ontologies are not set!");
 			} else {

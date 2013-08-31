@@ -333,6 +333,24 @@ public class DynTableJPanel extends JPanel {
 	}
 	
 	/**
+	 * Gets the current OntologyClassEditorJPanel if the current one applies for 
+	 * the specified data model index.
+	 *
+	 * @param targetDataModelIndex the target data model index
+	 * @return the OntologyClassEditorJPanel
+	 */
+	public OntologyClassEditorJPanel getOntologyClassEditorJPanel(int targetDataModelIndex) {
+
+		OntologyClassEditorJPanel ocep = null;
+		if (this.jComponent2Add!=null && this.jComponent2Add instanceof OntologyClassEditorJPanel) {
+			if (this.getStartArgumentIndex(this.dynType) == targetDataModelIndex) {
+				ocep = (OntologyClassEditorJPanel) this.jComponent2Add; 
+			}
+		}
+		return ocep;
+	}
+	
+	/**
 	 * Can be used to specify a JToolBar where user functions of 
 	 * a {@link OntologyClassEditorJPanel} can be placed.
 	 *
@@ -424,7 +442,6 @@ public class DynTableJPanel extends JPanel {
 		this.jToolBar4UserFunction.validate();
 		this.jToolBar4UserFunction.repaint();
 	}
-	
 	
 	/**
 	 * Gets the start argument index of the current {@link DynType}.

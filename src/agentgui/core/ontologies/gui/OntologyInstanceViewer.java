@@ -36,6 +36,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.io.UnsupportedEncodingException;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -46,6 +47,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.border.EtchedBorder;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -83,7 +85,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	private final String newLine = Application.getGlobalInfo().getNewLineSeparator();
 	private final String separatorLine = "------------------------------------------";  //  @jve:decl-index=0:
 	
-	private JPanel jPanelEnlarege = null;
+	private JPanel jPanelEnlarge = null;
 	private JLabel jLabelTitleEnlarge = null;  //  @jve:decl-index=0:visual-constraint="12,220"
 
 	private JPanel jContentPane = null;
@@ -440,7 +442,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * This method adds the Enlarge-View-Tab to THIS TabbedPane.
 	 */
 	private void addEnlargeTab() {
-		this.addTab("Vergrößern", getJPanelEnlarege());
+		this.addTab("Vergrößern", this.getJPanelEnlarge());
 		this.setTabComponentAt(3, this.getJLabelTitleEnlarge());
 		this.jLabelTitleEnlarge.setText("  " + Language.translate("Vergrößern ...") + "  ");
 	}
@@ -448,7 +450,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * This method removes the Enlarge-View-Tab to THIS TabbedPane.
 	 */
 	private void removeEnlargeTab() {
-		this.remove(jPanelEnlarege);
+		this.remove(jPanelEnlarge);
 	}
 	/**
 	 * This method initialises dynTableJPanel.
@@ -510,12 +512,12 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * This method initialises jPanelEnlarege.
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJPanelEnlarege() {
-		if (jPanelEnlarege == null) {
-			jPanelEnlarege = new JPanel();
-			jPanelEnlarege.setLayout(new GridBagLayout());
+	private JPanel getJPanelEnlarge() {
+		if (jPanelEnlarge == null) {
+			jPanelEnlarge = new JPanel();
+			jPanelEnlarge.setLayout(new GridBagLayout());
 		}
-		return jPanelEnlarege;
+		return jPanelEnlarge;
 	}
 	/**
 	 * This method initialises jLabelTitleEnlarge.
@@ -530,6 +532,33 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		return jLabelTitleEnlarge;
 	}
 
+	/**
+	 * Returns the OntologyClassEditorJPanel for the specified index of the current data model.
+	 *
+	 * @param targetDataModelIndex the target data model index
+	 * @return the ontology class editor j panel
+	 */
+	public Vector<OntologyClassEditorJPanel> getOntologyClassEditorJPanel(int targetDataModelIndex) {
+
+		Vector<OntologyClassEditorJPanel> ontoVisPanel = new Vector<OntologyClassEditorJPanel>();
+
+		if (this.getSelectedIndex()==0) {
+			// --- An open visualisation of the DynTable ------------
+			OntologyClassEditorJPanel ocep = this.getDynTableJPanel().getOntologyClassEditorJPanel(targetDataModelIndex);
+			if (ocep!=null) {
+				ontoVisPanel.add(ocep);	
+			}
+		} else if (this.getSelectedIndex()==1) {
+			// --- Visualisation on the DynForm himself -------------
+			DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) this.getDynForm().getObjectTree().getRoot();
+			DefaultMutableTreeNode targetNode = (DefaultMutableTreeNode) rootNode.getChildAt(targetDataModelIndex);
+			OntologyClassWidget widget = this.getDynForm().getOntologyClassWidget(targetNode);
+			ontoVisPanel.add(widget);
+		}
+		
+		if (ontoVisPanel.size()==0) ontoVisPanel=null;
+		return ontoVisPanel;
+	}
 	
 	/**
 	 * This method saves the current configuration.
@@ -636,8 +665,8 @@ public class OntologyInstanceViewer extends JTabbedPane {
 					configXML64[i] = new String(Base64.encodeBase64(configXML[i].getBytes("UTF8")));	
 				}
 				
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+			} catch (UnsupportedEncodingException uex) {
+				uex.printStackTrace();
 			}
 		}
 		return configXML64;
@@ -681,4 +710,5 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	public Object[] getConfigurationInstancesCopy() {
 		return this.getDynForm().getOntoArgsInstanceCopy();
 	}
+
 }

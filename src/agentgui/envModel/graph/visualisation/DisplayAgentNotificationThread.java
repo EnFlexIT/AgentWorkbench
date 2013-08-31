@@ -36,6 +36,8 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
+import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries;
+import agentgui.envModel.graph.visualisation.notifications.UpdateTimeSeries;
 
 /**
  * The Class DisplayAgentNotificationThread.
@@ -79,8 +81,11 @@ public class DisplayAgentNotificationThread extends Thread {
 
 				final DisplayAgentNotificationGraph displayNotification = this.displayNotificationHandler.getDisplayNotificationStack().remove(0);
 				boolean proceed = true;
-				
-				// --- Is the next notification similar? ----------------------
+
+				// ------------------------------------------------------------				
+				// --- Case DataModelNotification -----------------------------
+				// --- Is the next notification for the same GraphElement? ----
+				// ------------------------------------------------------------
 				if (displayNotification instanceof DataModelNotification && this.displayNotificationHandler.getDisplayNotificationStack().size()>0) {
 					
 					DisplayAgentNotificationGraph displayNotificationNext = this.displayNotificationHandler.getDisplayNotificationStack().get(0);
@@ -99,9 +104,10 @@ public class DisplayAgentNotificationThread extends Thread {
 							}
 						}
 					}
-					
 				}
+				// ------------------------------------------------------------
 				
+				// ------------------------------------------------------------
 				if (proceed==true) {
 					
 					try {
@@ -109,6 +115,8 @@ public class DisplayAgentNotificationThread extends Thread {
 							@Override
 							public void run() {
 								if (displayNotification instanceof DataModelNotification) {
+									sendDataModelUpdate(displayNotification);
+								} else if (displayNotification instanceof UpdateTimeSeries) {
 									sendDataModelUpdate(displayNotification);
 								} else {
 									sendNetworkModelNotification(displayNotification);
@@ -123,6 +131,7 @@ public class DisplayAgentNotificationThread extends Thread {
 					}
 					
 				} // end proceed==true
+				// ------------------------------------------------------------
 				
 			} // end while for jobs
 
@@ -159,11 +168,17 @@ public class DisplayAgentNotificationThread extends Thread {
 	 * @param graphController the graph controller
 	 * @param displayNotification the display notification
 	 */
-	private void sendDataModelUpdate(DisplayAgentNotificationGraph displayNotification) {
+	public void sendDataModelUpdate(DisplayAgentNotificationGraph displayNotification) {
+		
 		if (displayNotification instanceof DataModelNotification) {
-			// --- Put DataModelNotification to Display -----
+			// --- Put DataModelNotification to the display -------------------
 			DataModelNotification dataModelNotification = (DataModelNotification) displayNotification; 
 			this.graphController.getGraphEnvironmentControllerGUI().getBasicGraphGuiJDesktopPane().setDataModelNotification(dataModelNotification);
+			
+		} else if (displayNotification instanceof UpdateDataSeries) {
+			// --- Put the Update of the DataSeries to the display ------------
+			UpdateDataSeries uds = (UpdateTimeSeries) displayNotification;
+			this.graphController.getGraphEnvironmentControllerGUI().getBasicGraphGuiJDesktopPane().setUpdateDataSeries(uds);
 		}
 
 	}

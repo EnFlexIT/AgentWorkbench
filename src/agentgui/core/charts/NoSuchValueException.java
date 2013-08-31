@@ -30,9 +30,6 @@ package agentgui.core.charts;
 
 public class NoSuchValueException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4772210832834082586L;
 	
 	public NoSuchValueException(){

@@ -44,6 +44,8 @@ import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificat
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
 import agentgui.envModel.graph.visualisation.notifications.GraphLayoutNotification;
 import agentgui.envModel.graph.visualisation.notifications.NetworkComponentDirectionNotification;
+import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries;
+import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeriesException;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 
 /**
@@ -114,10 +116,10 @@ public class DisplayAgentNotificationHandler {
 				DisplayAgentNotificationGraph displayNotificationSingle =  displayNotificationMultiple.getDisplayNotifications().get(i);
 				try {
 					// --- Try to apply the current settings --------
-					this.setDisplayAction(graphController, networkModel, displayNotificationSingle, notification.getSender());
+					this.setSingleDisplayAgentNotification(graphController, networkModel, displayNotificationSingle, notification.getSender());
 					
 				} catch (Exception ex) {
-					System.out.println("=> Error in DisplayAgent!");
+					System.err.println("=> Error in DisplayAgent!");
 					ex.printStackTrace();
 				}
 			}
@@ -128,10 +130,10 @@ public class DisplayAgentNotificationHandler {
 			displayNotification = (DisplayAgentNotificationGraph) notification.getNotification();
 			try {
 				// --- Try to apply the current settings ------------
-				this.setDisplayAction(graphController, networkModel, displayNotification, notification.getSender());
+				this.setSingleDisplayAgentNotification(graphController, networkModel, displayNotification, notification.getSender());
 				
 			} catch (Exception ex) {
-				System.out.println("=> Error in DisplayAgent!");
+				System.err.println("=> Error in DisplayAgent!");
 				ex.printStackTrace();
 			}
 
@@ -140,12 +142,12 @@ public class DisplayAgentNotificationHandler {
 	}
 	
 	/**
-	 * Sets the concrete, single display action to the NetworkModel first and invokes a visualisation update afterwards.
+	 * Sets the concrete, single DisplayAgentNotificationGraph to the NetworkModel first and invokes a visualisation update afterwards.
 	 *
 	 * @param senderAID the sender aid
 	 * @param displayNotification the GraphDisplayAgentNotification
 	 */
-	private void setDisplayAction(GraphEnvironmentController graphController, NetworkModel networkModel, DisplayAgentNotificationGraph displayNotification, AID senderAID) {
+	private void setSingleDisplayAgentNotification(GraphEnvironmentController graphController, NetworkModel networkModel, DisplayAgentNotificationGraph displayNotification, AID senderAID) {
 		
 		if (displayNotification instanceof NetworkComponentDirectionNotification) {
 			// ------------------------------------------------------
@@ -272,6 +274,21 @@ public class DisplayAgentNotificationHandler {
 				}
 			}// --- end dmNote.isEmpty ------------------------------
 			
+		} else if (displayNotification instanceof UpdateDataSeries) {
+			// ------------------------------------------------------
+			// => Update DataSeries of NetworkComponent or GraphNode
+			// ------------------------------------------------------
+			if (graphController==null) {
+				// --- If there is no visualisation, do update here -
+				try {
+					UpdateDataSeries uds = (UpdateDataSeries) displayNotification;
+					uds.applyToNetworkModelOnly(networkModel);
+
+				} catch (UpdateDataSeriesException udse) {
+					System.err.println("=> Error in DisplayAgent!");
+					udse.printStackTrace();
+				}
+			}
 
 		} // end of case separation
 
@@ -312,7 +329,7 @@ public class DisplayAgentNotificationHandler {
 		if (this.displayUpdater==null) {
 			this.displayUpdater = new DisplayAgentNotificationThread(this, graphController);
 			this.displayUpdater.start();
-		}
+		}	
 		return this.displayUpdater;
 	}
 
@@ -322,6 +339,7 @@ public class DisplayAgentNotificationHandler {
 	public void dispose() {
 		if (this.displayUpdater!=null) {
 			this.displayUpdater.dispose();
+			this.displayUpdater = null;
 		}
 	}
 	
