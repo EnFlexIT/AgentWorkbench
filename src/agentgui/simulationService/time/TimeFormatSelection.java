@@ -62,7 +62,9 @@ public class TimeFormatSelection extends JPanelForActions {
 	private static final long serialVersionUID = 1L;
 	
 	final static String PathImage = Application.getGlobalInfo().PathImageIntern();
+	
 	private boolean showLable = false;
+	private String defaultTimeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;  //  @jve:decl-index=0:
 	
 	private JLabel jLabelFormat = null;
 	private JTextField jTextFieldTimeFormat = null;
@@ -71,6 +73,7 @@ public class TimeFormatSelection extends JPanelForActions {
 
 	private JPanel jPanelDummy = null;
 
+	
 	
 	/**
 	 * Instantiates a new time format selection.
@@ -87,6 +90,7 @@ public class TimeFormatSelection extends JPanelForActions {
 		this.showLable=showFormatLabel;
 		initialize();
 	}
+	
 	/**
 	 * This method initializes this.
 	 * @return void
@@ -193,7 +197,7 @@ public class TimeFormatSelection extends JPanelForActions {
 			jButtonTimeFormatDefault.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					getJTextFieldTimeFormat().setText(TimeModelDateBased.DEFAULT_TIME_FORMAT);
+					getJTextFieldTimeFormat().setText(getDefaultTimeFormat());
 					fireActionEvent();
 				}
 			});
@@ -239,7 +243,7 @@ public class TimeFormatSelection extends JPanelForActions {
 	 */
 	public void setTimeFormat(String newTimeFormat) {
 		if (newTimeFormat==null) {
-			this.getJTextFieldTimeFormat().setText(this.getTimeFormatDefault());
+			this.getJTextFieldTimeFormat().setText(this.getDefaultTimeFormat());
 		} else {
 			this.getJTextFieldTimeFormat().setText(newTimeFormat);	
 		}
@@ -250,17 +254,24 @@ public class TimeFormatSelection extends JPanelForActions {
 	 */
 	public String getTimeFormat() {
 		if (this.getJTextFieldTimeFormat().getText()==null) {
-			this.setTimeFormat(this.getTimeFormatDefault());
+			this.setTimeFormat(this.getDefaultTimeFormat());
 		}
 		return this.getJTextFieldTimeFormat().getText();
 	}
 	
 	/**
-	 * Returns the default time format.
+	 * Sets the default time format.
+	 * @param defaultTimeFormat the new default time format
+	 */
+	public void setDefaultTimeFormat(String defaultTimeFormat) {
+		this.defaultTimeFormat = defaultTimeFormat;
+	}
+	/**
+	 * Gets the default time format.
 	 * @return the default time format
 	 */
-	public String getTimeFormatDefault() {
-		return TimeModelDateBased.DEFAULT_TIME_FORMAT;
+	public String getDefaultTimeFormat() {
+		return defaultTimeFormat;
 	}
 	
 	/**

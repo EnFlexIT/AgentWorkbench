@@ -42,6 +42,7 @@ import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesValuePair;
 import agentgui.ontology.ValuePair;
+import agentgui.simulationService.time.TimeModelDateBased;
 
 /**
  * Container class managing the data models for the different time series representations.
@@ -178,6 +179,9 @@ public class TimeSeriesDataModel extends DataModel {
 	 * @return the timeFormat
 	 */
 	public String getTimeFormat() {
+		if (((TimeSeriesOntologyModel)getOntologyModel()).getAdditionalSettings().getTimeFormat()==null) {
+			((TimeSeriesOntologyModel)getOntologyModel()).getAdditionalSettings().setTimeFormat(TimeModelDateBased.DEFAULT_TIME_FORMAT);
+		} 
 		return ((TimeSeriesOntologyModel)getOntologyModel()).getAdditionalSettings().getTimeFormat();
 	}
 
@@ -250,5 +254,5 @@ public class TimeSeriesDataModel extends DataModel {
 		newSeries.setLabel(label);
 		return newSeries;
 	}
-	
+
 }

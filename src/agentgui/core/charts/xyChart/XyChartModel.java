@@ -28,13 +28,14 @@
  */
 package agentgui.core.charts.xyChart;
 
+import jade.util.leap.List;
+
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import agentgui.core.charts.ChartModel;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.ontology.DataSeries;
-import agentgui.ontology.XyDataSeries;
 import agentgui.ontology.XyValuePair;
 
 public class XyChartModel extends XYSeriesCollection implements ChartModel {
@@ -45,8 +46,7 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 	private static final long serialVersionUID = 8270571170143064082L;
 
 	@Override
-	public void addOrUpdateValuePair(int seriesIndex, Number key, Number value)
-			throws NoSuchSeriesException {
+	public void addOrUpdateValuePair(int seriesIndex, Number key, Number value) throws NoSuchSeriesException {
 		if(seriesIndex < this.getSeriesCount()){
 			XYSeries series = this.getSeries(seriesIndex);
 			series.addOrUpdate(key, value);
@@ -58,16 +58,36 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 
 	@Override
 	public void addSeries(DataSeries series) {
-		XYSeries newSeries = new XYSeries(series.getLabel());
 		
-		jade.util.leap.Iterator valuePairs = ((XyDataSeries)series).getAllXyValuePairs();
-		while(valuePairs.hasNext()){
-			XyValuePair valuePair = (XyValuePair) valuePairs.next();
+		XYSeries newSeries = new XYSeries(series.getLabel());
+		List valuePairs = ((agentgui.ontology.XyDataSeries)series).getXyValuePairs();
+		for (int i = 0; i < valuePairs.size(); i++) {
+			XyValuePair valuePair = (XyValuePair) valuePairs.get(i);
 			newSeries.add(valuePair.getXValue().getFloatValue(), valuePair.getYValue().getFloatValue());
 		}
 		
 		this.addSeries(newSeries);
+	}
 
+	@Override
+	public void exchangeSeries(int seriesIndex, DataSeries series) throws NoSuchSeriesException {
+		if(seriesIndex < this.getSeriesCount()){
+			// --- edit series ---
+			XYSeries editSeries = (XYSeries) this.getSeries().get(seriesIndex);
+			editSeries.clear();
+			if (series.getLabel()!=null) {
+				editSeries.setKey(series.getLabel());
+			}
+			
+			List valuePairs = ((agentgui.ontology.XyDataSeries)series).getXyValuePairs();
+			for (int i = 0; i < valuePairs.size(); i++) {
+				XyValuePair valuePair = (XyValuePair) valuePairs.get(i);
+				editSeries.add(valuePair.getXValue().getFloatValue(), valuePair.getYValue().getFloatValue());	
+			}
+			
+		}else{
+			throw new NoSuchSeriesException();
+		}
 	}
 
 	@Override

@@ -62,6 +62,7 @@ public abstract class OntologyModel {
 	
 	public abstract DataSeries getSeries(int seriesIndex) throws NoSuchSeriesException;
 	
+	public abstract void exchangeSeries(int seriesIndex, DataSeries dataSeries) throws NoSuchSeriesException;
 	
 	/**
 	 * Gets the chart settings for this chart.

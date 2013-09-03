@@ -100,9 +100,8 @@ public class TimeSeriesChartTab extends ChartTab {
 	 * @param timeFormat
 	 */
 	void setTimeFormat(String timeFormat){
-		DateAxis da = (DateAxis) getChart().getXYPlot().getDomainAxis();
-		
 		DateFormat dateFormat = new SimpleDateFormat(timeFormat);
+		DateAxis da = (DateAxis) getChart().getXYPlot().getDomainAxis();
 		da.setDateFormatOverride(dateFormat);
 	}
 	

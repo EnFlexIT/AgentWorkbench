@@ -145,7 +145,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
 		Long startTime = System.currentTimeMillis();
 
-		for (int i=0; i<10; i++) {
+		for (int i=0; i<20; i++) {
 		
 			// --- Produce a TimeSeries ---------
 			TimeSeries tmpSeries = new TimeSeries();
@@ -156,7 +156,11 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 			for (int j = 0; j<10; j++) {
 				
 				Simple_Long sLong = new Simple_Long();
-				sLong.setLongValue(startTime + (j*1000));		
+				if (i<=1) {
+					sLong.setLongValue(startTime + (j*1000));
+				} else {
+					sLong.setLongValue(startTime + (j*i*1000));	
+				}
 
 				Simple_Float sFloat = new Simple_Float();
 				sFloat.setFloatValue(this.getRandomInteger(-10, 10));
@@ -171,13 +175,12 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 			
 			// --- Create an UpdateTimeSeries instance ----
 			UpdateTimeSeries uts = new UpdateTimeSeries(netComp, 1);
-			if (i==0) {
-				// --- Set what to do ---------------
-				uts.addTimeSeries(tmpSeries);
+			if (i<=1) {
+				uts.addOrExchangeTimeSeries(tmpSeries, i);
 			} else {
-				// --- Set what to do ---------------
 				uts.exchangeTimeSeries(tmpSeries, 0);
 			}
+
 			// --- Send update to the display ---
 			this.sendDisplayAgentNotification(uts);
 			

@@ -28,30 +28,28 @@
  */
 package agentgui.core.charts.gui;
 
-import javax.swing.JPanel;
-
-import java.awt.AWTEvent;
 import java.awt.Color;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
-import javax.swing.JTextField;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.JScrollPane;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
@@ -67,7 +65,7 @@ import agentgui.ontology.DataSeries;
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  *
  */
-public class ChartSettingsTab extends JPanel implements ActionListener, TableModelListener, FocusListener{
+public class ChartSettingsTab extends JPanel implements TableModelListener, DocumentListener {
 	
 	private static final long serialVersionUID = 2476599044804448243L;
 	
@@ -81,13 +79,18 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	private JTextField tfYAxisLabel;
 	private JComboBox cbRendererType;
 	private JScrollPane spTblSeriesSettings;
-	private JTable tblSeriesSettings;
-	
-	private DefaultTableModel myTableModel;
 	
 	protected DataModel model;
 	
+	private DefaultTableModel myTableModel;
+	private JTable tblSeriesSettings;
+	
+	private TableCellRenderer4Color cellRendererColor = null;
+	private TableCellEditor4Color cellEditorColor = null;
+	private TableCellSpinnerEditor4FloatObject cellEditorSpinner = null;
+	
 	protected ChartEditorJPanel parent;
+	
 	
 	public ChartSettingsTab(DataModel model, ChartEditorJPanel parent) {
 		this.model = model;
@@ -191,8 +194,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 			tfChartTitle = new JTextField();
 			tfChartTitle.setColumns(10);
 			tfChartTitle.setText(model.getOntologyModel().getChartSettings().getChartTitle());
-			tfChartTitle.addActionListener(this);
-			tfChartTitle.addFocusListener(this);
+			tfChartTitle.getDocument().addDocumentListener(this);
 		}
 		return tfChartTitle;
 	}
@@ -201,8 +203,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 			tfXAxisLabel = new JTextField();
 			tfXAxisLabel.setColumns(10);
 			tfXAxisLabel.setText(model.getOntologyModel().getChartSettings().getXAxisLabel());
-			tfXAxisLabel.addActionListener(this);
-			tfXAxisLabel.addFocusListener(this);
+			tfXAxisLabel.getDocument().addDocumentListener(this);
 		}
 		return tfXAxisLabel;
 	}
@@ -211,8 +212,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 			tfYAxisLabel = new JTextField();
 			tfYAxisLabel.setColumns(10);
 			tfYAxisLabel.setText(model.getOntologyModel().getChartSettings().getYAxisLabel());
-			tfYAxisLabel.addActionListener(this);
-			tfYAxisLabel.addFocusListener(this);
+			tfYAxisLabel.getDocument().addDocumentListener(this);
 		}
 		return tfYAxisLabel;
 	}
@@ -221,7 +221,12 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 			cbRendererType = new JComboBox();
 			cbRendererType.setModel(new DefaultComboBoxModel(ChartTab.RENDERER_TYPES));
 			cbRendererType.setSelectedItem(model.getOntologyModel().getChartSettings().getRendererType());
-			cbRendererType.addActionListener(this);
+			cbRendererType.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					setRendererType((String) getCbRendererType().getSelectedItem());
+				}
+			});
 		}
 		return cbRendererType;
 	}
@@ -234,45 +239,42 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	}
 	protected JTable getTblSeriesSettings() {
 		if (tblSeriesSettings == null) {
-			tblSeriesSettings = new JTable(){
-
-				private static final long serialVersionUID = -2409483712205505262L;
-
-				/* (non-Javadoc)
-				 * @see javax.swing.JTable#getCellEditor(int, int)
-				 */
-				@Override
-				public TableCellEditor getCellEditor(int row, int column) {
-					if(column == 1){
-						return new TableCellEditor4Color();
-					}else if(column == 2){
-						return new TableCellSpinnerEditor4FloatObject();
-					}else{
-						return super.getCellEditor(row, column);
-					}
-				}
-
-				/* (non-Javadoc)
-				 * @see javax.swing.JTable#getCellRenderer(int, int)
-				 */
-				@Override
-				public TableCellRenderer getCellRenderer(int row, int column) {
-					if(column == 1){
-						return new TableCellRenderer4Color(true);
-					}else{
-						return super.getCellRenderer(row, column);
-					}
-				}
-				
-				
-			};
+			tblSeriesSettings = new JTable(this.getTableModel());
 			tblSeriesSettings.setFillsViewportHeight(true);
-			tblSeriesSettings.setModel(this.getTableModel());
 			this.refreshTableModel();
-			tblSeriesSettings.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+			
+			TableColumnModel tcm = tblSeriesSettings.getColumnModel();
+			
+			TableColumn colorColumn = tcm.getColumn(1);
+			colorColumn.setCellEditor(this.getCellEditorColor());
+			colorColumn.setCellRenderer(this.getCellRenderer4Color());
+			
+			TableColumn columnWidth = tcm.getColumn(2);
+			columnWidth.setCellEditor(this.getCellEditorSpinner());
+			
 		}
 		return tblSeriesSettings;
 	}
+	
+	private TableCellRenderer4Color getCellRenderer4Color() {
+		if(cellRendererColor==null) {
+			cellRendererColor = new TableCellRenderer4Color(true);
+		}
+		return cellRendererColor;
+	}
+	private TableCellEditor4Color getCellEditorColor(){
+		if(cellEditorColor == null){
+			cellEditorColor = new TableCellEditor4Color();
+		}
+		return cellEditorColor;
+	}
+	private TableCellSpinnerEditor4FloatObject getCellEditorSpinner() {
+		if (cellEditorSpinner==null) {
+			cellEditorSpinner = new TableCellSpinnerEditor4FloatObject();
+		}
+		return cellEditorSpinner;
+	}
+	
 	
 	/**
 	 * Creates the table model for the settings table
@@ -306,6 +308,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 			String rgb = null;
 			if (model.getOntologyModel().getChartSettings().getYAxisColors().size() < (i+1)) {
 				rgb = ((Integer) DataModel.DEFAULT_COLORS[i % DataModel.DEFAULT_COLORS.length].getRGB()).toString();
+				model.getOntologyModel().getChartSettings().getYAxisColors().add(i, rgb);
 			} else {
 				rgb = (String) model.getOntologyModel().getChartSettings().getYAxisColors().get(i);
 			}
@@ -313,6 +316,7 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 			Float width = null; 
 			if (model.getOntologyModel().getChartSettings().getYAxisLineWidth().size() < (i+1)) {
 				width = DataModel.DEFAULT_LINE_WIDTH;
+				model.getOntologyModel().getChartSettings().getYAxisLineWidth().add(i, width);
 			} else {
 				width = (Float) model.getOntologyModel().getChartSettings().getYAxisLineWidth().get(i);
 			}
@@ -339,13 +343,13 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
+	 */
 	@Override
 	public void tableChanged(TableModelEvent tme) {
 		// Handle changes of series-specific settings
-		
 		int seriesIndex = tme.getFirstRow();
-		seriesIndex = tblSeriesSettings.convertRowIndexToModel(tblSeriesSettings.getSelectedRow());
-		
 		try{
 			if(tme.getColumn() == 0){
 				setSeriesLabel(seriesIndex, (String) tblSeriesSettings.getModel().getValueAt(seriesIndex, 0));
@@ -354,43 +358,37 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 			}else if(tme.getColumn() == 2){
 				setSeriesLineWidth(seriesIndex, (Float) tblSeriesSettings.getModel().getValueAt(seriesIndex, 2));
 			}
+			
 		}catch (NoSuchSeriesException ex) {
 			System.err.println("Error changing settings for series "+seriesIndex);
 			ex.printStackTrace();
 		}
 	}
+
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		handleEvent(e);
+	public void insertUpdate(DocumentEvent de) {
+		this.handleTextFieldUpdate(de);
 	}
 	@Override
-	public void focusGained(FocusEvent e) {
-		// Nothing to be done here
+	public void removeUpdate(DocumentEvent de) {
+		this.handleTextFieldUpdate(de);
 	}
 	@Override
-	public void focusLost(FocusEvent e) {
-		handleEvent(e);
+	public void changedUpdate(DocumentEvent de) {
+		this.handleTextFieldUpdate(de);		
+	}
+	private void handleTextFieldUpdate(DocumentEvent de) {
+		if (de.getDocument()==getTfChartTitle().getDocument()) {
+			setChartTitle(getTfChartTitle().getText());
+		}else if(de.getDocument() == getTfXAxisLabel().getDocument()){
+			setXAxisLabel(getTfXAxisLabel().getText());
+		}else if(de.getDocument() == getTfYAxisLabel().getDocument()){
+			setYAxisLabel(getTfYAxisLabel().getText());
+		}
 	}
 	
 	public void seriesRemoved(int seriesIndex){
 		((DefaultTableModel)getTblSeriesSettings().getModel()).removeRow(seriesIndex);
-	}
-	
-	/**
-	 * ActionEvent and FocusEvent are handled the same way 
-	 * @param e
-	 */
-	private void handleEvent(AWTEvent e){
-		// Handle changes of settings affecting the whole chart
-		if(e.getSource() == getTfChartTitle()){
-			setChartTitle(getTfChartTitle().getText());
-		}else if(e.getSource() == getTfXAxisLabel()){
-			setXAxisLabel(getTfXAxisLabel().getText());
-		}else if(e.getSource() == getTfYAxisLabel()){
-			setYAxisLabel(getTfYAxisLabel().getText());
-		}else if(e.getSource() == getCbRendererType()){
-			setRendererType((String) getCbRendererType().getSelectedItem());
-		}
 	}
 	
 	public void replaceModel(DataModel newModel){
@@ -424,8 +422,8 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 	 * @param newYAxisLabel The new y axis label
 	 */
 	private void setYAxisLabel(String newYAxisLabel){
-		model.getOntologyModel().getChartSettings().setXAxisLabel(newYAxisLabel);
-		parent.getChartTab().setXAxisLabel(newYAxisLabel);
+		model.getOntologyModel().getChartSettings().setYAxisLabel(newYAxisLabel);
+		parent.getChartTab().setYAxisLabel(newYAxisLabel);
 		model.getTableModel().setKeyColumnLabel(newYAxisLabel);
 	}
 	/**
@@ -468,4 +466,5 @@ public class ChartSettingsTab extends JPanel implements ActionListener, TableMod
 		model.getOntologyModel().getChartSettings().getYAxisLineWidth().add(seriesIndex, newWidth);
 		parent.getChartTab().setSeriesLineWidth(seriesIndex, newWidth);
 	}
+
 }

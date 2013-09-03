@@ -41,9 +41,7 @@ import javax.swing.SpinnerNumberModel;
  *
  */
 public class TableCellSpinnerEditor4FloatObject extends BasicCellEditor{
-	/**
-	 * Generated serialVersionUID
-	 */
+	
 	private static final long serialVersionUID = 7758086423044836617L;
 	
 	@Override
@@ -80,6 +78,7 @@ public class TableCellSpinnerEditor4FloatObject extends BasicCellEditor{
 		if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_TAB){
 			try {
 				((JSpinner)editorComponent).commitEdit();
+				
 			} catch (ParseException e1) {
 				DefaultEditor de = (DefaultEditor) ((JSpinner)editorComponent).getEditor();
 				String text = de.getTextField().getText();

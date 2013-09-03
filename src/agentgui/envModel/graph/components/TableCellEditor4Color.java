@@ -50,52 +50,42 @@ public class TableCellEditor4Color extends AbstractCellEditor implements TableCe
 
 	private static final long serialVersionUID = 2997237817617185155L;
 
+	private JColorChooser colorChooser = null;
 	private Color currentColor;
 	private JButton button;
-	private JColorChooser colorChooser;
-	private JDialog dialog;
-    protected static final String EDIT = "edit";
 
     /**
      * Instantiates a new color editor.
      */
     public TableCellEditor4Color() {
-        //Set up the editor (from the table's point of view),
-        //which is a button.
-        //This button brings up the color chooser dialog,
-        //which is the editor from the user's point of view.
+        // --- Set up the editor (from the table's point of view), which is a button.
+        // --- This button brings up the color chooser dialog, which is the editor 
+    	// --- from the user's point of view.
         button = new JButton();
-        button.setActionCommand(EDIT);
-        button.addActionListener(this);
         button.setBorderPainted(false);
-
-        //Set up the dialog that the button brings up.
-        colorChooser = new JColorChooser();
-        dialog = JColorChooser.createDialog(button,
-                                        "Pick a Color",
-                                        true,  //modal
-                                        colorChooser,
-                                        this,  //OK button handler
-                                        null); //no CANCEL button handler
+        button.addActionListener(this);
     }
 
-    /**
-     * Handles events from the editor button and from
-     * the dialog's OK button.
-     *
-     * @param actionEvent the event
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
-    public void actionPerformed(ActionEvent actionEvent) {
-        if (EDIT.equals(actionEvent.getActionCommand())) {
-            //The user has clicked the cell, so
-            //bring up the dialog.
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        
+    	if (ae.getSource()==this.button) {
+            //The user has clicked the cell, so bring up the dialog.
             button.setBackground(currentColor);
+           
+            //Set up the dialog that the button brings up.
+            colorChooser = new JColorChooser();
             colorChooser.setColor(currentColor);
+            JDialog dialog = JColorChooser.createDialog(button, "Pick a Color", true, colorChooser, this,  null); 
             dialog.setVisible(true);
-
-            //Make the renderer reappear.
+            // --- From here: user action in the dialog ---
+            
+            currentColor = colorChooser.getColor();
             fireEditingStopped();
-
+            
         } else { //User pressed dialog's "OK" button.
             currentColor = colorChooser.getColor();
         }
@@ -115,6 +105,7 @@ public class TableCellEditor4Color extends AbstractCellEditor implements TableCe
      */
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         currentColor = (Color)value;
+        button.setBackground(currentColor);
         return button;
     }
 }

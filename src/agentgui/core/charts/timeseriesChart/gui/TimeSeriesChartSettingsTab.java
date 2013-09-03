@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.charts.timeseriesChart.gui;
 
 import java.awt.Dimension;
@@ -5,7 +33,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 
@@ -13,26 +41,25 @@ import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartSettingsTab;
 import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
+import agentgui.simulationService.time.TimeFormatSelection;
+
 /**
  * ChartSettingsTab-implementation for time series charts, adding the possibility 
- * to set the time format. 
+ * to set the time format.
+ * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
- *
  */
 public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = 675579393370531354L;
 	
 	private JLabel lblTimeFormatSelector = null;
-	private TimeFormatSelector timeFormatSelector = null;
+	private TimeFormatSelection timeFormatSelector = null;
 
+	
 	public TimeSeriesChartSettingsTab(DataModel model, TimeSeriesChartEditorJPanel parent) {
 		super(model, parent);
 	}
-	
 	
 
 	/* (non-Javadoc)
@@ -70,25 +97,27 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 		
 	}
 
-
-
 	/**
 	 * @return the jPanelTimeFormater
 	 */
-	public TimeFormatSelector getTimeFormatSelector() {
+	public TimeFormatSelection getTimeFormatSelector() {
 		if (timeFormatSelector==null) {
-			timeFormatSelector = new TimeFormatSelector(this);
+			timeFormatSelector = new TimeFormatSelection(false);
+			timeFormatSelector.setDefaultTimeFormat(this.getDefaultTimeFormat());
 			timeFormatSelector.setPreferredSize(new Dimension(360, 80));
-//			timeFormatSelector.setTimeFormat(((TimeSeriesChartSettings)model.getChartSettings()).getTimeFormat());
 			timeFormatSelector.setTimeFormat(((TimeSeriesOntologyModel)model.getOntologyModel()).getAdditionalSettings().getTimeFormat());
-			timeFormatSelector.addActionListener(this);
+			timeFormatSelector.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					setTimeFormat(getTimeFormatSelector().getTimeFormat());
+				}
+			});
 		}
 		return timeFormatSelector;
 	}
 
-
-
 	/**
+	 * Gets the lbl time format selector.
 	 * @return the lblTimeFormatSelector
 	 */
 	public JLabel getLblTimeFormatSelector() {
@@ -97,36 +126,8 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 		}
 		return lblTimeFormatSelector;
 	}
-
-
-
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.gui.ChartSettingsTab#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == getTimeFormatSelector()){
-			setTimeFormat(getTimeFormatSelector().getTimeFormat());
-		}else{
-			super.actionPerformed(e);
-		}
-	}
-
-
-
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.gui.ChartSettingsTab#focusLost(java.awt.event.FocusEvent)
-	 */
-	@Override
-	public void focusLost(FocusEvent e) {
-		if(e.getSource() == getTimeFormatSelector()){
-			setTimeFormat(getTimeFormatSelector().getTimeFormat());
-		}else{
-			super.focusLost(e);
-		}
-		
-	}
 	/**
+	 * Gets the default time format.
 	 * @return The default time format
 	 */
 	public String getDefaultTimeFormat(){

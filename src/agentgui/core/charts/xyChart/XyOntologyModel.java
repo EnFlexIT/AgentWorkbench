@@ -99,5 +99,15 @@ public class XyOntologyModel extends OntologyModel {
 			throw new NoSuchSeriesException();
 		}
 	}
+	@Override
+	public void exchangeSeries(int seriesIndex, DataSeries dataSeries) throws NoSuchSeriesException {
+		if (seriesIndex<getSeriesCount()) {
+			XyChart xyc = (XyChart) this.chart;
+			xyc.getXyChartData().remove(seriesIndex);
+			xyc.getXyChartData().add(seriesIndex, dataSeries);
+		} else {
+			throw new NoSuchSeriesException();
+		}
+	}
 
 }

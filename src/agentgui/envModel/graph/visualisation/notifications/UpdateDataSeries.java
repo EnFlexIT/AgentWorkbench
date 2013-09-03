@@ -105,6 +105,21 @@ public abstract class UpdateDataSeries extends DisplayAgentNotificationGraph {
 		return componentType;
 	}
 	/**
+	 * Gets the component type name as String.
+	 * @return the component type name
+	 */
+	public String getComponentTypeName() {
+		if (this.getComponentType()==null) return null;
+		String componentTypeName = null;
+		switch (this.getComponentType()) {
+		case GraphNode:
+			componentTypeName = "GraphNode";
+		case NetworkComponent:
+			componentTypeName = "NetworkComponent";
+		}
+		return componentTypeName;
+	}
+	/**
 	 * Gets the component id.
 	 * @return the component id
 	 */

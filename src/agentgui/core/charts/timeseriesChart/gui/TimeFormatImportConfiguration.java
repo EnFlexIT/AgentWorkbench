@@ -299,7 +299,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	 * @return the file property for the CSV time format
 	 */
 	private String getFilePropertyCsvTimeFormat() {
-		return Application.getGlobalInfo().getFileProperties().getProperty(PROP_CsvTimeFormat, this.getTimeFormatSelector().getTimeFormatDefault());
+		return Application.getGlobalInfo().getFileProperties().getProperty(PROP_CsvTimeFormat, TimeModelDateBased.DEFAULT_TIME_FORMAT);
 	}
 	/**
 	 * Sets the file property of the CSV time format.

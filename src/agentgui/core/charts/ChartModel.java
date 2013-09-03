@@ -42,6 +42,21 @@ public interface ChartModel {
 	 */
 	public void addOrUpdateValuePair(int seriesIndex, Number key, Number value) throws NoSuchSeriesException;
 	public void addSeries(DataSeries series);
+	
+	/**
+	 * Exchanges the series specified by the series index with the given DataSeries.
+	 *
+	 * @param seriesIndex the series index
+	 * @param series the DataSeries
+	 * @throws NoSuchSeriesException the no such series exception
+	 */
+	public void exchangeSeries(int seriesIndex, DataSeries series) throws NoSuchSeriesException;
+	
+	/**
+	 * Removes the data series with the given index from the chart model
+	 * @param seriesIndex The series index
+	 */
+	public void removeSeries(int seriesIndex);
 	/**
 	 * Update the time stamp in all series that contain it
 	 * @param oldKey The old time stamp
@@ -55,11 +70,6 @@ public interface ChartModel {
 	 * @throws NoSuchSeriesException Thrown if there is no series with the specified index
 	 */
 	public void removeValuePair(int seriesIndex, Number key) throws NoSuchSeriesException;
-	/**
-	 * Removes the data series with the given index from the chart model
-	 * @param seriesIndex The series index
-	 */
-	public void removeSeries(int seriesIndex);
 	
 	public abstract Series getSeries(int seriesIndex);
 	

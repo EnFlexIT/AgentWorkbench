@@ -94,7 +94,7 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	}
 	
 	@Override
-	public TimeSeries getSeries(int seriesIndex) throws NoSuchSeriesException{
+	public TimeSeries getSeries(int seriesIndex) throws NoSuchSeriesException {
 		if(seriesIndex < getSeriesCount()){
 			TimeSeries series = (TimeSeries) ((TimeSeriesChart) chart).getTimeSeriesChartData().get(seriesIndex);
 			return series;
@@ -102,7 +102,17 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 			throw new NoSuchSeriesException();
 		}
 	}
-
+	@Override
+	public void exchangeSeries(int seriesIndex, DataSeries dataSeries) throws NoSuchSeriesException {
+		if (seriesIndex<getSeriesCount()) {
+			TimeSeriesChart tsc = (TimeSeriesChart) this.chart;
+			tsc.getTimeSeriesChartData().remove(seriesIndex);
+			tsc.getTimeSeriesChartData().add(seriesIndex, dataSeries);
+		} else {
+			throw new NoSuchSeriesException();
+		}
+	}
+	
 	@Override
 	public List getSeriesData(int seriesIndex) throws NoSuchSeriesException {
 		if(seriesIndex < getSeriesCount()){

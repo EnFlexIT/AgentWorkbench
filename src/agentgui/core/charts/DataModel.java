@@ -49,24 +49,28 @@ import agentgui.ontology.ValuePair;
  */
 public abstract class DataModel implements TableModelListener {
 	
-	/** These colors will be used for newly added series */
+	/** These colors will be used for newly added series. */
 	public static final Color[] DEFAULT_COLORS = {Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.YELLOW, Color.PINK, Color.CYAN, Color.MAGENTA, Color.LIGHT_GRAY, Color.DARK_GRAY, Color.BLACK};
-	/** This line width will be used for newly added series */
+	
+	/** This line width will be used for newly added series. */
 	public static final float DEFAULT_LINE_WIDTH = 1.0f;
 	
-	/** The ontology representation of the series data */
+	/** The ontology representation of the series data. */
 	protected OntologyModel ontologyModel;
-	/** The JFreeChart representation of the series data */
+	
+	/** The JFreeChart representation of the series data. */
 	protected ChartModel chartModel;
-	/** The JTable representation of the series data */
+	
+	/** The JTable representation of the series data. */
 	protected TableModel tableModel;
 	
-	/** The number of series in this data model	 */
+	/** The number of series in this data model. */
 	protected int seriesCount = 0;
 	
 	
 	/**
-	 * Creates a new data series of the correct type for the precise type of chart 
+	 * Creates a new data series of the correct type for the precise type of chart.
+	 *
 	 * @param label The new data series label
 	 * @return The new data series
 	 */
@@ -98,7 +102,8 @@ public abstract class DataModel implements TableModelListener {
 	public abstract Number getValueFromPair(ValuePair vp);
 	
 	/**
-	 * Updates the key of the value pair
+	 * Updates the key of the value pair.
+	 *
 	 * @param key The new key
 	 * @param vp The value pair to be updated
 	 */
@@ -119,16 +124,23 @@ public abstract class DataModel implements TableModelListener {
 	 */
 	public abstract List getValuePairsFromSeries(DataSeries series);
 	
+	/**
+	 * Gets the default series label.
+	 *
+	 * @return the default series label
+	 */
 	public abstract String getDefaultSeriesLabel();
 	
 	
 	/**
+	 * Returns the ontology model.
 	 * @return the ontologyModel
 	 */
 	public OntologyModel getOntologyModel() {
 		return ontologyModel;
 	}
 	/**
+	 * Sets the ontology model.
 	 * @param ontologyModel the ontologyModel to set
 	 */
 	public void setOntologyModel(OntologyModel ontologyModel) {
@@ -136,12 +148,14 @@ public abstract class DataModel implements TableModelListener {
 	}
 
 	/**
+	 * Gets the chart model.
 	 * @return the chartModel
 	 */
 	public ChartModel getChartModel() {
 		return chartModel;
 	}
 	/**
+	 * Sets the chart model.
 	 * @param chartModel the chartModel to set
 	 */
 	public void setChartModel(ChartModel chartModel) {
@@ -149,12 +163,14 @@ public abstract class DataModel implements TableModelListener {
 	}
 
 	/**
+	 * Gets the table model.
 	 * @return the tableModel
 	 */
 	public TableModel getTableModel() {
 		return tableModel;
 	}
 	/**
+	 * Sets the table model.
 	 * @param tableModel the tableModel to set
 	 */
 	public void setTableModel(TableModel tableModel) {
@@ -162,6 +178,7 @@ public abstract class DataModel implements TableModelListener {
 	}
 
 	/**
+	 * Gets the series count.
 	 * @return the seriesCount
 	 */
 	public int getSeriesCount() {
@@ -238,7 +255,8 @@ public abstract class DataModel implements TableModelListener {
 	}
 	
 	/**
-	 * Adds a new series to the data model
+	 * Adds a new series to the data model.
+	 *
 	 * @param series The new series
 	 */
 	public void addSeries(DataSeries series){
@@ -262,7 +280,42 @@ public abstract class DataModel implements TableModelListener {
 	}
 	
 	/**
-	 * Removes a series from the data model
+	 * Adds or exchanges a data series from the current chart.
+	 *
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public void addOrExchangeSeries(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+
+		if (targetDataSeriesIndex<=(this.getSeriesCount()-1)) {
+			// --- Exchange DataSeries --------------------
+			this.exchangeSeries(series, targetDataSeriesIndex);
+		} else {
+			// --- Add this series as new series ----------
+			this.addSeries(series);
+		}
+	}
+	
+	/**
+	 * Adds or exchanges a data series from the current chart. If the
+	 * specified series does not exists, nothing will be done.
+	 *
+	 * @param series the series
+	 * @param seriesIndex the target data series index
+	 */
+	public void exchangeSeries(DataSeries series, int seriesIndex) throws NoSuchSeriesException {
+		if (seriesIndex<=(this.getSeriesCount()-1)) {
+			ontologyModel.exchangeSeries(seriesIndex, series);
+			chartModel.exchangeSeries(seriesIndex, series);
+			tableModel.exchangeSeries(seriesIndex, series);
+		} else {
+			throw new NoSuchSeriesException();
+		}
+	}
+	
+	/**
+	 * Removes a series from the data model.
+	 *
 	 * @param seriesIndex The index of the series to be removed
 	 * @throws NoSuchSeriesException Thrown if there is no series with that index
 	 */
@@ -285,7 +338,7 @@ public abstract class DataModel implements TableModelListener {
 			try {
 				ontologyModel.removeValuePair(i, key);
 				chartModel.removeValuePair(i, key);
-				//TODO
+
 			} catch (NoSuchSeriesException e) {
 				System.err.println("Trying to remove value pair from non-existant series "+i);
 				e.printStackTrace();

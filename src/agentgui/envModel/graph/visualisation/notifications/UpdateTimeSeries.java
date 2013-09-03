@@ -30,8 +30,7 @@ package agentgui.envModel.graph.visualisation.notifications;
 
 import java.util.Vector;
 
-import agentgui.core.charts.DataModel;
-import agentgui.core.charts.NoSuchSeriesException;
+import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartEditorJPanel;
 import agentgui.core.charts.timeseriesChart.gui.TimeSeriesWidget;
 import agentgui.core.ontologies.gui.OntologyClassEditorJPanel;
@@ -183,30 +182,26 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 	@Override
 	public void applyToNetworkModelOnly(NetworkModel networkModel) throws UpdateDataSeriesException {
 
-		String compID = this.getComponentID();
-		String compType = null;
 		Object dataModel = null;
 		switch (this.getComponentType()) {
 		case GraphNode:
-			compType = "GraphNode";
-			GraphNode node =(GraphNode)networkModel.getGraphElement(compID);
+			GraphNode node =(GraphNode)networkModel.getGraphElement(this.getComponentID());
 			if (node==null) {
-				throw new UpdateDataSeriesException("GraphNode '" + compID + "' could not be found in the NetworkModel!");
+				throw new UpdateDataSeriesException("GraphNode '" + this.getComponentID() + "' could not be found in the NetworkModel!");
 			}
 			dataModel = node.getDataModel();
 			break;
 		case NetworkComponent:
-			compType = "NetworkComponent";
-			NetworkComponent networkComponent = networkModel.getNetworkComponent(compID);
+			NetworkComponent networkComponent = networkModel.getNetworkComponent(this.getComponentID());
 			if (networkComponent==null) {
-				throw new UpdateDataSeriesException("NetworkComponent '" + compID + "' could not be found in the NetworkModel!");
+				throw new UpdateDataSeriesException("NetworkComponent '" + this.getComponentID() + "' could not be found in the NetworkModel!");
 			}
 			dataModel = networkComponent.getDataModel();
 			break;
 		} 
 
 		if (dataModel==null) {
-			throw new UpdateDataSeriesException("NullPointerException: The data model of " + compType + " '" + compID + "' is null!");
+			throw new UpdateDataSeriesException("NullPointerException: The data model of " + this.getComponentTypeName() + " '" + this.getComponentID() + "' is null!");
 		}
 		
 		// --- Get the right data model part -------------------- 
@@ -216,7 +211,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 			this.applyUpdate(tsc);
 			
 		} catch (Exception ex) {
-			throw new UpdateDataSeriesException(this.getTargetDataModelIndex(), compType, compID, ex);
+			throw new UpdateDataSeriesException(this.getTargetDataModelIndex(), this.getComponentTypeName(), this.getComponentID(), ex);
 		}
 		
 	}
@@ -258,15 +253,19 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 		// --- From here: Edits of single TimeSeries ------
 		// ------------------------------------------------
 		case EditDataSeriesAddData:
-			
+			//TODO
 			break;
 
 		case EditDataSeriesAddOrExchangeData:
-			
+			//TODO
 			break;
 			
+		case EditDataSeriesExchangeData:
+			//TODO
+			break;
+		
 		case EditDataSeriesRemoveData:
-	
+			//TODO
 			break;
 		}
 
@@ -283,73 +282,86 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 			// ----------------------------------------------------------------
 			// --- Apply just to the data model -------------------------------
 			// ----------------------------------------------------------------
-			Object[] objectArr = ontologyInstanceViewer.getConfigurationInstances();
-			TimeSeriesChart tsc = (TimeSeriesChart) objectArr[this.getTargetDataModelIndex()];
-			this.applyUpdate(tsc);
+			try {
+				Object[] objectArr = ontologyInstanceViewer.getConfigurationInstances();
+				TimeSeriesChart tsc = (TimeSeriesChart) objectArr[this.getTargetDataModelIndex()];
+				this.applyUpdate(tsc);
+				
+			} catch (Exception ex) {
+				throw new UpdateDataSeriesException(this.getTargetDataModelIndex(), this.getComponentTypeName(), this.getComponentID(), ex);
+			}
 			
 		} else {
 			// ----------------------------------------------------------------
 			// --- Apply to the visualisation ---------------------------------
 			// ----------------------------------------------------------------
-			for (int i = 0; i < ontoVisPanel.size(); i++) {
+			try {
 				
-				DataModel dataModelTimeSeries = null;
-				OntologyClassEditorJPanel ontoVisPanelSingle = ontoVisPanel.get(i);
-				// --- Get the data model of the chart --------
-				if (ontoVisPanelSingle instanceof TimeSeriesChartEditorJPanel) {
-					TimeSeriesChartEditorJPanel tscep = (TimeSeriesChartEditorJPanel) ontoVisPanelSingle;
-					dataModelTimeSeries = tscep.getModel();
+				for (int i = 0; i < ontoVisPanel.size(); i++) {
 					
-				} else if (ontoVisPanelSingle instanceof TimeSeriesWidget) {
-					TimeSeriesWidget tsw = (TimeSeriesWidget) ontoVisPanelSingle;
-					TimeSeriesChartEditorJPanel tscep = (TimeSeriesChartEditorJPanel) tsw.getTimeSeriesChartEditorJDialog().getContentPane();
-					dataModelTimeSeries = tscep.getModel();
-				}
-				
-				// --- Apply Changes --------------------------
-				switch (this.getTargetAction()) {
-				case AddDataSeries:
-					dataModelTimeSeries.addSeries(this.getSpecifiedTimeSeries());
-					break;
+					TimeSeriesChartEditorJPanel tscep = null;
+					TimeSeriesDataModel dataModelTimeSeries = null; 
+					OntologyClassEditorJPanel ontoVisPanelSingle = ontoVisPanel.get(i);
+					// --- Get the data model of the chart --------
+					if (ontoVisPanelSingle instanceof TimeSeriesChartEditorJPanel) {
+						tscep = (TimeSeriesChartEditorJPanel) ontoVisPanelSingle;
+						dataModelTimeSeries = (TimeSeriesDataModel) tscep.getModel();
+						
+					} else if (ontoVisPanelSingle instanceof TimeSeriesWidget) {
+						TimeSeriesWidget tsw = (TimeSeriesWidget) ontoVisPanelSingle;
+						tscep = (TimeSeriesChartEditorJPanel) tsw.getTimeSeriesChartEditorJDialog().getContentPane();
+						dataModelTimeSeries = (TimeSeriesDataModel) tscep.getModel();
+					}
 					
-				case AddOrExchangeDataSeries:
-					//TODO
-					//dataModelTimeSeries.
-					break;
+					// --- Apply Changes --------------------------
+					switch (this.getTargetAction()) {
+					case AddDataSeries:
+						dataModelTimeSeries.addSeries(this.getSpecifiedTimeSeries());
+						break;
+						
+					case AddOrExchangeDataSeries:
+						dataModelTimeSeries.addOrExchangeSeries(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex());
+						break;
 
-				case ExchangeDataSeries:
-					//TODO					
-					break;
+					case ExchangeDataSeries:
+						dataModelTimeSeries.exchangeSeries(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex());					
+						break;
 
-				case RemoveDataSeries:
-					try {
+					case RemoveDataSeries:
 						if (this.getTargetDataSeriesIndex()<=dataModelTimeSeries.getSeriesCount()-1) {
 							dataModelTimeSeries.removeSeries(this.getTargetDataSeriesIndex());	
 						}
+						break;
 						
-					} catch (NoSuchSeriesException nsse) {
-						nsse.printStackTrace();
-					}
-					break;
-					
-				// ------------------------------------------------	
-				// --- From here: Edits of single TimeSeries ------
-				// ------------------------------------------------
-				case EditDataSeriesAddData:
-					
-					break;
+					// ------------------------------------------------	
+					// --- From here: Edits of single TimeSeries ------
+					// ------------------------------------------------
+					case EditDataSeriesAddData:
+						//TODO
+						break;
 
-				case EditDataSeriesAddOrExchangeData:
+					case EditDataSeriesAddOrExchangeData:
+						//TODO					
+						break;
 					
-					break;
+					case EditDataSeriesExchangeData:
+						//TODO
+						break;
 					
-				case EditDataSeriesRemoveData:
+					case EditDataSeriesRemoveData:
+						//TODO
+						break;
+						
+					} // end switch
+					
+				} // end for
 			
-					break;
-					
-				} // end switch
-			} // end apply to visualisation
-		}
+			} catch (Exception ex) {
+				throw new UpdateDataSeriesException(this.getTargetDataModelIndex(), this.getComponentTypeName(), this.getComponentID(), ex);
+			}
+			
+		}//end apply to visualisation
+		
 		
 	} // end method
 	
