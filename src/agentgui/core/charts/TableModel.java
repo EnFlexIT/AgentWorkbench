@@ -319,14 +319,14 @@ public abstract class TableModel extends AbstractTableModel {
 		
 		int valueColumIndex = seriesIndex+1;
 		this.columnTitles.set(valueColumIndex, newSeries.getLabel());
-		HashMap<Number, Integer> availableKeys = new HashMap<Number, Integer>(); 
+		HashMap<Number, Vector<Object>> availableRows = new HashMap<Number, Vector<Object>>(); 
 		
 		// --- Remove values that are belonging to the old series ---
 		for (int i=0; i<getRowCount(); i++) {
 			// --- Set value null ------------------------------
 			Vector<Object> rowVector = this.getRow(i);
 			Number keyValue = (Number) rowVector.get(0);
-			availableKeys.put(keyValue, i);
+			availableRows.put(keyValue, rowVector);
 			this.getRow(i).set(valueColumIndex, null);
 		}
 		
@@ -335,15 +335,15 @@ public abstract class TableModel extends AbstractTableModel {
 			
 			ValuePair vp = (ValuePair) valuePairs.get(i);
 			Number keyValue = this.parentDataModel.getKeyFromPair(vp);
-			Integer rowIndex = availableKeys.get(keyValue);
-			if (rowIndex==null) {
+			Vector<Object> rowVector = availableRows.get(keyValue);
+			if (rowVector==null) {
 				// No row found, create a new row
-				Vector<Object> newRow = new Vector<Object>();
-				while(newRow.size()< this.getColumnCount()){
-					newRow.add(null);
+				rowVector = new Vector<Object>();
+				while(rowVector.size()< this.getColumnCount()){
+					rowVector.add(null);
 				}
-				newRow.set(0, parentDataModel.getKeyFromPair(vp));
-				newRow.set(valueColumIndex, parentDataModel.getValueFromPair(vp));
+				rowVector.set(0, parentDataModel.getKeyFromPair(vp));
+				rowVector.set(valueColumIndex, parentDataModel.getValueFromPair(vp));
 				
 				// Find the right place to insert the new row:
 				int insertAt = getRowCount();	// At the end of the table...
@@ -353,11 +353,10 @@ public abstract class TableModel extends AbstractTableModel {
 						insertAt = j;			// ... or before the first one with a higher time stamp
 					}
 				}
-				tableData.add(insertAt, newRow);
+				tableData.add(insertAt, rowVector);
 				
 			} else {
 				// Row found, exchange the value
-				Vector<Object> rowVector = this.getRow(rowIndex);
 				rowVector.set(valueColumIndex, parentDataModel.getValueFromPair(vp));
 				
 			}
