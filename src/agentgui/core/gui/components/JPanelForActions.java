@@ -45,7 +45,7 @@ public class JPanelForActions extends JPanel implements MouseListener {
 	private static final long serialVersionUID = -4592535323022211528L;
 	
 	private ArrayList<ActionListener> listener = null;
-		
+	private boolean pauseFireUpdates = false;
 	
 	/**
 	 * Instantiates a new JPanel that can fire ActionEvents.
@@ -60,11 +60,25 @@ public class JPanelForActions extends JPanel implements MouseListener {
 	 * @param evt the ActionEvent
 	 */
 	protected void fireUpdate(ActionEvent evt) {
-		for (ActionListener al : listener) {
-			al.actionPerformed(evt);
+		if (isPauseFireUpdates()==false) {
+			for (ActionListener al : listener) {
+				al.actionPerformed(evt);
+			}	
 		}
 	}
-		
+	/**
+	 * @return the pauseFireUpdates
+	 */
+	protected boolean isPauseFireUpdates() {
+		return pauseFireUpdates;
+	}
+	/**
+	 * @param pauseFireUpdates the pauseFireUpdates to set
+	 */
+	protected void setPauseFireUpdates(boolean pauseFireUpdates) {
+		this.pauseFireUpdates = pauseFireUpdates;
+	}
+
 	/**
 	 * Adds the action listener.
 	 * @param al the ActionListener

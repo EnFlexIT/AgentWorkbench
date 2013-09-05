@@ -197,7 +197,9 @@ public class TimeFormatSelection extends JPanelForActions {
 			jButtonTimeFormatDefault.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					setPauseFireUpdates(true);
 					getJTextFieldTimeFormat().setText(getDefaultTimeFormat());
+					setPauseFireUpdates(false);
 					fireActionEvent();
 				}
 			});
@@ -218,7 +220,9 @@ public class TimeFormatSelection extends JPanelForActions {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
 					TimeFormat tf = (TimeFormat) cbm.getSelectedItem();
+					setPauseFireUpdates(true);
 					getJTextFieldTimeFormat().setText(tf.getFormat());
+					setPauseFireUpdates(false);
 					fireActionEvent();
 				}
 			});
@@ -278,7 +282,7 @@ public class TimeFormatSelection extends JPanelForActions {
 	 * Fires a action event for this panel.
 	 */
 	private void fireActionEvent() {
-		ActionEvent ae = new ActionEvent(this, 0, "DateFormatChnaged");
+		ActionEvent ae = new ActionEvent(this, 0, "DateFormatChanged");
 		this.fireUpdate(ae);
 	}
 	
