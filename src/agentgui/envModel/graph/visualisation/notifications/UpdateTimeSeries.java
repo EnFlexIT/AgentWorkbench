@@ -28,9 +28,13 @@
  */
 package agentgui.envModel.graph.visualisation.notifications;
 
+import jade.util.leap.List;
+
+import java.util.HashSet;
 import java.util.Vector;
 
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
+import agentgui.core.charts.timeseriesChart.TimeSeriesHelper;
 import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartEditorJPanel;
 import agentgui.core.charts.timeseriesChart.gui.TimeSeriesWidget;
 import agentgui.core.ontologies.gui.OntologyClassEditorJPanel;
@@ -51,6 +55,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 	private static final long serialVersionUID = 8563478170121892593L;
 
 	private TimeSeries specifiedTimeSeries = null;
+	private transient HashSet<Integer> editedInstances = null;
 	
 	/**
 	 * Instantiates a new update time series.
@@ -125,7 +130,19 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 		return specifiedTimeSeries;
 	}
 	
-	
+	/**
+	 * Returns the collection of identity hash codes of object instances that were already edited.
+	 * 
+	 * @see System#identityHashCode(Object)
+	 * @return the series instance edited
+	 */
+	private HashSet<Integer> getEditedInstances() {
+		if (this.editedInstances==null) {
+			editedInstances = new HashSet<Integer>();
+		}
+		return editedInstances;
+	}
+
 	/**
 	 * Edits the time series: adds new data to a time series.
 	 *
@@ -253,19 +270,44 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 		// --- From here: Edits of single TimeSeries ------
 		// ------------------------------------------------
 		case EditDataSeriesAddData:
-			//TODO
-			break;
-
 		case EditDataSeriesAddOrExchangeData:
-			//TODO
-			break;
-			
 		case EditDataSeriesExchangeData:
-			//TODO
-			break;
-		
-		case EditDataSeriesRemoveData:
-			//TODO
+		case EditDataSeriesRemoveData:			
+			// -- Get the time series to work on ---------- 
+			TimeSeries timeSeries = (TimeSeries) timeSeriesChart.getTimeSeriesChartData().get(this.getTargetDataSeriesIndex());
+			List oldValuePairs = timeSeries.getTimeSeriesValuePairs();
+			Integer editInstance = System.identityHashCode(oldValuePairs);
+			// --- Was the instance already edited? -------
+			if (this.getEditedInstances().contains(editInstance)==false) {
+				// --- Get the list of new value pairs ----
+				TimeSeriesHelper timeSeriesHelper = new TimeSeriesHelper(timeSeries);
+				// --- Again, case separation -------------
+				switch (this.getTargetAction()) {
+				case EditDataSeriesAddData:
+					// --- Add data to series -------------
+					timeSeriesHelper.addSeriesData(this.getSpecifiedTimeSeries());
+					this.getEditedInstances().add(editInstance);
+					break;
+
+				case EditDataSeriesAddOrExchangeData:
+					// --- Add or Exchange data -----------
+					timeSeriesHelper.addOrExchangeSeriesData(this.getSpecifiedTimeSeries());
+					this.getEditedInstances().add(editInstance);
+					break;
+					
+				case EditDataSeriesExchangeData:
+					// --- Exchange data ------------------
+					timeSeriesHelper.exchangeSeriesData(this.getSpecifiedTimeSeries());
+					this.getEditedInstances().add(editInstance);
+					break;
+					
+				case EditDataSeriesRemoveData:
+					// --- Remove data --------------------
+					timeSeriesHelper.removeSeriesData(this.getSpecifiedTimeSeries());
+					this.getEditedInstances().add(editInstance);
+					break;
+				}
+			} // end of not edited instances
 			break;
 		}
 
@@ -337,19 +379,19 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 					// --- From here: Edits of single TimeSeries ------
 					// ------------------------------------------------
 					case EditDataSeriesAddData:
-						//TODO
+						System.out.println("Add Data now");
 						break;
 
 					case EditDataSeriesAddOrExchangeData:
-						//TODO					
+						System.out.println("Add or Exchange Data now");
 						break;
 					
 					case EditDataSeriesExchangeData:
-						//TODO
+						System.out.println("Exchange Data now");
 						break;
 					
 					case EditDataSeriesRemoveData:
-						//TODO
+						System.out.println("Remove Data now");
 						break;
 						
 					} // end switch

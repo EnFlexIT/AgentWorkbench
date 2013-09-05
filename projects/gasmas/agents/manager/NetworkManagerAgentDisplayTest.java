@@ -132,15 +132,77 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		// --- Second example: Update a TimeSeriesChart -------------
 		// ----------------------------------------------------------
 //		this.runDataModelNotificationUpdates();
-
-		this.updateTimeSeries_AddTimeSeries();
+		this.updateTimeSeries_CompleteSeriesActions();
+		
+		this.updateTimeSeries_PartialSeriesActions();
 		
 	}
 
 	/**
 	 * Update time series: add time series.
 	 */
-	private void updateTimeSeries_AddTimeSeries() {
+	private void updateTimeSeries_PartialSeriesActions() {
+		
+		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
+		Long startTime = System.currentTimeMillis();
+		
+		// --- First create a base TimeSereies ------- 
+		TimeSeries tmpSeries = new TimeSeries();
+		tmpSeries.setLabel("SingleSeries");
+		tmpSeries.setUnit("Random Integer");
+
+		Simple_Long sLong = new Simple_Long();
+		sLong.setLongValue(startTime);
+		Simple_Float sFloat = new Simple_Float();
+		sFloat.setFloatValue(this.getRandomInteger(0, 100));
+		
+		TimeSeriesValuePair tsvp = new TimeSeriesValuePair();
+		tsvp.setTimestamp(sLong);
+		tsvp.setValue(sFloat);			
+		
+		tmpSeries.addTimeSeriesValuePairs(tsvp);
+		
+		UpdateTimeSeries uts = new UpdateTimeSeries(netComp, 1);
+		uts.addOrExchangeTimeSeries(tmpSeries, 0);
+		this.sendDisplayAgentNotification(uts);
+		
+		
+		for (int run=0; run<5; run++) {
+
+			// --- Create the update of the TimeSereies ----
+			TimeSeries addSeries = new TimeSeries();
+			tmpSeries.setLabel("Add Series");
+			tmpSeries.setUnit("Random Integer");
+			for (int i = 0; i < 5; i++) {
+				
+				Simple_Long sLongAdd = new Simple_Long();
+				sLongAdd.setLongValue(startTime + ((i+1)*1000));
+				Simple_Float sFloatAdd = new Simple_Float();
+				sFloatAdd.setFloatValue(this.getRandomInteger(0, 100));
+				
+				TimeSeriesValuePair tsvpAdd = new TimeSeriesValuePair();
+				tsvpAdd.setTimestamp(sLongAdd);
+				tsvpAdd.setValue(sFloatAdd);			
+				
+				addSeries.addTimeSeriesValuePairs(tsvpAdd);
+			}
+			
+			UpdateTimeSeries utsAdd = new UpdateTimeSeries(netComp, 1);
+			utsAdd.editTimeSeriesAddOrExchangeTimeSeriesData(0, addSeries);
+			this.sendDisplayAgentNotification(utsAdd);
+			System.out.println("Send " + (run+1));
+			
+		}
+		
+		
+	}
+	
+	
+	/**
+	 * Update time series: add time series.
+	 */
+	@SuppressWarnings("unused")
+	private void updateTimeSeries_CompleteSeriesActions() {
 		
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
 		Long startTime = System.currentTimeMillis();

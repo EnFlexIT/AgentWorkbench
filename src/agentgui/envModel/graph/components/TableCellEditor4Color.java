@@ -82,8 +82,6 @@ public class TableCellEditor4Color extends AbstractCellEditor implements TableCe
             JDialog dialog = JColorChooser.createDialog(button, "Pick a Color", true, colorChooser, this,  null); 
             dialog.setVisible(true);
             // --- From here: user action in the dialog ---
-            
-            currentColor = colorChooser.getColor();
             fireEditingStopped();
             
         } else { //User pressed dialog's "OK" button.
