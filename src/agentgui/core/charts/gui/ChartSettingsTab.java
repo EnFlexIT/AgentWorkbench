@@ -34,7 +34,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -52,11 +51,11 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import agentgui.core.application.Language;
-import agentgui.core.charts.DataModel;
+import agentgui.core.charts.ChartSettingModel;
+import agentgui.core.charts.ChartSettingModelListener;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.envModel.graph.components.TableCellEditor4Color;
 import agentgui.envModel.graph.components.TableCellRenderer4Color;
-import agentgui.ontology.DataSeries;
 
 /**
  * GUI component for editing the settings for a chart. This component provides means to edit 
@@ -64,11 +63,13 @@ import agentgui.ontology.DataSeries;
  * additional settings, subclass this component and add the required GUI elements.
  *  
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
- *
  */
-public class ChartSettingsTab extends JPanel implements TableModelListener, DocumentListener {
+public class ChartSettingsTab extends JPanel implements DocumentListener, ChartSettingModelListener, TableModelListener {
 	
 	private static final long serialVersionUID = 2476599044804448243L;
+	
+	protected ChartSettingModel chartSettingModel;
+	protected ChartEditorJPanel parent;
 	
 	// Swing components
 	private JLabel lblChartTitle;
@@ -80,23 +81,47 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 	private JTextField tfYAxisLabel;
 	private JComboBox cbRendererType;
 	private JScrollPane spTblSeriesSettings;
-	
-	protected DataModel model;
-	
-	private DefaultTableModel myTableModel;
+
 	private JTable tblSeriesSettings;
-	
 	private TableCellRenderer4Color cellRendererColor = null;
 	private TableCellEditor4Color cellEditorColor = null;
 	private TableCellSpinnerEditor4FloatObject cellEditorSpinner = null;
 	
-	protected ChartEditorJPanel parent;
-	
-	
-	public ChartSettingsTab(DataModel model, ChartEditorJPanel parent) {
-		this.model = model;
+	/**
+	 * Instantiates a new chart settings tab.
+	 *
+	 * @param chartSettingModel the chart setting model
+	 * @param parent the parent
+	 */
+	public ChartSettingsTab(ChartSettingModel chartSettingModel, ChartEditorJPanel parent) {
+		this.chartSettingModel = chartSettingModel;
+		this.chartSettingModel.addChartSettingModelListener(this);
 		this.parent = parent;
 		this.initialize(); 
+		this.setChartSettingModelData();
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartSettingModelListener#replaceModel(agentgui.core.charts.ChartSettingModel)
+	 */
+	@Override
+	public void replaceModel(ChartSettingModel newChartSettingModel) {
+		this.chartSettingModel.removeChartSettingModelListener(this);
+		this.chartSettingModel = newChartSettingModel;
+		this.chartSettingModel.addChartSettingModelListener(this);
+		this.setChartSettingModelData();
+	}
+	
+	/**
+	 * Sets the chart setting model data to the form.
+	 */
+	private void setChartSettingModelData() {
+		this.getTfChartTitle().setText(this.chartSettingModel.getChartTitle());
+		this.getTfXAxisLabel().setText(this.chartSettingModel.getChartXAxisLabel());
+		this.getTfYAxisLabel().setText(this.chartSettingModel.getChartYAxisLabel());
+		this.getCbRendererType().setSelectedItem(this.chartSettingModel.getRenderType());
+		this.getTblSeriesSettings().setModel(this.chartSettingModel.getTableModelSeriesSettings());
+		this.refreshRenderEditorTblSeriesSettings();
 	}
 	
 	/**
@@ -194,7 +219,7 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 		if (tfChartTitle == null) {
 			tfChartTitle = new JTextField();
 			tfChartTitle.setColumns(10);
-			tfChartTitle.setText(model.getOntologyModel().getChartSettings().getChartTitle());
+			tfChartTitle.setText(chartSettingModel.getChartTitle());
 			tfChartTitle.getDocument().addDocumentListener(this);
 		}
 		return tfChartTitle;
@@ -203,7 +228,7 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 		if (tfXAxisLabel == null) {
 			tfXAxisLabel = new JTextField();
 			tfXAxisLabel.setColumns(10);
-			tfXAxisLabel.setText(model.getOntologyModel().getChartSettings().getXAxisLabel());
+			tfXAxisLabel.setText(chartSettingModel.getChartXAxisLabel());
 			tfXAxisLabel.getDocument().addDocumentListener(this);
 		}
 		return tfXAxisLabel;
@@ -212,7 +237,7 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 		if (tfYAxisLabel == null) {
 			tfYAxisLabel = new JTextField();
 			tfYAxisLabel.setColumns(10);
-			tfYAxisLabel.setText(model.getOntologyModel().getChartSettings().getYAxisLabel());
+			tfYAxisLabel.setText(chartSettingModel.getChartYAxisLabel());
 			tfYAxisLabel.getDocument().addDocumentListener(this);
 		}
 		return tfYAxisLabel;
@@ -221,11 +246,11 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 		if (cbRendererType == null) {
 			cbRendererType = new JComboBox();
 			cbRendererType.setModel(new DefaultComboBoxModel(ChartTab.RENDERER_TYPES));
-			cbRendererType.setSelectedItem(model.getOntologyModel().getChartSettings().getRendererType());
+			cbRendererType.setSelectedItem(chartSettingModel.getRenderType());
 			cbRendererType.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					setRendererType((String) getCbRendererType().getSelectedItem());
+					setRenderType((String) getCbRendererType().getSelectedItem());
 				}
 			});
 		}
@@ -240,21 +265,27 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 	}
 	protected JTable getTblSeriesSettings() {
 		if (tblSeriesSettings == null) {
-			tblSeriesSettings = new JTable(this.getTableModel());
+			tblSeriesSettings = new JTable(this.chartSettingModel.getTableModelSeriesSettings());
 			tblSeriesSettings.setFillsViewportHeight(true);
-			this.refreshTableModel();
-			
-			TableColumnModel tcm = tblSeriesSettings.getColumnModel();
-			
-			TableColumn colorColumn = tcm.getColumn(1);
-			colorColumn.setCellEditor(this.getCellEditorColor());
-			colorColumn.setCellRenderer(this.getCellRenderer4Color());
-			
-			TableColumn columnWidth = tcm.getColumn(2);
-			columnWidth.setCellEditor(this.getCellEditorSpinner());
-			
+			this.chartSettingModel.getTableModelSeriesSettings().addTableModelListener(this);
+			this.chartSettingModel.refreshTableModel();
+			this.refreshRenderEditorTblSeriesSettings();
 		}
 		return tblSeriesSettings;
+	}
+	/**
+	 * Refreshes renderer and editors of the series table.
+	 */
+	private void refreshRenderEditorTblSeriesSettings() {
+		
+		TableColumnModel tcm = this.getTblSeriesSettings().getColumnModel();
+		
+		TableColumn colorColumn = tcm.getColumn(1);
+		colorColumn.setCellEditor(this.getCellEditorColor());
+		colorColumn.setCellRenderer(this.getCellRenderer4Color());
+		
+		TableColumn columnWidth = tcm.getColumn(2);
+		columnWidth.setCellEditor(this.getCellEditorSpinner());
 	}
 	
 	private TableCellRenderer4Color getCellRenderer4Color() {
@@ -276,88 +307,20 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 		return cellEditorSpinner;
 	}
 	
-	
-	/**
-	 * Creates the table model for the settings table
-	 * @return The table model
-	 */
-	private DefaultTableModel getTableModel(){
-		// --- Initialize model and columns ---------------
-		if (this.myTableModel==null) {
-			myTableModel = new DefaultTableModel();
-			myTableModel.addColumn(Language.translate("Name"));
-			myTableModel.addColumn(Language.translate("Farbe"));
-			myTableModel.addColumn(Language.translate("Liniendicke"));
-			myTableModel.addTableModelListener(this);
-		}
-		return myTableModel;
-	}
-
-	private void refreshTableModel() {
-
-		// --- Remove all elements first ----------------------------
-		while(this.getTableModel().getRowCount()>0) {
-			this.getTableModel().removeRow(0);
-		}
-		
-		// --- Add rows containing the series specific settings -----
-		for(int i=0; i < model.getSeriesCount(); i++){
-				
-			// Extract series settings from the ontology model
-			DataSeries series = (DataSeries) model.getOntologyModel().getChartData().get(i);
-			
-			String rgb = null;
-			if (model.getOntologyModel().getChartSettings().getYAxisColors().size() < (i+1)) {
-				rgb = ((Integer) DataModel.DEFAULT_COLORS[i % DataModel.DEFAULT_COLORS.length].getRGB()).toString();
-				model.getOntologyModel().getChartSettings().getYAxisColors().add(i, rgb);
-			} else {
-				rgb = (String) model.getOntologyModel().getChartSettings().getYAxisColors().get(i);
-			}
-			
-			Float width = null; 
-			if (model.getOntologyModel().getChartSettings().getYAxisLineWidth().size() < (i+1)) {
-				width = DataModel.DEFAULT_LINE_WIDTH;
-				model.getOntologyModel().getChartSettings().getYAxisLineWidth().add(i, width);
-			} else {
-				width = (Float) model.getOntologyModel().getChartSettings().getYAxisLineWidth().get(i);
-			}
-			
-			// Create a table row for the series
-			Vector<Object> rowVector = new Vector<Object>();
-			rowVector.add(series.getLabel());
-			rowVector.add(new Color(Integer.parseInt(rgb)));
-			rowVector.add(width);
-			
-			this.getTableModel().addRow(rowVector);
-		}
-	}
-	
-	public void addSeries(DataSeries series){
-		
-		String label = series.getLabel();
-		Color color = new Color(Integer.parseInt((String) model.getOntologyModel().getChartSettings().getYAxisColors().get(model.getSeriesCount()-1)));
-		Float lineWidth = (Float) model.getOntologyModel().getChartSettings().getYAxisLineWidth().get(model.getSeriesCount()-1);
-		
-		Object[] newRow = {label, color, lineWidth};
-		
-		((DefaultTableModel)getTblSeriesSettings().getModel()).addRow(newRow);
-		
-	}
-	
 	/* (non-Javadoc)
 	 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
 	 */
 	@Override
 	public void tableChanged(TableModelEvent tme) {
-		// Handle changes of series-specific settings
+
 		int seriesIndex = tme.getFirstRow();
 		try{
 			if(tme.getColumn() == 0){
-				setSeriesLabel(seriesIndex, (String) tblSeriesSettings.getModel().getValueAt(seriesIndex, 0));
+				setSeriesLabel(seriesIndex, (String) this.chartSettingModel.getTableModelSeriesSettings().getValueAt(seriesIndex, 0));
 			}else if(tme.getColumn() == 1){
-				setSeriesColor(seriesIndex, (Color) tblSeriesSettings.getModel().getValueAt(seriesIndex, 1));
+				setSeriesColor(seriesIndex, (Color) this.chartSettingModel.getTableModelSeriesSettings().getValueAt(seriesIndex, 1));
 			}else if(tme.getColumn() == 2){
-				setSeriesLineWidth(seriesIndex, (Float) tblSeriesSettings.getModel().getValueAt(seriesIndex, 2));
+				setSeriesLineWidth(seriesIndex, (Float) this.chartSettingModel.getTableModelSeriesSettings().getValueAt(seriesIndex, 2));
 			}
 			
 		}catch (NoSuchSeriesException ex) {
@@ -365,7 +328,7 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 			ex.printStackTrace();
 		}
 	}
-
+	
 	@Override
 	public void insertUpdate(DocumentEvent de) {
 		this.handleTextFieldUpdate(de);
@@ -392,21 +355,12 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 		((DefaultTableModel)getTblSeriesSettings().getModel()).removeRow(seriesIndex);
 	}
 	
-	public void replaceModel(DataModel newModel){
-		this.model = newModel;
-		DefaultTableModel dtm = (DefaultTableModel) this.getTblSeriesSettings().getModel();
-		if (dtm.getColumnCount()==0) {
-			this.getTblSeriesSettings().setModel(getTableModel());
-		}
-		this.refreshTableModel();
-	}
-	
 	/**
 	 * Applies chart title changes
 	 * @param newTitle The new chart title
 	 */
 	private void setChartTitle(String newTitle){
-		model.getOntologyModel().getChartSettings().setChartTitle(newTitle);
+		chartSettingModel.setChartTitle(newTitle);
 		parent.getChartTab().getChart().setTitle(newTitle);
 	}
 	/**
@@ -414,25 +368,23 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 	 * @param newYAxisLabel The new x axis label
 	 */
 	private void setXAxisLabel(String newXAxisLabel){
-		model.getOntologyModel().getChartSettings().setXAxisLabel(newXAxisLabel);
+		chartSettingModel.setChartXAxisLabel(newXAxisLabel);
 		parent.getChartTab().setXAxisLabel(newXAxisLabel);
-		model.getTableModel().setKeyColumnLabel(newXAxisLabel);
 	}
 	/**
 	 * Sets the y axis label for the chart
 	 * @param newYAxisLabel The new y axis label
 	 */
 	private void setYAxisLabel(String newYAxisLabel){
-		model.getOntologyModel().getChartSettings().setYAxisLabel(newYAxisLabel);
+		chartSettingModel.setChartYAxisLabel(newYAxisLabel);
 		parent.getChartTab().setYAxisLabel(newYAxisLabel);
-		model.getTableModel().setKeyColumnLabel(newYAxisLabel);
 	}
 	/**
 	 * Sets the renderer type for the chart
 	 * @param newRendererType The new renderer type
 	 */
-	private void setRendererType(String newRendererType){
-		model.getOntologyModel().getChartSettings().setRendererType(newRendererType);
+	private void setRenderType(String newRendererType){
+		chartSettingModel.setRenderType(newRendererType);
 		parent.getChartTab().setRenderer(newRendererType);
 	}
 	/**
@@ -442,8 +394,7 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 	 * @throws NoSuchSeriesException Invalid series index
 	 */
 	private void setSeriesLabel(int seriesIndex, String newLabel) throws NoSuchSeriesException{
-		model.getOntologyModel().getSeries(seriesIndex).setLabel(newLabel);
-		model.getChartModel().getSeries(seriesIndex).setKey(newLabel);
+		chartSettingModel.setSeriesLabel(seriesIndex, newLabel);
 	}
 	/**
 	 * Sets the plot color for a data series, specified by its index 
@@ -452,8 +403,7 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 	 * @throws NoSuchSeriesException Invalid series index
 	 */
 	private void setSeriesColor(int seriesIndex, Color newColor) throws NoSuchSeriesException{
-		model.getOntologyModel().getChartSettings().getYAxisColors().remove(seriesIndex);
-		model.getOntologyModel().getChartSettings().getYAxisColors().add(seriesIndex, ""+newColor.getRGB());
+		chartSettingModel.setSeriesColor(seriesIndex, newColor);
 		parent.getChartTab().setSeriesColor(seriesIndex, newColor);
 	}
 	/**
@@ -463,8 +413,7 @@ public class ChartSettingsTab extends JPanel implements TableModelListener, Docu
 	 * @throws NoSuchSeriesException Invalid series index
 	 */
 	private void setSeriesLineWidth(int seriesIndex, Float newWidth) throws NoSuchSeriesException{
-		model.getOntologyModel().getChartSettings().getYAxisLineWidth().remove(seriesIndex);
-		model.getOntologyModel().getChartSettings().getYAxisLineWidth().add(seriesIndex, newWidth);
+		chartSettingModel.setSeriesLineWidth(seriesIndex, newWidth);
 		parent.getChartTab().setSeriesLineWidth(seriesIndex, newWidth);
 	}
 

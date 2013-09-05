@@ -70,7 +70,7 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 	
 	protected XyChartSettingsTab getSettingsTab(){
 		if(this.settingsTab == null){
-			this.settingsTab = new XyChartSettingsTab(this.model, this);
+			this.settingsTab = new XyChartSettingsTab(this.model.getChartSettingModel(), this);
 		}
 		
 		return (XyChartSettingsTab) this.settingsTab;
@@ -91,7 +91,7 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 		this.model = new XyDataModel((XyChart) objectInstance);
 		this.getChartTab().replaceModel(this.model);
 		this.getTableTab().replaceModel(this.model);
-		this.getSettingsTab().replaceModel(this.model);
+		this.getSettingsTab().replaceModel(this.model.getChartSettingModel());
 	}
 
 	@Override

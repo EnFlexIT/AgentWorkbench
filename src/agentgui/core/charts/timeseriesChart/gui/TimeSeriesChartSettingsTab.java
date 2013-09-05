@@ -38,9 +38,9 @@ import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 
 import agentgui.core.application.Language;
-import agentgui.core.charts.DataModel;
+import agentgui.core.charts.ChartSettingModel;
 import agentgui.core.charts.gui.ChartSettingsTab;
-import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
+import agentgui.core.charts.timeseriesChart.TimeSeriesChartSettingModel;
 import agentgui.simulationService.time.TimeFormatSelection;
 
 /**
@@ -57,8 +57,8 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	private TimeFormatSelection timeFormatSelector = null;
 
 	
-	public TimeSeriesChartSettingsTab(DataModel model, TimeSeriesChartEditorJPanel parent) {
-		super(model, parent);
+	public TimeSeriesChartSettingsTab(ChartSettingModel chartSettingModel, TimeSeriesChartEditorJPanel parent) {
+		super(chartSettingModel, parent);
 	}
 	
 
@@ -98,25 +98,6 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	}
 
 	/**
-	 * @return the jPanelTimeFormater
-	 */
-	public TimeFormatSelection getTimeFormatSelector() {
-		if (timeFormatSelector==null) {
-			timeFormatSelector = new TimeFormatSelection(false);
-			timeFormatSelector.setDefaultTimeFormat(this.getDefaultTimeFormat());
-			timeFormatSelector.setPreferredSize(new Dimension(360, 80));
-			timeFormatSelector.setTimeFormat(((TimeSeriesOntologyModel)model.getOntologyModel()).getAdditionalSettings().getTimeFormat());
-			timeFormatSelector.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent ae) {
-					setTimeFormat(getTimeFormatSelector().getTimeFormat());
-				}
-			});
-		}
-		return timeFormatSelector;
-	}
-
-	/**
 	 * Gets the lbl time format selector.
 	 * @return the lblTimeFormatSelector
 	 */
@@ -133,13 +114,31 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	public String getDefaultTimeFormat(){
 		return parent.getDefaultTimeFormat();
 	}
-	
+	/**
+	 * @return the jPanelTimeFormater
+	 */
+	public TimeFormatSelection getTimeFormatSelector() {
+		if (timeFormatSelector==null) {
+			timeFormatSelector = new TimeFormatSelection(false);
+			timeFormatSelector.setDefaultTimeFormat(this.getDefaultTimeFormat());
+			timeFormatSelector.setPreferredSize(new Dimension(360, 80));
+			timeFormatSelector.setTimeFormat(((TimeSeriesChartSettingModel)chartSettingModel).getTimeFormat());
+			timeFormatSelector.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					TimeFormatSelection tfs = (TimeFormatSelection) ae.getSource();
+					setTimeFormat(tfs.getTimeFormat());
+				}
+			});
+		}
+		return timeFormatSelector;
+	}
 	/**
 	 * Sets the time format for the chart
 	 * @param newTimeFormat The new time format
 	 */
 	private void setTimeFormat(String newTimeFormat){
-		((TimeSeriesOntologyModel) model.getOntologyModel()).getAdditionalSettings().setTimeFormat(newTimeFormat);
+		((TimeSeriesChartSettingModel)chartSettingModel).setTimeFormat(newTimeFormat);
 		((TimeSeriesChartEditorJPanel)parent).getChartTab().setTimeFormat(newTimeFormat);
 	}
 

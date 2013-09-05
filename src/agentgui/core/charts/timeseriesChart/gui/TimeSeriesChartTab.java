@@ -44,9 +44,7 @@ import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
  *
  */
 public class TimeSeriesChartTab extends ChartTab {
-	/**
-	 * Generated serialVersionUID
-	 */
+
 	private static final long serialVersionUID = -1998969136744482400L;
 	
 	/**

@@ -35,6 +35,7 @@ import java.awt.event.KeyListener;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
+
 /**
  * This class implements features shared by the different cell editor classes used 
  * by the chart data editing tables.
@@ -76,9 +77,6 @@ public abstract class BasicCellEditor extends AbstractCellEditor implements KeyL
 		this.column = column;
 		this.originalRowHeight = table.getRowHeight(row);
 		this.confirmationKey = KeyEvent.VK_UNDEFINED;
-		
-//		this.addThisClassAsFocusListenerOnce(this.table);
-//		this.addThisClassAsFocusListenerOnce(this.getEditorComponent(value));
 		
 		table.setRowHeight(row, (int) (originalRowHeight*1.5));
 		return this.getEditorComponent(value);
@@ -142,44 +140,4 @@ public abstract class BasicCellEditor extends AbstractCellEditor implements KeyL
 		// Method required by the interface, but not needed here.
 	}
 
-	
-//	/**
-//	 * Adds this class once as a FocusListern for the component.
-//	 * @param comp the JComponent
-//	 */
-//	private void addThisClassAsFocusListenerOnce(Component comp) {
-//				
-//		boolean thisIsAdded = false;
-//		FocusListener[] flAtComp = comp.getFocusListeners();
-//		for (int i=0; i<flAtComp.length; i++) {
-//			FocusListener fl = flAtComp[i];
-//			if (fl==this) {
-//				thisIsAdded = true;
-//				break;
-//			}
-//		}
-//		if (thisIsAdded==false) {
-//			comp.addFocusListener(this);
-//		}
-//	}
-//	
-//	/* (non-Javadoc)
-//	 * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
-//	 */
-//	@Override
-//	public void focusLost(FocusEvent fe) {
-//		if(fe.getSource()==this.table){
-//			System.out.println("=> Table lost focus " + this.table.toString());	
-//		} else if (fe.getSource()== this.editorComponent) {
-//			System.out.println("=> Editor component lost focus!!!");
-//		}
-//	}
-//	/* (non-Javadoc)
-//	 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
-//	 */
-//	@Override
-//	public void focusGained(FocusEvent e) {
-//		
-//	}
-	
 }

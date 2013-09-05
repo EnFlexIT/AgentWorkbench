@@ -89,7 +89,7 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	@Override
 	protected TimeSeriesChartSettingsTab getSettingsTab(){
 		if(this.settingsTab == null){
-			this.settingsTab = new TimeSeriesChartSettingsTab(this.model, this);
+			this.settingsTab = new TimeSeriesChartSettingsTab(this.model.getChartSettingModel(), this);
 		}
 		return (TimeSeriesChartSettingsTab) settingsTab;
 	}
@@ -133,7 +133,7 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 		
 		this.getChartTab().replaceModel(this.model);
 		this.getTableTab().replaceModel(this.model);
-		this.getSettingsTab().replaceModel(this.model);
+		this.getSettingsTab().replaceModel(this.model.getChartSettingModel());
 	}
 
 	@Override

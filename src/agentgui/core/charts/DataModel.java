@@ -28,14 +28,16 @@
  */
 package agentgui.core.charts;
 
+import jade.util.leap.List;
+
 import java.awt.Color;
 import java.util.Vector;
-
-import jade.util.leap.List;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import agentgui.core.charts.timeseriesChart.TimeSeriesChartSettingModel;
+import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 
@@ -51,18 +53,17 @@ public abstract class DataModel implements TableModelListener {
 	
 	/** These colors will be used for newly added series. */
 	public static final Color[] DEFAULT_COLORS = {Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.YELLOW, Color.PINK, Color.CYAN, Color.MAGENTA, Color.LIGHT_GRAY, Color.DARK_GRAY, Color.BLACK};
-	
 	/** This line width will be used for newly added series. */
 	public static final float DEFAULT_LINE_WIDTH = 1.0f;
 	
 	/** The ontology representation of the series data. */
 	protected OntologyModel ontologyModel;
-	
-	/** The JFreeChart representation of the series data. */
-	protected ChartModel chartModel;
-	
 	/** The JTable representation of the series data. */
 	protected TableModel tableModel;
+	/** The JFreeChart representation of the series data. */
+	protected ChartModel chartModel;
+	/** The model for the chart settings */
+	protected ChartSettingModel chartSettingModel;
 	
 	/** The number of series in this data model. */
 	protected int seriesCount = 0;
@@ -126,7 +127,6 @@ public abstract class DataModel implements TableModelListener {
 	
 	/**
 	 * Gets the default series label.
-	 *
 	 * @return the default series label
 	 */
 	public abstract String getDefaultSeriesLabel();
@@ -146,7 +146,22 @@ public abstract class DataModel implements TableModelListener {
 	public void setOntologyModel(OntologyModel ontologyModel) {
 		this.ontologyModel = ontologyModel;
 	}
-
+	
+	/**
+	 * Gets the table model.
+	 * @return the tableModel
+	 */
+	public TableModel getTableModel() {
+		return tableModel;
+	}
+	/**
+	 * Sets the table model.
+	 * @param tableModel the tableModel to set
+	 */
+	public void setTableModel(TableModel tableModel) {
+		this.tableModel = tableModel;
+	}
+	
 	/**
 	 * Gets the chart model.
 	 * @return the chartModel
@@ -163,20 +178,27 @@ public abstract class DataModel implements TableModelListener {
 	}
 
 	/**
-	 * Gets the table model.
-	 * @return the tableModel
+	 * Returns the chart setting model.
+	 * @return the chart setting model
 	 */
-	public TableModel getTableModel() {
-		return tableModel;
+	public ChartSettingModel getChartSettingModel() {
+		if (chartSettingModel==null) {
+			if (this.ontologyModel instanceof TimeSeriesOntologyModel) {
+				chartSettingModel = new TimeSeriesChartSettingModel(this);
+			} else {
+				chartSettingModel = new ChartSettingModel(this);	
+			}
+		}
+		return chartSettingModel;
 	}
 	/**
-	 * Sets the table model.
-	 * @param tableModel the tableModel to set
+	 * Sets the chart setting model.
+	 * @param chartSettingModel the new chart setting model
 	 */
-	public void setTableModel(TableModel tableModel) {
-		this.tableModel = tableModel;
+	public void setChartSettingModel(ChartSettingModel chartSettingModel) {
+		this.chartSettingModel = chartSettingModel;
 	}
-
+	
 	/**
 	 * Gets the series count.
 	 * @return the seriesCount
@@ -268,12 +290,13 @@ public abstract class DataModel implements TableModelListener {
 		
 		// Add the data to the sub models
 		ontologyModel.addSeries(series);
-		chartModel.addSeries(series);
-		tableModel.addSeries(series);
-		
 		// Apply default settings
 		ontologyModel.getChartSettings().addYAxisColors(""+DEFAULT_COLORS[getSeriesCount() % DEFAULT_COLORS.length].getRGB());
 		ontologyModel.getChartSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
+		
+		chartModel.addSeries(series);
+		tableModel.addSeries(series);
+		this.getChartSettingModel().refresh();
 		
 		seriesCount++;
 
@@ -308,6 +331,7 @@ public abstract class DataModel implements TableModelListener {
 			ontologyModel.exchangeSeries(seriesIndex, series);
 			chartModel.exchangeSeries(seriesIndex, series);
 			tableModel.exchangeSeries(seriesIndex, series);
+			this.getChartSettingModel().refresh();
 		} else {
 			throw new NoSuchSeriesException();
 		}
@@ -323,7 +347,7 @@ public abstract class DataModel implements TableModelListener {
 		ontologyModel.removeSeries(seriesIndex);
 		chartModel.removeSeries(seriesIndex);
 		tableModel.removeSeries(seriesIndex);
-		
+		this.getChartSettingModel().refresh();
 		seriesCount--;
 	}
 	

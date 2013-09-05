@@ -68,6 +68,7 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	public TimeSeriesAdditionalSettings getAdditionalSettings(){
 		return ((TimeSeriesChart) chart).getTimeSeriesAdditionalSettings();
 	}
+	
 	@Override
 	public void addSeries(DataSeries series){
 		((TimeSeriesChart) chart).getTimeSeriesChartData().add(series);
