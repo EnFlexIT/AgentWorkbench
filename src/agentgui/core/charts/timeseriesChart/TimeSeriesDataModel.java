@@ -308,8 +308,9 @@ public class TimeSeriesDataModel extends DataModel {
 			localTimeSeriesHelper.exchangeSeriesData(exTimeSeries);
 		}
 		// --- Edit chart model ---------------------------
-		
+		this.chartModel.editSeriesExchangeData(exTimeSeries, targetDataSeriesIndex);
 		// --- Edit table model ---------------------------
+		this.tableModel.editSeriesExchangeData(exTimeSeries, targetDataSeriesIndex);
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.DataModel#editDataSeriesRemoveData(agentgui.ontology.DataSeries, int, boolean)
@@ -325,8 +326,9 @@ public class TimeSeriesDataModel extends DataModel {
 			localTimeSeriesHelper.removeSeriesData(removeTimeSeries);
 		}
 		// --- Edit chart model ---------------------------
-		
+		this.chartModel.editSeriesRemoveData(removeTimeSeries, targetDataSeriesIndex);
 		// --- Edit table model ---------------------------
+		this.tableModel.editSeriesRemoveData(removeTimeSeries, targetDataSeriesIndex);
 	}
 
 }

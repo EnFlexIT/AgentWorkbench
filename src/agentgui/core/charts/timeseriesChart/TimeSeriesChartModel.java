@@ -32,6 +32,7 @@ import jade.util.leap.List;
 
 import java.util.TimeZone;
 
+import org.jfree.data.general.SeriesException;
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.time.TimeSeriesDataItem;
@@ -195,7 +196,9 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 			throw new NoSuchSeriesException();
 		}
 	}
-
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#editSeriesAddOrExchangeData(agentgui.ontology.DataSeries, int)
+	 */
 	@Override
 	public void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 		
@@ -220,16 +223,57 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#editSeriesExchangeData(agentgui.ontology.DataSeries, int)
+	 */
 	@Override
 	public void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
-		// TODO Auto-generated method stub
-		
+
+		if (targetDataSeriesIndex<=(this.getSeriesCount()-1)) {
+			org.jfree.data.time.TimeSeries exchangeSeries = (org.jfree.data.time.TimeSeries) this.getSeries().get(targetDataSeriesIndex);
+			List valuePairs = ((agentgui.ontology.TimeSeries)series).getTimeSeriesValuePairs();
+			for (int i = 0; i < valuePairs.size(); i++) {
+				TimeSeriesValuePair valuePair = (TimeSeriesValuePair) valuePairs.get(i);
+				Simple_Long simpleLong = valuePair.getTimestamp();
+				Simple_Float simpleFloat = valuePair.getValue();
+				
+				Long timeStampLong = simpleLong.getLongValue();
+				Float floatValue = simpleFloat.getFloatValue();
+				if (timeStampLong!=null) {
+					try {
+						exchangeSeries.update(new FixedMillisecond(timeStampLong), floatValue);
+					} catch (SeriesException se) {
+						// --- Nothing to do here, just take the next value ---
+					}
+				}
+			}
+
+		} else {
+			throw new NoSuchSeriesException();			
+		}
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#editSeriesRemoveData(agentgui.ontology.DataSeries, int)
+	 */
 	@Override
 	public void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
-		// TODO Auto-generated method stub
-		
+
+		if (targetDataSeriesIndex<=(this.getSeriesCount()-1)) {
+			org.jfree.data.time.TimeSeries removeSeries = (org.jfree.data.time.TimeSeries) this.getSeries().get(targetDataSeriesIndex);
+			List valuePairs = ((agentgui.ontology.TimeSeries)series).getTimeSeriesValuePairs();
+			for (int i = 0; i < valuePairs.size(); i++) {
+				TimeSeriesValuePair valuePair = (TimeSeriesValuePair) valuePairs.get(i);
+				Simple_Long simpleLong = valuePair.getTimestamp();
+				Long timeStampLong = simpleLong.getLongValue();
+				if (timeStampLong!=null) {
+					removeSeries.delete(new FixedMillisecond(timeStampLong));
+				}
+			}
+
+		} else {
+			throw new NoSuchSeriesException();			
+		}
 	}
 
 }

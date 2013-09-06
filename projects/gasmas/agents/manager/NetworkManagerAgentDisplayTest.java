@@ -164,7 +164,8 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		UpdateTimeSeries uts = new UpdateTimeSeries(netComp, 1);
 		uts.addOrExchangeTimeSeries(tmpSeries, 0);
 		this.sendDisplayAgentNotification(uts);
-		
+		uts.addOrExchangeTimeSeries(tmpSeries, 1);
+		this.sendDisplayAgentNotification(uts);
 		
 		for (int run=0; run<20; run++) {
 
@@ -172,14 +173,18 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 			TimeSeries addSeries = new TimeSeries();
 			tmpSeries.setLabel("Add Series");
 			tmpSeries.setUnit("Random Integer");
-			for (int i = 0; i < 5; i++) {
+			
+			int iMax = 5;
+			if (run==0) iMax = 100;
+			
+			for (int i = 0; i<iMax; i++) {
 				
 				Simple_Long sLongAdd = new Simple_Long();
 				//startTime = startTime + 1000;
-				if (run<=5) {
+				if (run==0) {
 					sLongAdd.setLongValue(startTime + (i*1000));	
 				} else {
-					sLongAdd.setLongValue(startTime + (i*2000));
+					sLongAdd.setLongValue(startTime + ((run-1)*5000)+ (i*1000));
 				}
 				Simple_Float sFloatAdd = new Simple_Float();
 				sFloatAdd.setFloatValue(this.getRandomInteger(0, 100));
@@ -192,8 +197,15 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 			}
 			
 			UpdateTimeSeries utsAdd = new UpdateTimeSeries(netComp, 1);
-			utsAdd.editTimeSeriesAddOrExchangeTimeSeriesData(0, addSeries);
-			this.sendDisplayAgentNotification(utsAdd);
+			if (run==0) {
+				utsAdd.editTimeSeriesAddOrExchangeTimeSeriesData(0, addSeries);
+				this.sendDisplayAgentNotification(utsAdd);
+				utsAdd.editTimeSeriesAddOrExchangeTimeSeriesData(1, addSeries);
+				this.sendDisplayAgentNotification(utsAdd);
+			} else {
+				utsAdd.editTimeSeriesRemoveTimeSeriesData(0, addSeries);
+				this.sendDisplayAgentNotification(utsAdd);
+			}
 			System.out.println("Send " + (run+1));
 			// --- Just wait a little -----------
 			try {
