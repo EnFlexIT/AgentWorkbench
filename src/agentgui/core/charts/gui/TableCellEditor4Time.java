@@ -29,6 +29,7 @@
 package agentgui.core.charts.gui;
 
 import java.awt.Component;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -47,6 +48,14 @@ public class TableCellEditor4Time extends BasicCellEditor{
 
 	private String timeFormat;
 	
+	/**
+	 * Remembers the difference between the full original date and that returned by the spinner right after the initialization,
+	 * to compensate errors caused by shorter time formats
+	 */
+	private long difference = 0;
+	
+	private JSpinner.DateEditor dateEditor;
+	
 	public TableCellEditor4Time(String timeFormat){
 		this.timeFormat = timeFormat;
 	}
@@ -57,8 +66,11 @@ public class TableCellEditor4Time extends BasicCellEditor{
 	@Override
 	public Object getCellEditorValue() {
 		
-		Date date = (Date) ((JSpinner)editorComponent).getValue();
-		return date.getTime();
+		// Add the difference remembered at initialization time, to compensate errors caused by the time formats 
+		Date returnedDate = (Date) ((JSpinner)editorComponent).getValue();
+		Date correctDate = new Date(returnedDate.getTime() + difference);
+		
+		return correctDate.getTime();
 	}
 
 	@Override
@@ -66,14 +78,28 @@ public class TableCellEditor4Time extends BasicCellEditor{
 		if(this.editorComponent == null){
 			SpinnerDateModel sdm = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
 			editorComponent = new JSpinner(sdm);
-			JSpinner.DateEditor de = new JSpinner.DateEditor((JSpinner) editorComponent, timeFormat);
-			de.getTextField().addKeyListener(this);
-			((JSpinner)editorComponent).setEditor(de);
+			dateEditor = new JSpinner.DateEditor((JSpinner) editorComponent, timeFormat);
+			dateEditor.getTextField().addKeyListener(this);
+			((JSpinner)editorComponent).setEditor(dateEditor);
 		}
 		
 		// Init spinner
 		long timeStamp = (Long) value;
-		((JSpinner)editorComponent).getModel().setValue(new Date(timeStamp));
+		
+		// Remember the original date
+		Date originalDate = new Date(timeStamp);
+		((JSpinner)editorComponent).getModel().setValue(originalDate);
+		try {
+			// Refresh the spinner value according to the internal JTextField. Date  
+			// components missing in the time format will be set to zero by this. 
+			((JSpinner)editorComponent).commitEdit();
+		} catch (ParseException e) {
+			// This cannot happen, as the spinner is initialized with a valid value right before  
+		}
+
+		// Compare the possibly errorneous date returned by the spinner to the original one and remember the difference
+		Date returnedDate = new Date((Long) getCellEditorValue());
+		difference = originalDate.getTime() - returnedDate.getTime();
 		
 		return this.editorComponent;
 	}
