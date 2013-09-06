@@ -142,4 +142,23 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 		}
 	}
 
+
+	@Override
+	public void editSeriesAddData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+		// TODO Auto-generated method stub
+	}
+	@Override
+	public void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+		// TODO Auto-generated method stub
+	}
+	@Override
+	public void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+		// TODO Auto-generated method stub
+	}
+	@Override
+	public void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+		// TODO Auto-generated method stub
+	}
+
+	
 }

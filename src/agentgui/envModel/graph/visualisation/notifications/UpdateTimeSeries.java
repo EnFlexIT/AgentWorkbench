@@ -360,15 +360,12 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 					case AddDataSeries:
 						dataModelTimeSeries.addSeries(this.getSpecifiedTimeSeries());
 						break;
-						
 					case AddOrExchangeDataSeries:
 						dataModelTimeSeries.addOrExchangeSeries(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex());
 						break;
-
 					case ExchangeDataSeries:
 						dataModelTimeSeries.exchangeSeries(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex());					
 						break;
-
 					case RemoveDataSeries:
 						if (this.getTargetDataSeriesIndex()<=dataModelTimeSeries.getSeriesCount()-1) {
 							dataModelTimeSeries.removeSeries(this.getTargetDataSeriesIndex());	
@@ -379,19 +376,31 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 					// --- From here: Edits of single TimeSeries ------
 					// ------------------------------------------------
 					case EditDataSeriesAddData:
-						System.out.println("Add Data now");
-						break;
-
 					case EditDataSeriesAddOrExchangeData:
-						System.out.println("Add or Exchange Data now");
-						break;
-					
 					case EditDataSeriesExchangeData:
-						System.out.println("Exchange Data now");
-						break;
-					
-					case EditDataSeriesRemoveData:
-						System.out.println("Remove Data now");
+					case EditDataSeriesRemoveData:			
+						// -- Get the time series to work on ---------- 
+						List oldValuePairs = dataModelTimeSeries.getOntologyModel().getSeriesData(this.getTargetDataSeriesIndex());
+						Integer editInstance = System.identityHashCode(oldValuePairs);
+						boolean editOntology = !this.getEditedInstances().contains(editInstance);
+						switch (this.getTargetAction()) {
+						case EditDataSeriesAddData:
+							dataModelTimeSeries.editDataSeriesAddData(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex(), editOntology);
+							this.getEditedInstances().add(editInstance);
+							break;
+						case EditDataSeriesAddOrExchangeData:
+							dataModelTimeSeries.editDataSeriesAddOrExchangeData(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex(), editOntology);
+							this.getEditedInstances().add(editInstance);
+							break;
+						case EditDataSeriesExchangeData:
+							dataModelTimeSeries.editDataSeriesExchangeData(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex(), editOntology);
+							this.getEditedInstances().add(editInstance);
+							break;
+						case EditDataSeriesRemoveData:
+							dataModelTimeSeries.editDataSeriesRemoveData(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex(), editOntology);
+							this.getEditedInstances().add(editInstance);
+							break;
+						}
 						break;
 						
 					} // end switch

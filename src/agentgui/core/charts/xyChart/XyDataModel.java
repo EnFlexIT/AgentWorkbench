@@ -31,6 +31,7 @@ package agentgui.core.charts.xyChart;
 import jade.util.leap.Iterator;
 import jade.util.leap.List;
 import agentgui.core.charts.DataModel;
+import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.gui.ChartTab;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.Simple_Float;
@@ -160,4 +161,35 @@ public class XyDataModel extends DataModel {
 		return newSeries;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#editDataSeriesAddData(agentgui.ontology.DataSeries, int, boolean)
+	 */
+	@Override
+	public void editDataSeriesAddData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException {
+		// TODO Auto-generated method stub
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#editDataSeriesAddOrExchangeData(agentgui.ontology.DataSeries, int, boolean)
+	 */
+	@Override
+	public void editDataSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException {
+		// TODO Auto-generated method stub
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#editDataSeriesExchangeData(agentgui.ontology.DataSeries, int, boolean)
+	 */
+	@Override
+	public void editDataSeriesExchangeData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException {
+		// TODO Auto-generated method stub
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#editDataSeriesRemoveData(agentgui.ontology.DataSeries, int, boolean)
+	 */
+	@Override
+	public void editDataSeriesRemoveData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException {
+		// TODO Auto-generated method stub
+	}
+
+	
 }

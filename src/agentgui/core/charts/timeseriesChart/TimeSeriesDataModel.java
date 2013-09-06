@@ -34,6 +34,7 @@ import jade.util.leap.List;
 import java.util.Date;
 
 import agentgui.core.charts.DataModel;
+import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.gui.ChartTab;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.Simple_Float;
@@ -253,6 +254,79 @@ public class TimeSeriesDataModel extends DataModel {
 		TimeSeries newSeries = new TimeSeries();
 		newSeries.setLabel(label);
 		return newSeries;
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#editDataSeriesAddData(agentgui.ontology.DataSeries, int, boolean)
+	 */
+	@Override
+	public void editDataSeriesAddData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException {
+		
+		TimeSeries addTimeSeries = (TimeSeries) series;
+		// --- Edit the ontology model first --------------
+		if (editOntology==true) {
+			TimeSeries localTimeSeries = (TimeSeries) this.ontologyModel.getSeriesData(targetDataSeriesIndex);
+			TimeSeriesHelper localTimeSeriesHelper = new TimeSeriesHelper(localTimeSeries);
+			localTimeSeriesHelper.addSeriesData(addTimeSeries);
+		}
+		// --- Edit chart model ---------------------------
+		this.chartModel.editSeriesAddData(addTimeSeries, targetDataSeriesIndex);
+		// --- Edit table model ---------------------------
+		this.tableModel.editSeriesAddData(addTimeSeries, targetDataSeriesIndex);
+		
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#editDataSeriesAddOrExchangeData(agentgui.ontology.DataSeries, int, boolean)
+	 */
+	@Override
+	public void editDataSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException {
+		
+		TimeSeries addExTimeSeries = (TimeSeries) series;
+		// --- Edit the ontology model first --------------
+		if (editOntology==true) {
+			TimeSeries localTimeSeries = (TimeSeries) this.ontologyModel.getSeriesData(targetDataSeriesIndex);
+			TimeSeriesHelper localTimeSeriesHelper = new TimeSeriesHelper(localTimeSeries);
+			localTimeSeriesHelper.addOrExchangeSeriesData(addExTimeSeries);
+		}
+		// --- Edit chart model ---------------------------
+		this.chartModel.editSeriesAddOrExchangeData(addExTimeSeries, targetDataSeriesIndex);
+		// --- Edit table model ---------------------------
+		this.tableModel.editSeriesAddOrExchangeData(addExTimeSeries, targetDataSeriesIndex);
+		
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#editDataSeriesExchangeData(agentgui.ontology.DataSeries, int, boolean)
+	 */
+	@Override
+	public void editDataSeriesExchangeData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException {
+		
+		TimeSeries exTimeSeries = (TimeSeries) series;
+		// --- Edit the ontology model first --------------
+		if (editOntology==true) {
+			TimeSeries localTimeSeries = (TimeSeries) this.ontologyModel.getSeriesData(targetDataSeriesIndex);
+			TimeSeriesHelper localTimeSeriesHelper = new TimeSeriesHelper(localTimeSeries);
+			localTimeSeriesHelper.exchangeSeriesData(exTimeSeries);
+		}
+		// --- Edit chart model ---------------------------
+		
+		// --- Edit table model ---------------------------
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#editDataSeriesRemoveData(agentgui.ontology.DataSeries, int, boolean)
+	 */
+	@Override
+	public void editDataSeriesRemoveData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException {
+		
+		TimeSeries removeTimeSeries = (TimeSeries) series;
+		// --- Edit the ontology model first --------------
+		if (editOntology==true) {
+			TimeSeries localTimeSeries = (TimeSeries) this.ontologyModel.getSeriesData(targetDataSeriesIndex);
+			TimeSeriesHelper localTimeSeriesHelper = new TimeSeriesHelper(localTimeSeries);
+			localTimeSeriesHelper.removeSeriesData(removeTimeSeries);
+		}
+		// --- Edit chart model ---------------------------
+		
+		// --- Edit table model ---------------------------
 	}
 
 }

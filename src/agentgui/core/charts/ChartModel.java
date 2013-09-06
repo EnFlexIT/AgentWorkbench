@@ -33,6 +33,7 @@ import org.jfree.data.general.Series;
 import agentgui.ontology.DataSeries;
 
 public interface ChartModel {
+	
 	/**
 	 * Adds or updates a value to/in a data series.
 	 * @param seriesIndex The index of the series that should be changed
@@ -41,22 +42,6 @@ public interface ChartModel {
 	 * @throws NoSuchSeriesException Will be thrown if there is no series with the specified index
 	 */
 	public void addOrUpdateValuePair(int seriesIndex, Number key, Number value) throws NoSuchSeriesException;
-	public void addSeries(DataSeries series);
-	
-	/**
-	 * Exchanges the series specified by the series index with the given DataSeries.
-	 *
-	 * @param seriesIndex the series index
-	 * @param series the DataSeries
-	 * @throws NoSuchSeriesException the no such series exception
-	 */
-	public void exchangeSeries(int seriesIndex, DataSeries series) throws NoSuchSeriesException;
-	
-	/**
-	 * Removes the data series with the given index from the chart model
-	 * @param seriesIndex The series index
-	 */
-	public void removeSeries(int seriesIndex);
 	/**
 	 * Update the time stamp in all series that contain it
 	 * @param oldKey The old time stamp
@@ -72,5 +57,50 @@ public interface ChartModel {
 	public void removeValuePair(int seriesIndex, Number key) throws NoSuchSeriesException;
 	
 	public abstract Series getSeries(int seriesIndex);
+	
+	
+	/**
+	 * Adds the series.
+	 * @param series the series
+	 */
+	public void addSeries(DataSeries series);
+	/**
+	 * Exchanges the series specified by the series index with the given DataSeries.
+	 * @param seriesIndex the series index
+	 * @param series the DataSeries
+	 * @throws NoSuchSeriesException the no such series exception
+	 */
+	public void exchangeSeries(int seriesIndex, DataSeries series) throws NoSuchSeriesException;
+	/**
+	 * Removes the data series with the given index from the chart model
+	 * @param seriesIndex The series index
+	 */
+	public void removeSeries(int seriesIndex);
+	
+	
+	/**
+	 * Edits the data series by adding data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public abstract void editSeriesAddData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException;
+	/**
+	 * Edits the data series by adding or exchanging data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public abstract void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException;
+	/**
+	 * Edits the data series by exchanging data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public abstract void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException;
+	/**
+	 * Edits the data series by remove data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public abstract void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException;
 	
 }

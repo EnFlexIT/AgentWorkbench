@@ -109,25 +109,33 @@ public class TimeSeriesHelper extends TreeMap<Long, TimeSeriesValuePair>{
 	/**
 	 * Adds new series data to the current TimeSeries, if the concrete data is new.
 	 * If the data (time stamp) is already there, it will not be overwritten.
-	 * @param additionalTimeSeries the TimeSereis containing new data 
+	 *
+	 * @param additionalTimeSeries the TimeSereis containing new data
+	 * @return the time series containing the value pairs that were added
 	 */
-	public void addSeriesData(TimeSeries additionalTimeSeries) {
-		this.addSeriesData(additionalTimeSeries.getTimeSeriesValuePairs());
+	public TimeSeries addSeriesData(TimeSeries additionalTimeSeries) {
+		return this.addSeriesData(additionalTimeSeries.getTimeSeriesValuePairs());
 	}
 	/**
 	 * Adds new series data to the current TimeSeries, if the concrete data is new.
 	 * If the data (time stamp) is already there, it will not be overwritten.
 	 * @param listOfTimeSeriesValuePairs the list of time series value pairs
 	 */
-	public void addSeriesData(List listOfTimeSeriesValuePairs) {
+	public TimeSeries addSeriesData(List listOfTimeSeriesValuePairs) {
+		TimeSeries addedValuePairs = new TimeSeries();
 		for (int i = 0; i < listOfTimeSeriesValuePairs.size(); i++) {
 			TimeSeriesValuePair tsvp = (TimeSeriesValuePair) listOfTimeSeriesValuePairs.get(i);
 			Long timeStamp = tsvp.getTimestamp().getLongValue();
 			if (this.containsKey(timeStamp)==false) {
 				this.getTimeSeries().getTimeSeriesValuePairs().add(tsvp);
 				this.put(timeStamp, tsvp);
+				addedValuePairs.addTimeSeriesValuePairs(tsvp);
 			}
 		}
+		if (addedValuePairs.getTimeSeriesValuePairs().size()==0) {
+			addedValuePairs=null;
+		}
+		return addedValuePairs;
 	}
 	
 	/**
@@ -153,23 +161,31 @@ public class TimeSeriesHelper extends TreeMap<Long, TimeSeriesValuePair>{
 	/**
 	 * Exchanges series data, if the concrete time stamps are available.
 	 * @param additionalTimeSeries the additional time series
+	 * @return the time series of value pairs that were exchanged
 	 */
-	public void exchangeSeriesData(TimeSeries additionalTimeSeries) {
-		this.exchangeSeriesData(additionalTimeSeries.getTimeSeriesValuePairs());
+	public TimeSeries exchangeSeriesData(TimeSeries additionalTimeSeries) {
+		return this.exchangeSeriesData(additionalTimeSeries.getTimeSeriesValuePairs());
 	}
 	/**
 	 * Exchanges series data, if the concrete time stamps are available.
 	 * @param listOfTimeSeriesValuePairs the list of time series value pairs
+	 * @return the time series of value pairs that were exchanged
 	 */
-	public void exchangeSeriesData(List listOfTimeSeriesValuePairs) {
+	public TimeSeries exchangeSeriesData(List listOfTimeSeriesValuePairs) {
+		TimeSeries exchangedTimeSeries = new TimeSeries();
 		for (int i = 0; i < listOfTimeSeriesValuePairs.size(); i++) {
 			TimeSeriesValuePair tsvp = (TimeSeriesValuePair) listOfTimeSeriesValuePairs.get(i);
 			Long timeStamp = tsvp.getTimestamp().getLongValue();
 			if (this.containsKey(timeStamp)) {
-				this.put(timeStamp, tsvp);	
+				this.put(timeStamp, tsvp);
+				exchangedTimeSeries.addTimeSeriesValuePairs(tsvp);
 			}
 		}
 		this.resetTimeSeriesFromTreeMap();
+		if (exchangedTimeSeries.getTimeSeriesValuePairs().size()==0) {
+			exchangedTimeSeries = null;
+		}
+		return exchangedTimeSeries;
 	}
 	
 	/**

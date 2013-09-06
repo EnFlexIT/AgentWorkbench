@@ -106,9 +106,11 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	 */
 	@Override
 	public void replaceModel(ChartSettingModel newChartSettingModel) {
-		this.chartSettingModel.removeChartSettingModelListener(this);
-		this.chartSettingModel = newChartSettingModel;
-		this.chartSettingModel.addChartSettingModelListener(this);
+		if (newChartSettingModel!=this.chartSettingModel) {
+			this.chartSettingModel.removeChartSettingModelListener(this);
+			this.chartSettingModel = newChartSettingModel;
+			this.chartSettingModel.addChartSettingModelListener(this);
+		}
 		this.setChartSettingModelData();
 	}
 	
@@ -116,12 +118,18 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	 * Sets the chart setting model data to the form.
 	 */
 	private void setChartSettingModelData() {
+		
 		this.getTfChartTitle().setText(this.chartSettingModel.getChartTitle());
 		this.getTfXAxisLabel().setText(this.chartSettingModel.getChartXAxisLabel());
 		this.getTfYAxisLabel().setText(this.chartSettingModel.getChartYAxisLabel());
 		this.getCbRendererType().setSelectedItem(this.chartSettingModel.getRenderType());
-		this.getTblSeriesSettings().setModel(this.chartSettingModel.getTableModelSeriesSettings());
-		this.refreshRenderEditorTblSeriesSettings();
+		
+		DefaultTableModel tbModel = this.chartSettingModel.getTableModelSeriesSettings();
+		if (tbModel!=this.getTblSeriesSettings().getModel()) {
+			this.getTblSeriesSettings().setModel(tbModel);
+			this.refreshRenderEditorTblSeriesSettings();	
+		}
+		
 	}
 	
 	/**

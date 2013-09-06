@@ -31,12 +31,14 @@ package agentgui.core.charts;
 import jade.util.leap.List;
 
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import agentgui.ontology.DataSeries;
+import agentgui.ontology.TimeSeriesValuePair;
 import agentgui.ontology.ValuePair;
 
 /**
@@ -495,5 +497,127 @@ public abstract class TableModel extends AbstractTableModel {
 		}
 	}
 	
+	/**
+	 * Gets the table data tree map.
+	 * @return the table data tree map
+	 */
+	public TreeMap<Number, Vector<Object>> getTableDataAsTreeMap() {
+		TreeMap<Number, Vector<Object>> treeMap = new TreeMap<Number, Vector<Object>>();
+		for (int i = 0; i < tableData.size(); i++) {
+			Vector<Object> row = tableData.get(i);
+			treeMap.put((Number) row.get(0), row);
+		}
+		return treeMap;
+	}
+	
+	
+	/**
+	 * Edits the data series by adding data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public void editSeriesAddData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+		
+		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
+			
+			int targetTbIndex = targetDataSeriesIndex+1;
+			List valuePairs = parentDataModel.getValuePairsFromSeries(series); 
+			for (int i = 0; i < valuePairs.size(); i++) {
+				TimeSeriesValuePair vp = (TimeSeriesValuePair) valuePairs.get(i);
+				Vector<Object> newRow = new Vector<Object>();
+				newRow.add(parentDataModel.getKeyFromPair(vp));
+				while(newRow.size() < this.getColumnCount()){
+					newRow.add(null);
+				}
+				newRow.add(targetTbIndex, parentDataModel.getValueFromPair(vp));
+				tableData.add(newRow);
+			}
+			this.fireTableStructureChanged();
+			
+		} else {
+			throw new NoSuchSeriesException(); 
+		}
+	}
+	/**
+	 * Edits the data series by adding or exchanging data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+
+		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
+			
+			boolean dataWereAdded = false;
+			int targetTbIndex = targetDataSeriesIndex+1;
+			TreeMap<Number, Vector<Object>> tableDataTreeMap = this.getTableDataAsTreeMap();
+			
+			List valuePairs = parentDataModel.getValuePairsFromSeries(series);
+			for (int i = 0; i < valuePairs.size(); i++) {
+				// --- Find the key in the table ----------
+				TimeSeriesValuePair vp = (TimeSeriesValuePair) valuePairs.get(i);
+				Number key = parentDataModel.getKeyFromPair(vp);
+				Number value = parentDataModel.getValueFromPair(vp);
+
+				Vector<Object> editRow = tableDataTreeMap.get(key);
+				if (editRow==null) {
+					// --- Add a new row ------------------
+					editRow = new Vector<Object>();
+					while(editRow.size() < this.getColumnCount()){
+						editRow.add(null);
+					}
+					editRow.set(0, key);
+					editRow.set(targetTbIndex, value);
+					tableDataTreeMap.put(key, editRow);
+					dataWereAdded = true;
+					
+				} else {
+					// --- Finally edit the row -----------
+					editRow.set(targetTbIndex, value);
+				}
+			}
+			
+			// --- Finally update the table, if necessary -
+			if (dataWereAdded==true) {
+				// --- Rebuild the table ------------------
+				Number[] keyArray = new Number[tableDataTreeMap.size()]; 
+				tableDataTreeMap.keySet().toArray(keyArray);
+				for (int i = 0; i < keyArray.length; i++) {
+					Number keyTreeMap = keyArray[i];
+					if ((valuePairs.size()-1)<i) {
+						// --- Just add new data ----------
+						this.tableData.add(i, tableDataTreeMap.get(keyTreeMap));
+					} else {
+						Number keyValuePair = parentDataModel.getKeyFromPair((ValuePair) valuePairs.get(i));
+						if (keyTreeMap.equals(keyValuePair)==false) {
+							// --- New data was found -----
+							this.tableData.add(i, tableDataTreeMap.get(keyTreeMap));
+						}	
+					}
+				}	
+			}
+			this.fireTableStructureChanged();
+			
+		} else {
+			throw new NoSuchSeriesException();
+		}
+	}
+	/**
+	 * Edits the data series by exchanging data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+		//TODO
+		System.out.println("ToDo: Edit Tabele model");
+	}
+	/**
+	 * Edits the data series by remove data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+		//TODO
+		System.out.println("ToDo: Edit Tabele model");
+	}
 	
 }

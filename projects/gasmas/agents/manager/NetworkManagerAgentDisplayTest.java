@@ -132,8 +132,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		// --- Second example: Update a TimeSeriesChart -------------
 		// ----------------------------------------------------------
 //		this.runDataModelNotificationUpdates();
-		this.updateTimeSeries_CompleteSeriesActions();
-		
+//		this.updateTimeSeries_CompleteSeriesActions();
 		this.updateTimeSeries_PartialSeriesActions();
 		
 	}
@@ -167,7 +166,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		this.sendDisplayAgentNotification(uts);
 		
 		
-		for (int run=0; run<5; run++) {
+		for (int run=0; run<20; run++) {
 
 			// --- Create the update of the TimeSereies ----
 			TimeSeries addSeries = new TimeSeries();
@@ -176,7 +175,12 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 			for (int i = 0; i < 5; i++) {
 				
 				Simple_Long sLongAdd = new Simple_Long();
-				sLongAdd.setLongValue(startTime + ((i+1)*1000));
+				//startTime = startTime + 1000;
+				if (run<=5) {
+					sLongAdd.setLongValue(startTime + (i*1000));	
+				} else {
+					sLongAdd.setLongValue(startTime + (i*2000));
+				}
 				Simple_Float sFloatAdd = new Simple_Float();
 				sFloatAdd.setFloatValue(this.getRandomInteger(0, 100));
 				
@@ -191,7 +195,12 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 			utsAdd.editTimeSeriesAddOrExchangeTimeSeriesData(0, addSeries);
 			this.sendDisplayAgentNotification(utsAdd);
 			System.out.println("Send " + (run+1));
-			
+			// --- Just wait a little -----------
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		
