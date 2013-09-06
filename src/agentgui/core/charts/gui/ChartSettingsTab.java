@@ -110,6 +110,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 			this.chartSettingModel.removeChartSettingModelListener(this);
 			this.chartSettingModel = newChartSettingModel;
 			this.chartSettingModel.addChartSettingModelListener(this);
+			this.chartSettingModel.getTableModelSeriesSettings().addTableModelListener(this);
 		}
 		this.setChartSettingModelData();
 	}
@@ -275,6 +276,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 		if (tblSeriesSettings == null) {
 			tblSeriesSettings = new JTable(this.chartSettingModel.getTableModelSeriesSettings());
 			tblSeriesSettings.setFillsViewportHeight(true);
+			
 			this.chartSettingModel.getTableModelSeriesSettings().addTableModelListener(this);
 			this.chartSettingModel.refreshTableModel();
 			this.refreshRenderEditorTblSeriesSettings();
