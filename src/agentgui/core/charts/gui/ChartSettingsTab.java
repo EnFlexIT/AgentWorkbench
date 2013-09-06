@@ -405,6 +405,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	 */
 	private void setSeriesLabel(int seriesIndex, String newLabel) throws NoSuchSeriesException{
 		chartSettingModel.setSeriesLabel(seriesIndex, newLabel);
+		parent.getChartTab().getChart().fireChartChanged();		// Trigger repaint 
 	}
 	/**
 	 * Sets the plot color for a data series, specified by its index 
