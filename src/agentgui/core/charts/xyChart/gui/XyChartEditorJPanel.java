@@ -49,7 +49,6 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 
 	public XyChartEditorJPanel(DynForm dynForm, int startArgIndex) {
 		super(dynForm, startArgIndex);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -72,7 +71,6 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 		if(this.settingsTab == null){
 			this.settingsTab = new XyChartSettingsTab(this.model.getChartSettingModel(), this);
 		}
-		
 		return (XyChartSettingsTab) this.settingsTab;
 	}
 

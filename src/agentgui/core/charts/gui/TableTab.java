@@ -195,7 +195,6 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		if(e.getSource() == getBtnAddColumn() || (e.getSource() == getBtnAddRow() && getTable().getRowCount() == 0)){
 			
 			String seriesLabel = (String) JOptionPane.showInputDialog(this, Language.translate("Label"), Language.translate("Neue Datenreihe"), JOptionPane.QUESTION_MESSAGE, null, null, model.getDefaultSeriesLabel());
-			
 			if(seriesLabel != null){
 			
 				DataSeries newSeries = model.createNewDataSeries(seriesLabel);

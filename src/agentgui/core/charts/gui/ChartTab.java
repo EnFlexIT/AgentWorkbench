@@ -68,7 +68,7 @@ public abstract class ChartTab extends ChartPanel {
 	};
 	
 	/** Use the step renderer by default. */
-	public static final String DEFAULT_RENDERER = RENDERER_TYPES[RENDERER_Step_Renderer];
+	public static final String DEFAULT_RENDERER = RENDERER_TYPES[RENDERER_Line_Renderer];
 	
 	/** The data model (containing ontology-, chart- and tablemodel) for this chart	 */
 	protected DataModel model;

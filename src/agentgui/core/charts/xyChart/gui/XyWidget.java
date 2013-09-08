@@ -103,9 +103,10 @@ public class XyWidget extends OntologyClassWidget implements ActionListener {
 	}
 	
 	/**
-	 * @return the xycejd
+	 * Returns the current XyChartEditorJDialog.
+	 * @return the current XyChartEditorJDialog
 	 */
-	private XyChartEditorJDialog getXyChartEditorJDialog() {
+	public XyChartEditorJDialog getXyChartEditorJDialog() {
 		if(xycejd == null){
 			xycejd = new XyChartEditorJDialog(this.getDynForm(), this.getArgumentIndex());
 		}

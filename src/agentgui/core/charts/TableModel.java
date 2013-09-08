@@ -39,7 +39,6 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import agentgui.ontology.DataSeries;
-//import agentgui.ontology.TimeSeriesValuePair;
 import agentgui.ontology.ValuePair;
 
 /**
@@ -250,30 +249,29 @@ public abstract class TableModel extends AbstractTableModel {
 		columnTitles.add(newSeries.getLabel());
 		List valuePairs = parentDataModel.getValuePairsFromSeries(newSeries); 
 		
-		if(this.getRowCount()==0){
-			// tableData is empty, add a new Row for each value pair
-			for (int i=0; i<valuePairs.size(); i++) {
-				ValuePair vp = (ValuePair) valuePairs.get(i);
-				
+		int oldColCount = getColumnCount();
+		for (int i=0; i<valuePairs.size(); i++) {
+			
+			// Check if there is a row with this key value
+			ValuePair vp = (ValuePair) valuePairs.get(i);
+			if (this.getRowCount()==0) {
+				// --- Add a first row ----------------
 				Vector<Object> newRow = new Vector<Object>();
 				newRow.add(parentDataModel.getKeyFromPair(vp));
 				newRow.add(parentDataModel.getValueFromPair(vp));
 				
 				tableData.add(newRow);
-			}
-			
-		}else{
-			
-			// tableData is not empty, integrate the new series
-			int oldColCount = getColumnCount();
-			for (int i=0; i<valuePairs.size(); i++) {
-				ValuePair vp = (ValuePair) valuePairs.get(i);
 				
-				// Check if there is a row with this time stamp
+			} else {
+				// --- TableData is not empty, integrate the new series				
 				int rowIndex = getRowIndexByKey(parentDataModel.getKeyFromPair(vp));
 				if(rowIndex >= 0){
 					// There is one, append the new value
-					tableData.get(rowIndex).add(parentDataModel.getValueFromPair(vp));
+					Vector<Object> editRow = tableData.get(rowIndex);
+					while(editRow.size() < (oldColCount+1)){
+						editRow.add(null);
+					}
+					editRow.set(oldColCount, parentDataModel.getValueFromPair(vp));
 					
 				}else{
 					// There is not, add a new row
@@ -299,16 +297,14 @@ public abstract class TableModel extends AbstractTableModel {
 					
 				}
 			}
-			
-			// Append empty values to all rows for which the new series did not contain a value 
-			for(int i=0; i < getRowCount(); i++){
-				if(tableData.get(i).size() <= oldColCount){
-					tableData.get(i).add(null);
-				}
-			}
-			
 		}
 		
+		// Append empty values to all rows for which the new series did not contain a value 
+		for(int i=0; i < getRowCount(); i++){
+			if(tableData.get(i).size() <= oldColCount){
+				tableData.get(i).add(null);
+			}
+		}
 		fireTableStructureChanged();
 	}
 	

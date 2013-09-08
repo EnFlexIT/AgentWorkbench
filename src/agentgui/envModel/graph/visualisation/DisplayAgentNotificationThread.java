@@ -37,7 +37,6 @@ import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
 import agentgui.envModel.graph.visualisation.notifications.UpdateDataSeries;
-import agentgui.envModel.graph.visualisation.notifications.UpdateTimeSeries;
 
 /**
  * The Class DisplayAgentNotificationThread.
@@ -116,7 +115,7 @@ public class DisplayAgentNotificationThread extends Thread {
 							public void run() {
 								if (displayNotification instanceof DataModelNotification) {
 									sendDataModelUpdate(displayNotification);
-								} else if (displayNotification instanceof UpdateTimeSeries) {
+								} else if (displayNotification instanceof UpdateDataSeries) {
 									sendDataModelUpdate(displayNotification);
 								} else {
 									sendNetworkModelNotification(displayNotification);
@@ -177,7 +176,7 @@ public class DisplayAgentNotificationThread extends Thread {
 			
 		} else if (displayNotification instanceof UpdateDataSeries) {
 			// --- Put the Update of the DataSeries to the display ------------
-			UpdateDataSeries uds = (UpdateTimeSeries) displayNotification;
+			UpdateDataSeries uds = (UpdateDataSeries) displayNotification;
 			this.graphController.getGraphEnvironmentControllerGUI().getBasicGraphGuiJDesktopPane().setUpdateDataSeries(uds);
 		}
 

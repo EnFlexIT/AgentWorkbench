@@ -68,10 +68,8 @@ public class XyTableTab extends TableTab {
 	@Override
 	protected JTable getTable(boolean forceRebuild) {
 		if(table == null || forceRebuild){
-			table = new JTable(){
-
+			table = new JTable(model.getTableModel()){
 				private static final long serialVersionUID = 3537626788187543327L;
-
 				@Override
 				public TableCellEditor getCellEditor(int row, int column) {
 					// Same cell editor for all columns
@@ -79,11 +77,11 @@ public class XyTableTab extends TableTab {
 				}
 			};
 		}
-		table.setModel(model.getTableModel());
 		table.setShowGrid(false);
 		table.getTableHeader().setReorderingAllowed(false);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().addListSelectionListener(this);
+		
 		
 		final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model.getTableModel());
 		if (model.getTableModel().getColumnCount()>0) {

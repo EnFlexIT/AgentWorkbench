@@ -46,23 +46,20 @@ import agentgui.ontology.XyValuePair;
  */
 public class XyDataModel extends DataModel {
 	
-	/**
-	 * This label with appended seriesCount+1 will be used for newly added series
-	 */
+	/** This label with appended seriesCount+1 will be used for newly added series */
 	public static final String DEFAULT_SERIES_LABEL = "Data Series";
-	/**
-	 * This title will be used for the chart if none is specified
-	 */
+	/** This title will be used for the chart if none is specified */
 	public static final String DEFAULT_CHART_TITLE = "XY Chart";
-	/**
-	 * This x axis label will be used for the chart if none is specified
-	 */
+	/** This x axis label will be used for the chart if none is specified */
 	public static final String DEFAULT_X_AXIS_LABEL = "X Value";
-	/**
-	 * This y axis label will be used for the chart if none is specified
-	 */
+	/** This y axis label will be used for the chart if none is specified */
 	public static final String DEFAULT_Y_AXIS_LABEL = "Y Value";
 	
+	
+	/**
+	 * Instantiates a new XyDataModel.
+	 * @param chart the chart
+	 */
 	public XyDataModel(XyChart chart){
 		this.ontologyModel = new XyOntologyModel(chart, this);
 		chartModel = new XyChartModel();

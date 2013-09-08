@@ -147,7 +147,10 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	 */
 	@Override
 	public void setDataModel(Object dataModel, boolean avoidGuiUpdate) {
-		Object[] dataModelArray = (Object[]) dataModel;
+		Object[] dataModelArray = null;
+		if (dataModel!=null) {
+			dataModelArray = (Object[]) dataModel;	
+		}
 		this.getOntologyInstanceViewer().setConfigurationInstances(dataModelArray, avoidGuiUpdate);
 	}
 	/* (non-Javadoc)

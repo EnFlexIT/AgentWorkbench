@@ -123,7 +123,6 @@ public class ChartSettingModel {
 	public void setChartYAxisLabel(String newYAxisLabel) {
 		this.chartYAxisLabel = newYAxisLabel;
 		this.parentDataModel.getOntologyModel().getChartSettings().setYAxisLabel(newYAxisLabel);
-		this.parentDataModel.getTableModel().setKeyColumnLabel(newYAxisLabel);
 	}
 
 	/**

@@ -33,10 +33,11 @@ import jade.util.leap.List;
 import java.util.HashSet;
 import java.util.Vector;
 
-import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
-import agentgui.core.charts.timeseriesChart.TimeSeriesHelper;
-import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartEditorJPanel;
-import agentgui.core.charts.timeseriesChart.gui.TimeSeriesWidget;
+import agentgui.core.charts.xyChart.XyDataModel;
+import agentgui.core.charts.xyChart.XySeriesHelper;
+import agentgui.core.charts.xyChart.gui.XyChartEditorJPanel;
+import agentgui.core.charts.xyChart.gui.XyWidget;
+
 import agentgui.core.ontologies.gui.OntologyClassEditorJPanel;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -45,94 +46,94 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4Ontology;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
-import agentgui.ontology.TimeSeries;
-import agentgui.ontology.TimeSeriesChart;
+import agentgui.ontology.XyChart;
+import agentgui.ontology.XyDataSeries;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 
 /**
- * The Class UpdateTimeSeries can be used in order to send 
+ * The Class UpdateXySeries can be used in order to send 
  * {@link DisplayAgentNotification}'s to the {@link DisplayAgent}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class UpdateTimeSeries extends UpdateDataSeries {
+public class UpdateXySeries extends UpdateDataSeries {
 
 	private static final long serialVersionUID = 8563478170121892593L;
 
-	private TimeSeries specifiedTimeSeries = null;
+	private XyDataSeries specifiedXySeries = null;
 	private transient HashSet<Integer> editedInstances = null;
 	
 	/**
-	 * Instantiates a new update time series.
+	 * Instantiates a new update xy series.
 	 *
 	 * @param networkComponent the network component
 	 * @param targetDataModelIndex the target data model index
 	 */
-	public UpdateTimeSeries(NetworkComponent networkComponent, int targetDataModelIndex) {
+	public UpdateXySeries(NetworkComponent networkComponent, int targetDataModelIndex) {
 		super(networkComponent, targetDataModelIndex);
 	}
 	
 	/**
-	 * Instantiates a new update time series.
+	 * Instantiates a new update xy series.
 	 *
 	 * @param graphNode the graph node
 	 * @param targetDataModelIndex the target data model index
 	 */
-	public UpdateTimeSeries(GraphNode graphNode, int targetDataModelIndex) {
+	public UpdateXySeries(GraphNode graphNode, int targetDataModelIndex) {
 		super(graphNode, targetDataModelIndex);
 	}
 	
 	/**
-	 * Adds a time series.
-	 * @param newTimeSeries the new time series
+	 * Adds a xy series.
+	 * @param newXySeries the new xy series
 	 */
-	public void addTimeSeries(TimeSeries newTimeSeries) {
+	public void addXySeries(XyDataSeries newXySeries) {
 		this.setTargetAction(UPDATE_ACTION.AddDataSeries);
-		this.setSpecifiedTimeSeries(newTimeSeries);
+		this.setSpecifiedXySeries(newXySeries);
 	}
 	/**
-	 * Adds or exchanges a Time Series at a specified data series index.
-	 * @param newTimeSeries the new time series
+	 * Adds or exchanges a Xy Series at a specified data series index.
+	 * @param newXySeries the new xy series
 	 * @param dataSeriesIndex the data series index
 	 */
-	public void addOrExchangeTimeSeries(TimeSeries newTimeSeries, int dataSeriesIndex) {
+	public void addOrExchangeXySeries(XyDataSeries newXySeries, int dataSeriesIndex) {
 		this.setTargetAction(UPDATE_ACTION.AddOrExchangeDataSeries);
-		this.setSpecifiedTimeSeries(newTimeSeries);
+		this.setSpecifiedXySeries(newXySeries);
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
 	}
 	/**
-	 * Exchange exchanges a Time Series at a specified data series index.
+	 * Exchange exchanges a Xy Series at a specified data series index.
 	 * If the specified index can not be found, nothing will be done.
-	 * @param newTimeSeries the new time series
+	 * @param newXySeries the new xy series
 	 * @param dataSeriesIndex the data series index
 	 */
-	public void exchangeTimeSeries(TimeSeries newTimeSeries, int dataSeriesIndex) {
+	public void exchangeXySeries(XyDataSeries newXySeries, int dataSeriesIndex) {
 		this.setTargetAction(UPDATE_ACTION.ExchangeDataSeries);
-		this.setSpecifiedTimeSeries(newTimeSeries);
+		this.setSpecifiedXySeries(newXySeries);
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
 	}
 	/**
-	 * Removes the time series.
+	 * Removes the xy series.
 	 * @param dataSeriesIndex the data series index
 	 */
-	public void removeTimeSeries(int dataSeriesIndex) {
+	public void removeXySeries(int dataSeriesIndex) {
 		this.setTargetAction(UPDATE_ACTION.RemoveDataSeries);
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
 	}
 
 	/**
-	 * Sets the specified time series.
-	 * @param specifiedTimeSeries the new specified time series
+	 * Sets the specified xy series.
+	 * @param specifiedXySeries the new specified xy series
 	 */
-	public void setSpecifiedTimeSeries(TimeSeries specifiedTimeSeries) {
-		this.specifiedTimeSeries = specifiedTimeSeries;
+	public void setSpecifiedXySeries(XyDataSeries specifiedXySeries) {
+		this.specifiedXySeries = specifiedXySeries;
 	}
 	/**
-	 * Gets the specified time series.
-	 * @return the specified time series
+	 * Gets the specified xy series.
+	 * @return the specified xy series
 	 */
-	public TimeSeries getSpecifiedTimeSeries() {
-		return specifiedTimeSeries;
+	public XyDataSeries getSpecifiedXySeries() {
+		return specifiedXySeries;
 	}
 	
 	/**
@@ -149,51 +150,51 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 	}
 
 	/**
-	 * Edits the time series: adds new data to a time series.
+	 * Edits the xy series: adds new data to a xy series.
 	 *
 	 * @param dataSeriesIndex the data series index
-	 * @param timeSeriesData2Add the time series data2 add
+	 * @param xySeriesData2Add the xy series data2 add
 	 */
-	public void editTimeSeriesAddTimeSeriesData(int dataSeriesIndex, TimeSeries timeSeriesData2Add) {
+	public void editXySeriesAddXySeriesData(int dataSeriesIndex, XyDataSeries xySeriesData2Add) {
 		this.setTargetAction(UPDATE_ACTION.EditDataSeriesAddData);
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
-		this.setSpecifiedTimeSeries(timeSeriesData2Add);
+		this.setSpecifiedXySeries(xySeriesData2Add);
 	}
 	
 	/**
-	 * Edits the time series: adds or exchanges time series data.
+	 * Edits the xy series: adds or exchanges xy series data.
 	 *
 	 * @param dataSeriesIndex the data series index
-	 * @param timeSeriesData2AddOrExchange the time series data2 add or exchange
+	 * @param xySeriesData2AddOrExchange the xy series data2 add or exchange
 	 */
-	public void editTimeSeriesAddOrExchangeTimeSeriesData(int dataSeriesIndex, TimeSeries timeSeriesData2AddOrExchange) {
+	public void editXySeriesAddOrExchangeXySeriesData(int dataSeriesIndex, XyDataSeries xySeriesData2AddOrExchange) {
 		this.setTargetAction(UPDATE_ACTION.EditDataSeriesAddOrExchangeData);
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
-		this.setSpecifiedTimeSeries(timeSeriesData2AddOrExchange);
+		this.setSpecifiedXySeries(xySeriesData2AddOrExchange);
 	}
 	/**
-	 * Edits the time series: exchanges time series data. If the specified timestamps 
+	 * Edits the xy series: exchanges xy series data. If the specified xystamps 
 	 * can not be found, nothing will be done.
 	 *
 	 * @param dataSeriesIndex the data series index
-	 * @param timeSeriesData2AddOrExchange the time series data2 add or exchange
+	 * @param xySeriesData2AddOrExchange the xy series data2 add or exchange
 	 */
-	public void editTimeSeriesExchangeTimeSeriesData(int dataSeriesIndex, TimeSeries timeSeriesData2AddOrExchange) {
+	public void editXySeriesExchangeXySeriesData(int dataSeriesIndex, XyDataSeries xySeriesData2AddOrExchange) {
 		this.setTargetAction(UPDATE_ACTION.EditDataSeriesExchangeData);
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
-		this.setSpecifiedTimeSeries(timeSeriesData2AddOrExchange);
+		this.setSpecifiedXySeries(xySeriesData2AddOrExchange);
 	}
 	
 	/**
-	 * Edits the time series: removes time series data specified by the timestamps.
+	 * Edits the xy series: removes xy series data specified by the xystamps.
 	 *
 	 * @param dataSeriesIndex the data series index
-	 * @param timeSeriesData2Remove the time series data2 remove
+	 * @param xySeriesData2Remove the xy series data2 remove
 	 */
-	public void editTimeSeriesRemoveTimeSeriesData(int dataSeriesIndex, TimeSeries timeSeriesData2Remove) {
+	public void editXySeriesRemoveXySeriesData(int dataSeriesIndex, XyDataSeries xySeriesData2Remove) {
 		this.setTargetAction(UPDATE_ACTION.EditDataSeriesRemoveData);
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
-		this.setSpecifiedTimeSeries(timeSeriesData2Remove);
+		this.setSpecifiedXySeries(xySeriesData2Remove);
 	}
 
 	
@@ -244,7 +245,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 		// --- Get the right data model part -------------------- 
 		try {
 			Object[] objectArr = (Object[]) dataModel; 
-			TimeSeriesChart tsc = (TimeSeriesChart) objectArr[this.getTargetDataModelIndex()];
+			XyChart tsc = (XyChart) objectArr[this.getTargetDataModelIndex()];
 			this.applyUpdate(tsc);
 			
 		} catch (Exception ex) {
@@ -255,75 +256,75 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 	
 	/**
 	 * Apply the update configured in this class.
-	 * @param timeSeriesChart the actual time series chart
+	 * @param xySeriesChart the actual xy series chart
 	 */
-	private void applyUpdate(TimeSeriesChart timeSeriesChart) {
+	private void applyUpdate(XyChart xySeriesChart) {
 		
 		switch (this.getTargetAction()) {
 		case AddDataSeries:
-			timeSeriesChart.getTimeSeriesChartData().add(this.getSpecifiedTimeSeries());
+			xySeriesChart.getXyChartData().add(this.getSpecifiedXySeries());
 			break;
 			
 		case AddOrExchangeDataSeries:
-			if (this.getTargetDataSeriesIndex()<=timeSeriesChart.getTimeSeriesChartData().size()-1) {
-				timeSeriesChart.getTimeSeriesChartData().remove(this.getTargetDataSeriesIndex());	
-				timeSeriesChart.getTimeSeriesChartData().add(this.getTargetDataSeriesIndex(), this.getSpecifiedTimeSeries());
+			if (this.getTargetDataSeriesIndex()<=xySeriesChart.getXyChartData().size()-1) {
+				xySeriesChart.getXyChartData().remove(this.getTargetDataSeriesIndex());	
+				xySeriesChart.getXyChartData().add(this.getTargetDataSeriesIndex(), this.getSpecifiedXySeries());
 			} else {
-				timeSeriesChart.getTimeSeriesChartData().add(this.getSpecifiedTimeSeries());
+				xySeriesChart.getXyChartData().add(this.getSpecifiedXySeries());
 			}
 			break;
 
 		case ExchangeDataSeries:
-			if (this.getTargetDataSeriesIndex()<=timeSeriesChart.getTimeSeriesChartData().size()-1) {
-				timeSeriesChart.getTimeSeriesChartData().remove(this.getTargetDataSeriesIndex());
-				timeSeriesChart.getTimeSeriesChartData().add(this.getTargetDataSeriesIndex(), this.getSpecifiedTimeSeries());
+			if (this.getTargetDataSeriesIndex()<=xySeriesChart.getXyChartData().size()-1) {
+				xySeriesChart.getXyChartData().remove(this.getTargetDataSeriesIndex());
+				xySeriesChart.getXyChartData().add(this.getTargetDataSeriesIndex(), this.getSpecifiedXySeries());
 			} 
 			break;
 			
 		case RemoveDataSeries:
-			if (this.getTargetDataSeriesIndex()<=timeSeriesChart.getTimeSeriesChartData().size()-1) {
-				timeSeriesChart.getTimeSeriesChartData().remove(this.getTargetDataSeriesIndex());	
+			if (this.getTargetDataSeriesIndex()<=xySeriesChart.getXyChartData().size()-1) {
+				xySeriesChart.getXyChartData().remove(this.getTargetDataSeriesIndex());	
 			}
 			break;
 
 		// ------------------------------------------------	
-		// --- From here: Edits of single TimeSeries ------
+		// --- From here: Edits of single XySeries ------
 		// ------------------------------------------------
 		case EditDataSeriesAddData:
 		case EditDataSeriesAddOrExchangeData:
 		case EditDataSeriesExchangeData:
 		case EditDataSeriesRemoveData:			
-			// -- Get the time series to work on ---------- 
-			TimeSeries timeSeries = (TimeSeries) timeSeriesChart.getTimeSeriesChartData().get(this.getTargetDataSeriesIndex());
-			List oldValuePairs = timeSeries.getTimeSeriesValuePairs();
+			// -- Get the xy series to work on ---------- 
+			XyDataSeries xySeries = (XyDataSeries) xySeriesChart.getXyChartData().get(this.getTargetDataSeriesIndex());
+			List oldValuePairs = xySeries.getXyValuePairs();
 			Integer editInstance = System.identityHashCode(oldValuePairs);
 			// --- Was the instance already edited? -------
 			if (this.getEditedInstances().contains(editInstance)==false) {
 				// --- Get the list of new value pairs ----
-				TimeSeriesHelper timeSeriesHelper = new TimeSeriesHelper(timeSeries);
+				XySeriesHelper xySeriesHelper = new XySeriesHelper(xySeries);
 				// --- Again, case separation -------------
 				switch (this.getTargetAction()) {
 				case EditDataSeriesAddData:
 					// --- Add data to series -------------
-					timeSeriesHelper.addSeriesData(this.getSpecifiedTimeSeries());
+					xySeriesHelper.addSeriesData(this.getSpecifiedXySeries());
 					this.getEditedInstances().add(editInstance);
 					break;
 
 				case EditDataSeriesAddOrExchangeData:
 					// --- Add or Exchange data -----------
-					timeSeriesHelper.addOrExchangeSeriesData(this.getSpecifiedTimeSeries());
+					xySeriesHelper.addOrExchangeSeriesData(this.getSpecifiedXySeries());
 					this.getEditedInstances().add(editInstance);
 					break;
 					
 				case EditDataSeriesExchangeData:
 					// --- Exchange data ------------------
-					timeSeriesHelper.exchangeSeriesData(this.getSpecifiedTimeSeries());
+					xySeriesHelper.exchangeSeriesData(this.getSpecifiedXySeries());
 					this.getEditedInstances().add(editInstance);
 					break;
 					
 				case EditDataSeriesRemoveData:
 					// --- Remove data --------------------
-					timeSeriesHelper.removeSeriesData(this.getSpecifiedTimeSeries());
+					xySeriesHelper.removeSeriesData(this.getSpecifiedXySeries());
 					this.getEditedInstances().add(editInstance);
 					break;
 				}
@@ -346,7 +347,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 			// ----------------------------------------------------------------
 			try {
 				Object[] objectArr = ontologyInstanceViewer.getConfigurationInstances();
-				TimeSeriesChart tsc = (TimeSeriesChart) objectArr[this.getTargetDataModelIndex()];
+				XyChart tsc = (XyChart) objectArr[this.getTargetDataModelIndex()];
 				this.applyUpdate(tsc);
 				
 			} catch (Exception ex) {
@@ -361,63 +362,63 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 				
 				for (int i = 0; i < ontoVisPanel.size(); i++) {
 					
-					TimeSeriesChartEditorJPanel tscep = null;
-					TimeSeriesDataModel dataModelTimeSeries = null; 
+					XyChartEditorJPanel tscep = null;
+					XyDataModel dataModelXySeries = null; 
 					OntologyClassEditorJPanel ontoVisPanelSingle = ontoVisPanel.get(i);
 					// --- Get the data model of the chart --------
-					if (ontoVisPanelSingle instanceof TimeSeriesChartEditorJPanel) {
-						tscep = (TimeSeriesChartEditorJPanel) ontoVisPanelSingle;
-						dataModelTimeSeries = (TimeSeriesDataModel) tscep.getModel();
+					if (ontoVisPanelSingle instanceof XyChartEditorJPanel) {
+						tscep = (XyChartEditorJPanel) ontoVisPanelSingle;
+						dataModelXySeries = (XyDataModel) tscep.getModel();
 						
-					} else if (ontoVisPanelSingle instanceof TimeSeriesWidget) {
-						TimeSeriesWidget tsw = (TimeSeriesWidget) ontoVisPanelSingle;
-						tscep = (TimeSeriesChartEditorJPanel) tsw.getTimeSeriesChartEditorJDialog().getContentPane();
-						dataModelTimeSeries = (TimeSeriesDataModel) tscep.getModel();
+					} else if (ontoVisPanelSingle instanceof XyWidget) {
+						XyWidget tsw = (XyWidget) ontoVisPanelSingle;
+						tscep = (XyChartEditorJPanel) tsw.getXyChartEditorJDialog().getContentPane();
+						dataModelXySeries = (XyDataModel) tscep.getModel();
 					}
 					
 					// --- Apply Changes --------------------------
 					switch (this.getTargetAction()) {
 					case AddDataSeries:
-						dataModelTimeSeries.addSeries(this.getSpecifiedTimeSeries());
+						dataModelXySeries.addSeries(this.getSpecifiedXySeries());
 						break;
 					case AddOrExchangeDataSeries:
-						dataModelTimeSeries.addOrExchangeSeries(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex());
+						dataModelXySeries.addOrExchangeSeries(this.getSpecifiedXySeries(), this.getTargetDataSeriesIndex());
 						break;
 					case ExchangeDataSeries:
-						dataModelTimeSeries.exchangeSeries(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex());					
+						dataModelXySeries.exchangeSeries(this.getSpecifiedXySeries(), this.getTargetDataSeriesIndex());					
 						break;
 					case RemoveDataSeries:
-						if (this.getTargetDataSeriesIndex()<=dataModelTimeSeries.getSeriesCount()-1) {
-							dataModelTimeSeries.removeSeries(this.getTargetDataSeriesIndex());	
+						if (this.getTargetDataSeriesIndex()<=dataModelXySeries.getSeriesCount()-1) {
+							dataModelXySeries.removeSeries(this.getTargetDataSeriesIndex());	
 						}
 						break;
 						
 					// ------------------------------------------------	
-					// --- From here: Edits of single TimeSeries ------
+					// --- From here: Edits of single XySeries ------
 					// ------------------------------------------------
 					case EditDataSeriesAddData:
 					case EditDataSeriesAddOrExchangeData:
 					case EditDataSeriesExchangeData:
 					case EditDataSeriesRemoveData:			
-						// -- Get the time series to work on ---------- 
-						List oldValuePairs = dataModelTimeSeries.getOntologyModel().getSeriesData(this.getTargetDataSeriesIndex());
+						// -- Get the xy series to work on ---------- 
+						List oldValuePairs = dataModelXySeries.getOntologyModel().getSeriesData(this.getTargetDataSeriesIndex());
 						Integer editInstance = System.identityHashCode(oldValuePairs);
 						boolean editOntology = !this.getEditedInstances().contains(editInstance);
 						switch (this.getTargetAction()) {
 						case EditDataSeriesAddData:
-							dataModelTimeSeries.editDataSeriesAddData(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex(), editOntology);
+							dataModelXySeries.editDataSeriesAddData(this.getSpecifiedXySeries(), this.getTargetDataSeriesIndex(), editOntology);
 							this.getEditedInstances().add(editInstance);
 							break;
 						case EditDataSeriesAddOrExchangeData:
-							dataModelTimeSeries.editDataSeriesAddOrExchangeData(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex(), editOntology);
+							dataModelXySeries.editDataSeriesAddOrExchangeData(this.getSpecifiedXySeries(), this.getTargetDataSeriesIndex(), editOntology);
 							this.getEditedInstances().add(editInstance);
 							break;
 						case EditDataSeriesExchangeData:
-							dataModelTimeSeries.editDataSeriesExchangeData(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex(), editOntology);
+							dataModelXySeries.editDataSeriesExchangeData(this.getSpecifiedXySeries(), this.getTargetDataSeriesIndex(), editOntology);
 							this.getEditedInstances().add(editInstance);
 							break;
 						case EditDataSeriesRemoveData:
-							dataModelTimeSeries.editDataSeriesRemoveData(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex(), editOntology);
+							dataModelXySeries.editDataSeriesRemoveData(this.getSpecifiedXySeries(), this.getTargetDataSeriesIndex(), editOntology);
 							this.getEditedInstances().add(editInstance);
 							break;
 						}
