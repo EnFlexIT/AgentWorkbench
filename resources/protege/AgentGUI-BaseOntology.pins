@@ -1,18 +1,13 @@
-; Tue Jul 02 23:36:54 CEST 2013
+; Thu Sep 12 17:14:07 CEST 2013
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
 
 ([Chart] of  %3AJADE-CLASS
 
-	(%3AJADE-IGNORE FALSE)
-	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   \n	   boolean wrongChartTitle = false;\n	   if (this.getVisualizationSettings().getChartTitle() == null|| this.getVisualizationSettings().getChartTitle().length()==0) {\n		   wrongChartTitle = true;\n	   }\n	   boolean wrongXAxisLabel = false;\n	   if (this.getVisualizationSettings().getXAxisLabel()==null || this.getVisualizationSettings().getXAxisLabel().length()==0) {\n		   wrongXAxisLabel = true;\n	   }\n	   boolean wrongYAxisLabel = false;\n	   if (this.getVisualizationSettings().getYAxisLabel()==null || this.getVisualizationSettings().getYAxisLabel().length()==0) {\n		   wrongYAxisLabel= true;\n	   }\n	   \n	   if (wrongChartTitle && wrongXAxisLabel && wrongYAxisLabel) {\n		   return true;\n	   }  else {\n		   return false;\n	   }\n   }"))
-
-([ChartSettingsGeneral] of  %3AJADE-CLASS
-
 	(%3AJADE-IGNORE FALSE))
 
-([ChartSettingSpecial] of  %3AJADE-CLASS
+([ChartSettingsGeneral] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -26,7 +21,7 @@
 
 ([project+annotation] of  %3APROJECT-ANNOTATION
 
-	(%3ALOCATION "D:\\Eclipse Workspace\\AgentGUI\\src")
+	(%3ALOCATION "D:\\10 Java Projects\\AgentGUI\\src")
 	(%3AONTOLOGYNAME "AgentGUI_Base")
 	(%3APACKAGE "agentgui.ontology")
 	(%3ASUPPORT "j2se"))
@@ -61,11 +56,12 @@
 	(%3AJADE-IGNORE FALSE)
 	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getTimeSeriesValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }else{\n		   if(getTimeSeriesValuePairs().size() == 1){\n			   TimeSeriesValuePair vp = (TimeSeriesValuePair) getTimeSeriesValuePairs().get(0);\n			   if(vp.getValue().getFloatValue() == 0.0f && vp.getTimestamp().getStringLongValue().length() == 0){\n				   noValuePairs = true;\n			   }\n		   }\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n   }"))
 
-([TimeSeriesAdditionalSettings] of  %3AJADE-CLASS
-
-	(%3AJADE-IGNORE FALSE))
-
 ([TimeSeriesChart] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n boolean wrongChartTitle = false;\n if (this.getTimeSeriesVisualisationSettings().getChartTitle() == null|| this.getTimeSeriesVisualisationSettings().getChartTitle().length()==0) {\n  wrongChartTitle = true;\n }\n boolean wrongXAxisLabel = false;\n if (this.getTimeSeriesVisualisationSettings().getXAxisLabel()==null || this.getTimeSeriesVisualisationSettings().getXAxisLabel().length()==0) {\n  wrongXAxisLabel = true;\n }\n boolean wrongYAxisLabel = false;\n if (this.getTimeSeriesVisualisationSettings().getYAxisLabel()==null || this.getTimeSeriesVisualisationSettings().getYAxisLabel().length()==0) {\n  wrongYAxisLabel= true;\n }\n\n if (wrongChartTitle && wrongXAxisLabel && wrongYAxisLabel) {\n  return true;\n } else {\n  return false;\n }\n}"))
+
+([TimeSeriesChartSettings] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -83,12 +79,17 @@
 
 ([XyChart] of  %3AJADE-CLASS
 
-	(%3AJADE-IGNORE FALSE))
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n boolean wrongChartTitle = false;\n if (this.getXySeriesVisualisationSettings().getChartTitle() == null|| this.getXySeriesVisualisationSettings().getChartTitle().length()==0) {\n  wrongChartTitle = true;\n }\n boolean wrongXAxisLabel = false;\n if (this.getXySeriesVisualisationSettings().getXAxisLabel()==null || this.getXySeriesVisualisationSettings().getXAxisLabel().length()==0) {\n  wrongXAxisLabel = true;\n }\n boolean wrongYAxisLabel = false;\n if (this.getXySeriesVisualisationSettings().getYAxisLabel()==null || this.getXySeriesVisualisationSettings().getYAxisLabel().length()==0) {\n  wrongYAxisLabel= true;\n }\n\n if (wrongChartTitle && wrongXAxisLabel && wrongYAxisLabel) {\n  return true;\n } else {\n  return false;\n }\n}"))
 
 ([XyDataSeries] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE)
 	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getXyValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n   }"))
+
+([XySeriesChartSettings] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
 
 ([XyValuePair] of  %3AJADE-CLASS
 

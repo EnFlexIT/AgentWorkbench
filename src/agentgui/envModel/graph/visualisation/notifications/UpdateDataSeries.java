@@ -28,6 +28,8 @@
  */
 package agentgui.envModel.graph.visualisation.notifications;
 
+import java.util.HashSet;
+
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -73,6 +75,7 @@ public abstract class UpdateDataSeries extends DisplayAgentNotificationGraph {
 	/** The target action. */
 	private UPDATE_ACTION targetAction = null; 
 	
+	private transient HashSet<Integer> editedInstances = null;
 
 	/**
 	 * Instantiates a new data series update.
@@ -162,6 +165,19 @@ public abstract class UpdateDataSeries extends DisplayAgentNotificationGraph {
 	 */
 	public int getTargetDataSeriesIndex() {
 		return targetDataSeriesIndex;
+	}
+	
+	/**
+	 * Returns the collection of identity hash codes of object instances that were already edited.
+	 * 
+	 * @see System#identityHashCode(Object)
+	 * @return the series instance edited
+	 */
+	protected HashSet<Integer> getEditedInstances() {
+		if (this.editedInstances==null) {
+			editedInstances = new HashSet<Integer>();
+		}
+		return editedInstances;
 	}
 	
 	/**

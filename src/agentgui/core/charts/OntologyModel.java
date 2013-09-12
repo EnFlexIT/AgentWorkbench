@@ -68,9 +68,8 @@ public abstract class OntologyModel {
 	 * Gets the chart settings for this chart.
 	 * @return the general chart settings
 	 */
-	public ChartSettingsGeneral getChartSettings(){
-		return chart.getVisualizationSettings();
-	}
+	public abstract ChartSettingsGeneral getChartSettings();
+	
 	/**
 	 * Gets the index of the value pair with the given key of the series with the given index.
 	 * @param seriesIndex The series index

@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: Simple_Integer
 * @author ontology bean generator
-* @version 2013/07/2, 23:36:43
+* @version 2013/09/12, 17:14:05
 */
 public class Simple_Integer implements Concept {
 

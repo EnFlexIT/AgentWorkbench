@@ -34,12 +34,14 @@ import agentgui.core.charts.TableModel;
 
 public class XyTableModel extends TableModel {
 
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = -8873141815861732107L;
+	
 	private static final String DEFAULT_KEY_COLUMN_TITLE = "X value";
 	
+	/**
+	 * Instantiates a new XyTableModel.
+	 * @param parent the parent
+	 */
 	public XyTableModel(XyDataModel parent){
 		this.parentDataModel = parent;
 		this.initilizeTabelModel();

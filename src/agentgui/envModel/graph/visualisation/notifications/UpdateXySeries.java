@@ -30,7 +30,6 @@ package agentgui.envModel.graph.visualisation.notifications;
 
 import jade.util.leap.List;
 
-import java.util.HashSet;
 import java.util.Vector;
 
 import agentgui.core.charts.xyChart.XyDataModel;
@@ -61,7 +60,6 @@ public class UpdateXySeries extends UpdateDataSeries {
 	private static final long serialVersionUID = 8563478170121892593L;
 
 	private XyDataSeries specifiedXySeries = null;
-	private transient HashSet<Integer> editedInstances = null;
 	
 	/**
 	 * Instantiates a new update xy series.
@@ -136,18 +134,6 @@ public class UpdateXySeries extends UpdateDataSeries {
 		return specifiedXySeries;
 	}
 	
-	/**
-	 * Returns the collection of identity hash codes of object instances that were already edited.
-	 * 
-	 * @see System#identityHashCode(Object)
-	 * @return the series instance edited
-	 */
-	private HashSet<Integer> getEditedInstances() {
-		if (this.editedInstances==null) {
-			editedInstances = new HashSet<Integer>();
-		}
-		return editedInstances;
-	}
 
 	/**
 	 * Edits the xy series: adds new data to a xy series.

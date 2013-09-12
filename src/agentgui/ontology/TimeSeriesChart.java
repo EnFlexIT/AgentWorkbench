@@ -7,21 +7,31 @@ import jade.core.*;
 /**
 * Protege name: TimeSeriesChart
 * @author ontology bean generator
-* @version 2013/07/2, 23:36:43
+* @version 2013/09/12, 17:14:05
 */
 public class TimeSeriesChart extends Chart{ 
 
-   /**
-* Protege name: timeSeriesAdditionalSettings
-   */
-   private TimeSeriesAdditionalSettings timeSeriesAdditionalSettings;
-   public void setTimeSeriesAdditionalSettings(TimeSeriesAdditionalSettings value) { 
-    this.timeSeriesAdditionalSettings=value;
-   }
-   public TimeSeriesAdditionalSettings getTimeSeriesAdditionalSettings() {
-     return this.timeSeriesAdditionalSettings;
-   }
+//////////////////////////// User code
+public boolean isEmpty() {
+ boolean wrongChartTitle = false;
+ if (this.getTimeSeriesVisualisationSettings().getChartTitle() == null|| this.getTimeSeriesVisualisationSettings().getChartTitle().length()==0) {
+  wrongChartTitle = true;
+ }
+ boolean wrongXAxisLabel = false;
+ if (this.getTimeSeriesVisualisationSettings().getXAxisLabel()==null || this.getTimeSeriesVisualisationSettings().getXAxisLabel().length()==0) {
+  wrongXAxisLabel = true;
+ }
+ boolean wrongYAxisLabel = false;
+ if (this.getTimeSeriesVisualisationSettings().getYAxisLabel()==null || this.getTimeSeriesVisualisationSettings().getYAxisLabel().length()==0) {
+  wrongYAxisLabel= true;
+ }
 
+ if (wrongChartTitle && wrongXAxisLabel && wrongYAxisLabel) {
+  return true;
+ } else {
+  return false;
+ }
+}
    /**
    * The data to be displayed by the chart
 * Protege name: timeSeriesChartData
@@ -43,5 +53,16 @@ public class TimeSeriesChart extends Chart{
    public Iterator getAllTimeSeriesChartData() {return timeSeriesChartData.iterator(); }
    public List getTimeSeriesChartData() {return timeSeriesChartData; }
    public void setTimeSeriesChartData(List l) {timeSeriesChartData = l; }
+
+   /**
+* Protege name: timeSeriesVisualisationSettings
+   */
+   private TimeSeriesChartSettings timeSeriesVisualisationSettings;
+   public void setTimeSeriesVisualisationSettings(TimeSeriesChartSettings value) { 
+    this.timeSeriesVisualisationSettings=value;
+   }
+   public TimeSeriesChartSettings getTimeSeriesVisualisationSettings() {
+     return this.timeSeriesVisualisationSettings;
+   }
 
 }

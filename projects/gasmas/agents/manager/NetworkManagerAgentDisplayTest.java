@@ -37,6 +37,7 @@ import java.awt.Color;
 import java.util.HashSet;
 import java.util.Random;
 
+import agentgui.core.charts.timeseriesChart.TimeSeriesHelper;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphElementLayout;
@@ -94,13 +95,6 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		// --- in order to make it accessible for the whole agency --
 		((TimeModelContinuous) this.getTimeModel()).setExecuted(true);
 		this.notifyAboutEnvironmentChanges();
-		
-		// ----------------------------------------------------------
-		// --- Get the network component for the test ---------------
-		// ----------------------------------------------------------
-		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n37");
-		// --- Open the property window for the component -----------
-		this.sendDisplayAgentNotification(new DataModelOpenViewNotification(netComp));
 		
 		// ----------------------------------------------------------
 		// --- Second example: Chart Series Actions -----------------
@@ -185,8 +179,10 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 	private void updateTimeSeries_CompleteSeriesActions() {
 		
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
+		// --- Open components property dialog ------------
+		this.sendDisplayAgentNotification(new DataModelOpenViewNotification(netComp));
+		
 		Long startTime = System.currentTimeMillis();
-
 		for (int i=0; i<20; i++) {
 		
 			// --- Produce a TimeSeries ---------
@@ -251,6 +247,9 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 	private void updateTimeSeries_PartialSeriesActions() {
 		
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
+		// --- Open components property dialog ------------
+		this.sendDisplayAgentNotification(new DataModelOpenViewNotification(netComp));
+
 		Long startTime = System.currentTimeMillis();
 		
 		// --- First create a base TimeSereies ------- 
@@ -269,16 +268,22 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		
 		tmpSeries.addTimeSeriesValuePairs(tsvp);
 		
+		// --- Add the first TimeSeries -------------------
 		UpdateTimeSeries uts = new UpdateTimeSeries(netComp, 1);
 		uts.addOrExchangeTimeSeries(tmpSeries, 0);
 		this.sendDisplayAgentNotification(uts);
-		uts.addOrExchangeTimeSeries(tmpSeries, 1);
+
+		// --- Add the second TimeSeries ------------------
+		uts = new UpdateTimeSeries(netComp, 1);
+		uts.addOrExchangeTimeSeries(new TimeSeriesHelper(tmpSeries).getTimeSeriesCopy() , 1);
 		this.sendDisplayAgentNotification(uts);
 		
+		
+		// --- Do some dynamic things on them -------------
 		for (int run=0; run<20; run++) {
 
-			// --- Create the update of the TimeSereies ----
-			TimeSeries addSeries = new TimeSeries();
+			// --- Create the update of the TimeSereies ---
+			TimeSeries editSeries = new TimeSeries();
 			tmpSeries.setLabel("Add Series");
 			tmpSeries.setUnit("Random Integer");
 			
@@ -301,23 +306,28 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 				tsvpAdd.setTimestamp(sLongAdd);
 				tsvpAdd.setValue(sFloatAdd);			
 				
-				addSeries.addTimeSeriesValuePairs(tsvpAdd);
+				editSeries.addTimeSeriesValuePairs(tsvpAdd);
 			}
 			
+			// --- Update the TimeSeries ------------------
 			UpdateTimeSeries utsAdd = new UpdateTimeSeries(netComp, 1);
 			if (run==0) {
-				utsAdd.editTimeSeriesAddOrExchangeTimeSeriesData(0, addSeries);
+				utsAdd.editTimeSeriesAddOrExchangeTimeSeriesData(0, editSeries);
 				this.sendDisplayAgentNotification(utsAdd);
-				utsAdd.editTimeSeriesAddOrExchangeTimeSeriesData(1, addSeries);
-				this.sendDisplayAgentNotification(utsAdd);
+				
+				UpdateTimeSeries utsAdd2 = new UpdateTimeSeries(netComp, 1);
+				utsAdd2.editTimeSeriesAddOrExchangeTimeSeriesData(1, new TimeSeriesHelper(editSeries).getTimeSeriesCopy());
+				this.sendDisplayAgentNotification(utsAdd2);
+				
 			} else {
-				utsAdd.editTimeSeriesRemoveTimeSeriesData(0, addSeries);
+				utsAdd.editTimeSeriesRemoveTimeSeriesData(0, editSeries);
 				this.sendDisplayAgentNotification(utsAdd);
 			}
+			
 			System.out.println("Send " + (run+1));
 			// --- Just wait a little -----------
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(250);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -397,11 +407,14 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
 		Object dataModel = netComp.getDataModel();
 		Object[] dataModelArr = (Object[]) dataModel;
+
+		// --- Open components property dialog ------------
+		this.sendDisplayAgentNotification(new DataModelOpenViewNotification(netComp));
 		
 		// --- Get the TimeSeries -------------------------
 		Exit exit = (Exit) dataModelArr[0];
 		TimeSeriesChart tsc = (TimeSeriesChart) dataModelArr[1];
-		tsc.getVisualizationSettings().setChartTitle("This is a test notification");
+		tsc.getTimeSeriesVisualisationSettings().setChartTitle("This is a test notification");
 		
 		TimeSeries ts = null;
 		if (tsc.getTimeSeriesChartData().size()==0) {

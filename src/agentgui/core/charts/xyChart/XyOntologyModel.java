@@ -35,6 +35,7 @@ import agentgui.ontology.ChartSettingsGeneral;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.XyChart;
 import agentgui.ontology.XyDataSeries;
+import agentgui.ontology.XySeriesChartSettings;
 
 public class XyOntologyModel extends OntologyModel {
 	
@@ -43,10 +44,18 @@ public class XyOntologyModel extends OntologyModel {
 			this.chart = chart;
 		}else{
 			this.chart = new XyChart();
-			this.chart.setVisualizationSettings(new ChartSettingsGeneral());
+			((XyChart)this.chart).setXySeriesVisualisationSettings(new XySeriesChartSettings());
 		}
 		
 		this.parent = parent;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.OntologyModel#getChartSettings()
+	 */
+	public ChartSettingsGeneral getChartSettings(){
+		return ((XyChart)this.chart).getXySeriesVisualisationSettings();
 	}
 	
 	public XyChart getXyChart(){
@@ -73,8 +82,8 @@ public class XyOntologyModel extends OntologyModel {
 	public void removeSeries(int seriesIndex) throws NoSuchSeriesException {
 		if(seriesIndex < getSeriesCount()){
 			((XyChart) chart).getXyChartData().remove(seriesIndex);
-			chart.getVisualizationSettings().getYAxisColors().remove(seriesIndex);
-			chart.getVisualizationSettings().getYAxisLineWidth().remove(seriesIndex);
+			((XyChart) chart).getXySeriesVisualisationSettings().getYAxisColors().remove(seriesIndex);
+			((XyChart) chart).getXySeriesVisualisationSettings().getYAxisLineWidth().remove(seriesIndex);
 		}else{
 			throw new NoSuchSeriesException();
 		}

@@ -1,4 +1,4 @@
-; Tue Jul 02 23:36:54 CEST 2013
+; Thu Sep 12 17:14:07 CEST 2013
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7,12 +7,57 @@
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
+	(single-slot StringLongValue
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot value
+		(type INSTANCE)
+;+		(allowed-classes Simple_Float)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot unit
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot yAxisColors
+;+		(comment "The RGB values of the colors for each series plot")
+		(type STRING)
+		(create-accessor read-write))
 	(single-slot timestamp
 		(type INSTANCE)
 ;+		(allowed-classes Simple_Long)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
-	(single-slot formula
+	(multislot timeSeriesChartData
+;+		(comment "The data to be displayed by the chart")
+		(type INSTANCE)
+;+		(allowed-classes TimeSeries)
+		(create-accessor read-write))
+	(single-slot xAxisLabel
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot xyChartData
+;+		(comment "The data to be displayed by the chart")
+		(type INSTANCE)
+;+		(allowed-classes XyDataSeries)
+		(create-accessor read-write))
+	(multislot timeSeriesValuePairs
+;+		(comment "The data of the time series")
+		(type INSTANCE)
+;+		(allowed-classes TimeSeriesValuePair)
+		(create-accessor read-write))
+	(single-slot IntegerValue
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot xyValuePairs
+;+		(comment "The data of the series")
+		(type INSTANCE)
+;+		(allowed-classes XyValuePair)
+		(create-accessor read-write))
+	(single-slot yAxisLabel
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -26,45 +71,22 @@
 ;+		(allowed-classes)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot valueAxisDescriptions
+	(single-slot formula
 		(type STRING)
+;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot StringValue
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot timeAxis
+	(single-slot chartTitle
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot yAxisLineWidth
 		(type FLOAT)
 		(create-accessor read-write))
-	(single-slot value
-		(type INSTANCE)
-;+		(allowed-classes Simple_Float)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot StringLongValue
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot xAxisLabel
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(multislot timeSeriesChartData
-;+		(comment "The data to be displayed by the chart")
-		(type INSTANCE)
-;+		(allowed-classes TimeSeries)
-		(create-accessor read-write))
-	(single-slot valueAxisDataTable
-		(type INSTANCE)
-;+		(allowed-classes)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot graphDataType
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot rendererType
-;+		(comment "The renderer type to be used fpr rendering the plots")
+	(single-slot timeFormat
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -73,20 +95,9 @@
 ;+		(allowed-classes Simple_Float)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot timeFormat
+	(single-slot rendererType
+;+		(comment "The renderer type to be used fpr rendering the plots")
 		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(multislot yAxisLineWidth
-		(type FLOAT)
-		(create-accessor read-write))
-	(multislot timeSeriesValuePairs
-;+		(comment "The data of the time series")
-		(type INSTANCE)
-;+		(allowed-classes TimeSeriesValuePair)
-		(create-accessor read-write))
-	(single-slot FloatValue
-		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot xValue
@@ -94,26 +105,16 @@
 ;+		(allowed-classes Simple_Float)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot visualizationSettings
-;+		(comment "This defines how the chart will be displayed")
-		(type INSTANCE)
-;+		(allowed-classes ChartSettingsGeneral)
+	(single-slot FloatValue
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot timeSeriesAdditionalSettings
-		(type INSTANCE)
-;+		(allowed-classes TimeSeriesAdditionalSettings)
+	(single-slot allowDuplicateXValues
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot chartTitle
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot xAxisDescriptions
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot BooleanValue
+	(single-slot autoSort
 		(type SYMBOL)
 		(allowed-values FALSE TRUE)
 ;+		(cardinality 0 1)
@@ -121,38 +122,20 @@
 	(multislot columnData
 		(type FLOAT)
 		(create-accessor read-write))
-	(single-slot IntegerValue
-		(type INTEGER)
+	(single-slot BooleanValue
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot valueAxisUnits
-		(type STRING)
-		(create-accessor read-write))
-	(single-slot yAxisLabel
-		(type STRING)
+	(single-slot xySeriesVisualisationSettings
+		(type INSTANCE)
+;+		(allowed-classes XySeriesChartSettings)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot xyValuePairs
-;+		(comment "The data of the series")
+	(single-slot timeSeriesVisualisationSettings
 		(type INSTANCE)
-;+		(allowed-classes XyValuePair)
-		(create-accessor read-write))
-	(single-slot unit
-		(type STRING)
+;+		(allowed-classes TimeSeriesChartSettings)
 ;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(multislot yAxisColors
-;+		(comment "The RGB values of the colors for each series plot")
-		(type STRING)
-		(create-accessor read-write))
-	(multislot tableData
-		(type INSTANCE)
-;+		(allowed-classes)
-		(create-accessor read-write))
-	(multislot xyChartData
-;+		(comment "The data to be displayed by the chart")
-		(type INSTANCE)
-;+		(allowed-classes XyDataSeries)
 		(create-accessor read-write)))
 
 (defclass Formula
@@ -215,26 +198,20 @@
 
 (defclass Chart
 	(is-a Concept)
-	(role abstract)
-	(single-slot visualizationSettings
-;+		(comment "This defines how the chart will be displayed")
-		(type INSTANCE)
-;+		(allowed-classes ChartSettingsGeneral)
-;+		(cardinality 0 1)
-		(create-accessor read-write)))
+	(role abstract))
 
 (defclass TimeSeriesChart
 	(is-a Chart)
 	(role concrete)
-	(single-slot timeSeriesAdditionalSettings
-		(type INSTANCE)
-;+		(allowed-classes TimeSeriesAdditionalSettings)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(multislot timeSeriesChartData
 ;+		(comment "The data to be displayed by the chart")
 		(type INSTANCE)
 ;+		(allowed-classes TimeSeries)
+		(create-accessor read-write))
+	(single-slot timeSeriesVisualisationSettings
+		(type INSTANCE)
+;+		(allowed-classes TimeSeriesChartSettings)
+;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass XyChart
@@ -244,6 +221,11 @@
 ;+		(comment "The data to be displayed by the chart")
 		(type INSTANCE)
 ;+		(allowed-classes XyDataSeries)
+		(create-accessor read-write))
+	(single-slot xySeriesVisualisationSettings
+		(type INSTANCE)
+;+		(allowed-classes XySeriesChartSettings)
+;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass VisualizationSettings
@@ -253,52 +235,62 @@
 (defclass ChartSettingsGeneral "This class contains all data related to how a chart will be displayed"
 	(is-a VisualizationSettings)
 	(role concrete)
-	(single-slot rendererType
-;+		(comment "The renderer type to be used fpr rendering the plots")
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot chartTitle
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot yAxisLabel
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(multislot yAxisLineWidth
 		(type FLOAT)
 		(create-accessor read-write))
+	(multislot yAxisColors
+;+		(comment "The RGB values of the colors for each series plot")
+		(type STRING)
+		(create-accessor read-write))
+	(single-slot rendererType
+;+		(comment "The renderer type to be used fpr rendering the plots")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot xAxisLabel
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot yAxisColors
-;+		(comment "The RGB values of the colors for each series plot")
+	(single-slot yAxisLabel
 		(type STRING)
+;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
-(defclass ChartSettingSpecial
-	(is-a VisualizationSettings)
-	(role abstract))
-
-(defclass TimeSeriesAdditionalSettings
-	(is-a ChartSettingSpecial)
+(defclass TimeSeriesChartSettings
+	(is-a ChartSettingsGeneral)
 	(role concrete)
 	(single-slot timeFormat
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
+(defclass XySeriesChartSettings
+	(is-a ChartSettingsGeneral)
+	(role concrete)
+	(single-slot allowDuplicateXValues
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot autoSort
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
 (defclass DataSeries "This class represents one data series, containing x and y values"
 	(is-a Concept)
 	(role concrete)
-	(single-slot label
-;+		(comment "The data series label")
+	(single-slot unit
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot unit
+	(single-slot label
+;+		(comment "The data series label")
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
@@ -328,14 +320,14 @@
 (defclass TimeSeriesValuePair "One single data item in a time series."
 	(is-a ValuePair)
 	(role concrete)
-	(single-slot timestamp
-		(type INSTANCE)
-;+		(allowed-classes Simple_Long)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
 	(single-slot value
 		(type INSTANCE)
 ;+		(allowed-classes Simple_Float)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot timestamp
+		(type INSTANCE)
+;+		(allowed-classes Simple_Long)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 

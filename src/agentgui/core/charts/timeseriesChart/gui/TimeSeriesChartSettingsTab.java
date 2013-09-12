@@ -55,13 +55,24 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	
 	private JLabel lblTimeFormatSelector = null;
 	private TimeFormatSelection timeFormatSelector = null;
-
+	private boolean pauseLocalActionListener = false;
 	
 	public TimeSeriesChartSettingsTab(ChartSettingModel chartSettingModel, TimeSeriesChartEditorJPanel parent) {
 		super(chartSettingModel, parent);
 	}
 	
-
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartSettingsTab#setChartSettingModelData()
+	 */
+	@Override
+	public void setChartSettingModelData() {
+		String newTimeFormat = ((TimeSeriesChartSettingModel)this.chartSettingModel).getTimeFormat();
+		this.pauseLocalActionListener = true;
+		this.getTimeFormatSelector().setTimeFormat(newTimeFormat);
+		this.pauseLocalActionListener = false;
+		super.setChartSettingModelData();
+	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.gui.ChartSettingsTab#initialize()
 	 */
@@ -126,8 +137,10 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 			timeFormatSelector.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					TimeFormatSelection tfs = (TimeFormatSelection) ae.getSource();
-					setTimeFormat(tfs.getTimeFormat());
+					if (pauseLocalActionListener==false) {
+						TimeFormatSelection tfs = (TimeFormatSelection) ae.getSource();
+						setTimeFormat(tfs.getTimeFormat());	
+					}
 				}
 			});
 		}
@@ -138,7 +151,7 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	 * @param newTimeFormat The new time format
 	 */
 	private void setTimeFormat(String newTimeFormat){
-		((TimeSeriesChartSettingModel)chartSettingModel).setTimeFormat(newTimeFormat);
+ 		((TimeSeriesChartSettingModel)chartSettingModel).setTimeFormat(newTimeFormat);
 		((TimeSeriesChartEditorJPanel)parent).getChartTab().setTimeFormat(newTimeFormat);
 	}
 

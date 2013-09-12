@@ -61,7 +61,7 @@ public class XyDataModel extends DataModel {
 	 * @param chart the chart
 	 */
 	public XyDataModel(XyChart chart){
-		this.ontologyModel = new XyOntologyModel(chart, this);
+		ontologyModel = new XyOntologyModel(chart, this);
 		chartModel = new XyChartModel();
 		tableModel = new XyTableModel(this);
 		

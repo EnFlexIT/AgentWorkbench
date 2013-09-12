@@ -41,6 +41,7 @@ import agentgui.ontology.Simple_Float;
 import agentgui.ontology.Simple_Long;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
+import agentgui.ontology.TimeSeriesChartSettings;
 import agentgui.ontology.TimeSeriesValuePair;
 import agentgui.ontology.ValuePair;
 import agentgui.simulationService.time.TimeModelDateBased;
@@ -98,7 +99,7 @@ public class TimeSeriesDataModel extends DataModel {
 			this.ontologyModel.getChartSettings().setXAxisLabel(DEFAULT_X_AXIS_LABEL);
 			this.ontologyModel.getChartSettings().setYAxisLabel(DEFAULT_Y_AXIS_LABEL);
 			this.ontologyModel.getChartSettings().setRendererType(ChartTab.DEFAULT_RENDERER);
-			((TimeSeriesOntologyModel)this.ontologyModel).getAdditionalSettings().setTimeFormat(defaultTimeFormat);
+			((TimeSeriesChartSettings)((TimeSeriesOntologyModel)this.ontologyModel).getChartSettings()).setTimeFormat(defaultTimeFormat);
 			
 		} else {
 			
@@ -180,17 +181,19 @@ public class TimeSeriesDataModel extends DataModel {
 	 * @return the timeFormat
 	 */
 	public String getTimeFormat() {
-		if (((TimeSeriesOntologyModel)getOntologyModel()).getAdditionalSettings().getTimeFormat()==null) {
-			((TimeSeriesOntologyModel)getOntologyModel()).getAdditionalSettings().setTimeFormat(TimeModelDateBased.DEFAULT_TIME_FORMAT);
+		TimeSeriesChartSettings tscs = (TimeSeriesChartSettings)((TimeSeriesOntologyModel)this.ontologyModel).getChartSettings();
+		if (tscs.getTimeFormat()==null) {
+			tscs.setTimeFormat(TimeModelDateBased.DEFAULT_TIME_FORMAT);
 		} 
-		return ((TimeSeriesOntologyModel)getOntologyModel()).getAdditionalSettings().getTimeFormat();
+		return tscs.getTimeFormat();
 	}
 
 	/**
 	 * @param timeFormat the timeFormat to set
 	 */
 	public void setTimeFormat(String timeFormat) {
-		((TimeSeriesOntologyModel)getOntologyModel()).getAdditionalSettings().setTimeFormat(timeFormat);
+		TimeSeriesChartSettings tscs = (TimeSeriesChartSettings)((TimeSeriesOntologyModel)this.ontologyModel).getChartSettings();
+		tscs.setTimeFormat(timeFormat);
 	}
 
 	@Override
@@ -265,7 +268,7 @@ public class TimeSeriesDataModel extends DataModel {
 		TimeSeries addTimeSeries = (TimeSeries) series;
 		// --- Edit the ontology model first --------------
 		if (editOntology==true) {
-			TimeSeries localTimeSeries = (TimeSeries) this.ontologyModel.getSeriesData(targetDataSeriesIndex);
+			TimeSeries localTimeSeries = (TimeSeries) this.ontologyModel.getSeries(targetDataSeriesIndex);
 			TimeSeriesHelper localTimeSeriesHelper = new TimeSeriesHelper(localTimeSeries);
 			localTimeSeriesHelper.addSeriesData(addTimeSeries);
 		}
@@ -284,7 +287,7 @@ public class TimeSeriesDataModel extends DataModel {
 		TimeSeries addExTimeSeries = (TimeSeries) series;
 		// --- Edit the ontology model first --------------
 		if (editOntology==true) {
-			TimeSeries localTimeSeries = (TimeSeries) this.ontologyModel.getSeriesData(targetDataSeriesIndex);
+			TimeSeries localTimeSeries = (TimeSeries) this.ontologyModel.getSeries(targetDataSeriesIndex);
 			TimeSeriesHelper localTimeSeriesHelper = new TimeSeriesHelper(localTimeSeries);
 			localTimeSeriesHelper.addOrExchangeSeriesData(addExTimeSeries);
 		}
@@ -303,7 +306,7 @@ public class TimeSeriesDataModel extends DataModel {
 		TimeSeries exTimeSeries = (TimeSeries) series;
 		// --- Edit the ontology model first --------------
 		if (editOntology==true) {
-			TimeSeries localTimeSeries = (TimeSeries) this.ontologyModel.getSeriesData(targetDataSeriesIndex);
+			TimeSeries localTimeSeries = (TimeSeries) this.ontologyModel.getSeries(targetDataSeriesIndex);
 			TimeSeriesHelper localTimeSeriesHelper = new TimeSeriesHelper(localTimeSeries);
 			localTimeSeriesHelper.exchangeSeriesData(exTimeSeries);
 		}
@@ -321,7 +324,7 @@ public class TimeSeriesDataModel extends DataModel {
 		TimeSeries removeTimeSeries = (TimeSeries) series;
 		// --- Edit the ontology model first --------------
 		if (editOntology==true) {
-			TimeSeries localTimeSeries = (TimeSeries) this.ontologyModel.getSeriesData(targetDataSeriesIndex);
+			TimeSeries localTimeSeries = (TimeSeries) this.ontologyModel.getSeries(targetDataSeriesIndex);
 			TimeSeriesHelper localTimeSeriesHelper = new TimeSeriesHelper(localTimeSeries);
 			localTimeSeriesHelper.removeSeriesData(removeTimeSeries);
 		}

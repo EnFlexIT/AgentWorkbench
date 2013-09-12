@@ -32,6 +32,7 @@ import jade.util.leap.List;
 
 import java.util.TreeMap;
 
+import agentgui.ontology.Simple_Float;
 import agentgui.ontology.XyDataSeries;
 import agentgui.ontology.XyValuePair;
 
@@ -76,6 +77,36 @@ public class XySeriesHelper extends TreeMap<Float, XyValuePair>{
 		}
 		return xySeries;
 	}
+	/**
+	 * Returns a copy of the current XyDataSeries.
+	 * @return the time series copy
+	 */
+	public XyDataSeries getXySeriesCopy() {
+		XyDataSeries copy = null;
+		if (this.xySeries!=null) {
+			
+			copy = new XyDataSeries();
+			copy.setLabel(this.xySeries.getLabel() + " (Copy)");
+			copy.setUnit(this.xySeries.getUnit());
+
+			for (int i = 0; i < this.xySeries.getXyValuePairs().size(); i++) {
+				XyValuePair xyVpOld = (XyValuePair) this.xySeries.getXyValuePairs().get(i);
+				
+				Simple_Float xValue = new Simple_Float();
+				xValue.setFloatValue(xyVpOld.getXValue().getFloatValue());
+				Simple_Float yValue = new Simple_Float();
+				yValue.setFloatValue(xyVpOld.getYValue().getFloatValue());
+				
+				XyValuePair xyVpNew = new XyValuePair();
+				xyVpNew.setXValue(xValue);
+				xyVpNew.setYValue(yValue);
+				
+				copy.addXyValuePairs(xyVpNew);
+			}
+		}
+		return copy;
+	}
+
 	/**
 	 * Puts the current XyDataSeries into the local TreeMap.
 	 */

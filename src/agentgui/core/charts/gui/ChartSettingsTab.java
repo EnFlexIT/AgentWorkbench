@@ -118,7 +118,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	/**
 	 * Sets the chart setting model data to the form.
 	 */
-	private void setChartSettingModelData() {
+	public void setChartSettingModelData() {
 		
 		this.getTfChartTitle().setText(this.chartSettingModel.getChartTitle());
 		this.getTfXAxisLabel().setText(this.chartSettingModel.getChartXAxisLabel());

@@ -32,6 +32,8 @@ import jade.util.leap.List;
 
 import java.util.TreeMap;
 
+import agentgui.ontology.Simple_Float;
+import agentgui.ontology.Simple_Long;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesValuePair;
 
@@ -77,6 +79,36 @@ public class TimeSeriesHelper extends TreeMap<Long, TimeSeriesValuePair>{
 		return timeSeries;
 	}
 	/**
+	 * Returns a copy of the current TimeSeries.
+	 * @return the time series copy
+	 */
+	public TimeSeries getTimeSeriesCopy() {
+		TimeSeries copy = null;
+		if (this.timeSeries!=null) {
+			
+			copy = new TimeSeries();
+			copy.setLabel(this.timeSeries.getLabel() + " (Copy)");
+			copy.setUnit(this.timeSeries.getUnit());
+			
+			for (int i = 0; i < this.timeSeries.getTimeSeriesValuePairs().size(); i++) {
+				TimeSeriesValuePair tsVpOld = (TimeSeriesValuePair) this.timeSeries.getTimeSeriesValuePairs().get(i);
+				
+				Simple_Long timeValue = new Simple_Long();
+				timeValue.setLongValue(tsVpOld.getTimestamp().getLongValue());
+				Simple_Float floatValue = new Simple_Float();
+				floatValue.setFloatValue(tsVpOld.getValue().getFloatValue());
+				
+				TimeSeriesValuePair tsVpNew = new TimeSeriesValuePair();
+				tsVpNew.setTimestamp(timeValue);
+				tsVpNew.setValue(floatValue);
+				
+				copy.addTimeSeriesValuePairs(tsVpNew);
+			}
+		}
+		return copy;
+	}
+	
+	/**
 	 * Puts the current TimeSeries into the local TreeMap.
 	 */
 	private void putToTreeMap() {
@@ -101,7 +133,12 @@ public class TimeSeriesHelper extends TreeMap<Long, TimeSeriesValuePair>{
 		Long[] keys = new Long[this.size()];
 		this.keySet().toArray(keys);
 		for (int i = 0; i < keys.length; i++) {
-			this.getTimeSeries().getTimeSeriesValuePairs().add(this.get(keys[i]));
+			TimeSeriesValuePair tsvp = this.get(keys[i]);
+			if (tsvp!=null) {
+				this.getTimeSeries().getTimeSeriesValuePairs().add(tsvp);	
+			} else {
+				System.out.println("No Value found ...");
+			}
 		}
 		
 	}
@@ -202,7 +239,7 @@ public class TimeSeriesHelper extends TreeMap<Long, TimeSeriesValuePair>{
 	public void removeSeriesData(List listOfTimeSeriesValuePairs) {
 		for (int i = 0; i < listOfTimeSeriesValuePairs.size(); i++) {
 			TimeSeriesValuePair tsvp = (TimeSeriesValuePair) listOfTimeSeriesValuePairs.get(i);
-			Long timeStamp = tsvp.getTimestamp().getLongValue();
+			long timeStamp = tsvp.getTimestamp().getLongValue();
 			this.remove(timeStamp);
 		}
 		this.resetTimeSeriesFromTreeMap();

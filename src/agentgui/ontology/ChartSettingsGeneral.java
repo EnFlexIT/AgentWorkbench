@@ -8,7 +8,7 @@ import jade.core.*;
    * This class contains all data related to how a chart will be displayed
 * Protege name: ChartSettingsGeneral
 * @author ontology bean generator
-* @version 2013/07/2, 23:36:43
+* @version 2013/09/12, 17:14:05
 */
 public class ChartSettingsGeneral extends VisualizationSettings{ 
 
@@ -21,29 +21,6 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    }
    public String getChartTitle() {
      return this.chartTitle;
-   }
-
-   /**
-   * The renderer type to be used fpr rendering the plots
-* Protege name: rendererType
-   */
-   private String rendererType;
-   public void setRendererType(String value) { 
-    this.rendererType=value;
-   }
-   public String getRendererType() {
-     return this.rendererType;
-   }
-
-   /**
-* Protege name: yAxisLabel
-   */
-   private String yAxisLabel;
-   public void setYAxisLabel(String value) { 
-    this.yAxisLabel=value;
-   }
-   public String getYAxisLabel() {
-     return this.yAxisLabel;
    }
 
    /**
@@ -68,17 +45,6 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    public void setYAxisLineWidth(List l) {yAxisLineWidth = l; }
 
    /**
-* Protege name: xAxisLabel
-   */
-   private String xAxisLabel;
-   public void setXAxisLabel(String value) { 
-    this.xAxisLabel=value;
-   }
-   public String getXAxisLabel() {
-     return this.xAxisLabel;
-   }
-
-   /**
    * The RGB values of the colors for each series plot
 * Protege name: yAxisColors
    */
@@ -99,5 +65,39 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    public Iterator getAllYAxisColors() {return yAxisColors.iterator(); }
    public List getYAxisColors() {return yAxisColors; }
    public void setYAxisColors(List l) {yAxisColors = l; }
+
+   /**
+   * The renderer type to be used fpr rendering the plots
+* Protege name: rendererType
+   */
+   private String rendererType;
+   public void setRendererType(String value) { 
+    this.rendererType=value;
+   }
+   public String getRendererType() {
+     return this.rendererType;
+   }
+
+   /**
+* Protege name: xAxisLabel
+   */
+   private String xAxisLabel;
+   public void setXAxisLabel(String value) { 
+    this.xAxisLabel=value;
+   }
+   public String getXAxisLabel() {
+     return this.xAxisLabel;
+   }
+
+   /**
+* Protege name: yAxisLabel
+   */
+   private String yAxisLabel;
+   public void setYAxisLabel(String value) { 
+    this.yAxisLabel=value;
+   }
+   public String getYAxisLabel() {
+     return this.yAxisLabel;
+   }
 
 }

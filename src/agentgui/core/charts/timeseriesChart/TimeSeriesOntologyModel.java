@@ -34,8 +34,8 @@ import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.ontology.ChartSettingsGeneral;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.TimeSeries;
-import agentgui.ontology.TimeSeriesAdditionalSettings;
 import agentgui.ontology.TimeSeriesChart;
+import agentgui.ontology.TimeSeriesChartSettings;
 
 public class TimeSeriesOntologyModel extends OntologyModel{
 	
@@ -44,12 +44,18 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 			this.chart = timeSeriesChart;
 		}else{
 			this.chart = new TimeSeriesChart();
-			this.chart.setVisualizationSettings(new ChartSettingsGeneral());
-			((TimeSeriesChart)this.chart).setTimeSeriesAdditionalSettings(new TimeSeriesAdditionalSettings());
+			((TimeSeriesChart)this.chart).setTimeSeriesVisualisationSettings(new TimeSeriesChartSettings());
 		}
 		this.parent = parent;
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.OntologyModel#getChartSettings()
+	 */
+	public ChartSettingsGeneral getChartSettings(){
+		return ((TimeSeriesChart)this.chart).getTimeSeriesVisualisationSettings();
+	}
+	
 	/**
 	 * Gets the complete ontology representation (data and visualization settings) for this chart.
 	 * @return the timeSeriesChart
@@ -65,10 +71,6 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 		this.chart = timeSeriesChart;
 	}
 	
-	public TimeSeriesAdditionalSettings getAdditionalSettings(){
-		return ((TimeSeriesChart) chart).getTimeSeriesAdditionalSettings();
-	}
-	
 	@Override
 	public void addSeries(DataSeries series){
 		((TimeSeriesChart) chart).getTimeSeriesChartData().add(series);
@@ -77,8 +79,8 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	public void removeSeries(int seriesIndex) throws NoSuchSeriesException{
 		if(seriesIndex < getSeriesCount()){
 			((TimeSeriesChart) chart).getTimeSeriesChartData().remove(seriesIndex);
-			chart.getVisualizationSettings().getYAxisColors().remove(seriesIndex);
-			chart.getVisualizationSettings().getYAxisLineWidth().remove(seriesIndex);
+			((TimeSeriesChart) chart).getTimeSeriesVisualisationSettings().getYAxisColors().remove(seriesIndex);
+			((TimeSeriesChart) chart).getTimeSeriesVisualisationSettings().getYAxisLineWidth().remove(seriesIndex);
 		}else{
 			throw new NoSuchSeriesException();
 		}
@@ -128,7 +130,7 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	 * Sets the time format in the settings object
 	 * @param timeFormat
 	 */
-	void setTimeFormat(String timeFormat){
-		getAdditionalSettings().setTimeFormat(timeFormat);
+	public void setTimeFormat(String timeFormat){
+		((TimeSeriesChart)this.chart).getTimeSeriesVisualisationSettings().setTimeFormat(timeFormat);
 	}
 }

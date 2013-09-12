@@ -30,6 +30,7 @@ package agentgui.core.charts.timeseriesChart;
 
 import agentgui.core.charts.ChartSettingModel;
 import agentgui.core.charts.DataModel;
+import agentgui.ontology.TimeSeriesChartSettings;
 
 /**
  * The Class TimeSeriesChartSettingModel.
@@ -38,7 +39,7 @@ import agentgui.core.charts.DataModel;
  */
 public class TimeSeriesChartSettingModel extends ChartSettingModel {
 
-	private String timeFormat = null;
+	private String timeFormat;
 	
 	/**
 	 * Instantiates a new time series chart setting model.
@@ -53,7 +54,9 @@ public class TimeSeriesChartSettingModel extends ChartSettingModel {
 	 */
 	@Override
 	public void refresh() {
-		this.timeFormat = ((TimeSeriesOntologyModel)this.parentDataModel.getOntologyModel()).getAdditionalSettings().getTimeFormat();
+		TimeSeriesOntologyModel tsom = ((TimeSeriesOntologyModel)this.parentDataModel.getOntologyModel());
+		TimeSeriesChartSettings tscs = (TimeSeriesChartSettings) tsom.getChartSettings();
+		this.timeFormat = tscs.getTimeFormat();
 		super.refresh();
 	}
 
@@ -70,7 +73,9 @@ public class TimeSeriesChartSettingModel extends ChartSettingModel {
 	 */
 	public void setTimeFormat(String newTimeFormat) {
 		this.timeFormat = newTimeFormat;
-		((TimeSeriesOntologyModel) this.parentDataModel.getOntologyModel()).getAdditionalSettings().setTimeFormat(newTimeFormat);
+		TimeSeriesOntologyModel tsom = ((TimeSeriesOntologyModel)this.parentDataModel.getOntologyModel());
+		TimeSeriesChartSettings tscs = (TimeSeriesChartSettings) tsom.getChartSettings();
+		tscs.setTimeFormat(newTimeFormat);
 	}
 	
 	

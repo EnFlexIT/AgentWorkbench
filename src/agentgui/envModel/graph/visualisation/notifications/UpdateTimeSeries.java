@@ -30,7 +30,6 @@ package agentgui.envModel.graph.visualisation.notifications;
 
 import jade.util.leap.List;
 
-import java.util.HashSet;
 import java.util.Vector;
 
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
@@ -60,7 +59,6 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 	private static final long serialVersionUID = 8563478170121892593L;
 
 	private TimeSeries specifiedTimeSeries = null;
-	private transient HashSet<Integer> editedInstances = null;
 	
 	/**
 	 * Instantiates a new update time series.
@@ -135,18 +133,6 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 		return specifiedTimeSeries;
 	}
 	
-	/**
-	 * Returns the collection of identity hash codes of object instances that were already edited.
-	 * 
-	 * @see System#identityHashCode(Object)
-	 * @return the series instance edited
-	 */
-	private HashSet<Integer> getEditedInstances() {
-		if (this.editedInstances==null) {
-			editedInstances = new HashSet<Integer>();
-		}
-		return editedInstances;
-	}
 
 	/**
 	 * Edits the time series: adds new data to a time series.

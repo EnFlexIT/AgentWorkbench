@@ -79,7 +79,8 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 				newSeries.add(newItem);	
 			}
 		}
-		this.addSeries(newSeries);
+		this.addSeries(newSeries);	
+		
 	}
 	
 	/* (non-Javadoc)
