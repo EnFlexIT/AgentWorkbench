@@ -8,41 +8,9 @@ import jade.core.*;
    * This class contains all data related to how a chart will be displayed
 * Protege name: ChartSettingsGeneral
 * @author ontology bean generator
-* @version 2013/09/12, 17:14:05
+* @version 2013/10/1, 11:28:40
 */
 public class ChartSettingsGeneral extends VisualizationSettings{ 
-
-   /**
-* Protege name: chartTitle
-   */
-   private String chartTitle;
-   public void setChartTitle(String value) { 
-    this.chartTitle=value;
-   }
-   public String getChartTitle() {
-     return this.chartTitle;
-   }
-
-   /**
-* Protege name: yAxisLineWidth
-   */
-   private List yAxisLineWidth = new ArrayList();
-   public void addYAxisLineWidth(Float elem) { 
-     List oldList = this.yAxisLineWidth;
-     yAxisLineWidth.add(elem);
-   }
-   public boolean removeYAxisLineWidth(Float elem) {
-     List oldList = this.yAxisLineWidth;
-     boolean result = yAxisLineWidth.remove(elem);
-     return result;
-   }
-   public void clearAllYAxisLineWidth() {
-     List oldList = this.yAxisLineWidth;
-     yAxisLineWidth.clear();
-   }
-   public Iterator getAllYAxisLineWidth() {return yAxisLineWidth.iterator(); }
-   public List getYAxisLineWidth() {return yAxisLineWidth; }
-   public void setYAxisLineWidth(List l) {yAxisLineWidth = l; }
 
    /**
    * The RGB values of the colors for each series plot
@@ -98,6 +66,38 @@ public class ChartSettingsGeneral extends VisualizationSettings{
    }
    public String getYAxisLabel() {
      return this.yAxisLabel;
+   }
+
+   /**
+* Protege name: yAxisLineWidth
+   */
+   private List yAxisLineWidth = new ArrayList();
+   public void addYAxisLineWidth(Float elem) { 
+     List oldList = this.yAxisLineWidth;
+     yAxisLineWidth.add(elem);
+   }
+   public boolean removeYAxisLineWidth(Float elem) {
+     List oldList = this.yAxisLineWidth;
+     boolean result = yAxisLineWidth.remove(elem);
+     return result;
+   }
+   public void clearAllYAxisLineWidth() {
+     List oldList = this.yAxisLineWidth;
+     yAxisLineWidth.clear();
+   }
+   public Iterator getAllYAxisLineWidth() {return yAxisLineWidth.iterator(); }
+   public List getYAxisLineWidth() {return yAxisLineWidth; }
+   public void setYAxisLineWidth(List l) {yAxisLineWidth = l; }
+
+   /**
+* Protege name: chartTitle
+   */
+   private String chartTitle;
+   public void setChartTitle(String value) { 
+    this.chartTitle=value;
+   }
+   public String getChartTitle() {
+     return this.chartTitle;
    }
 
 }

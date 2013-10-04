@@ -42,6 +42,7 @@ import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.Simple_Float;
 import agentgui.ontology.Simple_Long;
+import agentgui.ontology.TimeSeriesChartSettings;
 import agentgui.ontology.TimeSeriesValuePair;
 
 /**
@@ -53,8 +54,24 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	
 	private static final long serialVersionUID = 2315036788757231999L;
 
-	public TimeSeriesChartModel(){
+	private TimeSeriesDataModel tsDataModel;
+
+	
+	/**
+	 * Instantiates a new time series chart model.
+	 * @param timeSeriesChartSettings the time series chart settings
+	 */
+	public TimeSeriesChartModel(TimeSeriesDataModel timeSeriesDataModel){
 		super(TimeZone.getTimeZone("GMT"));
+		this.tsDataModel = timeSeriesDataModel;
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#getChartSettings()
+	 */
+	@Override
+	public TimeSeriesChartSettings getChartSettings() {
+		return  (TimeSeriesChartSettings)tsDataModel.getOntologyModel().getChartSettings();
 	}
 	
 	/* (non-Javadoc)
@@ -116,10 +133,13 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.ChartModel#addOrUpdateValuePair(int, java.lang.Number, java.lang.Number)
+	/**
+	 * Adds or updates a value to/in a data series.
+	 * @param seriesIndex The index of the series that should be changed
+	 * @param key The key for the value pair to be added/updated
+	 * @param value The new value for the value pair
+	 * @throws NoSuchSeriesException Will be thrown if there is no series with the specified index
 	 */
-	@Override
 	public void addOrUpdateValuePair(int seriesIndex, Number key, Number value) throws NoSuchSeriesException {
 		if(seriesIndex < this.getSeriesCount()){
 			org.jfree.data.time.TimeSeries series = this.getSeries(seriesIndex);
@@ -130,10 +150,11 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.ChartModel#updateKey(java.lang.Number, java.lang.Number)
+	/**
+	 * Update the time stamp in all series that contain it
+	 * @param oldKey The old time stamp
+	 * @param newKey The new time stamp
 	 */
-	@Override
 	public void updateKey(Number oldKey, Number newKey) {
 		@SuppressWarnings("unchecked")
 		java.util.Iterator<org.jfree.data.time.TimeSeries> allSeries = getSeries().iterator();
@@ -155,11 +176,12 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 		}
 		
 	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.ChartModel#removeValuePair(int, java.lang.Number)
+	/**
+	 * Removes the value pair with the given key from the series with the given index.
+	 * @param seriesIndex The series index
+	 * @param key The key
+	 * @throws NoSuchSeriesException Thrown if there is no series with the specified index
 	 */
-	@Override
 	public void removeValuePair(int seriesIndex, Number key) throws NoSuchSeriesException {
 		if(seriesIndex < this.getSeriesCount()){
 			org.jfree.data.time.TimeSeries series = (org.jfree.data.time.TimeSeries) getSeries().get(seriesIndex);

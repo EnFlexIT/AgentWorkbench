@@ -87,6 +87,8 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	private TableCellEditor4Color cellEditorColor = null;
 	private TableCellSpinnerEditor4FloatObject cellEditorSpinner = null;
 	
+	private boolean isPauseListener = false;
+	
 	/**
 	 * Instantiates a new chart settings tab.
 	 *
@@ -120,6 +122,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	 */
 	public void setChartSettingModelData() {
 		
+		this.isPauseListener = true;
 		this.getTfChartTitle().setText(this.chartSettingModel.getChartTitle());
 		this.getTfXAxisLabel().setText(this.chartSettingModel.getChartXAxisLabel());
 		this.getTfYAxisLabel().setText(this.chartSettingModel.getChartYAxisLabel());
@@ -130,7 +133,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 			this.getTblSeriesSettings().setModel(tbModel);
 			this.refreshRenderEditorTblSeriesSettings();	
 		}
-		
+		this.isPauseListener = false;
 	}
 	
 	/**
@@ -259,7 +262,9 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 			cbRendererType.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					setRenderType((String) getCbRendererType().getSelectedItem());
+					if (isPauseListener==false) {
+						setRenderType((String) getCbRendererType().getSelectedItem());
+					}
 				}
 			});
 		}
@@ -352,17 +357,15 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 		this.handleTextFieldUpdate(de);		
 	}
 	private void handleTextFieldUpdate(DocumentEvent de) {
-		if (de.getDocument()==getTfChartTitle().getDocument()) {
-			setChartTitle(getTfChartTitle().getText());
-		}else if(de.getDocument() == getTfXAxisLabel().getDocument()){
-			setXAxisLabel(getTfXAxisLabel().getText());
-		}else if(de.getDocument() == getTfYAxisLabel().getDocument()){
-			setYAxisLabel(getTfYAxisLabel().getText());
+		if (this.isPauseListener==false) {
+			if (de.getDocument()==getTfChartTitle().getDocument()) {
+				setChartTitle(getTfChartTitle().getText());
+			}else if(de.getDocument() == getTfXAxisLabel().getDocument()){
+				setXAxisLabel(getTfXAxisLabel().getText());
+			}else if(de.getDocument() == getTfYAxisLabel().getDocument()){
+				setYAxisLabel(getTfYAxisLabel().getText());
+			}	
 		}
-	}
-	
-	public void seriesRemoved(int seriesIndex){
-		((DefaultTableModel)getTblSeriesSettings().getModel()).removeRow(seriesIndex);
 	}
 	
 	/**
@@ -426,6 +429,15 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	private void setSeriesLineWidth(int seriesIndex, Float newWidth) throws NoSuchSeriesException{
 		chartSettingModel.setSeriesLineWidth(seriesIndex, newWidth);
 		parent.getChartTab().setSeriesLineWidth(seriesIndex, newWidth);
+	}
+	
+	/**
+	 * Can be used to notify underlying elements to stop edit actions.
+	 */
+	public void stopEditing() {
+		if (getTblSeriesSettings()!=null && getTblSeriesSettings().isEditing()==true) {
+			getTblSeriesSettings().getCellEditor().stopCellEditing();
+		}
 	}
 
 }

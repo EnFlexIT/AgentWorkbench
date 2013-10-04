@@ -35,6 +35,8 @@ import java.text.ParseException;
 import javax.swing.JSpinner;
 import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.SpinnerNumberModel;
+
+import agentgui.core.common.KeyAdapter4Numbers;
 /**
  * JSpinner-based table cell editor for Float objects
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
@@ -65,6 +67,7 @@ public class TableCellSpinnerEditor4FloatObject extends BasicCellEditor{
 			editorComponent.addKeyListener(this);
 			DefaultEditor edit = (DefaultEditor) ((JSpinner)editorComponent).getEditor();
 			edit.getTextField().addKeyListener(this);
+			edit.getTextField().addKeyListener(new KeyAdapter4Numbers(true));
 		}
 		((JSpinner)editorComponent).setValue(value);
 		return editorComponent;

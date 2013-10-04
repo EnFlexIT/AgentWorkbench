@@ -336,7 +336,7 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
     	JMenuItem jMenuItem = new JMenuItem();
     	jMenuItem.setName(MENU_ITEM_NAME_PREFIX + "_JMenuItem_" + networkComponent.getId());
     	jMenuItem.setText(Language.translate("Edit Properties", Language.EN));
-    	jMenuItem.setIcon(new ImageIcon(getClass().getResource(IMAGE_PATH + "Properties.jpg")));
+    	jMenuItem.setIcon(new ImageIcon(getClass().getResource(IMAGE_PATH + "Properties.png")));
     	jMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

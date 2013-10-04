@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: XyChart
 * @author ontology bean generator
-* @version 2013/09/12, 17:14:05
+* @version 2013/10/1, 11:28:40
 */
 public class XyChart extends Chart{ 
 
@@ -33,6 +33,17 @@ public boolean isEmpty() {
  }
 }
    /**
+* Protege name: xySeriesVisualisationSettings
+   */
+   private XySeriesChartSettings xySeriesVisualisationSettings;
+   public void setXySeriesVisualisationSettings(XySeriesChartSettings value) { 
+    this.xySeriesVisualisationSettings=value;
+   }
+   public XySeriesChartSettings getXySeriesVisualisationSettings() {
+     return this.xySeriesVisualisationSettings;
+   }
+
+   /**
    * The data to be displayed by the chart
 * Protege name: xyChartData
    */
@@ -53,16 +64,5 @@ public boolean isEmpty() {
    public Iterator getAllXyChartData() {return xyChartData.iterator(); }
    public List getXyChartData() {return xyChartData; }
    public void setXyChartData(List l) {xyChartData = l; }
-
-   /**
-* Protege name: xySeriesVisualisationSettings
-   */
-   private XySeriesChartSettings xySeriesVisualisationSettings;
-   public void setXySeriesVisualisationSettings(XySeriesChartSettings value) { 
-    this.xySeriesVisualisationSettings=value;
-   }
-   public XySeriesChartSettings getXySeriesVisualisationSettings() {
-     return this.xySeriesVisualisationSettings;
-   }
 
 }

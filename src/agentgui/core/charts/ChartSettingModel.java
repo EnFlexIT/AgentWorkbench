@@ -106,7 +106,7 @@ public class ChartSettingModel {
 	public void setChartXAxisLabel(String newXAxisLabel) {
 		this.chartXAxisLabel = newXAxisLabel;
 		this.parentDataModel.getOntologyModel().getChartSettings().setXAxisLabel(newXAxisLabel);
-		this.parentDataModel.getTableModel().setKeyColumnLabel(newXAxisLabel);
+		this.parentDataModel.getTableModel().setXColumnLabel(newXAxisLabel);
 	}
 
 	/**

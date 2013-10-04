@@ -31,6 +31,8 @@ package agentgui.core.charts.gui;
 import java.awt.Component;
 import javax.swing.JTextField;
 
+import agentgui.core.common.KeyAdapter4Numbers;
+
 /**
  * JTextField-based table cell editor for Float objects.
  * @author Nils
@@ -48,6 +50,7 @@ public class TableCellEditor4FloatObject extends BasicCellEditor{
 	public Object getCellEditorValue() {
 		String newValue = ((JTextField)editorComponent).getText();
 		if(newValue.length() > 0){
+			newValue = newValue.replace(",", ".");
 			return new Float(newValue);
 		}else{
 			return null;
@@ -66,6 +69,7 @@ public class TableCellEditor4FloatObject extends BasicCellEditor{
 		if(editorComponent == null){
 			editorComponent = new JTextField();
 			editorComponent.addKeyListener(this);
+			editorComponent.addKeyListener(new KeyAdapter4Numbers(true));
 		}
 		if(value != null){
 			((JTextField)editorComponent).setText(""+((Float)value));

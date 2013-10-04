@@ -31,13 +31,12 @@ package agentgui.core.charts;
 import jade.util.leap.List;
 
 import java.awt.Color;
-import java.util.Vector;
-
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import agentgui.core.charts.timeseriesChart.TimeSeriesChartSettingModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
+import agentgui.core.charts.xyChart.XyOntologyModel;
+import agentgui.core.charts.xyChart.XySeriesChartSettingModel;
+import agentgui.ontology.Chart;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 
@@ -49,12 +48,13 @@ import agentgui.ontology.ValuePair;
  *  
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  */
-public abstract class DataModel implements TableModelListener {
+public abstract class DataModel {
 	
 	/** These colors will be used for newly added series. */
 	public static final Color[] DEFAULT_COLORS = {Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.YELLOW, Color.PINK, Color.CYAN, Color.MAGENTA, Color.LIGHT_GRAY, Color.DARK_GRAY, Color.BLACK};
 	/** This line width will be used for newly added series. */
 	public static final float DEFAULT_LINE_WIDTH = 1.0f;
+	
 	
 	/** The ontology representation of the series data. */
 	protected OntologyModel ontologyModel;
@@ -70,6 +70,13 @@ public abstract class DataModel implements TableModelListener {
 	
 	
 	/**
+	 * Sets the chart given by the data model of the ontology instance.
+	 * @param ontologyChart the new ontology instance chart
+	 */
+	public abstract void setOntologyInstanceChart(Chart ontologyChart);
+	
+	
+	/**
 	 * Creates a new data series of the correct type for the precise type of chart.
 	 *
 	 * @param label The new data series label
@@ -79,20 +86,22 @@ public abstract class DataModel implements TableModelListener {
 	
 	/**
 	 * Creates a new value pair for the specific type of chart.
-	 * Allows value pair creation in super class methods without knowing the exact class of the value pair. 
+	 * Allows value pair creation in super class methods without knowing the exact class of the value pair.
+	 *
 	 * @param key The key / x value
 	 * @param value The (y) value
+	 * @param indexPosition the index position
 	 * @return The value pair
 	 */
 	public abstract ValuePair createNewValuePair(Number key, Number value);
 	
 	/**
-	 * Gets the key / x value from the value pair.
+	 * Gets the key / x value from the given value pair.
 	 * Allows accessing the key / x value from superclass methods without knowing the exact class of value pair and key / x value.
 	 * @param vp The value pair
 	 * @return The key / x value
 	 */
-	public abstract Number getKeyFromPair(ValuePair vp);
+	public abstract Number getXValueFromPair(ValuePair vp);
 	
 	/**
 	 * Gets the (y) value from the value pair.
@@ -100,7 +109,7 @@ public abstract class DataModel implements TableModelListener {
 	 * @param vp The value pair
 	 * @return The (y) value
 	 */
-	public abstract Number getValueFromPair(ValuePair vp);
+	public abstract Number getYValueFromValuePair(ValuePair vp);
 	
 	/**
 	 * Updates the key of the value pair.
@@ -221,6 +230,8 @@ public abstract class DataModel implements TableModelListener {
 		if (chartSettingModel==null) {
 			if (this.ontologyModel instanceof TimeSeriesOntologyModel) {
 				chartSettingModel = new TimeSeriesChartSettingModel(this);
+			} else if (this.ontologyModel instanceof XyOntologyModel) {
+				chartSettingModel = new XySeriesChartSettingModel(this);
 			} else {
 				chartSettingModel = new ChartSettingModel(this);	
 			}
@@ -242,101 +253,12 @@ public abstract class DataModel implements TableModelListener {
 	public int getSeriesCount() {
 		return seriesCount;
 	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
-	 */
-	@Override
-	public void tableChanged(TableModelEvent tme) {
-		
-		if(tme.getSource()==tableModel && tme.getFirstRow()>=0){
-			
-			if(tme.getType()==TableModelEvent.UPDATE){
-				// --- Update Events in the table ---------
-				if(tme.getColumn() > 0){
-					// --- A single value was edited ------------------------------------
-					int seriesIndex = tme.getColumn()-1; // First column contains the time stamps.
-					int rowIndex = tme.getFirstRow();
-					
-					Number key = (Number) tableModel.getValueAt(rowIndex, 0);
-					Number value = (Number) tableModel.getValueAt(rowIndex, tme.getColumn());
-					Vector<Object> rowVector = tableModel.getRow(rowIndex);
-					
-					try {
-						if(value!=null){
-							// --- Update new entry in chart and ontology model ---------
-							chartModel.addOrUpdateValuePair(seriesIndex, key, value);
-							ontologyModel.addOrUpdateValuePair(seriesIndex, key, value);
-						
-						} else {
-							if (tableModel.isEmptyTableModelRow(rowVector)==false) {
-								// --- Rewrite the data row -----------------------------
-								for (int i=1; i < rowVector.size(); i++) {
-									Number seriesValue = (Number) rowVector.get(i);
-									int series = i-1;
-									if (seriesValue!=null) {
-										chartModel.addOrUpdateValuePair(series, key, seriesValue);
-										ontologyModel.addOrUpdateValuePair(series, key, seriesValue);
-									} else {
-										chartModel.removeValuePair(series, key);
-										ontologyModel.removeValuePair(series, key);
-									}
-								} // end for
-								
-							} else {
-								// --- Empty row, delete ValuePair ----------------------
-								chartModel.removeValuePair(seriesIndex, key);
-								ontologyModel.removeValuePair(seriesIndex, key);
-							}
-						}
-						
-					} catch (NoSuchSeriesException e) {
-						System.err.println("Error updating data model: Series "+seriesIndex+" does mot exist!");
-						e.printStackTrace();
-					}
-				
-				} else if(tme.getColumn() == 0) {
-					// --- The key value (e.g. the time stamp) was edited ---------------
-					Number oldKey = (Number) tableModel.getLatestChangedValue();
-					Number newKey = (Number) tableModel.getValueAt(tme.getFirstRow(), 0);
-					
-					ontologyModel.updateKey(oldKey, newKey);
-					chartModel.updateKey(oldKey, newKey);
-					
-				}
-				
-			} else {
-				// --- Insert or Delete events in the table ---------
-			}
-		}
-
-	}
 	
 	/**
 	 * Adds a new series to the data model.
-	 *
 	 * @param series The new series
 	 */
-	public void addSeries(DataSeries series){
-		
-		// Set the default label if none is specified in the series
-		if(series.getLabel() == null || series.getLabel().length() == 0){
-			series.setLabel(getDefaultSeriesLabel());
-		}
-		
-		// Add the data to the sub models
-		ontologyModel.addSeries(series);
-		// Apply default settings
-		ontologyModel.getChartSettings().addYAxisColors(""+DEFAULT_COLORS[getSeriesCount() % DEFAULT_COLORS.length].getRGB());
-		ontologyModel.getChartSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
-		
-		chartModel.addSeries(series);
-		tableModel.addSeries(series);
-		this.getChartSettingModel().refresh();
-		
-		seriesCount++;
-
-	}
+	public abstract void addSeries(DataSeries series);
 	
 	/**
 	 * Adds or exchanges a data series from the current chart.
@@ -368,6 +290,7 @@ public abstract class DataModel implements TableModelListener {
 			chartModel.exchangeSeries(seriesIndex, series);
 			tableModel.exchangeSeries(seriesIndex, series);
 			this.getChartSettingModel().refresh();
+			
 		} else {
 			throw new NoSuchSeriesException();
 		}
@@ -380,32 +303,12 @@ public abstract class DataModel implements TableModelListener {
 	 * @throws NoSuchSeriesException Thrown if there is no series with that index
 	 */
 	public void removeSeries(int seriesIndex) throws NoSuchSeriesException{
-		ontologyModel.removeSeries(seriesIndex);
-		chartModel.removeSeries(seriesIndex);
-		tableModel.removeSeries(seriesIndex);
+		this.ontologyModel.removeSeries(seriesIndex);
+		this.chartModel.removeSeries(seriesIndex);
+		this.tableModel.removeSeries(seriesIndex);
+		this.seriesCount--;
 		this.getChartSettingModel().refresh();
-		seriesCount--;
-	}
-	
-	
-	/**
-	 * Removes the value pair with the given time stamp from every series that contains one. 
-	 * @param key The time stamp
-	 */
-	public void removeValuePairsFromAllSeries(Number key){
 		
-		for(int i=0; i<getSeriesCount(); i++){
-			try {
-				ontologyModel.removeValuePair(i, key);
-				chartModel.removeValuePair(i, key);
-
-			} catch (NoSuchSeriesException e) {
-				System.err.println("Trying to remove value pair from non-existant series "+i);
-				e.printStackTrace();
-			}
-		}
-		
-		tableModel.removeRowByKey(key);
 	}
 	
 }

@@ -8,7 +8,7 @@ import jade.core.*;
    * One single data item in a time series.
 * Protege name: TimeSeriesValuePair
 * @author ontology bean generator
-* @version 2013/09/12, 17:14:05
+* @version 2013/10/1, 11:28:40
 */
 public class TimeSeriesValuePair extends ValuePair{ 
 

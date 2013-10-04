@@ -26,24 +26,25 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.charts;
+package agentgui.core.charts.xyChart;
+
+import agentgui.core.charts.ChartSettingModel;
+import agentgui.core.charts.DataModel;
 
 /**
- * The listener interface for receiving updates of the ChartSettingModel.
+ * The Class XySeriesChartSettingModel.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public interface ChartSettingModelListener {
+public class XySeriesChartSettingModel extends ChartSettingModel {
 
-	/**
-	 * Sets the chart setting model.
-	 * @param newChartSettingModel the new chart setting model
-	 */
-	public void replaceModel(ChartSettingModel newChartSettingModel);
-	
 	
 	/**
-	 * Can be used to notify underlying elements to stop edit actions.
+	 * Instantiates a new time series chart setting model.
+	 * @param parentDataModel the parent data model
 	 */
-	public void stopEditing();
+	public XySeriesChartSettingModel(DataModel parentDataModel) {
+		super(parentDataModel);
+	}
+
 }

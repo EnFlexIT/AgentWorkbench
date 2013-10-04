@@ -324,7 +324,6 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 				this.sendDisplayAgentNotification(utsAdd);
 			}
 			
-			System.out.println("Send " + (run+1));
 			// --- Just wait a little -----------
 			try {
 				Thread.sleep(250);

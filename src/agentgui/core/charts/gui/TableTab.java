@@ -31,77 +31,57 @@ package agentgui.core.charts.gui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
-import agentgui.core.charts.NoSuchSeriesException;
-import agentgui.ontology.DataSeries;
-import agentgui.ontology.ValuePair;
 
 /**
  * Generic superclass for a Swing component showing the table representation of chart data and 
  * providing means for editing the data.
+ * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
- *
  */
-public abstract class TableTab extends JPanel implements ActionListener, ListSelectionListener{
+public abstract class TableTab extends JPanel implements ActionListener, ListSelectionListener {
 
 	private static final long serialVersionUID = -8682335989453677658L;
 
 	/** The path for icon images */
-	protected final String PathImage = Application.getGlobalInfo().PathImageIntern();
+	protected final String pathImage = Application.getGlobalInfo().PathImageIntern();
 
-	// Swing components
-	protected JScrollPane scrollPane;
-	protected JTable table;
-	protected JToolBar toolBar;
-	protected JButton btnAddRow;
-	protected JButton btnAddColumn;
-	protected JButton btnRemoveRow;
-	protected JButton btnRemoveColumn;
-	protected JSeparator separator;
+	private JScrollPane scrollPane;
+	private JToolBar toolBar;
+	private JButton btnAddRow;
+	private JButton btnAddColumn;
+	private JButton btnRemoveRow;
+	private JButton btnRemoveColumn;
 	
-	protected DataModel model;
+	protected JTable jTable;
 	
 	protected ChartEditorJPanel parentChartEditor;
+	protected DataModel dataModelLocal;
 	
 	
 	/**
-	 * Creates a JTable with the correct renderer and editor classes for the type of chart data
-	 * @return The table
+	 * Instantiates a new table tab.
+	 * @param parentChartEditor the parent chart editor
 	 */
-	protected abstract JTable getTable();
-	
-	/**
-	 * Creates a JTable with the correct renderer and editor classes for the type of chart data
-	 * @return The table
-	 */
-	protected abstract JTable getTable(boolean forceRebuild);
-	
 	public TableTab(ChartEditorJPanel parentChartEditor){
 		this.parentChartEditor = parentChartEditor;
 	}
 	
-	
-	/**
-	 * Initialize.
-	 */
+	/** Initializes this. */
 	protected void initialize(){
-		getTable().setModel(this.model.getTableModel());
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
@@ -109,12 +89,14 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.insets = new Insets(0, 0, 0, 5);
+		gbc_scrollPane.insets = new Insets(0, 0, 0, 0);
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 0;
 		add(getScrollPane(), gbc_scrollPane);
+		
 		GridBagConstraints gbc_toolBar = new GridBagConstraints();
 		gbc_toolBar.anchor = GridBagConstraints.NORTH;
 		gbc_toolBar.gridx = 1;
@@ -122,171 +104,84 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		add(getToolBar(), gbc_toolBar);
 	}
 	
-	private JScrollPane getScrollPane() {
+	/**
+	 * Creates a JTable with the correct renderer and editor classes for the type of chart data
+	 * @return The table
+	 */
+	protected abstract JTable getTable();
+	/**
+	 * Sets the buttons enabled to the current situation.
+	 */
+	public abstract void setButtonsEnabledToSituation();
+
+	
+	protected JScrollPane getScrollPane() {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane();
-			scrollPane.setViewportView(getTable());
+			scrollPane.setViewportView(this.getTable());
 		}
 		return scrollPane;
 	}
-	private JToolBar getToolBar() {
+	protected JToolBar getToolBar() {
 		if (toolBar == null) {
 			toolBar = new JToolBar();
+			toolBar.setFloatable(false);
 			toolBar.setOrientation(SwingConstants.VERTICAL);
 			toolBar.add(getBtnAddRow());
 			toolBar.add(getBtnAddColumn());
-			toolBar.add(getSeparator());
+			toolBar.addSeparator();
 			toolBar.add(getBtnRemoveRow());
 			toolBar.add(getBtnRemoveColumn());
+			toolBar.addSeparator();
 		}
 		return toolBar;
 	}
-	private JButton getBtnAddRow() {
+	protected JButton getBtnAddRow() {
 		if (btnAddRow == null) {
 			btnAddRow = new JButton();
-			btnAddRow.setIcon(new ImageIcon(this.getClass().getResource(PathImage + "AddRow.png")));
+			btnAddRow.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "AddRow.png")));
 			btnAddRow.setToolTipText(Language.translate("Zeile hinzufügen"));
 			btnAddRow.addActionListener(this);
 		}
 		return btnAddRow;
 	}
-	private JButton getBtnAddColumn() {
+	protected JButton getBtnAddColumn() {
 		if (btnAddColumn == null) {
 			btnAddColumn = new JButton();
-			btnAddColumn.setIcon(new ImageIcon(this.getClass().getResource( PathImage + "AddCol.png")));
+			btnAddColumn.setIcon(new ImageIcon(this.getClass().getResource( pathImage + "AddCol.png")));
 			btnAddColumn.setToolTipText(Language.translate("Spalte hinzufügen"));
 			btnAddColumn.addActionListener(this);
 		}
 		return btnAddColumn;
 	}
-	private JButton getBtnRemoveRow() {
+	protected JButton getBtnRemoveRow() {
 		if (btnRemoveRow == null) {
 			btnRemoveRow = new JButton();
-			btnRemoveRow.setIcon(new ImageIcon(this.getClass().getResource( PathImage + "RemoveRow.png")));
+			btnRemoveRow.setIcon(new ImageIcon(this.getClass().getResource( pathImage + "RemoveRow.png")));
 			btnRemoveRow.setToolTipText(Language.translate("Zeile entfernen"));
 			btnRemoveRow.setEnabled(false);
 			btnRemoveRow.addActionListener(this);
 		}
 		return btnRemoveRow;
 	}
-	private JButton getBtnRemoveColumn() {
+	protected JButton getBtnRemoveColumn() {
 		if (btnRemoveColumn == null) {
 			btnRemoveColumn = new JButton();
-			btnRemoveColumn.setIcon(new ImageIcon(this.getClass().getResource( PathImage + "RemoveCol.png")));
+			btnRemoveColumn.setIcon(new ImageIcon(this.getClass().getResource( pathImage + "RemoveCol.png")));
 			btnRemoveColumn.setToolTipText(Language.translate("Spalte entfernen"));
 			btnRemoveColumn.setEnabled(false);
 			btnRemoveColumn.addActionListener(this);
 		}
 		return btnRemoveColumn;
 	}
-	private JSeparator getSeparator() {
-		if (separator == null) {
-			separator = new JSeparator();
-		}
-		return separator;
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		if(e.getSource() == getBtnAddColumn() || (e.getSource() == getBtnAddRow() && getTable().getRowCount() == 0)){
-			
-			String seriesLabel = (String) JOptionPane.showInputDialog(this, Language.translate("Label"), Language.translate("Neue Datenreihe"), JOptionPane.QUESTION_MESSAGE, null, null, model.getDefaultSeriesLabel());
-			if(seriesLabel != null){
-			
-				DataSeries newSeries = model.createNewDataSeries(seriesLabel);
-	
-				// As JFreeChart doesn't work with empty data series, one value pair must be added
-				ValuePair initialValuePair;
-				if(model.getSeriesCount() > 0){
-					// If there is already data in the model, use the first existing key 
-					initialValuePair = model.createNewValuePair((Number) model.getTableModel().getValueAt(0, 0), 0);
-				}else{
-					// If not, use 0 as time stamp
-					initialValuePair = model.createNewValuePair(0, 0);
-				}
-				
-				model.getValuePairsFromSeries(newSeries).add(initialValuePair);
-				model.addSeries(newSeries);
-				
-				parentChartEditor.setOntologyClassInstance(parentChartEditor.getOntologyClassInstance());
-			}
-		} else if(e.getSource() == getBtnAddRow()){
-			model.getTableModel().addEmptyRow(getTable());
-		} else if(e.getSource() == getBtnRemoveColumn()){
-			
-			if(table.getSelectedColumn() > 0){
-				int seriesIndex = table.getSelectedColumn()-1;
-				try {
-					this.model.removeSeries(seriesIndex);
-					parentChartEditor.getSettingsTab().seriesRemoved(seriesIndex);
 
-				} catch (NoSuchSeriesException e1) {
-					System.err.println("Error removing series " + seriesIndex);
-					e1.printStackTrace();
-				}
-			}
-			
-		} else if(e.getSource() == getBtnRemoveRow()){
-			int rowNum = table.getSelectedRow();
-			int colNum = table.getSelectedColumn();
-			if(table.isEditing()){
-				table.getCellEditor().cancelCellEditing();
-			}
-			if(table.getRowCount() == 1){
-				while(model.getSeriesCount() > 0){
-					try {
-						model.removeSeries(0);
-					} catch (NoSuchSeriesException e1) {
-						// This cannot happen, as there where clause prevents empty models  
-					}
-				}
-			}else{
-				Number key = (Number) table.getValueAt(table.getSelectedRow(), 0);
-				model.removeValuePairsFromAllSeries(key);
-			}
-			
-			// TODO Check if necessary
-			parentChartEditor.setOntologyClassInstance(parentChartEditor.getOntologyClassInstance());
-			
-			if(rowNum < table.getRowCount()){
-				table.changeSelection(rowNum, colNum, false, false);
-			}else if(table.getRowCount() > 0){
-				table.changeSelection(table.getRowCount(), colNum, false, false);
-			}
-			
-		}
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
-	 */
-	@Override
-	public void valueChanged(ListSelectionEvent e) {
-		// Enable btnRemoveRow if a row is selected
-		getBtnRemoveRow().setEnabled(table.getSelectedRow() >= 0);
-		
-		// Enable btnRemoveColumn if a non-key column is selected
-		getBtnRemoveColumn().setEnabled(table.getSelectedColumn() > 0);
-	}
-	
 	/**
-	 * Replaces the data model.
-	 * @param newModel the new DataModel model
+	 * Can be used to notify underlying elements to stop edit actions.
 	 */
-	public void replaceModel(DataModel newModel){
-
-		this.model = newModel;
-//		this.getTable().setModel(this.model.getTableModel());
-		if(this.model.getSeriesCount() > 0){
-			this.getScrollPane().setViewportView(getTable(true));
+	public void stopEditing() {
+		if (this.getTable().isEditing()==true) {
+			this.getTable().getCellEditor().stopCellEditing();
 		}
-		
-		
 	}
-
+	
 }

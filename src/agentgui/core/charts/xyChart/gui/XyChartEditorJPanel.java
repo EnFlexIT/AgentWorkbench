@@ -28,6 +28,7 @@
  */
 package agentgui.core.charts.xyChart.gui;
 
+import javax.swing.JTable;
 import javax.swing.JToolBar;
 
 import agentgui.core.charts.gui.ChartEditorJPanel;
@@ -35,6 +36,7 @@ import agentgui.core.charts.xyChart.XyDataModel;
 import agentgui.core.charts.xyChart.XyOntologyModel;
 import agentgui.core.ontologies.gui.DynForm;
 import agentgui.ontology.XyChart;
+
 /**
  * Implementation of OntologyClassEditorJPanel for XyCharts
  * 
@@ -42,59 +44,106 @@ import agentgui.ontology.XyChart;
  */
 public class XyChartEditorJPanel extends ChartEditorJPanel {
 
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = 7040702924414575703L;
 
+	/** The local data model. */
+	protected XyDataModel dataModel;
+	
+	
+	/**
+	 * Instantiates a new XyChartEditorJPanel.
+	 *
+	 * @param dynForm the current DynForm
+	 * @param startArgIndex the current start argument index
+	 */
 	public XyChartEditorJPanel(DynForm dynForm, int startArgIndex) {
 		super(dynForm, startArgIndex);
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#getDataModel()
+	 */
+	@Override
+	public XyDataModel getDataModel() {
+		if (this.dataModel==null) {
+			this.dataModel = new XyDataModel(this);
+		}
+		return this.dataModel;
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#setOntologyClassInstance(java.lang.Object)
+	 */
+	@Override
+	public void setOntologyClassInstance(Object objectInstance) {
+		this.getDataModel().setOntologyInstanceChart((XyChart) objectInstance);
+		
+		this.getChartTab().replaceModel(this.getDataModel());
+		this.getChartSettingsTab().replaceModel(this.getDataModel().getChartSettingModel());
+		
+		this.getTableTab().setButtonsEnabledToSituation();
+		
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#getOntologyClassInstance()
+	 */
+	@Override
+	public Object getOntologyClassInstance() {
+		return ((XyOntologyModel)this.getDataModel().getOntologyModel()).getXyChart();
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#getChartTab()
+	 */
 	@Override
 	protected XyChartTab getChartTab() {
 		if(chartTab == null){
-			chartTab = new XyChartTab((XyDataModel) model);
+			chartTab = new XyChartTab((XyDataModel) this.getDataModel());
 		}
 		return (XyChartTab) chartTab;
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#getTableTab()
+	 */
 	@Override
 	protected XyTableTab getTableTab() {
 		if(tableTab == null){
-			tableTab = new XyTableTab((XyDataModel) model, this);
+			tableTab = new XyTableTab(this.getDataModel(), this);
 		}
 		return (XyTableTab) tableTab;
 	}
+	/**
+	 * Returns the current JTable for the data series.
+	 * @return the JTable for the data series
+	 */
+	public JTable getJTabelDataSeries() {
+		return this.getTableTab().getTable();
+	}
 	
-	protected XyChartSettingsTab getSettingsTab(){
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#getSettingsTab()
+	 */
+	protected XyChartSettingsTab getChartSettingsTab(){
 		if(this.settingsTab == null){
-			this.settingsTab = new XyChartSettingsTab(this.model.getChartSettingModel(), this);
+			this.settingsTab = new XyChartSettingsTab(this.getDataModel().getChartSettingModel(), this);
 		}
 		return (XyChartSettingsTab) this.settingsTab;
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#parseKey(java.lang.String, java.lang.String, java.lang.Number)
+	 */
 	@Override
 	protected Number parseKey(String key, String keyFormat, Number keyOffset) {
 		return Float.parseFloat(key);
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#parseValue(java.lang.String)
+	 */
 	@Override
 	protected Number parseValue(String value) {
 		return Float.parseFloat(value);
-	}
-
-	@Override
-	public void setOntologyClassInstance(Object objectInstance) {
-		this.model = new XyDataModel((XyChart) objectInstance);
-		this.getChartTab().replaceModel(this.model);
-		this.getTableTab().replaceModel(this.model);
-		this.getSettingsTab().replaceModel(this.model.getChartSettingModel());
-	}
-
-	@Override
-	public Object getOntologyClassInstance() {
-		return ((XyOntologyModel)this.model.getOntologyModel()).getXyChart();
 	}
 
 	/* (non-Javadoc)
@@ -104,5 +153,6 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 	public JToolBar getJToolBarUserFunctions() {
 		return this.getToolBar();
 	}
+
 
 }

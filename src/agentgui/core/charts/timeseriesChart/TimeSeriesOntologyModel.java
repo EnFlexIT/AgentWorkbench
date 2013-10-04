@@ -36,24 +36,37 @@ import agentgui.ontology.DataSeries;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesChartSettings;
+import agentgui.ontology.ValuePair;
 
+/**
+ * The Class TimeSeriesOntologyModel.
+ */
 public class TimeSeriesOntologyModel extends OntologyModel{
 	
+	private TimeSeriesDataModel dataModel;
+	private TimeSeriesChart timeSeriesChart;
+	
+	/**
+	 * Instantiates a new time series ontology model.
+	 *
+	 * @param timeSeriesChart the time series chart
+	 * @param parent the parent
+	 */
 	public TimeSeriesOntologyModel(TimeSeriesChart timeSeriesChart, TimeSeriesDataModel parent){
-		if(timeSeriesChart != null){
-			this.chart = timeSeriesChart;
+		if(timeSeriesChart!=null){
+			this.timeSeriesChart = timeSeriesChart;
 		}else{
-			this.chart = new TimeSeriesChart();
-			((TimeSeriesChart)this.chart).setTimeSeriesVisualisationSettings(new TimeSeriesChartSettings());
+			this.timeSeriesChart = new TimeSeriesChart();
+			this.timeSeriesChart.setTimeSeriesVisualisationSettings(new TimeSeriesChartSettings());
 		}
-		this.parent = parent;
+		this.dataModel = parent;
 	}
 
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.OntologyModel#getChartSettings()
 	 */
 	public ChartSettingsGeneral getChartSettings(){
-		return ((TimeSeriesChart)this.chart).getTimeSeriesVisualisationSettings();
+		return this.timeSeriesChart.getTimeSeriesVisualisationSettings();
 	}
 	
 	/**
@@ -61,65 +74,179 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	 * @return the timeSeriesChart
 	 */
 	public TimeSeriesChart getTimeSeriesChart() {
-		return ((TimeSeriesChart) chart);
+		return timeSeriesChart;
 	}
 
 	/**
 	 * @param timeSeriesChart The timeSeriesChart to set
 	 */
 	public void setTimeSeriesChart(TimeSeriesChart timeSeriesChart) {
-		this.chart = timeSeriesChart;
+		this.timeSeriesChart = timeSeriesChart;
 	}
 	
-	@Override
-	public void addSeries(DataSeries series){
-		((TimeSeriesChart) chart).getTimeSeriesChartData().add(series);
+	/**
+	 * Gets the index of the value pair with the given key of the series with the given index.
+	 * @param seriesIndex The series index
+	 * @param key The key
+	 * @return The value pair's index
+	 * @throws NoSuchSeriesException Thrown if there is no series with the specified index
+	 */
+	protected int getIndexByKey(int seriesIndex, Number key) throws NoSuchSeriesException{
+		
+		List seriesData = getSeriesData(seriesIndex);
+		
+		for(int i=0; i<seriesData.size(); i++){
+			ValuePair valuePair = (ValuePair) seriesData.get(i);
+			if(dataModel.getXValueFromPair(valuePair).doubleValue() == key.doubleValue()){
+				return i;
+			}
+		}
+		return -1;
 	}
-	@Override
-	public void removeSeries(int seriesIndex) throws NoSuchSeriesException{
+	
+	
+	/**
+	 * Removes a value pair.
+	 *
+	 * @param seriesIndex the series index
+	 * @param key the key
+	 * @throws NoSuchSeriesException the no such series exception
+	 */
+	public void removeValuePair(int seriesIndex, Number key) throws NoSuchSeriesException{
 		if(seriesIndex < getSeriesCount()){
-			((TimeSeriesChart) chart).getTimeSeriesChartData().remove(seriesIndex);
-			((TimeSeriesChart) chart).getTimeSeriesVisualisationSettings().getYAxisColors().remove(seriesIndex);
-			((TimeSeriesChart) chart).getTimeSeriesVisualisationSettings().getYAxisLineWidth().remove(seriesIndex);
+			List seriesData = getSeriesData(seriesIndex);
+			int index = getIndexByKey(seriesIndex, key);
+			if(index >= 0){
+				seriesData.remove(index);
+			}
 		}else{
 			throw new NoSuchSeriesException();
 		}
 	}
 	
+	/**
+	 * Adds or updates a value pair.
+	 *
+	 * @param seriesIndex the series index
+	 * @param key the key
+	 * @param value the value
+	 * @throws NoSuchSeriesException the no such series exception
+	 */
+	public void addOrUpdateValuePair(int seriesIndex, Number key, Number value) throws NoSuchSeriesException{
+		if(seriesIndex < getSeriesCount()){
+			List seriesData = getSeriesData(seriesIndex);
+			int valueIndex = getIndexByKey(seriesIndex, key);
+			if(valueIndex >= 0){
+				ValuePair valuePairToChange = (ValuePair) seriesData.get(valueIndex);
+				dataModel.setValueForPair(value, valuePairToChange);
+			}else{
+				ValuePair newValuePair = dataModel.createNewValuePair(key, value);
+				seriesData.add(newValuePair);
+			}
+		}else{
+			throw new NoSuchSeriesException();
+		}
+	}
+	
+	/**
+	 * Exchanges one key in all series that contain it
+	 * @param oldKey The old key
+	 * @param newKey The new key
+	 */
+	public void updateKey(Number oldKey, Number newKey){
+		
+		for(int i=0; i<getSeriesCount(); i++){
+			try {
+				
+				int vpIndex = getIndexByKey(i, oldKey); 
+				if( vpIndex >= 0){
+					// There is a pair with this key
+					List seriesData = getSeriesData(i);
+					ValuePair vp2update = (ValuePair) seriesData.get(vpIndex);
+					dataModel.setKeyForPair(newKey, vp2update);
+				}
+				
+				
+			} catch (NoSuchSeriesException e) {
+				// Should never happen, as i cannot be > number of series
+				System.err.println("Error accessing series "+i);
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.OntologyModel#addSeries(agentgui.ontology.DataSeries)
+	 */
+	@Override
+	public void addSeries(DataSeries series){
+		timeSeriesChart.getTimeSeriesChartData().add(series);
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.OntologyModel#removeSeries(int)
+	 */
+	@Override
+	public void removeSeries(int seriesIndex) throws NoSuchSeriesException{
+		if(seriesIndex < getSeriesCount()){
+			timeSeriesChart.getTimeSeriesChartData().remove(seriesIndex);
+			timeSeriesChart.getTimeSeriesVisualisationSettings().getYAxisColors().remove(seriesIndex);
+			timeSeriesChart.getTimeSeriesVisualisationSettings().getYAxisLineWidth().remove(seriesIndex);
+		}else{
+			throw new NoSuchSeriesException();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.OntologyModel#getSeriesCount()
+	 */
 	@Override
 	public int getSeriesCount(){
-		return ((TimeSeriesChart) chart).getTimeSeriesChartData().size();
+		return timeSeriesChart.getTimeSeriesChartData().size();
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.OntologyModel#getChartData()
+	 */
 	@Override
 	public List getChartData(){
-		return ((TimeSeriesChart) chart).getTimeSeriesChartData();
+		return timeSeriesChart.getTimeSeriesChartData();
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.OntologyModel#getSeries(int)
+	 */
 	@Override
 	public TimeSeries getSeries(int seriesIndex) throws NoSuchSeriesException {
 		if(seriesIndex < getSeriesCount()){
-			TimeSeries series = (TimeSeries) ((TimeSeriesChart) chart).getTimeSeriesChartData().get(seriesIndex);
+			TimeSeries series = (TimeSeries) timeSeriesChart.getTimeSeriesChartData().get(seriesIndex);
 			return series;
 		}else{
 			throw new NoSuchSeriesException();
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.OntologyModel#exchangeSeries(int, agentgui.ontology.DataSeries)
+	 */
 	@Override
 	public void exchangeSeries(int seriesIndex, DataSeries dataSeries) throws NoSuchSeriesException {
 		if (seriesIndex<getSeriesCount()) {
-			TimeSeriesChart tsc = (TimeSeriesChart) this.chart;
-			tsc.getTimeSeriesChartData().remove(seriesIndex);
-			tsc.getTimeSeriesChartData().add(seriesIndex, dataSeries);
+			this.timeSeriesChart.getTimeSeriesChartData().remove(seriesIndex);
+			this.timeSeriesChart.getTimeSeriesChartData().add(seriesIndex, dataSeries);
 		} else {
 			throw new NoSuchSeriesException();
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.OntologyModel#getSeriesData(int)
+	 */
 	@Override
 	public List getSeriesData(int seriesIndex) throws NoSuchSeriesException {
 		if(seriesIndex < getSeriesCount()){
-			TimeSeries series = (TimeSeries) ((TimeSeriesChart) chart).getTimeSeriesChartData().get(seriesIndex);
+			TimeSeries series = (TimeSeries) timeSeriesChart.getTimeSeriesChartData().get(seriesIndex);
 			return (List) series.getTimeSeriesValuePairs();
 		}else{
 			throw new NoSuchSeriesException();
@@ -127,10 +254,11 @@ public class TimeSeriesOntologyModel extends OntologyModel{
 	}
 	
 	/**
-	 * Sets the time format in the settings object
-	 * @param timeFormat
+	 * Sets the time format in the settings object.
+	 * @param timeFormat the new time format
 	 */
 	public void setTimeFormat(String timeFormat){
-		((TimeSeriesChart)this.chart).getTimeSeriesVisualisationSettings().setTimeFormat(timeFormat);
+		this.timeSeriesChart.getTimeSeriesVisualisationSettings().setTimeFormat(timeFormat);
 	}
+	
 }

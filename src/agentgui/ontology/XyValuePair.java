@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: XyValuePair
 * @author ontology bean generator
-* @version 2013/09/12, 17:14:05
+* @version 2013/10/1, 11:28:40
 */
 public class XyValuePair extends ValuePair{ 
 

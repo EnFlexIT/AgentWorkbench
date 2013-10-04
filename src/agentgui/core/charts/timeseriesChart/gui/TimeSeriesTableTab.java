@@ -28,25 +28,33 @@
  */
 package agentgui.core.charts.timeseriesChart.gui;
 
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import agentgui.core.application.Language;
+import agentgui.core.charts.NoSuchSeriesException;
+import agentgui.core.charts.TableModel;
+import agentgui.core.charts.TableModelDataVector;
 import agentgui.core.charts.gui.ChartEditorJPanel;
 import agentgui.core.charts.gui.TableCellEditor4FloatObject;
 import agentgui.core.charts.gui.TableCellEditor4Time;
 import agentgui.core.charts.gui.TableCellRenderer4Time;
 import agentgui.core.charts.gui.TableTab;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
+import agentgui.ontology.DataSeries;
+import agentgui.ontology.ValuePair;
 
 /**
  * TableTab-implementation for time series charts.
@@ -62,61 +70,54 @@ public class TimeSeriesTableTab extends TableTab {
 	 */
 	public TimeSeriesTableTab(TimeSeriesDataModel model, ChartEditorJPanel parentChartEditor) {
 		super(parentChartEditor);
-		this.model = model;
+		this.dataModelLocal = model;
 		initialize();
 	}
+	
 	@Override
 	protected JTable getTable() {
-		return this.getTable(false);
-	}
-	@Override
-	protected JTable getTable(boolean forceRebuild) {
-		if (table == null || forceRebuild) {
-			table = new JTable(){
-
+		if (jTable == null) {
+			
+			jTable = new JTable(){
 				private static final long serialVersionUID = 4259474557660027403L;
-
 				/* (non-Javadoc)
 				 * @see javax.swing.JTable#getCellEditor(int, int)
 				 */
 				@Override
 				public TableCellEditor getCellEditor(int row, int column) {
 					if(column == 0){
-						return new TableCellEditor4Time(((TimeSeriesDataModel)model).getTimeFormat());
+						return new TableCellEditor4Time(((TimeSeriesDataModel)dataModelLocal).getTimeFormat());
 					}else{
 						return new TableCellEditor4FloatObject();
 					}
 				}
-
 				/* (non-Javadoc)
 				 * @see javax.swing.JTable#getCellRenderer(int, int)
 				 */
 				@Override
 				public TableCellRenderer getCellRenderer(int row, int column) {
 					if(column == 0){
-						return new TableCellRenderer4Time(((TimeSeriesDataModel)model).getTimeFormat());
+						return new TableCellRenderer4Time(((TimeSeriesDataModel)dataModelLocal).getTimeFormat());
 					}else{
 						return super.getCellRenderer(row, column);
 					}
 				}
-				
-				
-
-				
 			};
-			table.setModel(model.getTableModel());
-			table.setShowGrid(false);
-			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			table.setCellSelectionEnabled(true);
-			table.setRowSelectionAllowed(true);
-			table.setColumnSelectionAllowed(true);
-			table.getTableHeader().setReorderingAllowed(false);
 			
-			table.getSelectionModel().addListSelectionListener(this);
-			table.getColumnModel().getSelectionModel().addListSelectionListener(this);
+			jTable.setModel(dataModelLocal.getTableModel());
+			jTable.setShowGrid(false);
+			jTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jTable.setCellSelectionEnabled(true);
+			jTable.setRowSelectionAllowed(true);
+			jTable.setColumnSelectionAllowed(true);
+			jTable.getTableHeader().setReorderingAllowed(false);
 			
-			final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model.getTableModel());
-			if (model.getTableModel().getColumnCount()>0) {
+			jTable.getSelectionModel().addListSelectionListener(this);
+			jTable.getColumnModel().getSelectionModel().addListSelectionListener(this);
+			
+			
+			final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(dataModelLocal.getTableModel());
+			if (dataModelLocal.getTableModel().getColumnCount()>0) {
 				sorter.setComparator(0, new Comparator<Number>() {
 					@Override
 					public int compare(Number value1, Number value2) {
@@ -133,17 +134,98 @@ public class TimeSeriesTableTab extends TableTab {
 					}
 				});				
 			}
-			table.setRowSorter(sorter);
+			jTable.setRowSorter(sorter);
 			
 			// --- Initially sort by key ------------
 			List<SortKey> sortKeys = new ArrayList<SortKey>();
-			for (int i = 0; i < table.getColumnCount(); i++) {
+			for (int i = 0; i < jTable.getColumnCount(); i++) {
 			    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
 			}
-			table.getRowSorter().setSortKeys(sortKeys);
+			jTable.getRowSorter().setSortKeys(sortKeys);
 			
 		}
-		return table;
+		return jTable;
 	}
 		
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		// --- Stop Cell editing --------------------------
+		if (this.getTable().isEditing()) {
+			this.getTable().getCellEditor().stopCellEditing();	
+		}
+		
+		// --- Case separation ActionEvent ----------------
+		if(e.getSource()==getBtnAddColumn() || (e.getSource()==getBtnAddRow() && getTable().getRowCount()==0)){
+			
+			String seriesLabel = (String) JOptionPane.showInputDialog(this, Language.translate("Label"), Language.translate("Neue Datenreihe"), JOptionPane.QUESTION_MESSAGE, null, null, dataModelLocal.getDefaultSeriesLabel());
+			if(seriesLabel != null){
+				// --- As JFreeChart doesn't work with empty data series, one value pair must be added ------ 
+				DataSeries newSeries = this.dataModelLocal.createNewDataSeries(seriesLabel);
+				ValuePair initialValuePair;
+				if(this.dataModelLocal.getSeriesCount() > 0){
+					// -- If there is already data in the model, use the first existing key -----------------
+					TableModelDataVector dataVector = this.dataModelLocal.getTableModel().getTableModelDataVector();
+					int keyColumn = dataVector.getKeyColumnIndex();
+					for (int row=0; row<dataVector.size(); row++) {
+						initialValuePair = this.dataModelLocal.createNewValuePair((Number) this.dataModelLocal.getTableModel().getValueAt(row, keyColumn), 0);
+						this.dataModelLocal.getValuePairsFromSeries(newSeries).add(initialValuePair);
+					}
+					
+				}else{
+					// --- If not, use 0 as key value -------------------------------------------------------
+					initialValuePair = this.dataModelLocal.createNewValuePair(0, 0);
+					this.dataModelLocal.getValuePairsFromSeries(newSeries).add(initialValuePair);
+				}
+				this.dataModelLocal.addSeries(newSeries);
+			}
+			
+		} else if(e.getSource() == getBtnAddRow()){
+			this.dataModelLocal.getTableModel().addEmptyRow(this.getTable());
+			
+		} else if(e.getSource() == getBtnRemoveRow()){
+			this.dataModelLocal.getTableModel().removeRow(this.getTable());
+
+		} else if(e.getSource() == getBtnRemoveColumn()){
+			
+			if(jTable.getSelectedColumn() > 0){
+				TableModelDataVector tmdv = ((TableModel) jTable.getModel()).getTableModelDataVector();
+				int seriesIndex = jTable.getSelectedColumn()-tmdv.getNoOfPrefixColumns();
+				try {
+					this.dataModelLocal.removeSeries(seriesIndex);
+
+				} catch (NoSuchSeriesException e1) {
+					System.err.println("Error removing series " + seriesIndex);
+					e1.printStackTrace();
+				}
+			}
+			
+		} 
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
+	 */
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		this.setButtonsEnabledToSituation();
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.TableTab#setButtonsEnabledToSituation()
+	 */
+	@Override
+	public void setButtonsEnabledToSituation() {
+		// Enable btnRemoveRow if a row is selected
+		getBtnRemoveRow().setEnabled(jTable.getSelectedRow() >= 0);
+		// Enable btnRemoveColumn if a non-key column is selected
+		getBtnRemoveColumn().setEnabled(jTable.getSelectedColumn() > 0);
+	}
+
+	
 }

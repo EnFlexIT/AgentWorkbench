@@ -353,12 +353,12 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 					// --- Get the data model of the chart --------
 					if (ontoVisPanelSingle instanceof TimeSeriesChartEditorJPanel) {
 						tscep = (TimeSeriesChartEditorJPanel) ontoVisPanelSingle;
-						dataModelTimeSeries = (TimeSeriesDataModel) tscep.getModel();
+						dataModelTimeSeries = (TimeSeriesDataModel) tscep.getDataModel();
 						
 					} else if (ontoVisPanelSingle instanceof TimeSeriesWidget) {
 						TimeSeriesWidget tsw = (TimeSeriesWidget) ontoVisPanelSingle;
 						tscep = (TimeSeriesChartEditorJPanel) tsw.getTimeSeriesChartEditorJDialog().getContentPane();
-						dataModelTimeSeries = (TimeSeriesDataModel) tscep.getModel();
+						dataModelTimeSeries = (TimeSeriesDataModel) tscep.getDataModel();
 					}
 					
 					// --- Apply Changes --------------------------

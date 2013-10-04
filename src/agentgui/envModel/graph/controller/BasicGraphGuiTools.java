@@ -240,7 +240,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		if (jButtonComponents == null) {
 		    jButtonComponents = new JButton();
 		    jButtonComponents.setPreferredSize(jButtonSize);
-		    jButtonComponents.setIcon(new ImageIcon(getClass().getResource(pathImage + "components.gif")));
+		    jButtonComponents.setIcon(new ImageIcon(getClass().getResource(pathImage + "Properties.png")));
 		    jButtonComponents.setToolTipText(Language.translate("Netzwerk-Komponenten"));
 		    jButtonComponents.addActionListener(this);
 		}
@@ -583,7 +583,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		if (jMenuItemNodeProp == null) {
 		    jMenuItemNodeProp = new JMenuItem();
 		    jMenuItemNodeProp.setText(Language.translate("Edit Vertex Properties", Language.EN));
-		    jMenuItemNodeProp.setIcon(new ImageIcon(getClass().getResource(pathImage + "Properties.jpg")));
+		    jMenuItemNodeProp.setIcon(new ImageIcon(getClass().getResource(pathImage + "Properties.png")));
 		    jMenuItemNodeProp.addActionListener(this);
 		}
 		return jMenuItemNodeProp;
@@ -597,7 +597,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		if (jMenuItemEdgeProp == null) {
 		    jMenuItemEdgeProp = new JMenuItem();
 		    jMenuItemEdgeProp.setText(Language.translate("Edit Properties", Language.EN));
-		    jMenuItemEdgeProp.setIcon(new ImageIcon(getClass().getResource(pathImage + "Properties.jpg")));
+		    jMenuItemEdgeProp.setIcon(new ImageIcon(getClass().getResource(pathImage + "Properties.png")));
 		    jMenuItemEdgeProp.addActionListener(this);
 		}
 		return jMenuItemEdgeProp;

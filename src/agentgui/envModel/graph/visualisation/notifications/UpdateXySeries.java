@@ -354,12 +354,12 @@ public class UpdateXySeries extends UpdateDataSeries {
 					// --- Get the data model of the chart --------
 					if (ontoVisPanelSingle instanceof XyChartEditorJPanel) {
 						tscep = (XyChartEditorJPanel) ontoVisPanelSingle;
-						dataModelXySeries = (XyDataModel) tscep.getModel();
+						dataModelXySeries = (XyDataModel) tscep.getDataModel();
 						
 					} else if (ontoVisPanelSingle instanceof XyWidget) {
 						XyWidget tsw = (XyWidget) ontoVisPanelSingle;
 						tscep = (XyChartEditorJPanel) tsw.getXyChartEditorJDialog().getContentPane();
-						dataModelXySeries = (XyDataModel) tscep.getModel();
+						dataModelXySeries = (XyDataModel) tscep.getDataModel();
 					}
 					
 					// --- Apply Changes --------------------------

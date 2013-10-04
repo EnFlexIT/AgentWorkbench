@@ -46,7 +46,7 @@ de;An Fenster anpassen;Fit to window;;;
 de;Ansicht wiederherstellen;Restore View;;;
 de;Ansicht:;View:
 de;Ansicht;View
-de;Anwenden;;;;
+de;Anwenden;Apply;;;
 de;Anwendung;Application
 de;Anzahl Agenten (erwartet);Number of agents (expected)
 de;Anzahl Container berechnen;Calculate number of container
@@ -64,6 +64,7 @@ de;Auswahl - Agenten;Agent selection
 de;Auswahl - Ontologien;Ontology selection
 de;Auswahl Ontologien;Ontology selection
 de;Auswahl Startliste;Selection: start list;;;
+de;Automatisch nach X-Werten sortieren;Autosort by X-Values;;;
 de;Basis-Agenten;Base agents
 de;Basis-Info;Basic info
 de;Bearbeiten;Edit
@@ -100,6 +101,13 @@ de;Container;Container
 de;Countdown-Ansicht;Countdown view;;;
 de;DF (Directory Facilitator) starten;Start DF (Directory Facilitator)
 de;DF anzeigen;Show DF GUI
+de;Das Anwenden der neuen Datenreiheneigenschaften 
+kann dazu führen, dass Daten verloren gehen.
+
+Möchten Sie fortfahren?;Applying the new data series properties 
+can lead to data loss. 
+
+Would you like to continue?;;;
 de;Das Editor-Panel für die Klasse ist nicht definiert!;The editor panel of this class is not defined!;;;
 de;Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht erneut hinzugefügt werden!;The plugin is already integrated into the project and therefore can not be added again!
 de;Das Projekt wird nun geschlossen!;The project will be closed now!;;;
@@ -141,9 +149,11 @@ nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system para
 can not be deleted or renamed!;;;
 de;Diskretes Zeitmodell mit Schrittweite sowie Start- und Endzeitpunkt.;Incremental discrete-time model with start and stop time.;;;
 de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
+de;Doppelte X-Werte zulassen;Allow duplicate X-Values;;;
 de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;;;
 de;Eigene Auslastungsgrenzwerte verwenden;Use own threshold values
+de;Eigenschaften;Properties;;;
 de;Einfach zählendes Zeitmodell (z. B. 1 ... 9999);Simple counting time model (e. g. 1 ... 9999);;;
 de;Einheit;Unit
 de;Einstellungen;Settings;;;
@@ -322,6 +332,9 @@ de;N - Threads;N - Threads
 de;Nach Update suchen ...;Search for Update ...;;;
 de;Nach Update suchen;Check for Update;;;
 de;Nach Updates suchen;Search for updates;;;
+de;Nach X-Werten sortieren;Autosort by X-values;;;
+de;Nach oben verschieben;Move up;;;
+de;Nach unten verschieben;Move down;;;
 de;Name bereits vorhanden!;Name already exists!
 de;Name ungültig!;Invalid name!
 de;Netz-Komponenten;Network Components
@@ -335,9 +348,9 @@ de;Netzwerkmodell importieren;Import network model ;;;
 de;Netzwerkmodell leeren;Clear network model;;;
 de;Neu laden;Reload;;;
 de;Neue Datenreihe(n) importieren;Import new data set (s) ;;;
-de;Neue Datenreihe;;;;
+de;Neue Datenreihe;New Data Series;;;
 de;Neue Serie;New Series;;;
-de;Neue Werte;;;;
+de;Neue Werte;New Values;;;
 de;Neuer Agent;New agent
 de;Neuer Eintrag;New Entry
 de;Neues Hindernis;New obstacle
@@ -349,6 +362,7 @@ de;Neustart des Server-Dienstes;Restart the server
 de;Nicht definiert;Not defined
 de;Nicht eindeutige Komponentenauswahl !;Non-unique component selection !;;;
 de;Nur Nicht-JADE-Ontologien;Only non-JADE ontologies
+de;Nächste Datenreihe;Next Data Series;;;
 de;Nächster Datensatz (STRG+DOWN);Next Record (CTRL + DOWN)
 de;OK;OK
 de;Objekt Entfernen;Remove object
@@ -410,6 +424,7 @@ de;RMA (Remote Monitoring Agent) öffnen;Open RMA (Remote Monitoring Agent)
 de;Raster verwenden;Use guide grid;;;
 de;Raster-Breite;Grid width;;;
 de;Rechts-Klick für weitere Optionen;Right-Click for more options
+de;Reihen-Eigenschaften;Series-Properties;;;
 de;Remote JADE-RMA beim Start des entfernten Containers anzeigen;Display remote JADE-RMA at the start of the remote container;;;
 de;Ressourcen;Resources
 de;SVG Dateien;SVG files
@@ -539,6 +554,7 @@ de;Vis.-Geschwindigkeit;Visualisation speed
 de;Visualisierung;Visualization
 de;Vor dem Löschen exportieren!;Export before deleting!;;;
 de;Vorhandene Projektverzeichnisse;Available project folders;;;
+de;Vorherige Datenreihe;Previous Data Series;;;
 de;Voriger Datensatz (STRG+UP);Previous Record (CTRL + UP)
 de;Vorlagen;Templates;;;
 de;Warte auf Agentenliste...;Waiting for agent list...
@@ -550,6 +566,7 @@ de;Wochen;Weeks;;;
 de;Wollen Sie das aktuelle Setup wirklich löschen?;Do you want to delete the current Setup?
 de;Wörterbuch;Dictionary
 de;X Wert;X value;;;
+de;X-Duplikate zulassen;Allow duplicate X-Values;;;
 de;XML-Dateien;XML files
 de;XML;XML
 de;Zeile entfernen;Remove Row;;;
@@ -582,6 +599,7 @@ de;wurde nicht gefunden.;was not found.
 de;yEd GraphML Datei;yEd GraphML file
 de;yEd GraphML;yEd GraphML
 de;zu Datei;to file
+de;Änderungen anwenden;;;;
 de;Öffne Projekt;Open Project;;;
 de;Öffnen;Open
 de;Über...;About ...

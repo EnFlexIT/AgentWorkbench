@@ -6,9 +6,6 @@ import agentgui.core.ontologies.gui.DynForm;
 
 public class XyChartEditorJDialog extends ChartEditorJDialog {
 
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = 4548924604253959308L;
 
 	public XyChartEditorJDialog(DynForm dynForm, int startArgIndex) {

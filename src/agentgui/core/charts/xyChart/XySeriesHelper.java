@@ -38,6 +38,8 @@ import agentgui.ontology.XyValuePair;
 
 /**
  * The Class XySeriesHelper provides some methods to work with {@link XyDataSeries}.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class XySeriesHelper extends TreeMap<Float, XyValuePair>{
 

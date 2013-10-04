@@ -34,6 +34,7 @@ import java.awt.event.KeyListener;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
 /**
@@ -62,6 +63,7 @@ public abstract class BasicCellEditor extends AbstractCellEditor implements KeyL
 
 	@Override
 	public abstract Object getCellEditorValue();
+	
 	/**
 	 * Returns the editor component, initializes it if not done yet
 	 * @param value The table cell's value before editing 
@@ -69,6 +71,8 @@ public abstract class BasicCellEditor extends AbstractCellEditor implements KeyL
 	 */
 	protected abstract Component getEditorComponent(Object value);
 
+	
+	
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		
@@ -82,18 +86,16 @@ public abstract class BasicCellEditor extends AbstractCellEditor implements KeyL
 		return this.getEditorComponent(value);
 	}
 
-	/**
-	 * @return the row
-	 */
+	/** @return the row */
 	public int getRow() {
 		return row;
 	}
-	/**
-	 * @return the column
-	 */
+	/** @return the column */
 	public int getColumn() {
 		return column;
 	}
+	
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.AbstractCellEditor#stopCellEditing()
 	 */
@@ -121,22 +123,34 @@ public abstract class BasicCellEditor extends AbstractCellEditor implements KeyL
 		super.cancelCellEditing();
 	}
 	@Override
-	public void keyPressed(KeyEvent e) {
-		int keyCode = e.getKeyCode();
+	public void keyPressed(KeyEvent ke) {
+		
+		int keyCode = ke.getKeyCode();
+		Object keSource = ke.getSource();
+		JTextField jTextField = (JTextField) keSource;;
+		int caretPos = jTextField.getCaretPosition();
+		int textLength = jTextField.getText().length();
+		
 		if(keyCode == KeyEvent.VK_ESCAPE){
 			// Due to a java bug, the callback method is not called automatically when pressing escape.
 			cancelCellEditing();
-		}else if(keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_TAB){
+		} else if(keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_TAB){
 			// Remember which key was used to confirm editing
 			confirmationKey = keyCode;
+		} else if(keyCode==KeyEvent.VK_RIGHT && caretPos==textLength){
+			confirmationKey = keyCode;
+			stopCellEditing();
+		} else if(keyCode==KeyEvent.VK_LEFT && caretPos==0){
+			confirmationKey = keyCode;
+			stopCellEditing();
 		}
 	}
 	@Override
-	public void keyTyped(KeyEvent e) {
+	public void keyTyped(KeyEvent ke) {
 		// Method required by the interface, but not needed here.
 	}
 	@Override
-	public void keyReleased(KeyEvent e) {
+	public void keyReleased(KeyEvent ke) {
 		// Method required by the interface, but not needed here.
 	}
 

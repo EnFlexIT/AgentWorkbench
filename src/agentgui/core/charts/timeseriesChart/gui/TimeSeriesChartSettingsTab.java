@@ -55,8 +55,15 @@ public class TimeSeriesChartSettingsTab extends ChartSettingsTab {
 	
 	private JLabel lblTimeFormatSelector = null;
 	private TimeFormatSelection timeFormatSelector = null;
+	
 	private boolean pauseLocalActionListener = false;
 	
+	
+	/**
+	 * Instantiates a new time series chart settings tab.
+	 * @param chartSettingModel the chart setting model
+	 * @param parent the parent
+	 */
 	public TimeSeriesChartSettingsTab(ChartSettingModel chartSettingModel, TimeSeriesChartEditorJPanel parent) {
 		super(chartSettingModel, parent);
 	}

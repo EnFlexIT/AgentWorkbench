@@ -28,21 +28,44 @@
  */
 package agentgui.core.charts.xyChart;
 
+import jade.util.leap.List;
+
+import java.awt.Container;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.TreeMap;
 import java.util.Vector;
 
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+
+import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.TableModel;
+import agentgui.core.charts.TableModelDataVector;
+import agentgui.ontology.DataSeries;
+import agentgui.ontology.ValuePair;
+import agentgui.ontology.XyDataSeries;
+import agentgui.ontology.XyValuePair;
 
 public class XyTableModel extends TableModel {
 
 	private static final long serialVersionUID = -8873141815861732107L;
 	
-	private static final String DEFAULT_KEY_COLUMN_TITLE = "X value";
+	private static final String DEFAULT_NUMBER_COLUMN_TITLE = "Row No";
+	private static final String DEFAULT_KEY_COLUMN_TITLE = "X Value";
+	
+	private JTable myJTable = null;
+	private int currSeriesSelection = -1;
+	private Vector<TableModelDataVector> seriesTableModels = null;
+	
 	
 	/**
 	 * Instantiates a new XyTableModel.
 	 * @param parent the parent
 	 */
-	public XyTableModel(XyDataModel parent){
+	public XyTableModel(JTable myJTable, XyDataModel parent){
+		this.myJTable = myJTable;
 		this.parentDataModel = parent;
 		this.initilizeTabelModel();
 	}
@@ -51,9 +74,45 @@ public class XyTableModel extends TableModel {
 	 * @see agentgui.core.charts.TableModel#initilizeTabelModel()
 	 */
 	public void initilizeTabelModel() {
-		columnTitles = new Vector<String>();
-		columnTitles.add(DEFAULT_KEY_COLUMN_TITLE);
-		tableData = new Vector<Vector<Object>>();
+		this.columnTitles = new Vector<String>();
+		this.columnTitles.add(DEFAULT_NUMBER_COLUMN_TITLE);
+		this.columnTitles.add(DEFAULT_KEY_COLUMN_TITLE);
+		this.currSeriesSelection = -1;
+		this.seriesTableModels = new Vector<TableModelDataVector>();
+		this.tableModelDataVector = new TableModelDataVector(true, 0);
+		this.addTableModelListener(this);
+		this.setTabTitle();
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.TableModel#rebuildTableModel()
+	 */
+	@Override
+	public void rebuildTableModel() {
+		
+		this.seriesTableModels = null;
+		this.tableModelDataVector = null;
+		
+		List chartDataSeries = this.parentDataModel.getOntologyModel().getChartData();
+		for (int i = 0; i < chartDataSeries.size(); i++) {
+			DataSeries chartData = (DataSeries) chartDataSeries.get(i);
+			this.addSeries(chartData);
+		}
+	}
+	
+	/**
+	 * Gets the chart model.
+	 * @return the chart model
+	 */
+	private XyChartModel getChartModel() {
+		return (XyChartModel) this.parentDataModel.getChartModel();
+	}
+	/**
+	 * Gets the ontology model.
+	 * @return the ontology model
+	 */
+	private XyOntologyModel getOntologyModel() {
+		return (XyOntologyModel) this.parentDataModel.getOntologyModel();
 	}
 	
 	/* (non-Javadoc)
@@ -61,6 +120,9 @@ public class XyTableModel extends TableModel {
 	 */
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
+		if (columnIndex==0) {
+			return Integer.class;
+		} 
 		return Float.class;
 	}
 	
@@ -70,5 +132,661 @@ public class XyTableModel extends TableModel {
 	public static String getDefaultKeyColumnTitle() {
 		return DEFAULT_KEY_COLUMN_TITLE;
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.TableModel#setSeriesLabel(int, java.lang.String)
+	 */
+	@Override
+	public void setSeriesLabel(int seriesIndex, String label) throws NoSuchSeriesException{
+		if(seriesIndex==this.getFocusedSeriesIndex()){
+			if (columnTitles.size()==3){
+				columnTitles.set(2, label);	
+			} else {
+				columnTitles.add(2, label);
+			}
+			fireTableStructureChanged();
+		}
+	}
+	/* (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+	 */
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		if (columnIndex==0) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Gets the series table models.
+	 * @return the series table models
+	 */
+	public Vector<TableModelDataVector> getSeriesTableModels() {
+		if (this.seriesTableModels==null) {
+			this.seriesTableModels = new Vector<TableModelDataVector>();
+		}
+		return this.seriesTableModels;
+	}
+	
+	/**
+	 * Gets the focused series index.
+	 * @return the focused series index
+	 */
+	public int getFocusedSeriesIndex() {
+		return this.currSeriesSelection;
+	}
+	/**
+	 * Focuses the specified series.
+	 *
+	 * @param targetSeriesIndex the target series index
+	 * @throws NoSuchSeriesException the no such series exception
+	 */
+	public void focusSeries(int targetSeriesIndex) {
+		
+		try {
+			if (targetSeriesIndex<0) {
+				targetSeriesIndex = 0;
+			} else if (targetSeriesIndex>(this.getSeriesTableModels().size()-1)) {
+				targetSeriesIndex = this.getSeriesTableModels().size()-1;
+			}
+			this.currSeriesSelection = targetSeriesIndex;
+			// --- Get label from series ------------------
+			DataSeries series = this.parentDataModel.getOntologyModel().getSeries(this.currSeriesSelection);
+			this.tableModelDataVector = this.getSeriesTableModels().get(this.currSeriesSelection);
+			// --- Set series name ------------------------
+			if (this.columnTitles.size()==3) {
+				this.columnTitles.set(2, series.getLabel());	
+			} else {
+				this.columnTitles.add(2, series.getLabel());
+			}
+			// --- Refresh model --------------------------
+			this.myJTable.setModel(this);
+			this.fireTableStructureChanged();
+			
+			// --- Set tab-title --------------------------
+			this.setTabTitle();
+			
+		} catch (NoSuchSeriesException nsse) {
+			nsse.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Sets the tab title.
+	 */
+	private void setTabTitle() {
+		
+		String tabTitle = "";
+		if (this.getSeriesTableModels().size()==0) {
+			tabTitle = "Table (0)";
+		} else {
+			tabTitle = "Table (" + (currSeriesSelection+1) + "/" +  this.getSeriesTableModels().size() + ")";
+		}
+		Container tableTab = this.myJTable.getParent().getParent().getParent();
+		JTabbedPane editorTabbedPane =(JTabbedPane) tableTab.getParent();
+		if (editorTabbedPane!=null) {
+			int tabPosIndex = 0;
+			for (tabPosIndex=0; tabPosIndex<editorTabbedPane.getTabCount(); tabPosIndex++) {
+				if (editorTabbedPane.getComponentAt(tabPosIndex)==tableTab) {
+					break;
+				}
+			}
+			editorTabbedPane.setTitleAt(tabPosIndex, tabTitle);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.TableModel#addEmptyRow(javax.swing.JTable)
+	 */
+	@Override
+	public void addEmptyRow(JTable jTable){
+		
+		// --- Get current position in the table model ----
+		Vector<Number> rowSelected = null;
+		Vector<Number> newRow = null;
+		Number currKey = 0;
+		Number newKey = 0;
+		float newXValue = 0f;
+		float newYValue = 0f;
+		
+		// --- Get the current or the last row ------------
+		int modelLineSelected = 0;
+		int modelLineSelectedNew = 0;
+		int tableRowSelected = 0;
+		int tableRowSelectedNew = 0;
+			
+		tableRowSelected = jTable.getSelectedRow();
+		if (tableRowSelected==-1) {
+			tableRowSelected = 0;
+		}
+		
+		if (tableModelDataVector.size()==0) {
+			// --- Create new data series -----------------
+			DataSeries newSeries = parentDataModel.createNewDataSeries(parentDataModel.getDefaultSeriesLabel());
+			
+			ValuePair initialValuePair = parentDataModel.createNewValuePair(0L, newYValue);
+			parentDataModel.getValuePairsFromSeries(newSeries).add(initialValuePair);
+			parentDataModel.addSeries(newSeries);
+			
+		} else {
+			// --- Get current selection ------------------
+			modelLineSelected = jTable.convertRowIndexToModel(tableRowSelected);
+			if (modelLineSelected>this.tableModelDataVector.size()-1) modelLineSelected = this.tableModelDataVector.size()-1; 
+			rowSelected = tableModelDataVector.get(modelLineSelected);
+			currKey = rowSelected.get(tableModelDataVector.getKeyColumnIndex());
+			newRow = new Vector<Number>();
 
+			// --- Case separation according to the key ---
+			if (tableModelDataVector.getKeyColumnIndex()==0) {
+				// --- Key by row number ---
+				newKey = currKey;
+				// --- Find new index -----------
+				modelLineSelectedNew = modelLineSelected;
+				// --- Add to new row -----------
+				newRow.add(newKey);
+				newRow.add(newXValue);
+				
+			} else {
+				// --- Key by X Value -----------
+				newKey = currKey.floatValue() + 1f;
+				while (tableModelDataVector.getKeyRowVectorTreeMap().get(newKey)!=null) {
+					newKey = newKey.floatValue() + 1f;
+				}
+				// --- Find new index -----------
+				modelLineSelectedNew = tableModelDataVector.size();
+				for (int i=0; i < tableModelDataVector.size(); i++) {
+					Vector<Number> row = tableModelDataVector.get(i);
+					Number key = row.get(tableModelDataVector.getKeyColumnIndex());
+					if (key.doubleValue()>newKey.doubleValue()) {
+						modelLineSelectedNew = i;
+						break;
+					}
+				}
+				// --- Add to new row -----------
+				newRow.add(modelLineSelectedNew+1);
+				newRow.add(newKey);
+			}
+			newRow.add(newYValue);
+			
+			this.getOntologyModel().addXyValuePair(this.getFocusedSeriesIndex(), modelLineSelectedNew, newXValue, newYValue);
+			this.getChartModel().addXyDataItem(this.getFocusedSeriesIndex(), modelLineSelectedNew, newXValue, newYValue);
+			
+			// --- Add new row to table model ---
+			tableModelDataVector.add(modelLineSelectedNew, newRow);
+			
+		}
+		fireTableRowsInserted(0, getRowCount()-1);
+		
+		// --- Set new selection ----------------
+		tableRowSelectedNew = jTable.convertRowIndexToView(modelLineSelectedNew);
+		if(tableRowSelectedNew >= 0){
+			jTable.setRowSelectionInterval(tableRowSelectedNew, tableRowSelectedNew);
+			jTable.changeSelection(tableRowSelectedNew, 0, false, false);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.TableModel#removeRow(javax.swing.JTable)
+	 */
+	@Override
+	public void removeRow(JTable jTable){
+
+		int rowIndexTable = jTable.getSelectedRow();
+		
+		int rowIndexModel = 0;
+		int rowIndexTableNew = 0;
+		int rowIndexModelNew = 0;
+		
+		if(jTable.getRowCount()==1 && parentDataModel.getSeriesCount()==1){
+			// ---- Last row of the last data series ------
+			while(parentDataModel.getSeriesCount()>0){
+				try {
+					parentDataModel.removeSeries(0);
+				} catch (NoSuchSeriesException nsse) {
+					nsse.printStackTrace();  
+				}
+			}
+			rowIndexModelNew = -1;
+			rowIndexTableNew = -1;
+		
+		} else if (jTable.getRowCount()==1 && parentDataModel.getSeriesCount()>1) {
+			// --- Last row of a data series --------------
+			try {
+				parentDataModel.removeSeries(this.getFocusedSeriesIndex());
+			} catch (NoSuchSeriesException nsse) {
+				nsse.printStackTrace();
+			}
+			
+		} else{
+			// --- One of several rows are selected -------
+			if ((rowIndexTable+1) > jTable.getRowCount()) {
+				rowIndexTable = jTable.getRowCount()-1;
+			}
+			rowIndexModel = jTable.convertRowIndexToModel(rowIndexTable);
+			
+			this.tableModelDataVector.remove(rowIndexModel);
+			this.getOntologyModel().removeXyValuePair(this.getFocusedSeriesIndex(), rowIndexModel);
+			this.getChartModel().setXYSeriesAccordingToOntologyModel(this.getFocusedSeriesIndex());
+			this.fireTableRowsDeleted(rowIndexModel, rowIndexModel);
+			
+			rowIndexModelNew = rowIndexModel;
+			if (rowIndexModelNew>=jTable.getRowCount()) {
+				rowIndexModelNew = jTable.getRowCount()-1;
+			}
+			rowIndexTableNew = jTable.convertRowIndexToView(rowIndexModelNew);
+			
+		}
+		
+		// --- Set new selection ------------
+		if(rowIndexTableNew==-1){
+			jTable.clearSelection();
+		} else {
+			jTable.setRowSelectionInterval(rowIndexTableNew, rowIndexTableNew);
+			jTable.changeSelection(rowIndexTableNew, 0, false, false);
+		}
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.TableModel#addSeries(agentgui.ontology.DataSeries)
+	 */
+	@Override
+	public void addSeries(DataSeries newSeries){
+
+		if (newSeries==null) return;
+		XyDataSeries xySeries = (XyDataSeries) newSeries;
+		int xySeriesInitialSize = xySeries.getXyValuePairs().size();
+		
+		// --- Create new table model for the series ------
+		int keyColumnIndex = 0;
+		if (xySeries.getAvoidDuplicateXValues()==true) {
+			keyColumnIndex = 1;
+		}
+		
+		// --- Do some initial work on the data series ----
+		TableModelDataVector tmdv = new TableModelDataVector(true, keyColumnIndex);
+		
+		// --- Run through the list of value pairs --------
+		List valuePairs = parentDataModel.getValuePairsFromSeries(xySeries); 
+		for (int i=0; i<valuePairs.size(); i++) {
+			
+			ValuePair vp = (ValuePair) valuePairs.get(i);
+			Number xValue = parentDataModel.getXValueFromPair(vp);
+			Number yValue = parentDataModel.getYValueFromValuePair(vp);
+			
+			Vector<Number> newRow = new Vector<Number>();
+			if (tmdv.size()==0) {
+				newRow.add(1);
+			} else {
+				newRow.add(tmdv.size()+1);
+			}
+			newRow.add(xValue);
+			newRow.add(yValue);
+			
+			tmdv.add(newRow);
+		}
+		// --- Add TableModels and set focus --------------
+		this.getSeriesTableModels().add(tmdv);
+		this.focusSeries(this.getSeriesTableModels().size()-1);
+		this.fireTableStructureChanged();
+		
+		if (xySeries.getAvoidDuplicateXValues()==true && tmdv.size()!=xySeriesInitialSize) {
+			// ---------------------------------------------------------------- 
+			// --- Some rows are filtered because of duplicate X-Values. ------ 
+			// --- Correct the ontology model							 ------
+			// ----------------------------------------------------------------
+			//TODO
+			System.out.println("Data was filtered");
+		}
+		
+	}
+	
+	/**
+	 * Removes a XY Series from the table model
+	 * @param seriesIndex The index of the series to be removed
+	 * @throws NoSuchSeriesException Will be thrown if there is no series with the specified index
+	 */
+	public void removeSeries(int seriesIndex) throws NoSuchSeriesException {
+
+		if (this.getSeriesTableModels().size()==1) {
+			// --- The last series has to be removed ------
+			this.initilizeTabelModel();
+			
+		} else {
+			if (this.getSeriesTableModels().size()==0 || seriesIndex>this.getSeriesTableModels().size()-1) {
+				throw new NoSuchSeriesException();
+				
+			} else {
+				this.getSeriesTableModels().remove(seriesIndex);
+				// --- Focus next series ------------------
+				if (this.getSeriesTableModels().size()>0) {
+					if (seriesIndex<(this.getSeriesTableModels().size()-1)) {
+						this.focusSeries(seriesIndex);	
+					} else {
+						this.focusSeries(this.getSeriesTableModels().size()-1);
+					}
+				} else {
+					this.initilizeTabelModel();
+				}
+			}
+		}
+		fireTableStructureChanged();
+	}
+	
+	/**
+	 * Exchanges the specified data series with a new data series.
+	 *
+	 * @param seriesIndex the series index
+	 * @param newSeries the new series
+	 */
+	public void exchangeSeries(int seriesIndex, DataSeries newSeries) {
+		//TODO
+		int valueColumIndex = seriesIndex+1;
+		this.columnTitles.set(valueColumIndex, newSeries.getLabel());
+		HashMap<Number, Vector<Number>> availableRows = new HashMap<Number, Vector<Number>>(); 
+		
+		// --- Remove values that are belonging to the old series ---
+		for (int i=0; i<getRowCount(); i++) {
+			// --- Set value null ------------------------------
+			Vector<Number> rowVector = this.getRow(i);
+			Number keyValue = (Number) rowVector.get(0);
+			availableRows.put(keyValue, rowVector);
+			this.getRow(i).set(valueColumIndex, null);
+		}
+		
+		List valuePairs = this.parentDataModel.getValuePairsFromSeries(newSeries);
+		for (int i = 0; i < valuePairs.size(); i++) {
+			
+			ValuePair vp = (ValuePair) valuePairs.get(i);
+			Number keyValue = this.parentDataModel.getXValueFromPair(vp);
+			Vector<Number> rowVector = availableRows.get(keyValue);
+			if (rowVector==null) {
+				// No row found, create a new row
+				rowVector = new Vector<Number>();
+				while(rowVector.size()< this.getColumnCount()){
+					rowVector.add(null);
+				}
+				rowVector.set(0, parentDataModel.getXValueFromPair(vp));
+				rowVector.set(valueColumIndex, parentDataModel.getYValueFromValuePair(vp));
+				
+				// Find the right place to insert the new row:
+				int insertAt = getRowCount();	// At the end of the table...
+				for(int j=0;j<this.getRowCount();j++){
+					double compareValue = ((Number) tableModelDataVector.get(j).get(0)).doubleValue();
+					if(compareValue > parentDataModel.getXValueFromPair(vp).doubleValue()){
+						insertAt = j;			// ... or before the first one with a higher time stamp
+					}
+				}
+				tableModelDataVector.add(insertAt, rowVector);
+				
+			} else {
+				// Row found, exchange the value
+				rowVector.set(valueColumIndex, parentDataModel.getYValueFromValuePair(vp));
+				
+			}
+		} 
+		
+		// --- Remove all empty rows --------------------------------
+		this.removeEmptyRows();
+		
+		this.fireTableStructureChanged();
+		
+	}
+	
+	/**
+	 * Edits the data series by adding data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public void editSeriesAddData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+		//TODO
+		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
+			
+			int targetTbIndex = targetDataSeriesIndex+1;
+			List valuePairs = parentDataModel.getValuePairsFromSeries(series); 
+			for (int i = 0; i < valuePairs.size(); i++) {
+				ValuePair vp = (ValuePair) valuePairs.get(i);
+				Vector<Number> newRow = new Vector<Number>();
+				newRow.add(parentDataModel.getXValueFromPair(vp));
+				while(newRow.size() < this.getColumnCount()){
+					newRow.add(null);
+				}
+				newRow.add(targetTbIndex, parentDataModel.getYValueFromValuePair(vp));
+				tableModelDataVector.add(newRow);
+			}
+			this.fireTableStructureChanged();
+			
+		} else {
+			throw new NoSuchSeriesException(); 
+		}
+	}
+	/**
+	 * Edits the data series by adding or exchanging data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+		//TODO
+		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
+			
+			boolean dataWereAdded = false;
+			int targetTbIndex = targetDataSeriesIndex+1;
+			TreeMap<Number, Vector<Number>> tableDataTreeMap = new TreeMap<Number, Vector<Number>>(this.tableModelDataVector.getKeyRowVectorTreeMap());
+			
+			List valuePairs = parentDataModel.getValuePairsFromSeries(series);
+			for (int i = 0; i < valuePairs.size(); i++) {
+				// --- Find the key in the table ----------
+				ValuePair vp = (ValuePair) valuePairs.get(i);
+				Number key = parentDataModel.getXValueFromPair(vp);
+				Number value = parentDataModel.getYValueFromValuePair(vp);
+
+				Vector<Number> editRow = tableDataTreeMap.get(key);
+				if (editRow==null) {
+					// --- Add a new row ------------------
+					editRow = new Vector<Number>();
+					while(editRow.size() < this.getColumnCount()){
+						editRow.add(null);
+					}
+					editRow.set(0, key);
+					editRow.set(targetTbIndex, value);
+					tableDataTreeMap.put(key, editRow);
+					dataWereAdded = true;
+					
+				} else {
+					// --- Finally edit the row -----------
+					editRow.set(targetTbIndex, value);
+				}
+			}
+			
+			// --- Finally update the table, if necessary -
+			if (dataWereAdded==true) {
+				// --- Rebuild the table ------------------
+				Number[] keyArray = new Number[tableDataTreeMap.size()]; 
+				tableDataTreeMap.keySet().toArray(keyArray);
+				for (int i = 0; i < keyArray.length; i++) {
+					Number keyTreeMap = keyArray[i];
+					if ((valuePairs.size()-1)<i) {
+						// --- Just add new data ----------
+						this.tableModelDataVector.add(i, tableDataTreeMap.get(keyTreeMap));
+					} else {
+						Number keyValuePair = parentDataModel.getXValueFromPair((ValuePair) valuePairs.get(i));
+						if (keyTreeMap.equals(keyValuePair)==false) {
+							// --- New data was found -----
+							this.tableModelDataVector.add(i, tableDataTreeMap.get(keyTreeMap));
+						}	
+					}
+				}	
+			}
+			this.fireTableStructureChanged();
+			
+		} else {
+			throw new NoSuchSeriesException();
+		}
+	}
+	/**
+	 * Edits the data series by exchanging data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+		//TODO
+		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
+			
+			int targetTbIndex = targetDataSeriesIndex+1;
+			
+			List valuePairs = parentDataModel.getValuePairsFromSeries(series);
+			for (int i = 0; i < valuePairs.size(); i++) {
+				// --- Find the key in the table ----------
+				ValuePair vp = (ValuePair) valuePairs.get(i);
+				Number key = parentDataModel.getXValueFromPair(vp);
+				Number value = parentDataModel.getYValueFromValuePair(vp);
+
+				Vector<Number> editRow = this.tableModelDataVector.getKeyRowVectorTreeMap().get(key);
+				if (editRow!=null) {
+					// --- Edit the row -------------------
+					editRow.set(targetTbIndex, value);
+				}
+			}
+			this.fireTableStructureChanged();
+			
+		} else {
+			throw new NoSuchSeriesException();
+		}
+	}
+	/**
+	 * Edits the data series by remove data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 */
+	public void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
+		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
+			
+			int targetTbIndex = targetDataSeriesIndex+1;
+			HashSet<Number> removeKeys = this.getKeyHashSetFromDataSeries(series);
+			
+			for (int i = 0; i < this.tableModelDataVector.size(); i++) {
+				Vector<Number> rowVector = this.tableModelDataVector.get(i);
+				Number keyValue = (Number) rowVector.get(0);
+				if (removeKeys.contains(keyValue)) {
+					// --- Delete Value ---------
+					rowVector.set(targetTbIndex, null);
+				}
+			}
+			this.removeEmptyRows();
+			this.fireTableStructureChanged();
+			
+		} else {
+			throw new NoSuchSeriesException();
+		}
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
+	 */
+	@Override
+	public void tableChanged(TableModelEvent tme) {
+		
+		if(tme.getSource()==this && tme.getFirstRow()>=0){
+			
+			if(tme.getType()==TableModelEvent.UPDATE){
+				// --- Update Events in the table ---------------------------------------
+				int rowIndex = tme.getFirstRow();
+				Vector<Number> rowVector = this.getRow(rowIndex);
+				Float xValue = (Float) rowVector.get(1);
+				Float yValue = (Float) rowVector.get(2);
+
+				// --- Where was it happened --------------------------------------------
+				if(tme.getColumn()>=this.tableModelDataVector.getNoOfPrefixColumns()){
+					// --- A value of a series was edited -------------------------------
+					try {
+						if(yValue!=null){
+							// --- Update new entry in chart and ontology model ---------
+							this.getOntologyModel().updateXyValuePair(this.getFocusedSeriesIndex(), rowIndex, xValue, yValue);
+							this.getChartModel().setXYSeriesAccordingToOntologyModel(this.getFocusedSeriesIndex());
+							
+						} else {
+							// --- We have an empty yValue ------------------------------
+							if (this.isEmptyTableModelRow(rowVector)==false) {
+								// --- Rewrite the data row -----------------------------
+								this.getOntologyModel().updateXyValuePair(this.getFocusedSeriesIndex(), rowIndex, xValue, yValue);
+								this.getChartModel().setXYSeriesAccordingToOntologyModel(this.getFocusedSeriesIndex());
+								
+							} else {
+								// --- Empty row, delete ValuePair ----------------------
+								this.tableModelDataVector.remove(rowIndex);
+								this.getOntologyModel().removeXyValuePair(this.getFocusedSeriesIndex(), rowIndex);
+								this.getChartModel().setXYSeriesAccordingToOntologyModel(this.getFocusedSeriesIndex());
+								if (this.getRowCount()==0) {
+									this.removeSeries(this.getFocusedSeriesIndex());
+									this.getChartModel().removeSeries(this.getFocusedSeriesIndex());
+									this.getOntologyModel().removeSeries(this.getFocusedSeriesIndex());
+								}
+							}
+						}
+						
+					} catch (NoSuchSeriesException e) {
+						System.err.println("Error updating data model: Series "+this.getFocusedSeriesIndex()+" does mot exist!");
+						e.printStackTrace();
+					}
+				
+				} else if (tme.getColumn()==1) {
+					// --- x value has changed ------------------------------------------
+					this.getOntologyModel().updateXyValuePair(this.getFocusedSeriesIndex(), rowIndex, xValue, yValue);
+					this.getChartModel().setXYSeriesAccordingToOntologyModel(this.getFocusedSeriesIndex());
+				} 
+				
+			} else {
+				// --- Insert or Delete events in the table ---------
+			}
+		}
+
+	}
+	
+	/**
+	 * Moves the current selection according to the direction.
+	 * @param direction the direction to move
+	 */
+	public void move(JTable jTable, int direction) {
+		
+		if (jTable.getSelectedRow()!=-1 && direction!=0) {
+			
+			int selectedRowTableNew; 
+			int selectedRowModelNew;
+			int selectedRowTable = jTable.getSelectedRow();
+			int selectedRowModel = jTable.convertRowIndexToModel(selectedRowTable);
+			
+			if (!((selectedRowModel==0 && direction<0) || (selectedRowModel==this.tableModelDataVector.size()-1 && direction>0))) {
+				Vector<Number> rowSelected = this.tableModelDataVector.remove(selectedRowModel);
+				XyValuePair xyValuePair = (XyValuePair) this.getOntologyModel().removeXyValuePair(this.getFocusedSeriesIndex(), selectedRowModel);
+				
+				if (direction>0) {
+					// --- move down ------------
+					selectedRowModelNew = selectedRowTable+1; 
+					this.tableModelDataVector.add(selectedRowModelNew, rowSelected);
+					this.getOntologyModel().addXyValuePair(this.getFocusedSeriesIndex(), selectedRowModelNew, xyValuePair);
+					this.getChartModel().setXYSeriesAccordingToOntologyModel(this.getFocusedSeriesIndex());
+					fireTableRowsInserted(selectedRowModel, selectedRowModelNew);
+					
+				} else {
+					// --- move up --------------
+					selectedRowModelNew = selectedRowTable-1; 
+					this.tableModelDataVector.add(selectedRowModelNew, rowSelected);
+					this.getOntologyModel().addXyValuePair(this.getFocusedSeriesIndex(), selectedRowModelNew, xyValuePair);
+					this.getChartModel().setXYSeriesAccordingToOntologyModel(this.getFocusedSeriesIndex());
+					fireTableRowsInserted(selectedRowModelNew, selectedRowModel);
+				}
+				
+				selectedRowTableNew = jTable.convertRowIndexToView(selectedRowModelNew);
+				if(selectedRowTableNew >= 0){
+					jTable.setRowSelectionInterval(selectedRowTableNew, selectedRowTableNew);
+					jTable.changeSelection(selectedRowTableNew, 0, false, false);
+				}
+			}
+		}
+		
+	}
+	
+	
 }

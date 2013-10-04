@@ -39,7 +39,7 @@ import agentgui.core.charts.gui.ChartEditorJPanel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
 import agentgui.core.ontologies.gui.DynForm;
-import agentgui.ontology.TimeSeriesChart;
+import agentgui.ontology.Chart;
 
 /**
  * Implementation of OntologyClassEditorJPanel for TimeSeriesChart
@@ -50,15 +50,49 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 
 	private static final long serialVersionUID = 6342520178418229017L;
 
+	/** The data model. */
+	protected TimeSeriesDataModel dataModel;
+	
 
 	/**
-	 * Instantiates a new time series chart editor j panel.
+	 * Instantiates a new TimeSeriesChartEditorJPanel.
 	 *
-	 * @param dynForm the dyn form
-	 * @param startArgIndex the start arg index
+	 * @param dynForm the current DynForm
+	 * @param startArgIndex the current start argument index
 	 */
 	public TimeSeriesChartEditorJPanel(DynForm dynForm, int startArgIndex) {
 		super(dynForm, startArgIndex);
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartEditorJPanel#getDataModel()
+	 */
+	@Override
+	public TimeSeriesDataModel getDataModel() {
+		if (this.dataModel==null) {
+			this.dataModel = new TimeSeriesDataModel();
+		}
+		return this.dataModel;
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#setOntologyClassInstance(java.lang.Object)
+	 */
+	@Override
+	public void setOntologyClassInstance(Object objectInstance) {
+		this.getDataModel().setDefaultTimeFormat(this.getDefaultTimeFormat());
+		this.getDataModel().setOntologyInstanceChart((Chart) objectInstance);
+		
+		this.getChartTab().replaceModel(this.getDataModel());
+		this.getChartSettingsTab().replaceModel(this.getDataModel().getChartSettingModel());
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#getOntologyClassInstance()
+	 */
+	@Override
+	public Object getOntologyClassInstance() {
+		return ((TimeSeriesOntologyModel)this.getDataModel().getOntologyModel()).getTimeSeriesChart();
 	}
 
 	/* (non-Javadoc)
@@ -67,7 +101,7 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	@Override
 	protected TimeSeriesChartTab getChartTab(){
 		if(chartTab == null){
-			chartTab = new TimeSeriesChartTab((TimeSeriesDataModel) this.model);
+			chartTab = new TimeSeriesChartTab((TimeSeriesDataModel) this.dataModel);
 		}
 		return (TimeSeriesChartTab) chartTab;
 	}
@@ -78,7 +112,7 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	@Override
 	protected TimeSeriesTableTab getTableTab(){
 		if(tableTab == null){
-			tableTab = new TimeSeriesTableTab((TimeSeriesDataModel) this.model, this);
+			tableTab = new TimeSeriesTableTab((TimeSeriesDataModel) this.dataModel, this);
 		}
 		return (TimeSeriesTableTab) tableTab;
 	}
@@ -87,9 +121,9 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	 * @see agentgui.core.charts.gui.ChartEditorJPanel#getSettingsTab()
 	 */
 	@Override
-	protected TimeSeriesChartSettingsTab getSettingsTab(){
+	protected TimeSeriesChartSettingsTab getChartSettingsTab(){
 		if(this.settingsTab == null){
-			this.settingsTab = new TimeSeriesChartSettingsTab(this.model.getChartSettingModel(), this);
+			this.settingsTab = new TimeSeriesChartSettingsTab(this.dataModel.getChartSettingModel(), this);
 		}
 		return (TimeSeriesChartSettingsTab) settingsTab;
 	}
@@ -124,24 +158,6 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 		return Float.parseFloat(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#setOntologyClassInstance(java.lang.Object)
-	 */
-	@Override
-	public void setOntologyClassInstance(Object objectInstance) {
-		this.model = new TimeSeriesDataModel((TimeSeriesChart) objectInstance, this.getDefaultTimeFormat());
-		
-		this.getChartTab().replaceModel(this.model);
-		this.getTableTab().replaceModel(this.model);
-		this.getSettingsTab().replaceModel(this.model.getChartSettingModel());
-	}
-
-	@Override
-	public Object getOntologyClassInstance() {
-		return ((TimeSeriesOntologyModel)this.getModel().getOntologyModel()).getTimeSeriesChart();
-	}
-
-	
 	/* (non-Javadoc)
 	 * @see agentgui.core.ontologies.gui.OntologyClassEditorJPanel#getJToolBarUserFunctions()
 	 */

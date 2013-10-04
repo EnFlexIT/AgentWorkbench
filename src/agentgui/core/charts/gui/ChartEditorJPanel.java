@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -55,6 +56,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import agentgui.core.application.Application;
@@ -102,11 +105,13 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	protected TableTab tableTab;
 	protected ChartSettingsTab settingsTab;
 	
+	
 	/**
-	 * The data model for this chart
+	 * Instantiates a new chart editor j panel.
+	 *
+	 * @param dynForm the dyn form
+	 * @param startArgIndex the start arg index
 	 */
-	protected DataModel model;
-
 	public ChartEditorJPanel(DynForm dynForm, int startArgIndex) {
 		super(dynForm, startArgIndex);
 		
@@ -130,7 +135,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 				File csvFile = jFileChooserImportCSV.getSelectedFile();
 				
 				// --- Separate DataModel --------------------------- 
-				if (this.getModel() instanceof TimeSeriesDataModel) {
+				if (this.getDataModel() instanceof TimeSeriesDataModel) {
 					// --- Ask for time format ----------------------
 					TimeFormatImportConfiguration importFormatDialog = new TimeFormatImportConfiguration(Application.getMainWindow(), csvFile); 
 					importFormatDialog.setVisible(true);
@@ -144,7 +149,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 					this.importDataSeriesFromCSV(csvFile, null, null);	
 					
 				}
-				this.setOntologyClassInstance(this.getOntologyClassInstance());
+				this.getTableTab().setButtonsEnabledToSituation();
 			}
 			
 		} else if(ae.getSource() == btnSaveImage) {
@@ -191,21 +196,27 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		return toolBar;
 	}
 	
-	
-	
 	protected JTabbedPane getTabbedPane(){
 		if(tabbedPane == null){
 			tabbedPane = new JTabbedPane();
 			tabbedPane.addTab("Chart", getChartTab());
 			tabbedPane.addTab("Table", getTableTab());
 			tabbedPane.addTab("Settings", getJScrollPane4SettingsTab());
+			tabbedPane.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent ce) {
+					// --- Stop editing cells in tables ---
+					getTableTab().stopEditing();
+					getChartSettingsTab().stopEditing();
+				}
+			});
 		}
 		return tabbedPane;
 	}
 	protected JScrollPane getJScrollPane4SettingsTab() {
 		if (scrollPane4SettingTab==null) {
 			scrollPane4SettingTab = new JScrollPane();
-			scrollPane4SettingTab.setViewportView(this.getSettingsTab());
+			scrollPane4SettingTab.setViewportView(this.getChartSettingsTab());
 		}
 		return scrollPane4SettingTab;
 	}
@@ -214,7 +225,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	
 	protected abstract TableTab getTableTab();
 	
-	protected abstract ChartSettingsTab getSettingsTab();
+	protected abstract ChartSettingsTab getChartSettingsTab();
 	
 	protected JButton getBtnImport() {
 		if (btnImport == null) {
@@ -379,15 +390,8 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	/**
 	 * @return the model
 	 */
-	public DataModel getModel() {
-		return model;
-	}
-	/**
-	 * @param model the model to set
-	 */
-	public void setModel(DataModel model) {
-		this.model = model;
-	}
+	public abstract DataModel getDataModel();
+	
 	
 	/**
 	 * Get a key / x value of the correct type for this chart from a string representation.
@@ -418,6 +422,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		BufferedReader csvFileReader = null;
 		DataSeries[] importedSeries = null;
 		boolean validLine = false;
+		int validLineIndexCounter = 0;
 		System.out.println("Importing CSV data from " + csvFile.getName());
 		
 		// Read the data from the file
@@ -443,7 +448,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 						importedSeries = new DataSeries[parts.length-1];
 						
 						for(int k=0; k<parts.length-1; k++){
-							importedSeries[k] = model.createNewDataSeries(null);
+							importedSeries[k] = this.getDataModel().createNewDataSeries(null);
 						}
 					}
 					
@@ -455,17 +460,19 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 						if(parts[i].length() > 0){
 							// Empty string -> no value for this key in this series -> no new value pair
 							Number value = parseValue(parts[i]);
-							ValuePair valuePair = model.createNewValuePair(key, value);
-							model.getValuePairsFromSeries(importedSeries[i-1]).add(valuePair);
+							ValuePair valuePair = this.getDataModel().createNewValuePair(key, value);
+							this.getDataModel().getValuePairsFromSeries(importedSeries[i-1]).add(valuePair);
 						}
 					}
-					
+					validLineIndexCounter++;	
 				}
 			}
 			csvFileReader.close();
 			
-			for(int j=0; j < importedSeries.length; j++){
-				model.addSeries(importedSeries[j]);
+			if (importedSeries!=null) {
+				for(int j=0; j < importedSeries.length; j++){
+					this.getDataModel().addSeries(importedSeries[j]);
+				}	
 			}
 			
 		} catch (FileNotFoundException e) {

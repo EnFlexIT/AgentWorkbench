@@ -30,32 +30,24 @@ package agentgui.core.charts;
 
 import org.jfree.data.general.Series;
 
+import agentgui.ontology.ChartSettingsGeneral;
 import agentgui.ontology.DataSeries;
 
 public interface ChartModel {
 	
-	/**
-	 * Adds or updates a value to/in a data series.
-	 * @param seriesIndex The index of the series that should be changed
-	 * @param key The key for the value pair to be added/updated
-	 * @param value The new value for the value pair
-	 * @throws NoSuchSeriesException Will be thrown if there is no series with the specified index
-	 */
-	public void addOrUpdateValuePair(int seriesIndex, Number key, Number value) throws NoSuchSeriesException;
-	/**
-	 * Update the time stamp in all series that contain it
-	 * @param oldKey The old time stamp
-	 * @param newKey The new time stamp
-	 */
-	public void updateKey(Number oldKey, Number newKey);
-	/**
-	 * Removes the value pair with the given key from the series with the given index.
-	 * @param seriesIndex The series index
-	 * @param key The key
-	 * @throws NoSuchSeriesException Thrown if there is no series with the specified index
-	 */
-	public void removeValuePair(int seriesIndex, Number key) throws NoSuchSeriesException;
 	
+	/**
+	 * Returns the chart settings.
+	 * @return the chart settings
+	 */
+	public ChartSettingsGeneral getChartSettings();
+	
+	
+	/**
+	 * Returns the jfreeChart series specified by the index position.
+	 * @param seriesIndex the series index
+	 * @return the series
+	 */
 	public abstract Series getSeries(int seriesIndex);
 	
 	

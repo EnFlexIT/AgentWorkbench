@@ -19,14 +19,13 @@
             </agent>
             <agent agentReference="gasmas.agents.components.ClusterNetworkAgent">
                 <startArgumentVector>
-                    <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="1"/>
-                    <startArgument ontologyReference="agentgui.ontology.XyChart" position="2"/>
+                    <startArgument ontologyReference="agentgui.ontology.XyChart" position="1"/>
                 </startArgumentVector>
             </agent>
         </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1468</useLocalPort>
+        <useLocalPort>1482</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -132,5 +131,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>false</unsaved>
+    <unsaved>true</unsaved>
 </project>

@@ -33,16 +33,19 @@ import jade.util.leap.List;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.gui.ChartTab;
+import agentgui.core.charts.xyChart.gui.XyChartEditorJPanel;
+import agentgui.ontology.Chart;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.Simple_Float;
 import agentgui.ontology.ValuePair;
 import agentgui.ontology.XyChart;
 import agentgui.ontology.XyDataSeries;
 import agentgui.ontology.XyValuePair;
+
 /**
  * Container class managing the data models for the different XY data series representations.
+ * 
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
- *
  */
 public class XyDataModel extends DataModel {
 	
@@ -54,19 +57,45 @@ public class XyDataModel extends DataModel {
 	public static final String DEFAULT_X_AXIS_LABEL = "X Value";
 	/** This y axis label will be used for the chart if none is specified */
 	public static final String DEFAULT_Y_AXIS_LABEL = "Y Value";
+	/** Duplicate X values are allowed by default */
+	public static final boolean DEFAULT_ALLOW_DUPLICATE_X_VALUES = true;
+	/** By default items will be sorted by the X values */
+	public static final boolean DEFAULT_AUTOSORT_BY_X = true;
 	
+	private XyChartEditorJPanel myEditorJPanel = null;
 	
 	/**
 	 * Instantiates a new XyDataModel.
-	 * @param chart the chart
 	 */
-	public XyDataModel(XyChart chart){
-		ontologyModel = new XyOntologyModel(chart, this);
-		chartModel = new XyChartModel();
-		tableModel = new XyTableModel(this);
+	public XyDataModel(XyChartEditorJPanel myEditorJPanel){
+		this.myEditorJPanel = myEditorJPanel;
+	}
+	/**
+	 * Returns the current XyChartEditorJPanel.
+	 * @return the current XyChartEditorJPanel
+	 */
+	public XyChartEditorJPanel getXyChartEditorJPanel() {
+		return this.myEditorJPanel;
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#setOntologyInstanceChart(agentgui.ontology.Chart)
+	 */
+	@Override
+	public void setOntologyInstanceChart(Chart ontologyChart) {
+
+		XyChart xyChart = (XyChart) ontologyChart;
+		
+		this.ontologyModel = new XyOntologyModel(xyChart, this);
+		this.chartModel = new XyChartModel(this);
+		if (this.tableModel==null) {
+			this.tableModel = new XyTableModel(this.myEditorJPanel.getJTabelDataSeries(), this);
+		} else {
+			this.tableModel.rebuildTableModel();
+		}
+		this.seriesCount=0;
 		
 		XyOntologyModel xyom = (XyOntologyModel) this.ontologyModel;
-		
 		if(xyom.getXyChart().isEmpty()){
 			
 			// The ontology model is empty. Do some initialization work.
@@ -99,16 +128,52 @@ public class XyDataModel extends DataModel {
 				if(seriesCount > this.ontologyModel.getChartSettings().getYAxisLineWidth().size()){
 					this.ontologyModel.getChartSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
 				}
-				chartModel.addSeries(nextSeries);
-				tableModel.addSeries(nextSeries);
-				seriesCount++;
+				this.chartModel.addSeries(nextSeries);
+				this.seriesCount++;
 			}
 		}
 		
-		// Register for table model events
-		tableModel.addTableModelListener(this);
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#addSeries(agentgui.ontology.DataSeries)
+	 */
+	@Override
+	public void addSeries(DataSeries series){
+		
+		// Set the default label if none is specified in the series
+		if(series.getLabel() == null || series.getLabel().length() == 0){
+			series.setLabel(getDefaultSeriesLabel());
+		}
+		
+		// Add the data to the sub models
+		ontologyModel.addSeries(series);
+		// Apply default settings
+		ontologyModel.getChartSettings().addYAxisColors(""+DEFAULT_COLORS[getSeriesCount() % DEFAULT_COLORS.length].getRGB());
+		ontologyModel.getChartSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
+		
+		chartModel.addSeries(series);
+		tableModel.addSeries(series);
+		seriesCount++;
+		this.getChartSettingModel().refresh();
 
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#createNewDataSeries(java.lang.String)
+	 */
+	@Override
+	public XyDataSeries createNewDataSeries(String label) {
+		XyDataSeries newSeries = new XyDataSeries();
+		newSeries.setLabel(label);
+		newSeries.setAutoSort(false);
+		newSeries.setAvoidDuplicateXValues(false);
+		return newSeries;
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#createNewValuePair(java.lang.Number, java.lang.Number)
+	 */
 	@Override
 	public ValuePair createNewValuePair(Number key, Number value) {
 		XyValuePair valuePair = new XyValuePair();
@@ -120,14 +185,17 @@ public class XyDataModel extends DataModel {
 		valuePair.setYValue(yValue);
 		return valuePair;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.DataModel#getKeyFromPair(agentgui.ontology.ValuePair)
+	 */
 	@Override
-	public Number getKeyFromPair(ValuePair vp) {
+	public Number getXValueFromPair(ValuePair vp) {
 		return ((XyValuePair)vp).getXValue().getFloatValue();
 	}
 
 	@Override
-	public Number getValueFromPair(ValuePair vp) {
+	public Number getYValueFromValuePair(ValuePair vp) {
 		return ((XyValuePair)vp).getYValue().getFloatValue();
 	}
 
@@ -151,14 +219,6 @@ public class XyDataModel extends DataModel {
 		return DEFAULT_SERIES_LABEL+" "+(getSeriesCount()+1);
 	}
 
-	@Override
-	public XyDataSeries createNewDataSeries(String label) {
-		XyDataSeries newSeries = new XyDataSeries();
-		newSeries.setLabel(label);
-		return newSeries;
-	}
-
-	
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.DataModel#editDataSeriesAddData(agentgui.ontology.DataSeries, int, boolean)
 	 */
@@ -188,5 +248,4 @@ public class XyDataModel extends DataModel {
 		// TODO Auto-generated method stub
 	}
 
-	
 }

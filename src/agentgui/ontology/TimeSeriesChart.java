@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: TimeSeriesChart
 * @author ontology bean generator
-* @version 2013/09/12, 17:14:05
+* @version 2013/10/1, 11:28:40
 */
 public class TimeSeriesChart extends Chart{ 
 
@@ -33,6 +33,17 @@ public boolean isEmpty() {
  }
 }
    /**
+* Protege name: timeSeriesVisualisationSettings
+   */
+   private TimeSeriesChartSettings timeSeriesVisualisationSettings;
+   public void setTimeSeriesVisualisationSettings(TimeSeriesChartSettings value) { 
+    this.timeSeriesVisualisationSettings=value;
+   }
+   public TimeSeriesChartSettings getTimeSeriesVisualisationSettings() {
+     return this.timeSeriesVisualisationSettings;
+   }
+
+   /**
    * The data to be displayed by the chart
 * Protege name: timeSeriesChartData
    */
@@ -53,16 +64,5 @@ public boolean isEmpty() {
    public Iterator getAllTimeSeriesChartData() {return timeSeriesChartData.iterator(); }
    public List getTimeSeriesChartData() {return timeSeriesChartData; }
    public void setTimeSeriesChartData(List l) {timeSeriesChartData = l; }
-
-   /**
-* Protege name: timeSeriesVisualisationSettings
-   */
-   private TimeSeriesChartSettings timeSeriesVisualisationSettings;
-   public void setTimeSeriesVisualisationSettings(TimeSeriesChartSettings value) { 
-    this.timeSeriesVisualisationSettings=value;
-   }
-   public TimeSeriesChartSettings getTimeSeriesVisualisationSettings() {
-     return this.timeSeriesVisualisationSettings;
-   }
 
 }
