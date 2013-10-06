@@ -42,6 +42,7 @@ import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.TableModel;
 import agentgui.core.charts.TableModelDataVector;
 import agentgui.ontology.DataSeries;
+import agentgui.ontology.TimeSeries;
 import agentgui.ontology.ValuePair;
 
 /**
@@ -68,7 +69,7 @@ public class TimeSeriesTableModel extends TableModel {
 	public void initilizeTabelModel() {
 		columnTitles = new Vector<String>();
 		columnTitles.add(DEFAULT_TIME_COLUMN_TITLE);
-		tableModelDataVector = new TableModelDataVector(false, 0);
+		tableModelDataVector = new TableModelDataVector(TimeSeries.class.getSimpleName(), false, 0);
 		this.addTableModelListener(this);
 	}
 
@@ -77,7 +78,7 @@ public class TimeSeriesTableModel extends TableModel {
 	 */
 	@Override
 	public void rebuildTableModel() {
-		this.tableModelDataVector=new TableModelDataVector(this.tableModelDataVector.isActivateRowNumber(), this.tableModelDataVector.getKeyColumnIndex());
+		this.tableModelDataVector=new TableModelDataVector(TimeSeries.class.getSimpleName(), this.tableModelDataVector.isActivateRowNumber(), this.tableModelDataVector.getKeyColumnIndex());
 		List chartDataSeries = this.parentDataModel.getOntologyModel().getChartData();
 		for (int i = 0; i < chartDataSeries.size(); i++) {
 			DataSeries chartData = (DataSeries) chartDataSeries.get(i);
@@ -145,7 +146,7 @@ public class TimeSeriesTableModel extends TableModel {
 		int tableRowSelectedNew = 0;
 			
 		tableRowSelected = jTable.getSelectedRow();
-		if (tableRowSelected==-1) {
+		if (tableRowSelected==-1 || tableRowSelected>=jTable.getRowCount()) {
 			tableRowSelected = jTable.getRowCount()-1;
 		}
 		

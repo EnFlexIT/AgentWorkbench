@@ -198,9 +198,9 @@ public class TimeSeriesTableTab extends TableTab {
 				try {
 					this.dataModelLocal.removeSeries(seriesIndex);
 
-				} catch (NoSuchSeriesException e1) {
+				} catch (NoSuchSeriesException nsse) {
 					System.err.println("Error removing series " + seriesIndex);
-					e1.printStackTrace();
+					nsse.printStackTrace();
 				}
 			}
 			

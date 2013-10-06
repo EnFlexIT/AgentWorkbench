@@ -75,7 +75,6 @@ public abstract class DataModel {
 	 */
 	public abstract void setOntologyInstanceChart(Chart ontologyChart);
 	
-	
 	/**
 	 * Creates a new data series of the correct type for the precise type of chart.
 	 *
@@ -258,7 +257,25 @@ public abstract class DataModel {
 	 * Adds a new series to the data model.
 	 * @param series The new series
 	 */
-	public abstract void addSeries(DataSeries series);
+	public void addSeries(DataSeries series) {
+
+		// Set the default label if none is specified in the series
+		if(series.getLabel() == null || series.getLabel().length() == 0){
+			series.setLabel(getDefaultSeriesLabel());
+		}
+		
+		// Add the data to the sub models
+		ontologyModel.addSeries(series);
+		// Apply default settings
+		ontologyModel.getChartSettings().addYAxisColors(""+DEFAULT_COLORS[getSeriesCount() % DEFAULT_COLORS.length].getRGB());
+		ontologyModel.getChartSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
+		
+		chartModel.addSeries(series);
+		tableModel.addSeries(series);
+		seriesCount++;
+		this.getChartSettingModel().refresh();
+
+	}
 	
 	/**
 	 * Adds or exchanges a data series from the current chart.

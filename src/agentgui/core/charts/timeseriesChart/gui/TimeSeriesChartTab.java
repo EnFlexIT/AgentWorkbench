@@ -60,20 +60,20 @@ public class TimeSeriesChartTab extends ChartTab {
 				true, false, false
 		));
 		
-		this.model = model;
+		this.dataModel = model;
 		
 		applySettings();
 	}
 
 	@Override
 	public void replaceModel(DataModel newModel) {
-		this.model = newModel;
+		this.dataModel = newModel;
 		
 		this.setChart(ChartFactory.createTimeSeriesChart(
-				this.model.getOntologyModel().getChartSettings().getChartTitle(), 
-				this.model.getOntologyModel().getChartSettings().getXAxisLabel(), 
-				this.model.getOntologyModel().getChartSettings().getYAxisLabel(), 
-				((TimeSeriesDataModel)this.model).getTimeSeriesChartModel(), 
+				this.dataModel.getOntologyModel().getChartSettings().getChartTitle(), 
+				this.dataModel.getOntologyModel().getChartSettings().getXAxisLabel(), 
+				this.dataModel.getOntologyModel().getChartSettings().getYAxisLabel(), 
+				((TimeSeriesDataModel)this.dataModel).getTimeSeriesChartModel(), 
 				true, false, false
 		));
 		
@@ -89,7 +89,7 @@ public class TimeSeriesChartTab extends ChartTab {
 		super.applySettings();
 		DateAxis da = (DateAxis) getChart().getXYPlot().getDomainAxis();
 		
-		DateFormat dateFormat = new SimpleDateFormat(((TimeSeriesDataModel)model).getTimeFormat());
+		DateFormat dateFormat = new SimpleDateFormat(((TimeSeriesDataModel)dataModel).getTimeFormat());
 		da.setDateFormatOverride(dateFormat);
 	}
 	

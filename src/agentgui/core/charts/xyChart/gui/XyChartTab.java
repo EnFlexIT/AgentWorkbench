@@ -38,16 +38,13 @@ import agentgui.core.charts.xyChart.XyDataModel;
 
 public class XyChartTab extends ChartTab {
 	
-	/**
-	 * Generated serialVersionUID
-	 */
 	private static final long serialVersionUID = 5373349334098916334L;
-	/**
-	 * These renderer types can be chosen for rendering the plots. For adding more renderers,
-	 * a description must be added to this array, and the corresponding constructor call must 
-	 * be added to the setRenderer method.
-	 */
 
+	
+	/**
+	 * Instantiates a new XyChartTab.
+	 * @param model the model
+	 */
 	public XyChartTab(XyDataModel model){
 		super(ChartFactory.createXYLineChart(
 				model.getOntologyModel().getChartSettings().getChartTitle(), 
@@ -58,26 +55,27 @@ public class XyChartTab extends ChartTab {
 				true, false, false
 		));
 		
-		
-		this.model = model;
-		
-		applySettings();
+		this.dataModel = model;
+		this.applySettings();
 	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.gui.ChartTab#replaceModel(agentgui.core.charts.DataModel)
+	 */
 	@Override
 	public void replaceModel(DataModel newModel) {
-		this.model = newModel;
+		this.dataModel = newModel;
 		
 		this.setChart(ChartFactory.createXYLineChart(
-				model.getOntologyModel().getChartSettings().getChartTitle(), 
-				model.getOntologyModel().getChartSettings().getXAxisLabel(), 
-				model.getOntologyModel().getChartSettings().getYAxisLabel(), 
-				(XYDataset) model.getChartModel(), 
+				dataModel.getOntologyModel().getChartSettings().getChartTitle(), 
+				dataModel.getOntologyModel().getChartSettings().getXAxisLabel(), 
+				dataModel.getOntologyModel().getChartSettings().getYAxisLabel(), 
+				(XYDataset) dataModel.getChartModel(), 
 				PlotOrientation.VERTICAL, 
 				true, false, false
 		));
 		
-		
-		applySettings();
-		
+		this.applySettings();
 	}
+	
 }

@@ -64,7 +64,7 @@ de;Auswahl - Agenten;Agent selection
 de;Auswahl - Ontologien;Ontology selection
 de;Auswahl Ontologien;Ontology selection
 de;Auswahl Startliste;Selection: start list;;;
-de;Automatisch nach X-Werten sortieren;Autosort by X-Values;;;
+de;Automatisch sortieren;Automatically sort;;;
 de;Basis-Agenten;Base agents
 de;Basis-Info;Basic info
 de;Bearbeiten;Edit
@@ -599,7 +599,7 @@ de;wurde nicht gefunden.;was not found.
 de;yEd GraphML Datei;yEd GraphML file
 de;yEd GraphML;yEd GraphML
 de;zu Datei;to file
-de;Änderungen anwenden;;;;
+de;Änderungen anwenden;Apply Changes;;;
 de;Öffne Projekt;Open Project;;;
 de;Öffnen;Open
 de;Über...;About ...

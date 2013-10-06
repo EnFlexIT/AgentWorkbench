@@ -28,6 +28,8 @@
  */
 package agentgui.core.charts.xyChart;
 
+import java.util.Vector;
+
 import jade.util.leap.List;
 
 import org.jfree.data.xy.XYDataItem;
@@ -63,21 +65,28 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 		return (XySeriesChartSettings) xyDataModel.getOntologyModel().getChartSettings();
 	}
 
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.ChartModel#addSeries(agentgui.ontology.DataSeries)
+	/**
+	 * Converts and returns a XYSeries from a XyDataSeries.
+	 * @param xyDataSeries the XyDataSeries
+	 * @return the converted 
 	 */
-	@Override
-	public void addSeries(DataSeries series) {
-		
-		XyDataSeries xyDataSeries = (XyDataSeries) series;
-		XYSeries newSeries = new XYSeries(series.getLabel(), xyDataSeries.getAutoSort(), !xyDataSeries.getAvoidDuplicateXValues());
-		
+	public XYSeries getXYSeriesFromXyDataSeries(XyDataSeries xyDataSeries) {
+	
+		XYSeries newSeries = new XYSeries(xyDataSeries.getLabel(), xyDataSeries.getAutoSort(), !xyDataSeries.getAvoidDuplicateXValues());
 		List valuePairs = xyDataSeries.getXyValuePairs();
 		for (int i = 0; i < valuePairs.size(); i++) {
 			XyValuePair valuePair = (XyValuePair) valuePairs.get(i);
 			newSeries.add(valuePair.getXValue().getFloatValue(), valuePair.getYValue().getFloatValue());
 		}
-		this.addSeries(newSeries);
+		return newSeries;
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#addSeries(agentgui.ontology.DataSeries)
+	 */
+	@Override
+	public void addSeries(DataSeries series) {
+		this.addSeries(this.getXYSeriesFromXyDataSeries((XyDataSeries)series));
 	}
 
 	/* (non-Javadoc)
@@ -86,41 +95,43 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 	@Override
 	public void exchangeSeries(int seriesIndex, DataSeries series) throws NoSuchSeriesException {
 		if(seriesIndex < this.getSeriesCount()){
-			// --- edit series ---
-			XYSeries editSeries = (XYSeries) this.getSeries().get(seriesIndex);
-			editSeries.clear();
-			if (series.getLabel()!=null) {
-				editSeries.setKey(series.getLabel());
-			}
+
+			XyDataSeries xyDataSeries = (XyDataSeries) series;
+			XYSeries editSeries = this.getSeries(seriesIndex);
 			
-			List valuePairs = ((agentgui.ontology.XyDataSeries)series).getXyValuePairs();
-			for (int i = 0; i < valuePairs.size(); i++) {
-				XyValuePair valuePair = (XyValuePair) valuePairs.get(i);
-				editSeries.add(valuePair.getXValue().getFloatValue(), valuePair.getYValue().getFloatValue());	
+			// --- Are there configuration changes ? -------------------------- 
+			if (xyDataSeries.getAutoSort()==editSeries.getAutoSort() && xyDataSeries.getAvoidDuplicateXValues()==(!editSeries.getAllowDuplicateXValues())) {
+				// --- No configuration changes -------------------------------
+				editSeries.clear();
+				if (series.getLabel()!=null) {
+					editSeries.setKey(series.getLabel());
+				}
+				
+				List valuePairs = xyDataSeries.getXyValuePairs();
+				for (int i = 0; i < valuePairs.size(); i++) {
+					XyValuePair valuePair = (XyValuePair) valuePairs.get(i);
+					editSeries.add(valuePair.getXValue().getFloatValue(), valuePair.getYValue().getFloatValue());	
+				}
+				
+			} else {
+				// --- Configuration has changed ------------------------------
+				XYSeries newSeries = (XYSeries) this.getXYSeriesFromXyDataSeries(xyDataSeries);
+				// --- Replace the edit series with the new series ------------
+				Vector<XYSeries> currSerieses = new Vector<XYSeries>();
+				for (int i=0; i < this.getSeriesCount(); i++) {
+					currSerieses.add(this.getSeries(i));
+				}
+				currSerieses.set(seriesIndex, newSeries);
+
+				this.removeAllSeries();
+				for (int i = 0; i < currSerieses.size(); i++) {
+					this.addSeries(currSerieses.get(i));
+				}
 			}
 			
 		}else{
 			throw new NoSuchSeriesException();
 		}
-	}
-
-	/**
-	 * Returns the specified theXYSeriess.
-	 * @param seriesIndex the series index
-	 * @return the XYSeries
-	 */
-	public XYSeries getXySeries(int seriesIndex) {
-		return this.getSeries(seriesIndex);
-	}
-	/**
-	 * Returns the XYDataItem.
-	 *
-	 * @param seriesIndex the series index
-	 * @param indexPosition the index position
-	 * @return the xY data item
-	 */
-	public XYDataItem getXYDataItem(int seriesIndex, int indexPosition) {
-		return this.getXySeries(seriesIndex).getDataItem(indexPosition);
 	}
 	
 	/**
@@ -130,7 +141,7 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 		
 		try {
 			List xyData = this.xyDataModel.getOntologyModel().getSeriesData(seriesIndex);
-			XYSeries xySeries = this.getXySeries(seriesIndex);	
+			XYSeries xySeries = this.getSeries(seriesIndex);	
 			xySeries.clear();
 			
 			for (int i = 0; i < xyData.size()-1; i++) {
@@ -146,6 +157,17 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 	}
 	
 	/**
+	 * Returns the XYDataItem.
+	 *
+	 * @param seriesIndex the series index
+	 * @param indexPosition the index position
+	 * @return the xY data item
+	 */
+	public XYDataItem getXYDataItem(int seriesIndex, int indexPosition) {
+		return this.getSeries(seriesIndex).getDataItem(indexPosition);
+	}
+	
+	/**
 	 * Adds the specified values as XYDataItem to the specified position.
 	 * @param seriesIndex the series index
 	 * @param indexPosition the index position
@@ -153,7 +175,7 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 	 * @param newYValue the new y value
 	 */
 	public void addXyDataItem(int seriesIndex, int indexPosition, float newXValue, float newYValue) {
-		XYSeries xySeries = this.getXySeries(seriesIndex);
+		XYSeries xySeries = this.getSeries(seriesIndex);
 		if (xySeries.getAutoSort()==true) {
 			// --- Add new value ------------------------------------
 			xySeries.add(newXValue, newYValue);

@@ -42,14 +42,12 @@ public interface ChartModel {
 	 */
 	public ChartSettingsGeneral getChartSettings();
 	
-	
 	/**
 	 * Returns the jfreeChart series specified by the index position.
 	 * @param seriesIndex the series index
 	 * @return the series
 	 */
 	public abstract Series getSeries(int seriesIndex);
-	
 	
 	/**
 	 * Adds the series.

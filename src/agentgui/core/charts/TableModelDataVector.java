@@ -29,6 +29,8 @@
 package agentgui.core.charts;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeMap;
@@ -47,6 +49,7 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 
 	private static final long serialVersionUID = -5351438344725678570L;
 	
+	private String typeDescription = this.getClass().getSimpleName();
 	private boolean activateRowNumber = false;
 	private int noOfPrefixColumns = 1;
 	private int keyColumnIndex = 0;
@@ -61,7 +64,10 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 	 * @param noOfPrefixColumns the no of prefix columns
 	 * @param keyColumnIndex the key column index
 	 */
-	public TableModelDataVector(boolean activateRowNumber, int keyColumnIndex) {
+	public TableModelDataVector(String typeDescription, boolean activateRowNumber, int keyColumnIndex) {
+		if (typeDescription!=null) {
+			this.typeDescription = typeDescription;
+		}
 		this.activateRowNumber = activateRowNumber;
 		if (this.activateRowNumber==true) {
 			this.noOfPrefixColumns = 2;
@@ -144,7 +150,7 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 			this.getKeyIndexHashMap().put(key, this.size());
 			return super.add(rowVector);
 		} else {
-			System.err.println(this.getClass().getSimpleName() + ": Duplicate key value " + key + " - row data was not added!");	
+			System.err.println(this.typeDescription + ": Duplicate key value " + key + " - row data was not added!");	
 		}
 		return false;
 	}
@@ -156,7 +162,7 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 			this.getKeyIndexHashMap().put(key, this.size());
 			super.addElement(rowVector);
 		} else {
-			System.err.println(this.getClass().getSimpleName() + ": Duplicate key value " + key + " - row data was not added!");
+			System.err.println(this.typeDescription + ": Duplicate key value " + key + " - row data was not added!");
 		}
 	}
 	@Override
@@ -173,7 +179,7 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 				super.add(index, rowVector);
 				this.resetReminderMaps();			
 			}  else {
-				System.err.println(this.getClass().getSimpleName() + ": Duplicate key value " + key + " - row data was not added!");
+				System.err.println(this.typeDescription + ": Duplicate key value " + key + " - row data was not added!");
 			}	
 		}
 	}
@@ -203,7 +209,7 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 				newIndexPos++;
 				
 			}  else {
-				System.err.println(this.getClass().getSimpleName() + ": Duplicate key value " + key + " - row data was not added!");
+				System.err.println(this.typeDescription + ": Duplicate key value " + key + " - row data was not added!");
 				fullSuccess = false;
 			}
 		}
@@ -248,5 +254,32 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 		this.resetReminderMaps();
 		return done;
 	}
+
+	/**
+	 * Sorts the current data model.
+	 */
+	public void sort() {
+		Collections.sort(this, new Comparator<Vector<Number>>() {
+			@Override
+			public int compare(Vector<Number> v1, Vector<Number> v2) {
+				if (isActivateRowNumber()==false) {
+					// --- TimeStamp compare ----
+					Long time1 = v1.get(0).longValue();
+					Long time2 = v2.get(0).longValue();
+					return time1.compareTo(time2);
+				} 
+				// --- XY-compare -----------
+				Float x1 = v1.get(1).floatValue();
+				Float x2 = v2.get(1).floatValue();
+				if (x1.equals(x2)==true) {
+					Float y1 = v1.get(2).floatValue();
+					Float y2 = v2.get(2).floatValue();
+					return y1.compareTo(y2);
+				}
+				return x1.compareTo(x2);
+			}
+		});
+	}
+	
 	
 }

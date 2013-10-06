@@ -79,7 +79,7 @@ public class XyTableModel extends TableModel {
 		this.columnTitles.add(DEFAULT_KEY_COLUMN_TITLE);
 		this.currSeriesSelection = -1;
 		this.seriesTableModels = new Vector<TableModelDataVector>();
-		this.tableModelDataVector = new TableModelDataVector(true, 0);
+		this.tableModelDataVector = new TableModelDataVector(XyDataSeries.class.getSimpleName(), true, 0);
 		this.addTableModelListener(this);
 		this.setTabTitle();
 	}
@@ -90,6 +90,7 @@ public class XyTableModel extends TableModel {
 	@Override
 	public void rebuildTableModel() {
 		
+		int seriesSelected = this.getFocusedSeriesIndex();
 		this.seriesTableModels = null;
 		this.tableModelDataVector = null;
 		
@@ -97,6 +98,31 @@ public class XyTableModel extends TableModel {
 		for (int i = 0; i < chartDataSeries.size(); i++) {
 			DataSeries chartData = (DataSeries) chartDataSeries.get(i);
 			this.addSeries(chartData);
+		}
+		if (seriesSelected!=-1) {
+			this.focusSeries(seriesSelected);
+		}
+	}
+	
+	/**
+	 * Rebuilds the table model for the specified XYDataSeries.
+	 * @param seriesIndex the series index of the XyDataSeries to change
+	 */
+	public void rebuildXyDataSeries(int seriesIndex) {
+		
+		try {
+			XyDataSeries xyDataSeries = (XyDataSeries) this.parentDataModel.getOntologyModel().getSeries(seriesIndex);
+			TableModelDataVector tmdv = this.getTableModelDataVectorFromXyDataSeries(xyDataSeries);
+			this.seriesTableModels.set(seriesIndex, tmdv);
+			if (seriesIndex==this.getFocusedSeriesIndex()) {
+				this.focusSeries(seriesIndex);	
+			}
+			xyDataSeries = this.getXyDataSeriesFromData();
+			this.getOntologyModel().exchangeSeries(seriesIndex, xyDataSeries);
+			this.getChartModel().exchangeSeries(seriesIndex, xyDataSeries);
+		
+		} catch (NoSuchSeriesException nsse) {
+			nsse.printStackTrace();
 		}
 	}
 	
@@ -395,49 +421,29 @@ public class XyTableModel extends TableModel {
 	public void addSeries(DataSeries newSeries){
 
 		if (newSeries==null) return;
-		XyDataSeries xySeries = (XyDataSeries) newSeries;
-		int xySeriesInitialSize = xySeries.getXyValuePairs().size();
-		
-		// --- Create new table model for the series ------
-		int keyColumnIndex = 0;
-		if (xySeries.getAvoidDuplicateXValues()==true) {
-			keyColumnIndex = 1;
-		}
+		XyDataSeries xyDataSeries = (XyDataSeries) newSeries;
 		
 		// --- Do some initial work on the data series ----
-		TableModelDataVector tmdv = new TableModelDataVector(true, keyColumnIndex);
+		TableModelDataVector tmdv = this.getTableModelDataVectorFromXyDataSeries(xyDataSeries);
 		
-		// --- Run through the list of value pairs --------
-		List valuePairs = parentDataModel.getValuePairsFromSeries(xySeries); 
-		for (int i=0; i<valuePairs.size(); i++) {
-			
-			ValuePair vp = (ValuePair) valuePairs.get(i);
-			Number xValue = parentDataModel.getXValueFromPair(vp);
-			Number yValue = parentDataModel.getYValueFromValuePair(vp);
-			
-			Vector<Number> newRow = new Vector<Number>();
-			if (tmdv.size()==0) {
-				newRow.add(1);
-			} else {
-				newRow.add(tmdv.size()+1);
-			}
-			newRow.add(xValue);
-			newRow.add(yValue);
-			
-			tmdv.add(newRow);
-		}
 		// --- Add TableModels and set focus --------------
 		this.getSeriesTableModels().add(tmdv);
 		this.focusSeries(this.getSeriesTableModels().size()-1);
 		this.fireTableStructureChanged();
 		
-		if (xySeries.getAvoidDuplicateXValues()==true && tmdv.size()!=xySeriesInitialSize) {
+		if (xyDataSeries.getAvoidDuplicateXValues()==true && tmdv.size()!=xyDataSeries.getXyValuePairs().size()) {
 			// ---------------------------------------------------------------- 
 			// --- Some rows are filtered because of duplicate X-Values. ------ 
-			// --- Correct the ontology model							 ------
+			// --- Correct the ontology and chart model					 ------
 			// ----------------------------------------------------------------
-			//TODO
-			System.out.println("Data was filtered");
+			xyDataSeries = this.getXyDataSeriesFromData();
+			this.getOntologyModel().getChartData().remove(this.getFocusedSeriesIndex());
+			this.getOntologyModel().getChartData().add(this.getFocusedSeriesIndex(), xyDataSeries);
+			try {
+				this.getChartModel().exchangeSeries(this.getFocusedSeriesIndex(), xyDataSeries);
+			} catch (NoSuchSeriesException nsse) {
+				nsse.printStackTrace();
+			}
 		}
 		
 	}
@@ -745,6 +751,72 @@ public class XyTableModel extends TableModel {
 	}
 	
 	/**
+	 * Returns a TableModelDataVector from a given XyDataSeries.
+	 * @param xyDataSeries the xy data series
+	 * @return the table model data vector from xy data series
+	 */
+	private TableModelDataVector getTableModelDataVectorFromXyDataSeries(XyDataSeries xyDataSeries) {
+		
+		int keyColumnIndex = 0;
+		if (xyDataSeries.getAvoidDuplicateXValues()==true) {
+			keyColumnIndex = 1;
+		}
+		
+		// --- Do some initial work on the data series ----
+		TableModelDataVector tmdv = new TableModelDataVector(XyDataSeries.class.getSimpleName(), true, keyColumnIndex);
+		
+		// --- Run through the list of value pairs --------
+		List valuePairs = parentDataModel.getValuePairsFromSeries(xyDataSeries); 
+		for (int i=0; i<valuePairs.size(); i++) {
+			
+			ValuePair vp = (ValuePair) valuePairs.get(i);
+			Number xValue = parentDataModel.getXValueFromPair(vp);
+			Number yValue = parentDataModel.getYValueFromValuePair(vp);
+			
+			Vector<Number> newRow = new Vector<Number>();
+			if (tmdv.size()==0) {
+				newRow.add(1);
+			} else {
+				newRow.add(tmdv.size()+1);
+			}
+			newRow.add(xValue);
+			newRow.add(yValue);
+			
+			tmdv.add(newRow);
+		}
+		if (xyDataSeries.getAutoSort()==true) {
+			tmdv.sort();
+		}
+		return tmdv;
+	}
+	
+	/**
+	 * Gets the XyDataSeries from the current data.
+	 * @return the XyDataSeries from data
+	 */
+	private XyDataSeries getXyDataSeriesFromData() {
+		
+		XyDataSeries xyDataSeries = null;
+		if (this.tableModelDataVector!=null && this.tableModelDataVector.size()!=0) {
+			
+			XyDataModel model = (XyDataModel) this.parentDataModel;
+			XyDataSeries xyDataSeriesCurrent = (XyDataSeries) this.getOntologyModel().getChartData().get(this.getFocusedSeriesIndex());
+			// --- Get settings from current Series -------
+			xyDataSeries = new XyDataSeries();
+			xyDataSeries.setLabel(xyDataSeriesCurrent.getLabel());
+			xyDataSeries.setAutoSort(xyDataSeriesCurrent.getAutoSort());
+			xyDataSeries.setAvoidDuplicateXValues(xyDataSeriesCurrent.getAvoidDuplicateXValues());
+			// --- Add data from local table model --------
+			for (int i=0; i < this.tableModelDataVector.size(); i++) {
+				Vector<Number> row = this.tableModelDataVector.get(i);
+				XyValuePair vp = (XyValuePair) model.createNewValuePair(row.get(1), row.get(2));	
+				xyDataSeries.addXyValuePairs(vp);
+			}
+		}
+		return xyDataSeries;
+	}
+	
+	/**
 	 * Moves the current selection according to the direction.
 	 * @param direction the direction to move
 	 */
@@ -787,6 +859,5 @@ public class XyTableModel extends TableModel {
 		}
 		
 	}
-	
-	
+
 }

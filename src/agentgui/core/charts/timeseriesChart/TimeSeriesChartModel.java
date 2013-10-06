@@ -71,7 +71,7 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	 */
 	@Override
 	public TimeSeriesChartSettings getChartSettings() {
-		return  (TimeSeriesChartSettings)tsDataModel.getOntologyModel().getChartSettings();
+		return (TimeSeriesChartSettings)tsDataModel.getOntologyModel().getChartSettings();
 	}
 	
 	/* (non-Javadoc)

@@ -186,30 +186,6 @@ public class TimeSeriesDataModel extends DataModel {
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.core.charts.DataModel#addSeries(agentgui.ontology.DataSeries)
-	 */
-	@Override
-	public void addSeries(DataSeries series){
-		
-		// Set the default label if none is specified in the series
-		if(series.getLabel() == null || series.getLabel().length() == 0){
-			series.setLabel(getDefaultSeriesLabel());
-		}
-		
-		// Add the data to the sub models
-		ontologyModel.addSeries(series);
-		// Apply default settings
-		ontologyModel.getChartSettings().addYAxisColors(""+DEFAULT_COLORS[getSeriesCount() % DEFAULT_COLORS.length].getRGB());
-		ontologyModel.getChartSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
-		
-		chartModel.addSeries(series);
-		tableModel.addSeries(series);
-		seriesCount++;
-		this.getChartSettingModel().refresh();
-
-	}
-	
-	/* (non-Javadoc)
 	 * @see agentgui.core.charts.DataModel#createNewDataSeries(java.lang.String)
 	 */
 	@Override

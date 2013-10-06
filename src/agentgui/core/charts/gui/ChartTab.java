@@ -71,8 +71,22 @@ public abstract class ChartTab extends ChartPanel {
 	public static final String DEFAULT_RENDERER = RENDERER_TYPES[RENDERER_Line_Renderer];
 	
 	/** The data model (containing ontology-, chart- and tablemodel) for this chart	 */
-	protected DataModel model;
+	protected DataModel dataModel;
 	
+	
+	/**
+	 * Constructor
+	 * @param chart The chart to be displayed
+	 */
+	public ChartTab(JFreeChart chart) {
+		super(chart);
+		this.setBackground(Color.WHITE);								// Component background
+		this.getChart().getPlot().setBackgroundPaint(Color.WHITE);		// Chart background
+		
+		// Background grid color
+		this.getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
+		this.getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
+	}
 	
 	/**
 	 * Gets the render type.
@@ -96,20 +110,6 @@ public abstract class ChartTab extends ChartPanel {
 	 */
 	public BufferedImage getChartThumb(){
 		return this.exportAsImage(260, 175, true);
-	}
-	
-	/**
-	 * Constructor
-	 * @param chart The chart to be displayed
-	 */
-	public ChartTab(JFreeChart chart) {
-		super(chart);
-		this.setBackground(Color.WHITE);								// Component background
-		this.getChart().getPlot().setBackgroundPaint(Color.WHITE);		// Chart background
-		
-		// Background grid color
-		this.getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
-		this.getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
 	}
 	
 	/**
@@ -178,7 +178,7 @@ public abstract class ChartTab extends ChartPanel {
 	 * Applies the color settings from the ontology model
 	 */
 	public void applyColorSettings(){
-		List colors = model.getOntologyModel().getChartSettings().getYAxisColors();
+		List colors = dataModel.getOntologyModel().getChartSettings().getYAxisColors();
 		XYItemRenderer renderer = getChart().getXYPlot().getRenderer();
 		for(int i=0; i < colors.size(); i++){
 			String colorString = (String) colors.get(i);
@@ -193,7 +193,7 @@ public abstract class ChartTab extends ChartPanel {
 	 * Applies the line width settings from the ontology model
 	 */
 	public void applyLineWidthsSettings(){
-		List lineWidths = model.getOntologyModel().getChartSettings().getYAxisLineWidth();
+		List lineWidths = dataModel.getOntologyModel().getChartSettings().getYAxisLineWidth();
 		XYItemRenderer renderer = getChart().getXYPlot().getRenderer();
 		
 		for(int i = 0; i < lineWidths.size(); i++){
@@ -212,7 +212,7 @@ public abstract class ChartTab extends ChartPanel {
 	}
 	
 	public void setSeriesColor(int seriesIndex, Color color) throws NoSuchSeriesException{
-		if(seriesIndex < model.getSeriesCount()){
+		if(seriesIndex < dataModel.getSeriesCount()){
 			XYItemRenderer renderer = getChart().getXYPlot().getRenderer();
 			renderer.setSeriesPaint(seriesIndex, color);
 		}else{
@@ -221,7 +221,7 @@ public abstract class ChartTab extends ChartPanel {
 	}
 	
 	public void setSeriesLineWidth(int seriesIndex, float lineWidth) throws NoSuchSeriesException{
-		if(seriesIndex < model.getSeriesCount()){
+		if(seriesIndex < dataModel.getSeriesCount()){
 			XYItemRenderer renderer = getChart().getXYPlot().getRenderer();
 			renderer.setSeriesStroke(seriesIndex, new BasicStroke(lineWidth));
 		}else{
@@ -235,9 +235,9 @@ public abstract class ChartTab extends ChartPanel {
 	 * Applies some settings for chart visualization. If chart type specific settings are required, override this method.
 	 */
 	protected void applySettings(){
-		if(model.getOntologyModel().getChartSettings().getRendererType() != null){
+		if(dataModel.getOntologyModel().getChartSettings().getRendererType() != null){
 			// If a renderer type is specified, use that
-			setRenderer(model.getOntologyModel().getChartSettings().getRendererType());
+			setRenderer(dataModel.getOntologyModel().getChartSettings().getRendererType());
 		}else{
 			// If not, use the default renderer for this chart type
 			setRenderer(DEFAULT_RENDERER);

@@ -87,8 +87,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	private TableCellEditor4Color cellEditorColor = null;
 	private TableCellSpinnerEditor4FloatObject cellEditorSpinner = null;
 	
-	private boolean isPauseListener = false;
-	
+
 	/**
 	 * Instantiates a new chart settings tab.
 	 *
@@ -122,7 +121,6 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	 */
 	public void setChartSettingModelData() {
 		
-		this.isPauseListener = true;
 		this.getTfChartTitle().setText(this.chartSettingModel.getChartTitle());
 		this.getTfXAxisLabel().setText(this.chartSettingModel.getChartXAxisLabel());
 		this.getTfYAxisLabel().setText(this.chartSettingModel.getChartYAxisLabel());
@@ -133,7 +131,6 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 			this.getTblSeriesSettings().setModel(tbModel);
 			this.refreshRenderEditorTblSeriesSettings();	
 		}
-		this.isPauseListener = false;
 	}
 	
 	/**
@@ -262,9 +259,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 			cbRendererType.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					if (isPauseListener==false) {
-						setRenderType((String) getCbRendererType().getSelectedItem());
-					}
+					setRenderType((String) getCbRendererType().getSelectedItem());
 				}
 			});
 		}
@@ -331,14 +326,14 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 		int seriesIndex = tme.getFirstRow();
 		try{
 			if(tme.getColumn() == 0){
-				setSeriesLabel(seriesIndex, (String) this.chartSettingModel.getTableModelSeriesSettings().getValueAt(seriesIndex, 0));
+				this.setSeriesLabel(seriesIndex, (String) this.chartSettingModel.getTableModelSeriesSettings().getValueAt(seriesIndex, 0));
 			}else if(tme.getColumn() == 1){
-				setSeriesColor(seriesIndex, (Color) this.chartSettingModel.getTableModelSeriesSettings().getValueAt(seriesIndex, 1));
+				this.setSeriesColor(seriesIndex, (Color) this.chartSettingModel.getTableModelSeriesSettings().getValueAt(seriesIndex, 1));
 			}else if(tme.getColumn() == 2){
-				setSeriesLineWidth(seriesIndex, (Float) this.chartSettingModel.getTableModelSeriesSettings().getValueAt(seriesIndex, 2));
+				this.setSeriesLineWidth(seriesIndex, (Float) this.chartSettingModel.getTableModelSeriesSettings().getValueAt(seriesIndex, 2));
 			}
 			
-		}catch (NoSuchSeriesException ex) {
+		} catch (NoSuchSeriesException ex) {
 			System.err.println("Error changing settings for series "+seriesIndex);
 			ex.printStackTrace();
 		}
@@ -357,15 +352,13 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 		this.handleTextFieldUpdate(de);		
 	}
 	private void handleTextFieldUpdate(DocumentEvent de) {
-		if (this.isPauseListener==false) {
-			if (de.getDocument()==getTfChartTitle().getDocument()) {
-				setChartTitle(getTfChartTitle().getText());
-			}else if(de.getDocument() == getTfXAxisLabel().getDocument()){
-				setXAxisLabel(getTfXAxisLabel().getText());
-			}else if(de.getDocument() == getTfYAxisLabel().getDocument()){
-				setYAxisLabel(getTfYAxisLabel().getText());
-			}	
-		}
+		if (de.getDocument()==getTfChartTitle().getDocument()) {
+			setChartTitle(getTfChartTitle().getText());
+		}else if(de.getDocument() == getTfXAxisLabel().getDocument()){
+			setXAxisLabel(getTfXAxisLabel().getText());
+		}else if(de.getDocument() == getTfYAxisLabel().getDocument()){
+			setYAxisLabel(getTfYAxisLabel().getText());
+		}	
 	}
 	
 	/**

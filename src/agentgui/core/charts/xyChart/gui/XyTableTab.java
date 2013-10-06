@@ -176,7 +176,7 @@ public class XyTableTab extends TableTab {
 	}
 	private JCheckBox getJCheckboxAutoSort() {
 		if (jCheckboxAutoSort==null) {
-			jCheckboxAutoSort = new JCheckBox(Language.translate("Automatisch nach X-Werten sortieren"));
+			jCheckboxAutoSort = new JCheckBox(Language.translate("Automatisch sortieren"));
 			jCheckboxAutoSort.setFont(new Font("Dialog", Font.BOLD, 12));
 			jCheckboxAutoSort.setMargin(new Insets(5, 5, 5, 5));
 			jCheckboxAutoSort.addActionListener(this);
@@ -314,6 +314,7 @@ public class XyTableTab extends TableTab {
 			this.getTable().getCellEditor().stopCellEditing();	
 		}
 		
+		XyTableModel xyTableModel = ((XyTableModel)this.dataModelLocal.getTableModel());
 		// --- Case separation ActionEvent ----------------
 		if (ae.getSource()==getBtnSeriesSettings()) {
 			this.setJPopupMenueSettingsVisible(true);
@@ -336,16 +337,14 @@ public class XyTableTab extends TableTab {
 					// --- Apply settings to series -------
 					dataSeries.setAutoSort(this.jCheckboxAutoSort.isSelected());
 					dataSeries.setAvoidDuplicateXValues(!this.getJCheckboxDuplicateXValues().isSelected());
-					this.dataModelLocal.getTableModel().rebuildTableModel();
+					xyTableModel.rebuildXyDataSeries(xyTableModel.getFocusedSeriesIndex());
 				}
 			}
 			
 		} else if (ae.getSource()==getBtnPrevSeries()) {
-			XyTableModel xyTableModel = ((XyTableModel)this.dataModelLocal.getTableModel());
 			xyTableModel.focusSeries(xyTableModel.getFocusedSeriesIndex()-1);
 			
 		} else if (ae.getSource()==getBtnNextSeries()) {
-			XyTableModel xyTableModel = ((XyTableModel)this.dataModelLocal.getTableModel());
 			xyTableModel.focusSeries(xyTableModel.getFocusedSeriesIndex()+1);
 			
 		} else if(ae.getSource()==getBtnAddColumn() || (ae.getSource()==getBtnAddRow() && getTable().getRowCount()==0)){
@@ -354,7 +353,6 @@ public class XyTableTab extends TableTab {
 			if(seriesLabel != null){
 				// --- As JFreeChart doesn't work with empty data series, one value pair must be added ------ 
 				DataSeries newSeries = this.dataModelLocal.createNewDataSeries(seriesLabel);
-				// --- If not, use 0 as key value -------------------------------------------------------
 				ValuePair initialValuePair = this.dataModelLocal.createNewValuePair(0, 0);
 				this.dataModelLocal.getValuePairsFromSeries(newSeries).add(initialValuePair);
 				this.dataModelLocal.addSeries(newSeries);
@@ -380,10 +378,10 @@ public class XyTableTab extends TableTab {
 			this.dataModelLocal.getTableModel().removeRow(this.getTable());
 			
 		} else if (ae.getSource()==getBtnMoveUp()) {
-			((XyTableModel)this.dataModelLocal.getTableModel()).move(this.getTable(), -1);
+			xyTableModel.move(this.getTable(), -1);
 			
 		} else if (ae.getSource()==getBtnMoveDown()) {
-			((XyTableModel)this.dataModelLocal.getTableModel()).move(this.getTable(), 1);
+			xyTableModel.move(this.getTable(), 1);
 			
 		}
 		this.setButtonsEnabledToSituation();
@@ -409,7 +407,10 @@ public class XyTableTab extends TableTab {
 			int focusedSeries = ((XyTableModel)this.dataModelLocal.getTableModel()).getFocusedSeriesIndex();
 			int countRows = this.dataModelLocal.getTableModel().getRowCount();
 			int selectRowTable = this.getTable().getSelectedRow();
-			XyDataSeries xySeries = ((XyOntologyModel) this.dataModelLocal.getOntologyModel()).getSeries(focusedSeries);
+			XyDataSeries xySeries = null;
+			if (focusedSeries>=0) {
+				xySeries = ((XyOntologyModel) this.dataModelLocal.getOntologyModel()).getSeries(focusedSeries);	
+			}
 			
 			// --- Settings -------------------------
 			this.getBtnSeriesSettings().setEnabled(countSeries>0);	
@@ -426,8 +427,8 @@ public class XyTableTab extends TableTab {
 			this.getBtnRemoveRow().setEnabled(selectRowTable!=-1);
 			this.getBtnRemoveColumn().setEnabled(countSeries>0);
 			
-			this.getBtnMoveUp().setEnabled(xySeries.getAutoSort()==false && countRows>1 && selectRowTable>0);
-			this.getBtnMoveDown().setEnabled(xySeries.getAutoSort()==false && countRows>1 && selectRowTable!=-1 && selectRowTable<countRows-1) ;
+			this.getBtnMoveUp().setEnabled(xySeries!=null && xySeries.getAutoSort()==false && countRows>1 && selectRowTable>0);
+			this.getBtnMoveDown().setEnabled(xySeries!=null && xySeries.getAutoSort()==false && countRows>1 && selectRowTable!=-1 && selectRowTable<countRows-1) ;
 			
 		} catch (NoSuchSeriesException nsse) {
 			nsse.printStackTrace();
