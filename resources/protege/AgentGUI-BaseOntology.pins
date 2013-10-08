@@ -1,4 +1,4 @@
-; Tue Oct 01 11:28:42 CEST 2013
+; Tue Oct 08 13:29:19 CEST 2013
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -54,7 +54,7 @@
 ([TimeSeries] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE)
-	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getTimeSeriesValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }else{\n		   if(getTimeSeriesValuePairs().size() == 1){\n			   TimeSeriesValuePair vp = (TimeSeriesValuePair) getTimeSeriesValuePairs().get(0);\n			   if(vp.getValue().getFloatValue() == 0.0f && vp.getTimestamp().getStringLongValue().length() == 0){\n				   noValuePairs = true;\n			   }\n		   }\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n   }"))
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getTimeSeriesValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }else{\n		   if(getTimeSeriesValuePairs().size() == 1){\n			   TimeSeriesValuePair vp = (TimeSeriesValuePair) getTimeSeriesValuePairs().get(0);\n			   if(vp.getValue().getFloatValue() == 0.0f && vp.getTimestamp().getStringLongValue().length() == 0){\n				   noValuePairs = true;\n			   }\n		   }\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n}\n\npublic void sort() {\n	java.util.List<TimeSeriesValuePair> newTimeSeriesValuePairs = new java.util.ArrayList<TimeSeriesValuePair>();\n	for (int i=0; i<this.timeSeriesValuePairs.size(); i++) {\n		newTimeSeriesValuePairs.add((TimeSeriesValuePair) this.timeSeriesValuePairs.get(i));\n	}\n	java.util.Collections.sort(newTimeSeriesValuePairs, new java.util.Comparator<TimeSeriesValuePair>() {\n		@Override\n		public int compare(TimeSeriesValuePair vp1, TimeSeriesValuePair vp2) {\n			Long t1 = vp1.getTimestamp().getLongValue();\n			Long t2 = vp2.getTimestamp().getLongValue();\n			return t1.compareTo(t2);\n		}\n	});\n	this.timeSeriesValuePairs.clear();\n	for (int i=0; i<newTimeSeriesValuePairs.size(); i++) {\n		this.timeSeriesValuePairs.add(newTimeSeriesValuePairs.get(i));\n	}\n}"))
 
 ([TimeSeriesChart] of  %3AJADE-CLASS
 
@@ -85,7 +85,7 @@
 ([XyDataSeries] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE)
-	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getXyValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n   }"))
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getXyValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n}\n\npublic void sort() {\n	\n	java.util.List<XyValuePair> newXyValuePairs = new java.util.ArrayList<XyValuePair>();\n	for (int i=0; i<this.xyValuePairs.size(); i++) {\n		newXyValuePairs.add((XyValuePair) this.xyValuePairs.get(i));\n	}\n	java.util.Collections.sort(newXyValuePairs, new java.util.Comparator<XyValuePair>() {\n		@Override\n		public int compare(XyValuePair vp1, XyValuePair vp2) {\n			Float x1 = vp1.getXValue().getFloatValue();\n			Float x2 = vp2.getXValue().getFloatValue();\n			if (vp1.getXValue().getFloatValue()==vp2.getXValue().getFloatValue()) {\n				Float y1 = vp1.getYValue().getFloatValue();\n				Float y2 = vp2.getYValue().getFloatValue();\n				return y1.compareTo(y2);\n			}\n			return x1.compareTo(x2);\n		}\n	});\n	this.xyValuePairs.clear();\n	for (int i=0; i<newXyValuePairs.size(); i++) {\n		this.xyValuePairs.add(newXyValuePairs.get(i));\n	}\n}"))
 
 ([XySeriesChartSettings] of  %3AJADE-CLASS
 

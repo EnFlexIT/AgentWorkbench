@@ -124,7 +124,7 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 	/**
 	 * Resets reminder maps.
 	 */
-	public void resetReminderMaps() {
+	public void resetRowNumberAndReminderMaps() {
 		keyRowVectorTreeMap.clear();
 		keyIndexHashMap.clear();
 		for (int i = 0; i < this.size(); i++) {
@@ -171,13 +171,13 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 		if (this.getKeyColumnIndex()==0) {
 			// --- Duplicate x values are allowed ---------
 			super.add(index, rowVector);
-			this.resetReminderMaps();
+			this.resetRowNumberAndReminderMaps();
 			
 		} else {
 			// --- Duplicate x values are NOT allowed -----
 			if (this.getKeyRowVectorTreeMap().get(key)==null) {
 				super.add(index, rowVector);
-				this.resetReminderMaps();			
+				this.resetRowNumberAndReminderMaps();			
 			}  else {
 				System.err.println(this.typeDescription + ": Duplicate key value " + key + " - row data was not added!");
 			}	
@@ -214,7 +214,7 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 			}
 		}
 		
-		this.resetReminderMaps();
+		this.resetRowNumberAndReminderMaps();
 		return fullSuccess;
 	}
 	
@@ -223,13 +223,13 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 	@Override
 	public synchronized Vector<Number> remove(int index) {
 		Vector<Number> rowRemoved = super.remove(index);
-		this.resetReminderMaps();
+		this.resetRowNumberAndReminderMaps();
 		return rowRemoved;
 	}
 	@Override
 	public synchronized void removeElementAt(int index) {
 		super.removeElementAt(index);
-		this.resetReminderMaps();
+		this.resetRowNumberAndReminderMaps();
 	}
 	
 	@Override
@@ -246,12 +246,12 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 	@Override
 	public synchronized void removeAllElements() {
 		super.removeAllElements();
-		this.resetReminderMaps();
+		this.resetRowNumberAndReminderMaps();
 	}
 	@Override
 	public synchronized boolean removeAll(Collection<?> collection) {
 		boolean done = super.removeAll(collection);
-		this.resetReminderMaps();
+		this.resetRowNumberAndReminderMaps();
 		return done;
 	}
 
@@ -279,6 +279,26 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 				return x1.compareTo(x2);
 			}
 		});
+		this.resetRowNumberAndReminderMaps();
+	}
+
+	/**
+	 * Returns the row specified by the column to search for and a given value.
+	 *
+	 * @param colIndex the column index
+	 * @param xValue the x value
+	 * @return the row by value
+	 */
+	public Vector<Number> getRowByValue(int columnIndex, Number value) {
+		Vector<Number> rowFound = null;
+		for (int i=0; i<this.size(); i++) {
+			Number compValue = this.get(i).get(columnIndex);
+			if (compValue.equals(value)) {
+				rowFound = this.get(i);
+				break;
+			}
+		}
+		return rowFound;
 	}
 	
 	

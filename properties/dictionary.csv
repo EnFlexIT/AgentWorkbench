@@ -149,6 +149,10 @@ nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system para
 can not be deleted or renamed!;;;
 de;Diskretes Zeitmodell mit Schrittweite sowie Start- und Endzeitpunkt.;Incremental discrete-time model with start and stop time.;;;
 de;Doppelklick um eine Klasse auszuwählen !;Double click to select a class!
+de;Doppelte X-Werte nicht zulässig!;Duplicate x values are not allowed!;;;
+de;Doppelte X-Werte sind derzeit nicht zulässig!
+Die Aktion wird rückgängig gemacht.;Duplicate x values ??are currently not allowed!
+The action will be canceled.;;;
 de;Doppelte X-Werte zulassen;Allow duplicate X-Values;;;
 de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;;;

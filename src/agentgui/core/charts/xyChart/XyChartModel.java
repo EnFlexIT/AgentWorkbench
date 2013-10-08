@@ -144,12 +144,14 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 			XYSeries xySeries = this.getSeries(seriesIndex);	
 			xySeries.clear();
 			
-			for (int i = 0; i < xyData.size()-1; i++) {
+			for (int i=0; i<xyData.size()-1; i++) {
 				XyValuePair vp = (XyValuePair) xyData.get(i);
 				xySeries.add(vp.getXValue().getFloatValue(), vp.getYValue().getFloatValue(), false);
 			}
-			XyValuePair vp = (XyValuePair) xyData.get(xyData.size()-1);
-			xySeries.add(vp.getXValue().getFloatValue(), vp.getYValue().getFloatValue());
+			if (xyData.size()>0) {
+				XyValuePair vp = (XyValuePair) xyData.get(xyData.size()-1);
+				xySeries.add(vp.getXValue().getFloatValue(), vp.getYValue().getFloatValue());
+			}
 			
 		} catch (NoSuchSeriesException e) {
 			e.printStackTrace();

@@ -83,6 +83,13 @@ public class XyTableTab extends TableTab {
 	private JCheckBox jCheckboxDuplicateXValues;
 	private JButton jButtonApplySettings;
 	
+	
+	/**
+	 * Instantiates a new XyTableTab.
+	 *
+	 * @param model the model
+	 * @param parentChartEditor the parent chart editor
+	 */
 	public XyTableTab(XyDataModel model, ChartEditorJPanel parentChartEditor){
 		super(parentChartEditor);
 		this.dataModelLocal = model;
@@ -309,32 +316,36 @@ public class XyTableTab extends TableTab {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		// --- Stop Cell editing --------------------------
+		// --- Stop Cell editing ----------------------------------------------
 		if (this.getTable().isEditing()) {
 			this.getTable().getCellEditor().stopCellEditing();	
 		}
 		
 		XyTableModel xyTableModel = ((XyTableModel)this.dataModelLocal.getTableModel());
-		// --- Case separation ActionEvent ----------------
+		// --- Case separation ActionEvent ------------------------------------
 		if (ae.getSource()==getBtnSeriesSettings()) {
 			this.setJPopupMenueSettingsVisible(true);
 			
 		} else if (ae.getSource()==getJButtonApplySettings()) {
 
 			this.setJPopupMenueSettingsVisible(false);
-			// --- Are there changes in the settings? -----
+			// --- Are there changes in the settings? -------------------------
 			XyDataSeries dataSeries = this.getCurrentXySeries();
 			if (!(this.jCheckboxAutoSort.isSelected()==dataSeries.getAutoSort() && this.getJCheckboxDuplicateXValues().isSelected()!=dataSeries.getAvoidDuplicateXValues())) {
-				// --- Settings have changed --------------
-				String title = Language.translate("Änderungen anwenden") +"?";
-				String msg = "Das Anwenden der neuen Datenreiheneigenschaften ";
-				msg += "\nkann dazu führen, dass Daten verloren gehen.";
-				msg += "\n\nMöchten Sie fortfahren?"; 
-				msg = Language.translate(msg) ;
+				// --- Settings have changed ----------------------------------
+				int userAnswer = JOptionPane.YES_OPTION;
+				if (this.getJCheckboxDuplicateXValues().isSelected()==dataSeries.getAvoidDuplicateXValues() && this.getJCheckboxDuplicateXValues().isSelected()==false) {
+					// --- Especially duplicate x values are disallowed now ---
+					String title = Language.translate("Änderungen anwenden") +"?";
+					String msg = "Das Anwenden der neuen Datenreiheneigenschaften ";
+					msg += "\nkann dazu führen, dass Daten verloren gehen.";
+					msg += "\n\nMöchten Sie fortfahren?"; 
+					msg = Language.translate(msg) ;
+					userAnswer = JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION);
+				} 
 				
-				int answer = JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION);
-				if (answer==JOptionPane.YES_OPTION) {
-					// --- Apply settings to series -------
+				if (userAnswer==JOptionPane.YES_OPTION) {
+					// --- Apply settings to series ---------------------------
 					dataSeries.setAutoSort(this.jCheckboxAutoSort.isSelected());
 					dataSeries.setAvoidDuplicateXValues(!this.getJCheckboxDuplicateXValues().isSelected());
 					xyTableModel.rebuildXyDataSeries(xyTableModel.getFocusedSeriesIndex());

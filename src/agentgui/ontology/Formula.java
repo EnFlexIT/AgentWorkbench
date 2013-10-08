@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: Formula
 * @author ontology bean generator
-* @version 2013/10/1, 11:28:40
+* @version 2013/10/8, 13:06:42
 */
 public class Formula implements Concept {
 

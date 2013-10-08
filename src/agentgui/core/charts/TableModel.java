@@ -150,13 +150,15 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 	 * @param label The label
 	 */
 	public void setXColumnLabel(String label){
-		int xLabelIndex = 0;
-		if (this.tableModelDataVector.isActivateRowNumber()==true) {
-			xLabelIndex = 1;
+		if (this.getRowCount()>0) {
+			int xLabelIndex = 0;
+			if (this.tableModelDataVector.isActivateRowNumber()==true) {
+				xLabelIndex = 1;
+			}
+			columnTitles.remove(xLabelIndex);
+			columnTitles.add(xLabelIndex, label);
+			fireTableStructureChanged();
 		}
-		columnTitles.remove(xLabelIndex);
-		columnTitles.add(xLabelIndex, label);
-		fireTableStructureChanged();
 	}
 	
 	/**

@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: XySeriesChartSettings
 * @author ontology bean generator
-* @version 2013/10/1, 11:28:39
+* @version 2013/10/8, 13:06:42
 */
 public class XySeriesChartSettings extends ChartSettingsGeneral{ 
 
