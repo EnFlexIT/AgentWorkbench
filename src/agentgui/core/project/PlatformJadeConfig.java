@@ -104,13 +104,14 @@ public class PlatformJadeConfig implements Serializable {
 	// --- Runtime variables -------------------------------------------------- 
 	@XmlTransient
 	private Project currProject = null;
+	@XmlTransient
+	private DefaultListModel listModelServices = null;
+	
 	@XmlElement(name="useLocalPort")	
 	private Integer useLocalPort = Application.getGlobalInfo().getJadeLocalPort();
 	@XmlElementWrapper(name = "serviceList")
 	@XmlElement(name="service")			
 	private HashSet<String> useServiceList = new HashSet<String>();
-	@XmlTransient
-	private DefaultListModel listModelServices = null;
 	
 	
 	/**
@@ -169,27 +170,14 @@ public class PlatformJadeConfig implements Serializable {
 	}
 	
 	/**
-	 * This Method scans for a free Port, which can be used
-	 * for the JADE-Container. It's starts searching for a free
-	 * Port on 'portSearchStart'. If not available, it checks
-	 * the next higher Port and so on.
-	 *
-	 * @param portSearchStart the port search start
-	 */
-	private void findFreePort(int portSearchStart){
-		PortChecker portCheck = new PortChecker(portSearchStart);
-		useLocalPort = portCheck.getFreePort();
-	}
-	
-	/**
 	 * Adds the local configured 'LocalPort' to the input instance of Profile.
 	 *
 	 * @param profile the profile
 	 * @return jade.core.Profile
 	 */
 	private Profile setProfileLocalPort(Profile profile){
-		this.findFreePort(useLocalPort);
-		profile.setParameter(Profile.LOCAL_PORT, useLocalPort.toString());
+		Integer freePort = new PortChecker(this.useLocalPort).getFreePort();
+		profile.setParameter(Profile.LOCAL_PORT, freePort.toString());
 		return profile;
 	}
 	

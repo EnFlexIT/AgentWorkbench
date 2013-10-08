@@ -51,7 +51,7 @@ public class PortChecker {
 		
 		int currPort = portSearchStart;
 		while (currPort < portSearchStart+30) {
-			if (isFreePort(currPort)){
+			if (this.isFreePort(currPort)==true){
 				freePort = currPort;
 				break;
 			}
@@ -84,13 +84,13 @@ public class PortChecker {
 			ds = new DatagramSocket(port);
 			ds.setReuseAddress(true);
 			return true;
+			
 		} catch (IOException e) {
 		} finally {
-			if (ds != null) {
+			if (ds!=null) {
 				ds.close();
 			}
-
-			if (ss != null) {
+			if (ss!=null) {
 				try {
 					ss.close();
 				} catch (IOException e) {

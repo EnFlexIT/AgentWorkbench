@@ -466,10 +466,10 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 		if (trigger==jButtonSetPort) {
 			
 			// --- Open Dialog ------------------
-			JadeSetupNewPort newPort = new JadeSetupNewPort( Application.getMainWindow(), currProject.getProjectName(), true, currProject, jTextFieldDefaultPort.getLocationOnScreen());
+			JadeSetupNewPort newPort = new JadeSetupNewPort(Application.getMainWindow(), currProject.getProjectName(), true, currProject, jTextFieldDefaultPort.getLocationOnScreen());
 			newPort.setVisible(true);
 			// === Go ahead =====================
-			if ( newPort.isCanceled() == false ) {
+			if (newPort.isCanceled() == false) {
 				Integer oldLocalPort = currProject.getJadeConfiguration().getLocalPort();
 				Integer newLocalPort = newPort.getNewLocalPort4Jade();
 				if (newLocalPort!=oldLocalPort) {
