@@ -200,28 +200,68 @@ public class XyDataModel extends DataModel {
 	 */
 	@Override
 	public void editDataSeriesAddData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException {
-		// TODO Auto-generated method stub
+
+		XyDataSeries addXySeries = (XyDataSeries) series;
+		// --- Edit the ontology model first --------------
+		if (editOntology==true) {
+			XyDataSeries localTimeSeries = (XyDataSeries) this.ontologyModel.getSeries(targetDataSeriesIndex);
+			XySeriesHelper localXySeriesHelper = new XySeriesHelper(localTimeSeries);
+			localXySeriesHelper.addSeriesData(addXySeries);
+		}
+		// --- Rebuild chart and table -------------------- 
+		((XyChartModel)this.chartModel).exchangeSeries(targetDataSeriesIndex, this.ontologyModel.getSeries(targetDataSeriesIndex));
+		((XyTableModel)this.tableModel).exchangeSeries(targetDataSeriesIndex, this.ontologyModel.getSeries(targetDataSeriesIndex));
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.DataModel#editDataSeriesAddOrExchangeData(agentgui.ontology.DataSeries, int, boolean)
 	 */
 	@Override
 	public void editDataSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException {
-		// TODO Auto-generated method stub
+		
+		XyDataSeries addExXySeries = (XyDataSeries) series;
+		// --- Edit the ontology model first --------------
+		if (editOntology==true) {
+			XyDataSeries localTimeSeries = (XyDataSeries) this.ontologyModel.getSeries(targetDataSeriesIndex);
+			XySeriesHelper localXySeriesHelper = new XySeriesHelper(localTimeSeries);
+			localXySeriesHelper.addOrExchangeSeriesData(addExXySeries);
+		}
+		// --- Rebuild chart and table -------------------- 
+		((XyChartModel)this.chartModel).exchangeSeries(targetDataSeriesIndex, this.ontologyModel.getSeries(targetDataSeriesIndex));
+		((XyTableModel)this.tableModel).exchangeSeries(targetDataSeriesIndex, this.ontologyModel.getSeries(targetDataSeriesIndex));
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.DataModel#editDataSeriesExchangeData(agentgui.ontology.DataSeries, int, boolean)
 	 */
 	@Override
 	public void editDataSeriesExchangeData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException {
-		// TODO Auto-generated method stub
+
+		XyDataSeries exchangeXySeries = (XyDataSeries) series;
+		// --- Edit the ontology model first --------------
+		if (editOntology==true) {
+			XyDataSeries localTimeSeries = (XyDataSeries) this.ontologyModel.getSeries(targetDataSeriesIndex);
+			XySeriesHelper localXySeriesHelper = new XySeriesHelper(localTimeSeries);
+			localXySeriesHelper.exchangeSeriesData(exchangeXySeries);
+		}
+		// --- Rebuild chart and table -------------------- 
+		((XyChartModel)this.chartModel).exchangeSeries(targetDataSeriesIndex, this.ontologyModel.getSeries(targetDataSeriesIndex));
+		((XyTableModel)this.tableModel).exchangeSeries(targetDataSeriesIndex, this.ontologyModel.getSeries(targetDataSeriesIndex));
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.DataModel#editDataSeriesRemoveData(agentgui.ontology.DataSeries, int, boolean)
 	 */
 	@Override
 	public void editDataSeriesRemoveData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException {
-		// TODO Auto-generated method stub
+		
+		XyDataSeries removeXySeries = (XyDataSeries) series;
+		// --- Edit the ontology model first --------------
+		if (editOntology==true) {
+			XyDataSeries localTimeSeries = (XyDataSeries) this.ontologyModel.getSeries(targetDataSeriesIndex);
+			XySeriesHelper localXySeriesHelper = new XySeriesHelper(localTimeSeries);
+			localXySeriesHelper.removeSeriesData(removeXySeries);
+		}
+		// --- Rebuild chart and table -------------------- 
+		((XyChartModel)this.chartModel).exchangeSeries(targetDataSeriesIndex, this.ontologyModel.getSeries(targetDataSeriesIndex));
+		((XyTableModel)this.tableModel).exchangeSeries(targetDataSeriesIndex, this.ontologyModel.getSeries(targetDataSeriesIndex));
 	}
 
 }

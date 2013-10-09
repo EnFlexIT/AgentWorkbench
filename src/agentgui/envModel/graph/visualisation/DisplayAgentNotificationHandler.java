@@ -323,6 +323,7 @@ public class DisplayAgentNotificationHandler {
 	
 	/**
 	 * Gets the display updater.
+	 * @see DisplayAgentNotificationThread
 	 * @return the display updater
 	 */
 	private Thread startDisplayUpdater(GraphEnvironmentController graphController) {
@@ -334,7 +335,7 @@ public class DisplayAgentNotificationHandler {
 	}
 
 	/**
-	 * Dispose.
+	 * Stops and disposes the display updater or {@link DisplayAgentNotificationThread}.
 	 */
 	public void dispose() {
 		if (this.displayUpdater!=null) {

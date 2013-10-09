@@ -94,11 +94,11 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 	 */
 	@Override
 	public void exchangeSeries(int seriesIndex, DataSeries series) throws NoSuchSeriesException {
+		
 		if(seriesIndex < this.getSeriesCount()){
 
 			XyDataSeries xyDataSeries = (XyDataSeries) series;
 			XYSeries editSeries = this.getSeries(seriesIndex);
-			
 			// --- Are there configuration changes ? -------------------------- 
 			if (xyDataSeries.getAutoSort()==editSeries.getAutoSort() && xyDataSeries.getAvoidDuplicateXValues()==(!editSeries.getAllowDuplicateXValues())) {
 				// --- No configuration changes -------------------------------
@@ -186,23 +186,5 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 			this.setXYSeriesAccordingToOntologyModel(seriesIndex);
 		}
 	}
-	
-	@Override
-	public void editSeriesAddData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
-		// TODO Auto-generated method stub
-	}
-
 	
 }

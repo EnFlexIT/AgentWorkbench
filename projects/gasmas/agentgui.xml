@@ -39,7 +39,7 @@
         <doStaticLoadBalancing>false</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <numberOfAgents>1500</numberOfAgents>
-        <numberOfContainer>1</numberOfContainer>
+        <numberOfContainer>2</numberOfContainer>
         <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
@@ -59,7 +59,7 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>MixedClusters (1) Small</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
-    <downloadResources>http://rudel1:8080/gasmas/gasmas_IDE.jar</downloadResources>
+    <downloadResources>http://rudel1.cs.uni-due.de:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>

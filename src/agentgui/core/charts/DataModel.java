@@ -139,43 +139,6 @@ public abstract class DataModel {
 	 */
 	public abstract String getDefaultSeriesLabel();
 	
-	
-	/**
-	 * Edits the data series by adding data.
-	 *
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 * @param editOntology true, if the ontology has to be edited
-	 */
-	public abstract void editDataSeriesAddData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException;
-	/**
-	 * Edits the data series by adding or exchanging data.
-	 *
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 * @param editOntology true, if the ontology has to be edited
-	 */
-	public abstract void editDataSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException;
-	/**
-	 * Edits the data series by exchanging data.
-	 *
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 * @param editOntology true, if the ontology has to be edited
-	 */
-	public abstract void editDataSeriesExchangeData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException;
-	
-	/**
-	 * Edits the data series by remove data.
-	 *
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 * @param editOntology true, if the ontology has to be edited
-	 * @throws NoSuchSeriesException the no such series exception
-	 */
-	public abstract void editDataSeriesRemoveData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException;
-	
-	
 	/**
 	 * Returns the ontology model.
 	 * @return the ontologyModel
@@ -327,5 +290,41 @@ public abstract class DataModel {
 		this.getChartSettingModel().refresh();
 		
 	}
+
+	/**
+	 * Edits the data series by adding data.
+	 *
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 * @param editOntology true, if the ontology has to be edited
+	 */
+	public abstract void editDataSeriesAddData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException;
+	/**
+	 * Edits the data series by adding or exchanging data.
+	 *
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 * @param editOntology true, if the ontology has to be edited
+	 */
+	public abstract void editDataSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException;
+	/**
+	 * Edits the data series by exchanging data.
+	 *
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 * @param editOntology true, if the ontology has to be edited
+	 */
+	public abstract void editDataSeriesExchangeData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException;
+	
+	/**
+	 * Edits the data series by remove data.
+	 *
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
+	 * @param editOntology true, if the ontology has to be edited
+	 * @throws NoSuchSeriesException the no such series exception
+	 */
+	public abstract void editDataSeriesRemoveData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException;
+	
 	
 }

@@ -192,10 +192,12 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.ChartModel#editSeriesAddData(agentgui.ontology.DataSeries, int)
+	
+	/**
+	 * Edits the data series by adding data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
 	 */
-	@Override
 	public void editSeriesAddData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 
 		if (targetDataSeriesIndex<=(this.getSeriesCount()-1)) {
@@ -219,10 +221,11 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 			throw new NoSuchSeriesException();
 		}
 	}
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.ChartModel#editSeriesAddOrExchangeData(agentgui.ontology.DataSeries, int)
+	/**
+	 * Edits the data series by adding or exchanging data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
 	 */
-	@Override
 	public void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 		
 		if (targetDataSeriesIndex<=(this.getSeriesCount()-1)) {
@@ -246,10 +249,11 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.ChartModel#editSeriesExchangeData(agentgui.ontology.DataSeries, int)
+	/**
+	 * Edits the data series by exchanging data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
 	 */
-	@Override
 	public void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 
 		if (targetDataSeriesIndex<=(this.getSeriesCount()-1)) {
@@ -276,10 +280,11 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.ChartModel#editSeriesRemoveData(agentgui.ontology.DataSeries, int)
+	/**
+	 * Edits the data series by remove data.
+	 * @param series the series
+	 * @param targetDataSeriesIndex the target data series index
 	 */
-	@Override
 	public void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 
 		if (targetDataSeriesIndex<=(this.getSeriesCount()-1)) {

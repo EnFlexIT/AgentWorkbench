@@ -31,6 +31,7 @@ package agentgui.core.charts.xyChart;
 import jade.util.leap.List;
 
 import java.util.TreeMap;
+import java.util.Vector;
 
 import agentgui.ontology.Simple_Float;
 import agentgui.ontology.XyDataSeries;
@@ -75,10 +76,33 @@ public class XySeriesHelper extends TreeMap<Float, XyValuePair>{
 	public XyDataSeries getXySeries() {
 		if (this.xySeries==null) {
 			this.xySeries = new XyDataSeries();
-			this.xySeries.setLabel("New XY-Data Seriues");
+			this.xySeries.setLabel("New XY-Data Series");
 		}
 		return xySeries;
 	}
+	
+	/**
+	 * Returns all value pairs that contain the specified x and y value.
+	 * @param xValueToSearch the x value to search
+	 * @param yValueToSearch the y value to search
+	 * @return the Vector of {@link XyValuePair} with the specified x and y values
+	 */
+	public Vector<XyValuePair> getAllValuePairsContaining(Float xValueToSearch, Float yValueToSearch) {
+		Vector<XyValuePair> xyValuePairsFound = null;
+		for (int i=0; i<this.getXySeries().getXyValuePairs().size(); i++) {
+			XyValuePair currValuePair = (XyValuePair) this.getXySeries().getXyValuePairs().get(i);
+			float currXValue = currValuePair.getXValue().getFloatValue();
+			float currYValue = currValuePair.getYValue().getFloatValue();
+			if (xValueToSearch.equals(currXValue) && yValueToSearch.equals(currYValue)) {
+				if (xyValuePairsFound==null) {
+					xyValuePairsFound = new Vector<XyValuePair>();
+				}
+				xyValuePairsFound.addElement(currValuePair);
+			}
+		}
+		return xyValuePairsFound;
+	}
+	
 	/**
 	 * Returns a copy of the current XyDataSeries.
 	 * @return the time series copy
@@ -90,7 +114,9 @@ public class XySeriesHelper extends TreeMap<Float, XyValuePair>{
 			copy = new XyDataSeries();
 			copy.setLabel(this.xySeries.getLabel() + " (Copy)");
 			copy.setUnit(this.xySeries.getUnit());
-
+			copy.setAutoSort(this.xySeries.getAutoSort());
+			copy.setAvoidDuplicateXValues(this.xySeries.getAvoidDuplicateXValues());
+			
 			for (int i = 0; i < this.xySeries.getXyValuePairs().size(); i++) {
 				XyValuePair xyVpOld = (XyValuePair) this.xySeries.getXyValuePairs().get(i);
 				
@@ -117,129 +143,168 @@ public class XySeriesHelper extends TreeMap<Float, XyValuePair>{
 		List valuePairs = this.xySeries.getXyValuePairs();
 		for (int i = 0; i < valuePairs.size(); i++) {
 			XyValuePair xyVp = (XyValuePair) valuePairs.get(i);
-			Float xyStamp = xyVp.getXValue().getFloatValue();
-			this.put(xyStamp, xyVp);
+			Float xValue = xyVp.getXValue().getFloatValue();
+			this.put(xValue, xyVp);
 		}
-	}
-	
-	/**
-	 * Resets the current XyDataSeries from local TreeMap.
-	 */
-	private void resetXySeriesFromTreeMap() {
-		
-		// --- Clear current XyDataSeries ---------
-		this.getXySeries().getXyValuePairs().clear();
-		
-		// --- rebuild  XyDataSeries --------------
-		Long[] keys = new Long[this.size()];
-		this.keySet().toArray(keys);
-		for (int i = 0; i < keys.length; i++) {
-			this.getXySeries().getXyValuePairs().add(this.get(keys[i]));
-		}
-		
 	}
 	
 	/**
 	 * Adds new series data to the current XyDataSeries, if the concrete data is new.
-	 * If the data (xy stamp) is already there, it will not be overwritten.
-	 *
+	 * ATTENTION: If duplicate x values are allowed, all {@link XyValuePair} elements 
+	 * will just be added. If duplicate x values are NOT allowed only {@link XyValuePair} 
+	 * with new x values will be added.
 	 * @param additionalXySeries the XySereis containing new data
-	 * @return the xy series containing the value pairs that were added
+	 * @return a XyDataSeries containing the value pairs that were actually added
 	 */
 	public XyDataSeries addSeriesData(XyDataSeries additionalXySeries) {
 		return this.addSeriesData(additionalXySeries.getXyValuePairs());
 	}
 	/**
 	 * Adds new series data to the current XyDataSeries, if the concrete data is new.
-	 * If the data (xy stamp) is already there, it will not be overwritten.
+	 * ATTENTION: If duplicate x values are allowed, all {@link XyValuePair} elements 
+	 * will just be added. If duplicate x values are NOT allowed only {@link XyValuePair} 
+	 * with new x values will be added.
 	 * @param listOfXySeriesValuePairs the list of xy series value pairs
+	 * @return a XyDataSeries containing the value pairs that were actually added
 	 */
 	public XyDataSeries addSeriesData(List listOfXySeriesValuePairs) {
 		XyDataSeries addedValuePairs = new XyDataSeries();
 		for (int i = 0; i < listOfXySeriesValuePairs.size(); i++) {
 			XyValuePair xyVp = (XyValuePair) listOfXySeriesValuePairs.get(i);
-			Float xyStamp = xyVp.getXValue().getFloatValue();
-			if (this.containsKey(xyStamp)==false) {
+			Float xValue = xyVp.getXValue().getFloatValue();
+			boolean addValuePair = true;
+			if (this.getXySeries().getAvoidDuplicateXValues() && this.containsKey(xValue)) {
+				addValuePair = false;
+			} 
+			if (addValuePair==true) {
 				this.getXySeries().getXyValuePairs().add(xyVp);
-				this.put(xyStamp, xyVp);
+				this.put(xValue, xyVp);
 				addedValuePairs.addXyValuePairs(xyVp);
 			}
 		}
 		if (addedValuePairs.getXyValuePairs().size()==0) {
 			addedValuePairs=null;
+		} else {
+			if (this.getXySeries().getAutoSort()==true) {
+				this.getXySeries().sort();
+			}
 		}
 		return addedValuePairs;
 	}
 	
 	/**
-	 * Adds the or exchanges series data with the data of the specified XyDataSeries.
+	 * Adds or exchanges series data with the data of the specified XyDataSeries.
+	 * ATTENTION: If duplicate x values are allowed in the current series, the 
+	 * new data will be just added.
 	 * @param additionalXySeries the additional xy series
 	 */
 	public void addOrExchangeSeriesData(XyDataSeries additionalXySeries) {
 		this.addOrExchangeSeriesData(additionalXySeries.getXyValuePairs());
 	}
 	/**
-	 * Adds the or exchanges series data with the specified .
+	 * Adds or exchanges series data with the specified List of XyValuePairs.
+	 * ATTENTION: If duplicate x values are allowed in the current series, the 
+	 * new data will be just added.
 	 * @param listOfXySeriesValuePairs the list of xy series value pairs
 	 */
 	public void addOrExchangeSeriesData(List listOfXySeriesValuePairs) {
-		for (int i = 0; i < listOfXySeriesValuePairs.size(); i++) {
-			XyValuePair xyVp = (XyValuePair) listOfXySeriesValuePairs.get(i);
-			Float xyStamp = xyVp.getXValue().getFloatValue();
-			this.put(xyStamp, xyVp);
+		if (this.getXySeries().getAvoidDuplicateXValues()==true) {
+			for (int i = 0; i < listOfXySeriesValuePairs.size(); i++) {
+				XyValuePair xyVp = (XyValuePair) listOfXySeriesValuePairs.get(i);
+				Float xValue = xyVp.getXValue().getFloatValue();
+				XyValuePair xyVpLocal = this.get(xValue);
+				if (xyVpLocal!=null) {
+					xyVpLocal.setYValue(xyVp.getYValue());
+				} else {
+					this.getXySeries().getXyValuePairs().add(xyVp);
+					this.put(xValue, xyVp);
+				}
+			}
+			if (this.getXySeries().getAutoSort()==true) {
+				this.getXySeries().sort();
+			}
+		} else {
+			this.addSeriesData(listOfXySeriesValuePairs);
 		}
-		this.resetXySeriesFromTreeMap();
 	}
 
 	/**
-	 * Exchanges series data, if the concrete xy stamps are available.
+	 * Exchanges series data, if the concrete x values are available and
+	 * if duplicate x values are forbidden.
+	 * ATTENTION: If duplicate x values are allowed this method will simply 
+	 * exchange nothing.
 	 * @param additionalXySeries the additional xy series
-	 * @return the xy series of value pairs that were exchanged
+	 * @return the XyDataSeries of value pairs that were exchanged
 	 */
 	public XyDataSeries exchangeSeriesData(XyDataSeries additionalXySeries) {
 		return this.exchangeSeriesData(additionalXySeries.getXyValuePairs());
 	}
 	/**
-	 * Exchanges series data, if the concrete xy stamps are available.
+	 * Exchanges series data, if the concrete x values are available and if duplicate 
+	 * x values are forbidden.
+	 * ATTENTION: If duplicate x values are allowed this method will exchange nothing.
 	 * @param listOfXySeriesValuePairs the list of xy series value pairs
-	 * @return the xy series of value pairs that were exchanged
+	 * @return the XyDataSeries of value pairs that were exchanged
 	 */
 	public XyDataSeries exchangeSeriesData(List listOfXySeriesValuePairs) {
-		XyDataSeries exchangedXySeries = new XyDataSeries();
-		for (int i = 0; i < listOfXySeriesValuePairs.size(); i++) {
-			XyValuePair xyVp = (XyValuePair) listOfXySeriesValuePairs.get(i);
-			Float xyStamp = xyVp.getXValue().getFloatValue();
-			if (this.containsKey(xyStamp)) {
-				this.put(xyStamp, xyVp);
-				exchangedXySeries.addXyValuePairs(xyVp);
+		XyDataSeries exchangedXySeries = null;
+		if (this.getXySeries().getAvoidDuplicateXValues()==true) {
+			exchangedXySeries = new XyDataSeries();
+			for (int i=0; i<listOfXySeriesValuePairs.size(); i++) {
+				XyValuePair xyVp = (XyValuePair) listOfXySeriesValuePairs.get(i);
+				Float xValue = xyVp.getXValue().getFloatValue();
+				XyValuePair xyVpLocal = this.get(xValue);
+				if (xyVpLocal!=null) {
+					xyVpLocal.setYValue(xyVp.getYValue());
+					exchangedXySeries.addXyValuePairs(xyVp);
+				}
 			}
-		}
-		this.resetXySeriesFromTreeMap();
-		if (exchangedXySeries.getXyValuePairs().size()==0) {
-			exchangedXySeries = null;
+			if (exchangedXySeries.getXyValuePairs().size()==0) {
+				exchangedXySeries = null;
+			}
 		}
 		return exchangedXySeries;
 	}
 	
 	/**
-	 * Removes the series data specified by the xy stamps.
-	 * @param additionalXySeries the additional xy series
+	 * Removes the series data specified by the list of {@link XyValuePair}.
+	 * @param xyDataSeriesToRemove the XyDataSeries that contains the value pairs to remove
 	 */
-	public void removeSeriesData(XyDataSeries additionalXySeries) {
-		this.removeSeriesData(additionalXySeries.getXyValuePairs());
+	public void removeSeriesData(XyDataSeries xyDataSeriesToRemove) {
+		this.removeSeriesData(xyDataSeriesToRemove.getXyValuePairs());
 	}
 	/**
 	 * Removes the series data specified by the xy stamps.
-	 * @param listOfXySeriesValuePairs the list of xy series value pairs
+	 * ATTENTION: If duplicate x values are forbidden this method just searches for 
+	 * x values to remove. If duplicates are allowed, the method searches for a match
+	 * of x and y value (which can be time consuming).
+	 * @param listOfXySeriesValuePairs the list of {@link XyValuePair}
 	 */
 	public void removeSeriesData(List listOfXySeriesValuePairs) {
+
 		for (int i = 0; i < listOfXySeriesValuePairs.size(); i++) {
 			XyValuePair xyVp = (XyValuePair) listOfXySeriesValuePairs.get(i);
-			Float xyStamp = xyVp.getXValue().getFloatValue();
-			this.remove(xyStamp);
-		}
-		this.resetXySeriesFromTreeMap();
+			Float xValue = xyVp.getXValue().getFloatValue();
+			Float yValue = xyVp.getYValue().getFloatValue();
+			if (this.getXySeries().getAvoidDuplicateXValues()==true) {
+				// --- duplicate x values are forbidden -------
+				XyValuePair xyVpLocal = this.get(xValue);
+				if (xyVpLocal!=null) {
+					this.getXySeries().removeXyValuePairs(xyVpLocal);
+					this.remove(xValue);
+				}
+			} else {
+				// --- duplicate x values are allowed ---------
+				Vector<XyValuePair> xyVPsLocal = this.getAllValuePairsContaining(xValue, yValue);
+				if (xyVPsLocal!=null) {
+					for (int j = 0; j < xyVPsLocal.size(); j++) {
+						XyValuePair xyVpLocal = xyVPsLocal.get(j);
+						this.getXySeries().removeXyValuePairs(xyVpLocal);
+					}
+					this.remove(xValue);
+				}
+			}
+		}//--- end for ---
 	}
-	
 
 }

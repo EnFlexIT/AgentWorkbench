@@ -148,15 +148,18 @@ public class TimeSeriesHelper extends TreeMap<Long, TimeSeriesValuePair>{
 	 * If the data (time stamp) is already there, it will not be overwritten.
 	 *
 	 * @param additionalTimeSeries the TimeSereis containing new data
-	 * @return the time series containing the value pairs that were added
+	 * @return a TimeSeries containing the value pairs that were actually added
 	 */
 	public TimeSeries addSeriesData(TimeSeries additionalTimeSeries) {
 		return this.addSeriesData(additionalTimeSeries.getTimeSeriesValuePairs());
 	}
+	
 	/**
 	 * Adds new series data to the current TimeSeries, if the concrete data is new.
 	 * If the data (time stamp) is already there, it will not be overwritten.
+	 *
 	 * @param listOfTimeSeriesValuePairs the list of time series value pairs
+	 * @return a TimeSeries containing the value pairs that were actually added
 	 */
 	public TimeSeries addSeriesData(List listOfTimeSeriesValuePairs) {
 		TimeSeries addedValuePairs = new TimeSeries();

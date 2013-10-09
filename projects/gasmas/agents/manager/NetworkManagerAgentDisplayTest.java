@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 import agentgui.core.charts.timeseriesChart.TimeSeriesHelper;
+import agentgui.core.charts.xyChart.XySeriesHelper;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphElementLayout;
@@ -97,16 +98,143 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		this.notifyAboutEnvironmentChanges();
 		
 		// ----------------------------------------------------------
-		// --- Second example: Chart Series Actions -----------------
+		// --- Examples: Chart Series Actions -----------------------
 		// ----------------------------------------------------------
 //		this.updateLayout();
 //		this.runDataModelNotificationUpdates();
+		
 //		this.updateTimeSeries_CompleteSeriesActions();
 //		this.updateTimeSeries_PartialSeriesActions();
+		
 		this.updateXyTimeSeries_CompleteSeriesActions();
+		this.updateXyTimeSeries_PartialSeriesActions();
 		
 	}
 
+	private void updateXyTimeSeries_PartialSeriesActions() {
+	
+		float fromBound = 0f;
+		float toBound = 2f;
+		
+		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n37"); // Exit in that case
+		this.sendDisplayAgentNotification(new DataModelOpenViewNotification(netComp));
+		
+		// ----------------------------------------------------------
+		// --- Produce a XyDataSeries -------
+		XyDataSeries base = new XyDataSeries();
+		base.setLabel("XySeries to edit");
+		base.setUnit("Random Float");
+		base.setAutoSort(true);
+		base.setAvoidDuplicateXValues(true);
+		// --- Create some value pairs ------
+		for (int j=0; j<10; j++) {
+			
+			Simple_Float xValue = new Simple_Float();
+			xValue.setFloatValue(this.getRandomFloat(fromBound, toBound));
+
+			Simple_Float yValue = new Simple_Float();
+			yValue.setFloatValue(this.getRandomFloat(fromBound, toBound));
+
+			XyValuePair xyVp = new XyValuePair();
+			xyVp.setXValue(xValue);
+			xyVp.setYValue(yValue);			
+			
+			base.addXyValuePairs(xyVp);
+		}
+		if (base.getAutoSort()==true) {
+			base.sort();	
+		}
+		
+		UpdateXySeries uts = new UpdateXySeries(netComp, 1);
+		uts.addXySeries(base);
+		this.sendDisplayAgentNotification(uts);
+		// ----------------------------------------------------------
+		
+		// --- Reminder for later remove actions --------------------
+		XyDataSeries removerReminderSeries = new XyDataSeries();
+		removerReminderSeries.setLabel("Reminder");
+		XySeriesHelper removerReminderHelper = new XySeriesHelper(removerReminderSeries);
+		
+		for (int i=0; i<20; i++) {
+			
+			XyDataSeries tmp1 = new XyDataSeries();
+			tmp1.setLabel("Adder1");
+			
+			XyDataSeries tmp2 = new XyDataSeries();
+			tmp2.setLabel("Adder2");
+			for (int j=0; j<5; j++) {
+				
+				Simple_Float xValue = new Simple_Float();
+				xValue.setFloatValue(this.getRandomFloat(toBound+i-0.5f, toBound+i+0.5f));
+				
+				Simple_Float yValue1 = new Simple_Float();
+				yValue1.setFloatValue(this.getRandomFloat(fromBound, toBound));
+				
+				Simple_Float yValue2 = new Simple_Float();
+				yValue2.setFloatValue(this.getRandomFloat(fromBound, toBound));
+				
+				XyValuePair xyVp1 = new XyValuePair();
+				xyVp1.setXValue(xValue);
+				xyVp1.setYValue(yValue1);			
+				
+				XyValuePair xyVp2 = new XyValuePair();
+				xyVp2.setXValue(xValue);
+				xyVp2.setYValue(yValue2);
+				
+				if (j<2) {
+					tmp1.addXyValuePairs(xyVp1);
+				}
+				tmp2.addXyValuePairs(xyVp2);
+				
+			}
+			
+			uts = new UpdateXySeries(netComp, 1);
+			uts.editXySeriesAddXySeriesData(1, tmp1);;
+			this.sendDisplayAgentNotification(uts);
+			// --- Remind for later remove action --------
+			removerReminderHelper.addSeriesData(tmp1);
+			
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			uts = new UpdateXySeries(netComp, 1);
+			uts.editXySeriesAddOrExchangeXySeriesData(1, tmp2);
+			this.sendDisplayAgentNotification(uts);
+			// --- Remind for later remove action --------
+			removerReminderHelper.addSeriesData(tmp2);
+
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		// --- Remove some value pairs ----------
+		removerReminderSeries = removerReminderHelper.getXySeriesCopy();
+		for (int k=removerReminderSeries.getXyValuePairs().size()-1; k>=0; k--) {
+			XyValuePair vp = (XyValuePair) removerReminderSeries.getXyValuePairs().get(k);
+			XyDataSeries removeSeries = new XyDataSeries();
+			removeSeries.addXyValuePairs(vp);
+			
+			uts = new UpdateXySeries(netComp, 1);
+			uts.editXySeriesRemoveXySeriesData(1, removeSeries);
+			this.sendDisplayAgentNotification(uts);
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("=> 'updateXySeries - partial series actions' test is done!");
+		
+	}
+		
+	@SuppressWarnings("unused")
 	private void updateXyTimeSeries_CompleteSeriesActions() {
 		
 		float fromBound = 0f;
@@ -117,13 +245,15 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		
 		for (int i=0; i<10; i++) {
 		
-			// --- Produce a TimeSeries ---------
+			// --- Produce a XyDataSeries -------
 			XyDataSeries tmpSeries = new XyDataSeries();
 			tmpSeries.setLabel("XySeries " + (i+1));
 			tmpSeries.setUnit("Random Float");
+			tmpSeries.setAutoSort(true);
+			tmpSeries.setAvoidDuplicateXValues(true);
 			
 			// --- Create some value pairs ------
-			for (int j = 0; j<10; j++) {
+			for (int j=0; j<10; j++) {
 				
 				Simple_Float xValue = new Simple_Float();
 				xValue.setFloatValue(this.getRandomFloat(fromBound, toBound));
@@ -141,32 +271,29 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 			
 			// --- Create an UpdateTimeSeries instance ----
 			UpdateXySeries uts = new UpdateXySeries(netComp, 1);
-			uts.addXySeries(tmpSeries);
-			
-//			if (i<=1) {
-//				uts.addOrExchangeXySeries(tmpSeries, i);
-//			} else {
-//				uts.exchangeXySeries(tmpSeries, 0);
-//			}
-			
+			if (i==0) {
+				uts.addXySeries(tmpSeries);				
+			}else if (i>0 && i<=3) {
+				uts.addOrExchangeXySeries(tmpSeries, i);
+			} else {
+				uts.exchangeXySeries(tmpSeries, 1);
+			}
 			// --- Send update to the display ---
 			this.sendDisplayAgentNotification(uts);
 			
-//			if (i>2) {
-//				// --- Remove last TimeSeries ---
-//				UpdateTimeSeries utsRemove = new UpdateTimeSeries(netComp, 1);
-//				utsRemove.removeTimeSeries(2);
-//				this.sendDisplayAgentNotification(utsRemove);
-//			}
-			
 			// --- Just wait a little -----------
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("=> 'updateXySeries' test is done!");
+		
+		UpdateXySeries uts = new UpdateXySeries(netComp, 1);
+		uts.removeXySeries(0);
+		this.sendDisplayAgentNotification(uts);
+		
+		System.out.println("=> 'updateXySeries - complete series actions' test is done!");
 		
 	}
 	
@@ -356,7 +483,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 	 */
 	public float getRandomFloat(float fromBound, float toBound) {   
 		Random rand = new Random();
-		return rand.nextFloat() * ((toBound - fromBound) + fromBound);   
+		return (rand.nextFloat() * (toBound - fromBound) + fromBound);   
 	}
 	
 	/**
@@ -459,7 +586,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 	
 	@Override
 	public void setPauseSimulation(boolean isPauseSimulation) {
-		// TODO Auto-generated method stub
+		// Nothing to do here yet
 	}
 
 	/**

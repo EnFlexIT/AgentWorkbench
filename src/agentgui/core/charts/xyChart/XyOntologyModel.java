@@ -101,14 +101,26 @@ public class XyOntologyModel extends OntologyModel {
 
 	}
 	/* (non-Javadoc)
+	 * @see agentgui.core.charts.OntologyModel#exchangeSeries(int, agentgui.ontology.DataSeries)
+	 */
+	@Override
+	public void exchangeSeries(int seriesIndex, DataSeries dataSeries) throws NoSuchSeriesException {
+		if (seriesIndex>-1 && seriesIndex<getSeriesCount()) {
+			this.xyChart.getXyChartData().remove(seriesIndex);
+			this.xyChart.getXyChartData().add(seriesIndex, dataSeries);
+		} else {
+			throw new NoSuchSeriesException();
+		}
+	}
+	/* (non-Javadoc)
 	 * @see agentgui.core.charts.OntologyModel#removeSeries(int)
 	 */
 	@Override
 	public void removeSeries(int seriesIndex) throws NoSuchSeriesException {
 		if(seriesIndex < getSeriesCount()){
-			xyChart.getXyChartData().remove(seriesIndex);
-			xyChart.getXySeriesVisualisationSettings().getYAxisColors().remove(seriesIndex);
-			xyChart.getXySeriesVisualisationSettings().getYAxisLineWidth().remove(seriesIndex);
+			this.xyChart.getXyChartData().remove(seriesIndex);
+			this.xyChart.getXySeriesVisualisationSettings().getYAxisColors().remove(seriesIndex);
+			this.xyChart.getXySeriesVisualisationSettings().getYAxisLineWidth().remove(seriesIndex);
 		}else{
 			throw new NoSuchSeriesException();
 		}
@@ -157,20 +169,6 @@ public class XyOntologyModel extends OntologyModel {
 	@Override
 	public List getChartData() {
 		return xyChart.getXyChartData();
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.core.charts.OntologyModel#exchangeSeries(int, agentgui.ontology.DataSeries)
-	 */
-	@Override
-	public void exchangeSeries(int seriesIndex, DataSeries dataSeries) throws NoSuchSeriesException {
-		if (seriesIndex<getSeriesCount()) {
-			XyChart xyc = this.xyChart;
-			xyc.getXyChartData().remove(seriesIndex);
-			xyc.getXyChartData().add(seriesIndex, dataSeries);
-		} else {
-			throw new NoSuchSeriesException();
-		}
 	}
 
 	/**

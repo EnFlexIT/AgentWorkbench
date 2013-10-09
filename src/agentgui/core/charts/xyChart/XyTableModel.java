@@ -31,9 +31,6 @@ package agentgui.core.charts.xyChart;
 import jade.util.leap.List;
 
 import java.awt.Container;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -50,6 +47,10 @@ import agentgui.ontology.ValuePair;
 import agentgui.ontology.XyDataSeries;
 import agentgui.ontology.XyValuePair;
 
+
+/**
+ * The Class XyTableModel.
+ */
 public class XyTableModel extends TableModel {
 
 	private static final long serialVersionUID = -8873141815861732107L;
@@ -459,6 +460,23 @@ public class XyTableModel extends TableModel {
 	}
 	
 	/**
+	 * Exchanges the specified data series with a new data series.
+	 *
+	 * @param seriesIndex the series index
+	 * @param newSeries the new series
+	 */
+	public void exchangeSeries(int seriesIndex, DataSeries newSeries) {
+		XyDataSeries xyDataSeries = (XyDataSeries) newSeries;
+		TableModelDataVector tmdv = this.getTableModelDataVectorFromXyDataSeries(xyDataSeries);
+		if (seriesIndex>-1 && seriesIndex<this.seriesTableModels.size()) {
+			this.seriesTableModels.set(seriesIndex, tmdv);
+			if (seriesIndex==this.getFocusedSeriesIndex()) {
+				this.focusSeries(seriesIndex);	
+			}
+		}
+	}
+	
+	/**
 	 * Removes a XY Series from the table model
 	 * @param seriesIndex The index of the series to be removed
 	 * @throws NoSuchSeriesException Will be thrown if there is no series with the specified index
@@ -488,212 +506,6 @@ public class XyTableModel extends TableModel {
 			}
 		}
 		fireTableStructureChanged();
-	}
-	
-	/**
-	 * Exchanges the specified data series with a new data series.
-	 *
-	 * @param seriesIndex the series index
-	 * @param newSeries the new series
-	 */
-	public void exchangeSeries(int seriesIndex, DataSeries newSeries) {
-		//TODO
-		int valueColumIndex = seriesIndex+1;
-		this.columnTitles.set(valueColumIndex, newSeries.getLabel());
-		HashMap<Number, Vector<Number>> availableRows = new HashMap<Number, Vector<Number>>(); 
-		
-		// --- Remove values that are belonging to the old series ---
-		for (int i=0; i<getRowCount(); i++) {
-			// --- Set value null ------------------------------
-			Vector<Number> rowVector = this.getRow(i);
-			Number keyValue = (Number) rowVector.get(0);
-			availableRows.put(keyValue, rowVector);
-			this.getRow(i).set(valueColumIndex, null);
-		}
-		
-		List valuePairs = this.parentDataModel.getValuePairsFromSeries(newSeries);
-		for (int i = 0; i < valuePairs.size(); i++) {
-			
-			ValuePair vp = (ValuePair) valuePairs.get(i);
-			Number keyValue = this.parentDataModel.getXValueFromPair(vp);
-			Vector<Number> rowVector = availableRows.get(keyValue);
-			if (rowVector==null) {
-				// No row found, create a new row
-				rowVector = new Vector<Number>();
-				while(rowVector.size()< this.getColumnCount()){
-					rowVector.add(null);
-				}
-				rowVector.set(0, parentDataModel.getXValueFromPair(vp));
-				rowVector.set(valueColumIndex, parentDataModel.getYValueFromValuePair(vp));
-				
-				// Find the right place to insert the new row:
-				int insertAt = getRowCount();	// At the end of the table...
-				for(int j=0;j<this.getRowCount();j++){
-					double compareValue = ((Number) tableModelDataVector.get(j).get(0)).doubleValue();
-					if(compareValue > parentDataModel.getXValueFromPair(vp).doubleValue()){
-						insertAt = j;			// ... or before the first one with a higher time stamp
-					}
-				}
-				tableModelDataVector.add(insertAt, rowVector);
-				
-			} else {
-				// Row found, exchange the value
-				rowVector.set(valueColumIndex, parentDataModel.getYValueFromValuePair(vp));
-				
-			}
-		} 
-		
-		// --- Remove all empty rows --------------------------------
-		this.removeEmptyRows();
-		this.fireTableStructureChanged();
-		
-	}
-	
-	/**
-	 * Edits the data series by adding data.
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 */
-	public void editSeriesAddData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
-		//TODO
-		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
-			
-			int targetTbIndex = targetDataSeriesIndex+1;
-			List valuePairs = parentDataModel.getValuePairsFromSeries(series); 
-			for (int i = 0; i < valuePairs.size(); i++) {
-				ValuePair vp = (ValuePair) valuePairs.get(i);
-				Vector<Number> newRow = new Vector<Number>();
-				newRow.add(parentDataModel.getXValueFromPair(vp));
-				while(newRow.size() < this.getColumnCount()){
-					newRow.add(null);
-				}
-				newRow.add(targetTbIndex, parentDataModel.getYValueFromValuePair(vp));
-				tableModelDataVector.add(newRow);
-			}
-			this.fireTableStructureChanged();
-			
-		} else {
-			throw new NoSuchSeriesException(); 
-		}
-	}
-	/**
-	 * Edits the data series by adding or exchanging data.
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 */
-	public void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
-		//TODO
-		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
-			
-			boolean dataWereAdded = false;
-			int targetTbIndex = targetDataSeriesIndex+1;
-			TreeMap<Number, Vector<Number>> tableDataTreeMap = new TreeMap<Number, Vector<Number>>(this.tableModelDataVector.getKeyRowVectorTreeMap());
-			
-			List valuePairs = parentDataModel.getValuePairsFromSeries(series);
-			for (int i = 0; i < valuePairs.size(); i++) {
-				// --- Find the key in the table ----------
-				ValuePair vp = (ValuePair) valuePairs.get(i);
-				Number key = parentDataModel.getXValueFromPair(vp);
-				Number value = parentDataModel.getYValueFromValuePair(vp);
-
-				Vector<Number> editRow = tableDataTreeMap.get(key);
-				if (editRow==null) {
-					// --- Add a new row ------------------
-					editRow = new Vector<Number>();
-					while(editRow.size() < this.getColumnCount()){
-						editRow.add(null);
-					}
-					editRow.set(0, key);
-					editRow.set(targetTbIndex, value);
-					tableDataTreeMap.put(key, editRow);
-					dataWereAdded = true;
-					
-				} else {
-					// --- Finally edit the row -----------
-					editRow.set(targetTbIndex, value);
-				}
-			}
-			
-			// --- Finally update the table, if necessary -
-			if (dataWereAdded==true) {
-				// --- Rebuild the table ------------------
-				Number[] keyArray = new Number[tableDataTreeMap.size()]; 
-				tableDataTreeMap.keySet().toArray(keyArray);
-				for (int i = 0; i < keyArray.length; i++) {
-					Number keyTreeMap = keyArray[i];
-					if ((valuePairs.size()-1)<i) {
-						// --- Just add new data ----------
-						this.tableModelDataVector.add(i, tableDataTreeMap.get(keyTreeMap));
-					} else {
-						Number keyValuePair = parentDataModel.getXValueFromPair((ValuePair) valuePairs.get(i));
-						if (keyTreeMap.equals(keyValuePair)==false) {
-							// --- New data was found -----
-							this.tableModelDataVector.add(i, tableDataTreeMap.get(keyTreeMap));
-						}	
-					}
-				}	
-			}
-			this.fireTableStructureChanged();
-			
-		} else {
-			throw new NoSuchSeriesException();
-		}
-	}
-	/**
-	 * Edits the data series by exchanging data.
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 */
-	public void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
-		//TODO
-		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
-			
-			int targetTbIndex = targetDataSeriesIndex+1;
-			
-			List valuePairs = parentDataModel.getValuePairsFromSeries(series);
-			for (int i = 0; i < valuePairs.size(); i++) {
-				// --- Find the key in the table ----------
-				ValuePair vp = (ValuePair) valuePairs.get(i);
-				Number key = parentDataModel.getXValueFromPair(vp);
-				Number value = parentDataModel.getYValueFromValuePair(vp);
-
-				Vector<Number> editRow = this.tableModelDataVector.getKeyRowVectorTreeMap().get(key);
-				if (editRow!=null) {
-					// --- Edit the row -------------------
-					editRow.set(targetTbIndex, value);
-				}
-			}
-			this.fireTableStructureChanged();
-			
-		} else {
-			throw new NoSuchSeriesException();
-		}
-	}
-	/**
-	 * Edits the data series by remove data.
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 */
-	public void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
-		if (targetDataSeriesIndex<=(this.getColumnCount()-1)) {
-			
-			int targetTbIndex = targetDataSeriesIndex+1;
-			HashSet<Number> removeKeys = this.getKeyHashSetFromDataSeries(series);
-			
-			for (int i = 0; i < this.tableModelDataVector.size(); i++) {
-				Vector<Number> rowVector = this.tableModelDataVector.get(i);
-				Number keyValue = (Number) rowVector.get(0);
-				if (removeKeys.contains(keyValue)) {
-					// --- Delete Value ---------
-					rowVector.set(targetTbIndex, null);
-				}
-			}
-			this.removeEmptyRows();
-			this.fireTableStructureChanged();
-			
-		} else {
-			throw new NoSuchSeriesException();
-		}
 	}
 	
 	/* (non-Javadoc)

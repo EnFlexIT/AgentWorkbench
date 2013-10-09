@@ -188,6 +188,7 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 	 */
 	public abstract void removeRow(JTable jTable);
 	
+	
 	/**
 	 * Add a data series to the table model
 	 * @param newSeries
@@ -209,33 +210,6 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 	public abstract void exchangeSeries(int seriesIndex, DataSeries newSeries) throws NoSuchSeriesException;
 	
 	
-	/**
-	 * Edits the data series by adding data.
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 */
-	public abstract void editSeriesAddData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException;
-	/**
-	 * Edits the data series by adding or exchanging data.
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 */
-	public abstract void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException;
-	/**
-	 * Edits the data series by exchanging data.
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 */
-	public abstract void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException;
-	/**
-	 * Edits the data series by remove data.
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 */
-	public abstract void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException;
-	
-	
-
 	/**
 	 * Returns the index of the row with the given key / x value, or -1 if the 
 	 * time stamp does not exist in the table.

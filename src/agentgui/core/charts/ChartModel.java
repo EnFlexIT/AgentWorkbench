@@ -68,29 +68,4 @@ public interface ChartModel {
 	public void removeSeries(int seriesIndex);
 	
 	
-	/**
-	 * Edits the data series by adding data.
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 */
-	public abstract void editSeriesAddData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException;
-	/**
-	 * Edits the data series by adding or exchanging data.
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 */
-	public abstract void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException;
-	/**
-	 * Edits the data series by exchanging data.
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 */
-	public abstract void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException;
-	/**
-	 * Edits the data series by remove data.
-	 * @param series the series
-	 * @param targetDataSeriesIndex the target data series index
-	 */
-	public abstract void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException;
-	
 }

@@ -127,31 +127,27 @@ public class TimeSeriesDataModel extends DataModel {
 	}
 	
 	/**
+	 * Returns the current time series ontology model.
 	 * @return the ontologyModel
 	 */
 	public TimeSeriesOntologyModel getTimeSeriesOntologyModel() {
 		return (TimeSeriesOntologyModel) ontologyModel;
 	}
 	/**
-	 * @param ontologyModel the ontologyModel to set
-	 */
-	public void setTimeSeriesOntologyModel(TimeSeriesOntologyModel ontologyModel) {
-		this.ontologyModel = ontologyModel;
-	}
-
-	/**
+	 * Returns the current time series chart model.
 	 * @return the chartModel
 	 */
 	public TimeSeriesChartModel getTimeSeriesChartModel() {
 		return (TimeSeriesChartModel) chartModel;
 	}
 	/**
-	 * @param chartModel the chartModel to set
+	 * Returns the current time series table model.
+	 * @return the time series table model
 	 */
-	public void setTimeSeriesChartModel(TimeSeriesChartModel chartModel) {
-		this.chartModel = chartModel;
+	public TimeSeriesTableModel getTimeSeriesTableModel() {
+		return (TimeSeriesTableModel) this.tableModel;
 	}
-
+	
 	/**
 	 * Sets the default time format.
 	 * @param defaultTimeFormat the new default time format
@@ -290,9 +286,9 @@ public class TimeSeriesDataModel extends DataModel {
 			localTimeSeriesHelper.addSeriesData(addTimeSeries);
 		}
 		// --- Edit chart model ---------------------------
-		this.chartModel.editSeriesAddData(addTimeSeries, targetDataSeriesIndex);
+		this.getTimeSeriesChartModel().editSeriesAddData(addTimeSeries, targetDataSeriesIndex);
 		// --- Edit table model ---------------------------
-		this.tableModel.editSeriesAddData(addTimeSeries, targetDataSeriesIndex);
+		this.getTimeSeriesTableModel().editSeriesAddData(addTimeSeries, targetDataSeriesIndex);
 		
 	}
 	/* (non-Javadoc)
@@ -309,9 +305,9 @@ public class TimeSeriesDataModel extends DataModel {
 			localTimeSeriesHelper.addOrExchangeSeriesData(addExTimeSeries);
 		}
 		// --- Edit chart model ---------------------------
-		this.chartModel.editSeriesAddOrExchangeData(addExTimeSeries, targetDataSeriesIndex);
+		this.getTimeSeriesChartModel().editSeriesAddOrExchangeData(addExTimeSeries, targetDataSeriesIndex);
 		// --- Edit table model ---------------------------
-		this.tableModel.editSeriesAddOrExchangeData(addExTimeSeries, targetDataSeriesIndex);
+		this.getTimeSeriesTableModel().editSeriesAddOrExchangeData(addExTimeSeries, targetDataSeriesIndex);
 		
 	}
 	/* (non-Javadoc)
@@ -328,9 +324,9 @@ public class TimeSeriesDataModel extends DataModel {
 			localTimeSeriesHelper.exchangeSeriesData(exTimeSeries);
 		}
 		// --- Edit chart model ---------------------------
-		this.chartModel.editSeriesExchangeData(exTimeSeries, targetDataSeriesIndex);
+		this.getTimeSeriesChartModel().editSeriesExchangeData(exTimeSeries, targetDataSeriesIndex);
 		// --- Edit table model ---------------------------
-		this.tableModel.editSeriesExchangeData(exTimeSeries, targetDataSeriesIndex);
+		this.getTimeSeriesTableModel().editSeriesExchangeData(exTimeSeries, targetDataSeriesIndex);
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.DataModel#editDataSeriesRemoveData(agentgui.ontology.DataSeries, int, boolean)
@@ -346,9 +342,10 @@ public class TimeSeriesDataModel extends DataModel {
 			localTimeSeriesHelper.removeSeriesData(removeTimeSeries);
 		}
 		// --- Edit chart model ---------------------------
-		this.chartModel.editSeriesRemoveData(removeTimeSeries, targetDataSeriesIndex);
+		this.getTimeSeriesChartModel().editSeriesRemoveData(removeTimeSeries, targetDataSeriesIndex);
 		// --- Edit table model ---------------------------
-		this.tableModel.editSeriesRemoveData(removeTimeSeries, targetDataSeriesIndex);
+		this.getTimeSeriesTableModel().editSeriesRemoveData(removeTimeSeries, targetDataSeriesIndex);
 	}
 
+	
 }

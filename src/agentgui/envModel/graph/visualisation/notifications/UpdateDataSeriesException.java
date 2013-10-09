@@ -65,7 +65,7 @@ public class UpdateDataSeriesException extends Exception {
 	 * @param cause the cause
 	 */
 	public UpdateDataSeriesException(int targetDataModelIndex, String compTypeGraphNodeOrNetworkComponent, String compID, Throwable cause) {
-		super("Error while trying to apply action 'UpdateTimeSeries' to data model index " + targetDataModelIndex + " of " + compTypeGraphNodeOrNetworkComponent + " '" + compID + "':", cause);
+		super("Error while trying to apply action 'UpdateDataSeries' to data model index " + targetDataModelIndex + " of " + compTypeGraphNodeOrNetworkComponent + " '" + compID + "':", cause);
 	}
 	
 }
