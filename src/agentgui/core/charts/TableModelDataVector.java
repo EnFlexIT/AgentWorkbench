@@ -289,13 +289,15 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 	 * @param xValue the x value
 	 * @return the row by value
 	 */
-	public Vector<Number> getRowByValue(int columnIndex, Number value) {
+	public Vector<Number> getRowByValue(int columnIndex, Number value, Integer skipRowIndex) {
 		Vector<Number> rowFound = null;
 		for (int i=0; i<this.size(); i++) {
-			Number compValue = this.get(i).get(columnIndex);
-			if (compValue.equals(value)) {
-				rowFound = this.get(i);
-				break;
+			if (!(skipRowIndex!=null && i==skipRowIndex)) {
+				Number compValue = this.get(i).get(columnIndex);
+				if (compValue.equals(value)) {
+					rowFound = this.get(i);
+					break;
+				}
 			}
 		}
 		return rowFound;

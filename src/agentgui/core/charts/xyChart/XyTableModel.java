@@ -530,7 +530,7 @@ public class XyTableModel extends TableModel {
 						if (((Float)this.latestChangedValue).equals(xValue)) return;
 						if (this.getOntologyModel().getSeries(this.getFocusedSeriesIndex()).getAvoidDuplicateXValues()==true) {
 							// --- Risk of duplicate x values ? -------------------------
-							if (this.tableModelDataVector.getRowByValue(colIndex, xValue)!=null) {
+							if (this.tableModelDataVector.getRowByValue(colIndex, xValue, rowIndex)!=null) {
 								// --- Another row contains this value, undo ------------
 								String title = "Doppelte X-Werte nicht zulässig!";
 								String msg = "Doppelte X-Werte sind derzeit nicht zulässig!\n";
