@@ -59,7 +59,7 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	
 	/**
 	 * Instantiates a new time series chart model.
-	 * @param timeSeriesChartSettings the time series chart settings
+	 * @param timeSeriesDataModel the current TimeSeriesDataModel
 	 */
 	public TimeSeriesChartModel(TimeSeriesDataModel timeSeriesDataModel){
 		super(TimeZone.getTimeZone("GMT"));

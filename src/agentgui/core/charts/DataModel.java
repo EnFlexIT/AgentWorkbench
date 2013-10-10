@@ -89,7 +89,6 @@ public abstract class DataModel {
 	 *
 	 * @param key The key / x value
 	 * @param value The (y) value
-	 * @param indexPosition the index position
 	 * @return The value pair
 	 */
 	public abstract ValuePair createNewValuePair(Number key, Number value);

@@ -61,7 +61,8 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 	/**
 	 * Instantiates a new table model data vector.
 	 *
-	 * @param noOfPrefixColumns the no of prefix columns
+	 * @param typeDescription the type description
+	 * @param activateRowNumber the activate row number
 	 * @param keyColumnIndex the key column index
 	 */
 	public TableModelDataVector(String typeDescription, boolean activateRowNumber, int keyColumnIndex) {
@@ -285,8 +286,9 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 	/**
 	 * Returns the row specified by the column to search for and a given value.
 	 *
-	 * @param colIndex the column index
-	 * @param xValue the x value
+	 * @param columnIndex the column index
+	 * @param value the value
+	 * @param skipRowIndex the row index that can be skip during search
 	 * @return the row by value
 	 */
 	public Vector<Number> getRowByValue(int columnIndex, Number value, Integer skipRowIndex) {

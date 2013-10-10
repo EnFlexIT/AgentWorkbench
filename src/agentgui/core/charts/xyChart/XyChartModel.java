@@ -51,7 +51,7 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 	
 	/**
 	 * Instantiates a new XYChartModel.
-	 * @param chartSettings the chart settings
+	 * @param xyDataModel the current XyDataModel
 	 */
 	public XyChartModel(XyDataModel xyDataModel) {
 		this.xyDataModel = xyDataModel;

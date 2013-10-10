@@ -155,7 +155,7 @@ public class ChartSettingModel {
 	/**
 	 * Sets the plot color for a data series, specified by its index 
 	 * @param seriesIndex The series index
-	 * @param newLabel The new plot color
+	 * @param newColor The new plot color
 	 * @throws NoSuchSeriesException Invalid series index
 	 */
 	public void setSeriesColor(int seriesIndex, Color newColor) throws NoSuchSeriesException{
@@ -165,7 +165,7 @@ public class ChartSettingModel {
 	/**
 	 * Sets the plot line width for a data series, specified by its index 
 	 * @param seriesIndex The series index
-	 * @param newLabel The new plot line width
+	 * @param newWidth The new plot line width
 	 * @throws NoSuchSeriesException Invalid series index
 	 */
 	public void setSeriesLineWidth(int seriesIndex, Float newWidth) throws NoSuchSeriesException{

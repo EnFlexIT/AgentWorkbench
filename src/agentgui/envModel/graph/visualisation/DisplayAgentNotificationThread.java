@@ -164,7 +164,6 @@ public class DisplayAgentNotificationThread extends Thread {
 	/**
 	 * Sends a data model update.
 	 *
-	 * @param graphController the graph controller
 	 * @param displayNotification the display notification
 	 */
 	public void sendDataModelUpdate(DisplayAgentNotificationGraph displayNotification) {
