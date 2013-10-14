@@ -38,12 +38,12 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
-import agentgui.core.environment.AbstractEnvironmentModel;
-import agentgui.core.environment.DisplaytEnvironmentModel;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.project.Project;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
+import agentgui.simulationService.environment.AbstractEnvironmentModel;
+import agentgui.simulationService.environment.DisplaytEnvironmentModel;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.sensoring.ServiceActuatorManager;
 import agentgui.simulationService.sensoring.ServiceSensorManager;

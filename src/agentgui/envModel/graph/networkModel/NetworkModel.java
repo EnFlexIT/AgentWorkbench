@@ -40,13 +40,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
-import agentgui.core.environment.DisplaytEnvironmentModel;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.prototypes.ClusterGraphElement;
 import agentgui.envModel.graph.prototypes.DistributionNode;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 import agentgui.envModel.graph.prototypes.StarGraphElement;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
+import agentgui.simulationService.environment.DisplaytEnvironmentModel;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;

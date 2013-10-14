@@ -30,14 +30,13 @@ package agentgui.simulationService.environment;
 
 import java.io.Serializable;
 
-import agentgui.core.environment.AbstractEnvironmentModel;
-import agentgui.core.environment.DisplaytEnvironmentModel;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.time.TimeModel;
 
 /**
- * This is the generalized environment model to use with the SimulationService.
+ * This is the generalized environment model to use with the SimulationService
+ * and in order to extend individual environment models.
  * 
  * @see SimulationService
  * 

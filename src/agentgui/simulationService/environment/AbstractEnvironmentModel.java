@@ -26,11 +26,12 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.core.environment;
+package agentgui.simulationService.environment;
 
 import java.io.Serializable;
 
-import agentgui.simulationService.environment.EnvironmentModel;
+import agentgui.core.environment.EnvironmentController;
+
 
 /**
  * The Class AbstractEnvironmentModel has to be used in environment models 

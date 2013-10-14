@@ -44,6 +44,8 @@ import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.agents.AbstractDisplayAgent;
+import agentgui.simulationService.environment.AbstractEnvironmentModel;
+import agentgui.simulationService.environment.DisplaytEnvironmentModel;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModel;
 
