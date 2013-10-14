@@ -1,0 +1,100 @@
+Changes between Agent.GUI Version 0.99 and Version 1.00
+
+General
+
+	- Updated JADE to version 4.3
+	- Updated JFreeChart to version 1.0.15
+	- Removed Batik and thus the SVG - Continuous-2D-Environment from the core Agent.GUI project (if you still need it, please contact us)
+	- Added some basic UML class documentations in ./AgentGUI/doc/uml/ - This folder is only available by using the IDE or by SVN
+	- Found and resolved possible trap for wrong configurations of the Agent.GUI/projects start arguments: added .toLower()
+	- Corrected version comparison for the update procedure
+	- Removed the bug that increased the JADE port by one after every JADE start and a subsequent save action.
+	- Enabled access to the current connection instance (com.mysql.jdbc.Connection) of an active database connection in class (agentgui.core.database.DBConnection)
+	- Removed bug for empty password entries for the database
+	- Extend class agentgui.core.gui.ProgressMonitor to be a JDialog or JInternalFrame. Depending on the context, the needed Container will be used.
+	- Extended the PlugIn with a new method that reacts on a PREPARE_FOR_SAVING notification of the current projects observer
+	
+	- Fixed bug for Ontologies that are located in external jar files.
+	- Created a new abstract super class DynFormBase for the class DynForm (see package agentgui.core.ontologies.gui) and separated the lines of code.
+	- Added a new table view to the OntologyInstanceViewer (agentgui.core.ontologies.gui.DynTable).
+	- DynTable: Added own DataVector Type and corresponding compare method in order to simplify UI updates	
+	- Added new sorting mechanism for ontology classes - looks nicer now!
+	- Added boolean parameter 'avoidGuiUpdate' to several methods of the DynForm, which increases the speed of pure data handling
+	- Introduced the EnvironmentController to the OntologyInstanceViewer and the DynForm
+	
+	- Introduced the OntologyClassVisualisation as a general concept for the visualisation of ontology classes
+	- Added the possibility to register an OntologyClassVisualisation by using a PlugIn
+	- Extended the class OntologyClassVisulisation with getter methods that enable the creation of Widgets, JPanels and JDialogs for an ontology class
+	- Added the general class OntologyClassVisualizations (Widget/Panel/Dialog) to the OntologyInstanceViewer
+	- Redesigned the handling of OntologyClassVisualisation's in connection to the DynForm	
+	- Fixed initial problems that occurred during initiating of OntologyClassWidget' and OntologyClassEditorPanel's	
+
+	- According to the concept of OntologyClassVisualisation's the ontology classes TimeSeriesChart and XyChart (see package agentgui.ontology) were implemented with visualization and editing interfaces for user and dynamic interactions during execution time that can be used in the OntologyInstanceViewer 
+	- Changed structure of the AgentGUIBaseOntology (see package agentgui.ontology) for TimeSeriesChart and XyChart
+	- Added dialog and conversion filter for time stamps of TimeSeriesChart's 
+	- Added functionality to apply time shift for TimeSeriesChart's during the import of csv-files
+	
+
+Environment models
+	
+	- Introduced the abstract classes DisplaytEnvironmentModel and AbstractEnvironmentModel for the slots of the general class EnvironmentModel (see package agentgui.simulationService.environment).
+	- Some refactoring regarding the previous changes (e.g. the new method EnvironmentModel.getCopy())
+	- Improved access for environment notification and EnvironmentModel-updates in the simulations service
+	- Refactored handling and thus increased the speed to access ServiceSensor instances in the ServiceActuator.
+	- In future 'Pause simulation' has to be implementation separately in every involved agent. The SimulationService will not longer intervene in the scheduling, but it will transfer a notification that the simulation has to be paused to agents and manager agents. 
+	- Corrected class TimeModelContinuous so that the right time will be stored/reminded now if a pausing time event occurs.
+
+	
+Graph or Network
+
+	- Added copy and paste action to the graph and network environment.
+	- Added a getDataModelCopy() method to the NetworkComponentAdapter and changed the getCopy() method for GraphNode, NetworkComponent and ClusterNetworkComponent	
+	- Created undo action for clearing network models.
+	- Created undo action for importing graphs.
+	- Fixed concurrency bug for loading the network model.
+	- Added double click event to the list of NetworkComponent's (will focus and center the selected component on screen).
+	- "Centering Component" now keeps the current Zoom-Factor.
+	- Added further renderer to edge arrows in order to have the same color as the edge itself
+	- Renaming of a NetworkComponent will now also reset the layout of its GraphElement's. 	
+	- Redesigned parts of the AbstractDisplayAgent and the DisplayAgent for the graph and network environment.
+	- Updated UML diagram for the NetworkComponentAdapter located in ./AgentGUI/doc/uml/ - This folder is only available by using the IDE or by SVN.
+	
+	- Redesigned right side/area of GraphEnvironmentControllerGUI to a LayeredPane in order to allow property dialogs and other JInternalFrame based dialogs (see agentgui.envModel.graph.controller.BasicGraphGuiJDesktop).
+	- Redesigned agentgui.envModel.graph.controller.BasicGraphGUI to a JInternalFrame (also related to the above mentioned changes).
+	- Improvements for the AddComponentDialog: The dialog will now stay open after adding a new component.
+	- Added new super class for internal frames that are used on the BasicGraphGuiJDesktop.
+	- Added Toolbar components to the BasicGraphGuiProperties dialog.	
+	- Improved method 'hasChanged' in the dialog BasicGraphGuiProperties
+	- Added user request when closing the property dialog of NetworkComponent's (SaveChanges: Yes, No, Cancel).	
+	- Enabled DoubleBuffering for JUNG-VisulazationViewer.
+	- Accelerated movements of property dialogs over the graph visualisation.
+
+	- Redesigned data model for GraphNodes also to a NetworkComponentAdapter.
+	- Changed the selection class and visualization for domains in the component type settings.
+	- Labels for DistributionNodes will now be displayed according to the DomainSettings and ComponentTypeSettings.
+	- Added the context menus for GraphNodes by using a NetworkComponentAdapter
+	- It is now possible to edit and work on properties for GraphNode-objects also.
+	- Added possibilities to handle the data model of NetworkComponents and GraphNodes by avoiding a GUI update.
+	- Extended context menus for GraphNodes that are connected to more than one NetworkComponent
+	
+	- Added methods that allow to send notification or ACLMessages by using a NetworkComponentAdapter (allows user interactions during MAS runtime).
+	- Properties changes of NetworkComponent's or GraphNodes during runtime will now be send to the corresponding agent.
+	- Changed the NetworkComponentAdapter, so that it is allowed now to access the actual GraphNode or NetworkComponent.
+	- Changed the usage of the TimeModelContinuous for the display agent of the graph and network environment
+
+	- Added DisplayAgentNotificationGraph for the graph and network environment (see package agentgui.envModel.graph.visualisation.notifications).
+	- Added own update thread to the DisplayAgentNotificationHandler => DisplayAgentNotificationThread
+	- Display notifications will be also transferred to the property frames of GraphNode and NetworkComponents 
+	- Added further types of display notifications in order to reduce the amount of data for notifications.
+	- Added a NetworkComponentDataModelNotification to the list of DisplayAgentNotificationGraph elements.
+	- Added further displayable update notifications for single data series as TimeSeries and XySeries.
+
+	
+Agent.GUI - Projects
+______________________________________________________________________
+
+
+	
+
+
+
