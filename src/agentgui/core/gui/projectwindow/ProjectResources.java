@@ -777,7 +777,9 @@ public class ProjectResources extends JPanel implements Observer {
 		cs.setVisible(true);
 		// --- act in the dialog ... --------------------
 		if (cs.isCanceled()==false) {
-			this.currProject.setTimeModelClass(cs.getClassSelected());
+			if (cs.getClassSelected()!=null && cs.getClassSelected().length()!=0) {
+				this.currProject.setTimeModelClass(cs.getClassSelected());	
+			}
 		}
 		cs.dispose();
 		cs = null;

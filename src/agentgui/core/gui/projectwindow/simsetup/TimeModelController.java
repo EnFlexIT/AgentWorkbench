@@ -119,7 +119,7 @@ public class TimeModelController implements Observer {
 		if (display4TimeModel==null) {
 			
 			this.currTimeModelClass = this.currProject.getTimeModelClass();
-			if (this.currTimeModelClass!=null) {
+			if (this.currTimeModelClass!=null && this.currTimeModelClass.length()!=0) {
 
 				try {
 					@SuppressWarnings("unchecked")

@@ -547,9 +547,10 @@ import agentgui.core.webserver.JarFileCreator;
 	public void plugInVectorLoad() {
 		if (this.plugInVectorLoaded==false) {
 			// --- load all plugins configured in 'plugIns_Classes' -----------
-			for (int i = 0; i < this.plugIns_Classes.size(); i++) {
+			for (int i=0; i < this.plugIns_Classes.size(); i++) {
 				if (this.plugInLoad(this.plugIns_Classes.get(i), false)== false ) {
-					return;
+					System.err.println("Removed Plug-In entry for: '" + this.plugIns_Classes.get(i) + "'");
+					this.plugIns_Classes.remove(i);
 				}
 			}
 			this.plugInVectorLoaded = true;
@@ -592,16 +593,17 @@ import agentgui.core.webserver.JarFileCreator;
 				// --- PlugIn can't be loaded because it's already there ------
 				PlugIn ppi = getPlugInsLoaded().getPlugIn(pluginReference);
 				
-				MsgHead = Language.translate("Fehler - PlugIn: ") + ppi.getName() + " !" ;
+				MsgHead = Language.translate("Fehler - PlugIn: ") + " " + ppi.getClassReference() + " !" ;
 				MsgText = Language.translate("Das PlugIn wurde bereits in das Projekt integriert " +
 						"und kann deshalb nicht erneut hinzugefügt werden!");
 				JOptionPane.showInternalMessageDialog( this.getProjectWindow(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
+				return false;
 				
 			} else {
 				// --- PlugIn can be loaded -----------------------------------
 				PlugIn ppi = getPlugInsLoaded().loadPlugin(this, pluginReference);
 				this.setNotChangedButNotify(new PlugInNotification(PlugIn.ADDED, ppi));
-				if (add2PlugInReferenceVector) {
+				if (add2PlugInReferenceVector==true) {
 					this.plugIns_Classes.add(pluginReference);	
 				}
 			}
