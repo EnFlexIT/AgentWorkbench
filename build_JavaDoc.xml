@@ -64,18 +64,18 @@
 						lib/jFreeChart/jcommon-1.0.18.jar;
 						lib/jFreeChart/jfreechart-1.0.15.jar;
 						lib/jep-2.3.1/jep-2.3.1.jar;
-						lib/jung/collections-generic-4.01.jar;lib/batik/lib/pdf-transcoder.jar
-						lib/jung/colt-1.2.0.jar;lib/jung/jung-samples-2.0.1.jar;
+						lib/jung/collections-generic-4.01.jar;
+						lib/jung/colt-1.2.0.jar;
+						lib/jung/jung-samples-2.0.1.jar;
 						lib/jung/jung-algorithms-2.0.1.jar;
 						lib/jung/jung-api-2.0.1.jar;
 						lib/jung/jung-graph-impl-2.0.1.jar;
-						lib/jung/jung-io-2.0.1.jar;lib/batik/batik-ttf2svg.jar;
+						lib/jung/jung-io-2.0.1.jar;
 						lib/jung/jung-jai-2.0.1.jar;
 						lib/jung/jung-visualization-2.0.1.jar;
 						lib/jung/stax-api-1.0.1.jar;
 						lib/jung/vecmath-1.3.1.jar;
-						lib/jung/wstx-asl-3.2.6.jar;			
-						lib/batik/batik.jar;"
+						lib/jung/wstx-asl-3.2.6.jar;"
 			/>
 		
 	</target>

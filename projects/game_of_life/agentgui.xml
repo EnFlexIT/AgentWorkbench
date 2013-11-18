@@ -17,6 +17,8 @@
             <agent agentReference="gol.acl.agents.GameOfLifeAgent">
                 <startArgumentVector>
                     <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="1"/>
+                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" position="2"/>
+                    <startArgument ontologyReference="agentgui.ontology.Simple_String" position="3"/>
                 </startArgumentVector>
             </agent>
         </agentVector>
@@ -113,5 +115,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>true</unsaved>
+    <unsaved>false</unsaved>
 </project>

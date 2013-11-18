@@ -6,7 +6,6 @@ import agentgui.math.calculation.CalcParameterNotSetException;
 /**
  * Calculates the compressibility number using Cerbe formula 2.1.16a 
  * @author Nils
- *
  */
 public class CompressibilityNumber extends CalcExpression {
 	

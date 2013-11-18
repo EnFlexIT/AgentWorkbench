@@ -114,9 +114,6 @@ public class SimulationService extends BaseService {
 	/** --- The List of Agents, which are registered to this service ----------- */ 
 	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
 	
-	/** --- Pause the current simulation --------------------------------------- */
-	private boolean pauseSimulation = false; 
-	
 	/** --- The TransactionMap of the simulation ------------------------------- */
 	private TransactionMap transactionMap = new TransactionMap();
 	/** --- The current EnvironmentModel --------------------------------------- */
@@ -1230,9 +1227,8 @@ public class SimulationService extends BaseService {
 		 * @param pause true, if the simulation should pause
 		 */
 		private void setPauseSimulation(boolean pause) {
-			pauseSimulation = pause;
-			localServiceActuator.notifySensorPauseSimulation(pauseSimulation);
-			localServiceActuator4Manager.notifyManagerPauseSimulation(pauseSimulation);
+			localServiceActuator.notifySensorPauseSimulation(pause);
+			localServiceActuator4Manager.notifyManagerPauseSimulation(pause);
 		}
 		
 		/**

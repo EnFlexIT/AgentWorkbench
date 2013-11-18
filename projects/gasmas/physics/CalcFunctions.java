@@ -79,8 +79,7 @@ public class CalcFunctions {
 	/**
 	 * Rounds a double value to the given precision.
 	 * For example: <br> 
-	 * <code> round(3.14159 26535, 2)</code><br>
-	 * will deliver 3.14
+	 * <code> round(3.14159 26535, 2)</code> will deliver 3.14
 	 *
 	 * @param doubleValue the double value
 	 * @param precision the precision

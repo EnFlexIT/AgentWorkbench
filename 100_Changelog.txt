@@ -91,7 +91,12 @@ Graph or Network
 
 	
 Agent.GUI - Projects
-______________________________________________________________________
+
+	Updated the example projects 'Game of Life' and 'Agent.GUI PlugIn Example' in order to include the above described changes. 
+	To keep these projects executable for your Agent.GUI installation, please download the latest version from the Agent.GUI site 
+	(see Download => Agent.GUI - Projects) !
+	
+
 
 
 	

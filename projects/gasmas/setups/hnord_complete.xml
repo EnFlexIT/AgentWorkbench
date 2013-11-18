@@ -6526,12 +6526,12 @@
             <value>1352797097437</value>
         </entry>
         <entry>
-            <key>TimeStop</key>
-            <value>1352883497437</value>
-        </entry>
-        <entry>
             <key>DisplayUnitIndex</key>
             <value>1</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1352883497437</value>
         </entry>
         <entry>
             <key>TimeFormat</key>

@@ -100,7 +100,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		// ----------------------------------------------------------
 		// --- Examples: Chart Series Actions -----------------------
 		// ----------------------------------------------------------
-//		this.updateLayout();
+		this.updateLayout();
 //		this.runDataModelNotificationUpdates();
 		
 //		this.updateTimeSeries_CompleteSeriesActions();
