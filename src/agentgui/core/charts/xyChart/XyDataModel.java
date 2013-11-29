@@ -93,6 +93,7 @@ public class XyDataModel extends DataModel {
 		} else {
 			this.tableModel.rebuildTableModel();
 		}
+		this.chartSettingModel = null;
 		this.seriesCount=0;
 		
 		XyOntologyModel xyom = (XyOntologyModel) this.ontologyModel;

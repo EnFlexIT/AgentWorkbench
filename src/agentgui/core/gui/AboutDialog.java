@@ -45,6 +45,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Calendar;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -340,7 +341,8 @@ public class AboutDialog extends JDialog implements ActionListener{
 			gridBagConstraints3.insets = new Insets(30, 10, 0, 0);
 			
 			jLabelCopyright1 = new JLabel();
-			jLabelCopyright1.setText("Copyright \u00A9 2009-2012 by Christian Derksen");
+			int year = Calendar.getInstance().get(Calendar.YEAR);
+			jLabelCopyright1.setText("Copyright \u00A9 2009-" + year + " by Christian Derksen");
 			jLabelCopyright1.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jLabelCopyright2 = new JLabel();
 			jLabelCopyright2.setText("& DAWIS @ ICB - University of Duisburg-Essen");

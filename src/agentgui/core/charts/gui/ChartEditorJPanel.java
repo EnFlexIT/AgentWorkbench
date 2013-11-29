@@ -122,6 +122,9 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		this.add(getTabbedPane(), BorderLayout.CENTER);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		

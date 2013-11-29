@@ -83,6 +83,7 @@ public class TimeSeriesDataModel extends DataModel {
 		} else {
 			this.tableModel.rebuildTableModel();
 		}
+		this.chartSettingModel = null;
 		this.seriesCount=0;
 		
 		TimeSeriesOntologyModel tsom = (TimeSeriesOntologyModel) this.ontologyModel;
