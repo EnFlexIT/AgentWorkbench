@@ -146,11 +146,13 @@ public class LoadMeasureSigar extends SigarCommandBase implements Cloneable {
 	public void outputCpu() throws SigarException {
         // --- setting cpu-Information --------------------
 		cpuInfos = this.sigar.getCpuInfoList();
-		CpuInfo info = cpuInfos[0];
-        setVendor(info.getVendor());
-        setModel(info.getModel());
-        setMhz(info.getMhz());
-        setTotalCpu(info.getTotalCores());
+		if(cpuInfos != null && cpuInfos.length!=0){
+			CpuInfo info = cpuInfos[0];
+	        setVendor(info.getVendor());
+	        setModel(info.getModel());
+	        setMhz(info.getMhz());
+	        setTotalCpu(info.getTotalCores());
+		}
     }
 
     /**
