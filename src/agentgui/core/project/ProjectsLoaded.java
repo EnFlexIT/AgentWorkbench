@@ -186,7 +186,7 @@ public class ProjectsLoaded {
 				return null;
 			}
 			
-			// --- Read file 'agentgui.xml' --------------
+			// --- Read file 'agentgui.xml' ---------------
 			try {
 				pc = JAXBContext.newInstance(newProject.getClass());
 				um = pc.createUnmarshaller();
@@ -196,6 +196,14 @@ public class ProjectsLoaded {
 			} catch (JAXBException ex) {
 				ex.printStackTrace();
 			}
+			
+			// --- check/create default folders -----------
+			newProject.setProjectFolder(localTmpProjectFolder);
+			newProject.checkCreateSubFolders();
+			
+			// --- Load additional jar-resources ----------
+			newProject.resourcesLoad();
+			
 			
 			// --- Reading the serializable user object of - 
 			// --- the Project from the 'agentgui.bin' -----
@@ -219,16 +227,7 @@ public class ProjectsLoaded {
 				newProject.setUserRuntimeObject(userObject);				
 			}
 			
-			// --- check/create default folders --------------------
-			newProject.setProjectFolder(localTmpProjectFolder);
-			newProject.checkCreateSubFolders();
 		}
-		
-		// --------------------------------------------------------------------
-		// --- Load additional external resources with the ClassLoader --------
-		// --------------------------------------------------------------------
-		newProject.resourcesLoad();
-		// --------------------------------------------------------------------
 		
 		// --- Remind the current name of the used environment model type -----
 		boolean reloadEnvironmentType = false;
