@@ -55,7 +55,7 @@
 						lib/jade/lib/jade.jar;
 						lib/jade/lib/migration.jar;
 						lib/jade/lib/XMLCodec.jar;
-						lib/jdbc/mysql-connector-java-3.0.17-ga-bin.jar;
+						lib/jdbc/mysql-connector-java-5.0.8-bin.jar;
 						lib/google-api-translate-java-0.92.jar;
 						lib/scimark2lib.jar;
 						lib/hyperic-sigar/sigar-bin/lib/log4j.jar;

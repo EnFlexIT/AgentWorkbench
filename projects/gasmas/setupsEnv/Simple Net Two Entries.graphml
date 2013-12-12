@@ -11,37 +11,37 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <default></default>
 </key>
 <graph edgedefault="directed">
-<node id="PP26">
-<data key="pos">25.0:25.0</data>
-</node>
 <node id="PP2">
 <data key="pos">60.0:45.0</data>
-</node>
-<node id="PP3">
-<data key="pos">40.0:45.0</data>
 </node>
 <node id="PP6">
 <data key="pos">130.0:45.0</data>
 </node>
-<node id="PP15">
-<data key="pos">200.0:45.0</data>
+<node id="PP26">
+<data key="pos">25.0:25.0</data>
+</node>
+<node id="PP3">
+<data key="pos">40.0:45.0</data>
 </node>
 <node id="PP17">
 <data key="pos">25.0:65.0</data>
 </node>
+<node id="PP15">
+<data key="pos">200.0:45.0</data>
+</node>
 <edge id="Compressor" source="PP2" target="PP6">
 <desc>Compressor</desc>
-</edge>
-<edge id="n0_0" directed="false" source="PP26" target="PP3">
-<desc>Branch3</desc>
 </edge>
 <edge id="Pipe" directed="false" source="PP15" target="PP6">
 <desc>Pipe</desc>
 </edge>
-<edge id="n0_2" directed="false" source="PP17" target="PP3">
+<edge id="n0_1" directed="false" source="PP3" target="PP2">
 <desc>Branch3</desc>
 </edge>
-<edge id="n0_1" directed="false" source="PP3" target="PP2">
+<edge id="n0_0" directed="false" source="PP26" target="PP3">
+<desc>Branch3</desc>
+</edge>
+<edge id="n0_2" directed="false" source="PP17" target="PP3">
 <desc>Branch3</desc>
 </edge>
 </graph>

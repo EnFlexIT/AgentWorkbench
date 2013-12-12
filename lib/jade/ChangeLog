@@ -1,3 +1,63 @@
+MAJOR CHANGES in JADE 4.3.1 (06 12 2013)
+==========================================================================
+GENERAL IMPROVEMENTS:
+Kernel
+- Added threshold on message delivery time (if exceeded a WARNING is printed)
+- Modified MessageManager to manage warningSize, maxSize and sleepTimeFactor
+- Added support for trying logical host names first in intra-platform communication (-priviledge-logical-name option)
+- Modified getDefaultNetworkName() method of Profile class to retrieve the CanonicalHostName
+- Added support for defining storage-enabled nodes and improved logs in PersistentDeliveryService
+- Improved support for configuring hosts in UDPNodeMonitoringService
+- SAMService: Added addHandler() and removeHandler() methods in service helper to allows agents to dinamically add/remove SAMInfoHandlers. 
+              Added support for managing entity names of the form a/b/c.
+			  Modified AverageMeasureProviderImpl to manage NaN values
+			  Added Provider common interface implemented by all measure providers
+- registerO2AInterface() method made public
+
+Interaction Protocols
+- Modified Conversation ID generation to ensure unicity. This also fixes a bug reported by Henrique Lopes Cardoso about SubscriptionResponder that overrided Subscriptions from different agents
+
+AMS/DF
+- Added support for DF SAM statistics
+- Modified AMS to avoid triggering the shutdown hook more than 1 time.
+
+MTPs
+- Integrated fix by Svehlak Libor to make the HTTP MTP listen on the address specified in the URL mtp argument 
+
+Split Containers
+- Added support for retrieving server-time-offset at FrontEnd startup: set the JICPProtocol.GET_SERVER_TIME_KEY = true; Server time offset is made available as a Long (ms) at the JICPProtocol.SERVER_TIME_OFFSET_KEY key.
+- Fixed bug in service helper method invocation called by FEServices. Method was not invoked at all.
+- Fixed bug on topic based communication when sender and receiver live in the same front end (bug reported by Andrew Trow)
+
+Others
+- Added LocalJadeGateway class to support usage of components that uses the JadeGateway from both external programs and agents
+- Added Toolkit utilities class with utility method to substitute properties in a given text
+
+Add-Ons
+- Web Service Integration Gateway (WSIG) 
+  - Added support for exposing agent actions as REST operations
+  - Properly managed ontology name/class specified in ServiceDescriptor
+  - Properly managed type anyType
+  - Removed Log4J dependency
+  
+- Web Service Dynamic Client (WSDC)
+  - Updated AXIS library
+  - Implemented logging of SOAP messages
+  - Removed Log4J dependency
+  
+- Miscellaneous (MISC)
+  - Added support for setting a defaultPackage in jade.cli.Shell.
+  - Managed the case where no behaviour is returned in CLICommand.
+
+DOCUMENTATION
+- Fixed "aclcodecs" option in XMLACLCodec Tutorial
+
+
+POSSIBLE BACKWARD INCOMPATIBILITIES:
+We do NOT expect any backward incompatibility with respect to the previous JADE version.
+
+
+
 MAJOR CHANGES in JADE 4.3 (29 03 2013)
 ==========================================================================
 GENERAL IMPROVEMENTS:

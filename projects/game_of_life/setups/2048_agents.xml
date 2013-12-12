@@ -10,20 +10,16 @@
     </agentSetup>
     <timeModelSettings>
         <entry>
-            <key>TimeStart</key>
-            <value>1359295415312</value>
+            <key>CounterCurrent</key>
+            <value>0</value>
         </entry>
         <entry>
-            <key>AccelerationFactor</key>
-            <value>1.0</value>
+            <key>CounterStop</key>
+            <value>9999</value>
         </entry>
         <entry>
-            <key>TimeStop</key>
-            <value>1359381815312</value>
-        </entry>
-        <entry>
-            <key>TimeFormat</key>
-            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
+            <key>CounterStart</key>
+            <value>1</value>
         </entry>
     </timeModelSettings>
     <environmentFileName>2048 Agents.xml</environmentFileName>

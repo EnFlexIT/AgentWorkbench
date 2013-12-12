@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: CalendarBean.jar ../lib/jade.jar ../lib/jadeTools.jar 
-Main-Class: jade.Boot

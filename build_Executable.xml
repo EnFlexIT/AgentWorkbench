@@ -47,7 +47,7 @@
 					
 					lib/scimark2lib.jar
 					
-					lib/jdbc/mysql-connector-java-3.0.17-ga-bin.jar
+					lib/jdbc/mysql-connector-java-5.0.8-bin.jar
 		
 					lib/googleTranslateAPI/google-api-translate-java-0.97.jar
 					lib/googleTranslateAPI/json-20090211.jar
