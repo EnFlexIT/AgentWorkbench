@@ -121,33 +121,33 @@ public class AgentClassElement4SimStart {
 	private void setDefaultAgentName() {
 		
 			// -----------------------------------------------------
-			// --- Vorschlag für den Ausführungsnamen finden -------
-			String StartAs = agentClass.getName();
-			StartAs = StartAs.substring(StartAs.lastIndexOf(".")+1);
+			// --- Find suggestion for the agent name -------------
+			String startAs = this.agentClass.getName();
+			startAs = startAs.substring(startAs.lastIndexOf(".")+1);
 			// -----------------------------------------------------
-			// --- Alle Großbuchstaben filtern ---------------------
-			String RegExp = "[A-Z]";	
-			String StartAsNew = ""; 
-			for (int i = 0; i < StartAs.length(); i++) {
-				String SngChar = "" + StartAs.charAt(i);
-				if ( SngChar.matches( RegExp ) == true ) {
-					StartAsNew = StartAsNew + SngChar;	
-					// --- ggf. den zweiten Buchstaben mitnehmen ---
-					if ( i < StartAs.length() ) {
-						String SngCharN = "" + StartAs.charAt(i+1);
-						if ( SngCharN.matches( RegExp ) == false ) {
-							StartAsNew = StartAsNew + SngCharN;	
+			// --- Filter for upper letters ------------------------
+			String regExp = "[A-Z]";	
+			String startAsNew = ""; 
+			for (int i=0; i<startAs.length(); i++) {
+				String sngChar = "" + startAs.charAt(i);
+				if (sngChar.matches(regExp)==true) {
+					startAsNew = startAsNew + sngChar;	
+					// --- Maybe take also the next letter ----------
+					if ((i+1)<=(startAs.length()-1)) {
+						String sngCharN = "" + startAs.charAt(i+1);
+						if (sngCharN.matches(regExp)==false) {
+							startAsNew = startAsNew + sngCharN;	
 						}
 					}	
-					// ---------------------------------------------
+					// ----------------------------------------------
 				}						
 		    }
-			if ( StartAsNew != "" && StartAsNew.length() >= 4 ) {
-				StartAs = StartAsNew;
+			if (startAsNew!="" && startAsNew.length()>=4) {
+				startAs = startAsNew;
 			}
 			// -----------------------------------------------------
-			// --- Vorschlagsnamen einstellen ----------------------	
-			startAsName = StartAs;
+			// --- set agent name ----------------------------------	
+			this.setStartAsName(startAs);
 		
 	}
 	
@@ -182,7 +182,6 @@ public class AgentClassElement4SimStart {
 	
 	/**
 	 * Returns the class of the current Agent.
-	 *
 	 * @return the Class<? extends Agent> instance of the agent
 	 */
 	public Class<? extends Agent> getElementClass(){
@@ -191,41 +190,36 @@ public class AgentClassElement4SimStart {
 	
 	/**
 	 * Returns the position of the currently configured agent in the current list.
-	 *
 	 * @return Integer position number
 	 */
 	@XmlTransient
 	public Integer getPostionNo() {
 		return postionNo;
 	}
-	
 	/**
 	 * Sets the position number of the current agent.
-	 *
 	 * @param postionNo the postionNo to set
 	 */
 	public void setPostionNo(Integer postionNo) {
 		this.postionNo = postionNo;
 	}
-	
+
 	/**
 	 * Returns the listType this entry belongs to.
-	 *
 	 * @return the listType
 	 */
 	@XmlTransient
 	public String getListMembership() {
 		return listMembership;
 	}
-	
 	/**
 	 * Sets the type of the list this entry belongs to.
-	 *
 	 * @param listMembership the listType to set
 	 */
 	public void setListMembership(String listMembership) {
 		this.listMembership = listMembership;
 	}
+
 	/**
 	 * Returns the local name of the agent like ((AID)agentAID).getLocalname() 
 	 * @return the startAsName
