@@ -28,51 +28,74 @@
  */
 package agentgui.math.calculation;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 /**
- * The Class CalcParameter.
+ * The Class CalcParameter can bes used in order to set a Parameter for a
+ * formula. Possible {@link CalcExpression} Types can be {@link CalcConstant}
+ * and {@link CalcFormula}
+ * 
+ * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CalcParameter extends CalcExpression {
 
 	private static final long serialVersionUID = 1444566766356515442L;
 
-	public static final int CONSTANT_VALUE = 0;
-	public static final int FORMULA = 1;
-	
+	/**
+	 * The Enumeration ExpressionType provides a selection 
+	 * of possible parameters that can be set.
+	 */
+	public enum ExpressionType {
+		CONSTANT_VALUE,
+		FORMULA
+		
+	}
 	
 	/** The parameter type. */
-	private int parameterType = 0;
+	private ExpressionType currExpressionType;
 	
 	/** 
 	 * The current CalcExpression, which can be either 
 	 * a constant value or a formula, which has to be calculated. 
 	 */
-	private CalcExpression calcExpression = null;
+	private CalcExpression calcExpression;
+	
 	
 	
 	/**
 	 * Instantiates a new parameter for calculations.
+	 */
+	public CalcParameter() {
+		
+	}
+	
+	/**
+	 * Instantiates a new parameter for calculations.
 	 *
-	 * @param parameterType the parameter type
+	 * @param expressionType the parameter type
 	 * @param calcExpression the CalcExpression
 	 */
-	public CalcParameter(int parameterType, CalcExpression calcExpression) {
-		this.setParameterType(parameterType);
+	public CalcParameter(ExpressionType expressionType, CalcExpression calcExpression) {
+		this.setExpressionType(expressionType);
 		this.setCalcExpression(calcExpression);
 	}
 	
 	/**
-	 * Sets the parameter type.
-	 * @param parameterType the parameterType to set
+	 * Sets the current ExpressionType.
+	 * @param expressionType the current ExpressionType to set
 	 */
-	public void setParameterType(int parameterType) {
-		this.parameterType = parameterType;
+	public void setExpressionType(ExpressionType expressionType) {
+		this.currExpressionType = expressionType;
 	}
 	/**
-	 * Gets the parameter type.
-	 * @return the parameterType
+	 * Returns the current ExpressionType.
+	 * @return the current ExpressionType 
 	 */
-	public int getParameterType() {
-		return parameterType;
+	public ExpressionType getExpressionType() {
+		return currExpressionType;
 	}
 
 	/**
@@ -82,9 +105,9 @@ public class CalcParameter extends CalcExpression {
 	 */
 	public void setCalcExpression(CalcExpression calcExpression) {
 		if (calcExpression instanceof CalcConstant) {
-			setParameterType(CalcParameter.CONSTANT_VALUE);
+			setExpressionType(ExpressionType.CONSTANT_VALUE);
 		} else if (calcExpression instanceof CalcFormula) {
-			setParameterType(CalcParameter.FORMULA);
+			setExpressionType(ExpressionType.FORMULA);
 		}
 		this.calcExpression = calcExpression;
 	}
@@ -105,7 +128,5 @@ public class CalcParameter extends CalcExpression {
 		return this.calcExpression.getValue();
 	}
 
-	
-	
 	
 }

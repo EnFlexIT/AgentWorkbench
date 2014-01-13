@@ -26,13 +26,27 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
+
 package agentgui.math.calculation;
 
-import java.io.Serializable;
+import jade.util.leap.Serializable;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
 
 /**
- * The Class CalcExpression.
+ * This is the abstract super class CalcExpression that can be either
+ * used to generate a complex calculation expression by using the classes
+ * {@link CalcConstant}, {@link CalcParameter} or {@link CalcFormula}.
+ * On the other hand, this class can just be extended in order to
+ * generate a calculating class, where calculations are don within the
+ * Java class itself. 
+ * 
+ * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
+
+@XmlRootElement(namespace="http://www.dawis.wiwi.uni-due.de/CalcExpression")
 public abstract class CalcExpression implements Serializable {
 
 	private static final long serialVersionUID = 3777486633158645068L;

@@ -274,7 +274,7 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     private Vector<Vector<String>> getComponentTableContents() {
 
 		Vector<Vector<String>> componentVector = new Vector<Vector<String>>();
-		if (this.getGraphController().getNetworkModelAdapter() != null) {
+		if (this.getGraphController().getNetworkModel()!=null && this.getGraphController().getNetworkModelAdapter()!=null ) {
 	
 		    // Get the components from the controllers GridModel
 		    Iterator<NetworkComponent> components = this.getGraphController().getNetworkModelAdapter().getNetworkComponents().values().iterator();

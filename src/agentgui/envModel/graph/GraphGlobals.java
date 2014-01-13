@@ -31,7 +31,6 @@ package agentgui.envModel.graph;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,6 +44,7 @@ import javax.swing.UIManager;
 
 import edu.uci.ics.jung.graph.Graph;
 
+import agentgui.core.application.Application;
 import agentgui.core.common.PathHandling;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -86,15 +86,18 @@ public final class GraphGlobals {
  		// ----------------------------------------------------------
  		// --- 0. Get the source folder of the execution instance ---
  		// ----------------------------------------------------------
- 		File currRootFile;
-		try {
-			currRootFile = new File(GraphGlobals.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-			if (currRootFile.exists()) {
-				pathRoot = currRootFile.getParentFile().getAbsolutePath();
-	    	}
-		} catch (URISyntaxException e) {
-			//e.printStackTrace();
-		}
+ 		// --- Removed because of a authority bug in IOS-systems ---- 
+// 		File currRootFile;
+//		try {
+//			currRootFile = new File(GraphGlobals.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+//			if (currRootFile.exists()) {
+//				pathRoot = currRootFile.getParentFile().getAbsolutePath();
+//	    	}
+//		} catch (URISyntaxException e) {
+//			//e.printStackTrace();
+//		}
+ 		// --- New approach to the above mentioned problem ----------
+ 		pathRoot = Application.getGlobalInfo().PathBaseDir();
  		
  		// ----------------------------------------------------------
 		// --- 1. Search in the loaded packages ---------------------

@@ -351,7 +351,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private void reLoadGraph() {
 
-		Graph<GraphNode, GraphEdge> graph = this.graphController.getNetworkModelAdapter().getGraph();
+		Graph<GraphNode, GraphEdge> graph = null;
+		if (this.graphController.getNetworkModel()!=null) {
+			graph = this.graphController.getNetworkModel().getGraph();	
+		}
 
 		// --- Remove the old component -------------------
 		if (this.centerComponent!=null) {
@@ -365,8 +368,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (graph==null) {
 			// --- NO graph to display ----------
 			this.visView = null;
-			this.visViewSatellite = null;
 			this.killSatelliteView();
+			this.visViewSatellite = null;
 			this.centerComponent = new JPanel();
 			this.add(centerComponent, BorderLayout.CENTER);
 

@@ -28,23 +28,33 @@
  */
 package agentgui.math.calculation;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 /**
  * This class implements constant values.
- *
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
+
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CalcConstant extends CalcExpression {
 	
 	private static final long serialVersionUID = 953391125028424724L;
 	
-	/**
-	 * The value of the constant.
-	 */
+	/** The value of the constant.	 */
+	@XmlElement(name = "Value", required = true)
 	private double value;
 	
+	
 	/**
-	 * Instantiates a new constant value.
-	 * @param value the value
+	 * Instantiates a new empty CalcConstant.
+	 */
+	public CalcConstant(){
+	}
+	/**
+	 * Instantiates a new CalcConstant.
+	 * @param value the actual constant value 
 	 */
 	public CalcConstant(double value){
 		this.value = value;

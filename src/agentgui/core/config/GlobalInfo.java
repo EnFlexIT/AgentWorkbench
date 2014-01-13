@@ -153,12 +153,12 @@ public class GlobalInfo {
 
 	/**
 	 * The Enumeration of possible ExecutionModes.
-	 * In order to get the current execution mode use   
-	 * see 
+	 * In order to get the current execution mode use  
+	 * the method {@link GlobalInfo#getExecutionMode()} and {@link GlobalInfo#getExecutionModeDescription()} 
 	 * @see GlobalInfo#getExecutionMode()
 	 */
 	public enum ExecutionMode {
-		APPLICATION, SERVER, SERVER_MASTER, SERVER_SLAVE
+		APPLICATION, SERVER, SERVER_MASTER, SERVER_SLAVE, DEVICE_AGENT
 	}
 	
 	/**
@@ -310,7 +310,7 @@ public class GlobalInfo {
 	}
 	
 	/**
-	 * Gets the execution mode description.
+	 * Returns the execution mode description.
 	 * @return the execution mode description
 	 */
 	public String getExecutionModeDescription() {
@@ -328,6 +328,9 @@ public class GlobalInfo {
 			break;
 		case SERVER_SLAVE:
 			executionModeDescription = "Server [Slave]";
+			break;
+		case DEVICE_AGENT:
+			executionModeDescription = "Device Agent";
 			break;
 		}
 		return executionModeDescription;

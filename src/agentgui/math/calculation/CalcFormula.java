@@ -31,13 +31,19 @@ package agentgui.math.calculation;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 import org.nfunk.jep.JEP;
+
+import agentgui.math.calculation.CalcParameter.ExpressionType;
 
 /**
  * Class for calculations using the JEP Parser.
- *
- * @author Nils
+ * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CalcFormula extends CalcExpression {
 	
 	private static final long serialVersionUID = -669801540602778489L;
@@ -75,9 +81,9 @@ public class CalcFormula extends CalcExpression {
 	public void addParameter(String name, CalcExpression expression){
 		CalcParameter parameter = null;
 		if (expression instanceof CalcConstant) {
-			parameter = new CalcParameter(CalcParameter.CONSTANT_VALUE, expression);
+			parameter = new CalcParameter(ExpressionType.CONSTANT_VALUE, expression);
 		} else if (expression instanceof CalcFormula) {
-			parameter = new CalcParameter(CalcParameter.FORMULA, expression);
+			parameter = new CalcParameter(ExpressionType.FORMULA, expression);
 		}
 		this.parameters.put(name, parameter);
 	}

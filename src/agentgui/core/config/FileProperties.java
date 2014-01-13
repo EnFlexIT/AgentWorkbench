@@ -551,9 +551,9 @@ public class FileProperties extends Properties {
 	 * This method saves the current settings to the property file
 	 */
 	public void save() {
-		// --- getting the current values of the mandantory variables ---
+		// --- getting the current values of the mandatory variables -----
 		this.setGlobal2Config();
-		// --- Save the config-file -------------------------------------
+		// --- Save the configuration-file -------------------------------
 		try {
 			this.store(new FileOutputStream(configFile), configFileDefaultComment);
 		} catch (FileNotFoundException e) {
