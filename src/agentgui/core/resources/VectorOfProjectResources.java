@@ -118,6 +118,22 @@ public class VectorOfProjectResources extends Vector<String> {
 	}
 
 	// ----------------------------------------------------	
+	// --- SET methods ------------------------------------
+	// ----------------------------------------------------
+	@Override
+	public synchronized String set(int index, String element) {
+		String oldElement = super.set(index, element);
+		this.set2DefaultListModel(index, element);
+		return oldElement;
+	}
+	
+	@Override
+	public synchronized void setElementAt(String element, int index) {
+		super.setElementAt(element, index);
+		this.set2DefaultListModel(index, element);
+	}
+	
+	// ----------------------------------------------------	
 	// --- REMOVE methods ---------------------------------
 	// ----------------------------------------------------
 	/* (non-Javadoc)
@@ -197,6 +213,16 @@ public class VectorOfProjectResources extends Vector<String> {
 		this.resourcesListModel.add(index, r2d);
 	}
 	
+	/**
+	 * Set a new resource entry to the list model at the specified index position.
+	 *
+	 * @param index the index
+	 * @param resource the resource
+	 */
+	private void set2DefaultListModel(int index, String resource) {
+		Resources2Display r2d = new Resources2Display(resource);
+		this.resourcesListModel.set(index, r2d);
+	}
 	
 	/**
 	 * Removes the from default list model.

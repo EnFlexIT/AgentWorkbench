@@ -165,7 +165,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	@XmlElementWrapper(name = "projectResources")
 	@XmlElement(name="projectResource")
-	private VectorOfProjectResources projectResources = new VectorOfProjectResources();
+	private VectorOfProjectResources projectResources;
 	
 	/**
 	 * This Vector handles the list of resources which should be loadable in case of 
@@ -1084,30 +1084,96 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	@XmlTransient
 	public VectorOfProjectResources getProjectResources() {
+		if (this.projectResources==null) {
+			this.projectResources = new VectorOfProjectResources();
+		}
 		return projectResources;
 	}
+	
+	/**
+	 * Tries to retrieve a bin-folder location given form an external resource to load for a project.
+	 * @param resourcePath the resource path
+	 * @return the same string if nothing is found, otherwise the new resource path
+	 */
+	private String retrievBinResourceFromPath(String resourcePath) {
+		
+		// --- Get Agent.GUI base directory and walk up two parent folders ---
+		File searchDir = new File(Application.getGlobalInfo().PathBaseDir());
+		for (int i=0; i<2; i++) {
+			if (searchDir!=null) {
+				searchDir = searchDir.getParentFile();
+			} else {
+				break;
+			}
+		}
+		
+		// --- Directory found? -----------------------------------------------
+		if (searchDir!=null) {
+			// --- Set the string for the search path -------------------------
+			String searchPath = searchDir.getAbsolutePath() + File.separator;
+			// --- Examine the give resource path -----------------------------			
+			String checkAddition = null;
+			String[] jarFileCorrectedFragments = resourcePath.split("\\"+File.separator);
+			// --- Try to rebuild the resource path ---------------------------
+			for (int i=(jarFileCorrectedFragments.length-1); i>0; i--) {
+				String fragment = jarFileCorrectedFragments[i];
+				if (fragment.equals("")==false) {
+					if (i==(jarFileCorrectedFragments.length-1)) {
+						checkAddition = fragment;	
+					} else {
+						checkAddition = fragment + File.separator + checkAddition;
+					}
+					 
+					File checkPath = new File(searchPath + checkAddition);	
+					if (checkPath.exists()==true) {
+						// --- Path found ! -----------------------------------
+						return checkPath.getAbsolutePath();
+					}	
+				}
+			}
+		}
+		return resourcePath;
+	}
+	
 	
 	/**
 	 * This method adds external project resources (*.jar-files) to the CLATHPATH  
 	 */
 	public void resourcesLoad() {
 
-		for(String jarFile4Display : this.getProjectResources()) {
-
+		for (int i=0; i<this.getProjectResources().size(); i++) {
+			
+			String jarFile4Display = this.getProjectResources().get(i);
 			jarFile4Display = PathHandling.getPathName4LocalSystem(jarFile4Display);
 			
 			String prefixText = null;
 			String suffixText = null;
-
 			try {
 				
 				String jarFileCorrected = ClassLoaderUtil.adjustPathForLoadIn(jarFile4Display, this.getProjectFolderFullPath());
 				File file = new File(jarFileCorrected);
+				if (file.exists()==false && jarFileCorrected.toLowerCase().endsWith("jar")==false) {
+					// --- Try to find / retrieve bin resource ------ 
+					String jarFileCorrectedNew = this.retrievBinResourceFromPath(jarFileCorrected);
+					if (jarFileCorrectedNew.equals(jarFileCorrected)==false) {
+						// --- Found new bin resource ---------------
+						System.out.println("=> Retrieved new location for resource path '" + jarFileCorrected + "'");
+						System.out.println("=> Corrected it to '" + jarFileCorrectedNew + "'");
+						this.getProjectResources().set(i, jarFileCorrectedNew);
+						
+						jarFile4Display = jarFileCorrectedNew;
+						jarFileCorrected = jarFileCorrectedNew;
+						file = new File(jarFileCorrected);	
+					}
+				}
+				
 				if (file.exists()==false) {
+					// --- Definitely no file found -----------------
 					prefixText = "ERROR";
 					suffixText = Language.translate("Datei nicht gefunden!");
 					
 				} else if (file.isDirectory()) {
+					// --- Folder found: Build a temporary *.jar ----
 					prefixText = "";
 					suffixText = "proceeding started";
 					
@@ -1135,6 +1201,7 @@ import agentgui.core.webserver.JarFileCreator;
 					suffixText = Language.translate("Verzeichnis gepackt zu") + " '" + File.separator + "~tmp" + File.separator + jarArchiveFileName + "' " + Language.translate("um") + " " + dateText;
 					
 				} else {
+					// --- Load the given jar-file ------------------
 					ClassLoaderUtil.addFile(file.getAbsoluteFile());
 					ClassLoaderUtil.addJarToClassPath(jarFileCorrected);
 					
@@ -1149,6 +1216,10 @@ import agentgui.core.webserver.JarFileCreator;
 				suffixText = e.getMessage();
 			}
 			
+			// --- On Error print it to console -----------
+			if (prefixText.equals("ERROR")==true) {
+				System.err.println("=> " + suffixText + " - " + jarFile4Display);
+			}
 			// --- Set the additional text ----------------
 			this.getProjectResources().setPrefixText(jarFile4Display, prefixText);
 			this.getProjectResources().setSuffixText(jarFile4Display, suffixText);
