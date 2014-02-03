@@ -23,16 +23,28 @@
 </head>
 <body>
 
-	<h3>Changes in Agent.GUI - Version 1.00 revision 297</h3>
+	<h3>Changes in Agent.GUI - Version 1.01 revision 297</h3>
 
 	<b>General</b>
 	<ul>
 		<li>Updated JADE to version 4.3.1</li>
 		<li>Updated MySQL-JDBC Connector to version 5.0.8</li>
-		<li>Fixed bug in the series settings of TimeSeriesCharts and XYCharts</li>
-		<li>Bug fix in the 'About'' dialog</li>
+		<li>Added 'Device-Mode' as new further execution mode of Agent.GUI<br>(see menu 'Extras' -> 'Options' -> Tab:'Program Start').</li>
+		<li>Redesign final update process of AgentGuiUpdate.jar: Process takes svn-connected projects into account now.</li>
+		<li>Added automatic search for './bin/'-folder for cases where projects are developed by using a svn-server.</li>
+		<li>Fixed bug in the series settings of TimeSeriesCharts and XYCharts.</li>
+		<li>Bug fix in the 'About' dialog.</li>
+		<li>Refactored class DBConnection in order to allow access to further databases with this class.</li>
+		<li>Added unit expression and new .toString()-method to class agentgui.math.calculation.CalcExpression.</li>
 	</ul>
-
+	
+	<b>Graph or Network</b>
+	<ul>
+		<li>Bug fixes in class GraphGlobal for the location of image files.</li>	
+	</ul>
+	
+	<!-- Version 1.00 -->
+	
 	<h3>Changes in Agent.GUI - Version 1.00 revision 291</h3>
 
 	<b>General</b>

@@ -45,12 +45,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-
 @XmlRootElement(namespace="http://www.dawis.wiwi.uni-due.de/CalcExpression")
 public abstract class CalcExpression implements Serializable {
 
 	private static final long serialVersionUID = 3777486633158645068L;
 
+	private String unit;
+	
+	
 	/**
 	 * Returns or calculates the value of the CalcExpression.
 	 *
@@ -58,5 +60,34 @@ public abstract class CalcExpression implements Serializable {
 	 * @throws CalcExeption the CalcExeption
 	 */
 	public abstract double getValue() throws CalcExeption;
+
+	
+	/**
+	 * Sets the unit.
+	 * @param unit the new unit
+	 */
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+	/**
+	 * Returns the unit.
+	 * @return the unit
+	 */
+	public String getUnit() {
+		return unit;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		try {
+			return this.getValue() + " " + this.getUnit();
+		} catch (CalcExeption ex) {
+			ex.printStackTrace();
+		}
+		return "#ERROR"; 
+	}
 
 }

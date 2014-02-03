@@ -96,8 +96,6 @@ public class GlobalInfo {
 	private static String localPathWebServer = "server" + fileSeparator;
 	private static String localPathDownloads = "download" + fileSeparator;
 	
-	private static String[] localProjects = null;
-	
 	private static String localFileDictionary  = localPathProperty + "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
 	private static String localFileNameProject = "agentgui.xml";
@@ -116,7 +114,7 @@ public class GlobalInfo {
 	private Vector<OntologyClassVisualisation> knownOntologyClassVisualisation = null;
 	
 	// --- File-Properties --------------------------------------------------
-	private boolean filePropRunAsServer = false;
+	private ExecutionMode fileExecutionMode = null;
 	
 	private float filePropBenchValue = 0;
 	private String filePropBenchExecOn = null;
@@ -158,7 +156,7 @@ public class GlobalInfo {
 	 * @see GlobalInfo#getExecutionMode()
 	 */
 	public enum ExecutionMode {
-		APPLICATION, SERVER, SERVER_MASTER, SERVER_SLAVE, DEVICE_AGENT
+		APPLICATION, SERVER, SERVER_MASTER, SERVER_SLAVE, EMBEDDED_SYSTEM_AGENT
 	}
 	
 	/**
@@ -266,30 +264,28 @@ public class GlobalInfo {
 	}
 	
 	/**
+	 * Sets the execution mode.
+	 * @param executionMode the new execution mode
+	 */
+	public void setExecutionMode(ExecutionMode executionMode) {
+		this.fileExecutionMode = executionMode;
+	}
+	
+	/**
 	 * Gets the execution mode from configuration.
 	 * @return the execution mode from configuration
 	 */
 	public ExecutionMode getExecutionMode() {
 	
-		ExecutionMode execMode = null; 
-		if (Application.isRunningAsServer()==false) {
-			// ----------------------------------
-			// --- Running as Application -------
-			// ----------------------------------
-			execMode = ExecutionMode.APPLICATION;	
-		} else {
-			// ----------------------------------
-			// --- Running as Server-Tool -------
-			// ----------------------------------
-			execMode = ExecutionMode.SERVER;
-			
-			// --- Does JADE run? ---------------
+		ExecutionMode execMode = this.fileExecutionMode; 
+		if (execMode==ExecutionMode.SERVER) {
+			// ------------------------------------------------------
+			// --- Does JADE run? -----------------------------------
+			// ------------------------------------------------------			
 			Platform platform = Application.getJadePlatform();
 			AgentContainer mainContainer = platform.jadeGetMainContainer();
 			if (mainContainer!=null) {
-				// --------------------------------------------------
 				// --- JADE is running ------------------------------
-				// --------------------------------------------------
 				JadeUrlChecker urlConfigured = new JadeUrlChecker(this.getServerMasterURL());
 				urlConfigured.setPort(this.getServerMasterPort());
 				urlConfigured.setPort4MTP(this.getServerMasterPort4MTP());
@@ -302,9 +298,8 @@ public class GlobalInfo {
 					// --- Running as Server [Slave] ----------------
 					execMode = ExecutionMode.SERVER_SLAVE;
 				}
-				// --------------------------------------------------
 			}
-			
+			// ------------------------------------------------------
 		}
 		return execMode;
 	}
@@ -329,8 +324,8 @@ public class GlobalInfo {
 		case SERVER_SLAVE:
 			executionModeDescription = "Server [Slave]";
 			break;
-		case DEVICE_AGENT:
-			executionModeDescription = "Device Agent";
+		case EMBEDDED_SYSTEM_AGENT:
+			executionModeDescription = "Embedded System Agent";
 			break;
 		}
 		return executionModeDescription;
@@ -505,9 +500,9 @@ public class GlobalInfo {
 	 * Returns the list of project folders, which are located in the root project folder
 	 * @return Array of project folders
 	 */
-	public String[] getIDEProjects( ){		
+	public String[] getProjectSubDirectories( ){		
 		// --- Search for sub folders ---
-		localProjects = null;
+		String[] localProjects = null;
 		File maindir = new File(this.PathProjects(true)) ;
 		File files[] = maindir.listFiles();
 		for (int i = 0; i < files.length; i++) {
@@ -515,8 +510,7 @@ public class GlobalInfo {
 				if (localProjects == null) {						
 					String[] AddEr = { files[i].getName() };	
 					localProjects = AddEr;	
-				}
-				else {
+				} else {
 					String[] AddEr = new String[localProjects.length+1];
 					System.arraycopy( localProjects, 0, AddEr, 0, localProjects.length );
 					AddEr[AddEr.length-1] = files[i].getName();
@@ -824,23 +818,6 @@ public class GlobalInfo {
 			this.fileProperties = new FileProperties(this);
 		}
 		return this.fileProperties;
-	}
-	/**
-	 * This method can be used in order to configure the current execution 
-	 * of Agent.GUI as an server tool (for 'server.master' or 'server.slave') 
-	 * @param runAsServer The boolean to set
-	 */
-	public void setRunAsServer(boolean runAsServer) {
-		this.filePropRunAsServer = runAsServer;
-		Application.setRunningAsServer(runAsServer);
-	}
-	/**
-	 * Can be accessed in order to find out whether the current execution 
-	 * of Agent.GUI is running as server or as application
-	 * @return true if the application is running in server mode - otherwise false
-	 */
-	public boolean isRunAsServer() {
-		return this.filePropRunAsServer;
 	}
 
 	// ---- SciMark 2.0 Benchmark ----------------------------

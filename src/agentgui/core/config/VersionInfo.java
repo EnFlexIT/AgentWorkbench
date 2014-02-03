@@ -75,7 +75,7 @@ public class VersionInfo extends Properties {
 	private void readVersionInfo() {
 		
 		try {
-			this.load(this.getClass().getClassLoader().getResourceAsStream(versionFile));
+			this.load(this.getClass().getClassLoader().getResourceAsStream(this.versionFile));
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -126,9 +126,12 @@ public class VersionInfo extends Properties {
 		if (includeApplicationTitle) {
 			versionInfo += Application.getGlobalInfo().getApplicationTitle() + " " + newLineString;	
 		}
-
-		versionInfo += this.getVersionMajor() + "." + this.getVersionMinor() + " " + newLineString;
+		
+		String minorVersion = String.format("%02d", this.getVersionMinor());
+		
+		versionInfo += this.getVersionMajor() + "." + minorVersion + " " + newLineString;
 		versionInfo += "revision " + this.getVersionBuild() + " (" + dateString + ")"; 
+		
 		return versionInfo.replaceAll("  ", " ");
 	}
 	

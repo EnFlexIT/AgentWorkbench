@@ -167,66 +167,10 @@ public class ProjectsLoaded {
 			
 		} else {
 			// --- Get data model from file ---------------
-			JAXBContext pc;
-			Unmarshaller um = null;
-			String XMLFileName = newProject.getProjectFolderFullPath() + Application.getGlobalInfo().getFileNameProject();	
-			String userObjectFileName = newProject.getProjectFolderFullPath() + Application.getGlobalInfo().getFilenameProjectUserObject();
-		
-			// --- Does the file exists -------------------
-			File xmlFile = new File(XMLFileName);
-			if (xmlFile.exists()==false) {
-				
-				System.out.println(Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + " " + XMLFileName);
-				Application.setStatusBar(Language.translate("Fertig"));
-				
-				String title = Language.translate("Projekt-Ladefehler!");
-				String message = Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + "\n";
-				message += XMLFileName;
-				JOptionPane.showInternalMessageDialog(Application.getMainWindow().getJDesktopPane4Projects(), message, title, JOptionPane.WARNING_MESSAGE);
+			newProject = this.getProject(selectedProjectFolder);
+			if (newProject==null) {
 				return null;
 			}
-			
-			// --- Read file 'agentgui.xml' ---------------
-			try {
-				pc = JAXBContext.newInstance(newProject.getClass());
-				um = pc.createUnmarshaller();
-				newProject = (Project) um.unmarshal(new FileReader(XMLFileName));
-			} catch (FileNotFoundException ex) {
-				ex.printStackTrace();
-			} catch (JAXBException ex) {
-				ex.printStackTrace();
-			}
-			
-			// --- check/create default folders -----------
-			newProject.setProjectFolder(localTmpProjectFolder);
-			newProject.checkCreateSubFolders();
-			
-			// --- Load additional jar-resources ----------
-			newProject.resourcesLoad();
-			
-			
-			// --- Reading the serializable user object of - 
-			// --- the Project from the 'agentgui.bin' -----
-			File userObjectFile = new File(userObjectFileName);
-			if (userObjectFile.exists()) {
-				
-				Serializable userObject = null;
-				FileInputStream fis = null;
-				ObjectInputStream in = null;
-				try {
-					fis = new FileInputStream(userObjectFileName);
-					in = new ObjectInputStream(fis);
-					userObject = (Serializable)in.readObject();
-					in.close();
-					
-				} catch(IOException ex) {
-					ex.printStackTrace();
-				} catch(ClassNotFoundException ex) {
-					ex.printStackTrace();
-				}
-				newProject.setUserRuntimeObject(userObject);				
-			}
-			
 		}
 		
 		// --- Remind the current name of the used environment model type -----
@@ -285,6 +229,85 @@ public class ProjectsLoaded {
 		return newProject;
 	}
 
+	/**
+	 * Loads and returns the specified project to a Project instance.
+	 * By loading, this method will also load external jar-resources
+	 * by using the ClassLoader
+	 *
+	 * @param projectSubDirectory the project sub directory
+	 * @return the project
+	 */
+	public Project getProject(String projectSubDirectory) {
+		
+		Project project = null;
+		
+		// --- Get data model from file ---------------
+		String projectFolder = Application.getGlobalInfo().PathProjects(true) + projectSubDirectory + File.separator;
+		String XMLFileName = projectFolder + Application.getGlobalInfo().getFileNameProject();	
+		String userObjectFileName = projectFolder + Application.getGlobalInfo().getFilenameProjectUserObject();
+	
+		// --- Does the file exists -------------------
+		File xmlFile = new File(XMLFileName);
+		if (xmlFile.exists()==false) {
+			
+			System.out.println(Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + " " + XMLFileName);
+			Application.setStatusBar(Language.translate("Fertig"));
+			
+			String title = Language.translate("Projekt-Ladefehler!");
+			String message = Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + "\n";
+			message += XMLFileName;
+			JOptionPane.showInternalMessageDialog(Application.getMainWindow().getJDesktopPane4Projects(), message, title, JOptionPane.WARNING_MESSAGE);
+			return null;
+		}
+		
+		// --- Read file 'agentgui.xml' ---------------
+		try {
+			JAXBContext pc = JAXBContext.newInstance(Project.class);
+			Unmarshaller um = pc.createUnmarshaller();
+			project = (Project) um.unmarshal(new FileReader(XMLFileName));
+			
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+			return null;
+		} catch (JAXBException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		
+		// --- check/create default folders -----------
+		project.setProjectFolder(projectSubDirectory);
+		project.checkCreateSubFolders();
+		
+		// --- Load additional jar-resources ----------
+		project.resourcesLoad();
+		
+		// --- Reading the serializable user object of - 
+		// --- the Project from the 'agentgui.bin' -----
+		File userObjectFile = new File(userObjectFileName);
+		if (userObjectFile.exists()) {
+			
+			Serializable userObject = null;
+			FileInputStream fis = null;
+			ObjectInputStream in = null;
+			try {
+				fis = new FileInputStream(userObjectFileName);
+				in = new ObjectInputStream(fis);
+				userObject = (Serializable)in.readObject();
+				in.close();
+				
+			} catch(IOException ex) {
+				ex.printStackTrace();
+				return null;
+			} catch(ClassNotFoundException ex) {
+				ex.printStackTrace();
+				return null;
+			}
+			project.setUserRuntimeObject(userObject);				
+		}
+		return project;
+	}
+	
+	
 	/**
 	 * This method will try to close all open projects
 	 * @return Returns true on success

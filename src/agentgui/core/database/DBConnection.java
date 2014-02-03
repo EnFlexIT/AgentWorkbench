@@ -61,6 +61,8 @@ public class DBConnection {
 	private String dbUser = null;
 	private String dbPswd = null;
 
+	private boolean autoCreatePlatformTable=true;
+	
 	private Connection connection = null;
 	private String sql = null;
 	
@@ -71,9 +73,57 @@ public class DBConnection {
 	
 	
 	/**
-	 * Constructor of this class. Try's to connect to or build the database for the server.master agent
+	 * Constructor for the database connection. Using this constructor will
+	 * directly try to connect to the configured database and will search for 
+	 * the table 'platforms'. If the database or the table can not be found 
+	 * or accessed, it will be tried to create the database and/or the table. 
 	 */
 	public DBConnection() {
+		this.dbHost = Application.getGlobalInfo().getServerMasterDBHost();
+		this.dbName = Application.getGlobalInfo().getServerMasterDBName();
+		this.dbUser = Application.getGlobalInfo().getServerMasterDBUser();
+		this.dbPswd = Application.getGlobalInfo().getServerMasterDBPswd(); 
+		this.autoCreatePlatformTable=true;
+		this.establishConnection();
+	}
+	
+	/**
+	 * Constructor for the database connection. Using this constructor will
+ 	 * directly try to connect to the configured database, but not to a specific
+ 	 * table (see other constructor of this class). If the database can not be 
+ 	 * found, it will be tried to create the database.
+ 	 * 
+	 * @param dbHost the database host to use
+	 * @param dbName the database name to use
+	 * @param dbUser the database user to use
+	 * @param dbPswd the database password to use
+	 */
+	public DBConnection(String dbHost, String dbName, String dbUser, String dbPswd) {
+		this.dbHost = dbHost;
+		this.dbName = dbName;
+		this.dbUser = dbUser;
+		this.dbPswd = dbPswd;
+		this.autoCreatePlatformTable=false;
+		this.establishConnection();
+	}
+	
+	/**
+	 * Establish connection.
+	 */
+	private void establishConnection(){
+		
+		// --- Do we have a Port configuration ------------
+		if (this.dbHost!=null) {
+			if (this.dbHost.contains(":")) {
+				// --- Port was given ---------------------
+				this.dbHost = "jdbc:mysql://" + this.dbHost + "/";
+			} else {
+				// --- Port was not given -----------------
+				this.dbHost = "jdbc:mysql://" + this.dbHost + ":3306/";
+			}
+		}
+		if (this.dbUser==null) this.dbUser="";
+		if (this.dbPswd==null) this.dbPswd="";
 		
 		// --- Can the connection be established? ---------
 		if (this.connect()==false) {
@@ -82,22 +132,29 @@ public class DBConnection {
 		}
 		// --- Is the database available? -----------------
 		if (this.dbIsAvailable()==true) {
+			// --- Connect to database --------------------
 			this.setConnection2Database(this.dbName);
-			// --- DB is there, check table 'platforms' ---
-			if (isPlatformTableCorrect()==false) {
-				// --- if not correct, recreate -----------
-				if (this.createTablePlatforms(true)==false) {
-					this.hasErrors = true;
-					return;
+			// --- Auto create TB:  platforms ? -----------
+			if (this.autoCreatePlatformTable==true) {
+				// --- Check table 'platforms' ------------
+				if (isPlatformTableCorrect()==false) {
+					// --- if not correct, recreate -------
+					if (this.createTablePlatforms(true)==false) {
+						this.hasErrors = true;
+						return;
+					}
 				}
 			}
 			
 		} else {
 			// --- try to create to the database ----------
 			if (this.createDB()==true) {
-				if (this.createTablePlatforms()==false) {
-					this.hasErrors = true;
-					return;
+				// --- Auto create TB:  platforms ? -------
+				if (this.autoCreatePlatformTable==true) {
+					if (this.createTablePlatforms()==false) {
+						this.hasErrors = true;
+						return;
+					}	
 				}
 			} else {
 				this.hasErrors = true;
@@ -105,7 +162,7 @@ public class DBConnection {
 			}
 		}
 	}
-
+	
 	/**
 	 * Creates the required Database for the server.master agent
 	 * @return True, if the database creation was successful
@@ -407,9 +464,7 @@ public class DBConnection {
 	 */
 	private boolean connect() {
 		
-		String configuredHost = Application.getGlobalInfo().getServerMasterDBHost();
-		if (configuredHost==null) {
-			
+		if (this.dbHost==null) {
 			String msg = ""; 
 			msg += "Fehlende Angaben über den Datenbank-Host." + newLine;
 			msg += "Bitte überprüfen Sie die Datenbank-Einstellungen!";
@@ -421,30 +476,11 @@ public class DBConnection {
 			return false;
 		}
 
-		dbName = Application.getGlobalInfo().getServerMasterDBName();
-		dbUser = Application.getGlobalInfo().getServerMasterDBUser();
-		dbPswd = Application.getGlobalInfo().getServerMasterDBPswd(); 
-		if ( configuredHost.contains(":") ) {
-			// --- Port wurde explizit angegeben --------------------
-			dbHost = "jdbc:mysql://" + configuredHost + "/";
-		} else {
-			// --- Port wurde nicht angegeben, Standard verwenden ---
-			dbHost = "jdbc:mysql://" + configuredHost + ":3306/";
-		}
-		
 		try {
 			
 			Properties props = new Properties();
-			if (dbUser!=null) {
-				props.setProperty("user", dbUser);
-			} else {
-				props.setProperty("user", "");
-			}
-			if (dbPswd!=null) {
-				props.setProperty("password", dbPswd);
-			} else {
-				props.setProperty("password", "");
-			}
+			props.setProperty("user", dbUser);
+			props.setProperty("password", dbPswd);
 			props.setProperty("useUnicode","true");
 			props.setProperty("characterEncoding","UTF-8");
 			props.setProperty("connectionCollation","utf8_general_ci");

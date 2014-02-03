@@ -127,8 +127,8 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 		this.actionCode = currentAction;
 		
 		//--- TreeModel initialisieren --------------------------
-		rootNode = new DefaultMutableTreeNode("... " + Application.getGlobalInfo().PathProjects(false, false));
-		projectTreeModel = new DefaultTreeModel(rootNode);	
+		this.rootNode = new DefaultMutableTreeNode("... " + Application.getGlobalInfo().PathProjects(false, false));
+		this.projectTreeModel = new DefaultTreeModel(rootNode);	
 		this.initialize();
 
 		// --- Dialog zentrieren ------------------------------------
@@ -451,7 +451,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			projectTree.setRootVisible(true);
 			projectTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			// --- Node-Objekte einfügen ------------------
-			String[] ideProjects = Application.getGlobalInfo().getIDEProjects();
+			String[] ideProjects = Application.getGlobalInfo().getProjectSubDirectories();
 			if (ideProjects!=null) {
 				for (String projectFolder : ideProjects) {
 					currentNode = new DefaultMutableTreeNode( projectFolder );
@@ -706,7 +706,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			// ----------------------------------------------------
 			// --- Gibt es das gewünschte Verzeichnis bereits? ----
 			if ( ProError==false ) {
-				String[] IDEProjects = Application.getGlobalInfo().getIDEProjects();
+				String[] IDEProjects = Application.getGlobalInfo().getProjectSubDirectories();
 				if (IDEProjects!=null) {
 					for ( String Pro : IDEProjects ) {
 						if ( Pro.equalsIgnoreCase(ProFolder) ) {

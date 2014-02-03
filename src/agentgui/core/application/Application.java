@@ -67,13 +67,7 @@ public class Application {
 	private static boolean justStartJade = false;
 	/** Indicates if the benchmark is currently running */
 	private static boolean benchmarkRunning = false; 
-	/**
-	 * If the application was executed as end user application, this attribute will be false.
-	 * In case of the execution as a 'server'-tool (without application window but with tray icon 
-	 * control), this will be true. 
-	 */
-	private static boolean runningAsServer = false;
-
+	
 	/**
 	 * This ClassDetector is used in order to search for agent classe's, ontology's and BaseService'.
 	 * If a project was newly opened, the search process will restart in order to determine the integrated
@@ -127,18 +121,19 @@ public class Application {
 	}
 	
 	/**
-	 * Sets that AgentGUI is running as server or not.
-	 * @param runningAsServer the new running as server
-	 */
-	public static void setRunningAsServer(boolean runningAsServer) {
-		Application.runningAsServer = runningAsServer;
-	}
-	/**
-	 * Checks if is running as server.
+	 * If the application was executed as end user application, this will be false.
+	 * In case of the execution as a 'server'-tool (without application window, but 
+	 * with tray icon control) this method will return true.
 	 * @return true, if AgentGUI is running as server tool
 	 */
 	public static boolean isRunningAsServer() {
-		return Application.runningAsServer;
+		switch (Application.getGlobalInfo().getExecutionMode()) {
+		case SERVER:
+		case SERVER_MASTER:
+		case SERVER_SLAVE:
+			return true;
+		}
+		return false;
 	}
 	
 	/**

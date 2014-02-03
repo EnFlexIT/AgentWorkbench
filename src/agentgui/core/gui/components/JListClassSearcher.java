@@ -98,6 +98,14 @@ public class JListClassSearcher extends JListWithProgressBar {
 	}
 	
 	/**
+	 * Returns the class after that is being searched for.
+	 * @return the class after that is being searched for.
+	 */
+	public Class<?> getClass2SearchFor() {
+		return this.currSearchFor;
+	}
+	
+	/**
 	 * Sets the DefaultListModel for the current JList to display
 	 */
 	public void reSetListModel() {

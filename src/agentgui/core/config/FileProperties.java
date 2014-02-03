@@ -42,6 +42,7 @@ import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo.ExecutionMode;
 
 /**
  * This class manages the properties that are located in the
@@ -66,6 +67,9 @@ public class FileProperties extends Properties {
 	private String configFileDefaultComment = "";
 
 	private final String DEF_RUNAS = "01_RUNAS";
+	private final String DEF_RUNAS_Application = "Application";
+	private final String DEF_RUNAS_Server = "Server";
+	private final String DEF_RUNAS_EmeddedSystemAgent = "EmbeddedSystemAgent";
 	
 	private final String DEF_BENCH_VALUE = "02_BENCH_VALUE";
 	private final String DEF_BENCH_EXEC_ON = "03_BENCH_EXEC_ON";
@@ -183,10 +187,12 @@ public class FileProperties extends Properties {
 		
 		// --- this.DEF_RUNAS ------------------------
 		propValue = this.getProperty(this.DEF_RUNAS).trim();
-		if ( propValue.equalsIgnoreCase("server") == true ) {
-			Application.getGlobalInfo().setRunAsServer(true);
+		if (propValue.equalsIgnoreCase(this.DEF_RUNAS_Server)==true) {
+			Application.getGlobalInfo().setExecutionMode(ExecutionMode.SERVER);
+		} else if (propValue.equalsIgnoreCase(this.DEF_RUNAS_EmeddedSystemAgent)==true) {
+			Application.getGlobalInfo().setExecutionMode(ExecutionMode.EMBEDDED_SYSTEM_AGENT);
 		} else {
-			Application.getGlobalInfo().setRunAsServer(false);
+			Application.getGlobalInfo().setExecutionMode(ExecutionMode.APPLICATION);
 		}
 		
 		// --- this.DEF_BENCH_VALUE ------------------
@@ -335,12 +341,19 @@ public class FileProperties extends Properties {
 	private void setGlobal2Config() {
 		
 		// --- this.DEF_RUNAS ------------------------
-		if ( Application.getGlobalInfo().isRunAsServer() == true ) {
-			this.setProperty(this.DEF_RUNAS, "Server");
-		} else {
-			this.setProperty(this.DEF_RUNAS, "Application");
+		switch (Application.getGlobalInfo().getExecutionMode()) {
+		case APPLICATION:
+			this.setProperty(this.DEF_RUNAS, this.DEF_RUNAS_Application);
+			break;
+		case EMBEDDED_SYSTEM_AGENT:
+			this.setProperty(this.DEF_RUNAS, this.DEF_RUNAS_EmeddedSystemAgent);
+			break;
+		case SERVER:
+		case SERVER_MASTER:
+		case SERVER_SLAVE:
+			this.setProperty(this.DEF_RUNAS, this.DEF_RUNAS_Server);
+			break;
 		}
-		
 		
 		// --- this.DEF_BENCH_VALUE ------------------
 		this.setProperty(this.DEF_BENCH_VALUE, Application.getGlobalInfo().getBenchValue().toString());

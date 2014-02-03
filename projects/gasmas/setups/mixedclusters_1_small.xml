@@ -292,32 +292,22 @@
         <agent>
             <postionNo>48</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
-            <startAsName>n38</startAsName>
-        </agent>
-        <agent>
-            <postionNo>49</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
             <startAsName>n37</startAsName>
         </agent>
     </agentSetup>
     <timeModelSettings>
         <entry>
-            <key>TimeStart</key>
-            <value>1353066196125</value>
+            <key>CounterCurrent</key>
+            <value>0</value>
         </entry>
         <entry>
-            <key>AccelerationFactor</key>
-            <value>1.0</value>
+            <key>CounterStart</key>
+            <value>1</value>
         </entry>
         <entry>
-            <key>TimeStop</key>
-            <value>1353152596125</value>
-        </entry>
-        <entry>
-            <key>TimeFormat</key>
-            <value>dd.MM.yyyy HH:mm:ss</value>
+            <key>CounterStop</key>
+            <value>9999</value>
         </entry>
     </timeModelSettings>
     <environmentFileName>MixedClusters (1) Small.graphml</environmentFileName>

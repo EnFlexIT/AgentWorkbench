@@ -134,7 +134,6 @@ public class ClassSelector extends JDialog {
 	 */
 	public ClassSelector(Frame owner, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
 		super(owner);
-		
 		this.class2Search4 = clazz2Search4;
 		this.class2Search4CurrentValue = clazz2Search4CurrentValue;
 		this.class2Search4DefaultValue = clazz2Search4DefaultValue;
@@ -144,6 +143,29 @@ public class ClassSelector extends JDialog {
 		
 	}
 
+	/**
+	 * Constructor to configure the type of class, we are looking for.
+	 *
+	 * @param owner the owner
+	 * @param jListClassSearcher an actual instance of a {@link JListClassSearcher}
+	 * @param clazz2Search4CurrentValue the clazz2 search4 current value
+	 * @param clazz2Search4DefaultValue the clazz2 search4 default value
+	 * @param clazz2Search4Description the clazz2 search4 description
+	 * @param allowNull the allow null
+	 */
+	public ClassSelector(Frame owner, JListClassSearcher jListClassSearcher, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
+		super(owner);
+		this.jListClassesFound = jListClassSearcher;
+		this.addDoubleClickEvent2CurrentJListClassSearcher();
+		
+		this.class2Search4 = jListClassSearcher.getClass2SearchFor();
+		this.class2Search4CurrentValue = clazz2Search4CurrentValue;
+		this.class2Search4DefaultValue = clazz2Search4DefaultValue;
+		this.class2Search4Description = clazz2Search4Description;
+		this.allowNull = allowNull;
+		this.initialize();
+	}
+	
 	/**
 	 * Gets the class2 search4.
 	 * @return the class2Search4
@@ -157,6 +179,14 @@ public class ClassSelector extends JDialog {
 	 */
 	public String getClass2Search4CurrentValue() {
 		return class2Search4CurrentValue;
+	}
+	/**
+	 * Sets the class2 search4 current value.
+	 * @return the string
+	 */
+	public void setClass2Search4CurrentValue(String newClassName) {
+		class2Search4CurrentValue = newClassName;
+		this.getJTextFieldCustomizeClass().setText(newClassName);
 	}
 	/**
 	 * Gets the class2 search4 default value.
@@ -278,10 +308,6 @@ public class ClassSelector extends JDialog {
 			gridBagConstraints5.insets = new Insets(10, 20, 10, 20);
 			gridBagConstraints5.gridwidth = 4;
 			gridBagConstraints5.gridy = 3;
-			jLabelSeperator = new JLabel();
-			jLabelSeperator.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			jLabelSeperator.setText(" ");
-			jLabelSeperator.setPreferredSize(new Dimension(200, 2));
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.fill = GridBagConstraints.BOTH;
 			gridBagConstraints3.gridy = 5;
@@ -333,6 +359,11 @@ public class ClassSelector extends JDialog {
 			gridBagConstraints42.insets = new Insets(20, 20, 0, 0);
 			gridBagConstraints42.gridx = 0;
 
+			jLabelSeperator = new JLabel();
+			jLabelSeperator.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+			jLabelSeperator.setText(" ");
+			jLabelSeperator.setPreferredSize(new Dimension(200, 2));
+			
 			jLabelSearchCaption = new JLabel();
 			jLabelSearchCaption.setFont(new Font("Dialog", Font.BOLD, 12));
 			jLabelSearchCaption.setText("Suche & Auswahl");
@@ -638,19 +669,26 @@ public class ClassSelector extends JDialog {
 	private JListWithProgressBar getJListClassesFound() {
 		if (jListClassesFound == null) {
 			jListClassesFound = new JListClassSearcher(this.class2Search4, this.css);
-			jListClassesFound.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			jListClassesFound.jListLoading.setToolTipText(Language.translate("Doppelklick um eine Klasse auszuwählen !"));
-			jListClassesFound.jListLoading.addMouseListener( new MouseAdapter() {
-				public void mouseClicked(MouseEvent me) {
-					if (me.getClickCount() == 2 ) {
-						if (jListClassesFound.isSelectionEmpty()==false) {
-							jButtonTakeSelected.doClick();
-						}
-					}
-				}
-			});
+			this.addDoubleClickEvent2CurrentJListClassSearcher();
 		}
 		return jListClassesFound;
 	}
+	/**
+	 * Adds the double click event to the current JListClassSearcher.
+	 */
+	private void addDoubleClickEvent2CurrentJListClassSearcher() {
+		this.getJListClassesFound().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		this.getJListClassesFound().jListLoading.setToolTipText(Language.translate("Doppelklick um eine Klasse auszuwählen !"));
+		this.getJListClassesFound().jListLoading.addMouseListener( new MouseAdapter() {
+			public void mouseClicked(MouseEvent me) {
+				if (me.getClickCount() == 2 ) {
+					if (jListClassesFound.isSelectionEmpty()==false) {
+						jButtonTakeSelected.doClick();
+					}
+				}
+			}
+		});
+	}
+	
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

@@ -25,6 +25,7 @@ de;Agent:;Agent:
 de;Agent;agent
 de;AgentGUI - Standardeinstellungen verwenden;Use Agent.GUI defaults
 de;Agenten Start-Konfiguration;Agent start configuration
+de;Agenten auswählen;Select Agent;;;
 de;Agenten entfernen;Remove Agent
 de;Agenten hinzufügen;Add Agent
 de;Agenten in diesem Projekt;Agents in this project
@@ -82,8 +83,11 @@ de;Bitte nur ganze Zahlen größer 0 eingeben!;Please integer numbers greater than
 de;Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type of the start argument!
 de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark is running ...
 de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.
+de;Bitte wählen Sie das Projekt aus, das den Agenten enthält;Please select the project that contains the agent;;;
+de;Bitte wählen Sie das Projekt, das den Agenten enthält!;;;;
 de;Bitte wählen Sie das gewünschte Projekt aus!;Please select the desired project!
 de;Bitte wählen Sie den Agenten aus, den Sie starten wollen.;Please select the agent you want to start.;;;
+de;Bitte wählen Sie den Agenten aus, der gestartet werden soll;Please select the agent that you want to start;;;
 de;Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please select the ontology, which has to be added to your project!
 de;Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.;Please select one of the mapped ontology references from the list.;;;
 de;Bitte wählen Sie eine einzelne Netzwerkkomponente !;Please select a single network component!;;;
@@ -182,6 +186,7 @@ de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Datenba
 de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
 de;Fehlende Ontologie-Auswahl !;Missing ontology selection!
+de;Fehlendes Projekt!;Missing Project!;;;
 de;Fehler - '@';Error – '@'
 de;Fehler - PlugIn:;Error - PlugIn:
 de;Fehler - Projektauswahl !;Error - project selection!
@@ -208,6 +213,7 @@ de;Folgende Plattform-Dienste starten:;Start the following platform-services:
 de;Format;Format;;;
 de;Formular;Form
 de;Französisch;French
+de;Geräte-Agent;Embedded System Agent;;;
 de;Google - Übersetzung;Google translation;;;
 de;Google-Übersetzung verwenden;Use Google Translate;;;
 de;Google-Übersetzung übernehmen (STRG+G);Apply Google translation (CTRL + G)
@@ -226,6 +232,7 @@ de;Hilfe;Help
 de;Hilfs-Raster;Guide Grid;;;
 de;Hindernis;Obstacle
 de;Hindernisse;Obstacles
+de;Hinweis;Hint;;;
 de;Hinzufügen;Add
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
 de;Ihre Webseite:;Your Website:;;;
@@ -421,6 +428,7 @@ de;Projekt-Info;Project info
 de;Projekt-Ladefehler!;Error while loading project!;;;
 de;Projekt-Ontologie;Project ontology
 de;Projekt-Ressourcen;Project Resources
+de;Projekt;Project;;;
 de;Projekte;Projects
 de;Projekttitel;Project title
 de;Quell-Sprache;Source language;;;

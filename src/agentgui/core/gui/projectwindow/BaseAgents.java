@@ -128,7 +128,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		this.currProject.addObserver(this);	
 		this.initialize();	
 		
-		// --- Übersetzung anschmeissen -------------------
+		// --- Translate text modules ---------------------
 		jLabelAgent.setText(Language.translate("Agent:"));
 		jLabelStart.setText(Language.translate("Starten als:"));
 		jLabelRecerence.setText(Language.translate("Start-Objekte aus Projekt-Ontologie"));
@@ -143,7 +143,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		jButtonReferencesAdd.setToolTipText(Language.translate("Objekt hinzufügen"));
 		jButtonReferencesRemove.setToolTipText(Language.translate("Objekt entfernen"));
 		
-		// --- Basis-Verzeichnisse im OntoTree anzeigen -------
+		// --- Basis-Verzeichnisse im OntoTree anzeigen ---
 		this.OntoTreeExpand2Level(3, true);
 
 	}
