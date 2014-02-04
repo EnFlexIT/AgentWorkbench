@@ -1390,6 +1390,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		this.jTextFieldDBUser.setText(globalInfo.getServerMasterDBUser());
 		this.jTextFieldDBPswd.setText(globalInfo.getServerMasterDBPswd());
 		
+		
 		this.getJComboBoxProjectSelector().setSelectedItem(globalInfo.getDeviceServiceProjectFolder());
 		switch (globalInfo.getDeviceServiceExecutionMode()) {
 		case SETUP:
@@ -1442,6 +1443,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		this.globalInfo.setServerMasterDBName(this.jTextFieldDB.getText().trim());
 		this.globalInfo.setServerMasterDBUser(this.jTextFieldDBUser.getText().trim());
 		this.globalInfo.setServerMasterDBPswd(this.jTextFieldDBPswd.getText().trim());
+		
 		
 		this.globalInfo.setDeviceServiceProjectFolder((String) this.getJComboBoxProjectSelector().getSelectedItem());
 		if (this.getJRadioButtonExecuteAsService().isSelected()) {
