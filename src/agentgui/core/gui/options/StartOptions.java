@@ -57,6 +57,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
@@ -1114,10 +1115,10 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		} else if (actCMD.equalsIgnoreCase("visTrayIcon")) {
 			// --- nothing to do here ---------------------
 			
-		} else if (actCMD.equalsIgnoreCase("applySettings")) {
-			this.doOkAction();
 		} else if (actCMD.equalsIgnoreCase("resetSettings")) {
 			this.setGlobalData2Form();
+		} else if (actCMD.equalsIgnoreCase("applySettings")) {
+			this.doOkAction();
 		} else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actCMD);
 		}
@@ -1468,38 +1469,91 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		String msgText = null;
 		boolean err = false;
 		
-		String testURL = this.jTextFieldMasterURL.getText().trim();
-		String testPortAsString  = this.jTextFieldMasterPort.getText().trim();
-		Integer testPortAsInteger = Integer.parseInt( testPortAsString );
+		if (this.getJRadioButtonRunAsDevice().isSelected()) {
+			// --------------------------------------------------------------
+			// --- Error Check for Service and Embedded System Agent --------
+			// --------------------------------------------------------------
+			
+			// --- Project selected ? ---------------------------------------
+			if (this.getJComboBoxProjectSelector().getSelectedItem()==null || this.getJComboBoxProjectSelector().getSelectedItem().equals("")==true) {
+				msgHead = Language.translate("Fehlendes Projekt!");
+				msgText = Language.translate("Bitte wählen Sie ein Projekt aus") + "!";	
+				JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
+				this.getJComboBoxProjectSelector().showPopup();
+				return true;
+			}
+			// --- Case Service or Embedded System Agent? -------------------
+			if (this.getJRadioButtonExecuteAsService().isSelected()==false && this.getJRadioButtonExecuteAsDeviceAgent().isSelected()==false) {
+				msgHead = Language.translate("Ausführungsart nicht festgelegt!");
+				msgText = Language.translate("Bitte legen Sie fest, ob Sie Agent.GUI als Service oder als Embedded System Agent ausführen möchten") + "!";	
+				JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
+				return true;
 				
-		String  testPort4MTPAsString  = this.jTextFieldMasterPort4MTP.getText().trim();
-		Integer testPort4MTPAsInteger = Integer.parseInt( testPort4MTPAsString );
-
-		// --- Testing URL and Port ---------------------------------
-		if ( testURL != null ) {
-			if ( testURL.equalsIgnoreCase("")==false  ) {
-				// --- Testing the URL ----------------------------------
-				if ( testURL.contains(" ") ) {
-					msgHead = Language.translate("Fehler: URL oder IP !");
-					msgText = Language.translate("Die URL oder IP enthält unzulässige Zeichen!");	
-					JOptionPane.showMessageDialog( this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
-					return true;
-				}
-				// --- Testing the Port ---------------------------------
-				if ( testPortAsInteger.equals(0) ) {
-					msgHead = Language.translate("Fehler: Port");
-					msgText = Language.translate("Der Port muss einem Wert ungleich 0 entsprechen!");	
-					JOptionPane.showMessageDialog( this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
-					return true;
-				}
-				// --- Testing the Port 4 MTP ---------------------------
-				if ( testPort4MTPAsInteger.equals(0) ) {
-					msgHead = Language.translate("Fehler: Port4MTP ");
-					msgText = Language.translate("Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!");	
+			} else if (this.getJRadioButtonExecuteAsService().isSelected()) {
+				// --- Simulation Setup selected? --------------------------- 
+				if (this.getJComboBoxSetupSelector().getSelectedItem()==null || this.getJComboBoxSetupSelector().getSelectedItem().equals("")==true) {
+					msgHead = Language.translate("Fehlendes Simulations-Setup!");
+					msgText = Language.translate("Bitte wählen Sie ein Simulations-Setup") + "!";	
 					JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
+					this.getJComboBoxSetupSelector().showPopup();
 					return true;
+				}
+				
+			} else if (this.getJRadioButtonExecuteAsDeviceAgent().isSelected()) {
+				// --- Agent Selected ? -------------------------------------
+				if (this.getJTextFieldAgentClass().getText()==null || this.getJTextFieldAgentClass().getText().equals("")) {
+					msgHead = Language.translate("Fehlender Agent!");
+					msgText = Language.translate("Bitte wählen Sie einen Agenten") + "!";	
+					JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							esaSelectAgent();
+						}
+					});
+					return true;
+				}
+				
+			}
+			
+		} else {
+			// --------------------------------------------------------------
+			// --- Error Check for Application and Background System --------
+			// --------------------------------------------------------------
+			String testURL = this.jTextFieldMasterURL.getText().trim();
+			String testPortAsString  = this.jTextFieldMasterPort.getText().trim();
+			Integer testPortAsInteger = Integer.parseInt( testPortAsString );
+					
+			String  testPort4MTPAsString  = this.jTextFieldMasterPort4MTP.getText().trim();
+			Integer testPort4MTPAsInteger = Integer.parseInt( testPort4MTPAsString );
+
+			// --- Testing URL and Port -------------------------------------
+			if ( testURL != null ) {
+				if ( testURL.equalsIgnoreCase("")==false  ) {
+					// --- Testing the URL ----------------------------------
+					if ( testURL.contains(" ") ) {
+						msgHead = Language.translate("Fehler: URL oder IP !");
+						msgText = Language.translate("Die URL oder IP enthält unzulässige Zeichen!");	
+						JOptionPane.showMessageDialog( this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
+						return true;
+					}
+					// --- Testing the Port ---------------------------------
+					if ( testPortAsInteger.equals(0) ) {
+						msgHead = Language.translate("Fehler: Port");
+						msgText = Language.translate("Der Port muss einem Wert ungleich 0 entsprechen!");	
+						JOptionPane.showMessageDialog( this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
+						return true;
+					}
+					// --- Testing the Port 4 MTP ---------------------------
+					if ( testPort4MTPAsInteger.equals(0) ) {
+						msgHead = Language.translate("Fehler: Port4MTP ");
+						msgText = Language.translate("Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!");	
+						JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
+						return true;
+					}
 				}
 			}
+
 		}
 		return err;
 	}
@@ -1515,11 +1569,11 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		String newLine = Application.getGlobalInfo().getNewLineSeparator();
 		String forceRestartTo = null;
 		
-		// --- Fehlerbehnaldung -------------------------------------
-		if ( errorFound() == true) {
+		// --- Error-Handling -------------------------------------------------
+		if (errorFound()==true) {
 			return;
 		}
-		// --- If a change from 'Application' to 'Server' occures --- 
+		// --- If a change from 'Application' to 'Server' occurs --------------
 		if (isServerNew!=isServerOld) {
 			if (isServerNew==true) {
 				forceRestartTo = Language.translate("Server");
@@ -1527,11 +1581,10 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				forceRestartTo = Language.translate("Anwendung");
 			}
 			
-			// --------------------------------------------------------------
-			// --- Neustart der Anwendung einleiten, weil von Server --------
-			// --- auf Application umgestellt wurde oder umgekehrt ----------
-			// --- Wenn der User das möchte !! ------------------------------
-			// --------------------------------------------------------------
+			// ----------------------------------------------------------------
+			// --- Restart application because it was switched ----------------
+			// --- between ExecutionModes, but ask the user before ------------
+			// ----------------------------------------------------------------
 			String MsgHead = "";
 			String MsgText = "";
 			
@@ -1555,14 +1608,14 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), MsgText, MsgHead, JOptionPane.OK_OPTION);
 				return;
 			}
-			// --------------------------------------------------------------
+			// ----------------------------------------------------------------
 		}
 		this.setFromData2Global();
 		Application.getGlobalInfo().getFileProperties().save();
 
-		// ------------------------------------------------------------------
+		// --------------------------------------------------------------------
 		this.applySettings();
-		// ------------------------------------------------------------------
+		// --------------------------------------------------------------------
 		this.optionDialog.setVisible(false);
 		
 	}
