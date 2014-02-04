@@ -16,9 +16,12 @@ de;Agent nach oben verschieben;Move up agent
 de;Agent nach unten verschieben;Move down agent
 de;Agent starten...;Start agent...
 de;Agent und Ontologie-Referenz auswählen!;Select an agent and an ontology reference!;;;
+de;Agent.GUI - Anwendungsvisualisierungen;Agent.GUI - Application Visualisations;;;
 de;Agent.GUI - Projekt öffnen;Agent.GUI – Open project
 de;Agent.GUI - Standard verwenden;Use Agent.GUI defaults
+de;Agent.GUI - Tray Icon anzeigen;Display Agent.GUI - Tray Icon;;;
 de;Agent.GUI - Update;Agent.GUI - Update;;;
+de;Agent.GUI Dienst / Embedded System Agent;Agent.GUI Service / Embedded System Agent;;;
 de;Agent.GUI Projekt-Datei;Agent.GUI project file
 de;Agent.GUI umschalten ?;Switch Agent.GUI ?
 de;Agent:;Agent:
@@ -57,6 +60,7 @@ de;Arbeitsspeicher für Remote-JVM;Memory for remote JVM;;;
 de;Arbeitsspeicher;Memory
 de;Argument;argument
 de;Art der Darstellung;Type of display;;;
+de;Ausführen als;Run as;;;
 de;Ausgewählte JADE-Services;Selected JADE Services;;;
 de;Ausgewählte Klasse übernehmen!;Take selected class!
 de;Auslastungs-Grenzwerte manuell festlegen;Set load thresholds manually
@@ -84,11 +88,11 @@ de;Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type o
 de;Bitte warten! Der Benchmark wird durchgeführt ...;Please wait! The benchmark is running ...
 de;Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.;Please repeat the process if required and then confirm with 'Yes'.
 de;Bitte wählen Sie das Projekt aus, das den Agenten enthält;Please select the project that contains the agent;;;
-de;Bitte wählen Sie das Projekt, das den Agenten enthält!;;;;
 de;Bitte wählen Sie das gewünschte Projekt aus!;Please select the desired project!
 de;Bitte wählen Sie den Agenten aus, den Sie starten wollen.;Please select the agent you want to start.;;;
 de;Bitte wählen Sie den Agenten aus, der gestartet werden soll;Please select the agent that you want to start;;;
 de;Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !;Please select the ontology, which has to be added to your project!
+de;Bitte wählen Sie ein Projekt aus;Please select a project;;;
 de;Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.;Please select one of the mapped ontology references from the list.;;;
 de;Bitte wählen Sie eine einzelne Netzwerkkomponente !;Please select a single network component!;;;
 de;Bitte wählen Sie einen Agenten aus der Liste.;Please select an agent from the list.;;;
@@ -148,6 +152,9 @@ de;Die Google-Übersetzungsfunktion wurde deaktiviert!;Google's translation featu
 de;Die Höhe des exportieren Bildes;The height of the image to be exported;;;
 de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The class of the type 'OntologyClassVisualisation' was not found!;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.<br><br>Möchten Sie die Konfiguration nun vornehmen?;The system configuration does not contain valid information about the<br>database server. The launch of JADE is therefore interrupted.<br> Please configure a valid MySQL database server and restart the Server.Master.<br><br> Would you like to configure this now?;;;
+de;Dienst / Emedded System Agent;Service / Emedded System Agent;;;
+de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
+de;Dienst;Service;;;
 de;Dieser Eintrag ist ein notwendiger Systemparameter, der 
 nicht gelöscht oder umbenannt werden darf!;This entry is a necessary system parameter, which
 can not be deleted or renamed!;;;
@@ -167,6 +174,8 @@ de;Einheit;Unit
 de;Einstellungen;Settings;;;
 de;Element-Typ;Element type
 de;Element;Element
+de;Embedded System Agent: Bitte wählen Sie den Agenten aus, der gestartet werden soll;Embedded System Agent: Please select the agent that you want to execute;;;
+de;Embedded System Agent;Embedded System Agent;;;
 de;Endanwender-Ansicht;End users view
 de;Englisch;English
 de;Entferne Agent;Remove agent
@@ -227,11 +236,12 @@ de;Graph-Prototypen;Graph-prototypes
 de;GraphML-Dateien;GraphML-Files
 de;Grenzwerte;Thresholds
 de;Größe;Size
-de;Hauptserver (server.master);main server (server.master)
+de;Hauptserver (server.master);Main Server (server.master);null;null;null
 de;Hilfe;Help
 de;Hilfs-Raster;Guide Grid;;;
-de;Hindernis;Obstacle
-de;Hindernisse;Obstacles
+de;Hintergrundsystem (Master / Slave);Background System (Master / Slave);;;
+de;Hintergrundsystem - Konfiguration;Background System - Configuration;;;
+de;Hintergrundsystem beim Programmstart automatisch initialisieren;Initialize background system at startup automatically;;;
 de;Hinweis;Hint;;;
 de;Hinzufügen;Add
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
@@ -469,6 +479,7 @@ de;Setup umbenennen;Rename Setup
 de;Setup-Datei nicht gefunden!;Could not find setup file!
 de;Setup-Name wird bereits verwendet!;Setup name is already used!
 de;Setup-Name zu kurz!;Setup name too short!
+de;Setup;Setup;;;
 de;Simulation starten;Start simulation
 de;Simulation-Start;Start simulation
 de;Simulation-Stop;Stop simulation
@@ -522,6 +533,7 @@ de;Suche vorwärts;Search forwards;;;
 de;Suche;Search
 de;Summe einblenden;Show Sum ;;;
 de;Summe;Sum;;;
+de;Sämtliche visuellen Darstellungen deaktivieren;Disable all visual representations;;;
 de;Tabelle;Table;;;
 de;Tage;Days;;;
 de;Teil-Umgebung;environment part

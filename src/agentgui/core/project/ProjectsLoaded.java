@@ -167,7 +167,7 @@ public class ProjectsLoaded {
 			
 		} else {
 			// --- Get data model from file ---------------
-			newProject = this.getProject(selectedProjectFolder);
+			newProject = this.getProject(localTmpProjectFolder);
 			if (newProject==null) {
 				return null;
 			}

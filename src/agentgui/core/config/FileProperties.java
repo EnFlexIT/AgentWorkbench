@@ -190,7 +190,7 @@ public class FileProperties extends Properties {
 		if (propValue.equalsIgnoreCase(this.DEF_RUNAS_Server)==true) {
 			Application.getGlobalInfo().setExecutionMode(ExecutionMode.SERVER);
 		} else if (propValue.equalsIgnoreCase(this.DEF_RUNAS_EmeddedSystemAgent)==true) {
-			Application.getGlobalInfo().setExecutionMode(ExecutionMode.EMBEDDED_SYSTEM_AGENT);
+			Application.getGlobalInfo().setExecutionMode(ExecutionMode.DEVICE_SYSTEM);
 		} else {
 			Application.getGlobalInfo().setExecutionMode(ExecutionMode.APPLICATION);
 		}
@@ -345,7 +345,7 @@ public class FileProperties extends Properties {
 		case APPLICATION:
 			this.setProperty(this.DEF_RUNAS, this.DEF_RUNAS_Application);
 			break;
-		case EMBEDDED_SYSTEM_AGENT:
+		case DEVICE_SYSTEM:
 			this.setProperty(this.DEF_RUNAS, this.DEF_RUNAS_EmeddedSystemAgent);
 			break;
 		case SERVER:

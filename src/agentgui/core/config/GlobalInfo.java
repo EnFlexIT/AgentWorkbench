@@ -140,6 +140,13 @@ public class GlobalInfo {
 	private Integer updateKeepDictionary = 1;
 	private long updateDateLastChecked = 0;
 	
+	private String deviceServiceProjectFolder = null;
+	private DeviceSystemExecutionMode deviceServiceExecutionMode = DeviceSystemExecutionMode.SETUP;
+	private String deviceServiceSetupSelected = null;  
+	private String deviceServiceAgentSelected = null;
+	private EmbeddedSystemAgentVisualisation deviceServiceAgentVisualisation = EmbeddedSystemAgentVisualisation.TRAY_ICON;
+	
+	
 	// --- Reminder information for file dialogs ----------------------------
 	private File lastSelectedFolder = null; 
 	
@@ -156,7 +163,21 @@ public class GlobalInfo {
 	 * @see GlobalInfo#getExecutionMode()
 	 */
 	public enum ExecutionMode {
-		APPLICATION, SERVER, SERVER_MASTER, SERVER_SLAVE, EMBEDDED_SYSTEM_AGENT
+		APPLICATION, SERVER, SERVER_MASTER, SERVER_SLAVE, DEVICE_SYSTEM
+	}
+
+	/**
+	 * The Enumeration of possible ExecutionModes.
+	 * In order to get the current execution mode use  
+	 * the method {@link GlobalInfo#getExecutionMode()} and {@link GlobalInfo#getExecutionModeDescription()} 
+	 * @see GlobalInfo#getExecutionMode()
+	 */
+	public enum DeviceSystemExecutionMode {
+		SETUP, AGENT
+	}
+
+	public enum EmbeddedSystemAgentVisualisation {
+		NONE, TRAY_ICON
 	}
 	
 	/**
@@ -324,7 +345,7 @@ public class GlobalInfo {
 		case SERVER_SLAVE:
 			executionModeDescription = "Server [Slave]";
 			break;
-		case EMBEDDED_SYSTEM_AGENT:
+		case DEVICE_SYSTEM:
 			executionModeDescription = "Embedded System Agent";
 			break;
 		}
@@ -1339,5 +1360,81 @@ public class GlobalInfo {
 	public Long getUpdateDateLastChecked() {
 		return updateDateLastChecked;
 	}
+	
+	/**
+	 * Gets the device service project folder.
+	 * @return the device service project folder
+	 */
+	public String getDeviceServiceProjectFolder() {
+		return deviceServiceProjectFolder;
+	}
+	/**
+	 * Sets the device service project folder.
+	 * @param deviceServiceProjectFolder the new device service project folder
+	 */
+	public void setDeviceServiceProjectFolder(String deviceServiceProjectFolder) {
+		this.deviceServiceProjectFolder = deviceServiceProjectFolder;
+	}
+	
+	/**
+	 * Gets the device service execution mode.
+	 * @return the device service execution mode
+	 */
+	public DeviceSystemExecutionMode getDeviceServiceExecutionMode() {
+		return deviceServiceExecutionMode;
+	}
+	/**
+	 * Sets the device service execution mode.
+	 * @param deviceServiceExecutionMode the new device service execution mode
+	 */
+	public void setDeviceServiceExecutionMode(DeviceSystemExecutionMode deviceServiceExecutionMode) {
+		this.deviceServiceExecutionMode = deviceServiceExecutionMode;
+	}
+	
+	/**
+	 * Gets the device service setup selected.
+	 * @return the device service setup selected
+	 */
+	public String getDeviceServiceSetupSelected() {
+		return deviceServiceSetupSelected;
+	}
+	/**
+	 * Sets the device service setup selected.
+	 * @param deviceServiceSetupSelected the new device service setup selected
+	 */
+	public void setDeviceServiceSetupSelected(String deviceServiceSetupSelected) {
+		this.deviceServiceSetupSelected = deviceServiceSetupSelected;
+	}
+	
+	/**
+	 * Gets the device service agent selected.
+	 * @return the device service agent selected
+	 */
+	public String getDeviceServiceAgentSelected() {
+		return deviceServiceAgentSelected;
+	}
+	/**
+	 * Sets the device service agent selected.
+	 * @param deviceServiceAgentSelected the new device service agent selected
+	 */
+	public void setDeviceServiceAgentSelected(String deviceServiceAgentSelected) {
+		this.deviceServiceAgentSelected = deviceServiceAgentSelected;
+	}
+	
+	/**
+	 * Gets the device service agent visualisation.
+	 * @return the device service agent visualisation
+	 */
+	public EmbeddedSystemAgentVisualisation getDeviceServiceAgentVisualisation() {
+		return deviceServiceAgentVisualisation;
+	}
+	/**
+	 * Sets the device service agent visualisation.
+	 * @param deviceServiceAgentVisualisation the new device service agent visualisation
+	 */
+	public void setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation deviceServiceAgentVisualisation) {
+		this.deviceServiceAgentVisualisation = deviceServiceAgentVisualisation;
+	}
+	
 	
 }
