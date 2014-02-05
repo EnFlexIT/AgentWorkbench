@@ -49,19 +49,19 @@ import agentgui.core.application.Application;
  */
 public class AgentGUITrayIcon implements ActionListener {
 
-	private SystemTray tray = SystemTray.getSystemTray();
-	public TrayIcon trayIcon;
+	private SystemTray systemTray = SystemTray.getSystemTray();
+	private TrayIcon trayIcon;
 	
-	private final String PathImage = Application.getGlobalInfo().PathImageIntern();
+	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
 	
-	public ImageIcon imageIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );;
-	public Image     image = imageIcon.getImage();
+	private ImageIcon imageIconRed = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUI.png"));
+	private Image     imageRed = imageIconRed.getImage();
 	
-	public ImageIcon imageGreenIcon = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUIGreen.png") );;
-	public Image     imageGreen = imageGreenIcon.getImage();
+	private ImageIcon imageIconGreen = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUIGreen.png"));
+	private Image     imageGreen = imageIconGreen.getImage();
 	
-	public AgentGUITrayPopUp popUp = null;
-	public AgentGUITrayDialog trayDialog = null;
+	private AgentGUITrayPopUp trayPopUp = null;
+	private AgentGUITrayDialog trayDialog = null;
 	
 	/**
 	 * Constructor of this class.
@@ -69,43 +69,111 @@ public class AgentGUITrayIcon implements ActionListener {
 	public AgentGUITrayIcon() {
 		this.initialize();
 	}
-
+	
 	/**
 	 * Starts the TrayIcon, if this is supported. If not, it should start a
 	 * simple JDialog, doing the same as independent Window.
 	 */
 	private void initialize() {
 
-		popUp = new AgentGUITrayPopUp(this);
-		
 		if (SystemTray.isSupported()) {
 			// --- System-Tray is supported -------------------------
-			trayIcon = new TrayIcon(image, Application.getGlobalInfo().getApplicationTitle(), popUp);
-			trayIcon.setImageAutoSize(true);
-			trayIcon.addActionListener(this);
 			try {
-				tray.add(trayIcon);
+				systemTray.add(this.getTrayIcon());
 			} catch (AWTException e) {
 				System.err.println("TrayIcon supported, but could not be added.");
 				// --- System Tray is NOT supported -----------------
-				trayDialog = new AgentGUITrayDialog(null,this);
-				trayDialog.setVisible(true);			
+				this.getAgentGUITrayDialog(true).setVisible(true);			
 				// --------------------------------------------------
 			}
 		} else {
 			// --- System Tray is NOT supported --------------------- 
-			trayDialog = new AgentGUITrayDialog(null,this);
-			trayDialog.setVisible(true);
+			this.getAgentGUITrayDialog(true).setVisible(true);
 			// ------------------------------------------------------
 		}
-		popUp.refreshView();
+		this.getAgentGUITrayPopUp().refreshView();
 	}
 
+	/**
+	 * Returns the AgentGUITrayPopUp.
+	 * @return the AgentGUITrayPopUp
+	 */
+	public AgentGUITrayPopUp getAgentGUITrayPopUp() {
+		if (trayPopUp==null) {
+			trayPopUp = new AgentGUITrayPopUp(this);
+		}
+		return trayPopUp;
+	}
+
+	/**
+	 * Returns the AgentGUITrayDialog.
+	 * @return the AgentGUITrayDialog
+	 */
+	public AgentGUITrayDialog getAgentGUITrayDialog() {
+		return this.getAgentGUITrayDialog(false);
+	}
+	/**
+	 * Returns the AgentGUITrayDialog.
+	 * @param createIfNotAvailable set true, if you want that an instance should automatically be created
+	 * @return the AgentGUITrayDialog
+	 */
+	public AgentGUITrayDialog getAgentGUITrayDialog(boolean createIfNotAvailable) {
+		if (trayDialog==null) {
+			if (createIfNotAvailable==true) {
+				trayDialog = new AgentGUITrayDialog(null, this);
+			}
+		}
+		return trayDialog;
+	}
+	
+	/**
+	 * Returns the current TrayIcon.
+	 * @return the TrayIcon
+	 */
+	public TrayIcon getTrayIcon() {
+		if (trayIcon==null) {
+			trayIcon = new TrayIcon(this.getImageRed(), Application.getGlobalInfo().getApplicationTitle(), this.getAgentGUITrayPopUp());
+			trayIcon.setImageAutoSize(true);
+			trayIcon.addActionListener(this);
+		}
+		return trayIcon;
+	}
+	
+	/**
+	 * Gets the red image icon of the Agent.GUI TrayIcon
+	 * @return the red image icon
+	 */
+	public ImageIcon getImageIconRed() {
+		return this.imageIconRed;
+	}
+	/**
+	 * Gets the red image of the Agent.GUI TrayIcon.
+	 * @return the red image 
+	 */
+	public Image getImageRed() {
+		return this.imageRed;
+	}
+	
+	/**
+	 * Gets the green image icon of the Agent.GUI TrayIcon.
+	 * @return the image icon green
+	 */
+	public ImageIcon getImageIconGreen() {
+		return this.imageIconGreen;
+	}
+	/**
+	 * Gets the green image of the Agent.GUI TrayIcon.
+	 * @return the image green
+	 */
+	public Image getImageGreen() {
+		return this.imageGreen;
+	}
+	
 	/**
 	 * Removes the tray icon out off the system tray.
 	 */
 	public void remove() {
-		tray.remove(trayIcon);
+		systemTray.remove(trayIcon);
 	}
 		
 	/* (non-Javadoc)
@@ -113,8 +181,7 @@ public class AgentGUITrayIcon implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//trayIcon.displayMessage(Application.RunInfo.AppTitel(), "An Action Event Has Been Performed!", TrayIcon.MessageType.INFO);
-		if ( Application.isRunningAsServer() == true ) {
+		if (Application.isRunningAsServer()==true) {
 			Application.showOptionDialog();	
 		} else {
 			Application.getMainWindow().restoreFocus();

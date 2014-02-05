@@ -142,7 +142,7 @@ public class ServerSlaveAgent extends Agent {
 		}
 		
 		// --- Define Main-Platform-Info ------------------
-		JadeUrlChecker myURL = Application.getJadePlatform().urlChecker;
+		JadeUrlChecker myURL = Application.getJadePlatform().getJadeUrlChecker();
 		mainPlatform.setIp(myURL.getHostIP());
 		mainPlatform.setUrl(myURL.getHostName());
 		mainPlatform.setPort(myURL.getPort());

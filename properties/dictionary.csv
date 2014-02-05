@@ -383,7 +383,7 @@ de;Neues Projekt anlegen;Create new project
 de;Neues Projekt;New project
 de;Neues Setup anlegen ...;Create new setup ...
 de;Neuinitialsierung des Anwendungsfensters ...;Re-initialization of the application window ...;;;
-de;Neustart des Server-Dienstes;Restart the server
+de;Neustart des Server-Dienstes;Restart server;null;null;null
 de;Nicht definiert;Not defined
 de;Nicht eindeutige Komponentenauswahl !;Non-unique component selection !;;;
 de;Nur Nicht-JADE-Ontologien;Only non-JADE ontologies
@@ -422,8 +422,6 @@ de;PlugIn für Agent.GUI;PlugIn for Agent.GUI
 de;Position;Position
 de;Progamm umschalten auf;Switch progam to
 de;Programmende...;Application shutdown ...
-de;Programmstart [Anwendung] ...;Program Start [Application] ...
-de;Programmstart [Server] ...;Program Start [Server] ...
 de;Programmstart...;Starting Program ...
 de;Programmstart;Program Start
 de;Projekt '@' speichern?;Save Project '@'?
@@ -558,9 +556,7 @@ de;Umgebungseigenschaften;Environment properties
 de;Umgebungskonfiguration;Environment Configuration
 de;Umgebungstyp bzw. -modell für Simulation und Visualisierung;Environment typ and model for simulation and visualization;;;
 de;Umgebungstyp;Environment Type
-de;Umschalten von 'Anwendung' auf 'Server';Switch from 'Application' to 'Server'
-de;Umschalten von 'Server' auf 'Anwendung';Switch from 'Server' to 'Application'
-de;Umschaltung rückgängig gemacht!;Switching undone!
+de;Umschalten von;Switch from;;;
 de;Unbekannt:;Unknown:
 de;Undefiniert;undefined
 de;Ungültige Eingabe, ausschließlich zahlenwerte zulässig!;Invalid input, only numbers allowed!
@@ -609,6 +605,7 @@ de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent 
 de;Zurücksetzen;Reset
 de;Zyklisch !;Cyclic!
 de;Zähler;Counter;;;
+de;auf;to;;;
 de;bereit;ready
 de;für das Setup;for the setup
 de;in Datei;In file

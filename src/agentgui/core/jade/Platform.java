@@ -72,8 +72,9 @@ public class Platform extends Object {
 	private Vector<AgentContainer> jadeContainerLocal = new Vector<AgentContainer>();
 	private Vector<ContainerID> jadeContainerRemote = new Vector<ContainerID>();
 	
-	public JadeUrlChecker urlChecker = null; 
+	private JadeUrlChecker urlChecker = null; 
 	private String newLine = Application.getGlobalInfo().getNewLineSeparator();
+	
 	
 	/**
 	 * Constructor of this class.
@@ -92,11 +93,6 @@ public class Platform extends Object {
 	 */
 	private boolean jadeStartBackgroundAgents(boolean showRMA) {
 		
-		// --- Define the Address of the Main-Platform --------------
-		urlChecker = new JadeUrlChecker(Application.getGlobalInfo().getServerMasterURL());
-		urlChecker.setPort(Application.getGlobalInfo().getServerMasterPort());
-		urlChecker.setPort4MTP(Application.getGlobalInfo().getServerMasterPort4MTP());
-		
 		// ----------------------------------------------------------
 		// --- Differentiation of the Application-Case --------------
 		// ----------------------------------------------------------
@@ -110,7 +106,7 @@ public class Platform extends Object {
 			}			
 			// --- Start RMA ('Remote Monitoring Agent') ------------ 
 			if (showRMA==true) {
-				jadeSystemAgentOpen( "rma", null );	
+				jadeSystemAgentOpen("rma", null);	
 			}
 			break;
 		
@@ -181,14 +177,44 @@ public class Platform extends Object {
 				this.jadeAgentStart(MASserverSlaveAgentName, agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
 			}
 			break;
+		
+		case DEVICE_SYSTEM:
+			// -------------------------------------------------
+			// --- Run as Service / Embedded System Agent ------
+			// -------------------------------------------------
+			switch (Application.getGlobalInfo().getDeviceServiceExecutionMode()) {
+			case SETUP:
+				if (jadeAgentIsRunning(MASapplicationAgentName)==false) {
+					jadeAgentStart(MASapplicationAgentName, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
+				}
+				break;
+
+			case AGENT:
+				// --- pending --------
+				break;
+			}
 			
+			break;
 		}
 		return true;
 	}
 	
 	/**
+	 * Returns the JadeUrlChecker.
+	 * @return the JadeUrlChecker
+	 */
+	public JadeUrlChecker getJadeUrlChecker() {
+		if (urlChecker==null) {
+			// --- Define the Address of the Main-Platform --------------
+			urlChecker = new JadeUrlChecker(Application.getGlobalInfo().getServerMasterURL());
+			urlChecker.setPort(Application.getGlobalInfo().getServerMasterPort());
+			urlChecker.setPort4MTP(Application.getGlobalInfo().getServerMasterPort4MTP());
+		}
+		return urlChecker;
+	}
+	
+	/**
 	 * Starts JADE
-	 *
 	 * @return true, if successful
 	 */		
 	public boolean jadeStart() {
@@ -197,7 +223,6 @@ public class Platform extends Object {
 	
 	/**
 	 * Starts JADE
-	 *
 	 * @param showRMA the show rma
 	 * @return true, if successful
 	 */
@@ -209,7 +234,7 @@ public class Platform extends Object {
 			try {
 				// --- Start Platform -------------------------------
 				jadeRuntime = Runtime.instance();	
-				jadeRuntime.invokeOnTermination( new Runnable() {
+				jadeRuntime.invokeOnTermination(new Runnable() {
 					public void run() {
 						jadeMainContainer = null;
 						jadeRuntime = null;
@@ -222,13 +247,13 @@ public class Platform extends Object {
 				// --- Start MainContainer --------------------------				
 				jadeMainContainer = jadeRuntime.createMainContainer(this.jadeGetContainerProfile());
 				startSucceed = true;
-			}
-			catch ( Exception e ) {
+				
+			} catch ( Exception e ) {
 				e.printStackTrace();
 				return false;
 			}
-		}
-		else {
+			
+		} else {
 			System.out.println( "JADE läuft bereits! => " + jadeRuntime );			
 		}
 
@@ -415,17 +440,17 @@ public class Platform extends Object {
 	 */
 	public void jadeSystemAgentOpen(String rootAgentName, Integer optionalSuffixNo, Object[] openArgs) {
 		// --- Table of the known Jade System-Agents -----
-		Hashtable<String, String> JadeSystemTools = new Hashtable<String, String>();
-		JadeSystemTools.put( "rma", "jade.tools.rma.rma" );
-		JadeSystemTools.put( "sniffer", "jade.tools.sniffer.Sniffer" );
-		JadeSystemTools.put( "dummy", "jade.tools.DummyAgent.DummyAgent" );
-		JadeSystemTools.put( "df", "mas.agents.DFOpener" );
-		JadeSystemTools.put( "introspector", "jade.tools.introspector.Introspector" );
-		JadeSystemTools.put( "log", "jade.tools.logging.LogManagerAgent" );
+		Hashtable<String, String> systemAgents = new Hashtable<String, String>();
+		systemAgents.put("rma", jade.tools.rma.rma.class.getName());
+		systemAgents.put("sniffer", jade.tools.sniffer.Sniffer.class.getName());
+		systemAgents.put("dummy", jade.tools.DummyAgent.DummyAgent.class.getName());
+//		systemAgents.put("df", mas.agents.DFOpener.class.getName());
+		systemAgents.put("introspector", jade.tools.introspector.Introspector.class.getName());
+		systemAgents.put("log", jade.tools.logging.LogManagerAgent.class.getName());
 
 		// --- AgentGUI - Agents --------------------------
-		JadeSystemTools.put( "loadmonitor", agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
-		JadeSystemTools.put( "simstarter", agentgui.simulationService.agents.LoadExecutionAgent.class.getName());
+		systemAgents.put("loadmonitor", agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
+		systemAgents.put("simstarter", agentgui.simulationService.agents.LoadExecutionAgent.class.getName());
 		
 		boolean showRMA = true;
 		
@@ -451,18 +476,18 @@ public class Platform extends Object {
 			}
 		}
 		// --- Setting the real name of the agent to start --- 
-		if ( optionalSuffixNo != null ) 
+		if (optionalSuffixNo!=null) 
 			agentNameForStart = rootAgentName + optionalSuffixNo.toString(); 
 		
 		// --- Was the system already started? ---------------
-		if ( jadeIsMainContainerRunning() == false ) {
+		if (jadeIsMainContainerRunning()==false) {
 			msgHead = Language.translate("JADE wurde noch nicht gestartet!");
 			msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
 			msgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
-			if ( msgAnswer == 1 ) return; // --- NO,just exit 
+			if (msgAnswer==JOptionPane.NO_OPTION) return; // --- NO, just exit 
 			// --- Start the JADE-Platform -------------------
-			jadeStart(showRMA);
-			if ( agentNameForStart.equalsIgnoreCase("rma") ) {
+			this.jadeStart(showRMA);
+			if (agentNameForStart.equalsIgnoreCase("rma")) {
 				try {
 					agentController = jadeMainContainer.getAgent("rma");
 				} catch (ControllerException e) {
@@ -474,31 +499,31 @@ public class Platform extends Object {
 	
 		// ---------------------------------------------------
 		// --- Can a path to the agent be found? -------------   
-		agentNameClass = JadeSystemTools.get( agentNameSearch );
-		if ( agentNameClass == null ) {
+		agentNameClass = systemAgents.get(agentNameSearch);
+		if (agentNameClass==null) {
 			System.out.println( "jadeSystemAgentOpen: Unbekannter System-Agent => " + rootAgentName);
 			return;
 		}
 		
 		// --- Does an agent (see name) already exists? ------
-		if ( jadeAgentIsRunning(agentNameForStart) == true && agentNameForStart.equalsIgnoreCase("df")==false ) {
+		if (jadeAgentIsRunning(agentNameForStart)==true && agentNameForStart.equalsIgnoreCase("df")==false) {
 			// --- Agent already EXISTS !! -------------------
 			msgHead = Language.translate("Der Agent '") + rootAgentName +  Language.translate("' ist bereits geöffnet!");
 			msgText = Language.translate("Möchten Sie einen weiteren Agenten dieser Art starten?");
 			if (Application.isRunningAsServer()) {
-				msgAnswer =  JOptionPane.showConfirmDialog( null, msgText, msgHead, JOptionPane.YES_NO_OPTION);				
+				msgAnswer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);				
 			} else {
-				msgAnswer =  JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);	
+				msgAnswer = JOptionPane.showInternalConfirmDialog(Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);	
 			}
-			if ( msgAnswer == 0 ) {
+			if (msgAnswer==0) {
 				// --- YES - Start another agent of this kind ---------
-				jadeSystemAgentOpen( rootAgentName, newSuffixNo(rootAgentName), openArgs );
+				jadeSystemAgentOpen(rootAgentName, newSuffixNo(rootAgentName), openArgs);
 			}
 			
 		} else {
 			// --- Agent doe's NOT EXISTS !! ---------------------
 			try {
-				if ( agentNameForStart.equalsIgnoreCase("df") ) {
+				if (agentNameForStart.equalsIgnoreCase("df")) {
 					// --- Show the DF-GUI -----------------------
 					this.jadeUtilityAgentStart(UTIL_CMD_OpenDF);
 					return;					
@@ -507,7 +532,7 @@ public class Platform extends Object {
 					return;
 				} else if (agentNameForStart.equalsIgnoreCase("simstarter")) {
 					String containerName = Application.getProjectFocused().getProjectFolder();
-					jadeAgentStart(agentNameForStart, agentNameClass, openArgs, containerName);
+					this.jadeAgentStart(agentNameForStart, agentNameClass, openArgs, containerName);
 				} else {
 					// --- Show a standard jade ToolAgent --------
 					agentController = jadeMainContainer.createNewAgent(agentNameForStart, agentNameClass, openArgs);

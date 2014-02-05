@@ -240,25 +240,25 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 * @param name the name
 	 * @param isAddedNew the is added new
 	 */
-	public void setupLoadAndFocus(int action, String name, boolean isAddedNew) {
+	public boolean setupLoadAndFocus(int action, String name, boolean isAddedNew) {
 		
-		if (this.containsKey(name)==false) return;
+		boolean done = true;
+		if (this.containsKey(name)==false) return false;
 		
-		// --- Aktuelles Setup auf Input 'name' -----------
-		currSimSetupName = name;
-		currProject.setSimulationSetupCurrent(name);
-		currSimXMLFile = currProject.getSubFolder4Setups(true) + this.get(currSimSetupName);
+		// --- configure to the specified setup -----------
+		this.currSimSetupName = name;
+		this.currProject.setSimulationSetupCurrent(name);
+		this.currSimXMLFile = currProject.getSubFolder4Setups(true) + this.get(currSimSetupName);
 		
-		// --- 'SimulationSetup'-Objekt neu instanziieren -
-		currSimSetup = new SimulationSetup(currProject);
+		// --- Create new instance of SimulationSetup -----
+		this.currSimSetup = new SimulationSetup(currProject);
 				
-		// --- Datei lesen und currSimSetup setzen -------- 
+		// --- Read file if needed ------------------------ 
 		if (isAddedNew==false) {
-			this.setupOpen();	
+			done = this.setupOpen();
 		}		
-		
-		// --- Interessenten informieren ------------------
-		currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(action));
+		this.currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(action));
+		return done;
 		
 	}
 	
@@ -349,40 +349,38 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 * variable 'currSimSetup' which can be get and set by using
 	 * 'getCurrSimSetup' or 'setCurrSimSetup'.
 	 */
-	private void setupOpen() {
+	private boolean setupOpen() {
 		
-		String head=null, msg =null;;
-		Integer answer = 0;
-		JAXBContext pc = null;
-		Unmarshaller um = null;
+		boolean done = true;
 		
 		try {
-			pc = JAXBContext.newInstance(currSimSetup.getClass());
-			um = pc.createUnmarshaller();
+			JAXBContext pc = JAXBContext.newInstance(currSimSetup.getClass());
+			Unmarshaller um = pc.createUnmarshaller();
 			FileReader fr = new FileReader(currSimXMLFile);
-			currSimSetup = (SimulationSetup) um.unmarshal(fr);
+			this.currSimSetup = (SimulationSetup) um.unmarshal(fr);
 			fr.close();
 			
 		} catch (FileNotFoundException e) {
 
-			// --- Die Datei wurde nicht gefunden ---------
-			head = Language.translate("Setup-Datei nicht gefunden!");
-			msg  = Language.translate("Die Datei") + " '" + this.get(currSimSetupName) + "' " + Language.translate("für das Setup") + " '" + currSimSetupName + "' " + Language.translate("wurde nicht gefunden.");
+			String head = Language.translate("Setup-Datei nicht gefunden!");
+			String msg  = Language.translate("Die Datei") + " '" + this.get(currSimSetupName) + "' " + Language.translate("für das Setup") + " '" + currSimSetupName + "' " + Language.translate("wurde nicht gefunden.");
 			msg += Language.translate("<br>Kann der Name aus der Liste der Setups entfernt werden?");
 			msg += Language.translate("<br>Falls nicht, wird eine neue Setup-Datei erzeugt.");
-			answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), msg, head, JOptionPane.YES_NO_OPTION);
-			if ( answer == JOptionPane.YES_OPTION  ) {
+			Integer answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), msg, head, JOptionPane.YES_NO_OPTION);
+			if (answer==JOptionPane.YES_OPTION) {
 				this.setupRemove(currSimSetupName);
 			}			
 			
 		} catch (JAXBException e) {
 			e.printStackTrace();
+			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		}
 
 		// --- Set the project to the simulation setup -----------------------------
-		currSimSetup.setProject(currProject);
+		this.currSimSetup.setProject(currProject);
 		
 		//--- Reading the serializable user object of the simsetup from the 'agentgui_userobject.bin' ---
 		String userObjectFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currSimXMLFile);
@@ -396,18 +394,19 @@ public class SimulationSetups extends Hashtable<String, String> {
 				in = new ObjectInputStream(fis);
 				userObject = (Serializable)in.readObject();
 				in.close();
-				currSimSetup.setUserRuntimeObject(userObject);
+				this.currSimSetup.setUserRuntimeObject(userObject);
 				
 			} catch(IOException ex) {
 				ex.printStackTrace();
+				return false;
 			} catch(ClassNotFoundException ex) {
 				ex.printStackTrace();
+				return false;
 			}
 		}
 		
 		// --- Create the DefaultListModels for the current agent configuration ---- 
-		currSimSetup.createHashMap4AgentDefaulListModelsFromAgentList();
-
+		this.currSimSetup.createHashMap4AgentDefaulListModelsFromAgentList();
 		
 		// --- Set the agent classes in the agentSetup -----------------------------
 		ArrayList<AgentClassElement4SimStart> agentList = currSimSetup.getAgentList();
@@ -418,9 +417,12 @@ public class SimulationSetups extends Hashtable<String, String> {
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();
+				return false;
 			}
 		}
-		currSimSetup.setProject(currProject);
+		this.currSimSetup.setProject(currProject);
+		
+		return done;
 	}
 
 	/**

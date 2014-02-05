@@ -42,6 +42,8 @@ import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
+import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 
 /**
@@ -94,6 +96,17 @@ public class FileProperties extends Properties {
 	private final String DEF_UPDATE_AUTOCONFIG = "36_UPDATE_AUTOCONFIG";
 	private final String DEF_UPDATE_KEEP_DICTIONARY = "37_UPDATE_KEEP_DICTIONARY";
 	private final String DEF_UPDATE_DATE_LAST_CHECKED = "38_UPDATE_DATE_LAST_CHECKED";
+	
+	private final String DEF_DeviceServcie_ProjectFolder = "40_DEVICE_SERVICE_PROJECT";
+	private final String DEF_DeviceServcie_ExecAs = "41_DEVICE_SERVICE_EXEC_AS";
+	private final String DEF_DeviceServcie_ExecAsService = "Service";
+	private final String DEF_DeviceServcie_ExecAsAgent = "Agent";
+	private final String DEF_DeviceServcie_Setup = "42_DEVICE_SERVICE_SETUP";
+	private final String DEF_DeviceServcie_Agent = "43_DEVICE_SERVICE_AGENT";
+	private final String DEF_DeviceServcie_Vis = "44_DEVICE_SERVICE_VISUALISATION";
+	private final String DEF_DeviceServcie_Vis_None = "None";
+	private final String DEF_DeviceServcie_Vis_TrayIcon = "TrayIcon";
+	
 	
 	private String[] mandatoryProps = {	this.DEF_RUNAS,
 										this.DEF_BENCH_VALUE,
@@ -195,6 +208,7 @@ public class FileProperties extends Properties {
 			Application.getGlobalInfo().setExecutionMode(ExecutionMode.APPLICATION);
 		}
 		
+		
 		// --- this.DEF_BENCH_VALUE ------------------
 		propValue = this.getProperty(this.DEF_BENCH_VALUE).trim();
 		if ( propValue.equalsIgnoreCase("") == true ) {
@@ -224,6 +238,7 @@ public class FileProperties extends Properties {
 		} else {
 			Application.getGlobalInfo().setLanguage("en");
 		}
+		
 		
 		// --- this.DEF_AUTOSTART --------------------
 		propValue = this.getProperty(this.DEF_AUTOSTART).trim();
@@ -256,6 +271,7 @@ public class FileProperties extends Properties {
 			Application.getGlobalInfo().setServerMasterPort4MTP(0);
 		}
 		
+		
 		// --- this.DEF_MASTER_DB_HOST ---------------
 		propValue = this.getProperty(this.DEF_MASTER_DB_HOST);
 		if ( propValue!=null &&  propValue.equalsIgnoreCase("") == false ) {
@@ -285,6 +301,7 @@ public class FileProperties extends Properties {
 			Application.getGlobalInfo().setServerMasterDBPswd(null);
 		}
 		
+		
 		// --- this.DEF_GOOGLE_API_KEY ---------------
 		propValue = this.getProperty(this.DEF_GOOGLE_API_KEY);
 		if ( propValue!=null && propValue.equalsIgnoreCase("") == false ) {
@@ -299,6 +316,7 @@ public class FileProperties extends Properties {
 		} else {
 			Application.getGlobalInfo().setGoogleHttpRef(null);
 		}
+		
 		
 		// --- this.DEF_UPDATE_SITE ------------------
 		propValue = this.getProperty(this.DEF_UPDATE_SITE);
@@ -331,6 +349,53 @@ public class FileProperties extends Properties {
 		} else {
 			Application.getGlobalInfo().setUpdateDateLastChecked(0);
 		}
+		
+		
+		// --- this.DEF_DeviceServcie_ProjectFolder ---
+		propValue = this.getProperty(this.DEF_DeviceServcie_ProjectFolder);
+		if (propValue==null || propValue.equals("")) {
+			Application.getGlobalInfo().setDeviceServiceProjectFolder(null);
+		} else {
+			Application.getGlobalInfo().setDeviceServiceProjectFolder(propValue);	
+		}
+		
+		// --- this.DEF_DeviceServcie_ExecAs ----------
+		propValue = this.getProperty(this.DEF_DeviceServcie_ExecAs);
+		if (propValue==null || propValue.equals("")) {
+			Application.getGlobalInfo().setDeviceServiceExecutionMode(DeviceSystemExecutionMode.SETUP);
+		} else if (propValue.equalsIgnoreCase(this.DEF_DeviceServcie_ExecAsService)) {
+			Application.getGlobalInfo().setDeviceServiceExecutionMode(DeviceSystemExecutionMode.SETUP);
+		} else if (propValue.equalsIgnoreCase(this.DEF_DeviceServcie_ExecAsAgent)) {
+			Application.getGlobalInfo().setDeviceServiceExecutionMode(DeviceSystemExecutionMode.AGENT);
+		} else {
+			Application.getGlobalInfo().setDeviceServiceExecutionMode(DeviceSystemExecutionMode.SETUP);
+		}
+		// --- this.DEF_DeviceServcie_Setup -----------
+		propValue = this.getProperty(this.DEF_DeviceServcie_Setup);
+		if (propValue==null || propValue.equals("")) {
+			Application.getGlobalInfo().setDeviceServiceSetupSelected(null);
+		} else {
+			Application.getGlobalInfo().setDeviceServiceSetupSelected(propValue);
+		}
+		// --- this.DEF_DeviceServcie_Agent -----------
+		propValue = this.getProperty(this.DEF_DeviceServcie_Agent);
+		if (propValue==null || propValue.equals("")) {
+			Application.getGlobalInfo().setDeviceServiceAgentSelected(null);
+		} else {
+			Application.getGlobalInfo().setDeviceServiceAgentSelected(propValue);
+		}
+		// --- this.DEF_DeviceServcie_Vis -------------
+		propValue = this.getProperty(this.DEF_DeviceServcie_Vis);
+		if (propValue==null || propValue.equals("")) {
+			Application.getGlobalInfo().setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.NONE);
+		} else if (propValue.equalsIgnoreCase(this.DEF_DeviceServcie_Vis_None)) {
+			Application.getGlobalInfo().setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.NONE);
+		} else if (propValue.equalsIgnoreCase(this.DEF_DeviceServcie_Vis_TrayIcon)) {
+			Application.getGlobalInfo().setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.TRAY_ICON);
+		} else {
+			Application.getGlobalInfo().setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.NONE);
+		}
+		
 		
 	}
 
@@ -434,6 +499,7 @@ public class FileProperties extends Properties {
 			this.setProperty(this.DEF_GOOGLE_HTTP_REF, Application.getGlobalInfo().getGoogleHttpRef());	
 		}
 		
+		
 		// --- this.DEF_UPDATE_SITE ------------------
 		if (Application.getGlobalInfo().getUpdateSite() == null) {
 			this.setProperty(this.DEF_UPDATE_SITE, "");
@@ -447,6 +513,45 @@ public class FileProperties extends Properties {
 		// --- this.DEF_UPDATE_DATE_LAST_CHECKED ------
 		this.setProperty(this.DEF_UPDATE_DATE_LAST_CHECKED, Application.getGlobalInfo().getUpdateDateLastChecked().toString());
 		
+		
+		// --- this.DEF_DeviceServcie_ProjectFolder ---
+		if (Application.getGlobalInfo().getDeviceServiceProjectFolder()==null) {
+			this.setProperty(this.DEF_DeviceServcie_ProjectFolder, "");
+		} else {
+			this.setProperty(this.DEF_DeviceServcie_ProjectFolder, Application.getGlobalInfo().getDeviceServiceProjectFolder());
+		}
+		// --- this.DEF_DeviceServcie_ExecAs ----------
+		switch (Application.getGlobalInfo().getDeviceServiceExecutionMode()) {
+		case SETUP:
+			this.setProperty(this.DEF_DeviceServcie_ExecAs, this.DEF_DeviceServcie_ExecAsService);
+			break;
+		case AGENT:
+			this.setProperty(this.DEF_DeviceServcie_ExecAs, this.DEF_DeviceServcie_ExecAsAgent);
+			break;
+		}
+		// --- this.DEF_DeviceServcie_ProjectFolder ---
+		if (Application.getGlobalInfo().getDeviceServiceSetupSelected()==null) {
+			this.setProperty(this.DEF_DeviceServcie_Setup, "");
+		} else {
+			this.setProperty(this.DEF_DeviceServcie_Setup, Application.getGlobalInfo().getDeviceServiceSetupSelected());
+		}
+		// --- this.DEF_DeviceServcie_Agent -----------
+		if (Application.getGlobalInfo().getDeviceServiceAgentSelected()==null) {
+			this.setProperty(this.DEF_DeviceServcie_Agent, "");
+		} else {
+			this.setProperty(this.DEF_DeviceServcie_Agent, Application.getGlobalInfo().getDeviceServiceAgentSelected());
+		}
+		// --- this.DEF_DeviceServcie_Vis -------------
+		switch (Application.getGlobalInfo().getDeviceServiceAgentVisualisation()) {
+		case NONE:
+			this.setProperty(this.DEF_DeviceServcie_Vis, this.DEF_DeviceServcie_Vis_None);
+			break;
+		case TRAY_ICON:
+			this.setProperty(this.DEF_DeviceServcie_Vis, this.DEF_DeviceServcie_Vis_TrayIcon);
+			break;
+		}
+		
+
 	}	
 	
 	/**

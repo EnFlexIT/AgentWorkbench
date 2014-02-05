@@ -38,6 +38,8 @@ import javax.swing.SwingUtilities;
 
 import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
+import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.ChangeDialog;
@@ -48,9 +50,11 @@ import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.Platform;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectsLoaded;
+import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.systemtray.AgentGUITrayIcon;
 import agentgui.core.update.AgentGuiUpdater;
 import agentgui.core.webserver.DownloadServer;
+import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.load.LoadMeasureThread;
 
 /**
@@ -383,16 +387,6 @@ public class Application {
 		
 		if (isRunningAsServer()==false && project2OpenAfterStart!=null) {
 			
-			// --- wait for the end of the benchmark ------
-			while(benchmarkRunning==true) {
-				Application.setStatusBar(Language.translate("Warte auf das Ende des Benchmarks ..."));
-				try {
-					Thread.sleep(250);
-				} catch (InterruptedException ex) {
-					ex.printStackTrace();
-				}
-			}
-			
 			// --- open the specified project -------------
 			Application.setStatusBar(Language.translate("Öffne Projekt") + " '" + project2OpenAfterStart + "'...");
 			SwingUtilities.invokeLater(new Runnable() {
@@ -424,35 +418,55 @@ public class Application {
 		}
 		
 		// ----------------------------------------------------------		
-		// --- Start the Application as defined by 'isServer' -------
-		getJadePlatform();
-		getTrayIcon();
+		// --- Start Agent.GUI as defined by 'ExecutionMode' --------
+		// ----------------------------------------------------------
+		String executeStatement = Language.translate("Programmstart");
+		System.out.println(executeStatement + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
 		
-		if (isRunningAsServer()==true) {
-			// ------------------------------------------------------
-			// --- Start Server-Version of AgentGUI -----------------
-			System.out.println( Language.translate("Programmstart [Server] ..." ) );
-			// --- In the Server-Case, start the benchmark now ! ----
-			doBenchmark(false);
-			startServer();
-			
-		} else {
+		switch (getGlobalInfo().getExecutionMode()) {
+		case APPLICATION:
 			// ------------------------------------------------------
 			// --- Start Application --------------------------------
-			System.out.println( Language.translate("Programmstart [Anwendung] ..." ) );
+			getTrayIcon();
 			getProjectsLoaded();
 
 			startApplication();
 			getMainWindow().setStatusBar(Language.translate("Fertig"));
 			doBenchmark(false);
+			waitForBenchmark();
+			
 			proceedStartArgumentOpenProject();
+			
 			if (agentGuiWasUpdated==true) {
 				showChangeDialog();
 			} else {
 				new AgentGuiUpdater().start();
 			}
+			break;
 			
+		case SERVER:
+			// ------------------------------------------------------
+			// --- Start Server-Version of AgentGUI -----------------
+			// --- In the Server-Case, start the benchmark now ! ----
+			getTrayIcon();
+			doBenchmark(false);
+			startServer();
+			break;
+
+		case DEVICE_SYSTEM:
+			// ------------------------------------------------------
+			// --- Start Service / Embedded System Agent ------------
+			startServiceOrEmbeddedSystemAgent();
+			
+			if (agentGuiWasUpdated==true) {
+				showChangeDialog();
+			} else {
+				new AgentGuiUpdater().start();
+			}
+			break;
+
 		}
+		
 	}
 	
 	/**
@@ -478,25 +492,83 @@ public class Application {
 				}
 			}			
 			getJadePlatform().jadeStart();
-			trayIcon.popUp.refreshView();
+			getTrayIcon().getAgentGUITrayPopUp().refreshView();
 		}
 	}
 	
 	/**
-	 * Quits the application
+	 * Start Agent.GUI as device system or embedded system agent.
+	 */
+	public static void startServiceOrEmbeddedSystemAgent() {
+		
+		final String projectFolder = getGlobalInfo().getDeviceServiceProjectFolder();
+		DeviceSystemExecutionMode execMode = getGlobalInfo().getDeviceServiceExecutionMode();
+		final String simulationSetup = getGlobalInfo().getDeviceServiceSetupSelected();
+
+		String agent = getGlobalInfo().getDeviceServiceAgentSelected();
+		EmbeddedSystemAgentVisualisation embSysAgentVis = getGlobalInfo().getDeviceServiceAgentVisualisation();
+		
+		// ---- Case separation DeviceSystemExecutionMode ---------------------
+		switch (execMode) {
+		case SETUP:
+			// ----------------------------------------------------------------
+			// --- Do the same as opening the normal application --------------
+			// ----------------------------------------------------------------
+			getTrayIcon();
+			getProjectsLoaded();
+
+			startApplication();
+			getMainWindow().setStatusBar(Language.translate("Fertig"));
+			doBenchmark(false);
+			waitForBenchmark();
+		
+			// --- Execute the simulation setup -----------------------
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					// --- Open the specified project ---------------------------------
+					Project projectOpened = getProjectsLoaded().add(projectFolder);
+					if (projectOpened!=null) {
+						// --- Select the specified simulation setup ------------------
+						boolean setupLoaded = projectOpened.getSimulationSetups().setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, simulationSetup, false);
+						if (setupLoaded==true) {
+							if (getJadePlatform().jadeStart(false)==true) {
+								// --- Start Setup ------------------------------------
+								Object[] startWith = new Object[1];
+								startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
+								getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
+							}
+						}
+					}
+				} // end run method
+			});// end runnable
+			break;
+
+		case AGENT:
+			// ----------------------------------------------------------------
+			// --- 
+			// ----------------------------------------------------------------
+			
+			break;
+		}
+		
+	}
+	
+	/**
+	 * Quits Agent.GUI (Application | Server | Service & Embedded System Agent)
 	 */
 	public static void quit() {
 
-		// --- JADE beenden ------------------------
+		// --- Shutdown JADE -----------------------
 		getJadePlatform().jadeStop();
-		// --- Noch offene Projekte schließen ------
-		if (getProjectsLoaded().closeAll()==false) {
-			return;	
-		}
-		// --- FileProperties speichern ------------
+
+		// --- Close open projects -----------------
+		if (getProjectsLoaded().closeAll()==false) return;	
+		
+		// --- Save file properties ----------------
 		getGlobalInfo().getFileProperties().save();
 		
-		// --- Fertig ------------------------------
+		// --- Done --------------------------------
 		System.out.println(Language.translate("Programmende... ") );
 		Language.saveDictionaryFile();
 		System.exit(0);		
@@ -526,7 +598,6 @@ public class Application {
 		
 		if (options!=null) return;
 		
-		// ==================================================================
 		if (isRunningAsServer()==true) {
 			options = new OptionDialog(null);
 		} else {
@@ -536,9 +607,7 @@ public class Application {
 			options.setFocusOnTab(focusOnTab);
 		}
 		options.setVisible(true);
-		// ==================================================================
-		// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
-		// ==================================================================
+		// - - - - - - - - - - - - - - - - - - - -
 		options.dispose();
 		options = null;
 		
@@ -593,7 +662,7 @@ public class Application {
 			getMainWindow().setStatusJadeRunning(runs);	
 		}
 		if (trayIcon!=null) {
-			trayIcon.popUp.refreshView();	
+			trayIcon.getAgentGUITrayPopUp().refreshView();	
 		}
 	}
 	
@@ -633,11 +702,11 @@ public class Application {
 		String newLine = getGlobalInfo().getNewLineSeparator();
 		
 		if (askUser==true) {
-			// --- Sind die neue und die alte Anzeigesprach gleich ? ----
+			// --- Do we have identical Languages -------------------
 			Integer newLangIndex = Language.getIndexOfLanguage(newLang);
 			if ( newLangIndex == Language.currLanguageIndex ) return; 
 			
-			// --- User fragen, ob die Sprache umgestellt werden soll ---
+			// --- Ask user -----------------------------------------
 			String MsgHead = Language.translate("Anzeigesprache wechseln?");
 			String MsgText = Language.translate(
 							 "Möchten Sie die Anzeigesprache wirklich umstellen?" + newLine + 
@@ -648,18 +717,18 @@ public class Application {
 			
 		}
 		
-		// --- JADE stoppen -----------------------------------------		
+		// --- JADE shutdown ----------------------------------------		
 		getJadePlatform().jadeStop();
-		// --- Projekte schliessen ----------------------------------
+		// --- Close projects ---------------------------------------
 		if (getProjectsLoaded()!=null) {
 			if (getProjectsLoaded().closeAll()==false) return;	
 		}
-		// --- Sprache umstellen ------------------------------------
+		// --- Switch Language --------------------------------------
 		Language.changeApplicationLanguageTo(newLang);
-		// --- Anwendungsfenster schliessen -------------------------
+		// --- Close MainWindow -------------------------------------
 		getMainWindow().dispose();
 		mainWindow = null;
-		// --- Anwendung neu öffnen ---------------------------------
+		// --- Restart application ----------------------------------
 		startApplication();	
 
 	}	
@@ -690,7 +759,21 @@ public class Application {
 	public static boolean isBenchmarkRunning() {
 		return benchmarkRunning;
 	}
-
+	/**
+	 * Waits for until the end of the benchmark.
+	 */
+	private static void waitForBenchmark() {
+		while(benchmarkRunning==true) {
+			Application.setStatusBar(Language.translate("Warte auf das Ende des Benchmarks ..."));
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException ex) {
+				ex.printStackTrace();
+			}
+		}
+		Application.setStatusBar(Language.translate("Fertig"));
+	}
+	
 	/**
 	 * Starts the Web-Server, so that a remote server.slave is able 
 	 * to download the additional jar-resources of a project

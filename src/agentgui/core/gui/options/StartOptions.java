@@ -126,9 +126,8 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	private JButton jButtonApply = null;
 	private JButton jButtonUpdateSiteDefault = null;
 	
-	private boolean forceRestart = false;
-	private boolean isServerOld = Application.isRunningAsServer();
-	private boolean isServerNew = Application.isRunningAsServer();
+	private ExecutionMode executionModeOld = Application.getGlobalInfo().getExecutionMode();
+	private ExecutionMode executionModeNew = Application.getGlobalInfo().getExecutionMode();
 
 	// --- Elements for the Embedded System Agent --------
 	private Project esaProjectSelected = null;  //  @jve:decl-index=0:
@@ -1092,12 +1091,15 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		
 		String actCMD = ae.getActionCommand();
-		if (actCMD.equalsIgnoreCase("runAsApplication")) {
+		if (actCMD.equalsIgnoreCase("runAsApplication") || actCMD.equalsIgnoreCase("runAsServer") || actCMD.equalsIgnoreCase("runAsEmbeddedSystemAgent")) {
+			if (getJRadioButtonRunAsApplication().isSelected()) {
+				this.executionModeNew = ExecutionMode.APPLICATION;
+			} else if (getJRadioButtonRunAsServer().isSelected()) {
+				this.executionModeNew = ExecutionMode.SERVER;
+			} else if (getJRadioButtonRunAsDevice().isSelected()) {
+				this.executionModeNew = ExecutionMode.DEVICE_SYSTEM;
+			}
 			this.refreshView();	
-		} else if (actCMD.equalsIgnoreCase("runAsServer")) {
-			this.refreshView();
-		} else if (actCMD.equalsIgnoreCase("runAsEmbeddedSystemAgent")) {
-			this.refreshView();
 			
 		} else if (actCMD.equalsIgnoreCase("esaProjectSelected")) {
 			this.esaLoadSelectedProject();
@@ -1565,56 +1567,34 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	 */
 	private void doOkAction() {
 		
-		this.isServerOld = Application.isRunningAsServer();
-		this.isServerNew = this.jRadioButtonRunAsServer.isSelected();
-		
 		String newLine = Application.getGlobalInfo().getNewLineSeparator();
-		String forceRestartTo = null;
 		
 		// --- Error-Handling -------------------------------------------------
 		if (errorFound()==true) {
 			return;
 		}
 		// --- If a change from 'Application' to 'Server' occurs --------------
-		if (isServerNew!=isServerOld) {
-			if (isServerNew==true) {
-				forceRestartTo = Language.translate("Server");
-			} else {
-				forceRestartTo = Language.translate("Anwendung");
-			}
-			
+		if (this.executionModeNew!=this.executionModeOld) {
 			// ----------------------------------------------------------------
 			// --- Restart application because it was switched ----------------
 			// --- between ExecutionModes, but ask the user before ------------
 			// ----------------------------------------------------------------
+			String executionModeTextNew = Application.getGlobalInfo().getExecutionModeDescription(this.executionModeNew);
 			String MsgHead = "";
 			String MsgText = "";
 			
 			MsgHead += Language.translate("Agent.GUI umschalten ?");
-			MsgText += Language.translate("Progamm umschalten auf") + " '" + forceRestartTo + "':" + newLine; 	
+			MsgText += Language.translate("Progamm umschalten auf") + " '" + executionModeTextNew + "':" + newLine; 	
 			MsgText += Language.translate("Möchten Sie Agent.GUI nun umschalten und neu starten ?");
 
 			Integer MsgAnswer = JOptionPane.showConfirmDialog( this.optionDialog.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
-			if (MsgAnswer == JOptionPane.YES_OPTION ) {
-				forceRestart = true;			
-			} else {
-				forceRestart = false;
-				if (this.jRadioButtonRunAsServer.isSelected()) {
-					this.jRadioButtonRunAsApplication.setSelected(true);
-				} else {
-					this.jRadioButtonRunAsServer.setSelected(true);
-				}
-				MsgHead = Language.translate("Umschaltung rückgängig gemacht!");
-				MsgText =  Language.translate("Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.") + newLine;
-				MsgText += Language.translate("Bitte wiederholen Sie den Vorgang bei Bedarf und bestätigen Sie dann mit 'Ja'.");
-				JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), MsgText, MsgHead, JOptionPane.OK_OPTION);
+			if (MsgAnswer == JOptionPane.NO_OPTION) {
 				return;
 			}
 			// ----------------------------------------------------------------
 		}
 		this.setFromData2Global();
 		Application.getGlobalInfo().getFileProperties().save();
-
 		// --------------------------------------------------------------------
 		this.applySettings();
 		// --------------------------------------------------------------------
@@ -1627,40 +1607,93 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	 */
 	private void applySettings(){
 		
-		if ((isServerOld==true && isServerNew==true) || forceRestart==true) { 
-			// --- JADE beenden -------------------------------------
-			Application.getJadePlatform().jadeStop();			
-			// --- Anwendung neu starten ----------------------------
-			if (isServerOld == true) {
-				if (isServerNew==true) {
-					// --- Neustart 'Server'-------------------------
-					System.out.println(Language.translate("Neustart des Server-Dienstes"));
-				} else {
-					// --- Umschalten von 'Server' auf 'Application' ----
-					System.out.println(Language.translate("Umschalten von 'Server' auf 'Anwendung'"));
-				}				
-				// --- Tray-Icon entfernen / schliessen -------------
+		boolean serverOld = isBackgroundSystemServer(this.executionModeOld);
+		boolean serverNew = isBackgroundSystemServer(this.executionModeNew);
+		String executionModeTextOld = Application.getGlobalInfo().getExecutionModeDescription(this.executionModeOld);
+		String executionModeTextNew = Application.getGlobalInfo().getExecutionModeDescription(this.executionModeNew);
+
+		if (this.executionModeNew==this.executionModeOld) {
+			// --- same ExecutionMode -------------------------------
+			if (serverNew==true & serverNew==serverOld) {
+				// --- Restart 'Server'------------------------------
+				System.out.println(Language.translate("Neustart des Server-Dienstes"));
+				Application.getJadePlatform().jadeStop();
 				Application.getTrayIcon().remove();
 				Application.setTrayIcon(null);
-
-			} else {
-				// --- Umschalten von 'Application' auf 'Server' ----
-				System.out.println(Language.translate("Umschalten von 'Anwendung' auf 'Server'"));
-				// --- Noch offene Projekte schließen ---------------
+				// --- Restart --------------------------------------
+				Application.startAgentGUI();
+			}
+			
+		} else {
+			// --- new ExecutionMode --------------------------------
+			String textPrefix = Language.translate("Umschalten von");
+			String textMiddle = Language.translate("auf");
+			System.out.println(textPrefix + " '" + executionModeTextOld + "' " + textMiddle + " '" + executionModeTextNew + "'");
+			
+			// ------------------------------------------------------
+			// --- Controlled shutdown of the current execution -----
+			Application.getJadePlatform().jadeStop();
+			
+			// --- Case separation for current ExecutionMode --------
+			switch (this.executionModeOld) {
+			case APPLICATION:
+				// --- Application Modus ----------------------------
 				if (Application.getProjectsLoaded()!= null) {
-					if ( Application.getProjectsLoaded().closeAll() == false ) return;	
+					if (Application.getProjectsLoaded().closeAll() == false ) return;	
 				}		
-				// --- Anwendungsfenster schliessen -----------------
+				// --- Close main window and TrayIcon ---------------
 				Application.getMainWindow().dispose();
 				Application.setMainWindow(null);
-				// --- Tray-Icon schliessen -------------------------
 				Application.getTrayIcon().remove();
 				Application.setTrayIcon(null);
+				break;
+
+			case SERVER:
+			case SERVER_MASTER:
+			case SERVER_SLAVE:
+				// --- Background System Modus ----------------------
+				Application.getTrayIcon().remove();
+				Application.setTrayIcon(null);
+				break;
+				
+			case DEVICE_SYSTEM:
+				// --- Device / Embedded System Agent ---------------
+				if (Application.getProjectsLoaded()!= null) {
+					if (Application.getProjectsLoaded().closeAll()==false) return;	
+				}		
+				if (Application.getMainWindow()!=null) {
+					Application.getMainWindow().dispose();
+					Application.setMainWindow(null);
+				}
+				if (Application.getTrayIcon()!=null) {
+					Application.getTrayIcon().remove();
+					Application.setTrayIcon(null);	
+				}
+				break;
+				
 			}
 			// --- Restart ------------------------------------------
 			Application.startAgentGUI();
 		}
 
+	}
+
+	/**
+	 * Checks if the specified ExecutionMode is a background system server.
+	 *
+	 * @param executionMode the execution mode
+	 * @return true, if is background system server
+	 */
+	private boolean isBackgroundSystemServer(ExecutionMode executionMode) {
+		boolean server = false;
+		switch (this.executionModeOld) {
+		case SERVER:
+		case SERVER_MASTER:
+		case SERVER_SLAVE:
+			server = true;
+			break;
+		}
+		return server;
 	}
 
 

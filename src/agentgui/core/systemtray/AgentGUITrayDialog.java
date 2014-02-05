@@ -53,11 +53,11 @@ public class AgentGUITrayDialog extends JDialog implements MouseListener {
 
 	private static final long serialVersionUID = -663073173834257611L;
 	
-	private PopupMenu popUp = null;  //  @jve:decl-index=0:
+	private PopupMenu trayIconPopUp = null;  //  @jve:decl-index=0:
 	private AgentGUITrayIcon appTrayIconInstance = null;
 	
 	private JPanel jContentPane = null;  //  @jve:decl-index=0:visual-constraint="10,10"
-	public JLabel jLabelIcon = null;
+	private JLabel jLabelIcon = null;
 	private JLabel jLabelInfo = null;
 	
 	/**
@@ -69,14 +69,12 @@ public class AgentGUITrayDialog extends JDialog implements MouseListener {
 	public AgentGUITrayDialog(Frame owner, AgentGUITrayIcon trayIconInstance) {
 		super(owner);
 		appTrayIconInstance = trayIconInstance;
-		popUp = trayIconInstance.popUp;
+		trayIconPopUp = trayIconInstance.getAgentGUITrayPopUp();
 		initialize();
 	}
 
 	/**
 	 * This method initializes this.
-	 *
-	 * @return void
 	 */
 	private void initialize() {
 		
@@ -84,7 +82,7 @@ public class AgentGUITrayDialog extends JDialog implements MouseListener {
 		this.add(getJContentPane());
 		this.setUndecorated(true);
 		this.addMouseListener(this);
-		this.add(popUp);
+		this.add(trayIconPopUp);
 		this.setAlwaysOnTop(true);
 		
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -98,12 +96,11 @@ public class AgentGUITrayDialog extends JDialog implements MouseListener {
 		
 		String viewText = Language.translate("Rechts-Klick für weitere Optionen");
 		jLabelInfo.setText(viewText);
-		jLabelIcon.setToolTipText(viewText);
+		this.getjLabel4Icon().setToolTipText(viewText);
 	}
 
 	/**
 	 * This method initializes jContentPane.
-	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -114,52 +111,42 @@ public class AgentGUITrayDialog extends JDialog implements MouseListener {
 			jLabelInfo.setText("Rechts-Klick für weitere Optionen");
 			jLabelInfo.addMouseListener(this);
 			
-			jLabelIcon = new JLabel();
-			jLabelIcon.setBounds(new Rectangle(5, 5, 51, 57));
-			jLabelIcon.setIcon(appTrayIconInstance.imageIcon);
-			jLabelIcon.setText("");
-			jLabelIcon.addMouseListener(this);
-			
 			jContentPane = new JPanel();
 			jContentPane.setLayout(null);
 			jContentPane.setSize(new Dimension(329, 68));
 			jContentPane.addMouseListener(this);
-			jContentPane.add(jLabelIcon, null);
+			jContentPane.add(this.getjLabel4Icon(), null);
 			jContentPane.add(jLabelInfo, null);
 		}
 		return jContentPane;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	/**
+	 * Returns the JLable for the Icon.
+	 * @return the JLable for the Icon
 	 */
+	public JLabel getjLabel4Icon() {
+		if (jLabelIcon==null) {
+			jLabelIcon = new JLabel();
+			jLabelIcon.setBounds(new Rectangle(5, 5, 51, 57));
+			jLabelIcon.setIcon(appTrayIconInstance.getImageIconRed());
+			jLabelIcon.setText("");
+			jLabelIcon.addMouseListener(this);
+		}
+		return jLabelIcon;
+	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		//System.out.println( "MouseClicked" );
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
-	 */
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		//System.out.println( "MouseEntered" );
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
-	 */
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// System.out.println( "MouseExited" );
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
-	 */
 	@Override
 	public void mousePressed(MouseEvent e) {
-		//System.out.println( "MousePressed" );
 	}
 	
 	/* (non-Javadoc)
@@ -169,10 +156,10 @@ public class AgentGUITrayDialog extends JDialog implements MouseListener {
 	public void mouseReleased(MouseEvent e) {
 		//System.out.println( "MouseReleased" );
 		if (e.isPopupTrigger()) {
-			if (popUp == null) {
+			if (trayIconPopUp == null) {
 				System.out.println("Could not find context menu.");
 			} else {
-				popUp.show( e.getComponent(), e.getX(), e.getY());	
+				trayIconPopUp.show( e.getComponent(), e.getX(), e.getY());	
 			}			
 		}		
 	}

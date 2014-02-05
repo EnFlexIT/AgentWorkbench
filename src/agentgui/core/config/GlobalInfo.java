@@ -325,16 +325,26 @@ public class GlobalInfo {
 		return execMode;
 	}
 	
+	
+	
+	/**
+	 * Gets the execution mode description of the current {@link ExecutionMode}.
+	 * @return the execution mode description
+	 */
+	public String getExecutionModeDescription() {
+		return this.getExecutionModeDescription(this.getExecutionMode());
+	}
+	
 	/**
 	 * Returns the execution mode description.
 	 * @return the execution mode description
 	 */
-	public String getExecutionModeDescription() {
+	public String getExecutionModeDescription(ExecutionMode executionMode) {
 
 		String executionModeDescription = null;
-		switch (this.getExecutionMode()) {
+		switch (executionMode) {
 		case APPLICATION:
-			executionModeDescription = "Application";
+			executionModeDescription = Language.translate("Anwendung");
 			break;
 		case SERVER:
 			executionModeDescription = "Server";
@@ -346,7 +356,7 @@ public class GlobalInfo {
 			executionModeDescription = "Server [Slave]";
 			break;
 		case DEVICE_SYSTEM:
-			executionModeDescription = "Embedded System Agent";
+			executionModeDescription = Language.translate("Dienst / Emedded System Agent");
 			break;
 		}
 		return executionModeDescription;
