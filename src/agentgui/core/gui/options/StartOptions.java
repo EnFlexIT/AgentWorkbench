@@ -1607,27 +1607,53 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	 */
 	private void applySettings(){
 		
-		boolean serverOld = isBackgroundSystemServer(this.executionModeOld);
-		boolean serverNew = isBackgroundSystemServer(this.executionModeNew);
-		String executionModeTextOld = Application.getGlobalInfo().getExecutionModeDescription(this.executionModeOld);
-		String executionModeTextNew = Application.getGlobalInfo().getExecutionModeDescription(this.executionModeNew);
-
 		if (this.executionModeNew==this.executionModeOld) {
-			// --- same ExecutionMode -------------------------------
-			if (serverNew==true & serverNew==serverOld) {
-				// --- Restart 'Server'------------------------------
-				System.out.println(Language.translate("Neustart des Server-Dienstes"));
+			// ------------------------------------------------------
+			// --- Same ExecutionMode -------------------------------
+			// ------------------------------------------------------
+			switch (this.executionModeOld) {
+			case APPLICATION:
+				// --- Do nothing in this case ----------------------
+				break;
+			
+			case SERVER:
+			case SERVER_MASTER:
+			case SERVER_SLAVE:
+				// --- Background System Modus ----------------------
+				System.out.println("\n" + Language.translate("Neustart des Server-Dienstes") + " ...");
 				Application.getJadePlatform().jadeStop();
 				Application.getTrayIcon().remove();
 				Application.setTrayIcon(null);
-				// --- Restart --------------------------------------
 				Application.startAgentGUI();
+				break;
+				
+			case DEVICE_SYSTEM:
+				// --- Device / Embedded System Agent ---------------
+				System.out.println("\n" + Language.translate("Neustart") + " " + Application.getGlobalInfo().getExecutionModeDescription(this.executionModeNew) + " ...");
+				Application.getJadePlatform().jadeStop();
+				if (Application.getProjectsLoaded()!= null) {
+					if (Application.getProjectsLoaded().closeAll()==false) return;	
+				}		
+				if (Application.getMainWindow()!=null) {
+					Application.getMainWindow().dispose();
+					Application.setMainWindow(null);
+				}
+				if (Application.getTrayIcon()!=null) {
+					Application.getTrayIcon().remove();
+					Application.setTrayIcon(null);	
+				}
+				Application.startAgentGUI();
+				break;
 			}
 			
 		} else {
-			// --- new ExecutionMode --------------------------------
+			// ------------------------------------------------------
+			// --- New ExecutionMode --------------------------------
+			// ------------------------------------------------------
 			String textPrefix = Language.translate("Umschalten von");
+			String executionModeTextOld = Application.getGlobalInfo().getExecutionModeDescription(this.executionModeOld);
 			String textMiddle = Language.translate("auf");
+			String executionModeTextNew = Application.getGlobalInfo().getExecutionModeDescription(this.executionModeNew);
 			System.out.println(textPrefix + " '" + executionModeTextOld + "' " + textMiddle + " '" + executionModeTextNew + "'");
 			
 			// ------------------------------------------------------
@@ -1675,26 +1701,8 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			// --- Restart ------------------------------------------
 			Application.startAgentGUI();
 		}
-
 	}
 
-	/**
-	 * Checks if the specified ExecutionMode is a background system server.
-	 *
-	 * @param executionMode the execution mode
-	 * @return true, if is background system server
-	 */
-	private boolean isBackgroundSystemServer(ExecutionMode executionMode) {
-		boolean server = false;
-		switch (this.executionModeOld) {
-		case SERVER:
-		case SERVER_MASTER:
-		case SERVER_SLAVE:
-			server = true;
-			break;
-		}
-		return server;
-	}
-
+	
 
 }  //  @jve:decl-index=0:visual-constraint="-3,8"

@@ -126,8 +126,7 @@ public class ProjectsLoaded {
 			action = ProjectNewOpen.ACTION_OpenProject;
 			actionTitel = Language.translate("Projekt öffnen");			
 		}
-		Application.getMainWindow().setStatusBar(actionTitel + " ...");
-		
+		Application.setStatusBar(actionTitel + " ...");
 		
 		if (selectedProjectFolder==null) {
 			// --- Open user dialog -----------------------
@@ -208,11 +207,13 @@ public class ProjectsLoaded {
 		Application.setProjectFocused(newProject);
 
 		// --- Configure the project view in the main application -------------
-		Application.getProjectsLoaded().setProjectView();		
-		Application.getMainWindow().setCloseButtonPosition(true);
-		Application.setTitelAddition(newProject.getProjectName());
-		Application.setStatusBar(Language.translate("Fertig"));	
-		newProject.setMaximized();
+		if (Application.getMainWindow()!=null) {
+			Application.getProjectsLoaded().setProjectView();		
+			Application.getMainWindow().setCloseButtonPosition(true);
+			Application.setTitelAddition(newProject.getProjectName());
+			Application.setStatusBar(Language.translate("Fertig"));	
+			newProject.setMaximized();
+		}
 		
 		if (addNew==true) {
 			// --- Save project for the first time ---
@@ -403,16 +404,14 @@ public class ProjectsLoaded {
 	 * Configures the appearance of the application, depending on the current project configuration
 	 */
 	public void setProjectView() {
-		
-		// --- 1. Set Setup-Selector and Tools --------------------------------
-		Application.getMainWindow().getSetupSelectorToolbar().setProject(Application.getProjectFocused());
-		
-		// --- 2. Rebuild the view to the Items in MenuBar 'Window' -----------
-		this.setProjectMenuItems();
-		
-		// --- 3. Set the right value to the MenueBar 'View' ------------------
-		this.setProjectView4DevOrUser();
-		
+		if (Application.getMainWindow()!=null) {
+			// --- 1. Set Setup-Selector and Tools --------------------------------
+			Application.getMainWindow().getSetupSelectorToolbar().setProject(Application.getProjectFocused());	
+			// --- 2. Rebuild the view to the Items in MenuBar 'Window' -----------
+			this.setProjectMenuItems();
+			// --- 3. Set the right value to the MenueBar 'View' ------------------
+			this.setProjectView4DevOrUser();
+		}
 	}
 	
 	/**
@@ -688,7 +687,7 @@ public class ProjectsLoaded {
 		int action = ProjectNewOpen.ACTION_DeleteProject;
 		String actionTitel = Language.translate("Projekt löschen");
 		
-		Application.getMainWindow().setStatusBar(actionTitel + " ...");
+		Application.setStatusBar(actionTitel + " ...");
 		
 		// ----------------------------------------------------------
 		// --- Open project selection dialog ------------------------

@@ -29,7 +29,12 @@
 package agentgui.core.benchmark;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import javax.swing.SwingUtilities;
 
@@ -55,11 +60,11 @@ public class BenchmarkMeasurement extends Thread {
 
 	private BenchmarkMonitor benchGUI = null;
 	
-	private float benchValueOld = Application.getGlobalInfo().getBenchValue();
-	private boolean benchAllwaysSkip = Application.getGlobalInfo().isBenchAllwaysSkip();
 	private boolean forceBench = false;
+	private boolean benchAllwaysSkip = Application.getGlobalInfo().isBenchAllwaysSkip();
+	private float benchValueOld = Application.getGlobalInfo().getBenchValue();
+
 	private String benchExecOn = Application.getGlobalInfo().getBenchExecOn();
-	
 	private String nowExecOn = null;
 	
 	private double min_time = Constants.RESOLUTION_DEFAULT;
@@ -89,13 +94,13 @@ public class BenchmarkMeasurement extends Thread {
 		super.run();
 		this.setName("SciMark2-Benchmark");
 
-		// --- Startwert = Alter Wert ---------------------  
+		// --- Initial value = Old Value ------------------  
 		LoadMeasureThread.setCompositeBenchmarkValue(benchValueOld);
 		
-		// --- FileProperties berücksichtigen -------------
-		this.nowExecOn = this.getLocalComputerName();
+		// --- Get current system identifier --------------
+		this.nowExecOn = this.getLocalSystemIdentifier();
 
-		// --- Kriterium für einen vorzeitigen Ausstieg ---
+		// --- Criteria to not execute the benchmark ------
 		if ( this.benchValueOld>0 && this.nowExecOn.equalsIgnoreCase(this.benchExecOn) && this.benchAllwaysSkip==true && forceBench==false) {
 			// --- Nach Agent-, Ontology- und BaseService - Classes suchen ----
 			Application.setBenchmarkRunning(false);
@@ -241,18 +246,48 @@ public class BenchmarkMeasurement extends Thread {
 	}
 	
 	/**
-	 * Returns the local 'CanonicalHostName' to identify
+	 * Returns the MAC-Address local 'CanonicalHostName' to identify
 	 * on which computer this measurement were executed.
 	 *
 	 * @return the local computer name
 	 */
-	private String getLocalComputerName() {
+	private String getLocalSystemIdentifier() {
 
-		String nowExecOn = null;
+		String nowExecOn=null;
+		
+		// ------------------------------------------------
+		// --- Try to get the MAC address first -----------
 		try {
-			nowExecOn = InetAddress.getLocalHost().getCanonicalHostName();
-		} catch (UnknownHostException inetE) {
-			inetE.printStackTrace();
+			Vector<String> macAddresses = new Vector<String>();
+			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+			while (interfaces.hasMoreElements()) {
+				NetworkInterface netInterface = interfaces.nextElement();
+				byte[] mac = netInterface.getHardwareAddress();
+				if(mac != null) {
+			        StringBuilder sb = new StringBuilder();
+			        for (int i = 0; i < mac.length; i++) {
+			          sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+			        }
+			        macAddresses.add(sb.toString());
+				}
+			}
+			// --- Found one or more MAC-Addresses --------
+			if (macAddresses.size()>0) {
+				Collections.sort(macAddresses);
+				nowExecOn = macAddresses.get(0);
+			}
+			
+		} catch (SocketException se) {
+			//se.printStackTrace();
+		}
+		
+		// --- In case that no MAC address was found ------
+		if (nowExecOn==null) {
+			try {
+				nowExecOn = InetAddress.getLocalHost().getCanonicalHostName();
+			} catch (UnknownHostException inetE) {
+				inetE.printStackTrace();
+			}
 		}
 		return nowExecOn;
 	}

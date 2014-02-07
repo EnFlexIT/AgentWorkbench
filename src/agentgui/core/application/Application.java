@@ -28,6 +28,8 @@
  */
 package agentgui.core.application;
 
+import jade.core.Profile;
+import jade.debugging.DebugService;
 import jade.debugging.components.JPanelConsole;
 
 import java.io.File;
@@ -54,6 +56,8 @@ import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.systemtray.AgentGUITrayIcon;
 import agentgui.core.update.AgentGuiUpdater;
 import agentgui.core.webserver.DownloadServer;
+import agentgui.simulationService.LoadService;
+import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.load.LoadMeasureThread;
 
@@ -505,14 +509,14 @@ public class Application {
 		DeviceSystemExecutionMode execMode = getGlobalInfo().getDeviceServiceExecutionMode();
 		final String simulationSetup = getGlobalInfo().getDeviceServiceSetupSelected();
 
-		String agent = getGlobalInfo().getDeviceServiceAgentSelected();
+		String agentClassName = getGlobalInfo().getDeviceServiceAgentSelected();
 		EmbeddedSystemAgentVisualisation embSysAgentVis = getGlobalInfo().getDeviceServiceAgentVisualisation();
 		
 		// ---- Case separation DeviceSystemExecutionMode ---------------------
 		switch (execMode) {
 		case SETUP:
 			// ----------------------------------------------------------------
-			// --- Do the same as opening the normal application --------------
+			// --- Execute a setup --------------------------------------------
 			// ----------------------------------------------------------------
 			getTrayIcon();
 			getProjectsLoaded();
@@ -546,9 +550,52 @@ public class Application {
 
 		case AGENT:
 			// ----------------------------------------------------------------
-			// --- 
+			// --- Just execute an agent with limited visualisation ----------- 
 			// ----------------------------------------------------------------
+			switch (embSysAgentVis) {
+			case TRAY_ICON:
+				getTrayIcon();	
+				break;
+			}
 			
+			// --- Load project -----------------------------------------------
+			Project projectOpened = getProjectsLoaded().add(projectFolder);
+			if (projectOpened!=null) {
+				// --- Stop the DownloadServer --------------------------------
+				Application.stopDownloadServer();
+				
+				// --- Remove the Agent.GUI services --------------------------
+				Profile jadeProfile = getJadePlatform().jadeGetContainerProfile();
+				String services = jadeProfile.getParameter("services", null);
+
+				String servicesNew = "";
+				String[] serviceArray = services.split(";");
+				for (int i = 0; i < serviceArray.length; i++) {
+					if (serviceArray[i].equals(SimulationService.class.getName())==false &&
+						serviceArray[i].equals(LoadService.class.getName())==false &&
+						serviceArray[i].equals(DebugService.class.getName())==false) {
+						servicesNew += serviceArray[i] + ";";
+					}
+				}
+				jadeProfile.setParameter("services", servicesNew);
+				
+				// --- Set the project to be 'saved' --------------------------
+				projectOpened.setUnsaved(false);
+				
+				// --- Start JADE ---------------------------------------------
+				if (getJadePlatform().jadeStart(false, jadeProfile)==true) {
+					
+					try {
+						// --- Start the selected Agent -----------------------
+						Class<?> agentClass = Class.forName(agentClassName);
+						String startAs = agentClass.getSimpleName();
+						getJadePlatform().jadeAgentStart(startAs, agentClassName);
+								
+					} catch (ClassNotFoundException cnfe) {
+						cnfe.printStackTrace();
+					}
+				}
+			}
 			break;
 		}
 		
@@ -650,7 +697,9 @@ public class Application {
 	 * @param add2BasicTitel
 	 */
 	public static void setTitelAddition( String add2BasicTitel ) {
-		getMainWindow().setTitelAddition(add2BasicTitel);
+		if (getMainWindow()!=null) {
+			getMainWindow().setTitelAddition(add2BasicTitel);
+		}
 	}
 
 	/**
@@ -671,7 +720,9 @@ public class Application {
 	 * @param statusText
 	 */
 	public static void setStatusBar(String statusText) {
-		getMainWindow().setStatusBar(statusText);
+		if (getMainWindow()!=null) {
+			getMainWindow().setStatusBar(statusText);	
+		}
 	}
 	
 	/**
@@ -791,7 +842,6 @@ public class Application {
 	 * Stops the Web-Server for the resources download of an external server.slave
 	 */
 	public static void stopDownloadServer() {
-
 		if (downloadServer!=null) {
 			synchronized (downloadServer) {
 				downloadServer.stop();

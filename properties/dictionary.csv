@@ -384,6 +384,7 @@ de;Neues Projekt;New project
 de;Neues Setup anlegen ...;Create new setup ...
 de;Neuinitialsierung des Anwendungsfensters ...;Re-initialization of the application window ...;;;
 de;Neustart des Server-Dienstes;Restart server;null;null;null
+de;Neustart;Restart;;;
 de;Nicht definiert;Not defined
 de;Nicht eindeutige Komponentenauswahl !;Non-unique component selection !;;;
 de;Nur Nicht-JADE-Ontologien;Only non-JADE ontologies

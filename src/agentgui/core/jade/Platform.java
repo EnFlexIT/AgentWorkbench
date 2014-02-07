@@ -104,10 +104,6 @@ public class Platform extends Object {
 			if (jadeAgentIsRunning(MASapplicationAgentName)==false) {
 				jadeAgentStart(MASapplicationAgentName, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
 			}			
-			// --- Start RMA ('Remote Monitoring Agent') ------------ 
-			if (showRMA==true) {
-				jadeSystemAgentOpen("rma", null);	
-			}
 			break;
 		
 		case SERVER_MASTER:
@@ -196,6 +192,10 @@ public class Platform extends Object {
 			
 			break;
 		}
+		// --- Start RMA ('Remote Monitoring Agent') -----------
+		if (showRMA==true) {
+			jadeSystemAgentOpen("rma", null);	
+		}
 		return true;
 	}
 	
@@ -214,19 +214,27 @@ public class Platform extends Object {
 	}
 	
 	/**
-	 * Starts JADE
+	 * Starts JADE and dieplays the RMA
 	 * @return true, if successful
 	 */		
 	public boolean jadeStart() {
-		return jadeStart(true);
+		return jadeStart(true, null);
 	}	
-	
 	/**
-	 * Starts JADE
-	 * @param showRMA the show rma
+	 * Starts JADE.
+	 * @param showRMA set true, if you want to see the RMA
 	 * @return true, if successful
 	 */
 	public boolean jadeStart(boolean showRMA) {
+		return jadeStart(showRMA, null);
+	}
+	/**
+	 * Starts JADE.
+	 * @param showRMA set true, if you want to see the RMA 
+	 * @param containerProfile the actual container Profile
+	 * @return true, if successful
+	 */
+	public boolean jadeStart(boolean showRMA, Profile containerProfile) {
 		
 		boolean startSucceed = false;		
 		
@@ -244,11 +252,15 @@ public class Platform extends Object {
 						}
 					}
 				});
-				// --- Start MainContainer --------------------------				
-				jadeMainContainer = jadeRuntime.createMainContainer(this.jadeGetContainerProfile());
+				// --- Start MainContainer --------------------------
+				if (containerProfile!=null) {
+					jadeMainContainer = jadeRuntime.createMainContainer(containerProfile);
+				} else {
+					jadeMainContainer = jadeRuntime.createMainContainer(this.jadeGetContainerProfile());
+				}
 				startSucceed = true;
 				
-			} catch ( Exception e ) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
 			}
@@ -272,7 +284,7 @@ public class Platform extends Object {
 	 * used.
 	 * @return Profile (for Jade-Containers)
 	 */
-	private Profile jadeGetContainerProfile() {
+	public Profile jadeGetContainerProfile() {
 
 		Profile jadeContainerProfile = null;
 		Project currProject = Application.getProjectFocused();
@@ -444,7 +456,7 @@ public class Platform extends Object {
 		systemAgents.put("rma", jade.tools.rma.rma.class.getName());
 		systemAgents.put("sniffer", jade.tools.sniffer.Sniffer.class.getName());
 		systemAgents.put("dummy", jade.tools.DummyAgent.DummyAgent.class.getName());
-//		systemAgents.put("df", mas.agents.DFOpener.class.getName());
+		systemAgents.put("df", "mas.agents.DFOpener");
 		systemAgents.put("introspector", jade.tools.introspector.Introspector.class.getName());
 		systemAgents.put("log", jade.tools.logging.LogManagerAgent.class.getName());
 
@@ -501,7 +513,7 @@ public class Platform extends Object {
 		// --- Can a path to the agent be found? -------------   
 		agentNameClass = systemAgents.get(agentNameSearch);
 		if (agentNameClass==null) {
-			System.out.println( "jadeSystemAgentOpen: Unbekannter System-Agent => " + rootAgentName);
+			System.err.println( "jadeSystemAgentOpen: Unbekannter System-Agent => " + rootAgentName);
 			return;
 		}
 		
@@ -651,10 +663,10 @@ public class Platform extends Object {
 	 */
 	public AgentContainer jadeContainerCreate(String newContainerName) {
 		Profile pSub = this.jadeGetContainerProfile();
-		pSub.setParameter( Profile.CONTAINER_NAME, newContainerName );
-		AgentContainer MAS_AgentContainer = jadeRuntime.createAgentContainer( pSub );
-		jadeContainerLocal.add( MAS_AgentContainer );
-		return MAS_AgentContainer;		
+		pSub.setParameter(Profile.CONTAINER_NAME, newContainerName);
+		AgentContainer agentContainer = jadeRuntime.createAgentContainer(pSub);
+		jadeContainerLocal.add(agentContainer);
+		return agentContainer;		
 	}	
 	
 	/**

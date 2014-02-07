@@ -372,7 +372,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public boolean save() {
 		// --- Save the current project -------------------
-		Application.getMainWindow().setStatusBar( projectName + ": " + Language.translate("speichern") + " ... ");
+		Application.setStatusBar( projectName + ": " + Language.translate("speichern") + " ... ");
 		this.setNotChangedButNotify(Project.PREPARE_FOR_SAVING);		
 		
 		try {			
@@ -415,7 +415,7 @@ import agentgui.core.webserver.JarFileCreator;
 			System.out.println("XML-Error while saving Project-File!");
 			e.printStackTrace();
 		}
-		Application.getMainWindow().setStatusBar("");
+		Application.setStatusBar("");
 		return true;		
 	}
 	
@@ -430,7 +430,7 @@ import agentgui.core.webserver.JarFileCreator;
 		String msgText = null;
 		Integer msgAnswer = 0;
 		
-		Application.getMainWindow().setStatusBar(Language.translate("Projekt schlieﬂen") + " ...");
+		Application.setStatusBar(Language.translate("Projekt schlieﬂen") + " ...");
 		if (isUnsaved()==true) {
 			msgHead = Language.translate("Projekt '@' speichern?");
 			msgHead = msgHead.replace( "'@'", "'" + projectName + "'");			
@@ -483,8 +483,10 @@ import agentgui.core.webserver.JarFileCreator;
 			Application.setTitelAddition( Application.getProjectFocused().projectName );
 		} else {
 			Application.setProjectFocused(null);
-			Application.getMainWindow().setCloseButtonPosition(false);
 			Application.setTitelAddition("");
+			if (Application.getMainWindow()!=null) {
+				Application.getMainWindow().setCloseButtonPosition(false);
+			}
 		}
 		Application.setStatusBar("");
 		return true;
@@ -761,15 +763,17 @@ import agentgui.core.webserver.JarFileCreator;
 	 * Maximise the Project-Window within the AgenGUI-Application
 	 */
 	public void setMaximized() {
-		// --- Validate the main application window -----------------
-		Application.getMainWindow().validate();
-		// --- Be sure that everything is there as needed ----------- 
-		if (getProjectWindow()!=null && getProjectWindow().getParent()!=null) {
-			// --- Maximise now -------------------------------------
-			((BasicInternalFrameUI) getProjectWindow().getUI()).setNorthPane(null);
-			DesktopManager dtm = Application.getMainWindow().getJDesktopPane4Projects().getDesktopManager();
-			if (dtm!=null) {
-				dtm.maximizeFrame(getProjectWindow());	
+		if (Application.getMainWindow()!=null) {
+			// --- Validate the main application window -----------------
+			Application.getMainWindow().validate();
+			// --- Be sure that everything is there as needed ----------- 
+			if (getProjectWindow()!=null && getProjectWindow().getParent()!=null) {
+				// --- Maximise now -------------------------------------
+				((BasicInternalFrameUI) getProjectWindow().getUI()).setNorthPane(null);
+				DesktopManager dtm = Application.getMainWindow().getJDesktopPane4Projects().getDesktopManager();
+				if (dtm!=null) {
+					dtm.maximizeFrame(getProjectWindow());	
+				}
 			}
 		}
 	}

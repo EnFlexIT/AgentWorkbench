@@ -312,8 +312,10 @@ public abstract class PlugIn implements Observer {
 		customOntologyClassVisualisation = new Vector<OntologyClassVisualisation>();
 		
 		// --- validate/repaint the main window -----------
-		Application.getMainWindow().validate();
-		Application.getMainWindow().repaint();
+		if (Application.getMainWindow()!=null) {
+			Application.getMainWindow().validate();
+			Application.getMainWindow().repaint();
+		}
 		
 	}
 	// --------------------------------------------------------------
