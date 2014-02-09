@@ -59,6 +59,7 @@ import javax.swing.UIManager;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.gui.components.JHyperLink;
 import javax.swing.JTabbedPane;
 import javax.swing.BorderFactory;
@@ -142,7 +143,8 @@ public class AboutDialog extends JDialog implements ActionListener{
 		this.registerEscapeKeyStroke();
 		
 		// --- Set the Look and Feel of the Dialog ------------------
-		if (Application.isRunningAsServer()==true) {
+		ExecutionMode execMode = Application.getGlobalInfo().getExecutionMode(); 
+		if (Application.isRunningAsServer()==true ||  execMode==ExecutionMode.DEVICE_SYSTEM) {
 			if (Application.getGlobalInfo().getAppLnF()!=null) {
 				setLookAndFeel(Application.getGlobalInfo().getAppLnF());
 			}

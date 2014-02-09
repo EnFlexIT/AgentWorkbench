@@ -37,6 +37,8 @@ import javax.swing.Icon;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
+import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.update.AgentGuiUpdater;
 
 /**
@@ -105,7 +107,15 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		this.add(itemAbout);
 		this.addSeparator();
 		
-		if (Application.isRunningAsServer() == true) {
+		// --- Case ExecutionMode -------------------------------
+		switch (Application.getGlobalInfo().getExecutionMode()) {
+		case APPLICATION:
+			this.add(itemExit);
+			break;
+
+		case SERVER:
+		case SERVER_MASTER:
+		case SERVER_SLAVE:
 			// --- In case of running as Server -----------------
 			this.add(itemServiceStart);
 			this.add(itemServiceStop);
@@ -116,9 +126,29 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 			this.add(itemConsole);	
 			this.addSeparator();
 			this.add(itemExit);
-		} else {
-			// --- In case of running as Application ------------
-			this.add(itemExit);
+			break;
+			
+		case DEVICE_SYSTEM:
+			// --- Case DeviceServiceExecutionMode --------------
+			switch (Application.getGlobalInfo().getDeviceServiceExecutionMode()) {
+			case SETUP:
+				this.add(itemExit);
+				break;
+
+			case AGENT:
+				this.add(itemServiceStart);
+				this.add(itemServiceStop);
+				this.addSeparator();
+				this.add(itemOpenRMA);
+				this.addSeparator();
+				this.add(itemConfig);
+				this.add(itemConsole);	
+				this.addSeparator();
+				this.add(itemExit);
+				break;
+			}
+			break;
+
 		}
 		
 	}
@@ -153,6 +183,20 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		agentGUItray.getTrayIcon().setToolTip(Application.getGlobalInfo().getApplicationTitle() + " - " + Application.getGlobalInfo().getExecutionModeDescription());
 	}
 	
+	/**
+	 * Start jade.
+	 */
+	private void startJade() {
+		ExecutionMode appExecMode = Application.getGlobalInfo().getExecutionMode();
+		DeviceSystemExecutionMode deviceSysExecMode = Application.getGlobalInfo().getDeviceServiceExecutionMode(); 
+		if (appExecMode==ExecutionMode.DEVICE_SYSTEM && deviceSysExecMode==DeviceSystemExecutionMode.AGENT) {
+			// --- Start JADE for an embedded system agent ----------------
+			Application.getJadePlatform().jadeStart4EmbeddedSystemAgent();
+		} else {
+			Application.getJadePlatform().jadeStart();	
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -165,7 +209,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		} else if ( ActCMD.equalsIgnoreCase("About")) {
 			Application.showAboutDialog();
 		}else if ( ActCMD.equalsIgnoreCase("startAgentGUIService")) {
-			Application.getJadePlatform().jadeStart();
+			this.startJade();
 			this.refreshView();
 		} else if ( ActCMD.equalsIgnoreCase("stoptAgentGUIService")) {
 			Application.getJadePlatform().jadeStop();

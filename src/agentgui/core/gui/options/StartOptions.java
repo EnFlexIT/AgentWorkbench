@@ -172,7 +172,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		
 		jRadioButtonRunAsApplication.setText(Language.translate("Anwendung"));
 		jRadioButtonRunAsServer.setText(Language.translate("Hintergrundsystem (Master / Slave)"));
-		jRadioButtonRunAsEmbeddedSystemAgent.setText(Language.translate("Dienst / Emedded System Agent"));
+		jRadioButtonRunAsEmbeddedSystemAgent.setText(Language.translate("Dienst / Embedded System Agent"));
 		
 		jLabelServerHeader.setText(Application.getGlobalInfo().getApplicationTitle() + " " + Language.translate("Hintergrundsystem - Konfiguration"));
 		jCheckBoxAutoStart.setText(" " + Language.translate("Hintergrundsystem beim Programmstart automatisch initialisieren"));
@@ -274,7 +274,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		if (jRadioButtonRunAsEmbeddedSystemAgent == null) {
 			jRadioButtonRunAsEmbeddedSystemAgent = new JRadioButton();
 			jRadioButtonRunAsEmbeddedSystemAgent.setPreferredSize(new Dimension(300, 24));
-			jRadioButtonRunAsEmbeddedSystemAgent.setText("Dienst / Emedded System Agent");
+			jRadioButtonRunAsEmbeddedSystemAgent.setText("Dienst / Embedded System Agent");
 			jRadioButtonRunAsEmbeddedSystemAgent.setActionCommand("runAsEmbeddedSystemAgent");
 			jRadioButtonRunAsEmbeddedSystemAgent.addActionListener(this);
 		}
@@ -1392,31 +1392,40 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		this.jTextFieldDBUser.setText(globalInfo.getServerMasterDBUser());
 		this.jTextFieldDBPswd.setText(globalInfo.getServerMasterDBPswd());
 		
-		
-		this.getJComboBoxProjectSelector().setSelectedItem(globalInfo.getDeviceServiceProjectFolder());
-		switch (globalInfo.getDeviceServiceExecutionMode()) {
-		case SETUP:
+		if (globalInfo.getExecutionMode()==ExecutionMode.DEVICE_SYSTEM) {
+			// --- In case of a Service / Embedded System Agent ---------		
+			this.getJComboBoxProjectSelector().setSelectedItem(globalInfo.getDeviceServiceProjectFolder());
+			switch (globalInfo.getDeviceServiceExecutionMode()) {
+			case SETUP:
+				this.getJRadioButtonExecuteAsService().setSelected(true);
+				this.getJRadioButtonExecuteAsDeviceAgent().setSelected(false);
+				break;
+			case AGENT:
+				this.getJRadioButtonExecuteAsService().setSelected(false);
+				this.getJRadioButtonExecuteAsDeviceAgent().setSelected(true);
+				break;
+			}
+			this.getJComboBoxSetupSelector().setSelectedItem(globalInfo.getDeviceServiceSetupSelected());
+			this.getJTextFieldAgentClass().setText(globalInfo.getDeviceServiceAgentSelected());
+			switch (globalInfo.getDeviceServiceAgentVisualisation()) {
+			case NONE:
+				this.getJRadioButtonVisNon().setSelected(true);
+				this.getJRadioButtonVisTrayIcon().setSelected(false);
+				break;
+			case TRAY_ICON:
+				this.getJRadioButtonVisNon().setSelected(false);
+				this.getJRadioButtonVisTrayIcon().setSelected(true);
+				break;
+			}
+			
+		} else {
+			// --- Just set some default values ---------------------
 			this.getJRadioButtonExecuteAsService().setSelected(true);
 			this.getJRadioButtonExecuteAsDeviceAgent().setSelected(false);
-			break;
-		case AGENT:
-			this.getJRadioButtonExecuteAsService().setSelected(false);
-			this.getJRadioButtonExecuteAsDeviceAgent().setSelected(true);
-			break;
+			this.getJRadioButtonVisNon().setSelected(false);
+			this.getJRadioButtonVisTrayIcon().setSelected(true);
+			
 		}
-		this.getJComboBoxSetupSelector().setSelectedItem(globalInfo.getDeviceServiceSetupSelected());
-		this.getJTextFieldAgentClass().setText(globalInfo.getDeviceServiceAgentSelected());
-		switch (globalInfo.getDeviceServiceAgentVisualisation()) {
-		case NONE:
-			this.jRadioButtonVisNon.setSelected(true);
-			this.jRadioButtonVisTrayIcon.setSelected(false);
-			break;
-		case TRAY_ICON:
-			this.jRadioButtonVisNon.setSelected(false);
-			this.jRadioButtonVisTrayIcon.setSelected(true);
-			break;
-		}
-		
 		this.refreshView();
 	}
 	
@@ -1622,7 +1631,6 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				// --- Background System Modus ----------------------
 				System.out.println("\n" + Language.translate("Neustart des Server-Dienstes") + " ...");
 				Application.getJadePlatform().jadeStop();
-				Application.getTrayIcon().remove();
 				Application.setTrayIcon(null);
 				Application.startAgentGUI();
 				break;
@@ -1634,14 +1642,8 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				if (Application.getProjectsLoaded()!= null) {
 					if (Application.getProjectsLoaded().closeAll()==false) return;	
 				}		
-				if (Application.getMainWindow()!=null) {
-					Application.getMainWindow().dispose();
-					Application.setMainWindow(null);
-				}
-				if (Application.getTrayIcon()!=null) {
-					Application.getTrayIcon().remove();
-					Application.setTrayIcon(null);	
-				}
+				Application.setMainWindow(null);
+				Application.setTrayIcon(null);	
 				Application.startAgentGUI();
 				break;
 			}
@@ -1668,9 +1670,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 					if (Application.getProjectsLoaded().closeAll() == false ) return;	
 				}		
 				// --- Close main window and TrayIcon ---------------
-				Application.getMainWindow().dispose();
 				Application.setMainWindow(null);
-				Application.getTrayIcon().remove();
 				Application.setTrayIcon(null);
 				break;
 
@@ -1678,7 +1678,6 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			case SERVER_MASTER:
 			case SERVER_SLAVE:
 				// --- Background System Modus ----------------------
-				Application.getTrayIcon().remove();
 				Application.setTrayIcon(null);
 				break;
 				
@@ -1687,14 +1686,9 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				if (Application.getProjectsLoaded()!= null) {
 					if (Application.getProjectsLoaded().closeAll()==false) return;	
 				}		
-				if (Application.getMainWindow()!=null) {
-					Application.getMainWindow().dispose();
-					Application.setMainWindow(null);
-				}
-				if (Application.getTrayIcon()!=null) {
-					Application.getTrayIcon().remove();
-					Application.setTrayIcon(null);	
-				}
+				Application.setMainWindow(null);
+				Application.setTrayIcon(null);	
+				Application.setLogFileWriter(null);
 				break;
 				
 			}

@@ -59,7 +59,7 @@ public class ExitDeviceExecutionBehaviour extends TickerBehaviour {
 
 	private static final long serialVersionUID = -5888248028098540315L;
 
-	private final String ShutDownFileNameTemplate = "AgentGuiShutDownXXXX.txt";
+	private final String ShutDownFileNameTemplate = "AgentGuiDeviceAgentShutDownXXXX.txt";
 	private File shutDownFile;
 	
 	/**
@@ -73,19 +73,22 @@ public class ExitDeviceExecutionBehaviour extends TickerBehaviour {
 		this.createShutDownFile();
 	}
 
+	/* (non-Javadoc)
+	 * @see jade.core.behaviours.TickerBehaviour#onTick()
+	 */
 	@Override
 	protected void onTick() {
 		// --- Check if the file is still there. ----------  
 		// --- If not, terminate the whole platform -------
 		if (this.shutDownFile.exists()==false) {
-			new ShutDown().start();
+			new ShutDownThread().start();
 			this.stop();
 			myAgent.doDelete();
 		}
 	}
 
 	/**
-	 * Creates the shutdown file.
+	 * Creates the shutdown file that will be observed by this behaviour.
 	 */
 	private void createShutDownFile() {
 		
@@ -121,7 +124,7 @@ public class ExitDeviceExecutionBehaviour extends TickerBehaviour {
 	 * The private class ShutDown is just a small simple 
 	 * Thread that shuts down the current application.
 	 */
-	private class ShutDown extends Thread {
+	private class ShutDownThread extends Thread {
 		/* (non-Javadoc)
 		 * @see java.lang.Runnable#run()
 		 */

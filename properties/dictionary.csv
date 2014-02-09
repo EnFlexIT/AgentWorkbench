@@ -12,6 +12,7 @@ de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;
 de;Abtastintervall;Sampling rate;;;
 de;Agent auswählen!;Select an Agent!;;;
+de;Agent gestartet;Agent started;;;
 de;Agent nach oben verschieben;Move up agent
 de;Agent nach unten verschieben;Move down agent
 de;Agent starten...;Start agent...
@@ -154,7 +155,7 @@ de;Die Google-Übersetzungsfunktion wurde deaktiviert!;Google's translation featu
 de;Die Höhe des exportieren Bildes;The height of the image to be exported;;;
 de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The class of the type 'OntologyClassVisualisation' was not found!;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.<br><br>Möchten Sie die Konfiguration nun vornehmen?;The system configuration does not contain valid information about the<br>database server. The launch of JADE is therefore interrupted.<br> Please configure a valid MySQL database server and restart the Server.Master.<br><br> Would you like to configure this now?;;;
-de;Dienst / Emedded System Agent;Service / Emedded System Agent;;;
+de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
 de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
 de;Dienst;Service;;;
 de;Dieser Eintrag ist ein notwendiger Systemparameter, der 

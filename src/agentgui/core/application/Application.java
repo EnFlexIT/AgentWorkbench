@@ -28,9 +28,8 @@
  */
 package agentgui.core.application;
 
-import jade.core.Profile;
-import jade.debugging.DebugService;
 import jade.debugging.components.JPanelConsole;
+import jade.debugging.logfile.LogFileWriter;
 
 import java.io.File;
 import java.util.Vector;
@@ -56,8 +55,6 @@ import agentgui.core.sim.setup.SimulationSetups;
 import agentgui.core.systemtray.AgentGUITrayIcon;
 import agentgui.core.update.AgentGuiUpdater;
 import agentgui.core.webserver.DownloadServer;
-import agentgui.simulationService.LoadService;
-import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.load.LoadMeasureThread;
 
@@ -94,6 +91,8 @@ public class Application {
 	private static AgentGUITrayIcon trayIcon = null;
 	/** This is the instance of the main application window */
 	private static JPanelConsole console = null;
+	/** In case that a log file has to be written */
+	private static LogFileWriter logFileWriter = null;
 	/** The About dialog of the main application window. */
 	private static AboutDialog about = null;
 	/** The About dialog of the application.*/
@@ -169,6 +168,36 @@ public class Application {
 		}
 		return Application.console;
 	}
+	
+	/**
+	 * Creates the log file writer.
+	 * @param logFileName the log file name
+	 * @return the log file writer
+	 */
+	public static LogFileWriter createLogFileWriter(String logFileName) {
+		if (logFileWriter==null) {
+			logFileWriter = new LogFileWriter(logFileName);	
+		}
+		return logFileWriter;
+	}
+	/**
+	 * Returns the current LogFileWriter of the application.
+	 * @return the LogFileWriter
+	 */
+	public static LogFileWriter getLogFileWriter() {
+		return logFileWriter;
+	}
+	/**
+	 * Sets the LogFileWriter for the application.
+	 * @param newLogFileWriter the new LogFileWriter
+	 */
+	public static void setLogFileWriter(LogFileWriter newLogFileWriter) {
+		if (logFileWriter!=null && newLogFileWriter==null) {
+			logFileWriter.stopFileWriter();
+		}
+		logFileWriter = newLogFileWriter;
+	}
+	
 	/**
 	 * Returns the application-wide information system.
 	 * @return the global info
@@ -205,7 +234,10 @@ public class Application {
 	 * @param newTrayIcon the new tray icon
 	 */
 	public static void setTrayIcon(AgentGUITrayIcon newTrayIcon) {
-		Application.trayIcon = newTrayIcon;
+		if (trayIcon!=null && newTrayIcon==null) {
+			trayIcon.remove();	
+		}
+		trayIcon = newTrayIcon;
 	}
 	
 	/**
@@ -217,10 +249,13 @@ public class Application {
 	}
 	/**
 	 * Sets the main window.
-	 * @param mainWindow the new main window
+	 * @param newMainWindow the new main window
 	 */
-	public static void setMainWindow(MainWindow mainWindow) {
-		Application.mainWindow = mainWindow;	
+	public static void setMainWindow(MainWindow newMainWindow) {
+		if (mainWindow!=null && newMainWindow==null) {
+			mainWindow.dispose();
+		}
+		mainWindow = newMainWindow;	
 	}
 	
 	
@@ -486,7 +521,7 @@ public class Application {
 	 */
 	public static void startServer() {
 		// --- Automatically Start JADE, if configured --------------
-		if ( getGlobalInfo().isServerAutoRun()==true ) {
+		if (getGlobalInfo().isServerAutoRun()==true) {
 			// --- Wait until the benchmark result is available -----
 			while (LoadMeasureThread.getCompositeBenchmarkValue()==0) {
 				try {
@@ -508,8 +543,7 @@ public class Application {
 		final String projectFolder = getGlobalInfo().getDeviceServiceProjectFolder();
 		DeviceSystemExecutionMode execMode = getGlobalInfo().getDeviceServiceExecutionMode();
 		final String simulationSetup = getGlobalInfo().getDeviceServiceSetupSelected();
-
-		String agentClassName = getGlobalInfo().getDeviceServiceAgentSelected();
+		
 		EmbeddedSystemAgentVisualisation embSysAgentVis = getGlobalInfo().getDeviceServiceAgentVisualisation();
 		
 		// ---- Case separation DeviceSystemExecutionMode ---------------------
@@ -554,46 +588,25 @@ public class Application {
 			// ----------------------------------------------------------------
 			switch (embSysAgentVis) {
 			case TRAY_ICON:
-				getTrayIcon();	
+				getTrayIcon();
+				break;
+				
+			case NONE:
+				// --- Start writing a LogFile --------------------------------
+				String logFileName = Application.getGlobalInfo().PathBaseDir() + "AgentGuiDeviceAgent.log";
+				createLogFileWriter(logFileName);
+				// --- Create some initial output -----------------------------
+				getGlobalInfo().getVersionInfo().printVersionInfo();
+				String executeStatement = Language.translate("Programmstart");
+				System.out.println(executeStatement + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
 				break;
 			}
 			
 			// --- Load project -----------------------------------------------
 			Project projectOpened = getProjectsLoaded().add(projectFolder);
 			if (projectOpened!=null) {
-				// --- Stop the DownloadServer --------------------------------
-				Application.stopDownloadServer();
-				
-				// --- Remove the Agent.GUI services --------------------------
-				Profile jadeProfile = getJadePlatform().jadeGetContainerProfile();
-				String services = jadeProfile.getParameter("services", null);
-
-				String servicesNew = "";
-				String[] serviceArray = services.split(";");
-				for (int i = 0; i < serviceArray.length; i++) {
-					if (serviceArray[i].equals(SimulationService.class.getName())==false &&
-						serviceArray[i].equals(LoadService.class.getName())==false &&
-						serviceArray[i].equals(DebugService.class.getName())==false) {
-						servicesNew += serviceArray[i] + ";";
-					}
-				}
-				jadeProfile.setParameter("services", servicesNew);
-				
-				// --- Set the project to be 'saved' --------------------------
-				projectOpened.setUnsaved(false);
-				
-				// --- Start JADE ---------------------------------------------
-				if (getJadePlatform().jadeStart(false, jadeProfile)==true) {
-					try {
-						// --- Start the selected Agent -----------------------
-						Class<?> agentClass = Class.forName(agentClassName);
-						String startAs = agentClass.getSimpleName();
-						getJadePlatform().jadeAgentStart(startAs, agentClassName);
-								
-					} catch (ClassNotFoundException cnfe) {
-						cnfe.printStackTrace();
-					}
-				}
+				// --- Start JADE for an embedded system agent ----------------
+				getJadePlatform().jadeStart4EmbeddedSystemAgent();
 			}
 			break;
 		}
@@ -617,6 +630,11 @@ public class Application {
 		// --- Done --------------------------------
 		System.out.println(Language.translate("Programmende... ") );
 		Language.saveDictionaryFile();
+		
+		// --- LogFileWriter -----------------------
+		setLogFileWriter(null);
+		
+		// --- Shutdown JVM ------------------------
 		System.exit(0);		
 	}
 
@@ -829,7 +847,6 @@ public class Application {
 	 * to download the additional jar-resources of a project
 	 */
 	public static DownloadServer startDownloadServer() {
-		
 		if (downloadServer==null) {
 			downloadServer = new DownloadServer();
 			downloadServer.setRoot(getGlobalInfo().PathWebServer(true));

@@ -175,6 +175,7 @@ public class FileProperties extends Properties {
 	 * the store-method will be invoked during the save()-method is
 	 * invoked.
 	 */
+	@Override
 	public synchronized Enumeration<Object> keys() {
 		Enumeration<Object> keysEnum = super.keys();
 		Vector<Object> keySorted = new Vector<Object>();

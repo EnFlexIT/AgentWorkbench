@@ -72,6 +72,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo.ExecutionMode;
 
 /**
  * This JDialog represents the option dialog, where the 
@@ -119,7 +120,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		optionTreeModel = new DefaultTreeModel(rootNode);	
 		
 		// --- Set the Look and Feel of the Dialog ------------------
-		if (Application.isRunningAsServer()==true) {
+		ExecutionMode execMode = Application.getGlobalInfo().getExecutionMode(); 
+		if (Application.isRunningAsServer()==true ||  execMode==ExecutionMode.DEVICE_SYSTEM) {
 			if (Application.getGlobalInfo().getAppLnF()!=null) {
 				setLookAndFeel(Application.getGlobalInfo().getAppLnF());
 			}
@@ -145,7 +147,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    tabTitle = Language.translate("Agent.GUI - Update");
 	    this.addOptionTab(updateOptions, null);
 	    
-	    if (Application.isRunningAsServer()==true) {
+	    if (Application.isRunningAsServer()==true || execMode==ExecutionMode.DEVICE_SYSTEM) {
 	    	tabTitle = Language.translate("Konsole");
 	    	this.addOptionTab(tabTitle, null, Application.getConsole(), tabTitle);	
 	    }

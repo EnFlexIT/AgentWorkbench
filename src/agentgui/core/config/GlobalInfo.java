@@ -356,7 +356,7 @@ public class GlobalInfo {
 			executionModeDescription = "Server [Slave]";
 			break;
 		case DEVICE_SYSTEM:
-			executionModeDescription = Language.translate("Dienst / Emedded System Agent");
+			executionModeDescription = Language.translate("Dienst / Embedded System Agent");
 			break;
 		}
 		return executionModeDescription;
