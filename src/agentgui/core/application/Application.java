@@ -584,7 +584,6 @@ public class Application {
 				
 				// --- Start JADE ---------------------------------------------
 				if (getJadePlatform().jadeStart(false, jadeProfile)==true) {
-					
 					try {
 						// --- Start the selected Agent -----------------------
 						Class<?> agentClass = Class.forName(agentClassName);

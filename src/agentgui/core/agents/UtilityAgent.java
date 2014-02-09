@@ -28,10 +28,11 @@
  */
 package agentgui.core.agents;
 
+import agentgui.core.agents.behaviour.ExitDeviceExecutionBehaviour;
 import agentgui.core.agents.behaviour.PlatformShutdownBehaviour;
 import agentgui.core.agents.behaviour.ShowDFBehaviour;
 import agentgui.core.agents.behaviour.ShowLoadMonitorBehaviour;
-import agentgui.core.jade.Platform;
+import agentgui.core.jade.Platform.UTILITY_AGENT_JOB;
 import jade.core.Agent;
 
 /**
@@ -40,22 +41,22 @@ import jade.core.Agent;
  * <br>
  * Depending on the start-arguments for this Agent the tasks are as follows:<br>
  * <ul>
- * 		<li><b>int</b> Platform.UTIL_CMD_OpenDF: will send a message in order to show the DF</li>
- * 		<li><b>int</b> Platform.UTIL_CMD_ShutdownPlatform: will send a message to the AMS in order to shutdown the whole platform</li>
- * 		<li><b>int</b> Platform.UTIL_CMD_OpenLoadMonitor: will send a message to show the LoadMonitor</li>
+ * 		<li>Platform.UTILITY_AGENT_JOB#OpernDF: will send a message in order to show the DF</li>
+ * 		<li>Platform.UTILITY_AGENT_JOB#ShutdownPlatform: will send a message to the AMS in order to shutdown the whole platform</li>
+ * 		<li>Platform.UTILITY_AGENT_JOB#OpenLoadMonitor: will send a message to show the LoadMonitor</li>
  * </ul>
  * The setup-method of the agent will evaluate the start argument and will add the corresponding behaviour.
  * 
  * 
  * @see agentgui.core.jade.Platform
  * 
- * @see agentgui.core.jade.Platform#UTIL_CMD_OpenDF
+ * @see agentgui.core.jade.Platform.UTILITY_AGENT_JOB#OpernDF
  * @see agentgui.core.agents.behaviour.ShowDFBehaviour
  * 
- * @see agentgui.core.jade.Platform#UTIL_CMD_ShutdownPlatform
+ * @see agentgui.core.jade.Platform.UTILITY_AGENT_JOB#ShutdownPlatform
  * @see agentgui.core.agents.behaviour.PlatformShutdownBehaviour
  * 
- * @see agentgui.core.jade.Platform#UTIL_CMD_OpenLoadMonitor
+ * @see agentgui.core.jade.Platform.UTILITY_AGENT_JOB#OpenLoadMonitor
  * @see agentgui.core.agents.behaviour.ShowLoadMonitorBehaviour
  * @see agentgui.simulationService.agents.LoadMeasureAgent
  * 
@@ -80,18 +81,22 @@ public class UtilityAgent extends Agent {
 			return;
 		}
 		
-		Integer start4 = (Integer) args[0];
-		switch (start4) {
-		case Platform.UTIL_CMD_OpenDF:
+		UTILITY_AGENT_JOB job = (UTILITY_AGENT_JOB) args[0];
+		switch (job) {
+		case OpernDF:
 			this.addBehaviour(new ShowDFBehaviour());
 			break;
 
-		case Platform.UTIL_CMD_ShutdownPlatform:
+		case ShutdownPlatform:
 			this.addBehaviour(new PlatformShutdownBehaviour());
 			break;
 			
-		case Platform.UTIL_CMD_OpenLoadMonitor:
+		case OpenLoadMonitor:
 			this.addBehaviour(new ShowLoadMonitorBehaviour());
+			break;
+
+		case ExitDeviceExecutionModus:
+			this.addBehaviour(new ExitDeviceExecutionBehaviour(this, 1000));
 			break;
 			
 		default:

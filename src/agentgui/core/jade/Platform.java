@@ -59,13 +59,16 @@ import agentgui.core.webserver.DownloadServer;
  */
 public class Platform extends Object {
 
-	public final static int UTIL_CMD_OpenDF = 1;
-	public final static int UTIL_CMD_ShutdownPlatform = 2;
-	public final static int UTIL_CMD_OpenLoadMonitor = 3;
+	public enum UTILITY_AGENT_JOB {
+		OpernDF,
+		ShutdownPlatform,
+		OpenLoadMonitor,
+		ExitDeviceExecutionModus
+	}
 	
-	private static final String MASapplicationAgentName = "server.client";
-	private static final String MASserverMasterAgentName = "server.master";
-	private static final String MASserverSlaveAgentName = "server.slave";
+	private static final String BackgroundSystemAgentApplication = "server.client";
+	private static final String BackgroundSystemAgentServerMaster = "server.master";
+	private static final String BackgroundSystemAgentServerSlave = "server.slave";
 
 	private Runtime jadeRuntime;
 	private AgentContainer jadeMainContainer;
@@ -101,8 +104,8 @@ public class Platform extends Object {
 		
 		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
-			if (jadeAgentIsRunning(MASapplicationAgentName)==false) {
-				jadeAgentStart(MASapplicationAgentName, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
+			if (jadeAgentIsRunning(BackgroundSystemAgentApplication)==false) {
+				jadeAgentStart(BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
 			}			
 			break;
 		
@@ -134,8 +137,8 @@ public class Platform extends Object {
 				
 			}
 			// --- Starting 'Server.Master'-Agent --------------				
-			if (jadeAgentIsRunning(MASserverMasterAgentName)==false) {
-				this.jadeAgentStart(MASserverMasterAgentName, agentgui.simulationService.agents.ServerMasterAgent.class.getName());	
+			if (jadeAgentIsRunning(BackgroundSystemAgentServerMaster)==false) {
+				this.jadeAgentStart(BackgroundSystemAgentServerMaster, agentgui.simulationService.agents.ServerMasterAgent.class.getName());	
 			}
 			break;
 			
@@ -169,8 +172,8 @@ public class Platform extends Object {
 				
 			} 
 			// --- Starting 'Server.Slave'-Agent ---------------
-			if (jadeAgentIsRunning(MASserverSlaveAgentName)==false) {			
-				this.jadeAgentStart(MASserverSlaveAgentName, agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
+			if (jadeAgentIsRunning(BackgroundSystemAgentServerSlave)==false) {			
+				this.jadeAgentStart(BackgroundSystemAgentServerSlave, agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
 			}
 			break;
 		
@@ -180,13 +183,13 @@ public class Platform extends Object {
 			// -------------------------------------------------
 			switch (Application.getGlobalInfo().getDeviceServiceExecutionMode()) {
 			case SETUP:
-				if (jadeAgentIsRunning(MASapplicationAgentName)==false) {
-					jadeAgentStart(MASapplicationAgentName, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
+				if (jadeAgentIsRunning(BackgroundSystemAgentApplication)==false) {
+					jadeAgentStart(BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
 				}
 				break;
 
 			case AGENT:
-				// --- pending --------
+				jadeUtilityAgentStart(UTILITY_AGENT_JOB.ExitDeviceExecutionModus);
 				break;
 			}
 			
@@ -214,7 +217,7 @@ public class Platform extends Object {
 	}
 	
 	/**
-	 * Starts JADE and dieplays the RMA
+	 * Starts JADE and displays the RMA
 	 * @return true, if successful
 	 */		
 	public boolean jadeStart() {
@@ -325,7 +328,7 @@ public class Platform extends Object {
 		// --- a 'ShutdownPlatform()' to the AMS   --------	
 		// ------------------------------------------------
 		if (jadeIsMainContainerRunning()) {
-			this.jadeUtilityAgentStart(UTIL_CMD_ShutdownPlatform);
+			this.jadeUtilityAgentStart(UTILITY_AGENT_JOB.ShutdownPlatform);
 			// --- Wait for the end of Jade ---------------
 			Long timeStop = System.currentTimeMillis() + (10 * 1000);
 			while(jadeIsMainContainerRunning()) {
@@ -364,7 +367,7 @@ public class Platform extends Object {
 	 */
 	public boolean jadeStopAskUserBefore() {
 		
-		if(this.jadeIsMainContainerRunning()==true) {
+		if(this.jadeIsMainContainerRunning()==true && Application.getMainWindow()!=null) {
 			String MsgHead = Language.translate("JADE wird zur Zeit ausgeführt!");
 			String MsgText = Language.translate("Möchten Sie JADE nun beenden?");
 			Integer MsgAnswer =  JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
@@ -394,13 +397,13 @@ public class Platform extends Object {
 	 * @return true, if the Main-Container is running
 	 */
 	public boolean jadeIsMainContainerRunning () {
-		boolean JiR;		
+		boolean isRunning;		
 		try {
 			jadeMainContainer.getState();
-			JiR = true;
+			isRunning = true;
 		}
 		catch (Exception eMC) {
-			JiR = false; //	eMC.printStackTrace();	
+			isRunning = false; //	eMC.printStackTrace();	
 			jadeMainContainer = null;
 			try {
 				jadeRuntime.shutDown();				
@@ -409,23 +412,20 @@ public class Platform extends Object {
 			}			
 			jadeRuntime = null;	
 		}
-		return JiR;
+		return isRunning;
 	}
 	
 	
 	/**
-	 * Starts the Utility-Agent with a job defined in its start argument
+	 * Starts the Utility-Agent with a job defined in its start argument.
 	 *
-	 * @see #UTIL_CMD_OpenDF
-	 * @see #UTIL_CMD_OpenLoadMonitor
-	 * @see #UTIL_CMD_ShutdownPlatform
+	 * @param utilityAgentJob the job for the utility UtilityAgent to do
+	 * @see UTILITY_AGENT_JOB
 	 * @see UtilityAgent
-	 * 
-	 * @param utilityCMD the job for the utility UtilityAgent to do
 	 */
-	public void jadeUtilityAgentStart(int utilityCMD) {
+	public void jadeUtilityAgentStart(UTILITY_AGENT_JOB utilityAgentJob) {
 		Object[] agentArgs = new Object[5];
-		agentArgs[0] = utilityCMD;
+		agentArgs[0] = utilityAgentJob;
 		jadeAgentStart("utility", agentgui.core.agents.UtilityAgent.class.getName(), agentArgs);
 	}
 	
@@ -537,10 +537,10 @@ public class Platform extends Object {
 			try {
 				if (agentNameForStart.equalsIgnoreCase("df")) {
 					// --- Show the DF-GUI -----------------------
-					this.jadeUtilityAgentStart(UTIL_CMD_OpenDF);
+					this.jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpernDF);
 					return;					
 				} else if (agentNameForStart.equalsIgnoreCase("loadMonitor") ) {
-					this.jadeUtilityAgentStart(UTIL_CMD_OpenLoadMonitor);
+					this.jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenLoadMonitor);
 					return;
 				} else if (agentNameForStart.equalsIgnoreCase("simstarter")) {
 					String containerName = Application.getProjectFocused().getProjectFolder();
@@ -736,8 +736,7 @@ public class Platform extends Object {
 		jadeContainerLocal.remove( agentContainer );
 		try {
 			agentContainer.kill();
-		} 
-		catch (StaleProxyException e) {
+		} catch (StaleProxyException e) {
 			//e.printStackTrace();
 		}
 	}

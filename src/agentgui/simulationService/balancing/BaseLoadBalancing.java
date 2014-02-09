@@ -43,7 +43,7 @@ import java.util.Vector;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.jade.Platform;
+import agentgui.core.jade.Platform.UTILITY_AGENT_JOB;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
@@ -344,7 +344,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 * This method will start the Load-Monitor-Agent.
 	 */
 	protected void openLoadMonitor() {
-		 Application.getJadePlatform().jadeUtilityAgentStart( Platform.UTIL_CMD_OpenLoadMonitor);
+		 Application.getJadePlatform().jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenLoadMonitor);
 	}
 	
 	/**

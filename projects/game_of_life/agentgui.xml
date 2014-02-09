@@ -24,7 +24,7 @@
         </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
-        <useLocalPort>1109</useLocalPort>
+        <useLocalPort>1099</useLocalPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
