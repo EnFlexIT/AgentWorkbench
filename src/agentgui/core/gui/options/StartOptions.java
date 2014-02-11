@@ -56,6 +56,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
@@ -69,6 +70,7 @@ import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.gui.ClassSelector;
 import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.project.Project;
+import java.awt.BorderLayout;
 
 /**
  * On this JPanel the starting options of AgentGUI can be set.
@@ -83,19 +85,16 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	private String pathImage = globalInfo.PathImageIntern();
 	private OptionDialog optionDialog = null;
 	
-	private GridBagConstraints gridBagConstraints4Configuration = null;  //  @jve:decl-index=0:
-	
-	private JPanel jPanelAppNServer = null;
-	private JPanel jPanelEmbedded = null;  //  @jve:decl-index=0:visual-constraint="20,453"
-	
+	private JPanel jPanel4ScrollPane = null;
+	private JScrollPane jScrollPaneConfig = null;
+	private JPanel jPanelConfig = null;  //  @jve:decl-index=0:visual-constraint="698,108"
+
 	private JPanel jPanelTop = null;
-	private JPanel jPanelMiddle = null;
-	private JPanel jPanelBottom = null;
-	private JPanel jPanelDummy = null;
-	
+	private JPanel jPanelMainBgServer = null;
+	private JPanel jPanelBackgroundService = null;  //  @jve:decl-index=0:visual-constraint="22,899"
 	private JRadioButton jRadioButtonRunAsApplication = null;
 	private JRadioButton jRadioButtonRunAsServer = null;
-	private JRadioButton jRadioButtonRunAsEmbeddedSystemAgent = null;
+	private JRadioButton jRadioButtonRunAsDeviceService = null;
 	private JCheckBox jCheckBoxAutoStart = null;
 	
 	private JLabel jLabelServerHeader = null;
@@ -107,7 +106,6 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	private JLabel jLabelPort4MTP = null;
 	private JLabel jLabelPort = null;
 	
-	private JLabel jLabelDummyTop = null;
 	private JLabel jLabelDBtitle = null;
 	private JLabel jLabelDBHost = null;
 	private JLabel jLabelDB = null;
@@ -132,6 +130,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	// --- Elements for the Embedded System Agent --------
 	private Project esaProjectSelected = null;  //  @jve:decl-index=0:
 	
+	private JPanel jPanelEmbedded = null;  //  @jve:decl-index=0:visual-constraint="20,453"
 	private JLabel jLabelEmbeddedHeader = null;
 	private JLabel jLabelProject = null;
 	private JLabel jLabelProjectHeader = null;
@@ -156,7 +155,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	private JRadioButton jRadioButtonVisNon = null;
 	private JRadioButton jRadioButtonVisTrayIcon = null;
 
-	
+
 	/**
 	 * This is the Constructor
 	 */
@@ -172,7 +171,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		
 		jRadioButtonRunAsApplication.setText(Language.translate("Anwendung"));
 		jRadioButtonRunAsServer.setText(Language.translate("Hintergrundsystem (Master / Slave)"));
-		jRadioButtonRunAsEmbeddedSystemAgent.setText(Language.translate("Dienst / Embedded System Agent"));
+		jRadioButtonRunAsDeviceService.setText(Language.translate("Dienst / Embedded System Agent"));
 		
 		jLabelServerHeader.setText(Application.getGlobalInfo().getApplicationTitle() + " " + Language.translate("Hintergrundsystem - Konfiguration"));
 		jCheckBoxAutoStart.setText(" " + Language.translate("Hintergrundsystem beim Programmstart automatisch initialisieren"));
@@ -201,42 +200,48 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	 * @return void
 	 */
 	private void initialize() {
-		GridBagConstraints gridBagConstraints30 = new GridBagConstraints();
-		gridBagConstraints30.gridx = 0;
-		gridBagConstraints30.fill = GridBagConstraints.BOTH;
-		gridBagConstraints30.weightx = 1.0;
-		gridBagConstraints30.weighty = 1.0;
-		gridBagConstraints30.insets = new Insets(0, 20, 5, 20);
-		gridBagConstraints30.gridy = 2;
 		
+		// --- Initiate all sub panels --------------------
+		this.getJPanelMainBgServer();
+		this.getJPanelBackgroundService();
+		this.getJPanelEmbeddedSystemAgent();
+		
+		
+		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+		gridBagConstraints3.gridx = 0;
+		gridBagConstraints3.fill = GridBagConstraints.BOTH;
+		gridBagConstraints3.weightx = 1.0;
+		gridBagConstraints3.weighty = 1.0;
+		gridBagConstraints3.insets = new Insets(10, 10, 10, 10);
+		gridBagConstraints3.gridy = 1;
 		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
 		gridBagConstraints21.gridx = 0;
 		gridBagConstraints21.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints21.insets = new Insets(20, 20, 5, 20);
+		gridBagConstraints21.insets = new Insets(20, 20, 0, 20);
 		gridBagConstraints21.anchor = GridBagConstraints.WEST;
 		gridBagConstraints21.weightx = 1.0;
+		gridBagConstraints21.weighty = 0.0;
 		gridBagConstraints21.gridy = 0;
 		
-		gridBagConstraints4Configuration = new GridBagConstraints();
-		gridBagConstraints4Configuration.gridx = 0;
-		gridBagConstraints4Configuration.weightx = 0.0;
-		gridBagConstraints4Configuration.anchor = GridBagConstraints.WEST;
-		gridBagConstraints4Configuration.insets = new Insets(10, 20, 0, 110);
-		gridBagConstraints4Configuration.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints4Configuration.gridy = 1;
-		
-		jLabelRunsAs = new JLabel();
-		jLabelRunsAs.setText("Starte Agent.GUI als:");
-		jLabelRunsAs.setFont(new Font("Dialog", Font.BOLD, 12));
-
 		this.setSize(680, 440);
 		this.setLayout(new GridBagLayout());
-		this.add(getJPanelTop(), gridBagConstraints21);
 		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		this.add(getJPanelAppNServer(), gridBagConstraints4Configuration);
-		this.add(getJPanelSaveOptions(), gridBagConstraints30);
+		this.add(getJPanelTop(), gridBagConstraints21);
+		this.add(getJPanel4ScrollPane(), gridBagConstraints3);
+		
 	}
-
+	/**
+	 * This method initializes jPanel4ScrollPane	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanel4ScrollPane() {
+		if (jPanel4ScrollPane == null) {
+			jPanel4ScrollPane = new JPanel();
+			jPanel4ScrollPane.setLayout(new BorderLayout());
+			jPanel4ScrollPane.add(getJScrollPaneConfig(), BorderLayout.CENTER);
+		}
+		return jPanel4ScrollPane;
+	}
 	/**
 	 * This method initializes jRadioButtonRunAsApplication	
 	 * @return javax.swing.JRadioButton	
@@ -246,7 +251,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			jRadioButtonRunAsApplication = new JRadioButton();
 			jRadioButtonRunAsApplication.setText("Anwendung");
 			jRadioButtonRunAsApplication.setSelected(true);
-			jRadioButtonRunAsApplication.setPreferredSize(new Dimension(250, 24));
+			jRadioButtonRunAsApplication.setPreferredSize(new Dimension(300, 24));
 			jRadioButtonRunAsApplication.setActionCommand("runAsApplication");
 			jRadioButtonRunAsApplication.addActionListener(this);
 		}
@@ -259,8 +264,8 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	private JRadioButton getJRadioButtonRunAsServer() {
 		if (jRadioButtonRunAsServer == null) {
 			jRadioButtonRunAsServer = new JRadioButton();
-			jRadioButtonRunAsServer.setPreferredSize(new Dimension(300, 24));
 			jRadioButtonRunAsServer.setText("Hintergrundsystem (Master / Slave)");
+			jRadioButtonRunAsServer.setPreferredSize(new Dimension(300, 24));
 			jRadioButtonRunAsServer.setActionCommand("runAsServer");
 			jRadioButtonRunAsServer.addActionListener(this);
 		}
@@ -270,15 +275,15 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	 * This method initializes jRadioButtonRunAsDevice	
 	 * @return javax.swing.JRadioButton	
 	 */
-	private JRadioButton getJRadioButtonRunAsDevice() {
-		if (jRadioButtonRunAsEmbeddedSystemAgent == null) {
-			jRadioButtonRunAsEmbeddedSystemAgent = new JRadioButton();
-			jRadioButtonRunAsEmbeddedSystemAgent.setPreferredSize(new Dimension(300, 24));
-			jRadioButtonRunAsEmbeddedSystemAgent.setText("Dienst / Embedded System Agent");
-			jRadioButtonRunAsEmbeddedSystemAgent.setActionCommand("runAsEmbeddedSystemAgent");
-			jRadioButtonRunAsEmbeddedSystemAgent.addActionListener(this);
+	private JRadioButton getJRadioButtonRunAsDeviceService() {
+		if (jRadioButtonRunAsDeviceService == null) {
+			jRadioButtonRunAsDeviceService = new JRadioButton();
+			jRadioButtonRunAsDeviceService.setText("Dienst / Embedded System Agent");
+			jRadioButtonRunAsDeviceService.setPreferredSize(new Dimension(300, 24));
+			jRadioButtonRunAsDeviceService.setActionCommand("runAsEmbeddedSystemAgent");
+			jRadioButtonRunAsDeviceService.addActionListener(this);
 		}
-		return jRadioButtonRunAsEmbeddedSystemAgent;
+		return jRadioButtonRunAsDeviceService;
 	}
 	
 	/**
@@ -288,27 +293,23 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	private JPanel getJPanelTop() {
 		if (jPanelTop == null) {
 			GridBagConstraints gridBagConstraints28 = new GridBagConstraints();
-			gridBagConstraints28.gridx = 2;
+			gridBagConstraints28.gridx = 1;
 			gridBagConstraints28.anchor = GridBagConstraints.WEST;
-			gridBagConstraints28.insets = new Insets(2, 10, 0, 0);
+			gridBagConstraints28.insets = new Insets(0, 10, 0, 0);
 			gridBagConstraints28.gridwidth = 1;
+			gridBagConstraints28.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints28.gridy = 2;
-			GridBagConstraints gridBagConstraints27 = new GridBagConstraints();
-			gridBagConstraints27.gridx = 3;
-			gridBagConstraints27.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints27.weightx = 1.0;
-			gridBagConstraints27.gridwidth = 2;
-			gridBagConstraints27.gridheight = 0;
-			gridBagConstraints27.gridy = 2;
 			
 			GridBagConstraints gridBagConstraints26 = new GridBagConstraints();
 			gridBagConstraints26.insets = new Insets(0, 2, 0, 0);
 			gridBagConstraints26.gridy = 0;
-			gridBagConstraints26.gridx = 5;
+			gridBagConstraints26.weightx = 0.0;
+			gridBagConstraints26.gridx = 4;
 			GridBagConstraints gridBagConstraints25 = new GridBagConstraints();
 			gridBagConstraints25.anchor = GridBagConstraints.EAST;
-			gridBagConstraints25.gridx = 4;
+			gridBagConstraints25.gridx = 3;
 			gridBagConstraints25.gridy = 0;
+			gridBagConstraints25.weightx = 0.0;
 			gridBagConstraints25.insets = new Insets(0, 20, 0, 0);
 			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
 			gridBagConstraints18.anchor = GridBagConstraints.WEST;
@@ -316,26 +317,31 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			gridBagConstraints18.gridy = 0;
 			gridBagConstraints18.insets = new Insets(10, 20, 0, 10);
 			GridBagConstraints gridBagConstraints24 = new GridBagConstraints();
-			gridBagConstraints24.insets = new Insets(2, 10, 0, 0);
+			gridBagConstraints24.insets = new Insets(0, 10, 0, 0);
 			gridBagConstraints24.gridy = 1;
 			gridBagConstraints24.ipadx = 0;
 			gridBagConstraints24.anchor = GridBagConstraints.WEST;
-			gridBagConstraints24.gridx = 2;
+			gridBagConstraints24.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints24.gridx = 1;
 			GridBagConstraints gridBagConstraints23 = new GridBagConstraints();
 			gridBagConstraints23.insets = new Insets(0, 10, 0, 0);
 			gridBagConstraints23.gridy = 0;
 			gridBagConstraints23.ipadx = 0;
-			gridBagConstraints23.anchor = GridBagConstraints.WEST;
-			gridBagConstraints23.gridx = 2;
+			gridBagConstraints23.anchor = GridBagConstraints.SOUTH;
+			gridBagConstraints23.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints23.weightx = 1.0;
+			gridBagConstraints23.gridx = 1;
 			GridBagConstraints gridBagConstraints20 = new GridBagConstraints();
-			gridBagConstraints20.insets = new Insets(0, 0, 0, 0);
+			gridBagConstraints20.insets = new Insets(2, 0, 0, 0);
 			gridBagConstraints20.gridy = 0;
 			gridBagConstraints20.ipadx = 0;
 			gridBagConstraints20.anchor = GridBagConstraints.WEST;
+			gridBagConstraints20.weightx = 0.0;
 			gridBagConstraints20.gridx = 0;
 			
-			jLabelDummyTop = new JLabel();
-			jLabelDummyTop.setText(" ");
+			jLabelRunsAs = new JLabel();
+			jLabelRunsAs.setText("Starte Agent.GUI als:");
+			jLabelRunsAs.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jPanelTop = new JPanel();
 			jPanelTop.setLayout(new GridBagLayout());
@@ -344,63 +350,22 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			jPanelTop.add(getJRadioButtonRunAsServer(), gridBagConstraints24);
 			jPanelTop.add(getJButtonApply(), gridBagConstraints25);
 			jPanelTop.add(getJButtonUpdateSiteDefault(), gridBagConstraints26);
-			jPanelTop.add(jLabelDummyTop, gridBagConstraints27);
-			jPanelTop.add(getJRadioButtonRunAsDevice(), gridBagConstraints28);
+			jPanelTop.add(getJRadioButtonRunAsDeviceService(), gridBagConstraints28);
 			
 			ButtonGroup runAsGroup = new ButtonGroup();
 			runAsGroup.add(jRadioButtonRunAsApplication);
 			runAsGroup.add(jRadioButtonRunAsServer);
-			runAsGroup.add(jRadioButtonRunAsEmbeddedSystemAgent);
+			runAsGroup.add(jRadioButtonRunAsDeviceService);
 			
 		}
 		return jPanelTop;
 	}
-
-	/**
-	 * This method initializes jPanelAppNServer	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelAppNServer() {
-		if (jPanelAppNServer == null) {
-			GridBagConstraints gridBagConstraints19 = new GridBagConstraints();
-			gridBagConstraints19.fill = GridBagConstraints.BOTH;
-			gridBagConstraints19.gridx = 0;
-			gridBagConstraints19.gridy = 2;
-			gridBagConstraints19.ipadx = 0;
-			gridBagConstraints19.weightx = 0.0;
-			gridBagConstraints19.weighty = 1.0;
-			gridBagConstraints19.insets = new Insets(0, 20, 20, 20);
-			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-			gridBagConstraints7.anchor = GridBagConstraints.WEST;
-			gridBagConstraints7.insets = new Insets(0, 0, 10, 10);
-			gridBagConstraints7.gridx = 0;
-			gridBagConstraints7.gridy = 1;
-			gridBagConstraints7.weightx = 0.0;
-			gridBagConstraints7.weighty = 0.0;
-			gridBagConstraints7.fill = GridBagConstraints.NONE;
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.anchor = GridBagConstraints.WEST;
-			gridBagConstraints3.insets = new Insets(0, 0, 10, 10);
-			gridBagConstraints3.gridx = 0;
-			gridBagConstraints3.gridy = 0;
-			gridBagConstraints3.weightx = 1.0;
-			gridBagConstraints3.weighty = 0.0;
-			gridBagConstraints3.fill = GridBagConstraints.NONE;
-			
-			jPanelAppNServer = new JPanel();
-			jPanelAppNServer.setLayout(new GridBagLayout());
-			jPanelAppNServer.add(getJPanelMiddle(), gridBagConstraints3);
-			jPanelAppNServer.add(getJPanelBottom(), gridBagConstraints7);
-		}
-		return jPanelAppNServer;
-	}
-	
 	/**
 	 * This method initializes jPanelMiddle	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getJPanelMiddle() {
-		if (jPanelMiddle == null) {
+	private JPanel getJPanelMainBgServer() {
+		if (jPanelMainBgServer == null) {
 			GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
 			gridBagConstraints41.gridx = 2;
 			gridBagConstraints41.anchor = GridBagConstraints.WEST;
@@ -431,7 +396,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
 			gridBagConstraints6.gridx = 1;
 			GridBagConstraints gridBagConstraints51 = new GridBagConstraints();
-			gridBagConstraints51.fill = GridBagConstraints.NONE;
+			gridBagConstraints51.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints51.gridy = 4;
 			gridBagConstraints51.weightx = 1.0;
 			gridBagConstraints51.insets = new Insets(5, 5, 0, 0);
@@ -454,19 +419,6 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			gridBagConstraints1.insets = new Insets(0, 0, 0, 0);
 			gridBagConstraints1.gridwidth = 3;
 			gridBagConstraints1.gridy = 3;
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.gridx = 0;
-			gridBagConstraints.insets = new Insets(5, 0, 0, 10);
-			gridBagConstraints.anchor = GridBagConstraints.WEST;
-			gridBagConstraints.gridwidth = 3;
-			gridBagConstraints.gridy = 8;
-			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-			gridBagConstraints5.gridx = 0;
-			gridBagConstraints5.insets = new Insets(15, 0, 0, 10);
-			gridBagConstraints5.anchor = GridBagConstraints.WEST;
-			gridBagConstraints5.gridwidth = 3;
-			gridBagConstraints5.gridy = 7;
-
 			jLabelPort = new JLabel();
 			jLabelPort.setText("1099 = \"myServer:1099/JADE\"");
 			jLabelPort.setPreferredSize(new Dimension(220, 16));
@@ -493,21 +445,20 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			jLabelServerHeader.setText("Agent.GUI Hintergrundsystem - Konfiguration");
 			jLabelServerHeader.setFont(new Font("Dialog", Font.BOLD, 12));
 			
-			jPanelMiddle = new JPanel();
-			jPanelMiddle.setLayout(new GridBagLayout());
-			jPanelMiddle.add(jLabelServerHeader, gridBagConstraints5);
-			jPanelMiddle.add(getJCheckBoxAutoStart(), gridBagConstraints);
-			jPanelMiddle.add(jLabelJadeConfig, gridBagConstraints1);
-			jPanelMiddle.add(jLabelMasterURL, gridBagConstraints2);
-			jPanelMiddle.add(jLabelMasterPort, gridBagConstraints4);
-			jPanelMiddle.add(getJTextFieldMasterURL(), gridBagConstraints51);
-			jPanelMiddle.add(getJTextFieldMasterPort(), gridBagConstraints6);
-			jPanelMiddle.add(getJTextFieldMasterPort4MTP(), gridBagConstraints11);
-			jPanelMiddle.add(jLabelMasterPort4MTP, gridBagConstraints22);
-			jPanelMiddle.add(jLabelPort4MTP, gridBagConstraints31);
-			jPanelMiddle.add(jLabelPort, gridBagConstraints41);
+			jPanelMainBgServer = new JPanel();
+			jPanelMainBgServer.setLayout(new GridBagLayout());
+			jPanelMainBgServer.setPreferredSize(new Dimension(550, 109));
+			jPanelMainBgServer.add(jLabelJadeConfig, gridBagConstraints1);
+			jPanelMainBgServer.add(jLabelMasterURL, gridBagConstraints2);
+			jPanelMainBgServer.add(jLabelMasterPort, gridBagConstraints4);
+			jPanelMainBgServer.add(getJTextFieldMasterURL(), gridBagConstraints51);
+			jPanelMainBgServer.add(getJTextFieldMasterPort(), gridBagConstraints6);
+			jPanelMainBgServer.add(getJTextFieldMasterPort4MTP(), gridBagConstraints11);
+			jPanelMainBgServer.add(jLabelMasterPort4MTP, gridBagConstraints22);
+			jPanelMainBgServer.add(jLabelPort4MTP, gridBagConstraints31);
+			jPanelMainBgServer.add(jLabelPort, gridBagConstraints41);
 		}
-		return jPanelMiddle;
+		return jPanelMainBgServer;
 	}
 
 	/**
@@ -585,60 +536,73 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	 * This method initializes jPanelBottom	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getJPanelBottom() {
-		if (jPanelBottom == null) {
+	private JPanel getJPanelBackgroundService() {
+		if (jPanelBackgroundService == null) {
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			gridBagConstraints5.anchor = GridBagConstraints.WEST;
+			gridBagConstraints5.gridwidth = 4;
+			gridBagConstraints5.gridx = 0;
+			gridBagConstraints5.gridy = 0;
+			gridBagConstraints5.insets = new Insets(0, 0, 0, 10);
+			GridBagConstraints gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.anchor = GridBagConstraints.WEST;
+			gridBagConstraints.gridwidth = 5;
+			gridBagConstraints.gridx = 0;
+			gridBagConstraints.gridy = 1;
+			gridBagConstraints.insets = new Insets(5, 0, 0, 10);
 			GridBagConstraints gridBagConstraints16 = new GridBagConstraints();
 			gridBagConstraints16.fill = GridBagConstraints.BOTH;
-			gridBagConstraints16.gridy = 2;
-			gridBagConstraints16.weightx = 1.0;
+			gridBagConstraints16.gridy = 4;
+			gridBagConstraints16.weightx = 0.0;
 			gridBagConstraints16.insets = new Insets(5, 5, 0, 0);
 			gridBagConstraints16.anchor = GridBagConstraints.EAST;
-			gridBagConstraints16.gridx = 3;
+			gridBagConstraints16.gridx = 4;
 			GridBagConstraints gridBagConstraints17 = new GridBagConstraints();
 			gridBagConstraints17.gridx = 0;
 			gridBagConstraints17.anchor = GridBagConstraints.WEST;
 			gridBagConstraints17.gridwidth = 4;
-			gridBagConstraints17.gridy = 0;
+			gridBagConstraints17.insets = new Insets(10, 0, 0, 0);
+			gridBagConstraints17.gridy = 2;
 			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
 			gridBagConstraints15.fill = GridBagConstraints.BOTH;
-			gridBagConstraints15.gridy = 1;
+			gridBagConstraints15.gridy = 3;
 			gridBagConstraints15.weightx = 1.0;
 			gridBagConstraints15.insets = new Insets(5, 5, 0, 0);
 			gridBagConstraints15.anchor = GridBagConstraints.EAST;
-			gridBagConstraints15.gridx = 3;
+			gridBagConstraints15.gridx = 4;
 			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
-			gridBagConstraints14.gridx = 2;
+			gridBagConstraints14.gridx = 3;
 			gridBagConstraints14.anchor = GridBagConstraints.WEST;
 			gridBagConstraints14.insets = new Insets(5, 10, 0, 0);
-			gridBagConstraints14.gridy = 2;
+			gridBagConstraints14.gridy = 4;
 			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
-			gridBagConstraints13.gridx = 2;
+			gridBagConstraints13.gridx = 3;
 			gridBagConstraints13.anchor = GridBagConstraints.WEST;
 			gridBagConstraints13.insets = new Insets(5, 10, 0, 0);
-			gridBagConstraints13.gridy = 1;
+			gridBagConstraints13.gridy = 3;
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			gridBagConstraints12.anchor = GridBagConstraints.WEST;
 			gridBagConstraints12.insets = new Insets(5, 0, 0, 0);
-			gridBagConstraints12.gridy = 1;
+			gridBagConstraints12.gridy = 3;
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.fill = GridBagConstraints.BOTH;
-			gridBagConstraints10.gridy = 2;
-			gridBagConstraints10.weightx = 1.0;
+			gridBagConstraints10.gridy = 4;
+			gridBagConstraints10.weightx = 0.0;
 			gridBagConstraints10.insets = new Insets(5, 5, 0, 0);
 			gridBagConstraints10.anchor = GridBagConstraints.WEST;
-			gridBagConstraints10.gridx = 1;
+			gridBagConstraints10.gridx = 2;
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
 			gridBagConstraints9.fill = GridBagConstraints.BOTH;
-			gridBagConstraints9.gridy = 1;
+			gridBagConstraints9.gridy = 3;
 			gridBagConstraints9.weightx = 1.0;
 			gridBagConstraints9.insets = new Insets(5, 5, 0, 0);
 			gridBagConstraints9.anchor = GridBagConstraints.WEST;
-			gridBagConstraints9.gridx = 1;
+			gridBagConstraints9.gridx = 2;
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
 			gridBagConstraints8.gridx = 0;
 			gridBagConstraints8.anchor = GridBagConstraints.WEST;
 			gridBagConstraints8.insets = new Insets(5, 0, 0, 0);
-			gridBagConstraints8.gridy = 2;
+			gridBagConstraints8.gridy = 4;
 
 			jLabelDBtitle = new JLabel();
 			jLabelDBtitle.setText("MySQL-Datenbank für den Hauptserver (server.master)");
@@ -655,19 +619,23 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			jLabelDBHost.setText("DB-Host");
 			jLabelDBHost.setPreferredSize(new Dimension(55, 16));
 			
-			jPanelBottom = new JPanel();
-			jPanelBottom.setLayout(new GridBagLayout());
-			jPanelBottom.add(jLabelDBHost, gridBagConstraints12);
-			jPanelBottom.add(jLabelDB, gridBagConstraints8);
-			jPanelBottom.add(getJTextFieldDBHost(), gridBagConstraints9);
-			jPanelBottom.add(getJTextFieldDB(), gridBagConstraints10);
-			jPanelBottom.add(jLabelDBUser, gridBagConstraints13);
-			jPanelBottom.add(jLabelDBpswd, gridBagConstraints14);
-			jPanelBottom.add(getJTextFieldDBUser(), gridBagConstraints15);
-			jPanelBottom.add(jLabelDBtitle, gridBagConstraints17);
-			jPanelBottom.add(getjTextFieldDBPswd(), gridBagConstraints16);
+			jPanelBackgroundService = new JPanel();
+			jPanelBackgroundService.setLayout(new GridBagLayout());
+			jPanelBackgroundService.setSize(new Dimension(550, 133));
+			jPanelBackgroundService.setPreferredSize(new Dimension(550, 133));
+			jPanelBackgroundService.add(jLabelDBHost, gridBagConstraints12);
+			jPanelBackgroundService.add(jLabelDB, gridBagConstraints8);
+			jPanelBackgroundService.add(getJTextFieldDBHost(), gridBagConstraints9);
+			jPanelBackgroundService.add(getJTextFieldDB(), gridBagConstraints10);
+			jPanelBackgroundService.add(jLabelDBUser, gridBagConstraints13);
+			jPanelBackgroundService.add(jLabelDBpswd, gridBagConstraints14);
+			jPanelBackgroundService.add(getJTextFieldDBUser(), gridBagConstraints15);
+			jPanelBackgroundService.add(jLabelDBtitle, gridBagConstraints17);
+			jPanelBackgroundService.add(getJTextFieldDBPswd(), gridBagConstraints16);
+			jPanelBackgroundService.add(getJCheckBoxAutoStart(), gridBagConstraints);
+			jPanelBackgroundService.add(jLabelServerHeader, gridBagConstraints5);
 		}
-		return jPanelBottom;
+		return jPanelBackgroundService;
 	}
 	/**
 	 * This method initializes jTextFieldDBHost	
@@ -706,24 +674,12 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	 * This method initializes jPasswordFieldDBpswd	
 	 * @return javax.swing.JPasswordField	
 	 */
-	private JTextField getjTextFieldDBPswd() {
+	private JTextField getJTextFieldDBPswd() {
 		if (jTextFieldDBPswd == null) {
 			jTextFieldDBPswd = new JPasswordField();
 			jTextFieldDBPswd.setPreferredSize(new Dimension(200, 26));
 		}
 		return jTextFieldDBPswd;
-	}
-	
-	/**
-	 * This method initializes jPanelSaveOptions	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelSaveOptions() {
-		if (jPanelDummy == null) {
-			jPanelDummy = new JPanel();
-			jPanelDummy.setLayout(new GridBagLayout());
-		}
-		return jPanelDummy;
 	}
 	
 	/**
@@ -864,7 +820,8 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			
 			jPanelEmbedded = new JPanel();
 			jPanelEmbedded.setLayout(new GridBagLayout());
-			jPanelEmbedded.setSize(new Dimension(541, 318));
+			jPanelEmbedded.setSize(new Dimension(550, 318));
+			jPanelEmbedded.setPreferredSize(new Dimension(550, 297));
 			jPanelEmbedded.add(jLabelEmbeddedHeader, gridBagConstraints32);
 			jPanelEmbedded.add(jLabelProject, gridBagConstraints33);
 			jPanelEmbedded.add(getJComboBoxProjectSelector(), gridBagConstraints34);
@@ -1084,185 +1041,229 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		return jButtonApply;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/**
+	 * This method initializes jScrollPaneConfig	
+	 * @return javax.swing.JScrollPane	
 	 */
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		
-		String actCMD = ae.getActionCommand();
-		if (actCMD.equalsIgnoreCase("runAsApplication") || actCMD.equalsIgnoreCase("runAsServer") || actCMD.equalsIgnoreCase("runAsEmbeddedSystemAgent")) {
-			if (getJRadioButtonRunAsApplication().isSelected()) {
-				this.executionModeNew = ExecutionMode.APPLICATION;
-			} else if (getJRadioButtonRunAsServer().isSelected()) {
-				this.executionModeNew = ExecutionMode.SERVER;
-			} else if (getJRadioButtonRunAsDevice().isSelected()) {
-				this.executionModeNew = ExecutionMode.DEVICE_SYSTEM;
-			}
-			this.refreshView();	
-			
-		} else if (actCMD.equalsIgnoreCase("esaProjectSelected")) {
-			this.esaLoadSelectedProject();
-		} else if (actCMD.equalsIgnoreCase("esaExecuteAsServerService")) {
-			this.refreshView();
-		} else if (actCMD.equalsIgnoreCase("esaExecuteAsDeviceAgent")) {
-			this.refreshView();
-			
-		} else if (actCMD.equalsIgnoreCase("esaSetupSelected")) {
-			// --- nothing to do here ---------------------
-		} else if (actCMD.equalsIgnoreCase("esaSelectAgent")) {
-			this.esaSelectAgent();
-		} else if (actCMD.equalsIgnoreCase("visNon")) {
-			// --- nothing to do here ---------------------
-		} else if (actCMD.equalsIgnoreCase("visTrayIcon")) {
-			// --- nothing to do here ---------------------
-			
-		} else if (actCMD.equalsIgnoreCase("resetSettings")) {
-			this.setGlobalData2Form();
-		} else if (actCMD.equalsIgnoreCase("applySettings")) {
-			this.doOkAction();
-		} else {
-			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actCMD);
+	private JScrollPane getJScrollPaneConfig() {
+		if (jScrollPaneConfig == null) {
+			jScrollPaneConfig = new JScrollPane();
+			jScrollPaneConfig.setPreferredSize(new Dimension(100, 100));
+			jScrollPaneConfig.getVerticalScrollBar().setUnitIncrement(10);
+			jScrollPaneConfig.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		}
+		return jScrollPaneConfig;
+	}
+	/**
+	 * This method initializes jPanelConfig	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelConfig() {
+		if (jPanelConfig == null) {
+			jPanelConfig = new JPanel();
+			jPanelConfig.setLayout(new GridBagLayout());
+			jPanelConfig.setSize(new Dimension(600, 20));
+			jPanelConfig.setPreferredSize(new Dimension(600, 20));
+		}
+		return jPanelConfig;
+	}
+	/**
+	 * Resets the jPanelConfig
+	 */
+	private void resetJPanelConfigReset() {
+		this.getJPanelConfig().removeAll();
+		this.getJPanelConfig().setSize(new Dimension(600, 20));
+		this.getJPanelConfig().setPreferredSize(new Dimension(600, 20));
+	}
+	/**
+	 * Adds a new component to the jPanelConfig panel in vertical direction.
+	 * @param newComponent the new component
+	 */
+	private void addToConfigPanel(Component newComponent) {
+		
+		int compsThere = this.getJPanelConfig().getComponentCount();
+		
+		GridBagConstraints gridBagC = new GridBagConstraints();
+		gridBagC.gridx = 0;
+		gridBagC.gridy = compsThere;
+		gridBagC.fill = GridBagConstraints.NONE;
+		gridBagC.insets = new Insets(10, 10, 5, 10);
+		gridBagC.weightx = 1.0;
+		gridBagC.anchor = GridBagConstraints.WEST;
+		
+		// --- Get old panel height -------------
+		int oldPanelHeight = this.getJPanelConfig().getHeight();
+		int oldPanelWidth = this.getJPanelConfig().getWidth();
+		
+		// --- new Component height -------------
+		int newCompHeight = newComponent.getHeight();
+		int newCompPrefHeight = (int) newComponent.getPreferredSize().getHeight();
+		if (newCompPrefHeight>newCompHeight) newCompHeight = newCompPrefHeight;
+		int newPanelHeight = oldPanelHeight + newCompHeight + gridBagC.insets.top + gridBagC.insets.bottom; 
+		
+		// --- Set size and add component -------
+		this.getJPanelConfig().setSize(new Dimension(oldPanelWidth, newPanelHeight));
+		this.getJPanelConfig().setPreferredSize(new Dimension(oldPanelWidth, newPanelHeight));
+		this.getJPanelConfig().add(newComponent, gridBagC);
+		this.getJPanelConfig().revalidate();
+		this.getJPanelConfig().repaint();
+	}
+	/**
+	 * Adds the to config panel completion.
+	 */
+	private void addToConfigPanelCompletion() {
+		
+		int compsThere = this.getJPanelConfig().getComponentCount();
+		
+		GridBagConstraints gridBagC = new GridBagConstraints();
+		gridBagC.gridx = 0;
+		gridBagC.gridy = compsThere;
+		gridBagC.fill = GridBagConstraints.BOTH;
+		gridBagC.insets = new Insets(10, 10, 5, 10);
+		gridBagC.weightx = 1.0;
+		gridBagC.weighty = 1.0;
+
+		JLabel jLabelDummy = new JLabel("");
+
+		this.getJPanelConfig().add(jLabelDummy, gridBagC);
+		this.getJPanelConfig().revalidate();
+		this.getJPanelConfig().repaint();
 		
 	}
 	
 	/**
-	 * This method handles the view 
+	 * Returns the selected execution mode.
+	 * @return the selected execution mode
 	 */
-	public void refreshView() {
+	private ExecutionMode getSelectedExecutionMode() {
+		ExecutionMode executionMode = null;
+		if (this.getJRadioButtonRunAsApplication().isSelected()) {
+			executionMode = ExecutionMode.APPLICATION;
+		} else if (this.getJRadioButtonRunAsServer().isSelected()) {
+			executionMode = ExecutionMode.SERVER;
+		} else if (this.getJRadioButtonRunAsDeviceService().isSelected()) {
+			executionMode = ExecutionMode.DEVICE_SYSTEM;
+		}
+		return executionMode;
+	}
+	
+	/**
+	 * This method handles and refreshes the view 
+	 */
+	private void refreshView() {
 		
-		if (this.getJRadioButtonRunAsDevice().isSelected()==true) {
-			// --- Embedded System Agent ------------------
-			this.setConfigurationComponent(getJPanelEmbeddedSystemAgent());
+		// --- Reset the configuration panel first --------
+		this.resetJPanelConfigReset();
+		
+		// --- Add the components as needed ---------------
+		switch (this.getSelectedExecutionMode()) {
+		case APPLICATION:
+			this.addToConfigPanel(this.getJPanelMainBgServer());
+			// --- Reset DEVICE_SYSTEM variables ----------
+			this.getJComboBoxProjectSelector().setSelectedItem(null);
+			this.getJComboBoxSetupSelector().setSelectedItem(null);
+			this.getJTextFieldAgentClass().setText(null);
+			this.esaClassSelector = null;
+			break;
+
+		case SERVER:
+			this.addToConfigPanel(this.getJPanelMainBgServer());
+			this.addToConfigPanel(this.getJPanelBackgroundService());
+			// --- Reset DEVICE_SYSTEM variables ----------
+			this.getJComboBoxProjectSelector().setSelectedItem(null);
+			this.getJComboBoxSetupSelector().setSelectedItem(null);
+			this.getJTextFieldAgentClass().setText(null);
+			this.esaClassSelector = null;
+			break;
 			
-			if (this.getJComboBoxProjectSelector().getSelectedItem()==null || this.getJComboBoxProjectSelector().getSelectedItem().equals("")==true) {
+		case DEVICE_SYSTEM:
+			this.addToConfigPanel(this.getJPanelMainBgServer());
+			this.addToConfigPanel(this.getJPanelEmbeddedSystemAgent());
+			this.refreshViewDeviceSystem();
+			break;
+		}
+
+		// --- Add completion dummy JLabel ----------------
+		this.addToConfigPanelCompletion();
+		
+		// --- Refresh the view in the scroll pane --------
+		this.getJScrollPaneConfig().setViewportView(this.getJPanelConfig());
+		this.getJScrollPaneConfig().revalidate();
+		this.getJScrollPaneConfig().repaint();
+	}
+	
+	/**
+	 * Refresh the view of the device system configuration.
+	 */
+	private void refreshViewDeviceSystem() {
+		
+		// --- Component enable / disable actions ----- 
+		if (this.getJComboBoxProjectSelector().getSelectedItem()==null || this.getJComboBoxProjectSelector().getSelectedItem().equals("")==true) {
+			
+			jLabelExecuteAs.setEnabled(false);
+			jLabelSetupHeader.setEnabled(false);
+			jLabelSetup.setEnabled(false);
+			jLabelAgentHeader.setEnabled(false);
+			jLabelAgent.setEnabled(false);
+			jLabelVisConfig.setEnabled(false);
+			
+			this.getJRadioButtonExecuteAsService().setEnabled(false);
+			this.getJRadioButtonExecuteAsDeviceAgent().setEnabled(false);
+			this.getJComboBoxSetupSelector().setEnabled(false);
+			this.getJTextFieldAgentClass().setEnabled(false);
+			this.getJButtonEsaSelectAgent().setEnabled(false);
+			this.getJRadioButtonVisNon().setEnabled(false);
+			this.getJRadioButtonVisTrayIcon().setEnabled(false);
+		
+		} else {
+
+			jLabelExecuteAs.setEnabled(true);
+			this.getJRadioButtonExecuteAsService().setEnabled(true);
+			this.getJRadioButtonExecuteAsDeviceAgent().setEnabled(true);
+			
+			if (this.getJRadioButtonExecuteAsService().isSelected()==false && this.getJRadioButtonExecuteAsDeviceAgent().isSelected()==false) {
+				this.getJComboBoxSetupSelector().setSelectedItem(null);
+				this.getJTextFieldAgentClass().setText(null);
 				
-				jLabelExecuteAs.setEnabled(false);
 				jLabelSetupHeader.setEnabled(false);
 				jLabelSetup.setEnabled(false);
 				jLabelAgentHeader.setEnabled(false);
 				jLabelAgent.setEnabled(false);
 				jLabelVisConfig.setEnabled(false);
-				
-				this.getJRadioButtonExecuteAsService().setEnabled(false);
-				this.getJRadioButtonExecuteAsDeviceAgent().setEnabled(false);
 				this.getJComboBoxSetupSelector().setEnabled(false);
 				this.getJTextFieldAgentClass().setEnabled(false);
 				this.getJButtonEsaSelectAgent().setEnabled(false);
 				this.getJRadioButtonVisNon().setEnabled(false);
 				this.getJRadioButtonVisTrayIcon().setEnabled(false);
-			
-			} else {
-
-				jLabelExecuteAs.setEnabled(true);
-				this.getJRadioButtonExecuteAsService().setEnabled(true);
-				this.getJRadioButtonExecuteAsDeviceAgent().setEnabled(true);
 				
-				if (this.getJRadioButtonExecuteAsService().isSelected()==false && this.getJRadioButtonExecuteAsDeviceAgent().isSelected()==false) {
-					this.getJComboBoxSetupSelector().setSelectedItem(null);
-					this.getJTextFieldAgentClass().setText(null);
-					
-					jLabelSetupHeader.setEnabled(false);
-					jLabelSetup.setEnabled(false);
-					jLabelAgentHeader.setEnabled(false);
-					jLabelAgent.setEnabled(false);
-					jLabelVisConfig.setEnabled(false);
-					this.getJComboBoxSetupSelector().setEnabled(false);
-					this.getJTextFieldAgentClass().setEnabled(false);
-					this.getJButtonEsaSelectAgent().setEnabled(false);
-					this.getJRadioButtonVisNon().setEnabled(false);
-					this.getJRadioButtonVisTrayIcon().setEnabled(false);
-					
-				} else if (this.getJRadioButtonExecuteAsService().isSelected()) {
-					this.getJTextFieldAgentClass().setText(null);
-					
-					jLabelSetupHeader.setEnabled(true);
-					jLabelSetup.setEnabled(true);
-					jLabelAgentHeader.setEnabled(false);
-					jLabelAgent.setEnabled(false);
-					jLabelVisConfig.setEnabled(false);
-					this.getJComboBoxSetupSelector().setEnabled(true);
-					this.getJTextFieldAgentClass().setEnabled(false);
-					this.getJButtonEsaSelectAgent().setEnabled(false);
-					this.getJRadioButtonVisNon().setEnabled(false);
-					this.getJRadioButtonVisTrayIcon().setEnabled(false);
-
-				} else if (this.getJRadioButtonExecuteAsDeviceAgent().isSelected()) {
-					this.getJComboBoxSetupSelector().setSelectedItem(null);
-					
-					jLabelSetupHeader.setEnabled(false);
-					jLabelSetup.setEnabled(false);
-					jLabelAgentHeader.setEnabled(true);
-					jLabelAgent.setEnabled(true);
-					jLabelVisConfig.setEnabled(true);
-					this.getJComboBoxSetupSelector().setEnabled(false);
-					this.getJTextFieldAgentClass().setEnabled(true);
-					this.getJButtonEsaSelectAgent().setEnabled(true);
-					this.getJRadioButtonVisNon().setEnabled(true);
-					this.getJRadioButtonVisTrayIcon().setEnabled(true);
-					
-				}
-			}
-			
-		} else {
-			// --- Application or Server ------------------			
-			this.setConfigurationComponent(getJPanelAppNServer());
-			
-			// --- Reset local variables ------------------
-			this.getJComboBoxProjectSelector().setSelectedItem(null);
-			this.getJComboBoxSetupSelector().setSelectedItem(null);
-			this.getJTextFieldAgentClass().setText(null);
-			this.esaClassSelector = null;
-			
-			if (jRadioButtonRunAsServer.isSelected()) {
-				jLabelServerHeader.setEnabled(true);
-				jCheckBoxAutoStart.setEnabled(true);
-				jLabelDBtitle.setEnabled(true);
-				jLabelDBHost.setEnabled(true);
-				jTextFieldDBHost.setEnabled(true);
-				jLabelDB.setEnabled(true);
-				jTextFieldDB.setEnabled(true);
-				jLabelDBUser.setEnabled(true);
-				jTextFieldDBUser.setEnabled(true);
-				jLabelDBpswd.setEnabled(true);
-				jTextFieldDBPswd.setEnabled(true);
+			} else if (this.getJRadioButtonExecuteAsService().isSelected()) {
+				this.getJTextFieldAgentClass().setText(null);
 				
-			} else {
-				jLabelServerHeader.setEnabled(false);
-				jCheckBoxAutoStart.setEnabled(false);
-				jLabelDBtitle.setEnabled(false);
-				jLabelDBHost.setEnabled(false);
-				jTextFieldDBHost.setEnabled(false);
-				jLabelDB.setEnabled(false);
-				jTextFieldDB.setEnabled(false);
-				jLabelDBUser.setEnabled(false);
-				jTextFieldDBUser.setEnabled(false);
-				jLabelDBpswd.setEnabled(false);
-				jTextFieldDBPswd.setEnabled(false);
-			}
-		}
-		
-	}
-	/**
-	 * Sets the component for the configuration.
-	 */
-	private void setConfigurationComponent(Component newComp) {
-		
-		for (int i = 0; i < this.getComponents().length; i++) {
-			Component comp = this.getComponents()[i];
-			if (newComp==this.getJPanelAppNServer() && comp==this.getJPanelEmbeddedSystemAgent()) {
-				this.remove(this.getJPanelEmbeddedSystemAgent());
-				this.add(newComp, this.gridBagConstraints4Configuration);
-				this.validate();
-				this.repaint();
-				break;
-			} else if (newComp==this.getJPanelEmbeddedSystemAgent() && comp==this.getJPanelAppNServer()) {
-				this.remove(this.getJPanelAppNServer());
-				this.add(newComp, this.gridBagConstraints4Configuration);
-				this.validate();
-				this.repaint();
-				break;
+				jLabelSetupHeader.setEnabled(true);
+				jLabelSetup.setEnabled(true);
+				jLabelAgentHeader.setEnabled(false);
+				jLabelAgent.setEnabled(false);
+				jLabelVisConfig.setEnabled(false);
+				this.getJComboBoxSetupSelector().setEnabled(true);
+				this.getJTextFieldAgentClass().setEnabled(false);
+				this.getJButtonEsaSelectAgent().setEnabled(false);
+				this.getJRadioButtonVisNon().setEnabled(false);
+				this.getJRadioButtonVisTrayIcon().setEnabled(false);
+
+			} else if (this.getJRadioButtonExecuteAsDeviceAgent().isSelected()) {
+				this.getJComboBoxSetupSelector().setSelectedItem(null);
+				
+				jLabelSetupHeader.setEnabled(false);
+				jLabelSetup.setEnabled(false);
+				jLabelAgentHeader.setEnabled(true);
+				jLabelAgent.setEnabled(true);
+				jLabelVisConfig.setEnabled(true);
+				this.getJComboBoxSetupSelector().setEnabled(false);
+				this.getJTextFieldAgentClass().setEnabled(true);
+				this.getJButtonEsaSelectAgent().setEnabled(true);
+				this.getJRadioButtonVisNon().setEnabled(true);
+				this.getJRadioButtonVisTrayIcon().setEnabled(true);
+				
 			}
 		}
 		
@@ -1312,7 +1313,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			}
 			
 		}
-		this.refreshView();
+		this.refreshViewDeviceSystem();
 		
 	}
 	
@@ -1358,39 +1359,39 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		
 		switch (globalInfo.getExecutionMode()) {
 		case APPLICATION:
-			this.jRadioButtonRunAsApplication.setSelected(true);
-			this.jRadioButtonRunAsServer.setSelected(false);
-			this.jRadioButtonRunAsEmbeddedSystemAgent.setSelected(false);
+			this.getJRadioButtonRunAsApplication().setSelected(true);
+			this.getJRadioButtonRunAsServer().setSelected(false);
+			this.getJRadioButtonRunAsDeviceService().setSelected(false);
 			break;
 			
 		case SERVER:
 		case SERVER_MASTER:
 		case SERVER_SLAVE:
-			this.jRadioButtonRunAsApplication.setSelected(false);
-			this.jRadioButtonRunAsServer.setSelected(true);
-			this.jRadioButtonRunAsEmbeddedSystemAgent.setSelected(false);
+			this.getJRadioButtonRunAsApplication().setSelected(false);
+			this.getJRadioButtonRunAsServer().setSelected(true);
+			this.getJRadioButtonRunAsDeviceService().setSelected(false);
 			break;
 
 		case DEVICE_SYSTEM:
-			this.jRadioButtonRunAsApplication.setSelected(false);
-			this.jRadioButtonRunAsServer.setSelected(false);
-			this.jRadioButtonRunAsEmbeddedSystemAgent.setSelected(true);
+			this.getJRadioButtonRunAsApplication().setSelected(false);
+			this.getJRadioButtonRunAsServer().setSelected(false);
+			this.getJRadioButtonRunAsDeviceService().setSelected(true);
 			break;
 		}
 		
 		if (globalInfo.isServerAutoRun()== true) {
-			this.jCheckBoxAutoStart.setSelected(true);	
+			this.getJCheckBoxAutoStart().setSelected(true);	
 		} else {
-			this.jCheckBoxAutoStart.setSelected(false);
+			this.getJCheckBoxAutoStart().setSelected(false);
 		}
-		this.jTextFieldMasterURL.setText(globalInfo.getServerMasterURL());
-		this.jTextFieldMasterPort.setText(globalInfo.getServerMasterPort().toString());
-		this.jTextFieldMasterPort4MTP.setText(globalInfo.getServerMasterPort4MTP().toString());
+		this.getJTextFieldMasterURL().setText(globalInfo.getServerMasterURL());
+		this.getJTextFieldMasterPort().setText(globalInfo.getServerMasterPort().toString());
+		this.getJTextFieldMasterPort4MTP().setText(globalInfo.getServerMasterPort4MTP().toString());
 		
-		this.jTextFieldDBHost.setText(globalInfo.getServerMasterDBHost());
-		this.jTextFieldDB.setText(globalInfo.getServerMasterDBName());
-		this.jTextFieldDBUser.setText(globalInfo.getServerMasterDBUser());
-		this.jTextFieldDBPswd.setText(globalInfo.getServerMasterDBPswd());
+		this.getJTextFieldDBHost().setText(globalInfo.getServerMasterDBHost());
+		this.getJTextFieldDB().setText(globalInfo.getServerMasterDBName());
+		this.getJTextFieldDBUser().setText(globalInfo.getServerMasterDBUser());
+		this.getJTextFieldDBPswd().setText(globalInfo.getServerMasterDBPswd());
 		
 		if (globalInfo.getExecutionMode()==ExecutionMode.DEVICE_SYSTEM) {
 			// --- In case of a Service / Embedded System Agent ---------		
@@ -1438,7 +1439,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			this.globalInfo.setExecutionMode(ExecutionMode.APPLICATION);
 		} else if (this.jRadioButtonRunAsServer.isSelected()) {
 			this.globalInfo.setExecutionMode(ExecutionMode.SERVER);
-		} else if (this.jRadioButtonRunAsEmbeddedSystemAgent.isSelected()) {
+		} else if (this.jRadioButtonRunAsDeviceService.isSelected()) {
 			this.globalInfo.setExecutionMode(ExecutionMode.DEVICE_SYSTEM);
 		}
 		
@@ -1482,7 +1483,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		String msgText = null;
 		boolean err = false;
 		
-		if (this.getJRadioButtonRunAsDevice().isSelected()) {
+		if (this.getJRadioButtonRunAsDeviceService().isSelected()) {
 			// --------------------------------------------------------------
 			// --- Error Check for Service and Embedded System Agent --------
 			// --------------------------------------------------------------
@@ -1696,7 +1697,48 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			Application.startAgentGUI();
 		}
 	}
-
 	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		
+		String actCMD = ae.getActionCommand();
+		if (actCMD.equalsIgnoreCase("runAsApplication") || actCMD.equalsIgnoreCase("runAsServer") || actCMD.equalsIgnoreCase("runAsEmbeddedSystemAgent")) {
+			if (getJRadioButtonRunAsApplication().isSelected()) {
+				this.executionModeNew = ExecutionMode.APPLICATION;
+			} else if (getJRadioButtonRunAsServer().isSelected()) {
+				this.executionModeNew = ExecutionMode.SERVER;
+			} else if (getJRadioButtonRunAsDeviceService().isSelected()) {
+				this.executionModeNew = ExecutionMode.DEVICE_SYSTEM;
+			}
+			this.refreshView();	
+			
+		} else if (actCMD.equalsIgnoreCase("esaProjectSelected")) {
+			this.esaLoadSelectedProject();
+		} else if (actCMD.equalsIgnoreCase("esaExecuteAsServerService")) {
+			this.refreshViewDeviceSystem();
+		} else if (actCMD.equalsIgnoreCase("esaExecuteAsDeviceAgent")) {
+			this.refreshViewDeviceSystem();
+			
+		} else if (actCMD.equalsIgnoreCase("esaSetupSelected")) {
+			// --- nothing to do here ---------------------
+		} else if (actCMD.equalsIgnoreCase("esaSelectAgent")) {
+			this.esaSelectAgent();
+		} else if (actCMD.equalsIgnoreCase("visNon")) {
+			// --- nothing to do here ---------------------
+		} else if (actCMD.equalsIgnoreCase("visTrayIcon")) {
+			// --- nothing to do here ---------------------
+			
+		} else if (actCMD.equalsIgnoreCase("resetSettings")) {
+			this.setGlobalData2Form();
+		} else if (actCMD.equalsIgnoreCase("applySettings")) {
+			this.doOkAction();
+		} else {
+			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actCMD);
+		}
+		
+	}
 
 }  //  @jve:decl-index=0:visual-constraint="-3,8"
