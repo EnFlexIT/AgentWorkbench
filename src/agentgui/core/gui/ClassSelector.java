@@ -180,9 +180,10 @@ public class ClassSelector extends JDialog {
 	public String getClass2Search4CurrentValue() {
 		return class2Search4CurrentValue;
 	}
+	
 	/**
 	 * Sets the class2 search4 current value.
-	 * @return the string
+	 * @param newClassName the new class2 search4 current value
 	 */
 	public void setClass2Search4CurrentValue(String newClassName) {
 		class2Search4CurrentValue = newClassName;
