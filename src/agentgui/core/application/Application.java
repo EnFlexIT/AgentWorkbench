@@ -523,13 +523,7 @@ public class Application {
 		// --- Automatically Start JADE, if configured --------------
 		if (getGlobalInfo().isServerAutoRun()==true) {
 			// --- Wait until the benchmark result is available -----
-			while (LoadMeasureThread.getCompositeBenchmarkValue()==0) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}			
+			waitForBenchmark();
 			getJadePlatform().jadeStart();
 			getTrayIcon().getAgentGUITrayPopUp().refreshView();
 		}
