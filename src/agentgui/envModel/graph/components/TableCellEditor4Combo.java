@@ -29,26 +29,25 @@
 package agentgui.envModel.graph.components;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
+
+import agentgui.core.gui.components.JComboBoxWide;
 
 /**
  * The Class TableCellEditor4Combo.
  */
-public class TableCellEditor4Combo extends AbstractCellEditor implements TableCellEditor, ActionListener {
+public class TableCellEditor4Combo extends AbstractCellEditor implements TableCellEditor {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1544056145162025328L;
 
 	/** The JComboBox. */
-	private JComboBox combo = null;
+	private JComboBoxWide combo = null;
 	
 	/** The click count to start. */
 	private int clickCountToStart = 1;
@@ -58,9 +57,8 @@ public class TableCellEditor4Combo extends AbstractCellEditor implements TableCe
 	 * Instantiates a new table cell editor for a JComboBox.
 	 * @param comboBox the JComboBox
 	 */
-	public TableCellEditor4Combo(JComboBox comboBox) {
+	public TableCellEditor4Combo(JComboBoxWide comboBox) {
 		this.combo = comboBox;
-		this.combo.addActionListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -114,13 +112,5 @@ public class TableCellEditor4Combo extends AbstractCellEditor implements TableCe
 	public void cancelCellEditing() {
         super.cancelCellEditing();
     }
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-	}
 	
 }

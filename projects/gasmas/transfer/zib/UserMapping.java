@@ -50,7 +50,6 @@ import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -66,6 +65,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
 import agentgui.core.application.Language;
+import agentgui.core.gui.components.JComboBoxWide;
 import agentgui.envModel.graph.components.TableCellEditor4Combo;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
@@ -291,7 +291,7 @@ public class UserMapping extends JDialog implements ActionListener {
 	 * Gets the JComboBox for the known components.
 	 * @return the JComboBox for the components
 	 */
-	private JComboBox getJComboBoxComponents() {
+	private JComboBoxWide getJComboBoxComponents() {
 		
 		Vector<String> ctsVector =  new Vector<String>();
 		HashMap<String, ComponentTypeSettings> cts = this.generalGraphSettings4MAS.getCurrentCTS();
@@ -301,7 +301,7 @@ public class UserMapping extends JDialog implements ActionListener {
 		Collections.sort(ctsVector);
 		DefaultComboBoxModel comboBoxModel4Domains = new DefaultComboBoxModel(ctsVector);
 		
-		JComboBox jComboBoxNodeSize = new JComboBox(comboBoxModel4Domains);
+		JComboBoxWide jComboBoxNodeSize = new JComboBoxWide(comboBoxModel4Domains);
 		return jComboBoxNodeSize;
 	}
 	
