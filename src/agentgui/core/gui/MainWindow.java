@@ -43,6 +43,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -160,7 +161,8 @@ public class MainWindow extends JFrame implements ComponentListener {
 		this.initComponents();
 		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		this.getContentPane().setPreferredSize(this.getSize());
+//		this.getContentPane().setPreferredSize(this.getSize());
+		this.setToScreenSize();
 		this.setLocationRelativeTo(null);
 		this.pack();	
 		
@@ -211,6 +213,18 @@ public class MainWindow extends JFrame implements ComponentListener {
 	// --- Initialisierung des Fensters - ENDE --------------------
 	// ------------------------------------------------------------
 
+	/**
+	 * Sets frame size in relation to the screen size.
+	 */
+	private void setToScreenSize() {
+		double scale = 0.9;
+		Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
+		int frameWidth = (int) (screenDimension.getWidth() * scale);
+		int frameHeight = (int) (screenDimension.getHeight() * scale);
+		Dimension frameSize = new Dimension(frameWidth, frameHeight);
+		this.setSize(frameSize);
+		this.setPreferredSize(frameSize);
+	}
 	
 	// ------------------------------------------------------------
 	// --- Statusanzeigen etc. definieren - START -----------------
