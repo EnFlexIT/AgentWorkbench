@@ -167,8 +167,7 @@ public class GlobalInfo {
 	}
 
 	/**
-	 * The Enumeration of possible ExecutionModes.
-	 * In order to get the current execution mode use  
+	 * The Enumeration of possible ExecutionModes. In order to get the current execution mode use  
 	 * the method {@link GlobalInfo#getExecutionMode()} and {@link GlobalInfo#getExecutionModeDescription()} 
 	 * @see GlobalInfo#getExecutionMode()
 	 */
@@ -176,6 +175,12 @@ public class GlobalInfo {
 		SETUP, AGENT
 	}
 
+	/**
+	 * The Enumeration EmbeddedSystemAgentVisualisation indicates
+	 * if and how visualisations are to be displayed in case that
+	 * the {@link ExecutionMode} is set to {@link ExecutionMode#DEVICE_SYSTEM}
+	 * or embedded system agent respectively.
+	 */
 	public enum EmbeddedSystemAgentVisualisation {
 		NONE, TRAY_ICON
 	}
@@ -218,7 +223,7 @@ public class GlobalInfo {
 			if (JCP_Files[i].endsWith(".jar")) {
 				// ----------------------------------------------------------
 				// --- Dateinamen herausnehmen ------------------------------
-				cutAt = JCP_Files[i].lastIndexOf( fileSeparator );
+				cutAt = JCP_Files[i].lastIndexOf(fileSeparator);
 				if(cutAt!=-1){ //only if seperator was actually found
 					JCP_Folders[i] = JCP_Folders[i].substring(0, cutAt);
 				}

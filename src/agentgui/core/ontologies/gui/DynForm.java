@@ -208,8 +208,8 @@ public class DynForm extends DynFormBase {
 		JLabel objectLabelName = new JLabel();		
 		if (oscd != null) {
 			// --- if we are on the main panel -> add the class name to it !
-			// --- Create a JPanel in which the class name (JLabel) and its innerclasses
-			// --- and/or fields are added instead of mainPanel - class name - innerclasses/fields
+			// --- Create a JPanel in which the class name (JLabel) and its inner classes
+			// --- and/or fields are added instead of mainPanel - class name - inner classes/fields
 			
 			if(depth == 0){
 				// --- Set the label for the class --- //

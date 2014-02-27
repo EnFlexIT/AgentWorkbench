@@ -80,7 +80,6 @@ public class Application {
 	 */
 	private static ClassSearcher classSearcher = null;
 	
-	
 	/** The instance of this singleton class */
 	private static Application thisApp = new Application();
 	/** This attribute holds the current state of the configurable runtime informations */
@@ -478,6 +477,7 @@ public class Application {
 			
 			if (agentGuiWasUpdated==true) {
 				showChangeDialog();
+				agentGuiWasUpdated=false;
 			} else {
 				new AgentGuiUpdater().start();
 			}
@@ -499,6 +499,7 @@ public class Application {
 			
 			if (agentGuiWasUpdated==true) {
 				showChangeDialog();
+				agentGuiWasUpdated=false;
 			} else {
 				new AgentGuiUpdater().start();
 			}
