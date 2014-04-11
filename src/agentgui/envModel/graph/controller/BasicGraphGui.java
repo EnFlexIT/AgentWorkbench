@@ -97,6 +97,7 @@ import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
+import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
@@ -612,8 +613,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.getRenderContext().setLabelOffset(0);
 		vViewer.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
 
-		// --- Use straight lines as edges --------------------------------
-		vViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<GraphNode, GraphEdge>());
+		// --- Set the EdgeShape of the Visualisation Viewer --------------
+		this.setEdgeShapeTransformer(vViewer);
 		
 		// --- Set edge width ---------------------------------------------
 		vViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
@@ -645,15 +646,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 				String imageRef = edge.getGraphElementLayout(graphController.getNetworkModel()).getImageReference();
 				boolean showLabel = edge.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel();
 				// --- Configure color ------------------------------------
-				Color color = null;
-				String htmlColor = null;
+				Color color = Color.BLACK;
 				if (vViewer.getPickedEdgeState().isPicked(edge)) {
 					color = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
-					htmlColor = Integer.toHexString(color.getRed()) + Integer.toHexString(color.getGreen()) + Integer.toHexString(color.getBlue());
-				} else {
-					color = Color.BLACK;
-					htmlColor = "000000";
 				}
+				String htmlColor = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
 				
 				// --- Get the text / image content -----------------------
 				String content = "";
@@ -671,7 +668,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 					}
 				}
 				// --- Set the return value -------------------------------
-				String textDisplay = "<html><center><font color='#[COLOR]'>[CONTENT]</font></center></html>";
+				String textDisplay = "<html><center><font color='[COLOR]'>[CONTENT]</font></center></html>";
 				textDisplay = textDisplay.replace("[COLOR]", htmlColor);
 				textDisplay = textDisplay.replace("[CONTENT]", content);
 				return textDisplay;
@@ -696,6 +693,59 @@ public class BasicGraphGui extends JPanel implements Observer {
 		
 		// --- Done -------------------------------------------------------
 		return vViewer;
+	}
+	
+	/**
+	 * Sets the edge shape transformer according to the {@link GeneralGraphSettings4MAS}.
+	 * @see GeneralGraphSettings4MAS#getEdgeShape()
+	 */
+	public void setEdgeShapeTransformer() {
+		this.setEdgeShapeTransformer(this.getVisView());
+	}
+	
+	/**
+	 * Sets the edge shape transformer according to the {@link GeneralGraphSettings4MAS}.
+	 * @see GeneralGraphSettings4MAS#getEdgeShape()
+	 * @param visViewer the vis viewer
+	 */
+	public void setEdgeShapeTransformer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer) {
+
+		// --- Use straight lines as edges ? ------------------------------
+		AbstractEdgeShapeTransformer<GraphNode, GraphEdge> edgeShapeTransformer = null;
+		switch (this.getGraphEnvironmentController().getNetworkModelAdapter().getGeneralGraphSettings4MAS().getEdgeShape()) {
+		case BentLine:
+			edgeShapeTransformer = new EdgeShape.BentLine<GraphNode, GraphEdge>();
+			break;
+		case Box:
+			edgeShapeTransformer = new EdgeShape.Box<GraphNode, GraphEdge>();
+			break;
+		case CubicCurve:
+			edgeShapeTransformer = new EdgeShape.CubicCurve<GraphNode, GraphEdge>();
+			break;
+		case Line:
+			edgeShapeTransformer = new EdgeShape.Line<GraphNode, GraphEdge>();
+			break;
+		case Loop:
+			edgeShapeTransformer = new EdgeShape.Loop<GraphNode, GraphEdge>();
+			break;
+		case Orthogonal:
+			edgeShapeTransformer = new EdgeShape.Orthogonal<GraphNode, GraphEdge>();
+			break;
+		case QuadCurve:
+			edgeShapeTransformer = new EdgeShape.QuadCurve<GraphNode, GraphEdge>();
+			break;
+		case SimpleLoop:
+			edgeShapeTransformer = new EdgeShape.SimpleLoop<GraphNode, GraphEdge>();
+			break;
+		case Wedge:
+			edgeShapeTransformer = new EdgeShape.Wedge<GraphNode, GraphEdge>(5);
+			break;
+		default:
+			edgeShapeTransformer = new EdgeShape.Line<GraphNode, GraphEdge>();	
+			break;
+		}
+		visViewer.getRenderContext().setEdgeShapeTransformer(edgeShapeTransformer);
+		visViewer.repaint();
 	}
 	
 	/**

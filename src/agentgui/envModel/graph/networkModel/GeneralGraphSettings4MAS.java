@@ -81,6 +81,19 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	/** Default shapes for a central cluster node */
 	public static final String SHAPE_DEFAULT_4_CLUSTER = SHAPE_RECTANGLE;
 	
+	/** The list of possible edge shapes */
+	public static enum EdgeShape {
+		BentLine,
+		Box,
+		CubicCurve,
+		Line,
+		Loop,
+		Orthogonal,
+		QuadCurve,
+		SimpleLoop,
+		Wedge
+	}
+	
 	/** The prefix name for the NetworkComponentAdapter of a GraphNode */
 	public static final String GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX = "GraphNodeAdapter_";
 	
@@ -94,7 +107,8 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	private boolean snap2Grid = true;
 	/** The snap raster. */
 	private double snapRaster = DEFAULT_RASTER_SIZE;
-
+	/** The edge shape. */
+	private EdgeShape edgeShape = EdgeShape.Line;
 	
 	/**
 	 * Default constructor
@@ -236,6 +250,20 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 */
 	public double getSnapRaster() {
 		return snapRaster;
+	}
+	/**
+	 * Sets the edge shape.
+	 * @param edgeShape the new edge shape
+	 */
+	public void setEdgeShape(EdgeShape edgeShape) {
+		this.edgeShape = edgeShape;
+	}
+	/**
+	 * Gets the edge shape.
+	 * @return the edge shape
+	 */
+	public EdgeShape getEdgeShape() {
+		return edgeShape;
 	}
 	
 }

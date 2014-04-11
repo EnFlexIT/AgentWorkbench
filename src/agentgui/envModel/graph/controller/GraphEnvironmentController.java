@@ -370,8 +370,10 @@ public class GraphEnvironmentController extends EnvironmentController {
     	this.networkModel = new NetworkModel();
     	String fileName = getCurrentSimulationSetup().getEnvironmentFileName();
     	
-    	Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    	Application.setStatusBar(Language.translate("Lade Setup") + " :" + fileName + " ...");
+    	if (Application.getMainWindow()!=null) {
+    		Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    		Application.setStatusBar(Language.translate("Lade Setup") + " :" + fileName + " ...");
+    	}
     	
 		if (fileName != null) {
 	
@@ -429,8 +431,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 		// --- Reset Undo-Manager -----------------------------------------------------------------
 		this.networkModelAdapter.getUndoManager().discardAllEdits();
 
-		Application.setStatusBar(Language.translate("Fertig"));
-		Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		if (Application.getMainWindow()!=null) {
+			Application.setStatusBar(Language.translate("Fertig"));
+			Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
 		
     }
 

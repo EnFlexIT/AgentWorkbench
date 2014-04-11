@@ -716,6 +716,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// - - - Waiting here - - -
 			if (ctsDialog.isCanceled()==false) {
 				this.graphController.getNetworkModelAdapter().setGeneralGraphSettings4MAS(ctsDialog.getGeneralGraphSettings4MAS());
+				this.graphController.getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui().setEdgeShapeTransformer();
 			}
 			ctsDialog.dispose();
 			ctsDialog = null;

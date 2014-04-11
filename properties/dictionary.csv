@@ -276,6 +276,7 @@ de;Jade wurde beendet!;JADE was stopped!
 de;Jahre;Years;;;
 de;Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteilung;Java class for the start of the simulation agents and the static load balancing
 de;Java-Klasse für die dynamische Lastverteilung;Java class for dynamic load balancing
+de;Kanten-Typ;Edge Type;;;
 de;Kein Projekt geöffnet !;No open project!
 de;Kein SVG zugewiesen;No SVG assigned
 de;Kein vordefiniertes Umgebungsmodell verwenden;Don't use a predefined environment model;;;

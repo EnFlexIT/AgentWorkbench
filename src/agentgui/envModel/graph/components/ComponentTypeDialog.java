@@ -44,6 +44,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -87,8 +88,10 @@ import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
+import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS.EdgeShape;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
+import javax.swing.JComboBox;
 
 /**
  * GUI dialog for configuring network component types
@@ -130,6 +133,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private HashMap<String, DomainSettings> currDomainSettings = null;
 	private boolean currSnap2Grid = true;
 	private double currSnapRaster = 5; 
+	private EdgeShape currEdgeShape = null; 
 	
 	private Project currProject = null;
 	private boolean canceled = false;
@@ -162,11 +166,14 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JTable jTableDomainTypes = null;
 	private DefaultTableModel domainTableModel = null;
 	
+	private JLabel jLabelEdgeShape = null;
+	private JComboBox jComboBoxEdgeShapes = null;
+	private DefaultComboBoxModel comboBoxModelEdgeShapes = null;
+
 	private TableCellEditor4ClassSelector agentClassesCellEditor = null;  		//  @jve:decl-index=0:
 	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  	//  @jve:decl-index=0:
 	private TableCellEditor4ClassSelector adapterClassesCellEditor = null;  	//  @jve:decl-index=0:
-	
-		
+
 	/**
 	 * This is the default constructor.
 	 *
@@ -178,6 +185,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		this.currDomainSettings = graphSettings.getDomainSettings();
 		this.currSnap2Grid = graphSettings.isSnap2Grid();
 		this.currSnapRaster = graphSettings.getSnapRaster();
+		this.currEdgeShape = graphSettings.getEdgeShape();
 		this.currProject = project;
 		initialize();
 	}
@@ -254,6 +262,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		// --- Get the Guide grid configuration -------------------------------
 		this.getJCheckBoxSnap2Grid().setSelected(this.currSnap2Grid);
 		this.getJSpinnerGridWidth().setValue(this.currSnapRaster);
+		this.getJComboBoxEdgeShapes().setSelectedItem(this.currEdgeShape);
 	}
 	
 	/**
@@ -285,15 +294,23 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		return this.currSnapRaster;
 	}
 	/**
+	 * Gets the edge shape.
+	 * @return the edge shape
+	 */
+	public EdgeShape getEdgeShape() {
+		return this.currEdgeShape;
+	}
+	/**
 	 * Returns the GeneralGraphSettings4MAS.
 	 * @return the GeneralGraphSettings4MAS for the graph environment
 	 */
 	public GeneralGraphSettings4MAS getGeneralGraphSettings4MAS() {
 		GeneralGraphSettings4MAS genSettings = new GeneralGraphSettings4MAS();
-		genSettings.setCurrentCTS(getComponentTypeSettings());
-		genSettings.setDomainSettings(getDomainSettings());
-		genSettings.setSnap2Grid(isSnap2Grid());
-		genSettings.setSnapRaster(getSnapRaster());
+		genSettings.setCurrentCTS(this.getComponentTypeSettings());
+		genSettings.setDomainSettings(this.getDomainSettings());
+		genSettings.setSnap2Grid(this.isSnap2Grid());
+		genSettings.setSnapRaster(this.getSnapRaster());
+		genSettings.setEdgeShape(this.getEdgeShape());
 		return genSettings;
 	}
 	
@@ -460,6 +477,18 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JPanel getJPanelRaster() {
 		if (jPanelRaster == null) {
 			
+			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
+			gridBagConstraints15.fill = GridBagConstraints.BOTH;
+			gridBagConstraints15.gridy = 2;
+			gridBagConstraints15.weightx = 1.0;
+			gridBagConstraints15.gridwidth = 2;
+			gridBagConstraints15.insets = new Insets(20, 5, 0, 0);
+			gridBagConstraints15.gridx = 1;
+			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
+			gridBagConstraints14.gridx = 0;
+			gridBagConstraints14.anchor = GridBagConstraints.WEST;
+			gridBagConstraints14.insets = new Insets(20, 5, 0, 0);
+			gridBagConstraints14.gridy = 2;
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.anchor = GridBagConstraints.WEST;
 			gridBagConstraints11.insets = new Insets(5, 5, 5, 0);
@@ -494,6 +523,10 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jLabelGuideGridWidth.setText("Raster-Breite");
 			jLabelGuideGridWidth.setText(Language.translate(jLabelGuideGridWidth.getText()));
 			
+			jLabelEdgeShape = new JLabel();
+			jLabelEdgeShape.setText("Kanten-Typ");
+			jLabelEdgeShape.setText(Language.translate(jLabelEdgeShape.getText()) + ":");
+			jLabelEdgeShape.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jPanelRaster = new JPanel();
 			jPanelRaster.setLayout(new GridBagLayout());
@@ -501,6 +534,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jPanelRaster.add(getJCheckBoxSnap2Grid(), gridBagConstraints7);
 			jPanelRaster.add(jLabelGuideGridWidth, gridBagConstraints10);
 			jPanelRaster.add(getJSpinnerGridWidth(), gridBagConstraints11);
+			jPanelRaster.add(jLabelEdgeShape, gridBagConstraints14);
+			jPanelRaster.add(getJComboBoxEdgeShapes(), gridBagConstraints15);
 		}
 		return jPanelRaster;
 	}
@@ -1366,7 +1401,31 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		}
 		return jSpnnerGridWidth;
 	}
-
+	/**
+	 * This method initializes jComboBoxEdgeShapes	
+	 * @return javax.swing.JComboBox	
+	 */
+	private JComboBox getJComboBoxEdgeShapes() {
+		if (jComboBoxEdgeShapes == null) {
+			jComboBoxEdgeShapes = new JComboBox(this.getComboBoxModel4EdgeShapes());
+		}
+		return jComboBoxEdgeShapes;
+	}
+	/**
+	 * Gets the combo box model4 edge shapes.
+	 * @return the combo box model4 edge shapes
+	 */
+	private DefaultComboBoxModel getComboBoxModel4EdgeShapes() {
+		if (comboBoxModelEdgeShapes==null) {
+			comboBoxModelEdgeShapes = new DefaultComboBoxModel();
+			List<EdgeShape> shapes = new ArrayList<EdgeShape>(Arrays.asList(EdgeShape.values()));
+			for (int i = 0; i < shapes.size(); i++) {
+				comboBoxModelEdgeShapes.addElement(shapes.get(i));
+			}
+		}
+		return comboBoxModelEdgeShapes;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -1473,7 +1532,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			this.currCompTypSettings = ctsHash;
 			
 			this.currSnap2Grid = this.jCheckBoxSnap2Grid.isSelected();
-			this.currSnapRaster = (Double)jSpnnerGridWidth.getValue(); 
+			this.currSnapRaster = (Double)this.jSpnnerGridWidth.getValue(); 
+			this.currEdgeShape = (EdgeShape) this.jComboBoxEdgeShapes.getSelectedItem();
 			
 			this.canceled = false;
 			this.setVisible(false);

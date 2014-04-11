@@ -362,13 +362,13 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		super.mouseReleased(me);
 		
 		if (SwingUtilities.isRightMouseButton(me)) {
-			if (movePanelWithRightAction==true) {
+			if (this.movePanelWithRightAction==true) {
 				this.movePanelWithRightAction = false;
 				this.getVisViewer().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		} else if (SwingUtilities.isLeftMouseButton(me)) {
-			if (moveNodeWithLeftAction=true) {
-				this.moveNodeWithLeftAction = true;	
+			if (this.moveNodeWithLeftAction==true) {
+				this.moveNodeWithLeftAction = false;	
 				this.setNodesMoved2EndPosition();
 				this.createUndoableMoveAction();
 				this.nodesMoved.removeAllElements();
@@ -389,7 +389,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		// ----------------------------------------------------------------------------------------
 		// --- Action if the right mouse button is pressed and no graph element is selected -------
 		// ----------------------------------------------------------------------------------------
-		if (movePanelWithRightAction==true) {
+		if (this.movePanelWithRightAction==true) {
 
 			MutableTransformer modelTransformer = this.getVisViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
             try {
@@ -411,7 +411,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 		// ----------------------------------------------------------------------------------------
 		// --- Update the GraphNode's position attribute ------------------------------------------ 
 		// ----------------------------------------------------------------------------------------
-		if (moveNodeWithLeftAction==true) {
+		if (this.moveNodeWithLeftAction==true) {
 			
 			Graph<GraphNode, GraphEdge> graph = null;
 			boolean snapToGrid = this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelAdapter().getGeneralGraphSettings4MAS().isSnap2Grid();
