@@ -181,7 +181,8 @@ public class AgentGUITrayIcon implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (Application.isRunningAsServer()==true) {
+		
+		if (Application.isRunningAsServer()==true || Application.getMainWindow()==null) {
 			Application.showOptionDialog();	
 		} else {
 			Application.getMainWindow().restoreFocus();

@@ -74,7 +74,6 @@ public class TimeFormatSelection extends JPanelForActions {
 	private JPanel jPanelDummy = null;
 
 	
-	
 	/**
 	 * Instantiates a new time format selection.
 	 */
@@ -139,17 +138,10 @@ public class TimeFormatSelection extends JPanelForActions {
 		gridBagConstraintDummy.insets = new Insets(0, 0, 0, 0);
 		gridBagConstraintDummy.gridy = 3;
 		
-		if (showLable==true) {
-			jLabelFormat = new JLabel();
-			jLabelFormat.setText("Format");
-			jLabelFormat.setText(Language.translate(jLabelFormat.getText()) + ":");
-			jLabelFormat.setPreferredSize(new Dimension(40, 16));
-		}
-		
 		this.setSize(427, 65);
 		this.setLayout(new GridBagLayout());
 		if (showLable==true) {
-			this.add(jLabelFormat, gridBagConstraintLabel);	
+			this.add(this.getJLabelFormatHeader(), gridBagConstraintLabel);	
 		}
 		this.add(getJTextFieldTimeFormat(), gridBagConstraintTextField);
 		this.add(getJComboBoxTimeFormat(), gridBagConstraintComboBox);
@@ -157,6 +149,20 @@ public class TimeFormatSelection extends JPanelForActions {
 		this.add(getJPanelDummy(), gridBagConstraintDummy);
 	}
 
+	/**
+	 * Gets the JLabel format header.
+	 * @return the JLabel format header
+	 */
+	public JLabel getJLabelFormatHeader() {
+		if (jLabelFormat==null) {
+			jLabelFormat = new JLabel();
+			jLabelFormat.setText("Format");
+			jLabelFormat.setText(Language.translate(jLabelFormat.getText()) + ":");
+			jLabelFormat.setPreferredSize(new Dimension(40, 16));
+		}
+		return jLabelFormat;
+	}
+	
 	/**
 	 * This method initializes jTextFieldTimeFormat.
 	 * @return javax.swing.JTextField

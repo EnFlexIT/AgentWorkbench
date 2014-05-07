@@ -255,8 +255,8 @@ public class BenchmarkMeasurement extends Thread {
 
 		String nowExecOn=null;
 		
-		// ------------------------------------------------
-		// --- Try to get the MAC address first -----------
+		// --------------------------------------------------------------------
+		// --- Try to get the MAC address first -------------------------------
 		try {
 			Vector<String> macAddresses = new Vector<String>();
 			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
@@ -268,20 +268,26 @@ public class BenchmarkMeasurement extends Thread {
 			        for (int i = 0; i < mac.length; i++) {
 			          sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
 			        }
-			        macAddresses.add(sb.toString());
+			        // --- Add to the list of MAC addresses, if not empty ----- 
+			        String macAddress = sb.toString();
+			        if (macAddress!=null && macAddress.equals("")==false) {
+			        	if (macAddresses.contains(macAddress)==false) {
+			        		macAddresses.add(macAddress);
+			        	}
+			        }
 				}
 			}
-			// --- Found one or more MAC-Addresses --------
+			// --- Found one or more MAC-Addresses ----------------------------
 			if (macAddresses.size()>0) {
 				Collections.sort(macAddresses);
-				nowExecOn = macAddresses.get(0);
+				nowExecOn = macAddresses.get(macAddresses.size()-1);
 			}
 			
 		} catch (SocketException se) {
 			//se.printStackTrace();
 		}
 		
-		// --- In case that no MAC address was found ------
+		// --- In case that no MAC address was found --------------------------
 		if (nowExecOn==null) {
 			try {
 				nowExecOn = InetAddress.getLocalHost().getCanonicalHostName();

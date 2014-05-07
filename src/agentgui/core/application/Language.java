@@ -120,7 +120,7 @@ public class Language {
 	 */
 	public static void startDictionary() {
 		if (dictHash64.size()==0) {
-			// --- load the dictionary ------------------------------
+			// --- load the dictionary ----------
 			loadDictionaryFile();
 		}
 	}
@@ -165,8 +165,9 @@ public class Language {
 	public static String translate(String expression, String language)  {
 		
 		// --- In case that the dictionary was not loaded yet -----------------
-		if (dictLineList64.size() == 0) {
-			return expression;
+		if (dictLineList64.size()==0) {
+			loadDictionaryFile();
+			if (dictLineList64.size()==0) return expression;
 		}
 		// --- Check if the expression exists ---------------------------------
 		String translationExp = null;

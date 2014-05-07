@@ -203,7 +203,9 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 			}
 		});
 		// --- Set the IconImage ----------------------------------
-		this.setIconImage( Application.getMainWindow().getIconImage() );
+		if (Application.getMainWindow()!=null) {
+			this.setIconImage(Application.getMainWindow().getIconImage());
+		}
 		
 		// --- Dialog zentrieren ------------------------------------
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
@@ -218,7 +220,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 *
 	 * @return the ontology instance viewer
 	 */
-	private OntologyInstanceViewer getOntologyInstanceViewer() {
+	public OntologyInstanceViewer getOntologyInstanceViewer() {
 		if(oiv==null) {
 			switch (this.ontologyInstanceViewerConstructor) {
 			case 1:
@@ -360,8 +362,8 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 		
 		Object trigger = ae.getSource();
 		if (trigger==jButtonOK) {
-			oiv.save();
-			this.setObjectConfiguration(oiv.getConfigurationInstances());
+			this.getOntologyInstanceViewer().save();
+			this.setObjectConfiguration(this.getOntologyInstanceViewer().getConfigurationInstances());
 			this.setCancelled(false);
 			this.setVisible(false);
 			
