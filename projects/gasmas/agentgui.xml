@@ -32,8 +32,8 @@
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -69,28 +69,8 @@
             <value>smallclusters_2_mid.xml</value>
         </entry>
         <entry>
-            <key>SmallClusters (1) Small</key>
-            <value>smallclusters_1_small.xml</value>
-        </entry>
-        <entry>
-            <key>Optionales Gas Netz</key>
-            <value>optionales_gas_netz.xml</value>
-        </entry>
-        <entry>
-            <key>HNord</key>
-            <value>hnord.xml</value>
-        </entry>
-        <entry>
-            <key>HNord Complete</key>
-            <value>hnord_complete.xml</value>
-        </entry>
-        <entry>
-            <key>MixedClusters (1) Small</key>
-            <value>mixedclusters_1_small.xml</value>
-        </entry>
-        <entry>
-            <key>SmallClusters (3) Large</key>
-            <value>smallclusters_3_large.xml</value>
+            <key>MixedClusters (2) Medium</key>
+            <value>mixedclusters_2_medium.xml</value>
         </entry>
         <entry>
             <key>HNord (2) Mid</key>
@@ -101,36 +81,56 @@
             <value>smartgrid.xml</value>
         </entry>
         <entry>
-            <key>HNord (3) Large</key>
-            <value>hnord_3_large.xml</value>
+            <key>Optionales Gas Netz</key>
+            <value>optionales_gas_netz.xml</value>
         </entry>
         <entry>
-            <key>MixedClusters (3) Large</key>
-            <value>mixedclusters_3_large.xml</value>
-        </entry>
-        <entry>
-            <key>Simple Net</key>
-            <value>simple_net.xml</value>
-        </entry>
-        <entry>
-            <key>HNord (1) Small</key>
-            <value>hnord_1_small.xml</value>
+            <key>SmallClusters (3) Large</key>
+            <value>smallclusters_3_large.xml</value>
         </entry>
         <entry>
             <key>Testnetz 3</key>
             <value>testnetz_3.xml</value>
         </entry>
         <entry>
-            <key>Simple Net Two Entries</key>
-            <value>simple_net_two_entries.xml</value>
+            <key>SmallClusters (1) Small</key>
+            <value>smallclusters_1_small.xml</value>
+        </entry>
+        <entry>
+            <key>HNord</key>
+            <value>hnord.xml</value>
         </entry>
         <entry>
             <key>Testimport</key>
             <value>testimport.xml</value>
         </entry>
         <entry>
-            <key>MixedClusters (2) Medium</key>
-            <value>mixedclusters_2_medium.xml</value>
+            <key>HNord (1) Small</key>
+            <value>hnord_1_small.xml</value>
+        </entry>
+        <entry>
+            <key>Simple Net</key>
+            <value>simple_net.xml</value>
+        </entry>
+        <entry>
+            <key>MixedClusters (3) Large</key>
+            <value>mixedclusters_3_large.xml</value>
+        </entry>
+        <entry>
+            <key>MixedClusters (1) Small</key>
+            <value>mixedclusters_1_small.xml</value>
+        </entry>
+        <entry>
+            <key>Simple Net Two Entries</key>
+            <value>simple_net_two_entries.xml</value>
+        </entry>
+        <entry>
+            <key>HNord (3) Large</key>
+            <value>hnord_3_large.xml</value>
+        </entry>
+        <entry>
+            <key>HNord Complete</key>
+            <value>hnord_complete.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>

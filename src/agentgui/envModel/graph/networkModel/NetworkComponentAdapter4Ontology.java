@@ -45,8 +45,6 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
  */
 public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentAdapter4DataModel {
 
-	private static final long serialVersionUID = -5374060290921305401L;
-	
 	private OntologyVisualisationHelper ovh = null;
 	private OntologyInstanceViewer oiv = null;
 

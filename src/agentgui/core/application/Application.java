@@ -138,6 +138,9 @@ public class Application {
 		case SERVER_MASTER:
 		case SERVER_SLAVE:
 			return true;
+		
+		default:
+			break;
 		}
 		return false;
 	}
@@ -484,6 +487,8 @@ public class Application {
 			break;
 			
 		case SERVER:
+		case SERVER_MASTER:
+		case SERVER_SLAVE:
 			// ------------------------------------------------------
 			// --- Start Server-Version of AgentGUI -----------------
 			// --- In the Server-Case, start the benchmark now ! ----
@@ -504,7 +509,6 @@ public class Application {
 				new AgentGuiUpdater().start();
 			}
 			break;
-
 		}
 		
 	}

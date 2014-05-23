@@ -53,6 +53,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Application;
+import agentgui.core.common.ExceptionHandling;
 import agentgui.core.common.KeyAdapter4Numbers;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.ontologies.OntologyClassTreeObject;
@@ -376,11 +377,12 @@ public abstract class DynFormBase extends JPanel {
 			
 			// --- Get the corresponding Ontology-Instance ----------			
 			OntologyClassTreeObject octo = this.ontologyVisualisationHelper.getClassTreeObject(className);
-			Ontology onto = octo.getOntologyClass().getOntologyInstance();
+			Ontology ontology = octo.getOntologyClass().getOntologyInstance();
 			
 			// --- Generate instance for this argument --------------
 			if ((i+1)<=numOfXMLArgs) {
-				Object argumentInstance = getInstanceOfXML(ontoArgsXML[i], onto);
+				// --- Convert XML to ontology class instance ------- 
+				Object argumentInstance = this.getInstanceOfXML(ontoArgsXML[i], className, ontology);
 				if (argumentInstance!=null) {
 					// --- Set the current instance to the form -----
 					if (avoidGuiUpdate==false) {
@@ -395,6 +397,7 @@ public abstract class DynFormBase extends JPanel {
 					// --- Remind object state as instance ----------
 					newOntoArgsInstance[i] = argumentInstance;
 				}
+				
 			}
 
 		} // --- end for ---
@@ -444,7 +447,7 @@ public abstract class DynFormBase extends JPanel {
 	 * @param ontology the ontology
 	 * @return the instance of xml
 	 */
-	protected Object getInstanceOfXML(String xmlString, Ontology ontology) {
+	protected Object getInstanceOfXML(String xmlString, String className, Ontology ontology) {
 		
 		Object objectInstance = null;
 
@@ -455,8 +458,15 @@ public abstract class DynFormBase extends JPanel {
 				
 			} catch (CodecException ce) {
 				ce.printStackTrace();
+				
 			} catch (OntologyException oe) {
-				oe.printStackTrace();
+				//oe.printStackTrace();
+				// --- No object was created from XML ---------------
+				// --- -> Try to create an empty instance -----------
+				System.err.println("Ontology '" + ontology.getName() + "' -> XML to Object: " + ExceptionHandling.getFirstTextLineOfException(oe));
+				objectInstance = this.getNewClassInstance(className);
+				System.err.println("Ontology '" + ontology.getName() + "' -> XML to Object: Created an empty instance for class '" + className + "' !");
+				
 			}		
 		}
 		return objectInstance;

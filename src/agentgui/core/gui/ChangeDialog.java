@@ -343,8 +343,9 @@ public class ChangeDialog extends JDialog implements ActionListener {
 			
 			} else if(changeFilesURL.getProtocol().equals("jar")) {
 				// --- Happens in the AgentGui.jar ------------------
+				JarInputStream jarFile=null;
 				try {
-					JarInputStream jarFile = new JarInputStream(new FileInputStream(Application.getGlobalInfo().getFileRunnableJar(true)));
+					jarFile = new JarInputStream(new FileInputStream(Application.getGlobalInfo().getFileRunnableJar(true)));
 					int pathSepPosition = this.changeFilesPackage.indexOf("/");
 					while(true) {
 						JarEntry jarEntry=jarFile.getNextJarEntry ();
@@ -358,6 +359,12 @@ public class ChangeDialog extends JDialog implements ActionListener {
 					
 				} catch (IOException e) {
 					e.printStackTrace();
+				} finally {
+					// --- Ensure that the file will be closed again ---
+					try {
+						jarFile.close();
+					} catch (IOException e) {
+					}	
 				}
 			}
 			

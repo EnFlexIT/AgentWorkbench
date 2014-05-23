@@ -50,8 +50,6 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
  */
 public abstract class NetworkComponentAdapter4DataModel {
 
-	private static final long serialVersionUID = -5222516718157004730L;
-
 	private GraphEnvironmentController graphController = null;
 
 	

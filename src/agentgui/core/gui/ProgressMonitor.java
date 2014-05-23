@@ -61,8 +61,6 @@ import agentgui.core.application.Language;
  */
 public class ProgressMonitor implements ActionListener {
 
-	private static final long serialVersionUID = -5215083407952353606L;
-
 	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( pathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
