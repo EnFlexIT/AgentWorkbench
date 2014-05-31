@@ -65,12 +65,6 @@ public abstract class NetworkComponentAdapter {
 	
 	
 	/**
-	 * Instantiates a new network component adapter.
-	 */
-	public NetworkComponentAdapter() {
-
-	}
-	/**
 	 * Instantiates a new network component adapter that allows access 
 	 * to the controlling agent if there is one.
 	 * 

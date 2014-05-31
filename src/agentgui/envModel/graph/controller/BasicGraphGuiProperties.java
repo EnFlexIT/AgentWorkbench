@@ -373,7 +373,10 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			this.dataModelBase64InitialHashCodes = new Vector<Integer>();
 			for (int i=0; i < initialBase64EncodedValues.size(); i++) {
 				String singleDataModel = initialBase64EncodedValues.get(i);
-				int singleDataModelHashCode = singleDataModel.hashCode();
+				int singleDataModelHashCode = 0;
+				if (singleDataModel!=null) {
+					singleDataModelHashCode = singleDataModel.hashCode();	
+				}
 				this.dataModelBase64InitialHashCodes.add(singleDataModelHashCode);	
 			}
 		}
