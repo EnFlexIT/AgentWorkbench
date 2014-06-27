@@ -526,6 +526,7 @@ public class Zipper extends Thread {
 					while ((len = in.read(buf)) > 0) {
 						zip.write(buf, 0, len);
 					}
+					in.close();
 				}
 				
 			} catch (Exception ex) {

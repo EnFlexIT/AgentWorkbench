@@ -93,20 +93,36 @@ public class JarFileCreator {
 		
 		// --- Search Files -------------------------------
 		File searchIn = new File(this.baseDir4Search);
-		ArrayList<File> fileArrayList = this.findFiles(searchIn, ".class");
+		ArrayList<File> fileArrayList = this.findFiles(searchIn, this.getAllowedFileSuffixes());
 		// --- store result locally -----------------------
 		this.fileList = new File[fileArrayList.size()];
 		this.fileList = fileArrayList.toArray(this.fileList);
 	}
 	
 	/**
+	 * Gets the positive file suffixes for a *.jar-file.
+	 * @return the positive file suffixes
+	 */
+	private ArrayList<String> getAllowedFileSuffixes() {
+		
+		ArrayList<String> positiveFileSuffixes = new ArrayList<String>();
+		positiveFileSuffixes.add(".class");
+		positiveFileSuffixes.add(".png");
+		positiveFileSuffixes.add(".bmp");
+		positiveFileSuffixes.add(".jpg");
+		positiveFileSuffixes.add(".jepg");
+		positiveFileSuffixes.add(".gif");
+		return positiveFileSuffixes;
+	}
+	
+	/**
 	 * This method will find all available files specified by the find String.
 	 *
 	 * @param directory the directory
-	 * @param string2Find the String to find
+	 * @param allowedFileSuffixes the allowed file suffixes
 	 * @return the array list
 	 */
-	private ArrayList<File> findFiles(File directory, String string2Find) {
+	private ArrayList<File> findFiles(File directory, ArrayList<String> allowedFileSuffixes) {
 
 		File[] files = directory.listFiles();
 		ArrayList<File> matches = new ArrayList<File> ();
@@ -114,11 +130,15 @@ public class JarFileCreator {
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].isDirectory()) {
 					// --- Search sub-directories ---------
-					matches.addAll(findFiles(files[i], string2Find)); 
+					matches.addAll(findFiles(files[i], allowedFileSuffixes)); 
 				} else {
 					// --- filter single file for 'find' ------
-					if (files[i].getName().contains(string2Find)) {
-						matches.add(files[i]);
+					int lastDotPos = files[i].getName().lastIndexOf('.');
+					if (lastDotPos>0) {
+						String fileSuffix = files[i].getName().substring(lastDotPos);
+					    if (allowedFileSuffixes.contains(fileSuffix)) {
+					    	matches.add(files[i]);
+					    }
 					}
 				}
 			}
