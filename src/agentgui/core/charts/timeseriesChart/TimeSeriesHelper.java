@@ -167,15 +167,59 @@ public class TimeSeriesHelper extends TreeMap<Long, TimeSeriesValuePair>{
 			TimeSeriesValuePair tsvp = (TimeSeriesValuePair) listOfTimeSeriesValuePairs.get(i);
 			Long timeStamp = tsvp.getTimestamp().getLongValue();
 			if (this.containsKey(timeStamp)==false) {
-				this.getTimeSeries().getTimeSeriesValuePairs().add(tsvp);
-				this.put(timeStamp, tsvp);
-				addedValuePairs.addTimeSeriesValuePairs(tsvp);
+				TimeSeriesValuePair addedTSVP = this.addSeriesData(tsvp);
+				if (addedTSVP!=null) {
+					addedValuePairs.addTimeSeriesValuePairs(tsvp);
+				}
 			}
 		}
 		if (addedValuePairs.getTimeSeriesValuePairs().size()==0) {
 			addedValuePairs=null;
 		}
 		return addedValuePairs;
+	}
+	
+	/**
+	 * Adds a specified TimeSeriesValuePair to the current TimeSeries.
+	 *
+	 * @param tsvp the TimeSeriesValuePair
+	 * @return the added TimeSeriesValuePair or null
+	 */
+	public TimeSeriesValuePair addSeriesData(TimeSeriesValuePair tsvp) {
+		TimeSeriesValuePair addedTimeSeriesValuePair = null;
+		if (tsvp!=null) {
+			Long timeStamp = tsvp.getTimestamp().getLongValue();
+			if (this.containsKey(timeStamp)==false) {
+				this.getTimeSeries().getTimeSeriesValuePairs().add(tsvp);
+				this.put(timeStamp, tsvp);
+				addedTimeSeriesValuePair = tsvp;
+			}	
+		}
+		return addedTimeSeriesValuePair;
+	}
+	
+	/**
+	 * Adds a specified TimeSeriesValuePair to the current TimeSeries.
+	 *
+	 * @param timeStamp the time stamp
+	 * @param value the value
+	 * @return the added TimeSeriesValuePair or null
+	 */
+	public TimeSeriesValuePair addSeriesData(long timeStamp, float value ) {
+		TimeSeriesValuePair addedTimeSeriesValuePair = null;
+		if (this.containsKey(timeStamp)==false) {
+			Simple_Long sLong = new Simple_Long();
+			sLong.setLongValue(timeStamp);
+			
+			Simple_Float sFloat = new Simple_Float();
+			sFloat.setFloatValue(value);
+			
+			TimeSeriesValuePair tsvp = new TimeSeriesValuePair();
+			tsvp.setTimestamp(sLong);
+			tsvp.setValue(sFloat);
+			addedTimeSeriesValuePair = this.addSeriesData(tsvp);
+		}
+		return addedTimeSeriesValuePair;
 	}
 	
 	/**

@@ -295,6 +295,12 @@
             <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
             <startAsName>n37</startAsName>
         </agent>
+        <agent>
+            <postionNo>49</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
+            <startAsName>n38</startAsName>
+        </agent>
     </agentSetup>
     <timeModelSettings>
         <entry>
