@@ -520,39 +520,39 @@ public abstract class PlugIn implements Observer {
 	// --- Changes in the SimulationSetup --------------------------------
 	/**
 	 * Will be invoked, if a new {@link SimulationSetup} was created.
-	 * @param newSimSetup the new {@link SimulationSetup}
+	 * @param simSetup the new {@link SimulationSetup}
 	 */
-	protected void onSimSetupAddNew(SimulationSetup newSimSetup) { }
+	protected void onSimSetupAddNew(SimulationSetup simSetup) { }
 	/**
 	 * Will be invoked, if a {@link SimulationSetup} was copied.
-	 * @param copiedSimSetup the copied {@link SimulationSetup}
+	 * @param simSetup the copied {@link SimulationSetup}
 	 */
-	protected void onSimSetupCopy(SimulationSetup copiedSimSetup) { }
+	protected void onSimSetupCopy(SimulationSetup simSetup) { }
 	/**
 	 * Will be invoked, if a {@link SimulationSetup} was loaded.
-	 * @param loadedSimSetup the loaded {@link SimulationSetup}
+	 * @param simSetup the loaded {@link SimulationSetup}
 	 */
-	protected void onSimSetupLoad(SimulationSetup loadedSimSetup) { }
+	protected void onSimSetupLoad(SimulationSetup simSetup) { }
 	/**
 	 * Will be invoked, if a {@link SimulationSetup} was removed.
-	 * @param currSimSetup the current {@link SimulationSetup}
+	 * @param simSetup the current {@link SimulationSetup}
 	 */
-	protected void onSimSetupRemove(SimulationSetup currSimSetup) { }
+	protected void onSimSetupRemove(SimulationSetup simSetup) { }
 	/**
 	 * Will be invoked, if a {@link SimulationSetup} was renamed.
-	 * @param currSimSetup the current {@link SimulationSetup}
+	 * @param simSetup the current {@link SimulationSetup}
 	 */
-	protected void onSimSetupRename(SimulationSetup currSimSetup) { }
+	protected void onSimSetupRename(SimulationSetup simSetup) { }
 	/**
 	 * Will be invoked, before a {@link SimulationSetup} will be saved
-	 * @param currSimSetup the current {@link SimulationSetup}
+	 * @param simSetup the current {@link SimulationSetup}
 	 */
-	protected void onSimSetupPrepareSaving(SimulationSetup currSimSetup) { }
+	protected void onSimSetupPrepareSaving(SimulationSetup simSetup) { }
 	/**
 	 * Will be invoked, if a {@link SimulationSetup} was saved
-	 * @param currSimSetup the current {@link SimulationSetup}
+	 * @param simSetup the current {@link SimulationSetup}
 	 */
-	protected void onSimSetupSaved(SimulationSetup currSimSetup) { }
+	protected void onSimSetupSaved(SimulationSetup simSetup) { }
 
 	// --- Changes with the PlugIns --------------------------------------
 	/**
