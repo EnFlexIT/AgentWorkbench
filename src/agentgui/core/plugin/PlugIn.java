@@ -74,9 +74,9 @@ public abstract class PlugIn implements Observer {
 	private Vector<EnvironmentType> customEnvironmentTypes = new Vector<EnvironmentType>();
 	private Vector<OntologyClassVisualisation> customOntologyClassVisualisation = new Vector<OntologyClassVisualisation>();
 	
+	
 	/**
-	 * Default constructor for this class.
-	 *
+	 * Constructor for this class.
 	 * @param currProject the current project
 	 */
 	public PlugIn(Project currProject) {
@@ -85,25 +85,22 @@ public abstract class PlugIn implements Observer {
 	}
 	
 	/**
-	 * Sets the class reference.
-	 *
+	 * Sets the class reference of this PugIn.
 	 * @param classReference the classReference to set
 	 */
 	public void setClassReference(String classReference) {
 		this.classReference = classReference;
 	}
-	
 	/**
-	 * Gets the class reference.
-	 * @return the classReference
+	 * Returns the class reference of the current {@link PlugIn}.
+	 * @return the classReference as {@link String}
 	 */
 	public String getClassReference() {
 		return classReference;
 	}
 
 	/**
-	 * Gets the name.
-	 *
+	 * Returns the name of the current {@link PlugIn}.
 	 * @return the pluginName
 	 */
 	public abstract String getName();
@@ -426,17 +423,19 @@ public abstract class PlugIn implements Observer {
 			int sscnUpdate = sscn.getUpdateReason();
 			SimulationSetup simSetup = project.getSimulationSetups().getCurrSimSetup();
 			if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_ADD_NEW) {
-				this.onSimSetupChangedAddNew(simSetup);
+				this.onSimSetupAddNew(simSetup);
 			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_COPY) {
-				this.onSimSetupChangedCopy(simSetup);
+				this.onSimSetupCopy(simSetup);
 			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_LOAD) {
-				this.onSimSetupChangedLoad(simSetup);
+				this.onSimSetupLoad(simSetup);
 			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_REMOVE) {
-				this.onSimSetupChangedRemove(simSetup);
+				this.onSimSetupRemove(simSetup);
 			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_RENAME) {
-				this.onSimSetupChangedRename(simSetup);
+				this.onSimSetupRename(simSetup);
+			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_PREPARE_SAVING) {
+				this.onSimSetupPrepareSaving(simSetup);
 			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_SAVED) {
-				this.onSimSetupChangedSaved(simSetup);				
+				this.onSimSetupSaved(simSetup);				
 			}
 		
 		// ----------------------------------------------------------
@@ -461,15 +460,14 @@ public abstract class PlugIn implements Observer {
 	}
 
 	/**
-	 * In order to perceive individual informations from the project Observer
+	 * In order to perceive individual informations from the {@link Project} {@link Observer}
 	 * (observer pattern), this method should be used in the extended class.
 	 * !!! Do NOT override the update method directly !!
 	 *
 	 * @param observable the observable
 	 * @param updateObject the update object
 	 */
-	protected void updateFromObserver(Observable observable, Object updateObject) {
-	}
+	protected void updateFromObserver(Observable observable, Object updateObject) { }
 
 	// ------------------------------------------------------------------------
 	// --- Protected methods for the PlugIn-development --- START ------------- 
@@ -521,69 +519,53 @@ public abstract class PlugIn implements Observer {
 	
 	// --- Changes in the SimulationSetup --------------------------------
 	/**
-	 * On sim setup changed add new.
-	 *
-	 * @param currSimSetup the curr sim setup
+	 * Will be invoked, if a new {@link SimulationSetup} was created.
+	 * @param newSimSetup the new {@link SimulationSetup}
 	 */
-	private void onSimSetupChangedAddNew(SimulationSetup currSimSetup) {
-	}
-	
+	protected void onSimSetupAddNew(SimulationSetup newSimSetup) { }
 	/**
-	 * On sim setup changed copy.
-	 *
-	 * @param currSimSetup the curr sim setup
+	 * Will be invoked, if a {@link SimulationSetup} was copied.
+	 * @param copiedSimSetup the copied {@link SimulationSetup}
 	 */
-	private void onSimSetupChangedCopy(SimulationSetup currSimSetup) {
-	}
-	
+	protected void onSimSetupCopy(SimulationSetup copiedSimSetup) { }
 	/**
-	 * On sim setup changed load.
-	 *
-	 * @param currSimSetup the curr sim setup
+	 * Will be invoked, if a {@link SimulationSetup} was loaded.
+	 * @param loadedSimSetup the loaded {@link SimulationSetup}
 	 */
-	private void onSimSetupChangedLoad(SimulationSetup currSimSetup) {
-	}
-	
+	protected void onSimSetupLoad(SimulationSetup loadedSimSetup) { }
 	/**
-	 * On sim setup changed remove.
-	 *
-	 * @param currSimSetup the curr sim setup
+	 * Will be invoked, if a {@link SimulationSetup} was removed.
+	 * @param currSimSetup the current {@link SimulationSetup}
 	 */
-	private void onSimSetupChangedRemove(SimulationSetup currSimSetup) {
-	}
-	
+	protected void onSimSetupRemove(SimulationSetup currSimSetup) { }
 	/**
-	 * On sim setup changed rename.
-	 *
-	 * @param currSimSetup the curr sim setup
+	 * Will be invoked, if a {@link SimulationSetup} was renamed.
+	 * @param currSimSetup the current {@link SimulationSetup}
 	 */
-	private void onSimSetupChangedRename(SimulationSetup currSimSetup) {
-	}
-	
+	protected void onSimSetupRename(SimulationSetup currSimSetup) { }
 	/**
-	 * On sim setup changed saved.
-	 *
-	 * @param currSimSetup the curr sim setup
+	 * Will be invoked, before a {@link SimulationSetup} will be saved
+	 * @param currSimSetup the current {@link SimulationSetup}
 	 */
-	private void onSimSetupChangedSaved(SimulationSetup currSimSetup) {
-	}
+	protected void onSimSetupPrepareSaving(SimulationSetup currSimSetup) { }
+	/**
+	 * Will be invoked, if a {@link SimulationSetup} was saved
+	 * @param currSimSetup the current {@link SimulationSetup}
+	 */
+	protected void onSimSetupSaved(SimulationSetup currSimSetup) { }
 
 	// --- Changes with the PlugIns --------------------------------------
 	/**
 	 * On plug in removed.
-	 *
 	 * @param plugIn the plug in
 	 */
-	private void onPlugInRemoved(PlugIn plugIn) {
-	}
+	protected void onPlugInRemoved(PlugIn plugIn) { }
 	
 	/**
 	 * On plug in added.
-	 *
 	 * @param plugIn the plug in
 	 */
-	private void onPlugInAdded(PlugIn plugIn) {
-	}
+	protected void onPlugInAdded(PlugIn plugIn) { }
 
 	/**
 	 * Overriding his method allows to extend/change the currently 

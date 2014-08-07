@@ -568,7 +568,7 @@ public class DBConnection {
 				msg  = Language.translate(errText) + newLine;
 			} else {
 				// --- SQL-Fehler -------------------------
-				msg  = Language.translate("MySQL-Fehler ") + errNumber + ":" + newLine;
+				msg  = Language.translate("MySQL-Fehler") + " " + errNumber + ":" + newLine;
 				msg += errText;				
 				msg = formatText(msg);				
 			}		
@@ -580,6 +580,8 @@ public class DBConnection {
 		 */
 		public void show() {
 			this.setMessage();
+			System.err.println("DB: " + errHead);
+			System.err.println(msg);
 			JOptionPane.showMessageDialog(null, msg, errHead, JOptionPane.OK_OPTION);
 			this.resetError();
 		}

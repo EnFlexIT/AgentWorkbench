@@ -251,23 +251,19 @@ public class SetupSelectorToolbar implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
-		Object trigger = ae.getSource();
-		
-		// --- Fallunterscheidung 'Auslöser' -----------------------------
-		if ( trigger == jComboBoxSetupSelector ) {
-			if (jComboBoxSetupSelector.getSelectedItem()!= null) {
-				currProject.getSimulationSetups().setupSave();
-				currProject.getSimulationSetups().setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, jComboBoxSetupSelector.getSelectedItem().toString(), false);
+		if (ae.getSource()==this.getJComboBoxSetupSelector()) {
+			if (this.getJComboBoxSetupSelector().getSelectedItem()!=null) {
+				String selectedSetup = this.getJComboBoxSetupSelector().getSelectedItem().toString();	
+				this.currProject.getSimulationSetups().setupSave();
+				this.currProject.getSimulationSetups().setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, selectedSetup, false);
 			}
-			
-		} else if ( trigger == jButtonSetupRename ) {
+		} else if (ae.getSource()==this.getJButtonSetupRename()) {
 			this.setupRename();
-		} else if ( trigger == jButtonSetupCopy ) {
+		} else if (ae.getSource()==this.getJButtonSetupCopy()) {
 			this.setupCopy();
-		} else if ( trigger == jButtonSetupNew ) {
+		} else if (ae.getSource()==this.getJButtonSetupNew()) {
 			this.setupAdd();
-		} else if ( trigger == jButtonSetupDelete ) {
+		} else if (ae.getSource()==this.getJButtonSetupDelete()) {
 			this.setupRemove();
 		} else {
 			System.out.println(ae.toString());
@@ -309,11 +305,11 @@ public class SetupSelectorToolbar implements ActionListener {
 		
 		if (this.currProject==null) return;
 		
-		// --- Aktuelles Setup ermitteln ------------------
+		// --- Determine current setup --------------------
 		String currSetup = this.currProject.getSimulationSetupCurrent();
 		String currSetupFile = this.currProject.getSimulationSetups().get(currSetup);
 		
-		// --- ComboBoxModel neu aufbauen -----------------
+		// --- (Re)Create ComboBoxModel -------------------
 		jComboBoxSetupSelector.removeActionListener(this);
 		jComboBoxModel4Setups.removeAllElements();
 		
@@ -328,16 +324,16 @@ public class SetupSelectorToolbar implements ActionListener {
 			jComboBoxModel4Setups.addElement(setupName);
 		}
 		
-		// --- Auf das aktuelle Setup setzen --------------
+		// --- Set to current SimulationSetup -------------
 		jComboBoxSetupSelector.setToolTipText("Setup '" + currSetup + "' " + Language.translate("in Datei") + " '" + currSetupFile + "'");
 		jComboBoxSetupSelector.setSelectedItem(currSetup);
 		jComboBoxSetupSelector.addActionListener(this);
 		
-		// --- Das akuelle DefaultListModel laden ---------
-		currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
-		if ( currSimSetup==null ) {
-			currProject.getSimulationSetups().setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, currProject.getSimulationSetupCurrent(), false);
-			currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
+		// --- Load DefaultListModel laden ---------
+		this.currSimSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
+		if (this.currSimSetup==null) {
+			this.currProject.getSimulationSetups().setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, this.currProject.getSimulationSetupCurrent(), false);
+			this.currSimSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
 		}
 	}
 

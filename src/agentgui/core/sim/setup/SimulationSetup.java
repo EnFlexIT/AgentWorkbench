@@ -154,7 +154,7 @@ import agentgui.core.project.Project;
 			pm.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 
-			Writer pw = new FileWriter( currProject.getSimulationSetups().getCurrSimXMLFile() );
+			Writer pw = new FileWriter( this.currProject.getSimulationSetups().getCurrSimXMLFile() );
 			pm.marshal(this, pw);
 			pw.close();
 			
@@ -166,7 +166,7 @@ import agentgui.core.project.Project;
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
 		    try  {
-		    	String binFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currProject.getSimulationSetups().getCurrSimXMLFile()); 
+		    	String binFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(this.currProject.getSimulationSetups().getCurrSimXMLFile()); 
 		    	fos = new FileOutputStream(binFileName);
 		    	out = new ObjectOutputStream(fos);
 		    	out.writeObject(this.userRuntimeObject);
@@ -176,7 +176,7 @@ import agentgui.core.project.Project;
 		    	ex.printStackTrace();
 		    	saved = false;
 		    }
-			currProject.setNotChangedButNotify(new SimulationSetupsChangeNotification(SimulationSetups.SIMULATION_SETUP_SAVED));
+			this.currProject.setNotChangedButNotify(new SimulationSetupsChangeNotification(SimulationSetups.SIMULATION_SETUP_SAVED));
 		
 		} catch (Exception e) {
 			System.out.println("XML-Error while saving Setup-File!");

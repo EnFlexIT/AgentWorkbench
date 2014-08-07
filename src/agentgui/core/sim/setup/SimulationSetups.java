@@ -74,7 +74,8 @@ public class SimulationSetups extends Hashtable<String, String> {
 	public static final int SIMULATION_SETUP_COPY = 2;
 	public static final int SIMULATION_SETUP_REMOVE = 3;
 	public static final int SIMULATION_SETUP_RENAME = 4;
-	public static final int SIMULATION_SETUP_SAVED = 5;
+	public static final int SIMULATION_SETUP_PREPARE_SAVING = 5;
+	public static final int SIMULATION_SETUP_SAVED = 6;
 	
 	private final String XML_FilePostfix = Application.getGlobalInfo().getXmlFilePostfix();
 	
@@ -91,12 +92,12 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 * @param currentSimulationSetup the current simulation setup 
 	 */
 	public SimulationSetups(Project project, String currentSimulationSetup) {
-		currProject = project;
-		currSimSetupName = currentSimulationSetup;
+		this.currProject = project;
+		this.currSimSetupName = currentSimulationSetup;
 	}
 
 	/**
-	 * This Method creates the 'default' - Simulation-Setup.
+	 * This Method creates the 'default' {@link SimulationSetup}.
 	 */
 	public void setupCreateDefault() {
 		
@@ -107,12 +108,12 @@ public class SimulationSetups extends Hashtable<String, String> {
 		xmlFile = currProject.getSimulationSetups().getSuggestSetupFile(currSimSetupName);
 		
 		this.put(currSimSetupName, xmlFile);
-		currProject.setSimulationSetupCurrent(currSimSetupName);
+		this.currProject.setSimulationSetupCurrent(currSimSetupName);
 		
-		currSimSetup = new SimulationSetup(currProject); 
+		this.currSimSetup = new SimulationSetup(this.currProject); 
 		
-		XMLPathName = currProject.getSubFolder4Setups(true) + xmlFile;		
-		currSimXMLFile = XMLPathName;
+		XMLPathName = this.currProject.getSubFolder4Setups(true) + xmlFile;		
+		this.currSimXMLFile = XMLPathName;
 
 		this.setupSave();
 		
@@ -181,10 +182,10 @@ public class SimulationSetups extends Hashtable<String, String> {
 
 		this.currSimSetup.save();
 		
-		// --- Verzeichnis-Info zusammenbauen -------------
-		String pathSimXML  = currProject.getSubFolder4Setups(true);
+		// --- Prepare path info --------------------------
+		String pathSimXML  = this.currProject.getSubFolder4Setups(true);
 		String fileNameXMLNew = pathSimXML + fileNameNew; 
-		// --- Datei kopieren -----------------------------
+		// --- Copy File ----------------------------------
 		FileCopier fc = new FileCopier();
 		fc.copyFile(currSimXMLFile, fileNameXMLNew);
 		
@@ -195,42 +196,41 @@ public class SimulationSetups extends Hashtable<String, String> {
 		fc = new FileCopier();
 		fc.copyFile(userObjectFileNameOld, userObjectFileNameNew);
 		
-		// --- Alte Datei und alten Eintrag raus ----------
+		// --- Remove old file and old entry --------------
 		new File(currSimXMLFile).delete();
 		new File(userObjectFileNameOld).delete();
 		this.remove(nameOld);
-		// --- Neuen Eintrag rein -------------------------
+		// --- Insert new entry ----------------------------
 		this.put(nameNew, fileNameNew);
 		this.setupLoadAndFocus(SIMULATION_SETUP_RENAME, nameNew, false);
-		// --- Projekt speichern --------------------------
-		currProject.save();
+		// --- Save Project -------------------------------
+		this.currProject.save();
 	}
 
 	/**
-	 * Copies a Setup and the associated file.
+	 * Copies a {@link SimulationSetup} and the associated files.
 	 *
-	 * @param nameOld the name old
-	 * @param nameNew the name new
-	 * @param fileNameNew the file name new
+	 * @param nameOld the name of the {@link SimulationSetup} to copy
+	 * @param nameNew the name of the copied {@link SimulationSetup}
+	 * @param fileNameNew the file name for the new {@link SimulationSetup}
 	 */
 	public void setupCopy(String nameOld, String nameNew, String fileNameNew) {
 
 		if (this.containsKey(nameOld)==false) return;
-		// --- Aktuellen Zustand speichern ----------------
-		currProject.save();
-		
-		// --- Verzeichnis-Info zusammenbauen -------------
-		String pathSimXML  = currProject.getSubFolder4Setups(true);
+		// --- Save current state and project -------------
+		this.currProject.save();
+		// --- Prepare folder info ------------------------
+		String pathSimXML  = this.currProject.getSubFolder4Setups(true);
 		String fileNameXMLNew = pathSimXML + fileNameNew; 
-		// --- Datei kopieren -----------------------------
+		// --- Copy File ----------------------------------
 		FileCopier fc = new FileCopier();
-		fc.copyFile(currSimXMLFile, fileNameXMLNew);
+		fc.copyFile(this.currSimXMLFile, fileNameXMLNew);
 		// --- Name und Dateiname hinzufügen --------------
 		this.put(nameNew, fileNameNew);
 		// --- Fokus auf das aktuelle Setup ---------------
 		this.setupLoadAndFocus(SIMULATION_SETUP_COPY,nameNew, false);
-		// --- Projekt speichern --------------------------
-		currProject.save();
+		// --- Save Project --------------------------
+		this.currProject.save();
 	}
 	
 	/**
@@ -245,13 +245,13 @@ public class SimulationSetups extends Hashtable<String, String> {
 		boolean done = true;
 		if (this.containsKey(name)==false) return false;
 		
-		// --- configure to the specified setup -----------
+		// --- Configure to the specified setup -----------
 		this.currSimSetupName = name;
 		this.currProject.setSimulationSetupCurrent(name);
 		this.currSimXMLFile = currProject.getSubFolder4Setups(true) + this.get(currSimSetupName);
 		
 		// --- Create new instance of SimulationSetup -----
-		this.currSimSetup = new SimulationSetup(currProject);
+		this.currSimSetup = new SimulationSetup(this.currProject);
 				
 		// --- Read file if needed ------------------------ 
 		if (isAddedNew==false) {
@@ -263,21 +263,15 @@ public class SimulationSetups extends Hashtable<String, String> {
 	}
 	
 	/**
-	 * Finds and returns the first Setup name using an alphabetic order.
+	 * Finds and returns the first setup name using an alphabetic order.
 	 * @return the first Setup name using an alphabetic order
 	 */
 	public String getFirstSetup() {
-
 		if (this.size()==0) return null;
-			
-		Vector<String> v = new Vector<String>(this.keySet());
-		Collections.sort(v, String.CASE_INSENSITIVE_ORDER);
-		Iterator<String> it = v.iterator();
-		while (it.hasNext()) {
-			currSimSetupName = it.next();
-			break;
-		}
-		return currSimSetupName;
+		Vector<String> simSetupNames = new Vector<String>(this.keySet());
+		Collections.sort(simSetupNames, String.CASE_INSENSITIVE_ORDER);
+		this.currSimSetupName = simSetupNames.get(0); 
+		return this.currSimSetupName;
 	}
 	
 	/**
@@ -288,11 +282,11 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 */
 	public String getSuggestSetupFile(String inputText) {
 		
-		String RegExp = "[a-z;_;0-9]";
+		String regExp = "[a-z;_;0-9]";
 		String suggest = inputText;
 		String suggestNew = "";
 		
-		// --- Vorarbeiten ------------------------------
+		// --- Preparations ---------------------
 		suggest = suggest.toLowerCase();
 		suggest = suggest.replaceAll("  ", " ");
 		suggest = suggest.replace(" ", "_");
@@ -301,10 +295,10 @@ public class SimulationSetups extends Hashtable<String, String> {
 		suggest = suggest.replace("ö", "oe");
 		suggest = suggest.replace("ü", "ue");
 		
-		// --- Alle Buchstaben untersuchen --------------
+		// --- Examine all characters -----------
 		for (int i = 0; i < suggest.length(); i++) {
 			String SngChar = "" + suggest.charAt(i);
-			if ( SngChar.matches( RegExp ) == true ) {
+			if (SngChar.matches(regExp) == true ) {
 				suggestNew = suggestNew + SngChar;	
 			}						
 	    }
@@ -314,11 +308,11 @@ public class SimulationSetups extends Hashtable<String, String> {
 	}
 	
 	/**
-	 * This Method checks if the incomming Setup-Name is already
-	 * used in the current List of Setups (Hashmap).
+	 * This Method checks if the incoming Setup-Name is already
+	 * used in the current List of Setups (HashMap).
 	 *
-	 * @param setupName2Test the setup name2 test
-	 * @return true if the setup name is already used in the current list of setups
+	 * @param setupName2Test the setup name to test
+	 * @return true, if the setup name is already used in the current list of setups
 	 */
 	public boolean containsSetupName(String setupName2Test) {
 		
@@ -338,8 +332,9 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 */
 	public void setupSave() {
 		if (currSimSetup!=null) {
-			currSimSetup.save();
-			currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(SIMULATION_SETUP_SAVED));
+			this.currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(SIMULATION_SETUP_PREPARE_SAVING));
+			this.currSimSetup.save();
+			this.currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(SIMULATION_SETUP_SAVED));
 		}
 		this.setupCleanUpSubFolder();
 	}
@@ -347,12 +342,11 @@ public class SimulationSetups extends Hashtable<String, String> {
 	/**
 	 * This Method loads the current Simulation-Setup to the local
 	 * variable 'currSimSetup' which can be get and set by using
-	 * 'getCurrSimSetup' or 'setCurrSimSetup'.
+	 * {@link #getCurrSimSetup()} or {@link #setCurrSimSetup(SimulationSetup)}.
 	 */
 	private boolean setupOpen() {
 		
 		boolean done = true;
-		
 		try {
 			JAXBContext pc = JAXBContext.newInstance(currSimSetup.getClass());
 			Unmarshaller um = pc.createUnmarshaller();
@@ -385,7 +379,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		//--- Reading the serializable user object of the simsetup from the 'agentgui_userobject.bin' ---
 		String userObjectFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currSimXMLFile);
 		File userObjectFile = new File(userObjectFileName);
-		if (userObjectFile.exists()) {
+		if (userObjectFile.exists()==true) {
 			Serializable userObject = null;
 			FileInputStream fis = null;
 			ObjectInputStream in = null;
@@ -398,10 +392,22 @@ public class SimulationSetups extends Hashtable<String, String> {
 				
 			} catch(IOException ex) {
 				ex.printStackTrace();
+				try {
+					in.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
 				return false;
+				
 			} catch(ClassNotFoundException ex) {
 				ex.printStackTrace();
+				try {
+					in.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
 				return false;
+			
 			}
 		}
 		
@@ -434,13 +440,14 @@ public class SimulationSetups extends Hashtable<String, String> {
 		String pathSimXML  = currProject.getSubFolder4Setups(true);
 		File[] files = new File(pathSimXML).listFiles();
 		if (files != null) {
-			// --- Auflistung der Dateien durchlaufen -----
+			// --- Run through the list of files in folder ----------
 			for (int i = 0; i < files.length; i++) {
-				// --- Nur xml-Dateien beachten -----------
+				// --- Just work on files ending with xml -----------
 				if (files[i].getName().endsWith(XML_FilePostfix)) {
 					if (this.containsValue(files[i].getName())==false) {
+						// --- If not in the list of setups, delete -
 						files[i].delete();
-						// --- bin File ebenfalls löschen -
+						// --- Also delete the bin-file, if there ---
 						String binFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(files[i].getAbsolutePath());
 						if (binFileName!=null) {
 							File binFile = new File(binFileName);
@@ -448,38 +455,36 @@ public class SimulationSetups extends Hashtable<String, String> {
 								binFile.delete();
 							}
 						}
-						// --------------------------------
 					}
-				}
-			}
-			// --------------------------------------------
-		}
+				} // end is xml-file
+			} // end for
+		} // end if
 	}
 	
 	/**
-	 * Gets the curr sim setup.
-	 * @return the currSimSetup
+	 * Returns the current {@link SimulationSetup}.
+	 * @return {@link SimulationSetup}
 	 */
 	public SimulationSetup getCurrSimSetup() {
 		return currSimSetup;
 	}
 	/**
-	 * Sets the curr sim setup.
-	 * @param currSimSetup the currSimSetup to set
+	 * Sets the current {@link SimulationSetup}.
+	 * @param currSimSetup the new current {@link SimulationSetup}
 	 */
 	public void setCurrSimSetup(SimulationSetup currSimSetup) {
 		this.currSimSetup = currSimSetup;
 	}
 
 	/**
-	 * Sets the curr sim xml file.
+	 * Sets the current {@link SimulationSetup}'s xml file name as String.
 	 * @param currSimXMLFile the currSimXMLFile to set
 	 */
 	public void setCurrSimXMLFile(String currSimXMLFile) {
 		this.currSimXMLFile = currSimXMLFile;
 	}
 	/**
-	 * Gets the curr sim xml file.
+	 * Returns the current {@link SimulationSetup}'s xml file name as String.
 	 * @return the currSimXMLFile
 	 */
 	public String getCurrSimXMLFile() {

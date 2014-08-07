@@ -488,7 +488,7 @@ public class ServerMasterAgent extends Agent {
 
 			File localUpdateDirFile = new File(localUpdateDir);
 			File localVersionInfoFile = new File(localVersionInfo);
-			if (localVersionInfoFile.exists()) {
+			if (localVersionInfoFile.exists()==true) {
 				// --- File 'latestVersion.xml' is available ------------------ 
 				UpdateInformation updateInformation = new UpdateInformation();
 				updateInformation.loadUpdateInformation(localVersionInfoFile);
@@ -531,6 +531,7 @@ public class ServerMasterAgent extends Agent {
 		 * @param exceptFiles the except files
 		 */
 		private void cleanUpUpdateFolder(File file, Vector<File> exceptFiles) {
+			if (file==null) return;
 			File[] files = file.listFiles();
 			for (int i = 0; i < files.length; i++) {
 				if (exceptFiles==null) {

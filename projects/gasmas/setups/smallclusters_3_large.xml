@@ -664,12 +664,12 @@
             <value>1357152829312</value>
         </entry>
         <entry>
-            <key>TimeStop</key>
-            <value>1357239229312</value>
-        </entry>
-        <entry>
             <key>DisplayUnitIndex</key>
             <value>1</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1357239229312</value>
         </entry>
         <entry>
             <key>TimeFormat</key>
