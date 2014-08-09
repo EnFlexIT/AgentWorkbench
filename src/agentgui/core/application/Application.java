@@ -51,7 +51,7 @@ import agentgui.core.jade.ClassSearcher;
 import agentgui.core.jade.Platform;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectsLoaded;
-import agentgui.core.sim.setup.SimulationSetups;
+import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.systemtray.AgentGUITrayIcon;
 import agentgui.core.update.AgentGuiUpdater;
 import agentgui.core.webserver.DownloadServer;
@@ -567,7 +567,7 @@ public class Application {
 					Project projectOpened = getProjectsLoaded().add(projectFolder);
 					if (projectOpened!=null) {
 						// --- Select the specified simulation setup ------------------
-						boolean setupLoaded = projectOpened.getSimulationSetups().setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, simulationSetup, false);
+						boolean setupLoaded = projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
 						if (setupLoaded==true) {
 							if (getJadePlatform().jadeStart(false)==true) {
 								// --- Start Setup ------------------------------------

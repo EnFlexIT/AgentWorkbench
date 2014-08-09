@@ -46,12 +46,12 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.FileCopier;
 import agentgui.core.project.Project;
+import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 
 /**
  * This class represents the list of setups available in a {@link Project}.
@@ -67,15 +67,6 @@ public class SimulationSetups extends Hashtable<String, String> {
 	private static final long serialVersionUID = -9078535303459653695L;
 
 	public static final String DEFAULT_SETUP_NAME = "default";
-	
-	public static final String CHANGED = "SimSetups";
-	public static final int SIMULATION_SETUP_LOAD = 0;
-	public static final int SIMULATION_SETUP_ADD_NEW = 1;
-	public static final int SIMULATION_SETUP_COPY = 2;
-	public static final int SIMULATION_SETUP_REMOVE = 3;
-	public static final int SIMULATION_SETUP_RENAME = 4;
-	public static final int SIMULATION_SETUP_PREPARE_SAVING = 5;
-	public static final int SIMULATION_SETUP_SAVED = 6;
 	
 	private final String XML_FilePostfix = Application.getGlobalInfo().getXmlFilePostfix();
 	
@@ -131,7 +122,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Name und Dateiname hinzufügen --------------
 		this.put(name, newFileName);
 		// --- Fokus auf das aktuelle Setup ---------------
-		this.setupLoadAndFocus(SIMULATION_SETUP_ADD_NEW, name, true);
+		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_ADD_NEW, name, true);
 		// --- Projekt speichern --------------------------
 		currProject.save();
 	}
@@ -151,7 +142,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		new File(userObjectFileName).delete();
 		
 		// --- Interessenten informieren ------------------
-		currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(SIMULATION_SETUP_REMOVE));
+		currProject.setChangedAndNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_REMOVE));
 		
 		// --- Groesse des Rests berücksichtigen ----------
 		if (this.size() == 0) {
@@ -163,7 +154,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 
 		} else {
 			// --- Load first Setup -----------------------
-			this.setupLoadAndFocus(SIMULATION_SETUP_LOAD,this.getFirstSetup(), false);
+			this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD,this.getFirstSetup(), false);
 		}
 		// --- Save project -------------------------------
 		currProject.save();
@@ -182,17 +173,15 @@ public class SimulationSetups extends Hashtable<String, String> {
 
 		this.currSimSetup.save();
 		
-		// --- Prepare path info --------------------------
+		// --- Prepare folder info and copy XML file ------
 		String pathSimXML  = this.currProject.getSubFolder4Setups(true);
 		String fileNameXMLNew = pathSimXML + fileNameNew; 
-		// --- Copy File ----------------------------------
 		FileCopier fc = new FileCopier();
 		fc.copyFile(currSimXMLFile, fileNameXMLNew);
 		
 		// --- Copy user object file ----------------------
-		String userObjectFileNameOld = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currSimXMLFile);
+		String userObjectFileNameOld = Application.getGlobalInfo().getBinFileNameFromXmlFileName(this.currSimXMLFile);
 		String userObjectFileNameNew = Application.getGlobalInfo().getBinFileNameFromXmlFileName(fileNameXMLNew);
-		
 		fc = new FileCopier();
 		fc.copyFile(userObjectFileNameOld, userObjectFileNameNew);
 		
@@ -200,9 +189,10 @@ public class SimulationSetups extends Hashtable<String, String> {
 		new File(currSimXMLFile).delete();
 		new File(userObjectFileNameOld).delete();
 		this.remove(nameOld);
+		
 		// --- Insert new entry ----------------------------
 		this.put(nameNew, fileNameNew);
-		this.setupLoadAndFocus(SIMULATION_SETUP_RENAME, nameNew, false);
+		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_RENAME, nameNew, false);
 		// --- Save Project -------------------------------
 		this.currProject.save();
 	}
@@ -219,16 +209,22 @@ public class SimulationSetups extends Hashtable<String, String> {
 		if (this.containsKey(nameOld)==false) return;
 		// --- Save current state and project -------------
 		this.currProject.save();
-		// --- Prepare folder info ------------------------
+		
+		// --- Prepare folder info and copy XML file ------
 		String pathSimXML  = this.currProject.getSubFolder4Setups(true);
 		String fileNameXMLNew = pathSimXML + fileNameNew; 
-		// --- Copy File ----------------------------------
 		FileCopier fc = new FileCopier();
 		fc.copyFile(this.currSimXMLFile, fileNameXMLNew);
-		// --- Name und Dateiname hinzufügen --------------
+		
+		// --- Copy user object file ----------------------
+		String userObjectFileNameOld = Application.getGlobalInfo().getBinFileNameFromXmlFileName(this.currSimXMLFile);
+		String userObjectFileNameNew = Application.getGlobalInfo().getBinFileNameFromXmlFileName(fileNameXMLNew);
+		fc = new FileCopier();
+		fc.copyFile(userObjectFileNameOld, userObjectFileNameNew);
+		
+		// --- Insert new entry ----------------------------
 		this.put(nameNew, fileNameNew);
-		// --- Fokus auf das aktuelle Setup ---------------
-		this.setupLoadAndFocus(SIMULATION_SETUP_COPY,nameNew, false);
+		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_COPY, nameNew, false);
 		// --- Save Project --------------------------
 		this.currProject.save();
 	}
@@ -240,7 +236,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 * @param name the name
 	 * @param isAddedNew the is added new
 	 */
-	public boolean setupLoadAndFocus(int action, String name, boolean isAddedNew) {
+	public boolean setupLoadAndFocus(SimNoteReason action, String name, boolean isAddedNew) {
 		
 		boolean done = true;
 		if (this.containsKey(name)==false) return false;
@@ -257,7 +253,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		if (isAddedNew==false) {
 			done = this.setupOpen();
 		}		
-		this.currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(action));
+		this.currProject.setChangedAndNotify(new SimulationSetupNotification(action));
 		return done;
 		
 	}
@@ -332,9 +328,9 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 */
 	public void setupSave() {
 		if (currSimSetup!=null) {
-			this.currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(SIMULATION_SETUP_PREPARE_SAVING));
+			this.currProject.setChangedAndNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_PREPARE_SAVING));
 			this.currSimSetup.save();
-			this.currProject.setChangedAndNotify(new SimulationSetupsChangeNotification(SIMULATION_SETUP_SAVED));
+			this.currProject.setChangedAndNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_SAVED));
 		}
 		this.setupCleanUpSubFolder();
 	}

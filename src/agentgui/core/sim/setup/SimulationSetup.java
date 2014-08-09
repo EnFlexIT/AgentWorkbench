@@ -52,6 +52,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
+import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 
 /**
  * This is the model class for a simulation setup.
@@ -176,7 +177,7 @@ import agentgui.core.project.Project;
 		    	ex.printStackTrace();
 		    	saved = false;
 		    }
-			this.currProject.setNotChangedButNotify(new SimulationSetupsChangeNotification(SimulationSetups.SIMULATION_SETUP_SAVED));
+			this.currProject.setNotChangedButNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_SAVED));
 		
 		} catch (Exception e) {
 			System.out.println("XML-Error while saving Setup-File!");

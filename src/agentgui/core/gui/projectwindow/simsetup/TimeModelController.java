@@ -36,8 +36,7 @@ import agentgui.core.application.Language;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.core.sim.setup.SimulationSetups;
-import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
+import agentgui.core.sim.setup.SimulationSetupNotification;
 import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
 import agentgui.simulationService.time.TimeModel;
 
@@ -218,12 +217,11 @@ public class TimeModelController implements Observer {
 				this.setupLoad();
 			}
 		
-		} else if (updateObject instanceof SimulationSetupsChangeNotification) {
+		} else if (updateObject instanceof SimulationSetupNotification) {
 			// --- Change inside the simulation setup ---------------
-			SimulationSetupsChangeNotification scn = (SimulationSetupsChangeNotification) updateObject;
-			int updateReason=scn.getUpdateReason();
-			switch (updateReason) {
-			case SimulationSetups.SIMULATION_SETUP_SAVED:
+			SimulationSetupNotification scn = (SimulationSetupNotification) updateObject;
+			switch (scn.getUpdateReason()) {
+			case SIMULATION_SETUP_SAVED:
 				break;
 				
 			default:

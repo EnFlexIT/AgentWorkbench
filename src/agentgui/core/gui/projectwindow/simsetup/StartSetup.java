@@ -69,8 +69,9 @@ import agentgui.core.gui.AgentSelector;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.sim.setup.SimulationSetups;
-import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
+import agentgui.core.sim.setup.SimulationSetupNotification;
 
 import javax.swing.JSplitPane;
 import javax.swing.JComboBox;
@@ -618,7 +619,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if ( currSimSetup==null ) {
 			SimulationSetups setups = currProject.getSimulationSetups();
 			String currSimSetupName = currProject.getSimulationSetupCurrent();
-			setups.setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, currSimSetupName, false);
+			setups.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, currSimSetupName, false);
 			currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
 		}
 		// --- Load the current DefaultListModel laden --------------
@@ -796,15 +797,15 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
-	public void update(Observable arg0, Object arg1) {
+	public void update(Observable observable, Object updateObject) {
 		
-		if ( arg1.toString().equalsIgnoreCase(SimulationSetups.CHANGED)) {
+		if (updateObject instanceof SimulationSetupNotification) {
 			// --- Change inside the simulation setup ---------------
-			SimulationSetupsChangeNotification scn = (SimulationSetupsChangeNotification) arg1;
+			SimulationSetupNotification scn = (SimulationSetupNotification) updateObject;
 			switch (scn.getUpdateReason()) {
-			case SimulationSetups.SIMULATION_SETUP_SAVED:
+			case SIMULATION_SETUP_SAVED:
 				break;
-			case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
+			case SIMULATION_SETUP_ADD_NEW:
 				this.jListModelAgents2Start = new DefaultListModel();
 				this.currSimSetup.setAgentDefaultListModel(SimulationSetup.AGENT_LIST_ManualConfiguration, this.jListModelAgents2Start);
 				this.setupLoad();

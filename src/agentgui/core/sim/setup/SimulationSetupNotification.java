@@ -32,41 +32,48 @@ package agentgui.core.sim.setup;
  * Class which is used for notifications about changes and actions
  * inside the SimulationSetups, like 'addNew', 'saved' and so on.
  * Which action was used can be set by the constructor while using 
- * the static globals of {@link SimulationSetups}. 
+ * the containing enumeration {@link SimNoteReason}. 
  *     
  * @see SimulationSetups
- * @see SimulationSetups#CHANGED
- * @see SimulationSetups#SIMULATION_SETUP_ADD_NEW
- * @see SimulationSetups#SIMULATION_SETUP_COPY
- * @see SimulationSetups#SIMULATION_SETUP_REMOVE
- * @see SimulationSetups#SIMULATION_SETUP_RENAME
- * @see SimulationSetups#SIMULATION_SETUP_SAVED
+ * @see SimNoteReason
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class SimulationSetupsChangeNotification {
+public class SimulationSetupNotification {
 	
-	private int updateReason;
+	
+	/** The Enumeration for the notification reasons. */
+	public enum SimNoteReason {
+		SIMULATION_SETUP_LOAD,
+		SIMULATION_SETUP_ADD_NEW,
+		SIMULATION_SETUP_COPY,
+		SIMULATION_SETUP_REMOVE,
+		SIMULATION_SETUP_RENAME,
+		SIMULATION_SETUP_PREPARE_SAVING,
+		SIMULATION_SETUP_SAVED
+	}
+	
+	private SimNoteReason updateReason;
 	
 	/**
 	 * Instantiates a new simulation setups change notification.
 	 * @param reason the reason
 	 */
-	public SimulationSetupsChangeNotification(int reason) {
+	public SimulationSetupNotification(SimNoteReason reason) {
 		updateReason = reason;
 	}
 	/**
 	 * Sets the update reason.
 	 * @param updateReason the new update reason
 	 */
-	public void setUpdateReason(int updateReason) {
+	public void setUpdateReason(SimNoteReason updateReason) {
 		this.updateReason = updateReason;
 	}
 	/**
 	 * Gets the update reason.
 	 * @return the update reason
 	 */
-	public int getUpdateReason() {
+	public SimNoteReason getUpdateReason() {
 		return updateReason;
 	}
 	
@@ -74,7 +81,7 @@ public class SimulationSetupsChangeNotification {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return SimulationSetups.CHANGED;
+		return "SimulationSetup." + updateReason.toString();
 	}
 	
 }

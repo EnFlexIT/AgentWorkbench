@@ -61,8 +61,6 @@ import agentgui.core.gui.ClassSelector;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
 import agentgui.core.project.RemoteContainerConfiguration;
-import agentgui.core.sim.setup.SimulationSetups;
-import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
 import agentgui.simulationService.balancing.DynamicLoadBalancing;
 import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.balancing.StaticLoadBalancing;
@@ -1214,21 +1212,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	@Override
 	public void update(Observable o, Object notifyObject) {
 		
-		if ( notifyObject.toString().equalsIgnoreCase(SimulationSetups.CHANGED)) {
-			// --- Change inside the simulation setup ---------------
-			SimulationSetupsChangeNotification scn = (SimulationSetupsChangeNotification) notifyObject;
-			switch (scn.getUpdateReason()) {
-			case SimulationSetups.SIMULATION_SETUP_SAVED:
-				break;
-			default:
-				break;
-			}
-		
-		} else if (notifyObject==Project.CHANGED_DistributionSetup) {
+		if (notifyObject==Project.CHANGED_DistributionSetup) {
 			this.setupLoad();
-			
-		} else {
-			//System.out.println( this.getClass().getName() + ": " + arg1.toString() );	
 		}
 	}
 

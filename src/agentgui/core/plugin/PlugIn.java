@@ -48,8 +48,7 @@ import agentgui.core.ontologies.gui.OntologyClassWidget;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.core.sim.setup.SimulationSetups;
-import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
+import agentgui.core.sim.setup.SimulationSetupNotification;
 
 /**
  * This abstract class is the root for customized plug-in's, which can
@@ -417,25 +416,32 @@ public abstract class PlugIn implements Observer {
 		// ----------------------------------------------------------
 		// --- Changes with the SimulationSetups --------------------			
 		// ----------------------------------------------------------
-		} else if (updateObject.toString().equals(SimulationSetups.CHANGED)) {
+		} else if (updateObject instanceof SimulationSetupNotification) {
 			
-			SimulationSetupsChangeNotification sscn = (SimulationSetupsChangeNotification) updateObject;
-			int sscnUpdate = sscn.getUpdateReason();
+			SimulationSetupNotification sscn = (SimulationSetupNotification) updateObject;
 			SimulationSetup simSetup = project.getSimulationSetups().getCurrSimSetup();
-			if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_ADD_NEW) {
+			switch (sscn.getUpdateReason()) {
+			case SIMULATION_SETUP_ADD_NEW:
 				this.onSimSetupAddNew(simSetup);
-			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_COPY) {
+				break;
+			case SIMULATION_SETUP_COPY:
 				this.onSimSetupCopy(simSetup);
-			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_LOAD) {
+				break;
+			case SIMULATION_SETUP_LOAD:
 				this.onSimSetupLoad(simSetup);
-			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_REMOVE) {
-				this.onSimSetupRemove(simSetup);
-			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_RENAME) {
-				this.onSimSetupRename(simSetup);
-			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_PREPARE_SAVING) {
+				break;
+			case SIMULATION_SETUP_PREPARE_SAVING:
 				this.onSimSetupPrepareSaving(simSetup);
-			} else if (sscnUpdate==SimulationSetups.SIMULATION_SETUP_SAVED) {
-				this.onSimSetupSaved(simSetup);				
+				break;
+			case SIMULATION_SETUP_REMOVE:
+				this.onSimSetupRemove(simSetup);
+				break;
+			case SIMULATION_SETUP_RENAME:
+				this.onSimSetupRename(simSetup);
+				break;
+			case SIMULATION_SETUP_SAVED:
+				this.onSimSetupSaved(simSetup);
+				break;
 			}
 		
 		// ----------------------------------------------------------

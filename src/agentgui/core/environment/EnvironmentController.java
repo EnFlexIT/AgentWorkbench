@@ -41,7 +41,7 @@ import javax.swing.DefaultListModel;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
+import agentgui.core.sim.setup.SimulationSetupNotification;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.agents.AbstractDisplayAgent;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
@@ -272,15 +272,15 @@ public abstract class EnvironmentController extends Observable implements Observ
 	public void update(Observable o, Object arg) {
 		if(o.equals(currProject) && arg == Project.SAVED){
 			this.saveEnvironment();
-		}else if(o.equals(currProject) && arg instanceof SimulationSetupsChangeNotification){
-			this.handleSimSetupChange((SimulationSetupsChangeNotification) arg);
+		}else if(o.equals(currProject) && arg instanceof SimulationSetupNotification){
+			this.handleSimSetupChange((SimulationSetupNotification) arg);
 		}
 	}
 	/**
 	 * Invoked by the project when the simulation setup change event occurs.
 	 * @param sscn the SimulationSetupsChangeNotification that can be differentiated by its globals
 	 */
-	protected abstract void handleSimSetupChange(SimulationSetupsChangeNotification sscn);
+	protected abstract void handleSimSetupChange(SimulationSetupNotification sscn);
 	
 	
 	/** Load environment model from files */

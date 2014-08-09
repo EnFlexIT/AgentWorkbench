@@ -50,8 +50,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.core.sim.setup.SimulationSetups;
-import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
+import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
+import agentgui.core.sim.setup.SimulationSetupNotification;
 
 /**
  * The Class SetupSelectorToolbar is used in the main toolbar of the application
@@ -255,7 +255,7 @@ public class SetupSelectorToolbar implements ActionListener {
 			if (this.getJComboBoxSetupSelector().getSelectedItem()!=null) {
 				String selectedSetup = this.getJComboBoxSetupSelector().getSelectedItem().toString();	
 				this.currProject.getSimulationSetups().setupSave();
-				this.currProject.getSimulationSetups().setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, selectedSetup, false);
+				this.currProject.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, selectedSetup, false);
 			}
 		} else if (ae.getSource()==this.getJButtonSetupRename()) {
 			this.setupRename();
@@ -281,13 +281,13 @@ public class SetupSelectorToolbar implements ActionListener {
 		 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 		 */
 		@Override
-		public void update(Observable observable, Object arg) {
+		public void update(Observable observable, Object updateObject) {
 			
-			if ( arg.toString().equalsIgnoreCase(SimulationSetups.CHANGED)) {
+			if (updateObject instanceof SimulationSetupNotification) {
 				// --- Change inside the simulation setup ---------------
-				SimulationSetupsChangeNotification scn = (SimulationSetupsChangeNotification) arg;
+				SimulationSetupNotification scn = (SimulationSetupNotification) updateObject;
 				switch (scn.getUpdateReason()) {
-				case SimulationSetups.SIMULATION_SETUP_SAVED:
+				case SIMULATION_SETUP_SAVED:
 					break;
 				default:
 					setupLoad();	
@@ -332,7 +332,7 @@ public class SetupSelectorToolbar implements ActionListener {
 		// --- Load DefaultListModel laden ---------
 		this.currSimSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
 		if (this.currSimSetup==null) {
-			this.currProject.getSimulationSetups().setupLoadAndFocus(SimulationSetups.SIMULATION_SETUP_LOAD, this.currProject.getSimulationSetupCurrent(), false);
+			this.currProject.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, this.currProject.getSimulationSetupCurrent(), false);
 			this.currSimSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
 		}
 	}

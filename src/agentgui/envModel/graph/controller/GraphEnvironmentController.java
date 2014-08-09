@@ -59,8 +59,7 @@ import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.gui.ProgressMonitor;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.core.sim.setup.SimulationSetups;
-import agentgui.core.sim.setup.SimulationSetupsChangeNotification;
+import agentgui.core.sim.setup.SimulationSetupNotification;
 import agentgui.envModel.graph.controller.yedGraphml.YedGraphMLFileImporter;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
@@ -286,19 +285,19 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @param sscn The SimulationSetupChangeNotifications to handle
      */
     @Override
-    protected void handleSimSetupChange(SimulationSetupsChangeNotification sscn) {
+    protected void handleSimSetupChange(SimulationSetupNotification sscn) {
 
 		switch (sscn.getUpdateReason()) {
-		case SimulationSetups.SIMULATION_SETUP_LOAD:
+		case SIMULATION_SETUP_LOAD:
 		    this.updateGraphFileName();
 		    this.loadEnvironment(); // Loads network model and notifies observers
 		    break;
 	
-		case SimulationSetups.SIMULATION_SETUP_SAVED:
+		case SIMULATION_SETUP_SAVED:
 		    this.saveEnvironment();
 		    break;
 	
-		case SimulationSetups.SIMULATION_SETUP_ADD_NEW:
+		case SIMULATION_SETUP_ADD_NEW:
 		    
 			GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
 			if (this.networkModel!=null) {
@@ -316,13 +315,13 @@ public class GraphEnvironmentController extends EnvironmentController {
 	
 		    break;
 	
-		case SimulationSetups.SIMULATION_SETUP_COPY:
+		case SIMULATION_SETUP_COPY:
 		    this.updateGraphFileName();
 		    this.saveEnvironment();
 		    this.getProject().setUnsaved(true);
 		    break;
 	
-		case SimulationSetups.SIMULATION_SETUP_REMOVE:
+		case SIMULATION_SETUP_REMOVE:
 		    File graphFile = new File(getEnvFolderPath() + baseFileName + ".graphml");
 		    if (graphFile.exists()) {
 		    	graphFile.delete();
@@ -335,7 +334,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    updateGraphFileName();
 		    break;
 	
-		case SimulationSetups.SIMULATION_SETUP_RENAME:
+		case SIMULATION_SETUP_RENAME:
 		    File oldGraphFile = new File(getEnvFolderPath() + baseFileName + ".graphml");
 		    File oldComponentFile = new File(getEnvFolderPath() + baseFileName + ".xml");
 		    updateGraphFileName();
@@ -348,6 +347,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 				oldComponentFile.renameTo(newComponentFile);
 		    }
 		    break;
+		
+		case SIMULATION_SETUP_PREPARE_SAVING:
+			// --- Nothing to do here ---------------------
+			break;
 		}
 
     }
