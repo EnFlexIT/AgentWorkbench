@@ -83,11 +83,11 @@ public class DynTable extends JTable {
 	@SuppressWarnings("unchecked")
 	public void refreshTableModel() {
 		
-		int previouslySelectedRow = this.getSelectedRow();
+		int rowIndexSelected = this.getSelectedRow();
 		
 		DefaultTableModel dtm = (DefaultTableModel) this.getModel();
 		if (dtm.getColumnCount()==0) {
-			// --- Create a new table model -----
+			// --- Create a new table model ---------------
 			Vector<String> columnNames = new Vector<String>();
 			columnNames.add(" ");
 			columnNames.add(" ");
@@ -141,10 +141,13 @@ public class DynTable extends JTable {
 			
 		}
 		
-		if (previouslySelectedRow>-1) {
-			this.setRowSelectionInterval(previouslySelectedRow, previouslySelectedRow);
+		// --- Set new selection --------------------------
+		int rowCount = this.getRowCount();
+		if (rowIndexSelected>(rowCount-1)) {
+			this.setRowSelectionInterval(rowCount-1, rowCount-1);
+		} else if (rowIndexSelected>-1) {
+			this.setRowSelectionInterval(rowIndexSelected, rowIndexSelected);
 		}
-		
 	}
 	
 	/**
