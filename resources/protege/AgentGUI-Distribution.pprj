@@ -679,7 +679,7 @@
 	(default_facet_metaclass ":STANDARD-FACET")
 	(default_instance_widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
 	(default_slot_metaclass ":STANDARD-SLOT")
-	(included_projects "file:/C:/Programme/Protege_3.3.1/plugins/nl.uva.psy.swi.beangenerator/projects/SimpleJADEAbstractOntology.pprj")
+	(included_projects "file:/C:/Protege/plugins/nl.uva.psy.swi.beangenerator/projects/SimpleJADEAbstractOntology.pprj")
 	(journaling_enabled FALSE)
 	(next_frame_number 0)
 	(options [KB_001031_Instance_1])
