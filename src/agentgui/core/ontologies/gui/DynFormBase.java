@@ -1139,8 +1139,7 @@ public abstract class DynFormBase extends JPanel {
 
 		// --- Are there any sub nodes available? ---------
 		if (node.getChildCount()>0) {
-			int noOfSubClasses = node.getChildCount();
-			for (int i=0; i < noOfSubClasses; i++) {
+			for (int i=0; i < node.getChildCount(); i++) {
 				DefaultMutableTreeNode subNode = (DefaultMutableTreeNode) node.getChildAt(i);
 				this.resetValuesOnSubForm(subNode);
 			}

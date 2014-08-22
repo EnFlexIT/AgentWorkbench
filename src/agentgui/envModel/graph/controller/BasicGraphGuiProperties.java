@@ -33,6 +33,7 @@ import jade.core.AID;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
@@ -92,7 +93,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	private int defaultWidth = 300;
 	private int defaultHeight= 450;
 	
-	private Object graphObject = null;  //  @jve:decl-index=0:
+	private Object selectedGraphObject = null;  //  @jve:decl-index=0:
 	private GraphNode graphNode = null;
 	private NetworkComponent networkComponent = null;
 	private NetworkComponentAdapter networkComponentAdapter = null;
@@ -113,11 +114,13 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	
 	/**
 	 * Instantiates a new properties dialog for GraphNodes or NetworkComponents.
-	 * @param graphController the graph controller
+	 *
+	 * @param graphController the current {@link GraphEnvironmentController}
+	 * @param selectedGraphObject the selected graph object
 	 */
-	public BasicGraphGuiProperties(GraphEnvironmentController graphController, BasicGraphGuiJDesktopPane desktop, Object graphObject) {
+	public BasicGraphGuiProperties(GraphEnvironmentController graphController, Object selectedGraphObject) {
 		super(graphController);
-		this.graphObject = graphObject;
+		this.selectedGraphObject = selectedGraphObject;
 		this.initialize();
 	}
 
@@ -131,9 +134,17 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		this.setMaximizable(true);
 		this.setResizable(true);
 		this.setIconifiable(true);
-		
+
 		this.setClosable(true);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		
+		this.setTitle("Component");
+		this.setSize(this.defaultWidth, this.defaultHeight);
+		this.setInitialSizeAndPosition();
+		
+		// --- Remove Frame menu ----------------
+		BasicInternalFrameUI ui = (BasicInternalFrameUI)this.getUI();
+		ui.getNorthPane().remove(0);
 		
 		final JInternalFrame thisFrame = this;
 		this.addInternalFrameListener(new InternalFrameAdapter() {
@@ -183,13 +194,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			}
 		});
 		
-		this.setTitle("Component");
-		this.setSize(this.defaultWidth, this.defaultHeight);
-		this.setInitialSize();
-		
-		BasicInternalFrameUI ui = (BasicInternalFrameUI)this.getUI();
-		ui.getNorthPane().remove(0);
-		
 		this.configureForGraphObject();
 		this.setContentPane(this.getJContentPane());
 		
@@ -199,24 +203,31 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	}
 	
 	/**
-	 * Sets the initial size, if the frame opens.
+	 * Sets the initial size and position of the frame.
 	 */
-	private void setInitialSize() {
+	private void setInitialSizeAndPosition() {
 
-		// --- Configure the size of the frame ------------
+		// --- Get the initial x-position of the property window ----
+		int posBasicGraphGui = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getLocation().x;
+		int posVisViewOnBasicGraphGui = this.basicGraphGui.getVisView().getParent().getLocation().x; 
+		int initialX = posBasicGraphGui + posVisViewOnBasicGraphGui;
+		
 		if (this.graphDesktop!=null) {
+			Dimension desktopSize = this.graphDesktop.getSize();
+			Dimension newSize = new Dimension(this.defaultWidth, (int) (desktopSize.getHeight()*(2.0/3.0)));
 			if (this.graphDesktop.getLastOpenedEditor()==null) {
-				Dimension desktopSize = this.graphDesktop.getSize();
-				Dimension newSize = new Dimension(this.defaultWidth, (int) (desktopSize.getHeight()*(2.0/3.0)));
+				this.setLocation(initialX, 0);
 				this.setSize(newSize);
 			} else {
-				this.setSize(this.graphDesktop.getLastOpenedEditor().getSize());
+				int movementX = 10;
+				int movementY = 22;
+				Point lastEditorPosition = this.graphDesktop.getLastOpenedEditor().getLocation();
+				this.setLocation(lastEditorPosition.x+movementX, lastEditorPosition.y+movementY);
+				this.setSize(newSize);
 			}
 		} else {
-			this.setSize(new Dimension(this.defaultWidth, this.defaultHeight));
+			this.setLocation(initialX, 0);
 		}
-		// --- Set also the preferred size ----------------
-		this.setPreferredSize(this.getSize());
 	}
 	
 	/**
@@ -224,7 +235,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 * @return the graphObject
 	 */
 	public Object getGraphObject() {
-		return graphObject;
+		return selectedGraphObject;
 	}
 	
 	/**
@@ -240,7 +251,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			// --- Set the local variable ---------------------------
 			this.graphNode = (GraphNode) this.getGraphObject();
 			// --- Get the corresponding NetworkComponentAdapter ----			
-			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, (GraphNode) this.getGraphObject());
+			this.networkComponentAdapter = this.graphController.getNetworkModel().getNetworkComponentAdapter(this.graphController, this.graphNode);
 			title2Set = "Vertex: " + this.graphNode.getId();
 			
 		} else if (this.getGraphObject() instanceof GraphEdge) {

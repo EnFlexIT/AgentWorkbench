@@ -313,7 +313,6 @@ public class DynTableJPanel extends JPanel {
 			// --- Add the component to the JSplitPane ------------------------
 			switch (this.getExpansionDirection()) {
 			case DynTableJPanel.EXPANSION_Horizontal:
-				
 				this.getJSplitPaneExpanded().setRightComponent(jComponent2Add);
 				break;
 

@@ -55,7 +55,6 @@ public class TimeSeriesWidget extends OntologyClassWidget implements ActionListe
 	private static final int THUMBNAIL_WIDTH = 260;
 	private static final int THUMBNAIL_HEIGHT = 175;
 	
-//	private TimeSeriesChart currChart = null;  //  @jve:decl-index=0:
 	private TimeSeriesChartEditorJDialog tscejd = null;
 	
 	private JButton jButtonEdit = null;

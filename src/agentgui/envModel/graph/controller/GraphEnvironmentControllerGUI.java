@@ -346,18 +346,18 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 
     /**
      * This is the central method that allows the editing of component settings.
-     * @param graphObject the object, where the settings should be edited.
+     * @param selectedGraphObject the object, where the settings should be edited.
      */
-    private void editComponentSettings(Object graphObject) {
+    private void editComponentSettings(Object selectedGraphObject) {
 
-    	if (graphObject==null) return;
+    	if (selectedGraphObject==null) return;
     	
-    	ClusterNetworkComponent cnc = this.evaluateForClusterNetworkComponent(graphObject);
+    	ClusterNetworkComponent cnc = this.evaluateForClusterNetworkComponent(selectedGraphObject);
     	if (cnc!=null) {
 			this.setFocusOnAlternativeTab(cnc.getId());
 			
     	} else {
-    		new BasicGraphGuiProperties(this.getGraphController(), this.getBasicGraphGuiJDesktopPane(), graphObject);
+    		new BasicGraphGuiProperties(this.getGraphController(), selectedGraphObject);
     	}
     }
    

@@ -946,6 +946,38 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 	}
 
+	
+	/**
+	 * Returns the selected graph objects. These are either all selected {@link NetworkComponent}'s
+	 * or, in case of the selection of a single {@link GraphNode}   
+	 * @return the selected graph object
+	 */
+	public Set<Object> getSelectedGraphObject() {
+		
+		HashSet<Object> selectedGraphObject = new HashSet<Object>();
+
+		Set<GraphNode> nodesSelected = this.getPickedNodes();
+		Set<GraphEdge> edgesSelected = this.getPickedEdges();
+		
+		if (edgesSelected.size()==0 && nodesSelected.size()==0) {
+			// --- Nothing selected -----------------------
+			return null;
+		
+		} else {
+			// --- Something selected ---------------------
+			HashSet<NetworkComponent> fsNetComps = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesSelected);
+			if (fsNetComps==null || fsNetComps.size()==0) {
+				if (nodesSelected.size()==1) {
+					selectedGraphObject.add(nodesSelected.iterator().next());
+				}	
+			} else {
+				selectedGraphObject.addAll(fsNetComps);
+			}
+		}
+		return selectedGraphObject;
+	}
+	
+	
 	/**
 	 * Export the current graph as image by using a file selection dialog.
 	 */

@@ -58,7 +58,7 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	private GraphEnvironmentController graphController = null;
 	
 	private HashMap<String, JInternalFrame> editorFrames = null;  //  @jve:decl-index=0:
-	private JInternalFrame lastOpenedEditor = null;
+	private Vector<JInternalFrame> lastOpenedEditor = new Vector<JInternalFrame>();
 	private ComponentListener myComponentAdapter = null;  //  @jve:decl-index=0:
 
 	
@@ -91,6 +91,15 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 		return editorFrames;
 	}
 	/**
+	 * Returns, if available, the JInternalFrame for an object like GraphNode, NetworkComponet 
+	 * @param editorTitle the graph object (NetworkComponent or Node)
+	 * @return the instances of the related JInternalFrame, if available
+	 */
+	public JInternalFrame getEditor(String editorTitle) {
+		return this.getHashMapEditorFrames().get(editorTitle);
+	}
+	
+	/**
 	 * Can be used in order to register a property window for components or nodes.
 	 * @param internalFrame the JInternalFrame to register
 	 */
@@ -104,17 +113,7 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 */
 	public void unregisterEditor(JInternalFrame internalFrame) {
 		this.getHashMapEditorFrames().remove(internalFrame.getTitle());
-		if (internalFrame==this.getLastOpenedEditor()) {
-			this.setLastOpenedEditor(null);
-		}
-	}
-	/**
-	 * Returns, if available, the JInternalFrame for an object like GraphNode, NetworkComponet 
-	 * @param editorTitle the graph object (NetworkComponent or Node)
-	 * @return the instances of the related JInternalFrame, if available
-	 */
-	public JInternalFrame getEditor(String editorTitle) {
-		return this.getHashMapEditorFrames().get(editorTitle);
+		this.lastOpenedEditor.remove(internalFrame);
 	}
 
 	/**
@@ -122,14 +121,17 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 * @param lastOpenedEditorFrame the new last opened JInternalFrame
 	 */
 	private void setLastOpenedEditor(JInternalFrame lastOpenedEditorFrame) {
-		this.lastOpenedEditor = lastOpenedEditorFrame;
+		this.lastOpenedEditor.add(lastOpenedEditorFrame);
 	}
 	/**
 	 * Gets the last opened JInternalFrame.
 	 * @return the last opened JInternalFrame
 	 */
 	public JInternalFrame getLastOpenedEditor() {
-		return lastOpenedEditor;
+		if (this.lastOpenedEditor.size()==0) {
+			return null;	
+		} 
+		return lastOpenedEditor.lastElement();
 	}
 	
 	/**
@@ -275,7 +277,8 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 				// --- Put notification into the property dialog ---- 
 				BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;
 				if (basicProperties.setUpdateDataSeries(updateDataSeries)==true) {
-					return; // --- Done ! ---
+					// --- Done ! ---
+					break; 
 				}
 			}
 		}

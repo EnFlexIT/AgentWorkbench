@@ -41,6 +41,7 @@ de;Agenten;Agents
 de;Agentenklasse;Agent class
 de;Agentenliste aktualisieren;Refresh agent list
 de;Aktualisiere Agenten-Liste...;Refreshing agent list
+de;Alle Eigenschaftsfenster schließen;Close all property windows;;;
 de;Alle Objekte löschen;Delete all objects
 de;Alle Ontologien;All ontologies
 de;Alle Rechte vorbehalten.;All rights reserved.
@@ -189,6 +190,8 @@ de;Entwickler-Ansicht;Developer view
 de;Erweiterungsadapter für Netzwerkkomponenten;Extension adapter for network components;;;
 de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
+de;Es wurde keine Komponente ausgewählt!;No selected component!;;;
+de;Es wurde mehr als eine Komponente ausgewählt!;More than one component was selcted.;;;
 de;Export:;Export:;;;
 de;Externe jar-Ressourcen;External jar resources;;;
 de;Extras;Extras
@@ -217,6 +220,7 @@ de;Fehler – Projektauswahl!;Error – Project selection!
 de;Fehler – Projektname!;Error – Project name
 de;Fehler – Projektverzeichnis!;Error – Project folder
 de;Fehler;Error
+de;Fehlerhafte Auswahl!;Incorrect selection!;;;
 de;Fehlerhafte Eingabe;Faulty input;;;
 de;Fenster;Window
 de;Fertig;Ready
@@ -303,6 +307,9 @@ de;Kommunikation;Communication
 de;Komponente zentrieren und fokussieren;Center and focus component ;;;
 de;Komponente;Component
 de;Komponenten-Definition bearbeiten;Edit Component Definitions;;;
+de;Komponenten-Eigenschaften ...;Component Properties;;;
+de;Komponenten-Eigenschaften bearbeiten ...;Edit Component Properties;;;
+de;Komponenten-Eigenschaften bearbeiten;Edit Component Properties;;;
 de;Komponenten-Einstellungen;Component settings
 de;Komponenten-Typen;Component-Types
 de;Komponententyp-Definition;Component-Type definition

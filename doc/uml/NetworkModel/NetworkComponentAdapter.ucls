@@ -1,128 +1,128 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.2" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+<class-diagram version="1.1.6" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" language="java" name="agentgui.envModel.graph.networkModel.NetworkComponent" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkComponent.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position x="189" y="145" width="-1" height="-1"/>    
+    <position height="-1" width="-1" x="189" y="145"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
   <class id="2" language="java" name="agentgui.envModel.graph.networkModel.NetworkComponentAdapter" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkComponentAdapter.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position x="608" y="40" width="-1" height="-1"/>    
+    <position height="-1" width="-1" x="608" y="40"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
   <class id="3" language="java" name="agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkComponentAdapter4DataModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position x="609" y="253" width="-1" height="-1"/>    
+    <position height="-1" width="-1" x="609" y="253"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
   <class id="4" language="java" name="agentgui.envModel.graph.networkModel.NetworkComponentAdapter4Ontology" 
     project="AgentGUI" file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkComponentAdapter4Ontology.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position x="609" y="339" width="-1" height="-1"/>    
+    <position height="-1" width="-1" x="609" y="339"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
   <class id="5" language="java" name="agentgui.envModel.graph.networkModel.NetworkModel" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/envModel/graph/networkModel/NetworkModel.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position x="189" y="40" width="-1" height="-1"/>    
+    <position height="-1" width="-1" x="189" y="40"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
   <class id="6" language="java" name="agentgui.envModel.graph.controller.BasicGraphGuiProperties" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/envModel/graph/controller/BasicGraphGuiProperties.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position x="609" y="145" width="-1" height="-1"/>    
+    <position height="-1" width="-1" x="609" y="145"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="false" package="false" protected="false" private="false"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
   <association id="7">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="8" name="networkComponents"/>      
-      <multiplicity id="9" minimum="0" maximum="2147483647"/>    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="8" name="networkComponent"/>      
+      <multiplicity id="9" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="10">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="11" name="networkComponentAdapterHash"/>      
-      <multiplicity id="12" minimum="0" maximum="2147483647"/>    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="11" name="networkComponentAdapter"/>      
+      <multiplicity id="12" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="13">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="14" name="networkComponent"/>      
-      <multiplicity id="15" minimum="0" maximum="1"/>    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="14" name="networkComponents"/>      
+      <multiplicity id="15" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="16">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="17" name="adapter4DataModel"/>      
-      <multiplicity id="18" minimum="0" maximum="1"/>    
+  <generalization id="16">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <association id="17">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="18" name="networkComponent"/>      
+      <multiplicity id="19" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="19">    
+  <association id="20">    
     <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="20" name="alternativeNetworkModel"/>      
-      <multiplicity id="21" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="22">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="23" name="networkComponentAdapter"/>      
-      <multiplicity id="24" minimum="0" maximum="1"/>    
+      <attribute id="21" name="networkComponentAdapterHash"/>      
+      <multiplicity id="22" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="25">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="26" name="networkComponent"/>      
-      <multiplicity id="27" minimum="0" maximum="1"/>    
+  <association id="23">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="24" name="alternativeNetworkModel"/>      
+      <multiplicity id="25" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="28">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
+  <association id="26">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="27" name="adapter4DataModel"/>      
+      <multiplicity id="28" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     accessors="true" visibility="true">    
-    <attributes public="false" package="false" protected="false" private="false"/>    
-    <operations public="true" package="true" protected="true" private="true"/>  
+    <attributes public="false" package="false" protected="false" private="false" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
   </classifier-display>  
   <association-display labels="true" multiplicity="true"/>
 </class-diagram>

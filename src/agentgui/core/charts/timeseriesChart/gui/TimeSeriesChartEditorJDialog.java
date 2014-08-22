@@ -17,11 +17,11 @@ public class TimeSeriesChartEditorJDialog extends ChartEditorJDialog {
 	}
 
 	public void setOntologyClassInstance(Object objectInstance) {
-		this.contentPane.setOntologyClassInstance(objectInstance);
+		this.getContentPane().setOntologyClassInstance(objectInstance);
 	}
 
 	public Object getOntologyClassInstance() {
-		return this.contentPane.getOntologyClassInstance();
+		return this.getContentPane().getOntologyClassInstance();
 	}
 
 	@Override

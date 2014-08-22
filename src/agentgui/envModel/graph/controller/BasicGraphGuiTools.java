@@ -29,6 +29,7 @@
 package agentgui.envModel.graph.controller;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -41,6 +42,7 @@ import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JInternalFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -66,8 +68,6 @@ import agentgui.envModel.graph.networkModel.NetworkModelNotification;
  */
 public class BasicGraphGuiTools implements ActionListener, Observer {
 
-    private static final long serialVersionUID = 7033208567874447367L;
-
     private final String pathImage = GraphGlobals.getPathImages(); // @jve:decl-index=0:
     private final Dimension jButtonSize = new Dimension(26, 26); // @jve:decl-index=0:
 
@@ -78,6 +78,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JToolBar jToolBarView = null;
     
     private JButton jButtonComponents = null;
+    private JButton jButtonWindows = null;
     private JToggleButton jButtonSatelliteView = null;
     private JButton jButtonZoomFit2Window = null;
     private JButton jButtonZoomOne2One = null;
@@ -190,7 +191,10 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 
     		jToolBarView.add(getJButtonComponents());
     		jToolBarView.addSeparator();
-
+    		
+    		jToolBarView.add(getJButtonWindows());
+    		jToolBarView.addSeparator();
+    		
     		jToolBarView.add(getJToggleMousePicking());
     		jToolBarView.add(getJToggleMouseTransforming());
 
@@ -233,7 +237,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     }
 
     /**
-     * This method initializes jButtonZoomIn
+     * This method initializes jButtonComponents
      * @return javax.swing.JButton
      */
     private JButton getJButtonComponents() {
@@ -247,6 +251,22 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		return jButtonComponents;
     }
 
+    /**
+     * This method initializes jButtonWindows
+     * @return javax.swing.JButton
+     */
+    private JButton getJButtonWindows() {
+		if (jButtonWindows == null) {
+			jButtonWindows = new JButton();
+			jButtonWindows.setPreferredSize(jButtonSize);
+			jButtonWindows.setIcon(new ImageIcon(getClass().getResource(pathImage + "PropertyWindows.png")));
+			jButtonWindows.setToolTipText(Language.translate("Komponenten-Eigenschaften ..."));
+			jButtonWindows.addActionListener(this);
+		}
+		return jButtonWindows;
+    }
+
+    
     /**
      * This method initializes jButtonZoomReload
      * @return javax.swing.JButton
@@ -669,11 +689,106 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		});
     }
 	
+    /**
+     * Open the JPopupMenu for the property windows.
+     */
+    private void openJPopupMenu4PropertyWindows() {
+    	
+    	// ----------------------------------------------------------
+    	// --- Create the ActionListener first ----------------------
+    	// ----------------------------------------------------------
+    	ActionListener al = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				
+				String ac = ae.getActionCommand();
+				if (ac.equals("PropWindowOpenSelection")) {
+					// --- Open properties of current selection -----
+					final Set<Object> selectedObjects = basicGraphGui.getSelectedGraphObject();
+					if (selectedObjects==null) {
+						// --- No selection -------------------------
+						String title = Language.translate("Fehlende Auswahl!");
+						String message = Language.translate("Es wurde keine Komponente ausgewählt!");
+						JOptionPane.showInternalMessageDialog(basicGraphGui, message, title, JOptionPane.WARNING_MESSAGE);
+						
+					} else {
+						// --- Open the property dialog(s) ----------
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								for (Object selectedObject : selectedObjects) {
+									NetworkModelNotification nmn = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_EditComponentSettings);
+									nmn.setInfoObject(selectedObject);
+									graphController.notifyObservers(nmn);						
+								}
+							}
+						});
+					}
+					
+				} else if (ac.equals("PropWindowCloseAll")) {
+					System.out.println(ac);
+					graphControllerGUI.getBasicGraphGuiJDesktopPane().closeAllBasicGraphGuiProperties();
+					
+				} else {
+					JInternalFrame frame = graphControllerGUI.getBasicGraphGuiJDesktopPane().getEditor(ac);
+					frame.moveToFront();
+					
+				}
+			}
+		}; // end ActionListener
+    	
+    	// ----------------------------------------------------------
+		// --- Create the popup menu --------------------------------
+    	// ----------------------------------------------------------
+		JPopupMenu pMenue = new JPopupMenu();
+		
+		JMenuItem item = new JMenuItem(Language.translate("Komponenten-Eigenschaften bearbeiten"));
+    	item.setActionCommand("PropWindowOpenSelection");
+    	item.addActionListener(al);
+    	pMenue.add(item);
+    	
+    	// --- List all displayed Frames ----------------------------
+    	BasicGraphGuiJDesktopPane desktopPane = this.graphControllerGUI.getBasicGraphGuiJDesktopPane();
+    	JInternalFrame[] intFrames = desktopPane.getAllFrames();
+    	
+		boolean separatorSet = false;
+    	for (int i = 0; i < intFrames.length; i++) {
+    		JInternalFrame intFrame = intFrames[i];
+			if ( ! (intFrame instanceof AddComponentDialog || intFrame instanceof BasicGraphGuiRootJSplitPane)) {
+				// --- Property frame listed ------------------------
+				if (separatorSet==false) {
+					// --- Add item to close all open windows ------- 
+					pMenue.addSeparator();
+			    	item = new JMenuItem(Language.translate("Alle Eigenschaftsfenster schließen"));
+			    	item.setActionCommand("PropWindowCloseAll");
+			    	item.addActionListener(al);
+			    	pMenue.add(item);
+					pMenue.addSeparator();
+					separatorSet = true;
+				}
+				// --- Add menu item for the window -----------------
+				item = new JMenuItem(intFrame.getTitle());
+    	    	item.setActionCommand(intFrame.getTitle());
+    	    	item.addActionListener(al);
+    	    	if (i==0) {
+    	    		item.setFont(new Font("Dialog", Font.BOLD, 12));
+    	    	}
+    	    	pMenue.add(item); 
+    	    	
+			}
+		}
+    	
+    	// --- Show popup menu --------------------------------------
+    	pMenue.show(this.getJButtonWindows(), this.getJButtonWindows().getWidth(), 0);
+    	
+    }
+    
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
 	public void update(Observable observable, Object object) {
+	
 		if (object instanceof NetworkModelNotification) {
 			
 			this.setUndoRedoButtonsEnabled();
@@ -720,6 +835,11 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			}
 			ctsDialog.dispose();
 			ctsDialog = null;
+			
+		} else if (ae.getSource() == getJButtonWindows()) {
+			// ------------------------------------------------------
+			// --- Property Windows ---------------------------------
+			this.openJPopupMenu4PropertyWindows();
 			
 		} else if (ae.getSource() == getJToggleButtonSatelliteView()) {
 			// ------------------------------------------------------

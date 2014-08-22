@@ -421,14 +421,13 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	 */
 	protected void importDataSeriesFromCSV(File csvFile, String keyFormat, Number keyOffset) {
 		
-		// Read the CSV data
+		// --- Read the CSV data --------------------------
 		BufferedReader csvFileReader = null;
 		DataSeries[] importedSeries = null;
 		boolean validLine = false;
-		int validLineIndexCounter = 0;
+
+		// --- Read the data from the file ----------------
 		System.out.println("Importing CSV data from " + csvFile.getName());
-		
-		// Read the data from the file
 		try {
 			csvFileReader = new BufferedReader(new FileReader(csvFile));
 			String inBuffer = null;
@@ -467,7 +466,6 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 							this.getDataModel().getValuePairsFromSeries(importedSeries[i-1]).add(valuePair);
 						}
 					}
-					validLineIndexCounter++;	
 				}
 			}
 			csvFileReader.close();
