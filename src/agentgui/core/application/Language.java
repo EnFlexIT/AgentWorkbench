@@ -204,10 +204,11 @@ public class Language {
 	}
 	
 	/**
-	 * This method will return a new dictionary line for the dictionary
+	 * This method will return a new dictionary line for the dictionary.
+	 *
 	 * @param expression The expression to translate
 	 * @param language The language used in the source code
-	 * @return
+	 * @return the new dictionary line
 	 */
 	private static String getNewDictionaryLine(String expression, String language) {
 
@@ -470,9 +471,10 @@ public class Language {
 	private static int getNumberOfLanguages() {
 		return getLanguages().length-1;
 	}
+	
 	/**
-	 * returns an empty dictionary line
-	 * @return
+	 * returns an empty dictionary line.
+	 * @return an empty dictionary line
 	 */
 	private static String getEmptyLine() {
 		return stringRepeat(seperator, getNumberOfLanguages()-1);

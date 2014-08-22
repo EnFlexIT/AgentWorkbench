@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -84,6 +85,9 @@ public class DebugService extends BaseService {
 	private ServiceComponent localSlice;
 
 	
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#init(jade.core.AgentContainer, jade.core.Profile)
+	 */
 	public void init(AgentContainer ac, Profile p) throws ProfileException {
 		
 		super.init(ac,p);
@@ -216,15 +220,13 @@ public class DebugService extends BaseService {
 
 	
 	// --------------------------------------------------------------	
-	// ---- Inner-Class 'AgentTimeImpl' ---- Start ------------------
+	// ---- Inner-Class 'DebugServiceImpl' ---- Start ---------------
 	// --------------------------------------------------------------
 	/**
 	 * Sub-Class to provide interaction between Agents and this Service
 	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg / Essen
 	 */
 	public class DebugServiceImpl implements DebugServiceHelper {
-
-		private static final long serialVersionUID = 5741448121178289099L;
 
 		@Override
 		public void init(Agent arg0) {
@@ -240,13 +242,14 @@ public class DebugService extends BaseService {
 
 	}
 	// --------------------------------------------------------------	
-	// ---- Inner-Class 'AgentTimeImpl' ---- End --------------------
+	// ---- Inner-Class 'DebugServiceImpl' ---- End -----------------
 	// --------------------------------------------------------------
 	
 	/**
-	 * 
-	 * @param slices
-	 * @throws ServiceException
+	 * Sends local console output to the MainContainer.
+	 *
+	 * @param lines2transfer the lines2transfer
+	 * @throws ServiceException the service exception
 	 */
 	public void sendLocalConsoleOutput2Main(Vector<String> lines2transfer) throws ServiceException {
 		

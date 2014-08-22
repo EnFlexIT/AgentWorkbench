@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -37,7 +38,6 @@ import java.util.Vector;
  * The received output will be received in the local <code>Vector<String></code> outputStack., which<br>
  * can be accessed by the getStack() - method in a synchronised way.<br>   
  * 
- * @see SysOutBoard
  * @see PrintStreamListener
  * @see System#out
  * @see System#err
@@ -50,7 +50,8 @@ public class SysOutScanner {
 	private LogFileWriter logFileWriter;
 
 	/**
-	 * Default constructor of this class, if running local in an application 
+	 * Constructor of this class, if running local in an application.
+	 * @param localConsole the LogFileWriter
 	 */
 	public SysOutScanner(LogFileWriter localConsole) {
 		this.logFileWriter = localConsole;
@@ -86,7 +87,7 @@ public class SysOutScanner {
 	/**
 	 * This method will be used in order to append an output line (System.out or System.err) 
 	 * to the local outputStack
-	 * @param lineOutput
+	 * @param lineOutput the line output
 	 */
 	public void append2Stack(String lineOutput) {
 		if (this.outputStack.size()>=20) {
@@ -103,7 +104,7 @@ public class SysOutScanner {
 	
 	/**
 	 * Can be used in order to get the current outputStack of the local console.
-	 * @return
+	 * @return the stack
 	 */
 	public synchronized Vector<String> getStack() {
 		Vector<String> stack = this.outputStack;

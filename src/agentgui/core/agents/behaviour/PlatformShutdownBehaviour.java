@@ -85,10 +85,9 @@ public class PlatformShutdownBehaviour extends OneShotBehaviour {
 		myAgent.doDelete();
 	}
 
-	
 	/**
-	 * Checks if the simulations service is running or not 
-	 * @return
+	 * Checks if the {@link SimulationService} is running or not .
+	 * @return true, if the service is running
 	 */
 	private boolean simulationServiceIsRunning() {
 		

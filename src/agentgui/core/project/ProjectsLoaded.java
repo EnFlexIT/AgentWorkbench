@@ -287,23 +287,26 @@ public class ProjectsLoaded {
 		File userObjectFile = new File(userObjectFileName);
 		if (userObjectFile.exists()) {
 			
-			Serializable userObject = null;
-			FileInputStream fis = null;
-			ObjectInputStream in = null;
+			ObjectInputStream inStream = null;
 			try {
-				fis = new FileInputStream(userObjectFileName);
-				in = new ObjectInputStream(fis);
-				userObject = (Serializable)in.readObject();
-				in.close();
+				FileInputStream fis = new FileInputStream(userObjectFileName);
+				inStream = new ObjectInputStream(fis);
+				Serializable userObject = (Serializable) inStream.readObject();
+				project.setUserRuntimeObject(userObject);
+				inStream.close();
 				
 			} catch(IOException ex) {
 				ex.printStackTrace();
-				return null;
+				
 			} catch(ClassNotFoundException ex) {
 				ex.printStackTrace();
-				return null;
+				try {
+					inStream.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
 			}
-			project.setUserRuntimeObject(userObject);				
+							
 		}
 		return project;
 	}

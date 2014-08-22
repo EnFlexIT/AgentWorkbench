@@ -338,9 +338,11 @@ public class SetupSelectorToolbar implements ActionListener {
 	}
 
 	/**
-	 * Asks the user for a name of a setup
-	 * @param isAddNewSetup
-	 * @return
+	 * Asks the user for a name of a setup.
+	 *
+	 * @param ReasonConstant the reason constant
+	 * @param suggestion the suggestion
+	 * @return the string for the requested setup name or null
 	 */
 	private String setupAskUser4SetupName(Integer ReasonConstant, String suggestion) {
 		

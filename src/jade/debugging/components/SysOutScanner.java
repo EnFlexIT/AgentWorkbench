@@ -4,8 +4,9 @@
  * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
  * http://sourceforge.net/projects/agentgui/
- * http://www.dawis.wiwi.uni-due.de/ 
+ * http://www.agentgui.org 
  *
  * GNU Lesser General Public License
  *
@@ -54,14 +55,16 @@ public class SysOutScanner {
 	private JPanelConsole localConsole;
 
 	/**
-	 * Default constructor of this class, if running from the DebugService 
+	 * Constructor of this class, if running from the DebugService.
+	 * @param debugService the current DebugService
 	 */
 	public SysOutScanner(DebugService debugService) {
 		this.debugService = debugService;
 		this.setScanner();
 	}
 	/**
-	 * Default constructor of this class, if running local in an application 
+	 * Constructor of this class, if running local in an application.
+	 * @param localConsole the local console
 	 */
 	public SysOutScanner(JPanelConsole localConsole) {
 		this.localConsole = localConsole;
@@ -97,7 +100,8 @@ public class SysOutScanner {
 	/**
 	 * This method will be used in order to append an output line (System.out or System.err) 
 	 * to the local outputStack
-	 * @param lineOutput
+	 *
+	 * @param lineOutput the line output to display
 	 */
 	public void append2Stack(String lineOutput) {
 		if (this.outputStack.size()>=20) {
@@ -123,7 +127,7 @@ public class SysOutScanner {
 	
 	/**
 	 * Can be used in order to get the current outputStack of the local console.
-	 * @return
+	 * @return the current output stack
 	 */
 	public synchronized Vector<String> getStack() {
 		Vector<String> stack = this.outputStack;

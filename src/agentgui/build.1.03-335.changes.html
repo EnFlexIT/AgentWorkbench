@@ -23,8 +23,38 @@
 </head>
 <body>
 
+	<h3>Changes in Agent.GUI - Version 1.03 revision 335</h3>
 
-	<h3>=> Changes in Agent.GUI - Version 1.02 revision 323</h3>
+	<b>General</b>
+	<ul>
+		<li>Some general debugging.</li>
+		<li>Small modifications regarding the error handling of a DBConnection.</li>
+		<li>JarFileCreator: Resolved problems with image files that are used within a bin-path / project.</li>
+		<li>Small modifications regarding the SimulationSetup.</li>
+		<li>Refactored SimulationSetupNotifications.</li>
+		<li>Extended PlugIn class in order to react on changes within a SimulationSetup.</li>
+		<li>Eliminated bug in class DynTable: Automated row selection resulted into errors.</li>		
+		<li>Extended TimeSeriesHelper with two new add methods.</li>
+		<li>The JavaDoc build script contains now a variable to adjust the executable for the JavaDoc creation.</li>
+		<li>Agent.GUI-JavaDoc will now be created with Java 7.</li>
+	</ul>
+	
+	<b>Graph or Network</b>
+	<ul>
+		<li>Removed bug in NetworkComponentAdapter.</li>
+		<li>Added handling functions for multiple property dialogues of the GraphEnvironment.</li>
+	</ul>
+	
+	<b>Agent.GUI - Projects</b>
+	<ul>
+		<li>Updated the example projects 'Game of Life' and 'Agent.GUI PlugIn Example' in order to include the above described changes. 
+		To keep these projects executable for the current Agent.GUI installation, please download the latest version from the Agent.GUI 
+		site (see <a href="http://www.agentgui.org/index.php/download/viewcategory/6-agentgui-projects">Agent.GUI - Projects</a>)!</li>
+	</ul>
+	<br><hr width="90%"><br>
+
+
+	<h3>Changes in Agent.GUI - Version 1.02 revision 323</h3>
 
 	<b>General</b>
 	<ul>
@@ -40,9 +70,10 @@
 	<ul>
 		<li>Added Edge type configuration for the GraphEnvironment.</li>	
 	</ul>
-	<br><br>
+	<br><hr width="90%"><br>
 	
-	<h3>=> Changes in Agent.GUI - Version 1.01 revision 310</h3>
+	
+	<h3>Changes in Agent.GUI - Version 1.01 revision 310</h3>
 	
 	<b>General</b>
 	<ul>
