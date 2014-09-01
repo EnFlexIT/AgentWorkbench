@@ -10,7 +10,7 @@ de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br> Can the name
 de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;
-de;Abtastintervall;Sampling rate;;;
+de;Abtastintervall;Sampling interval;;;
 de;Agent auswählen!;Select an Agent!;;;
 de;Agent gestartet;Agent started;;;
 de;Agent nach oben verschieben;Move up agent
@@ -326,6 +326,7 @@ de;Lade SVG-Datei;Loading SVG file
 de;Lade Setup;Load Setup;;;
 de;Lade Umgebung aus;Loading environment from
 de;Lade Umgebungsdatei;Getting environment file
+de;Lastaufzeichnung mit dem Start von JADE beginnen;Record system load immediately on JADE startup;;;
 de;Letzte Änderungen;Recent changes;;;
 de;Liniendicke;Line thickness;;;
 de;Load Monitor öffnen;Open load monitor

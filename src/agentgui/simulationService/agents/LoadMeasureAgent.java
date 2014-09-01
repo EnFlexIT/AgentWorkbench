@@ -73,10 +73,10 @@ import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadMerger;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
-import agentgui.simulationService.load.gui.SystemLoad;
+import agentgui.simulationService.load.gui.SystemLoadPanel;
 import agentgui.simulationService.load.gui.SystemLoadDialog;
 import agentgui.simulationService.load.gui.SystemLoadSingle;
-import agentgui.simulationService.load.gui.SystemLoad.TimeSelection;
+import agentgui.simulationService.load.gui.SystemLoadPanel.TimeSelection;
 import agentgui.simulationService.ontology.OSInfo;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
@@ -105,7 +105,7 @@ public class LoadMeasureAgent extends Agent {
 	// --------------------------------------------------------------
 	// --- Display-elements of the Monitoring system ---------------- 
 	private SystemLoadDialog loadDialog = null; 
-	private SystemLoad loadPanel = null;
+	private SystemLoadPanel loadPanel = null;
 	// --- Remember container Informations/Instances (Display) ------
 	private Hashtable<String, SystemLoadSingle> containerLoadDialogs = new Hashtable<String, SystemLoadSingle>(); 
 	// --------------------------------------------------------------
@@ -178,21 +178,19 @@ public class LoadMeasureAgent extends Agent {
 	protected void setup() {
 		
 		DecimalFormatSymbols dfs = new DecimalFormatSymbols(); 
-		monitorDecimalSeparator = Character.toString(dfs.getDecimalSeparator());
+		this.monitorDecimalSeparator = Character.toString(dfs.getDecimalSeparator());
 		
 		this.getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
 		this.getContentManager().registerOntology(JADEManagementOntology.getInstance());
 		
-		loadPanel = new SystemLoad(this);
+		this.loadPanel = new SystemLoadPanel(this);
+		this.loadDialog = new SystemLoadDialog();
+		this.loadDialog.setContentPane(this.loadPanel);
+
+		this.loadBalancing = new DynamicLoadBalancing(this);
 		
-		loadDialog = new SystemLoadDialog();
-		loadDialog.setContentPane(loadPanel);
-		//loadDialog.setVisible(true);
-		
-		loadBalancing = new DynamicLoadBalancing(this);
-		
-		monitorBehaviourTickingPeriod = ((TimeSelection) loadPanel.jComboBoxInterval.getSelectedItem()).getTimeInMill();
-		monitorBehaviour = new MonitorBehaviour(this, monitorBehaviourTickingPeriod);
+		this.monitorBehaviourTickingPeriod = ((TimeSelection) loadPanel.getJComboBoxInterval().getSelectedItem()).getTimeInMill();
+		this.monitorBehaviour = new MonitorBehaviour(this, monitorBehaviourTickingPeriod);
 		this.addBehaviour(monitorBehaviour) ;
 		this.addBehaviour(new ReceiveBehaviour());
 	}
@@ -262,11 +260,11 @@ public class LoadMeasureAgent extends Agent {
 	 */
 	public class MonitorBehaviour extends TickerBehaviour {
 
-		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = -5802791218164507242L;
 		
-		/** The load dialog height. */
 		private int loadDialogHeight = 0;
+		private boolean initiatedLoadRecordingOnce = false;
+		
 		
 		/**
 		 * Instantiates a new monitor behaviour.
@@ -308,10 +306,10 @@ public class LoadMeasureAgent extends Agent {
 				
 				// --- Walk through the list of all containers --------------------------
 				loadContainer2Display = new Vector<String>(loadHelper.getContainerQueue());
-				Iterator<String> it = loadContainer2Display.iterator();
-				while (it.hasNext()) {
-					
-					String containerName = it.next();
+				
+				for (int i = 0; i < loadContainer2Display.size(); i++) {
+					// --- Get container name -------------------------------------------
+					String containerName = loadContainer2Display.get(i);
 					
 					// --- Get the benchmark-result for this node/container -------------
 					NodeDescription containerDesc = loadHelper.getContainerDescription(containerName);
@@ -392,10 +390,33 @@ public class LoadMeasureAgent extends Agent {
 					loadPanel.jLabelRecord.setForeground(Color.gray);
 				}
 			}
+			
 			// --------------------------------------------------------------------------
-			// --- Now, activate the load balancing algorithm in a dedicated thread -----
+			// --- Which Project, SimulationSetup and DistributionSetup is used?  -------
 			// --------------------------------------------------------------------------
-			this.doCheckDynamicLoadBalancing();
+			currProject = Application.getProjectFocused();		
+			if (currProject==null) {
+				currSimSetup = null;
+				currDisSetup = null;
+			} else {
+				currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
+				currDisSetup = currProject.getDistributionSetup();
+			}
+
+			// --- Check if load recording has to be started directly -------------------
+			if (this.initiatedLoadRecordingOnce==false && currDisSetup!=null && currDisSetup.isImmediatelyStartLoadRecording()==true) {
+				loadPanel.setRecordingInterval(currDisSetup.getLoadRecordingInterval());
+				loadPanel.setDoLoadRecording(true);
+				// --- Make sure that this is done only once, in order to allow stop ---
+				this.initiatedLoadRecordingOnce = true;
+			}
+			
+			// --------------------------------------------------------------------------
+			// --- If configured, activate the load balancing in a dedicated thread -----
+			// --------------------------------------------------------------------------
+			if (currDisSetup!=null && currDisSetup.isDoDynamicLoadBalancing()==true) {
+				this.doCheckDynamicLoadBalancing();
+			}
 			// --------------------------------------------------------------------------
 		}
 
@@ -408,58 +429,41 @@ public class LoadMeasureAgent extends Agent {
 			
 			// --- If the dynamic load balancing is still running/executed  	 --- 
 			// --- from the last measure tick, exit here to prevent side effects ---
-			if (loadBalancingIsStillActivated == true) {
-				return;
-			}
+			if (loadBalancingIsStillActivated == true) return;
+			// --- Set that load balancing is active now ---------------------------
 			loadBalancingIsStillActivated = true;
 			
-			// --- Which project is currently used?  --------------------------
-			currProject = Application.getProjectFocused();		
-			if (currProject == null) {
-				currSimSetup = null;
-				currDisSetup = null;
-				return;
-			} 
-			// --- Get the current simulation setup ---------------------------
-			currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
-			// --- Get the current distribution setup -------------------------
-			currDisSetup = currProject.getDistributionSetup();
-			
-			// --- If the dynamic load balancing is activated: ----------------
-			if (currDisSetup!=null && currDisSetup.isDoDynamicLoadBalancing()==true) {
-			
-				LoadMeasureAgent thisLoadAgent = (LoadMeasureAgent) myAgent;
-				try {
-					@SuppressWarnings("unchecked")
-					Class<? extends DynamicLoadBalancingBase> dynLoBaClass = (Class<? extends DynamicLoadBalancingBase>) Class.forName(currDisSetup.getDynamicLoadBalancingClass());
-					loadBalancing = dynLoBaClass.getDeclaredConstructor( new Class[] { thisLoadAgent.getClass() }).newInstance( new Object[] { thisLoadAgent });
-					
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
-				}	
-				// --- If loading of the class was not successful ----
-				// --- start the default class for balancing	  ----
-				if (loadBalancing==null) {
-					loadBalancing = new DynamicLoadBalancing(thisLoadAgent);
-				}
-				// --- get the instance of the ThreadedBehaviour --------------
-				ThreadedBehaviourFactory loadBalancingThread = new ThreadedBehaviourFactory();
-				// --- execute the dynamic load balancing ---------------------
-				myAgent.addBehaviour(loadBalancingThread.wrap(loadBalancing));
-						
+			// --- If the dynamic load balancing is activated: ---------------------
+			LoadMeasureAgent thisLoadAgent = (LoadMeasureAgent) myAgent;
+			try {
+				@SuppressWarnings("unchecked")
+				Class<? extends DynamicLoadBalancingBase> dynLoBaClass = (Class<? extends DynamicLoadBalancingBase>) Class.forName(currDisSetup.getDynamicLoadBalancingClass());
+				loadBalancing = dynLoBaClass.getDeclaredConstructor( new Class[] { thisLoadAgent.getClass() }).newInstance( new Object[] { thisLoadAgent });
+				
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			}	
+			// --- If loading of the class was not successful ----------------------
+			// --- start the default class for balancing	  ----------------------
+			if (loadBalancing==null) {
+				loadBalancing = new DynamicLoadBalancing(thisLoadAgent);
 			}
+			// --- get the instance of the ThreadedBehaviour -----------------------
+			ThreadedBehaviourFactory loadBalancingThread = new ThreadedBehaviourFactory();
+			// --- execute the dynamic load balancing ------------------------------
+			myAgent.addBehaviour(loadBalancingThread.wrap(loadBalancing));
 			
 		}// --- end dynamic LoadBalancing
 		

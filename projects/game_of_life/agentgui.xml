@@ -28,8 +28,8 @@
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -37,6 +37,8 @@
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>true</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
+        <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
+        <loadRecordingInterval>500</loadRecordingInterval>
         <numberOfAgents>60</numberOfAgents>
         <numberOfContainer>1</numberOfContainer>
         <staticLoadBalancingClass>gol.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
@@ -56,10 +58,10 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>4050 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>0032 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
-    <downloadResources>http://rudel1.cs.uni-due.de:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
-    <downloadResources>http://rudel1.cs.uni-due.de:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
+    <downloadResources>http://Pandora:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
+    <downloadResources>http://Pandora:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>0242 Agents</key>
@@ -94,12 +96,12 @@
             <value>0018_agents.xml</value>
         </entry>
         <entry>
-            <key>1800 Agents</key>
-            <value>1800_agents.xml</value>
-        </entry>
-        <entry>
             <key>0032 Agents</key>
             <value>0032_agents.xml</value>
+        </entry>
+        <entry>
+            <key>1800 Agents</key>
+            <value>1800_agents.xml</value>
         </entry>
         <entry>
             <key>4050 Agents</key>

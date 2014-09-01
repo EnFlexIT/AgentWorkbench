@@ -61,30 +61,30 @@ import javax.swing.JTextField;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class SystemLoad extends JPanel {
+public class SystemLoadPanel extends JPanel {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	
-	final static String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
+	private static final String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
 	
-	private LoadMeasureAgent myAgent = null;
+	private LoadMeasureAgent myAgent;
+	private boolean isRecording = false;
 	
-	private JScrollPane jScrollPane = null;
-	public JPanel jPanelLoad = null;
+	private JScrollPane jScrollPane;
+	public JPanel jPanelLoad;
 	
-	private JToolBar jJToolBarLoad = null;
-		private JButton jButtonMeasureStart = null; 
-		private JButton jButtonMeasureSuspend = null;
-		public JComboBox jComboBoxInterval = null;
-		private DefaultComboBoxModel comboData = new DefaultComboBoxModel();
-		private TimeSelection comboDataDefaultValue = null;
-		private JButton jButtonMeasureRecord = null;
-		private JButton jButtonMeasureRecordStop = null;
-		public JLabel jLabelRecord = null;
-		public JLabel jLabelSpeed = null;
+	private JToolBar jToolBarLoad;
+		private JButton jButtonMeasureStart; 
+		private JButton jButtonMeasureSuspend;
+		private JComboBox jComboBoxInterval;
+		private DefaultComboBoxModel comboBoxModelInterval;
+		private JButton jButtonMeasureRecord;
+		private JButton jButtonMeasureRecordStop;
+		public JLabel jLabelRecord;
+		public JLabel jLabelSpeed;
 		
-		private JLabel jLabelAgentCount = null;
-		private JLabel jLabelContainerCount = null;
+		private JLabel jLabelAgentCount;
+		private JLabel jLabelContainerCount;
 		
 		private JTextField jTextFieldCyclesPerSecond = null;
 
@@ -93,7 +93,7 @@ public class SystemLoad extends JPanel {
 	 * This is the default constructor.
 	 * @param agent the agent
 	 */
-	public SystemLoad(LoadMeasureAgent agent) {
+	public SystemLoadPanel(LoadMeasureAgent agent) {
 		super();
 		myAgent = agent;
 		initialize();
@@ -115,7 +115,7 @@ public class SystemLoad extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.setSize(620, 90);
 		this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		this.add(getJJToolBarLoad(), BorderLayout.NORTH);
+		this.add(getJToolBarLoad(), BorderLayout.NORTH);
 		this.add(getJScrollPane(), BorderLayout.CENTER);
 	}
 
@@ -178,69 +178,69 @@ public class SystemLoad extends JPanel {
 	 * This method initializes jJToolBarLoad.
 	 * @return javax.swing.JToolBar
 	 */
-	private JToolBar getJJToolBarLoad() {
-		if (jJToolBarLoad == null) {
+	private JToolBar getJToolBarLoad() {
+		if (jToolBarLoad == null) {
 			
-			jJToolBarLoad = new JToolBar();
-			jJToolBarLoad.setFloatable(false);
-			jJToolBarLoad.setRollover(true);
+			jToolBarLoad = new JToolBar();
+			jToolBarLoad.setFloatable(false);
+			jToolBarLoad.setRollover(true);
 			
 			// --- The Pause/Start Buttons of the Load-Agent --------
 			jButtonMeasureStart = new JToolBarButton( "StartMeasurement", Language.translate("Mess-Agenten starten"), null, "MBLoadPlay.png" );
-			jJToolBarLoad.add(jButtonMeasureStart);
+			jToolBarLoad.add(jButtonMeasureStart);
 			
 			jButtonMeasureSuspend = new JToolBarButton( "PauseMeasurement", Language.translate("Mess-Agenten anhalten"), null, "MBLoadPause.png" );
-			jJToolBarLoad.add(jButtonMeasureSuspend);
-			jJToolBarLoad.addSeparator();
+			jToolBarLoad.add(jButtonMeasureSuspend);
+			jToolBarLoad.addSeparator();
 			
 			// --- The measure interval -----------------------------
-			jJToolBarLoad.add(getJComboBoxInterval());
-			jJToolBarLoad.addSeparator();
+			jToolBarLoad.add(getJComboBoxInterval());
+			jToolBarLoad.addSeparator();
 			
 			// --- The Record Start/Stop Buttons --------------------
 			jButtonMeasureRecord = new JToolBarButton( "RecordMeasurement", Language.translate("Messung aufzeichnen"), null, "MBLoadRecord.png" );
-			jJToolBarLoad.add(jButtonMeasureRecord);
+			jToolBarLoad.add(jButtonMeasureRecord);
 			
 			jButtonMeasureRecordStop = new JToolBarButton( "StopRecordMeasurement", Language.translate("Messungsaufzeichnung beenden"), null, "MBLoadStopRecord.png" );			
-			jJToolBarLoad.add(jButtonMeasureRecordStop);
+			jToolBarLoad.add(jButtonMeasureRecordStop);
 
 			jLabelRecord = new JLabel();
 			jLabelRecord.setFont(new Font("Dialog", Font.BOLD, 12));
 			jLabelRecord.setText(" Record !");
 			jLabelRecord.setForeground(Color.gray);
 			jLabelRecord.setPreferredSize(new Dimension(50, 16));
-			jJToolBarLoad.add(jLabelRecord);
-			jJToolBarLoad.addSeparator();
+			jToolBarLoad.add(jLabelRecord);
+			jToolBarLoad.addSeparator();
 			
 			// --- Counter for the number of agents -----------------
 			jLabelAgentCount = new JLabel();
 			jLabelAgentCount.setText(" 00000 " +  Language.translate("Agenten") + " ");
 			jLabelAgentCount.setFont(new Font("Dialog", Font.BOLD, 12));
-			jJToolBarLoad.add(jLabelAgentCount);
-			jJToolBarLoad.addSeparator();
+			jToolBarLoad.add(jLabelAgentCount);
+			jToolBarLoad.addSeparator();
 			
 			// --- Counter for the number of container --------------
 			jLabelContainerCount = new JLabel();
 			jLabelContainerCount.setText(" 000 " +  Language.translate("Container") + " ");
 			jLabelContainerCount.setFont(new Font("Dialog", Font.BOLD, 12));
-			jJToolBarLoad.add(jLabelContainerCount);
-			jJToolBarLoad.addSeparator();
+			jToolBarLoad.add(jLabelContainerCount);
+			jToolBarLoad.addSeparator();
 			
-			// --- Field for th number of cycles/second -------------
+			// --- Field for the number of cycles/second ------------
 			jTextFieldCyclesPerSecond = new JTextField();
 			jTextFieldCyclesPerSecond.setPreferredSize(new Dimension(70, 25));
 			jTextFieldCyclesPerSecond.setEditable(false);
 			jTextFieldCyclesPerSecond.setToolTipText("Cycles / second");
-			jJToolBarLoad.add(jTextFieldCyclesPerSecond);
+			jToolBarLoad.add(jTextFieldCyclesPerSecond);
 
 			jLabelSpeed = new JLabel();
 			jLabelSpeed.setFont(new Font("Dialog", Font.BOLD, 12));
 			jLabelSpeed.setText(" 1 / s");
 			jLabelSpeed.setPreferredSize(new Dimension(30, 16));
-			jJToolBarLoad.add(jLabelSpeed);
+			jToolBarLoad.add(jLabelSpeed);
 			
 		}
-		return jJToolBarLoad;
+		return jToolBarLoad;
 	}
 
 	/**
@@ -274,13 +274,11 @@ public class SystemLoad extends JPanel {
 	 * This method initializes jComboBoxInterval.
 	 * @return javax.swing.JComboBox
 	 */
-	private JComboBox getJComboBoxInterval() {
+	public JComboBox getJComboBoxInterval() {
 		if (jComboBoxInterval == null) {
-			this.setComboBoxModel();
-			jComboBoxInterval = new JComboBox();
-			jComboBoxInterval.setMaximumRowCount(comboData.getSize());
-			jComboBoxInterval.setModel(comboData);
-			jComboBoxInterval.setSelectedItem(comboDataDefaultValue);
+			jComboBoxInterval = new JComboBox(this.getComboBoxModelRecordingInterval());
+			jComboBoxInterval.setMaximumRowCount(comboBoxModelInterval.getSize());
+			jComboBoxInterval.setModel(comboBoxModelInterval);
 			jComboBoxInterval.setToolTipText(Language.translate("Abtastintervall"));
 			jComboBoxInterval.addActionListener(new ActionListener() {
 				@Override
@@ -289,6 +287,7 @@ public class SystemLoad extends JPanel {
 					myAgent.setMonitorBehaviourTickingPeriod(newTickingInterval);
 				}
 			});
+			this.setRecordingInterval(500);
 		}
 		return jComboBoxInterval;
 	}
@@ -296,28 +295,63 @@ public class SystemLoad extends JPanel {
 	/**
 	 * This method sets the default values for the ComboBoxModel of sampling interval.
 	 */
-	private void setComboBoxModel() {
-		
-		//comboData.addElement(new TimeSelection(100));
-		//comboData.addElement(new TimeSelection(200));
-		comboDataDefaultValue = new TimeSelection(500);
-		comboData.addElement(comboDataDefaultValue);
-		
-		comboData.addElement(new TimeSelection(1000));
-		comboData.addElement(new TimeSelection(2000));
-		comboData.addElement(new TimeSelection(3000));
-		comboData.addElement(new TimeSelection(4000));
-		comboData.addElement(new TimeSelection(5000));
-		comboData.addElement(new TimeSelection(6000));
-		comboData.addElement(new TimeSelection(7000));
-		comboData.addElement(new TimeSelection(8000));
-		comboData.addElement(new TimeSelection(9000));
-		comboData.addElement(new TimeSelection(10000));
-		
-		comboData.addElement(new TimeSelection(15000));
-		comboData.addElement(new TimeSelection(20000));
-		comboData.addElement(new TimeSelection(30000));
-		comboData.addElement(new TimeSelection(60000));
+	private DefaultComboBoxModel getComboBoxModelRecordingInterval() {
+		if (comboBoxModelInterval==null) {
+			comboBoxModelInterval = new DefaultComboBoxModel();
+			comboBoxModelInterval.addElement(new TimeSelection(500));
+			comboBoxModelInterval.addElement(new TimeSelection(1000));
+			comboBoxModelInterval.addElement(new TimeSelection(2000));
+			comboBoxModelInterval.addElement(new TimeSelection(3000));
+			comboBoxModelInterval.addElement(new TimeSelection(4000));
+			comboBoxModelInterval.addElement(new TimeSelection(5000));
+			comboBoxModelInterval.addElement(new TimeSelection(6000));
+			comboBoxModelInterval.addElement(new TimeSelection(7000));
+			comboBoxModelInterval.addElement(new TimeSelection(8000));
+			comboBoxModelInterval.addElement(new TimeSelection(9000));
+			comboBoxModelInterval.addElement(new TimeSelection(10000));
+			comboBoxModelInterval.addElement(new TimeSelection(15000));
+			comboBoxModelInterval.addElement(new TimeSelection(20000));
+			comboBoxModelInterval.addElement(new TimeSelection(30000));
+			comboBoxModelInterval.addElement(new TimeSelection(60000));
+		}
+		return comboBoxModelInterval;
+	}
+	
+	/**
+	 * Sets the recording interval.
+	 * @param timeInMillis the new recording interval
+	 */
+	public void setRecordingInterval(int timeInMillis) {
+		for (int i = 0; i < this.getComboBoxModelRecordingInterval().getSize(); i++) {
+			TimeSelection timeSelection = (TimeSelection) this.getComboBoxModelRecordingInterval().getElementAt(i); 
+			if (timeSelection.getTimeInMill()==timeInMillis) {
+				this.getComboBoxModelRecordingInterval().setSelectedItem(timeSelection);
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Sets to do the load recording now.
+	 * @param doRecording the new do load recording
+	 */
+	public void setDoLoadRecording(boolean doRecording) {
+		// --- Prevent to repeat an action if already ----- 
+		if (doRecording!=isRecording) {
+			if (doRecording==true) {
+				this.isRecording = true;
+				this.myAgent.setMonitorSaveLoad(true);
+				this.jButtonMeasureRecord.setEnabled(false);
+				this.jButtonMeasureRecordStop.setEnabled(true);
+				this.jLabelRecord.setForeground(Color.red);
+			} else {
+				this.isRecording = false;
+				this.myAgent.setMonitorSaveLoad(false);
+				this.jButtonMeasureRecord.setEnabled(true);
+				this.jButtonMeasureRecordStop.setEnabled(false);
+				this.jLabelRecord.setForeground(Color.gray);
+			}
+		}
 	}
 	
 	// ------------------------------------------------------------
@@ -345,18 +379,17 @@ public class SystemLoad extends JPanel {
 			this.setSize(36, 36);
 			
 			if ( imgName != null ) {
-				this.setPreferredSize( new Dimension(26,26) );
-			}
-			else {
-				this.setPreferredSize( null );	
+				this.setPreferredSize(new Dimension(26,26));
+			} else {
+				this.setPreferredSize(null);	
 			}
 
-			if ( imgName != null ) {
+			if (imgName!=null) {
 				try {
 					ImageIcon ButtIcon = new ImageIcon( this.getClass().getResource( PathImage + imgName ), text);
 					this.setIcon(ButtIcon);
-				}
-				catch (Exception err) {
+					
+				} catch (Exception err) {
 					System.err.println(Language.translate("Fehler beim Laden des Bildes: ") + err.getMessage());
 				}				
 			}
@@ -368,31 +401,26 @@ public class SystemLoad extends JPanel {
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		public void actionPerformed(ActionEvent ae) {
-			// --- Fallunterscheidung 'cmd' einbauen ---
-			String ActCMD = ae.getActionCommand();			
+			
+			String actionCMD = ae.getActionCommand();			
 			// ------------------------------------------------
-			if ( ActCMD.equalsIgnoreCase("StartMeasurement") ) {
+			if ( actionCMD.equalsIgnoreCase("StartMeasurement") ) {
 				myAgent.addBehaviour(myAgent.monitorBehaviour);
 				jButtonMeasureStart.setEnabled(false);
 				jButtonMeasureSuspend.setEnabled(true);
 
-			} else if ( ActCMD.equalsIgnoreCase("PauseMeasurement") ) {
+			} else if ( actionCMD.equalsIgnoreCase("PauseMeasurement") ) {
 				myAgent.removeBehaviour(myAgent.monitorBehaviour);
 				jButtonMeasureStart.setEnabled(true);
 				jButtonMeasureSuspend.setEnabled(false);
 
-			} else if ( ActCMD.equalsIgnoreCase("RecordMeasurement") ) {
-				myAgent.setMonitorSaveLoad(true);
-				jButtonMeasureRecord.setEnabled(false);
-				jButtonMeasureRecordStop.setEnabled(true);
-				jLabelRecord.setForeground(Color.red);
-			} else if ( ActCMD.equalsIgnoreCase("StopRecordMeasurement") ) {
-				myAgent.setMonitorSaveLoad(false);
-				jButtonMeasureRecord.setEnabled(true);
-				jButtonMeasureRecordStop.setEnabled(false);
-				jLabelRecord.setForeground(Color.gray);
+			} else if ( actionCMD.equalsIgnoreCase("RecordMeasurement") ) {
+				setDoLoadRecording(true);
+			} else if ( actionCMD.equalsIgnoreCase("StopRecordMeasurement") ) {
+				setDoLoadRecording(false);
+				
 			} else { 
-				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);
+				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actionCMD);
 			};
 			
 		};

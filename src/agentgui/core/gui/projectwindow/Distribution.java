@@ -28,6 +28,7 @@
  */
 package agentgui.core.gui.projectwindow;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -94,6 +95,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JPanel jPanelStaticClass = null;
 	private JPanel jPanelDynamic = null;
 	private JPanel jPanelThreshold = null;
+	private JPanel jPanelRecording = null;
 	private JPanel jPanelDummy = null;
 	
 	private JCheckBox jCheckBoxPreventUsageOfUsedComputers = null;
@@ -101,9 +103,11 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JCheckBox jCheckBoxDoLoadStatic = null;
 	private JCheckBox jCheckBoxDoLoadDynamic = null;
 	private JCheckBox jCheckBoxThresholdDefinition = null;
+	private JCheckBox jCheckBoxImmediatelyStartLoadRecording = null;
 	
 	private JComboBox jComboBoxJVMMemoryInitial = null;
 	private JComboBox jComboBoxJVMMemoryMaximum = null;
+	private JComboBox jComboBoxRecordingInterval = null;
 	
 	private Object[] comboData = {JadeRemoteStart.jvmMemo0016MB, JadeRemoteStart.jvmMemo0032MB,
 								  JadeRemoteStart.jvmMemo0064MB, JadeRemoteStart.jvmMemo0128MB,
@@ -111,6 +115,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 								  JadeRemoteStart.jvmMemo1024MB};
 	private DefaultComboBoxModel comboModelInitial = new DefaultComboBoxModel(comboData);
 	private DefaultComboBoxModel comboModelMaximal = new DefaultComboBoxModel(comboData);
+	private DefaultComboBoxModel comboModelRecordingInterval = null;
 	
 	private JTextField jTextFieldAgentsExpected = null;
 	private JTextField jTextFieldContainerExpected = null;
@@ -152,6 +157,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JButton jButtonSelectStaticClass = null;
 	private JButton jButtonSelectDynamicClass = null;
 
+	private JLabel jLabelRecording = null;
 	private JLabel jLabelDummy = null;
 
 	
@@ -171,6 +177,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		jCheckBoxDoLoadStatic.setText(Language.translate("Statische Lastverteilung aktivieren"));
 		jCheckBoxDoLoadDynamic.setText(Language.translate("Dynamische Lastverteilung aktivieren"));
 		jCheckBoxThresholdDefinition.setText(Language.translate("Eigene Auslastungsgrenzwerte verwenden"));
+		jCheckBoxImmediatelyStartLoadRecording.setText(Language.translate("Lastaufzeichnung mit dem Start von JADE beginnen"));
 		
 		jLabelMemoryAlloc.setText(Language.translate("Arbeitsspeicher für Remote-JVM"));
 		jLabelStaticLoadClass.setText(Language.translate("Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteilung"));
@@ -181,6 +188,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		jLabelCPU.setText(Language.translate("CPU-Auslastung"));
 		jLabelMemory.setText(Language.translate("JVM Heap-Memory"));
 		jLabelThreads.setText(Language.translate("N - Threads"));
+
+		jLabelRecording.setText(Language.translate("Abtastintervall"));
 		
 		jButtonCalcContainer.setText(Language.translate("Anzahl Container berechnen"));
 		
@@ -209,70 +218,85 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JPanel getJPanelOnScrollPane() {
 		if (jPanelOnScrollPane==null) {
 			
-			GridBagConstraints gridBagConstraints210 = new GridBagConstraints();
-			gridBagConstraints210.gridx = 0;
-			gridBagConstraints210.anchor = GridBagConstraints.WEST;
-			gridBagConstraints210.insets = new Insets(10, 10, 0, 0);
-			gridBagConstraints210.gridy = 0;
-			GridBagConstraints gridBagConstraints110 = new GridBagConstraints();
-			gridBagConstraints110.gridx = 0;
-			gridBagConstraints110.anchor = GridBagConstraints.WEST;
-			gridBagConstraints110.insets = new Insets(5, 32, 0, 0);
-			gridBagConstraints110.gridy = 7;
-			GridBagConstraints gridBagConstraints101 = new GridBagConstraints();
-			gridBagConstraints101.gridx = 0;
-			gridBagConstraints101.fill = GridBagConstraints.NONE;
-			gridBagConstraints101.weighty = 1.0;
-			gridBagConstraints101.insets = new Insets(10, 10, 10, 10);
-			gridBagConstraints101.anchor = GridBagConstraints.NORTHWEST;
-			gridBagConstraints101.gridy = 13;
-			GridBagConstraints gridBagConstraints51 = new GridBagConstraints();
-			gridBagConstraints51.gridx = 0;
-			gridBagConstraints51.insets = new Insets(5, 32, 0, 10);
-			gridBagConstraints51.anchor = GridBagConstraints.WEST;
-			gridBagConstraints51.fill = GridBagConstraints.NONE;
-			gridBagConstraints51.gridy = 12;
-			GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
-			gridBagConstraints41.gridx = 0;
-			gridBagConstraints41.insets = new Insets(10, 10, 0, 0);
-			gridBagConstraints41.anchor = GridBagConstraints.WEST;
-			gridBagConstraints41.gridy = 11;
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.gridx = 0;
-			gridBagConstraints2.fill = GridBagConstraints.NONE;
-			gridBagConstraints2.weightx = 0.0;
-			gridBagConstraints2.insets = new Insets(5, 32, 0, 10);
-			gridBagConstraints2.anchor = GridBagConstraints.WEST;
-			gridBagConstraints2.gridy = 10;
-			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-			gridBagConstraints11.gridx = 0;
-			gridBagConstraints11.fill = GridBagConstraints.NONE;
-			gridBagConstraints11.weightx = 1.0;
-			gridBagConstraints11.insets = new Insets(5, 32, 0, 10);
-			gridBagConstraints11.anchor = GridBagConstraints.WEST;
-			gridBagConstraints11.gridy = 6;
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.gridx = 0;
-			gridBagConstraints1.anchor = GridBagConstraints.WEST;
-			gridBagConstraints1.insets = new Insets(10, 10, 0, 0);
-			gridBagConstraints1.gridy = 9;
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.gridx = 0;
-			gridBagConstraints.anchor = GridBagConstraints.WEST;
-			gridBagConstraints.insets = new Insets(10, 10, 0, 0);
-			gridBagConstraints.gridy = 5;
+			GridBagConstraints gridBagConstraints00 = new GridBagConstraints();
+			gridBagConstraints00.gridx = 0;
+			gridBagConstraints00.gridy = 0;
+			gridBagConstraints00.anchor = GridBagConstraints.WEST;
+			gridBagConstraints00.insets = new Insets(10, 10, 0, 0);
+			GridBagConstraints gridBagConstraints01 = new GridBagConstraints();
+			gridBagConstraints01.gridx = 0;
+			gridBagConstraints01.gridy = 1;
+			gridBagConstraints01.anchor = GridBagConstraints.WEST;
+			gridBagConstraints01.insets = new Insets(10, 10, 0, 0);
+			GridBagConstraints gridBagConstraints02 = new GridBagConstraints();
+			gridBagConstraints02.gridx = 0;
+			gridBagConstraints02.gridy = 2;
+			gridBagConstraints02.fill = GridBagConstraints.NONE;
+			gridBagConstraints02.weightx = 1.0;
+			gridBagConstraints02.insets = new Insets(5, 32, 0, 10);
+			gridBagConstraints02.anchor = GridBagConstraints.WEST;
+			GridBagConstraints gridBagConstraints03 = new GridBagConstraints();
+			gridBagConstraints03.gridx = 0;
+			gridBagConstraints03.gridy = 3;
+			gridBagConstraints03.anchor = GridBagConstraints.WEST;
+			gridBagConstraints03.insets = new Insets(5, 32, 0, 0);
+			GridBagConstraints gridBagConstraints04 = new GridBagConstraints();
+			gridBagConstraints04.gridx = 0;
+			gridBagConstraints04.gridy = 4;
+			gridBagConstraints04.anchor = GridBagConstraints.WEST;
+			gridBagConstraints04.insets = new Insets(10, 10, 0, 0);
+			GridBagConstraints gridBagConstraints05 = new GridBagConstraints();
+			gridBagConstraints05.gridx = 0;
+			gridBagConstraints05.gridy = 5;
+			gridBagConstraints05.fill = GridBagConstraints.NONE;
+			gridBagConstraints05.weightx = 0.0;
+			gridBagConstraints05.insets = new Insets(5, 32, 0, 10);
+			gridBagConstraints05.anchor = GridBagConstraints.WEST;
+			GridBagConstraints gridBagConstraints06 = new GridBagConstraints();
+			gridBagConstraints06.gridx = 0;
+			gridBagConstraints06.gridy = 6;
+			gridBagConstraints06.insets = new Insets(10, 10, 0, 0);
+			gridBagConstraints06.anchor = GridBagConstraints.WEST;
+			GridBagConstraints gridBagConstraints07 = new GridBagConstraints();
+			gridBagConstraints07.gridx = 0;
+			gridBagConstraints07.gridy = 7;
+			gridBagConstraints07.insets = new Insets(5, 32, 0, 10);
+			gridBagConstraints07.anchor = GridBagConstraints.WEST;
+			gridBagConstraints07.fill = GridBagConstraints.NONE;
+			GridBagConstraints gridBagConstraints08 = new GridBagConstraints();
+			gridBagConstraints08.gridx = 0;
+			gridBagConstraints08.gridy = 8;
+			gridBagConstraints08.insets = new Insets(10, 10, 0, 0);
+			gridBagConstraints08.anchor = GridBagConstraints.WEST;
+			GridBagConstraints gridBagConstraints09 = new GridBagConstraints();
+			gridBagConstraints09.gridx = 0;
+			gridBagConstraints09.gridy = 9;
+			gridBagConstraints09.insets = new Insets(5, 32, 0, 10);
+			gridBagConstraints09.anchor = GridBagConstraints.WEST;
+			gridBagConstraints09.fill = GridBagConstraints.NONE;
+			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
+			gridBagConstraints10.gridx = 0;
+			gridBagConstraints10.gridy = 10;
+			gridBagConstraints10.fill = GridBagConstraints.NONE;
+			gridBagConstraints10.weighty = 1.0;
+			gridBagConstraints10.insets = new Insets(10, 10, 10, 10);
+			gridBagConstraints10.anchor = GridBagConstraints.NORTHWEST;
+			
 			
 			jPanelOnScrollPane = new JPanel();
 			jPanelOnScrollPane.setLayout(new GridBagLayout());
-			jPanelOnScrollPane.add(getJCheckBoxDoLoadStatic(), gridBagConstraints);
-			jPanelOnScrollPane.add(getJCheckBoxDoLoadDynamic(), gridBagConstraints1);
-			jPanelOnScrollPane.add(getJPanelStatic(), gridBagConstraints11);
-			jPanelOnScrollPane.add(getJPanelDynamic(), gridBagConstraints2);
-			jPanelOnScrollPane.add(getJCheckBoxThresholdDefinition(), gridBagConstraints41);
-			jPanelOnScrollPane.add(getJPanelThreshold(), gridBagConstraints51);
-			jPanelOnScrollPane.add(getJPanelDummy(), gridBagConstraints101);
-			jPanelOnScrollPane.add(getJPanelStaticClass(), gridBagConstraints110);
-			jPanelOnScrollPane.add(getJPanelRemoteConfig(), gridBagConstraints210);
+			jPanelOnScrollPane.add(getJPanelRemoteConfig(), gridBagConstraints00);
+			jPanelOnScrollPane.add(getJCheckBoxDoLoadStatic(), gridBagConstraints01);
+			jPanelOnScrollPane.add(getJPanelStatic(), gridBagConstraints02);
+			jPanelOnScrollPane.add(getJPanelStaticClass(), gridBagConstraints03);
+			jPanelOnScrollPane.add(getJCheckBoxDoLoadDynamic(), gridBagConstraints04);
+			jPanelOnScrollPane.add(getJPanelDynamic(), gridBagConstraints05);
+			jPanelOnScrollPane.add(getJCheckBoxThresholdDefinition(), gridBagConstraints06);
+			jPanelOnScrollPane.add(getJPanelThreshold(), gridBagConstraints07);
+			jPanelOnScrollPane.add(getJCheckBoxImmediatelyStartLoadRecording(), gridBagConstraints08);
+			jPanelOnScrollPane.add(getJPanelRecording(), gridBagConstraints09);
+			jPanelOnScrollPane.add(getJPanelDummy(), gridBagConstraints10);
+			
 			
 		}
 		return jPanelOnScrollPane;
@@ -998,6 +1022,111 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	}
 
 	/**
+	 * Gets the JPanel recording.
+	 * @return the JPanel recording
+	 */
+	private Component getJPanelRecording() {
+		if (jPanelRecording==null) {
+			jPanelRecording = new JPanel();
+			jPanelRecording.setLayout(new GridBagLayout());
+			jPanelRecording.setPreferredSize(new Dimension(500, 30));
+			
+			GridBagConstraints gridBagConstraintsLabel = new GridBagConstraints();
+			gridBagConstraintsLabel.gridx = 0;
+			gridBagConstraintsLabel.gridy = 0;
+			gridBagConstraintsLabel.insets = new Insets(0, 0, 0, 0);
+			gridBagConstraintsLabel.anchor = GridBagConstraints.WEST;
+			
+			GridBagConstraints gridBagConstraintsCombo = new GridBagConstraints();
+			gridBagConstraintsCombo.fill = GridBagConstraints.NONE;
+			gridBagConstraintsCombo.gridx = 1;
+			gridBagConstraintsCombo.gridy = 0;
+			gridBagConstraintsCombo.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsCombo.weightx = 1.0;
+			gridBagConstraintsCombo.weighty = 1.0;
+			gridBagConstraintsCombo.insets = new Insets(0, 5, 0, 0);
+			
+			jLabelRecording = new JLabel("Abtastintervall");
+			
+			jPanelRecording.add(jLabelRecording, gridBagConstraintsLabel);
+			jPanelRecording.add(getJComboBoxRecordingInterval(), gridBagConstraintsCombo);
+			
+		}
+		return this.jPanelRecording;
+	}
+	
+	
+	/**
+	 * This method initializes jCheckBoxDoLoadStatic	
+	 * @return javax.swing.JCheckBox	
+	 */
+	private JCheckBox getJCheckBoxImmediatelyStartLoadRecording() {
+		if (jCheckBoxImmediatelyStartLoadRecording == null) {
+			jCheckBoxImmediatelyStartLoadRecording = new JCheckBox();
+			jCheckBoxImmediatelyStartLoadRecording.setText("Lastaufzeichnung mit dem Start von JADE beginnen");
+			jCheckBoxImmediatelyStartLoadRecording.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckBoxImmediatelyStartLoadRecording.addActionListener(this);
+		}
+		return jCheckBoxImmediatelyStartLoadRecording;
+	}
+	/**
+	 * This method initializes jComboBoxInterval.
+	 * @return javax.swing.JComboBox
+	 */
+	private JComboBox getJComboBoxRecordingInterval() {
+		if (jComboBoxRecordingInterval == null) {
+			jComboBoxRecordingInterval = new JComboBox(this.getComboBoxModelRecordingInterval());
+			jComboBoxRecordingInterval.setMaximumRowCount(this.getComboBoxModelRecordingInterval().getSize());
+			jComboBoxRecordingInterval.setSelectedItem(this.getComboBoxModelRecordingInterval().getElementAt(0));
+			jComboBoxRecordingInterval.setPreferredSize(new Dimension(60, 26));
+			jComboBoxRecordingInterval.setToolTipText(Language.translate("Abtastintervall"));
+			jComboBoxRecordingInterval.addActionListener(this);
+		}
+		return jComboBoxRecordingInterval;
+	}
+	/**
+	 * Returns DefaultComboBoxModel of sampling interval.
+	 * @return the default combo box model
+	 */
+	private DefaultComboBoxModel getComboBoxModelRecordingInterval() {
+		if (comboModelRecordingInterval==null) {
+			comboModelRecordingInterval = new DefaultComboBoxModel();
+			comboModelRecordingInterval.addElement(new TimeSelection(500));
+			
+			comboModelRecordingInterval.addElement(new TimeSelection(1000));
+			comboModelRecordingInterval.addElement(new TimeSelection(2000));
+			comboModelRecordingInterval.addElement(new TimeSelection(3000));
+			comboModelRecordingInterval.addElement(new TimeSelection(4000));
+			comboModelRecordingInterval.addElement(new TimeSelection(5000));
+			comboModelRecordingInterval.addElement(new TimeSelection(6000));
+			comboModelRecordingInterval.addElement(new TimeSelection(7000));
+			comboModelRecordingInterval.addElement(new TimeSelection(8000));
+			comboModelRecordingInterval.addElement(new TimeSelection(9000));
+			comboModelRecordingInterval.addElement(new TimeSelection(10000));
+			
+			comboModelRecordingInterval.addElement(new TimeSelection(15000));
+			comboModelRecordingInterval.addElement(new TimeSelection(20000));
+			comboModelRecordingInterval.addElement(new TimeSelection(30000));
+			comboModelRecordingInterval.addElement(new TimeSelection(60000));	
+		}
+		return comboModelRecordingInterval;
+	}
+
+	/**
+	 * Sets the recording interval.
+	 * @param timeInMillis the new recording interval
+	 */
+	private void setRecordingInterval(int timeInMillis) {
+		for (int i = 0; i < this.getComboBoxModelRecordingInterval().getSize(); i++) {
+			TimeSelection timeSelection = (TimeSelection) this.getComboBoxModelRecordingInterval().getElementAt(i); 
+			if (timeSelection.getTimeInMill()==timeInMillis) {
+				this.getComboBoxModelRecordingInterval().setSelectedItem(timeSelection);
+				break;
+			}
+		}
+	}
+	
+	/**
 	 * This method initializes jPanelDummy	
 	 * @return javax.swing.JPanel	
 	 */
@@ -1059,7 +1188,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			this.jTextFieldThreadsLow.setText(this.currUserThresholds.getThNoThreadsL().toString());
 			this.jTextFieldThreadsHigh.setText(this.currUserThresholds.getThNoThreadsH().toString());
 		}
-		currProject.setDistributionSetup(this.currDistributionSetup);
+		this.currProject.setDistributionSetup(this.currDistributionSetup);
 	}
 	
 	/**
@@ -1068,9 +1197,9 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private void setupLoad() {
 		
 		// --- Das akuelle DefaultListModel laden ---------
-		currDistributionSetup = this.currProject.getDistributionSetup();
-		currUserThresholds = currDistributionSetup.getUserThresholds();
-		currRemoteContainerConfiguration = this.currProject.getRemoteContainerConfiguration();
+		this.currDistributionSetup = this.currProject.getDistributionSetup();
+		this.currUserThresholds = this.currDistributionSetup.getUserThresholds();
+		this.currRemoteContainerConfiguration = this.currProject.getRemoteContainerConfiguration();
 		
 		this.jCheckBoxPreventUsageOfUsedComputers.setSelected(currRemoteContainerConfiguration.isPreventUsageOfAlreadyUsedComputers());
 		this.jCheckBoxShowRMA.setSelected(currRemoteContainerConfiguration.isShowJADErmaGUI());
@@ -1092,6 +1221,9 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		this.jTextFieldMemHigh.setText(((Integer)currUserThresholds.getThMemoH()).toString());
 		this.jTextFieldThreadsLow.setText(((Integer)currUserThresholds.getThNoThreadsL()).toString());
 		this.jTextFieldThreadsHigh.setText(((Integer)currUserThresholds.getThNoThreadsH()).toString());
+		
+		this.jCheckBoxImmediatelyStartLoadRecording.setSelected(currDistributionSetup.isImmediatelyStartLoadRecording());
+		this.setRecordingInterval(currDistributionSetup.getLoadRecordingInterval());
 		
 		this.jLabelCalculation.setText("");
 	}
@@ -1203,6 +1335,13 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			currDistributionSetup.setDoDynamicLoadBalancing(jCheckBoxDoLoadDynamic.isSelected());
 		} else if (trigger==jCheckBoxThresholdDefinition) {
 			currDistributionSetup.setUseUserThresholds(jCheckBoxThresholdDefinition.isSelected());
+		
+		} else if (trigger==jCheckBoxImmediatelyStartLoadRecording) {
+			currDistributionSetup.setImmediatelyStartLoadRecording(jCheckBoxImmediatelyStartLoadRecording.isSelected());
+		} else if (trigger==jComboBoxRecordingInterval) {
+			TimeSelection timeSelection = (TimeSelection) jComboBoxRecordingInterval.getSelectedItem();
+			currDistributionSetup.setLoadRecordingInterval(timeSelection.getTimeInMill());
+			
 		} else {
 			//System.err.println("Action nicht implementiert: " + ae.getActionCommand());
 		}
@@ -1269,4 +1408,55 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		currProject.setDistributionSetup(this.currDistributionSetup);
 	}
 
+	
+	/**
+	 * The class TimeSelection is used for the ComboBoxModel of the 
+	 * sampling interval as user object.
+	 */
+	public class TimeSelection {
+		
+		private int timeInMill = 0;
+		
+		/**
+		 * Instantiates a new time selection.
+		 * @param timeInMillis the time in milliseconds
+		 */
+		public TimeSelection(int timeInMillis) {
+			this.timeInMill = timeInMillis;
+		}
+		
+		/**
+		 * Gets the time in milliseconds.
+		 * @return the time in milliseconds
+		 */
+		public int getTimeInMill() {
+			return timeInMill;
+		}
+		/**
+		 * Sets the time in milliseconds.
+		 * @param timeInMill the milliseconds to set
+		 */
+		public void setTimeInMill(int timeInMill) {
+			this.timeInMill = timeInMill;
+		}
+		
+		/**
+		 * Converts the milliseconds into seconds.
+		 * @return the text to display in seconds
+		 */
+		public String toString() {
+			int timeInTenth = Math.round(timeInMill/100);
+			float timeInSecFloat = (float) timeInTenth / 10;  
+			int timeInSecInt = (int) timeInSecFloat;
+			
+			if ((timeInSecFloat-timeInSecInt)>0) {
+				return timeInSecFloat + " s";
+			} else {
+				return timeInSecInt + " s";
+			}			
+		}
+		
+	}
+	
+	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

@@ -60,9 +60,12 @@ public class DistributionSetup implements Serializable {
 	private boolean useUserThresholds = false;
 	private LoadThresholdLevels UserThresholds = new LoadThresholdLevels();
 
+	private boolean immediatelyStartLoadRecording = false;
+	private int loadRecordingInterval=500;
+	
+	
 	/**
 	 * Checks if is do static load balancing.
-	 *
 	 * @return the doStaticLoadBalalncing
 	 */
 	public boolean isDoStaticLoadBalancing() {
@@ -70,7 +73,6 @@ public class DistributionSetup implements Serializable {
 	}
 	/**
 	 * Sets the do static load balancing.
-	 *
 	 * @param doStaticLoadBalalncing the doStaticLoadBalalncing to set
 	 */
 	public void setDoStaticLoadBalancing(boolean doStaticLoadBalalncing) {
@@ -79,7 +81,6 @@ public class DistributionSetup implements Serializable {
 	
 	/**
 	 * Gets the number of agents.
-	 *
 	 * @return the numberOfAgents
 	 */
 	public int getNumberOfAgents() {
@@ -87,7 +88,6 @@ public class DistributionSetup implements Serializable {
 	}
 	/**
 	 * Sets the number of agents.
-	 *
 	 * @param numberOfAgents the numberOfAgents to set
 	 */
 	public void setNumberOfAgents(int numberOfAgents) {
@@ -96,7 +96,6 @@ public class DistributionSetup implements Serializable {
 	
 	/**
 	 * Gets the number of container.
-	 *
 	 * @return the numberOfContainer
 	 */
 	public int getNumberOfContainer() {
@@ -104,7 +103,6 @@ public class DistributionSetup implements Serializable {
 	}
 	/**
 	 * Sets the number of container.
-	 *
 	 * @param numberOfContainer the numberOfContainer to set
 	 */
 	public void setNumberOfContainer(int numberOfContainer) {
@@ -113,7 +111,6 @@ public class DistributionSetup implements Serializable {
 	
 	/**
 	 * Sets the static load balancing class.
-	 *
 	 * @param staticLoadBalancingClass the staticLoadBalancingClass to set
 	 */
 	public void setStaticLoadBalancingClass(String staticLoadBalancingClass) {
@@ -121,7 +118,6 @@ public class DistributionSetup implements Serializable {
 	}
 	/**
 	 * Gets the static load balancing class.
-	 *
 	 * @return the staticLoadBalancingClass
 	 */
 	public String getStaticLoadBalancingClass() {
@@ -129,25 +125,22 @@ public class DistributionSetup implements Serializable {
 	}
 	
 	/**
-	 * Checks if is do dynamic load balalncing.
-	 *
+	 * Checks if is do dynamic load balancing.
 	 * @return the doDynamicLoadBalalncing
 	 */
 	public boolean isDoDynamicLoadBalancing() {
 		return doDynamicLoadBalancing;
 	}
 	/**
-	 * Sets the do dynamic load balalncing.
-	 *
-	 * @param doDynamicLoadBalalncing the doDynamicLoadBalalncing to set
+	 * Sets the do dynamic load balancing.
+	 * @param doDynamicLoadBalancing the doDynamicLoadBalalncing to set
 	 */
-	public void setDoDynamicLoadBalancing(boolean doDynamicLoadBalalncing) {
-		this.doDynamicLoadBalancing = doDynamicLoadBalalncing;
+	public void setDoDynamicLoadBalancing(boolean doDynamicLoadBalancing) {
+		this.doDynamicLoadBalancing = doDynamicLoadBalancing;
 	}
 	
 	/**
 	 * Gets the dynamic load balancing class.
-	 *
 	 * @return the dynamicLoadBalancingClass
 	 */
 	public String getDynamicLoadBalancingClass() {
@@ -155,7 +148,6 @@ public class DistributionSetup implements Serializable {
 	}
 	/**
 	 * Sets the dynamic load balancing class.
-	 *
 	 * @param dynamicLoadBalancingClass the dynamicLoadBalancingClass to set
 	 */
 	public void setDynamicLoadBalancingClass(String dynamicLoadBalancingClass) {
@@ -164,7 +156,6 @@ public class DistributionSetup implements Serializable {
 	
 	/**
 	 * Checks if is use user thresholds.
-	 *
 	 * @return the useUserThresholds
 	 */
 	public boolean isUseUserThresholds() {
@@ -172,7 +163,6 @@ public class DistributionSetup implements Serializable {
 	}
 	/**
 	 * Sets the use user thresholds.
-	 *
 	 * @param useUserThresholds the useUserThresholds to set
 	 */
 	public void setUseUserThresholds(boolean useUserThresholds) {
@@ -181,7 +171,6 @@ public class DistributionSetup implements Serializable {
 	
 	/**
 	 * Gets the user thresholds.
-	 *
 	 * @return the userThresholds
 	 */
 	public LoadThresholdLevels getUserThresholds() {
@@ -189,10 +178,40 @@ public class DistributionSetup implements Serializable {
 	}
 	/**
 	 * Sets the user thresholds.
-	 *
 	 * @param userThresholds the userThresholds to set
 	 */
 	public void setUserThresholds(LoadThresholdLevels userThresholds) {
 		UserThresholds = userThresholds;
 	}
+	
+	/**
+	 * Checks if is immediately start load recording.
+	 * @return true, if is immediately start load recording
+	 */
+	public boolean isImmediatelyStartLoadRecording() {
+		return immediatelyStartLoadRecording;
+	}
+	/**
+	 * Sets the immediately start load recording.
+	 * @param immediatelyStartLoadRecording the new immediately start load recording
+	 */
+	public void setImmediatelyStartLoadRecording(boolean immediatelyStartLoadRecording) {
+		this.immediatelyStartLoadRecording = immediatelyStartLoadRecording;
+	}
+
+	/**
+	 * Returns the load recording interval.
+	 * @return the load recording interval
+	 */
+	public int getLoadRecordingInterval() {
+		return loadRecordingInterval;
+	}
+	/**
+	 * Sets the load recording interval.
+	 * @param loadRecordingInterval the new load recording interval
+	 */
+	public void setLoadRecordingInterval(int loadRecordingInterval) {
+		this.loadRecordingInterval = loadRecordingInterval;
+	}
+	
 }
