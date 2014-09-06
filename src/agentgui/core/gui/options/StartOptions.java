@@ -856,8 +856,10 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
 			comboBoxModel.addElement("");
 			String[] projectFolders = globalInfo.getProjectSubDirectories();
-			for (int i = 0; i < projectFolders.length; i++) {
-				comboBoxModel.addElement(projectFolders[i]);	
+			if (projectFolders!=null && projectFolders.length>0) {
+				for (int i = 0; i < projectFolders.length; i++) {
+					comboBoxModel.addElement(projectFolders[i]);	
+				}	
 			}
 			jComboBoxProjectSelector = new JComboBox(comboBoxModel);
 			jComboBoxProjectSelector.setPreferredSize(new Dimension(300, 26));
@@ -1158,6 +1160,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		// --- Add the components as needed ---------------
 		switch (this.getSelectedExecutionMode()) {
 		case APPLICATION:
+		default:
 			this.addToConfigPanel(this.getJPanelMainBgServer());
 			// --- Reset DEVICE_SYSTEM variables ----------
 			this.getJComboBoxProjectSelector().setSelectedItem(null);
@@ -1181,6 +1184,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			this.addToConfigPanel(this.getJPanelEmbeddedSystemAgent());
 			this.refreshViewDeviceSystem();
 			break;
+		
 		}
 
 		// --- Add completion dummy JLabel ----------------
