@@ -1176,7 +1176,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		
 		Set<GraphNode> nodesPicked = this.visView.getPickedVertexState().getPicked();
 		if (nodesPicked.size()!=0) {
-			HashSet<NetworkComponent> components = this.graphController.getNetworkModel().getNetworkComponentsFullySelected(nodesPicked);
+			HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponentsFullySelected(nodesPicked);
 			if (components.size()!=0) {
 				// --- Get the dimension of the selected nodes ------ 
 				Rectangle2D areaSelected = GraphGlobals.getGraphSpreadDimension(nodesPicked);

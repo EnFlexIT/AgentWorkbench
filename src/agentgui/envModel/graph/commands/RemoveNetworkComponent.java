@@ -39,6 +39,7 @@ import javax.swing.undo.CannotUndoException;
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.GraphEdge;
+import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.GraphNodePairs;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
@@ -58,8 +59,9 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 
 	private int noOfComponents4ModelStorage = 100;
 	
-	private GraphEnvironmentController graphController = null;
-	private Vector<NetworkComponent> networkComponents2Remove = null;
+	private GraphEnvironmentController graphController;
+	private Vector<NetworkComponent> networkComponents2Remove;
+	private boolean removeDistributionNodes; 
 	
 	private NetworkModel extractedNetworkModel = null;
 	private HashMap<NetworkComponent, Vector<GraphNodePairs>> nodeConnections = null; 
@@ -69,13 +71,15 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 	/**
 	 * Instantiates the new action in order to remove a set of NetworkComponents's.
 	 *
-	 * @param graphController the graph controller
-	 * @param networkComponents2Remove the network components2 remove
+	 * @param graphController the {@link GraphEnvironmentController}
+	 * @param networkComponents2Remove the network components to remove
+	 * @param removeDistributionNodes the boolean that indicates to remove distribution nodes too
 	 */
-	public RemoveNetworkComponent(GraphEnvironmentController graphController, HashSet<NetworkComponent> networkComponents2Remove) {
+	public RemoveNetworkComponent(GraphEnvironmentController graphController, HashSet<NetworkComponent> networkComponents2Remove, boolean removeDistributionNodes) {
 		super();
 		this.graphController = graphController;
 		this.networkComponents2Remove = new Vector<NetworkComponent>(networkComponents2Remove);
+		this.removeDistributionNodes = removeDistributionNodes;
 		this.doEdit();
 	}
 
@@ -98,14 +102,15 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		this.nodeConnections = new HashMap<NetworkComponent, Vector<GraphNodePairs>>();
 		this.extractedNetworkModel = new NetworkModel();
 		
-		for (int i = 0; i < this.networkComponents2Remove.size(); i++) {
+		for (NetworkComponent networkComponent : this.networkComponents2Remove) {
 
-			NetworkComponent networkComponent = this.networkComponents2Remove.get(i);
-			
-			this.transfer2localNetworkModel(networkComponent);
-			this.graphController.getNetworkModel().removeNetworkComponent(networkComponent, false);
-			this.graphController.removeAgent(networkComponent);
-			netCompsRemoved.add(networkComponent);
+			boolean isDistributionNode = networkComponent.getPrototypeClassName().equals(DistributionNode.class.getName());
+			if (isDistributionNode==false || (isDistributionNode==true && this.removeDistributionNodes==true)) {
+				this.transfer2localNetworkModel(networkComponent);
+				this.graphController.getNetworkModel().removeNetworkComponent(networkComponent, this.removeDistributionNodes, false);
+				this.graphController.removeAgent(networkComponent);
+				netCompsRemoved.add(networkComponent);
+			}
 		}
 		this.graphController.getNetworkModel().refreshGraphElements();
 		
@@ -127,18 +132,21 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		// --- Work on the graph ----------------------------------------------
 		Graph<GraphNode, GraphEdge> sourceGraph = sourceNetworkModel.getGraph();
 		Graph<GraphNode, GraphEdge> destinGraph = destinNetworkModel.getGraph();
-		
+
 		// --- Split the nodes of the component from the rest of --------------
 		// --- the network and remind these connections 		 --------------
 		Vector<GraphNodePairs> nodeConnections4Component = new Vector<GraphNodePairs>();
-		HashSet<String> nodeIDs = sourceNetworkModel.extractGraphElementIDs(networkComponent, new GraphNode());
-		for (String nodeID: nodeIDs) {
-			GraphNode node2SplitAt = (GraphNode) sourceNetworkModel.getGraphElement(nodeID);
-			// --- Split the connection node ------------------------
-			GraphNodePairs couples = sourceNetworkModel.splitNetworkModelAtNode(node2SplitAt, false, false);
-			// --- Remind the connections of this node --------------
-			if (couples.getGraphNode2Hash().size()>0) {
-				nodeConnections4Component.add(couples);	
+		HashSet<GraphElement> graphElements = sourceNetworkModel.getGraphElementsOfNetworkComponent(networkComponent, new GraphNode());
+		for (GraphElement node: graphElements) {
+			GraphNode node2SplitAt = (GraphNode) node;
+			boolean isDistributionGraphNode = sourceNetworkModel.isDistributionNode(node2SplitAt)!=null;
+			if (isDistributionGraphNode==false || (isDistributionGraphNode==true && removeDistributionNodes==true)) {
+				// --- Split the connection node ------------------------
+				GraphNodePairs couples = sourceNetworkModel.splitNetworkModelAtNode(node2SplitAt);
+				// --- Remind the connections of this node --------------
+				if (couples.getGraphNode2Hash().size()>0) {
+					nodeConnections4Component.add(couples);	
+				}
 			}
 		}
 		// --- Remind the connections of this NetworkComponent ---------------- 
@@ -155,8 +163,9 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		}
 		
 		// --- DistributionNode ? ---------------------------------------------
-		if (netComp.getPrototypeClassName().equalsIgnoreCase(DistributionNode.class.getName())) {
-			GraphNode node = (GraphNode) sourceNetworkModel.getGraphElement(nodeIDs.iterator().next());
+		if (netComp.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+			String graphNodeID = networkComponent.getGraphElementIDs().iterator().next();
+			GraphNode node = (GraphNode) sourceNetworkModel.getGraphElement(graphNodeID);
 			destinGraph.addVertex(node);
 		}
 		
@@ -264,10 +273,8 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
 		
 		HashSet<NetworkComponent> netCompsRemoved = new HashSet<NetworkComponent>();
-		for (int i = 0; i < this.networkComponents2Remove.size(); i++) {
+		for (NetworkComponent networkComponent : this.networkComponents2Remove) {
 
-			NetworkComponent networkComponent = this.networkComponents2Remove.get(i);
-			
 			this.graphController.getNetworkModel().removeNetworkComponent(networkComponent, false);
 			this.graphController.removeAgent(networkComponent);
 			netCompsRemoved.add(networkComponent);

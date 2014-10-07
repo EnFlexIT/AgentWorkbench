@@ -59,6 +59,7 @@ import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.GraphNodePairs;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
+import agentgui.envModel.graph.prototypes.DistributionNode;
 
 /**
  * The Class BasicGraphGuiTools consists on additional visual tools for 
@@ -921,16 +922,64 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		} else if (ae.getSource() == getJButtonRemoveComponent() || ae.getSource() == getJMenuItemDeleteComp()) {
 			// ------------------------------------------------------
 			// --- Remove Component Button clicked ------------------
+			boolean removeDistributionNodes = true;
 			Set<GraphNode> nodeSet = this.basicGraphGui.getPickedNodes();
+			Set<GraphEdge> edgeSet = this.basicGraphGui.getPickedEdges();
 			HashSet<NetworkComponent> selectedComponents = this.graphController.getNetworkModelAdapter().getNetworkComponentsFullySelected(nodeSet);
 			
+			// ------------------------------------------------------
+			// --- Capture the case of one edged-NetworkComponent ---  
+			// --- and several DistributionNodes are selected    ----
+			if (selectedComponents!=null && selectedComponents.size()>1 && edgeSet.size()>=1) {
+				// --- Determine NetworkComponents by edges ---------
+				HashSet<NetworkComponent> edgeComponents = new HashSet<NetworkComponent>();
+				for (GraphEdge edgeSelected : edgeSet) {
+					NetworkComponent componentFound = this.graphController.getNetworkModelAdapter().getNetworkComponent(edgeSelected);
+					if (componentFound!=null && edgeComponents.contains(componentFound)==false) {
+						edgeComponents.add(componentFound);
+						if (edgeComponents.size()>1) {
+							break;
+						}
+					}
+				}
+				// --- Only if we could find a single component -----
+				if (edgeComponents.size()==1) {
+					NetworkComponent edgeComponent = edgeComponents.iterator().next();
+					if (selectedComponents.contains(edgeComponent)==true) {
+						// --- Get remaining list of selections  ----
+						HashSet<NetworkComponent> disNodeComponents = new HashSet<NetworkComponent>(selectedComponents);
+						disNodeComponents.remove(edgeComponent);
+						// --- Are there DistributionNodes? ---------
+						for(NetworkComponent disNodeSearch : disNodeComponents) {
+							if (disNodeSearch.getPrototypeClassName().equals(DistributionNode.class.getName())==false) {
+								disNodeComponents.remove(disNodeSearch);
+							}
+						}
+						// --- Prepare user request -----------------
+						String title = Language.translate("Also remove node components?", Language.EN);
+						String msg = Language.translate("The selection contains also NetworkComponets that are single nodes.", Language.EN) + "\n";
+						msg += Language.translate("These are:", Language.EN) + "\n";
+						for(NetworkComponent distributionNode : disNodeComponents) {
+							msg += "- " + distributionNode.getType() + " (" + distributionNode.getId() + ")\n";
+						}
+						msg += Language.translate("Should they be removed too?", Language.EN);
+						int userAnswer = JOptionPane.showConfirmDialog(this.graphControllerGUI, msg, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+						if (userAnswer==JOptionPane.NO_OPTION) {
+							removeDistributionNodes = false;
+							for(NetworkComponent distributionNode : disNodeComponents) {
+								selectedComponents.remove(distributionNode);
+							}
+						}
+					}
+				}
+			}
+			// --- Proceed with deleting, if applicable -------------  
 			if(selectedComponents!=null && selectedComponents.size()>0){ 
 				// --- Remove component and update graph ------------ 
-				this.graphController.getNetworkModelAdapter().removeNetworkComponents(selectedComponents);	
-				
+				this.graphController.getNetworkModelAdapter().removeNetworkComponents(selectedComponents, removeDistributionNodes);	
 			} else {
 				// --- Nothing valid picked -------------------------
-				JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Select a valid element first!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);	
+				JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Select a valid element first!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.INFORMATION_MESSAGE);	
 			}
 			
 		} else if (ae.getSource() == getJButtonMergeNodes()) {
