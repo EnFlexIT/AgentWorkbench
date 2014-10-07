@@ -66,50 +66,50 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <generalization id="8">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <association id="9">    
-    <bendpoint x="402" y="113"/>    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="10" name="myEnvironmentPanel">        
-        <position height="14" width="103" x="353" y="115"/>      
-      </attribute>      
-      <multiplicity id="11" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="12">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <association id="13">    
-    <bendpoint x="401" y="68"/>    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="14" name="environmentController">        
-        <position height="14" width="111" x="349" y="51"/>      
-      </attribute>      
-      <multiplicity id="15" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="16">    
+  <association id="8">    
     <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="17" name="graphGuiTools"/>      
-      <multiplicity id="18" minimum="0" maximum="1"/>    
+      <attribute id="9" name="graphGuiTools"/>      
+      <multiplicity id="10" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="19">    
+  <generalization id="11">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <association id="12">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="20" name="networkModel"/>      
-      <multiplicity id="21" minimum="0" maximum="1"/>    
+      <attribute id="13" name="networkModel"/>      
+      <multiplicity id="14" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="15">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <association id="16">    
+    <bendpoint x="401" y="68"/>    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="17" name="environmentController">        
+        <position height="14" width="111" x="349" y="51"/>      
+      </attribute>      
+      <multiplicity id="18" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="19">    
+    <bendpoint x="402" y="113"/>    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="20" name="myEnvironmentPanel">        
+        <position height="14" width="103" x="353" y="115"/>      
+      </attribute>      
+      <multiplicity id="21" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" 
