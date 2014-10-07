@@ -43,6 +43,8 @@
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>false</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
+        <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
+        <loadRecordingInterval>500</loadRecordingInterval>
         <numberOfAgents>1500</numberOfAgents>
         <numberOfContainer>2</numberOfContainer>
         <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
@@ -62,7 +64,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>MixedClusters (1) Small</simulationSetupCurrent>
+    <simulationSetupCurrent>Testimport</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
     <downloadResources>http://132.252.61.210:8080/gasmas/BIN_DUMP_1944173477.jar</downloadResources>
     <downloadResources>http://132.252.61.210:8080/gasmas/gasmas_IDE.jar</downloadResources>
@@ -133,5 +135,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>false</unsaved>
+    <unsaved>true</unsaved>
 </project>

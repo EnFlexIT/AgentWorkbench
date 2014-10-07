@@ -34,41 +34,35 @@
         <agent>
             <postionNo>5</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
-            <startAsName>n68</startAsName>
-        </agent>
-        <agent>
-            <postionNo>6</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
             <startAsName>n84</startAsName>
         </agent>
         <agent>
-            <postionNo>7</postionNo>
+            <postionNo>6</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
             <startAsName>n85</startAsName>
         </agent>
         <agent>
-            <postionNo>8</postionNo>
+            <postionNo>7</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.PipeAgent</agentClassReference>
             <startAsName>n87</startAsName>
         </agent>
         <agent>
-            <postionNo>9</postionNo>
+            <postionNo>8</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.ExitAgent</agentClassReference>
             <startAsName>n88</startAsName>
         </agent>
         <agent>
-            <postionNo>10</postionNo>
+            <postionNo>9</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.StorageAgent</agentClassReference>
             <startAsName>n89</startAsName>
         </agent>
         <agent>
-            <postionNo>11</postionNo>
+            <postionNo>10</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>gasmas.agents.components.EntryAgent</agentClassReference>
             <startAsName>n94</startAsName>
