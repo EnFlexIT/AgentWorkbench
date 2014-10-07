@@ -33,9 +33,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-
 /**
  * The Class GraphElementLayout.
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class GraphElementLayout {
 
@@ -265,7 +265,7 @@ public class GraphElementLayout {
 		GraphEdge graphEdge = (GraphEdge) this.myGraphElement;
 		NetworkComponent networkComponent = this.networkModel.getNetworkComponent(graphEdge);
 		if (networkComponent == null) {
-			System.out.println(graphEdge.getId() + " not found!");
+			System.out.println("Graph Element Layout: NetworkComponent for GraphEdge '" + graphEdge.getId() + "' not found!");
 			return;
 		}
 		if (networkComponent instanceof ClusterNetworkComponent) {
@@ -275,8 +275,6 @@ public class GraphElementLayout {
 			ClusterNetworkComponent clusterNetworkComponent = (ClusterNetworkComponent) networkComponent;
 			this.myDomain = domainHash.get(clusterNetworkComponent.getDomain());
 			
-			//this.size = myComponentTypeSettings.getEdgeWidth();
-			//this.color = new Color(Integer.parseInt(myComponentTypeSettings.getColor()));
 			this.colorPicked = new Color(Integer.parseInt(myDomain.getVertexColorPicked()));
 			this.labelText = graphEdge.getId();
 			this.showLabel = false;

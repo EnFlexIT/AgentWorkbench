@@ -347,7 +347,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	public void removeNetworkComponent(NetworkComponent networkComponent) {
 		HashSet<NetworkComponent> compHash = new HashSet<NetworkComponent>();
 		compHash.add(networkComponent);
-		this.removeNetworkComponents(compHash);
+		this.removeNetworkComponents(compHash, true);
 	}
 
 	/* (non-Javadoc)
@@ -355,7 +355,14 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 */
 	@Override
 	public void removeNetworkComponents(HashSet<NetworkComponent> networkComponents) {
-		this.undoManager.addEdit(new RemoveNetworkComponent(this.graphController, networkComponents));
+		this.removeNetworkComponents(networkComponents, true);
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#removeNetworkComponents(java.util.HashSet, boolean)
+	 */
+	public void removeNetworkComponents(HashSet<NetworkComponent> networkComponents, boolean removeDistributionNodes) {
+		this.undoManager.addEdit(new RemoveNetworkComponent(this.graphController, networkComponents, removeDistributionNodes));
 	}
 	
 	/* (non-Javadoc)
@@ -423,15 +430,7 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 */
 	@Override
 	public void splitNetworkModelAtNode(GraphNode node2SplitAt) {
-		this.undoManager.addEdit(new SplitNetworkComponent(this.graphController, node2SplitAt, true));
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#splitNetworkModelAtNode(agentgui.envModel.graph.networkModel.GraphNode, boolean)
-	 */
-	@Override
-	public void splitNetworkModelAtNode(GraphNode node2SplitAt, boolean moveOppositeNode) {
-		this.undoManager.addEdit(new SplitNetworkComponent(this.graphController, node2SplitAt, moveOppositeNode));
+		this.undoManager.addEdit(new SplitNetworkComponent(this.graphController, node2SplitAt));
 	}
 	
 	/**

@@ -124,7 +124,7 @@ public interface NetworkModelInterface {
 	public abstract void renameNetworkComponent(String oldCompID, String newCompID);
 
 	/**
-	 * This method removes a NetworkComponent from the GridModel's networkComponents 
+	 * This method removes a {@link NetworkComponent} from the GridModel's networkComponents 
 	 * HashMap, using its' ID as key.
 	 * 
 	 * @param networkComponent The NetworkComponent to remove
@@ -132,11 +132,18 @@ public interface NetworkModelInterface {
 	public abstract void removeNetworkComponent(NetworkComponent networkComponent);
 
 	/**
-	 * Removes the network components.
-	 * @param networkComponents the network components
+	 * Removes the specified {@link NetworkComponent}'s.
+	 * @param networkComponents the {@link NetworkComponent}'s to delete 
 	 */
 	public abstract void removeNetworkComponents(HashSet<NetworkComponent> networkComponents);
 
+	/**
+	 * Removes the specified {@link NetworkComponent}'s.
+	 * @param networkComponents the {@link NetworkComponent}'s to delete
+	 * @param removeDistributionNodes set true, if DistributionNodes should be removed too 
+	 */
+	public abstract void removeNetworkComponents(HashSet<NetworkComponent> networkComponents, boolean removeDistributionNodes);
+	
 	/**
 	 * Removes the network components if not in list.
 	 *
@@ -189,20 +196,21 @@ public interface NetworkModelInterface {
 	public abstract NetworkComponent getNetworkComponent(GraphEdge graphEdge);
 
 	/**
-	 * Gets alls networkComponents contained in a GraphNode Set
+	 * Gets all NetworkComponents contained in a GraphNode Set
 	 *
 	 * @param graphNodes the graph nodes
 	 * @return the network components
 	 */
 	public abstract HashSet<NetworkComponent> getNetworkComponents(Set<GraphNode> graphNodes);
 
+	
 	/**
 	 * Returns the {@link NetworkComponent}'s that are fully selected by the given set of GraphNodes.<br>
 	 * As an example: if you have selected one vertex of a simple directed edge with two vertices, this
 	 * method will return null.  
 	 *
-	 * @param graphNodes the GraphNodes
-	 * @return the {@link NetworkComponent}'s that are fully selected by the given GraphNodes's
+	 * @param graphNodes the set of selected {@link GraphNode}'s
+	 * @return the {@link NetworkComponent}'s that are fully selected by the given nodes and edges
 	 */
 	public abstract HashSet<NetworkComponent> getNetworkComponentsFullySelected(Set<GraphNode> graphNodes);
 	
@@ -308,14 +316,6 @@ public interface NetworkModelInterface {
 	 */
 	public abstract void splitNetworkModelAtNode(GraphNode node2SplitAt);
 
-	/**
-	 * Splits the network model at a specified node.
-	 *
-	 * @param node2SplitAt the node
-	 * @param moveOppositeNode the move opposite node
-	 */
-	public abstract void splitNetworkModelAtNode(GraphNode node2SplitAt, boolean moveOppositeNode);
-	
 	/**
 	 * Gets a shifted position for a node in relation to the raster size of the component type settings.
 	 * @param fixedNode the fixed node
