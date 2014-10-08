@@ -545,15 +545,17 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 
 		// --- Make sure that the NetworkComponent is on its own ----
 		HashSet<GraphElement> graphElements = this.getGraphElementsOfNetworkComponent(networkComponent, new GraphNode());
-		for (GraphElement graphElement : graphElements) {
-			GraphNode node = (GraphNode) graphElement;
-			boolean isDistributionGraphNode = this.isDistributionNode(node)!=null;
-			if (isDistributionGraphNode==false || (isDistributionGraphNode==true && removeDistributionNodes==true)) {
-				HashSet<NetworkComponent> networkComponents = this.getNetworkComponents(node);
-				if (networkComponents.size() > 1) {
-					this.splitNetworkModelAtNode(node);
-				}	
-			}
+		if (graphElements!=null) {
+			for (GraphElement graphElement : graphElements) {
+				GraphNode node = (GraphNode) graphElement;
+				boolean isDistributionGraphNode = this.isDistributionNode(node)!=null;
+				if (isDistributionGraphNode==false || (isDistributionGraphNode==true && removeDistributionNodes==true)) {
+					HashSet<NetworkComponent> networkComponents = this.getNetworkComponents(node);
+					if (networkComponents.size() > 1) {
+						this.splitNetworkModelAtNode(node);
+					}	
+				}
+			}	
 		}
 		
 		// --- Remove the graph elements of this component ----------
@@ -779,37 +781,26 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	public HashSet<NetworkComponent> getNetworkComponentsFullySelected(Set<GraphNode> graphNodes) {
 		
-		// --- Create a reminder for the IDs of the GraphNodes ------
-		Set<String> idSetGraphNodes = new HashSet<String>();
-		for (GraphNode graphNode : graphNodes) {
-			idSetGraphNodes.add(graphNode.getId());
-		}
-		
-		// --- Get the affected components --------------------------
-		HashSet<NetworkComponent> componentsAffected = this.getNetworkComponents(graphNodes);
 		HashSet<NetworkComponent> componentsFound = new HashSet<NetworkComponent>();
-		
-		// --- Run through the list of components -------------------
-		for (NetworkComponent component : componentsAffected) {
-			// --- Extract all GraphNode IDs ------------------------
-			Set<String> compIDSetAffecetd = this.extractGraphElementIDs(component, new GraphNode());
-			Set<String> compIDSetFound = new HashSet<String>();
-			for (String compID : compIDSetAffecetd) {
-				// --- Is this a node in the selection? -------------
-				if (idSetGraphNodes.contains(compID)) {
-					compIDSetFound.add(compID);
+		HashSet<NetworkComponent> componentsAffected = this.getNetworkComponents(graphNodes);
+
+		// --- Take affected components and run through them --------
+		for (NetworkComponent networkComponent : componentsAffected) {
+			
+			int graphElementsInSelection = 0; 
+			HashSet<GraphElement> graphElementsOfNetworkComponent = this.getGraphElementsOfNetworkComponent(networkComponent, new GraphNode());
+			for (GraphElement element : graphElementsOfNetworkComponent) {
+				if (graphNodes.contains(element)) {
+					graphElementsInSelection++;
 				}
 			}
-			// --- Add the NetworkComponent to the result
-			if (compIDSetFound.size()==compIDSetAffecetd.size()) {
-				componentsFound.add(component);
+			if (graphElementsInSelection==graphElementsOfNetworkComponent.size()) {
+				componentsFound.add(networkComponent);
 			}
 			
 		}
 		
-		if (componentsFound.size()==0) {
-			return null;
-		}
+		if (componentsFound.size()==0) componentsFound = null;
 		return componentsFound;
 		
 	}
@@ -1008,12 +999,15 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			supplementNetworkModel.getGraphElements().remove(oldNodeID);
 			supplementNetworkModel.getGraphElements().put(newNodeID, graphNode);
 			
+			// --- Change to new ID also in the other affected components ----- 
 			NetworkComponents netComps = supplementNetworkModel.getGraphElementToNetworkComponentHash().get(graphNode);
-			for (NetworkComponent netComp : netComps) {
-				// --- Change to the new ID
-				netComp.getGraphElementIDs().remove(oldNodeID);
-				netComp.getGraphElementIDs().add(newNodeID);
+			if (netComps!=null) {
+				for (NetworkComponent netComp : netComps) {
+					netComp.getGraphElementIDs().remove(oldNodeID);
+					netComp.getGraphElementIDs().add(newNodeID);
+				}	
 			}
+
 		}
 		
 		// --- Get the list of NetworkComponents ------------------------------

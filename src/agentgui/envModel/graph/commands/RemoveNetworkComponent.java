@@ -137,18 +137,21 @@ public class RemoveNetworkComponent extends AbstractUndoableEdit {
 		// --- the network and remind these connections 		 --------------
 		Vector<GraphNodePairs> nodeConnections4Component = new Vector<GraphNodePairs>();
 		HashSet<GraphElement> graphElements = sourceNetworkModel.getGraphElementsOfNetworkComponent(networkComponent, new GraphNode());
-		for (GraphElement node: graphElements) {
-			GraphNode node2SplitAt = (GraphNode) node;
-			boolean isDistributionGraphNode = sourceNetworkModel.isDistributionNode(node2SplitAt)!=null;
-			if (isDistributionGraphNode==false || (isDistributionGraphNode==true && removeDistributionNodes==true)) {
-				// --- Split the connection node ------------------------
-				GraphNodePairs couples = sourceNetworkModel.splitNetworkModelAtNode(node2SplitAt);
-				// --- Remind the connections of this node --------------
-				if (couples.getGraphNode2Hash().size()>0) {
-					nodeConnections4Component.add(couples);	
+		if (graphElements!=null) {
+			for (GraphElement node: graphElements) {
+				GraphNode node2SplitAt = (GraphNode) node;
+				boolean isDistributionGraphNode = sourceNetworkModel.isDistributionNode(node2SplitAt)!=null;
+				if (isDistributionGraphNode==false || (isDistributionGraphNode==true && removeDistributionNodes==true)) {
+					// --- Split the connection node --------------------------
+					GraphNodePairs couples = sourceNetworkModel.splitNetworkModelAtNode(node2SplitAt);
+					// --- Remind the connections of this node ----------------
+					if (couples.getGraphNode2Hash().size()>0) {
+						nodeConnections4Component.add(couples);	
+					}
 				}
-			}
+			}	
 		}
+		
 		// --- Remind the connections of this NetworkComponent ---------------- 
 		this.nodeConnections.put(networkComponent, nodeConnections4Component);
 		
