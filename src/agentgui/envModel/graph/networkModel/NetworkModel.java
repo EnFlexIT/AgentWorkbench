@@ -630,18 +630,19 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 
 	/**
-	 * Removes the network components if not in list.
-	 * @param networkComponents the network components
+	 * Removes all network components if not in the specified list.
+	 * @param networkComponentsToKeep the network components to keep when deleting network components
 	 */
-	public HashSet<NetworkComponent> removeNetworkComponentsInverse(HashSet<NetworkComponent> networkComponents) {
+	public HashSet<NetworkComponent> removeNetworkComponentsInverse(HashSet<NetworkComponent> networkComponentsToKeep) {
 		HashSet<NetworkComponent> removed = new HashSet<NetworkComponent>();
-		HashSet<String> networkComponentIDs = this.getNetworkComponentsIDs(networkComponents);
+		HashSet<String> networkComponentIDs = this.getNetworkComponentsIDs(networkComponentsToKeep);
 		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
-			if (!networkComponentIDs.contains(networkComponent.getId())) {
-				removeNetworkComponent(networkComponent);
+			if (networkComponentIDs.contains(networkComponent.getId())==false) {
+				removeNetworkComponent(networkComponent, false, false);
 				removed.add(networkComponent);
 			}
 		}
+		this.refreshGraphElements();
 		return removed;
 	}
 	
@@ -1661,13 +1662,22 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	
 	/**
 	 * Replace NetworkComponents by one ClusterComponent.
-	 * @param networkComponents A List of NetworkComponents
+	 *
+	 * @param networkComponentsToCluster The List of {@link NetworkComponent}'s that are to be grouped into a cluster
+	 * @param distributionNodesAreOuterNodes the distribution nodes are outer nodes
+	 * @return the new {@link ClusterNetworkComponent} that was inserted into the model
 	 */
-	public ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponents, boolean distributionNodesAreOuterNodes) {
+	public ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponentsToCluster, boolean distributionNodesAreOuterNodes) {
 		
-		// ---------- Get Domain of current NetworkComponent ----------------------
+		// --- Maybe another instance: Get real group of NetworkComponents ---- 
+		HashSet<NetworkComponent> goNetworkComponents = new HashSet<NetworkComponent>();
+		for (NetworkComponent netComp : networkComponentsToCluster) {
+			goNetworkComponents.add(this.getNetworkComponent(netComp.getId()));
+		}
+		
+		// ---------- Get Domain of current NetworkComponent -------------------
 		String domain = null;
-		NetworkComponent networkComponent = networkComponents.iterator().next();
+		NetworkComponent networkComponent = goNetworkComponents.iterator().next();
 		if (networkComponent instanceof ClusterNetworkComponent) {
 			domain = ((ClusterNetworkComponent) networkComponent).getDomain();
 		} else {
@@ -1676,34 +1686,36 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			domain = cts.getDomain();	
 		}
 				
-		// ---------- Prepare Parameters for ClusterComponent ---------------------
+		// ---------- Prepare Parameters for ClusterComponent ------------------
 		NetworkModel clusterNetworkModel = this.getCopy();
 		clusterNetworkModel.setAlternativeNetworkModel(null);
-		clusterNetworkModel.removeNetworkComponentsInverse(networkComponents);
+		clusterNetworkModel.removeNetworkComponentsInverse(goNetworkComponents);
 		clusterNetworkModel.resetGraphElementLayout();
 		
-		// ----------- Get outer GraphNode of the NetworkModel --------------------
-		Vector<GraphNode> outerNodes = clusterNetworkModel.getOuterNodes(distributionNodesAreOuterNodes);
+		// ----------- Get outer GraphNode of the NetworkModel -----------------
+		Vector<GraphNode> outerNodes = this.getOuterConnectionNodes(goNetworkComponents, distributionNodesAreOuterNodes);
+		
+		// ----------- Remove clustered NetworkComponents ----------------------
+		for (NetworkComponent netComp : goNetworkComponents) {
+			if (distributionNodesAreOuterNodes==false) {
+				this.removeNetworkComponent(netComp, true, false);
+			} else {
+				if (netComp.getPrototypeClassName().equals(DistributionNode.class.getName())==false) {
+					this.removeNetworkComponent(netComp, false, false);
+				}
+			}
+		}
 		
 		// ----------- Create Cluster Prototype and Component ---------------------
 		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, this.nextNetworkComponentID());
 		HashSet<GraphElement> graphElements = clusterGraphElement.addToGraph(this);
 		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterGraphElement.getId(), clusterGraphElement.getType(), null, graphElements, clusterGraphElement.isDirected(), domain, clusterNetworkModel);
-		
-		// ----------- Remove clustered NetworkComponents -------------------------
-		for (NetworkComponent netComp : networkComponents) {
-			if (distributionNodesAreOuterNodes==false) {
-				this.removeNetworkComponent(netComp);
-			} else {
-				if (netComp.getPrototypeClassName().equals(DistributionNode.class.getName())==false) {
-					this.removeNetworkComponent(netComp);
-				}
-			}
-		}
-		
 		this.addNetworkComponent(clusterComponent);
 		this.refreshGraphElements();
-		this.resetGraphElementLayout();
+
+		// --- Add the created cluster as an alternative network model -----------
+		this.getAlternativeNetworkModel().put(clusterComponent.getId(), clusterNetworkModel);
+		
 		return clusterComponent;
 	}
 
@@ -1743,28 +1755,37 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	/**
 	 * Returns the outer, not connected GraphNodes of a NetworkModel.
 	 *
+	 * @param networkComponents the {@link NetworkComponent}'s that aare building a group within the graph (BE AWARE OF THE RIGHT INSTANCE)
 	 * @param setDistributionNodesToOuterNodes if true, distribution nodes will always set to outer nodes
 	 * @return the outer nodes
 	 */
-	public Vector<GraphNode> getOuterNodes(boolean setDistributionNodesToOuterNodes) {
+	public Vector<GraphNode> getOuterConnectionNodes(HashSet<NetworkComponent> networkComponents, boolean setDistributionNodesToOuterNodes) {
 		
 		Vector<GraphNode> outerNodes = new Vector<GraphNode>();
-		Collection<GraphNode> nodes = this.getGraph().getVertices();
-		for (GraphNode node : nodes) {
-			HashSet<NetworkComponent> comps = this.getNetworkComponents(node);
-			if (comps.size()==1) {
-				if (isFreeGraphNode(node)==true) {
-					outerNodes.add(node);	
-				}
-				
-			} else if (comps.size()>1) {
-				// --- DistributionNode? --------
-				if (this.containsDistributionNode(comps)!=null && setDistributionNodesToOuterNodes==true){
-					outerNodes.add(node);
-				}
-				
+		
+		// --- Walk through the list of specified NetworkCompnents ------------
+		for (NetworkComponent netComp : networkComponents) {
+			// --- Get all GraphNodes of a NetworkComponent -------------------
+			HashSet<GraphElement> nodeElements = this.getGraphElementsOfNetworkComponent(netComp, new GraphNode());
+			for (GraphElement nodeElement : nodeElements) {
+				// --- Get connected NetworkComponents of this GraphNode ------
+				NetworkComponents connNetComps = this.getGraphElementToNetworkComponentHash().get(nodeElement);
+				// --- Distribution Node within neighbours and set outer? -----
+				if (setDistributionNodesToOuterNodes==true && this.containsDistributionNode(connNetComps)!=null && outerNodes.contains((GraphNode)nodeElement)==false) {
+					// --- Add to outer nodes ---------------------------------
+					outerNodes.add((GraphNode)nodeElement);	
+					
+				} else {
+					// --- Are the connected NetworkComponents in the group -------	
+					for (NetworkComponent connNetComp : connNetComps) {
+						if (networkComponents.contains(connNetComp)==false && outerNodes.contains((GraphNode)nodeElement)==false) {
+							// --- Found outer node -------------------------------
+							outerNodes.add((GraphNode)nodeElement);	
+							break;
+						}
+					} 
+				} // end if
 			}
-			
 		}
 		return outerNodes;
 	}
