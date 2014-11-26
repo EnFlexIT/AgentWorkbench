@@ -1231,10 +1231,6 @@ import agentgui.core.webserver.JarFileCreator;
 		}
 		
 		// --- Search for Agent-, Ontology- and BaseService - Classes ----
-		if (Application.getClassSearcher() != null) {
-			Application.getClassSearcher().stopSearch(null);
-			Application.setClassSearcher(null);
-		}
 		Application.setClassSearcher(new ClassSearcher(this));
 		
 		this.setChangedAndNotify(CHANGED_ProjectResources);

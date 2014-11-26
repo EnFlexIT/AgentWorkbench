@@ -73,7 +73,7 @@ public class SplitNetworkComponent extends AbstractUndoableEdit {
 	 */
 	private void doEdit() {
 		// --- Split at node and remind the coupling ----------------
-		this.graphNodePairsSplited = this.graphController.getNetworkModel().splitNetworkModelAtNode(this.graphNode2SplitAt);
+		this.graphNodePairsSplited = this.graphController.getNetworkModel().splitNetworkModelAtNode(this.graphNode2SplitAt, true);
 		this.graphController.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Nodes_Splited));
 		this.graphController.setProjectUnsaved();
 	}

@@ -38,12 +38,11 @@ import java.util.Vector;
 
 import javax.swing.SwingUtilities;
 
-import agentgui.core.application.Application;
-import agentgui.core.jade.ClassSearcher;
-import agentgui.simulationService.load.LoadMeasureThread;
 import jnt.scimark2.Constants;
 import jnt.scimark2.Random;
 import jnt.scimark2.kernel;
+import agentgui.core.application.Application;
+import agentgui.simulationService.load.LoadMeasureThread;
 
 /**
  * This thread is doing the actual benchmark measurements, which 
@@ -101,12 +100,10 @@ public class BenchmarkMeasurement extends Thread {
 		this.nowExecOn = this.getLocalSystemIdentifier();
 
 		// --- Criteria to not execute the benchmark ------
-		if ( this.benchValueOld>0 && this.nowExecOn.equalsIgnoreCase(this.benchExecOn) && this.benchAllwaysSkip==true && forceBench==false) {
-			// --- Nach Agent-, Ontology- und BaseService - Classes suchen ----
+		if (this.benchValueOld>0 && this.nowExecOn.equalsIgnoreCase(this.benchExecOn) && this.benchAllwaysSkip==true && forceBench==false) {
+			// --- Start search for Agents, Ontologies and BaseServices -----------
 			Application.setBenchmarkRunning(false);
-			if (Application.getClassSearcher() == null) {
-				Application.setClassSearcher(new ClassSearcher());
-			}			
+			Application.getClassSearcher();
 			return;
 		}  
 		
@@ -132,7 +129,7 @@ public class BenchmarkMeasurement extends Thread {
 		// ------------------------------------------------
 		
 		
-		// --- Anzeige für den Fortschritt --- ON ---------
+		// --- Progress Display --- ON --------------------
 		benchGUI.setBenchmarkValue(benchValueOld);
 		benchGUI.jProgressBarBenchmark.setMinimum(0);
 		benchGUI.jProgressBarBenchmark.setMaximum(6);
@@ -178,14 +175,14 @@ public class BenchmarkMeasurement extends Thread {
 		float result  = (float)Math.round((float)res[0]*100)/100;
 		if (this.isSkipAction()) return;
 
-		// --- Ergebnis im LoadMeasurThread speichern -----
+		// --- Store result in LoadMeasurThread -----------
 		LoadMeasureThread.setCompositeBenchmarkValue(result);
 		Application.getGlobalInfo().setBenchValue(result);
 		Application.getGlobalInfo().setBenchExecOn(nowExecOn);
 		Application.getGlobalInfo().setBenchAllwaysSkip(benchAllwaysSkip);
 		Application.getGlobalInfo().getFileProperties().save();
 		
-		// --- Anzeige für den Fortschritt --- OFF --------
+		// --- Progress Display --- OFF -------------------
 		benchGUI.setBenchmarkValue(result);
 		try {
 			Thread.sleep(1000);
@@ -195,10 +192,9 @@ public class BenchmarkMeasurement extends Thread {
 		this.closeGUI();
 		Application.setBenchmarkRunning(false);
 		
-		// --- Nach Agent-, Ontology- und BaseService - Classes suchen ----
-		if (Application.getClassSearcher() == null) {
-			Application.setClassSearcher(new ClassSearcher());
-		}
+		// --- Start search for Agents, Ontologies and BaseServices -----------
+		Application.getClassSearcher();
+		
 	}
 	
 	/**

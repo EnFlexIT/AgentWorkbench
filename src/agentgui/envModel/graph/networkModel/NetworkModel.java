@@ -638,7 +638,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		HashSet<String> networkComponentIDs = this.getNetworkComponentsIDs(networkComponentsToKeep);
 		for (NetworkComponent networkComponent : new ArrayList<NetworkComponent>(this.networkComponents.values())) {
 			if (networkComponentIDs.contains(networkComponent.getId())==false) {
-				removeNetworkComponent(networkComponent, false, false);
+				removeNetworkComponent(networkComponent, true, false);
 				removed.add(networkComponent);
 			}
 		}
@@ -1376,8 +1376,17 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the GraphNodePairs that can be used to undo this operation
 	 */
 	public GraphNodePairs splitNetworkModelAtNode(GraphNode node2SplitAt) {
+		return this.splitNetworkModelAtNode(node2SplitAt, false);
+	}
+	/**
+	 * Splits the network model at a specified node.
+	 *
+	 * @param node2SplitAt the node
+	 * @param moveOppositeNode the move opposite node
+	 * @return the GraphNodePairs that can be used to undo this operation
+	 */
+	public GraphNodePairs splitNetworkModelAtNode(GraphNode node2SplitAt, boolean moveOppositeNode) {
 
-		boolean moveOppositeNode = false;
 		GraphNodePairs graphNodePair = null;
 		HashSet<GraphNode> graphNodeConnections = new HashSet<GraphNode>();
 		

@@ -48,6 +48,7 @@ import agentgui.core.gui.MainWindow;
 import agentgui.core.gui.Translation;
 import agentgui.core.gui.options.OptionDialog;
 import agentgui.core.jade.ClassSearcher;
+import agentgui.core.jade.ClassSearcher.ClassSearcherProcess;
 import agentgui.core.jade.Platform;
 import agentgui.core.project.Project;
 import agentgui.core.project.ProjectsLoaded;
@@ -146,17 +147,23 @@ public class Application {
 	}
 	
 	/**
-	 * Sets the class searcher.
-	 * @param classSearcher the new class searcher
+	 * Sets the current {@link ClassSearcher}.
+	 * @param newClassSearcher the new class searcher
 	 */
-	public static void setClassSearcher(ClassSearcher classSearcher) {
-		Application.classSearcher = classSearcher;
+	public static void setClassSearcher(ClassSearcher newClassSearcher) {
+		if (classSearcher!=null) {
+			classSearcher.stopSearch(ClassSearcherProcess.ALL_SEARCH_PROCESSES);	
+		}
+		classSearcher = newClassSearcher;
 	}
 	/**
-	 * Returns the class searcher.
+	 * Returns the current {@link ClassSearcher}.
 	 * @return the class searcher
 	 */
 	public static ClassSearcher getClassSearcher() {
+		if (classSearcher==null) {
+			classSearcher = new ClassSearcher();
+		}
 		return classSearcher;
 	}
 	

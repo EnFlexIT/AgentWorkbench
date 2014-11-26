@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="javadoc-create">
 
+	<tstamp><format property="TODAYS_YEAR" pattern="yyyy"/></tstamp>
 	<property name="javadocExec" value="C:/Program Files/Java/jdk1.7.0_51/bin/javadoc.exe" />
 	
 	<property name="destinDir" value="doc" />
@@ -80,14 +81,23 @@
 						lib/jung/stax-api-1.0.1.jar;
 						lib/jung/vecmath-1.3.1.jar;
 						lib/jung/wstx-asl-3.2.6.jar;"
-			/>
+			>
 		
+			<bottom><![CDATA[<i>Copyright &copy; 2009-${TODAYS_YEAR} by Christian Derksen & DAWIS @ ICB - University Duisburg-Essen. All Rights Reserved.</i>]]></bottom>
+			<!-- TODO <link offline="true" href="../../lib/jade/doc/JADE-doc-4.3.2.zip" packagelistloc="./jade/doc" /> -->
+			
+		</javadoc>	
 	</target>
 
 	<target name="javadoc-zip" description="Zipping API">
-		<zip destfile="${destinDirAPI}/${zip.name}">
+		<!-- Create Zip file -->
+		<zip destfile="${destinDir}/${zip.name}">
 			<fileset dir="${destinDirAPI}" />
 		</zip>		
+		<!-- Remove old file, if there -->
+		<delete file="${destinDirAPI}/${zip.name}" failonerror="false" />
+		<!-- Move Zip file -->
+		<move file="${destinDir}/${zip.name}" tofile="${destinDirAPI}/${zip.name}" />
 	</target>
 	
 </project>

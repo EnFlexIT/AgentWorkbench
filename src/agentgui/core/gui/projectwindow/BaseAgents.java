@@ -70,6 +70,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.jade.ClassSearcher;
+import agentgui.core.jade.ClassSearcher.ClassSearcherProcess;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.gui.OntologyInstanceDialog;
 import agentgui.core.project.AgentStartArgument;
@@ -755,8 +756,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		Object trigger = ae.getSource();
 
 		if (trigger==jButtonAgentListRefresh) {
-			// --- AgentList aktualisieren ----------------
-			Application.getClassSearcher().reStartSearch(currProject, ClassSearcher.RESTART_AGENT_SEARCH);
+			// --- Refresh agent list -------------------------------
+			Application.getClassSearcher().reStartSearch(currProject, ClassSearcherProcess.AGENT_SEARCH);
 			
 			jTextAgent.setText(null);
 			jTextAgentStartAs.setText(null);

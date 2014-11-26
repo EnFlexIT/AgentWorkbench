@@ -59,10 +59,13 @@ import agentgui.core.project.Project;
  */
 public class ClassSearcher {
 
-	public static final int RESTART_AGENT_SEARCH = 1; 
-	public static final int RESTART_ONTOLOGY_SEARCH = 2;
-	public static final int RESTART_BASESERVICE_SEARCH = 3;
-
+	public static enum ClassSearcherProcess {
+		ALL_SEARCH_PROCESSES,
+		AGENT_SEARCH,
+		ONTOLOGY_SEARCH,
+		BASESERVICE_SEARCH
+	}
+	
 	public static final Class<Agent> CLASSES_AGENTS = jade.core.Agent.class;
 	public static final Class<Ontology> CLASSES_ONTOLOGIES = jade.content.onto.Ontology.class;
 	public static final Class<BaseService> CLASSES_BASESERVICE = jade.core.BaseService.class;
@@ -91,20 +94,21 @@ public class ClassSearcher {
 	}
 	
 	/**
-	 * Re start search.
+	 * Re start the specified search process.
 	 *
 	 * @param project the project
-	 * @param searchFor the search for
+	 * @param searchProcess the search process
 	 */
-	public void reStartSearch(Project project, Integer searchFor) {
+	public void reStartSearch(Project project, ClassSearcherProcess searchProcess) {
 		
 		this.currProject = project;
+		if (searchProcess==null)  {
+			searchProcess = ClassSearcherProcess.ALL_SEARCH_PROCESSES;
+		}
 		
-		if (searchFor==null) {
-			// ------------------------------------------------
-			// --- Restart all searches -----------------------
-			// ------------------------------------------------
-			
+		// --- ReStart selected searches ------------------
+		switch (searchProcess) {
+		case ALL_SEARCH_PROCESSES:
 			// --- Start search for Agent ---------------------
 			csAgents.stopSearch();
 			csAgents.setProject(this.currProject);
@@ -119,68 +123,65 @@ public class ClassSearcher {
 			csBaseService.stopSearch();
 			csBaseService.setProject(this.currProject);
 			csBaseService.startSearch();
-
-		} else {
-			// ------------------------------------------------
-			// --- Start selected searches --------------------
-			// ------------------------------------------------
-			int search = searchFor;
-			switch (search) {
-			case RESTART_AGENT_SEARCH:
-				// --- Start search for Agent ---------------------
-				csAgents.stopSearch();
-				csAgents.setProject(this.currProject);
-				csAgents.startSearch();				
-				break;
-				
-			case RESTART_ONTOLOGY_SEARCH:
-				// --- Start search for Ontology ------------------
-				csOntologies.stopSearch();
-				csOntologies.setProject(this.currProject);
-				csOntologies.startSearch();
-				break;
-				
-			case RESTART_BASESERVICE_SEARCH:
-				// --- Start search for BaseService ---------------
-				csBaseService.stopSearch();
-				csBaseService.setProject(this.currProject);
-				csBaseService.startSearch();
-				break;
-			}
+			break;
+			
+		case AGENT_SEARCH:
+			// --- Start search for Agent ---------------------
+			csAgents.stopSearch();
+			csAgents.setProject(this.currProject);
+			csAgents.startSearch();				
+			break;
+			
+		case ONTOLOGY_SEARCH:
+			// --- Start search for Ontology ------------------
+			csOntologies.stopSearch();
+			csOntologies.setProject(this.currProject);
+			csOntologies.startSearch();
+			break;
+			
+		case BASESERVICE_SEARCH:
+			// --- Start search for BaseService ---------------
+			csBaseService.stopSearch();
+			csBaseService.setProject(this.currProject);
+			csBaseService.startSearch();
+			break;
+			
 		}
 		
 	}
 	
 	/**
-	 * Stops all search process or the specified one.
-	 * 
-	 * @param searchOf the search of
+	 * Stops the specified search processes (one or all).
+	 * @param searchProcess the search of
 	 */
-	public void stopSearch(Integer searchOf) {
+	public void stopSearch(ClassSearcherProcess searchProcess) {
 	
-		if (searchOf==null) {
+		if (searchProcess==null)  {
+			searchProcess = ClassSearcherProcess.ALL_SEARCH_PROCESSES;
+		}
+		
+		switch (searchProcess) {
+		case ALL_SEARCH_PROCESSES:
 			csAgents.stopSearch();
 			csOntologies.stopSearch();
 			csBaseService.stopSearch();
+			break;
+		
+		case AGENT_SEARCH:
+			// --- Start search for Agent ---------------------
+			csAgents.stopSearch();
+			break;
 			
-		} else {
+		case ONTOLOGY_SEARCH:
+			// --- Start search for Ontology ------------------
+			csOntologies.stopSearch();
+			break;
 			
-			switch (searchOf) {
-			case RESTART_AGENT_SEARCH:
-				// --- Start search for Agent ---------------------
-				csAgents.stopSearch();
-				break;
-				
-			case RESTART_ONTOLOGY_SEARCH:
-				// --- Start search for Ontology ------------------
-				csOntologies.stopSearch();
-				break;
-				
-			case RESTART_BASESERVICE_SEARCH:
-				// --- Start search for BaseService ---------------
-				csBaseService.stopSearch();
-				break;
-			}
+		case BASESERVICE_SEARCH:
+			// --- Start search for BaseService ---------------
+			csBaseService.stopSearch();
+			break;
+			
 		}
 	}
 	
