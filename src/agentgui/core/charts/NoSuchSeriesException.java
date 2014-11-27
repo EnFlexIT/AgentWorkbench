@@ -27,6 +27,7 @@
  * **************************************************************
  */
 package agentgui.core.charts;
+
 /**
  * This type of exception is thrown when trying to access a data series that does not exist in the (sub) data model
  * @author Nils
