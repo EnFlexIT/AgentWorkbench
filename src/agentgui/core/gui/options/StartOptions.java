@@ -166,7 +166,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		this.initialize();
 		this.setGlobalData2Form();
 		
-		// --- ‹bersetzungen einstellen ----------------------------------------
+		// --- Translate ----------------------------------
 		jLabelRunsAs.setText(Language.translate("Starte Agent.GUI als:"));
 		
 		jRadioButtonRunAsApplication.setText(Language.translate("Anwendung"));
@@ -176,7 +176,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		jLabelServerHeader.setText(Application.getGlobalInfo().getApplicationTitle() + " " + Language.translate("Hintergrundsystem - Konfiguration"));
 		jCheckBoxAutoStart.setText(" " + Language.translate("Hintergrundsystem beim Programmstart automatisch initialisieren"));
 		jLabelJadeConfig.setText(Application.getGlobalInfo().getApplicationTitle() + " " + Language.translate("Hauptserver (server.master)") );
-		jLabelDBtitle.setText(Language.translate("MySQL-Datenbank f¸r den Hauptserver (server.master)"));
+		jLabelDBtitle.setText(Language.translate("MySQL-Datenbank f√ºr den Hauptserver (server.master)"));
 		jButtonApply.setText(Language.translate("Anwenden"));
 	}
 
@@ -605,7 +605,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			gridBagConstraints8.gridy = 4;
 
 			jLabelDBtitle = new JLabel();
-			jLabelDBtitle.setText("MySQL-Datenbank f¸r den Hauptserver (server.master)");
+			jLabelDBtitle.setText("MySQL-Datenbank f√ºr den Hauptserver (server.master)");
 			jLabelDBtitle.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jLabelDBpswd = new JLabel();
@@ -783,7 +783,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			jLabelEmbeddedHeader.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jLabelProjectHeader = new JLabel();
-			jLabelProjectHeader.setText("Bitte w‰hlen Sie ein Projekt aus");
+			jLabelProjectHeader.setText("Bitte w√§hlen Sie ein Projekt aus");
 			jLabelProjectHeader.setText(Language.translate(jLabelProjectHeader.getText()));
 			jLabelProjectHeader.setFont(new Font("Dialog", Font.BOLD, 12));
 			
@@ -792,12 +792,12 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			jLabelProject.setText(Language.translate(jLabelProject.getText()) + ":");
 			
 			jLabelExecuteAs = new JLabel();
-			jLabelExecuteAs.setText("Ausf¸hren als");
+			jLabelExecuteAs.setText("Ausf√ºhren als");
 			jLabelExecuteAs.setText(Language.translate(jLabelExecuteAs.getText()) + ":");
 			jLabelExecuteAs.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jLabelSetupHeader = new JLabel();
-			jLabelSetupHeader.setText("Dienst: Bitte w‰hlen Sie das Setup aus, das gestartet werden soll");
+			jLabelSetupHeader.setText("Dienst: Bitte w√§hlen Sie das Setup aus, das gestartet werden soll");
 			jLabelSetupHeader.setText(Language.translate(jLabelSetupHeader.getText()));
 			jLabelSetupHeader.setFont(new Font("Dialog", Font.BOLD, 12));
 			
@@ -806,7 +806,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			jLabelSetup.setText(Language.translate(jLabelSetup.getText()));
 			
 			jLabelAgentHeader = new JLabel();
-			jLabelAgentHeader.setText("Embedded System Agent: Bitte w‰hlen Sie den Agenten aus, der gestartet werden soll");
+			jLabelAgentHeader.setText("Embedded System Agent: Bitte w√§hlen Sie den Agenten aus, der gestartet werden soll");
 			jLabelAgentHeader.setText(Language.translate(jLabelAgentHeader.getText()));
 			jLabelAgentHeader.setFont(new Font("Dialog", Font.BOLD, 12));
 			
@@ -875,7 +875,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	private JButton getJButtonEsaSelectAgent() {
 		if (jButtonSelectAgentClass == null) {
 			jButtonSelectAgentClass = new JButton();
-			jButtonSelectAgentClass.setToolTipText(Language.translate("Agenten ausw‰hlen"));
+			jButtonSelectAgentClass.setToolTipText(Language.translate("Agenten ausw√§hlen"));
 			jButtonSelectAgentClass.setPreferredSize(new Dimension(45, 26));
 			jButtonSelectAgentClass.setIcon(new ImageIcon(getClass().getResource(pathImage + "Search.png")));
 			jButtonSelectAgentClass.setActionCommand("esaSelectAgent");
@@ -987,7 +987,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	private JRadioButton getJRadioButtonVisNon() {
 		if (jRadioButtonVisNon == null) {
 			jRadioButtonVisNon = new JRadioButton();
-			jRadioButtonVisNon.setText("S‰mtliche visuellen Darstellungen deaktivieren");
+			jRadioButtonVisNon.setText("S√§mtliche visuellen Darstellungen deaktivieren");
 			jRadioButtonVisNon.setText(Language.translate(jRadioButtonVisNon.getText()));
 			jRadioButtonVisNon.setPreferredSize(new Dimension(300, 24));
 			jRadioButtonVisNon.setActionCommand("visNon");
@@ -1330,7 +1330,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		String currAgentClass = this.getJTextFieldAgentClass().getText();
 		if (this.esaClassSelector==null) {
 			JListClassSearcher jListClassSearcher = new JListClassSearcher(Agent.class, project);
-			this.esaClassSelector = new ClassSelector(null, jListClassSearcher, currAgentClass, null, Language.translate("Bitte w‰hlen Sie den Agenten aus, der gestartet werden soll"), false);
+			this.esaClassSelector = new ClassSelector(null, jListClassSearcher, currAgentClass, null, Language.translate("Bitte w√§hlen Sie den Agenten aus, der gestartet werden soll"), false);
 		} 
 		this.esaClassSelector.setClass2Search4CurrentValue(currAgentClass);
 		return this.esaClassSelector;
@@ -1343,7 +1343,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		
 		if (this.esaProjectSelected==null) {
 			String msgHead = Language.translate("Fehlendes Projekt!");
-			String msgText = Language.translate("Bitte w‰hlen Sie ein Projekt aus") + "!";	
+			String msgText = Language.translate("Bitte w√§hlen Sie ein Projekt aus") + "!";	
 			JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
 			this.getJComboBoxProjectSelector().showPopup();
 			return;
@@ -1495,15 +1495,15 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			// --- Project selected ? ---------------------------------------
 			if (this.getJComboBoxProjectSelector().getSelectedItem()==null || this.getJComboBoxProjectSelector().getSelectedItem().equals("")==true) {
 				msgHead = Language.translate("Fehlendes Projekt!");
-				msgText = Language.translate("Bitte w‰hlen Sie ein Projekt aus") + "!";	
+				msgText = Language.translate("Bitte w√§hlen Sie ein Projekt aus") + "!";	
 				JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
 				this.getJComboBoxProjectSelector().showPopup();
 				return true;
 			}
 			// --- Case Service or Embedded System Agent? -------------------
 			if (this.getJRadioButtonExecuteAsService().isSelected()==false && this.getJRadioButtonExecuteAsDeviceAgent().isSelected()==false) {
-				msgHead = Language.translate("Ausf¸hrungsart nicht festgelegt!");
-				msgText = Language.translate("Bitte legen Sie fest, ob Sie Agent.GUI als Service oder als Embedded System Agent ausf¸hren mˆchten") + "!";	
+				msgHead = Language.translate("Ausf√ºhrungsart nicht festgelegt!");
+				msgText = Language.translate("Bitte legen Sie fest, ob Sie Agent.GUI als Service oder als Embedded System Agent ausf√ºhren m√∂chten") + "!";	
 				JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
 				return true;
 				
@@ -1511,7 +1511,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				// --- Simulation Setup selected? --------------------------- 
 				if (this.getJComboBoxSetupSelector().getSelectedItem()==null || this.getJComboBoxSetupSelector().getSelectedItem().equals("")==true) {
 					msgHead = Language.translate("Fehlendes Simulations-Setup!");
-					msgText = Language.translate("Bitte w‰hlen Sie ein Simulations-Setup") + "!";	
+					msgText = Language.translate("Bitte w√§hlen Sie ein Simulations-Setup") + "!";	
 					JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
 					this.getJComboBoxSetupSelector().showPopup();
 					return true;
@@ -1521,7 +1521,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				// --- Agent Selected ? -------------------------------------
 				if (this.getJTextFieldAgentClass().getText()==null || this.getJTextFieldAgentClass().getText().equals("")) {
 					msgHead = Language.translate("Fehlender Agent!");
-					msgText = Language.translate("Bitte w‰hlen Sie einen Agenten") + "!";	
+					msgText = Language.translate("Bitte w√§hlen Sie einen Agenten") + "!";	
 					JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
@@ -1551,7 +1551,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 					// --- Testing the URL ----------------------------------
 					if ( testURL.contains(" ") ) {
 						msgHead = Language.translate("Fehler: URL oder IP !");
-						msgText = Language.translate("Die URL oder IP enth‰lt unzul‰ssige Zeichen!");	
+						msgText = Language.translate("Die URL oder IP enth√§lt unzul√§ssige Zeichen!");	
 						JOptionPane.showMessageDialog( this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
 						return true;
 					}
@@ -1565,7 +1565,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 					// --- Testing the Port 4 MTP ---------------------------
 					if ( testPort4MTPAsInteger.equals(0) ) {
 						msgHead = Language.translate("Fehler: Port4MTP ");
-						msgText = Language.translate("Der Port f¸r die MTP-Adresse muss einem Wert ungleich 0 entsprechen!");	
+						msgText = Language.translate("Der Port f√ºr die MTP-Adresse muss einem Wert ungleich 0 entsprechen!");	
 						JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
 						return true;
 					}
@@ -1599,7 +1599,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			
 			MsgHead += Language.translate("Agent.GUI umschalten ?");
 			MsgText += Language.translate("Progamm umschalten auf") + " '" + executionModeTextNew + "':" + newLine; 	
-			MsgText += Language.translate("Mˆchten Sie Agent.GUI nun umschalten und neu starten ?");
+			MsgText += Language.translate("M√∂chten Sie Agent.GUI nun umschalten und neu starten ?");
 
 			Integer MsgAnswer = JOptionPane.showConfirmDialog( this.optionDialog.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
 			if (MsgAnswer == JOptionPane.NO_OPTION) {

@@ -99,16 +99,16 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 		this.refreshDataView();
 		
 		// --- configure translation ------------
-		jLabelPort.setText(Language.translate("Starte JADE über Port-Nr.:"));
-		jLabelPortExplain.setText(Language.translate("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)"));
+		jLabelPort.setText(Language.translate("Starte JADE Ã¼ber Port-Nr.:"));
+		jLabelPortExplain.setText(Language.translate("(Falls bereits verwendet, wird versucht den nÃ¤chst hÃ¶heren Port zu nutzen)"));
 		jButtonSetPortDefault.setToolTipText(Language.translate("Standard verwenden"));
 		jButtonSetPort.setToolTipText(Language.translate("JADE-Port bearbeiten"));
 		
-		jLabelServicesChosen.setText(Language.translate("Ausgewählte JADE-Services"));
-		jLabelServicesAvailable.setText(Language.translate("Verfügbare JADE-Services"));
+		jLabelServicesChosen.setText(Language.translate("AusgewÃ¤hlte JADE-Services"));
+		jLabelServicesAvailable.setText(Language.translate("VerfÃ¼gbare JADE-Services"));
 		
 		jButtonDefaultJadeConfig.setToolTipText(Language.translate("Standardkonfiguration verwenden"));
-		jButtonServiceAdd.setToolTipText(Language.translate("Service hinzufügen"));
+		jButtonServiceAdd.setToolTipText(Language.translate("Service hinzufÃ¼gen"));
 		jButtonServiceRemove.setToolTipText(Language.translate("Service entfernen"));
 				
 	}
@@ -151,10 +151,10 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 		
 		jLabelPortExplain = new JLabel();
 		jLabelPortExplain.setFont(new Font("Dialog", Font.PLAIN, 12));
-		jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)");
+		jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nÃ¤chst hÃ¶heren Port zu nutzen)");
 		jLabelPort = new JLabel();
 		jLabelPort.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelPort.setText("Starte JADE über Port-Nr.:");
+		jLabelPort.setText("Starte JADE Ã¼ber Port-Nr.:");
 
 		this.add(jLabelPort, gridBagConstraints);
 		this.add(jLabelPortExplain, gridBagConstraints1);
@@ -257,7 +257,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			gridBagConstraints12.weightx = 1.0;
 			gridBagConstraints12.gridy = 1;
 			jLabelServicesAvailable = new JLabel();
-			jLabelServicesAvailable.setText("Verfügbare JADE-Services");
+			jLabelServicesAvailable.setText("VerfÃ¼gbare JADE-Services");
 			jLabelServicesAvailable.setPreferredSize(new Dimension(156, 16));
 			jLabelServicesAvailable.setFont(new Font("Dialog", Font.BOLD, 12));
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
@@ -268,7 +268,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			gridBagConstraints11.weightx = 1.0;
 			gridBagConstraints11.gridy = 1;
 			jLabelServicesChosen = new JLabel();
-			jLabelServicesChosen.setText("Ausgewählte JADE-Services");
+			jLabelServicesChosen.setText("AusgewÃ¤hlte JADE-Services");
 			jLabelServicesChosen.setPreferredSize(new Dimension(156, 16));
 			jLabelServicesChosen.setFont(new Font("Dialog", Font.BOLD, 12));
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
@@ -413,7 +413,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			jButtonServiceAdd = new JButton();
 			jButtonServiceAdd.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowLeft.png")));
 			jButtonServiceAdd.setPreferredSize(new Dimension(45, 27));
-			jButtonServiceAdd.setToolTipText("Service hinzufügen");
+			jButtonServiceAdd.setToolTipText("Service hinzufÃ¼gen");
 			jButtonServiceAdd.addActionListener(this);
 		}
 		return jButtonServiceAdd;

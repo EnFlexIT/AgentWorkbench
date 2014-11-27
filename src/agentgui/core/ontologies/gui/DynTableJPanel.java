@@ -283,7 +283,7 @@ public class DynTableJPanel extends JPanel {
 			if (ontoClassVis!=null) {
 				switch (this.getExpansionDirection()) {
 				case DynTableJPanel.EXPANSION_Horizontal:
-					missingText = Language.translate("Das Editor-Panel für die Klasse ist nicht definiert!");
+					missingText = Language.translate("Das Editor-Panel fÃ¼r die Klasse ist nicht definiert!");
 					OntologyClassEditorJPanel ocej = ontoClassVis.getEditorJPanel(this.dynForm, startArgIndex);
 					this.jComponent2Add = ocej;
 					
@@ -300,7 +300,7 @@ public class DynTableJPanel extends JPanel {
 					break;
 
 				case DynTableJPanel.EXPANSION_Vertical:
-					missingText = Language.translate("Das Widget für die Klasse ist nicht definiert!");
+					missingText = Language.translate("Das Widget fÃ¼r die Klasse ist nicht definiert!");
 					OntologyClassWidget ocw = ontoClassVis.getWidget(this.dynForm, startArgIndex);
 					this.jComponent2Add = ocw;
 					break;

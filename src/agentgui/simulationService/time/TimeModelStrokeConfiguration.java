@@ -133,7 +133,7 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 		jLabelHeader1.setText("TimeModelStroke");
 		jLabelHeader1.setFont(new Font("Dialog", Font.BOLD, 14));
 		jLabelHeader2 = new JLabel();
-		jLabelHeader2.setText("Einfach z‰hlendes Zeitmodell (z. B. 1 ... 9999)");
+		jLabelHeader2.setText("Einfach z√§hlendes Zeitmodell (z. B. 1 ... 9999)");
 		jLabelHeader2.setText(Language.translate(jLabelHeader2.getText()));
 		jLabelCounterStart = new JLabel();
 		jLabelCounterStart.setText("Start bei:");

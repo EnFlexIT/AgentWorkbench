@@ -605,7 +605,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		if (jButtonRotate45 == null) {
 			jButtonRotate45 = new JButton();
 			jButtonRotate45.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate45.png")));
-			jButtonRotate45.setToolTipText("Rotate 45°");
+			jButtonRotate45.setToolTipText("Rotate 45Â°");
 			jButtonRotate45.addActionListener(this);
 		}
 		return jButtonRotate45;
@@ -617,7 +617,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	private JButton getJButtonRotate90() {
 		if (jButtonRotate90 == null) {
 			jButtonRotate90 = new JButton();
-			jButtonRotate90.setToolTipText("Rotate 90°");
+			jButtonRotate90.setToolTipText("Rotate 90Â°");
 			jButtonRotate90.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate90.png")));
 			jButtonRotate90.addActionListener(this);
 		}
@@ -630,7 +630,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	private JButton getJButtonRotate315() {
 		if (jButtonRotate315 == null) {
 			jButtonRotate315 = new JButton();
-			jButtonRotate315.setToolTipText("Rotate -45°");
+			jButtonRotate315.setToolTipText("Rotate -45Â°");
 			jButtonRotate315.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate315.png")));
 			jButtonRotate315.addActionListener(this);
 		}
@@ -643,7 +643,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	private JButton getJButtonRotate270() {
 		if (jButtonRotate270 == null) {
 			jButtonRotate270 = new JButton();
-			jButtonRotate270.setToolTipText("Rotate -90°");
+			jButtonRotate270.setToolTipText("Rotate -90Â°");
 			jButtonRotate270.setIcon(new ImageIcon(getClass().getResource(pathImage + "Rotate270.png")));
 			jButtonRotate270.addActionListener(this);
 		}

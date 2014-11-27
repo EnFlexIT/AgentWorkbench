@@ -99,7 +99,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 	    jRadioButtonShowAll.setText(Language.translate("Alle Ontologien"));
 		jRadioButtonShowNoneJade.setText(Language.translate("Nur Nicht-JADE-Ontologien"));
 	    
-	    jButtonSelect.setText(Language.translate("Hinzufügen"));
+	    jButtonSelect.setText(Language.translate("HinzufÃ¼gen"));
 	    jButtonCancel.setText(Language.translate("Abbrechen"));
 	}
 
@@ -261,7 +261,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 	private JButton getJButtonSelect() {
 		if (jButtonSelect == null) {
 			jButtonSelect = new JButton();
-			jButtonSelect.setText("Hinzufügen");
+			jButtonSelect.setText("HinzufÃ¼gen");
 			jButtonSelect.setForeground(new Color(0, 153, 0));
 			jButtonSelect.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonSelect.setActionCommand("AddOntology");
@@ -388,7 +388,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 				this.setVisible(false);
 			} else {
 				MsgHead = Language.translate("Fehlende Ontologie-Auswahl !");
-				MsgText = Language.translate("Bitte wählen Sie die Ontologie aus, die Ihrem Projekt hinzugefügt werden soll !");			
+				MsgText = Language.translate("Bitte wÃ¤hlen Sie die Ontologie aus, die Ihrem Projekt hinzugefÃ¼gt werden soll !");			
 				JOptionPane.showInternalMessageDialog( this.getContentPane(), MsgText, MsgHead, JOptionPane.WARNING_MESSAGE);
 			}
 		} else if ( ActCMD == "Cancel" ) {

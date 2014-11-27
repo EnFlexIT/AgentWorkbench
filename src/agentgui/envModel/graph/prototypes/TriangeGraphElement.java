@@ -128,7 +128,7 @@ public class TriangeGraphElement extends GraphElementPrototype {
 	    elements.add(e3);
 	    return elements;
 	} else {
-	    System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Vorgänger ") + predecessor.getId());
+	    System.err.println(Language.translate("Fehler beim EinfÃ¼gen von Komponente " + getId() + " : Kein freier Anschlusspunkt an VorgÃ¤nger ") + predecessor.getId());
 	    return null;
 	}
     }
@@ -169,7 +169,7 @@ public class TriangeGraphElement extends GraphElementPrototype {
 	    elements.add(e3);
 	    return elements;
 	} else {
-	    System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Nachfolger") + successor.getId());
+	    System.err.println(Language.translate("Fehler beim EinfÃ¼gen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Nachfolger") + successor.getId());
 	    return null;
 	}
     }
@@ -211,10 +211,10 @@ public class TriangeGraphElement extends GraphElementPrototype {
 
 	} else {
 	    if (n1 == null) {
-		System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Vorgänger ") + predecessor.getId());
+		System.err.println(Language.translate("Fehler beim EinfÃ¼gen von Komponente " + getId() + " : Kein freier Anschlusspunkt an VorgÃ¤nger ") + predecessor.getId());
 	    }
 	    if (n2 == null) {
-		System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Nachfolger") + successor.getId());
+		System.err.println(Language.translate("Fehler beim EinfÃ¼gen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Nachfolger") + successor.getId());
 	    }
 	    return null;
 	}

@@ -83,9 +83,11 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	
 	private static final long serialVersionUID = 4979849463130057295L;
 
-	public final static int ACTION_NewProject = 1;
-	public final static int ACTION_OpenProject = 2;
-	public final static int ACTION_DeleteProject = 3;
+	public enum DialogAction {
+		NewProject,
+		OpenProject,
+		DeleteProject
+	}
 	
 	private static String newLine = Application.getGlobalInfo().getNewLineSeparator();  //  @jve:decl-index=0:
 	
@@ -110,7 +112,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	private JButton jButtonOK = null;
 	private JButton jButtonCancel = null;
 	
-	private int actionCode = 0;
+	private DialogAction currDialogAction;
 	private boolean Canceled = false;
 	private boolean exportBeforeDelete = true;
 
@@ -122,9 +124,9 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	 * @param titel the titel
 	 * @param currentAction the current action
 	 */
-	public ProjectNewOpen(Frame owner, String titel, int currentAction ) {
+	public ProjectNewOpen(Frame owner, String titel, DialogAction currentAction ) {
 		super(owner, titel);
-		this.actionCode = currentAction;
+		this.currDialogAction = currentAction;
 		
 		//--- TreeModel initialisieren --------------------------
 		this.rootNode = new DefaultMutableTreeNode("... " + Application.getGlobalInfo().PathProjects(false, false));
@@ -138,19 +140,19 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	    this.setLocation(left, top);	
 
 	    // --- Fallunterscheidung "Neues Projekt?" ------------------
-	    switch (actionCode) {
-	    case ACTION_NewProject:
+	    switch (currentAction) {
+	    case NewProject:
 	    	jButtonOK.setText("OK");
 	    	jTextFieldProjectName.setEnabled(true);
 	    	jTextFieldProjectFolder.setEnabled(true);
 	    	break;
-	    case ACTION_OpenProject:
-	    	jButtonOK.setText("Öffnen");
+	    case OpenProject:
+	    	jButtonOK.setText("Ã–ffnen");
 	    	jTextFieldProjectName.setEnabled(false);
 	    	jTextFieldProjectFolder.setEnabled(false);	    
 	    	break;
-	    case ACTION_DeleteProject:
-	    	jButtonOK.setText("Löschen");
+	    case DeleteProject:
+	    	jButtonOK.setText("LÃ¶schen");
 	    	jTextFieldProjectName.setEnabled(false);
 	    	jTextFieldProjectFolder.setEnabled(false);	    
 	    	break;
@@ -308,7 +310,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			jContentPane.add(getJTextFieldProjectFolder(), gridBagConstraints6);
 			jContentPane.add(getJScrollTree(), gridBagConstraints7);
 			jContentPane.add(getJPanelButtons(), gridBagConstraints11);
-			if (this.actionCode==ACTION_DeleteProject==true) {
+			if (this.currDialogAction==DialogAction.DeleteProject) {
 				jContentPane.add(getJCheckBoxExportBefore(), gridBagConstraints21);	
 			}
 			
@@ -323,7 +325,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	private JCheckBox getJCheckBoxExportBefore() {
 		if (jCheckBoxExportBefore == null) {
 			jCheckBoxExportBefore = new JCheckBox();
-			jCheckBoxExportBefore.setText("Vor dem Löschen exportieren!");
+			jCheckBoxExportBefore.setText("Vor dem LÃ¶schen exportieren!");
 			jCheckBoxExportBefore.setText(Language.translate(jCheckBoxExportBefore.getText()));
 			jCheckBoxExportBefore.setFont(new Font("Dialog", Font.BOLD, 12));
 			jCheckBoxExportBefore.setForeground(new Color(153, 0, 0));
@@ -382,9 +384,9 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 					suggest = suggest.toLowerCase();
 					suggest = suggest.replaceAll("  ", " ");
 					suggest = suggest.replace(" ", "_");
-					suggest = suggest.replace("ä", "ae");
-					suggest = suggest.replace("ö", "oe");
-					suggest = suggest.replace("ü", "ue");
+					suggest = suggest.replace("Ã¤", "ae");
+					suggest = suggest.replace("Ã¶", "oe");
+					suggest = suggest.replace("Ã¼", "ue");
 					
 					// --- Alle Buchstaben untersuchen --------------
 					for (int i = 0; i < suggest.length(); i++) {
@@ -396,7 +398,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 					suggest = suggestNew;
 					suggest = suggest.replaceAll("__", "_");
 					
-					// --- Auf max. Länge beschränken ---------------
+					// --- Set to maximal length --------------------
 					if (suggest.length()>20) {
 						cut = 20;
 					} else {
@@ -450,7 +452,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			projectTree.setShowsRootHandles(false);
 			projectTree.setRootVisible(true);
 			projectTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-			// --- Node-Objekte einfügen ------------------
+			// --- Add Node-Object ----------------------------------
 			String[] ideProjects = Application.getGlobalInfo().getProjectSubDirectories();
 			if (ideProjects!=null) {
 				for (String projectFolder : ideProjects) {
@@ -461,8 +463,8 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			TreePath TreePathRoot = new TreePath(rootNode);
 			projectTree.expandPath( TreePathRoot );	
 			
-			// --- Falls ein Projekt geöffnet werden soll - START ---
-			if (actionCode!=ACTION_NewProject) {
+			// --- In case that a project has to be opened - START --
+			if (currDialogAction!=DialogAction.NewProject) {
 				projectTree.addTreeSelectionListener(new TreeSelectionListener() {
 					@Override
 					public void valueChanged(TreeSelectionEvent ts) {
@@ -488,7 +490,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 					}
 				});
 			};
-			// --- Falls ein Projekt geöffnet werden soll - ENDE ----
+			// --- In case that a project has to be opened - END ----
 			
 		}
 		return projectTree;
@@ -649,69 +651,66 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Project error.
+	 * Check for project errors.
 	 * @return true or false
 	 */
 	public boolean isProjectError () {
-		// ----------------------------------------------------
-		// --- Fehlerbehandlung bevor der Thread wieder -------
-		// --- an die Klasse "Project" zurückgegeben wird -----
-		// ----------------------------------------------------		
-		String ProName = getProjectName();
-		String ProFolder = getProjectFolder();
+
+		String projectName = getProjectName();
+		String projectFolder = getProjectFolder();
 		
-		boolean ProError = false;
-		String ProErrorSrc = null;
-		String MsgHead = null;
-		String MsgText = null;
+		boolean projectError = false;
+		String projectErrorSource = null;
+		String msgTitle = null;
+		String msgText = null;
 		
-		if (actionCode == ACTION_NewProject) {
+		if (currDialogAction==DialogAction.NewProject) {
 			// ++++++++++++++++++++++++++++++++++++++++++++++++++++
-			// +++ Anlegen eines neuen Projekts +++++++++++++++++++
+			// +++ Create new Project +++++++++++++++++++++++++++++
 			// ++++++++++++++++++++++++++++++++++++++++++++++++++++
 			// ----------------------------------------------------
-			// --- Untersuchungen zum Projektnamen ----------------		
-			if ( ProError==false && ProName == null ) {
-				ProErrorSrc = "ProName";
-				ProError = true;
-			} else if ( ProError==false && ProName.length() == 0 ) {
-				ProErrorSrc = "ProName";
-				ProError = true;
+			// --- Get project name -------------------------------		
+			if ( projectError==false && projectName == null ) {
+				projectErrorSource = "ProName";
+				projectError = true;
+			} else if ( projectError==false && projectName.length() == 0 ) {
+				projectErrorSource = "ProName";
+				projectError = true;
 			}
 			// ----------------------------------------------------
-			// --- Untersuchungen zum Projektverzeichnis ----------		
-			if ( ProError==false && ProFolder == null ) {
-				ProErrorSrc = "ProFolder";
-				ProError = true;
-			} else if ( ProError==false && ProFolder.length() == 0 ) {
-				ProErrorSrc = "ProFolder";
-				ProError = true;
+			// --- Check project directory ------------------------		
+			if ( projectError==false && projectFolder == null ) {
+				projectErrorSource = "ProFolder";
+				projectError = true;
+			} else if ( projectError==false && projectFolder.length() == 0 ) {
+				projectErrorSource = "ProFolder";
+				projectError = true;
 			}
 			// ----------------------------------------------------
-			// --- Verzeichniseingabe überarbeiten ----------------
-			ProFolder = ProFolder.trim();
-			ProFolder = ProFolder.toLowerCase();
-			ProFolder = ProFolder.replaceAll(" ", "_");
-			while ( ProFolder.contains( "__" ) ) {
-				ProFolder = ProFolder.replaceAll("__", "_");	
+			// --- Configure / correct directory name -------------
+			projectFolder = projectFolder.trim();
+			projectFolder = projectFolder.toLowerCase();
+			projectFolder = projectFolder.replaceAll(" ", "_");
+			while ( projectFolder.contains( "__" ) ) {
+				projectFolder = projectFolder.replaceAll("__", "_");	
 			}
-			setProjectFolder(ProFolder);		
+			setProjectFolder(projectFolder);		
 			// ----------------------------------------------------
-			// --- Regulären Ausdruck abtesten --------------------
+			// --- Check for regular expression -------------------
 			String RegExp = "[a-z_]{3,}";
-			if ( ProError==false && ProFolder.matches( RegExp ) == false ) {
-				ProErrorSrc = "ProFolderRegEx";
-				ProError = true;
+			if ( projectError==false && projectFolder.matches( RegExp ) == false ) {
+				projectErrorSource = "ProFolderRegEx";
+				projectError = true;
 			}
 			// ----------------------------------------------------
-			// --- Gibt es das gewünschte Verzeichnis bereits? ----
-			if ( ProError==false ) {
+			// --- Does the project directory already exists? -----
+			if ( projectError==false ) {
 				String[] IDEProjects = Application.getGlobalInfo().getProjectSubDirectories();
 				if (IDEProjects!=null) {
 					for ( String Pro : IDEProjects ) {
-						if ( Pro.equalsIgnoreCase(ProFolder) ) {
-							ProErrorSrc = "ProFolderDouble";
-							ProError = true;	
+						if ( Pro.equalsIgnoreCase(projectFolder) ) {
+							projectErrorSource = "ProFolderDouble";
+							projectError = true;	
 							break;
 						}			
 					}
@@ -719,102 +718,103 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			}
 			// ----------------------------------------------------
 			// --- Test: Basis-Verzeichnis anlegen ----------------
-			if ( ProError==false ) {
-				String NewDirName = Application.getGlobalInfo().PathProjects(true) + ProFolder;
+			if ( projectError==false ) {
+				String NewDirName = Application.getGlobalInfo().PathProjects(true) + projectFolder;
 				File f = new File(NewDirName);
 				if ( f.isDirectory() ) {
-					ProErrorSrc = "ProFolderDouble";
-					ProError = true;	
+					projectErrorSource = "ProFolderDouble";
+					projectError = true;	
 				} 
 				else {
 					if ( f.mkdir() == false ) {
-						ProErrorSrc = "ProFolderCreate";
-						ProError = true;	
+						projectErrorSource = "ProFolderCreate";
+						projectError = true;	
 					}
 				}
 			}		
 			
 			// ----------------------------------------------------
 			// --- Show Error-Msg, if an error occurs -------------
-			if (ProError==true) {
-				if ( ProErrorSrc == "ProName" ) {
-					MsgHead = Language.translate("Fehler - Projektname !");
-					MsgText = Language.translate(
+			if (projectError==true) {
+				if ( projectErrorSource == "ProName" ) {
+					msgTitle = Language.translate("Fehler - Projektname !");
+					msgText = Language.translate(
 								 "Bitte geben Sie einen Projektnamen an!" + newLine + newLine + 
-								 "Zulässig sind beliebige Zeichen " + newLine +
+								 "ZulÃ¤ssig sind beliebige Zeichen " + newLine +
 								 "sowie Leerzeichen." );			
 				}
-				else if ( ProErrorSrc == "ProFolder" ) {
-					MsgHead = Language.translate("Fehler - Projektverzeichnis !");
-					MsgText = Language.translate(
+				else if ( projectErrorSource == "ProFolder" ) {
+					msgTitle = Language.translate("Fehler - Projektverzeichnis !");
+					msgText = Language.translate(
 								 "Bitte geben Sie ein korrektes Projektverzeichnis an!" + newLine + newLine + 
-								 "Zulässig sind beliebige Zeichen (Kleinbuchstaben), die den " + newLine +
-								 "Konventionen für Verzeichnisse in Ihrem Betriebssystems" + newLine +
+								 "ZulÃ¤ssig sind beliebige Zeichen (Kleinbuchstaben), die den " + newLine +
+								 "Konventionen fÃ¼r Verzeichnisse in Ihrem Betriebssystems" + newLine +
 								 "entsprechen. " + newLine + newLine +
-								 "Leerzeichen sind nicht zulässig!" );			
+								 "Leerzeichen sind nicht zulÃ¤ssig!" );			
 				}
-				else if ( ProErrorSrc == "ProFolderRegEx" ) {
-					MsgHead = Language.translate("Fehler - Projektverzeichnis !" );
-					MsgText = Language.translate(
-							 "Der gewählte Bezeichner für das Projektverzeichnis enthält" + newLine +  
-							 "unzulässige oder zu wenige Zeichen! " + newLine + newLine +
-							 "Es werden min. 3 bis max. 20 Zeichen benötigt:" + newLine +
+				else if ( projectErrorSource == "ProFolderRegEx" ) {
+					msgTitle = Language.translate("Fehler - Projektverzeichnis !" );
+					msgText = Language.translate(
+							 "Der gewÃ¤hlte Bezeichner fÃ¼r das Projektverzeichnis enthÃ¤lt" + newLine +  
+							 "unzulÃ¤ssige oder zu wenige Zeichen! " + newLine + newLine +
+							 "Es werden min. 3 bis max. 20 Zeichen benÃ¶tigt:" + newLine +
 							 "Erlaubt sind nur Kleinbuchstaben. Umlaute und" + newLine +
-							 "Leerzeichen sind nicht zulässig (verwenden Sie " + newLine +
+							 "Leerzeichen sind nicht zulÃ¤ssig (verwenden Sie " + newLine +
 							 "stattdessen _ 'Unterstrich').");
 				}
-				else if ( ProErrorSrc == "ProFolderDouble" ) {
-					MsgHead = Language.translate("Fehler - Projektverzeichnis !" );
-					MsgText = Language.translate(
-							 "Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!" + newLine + newLine + 
-							 "Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis" );
+				else if ( projectErrorSource == "ProFolderDouble" ) {
+					msgTitle = Language.translate("Fehler - Projektverzeichnis !" );
+					msgText = Language.translate(
+							 "Das von Ihnen gewÃ¤hlte Projektverzeichnis wird bereits verwendet!" + newLine + newLine + 
+							 "Bitte wÃ¤hlen Sie einen anderen Namen fÃ¼r Ihr Verzeichnis" );
 				}
-				else if ( ProErrorSrc == "ProFolderCreate" ) {
-					MsgHead = Language.translate("Fehler - Projektverzeichnis !" );
-					MsgText = Language.translate("Das Verzeichnis konnte nicht aangelegt werden !" );
+				else if ( projectErrorSource == "ProFolderCreate" ) {
+					msgTitle = Language.translate("Fehler - Projektverzeichnis !" );
+					msgText = Language.translate("Das Verzeichnis konnte nicht aangelegt werden !" );
 				}
-				JOptionPane.showInternalMessageDialog( this.getContentPane(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
-			}					
-		}
-		else {
-			// ++++++++++++++++++++++++++++++++++++++++++++++++++++
-			// +++ Öffnen eines vorhandnen Projekts +++++++++++++++
-			// ++++++++++++++++++++++++++++++++++++++++++++++++++++
-			// --- Test, ob ein Projektordner gewählt wurde -------
-			if ( ProError==false && (ProFolder == null || ProFolder == "" || ProFolder.length() == 0) ) {
-				ProErrorSrc = "ProFolder";
-				ProError = true;
+				JOptionPane.showInternalMessageDialog( this.getContentPane(), msgText, msgTitle, JOptionPane.ERROR_MESSAGE);
 			}
-			// --- Test, ob die Projektdatei gefunden wurde -------
-			if ( ProError==false ) {				
+			
+		} else {
+			
+			// ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			// +++ Open an existing Project +++++++++++++++++++++++++
+			// ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			// --- Check project directory --------------------------
+			if ( projectError==false && (projectFolder == null || projectFolder == "" || projectFolder.length() == 0) ) {
+				projectErrorSource = "ProFolder";
+				projectError = true;
+			}
+			// --- Check project file -------------------------------
+			if ( projectError==false ) {				
 				String XMLFileName = Application.getGlobalInfo().PathProjects(true) + 
-									 ProFolder + File.separator +
+									 projectFolder + File.separator +
 									 Application.getGlobalInfo().getFileNameProject();
 				File f = new File( XMLFileName );
 				if ( f.isFile() == false ) {
-					ProErrorSrc = "ProFolderAgentGUIxml";
-					ProError = true;
+					projectErrorSource = "ProFolderAgentGUIxml";
+					projectError = true;
 				}
 			}
 			
 			// ----------------------------------------------------
 			// --- Show Error-Msg, if an error occurs -------------
-			if (ProError==true) {
-				if ( ProErrorSrc == "ProFolder" ) {
-					MsgHead = Language.translate("Fehler - Projektauswahl !");
-					MsgText = Language.translate("Bitte wählen Sie das gewünschte Projekt aus!");			
+			if (projectError==true) {
+				if ( projectErrorSource == "ProFolder" ) {
+					msgTitle = Language.translate("Fehler - Projektauswahl !");
+					msgText = Language.translate("Bitte wÃ¤hlen Sie das gewÃ¼nschte Projekt aus!");			
 				}
-				else if ( ProErrorSrc == "ProFolderAgentGUIxml" ) {
-					MsgHead = Language.translate("Fehler - '@'");
-					MsgText = Language.translate("Die Datei '@' wurde nicht gefunden!");	
-					MsgHead = MsgHead.replace("@", Application.getGlobalInfo().getFileNameProject() );
-					MsgText = MsgText.replace("@", Application.getGlobalInfo().getFileNameProject() );					
+				else if ( projectErrorSource == "ProFolderAgentGUIxml" ) {
+					msgTitle = Language.translate("Fehler - '@'");
+					msgText = Language.translate("Die Datei '@' wurde nicht gefunden!");	
+					msgTitle = msgTitle.replace("@", Application.getGlobalInfo().getFileNameProject() );
+					msgText = msgText.replace("@", Application.getGlobalInfo().getFileNameProject() );					
 				}				
-				JOptionPane.showInternalMessageDialog( this.getContentPane(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showInternalMessageDialog( this.getContentPane(), msgText, msgTitle, JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
-		return ProError;
+		return projectError;
 	}
 
 	

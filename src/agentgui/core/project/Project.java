@@ -430,13 +430,13 @@ import agentgui.core.webserver.JarFileCreator;
 		String msgText = null;
 		Integer msgAnswer = 0;
 		
-		Application.setStatusBar(Language.translate("Projekt schließen") + " ...");
+		Application.setStatusBar(Language.translate("Projekt schlieÃŸen") + " ...");
 		if (isUnsaved()==true) {
 			msgHead = Language.translate("Projekt '@' speichern?");
 			msgHead = msgHead.replace( "'@'", "'" + projectName + "'");			
 			msgText = Language.translate(
 						"Das aktuelle Projekt '@' ist noch nicht gespeichert!" + Application.getGlobalInfo().getNewLineSeparator() + 
-						"Möchten Sie es nun speichern ?");
+						"MÃ¶chten Sie es nun speichern ?");
 			msgText = msgText.replace( "'@'", "'" + projectName + "'");
 			
 			msgAnswer = JOptionPane.showInternalConfirmDialog (Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_CANCEL_OPTION );
@@ -597,7 +597,7 @@ import agentgui.core.webserver.JarFileCreator;
 				
 				MsgHead = Language.translate("Fehler - PlugIn: ") + " " + ppi.getClassReference() + " !" ;
 				MsgText = Language.translate("Das PlugIn wurde bereits in das Projekt integriert " +
-						"und kann deshalb nicht erneut hinzugefügt werden!");
+						"und kann deshalb nicht erneut hinzugefÃ¼gt werden!");
 				JOptionPane.showInternalMessageDialog( this.getProjectWindow(), MsgText, MsgHead, JOptionPane.ERROR_MESSAGE);
 				return false;
 				

@@ -94,7 +94,7 @@ public class AgentGUITrayDialog extends JDialog implements MouseListener {
 		jContentPane.setToolTipText(viewTitle);
 		jLabelInfo.setToolTipText(viewTitle);
 		
-		String viewText = Language.translate("Rechts-Klick für weitere Optionen");
+		String viewText = Language.translate("Rechts-Klick fÃ¼r weitere Optionen");
 		jLabelInfo.setText(viewText);
 		this.getjLabel4Icon().setToolTipText(viewText);
 	}
@@ -108,7 +108,7 @@ public class AgentGUITrayDialog extends JDialog implements MouseListener {
 			
 			jLabelInfo = new JLabel();
 			jLabelInfo.setBounds(new Rectangle(60, 25, 210, 16));
-			jLabelInfo.setText("Rechts-Klick für weitere Optionen");
+			jLabelInfo.setText("Rechts-Klick fÃ¼r weitere Optionen");
 			jLabelInfo.addMouseListener(this);
 			
 			jContentPane = new JPanel();

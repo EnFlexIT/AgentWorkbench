@@ -113,10 +113,10 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 		this.setLocationRelativeTo(null);
 		
 		// --- Translations ----
-		jLabelBenchmark.setText(Language.translate("Bitte warten! Der Benchmark wird durchgeführt ..."));
+		jLabelBenchmark.setText(Language.translate("Bitte warten! Der Benchmark wird durchgefÃ¼hrt ..."));
 		jLabelBenchmarkOldCaption.setText(Language.translate("Alter Wert: "));
-		jButtonSkip.setText(Language.translate("Überspringen"));
-		jButtonSkipAllways.setText(Language.translate("Immer Überspringen"));
+		jButtonSkip.setText(Language.translate("Ãœberspringen"));
+		jButtonSkipAllways.setText(Language.translate("Immer Ã¼berspringen"));
 		
 	}
 
@@ -175,7 +175,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 			gridBagConstraints1.gridwidth = 2;
 			gridBagConstraints1.gridy = 0;
 			jLabelBenchmark = new JLabel();
-			jLabelBenchmark.setText("Bitte warten! Benchmark wird durchgeführt ...");
+			jLabelBenchmark.setText("Bitte warten! Benchmark wird durchgefÃ¼hrt ...");
 			jLabelBenchmark.setFont(new Font("Dialog", Font.BOLD, 14));
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.gridx = 0;
@@ -240,7 +240,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	private JButton getJButtonSkip() {
 		if (jButtonSkip == null) {
 			jButtonSkip = new JButton();
-			jButtonSkip.setText("Überspringen");
+			jButtonSkip.setText("Ãœberspringen");
 			jButtonSkip.setPreferredSize(new Dimension(134, 24));
 			jButtonSkip.setFont(new Font("Dialog", Font.BOLD, 10));
 			jButtonSkip.addActionListener(this);
@@ -256,7 +256,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	private JButton getJButtonSkipAllways() {
 		if (jButtonSkipAllways == null) {
 			jButtonSkipAllways = new JButton();
-			jButtonSkipAllways.setText("Immer Überspringen");
+			jButtonSkipAllways.setText("Immer Ã¼berspringen");
 			jButtonSkipAllways.setFont(new Font("Dialog", Font.BOLD, 10));
 			jButtonSkipAllways.addActionListener(this);
 		}

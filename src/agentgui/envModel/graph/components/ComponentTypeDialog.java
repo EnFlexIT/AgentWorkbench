@@ -547,7 +547,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JButton getJButtonConfirm() {
 		if (jButtonConfirm == null) {
 			jButtonConfirm = new JButton();
-			jButtonConfirm.setText("Übernehmen");
+			jButtonConfirm.setText("Ãœbernehmen");
 			jButtonConfirm.setText(Language.translate(jButtonConfirm.getText()));
 			jButtonConfirm.setPreferredSize(new Dimension(120, 28));
 			jButtonConfirm.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -879,8 +879,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		if (domainName!=null) {
 			if (domainName.equals(defaultDomain)) {
 				String newLine = Application.getGlobalInfo().getNewLineSeparator();
-				String msg = Language.translate("Dieser Eintrag ist ein notwendiger Systemparameter, der " + newLine + "nicht gelöscht oder umbenannt werden darf!");
-				String title = "'" + defaultDomain + "': " +  Language.translate("Löschen nicht zulässig!");
+				String msg = Language.translate("Dieser Eintrag ist ein notwendiger Systemparameter, der " + newLine + "nicht gelÃ¶scht oder umbenannt werden darf!");
+				String title = "'" + defaultDomain + "': " +  Language.translate("LÃ¶schen nicht zulÃ¤ssig!");
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				return;
 			} 
@@ -1191,7 +1191,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 */
 	private TableCellEditor4ClassSelector getAdapterClassesCellEditor(){
 		if(adapterClassesCellEditor == null){
-			adapterClassesCellEditor = new TableCellEditor4ClassSelector(Application.getMainWindow(), NetworkComponentAdapter.class, "", "", Language.translate("Erweiterungsadapter für Netzwerkkomponenten"), true);
+			adapterClassesCellEditor = new TableCellEditor4ClassSelector(Application.getMainWindow(), NetworkComponentAdapter.class, "", "", Language.translate("Erweiterungsadapter fÃ¼r Netzwerkkomponenten"), true);
 		}
 		return adapterClassesCellEditor;
 	}

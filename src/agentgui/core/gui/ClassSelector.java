@@ -371,7 +371,7 @@ public class ClassSelector extends JDialog {
 			jLabelSearchCaption.setText(Language.translate(jLabelSearchCaption.getText()) + ": Class extends " + class2Search4.getName() );
 			
 			jLabelCustomize = new JLabel();
-			jLabelCustomize.setText("Klasse mit gewünschter Oberklasse:");
+			jLabelCustomize.setText("Klasse mit gewÃ¼nschter Oberklasse:");
 			jLabelCustomize.setText(class2Search4Description + ":");
 			jLabelCustomize.setFont(new Font("Dialog", Font.BOLD, 12));
 			
@@ -419,7 +419,7 @@ public class ClassSelector extends JDialog {
 	private JButton getJButtonDefaultClass() {
 		if (jButtonDefaultClass == null) {
 			jButtonDefaultClass = new JButton();
-			jButtonDefaultClass.setToolTipText(Language.translate("Zurücksetzen"));
+			jButtonDefaultClass.setToolTipText(Language.translate("ZurÃ¼cksetzen"));
 			jButtonDefaultClass.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonDefaultClass.setPreferredSize(new Dimension(45, 26));
 			jButtonDefaultClass.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
@@ -441,7 +441,7 @@ public class ClassSelector extends JDialog {
 		if (jButtonSetNull == null) {
 			jButtonSetNull = new JButton();
 			jButtonSetNull.setEnabled(this.allowNull);
-			jButtonSetNull.setToolTipText(Language.translate("Löschen"));
+			jButtonSetNull.setToolTipText(Language.translate("LÃ¶schen"));
 			jButtonSetNull.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonSetNull.setPreferredSize(new Dimension(45, 26));
 			jButtonSetNull.setIcon(new ImageIcon(getClass().getResource(PathImage + "Delete.png")));
@@ -463,7 +463,7 @@ public class ClassSelector extends JDialog {
 	private JButton getJButtonDefaultClassCustomize() {
 		if (jButtonCheckClass == null) {
 			jButtonCheckClass = new JButton();
-			jButtonCheckClass.setToolTipText(Language.translate("Klassenangabe überprüfen"));
+			jButtonCheckClass.setToolTipText(Language.translate("Klassenangabe Ã¼berprÃ¼fen"));
 			jButtonCheckClass.setPreferredSize(new Dimension(45, 26));
 			jButtonCheckClass.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
 			jButtonCheckClass.addActionListener(new ActionListener() {
@@ -557,7 +557,7 @@ public class ClassSelector extends JDialog {
 			jButtonOK.setPreferredSize(new Dimension(120, 26));
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonOK.setForeground(new Color(0, 153, 0));
-			jButtonOK.setText("Übernehmen");
+			jButtonOK.setText("Ãœbernehmen");
 			jButtonOK.setText(Language.translate(jButtonOK.getText()));
 			jButtonOK.addActionListener(new ActionListener() {
 				@Override
@@ -642,7 +642,7 @@ public class ClassSelector extends JDialog {
 			jButtonTakeSelected.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonTakeSelected.setPreferredSize(new Dimension(45, 26));
 			jButtonTakeSelected.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowUp.png")));
-			jButtonTakeSelected.setToolTipText(Language.translate("Ausgewählte Klasse übernehmen!"));
+			jButtonTakeSelected.setToolTipText(Language.translate("AusgewÃ¤hlte Klasse Ã¼bernehmen!"));
 			jButtonTakeSelected.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -679,7 +679,7 @@ public class ClassSelector extends JDialog {
 	 */
 	private void addDoubleClickEvent2CurrentJListClassSearcher() {
 		this.getJListClassesFound().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		this.getJListClassesFound().jListLoading.setToolTipText(Language.translate("Doppelklick um eine Klasse auszuwählen !"));
+		this.getJListClassesFound().jListLoading.setToolTipText(Language.translate("Doppelklick um eine Klasse auszuwÃ¤hlen !"));
 		this.getJListClassesFound().jListLoading.addMouseListener( new MouseAdapter() {
 			public void mouseClicked(MouseEvent me) {
 				if (me.getClickCount() == 2 ) {

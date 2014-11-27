@@ -117,13 +117,13 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 */
 	public void setupAddNew(String name, String newFileName) {
 		
-		// --- Aktuelles Setup speichern ------------------
+		// --- Setup current setup ------------------------
 		this.setupSave();
-		// --- Name und Dateiname hinzufügen --------------
+		// --- Add name and file --------------------------
 		this.put(name, newFileName);
-		// --- Fokus auf das aktuelle Setup ---------------
+		// --- Set focus to the current setup -------------
 		this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_ADD_NEW, name, true);
-		// --- Projekt speichern --------------------------
+		// --- Save project -------------------------------
 		currProject.save();
 	}
 
@@ -135,20 +135,19 @@ public class SimulationSetups extends Hashtable<String, String> {
 		
 		if (this.containsKey(name)==false) return;
 
-		// --- Setup rausschmeissen------------------------
+		// --- Remove Setup -------------------------------
 		this.remove(name);
 		new File(currSimXMLFile).delete();
 		String userObjectFileName = Application.getGlobalInfo().getBinFileNameFromXmlFileName(currSimXMLFile);
 		new File(userObjectFileName).delete();
 		
-		// --- Interessenten informieren ------------------
+		// --- Notify -------------------------------------
 		currProject.setChangedAndNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_REMOVE));
 		
-		// --- Groesse des Rests berücksichtigen ----------
 		if (this.size() == 0) {
 			// --- add default - Setup --------------------
 			currSimSetupName = "default";
-			// --- Noch keine Setups gespeichert ----------
+			// --- No setup found -------------------------
 			String newFileName = getSuggestSetupFile(currSimSetupName);
 			this.setupAddNew(currSimSetupName, newFileName);
 
@@ -287,9 +286,9 @@ public class SimulationSetups extends Hashtable<String, String> {
 		suggest = suggest.replaceAll("  ", " ");
 		suggest = suggest.replace(" ", "_");
 		suggest = suggest.replace("-", "_");
-		suggest = suggest.replace("ä", "ae");
-		suggest = suggest.replace("ö", "oe");
-		suggest = suggest.replace("ü", "ue");
+		suggest = suggest.replace("Ã¤", "ae");
+		suggest = suggest.replace("Ã¶", "oe");
+		suggest = suggest.replace("Ã¼", "ue");
 		
 		// --- Examine all characters -----------
 		for (int i = 0; i < suggest.length(); i++) {
@@ -353,7 +352,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		} catch (FileNotFoundException e) {
 
 			String head = Language.translate("Setup-Datei nicht gefunden!");
-			String msg  = Language.translate("Die Datei") + " '" + this.get(currSimSetupName) + "' " + Language.translate("für das Setup") + " '" + currSimSetupName + "' " + Language.translate("wurde nicht gefunden.");
+			String msg  = Language.translate("Die Datei") + " '" + this.get(currSimSetupName) + "' " + Language.translate("fÃ¼r das Setup") + " '" + currSimSetupName + "' " + Language.translate("wurde nicht gefunden.");
 			msg += Language.translate("<br>Kann der Name aus der Liste der Setups entfernt werden?");
 			msg += Language.translate("<br>Falls nicht, wird eine neue Setup-Datei erzeugt.");
 			Integer answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), msg, head, JOptionPane.YES_NO_OPTION);

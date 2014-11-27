@@ -946,7 +946,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 				    }
 				}
 				if (pos == null) {
-				    System.err.println("Keine Position definiert für Knoten " + nmd.getId());
+				    System.err.println("Keine Position definiert fÃ¼r Knoten " + nmd.getId());
 				    pos = new Point2D.Double(0, 0);
 				}
 				graphNode.setPosition(pos);

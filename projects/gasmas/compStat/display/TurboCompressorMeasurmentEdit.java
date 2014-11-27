@@ -309,7 +309,7 @@ public class TurboCompressorMeasurmentEdit extends JDialog implements ParameterL
 	 */
 	private ValueTypeDisplay getValueTypeDisplayFlowRate() {
 		if (valueTypeDisplayFlowRate== null) {
-			valueTypeDisplayFlowRate = new ValueTypeDisplay("Vol. Flow Rate [m³/s]", valueTypeDimension);
+			valueTypeDisplayFlowRate = new ValueTypeDisplay("Vol. Flow Rate [mÂ²/s]", valueTypeDimension);
 			valueTypeDisplayFlowRate.addParameterListener(this);
 		}
 		return valueTypeDisplayFlowRate;

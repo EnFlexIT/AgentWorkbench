@@ -116,7 +116,7 @@ public class ChangeDialog extends JDialog implements ActionListener {
 	 */
 	private void initialize() {
 		
-		String title = Language.translate("Letzte Änderungen") + " - ";
+		String title = Language.translate("Letzte Ã„nderungen") + " - ";
 		title += Application.getGlobalInfo().getVersionInfo().getFullVersionInfo(true, null);
 		this.setTitle(title);
 		
@@ -421,7 +421,7 @@ public class ChangeDialog extends JDialog implements ActionListener {
 	private JButton getJButtonClose() {
 		if (jButtonClose == null) {
 			jButtonClose = new JButton();
-			jButtonClose.setText("Schließen");
+			jButtonClose.setText("SchlieÃŸen");
 			jButtonClose.setText(Language.translate(jButtonClose.getText()));
 			jButtonClose.setForeground(new Color(0, 0 ,153));
 			jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));

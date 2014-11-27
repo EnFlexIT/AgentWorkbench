@@ -145,7 +145,7 @@ public class XyTableTab extends TableTab {
 			btnNextSeries = new JButton();
 			btnNextSeries.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "ArrowRight.png")));
 			btnNextSeries.setPreferredSize(new Dimension(26, 26));
-			btnNextSeries.setToolTipText(Language.translate("Nächste Datenreihe"));
+			btnNextSeries.setToolTipText(Language.translate("NÃ¤chste Datenreihe"));
 			btnNextSeries.addActionListener(this);
 		}
 		return btnNextSeries;
@@ -336,10 +336,10 @@ public class XyTableTab extends TableTab {
 				int userAnswer = JOptionPane.YES_OPTION;
 				if (this.getJCheckboxDuplicateXValues().isSelected()==dataSeries.getAvoidDuplicateXValues() && this.getJCheckboxDuplicateXValues().isSelected()==false) {
 					// --- Especially duplicate x values are disallowed now ---
-					String title = Language.translate("Änderungen anwenden") +"?";
+					String title = Language.translate("Ã„nderungen anwenden") +"?";
 					String msg = "Das Anwenden der neuen Datenreiheneigenschaften ";
-					msg += "\nkann dazu führen, dass Daten verloren gehen.";
-					msg += "\n\nMöchten Sie fortfahren?"; 
+					msg += "\nkann dazu fÃ¼hren, dass Daten verloren gehen.";
+					msg += "\n\nMÃ¶chten Sie fortfahren?"; 
 					msg = Language.translate(msg) ;
 					userAnswer = JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION);
 				} 

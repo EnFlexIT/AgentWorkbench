@@ -436,7 +436,7 @@ public class Application {
 		if (isRunningAsServer()==false && project2OpenAfterStart!=null) {
 			
 			// --- open the specified project -------------
-			Application.setStatusBar(Language.translate("Öffne Projekt") + " '" + project2OpenAfterStart + "'...");
+			Application.setStatusBar(Language.translate("Ã–ffne Projekt") + " '" + project2OpenAfterStart + "'...");
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
@@ -783,9 +783,9 @@ public class Application {
 			// --- Ask user -----------------------------------------
 			String MsgHead = Language.translate("Anzeigesprache wechseln?");
 			String MsgText = Language.translate(
-							 "Möchten Sie die Anzeigesprache wirklich umstellen?" + newLine + 
+							 "MÃ¶chten Sie die Anzeigesprache wirklich umstellen?" + newLine + 
 							 "Die Anwendung muss hierzu neu gestartet und Projekte" + newLine +
-							 "von Ihnen neu geöffnet werden.");
+							 "von Ihnen neu geÃ¶ffnet werden.");
 			Integer MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
 			if (MsgAnswer==1) return;
 			

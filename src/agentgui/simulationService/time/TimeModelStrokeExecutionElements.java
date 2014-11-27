@@ -42,7 +42,7 @@ public class TimeModelStrokeExecutionElements extends TimeModelBaseExecutionElem
 
 	private static final long serialVersionUID = 385807623783469748L;
 
-	private final String toolBarTitle = Language.translate("Zähler");
+	private final String toolBarTitle = Language.translate("ZÃ¤hler");
 	private TimeModelStroke timeModelStroke = null;
 	
 		

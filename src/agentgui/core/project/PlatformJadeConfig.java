@@ -358,11 +358,10 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public boolean isEqual(PlatformJadeConfig jadeConfig2) {
 		
-		// --- Selbe Anzahl der ausgewählten Services ? -------------
 		if ( this.countUsedServices() != jadeConfig2.countUsedServices() ) {
 			return false;
 		}
-		// --- Sind die ausgewählten Services identisch? ------------ 
+
 		Iterator<String> it = this.useServiceList.iterator();
 		while( it.hasNext() ) {
 			String currService = it.next();

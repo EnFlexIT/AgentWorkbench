@@ -532,9 +532,9 @@ public class XyTableModel extends TableModel {
 							// --- Risk of duplicate x values ? -------------------------
 							if (this.tableModelDataVector.getRowByValue(colIndex, xValue, rowIndex)!=null) {
 								// --- Another row contains this value, undo ------------
-								String title = "Doppelte X-Werte nicht zul‰ssig!";
-								String msg = "Doppelte X-Werte sind derzeit nicht zul‰ssig!\n";
-								msg += "Die Aktion wird r¸ckg‰ngig gemacht.";
+								String title = "Doppelte X-Werte nicht zul√§ssig!";
+								String msg = "Doppelte X-Werte sind derzeit nicht zul√§ssig!\n";
+								msg += "Die Aktion wird r√ºckg√§ngig gemacht.";
 								
 								JOptionPane.showMessageDialog(this.myJTable, Language.translate(msg), Language.translate(title), JOptionPane.WARNING_MESSAGE, null);
 								xValue = (Float) this.latestChangedValue;

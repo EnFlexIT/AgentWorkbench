@@ -442,9 +442,9 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * This method adds the Enlarge-View-Tab to THIS TabbedPane.
 	 */
 	private void addEnlargeTab() {
-		this.addTab("Vergrößern", this.getJPanelEnlarge());
+		this.addTab("VergrÃ¶ÃŸern", this.getJPanelEnlarge());
 		this.setTabComponentAt(3, this.getJLabelTitleEnlarge());
-		this.jLabelTitleEnlarge.setText("  " + Language.translate("Vergrößern ...") + "  ");
+		this.jLabelTitleEnlarge.setText("  " + Language.translate("VergrÃ¶ÃŸern ...") + "  ");
 	}
 	/**
 	 * This method removes the Enlarge-View-Tab to THIS TabbedPane.
@@ -526,7 +526,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	private JLabel getJLabelTitleEnlarge() {
 		if (jLabelTitleEnlarge == null) {
 			jLabelTitleEnlarge = new JLabel();
-			jLabelTitleEnlarge.setText(" Vergrößern");
+			jLabelTitleEnlarge.setText(" VergrÃ¶ÃŸern");
 			jLabelTitleEnlarge.setIcon(imageEnlarge);
 		}
 		return jLabelTitleEnlarge;

@@ -216,7 +216,7 @@ public class DynFormText extends JPanel implements ActionListener {
 			jButtonSearchForward = new JButton();
 			jButtonSearchForward.setPreferredSize(new Dimension(26, 26));
 			jButtonSearchForward.setIcon(new ImageIcon(getClass().getResource(pathImage + "ArrowRight.png")));
-			jButtonSearchForward.setToolTipText(Language.translate("Suche vorwärts"));
+			jButtonSearchForward.setToolTipText(Language.translate("Suche vorwÃ¤rts"));
 			jButtonSearchForward.addActionListener(this);
 		}
 		return jButtonSearchForward;
@@ -230,7 +230,7 @@ public class DynFormText extends JPanel implements ActionListener {
 			jButtonSearchBackwards = new JButton();
 			jButtonSearchBackwards.setPreferredSize(new Dimension(26, 26));
 			jButtonSearchBackwards.setIcon(new ImageIcon(getClass().getResource(pathImage + "ArrowLeft.png")));
-			jButtonSearchBackwards.setToolTipText(Language.translate("Suche rückwärts"));
+			jButtonSearchBackwards.setToolTipText(Language.translate("Suche rÃ¼ckwÃ¤rts"));
 			jButtonSearchBackwards.addActionListener(this);
 		}
 		return jButtonSearchBackwards;
@@ -244,7 +244,7 @@ public class DynFormText extends JPanel implements ActionListener {
 			jButtonSearchDelete = new JButton();
 			jButtonSearchDelete.setPreferredSize(new Dimension(26, 26));
 			jButtonSearchDelete.setIcon(new ImageIcon(getClass().getResource(pathImage + "Delete.png")));
-			jButtonSearchDelete.setToolTipText(Language.translate("Suche löschen"));
+			jButtonSearchDelete.setToolTipText(Language.translate("Suche lÃ¶schen"));
 			jButtonSearchDelete.addActionListener(this);
 		}
 		return jButtonSearchDelete;

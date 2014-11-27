@@ -37,7 +37,7 @@ import java.util.Vector;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 
 /**
- * This class is used for reflective access to classes of ontologies, which were build by Protégé.
+ * This class is used for reflective access to classes of ontologies, which were build by Protege.
  * It is used within the {@link OntologyClassTreeObject} in order to provide the detailed
  * information about the structure of a class.  
  * 
@@ -114,7 +114,7 @@ public class ReflectClass extends Object {
 		public String Cardinality = null;
 		/** The type of the variable. */
 		public String VarType = null;
-		/** The Other facts, which are usually free, but displayed in Protégé. */
+		/** The Other facts, which are usually free, but displayed in Protege. */
 		public String OtherFacts = null;
 		
 		
@@ -209,11 +209,10 @@ public class ReflectClass extends Object {
 				  	 methodName.equalsIgnoreCase("notifyall") == false &&
 				 	 methodName.endsWith( CurrSlotNa ) ) {
 					// ---------------------------------------------------------
-					// --- Wenn die aktuelle Methode schon mit 'get' oder    ---
-					// --- 'set' anfängt, dann sollte der Name auch komplett ---
-					// --- stimmen !!!										 ---
+					// --- If current method name starts with 'get'          --- 
+					// --- or 'set' the name should be completely right      ---
+					// --- 95% secure, but ...                               ---
 					// ---------------------------------------------------------
-					// --- 95% Sicherheit, aber, aber ... 
 					String GeSeTest = methodName.substring(0, 3);
 					if ( GeSeTest.equals("get") || GeSeTest.equals("set")  ) {
 						if ( methodName.equals(GeSeTest + CurrSlotNa) ) {

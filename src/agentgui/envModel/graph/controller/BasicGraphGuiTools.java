@@ -277,7 +277,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		    jButtonSatelliteView = new JToggleButton();
 		    jButtonSatelliteView.setIcon(new ImageIcon(getClass().getResource(pathImage + "SatelliteView.png")));
 		    jButtonSatelliteView.setPreferredSize(jButtonSize);
-		    jButtonSatelliteView.setToolTipText(Language.translate("‹bersichtsfenster ein- und ausblenden"));
+		    jButtonSatelliteView.setToolTipText(Language.translate("√úbersichtsfenster ein- und ausblenden"));
 		    jButtonSatelliteView.addActionListener(this);
 		}
 		return jButtonSatelliteView;
@@ -337,7 +337,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		    jButtonZoomIn = new JButton();
 		    jButtonZoomIn.setPreferredSize(jButtonSize);
 		    jButtonZoomIn.setIcon(new ImageIcon(getClass().getResource(pathImage + "ZoomIn.png")));
-		    jButtonZoomIn.setToolTipText(Language.translate("Vergrˆﬂern"));
+		    jButtonZoomIn.setToolTipText(Language.translate("Vergr√∂√üern"));
 		    jButtonZoomIn.addActionListener(this);
 		}
 		return jButtonZoomIn;
@@ -709,7 +709,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 					if (selectedObjects==null) {
 						// --- No selection -------------------------
 						String title = Language.translate("Fehlende Auswahl!");
-						String message = Language.translate("Es wurde keine Komponente ausgew‰hlt!");
+						String message = Language.translate("Es wurde keine Komponente ausgew√§hlt!");
 						JOptionPane.showInternalMessageDialog(basicGraphGui, message, title, JOptionPane.WARNING_MESSAGE);
 						
 					} else {
@@ -760,7 +760,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				if (separatorSet==false) {
 					// --- Add item to close all open windows ------- 
 					pMenue.addSeparator();
-			    	item = new JMenuItem(Language.translate("Alle Eigenschaftsfenster schlieﬂen"));
+			    	item = new JMenuItem(Language.translate("Alle Eigenschaftsfenster schlie√üen"));
 			    	item.setActionCommand("PropWindowCloseAll");
 			    	item.addActionListener(al);
 			    	pMenue.add(item);

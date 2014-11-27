@@ -179,9 +179,9 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		jCheckBoxThresholdDefinition.setText(Language.translate("Eigene Auslastungsgrenzwerte verwenden"));
 		jCheckBoxImmediatelyStartLoadRecording.setText(Language.translate("Lastaufzeichnung mit dem Start von JADE beginnen"));
 		
-		jLabelMemoryAlloc.setText(Language.translate("Arbeitsspeicher für Remote-JVM"));
-		jLabelStaticLoadClass.setText(Language.translate("Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteilung"));
-		jLabelDynamicLoadClass.setText(Language.translate("Java-Klasse für die dynamische Lastverteilung"));
+		jLabelMemoryAlloc.setText(Language.translate("Arbeitsspeicher fÃ¼r Remote-JVM"));
+		jLabelStaticLoadClass.setText(Language.translate("Java-Klasse fÃ¼r den Start der Simulations-Agenten und die statische Lastverteilung"));
+		jLabelDynamicLoadClass.setText(Language.translate("Java-Klasse fÃ¼r die dynamische Lastverteilung"));
 		jLabelAgentsExpected.setText(Language.translate("Anzahl Agenten (erwartet)"));
 		jLabelContainerExpected.setText(Language.translate("Anzahl Container"));
 
@@ -196,8 +196,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		jButtonRemoteDefault.setToolTipText(Language.translate("Standard verwenden"));
 		jButtonDefaultClassStatic.setToolTipText(Language.translate("Agent.GUI - Standard verwenden"));	
 		jButtonDefaultClassDynamic.setToolTipText(Language.translate("Agent.GUI - Standard verwenden"));
-		jButtonSelectStaticClass.setToolTipText(Language.translate("Klasse auswählen"));
-		jButtonSelectDynamicClass.setToolTipText(Language.translate("Klasse auswählen"));
+		jButtonSelectStaticClass.setToolTipText(Language.translate("Klasse auswÃ¤hlen"));
+		jButtonSelectDynamicClass.setToolTipText(Language.translate("Klasse auswÃ¤hlen"));
 	}
 
 	/**
@@ -371,7 +371,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jLabelMemoryMax = new JLabel();
 			jLabelMemoryMax.setText("Max.");
 			jLabelMemoryAlloc = new JLabel();
-			jLabelMemoryAlloc.setText("Arbeitsspeicher für Remote-JVM");
+			jLabelMemoryAlloc.setText("Arbeitsspeicher fÃ¼r Remote-JVM");
 			jLabelMemoryAlloc.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jPanelRemoteConfig = new JPanel();
@@ -507,7 +507,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		if (initMem>=maxiMem) {
 			combo.hidePopup();
 			String head = Language.translate("Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !");
-			String msg = Language.translate("Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.");
+			String msg = Language.translate("Der maximale Arbeitsspeicher muss grÃ¶ÃŸer als der initiale Arbeitsspeicher sein.");
 			JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.ERROR_MESSAGE);
 			error = true;
 		}
@@ -628,7 +628,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			gridBagConstraints42.gridwidth = 3;
 			gridBagConstraints42.gridx = 0;
 			jLabelStaticLoadClass = new JLabel();
-			jLabelStaticLoadClass.setText("Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteilung");
+			jLabelStaticLoadClass.setText("Java-Klasse fÃ¼r den Start der Simulations-Agenten und die statische Lastverteilung");
 			jPanelStaticClass = new JPanel();
 			jPanelStaticClass.setLayout(new GridBagLayout());
 			jPanelStaticClass.add(jLabelStaticLoadClass, gridBagConstraints42);
@@ -674,7 +674,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JButton getJButtonDefaultClassStaticCheck() {
 		if (jButtonSelectStaticClass == null) {
 			jButtonSelectStaticClass = new JButton();
-			jButtonSelectStaticClass.setToolTipText("Klasse auswählen");
+			jButtonSelectStaticClass.setToolTipText("Klasse auswÃ¤hlen");
 			jButtonSelectStaticClass.setPreferredSize(new Dimension(45, 26));
 			jButtonSelectStaticClass.setIcon(new ImageIcon(getClass().getResource(PathImage + "Search.png")));
 			jButtonSelectStaticClass.setActionCommand("StatLoadBalancingCheck");
@@ -710,7 +710,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			gridBagConstraints4.anchor = GridBagConstraints.WEST;
 			gridBagConstraints4.gridy = 0;
 			jLabelDynamicLoadClass = new JLabel();
-			jLabelDynamicLoadClass.setText("Java-Klasse für die dynamische Lastverteilung");
+			jLabelDynamicLoadClass.setText("Java-Klasse fÃ¼r die dynamische Lastverteilung");
 			jPanelDynamic = new JPanel();
 			jPanelDynamic.setLayout(new GridBagLayout());
 			jPanelDynamic.add(jLabelDynamicLoadClass, gridBagConstraints4);
@@ -757,7 +757,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JButton getJButtonDefaultClassDynamicCheck() {
 		if (jButtonSelectDynamicClass == null) {
 			jButtonSelectDynamicClass = new JButton();
-			jButtonSelectDynamicClass.setToolTipText("Klasse auswählen");
+			jButtonSelectDynamicClass.setToolTipText("Klasse auswÃ¤hlen");
 			jButtonSelectDynamicClass.setPreferredSize(new Dimension(45, 26));
 			jButtonSelectDynamicClass.setIcon(new ImageIcon(getClass().getResource(PathImage + "Search.png")));
 			jButtonSelectDynamicClass.setActionCommand("DynLoadBalancingCheck");

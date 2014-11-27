@@ -107,14 +107,14 @@ public class BenchmarkMeasurement extends Thread {
 			return;
 		}  
 		
-		// --- Benchmark-Monitor initialisieren -----------
+		// --- Initialise Benchmark-Monitor  --------------
 		if (Application.getMainWindow()==null) {
 			benchGUI = new BenchmarkMonitor(null);	
 		} else {
 			benchGUI = new BenchmarkMonitor(Application.getMainWindow());	
 		}		
 		
-		// --- Eingriffsmöglichkeit für den Nutzer --------
+		// --- Set user buttons ---------------------------
 		if ( benchValueOld>0 && nowExecOn.equalsIgnoreCase(benchExecOn)) {
 			benchGUI.jButtonSkip.setEnabled(true);
 			if (forceBench==true) {

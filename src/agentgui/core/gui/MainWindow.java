@@ -197,7 +197,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 		this.add(getMainSplitpane());
 		this.setSize(1150, 640);	
 		
-		// --- Listener für das Schließen der Applikation ----
+		// --- Listener for closing the application -------
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
 			Application.quit();
@@ -205,7 +205,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 		});
 		this.addComponentListener(this);
 		
-		// --- Schaltflächen für die Simulationskontrolle einstellen --
+		// --- Set button for simulation control ---------- 
 		this.setSimulationReady2Start();
 		
 	}	
@@ -478,7 +478,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 
 
 	// ------------------------------------------------------------
-	// --- Menüleistendefinition - START --------------------------
+	// --- Tollbar definition - START -----------------------------
 	// ------------------------------------------------------------
 	/**
 	 * This method returns the current instance of the applications menu bar.
@@ -576,7 +576,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 		this.validate();
 	}
 	// ------------------------------------------------------------
-	// --- Menü Projekte ------------------------------------------
+	// --- Menu Projects ------------------------------------------
 	// ------------------------------------------------------------
 	/**
 	 * This method returns the current instance of the menu "Project".
@@ -588,22 +588,22 @@ public class MainWindow extends JFrame implements ComponentListener {
 			jMenuMainProject = new JMenu("Projekte");
 			jMenuMainProject.setText(Language.translate("Projekte"));			
 			jMenuMainProject.add( new CWMenueItem( "ProjectNew", Language.translate("Neues Projekt"), "MBnew.png" )) ;
-			jMenuMainProject.add( new CWMenueItem( "ProjectOpen", Language.translate("Projekt öffnen"), "MBopen.png" )) ;
-			jMenuMainProject.add( new CWMenueItem( "ProjectClose", Language.translate("Projekt schließen"), "MBclose.png" )) ;
+			jMenuMainProject.add( new CWMenueItem( "ProjectOpen", Language.translate("Projekt Ã¶ffnen"), "MBopen.png" )) ;
+			jMenuMainProject.add( new CWMenueItem( "ProjectClose", Language.translate("Projekt schlieÃŸen"), "MBclose.png" )) ;
 			jMenuMainProject.addSeparator();
 			jMenuMainProject.add( new CWMenueItem( "ProjectSave", Language.translate("Projekt speichern"), "MBsave.png" )) ;
 			jMenuMainProject.addSeparator();
 			jMenuMainProject.add( new CWMenueItem( "ProjectImport", Language.translate("Projekt importieren"), "MBtransImport.png" )) ;
 			jMenuMainProject.add( new CWMenueItem( "ProjectExport", Language.translate("Projekt exportieren"), "MBtransExport.png" )) ;
 			jMenuMainProject.addSeparator();
-			jMenuMainProject.add( new CWMenueItem( "ProjectDelete", Language.translate("Projekt löschen"), "Delete.png" )) ;
+			jMenuMainProject.add( new CWMenueItem( "ProjectDelete", Language.translate("Projekt lÃ¶schen"), "Delete.png" )) ;
 			jMenuMainProject.addSeparator();
 			jMenuMainProject.add( new CWMenueItem( "ApplicationQuit", Language.translate("Beenden"), null )) ;			
 		}
 		return jMenuMainProject;
 	}
 	// ------------------------------------------------------------
-	// --- Menü "View" --------------------------------------------
+	// --- Menu "View" --------------------------------------------
 	// ------------------------------------------------------------
 	/**
 	 * This method returns the current instance of the menu "View".
@@ -656,7 +656,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 		return jMenuMainView;
 	}
 	// ------------------------------------------------------------
-	// --- Menü "JADE" --------------------------------------------
+	// --- Menu "JADE" --------------------------------------------
 	// ------------------------------------------------------------
 	/**
 	 * This method returns the current instance of the menu "JADE".
@@ -670,19 +670,19 @@ public class MainWindow extends JFrame implements ComponentListener {
 			jMenuMainJade.add( new CWMenueItem( "JadeStart", Language.translate("JADE starten"), "MBJadeOn.png" )) ;
 			jMenuMainJade.add( new CWMenueItem( "JadeStop", Language.translate("JADE stoppen"), "MBJadeOff.png" )) ;
 			jMenuMainJade.addSeparator();
-			jMenuMainJade.add( new CWMenueItem( "PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif" )) ;
+			jMenuMainJade.add( new CWMenueItem( "PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) Ã¶ffnen"), "MBJadeRMA.gif" )) ;
 			jMenuMainJade.add( new CWMenueItem( "PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif" )) ;
 			jMenuMainJade.add( new CWMenueItem( "PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif" )) ;
 			jMenuMainJade.add( new CWMenueItem( "PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif" )) ;
 			jMenuMainJade.add( new CWMenueItem( "PopIntrospec", Language.translate("Introspector-Agent starten"), "MBJadeIntrospector.gif" )) ;
 			jMenuMainJade.add( new CWMenueItem( "PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif" )) ;
 			jMenuMainJade.addSeparator();
-			jMenuMainJade.add( new CWMenueItem( "ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), "MBLoadMonitor.png" ));
+			jMenuMainJade.add( new CWMenueItem( "ContainerMonitoring", Language.translate("Auslastungs-Monitor Ã¶ffnen"), "MBLoadMonitor.png" ));
 		}
 		return jMenuMainJade;
 	}
 	// ------------------------------------------------------------
-	// --- Menü Simulation ----------------------------------------
+	// --- Menu Simulation ----------------------------------------
 	// ------------------------------------------------------------
 	/**
 	 * This method returns the current instance of the menu "Project".
@@ -706,7 +706,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 	
 	
 	// ------------------------------------------------------------
-	// --- Menü Extras ---------------------------------------------
+	// --- Menu Extras ---------------------------------------------
 	// ------------------------------------------------------------
 	/**
 	 * This method returns the current instance of the menu "Extra".
@@ -758,12 +758,14 @@ public class MainWindow extends JFrame implements ComponentListener {
 				jMenuExtraLang.add( new JMenuItemLang(languageList[i], setBold) );
 			};
 
-			// --- Menüpunkt Übersetzung --------------
 			jMenuExtraLang.addSeparator();
-			jMenuExtraLang.add(new CWMenueItem("ExtraTranslation", Language.translate("Übersetzen ..."), null));
+			jMenuExtraLang.add(new CWMenueItem("ExtraTranslation", Language.translate("Ãœbersetzen ..."), null));
 		
 		}
-		// --- Unterklasse für die verfügbaren Sprachen  --------------
+		
+		// ------------------------------------------------
+		// --- Sub class for available languages ----------
+		// ------------------------------------------------
 		/**
 		 * The Class JMenuItemLang.
 		 */
@@ -822,7 +824,10 @@ public class MainWindow extends JFrame implements ComponentListener {
 					jMenuExtraLnF.add( new JMenuItmenLnF(plaf[i].getName(), plaf[i].getClassName(), setBold) );
 			    };			
 		}
-		// --- Unterklasse für die Look and Feel Menü-Elemente --------
+		
+		// ------------------------------------------------
+		// --- Sub class for the Look and Feel Menu -------
+		// ------------------------------------------------
 		/**
 		 * The Class JMenuItmenLnF.
 		 */
@@ -864,7 +869,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 		// ------------------------------------------------------------	
 	
 	// ------------------------------------------------------------
-	// --- Menü Fenster -------------------------------------------
+	// --- Menu Window---------------------------------------------
 	// ------------------------------------------------------------
 	/**
 	 * Gets the JMenu main window.
@@ -880,19 +885,18 @@ public class MainWindow extends JFrame implements ComponentListener {
 	}
 	
 	// ------------------------------------------------------------
-	// --- Menü Hilfe ---------------------------------------------
+	// --- Menu Help ----------------------------------------------
 	// ------------------------------------------------------------
 	/**
 	 * This method returns the current instance of the menu "Help".
-	 *
 	 * @return the j menu main help
 	 */
 	public JMenu getJMenuMainHelp() {
 		if (jMenuMainHelp == null) {
 			jMenuMainHelp = new JMenu("Hilfe");
 			jMenuMainHelp.setText(Language.translate("Hilfe"));
-			jMenuMainHelp.add( new CWMenueItem( "HelpAbout", Language.translate("Über..."), null ));
-			jMenuMainHelp.add( new CWMenueItem( "HelpChanges", Language.translate("Letzte Änderungen"), null ));
+			jMenuMainHelp.add( new CWMenueItem( "HelpAbout", Language.translate("Ãœber..."), null ));
+			jMenuMainHelp.add( new CWMenueItem( "HelpChanges", Language.translate("Letzte Ã„nderungen"), null ));
 			jMenuMainHelp.addSeparator();
 			jMenuMainHelp.add( new CWMenueItem( "HelpUpdate", Language.translate("Nach Update suchen") + " !", null ));
 			
@@ -901,7 +905,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 	}
 
 	// ------------------------------------------------------------
-	// --- Menü "Close-Button" ------------------------------------
+	// --- Menu "Close-Button" ------------------------------------
 	// ------------------------------------------------------------
 	/**
 	 * Gets the close button.
@@ -912,7 +916,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 		if (jMenuCloseButton == null ) {
 			jMenuCloseButton = new CWMenueItem( "ProjectClose", "", "MBclose.png" );
 			jMenuCloseButton.setText("");
-			jMenuCloseButton.setToolTipText( Language.translate("Projekt schließen") );
+			jMenuCloseButton.setToolTipText( Language.translate("Projekt schlieÃŸen") );
 			jMenuCloseButton.setBorder(null);
 			jMenuCloseButton.setMargin( new Insets(0, 0, 0, 0) );
 			jMenuCloseButton.setPreferredSize( new Dimension ( 30 , jMenuCloseButton.getHeight() ) );
@@ -928,13 +932,10 @@ public class MainWindow extends JFrame implements ComponentListener {
 	 */
 	public void setCloseButtonPosition(boolean setVisible){
 		
-		// --- Positionsmerker für das Fenster setzen ?  ----------
-		// --- Wird nach der Initialisierung ausgewertet ----------
-		if ( jMenuCloseButton.isVisible() == false ) {
+		if (jMenuCloseButton.isVisible() == false ) {
 			jMenuCloseButton.setVisible(true);
 		}
-		// --- Entsprechendes Icon einblenden --------------------- 
-		if ( setVisible == true ){
+		if (setVisible==true){
 			jMenuCloseButton.setIcon( iconClose );	
 			jMenuCloseButton.setEnabled( true );	
 		}
@@ -943,22 +944,18 @@ public class MainWindow extends JFrame implements ComponentListener {
 			jMenuCloseButton.setEnabled( false );
 		}		
 		
-		// --- Menüleiste neu zeichnen / Änderungen anzeigen ------
-		if ( jMenuBarMain != null ) {
+		if (jMenuBarMain!=null) {
 			jMenuBarMain.revalidate();
 		}						
 	}	
 	
 	
 	// ------------------------------------------------------------
-	// --- Unterklasse für alle einfachen Menüelemente - START ----
+	// --- Sub class for simple menu items - START ----------------
 	// ------------------------------------------------------------	
-	/**
-	 * The Class CWMenueItem.
-	 */
+	/** The Class CWMenueItem. */
 	private class CWMenueItem extends JMenuItem implements ActionListener {
 		
-		/** Creat's a JMenueItem for PopUp- or normal Menue's and holds the ActionListener for them. */
 		private static final long serialVersionUID = 1L;
 
 		/**
@@ -989,7 +986,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 		public void actionPerformed(ActionEvent ae) {
 			String ActCMD = ae.getActionCommand();	
 	
-			// --- Menü Projekt -------------------------------
+			// --- Menu Projekt -------------------------------
 			if ( ActCMD.equalsIgnoreCase("ProjectNew") ) {
 				Application.getProjectsLoaded().add( true );
 			}
@@ -1016,11 +1013,11 @@ public class MainWindow extends JFrame implements ComponentListener {
 			else if ( ActCMD.equalsIgnoreCase("ApplicationQuit") ) {
 				Application.quit();
 			}
-			// --- Menü Ansicht / View ------------------------
+			// --- Menu Ansicht / View ------------------------
 			else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) {
 				Application.getMainWindow().doSwitchConsole();
 			}
-			// --- Menü Jade ----------------------------------
+			// --- Menu Jade ----------------------------------
 			else if ( ActCMD.equalsIgnoreCase("JadeStart") ) {
 				Application.getJadePlatform().jadeStart();
 			}
@@ -1045,7 +1042,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 			else if ( ActCMD.equalsIgnoreCase("PopLog") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("log", null);
 			}
-			// --- Menü Simulation ----------------------------
+			// --- Menu Simulation ----------------------------
 			else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
@@ -1063,7 +1060,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 			else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
 				Application.getJadePlatform().jadeSystemAgentOpen("loadMonitor", null);
 			}
-			// --- Menü Extras => nicht hier !! ---------------
+			// --- Menu Extras => NOT here !! ---------------
 			else if ( ActCMD.equalsIgnoreCase("ExtraTranslation") ) {
 				Application.showTranslationDialog();
 			}
@@ -1073,7 +1070,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 			else if ( ActCMD.equalsIgnoreCase("ExtraOptions") ) {
 				Application.showOptionDialog();
 			}
-			// --- Menü Hilfe ---------------------------------
+			// --- Menu Hilfe ---------------------------------
 			else if ( ActCMD.equalsIgnoreCase("HelpUpdate") ) {
 				new AgentGuiUpdater(true).start();
 			}
@@ -1089,15 +1086,15 @@ public class MainWindow extends JFrame implements ComponentListener {
 		}		
 	}		
 	// ------------------------------------------------------------
-	// --- Unterklasse für alle einfachen Menüelemente - ENDE -----
-	// ------------------------------------------------------------			
+	// --- Sub class for simple menu items - End ------------------
+	// ------------------------------------------------------------	
 	// ------------------------------------------------------------
-	// --- Menüleistendefinition - ENDE ---------------------------
+	// --- Menu definition - END ----------------------------------
 	// ------------------------------------------------------------
 		
 		
 	// ------------------------------------------------------------
-	// --- Symbolleiste erstellen - START -------------------------
+	// --- Create Toolbar - START ---------------------------------
 	// ------------------------------------------------------------
 	/**
 	 * Returns the main JToolBar of the application window.
@@ -1107,10 +1104,10 @@ public class MainWindow extends JFrame implements ComponentListener {
 
 		if ( jToolBarApplication == null) {
 			
-			// --- PopUp-Menü zum Button 'JadeTools' definieren (s. u.) ---
+			// --- PopUp-Menu zum Button 'JadeTools' definieren (s. u.) ---
 			jPopupMenuJadeTools = new JPopupMenu("SubBar");
 			jPopupMenuJadeTools.setBorder( BorderFactory.createEtchedBorder(EtchedBorder.LOWERED) );
-			jPopupMenuJadeTools.add( new CWMenueItem( "PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif" )) ;
+			jPopupMenuJadeTools.add( new CWMenueItem( "PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) Ã¶ffnen"), "MBJadeRMA.gif" )) ;
 			jPopupMenuJadeTools.add( new CWMenueItem( "PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif" )) ;
 			jPopupMenuJadeTools.add( new CWMenueItem( "PopDummy", Language.translate("Dummy-Agenten starten"), "MBJadeDummy.gif" )) ;
 			jPopupMenuJadeTools.add( new CWMenueItem( "PopDF", Language.translate("DF anzeigen"), "MBJadeDF.gif" )) ;
@@ -1123,7 +1120,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 			jToolBarApplication.setRollover(true);
 			
 			jToolBarApplication.add(new JToolBarButton( "New", Language.translate("Neues Projekt"), null, "MBnew.png" ));
-			jToolBarApplication.add(new JToolBarButton( "Open", Language.translate("Projekt öffnen"), null, "MBopen.png" ));
+			jToolBarApplication.add(new JToolBarButton( "Open", Language.translate("Projekt Ã¶ffnen"), null, "MBopen.png" ));
 			jToolBarApplication.add(new JToolBarButton( "Save", Language.translate("Projekt speichern"), null, "MBsave.png" ));
 			jToolBarApplication.addSeparator();
 			
@@ -1161,7 +1158,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 			jToolBarApplication.add(jButtonSimStop) ;
 			jToolBarApplication.addSeparator();
 
-			jToolBarApplication.add(new JToolBarButton( "ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), null, "MBLoadMonitor.png" ));
+			jToolBarApplication.add(new JToolBarButton( "ContainerMonitoring", Language.translate("Auslastungs-Monitor Ã¶ffnen"), null, "MBLoadMonitor.png" ));
 			jToolBarApplication.addSeparator();
 			
 		};		
@@ -1231,12 +1228,12 @@ public class MainWindow extends JFrame implements ComponentListener {
 		this.validate();
 	}
 	// ------------------------------------------------------------
-	// --- Symbolleiste erstellen - ENDE --------------------------
+	// --- Create Toolbar - END -----------------------------------
 	// ------------------------------------------------------------
 
 	
 	// ------------------------------------------------------------
-	// --- Unterklasse für die Symbolleisten-Buttons --------------
+	// --- Sub class for toolbar buttons --------------------------
 	// ------------------------------------------------------------	
 	/**
 	 * The Class JToolBarButton.

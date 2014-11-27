@@ -150,13 +150,13 @@ public class AboutDialog extends JDialog implements ActionListener{
 			}
 		}
 
-		// --- ‹bersetzungen einstellen -----------------------------
+		// --- Translate --------------------------------------------
 		this.setTitle( Application.getGlobalInfo().getApplicationTitle() );
 		jLabelTitle.setText( Application.getGlobalInfo().getApplicationTitle());
 		jLabelVersion.setText("Version: " +  Application.getGlobalInfo().getVersionInfo().getFullVersionInfo(false, " "));
 		jLabelCopyright3.setText(Language.translate("Alle Rechte vorbehalten."));
 		
-		// --- Dialog zentrieren ------------------------------------
+		// --- Set Dialog position ----------------------------------
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 		int top = (screenSize.height - this.getHeight()) / 2; 
 	    int left = (screenSize.width - this.getWidth()) / 2; 
@@ -250,7 +250,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 	private JButton getJButtonOk() {
 		if (jButtonOk == null) {
 			jButtonOk = new JButton();
-			jButtonOk.setText("Schlieﬂen");
+			jButtonOk.setText("Schlie√üen");
 			jButtonOk.setText(Language.translate(jButtonOk.getText()));
 			jButtonOk.setForeground(new Color(0, 0 ,153));
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));

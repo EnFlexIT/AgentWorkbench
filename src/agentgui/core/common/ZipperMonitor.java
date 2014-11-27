@@ -110,8 +110,8 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		this.setLocationRelativeTo(null);
 		this.setAlwaysOnTop(true);
 		
-		// --- Übersetzungen festelgen ----
-		jButtonCancel.setText(Language.translate("Abbruch"));
+		// --- Translate ----
+		this.getJButtonCancel().setText(Language.translate("Abbruch"));
 		
 	}
 
@@ -285,7 +285,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent act) {
 
 		Object actor = act.getSource();
-		if (actor.equals(jButtonCancel)) {
+		if (actor.equals(this.getJButtonCancel())) {
 			this.setCanceled(true);
 		}
 	}

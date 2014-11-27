@@ -126,15 +126,15 @@ public class ProjectResources extends JPanel implements Observer {
 		jTextFieldTimeModelClass.setText(this.currProject.getTimeModelClass());
 		
 		// --- Set the translations ---------------------------------
-		jLabelEnvTyp.setText(Language.translate("Umgebungstyp bzw. -modell für Simulation und Visualisierung"));
+		jLabelEnvTyp.setText(Language.translate("Umgebungstyp bzw. -modell fÃ¼r Simulation und Visualisierung"));
 		jLabelResources.setText(Language.translate("Externe jar-Ressourcen"));
 		jLabelPlugIns.setText(Language.translate("Plug-Ins"));
 		
-		jButtonResourcesAdd.setToolTipText(Language.translate("Hinzufügen"));
+		jButtonResourcesAdd.setToolTipText(Language.translate("HinzufÃ¼gen"));
 		jButtonResourcesRemove.setToolTipText(Language.translate("Entfernen"));
 		jButtonRecourcesRefresh.setToolTipText(Language.translate("Neu laden"));
 		
-		jButtonAddPlugIns.setToolTipText(Language.translate("Hinzufügen"));
+		jButtonAddPlugIns.setToolTipText(Language.translate("HinzufÃ¼gen"));
 		jButtonRemovePlugIns.setToolTipText(Language.translate("Entfernen"));
 		jButtonRefreshPlugIns.setToolTipText(Language.translate("Neu laden"));
 		
@@ -450,7 +450,7 @@ public class ProjectResources extends JPanel implements Observer {
 			gridBagConstraints5.insets = new Insets(0, 0, 0, 0);
 			gridBagConstraints5.gridy = 0;
 			jLabelEnvTyp = new JLabel();
-			jLabelEnvTyp.setText("Umgebungstyp bzw. -modell für Simulation und Visualisierung");
+			jLabelEnvTyp.setText("Umgebungstyp bzw. -modell fÃ¼r Simulation und Visualisierung");
 			jLabelEnvTyp.setFont(new Font("Dialog", Font.BOLD, 12));
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 			gridBagConstraints4.fill = GridBagConstraints.VERTICAL;
@@ -523,7 +523,7 @@ public class ProjectResources extends JPanel implements Observer {
 					Class<?> search4Class = PlugIn.class;
 					String 	 search4CurrentValue = null;
 					String 	 search4DefaultValue = null;
-					String   search4Description = Language.translate("PlugIn für Agent.GUI");
+					String   search4Description = Language.translate("PlugIn fÃ¼r Agent.GUI");
 					
 					ClassSelector cs = new ClassSelector(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
 					cs.setVisible(true);
@@ -744,7 +744,7 @@ public class ProjectResources extends JPanel implements Observer {
 			jButtonSelectTimeModel = new JButton();
 			jButtonSelectTimeModel.setPreferredSize(new Dimension(45, 26));
 			jButtonSelectTimeModel.setIcon(new ImageIcon(getClass().getResource(PathImage + "Search.png")));
-			jButtonSelectTimeModel.setToolTipText("Klasse auswählen");
+			jButtonSelectTimeModel.setToolTipText("Klasse auswÃ¤hlen");
 			jButtonSelectTimeModel.setToolTipText(Language.translate(jButtonSelectTimeModel.getToolTipText()));
 			jButtonSelectTimeModel.addActionListener(new ActionListener() {
 				@Override

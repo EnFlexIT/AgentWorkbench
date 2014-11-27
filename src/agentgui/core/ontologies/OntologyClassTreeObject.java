@@ -190,10 +190,7 @@ public class OntologyClassTreeObject extends Object {
 	 */
 	public DefaultTableModel getTableModel4Slot() {
 		
-		// --- TableModel aufbauen ----------------------------------
 		DefaultTableModel tm4s = new DefaultTableModel();
-		
-		// --- Spaltenünerschriften einstellen ----------------------
 		tm4s.addColumn("Name");
 		tm4s.addColumn("Cardinality");
 		tm4s.addColumn("Type");
@@ -212,14 +209,14 @@ public class OntologyClassTreeObject extends Object {
 	    Iterator<String> it = v.iterator();
 	    while (it.hasNext()) {
 	    	
-	    	// --- Wort/Slot  der Ontologie ermitteln --------------- 
+	    	// --- Get Word of the ontology ------------------------- 
 	    	String key = it.next();
 	    	String word = ontoSlotHash.get(key);
 	    	
-	    	// --- Slot untersuchen ... -----------------------------
+	    	// --- Get Slot... --------------------------------------
 	    	Slot currSlot = reflectedClass.getSlot(word);
 	    	
-	    	// --- Zeile an TableModel anfügen ----------------------	    	
+	    	// --- Add table row ------------------------------------	    	
 	    	Vector<String> rowData = new Vector<String>(); 
 	    	rowData.add(word );
 	    	rowData.add(currSlot.Cardinality);
@@ -288,7 +285,6 @@ public class OntologyClassTreeObject extends Object {
 	    	osd.setSlotOtherFacts(currSlot.OtherFacts);
 	    	osd.setSlotMethodList(currSlot.MethodList);
 	    	
-	    	// --- An Auflistung anfügen ----------------------------
 	    	ocd.getArrayList4SlotDescriptions().add(osd);
 	    }		
 	    

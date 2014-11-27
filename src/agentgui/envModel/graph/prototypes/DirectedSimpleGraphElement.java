@@ -96,7 +96,7 @@ public class DirectedSimpleGraphElement extends GraphElementPrototype {
 		    elements.add(exit);
 		    return elements;
 		}
-		System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Vorgänger ") + predecessor.getId());
+		System.err.println(Language.translate("Fehler beim EinfÃ¼gen von Komponente " + getId() + " : Kein freier Anschlusspunkt an VorgÃ¤nger ") + predecessor.getId());
 		return null;
 
     }
@@ -123,7 +123,7 @@ public class DirectedSimpleGraphElement extends GraphElementPrototype {
 		    elements.add(exit);
 		    return elements;
 		}
-		System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Nachfolger") + successor.getId());
+		System.err.println(Language.translate("Fehler beim EinfÃ¼gen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Nachfolger") + successor.getId());
 		return null;
     }
 
@@ -147,10 +147,10 @@ public class DirectedSimpleGraphElement extends GraphElementPrototype {
 		    return elements;
 		}
 		if (entry == null) {
-		    System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Vorgänger ") + predecessor.getId());
+		    System.err.println(Language.translate("Fehler beim EinfÃ¼gen von Komponente " + getId() + " : Kein freier Anschlusspunkt an VorgÃ¤nger ") + predecessor.getId());
 		}
 		if (exit == null) {
-		    System.err.println(Language.translate("Fehler beim Einfügen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Nachfolger") + successor.getId());
+		    System.err.println(Language.translate("Fehler beim EinfÃ¼gen von Komponente " + getId() + " : Kein freier Anschlusspunkt an Nachfolger") + successor.getId());
 		}
 		return null;
     }

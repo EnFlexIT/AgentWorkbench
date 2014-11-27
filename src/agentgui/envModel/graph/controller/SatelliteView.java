@@ -72,7 +72,7 @@ public class SatelliteView extends JDialog {
 		this.setAlwaysOnTop(true);
 		
 		this.add(this.basicGraphGui.getVisViewSatellite());
-		this.setTitle(Language.translate("Übersicht"));
+		this.setTitle(Language.translate("Ãœbersicht"));
 		
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {

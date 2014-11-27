@@ -317,11 +317,11 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 		String MsgText = null;
 
 		if ( ActCMD.equals("OntologieAdd") ) {
-			// --- Ontologie hinzufgen ------------------------------
-			String ActionTitel = Language.translate("Ontologie hinzufügen"); 
+			// --- Add Ontology -------------------------------------
+			String ActionTitel = Language.translate("Ontologie hinzufÃ¼gen"); 
 			OntologieSelector onSel = new OntologieSelector( Application.getMainWindow(), currProject.getProjectName() + ": " + ActionTitel,true );			
 			onSel.setVisible(true);
-			// === Hier geht's weiter, wenn der Dialog wieder geschlossen ist ===
+			// === Wait for user ===
 			if ( onSel.isCanceled() == true ) {
 				Application.setStatusBar( Language.translate("Fertig") );
 				return;
@@ -329,14 +329,14 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			String newOntologie = onSel.getNewOntologySelected();
 			onSel.dispose();
 			onSel = null;
-			// --- Neu gewählte Ontologie hinzufügen ---------------- 
+			// --- Add ontology ------------------------------------- 
 			currProject.subOntologyAdd(newOntologie);
 		}
 		else if ( ActCMD.equals("OntologieRemove") ) {
-			// --- Ontologie entfernen ------------------------------
+			// --- Remove Ontology ----------------------------------
 			if ( OntoTree.isSelectionEmpty() ) {
 				MsgHead = Language.translate("Fehlende Auswahl !");
-				MsgText = Language.translate("Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!");			
+				MsgText = Language.translate("Zum LÃ¶schen, wÃ¤hlen Sie bitte eine der dargestellten Ontologien aus!");			
 				JOptionPane.showInternalMessageDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
@@ -346,7 +346,6 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			if ( oc==null ) {
 				return;
 			}
-			// --- Gewählte Ontologie entfernen ---------------------
 			currProject.subOntologyRemove(oc.getOntologyMainClass());
 		}
 		else {

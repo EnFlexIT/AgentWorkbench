@@ -170,7 +170,7 @@ public class DBConnection {
 	private boolean createDB(){
 		
 		String msg = ""; 
-		msg += "Die Datenbank für den Server-Master ist nicht vorhanden." + newLine;
+		msg += "Die Datenbank fÃ¼r den Server-Master ist nicht vorhanden." + newLine;
 		msg += "Soll versucht werden diese nun anzulegen?"; 
 		this.dbError.setText( msg );
 		this.dbError.setHead( "Datenbank nicht vorhanden!" );
@@ -179,10 +179,7 @@ public class DBConnection {
 		if ( this.dbError.showQuestion() == JOptionPane.NO_OPTION ) return false;	
 		
 		
-		// ---------------------------------------------------------------------------------
-		// --- Hier steht die Standard-Konfiguration der Datenbank für den Server-Master ---
-		// ---------------------------------------------------------------------------------
-		System.out.println( Language.translate("Erzeuge die Datenbank für den Server-Master ... ") );
+		System.out.println( Language.translate("Erzeuge die Datenbank fÃ¼r den Server-Master ... ") );
 
 		// --- Create DB --------------------------
 		sql = "CREATE DATABASE " + dbName + " DEFAULT CHARACTER SET utf8";
@@ -261,7 +258,7 @@ public class DBConnection {
 		if ( this.getSqlExecuteUpdate(sql) == false ) return false;
 		
 		// ---------------------------------------------------------------------------------
-		System.out.println( Language.translate("Erzeuge die Tabelle 'platforms' für den Server-Master ... ") );
+		System.out.println( Language.translate("Erzeuge die Tabelle 'platforms' fÃ¼r den Server-Master ... ") );
 		return true;
 		
 	}
@@ -326,7 +323,7 @@ public class DBConnection {
 			} catch (SQLException e) {
 				e.printStackTrace();
 				this.dbError.setErrNumber( e.getErrorCode() );
-				this.dbError.setHead( "Fehler beim Auslesen der Datensätzen!" );
+				this.dbError.setHead( "Fehler beim Auslesen der DatensÃ¤tze!" );
 				this.dbError.setText( e.getLocalizedMessage() );
 				this.dbError.setErr(true);
 				this.dbError.show();
@@ -347,7 +344,7 @@ public class DBConnection {
 			e.printStackTrace();
 			this.dbError.setText(e.getLocalizedMessage());
 			this.dbError.setErrNumber( e.getErrorCode() );
-			this.dbError.setHead( "Fehler bei der Ausführung von 'executeUpdate'!" );
+			this.dbError.setHead( "Fehler bei der AusfÃ¼hrung von 'executeUpdate'!" );
 			this.dbError.setErr(true);
 			this.dbError.show();
 		}
@@ -374,7 +371,7 @@ public class DBConnection {
 				this.dbError.setText(msg);
 				this.dbError.put2Clipboard(sqlStatement);
 				this.dbError.setErrNumber( e.getErrorCode() );
-				this.dbError.setHead( "Fehler bei der Ausführung von 'executeUpdate'!" );
+				this.dbError.setHead( "Fehler bei der AusfÃ¼hrung von 'executeUpdate'!" );
 				this.dbError.setErr(true);
 				this.dbError.show();
 			}
@@ -426,7 +423,7 @@ public class DBConnection {
 				this.dbError.setText(msg);
 				this.dbError.put2Clipboard(sqlStmt);
 				this.dbError.setErrNumber( e.getErrorCode() );
-				this.dbError.setHead( "Fehler bei der Ausführung von 'executeQuery'!" );
+				this.dbError.setHead( "Fehler bei der AusfÃ¼hrung von 'executeQuery'!" );
 				this.dbError.setErr(true);
 				if (showErrorDialog==true) {
 					this.dbError.show();
@@ -466,8 +463,8 @@ public class DBConnection {
 		
 		if (this.dbHost==null) {
 			String msg = ""; 
-			msg += "Fehlende Angaben über den Datenbank-Host." + newLine;
-			msg += "Bitte überprüfen Sie die Datenbank-Einstellungen!";
+			msg += "Fehlende Angaben Ã¼ber den Datenbank-Host." + newLine;
+			msg += "Bitte Ã¼berprÃ¼fen Sie die Datenbank-Einstellungen!";
 			this.dbError.setText( msg );			
 			this.dbError.setHead( "Fehler in der Datenbank-Konfiguration!" );
 			this.dbError.setErrNumber( -1 );

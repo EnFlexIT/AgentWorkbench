@@ -146,22 +146,22 @@ public class OntologyClassVocabulary extends Hashtable<String, String> implement
 		String Prefix = filter4Class.toUpperCase();
 		//System.out.println("Suche: " + Prefix);
 		
-	    // --- Vokabular durchlaufen ------------------------------------------
+	    // --- Run through vocabulary ------------------------------------
 		while (itr.hasNext()) {
 	    	String key = itr.next();
 	    	if (key.startsWith(Prefix)) {
 	    		boolean add2Result = false;
 	    		if ( key.length() == Prefix.length() ) {
-	    			// --- Treffer, aber es werden nur Slots gesucht ----- 
-	    			// --- und nicht die Klasse selbst  ------------------
+	    			// --- Match, but we are just looking ---------------- 
+	    			// --- for slots and not for classes -----------------
 	    			add2Result = false;
 	    		} else {
-	    			// --- ggf. ein gleich startendes Wort gefunden ------
+	    			// --- Match with something similar ------------------
 	    			if ( key.startsWith(Prefix + "_") ) {
 	    				add2Result = true;
 	    			}	    			
 	    		}
-	    		// --- Bei Treffer anfügen ------------------------------- 
+	    		// --- If match found, add ------------------------------- 
 	    		if ( add2Result == true ) {
 		    		//System.out.println(Key + ": " + this.get( Key ));
 		    		resultHT.put( key, this.get(key) );

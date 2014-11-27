@@ -107,9 +107,9 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 		// ----------------------------------------------------------
 		// --- Check some configurations of the PlugIn -------------- 
 		if (plugIn.getName()==null) {
-			throw new PlugInLoadException(Language.translate("Es wurde kein Name für das PlugIn konfiguriert"));
+			throw new PlugInLoadException(Language.translate("Es wurde kein Name fÃ¼r das PlugIn konfiguriert"));
 		} else if (plugIn.getName().equals("")) {
-			throw new PlugInLoadException(Language.translate("Es wurde kein Name für das PlugIn konfiguriert"));
+			throw new PlugInLoadException(Language.translate("Es wurde kein Name fÃ¼r das PlugIn konfiguriert"));
 		}
 		
 		// --- Remind the classReference in the PlugIn --------------

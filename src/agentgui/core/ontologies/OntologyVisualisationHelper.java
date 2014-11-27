@@ -425,7 +425,7 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 				if ( node!=null) {
 					// --- UserObject aus dem entsprechenden Node-Object analysieren ---- 
 					OntologyClassTreeObject userObject = (OntologyClassTreeObject) node.getUserObject();
-					// --- Text ergänzen ------------------------------------------------ 
+					// --- Complete Text ------------------------------------------------ 
 					if (usedIn.equalsIgnoreCase("")==false) {
 						usedIn += " AND ";
 					}

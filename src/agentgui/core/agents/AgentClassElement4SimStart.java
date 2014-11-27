@@ -158,10 +158,9 @@ public class AgentClassElement4SimStart {
 	@Override
 	public String toString(){
 		
-		// --- Existiert die Agenten-Klasseninstanz ? -----
 		if (agentClass== null) {
 			try {
-				// --- Gibt es die Klasse überhaupt? ------
+				// --- Does the class exists ? ------------
 				agentClass = (Class<? extends Agent>) Class.forName(agentClassReference);
 			
 			} catch (NoClassDefFoundError exeption) {
@@ -171,7 +170,7 @@ public class AgentClassElement4SimStart {
 			}
 		} 
 		
-		// --- Ausgabe zusammenstellen --------------------
+		// --- Set/create Output --------------------------
 		if (agentClass==null) {
 			return "NotFound: " + df.format(postionNo) + ": " + startAsName + " [" + agentClassReference + "]";
 		} else {

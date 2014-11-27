@@ -95,8 +95,8 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		jRadioButtonUpdateDownloadAndAsk.setText(Language.translate("Update automatisch herunterladen, Installationszeitpunkt manuell festlegen"));
 		jRadioButtonUpdateDisabled.setText(Language.translate("Updates nicht automatisch herunterladen oder installieren"));
 		
-		jLabelUpdateDictionary.setText(Language.translate("Wörterbuch") + ":");
-		jCheckBoxUpdateKeepDictionary.setText(Language.translate("Im Falle eines Updates, eigenes Wörterbuch beibehalten."));
+		jLabelUpdateDictionary.setText(Language.translate("WÃ¶rterbuch") + ":");
+		jCheckBoxUpdateKeepDictionary.setText(Language.translate("Im Falle eines Updates, eigenes WÃ¶rterbuch beibehalten."));
 		
 	}
 
@@ -170,7 +170,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		
 		jLabelUpdateDictionary = new JLabel();
 		jLabelUpdateDictionary.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelUpdateDictionary.setText("Wörterbuch");
+		jLabelUpdateDictionary.setText("WÃ¶rterbuch");
 		
 		this.setSize(555, 307);
 		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
@@ -309,7 +309,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 	private JCheckBox getJCheckBoxUpdateKeepDictionary() {
 		if (jCheckBoxUpdateKeepDictionary == null) {
 			jCheckBoxUpdateKeepDictionary = new JCheckBox();
-			jCheckBoxUpdateKeepDictionary.setText("Im Falle eines Updates, eigenes Wörterbuch beibehalten.");
+			jCheckBoxUpdateKeepDictionary.setText("Im Falle eines Updates, eigenes WÃ¶rterbuch beibehalten.");
 		}
 		return jCheckBoxUpdateKeepDictionary;
 	}

@@ -153,7 +153,7 @@ public class YedGraphMLFileImporter extends NetworkModelFileImporter {
 		    }
 		    
 		} else {
-		    System.err.println(Language.translate("Fehler beim Instanziieren des GraphElementPrototyps für Element-Typ ") + tempElement.getType());
+		    System.err.println(Language.translate("Fehler beim Instanziieren des GraphElementPrototyps fÃ¼r Element-Typ ") + tempElement.getType());
 		}
     }
 

@@ -355,7 +355,7 @@ public class SystemLoadPanel extends JPanel {
 	}
 	
 	// ------------------------------------------------------------
-	// --- Unterklasse für die Symbolleisten-Buttons --- START ----
+	// --- Sub class for buttons of the toolbar --- Start ---------
 	// ------------------------------------------------------------	
 	/**
 	 * Sub class for generating JToolBarButton's.
@@ -426,12 +426,12 @@ public class SystemLoadPanel extends JPanel {
 		};
 	};
 	// ------------------------------------------------------------
-	// --- Unterklasse für die Symbolleisten-Buttons --- END ------
+	// --- sub class for buttons of the toolbar --- END -----------
 	// ------------------------------------------------------------	
 
 	
 	// ------------------------------------------------------------
-	// --- Unterklasse für das ComboBoxModel --- START ------------
+	// --- sub class for the ComboBoxModel --- START --------------
 	// ------------------------------------------------------------	
 	/**
 	 * The class TimeSelection is used for the ComboBoxModel of the 
@@ -483,7 +483,7 @@ public class SystemLoadPanel extends JPanel {
 		
 	}
 	// ------------------------------------------------------------
-	// --- Unterklasse für das ComboBoxModel --- START ------------
+	// --- sub class for the ComboBoxModel --- END ----------------
 	// ------------------------------------------------------------	
 	
 

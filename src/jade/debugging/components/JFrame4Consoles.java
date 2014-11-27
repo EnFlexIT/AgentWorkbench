@@ -33,7 +33,7 @@ public class JFrame4Consoles extends JFrame {
 		this.setContentPane(getJContentPane());
 		this.setTitle("JADE - Debugging");
 		
-		// --- Listener für das Schließen der Applikation ----
+		// --- Listener for closing the application ----
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
 				setVisible(false);

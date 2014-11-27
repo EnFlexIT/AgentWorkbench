@@ -50,9 +50,9 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	private static final long serialVersionUID = 719806666309626657L;
 	
 	// --------------------------------------------------------------------------
-	// --- "jade.content.onto.Ontology" - Basisklasse der Ontologie			  ---
-	// --- "jade.content.Concept"		- 1. mögliches Interface einer Klasse ---
-	// --- "jade.content.AgentAction"	- 2. mögliches Interface einer Klasse ---
+	// --- "jade.content.onto.Ontology" - Base class of the ontology          ---
+	// --- "jade.content.Concept"		- 1st possible Interface of a class   ---
+	// --- "jade.content.AgentAction"	- 2nd possible Interface of a class   ---
 	// --------------------------------------------------------------------------
 	private final static String BaseClassObject = "java.lang.Object";
 	
@@ -117,11 +117,11 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 	 */
 	private void addDefaultNodes() {
 		
-		// --- Den Knoten 'Concept' hinzufügen -----------------
+		// --- Add node 'Concept'--------------------------
 		this.conceptNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, "Concept") );
 		this.rootNode.add(conceptNode);
 		
-		// --- Den Knoten AID 'Agent-Identifier' hinzufügen ----
+		// --- Add node AID 'Agent-Identifier' ------------
 		try {
 			Class<?> AIDClass = Class.forName(BaseClassAID);
 			this.aidNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, AIDClass) );			
@@ -132,11 +132,11 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		}
 		this.conceptNode.add( aidNode );
 		
-		// --- Den Knoten AgentAction hinzufügen ---------------
+		// --- Add node 'AgentAction' ---------------------
 		this.aActionNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, "AgentAction") );
 		this.conceptNode.add( aActionNode );		
-		
-		// --- Den Knoten Predicate hinzufügen -----------------
+
+		// --- Add node 'Predicate' -----------------------
 		this.predicateNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(this.currOntoClass, "Predicate") );
 		this.rootNode.add( predicateNode );
 		

@@ -137,9 +137,9 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		// --- Das aktuelle Setup laden -------------------
 		this.setupLoad();
 		
-		// --- Übersetzungen laden ------------------------
+		// --- Translate ----------------------------------
 		jComboBoxStartLists.setToolTipText(Language.translate(jComboBoxStartLists.getToolTipText()));
-		jButtonAgentAdd.setToolTipText(Language.translate("Agenten hinzufügen"));
+		jButtonAgentAdd.setToolTipText(Language.translate("Agenten hinzufÃ¼gen"));
 		jButtonAgentRemove.setToolTipText(Language.translate("Agenten entfernen"));
 		jButtonMoveUp.setToolTipText(Language.translate("Agent nach oben verschieben"));
 		jButtonMoveDown.setToolTipText(Language.translate("Agent nach unten verschieben"));
@@ -290,10 +290,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	 */
 	private JList getJListStartList() {
 		if (jListStartList == null) {
-			
-			// -----------------------------------------------------------------
-			// --- MouseInputAdapter erstellen, der Drag and Drop ermöglicht --- 
-			// -----------------------------------------------------------------
+			// --- Create MouseInputAdapter for Drag and Drop ------------------ 
 			MouseInputAdapter mouseHandler = new MouseInputAdapter() {
 			
 				private Object draggedObject;
@@ -412,7 +409,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			jButtonAgentAdd = new JButton();
 			jButtonAgentAdd.setPreferredSize(new Dimension(45, 26));
 			jButtonAgentAdd.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListPlus.png")));
-			jButtonAgentAdd.setToolTipText("Agenten hinzufügen");
+			jButtonAgentAdd.setToolTipText("Agenten hinzufÃ¼gen");
 			jButtonAgentAdd.setActionCommand("AgentAdd");
 			jButtonAgentAdd.addActionListener(this);
 		}
@@ -680,8 +677,8 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		String msgText = "";
 		
 		if (newAgentName==null || newAgentName.equals("")) {
-			msgHead += Language.translate("Name ungültig!");
-			msgText += Language.translate("Bitte wählen Sie einen Namen für den Agenten!");
+			msgHead += Language.translate("Name ungÃ¼ltig!");
+			msgText += Language.translate("Bitte wÃ¤hlen Sie einen Namen fÃ¼r den Agenten!");
 			JOptionPane.showMessageDialog(null, msgText, msgHead, JOptionPane.OK_OPTION);
 			return;
 		}
@@ -696,7 +693,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 				
 				msgHead += Language.translate("Name bereits vorhanden!");
 				msgText += "Der Name '@' wird in der Startliste bereits verwendet !" + newLine +
-						   "Bitte wählen Sie einen anderen Namen für den Agenten.";
+						   "Bitte wÃ¤hlen Sie einen anderen Namen fÃ¼r den Agenten.";
 				msgText = Language.translate(msgText);
 				msgText = msgText.replace("@", newAgentName);
 				

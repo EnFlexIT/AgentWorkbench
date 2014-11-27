@@ -140,8 +140,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 		jButtonMoveUp.setToolTipText(Language.translate("Objekt nach oben"));
 		jButtonMoveDown.setToolTipText(Language.translate("Objekt nach unten"));
 		jButtonRename.setToolTipText(Language.translate("Ontologie Referenz benennen"));
-		jButtonRemoveAll.setToolTipText(Language.translate("Alle Objekte löschen"));
-		jButtonReferencesAdd.setToolTipText(Language.translate("Objekt hinzufügen"));
+		jButtonRemoveAll.setToolTipText(Language.translate("Alle Objekte lÃ¶schen"));
+		jButtonReferencesAdd.setToolTipText(Language.translate("Objekt hinzufÃ¼gen"));
 		jButtonReferencesRemove.setToolTipText(Language.translate("Objekt entfernen"));
 		
 		// --- Basis-Verzeichnisse im OntoTree anzeigen ---
@@ -545,7 +545,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			jButtonRemoveAll = new JButton();
 			jButtonRemoveAll.setIcon(new ImageIcon(getClass().getResource(PathImage + "Delete.png")));
 			jButtonRemoveAll.setPreferredSize(new Dimension(15, 15));
-			jButtonRemoveAll.setToolTipText("Alle Objekte löschen");
+			jButtonRemoveAll.setToolTipText("Alle Objekte lÃ¶schen");
 			jButtonRemoveAll.setActionCommand("OntoObjectsRemoveAll");
 			jButtonRemoveAll.addActionListener(this);
 		}
@@ -561,7 +561,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			jButtonReferencesAdd = new JButton();
 			jButtonReferencesAdd.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowUp.png")));
 			jButtonReferencesAdd.setSize(15, 15);
-			jButtonReferencesAdd.setToolTipText("Objekt hinzufügen");
+			jButtonReferencesAdd.setToolTipText("Objekt hinzufÃ¼gen");
 			jButtonReferencesAdd.setActionCommand("OntoObjectAdd");
 			jButtonReferencesAdd.addActionListener(this);
 		}
@@ -686,12 +686,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 						
 						updateView4AgentConfig();
 						
-						//System.out.println("Agent: " + ToDisplay);
 						// -----------------------------------------------------
-						// --- Definierte Start-Referenzen anzeigen ------------ 
-						//jListReferences.setListData( currProject.agentConfig.getListData(agentReference) );
-						// -----------------------------------------------------
-						// --- Eintrag für den aktuellen Agenten vornehmen -----
+						// --- Set entry to the current agent ------------------
 						int maxLenght = 30;
 						if ( agentReference.length() > maxLenght ) {
 							String ToDisplayStart = agentReference.substring(0, 4);
@@ -700,18 +696,18 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 						}
 						jTextAgent.setText(agentReference);
 						// -----------------------------------------------------
-						// --- Vorschlag für den Ausführungsnamen finden -------
+						// --- Find name for the agent -------------------------
 						String startAs = jAgentList.getSelectedValue().toString();
 						startAs = startAs.substring(startAs.lastIndexOf(".")+1);
 						// -----------------------------------------------------
-						// --- Alle Großbuchstaben filtern ---------------------
+						// --- Filter capital letters --------------------------
 						String regExp = "[A-Z]";	
 						String startAsNew = ""; 
 						for (int i = 0; i < startAs.length(); i++) {
 							String sngChar = "" + startAs.charAt(i);
 							if (sngChar.matches(regExp)==true) {
 								startAsNew = startAsNew + sngChar;	
-								// --- ggf. den zweiten Buchstaben mitnehmen ---
+								// --- Take the second character --------------
 								if ( i < startAs.length()-1 ) {
 									String SngCharN = "" + startAs.charAt(i+1);
 									if ( SngCharN.matches( regExp ) == false ) {
@@ -724,16 +720,14 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 						if ( startAsNew != "" && startAsNew.length() >= 4 ) {
 							startAs = startAsNew;
 						}
-						// -----------------------------------------------------
-						// --- Check, ob es dieser Agent schon läuft -----------
+						// --- Check, if this agent is already running ---------
 						int i = 1;
 						startAsNew = startAs;
 						while ( Application.getJadePlatform().jadeAgentIsRunning( startAs, currProject.getProjectFolder() ) == true ){
 							startAs = startAsNew + i;
 							i++; 
 						}
-						// -----------------------------------------------------
-						// --- Vorschlagsnamen einstellen ----------------------
+						// --- Set proposal name -------------------------------
 						jTextAgentStartAs.setText(startAs);
 						
 					}
@@ -751,7 +745,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		// --- Das ActionCommand und den Auslöser des Events ermitteln ---
+
 		String ActCMD = ae.getActionCommand();
 		Object trigger = ae.getSource();
 
@@ -774,8 +768,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			
 			selectedValue = (AgentClassElement)jAgentList.getSelectedValue();
 			if (selectedValue==null) {
-				String head = Language.translate("Agent auswählen!");
-				String msg  = Language.translate("Bitte wählen Sie den Agenten aus, den Sie starten wollen.");
+				String head = Language.translate("Agent auswÃ¤hlen!");
+				String msg  = Language.translate("Bitte wÃ¤hlen Sie den Agenten aus, den Sie starten wollen.");
 				JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.WARNING_MESSAGE);
 				return;
 			}
@@ -789,7 +783,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 				if (startArgsConfigured!=null) {
 					// --- If start-arguments are set, get them now -----
 					OntologyInstanceDialog oid = new OntologyInstanceDialog(Application.getMainWindow(), this.currProject.getEnvironmentController(), this.currProject.getOntologyVisualisationHelper(), this.currProject.getAgentStartConfiguration(), selectedAgentReference);
-					oid.setTitle(Language.translate("Startargument definieren für Agent") + " '" + selectedAgentName + "' (" + selectedAgentClass.getSimpleName() + ")");
+					oid.setTitle(Language.translate("Startargument definieren fÃ¼r Agent") + " '" + selectedAgentName + "' (" + selectedAgentClass.getSimpleName() + ")");
 					oid.setVisible(true);
 					// --- Wait ---
 					if (oid.isCancelled()) return;
@@ -809,8 +803,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			// --- Add start argument ---------------------
 			this.readSelectionFromForm();
 			if (agentReference==null || ontoReference==null) {
-				String head = Language.translate("Agent und Ontologie-Referenz auswählen!");
-				String msg  = Language.translate("Bitte wählen Sie einen Agenten und eine Ontologie-Referenz aus den entsprechenden Listen.");
+				String head = Language.translate("Agent und Ontologie-Referenz auswÃ¤hlen!");
+				String msg  = Language.translate("Bitte wÃ¤hlen Sie einen Agenten und eine Ontologie-Referenz aus den entsprechenden Listen.");
 				JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.WARNING_MESSAGE);
 				return;
 			}
@@ -861,8 +855,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			int selectedIndex = this.getJListReferences().getSelectedIndex(); 
 			
 			if (selectedIndex==-1) {
-				head = Language.translate("Ontologie-Referenz auswählen!");
-				msg  = Language.translate("Bitte wählen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.");
+				head = Language.translate("Ontologie-Referenz auswÃ¤hlen!");
+				msg  = Language.translate("Bitte wÃ¤hlen Sie eine der zugeordneten Ontologie-Referenzen aus der Liste.");
 				JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.WARNING_MESSAGE);
 				return;
 			}
@@ -870,7 +864,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			
 			input = null;
 			head = Language.translate("Ontologie Referenz maskieren");
-			msg  = Language.translate("Bitte geben Sie einen Bezeichner für die Referenz an!");
+			msg  = Language.translate("Bitte geben Sie einen Bezeichner fÃ¼-r die Referenz an!");
 			
 			AgentStartArgument ageStartArg = this.currProject.getAgentStartConfiguration().get(this.agentReference).get(selectedIndex);
 			String displayTitle = ageStartArg.getDisplayTitle();

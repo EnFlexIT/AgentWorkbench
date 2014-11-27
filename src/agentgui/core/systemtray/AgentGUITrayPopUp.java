@@ -74,7 +74,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		itemUpdate.setActionCommand("Update");
 		itemUpdate.addActionListener(this);
 		
-		itemAbout = new MenuItem(Language.translate("Über..."));
+		itemAbout = new MenuItem(Language.translate("Ãœber..."));
 		itemAbout.setActionCommand("About");
 		itemAbout.addActionListener(this);
 		
@@ -86,7 +86,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		itemServiceStop.setActionCommand("stoptAgentGUIService");
 		itemServiceStop.addActionListener(this);
 		
-		itemOpenRMA = new MenuItem(Language.translate("RMA (Remote Monitoring Agent) öffnen"));
+		itemOpenRMA = new MenuItem(Language.translate("RMA (Remote Monitoring Agent) Ã¶ffnen"));
 		itemOpenRMA.setActionCommand("openRMA");
 		itemOpenRMA.addActionListener(this);
 		
@@ -163,7 +163,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 			itemServiceStart.setEnabled(false);
 			itemServiceStop.setEnabled(true);
 			itemOpenRMA.setEnabled(true);
-			// --- Icon-Farbe in der entsprechenden Anzeige ändern --
+			// --- Change Icon color  -------------------------------
 			agentGUItray.getTrayIcon().setImage( agentGUItray.getImageGreen() );	
 			if (agentGUItray.getAgentGUITrayDialog()!=null ){
 				agentGUItray.getAgentGUITrayDialog().getjLabel4Icon().setIcon((Icon) agentGUItray.getImageIconGreen());
@@ -174,7 +174,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 			itemServiceStart.setEnabled(true);
 			itemServiceStop.setEnabled(false);
 			itemOpenRMA.setEnabled(false);
-			// --- Icon-Farbe in der entsprechenden Anzeige ändern --
+			// --- Change Icon color  -------------------------------
 			agentGUItray.getTrayIcon().setImage( agentGUItray.getImageRed() );	
 			if (agentGUItray.getAgentGUITrayDialog()!=null ){
 				agentGUItray.getAgentGUITrayDialog().getjLabel4Icon().setIcon((Icon) agentGUItray.getImageIconRed());

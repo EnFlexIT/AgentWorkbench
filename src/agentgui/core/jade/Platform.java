@@ -130,11 +130,11 @@ public class Platform extends Object {
 				String msgText = "";
 				
 				msgHead += Language.translate("Konfiguration des") + " " + applicationTitle + "-" +  executionModeDescription;
-				msgText += "Die Systemkonfiguration enthält keine gültigen Angaben über den" + newLine +
+				msgText += "Die Systemkonfiguration enthÃ¤lt keine gÃ¼ltigen Angaben Ã¼ber den" + newLine +
 						   "Datenbankserver. Der Start von JADE wird deshalb unterbrochen." + newLine +
 						   "Bitte konfigurieren Sie einen MySQL-Datenbank-Server und" + newLine +
-						   "starten Sie den Server-Master anschließend erneut." + newLine + newLine +
-						   "Möchten Sie die Konfiguration nun vornehmen?";
+						   "starten Sie den Server-Master anschlieÃŸend erneut." + newLine + newLine +
+						   "MÃ¶chten Sie die Konfiguration nun vornehmen?";
 				msgText = Language.translate(msgText);
 				
 				int answer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);
@@ -165,11 +165,11 @@ public class Platform extends Object {
 				String msgText = "";
 				
 				msgHead += Language.translate("Konfiguration des") + " " + applicationTitle + "-" +  executionModeDescription;
-				msgText += "Die Systemkonfiguration enthält keine gültigen Angaben über den" + newLine +
+				msgText += "Die Systemkonfiguration enthÃ¤lt keine gÃ¼ltigen Angaben Ã¼ber den" + newLine +
 						   "Hauptserver. Der Start von JADE wird deshalb unterbrochen." + newLine +
-						   "Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)" + newLine +
-						   "und starten Sie den Dienst anschließend erneut." + newLine + newLine +
-						   "Möchten Sie die Konfiguration nun vornehmen?";
+						   "Bitte konfigurieren Sie eine gÃ¼ltige Server-URL oder IP (inkl. Port)" + newLine +
+						   "und starten Sie den Dienst anschlieÃŸend erneut." + newLine + newLine +
+						   "MÃ¶chten Sie die Konfiguration nun vornehmen?";
 				msgText = Language.translate(msgText);
 				
 				int answer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);
@@ -276,7 +276,7 @@ public class Platform extends Object {
 			}
 			
 		} else {
-			System.out.println( "JADE läuft bereits! => " + jadeRuntime );			
+			System.out.println( "JADE lÃ¤uft bereits! => " + jadeRuntime );			
 		}
 
 		// --- Start the Application Background-Agents ---------------
@@ -431,8 +431,8 @@ public class Platform extends Object {
 	public boolean jadeStopAskUserBefore() {
 		
 		if(this.jadeIsMainContainerRunning()==true && Application.getMainWindow()!=null) {
-			String MsgHead = Language.translate("JADE wird zur Zeit ausgeführt!");
-			String MsgText = Language.translate("Möchten Sie JADE nun beenden?");
+			String MsgHead = Language.translate("JADE wird zur Zeit ausgefÃ¼hrt!");
+			String MsgText = Language.translate("MÃ¶chten Sie JADE nun beenden?");
 			Integer MsgAnswer =  JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
 			if ( MsgAnswer == 1 ) return false; // --- NO,just exit 
 			// --- Stop the JADE-Platform -------------------
@@ -542,8 +542,8 @@ public class Platform extends Object {
 		if (agentNameForStart.equalsIgnoreCase("simstarter")) {
 			showRMA = false;
 			if (Application.getProjectFocused()==null) {
-				msgHead = Language.translate("Abbruch: Kein Projekt geöffnet!");
-				msgText = Language.translate("Zur Zeit ist kein Agenten-Projekt geöffnet.");
+				msgHead = Language.translate("Abbruch: Kein Projekt geÃ¶ffnet!");
+				msgText = Language.translate("Zur Zeit ist kein Agenten-Projekt geÃ¶ffnet.");
 				JOptionPane.showMessageDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.OK_OPTION);
 				return;	
 			} else {
@@ -557,7 +557,7 @@ public class Platform extends Object {
 		// --- Was the system already started? ---------------
 		if (jadeIsMainContainerRunning()==false) {
 			msgHead = Language.translate("JADE wurde noch nicht gestartet!");
-			msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
+			msgText = Language.translate("MÃ¶chten Sie JADE nun starten und fortfahren?");
 			msgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
 			if (msgAnswer==JOptionPane.NO_OPTION) return; // --- NO, just exit 
 			// --- Start the JADE-Platform -------------------
@@ -583,8 +583,8 @@ public class Platform extends Object {
 		// --- Does an agent (see name) already exists? ------
 		if (jadeAgentIsRunning(agentNameForStart)==true && agentNameForStart.equalsIgnoreCase("df")==false) {
 			// --- Agent already EXISTS !! -------------------
-			msgHead = Language.translate("Der Agent '") + rootAgentName +  Language.translate("' ist bereits geöffnet!");
-			msgText = Language.translate("Möchten Sie einen weiteren Agenten dieser Art starten?");
+			msgHead = Language.translate("Der Agent '") + rootAgentName +  Language.translate("' ist bereits geÃ¶ffnet!");
+			msgText = Language.translate("MÃ¶chten Sie einen weiteren Agenten dieser Art starten?");
 			if (Application.getMainWindow()==null) {
 				msgAnswer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);				
 			} else {
@@ -753,16 +753,16 @@ public class Platform extends Object {
 		AgentContainer agentContainer = null;
 		String agentContainerName = null;
 		
-		// --- Falls JADE noch nicht läuft ... ----------------
+		// --- IfJADE is not already running -------------------
 		if (jadeIsMainContainerRunning()==false) {
 			return null;
 		}
-		// --- Wird nach dem 'Main-Container' gesucht? --------
+		// --- Searching for the 'Main-Container'? -------------
 		if (containerNameSearch==this.jadeMainContainer.getName()) {
 			return this.jadeMainContainer;
 		}	
 		
-		// --- Den richtigen Container abgreifen -------------- 
+		// --- Get the right container ------------------------- 
 		for (int i=0; i < jadeContainerLocal.size(); i++) {
 			agentContainer = jadeContainerLocal.get(i);
 			try {
@@ -876,7 +876,7 @@ public class Platform extends Object {
 		// --- Was the system already started? ---------------
 		if ( jadeIsMainContainerRunning() == false ) {
 			msgHead = Language.translate("JADE wurde noch nicht gestartet!");
-			msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
+			msgText = Language.translate("MÃ¶chten Sie JADE nun starten und fortfahren?");
 			MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
 			if ( MsgAnswer == 1 ) return; // --- NO,just exit 
 			// --- Start the JADE-Platform -------------------

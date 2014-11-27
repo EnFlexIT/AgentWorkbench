@@ -115,7 +115,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		super(owner);
 		this.owner = owner;
 		
-		// --- OptionTree vorbereiten -------------------------------
+		// --- Prepare OptionTree -----------------------------------
 		rootNode = new DefaultMutableTreeNode(Language.translate("Optionen"));
 		optionTreeModel = new DefaultTreeModel(rootNode);	
 		
@@ -127,12 +127,11 @@ public class OptionDialog extends JDialog implements ActionListener {
 			}
 		}
 		
-		// --- Create/Config der Dialog-Elemnete --------------------
 		this.initialize();
 
-		// --- ‹bersetzungen konfigurieren --------------------------
+		// --- Translate --------------------------------------------
 	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Optionen"));
-	    this.jButtonClose.setText(Language.translate("Schlieﬂen"));
+	    this.jButtonClose.setText(Language.translate("Schlie√üen"));
 	    
 	    // ----------------------------------------------------------
 	    // --- Optionen (Sub-Panel) einbauen ------------------------
@@ -381,7 +380,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private JButton getJButtonCancel() {
 		if (jButtonClose == null) {
 			jButtonClose = new JButton();
-			jButtonClose.setText("Schlieﬂen");
+			jButtonClose.setText("Schlie√üen");
 			jButtonClose.setForeground(new Color(0, 0, 153));
 			jButtonClose.setPreferredSize(new Dimension(100, 26));
 			jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));

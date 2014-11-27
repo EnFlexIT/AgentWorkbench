@@ -990,7 +990,7 @@ public class GlobalInfo {
 		this.filePropServerMasterPort = serverMasterPort;
 	}
 	/**
-	 * This method returns the port on which s�the server.master can be reached 
+	 * This method returns the port on which the server.master can be reached 
 	 * @return The port of the server.master
 	 * @see FileProperties
 	 */

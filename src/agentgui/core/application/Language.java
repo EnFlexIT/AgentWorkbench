@@ -268,7 +268,7 @@ public class Language {
 		headDescriptions.put(Language.EN, translate("Englisch"));
 		headDescriptions.put(Language.IT, translate("Italienisch"));
 		headDescriptions.put(Language.ES, translate("Spanisch"));
-		headDescriptions.put(Language.FR, translate("Französisch"));
+		headDescriptions.put(Language.FR, translate("FranzÃ¶sisch"));
 
 		String langHeaderWork = langHeader.toUpperCase();
 		String langHeaderD = headDescriptions.get(langHeaderWork);

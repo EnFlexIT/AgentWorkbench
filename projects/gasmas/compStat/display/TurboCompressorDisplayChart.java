@@ -124,7 +124,7 @@ public class TurboCompressorDisplayChart extends ChartPanel {
 
     	JFreeChart chart = ChartFactory.createXYLineChart(
             "Compressor Characteristics",
-            "Volumentric Flow Rate [m³/s]",
+            "Volumentric Flow Rate [mÂ²/s]",
             "Adiabatic Head [kJ/kg]",
             dataset,
             PlotOrientation.VERTICAL,

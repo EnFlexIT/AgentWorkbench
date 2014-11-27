@@ -229,23 +229,23 @@ public class JadeSetupNewPort extends JDialog implements ActionListener {
 		if (Trigger==jButtonSetPortDefault || ActCMD=="KeyENTER") {
 			// === OK-Action ========================================
 
-			// --- Fehlerprüfung ------------------------------------
+			// --- Error check --------------------------------------
 			Long newIntLocalPort = Long.valueOf(this.jTextFieldDefaultPort.getText());
 			
-			// --- Zahl überprüfen ----------------------------------
-			if ( newIntLocalPort == null || newIntLocalPort==0) {
+			// --- check number -------------------------------------
+			if (newIntLocalPort==null || newIntLocalPort==0) {
 				return;
 			} 
 			this.jTextFieldDefaultPort.setText(newIntLocalPort.toString());
 			
-			// --- Länge überprüfen ---------------------------------
+			// --- Check length -------------------------------------
 			String newStrLocalPort = this.jTextFieldDefaultPort.getText();
 			if ( newStrLocalPort.length()>4 ) {
 				newStrLocalPort = newStrLocalPort.substring(0, 4);
 				this.jTextFieldDefaultPort.setText(newStrLocalPort);
 				return;
 			}
-			// --- Neuen Wert merken --------------------------------
+			// --- Remind new value ---------------------------------
 			this.localJadePort = Integer.valueOf(this.jTextFieldDefaultPort.getText());
 			this.canceled = false;
 			this.setVisible(false);

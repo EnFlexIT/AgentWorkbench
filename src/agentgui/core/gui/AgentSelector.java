@@ -127,10 +127,10 @@ public class AgentSelector extends JDialog implements ActionListener {
 	    int left = (screenSize.width - this.getWidth()) / 2; 
 	    this.setLocation(left, top);	
 	 
-	    // --- Übersetzungen einstellen -----------------------------
+	    // --- Translate -----------------------------
 		this.setTitle(Language.translate("Auswahl - Agenten"));
 		jLabelSearchCaption.setText(Language.translate("Suche"));
-		jButtonOk.setText(Language.translate("Hinzufügen"));
+		jButtonOk.setText(Language.translate("HinzufÃ¼gen"));
 		jButtonCancel.setText(Language.translate("Abbrechen"));
 	}
 
@@ -241,7 +241,7 @@ public class AgentSelector extends JDialog implements ActionListener {
 			jButtonOk.setPreferredSize(new Dimension(120, 26));
 			jButtonOk.setForeground(new Color(0, 102, 0));
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOk.setText("Hinzufügen");
+			jButtonOk.setText("HinzufÃ¼gen");
 			jButtonOk.setActionCommand("Ok");
 			jButtonOk.addActionListener(this);
 		}
@@ -334,9 +334,7 @@ public class AgentSelector extends JDialog implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-
 		Object Trigger = ae.getSource();
-		// --- Fallunterscheidung 'Auslöser' -----------------------------
 		if ( Trigger == jButtonOk ) {
 			canceled = false;
 			if (okAction()==false) return;

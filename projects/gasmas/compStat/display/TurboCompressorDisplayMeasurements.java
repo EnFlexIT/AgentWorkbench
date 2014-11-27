@@ -76,7 +76,7 @@ public class TurboCompressorDisplayMeasurements extends ParameterDisplay impleme
 
 	private String columnHeader1 = "Efficiency / Settleline";	//  @jve:decl-index=0:
 	private String columnHeader2 = "Speed [1/min]";				//  @jve:decl-index=0:
-	private String columnHeader3 = "Vol. Flow Rate [m³/s]";  	//  @jve:decl-index=0:
+	private String columnHeader3 = "Vol. Flow Rate [mÂ²/s]";  	//  @jve:decl-index=0:
 	private String columnHeader4 = "Ad. Head [kJ/kg]";			//  @jve:decl-index=0:
 
 	private JScrollPane jScrollPaneMeasurements = null;

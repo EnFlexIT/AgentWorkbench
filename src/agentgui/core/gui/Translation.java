@@ -213,7 +213,7 @@ private static final long serialVersionUID = 1L;
 	private void initialize() {
 		this.setSize(1000, 550);
 		
-		this.setTitle(appName + ": " + "Wörterbuch");
+		this.setTitle(appName + ": " + "WÃ¶rterbuch");
 		this.setIconImage( image );
 		this.setModal(true);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -259,26 +259,26 @@ private static final long serialVersionUID = 1L;
 	    int left = (screenSize.width - this.getWidth()) / 2; 
 	    this.setLocation(left, top);	
 	 
-	    // --- Übersetzungen einstellen -----------------------------
-		this.setTitle(appName + ": " + Language.translate("Wörterbuch"));
-		jTabbedPane.setTitleAt(0, Language.translate("Wörterbuch"));
-		jTabbedPane.setTitleAt(1, Language.translate("Übersetzen ..."));
-		jButtonClose.setText(Language.translate("Schließen"));
+	    // --- Translate --------------------------------------------
+		this.setTitle(appName + ": " + Language.translate("WÃ¶rterbuch"));
+		jTabbedPane.setTitleAt(0, Language.translate("WÃ¶rterbuch"));
+		jTabbedPane.setTitleAt(1, Language.translate("Ãœbersetzen ..."));
+		jButtonClose.setText(Language.translate("SchlieÃŸen"));
 		
-		jMenuItemDelete.setText(Language.translate("Löschen"));
-		jMenuItemEdit.setText(Language.translate("Übersetzen"));
+		jMenuItemDelete.setText(Language.translate("LÃ¤schen"));
+		jMenuItemEdit.setText(Language.translate("Ãœbersetzen"));
 		
 		jLabelSelectSourceLang.setText(Language.translate("Sprache:"));
 		jLabelSelectDestinationLang.setText(Language.translate("Sprache:"));
-		jLabelSource.setText(Language.translate("Text zur Übersetzung"));
-		jLabelDestination.setText(Language.translate("Übersetzter Text "));
-		jLabelGoogleHeader.setText(Language.translate("Google - Übersetzung"));
+		jLabelSource.setText(Language.translate("Text zur Ãœbersetzung"));
+		jLabelDestination.setText(Language.translate("Ãœbersetzter Text "));
+		jLabelGoogleHeader.setText(Language.translate("Google - Ãœbersetzung"));
 		
 		jButtonPreviousDS.setToolTipText(Language.translate("Voriger Datensatz (STRG+UP)"));
-		jButtonNextDS.setToolTipText(Language.translate("Nächster Datensatz (STRG+DOWN)"));
-		jButtonSave.setToolTipText(Language.translate("Übersetzung speichern (STRG+S)"));
-		jButtonFindGap.setToolTipText(Language.translate("Suche nach der nächsten fehlenden Übersetzung (STRG+F)"));
-		jButtonGoogleTake.setToolTipText(Language.translate("Google-Übersetzung übernehmen (STRG+G)"));
+		jButtonNextDS.setToolTipText(Language.translate("NÃ¤chster Datensatz (STRG+DOWN)"));
+		jButtonSave.setToolTipText(Language.translate("Ãœbersetzung speichern (STRG+S)"));
+		jButtonFindGap.setToolTipText(Language.translate("Suche nach der nÃ¤chsten fehlenden Ãœbersetzung (STRG+F)"));
+		jButtonGoogleTake.setToolTipText(Language.translate("Google-Ãœbersetzung Ã¼bernehmen (STRG+G)"));
 
 	}
 
@@ -487,7 +487,7 @@ private static final long serialVersionUID = 1L;
 			jTableDictionary.setRowSelectionAllowed(true);
 			jTableDictionary.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jTableDictionary.setAutoCreateRowSorter(true);
-			// --- MouseListener hinzufügen ---------------
+			// --- Add MouseListener ----------------------
 			jTableDictionary.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent evt) {
@@ -510,7 +510,7 @@ private static final long serialVersionUID = 1L;
 					}
 				}
 			});
-			// --- SelectionListener hinzufügen -----------
+			// --- Add SelectionListener ------------------
 			jTableDictionary.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 				@Override
 				public void valueChanged(ListSelectionEvent eve) {
@@ -571,7 +571,7 @@ private static final long serialVersionUID = 1L;
 	private JMenuItem getJMenuItemDelete() {
 		if (jMenuItemDelete == null) {
 			jMenuItemDelete = new JMenuItem();
-			jMenuItemDelete.setText("Löschen");
+			jMenuItemDelete.setText("LÃ¶schen");
 			jMenuItemDelete.addActionListener(this);
 		}
 		return jMenuItemDelete;
@@ -583,7 +583,7 @@ private static final long serialVersionUID = 1L;
 	private JMenuItem getJMenuItemEdit() {
 		if (jMenuItemEdit == null) {
 			jMenuItemEdit = new JMenuItem();
-			jMenuItemEdit.setText("Übersetzen");
+			jMenuItemEdit.setText("Ãœbersetzen");
 			jMenuItemEdit.addActionListener(this);
 		}
 		return jMenuItemEdit;
@@ -623,8 +623,8 @@ private static final long serialVersionUID = 1L;
 	private JTabbedPane getJTabbedPane() {
 		if (jTabbedPane == null) {
 			jTabbedPane = new JTabbedPane();
-			jTabbedPane.addTab("Wörterbuch", null, getJScrollPaneDictionary(), null);
-			jTabbedPane.addTab("Übersetzen ...", null, getJPanelTranslation(), null);
+			jTabbedPane.addTab("WÃ¶rterbuch", null, getJScrollPaneDictionary(), null);
+			jTabbedPane.addTab("Ãœbersetzen ...", null, getJPanelTranslation(), null);
 		}
 		return jTabbedPane;
 	}
@@ -765,11 +765,11 @@ private static final long serialVersionUID = 1L;
 			jLabelSelectDestinationLang.setText("Sprache:");
 
 			jLabelSource = new JLabel();
-			jLabelSource.setText("Text zur Übersetzung");
+			jLabelSource.setText("Text zur Ãœbersetzung");
 			jLabelSource.setFont(new Font("Dialog", Font.BOLD, 12));
 
 			jLabelDestination = new JLabel();
-			jLabelDestination.setText("Übersetzter Text ");
+			jLabelDestination.setText("Ãœbersetzter Text ");
 			jLabelDestination.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jLabelSourceLanguage = new JLabel();
@@ -780,7 +780,7 @@ private static final long serialVersionUID = 1L;
 			jLabelSourceLanguage.setPreferredSize(new Dimension(38, 26));
 			
 			jLabelGoogleHeader = new JLabel();
-			jLabelGoogleHeader.setText("Google - Übersetzung");
+			jLabelGoogleHeader.setText("Google - Ãœbersetzung");
 			jLabelGoogleHeader.setFont(new Font("Dialog", Font.BOLD, 12));
 			
 			jHyperLinkGoogleInfo = new JHyperLink();
@@ -879,7 +879,7 @@ private static final long serialVersionUID = 1L;
 			jButtonClose = new JButton();
 			jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonClose.setPreferredSize(new Dimension(100, 26));
-			jButtonClose.setText("Schließen");
+			jButtonClose.setText("SchlieÃŸen");
 			jButtonClose.addActionListener(this);			
 		}
 		return jButtonClose;
@@ -891,7 +891,7 @@ private static final long serialVersionUID = 1L;
 	private JButton getJButtonImportCSV() {
 		if (jButtonImportCSV == null) {
 			jButtonImportCSV = new JButton();
-			jButtonImportCSV.setToolTipText(Language.translate("'.csv'-Version des Wörterbuchs übernehmen ..."));
+			jButtonImportCSV.setToolTipText(Language.translate("'.csv'-Version des WÃ¶rterbuchs Ã¼bernehmen ..."));
 			jButtonImportCSV .setIcon(new ImageIcon(getClass().getResource(PathImage + "MBtransImport.png")));
 			jButtonImportCSV.setPreferredSize(new Dimension(26, 26));
 			jButtonImportCSV.addActionListener(this);
@@ -1038,7 +1038,7 @@ private static final long serialVersionUID = 1L;
 		if (jButtonNextDS == null) {
 			jButtonNextDS = new JButton();
 			jButtonNextDS.setPreferredSize(new Dimension(26, 26));
-			jButtonNextDS.setToolTipText("Nächster Datensatz (STRG+DOWN)");
+			jButtonNextDS.setToolTipText("NÃ¤chster Datensatz (STRG+DOWN)");
 			jButtonNextDS.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowDown.png")));
 			jButtonNextDS.addActionListener(this);
 		}
@@ -1066,7 +1066,7 @@ private static final long serialVersionUID = 1L;
 		if (jButtonDelete == null) {
 			jButtonDelete = new JButton();
 			jButtonDelete.setPreferredSize(new Dimension(26, 26));
-			jButtonDelete.setToolTipText("Datensatz löschen (STRG+DELETE)");
+			jButtonDelete.setToolTipText("Datensatz lÃ¶schen (STRG+DELETE)");
 			jButtonDelete.setIcon(new ImageIcon(getClass().getResource(PathImage + "Delete.png")));
 			jButtonDelete.addActionListener(this);
 		}
@@ -1080,7 +1080,7 @@ private static final long serialVersionUID = 1L;
 		if (jButtonSave == null) {
 			jButtonSave = new JButton();
 			jButtonSave.setPreferredSize(new Dimension(26, 26));
-			jButtonSave.setToolTipText("Übersetzung speichern (STRG+S)");
+			jButtonSave.setToolTipText("Ãœbersetzung speichern (STRG+S)");
 			jButtonSave.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBsave.png")));
 			jButtonSave.addActionListener(this);
 		}
@@ -1094,7 +1094,7 @@ private static final long serialVersionUID = 1L;
 		if (jButtonFindGap == null) {
 			jButtonFindGap = new JButton();
 			jButtonFindGap.setPreferredSize(new Dimension(26, 26));
-			jButtonFindGap.setToolTipText("Suche nach der nächsten fehlenden Übersetzung (STRG+F)");
+			jButtonFindGap.setToolTipText("Suche nach der nÃ¤chsten fehlenden Ãœbersetzung (STRG+F)");
 			jButtonFindGap.setIcon(new ImageIcon(getClass().getResource(PathImage + "Search.png")));
 			jButtonFindGap.addActionListener(this);
 		}
@@ -1107,7 +1107,7 @@ private static final long serialVersionUID = 1L;
 	private JCheckBox getJCheckBoxDoGoogleTranslation() {
 		if (jCheckBoxUseGoogleTranslation == null) {
 			jCheckBoxUseGoogleTranslation = new JCheckBox();
-			jCheckBoxUseGoogleTranslation.setText("Google-Übersetzung verwenden");
+			jCheckBoxUseGoogleTranslation.setText("Google-Ãœbersetzung verwenden");
 			jCheckBoxUseGoogleTranslation.setText(Language.translate(jCheckBoxUseGoogleTranslation.getText()));
 			jCheckBoxUseGoogleTranslation.setSelected(this.useGoogleTranslation);
 			jCheckBoxUseGoogleTranslation.addActionListener(this);
@@ -1122,7 +1122,7 @@ private static final long serialVersionUID = 1L;
 		if (jButtonGoogleTake == null) {
 			jButtonGoogleTake = new JButton();
 			jButtonGoogleTake.setPreferredSize(new Dimension(26, 26));
-			jButtonGoogleTake.setToolTipText("Google-Übersetzung übernehmen (STRG+G)");
+			jButtonGoogleTake.setToolTipText("Google-Ãœbersetzung Ã¼bernehmen (STRG+G)");
 			jButtonGoogleTake.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBgoogle.png")));
 			jButtonGoogleTake.addActionListener(this);
 		}
@@ -1415,7 +1415,7 @@ private static final long serialVersionUID = 1L;
 				} catch (Exception e) {
 					//e.printStackTrace();
 					translation  = "ERROR: " + e.getLocalizedMessage();
-					translation += "\n=> " + Language.translate("Die Google-Übersetzungsfunktion wurde deaktiviert!");
+					translation += "\n=> " + Language.translate("Die Google-Ãœbersetzungsfunktion wurde deaktiviert!");
 					this.useGoogleTranslation = false;
 					this.jCheckBoxUseGoogleTranslation.setSelected(this.useGoogleTranslation);
 
@@ -1439,8 +1439,8 @@ private static final long serialVersionUID = 1L;
 			
 		} else if (trigger == jButtonImportCSV) {
 			
-			String title = Language.translate("CSV-Version des Wörterbuchs übernehmen?");
-			String message = Language.translate("Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?");
+			String title = Language.translate("CSV-Version des WÃ¶rterbuchs Ã¼bernehmen?");
+			String message = Language.translate("MÃ¶chten Sie die CSV-Version des WÃ¶rterbuches jetzt Ã¼bernehmen?");
 			
 			int answer = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION);
 			if (answer == JOptionPane.YES_OPTION) {

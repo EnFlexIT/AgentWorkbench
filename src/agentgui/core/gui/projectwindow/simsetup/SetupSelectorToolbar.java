@@ -106,12 +106,12 @@ public class SetupSelectorToolbar implements ActionListener {
 		this.jToolBar2Add2.add(this.getJButtonSetupDelete());
 		
 		
-		// --- Übersetzungen laden ------------------------
-		this.jComboBoxSetupSelector.setToolTipText(Language.translate("Setup auswählen"));
+		// --- Translate ----------------------------------
+		this.jComboBoxSetupSelector.setToolTipText(Language.translate("Setup auswÃ¤hlen"));
 		this.jButtonSetupRename.setToolTipText(Language.translate("Setup umbenennen"));
 		this.jButtonSetupCopy.setToolTipText(Language.translate("Setup kopieren"));
-		this.jButtonSetupNew.setToolTipText(Language.translate("Setup hinzufügen"));
-		this.jButtonSetupDelete.setToolTipText(Language.translate("Setup löschen"));
+		this.jButtonSetupNew.setToolTipText(Language.translate("Setup hinzufÃ¼gen"));
+		this.jButtonSetupDelete.setToolTipText(Language.translate("Setup lÃ¶schen"));
 		
 		this.setEnabled(false);
 		
@@ -176,7 +176,7 @@ public class SetupSelectorToolbar implements ActionListener {
 	private JComboBox getJComboBoxSetupSelector() {
 		if (jComboBoxSetupSelector == null) {
 			jComboBoxSetupSelector = new JComboBox(jComboBoxModel4Setups);
-			jComboBoxSetupSelector.setToolTipText("Setup auswählen");
+			jComboBoxSetupSelector.setToolTipText("Setup auswÃ¤hlen");
 			jComboBoxSetupSelector.setMaximumRowCount(18);
 			jComboBoxSetupSelector.setPreferredSize(new Dimension(200, 26));
 			jComboBoxSetupSelector.addActionListener(this);
@@ -223,7 +223,7 @@ public class SetupSelectorToolbar implements ActionListener {
 		if (jButtonSetupNew == null) {
 			jButtonSetupNew = new JButton();
 			jButtonSetupNew.setPreferredSize(new Dimension(26, 26));
-			jButtonSetupNew.setToolTipText("Setup hinzufügen");
+			jButtonSetupNew.setToolTipText("Setup hinzufÃ¼gen");
 			jButtonSetupNew.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListPlus.png")));
 			jButtonSetupNew.addActionListener(this);
 		}
@@ -238,7 +238,7 @@ public class SetupSelectorToolbar implements ActionListener {
 		if (jButtonSetupDelete == null) {
 			jButtonSetupDelete = new JButton();
 			jButtonSetupDelete.setPreferredSize(new Dimension(26, 26));
-			jButtonSetupDelete.setToolTipText("Setup löschen");
+			jButtonSetupDelete.setToolTipText("Setup lÃ¶schen");
 			jButtonSetupDelete.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
 			jButtonSetupDelete.addActionListener(this);
 		}
@@ -357,15 +357,15 @@ public class SetupSelectorToolbar implements ActionListener {
 			switch (ReasonConstant) {
 			case 1:
 				head = Language.translate("Neues Setup anlegen ...");
-				msg  = Language.translate("Bitte geben Sie den Namen für das neue Setup an!");
+				msg  = Language.translate("Bitte geben Sie den Namen fÃ¼r das neue Setup an!");
 				break;
 			case 2:
 				head = Language.translate("Setup umbenennen ...");
-				msg  = Language.translate("Bitte geben Sie den neuen Namen für das Setup an!");
+				msg  = Language.translate("Bitte geben Sie den neuen Namen fÃ¼r das Setup an!");
 				break;
 			case 3:
 				head = Language.translate("Setup kopieren ...");
-				msg  = Language.translate("Bitte geben Sie den neuen Namen für das Setup an!");
+				msg  = Language.translate("Bitte geben Sie den neuen Namen fÃ¼r das Setup an!");
 				break;
 
 			}
@@ -380,12 +380,12 @@ public class SetupSelectorToolbar implements ActionListener {
 			input = input.trim();
 			if (input.equalsIgnoreCase("")) return null;
 			
-			// --- Kann der Name in einen gültigen Dateinamen umbenannt werden? ----
+			// --- Can the name be used as file name? -----
 			newFileName = currProject.getSimulationSetups().getSuggestSetupFile(input);
 			if (newFileName.length() < 8) {
 				head = Language.translate("Setup-Name zu kurz!");
 				msg  = "Name: '" + input + "' " + Language.translate("zu Datei") + ": '" + newFileName + ".xml':";
-				msg += Language.translate("<br>Bitte geben Sie einen längeren Namen für das Setup an.");
+				msg += Language.translate("<br>Bitte geben Sie einen lÃ¤ngeren Namen fÃ¼r das Setup an.");
 				JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.NO_OPTION);
 			} else {
 				inputIsOk = true;
@@ -395,7 +395,7 @@ public class SetupSelectorToolbar implements ActionListener {
 			if (currProject.getSimulationSetups().containsSetupName(input)) {
 				head = Language.translate("Setup-Name wird bereits verwendet!");
 				msg  = Language.translate("Der Name") + " '" + input + "' " + Language.translate("wird bereits verwendet.");
-				msg += Language.translate("<br>Bitte geben Sie einen anderen Namen für das Setup an.");
+				msg += Language.translate("<br>Bitte geben Sie einen anderen Namen fÃ¼r das Setup an.");
 				JOptionPane.showMessageDialog(Application.getMainWindow(), msg, head, JOptionPane.NO_OPTION);
 				inputIsOk = false;
 			}
@@ -455,8 +455,8 @@ public class SetupSelectorToolbar implements ActionListener {
 		String msg  = null;
 		Integer input = null;
 		
-		head = jComboBoxSetupSelector.getSelectedItem().toString() + ": " + Language.translate("Setup löschen?");
-		msg  = Language.translate("Wollen Sie das aktuelle Setup wirklich löschen?");
+		head = jComboBoxSetupSelector.getSelectedItem().toString() + ": " + Language.translate("Setup lÃ¶schen?");
+		msg  = Language.translate("Wollen Sie das aktuelle Setup wirklich lÃ¶schen?");
 		input = JOptionPane.showConfirmDialog(Application.getMainWindow(), msg, head, JOptionPane.YES_NO_OPTION);
 		if (input == JOptionPane.YES_OPTION) {
 			currProject.getSimulationSetups().setupRemove(jComboBoxSetupSelector.getSelectedItem().toString());

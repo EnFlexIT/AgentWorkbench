@@ -90,7 +90,7 @@ public class MergeNetworkModel extends AbstractUndoableEdit {
 	 */
 	@Override
 	public String getPresentationName() {
-		return Language.translate("Netzwerkkomponente(n) hinzufügen");
+		return Language.translate("Netzwerkkomponente(n) hinzufÃ¼gen");
 	}
 	
 	/* (non-Javadoc)

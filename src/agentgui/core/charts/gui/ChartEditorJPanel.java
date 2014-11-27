@@ -260,7 +260,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
     	if(cbImageAspectRatio == null){
     		DefaultComboBoxModel formatsModel = new DefaultComboBoxModel(new String[]{"16:9", "4:3"});
     		cbImageAspectRatio = new JComboBox(formatsModel);
-    		cbImageAspectRatio.setToolTipText(Language.translate("Das Seitenverhältnis des exportierten Bildes"));
+    		cbImageAspectRatio.setToolTipText(Language.translate("Das SeitenverhÃ¤ltnis des exportierten Bildes"));
     		cbImageAspectRatio.addActionListener(this);
     	}
     	return cbImageAspectRatio;
@@ -299,7 +299,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	protected JTextField getTfImageHeight(){
     	if(tfImageHeight == null){
     		tfImageHeight = new JTextField(DEFAULT_ImageHeight.toString());
-    		tfImageHeight.setToolTipText(Language.translate("Die Höhe des exportieren Bildes"));
+    		tfImageHeight.setToolTipText(Language.translate("Die HÃ¶he des exportieren Bildes"));
     		tfImageHeight.setPreferredSize(new Dimension(50, 26));
     		tfImageHeight.setHorizontalAlignment(JTextField.CENTER);
     		tfImageHeight.addActionListener(this);
@@ -354,7 +354,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	private void recalculateImageHeight(){
 		String imageWidthString = this.getTfImageWidth().getText();
 		if (imageWidthString==null || imageWidthString.equals("")) {
-			JOptionPane.showMessageDialog(this, Language.translate("Bitte nur ganze Zahlen größer 0 eingeben!"), Language.translate("Fehlerhafte Eingabe"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, Language.translate("Bitte nur ganze Zahlen grÃ¶ÃŸer 0 eingeben!"), Language.translate("Fehlerhafte Eingabe"), JOptionPane.ERROR_MESSAGE);
 			this.setImageDefaultValues();
 			return;
 		} 
@@ -365,7 +365,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	private void recalculateImageWidth(){
 		String imageHeightString = this.getTfImageHeight().getText();
 		if (imageHeightString==null || imageHeightString.equals("")) {
-			JOptionPane.showMessageDialog(this, Language.translate("Bitte nur ganze Zahlen größer 0 eingeben!"), Language.translate("Fehlerhafte Eingabe"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, Language.translate("Bitte nur ganze Zahlen grÃ¶ÃŸer 0 eingeben!"), Language.translate("Fehlerhafte Eingabe"), JOptionPane.ERROR_MESSAGE);
 			this.setImageDefaultValues();
 			return;
 		} 
@@ -499,13 +499,13 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		// --- Determine image size ----------------------------
 		Integer imageWidth = Integer.parseInt(this.getTfImageWidth().getText());
 		if (imageWidth==0) {
-			JOptionPane.showMessageDialog(this, Language.translate("Bitte nur ganze Zahlen größer 0 eingeben!"), Language.translate("Fehlerhafte Eingabe"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, Language.translate("Bitte nur ganze Zahlen grÃ¶ÃŸer 0 eingeben!"), Language.translate("Fehlerhafte Eingabe"), JOptionPane.ERROR_MESSAGE);
 			this.setImageDefaultValues();
 			return;
 		}
 		Integer imageHeight = Integer.parseInt(this.getTfImageHeight().getText());
 		if (imageHeight==0) {
-			JOptionPane.showMessageDialog(this, Language.translate("Bitte nur ganze Zahlen größer 0 eingeben!"), Language.translate("Fehlerhafte Eingabe"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, Language.translate("Bitte nur ganze Zahlen grÃ¶ÃŸer 0 eingeben!"), Language.translate("Fehlerhafte Eingabe"), JOptionPane.ERROR_MESSAGE);
 			this.setImageDefaultValues();
 			return;
 		}

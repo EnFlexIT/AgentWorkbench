@@ -140,7 +140,7 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		if (btnAddRow == null) {
 			btnAddRow = new JButton();
 			btnAddRow.setIcon(new ImageIcon(this.getClass().getResource(pathImage + "AddRow.png")));
-			btnAddRow.setToolTipText(Language.translate("Zeile hinzufügen"));
+			btnAddRow.setToolTipText(Language.translate("Zeile hinzufÃ¼gen"));
 			btnAddRow.addActionListener(this);
 		}
 		return btnAddRow;
@@ -149,7 +149,7 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 		if (btnAddColumn == null) {
 			btnAddColumn = new JButton();
 			btnAddColumn.setIcon(new ImageIcon(this.getClass().getResource( pathImage + "AddCol.png")));
-			btnAddColumn.setToolTipText(Language.translate("Spalte hinzufügen"));
+			btnAddColumn.setToolTipText(Language.translate("Spalte hinzufÃ¼gen"));
 			btnAddColumn.addActionListener(this);
 		}
 		return btnAddColumn;
