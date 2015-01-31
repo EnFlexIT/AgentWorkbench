@@ -115,8 +115,10 @@ public class ServerMasterAgent extends Agent {
 	protected void setup() {
 		super.setup();
 		
-		getContentManager().registerLanguage(codec);
-		getContentManager().registerOntology(ontology);
+		System.out.println("Starting Background System-Agent '" + this.getName() + "'");
+		
+		this.getContentManager().registerLanguage(codec);
+		this.getContentManager().registerOntology(ontology);
 
 		// --- Add Main-Behaviours ------------------------
 		this.parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);

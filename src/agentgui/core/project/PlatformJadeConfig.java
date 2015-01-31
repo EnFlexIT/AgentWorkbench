@@ -44,6 +44,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.network.PortChecker;
 
 /**
@@ -70,6 +71,9 @@ import agentgui.core.network.PortChecker;
 public class PlatformJadeConfig implements Serializable {
 	
 	private static final long serialVersionUID = -9062155032902746361L;
+	
+	private static final boolean debug = false;
+	
 	
 	// --- Services 'Activated automatically' ---------------------------------
 	public static final String SERVICE_MessagingService = jade.core.messaging.MessagingService.class.getName();
@@ -158,43 +162,78 @@ public class PlatformJadeConfig implements Serializable {
 	}
 	
 	/**
-	 * This Method returns a new Instance of Profil, which
-	 * can be used for starting a new JADE-Container.
+	 * This Method returns a new Instance of {@link ProfileImpl} that is used to start JADE-Container.
 	 * @return jade.core.Profile
 	 */
-	public Profile getNewInstanceOfProfilImpl(){
-		Profile prof = new ProfileImpl();
-		prof = this.setProfileLocalPort(prof);
-		prof = this.setProfileServices(prof);		
-		return prof;
-	}
-	
-	/**
-	 * Adds the local configured 'LocalPort' to the input instance of Profile.
-	 *
-	 * @param profile the profile
-	 * @return jade.core.Profile
-	 */
-	private Profile setProfileLocalPort(Profile profile){
-		Integer freePort = new PortChecker(this.useLocalPort).getFreePort();
-		profile.setParameter(Profile.LOCAL_PORT, freePort.toString());
+	public ProfileImpl getNewInstanceOfProfilImpl(){
+		ProfileImpl profile = new ProfileImpl();
+		if (debug) {
+			this.setProfileDumOptions(profile);
+		}
+		this.setProfileLocalHost(profile);
+		this.setProfileLocalPort(profile);
+		this.setProfileLocalPortMTP(profile);
+		this.setProfileServices(profile);
 		return profile;
 	}
-	
 	/**
-	 * Adds the local configured services to the input instance of Profile.
-	 *
-	 * @param profile the profile
-	 * @return jade.core.Profile
+	 * Adds the local configured DUMP_OPTIONS to the input instance of Profile.
+	 * @param profile the profile to work on
 	 */
-	private Profile setProfileServices(Profile profile){
+	private void setProfileDumOptions(Profile profile){
+		profile.setParameter(Profile.DUMP_OPTIONS, "true");
+	}	
+	/**
+	 * Adds the configured 'LOCAL_HOST' to the input instance of Profile 
+	 * in case that the localhost hosts the server.master too. In that case
+	 * the platform URL should exactly match the configuration.
+	 * @param profile the profile to work on
+	 */
+	private void setProfileLocalHost(Profile profile){
+		if (Application.getGlobalInfo().getJadeUrlConfigurationForMaster().isLocalhost()) {
+			profile.setParameter(Profile.LOCAL_HOST, Application.getGlobalInfo().getServerMasterURL());	
+		}
+	}
+	/**
+	 * Adds the configured 'LOCAL_PORT' to the input instance of Profile.
+	 * @param profile the profile to work on
+	 */
+	private void setProfileLocalPort(Profile profile){
+		Integer freePort = new PortChecker(this.useLocalPort).getFreePort();
+		profile.setParameter(Profile.LOCAL_PORT, freePort.toString());
+	}
+	/**
+	 * Adds the configured 'jade_mtp_http_port' to the input instance of Profile.
+	 * @param profile the new profile local port mtp
+	 */
+	private void setProfileLocalPortMTP(ProfileImpl profile) {
+		// --- Only set the MTP port in case of SERVER on local machines ------
+		GlobalInfo globalInfo = Application.getGlobalInfo();
+		if (globalInfo.getJadeUrlConfigurationForMaster().isLocalhost()) {
+			switch (globalInfo.getExecutionMode()) {
+			case SERVER:
+			case SERVER_MASTER:
+			case SERVER_SLAVE:
+				// --- See if the configure port for MTP is free --------------
+				Integer freePort = new PortChecker(globalInfo.getServerMasterPort4MTP(), globalInfo.getServerMasterURL()).getFreePort();
+				profile.setParameter("jade_mtp_http_port", freePort.toString());	
+				break;
+
+			default:
+				break;
+			}	
+		}
+	}
+	/**
+	 * Adds the local configured SERVICES to the input instance of Profile.
+	 * @param profile the profile to work on
+	 */
+	private void setProfileServices(Profile profile){
 		String serviceListString = this.getServiceListArgument();
 		if (serviceListString.equalsIgnoreCase("")==false || serviceListString!=null) {
 			profile.setParameter(Profile.SERVICES, serviceListString);
 		}
-		return profile;
 	}	
-	
 	/**
 	 * This method walks through the HashSet of configured Services and returns them
 	 * as a String separated with a semicolon (';').

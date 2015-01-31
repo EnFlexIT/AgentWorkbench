@@ -28,6 +28,7 @@
  */
 package agentgui.core.systemtray;
 
+import java.awt.Font;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
@@ -52,6 +53,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 
 	private AgentGUITrayIcon agentGUItray = null;
 	
+	private MenuItem itemHeader = null;
 	private MenuItem itemUpdate = null;
 	private MenuItem itemAbout = null;
 	private MenuItem itemServiceStart = null;
@@ -103,6 +105,9 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		itemExit.addActionListener(this);
 		
 		// --- Build PopUp-Menu ---------------------------------
+		this.add(this.getMenuItemHeader());
+		this.addSeparator();
+		
 		this.add(itemUpdate);
 		this.add(itemAbout);
 		this.addSeparator();
@@ -110,6 +115,8 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		// --- Case ExecutionMode -------------------------------
 		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
+			this.add(itemConfig);
+			this.addSeparator();
 			this.add(itemExit);
 			break;
 
@@ -154,6 +161,19 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 	}
 
 	/**
+	 * Gets the menu item for the context menu header.
+	 * @return the menu item header
+	 */
+	private MenuItem getMenuItemHeader() {
+		if (itemHeader==null) {
+			itemHeader = new MenuItem(Application.getGlobalInfo().getApplicationTitle() + " - " + Application.getGlobalInfo().getExecutionModeDescription());
+			itemHeader.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return itemHeader;
+	}
+	
+	
+	/**
 	 * Refresh view.
 	 */
 	public void refreshView() {
@@ -164,9 +184,9 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 			itemServiceStop.setEnabled(true);
 			itemOpenRMA.setEnabled(true);
 			// --- Change Icon color  -------------------------------
-			agentGUItray.getTrayIcon().setImage( agentGUItray.getImageGreen() );	
-			if (agentGUItray.getAgentGUITrayDialog()!=null ){
-				agentGUItray.getAgentGUITrayDialog().getjLabel4Icon().setIcon((Icon) agentGUItray.getImageIconGreen());
+			this.agentGUItray.getTrayIcon().setImage( agentGUItray.getImageGreen() );	
+			if (this.agentGUItray.getAgentGUITrayDialog()!=null ){
+				this.agentGUItray.getAgentGUITrayDialog().getjLabel4Icon().setIcon((Icon) agentGUItray.getImageIconGreen());
 			}
 			
 		} else {
@@ -175,12 +195,13 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 			itemServiceStop.setEnabled(false);
 			itemOpenRMA.setEnabled(false);
 			// --- Change Icon color  -------------------------------
-			agentGUItray.getTrayIcon().setImage( agentGUItray.getImageRed() );	
-			if (agentGUItray.getAgentGUITrayDialog()!=null ){
-				agentGUItray.getAgentGUITrayDialog().getjLabel4Icon().setIcon((Icon) agentGUItray.getImageIconRed());
+			this.agentGUItray.getTrayIcon().setImage( agentGUItray.getImageRed() );	
+			if (this.agentGUItray.getAgentGUITrayDialog()!=null ){
+				this.agentGUItray.getAgentGUITrayDialog().getjLabel4Icon().setIcon((Icon) agentGUItray.getImageIconRed());
 			}
 		}
-		agentGUItray.getTrayIcon().setToolTip(Application.getGlobalInfo().getApplicationTitle() + " - " + Application.getGlobalInfo().getExecutionModeDescription());
+		this.agentGUItray.getTrayIcon().setToolTip(Application.getGlobalInfo().getApplicationTitle() + " - " + Application.getGlobalInfo().getExecutionModeDescription());
+		this.getMenuItemHeader().setLabel(Application.getGlobalInfo().getApplicationTitle() + " - " + Application.getGlobalInfo().getExecutionModeDescription());
 	}
 	
 	/**

@@ -48,7 +48,6 @@ import agentgui.core.agents.UtilityAgent;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
-import agentgui.core.network.JadeUrlChecker;
 import agentgui.core.project.Project;
 import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.LoadService;
@@ -79,7 +78,6 @@ public class Platform extends Object {
 	private Vector<AgentContainer> jadeContainerLocal = new Vector<AgentContainer>();
 	private Vector<ContainerID> jadeContainerRemote = new Vector<ContainerID>();
 	
-	private JadeUrlChecker urlChecker = null; 
 	private String newLine = Application.getGlobalInfo().getNewLineSeparator();
 	
 	
@@ -205,24 +203,14 @@ public class Platform extends Object {
 			}
 			
 			break;
+			
+		default:
+			// --- Nothing to do here -----------
+			break;
 		}
 		return true;
 	}
-	
-	/**
-	 * Returns the JadeUrlChecker.
-	 * @return the JadeUrlChecker
-	 */
-	public JadeUrlChecker getJadeUrlChecker() {
-		if (urlChecker==null) {
-			// --- Define the Address of the Main-Platform --------------
-			urlChecker = new JadeUrlChecker(Application.getGlobalInfo().getServerMasterURL());
-			urlChecker.setPort(Application.getGlobalInfo().getServerMasterPort());
-			urlChecker.setPort4MTP(Application.getGlobalInfo().getServerMasterPort4MTP());
-		}
-		return urlChecker;
-	}
-	
+
 	/**
 	 * Starts JADE and displays the RMA
 	 * @return true, if successful

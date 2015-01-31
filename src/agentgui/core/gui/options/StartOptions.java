@@ -41,6 +41,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -70,6 +72,7 @@ import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.gui.ClassSelector;
 import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.project.Project;
+
 import java.awt.BorderLayout;
 
 /**
@@ -1478,6 +1481,25 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	}
 	
 	/**
+	 * Checks if is the specified server address is a valid server address.
+	 *
+	 * @param serverAddressToCheck the server address to check
+	 * @return true, if is valid server address
+	 */
+	private boolean isValidServerAddress(String serverAddressToCheck) {
+
+		boolean vaidMasterHost = false;
+		try {
+			InetAddress.getByName(serverAddressToCheck);
+			vaidMasterHost = true;
+			
+		} catch (UnknownHostException uhe) {
+//			uhe.printStackTrace();
+		}
+		return vaidMasterHost;
+	}
+	
+	/**
 	 * This method doe's the Error-Handling for this Dialog.
 	 * @return true or false
 	 */
@@ -1534,44 +1556,62 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				
 			}
 			
-		} else {
-			// --------------------------------------------------------------
-			// --- Error Check for Application and Background System --------
-			// --------------------------------------------------------------
-			String testURL = this.jTextFieldMasterURL.getText().trim();
-			String testPortAsString  = this.jTextFieldMasterPort.getText().trim();
-			Integer testPortAsInteger = Integer.parseInt( testPortAsString );
-					
-			String  testPort4MTPAsString  = this.jTextFieldMasterPort4MTP.getText().trim();
-			Integer testPort4MTPAsInteger = Integer.parseInt( testPort4MTPAsString );
+		} 
+			
+		// --------------------------------------------------------------
+		// --- Error Check for URL and Ports ----------------------------
+		// --------------------------------------------------------------
+		String testURL = this.jTextFieldMasterURL.getText().trim();
+		// --- Testing URL and Port -------------------------------------
+		if ( testURL!=null && testURL.equalsIgnoreCase("")==false ) {
 
-			// --- Testing URL and Port -------------------------------------
-			if ( testURL != null ) {
-				if ( testURL.equalsIgnoreCase("")==false  ) {
-					// --- Testing the URL ----------------------------------
-					if ( testURL.contains(" ") ) {
-						msgHead = Language.translate("Fehler: URL oder IP !");
-						msgText = Language.translate("Die URL oder IP enthält unzulässige Zeichen!");	
-						JOptionPane.showMessageDialog( this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
-						return true;
-					}
-					// --- Testing the Port ---------------------------------
-					if ( testPortAsInteger.equals(0) ) {
-						msgHead = Language.translate("Fehler: Port");
-						msgText = Language.translate("Der Port muss einem Wert ungleich 0 entsprechen!");	
-						JOptionPane.showMessageDialog( this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
-						return true;
-					}
-					// --- Testing the Port 4 MTP ---------------------------
-					if ( testPort4MTPAsInteger.equals(0) ) {
-						msgHead = Language.translate("Fehler: Port4MTP ");
-						msgText = Language.translate("Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!");	
-						JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
-						return true;
-					}
+			// --- Parse the Port configuration -------------------------
+			String testPortAsString = this.jTextFieldMasterPort.getText().trim();
+			if (testPortAsString==null || testPortAsString.equals("")==true) {
+				this.jTextFieldMasterPort.setText("0");
+				testPortAsString = "0";
+			}
+			int testPortAsInteger = Integer.parseInt( testPortAsString );
+					
+			String  testPort4MTPAsString = this.jTextFieldMasterPort4MTP.getText().trim();
+			if (testPort4MTPAsString==null || testPort4MTPAsString.equals("")==true) {
+				this.jTextFieldMasterPort4MTP.setText("0");
+				testPort4MTPAsString = "0";
+			}
+			int testPort4MTPAsInteger = Integer.parseInt( testPort4MTPAsString );
+
+			// --- Testing the URL ----------------------------------
+			if ( testURL.contains(" ") ) {
+				msgHead = Language.translate("Fehler: URL oder IP !");
+				msgText = Language.translate("Die URL oder IP enthält unzulässige Zeichen!");	
+				JOptionPane.showMessageDialog( this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			// --- Try to resolve server address --------------------
+			if (isValidServerAddress(testURL)==false) {
+				msgHead = Language.translate("Fehler: URL oder IP !");
+				msgText = Language.translate("Die URL oder IP konnte nicht aufgelöst werden!") + "\n";
+				msgText += Language.translate("Soll die aktuelle Einstellung trotzdem übernommen werden?");
+				int answer = JOptionPane.showConfirmDialog( this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.YES_OPTION);
+				if (answer==JOptionPane.NO_OPTION) {
+					return true;
 				}
 			}
-
+			// --- Testing the Port ---------------------------------
+			if ( testPortAsInteger==0 ) {
+				msgHead = Language.translate("Fehler: Port");
+				msgText = Language.translate("Der Port muss einem Wert ungleich 0 entsprechen!");	
+				JOptionPane.showMessageDialog( this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			// --- Testing the Port 4 MTP ---------------------------
+			if ( testPort4MTPAsInteger==0 ) {
+				msgHead = Language.translate("Fehler: Port für MTP ");
+				msgText = Language.translate("Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!");	
+				JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			
 		}
 		return err;
 	}
@@ -1601,7 +1641,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			MsgText += Language.translate("Progamm umschalten auf") + " '" + executionModeTextNew + "':" + newLine; 	
 			MsgText += Language.translate("Möchten Sie Agent.GUI nun umschalten und neu starten ?");
 
-			Integer MsgAnswer = JOptionPane.showConfirmDialog( this.optionDialog.getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
+			Integer MsgAnswer = JOptionPane.showConfirmDialog(this.optionDialog, MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
 			if (MsgAnswer == JOptionPane.NO_OPTION) {
 				return;
 			}

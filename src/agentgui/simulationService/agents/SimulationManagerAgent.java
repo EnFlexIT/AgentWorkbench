@@ -194,7 +194,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	 *
 	 * @return the initial environment model
 	 */
-	protected EnvironmentModel getEnvironmentModelFromSetup(){
+	public EnvironmentModel getEnvironmentModelFromSetup(){
 		
 		EnvironmentModel envModel = null;
 		Project currProject = Application.getProjectFocused();
@@ -220,7 +220,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	/**
 	 * This method has to be called if the next simulation step can be executed.
 	 */
-	protected void doNextSimulationStep() {
+	public void doNextSimulationStep() {
 		this.simBehaviour.restart();
 	}
 	
@@ -230,7 +230,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * @param answersExpected the expected number answers from the involved {@link SimulationAgent}'s 
 	 * @throws ServiceException the ServiceException
 	 */
-	protected void stepSimulation(int answersExpected) throws ServiceException {
+	public void stepSimulation(int answersExpected) throws ServiceException {
 		simHelper.stepSimulation(this.getEnvironmentModel(), answersExpected);
 	}
 	
@@ -241,7 +241,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * @param answersExpected the expected number answers from the involved {@link SimulationAgent}'s
 	 * @throws ServiceException the ServiceException
 	 */
-	protected void stepSimulation(EnvironmentModel environmentModel, int answersExpected) throws ServiceException {
+	public void stepSimulation(EnvironmentModel environmentModel, int answersExpected) throws ServiceException {
 		this.setEnvironmentModel(environmentModel);
 		simHelper.stepSimulation(this.getEnvironmentModel(), answersExpected);
 	}
@@ -250,7 +250,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * Resets the answers of the agents in the simulation service to an empty Hashtable.
 	 * @throws ServiceException ServiceException
 	 */
-	protected void resetEnvironmentInstanceNextParts() throws ServiceException {
+	public void resetEnvironmentInstanceNextParts() throws ServiceException {
 		simHelper.resetEnvironmentInstanceNextParts();
 	}
 	
@@ -318,7 +318,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * @param notification the notification
 	 * @return true, if successful
 	 */
-	protected boolean sendAgentNotification(AID receiverAID, Object notification) {
+	public boolean sendAgentNotification(AID receiverAID, Object notification) {
 		boolean send = false;
 		EnvironmentNotification myNotification = new EnvironmentNotification(this.getAID(), true, notification);
 		try {
@@ -332,7 +332,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	/**
 	 * Notify all AbstractDisplayAgents about environment changes by using the SimulationService.
 	 */
-	protected void sendDisplayAgentNotificationUpdateEnvironmentModel() {
+	public void sendDisplayAgentNotificationUpdateEnvironmentModel() {
 		try {
 			simHelper.displayAgentSetEnvironmentModel(this.getEnvironmentModel());
 		} catch (ServiceException e) {
@@ -343,7 +343,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * Notify display agents about environment changes with concrete messages.
 	 * @param displayAgentNotification the display agent message
 	 */
-	protected void sendDisplayAgentNotification(DisplayAgentNotification displayAgentNotification) {
+	public void sendDisplayAgentNotification(DisplayAgentNotification displayAgentNotification) {
 		try {
 			EnvironmentNotification notification = new EnvironmentNotification(getAID(), true, displayAgentNotification);
 			simHelper.displayAgentNotification(notification);
@@ -441,14 +441,14 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * Provides the environment model.
 	 * @return the environment model
 	 */
-	protected EnvironmentModel getEnvironmentModel() {
+	public EnvironmentModel getEnvironmentModel() {
 		return myEnvironmentModel;
 	}
 	/**
 	 * Sets the environment model.
 	 * @param environmentModel the new environment model
 	 */
-	protected void setEnvironmentModel(EnvironmentModel environmentModel) {
+	public void setEnvironmentModel(EnvironmentModel environmentModel) {
 		this.myEnvironmentModel = environmentModel;
 	}
 	
@@ -456,14 +456,14 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * Provides the current time model.
 	 * @return the time model
 	 */
-	protected TimeModel getTimeModel() {
+	public TimeModel getTimeModel() {
 		return this.getEnvironmentModel().getTimeModel();
 	}
 	/**
 	 * Sets the current time model.
 	 * @param timeModel the new time model
 	 */
-	protected void setTimeModel(TimeModel timeModel) {
+	public void setTimeModel(TimeModel timeModel) {
 		this.getEnvironmentModel().setTimeModel(timeModel);
 	}
 	
@@ -471,14 +471,14 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * Returns the current abstract environment model.
 	 * @return the abstract environment
 	 */
-	protected AbstractEnvironmentModel getAbstractEnvironment() {
+	public AbstractEnvironmentModel getAbstractEnvironment() {
 		return this.getEnvironmentModel().getAbstractEnvironment();
 	}
 	/**
 	 * Sets the abstract environment.
 	 * @param abstractEnvironment the new abstract environment
 	 */
-	protected void setAbstractEnvironment(AbstractEnvironmentModel abstractEnvironment) {
+	public void setAbstractEnvironment(AbstractEnvironmentModel abstractEnvironment) {
 		this.getEnvironmentModel().setAbstractEnvironment(abstractEnvironment);
 	}
 
@@ -486,14 +486,14 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * Returns the current display environment.
 	 * @return the display environment
 	 */
-	protected DisplaytEnvironmentModel getDisplayEnvironment() {
+	public DisplaytEnvironmentModel getDisplayEnvironment() {
 		return this.getEnvironmentModel().getDisplayEnvironment();
 	}
 	/**
 	 * Sets the display environment.
 	 * @param displayEnvironment the new display environment
 	 */
-	protected void setDisplayEnvironment(DisplaytEnvironmentModel displayEnvironment) {
+	public void setDisplayEnvironment(DisplaytEnvironmentModel displayEnvironment) {
 		this.getEnvironmentModel().setDisplayEnvironment(displayEnvironment);
 	}
 
@@ -501,14 +501,14 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * Gets the agent answers.
 	 * @return the agent answers
 	 */
-	protected Hashtable<AID, Object> getAgentAnswers() {
+	public Hashtable<AID, Object> getAgentAnswers() {
 		return agentAnswers;
 	}
 	/**
 	 * Sets the agent answers.
 	 * @param agentAnswers the agent answers
 	 */
-	protected void setAgentAnswers(Hashtable<AID, Object> agentAnswers) {
+	public void setAgentAnswers(Hashtable<AID, Object> agentAnswers) {
 		this.agentAnswers = agentAnswers;
 	}
 	

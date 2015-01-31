@@ -44,7 +44,7 @@ import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import agentgui.core.application.Application;
-import agentgui.core.network.JadeUrlChecker;
+import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.update.AgentGuiUpdater;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
@@ -118,9 +118,11 @@ public class ServerSlaveAgent extends Agent {
 	@Override
 	protected void setup() {
 		super.setup();
-		// --- Register Codec and Ontology ----------------
-		getContentManager().registerLanguage(codec);
-		getContentManager().registerOntology(ontology);
+		
+		System.out.println("Starting Background System-Agent '" + this.getName() + "'");
+		
+		this.getContentManager().registerLanguage(codec);
+		this.getContentManager().registerOntology(ontology);
 
 		LoadServiceHelper simHelper = null;
 		try {
@@ -142,14 +144,14 @@ public class ServerSlaveAgent extends Agent {
 		}
 		
 		// --- Define Main-Platform-Info ------------------
-		JadeUrlChecker myURL = Application.getJadePlatform().getJadeUrlChecker();
+		JadeUrlConfiguration myURL = Application.getGlobalInfo().getJadeUrlConfigurationForMaster();
 		mainPlatform.setIp(myURL.getHostIP());
 		mainPlatform.setUrl(myURL.getHostName());
 		mainPlatform.setPort(myURL.getPort());
-		mainPlatform.setHttp4mtp(myURL.getJADEurl4MTP());
+		mainPlatform.setHttp4mtp(myURL.getJadeURL4MTP());
 		
 		// --- Define Receiver of local Status-Info -------
-		mainPlatformAgent = new AID("server.master" + "@" + myURL.getJADEurl(), AID.ISGUID );
+		mainPlatformAgent = new AID("server.master" + "@" + myURL.getJadeURL(), AID.ISGUID );
 		mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
 		
 		// --- Set myTime ---------------------------------
@@ -162,7 +164,7 @@ public class ServerSlaveAgent extends Agent {
 		myRegistration.setSlaveOS(myOS);
 		myRegistration.setSlaveVersion(myVersion);
 		this.sendMessage2MainServer(myRegistration);
-
+		
 		// --- Add Main-Behaiviours -----------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
 		parBehaiv.addSubBehaviour( new MessageReceiveBehaviour() );

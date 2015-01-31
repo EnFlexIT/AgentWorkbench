@@ -47,12 +47,12 @@ import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.environment.EnvironmentTypes;
-import agentgui.core.jade.Platform;
-import agentgui.core.network.JadeUrlChecker;
+import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.ontologies.gui.OntologyClassVisualisation;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
+
 
 /**
  * This class is for constant values or variables, which can
@@ -80,7 +80,8 @@ public class GlobalInfo {
 	
 	// --- JADE-Variables ---------------------------------------------------
 	private Integer localeJadeLocalPort = 1099;
-	
+	private JadeUrlConfiguration urlConfiguraionForMaster;
+				
 	// --- Variables --------------------------------------------------------
 	public final static String ExecutedOverIDE = "IDE";
 	public final static String ExecutedOverAgentGuiJar = "Executable";
@@ -112,6 +113,7 @@ public class GlobalInfo {
 	
 	// --- Known OntologyClassVisualisation's of Agent.GUI ------------------
 	private Vector<OntologyClassVisualisation> knownOntologyClassVisualisation = null;
+	
 	
 	// --- File-Properties --------------------------------------------------
 	private ExecutionMode fileExecutionMode = null;
@@ -308,22 +310,24 @@ public class GlobalInfo {
 			// ------------------------------------------------------
 			// --- Does JADE run? -----------------------------------
 			// ------------------------------------------------------			
-			Platform platform = Application.getJadePlatform();
-			AgentContainer mainContainer = platform.jadeGetMainContainer();
+			AgentContainer mainContainer = Application.getJadePlatform().jadeGetMainContainer();
 			if (mainContainer!=null) {
+				// --------------------------------------------------
 				// --- JADE is running ------------------------------
-				JadeUrlChecker urlConfigured = new JadeUrlChecker(this.getServerMasterURL());
-				urlConfigured.setPort(this.getServerMasterPort());
-				urlConfigured.setPort4MTP(this.getServerMasterPort4MTP());
-				
-				JadeUrlChecker urlCurrent = new JadeUrlChecker(mainContainer.getPlatformName());	
-				if (urlCurrent.getHostIP().equalsIgnoreCase(urlConfigured.getHostIP()) && urlCurrent.getPort().equals(urlConfigured.getPort()) ) {
-					// --- Running as Server [Master] ---------------
-					execMode = ExecutionMode.SERVER_MASTER;
-				} else {
-					// --- Running as Server [Slave] ----------------
-					execMode = ExecutionMode.SERVER_SLAVE;
+				// --------------------------------------------------
+				// --- Default: Running as Server [Slave] -----------
+				execMode = ExecutionMode.SERVER_SLAVE;
+
+				JadeUrlConfiguration masterConfigured = this.getJadeUrlConfigurationForMaster();
+				if (masterConfigured.isLocalhost()==true) {
+					// --- Compare to MainContainer address ---------
+					JadeUrlConfiguration platformRunning = new JadeUrlConfiguration(mainContainer.getPlatformName());
+					if (platformRunning.isEqualJadePlatform(masterConfigured)==true) {
+						// --- Running as Server [Master] -----------
+						execMode = ExecutionMode.SERVER_MASTER;
+					}
 				}
+				
 			}
 			// ------------------------------------------------------
 		}
@@ -777,6 +781,27 @@ public class GlobalInfo {
 	}
 	
 	/**
+	 * Sets the {@link JadeUrlConfiguration} for the server.master.
+	 * @param newJadeUrlConfiguration the new {@link JadeUrlConfiguration} for master
+	 */
+	public void setJadeUrlConfigurationForMaster(JadeUrlConfiguration newJadeUrlConfiguration) {
+		this.urlConfiguraionForMaster = newJadeUrlConfiguration;
+	}
+	/**
+	 * Returns the {@link JadeUrlConfiguration} for the server.master.
+	 * @return the JadeUrlConfiguration
+	 */
+	public JadeUrlConfiguration getJadeUrlConfigurationForMaster() {
+		if (urlConfiguraionForMaster==null) {
+			// --- Define the Address of the Main-Platform --------------
+			urlConfiguraionForMaster = new JadeUrlConfiguration(this.getServerMasterURL());
+			urlConfiguraionForMaster.setPort(this.getServerMasterPort());
+			urlConfiguraionForMaster.setPort4MTP(this.getServerMasterPort4MTP());
+		}
+		return urlConfiguraionForMaster;
+	}
+	
+	/**
 	 * This method return the default platform configuration for JADE
 	 * @return instance of class 'PlatformJadeConfig', which holds the configuration of JADE
 	 * @see PlatformJadeConfig
@@ -805,21 +830,10 @@ public class GlobalInfo {
 	 * @see Profile
 	 */
 	public Profile getJadeDefaultProfile() {
-		PlatformJadeConfig jadeConfig = getJadeDefaultPlatformConfig();
+		PlatformJadeConfig jadeConfig = this.getJadeDefaultPlatformConfig();
 		return jadeConfig.getNewInstanceOfProfilImpl();
 	}
 
-	// ---------------------------------------------------------
-	// --- Laufzeitinformationen zu JADE -----------------------
-	// ---------------------------------------------------------
-	/**
-	 * Returns the JADE version
-	 * @return String, which contains the version of JADE
-	 */
-	public String getJadeVersion(){
-		return jade.core.Runtime.getVersion();
-	}
-	
 	// ---------------------------------------------------------
 	// --- Farbvariablen ---------------------------------------
 	// ---------------------------------------------------------
@@ -972,6 +986,7 @@ public class GlobalInfo {
 	 */
 	public void setServerMasterURL(String serverMasterURL) {
 		this.filePropServerMasterURL = serverMasterURL;
+		this.setJadeUrlConfigurationForMaster(null);
 	}
 	/**
 	 * Here the URL or IP of the server.master can be get
@@ -988,6 +1003,7 @@ public class GlobalInfo {
 	 */
 	public void setServerMasterPort(Integer serverMasterPort) {
 		this.filePropServerMasterPort = serverMasterPort;
+		this.setJadeUrlConfigurationForMaster(null);
 	}
 	/**
 	 * This method returns the port on which the server.master can be reached 
@@ -1004,6 +1020,7 @@ public class GlobalInfo {
 	 */
 	public void setServerMasterPort4MTP(Integer serverMasterPort4MTP) {
 		this.filePropServerMasterPort4MTP = serverMasterPort4MTP;
+		this.setJadeUrlConfigurationForMaster(null);
 	}
 	/**
 	 * Returns the MTP port of the server.master 

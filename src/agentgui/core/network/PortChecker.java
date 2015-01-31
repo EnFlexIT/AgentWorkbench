@@ -28,9 +28,11 @@
  */
 package agentgui.core.network;
 
+
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  * This class can be used in order to evaluate the next free or unused port
@@ -41,19 +43,42 @@ import java.net.ServerSocket;
 public class PortChecker {
 
 	private int freePort;
+
 	
 	/**
-	 * Constructor of this class.
-	 *
+	 * Instantiates a new port checker.
 	 * @param portSearchStart the port search start
 	 */
 	public PortChecker(int portSearchStart){
+		this.checkPort(portSearchStart, null);
+	}
+	/**
+	 * Instantiates a new port checker.
+	 * @param portSearchStart the port search start
+	 * @param checkURLorIP the URL or the IP to check
+	 */
+	public PortChecker(int portSearchStart, String checkURLorIP){
+		this.checkPort(portSearchStart, checkURLorIP);
+	}
+	
+	/**
+	 * Checks for the free port starting from specified one.
+	 * @param portSearchStart the port search start
+	 */
+	private void checkPort(int portSearchStart, String checkURLorIP) {
 		
 		int currPort = portSearchStart;
 		while (currPort < portSearchStart+30) {
-			if (this.isFreePort(currPort)==true){
-				freePort = currPort;
-				break;
+			if (checkURLorIP==null) {
+				if (this.isFreePort(currPort)==true){
+					this.freePort = currPort;
+					break;
+				}
+			} else {
+				if (this.isFreePort(currPort)==true && this.isFreePortHTTP(currPort, checkURLorIP)==true) {
+					this.freePort = currPort;
+					break;
+				}
 			}
 			currPort++;
 		}
@@ -61,7 +86,6 @@ public class PortChecker {
 	
 	/**
 	 * Provides the next free port number.
-	 *
 	 * @return next free port number
 	 */
 	public int getFreePort() {
@@ -99,6 +123,29 @@ public class PortChecker {
 			}
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * Checks if a free http was specified.
+	 *
+	 * @param port the port
+	 * @param checkURLorIP the HTTP or HTTPS address
+	 * @return true, if is free port http
+	 */
+	public boolean isFreePortHTTP(int port, String checkURLorIP) {
+
+		boolean isFreeHTTPport = false;
+		try {
+			Socket s = new Socket(checkURLorIP, port);
+			s.close();
+			isFreeHTTPport = false;
+		    
+		} catch (IOException ioex) {
+//			ioex.printStackTrace();
+			isFreeHTTPport = true;
+		}
+		return isFreeHTTPport;
 	}
 	
 }

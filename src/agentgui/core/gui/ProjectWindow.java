@@ -109,10 +109,11 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	private MaximizedTab maxTab = null;
 	private ProjectWindowTab maxProjectWindowTab = null;
 	
+	
 	/**
-	 * This is the default constructor.
+	 * This is the default constructor for a new project window.
 	 *
-	 * @param project the current Project instance
+	 * @param project the current {@link Project} 
 	 */
 	public ProjectWindow(Project project) {
 		
@@ -177,29 +178,26 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			jSplitPaneProjectView.setOneTouchExpandable(true);
 			jSplitPaneProjectView.setDividerLocation(210);
 			jSplitPaneProjectView.setDividerSize(10);			
-			jSplitPaneProjectView.setLeftComponent(getJScrollPane());			
-			jSplitPaneProjectView.setRightComponent( getProjectViewRightTabs() );
+			jSplitPaneProjectView.setLeftComponent(this.getJScrollPane());			
+			jSplitPaneProjectView.setRightComponent(this.getProjectViewRightTabs());
 		}
 		return jSplitPaneProjectView;
 	}
 	
 	/**
 	 * This method initializes jScrollPane.
-	 *
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
 			jScrollPane.setBorder(null);
-			jScrollPane.setViewportView(getProjectTree());
+			jScrollPane.setViewportView(this.getProjectTree());
 		}
 		return jScrollPane;
 	}
-	
 	/**
 	 * This method initializes ProjectTree.
-	 *
 	 * @return javax.swing.JTree
 	 */
 	private JTree getProjectTree() {
@@ -208,7 +206,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			projectTree.setName("ProjectTree");
 			projectTree.setShowsRootHandles(false);
 			projectTree.setRootVisible(true);
-			projectTree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
+			projectTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			// ------------------------------------------------------------------
 			// ------------------------------------------------------------------
 			projectTree.addTreeSelectionListener( new TreeSelectionListener() {
@@ -260,16 +258,14 @@ public class ProjectWindow extends JInternalFrame implements Observer {
     /**
 	 * Project tree expand2 level.
 	 *
-	 * @param Up2TreeLevel the up2 tree level
+	 * @param up2TreeLevel the up2 tree level
 	 * @param expand the expand
 	 */
-	public void projectTreeExpand2Level(Integer Up2TreeLevel, boolean expand ) {
-    	
-    	Integer CurrNodeLevel = 1;
-    	if ( Up2TreeLevel == null ) 
-    		Up2TreeLevel = 1000;
-
-    	projectTreeExpand(new TreePath(rootNode), expand, CurrNodeLevel, Up2TreeLevel);
+	public void projectTreeExpand2Level(Integer up2TreeLevel, boolean expand) {
+    	if (up2TreeLevel==null) {
+    		up2TreeLevel = 1000;
+    	}
+    	this.projectTreeExpand(new TreePath(rootNode), expand, 1, up2TreeLevel);
     }
 	
 	/**
@@ -277,20 +273,20 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	 *
 	 * @param parent the parent
 	 * @param expand the expand
-	 * @param CurrNodeLevel the curr node level
-	 * @param Up2TreeLevel the up2 tree level
+	 * @param currNodeLevel the current node level
+	 * @param up2TreeLevel the up2 tree level
 	 */
-	private void projectTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
+	private void projectTreeExpand(TreePath parent, boolean expand, Integer currNodeLevel, Integer up2TreeLevel) {
     
         TreeNode node = (TreeNode)parent.getLastPathComponent();
-        if (CurrNodeLevel >= Up2TreeLevel) {
+        if (currNodeLevel >= up2TreeLevel) {
         	return;
         }
         if (node.getChildCount() >= 0) {
             for ( @SuppressWarnings("rawtypes") Enumeration e=node.children(); e.hasMoreElements(); ) {
                 TreeNode n = (TreeNode) e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);
-                projectTreeExpand(path, expand, CurrNodeLevel+1, Up2TreeLevel);
+                projectTreeExpand(path, expand, currNodeLevel+1, up2TreeLevel);
             }
         }    
         // Expansion or collapse must be done bottom-up
@@ -527,20 +523,18 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		return null;
 	}
 	
-	/**
-	 * Get the notification of the ObjectModel.
-	 *
-	 * @param arg0 the arg0
-	 * @param OName the o name
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
-	public void update(Observable arg0, Object OName) {
+	@Override
+	public void update(Observable observable, Object updateObject) {
 		
-		String ObjectName = OName.toString();
-		if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectName ) ) {
-			rootNode.setUserObject( currProject.getProjectName() );
+		String ObjectName = updateObject.toString();
+		if (ObjectName.equalsIgnoreCase(Project.CHANGED_ProjectName)) {
+			rootNode.setUserObject(currProject.getProjectName());
 			projectTreeModel.nodeChanged(rootNode);
 			projectTree.repaint();
-			Application.setTitelAddition( currProject.getProjectName() );
+			Application.setTitelAddition(currProject.getProjectName());
 			
 		} else if (ObjectName.equals(Project.CHANGED_ProjectView)) {
 			this.setView();			
@@ -769,7 +763,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 				nodeArray.add(currNode);	
 			}
 		}
-		for (int i = nodeArray.size()-1; i > -1; i--) {
+		for (int i=nodeArray.size()-1; i>-1; i--) {
 			currNode = nodeArray.get(i);
 			ProjectWindowTab pwt = (ProjectWindowTab) currNode.getUserObject();
 			Component displayElement = pwt.getComponent();
@@ -792,7 +786,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			viewToSet = ProjectWindowTab.DISPLAY_4_DEVELOPER;
 		}
 		
-		// --- Exists a Panle for the current environment model? ---- 
+		// --- Exists a panel for the current environment model? ---- 
 		Class<? extends EnvironmentController> envController = this.currProject.getEnvironmentModelType().getEnvironmentControllerClass();
 		
 		// --- Remind the current selection -------------------------

@@ -78,7 +78,6 @@ import javax.swing.border.EtchedBorder;
  */
 public class ClassSelector extends JDialog {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	
 	private final String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
@@ -138,7 +137,7 @@ public class ClassSelector extends JDialog {
 		this.class2Search4CurrentValue = clazz2Search4CurrentValue;
 		this.class2Search4DefaultValue = clazz2Search4DefaultValue;
 		this.class2Search4Description = clazz2Search4Description;
-		this.allowNull = allowNull;
+		this.setAllowNull(allowNull);
 		this.initialize();
 		
 	}
@@ -162,7 +161,7 @@ public class ClassSelector extends JDialog {
 		this.class2Search4CurrentValue = clazz2Search4CurrentValue;
 		this.class2Search4DefaultValue = clazz2Search4DefaultValue;
 		this.class2Search4Description = clazz2Search4Description;
-		this.allowNull = allowNull;
+		this.setAllowNull(allowNull);
 		this.initialize();
 	}
 	
@@ -204,6 +203,25 @@ public class ClassSelector extends JDialog {
 		return class2Search4Description;
 	}
 	
+	/**
+	 * Checks if null or empty values are allowed.
+	 * @return the allowNull
+	 */
+	public boolean isAllowNull() {
+		return allowNull;
+	}
+	/**
+	 * Sets to allow null as a result or not.
+	 * @param allowNull the allowNull to set
+	 */
+	public void setAllowNull(boolean allowNull) {
+		this.allowNull = allowNull;
+		// --- Update view ------------------
+		this.getJButtonSetNull().setEnabled(this.allowNull);
+		this.getJButtonSetNull().validate();
+		this.getJButtonSetNull().repaint();
+	}
+
 	/**
 	 * Sets the canceled.
 	 * @param canceled the canceled to set
@@ -440,7 +458,7 @@ public class ClassSelector extends JDialog {
 	private JButton getJButtonSetNull() {
 		if (jButtonSetNull == null) {
 			jButtonSetNull = new JButton();
-			jButtonSetNull.setEnabled(this.allowNull);
+			jButtonSetNull.setEnabled(this.isAllowNull());
 			jButtonSetNull.setToolTipText(Language.translate("Löschen"));
 			jButtonSetNull.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonSetNull.setPreferredSize(new Dimension(45, 26));
@@ -491,7 +509,7 @@ public class ClassSelector extends JDialog {
 			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
 			this.setValidClass(true);
 			return true;
-		} else if (allowNull==true && className.equals("")) {
+		} else if (isAllowNull()==true && className.equals("")) {
 			jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
 			this.setValidClass(true);
 			return true;

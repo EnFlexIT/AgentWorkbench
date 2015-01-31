@@ -49,11 +49,10 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.wrapper.StaleProxyException;
 import agentgui.core.application.Application;
-import agentgui.core.network.JadeUrlChecker;
+import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.update.AgentGuiUpdater;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
-
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
 import agentgui.simulationService.ontology.AgentGuiVersion;
@@ -121,9 +120,11 @@ public class ServerClientAgent extends Agent {
 	protected void setup() {
 		super.setup();
 		
-		getContentManager().registerLanguage(codec);
-		getContentManager().registerOntology(ontology);
-		getContentManager().registerOntology(ontologyJadeMgmt);
+		System.out.println("Starting Background System-Agent '" + this.getName() + "'");
+		
+		this.getContentManager().registerLanguage(codec);
+		this.getContentManager().registerOntology(ontology);
+		this.getContentManager().registerOntology(ontologyJadeMgmt);
 		
 		LoadServiceHelper loadHelper = null;
 		try {
@@ -151,16 +152,16 @@ public class ServerClientAgent extends Agent {
 		}
 		
 		// --- Define Main-Platform-Info ------------------
-		JadeUrlChecker myURL = Application.getJadePlatform().getJadeUrlChecker();
+		JadeUrlConfiguration myURL = Application.getGlobalInfo().getJadeUrlConfigurationForMaster();
 		mainPlatform.setIp(myURL.getHostIP());
 		mainPlatform.setUrl(myURL.getHostName());
 		mainPlatform.setPort(myURL.getPort());
-		mainPlatform.setHttp4mtp(myURL.getJADEurl4MTP());
+		mainPlatform.setHttp4mtp(myURL.getJadeURL4MTP());
 		
 		// --- Define Receiver of local Status-Info -------
-		String jadeURL = myURL.getJADEurl();
+		String jadeURL = myURL.getJadeURL();
 		if (jadeURL!=null) {
-			mainPlatformAgent = new AID("server.master" + "@" + myURL.getJADEurl(), AID.ISGUID );
+			mainPlatformAgent = new AID("server.master" + "@" + myURL.getJadeURL(), AID.ISGUID );
 			mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());	
 		}		
 		

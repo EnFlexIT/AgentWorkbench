@@ -2,7 +2,6 @@ SOURCE_LANGUAGE;DE;EN;IT;ES;FR
 de;' ist bereits geöffnet!;' is already open!;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
-de;(Falls bereits verwendet, wird versucht den n�chst h�heren Port zu nutzen);;;;
 de;0 Sekunden;0 seconds;;;
 de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
 de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please enter a longer name for the setup.;;;
@@ -33,7 +32,6 @@ de;Agenten Start-Konfiguration;Agent start configuration
 de;Agenten auswählen;Select Agent;;;
 de;Agenten entfernen;Remove Agent
 de;Agenten hinzufügen;Add Agent
-de;Agenten hinzuf�gen;;;;
 de;Agenten in diesem Projekt;Agents in this project
 de;Agenten-Klasse;Agent class
 de;Agenten-Klassen;Agent classes
@@ -45,7 +43,6 @@ de;Agentenliste aktualisieren;Refresh agent list
 de;Aktualisiere Agenten-Liste...;Refreshing agent list
 de;Alle Eigenschaftsfenster schließen;Close all property windows;;;
 de;Alle Objekte löschen;Delete all objects
-de;Alle Objekte l�schen;;;;
 de;Alle Ontologien;All ontologies
 de;Alle Rechte vorbehalten.;All rights reserved.
 de;Allgemein;General;;;
@@ -62,17 +59,14 @@ de;Anzahl Container berechnen;Calculate number of container
 de;Anzahl Container;Number of container
 de;Anzeigesprache wechseln?;Change the GUI Language?
 de;Arbeitsspeicher für Remote-JVM;Memory for remote JVM;;;
-de;Arbeitsspeicher f�r Remote-JVM;;;;
 de;Arbeitsspeicher;Memory
 de;Argument;argument
 de;Art der Darstellung;Type of display;;;
 de;Ausführen als;Run as;;;
 de;Ausgewählte JADE-Services;Selected JADE Services;;;
 de;Ausgewählte Klasse übernehmen!;Take selected class!
-de;Ausgew�hlte JADE-Services;;;;
 de;Auslastungs-Grenzwerte manuell festlegen;Set load thresholds manually
 de;Auslastungs-Monitor öffnen;Open load monitor
-de;Auslastungs-Monitor �ffnen;;;;
 de;Auswahl - Agenten;Agent selection
 de;Auswahl - Ontologien;Ontology selection
 de;Auswahl Ontologien;Ontology selection
@@ -150,6 +144,8 @@ de;Der Agent ';The Agent '
 de;Der Agent 'rma' ist bereits geöffnet!;The agent 'rma' is already running
 de;Der Name '@' wird in der Startliste bereits verwendet !<br>Bitte wählen Sie einen anderen Namen für den Agenten.;The name '@' is already used in the start list!<br>Please select another name for the agent.
 de;Der Name;The name
+de;Der Port für die MTP-Adresse muss einem Wert ungleich 0 entsprechen!;The port for the MTP address must match a value other than 0!;;;
+de;Der Port muss einem Wert ungleich 0 entsprechen!;The port must match a value other than 0!;;;
 de;Der maximale Arbeitsspeicher muss größer als der initiale Arbeitsspeicher sein.;The maximum memory must be greater than the initial memory.;;;
 de;Deutsch;German
 de;Dicke;Thickness;;;
@@ -162,6 +158,7 @@ de;Die Google-Übersetzungsfunktion wurde deaktiviert!;Google's translation feat
 de;Die Höhe des exportieren Bildes;The height of the image to be exported;;;
 de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The class of the type 'OntologyClassVisualisation' was not found!;;;
 de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.<br><br>Möchten Sie die Konfiguration nun vornehmen?;The system configuration does not contain valid information about the<br>database server. The launch of JADE is therefore interrupted.<br> Please configure a valid MySQL database server and restart the Server.Master.<br><br> Would you like to configure this now?;;;
+de;Die URL oder IP konnte nicht aufgelöst werden!;The URL or IP could not be resolved!;;;
 de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
 de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
 de;Dienst;Service;;;
@@ -225,6 +222,9 @@ de;Fehler – '@';Error – '@'
 de;Fehler – Projektauswahl!;Error – Project selection!
 de;Fehler – Projektname!;Error – Project name
 de;Fehler – Projektverzeichnis!;Error – Project folder
+de;Fehler: Port für MTP;Error Port for MTP !;;;
+de;Fehler: Port;Error Port !;;;
+de;Fehler: URL oder IP !;Error in  URL or IP !;;;
 de;Fehler;Error
 de;Fehlerhafte Auswahl!;Incorrect selection!;;;
 de;Fehlerhafte Eingabe;Faulty input;;;
@@ -237,7 +237,6 @@ de;Folgende Plattform-Dienste starten:;Start the following platform-services:
 de;Format;Format;;;
 de;Formular;Form
 de;Französisch;French
-de;Franz�sisch;;;;
 de;Geräte-Agent;Embedded System Agent;;;
 de;Google - Übersetzung;Google translation;;;
 de;Google-Übersetzung verwenden;Use Google Translate;;;
@@ -260,7 +259,6 @@ de;Hintergrundsystem - Konfiguration;Background System - Configuration;;;
 de;Hintergrundsystem beim Programmstart automatisch initialisieren;Initialize background system at startup automatically;;;
 de;Hinweis;Hint;;;
 de;Hinzufügen;Add
-de;Hinzuf�gen;;;;
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
 de;Ihre Webseite:;Your Website:;;;
 de;Im Falle eines Updates, eigenes Wörterbuch beibehalten.;In case of an update, keep own dictionary.;;;
@@ -288,11 +286,8 @@ de;Jade wurde beendet!;JADE was stopped!
 de;Jahre;Years;;;
 de;Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteilung;Java class for the start of the simulation agents and the static load balancing
 de;Java-Klasse für die dynamische Lastverteilung;Java class for dynamic load balancing
-de;Java-Klasse f�r den Start der Simulations-Agenten und die statische Lastverteilung;;;;
-de;Java-Klasse f�r die dynamische Lastverteilung;;;;
 de;Kanten-Typ;Edge Type;;;
 de;Kein Projekt geöffnet !;No open project!
-de;Kein Projekt ge�ffnet !;;;;
 de;Kein SVG zugewiesen;No SVG assigned
 de;Kein vordefiniertes Umgebungsmodell verwenden;Don't use a predefined environment model;;;
 de;Keine Computer nutzen, die bereits einen Remote-Container beherbergen;Don't use computer that are already host a remote-container;;;
@@ -308,7 +303,6 @@ de;Keine;None
 de;Keiner;None
 de;Kind-Umgebungen;Child playgrounds
 de;Klasse auswählen;Select class
-de;Klasse ausw�hlen;;;;
 de;Klasse;Class
 de;Klassen bestimmen;Determine classes 
 de;Klassenangabe überprüfen;Check Class specification
@@ -340,7 +334,6 @@ de;Lade Umgebung aus;Loading environment from
 de;Lade Umgebungsdatei;Getting environment file
 de;Lastaufzeichnung mit dem Start von JADE beginnen;Record system load immediately on JADE startup;;;
 de;Letzte Änderungen;Recent changes;;;
-de;Letzte �nderungen;;;;
 de;Liniendicke;Line thickness;;;
 de;Load Monitor öffnen;Open load monitor
 de;Load Monitor;Load Monitor
@@ -417,7 +410,6 @@ de;OK;OK
 de;Objekt Entfernen;Remove object
 de;Objekt entfernen;Remove object
 de;Objekt hinzufügen;Add object
-de;Objekt hinzuf�gen;;;;
 de;Objekt löschen;Remove object
 de;Objekt nach oben;Move object up
 de;Objekt nach unten;Move object down
@@ -454,14 +446,11 @@ de;Projekt exportieren;Export Project
 de;Projekt exportieren?;Export project?
 de;Projekt importieren;Import Project
 de;Projekt löschen;Delete Project;;;
-de;Projekt l�schen;;;;
 de;Projekt schließen;Close Project
-de;Projekt schlie�en;;;;
 de;Projekt speichern;Save Project
 de;Projekt speichern?;Save Project?
 de;Projekt zum Export auswählen;Select a project to export
 de;Projekt öffnen;Open Project
-de;Projekt �ffnen;;;;
 de;Projekt-Agenten;Project-Agents
 de;Projekt-Desktop;Project Desktop
 de;Projekt-Info;Project info
@@ -473,7 +462,6 @@ de;Projekte;Projects
 de;Projekttitel;Project title
 de;Quell-Sprache;Source language;;;
 de;RMA (Remote Monitoring Agent) öffnen;Open RMA (Remote Monitoring Agent)
-de;RMA (Remote Monitoring Agent) �ffnen;;;;
 de;Raster verwenden;Use guide grid;;;
 de;Raster-Breite;Grid width;;;
 de;Rechts-Klick für weitere Optionen;Right-Click for more options
@@ -498,17 +486,13 @@ de;Server-Konfiguration;Server Configuration
 de;Server;Server
 de;Service entfernen;Remove Service;;;
 de;Service hinzufügen;Add Service;;;
-de;Service hinzuf�gen;;;;
 de;Setup Umbenennen;Rename Setup;;;
 de;Setup auswählen;Select Setup;;;
-de;Setup ausw�hlen;;;;
 de;Setup hinzufügen;Add Setup
-de;Setup hinzuf�gen;;;;
 de;Setup kopieren ...;Copy Setup ...
 de;Setup kopieren;Copy Setup
 de;Setup löschen;Delete Setup
 de;Setup löschen?;Delete Setup?
-de;Setup l�schen;;;;
 de;Setup umbenennen ...;Rename Setup ...
 de;Setup umbenennen;Rename Setup
 de;Setup-Datei nicht gefunden!;Could not find setup file!
@@ -524,6 +508,7 @@ de;Simulations-Visualisierung;Simulation-Visualization
 de;Simulationsumgebung;Simulation Environment
 de;Simulationszeit;Simulation time
 de;Sniffer-Agenten starten;Start Sniffer agent
+de;Soll die aktuelle Einstellung trotzdem übernommen werden?;Accept setting anyway?;;;
 de;Spalte entfernen;Remove Column;;;
 de;Spalte hinzufügen;Add Column;;;
 de;Spanisch;Spanish
@@ -546,7 +531,6 @@ de;Startargument definieren für Agent;Define start argument for agent;;;
 de;Starte Agent.GUI - Service;Start Agent.GUI - Service
 de;Starte Agent.GUI als:;Start Agent.GUI as:
 de;Starte JADE über Port-Nr.:;Start JADE via port no.:
-de;Starte JADE �ber Port-Nr.:;;;;
 de;Starte Messung der Systemauslastung;Start measuring the system load
 de;Starten als:;Start as:
 de;Starten als;Start as
@@ -562,13 +546,10 @@ de;Stunde;Hour;;;
 de;Stunden;Hours;;;
 de;Suche & Auswahl;Search & Selection;;;
 de;Suche löschen;Clear Search;;;
-de;Suche l�schen;;;;
 de;Suche nach Agenten beendet...;Search for agents finished...
 de;Suche nach der nächsten fehlenden Übersetzung (STRG+F);Search for the next missing translation (CTRL + F)
 de;Suche rückwärts;Search backwards;;;
-de;Suche r�ckw�rts;;;;
 de;Suche vorwärts;Search forwards;;;
-de;Suche vorw�rts;;;;
 de;Suche;Search
 de;Summe einblenden;Show Sum ;;;
 de;Summe;Sum;;;
@@ -592,7 +573,6 @@ de;Umgebungsdatei;Environment file
 de;Umgebungseigenschaften;Environment properties
 de;Umgebungskonfiguration;Environment Configuration
 de;Umgebungstyp bzw. -modell für Simulation und Visualisierung;Environment typ and model for simulation and visualization;;;
-de;Umgebungstyp bzw. -modell f�r Simulation und Visualisierung;;;;
 de;Umgebungstyp;Environment Type
 de;Umschalten von;Switch from;;;
 de;Unbekannt:;Unknown:
@@ -604,10 +584,8 @@ de;Updates automatisch installieren;Install updates automatically;;;
 de;Updates nicht automatisch herunterladen oder installieren;Do not automatically download or install ;;;
 de;Verbindungsknoten;Connection nodes;;;
 de;Verfügbare JADE-Services;Available JADE Services;;;
-de;Verf�gbare JADE-Services;;;;
 de;Vergrößern ...;Expand View ...
 de;Vergrößern;Zoom In
-de;Vergr��ern;;;;
 de;Verkleinern;Zoom out
 de;Verteilung + Grenzwerte;Distribution + Thresholds
 de;Verteilung;Distribution
@@ -676,11 +654,6 @@ de;Übersetzung speichern (STRG+S);Save translation (CTRL + S)
 de;Übersicht;Overview;;;
 de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
-de;�ber...;;;;
-de;�bersetzen ...;;;;
-de;�bersicht;;;;
-de;�bersichtsfenster ein- und ausblenden;;;;
-de;�ffne Projekt;;;;
 en;;Add Compressor ...;;;
 en;;Add Drive ...;;;
 en;;Add Electric Motor;;;
