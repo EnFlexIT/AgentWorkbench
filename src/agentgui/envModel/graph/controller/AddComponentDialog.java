@@ -83,21 +83,19 @@ import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;
-import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.GraphNodePairs;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkComponentFactory;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.prototypes.DistributionNode;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 import agentgui.envModel.graph.prototypes.Star3GraphElement;
-import agentgui.envModel.graph.prototypes.StarGraphElement;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 /**
@@ -395,7 +393,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		if (jScrollPane == null) {
 		    jScrollPane = new JScrollPane();
 		    jScrollPane.setPreferredSize(new Dimension(20, 200));
-		    jScrollPane.setViewportView(getJListComponentTypes());
+		    jScrollPane.setViewportView(this.getJListComponentTypes());
 		}
 		return jScrollPane;
     }
@@ -725,9 +723,9 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     	// --- Set the current domain ---------------------
     	String domain = this.localComponentTypeListElement.getDomain();
     	if (domain==null) {
-    		this.localDomainSetings = graphController.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
+    		this.localDomainSetings = this.graphController.getDomainSettings().get(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME);
     	} else {
-    		this.localDomainSetings = graphController.getDomainSettings().get(domain);	
+    		this.localDomainSetings = this.graphController.getDomainSettings().get(domain);	
     	}
     	// --- Set the above two values to the VisualizationViewer 
     	this.getVisualizationViewer().setComponentTypeListElement(this.localComponentTypeListElement);
@@ -751,161 +749,29 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     private void setPrototypePreview() {
 
     	String componentName = this.localComponentTypeListElement.getComponentName();
-    	String graphPrototype = this.localComponentTypeListElement.getComponentTypeSettings().getGraphPrototype();
     	
     	// --- Create the graph of the NetworkComponent -------------
-		this.localNetworkModel = null;
-    	this.localGraphElementPrototype = null;
-    	
-		try {
-		    Class<?> theClass = Class.forName(graphPrototype);
-		    this.localGraphElementPrototype = (GraphElementPrototype) theClass.newInstance();
-		} catch (ClassNotFoundException ex) {
-		    System.err.println("GraphElementPrototype class must be in class path.\n" + ex);
-		} catch (InstantiationException ex) {
-		    System.err.println("GraphElementPrototype class must be concrete.\n" + ex);
-		} catch (IllegalAccessException ex) {
-		    System.err.println("GraphElementPrototype class must have a no-arg constructor.\n" + ex);
-		}
-	
-		if (this.localGraphElementPrototype!=null) {
-		    
-			// --- Create a new local NetworkModel ------------------
-			this.localNetworkModel = new NetworkModel();
-			this.localNetworkModel.setGeneralGraphSettings4MAS(this.graphController.getNetworkModel().getGeneralGraphSettings4MAS().getCopy());
+    	this.localNetworkModel = NetworkComponentFactory.getNetworkModel4NetworkComponent(this.graphController.getNetworkModel().getGeneralGraphSettings4MAS(), componentName, this.getVisualizationViewer().getSize());
+    	this.localGraphElementPrototype = NetworkComponentFactory.getGraphElementPrototypeOfLastNetworkComponent();
+		if (this.localNetworkModel!=null && this.localGraphElementPrototype!=null) {
 
-			// --- Configure and add the prototype to the graph ----- 
-			this.localGraphElementPrototype.setId(this.localNetworkModel.nextNetworkComponentID());
-			this.localGraphElementPrototype.setType(componentName);
-			this.localGraphElementPrototype.addToGraph(this.localNetworkModel.getGraph());
-		    
-		    // --- Create the needed NetworkComponent --------------- 
-	    	ComponentTypeSettings cts = this.localComponentTypeListElement.getComponentTypeSettings();
-			HashSet<GraphElement> elements = new HashSet<GraphElement>();
-
-	    	// --- Get graph elements -------------------------------
-	    	Graph<GraphNode, GraphEdge> currGraph = this.localNetworkModel.getGraph();    	
-			for (GraphNode vertex : currGraph.getVertices()) {
-				elements.add(vertex);
-			}
-			for (GraphEdge edge : currGraph.getEdges()) {
-			    elements.add(edge);
-			}
-	    	
-			// --- Create a NetworkComponent for the local NetworkModel -
-			this.localNetworkModel.addNetworkComponent(new NetworkComponent(localGraphElementPrototype.getId(), componentName, graphPrototype, cts.getAgentClass(), elements, localGraphElementPrototype.isDirected()));
-		    
-			// --- Paint and Layout the graph -----------------------
-		    this.paintGraph();
-		    
-		    // --- Set current selected node ------------------------ 
+			// --- Set the graph to the layout ----------------------
+	    	Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(this.localNetworkModel.getGraph());
+			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
+				public Point2D transform(GraphNode node) {
+					return node.getPosition(); 
+				}
+			});
+			this.getVisualizationViewer().setGraphLayout(layout);
+			this.getVisualizationViewer().repaint();
+			
+			// --- Pick first GraphNode --------------------
+			this.pickFirstGraphNode();
 		    this.setSelectedGraphNode();
-	
+		    
 		}
-
     }
     
-    /**
-     * Repaints/Refreshes the visualisation viewer, with the given graph
-     * @param graph The new graph to be painted
-     */
-    private void paintGraph() {
-		
-    	boolean graphNodePositionsSet = false;
-    	int rasterSize = 50;
-    	double centerX = this.getVisualizationViewer().getCenter().getX();
-    	double centerY = this.getVisualizationViewer().getCenter().getY();
-    	
-    	Graph<GraphNode, GraphEdge> graph = this.localNetworkModel.getGraph();
-    	
-		// --- Define default layout ------------
-    	Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-			public Point2D transform(GraphNode node) {
-				return node.getPosition(); // The position is specified in the GraphNode instance
-			}
-		});
-		
-		// ------------------------------------------------
-		// --- Some special cases -------------------------
-		// ------------------------------------------------
-		if (graph.getEdgeCount()==0 && graph.getVertexCount()==1) {
-			// --------------------------------------------
-			// --- Case DistributionNodes -----------------
-			// --------------------------------------------
-			GraphNode node = graph.getVertices().iterator().next();
-			node.setPosition(new Point2D.Double(centerX, centerY));
-			graphNodePositionsSet = true;
-			
-		} else if (graph.getEdgeCount()==1) {
-			// --------------------------------------------
-			// --- Case directed Graph --------------------
-			// --------------------------------------------
-			GraphEdge edge = graph.getEdges().iterator().next();
-			EdgeType edgeType = graph.getEdgeType(edge);
-			if (edgeType==EdgeType.DIRECTED) {
-			
-				GraphNode nodeSource = graph.getSource(edge);
-				GraphNode nodeDestin = graph.getDest(edge);
-				nodeSource.setPosition(new Point2D.Double(centerX-rasterSize, centerY));
-				nodeDestin.setPosition(new Point2D.Double(centerX+rasterSize, centerY));
-				graphNodePositionsSet = true;
-			}
-			
-		} 
-		
-		if (this.localGraphElementPrototype instanceof StarGraphElement) {
-			// ----------------------------------
-			// --- Case StarGraphElement --------
-			// ----------------------------------
-			int nNodes = graph.getVertices().size();
-			double angle = 0;
-			double angleStep = 0;
-			if ((nNodes-1)<=4) {
-				angleStep = 2 * Math.PI / 4;
-			} else {
-				angleStep = 2 * Math.PI / (nNodes-1);
-			}
-			
-			for (GraphNode node : graph.getVertices()) {
-				int nEdges = graph.getIncidentEdges(node).size();
-				
-				if (nEdges==nNodes-1) {
-					node.setPosition(new Point2D.Double(centerX, centerY));
-				} else {
-					// --- outer Node found -----
-					double x = centerX + rasterSize * Math.cos(angle);
-					double y = centerY + rasterSize * Math.sin(angle);
-					node.setPosition(new Point2D.Double(x, y));
-					angle += angleStep;
-				}
-			}
-			graphNodePositionsSet = true;
-		}
-		
-		if (graphNodePositionsSet==false) {
-			// --- Distribute the GraphNodes in a cycle ---
-			double angle = 0;
-			double angleStep = 2 * Math.PI / graph.getVertices().size();
-			for (GraphNode graphNode : graph.getVertices()) {
-			
-				double x = centerX + rasterSize * Math.cos(angle); 
-				double y = centerY + rasterSize * Math.sin(angle);
-				
-				Point2D position = new Point2D.Double(x, y);
-				graphNode.setPosition(position);
-				angle+=angleStep;
-			}
-			graphNodePositionsSet = true;
-		}
-		
-		// --------------------------------------
-		// --- Set the graph to the layout ------
-		this.getVisualizationViewer().setGraphLayout(layout);
-		this.getVisualizationViewer().repaint();
-		this.pickFirstGraphNode();
-    }
-
     /**
      * Picks the first graph node.
      */

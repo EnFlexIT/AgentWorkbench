@@ -80,12 +80,15 @@ public class NetworkComponent implements Serializable {
 	@Deprecated
 	public NetworkComponent() {
 	}
+	
 	/**
 	 * Instantiates a new network component.
-	 * 
+	 *
 	 * @param id the id
 	 * @param type the type
 	 * @param prototypeClassName the prototype class name
+	 * @param agentClassName the agent class name
+	 * @param graphElements the graph elements
 	 * @param directed the directed
 	 */
 	public NetworkComponent(String id, String type, String prototypeClassName, String agentClassName, HashSet<GraphElement> graphElements, boolean directed ) {
