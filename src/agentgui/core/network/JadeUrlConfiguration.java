@@ -68,8 +68,13 @@ public class JadeUrlConfiguration {
 	public JadeUrlConfiguration(String urlOrIPtoCheck) {
 				
 		try {
-			this.currURLorIP = this.filterPort(urlOrIPtoCheck);
-			this.currInetAddress = InetAddress.getByName(currURLorIP);
+			if (urlOrIPtoCheck==null || urlOrIPtoCheck.trim().equals("")) {
+				this.currURLorIP = InetAddress.getLocalHost().getCanonicalHostName();
+				this.currInetAddress = InetAddress.getLocalHost();
+			} else {
+				this.currURLorIP = this.filterPort(urlOrIPtoCheck);
+				this.currInetAddress = InetAddress.getByName(currURLorIP);
+			}
 			this.errors=false;
 					
 		} catch (UnknownHostException err) {
