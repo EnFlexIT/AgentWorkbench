@@ -359,7 +359,7 @@ public class ServerMasterAgent extends Agent {
 							this.prepareForClientOrSlaveUpdate(msg);
 						}
 						
-					} else if ( agentAction instanceof ClientRegister ) {
+					} else if (agentAction instanceof ClientRegister) {
 						
 						ClientRegister cr = (ClientRegister) agentAction;						
 						PlatformAddress plAdd = cr.getClientAddress();
@@ -520,7 +520,9 @@ public class ServerMasterAgent extends Agent {
 				
 			} else {
 				// --- Cleanup update directory -------------------------------
-				this.cleanUpUpdateFolder(localUpdateDirFile, null);
+				if (localUpdateDirFile.exists()) {
+					this.cleanUpUpdateFolder(localUpdateDirFile, null);
+				}
 				
 			}
 			return null;
@@ -535,7 +537,8 @@ public class ServerMasterAgent extends Agent {
 		private void cleanUpUpdateFolder(File file, Vector<File> exceptFiles) {
 			if (file==null) return;
 			File[] files = file.listFiles();
-			for (int i = 0; i < files.length; i++) {
+			if (files==null) return;
+			for (int i=0; i < files.length; i++) {
 				if (exceptFiles==null) {
 					this.deleteFileOrFolder(files[i]);	
 					

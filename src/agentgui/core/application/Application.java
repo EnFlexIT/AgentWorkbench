@@ -666,7 +666,17 @@ public class Application {
 	 */
 	public static void showOptionDialog(String focusOnTab) {
 		
-		if (options!=null) return;
+		if (options!=null) {
+			if (options.isVisible()==true) {
+				// --- Set focus again ----------
+				options.requestFocus();
+				return;
+			} else {
+				// --- dispose it first --------- 
+				options.dispose();
+				options = null;
+			}
+		}
 		
 		if (isRunningAsServer()==true) {
 			options = new OptionDialog(null);
@@ -678,7 +688,9 @@ public class Application {
 		}
 		options.setVisible(true);
 		// - - - - - - - - - - - - - - - - - - - -
-		options.dispose();
+		if (options!=null) {
+			options.dispose();
+		}
 		options = null;
 		
 	}

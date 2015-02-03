@@ -1561,11 +1561,22 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		// --------------------------------------------------------------
 		// --- Error Check for URL and Ports ----------------------------
 		// --------------------------------------------------------------
-		String testURL = this.jTextFieldMasterURL.getText().trim();
+		String testURL = this.jTextFieldMasterURL.getText();
+		if (testURL!=null) {
+			testURL.trim();
+		}
+		
+		boolean checkJadeSettings = true;
+		if (this.executionModeNew==ExecutionMode.SERVER ) {
+			checkJadeSettings = true;
+		} else {
+			checkJadeSettings = (testURL!=null && testURL.equalsIgnoreCase("")==false);
+		}
+		
 		// --- Testing URL and Port -------------------------------------
-		if ( testURL!=null && testURL.equalsIgnoreCase("")==false ) {
+		if (checkJadeSettings==true) {
 
-			// --- Parse the Port configuration -------------------------
+			// --- Prepare for tests: Parse the Port configuration ------
 			String testPortAsString = this.jTextFieldMasterPort.getText().trim();
 			if (testPortAsString==null || testPortAsString.equals("")==true) {
 				this.jTextFieldMasterPort.setText("0");
@@ -1579,8 +1590,16 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				testPort4MTPAsString = "0";
 			}
 			int testPort4MTPAsInteger = Integer.parseInt( testPort4MTPAsString );
-
-			// --- Testing the URL ----------------------------------
+			
+			
+			// --- Test URL for null value ------------------------------
+			if ( testURL==null || testURL.equals("")==true) {
+				msgHead = Language.translate("Fehler: URL oder IP !");
+				msgText = Language.translate("Bitte geben Sie die URL oder IP des Hauptservers an!");	
+				JOptionPane.showMessageDialog( this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+			// --- Test URL for blanks ----------------------------------
 			if ( testURL.contains(" ") ) {
 				msgHead = Language.translate("Fehler: URL oder IP !");
 				msgText = Language.translate("Die URL oder IP enthält unzulässige Zeichen!");	
@@ -1739,6 +1758,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			}
 			// --- Restart ------------------------------------------
 			Application.startAgentGUI();
+			
 		}
 	}
 	

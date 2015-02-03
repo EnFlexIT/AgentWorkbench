@@ -173,7 +173,7 @@ public class VersionInfo extends Properties {
 	public Date getVersionDate() {
 		Date date=null;
 		try {
-			date = new SimpleDateFormat("yyyyMMddhhmm").parse(this.getProperty("version.date"));
+			date = new SimpleDateFormat("yyyyMMddHHmm").parse(this.getProperty("version.date"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
