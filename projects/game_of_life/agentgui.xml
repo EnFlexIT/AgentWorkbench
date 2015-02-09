@@ -58,10 +58,10 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>0032 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>0512 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
-    <downloadResources>http://Pandora:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
-    <downloadResources>http://Pandora:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
+    <downloadResources>http://132.252.61.210:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
+    <downloadResources>http://132.252.61.210:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>0242 Agents</key>

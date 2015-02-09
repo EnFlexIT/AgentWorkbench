@@ -214,9 +214,6 @@ public class SimulationService extends BaseService {
 	 */
 	public class SimulationServiceImpl implements SimulationServiceHelper {
 
-		/** The Constant serialVersionUID. */
-		private static final long serialVersionUID = 5741448121178289099L;
-
 		/* (non-Javadoc)
 		 * @see jade.core.ServiceHelper#init(jade.core.Agent)
 		 */
@@ -630,7 +627,12 @@ public class SimulationService extends BaseService {
 				myLogger.log(Logger.FINER, "Sending new EnvironmentModel + step simulation to " + sliceName);
 			}
 			try {
-				slice.stepSimulation(envModel, aSynchron);
+				if (slice.getNode().getName().equals(this.myContainer.getNodeDescriptor().getName())==true) {
+					environmentModel = envModel;
+					localServiceActuator.notifySensors(envModel, aSynchron);
+				} else {
+					slice.stepSimulation(envModel, aSynchron);
+				}
 			} catch (IMTPException err) {
 				myLogger.log(Logger.WARNING, "Error while sending the new EnvironmentModel + step simulation to slice " + sliceName, err);
 			}

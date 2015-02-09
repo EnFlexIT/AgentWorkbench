@@ -1071,8 +1071,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    	setBasicGraphGuiVisViewerActionOnTop(false);
 			}
 		};
-		Thread decoder = new Thread(decode);
-		decoder.setName("Base64-Decoder");
+		Thread decoder = new Thread(decode, "Base64-Decoder");
 		decoder.start();
 		
     }
@@ -1191,8 +1190,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    	
 			}
     	};
-		Thread encoder = new Thread(encode);
-		encoder.setName("Base64-Encoder");
+		Thread encoder = new Thread(encode, "Base64-Encoder");
 		encoder.start();
     	
     }

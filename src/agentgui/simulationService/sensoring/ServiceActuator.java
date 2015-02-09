@@ -155,16 +155,10 @@ public class ServiceActuator {
 	 * @param aSynchron true, if this should be don asynchronously
 	 */
 	public void notifySensors(final EnvironmentModel currEnvironmentModel, final boolean aSynchron) {
-		final ServiceSensor[] sensors = getServiceSensorArray();
-		Runnable notifier = new Runnable() {
-			@Override
-			public void run() {
-				for (int i = sensors.length-1; i>=0; i--) {
-					sensors[i].putEnvironmentModel(currEnvironmentModel, aSynchron);
-				}
-			}
-		};
-		notifier.run();		
+		ServiceSensor[] sensors = getServiceSensorArray();
+		for (int i = sensors.length-1; i>=0; i--) {
+			sensors[i].putEnvironmentModel(currEnvironmentModel, aSynchron);
+		}
 	}
 
 	/**
@@ -191,16 +185,10 @@ public class ServiceActuator {
 	 * to provide a faster(!) shut-down of the system.
 	 */
 	public void notifySensorAgentsDoDelete() {
-		final ServiceSensor[] sensors = getServiceSensorArray();
-		Runnable notifier = new Runnable() {
-			@Override
-			public void run() {
-				for (int i = sensors.length-1; i>=0; i--) {
-					sensors[i].doDelete();
-				}
-			}
-		};
-		notifier.run();		
+		ServiceSensor[] sensors = getServiceSensorArray();
+		for (int i = sensors.length-1; i>=0; i--) {
+			sensors[i].doDelete();
+		}
 	}
 	
 	/**
@@ -208,16 +196,10 @@ public class ServiceActuator {
 	 * @param isPauseSimulation the is pause simulation
 	 */
 	public void notifySensorPauseSimulation(final boolean isPauseSimulation) {
-		final ServiceSensor[] sensors = getServiceSensorArray();
-		Runnable notifier = new Runnable() {
-			@Override
-			public void run() {
-				for (int i = sensors.length-1; i>=0; i--) {
-					sensors[i].setPauseSimulation(isPauseSimulation);
-				}
-			}
-		};
-		notifier.run();		
+		ServiceSensor[] sensors = getServiceSensorArray();
+		for (int i = sensors.length-1; i>=0; i--) {
+			sensors[i].setPauseSimulation(isPauseSimulation);
+		}
 	}
 	
 	/**
@@ -226,22 +208,15 @@ public class ServiceActuator {
 	 */
 	public void setMigration(final Vector<AID_Container> transferAgents) {
 
-		Runnable notifier = new Runnable() {
-			@Override
-			public void run() {
-				// --- Filter these agents, which are located here ----------
-				Object[] arrTransfer = transferAgents.toArray();
-				for (int i = arrTransfer.length-1; i>=0; i--) {
-					AID aid = ((AID_Container)arrTransfer[i]).getAID();
-					Location newLocation = ((AID_Container)arrTransfer[i]).getNewLocation();
-					ServiceSensor sensorAgent = getSensor(aid); 
-					if (sensorAgent!=null) {
-						sensorAgent.putMigrationLocation(newLocation);
-					}
-				}
+		Object[] arrTransfer = transferAgents.toArray();
+		for (int i = arrTransfer.length-1; i>=0; i--) {
+			AID aid = ((AID_Container)arrTransfer[i]).getAID();
+			Location newLocation = ((AID_Container)arrTransfer[i]).getNewLocation();
+			ServiceSensor sensorAgent = this.getSensor(aid); 
+			if (sensorAgent!=null) {
+				sensorAgent.putMigrationLocation(newLocation);
 			}
-		};
-		notifier.run();	
+		}
 	}
 
 }
