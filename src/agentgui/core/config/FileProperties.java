@@ -130,7 +130,7 @@ public class FileProperties extends Properties {
 		
 		this.globalInfo = globalInfo;
 		this.versionInfo = this.globalInfo.getVersionInfo();
-		this.configFile = this.globalInfo.PathConfigFile(true);
+		this.configFile = this.globalInfo.getPathConfigFile(true);
 		
 		this.initialize();
 //		println4SysProps();

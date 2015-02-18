@@ -65,7 +65,7 @@ public class SystemLoadPanel extends JPanel {
 
 	private static final long serialVersionUID = 2L;
 	
-	private static final String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
+	private static final String PathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
 	private LoadMeasureAgent myAgent;
 	private boolean isRecording = false;

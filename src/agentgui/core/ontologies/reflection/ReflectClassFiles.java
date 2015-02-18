@@ -115,7 +115,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 					
 				} else {
 					// --- Points to a bin folder of an IDE -------------
-					searchPath = Application.getGlobalInfo().PathBaseDirIDE_BIN();
+					searchPath = Application.getGlobalInfo().getPathBaseDirIDE_BIN();
 					if (new File(searchPath).exists()==true) {
 						// --- The Agent.GUI IDE ------------------------
 						classList = getIDEClasses(searchPath, searchPath);

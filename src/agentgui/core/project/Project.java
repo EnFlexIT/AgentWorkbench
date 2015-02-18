@@ -832,7 +832,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public String getProjectFolderFullPath() {
 		if (projectFolderFullPath==null) {
-			projectFolderFullPath = Application.getGlobalInfo().PathProjects(true) + projectFolder + File.separator;
+			projectFolderFullPath = Application.getGlobalInfo().getPathProjects(true) + projectFolder + File.separator;
 		}
 		return projectFolderFullPath;
 	}
@@ -1102,7 +1102,7 @@ import agentgui.core.webserver.JarFileCreator;
 	private String retrievBinResourceFromPath(String resourcePath) {
 		
 		// --- Get Agent.GUI base directory and walk up two parent folders ---
-		File searchDir = new File(Application.getGlobalInfo().PathBaseDir());
+		File searchDir = new File(Application.getGlobalInfo().getPathBaseDir());
 		for (int i=0; i<2; i++) {
 			if (searchDir!=null) {
 				searchDir = searchDir.getParentFile();

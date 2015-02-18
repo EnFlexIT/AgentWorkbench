@@ -59,7 +59,7 @@ public abstract class ChartEditorJDialog extends JDialog implements ActionListen
 
 	private static final long serialVersionUID = 1820851101239120387L;
 	
-	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUI.png"));
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 	

@@ -99,7 +99,7 @@ public class ExitDeviceExecutionBehaviour extends TickerBehaviour {
 		String portNoString = platformName.substring(cut1, cut2);
 		
 		// --- Configure file location and name -----------
-		String agentGuiRoot = Application.getGlobalInfo().PathBaseDir();
+		String agentGuiRoot = Application.getGlobalInfo().getPathBaseDir();
 		String shutDownFile = ShutDownFileNameTemplate.replace("XXXX", portNoString);
 		this.shutDownFile = new File(agentGuiRoot + shutDownFile);
 		

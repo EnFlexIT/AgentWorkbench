@@ -67,7 +67,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 
 	private static final long serialVersionUID = 6748263753769300242L;
 	
-	final static String pathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
+	final static String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	private ImageIcon imageEnlarge =  new ImageIcon(getClass().getResource(pathImage + "MBFullScreen.png"));  //  @jve:decl-index=0:
 	
 	private OntologyVisualisationHelper ontologyVisualisationHelper = null;

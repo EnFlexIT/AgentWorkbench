@@ -132,9 +132,9 @@ public class AgentGuiUpdater extends Thread {
 		this.updateKeepDictionary = this.globalInfo.getUpdateKeepDictionary();
 		this.updateDateLastChecked = this.globalInfo.getUpdateDateLastChecked();
 		
-		this.localDownloadPath = this.globalInfo.PathDownloads(true);
-		this.localWebServerPath = this.globalInfo.PathWebServer(true);
-		this.localPropertiesPath = this.globalInfo.PathProperty(true);
+		this.localDownloadPath = this.globalInfo.getPathDownloads(true);
+		this.localWebServerPath = this.globalInfo.getPathWebServer(true);
+		this.localPropertiesPath = this.globalInfo.getPathProperty(true);
 		
 		this.latestVersionInfoFullPath = this.localDownloadPath + AgentGuiUpdater.UPDATE_VERSION_INFO_FILE;
 		
@@ -405,13 +405,13 @@ public class AgentGuiUpdater extends Thread {
 	 */
 	private boolean moveAgentGuiUpdaterJar() {
 		
-		String extractedFolder = globalInfo.PathDownloads(true) + this.localUpdateExtractedFolder;
+		String extractedFolder = globalInfo.getPathDownloads(true) + this.localUpdateExtractedFolder;
 		String updaterFilePath = extractedFolder + File.separator + this.globalInfo.getFileNameUpdater(false);
 		System.out.println("Trying to move file " + updaterFilePath);
 		File updaterFile = new File(updaterFilePath);
 		if (updaterFile.exists()==true) {
 			
-			String updaterRootFilePath = globalInfo.PathBaseDir();
+			String updaterRootFilePath = globalInfo.getPathBaseDir();
 			if (updaterRootFilePath.endsWith(File.separator)==false) {
 				updaterRootFilePath = updaterRootFilePath + File.separator;
 			}
@@ -482,7 +482,7 @@ public class AgentGuiUpdater extends Thread {
 			String[] arg = execute.split(" ");
 			ProcessBuilder proBui = new ProcessBuilder(arg);
 			proBui.redirectErrorStream(false);
-			proBui.directory(new File(this.globalInfo.PathBaseDir()));
+			proBui.directory(new File(this.globalInfo.getPathBaseDir()));
 			proBui.start();
 			
 		} catch (IOException e) {

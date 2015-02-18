@@ -74,7 +74,7 @@ public class ProjectResources extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 1L;
 	
-	final static String PathImage = Application.getGlobalInfo().PathImageIntern();
+	final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	private Project currProject = null;
 	
 	private JPanel jPanelSimulationEnvironment = null;

@@ -599,7 +599,7 @@ public class Application {
 				
 			case NONE:
 				// --- Start writing a LogFile --------------------------------
-				String logFileName = Application.getGlobalInfo().PathBaseDir() + "AgentGuiDeviceAgent.log";
+				String logFileName = Application.getGlobalInfo().getPathBaseDir() + "AgentGuiDeviceAgent.log";
 				createLogFileWriter(logFileName);
 				// --- Create some initial output -----------------------------
 				getGlobalInfo().getVersionInfo().printVersionInfo();
@@ -867,7 +867,7 @@ public class Application {
 	public static DownloadServer startDownloadServer() {
 		if (downloadServer==null) {
 			downloadServer = new DownloadServer();
-			downloadServer.setRoot(getGlobalInfo().PathWebServer(true));
+			downloadServer.setRoot(getGlobalInfo().getPathWebServer(true));
 			new Thread(downloadServer).start();
 		}
 		return downloadServer;

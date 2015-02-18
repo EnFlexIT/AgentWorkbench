@@ -63,7 +63,7 @@ import agentgui.core.project.Project;
 public class JadeSetup extends JPanel implements ActionListener, Observer {
 
 	private static final long serialVersionUID = -7016775471452161527L;
-	private final static String PathImage = Application.getGlobalInfo().PathImageIntern();
+	private final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	private Project currProject = null;
 	
 	private JLabel jLabelPort = null;

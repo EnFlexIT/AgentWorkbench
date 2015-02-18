@@ -176,7 +176,7 @@ public class DownloadServer implements HttpConstants, Runnable {
     	 
     	String pathSep = File.separator;
     	String sourceDirName = project.getProjectFolderFullPath();
-    	String destinDirName = Application.getGlobalInfo().PathWebServer(true) + project.getProjectFolder();    	
+    	String destinDirName = Application.getGlobalInfo().getPathWebServer(true) + project.getProjectFolder();    	
     	
     	File destinDir = null;
     	boolean destinDirNewlyCreated = false;
@@ -279,7 +279,7 @@ public class DownloadServer implements HttpConstants, Runnable {
     		}
 			
 			// --- Pack a jar of all class-files of the current project ------------
-			String pathBin = Application.getGlobalInfo().PathBaseDirIDE_BIN();
+			String pathBin = Application.getGlobalInfo().getPathBaseDirIDE_BIN();
 			JarFileCreator jarCreator = new JarFileCreator(pathBin, project.getProjectFolder());
 			
 			String jarArchiveName = project.getProjectFolder() + "_IDE.jar";

@@ -55,7 +55,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	private final static String pathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
+	private final static String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
 	private JPanel jPanelUpdateLink = null;
 	private JPanel jPanelDummy = null;

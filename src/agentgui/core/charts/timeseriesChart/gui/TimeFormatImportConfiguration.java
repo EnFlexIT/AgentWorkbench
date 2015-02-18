@@ -95,7 +95,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 
 	private static final long serialVersionUID = -7271198574951719361L;
 	
-	private final String PathImage = Application.getGlobalInfo().PathImageIntern();
+	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 

@@ -52,7 +52,7 @@ public class AgentGUITrayIcon implements ActionListener {
 	private SystemTray systemTray = SystemTray.getSystemTray();
 	private TrayIcon trayIcon;
 	
-	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private ImageIcon imageIconRed = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUI.png"));
 	private Image     imageRed = imageIconRed.getImage();

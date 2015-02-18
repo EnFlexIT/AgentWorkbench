@@ -84,7 +84,7 @@ public class ChangeDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 	private final Image imageAgentGUI = new ImageIcon( this.getClass().getResource( pathImage + "AgentGUI.png") ).getImage();  //  @jve:decl-index=0:
 	
 	private JPanel jContentPane = null;

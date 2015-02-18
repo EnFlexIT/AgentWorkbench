@@ -129,7 +129,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 		this.currDialogAction = currentAction;
 		
 		//--- TreeModel initialisieren --------------------------
-		this.rootNode = new DefaultMutableTreeNode("... " + Application.getGlobalInfo().PathProjects(false, false));
+		this.rootNode = new DefaultMutableTreeNode("... " + Application.getGlobalInfo().getPathProjects(false, false));
 		this.projectTreeModel = new DefaultTreeModel(rootNode);	
 		this.initialize();
 
@@ -719,7 +719,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			// ----------------------------------------------------
 			// --- Test: Basis-Verzeichnis anlegen ----------------
 			if ( projectError==false ) {
-				String NewDirName = Application.getGlobalInfo().PathProjects(true) + projectFolder;
+				String NewDirName = Application.getGlobalInfo().getPathProjects(true) + projectFolder;
 				File f = new File(NewDirName);
 				if ( f.isDirectory() ) {
 					projectErrorSource = "ProFolderDouble";
@@ -787,7 +787,7 @@ public class ProjectNewOpen extends JDialog implements ActionListener {
 			}
 			// --- Check project file -------------------------------
 			if ( projectError==false ) {				
-				String XMLFileName = Application.getGlobalInfo().PathProjects(true) + 
+				String XMLFileName = Application.getGlobalInfo().getPathProjects(true) + 
 									 projectFolder + File.separator +
 									 Application.getGlobalInfo().getFileNameProject();
 				File f = new File( XMLFileName );

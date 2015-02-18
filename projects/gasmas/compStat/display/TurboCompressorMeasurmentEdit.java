@@ -67,7 +67,7 @@ public class TurboCompressorMeasurmentEdit extends JDialog implements ParameterL
 	
 	public static final String rowHeaderSettleline = "Settleline";
 	
-	private final String pathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	private final ImageIcon iconAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 	

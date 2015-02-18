@@ -85,7 +85,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	private static final Integer DEFAULT_ImageWidth = 1600; 
 	private static final Integer DEFAULT_ImageHeight = 900;
 	
-	private final String pathImage = Application.getGlobalInfo().PathImageIntern(); // @jve:decl-index=0:
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern(); // @jve:decl-index=0:
     private final Dimension jButtonSize = new Dimension(26, 26); // @jve:decl-index=0:
      
 	// Swing components

@@ -62,7 +62,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-	private final static String PathImage = Application.getGlobalInfo().PathImageIntern();
+	private final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 

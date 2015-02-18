@@ -97,7 +97,7 @@ public final class GraphGlobals {
 //			//e.printStackTrace();
 //		}
  		// --- New approach to the above mentioned problem ----------
- 		pathRoot = Application.getGlobalInfo().PathBaseDir();
+ 		pathRoot = Application.getGlobalInfo().getPathBaseDir();
  		
  		// ----------------------------------------------------------
 		// --- 1. Search in the loaded packages ---------------------

@@ -61,7 +61,7 @@ import agentgui.core.application.Language;
  */
 public class ProgressMonitor implements ActionListener {
 
-	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( pathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 	

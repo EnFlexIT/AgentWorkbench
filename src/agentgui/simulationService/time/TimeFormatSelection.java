@@ -61,7 +61,7 @@ public class TimeFormatSelection extends JPanelForActions {
 
 	private static final long serialVersionUID = 1L;
 	
-	final static String PathImage = Application.getGlobalInfo().PathImageIntern();
+	final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private boolean showLable = false;
 	private String defaultTimeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;  //  @jve:decl-index=0:

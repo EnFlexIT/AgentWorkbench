@@ -61,7 +61,7 @@ import agentgui.core.sim.setup.SimulationSetupNotification;
  */
 public class SetupSelectorToolbar implements ActionListener {
 
-	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private final Integer SETUP_add = 1;
 	private final Integer SETUP_rename = 2;

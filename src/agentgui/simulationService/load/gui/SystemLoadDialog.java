@@ -54,7 +54,7 @@ public class SystemLoadDialog extends JFrame {
 
 private static final long serialVersionUID = 1L;
 	
-	final static String PathImage = Application.getGlobalInfo().PathImageIntern();
+	final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
 	private final Image imageAgentGUI = iconAgentGUI.getImage();
 

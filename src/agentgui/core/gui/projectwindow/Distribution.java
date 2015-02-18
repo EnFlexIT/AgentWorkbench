@@ -82,7 +82,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private final static int DYNAMIC_BALANCING_CLASS = 2;
 	private final static int THRESHOLD_LEVEL = 3;
 
-	private final String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
+	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
 	private Project currProject = null;
 	private DistributionSetup currDistributionSetup = null; 

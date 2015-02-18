@@ -61,7 +61,7 @@ import agentgui.core.application.Language;
 public class DynFormText extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -4693640456081655952L;
-	private static final String pathImage = Application.getGlobalInfo().PathImageIntern();
+	private static final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private DynForm dynForm = null;
 	

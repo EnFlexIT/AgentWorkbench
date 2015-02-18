@@ -218,7 +218,7 @@ public class GlobalInfo {
 				localBaseDir = agentGuiJarPath.substring(0, cutAt);	
 
 				// --- jade.jar in die ClassLoaderUtility einbinden ----------
-				String jadeJar = this.PathJade(true) + File.separator + localFileJade;
+				String jadeJar = this.getPathJade(true) + File.separator + localFileJade;
 				ClassLoaderUtil.addJarToClassPath(jadeJar);
 				
 			};
@@ -248,6 +248,7 @@ public class GlobalInfo {
 
 		}
 		// ------------------------------------------------------------------
+
 		
 		// ------------------------------------------------------------------
 		// --- Define the known EnvironmentTypes of Agent.GUI ---------------
@@ -446,23 +447,22 @@ public class GlobalInfo {
 		return newLineSeparatorReplacer;
 	}
 
-	// --- Allgemeine Verzeichnisangaben ---------------------
+	// ----------------------------------------------------
+	// --- General Directory information ------------------
+	// ----------------------------------------------------
 	/**
 	 * This method returns the base path of the application (e. g. 'C:\Java_Workspace\AgentGUI\')
 	 * @return the base path of the application
 	 */
-	public String PathBaseDir( ) {
+	public String getPathBaseDir( ) {
 		return localBaseDir;
 	}	
-	/**
-	 * Aktuelles KLassenverzeichnis der Anwendung fuer die IDE-Umgebung
-	 */
 	/**
 	 * This method returns the base path of the application, when Agent.GUI is running
 	 * in its development environment / IDE (e. g. 'C:\Java_Workspace\AgentGUI\bin\')
 	 * @return the binary- or bin- base path of the application
 	 */
-	public String PathBaseDirIDE_BIN( ) {
+	public String getPathBaseDirIDE_BIN( ) {
 		return localBaseDir + localPathAgentGUI + fileSeparator;
 	}	
 	/**
@@ -470,11 +470,10 @@ public class GlobalInfo {
 	 * @param absolute set true if you want to get the full path to this 
 	 * @return the path to the JADE libraries
 	 */
-	public String PathJade(boolean absolute){
+	public String getPathJade(boolean absolute){
 		if (absolute == true) { 
 			return FilePath2Absolute( localPathJade );
-		}
-		else {
+		} else {
 			return localPathJade;	
 		}		
 	}
@@ -483,11 +482,10 @@ public class GlobalInfo {
 	 * @param absolute set true if you want to get the full path to this 
 	 * @return the path reference to the property folder
 	 */
-	public String PathProperty(boolean absolute){
+	public String getPathProperty(boolean absolute){
 		if ( absolute == true ) { 
-			return FilePath2Absolute( localPathProperty );
-		}
-		else {
+			return FilePath2Absolute(localPathProperty);
+		} else {
 			return localPathProperty;	
 		}	
 	}
@@ -496,11 +494,11 @@ public class GlobalInfo {
 	 * @param absolute set true if you want to get the full path to this
 	 * @return the path reference to the property file agentgui.ini
 	 */
-	public String PathConfigFile(boolean absolute) {
+	public String getPathConfigFile(boolean absolute) {
 		if (absolute==true) {
-			return PathProperty(true) + localFileProperties;
+			return getPathProperty(true) + localFileProperties;
 		} else {
-			return PathProperty(false) + localFileProperties;
+			return getPathProperty(false) + localFileProperties;
 		}
 	}
 	
@@ -510,8 +508,8 @@ public class GlobalInfo {
 	 * @param absolute set true if you want to get the full path to this
 	 * @return the path to the project folder
 	 */
-	public String PathProjects(boolean absolute){
-		return this.PathProjects(absolute, true);
+	public String getPathProjects(boolean absolute){
+		return this.getPathProjects(absolute, true);
 	}
 	
 	/**
@@ -521,7 +519,7 @@ public class GlobalInfo {
 	 * @param forcePathCreation if true, the path will be created if it not already exists
 	 * @return the path to the project folder
 	 */
-	public String PathProjects(boolean absolute, boolean forcePathCreation){
+	public String getPathProjects(boolean absolute, boolean forcePathCreation){
 		String returnPath = null;
 		if (absolute == true) { 
 			returnPath = FilePath2Absolute(localPathProjects);
@@ -543,7 +541,7 @@ public class GlobalInfo {
 	public String[] getProjectSubDirectories( ){		
 		// --- Search for sub folders ---
 		String[] localProjects = null;
-		File maindir = new File(this.PathProjects(true)) ;
+		File maindir = new File(this.getPathProjects(true)) ;
 		File files[] = maindir.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isDirectory() && !files[i].getName().substring(0, 1).equals(".") ) {
@@ -565,7 +563,7 @@ public class GlobalInfo {
 	 * Returns the path to the internal img-folder of Agent.GUI (agentgui.core.gui.img)
 	 * @return path to the images, which are located in our project
 	 */
-	public String PathImageIntern( ){
+	public String getPathImageIntern( ){
 		return localPathImageIntern;
 	}
 
@@ -576,16 +574,13 @@ public class GlobalInfo {
 	 * If the folder doesn't exists, it will be created.
 	 * @return Local path to the download server of Agent.GUI ('/AgentGUI/server/')
 	 */
-	public String PathWebServer(boolean absolute) {
+	public String getPathWebServer(boolean absolute) {
 		
-		String returnPath = null;
-		if (absolute==true) { 
-			returnPath = FilePath2Absolute(localPathWebServer);
+		String returnPath = FilePath2Absolute(localPathWebServer);
+		if (absolute==false) { 
+			String workingPath = System.getProperty("user.dir");
+			returnPath = returnPath.substring(workingPath.length()+1);
 		}
-		else {
-			returnPath = localPathWebServer;	
-		}
-		
 		File dir = new File(returnPath);
 		if (dir.exists()==false) {
 			dir.mkdir();
@@ -599,21 +594,25 @@ public class GlobalInfo {
 	 * If the folder doesn't exists, it will be created.
 	 * @return Local path to the folder, where downloads will be saved ('/AgentGUI/download/')
 	 */
-	public String PathDownloads(boolean absolute) {
+	public String getPathDownloads(boolean absolute) {
 		
-		String returnPath = null;
-		if (absolute==true) { 
-			returnPath = FilePath2Absolute(localPathDownloads);
+		String returnPath = this.FilePath2Absolute(localPathDownloads);;
+		if (absolute==false) {
+			String workingPath = System.getProperty("user.dir");
+			returnPath = returnPath.substring(workingPath.length()+1);
 		}
-		else {
-			returnPath = localPathDownloads;	
-		}
-		
 		File dir = new File(returnPath);
 		if (dir.exists()==false) {
 			dir.mkdir();
 		}
 		return returnPath;
+	}
+	/**
+	 * Returns the sub folder String for downloads.
+	 * @return the sub folder4 downloads
+	 */
+	public String getSubFolder4Downloads() {
+		return localPathDownloads;
 	}
 	
 	/**
@@ -1111,7 +1110,7 @@ public class GlobalInfo {
 	 */
 	public File getLastSelectedFolder() {
 		if (lastSelectedFolder==null) {
-			lastSelectedFolder = new File(this.PathBaseDir());
+			lastSelectedFolder = new File(this.getPathBaseDir());
 		} 
 		return lastSelectedFolder;	
 	}

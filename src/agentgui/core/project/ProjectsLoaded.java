@@ -244,7 +244,7 @@ public class ProjectsLoaded {
 		Project project = null;
 		
 		// --- Get data model from file ---------------
-		String projectFolder = Application.getGlobalInfo().PathProjects(true) + projectSubDirectory + File.separator;
+		String projectFolder = Application.getGlobalInfo().getPathProjects(true) + projectSubDirectory + File.separator;
 		String XMLFileName = projectFolder + Application.getGlobalInfo().getFileNameProject();	
 		String userObjectFileName = projectFolder + Application.getGlobalInfo().getFilenameProjectUserObject();
 	
@@ -543,7 +543,7 @@ public class ProjectsLoaded {
 		File projectFile = chooser.getSelectedFile();
 		if (projectFile!=null && projectFile.exists()) {
 
-			String destFolder = Application.getGlobalInfo().PathProjects(true);
+			String destFolder = Application.getGlobalInfo().getPathProjects(true);
 			String zipFolder = projectFile.getAbsolutePath();
 			
 			// --- Import project file as a new project ---
@@ -662,7 +662,7 @@ public class ProjectsLoaded {
 		}
 		
 		// --- Export project file as a new project -------------
-		String srcFolder = Application.getGlobalInfo().PathProjects(true) + projectFolder;
+		String srcFolder = Application.getGlobalInfo().getPathProjects(true) + projectFolder;
 		String zipFolder = projectFile.getAbsolutePath();
 		
 		Zipper zipper = new Zipper(Application.getMainWindow());
@@ -744,7 +744,7 @@ public class ProjectsLoaded {
 		
 		// ----------------------------------------------------------
 		// --- Delete the folders of the project --------------------
-		projectFolderFullPath = Application.getGlobalInfo().PathProjects(true) + projectFolder;
+		projectFolderFullPath = Application.getGlobalInfo().getPathProjects(true) + projectFolder;
 		System.out.println(Language.translate("Lösche Verzeichnis") +": " + projectFolderFullPath);
 
 		// --- Get the files and folders in the project folder ------

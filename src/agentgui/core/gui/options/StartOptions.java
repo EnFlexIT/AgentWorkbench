@@ -85,7 +85,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	private static final long serialVersionUID = -5837814050254569584L;
 	
 	private GlobalInfo globalInfo = Application.getGlobalInfo();  //  @jve:decl-index=0:
-	private String pathImage = globalInfo.PathImageIntern();
+	private String pathImage = globalInfo.getPathImageIntern();
 	private OptionDialog optionDialog = null;
 	
 	private JPanel jPanel4ScrollPane = null;

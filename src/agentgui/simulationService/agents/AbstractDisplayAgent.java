@@ -71,7 +71,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 
 	private static final long serialVersionUID = -6499021588257662334L;
 	
-	private final String pathImage = Application.getGlobalInfo().PathImageIntern();
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 
 	protected boolean isPausedSimulation = true;
 	private boolean isAgentGuiEmbedded = false;

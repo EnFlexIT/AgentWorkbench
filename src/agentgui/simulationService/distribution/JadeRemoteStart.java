@@ -71,7 +71,7 @@ public class JadeRemoteStart extends Thread {
 	private boolean jadeIsRemoteContainer = true; 
 	private boolean jadeShowGUI = true; 
 	private String jadeShowGUIAgentName = "rma."; 
-	private String jadeServices = "jade.core.event.NotificationService;jade.core.mobility.AgentMobilityService;mas.service.SimulationService;";
+	private String jadeServices = "jade.core.event.NotificationService;jade.core.mobility.AgentMobilityService;agentgui.simulationService.SimulationService;agentgui.simulationService.LoadService";
 	private String jadeHost = "localhost";
 	private String jadePort = Application.getGlobalInfo().getJadeLocalPort().toString();
 	private String jadeContainerName = "remote";
@@ -80,7 +80,7 @@ public class JadeRemoteStart extends Thread {
 	private ArrayList jadeJarIncludeClassPath = new ArrayList();
 	private File extJarFolder = null; 
 	
-	private final String pathBaseDir = Application.getGlobalInfo().PathBaseDir();
+	private final String pathBaseDir = Application.getGlobalInfo().getPathBaseDir();
 	
 	/**
 	 * Default constructor.
@@ -125,7 +125,8 @@ public class JadeRemoteStart extends Thread {
 	 */
 	private void handelExternalJars() {
 		
-		String destinPath = Application.getGlobalInfo().PathDownloads(false);
+		String localDirectoryDownLoad = Application.getGlobalInfo().getPathDownloads(false);
+		String subDirectoryDownloads = Application.getGlobalInfo().getSubFolder4Downloads();
 		String projectSubFolder = null;
 		String downloadProtocol = "";
 		
@@ -142,10 +143,10 @@ public class JadeRemoteStart extends Thread {
 				projectSubFolder+= File.separator;
 				
 				// --- Correct the Path for the download -------
-				destinPath = destinPath + projectSubFolder;
+				localDirectoryDownLoad = localDirectoryDownLoad + projectSubFolder;
 				
 				// --- Check if this Folder exists -------------
-				extJarFolder = new File(destinPath);
+				extJarFolder = new File(localDirectoryDownLoad);
 				if (extJarFolder.exists()) {
 					deleteFolder(extJarFolder);
 					extJarFolder.delete();
@@ -155,16 +156,17 @@ public class JadeRemoteStart extends Thread {
 			
 			// --- Define Destination-File ---------------------
 			File remoteFile = new File(httpJarFile);
-			String destinFile = destinPath + remoteFile.getAbsoluteFile().getName();
+			String destinFile = localDirectoryDownLoad + remoteFile.getAbsoluteFile().getName();
 			
 			// --- Start the download --------------------------
 			new Download(httpJarFile, destinFile).startDownload();
 
 			// --- Set reminder for the ClassPath --------------
-			String ClassPathEntry = "./" + destinFile.replace(File.separator, "/") + ";";
-			jadeJarIncludeClassPath.add(ClassPathEntry);
+			String classPathEntry = destinFile.substring(destinFile.indexOf(subDirectoryDownloads));
+			classPathEntry = "./" + classPathEntry.replace(File.separator, "/") + ";";
+			jadeJarIncludeClassPath.add(classPathEntry);
 			
-			// --- Download-Protocoll --------------------------
+			// --- Download-Protocol ---------------------------
 			if (downloadProtocol.equals("")==false) {
 				downloadProtocol += "|";
 			}
@@ -172,7 +174,7 @@ public class JadeRemoteStart extends Thread {
 			
 		} // --- end for
 		if (downloadProtocol.equals("")==false) {
-			downloadProtocol = "Download to '" + destinPath + "': " + downloadProtocol + "";
+			downloadProtocol = "Download to '" + localDirectoryDownLoad + "': " + downloadProtocol + "";
 			System.out.println(downloadProtocol);
 		}
 	}
@@ -197,7 +199,6 @@ public class JadeRemoteStart extends Thread {
 	 */
 	@Override
 	public void run() {
-		//this.setName("JADE Remote: " + jadeContainerName);
 		this.startJade();
 	}
 	
@@ -223,7 +224,7 @@ public class JadeRemoteStart extends Thread {
 		
 		// --------------------------------------
 		// --- Class-Path configuration ---------
-		classPath = getClassPath(jadeServices);
+		classPath = this.getClassPath();
 		// +++ Check for operating system +++
 		if (os.toLowerCase().contains("windows")==true) {
 			// --- nothing to do here ---
@@ -232,7 +233,7 @@ public class JadeRemoteStart extends Thread {
 		}
 
 		// --------------------------------------
-		// --- Jade-Config ----------------------
+		// --- Jade configuration ---------------
 		jade += "agentgui.core.application.Application -jade" + " ";
 		if (jadeServices!=null) {
 			jadeArgs += "-services  " + jadeServices + " ";
@@ -249,7 +250,7 @@ public class JadeRemoteStart extends Thread {
 		jadeArgs = jadeArgs.trim();
 		
 		// --------------------------------------
-		// --- execute zusammenbauen ------------
+		// --- merge execute statement ----------
 		String execute = java + " " + javaVMArgs + " " + classPath + " " + jade  + " " + jadeArgs;
 		execute = execute.replace("  ", " ");
 		System.out.println( "Execute: " + execute);
@@ -257,7 +258,6 @@ public class JadeRemoteStart extends Thread {
 		// --------------------------------------
 		try {
 			
-			//System.out.println(execute);
 			String[] arg = execute.split(" ");
 			ProcessBuilder proBui = new ProcessBuilder(arg);
 			proBui.redirectErrorStream(true);
@@ -294,11 +294,9 @@ public class JadeRemoteStart extends Thread {
 
 	/**
 	 * This method configures the CLASSPATH for the remote-container.
-	 *
-	 * @param ServiceList the service list
 	 * @return the new class path
 	 */
-	private String getClassPath(String ServiceList) {
+	private String getClassPath() {
 		
 		String classPath = "";
 		
@@ -315,12 +313,11 @@ public class JadeRemoteStart extends Thread {
 		
 		// -----------------------------------------------------
 		// --- Configure external jar-files -------------------- 
-		if (jadeJarIncludeClassPath.size()>0) {
-			for (int i=0; jadeJarIncludeClassPath.size()>i; i++) {
-				String jar = (String) jadeJarIncludeClassPath.get(i);
-				classPath += jar;
-			}
+		for (int i = 0; i < this.jadeJarIncludeClassPath.size(); i++) {
+			String jar = (String) jadeJarIncludeClassPath.get(i);
+			classPath += jar;
 		}
+
 		return classPath;
 	}
 	

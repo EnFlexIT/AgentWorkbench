@@ -173,6 +173,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	public HashMap<GraphElement, NetworkComponents> getGraphElementToNetworkComponentHash() {
 		if (graphElementToNetworkComponents==null) {
 			graphElementToNetworkComponents = new HashMap<GraphElement, NetworkComponents>();
+			this.refreshGraphElements();
 		}
 		return graphElementToNetworkComponents;
 	}

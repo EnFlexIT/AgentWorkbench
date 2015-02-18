@@ -84,7 +84,7 @@ import agentgui.core.project.Project;
 public class BaseAgents extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private final static String PathImage = Application.getGlobalInfo().PathImageIntern();
+	private final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private Project currProject = null;
 	private OntologyClassTreeObject currOntoObject = null;

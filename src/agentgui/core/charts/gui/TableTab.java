@@ -57,7 +57,7 @@ public abstract class TableTab extends JPanel implements ActionListener, ListSel
 	private static final long serialVersionUID = -8682335989453677658L;
 
 	/** The path for icon images */
-	protected final String pathImage = Application.getGlobalInfo().PathImageIntern();
+	protected final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 
 	private JScrollPane scrollPane;
 	private JToolBar toolBar;

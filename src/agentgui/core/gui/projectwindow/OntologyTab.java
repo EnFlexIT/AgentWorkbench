@@ -70,7 +70,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	final static String PathImage = Application.getGlobalInfo().PathImageIntern();
+	final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private Project currProject;
 	private JSplitPane OntoSplitPane = null;

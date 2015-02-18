@@ -86,7 +86,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private static final long serialVersionUID = -3929823093128900880L;
 	
 	private String newLine = Application.getGlobalInfo().getNewLineSeparator();  //  @jve:decl-index=0:
-	private final String PathImage = Application.getGlobalInfo().PathImageIntern();  //  @jve:decl-index=0:
+	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );  //  @jve:decl-index=0:
 	
 	@SuppressWarnings("unused")
