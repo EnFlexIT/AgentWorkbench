@@ -96,16 +96,15 @@ public class LoadMeasureAgent extends Agent {
 	// --------------------------------------------------------------
 	// --- To which Project are we running in the moment ------------ 
 	/** The current project. */
-	protected Project currProject = null;
+	protected Project currProject;
 	/** The current SimulationSetup. */
-	protected SimulationSetup currSimSetup = null;
+	protected SimulationSetup currSimSetup;
 	/** The current DistributionSetup. */
-	protected DistributionSetup currDisSetup = null;
+	protected DistributionSetup currDisSetup;
 	
 	// --------------------------------------------------------------
 	// --- Display-elements of the Monitoring system ---------------- 
-	private SystemLoadDialog loadDialog = null; 
-	private SystemLoadPanel loadPanel = null;
+	private SystemLoadDialog loadDialog; 
 	// --- Remember container Informations/Instances (Display) ------
 	private Hashtable<String, SystemLoadSingle> containerLoadDialogs = new Hashtable<String, SystemLoadSingle>(); 
 	// --------------------------------------------------------------
@@ -113,13 +112,13 @@ public class LoadMeasureAgent extends Agent {
 	// --------------------------------------------------------------
 	// --- The measure/display behaviour of the agent --------------- 
 	/** The monitor behaviour, which is a TickerBehaviour. */
-	public MonitorBehaviour monitorBehaviour = null;
+	public MonitorBehaviour monitorBehaviour;
 	private long monitorBehaviourTickingPeriod = 0;
 	// --------------------------------------------------------------
 
 	// --------------------------------------------------------------
 	// --- The balancing algorithm of this agent --------------------
-	private DynamicLoadBalancingBase loadBalancing = null;
+	private DynamicLoadBalancingBase loadBalancing;
 	/** Indicator if a activate DynamicLoadBalancing is still active. */
 	public boolean loadBalancingIsStillActivated = false;
 	// --------------------------------------------------------------
@@ -156,7 +155,7 @@ public class LoadMeasureAgent extends Agent {
 	// --- Some System-String ---------------------------------------
 	private final String monitorDatasetDelimiter = ";";
 	private final String monitorDatasetLineSeperator = System.getProperty("line.separator");
-	private String monitorDecimalSeparator;
+	private String monitorDecimalSeparator = Character.toString(new DecimalFormatSymbols().getDecimalSeparator());
 	// --- Files which will be created for storing monitoring data --  
 	private final String monitorFileMeasurementTmp = "LoadMeasurement.tmp";
 	private final String monitorFileMeasurement = "LoadMeasurement.csv";
@@ -177,19 +176,12 @@ public class LoadMeasureAgent extends Agent {
 	@Override
 	protected void setup() {
 		
-		DecimalFormatSymbols dfs = new DecimalFormatSymbols(); 
-		this.monitorDecimalSeparator = Character.toString(dfs.getDecimalSeparator());
-		
 		this.getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
 		this.getContentManager().registerOntology(JADEManagementOntology.getInstance());
 		
-		this.loadPanel = new SystemLoadPanel(this);
-		this.loadDialog = new SystemLoadDialog();
-		this.loadDialog.setContentPane(this.loadPanel);
-
 		this.loadBalancing = new DynamicLoadBalancing(this);
 		
-		this.monitorBehaviourTickingPeriod = ((TimeSelection) loadPanel.getJComboBoxInterval().getSelectedItem()).getTimeInMill();
+		this.monitorBehaviourTickingPeriod = this.getSelectedTimeSelection().getTimeInMill();
 		this.monitorBehaviour = new MonitorBehaviour(this, monitorBehaviourTickingPeriod);
 		this.addBehaviour(monitorBehaviour) ;
 		this.addBehaviour(new ReceiveBehaviour());
@@ -204,22 +196,12 @@ public class LoadMeasureAgent extends Agent {
 		if (monitorDatasetWriter!=null) {
 			this.closeMonitorFile();
 		}
-		if (loadDialog!=null) {
-			loadDialog.setVisible(false);
-			loadDialog = null;
-		}
-	}
-	
-	/**
-	 * This Method shows the GUI of this LoadAgent.
-	 */
-	public void showGUI() {
-		loadDialog.setVisible(true);
+		this.getSystemLoadDialog().setVisible(false);
+		this.setSystemLoadDialog(null);
 	}
 	
 	/**
 	 * Returns the monitor behaviour ticking period.
-	 *
 	 * @return the monitorBehaviourTickingPeriod
 	 */
 	public long getMonitorBehaviourTickingPeriod() {
@@ -227,7 +209,6 @@ public class LoadMeasureAgent extends Agent {
 	}
 	/**
 	 * Sets the monitor behaviour ticking period.
-	 *
 	 * @param monitorBehaviourTickingPeriod the monitorBehaviourTickingPeriod to set
 	 */
 	public void setMonitorBehaviourTickingPeriod(long monitorBehaviourTickingPeriod) {
@@ -237,7 +218,6 @@ public class LoadMeasureAgent extends Agent {
 	
 	/**
 	 * Sets the instance of the dynamic load balancing algorithm to use.
-	 *
 	 * @param loadBalancing the new load balancing
 	 */
 	public void setLoadBalancing(DynamicLoadBalancingBase loadBalancing) {
@@ -245,13 +225,50 @@ public class LoadMeasureAgent extends Agent {
 	}
 	/**
 	 * Gets the currently use dynamic load balancing algorithm.
-	 *
 	 * @return the loadBalancing
 	 */
 	public DynamicLoadBalancingBase getLoadBalancing() {
 		return loadBalancing;
 	}
 
+	/**
+	 * This Method shows the GUI of this LoadAgent.
+	 */
+	public void showGUI() {
+		this.getSystemLoadDialog().setVisible(true);
+	}
+	/**
+	 * Sets the system load dialog.
+	 * @param newLoadDialog the new system load dialog
+	 */
+	private void setSystemLoadDialog(SystemLoadDialog newLoadDialog) {
+		this.loadDialog = newLoadDialog;
+	}
+	/**
+	 * Returns the {@link SystemLoadDialog}.
+	 * @return the system load dialog
+	 */
+	private SystemLoadDialog getSystemLoadDialog() {
+		if (this.loadDialog==null) {
+			this.loadDialog = new SystemLoadDialog(this);
+		}
+		return loadDialog;
+	}
+	/**
+	 * Gets the system load panel.
+	 * @return the system load panel
+	 */
+	private SystemLoadPanel getSystemLoadPanel() {
+		return this.getSystemLoadDialog().getSystemLoadPanel();
+	}
+	/**
+	 * Returns the currently selected {@link TimeSelection}.
+	 * @return the selected time selection
+	 */
+	private TimeSelection getSelectedTimeSelection() {
+		return ((TimeSelection) this.getSystemLoadPanel().getJComboBoxInterval().getSelectedItem());
+	}
+	
 	
 	/**
 	 * This TickerBehaviour measures, displays (if wanted) and stores the measured load values.
@@ -262,9 +279,11 @@ public class LoadMeasureAgent extends Agent {
 
 		private static final long serialVersionUID = -5802791218164507242L;
 		
-		private int loadDialogHeight = 0;
-		private boolean initiatedLoadRecordingOnce = false;
+		private LoadServiceHelper loadHelper;
 		
+		private boolean initiatedLoadRecordingOnce = false;
+		private int dialogTitleHeight = 28;
+		private int dialogHeight = 0;
 		
 		/**
 		 * Instantiates a new monitor behaviour.
@@ -275,7 +294,21 @@ public class LoadMeasureAgent extends Agent {
 		public MonitorBehaviour(Agent agent, long tickerPeriod) {
 			super(agent, tickerPeriod);
 		}
-
+		/**
+		 * Gets the {@link LoadServiceHelper}.
+		 * @return the load service helper
+		 */
+		private LoadServiceHelper getLoadServiceHelper() {
+			if (loadHelper==null) {
+				try {
+					loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
+				} catch (ServiceException se) {
+					se.printStackTrace();
+				}	
+			}
+			return loadHelper;
+		}
+		
 		/* (non-Javadoc)
 		 * @see jade.core.behaviours.TickerBehaviour#onTick()
 		 */
@@ -284,19 +317,18 @@ public class LoadMeasureAgent extends Agent {
 			
 			int layoutNodesVisible = 0;
 			try {
-				LoadServiceHelper loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
-				
+
 				// --- Get the PlatformLoad and the Agents at their locations -----------
 				monitorTimeStamp = System.currentTimeMillis();
-				loadCycleTime = loadHelper.getAvgCycleTime();
-				loadContainer = loadHelper.getContainerLoads();
-				loadContainerAgentMap = loadHelper.getAgentMap();
-				loadContainerLoactions = loadHelper.getContainerLocations();
+				loadCycleTime = this.getLoadServiceHelper().getAvgCycleTime();
+				loadContainer = this.getLoadServiceHelper().getContainerLoads();
+				loadContainerAgentMap = this.getLoadServiceHelper().getAgentMap();
+				loadContainerLoactions = this.getLoadServiceHelper().getContainerLocations();
 				
 				// --- Display number of agents -----------------------------------------
-				loadPanel.setNumberOfAgents(loadContainerAgentMap.noAgentsAtPlatform);
-				loadPanel.setNumberOfContainer(loadContainer.size());
-				loadPanel.setCycleTime(loadCycleTime);
+				getSystemLoadPanel().setNumberOfAgents(loadContainerAgentMap.noAgentsAtPlatform);
+				getSystemLoadPanel().setNumberOfContainer(loadContainer.size());
+				getSystemLoadPanel().setCycleTime(loadCycleTime);
 				loadThresholdLevels = LoadMeasureThread.getThresholdLevels();
 				
 				// Initialise variables JVM-balancing -----------------------------------
@@ -305,18 +337,16 @@ public class LoadMeasureAgent extends Agent {
 				loadJVM4Balancing = new Hashtable<String, LoadMerger>();
 				
 				// --- Walk through the list of all containers --------------------------
-				loadContainer2Display = new Vector<String>(loadHelper.getContainerQueue());
+				loadContainer2Display = new Vector<String>(this.getLoadServiceHelper().getContainerQueue());
 				
 				for (int i = 0; i < loadContainer2Display.size(); i++) {
 					// --- Get container name -------------------------------------------
 					String containerName = loadContainer2Display.get(i);
-					
 					// --- Get the benchmark-result for this node/container -------------
-					NodeDescription containerDesc = loadHelper.getContainerDescription(containerName);
+					NodeDescription containerDesc = this.getLoadServiceHelper().getContainerDescription(containerName);
 					Float benchmarkValue = containerDesc.getBenchmarkValue().getBenchmarkValue();
 					String jvmPID = containerDesc.getJvmPID(); 
 					String machineURL = containerDesc.getPlAddress().getUrl();
-					
 					// --- Get all needed load informations -----------------------------
 					PlatformLoad containerLoad = loadContainer.get(containerName);
 					Integer containerNoAgents = loadContainerAgentMap.noAgentsAtContainer.get(containerName);
@@ -351,17 +381,16 @@ public class LoadMeasureAgent extends Agent {
 					SystemLoadSingle dialogSingle = containerLoadDialogs.get(containerName);
 					if (dialogSingle==null) {
 						dialogSingle = new SystemLoadSingle();
-						loadPanel.jPanelLoad.add(dialogSingle, null);
+						getSystemLoadPanel().getJPanelForLoadDisplays().add(dialogSingle, null);
 						containerLoadDialogs.put(containerName, dialogSingle);
 					}
 					
 					// --- Display the current values -----------------------------------
 					if (containerLoad==null) {
-						dialogSingle.setVisible(false);
+						dialogSingle.setVisibleAWTsafe(false);								
 					} else {
-						dialogSingle.setVisible(true);
-						dialogSingle.updateView(containerName, containerDesc, benchmarkValue, containerLoad, containerNoAgents);
-						dialogSingle.repaint();
+						dialogSingle.setVisibleAWTsafe(true);
+						dialogSingle.updateViewAWTsafe(containerName, containerDesc, benchmarkValue, containerLoad, containerNoAgents);
 						layoutNodesVisible++;
 					}
 					// --- If wanted, save the current values to file -------------------
@@ -376,18 +405,19 @@ public class LoadMeasureAgent extends Agent {
 			}
 
 			// --- Refresh View ---------------------------------------------------------
-			int newloadDialogHeight = (85*layoutNodesVisible) + 60; 
-			if (newloadDialogHeight!=loadDialogHeight) {
-				loadDialog.setSize(loadDialog.getWidth(), newloadDialogHeight);
-				loadDialogHeight = newloadDialogHeight;
+			final int newloadDialogHeight = (SystemLoadSingle.loadPanelHeight * layoutNodesVisible) + (getSystemLoadPanel().getJToolBarLoad().getHeight() + this.dialogTitleHeight); 
+			if (this.dialogHeight!=newloadDialogHeight) {
+				this.dialogHeight = newloadDialogHeight;
+				getSystemLoadDialog().setSize(getSystemLoadDialog().getWidth(), newloadDialogHeight);						
 			}		
+
 			// --- If wanted, save the current values to file ---------------------------
 			if (monitorSaveLoad==true) {
 				buildAndSaveDataSet();
-				if (loadPanel.jLabelRecord.getForeground().equals(Color.gray) ) {
-					loadPanel.jLabelRecord.setForeground(Color.red);
+				if (getSystemLoadPanel().jLabelRecord.getForeground().equals(Color.gray) ) {
+					getSystemLoadPanel().jLabelRecord.setForeground(Color.red);
 				} else {
-					loadPanel.jLabelRecord.setForeground(Color.gray);
+					getSystemLoadPanel().jLabelRecord.setForeground(Color.gray);
 				}
 			}
 			
@@ -405,8 +435,8 @@ public class LoadMeasureAgent extends Agent {
 
 			// --- Check if load recording has to be started directly -------------------
 			if (this.initiatedLoadRecordingOnce==false && currDisSetup!=null && currDisSetup.isImmediatelyStartLoadRecording()==true) {
-				loadPanel.setRecordingInterval(currDisSetup.getLoadRecordingInterval());
-				loadPanel.setDoLoadRecording(true);
+				getSystemLoadPanel().setRecordingInterval(currDisSetup.getLoadRecordingInterval());
+				getSystemLoadPanel().setDoLoadRecording(true);
 				// --- Make sure that this is done only once, in order to allow stop ---
 				this.initiatedLoadRecordingOnce = true;
 			}
@@ -647,7 +677,6 @@ public class LoadMeasureAgent extends Agent {
 
 	/**
 	 * This Method returns the header line for the main monitoring file.
-	 *
 	 * @return the header line as a String
 	 */
 	private String getHeaderLine() {
@@ -786,7 +815,7 @@ public class LoadMeasureAgent extends Agent {
 				if (act!=null) {
 					Concept agentAction = act.getAction();
 					if (agentAction instanceof ShowMonitorGUI) {
-						loadDialog.setVisible(true);
+						getSystemLoadDialog().setVisible(true);
 					}
 				}
 			}

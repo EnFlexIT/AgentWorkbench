@@ -261,10 +261,12 @@ de;Hintergrundsystem - Konfiguration;Background System - Configuration;;;
 de;Hintergrundsystem beim Programmstart automatisch initialisieren;Initialize background system at startup automatically;;;
 de;Hinweis;Hint;;;
 de;Hinzufügen;Add
+de;ID;;;;
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
 de;Ihre Webseite:;Your Website:;;;
 de;Im Falle eines Updates, eigenes Wörterbuch beibehalten.;In case of an update, keep own dictionary.;;;
 de;Immer Überspringen;Allways Skip
+de;Immer überspringen;;;;
 de;Info;Info
 de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;
 de;Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !;Initial Memory >= Maximum Memory !;;;

@@ -107,7 +107,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 			currDisSetup = currProject.getDistributionSetup();
 		}
 		this.setLoadHelper();
-		this.setSimulationLoadHelper();
+		this.setSimulationHelper();
 		this.setThresholdLevels();
 	}
 	
@@ -133,7 +133,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	/**
 	 * This method receives the SimulationsServiceHelper to the corresponding local variable. 
 	 */
-	private void setSimulationLoadHelper() {
+	private void setSimulationHelper() {
 		try {
 			simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
 		} catch (ServiceException e) {

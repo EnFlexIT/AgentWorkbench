@@ -29,6 +29,7 @@
 package agentgui.simulationService.load.gui;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -37,14 +38,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.ontology.OSInfo;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
-
-import java.awt.Font;
 
 /**
  * This class is used in order to display the load on a single container in a modular way.  
@@ -53,11 +53,13 @@ import java.awt.Font;
  */
 public class SystemLoadSingle extends JPanel {
 
-private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -6464252322954864779L;
+
+	public static final int loadPanelHeight = 85;
 	
-	final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );  //  @jve:decl-index=0:
-	private final ImageIcon iconRed = new ImageIcon( this.getClass().getResource( PathImage + "StatRed.png") );  //  @jve:decl-index=0:
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
+	private final ImageIcon iconGreen = new ImageIcon(this.getClass().getResource(pathImage + "StatGreen.png"));  //  @jve:decl-index=0:
+	private final ImageIcon iconRed = new ImageIcon(this.getClass().getResource(pathImage + "StatRed.png"));  //  @jve:decl-index=0:
 
 	private JLabel jLabelThreshold = null;
 	private JProgressBar jLoadCPU = null;
@@ -154,21 +156,22 @@ private static final long serialVersionUID = 1L;
 		gridBagConstraints1.insets = new Insets(10, 0, 0, 0);
 		gridBagConstraints1.anchor = GridBagConstraints.NORTHWEST;
 		gridBagConstraints1.gridy = 0;
-		GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.gridx = 0;
-		gridBagConstraints.insets = new Insets(10, 10, 0, 0);
-		gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-		gridBagConstraints.gridy = 0;
+		GridBagConstraints gbcJLabelThreshold = new GridBagConstraints();
+		gbcJLabelThreshold.gridx = 0;
+		gbcJLabelThreshold.insets = new Insets(10, 10, 0, 0);
+		gbcJLabelThreshold.anchor = GridBagConstraints.NORTHWEST;
+		gbcJLabelThreshold.gridy = 0;
 		jLabelThreshold = new JLabel();
 		jLabelThreshold.setText("");
 		jLabelThreshold.setPreferredSize(new Dimension(16, 16));
 		jLabelThreshold.setIcon(iconGreen);
-		this.setSize(539, 85);
+		
+		this.setSize(540, SystemLoadSingle.loadPanelHeight);
 		this.setLayout(new GridBagLayout());
-		this.add(jLabelThreshold, gridBagConstraints);
-		this.add(getJLoadCPU(), gridBagConstraints1);
-		this.add(getJLoadMemory(), gridBagConstraints2);
-		this.add(getJLoadJVM(), gridBagConstraints3);
+		this.add(jLabelThreshold, gbcJLabelThreshold);
+		this.add(this.getJLoadCPU(), gridBagConstraints1);
+		this.add(this.getJLoadMemory(), gridBagConstraints2);
+		this.add(this.getJLoadJVM(), gridBagConstraints3);
 		this.add(jLabelNoThreads, gridBagConstraints4);
 		this.add(jLabelContainerName, gridBagConstraints5);
 		this.add(jLabelNodeDescription, gridBagConstraints6);
@@ -224,7 +227,19 @@ private static final long serialVersionUID = 1L;
 	}
 
 	/**
-	 * Update view.
+	 * Sets the visible AWT safe.
+	 * @param aFlag the new visible 
+	 */
+	public void setVisibleAWTsafe(final boolean aFlag) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				setVisible(aFlag);
+			}
+		});
+	}
+	/**
+	 * Update view AWT safe.
 	 *
 	 * @param containerName the container name
 	 * @param nD the NodeDescription
@@ -232,36 +247,43 @@ private static final long serialVersionUID = 1L;
 	 * @param pL the PlatformLoad
 	 * @param noAg the number of agents
 	 */
-	public void updateView(String containerName, NodeDescription nD, float benchmarkValue, PlatformLoad pL, Integer noAg) {
+	public void updateViewAWTsafe(final String containerName, final NodeDescription nD, final float benchmarkValue, final PlatformLoad pL, final Integer noAg) {
 
-		jLabelContainerName.setText(containerName);
-		if (pL.getLoadExceeded()==0) {
-			jLabelThreshold.setIcon(iconGreen);
-		} else {
-			jLabelThreshold.setIcon(iconRed);
-		}
-		jLoadCPU.setValue((int) pL.getLoadCPU());
-		jLoadMemory.setValue((int) pL.getLoadMemorySystem());
-		jLoadJVM.setValue((int) pL.getLoadMemoryJVM());
-		jLabelNoThreads.setText( pL.getLoadNoThreads() + " Threads");
-		jLabelNoAgents.setText(noAg + " Agents");
-		
-		// --- Beschreibung einstellen --------------------
-		String jvmPID = " [" + nD.getJvmPID() + "]";
-		
-		OSInfo os = nD.getOsInfo();
-		String opSys = os.getOs_name() + " " + os.getOs_version() + jvmPID;
-		
-		PlatformPerformance pP = nD.getPlPerformace();
-		String perform = pP.getCpu_vendor() + ": " + pP.getCpu_model();
-		perform = perform.replaceAll("  ", " ");
-		perform+= "<br>" + pP.getCpu_numberOf() + " x "+ pP.getCpu_speedMhz() + "MHz [" + pP.getMemory_totalMB() + " MB RAM]";
-		
-		String bench = benchmarkValue + " Mflops";
-		
-		String description = "<HTML><BODY>" + opSys + "<br>" + perform + "<br>" + bench + "</BODY></HTML>";
-		jLabelNodeDescription.setText(description);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
 
+				jLabelContainerName.setText(containerName);
+				if (pL.getLoadExceeded()==0) {
+					jLabelThreshold.setIcon(iconGreen);
+				} else {
+					jLabelThreshold.setIcon(iconRed);
+				}
+				jLoadCPU.setValue((int) pL.getLoadCPU());
+				jLoadMemory.setValue((int) pL.getLoadMemorySystem());
+				jLoadJVM.setValue((int) pL.getLoadMemoryJVM());
+				jLabelNoThreads.setText( pL.getLoadNoThreads() + " Threads");
+				jLabelNoAgents.setText(noAg + " Agents");
+				
+				// --- Beschreibung einstellen --------------------
+				String jvmPID = " [" + nD.getJvmPID() + "]";
+				
+				OSInfo os = nD.getOsInfo();
+				String opSys = os.getOs_name() + " " + os.getOs_version() + jvmPID;
+				
+				PlatformPerformance pP = nD.getPlPerformace();
+				String perform = pP.getCpu_vendor() + ": " + pP.getCpu_model();
+				perform = perform.replaceAll("  ", " ");
+				perform+= "<br>" + pP.getCpu_numberOf() + " x "+ pP.getCpu_speedMhz() + "MHz [" + pP.getMemory_totalMB() + " MB RAM]";
+				
+				String bench = benchmarkValue + " Mflops";
+				
+				String description = "<HTML><BODY>" + opSys + "<br>" + perform + "<br>" + bench + "</BODY></HTML>";
+				jLabelNodeDescription.setText(description);
+				
+				repaint();
+			}
+		});
 	}
 
 	

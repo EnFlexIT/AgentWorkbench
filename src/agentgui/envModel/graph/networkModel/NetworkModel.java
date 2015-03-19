@@ -170,10 +170,10 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * Returns the graph element to network component hash.
 	 * @return the graph element to network component hash
 	 */
-	public HashMap<GraphElement, NetworkComponents> getGraphElementToNetworkComponentHash() {
+	public synchronized HashMap<GraphElement, NetworkComponents> getGraphElementToNetworkComponentHash() {
 		if (graphElementToNetworkComponents==null) {
 			graphElementToNetworkComponents = new HashMap<GraphElement, NetworkComponents>();
-			this.refreshGraphElements();
+			this.refreshGraphElements();	
 		}
 		return graphElementToNetworkComponents;
 	}

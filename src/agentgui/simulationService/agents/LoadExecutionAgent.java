@@ -185,6 +185,7 @@ public class LoadExecutionAgent extends Agent {
 				@SuppressWarnings("unchecked")
 				Class<? extends StaticLoadBalancingBase> staLoBaClass = (Class<? extends StaticLoadBalancingBase>) Class.forName(currDisSetup.getStaticLoadBalancingClass());
 				return staLoBaClass.getDeclaredConstructor( new Class[] { myAgent.getClass() }).newInstance( new Object[] {myAgent});
+				
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (InstantiationException e) {

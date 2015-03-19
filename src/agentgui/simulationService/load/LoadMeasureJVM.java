@@ -46,8 +46,6 @@ import java.util.Hashtable;
  */
 public class LoadMeasureJVM implements Cloneable {
 
-	private static final long serialVersionUID = -5202880756096638141L;
-	
 	/** The JVM PID (process ID). */
 	private String jvmPID = null;
 	/** The free memory of the JVM. */

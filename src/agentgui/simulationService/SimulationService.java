@@ -102,7 +102,7 @@ public class SimulationService extends BaseService {
 	
 	/** --- Variables for the Time-Synchronisation ----------------------------- */
 	private long timeMeasureNext = 0;				// --- When was the MainContainerTime last measured 
-	private long timeMeasureInterval = 1000*5; 		// --- measure every 5 seconds 
+	private long timeMeasureInterval = 1000*60; 	// --- Measure every 60 seconds 
 	private int timeMeasureCountMax = 100;			// --- How often the time-difference should be measured to build an average value?
 	private long timeDiff2MainContainer = 0;		// --- Difference between this and the MainContainer-Time
 	
@@ -957,136 +957,129 @@ public class SimulationService extends BaseService {
 						myLogger.log(Logger.FINE, "Answering Remote-Time-Request");
 					}					
 					cmd.setReturnValue(getLocalTime());
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_SYNCH_SET_TIME_DIFF)) {
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SERVICE_SYNCH_SET_TIME_DIFF)) {
 					long timeDifference = (Long) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Setting Time-Difference to Main-Platform");
 					}					
 					setPlatformTimeDiff(timeDifference);
-				}
-
-				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_MANAGER_AGENT)) {
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_SET_MANAGER_AGENT)) {
 					EnvironmentManagerDescription envManager = (EnvironmentManagerDescription) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Received AID of the Agent-Manager");
 					}	
 					setManagerAgent(envManager);
-				}
-				
-				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_MODEL)) {
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_MODEL)) {
 					EnvironmentModel envModel = (EnvironmentModel) params[0];
 					boolean notifySensorAgents = (Boolean) params[1];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Received new environment model");
 					}	
 					setEnvironmentModel(envModel, notifySensorAgents);
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SIM_STEP_SIMULATION)) {
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_STEP_SIMULATION)) {
 					EnvironmentModel envModel = (EnvironmentModel) params[0];
 					boolean aSynchron = (Boolean) params[1];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Received 'Step Simulation'");
 					}	
 					stepSimulation(envModel, aSynchron);
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ANSWERS_EXPECTED)) {
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ANSWERS_EXPECTED)) {
 					int answersExpected = (Integer) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Received number of expected agent answers'");
 					}	
 					setEnvironmentInstanceNextPartsExpected(answersExpected);
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SIM_PAUSE_SIMULATION)) {
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_PAUSE_SIMULATION)) {
 					boolean pause = (Boolean) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Getting 'pause-simulation'-message");
 					}	
-					setPauseSimulation(pause);					
-				} 
-				
-				else if (cmdName.equals(SimulationServiceSlice.SIM_NOTIFY_AGENT)) {
+					setPauseSimulation(pause);
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_NOTIFY_AGENT)) {
 					AID agentAID = (AID) params[0];
 					EnvironmentNotification notification = (EnvironmentNotification) params[1];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Received 'Notify Agent for '" + agentAID.getLocalName() + "'");
 					}	
 					cmd.setReturnValue(notifySensorAgent(agentAID, notification));
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SIM_NOTIFY_MANAGER)) {
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_NOTIFY_MANAGER)) {
 					EnvironmentNotification notification = (EnvironmentNotification) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Getting parts for the next environment model");
 					}	
-					cmd.setReturnValue(notifyManagerAgent(notification));									
-				} 
-				else if (cmdName.equals(SimulationServiceSlice.SIM_NOTIFY_MANAGER_PUT_AGENT_ANSWERS)) {
+					cmd.setReturnValue(notifyManagerAgent(notification));
+					
+				}  else if (cmdName.equals(SimulationServiceSlice.SIM_NOTIFY_MANAGER_PUT_AGENT_ANSWERS)) {
 					@SuppressWarnings("unchecked")
 					Hashtable<AID, Object> allAgentAnswers = (Hashtable<AID, Object>) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Getting parts for the next environment model");
 					}	
-					notifyManagerAgentPutAgentAnswers(allAgentAnswers);									
-				} 
-				
-				else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_NEXT_PART)) {
+					notifyManagerAgentPutAgentAnswers(allAgentAnswers);
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_NEXT_PART)) {
 					@SuppressWarnings("unchecked")
 					Hashtable<AID, Object> nextPartsLocal = (Hashtable<AID, Object>) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Getting parts for the next environment model");
 					}	
-					setEnvironmentInstanceNextPart(nextPartsLocal);					
-				} 
-				else if (cmdName.equals(SimulationServiceSlice.SIM_GET_ENVIRONMENT_NEXT_PARTS)) {
+					setEnvironmentInstanceNextPart(nextPartsLocal);		
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_GET_ENVIRONMENT_NEXT_PARTS)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Answering request for the next parts of the environment-model" );
 					}	
-					cmd.setReturnValue(getEnvironmentInstanceNextParts());					
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SIM_RESET_ENVIRONMENT_NEXT_PARTS)) {
+					cmd.setReturnValue(getEnvironmentInstanceNextParts());
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_RESET_ENVIRONMENT_NEXT_PARTS)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Reseting next parts of the environment-model" );
 					}	
-					resetEnvironmentInstanceNextParts();					
-				}
-				
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_STOP_SIMULATION_AGENTS)) {
+					resetEnvironmentInstanceNextParts();	
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SERVICE_STOP_SIMULATION_AGENTS)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Stoping simulation agents in this container");
 					}
 					stopSimulationAgents();
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_SET_AGENT_MIGRATION)) {
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SERVICE_SET_AGENT_MIGRATION)) {
 					@SuppressWarnings("unchecked")
 					Vector<AID_Container> transferAgents = (Vector<AID_Container>) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Getting info about agent migration");
 					}
 					setAgentMigration(transferAgents);
-				}
-				
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_DISPLAY_AGENT_SET_ENVIRONMENT_MODEL)) {
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SERVICE_DISPLAY_AGENT_SET_ENVIRONMENT_MODEL)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Getting EnvironmentModel for DisplayAgents");
 					}
 					EnvironmentModel envModel = (EnvironmentModel) params[0];
 					displayAgentSetEnvironmentModel(envModel);
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SERVICE_DISPLAY_AGENT_NOTIFICATION)) {
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SERVICE_DISPLAY_AGENT_NOTIFICATION)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Getting EnvironmentModel for DisplayAgents");
 					}
 					EnvironmentNotification notification = (EnvironmentNotification) params[0];
 					displayAgentNotification(notification);
-				}
-				
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_AID_LIST)) {
+
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_AID_LIST)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Answering request for the Agents in this container");
 					}
 					cmd.setReturnValue(getListOfAgents());
-				}
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_AID_LIST_SENSOR)) {
+					
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_AID_LIST_SENSOR)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Answering request for the Agents with sensors in this container");
 					}
@@ -1480,32 +1473,26 @@ public class SimulationService extends BaseService {
 	 */
 	private void setMainContainerTimeLocally() {
 		
-		int counter = timeMeasureCountMax;
-		long locTime1Milli = 0;
-		long remTimeMilli = 0;
-		
-		long locTime1Nano = 0;
-		long locTime2Nano = 0;
-	
-		double remTimeMilliDiffAccumulate = 0;
-		
-		if (System.currentTimeMillis() >= timeMeasureNext ) {
-			// --- Balance the Main-Container time-differnece ------------
-			timeMeasureNext =  System.currentTimeMillis() + timeMeasureInterval;
-			SimulationServiceSlice ssl;
+		if (System.currentTimeMillis() >= this.timeMeasureNext ) {
+			// --- Set next measure time ---------------------------------
+			this.timeMeasureNext = System.currentTimeMillis() + this.timeMeasureInterval;
+			
 			try {
-				ssl = (SimulationServiceSlice) getSlice(MAIN_SLICE);
-				
-				for (int i=0; i<counter; i++) {
-					// --- Measure local time and ask for the remote time ---
-					locTime1Milli = System.currentTimeMillis();
-					locTime1Nano = System.nanoTime();										// --- nano-seconds ---
-					remTimeMilli = ssl.getRemoteTime(); 
-					locTime2Nano = System.nanoTime();										// --- nano-seconds ---
+				// --- Get the Main-Container slice ----------------------
+				SimulationServiceSlice ssl = (SimulationServiceSlice) getSlice(MAIN_SLICE);
+				// --- Measure time-difference to Main-Container ---------
+				double remTimeMilliDiffAccumulate = 0;
+				for (int i=0; i<this.timeMeasureCountMax; i++) {
+					// --- Measure local time and ask for remote time ----
+					long locTime1Milli = System.currentTimeMillis();
+					long locTime1Nano = System.nanoTime();										// --- nano-seconds ---
+					long remTimeMilli = ssl.getRemoteTime(); 
+					long locTime2Nano = System.nanoTime();										// --- nano-seconds ---
 					
 					remTimeMilliDiffAccumulate += getContainerTimeDifference(locTime1Milli, remTimeMilli, locTime1Nano, locTime2Nano);
 				}
-				timeDiff2MainContainer = Math.round(remTimeMilliDiffAccumulate/counter) * (-1);	
+				// --- Set local value for time difference ---------------
+				this.timeDiff2MainContainer = Math.round(remTimeMilliDiffAccumulate / this.timeMeasureCountMax) * (-1);	
 
 			} catch (ServiceException e) {
 				e.printStackTrace();

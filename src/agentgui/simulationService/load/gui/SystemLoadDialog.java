@@ -28,7 +28,6 @@
  */
 package agentgui.simulationService.load.gui;
 
-import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -52,47 +51,60 @@ import agentgui.simulationService.agents.LoadMeasureAgent;
  */
 public class SystemLoadDialog extends JFrame {
 
-private static final long serialVersionUID = 1L;
-	
-	final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
-	private final Image imageAgentGUI = iconAgentGUI.getImage();
+	private static final long serialVersionUID = 3170514914879967107L;
 
+	private final static String pathImage = Application.getGlobalInfo().getPathImageIntern();
+	private final ImageIcon iconAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
+
+	private LoadMeasureAgent loadMeasureAgent;
+	private SystemLoadPanel systemLoadPanel;
+
+	
 	/**
 	 * Instantiates a new system load dialog.
+	 * @param loadMeasureAgent the load measure agent
 	 */
-	public SystemLoadDialog() {
+	public SystemLoadDialog(LoadMeasureAgent loadMeasureAgent) {
 		super();
-		initialize();
+		this.loadMeasureAgent = loadMeasureAgent;
+		this.initialize();
 	}
 
 	/**
 	 * This method initialises this.
 	 */
 	private void initialize() {
+		
 		this.setSize(620, 120);
-		this.setIconImage(imageAgentGUI);
+		this.setIconImage(this.iconAgentGUI.getImage());
 	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Load Monitor"));
-		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
-		// --- Set the Look and Feel of the Dialog ------------------
-//		this.setLookAndFeel();
+		this.setLookAndFeel();
+		this.setContentPane(this.getSystemLoadPanel());		
 		
 		// --- Add a WindowsListener --------------------------------
-	    this.addWindowListener(new WindowAdapter() {
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				setVisible(false);
 			}
 		});
-
 	}
 
+	/**
+	 * Returns the system load panel.
+	 * @return the system load panel
+	 */
+	public SystemLoadPanel getSystemLoadPanel() {
+		if (systemLoadPanel==null) {
+			systemLoadPanel = new SystemLoadPanel(this.loadMeasureAgent);
+		}
+		return systemLoadPanel;
+	}
 	
 	/**
 	 * This method set the Look and Feel of this Dialog.
 	 */
-	@SuppressWarnings("unused")
 	private void setLookAndFeel() {
  
 		String lnfClassname = Application.getGlobalInfo().getAppLnF();
@@ -101,11 +113,14 @@ private static final long serialVersionUID = 1L;
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 			}
 			UIManager.setLookAndFeel(lnfClassname);
-			SwingUtilities.updateComponentTreeUI(this);				
-		} 
-		catch (Exception e) {
-			System.err.println("Cannot install " + lnfClassname + " on this platform:" + e.getMessage());
+			SwingUtilities.updateComponentTreeUI(this);
+			
+		}  catch (Exception ex) {
+			System.err.println("Cannot install Look and Feel '" + lnfClassname + "' on this platform.");
+			ex.printStackTrace();
 		}
 	}	
+
+	
 	
 }  //  @jve:decl-index=0:visual-constraint="11,3"

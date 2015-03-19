@@ -50,6 +50,7 @@ import javax.swing.JToolBar;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.simulationService.agents.LoadMeasureAgent;
+
 import javax.swing.JTextField;
 
 /**
@@ -63,15 +64,14 @@ import javax.swing.JTextField;
  */
 public class SystemLoadPanel extends JPanel {
 
-	private static final long serialVersionUID = 2L;
-	
-	private static final String PathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
+	private static final long serialVersionUID = -6077963388508346438L;
+	private static final String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
 	private LoadMeasureAgent myAgent;
 	private boolean isRecording = false;
 	
-	private JScrollPane jScrollPane;
-	public JPanel jPanelLoad;
+	private JScrollPane jScrollPaneForLoadDisplays;
+	private JPanel jPanelForLoadDisplays;
 	
 	private JToolBar jToolBarLoad;
 		private JButton jButtonMeasureStart; 
@@ -112,11 +112,11 @@ public class SystemLoadPanel extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setLayout(new BorderLayout());
-		this.setSize(620, 90);
 		this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		this.setLayout(new BorderLayout());
 		this.add(getJToolBarLoad(), BorderLayout.NORTH);
-		this.add(getJScrollPane(), BorderLayout.CENTER);
+		this.add(getJScrollPaneForLoadDisplays(), BorderLayout.CENTER);
+		this.setSize(620, SystemLoadSingle.loadPanelHeight + this.getJToolBarLoad().getHeight());
 	}
 
 	/**
@@ -178,7 +178,7 @@ public class SystemLoadPanel extends JPanel {
 	 * This method initializes jJToolBarLoad.
 	 * @return javax.swing.JToolBar
 	 */
-	private JToolBar getJToolBarLoad() {
+	public JToolBar getJToolBarLoad() {
 		if (jToolBarLoad == null) {
 			
 			jToolBarLoad = new JToolBar();
@@ -244,30 +244,28 @@ public class SystemLoadPanel extends JPanel {
 	}
 
 	/**
-	 * This method initializes jScrollPane.
+	 * Gets the JScrollPane.
 	 * @return javax.swing.JScrollPane
 	 */
-	private JScrollPane getJScrollPane() {
-		if (jScrollPane == null) {
-			jScrollPane = new JScrollPane();
-			jScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-			jScrollPane.setViewportView(getJPanelLoad());
-			jScrollPane.setViewportView(getJPanelLoad());
+	private JScrollPane getJScrollPaneForLoadDisplays() {
+		if (jScrollPaneForLoadDisplays == null) {
+			jScrollPaneForLoadDisplays = new JScrollPane();
+			jScrollPaneForLoadDisplays.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+			jScrollPaneForLoadDisplays.setViewportView(this.getJPanelForLoadDisplays());
 		}
-		return jScrollPane;
+		return jScrollPaneForLoadDisplays;
 	}
-
 	/**
-	 * This method initializes jPanelLoad.
-	 * @return javax.swing.JPanel
+	 * Returns the JPanel for load displays.
+	 * @return the JPanel for load displays
 	 */
-	private JPanel getJPanelLoad() {
-		if (jPanelLoad == null) {
-			jPanelLoad = new JPanel();
-			jPanelLoad.setSize(new Dimension(620, 90));
-			jPanelLoad.setLayout(new BoxLayout(getJPanelLoad(), BoxLayout.Y_AXIS));
+	public JPanel getJPanelForLoadDisplays() {
+		if (jPanelForLoadDisplays == null) {
+			jPanelForLoadDisplays = new JPanel();
+			jPanelForLoadDisplays.setSize(new Dimension(620, SystemLoadSingle.loadPanelHeight));
+			jPanelForLoadDisplays.setLayout(new BoxLayout(getJPanelForLoadDisplays(), BoxLayout.Y_AXIS));
 		}
-		return jPanelLoad;
+		return jPanelForLoadDisplays;
 	}
 
 	/**
@@ -386,7 +384,7 @@ public class SystemLoadPanel extends JPanel {
 
 			if (imgName!=null) {
 				try {
-					ImageIcon ButtIcon = new ImageIcon( this.getClass().getResource( PathImage + imgName ), text);
+					ImageIcon ButtIcon = new ImageIcon( this.getClass().getResource( pathImage + imgName ), text);
 					this.setIcon(ButtIcon);
 					
 				} catch (Exception err) {
