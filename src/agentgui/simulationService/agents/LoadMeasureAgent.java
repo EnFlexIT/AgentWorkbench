@@ -45,6 +45,7 @@ import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.lang.acl.ACLMessage;
 
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -282,7 +283,7 @@ public class LoadMeasureAgent extends Agent {
 		private LoadServiceHelper loadHelper;
 		
 		private boolean initiatedLoadRecordingOnce = false;
-		private int dialogTitleHeight = 28;
+		private int dialogTitleHeight = 38;
 		private int dialogHeight = 0;
 		
 		/**
@@ -405,7 +406,11 @@ public class LoadMeasureAgent extends Agent {
 			}
 
 			// --- Refresh View ---------------------------------------------------------
-			final int newloadDialogHeight = (SystemLoadSingle.loadPanelHeight * layoutNodesVisible) + (getSystemLoadPanel().getJToolBarLoad().getHeight() + this.dialogTitleHeight); 
+			int newloadDialogHeightMax = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+			int newloadDialogHeight = (SystemLoadSingle.loadPanelHeight * layoutNodesVisible) + (getSystemLoadPanel().getJToolBarLoad().getHeight() + this.dialogTitleHeight);
+			if (newloadDialogHeight>newloadDialogHeightMax) {
+				newloadDialogHeight=newloadDialogHeightMax;
+			}
 			if (this.dialogHeight!=newloadDialogHeight) {
 				this.dialogHeight = newloadDialogHeight;
 				getSystemLoadDialog().setSize(getSystemLoadDialog().getWidth(), newloadDialogHeight);						

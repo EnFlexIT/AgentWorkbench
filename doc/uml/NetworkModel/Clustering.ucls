@@ -31,19 +31,19 @@
     </display>  
   </class>  
   <association id="4">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="5" name="alternativeNetworkModel"/>      
-      <multiplicity id="6" minimum="0" maximum="2147483647"/>    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="5" name="clusterNetworkModel"/>      
+      <multiplicity id="6" minimum="0" maximum="1">        
+        <position height="14" width="18" x="697" y="290"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="7">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="8" name="clusterNetworkModel"/>      
-      <multiplicity id="9" minimum="0" maximum="1">        
-        <position height="14" width="18" x="697" y="290"/>      
-      </multiplicity>    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="8" name="alternativeNetworkModel"/>      
+      <multiplicity id="9" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
