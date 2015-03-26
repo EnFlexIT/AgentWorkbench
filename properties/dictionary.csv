@@ -66,6 +66,7 @@ de;Ausführen als;Run as;;;
 de;Ausgewählte JADE-Services;Selected JADE Services;;;
 de;Ausgewählte Klasse übernehmen!;Take selected class!
 de;Auslastungs-Grenzwerte manuell festlegen;Set load thresholds manually
+de;Auslastungs-Monitor bei JADE-Start anzeigen;Show Load-Monitor on Jade startup;;;
 de;Auslastungs-Monitor öffnen;Open load monitor
 de;Auswahl - Agenten;Agent selection
 de;Auswahl - Ontologien;Ontology selection
@@ -266,7 +267,7 @@ de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht
 de;Ihre Webseite:;Your Website:;;;
 de;Im Falle eines Updates, eigenes Wörterbuch beibehalten.;In case of an update, keep own dictionary.;;;
 de;Immer Überspringen;Allways Skip
-de;Immer überspringen;;;;
+de;Immer überspringen;Allways Skip;;;
 de;Info;Info
 de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;
 de;Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !;Initial Memory >= Maximum Memory !;;;

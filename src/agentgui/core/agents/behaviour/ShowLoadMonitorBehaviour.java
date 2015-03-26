@@ -59,6 +59,7 @@ public class ShowLoadMonitorBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() {
 
+		// --- Wait for the start of the LoadMeasureAgent -----------
 		AgentController ageCont = null;
 		while (ageCont==null) {
 			try {

@@ -1319,6 +1319,9 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	@XmlTransient
 	public DistributionSetup getDistributionSetup() {
+		if (distributionSetup==null) {
+			distributionSetup = new DistributionSetup();
+		}
 		return distributionSetup;
 	}
 	

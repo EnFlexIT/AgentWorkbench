@@ -68,7 +68,6 @@ import agentgui.simulationService.ontology.RemoteContainerConfig;
  */
 public abstract class BaseLoadBalancing extends OneShotBehaviour implements BaseLoadBalancingInterface {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4987462350754111029L;
 	
 	/** The simulation helper for the connection to the SimulationsService. */
@@ -101,10 +100,10 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 */
 	public BaseLoadBalancing(Agent agent) {
 		super(agent);
-		currProject = Application.getProjectFocused();		
+		this.currProject = Application.getProjectFocused();		
 		if (currProject!=null) {
-			currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
-			currDisSetup = currProject.getDistributionSetup();
+			this.currSimSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
+			this.currDisSetup = this.currProject.getDistributionSetup();
 		}
 		this.setLoadHelper();
 		this.setSimulationHelper();
@@ -344,7 +343,11 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 * This method will start the Load-Monitor-Agent.
 	 */
 	protected void openLoadMonitor() {
-		 Application.getJadePlatform().jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenLoadMonitor);
+		if (this.currDisSetup!=null && this.currDisSetup.isShowLoadMonitorAtPlatformStart()==true) {
+			Application.getJadePlatform().jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenLoadMonitor);	
+		} else {
+			Application.getJadePlatform().jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenLoadMonitor);
+		}
 	}
 	
 	/**

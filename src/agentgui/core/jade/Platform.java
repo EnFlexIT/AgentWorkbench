@@ -475,7 +475,7 @@ public class Platform extends Object {
 	 * @see UtilityAgent
 	 */
 	public void jadeUtilityAgentStart(UTILITY_AGENT_JOB utilityAgentJob) {
-		Object[] agentArgs = new Object[5];
+		Object[] agentArgs = new Object[1];
 		agentArgs[0] = utilityAgentJob;
 		jadeAgentStart("utility", agentgui.core.agents.UtilityAgent.class.getName(), agentArgs);
 	}

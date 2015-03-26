@@ -180,6 +180,15 @@ public class LoadMeasureAgent extends Agent {
 		this.getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
 		this.getContentManager().registerOntology(JADEManagementOntology.getInstance());
 		
+		this.currProject = Application.getProjectFocused();		
+		if (this.currProject==null) {
+			this.currSimSetup = null;
+			this.currDisSetup = null;
+		} else {
+			this.currSimSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
+			this.currDisSetup = this.currProject.getDistributionSetup();
+		}
+		
 		this.loadBalancing = new DynamicLoadBalancing(this);
 		
 		this.monitorBehaviourTickingPeriod = this.getSelectedTimeSelection().getTimeInMill();
@@ -429,14 +438,6 @@ public class LoadMeasureAgent extends Agent {
 			// --------------------------------------------------------------------------
 			// --- Which Project, SimulationSetup and DistributionSetup is used?  -------
 			// --------------------------------------------------------------------------
-			currProject = Application.getProjectFocused();		
-			if (currProject==null) {
-				currSimSetup = null;
-				currDisSetup = null;
-			} else {
-				currSimSetup = currProject.getSimulationSetups().getCurrSimSetup();
-				currDisSetup = currProject.getDistributionSetup();
-			}
 
 			// --- Check if load recording has to be started directly -------------------
 			if (this.initiatedLoadRecordingOnce==false && currDisSetup!=null && currDisSetup.isImmediatelyStartLoadRecording()==true) {

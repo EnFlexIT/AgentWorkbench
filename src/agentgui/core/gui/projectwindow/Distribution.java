@@ -84,30 +84,31 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 
 	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
-	private Project currProject = null;
-	private DistributionSetup currDistributionSetup = null; 
-	private LoadThresholdLevels currUserThresholds = null;
-	private RemoteContainerConfiguration currRemoteContainerConfiguration = null;
+	private Project currProject;
+	private DistributionSetup currDistributionSetup; 
+	private LoadThresholdLevels currUserThresholds;
+	private RemoteContainerConfiguration currRemoteContainerConfiguration;
 	
-	private JPanel jPanelOnScrollPane = null;
-	private JPanel jPanelRemoteConfig = null;
-	private JPanel jPanelStatic = null;
-	private JPanel jPanelStaticClass = null;
-	private JPanel jPanelDynamic = null;
-	private JPanel jPanelThreshold = null;
-	private JPanel jPanelRecording = null;
-	private JPanel jPanelDummy = null;
+	private JPanel jPanelOnScrollPane;
+	private JPanel jPanelRemoteConfig;
+	private JPanel jPanelStatic;
+	private JPanel jPanelStaticClass;
+	private JPanel jPanelDynamic;
+	private JPanel jPanelThreshold;
+	private JPanel jPanelRecording;
+	private JPanel jPanelDummy;
 	
-	private JCheckBox jCheckBoxPreventUsageOfUsedComputers = null;
-	private JCheckBox jCheckBoxShowRMA = null;
-	private JCheckBox jCheckBoxDoLoadStatic = null;
-	private JCheckBox jCheckBoxDoLoadDynamic = null;
-	private JCheckBox jCheckBoxThresholdDefinition = null;
-	private JCheckBox jCheckBoxImmediatelyStartLoadRecording = null;
+	private JCheckBox jCheckBoxPreventUsageOfUsedComputers;
+	private JCheckBox jCheckBoxShowRMA;
+	private JCheckBox jCheckBoxDoLoadStatic;
+	private JCheckBox jCheckBoxDoLoadDynamic;
+	private JCheckBox jCheckBoxThresholdDefinition;
+	private JCheckBox jCheckBoxShowLoadMonitor;
+	private JCheckBox jCheckBoxImmediatelyStartLoadRecording;
 	
-	private JComboBox jComboBoxJVMMemoryInitial = null;
-	private JComboBox jComboBoxJVMMemoryMaximum = null;
-	private JComboBox jComboBoxRecordingInterval = null;
+	private JComboBox jComboBoxJVMMemoryInitial;
+	private JComboBox jComboBoxJVMMemoryMaximum;
+	private JComboBox jComboBoxRecordingInterval;
 	
 	private Object[] comboData = {JadeRemoteStart.jvmMemo0016MB, JadeRemoteStart.jvmMemo0032MB,
 								  JadeRemoteStart.jvmMemo0064MB, JadeRemoteStart.jvmMemo0128MB,
@@ -115,50 +116,50 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 								  JadeRemoteStart.jvmMemo1024MB};
 	private DefaultComboBoxModel comboModelInitial = new DefaultComboBoxModel(comboData);
 	private DefaultComboBoxModel comboModelMaximal = new DefaultComboBoxModel(comboData);
-	private DefaultComboBoxModel comboModelRecordingInterval = null;
+	private DefaultComboBoxModel comboModelRecordingInterval;
 	
-	private JTextField jTextFieldAgentsExpected = null;
-	private JTextField jTextFieldContainerExpected = null;
-	private JTextField jTextFieldStaticLoadClass = null;
-	private JTextField jTextFieldDynamicLoadClass = null;
-	private JTextField jTextFieldCpuLow = null;
-	private JTextField jTextFieldCpuHigh = null;
-	private JTextField jTextFieldMemLow = null;
-	private JTextField jTextFieldMemHigh = null;
-	private JTextField jTextFieldThreadsHigh = null;
-	private JTextField jTextFieldThreadsLow = null;
+	private JTextField jTextFieldAgentsExpected;
+	private JTextField jTextFieldContainerExpected;
+	private JTextField jTextFieldStaticLoadClass;
+	private JTextField jTextFieldDynamicLoadClass;
+	private JTextField jTextFieldCpuLow;
+	private JTextField jTextFieldCpuHigh;
+	private JTextField jTextFieldMemLow;
+	private JTextField jTextFieldMemHigh;
+	private JTextField jTextFieldThreadsHigh;
+	private JTextField jTextFieldThreadsLow;
 	
-	private JLabel jLabelMemoryAlloc = null;
-	private JLabel jLabelMemoryMax = null;
-	private JLabel jLabelMemoryMin = null;
+	private JLabel jLabelMemoryAlloc;
+	private JLabel jLabelMemoryMax;
+	private JLabel jLabelMemoryMin;
 	
-	private JLabel jLabelStaticLoadClass = null;
-	private JLabel jLabelDynamicLoadClass = null;
-	private JLabel jLabelCalculation = null;
-	private JLabel jLabelAgentsExpected = null;
-	private JLabel jLabelContainerExpected = null;
+	private JLabel jLabelStaticLoadClass;
+	private JLabel jLabelDynamicLoadClass;
+	private JLabel jLabelCalculation;
+	private JLabel jLabelAgentsExpected;
+	private JLabel jLabelContainerExpected;
 	
-	private JLabel jLabelCPU = null;
-	private JLabel jLabelMemory = null;
-	private JLabel jLabelThreads = null;
-	private JLabel jLabelCPUPercent = null;
-	private JLabel jLabelMemPercent = null;
-	private JLabel jLabelThreadsNo = null;
-	private JLabel jLabelHigh = null;
-	private JLabel jLabelLow = null;
+	private JLabel jLabelCPU;
+	private JLabel jLabelMemory;
+	private JLabel jLabelThreads;
+	private JLabel jLabelCPUPercent;
+	private JLabel jLabelMemPercent;
+	private JLabel jLabelThreadsNo;
+	private JLabel jLabelHigh;
+	private JLabel jLabelLow;
 	
-	private JButton jButtonRemoteDefault = null;
-	private JButton jButtonCalcContainer = null;
+	private JButton jButtonRemoteDefault;
+	private JButton jButtonCalcContainer;
 	
-	private JButton jButtonDefaultClassStatic = null;
-	private JButton jButtonDefaultClassDynamic = null;
-	private JButton jButtonDefaultThreshold = null;
+	private JButton jButtonDefaultClassStatic;
+	private JButton jButtonDefaultClassDynamic;
+	private JButton jButtonDefaultThreshold;
 	
-	private JButton jButtonSelectStaticClass = null;
-	private JButton jButtonSelectDynamicClass = null;
+	private JButton jButtonSelectStaticClass;
+	private JButton jButtonSelectDynamicClass;
 
-	private JLabel jLabelRecording = null;
-	private JLabel jLabelDummy = null;
+	private JLabel jLabelRecording;
+	private JLabel jLabelDummy;
 
 	
 	/**
@@ -177,6 +178,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		jCheckBoxDoLoadStatic.setText(Language.translate("Statische Lastverteilung aktivieren"));
 		jCheckBoxDoLoadDynamic.setText(Language.translate("Dynamische Lastverteilung aktivieren"));
 		jCheckBoxThresholdDefinition.setText(Language.translate("Eigene Auslastungsgrenzwerte verwenden"));
+		jCheckBoxShowLoadMonitor.setText(Language.translate("Auslastungs-Monitor bei JADE-Start anzeigen"));
 		jCheckBoxImmediatelyStartLoadRecording.setText(Language.translate("Lastaufzeichnung mit dem Start von JADE beginnen"));
 		
 		jLabelMemoryAlloc.setText(Language.translate("Arbeitsspeicher für Remote-JVM"));
@@ -271,16 +273,21 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			GridBagConstraints gridBagConstraints09 = new GridBagConstraints();
 			gridBagConstraints09.gridx = 0;
 			gridBagConstraints09.gridy = 9;
-			gridBagConstraints09.insets = new Insets(5, 32, 0, 10);
+			gridBagConstraints09.insets = new Insets(10, 10, 0, 0);
 			gridBagConstraints09.anchor = GridBagConstraints.WEST;
-			gridBagConstraints09.fill = GridBagConstraints.NONE;
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 			gridBagConstraints10.gridx = 0;
 			gridBagConstraints10.gridy = 10;
+			gridBagConstraints10.insets = new Insets(5, 32, 0, 10);
+			gridBagConstraints10.anchor = GridBagConstraints.WEST;
 			gridBagConstraints10.fill = GridBagConstraints.NONE;
-			gridBagConstraints10.weighty = 1.0;
-			gridBagConstraints10.insets = new Insets(10, 10, 10, 10);
-			gridBagConstraints10.anchor = GridBagConstraints.NORTHWEST;
+			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+			gridBagConstraints11.gridx = 0;
+			gridBagConstraints11.gridy = 11;
+			gridBagConstraints11.fill = GridBagConstraints.NONE;
+			gridBagConstraints11.weighty = 1.0;
+			gridBagConstraints11.insets = new Insets(10, 10, 10, 10);
+			gridBagConstraints11.anchor = GridBagConstraints.NORTHWEST;
 			
 			
 			jPanelOnScrollPane = new JPanel();
@@ -293,9 +300,10 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jPanelOnScrollPane.add(getJPanelDynamic(), gridBagConstraints05);
 			jPanelOnScrollPane.add(getJCheckBoxThresholdDefinition(), gridBagConstraints06);
 			jPanelOnScrollPane.add(getJPanelThreshold(), gridBagConstraints07);
-			jPanelOnScrollPane.add(getJCheckBoxImmediatelyStartLoadRecording(), gridBagConstraints08);
-			jPanelOnScrollPane.add(getJPanelRecording(), gridBagConstraints09);
-			jPanelOnScrollPane.add(getJPanelDummy(), gridBagConstraints10);
+			jPanelOnScrollPane.add(getJCheckBoxShowLoadMonitor(), gridBagConstraints08);
+			jPanelOnScrollPane.add(getJCheckBoxImmediatelyStartLoadRecording(), gridBagConstraints09);
+			jPanelOnScrollPane.add(getJPanelRecording(), gridBagConstraints10);
+			jPanelOnScrollPane.add(getJPanelDummy(), gridBagConstraints11);
 			
 			
 		}
@@ -1054,8 +1062,19 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		}
 		return this.jPanelRecording;
 	}
-	
-	
+	/**
+	 * Gets the JCheckBox show load monitor.
+	 * @return the JCheckBox show load monitor
+	 */
+	private JCheckBox getJCheckBoxShowLoadMonitor() {
+		if (jCheckBoxShowLoadMonitor == null) {
+			jCheckBoxShowLoadMonitor = new JCheckBox();
+			jCheckBoxShowLoadMonitor.setText("Auslastungs-Monitor bei JADE-Start anzeigen");
+			jCheckBoxShowLoadMonitor.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckBoxShowLoadMonitor.addActionListener(this);
+		}
+		return jCheckBoxShowLoadMonitor;
+	}
 	/**
 	 * This method initializes jCheckBoxDoLoadStatic	
 	 * @return javax.swing.JCheckBox	
@@ -1222,6 +1241,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		this.jTextFieldThreadsLow.setText(((Integer)currUserThresholds.getThNoThreadsL()).toString());
 		this.jTextFieldThreadsHigh.setText(((Integer)currUserThresholds.getThNoThreadsH()).toString());
 		
+		this.jCheckBoxShowLoadMonitor.setSelected(currDistributionSetup.isShowLoadMonitorAtPlatformStart());
 		this.jCheckBoxImmediatelyStartLoadRecording.setSelected(currDistributionSetup.isImmediatelyStartLoadRecording());
 		this.setRecordingInterval(currDistributionSetup.getLoadRecordingInterval());
 		
@@ -1336,6 +1356,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		} else if (trigger==jCheckBoxThresholdDefinition) {
 			currDistributionSetup.setUseUserThresholds(jCheckBoxThresholdDefinition.isSelected());
 		
+		} else if (trigger==jCheckBoxShowLoadMonitor) {
+			currDistributionSetup.setShowLoadMonitorAtPlatformStart(jCheckBoxShowLoadMonitor.isSelected());
 		} else if (trigger==jCheckBoxImmediatelyStartLoadRecording) {
 			currDistributionSetup.setImmediatelyStartLoadRecording(jCheckBoxImmediatelyStartLoadRecording.isSelected());
 		} else if (trigger==jComboBoxRecordingInterval) {

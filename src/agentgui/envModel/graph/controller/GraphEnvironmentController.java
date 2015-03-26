@@ -60,7 +60,6 @@ import agentgui.core.gui.ProgressMonitor;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetupNotification;
-import agentgui.envModel.graph.controller.yedGraphml.YedGraphMLFileImporter;
 import agentgui.envModel.graph.networkModel.ClusterNetworkComponent;
 import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.DomainSettings;
@@ -116,7 +115,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     /** The GraphMLWriter used to save the graph */
     private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter = null;
     /** Known adapter for the import of network models */
-    private Vector<NetworkModelFileImporter> importAdapter = new Vector<NetworkModelFileImporter>();
+    private Vector<NetworkModelFileImporter> importAdapter;
 
     /** The network model currently loaded */
     private NetworkModel networkModel = null;
@@ -829,9 +828,8 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @return the import adapter
      */
     public Vector<NetworkModelFileImporter> getImportAdapter() {
-    	if (this.importAdapter.size()==0) {
-    		// --- Here the default import adapter are defined ------ 
-    		this.importAdapter.add(new YedGraphMLFileImporter(this, "graphml", "yEd GraphML"));
+    	if (this.importAdapter==null) {
+    		this.importAdapter = new Vector<NetworkModelFileImporter>();
     	}
     	return this.importAdapter;
     }

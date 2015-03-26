@@ -60,6 +60,7 @@ public class DistributionSetup implements Serializable {
 	private boolean useUserThresholds = false;
 	private LoadThresholdLevels UserThresholds = new LoadThresholdLevels();
 
+	private boolean showLoadMonitorAtPlatformStart = true;
 	private boolean immediatelyStartLoadRecording = false;
 	private int loadRecordingInterval=500;
 	
@@ -182,6 +183,21 @@ public class DistributionSetup implements Serializable {
 	 */
 	public void setUserThresholds(LoadThresholdLevels userThresholds) {
 		UserThresholds = userThresholds;
+	}
+	
+	/**
+	 * Checks if is show load monitor at platform start.
+	 * @return true, if is show load monitor
+	 */
+	public boolean isShowLoadMonitorAtPlatformStart() {
+		return showLoadMonitorAtPlatformStart;
+	}
+	/**
+	 * Sets the show load monitor at platform start.
+	 * @param showLoadMonitor the new show load monitor
+	 */
+	public void setShowLoadMonitorAtPlatformStart(boolean showLoadMonitorAtPlatformStart) {
+		this.showLoadMonitorAtPlatformStart = showLoadMonitorAtPlatformStart;
 	}
 	
 	/**

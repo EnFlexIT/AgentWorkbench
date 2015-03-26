@@ -6511,6 +6511,36 @@
             <agentClassReference>gasmas.agents.components.PipeShortAgent</agentClassReference>
             <startAsName>eN_8530e8530E</startAsName>
         </agent>
+        <agent>
+            <postionNo>1085</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n1085</startAsName>
+        </agent>
+        <agent>
+            <postionNo>1086</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n1087</startAsName>
+        </agent>
+        <agent>
+            <postionNo>1087</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n1088</startAsName>
+        </agent>
+        <agent>
+            <postionNo>1088</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n1090</startAsName>
+        </agent>
+        <agent>
+            <postionNo>1089</postionNo>
+            <listMembership>02 AgentStartEnvironment</listMembership>
+            <agentClassReference>gasmas.agents.components.BranchAgent</agentClassReference>
+            <startAsName>n1091</startAsName>
+        </agent>
     </agentSetup>
     <timeModelSettings>
         <entry>
