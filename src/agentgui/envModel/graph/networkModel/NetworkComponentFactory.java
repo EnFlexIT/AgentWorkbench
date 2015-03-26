@@ -165,7 +165,7 @@ public class NetworkComponentFactory {
 		// --- Configure and add the prototype to the graph --------- 
 		graphElementPrototype.setId(compNetworkModel.nextNetworkComponentID());
 		graphElementPrototype.setType(networkComponentTypeName);
-		graphElementPrototype.addToGraph(compNetworkModel.getGraph());
+		graphElementPrototype.addToGraph(compNetworkModel);
 	    
 	    // --- Create the needed NetworkComponent ------------------- 
 		HashSet<GraphElement> graphElements = new HashSet<GraphElement>();

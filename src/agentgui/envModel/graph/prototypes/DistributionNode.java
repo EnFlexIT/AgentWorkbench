@@ -33,6 +33,7 @@ import java.util.HashSet;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.NetworkModel;
 import edu.uci.ics.jung.graph.Graph;
 
 /**
@@ -54,56 +55,16 @@ public class DistributionNode extends GraphElementPrototype {
 	 * @see agentgui.envModel.graph.prototypes.GraphElementPrototype#addToGraph(edu.uci.ics.jung.graph.Graph)
 	 */
 	@Override
-	public HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph) {
-		this.graph = graph;
-		// Create a HashSet for the nodes and edges
+	public HashSet<GraphElement> addToGraph(NetworkModel networkModel) {
+    	
+    	Graph<GraphNode, GraphEdge> graph = networkModel.getGraph();
 		HashSet<GraphElement> elements = new HashSet<GraphElement>();
 
 		distributionNode = new GraphNode();
-		distributionNode.setId(GraphNode.GRAPH_NODE_PREFIX + (nodeCounter++));
+		distributionNode.setId(networkModel.nextNodeID());
 		graph.addVertex(distributionNode);
 	    elements.add(distributionNode);
 		return elements;
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.prototypes.GraphElementPrototype#addAfter(edu.uci.ics.jung.graph.Graph, agentgui.envModel.graph.prototypes.GraphElementPrototype)
-	 */
-	@Override
-	public HashSet<GraphElement> addAfter(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor) {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.prototypes.GraphElementPrototype#addBefore(edu.uci.ics.jung.graph.Graph, agentgui.envModel.graph.prototypes.GraphElementPrototype)
-	 */
-	@Override
-	public HashSet<GraphElement> addBefore(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype successor) {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.prototypes.GraphElementPrototype#addBetween(edu.uci.ics.jung.graph.Graph, agentgui.envModel.graph.prototypes.GraphElementPrototype, agentgui.envModel.graph.prototypes.GraphElementPrototype)
-	 */
-	@Override
-	public HashSet<GraphElement> addBetween(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor, GraphElementPrototype successor) {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.prototypes.GraphElementPrototype#getFreeEntry()
-	 */
-	@Override
-	public GraphNode getFreeEntry() {
-		return this.distributionNode;
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.prototypes.GraphElementPrototype#getFreeExit()
-	 */
-	@Override
-	public GraphNode getFreeExit() {
-		return getFreeEntry();
 	}
 
 	/* (non-Javadoc)

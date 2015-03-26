@@ -51,9 +51,15 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  */
 public class ClusterGraphElement extends StarGraphElement {
 
-	public ClusterGraphElement() {
-	}
+	private GraphNode centralGraphNode;
 
+	/**
+	 * Instantiates a new ClusterGraphElement. 
+	 * Simple constructor needed for reflective instantiation 
+	 */
+	public ClusterGraphElement() {
+		this.setType(GeneralGraphSettings4MAS.NETWORK_COMPONENT_TYPE_4_CLUSTER);
+	}
 	/**
 	 * Instantiates a new cluster graph element.
 	 * 
@@ -66,57 +72,46 @@ public class ClusterGraphElement extends StarGraphElement {
 		this.setType(GeneralGraphSettings4MAS.NETWORK_COMPONENT_TYPE_4_CLUSTER);
 	}
 
-	/**
-	 * Adds the to graph new Nodes for the ClusteComponent
-	 * 
-	 * @param networkModel the network model
-	 * @return the hash set
-	 */
-	public HashSet<GraphElement> addToGraph(NetworkModel networkModel) {
-		
-		HashSet<GraphElement> elements = new HashSet<GraphElement>();
-		Vector<GraphNode> newOuterNodes = new Vector<GraphNode>();
-		
-		// --- Add central Node -----------------
-		GraphNode centralNode = new GraphNode();
-		centralNode.setId(networkModel.nextNodeID());
-		networkModel.getGraph().addVertex(centralNode);
-		elements.add(centralNode);
-		
-		// --- Add Edges ------------------------
-		int counter = 0;
-		for (GraphNode graphNode : outerNodes) {
-			// --- Get node from NetworkModel ---
-			GraphNode graphNode2Connect = (GraphNode) networkModel.getGraphElement(graphNode.getId());
-			if (graphNode2Connect==null) {
-				graphNode2Connect = graphNode;
-			}
-			graphNode2Connect.setGraphElementLayout(null);
-			newOuterNodes.add(graphNode2Connect);
-			
-			// --- Add Edge ---------------------
-			GraphEdge edge = new GraphEdge(id + "_" + counter++, getType());
-			networkModel.getGraph().addEdge(edge, centralNode, graphNode2Connect, EdgeType.UNDIRECTED);
-			elements.add(edge);
-		}
-		
-		this.outerNodes = newOuterNodes;
-		
-		Rectangle2D rectangle = GraphGlobals.getGraphSpreadDimension(this.outerNodes);
-		centralNode.setPosition(new Point2D.Double(rectangle.getCenterX(), rectangle.getCenterY()));
-
-		elements.addAll(this.outerNodes);
-		return elements;
-		
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see agentgui.envModel.graph.prototypes.GraphElementPrototype#addToGraph(edu.uci.ics.jung.graph.Graph)
 	 */
 	@Override
-	public HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph) {
-		return null;
+	public HashSet<GraphElement> addToGraph(NetworkModel networkModel) {
+    	
+    	Graph<GraphNode, GraphEdge> graph = networkModel.getGraph();
+		HashSet<GraphElement> elements = new HashSet<GraphElement>();
+		
+		// --- Add central Node -------------------------------------
+		this.centralGraphNode = new GraphNode();
+		this.centralGraphNode.setId(networkModel.nextNodeID());
+		graph.addVertex(this.centralGraphNode);
+		elements.add(this.centralGraphNode);
+		
+		// --- Add Edges --------------------------------------------
+		int counter = 0;
+		for (GraphNode outerNode : outerNodes) {
+			// --- Add Edge -----------------------------------------
+			GraphEdge edge = new GraphEdge(id + "_" + counter++, getType());
+			graph.addEdge(edge, this.centralGraphNode, outerNode, EdgeType.UNDIRECTED);
+			elements.add(edge);
+		}
+		
+		// --- Set position of central GraphNode --------------------
+		Rectangle2D rectangle = GraphGlobals.getGraphSpreadDimension(this.outerNodes);
+		this.centralGraphNode.setPosition(new Point2D.Double(rectangle.getCenterX(), rectangle.getCenterY()));
+
+		elements.addAll(this.outerNodes);
+		return elements;
 	}
+	
+	/**
+	 * Returns the central graph node if available.
+	 * @return the central graph node if available
+	 */
+	public GraphNode getCentralGraphNode() {
+		return this.centralGraphNode;
+	}
+	
 }

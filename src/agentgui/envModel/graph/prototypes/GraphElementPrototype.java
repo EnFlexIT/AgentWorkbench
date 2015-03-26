@@ -30,10 +30,8 @@ package agentgui.envModel.graph.prototypes;
 
 import java.util.HashSet;
 
-import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
-import agentgui.envModel.graph.networkModel.GraphNode;
-import edu.uci.ics.jung.graph.Graph;
+import agentgui.envModel.graph.networkModel.NetworkModel;
 
 /**
  * Abstract super class for GraphElementPrototypes.
@@ -47,18 +45,11 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public abstract class GraphElementPrototype {
 	
-	/** Counting the number of nodes for generating unique node IDs for one prototype */
-	protected int nodeCounter = 0;
-
 	/** The id of the element represented by this GraphElementPrototype */
 	protected String id;
 	
 	/** The type of the element represented by this GraphElementPrototype */
 	protected String type;
-	
-	/** Reference to the graph instance, required to get graph topology related information on nodes and edges */
-	protected Graph<GraphNode, GraphEdge> graph;
-
 	
 	/**
 	 * This method adds a GraphElementPrototype to a JUNG graph, with no connection to other graph elements.
@@ -66,32 +57,7 @@ public abstract class GraphElementPrototype {
 	 * @param graph The JUNG graph
 	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed  
 	 */
-	public abstract HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph);
-	/**
-	 * This method adds a GraphElementPrototype to a JUNG graph after another element.
-	 * This method is only used for importing the graph from the GraphML file.
-	 * @param graph The JUNG graph
-	 * @param predecessor The GraphElementPrototype's predecessor
-	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed
-	 */
-	public abstract HashSet<GraphElement> addAfter(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor);
-	/**
-	 * This method adds a GraphElementPrototype to a JUNG graph before another element.
-	 * This method is only used for importing the graph from the GraphML file.
-	 * @param graph The JUNG graph
-	 * @param successor The GraphElementPrototype's successor
-	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed
-	 */
-	public abstract HashSet<GraphElement> addBefore(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype successor);
-	/**
-	 * This method adds a GraphElementPrototype to a JUNG graph between two other elements.
-	 * This method is only used for importing the graph from the GraphML file.
-	 * @param graph The JUNG graph
-	 * @param predecessor The GraphElementPrototype's predecessor
-	 * @param successor The GraphElementPrototype's successor
-	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed
-	 */
-	public abstract HashSet<GraphElement> addBetween(Graph<GraphNode, GraphEdge> graph, GraphElementPrototype predecessor, GraphElementPrototype successor);
+	public abstract HashSet<GraphElement> addToGraph(NetworkModel networkModel);
 	
 	/**
 	 * @param id the id to set
@@ -117,18 +83,6 @@ public abstract class GraphElementPrototype {
 	public String getType() {
 		return type;
 	}
-	/**
-	 * This method returns a node in which a predecessor can be connected to this GraphElementPrototype 
-	 * This method is only used for importing the graph from the GraphML file.
-	 * @return The node
-	 */
-	public abstract GraphNode getFreeEntry();
-	/**
-	 * This method returns a node in which a successor can be connected to this GraphElementPrototype
-	 * This method is only used for importing the graph from the GraphML file.
-	 * @return The node
-	 */
-	public abstract GraphNode getFreeExit();
 	/**
 	 * @return True if directed, false if undirected
 	 */

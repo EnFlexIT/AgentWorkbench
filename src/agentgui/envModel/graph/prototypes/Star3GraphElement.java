@@ -34,6 +34,7 @@ import java.util.HashSet;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
 import agentgui.envModel.graph.networkModel.GraphNode;
+import agentgui.envModel.graph.networkModel.NetworkModel;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 
@@ -67,16 +68,17 @@ public class Star3GraphElement extends StarGraphElement {
 	}
 
 	@Override
-	public HashSet<GraphElement> addToGraph(Graph<GraphNode, GraphEdge> graph) {
+	public HashSet<GraphElement> addToGraph(NetworkModel networkModel) {
+    	
+    	Graph<GraphNode, GraphEdge> graph = networkModel.getGraph();
 		// check if n is set
 		if (n != null) {
-			this.graph = graph;
 			// Create a HashSet for the nodes and edges
 			HashSet<GraphElement> elements = new HashSet<GraphElement>();
 
 			// Create central node and add to the graph
 			GraphNode centralNode = new GraphNode();
-			centralNode.setId(GraphNode.GRAPH_NODE_PREFIX + (nodeCounter++));
+			centralNode.setId(networkModel.nextNodeID());
 			graph.addVertex(centralNode);
 			elements.add(centralNode);
 
@@ -84,7 +86,7 @@ public class Star3GraphElement extends StarGraphElement {
 			for (int i = 0; i < n; i++) {
 				// Create the node and add to the vector
 				GraphNode node = new GraphNode();
-				node.setId(GraphNode.GRAPH_NODE_PREFIX + (nodeCounter++));
+				node.setId(networkModel.nextNodeID());
 				outerNodes.add(node);
 				elements.add(node);
 

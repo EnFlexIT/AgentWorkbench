@@ -29,6 +29,7 @@
 package agentgui.envModel.graph.networkModel;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +39,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import agentgui.core.common.SerialClone;
+import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.prototypes.ClusterGraphElement;
 import agentgui.envModel.graph.prototypes.DistributionNode;
@@ -272,17 +274,22 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the copy
 	 */
 	public NetworkModel getCopy() {
-
-		boolean cloneInstance = true;
-		NetworkModel netModel = null;
+		
 		synchronized (this) {
-			
+
+			NetworkModel netModel = null;	
+			boolean cloneInstance = true;
 			if (cloneInstance==true) {
 				// -------------------------------------------------------
 				// --- Make a serialisation copy the NetworkModel -------- 
 				// -------------------------------------------------------
-				netModel = SerialClone.clone(this);
-				netModel.refreshGraphElements();
+				try {
+					netModel = SerialClone.clone(this);
+					netModel.refreshGraphElements();
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 				
 			} else {
 				// -------------------------------------------------------
@@ -337,9 +344,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				netModel.setAlternativeNetworkModel(copyOfAlternativeNetworkModel);
 				
 			}
+			return netModel;
 		} // end synchronized
-
-		return netModel;
 	}
 
 	/**
@@ -938,9 +944,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return String The next unique node ID that can be used.
 	 */
 	public String nextNodeID() {
-		return nextNodeID(false);
+		return this.nextNodeID(false);
 	}
-
 	/**
 	 * Generates the next unique node ID in the series PP0, PP1, PP2, ...
 	 * 
@@ -948,18 +953,18 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return String The next unique node ID that can be used.
 	 */
 	private String nextNodeID(boolean skipNullEntries) {
-
+	
 		// Finds the current maximum node ID and returns the next one to it.
 		long max = -1;
 		boolean errEntry = false;
-
+	
 		Collection<GraphNode> nodeCollection = getGraph().getVertices();
 		GraphNode[] nodes = nodeCollection.toArray(new GraphNode[0]);
 		for (int i = 0; i < nodes.length; i++) {
 			GraphNode node = nodes[i];
 			String id = node.getId();
 			errEntry = (id == null || id.equals("null")) ? true : false;
-
+	
 			if (errEntry == true && skipNullEntries == false) {
 				id = this.nextNodeID(true);
 				node.setId(id);
@@ -1081,7 +1086,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	private Long extractNumericalValue(String expression) {
 		String numericString = "";
-		Long numeric = null;
+		Long numeric = new Long(-1);
 		for (int i = 0; i < expression.length(); i++) {
 			String letter = Character.toString(expression.charAt(i));
 			if (letter.matches("[0-9]")) {
@@ -1697,14 +1702,14 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	public ClusterNetworkComponent replaceComponentsByCluster(HashSet<NetworkComponent> networkComponentsToCluster, boolean distributionNodesAreOuterNodes) {
 		
 		// --- Maybe another instance: Get real group of NetworkComponents ---- 
-		HashSet<NetworkComponent> goNetworkComponents = new HashSet<NetworkComponent>();
+		HashSet<NetworkComponent> clusterNC2Use = new HashSet<NetworkComponent>();
 		for (NetworkComponent netComp : networkComponentsToCluster) {
-			goNetworkComponents.add(this.getNetworkComponent(netComp.getId()));
+			clusterNC2Use.add(this.getNetworkComponent(netComp.getId()));
 		}
 		
 		// ---------- Get Domain of current NetworkComponent -------------------
 		String domain = null;
-		NetworkComponent networkComponent = goNetworkComponents.iterator().next();
+		NetworkComponent networkComponent = clusterNC2Use.iterator().next();
 		if (networkComponent instanceof ClusterNetworkComponent) {
 			domain = ((ClusterNetworkComponent) networkComponent).getDomain();
 		} else {
@@ -1712,18 +1717,25 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			ComponentTypeSettings cts = this.generalGraphSettings4MAS.getCurrentCTS().get(compType);
 			domain = cts.getDomain();	
 		}
-				
-		// ---------- Prepare Parameters for ClusterComponent ------------------
+		// --- Get cluster agent class name -----------------------------------
+		DomainSettings dSettings = this.generalGraphSettings4MAS.getDomainSettings().get(domain);
+		String clusterAgentClassName = null;
+		if (dSettings!=null) {
+			clusterAgentClassName = dSettings.getClusterAgent();
+		}
+		
+		// ---------- Prepare Parameters for ClusterComponent -----------------
 		NetworkModel clusterNetworkModel = this.getCopy();
 		clusterNetworkModel.setAlternativeNetworkModel(null);
-		clusterNetworkModel.removeNetworkComponentsInverse(goNetworkComponents);
+		clusterNetworkModel.removeNetworkComponentsInverse(clusterNC2Use);
 		clusterNetworkModel.resetGraphElementLayout();
 		
-		// ----------- Get outer GraphNode of the NetworkModel -----------------
-		Vector<GraphNode> outerNodes = this.getOuterConnectionNodes(goNetworkComponents, distributionNodesAreOuterNodes);
-		
-		// ----------- Remove clustered NetworkComponents ----------------------
-		for (NetworkComponent netComp : goNetworkComponents) {
+		// ----------- Get outer GraphNode of the NetworkModel ----------------
+		Vector<GraphNode> outerNodes = this.getOuterConnectionNodes(clusterNC2Use, distributionNodesAreOuterNodes);
+		// ----------- Get remaining GraphElements of current outer nodes -----
+		HashMap<GraphNode, HashSet<GraphElement>> outerNodesRemainingGraphElements = this.getOuterConnectionRemainingGraphElements(outerNodes, clusterNC2Use);
+		// ----------- Remove clustered NetworkComponents ---------------------
+		for (NetworkComponent netComp : clusterNC2Use) {
 			if (distributionNodesAreOuterNodes==false) {
 				this.removeNetworkComponent(netComp, true, false);
 			} else {
@@ -1732,15 +1744,21 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				}
 			}
 		}
-		
-		// ----------- Create Cluster Prototype and Component ---------------------
+		// --- Correct outer nodes after NetworkComponents were removed -------
+		outerNodes = this.getOuterConnectionNodesCorrected(outerNodesRemainingGraphElements);
+
+		// ----------- Create Cluster GraphElement ----------------------------
 		ClusterGraphElement clusterGraphElement = new ClusterGraphElement(outerNodes, this.nextNetworkComponentID());
 		HashSet<GraphElement> graphElements = clusterGraphElement.addToGraph(this);
-		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterGraphElement.getId(), clusterGraphElement.getType(), null, graphElements, clusterGraphElement.isDirected(), domain, clusterNetworkModel);
+		// ----------- Set position of central GraphNode ----------------------
+		Rectangle2D rectangle = GraphGlobals.getGraphSpreadDimension(clusterNetworkModel.getGraph().getVertices());
+		clusterGraphElement.getCentralGraphNode().setPosition(new Point2D.Double(rectangle.getCenterX(), rectangle.getCenterY()));
+		// ----------- Create ClusterNetworkComponent -------------------------
+		ClusterNetworkComponent clusterComponent = new ClusterNetworkComponent(clusterGraphElement.getId(), clusterGraphElement.getType(), clusterAgentClassName, graphElements, clusterGraphElement.isDirected(), domain, clusterNetworkModel);
 		this.addNetworkComponent(clusterComponent);
 		this.refreshGraphElements();
 
-		// --- Add the created cluster as an alternative network model -----------
+		// --- Add the created cluster as an alternative network model --------
 		this.getAlternativeNetworkModel().put(clusterComponent.getId(), clusterNetworkModel);
 		
 		return clusterComponent;
@@ -1817,6 +1835,80 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		return outerNodes;
 	}
 
+	/**
+	 * Gets the outer connection remaining graph elements.
+	 *
+	 * @param outerNodes the outer nodes 
+	 * @param networkComponentsToCluster the network components to cluster
+	 * @return the outer connection remaining graph elements
+	 */
+	private HashMap<GraphNode, HashSet<GraphElement>> getOuterConnectionRemainingGraphElements(Vector<GraphNode> outerNodes, HashSet<NetworkComponent> networkComponentsToCluster) {
+		
+		HashMap<GraphNode, HashSet<GraphElement>> ocge = new HashMap<GraphNode, HashSet<GraphElement>>();
+		for (GraphNode graphNode1 : outerNodes) {
+			
+			// --- Get edges that are leaving / reaching this GraphNode ------- 
+			Vector<GraphEdge> edges = new Vector<GraphEdge>(this.getGraph().getIncidentEdges(graphNode1));
+			for (GraphEdge edge : edges) {
+				// --- Is the edge part of the NetworkComponets to Cluster? ---
+				if (networkComponentsToCluster.contains(this.getNetworkComponent(edge))==false) {
+					// --- Get opposite GraphNode -----------------------------
+					GraphNode graphNode2 = this.getGraph().getOpposite(graphNode1, edge);
+					HashSet<GraphElement> remainingGE = new HashSet<GraphElement>();
+					remainingGE.add(edge);
+					remainingGE.add(graphNode2);
+					ocge.put(graphNode1, remainingGE);
+					// --- one reminder is enough ! ---------------------------
+					break;
+				}
+			} // end for edges 
+		} // end for outerNodes
+		return ocge;
+	}
+	
+	/**
+	 * Gets the outer connection nodes corrected.
+	 *
+	 * @param outerNodesRemainingGraphElements the outer nodes remaining graph elements
+	 * @return the outer connection nodes corrected
+	 */
+	private Vector<GraphNode> getOuterConnectionNodesCorrected(HashMap<GraphNode, HashSet<GraphElement>> outerNodesRemainingGraphElements) {
+		
+		Vector<GraphNode> outerNodes = new Vector<GraphNode>();
+		for (GraphNode graphNode : outerNodesRemainingGraphElements.keySet()) {
+			
+			// --- Check, if the GraphNode is still there -----------
+			GraphElement graphNodeCheck = this.getGraphElement(graphNode.getId());
+			if (graphNodeCheck!=null) {
+				// --- Node is still there - just take it -----------
+				outerNodes.add((GraphNode) graphNodeCheck);
+				
+			} else {
+				// --- Search by using remaining GraphElements ------
+				GraphEdge edge = null;
+				GraphNode node1 = null;
+				HashSet<GraphElement> rGE = outerNodesRemainingGraphElements.get(graphNode);
+				for (GraphElement graphElement : rGE) {
+					GraphElement geFound = this.getGraphElement(graphElement.getId());
+					if (geFound instanceof GraphNode) {
+						node1 = (GraphNode) geFound;
+					} else if (geFound instanceof GraphEdge) {
+						edge = (GraphEdge) geFound;
+					}
+				} // end for
+				
+				if (edge!=null && node1!=null) {
+					GraphNode graphNodeFound = this.getGraph().getOpposite(node1, edge);
+					if (graphNodeFound!=null) {
+						outerNodes.add(graphNodeFound);	
+					}
+				}
+				
+			}
+		}
+		return outerNodes;
+	}
+	
 	/**
 	 * Gets the outer network components. Is build only one time, after generation or after copy
 	 * 
