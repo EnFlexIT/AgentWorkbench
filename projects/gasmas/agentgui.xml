@@ -5,7 +5,7 @@
     <projectView>Developer</projectView>
     <environmentModel>gridEnvironment</environmentModel>
     <projectResources>
-        <projectResource>D:\10 Java Projects\EnergyAgentBaseModel\bin</projectResource>
+        <projectResource>D:\10 Java Projects\EnergyOptionModel\bin</projectResource>
     </projectResources>
     <plugins>
         <className>gasmas.plugin.GasMasPlugIn</className>
@@ -45,9 +45,9 @@
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
         <loadRecordingInterval>500</loadRecordingInterval>
-        <numberOfAgents>1500</numberOfAgents>
-        <numberOfContainer>2</numberOfContainer>
-        <showLoadMonitorAtPlatformStart>true</showLoadMonitorAtPlatformStart>
+        <numberOfAgents>1000</numberOfAgents>
+        <numberOfContainer>3</numberOfContainer>
+        <showLoadMonitorAtPlatformStart>false</showLoadMonitorAtPlatformStart>
         <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
@@ -55,8 +55,8 @@
             <thCpuL>5</thCpuL>
             <thMemoH>80</thMemoH>
             <thMemoL>5</thMemoL>
-            <thNoThreadsH>1500</thNoThreadsH>
-            <thNoThreadsL>50</thNoThreadsL>
+            <thNoThreadsH>500</thNoThreadsH>
+            <thNoThreadsL>5</thNoThreadsL>
         </userThresholds>
     </distributionSetup>
     <remoteContainerConfiguration>
@@ -67,8 +67,8 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>MixedClusters (1) Small</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
-    <downloadResources>http://Pandora:8080/gasmas/BIN_DUMP_1944173477.jar</downloadResources>
-    <downloadResources>http://Pandora:8080/gasmas/gasmas_IDE.jar</downloadResources>
+    <downloadResources>http://Pandora.cs.uni-due.de:8080/gasmas/BIN_DUMP_-1172359784.jar</downloadResources>
+    <downloadResources>http://Pandora.cs.uni-due.de:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>
@@ -136,5 +136,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>true</unsaved>
+    <unsaved>false</unsaved>
 </project>

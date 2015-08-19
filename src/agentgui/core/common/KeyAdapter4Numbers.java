@@ -46,7 +46,7 @@ public class KeyAdapter4Numbers extends KeyAdapter {
 	private boolean isFloatValue = false;
 	
 	/**
-	 * Instantiates a new number watcher.
+	 * Instantiates a new number KeyAdapter4Numbers 
 	 * @param isFloatValue indicates, if this watcher is used for Float values. If not Integer values are assumed.
 	 */
 	public KeyAdapter4Numbers(boolean isFloatValue) {

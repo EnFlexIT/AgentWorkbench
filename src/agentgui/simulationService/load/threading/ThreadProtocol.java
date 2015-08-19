@@ -46,8 +46,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * Protocol class for storing Thread-Times
  * 
- * @author Hanno Monschan - ZIM - University of Duisburg-Essen
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 @XmlRootElement
 public class ThreadProtocol implements Serializable {
@@ -71,14 +70,23 @@ public class ThreadProtocol implements Serializable {
 	 * Instantiates a new thread protocol.
 	 *
 	 * @param simulationSetup the simulation setup
+	 * @param timestamp the time stamp
+	 */
+	public ThreadProtocol(String simulationSetup, long timestamp) {
+		this.setSimulationSetup(simulationSetup);
+		this.setTimestamp(timestamp);
+	}
+	
+	/**
+	 * Instantiates a new thread protocol.
+	 *
+	 * @param simulationSetup the simulation setup
 	 * @param containerName the container name
 	 * @param machineName the machine name
-	 * @param timestamp the timestamp
+	 * @param timestamp the time stamp
 	 * @param threadTimes the thread times
 	 */
-	public ThreadProtocol(String simulationSetup, String containerName,
-			String machineName, long timestamp, Vector<ThreadTime> threadTimes) {
-		super();
+	public ThreadProtocol(String simulationSetup, String containerName, String machineName, long timestamp, Vector<ThreadTime> threadTimes) {
 		this.simulationSetup = simulationSetup;
 		this.containerName = containerName;
 		this.machineName = machineName;
@@ -86,16 +94,6 @@ public class ThreadProtocol implements Serializable {
 		this.threadTimes = threadTimes;
 	}
 
-	/**
-	 * Instantiates a new thread protocol.
-	 *
-	 * @param simulationSetup the simulation setup
-	 * @param timestamp the timestamp
-	 */
-	public ThreadProtocol(String simulationSetup, long timestamp) {
-		this.setSimulationSetup(simulationSetup);
-		this.setTimestamp(timestamp);
-	}
 	
 	/**
 	 * Gets the simulation setup.
@@ -133,7 +131,7 @@ public class ThreadProtocol implements Serializable {
 	 */
 	public Vector<ThreadTime> getThreadTimes() {
 		if (threadTimes==null) {
-			threadTimes = new Vector<>();
+			threadTimes = new Vector<ThreadTime>();
 		}
 		return threadTimes;
 	}
@@ -147,16 +145,13 @@ public class ThreadProtocol implements Serializable {
 	
 	/**
 	 * Gets the container name.
-	 *
 	 * @return the container name
 	 */
 	public String getContainerName() {
 		return containerName;
 	}
-	
 	/**
 	 * Sets the container name.
-	 *
 	 * @param containerName the new container name
 	 */
 	public void setContainerName(String containerName) {
@@ -165,16 +160,13 @@ public class ThreadProtocol implements Serializable {
 	
 	/**
 	 * Gets the machine name.
-	 *
 	 * @return the machine name
 	 */
 	public String getMachineName() {
 		return machineName;
 	}
-	
 	/**
 	 * Sets the machine name.
-	 *
 	 * @param machineName the new machine name
 	 */
 	public void setMachineName(String machineName) {

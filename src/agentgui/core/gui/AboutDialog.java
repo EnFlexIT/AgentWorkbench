@@ -73,7 +73,6 @@ import javax.swing.SwingConstants;
  */
 public class AboutDialog extends JDialog implements ActionListener{
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5882844235988801425L;
 	
 	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();
@@ -131,7 +130,8 @@ public class AboutDialog extends JDialog implements ActionListener{
 					"Marvin Steinberg<br>" +
 					"Tim Lewen<br>" +
 					"Satyadeep Karnati<br>" +
-					"David Pachula" +
+					"David Pachula<br>" +
+					"Hanno Monschan" +
 					"</CENTER></HTML></BODY>";
 
 		this.setSize(550, 445);

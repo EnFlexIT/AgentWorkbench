@@ -35,16 +35,16 @@ import java.util.Vector;
 /**
  * The Class ThreadTimeMeasurement.
  * 
- * @author Hanno Monschan - ZIM - University of Duisburg-Essen
+ * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ThreadTimeMeasurement extends Thread {
 	
 	/** The Thread interval. */
 	private final long interval;
-    
+
+	
     /**
      *  Create a polling thread to track times. 
-     *
      * @param interval the interval
      */
     public ThreadTimeMeasurement( final long interval) {
@@ -57,10 +57,14 @@ public class ThreadTimeMeasurement extends Thread {
      * Run the thread until interrupted. 
      */
     public void run( ) {
-        while ( !isInterrupted() ) {
-        	generateThreadProtocol();
-            try { sleep( this.interval ); }
-            catch ( InterruptedException e ) { break; }
+        
+    	while ( !isInterrupted() ) {
+        	try { 
+            	this.generateThreadProtocol();
+        		Thread.sleep(this.interval); 
+            } catch ( InterruptedException e ) { 
+            	break; 
+            }
         }
     }
     
@@ -78,13 +82,13 @@ public class ThreadTimeMeasurement extends Thread {
         long cpuTime = 0L;
         long userTime = 0L;
         
-        if (tmxb.isThreadCpuTimeSupported()){
-        	if(! tmxb.isThreadCpuTimeEnabled()){
+        if (tmxb.isThreadCpuTimeSupported()==true){
+        	if(tmxb.isThreadCpuTimeEnabled()==false){
         		tmxb.setThreadCpuTimeEnabled(true);  
-        		System.out.println("ThreadTimeMeasurement now enabled.");
+//        		System.out.println("ThreadTimeMeasurement now enabled.");
         	}	
         } else{
-        	System.out.println("!! ThreadTimeMeasurement not supported !!");
+        	System.err.println("ThreadTimeMeasurement not supported !!");
         	return;
         }
         
@@ -98,11 +102,9 @@ public class ThreadTimeMeasurement extends Thread {
 
         	threadName = tmxb.getThreadInfo(id).getThreadName();
         	threadTimes.add(new ThreadTime(threadName, cpuTime, userTime));
-        	
         }
         
-		ThreadProtocol threadProtocol = new ThreadProtocol("simulationSetup","containerName", 
-				"machineName", System.currentTimeMillis(), threadTimes);
+		ThreadProtocol threadProtocol = new ThreadProtocol("simulationSetup", "containerName", "machineName", System.currentTimeMillis(), threadTimes);
 		
         //TODO: übergeben
     }

@@ -50,6 +50,7 @@ import javax.swing.JToolBar;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.simulationService.agents.LoadMeasureAgent;
+import agentgui.simulationService.load.threading.ThreadMeasureDialog;
 
 import javax.swing.JTextField;
 
@@ -81,6 +82,8 @@ public class SystemLoadPanel extends JPanel {
 		private JButton jButtonMeasureRecord;
 		private JButton jButtonMeasureRecordStop;
 		public JLabel jLabelRecord;
+		
+		private JButton jButtonMeasureThreadsSingle;
 		public JLabel jLabelSpeed;
 		
 		private JLabel jLabelAgentCount;
@@ -210,6 +213,11 @@ public class SystemLoadPanel extends JPanel {
 			jLabelRecord.setForeground(Color.gray);
 			jLabelRecord.setPreferredSize(new Dimension(50, 16));
 			jToolBarLoad.add(jLabelRecord);
+			jToolBarLoad.addSeparator();
+			
+			// --- Tools for the Thread Measurements ----------------
+			jButtonMeasureThreadsSingle = new JToolBarButton( "ThreadMeasureSingle", Language.translate("Einmalige Thread-Messung"), null, "ThreadShot.png" );
+			jToolBarLoad.add(jButtonMeasureThreadsSingle);
 			jToolBarLoad.addSeparator();
 			
 			// --- Counter for the number of agents -----------------
@@ -352,6 +360,21 @@ public class SystemLoadPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * Do thread measure single.
+	 */
+	private void doThreadMeasureSingle() {
+		
+		ThreadMeasureDialog tmd = new ThreadMeasureDialog();
+		tmd.setVisible(true);
+		
+		// --- Measure ---- 
+		
+		
+		
+	}
+	
+	
 	// ------------------------------------------------------------
 	// --- Sub class for buttons of the toolbar --- Start ---------
 	// ------------------------------------------------------------	
@@ -416,6 +439,9 @@ public class SystemLoadPanel extends JPanel {
 				setDoLoadRecording(true);
 			} else if ( actionCMD.equalsIgnoreCase("StopRecordMeasurement") ) {
 				setDoLoadRecording(false);
+			
+			} else if ( actionCMD.equalsIgnoreCase("ThreadMeasureSingle") ) {
+				doThreadMeasureSingle();
 				
 			} else { 
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actionCMD);

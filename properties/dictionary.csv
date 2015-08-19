@@ -180,7 +180,9 @@ de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;;;
 de;Eigene Auslastungsgrenzwerte verwenden;Use own threshold values
 de;Eigenschaften;Properties;;;
 de;Einfach zählendes Zeitmodell (z. B. 1 ... 9999);Simple counting time model (e. g. 1 ... 9999);;;
+de;Einfache Thread-Messung;;;;
 de;Einheit;Unit
+de;Einmalige Thread-Messung;Single thread measurements;;;
 de;Einstellungen;Settings;;;
 de;Element-Typ;Element type
 de;Element;Element
@@ -344,7 +346,6 @@ de;Load Monitor öffnen;Open load monitor
 de;Load Monitor;Load Monitor
 de;Log-Manager starten;Start Log Manager
 de;Lokal;Local;;;
-de;Läschen;;;;
 de;Lösche Verzeichnis;Delete Folder;;;
 de;Löschen nicht zulässig!;Deleting not allowed!;;;
 de;Löschen;Delete

@@ -193,7 +193,7 @@ public class LoadMeasureAgent extends Agent {
 		
 		this.monitorBehaviourTickingPeriod = this.getSelectedTimeSelection().getTimeInMill();
 		this.monitorBehaviour = new MonitorBehaviour(this, monitorBehaviourTickingPeriod);
-		this.addBehaviour(monitorBehaviour) ;
+		this.addBehaviour(this.monitorBehaviour) ;
 		this.addBehaviour(new ReceiveBehaviour());
 	}
 	

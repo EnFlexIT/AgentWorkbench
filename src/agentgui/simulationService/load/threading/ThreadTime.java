@@ -34,7 +34,7 @@ import java.io.Serializable;
 /**
  * The Class ThreadTime.
  * 
- * @author Hanno Monschan - ZIM - University of Duisburg-Essen
+ * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ThreadTime implements Serializable{
 
@@ -57,16 +57,13 @@ public class ThreadTime implements Serializable{
     
     /**
      * Gets the thread name.
-     *
      * @return the thread name
      */
     public String getThreadName() {
 		return threadName;
 	}
-
 	/**
 	 * Sets the thread name.
-	 *
 	 * @param threadName the new thread name
 	 */
 	public void setThreadName(String threadName) {

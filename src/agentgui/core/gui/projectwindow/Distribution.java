@@ -28,7 +28,6 @@
  */
 package agentgui.core.gui.projectwindow;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -39,8 +38,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -54,10 +51,16 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.common.KeyAdapter4Numbers;
 import agentgui.core.gui.ClassSelector;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
@@ -75,7 +78,7 @@ import agentgui.simulationService.load.LoadThresholdLevels;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class Distribution extends JScrollPane implements ActionListener, Observer, KeyListener {
+public class Distribution extends JScrollPane implements ActionListener, Observer {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -83,7 +86,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private final static int DYNAMIC_BALANCING_CLASS = 2;
 	private final static int THRESHOLD_LEVEL = 3;
 
-	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
 	private Project currProject;
 	private DistributionSetup currDistributionSetup; 
@@ -118,6 +121,11 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private DefaultComboBoxModel comboModelInitial = new DefaultComboBoxModel(comboData);
 	private DefaultComboBoxModel comboModelMaximal = new DefaultComboBoxModel(comboData);
 	private DefaultComboBoxModel comboModelRecordingInterval;
+	
+	private KeyAdapter4Numbers keyAdapter4Numbers;
+	private DocumentListener docListener;
+	private boolean pauseDocumentListener;
+	private boolean pauseObserver;
 	
 	private JTextField jTextFieldAgentsExpected;
 	private JTextField jTextFieldContainerExpected;
@@ -161,6 +169,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 
 	private JLabel jLabelRecording;
 	private JLabel jLabelDummy;
+	private JSeparator jSeparator01;
+	private JSeparator jSeparator02;
 
 	
 	/**
@@ -221,96 +231,135 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JPanel getJPanelOnScrollPane() {
 		if (jPanelOnScrollPane==null) {
 			
-			GridBagConstraints gridBagConstraints00 = new GridBagConstraints();
-			gridBagConstraints00.gridx = 0;
-			gridBagConstraints00.gridy = 0;
-			gridBagConstraints00.anchor = GridBagConstraints.WEST;
-			gridBagConstraints00.insets = new Insets(10, 10, 0, 0);
-			GridBagConstraints gridBagConstraints01 = new GridBagConstraints();
-			gridBagConstraints01.gridx = 0;
-			gridBagConstraints01.gridy = 1;
-			gridBagConstraints01.anchor = GridBagConstraints.WEST;
-			gridBagConstraints01.insets = new Insets(10, 10, 0, 0);
-			GridBagConstraints gridBagConstraints02 = new GridBagConstraints();
-			gridBagConstraints02.gridx = 0;
-			gridBagConstraints02.gridy = 2;
-			gridBagConstraints02.fill = GridBagConstraints.NONE;
-			gridBagConstraints02.weightx = 1.0;
-			gridBagConstraints02.insets = new Insets(5, 32, 0, 10);
-			gridBagConstraints02.anchor = GridBagConstraints.WEST;
-			GridBagConstraints gridBagConstraints03 = new GridBagConstraints();
-			gridBagConstraints03.gridx = 0;
-			gridBagConstraints03.gridy = 3;
-			gridBagConstraints03.anchor = GridBagConstraints.WEST;
-			gridBagConstraints03.insets = new Insets(5, 32, 0, 0);
-			GridBagConstraints gridBagConstraints04 = new GridBagConstraints();
-			gridBagConstraints04.gridx = 0;
-			gridBagConstraints04.gridy = 4;
-			gridBagConstraints04.anchor = GridBagConstraints.WEST;
-			gridBagConstraints04.insets = new Insets(10, 10, 0, 0);
-			GridBagConstraints gridBagConstraints05 = new GridBagConstraints();
-			gridBagConstraints05.gridx = 0;
-			gridBagConstraints05.gridy = 5;
-			gridBagConstraints05.fill = GridBagConstraints.NONE;
-			gridBagConstraints05.weightx = 0.0;
-			gridBagConstraints05.insets = new Insets(5, 32, 0, 10);
-			gridBagConstraints05.anchor = GridBagConstraints.WEST;
-			GridBagConstraints gridBagConstraints06 = new GridBagConstraints();
-			gridBagConstraints06.gridx = 0;
-			gridBagConstraints06.gridy = 6;
-			gridBagConstraints06.insets = new Insets(10, 10, 0, 0);
-			gridBagConstraints06.anchor = GridBagConstraints.WEST;
-			GridBagConstraints gridBagConstraints07 = new GridBagConstraints();
-			gridBagConstraints07.gridx = 0;
-			gridBagConstraints07.gridy = 7;
-			gridBagConstraints07.insets = new Insets(5, 32, 0, 10);
-			gridBagConstraints07.anchor = GridBagConstraints.WEST;
-			gridBagConstraints07.fill = GridBagConstraints.NONE;
-			GridBagConstraints gridBagConstraints08 = new GridBagConstraints();
-			gridBagConstraints08.gridx = 0;
-			gridBagConstraints08.gridy = 8;
-			gridBagConstraints08.insets = new Insets(10, 10, 0, 0);
-			gridBagConstraints08.anchor = GridBagConstraints.WEST;
-			GridBagConstraints gridBagConstraints09 = new GridBagConstraints();
-			gridBagConstraints09.gridx = 0;
-			gridBagConstraints09.gridy = 9;
-			gridBagConstraints09.insets = new Insets(10, 10, 0, 0);
-			gridBagConstraints09.anchor = GridBagConstraints.WEST;
-			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
-			gridBagConstraints10.gridx = 0;
-			gridBagConstraints10.gridy = 10;
-			gridBagConstraints10.insets = new Insets(5, 32, 0, 10);
-			gridBagConstraints10.anchor = GridBagConstraints.WEST;
-			gridBagConstraints10.fill = GridBagConstraints.NONE;
-			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-			gridBagConstraints11.gridx = 0;
-			gridBagConstraints11.gridy = 11;
-			gridBagConstraints11.fill = GridBagConstraints.NONE;
-			gridBagConstraints11.weighty = 1.0;
-			gridBagConstraints11.insets = new Insets(10, 10, 10, 10);
-			gridBagConstraints11.anchor = GridBagConstraints.NORTHWEST;
+			GridBagConstraints gbcJPanelRemoteConfig = new GridBagConstraints();
+			gbcJPanelRemoteConfig.gridx = 0;
+			gbcJPanelRemoteConfig.gridy = 0;
+			gbcJPanelRemoteConfig.anchor = GridBagConstraints.NORTHWEST;
+			gbcJPanelRemoteConfig.insets = new Insets(10, 10, 5, 5);
+			
+			GridBagConstraints gbc_jSeparator01 = new GridBagConstraints();
+			gbc_jSeparator01.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jSeparator01.insets = new Insets(0, 10, 5, 100);
+			gbc_jSeparator01.gridx = 0;
+			gbc_jSeparator01.gridy = 1;
+			
+			GridBagConstraints gbcJCheckBoxShowLoadMonitor = new GridBagConstraints();
+			gbcJCheckBoxShowLoadMonitor.gridx = 0;
+			gbcJCheckBoxShowLoadMonitor.gridy = 2;
+			gbcJCheckBoxShowLoadMonitor.insets = new Insets(10, 10, 5, 5);
+			gbcJCheckBoxShowLoadMonitor.anchor = GridBagConstraints.WEST;
+			GridBagConstraints gbcJCheckBoxImmStartLoadRecording = new GridBagConstraints();
+			gbcJCheckBoxImmStartLoadRecording.gridx = 0;
+			gbcJCheckBoxImmStartLoadRecording.gridy = 3;
+			gbcJCheckBoxImmStartLoadRecording.insets = new Insets(5, 10, 5, 5);
+			gbcJCheckBoxImmStartLoadRecording.anchor = GridBagConstraints.WEST;
+			GridBagConstraints gbcJPanelRecording = new GridBagConstraints();
+			gbcJPanelRecording.gridx = 0;
+			gbcJPanelRecording.gridy = 4;
+			gbcJPanelRecording.insets = new Insets(0, 32, 5, 10);
+			gbcJPanelRecording.anchor = GridBagConstraints.NORTHWEST;
+			
+			GridBagConstraints gbc_jSeparator02 = new GridBagConstraints();
+			gbc_jSeparator02.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jSeparator02.insets = new Insets(0, 10, 5, 100);
+			gbc_jSeparator02.gridx = 0;
+			gbc_jSeparator02.gridy = 5;
+
+			GridBagConstraints gbcJCheckBoxStatic = new GridBagConstraints();
+			gbcJCheckBoxStatic.gridx = 0;
+			gbcJCheckBoxStatic.gridy = 6;
+			gbcJCheckBoxStatic.anchor = GridBagConstraints.WEST;
+			gbcJCheckBoxStatic.insets = new Insets(10, 10, 5, 5);
+			GridBagConstraints gbcJPanelStatic = new GridBagConstraints();
+			gbcJPanelStatic.gridx = 0;
+			gbcJPanelStatic.gridy = 7;
+			gbcJPanelStatic.fill = GridBagConstraints.NONE;
+			gbcJPanelStatic.weightx = 1.0;
+			gbcJPanelStatic.insets = new Insets(5, 32, 5, 10);
+			gbcJPanelStatic.anchor = GridBagConstraints.NORTHWEST;
+			GridBagConstraints gbcJPanelStaticClass = new GridBagConstraints();
+			gbcJPanelStaticClass.gridx = 0;
+			gbcJPanelStaticClass.gridy = 8;
+			gbcJPanelStaticClass.anchor = GridBagConstraints.NORTHWEST;
+			gbcJPanelStaticClass.insets = new Insets(5, 32, 5, 5);
+			GridBagConstraints gbcJCheckBoxDynamic = new GridBagConstraints();
+			gbcJCheckBoxDynamic.gridx = 0;
+			gbcJCheckBoxDynamic.gridy = 9;
+			gbcJCheckBoxDynamic.anchor = GridBagConstraints.WEST;
+			gbcJCheckBoxDynamic.insets = new Insets(10, 10, 5, 5);
+			GridBagConstraints gbcJPanelDynamic = new GridBagConstraints();
+			gbcJPanelDynamic.gridx = 0;
+			gbcJPanelDynamic.gridy = 10;
+			gbcJPanelDynamic.fill = GridBagConstraints.NONE;
+			gbcJPanelDynamic.weightx = 0.0;
+			gbcJPanelDynamic.insets = new Insets(5, 32, 5, 10);
+			gbcJPanelDynamic.anchor = GridBagConstraints.WEST;
+			GridBagConstraints gbcJCheckBoxThreshold = new GridBagConstraints();
+			gbcJCheckBoxThreshold.gridx = 0;
+			gbcJCheckBoxThreshold.gridy = 11;
+			gbcJCheckBoxThreshold.insets = new Insets(10, 10, 5, 5);
+			gbcJCheckBoxThreshold.anchor = GridBagConstraints.WEST;
+			GridBagConstraints gbcJPanelThreshold = new GridBagConstraints();
+			gbcJPanelThreshold.gridx = 0;
+			gbcJPanelThreshold.gridy = 12;
+			gbcJPanelThreshold.insets = new Insets(5, 32, 5, 10);
+			gbcJPanelThreshold.anchor = GridBagConstraints.WEST;
+			gbcJPanelThreshold.fill = GridBagConstraints.NONE;
+			GridBagConstraints gridBagConstraintsDummy = new GridBagConstraints();
+			gridBagConstraintsDummy.gridx = 0;
+			gridBagConstraintsDummy.gridy = 13;
+			gridBagConstraintsDummy.fill = GridBagConstraints.NONE;
+			gridBagConstraintsDummy.weighty = 1.0;
+			gridBagConstraintsDummy.insets = new Insets(10, 10, 10, 10);
+			gridBagConstraintsDummy.anchor = GridBagConstraints.NORTHWEST;
+			
+			GridBagLayout gbl_jPanelOnScrollPane = new GridBagLayout();
+			gbl_jPanelOnScrollPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+			gbl_jPanelOnScrollPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 			
 			
 			jPanelOnScrollPane = new JPanel();
-			jPanelOnScrollPane.setLayout(new GridBagLayout());
-			jPanelOnScrollPane.add(getJPanelRemoteConfig(), gridBagConstraints00);
-			jPanelOnScrollPane.add(getJCheckBoxDoLoadStatic(), gridBagConstraints01);
-			jPanelOnScrollPane.add(getJPanelStatic(), gridBagConstraints02);
-			jPanelOnScrollPane.add(getJPanelStaticClass(), gridBagConstraints03);
-			jPanelOnScrollPane.add(getJCheckBoxDoLoadDynamic(), gridBagConstraints04);
-			jPanelOnScrollPane.add(getJPanelDynamic(), gridBagConstraints05);
-			jPanelOnScrollPane.add(getJCheckBoxThresholdDefinition(), gridBagConstraints06);
-			jPanelOnScrollPane.add(getJPanelThreshold(), gridBagConstraints07);
-			jPanelOnScrollPane.add(getJCheckBoxShowLoadMonitor(), gridBagConstraints08);
-			jPanelOnScrollPane.add(getJCheckBoxImmediatelyStartLoadRecording(), gridBagConstraints09);
-			jPanelOnScrollPane.add(getJPanelRecording(), gridBagConstraints10);
-			jPanelOnScrollPane.add(getJPanelDummy(), gridBagConstraints11);
+			jPanelOnScrollPane.setLayout(gbl_jPanelOnScrollPane);
+			jPanelOnScrollPane.add(getJPanelRemoteConfig(), gbcJPanelRemoteConfig);
+			jPanelOnScrollPane.add(getJSeparator01(), gbc_jSeparator01);
 			
+			jPanelOnScrollPane.add(getJCheckBoxShowLoadMonitor(), gbcJCheckBoxShowLoadMonitor);
+			jPanelOnScrollPane.add(getJCheckBoxImmediatelyStartLoadRecording(), gbcJCheckBoxImmStartLoadRecording);
+			jPanelOnScrollPane.add(getJPanelRecording(), gbcJPanelRecording);
+			jPanelOnScrollPane.add(getJSeparator02(), gbc_jSeparator02);
 			
+			jPanelOnScrollPane.add(getJCheckBoxDoLoadStatic(), gbcJCheckBoxStatic);
+			jPanelOnScrollPane.add(getJPanelStatic(), gbcJPanelStatic);
+			jPanelOnScrollPane.add(getJPanelStaticClass(), gbcJPanelStaticClass);
+			jPanelOnScrollPane.add(getJCheckBoxDoLoadDynamic(), gbcJCheckBoxDynamic);
+			jPanelOnScrollPane.add(getJPanelDynamic(), gbcJPanelDynamic);
+			jPanelOnScrollPane.add(getJCheckBoxThresholdDefinition(), gbcJCheckBoxThreshold);
+			jPanelOnScrollPane.add(getJPanelThreshold(), gbcJPanelThreshold);
+			jPanelOnScrollPane.add(getJPanelDummy(), gridBagConstraintsDummy);
 		}
 		return jPanelOnScrollPane;
 	}
-	
+	/**
+	 * Gets the JSeparator no 1.
+	 * @return the jSeparator01
+	 */
+	private JSeparator getJSeparator01() {
+		if (jSeparator01 == null) {
+			jSeparator01 = new JSeparator();
+		}
+		return jSeparator01;
+	}
+	/**
+	 * Gets the JSeparator no 2.
+	 * @return the jSeparator02
+	 */
+	private JSeparator getJSeparator02() {
+		if (jSeparator02 == null) {
+			jSeparator02 = new JSeparator();
+		}
+		return jSeparator02;
+	}
+
 	/**
 	 * This method initializes jPanelRemoteConfig	
 	 * @return javax.swing.JPanel	
@@ -405,7 +454,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JButton getJButtonRemoteDefault() {
 		if (jButtonRemoteDefault == null) {
 			jButtonRemoteDefault = new JButton();
-			jButtonRemoteDefault.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
+			jButtonRemoteDefault.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBreset.png")));
 			jButtonRemoteDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonRemoteDefault.setToolTipText("Standard verwenden");
 			jButtonRemoteDefault.addActionListener(this);
@@ -558,33 +607,34 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JPanel getJPanelStatic() {
 		if (jPanelStatic == null) {
 			GridBagConstraints gridBagConstraints27 = new GridBagConstraints();
-			gridBagConstraints27.gridx = 4;
+			gridBagConstraints27.gridx = 2;
 			gridBagConstraints27.anchor = GridBagConstraints.CENTER;
 			gridBagConstraints27.insets = new Insets(5, 5, 0, 0);
 			gridBagConstraints27.fill = GridBagConstraints.NONE;
-			gridBagConstraints27.gridy = 2;
+			gridBagConstraints27.gridy = 1;
 			jLabelCalculation = new JLabel();
 			jLabelCalculation.setText("");
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
-			gridBagConstraints10.gridx = 4;
-			gridBagConstraints10.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints10.gridx = 2;
+			gridBagConstraints10.insets = new Insets(0, 5, 5, 0);
 			gridBagConstraints10.gridy = 0;
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-			gridBagConstraints9.gridx = 1;
+			gridBagConstraints9.gridx = 0;
 			gridBagConstraints9.anchor = GridBagConstraints.WEST;
-			gridBagConstraints9.insets = new Insets(5, 0, 0, 0);
-			gridBagConstraints9.gridy = 2;
+			gridBagConstraints9.insets = new Insets(5, 0, 0, 5);
+			gridBagConstraints9.gridy = 1;
 			jLabelContainerExpected = new JLabel();
 			jLabelContainerExpected.setText("Anzahl Container");
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
 			gridBagConstraints8.fill = GridBagConstraints.VERTICAL;
-			gridBagConstraints8.gridy = 2;
+			gridBagConstraints8.gridy = 1;
 			gridBagConstraints8.weightx = 1.0;
 			gridBagConstraints8.anchor = GridBagConstraints.WEST;
-			gridBagConstraints8.insets = new Insets(5, 10, 0, 0);
-			gridBagConstraints8.gridx = 3;
+			gridBagConstraints8.insets = new Insets(5, 10, 0, 5);
+			gridBagConstraints8.gridx = 1;
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-			gridBagConstraints7.gridx = 1;
+			gridBagConstraints7.insets = new Insets(0, 0, 5, 5);
+			gridBagConstraints7.gridx = 0;
 			gridBagConstraints7.anchor = GridBagConstraints.WEST;
 			gridBagConstraints7.fill = GridBagConstraints.NONE;
 			gridBagConstraints7.gridy = 0;
@@ -593,12 +643,12 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.fill = GridBagConstraints.NONE;
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
-			gridBagConstraints6.gridx = 3;
-			gridBagConstraints6.insets = new Insets(0, 10, 0, 0);
+			gridBagConstraints6.gridx = 1;
+			gridBagConstraints6.insets = new Insets(0, 10, 5, 5);
 			gridBagConstraints6.weightx = 1.0;
 			jPanelStatic = new JPanel();
 			jPanelStatic.setLayout(new GridBagLayout());
-			jPanelStatic.setPreferredSize(new Dimension(500, 57));
+//			jPanelStatic.setPreferredSize(new Dimension(500, 57));
 			jPanelStatic.add(getJTextFieldAgentsExpected(), gridBagConstraints6);
 			jPanelStatic.add(jLabelAgentsExpected, gridBagConstraints7);
 			jPanelStatic.add(getJTextFieldContainerExpected(), gridBagConstraints8);
@@ -669,7 +719,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jButtonDefaultClassStatic.setToolTipText("Agent.GUI - Standard verwenden");			
 			jButtonDefaultClassStatic.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonDefaultClassStatic.setPreferredSize(new Dimension(45, 26));
-			jButtonDefaultClassStatic.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
+			jButtonDefaultClassStatic.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBreset.png")));
 			jButtonDefaultClassStatic.setActionCommand("StatLoadBalancingDefault");
 			jButtonDefaultClassStatic.addActionListener(this);
 		}
@@ -685,7 +735,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jButtonSelectStaticClass = new JButton();
 			jButtonSelectStaticClass.setToolTipText("Klasse auswählen");
 			jButtonSelectStaticClass.setPreferredSize(new Dimension(45, 26));
-			jButtonSelectStaticClass.setIcon(new ImageIcon(getClass().getResource(PathImage + "Search.png")));
+			jButtonSelectStaticClass.setIcon(new ImageIcon(getClass().getResource(pathImage + "Search.png")));
 			jButtonSelectStaticClass.setActionCommand("StatLoadBalancingCheck");
 			jButtonSelectStaticClass.addActionListener(this);
 		}
@@ -753,7 +803,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jButtonDefaultClassDynamic.setToolTipText("Agent.GUI - Standard verwenden");
 			jButtonDefaultClassDynamic.setBounds(new Rectangle(120, 121, 80, 26));
 			jButtonDefaultClassDynamic.setPreferredSize(new Dimension(45, 26));
-			jButtonDefaultClassDynamic.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
+			jButtonDefaultClassDynamic.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBreset.png")));
 			jButtonDefaultClassDynamic.setActionCommand("DynLoadBalancingDefault");
 			jButtonDefaultClassDynamic.addActionListener(this);
 		}
@@ -768,7 +818,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jButtonSelectDynamicClass = new JButton();
 			jButtonSelectDynamicClass.setToolTipText("Klasse auswählen");
 			jButtonSelectDynamicClass.setPreferredSize(new Dimension(45, 26));
-			jButtonSelectDynamicClass.setIcon(new ImageIcon(getClass().getResource(PathImage + "Search.png")));
+			jButtonSelectDynamicClass.setIcon(new ImageIcon(getClass().getResource(pathImage + "Search.png")));
 			jButtonSelectDynamicClass.setActionCommand("DynLoadBalancingCheck");
 			jButtonSelectDynamicClass.addActionListener(this);
 		}
@@ -783,7 +833,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		if (jTextFieldAgentsExpected == null) {
 			jTextFieldAgentsExpected = new JTextField();
 			jTextFieldAgentsExpected.setPreferredSize(new Dimension(100, 26));
-			jTextFieldAgentsExpected.addKeyListener(this);
+			jTextFieldAgentsExpected.addKeyListener(this.getKeyAdapter4Numbers());
+			jTextFieldAgentsExpected.getDocument().addDocumentListener(this.getDocumentListener4IntegerJTextField());
 		}
 		return jTextFieldAgentsExpected;
 	}
@@ -796,7 +847,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		if (jTextFieldContainerExpected == null) {
 			jTextFieldContainerExpected = new JTextField();
 			jTextFieldContainerExpected.setPreferredSize(new Dimension(100, 26));
-			jTextFieldContainerExpected.addKeyListener(this);
+			jTextFieldContainerExpected.addKeyListener(this.getKeyAdapter4Numbers());
+			jTextFieldContainerExpected.getDocument().addDocumentListener(this.getDocumentListener4IntegerJTextField());
 		}
 		return jTextFieldContainerExpected;
 	}
@@ -960,11 +1012,11 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		if (jTextFieldCpuLow == null) {
 			jTextFieldCpuLow = new JTextField();
 			jTextFieldCpuLow.setPreferredSize(new Dimension(50, 26));
-			jTextFieldCpuLow.addKeyListener(this);
+			jTextFieldCpuLow.addKeyListener(this.getKeyAdapter4Numbers());
+			jTextFieldCpuLow.getDocument().addDocumentListener(this.getDocumentListener4IntegerJTextField());
 		}
 		return jTextFieldCpuLow;
 	}
-
 	/**
 	 * This method initializes jTextFieldCpuHigh	
 	 * @return javax.swing.JTextField	
@@ -973,7 +1025,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		if (jTextFieldCpuHigh == null) {
 			jTextFieldCpuHigh = new JTextField();
 			jTextFieldCpuHigh.setPreferredSize(new Dimension(50, 26));
-			jTextFieldCpuHigh.addKeyListener(this);
+			jTextFieldCpuHigh.addKeyListener(this.getKeyAdapter4Numbers());
+			jTextFieldCpuHigh.getDocument().addDocumentListener(this.getDocumentListener4IntegerJTextField());
 		}
 		return jTextFieldCpuHigh;
 	}
@@ -986,11 +1039,11 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		if (jTextFieldMemLow == null) {
 			jTextFieldMemLow = new JTextField();
 			jTextFieldMemLow.setPreferredSize(new Dimension(50, 26));
-			jTextFieldMemLow.addKeyListener(this);
+			jTextFieldMemLow.addKeyListener(this.getKeyAdapter4Numbers());
+			jTextFieldMemLow.getDocument().addDocumentListener(this.getDocumentListener4IntegerJTextField());
 		}
 		return jTextFieldMemLow;
 	}
-
 	/**
 	 * This method initializes jTextFieldMemHigh	
 	 * @return javax.swing.JTextField	
@@ -999,7 +1052,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		if (jTextFieldMemHigh == null) {
 			jTextFieldMemHigh = new JTextField();
 			jTextFieldMemHigh.setPreferredSize(new Dimension(50, 26));
-			jTextFieldMemHigh.addKeyListener(this);
+			jTextFieldMemHigh.addKeyListener(this.getKeyAdapter4Numbers());
+			jTextFieldMemHigh.getDocument().addDocumentListener(this.getDocumentListener4IntegerJTextField());
 		}
 		return jTextFieldMemHigh;
 	}
@@ -1012,11 +1066,11 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		if (jTextFieldThreadsHigh == null) {
 			jTextFieldThreadsHigh = new JTextField();
 			jTextFieldThreadsHigh.setPreferredSize(new Dimension(50, 26));
-			jTextFieldThreadsHigh.addKeyListener(this);
+			jTextFieldThreadsHigh.addKeyListener(this.getKeyAdapter4Numbers());
+			jTextFieldThreadsHigh.getDocument().addDocumentListener(this.getDocumentListener4IntegerJTextField());
 		}
 		return jTextFieldThreadsHigh;
 	}
-
 	/**
 	 * This method initializes jTextFieldThreadsLow	
 	 * @return javax.swing.JTextField	
@@ -1025,20 +1079,20 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		if (jTextFieldThreadsLow == null) {
 			jTextFieldThreadsLow = new JTextField();
 			jTextFieldThreadsLow.setPreferredSize(new Dimension(50, 26));
-			jTextFieldThreadsLow.addKeyListener(this);
+			jTextFieldThreadsLow.addKeyListener(this.getKeyAdapter4Numbers());
+			jTextFieldThreadsLow.getDocument().addDocumentListener(this.getDocumentListener4IntegerJTextField());
 		}
 		return jTextFieldThreadsLow;
 	}
 
 	/**
-	 * Gets the JPanel recording.
-	 * @return the JPanel recording
+	 * Returns the JPanel for the recording interval.
+	 * @return the jPanelRecording
 	 */
-	private Component getJPanelRecording() {
+	private JPanel getJPanelRecording() {
 		if (jPanelRecording==null) {
 			jPanelRecording = new JPanel();
 			jPanelRecording.setLayout(new GridBagLayout());
-			jPanelRecording.setPreferredSize(new Dimension(500, 30));
 			
 			GridBagConstraints gridBagConstraintsLabel = new GridBagConstraints();
 			gridBagConstraintsLabel.gridx = 0;
@@ -1059,9 +1113,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			
 			jPanelRecording.add(jLabelRecording, gridBagConstraintsLabel);
 			jPanelRecording.add(getJComboBoxRecordingInterval(), gridBagConstraintsCombo);
-			
 		}
-		return this.jPanelRecording;
+		return jPanelRecording;
 	}
 	/**
 	 * Gets the JCheckBox show load monitor.
@@ -1174,6 +1227,87 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		return jButtonDefaultThreshold;
 	}
 	
+	/**
+	 * Gets the key adapter4 numbers.
+	 * @return the key adapter4 numbers
+	 */
+	private KeyAdapter4Numbers getKeyAdapter4Numbers() {
+		if (keyAdapter4Numbers==null) {
+			keyAdapter4Numbers = new KeyAdapter4Numbers(false);
+		}
+		return keyAdapter4Numbers;
+	}
+	/**
+	 * Gets the document listener for integer JTextField.
+	 * @return the docListener
+	 */
+	private DocumentListener getDocumentListener4IntegerJTextField() {
+		if (docListener==null) {
+			docListener = new DocumentListener() {
+				@Override
+				public void removeUpdate(DocumentEvent de) {
+					this.setDocChanges(de);
+				}
+				@Override
+				public void insertUpdate(DocumentEvent de) {
+					this.setDocChanges(de);
+				}
+				@Override
+				public void changedUpdate(DocumentEvent de) {
+					this.setDocChanges(de);
+				}
+				/**
+				 * Sets the doc changes to the distribution setup.
+				 * @param de the new doc changes
+				 */
+				private void setDocChanges(DocumentEvent de) {
+					
+					if (pauseDocumentListener==false) {
+						// --- Save document changes --------------------------
+						int number = 0;
+						Document srcDoc = de.getDocument();
+
+						String numberText=null;
+						try {
+							numberText = srcDoc.getText(0, srcDoc.getLength());
+						} catch (BadLocationException ble) {
+							ble.printStackTrace();
+						}
+						if (numberText!=null && numberText.equals("")==false) {
+							number = Integer.parseInt(numberText);	
+						} 
+						
+						// --- Save new value in the distribution setup -------
+						if (srcDoc==getJTextFieldAgentsExpected().getDocument()) {
+							currDistributionSetup.setNumberOfAgents(number);
+						} else if (srcDoc==getJTextFieldContainerExpected().getDocument()) {
+							currDistributionSetup.setNumberOfContainer(number);
+							
+						} else if (srcDoc==getJTextFieldCpuLow().getDocument()) {
+							currUserThresholds.setThCpuL(number);
+						} else if (srcDoc==getJTextFieldCpuHigh().getDocument()) {
+							currUserThresholds.setThCpuH(number);
+							
+						} else if (srcDoc==getJTextFieldMemLow().getDocument()) {
+							currUserThresholds.setThMemoL(number);
+						} else if (srcDoc==getJTextFieldMemHigh().getDocument()) {
+							currUserThresholds.setThMemoH(number);
+							
+						} else if (srcDoc==getJTextFieldThreadsLow().getDocument()) {
+							currUserThresholds.setThNoThreadsL(number);
+						} else if (srcDoc==getJTextFieldThreadsHigh().getDocument()) {
+							currUserThresholds.setThNoThreadsH(number);
+						}
+						pauseObserver=true;
+						currProject.setDistributionSetup(currDistributionSetup);
+						pauseObserver=false;
+					}
+				}
+			};
+		}
+		return docListener;
+	}
+	
 	// --------------------------------------------------------------
 	// --------------------------------------------------------------
 	/**
@@ -1194,19 +1328,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			break;
 
 		case THRESHOLD_LEVEL:
-			this.jCheckBoxThresholdDefinition.setSelected(false);
 			this.currDistributionSetup.setUseUserThresholds(false);
-			
-			this.currUserThresholds = new LoadThresholdLevels();
-			
-			this.jTextFieldCpuLow.setText(this.currUserThresholds.getThCpuL().toString());
-			this.jTextFieldCpuHigh.setText(this.currUserThresholds.getThCpuH().toString());
-			
-			this.jTextFieldMemLow.setText(this.currUserThresholds.getThMemoL().toString());
-			this.jTextFieldMemHigh.setText(this.currUserThresholds.getThMemoH().toString());
-			
-			this.jTextFieldThreadsLow.setText(this.currUserThresholds.getThNoThreadsL().toString());
-			this.jTextFieldThreadsHigh.setText(this.currUserThresholds.getThNoThreadsH().toString());
+			this.currDistributionSetup.setUserThresholds(new LoadThresholdLevels());
 		}
 		this.currProject.setDistributionSetup(this.currDistributionSetup);
 	}
@@ -1216,7 +1339,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	 */
 	private void setupLoad() {
 		
-		// --- Das akuelle DefaultListModel laden ---------
+		this.pauseDocumentListener = true;
+		
 		this.currDistributionSetup = this.currProject.getDistributionSetup();
 		this.currUserThresholds = this.currDistributionSetup.getUserThresholds();
 		this.currRemoteContainerConfiguration = this.currProject.getRemoteContainerConfiguration();
@@ -1247,6 +1371,9 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		this.setRecordingInterval(currDistributionSetup.getLoadRecordingInterval());
 		
 		this.jLabelCalculation.setText("");
+		
+		this.pauseDocumentListener = false;
+
 	}
 	
 	/**
@@ -1302,9 +1429,11 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 				break;
 			}
 		}
-
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 	
@@ -1371,64 +1500,17 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		currProject.setDistributionSetup(this.currDistributionSetup);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
 	@Override
-	public void update(Observable o, Object notifyObject) {
+	public void update(Observable observable, Object notifyObject) {
 		
 		if (notifyObject==Project.CHANGED_DistributionSetup) {
-			this.setupLoad();
+			if (pauseObserver==false) {
+				this.setupLoad();	
+			}
 		}
-	}
-
-	@Override
-	public void keyTyped(KeyEvent kT) {
-		
-		char charackter = kT.getKeyChar();
-		String SngChar = Character.toString(charackter);
-		// --- Numbers only !!! -----------------
-		if (SngChar.matches( "[0-9]") == false ) {
-			kT.consume();	
-			return;
-		}
-	}
-	@Override
-	public void keyPressed(KeyEvent e) {
-	}
-	@Override
-	public void keyReleased(KeyEvent kT) {
-		
-		// --- work on the datamodel ------------
-		JTextField sourceText = (JTextField) kT.getSource();
-		int number = 0;
-		try {
-			number = Integer.parseInt(sourceText.getText());
-		} catch (NumberFormatException e) {
-			number = 0;
-		}
-		
-		if (sourceText==jTextFieldAgentsExpected) {
-			currDistributionSetup.setNumberOfAgents(number);
-		} else if (sourceText==jTextFieldContainerExpected) {
-			currDistributionSetup.setNumberOfContainer(number);
-			
-		} else if (sourceText==jTextFieldCpuLow) {
-			currUserThresholds.setThCpuL(number);
-		} else if (sourceText==jTextFieldCpuHigh) {
-			currUserThresholds.setThCpuH(number);
-			
-		} else if (sourceText==jTextFieldMemLow) {
-			currUserThresholds.setThMemoL(number);
-		} else if (sourceText==jTextFieldMemHigh) {
-			currUserThresholds.setThMemoH(number);
-			
-		} else if (sourceText==jTextFieldThreadsLow) {
-			currUserThresholds.setThNoThreadsL(number);
-		} else if (sourceText==jTextFieldThreadsHigh) {
-			currUserThresholds.setThNoThreadsH(number);
-			
-		} else {
-			//System.err.println("Textfeld nicht implementiert: " + sourceText.getName());
-		}
-		currProject.setDistributionSetup(this.currDistributionSetup);
 	}
 
 	
