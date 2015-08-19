@@ -70,7 +70,8 @@ import agentgui.simulationService.distribution.JadeRemoteStart;
 import agentgui.simulationService.load.LoadThresholdLevels;
 
 /**
- * Represents the JPanel/Tab 'Simulation-Setup' - 'Distribution'
+ * Represents the JPanel/Tab to configure the Distribution mechanisms for
+ * agents within the project configuration 
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
