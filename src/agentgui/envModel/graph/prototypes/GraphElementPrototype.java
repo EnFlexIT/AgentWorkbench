@@ -54,8 +54,8 @@ public abstract class GraphElementPrototype {
 	/**
 	 * This method adds a GraphElementPrototype to a JUNG graph, with no connection to other graph elements.
 	 * This method should be implemented, for new graph prototypes.
-	 * @param graph The JUNG graph
-	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed  
+	 * @param networkModel the network model
+	 * @return A HashSet containing the GraphElements representing this component, or null if adding failed
 	 */
 	public abstract HashSet<GraphElement> addToGraph(NetworkModel networkModel);
 	

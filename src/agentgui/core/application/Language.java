@@ -43,6 +43,8 @@ import java.util.Vector;
 
 import org.apache.commons.codec.binary.Base64;
 
+import agentgui.core.config.GlobalInfo;
+
 /**
  * This is the static singleton class for the use of the dictionary by the 
  * applications translation functionality.<br><br>  
@@ -67,16 +69,16 @@ import org.apache.commons.codec.binary.Base64;
 public class Language {
 
 	private static Language thisSingleton = new Language(); 
+	private static GlobalInfo globalInfo;
 	
-	/**
-	 * This is the separator used in the dictionary file
-	 */
+	/** This is the separator used in the dictionary file */
 	public static final String seperator = ";";
-	private static String newLine = Application.getGlobalInfo().getNewLineSeparator();
-	private static String newLineReplacer = Application.getGlobalInfo().getNewLineSeparatorReplacer();
+	
+	private static String newLine;
+	private static String newLineReplacer;
 
-	private static String dictFileLocation64 = Application.getGlobalInfo().getFileDictionary(true, true);
-	private static String dictFileLocation = Application.getGlobalInfo().getFileDictionary(false, true);
+	private static String dictFileLocation64;
+	private static String dictFileLocation;
 
 	private static List<String> dictLineList64 = new ArrayList<String>();
 	private static List<String> dictLineListCSV = new ArrayList<String>();
@@ -134,7 +136,6 @@ public class Language {
 		String newLangShort = newLang.toLowerCase().replace("lang_", "");
 		Application.getGlobalInfo().setLanguage(newLangShort);
 		currLanguageIndex = getIndexOfLanguage(newLangShort);
-		
 	}
 		
 	/**
@@ -164,6 +165,9 @@ public class Language {
 	 */
 	public static String translate(String expression, String language)  {
 		
+		if (getGlobalInfo()==null) return expression;
+		
+		
 		// --- In case that the dictionary was not loaded yet -----------------
 		if (dictLineList64.size()==0) {
 			loadDictionaryFile();
@@ -173,7 +177,7 @@ public class Language {
 		String translationExp = null;
 		String expressionWork = null;
 		expressionWork = expression.trim();
-		expressionWork = expressionWork.replace(newLine, newLineReplacer);
+		expressionWork = expressionWork.replace(getNewLine(), getNewLineReplacer());
 
 		Integer lineInDictionary = dictHash64.get(expressionWork);		
 		if (lineInDictionary == null) {
@@ -195,8 +199,8 @@ public class Language {
 				if ( translationExp == null || translationExp.isEmpty() ) {
 					translationExp = expression.trim();
 				} else {
-					translationExp = translationExp.replace(newLineReplacer, newLine);				
-				};
+					translationExp = translationExp.replace(getNewLineReplacer(), getNewLine());				
+				}
 			}
 			
 		};
@@ -333,12 +337,12 @@ public class Language {
 		try {        
 			String line;
 			// --- Reading the CSV-Version of the dictionary ------------------		
-			in = new BufferedReader( new InputStreamReader( new FileInputStream(dictFileLocation) ) );
+			in = new BufferedReader( new InputStreamReader( new FileInputStream(getDictFileLocation()) ) );
 			while ((line = in.readLine()) != null) {   
 				dictLineListCSV.add(line);
 			}
 			// --- Reading the Base64 encoded UTF8-File of the dictionary -----
-			in64 = new BufferedReader( new InputStreamReader( new FileInputStream(dictFileLocation64) , "UTF8" ) );
+			in64 = new BufferedReader( new InputStreamReader( new FileInputStream(getDictFileLocation64()) , "UTF8" ) );
 			while ((line = in64.readLine()) != null) {
 				String decodedLine = new String(Base64.decodeBase64(line.getBytes()), "UTF8");
 				dictLineList64.add(decodedLine);
@@ -436,8 +440,8 @@ public class Language {
 		
 		try { 
 			// --- UTF8-File for the dictionary -------------------------------- 
-			OutWri = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(dictFileLocation)) );
-			OutWri64 = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(dictFileLocation64), "UTF8" ) );
+			OutWri = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(getDictFileLocation())) );
+			OutWri64 = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(getDictFileLocation64()), "UTF8" ) );
 		    
 			for ( final String line : DictSorted ) {
 				
@@ -528,7 +532,76 @@ public class Language {
 		}
 	}
 	
-}
- 
+	
+	/**
+	 * Gets access to the {@link GlobalInfo}.
+	 * @return the global info
+	 */
+	private static GlobalInfo getGlobalInfo() {
+		if (globalInfo==null) {
+			try {
+				globalInfo = Application.getGlobalInfo();	
+			} catch (Exception ex) {
+				//ex.printStackTrace();
+			}
+		}
+		return globalInfo;
+	}
+	
+	/**
+	 * Returns the current new line string.
+	 * @return the new line
+	 */
+	private static String getNewLine() {
+		if (newLine==null) {
+			GlobalInfo gInfo = getGlobalInfo();
+			if (gInfo!=null) {
+				newLine = gInfo.getNewLineSeparator();
+			}
+		}
+		return newLine;
+	}
+	/**
+	 * Returns the new line replacer string .
+	 * @return the new line
+	 */
+	private static String getNewLineReplacer() {
+		if (newLineReplacer==null) {
+			GlobalInfo gInfo = getGlobalInfo();
+			if (gInfo!=null) {
+				newLineReplacer = gInfo.getNewLineSeparatorReplacer();
+			}
+		}
+		return newLineReplacer;
+	}
+	/**
+	 * Returns the file location for the base64 encoded dictionary file as string.
+	 * @return the absolute file location as string 
+	 */
+	private static String getDictFileLocation64() {
+		if (dictFileLocation64==null) {
+			GlobalInfo gInfo = getGlobalInfo();
+			if (gInfo!=null) {
+				dictFileLocation64 = gInfo.getFileDictionary(true, true);
+			}
+		}
+		return dictFileLocation64;
+	}
+	/**
+	 * Returns the file location for the dictionary file as string.
+	 * @return the absolute file location as string 
+	 */
+	private static String getDictFileLocation() {
+		if (dictFileLocation==null) {
+			GlobalInfo gInfo = getGlobalInfo();
+			if (gInfo!=null) {
+				dictFileLocation = gInfo.getFileDictionary(false, true);
+			}
+		}
+		return dictFileLocation;
+	}
+	
 
- 
+	
+	
+}

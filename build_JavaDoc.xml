@@ -20,7 +20,8 @@
 	<property name="version.build" value="${build.number}"/>
 				
 	<property name="doc.title" value="Agent.GUI - Documentation (Version ${version.major}.${version.minor} Build ${version.build})"/> 
-	<property name="zip.name" value="Agent.GUI_${version.major}.${version.minor}_API.zip"/>
+	<property name="zip.namePrefix" value="Agent.GUI_"/>
+	<property name="zip.name" value="${zip.namePrefix}${version.major}.${version.minor}_API.zip"/>
 	
 		
 	<target name="javadoc-create" depends="" description="Creating javadoc ... ">
@@ -95,7 +96,11 @@
 			<fileset dir="${destinDirAPI}" />
 		</zip>		
 		<!-- Remove old file, if there -->
-		<delete file="${destinDirAPI}/${zip.name}" failonerror="false" />
+		<delete failonerror="false"> 
+			<fileset dir="${destinDirAPIzip}" defaultexcludes="false">
+			   <include name="**/${zip.namePrefix}*/**" />
+			</fileset>
+		</delete>
 		<!-- Move Zip file -->
 		<move file="${destinDir}/${zip.name}" tofile="${destinDirAPI}/${zip.name}" />
 	</target>

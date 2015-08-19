@@ -192,9 +192,10 @@ public class DistributionSetup implements Serializable {
 	public boolean isShowLoadMonitorAtPlatformStart() {
 		return showLoadMonitorAtPlatformStart;
 	}
+	
 	/**
 	 * Sets the show load monitor at platform start.
-	 * @param showLoadMonitor the new show load monitor
+	 * @param showLoadMonitorAtPlatformStart the new show load monitor at platform start
 	 */
 	public void setShowLoadMonitorAtPlatformStart(boolean showLoadMonitorAtPlatformStart) {
 		this.showLoadMonitorAtPlatformStart = showLoadMonitorAtPlatformStart;

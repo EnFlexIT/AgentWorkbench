@@ -55,15 +55,18 @@ import javax.swing.UIManager;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 
 /**
- * The Class AgentGuiUpdaterProgress.
+ * The Class ProgressMonitor can be used in order to display the progress of 
+ * a time consuming process as for example a download or other.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class ProgressMonitor implements ActionListener {
 
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( pathImage + "AgentGUI.png") );
-	private final Image imageAgentGUI = iconAgentGUI.getImage();
+	private ImageIcon imageIconAgentGUI;
+	private Image imageAgentGUI;
 	
 	private Container progressMonitorContainer = null;
 	
@@ -114,14 +117,15 @@ public class ProgressMonitor implements ActionListener {
 			jDialog.setAlwaysOnTop(true);
 			
 			jDialog.setTitle(this.windowTitle);
-			jDialog.setIconImage(imageAgentGUI);	
+			jDialog.setIconImage(this.getImageAgentGUI());	
 			jDialog.setContentPane(getJContentPane());
 			jDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			
+			this.progressMonitorContainer = jDialog; 
+			
 			if (this.owner==null) {
 				this.setLookAndFeel();	
 			}
-			
-			this.progressMonitorContainer = jDialog; 
 				
 		} else {
 			JInternalFrame jInternalFrame = new JInternalFrame();
@@ -129,7 +133,7 @@ public class ProgressMonitor implements ActionListener {
 			jInternalFrame.setResizable(false);
 			
 			jInternalFrame.setTitle(this.windowTitle);
-			jInternalFrame.setFrameIcon(iconAgentGUI);	
+			jInternalFrame.setFrameIcon(this.getImageIconAgentGUI());	
 			jInternalFrame.setContentPane(getJContentPane());
 			jInternalFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			
@@ -138,6 +142,47 @@ public class ProgressMonitor implements ActionListener {
 		
 	}
 
+	/**
+	 * Returns the current instance of the {@link GlobalInfo}.
+	 * @return the global info
+	 */
+	private GlobalInfo getGlobalInfo() {
+		GlobalInfo gInfo = null;
+		try {
+			gInfo = Application.getGlobalInfo();
+		} catch (Exception ex) {
+//			ex.printStackTrace();
+		}
+		return gInfo;
+	}
+	
+	private String getPathImageIntern() {
+		String imagePathIntern=null;
+		GlobalInfo gInfo = this.getGlobalInfo();
+		if (gInfo!=null) {
+			imagePathIntern = gInfo.getPathImageIntern();
+		}
+		return imagePathIntern;
+	}
+	private ImageIcon getImageIconAgentGUI() {
+		if (imageIconAgentGUI==null) {
+			String pathImage = this.getPathImageIntern();
+			if (pathImage!=null) {
+				imageIconAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
+			}
+		}
+		return imageIconAgentGUI;
+	}
+	private Image getImageAgentGUI(){
+		if (imageAgentGUI==null) {
+			ImageIcon iIcon = getImageIconAgentGUI();
+			if (iIcon!=null) {
+				imageAgentGUI = iIcon.getImage();
+			}
+		}
+		return imageAgentGUI;
+	}
+	
 	/**
 	 * Sets the progress dialog visible.
 	 * @param visible the new visible
@@ -263,21 +308,24 @@ public class ProgressMonitor implements ActionListener {
 	}
 	
 	/**
-	 * Sets the look and feel of the dialog similar to the core application window
+	 * Sets the look and feel of the dialog similar to the current application window
 	 */
 	private void setLookAndFeel() {
 		
-		String lnfClassname = Application.getGlobalInfo().getAppLnF();
-		try {
-			if (lnfClassname == null) {
-				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-			}	
-			UIManager.setLookAndFeel(lnfClassname);
-			SwingUtilities.updateComponentTreeUI(this.progressMonitorContainer);				
-		
-		} catch (Exception e) {
+		GlobalInfo gInfo = this.getGlobalInfo(); 
+		if (gInfo!=null) {
+			String lnfClassname = gInfo.getAppLnF();
+			try {
+				if (lnfClassname == null) {
+					lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
+				}	
+				UIManager.setLookAndFeel(lnfClassname);
+				SwingUtilities.updateComponentTreeUI(this.progressMonitorContainer);				
+			
+			} catch (Exception e) {
 				System.err.println("Cannot install " + lnfClassname + " on this platform:" + e.getMessage());
-		}		
+			}	
+		}
 	}
 	
 	/**

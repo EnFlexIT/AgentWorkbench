@@ -50,6 +50,8 @@ import javax.swing.WindowConstants;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
+
 import java.awt.Color;
 import java.io.File;
 
@@ -66,10 +68,9 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
-	private final ImageIcon iconAgentGUI = new ImageIcon( this.getClass().getResource( PathImage + "AgentGUI.png") );
-	private final Image imageAgentGUI = iconAgentGUI.getImage();
-
+	private ImageIcon imageIconAgentGUI;
+	private Image imageAgentGUI;
+	
 	private JPanel jContentPane = null;
 	
 	private JLabel jLabelProcess = null;
@@ -100,9 +101,13 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		this.setSize(542, 194);
 		this.setContentPane(getJContentPane());
 		
-		this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": Zip-Monitor");
-		this.setIconImage(imageAgentGUI);
-		
+		GlobalInfo gInfo = this.getGlobalInfo();
+		if (gInfo!=null) {
+			this.setTitle(gInfo.getApplicationTitle() + ": Zip-Monitor");	
+		} else {
+			this.setTitle("Zip-Monitor");
+		}
+		this.setIconImage(this.getImageAgentGUI());
 		this.setLookAndFeel();
 		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -116,21 +121,63 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	}
 
 	/**
+	 * Returns the current instance of the {@link GlobalInfo}.
+	 * @return the global info
+	 */
+	private GlobalInfo getGlobalInfo() {
+		GlobalInfo gInfo = null;
+		try {
+			gInfo = Application.getGlobalInfo();
+		} catch (Exception ex) {
+//			ex.printStackTrace();
+		}
+		return gInfo;
+	}
+	private String getPathImageIntern() {
+		String imagePathIntern=null;
+		GlobalInfo gInfo = this.getGlobalInfo();
+		if (gInfo!=null) {
+			imagePathIntern = gInfo.getPathImageIntern();
+		}
+		return imagePathIntern;
+	}
+	private ImageIcon getImageIconAgentGUI() {
+		if (imageIconAgentGUI==null) {
+			String pathImage = this.getPathImageIntern();
+			if (pathImage!=null) {
+				imageIconAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
+			}
+		}
+		return imageIconAgentGUI;
+	}
+	private Image getImageAgentGUI(){
+		if (imageAgentGUI==null) {
+			ImageIcon iIcon = getImageIconAgentGUI();
+			if (iIcon!=null) {
+				imageAgentGUI = iIcon.getImage();
+			}
+		}
+		return imageAgentGUI;
+	}
+	/**
 	 * Sets the look and feel of the dialog similar to the core application window
 	 */
 	private void setLookAndFeel() {
 		
-		String lnfClassname = Application.getGlobalInfo().getAppLnF();
-		try {
-			if (lnfClassname == null) {
-				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
-			}	
-			UIManager.setLookAndFeel(lnfClassname);
-			SwingUtilities.updateComponentTreeUI(this);				
-		} 
-		catch (Exception e) {
+		GlobalInfo gInfo = this.getGlobalInfo();
+		if (gInfo!=null) {
+			String lnfClassname = gInfo.getAppLnF();
+			try {
+				if (lnfClassname == null) {
+					lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
+				}	
+				UIManager.setLookAndFeel(lnfClassname);
+				SwingUtilities.updateComponentTreeUI(this);				
+			} 
+			catch (Exception e) {
 				System.err.println("Cannot install " + lnfClassname + " on this platform:" + e.getMessage());
-		}		
+			}	
+		}
 	}
 	
 	/**

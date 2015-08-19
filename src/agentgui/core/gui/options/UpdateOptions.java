@@ -36,6 +36,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -49,33 +51,41 @@ import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+
 import javax.swing.JCheckBox;
 
+
+/**
+ * The Class UpdateOptions extends an {@link AbstractOptionTab} and is
+ * used in order to visually configure the update of Agent.GUI.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ */
 public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
 	private final static String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
-	private JPanel jPanelUpdateLink = null;
-	private JPanel jPanelDummy = null;
+	private JPanel jPanelUpdateLink;
+	private JPanel jPanelDummy;
 	
-	private ButtonGroup updateAutoConfig = null;  //  @jve:decl-index=0:
-	private JRadioButton jRadioButtonUpdateAutomated = null;
-	private JRadioButton jRadioButtonUpdateDownloadAndAsk = null;
-	private JRadioButton jRadioButtonUpdateDisabled = null;
+	private ButtonGroup updateAutoConfig; 
+	private JRadioButton jRadioButtonUpdateAutomated;
+	private JRadioButton jRadioButtonUpdateDownloadAndAsk;
+	private JRadioButton jRadioButtonUpdateDisabled;
 	
-	private JLabel jLabelUpdateSiteLable = null;
-	private JLabel jLabelUpdateLable = null;
+	private JLabel jLabelUpdateSiteLable;
+	private JLabel jLabelUpdateTitle;
 	
-	private JTextField jTextFieldUpdateSite = null;
+	private JTextField jTextFieldUpdateSite;
 	
-	private JButton jButtonUpdateSiteApply = null;
-	private JButton jButtonUpdateSiteDefault = null;
+	private JButton jButtonUpdateSiteApply;
+	private JButton jButtonUpdateSiteDefault;
 
-	private JLabel jLabelUpdateDictionary = null;
+	private JLabel jLabelUpdateDictionary;
 
-	private JCheckBox jCheckBoxUpdateKeepDictionary = null;
+	private JCheckBox jCheckBoxUpdateKeepDictionary;
 	
 
 	/**
@@ -87,16 +97,15 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		this.setGlobalData2Form();
 		
 		// --- Configure translation ----------------------
-		jButtonUpdateSiteApply.setText(Language.translate("Speichern"));
-		jButtonUpdateSiteDefault.setToolTipText(Language.translate("Standard verwenden"));
+		this.getJButtonUpdateSiteApply().setText(Language.translate("Speichern"));
+		this.getJButtonUpdateSiteDefault().setToolTipText(Language.translate("Standard verwenden"));
 		
-		jLabelUpdateLable.setText(Language.translate("Nach Updates suchen") + ":");
-		jRadioButtonUpdateAutomated.setText(Language.translate("Updates automatisch installieren"));
-		jRadioButtonUpdateDownloadAndAsk.setText(Language.translate("Update automatisch herunterladen, Installationszeitpunkt manuell festlegen"));
-		jRadioButtonUpdateDisabled.setText(Language.translate("Updates nicht automatisch herunterladen oder installieren"));
+		this.getJRadioButtonUpdateAutomated().setText(Language.translate("Updates automatisch installieren"));
+		this.getJRadioButtonUpdateDownloadAndAsk().setText(Language.translate("Update automatisch herunterladen, Installationszeitpunkt manuell festlegen"));
+		this.getJRadioButtonUpdateDisabled().setText(Language.translate("Updates nicht automatisch herunterladen oder installieren"));
 		
 		jLabelUpdateDictionary.setText(Language.translate("Wörterbuch") + ":");
-		jCheckBoxUpdateKeepDictionary.setText(Language.translate("Im Falle eines Updates, eigenes Wörterbuch beibehalten."));
+		this.getJCheckBoxUpdateKeepDictionary().setText(Language.translate("Im Falle eines Updates, eigenes Wörterbuch beibehalten."));
 		
 	}
 
@@ -164,10 +173,6 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		gridBagConstraints.insets = new Insets(5, 20, 0, 0);
 		gridBagConstraints.gridy = 2;
 	
-		jLabelUpdateLable = new JLabel();
-		jLabelUpdateLable.setText("Nach Updates suchen");
-		jLabelUpdateLable.setFont(new Font("Dialog", Font.BOLD, 12));
-		
 		jLabelUpdateDictionary = new JLabel();
 		jLabelUpdateDictionary.setFont(new Font("Dialog", Font.BOLD, 12));
 		jLabelUpdateDictionary.setText("Wörterbuch");
@@ -179,7 +184,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		this.add(getJRadioButtonUpdateDownloadAndAsk(), gridBagConstraints1);
 		this.add(getJRadioButtonUpdateDisabled(), gridBagConstraints2);
 		this.add(getJPanelUpdateLink(), gridBagConstraints4);
-		this.add(jLabelUpdateLable, gridBagConstraints11);
+		this.add(getJLabelUpdateTitle(), gridBagConstraints11);
 		this.add(getJPanelDummy(), gridBagConstraints21);
 		this.add(jLabelUpdateDictionary, gridBagConstraints12);
 		this.add(getJCheckBoxUpdateKeepDictionary(), gridBagConstraints22);
@@ -189,6 +194,18 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		this.updateAutoConfig.add(this.getJRadioButtonUpdateDownloadAndAsk());
 		this.updateAutoConfig.add(this.getJRadioButtonUpdateDisabled());
 		
+	}
+	
+	/**
+	 * Returns the JLabel of the update title.
+	 * @return the jLabelUpdateTitle
+	 */
+	private JLabel getJLabelUpdateTitle() {
+		if (jLabelUpdateTitle==null) {
+			jLabelUpdateTitle = new JLabel();
+			jLabelUpdateTitle.setText("<html><b>Nach Updates suchen:</b></html>");
+		}
+		return jLabelUpdateTitle;
 	}
 	/**
 	 * This method initializes jRadioButtonUpdateAutomated	
@@ -373,8 +390,10 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 	 */
 	private void setGlobalData2Form() {
 
+		// --- Set link to update site ------------------------------
 		this.getJTextFieldUpdateSite().setText(Application.getGlobalInfo().getUpdateSite());
 		
+		// --- Set update configuration -----------------------------
 		int autoConfiguration = Application.getGlobalInfo().getUpdateAutoConfiguration();
 		switch (autoConfiguration) {
 		case 0:
@@ -391,14 +410,19 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 			break;
 		}
 		
+		// --- Set if dictionary can be overwritten -----------------
 		if (Application.getGlobalInfo().getUpdateKeepDictionary()==0) {
 			this.getJCheckBoxUpdateKeepDictionary().setSelected(false);
 		} else {
 			this.getJCheckBoxUpdateKeepDictionary().setSelected(true);
 		}
 		
+		// --- Set when the update check was done the last time -----
+		String titlePrefix = Language.translate("Nach Updates suchen");
+		long dateChecked = Application.getGlobalInfo().getUpdateDateLastChecked();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+		this.getJLabelUpdateTitle().setText("<html><b>" + titlePrefix + ":</b> (Last check: " + sdf.format(new Date(dateChecked)) + ")</html>");
+		
 	}
-
 	
-	
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+}  

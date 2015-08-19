@@ -210,6 +210,10 @@ public class AgentGuiUpdater extends Thread {
 			}
 			// --------------------------------------------
 			break;
+			
+		case DEVICE_SYSTEM:
+			// --- TODO -------------
+			break;
 		}
 		
 		// ------------------------------------------------
@@ -357,6 +361,9 @@ public class AgentGuiUpdater extends Thread {
 								case SERVER_MASTER:
 								case SERVER_SLAVE:
 									Application.startAgentGUI();	
+									break;
+								default:
+									// --- Nothing to do here ! ------
 									break;
 								}
 								
