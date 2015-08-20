@@ -78,6 +78,9 @@ import agentgui.simulationService.load.gui.SystemLoadPanel;
 import agentgui.simulationService.load.gui.SystemLoadDialog;
 import agentgui.simulationService.load.gui.SystemLoadSingle;
 import agentgui.simulationService.load.gui.SystemLoadPanel.TimeSelection;
+import agentgui.simulationService.load.threading.ThreadMeasureBehaviour;
+import agentgui.simulationService.load.threading.ThreadProtocol;
+import agentgui.simulationService.load.threading.ThreadProtocolVector;
 import agentgui.simulationService.ontology.OSInfo;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
@@ -91,17 +94,18 @@ import agentgui.simulationService.ontology.ShowMonitorGUI;
  */
 public class LoadMeasureAgent extends Agent {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3035508112883482740L;
 	
 	// --------------------------------------------------------------
 	// --- To which Project are we running in the moment ------------ 
 	/** The current project. */
-	protected Project currProject;
+	private Project currProject;
 	/** The current SimulationSetup. */
-	protected SimulationSetup currSimSetup;
+	private SimulationSetup currSimSetup;
 	/** The current DistributionSetup. */
-	protected DistributionSetup currDisSetup;
+	private DistributionSetup currDisSetup;
+	/** The Load Helper for this agent */
+	private LoadServiceHelper loadHelper;
 	
 	// --------------------------------------------------------------
 	// --- Display-elements of the Monitoring system ---------------- 
@@ -113,15 +117,15 @@ public class LoadMeasureAgent extends Agent {
 	// --------------------------------------------------------------
 	// --- The measure/display behaviour of the agent --------------- 
 	/** The monitor behaviour, which is a TickerBehaviour. */
-	public MonitorBehaviour monitorBehaviour;
-	private long monitorBehaviourTickingPeriod = 0;
+	private MonitorBehaviour monitorBehaviour;
+	private Long monitorBehaviourTickingPeriod = null;
 	// --------------------------------------------------------------
 
 	// --------------------------------------------------------------
 	// --- The balancing algorithm of this agent --------------------
 	private DynamicLoadBalancingBase loadBalancing;
 	/** Indicator if a activate DynamicLoadBalancing is still active. */
-	public boolean loadBalancingIsStillActivated = false;
+	private boolean dynLoadBalancaingStillActivated = false;
 	// --------------------------------------------------------------
 	
 	// --------------------------------------------------------------
@@ -170,6 +174,10 @@ public class LoadMeasureAgent extends Agent {
 	private Hashtable<String, String> monitorDatasetPartsDescription = new Hashtable<String, String>();
 	// --------------------------------------------------------------
 	
+	// --------------------------------------------------------------
+	// ---- Variables for threat measurements -----------------------
+	private ThreadMeasureBehaviour threadMeasureBehaviour; 
+	private ThreadProtocolVector threadProtocolVector;
 	
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
@@ -180,20 +188,9 @@ public class LoadMeasureAgent extends Agent {
 		this.getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
 		this.getContentManager().registerOntology(JADEManagementOntology.getInstance());
 		
-		this.currProject = Application.getProjectFocused();		
-		if (this.currProject==null) {
-			this.currSimSetup = null;
-			this.currDisSetup = null;
-		} else {
-			this.currSimSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
-			this.currDisSetup = this.currProject.getDistributionSetup();
-		}
-		
 		this.loadBalancing = new DynamicLoadBalancing(this);
 		
-		this.monitorBehaviourTickingPeriod = this.getSelectedTimeSelection().getTimeInMill();
-		this.monitorBehaviour = new MonitorBehaviour(this, monitorBehaviourTickingPeriod);
-		this.addBehaviour(this.monitorBehaviour) ;
+		this.addBehaviour(this.getMonitorBehaviour()) ;
 		this.addBehaviour(new ReceiveBehaviour());
 	}
 	
@@ -211,10 +208,24 @@ public class LoadMeasureAgent extends Agent {
 	}
 	
 	/**
+	 * Returns the {@link MonitorBehaviour}.
+	 * @return the monitor behaviour
+	 */
+	public MonitorBehaviour getMonitorBehaviour() {
+		if (monitorBehaviour==null) {
+			monitorBehaviour = new MonitorBehaviour(this, getMonitorBehaviourTickingPeriod());
+		}
+		return monitorBehaviour;
+	}
+	
+	/**
 	 * Returns the monitor behaviour ticking period.
 	 * @return the monitorBehaviourTickingPeriod
 	 */
 	public long getMonitorBehaviourTickingPeriod() {
+		if (monitorBehaviourTickingPeriod==null) {
+			monitorBehaviourTickingPeriod = this.getSelectedTimeSelection().getTimeInMill();
+		}
 		return monitorBehaviourTickingPeriod;
 	}
 	/**
@@ -223,7 +234,7 @@ public class LoadMeasureAgent extends Agent {
 	 */
 	public void setMonitorBehaviourTickingPeriod(long monitorBehaviourTickingPeriod) {
 		this.monitorBehaviourTickingPeriod = monitorBehaviourTickingPeriod;
-		this.monitorBehaviour.reset(monitorBehaviourTickingPeriod);
+		this.getMonitorBehaviour().reset(monitorBehaviourTickingPeriod);
 	}
 	
 	/**
@@ -279,6 +290,51 @@ public class LoadMeasureAgent extends Agent {
 		return ((TimeSelection) this.getSystemLoadPanel().getJComboBoxInterval().getSelectedItem());
 	}
 	
+	/**
+	 * Returns the current {@link Project}.
+	 * @return the project
+	 */
+	public Project getProject() {
+		if (currProject==null) {
+			currProject = Application.getProjectFocused();
+		}
+		return currProject;
+	}
+	/**
+	 * Returns the current {@link SimulationSetup} if available.
+	 * @return the simulation setup
+	 */
+	public SimulationSetup getSimulationSetup() {
+		if (currSimSetup==null && this.getProject()!=null) {
+			currSimSetup=this.getProject().getSimulationSetups().getCurrSimSetup();
+		}
+		return currSimSetup;
+	}
+	/**
+	 * Returns the {@link DistributionSetup} of the current {@link Project} if available.
+	 * @return the distribution setup
+	 */
+	public DistributionSetup getDistributionSetup() {
+		if (currDisSetup==null && this.getProject()!=null) {
+			currDisSetup = this.getProject().getDistributionSetup();
+		}
+		return currDisSetup;
+	}
+	
+	/**
+	 * Returns the {@link LoadServiceHelper}.
+	 * @return the load service helper
+	 */
+	public LoadServiceHelper getLoadServiceHelper() {
+		if (loadHelper==null) {
+			try {
+				loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
+			} catch (ServiceException se) {
+				se.printStackTrace();
+			}	
+		}
+		return loadHelper;
+	}
 	
 	/**
 	 * This TickerBehaviour measures, displays (if wanted) and stores the measured load values.
@@ -288,8 +344,6 @@ public class LoadMeasureAgent extends Agent {
 	public class MonitorBehaviour extends TickerBehaviour {
 
 		private static final long serialVersionUID = -5802791218164507242L;
-		
-		private LoadServiceHelper loadHelper;
 		
 		private boolean initiatedLoadRecordingOnce = false;
 		private int dialogTitleHeight = 38;
@@ -304,20 +358,6 @@ public class LoadMeasureAgent extends Agent {
 		public MonitorBehaviour(Agent agent, long tickerPeriod) {
 			super(agent, tickerPeriod);
 		}
-		/**
-		 * Gets the {@link LoadServiceHelper}.
-		 * @return the load service helper
-		 */
-		private LoadServiceHelper getLoadServiceHelper() {
-			if (loadHelper==null) {
-				try {
-					loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
-				} catch (ServiceException se) {
-					se.printStackTrace();
-				}	
-			}
-			return loadHelper;
-		}
 		
 		/* (non-Javadoc)
 		 * @see jade.core.behaviours.TickerBehaviour#onTick()
@@ -330,10 +370,10 @@ public class LoadMeasureAgent extends Agent {
 
 				// --- Get the PlatformLoad and the Agents at their locations -----------
 				monitorTimeStamp = System.currentTimeMillis();
-				loadCycleTime = this.getLoadServiceHelper().getAvgCycleTime();
-				loadContainer = this.getLoadServiceHelper().getContainerLoads();
-				loadContainerAgentMap = this.getLoadServiceHelper().getAgentMap();
-				loadContainerLoactions = this.getLoadServiceHelper().getContainerLocations();
+				loadCycleTime = getLoadServiceHelper().getAvgCycleTime();
+				loadContainer = getLoadServiceHelper().getContainerLoads();
+				loadContainerAgentMap = getLoadServiceHelper().getAgentMap();
+				loadContainerLoactions = getLoadServiceHelper().getContainerLocations();
 				
 				// --- Display number of agents -----------------------------------------
 				getSystemLoadPanel().setNumberOfAgents(loadContainerAgentMap.noAgentsAtPlatform);
@@ -347,13 +387,13 @@ public class LoadMeasureAgent extends Agent {
 				loadJVM4Balancing = new Hashtable<String, LoadMerger>();
 				
 				// --- Walk through the list of all containers --------------------------
-				loadContainer2Display = new Vector<String>(this.getLoadServiceHelper().getContainerQueue());
+				loadContainer2Display = new Vector<String>(getLoadServiceHelper().getContainerQueue());
 				
 				for (int i = 0; i < loadContainer2Display.size(); i++) {
 					// --- Get container name -------------------------------------------
 					String containerName = loadContainer2Display.get(i);
 					// --- Get the benchmark-result for this node/container -------------
-					NodeDescription containerDesc = this.getLoadServiceHelper().getContainerDescription(containerName);
+					NodeDescription containerDesc = getLoadServiceHelper().getContainerDescription(containerName);
 					Float benchmarkValue = containerDesc.getBenchmarkValue().getBenchmarkValue();
 					String jvmPID = containerDesc.getJvmPID(); 
 					String machineURL = containerDesc.getPlAddress().getUrl();
@@ -440,8 +480,8 @@ public class LoadMeasureAgent extends Agent {
 			// --------------------------------------------------------------------------
 
 			// --- Check if load recording has to be started directly -------------------
-			if (this.initiatedLoadRecordingOnce==false && currDisSetup!=null && currDisSetup.isImmediatelyStartLoadRecording()==true) {
-				getSystemLoadPanel().setRecordingInterval(currDisSetup.getLoadRecordingInterval());
+			if (this.initiatedLoadRecordingOnce==false && getDistributionSetup()!=null && getDistributionSetup().isImmediatelyStartLoadRecording()==true) {
+				getSystemLoadPanel().setRecordingInterval(getDistributionSetup().getLoadRecordingInterval());
 				getSystemLoadPanel().setDoLoadRecording(true);
 				// --- Make sure that this is done only once, in order to allow stop ---
 				this.initiatedLoadRecordingOnce = true;
@@ -450,7 +490,7 @@ public class LoadMeasureAgent extends Agent {
 			// --------------------------------------------------------------------------
 			// --- If configured, activate the load balancing in a dedicated thread -----
 			// --------------------------------------------------------------------------
-			if (currDisSetup!=null && currDisSetup.isDoDynamicLoadBalancing()==true) {
+			if (getDistributionSetup()!=null && getDistributionSetup().isDoDynamicLoadBalancing()==true) {
 				this.doCheckDynamicLoadBalancing();
 			}
 			// --------------------------------------------------------------------------
@@ -465,15 +505,15 @@ public class LoadMeasureAgent extends Agent {
 			
 			// --- If the dynamic load balancing is still running/executed  	 --- 
 			// --- from the last measure tick, exit here to prevent side effects ---
-			if (loadBalancingIsStillActivated == true) return;
+			if (isDynLoadBalancaingStillActivated()==true) return;
 			// --- Set that load balancing is active now ---------------------------
-			loadBalancingIsStillActivated = true;
+			setDynLoadBalancaingStillActivated(true);
 			
 			// --- If the dynamic load balancing is activated: ---------------------
 			LoadMeasureAgent thisLoadAgent = (LoadMeasureAgent) myAgent;
 			try {
 				@SuppressWarnings("unchecked")
-				Class<? extends DynamicLoadBalancingBase> dynLoBaClass = (Class<? extends DynamicLoadBalancingBase>) Class.forName(currDisSetup.getDynamicLoadBalancingClass());
+				Class<? extends DynamicLoadBalancingBase> dynLoBaClass = (Class<? extends DynamicLoadBalancingBase>) Class.forName(getDistributionSetup().getDynamicLoadBalancingClass());
 				loadBalancing = dynLoBaClass.getDeclaredConstructor( new Class[] { thisLoadAgent.getClass() }).newInstance( new Object[] { thisLoadAgent });
 				
 			} catch (ClassNotFoundException e) {
@@ -505,24 +545,27 @@ public class LoadMeasureAgent extends Agent {
 		
 	} // --- End of MonitorBehaviour (class) ----
 	
+	public boolean isDynLoadBalancaingStillActivated() {
+		return dynLoadBalancaingStillActivated;
+	}
+	public void setDynLoadBalancaingStillActivated(boolean dynLoadBalancaingStillActivated) {
+		this.dynLoadBalancaingStillActivated = dynLoadBalancaingStillActivated;
+	}
 	
 	/**
 	 * Checks if the current LoadAgent has to the save the load information in a file.
-	 *
 	 * @return the monitorSaveLoad
 	 */
 	public boolean isMonitorSaveLoad() {
 		return monitorSaveLoad;
 	}
-	
 	/**
 	 * Sets the current LoadAgent to save or not save the load information in a file.
-	 *
 	 * @param monitorSaveLoad true, if the information should be saved
 	 */
 	public void setMonitorSaveLoad(boolean monitorSaveLoad) {
+		
 		this.monitorSaveLoad = monitorSaveLoad;
-
 		// --- Create DatasetWriter -----------------------
 		if (this.monitorSaveLoad==true) {
 			monitorDatasetWriter = this.createMonitorFile(this.monitorFileMeasurementTmp);
@@ -661,7 +704,6 @@ public class LoadMeasureAgent extends Agent {
 	
 	/**
 	 * This method writes a single dataset to the current file of the 'monitorDatasetWriter'.
-	 *
 	 * @param dataSet the dataset
 	 */
 	private void saveDataSet(String dataSet) {
@@ -782,11 +824,58 @@ public class LoadMeasureAgent extends Agent {
 	}
 	
 	
+	// ------------------------------------------------------------
+	// --- Methods for the Thread Measurements --- Start ----------
+	// ------------------------------------------------------------
+	public ThreadMeasureBehaviour getThreadMeasureBehaviour() {
+		if (threadMeasureBehaviour==null) {
+			threadMeasureBehaviour = new ThreadMeasureBehaviour(this, this.getMonitorBehaviourTickingPeriod());
+		}
+		return threadMeasureBehaviour;
+	}
+	/**
+	 * (Re-)Starts the thread measurement.
+	 * @param oneShotBehaviour set true if you want to do a single measurement, otherwise false
+	 */
+	public void reStartThreadMeasurement(boolean oneShotBehaviour) {
+		ThreadMeasureBehaviour tmb = this.getThreadMeasureBehaviour();
+		tmb.setOneShotBehaviour(oneShotBehaviour);
+		tmb.reset();
+		this.addBehaviour(tmb);
+	}
+	
+	/**
+	 * Adds a thread protocol to the information of the agent.
+	 * @param tp the thread protocol
+	 */
+	public void addThreadProtocol(ThreadProtocol tp) {
+		synchronized (getThreadProtocolVector()) {
+			if (this.getThreadProtocolVector().getTimestamp()!=tp.getTimestamp()) {
+				this.getThreadProtocolVector().clear();
+			}
+			this.getThreadProtocolVector().add(tp);
+		}
+	}
+	/**
+	 * Returns the current {@link ThreadProtocol}.
+	 * @return the thread protocol
+	 */
+	public ThreadProtocolVector getThreadProtocolVector() {
+		if (threadProtocolVector==null) {
+			threadProtocolVector = new ThreadProtocolVector();
+			threadProtocolVector.setSimulationSetup(this.getProject().getSimulationSetupCurrent());
+		}
+		return threadProtocolVector;
+	}
+	
+	// ------------------------------------------------------------
+	// --- Methods for the Thread Measurements --- End ------------
+	// ------------------------------------------------------------	
+	
+	
 	// -----------------------------------------------------
-	// --- Message-Receive-Behaiviour --- S T A R T --------
+	// --- Message-Receive-Behaviour --- S T A R T ---------
 	// -----------------------------------------------------
-
-
 	/**
 	 * This is the message receive behaviour of the agent, which is basically waiting 
 	 * for a message to open the {@link SystemLoadDialog}. 
@@ -794,7 +883,6 @@ public class LoadMeasureAgent extends Agent {
 	 */
 	private class ReceiveBehaviour extends CyclicBehaviour {
 
-		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = -1701739199514787426L;
 
 		/* (non-Javadoc)

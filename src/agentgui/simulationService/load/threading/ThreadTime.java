@@ -74,7 +74,7 @@ public class ThreadTime implements Serializable{
      * Gets the cpu time.
      * @return the cpu time
      */
-    public long getjCpuTime() {
+    public long getCpuTime() {
 		return cpuTime;
 	}
 	/**

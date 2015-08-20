@@ -28,6 +28,13 @@
  */
 package agentgui.simulationService.load;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
+
+import agentgui.simulationService.load.threading.ThreadProtocol;
+import agentgui.simulationService.load.threading.ThreadTime;
+import agentgui.simulationService.load.threading.ThreadTimeReceiver;
+
 /**
  * This class represents the Thread, which is permanently running on a system
  * and observes the current system information and its loads. Therefore the classes
@@ -115,6 +122,11 @@ public class LoadMeasureThread extends Thread {
 	private static float loadMemorySystem = 0;
 	/** Number of running threads. */
 	private static Integer loadNoThreads = 0;
+	
+	/** Reminder for the last thread measurement */
+	private static long threadMeasurementLastTimeStamp;
+	
+	
 	
 	/**
 	 * Simple constructor of this class.
@@ -564,5 +576,69 @@ public class LoadMeasureThread extends Thread {
 	public static void setLoadNoThreads(Integer loadNoThreads) {
 		LoadMeasureThread.loadNoThreads = loadNoThreads;
 	}
+
+	/**
+	 * Does the thread measurement. For this, a single thread will be started and the results 
+	 * will be transfered to the specified {@link ThreadTimeReceiver}.
+	 * 
+	 * @see ThreadTimeReceiver
+	 *
+	 * @param timestamp the time stamp of the initial request
+	 * @param threadTimeReceiver the {@link ThreadTimeReceiver}
+	 */
+	public static void doThreadMeasurement(final long timestamp, final ThreadTimeReceiver threadTimeReceiver) {
+
+		if (timestamp!=threadMeasurementLastTimeStamp) {
+
+			// --- Remind this time stamp in order to avoid double work -------
+			threadMeasurementLastTimeStamp = timestamp;
+			
+			// --- Start Thread to do0 the work -------------------------------
+			Runnable threadMeasurement = new Runnable() {
+				@Override
+				public void run() {
+					
+					// --- Create a protocol instance -------------------------
+					ThreadProtocol tp = new ThreadProtocol(timestamp);
+
+					// --- Configure ThreadMXBean if possible and needed ------ 
+					ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
+			        if (tmxb.isThreadCpuTimeSupported()==true){
+			        	if(tmxb.isThreadCpuTimeEnabled()==false){
+			        		tmxb.setThreadCpuTimeEnabled(true);  
+			        	}	
+			        } else{
+			        	System.err.println("ThreadTimeMeasurement not supported !!");
+			        	threadTimeReceiver.receiveThreadProtocol(null);
+			        	return;
+			        }
+			        
+			        // --- Do measurement ------------------------------------- 
+			        String threadName;
+			        long cpuTime = 0L;
+			        long userTime = 0L;
+
+			        long[] ids = tmxb.getAllThreadIds();
+			        for (long id : ids) {
+			            
+			            cpuTime = tmxb.getThreadCpuTime(id);
+			            userTime = tmxb.getThreadUserTime(id);
+			            
+			            if ( cpuTime == -1 || userTime == -1 )
+			                continue;   // Thread died
+
+			        	threadName = tmxb.getThreadInfo(id).getThreadName();
+			        	tp.getThreadTimes().add(new ThreadTime(threadName, cpuTime, userTime));
+			        }
+			        // --- Send protocol to the requester of the measurement --
+			        threadTimeReceiver.receiveThreadProtocol(tp);
+					
+				}
+			};
+			// --- Start measurement thread -----------------------------------
+			threadMeasurement.run();
+		}
+	}
+	
 	
 }

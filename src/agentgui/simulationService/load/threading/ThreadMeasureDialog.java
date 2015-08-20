@@ -28,30 +28,52 @@
  */
 package agentgui.simulationService.load.threading;
 
-import javax.swing.JDialog;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+
+import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
 
 /**
  * The Class ThreadMeasureDialog.
  */
-public class ThreadMeasureDialog extends JDialog {
+public class ThreadMeasureDialog extends JFrame {
 
 	private static final long serialVersionUID = -5535823475614083190L;
+	
 	private JTabbedPane tabbedPane;
+	
+	private ThreadProtocolVector threadProtocolVector;
 	private ThreadMeasureProtocolTab jPanelMeasureProtocol;
+
 	
 	/**
 	 * Instantiates a new thread measure dialog.
+	 * @param threadProtocolVector the thread protocol vector
 	 */
-	public ThreadMeasureDialog() {
+	public ThreadMeasureDialog(ThreadProtocolVector threadProtocolVector) {
+		this.threadProtocolVector = threadProtocolVector;
 		this.initialize();
 	}
 	
 	private void initialize() {
+		
+		this.setSize(800, 600);
+		
+		
 		getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
 		getContentPane().add(getTabbedPane());
+		
+		// --- Set Dialog position ----------------------------------
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+		int top = (screenSize.height - this.getHeight()) / 2; 
+	    int left = (screenSize.width - this.getWidth()) / 2; 
+	    this.setLocation(left, top);			
+	    
+	    this.setVisible(true);
+		
 	}
 	
 	
@@ -65,7 +87,7 @@ public class ThreadMeasureDialog extends JDialog {
 	}
 	private ThreadMeasureProtocolTab getJPanelMeasureProtocol() {
 		if (jPanelMeasureProtocol == null) {
-			jPanelMeasureProtocol = new ThreadMeasureProtocolTab();
+			jPanelMeasureProtocol = new ThreadMeasureProtocolTab(this.threadProtocolVector);
 		}
 		return jPanelMeasureProtocol;
 	}

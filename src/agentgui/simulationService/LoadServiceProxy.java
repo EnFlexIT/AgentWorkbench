@@ -41,6 +41,7 @@ import java.util.Vector;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
+import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
@@ -51,7 +52,6 @@ import agentgui.simulationService.ontology.RemoteContainerConfig;
  */
 public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7016240061703852319L;
 
 	// ----------------------------------------------------------
@@ -392,5 +392,54 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#requestThreadMeasurement(long)
+	 */
+	@Override
+	public void requestThreadMeasurement(long timestamp) throws IMTPException {
+	
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_THREAD_MEASUREMENT_REQUEST, LoadService.NAME, null);
+			cmd.addParam(timestamp);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}			
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#putThreadProtocol(agentgui.simulationService.load.threading.ThreadProtocol)
+	 */
+	@Override
+	public void putThreadProtocol(ThreadProtocol threadProtocol) throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_THREAD_MEASUREMENT_PUT, LoadService.NAME, null);
+			cmd.addParam(threadProtocol);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}			
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
 	
 }

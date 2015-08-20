@@ -76,11 +76,14 @@ import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.VersionInfo;
+import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
+import agentgui.simulationService.load.threading.ThreadProtocol;
+import agentgui.simulationService.load.threading.ThreadTimeReceiver;
 import agentgui.simulationService.load.LoadMeasureSigar;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadThresholdLevels;
@@ -113,7 +116,6 @@ import agentgui.simulationService.ontology.RemoteContainerConfig;
  */
 public class LoadService extends BaseService {
 
-	
 	/** The external NAME of the this Service ('agentgui.simulationService.LoadService'). */
 	public static final String NAME = LoadServiceHelper.SERVICE_NAME;
 	
@@ -125,6 +127,8 @@ public class LoadService extends BaseService {
 	private AgentContainer myContainer;
 	private MainContainer myMainContainer;
 
+	private LoadMeasureAgent loadMeasureAgent;
+	
 	private Filter incFilter;
 	private Filter outFilter;
 	private ServiceComponent localSlice;
@@ -136,9 +140,6 @@ public class LoadService extends BaseService {
 	
 	/** The List of Agents, which are registered to this service  **/ 
 	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
-	
-	/** Default values for starting new remote-container **/
-	//public static final boolean DEFAULT_preventUsageOfAlreadyUsedComputers = true;
 	
 	private RemoteContainerConfig defaults4RemoteContainerConfig = null; 
 	
@@ -310,8 +311,7 @@ public class LoadService extends BaseService {
 				// --- RemoteContainerRequest WAS NOT successful ----
 				loadInfo.setNewContainerCanceled(crcReply.getRemoteContainerName());
 			} else {
-				Service.Slice[] slices = getAllSlices();
-				broadcastPutContainerDescription(slices, crcReply);	
+				broadcastPutContainerDescription(getAllSlices(), crcReply);	
 			}
 		}
 		
@@ -335,8 +335,7 @@ public class LoadService extends BaseService {
 		 * @see agentgui.simulationService.LoadServiceHelper#getContainerLocations()
 		 */
 		public Hashtable<String, Location> getContainerLocations() throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastGetContainerLocation(slices);
+			broadcastGetContainerLocation(getAllSlices());
 			return loadInfo.containerLocations;
 		}
 		
@@ -354,16 +353,14 @@ public class LoadService extends BaseService {
 		 * @see agentgui.simulationService.LoadServiceHelper#setThresholdLevels(agentgui.simulationService.load.LoadThresholdLevels)
 		 */
 		public void setThresholdLevels(LoadThresholdLevels thresholdLevels) throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastThresholdLevels(slices, thresholdLevels);
+			broadcastThresholdLevels(getAllSlices(), thresholdLevels);
 		}
 		
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.LoadServiceHelper#getContainerLoads()
 		 */
 		public Hashtable<String, PlatformLoad> getContainerLoads() throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastMeasureLoad(slices);
+			broadcastMeasureLoad(getAllSlices());
 			return loadInfo.containerLoads;
 		}
 		
@@ -371,8 +368,7 @@ public class LoadService extends BaseService {
 		 * @see agentgui.simulationService.LoadServiceHelper#getContainerLoad(java.lang.String)
 		 */
 		public PlatformLoad getContainerLoad(String containerName) throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastMeasureLoad(slices);
+			broadcastMeasureLoad(getAllSlices());
 			return loadInfo.containerLoads.get(containerName);
 		}
 		
@@ -414,8 +410,16 @@ public class LoadService extends BaseService {
 		 * @see agentgui.simulationService.LoadServiceHelper#setAgentMigration(java.util.Vector)
 		 */
 		public void setAgentMigration(Vector<AID_Container> transferAgents) throws ServiceException {
-			Service.Slice[] slices = getAllSlices();
-			broadcastAgentMigration(transferAgents, slices);
+			broadcastAgentMigration(transferAgents, getAllSlices());
+		}
+
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#requestThreadMeasurements(agentgui.simulationService.agents.LoadMeasureAgent)
+		 */
+		@Override
+		public void requestThreadMeasurements(LoadMeasureAgent loadMeasurementAgent) throws ServiceException {
+			loadMeasureAgent = loadMeasurementAgent;
+			broadcastThreadMeasurementRequest(getAllSlices(), System.currentTimeMillis());
 		}
 
 	}
@@ -721,6 +725,36 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
+	 * Broadcast the thread measurement request.
+	 *
+	 * @param slices the slices
+	 * @param timeStamp the time stamp for the request
+	 * @throws ServiceException the service exception
+	 */
+	private void broadcastThreadMeasurementRequest(Service.Slice[] slices, long timeStamp) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Try to request thread measurements from all Containers !");
+		}
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				LoadServiceSlice slice = (LoadServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try to request thread measurement of " + sliceName);
+				}
+				slice.requestThreadMeasurement(timeStamp);
+			}
+			catch(Throwable t) {
+				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+				myLogger.log(Logger.WARNING, "Error while requesting Thread Measurement on slice " + sliceName, t);
+			}
+		}		
+	}
+	
+	
+	/**
 	 * 'Broadcast' (or receive) the list of all agents in a container.
 	 * The information will be set to the local {@link #loadInfo}.
 	 *
@@ -785,6 +819,30 @@ public class LoadService extends BaseService {
 		}
 	}
 	
+	/**
+	 * Sends the specified {@link ThreadProtocol} to the main container.
+	 *
+	 * @param threadProtocol the thread protocol
+	 * @throws ServiceException the service exception
+	 */
+	private void sendThreadProtocolToMainContainer(ThreadProtocol threadProtocol) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending thread protocol to the Main-Container!");
+		}
+		String sliceName = null;
+		try {
+			LoadServiceSlice slice = (LoadServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Send thread protocol to " + sliceName);
+			}
+			slice.putThreadProtocol(threadProtocol);
+		}
+		catch(Throwable t) {
+			myLogger.log(Logger.WARNING, "Error while sending the thread protocol to slice  " + sliceName, t);
+		}
+	}	
 	
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'ServiceComponent' ---- Start ---------------
@@ -793,7 +851,7 @@ public class LoadService extends BaseService {
 	 * Inner class ServiceComponent. Will receive Commands, which 
 	 * are coming from the LoadServiceProxy and do local method invocations. 
 	 */
-	private class ServiceComponent implements Service.Slice {
+	private class ServiceComponent implements Service.Slice, ThreadTimeReceiver {
 		
 		private static final long serialVersionUID = 1776886375724997808L;
 
@@ -902,6 +960,20 @@ public class LoadService extends BaseService {
 					}	
 					this.setSimulationCycleStartTimeStamp();
 				}
+				else if (cmdName.equals(LoadServiceSlice.SERVICE_THREAD_MEASUREMENT_REQUEST)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Starting thread measurement for this platform");
+					}
+					long timestamp = (Long) params[0];
+					this.startThreadMeasurement(timestamp);
+				}
+				else if (cmdName.equals(LoadServiceSlice.SERVICE_THREAD_MEASUREMENT_PUT)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Got ThreadProtocol for display");
+					}
+					ThreadProtocol threadProtocol = (ThreadProtocol) params[0];
+					this.putThreadProtocolToLoadMeasureAgent(threadProtocol);
+				}
 			}
 			catch (Throwable t) {
 				cmd.setReturnValue(t);
@@ -909,6 +981,7 @@ public class LoadService extends BaseService {
 			return null;
 		}
 		
+
 		// -----------------------------------------------------------------
 		// --- The real methods for the Service Component --- Start -------- 
 		// -----------------------------------------------------------------
@@ -965,10 +1038,10 @@ public class LoadService extends BaseService {
 		}
 		
 		/**
-		 * Gets the default remote container config.
+		 * Gets the default remote container configuration.
 		 *
 		 * @param preventUsageOfAlreadyUsedComputers the prevent usage of already used computers
-		 * @return the default remote container config
+		 * @return the default remote container configuration
 		 */
 		private RemoteContainerConfig getAutoRemoteContainerConfig() {
 			return getRemoteContainerConfigAuto();
@@ -976,7 +1049,6 @@ public class LoadService extends BaseService {
 		
 		/**
 		 * Gets the new container to wait status.
-		 *
 		 * @param container2Wait4 the container2 wait4
 		 * @return the new container2 wait4 status
 		 */
@@ -986,7 +1058,6 @@ public class LoadService extends BaseService {
 		
 		/**
 		 * Sets the threshold levels.
-		 *
 		 * @param thresholdLevels the new threshold levels
 		 */
 		private void setThresholdLevels(LoadThresholdLevels thresholdLevels) {
@@ -995,7 +1066,6 @@ public class LoadService extends BaseService {
 		
 		/**
 		 * Measures the local system load.
-		 *
 		 * @return the platform load
 		 */
 		private PlatformLoad measureLoad() {
@@ -1010,7 +1080,6 @@ public class LoadService extends BaseService {
 		
 		/**
 		 * Put the container description of the {@link LoadService#loadInfo}.
-		 *
 		 * @param crcReply the ClientRemoteContainerReply
 		 */
 		private void putContainerDescription(ClientRemoteContainerReply crcReply) {
@@ -1019,7 +1088,6 @@ public class LoadService extends BaseService {
 		
 		/**
 		 * Returns the local container description.
-		 *
 		 * @return the container description
 		 */
 		private ClientRemoteContainerReply getContainerDescription() {
@@ -1032,11 +1100,45 @@ public class LoadService extends BaseService {
 		private void setSimulationCycleStartTimeStamp() {
 			loadInfo.setSimulationCycleStartTimeStamp();
 		}
+		
+		// ----------------------------------------------------------
+		// --- Method for the thread measurement --------------------
+		/**
+		 * Start thread measurement.
+		 * @param timestamp the time stamp
+		 */
+		private void startThreadMeasurement(long timestamp) {
+			LoadMeasureThread.doThreadMeasurement(timestamp, this);
+		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.load.threading.ThreadTimeReceiver#receiveThreadProtocol(agentgui.simulationService.load.threading.ThreadProtocol)
+		 */
+		@Override
+		public void receiveThreadProtocol(ThreadProtocol threadProtocol) {
+			
+			// --- Add information of container and machine name ----
+			threadProtocol.setContainerName(myCRCReply.getRemoteContainerName());
+			threadProtocol.setProcessID(myCRCReply.getRemotePID());
+			
+			// --- Send protocol to the main container --------------
+			try {
+				sendThreadProtocolToMainContainer(threadProtocol);
+			} catch (ServiceException se) {
+				se.printStackTrace();
+			}	
+		}
+		/**
+		 * Put the specified ThreadProtocol to the {@link LoadMeasureAgent}.
+		 * @param threadProtocol the thread protocol
+		 */
+		public void putThreadProtocolToLoadMeasureAgent(ThreadProtocol threadProtocol) {
+			loadMeasureAgent.addThreadProtocol(threadProtocol);
+		}
+		
+		
 		// -----------------------------------------------------------------
 		// --- The real functions for the Service Component --- Stop ------- 
 		// -----------------------------------------------------------------
-
-		
 	} 
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'ServiceComponent' ---- End -----------------

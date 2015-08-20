@@ -35,6 +35,7 @@ import jade.core.ServiceHelper;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.LoadAgentMap;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
@@ -240,6 +241,13 @@ public interface LoadServiceHelper extends ServiceHelper {
 	 * @throws ServiceException the service exception
 	 */
 	public void setAgentMigration(Vector<AID_Container> transferAgents) throws ServiceException;
+
+	/**
+	 * Requests all involved JVMs to do the thread measurements.
+	 * @param loadMeasuerAgent the load measure agent
+	 */
+	public void requestThreadMeasurements(LoadMeasureAgent loadMeasureAgent) throws ServiceException ;
+	
 	
 	
 }

@@ -38,6 +38,7 @@ import java.util.Vector;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
+import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
@@ -145,7 +146,7 @@ public interface LoadServiceSlice extends Service.Slice {
 	
 	
 	// ----------------------------------------------------------
-	// --- Methods for load-informations of all containers
+	// --- Methods for load-informations of all containers ------
 	/** The Constant SERVICE_GET_LOCATION. */
 	static final String SERVICE_GET_LOCATION = "get-location";
 	
@@ -215,6 +216,22 @@ public interface LoadServiceSlice extends Service.Slice {
 	 * @throws IMTPException the IMTPException
 	 */
 	public void setAgentMigration(Vector<AID_Container> transferAgents) throws IMTPException;
+
+	
+	
+	// ----------------------------------------------------------
+	// --- Methods for thread measurements ----------------------
+	/** The Constant SERVICE_REQUEST_THREAD_MEASUREMENT. */
+	static final String SERVICE_THREAD_MEASUREMENT_REQUEST = "requestThreadMeasurement";
+	static final String SERVICE_THREAD_MEASUREMENT_PUT = "putThreadMeasurement";
+	
+	/**
+	 * Requests the thread measurement from the contacted container.
+	 * @throws IMTPException the IMTP exception
+	 */
+	public void requestThreadMeasurement(long timestamp) throws IMTPException;
+
+	public void putThreadProtocol(ThreadProtocol threadProtocol) throws IMTPException ;
 
 
 }

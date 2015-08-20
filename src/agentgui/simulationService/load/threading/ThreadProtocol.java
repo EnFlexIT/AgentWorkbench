@@ -53,10 +53,11 @@ public class ThreadProtocol implements Serializable {
 	
 	private static final long serialVersionUID = 7906666593362238059L;
 	
-	private String simulationSetup;
-	private String containerName;
-	private String machineName;
 	private long timestamp;
+	
+	private String processID;
+	private String containerName;
+	
 	private Vector<ThreadTime> threadTimes;
 	
 	
@@ -68,12 +69,9 @@ public class ThreadProtocol implements Serializable {
 	
 	/**
 	 * Instantiates a new thread protocol.
-	 *
-	 * @param simulationSetup the simulation setup
 	 * @param timestamp the time stamp
 	 */
-	public ThreadProtocol(String simulationSetup, long timestamp) {
-		this.setSimulationSetup(simulationSetup);
+	public ThreadProtocol(long timestamp) {
 		this.setTimestamp(timestamp);
 	}
 	
@@ -82,32 +80,15 @@ public class ThreadProtocol implements Serializable {
 	 *
 	 * @param simulationSetup the simulation setup
 	 * @param containerName the container name
-	 * @param machineName the machine name
+	 * @param processID the processID
 	 * @param timestamp the time stamp
 	 * @param threadTimes the thread times
 	 */
-	public ThreadProtocol(String simulationSetup, String containerName, String machineName, long timestamp, Vector<ThreadTime> threadTimes) {
-		this.simulationSetup = simulationSetup;
+	public ThreadProtocol(long timestamp, String processID, String containerName, Vector<ThreadTime> threadTimes) {
 		this.containerName = containerName;
-		this.machineName = machineName;
+		this.processID = processID;
 		this.timestamp = timestamp;
 		this.threadTimes = threadTimes;
-	}
-
-	
-	/**
-	 * Gets the simulation setup.
-	 * @return the simulation setup
-	 */
-	public String getSimulationSetup() {
-		return simulationSetup;
-	}
-	/**
-	 * Sets the simulation setup.
-	 * @param simulationSetup the new simulation setup
-	 */
-	public void setSimulationSetup(String simulationSetup) {
-		this.simulationSetup = simulationSetup;
 	}
 
 	/**
@@ -160,19 +141,18 @@ public class ThreadProtocol implements Serializable {
 	
 	/**
 	 * Gets the machine name.
-	 * @return the machine name
+	 * @return the process ID
 	 */
-	public String getMachineName() {
-		return machineName;
+	public String getProcessID() {
+		return processID;
 	}
 	/**
-	 * Sets the machine name.
-	 * @param machineName the new machine name
+	 * Sets the processID .
+	 * @param processID the process ID
 	 */
-	public void setMachineName(String machineName) {
-		this.machineName = machineName;
+	public void setProcessID(String processID) {
+		this.processID = processID;
 	}
-	
 	
 
 	/**
@@ -202,7 +182,16 @@ public class ThreadProtocol implements Serializable {
 		return saved;		
 	}
 	
-
+	/**
+	 * Adds the specified ThreadProtocol to the current if the time stamps of the protocols are equal.
+	 * @param threadProtocol2Add the thread protocol to add
+	 */
+	public void addThreadProtocol(ThreadProtocol threadProtocol2Add) {
+		if (threadProtocol2Add.getTimestamp()==this.getTimestamp()) {
+			this.getThreadTimes().addAll(threadProtocol2Add.getThreadTimes());
+		}
+	}
+	
 	/**
 	 * Load.
 	 *
@@ -232,13 +221,12 @@ public class ThreadProtocol implements Serializable {
 		}
 		
 		if (tp!=null) {
-			this.setSimulationSetup(tp.getSimulationSetup());
 			this.setContainerName(tp.getContainerName());
-			this.setMachineName(tp.getMachineName());
+			this.setProcessID(tp.getProcessID());
 			this.setTimestamp(tp.getTimestamp());
 			this.setThreadTimes(tp.getThreadTimes());
 		}
 		return done;
 	}
-	
+
 }

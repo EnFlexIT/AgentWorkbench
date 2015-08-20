@@ -8,12 +8,15 @@ import java.awt.GridBagConstraints;
 public class ThreadMeasureProtocolTab extends JPanel {
 
 	private static final long serialVersionUID = -7315494195421538651L;
+
+	private ThreadProtocolVector threadProtocolVector;
+	
 	private JLabel JLabelHeader;
 
 	// --- Hier geht's weiter für den Hanno  ----!!!
 	
-	public ThreadMeasureProtocolTab() {
-		
+	public ThreadMeasureProtocolTab(ThreadProtocolVector threadProtocolVector) {
+		this.threadProtocolVector = threadProtocolVector;
 		initialize();
 	}
 	private void initialize() {

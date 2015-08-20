@@ -50,8 +50,6 @@ import agentgui.simulationService.ontology.PlatformPerformance;
  */
 public class LoadInformation  {
 
-	private static final long serialVersionUID = -8535049489754734307L;
-	
 	/** The Vector of container, which are or were connected. */
 	public Vector<String> containerQueue = new Vector<String>();
 	/** The Hashtable containerDescription, which holds the information identifiable by the container name. */

@@ -84,6 +84,7 @@ public class SystemLoadPanel extends JPanel {
 		public JLabel jLabelRecord;
 		
 		private JButton jButtonMeasureThreadsSingle;
+		private JButton jButtonMeasureThreadsMultiple;
 		public JLabel jLabelSpeed;
 		
 		private JLabel jLabelAgentCount;
@@ -218,6 +219,8 @@ public class SystemLoadPanel extends JPanel {
 			// --- Tools for the Thread Measurements ----------------
 			jButtonMeasureThreadsSingle = new JToolBarButton( "ThreadMeasureSingle", Language.translate("Einmalige Thread-Messung"), null, "ThreadShot.png" );
 			jToolBarLoad.add(jButtonMeasureThreadsSingle);
+			jButtonMeasureThreadsMultiple = new JToolBarButton( "ThreadMeasureMultiple", Language.translate("Kontinuierliche Thread-Messung"), null, "ThreadShot.png" );
+			jToolBarLoad.add(jButtonMeasureThreadsMultiple);
 			jToolBarLoad.addSeparator();
 			
 			// --- Counter for the number of agents -----------------
@@ -289,7 +292,7 @@ public class SystemLoadPanel extends JPanel {
 			jComboBoxInterval.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					Integer newTickingInterval = ((TimeSelection) jComboBoxInterval.getSelectedItem()).getTimeInMill();
+					long newTickingInterval = ((TimeSelection) jComboBoxInterval.getSelectedItem()).getTimeInMill();
 					myAgent.setMonitorBehaviourTickingPeriod(newTickingInterval);
 				}
 			});
@@ -360,19 +363,35 @@ public class SystemLoadPanel extends JPanel {
 		}
 	}
 	
+	// ------------------------------------------------------------
+	// --- Methods for the Thread Measurements --- Start ----------
+	// ------------------------------------------------------------	
 	/**
-	 * Do thread measure single.
+	 * Does a single thread measurement.
 	 */
 	private void doThreadMeasureSingle() {
 		
-		ThreadMeasureDialog tmd = new ThreadMeasureDialog();
+		// --- Start Thread Measurement -------------------
+		this.myAgent.reStartThreadMeasurement(true);
+
+		ThreadMeasureDialog tmd = new ThreadMeasureDialog(this.myAgent.getThreadProtocolVector());
 		tmd.setVisible(true);
 		
-		// --- Measure ---- 
-		
-		
-		
 	}
+	/**
+	 * Does multiple thread measurements.
+	 */
+	private void doThreadMeasureMultiple() {
+		
+		// --- Start Thread Measurement -------------------
+		this.myAgent.reStartThreadMeasurement(false);
+	}
+
+	
+	
+	// ------------------------------------------------------------
+	// --- Methods for the Thread Measurements --- End ------------
+	// ------------------------------------------------------------	
 	
 	
 	// ------------------------------------------------------------
@@ -426,12 +445,12 @@ public class SystemLoadPanel extends JPanel {
 			String actionCMD = ae.getActionCommand();			
 			// ------------------------------------------------
 			if ( actionCMD.equalsIgnoreCase("StartMeasurement") ) {
-				myAgent.addBehaviour(myAgent.monitorBehaviour);
+				myAgent.addBehaviour(myAgent.getMonitorBehaviour());
 				jButtonMeasureStart.setEnabled(false);
 				jButtonMeasureSuspend.setEnabled(true);
 
 			} else if ( actionCMD.equalsIgnoreCase("PauseMeasurement") ) {
-				myAgent.removeBehaviour(myAgent.monitorBehaviour);
+				myAgent.removeBehaviour(myAgent.getMonitorBehaviour());
 				jButtonMeasureStart.setEnabled(true);
 				jButtonMeasureSuspend.setEnabled(false);
 
@@ -442,6 +461,8 @@ public class SystemLoadPanel extends JPanel {
 			
 			} else if ( actionCMD.equalsIgnoreCase("ThreadMeasureSingle") ) {
 				doThreadMeasureSingle();
+			} else if ( actionCMD.equalsIgnoreCase("ThreadMeasureMultiple") ) {
+				doThreadMeasureMultiple();
 				
 			} else { 
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actionCMD);
@@ -464,13 +485,13 @@ public class SystemLoadPanel extends JPanel {
 	public class TimeSelection {
 		
 		/** The time in milliseconds. */
-		private int timeInMill = 0;
+		private long timeInMill = 0;
 		
 		/**
 		 * Instantiates a new time selection.
 		 * @param timeInMillis the time in milliseconds
 		 */
-		public TimeSelection(int timeInMillis) {
+		public TimeSelection(long timeInMillis) {
 			this.timeInMill = timeInMillis;
 		}
 		
@@ -478,7 +499,7 @@ public class SystemLoadPanel extends JPanel {
 		 * Gets the time in milliseconds.
 		 * @return the time in milliseconds
 		 */
-		public int getTimeInMill() {
+		public long getTimeInMill() {
 			return timeInMill;
 		}
 		/**

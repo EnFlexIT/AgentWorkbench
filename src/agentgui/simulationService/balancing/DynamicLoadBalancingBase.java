@@ -95,7 +95,7 @@ public abstract class DynamicLoadBalancingBase extends BaseLoadBalancing  {
 		this.setMeasurements();
 		this.refreshCountingsAndLists();
 		this.doBalancing();	
-		myLoadAgent.loadBalancingIsStillActivated = false;
+		myLoadAgent.setDynLoadBalancaingStillActivated(false);
 	}
 	/**
 	 * This method transfers the measurement data from the loadAgent
