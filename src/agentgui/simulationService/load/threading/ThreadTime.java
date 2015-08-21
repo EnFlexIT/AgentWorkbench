@@ -51,6 +51,7 @@ public class ThreadTime implements Serializable{
      * @param userTime the user time
      */
     public ThreadTime(String threadName, long cpuTime, long userTime) {
+    	this.setThreadName(threadName);
     	this.setCpuTime(cpuTime);
     	this.setUserTime(userTime);
     }
@@ -60,7 +61,7 @@ public class ThreadTime implements Serializable{
      * @return the thread name
      */
     public String getThreadName() {
-		return threadName;
+		return this.threadName;
 	}
 	/**
 	 * Sets the thread name.

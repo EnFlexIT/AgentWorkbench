@@ -75,13 +75,13 @@ public class ThreadProtocol implements Serializable {
 		this.setTimestamp(timestamp);
 	}
 	
+	
 	/**
 	 * Instantiates a new thread protocol.
 	 *
-	 * @param simulationSetup the simulation setup
+	 * @param timestamp the timestamp
+	 * @param processID the process id
 	 * @param containerName the container name
-	 * @param processID the processID
-	 * @param timestamp the time stamp
 	 * @param threadTimes the thread times
 	 */
 	public ThreadProtocol(long timestamp, String processID, String containerName, Vector<ThreadTime> threadTimes) {

@@ -100,6 +100,8 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		row.add(threadTime.getThreadName());
 		row.add(threadTime.getCpuTime());
 		row.add(threadTime.getUserTime());
+		
+		this.getTableModel().addRow(row);
 	}
 	/**
 	 * Clears the table model.
@@ -124,6 +126,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		for (int i = 0; i < threadProtocol.getThreadTimes().size(); i++) {
 			this.addTableModelRow(pid, threadProtocol.getThreadTimes().get(i));
 		}
+//		this.addTableModelRow("111", new ThreadTime("222", 333, 444));
 		return done;
 	}
 	
