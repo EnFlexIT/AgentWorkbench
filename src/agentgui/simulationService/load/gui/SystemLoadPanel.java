@@ -49,6 +49,7 @@ import javax.swing.JToolBar;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.gui.components.TimeSelection;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.threading.ThreadMeasureDialog;
 
@@ -330,7 +331,7 @@ public class SystemLoadPanel extends JPanel {
 	 * Sets the recording interval.
 	 * @param timeInMillis the new recording interval
 	 */
-	public void setRecordingInterval(int timeInMillis) {
+	public void setRecordingInterval(long timeInMillis) {
 		for (int i = 0; i < this.getComboBoxModelRecordingInterval().getSize(); i++) {
 			TimeSelection timeSelection = (TimeSelection) this.getComboBoxModelRecordingInterval().getElementAt(i); 
 			if (timeSelection.getTimeInMill()==timeInMillis) {
@@ -374,7 +375,7 @@ public class SystemLoadPanel extends JPanel {
 		// --- Start Thread Measurement -------------------
 		this.myAgent.reStartThreadMeasurement(true);
 
-		ThreadMeasureDialog tmd = new ThreadMeasureDialog(this.myAgent.getThreadProtocolVector());
+		ThreadMeasureDialog tmd = new ThreadMeasureDialog(this.myAgent);
 		tmd.setVisible(true);
 		
 	}
@@ -475,62 +476,5 @@ public class SystemLoadPanel extends JPanel {
 	// ------------------------------------------------------------	
 
 	
-	// ------------------------------------------------------------
-	// --- sub class for the ComboBoxModel --- START --------------
-	// ------------------------------------------------------------	
-	/**
-	 * The class TimeSelection is used for the ComboBoxModel of the 
-	 * sampling interval as user object.
-	 */
-	public class TimeSelection {
-		
-		/** The time in milliseconds. */
-		private long timeInMill = 0;
-		
-		/**
-		 * Instantiates a new time selection.
-		 * @param timeInMillis the time in milliseconds
-		 */
-		public TimeSelection(long timeInMillis) {
-			this.timeInMill = timeInMillis;
-		}
-		
-		/**
-		 * Gets the time in milliseconds.
-		 * @return the time in milliseconds
-		 */
-		public long getTimeInMill() {
-			return timeInMill;
-		}
-		/**
-		 * Sets the time in milliseconds.
-		 * @param timeInMill the milliseconds to set
-		 */
-		public void setTimeInMill(int timeInMill) {
-			this.timeInMill = timeInMill;
-		}
-		
-		/**
-		 * Converts the milliseconds into seconds.
-		 * @return the text to display in seconds
-		 */
-		public String toString() {
-			int timeInTenth = Math.round(timeInMill/100);
-			float timeInSecFloat = (float) timeInTenth / 10;  
-			int timeInSecInt = (int) timeInSecFloat;
-			
-			if ((timeInSecFloat-timeInSecInt)>0) {
-				return timeInSecFloat + " s";
-			} else {
-				return timeInSecInt + " s";
-			}			
-		}
-		
-	}
-	// ------------------------------------------------------------
-	// --- sub class for the ComboBoxModel --- END ----------------
-	// ------------------------------------------------------------	
-	
-
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

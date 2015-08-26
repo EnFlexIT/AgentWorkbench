@@ -29,11 +29,14 @@
 package agentgui.simulationService.load.threading;
 
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+
+import java.awt.BorderLayout;
+
+import agentgui.simulationService.agents.LoadMeasureAgent;
 
 
 /**
@@ -43,28 +46,31 @@ public class ThreadMeasureDialog extends JFrame {
 
 	private static final long serialVersionUID = -5535823475614083190L;
 	
+	private LoadMeasureAgent myAgent;
+	
 	private JTabbedPane tabbedPane;
 	
 	private ThreadProtocolVector threadProtocolVector;
 	private ThreadMeasureProtocolTab jPanelMeasureProtocol;
+	private ThreadMeasureToolBar toolBar;
 
 	
 	/**
 	 * Instantiates a new thread measure dialog.
 	 * @param threadProtocolVector the thread protocol vector
 	 */
-	public ThreadMeasureDialog(ThreadProtocolVector threadProtocolVector) {
-		this.threadProtocolVector = threadProtocolVector;
+	public ThreadMeasureDialog(LoadMeasureAgent agent) {
+		this.myAgent = agent;
+		this.threadProtocolVector = this.myAgent.getThreadProtocolVector();
 		this.initialize();
 	}
 	
 	private void initialize() {
 		
 		this.setSize(800, 600);
-		
-		
-		getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
-		getContentPane().add(getTabbedPane());
+		getContentPane().setLayout(new BorderLayout(0, 0));
+		getContentPane().add(getTabbedPane(), BorderLayout.CENTER);
+		getContentPane().add(getThreadMeasureToolBar(), BorderLayout.NORTH);
 		
 		// --- Set Dialog position ----------------------------------
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
@@ -76,12 +82,11 @@ public class ThreadMeasureDialog extends JFrame {
 		
 	}
 	
-	
 
 	private JTabbedPane getTabbedPane() {
 		if (tabbedPane == null) {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-			tabbedPane.addTab("Measurement", null, getJPanelMeasureProtocol(), null);
+			tabbedPane.addTab("Thread Measurement", null, getJPanelMeasureProtocol(), null);
 		}
 		return tabbedPane;
 	}
@@ -90,5 +95,11 @@ public class ThreadMeasureDialog extends JFrame {
 			jPanelMeasureProtocol = new ThreadMeasureProtocolTab(this.threadProtocolVector);
 		}
 		return jPanelMeasureProtocol;
+	}
+	private ThreadMeasureToolBar getThreadMeasureToolBar() {
+		if (toolBar == null) {
+			toolBar = new ThreadMeasureToolBar(this.myAgent);
+		}
+		return toolBar;
 	}
 }

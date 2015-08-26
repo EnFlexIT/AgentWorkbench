@@ -18,13 +18,13 @@
         <agentVector>
             <agent agentReference="gasmas.agents.components.ClusterNetworkComponentAgent">
                 <startArgumentVector>
-                    <startArgument position="1" ontologyReference="agentgui.ontology.Simple_Boolean"/>
-                    <startArgument position="2" ontologyReference="agentgui.ontology.TimeSeriesChart"/>
+                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" position="1"/>
+                    <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="2"/>
                 </startArgumentVector>
             </agent>
             <agent agentReference="gasmas.agents.components.ClusterNetworkAgent">
                 <startArgumentVector>
-                    <startArgument position="1" ontologyReference="agentgui.ontology.XyChart"/>
+                    <startArgument ontologyReference="agentgui.ontology.XyChart" position="1"/>
                 </startArgumentVector>
             </agent>
         </agentVector>

@@ -28,10 +28,16 @@
  */
 package agentgui.simulationService.load.threading;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import agentgui.core.agents.AgentClassElement4SimStart;
+import agentgui.core.application.Application;
+import agentgui.core.project.Project;
+import agentgui.core.sim.setup.SimulationSetup;
 
 /**
  * The Class ThreadProtocolVector is used to handle several {@link ThreadProtocol} instances.
@@ -73,6 +79,21 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	public void setSimulationSetup(String simulationSetup) {
 		this.simulationSetup = simulationSetup;
 	}
+	/**
+	 * Gets the agent start list of the current {@link SimulationSetup}.
+	 * @return the agent start list
+	 */
+	public ArrayList<AgentClassElement4SimStart> getAgentStartList() {
+		Project project = Application.getProjectFocused();
+		if (project!=null) {
+			// --- Get Simulation Setup ---------
+			SimulationSetup simSetup = project.getSimulationSetups().getCurrSimSetup();
+			if (simSetup!=null) {
+				return simSetup.getAgentList();
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * Gets the table model for this {@link ThreadProtocolVector}.
@@ -96,13 +117,14 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 				 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
 				 */
 				public Class<?> getColumnClass(int column){
-			          if (column >= 0 && column <= getColumnCount())
-			            return getValueAt(0, column).getClass();
-			          else
-			            return Object.class;
+					if (column >= 0 && column <= getColumnCount()) {
+						return getValueAt(0, column).getClass();
+					} else {
+						return Object.class;
+					}
 				}
 			};
-			//neccessary for preventing sorter from throwing error about empty row
+			// --- Necessary for preventing sorter from throwing error about empty row
 			this.addTableModelRow("", new ThreadTime("", 0L, 0L));
 		}
 		return this.tableModel;
@@ -113,9 +135,12 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	 * @param threadTime the thread time
 	 */
 	private void addTableModelRow(String pid, ThreadTime threadTime) {
+		
+		// --- TODO: Check if this is an agent !!
+		
 		Vector<Object> row = new Vector<Object>();
 		row.add(pid);
-		row.add(threadTime.getThreadName());
+		row.add(threadTime);
 		row.add(threadTime.getCpuTime());
 		row.add(threadTime.getUserTime());
 		

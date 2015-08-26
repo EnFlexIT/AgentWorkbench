@@ -36,13 +36,16 @@ import java.io.Serializable;
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadTime implements Serializable{
+public class ThreadTime implements Serializable {
 
 	private static final long serialVersionUID = 7920683110304631892L;
 	
-	public String threadName;
-	public long cpuTime;
-    public long userTime;
+	private String threadName;
+	private String className;
+	private boolean isAgent;
+	
+	private long cpuTime;
+	private long userTime;
     
     /**
      * Instantiates a new thread time.
@@ -56,6 +59,13 @@ public class ThreadTime implements Serializable{
     	this.setUserTime(userTime);
     }
     
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+    	return this.getThreadName();
+    }
     /**
      * Gets the thread name.
      * @return the thread name
@@ -71,6 +81,36 @@ public class ThreadTime implements Serializable{
 		this.threadName = threadName;
 	}
 
+	/**
+	 * Gets the class name.
+	 * @return the class name
+	 */
+	public String getClassName() {
+		return className;
+	}
+	/**
+	 * Sets the class name.
+	 * @param className the new class name
+	 */
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	/**
+	 * Checks if is agent.
+	 * @return true, if is agent
+	 */
+	public boolean isAgent() {
+		return isAgent;
+	}
+	/**
+	 * Sets the checks if is agent.
+	 * @param isAgent the new checks if is agent
+	 */
+	public void setIsAgent(boolean isAgent) {
+		this.isAgent = isAgent;
+	}
+	
 	/**
      * Gets the cpu time.
      * @return the cpu time

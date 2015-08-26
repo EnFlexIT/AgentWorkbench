@@ -62,6 +62,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.KeyAdapter4Numbers;
 import agentgui.core.gui.ClassSelector;
+import agentgui.core.gui.components.TimeSelection;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
 import agentgui.core.project.RemoteContainerConfiguration;
@@ -1189,7 +1190,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	 * Sets the recording interval.
 	 * @param timeInMillis the new recording interval
 	 */
-	private void setRecordingInterval(int timeInMillis) {
+	private void setRecordingInterval(long timeInMillis) {
 		for (int i = 0; i < this.getComboBoxModelRecordingInterval().getSize(); i++) {
 			TimeSelection timeSelection = (TimeSelection) this.getComboBoxModelRecordingInterval().getElementAt(i); 
 			if (timeSelection.getTimeInMill()==timeInMillis) {
@@ -1513,55 +1514,5 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		}
 	}
 
-	
-	/**
-	 * The class TimeSelection is used for the ComboBoxModel of the 
-	 * sampling interval as user object.
-	 */
-	public class TimeSelection {
-		
-		private int timeInMill = 0;
-		
-		/**
-		 * Instantiates a new time selection.
-		 * @param timeInMillis the time in milliseconds
-		 */
-		public TimeSelection(int timeInMillis) {
-			this.timeInMill = timeInMillis;
-		}
-		
-		/**
-		 * Gets the time in milliseconds.
-		 * @return the time in milliseconds
-		 */
-		public int getTimeInMill() {
-			return timeInMill;
-		}
-		/**
-		 * Sets the time in milliseconds.
-		 * @param timeInMill the milliseconds to set
-		 */
-		public void setTimeInMill(int timeInMill) {
-			this.timeInMill = timeInMill;
-		}
-		
-		/**
-		 * Converts the milliseconds into seconds.
-		 * @return the text to display in seconds
-		 */
-		public String toString() {
-			int timeInTenth = Math.round(timeInMill/100);
-			float timeInSecFloat = (float) timeInTenth / 10;  
-			int timeInSecInt = (int) timeInSecFloat;
-			
-			if ((timeInSecFloat-timeInSecInt)>0) {
-				return timeInSecFloat + " s";
-			} else {
-				return timeInSecInt + " s";
-			}			
-		}
-		
-	}
-	
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

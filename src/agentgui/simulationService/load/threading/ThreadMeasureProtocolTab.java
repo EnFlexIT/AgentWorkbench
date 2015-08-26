@@ -28,16 +28,13 @@
  */
 package agentgui.simulationService.load.threading;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 
 import java.awt.GridBagLayout;
-
-import javax.swing.JLabel;
-
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.util.ArrayList;
@@ -47,18 +44,27 @@ import javax.swing.JTable;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JRadioButton;
+
 /**
  * The Class ThreadMeasureProtocolTab.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadMeasureProtocolTab extends JPanel {
+public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -7315494195421538651L;
 
 	private ThreadProtocolVector threadProtocolVector;
-	
-	private JLabel JLabelHeader;
+	private JScrollPane scrollPaneTable;
+	private JTable jTableThreadProtocolVector;
+	private JPanel JPanelFilter;
+	private JRadioButton jRadioButtonNoFilter;
+	private JRadioButton jRadioButtonFilterAgents;
 	
 	/**
 	 * Instantiates a new thread measure protocol tab.
@@ -67,60 +73,134 @@ public class ThreadMeasureProtocolTab extends JPanel {
 	 */
 	public ThreadMeasureProtocolTab(ThreadProtocolVector threadProtocolVector) {
 		this.threadProtocolVector = threadProtocolVector;
-		initialize();
-
+		this.initialize();
 	}
 	
 	/**
 	 * Initialize.
 	 */
 	private void initialize() {
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{33, 335, 25, 15, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-		setLayout(gridBagLayout);
-		GridBagConstraints gbc_JLabelHeader = new GridBagConstraints();
-		gbc_JLabelHeader.anchor = GridBagConstraints.NORTHWEST;
-		gbc_JLabelHeader.insets = new Insets(0, 0, 0, 5);
-		gbc_JLabelHeader.gridx = 0;
-		gbc_JLabelHeader.gridy = 0;
-		add(getJLabelHeader(), gbc_JLabelHeader);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		add(scrollPane);
-
-		JTable table = new JTable(threadProtocolVector.getTableModel());
-		
-		table.setPreferredScrollableViewportSize(new Dimension(600, 500));
-		table.setFillsViewportHeight(true);
-		//set column min-width
-		table.getColumnModel().getColumn(0).setMinWidth(50);
-		table.getColumnModel().getColumn(1).setMinWidth(200);
-		
-		// Sort Threads - top most user time first
-		List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-		int columnIndexToSort = 3; //User Time
-		sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.DESCENDING));
-		
-		TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
-		sorter.setSortsOnUpdates(true);
-		sorter.setSortKeys(sortKeys);
-		table.setRowSorter(sorter);
-		
-		scrollPane.setViewportView(table);
+		this.setLayout(new BorderLayout(0, 0));
+		this.add(getScrollPaneTable(), BorderLayout.CENTER);
+		this.add(getJPanelFilter(), BorderLayout.SOUTH);
 	}
 	
 	/**
-	 * Gets the j label header.
-	 *
-	 * @return the j label header
+	 * Gets the scroll pane table.
+	 * @return the scroll pane table
 	 */
-	private JLabel getJLabelHeader() {
-		if (JLabelHeader == null) {
-			JLabelHeader = new JLabel("Thread Times");
+	private JScrollPane getScrollPaneTable() {
+		if (scrollPaneTable == null) {
+			scrollPaneTable = new JScrollPane();
+			scrollPaneTable.setViewportView(this.getJTableThreadProtocolVector());
 		}
-		return JLabelHeader;
+		return scrollPaneTable;
 	}
+	/**
+	 * Gets the j table thread protocol vector.
+	 * @return the j table thread protocol vector
+	 */
+	private JTable getJTableThreadProtocolVector() {
+		if (jTableThreadProtocolVector == null) {
+			
+			if (threadProtocolVector==null) {
+				jTableThreadProtocolVector = new JTable();
+			} else {
+				jTableThreadProtocolVector = new JTable(threadProtocolVector.getTableModel());
+			}
+			jTableThreadProtocolVector.setFillsViewportHeight(true);
+			jTableThreadProtocolVector.getColumnModel().getColumn(0).setMinWidth(50);
+			jTableThreadProtocolVector.getColumnModel().getColumn(1).setMinWidth(200);
+			
+			
+			if (threadProtocolVector!=null) {
+				// --- Add a sorter if the model is available -------
+				TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jTableThreadProtocolVector.getModel());
+
+				List<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>();
+				sortKeys.add(new RowSorter.SortKey(3, SortOrder.DESCENDING));
+				sorter.setSortKeys(sortKeys);
+				sorter.setSortsOnUpdates(true);
+				
+				jTableThreadProtocolVector.setRowSorter(sorter);	
+			}
+		}
+		return jTableThreadProtocolVector;
+	}
+	
+	/**
+	 * Gets the j panel filter.
+	 * @return the j panel filter
+	 */
+	private JPanel getJPanelFilter() {
+		if (JPanelFilter == null) {
+			JPanelFilter = new JPanel();
+			GridBagLayout gbl_JPanelFilter = new GridBagLayout();
+			gbl_JPanelFilter.columnWidths = new int[]{0, 0, 0, 0};
+			gbl_JPanelFilter.rowHeights = new int[]{23, 0};
+			gbl_JPanelFilter.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_JPanelFilter.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			JPanelFilter.setLayout(gbl_JPanelFilter);
+			GridBagConstraints gbc_jRadioButtonNoFilter = new GridBagConstraints();
+			gbc_jRadioButtonNoFilter.insets = new Insets(5, 5, 5, 5);
+			gbc_jRadioButtonNoFilter.anchor = GridBagConstraints.NORTH;
+			gbc_jRadioButtonNoFilter.gridx = 0;
+			gbc_jRadioButtonNoFilter.gridy = 0;
+			JPanelFilter.add(getJRadioButtonNoFilter(), gbc_jRadioButtonNoFilter);
+			GridBagConstraints gbc_jRadioButtonFilterAgents = new GridBagConstraints();
+			gbc_jRadioButtonFilterAgents.insets = new Insets(0, 0, 0, 5);
+			gbc_jRadioButtonFilterAgents.gridx = 1;
+			gbc_jRadioButtonFilterAgents.gridy = 0;
+			JPanelFilter.add(getJRadioButtonFilterAgents(), gbc_jRadioButtonFilterAgents);
+			
+			// --- Configure Button Group -----------------
+			ButtonGroup bg = new ButtonGroup();
+			bg.add(getJRadioButtonNoFilter());
+			bg.add(getJRadioButtonFilterAgents());
+			
+			// --- Set default value -----------------------
+			this.getJRadioButtonNoFilter().setSelected(true);
+			this.getJRadioButtonFilterAgents().setSelected(false);
+			
+		}
+		return JPanelFilter;
+	}
+	
+	/**
+	 * Gets the j radio button no filter.
+	 * @return the j radio button no filter
+	 */
+	private JRadioButton getJRadioButtonNoFilter() {
+		if (jRadioButtonNoFilter == null) {
+			jRadioButtonNoFilter = new JRadioButton("No Filter");
+		}
+		return jRadioButtonNoFilter;
+	}
+	
+	/**
+	 * Gets the j radio button filter agents.
+	 * @return the j radio button filter agents
+	 */
+	private JRadioButton getJRadioButtonFilterAgents() {
+		if (jRadioButtonFilterAgents == null) {
+			jRadioButtonFilterAgents = new JRadioButton("Filter for Agents");
+		}
+		return jRadioButtonFilterAgents;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+
+		if (ae.getSource()==this.getJRadioButtonNoFilter()) {
+			// --- Remove Filter ----------------
+			// TODO
+		} else if (ae.getSource()==this.getJRadioButtonFilterAgents()) {
+			// --- Set Filter -------------------			
+			// TODO			
+		}
+	}
+	
 }

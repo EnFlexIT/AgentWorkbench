@@ -62,6 +62,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
+import agentgui.core.gui.components.TimeSelection;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
@@ -77,7 +78,6 @@ import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.load.gui.SystemLoadPanel;
 import agentgui.simulationService.load.gui.SystemLoadDialog;
 import agentgui.simulationService.load.gui.SystemLoadSingle;
-import agentgui.simulationService.load.gui.SystemLoadPanel.TimeSelection;
 import agentgui.simulationService.load.threading.ThreadMeasureBehaviour;
 import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.load.threading.ThreadProtocolVector;
@@ -863,7 +863,11 @@ public class LoadMeasureAgent extends Agent {
 	public ThreadProtocolVector getThreadProtocolVector() {
 		if (threadProtocolVector==null) {
 			threadProtocolVector = new ThreadProtocolVector();
-			threadProtocolVector.setSimulationSetup(this.getProject().getSimulationSetupCurrent());
+			if (this.getProject()==null) {
+				threadProtocolVector.setSimulationSetup(null);
+			} else {
+				threadProtocolVector.setSimulationSetup(this.getProject().getSimulationSetupCurrent());				
+			}
 		}
 		return threadProtocolVector;
 	}

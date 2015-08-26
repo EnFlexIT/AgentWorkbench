@@ -62,7 +62,7 @@ public class DistributionSetup implements Serializable {
 
 	private boolean showLoadMonitorAtPlatformStart = true;
 	private boolean immediatelyStartLoadRecording = false;
-	private int loadRecordingInterval=500;
+	private long loadRecordingInterval=500;
 	
 	
 	/**
@@ -220,14 +220,14 @@ public class DistributionSetup implements Serializable {
 	 * Returns the load recording interval.
 	 * @return the load recording interval
 	 */
-	public int getLoadRecordingInterval() {
+	public long getLoadRecordingInterval() {
 		return loadRecordingInterval;
 	}
 	/**
 	 * Sets the load recording interval.
 	 * @param loadRecordingInterval the new load recording interval
 	 */
-	public void setLoadRecordingInterval(int loadRecordingInterval) {
+	public void setLoadRecordingInterval(long loadRecordingInterval) {
 		this.loadRecordingInterval = loadRecordingInterval;
 	}
 	
