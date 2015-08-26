@@ -28,6 +28,8 @@
  */
 package agentgui.simulationService.load.threading;
 
+import javax.swing.SwingUtilities;
+
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 import jade.core.ServiceException;
@@ -87,7 +89,10 @@ public class ThreadMeasureBehaviour extends TickerBehaviour {
 	@Override
 	protected void onTick() {
 		// --- Do the measurement -------------------------
-		this.doThreadMeasurement();
+		SwingUtilities.invokeLater(new Runnable() { public void run() {
+			doThreadMeasurement();
+			 }});
+		
 		// --- Exit, if this is a one shot behaviour ------
 		if (this.isOneShotBehaviour()) {
 			this.stop();
@@ -99,6 +104,7 @@ public class ThreadMeasureBehaviour extends TickerBehaviour {
 	private void doThreadMeasurement() {
 		try {
 			this.getLoadMeasureAgent().getLoadServiceHelper().requestThreadMeasurements(this.getLoadMeasureAgent());
+			
 			
 		} catch (ServiceException se) {
 			se.printStackTrace();

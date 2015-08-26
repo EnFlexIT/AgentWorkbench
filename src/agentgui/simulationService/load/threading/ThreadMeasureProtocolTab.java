@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.load.threading;
 
 import javax.swing.JPanel;
@@ -19,6 +47,11 @@ import javax.swing.JTable;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+/**
+ * The Class ThreadMeasureProtocolTab.
+ * 
+ * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
+ */
 public class ThreadMeasureProtocolTab extends JPanel {
 
 	private static final long serialVersionUID = -7315494195421538651L;
@@ -26,14 +59,21 @@ public class ThreadMeasureProtocolTab extends JPanel {
 	private ThreadProtocolVector threadProtocolVector;
 	
 	private JLabel JLabelHeader;
-
-	// --- Hier geht's weiter für den Hanno  ----!!!
 	
+	/**
+	 * Instantiates a new thread measure protocol tab.
+	 *
+	 * @param threadProtocolVector the thread protocol vector
+	 */
 	public ThreadMeasureProtocolTab(ThreadProtocolVector threadProtocolVector) {
 		this.threadProtocolVector = threadProtocolVector;
 		initialize();
 
 	}
+	
+	/**
+	 * Initialize.
+	 */
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{33, 335, 25, 15, 0};
@@ -52,27 +92,31 @@ public class ThreadMeasureProtocolTab extends JPanel {
 		add(scrollPane);
 
 		JTable table = new JTable(threadProtocolVector.getTableModel());
+		
 		table.setPreferredScrollableViewportSize(new Dimension(600, 500));
 		table.setFillsViewportHeight(true);
-		table.setAutoCreateRowSorter(true);
-		
 		//set column min-width
 		table.getColumnModel().getColumn(0).setMinWidth(50);
 		table.getColumnModel().getColumn(1).setMinWidth(200);
 		
-		// Sort Threads - top most user time
-		TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
-		table.setRowSorter(sorter);
+		// Sort Threads - top most user time first
 		List<RowSorter.SortKey> sortKeys = new ArrayList<>();
 		int columnIndexToSort = 3; //User Time
 		sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.DESCENDING));
+		
+		TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
+		sorter.setSortsOnUpdates(true);
 		sorter.setSortKeys(sortKeys);
-		sorter.sort();
+		table.setRowSorter(sorter);
 		
 		scrollPane.setViewportView(table);
-		
 	}
 	
+	/**
+	 * Gets the j label header.
+	 *
+	 * @return the j label header
+	 */
 	private JLabel getJLabelHeader() {
 		if (JLabelHeader == null) {
 			JLabelHeader = new JLabel("Thread Times");

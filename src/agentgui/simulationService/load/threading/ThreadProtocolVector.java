@@ -79,15 +79,33 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	 * @return the table model
 	 */
 	public DefaultTableModel getTableModel() {
-		if (tableModel==null) {
+		
+		if (this.tableModel==null) {
+			
 			Vector<String> header = new Vector<String>();
 			header.add("PID");
 			header.add("Thread Name");
 			header.add("System Time");
 			header.add("User Time");
-			tableModel = new DefaultTableModel(null, header);
+			
+			this.tableModel = new DefaultTableModel(null, header){
+
+				private static final long serialVersionUID = 1L;
+
+				/* (non-Javadoc)
+				 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+				 */
+				public Class<?> getColumnClass(int column){
+			          if (column >= 0 && column <= getColumnCount())
+			            return getValueAt(0, column).getClass();
+			          else
+			            return Object.class;
+				}
+			};
+			//neccessary for preventing sorter from throwing error about empty row
+			this.addTableModelRow("", new ThreadTime("", 0L, 0L));
 		}
-		return tableModel;
+		return this.tableModel;
 	}
 	/**
 	 * Adds a table model row.
@@ -102,6 +120,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		row.add(threadTime.getUserTime());
 		
 		this.getTableModel().addRow(row);
+	
 	}
 	/**
 	 * Clears the table model.
@@ -126,7 +145,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		for (int i = 0; i < threadProtocol.getThreadTimes().size(); i++) {
 			this.addTableModelRow(pid, threadProtocol.getThreadTimes().get(i));
 		}
-//		this.addTableModelRow("111", new ThreadTime("222", 333, 444));
+		
 		return done;
 	}
 	

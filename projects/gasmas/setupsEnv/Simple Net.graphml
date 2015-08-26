@@ -11,26 +11,5 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <default></default>
 </key>
 <graph edgedefault="directed">
-<node id="PP37">
-<data key="pos">135.0:25.0</data>
-</node>
-<node id="PP35">
-<data key="pos">295.0:25.0</data>
-</node>
-<node id="PP34">
-<data key="pos">190.0:25.0</data>
-</node>
-<node id="PP36">
-<data key="pos">25.0:25.0</data>
-</node>
-<edge id="n5" source="PP37" target="PP34">
-<desc>Compressor</desc>
-</edge>
-<edge id="n9" directed="false" source="PP35" target="PP34">
-<desc>Pipe</desc>
-</edge>
-<edge id="n8" directed="false" source="PP36" target="PP37">
-<desc>Pipe</desc>
-</edge>
 </graph>
 </graphml>

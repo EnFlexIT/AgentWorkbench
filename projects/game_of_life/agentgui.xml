@@ -6,9 +6,7 @@
     <projectResources>
         <projectResource>D:\10 Java Projects\Game of Life\bin</projectResource>
     </projectResources>
-    <plugins>
-        <className>gol.plugin.GameOfLifePlugIn</className>
-    </plugins>
+    <plugins/>
     <subOntologies>
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
     </subOntologies>
@@ -16,9 +14,9 @@
         <agentVector>
             <agent agentReference="gol.acl.agents.GameOfLifeAgent">
                 <startArgumentVector>
-                    <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="1"/>
-                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" position="2"/>
-                    <startArgument ontologyReference="agentgui.ontology.Simple_String" position="3"/>
+                    <startArgument position="1" ontologyReference="agentgui.ontology.TimeSeriesChart"/>
+                    <startArgument position="2" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                    <startArgument position="3" ontologyReference="agentgui.ontology.Simple_String"/>
                 </startArgumentVector>
             </agent>
         </agentVector>
@@ -28,8 +26,8 @@
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -59,10 +57,9 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>0512 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>0018 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
-    <downloadResources>http://Pandora:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
-    <downloadResources>http://Pandora:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
+    <downloadResources>http://localhost:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>0242 Agents</key>
@@ -97,12 +94,12 @@
             <value>0018_agents.xml</value>
         </entry>
         <entry>
-            <key>1800 Agents</key>
-            <value>1800_agents.xml</value>
-        </entry>
-        <entry>
             <key>0032 Agents</key>
             <value>0032_agents.xml</value>
+        </entry>
+        <entry>
+            <key>1800 Agents</key>
+            <value>1800_agents.xml</value>
         </entry>
         <entry>
             <key>4050 Agents</key>

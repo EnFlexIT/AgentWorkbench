@@ -85,7 +85,7 @@ public class ThreadMeasureDialog extends JFrame {
 		}
 		return tabbedPane;
 	}
-	private ThreadMeasureProtocolTab getJPanelMeasureProtocol() {
+	public ThreadMeasureProtocolTab getJPanelMeasureProtocol() {
 		if (jPanelMeasureProtocol == null) {
 			jPanelMeasureProtocol = new ThreadMeasureProtocolTab(this.threadProtocolVector);
 		}
