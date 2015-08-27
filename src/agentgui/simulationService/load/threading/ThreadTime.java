@@ -57,6 +57,8 @@ public class ThreadTime implements Serializable {
     	this.setThreadName(threadName);
     	this.setCpuTime(cpuTime);
     	this.setUserTime(userTime);
+    	// --- default ---
+    	this.setIsAgent(false);
     }
     
     /* (non-Javadoc)

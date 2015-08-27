@@ -31,6 +31,7 @@ package agentgui.simulationService.load.threading;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.RowFilter;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 
@@ -112,6 +113,9 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 			jTableThreadProtocolVector.getColumnModel().getColumn(0).setMinWidth(50);
 			jTableThreadProtocolVector.getColumnModel().getColumn(1).setMinWidth(200);
 			
+			//--- hide "Agent" column ---
+			jTableThreadProtocolVector.removeColumn(jTableThreadProtocolVector.getColumnModel().getColumn(4));
+			
 			
 			if (threadProtocolVector!=null) {
 				// --- Add a sorter if the model is available -------
@@ -173,6 +177,7 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 	private JRadioButton getJRadioButtonNoFilter() {
 		if (jRadioButtonNoFilter == null) {
 			jRadioButtonNoFilter = new JRadioButton("No Filter");
+			jRadioButtonNoFilter.addActionListener(this);
 		}
 		return jRadioButtonNoFilter;
 	}
@@ -184,6 +189,7 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 	private JRadioButton getJRadioButtonFilterAgents() {
 		if (jRadioButtonFilterAgents == null) {
 			jRadioButtonFilterAgents = new JRadioButton("Filter for Agents");
+			jRadioButtonFilterAgents.addActionListener(this);
 		}
 		return jRadioButtonFilterAgents;
 	}
@@ -194,12 +200,29 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 
+		@SuppressWarnings("unchecked")
+		TableRowSorter<TableModel>sorter = (TableRowSorter<TableModel>) getJTableThreadProtocolVector().getRowSorter();
+		
 		if (ae.getSource()==this.getJRadioButtonNoFilter()) {
+			
 			// --- Remove Filter ----------------
-			// TODO
+			sorter.setRowFilter(null);
+			
 		} else if (ae.getSource()==this.getJRadioButtonFilterAgents()) {
-			// --- Set Filter -------------------			
-			// TODO			
+			
+			// --- Set Filter -------------------		
+			RowFilter<Object,Object> isAgentFilter = new RowFilter<Object,Object>() {
+				  public boolean include(Entry<? extends Object, ? extends Object> entry) {
+					  for (int i = entry.getValueCount() - 1; i >= 0; i--) {
+						  if (entry.getValue(i).equals(true)) {
+							  return true;
+						  }
+					  }
+					  return false;
+				 }
+			};
+				
+			sorter.setRowFilter(isAgentFilter);
 		}
 	}
 	

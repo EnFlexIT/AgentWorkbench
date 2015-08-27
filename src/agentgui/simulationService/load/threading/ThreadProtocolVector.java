@@ -29,6 +29,7 @@
 package agentgui.simulationService.load.threading;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
@@ -108,6 +109,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 			header.add("Thread Name");
 			header.add("System Time");
 			header.add("User Time");
+			header.add("Agent");
 			
 			this.tableModel = new DefaultTableModel(null, header){
 
@@ -136,13 +138,22 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	 */
 	private void addTableModelRow(String pid, ThreadTime threadTime) {
 		
-		// --- TODO: Check if this is an agent !!
+        for (Iterator<AgentClassElement4SimStart> iterator = this.getAgentStartList().iterator(); iterator.hasNext();) {
+            AgentClassElement4SimStart agent = iterator.next();
+            
+            if(agent.getStartAsName().equals(threadTime.getThreadName())){
+            	threadTime.setIsAgent(true);
+                System.out.println("Agent-Thread: " + threadTime);
+                break;
+            }
+        }
 		
 		Vector<Object> row = new Vector<Object>();
 		row.add(pid);
 		row.add(threadTime);
 		row.add(threadTime.getCpuTime());
 		row.add(threadTime.getUserTime());
+		row.add(threadTime.isAgent());
 		
 		this.getTableModel().addRow(row);
 	
