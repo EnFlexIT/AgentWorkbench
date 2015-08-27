@@ -138,6 +138,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	 */
 	private void addTableModelRow(String pid, ThreadTime threadTime) {
 		
+		// --- check if thread is an agent and set attribute
         for (Iterator<AgentClassElement4SimStart> iterator = this.getAgentStartList().iterator(); iterator.hasNext();) {
             AgentClassElement4SimStart agent = iterator.next();
             
@@ -150,9 +151,12 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		Vector<Object> row = new Vector<Object>();
 		row.add(pid);
 		row.add(threadTime);
+		row.add(threadTime.isAgent());
+		
+		// --- convert nanoseconds to milliseconds for a slim display
 		row.add(threadTime.getCpuTime()/1000000);
 		row.add(threadTime.getUserTime()/1000000);
-		row.add(threadTime.isAgent());
+		
 		
 		this.getTableModel().addRow(row);
 	
