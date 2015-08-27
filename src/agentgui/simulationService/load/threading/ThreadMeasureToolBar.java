@@ -56,6 +56,7 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 	
 	private LoadMeasureAgent myAgent;
 	
+	private JButton jButtonMeasureRefresh;
 	private JButton jButtonMeasureStart;
 	private JButton jButtonMeasurePause;
 	
@@ -78,6 +79,8 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 		this.setFloatable(false);
 		this.setRollover(true);
 		
+		this.add(this.getJButtonMeasureRefresh());
+		this.addSeparator();
 		this.add(this.getJButtonMeasureStart());
 		this.add(this.getJButtonMeasurePause());
 		this.addSeparator();
@@ -85,13 +88,25 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 		this.add(getJComboBoxInterval());
 		this.addSeparator();
 
+		this.setContinuousMeasurement(false);
+		this.setRecordingInterval(this.myAgent.getThreadMeasurementTickingPeriod());
+		
 	}
 	
+	private JButton getJButtonMeasureRefresh() {
+		if (jButtonMeasureRefresh==null) {
+			jButtonMeasureRefresh = new JButton();
+			jButtonMeasureRefresh.setToolTipText(Language.translate("Refresh Thread Measurement", Language.EN));
+			jButtonMeasureRefresh.setPreferredSize(new Dimension(26,26));
+			jButtonMeasureRefresh.setIcon(new ImageIcon( this.getClass().getResource( pathImage + "Refresh.png" )));
+			jButtonMeasureRefresh.addActionListener(this);	
+		}
+		return jButtonMeasureRefresh;
+	}
 	private JButton getJButtonMeasureStart() {
 		if (jButtonMeasureStart==null) {
 			jButtonMeasureStart = new JButton();
 			jButtonMeasureStart.setToolTipText(Language.translate("Start Thread Measurement", Language.EN));
-			jButtonMeasureStart.setSize(36, 36);
 			jButtonMeasureStart.setPreferredSize(new Dimension(26,26));
 			jButtonMeasureStart.setIcon(new ImageIcon( this.getClass().getResource( pathImage + "MBLoadPlay.png" )));
 			jButtonMeasureStart.addActionListener(this);	
@@ -102,7 +117,6 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 		if (jButtonMeasurePause==null) {
 			jButtonMeasurePause = new JButton();
 			jButtonMeasurePause.setToolTipText(Language.translate("Pause Thread Measurement", Language.EN));
-			jButtonMeasurePause.setSize(36, 36);
 			jButtonMeasurePause.setPreferredSize(new Dimension(26,26));
 			jButtonMeasurePause.setIcon(new ImageIcon( this.getClass().getResource( pathImage + "MBLoadPause.png" )));
 			jButtonMeasurePause.addActionListener(this);	
@@ -120,14 +134,7 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 			jComboBoxInterval.setMaximumRowCount(comboBoxModelInterval.getSize());
 			jComboBoxInterval.setModel(comboBoxModelInterval);
 			jComboBoxInterval.setToolTipText(Language.translate("Abtastintervall"));
-			jComboBoxInterval.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent ae) {
-					long newTickingInterval = ((TimeSelection) jComboBoxInterval.getSelectedItem()).getTimeInMill();
-					myAgent.setMonitorBehaviourTickingPeriod(newTickingInterval);
-				}
-			});
-			this.setRecordingInterval(500);
+			jComboBoxInterval.addActionListener(this);
 		}
 		return jComboBoxInterval;
 	}
@@ -169,12 +176,38 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Sets the appearance of the toolbar depending on a continuous measurement.
+	 * @param isContinuousMeasurement the new continuous measurement
+	 */
+	private void setContinuousMeasurement(boolean isContinuousMeasurement) {
+		this.getJButtonMeasureRefresh().setEnabled(!isContinuousMeasurement);
+		this.getJButtonMeasurePause().setEnabled(isContinuousMeasurement);
+		this.getJButtonMeasureStart().setEnabled(!isContinuousMeasurement);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		// TODO Auto-generated method stub
+
+		if (ae.getSource()==getJButtonMeasureRefresh()) {
+			this.myAgent.reStartThreadMeasurement(true);
+			
+		} else if (ae.getSource()==getJButtonMeasureStart()) {
+			this.myAgent.reStartThreadMeasurement(false);
+			this.setContinuousMeasurement(true);
+			
+		} else if (ae.getSource()==getJButtonMeasurePause()) {
+			this.myAgent.reStartThreadMeasurement(true);
+			this.setContinuousMeasurement(false);
+			
+		} else if (ae.getSource()==this.getJComboBoxInterval()) {
+			long newTickingInterval = ((TimeSelection) jComboBoxInterval.getSelectedItem()).getTimeInMill();
+			myAgent.setThreadMeasurementTickingPeriod(newTickingInterval);
+			
+		}
 		
 	}
 		

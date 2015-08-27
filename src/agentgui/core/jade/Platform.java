@@ -66,6 +66,7 @@ public class Platform extends Object {
 		OpernDF,
 		ShutdownPlatform,
 		OpenLoadMonitor,
+		OpenThreadMonitor,
 		ExitDeviceExecutionModus
 	}
 	
@@ -513,6 +514,7 @@ public class Platform extends Object {
 
 		// --- AgentGUI - Agents --------------------------
 		systemAgents.put("loadmonitor", agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
+		systemAgents.put("threadmonitor", agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
 		systemAgents.put("simstarter", agentgui.simulationService.agents.LoadExecutionAgent.class.getName());
 		
 		boolean showRMA = true;
@@ -564,7 +566,7 @@ public class Platform extends Object {
 		// --- Can a path to the agent be found? -------------   
 		agentNameClass = systemAgents.get(agentNameSearch);
 		if (agentNameClass==null) {
-			System.err.println( "jadeSystemAgentOpen: Unbekannter System-Agent => " + rootAgentName);
+			System.err.println( "jadeSystemAgentOpen: Unknown System-Agent => " + rootAgentName);
 			return;
 		}
 		
@@ -592,6 +594,9 @@ public class Platform extends Object {
 					return;					
 				} else if (agentNameForStart.equalsIgnoreCase("loadMonitor") ) {
 					this.jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenLoadMonitor);
+					return;
+				} else if (agentNameForStart.equalsIgnoreCase("threadMonitor") ) {
+					this.jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenThreadMonitor);
 					return;
 				} else if (agentNameForStart.equalsIgnoreCase("simstarter")) {
 					String containerName = Application.getProjectFocused().getProjectFolder();

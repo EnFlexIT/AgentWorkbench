@@ -29,7 +29,7 @@
 package agentgui.simulationService.load.threading;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
@@ -50,36 +50,16 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 
 	private static final long serialVersionUID = -6007682527796979437L;
 
-	private String simulationSetup;
+	private HashMap<String, AgentClassElement4SimStart> agentStartHashMapReminder;
 	private DefaultTableModel tableModel;
 	
 	/**
 	 * Instantiates a new thread protocol vector.
 	 */
 	public ThreadProtocolVector() {
-	}
-	/**
-	 * Instantiates a new thread protocol vector.
-	 * @param simulationSetup the simulation setup
-	 */
-	public ThreadProtocolVector(String simulationSetup) {
-		this.setSimulationSetup(simulationSetup);
+		
 	}
 	
-	/**
-	 * Gets the simulation setup.
-	 * @return the simulation setup
-	 */
-	public String getSimulationSetup() {
-		return simulationSetup;
-	}
-	/**
-	 * Sets the simulation setup.
-	 * @param simulationSetup the new simulation setup
-	 */
-	public void setSimulationSetup(String simulationSetup) {
-		this.simulationSetup = simulationSetup;
-	}
 	/**
 	 * Gets the agent start list of the current {@link SimulationSetup}.
 	 * @return the agent start list
@@ -97,6 +77,50 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	}
 	
 	/**
+	 * Gets the agent start hash map reminder.
+	 * @return the agent start hash map reminder
+	 */
+	private HashMap<String, AgentClassElement4SimStart> getAgentStartHashMapReminder() {
+		if (agentStartHashMapReminder==null) {
+			agentStartHashMapReminder = new HashMap<String, AgentClassElement4SimStart>();
+		}
+		return agentStartHashMapReminder;
+	}
+	/**
+	 * Sets the agent start hash map reminder.
+	 * @param agentStartHashMap the agent start hash map
+	 */
+	private void setAgentStartHashMapReminder(HashMap<String, AgentClassElement4SimStart> agentStartHashMap) {
+		this.agentStartHashMapReminder = agentStartHashMap;
+	}
+	/**
+	 * Returns the agent start list as hash map, in order to accelerate the access.
+	 * @return the agent hash map
+	 */
+	public HashMap<String, AgentClassElement4SimStart> getAgentStartHashMap() {
+		
+		ArrayList<AgentClassElement4SimStart> agentStartList = this.getAgentStartList();
+		if (agentStartList!=null) {
+			// ------------------------------------------------------
+			// --- Check the size of the reminded HashMap -----------
+			// ------------------------------------------------------
+			if (agentStartList.size()!=this.getAgentStartHashMapReminder().size()) {
+				// --- Number of elements are different: Rebuild ----
+				HashMap<String, AgentClassElement4SimStart> agentStartHashMap = new HashMap<String, AgentClassElement4SimStart>();
+				for (int i = 0; i < agentStartList.size(); i++) {
+					AgentClassElement4SimStart ace4ss = agentStartList.get(i); 
+					agentStartHashMap.put(ace4ss.getStartAsName(), ace4ss);
+				}
+				// --- Remind ---------------------------------------
+				this.setAgentStartHashMapReminder(agentStartHashMap);
+			}
+			return this.getAgentStartHashMapReminder();
+			// ------------------------------------------------------
+		}
+		return null;
+	}
+	
+	/**
 	 * Gets the table model for this {@link ThreadProtocolVector}.
 	 * @return the table model
 	 */
@@ -107,8 +131,8 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 			Vector<String> header = new Vector<String>();
 			header.add("PID");
 			header.add("Thread Name");
-			header.add("System Time [ms]");
-			header.add("User Time [ms]");
+			header.add("System Time");
+			header.add("User Time");
 			header.add("Agent");
 			
 			this.tableModel = new DefaultTableModel(null, header){
@@ -138,26 +162,26 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	 */
 	private void addTableModelRow(String pid, ThreadTime threadTime) {
 		
-		// --- check if thread is an agent and set attribute
-        for (Iterator<AgentClassElement4SimStart> iterator = this.getAgentStartList().iterator(); iterator.hasNext();) {
-            AgentClassElement4SimStart agent = iterator.next();
-            
-            if(agent.getStartAsName().equals(threadTime.getThreadName())){
-            	threadTime.setIsAgent(true);
-                break;
-            }
-        }
+		// --- Check for agents out of the start list of the setup --
+		HashMap<String, AgentClassElement4SimStart> agentStartHashMap = this.getAgentStartHashMap();
+		if (agentStartHashMap!=null) {
+			
+			AgentClassElement4SimStart ace4ss = agentStartHashMap.get(threadTime.getThreadName());
+			if (ace4ss!=null) {
+				threadTime.setIsAgent(true);
+				threadTime.setClassName(ace4ss.getAgentClassReference());
+			}
+		}
 		
+		// --- Create row vector ------------------------------------
 		Vector<Object> row = new Vector<Object>();
 		row.add(pid);
 		row.add(threadTime);
-		// --- convert nanoseconds to milliseconds for a slim display
-		row.add(threadTime.getCpuTime()/1000000);
-		row.add(threadTime.getUserTime()/1000000);
-		
+		row.add(threadTime.getCpuTime());
+		row.add(threadTime.getUserTime());
 		row.add(threadTime.isAgent());
 		
-		
+		// --- Add row to table model -------------------------------
 		this.getTableModel().addRow(row);
 	
 	}

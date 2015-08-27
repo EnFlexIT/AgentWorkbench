@@ -31,11 +31,17 @@ package agentgui.simulationService.load.threading;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
 
 import java.awt.BorderLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
+import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 
 
@@ -45,6 +51,7 @@ import agentgui.simulationService.agents.LoadMeasureAgent;
 public class ThreadMeasureDialog extends JFrame {
 
 	private static final long serialVersionUID = -5535823475614083190L;
+	private static final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private LoadMeasureAgent myAgent;
 	
@@ -65,9 +72,26 @@ public class ThreadMeasureDialog extends JFrame {
 		this.initialize();
 	}
 	
+	/**
+	 * Initialize.
+	 */
 	private void initialize() {
 		
 		this.setSize(800, 600);
+		
+		this.setIconImage(new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png")).getImage());
+	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Thread Monitor"));
+		
+		// --- Add a WindowsListener --------------------------------
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
+			}
+		});
+		
+		// --- Set the content pane ---------------------------------
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		getContentPane().add(getTabbedPane(), BorderLayout.CENTER);
 		getContentPane().add(getThreadMeasureToolBar(), BorderLayout.NORTH);

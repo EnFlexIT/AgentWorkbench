@@ -32,6 +32,7 @@ import agentgui.core.agents.behaviour.ExitDeviceExecutionBehaviour;
 import agentgui.core.agents.behaviour.PlatformShutdownBehaviour;
 import agentgui.core.agents.behaviour.ShowDFBehaviour;
 import agentgui.core.agents.behaviour.ShowLoadMonitorBehaviour;
+import agentgui.core.agents.behaviour.ShowThreadMonitorBehaviour;
 import agentgui.core.jade.Platform.UTILITY_AGENT_JOB;
 import jade.core.Agent;
 
@@ -95,6 +96,10 @@ public class UtilityAgent extends Agent {
 			this.addBehaviour(new ShowLoadMonitorBehaviour());
 			break;
 
+		case OpenThreadMonitor:
+			this.addBehaviour(new ShowThreadMonitorBehaviour());
+			break;
+			
 		case ExitDeviceExecutionModus:
 			this.addBehaviour(new ExitDeviceExecutionBehaviour(this, 1000));
 			break;

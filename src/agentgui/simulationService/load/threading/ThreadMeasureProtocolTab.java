@@ -204,14 +204,12 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 		TableRowSorter<TableModel>sorter = (TableRowSorter<TableModel>) getJTableThreadProtocolVector().getRowSorter();
 		
 		if (ae.getSource()==this.getJRadioButtonNoFilter()) {
-			
 			// --- Remove Filter ----------------
 			sorter.setRowFilter(null);
 			
 		} else if (ae.getSource()==this.getJRadioButtonFilterAgents()) {
-			
 			// --- Set Filter -------------------		
-			RowFilter<Object,Object> isAgentFilter = new RowFilter<Object,Object>() {
+			RowFilter<Object,Object> isAgentFilter = new RowFilter<Object, Object>() {
 				  public boolean include(Entry<? extends Object, ? extends Object> entry) {
 					  for (int i = entry.getValueCount() - 1; i >= 0; i--) {
 						  if (entry.getValue(i).equals(true)) {
@@ -221,8 +219,8 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 					  return false;
 				 }
 			};
-				
 			sorter.setRowFilter(isAgentFilter);
+			
 		}
 	}
 	

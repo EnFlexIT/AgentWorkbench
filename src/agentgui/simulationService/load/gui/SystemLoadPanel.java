@@ -51,7 +51,6 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.components.TimeSelection;
 import agentgui.simulationService.agents.LoadMeasureAgent;
-import agentgui.simulationService.load.threading.ThreadMeasureDialog;
 
 import javax.swing.JTextField;
 
@@ -84,8 +83,6 @@ public class SystemLoadPanel extends JPanel {
 		private JButton jButtonMeasureRecordStop;
 		public JLabel jLabelRecord;
 		
-		private JButton jButtonMeasureThreadsSingle;
-		private JButton jButtonMeasureThreadsMultiple;
 		public JLabel jLabelSpeed;
 		
 		private JLabel jLabelAgentCount;
@@ -122,6 +119,8 @@ public class SystemLoadPanel extends JPanel {
 		this.add(getJToolBarLoad(), BorderLayout.NORTH);
 		this.add(getJScrollPaneForLoadDisplays(), BorderLayout.CENTER);
 		this.setSize(620, SystemLoadSingle.loadPanelHeight + this.getJToolBarLoad().getHeight());
+		
+		this.setRecordingInterval(this.myAgent.getMonitorBehaviourTickingPeriod());
 	}
 
 	/**
@@ -217,13 +216,6 @@ public class SystemLoadPanel extends JPanel {
 			jToolBarLoad.add(jLabelRecord);
 			jToolBarLoad.addSeparator();
 			
-			// --- Tools for the Thread Measurements ----------------
-			jButtonMeasureThreadsSingle = new JToolBarButton( "ThreadMeasureSingle", Language.translate("Einmalige Thread-Messung"), null, "ThreadShot.png" );
-			jToolBarLoad.add(jButtonMeasureThreadsSingle);
-			jButtonMeasureThreadsMultiple = new JToolBarButton( "ThreadMeasureMultiple", Language.translate("Kontinuierliche Thread-Messung"), null, "ThreadShot.png" );
-			jToolBarLoad.add(jButtonMeasureThreadsMultiple);
-			jToolBarLoad.addSeparator();
-			
 			// --- Counter for the number of agents -----------------
 			jLabelAgentCount = new JLabel();
 			jLabelAgentCount.setText(" 00000 " +  Language.translate("Agenten") + " ");
@@ -284,7 +276,7 @@ public class SystemLoadPanel extends JPanel {
 	 * This method initializes jComboBoxInterval.
 	 * @return javax.swing.JComboBox
 	 */
-	public JComboBox getJComboBoxInterval() {
+	private JComboBox getJComboBoxInterval() {
 		if (jComboBoxInterval == null) {
 			jComboBoxInterval = new JComboBox(this.getComboBoxModelRecordingInterval());
 			jComboBoxInterval.setMaximumRowCount(comboBoxModelInterval.getSize());
@@ -297,7 +289,6 @@ public class SystemLoadPanel extends JPanel {
 					myAgent.setMonitorBehaviourTickingPeriod(newTickingInterval);
 				}
 			});
-			this.setRecordingInterval(500);
 		}
 		return jComboBoxInterval;
 	}
@@ -364,37 +355,7 @@ public class SystemLoadPanel extends JPanel {
 		}
 	}
 	
-	// ------------------------------------------------------------
-	// --- Methods for the Thread Measurements --- Start ----------
-	// ------------------------------------------------------------	
-	/**
-	 * Does a single thread measurement.
-	 */
-	private void doThreadMeasureSingle() {
-		
-		// --- Start Thread Measurement -------------------
-		this.myAgent.reStartThreadMeasurement(true);
 
-		ThreadMeasureDialog tmd = new ThreadMeasureDialog(this.myAgent);
-		tmd.setVisible(true);
-		
-	}
-	/**
-	 * Does multiple thread measurements.
-	 */
-	private void doThreadMeasureMultiple() {
-		
-		// --- Start Thread Measurement -------------------
-		this.myAgent.reStartThreadMeasurement(false);
-	}
-
-	
-	
-	// ------------------------------------------------------------
-	// --- Methods for the Thread Measurements --- End ------------
-	// ------------------------------------------------------------	
-	
-	
 	// ------------------------------------------------------------
 	// --- Sub class for buttons of the toolbar --- Start ---------
 	// ------------------------------------------------------------	
@@ -459,11 +420,6 @@ public class SystemLoadPanel extends JPanel {
 				setDoLoadRecording(true);
 			} else if ( actionCMD.equalsIgnoreCase("StopRecordMeasurement") ) {
 				setDoLoadRecording(false);
-			
-			} else if ( actionCMD.equalsIgnoreCase("ThreadMeasureSingle") ) {
-				doThreadMeasureSingle();
-			} else if ( actionCMD.equalsIgnoreCase("ThreadMeasureMultiple") ) {
-				doThreadMeasureMultiple();
 				
 			} else { 
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actionCMD);

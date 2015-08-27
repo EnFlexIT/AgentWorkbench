@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: MasterUpdateNote
 * @author ontology bean generator
-* @version 2012/07/24, 12:09:17
+* @version 2015/08/27, 11:18:49
 */
 public class MasterUpdateNote implements AgentAction {
 

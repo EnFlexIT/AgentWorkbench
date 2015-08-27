@@ -161,7 +161,6 @@ public class MainWindow extends JFrame implements ComponentListener {
 		this.initComponents();
 		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-//		this.getContentPane().setPreferredSize(this.getSize());
 		this.setToScreenSize();
 		this.setLocationRelativeTo(null);
 		this.pack();	
@@ -189,7 +188,6 @@ public class MainWindow extends JFrame implements ComponentListener {
 	 */
 	private void initComponents() {
 
-		// --- Standardeinstellungen ---
 		this.setJMenuBar(this.getJMenuBarBase());
 		
 		this.add(getJToolBarApplication(), BorderLayout.NORTH);
@@ -209,9 +207,6 @@ public class MainWindow extends JFrame implements ComponentListener {
 		this.setSimulationReady2Start();
 		
 	}	
-	// ------------------------------------------------------------
-	// --- Initialisierung des Fensters - ENDE --------------------
-	// ------------------------------------------------------------
 
 	/**
 	 * Sets frame size in relation to the screen size.
@@ -231,7 +226,6 @@ public class MainWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	/**
 	 * Gets the status bar.
-	 *
 	 * @return the status bar
 	 */
 	private JPanel getStatusBar() {
@@ -347,7 +341,6 @@ public class MainWindow extends JFrame implements ComponentListener {
 	 * @return true, if successful
 	 */
 	public boolean consoleIsVisible() {
-		// --- Umschalten der Consolen-Ansicht --------------------
 		if (jSplitPane4ProjectDesktop.getDividerSize()==0) {
 			return false;
 		} else {
@@ -359,7 +352,6 @@ public class MainWindow extends JFrame implements ComponentListener {
 	 * Do switch console.
 	 */
 	private void doSwitchConsole() {
-		// --- Umschalten der Consolen-Ansicht --------------------
 		if (jSplitPane4ProjectDesktop.getDividerSize()>0) {
 			this.setConsoleVisible(false);
 		} else {
@@ -411,7 +403,6 @@ public class MainWindow extends JFrame implements ComponentListener {
 	// ------------------------------------------------------------
 	/**
 	 * Gets the main splitpane.
-	 *
 	 * @return the main splitpane
 	 */
 	private JSplitPane getMainSplitpane() {
@@ -678,6 +669,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 			jMenuMainJade.add( new CWMenueItem( "PopLog", Language.translate("Log-Manager starten"), "MBJadeLogger.gif" )) ;
 			jMenuMainJade.addSeparator();
 			jMenuMainJade.add( new CWMenueItem( "ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), "MBLoadMonitor.png" ));
+			jMenuMainJade.add( new CWMenueItem( "ThreadMonitoring", Language.translate("Thread-Monitor öffnen"), "MBclock.png" ));
 		}
 		return jMenuMainJade;
 	}
@@ -989,98 +981,100 @@ public class MainWindow extends JFrame implements ComponentListener {
 			// --- Menu Projekt -------------------------------
 			if ( ActCMD.equalsIgnoreCase("ProjectNew") ) {
 				Application.getProjectsLoaded().add( true );
-			}
-			else if ( ActCMD.equalsIgnoreCase("ProjectOpen") ) {
+				
+			} else if ( ActCMD.equalsIgnoreCase("ProjectOpen") ) {
 				Application.getProjectsLoaded().add( false );
-			}
-			else if ( ActCMD.equalsIgnoreCase("ProjectClose") ) {
+				
+			} else if ( ActCMD.equalsIgnoreCase("ProjectClose") ) {
 				Project currProject = Application.getProjectFocused();
-				if ( currProject != null ) currProject.close();				
-			}
-			else if ( ActCMD.equalsIgnoreCase("ProjectSave") ) {
+				if ( currProject != null ) currProject.close();
+				
+			} else if ( ActCMD.equalsIgnoreCase("ProjectSave") ) {
 				Project currProject = Application.getProjectFocused();
 				if ( currProject != null ) currProject.save();
-			}
-			else if ( ActCMD.equalsIgnoreCase("ProjectImport") ) {
+				
+			} else if ( ActCMD.equalsIgnoreCase("ProjectImport") ) {
 				Application.getProjectsLoaded().projectImport();
-			}
-			else if ( ActCMD.equalsIgnoreCase("ProjectExport") ) {
+				
+			} else if ( ActCMD.equalsIgnoreCase("ProjectExport") ) {
 				Application.getProjectsLoaded().projectExport();
-			}
-			else if ( ActCMD.equalsIgnoreCase("ProjectDelete") ) {
+				
+			} else if ( ActCMD.equalsIgnoreCase("ProjectDelete") ) {
 				Application.getProjectsLoaded().projectDelete();
-			}
-			else if ( ActCMD.equalsIgnoreCase("ApplicationQuit") ) {
+				
+			} else if ( ActCMD.equalsIgnoreCase("ApplicationQuit") ) {
 				Application.quit();
-			}
+			
 			// --- Menu Ansicht / View ------------------------
-			else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) {
+			} else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) {
 				Application.getMainWindow().doSwitchConsole();
-			}
+			
 			// --- Menu Jade ----------------------------------
-			else if ( ActCMD.equalsIgnoreCase("JadeStart") ) {
+			} else if ( ActCMD.equalsIgnoreCase("JadeStart") ) {
 				Application.getJadePlatform().jadeStart();
-			}
-			else if ( ActCMD.equalsIgnoreCase("JadeStop") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("JadeStop") ) {
 				Application.getJadePlatform().jadeStop();
-			}
-			else if ( ActCMD.equalsIgnoreCase("PopRMAStart") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("PopRMAStart") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("rma", null);
-			}
-			else if ( ActCMD.equalsIgnoreCase("PopSniffer") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("PopSniffer") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("sniffer", null);
-			}
-			else if ( ActCMD.equalsIgnoreCase("PopDummy") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("PopDummy") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("dummy", null);
-			}
-			else if ( ActCMD.equalsIgnoreCase("PopDF") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("PopDF") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("DF", null);
-			}
-			else if ( ActCMD.equalsIgnoreCase("PopIntrospec") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("PopIntrospec") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("introspector", null);
-			}
-			else if ( ActCMD.equalsIgnoreCase("PopLog") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("PopLog") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("log", null);
-			}
+			
 			// --- Menu Simulation ----------------------------
-			else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {
+			} else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
 				Application.getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
-			}
-			else if ( ActCMD.equalsIgnoreCase("SimulationPause") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("SimulationPause") ) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Pause;
 				Application.getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
-			}
-			else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
 				Application.getJadePlatform().jadeStop();
-			}
-
-			else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
+				
+			} else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
 				Application.getJadePlatform().jadeSystemAgentOpen("loadMonitor", null);
-			}
+			
+			} else if ( ActCMD.equalsIgnoreCase("ThreadMonitoring") ) { 
+				Application.getJadePlatform().jadeSystemAgentOpen("threadMonitor", null);
+			
 			// --- Menu Extras => NOT here !! ---------------
-			else if ( ActCMD.equalsIgnoreCase("ExtraTranslation") ) {
+			} else if ( ActCMD.equalsIgnoreCase("ExtraTranslation") ) {
 				Application.showTranslationDialog();
-			}
-			else if ( ActCMD.equalsIgnoreCase("ExtraBenchmark") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("ExtraBenchmark") ) {
 				Application.doBenchmark(true);
-			}			
-			else if ( ActCMD.equalsIgnoreCase("ExtraOptions") ) {
+						
+			} else if ( ActCMD.equalsIgnoreCase("ExtraOptions") ) {
 				Application.showOptionDialog();
-			}
+			
 			// --- Menu Hilfe ---------------------------------
-			else if ( ActCMD.equalsIgnoreCase("HelpUpdate") ) {
+			} else if ( ActCMD.equalsIgnoreCase("HelpUpdate") ) {
 				new AgentGuiUpdater(true).start();
-			}
-			else if ( ActCMD.equalsIgnoreCase("HelpChanges") ) {
+			
+			}else if ( ActCMD.equalsIgnoreCase("HelpChanges") ) {
 				Application.showChangeDialog();
-			}
-			else if ( ActCMD.equalsIgnoreCase("HelpAbout") ) {
+			
+			} else if ( ActCMD.equalsIgnoreCase("HelpAbout") ) {
 				Application.showAboutDialog();
-			}
-			else {
+			
+			} else {
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);
 			}			
 		}		
@@ -1159,6 +1153,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 			jToolBarApplication.addSeparator();
 
 			jToolBarApplication.add(new JToolBarButton( "ContainerMonitoring", Language.translate("Auslastungs-Monitor öffnen"), null, "MBLoadMonitor.png" ));
+			jToolBarApplication.add(new JToolBarButton( "ThreadMonitoring", Language.translate("Thread-Monitor öffnen"), null, "MBclock.png" ));
 			jToolBarApplication.addSeparator();
 			
 		};		
@@ -1310,6 +1305,8 @@ public class MainWindow extends JFrame implements ComponentListener {
 				
 			} else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
 				Application.getJadePlatform().jadeSystemAgentOpen("loadMonitor", null);
+			} else if ( ActCMD.equalsIgnoreCase("ThreadMonitoring") ) { 
+				Application.getJadePlatform().jadeSystemAgentOpen("threadMonitor", null);
 			
 			// ------------------------------------------------
 			} else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {

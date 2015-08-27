@@ -67,7 +67,7 @@ de;Ausgewählte JADE-Services;Selected JADE Services;;;
 de;Ausgewählte Klasse übernehmen!;Take selected class!
 de;Auslastungs-Grenzwerte manuell festlegen;Set load thresholds manually
 de;Auslastungs-Monitor bei JADE-Start anzeigen;Show Load-Monitor on Jade startup;;;
-de;Auslastungs-Monitor öffnen;Open load monitor
+de;Auslastungs-Monitor öffnen;Open Load Monitor;null;null;null
 de;Auswahl - Agenten;Agent selection
 de;Auswahl - Ontologien;Ontology selection
 de;Auswahl Ontologien;Ontology selection
@@ -218,6 +218,7 @@ de;Fehler - Projektverzeichnis !;Error - project folder !
 de;Fehler bei der Ausführung von 'executeQuery'!;Error when executing 'executeQuery'!
 de;Fehler bei der Ausführung von 'executeUpdate'!;Error when executing 'executeUpdate'!
 de;Fehler beim Auslesen der Datensätzen!;Error while reading records!
+de;Fehler beim Laden des Bildes:;;;;
 de;Fehler beim Lesen des Graphen;Error while reading the graph
 de;Fehler beim Parsen der Umgebungsdatei!;Error while parsing environment file!
 de;Fehler beim Verbindungsaufbau mit Datenbank-Server!;Error while connecting to database server!
@@ -342,7 +343,7 @@ de;Lade Umgebungsdatei;Getting environment file
 de;Lastaufzeichnung mit dem Start von JADE beginnen;Record system load immediately on JADE startup;;;
 de;Letzte Änderungen;Recent changes;;;
 de;Liniendicke;Line thickness;;;
-de;Load Monitor öffnen;Open load monitor
+de;Load Monitor öffnen;Open Load Monitor;null;null;null
 de;Load Monitor;Load Monitor
 de;Log-Manager starten;Start Log Manager
 de;Lokal;Local;;;
@@ -567,6 +568,8 @@ de;Tage;Days;;;
 de;Teil-Umgebung;environment part
 de;Teilnetze;Subnetworks;;;
 de;Text zur Übersetzung;Text to translate
+de;Thread Monitor;;;;
+de;Thread-Monitor öffnen;;;;
 de;Timer-Ansicht;Timer view;;;
 de;Titel;Title;;;
 de;Topologie;Topology;;;
@@ -701,6 +704,7 @@ en;;Please, specifiy the ID for the new Gas Driven Motor!;;;
 en;;Please, specifiy the ID for the new Gas Turbine!;;;
 en;;Please, specifiy the ID for the new Piston Compressor!;;;
 en;;Please, specifiy the ID for the new Turbo Compressor!;;;
+en;;Refresh Thread Measurement;;;
 en;;Remove Component;;;
 en;;Remove Turbo Compressor;;;
 en;;Save and send data model changes to agent(s)?;;;

@@ -8,9 +8,31 @@ import jade.core.*;
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2012/07/24, 12:09:17
+* @version 2015/08/27, 11:18:49
 */
 public class ClientRemoteContainerReply implements AgentAction {
+
+   /**
+* Protege name: remoteOS
+   */
+   private OSInfo remoteOS;
+   public void setRemoteOS(OSInfo value) { 
+    this.remoteOS=value;
+   }
+   public OSInfo getRemoteOS() {
+     return this.remoteOS;
+   }
+
+   /**
+* Protege name: remotePerformance
+   */
+   private PlatformPerformance remotePerformance;
+   public void setRemotePerformance(PlatformPerformance value) { 
+    this.remotePerformance=value;
+   }
+   public PlatformPerformance getRemotePerformance() {
+     return this.remotePerformance;
+   }
 
    /**
 * Protege name: remoteBenchmarkResult
@@ -21,6 +43,17 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
    public BenchmarkResult getRemoteBenchmarkResult() {
      return this.remoteBenchmarkResult;
+   }
+
+   /**
+* Protege name: remoteAgentGuiVersion
+   */
+   private AgentGuiVersion remoteAgentGuiVersion;
+   public void setRemoteAgentGuiVersion(AgentGuiVersion value) { 
+    this.remoteAgentGuiVersion=value;
+   }
+   public AgentGuiVersion getRemoteAgentGuiVersion() {
+     return this.remoteAgentGuiVersion;
    }
 
    /**
@@ -43,39 +76,6 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
    public String getRemoteContainerName() {
      return this.remoteContainerName;
-   }
-
-   /**
-* Protege name: remotePerformance
-   */
-   private PlatformPerformance remotePerformance;
-   public void setRemotePerformance(PlatformPerformance value) { 
-    this.remotePerformance=value;
-   }
-   public PlatformPerformance getRemotePerformance() {
-     return this.remotePerformance;
-   }
-
-   /**
-* Protege name: remoteOS
-   */
-   private OSInfo remoteOS;
-   public void setRemoteOS(OSInfo value) { 
-    this.remoteOS=value;
-   }
-   public OSInfo getRemoteOS() {
-     return this.remoteOS;
-   }
-
-   /**
-* Protege name: remoteAgentGuiVersion
-   */
-   private AgentGuiVersion remoteAgentGuiVersion;
-   public void setRemoteAgentGuiVersion(AgentGuiVersion value) { 
-    this.remoteAgentGuiVersion=value;
-   }
-   public AgentGuiVersion getRemoteAgentGuiVersion() {
-     return this.remoteAgentGuiVersion;
    }
 
    /**

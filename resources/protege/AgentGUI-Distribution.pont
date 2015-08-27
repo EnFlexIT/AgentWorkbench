@@ -1,4 +1,4 @@
-; Tue Jul 24 12:09:21 CEST 2012
+; Thu Aug 27 11:41:58 CEST 2015
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -303,6 +303,11 @@
 ;+		(allowed-classes AgentGuiVersion)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot clientAddress
+		(type INSTANCE)
+;+		(allowed-classes PlatformAddress)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot clientPerformance
 		(type INSTANCE)
 ;+		(allowed-classes PlatformPerformance)
@@ -311,11 +316,6 @@
 	(single-slot clientOS
 		(type INSTANCE)
 ;+		(allowed-classes OSInfo)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot clientAddress
-		(type INSTANCE)
-;+		(allowed-classes PlatformAddress)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot clientTime
@@ -327,11 +327,6 @@
 (defclass ClientTrigger
 	(is-a AgentAction)
 	(role concrete)
-	(single-slot clientBenchmarkValue
-		(type INSTANCE)
-;+		(allowed-classes BenchmarkResult)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot clientLoad
 		(type INSTANCE)
 ;+		(allowed-classes PlatformLoad)
@@ -340,6 +335,11 @@
 	(single-slot triggerTime
 		(type INSTANCE)
 ;+		(allowed-classes PlatformTime)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot clientBenchmarkValue
+		(type INSTANCE)
+;+		(allowed-classes BenchmarkResult)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -359,9 +359,24 @@
 (defclass ClientRemoteContainerReply
 	(is-a AgentAction)
 	(role concrete)
+	(single-slot remoteOS
+		(type INSTANCE)
+;+		(allowed-classes OSInfo)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot remotePerformance
+		(type INSTANCE)
+;+		(allowed-classes PlatformPerformance)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot remoteBenchmarkResult
 		(type INSTANCE)
 ;+		(allowed-classes BenchmarkResult)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot remoteAgentGuiVersion
+		(type INSTANCE)
+;+		(allowed-classes AgentGuiVersion)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot remotePID
@@ -370,21 +385,6 @@
 		(create-accessor read-write))
 	(single-slot remoteContainerName
 		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot remotePerformance
-		(type INSTANCE)
-;+		(allowed-classes PlatformPerformance)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot remoteOS
-		(type INSTANCE)
-;+		(allowed-classes OSInfo)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot remoteAgentGuiVersion
-		(type INSTANCE)
-;+		(allowed-classes AgentGuiVersion)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot remoteAddress
@@ -406,11 +406,6 @@
 ;+		(allowed-classes AgentGuiVersion)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot slavePerformance
-		(type INSTANCE)
-;+		(allowed-classes PlatformPerformance)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot slaveTime
 		(type INSTANCE)
 ;+		(allowed-classes PlatformTime)
@@ -419,6 +414,11 @@
 	(single-slot slaveAddress
 		(type INSTANCE)
 ;+		(allowed-classes PlatformAddress)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot slavePerformance
+		(type INSTANCE)
+;+		(allowed-classes PlatformPerformance)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -430,14 +430,14 @@
 ;+		(allowed-classes BenchmarkResult)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot slaveLoad
-		(type INSTANCE)
-;+		(allowed-classes PlatformLoad)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot triggerTime
 		(type INSTANCE)
 ;+		(allowed-classes PlatformTime)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot slaveLoad
+		(type INSTANCE)
+;+		(allowed-classes PlatformLoad)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -453,6 +453,10 @@
 	(is-a AgentAction)
 	(role concrete))
 
+(defclass ShowThreadGUI
+	(is-a AgentAction)
+	(role concrete))
+
 (defclass MasterUpdateNote
 	(is-a AgentAction)
 	(role concrete)
@@ -464,15 +468,15 @@
 (defclass AgentGuiVersion
 	(is-a Concept)
 	(role concrete)
+	(single-slot majorRevision
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot buildNo
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot minorRevision
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot majorRevision
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
@@ -484,16 +488,16 @@
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot http4mtp
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot url
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot port
 		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot http4mtp
-		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -540,32 +544,39 @@
 (defclass RemoteContainerConfig
 	(is-a Concept)
 	(role concrete)
-	(single-slot jvmMemAllocInitial
-		(type STRING)
+	(single-slot jadeIsRemoteContainer
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot jadeContainerName
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot jadeServices
+	(multislot hostExcludeIP
 		(type STRING)
-;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot jvmMemAllocMaximum
 		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot jadeShowGUI
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot jadePort
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot jadeIsRemoteContainer
+	(multislot jadeJarIncludeList
+		(type STRING)
+		(create-accessor read-write))
+	(single-slot jadeServices
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot preventUsageOfUsedComputer
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot jadeShowGUI
 		(type SYMBOL)
 		(allowed-values FALSE TRUE)
 ;+		(cardinality 0 1)
@@ -574,38 +585,31 @@
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(multislot hostExcludeIP
+	(single-slot jvmMemAllocInitial
 		(type STRING)
-		(create-accessor read-write))
-	(multislot jadeJarIncludeList
-		(type STRING)
-		(create-accessor read-write))
-	(single-slot preventUsageOfUsedComputer
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass PlatformLoad
 	(is-a Concept)
 	(role concrete)
-	(single-slot loadMemorySystem
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot loadExceeded
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot loadCPU
 		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot loadNoThreads
+		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot loadMemoryJVM
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot loadNoThreads
+	(single-slot loadMemorySystem
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot loadExceeded
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
@@ -617,11 +621,11 @@
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot os_name
+	(single-slot os_version
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot os_version
+	(single-slot os_name
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))

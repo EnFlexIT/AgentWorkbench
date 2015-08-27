@@ -6,10 +6,10 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: ShowMonitorGUI
+* Protege name: ShowThreadGUI
 * @author ontology bean generator
 * @version 2015/08/27, 11:18:49
 */
-public class ShowMonitorGUI implements AgentAction {
+public class ShowThreadGUI implements AgentAction {
 
 }

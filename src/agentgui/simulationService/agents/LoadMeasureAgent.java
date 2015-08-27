@@ -62,7 +62,6 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
-import agentgui.core.gui.components.TimeSelection;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
@@ -79,12 +78,14 @@ import agentgui.simulationService.load.gui.SystemLoadPanel;
 import agentgui.simulationService.load.gui.SystemLoadDialog;
 import agentgui.simulationService.load.gui.SystemLoadSingle;
 import agentgui.simulationService.load.threading.ThreadMeasureBehaviour;
+import agentgui.simulationService.load.threading.ThreadMeasureDialog;
 import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.load.threading.ThreadProtocolVector;
 import agentgui.simulationService.ontology.OSInfo;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
 import agentgui.simulationService.ontology.ShowMonitorGUI;
+import agentgui.simulationService.ontology.ShowThreadGUI;
 
 /**
  * This class represents the agent, which monitors the load information 
@@ -109,7 +110,7 @@ public class LoadMeasureAgent extends Agent {
 	
 	// --------------------------------------------------------------
 	// --- Display-elements of the Monitoring system ---------------- 
-	private SystemLoadDialog loadDialog; 
+	private SystemLoadDialog loadDialog;
 	// --- Remember container Informations/Instances (Display) ------
 	private Hashtable<String, SystemLoadSingle> containerLoadDialogs = new Hashtable<String, SystemLoadSingle>(); 
 	// --------------------------------------------------------------
@@ -118,9 +119,15 @@ public class LoadMeasureAgent extends Agent {
 	// --- The measure/display behaviour of the agent --------------- 
 	/** The monitor behaviour, which is a TickerBehaviour. */
 	private MonitorBehaviour monitorBehaviour;
-	private Long monitorBehaviourTickingPeriod = null;
+	private long monitorBehaviourTickingPeriod = 500L;
 	// --------------------------------------------------------------
 
+	// --------------------------------------------------------------
+	// --- Display-elements of the Threading ------------------------ 
+	private ThreadMeasureDialog threadDialog;
+	private long threadMeasurementTickingPeriod = 1000L;
+	// --------------------------------------------------------------
+	
 	// --------------------------------------------------------------
 	// --- The balancing algorithm of this agent --------------------
 	private DynamicLoadBalancingBase loadBalancing;
@@ -205,6 +212,9 @@ public class LoadMeasureAgent extends Agent {
 		}
 		this.getSystemLoadDialog().setVisible(false);
 		this.setSystemLoadDialog(null);
+		
+		this.getThreadDialog().setVisible(false);
+		this.setThreadDialog(null);
 	}
 	
 	/**
@@ -223,9 +233,6 @@ public class LoadMeasureAgent extends Agent {
 	 * @return the monitorBehaviourTickingPeriod
 	 */
 	public long getMonitorBehaviourTickingPeriod() {
-		if (monitorBehaviourTickingPeriod==null) {
-			monitorBehaviourTickingPeriod = this.getSelectedTimeSelection().getTimeInMill();
-		}
 		return monitorBehaviourTickingPeriod;
 	}
 	/**
@@ -252,12 +259,7 @@ public class LoadMeasureAgent extends Agent {
 		return loadBalancing;
 	}
 
-	/**
-	 * This Method shows the GUI of this LoadAgent.
-	 */
-	public void showGUI() {
-		this.getSystemLoadDialog().setVisible(true);
-	}
+	
 	/**
 	 * Sets the system load dialog.
 	 * @param newLoadDialog the new system load dialog
@@ -270,8 +272,8 @@ public class LoadMeasureAgent extends Agent {
 	 * @return the system load dialog
 	 */
 	private SystemLoadDialog getSystemLoadDialog() {
-		if (this.loadDialog==null) {
-			this.loadDialog = new SystemLoadDialog(this);
+		if (loadDialog==null) {
+			loadDialog = new SystemLoadDialog(this);
 		}
 		return loadDialog;
 	}
@@ -282,14 +284,7 @@ public class LoadMeasureAgent extends Agent {
 	private SystemLoadPanel getSystemLoadPanel() {
 		return this.getSystemLoadDialog().getSystemLoadPanel();
 	}
-	/**
-	 * Returns the currently selected {@link TimeSelection}.
-	 * @return the selected time selection
-	 */
-	private TimeSelection getSelectedTimeSelection() {
-		return ((TimeSelection) this.getSystemLoadPanel().getJComboBoxInterval().getSelectedItem());
-	}
-	
+
 	/**
 	 * Returns the current {@link Project}.
 	 * @return the project
@@ -829,7 +824,7 @@ public class LoadMeasureAgent extends Agent {
 	// ------------------------------------------------------------
 	public ThreadMeasureBehaviour getThreadMeasureBehaviour() {
 		if (threadMeasureBehaviour==null) {
-			threadMeasureBehaviour = new ThreadMeasureBehaviour(this, this.getMonitorBehaviourTickingPeriod());
+			threadMeasureBehaviour = new ThreadMeasureBehaviour(this, this.getThreadMeasurementTickingPeriod());
 		}
 		return threadMeasureBehaviour;
 	}
@@ -842,6 +837,21 @@ public class LoadMeasureAgent extends Agent {
 		tmb.setOneShotBehaviour(oneShotBehaviour);
 		tmb.reset();
 		this.addBehaviour(tmb);
+	}
+	/**
+	 * Sets the thread measurement ticking period.
+	 * @param threadMeasurementTickingPeriod the new thread measurement ticking period
+	 */
+	public void setThreadMeasurementTickingPeriod(long threadMeasurementTickingPeriod) {
+		this.threadMeasurementTickingPeriod = threadMeasurementTickingPeriod;
+		this.getThreadMeasureBehaviour().reset(threadMeasurementTickingPeriod);
+	}
+	/**
+	 * Returns the thread measurement ticking period.
+	 * @return the thread measurement ticking period
+	 */
+	public Long getThreadMeasurementTickingPeriod() {
+		return threadMeasurementTickingPeriod;
 	}
 	
 	/**
@@ -863,15 +873,28 @@ public class LoadMeasureAgent extends Agent {
 	public ThreadProtocolVector getThreadProtocolVector() {
 		if (threadProtocolVector==null) {
 			threadProtocolVector = new ThreadProtocolVector();
-			if (this.getProject()==null) {
-				threadProtocolVector.setSimulationSetup(null);
-			} else {
-				threadProtocolVector.setSimulationSetup(this.getProject().getSimulationSetupCurrent());				
-			}
 		}
 		return threadProtocolVector;
 	}
 	
+	/**
+	 * Sets the thread dialog.
+	 * @param threadDialog the new thread dialog
+	 */
+	public void setThreadDialog(ThreadMeasureDialog threadDialog) {
+		this.threadDialog = threadDialog;
+	}
+	/**
+	 * Gets the thread dialog.
+	 * @return the thread dialog
+	 */
+	public ThreadMeasureDialog getThreadDialog() {
+		if (threadDialog==null) {
+			this.reStartThreadMeasurement(true);
+			threadDialog = new ThreadMeasureDialog(this);
+		}
+		return threadDialog;
+	}
 	// ------------------------------------------------------------
 	// --- Methods for the Thread Measurements --- End ------------
 	// ------------------------------------------------------------	
@@ -914,6 +937,8 @@ public class LoadMeasureAgent extends Agent {
 					Concept agentAction = act.getAction();
 					if (agentAction instanceof ShowMonitorGUI) {
 						getSystemLoadDialog().setVisible(true);
+					} else if (agentAction instanceof ShowThreadGUI) {
+						getThreadDialog().setVisible(true);
 					}
 				}
 			}
