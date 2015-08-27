@@ -151,11 +151,11 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		Vector<Object> row = new Vector<Object>();
 		row.add(pid);
 		row.add(threadTime);
-		row.add(threadTime.isAgent());
-		
 		// --- convert nanoseconds to milliseconds for a slim display
 		row.add(threadTime.getCpuTime()/1000000);
 		row.add(threadTime.getUserTime()/1000000);
+		
+		row.add(threadTime.isAgent());
 		
 		
 		this.getTableModel().addRow(row);
