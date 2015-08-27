@@ -143,7 +143,6 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
             
             if(agent.getStartAsName().equals(threadTime.getThreadName())){
             	threadTime.setIsAgent(true);
-                System.out.println("Agent-Thread: " + threadTime);
                 break;
             }
         }
