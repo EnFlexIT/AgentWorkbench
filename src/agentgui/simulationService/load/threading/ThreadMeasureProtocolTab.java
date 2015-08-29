@@ -113,9 +113,6 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 			jTableThreadProtocolVector.getColumnModel().getColumn(0).setMinWidth(50);
 			jTableThreadProtocolVector.getColumnModel().getColumn(1).setMinWidth(200);
 			
-			//--- hide "Agent" column ---
-			jTableThreadProtocolVector.removeColumn(jTableThreadProtocolVector.getColumnModel().getColumn(4));
-			
 			
 			if (threadProtocolVector!=null) {
 				// --- Add a sorter if the model is available -------
@@ -209,17 +206,22 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 			
 		} else if (ae.getSource()==this.getJRadioButtonFilterAgents()) {
 			// --- Set Filter -------------------		
-			RowFilter<Object,Object> isAgentFilter = new RowFilter<Object, Object>() {
+			RowFilter<Object,Object> agentFilter = new RowFilter<Object, Object>() {
+				
 				  public boolean include(Entry<? extends Object, ? extends Object> entry) {
-					  for (int i = entry.getValueCount() - 1; i >= 0; i--) {
-						  if (entry.getValue(i).equals(true)) {
+
+					  // --- get column with ThreadTime-Instance (ThreadName) ---
+					  if(entry.getValue(1) instanceof ThreadTime) {
+						  ThreadTime tt = (ThreadTime)entry.getValue(1);	
+						  if(tt.isAgent() == true) {
 							  return true;
 						  }
 					  }
 					  return false;
 				 }
 			};
-			sorter.setRowFilter(isAgentFilter);
+			
+			sorter.setRowFilter(agentFilter);
 			
 		}
 	}

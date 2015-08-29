@@ -131,9 +131,8 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 			Vector<String> header = new Vector<String>();
 			header.add("PID");
 			header.add("Thread Name");
-			header.add("System Time");
-			header.add("User Time");
-			header.add("Agent");
+			header.add("System Time [ms]");
+			header.add("User Time [ms]");
 			
 			this.tableModel = new DefaultTableModel(null, header){
 
@@ -177,9 +176,8 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		Vector<Object> row = new Vector<Object>();
 		row.add(pid);
 		row.add(threadTime);
-		row.add(threadTime.getCpuTime());
-		row.add(threadTime.getUserTime());
-		row.add(threadTime.isAgent());
+		row.add(threadTime.getCpuTime()/1000000);// convert nanoseconds to milliseconds
+		row.add(threadTime.getUserTime()/1000000);// convert nanoseconds to milliseconds
 		
 		// --- Add row to table model -------------------------------
 		this.getTableModel().addRow(row);
