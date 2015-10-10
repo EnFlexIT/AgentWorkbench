@@ -196,7 +196,7 @@ public abstract class NetworkComponentAdapter {
 	 *  in <code>:receiver</code> message field (more than one agent can be specified as message receiver).
 	 *  
 	 *  @see jade.lang.acl.ACLMessage
-	 *  @param msg An ACL message object containing the actual message to send.	 
+	 *  @param msg the ACL message to be send	 
 	 */
 	public void send(ACLMessage msg) {
 		DisplayAgent displayAgent = this.getDisplayAgent();

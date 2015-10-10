@@ -77,7 +77,7 @@ de;Basis-Agenten;Base agents
 de;Basis-Info;Basic info
 de;Bearbeiten;Edit
 de;Beenden;Quit
-de;Beschleunigungsfaktor;Acceleration factor;;;
+de;Beschleunigungsfaktor;Acceleration Factor;;;
 de;Beschreibung;Description
 de;Beschriftung X Achse;Label X axis ;;;
 de;Beschriftung Y Achse;Label Y axis ;;;
@@ -159,8 +159,8 @@ de;Die Datenbank für den Server-Master ist nicht vorhanden.<br>Soll versucht we
 de;Die Google-Übersetzungsfunktion wurde deaktiviert!;Google's translation feature has been disabled!;;;
 de;Die Höhe des exportieren Bildes;The height of the image to be exported;;;
 de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The class of the type 'OntologyClassVisualisation' was not found!;;;
-de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.<br><br>Möchten Sie die Konfiguration nun vornehmen?;The system configuration does not contain valid information about the<br>database server. The launch of JADE is therefore interrupted.<br> Please configure a valid MySQL database server and restart the Server.Master.<br><br> Would you like to configure this now?;;;
-de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Hauptserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)<br>und starten Sie den Dienst anschließend erneut.<br><br>Möchten Sie die Konfiguration nun vornehmen?;The system configuration does not contain valid information about the <br>main server. The start of JADE is therefore interrupted. <br>Please configure a valid server URL or IP (incl. Port) <br>and start the service again then. <br>Do you want to make the configuration now?;;;
+de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the<br>database server. The execution of JADE was therefore interrupted.<br>Please, configure a valid MySQL database server and restart the Server.Master.;;;
+de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Hauptserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)<br>und starten Sie den Dienst anschließend erneut.;The system configuration does not contain valid information about the <br>main server. The execution of JADE was therefore interrupted. <br>Please, configure a valid server URL or IP (incl. Port) <br>and start the service again.;;;
 de;Die URL oder IP konnte nicht aufgelöst werden!;The URL or IP could not be resolved!;;;
 de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
 de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
@@ -218,7 +218,7 @@ de;Fehler - Projektverzeichnis !;Error - project folder !
 de;Fehler bei der Ausführung von 'executeQuery'!;Error when executing 'executeQuery'!
 de;Fehler bei der Ausführung von 'executeUpdate'!;Error when executing 'executeUpdate'!
 de;Fehler beim Auslesen der Datensätzen!;Error while reading records!
-de;Fehler beim Laden des Bildes:;;;;
+de;Fehler beim Laden des Bildes:;Error while loading image:;;;
 de;Fehler beim Lesen des Graphen;Error while reading the graph
 de;Fehler beim Parsen der Umgebungsdatei!;Error while parsing environment file!
 de;Fehler beim Verbindungsaufbau mit Datenbank-Server!;Error while connecting to database server!
@@ -377,6 +377,7 @@ de;Möchten Sie JADE nun starten und fortfahren?;Do you want to start JADE and c
 de;Möchten Sie das aktuelle Projekt exportieren?;Export the current project?
 de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;Do you want to switch the display language?<br>The application has to be restarted for this<br>purpose and projects has to be reopened.
 de;Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?;Do you want to take over the CSV version of the dictionary now?;;;
+de;Möchten Sie die Konfiguration nun vornehmen?;Would you like to configure this now?;;;
 de;Möchten Sie einen weiteren Agenten dieser Art starten?;Do you want to start another agent of this kind?
 de;N - Threads;N - Threads
 de;Nach Update suchen ...;Search for Update ...;;;
@@ -569,7 +570,7 @@ de;Teil-Umgebung;environment part
 de;Teilnetze;Subnetworks;;;
 de;Text zur Übersetzung;Text to translate
 de;Thread Monitor;;;;
-de;Thread-Monitor öffnen;;;;
+de;Thread-Monitor öffnen;Open Thread-Monitor;;;
 de;Timer-Ansicht;Timer view;;;
 de;Titel;Title;;;
 de;Topologie;Topology;;;

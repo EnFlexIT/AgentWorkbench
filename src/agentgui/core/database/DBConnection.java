@@ -67,9 +67,9 @@ public class DBConnection {
 	private String sql = null;
 	
 	/** The Error object of this class */
-	public Error dbError = new Error();
+	private Error dbError = new Error();
 	/** Flag that shows if errors have occurred */
-	public boolean hasErrors = false;
+	private boolean hasErrors = false;
 	
 	
 	/**
@@ -281,7 +281,7 @@ public class DBConnection {
 				"current_load_threshold_exceeded " +
 				"FROM platforms";
 		
-		ResultSet res = getSqlResult4ExecuteQuery(sql, false);
+		ResultSet res = this.getSqlResult4ExecuteQuery(sql, false);
 		if (res==null) {
 			return false;
 		}
@@ -295,7 +295,7 @@ public class DBConnection {
 	private boolean isPlatformTable() {
 		
 		sql  = "SELECT * FROM platforms";
-		ResultSet res = getSqlResult4ExecuteQuery(sql);
+		ResultSet res = this.getSqlResult4ExecuteQuery(sql);
 		if (res==null) {
 			return false;
 		}
@@ -309,7 +309,7 @@ public class DBConnection {
 	private boolean dbIsAvailable() {
 
 		String sql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '" + dbName + "'";
-		ResultSet res = getSqlResult4ExecuteQuery(sql);
+		ResultSet res = this.getSqlResult4ExecuteQuery(sql);
 		if (res==null) {
 			return false;
 		} else {
@@ -319,7 +319,8 @@ public class DBConnection {
 					return false;
 				} else {
 					return true;
-				}				
+				}		
+				
 			} catch (SQLException e) {
 				e.printStackTrace();
 				this.dbError.setErrNumber( e.getErrorCode() );
@@ -528,6 +529,21 @@ public class DBConnection {
 		this.connection = connection;
 	}
 	
+	/**
+	 * Indicates that there are errors while interacting with the configured database.
+	 * @return true, if there are errors
+	 */
+	public boolean hasErrors() {
+		return hasErrors;
+	}
+	/**
+	 * Returns the current {@link Error} instance that contains help functions for describing actual problems.
+	 * @return the current database error, if an error occurs
+	 */
+	public Error getError() {
+		return dbError;
+	}
+	
 	// ------------------------------
 	// --- Start Sub-Class ----------
 	// ------------------------------
@@ -558,13 +574,13 @@ public class DBConnection {
 		private void setMessage() {
 			
 			if (errNumber.equals(0) ) {
-				// --- NICHT-SQL-Fehler [System] ----------
+				// --- NON-SQL-error [System] -------------
 				msg  = errText + newLine;
 			} else  if (errNumber.equals(-1) ) {
-				// --- NICHT-SQL-Fehler [own] -------------
+				// --- NON-SQL-Error [own] ----------------
 				msg  = Language.translate(errText) + newLine;
 			} else {
-				// --- SQL-Fehler -------------------------
+				// --- SQL-Error --------------------------
 				msg  = Language.translate("MySQL-Fehler") + " " + errNumber + ":" + newLine;
 				msg += errText;				
 				msg = formatText(msg);				
@@ -579,7 +595,9 @@ public class DBConnection {
 			this.setMessage();
 			System.err.println("DB: " + errHead);
 			System.err.println(msg);
-			JOptionPane.showMessageDialog(null, msg, errHead, JOptionPane.OK_OPTION);
+			if (Application.isOperatingHeadless()==false) {
+				JOptionPane.showMessageDialog(null, msg, errHead, JOptionPane.OK_OPTION);	
+			}
 			this.resetError();
 		}
 		/**

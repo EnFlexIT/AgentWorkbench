@@ -32,11 +32,11 @@ import java.io.PrintStream;
 import java.util.Vector;
 
 /**
- * This Class can be used in order to listen to the output which will be generated<br> 
+ * This Class can be used in order to listen to the output that will be generated 
  * through the console by using System.out and System.err - commands.<br>
  * <br>
- * The received output will be received in the local <code>Vector<String></code> outputStack., which<br>
- * can be accessed by the getStack() - method in a synchronised way.<br>   
+ * The received output will be stored in the local Vector<String> outputStack 
+ * that can be accessed by the synchronised method {@link #getStack()}.   
  * 
  * @see PrintStreamListener
  * @see System#out

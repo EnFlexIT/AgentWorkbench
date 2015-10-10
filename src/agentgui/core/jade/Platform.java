@@ -47,7 +47,6 @@ import javax.swing.JOptionPane;
 import agentgui.core.agents.UtilityAgent;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.project.Project;
 import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.LoadService;
@@ -66,8 +65,7 @@ public class Platform extends Object {
 		OpernDF,
 		ShutdownPlatform,
 		OpenLoadMonitor,
-		OpenThreadMonitor,
-		ExitDeviceExecutionModus
+		OpenThreadMonitor
 	}
 	
 	private static final String BackgroundSystemAgentApplication = "server.client";
@@ -121,7 +119,7 @@ public class Platform extends Object {
 			// --- This is a Master-Server-Platform ------------
 			// -------------------------------------------------
 			// --- Connecting to Database ----------------------
-			if (Application.getDatabaseConnection(true).hasErrors==true ) {
+			if (Application.getDatabaseConnection(true).hasErrors()==true ) {
 				
 				this.jadeStop();
 				
@@ -132,14 +130,20 @@ public class Platform extends Object {
 				msgText += "Die Systemkonfiguration enthält keine gültigen Angaben über den" + newLine +
 						   "Datenbankserver. Der Start von JADE wird deshalb unterbrochen." + newLine +
 						   "Bitte konfigurieren Sie einen MySQL-Datenbank-Server und" + newLine +
-						   "starten Sie den Server-Master anschließend erneut." + newLine + newLine +
-						   "Möchten Sie die Konfiguration nun vornehmen?";
+						   "starten Sie den Server-Master anschließend erneut.";
 				msgText = Language.translate(msgText);
-				
-				int answer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);
-				if (answer == JOptionPane.YES_OPTION) {
-					Application.showOptionDialog();
-				} 
+
+				if (Application.isOperatingHeadless()==true) {
+					System.err.println("=> " + msgHead + " <=");
+					System.err.println(msgText);
+				} else {
+					String msgQuestion = Language.translate("Möchten Sie die Konfiguration nun vornehmen?");
+					msgText += newLine + newLine + msgQuestion; 
+					int answer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);
+					if (answer == JOptionPane.YES_OPTION) {
+						Application.showOptionDialog();
+					}	
+				}
 				return false;
 				
 			}
@@ -156,7 +160,8 @@ public class Platform extends Object {
 			if (Application.getGlobalInfo().getServerMasterURL()==null ||
 				Application.getGlobalInfo().getServerMasterURL().equalsIgnoreCase("")==true ||
 				Application.getGlobalInfo().getServerMasterPort().equals(0)==true ||
-				Application.getGlobalInfo().getServerMasterPort4MTP().equals(0)==true ) {
+				Application.getGlobalInfo().getServerMasterPort4MTP().equals(0)==true ||
+				Application.getGlobalInfo().getJadeUrlConfigurationForMaster().hasErrors()==true) {
 				
 				this.jadeStop();
 				
@@ -167,14 +172,20 @@ public class Platform extends Object {
 				msgText += "Die Systemkonfiguration enthält keine gültigen Angaben über den" + newLine +
 						   "Hauptserver. Der Start von JADE wird deshalb unterbrochen." + newLine +
 						   "Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)" + newLine +
-						   "und starten Sie den Dienst anschließend erneut." + newLine + newLine +
-						   "Möchten Sie die Konfiguration nun vornehmen?";
+						   "und starten Sie den Dienst anschließend erneut.";
 				msgText = Language.translate(msgText);
 				
-				int answer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);
-				if (answer == JOptionPane.YES_OPTION) {
-					Application.showOptionDialog();
-				} 
+				if (Application.isOperatingHeadless()==true) {
+					System.err.println("=> " + msgHead + " <=");
+					System.err.println(msgText);
+				} else {
+					String msgQuestion = Language.translate("Möchten Sie die Konfiguration nun vornehmen?");
+					msgText += newLine + newLine + msgQuestion;
+					int answer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);
+					if (answer == JOptionPane.YES_OPTION) {
+						Application.showOptionDialog();
+					}	
+				}
 				return false;
 				
 			} 
@@ -196,10 +207,7 @@ public class Platform extends Object {
 				break;
 
 			case AGENT:
-				EmbeddedSystemAgentVisualisation visualisation = Application.getGlobalInfo().getDeviceServiceAgentVisualisation();
-				if (visualisation==EmbeddedSystemAgentVisualisation.NONE) {
-					jadeUtilityAgentStart(UTILITY_AGENT_JOB.ExitDeviceExecutionModus);	
-				}
+				// --- nothing to do here yet ---
 				break;
 			}
 			
@@ -213,7 +221,7 @@ public class Platform extends Object {
 	}
 
 	/**
-	 * Starts JADE and displays the RMA
+	 * Starts JADE without displaying the RMA
 	 * @return true, if successful
 	 */		
 	public boolean jadeStart() {
@@ -221,7 +229,7 @@ public class Platform extends Object {
 	}	
 	/**
 	 * Starts JADE.
-	 * @param showRMA set true, if you want to see the RMA
+	 * @param showRMA set true, if you want also to start the RMA agent and its visualisation 
 	 * @return true, if successful
 	 */
 	public boolean jadeStart(boolean showRMA) {
@@ -229,7 +237,7 @@ public class Platform extends Object {
 	}
 	/**
 	 * Starts JADE.
-	 * @param showRMA set true, if you want to see the RMA 
+	 * @param showRMA set true, if you want also to start the RMA agent and its visualisation 
 	 * @param containerProfile the actual container Profile
 	 * @return true, if successful
 	 */

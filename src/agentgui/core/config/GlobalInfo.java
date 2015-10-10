@@ -92,6 +92,7 @@ public class GlobalInfo {
 	private static String localBaseDir = "";
 	private static String localPathAgentGUI	 = "bin";
 	private static String localPathJade		 = "lib" + fileSeparator + "jade" +  fileSeparator + "lib";
+	private static String localPathLogging  = "log" + fileSeparator;
 	private static String localPathProperty  = "properties" + fileSeparator;
 	private static String localPathProjects  = "projects" + fileSeparator;
 	private static String localPathWebServer = "server" + fileSeparator;
@@ -142,12 +143,11 @@ public class GlobalInfo {
 	private Integer updateKeepDictionary = 1;
 	private long updateDateLastChecked = 0;
 	
-	private String deviceServiceProjectFolder = null;
+	private String deviceServiceProjectFolder;
 	private DeviceSystemExecutionMode deviceServiceExecutionMode = DeviceSystemExecutionMode.SETUP;
-	private String deviceServiceSetupSelected = null;  
-	private String deviceServiceAgentSelected = null;
+	private String deviceServiceSetupSelected;  
+	private String deviceServiceAgentSelected;
 	private EmbeddedSystemAgentVisualisation deviceServiceAgentVisualisation = EmbeddedSystemAgentVisualisation.TRAY_ICON;
-	
 	
 	// --- Reminder information for file dialogs ----------------------------
 	private File lastSelectedFolder = null; 
@@ -490,6 +490,25 @@ public class GlobalInfo {
 		}	
 	}
 	/**
+	 * This method can be invoked in order to get the path to the logging directory 'log\'.
+	 * @param absolute set true if you want to get the full path to this 
+	 * @return the path reference to the property folder
+	 */
+	public String getPathLogging(boolean absolute){
+		String returnPath = null;
+		if (absolute==true ) { 
+			returnPath = FilePath2Absolute(localPathLogging);
+		} else {
+			returnPath = localPathLogging;	
+		}	
+		// --- Check, if the folder exists. If not create -----------
+		File testFile = new File(returnPath);
+		if (testFile.exists()==false) {
+			testFile.mkdir();
+		}
+		return returnPath;
+	}
+	/**
 	 * This method will return the concrete path to the property file 'agentgui.ini' relatively or absolute
 	 * @param absolute set true if you want to get the full path to this
 	 * @return the path reference to the property file agentgui.ini
@@ -792,7 +811,7 @@ public class GlobalInfo {
 	 */
 	public JadeUrlConfiguration getJadeUrlConfigurationForMaster() {
 		if (urlConfiguraionForMaster==null) {
-			// --- Define the Address of the Main-Platform --------------
+			// --- Define the address of the server.master platform -----------
 			urlConfiguraionForMaster = new JadeUrlConfiguration(this.getServerMasterURL());
 			urlConfiguraionForMaster.setPort(this.getServerMasterPort());
 			urlConfiguraionForMaster.setPort4MTP(this.getServerMasterPort4MTP());

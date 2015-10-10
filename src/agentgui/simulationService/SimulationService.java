@@ -107,7 +107,7 @@ public class SimulationService extends BaseService {
 	private long timeDiff2MainContainer = 0;		// --- Difference between this and the MainContainer-Time
 	
 	/** --- The Agent who is the Manager / Controller of the Simulation -------- */
-	private EnvironmentManagerDescription environmentManagerDescription = null;
+	private EnvironmentManagerDescription environmentManagerDescription;
 	/** --- Agents which have registered as display agents for the environment - */
 	private Vector<AID> environmentDisplayAgents = new Vector<AID>();
 	
@@ -117,17 +117,17 @@ public class SimulationService extends BaseService {
 	/** --- The TransactionMap of the simulation ------------------------------- */
 	private TransactionMap transactionMap = new TransactionMap();
 	/** --- The current EnvironmentModel --------------------------------------- */
-	private EnvironmentModel environmentModel = null;
+	private EnvironmentModel environmentModel;
 	/** --- The Actuator for this Service, which can inform registered  
 	    	Agents about changes in the Simulation e.g. 'stepTimeModel' -------- */
-	private ServiceActuator localServiceActuator = new ServiceActuator();
+	private ServiceActuator localServiceActuator;
 	private ServiceActuatorManager localServiceActuator4Manager = new ServiceActuatorManager();
 	
 	/** --- How should an Agent be notified about Environment-Changes? --------- */
 	private boolean stepSimulationAsynchronous = true;
 
 	/** --- The next EnvironmentObject-Instance in parts (answers of agents) --- */
-	private int environmentInstanceNextPartsExpected = 0;
+	private int environmentInstanceNextPartsExpected;
 	private Hashtable<AID, Object> environmentInstanceNextParts = new Hashtable<AID, Object>();
 	private Hashtable<AID, Object> environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
 	
@@ -166,7 +166,15 @@ public class SimulationService extends BaseService {
 	/* (non-Javadoc)
 	 * @see jade.core.BaseService#boot(jade.core.Profile)
 	 */
+	@Override
 	public void boot(Profile p) throws ServiceException {
+	}
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#shutdown()
+	 */
+	@Override
+	public void shutdown() {
+		this.getServiceActuator().shutdown();
 	}
 	/* (non-Javadoc)
 	 * @see jade.core.Service#getName()
@@ -177,7 +185,7 @@ public class SimulationService extends BaseService {
 	/* (non-Javadoc)
 	 * @see jade.core.BaseService#getHelper(jade.core.Agent)
 	 */
-	public ServiceHelper getHelper (Agent ag) {
+	public ServiceHelper getHelper(Agent ag) {
 		return new SimulationServiceImpl();
 	}
 	/* (non-Javadoc)
@@ -202,6 +210,16 @@ public class SimulationService extends BaseService {
 	 */
 	public Service.Slice getLocalSlice() {
 		return localSlice;
+	}
+	/**
+	 * Rerturns the {@link ServiceActuator} for the local container.
+	 * @return the service actuator
+	 */
+	private ServiceActuator getServiceActuator() {
+		if (localServiceActuator==null) {
+			localServiceActuator = new ServiceActuator(this.myContainer.getNodeDescriptor().getName());
+		}
+		return localServiceActuator;
 	}
 	
 	// --------------------------------------------------------------	
@@ -298,19 +316,19 @@ public class SimulationService extends BaseService {
 		 * @see agentgui.simulationService.SimulationServiceHelper#sensorPlugIn(agentgui.simulationService.sensoring.ServiceSensor)
 		 */
 		public void sensorPlugIn(ServiceSensor sensor) throws ServiceException {
-			localServiceActuator.plugIn(sensor);
+			getServiceActuator().plugIn(sensor);
 		}
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#sensorPlugIn(agentgui.simulationService.sensoring.ServiceSensor, boolean)
 		 */
 		public void sensorPlugIn(ServiceSensor sensor, boolean pasive) throws ServiceException {
-			localServiceActuator.plugInPassive(sensor);
+			getServiceActuator().plugInPassive(sensor);
 		}
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#sensorPlugOut(agentgui.simulationService.sensoring.ServiceSensor)
 		 */
 		public void sensorPlugOut(ServiceSensor sensor) throws ServiceException {
-			localServiceActuator.plugOut(sensor);	
+			getServiceActuator().plugOut(sensor);	
 		}		
 		
 		// ----------------------------------------------------------
@@ -406,7 +424,7 @@ public class SimulationService extends BaseService {
 				
 				// --- If the expected number of answers came back to ---
 				// --- the service, broadcast it to every other node ----
-				if (environmentInstanceNextPartsLocal.size() >= localServiceActuator.getNoOfSimulationAnswersExpected()) {
+				if (environmentInstanceNextPartsLocal.size() >= getServiceActuator().getNoOfSimulationAnswersExpected()) {
 					mainSetEnvironmentInstanceNextPart(environmentInstanceNextPartsLocal);	
 					environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
 				}
@@ -598,7 +616,7 @@ public class SimulationService extends BaseService {
 				myLogger.log(Logger.FINER, "Sending new EnvironmentModel to " + sliceName);
 			}
 			if (slice.getNode().getName().equals(this.myContainer.getNodeDescriptor().getName())==true) {
-				this.localServiceActuator.notifySensors(envModel, notifySensorAgents);
+				this.getServiceActuator().notifySensors(envModel, notifySensorAgents);
 			} else {
 				this.setEnvironmentModel2Slice(slice, envModel, notifySensorAgents);	
 			}
@@ -629,7 +647,7 @@ public class SimulationService extends BaseService {
 			try {
 				if (slice.getNode().getName().equals(this.myContainer.getNodeDescriptor().getName())==true) {
 					environmentModel = envModel;
-					localServiceActuator.notifySensors(envModel, aSynchron);
+					this.getServiceActuator().notifySensors(envModel, aSynchron);
 				} else {
 					slice.stepSimulation(envModel, aSynchron);
 				}
@@ -712,7 +730,7 @@ public class SimulationService extends BaseService {
 			myLogger.log(Logger.CONFIG, "Sending notfication to agent '" + agentAID.getLocalName() + "'!");
 		}
 		// --- First try to find the agent locally -------- 
-		boolean notified = this.localServiceActuator.notifySensorAgent(agentAID, notification);
+		boolean notified = this.getServiceActuator().notifySensorAgent(agentAID, notification);
 		if (notified==true) {
 			// --- Found locally - done! ----------------------------
 			return notified;
@@ -1127,7 +1145,7 @@ public class SimulationService extends BaseService {
 		private void setEnvironmentModel(EnvironmentModel newEnvironmentModel, boolean notifySensorAgents) {
 			environmentModel = newEnvironmentModel;
 			if (notifySensorAgents==true) {
-				localServiceActuator.notifySensors(environmentModel, stepSimulationAsynchronous );				
+				getServiceActuator().notifySensors(environmentModel, stepSimulationAsynchronous );				
 			}
 		}
 		/**
@@ -1138,7 +1156,7 @@ public class SimulationService extends BaseService {
 		 */
 		private void stepSimulation(EnvironmentModel newEnvironmentModel, boolean aSynchron) {
 			environmentModel = newEnvironmentModel;
-			localServiceActuator.notifySensors(newEnvironmentModel, aSynchron);
+			getServiceActuator().notifySensors(newEnvironmentModel, aSynchron);
 		} 
 		/**
 		 * Notifies the manager agent about the agent answers.
@@ -1165,7 +1183,7 @@ public class SimulationService extends BaseService {
 		 * @return true, if successful
 		 */
 		private boolean notifySensorAgent(AID agentAID, EnvironmentNotification notification){
-			return localServiceActuator.notifySensorAgent(agentAID, notification);
+			return getServiceActuator().notifySensorAgent(agentAID, notification);
 		}
 		
 		/**
@@ -1214,7 +1232,7 @@ public class SimulationService extends BaseService {
 		 * Stop simulation agents.
 		 */
 		private void stopSimulationAgents() {
-			localServiceActuator.notifySensorAgentsDoDelete();
+			getServiceActuator().notifySensorAgentsDoDelete();
 		}
 		
 		/**
@@ -1222,7 +1240,7 @@ public class SimulationService extends BaseService {
 		 * @param pause true, if the simulation should pause
 		 */
 		private void setPauseSimulation(boolean pause) {
-			localServiceActuator.notifySensorPauseSimulation(pause);
+			getServiceActuator().notifySensorPauseSimulation(pause);
 			localServiceActuator4Manager.notifyManagerPauseSimulation(pause);
 		}
 		
@@ -1231,7 +1249,7 @@ public class SimulationService extends BaseService {
 		 * @param transferAgents the new agent migration
 		 */
 		private void setAgentMigration(Vector<AID_Container> transferAgents) {
-			localServiceActuator.setMigration(transferAgents);
+			getServiceActuator().setMigration(transferAgents);
 		}
 		
 		/**
@@ -1247,7 +1265,7 @@ public class SimulationService extends BaseService {
 		 * @return the list of agents with sensors
 		 */
 		private AID[] getListOfAgentsWithSensors() {
-			return localServiceActuator.getSensorAgents();
+			return getServiceActuator().getSensorAgents();
 		}
 		
 		/**
@@ -1258,7 +1276,7 @@ public class SimulationService extends BaseService {
 			synchronized (environmentDisplayAgents) {
 				if (environmentDisplayAgents!=null) {
 					for (AID aid: environmentDisplayAgents) {
-						ServiceSensor sensor = localServiceActuator.getSensor(aid);
+						ServiceSensor sensor = getServiceActuator().getSensor(aid);
 						sensor.putEnvironmentModel(envModel, stepSimulationAsynchronous);
 					}
 				}
@@ -1272,7 +1290,7 @@ public class SimulationService extends BaseService {
 			synchronized (environmentDisplayAgents) {
 				if (environmentDisplayAgents!=null) {
 					for (AID aid: environmentDisplayAgents) {
-						ServiceSensor sensor = localServiceActuator.getSensor(aid);
+						ServiceSensor sensor = getServiceActuator().getSensor(aid);
 						sensor.notifyAgent(notification);
 					}
 				}

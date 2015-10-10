@@ -66,6 +66,8 @@ public class BenchmarkMeasurement extends Thread {
 	private String benchExecOn = Application.getGlobalInfo().getBenchExecOn();
 	private String nowExecOn = null;
 	
+	private boolean isHeadlessOperation = Application.isOperatingHeadless();
+	
 	private double min_time = Constants.RESOLUTION_DEFAULT;
 	private int FFT_size = Constants.FFT_SIZE;
 	private int SOR_size =  Constants.SOR_SIZE;
@@ -103,39 +105,47 @@ public class BenchmarkMeasurement extends Thread {
 		if (this.benchValueOld>0 && this.nowExecOn.equalsIgnoreCase(this.benchExecOn) && this.benchAllwaysSkip==true && forceBench==false) {
 			// --- Start search for Agents, Ontologies and BaseServices -----------
 			Application.setBenchmarkRunning(false);
-			Application.getClassSearcher();
+			if (this.isHeadlessOperation==false) {
+				Application.getClassSearcher();
+			}
 			return;
 		}  
 		
 		// --- Initialise Benchmark-Monitor  --------------
-		if (Application.getMainWindow()==null) {
-			benchGUI = new BenchmarkMonitor(null);	
-		} else {
-			benchGUI = new BenchmarkMonitor(Application.getMainWindow());	
-		}		
-		
-		// --- Set user buttons ---------------------------
-		if ( benchValueOld>0 && nowExecOn.equalsIgnoreCase(benchExecOn)) {
-			benchGUI.jButtonSkip.setEnabled(true);
-			if (forceBench==true) {
-				benchGUI.jButtonSkipAllways.setEnabled(false);
+		if (this.isHeadlessOperation==false) {
+			// --- Initialise BenchmarkMonitor ------------ 
+			if (Application.getMainWindow()==null) {
+				benchGUI = new BenchmarkMonitor(null);	
 			} else {
-				benchGUI.jButtonSkipAllways.setEnabled(true);
+				benchGUI = new BenchmarkMonitor(Application.getMainWindow());	
+			}		
+			
+			// --- Set user buttons -----------------------
+			if ( benchValueOld>0 && nowExecOn.equalsIgnoreCase(benchExecOn)) {
+				benchGUI.jButtonSkip.setEnabled(true);
+				if (forceBench==true) {
+					benchGUI.jButtonSkipAllways.setEnabled(false);
+				} else {
+					benchGUI.jButtonSkipAllways.setEnabled(true);
+				}
+			} else {
+				benchGUI.jButtonSkip.setEnabled(false);
+				benchGUI.jButtonSkipAllways.setEnabled(false);
 			}
+			
+			// --- Progress Display --- ON ----------------
+			benchGUI.setBenchmarkValue(benchValueOld);
+			benchGUI.jProgressBarBenchmark.setMinimum(0);
+			benchGUI.jProgressBarBenchmark.setMaximum(6);
+			benchGUI.jProgressBarBenchmark.setValue(0);
+			benchGUI.validate();
+			benchGUI.setVisible(true);
+			
 		} else {
-			benchGUI.jButtonSkip.setEnabled(false);
-			benchGUI.jButtonSkipAllways.setEnabled(false);
+			System.out.println("Executing Benchmark, please wait ... ");
 		}
 		// ------------------------------------------------
 		
-		
-		// --- Progress Display --- ON --------------------
-		benchGUI.setBenchmarkValue(benchValueOld);
-		benchGUI.jProgressBarBenchmark.setMinimum(0);
-		benchGUI.jProgressBarBenchmark.setMaximum(6);
-		benchGUI.jProgressBarBenchmark.setValue(0);
-		benchGUI.validate();
-		benchGUI.setVisible(true);
 		
 		// --- Start benchmark tests ----------------------
 		double res[] = new double[6];
@@ -183,17 +193,21 @@ public class BenchmarkMeasurement extends Thread {
 		Application.getGlobalInfo().getFileProperties().save();
 		
 		// --- Progress Display --- OFF -------------------
-		benchGUI.setBenchmarkValue(result);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException sleepE) {
-			sleepE.printStackTrace();
+		if (this.isHeadlessOperation==false) {
+			benchGUI.setBenchmarkValue(result);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException sleepE) {
+				sleepE.printStackTrace();
+			}
+			this.closeGUI();
 		}
-		this.closeGUI();
 		Application.setBenchmarkRunning(false);
 		
 		// --- Start search for Agents, Ontologies and BaseServices -----------
-		Application.getClassSearcher();
+		if (this.isHeadlessOperation==false) {
+			Application.getClassSearcher();			
+		}
 		
 	}
 	
@@ -202,12 +216,14 @@ public class BenchmarkMeasurement extends Thread {
 	 * @param n the new benchmark progress
 	 */
 	private void setBenchmarkProgress(final int n) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				benchGUI.jProgressBarBenchmark.setValue(n);
-			}
-		});
+		if (this.benchGUI!=null) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					benchGUI.jProgressBarBenchmark.setValue(n);
+				}
+			});	
+		}
 	}
 	
 	/**
@@ -216,18 +232,19 @@ public class BenchmarkMeasurement extends Thread {
 	 * @return true, if is skip action
 	 */
 	private boolean isSkipAction() {
-		
-		if (benchGUI.actionSkipAllways == true) {
-			Application.getGlobalInfo().setBenchAllwaysSkip(true);
-			this.closeGUI();
-			Application.setBenchmarkRunning(false);
-			return true;
+		if (this.benchGUI!=null) {
+			if (this.benchGUI.actionSkipAllways==true) {
+				Application.getGlobalInfo().setBenchAllwaysSkip(true);
+				this.closeGUI();
+				Application.setBenchmarkRunning(false);
+				return true;
+			}
+			if (this.benchGUI.actionSkip==true) {
+				this.closeGUI();
+				Application.setBenchmarkRunning(false);
+				return true;
+			}	
 		}
-		if (benchGUI.actionSkip==true) {
-			this.closeGUI();
-			Application.setBenchmarkRunning(false);
-			return true;
-		}		
 		return false;
 	}
 	
@@ -235,10 +252,11 @@ public class BenchmarkMeasurement extends Thread {
 	 * This method closes the benchmark monitor GUI.
 	 */
 	private void closeGUI() {
-		
-		benchGUI.setVisible(false);
-		benchGUI.dispose();
-		benchGUI = null;
+		if (this.benchGUI!=null) {
+			this.benchGUI.setVisible(false);
+			this.benchGUI.dispose();
+			this.benchGUI = null;	
+		}
 	}
 	
 	/**

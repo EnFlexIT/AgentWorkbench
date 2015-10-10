@@ -670,11 +670,11 @@ public class ServerMasterAgent extends Agent {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
-				dbConn.dbError.setErrNumber( e.getErrorCode() );
-				dbConn.dbError.setHead( "DB-Error during registration of a Slave-Servers!" );
-				dbConn.dbError.setText( e.getLocalizedMessage() );
-				dbConn.dbError.setErr(true);
-				dbConn.dbError.show();
+				dbConn.getError().setErrNumber( e.getErrorCode() );
+				dbConn.getError().setHead( "DB-Error during registration of a Slave-Server!" );
+				dbConn.getError().setText( e.getLocalizedMessage() );
+				dbConn.getError().setErr(true);
+				dbConn.getError().show();
 			}
 		}
 		

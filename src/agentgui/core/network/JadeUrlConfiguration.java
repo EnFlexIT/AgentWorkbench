@@ -39,7 +39,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-import agentgui.core.application.Application;
 
 /**
  * This class can be used in order to evaluate and compare configured JADE URL's and its ports. 
@@ -54,6 +53,7 @@ public class JadeUrlConfiguration {
 	private int currPort4MTP = -1;
 
 	private boolean errors=false;
+	private String errorMsg;
 	
 	private List<InetAddress> inetAddresses;
 	private List<InetAddress> ip4InetAddresses;
@@ -79,17 +79,15 @@ public class JadeUrlConfiguration {
 					
 		} catch (UnknownHostException err) {
 
-			String appTitle = Application.getGlobalInfo().getApplicationTitle();
-			System.err.println("");
-			System.err.println("=> [" + appTitle + "] Error while trying to receive network address '" + this.currURLorIP + "' !" );
-			System.err.println("=> Please, check your " + appTitle + "-options for server settings (e.g. for the server.master).");
-			System.err.println("=> Also make sure that the local machine has a working network connection.");
-			System.err.println("");
-			
-			this.errors=true;
+			this.errors = true;
+			this.errorMsg = "Error while trying to receive network address '" + this.currURLorIP + "' !\n";
+			this.errorMsg+= "=> Please, check your settings (e.g. for the server.master) and\n";
+			this.errorMsg+= "=> make sure that the local machine has a working network connection.\n";
+
 			this.currURLorIP = null;
 			this.currInetAddress = null;
 
+			System.err.println(this.errorMsg);
 		}
 		
 	}
@@ -137,6 +135,14 @@ public class JadeUrlConfiguration {
 	public boolean hasErrors() {
 		return errors;
 	}
+	/**
+	 * Returns the error message, if any.
+	 * @return the error message
+	 */
+	public String getErrorMessage() {
+		return errorMsg;
+	}
+	
 	/**
 	 * Checks if the specified instance equal to the current one.
 	 *

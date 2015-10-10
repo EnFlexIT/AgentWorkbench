@@ -49,10 +49,8 @@ import agentgui.core.application.Application;
  */
 public class AgentGUITrayIcon implements ActionListener {
 
-	private SystemTray systemTray = SystemTray.getSystemTray();
-	private TrayIcon trayIcon;
-	
 	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
+	private TrayIcon trayIcon;
 	
 	private ImageIcon imageIconRed = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUI.png"));
 	private Image     imageRed = imageIconRed.getImage();
@@ -60,8 +58,8 @@ public class AgentGUITrayIcon implements ActionListener {
 	private ImageIcon imageIconGreen = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUIGreen.png"));
 	private Image     imageGreen = imageIconGreen.getImage();
 	
-	private AgentGUITrayPopUp trayPopUp = null;
-	private AgentGUITrayDialog trayDialog = null;
+	private AgentGUITrayPopUp trayPopUp;
+	private AgentGUITrayDialog trayDialog;
 	
 	/**
 	 * Constructor of this class.
@@ -69,17 +67,24 @@ public class AgentGUITrayIcon implements ActionListener {
 	public AgentGUITrayIcon() {
 		this.initialize();
 	}
-	
+	/**
+	 * Returns the local {@link SystemTray}.
+	 * @return the system tray
+	 */
+	private SystemTray getSystemTray() {
+		return SystemTray.getSystemTray();
+	}
 	/**
 	 * Starts the TrayIcon, if this is supported. If not, it should start a
 	 * simple JDialog, doing the same as independent Window.
 	 */
 	private void initialize() {
 
-		if (SystemTray.isSupported()) {
+		if (SystemTray.isSupported()==true) {
 			// --- System-Tray is supported -------------------------
 			try {
-				systemTray.add(this.getTrayIcon());
+				this.getSystemTray().add(this.getTrayIcon());
+				
 			} catch (AWTException e) {
 				System.err.println("TrayIcon supported, but could not be added.");
 				// --- System Tray is NOT supported -----------------
@@ -120,6 +125,7 @@ public class AgentGUITrayIcon implements ActionListener {
 	public AgentGUITrayDialog getAgentGUITrayDialog(boolean createIfNotAvailable) {
 		if (trayDialog==null) {
 			if (createIfNotAvailable==true) {
+				// --- Try to create TrayIconDialog -------------
 				trayDialog = new AgentGUITrayDialog(null, this);
 			}
 		}
@@ -173,7 +179,7 @@ public class AgentGUITrayIcon implements ActionListener {
 	 * Removes the tray icon out off the system tray.
 	 */
 	public void remove() {
-		systemTray.remove(trayIcon);
+		this.getSystemTray().remove(trayIcon);
 	}
 		
 	/* (non-Javadoc)

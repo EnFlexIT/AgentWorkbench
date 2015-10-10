@@ -6,7 +6,9 @@
     <projectResources>
         <projectResource>D:\10 Java Projects\Game of Life\bin</projectResource>
     </projectResources>
-    <plugins/>
+    <plugins>
+        <className>gol.plugin.GameOfLifePlugIn</className>
+    </plugins>
     <subOntologies>
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
     </subOntologies>
@@ -14,9 +16,9 @@
         <agentVector>
             <agent agentReference="gol.acl.agents.GameOfLifeAgent">
                 <startArgumentVector>
-                    <startArgument position="1" ontologyReference="agentgui.ontology.TimeSeriesChart"/>
-                    <startArgument position="2" ontologyReference="agentgui.ontology.Simple_Boolean"/>
-                    <startArgument position="3" ontologyReference="agentgui.ontology.Simple_String"/>
+                    <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="1"/>
+                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" position="2"/>
+                    <startArgument ontologyReference="agentgui.ontology.Simple_String" position="3"/>
                 </startArgumentVector>
             </agent>
         </agentVector>
@@ -37,8 +39,8 @@
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
         <loadRecordingInterval>500</loadRecordingInterval>
-        <numberOfAgents>60</numberOfAgents>
-        <numberOfContainer>3</numberOfContainer>
+        <numberOfAgents>18</numberOfAgents>
+        <numberOfContainer>1</numberOfContainer>
         <showLoadMonitorAtPlatformStart>true</showLoadMonitorAtPlatformStart>
         <staticLoadBalancingClass>gol.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
@@ -57,9 +59,10 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>0018 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>0072 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
-    <downloadResources>http://localhost:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
+    <downloadResources>http://Pandora:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
+    <downloadResources>http://Pandora:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>0242 Agents</key>

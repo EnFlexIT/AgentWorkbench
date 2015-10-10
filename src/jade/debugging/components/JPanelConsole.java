@@ -55,15 +55,13 @@ public class JPanelConsole extends JPanel {
 	
 	private final String lineSeparator = System.getProperty("line.separator");
 	private AttributeSet attribute;
-	private MutableAttributeSet black;  //  @jve:decl-index=0:
+	private MutableAttributeSet black;
 	private MutableAttributeSet red;
 	
-	private SysOutScanner sos = null;
-	
-	private JEditorPane jEditorPaneOutput = null;
+	private JEditorPane jEditorPaneOutput;
 	private boolean localConsole = false;
 
-	private JScrollPane jScrollPane = null;
+	private JScrollPane jScrollPane;
 
 	private Integer printLinesCounter = 0;
 	private Integer printLinesMax = 400;
@@ -107,8 +105,7 @@ public class JPanelConsole extends JPanel {
 		
 		if (localConsole==true) {
 			// --- listen to local Out/Err-Output ---------
-			sos = new SysOutScanner(this);
-			SysOutBoard.setSysOutScanner(sos);
+			SysOutBoard.setSysOutScanner(new SysOutScanner(this));
 		}
 		
 	}
@@ -121,7 +118,7 @@ public class JPanelConsole extends JPanel {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
 			jScrollPane.setPreferredSize(new Dimension(400, 100));
-			jScrollPane.setViewportView(getJEditorPaneOutput());
+			jScrollPane.setViewportView(this.getJEditorPaneOutput());
 		}
 		return jScrollPane;
 	}

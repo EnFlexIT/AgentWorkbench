@@ -31,9 +31,11 @@ package agentgui.core.application;
 import jade.debugging.components.JPanelConsole;
 import jade.debugging.logfile.LogFileWriter;
 
+import java.awt.HeadlessException;
 import java.io.File;
 import java.util.Vector;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -41,6 +43,7 @@ import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
+import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.ChangeDialog;
@@ -73,6 +76,8 @@ public class Application {
 	private static boolean justStartJade = false;
 	/** Indicates if the benchmark is currently running */
 	private static boolean benchmarkRunning = false; 
+	/** Indicates that the application is running headless */
+	private static Boolean headlessOperation;
 	
 	/**
 	 * This ClassDetector is used in order to search for agent classe's, ontology's and BaseService'.
@@ -93,6 +98,8 @@ public class Application {
 	private static JPanelConsole console = null;
 	/** In case that a log file has to be written */
 	private static LogFileWriter logFileWriter = null;
+	/** In case of headless operation */
+	private static ShutdownThread shutdownThread;
 	/** The About dialog of the main application window. */
 	private static AboutDialog about = null;
 	/** The About dialog of the application.*/
@@ -147,6 +154,70 @@ public class Application {
 	}
 	
 	/**
+	 * Checks if Agent.GUI is or has to be executed headless (without any GUI).
+	 * @return true, if is headless operation
+	 */
+	public static boolean isOperatingHeadless() {
+		if (headlessOperation==null) {
+			// --- Do headless check ----------------------
+			JDialog hcDialog;
+			try {
+				hcDialog = new JDialog();
+				hcDialog.validate();
+				hcDialog = null;
+				headlessOperation = false;
+				
+			} catch (HeadlessException he) {
+				System.out.println("Headless Execution Mode ...");
+				headlessOperation = true;
+			}
+		}
+		return headlessOperation;
+	}
+	/**
+	 * Sets that Agent.GUI has to operated headless.
+	 * @param headlessOperation the new headless operation
+	 */
+	public static void setOperatingHeadless(boolean headlessOperation) {
+		if (headlessOperation==true) {
+			System.out.println("Headless Execution Mode ...");
+		}
+		Application.headlessOperation = headlessOperation;
+	}
+	
+	
+	/**
+	 * Creates and starts the {@link ShutdownThread} that used in headless mode.
+	 * @return the ShutdownThread
+	 */
+	public static ShutdownThread startShutdownThread() {
+		if (shutdownThread==null) {
+			shutdownThread = new ShutdownThread();	
+			shutdownThread.start();
+		}
+		return shutdownThread;
+	}
+	/**
+	 * Returns the current {@link ShutdownThread} of the application.
+	 * @return the ShutdownThread
+	 */
+	public static ShutdownThread getShutdownThread() {
+		return shutdownThread;
+	}
+	/**
+	 * Sets the ShutdownThread for the application. Set null in order  
+	 * to stop the currently running {@link ShutdownThread}.
+	 * @param newShutdownThread the new ShutdownThread
+	 */
+	public static void setShutdownThread(ShutdownThread newShutdownThread) {
+		if (shutdownThread!=null && newShutdownThread!=shutdownThread) {
+			shutdownThread.stopObserving();
+		}
+		shutdownThread = newShutdownThread;
+	}
+	
+	
+	/**
 	 * Sets the current {@link ClassSearcher}.
 	 * @param newClassSearcher the new class searcher
 	 */
@@ -178,14 +249,14 @@ public class Application {
 		return Application.console;
 	}
 	
+	
 	/**
 	 * Creates the log file writer.
-	 * @param logFileName the log file name
 	 * @return the log file writer
 	 */
-	public static LogFileWriter createLogFileWriter(String logFileName) {
+	public static LogFileWriter startLogFileWriter() {
 		if (logFileWriter==null) {
-			logFileWriter = new LogFileWriter(logFileName);	
+			logFileWriter = new LogFileWriter();	
 		}
 		return logFileWriter;
 	}
@@ -197,15 +268,17 @@ public class Application {
 		return logFileWriter;
 	}
 	/**
-	 * Sets the LogFileWriter for the application.
+	 * Sets the LogFileWriter for the application. Set null in order  
+	 * to stop the currently running {@link LogFileWriter}.
 	 * @param newLogFileWriter the new LogFileWriter
 	 */
 	public static void setLogFileWriter(LogFileWriter newLogFileWriter) {
-		if (logFileWriter!=null && newLogFileWriter==null) {
+		if (logFileWriter!=null && newLogFileWriter!=logFileWriter) {
 			logFileWriter.stopFileWriter();
 		}
 		logFileWriter = newLogFileWriter;
 	}
+	
 	
 	/**
 	 * Returns the application-wide information system.
@@ -233,8 +306,8 @@ public class Application {
 	 * @return the tray icon
 	 */
 	public static AgentGUITrayIcon getTrayIcon() {
-		if (Application.trayIcon==null) {
-			Application.trayIcon = new AgentGUITrayIcon();
+		if (Application.trayIcon==null && isOperatingHeadless()==false) {
+			Application.trayIcon = new AgentGUITrayIcon();	
 		}
 		return Application.trayIcon;
 	}
@@ -299,13 +372,17 @@ public class Application {
 	 */
 	public static void main(String[] args) {
 
-		// ----------------------------------------------------------
 		// --- Read the start arguments and react on it?! -----------
 		String[] remainingArgs = proceedStartArguments(args);
 		
+		// --- Start log file writer, if needed ---------------------
+		if (isOperatingHeadless()==true) startLogFileWriter();
+		
+		// --- Case separation Agent.GUI / JADE execution -----------
 		if (Application.justStartJade==false) {
 			// ------------------------------------------------------
 			// --- Start the Agent.GUI base-instances ---------------
+			// ------------------------------------------------------
 			getConsole();
 			getGlobalInfo();
 			Language.startDictionary();
@@ -316,13 +393,17 @@ public class Application {
 		} else {
 			// ------------------------------------------------------
 			// --- Just start JADE ----------------------------------
+			// ------------------------------------------------------
 			getGlobalInfo();
 			Language.startDictionary();
 
 			System.out.println("Just starting JADE now ...");
 			jade.Boot.main(remainingArgs);
-			
+		
 		}
+		
+		// --- Start ShutdownExecuter, if needed --------------------
+		if (isOperatingHeadless()==true) startShutdownThread();
 		
 	}	
 
@@ -368,7 +449,13 @@ public class Application {
 					// --- JADE has to be started as remote container ---------	
 					remainingArgsVector.removeElement(args[i]);
 					justStartJade = true;
-				
+					
+				} else if (args[i].equalsIgnoreCase("-headless")) {
+					// --------------------------------------------------------
+					// --- Agent.GUI has to be operated headless --------------
+					remainingArgsVector.removeElement(args[i]);
+					setOperatingHeadless(true);
+
 				} else if (args[i].equalsIgnoreCase("-help")) {
 					// --------------------------------------------------------
 					// --- print out the help for the start arguments ---------	
@@ -421,8 +508,9 @@ public class Application {
 		System.out.println("Agent.GUI - usage of start arguments:");
 		System.out.println("");
 		System.out.println("1. '-project projectFolder': opens the project located in the Agent.GUI folder 'project' (e.g. 'myProject')");
-		System.out.println("2. '-jade'                 : indicates that JADE has to be started. For the JADE start arguments, see JADE administrative guide." );
-		System.out.println("3. '-help' or '-?'         : provides this information to the console" );
+		System.out.println("2. '-headless'             : will set Agent.GUI to operate headless (without any GUI)");
+		System.out.println("3. '-jade'                 : indicates that JADE has to be started. For the JADE start arguments, see JADE administrative guide." );
+		System.out.println("4. '-help' or '-?'         : provides this information to the console" );
 		System.out.println("");
 		System.out.println("");
 	}
@@ -465,11 +553,25 @@ public class Application {
 			}
 		}
 		
+		// ----------------------------------------------------------
+		// --- Check if Agent.GUI is operated headless --------------
+		// ----------------------------------------------------------
+		if (isOperatingHeadless()==true) {
+			// --- Check start settings for headless operation ------
+			if (getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
+				String configFile = getGlobalInfo().getPathConfigFile(false);
+				String msg = "Agent.GUI-Execution Mode was set to 'Application', but this mode can't be executed headless.\n";
+				msg+= "Please, check the argument '01_RUNAS' in file '" + configFile + "' and set this argument\n";
+				msg+= "either to 'Server' or 'EmbeddedSystemAgent'.";
+				System.err.println(msg);
+				Application.quit();
+			}
+		}
+		
 		// ----------------------------------------------------------		
 		// --- Start Agent.GUI as defined by 'ExecutionMode' --------
 		// ----------------------------------------------------------
-		String executeStatement = Language.translate("Programmstart");
-		System.out.println(executeStatement + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
+		System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
 		
 		switch (getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
@@ -536,8 +638,14 @@ public class Application {
 		if (getGlobalInfo().isServerAutoRun()==true) {
 			// --- Wait until the benchmark result is available -----
 			waitForBenchmark();
-			getJadePlatform().jadeStart();
-			getTrayIcon().getAgentGUITrayPopUp().refreshView();
+			boolean jadeStarted = getJadePlatform().jadeStart();
+			if (isOperatingHeadless()==true && jadeStarted==false) {
+				Application.quit();
+			}
+			AgentGUITrayIcon trayIcon =  getTrayIcon();
+			if (trayIcon!=null) {
+				trayIcon.getAgentGUITrayPopUp().refreshView();
+			}
 		}
 	}
 	
@@ -598,13 +706,15 @@ public class Application {
 				break;
 				
 			case NONE:
-				// --- Start writing a LogFile --------------------------------
-				String logFileName = Application.getGlobalInfo().getPathBaseDir() + "AgentGuiDeviceAgent.log";
-				createLogFileWriter(logFileName);
-				// --- Create some initial output -----------------------------
-				getGlobalInfo().getVersionInfo().printVersionInfo();
-				String executeStatement = Language.translate("Programmstart");
-				System.out.println(executeStatement + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
+				// --- Start writing a LogFile, if not already executed -------
+				if (getLogFileWriter()==null) {
+					startLogFileWriter();
+					// --- Create some initial output for the log file --------
+					getGlobalInfo().getVersionInfo().printVersionInfo();
+					System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
+				}
+				// --- Start observing shutdown file --------------------------
+				startShutdownThread();
 				break;
 			}
 			
@@ -624,23 +734,26 @@ public class Application {
 	 */
 	public static void quit() {
 
-		// --- Shutdown JADE -----------------------
+		// --- Shutdown JADE --------------------
 		getJadePlatform().jadeStop();
 
-		// --- Close open projects -----------------
+		// --- Close open projects --------------
 		if (getProjectsLoaded().closeAll()==false) return;	
 		
-		// --- Save file properties ----------------
+		// --- Save file properties -------------
 		getGlobalInfo().getFileProperties().save();
 		
-		// --- Done --------------------------------
+		// --- Done -----------------------------
 		System.out.println(Language.translate("Programmende... ") );
 		Language.saveDictionaryFile();
 		
-		// --- LogFileWriter -----------------------
+		// --- LogFileWriter --------------------
 		setLogFileWriter(null);
 		
-		// --- Shutdown JVM ------------------------
+		// --- ShutdownExecuter -----------------
+		setShutdownThread(null);
+		
+		// --- Shutdown JVM ---------------------
 		System.exit(0);		
 	}
 

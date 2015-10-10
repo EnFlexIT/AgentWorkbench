@@ -28,7 +28,6 @@
  */
 package agentgui.core.agents;
 
-import agentgui.core.agents.behaviour.ExitDeviceExecutionBehaviour;
 import agentgui.core.agents.behaviour.PlatformShutdownBehaviour;
 import agentgui.core.agents.behaviour.ShowDFBehaviour;
 import agentgui.core.agents.behaviour.ShowLoadMonitorBehaviour;
@@ -98,10 +97,6 @@ public class UtilityAgent extends Agent {
 
 		case OpenThreadMonitor:
 			this.addBehaviour(new ShowThreadMonitorBehaviour());
-			break;
-			
-		case ExitDeviceExecutionModus:
-			this.addBehaviour(new ExitDeviceExecutionBehaviour(this, 1000));
 			break;
 			
 		default:

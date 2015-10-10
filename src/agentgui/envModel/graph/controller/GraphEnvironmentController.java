@@ -1002,7 +1002,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    	
 		    		try {
 		    			// --- Only display progress, if procedure is to long -----
-			    		if (System.currentTimeMillis() > displayTime) {
+			    		if (Application.isOperatingHeadless()==false && System.currentTimeMillis()>displayTime) {
 			    			if (pm.isVisible()==false) {
 			    				pm.setVisible(true);
 			    		    	pm.validate();
@@ -1104,7 +1104,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    		
 		    		try {
 		    			// --- Only display progress, if procedure is to long -----
-			    		if (System.currentTimeMillis() > displayTime) {
+			    		if (Application.isOperatingHeadless()==false && System.currentTimeMillis()>displayTime) {
 			    			if (pm.isVisible()==false) {
 			    				pm.setVisible(true);
 			    		    	pm.validate();
