@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
@@ -154,10 +155,15 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 	}
 
 	/**
-	 * This method will start the agents, which will show the
-	 * visualisation of the current environment model.
+	 * This method will start the agent that will show the visualisation of the current environment model.
+	 * In case of an headless operation of Agent.GUI, this method will do nothing.
+	 * 
+	 * @see Application#isOperatingHeadless()
 	 */
 	protected void startVisualizationAgent() {
+		
+		// --- Visualisation is only needed in case of a none headless operation
+		if (Application.isOperatingHeadless()==true) return;
 		
 		EnvironmentController envController = currProject.getEnvironmentController();
 		if (envController!=null) {
@@ -166,15 +172,9 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 			String envTypeInternalKey = envType.getInternalKey();
 			
 			// ----------------------------------------------------------------
-			// --- If an visualised environment is used -----------------------
+			// --- Start visualisation, if an visualised environment is used --
 			// ----------------------------------------------------------------
-			if (envTypeInternalKey.equalsIgnoreCase("none")) {
-				// --- Do nothing here ------------------------------
-			
-			} else {
-				// --------------------------------------------------
-				// --- Start the visualization of the model ---------
-				// --------------------------------------------------
+			if (envTypeInternalKey.equalsIgnoreCase("none")==false) {
 
 				// --- Get the Agent which has to be started for ---
 				Class<? extends Agent> displayAgentClass = envType.getDisplayAgentClass();

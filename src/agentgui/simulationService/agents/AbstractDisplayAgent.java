@@ -104,7 +104,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 		Object[] startArgs = getArguments();
 		EnvironmentModel tmpEnvironmentModel = null;
 			
-		if (startArgs == null || startArgs.length == 0) {
+		if (startArgs==null || startArgs.length==0) {
 			// --- Started as independent display -------------------
 			this.setAgentGuiEmbedded(false);
 			// --- Get environment from SimulationService -----------
@@ -146,14 +146,14 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	 * Sets the current EnvironmentController of the agent. In case that the EnvironmentController 
 	 * is not null, in turn this agent will be set as the controlling instance of the EnvironmentController.
 	 * 
-	 * @see EnvironmentController#setEnvironmentControllerAgent(AbstractDisplayAgent)
+	 * @see EnvironmentController#setDisplayAgent(AbstractDisplayAgent)
 	 * 
 	 * @param newEnvironmentController the new environment controller
 	 */
 	protected void setEnvironmentController(EnvironmentController newEnvironmentController) {
 		this.myEnvironmentController = newEnvironmentController;
 		if (this.myEnvironmentController!=null) {
-			this.myEnvironmentController.setEnvironmentControllerAgent(this);	
+			this.myEnvironmentController.setDisplayAgent(this);	
 		}
 	}
 	/**
@@ -162,7 +162,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	 * controlling instance of the EnvironmentController.
 	 * 
 	 * @see #createNewEnvironmentController()
-	 * @see EnvironmentController#setEnvironmentControllerAgent(AbstractDisplayAgent)
+	 * @see EnvironmentController#setDisplayAgent(AbstractDisplayAgent)
 	 * 
 	 * @return the environment controller
 	 */
@@ -170,7 +170,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 		if (this.myEnvironmentController==null) {
 			this.myEnvironmentController = this.createNewEnvironmentController();
 			if (this.myEnvironmentController!=null) {
-				this.myEnvironmentController.setEnvironmentControllerAgent(this);	
+				this.myEnvironmentController.setDisplayAgent(this);	
 			}
 		}
 		return myEnvironmentController;

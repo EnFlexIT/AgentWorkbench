@@ -48,7 +48,6 @@ public class JFrame4Consoles extends JFrame {
 	    
 	    this.setSize(width, height);
 	    this.setLocation(left, top);	
-		
 	}
 
 	/**

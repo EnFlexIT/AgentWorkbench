@@ -56,6 +56,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import agentgui.core.application.Application;
+
 
 /**
  * This Service can be used in order to direct (as a copy) the system output generated<br>
@@ -107,8 +109,12 @@ public class DebugService extends BaseService {
 		}
 		
 	}
+	
 	/**
-	 * Depending on the execution location the service configures independently
+	 * Depending on the execution location the service configures independently.
+	 *
+	 * @param p the {@link Profile} that is to be used with the JADE start
+	 * @throws ServiceException the service exception
 	 */
 	public void boot(Profile p) throws ServiceException {
 		
@@ -133,8 +139,12 @@ public class DebugService extends BaseService {
 				String localSliceName = localSlice.getNode().getName();
 				JPanelConsole jpc = SysOutBoard.getHashMapJPanelConsoles().get(localSliceName);
 				if (jpc!=null) {
-					SysOutBoard.getJTabbedPane4Consoles().remove(jpc);
-					SysOutBoard.getHashMapJPanelConsoles().remove(localSliceName);
+					if (SysOutBoard.getJTabbedPane4Consoles()!=null) {
+						SysOutBoard.getJTabbedPane4Consoles().remove(jpc);	
+					}
+					if (SysOutBoard.getHashMapJPanelConsoles()!=null) {
+						SysOutBoard.getHashMapJPanelConsoles().remove(localSliceName);
+					}
 				}
 				
 			}
@@ -150,7 +160,7 @@ public class DebugService extends BaseService {
 			
 			// --- Get the JTabbedPane, where the consoles can be shown ------- 
 			JTabbedPane4Consoles tp4c = SysOutBoard.getJTabbedPane4Consoles();
-			if (tp4c==null) {
+			if (tp4c==null && Application.isOperatingHeadless()==false) {
 				// --- Create the Frame, where the consoles can be displayed --
 				JFrame4Consoles displayFrame = new JFrame4Consoles();
 				tp4c = displayFrame.getJTabbedPaneRemoteConsoles();
@@ -165,24 +175,20 @@ public class DebugService extends BaseService {
 
 				// --- Show the dialog for the system output ------------------
 				displayFrame.setVisible(true);
-				
 			}
 			
 			// --- If there are old consoles, remove them from tab ------------
 			HashMap<String, JPanelConsole> consoleHash = SysOutBoard.getHashMapJPanelConsoles();
-			if (consoleHash != null) {
-				if (consoleHash.size()>0) {
-					Set<String> consoleKeys = consoleHash.keySet();
-					for (Iterator<String> iterator = consoleKeys.iterator(); iterator.hasNext();) {
-						String consoleKey = (String) iterator.next();
-						JPanelConsole currConsole = consoleHash.get(consoleKey);
-						if (currConsole.isLocalConsole()==false) {
-							tp4c.remove(consoleHash.get(consoleKey));
-							SysOutBoard.getHashMapJPanelConsoles().remove(consoleKey);
-							
-						}
-					}	
-				}
+			if (consoleHash!=null && consoleHash.size()>0) {
+				Set<String> consoleKeys = consoleHash.keySet();
+				for (Iterator<String> iterator = consoleKeys.iterator(); iterator.hasNext();) {
+					String consoleKey = (String) iterator.next();
+					JPanelConsole currConsole = consoleHash.get(consoleKey);
+					if (currConsole.isLocalConsole()==false) {
+						tp4c.remove(consoleHash.get(consoleKey));
+						SysOutBoard.getHashMapJPanelConsoles().remove(consoleKey);
+					}
+				}	
 			}
 			
 			// --- Configure the SysOutBoard for the current environment ------
@@ -190,16 +196,24 @@ public class DebugService extends BaseService {
 				SysOutBoard.setHashMapJPanelConsoles(new HashMap<String, JPanelConsole>());
 			}
 			SysOutBoard.setIsLocationOfMainContainer(true);
-			
 		}
-		
 	}
+	
+	/* (non-Javadoc)
+	 * @see jade.core.Service#getName()
+	 */
 	public String getName() {
 		return NAME;
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getHelper(jade.core.Agent)
+	 */
 	public ServiceHelper getHelper (Agent ag) {
 		return new DebugServiceImpl();
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getCommandFilter(boolean)
+	 */
 	public Filter getCommandFilter(boolean direction) {
 		if(direction == Filter.INCOMING) {
 			return incFilter;
@@ -208,11 +222,15 @@ public class DebugService extends BaseService {
 			return outFilter;
 		}
 	}
+	/* (non-Javadoc)
+	 * @see jade.core.BaseService#getHorizontalInterface()
+	 */
 	public Class<?> getHorizontalInterface() {
 		return DebugServiceSlice.class;
 	}
 	/**
 	 * Retrieve the locally installed slice of this service.
+	 * @return the local slice
 	 */
 	public Service.Slice getLocalSlice() {
 		return localSlice;

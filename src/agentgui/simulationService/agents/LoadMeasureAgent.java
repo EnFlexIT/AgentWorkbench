@@ -163,7 +163,7 @@ public class LoadMeasureAgent extends Agent {
 	// --------------------------------------------------------------
 	// ---- Variables for storing the measurements in a file --------
 	private boolean monitorSaveLoad = false;
-	private BufferedWriter monitorDatasetWriter = null;
+	private BufferedWriter monitorDatasetWriter;
 	// --- Some System-String ---------------------------------------
 	private final String monitorDatasetDelimiter = ";";
 	private final String monitorDatasetLineSeperator = System.getProperty("line.separator");
@@ -173,7 +173,7 @@ public class LoadMeasureAgent extends Agent {
 	private final String monitorFileMeasurement = "LoadMeasurement.csv";
 	private final String monitorFileMachines = "LoadMachines.txt";
 	// --- Timestamp of a measurement and its String-format ---------
-	private Long monitorTimeStamp = null;
+	private Long monitorTimeStamp;
 	private SimpleDateFormat monitorTimeStampFormat = new SimpleDateFormat("dd.MM.yy hh:mm:ss;S");
 	
 	private Hashtable<String, String> monitorDatasetParts = new Hashtable<String, String>();
@@ -210,11 +210,14 @@ public class LoadMeasureAgent extends Agent {
 		if (monitorDatasetWriter!=null) {
 			this.closeMonitorFile();
 		}
-		this.getSystemLoadDialog().setVisible(false);
-		this.setSystemLoadDialog(null);
-		
-		this.getThreadDialog().setVisible(false);
-		this.setThreadDialog(null);
+		if (loadDialog!=null) {
+			this.getSystemLoadDialog().setVisible(false);
+			this.setSystemLoadDialog(null);	
+		}
+		if (threadDialog!=null) {
+			this.getThreadDialog().setVisible(false);
+			this.setThreadDialog(null);	
+		}
 	}
 	
 	/**
@@ -272,7 +275,7 @@ public class LoadMeasureAgent extends Agent {
 	 * @return the system load dialog
 	 */
 	private SystemLoadDialog getSystemLoadDialog() {
-		if (loadDialog==null) {
+		if (loadDialog==null && Application.isOperatingHeadless()==false) {
 			loadDialog = new SystemLoadDialog(this);
 		}
 		return loadDialog;
@@ -282,6 +285,7 @@ public class LoadMeasureAgent extends Agent {
 	 * @return the system load panel
 	 */
 	private SystemLoadPanel getSystemLoadPanel() {
+		if (this.getSystemLoadDialog()==null) return null;
 		return this.getSystemLoadDialog().getSystemLoadPanel();
 	}
 
@@ -371,11 +375,12 @@ public class LoadMeasureAgent extends Agent {
 				loadContainerLoactions = getLoadServiceHelper().getContainerLocations();
 				
 				// --- Display number of agents -----------------------------------------
-				getSystemLoadPanel().setNumberOfAgents(loadContainerAgentMap.noAgentsAtPlatform);
-				getSystemLoadPanel().setNumberOfContainer(loadContainer.size());
-				getSystemLoadPanel().setCycleTime(loadCycleTime);
-				loadThresholdLevels = LoadMeasureThread.getThresholdLevels();
-				
+				if (getSystemLoadPanel()!=null) {
+					getSystemLoadPanel().setNumberOfAgents(loadContainerAgentMap.noAgentsAtPlatform);
+					getSystemLoadPanel().setNumberOfContainer(loadContainer.size());
+					getSystemLoadPanel().setCycleTime(loadCycleTime);
+				}
+				loadThresholdLevels = LoadMeasureThread.getThresholdLevels();				
 				// Initialise variables JVM-balancing -----------------------------------
 				loadThresholdExceededOverAll = 0;
 				loadMachines4Balancing = new Hashtable<String, LoadMerger>();
@@ -426,17 +431,21 @@ public class LoadMeasureAgent extends Agent {
 					SystemLoadSingle dialogSingle = containerLoadDialogs.get(containerName);
 					if (dialogSingle==null) {
 						dialogSingle = new SystemLoadSingle();
-						getSystemLoadPanel().getJPanelForLoadDisplays().add(dialogSingle, null);
+						if (getSystemLoadPanel()!=null) {
+							getSystemLoadPanel().getJPanelForLoadDisplays().add(dialogSingle, null);	
+						}
 						containerLoadDialogs.put(containerName, dialogSingle);
 					}
 					
 					// --- Display the current values -----------------------------------
-					if (containerLoad==null) {
-						dialogSingle.setVisibleAWTsafe(false);								
-					} else {
-						dialogSingle.setVisibleAWTsafe(true);
-						dialogSingle.updateViewAWTsafe(containerName, containerDesc, benchmarkValue, containerLoad, containerNoAgents);
-						layoutNodesVisible++;
+					if (getSystemLoadPanel()!=null) {
+						if (containerLoad==null) {
+							dialogSingle.setVisibleAWTsafe(false);								
+						} else {
+							dialogSingle.setVisibleAWTsafe(true);
+							dialogSingle.updateViewAWTsafe(containerName, containerDesc, benchmarkValue, containerLoad, containerNoAgents);
+							layoutNodesVisible++;
+						}
 					}
 					// --- If wanted, save the current values to file -------------------
 					if (monitorSaveLoad==true) {
@@ -450,23 +459,27 @@ public class LoadMeasureAgent extends Agent {
 			}
 
 			// --- Refresh View ---------------------------------------------------------
-			int newloadDialogHeightMax = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-			int newloadDialogHeight = (SystemLoadSingle.loadPanelHeight * layoutNodesVisible) + (getSystemLoadPanel().getJToolBarLoad().getHeight() + this.dialogTitleHeight);
-			if (newloadDialogHeight>newloadDialogHeightMax) {
-				newloadDialogHeight=newloadDialogHeightMax;
+			if (getSystemLoadPanel()!=null) {
+				int newloadDialogHeightMax = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+				int newloadDialogHeight = (SystemLoadSingle.loadPanelHeight * layoutNodesVisible) + (getSystemLoadPanel().getJToolBarLoad().getHeight() + this.dialogTitleHeight);
+				if (newloadDialogHeight>newloadDialogHeightMax) {
+					newloadDialogHeight=newloadDialogHeightMax;
+				}
+				if (this.dialogHeight!=newloadDialogHeight) {
+					this.dialogHeight = newloadDialogHeight;
+					getSystemLoadDialog().setSize(getSystemLoadDialog().getWidth(), newloadDialogHeight);						
+				}		
 			}
-			if (this.dialogHeight!=newloadDialogHeight) {
-				this.dialogHeight = newloadDialogHeight;
-				getSystemLoadDialog().setSize(getSystemLoadDialog().getWidth(), newloadDialogHeight);						
-			}		
 
 			// --- If wanted, save the current values to file ---------------------------
 			if (monitorSaveLoad==true) {
 				buildAndSaveDataSet();
-				if (getSystemLoadPanel().jLabelRecord.getForeground().equals(Color.gray) ) {
-					getSystemLoadPanel().jLabelRecord.setForeground(Color.red);
-				} else {
-					getSystemLoadPanel().jLabelRecord.setForeground(Color.gray);
+				if (getSystemLoadPanel()!=null) {
+					if (getSystemLoadPanel().jLabelRecord.getForeground().equals(Color.gray) ) {
+						getSystemLoadPanel().jLabelRecord.setForeground(Color.red);
+					} else {
+						getSystemLoadPanel().jLabelRecord.setForeground(Color.gray);
+					}	
 				}
 			}
 			
@@ -936,8 +949,12 @@ public class LoadMeasureAgent extends Agent {
 				if (act!=null) {
 					Concept agentAction = act.getAction();
 					if (agentAction instanceof ShowMonitorGUI) {
-						getSystemLoadDialog().setVisible(true);
+						// --- Open Load monitor ----------
+						if (Application.isOperatingHeadless()==false) {
+							getSystemLoadDialog().setVisible(true);	
+						}
 					} else if (agentAction instanceof ShowThreadGUI) {
+						// --- Open Thread monitor --------
 						getThreadDialog().setVisible(true);
 					}
 				}

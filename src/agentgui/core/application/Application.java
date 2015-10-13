@@ -626,8 +626,10 @@ public class Application {
 	 * Opens the main application window (JFrame)
 	 */
 	public static void startApplication() {
-		setMainWindow(new MainWindow());
-		getProjectsLoaded().setProjectView();
+		if (isOperatingHeadless()==false) {
+			setMainWindow(new MainWindow());
+			getProjectsLoaded().setProjectView();
+		}
 	}
 	
 	/**
@@ -670,7 +672,9 @@ public class Application {
 			getProjectsLoaded();
 
 			startApplication();
-			getMainWindow().setStatusBar(Language.translate("Fertig"));
+			if (getMainWindow()!=null) {
+				getMainWindow().setStatusBar(Language.translate("Fertig"));
+			}
 			doBenchmark(false);
 			waitForBenchmark();
 		

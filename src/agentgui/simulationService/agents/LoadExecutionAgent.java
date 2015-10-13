@@ -103,7 +103,7 @@ public class LoadExecutionAgent extends Agent {
 			
 			// --- If the Action is a 'start'-action, it can be also a 'restart'-action -----
 			if (startArg==BASE_ACTION_Start) {
-				if (mainWindow.isEnabledSimStop()) {
+				if (mainWindow!=null && mainWindow.isEnabledSimStop()) {
 					startArg = BASE_ACTION_Restart;
 				}
 			}
@@ -114,10 +114,12 @@ public class LoadExecutionAgent extends Agent {
 				StaticLoadBalancingBase staticBalancing = getStartAndStaticLoadBalancingClass(myAgent);
 				if (staticBalancing!=null) {
 					myAgent.addBehaviour(staticBalancing);	
-					mainWindow.setEnableSimStart(false);
-					mainWindow.setEnableSimPause(true);
-					mainWindow.setEnableSimStop(true);
-					mainWindow.enableSetupSelector(false);
+					if (mainWindow!=null) {
+						mainWindow.setEnableSimStart(false);
+						mainWindow.setEnableSimPause(true);
+						mainWindow.setEnableSimStop(true);
+						mainWindow.enableSetupSelector(false);
+					}
 				} else {
 					myAgent.doDelete();
 				}
@@ -125,29 +127,24 @@ public class LoadExecutionAgent extends Agent {
 
 			case BASE_ACTION_Pause:
 				setPauseSimulation(true);
-				mainWindow.setEnableSimStart(true);
-				mainWindow.setEnableSimPause(false);
-				mainWindow.setEnableSimStop(true);
+				if (mainWindow!=null) {
+					mainWindow.setEnableSimStart(true);
+					mainWindow.setEnableSimPause(false);
+					mainWindow.setEnableSimStop(true);
+				}
 				myAgent.doDelete();
 				break;
+				
 			case BASE_ACTION_Restart:
 				setPauseSimulation(false);
-				mainWindow.setEnableSimStart(false);
-				mainWindow.setEnableSimPause(true);
-				mainWindow.setEnableSimStop(true);
+				if (mainWindow!=null) {
+					mainWindow.setEnableSimStart(false);
+					mainWindow.setEnableSimPause(true);
+					mainWindow.setEnableSimStop(true);
+				}
 				myAgent.doDelete();
 				break;
-// 			REMOVED! Instead 'Application.JadePlatform.jadeStop()' will 
-//			be invoked from the buttons of the CoreWindow 				
-//			case BASE_ACTION_Stop:
-//				//Application.JadePlatform.jadeStop();
-//				mainWindow.setEnableSimStart(true);
-//				mainWindow.setEnableSimPause(false);
-//				mainWindow.setEnableSimStop(false);
-//				myAgent.doDelete();
-//				break;
 			}
-			
 		}
 		
 	}

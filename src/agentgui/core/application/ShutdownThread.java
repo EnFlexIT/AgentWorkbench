@@ -117,7 +117,8 @@ public class ShutdownThread extends Thread {
 		while (true) {
 			// --- Check if the shutdown file exists ------ 
 			if (this.shutDownFile.exists()==false) {
-				System.out.println("=> Observed file '" + this.shutDownFile.getName() + "' was deleted - Shutdown " + Application.getGlobalInfo().getApplicationTitle() + " ...");
+				System.out.println("=> Observed file '" + this.shutDownFile.getName() + "' was deleted!");
+				System.out.println("=> Shutdown " + Application.getGlobalInfo().getApplicationTitle() + " ...");
 				Application.quit();
 				return;
 			}

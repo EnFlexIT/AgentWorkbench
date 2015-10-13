@@ -176,14 +176,15 @@ public class DBConnection {
 		this.dbError.setHead( "Datenbank nicht vorhanden!" );
 		this.dbError.setErrNumber( -1 );
 		this.dbError.setErr(true);
-		if ( this.dbError.showQuestion() == JOptionPane.NO_OPTION ) return false;	
 		
-		
-		System.out.println( Language.translate("Erzeuge die Datenbank für den Server-Master ... ") );
+		if (Application.isOperatingHeadless()==false) {
+			if (this.dbError.showQuestion()==JOptionPane.NO_OPTION ) return false;	
+		}
+		System.out.println(Language.translate("Erzeuge die Datenbank für den Server-Master ... "));
 
 		// --- Create DB --------------------------
 		sql = "CREATE DATABASE " + dbName + " DEFAULT CHARACTER SET utf8";
-		if ( this.getSqlExecuteUpdate(sql) == false ) return false;
+		if ( this.getSqlExecuteUpdate(sql)==false ) return false;
 		
 		// --- Set Connection to Database ---------
 		this.setConnection2Database(dbName);

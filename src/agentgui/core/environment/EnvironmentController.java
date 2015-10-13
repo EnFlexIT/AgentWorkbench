@@ -62,7 +62,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	private Project currProject = null;
 
 	/** The {@link AbstractDisplayAgent} that is currently using this EnvironmentController. */
-	private AbstractDisplayAgent myEnvironmentControllerAgent = null;
+	private AbstractDisplayAgent myDisplayAgent = null;
 
 	/** The current environment panel. */
 	private EnvironmentPanel myEnvironmentPanel = null;
@@ -74,9 +74,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * (Contains the slash at the end).
 	 */
 	private String envFolderPath = null;
-	/**
-	 * The list model for the agents, which has to be started with the current environment model 
-	 */
+	/** The list model for the agents, which has to be started with the current environment model */
 	private DefaultListModel agents2Start = new DefaultListModel();
 
 	
@@ -379,10 +377,10 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * user interactions into {@link ACLMessage} and {@link SimulationService}-notifications
 	 * that can change settings and parameters during the runtime of the agency.
 	 * 
-	 * @param myEnvironmentControllerAgent the environment controller agent
+	 * @param newDisplayAgent the new, extended {@link AbstractDisplayAgent}
 	 */
-	public void setEnvironmentControllerAgent(AbstractDisplayAgent myEnvironmentControllerAgent) {
-		this.myEnvironmentControllerAgent = myEnvironmentControllerAgent;
+	public void setDisplayAgent(AbstractDisplayAgent newDisplayAgent) {
+		this.myDisplayAgent = newDisplayAgent;
 	}
 	/**
 	 * Returns the {@link AbstractDisplayAgent} that is using this EnvironmentController 
@@ -392,8 +390,8 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * 
 	 * @return the environment controller agent
 	 */
-	public AbstractDisplayAgent getEnvironmentControllerAgent() {
-		return myEnvironmentControllerAgent;
+	public AbstractDisplayAgent getDisplayAgent() {
+		return myDisplayAgent;
 	}
 	
 }

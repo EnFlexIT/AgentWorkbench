@@ -68,11 +68,11 @@ public abstract class NetworkComponentAdapter {
 	 * Instantiates a new network component adapter that allows access 
 	 * to the controlling agent if there is one.
 	 * 
-	 * @see EnvironmentController#getEnvironmentControllerAgent()
-	 * @see EnvironmentController#setEnvironmentControllerAgent(agentgui.simulationService.agents.AbstractDisplayAgent)
+	 * @see EnvironmentController#getDisplayAgent()
+	 * @see EnvironmentController#setDisplayAgent(agentgui.simulationService.agents.AbstractDisplayAgent)
 	 * 
-	 * @see GraphEnvironmentController#getEnvironmentControllerAgent()
-	 * @see GraphEnvironmentController#setEnvironmentControllerAgent(agentgui.simulationService.agents.AbstractDisplayAgent)
+	 * @see GraphEnvironmentController#getDisplayAgent()
+	 * @see GraphEnvironmentController#setDisplayAgent(agentgui.simulationService.agents.AbstractDisplayAgent)
 	 * 
 	 * @param graphEnvironmentController the graph environment controller
 	 */
@@ -157,8 +157,8 @@ public abstract class NetworkComponentAdapter {
 	 */
 	public DisplayAgent getDisplayAgent() {
 		DisplayAgent displayAgent = null;
-		if (graphController!=null) {
-			displayAgent = (DisplayAgent) this.graphController.getEnvironmentControllerAgent();
+		if (this.graphController!=null) {
+			displayAgent = (DisplayAgent) this.graphController.getDisplayAgent();
 		}
 		return displayAgent;
 	}

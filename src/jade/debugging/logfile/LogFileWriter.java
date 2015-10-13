@@ -29,6 +29,7 @@
 package jade.debugging.logfile;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -60,8 +61,9 @@ public class LogFileWriter {
 	 */
 	public LogFileWriter() {
 		this.logFile = this.getLoggingFileName();
-//		this.startFileWriter();
-		new SysOutScanner(this);
+		if (this.logFile!=null) {
+			new SysOutScanner(this);	
+		}
 	}
 	
 	/**
@@ -69,8 +71,9 @@ public class LogFileWriter {
 	 */
 	public LogFileWriter(String logFile) {
 		this.logFile = logFile;
-//		this.startFileWriter();
-		new SysOutScanner(this);
+		if (this.logFile!=null) {
+			new SysOutScanner(this);	
+		}
 	}
 	
 	/**
@@ -78,7 +81,18 @@ public class LogFileWriter {
 	 * @return the logging path and file name 
 	 */
 	private String getLoggingFileName() {
-		return "./log/" + this.getTimeStampPrefix() + "_AgentGui.log";
+		// --- Check, if the logging directory exists -----
+		File logPath = new File("./log");
+		try {
+			if (logPath.exists()==false) {
+				logPath.mkdir();
+			}
+			return "./log/" + this.getTimeStampPrefix() + "_AgentGui.log";
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
 	}
 	/**
 	 * Gets the time stamp prefix for the log file.
@@ -170,9 +184,12 @@ public class LogFileWriter {
 		if (newText==null || newText.equals("")) {
 			return;
 		} else if (newText.endsWith(this.newLine)==false) {
-			newText = prefix + newText + newLine;
+			newText = newText.replace("\r\n", "\n");
+			newText = newText.replace("\r", "\n");
+			newText = newText.replace("\n"+"\n", "\n");
+			newText = prefix + newText.replace("\n", this.newLine + "                      ") + newLine;
 		}
-		
+
 		try {
 			this.bufferedWriter.write(newText);
 			this.bufferedWriter.flush();
