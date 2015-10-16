@@ -73,11 +73,12 @@ public class JadeUrlConfiguration {
 				this.currInetAddress = InetAddress.getLocalHost();
 			} else {
 				this.currURLorIP = this.filterPort(urlOrIPtoCheck);
-				this.currInetAddress = InetAddress.getByName(currURLorIP);
+				this.currInetAddress = InetAddress.getByName(this.currURLorIP);
 			}
 			this.errors=false;
 					
 		} catch (UnknownHostException err) {
+//			err.printStackTrace();
 
 			this.errors = true;
 			this.errorMsg = "Error while trying to receive network address '" + this.currURLorIP + "' !\n";

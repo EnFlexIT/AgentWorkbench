@@ -366,7 +366,6 @@ public class Platform extends Object {
 			
 			// --- Start Download-Server for project-resources ------
 			DownloadServer webServer = Application.startDownloadServer();			
-			//System.out.println(Language.translate("Starte Webserver") + ": " + webServer.getHTTPAddress() );
 			
 			// --- If the current project has external resources ---- 
 			boolean ideExecuted = Application.getGlobalInfo().AppExecutedOver().equalsIgnoreCase("IDE");

@@ -76,18 +76,42 @@ public class LogFileWriter {
 		}
 	}
 	
+	
+	/**
+	 * Returns the logging path for the Agent.GUI logging. Within Windows and other systems, the
+	 * local local directory './log' will be used. Within Linux the folder '/var/log/agentgui'
+	 * will be returned and used. 
+	 * 
+	 * @return the logging path
+	 */
+	private String getLoggingPath() {
+		
+		String logPath = "./log";
+		String os = System.getProperty("os.name");
+		
+		if (os.toLowerCase().contains("windows")==true) {
+			// --- nothing to do here ---
+		} else if (os.toLowerCase().contains("linux")==true) {
+			logPath = "/var/log/agentgui";
+		}
+		return logPath;
+	}
 	/**
 	 * Returns the logging path and file name as string.
 	 * @return the logging path and file name 
 	 */
 	private String getLoggingFileName() {
 		// --- Check, if the logging directory exists -----
-		File logPath = new File("./log");
+		File logPath = new File(this.getLoggingPath());
 		try {
 			if (logPath.exists()==false) {
-				logPath.mkdir();
+				try {
+					logPath.mkdir();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
-			return "./log/" + this.getTimeStampPrefix() + "_AgentGui.log";
+			return this.getLoggingPath() + "/" + this.getTimeStampPrefix() + "_AgentGui.log";
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();

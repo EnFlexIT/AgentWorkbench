@@ -31,6 +31,7 @@ package agentgui.core.application;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.lang.management.ManagementFactory;
 
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
@@ -68,6 +69,11 @@ public class ShutdownThread extends Thread {
 		
 		// --- Get the root path to the file --------------
 		String agentGuiRoot = Application.getGlobalInfo().getPathBaseDir();
+
+		// --- Determine the local process ID (PID) -------
+		String localProcessName = ManagementFactory.getRuntimeMXBean().getName();
+		String pidChar = localProcessName.substring(0, localProcessName.indexOf("@"));
+		Integer pid = Integer.parseInt(pidChar);
 		
 		// --- Determine the current execution mode -------
 		String fileSufix = Application.getGlobalInfo().getExecutionModeDescription();
@@ -75,12 +81,12 @@ public class ShutdownThread extends Thread {
 		fileSufix = fileSufix.replaceAll("\\[", "");
 		fileSufix = fileSufix.replaceAll("\\]", "");
 		fileSufix = fileSufix.replaceAll(" ", "");
-		fileSufix += "1";
+		fileSufix += "_" + pid;
 		
 		// --- Configure file location and name -----------
 		String shutDownFile = ShutDownFileNameTemplate.replace("XXXX", fileSufix);
 		File checkFile = new File(agentGuiRoot + shutDownFile);
-		Integer oldNo = 1;
+		Integer oldNo = pid;
 		while (checkFile.exists()) {
 			shutDownFile = shutDownFile.replace(oldNo + ".txt", (oldNo+1) + ".txt");
 			oldNo++;

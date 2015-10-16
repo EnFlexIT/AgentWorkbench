@@ -133,15 +133,15 @@ public class LoadService extends BaseService {
 	private Filter outFilter;
 	private ServiceComponent localSlice;
 	
-	private String myContainerMTPurl = null;
+	private String myContainerMTPurl;
 	
 	/** The local ClientRemoteContainerReply instance. */
-	private ClientRemoteContainerReply myCRCReply = null; 
+	private ClientRemoteContainerReply myCRCReply; 
 	
 	/** The List of Agents, which are registered to this service  **/ 
 	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
 	
-	private RemoteContainerConfig defaults4RemoteContainerConfig = null; 
+	private RemoteContainerConfig defaults4RemoteContainerConfig; 
 	
 	/**  The Load-Information Array of all slices **/
 	private LoadInformation loadInfo = new LoadInformation(); 
@@ -203,8 +203,7 @@ public class LoadService extends BaseService {
 	public Filter getCommandFilter(boolean direction) {
 		if(direction == Filter.INCOMING) {
 			return incFilter;
-		}
-		else {
+		} else {
 			return outFilter;
 		}
 	}
@@ -1529,7 +1528,7 @@ public class LoadService extends BaseService {
 			myPlatform.setIp(hostIP);
 			myPlatform.setUrl(hostName);
 			myPlatform.setPort(Integer.parseInt(port));
-			myPlatform.setHttp4mtp(myContainerMTPurl);	
+			myPlatform.setHttp4mtp(this.myContainerMTPurl);	
 					
 			// --- Set OS-Informations ------------------------
 			OSInfo myOS = new OSInfo();
