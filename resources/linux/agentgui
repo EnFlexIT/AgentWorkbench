@@ -97,7 +97,8 @@ case "${1:-''}" in
 	
 	'status'|'check')
 	if [ -f $PIDFILE ]; then
-	  echo "$SERVICE_NAME is running!"
+      PID=$(cat $PIDFILE);
+	  echo "$SERVICE_NAME is running (PID=$PID)!"
 	else
 	  echo "$SERVICE_NAME is NOT running!"
 	fi

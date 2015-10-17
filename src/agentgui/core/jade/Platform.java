@@ -39,6 +39,8 @@ import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
 import jade.wrapper.State;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -47,6 +49,7 @@ import javax.swing.JOptionPane;
 import agentgui.core.agents.UtilityAgent;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
 import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.LoadService;
@@ -247,6 +250,12 @@ public class Platform extends Object {
 		
 		if (jadeIsMainContainerRunning()==false) {
 			try {
+				// --------------------------------------------------
+				// --- In case of execution as Service, check -------
+				// --- Master-URL and maybe delay the STADE start ---
+				// --------------------------------------------------
+				this.delayHeadlessServerStartByCheckingMasterURL();
+				
 				// --- Start Platform -------------------------------
 				jadeRuntime = Runtime.instance();	
 				jadeRuntime.invokeOnTermination(new Runnable() {
@@ -281,6 +290,50 @@ public class Platform extends Object {
 		
 		Application.setStatusJadeRunning(true);
 		return startSucceed;
+	}
+	
+	/**
+	 * [Trial] Delays the server start by checking the master URL. Using Agent.GUI as
+	 * a Service on Linux systems caused an {@link UnknownHostException} that
+	 * disappeared when Agemt.GUI service was restarted. So maybe this delay can help
+	 * to solve the problem of the name resolution. 
+	 * Checking time is set to 30 seconds. After that the system will continue with 
+	 * regular JADE start. This method operates only in case of a headless Server execution.
+	 * 
+	 * @see Application#isRunningAsServer()
+	 * @see Application#isOperatingHeadless()
+	 * @see GlobalInfo#getServerMasterURL()
+	 */
+	private void delayHeadlessServerStartByCheckingMasterURL() {
+		
+		if (Application.isOperatingHeadless()==true && Application.isRunningAsServer()) {
+			
+			InetAddress inetAddr = null;
+			String masterURL = Application.getGlobalInfo().getServerMasterURL();
+			
+			long timeDelayStop = System.currentTimeMillis() + 30 * 1000; 
+			while (System.currentTimeMillis()<timeDelayStop) {
+
+				// --- Do the URL check -----------------------
+				try {
+					inetAddr = InetAddress.getByName(masterURL);
+					
+				} catch (UnknownHostException uhe) {
+					System.out.println("UnknownHostException for '" + masterURL + "' => Delaying JADE start ...");
+//					uhe.printStackTrace();
+				}
+				
+				// --- Exit if URL could be resolved ----------
+				if (inetAddr!=null) return;
+				
+				// --- Retry in the next second ---------------
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException ie) {
+					ie.printStackTrace();
+				}
+			} // --- end while ---
+		}
 	}
 	
 	/**

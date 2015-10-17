@@ -32,6 +32,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,9 +49,8 @@ public class LogFileWriter {
 	private final String newLine = System.getProperty("line.separator");
 	
 	private SimpleDateFormat dateFormatter;
-	
 	private long nextMidnightTimeStamp;
-	private String logFile;
+
 	private FileWriter fileWriter;
 	private BufferedWriter bufferedWriter;
 	
@@ -60,22 +60,8 @@ public class LogFileWriter {
 	 * log directory for the logging file.
 	 */
 	public LogFileWriter() {
-		this.logFile = this.getLoggingFileName();
-		if (this.logFile!=null) {
-			new SysOutScanner(this);	
-		}
+		new SysOutScanner(this);	
 	}
-	
-	/**
-	 * Instantiates a new log file writer.
-	 */
-	public LogFileWriter(String logFile) {
-		this.logFile = logFile;
-		if (this.logFile!=null) {
-			new SysOutScanner(this);	
-		}
-	}
-	
 	
 	/**
 	 * Returns the logging path for the Agent.GUI logging. Within Windows and other systems, the
@@ -97,6 +83,24 @@ public class LogFileWriter {
 		return logPath;
 	}
 	/**
+	 * Gets the time stamp prefix for the log file.
+	 * @return the time stamp prefix
+	 */
+	private String getTimeStampPrefix() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		return sdf.format(new Date(System.currentTimeMillis()));
+	}
+	/**
+	 * Returns the local process ID (PID).
+	 * @return the PID
+	 */
+	private Integer getPID() {
+		// --- Determine the local process ID (PID) -------
+		String localProcessName = ManagementFactory.getRuntimeMXBean().getName();
+		String pidChar = localProcessName.substring(0, localProcessName.indexOf("@"));
+		return Integer.parseInt(pidChar);
+	}
+	/**
 	 * Returns the logging path and file name as string.
 	 * @return the logging path and file name 
 	 */
@@ -111,20 +115,12 @@ public class LogFileWriter {
 					ex.printStackTrace();
 				}
 			}
-			return this.getLoggingPath() + "/" + this.getTimeStampPrefix() + "_AgentGui.log";
+			return this.getLoggingPath() + "/" + this.getTimeStampPrefix() + "_" + this.getPID() + "_AgentGui.log";
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		return null;
-	}
-	/**
-	 * Gets the time stamp prefix for the log file.
-	 * @return the time stamp prefix
-	 */
-	private String getTimeStampPrefix() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		return sdf.format(new Date(System.currentTimeMillis()));
 	}
 	
 	/**
@@ -132,7 +128,7 @@ public class LogFileWriter {
 	 */
 	private void startFileWriter(){
 		try {
-			this.fileWriter = new FileWriter(this.logFile, true);
+			this.fileWriter = new FileWriter(this.getLoggingFileName(), true);
 			this.bufferedWriter = new BufferedWriter(this.fileWriter);
 			
 		} catch (IOException ioe){
