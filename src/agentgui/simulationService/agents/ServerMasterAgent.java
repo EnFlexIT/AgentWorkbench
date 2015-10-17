@@ -105,7 +105,7 @@ public class ServerMasterAgent extends Agent {
 	private Ontology ontology = AgentGUI_DistributionOntology.getInstance();
 	private Codec codec = new SLCodec();
 	
-	private ParallelBehaviour parBehaiv = null;
+	private ParallelBehaviour parBehaiv;
 	private DBConnection dbConn = Application.getDatabaseConnection();
 	
 	/* (non-Javadoc)

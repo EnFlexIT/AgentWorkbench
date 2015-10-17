@@ -90,22 +90,22 @@ public class ServerClientAgent extends Agent {
 	private Codec codec = new SLCodec();
 	
 	private PlatformAddress mainPlatform = new PlatformAddress();
-	private AID mainPlatformAgent = null;
+	private AID mainPlatformAgent;
 	private boolean mainPlatformReachable = true;
 	
-	private ClientRemoteContainerReply myCRCreply = null;
-	private PlatformAddress myPlatform = null;
-	private PlatformPerformance myPerformance = null;
-	private OSInfo myOS = null;
-	private AgentGuiVersion myVersion = null;
+	private ClientRemoteContainerReply myCRCreply;
+	private PlatformAddress myPlatform;
+	private PlatformPerformance myPerformance;
+	private OSInfo myOS;
+	private AgentGuiVersion myVersion;
 	
 	private PlatformTime myPlatformTime = new PlatformTime();
 	private ClientRegister myRegistration = new ClientRegister();
 	private PlatformLoad myLoad = new PlatformLoad();
 	
-	private ParallelBehaviour parBehaiv = null;
-	private TriggerBehaiviour trigger = null;
-	private SaveNodeDescriptionBehaviour sndBehaiv = null;
+	private ParallelBehaviour parBehaiv;
+	private TriggerBehaiviour trigger;
+	private SaveNodeDescriptionBehaviour sndBehaiv;
 	
 	private long triggerTime = new Long(1000*1);
 	private long triggerTime4Reconnection = new Long(1000*20);
