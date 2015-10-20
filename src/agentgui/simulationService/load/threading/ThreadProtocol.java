@@ -270,7 +270,7 @@ public class ThreadProtocol implements Serializable {
 	 * @return the JVM name
 	 */
 	public String getJVMName() {
-		return this.jvmName;
+		return jvmName;
 	}
 
 	/**
@@ -278,7 +278,7 @@ public class ThreadProtocol implements Serializable {
 	 * @return the machine name
 	 */
 	public String getMachineName() {
-		return this.machineName;
+		return machineName;
 	}
 
 }

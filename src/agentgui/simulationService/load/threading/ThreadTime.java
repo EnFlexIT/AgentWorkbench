@@ -51,7 +51,6 @@ public class ThreadTime implements Serializable {
     
     /**
      * Instantiates a new thread time.
-     *
      * @param systemTime the CPU time
      * @param userTime the user time
      */
@@ -68,14 +67,14 @@ public class ThreadTime implements Serializable {
      */
     @Override
     public String toString() {
-    	return this.getThreadName();
+    	return getThreadName();
     }
     /**
      * Gets the thread name.
      * @return the thread name
      */
     public String getThreadName() {
-		return this.threadName;
+		return threadName;
 	}
 	/**
 	 * Sets the thread name.
@@ -150,7 +149,6 @@ public class ThreadTime implements Serializable {
 	 * @return the predictive metric
 	 */
 	public double getPredictiveMetric() {
-		// TODO Auto-generated method stub
 		return predictiveMetric;
 	}
 
@@ -159,7 +157,6 @@ public class ThreadTime implements Serializable {
 	 * @return the real metric
 	 */
 	public double getRealMetric() {
-		// TODO Auto-generated method stub
 		return realMetric;
 	}
 

@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.load.threading;
 
 import org.jfree.data.xy.XYSeries;
@@ -26,7 +54,14 @@ public class ThreadInfoStorageAgent extends ThreadInfoStorageSeries {
 //		DELTA_CPU_SYSTEM_TIME
 //		};
 	
-	public ThreadInfoStorageAgent(String name, String className, boolean isAgent) {
+	/**
+ * Instantiates a new thread info storage agent.
+ *
+ * @param name the name
+ * @param className the class name
+ * @param isAgent the is agent
+ */
+public ThreadInfoStorageAgent(String name, String className, boolean isAgent) {
 		super(name);
 		this.className = className;
 		this.setAgent(isAgent);
@@ -42,7 +77,7 @@ public class ThreadInfoStorageAgent extends ThreadInfoStorageSeries {
 	 * @return the predictMetricCPU
 	 */
 	public double getPredictMetricCPU() {
-		return this.predictMetricCPU;
+		return predictMetricCPU;
 	}
 	/**
 	 * @param predictMetricCPU the predictMetricCPU to set
@@ -67,7 +102,7 @@ public class ThreadInfoStorageAgent extends ThreadInfoStorageSeries {
 	 * @return the className
 	 */
 	public String getClassName() {
-		return this.className;
+		return className;
 	}
 	/**
 	 * @return the isAgent

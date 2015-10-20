@@ -33,8 +33,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -389,12 +387,11 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	 */
 	public DefaultTreeModel getTreeModel(){
 		
-		if (this.treeModel==null) {
-		    this.treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("Machines"));
+		if (treeModel==null) {
+		    treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("Machines"));
 		    
 		}
-		
-		return this.treeModel;
+		return treeModel;
 		
 	}
 
@@ -416,13 +413,13 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 			return;
 		}
 		// --- get root-element ---
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.getTreeModel().getRoot();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) getTreeModel().getRoot();
 		root.removeAllChildren();
 		// ---update keysets ---
-		this.machineSet 	= mapMachine.keySet();
-		this.jvmSet 		= mapJVM.keySet();
-		this.containerSet 	= mapContainer.keySet();
-		this.agentSet 		= mapAgent.keySet();
+		machineSet 	= mapMachine.keySet();
+		jvmSet 		= mapJVM.keySet();
+		containerSet 	= mapContainer.keySet();
+		agentSet 		= mapAgent.keySet();
 		
 		// -- set iterators ---
 		Iterator<String> iteratorMachine = machineSet.iterator();
@@ -469,8 +466,8 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	      	}
 		}
 	
-		this.getTreeModel().setRoot(root);
-		this.getTreeModel().nodeChanged(root);
+		getTreeModel().setRoot(root);
+		getTreeModel().nodeChanged(root);
 		return;
 	}
 	

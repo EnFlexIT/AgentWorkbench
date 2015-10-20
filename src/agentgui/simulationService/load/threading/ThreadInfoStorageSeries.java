@@ -46,6 +46,10 @@ public class ThreadInfoStorageSeries {
 	/** The xy series hashmap that Contains multiple data-series  */
 	private HashMap<String, XYSeries> xySeriesMap;
 
+	/**
+	 * Instantiates a new thread info storage series.
+	 * @param name the name
+	 */
 	public ThreadInfoStorageSeries(String name) {
 		this.name = name;
 		this.isSelected = false;
@@ -67,7 +71,7 @@ public class ThreadInfoStorageSeries {
 	 * @return the XY series
 	 */
 	public XYSeries getXYSeries(String key){
-		return this.xySeriesMap.get(key);
+		return xySeriesMap.get(key);
 	}
 	
 	/**
@@ -96,7 +100,7 @@ public class ThreadInfoStorageSeries {
 	
 	@Override
     public String toString(){
-         return this.name;
+         return name;
     }
 
 	/**
