@@ -319,7 +319,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
     	    	
     	    }
     	    // --- create scroll-pane in pop-up window ---
-    	    new ThreadInfoScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, true, className);
+    	    new ThreadInfoScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, null, true, className);
 		}
 	}
 	
@@ -385,7 +385,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * Cches if node is of class instance "ThreadInfoStorageAgent".
+	 * Checks if node is of class instance "ThreadInfoStorageAgent".
 	 *
 	 * @param node the node
 	 * @return true, if successful
@@ -494,7 +494,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 */
 	private ThreadInfoScrollPane getRightScrollPane(){
 		if (rightScrollPane == null) {
-			rightScrollPane = new ThreadInfoScrollPane(this.getThreadInfoStorageXYSeriesChartsDelta(), this.getThreadInfoStorageXYSeriesChartsTotal(), false, "");
+			rightScrollPane = new ThreadInfoScrollPane(getThreadInfoStorageXYSeriesChartsDelta(), getThreadInfoStorageXYSeriesChartsTotal(), null, false, "");
 		}
 		return rightScrollPane;
 		
@@ -532,46 +532,85 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 			            TreePath path = jTreeThreadInfoStorage.getPathForLocation(e.getX(), e.getY());
 			            
 			            if (path != null) {
-//			                System.out.println(path.getLastPathComponent().toString());
-			                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+			            	
+			            	DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 			                lastNode = node;
+			                String nodeName = "";
+			                Iterator<String> iterator = null;
 			                
-			                // --- toogle flag ---
-			                Object obj = lastNode.getUserObject();
-		            	    if(obj.getClass().toString().endsWith("ThreadInfoStorageAgent")){
-		            	    	ThreadInfoStorageAgent tia = (ThreadInfoStorageAgent)obj;
+			                // --- toggle flag ---
+			                Object userObject = lastNode.getUserObject();
+			                
+			                //--- determine class of user object ---
+		            	    if(userObject.getClass().toString().endsWith("ThreadInfoStorageAgent")){
+		            	    	//--- agent: display all series on main chart ---
+		            	    	ThreadInfoStorageAgent tia = (ThreadInfoStorageAgent)userObject;
 		            	    	tia.setSelected(!tia.isSelected());
-		            	    }
-							
-							if(threadInfoStorage.getMapAgent().get(node.toString()) != null){
-								
-								String agentName = lastNode.toString();
-    			                Iterator<String> iteratorAgent = threadInfoStorage.getMapAgent().get(agentName).getXYSeriesMap().keySet().iterator();
+		            	    	
+		            	    	nodeName = lastNode.toString();
+    			                iterator = threadInfoStorage.getMapAgent().get(nodeName).getXYSeriesMap().keySet().iterator();
     			                
-	                    	    while(iteratorAgent.hasNext()){
-	                    	    	String next = iteratorAgent.next();
-	                    	    	
-	                    	    	//--- show charts according to display settings  --
-	                    	    	if(next.contains("TOTAL")){
-	                    	    		XYSeries series = threadInfoStorage.getMapAgent().get(agentName).getXYSeries(next);
-	                    	    		
-		                    	    	if(getThreadInfoStorageXYSeriesChartsTotal().indexOf(series.getKey()) == -1){
-		                    	    		getThreadInfoStorageXYSeriesChartsTotal().addSeries(series);
-		                    	    	}else{
-		                    	    		getThreadInfoStorageXYSeriesChartsTotal().removeSeries(series);
-		                    	    	}
-	                    	    	}else if(next.contains("DELTA")){
-	                    	    		XYSeries series = threadInfoStorage.getMapAgent().get(agentName).getXYSeries(next);
-	                    	    		
-		                    	    	if(getThreadInfoStorageXYSeriesChartsDelta().indexOf(series.getKey()) == -1){
-		                    	    		getThreadInfoStorageXYSeriesChartsDelta().addSeries(series);
-		                    	    	}else{
-		                    	    		getThreadInfoStorageXYSeriesChartsDelta().removeSeries(series);
-		                    	    	}
-	                    	    		
-	                    	    	}
-	                    	    }								
-							}
+    			                if(threadInfoStorage.getMapAgent().get(node.toString()) != null){
+    			                	
+    	                    	    while(iterator.hasNext()){
+    	                    	    	String next = iterator.next();
+    	                    	    	XYSeries series = threadInfoStorage.getMapAgent().get(nodeName).getXYSeries(next);
+    	                    	    	
+    	                    	    	if(next.contains("TOTAL")){
+    	                    	    		//---toggle ---
+    		                    	    	if(getThreadInfoStorageXYSeriesChartsTotal().indexOf(series.getKey()) == -1){
+    		                    	    		getThreadInfoStorageXYSeriesChartsTotal().addSeries(series);
+    		                    	    	}else{
+    		                    	    		getThreadInfoStorageXYSeriesChartsTotal().removeSeries(series);
+    		                    	    	}
+    	                    	    	}else if(next.contains("DELTA")){
+    	                    	    		//---toggle ---
+    		                    	    	if(getThreadInfoStorageXYSeriesChartsDelta().indexOf(series.getKey()) == -1){
+    		                    	    		getThreadInfoStorageXYSeriesChartsDelta().addSeries(series);
+    		                    	    	}else{
+    		                    	    		getThreadInfoStorageXYSeriesChartsDelta().removeSeries(series);
+    		                    	    	}
+    		                    	    }
+    	                    	    }								
+    							}
+		            	    }else{//--- machine: display CPU-load above main chart ---
+		            	    	//---walk the path up to the user object for machine---
+		            	    	TreePath newPath = path;
+		            	    	while(newPath.getPathCount() > 1){
+		            	    		
+		            	    		lastNode = (DefaultMutableTreeNode) newPath.getLastPathComponent();
+					                userObject = lastNode.getUserObject();
+					                if(userObject.getClass().toString().endsWith("ThreadInfoStorageMachine")){
+					                	//---display series for machine in new window ---
+					                	XYSeriesCollection popupXYSeriesCollectionTotal = new XYSeriesCollection();
+					            	    XYSeriesCollection popupXYSeriesCollectionDelta = new XYSeriesCollection();
+					            	    XYSeriesCollection popupXYSeriesCollectionLoad = new XYSeriesCollection();
+					            	    
+					                	nodeName = lastNode.toString();
+		    			                iterator = threadInfoStorage.getMapMachine().get(nodeName).getXYSeriesMap().keySet().iterator();
+		    			                
+		    			                if(threadInfoStorage.getMapMachine().get(nodeName) != null){
+		    			                	
+		    	                    	    while(iterator.hasNext()){
+		    	                    	    	String next = iterator.next();
+		    	                    	    	XYSeries series = threadInfoStorage.getMapMachine().get(nodeName).getXYSeries(next);
+		    	                    	    	if(next.contains("TOTAL")){
+		    	                    	    		popupXYSeriesCollectionTotal.addSeries(series);
+		    	                    	    	}else if(next.contains("DELTA")){
+		    	                    	    		popupXYSeriesCollectionDelta.addSeries(series);		    	                    	    		
+		    	                    	    	}else if(next.contains("LOAD")){
+		    	                    	    		popupXYSeriesCollectionLoad.addSeries(series);		    	                    	    		
+		    	                    	    	}
+		    	                    	    }
+		    	                    	 // --- create scroll-pane in pop-up window ---
+			    			        	    new ThreadInfoScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, popupXYSeriesCollectionLoad, true, nodeName);
+		    							}
+		    			                
+					                	break;
+			            	    	}
+					                newPath = newPath.getParentPath();
+		            	    	}	
+		            	    }
 			            }
 			        }
 

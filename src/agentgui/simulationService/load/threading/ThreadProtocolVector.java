@@ -126,7 +126,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	 */
 	public DefaultTableModel getTableModel() {
 		
-		if (this.tableModel==null) {
+		if (tableModel==null) {
 			
 			Vector<String> header = new Vector<String>();
 			header.add("PID");
@@ -134,7 +134,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 			header.add("System Time [ms]");
 			header.add("User Time [ms]");
 			
-			this.tableModel = new DefaultTableModel(null, header){
+			tableModel = new DefaultTableModel(null, header){
 
 				private static final long serialVersionUID = 1L;
 
@@ -150,9 +150,9 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 				}
 			};
 			// --- Necessary for preventing sorter from throwing error about empty row
-			this.addTableModelRow("", new ThreadTime("", 0L, 0L));
+			addTableModelRow("", new ThreadTime("", 0L, 0L));
 		}
-		return this.tableModel;
+		return tableModel;
 	}
 	
 	

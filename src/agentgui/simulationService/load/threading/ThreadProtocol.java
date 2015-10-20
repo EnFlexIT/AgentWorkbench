@@ -55,7 +55,6 @@ public class ThreadProtocol implements Serializable {
 	
 	private long timestamp;
 	private float loadCPU;
-	
 	private String processID;
 	private String containerName;
 	private String jvmName;

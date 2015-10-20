@@ -30,7 +30,6 @@ package agentgui.simulationService.load.threading;
 
 import org.jfree.data.xy.XYSeries;
 
-
 /**
  * Protocol class for storing Thread-Load-Information of an Agent-Class
  * 

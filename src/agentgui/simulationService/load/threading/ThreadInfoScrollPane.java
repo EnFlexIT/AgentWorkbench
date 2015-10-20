@@ -37,6 +37,8 @@ import java.awt.Insets;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Random;
 
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -48,6 +50,8 @@ import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.general.DatasetChangeEvent;
+import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.xy.XYSeriesCollection;
 
 /**
@@ -64,6 +68,7 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	private ChartPanel jFreeChartPanel;
 	private XYSeriesCollection deltaCollection;
 	private XYSeriesCollection totalCollection;
+	private XYSeriesCollection loadCollection;
 	private JPanel JPanelFilter;
 	private JFreeChart chart;
 	
@@ -75,7 +80,8 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	
 	private XYLineAndShapeRenderer rendererTotal;
 	private XYLineAndShapeRenderer rendererDelta;
-	
+	private XYLineAndShapeRenderer rendererLoad;
+
 	/** Display setting.Set true to show delta. */
 	private boolean showDelta;
 	/** Display setting.Set true to show total. */
@@ -99,7 +105,7 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	 * @param popup the popup
 	 * @param frameTitle the frame title
 	 */
-	public ThreadInfoScrollPane(XYSeriesCollection deltaCollection, XYSeriesCollection totalCollection, boolean popup, String frameTitle) {		
+	public ThreadInfoScrollPane(XYSeriesCollection deltaCollection, XYSeriesCollection totalCollection, XYSeriesCollection loadCollection, boolean popup, String frameTitle) {		
 		super();
 		this.showDelta = true;
 		this.showTotal = true;
@@ -110,6 +116,7 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 		this.frameTitle = frameTitle;
 		this.deltaCollection = deltaCollection;
 		this.totalCollection = totalCollection;
+		this.loadCollection = loadCollection;
 		initialize();
 		
 	}
@@ -127,6 +134,45 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 		    newWindow.setContentPane(this);
 		    newWindow.pack();
 		    newWindow.setVisible(true);
+		}
+		deltaCollection.addChangeListener(new CollectionSeriesChangeListener());
+	}
+	class CollectionSeriesChangeListener implements DatasetChangeListener{
+		private Random rand;
+		private int r,g,b;
+		private String seriesKey;
+		private Paint color;
+		private HashMap<String, Paint> lineColorMap;
+		
+		public CollectionSeriesChangeListener(){
+			this.rand = new Random();
+			this.lineColorMap = new HashMap<String, Paint>();
+		}
+		
+		@Override
+		public void datasetChanged(DatasetChangeEvent event) {
+			if(popup == false){
+				// -- set one color for a series  ---
+				
+				for(int x=0;x+2<=deltaCollection.getSeries().size(); x=x+2){
+					seriesKey = deltaCollection.getSeries(x).getKey().toString();				
+					
+					if(lineColorMap.containsKey(seriesKey) == false){
+						r = rand.nextInt(256);
+						g = rand.nextInt(256);
+						b = rand.nextInt(256);
+						color = new Color(r, g, b);
+						lineColorMap.put(seriesKey, color);
+					}else{
+						color = lineColorMap.get(seriesKey);
+					}
+					
+					rendererDelta.setSeriesPaint(x, color);
+					rendererDelta.setSeriesPaint(x+1,color);
+					rendererTotal.setSeriesPaint(x, color);
+					rendererTotal.setSeriesPaint(x+1, color);
+				}
+			}		
 		}
 	}
 
@@ -241,10 +287,14 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 		}
 		
 		//--- hide or show lines according to checkbox ---
-		rendererTotal.setSeriesLinesVisible(0, (showSystemTime  && showTotal));
-		rendererTotal.setSeriesLinesVisible(1, (showUserTime && showTotal));
-		rendererDelta.setSeriesLinesVisible(0, (showSystemTime  && showDelta));
-		rendererDelta.setSeriesLinesVisible(1, (showUserTime && showDelta));
+		for(int x=0;x<=totalCollection.getSeries().size(); x=x+2){
+			rendererTotal.setSeriesLinesVisible(x, (showSystemTime  && showTotal));
+			rendererTotal.setSeriesLinesVisible(x+1, (showUserTime && showTotal));
+		}
+		for(int x=0;x<=deltaCollection.getSeries().size(); x=x+2){
+			rendererDelta.setSeriesLinesVisible(x, (showSystemTime  && showDelta));
+			rendererDelta.setSeriesLinesVisible(x+1, (showUserTime && showDelta));
+		}
 		//--- hide or show legend ---
 		chart.getLegend().setVisible(showLegend);
 		}
@@ -320,7 +370,6 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	private ChartPanel getJFreeChartPanel() {
 		if (jFreeChartPanel == null) {
 			
-			
 			jFreeChartPanel = new ChartPanel(getJFreeChart());
 			
 			jFreeChartPanel.setMinimumDrawWidth( 0 );
@@ -357,43 +406,63 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 			
 			rendererTotal = new XYLineAndShapeRenderer(true, false);
 			rendererDelta = new XYLineAndShapeRenderer(true, false);
+			rendererLoad = new XYLineAndShapeRenderer(true, false);
 			
-			// --- total series ->  dotted line style ---
+			// --- user time series ->  dotted line style ---
 			float[][] pattern = {{10.0f},{10.0f,10.0f},{10.0f,10.0f,2.0f,10.0f},{1.0f,10.0f}};
 			BasicStroke stroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_MITER, 10.0f, pattern[3], 0.0f);
-			rendererTotal.setSeriesStroke(0, stroke);
 			rendererTotal.setSeriesStroke(1, stroke);
+			rendererDelta.setSeriesStroke(1, stroke);
 			
-			// -- set fixed colors if popup ---
+			NumberAxis axisDelta = new NumberAxis("Delta CPU-Time [ms]");
+			NumberAxis axisTotal = new NumberAxis("Total CPU-Time [ms]");;
+			NumberAxis axisLoad = new NumberAxis("Machine CPU-LOAD [%]");
+			
+			
 			if(popup == true){
-				rendererTotal.setSeriesPaint(0, (Paint) Color.RED);
-				rendererTotal.setSeriesPaint(1, (Paint) Color.BLACK);
-				
-				rendererDelta.setSeriesPaint(0, (Paint) Color.RED);
+				// -- set different, fixed colors if pop up ---
+				rendererDelta.setSeriesPaint(0, (Paint) Color.BLACK);
 				rendererDelta.setSeriesPaint(1, (Paint) Color.BLACK);
+				axisDelta.setLabelPaint(Color.BLACK);
+				
+				rendererTotal.setSeriesPaint(0, (Paint) Color.RED);
+				rendererTotal.setSeriesPaint(1, (Paint) Color.RED);	
+				if(loadCollection == null){
+					axisTotal.setLabelPaint(Color.RED);
+				}
 			}
-	        
-			//--- left axis scale ---
-			plot.setDataset(0, deltaCollection);
-			plot.setRenderer(0, rendererDelta);
-		    NumberAxis axisDelta = new NumberAxis("Delta CPU-Time [ms]");
-//		    axisDelta.setAutoRange(true);
-//		    axisDelta.setAutoRangeIncludesZero(false);
-		    plot.setRangeAxis(0, axisDelta);
-		    
-			//--- right axis scale ---
-		    plot.setDataset(1, totalCollection);
-		    plot.setRenderer(1, rendererTotal);
-		    NumberAxis axisTotal = new NumberAxis("Total CPU-Time [ms]");
-//		    axisTotal.setAutoRange(true);
-//		    axisTotal.setAutoRangeIncludesZero(false);
-		    plot.setRangeAxis(1, axisTotal);
-		    
+	        //--- CPU-load is always BLUE ---
+			rendererLoad.setSeriesPaint(0, (Paint) Color.BLUE);
+			axisLoad.setLabelPaint(Color.BLUE);
+			
+			if(deltaCollection != null){
+				//--- left axis scale ---
+				plot.setDataset(0, deltaCollection);
+				plot.setRenderer(0, rendererDelta);
+			    axisDelta.setAutoRangeIncludesZero(false);
+			    plot.setRangeAxis(0, axisDelta);
+			}
+			if(totalCollection != null){
+				//--- right axis scale ---
+			    plot.setDataset(1, totalCollection);
+			    plot.setRenderer(1, rendererTotal);
+			    axisTotal.setAutoRangeIncludesZero(false);
+			    plot.setRangeAxis(1, axisTotal);
+			}
+			if(loadCollection != null){
+				//--- right axis scale ---
+			    plot.setDataset(2, loadCollection);
+			    plot.setRenderer(2, rendererLoad);
+			    //---CPU-load  0-100%
+			    axisLoad.setRange(0, 100);
+			    plot.setRangeAxis(2, axisLoad);
+			}
 		    //--- first data set on left axis ---
 		    plot.mapDatasetToRangeAxis(0, 0);
 		    //--- first data set on right axis ---
 		    plot.mapDatasetToRangeAxis(1, 1);
-		    
+		    //--- third data set on right axis ---
+		    plot.mapDatasetToRangeAxis(2, 2);
 		    // --- styling ---
 		    plot.setBackgroundPaint(Color.WHITE);
 		    plot.setDomainGridlinePaint(Color.BLACK);

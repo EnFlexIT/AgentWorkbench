@@ -53,7 +53,7 @@ public class ThreadInfoStorageSeries {
 	public ThreadInfoStorageSeries(String name) {
 		this.name = name;
 		this.isSelected = false;
-		xySeriesMap = new HashMap<String, XYSeries>();
+		this.xySeriesMap = new HashMap<String, XYSeries>();
 	}
 	
 	/**

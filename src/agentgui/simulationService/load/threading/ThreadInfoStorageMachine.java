@@ -51,11 +51,11 @@ public class ThreadInfoStorageMachine extends ThreadInfoStorageSeries{
 	 */
 	public ThreadInfoStorageMachine(String name) {
 		super(name);
-		setXYSeries(TOTAL_CPU_USER_TIME,new XYSeries(TOTAL_CPU_USER_TIME+DELIMITER+name));
-		setXYSeries(DELTA_CPU_USER_TIME,new XYSeries(DELTA_CPU_USER_TIME+DELIMITER+name));
-		setXYSeries(TOTAL_CPU_SYSTEM_TIME,new XYSeries(TOTAL_CPU_SYSTEM_TIME+DELIMITER+name));
-		setXYSeries(DELTA_CPU_SYSTEM_TIME,new XYSeries(DELTA_CPU_SYSTEM_TIME+DELIMITER+name));
-		setXYSeries(LOAD_CPU,new XYSeries(LOAD_CPU+name));
+		setXYSeries(TOTAL_CPU_USER_TIME, new XYSeries(TOTAL_CPU_USER_TIME+DELIMITER+name));
+		setXYSeries(DELTA_CPU_USER_TIME, new XYSeries(DELTA_CPU_USER_TIME+DELIMITER+name));
+		setXYSeries(TOTAL_CPU_SYSTEM_TIME, new XYSeries(TOTAL_CPU_SYSTEM_TIME+DELIMITER+name));
+		setXYSeries(DELTA_CPU_SYSTEM_TIME, new XYSeries(DELTA_CPU_SYSTEM_TIME+DELIMITER+name));
+		setXYSeries(LOAD_CPU, new XYSeries(LOAD_CPU+DELIMITER+name));
 	}
 	
 	/**
