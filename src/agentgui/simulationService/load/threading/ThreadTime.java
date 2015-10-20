@@ -44,18 +44,20 @@ public class ThreadTime implements Serializable {
 	private String className;
 	private boolean isAgent;
 	
-	private long cpuTime;
+	private long systemTime;
 	private long userTime;
+	private double predictiveMetric;
+	private double realMetric;
     
     /**
      * Instantiates a new thread time.
      *
-     * @param cpuTime the CPU time
+     * @param systemTime the CPU time
      * @param userTime the user time
      */
     public ThreadTime(String threadName, long cpuTime, long userTime) {
     	this.setThreadName(threadName);
-    	this.setCpuTime(cpuTime);
+    	this.setSystemTime(cpuTime);
     	this.setUserTime(userTime);
     	// --- default ---
     	this.setIsAgent(false);
@@ -114,18 +116,18 @@ public class ThreadTime implements Serializable {
 	}
 	
 	/**
-     * Gets the cpu time.
+     * Gets the system cpu time.
      * @return the cpu time
      */
-    public long getCpuTime() {
-		return cpuTime;
+    public long getSystemTime() {
+		return systemTime;
 	}
 	/**
-	 * Sets the cpu time.
-	 * @param cpuTime the new cpu time
+	 * Sets the system cpu time.
+	 * @param systemTime the new cpu time
 	 */
-	public void setCpuTime(long cpuTime) {
-		this.cpuTime = cpuTime;
+	public void setSystemTime(long cpuTime) {
+		this.systemTime = cpuTime;
 	}
 	
 	/**
@@ -141,6 +143,40 @@ public class ThreadTime implements Serializable {
 	 */
 	public void setUserTime(long userTime) {
 		this.userTime = userTime;
+	}
+
+	/**
+	 * Gets the predictive metric.
+	 * @return the predictive metric
+	 */
+	public double getPredictiveMetric() {
+		// TODO Auto-generated method stub
+		return predictiveMetric;
+	}
+
+	/**
+	 * Gets the real metric.
+	 * @return the real metric
+	 */
+	public double getRealMetric() {
+		// TODO Auto-generated method stub
+		return realMetric;
+	}
+
+	/**
+	 * Sets the predictive metric.
+	 * @param predictiveMetric the predictiveMetric to set
+	 */
+	public void setPredictiveMetric(double predictiveMetric) {
+		this.predictiveMetric = predictiveMetric;
+	}
+
+	/**
+	 * Sets the real metric.
+	 * @param realMetric the realMetric to set
+	 */
+	public void setRealMetric(double realMetric) {
+		this.realMetric = realMetric;
 	}
 
 }

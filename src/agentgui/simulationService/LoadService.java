@@ -1118,6 +1118,13 @@ public class LoadService extends BaseService {
 			// --- Add information of container and machine name ----
 			threadProtocol.setContainerName(myCRCReply.getRemoteContainerName());
 			threadProtocol.setProcessID(myCRCReply.getRemotePID());
+			// --- jvm@machine, e.g. 73461@dell-blade-2 ---
+			String[] temp = threadProtocol.getProcessID().split("@");
+			String jvmName = temp[0];
+			String machineName = temp[1];
+			
+			threadProtocol.setJVMName(jvmName);
+			threadProtocol.setMachineName(machineName);
 			
 			// --- Send protocol to the main container --------------
 			try {

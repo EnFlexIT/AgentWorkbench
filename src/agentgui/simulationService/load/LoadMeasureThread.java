@@ -599,7 +599,7 @@ public class LoadMeasureThread extends Thread {
 				public void run() {
 					
 					// --- Create a protocol instance -------------------------
-					ThreadProtocol tp = new ThreadProtocol(timestamp);
+					ThreadProtocol tp = new ThreadProtocol(timestamp, getLoadCPU());
 
 					// --- Configure ThreadMXBean if possible and needed ------ 
 					ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
@@ -617,6 +617,7 @@ public class LoadMeasureThread extends Thread {
 			        String threadName;
 			        long cpuTime = 0L;
 			        long userTime = 0L;
+			        long factorMiliseconds = 1000000;
 
 			        long[] ids = tmxb.getAllThreadIds();
 			        for (long id : ids) {
@@ -628,7 +629,8 @@ public class LoadMeasureThread extends Thread {
 			                continue;   // Thread died
 
 			        	threadName = tmxb.getThreadInfo(id).getThreadName();
-			        	tp.getThreadTimes().add(new ThreadTime(threadName, cpuTime, userTime));
+			        	// --- add times, converted to milliseconds, tothreadProtocol
+			        	tp.getThreadTimes().add(new ThreadTime(threadName, (cpuTime/factorMiliseconds), (userTime/factorMiliseconds)));
 			        }
 			        // --- Send protocol to the requester of the measurement --
 			        threadTimeReceiver.receiveThreadProtocol(tp);

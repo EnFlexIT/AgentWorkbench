@@ -44,7 +44,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Protocol class for storing Thread-Times
+ * Transport Protocol class for recorded Thread-Times
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
@@ -54,9 +54,12 @@ public class ThreadProtocol implements Serializable {
 	private static final long serialVersionUID = 7906666593362238059L;
 	
 	private long timestamp;
+	private float loadCPU;
 	
 	private String processID;
 	private String containerName;
+	private String jvmName;
+	private String machineName;
 	
 	private Vector<ThreadTime> threadTimes;
 	
@@ -71,11 +74,11 @@ public class ThreadProtocol implements Serializable {
 	 * Instantiates a new thread protocol.
 	 * @param timestamp the time stamp
 	 */
-	public ThreadProtocol(long timestamp) {
+	public ThreadProtocol(long timestamp, float loadCPU) {
 		this.setTimestamp(timestamp);
+		this.setLoadCPU(loadCPU);
 	}
-	
-	
+
 	/**
 	 * Instantiates a new thread protocol.
 	 *
@@ -84,8 +87,9 @@ public class ThreadProtocol implements Serializable {
 	 * @param containerName the container name
 	 * @param threadTimes the thread times
 	 */
-	public ThreadProtocol(long timestamp, String processID, String containerName, Vector<ThreadTime> threadTimes) {
+	public ThreadProtocol(long timestamp, String processID, String containerName, float loadCPU, Vector<ThreadTime> threadTimes) {
 		this.containerName = containerName;
+		this.loadCPU = loadCPU;
 		this.processID = processID;
 		this.timestamp = timestamp;
 		this.threadTimes = threadTimes;
@@ -104,6 +108,22 @@ public class ThreadProtocol implements Serializable {
 	 */
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	/**
+	 * Sets the load cpu.
+	 * @param loadCPU the new load cpu
+	 */
+	public void setLoadCPU(float loadCPU) {
+		this.loadCPU = loadCPU;
+	}
+	
+	/**
+	 * Gets the load cpu.
+	 * @return the load cpu
+	 */
+	public float getLoadCPU() {
+		return loadCPU;
 	}
 	
 	/**
@@ -154,7 +174,6 @@ public class ThreadProtocol implements Serializable {
 		this.processID = processID;
 	}
 	
-
 	/**
 	 * Save.
 	 *
@@ -222,11 +241,44 @@ public class ThreadProtocol implements Serializable {
 		
 		if (tp!=null) {
 			this.setContainerName(tp.getContainerName());
+			this.setLoadCPU(tp.getLoadCPU());
 			this.setProcessID(tp.getProcessID());
 			this.setTimestamp(tp.getTimestamp());
 			this.setThreadTimes(tp.getThreadTimes());
 		}
 		return done;
+	}
+
+	/**
+	 * Sets the JVM name.
+	 * @param jvmName the new JVM name
+	 */
+	public void setJVMName(String jvmName) {
+		this.jvmName = jvmName;
+	}
+
+	/**
+	 * Sets the machine name.
+	 * @param machineName the new machine name
+	 */
+	public void setMachineName(String machineName) {
+		this.machineName = machineName;
+	}
+	
+	/**
+	 * Gets the JVM name.
+	 * @return the JVM name
+	 */
+	public String getJVMName() {
+		return this.jvmName;
+	}
+
+	/**
+	 * Gets the machine name.
+	 * @return the machine name
+	 */
+	public String getMachineName() {
+		return this.machineName;
 	}
 
 }

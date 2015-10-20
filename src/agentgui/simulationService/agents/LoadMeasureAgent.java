@@ -80,6 +80,7 @@ import agentgui.simulationService.load.gui.SystemLoadSingle;
 import agentgui.simulationService.load.threading.ThreadMeasureBehaviour;
 import agentgui.simulationService.load.threading.ThreadMeasureDialog;
 import agentgui.simulationService.load.threading.ThreadProtocol;
+import agentgui.simulationService.load.threading.ThreadInfoStorage;
 import agentgui.simulationService.load.threading.ThreadProtocolVector;
 import agentgui.simulationService.ontology.OSInfo;
 import agentgui.simulationService.ontology.PlatformLoad;
@@ -185,6 +186,7 @@ public class LoadMeasureAgent extends Agent {
 	// ---- Variables for threat measurements -----------------------
 	private ThreadMeasureBehaviour threadMeasureBehaviour; 
 	private ThreadProtocolVector threadProtocolVector;
+	private ThreadInfoStorage threadInfoStorage;
 	
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
@@ -877,6 +879,7 @@ public class LoadMeasureAgent extends Agent {
 				this.getThreadProtocolVector().clear();
 			}
 			this.getThreadProtocolVector().add(tp);
+			this.getThreadInfoStorage().add(tp);
 		}
 	}
 	/**
@@ -888,6 +891,17 @@ public class LoadMeasureAgent extends Agent {
 			threadProtocolVector = new ThreadProtocolVector();
 		}
 		return threadProtocolVector;
+	}
+	
+	/**
+	 * Gets the thread info storage.
+	 * @return the thread info storage
+	 */
+	public ThreadInfoStorage getThreadInfoStorage() {
+		if (threadInfoStorage==null) {
+			threadInfoStorage = new ThreadInfoStorage();
+		}
+		return threadInfoStorage;
 	}
 	
 	/**

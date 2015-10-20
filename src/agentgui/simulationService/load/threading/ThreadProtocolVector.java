@@ -52,7 +52,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 
 	private HashMap<String, AgentClassElement4SimStart> agentStartHashMapReminder;
 	private DefaultTableModel tableModel;
-	
+
 	/**
 	 * Instantiates a new thread protocol vector.
 	 */
@@ -154,6 +154,8 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		}
 		return this.tableModel;
 	}
+	
+	
 	/**
 	 * Adds a table model row.
 	 * @param pid the process ID
@@ -176,13 +178,15 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		Vector<Object> row = new Vector<Object>();
 		row.add(pid);
 		row.add(threadTime);
-		row.add(threadTime.getCpuTime()/1000000);// convert nanoseconds to milliseconds
-		row.add(threadTime.getUserTime()/1000000);// convert nanoseconds to milliseconds
+		row.add(threadTime.getSystemTime());
+		row.add(threadTime.getUserTime());
 		
 		// --- Add row to table model -------------------------------
 		this.getTableModel().addRow(row);
 	
 	}
+	
+	
 	/**
 	 * Clears the table model.
 	 */
@@ -203,6 +207,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		
 		// --- Add the new Thread Times to the table model ----------
 		String pid = threadProtocol.getProcessID();
+		this.clearTableModel();
 		for (int i = 0; i < threadProtocol.getThreadTimes().size(); i++) {
 			this.addTableModelRow(pid, threadProtocol.getThreadTimes().get(i));
 		}
@@ -229,19 +234,6 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		} else {
 			return this.get(0).getTimestamp();
 		}
-	}
-	
-	/**
-	 * Gets the Vector of all thread times.
-	 * @return the thread times
-	 */
-	public Vector<ThreadTime> getThreadTimes() {
-		Vector<ThreadTime> threadTimes = new Vector<ThreadTime>();
-		for (int i = 0; i < this.size(); i++) {
-			ThreadProtocol tp = this.get(i);
-			threadTimes.addAll(tp.getThreadTimes());
-		}
-		return threadTimes;
 	}
 	
 }

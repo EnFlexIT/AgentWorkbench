@@ -58,7 +58,9 @@ public class ThreadMeasureDialog extends JFrame {
 	private JTabbedPane tabbedPane;
 	
 	private ThreadProtocolVector threadProtocolVector;
+	private ThreadInfoStorage threadInfoStorage;
 	private ThreadMeasureProtocolTab jPanelMeasureProtocol;
+	private ThreadMeasureDetailTab jPanelMeasureDetail;
 	private ThreadMeasureToolBar toolBar;
 
 	
@@ -69,6 +71,7 @@ public class ThreadMeasureDialog extends JFrame {
 	public ThreadMeasureDialog(LoadMeasureAgent agent) {
 		this.myAgent = agent;
 		this.threadProtocolVector = this.myAgent.getThreadProtocolVector();
+		this.threadInfoStorage = this.myAgent.getThreadInfoStorage();
 		this.initialize();
 	}
 	
@@ -111,6 +114,8 @@ public class ThreadMeasureDialog extends JFrame {
 		if (tabbedPane == null) {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			tabbedPane.addTab("Thread Measurement", null, getJPanelMeasureProtocol(), null);
+			tabbedPane.addTab("Thread Details", null, getJPanelMeasureDetail(), null);
+			
 		}
 		return tabbedPane;
 	}
@@ -119,6 +124,12 @@ public class ThreadMeasureDialog extends JFrame {
 			jPanelMeasureProtocol = new ThreadMeasureProtocolTab(this.threadProtocolVector);
 		}
 		return jPanelMeasureProtocol;
+	}
+	public ThreadMeasureDetailTab getJPanelMeasureDetail() {
+		if (jPanelMeasureDetail == null) {
+			jPanelMeasureDetail = new ThreadMeasureDetailTab(this.threadInfoStorage);
+		}
+		return jPanelMeasureDetail;
 	}
 	private ThreadMeasureToolBar getThreadMeasureToolBar() {
 		if (toolBar == null) {
