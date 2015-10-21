@@ -28,6 +28,8 @@
  */
 package agentgui.simulationService.load.threading;
 
+import java.awt.Color;
+
 import org.jfree.data.xy.XYSeries;
 
 
@@ -37,42 +39,48 @@ import org.jfree.data.xy.XYSeries;
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ThreadInfoStorageAgent extends ThreadInfoStorageSeries {
+	/**
+	* The available series keys as constants
+	*/
+	public final String TOTAL_CPU_USER_TIME   = "TOTAL_CPU_USER_TIME";
+	public final String DELTA_CPU_USER_TIME   = "DELTA_CPU_USER_TIME";
+	public final String TOTAL_CPU_SYSTEM_TIME = "TOTAL_CPU_SYSTEM_TIME";
+	public final String DELTA_CPU_SYSTEM_TIME = "DELTA_CPU_SYSTEM_TIME";
 	
 	private double predictMetricCPU;
 	private double realMetricCPU;
 	protected String className;
 	private boolean isAgent;
 	
-	public final String TOTAL_CPU_USER_TIME   = "TOTAL_CPU_USER_TIME";
-	public final String DELTA_CPU_USER_TIME   = "DELTA_CPU_USER_TIME";
-	public final String TOTAL_CPU_SYSTEM_TIME = "TOTAL_CPU_SYSTEM_TIME";
-	public final String DELTA_CPU_SYSTEM_TIME = "DELTA_CPU_SYSTEM_TIME";
-//	public enum seriesAvailable {
-//		TOTAL_CPU_USER_TIME, 
-//		DELTA_CPU_USER_TIME, 
-//		TOTAL_CPU_SYSTEM_TIME, 
-//		DELTA_CPU_SYSTEM_TIME
-//		};
-	
 	/**
- * Instantiates a new thread info storage agent.
- *
- * @param name the name
- * @param className the class name
- * @param isAgent the is agent
- */
-public ThreadInfoStorageAgent(String name, String className, boolean isAgent) {
+	 * Instantiates a new thread info storage agent.
+	 * @param name the name
+	 * @param className the class name
+	 * @param isAgent the is agent
+	 */
+	public ThreadInfoStorageAgent(String name, String className, boolean isAgent) {
 		super(name);
 		this.className = className;
-		this.setAgent(isAgent);
-//		for (seriesAvailable ser : seriesAvailable.values()) {
-//			setXYSeries(ser.toString(),new XYSeries(name));
-//		}
-		setXYSeries(TOTAL_CPU_USER_TIME,new XYSeries(TOTAL_CPU_USER_TIME+DELIMITER+name));
-		setXYSeries(DELTA_CPU_USER_TIME,new XYSeries(DELTA_CPU_USER_TIME+DELIMITER+name));
-		setXYSeries(TOTAL_CPU_SYSTEM_TIME,new XYSeries(TOTAL_CPU_SYSTEM_TIME+DELIMITER+name));
-		setXYSeries(DELTA_CPU_SYSTEM_TIME,new XYSeries(DELTA_CPU_SYSTEM_TIME+DELIMITER+name));
+		this.isAgent = isAgent;
+		initialize();
 	}
+	
+	/**
+	 * Initialize.
+	 */
+	private void initialize(){
+		getXYSeriesMap().put(TOTAL_CPU_USER_TIME, new XYSeries(TOTAL_CPU_USER_TIME+DELIMITER+name));
+		getXYSeriesMap().put(DELTA_CPU_USER_TIME, new XYSeries(DELTA_CPU_USER_TIME+DELIMITER+name));
+		getXYSeriesMap().put(TOTAL_CPU_SYSTEM_TIME, new XYSeries(TOTAL_CPU_SYSTEM_TIME+DELIMITER+name));
+		getXYSeriesMap().put(DELTA_CPU_SYSTEM_TIME, new XYSeries(DELTA_CPU_SYSTEM_TIME+DELIMITER+name));	
+		
+		// --- default: total series RED, delta series BLACK ---
+		getXySeriesLineColorMap().put(TOTAL_CPU_USER_TIME+DELIMITER+name, Color.RED);
+		getXySeriesLineColorMap().put(DELTA_CPU_USER_TIME+DELIMITER+name, Color.BLACK);
+		getXySeriesLineColorMap().put(TOTAL_CPU_SYSTEM_TIME+DELIMITER+name, Color.RED);
+		getXySeriesLineColorMap().put(DELTA_CPU_SYSTEM_TIME+DELIMITER+name, Color.BLACK);
+	}
+	
 	/**
 	 * @return the predictMetricCPU
 	 */

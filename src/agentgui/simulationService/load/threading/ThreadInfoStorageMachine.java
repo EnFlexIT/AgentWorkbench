@@ -28,6 +28,8 @@
  */
 package agentgui.simulationService.load.threading;
 
+import java.awt.Color;
+
 import org.jfree.data.xy.XYSeries;
 /**
  * Storage class for storing Thread-Load-Information of (physical)machine
@@ -35,15 +37,17 @@ import org.jfree.data.xy.XYSeries;
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ThreadInfoStorageMachine extends ThreadInfoStorageSeries{
-	
-	/** The mflops of that (physical) machine. */
-	private double mflops;
-	
+	/**
+	* The available series keys as constants
+	*/
 	public final String TOTAL_CPU_USER_TIME   = "TOTAL_CPU_USER_TIME";
 	public final String DELTA_CPU_USER_TIME   = "DELTA_CPU_USER_TIME";
 	public final String TOTAL_CPU_SYSTEM_TIME = "TOTAL_CPU_SYSTEM_TIME";
 	public final String DELTA_CPU_SYSTEM_TIME = "DELTA_CPU_SYSTEM_TIME";
-	public final String LOAD_CPU = "LOAD_CPU";
+	public final String LOAD_CPU 			  = "LOAD_CPU";
+	
+	/** The MFLOPS of that (physical) machine. */
+	private double mflops;
 	
 	/**
 	 * Instantiates a new thread info storage machine.
@@ -51,21 +55,36 @@ public class ThreadInfoStorageMachine extends ThreadInfoStorageSeries{
 	 */
 	public ThreadInfoStorageMachine(String name) {
 		super(name);
-		setXYSeries(TOTAL_CPU_USER_TIME, new XYSeries(TOTAL_CPU_USER_TIME+DELIMITER+name));
-		setXYSeries(DELTA_CPU_USER_TIME, new XYSeries(DELTA_CPU_USER_TIME+DELIMITER+name));
-		setXYSeries(TOTAL_CPU_SYSTEM_TIME, new XYSeries(TOTAL_CPU_SYSTEM_TIME+DELIMITER+name));
-		setXYSeries(DELTA_CPU_SYSTEM_TIME, new XYSeries(DELTA_CPU_SYSTEM_TIME+DELIMITER+name));
-		setXYSeries(LOAD_CPU, new XYSeries(LOAD_CPU+DELIMITER+name));
+		
+		initialize();
 	}
 	
 	/**
-	 * @return the mflops
+	 * Initialize.
+	 */
+	private void initialize() {
+		getXYSeriesMap().put(TOTAL_CPU_USER_TIME, new XYSeries(TOTAL_CPU_USER_TIME+DELIMITER+name));
+		getXYSeriesMap().put(DELTA_CPU_USER_TIME, new XYSeries(DELTA_CPU_USER_TIME+DELIMITER+name));
+		getXYSeriesMap().put(TOTAL_CPU_SYSTEM_TIME, new XYSeries(TOTAL_CPU_SYSTEM_TIME+DELIMITER+name));
+		getXYSeriesMap().put(DELTA_CPU_SYSTEM_TIME, new XYSeries(DELTA_CPU_SYSTEM_TIME+DELIMITER+name));
+		getXYSeriesMap().put(LOAD_CPU, new XYSeries(LOAD_CPU+DELIMITER+name));	
+		
+		// --- default: total series RED, delta series BLACK , load BLUE---
+		getXySeriesLineColorMap().put(TOTAL_CPU_USER_TIME+DELIMITER+name, Color.RED);
+		getXySeriesLineColorMap().put(DELTA_CPU_USER_TIME+DELIMITER+name, Color.BLACK);
+		getXySeriesLineColorMap().put(TOTAL_CPU_SYSTEM_TIME+DELIMITER+name, Color.RED);
+		getXySeriesLineColorMap().put(DELTA_CPU_SYSTEM_TIME+DELIMITER+name, Color.BLACK);
+		getXySeriesLineColorMap().put(LOAD_CPU+DELIMITER+name, Color.BLUE);
+	}
+
+	/**
+	 * @return the MFLOPS
 	 */
 	public double getMflops() {
 		return mflops;
 	}
 	/**
-	 * @param mflops the mflops to set
+	 * @param mflops the MFLOPS to set
 	 */
 	public void setMflops(double mflops) {
 		this.mflops = mflops;

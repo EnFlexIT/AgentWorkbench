@@ -71,18 +71,11 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	private HashMap<String, ThreadInfoStorageAgentClass> mapAgentClass;
 	
 	/**
-	 * Instantiates a new thread protocol stack.
+	 * Instantiates a new thread info storage.
 	 */
 	public ThreadInfoStorage() {
-		 
-		// --- initialize ---
-		 getMapAgent();
-		 getMapAgentClass();
-		 getMapJVM();
-		 getMapContainer();
-		 getMapMachine();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.util.Vector#add(java.lang.Object)
 	 */
@@ -96,7 +89,6 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 
 		double machineTotalCPUSystemTime = 0;
 		double machineTotalCPUUsertime = 0;
-		ThreadInfoStorageAgent agentStorage;
 		
 		int numberOfThreads = threadProtocol.getThreadTimes().size();
 		for (int i = 0; i < numberOfThreads; i++) {
@@ -112,7 +104,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 				classKey = "all-non-agent-classes";
 			}
 			
-			agentStorage = mapAgent.get(agentName);
+			ThreadInfoStorageAgent agentStorage = getMapAgent().get(agentName);
 			if(agentStorage == null){
 				// --- add agent to map
 				mapAgent.put(agentName, new ThreadInfoStorageAgent(agentName, classKey, isAgent));
@@ -121,8 +113,8 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 			}
 			
 			// --- get system-and user data series ---
-			XYSeries totalCPUUserTimeXYSeries = agentStorage.getXYSeries(agentStorage.TOTAL_CPU_USER_TIME);
-			XYSeries totalCPUSystemTimeXYSeries = agentStorage.getXYSeries(agentStorage.TOTAL_CPU_SYSTEM_TIME);
+			XYSeries totalCPUUserTimeXYSeries = agentStorage.getXYSeriesMap().get(agentStorage.TOTAL_CPU_USER_TIME);
+			XYSeries totalCPUSystemTimeXYSeries = agentStorage.getXYSeriesMap().get(agentStorage.TOTAL_CPU_SYSTEM_TIME);
 			
 			// --- add X/Y value to total system-and user data series ---
 			double userTime = threadProtocol.getThreadTimes().get(i).getUserTime();
@@ -137,12 +129,12 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 			// --- calculate delta and add to delta data series  ---
 			double deltaUserTime = agentStorage.getLastDeltaForXYSeries(totalCPUUserTimeXYSeries);
 			double deltaSystemTime = agentStorage.getLastDeltaForXYSeries(totalCPUSystemTimeXYSeries);
-			agentStorage.getXYSeries(agentStorage.DELTA_CPU_USER_TIME).add(threadProtocol.getTimestamp(),deltaUserTime);
-			agentStorage.getXYSeries(agentStorage.DELTA_CPU_SYSTEM_TIME).add(threadProtocol.getTimestamp(),deltaSystemTime);
+			agentStorage.getXYSeriesMap().get(agentStorage.DELTA_CPU_USER_TIME).add(threadProtocol.getTimestamp(),deltaUserTime);
+			agentStorage.getXYSeriesMap().get(agentStorage.DELTA_CPU_SYSTEM_TIME).add(threadProtocol.getTimestamp(),deltaSystemTime);
 		
 			
 			////// AGENTCLASS //////
-			ThreadInfoStorageAgentClass agentClassStorage = mapAgentClass.get(classKey);
+			ThreadInfoStorageAgentClass agentClassStorage = getMapAgentClass().get(classKey);
 			if(agentClassStorage == null){
 				// --- add agent to map
 				mapAgentClass.put(classKey, new ThreadInfoStorageAgentClass(classKey));
@@ -171,103 +163,94 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 				agentClassStorage.setAvgPredictiveMetric((agentClassStorage.getAvgPredictiveMetric()+predictiveMetric)/2);
 				agentClassStorage.setAvgRealMetric((agentClassStorage.getAvgRealMetric()+realMetric)/2);
 			}
-			// --- MAX values ---
-			XYSeries actualSeries = agentClassStorage.getXYSeries(agentClassStorage.MAX_TOTAL_CPU_USER_TIME);
+			
 			double value;
+			
+			XYSeries actualSeries = agentClassStorage.getXYSeriesMap().get(agentClassStorage.MAX_TOTAL_CPU_SYSTEM_TIME);
 			int index = actualSeries.indexOf(threadProtocol.getTimestamp());
 			if(index >= 0){
 				value = (Double)actualSeries.getY(index);
-				if(userTime > value){
-					actualSeries.addOrUpdate(threadProtocol.getTimestamp(), userTime);
-				}else{//
-					actualSeries.addOrUpdate(threadProtocol.getTimestamp(), value);
-				}
-				
-			}else{//first entry
-				actualSeries.add(threadProtocol.getTimestamp(), userTime);
-			}
-			
-			actualSeries = agentClassStorage.getXYSeries(agentClassStorage.MAX_TOTAL_CPU_SYSTEM_TIME);
-			index = actualSeries.indexOf(threadProtocol.getTimestamp());
-			if(index >= 0){
-				value = (Double)actualSeries.getY(index);
 				if(systemTime > value){
-					actualSeries.addOrUpdate(threadProtocol.getTimestamp(), systemTime);
-				}else{//
-					actualSeries.addOrUpdate(threadProtocol.getTimestamp(), value);
+					actualSeries.update(threadProtocol.getTimestamp(), systemTime);
 				}
 			}else{//first entry
 				actualSeries.add(threadProtocol.getTimestamp(), systemTime);
 			}
 			
-			actualSeries = agentClassStorage.getXYSeries(agentClassStorage.MAX_DELTA_CPU_USER_TIME);
+			actualSeries = agentClassStorage.getXYSeriesMap().get(agentClassStorage.AVG_TOTAL_CPU_USER_TIME);
 			index = actualSeries.indexOf(threadProtocol.getTimestamp());
 			if(index >= 0){
 				value = (Double)actualSeries.getY(index);
-				if(deltaUserTime > value){
-					actualSeries.addOrUpdate(threadProtocol.getTimestamp(), deltaUserTime);
-				}else{//
-					actualSeries.addOrUpdate(threadProtocol.getTimestamp(), value);
-				}
+				actualSeries.update(threadProtocol.getTimestamp(), (value+userTime)/2);
 			}else{//first entry
-				actualSeries.add(threadProtocol.getTimestamp(), deltaUserTime);
+				actualSeries.add(threadProtocol.getTimestamp(), userTime);
 			}
 			
-			actualSeries = agentClassStorage.getXYSeries(agentClassStorage.MAX_DELTA_CPU_SYSTEM_TIME);
+			actualSeries = agentClassStorage.getXYSeriesMap().get(agentClassStorage.AVG_TOTAL_CPU_SYSTEM_TIME);
+			index = actualSeries.indexOf(threadProtocol.getTimestamp());
+			if(index >= 0){
+				value = (Double)actualSeries.getY(index);
+				actualSeries.update(threadProtocol.getTimestamp(), (value+systemTime)/2);
+			}else{//first entry
+				actualSeries.add(threadProtocol.getTimestamp(), systemTime);
+			}
+			
+			actualSeries = agentClassStorage.getXYSeriesMap().get(agentClassStorage.MAX_TOTAL_CPU_USER_TIME);
+			
+			index = actualSeries.indexOf(threadProtocol.getTimestamp());
+			if(index >= 0){
+				value = (Double)actualSeries.getY(index);
+				if(userTime > value){
+					actualSeries.update(threadProtocol.getTimestamp(), userTime);
+				}				
+			}else{//first entry
+				actualSeries.add(threadProtocol.getTimestamp(), userTime);
+			}
+			
+			actualSeries = agentClassStorage.getXYSeriesMap().get(agentClassStorage.MAX_DELTA_CPU_SYSTEM_TIME);
 			index = actualSeries.indexOf(threadProtocol.getTimestamp());
 			if(index >= 0){
 				value = (Double)actualSeries.getY(index);
 				if(deltaSystemTime > value){
-					actualSeries.addOrUpdate(threadProtocol.getTimestamp(), deltaSystemTime);
-				}else{//
-					actualSeries.addOrUpdate(threadProtocol.getTimestamp(), value);
+					actualSeries.update(threadProtocol.getTimestamp(), deltaSystemTime);
 				}
 			}else{//first entry
 				actualSeries.add(threadProtocol.getTimestamp(), deltaSystemTime);
 			}
 			
-			// --- AVG values ---
-			actualSeries = agentClassStorage.getXYSeries(agentClassStorage.AVG_TOTAL_CPU_USER_TIME);
+			actualSeries = agentClassStorage.getXYSeriesMap().get(agentClassStorage.MAX_DELTA_CPU_USER_TIME);
 			index = actualSeries.indexOf(threadProtocol.getTimestamp());
 			if(index >= 0){
 				value = (Double)actualSeries.getY(index);
-				actualSeries.addOrUpdate(threadProtocol.getTimestamp(), (value+userTime)/2);
-			}else{//first entry
-				actualSeries.add(threadProtocol.getTimestamp(), userTime);
-			}
-			
-			actualSeries = agentClassStorage.getXYSeries(agentClassStorage.AVG_TOTAL_CPU_SYSTEM_TIME);
-			index = actualSeries.indexOf(threadProtocol.getTimestamp());
-			if(index >= 0){
-				value = (Double)actualSeries.getY(index);
-				actualSeries.addOrUpdate(threadProtocol.getTimestamp(), (value+systemTime)/2);
-			}else{//first entry
-				actualSeries.add(threadProtocol.getTimestamp(), systemTime);
-			}
-			
-			actualSeries = agentClassStorage.getXYSeries(agentClassStorage.AVG_DELTA_CPU_USER_TIME);
-			index = actualSeries.indexOf(threadProtocol.getTimestamp());
-			if(index >= 0){
-				value = (Double)actualSeries.getY(index);
-				actualSeries.addOrUpdate(threadProtocol.getTimestamp(), (value+deltaUserTime)/2);
+				if(deltaUserTime > value){
+					actualSeries.update(threadProtocol.getTimestamp(), deltaUserTime);
+				}
 			}else{//first entry
 				actualSeries.add(threadProtocol.getTimestamp(), deltaUserTime);
 			}
 			
-			actualSeries = agentClassStorage.getXYSeries(agentClassStorage.AVG_DELTA_CPU_SYSTEM_TIME);
+			
+			actualSeries = agentClassStorage.getXYSeriesMap().get(agentClassStorage.AVG_DELTA_CPU_SYSTEM_TIME);
 			index = actualSeries.indexOf(threadProtocol.getTimestamp());
 			if(index >= 0){
 				value = (Double)actualSeries.getY(index);
-				actualSeries.addOrUpdate(threadProtocol.getTimestamp(), (value+deltaSystemTime)/2);
+				actualSeries.update(threadProtocol.getTimestamp(), (value+deltaSystemTime)/2);
 			}else{//first entry
 				actualSeries.add(threadProtocol.getTimestamp(), deltaSystemTime);
 			}
 			
-			
+			actualSeries = agentClassStorage.getXYSeriesMap().get(agentClassStorage.AVG_DELTA_CPU_USER_TIME);
+			index = actualSeries.indexOf(threadProtocol.getTimestamp());
+			if(index >= 0){
+				value = (Double)actualSeries.getY(index);
+				actualSeries.update(threadProtocol.getTimestamp(), (value+deltaUserTime)/2);
+			}else{//first entry
+				actualSeries.add(threadProtocol.getTimestamp(), deltaUserTime);
+			}	
 		}
 		///// Machine //////
 		String machineName = threadProtocol.getMachineName();
-		ThreadInfoStorageMachine machineStorage = mapMachine.get(machineName);
+		ThreadInfoStorageMachine machineStorage = getMapMachine().get(machineName);
 		if(machineStorage == null){
 			// --- add agent to map
 			mapMachine.put(machineName, new ThreadInfoStorageMachine(machineName));
@@ -277,7 +260,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 		}
 		//// JVM ////
 		String jvmName = threadProtocol.getJVMName();
-		ThreadInfoStorageJVM jvmStorage = mapJVM.get(jvmName);
+		ThreadInfoStorageJVM jvmStorage = getMapJVM().get(jvmName);
 		if(jvmStorage == null){
 			// --- add agent to map
 			mapJVM.put(jvmName, new ThreadInfoStorageJVM(jvmName));
@@ -286,7 +269,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 		}
 		//// CONTAINER ////
 		String containerName = threadProtocol.getContainerName();
-		ThreadInfoStorageContainer containerStorage = mapContainer.get(containerName);
+		ThreadInfoStorageContainer containerStorage = getMapContainer().get(containerName);
 		if(containerStorage == null){
 			// --- add agent to map
 			mapContainer.put(containerName, new ThreadInfoStorageContainer(containerName));
@@ -295,9 +278,9 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 		}
 		
 		// --- get data series ---
-		XYSeries loadCPUXYSeries = machineStorage.getXYSeries(machineStorage.LOAD_CPU);
-		XYSeries totalCPUUserTimeXYSeries = machineStorage.getXYSeries(machineStorage.TOTAL_CPU_USER_TIME);
-		XYSeries totalCPUSystemTimeXYSeries = machineStorage.getXYSeries(machineStorage.TOTAL_CPU_SYSTEM_TIME);
+		XYSeries loadCPUXYSeries = machineStorage.getXYSeriesMap().get(machineStorage.LOAD_CPU);
+		XYSeries totalCPUUserTimeXYSeries = machineStorage.getXYSeriesMap().get(machineStorage.TOTAL_CPU_USER_TIME);
+		XYSeries totalCPUSystemTimeXYSeries = machineStorage.getXYSeriesMap().get(machineStorage.TOTAL_CPU_SYSTEM_TIME);
 
 		// --- add X/Y values to data series ---
 		loadCPUXYSeries.add(threadProtocol.getTimestamp(), threadProtocol.getLoadCPU());
@@ -307,9 +290,9 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 		
 		// --- calculate delta and add to delta data series  ---			
 		double deltaUserTime = machineStorage.getLastDeltaForXYSeries(totalCPUUserTimeXYSeries);
-		machineStorage.getXYSeries(machineStorage.DELTA_CPU_USER_TIME).add(threadProtocol.getTimestamp(),deltaUserTime);
+		machineStorage.getXYSeriesMap().get(machineStorage.DELTA_CPU_USER_TIME).add(threadProtocol.getTimestamp(),deltaUserTime);
 		double deltaSystemTime = machineStorage.getLastDeltaForXYSeries(totalCPUSystemTimeXYSeries);
-		machineStorage.getXYSeries(machineStorage.DELTA_CPU_SYSTEM_TIME).add(threadProtocol.getTimestamp(),deltaSystemTime);
+		machineStorage.getXYSeriesMap().get(machineStorage.DELTA_CPU_SYSTEM_TIME).add(threadProtocol.getTimestamp(),deltaSystemTime);
 		
 		// --- Add nodes to the tree model ----------
 		this.addNodesToTreeModel(mapMachine, mapJVM, mapContainer, mapAgent);
@@ -332,7 +315,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	 */
 	public HashMap<String, ThreadInfoStorageMachine> getMapMachine() {
 		if(mapMachine == null){
-			mapMachine = new HashMap<String, ThreadInfoStorageMachine>();
+			this.mapMachine = new HashMap<String, ThreadInfoStorageMachine>();
 		}
 		return mapMachine;
 	}
@@ -343,7 +326,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	 */
 	public HashMap<String, ThreadInfoStorageContainer> getMapContainer() {
 		if(mapContainer == null){
-			mapContainer = new HashMap<String, ThreadInfoStorageContainer>();
+			this.mapContainer = new HashMap<String, ThreadInfoStorageContainer>();
 		}
 		return mapContainer;
 	}
@@ -354,7 +337,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	 */
 	public HashMap<String, ThreadInfoStorageJVM> getMapJVM() {
 		if(mapJVM == null){
-			mapJVM = new HashMap<String, ThreadInfoStorageJVM>();
+			this.mapJVM = new HashMap<String, ThreadInfoStorageJVM>();
 		}
 		return mapJVM;
 	}
@@ -365,7 +348,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	 */
 	public HashMap<String, ThreadInfoStorageAgent> getMapAgent() {
 		if(mapAgent == null){
-			mapAgent = new HashMap<String, ThreadInfoStorageAgent>();
+			this.mapAgent = new HashMap<String, ThreadInfoStorageAgent>();
 		}
 		return mapAgent;
 	}
@@ -376,7 +359,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	 */
 	public HashMap<String, ThreadInfoStorageAgentClass> getMapAgentClass() {
 		if(mapAgentClass == null){
-			mapAgentClass = new HashMap<String, ThreadInfoStorageAgentClass>();
+			this.mapAgentClass = new HashMap<String, ThreadInfoStorageAgentClass>();
 		}
 		return mapAgentClass;
 	}
@@ -388,7 +371,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	public DefaultTreeModel getTreeModel(){
 		
 		if (treeModel==null) {
-		    treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("Machines"));
+		    this.treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("Machines"));
 		    
 		}
 		return treeModel;

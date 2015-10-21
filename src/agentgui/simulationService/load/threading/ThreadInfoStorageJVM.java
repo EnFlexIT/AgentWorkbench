@@ -35,6 +35,10 @@ package agentgui.simulationService.load.threading;
  */
 public class ThreadInfoStorageJVM extends ThreadInfoStorageSeries{
 	
+	/**
+	 * Instantiates a new thread info storage for a JVM.
+	 * @param name the name
+	 */
 	public ThreadInfoStorageJVM(String name) {
 		super(name);
 	}

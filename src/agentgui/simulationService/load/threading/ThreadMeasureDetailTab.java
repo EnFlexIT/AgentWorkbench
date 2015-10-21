@@ -34,12 +34,14 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -110,7 +112,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 */
 	public ThreadMeasureDetailTab(ThreadInfoStorage threadInfoStorage) {
 		this.threadInfoStorage = threadInfoStorage;
-		this.initialize();
+		initialize();
 	}
 	
 	/**
@@ -130,8 +132,8 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 */
 	private JPanel getJPanelFilter() {
 		if (JPanelFilter == null) {
-			JPanelFilter = new JPanel();
-			JPanelFilter.setBorder(null);
+			this.JPanelFilter = new JPanel();
+			this.JPanelFilter.setBorder(null);
 			
 			// --- Configure Button Group -----------------
 			ButtonGroup bg = new ButtonGroup();
@@ -146,18 +148,18 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 			gbl_JPanelFilter.rowHeights = new int[]{23, 0};
 			gbl_JPanelFilter.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
 			gbl_JPanelFilter.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-			JPanelFilter.setLayout(gbl_JPanelFilter);
+			this.JPanelFilter.setLayout(gbl_JPanelFilter);
 			GridBagConstraints gbc_jRadioButtonNoFilter = new GridBagConstraints();
 			gbc_jRadioButtonNoFilter.fill = GridBagConstraints.BOTH;
 			gbc_jRadioButtonNoFilter.insets = new Insets(0, 0, 0, 5);
 			gbc_jRadioButtonNoFilter.gridx = 0;
 			gbc_jRadioButtonNoFilter.gridy = 0;
-			JPanelFilter.add(getJRadioButtonNoFilter(), gbc_jRadioButtonNoFilter);
+			this.JPanelFilter.add(getJRadioButtonNoFilter(), gbc_jRadioButtonNoFilter);
 			GridBagConstraints gbc_jRadioButtonFilterAgents = new GridBagConstraints();
 			gbc_jRadioButtonFilterAgents.fill = GridBagConstraints.BOTH;
 			gbc_jRadioButtonFilterAgents.gridx = 1;
 			gbc_jRadioButtonFilterAgents.gridy = 0;
-			JPanelFilter.add(getJRadioButtonFilterAgents(), gbc_jRadioButtonFilterAgents);
+			this.JPanelFilter.add(getJRadioButtonFilterAgents(), gbc_jRadioButtonFilterAgents);
 		}
 		return JPanelFilter;
 	}
@@ -168,10 +170,10 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 */
 	private JRadioButton getJRadioButtonNoFilter() {
 		if (jRadioButtonNoFilter == null) {
-			jRadioButtonNoFilter = new JRadioButton("No Filter");
-			jRadioButtonNoFilter.setHorizontalAlignment(SwingConstants.LEFT);
-			jRadioButtonNoFilter.setToolTipText("Show all threads");
-			jRadioButtonNoFilter.addActionListener(this);
+			this.jRadioButtonNoFilter = new JRadioButton("No Filter");
+			this.jRadioButtonNoFilter.setHorizontalAlignment(SwingConstants.LEFT);
+			this.jRadioButtonNoFilter.setToolTipText("Show all threads");
+			this.jRadioButtonNoFilter.addActionListener(this);
 		}
 		return jRadioButtonNoFilter;
 	}
@@ -182,10 +184,10 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 */
 	private JRadioButton getJRadioButtonFilterAgents() {
 		if (jRadioButtonFilterAgents == null) {
-			jRadioButtonFilterAgents = new JRadioButton("Filter for Agents");
-			jRadioButtonFilterAgents.setHorizontalAlignment(SwingConstants.LEFT);
-			jRadioButtonFilterAgents.setToolTipText("Show only agent threads");
-			jRadioButtonFilterAgents.addActionListener(this);
+			this.jRadioButtonFilterAgents = new JRadioButton("Filter for Agents");
+			this.jRadioButtonFilterAgents.setHorizontalAlignment(SwingConstants.LEFT);
+			this.jRadioButtonFilterAgents.setToolTipText("Show only agent threads");
+			this.jRadioButtonFilterAgents.addActionListener(this);
 		}
 		return jRadioButtonFilterAgents;
 	}
@@ -195,7 +197,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 * @return the right click menu
 	 */
 	private JPopupMenu getRightClickMenu(){
-		if(this.menu == null){
+		if(menu == null){
 			this.menu = new JPopupMenu();
 			
 			this.viewSingle = new JMenuItem("single view");
@@ -207,7 +209,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 			this.menu.add(viewAgentClass);	        
 			 
 		}
-		return this.menu;
+		return menu;
 		
 	}
 	
@@ -216,9 +218,8 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 * @return the thread protocol stack xy series charts
 	 */
 	private XYSeriesCollection getThreadInfoStorageXYSeriesChartsTotal(){
-		
-		if (ThreadInfoStorageXYSeriesChartsTotal == null){
-			ThreadInfoStorageXYSeriesChartsTotal = new XYSeriesCollection(null);
+		if(ThreadInfoStorageXYSeriesChartsTotal == null){
+			this.ThreadInfoStorageXYSeriesChartsTotal = new XYSeriesCollection(null);
 		}
 		
 		return ThreadInfoStorageXYSeriesChartsTotal;
@@ -229,9 +230,8 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 * @return the thread protocol stack xy series charts
 	 */
 	private XYSeriesCollection getThreadInfoStorageXYSeriesChartsDelta(){
-		
-		if (ThreadInfoStorageXYSeriesChartsDelta == null){
-			ThreadInfoStorageXYSeriesChartsDelta = new XYSeriesCollection(null);
+		if(ThreadInfoStorageXYSeriesChartsDelta == null){
+			this.ThreadInfoStorageXYSeriesChartsDelta = new XYSeriesCollection(null);
 		}
 		
 		return ThreadInfoStorageXYSeriesChartsDelta;
@@ -282,6 +282,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
     	    XYSeries series = null;
 			String className = "";
             Iterator<String> iteratorClass = null;
+            HashMap<String, Paint> lcm = null;
     		
 			if(ae.getSource()==viewSingle){
 				if (lastNode != null) {
@@ -303,23 +304,27 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	            }
 			}
     	    
-    	    while(iteratorClass.hasNext()){
-    	    	String next = iteratorClass.next();
-    	    	
-	    		if(ae.getSource()==viewSingle){
-	    			series = threadInfoStorage.getMapAgent().get(className).getXYSeries(next);
-	    		}else if(ae.getSource()==viewAgentClass){
-	    			series = threadInfoStorage.getMapAgentClass().get(className).getXYSeries(next);
-	    		}
-    	    	if(next.contains("TOTAL")){
-    	    		popupXYSeriesCollectionTotal.addSeries(series);
-    	    	}else if(next.contains("DELTA")){
-    	    		popupXYSeriesCollectionDelta.addSeries(series);
-    	    	}
-    	    	
-    	    }
-    	    // --- create scroll-pane in pop-up window ---
-    	    new ThreadInfoScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, null, true, className);
+			if(iteratorClass != null){
+	    	    while(iteratorClass.hasNext()){
+	    	    	String next = iteratorClass.next();
+	    	    	
+		    		if(ae.getSource()==viewSingle){
+		    			series = threadInfoStorage.getMapAgent().get(className).getXYSeriesMap().get(next);
+		    			lcm = threadInfoStorage.getMapAgent().get(className).getXySeriesLineColorMap();
+		    		}else if(ae.getSource()==viewAgentClass){
+		    			series = threadInfoStorage.getMapAgentClass().get(className).getXYSeriesMap().get(next);
+		    			lcm = threadInfoStorage.getMapAgentClass().get(className).getXySeriesLineColorMap();
+		    		}
+	    	    	if(next.contains("TOTAL")){
+	    	    		popupXYSeriesCollectionTotal.addSeries(series);
+	    	    	}else if(next.contains("DELTA")){
+	    	    		popupXYSeriesCollectionDelta.addSeries(series);
+	    	    	}
+	    	    	
+	    	    }
+	    	    // --- create scroll-pane in pop-up window ---
+	    	    new ThreadInfoScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, null, true, className, lcm);
+			}
 		}
 	}
 	
@@ -456,10 +461,10 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 */
 	private JTree getJTreeThreadInfoStorage() {
 		if (jTreeThreadInfoStorage == null) {
-			jTreeThreadInfoStorage = new JTree(threadInfoStorage.getTreeModel());
-//			jTreeThreadInfoStorage.addTreeSelectionListener(new MyTreeSelectionListener());
-			jTreeThreadInfoStorage.addMouseListener(new MyMouseListener());
-			jTreeThreadInfoStorage.setCellRenderer(new MyTreeCellRenderer());
+			this.jTreeThreadInfoStorage = new JTree(threadInfoStorage.getTreeModel());
+//			this.jTreeThreadInfoStorage.addTreeSelectionListener(new MyTreeSelectionListener());
+			this.jTreeThreadInfoStorage.addMouseListener(new MyMouseListener());
+			this.jTreeThreadInfoStorage.setCellRenderer(new MyTreeCellRenderer());
 		}
 		return jTreeThreadInfoStorage;
 	}
@@ -470,7 +475,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 */
 	private JSplitPane getSplitPane() {
 		if (splitPane == null) {
-			splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,getLeftScrollPane(),this.getRightScrollPane());			
+			this.splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,getLeftScrollPane(),this.getRightScrollPane());			
 		}
 		return splitPane;
 	}
@@ -481,8 +486,8 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 */
 	private JScrollPane getLeftScrollPane(){
 		if (leftScrollPane == null) {
-			leftScrollPane = new JScrollPane(getJTreeThreadInfoStorage());
-			leftScrollPane.setMinimumSize(new Dimension(200,300));
+			this.leftScrollPane = new JScrollPane(getJTreeThreadInfoStorage());
+			this.leftScrollPane.setMinimumSize(new Dimension(200,300));
 		}
 		return leftScrollPane;
 		
@@ -494,7 +499,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 */
 	private ThreadInfoScrollPane getRightScrollPane(){
 		if (rightScrollPane == null) {
-			rightScrollPane = new ThreadInfoScrollPane(getThreadInfoStorageXYSeriesChartsDelta(), getThreadInfoStorageXYSeriesChartsTotal(), null, false, "");
+			this.rightScrollPane = new ThreadInfoScrollPane(getThreadInfoStorageXYSeriesChartsDelta(), getThreadInfoStorageXYSeriesChartsTotal(), null, false, "", null);
 		}
 		return rightScrollPane;
 		
@@ -554,7 +559,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
     			                	
     	                    	    while(iterator.hasNext()){
     	                    	    	String next = iterator.next();
-    	                    	    	XYSeries series = threadInfoStorage.getMapAgent().get(nodeName).getXYSeries(next);
+    	                    	    	XYSeries series = threadInfoStorage.getMapAgent().get(nodeName).getXYSeriesMap().get(next);
     	                    	    	
     	                    	    	if(next.contains("TOTAL")){
     	                    	    		//---toggle ---
@@ -593,7 +598,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 		    			                	
 		    	                    	    while(iterator.hasNext()){
 		    	                    	    	String next = iterator.next();
-		    	                    	    	XYSeries series = threadInfoStorage.getMapMachine().get(nodeName).getXYSeries(next);
+		    	                    	    	XYSeries series = threadInfoStorage.getMapMachine().get(nodeName).getXYSeriesMap().get(next);
 		    	                    	    	if(next.contains("TOTAL")){
 		    	                    	    		popupXYSeriesCollectionTotal.addSeries(series);
 		    	                    	    	}else if(next.contains("DELTA")){
@@ -603,7 +608,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 		    	                    	    	}
 		    	                    	    }
 		    	                    	 // --- create scroll-pane in pop-up window ---
-			    			        	    new ThreadInfoScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, popupXYSeriesCollectionLoad, true, nodeName);
+			    			        	    new ThreadInfoScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, popupXYSeriesCollectionLoad, true, "Machine: "+nodeName, threadInfoStorage.getMapMachine().get(nodeName).getXySeriesLineColorMap());
 		    							}
 		    			                
 					                	break;

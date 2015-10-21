@@ -28,6 +28,7 @@
  */
 package agentgui.simulationService.load.threading;
 
+import java.awt.Paint;
 import java.util.HashMap;
 
 import org.jfree.data.xy.XYSeries;
@@ -45,6 +46,8 @@ public class ThreadInfoStorageSeries {
 	
 	/** The xy series hashmap that Contains multiple data-series  */
 	private HashMap<String, XYSeries> xySeriesMap;
+	/** The line color map contains color information for a XYSeries */
+	private HashMap<String, Paint> xySeriesLineColorMap;
 
 	/**
 	 * Instantiates a new thread info storage series.
@@ -53,25 +56,6 @@ public class ThreadInfoStorageSeries {
 	public ThreadInfoStorageSeries(String name) {
 		this.name = name;
 		this.isSelected = false;
-		this.xySeriesMap = new HashMap<String, XYSeries>();
-	}
-	
-	/**
-	 * Sets the xy series.
-	 * @param key the key
-	 * @param series the series
-	 */
-	public void setXYSeries(String key, XYSeries series){
-		this.xySeriesMap.put(key,series);
-	}
-	
-	/**
-	 * Gets the XY series.
-	 * @param key the key
-	 * @return the XY series
-	 */
-	public XYSeries getXYSeries(String key){
-		return xySeriesMap.get(key);
 	}
 	
 	/**
@@ -86,7 +70,7 @@ public class ThreadInfoStorageSeries {
 		if(itemIndex >=1){
 			from = (Double) series.getDataItem(itemIndex-1).getY();
 			to = (Double) series.getDataItem(itemIndex).getY();
-			return  (to -from);
+			return  Math.abs(to -from);
 		}
 		return 0;
 	}
@@ -107,6 +91,9 @@ public class ThreadInfoStorageSeries {
 	 * @return the xySeriesMap
 	 */
 	public HashMap<String, XYSeries> getXYSeriesMap() {
+		if(xySeriesMap == null){
+			this.xySeriesMap = new HashMap<String, XYSeries>();
+		}
 		return xySeriesMap;
 	}
 
@@ -131,4 +118,13 @@ public class ThreadInfoStorageSeries {
 		this.isSelected = isSelected;
 	}
 
+	/**
+	 * @return the xySeriesLineColorMap
+	 */
+	public HashMap<String, Paint> getXySeriesLineColorMap() {
+		if(xySeriesLineColorMap == null){
+			this.xySeriesLineColorMap = new HashMap<String, Paint>();
+		}
+		return xySeriesLineColorMap;
+	}
 }
