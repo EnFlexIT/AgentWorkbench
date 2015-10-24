@@ -35,7 +35,7 @@ import agentgui.simulationService.load.LoadMeasureThread;
  * as a receiver for the thread measurements of the {@link LoadMeasureThread}.
  * 
  * @see LoadMeasureThread
- * @see LoadMeasureThread#doThreadMeasurement(long, agentgui.simulationService.LoadService)
+ * @see LoadMeasureThread#doThreadMeasurement(long, ThreadTimeReceiver)
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

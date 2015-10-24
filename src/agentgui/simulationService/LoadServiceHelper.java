@@ -244,7 +244,9 @@ public interface LoadServiceHelper extends ServiceHelper {
 
 	/**
 	 * Requests all involved JVMs to do the thread measurements.
-	 * @param loadMeasuerAgent the load measure agent
+	 *
+	 * @param loadMeasureAgent the load measure agent
+	 * @throws ServiceException the service exception
 	 */
 	public void requestThreadMeasurements(LoadMeasureAgent loadMeasureAgent) throws ServiceException ;
 	
