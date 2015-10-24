@@ -136,8 +136,11 @@ public class ChangeDialog extends JDialog implements ActionListener {
 
 		// --- Center dialog ----------------------------------------
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
+		Double newWidth  = screenSize.getWidth()  * 0.7;
+		Double newHeight = screenSize.getHeight() * 0.8;
+		int top  = (screenSize.height - newHeight.intValue()) / 2; 
+	    int left = (screenSize.width  - newWidth.intValue()) / 2;
+	    this.setSize(newWidth.intValue(), newHeight.intValue());
 	    this.setLocation(left, top);
 		
 	}
