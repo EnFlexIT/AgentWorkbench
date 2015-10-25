@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.simulationService.load.threading;
+package agentgui.simulationService.load.threading.gui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -52,15 +52,26 @@ import agentgui.simulationService.agents.LoadMeasureAgent;
 public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 
 	private static final long serialVersionUID = 7052789869732559092L;
+	
+	/** The Constant pathImage. */
 	private static final String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
+	/** The my agent. */
 	private LoadMeasureAgent myAgent;
 	
+	/** The j button measure refresh. */
 	private JButton jButtonMeasureRefresh;
+	
+	/** The j button measure start. */
 	private JButton jButtonMeasureStart;
+	
+	/** The j button measure pause. */
 	private JButton jButtonMeasurePause;
 	
+	/** The j combo box interval. */
 	private JComboBox jComboBoxInterval;
+	
+	/** The combo box model interval. */
 	private DefaultComboBoxModel comboBoxModelInterval;
 	
 	/**
@@ -93,6 +104,11 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 		
 	}
 	
+	/**
+	 * Gets the j button measure refresh.
+	 *
+	 * @return the j button measure refresh
+	 */
 	private JButton getJButtonMeasureRefresh() {
 		if (jButtonMeasureRefresh==null) {
 			jButtonMeasureRefresh = new JButton();
@@ -103,6 +119,12 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 		}
 		return jButtonMeasureRefresh;
 	}
+	
+	/**
+	 * Gets the j button measure start.
+	 *
+	 * @return the j button measure start
+	 */
 	private JButton getJButtonMeasureStart() {
 		if (jButtonMeasureStart==null) {
 			jButtonMeasureStart = new JButton();
@@ -113,6 +135,12 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 		}
 		return jButtonMeasureStart;
 	}
+	
+	/**
+	 * Gets the j button measure pause.
+	 *
+	 * @return the j button measure pause
+	 */
 	private JButton getJButtonMeasurePause() {
 		if (jButtonMeasurePause==null) {
 			jButtonMeasurePause = new JButton();

@@ -50,7 +50,10 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 
 	private static final long serialVersionUID = -6007682527796979437L;
 
+	/** The agent start hash map reminder. */
 	private HashMap<String, AgentClassElement4SimStart> agentStartHashMapReminder;
+	
+	/** The table model. */
 	private DefaultTableModel tableModel;
 
 	/**

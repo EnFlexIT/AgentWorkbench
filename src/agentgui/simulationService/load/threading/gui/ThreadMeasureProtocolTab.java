@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.simulationService.load.threading;
+package agentgui.simulationService.load.threading.gui;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
@@ -51,6 +51,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JRadioButton;
 
+import agentgui.simulationService.load.threading.ThreadProtocolVector;
+import agentgui.simulationService.load.threading.ThreadTime;
+
 /**
  * The Class ThreadMeasureProtocolTab.
  * 
@@ -60,11 +63,22 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -7315494195421538651L;
 
+	/** The thread protocol vector. */
 	private ThreadProtocolVector threadProtocolVector;
+	
+	/** The scroll pane table. */
 	private JScrollPane scrollPaneTable;
+	
+	/** The j table thread protocol vector. */
 	private JTable jTableThreadProtocolVector;
+	
+	/** The J panel filter. */
 	private JPanel JPanelFilter;
+	
+	/** The j radio button no filter. */
 	private JRadioButton jRadioButtonNoFilter;
+	
+	/** The j radio button filter agents. */
 	private JRadioButton jRadioButtonFilterAgents;
 	
 	/**

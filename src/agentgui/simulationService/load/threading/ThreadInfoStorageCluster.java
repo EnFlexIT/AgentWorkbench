@@ -29,34 +29,17 @@
 package agentgui.simulationService.load.threading;
 
 /**
- * Storage class for storing Thread-Load-Information of (physical)machine
+ * Storage class for storing Thread-Load-Information about entire machine cluster
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadInfoStorageMachine extends ThreadInfoStorageSeries{
-	
-	/** The MFLOPS of that (physical) machine. */
-	private double mflops;
+public class ThreadInfoStorageCluster extends ThreadInfoStorageSeries{
 	
 	/**
-	 * Instantiates a new thread info storage machine.
+	 * Instantiates a new thread info storage for a JVM.
 	 * @param name the name
 	 */
-	public ThreadInfoStorageMachine(String name) {
+	public ThreadInfoStorageCluster(String name) {
 		super(name);
 	}
-
-	/**
-	 * @return the MFLOPS
-	 */
-	public double getMflops() {
-		return mflops;
-	}
-	/**
-	 * @param mflops the MFLOPS to set
-	 */
-	public void setMflops(double mflops) {
-		this.mflops = mflops;
-	}
-
 }

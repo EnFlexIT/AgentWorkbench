@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package agentgui.simulationService.load.threading;
+package agentgui.simulationService.load.threading.gui;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -37,10 +37,13 @@ import java.awt.Insets;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.Random;
 
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -54,6 +57,11 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 /**
  * The Class ThreadInfoScrollPane.
  * 
@@ -63,30 +71,84 @@ import org.jfree.data.xy.XYSeriesCollection;
  */
 public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	
+	/**
+     * The Constant DEFAULT_CHART_COLORS defines
+     * a set of standard colors for charts.
+     */
+    public static final Color[] DEFAULT_CHART_COLORS = {
+    	new Color(0, 0, 0),
+    	new Color(255, 0, 0),
+    	new Color(0, 0, 255),
+    	new Color(153, 115, 0),
+        new Color(237, 125, 49),
+        new Color(255, 192, 0),
+        new Color(68, 114, 196),
+        new Color(112, 173, 71),
+        new Color(37, 94, 145),
+        new Color(158, 72, 14),
+        new Color(99, 99, 99),
+        new Color(91, 155, 213),
+        new Color(165, 165, 165)
+    };
+	
 	private static final long serialVersionUID = 1L;
+	
+	/** The plot. */
 	private XYPlot plot;
+	
+	/** The j free chart panel. */
 	private ChartPanel jFreeChartPanel;
+	
+	/** The delta collection. */
 	private XYSeriesCollection deltaCollection;
+	
+	/** The total collection. */
 	private XYSeriesCollection totalCollection;
+	
+	/** The load collection. */
 	private XYSeriesCollection loadCollection;
+	
+	/** The J panel filter. */
 	private JPanel JPanelFilter;
+	
+	/** The chart. */
 	private JFreeChart chart;
 	
+	/** The file chooser. */
+	private JFileChooser fileChooser;
+	
+	/** The j check box user time. */
 	private JCheckBox jCheckBoxUserTime;
+	
+	/** The j check box system time. */
 	private JCheckBox jCheckBoxSystemTime;
+	
+	/** The j check box delta. */
 	private JCheckBox jCheckBoxDelta;
+	
+	/** The j check box total. */
 	private JCheckBox jCheckBoxTotal;
+	
+	/** The J check box legend. */
 	private JCheckBox JCheckBoxLegend;
 	
+	/** The renderer total. */
 	private XYLineAndShapeRenderer rendererTotal;
+	
+	/** The renderer delta. */
 	private XYLineAndShapeRenderer rendererDelta;
+	
+	/** The renderer load. */
 	private XYLineAndShapeRenderer rendererLoad;
 	
-	NumberAxis axisDelta;
-	NumberAxis axisTotal;
-	NumberAxis axisLoad;
+	/** The axis delta. */
+	private NumberAxis axisDelta;
 	
-	private HashMap<String, Paint> lineColorMap;
+	/** The axis total. */
+	private NumberAxis axisTotal;
+	
+	/** The axis load. */
+	private NumberAxis axisLoad;
 
 	/** Display setting.Set true to show delta. */
 	private boolean showDelta;
@@ -103,8 +165,20 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	/** The frame title. */
 	private String frameTitle;
 	
+	/** The pattern. */
 	private float[][] pattern;
+	
+	/** The stroke. */
 	private BasicStroke stroke;
+	
+	/** The lbl curve type. */
+	private JLabel lblCurveType;
+	
+	/** The lbl thread time. */
+	private JLabel lblThreadTime;
+	
+	/** The btn export csv. */
+	private JButton btnExportCSV;
 	
 	/**
 	 * Instantiates a new thread info scroll pane.
@@ -113,9 +187,8 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	 * @param totalCollection the total collection
 	 * @param popup the popup
 	 * @param frameTitle the frame title
-	 * @param lineColorMap 
 	 */
-	public ThreadInfoScrollPane(XYSeriesCollection deltaCollection, XYSeriesCollection totalCollection, XYSeriesCollection loadCollection, boolean popup, String frameTitle, HashMap<String, Paint> lineColorMap) {		
+	public ThreadInfoScrollPane(XYSeriesCollection deltaCollection, XYSeriesCollection totalCollection, XYSeriesCollection loadCollection, boolean popup, String frameTitle) {		
 		super();
 		this.showDelta = true;
 		this.showTotal = true;
@@ -127,7 +200,6 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 		this.deltaCollection = deltaCollection;
 		this.totalCollection = totalCollection;
 		this.loadCollection = loadCollection;
-		this.lineColorMap = lineColorMap;
 		initialize();
 		
 	}
@@ -146,8 +218,7 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 		    newWindow.pack();
 		    newWindow.setVisible(true);
 		}
-		deltaCollection.addChangeListener(new CollectionSeriesChangeListener());
-		totalCollection.addChangeListener(new CollectionSeriesChangeListener());
+		
 		
 		pattern = new float[][]{{10.0f},{10.0f,10.0f},{10.0f,10.0f,2.0f,10.0f},{1.0f,10.0f}};
 		stroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_MITER, 10.0f, pattern[3], 0.0f);
@@ -156,15 +227,15 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 		
 		if(deltaCollection != null){
 			
+			deltaCollection.addChangeListener(new CollectionSeriesChangeListener());
+			totalCollection.addChangeListener(new CollectionSeriesChangeListener());
+			
 			for(int x=0;x<deltaCollection.getSeries().size(); x++){
 				seriesKey = deltaCollection.getSeries(x).getKey().toString();
 				
-				if(lineColorMap != null){
-					if(lineColorMap.containsKey(seriesKey) == true){
-						color = lineColorMap.get(seriesKey);
-						rendererDelta.setSeriesPaint(x, color);
-					}
-				}	
+				color = DEFAULT_CHART_COLORS[0];
+				rendererDelta.setSeriesPaint(x, color);
+				
 				// --- user time series ->  dotted line style ---
 				if(seriesKey.contains("USER") == true){
 					rendererDelta.setSeriesStroke(x, stroke);
@@ -181,12 +252,9 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 			for(int x=0;x<totalCollection.getSeries().size(); x++){
 				seriesKey = totalCollection.getSeries(x).getKey().toString();				
 				
-				if(lineColorMap != null){
-					if(lineColorMap.containsKey(seriesKey) == true){
-						color = lineColorMap.get(seriesKey);
-						rendererTotal.setSeriesPaint(x, color);
-					}
-				}
+				color = DEFAULT_CHART_COLORS[1];
+				rendererTotal.setSeriesPaint(x, color);
+				
 				// --- user time series ->  dotted line style ---
 				if(seriesKey.contains("USER") == true){
 					rendererTotal.setSeriesStroke(x, stroke);
@@ -202,11 +270,10 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 			
 			for(int x=0;x<loadCollection.getSeries().size(); x++){
 				seriesKey = loadCollection.getSeries(x).getKey().toString();				
+				color = DEFAULT_CHART_COLORS[2];
 				
-				if(lineColorMap.containsKey(seriesKey) == true){
-					color = lineColorMap.get(seriesKey);
-					rendererLoad.setSeriesPaint(x, color);
-				}
+				rendererLoad.setSeriesPaint(x, color);
+				
 				if(popup == true){
 					axisLoad.setLabelPaint(color);
 				}
@@ -227,16 +294,21 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	 */
 	class CollectionSeriesChangeListener implements DatasetChangeListener{
 		private HashMap<String, Paint> localLineColorMap;
-		private int r,g,b;
-		private Random rand;
 		private int seriesCount;
+		private int colorIndex;
 		
+		/**
+		 * Instantiates a new collection series change listener.
+		 */
 		public CollectionSeriesChangeListener(){
 			this.localLineColorMap = new HashMap<String, Paint>();
-			this.rand = new Random();
 			this.seriesCount = -1;
+			this.colorIndex = 0;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.jfree.data.general.DatasetChangeListener#datasetChanged(org.jfree.data.general.DatasetChangeEvent)
+		 */
 		@Override
 		public void datasetChanged(DatasetChangeEvent event) {
 			
@@ -246,7 +318,7 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 					
 					int newSeriesCount = deltaCollection.getSeriesCount();
 			        if (newSeriesCount == seriesCount) {
-			            // no series was added/removed
+			            // --- nothing added/removed ---
 			        } else if (newSeriesCount < seriesCount) {
 			            //--- removed ---
 			            seriesCount = newSeriesCount;
@@ -254,22 +326,22 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 			            //--- added ---
 			            seriesCount = newSeriesCount;
 			            
-			            for(int x=0;x+2<=deltaCollection.getSeries().size(); x=x+2){
+			            for(int x = 0; x+2 <= deltaCollection.getSeries().size(); x=x+2){
 							String seriesKey = deltaCollection.getSeries(x).getKey().toString();
 							Paint color = Color.BLACK;
 							
 							if(localLineColorMap.containsKey(seriesKey) == false){
-								r = rand.nextInt(256);
-								g = rand.nextInt(256);
-								b = rand.nextInt(256);
-								color = new Color(r, g, b);
+								if(colorIndex >= DEFAULT_CHART_COLORS.length){
+									colorIndex = 0; // reset 
+								}
+								color = DEFAULT_CHART_COLORS[colorIndex++]; 
 								localLineColorMap.put(seriesKey, color);
 							}else{
 								color = localLineColorMap.get(seriesKey);
 							}
 							rendererDelta.setSeriesPaint(x, color);
-							rendererDelta.setSeriesPaint(x+1, color);
 							rendererTotal.setSeriesPaint(x, color);
+							rendererDelta.setSeriesPaint(x+1, color);
 							rendererTotal.setSeriesPaint(x+1, color);
 							
 							// --- user time series ->  dotted line style ---
@@ -289,8 +361,8 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	private JPanel getJPanelFilter() {
 		if (JPanelFilter == null) {
 			
-			this.JPanelFilter = new JPanel();
-			this.JPanelFilter.setBorder(null);
+			JPanelFilter = new JPanel();
+			JPanelFilter.setBorder(null);
 			
 			// --- Set default value -----------------------
 			getJCheckBoxSystemTime().setSelected(showSystemTime);
@@ -300,36 +372,59 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 			getJCheckBoxLegend().setSelected(showLegend);
 			
 			GridBagLayout gbl_JPanelFilter = new GridBagLayout();
-			gbl_JPanelFilter.columnWidths = new int[] {30, 0, 0, 0, 30, 30, 30, 30, 30, 0};
-			gbl_JPanelFilter.rowHeights = new int[] {23};
-			gbl_JPanelFilter.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE, 0.0, 0.0, 0.0, 0.0, 0.0};
-			gbl_JPanelFilter.rowWeights = new double[]{0.0};
-			this.JPanelFilter.setLayout(gbl_JPanelFilter);
+			gbl_JPanelFilter.columnWidths = new int[] {30};
+			gbl_JPanelFilter.rowHeights = new int[] {15, 15};
+			gbl_JPanelFilter.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_JPanelFilter.rowWeights = new double[]{0.0, 0.0};
+			JPanelFilter.setLayout(gbl_JPanelFilter);
+			GridBagConstraints gbc_lblThreadTime = new GridBagConstraints();
+			gbc_lblThreadTime.anchor = GridBagConstraints.EAST;
+			gbc_lblThreadTime.insets = new Insets(0, 5, 0, 5);
+			gbc_lblThreadTime.gridx = 0;
+			gbc_lblThreadTime.gridy = 1;
+			JPanelFilter.add(getLblThreadTime(), gbc_lblThreadTime);
 			GridBagConstraints gbc_jCheckBoxUserTime = new GridBagConstraints();
-			gbc_jCheckBoxUserTime.insets = new Insets(1, 1, 0, 5);
-			gbc_jCheckBoxUserTime.gridx = 2;
-			gbc_jCheckBoxUserTime.gridy = 0;
-			this.JPanelFilter.add(getJCheckBoxUserTime(), gbc_jCheckBoxUserTime);
+			gbc_jCheckBoxUserTime.anchor = GridBagConstraints.WEST;
+			gbc_jCheckBoxUserTime.insets = new Insets(1, 1, 1, 5);
+			gbc_jCheckBoxUserTime.gridx = 1;
+			gbc_jCheckBoxUserTime.gridy = 1;
+			JPanelFilter.add(getJCheckBoxUserTime(), gbc_jCheckBoxUserTime);
 			GridBagConstraints gbc_jCheckBoxDelta = new GridBagConstraints();
-			gbc_jCheckBoxDelta.insets = new Insets(1, 1, 0, 5);
-			gbc_jCheckBoxDelta.gridx = 0;
+			gbc_jCheckBoxDelta.anchor = GridBagConstraints.WEST;
+			gbc_jCheckBoxDelta.insets = new Insets(1, 1, 5, 5);
+			gbc_jCheckBoxDelta.gridx = 1;
 			gbc_jCheckBoxDelta.gridy = 0;
-			this.JPanelFilter.add(getJCheckBoxDelta(), gbc_jCheckBoxDelta);
+			JPanelFilter.add(getJCheckBoxDelta(), gbc_jCheckBoxDelta);
 			GridBagConstraints gbc_jCheckBoxSystemTime = new GridBagConstraints();
-			gbc_jCheckBoxSystemTime.insets = new Insets(1, 1, 0, 5);
-			gbc_jCheckBoxSystemTime.gridx = 3;
-			gbc_jCheckBoxSystemTime.gridy = 0;
-			this.JPanelFilter.add(getJCheckBoxSystemTime(), gbc_jCheckBoxSystemTime);
+			gbc_jCheckBoxSystemTime.anchor = GridBagConstraints.WEST;
+			gbc_jCheckBoxSystemTime.insets = new Insets(1, 1, 1, 5);
+			gbc_jCheckBoxSystemTime.gridx = 2;
+			gbc_jCheckBoxSystemTime.gridy = 1;
+			JPanelFilter.add(getJCheckBoxSystemTime(), gbc_jCheckBoxSystemTime);
 			GridBagConstraints gbc_jCheckBoxTotal = new GridBagConstraints();
-			gbc_jCheckBoxTotal.insets = new Insets(0, 0, 0, 5);
-			gbc_jCheckBoxTotal.gridx = 1;
+			gbc_jCheckBoxTotal.anchor = GridBagConstraints.WEST;
+			gbc_jCheckBoxTotal.insets = new Insets(1, 1, 5, 5);
+			gbc_jCheckBoxTotal.gridx = 2;
 			gbc_jCheckBoxTotal.gridy = 0;
-			this.JPanelFilter.add(getJCheckBoxTotal(), gbc_jCheckBoxTotal);
+			JPanelFilter.add(getJCheckBoxTotal(), gbc_jCheckBoxTotal);
 			GridBagConstraints gbc_JCheckBoxLegend = new GridBagConstraints();
-			gbc_JCheckBoxLegend.insets = new Insets(0, 0, 0, 5);
-			gbc_JCheckBoxLegend.gridx = 9;
+			gbc_JCheckBoxLegend.anchor = GridBagConstraints.EAST;
+			gbc_JCheckBoxLegend.insets = new Insets(0, 5, 5, 0);
+			gbc_JCheckBoxLegend.gridx = 4;
 			gbc_JCheckBoxLegend.gridy = 0;
-			this.JPanelFilter.add(getJCheckBoxLegend(), gbc_JCheckBoxLegend);
+			JPanelFilter.add(getJCheckBoxLegend(), gbc_JCheckBoxLegend);
+			GridBagConstraints gbc_lblCurveType = new GridBagConstraints();
+			gbc_lblCurveType.anchor = GridBagConstraints.EAST;
+			gbc_lblCurveType.insets = new Insets(0, 5, 5, 5);
+			gbc_lblCurveType.gridx = 0;
+			gbc_lblCurveType.gridy = 0;
+			JPanelFilter.add(getLblCurveType(), gbc_lblCurveType);
+			GridBagConstraints gbc_btnExportCSV = new GridBagConstraints();
+			gbc_btnExportCSV.anchor = GridBagConstraints.EAST;
+			gbc_btnExportCSV.insets = new Insets(0, 0, 0, 5);
+			gbc_btnExportCSV.gridx = 4;
+			gbc_btnExportCSV.gridy = 1;
+			JPanelFilter.add(getBtnExportCSV(), gbc_btnExportCSV);
 			
 		}
 		return JPanelFilter;
@@ -363,6 +458,16 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 			}
 		}else if (ae.getSource() == getJCheckBoxLegend()){
 			//---nothing to do ---
+		}else if (ae.getSource() == getBtnExportCSV()){
+			
+			int userSelection = getFileChooser().showSaveDialog(ThreadInfoScrollPane.this);
+			 
+			if (userSelection == JFileChooser.APPROVE_OPTION) {
+			    File fileToSave = fileChooser.getSelectedFile();
+			    System.out.println("Export XYSeries as file: " + fileToSave.getAbsolutePath());
+			    exportCsvFile(fileToSave.getAbsolutePath(), deltaCollection, totalCollection, loadCollection);
+			    
+			}
 		}
 		
 		if(getJCheckBoxLegend().isSelected() == true){
@@ -413,9 +518,9 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	 */
 	private JCheckBox getJCheckBoxDelta() {
 		if (jCheckBoxDelta == null) {
-			this.jCheckBoxDelta = new JCheckBox("Delta");
-			this.jCheckBoxDelta.setToolTipText("Show time delta charts");
-			this.jCheckBoxDelta.addActionListener(this);
+			jCheckBoxDelta = new JCheckBox("Delta");
+			jCheckBoxDelta.setToolTipText("Show time delta charts");
+			jCheckBoxDelta.addActionListener(this);
 		}
 		return jCheckBoxDelta;
 	}
@@ -426,9 +531,9 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	 */
 	private JCheckBox getJCheckBoxTotal() {
 		if (jCheckBoxTotal == null) {
-			this.jCheckBoxTotal = new JCheckBox("Total");
-			this.jCheckBoxTotal.setToolTipText("Show total time charts");
-			this.jCheckBoxTotal.addActionListener(this);
+			jCheckBoxTotal = new JCheckBox("Total");
+			jCheckBoxTotal.setToolTipText("Show total time charts");
+			jCheckBoxTotal.addActionListener(this);
 		}
 		return jCheckBoxTotal;
 	}
@@ -439,9 +544,9 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	 */
 	private JCheckBox getJCheckBoxUserTime() {
 		if (jCheckBoxUserTime == null) {
-			this.jCheckBoxUserTime = new JCheckBox("User time");
-			this.jCheckBoxUserTime.setToolTipText("Show user time charts");
-			this.jCheckBoxUserTime.addActionListener(this);
+			jCheckBoxUserTime = new JCheckBox("User");
+			jCheckBoxUserTime.setToolTipText("Show user time charts");
+			jCheckBoxUserTime.addActionListener(this);
 		}
 		return jCheckBoxUserTime;
 	}
@@ -452,9 +557,9 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	 */
 	private JCheckBox getJCheckBoxSystemTime() {
 		if (jCheckBoxSystemTime == null) {
-			this.jCheckBoxSystemTime = new JCheckBox("System time");
-			this.jCheckBoxSystemTime.setToolTipText("Show  system time charts");
-			this.jCheckBoxSystemTime.addActionListener(this);
+			jCheckBoxSystemTime = new JCheckBox("System");
+			jCheckBoxSystemTime.setToolTipText("Show  system time charts");
+			jCheckBoxSystemTime.addActionListener(this);
 		}
 		return jCheckBoxSystemTime;
 	}
@@ -465,9 +570,9 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	 */
 	private JCheckBox getJCheckBoxLegend() {
 		if (JCheckBoxLegend == null) {
-			this.JCheckBoxLegend = new JCheckBox("Show legend");
-			this.JCheckBoxLegend.setToolTipText("Show legend for charts");
-			this.JCheckBoxLegend.addActionListener(this);
+			JCheckBoxLegend = new JCheckBox("Show legend");
+			JCheckBoxLegend.setToolTipText("Show legend for charts");
+			JCheckBoxLegend.addActionListener(this);
 		}
 		return JCheckBoxLegend;
 	}
@@ -478,14 +583,15 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	private ChartPanel getJFreeChartPanel() {
 		if (jFreeChartPanel == null) {
 			
-			this.jFreeChartPanel = new ChartPanel(getJFreeChart());
+			jFreeChartPanel = new ChartPanel(getJFreeChart());
 			
-			this.jFreeChartPanel.setMinimumDrawWidth( 0 );
-			this.jFreeChartPanel.setMinimumDrawHeight( 0 );
-			this.jFreeChartPanel.setMaximumDrawWidth( 1920 );
-			this.jFreeChartPanel.setMaximumDrawHeight( 1200 );
-			this.jFreeChartPanel.setLayout(new BorderLayout(0, 0));
-			this.jFreeChartPanel.validate();
+			jFreeChartPanel.setMinimumDrawWidth( 0 );
+			jFreeChartPanel.setMinimumDrawHeight( 0 );
+			jFreeChartPanel.setMaximumDrawWidth( 1920 );
+			jFreeChartPanel.setMaximumDrawHeight( 1200 );
+			jFreeChartPanel.setLayout(new BorderLayout(0, 0));
+			jFreeChartPanel.setBackground(Color.WHITE);
+			jFreeChartPanel.validate();
 		}
 		return jFreeChartPanel;
 	}
@@ -496,8 +602,9 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	 */
 	private JFreeChart getJFreeChart(){
 		if(chart == null){
-			this.chart = new JFreeChart(getPlot());
-			this.chart.getLegend().setVisible(showLegend);
+			chart = new JFreeChart(getPlot());
+			chart.getLegend().setVisible(showLegend);
+			chart.setBackgroundPaint(Color.WHITE);
 		}	
 		return chart;
 	}
@@ -509,9 +616,8 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	private XYPlot getPlot(){
 		if(plot == null){
 			
-			this.plot = new XYPlot();
-			//TODO: simulation-time ?
-			this.plot.setDomainAxis(new DateAxis("Date"));
+			plot = new XYPlot();
+			plot.setDomainAxis(new DateAxis("Date"));
 			
 			rendererTotal = new XYLineAndShapeRenderer(true, false);
 			rendererDelta = new XYLineAndShapeRenderer(true, false);
@@ -519,42 +625,180 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 			
 			axisDelta = new NumberAxis("Delta CPU-Time [ms]");
 			axisTotal = new NumberAxis("Total CPU-Time [ms]");;
-			axisLoad = new NumberAxis("Machine CPU-LOAD [%]");
+			axisLoad = new NumberAxis("CPU-LOAD [%]");
 			
 			if(deltaCollection != null){
 				//--- left axis scale ---
-				this.plot.setDataset(0, deltaCollection);
-				this.plot.setRenderer(0, rendererDelta);
+				plot.setDataset(0, deltaCollection);
+				plot.setRenderer(0, rendererDelta);
 			    axisDelta.setAutoRangeIncludesZero(false);
-			    this.plot.setRangeAxis(0, axisDelta);
+			    plot.setRangeAxis(0, axisDelta);
 			}
 			if(totalCollection != null){
 				//--- right axis scale ---
-				this.plot.setDataset(1, totalCollection);
-				this.plot.setRenderer(1, rendererTotal);
+				plot.setDataset(1, totalCollection);
+				plot.setRenderer(1, rendererTotal);
 			    axisTotal.setAutoRangeIncludesZero(false);
-			    this.plot.setRangeAxis(1, axisTotal);
+			    plot.setRangeAxis(1, axisTotal);
 			}
 			if(loadCollection != null){
 				//--- right axis scale ---
-				this.plot.setDataset(2, loadCollection);
-				this.plot.setRenderer(2, rendererLoad);
+				plot.setDataset(2, loadCollection);
+				plot.setRenderer(2, rendererLoad);
 				//---CPU-load  0-100%
 			    axisLoad.setRange(0, 100);
-			    this.plot.setRangeAxis(2, axisLoad);
+			    plot.setRangeAxis(2, axisLoad);
 			}
 		    //--- first data set on left axis ---
-			this.plot.mapDatasetToRangeAxis(0, 0);
+			plot.mapDatasetToRangeAxis(0, 0);
 		    //--- first data set on right axis ---
-			this.plot.mapDatasetToRangeAxis(1, 1);
+			plot.mapDatasetToRangeAxis(1, 1);
 		    //--- third data set on right axis ---
-			this.plot.mapDatasetToRangeAxis(2, 2);
+			plot.mapDatasetToRangeAxis(2, 2);
 		    // --- styling ---
-			this.plot.setBackgroundPaint(Color.WHITE);
-			this.plot.setDomainGridlinePaint(Color.BLACK);
-			this.plot.setRangeGridlinePaint(Color.BLACK);
+			plot.setBackgroundPaint(Color.WHITE);
+			plot.setDomainGridlinePaint(Color.BLACK);
+			plot.setRangeGridlinePaint(Color.BLACK);
 			
 		}
 		return plot;
+	}
+	
+	/**
+	 * Gets the label curve type.
+	 * @return the label curve type
+	 */
+	private JLabel getLblCurveType() {
+		if (lblCurveType == null) {
+			lblCurveType = new JLabel("Curve type:");
+		}
+		return lblCurveType;
+	}
+	
+	/**
+	 * Gets the label thread time.
+	 * @return the label thread time
+	 */
+	private JLabel getLblThreadTime() {
+		if (lblThreadTime == null) {
+			lblThreadTime = new JLabel("Thread time:");
+		}
+		return lblThreadTime;
+	}
+	
+	/**
+	 * Export XYSeriesCollections as CSV file.
+	 *
+	 * @param sFileName the s file name
+	 * @param collection1 the collection1
+	 * @param collection2 the collection2
+	 * @param collection3 the collection3
+	 */
+	private static void exportCsvFile(String sFileName, XYSeriesCollection collection1, XYSeriesCollection collection2, XYSeriesCollection collection3)
+	  	{
+			if(collection1 != null){
+				try{
+					FileWriter writer = new FileWriter(sFileName);
+					/* Date(X), TOTAL_CPU_USER_TIME<>1 (Y), DELTA_CPU_USER_TIME<>1,...,TOTAL_CPU_USER_TIME<>2, .... 
+					 * linuxtime, double, double,...
+					 * .
+					 * .
+					 * .
+					 */				    
+				    if(collection1.getSeriesCount() != 0){
+				    	// --- write header ---
+					    writer.append("Date");
+					    writer.append(',');
+					    //--- delta ---
+					    for(int x=0;x<collection1.getSeries().size(); x++){
+					    	writer.append(collection1.getSeries(x).getKey().toString());
+					    	writer.append(',');						
+						}
+					    // --- total ---
+					    if(collection2 != null){
+					    	for(int x=0;x<collection2.getSeries().size(); x++){
+						    	writer.append(collection2.getSeries(x).getKey().toString());
+						    	writer.append(',');						
+							}
+					    }
+					    // --- load ---
+					    if(collection3 != null){
+					    	for(int x=0;x<collection3.getSeries().size(); x++){
+						    	writer.append(collection3.getSeries(x).getKey().toString());
+						    	writer.append(',');						
+							}
+					    }
+					    writer.append('\n');
+					    // --- header complete ---
+				    	// --- write data rows ---
+					    int rowCount = collection1.getItemCount(0);
+					    for(int row = 0;row < rowCount; row++){
+					    	writer.append(collection1.getSeries(0).getDataItem(row).getX().toString());//Date
+					    	writer.append(',');	
+					    	//---delta ---
+						    for(int x = 0;x < collection1.getSeries().size(); x++){		
+						    	writer.append(collection1.getSeries(x).getDataItem(row).getY().toString());//value
+						    	writer.append(',');
+							}
+						    //---total ---
+						    if(collection2 != null){
+						    	for(int x = 0;x < collection2.getSeries().size(); x++){
+							    	writer.append(collection2.getSeries(x).getDataItem(row).getY().toString());//value
+							    	writer.append(',');						
+								}
+						    }
+						    //---load ---
+						    if(collection3 != null){
+						    	for(int x = 0;x < collection3.getSeries().size(); x++){
+							    	writer.append(collection3.getSeries(x).getDataItem(row).getY().toString());//value
+							    	writer.append(',');						
+								}
+						    }
+						    writer.append('\n');
+					    }
+					    // --- data complete ---
+				    }else{
+				    	writer.append("no data recorded yet\n");
+				    }
+				    writer.flush();
+				    writer.close();
+				}catch(IOException e)
+					{
+			     		e.printStackTrace();
+					} 
+			}
+	   }
+
+	/**
+	 * @return the fileChooser
+	 */
+	public JFileChooser getFileChooser() {
+		if(fileChooser == null){
+			fileChooser = new JFileChooser();
+			fileChooser.setDialogTitle("Export data"); 
+			fileChooser.setAcceptAllFileFilterUsed(false);
+			fileChooser.setFileFilter(new FileNameExtensionFilter("CSV file","csv"));
+		}
+		return fileChooser;
+	}
+
+	/**
+	 * @param fileChooser the fileChooser to set
+	 */
+	public void setFileChooser(JFileChooser fileChooser) {
+		this.fileChooser = fileChooser;
+	}
+	
+	/**
+	 * Gets the btn export csv.
+	 * @return the btn export csv
+	 */
+	private JButton getBtnExportCSV() {
+		if (btnExportCSV == null) {
+			btnExportCSV = new JButton("Export CSV");
+			btnExportCSV.setVerticalAlignment(SwingConstants.BOTTOM);
+			btnExportCSV.addActionListener(this);
+		}
+		return btnExportCSV;
 	}
 }

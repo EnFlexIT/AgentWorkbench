@@ -53,13 +53,25 @@ public class ThreadProtocol implements Serializable {
 	
 	private static final long serialVersionUID = 7906666593362238059L;
 	
+	/** The timestamp. */
 	private long timestamp;
+	
+	/** The load cpu. */
 	private float loadCPU;
+	
+	/** The process id. */
 	private String processID;
+	
+	/** The container name. */
 	private String containerName;
+	
+	/** The jvm name. */
 	private String jvmName;
+	
+	/** The machine name. */
 	private String machineName;
 	
+	/** The thread times. */
 	private Vector<ThreadTime> threadTimes;
 	
 	

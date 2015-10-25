@@ -28,33 +28,29 @@
  */
 package agentgui.simulationService.load.threading;
 
-import java.awt.Color;
-
-import org.jfree.data.xy.XYSeries;
-
 /**
  * Protocol class for storing Thread-Load-Information of an Agent-Class
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ThreadInfoStorageAgentClass extends ThreadInfoStorageSeries{
-	/**
-	* The available series keys as constants
-	*/
-	public final String AVG_TOTAL_CPU_USER_TIME   = "AVG_TOTAL_CPU_USER_TIME";
-	public final String AVG_TOTAL_CPU_SYSTEM_TIME = "AVG_TOTAL_CPU_SYSTEM_TIME";
-	public final String AVG_DELTA_CPU_USER_TIME   = "AVG_DELTA_CPU_USER_TIME";
-	public final String AVG_DELTA_CPU_SYSTEM_TIME = "AVG_DELTA_CPU_SYSTEM_TIME";
-	public final String MAX_TOTAL_CPU_USER_TIME   = "MAX_TOTAL_CPU_USER_TIME";
-	public final String MAX_TOTAL_CPU_SYSTEM_TIME = "MAX_TOTAL_CPU_SYSTEM_TIME";
-	public final String MAX_DELTA_CPU_USER_TIME   = "MAX_DELTA_CPU_USER_TIME";
-	public final String MAX_DELTA_CPU_SYSTEM_TIME = "MAX_DELTA_CPU_SYSTEM_TIME";
 	
+	/** The avg predictive metric. */
 	private double avgPredictiveMetric;
+	
+	/** The avgreal metric. */
 	private double avgrealMetric;
+	
+	/** The min predictive metric. */
 	private double minPredictiveMetric;
+	
+	/** The min real metric. */
 	private double minRealMetric;
+	
+	/** The max predictive metric. */
 	private double maxPredictiveMetric;
+	
+	/** The max real metric. */
 	private double maxRealMetric;
 	
 	/**
@@ -70,35 +66,8 @@ public class ThreadInfoStorageAgentClass extends ThreadInfoStorageSeries{
 		this.minRealMetric 			= 0;
 		this.maxPredictiveMetric 	= 0;
 		this.maxRealMetric 			= 0;
-		
-		initialize();
 	}
 	
-	/**
-	 * Initialize.
-	 */
-	private void initialize() {
-		getXYSeriesMap().put(AVG_TOTAL_CPU_SYSTEM_TIME,new XYSeries(AVG_TOTAL_CPU_SYSTEM_TIME+DELIMITER+name));
-		getXYSeriesMap().put(AVG_TOTAL_CPU_USER_TIME,new XYSeries(AVG_TOTAL_CPU_USER_TIME+DELIMITER+name));
-		getXYSeriesMap().put(MAX_TOTAL_CPU_SYSTEM_TIME,new XYSeries(MAX_TOTAL_CPU_SYSTEM_TIME+DELIMITER+name));
-		getXYSeriesMap().put(MAX_TOTAL_CPU_USER_TIME,new XYSeries(MAX_TOTAL_CPU_USER_TIME+DELIMITER+name));
-		
-		getXYSeriesMap().put(AVG_DELTA_CPU_SYSTEM_TIME,new XYSeries(AVG_DELTA_CPU_SYSTEM_TIME+DELIMITER+name));
-		getXYSeriesMap().put(AVG_DELTA_CPU_USER_TIME,new XYSeries(AVG_DELTA_CPU_USER_TIME+DELIMITER+name));	
-		getXYSeriesMap().put(MAX_DELTA_CPU_SYSTEM_TIME,new XYSeries(MAX_DELTA_CPU_SYSTEM_TIME+DELIMITER+name));	
-		getXYSeriesMap().put(MAX_DELTA_CPU_USER_TIME,new XYSeries(MAX_DELTA_CPU_USER_TIME+DELIMITER+name));			
-		
-		// --- default: total series RED, delta series BLACK ---
-		getXySeriesLineColorMap().put(AVG_TOTAL_CPU_USER_TIME+DELIMITER+name, Color.magenta);
-		getXySeriesLineColorMap().put(AVG_DELTA_CPU_USER_TIME+DELIMITER+name, Color.gray);
-		getXySeriesLineColorMap().put(AVG_TOTAL_CPU_SYSTEM_TIME+DELIMITER+name, Color.magenta);
-		getXySeriesLineColorMap().put(AVG_DELTA_CPU_SYSTEM_TIME+DELIMITER+name, Color.gray);
-		
-		getXySeriesLineColorMap().put(MAX_TOTAL_CPU_USER_TIME+DELIMITER+name, Color.RED);
-		getXySeriesLineColorMap().put(MAX_DELTA_CPU_USER_TIME+DELIMITER+name, Color.BLACK);
-		getXySeriesLineColorMap().put(MAX_TOTAL_CPU_SYSTEM_TIME+DELIMITER+name, Color.RED);
-		getXySeriesLineColorMap().put(MAX_DELTA_CPU_SYSTEM_TIME+DELIMITER+name, Color.BLACK);
-	}
 	/**
 	 * @return the avgPredictiveMetric
 	 */

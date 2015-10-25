@@ -56,6 +56,11 @@ import agentgui.simulationService.ontology.PlatformLoad;
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg - Essen
  */
 public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
+	
+	private static final double LOAD_CPU_IDEAL_PERCENT = 80 ;//default 80
+	private static final double LOAD_CPU_CRIT_PERCENT  = 90 ;//default 90
+	private static final double LOAD_CPU_IDEAL = (LOAD_CPU_IDEAL_PERCENT/100) ;
+	private static final double LOAD_CPU_CRIT  = (LOAD_CPU_CRIT_PERCENT/100) ;
 
 	private static final long serialVersionUID = -6884445863598676300L;
 	/** The PlatformLoad in the different container. */
@@ -68,30 +73,22 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	private String remoteContainerName;
 	private boolean remoteOnly = true;
 	private boolean changeContainer = false;
-	public double loadCpuIdeal,loadMemIdeal,loadCpuCrit,loadMemCrit;
+	public double loadCpuIdeal,loadCpuCrit;
 	
-	private static final double LOAD_CPU_IDEAL_PERCENT = 80 ;//default 80
-	private static final double LOAD_MEM_IDEAL_PERCENT = 80 ;//default 80
-	private static final double LOAD_CPU_CRIT_PERCENT  = 90 ;//default 90
-	private static final double LOAD_MEM_CRIT_PERCENT  = 90 ;//default 90
-	private static final double LOAD_CPU_IDEAL = (LOAD_CPU_IDEAL_PERCENT/100) ;
-	private static final double LOAD_MEM_IDEAL = (LOAD_MEM_IDEAL_PERCENT/100) ;
-	private static final double LOAD_CPU_CRIT  = (LOAD_CPU_CRIT_PERCENT/100) ;
-	private static final double LOAD_MEM_CRIT  = (LOAD_MEM_CRIT_PERCENT/100) ;
-	
+	/**
+	 * Instantiates a new predictive static load balancing.
+	 *
+	 * @param agent the agent
+	 */
 	public PredictiveStaticLoadBalancing(LoadExecutionAgent agent) {
 		super(agent);
 		
 		if(currDisSetup.isUseUserThresholds()){
 			loadCpuIdeal = currDisSetup.getUserThresholds().getThCpuH()/100;
-			loadMemIdeal = currDisSetup.getUserThresholds().getThMemoH()/100;
 			loadCpuCrit  = currDisSetup.getUserThresholds().getThCpuH()/100;
-			loadMemCrit  = currDisSetup.getUserThresholds().getThMemoH()/100;
 		}else{
 			loadCpuIdeal = LOAD_CPU_IDEAL;
-			loadMemIdeal = LOAD_MEM_IDEAL;
 			loadCpuCrit  = LOAD_CPU_CRIT;
-			loadMemCrit  = LOAD_MEM_CRIT;
 		}
 		
 	}
@@ -106,8 +103,14 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 		this.PredictiveDistribution(true);	
 	}
 	
+	/**
+	 * Predictive distribution.
+	 *
+	 * @param verbose the verbose
+	 */
 	@SuppressWarnings("unchecked")
 	public void PredictiveDistribution(boolean verbose){
+		
 		boolean debug = verbose;
 		if(debug){
 			System.out.println("START of predictive, static distribution.");
@@ -116,7 +119,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 		// --- Distribution is based on predictive metrics, thus: 						-----
 		// --- => 1. Start the remote containers 										-----
 		// --- => 2. Get the metrics of remote container (location)                    	-----
-		// --- => 3. Determine the distribution of all agents in ('this.currAgentList')	----- 
+		// --- => 3. Determine the distribution of all agents from ('this.currAgentList')	----- 
 		// --- => 4. distribute the agents according to calculation						-----
 		// ---   (Agents defined in visualization-setup will be distributed as well)	-----
 		// ----------------------------------------------------------------------------------
@@ -148,19 +151,16 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 		Location remoteContainer = null;
 		/** The CPU benchmark values (MFLOPS  * No of CPUs) of each container*/
 		Hashtable<Location, Double> cpu = null;
-		/** The RAM benchmark values MB of each container*/
-		Hashtable<Location, Double> mem = null;
 		
 		
 		/*
-		 * ### 2. get CPU  and MEM Benchmark of each container
+		 * ### 2. get CPU Benchmark of each container
 		 */
 		
 		if (newContainerLocations!=null) {
 			
 			locationNames = new Vector<String>(newContainerLocations.keySet());
 			cpu = new Hashtable<Location, Double>();
-			mem = new Hashtable<Location, Double>();
 			
 			// iterate over location names
 			Iterator<String> locationNamesIt = locationNames.iterator();
@@ -177,10 +177,8 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 					mflopsBenchmarkValueTotal = Math.round(mflopsBenchmarkValueTotal*100)/100.0;
 					cpu.put(remoteContainer, mflopsBenchmarkValueTotal);
 					
-					Double memBenchmarkValueTotal =  (double) containerDesc.getPlPerformace().getMemory_totalMB();					
-					mem.put(remoteContainer, memBenchmarkValueTotal);
 					if(debug){
-						System.out.println(remoteContainer.getName()+ ", Benchmark:"+ cpu.get(remoteContainer) + " MFLOPS, " + mem.get(remoteContainer) + " MB");					
+						System.out.println(remoteContainer.getName()+ ", Benchmark:"+ cpu.get(remoteContainer) + " MFLOPS, ");					
 					}
 				} catch (ServiceException e) {
 					System.out.println("No container description available.");
@@ -201,8 +199,6 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 		LoadBalancingInterface lba = null;
 		/** temp for sum of CPU metrics*/
 		Hashtable<Location, Double> cpuContainerSum = new Hashtable<Location, Double>();
-		/** temp for sum of MEM metrics*/
-		Hashtable<Location, Double> memContainerSum = new Hashtable<Location, Double>();
 		
 		
 		if (currAgentList!=null && locationNames != null) {
@@ -221,8 +217,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 					
 					//still enough "space" on container ?
 					if(cpuContainerSum.get(remoteContainer) == null || 
-					   (cpu.get(remoteContainer)*loadCpuCrit) >= cpuContainerSum.get(remoteContainer)&&
-					   (mem.get(remoteContainer)*loadMemCrit) >= memContainerSum.get(remoteContainer)){
+					   (cpu.get(remoteContainer)*loadCpuCrit) >= cpuContainerSum.get(remoteContainer)){
 						
 
 						try {
@@ -239,20 +234,13 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 						}			
 						//update sum CPU metrics
 						if(cpuContainerSum.get(remoteContainer)!=null){
-							cpuContainerSum.put(remoteContainer, cpuContainerSum.get(remoteContainer) + lba.getPredictMetricCPU());
+							cpuContainerSum.put(remoteContainer, cpuContainerSum.get(remoteContainer) + lba.getPredictiveMetricCPU());
 						}else{
-							cpuContainerSum.put(remoteContainer, lba.getPredictMetricCPU());
-						}
-						//update sum MEM metrics
-						if(memContainerSum.get(remoteContainer)!=null){
-							memContainerSum.put(remoteContainer, memContainerSum.get(remoteContainer) + lba.getPredictMetricMEM());
-						}else{
-							memContainerSum.put(remoteContainer, lba.getPredictMetricMEM());
+							cpuContainerSum.put(remoteContainer, lba.getPredictiveMetricCPU());
 						}
 						
 						//ideal workload ?
-						if((cpu.get(remoteContainer)*loadCpuIdeal) <= cpuContainerSum.get(remoteContainer) ||
-					       (mem.get(remoteContainer)*loadMemIdeal) <= memContainerSum.get(remoteContainer)){
+						if((cpu.get(remoteContainer)*loadCpuIdeal) <= cpuContainerSum.get(remoteContainer)){
 							//change container
 							changeContainer = true;	
 						}
@@ -279,9 +267,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 						
 						if(debug){
 							System.out.println("#### IDEAL workload distribution for " + remoteContainer.getName());
-							System.out.println("#### REACHED  " + (100/cpu.get(remoteContainer) * cpuContainerSum.get(remoteContainer)) + "% CPU");
-							System.out.println("#### REACHED  " + (100/mem.get(remoteContainer) * memContainerSum.get(remoteContainer)) + "% ofMemory");
-						}
+							System.out.println("#### REACHED  " + (100/cpu.get(remoteContainer) * cpuContainerSum.get(remoteContainer)) + "% CPU");						}
 					}else{//not enough containers left
 												
 						if(remoteOnly == true){
@@ -295,7 +281,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 
 							}
 						}	
-						System.out.println("#### WARNING reached  " + (100/cpu.get(remoteContainer) * cpuContainerSum.get(remoteContainer)) + "% CPU," + (100/mem.get(remoteContainer) * memContainerSum.get(remoteContainer)) + "% Memory");						
+						System.out.println("#### WARNING reached  " + (100/cpu.get(remoteContainer) * cpuContainerSum.get(remoteContainer)) + "% CPU,");						
 					}
 					//reset
 					changeContainer = false;

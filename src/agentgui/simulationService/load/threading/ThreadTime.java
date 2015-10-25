@@ -40,23 +40,37 @@ public class ThreadTime implements Serializable {
 
 	private static final long serialVersionUID = 7920683110304631892L;
 	
+	/** The thread name. */
 	private String threadName;
+	
+	/** The class name. */
 	private String className;
+	
+	/** The is agent. */
 	private boolean isAgent;
 	
+	/** The system time. */
 	private long systemTime;
+	
+	/** The user time. */
 	private long userTime;
+	
+	/** The predictive metric. */
 	private double predictiveMetric;
+	
+	/** The real metric. */
 	private double realMetric;
     
     /**
      * Instantiates a new thread time.
-     * @param systemTime the CPU time
+     *
+     * @param threadName the thread name
+     * @param systemTime the system time
      * @param userTime the user time
      */
-    public ThreadTime(String threadName, long cpuTime, long userTime) {
+    public ThreadTime(String threadName, long systemTime, long userTime) {
     	this.setThreadName(threadName);
-    	this.setSystemTime(cpuTime);
+    	this.setSystemTime(systemTime);
     	this.setUserTime(userTime);
     	// --- default ---
     	this.setIsAgent(false);
@@ -125,8 +139,8 @@ public class ThreadTime implements Serializable {
 	 * Sets the system cpu time.
 	 * @param systemTime the new cpu time
 	 */
-	public void setSystemTime(long cpuTime) {
-		this.systemTime = cpuTime;
+	public void setSystemTime(long systemTime) {
+		this.systemTime = systemTime;
 	}
 	
 	/**

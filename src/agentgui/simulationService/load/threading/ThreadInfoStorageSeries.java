@@ -28,7 +28,6 @@
  */
 package agentgui.simulationService.load.threading;
 
-import java.awt.Paint;
 import java.util.HashMap;
 
 import org.jfree.data.xy.XYSeries;
@@ -40,14 +39,11 @@ import org.jfree.data.xy.XYSeries;
  */
 public class ThreadInfoStorageSeries {
 	
+	/** The name. */
 	protected String name;
-	private boolean isSelected;
-	public final String DELIMITER   = "<>";
 	
 	/** The xy series hashmap that Contains multiple data-series  */
 	private HashMap<String, XYSeries> xySeriesMap;
-	/** The line color map contains color information for a XYSeries */
-	private HashMap<String, Paint> xySeriesLineColorMap;
 
 	/**
 	 * Instantiates a new thread info storage series.
@@ -55,7 +51,6 @@ public class ThreadInfoStorageSeries {
 	 */
 	public ThreadInfoStorageSeries(String name) {
 		this.name = name;
-		this.isSelected = false;
 	}
 	
 	/**
@@ -76,15 +71,32 @@ public class ThreadInfoStorageSeries {
 	}
 	
 	/**
+	 * Gets the name.
+	 *
 	 * @return the name
 	 */
 	public String getName() {
 		return this.name;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
     public String toString(){
-         return name;
+		/*
+		 * returns the first substring of the name.
+		 * example:
+		 * name: agent@container@JVM@machine@cluster
+		 * returns agent
+		 */
+		int x = name.indexOf("@");
+		
+		if(x != -1){
+			return name.substring(0, x);
+		}
+		return name;
+		
     }
 
 	/**
@@ -102,29 +114,5 @@ public class ThreadInfoStorageSeries {
 	 */
 	public void setXYSeriesMap(HashMap<String, XYSeries> xySeriesMap) {
 		this.xySeriesMap = xySeriesMap;
-	}
-
-	/**
-	 * @return the isSelected
-	 */
-	public boolean isSelected() {
-		return isSelected;
-	}
-
-	/**
-	 * @param isSelected the isSelected to set
-	 */
-	public void setSelected(boolean isSelected) {
-		this.isSelected = isSelected;
-	}
-
-	/**
-	 * @return the xySeriesLineColorMap
-	 */
-	public HashMap<String, Paint> getXySeriesLineColorMap() {
-		if(xySeriesLineColorMap == null){
-			this.xySeriesLineColorMap = new HashMap<String, Paint>();
-		}
-		return xySeriesLineColorMap;
 	}
 }

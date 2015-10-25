@@ -28,10 +28,6 @@
  */
 package agentgui.simulationService.load.threading;
 
-import java.awt.Color;
-
-import org.jfree.data.xy.XYSeries;
-
 
 /**
  * Protocol class for storing Thread-Load-Information of a single Agent
@@ -39,17 +35,17 @@ import org.jfree.data.xy.XYSeries;
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ThreadInfoStorageAgent extends ThreadInfoStorageSeries {
-	/**
-	* The available series keys as constants
-	*/
-	public final String TOTAL_CPU_USER_TIME   = "TOTAL_CPU_USER_TIME";
-	public final String DELTA_CPU_USER_TIME   = "DELTA_CPU_USER_TIME";
-	public final String TOTAL_CPU_SYSTEM_TIME = "TOTAL_CPU_SYSTEM_TIME";
-	public final String DELTA_CPU_SYSTEM_TIME = "DELTA_CPU_SYSTEM_TIME";
-	
+		
+	/** The predict metric cpu. */
 	private double predictMetricCPU;
+	
+	/** The real metric cpu. */
 	private double realMetricCPU;
+	
+	/** The class name. */
 	protected String className;
+	
+	/** The is agent. */
 	private boolean isAgent;
 	
 	/**
@@ -62,23 +58,6 @@ public class ThreadInfoStorageAgent extends ThreadInfoStorageSeries {
 		super(name);
 		this.className = className;
 		this.isAgent = isAgent;
-		initialize();
-	}
-	
-	/**
-	 * Initialize.
-	 */
-	private void initialize(){
-		getXYSeriesMap().put(TOTAL_CPU_USER_TIME, new XYSeries(TOTAL_CPU_USER_TIME+DELIMITER+name));
-		getXYSeriesMap().put(DELTA_CPU_USER_TIME, new XYSeries(DELTA_CPU_USER_TIME+DELIMITER+name));
-		getXYSeriesMap().put(TOTAL_CPU_SYSTEM_TIME, new XYSeries(TOTAL_CPU_SYSTEM_TIME+DELIMITER+name));
-		getXYSeriesMap().put(DELTA_CPU_SYSTEM_TIME, new XYSeries(DELTA_CPU_SYSTEM_TIME+DELIMITER+name));	
-		
-		// --- default: total series RED, delta series BLACK ---
-		getXySeriesLineColorMap().put(TOTAL_CPU_USER_TIME+DELIMITER+name, Color.RED);
-		getXySeriesLineColorMap().put(DELTA_CPU_USER_TIME+DELIMITER+name, Color.BLACK);
-		getXySeriesLineColorMap().put(TOTAL_CPU_SYSTEM_TIME+DELIMITER+name, Color.RED);
-		getXySeriesLineColorMap().put(DELTA_CPU_SYSTEM_TIME+DELIMITER+name, Color.BLACK);
 	}
 	
 	/**

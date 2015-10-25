@@ -45,7 +45,10 @@ public class ThreadMeasureBehaviour extends TickerBehaviour {
 
 	private static final long serialVersionUID = 7031695042584275556L;
 	
+	/** The load measure agent. */
 	private LoadMeasureAgent loadMeasureAgent;
+	
+	/** The one shot behaviour. */
 	private boolean oneShotBehaviour;
 	
 	
