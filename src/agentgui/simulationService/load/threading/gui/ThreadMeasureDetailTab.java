@@ -63,6 +63,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -570,7 +571,11 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 * the myMouse event occurs, that object's appropriate
 	 * method is invoked.
 	 */
-	class MyMouseListener implements MouseListener{
+	class MyMouseListener extends DefaultTreeCellRenderer implements MouseListener{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private DefaultMutableTreeNode node;
 		private String nodeName;
 		private Iterator<String> iterator;
@@ -616,7 +621,8 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 				                }
 		            	    }
 		            	}
-		            }else{// --- toggle thread/agent chart visibility on main chart ---
+		            }else if (e.getClickCount() == 2){
+		            	// --- toggle thread/agent chart visibility on main chart ---
 	        	    	ThreadInfoStorageAgent tis = (ThreadInfoStorageAgent)userObject;
 	        	    	boolean isSelected = leafSelected.get(tis.toString()).booleanValue();
 	        	    	leafSelected.put(tis.toString(),new Boolean(!isSelected));
@@ -797,7 +803,10 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	    	this.agentInActiveIcon= new ImageIcon(((new ImageIcon(getClass().getResource(PathImage + "AgentGUI.png"))).getImage()).getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
 	    }
 
-	    @Override
+	    /* (non-Javadoc)
+    	 * @see javax.swing.tree.DefaultTreeCellRenderer#getTreeCellRendererComponent(javax.swing.JTree, java.lang.Object, boolean, boolean, boolean, int, boolean)
+    	 */
+    	@Override
 	    public Component getTreeCellRendererComponent(JTree tree, Object value,
 	            boolean sel, boolean expanded, boolean leaf, int row,
 	            boolean hasFocus) {
@@ -829,7 +838,7 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
     	    			setIcon(inActiveIcon);
     	    		}
     	    	}
-    	    }	 
+    	    }	
 	        return this;
 	    }
 	}
