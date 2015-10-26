@@ -33,11 +33,8 @@ import jade.core.Agent;
 /**
  * This interface is to extend an agent with methods needed for load-balancing, 
  *  
- * @see Agent
- * @see SmartHouseStaticLoadBalancing
- * @see SmartHouseDynamicLoadBalancing
- * 
  * @author Hanno Monschan - University of Duisburg - Essen
+ * @see Agent
  */
 public interface LoadBalancingInterface{
 	

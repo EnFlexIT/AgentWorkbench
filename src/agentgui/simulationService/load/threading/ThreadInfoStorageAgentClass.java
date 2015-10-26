@@ -35,16 +35,16 @@ package agentgui.simulationService.load.threading;
  */
 public class ThreadInfoStorageAgentClass extends ThreadInfoStorageSeries{
 	
-	/** The avg predictive metric. */
+	/** The average predictive metric. */
 	private double avgPredictiveMetric;
 	
-	/** The avgreal metric. */
+	/** The average real metric. */
 	private double avgrealMetric;
 	
-	/** The min predictive metric. */
+	/** The minimum predictive metric. */
 	private double minPredictiveMetric;
 	
-	/** The min real metric. */
+	/** The minimum real metric. */
 	private double minRealMetric;
 	
 	/** The max predictive metric. */
@@ -69,72 +69,107 @@ public class ThreadInfoStorageAgentClass extends ThreadInfoStorageSeries{
 	}
 	
 	/**
+	 * Gets the avg predictive metric.
+	 *
 	 * @return the avgPredictiveMetric
 	 */
 	public double getAvgPredictiveMetric() {
 		return avgPredictiveMetric;
 	}
+	
 	/**
+	 * Sets the average predictive metric.
+	 *
 	 * @param avgPredictiveMetric the avgPredictiveMetric to set
 	 */
 	public void setAvgPredictiveMetric(double avgPredictiveMetric) {
 		this.avgPredictiveMetric = avgPredictiveMetric;
 	}
+	
 	/**
-	 * @return the avgPrealMetric
+	 * Gets the average real metric.
+	 *
+	 * @return the avgRealMetric
 	 */
 	public double getAvgRealMetric() {
 		return avgrealMetric;
 	}
+	
 	/**
-	 * @param avgRealMetric the avgRealMetric to set
+	 * Sets the average real metric.
+	 *
+	 * @param avgPrealMetric the new average real metric
 	 */
 	public void setAvgRealMetric(double avgPrealMetric) {
 		this.avgrealMetric = avgPrealMetric;
 	}
+	
 	/**
+	 * Gets the minimum predictive metric.
+	 *
 	 * @return the minPredictiveMetric
 	 */
 	public double getMinPredictiveMetric() {
 		return minPredictiveMetric;
 	}
+	
 	/**
+	 * Sets the minimum predictive metric.
+	 *
 	 * @param minPredictiveMetric the minPredictiveMetric to set
 	 */
 	public void setMinPredictiveMetric(double minPredictiveMetric) {
 		this.minPredictiveMetric = minPredictiveMetric;
 	}
+	
 	/**
+	 * Gets the minimum real metric.
+	 *
 	 * @return the minrealMetric
 	 */
 	public double getMinRealMetric() {
 		return minRealMetric;
 	}
+	
 	/**
+	 * Sets the minimum real metric.
+	 *
 	 * @param minrealMetric the minrealMetric to set
 	 */
 	public void setMinRealMetric(double minrealMetric) {
 		this.minRealMetric = minrealMetric;
 	}
+	
 	/**
+	 * Gets the max predictive metric.
+	 *
 	 * @return the maxPredictiveMetric
 	 */
 	public double getMaxPredictiveMetric() {
 		return maxPredictiveMetric;
 	}
+	
 	/**
+	 * Sets the max predictive metric.
+	 *
 	 * @param maxPredictiveMetric the maxPredictiveMetric to set
 	 */
 	public void setMaxPredictiveMetric(double maxPredictiveMetric) {
 		this.maxPredictiveMetric = maxPredictiveMetric;
 	}
+	
 	/**
+	 * Gets the max real metric.
+	 *
 	 * @return the maxRealMetric
 	 */
 	public double getMaxRealMetric() {
 		return maxRealMetric;
 	}
+	
 	/**
+	 * Sets the max real metric.
+	 *
 	 * @param maxRealMetric the maxRealMetric to set
 	 */
 	public void setMaxRealMetric(double maxRealMetric) {

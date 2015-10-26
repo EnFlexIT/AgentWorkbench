@@ -409,8 +409,6 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 * component's <code>addMyTreeModelListener<code> method. When
 	 * the myTreeModel event occurs, that object's appropriate
 	 * method is invoked.
-	 *
-	 * @see MyTreeModelEvent
 	 */
 	class  MyTreeModelListener implements TreeModelListener {
 
@@ -571,8 +569,6 @@ public class ThreadMeasureDetailTab extends JPanel implements ActionListener {
 	 * component's <code>addMyMouseListener<code> method. When
 	 * the myMouse event occurs, that object's appropriate
 	 * method is invoked.
-	 *
-	 * @see MyMouseEvent
 	 */
 	class MyMouseListener implements MouseListener{
 		private DefaultMutableTreeNode node;

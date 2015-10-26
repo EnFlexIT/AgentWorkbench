@@ -289,8 +289,6 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	 * component's <code>addCollectionSeriesChangeListener<code> method. When
 	 * the collectionSeriesChange event occurs, that object's appropriate
 	 * method is invoked.
-	 *
-	 * @see CollectionSeriesChangeEvent
 	 */
 	class CollectionSeriesChangeListener implements DatasetChangeListener{
 		private HashMap<String, Paint> localLineColorMap;

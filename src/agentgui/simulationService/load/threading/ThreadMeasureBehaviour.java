@@ -57,7 +57,6 @@ public class ThreadMeasureBehaviour extends TickerBehaviour {
 	 *
 	 * @param loadMeasureAgent the load measure agent
 	 * @param period the period
-	 * @param oneShotBehaviour indicates if this is a single shot behaviour
 	 */
 	public ThreadMeasureBehaviour(LoadMeasureAgent loadMeasureAgent, long period) {
 		super(loadMeasureAgent, period);
