@@ -663,9 +663,12 @@ public class DBConnection {
 		 * @param toClipboard String which will be placed in the clipboard
 		 */
 		public void put2Clipboard(String toClipboard) {
-			StringSelection data = new StringSelection(toClipboard);
-			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-			clipboard.setContents(data, data);
+			if (Application.isOperatingHeadless()==false) {
+				// --- Only in case that Agent.GUI is operated with graphical representation ------
+				StringSelection data = new StringSelection(toClipboard);
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clipboard.setContents(data, data);	
+			}
 		}
 		/**
 		 * In case of an SQL-Error the Text can be very long.

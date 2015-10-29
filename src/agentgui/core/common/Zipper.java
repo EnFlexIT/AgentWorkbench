@@ -67,46 +67,59 @@ import agentgui.core.application.Application;
  */
 public class Zipper extends Thread {
 
+	private Frame owner = null;
+	
 	private boolean done = false;
 	
 	private int kindOfExec = 0;
 	private final int execZip = 1;
 	private final int execUnZip = 2;
 	
-	private ZipperMonitor zipMonitor = null;
-	private boolean zipMonitorVisible = true;
+	private boolean isHeadlessOperation;
+	private ZipperMonitor zipMonitor;
 	
-	private String excludePattern = null;
+	private String excludePattern;
 	private Vector<File> fileList = new Vector<File>();
-	private String zipFolder = null;
-	private String zipSourceFolder = null;
+	private String zipFolder;
+	private String zipSourceFolder;
 	
-	private String unzipZipFolder = null;
-	private String unzipDestinationFolder = null;
+	private String unzipZipFolder;
+	private String unzipDestinationFolder;
 	
-	private String projectFolder2Open = null;
+	private String projectFolder2Open;
 	
 	
 	/**
 	 * Instantiates a new Zipper.
 	 */
 	public Zipper() {
-		this.initialize(null);	
+		this.initialize();	
 	}
 	/**
 	 * Constructor of this class.
 	 * @param owner the owner
 	 */
 	public Zipper(Frame owner) {
-		this.initialize(owner);
+		this.owner = owner;
+		this.initialize();
 	}
 	
 	/**
 	 * Initialize.
 	 */
-	private void initialize(Frame owner) {
+	private void initialize() {
 		this.setName("Zipper");
-		this.zipMonitor = new ZipperMonitor(owner);
+	}
+	
+	/**
+	 * Return the {@link ZipperMonitor}.
+	 * @return the {@link ZipperMonitor}
+	 */
+	private ZipperMonitor getZipperMonitor() {
+		if (this.zipMonitor==null && this.isHeadlessOperation()==false) {
+			this.zipMonitor = new ZipperMonitor(this.owner);	
+		}
+		return this.zipMonitor;
 	}
 	
 	/**
@@ -134,16 +147,18 @@ public class Zipper extends Thread {
 		this.setDone(false);
 		
 		// --- Do the specified job -------------------
-		if (kindOfExec==execZip) {
-			this.zipFolder(zipSourceFolder, zipFolder);
-		} else if (kindOfExec==execUnZip) {
-			this.unzipFolder(unzipZipFolder, unzipDestinationFolder);
+		if (this.kindOfExec==this.execZip) {
+			this.zipFolder(this.zipSourceFolder, this.zipFolder);
+		} else if (this.kindOfExec==this.execUnZip) {
+			this.unzipFolder(this.unzipZipFolder, this.unzipDestinationFolder);
 		}
 		// --- Done -----------------------------------
 		this.setDone(true);
 		
 		// --- Hide zipMonitor ------------------------
-		this.zipMonitor.setVisible(false);
+		if (this.getZipperMonitor()!=null) {
+			this.getZipperMonitor().setVisible(false);	
+		}
 		
 		// --- if specified open extracted project ----
 		if (this.projectFolder2Open!=null) {
@@ -250,18 +265,18 @@ public class Zipper extends Thread {
 	}
 
 	/**
-	 * Sets the zip monitor visible.
-	 * @param zipMonitorVisible the new zip monitor visible
+	 * Sets the zip monitor visible or not.
+	 * @param isHeadlessOperation the flag for headless operation or not
 	 */
-	public void setVisible(boolean zipMonitorVisible) {
-		this.zipMonitorVisible = zipMonitorVisible;
+	public void setHeadlessOperation(boolean isHeadlessOperation) {
+		this.isHeadlessOperation = isHeadlessOperation;
 	}
 	/**
-	 * Checks if is zip monitor visible.
-	 * @return true, if is zip monitor visible
+	 * Checks if is headless (un)zip operation.
+	 * @return true, if is a headless (un)zip operation
 	 */
-	public boolean isVisible() {
-		return zipMonitorVisible;
+	public boolean isHeadlessOperation() {
+		return isHeadlessOperation;
 	}
 	
 	/**
@@ -352,7 +367,7 @@ public class Zipper extends Thread {
 			e.printStackTrace();
 		}
 		if (this.unzipZipFolder!=null && this.unzipDestinationFolder!=null) {
-			this.kindOfExec = execUnZip;
+			this.kindOfExec = this.execUnZip;
 			this.start();	
 		}		
 	}
@@ -370,11 +385,12 @@ public class Zipper extends Thread {
 
 			// --------------------------------------------
 			// --- configure/show zipMonitor ---------
-			this.zipMonitor.setNumberOfFilesMax(zf.size());
-			this.zipMonitor.setProcessDescription(false, zipFolder);
-			this.zipMonitor.setVisible(true);
+			if (this.getZipperMonitor()!=null) {
+				this.getZipperMonitor().setNumberOfFilesMax(zf.size());
+				this.getZipperMonitor().setProcessDescription(false, zipFolder);
+				this.getZipperMonitor().setVisible(true);	
+			}
 			// --------------------------------------------
-			
 			while (zipEnum.hasMoreElements()) {
 			
 				ZipEntry item = (ZipEntry) zipEnum.nextElement();
@@ -389,17 +405,19 @@ public class Zipper extends Thread {
 						newFile.getParentFile().mkdirs();
 					}
 					// --- Consider the zipMonitor --------
-					zipMonitor.setNumberNextFile();
-					zipMonitor.setCurrentJobFile(newfilePath);
-					if (zipMonitor.isCanceled()) {
-						// --- Cancel extraction ----------
-						this.setProjectFolder2Open(null);
-						zf.close();
-						File destFile = new File(destFolder + this.getRootFolder2Extract() + File.separator);
-						if (destFile.isDirectory()) {
-							destFile.delete();	
-						}
-						return;
+					if (this.getZipperMonitor()!=null) {
+						this.getZipperMonitor().setNumberNextFile();
+						this.getZipperMonitor().setCurrentJobFile(newfilePath);
+						if (this.getZipperMonitor().isCanceled()) {
+							// --- Cancel extraction ----------
+							this.setProjectFolder2Open(null);
+							zf.close();
+							File destFile = new File(destFolder + this.getRootFolder2Extract() + File.separator);
+							if (destFile.isDirectory()) {
+								destFile.delete();	
+							}
+							return;
+						}	
 					}
 					
 					InputStream is = zf.getInputStream(item);
@@ -453,9 +471,11 @@ public class Zipper extends Thread {
 			// --- Evaluate the folder structure -----
 			this.evaluateFolder(srcFolder);
 			// --- configure/show zipMonitor ---------
-			this.zipMonitor.setNumberOfFilesMax(this.fileList.size());
-			this.zipMonitor.setProcessDescription(true, srcFolder);
-			this.zipMonitor.setVisible(true);
+			if (this.getZipperMonitor()!=null) {
+				this.getZipperMonitor().setNumberOfFilesMax(this.fileList.size());
+				this.getZipperMonitor().setProcessDescription(true, srcFolder);
+				this.getZipperMonitor().setVisible(true);	
+			}
 			// --------------------------------------------
 			
 			ZipOutputStream zip = null;
@@ -477,7 +497,7 @@ public class Zipper extends Thread {
 			}
 
 			// --- Consider the zipMonitor ------------------
-			if (zipMonitor.isCanceled()) {
+			if (this.getZipperMonitor()!=null && this.getZipperMonitor().isCanceled()) {
 				File destFileZip = new File(destZipFile);
 				destFileZip.delete();
 			}
@@ -514,10 +534,12 @@ public class Zipper extends Thread {
 				// --- If the current file should be included -----------
 				if (includeFile==true) {
 					// --- Consider the zipMonitor ------------------
-					this.zipMonitor.setNumberNextFile();
-					this.zipMonitor.setCurrentJobFile(srcFile);
-					if (zipMonitor.isCanceled()) {
-						return;
+					if (this.getZipperMonitor()!=null) {
+						this.getZipperMonitor().setNumberNextFile();
+						this.getZipperMonitor().setCurrentJobFile(srcFile);
+						if (this.getZipperMonitor().isCanceled()) {
+							return;
+						}
 					}
 					FileInputStream in = new FileInputStream(srcFile);
 					zip.putNextEntry(new ZipEntry(path + File.separator + folder.getName()));

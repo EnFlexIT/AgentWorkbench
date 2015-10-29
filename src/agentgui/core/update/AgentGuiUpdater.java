@@ -57,31 +57,28 @@ public class AgentGuiUpdater extends Thread {
 	
 	private final String updateSiteAddition = "?key=xml";
 
-	private GlobalInfo globalInfo = null;
-	private VersionInfo versionInfo = null;
-	private ExecutionMode executionMode = null;
+	private GlobalInfo globalInfo;
+	private VersionInfo versionInfo;
+	private ExecutionMode executionMode;
 	
-	private String updateSite = null;
-	private Integer updateAutoConfiguration = null;
+	private String updateSite;
+	private Integer updateAutoConfiguration;
 	private Integer updateKeepDictionary = 1;
 	private long updateDateLastChecked = 0;
 	
 	
-	private String alternativeInfoLink = null;
+	private String alternativeInfoLink;
 	
-	private String localDownloadPath = null;
-	private String localWebServerPath = null;
-	private String localPropertiesPath = null;
+	private String localDownloadPath;
+	private String localWebServerPath;
+	private String localPropertiesPath;
 	
-	private UpdateInformation updateInformation = null;
+	private UpdateInformation updateInformation;
 	
-	private String latestVersionInfoFullPath = null;
+	private String latestVersionInfoFullPath;
 
-	private String localUpdateZipFile = null;
-	private String localUpdateExtractedFolder = null;
-
-	private DownloadThread downloadThread4Update = null;
-	private ProgressMonitor progressMonitor = null;
+	private String localUpdateZipFile;
+	private String localUpdateExtractedFolder;
 
 	private boolean manualyExecutedByUser = false;
 	private boolean doUpdateProcedure = true;
@@ -335,8 +332,12 @@ public class AgentGuiUpdater extends Thread {
 					// --- Stop JADE, close Projects ----------------
 					if (isPreparedForInstallation()==true) {
 						// ------------------------------------------
-						// --- Unzip the downloaded file ------------
-						if (this.unzipUpdateFile(this.askBeforeProjectShutdownAndUnzip)==true){
+						// --- Unzip the download -------------------
+						boolean headlessUnzip = Application.isOperatingHeadless();
+						if (headlessUnzip==false) {
+							headlessUnzip = this.askBeforeProjectShutdownAndUnzip;
+						}
+						if (this.unzipUpdateFile(headlessUnzip)==true){
 							// --- Clean up or Move to Server directory
 							this.handleDownloadedFilesAfterExtraction();
 							// --- Move AgentGuiUpdate.jar ---------- 
@@ -529,9 +530,9 @@ public class AgentGuiUpdater extends Thread {
 			String extractFolder = zipFolderFile.getParent() + File.separator + this.localUpdateExtractedFolder;
 			
 			Zipper zipper = new Zipper();
+			zipper.setHeadlessOperation(visualizeUnzipping);
 			zipper.setUnzipZipFolder(this.localUpdateZipFile);
 			zipper.setUnzipDestinationFolder(extractFolder);
-			zipper.setVisible(visualizeUnzipping);
 			zipper.doUnzipFolder();
 
 			while(zipper.isDone()==false) {
@@ -558,35 +559,57 @@ public class AgentGuiUpdater extends Thread {
 		if (this.updateInformation!=null && this.localUpdateZipFile!=null) {
 			if (this.updateInformation.getDownloadLink()!=null) {
 				
+				// --- Define download thread -----------------------
+				DownloadThread downloadThread4Update = new DownloadThread(this.updateInformation.getDownloadLink(), this.localUpdateZipFile);
 				System.out.println("Agent.GUI-Update: Start download ...");
-				this.progressMonitor = new ProgressMonitor("Agent.GUI - Update", "Agent.GUI - Update", "Download");
-				if (this.askBeforeDownload==true) {
-					this.progressMonitor.setVisible(true);	
+				
+				// --------------------------------------------------
+				// --- Headless operation mode? ---------------------
+				// --------------------------------------------------
+				if (Application.isOperatingHeadless()==true) {
+					// --- Headless mode ----------------------------
+					downloadThread4Update.start();
+					while(downloadThread4Update.isFinished()==false) {
+						System.out.print(downloadThread4Update.getDownloadProgress() + " % ...");
+						try {
+							sleep(500);
+						} catch (InterruptedException ie) {
+							ie.printStackTrace();
+						}
+					} // end while
+					System.out.println("100 %");
+					
+				} else {
+					// --- Operating with user interface ------------ 
+					ProgressMonitor progressMonitor = new ProgressMonitor("Agent.GUI - Update", "Agent.GUI - Update", "Download");
+					if (this.askBeforeDownload==true) {
+						progressMonitor.setVisible(true);	
+					}
+					progressMonitor.setProgress(0);
+					
+					downloadThread4Update.start();
+					while(downloadThread4Update.isFinished()==false) {
+						progressMonitor.setProgress(downloadThread4Update.getDownloadProgress());
+						if (progressMonitor.isCanceled()) {
+							downloadThread4Update.doCancel();
+						}
+						try {
+							sleep(200);
+						} catch (InterruptedException ie) {
+							ie.printStackTrace();
+						}
+					} // end while
+					
+					progressMonitor.setProgress(100);
+					progressMonitor.setVisible(false);
+					progressMonitor.dispose();
+					progressMonitor = null;
+					
 				}
-				this.progressMonitor.setProgress(0);
 				
-				this.downloadThread4Update = new DownloadThread(this.updateInformation.getDownloadLink(), this.localUpdateZipFile);
-				this.downloadThread4Update.start();
-				while(this.downloadThread4Update.isFinished()==false) {
-					this.progressMonitor.setProgress(this.downloadThread4Update.getDownloadProgress());
-					if (this.progressMonitor.isCanceled()) {
-						this.downloadThread4Update.doCancel();
-					}
-					try {
-						sleep(200);
-					} catch (InterruptedException ie) {
-						ie.printStackTrace();
-					}
-				} // end while
-				
-				this.progressMonitor.setProgress(100);
-				this.progressMonitor.setVisible(false);
-				this.progressMonitor.dispose();
-				this.progressMonitor = null;
-
 				// --- Successful download ? --------------
-				readyToInstall = this.downloadThread4Update.wasSuccessful();
-				this.downloadThread4Update = null;
+				readyToInstall = downloadThread4Update.wasSuccessful();
+				downloadThread4Update = null;
 				
 			}
 		}
