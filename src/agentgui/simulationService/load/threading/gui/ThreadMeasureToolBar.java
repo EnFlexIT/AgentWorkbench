@@ -100,7 +100,14 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 		this.addSeparator();
 
 		this.setContinuousMeasurement(false);
-		this.setRecordingInterval(this.myAgent.getThreadMeasurementTickingPeriod());
+		
+//		this.setRecordingInterval(this.myAgent.getThreadMeasurementTickingPeriod());
+		long tickingInterval = ((TimeSelection) getComboBoxModelRecordingInterval().getElementAt(0)).getTimeInMill();
+		this.myAgent.setThreadMeasurementTickingPeriod(tickingInterval);
+		this.setRecordingInterval(tickingInterval); 
+		
+		// --- start recording immediately ---
+		this.getJButtonMeasureStart().doClick();
 		
 	}
 	
@@ -172,16 +179,7 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 	private DefaultComboBoxModel getComboBoxModelRecordingInterval() {
 		if (comboBoxModelInterval==null) {
 			comboBoxModelInterval = new DefaultComboBoxModel();
-			comboBoxModelInterval.addElement(new TimeSelection(500));
-			comboBoxModelInterval.addElement(new TimeSelection(1000));
-			comboBoxModelInterval.addElement(new TimeSelection(2000));
-			comboBoxModelInterval.addElement(new TimeSelection(3000));
-			comboBoxModelInterval.addElement(new TimeSelection(4000));
 			comboBoxModelInterval.addElement(new TimeSelection(5000));
-			comboBoxModelInterval.addElement(new TimeSelection(6000));
-			comboBoxModelInterval.addElement(new TimeSelection(7000));
-			comboBoxModelInterval.addElement(new TimeSelection(8000));
-			comboBoxModelInterval.addElement(new TimeSelection(9000));
 			comboBoxModelInterval.addElement(new TimeSelection(10000));
 			comboBoxModelInterval.addElement(new TimeSelection(15000));
 			comboBoxModelInterval.addElement(new TimeSelection(20000));

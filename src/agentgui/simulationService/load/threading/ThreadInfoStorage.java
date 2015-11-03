@@ -63,11 +63,15 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	public final String LOAD_CPU 			  		= "LOAD_CPU";
 	public final String DELIMITER   				= "<>";
 	public final String AT   						= "@";
+	public final String CLUSTER   					= "Cluster";
 
 	private static final long serialVersionUID = 5821118253370178316L;
 	
 	/** The tree model. */
-	private DefaultTreeModel treeModel;
+	private DefaultTreeModel model;
+	
+	/** The root node. */
+	private DefaultMutableTreeNode rootNode;
 	
 	/** The Hash-Map that Stores ThreadInfo of cluster. */
 	private HashMap<String, ThreadInfoStorageCluster> mapCluster;
@@ -75,22 +79,31 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	
 	/** The Hash-Map that Stores ThreadInfo of each machine. */
 	private HashMap<String, ThreadInfoStorageMachine> mapMachine;
-	private Set<String> machineSet;
 	
 	/** The Hash-Map that Stores ThreadInfo of each JavaVirtualMachine. */
 	private HashMap<String, ThreadInfoStorageJVM> mapJVM;
-	private Set<String> jvmSet;
 	
 	/** The Hash-Map that Stores ThreadInfo of each Container. */
 	private HashMap<String, ThreadInfoStorageContainer> mapContainer;
-	private Set<String> containerSet;
 	
 	/** The Hash-Map that Stores ThreadInfo of each agent. */
 	private HashMap<String, ThreadInfoStorageAgent> mapAgent;
-	private Set<String> agentSet;
+
 	
 	/** The Hash-Map that Stores ThreadInfo of each agent-class. */
 	private HashMap<String, ThreadInfoStorageAgentClass> mapAgentClass;
+	
+	/** The JVM set. */
+	private Set<String> jvmSet;
+	
+	/** The machine set. */
+	private Set<String> machineSet;
+	
+	/** The container set. */
+	private Set<String> containerSet;
+	
+	/** The agent set. */
+	private Set<String> agentSet;
 	
 	/**
 	 * Instantiates a new thread info storage.
@@ -119,7 +132,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 		String machineName = threadProtocol.getMachineName();
 		String jvmName = threadProtocol.getJVMName()+AT+machineName;
 		String containerName = threadProtocol.getContainerName()+AT+jvmName;
-		String clusterName = "Cluster";
+		String clusterName = CLUSTER;
 		
 		//// CONTAINER ////
 		ThreadInfoStorageContainer containerStorage = getMapContainer().get(containerName);
@@ -444,6 +457,96 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 		
 		return done;
 	}
+	/**
+	 * Adds the nodes to tree model.
+	 *
+	 * @param mapMachine the map machine
+	 * @param mapJVM the map JVM
+	 * @param mapContainer the map container
+	 * @param mapAgent the map agent
+	 * @param mapCluster the map cluster
+	 */
+	private void addNodesToTreeModel(
+			HashMap<String,	ThreadInfoStorageMachine> mapMachine, 
+			HashMap<String, ThreadInfoStorageJVM> mapJVM,
+			HashMap<String, ThreadInfoStorageContainer> mapContainer, 
+			HashMap<String, ThreadInfoStorageAgent> mapAgent) {
+		
+		// --- get root-element ---
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) getModel().getRoot();
+		
+		/** leave if nothing has changed to avoid expensive iteration over sets
+		 * hint: root never changes, so this is left out
+		 */
+		if(mapMachine.keySet().equals(this.machineSet) 
+				&& mapJVM.keySet().equals(this.jvmSet) 
+				&& mapContainer.keySet().equals(this.containerSet) 
+				&& mapAgent.keySet().equals(this.agentSet)){
+			
+			getModel().nodeChanged(root);
+			return;
+		}
+		
+		root.removeAllChildren();
+		
+		// ---update keysets ---
+		machineSet 		= mapMachine.keySet();
+		jvmSet 			= mapJVM.keySet();
+		containerSet 	= mapContainer.keySet();
+		agentSet 		= mapAgent.keySet();
+		
+		// -- set iterators ---
+		Iterator<String> iteratorMachine = machineSet.iterator();
+		Iterator<String> iteratorJvm = jvmSet.iterator();
+		Iterator<String> iteratorContainer = containerSet.iterator();
+		Iterator<String> iteratorAgent = agentSet.iterator();
+		
+		//--- set fix user object for root---
+		root.setUserObject(mapCluster.get(CLUSTER));
+		// --- build tree ---
+		while (iteratorMachine.hasNext()){
+			
+			String keyMachine = (String) iteratorMachine.next();
+			DefaultMutableTreeNode machine = new DefaultMutableTreeNode(mapMachine.get(keyMachine));
+	      
+	      	if (root.getIndex((TreeNode)machine) == -1){
+	      		root.add(machine);
+	    	  
+	      		while (iteratorJvm.hasNext()){
+	      			String keyJVM = (String) iteratorJvm.next();
+	      			DefaultMutableTreeNode jvm = new DefaultMutableTreeNode(mapJVM.get(keyJVM));
+		  	      
+	      			if (machine.getIndex((TreeNode)jvm) == -1){
+	      				machine.add(jvm);
+		  	    	
+	      				while (iteratorContainer.hasNext()) {
+	      					String keyContainer = (String) iteratorContainer.next();
+	      					DefaultMutableTreeNode container = new DefaultMutableTreeNode(mapContainer.get(keyContainer));
+				  	      
+	      					if (jvm.getIndex((TreeNode)container) == -1){
+	      						jvm.add(container);
+				  	    	
+	      						while (iteratorAgent.hasNext()) {
+	      							String keyAgent = (String) iteratorAgent.next();
+	      							DefaultMutableTreeNode agent = new DefaultMutableTreeNode(mapAgent.get(keyAgent));
+						  	      
+	      							if (container.getIndex((TreeNode)agent) == -1){
+	      								container.add(agent);
+						  	    	  
+	      							}
+	      						}  
+	      					}
+	      				}
+	      			}
+	      		} 
+	      	}
+		}
+		rootNode = root;
+		getModel().setRoot(root);
+		getModel().reload(root);
+		getModel().nodeStructureChanged(root);
+		return;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Vector#clear()
@@ -493,8 +596,8 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	}
 
 	/**
-	 * Gets the map jvm.
-	 * @return the map jvm
+	 * Gets the map JVM.
+	 * @return the map JVM
 	 */
 	public HashMap<String, ThreadInfoStorageJVM> getMapJVM() {
 		if(mapJVM == null){
@@ -524,102 +627,29 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 		}
 		return mapAgentClass;
 	}
+
 	
 	/**
-	 * Gets the tree model.
-	 * @return the tree model
+	 * Gets the model.
+	 * 
+	 * @return the model
 	 */
-	public DefaultTreeModel getTreeModel(){
-		
-		if (treeModel==null) {
-		    treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("Cluster"));
-		    
+	public DefaultTreeModel getModel() {
+		if (model == null) {
+			model = new DefaultTreeModel( new DefaultMutableTreeNode(CLUSTER) );
 		}
-		return treeModel;
-		
+		return model;
 	}
-
+	
 	/**
-	 * Adds the nodes to tree model.
-	 * @param threadProtocol the thread protocol
+	 * Gets the root node.
+	 *
+	 * @return the root node
 	 */
-	private void addNodesToTreeModel(
-			HashMap<String,	ThreadInfoStorageMachine> mapMachine, 
-			HashMap<String, ThreadInfoStorageJVM> mapJVM,
-			HashMap<String, ThreadInfoStorageContainer> mapContainer, 
-			HashMap<String, ThreadInfoStorageAgent> mapAgent) {
-		
-		/** leave if nothing has changed to avoid expensive iteration over sets
-		 * hint: root never changes, so this is left out
-		 */
-		if(mapMachine.keySet().equals(this.machineSet) 
-				&& mapJVM.keySet().equals(this.jvmSet) 
-				&& mapContainer.keySet().equals(this.containerSet) 
-				&& mapAgent.keySet().equals(this.agentSet)){
-			return;
+	public DefaultMutableTreeNode getRootNode() {
+		if (rootNode == null) {
+			rootNode = new DefaultMutableTreeNode(CLUSTER);
 		}
-		// --- get root-element ---
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) getTreeModel().getRoot();
-		root.removeAllChildren();
-		
-		// ---update keysets ---
-		machineSet 		= mapMachine.keySet();
-		jvmSet 			= mapJVM.keySet();
-		containerSet 	= mapContainer.keySet();
-		agentSet 		= mapAgent.keySet();
-		
-		// -- set iterators ---
-		Iterator<String> iteratorMachine = machineSet.iterator();
-		Iterator<String> iteratorJvm = jvmSet.iterator();
-		Iterator<String> iteratorContainer = containerSet.iterator();
-		Iterator<String> iteratorAgent = agentSet.iterator();
-		
-		//--- set fix user object for root---
-		root.setUserObject(mapCluster.get("Cluster"));
-		// --- build tree ---
-		while (iteratorMachine.hasNext()){
-			
-			String keyMachine = (String) iteratorMachine.next();
-			DefaultMutableTreeNode machine = new DefaultMutableTreeNode(mapMachine.get(keyMachine));
-	      
-	      	if (root.getIndex((TreeNode)machine) == -1){
-	      		root.add(machine);
-	    	  
-	      		while (iteratorJvm.hasNext()){
-	      			String keyJVM = (String) iteratorJvm.next();
-	      			DefaultMutableTreeNode jvm = new DefaultMutableTreeNode(mapJVM.get(keyJVM));
-		  	      
-	      			if (machine.getIndex((TreeNode)jvm) == -1){
-	      				machine.add(jvm);
-		  	    	
-	      				while (iteratorContainer.hasNext()) {
-	      					String keyContainer = (String) iteratorContainer.next();
-	      					DefaultMutableTreeNode container = new DefaultMutableTreeNode(mapContainer.get(keyContainer));
-				  	      
-	      					if (jvm.getIndex((TreeNode)container) == -1){
-	      						jvm.add(container);
-				  	    	
-	      						while (iteratorAgent.hasNext()) {
-	      							String keyAgent = (String) iteratorAgent.next();
-	      							DefaultMutableTreeNode agent = new DefaultMutableTreeNode(mapAgent.get(keyAgent));
-						  	      
-	      							if (container.getIndex((TreeNode)agent) == -1){
-	      								container.add(agent);
-						  	    	  
-	      							}
-	      						}  
-	      					}
-	      				}
-	      			}
-	      		} 
-	      	}
-		}
-	
-		getTreeModel().setRoot(root);
-		getTreeModel().nodeChanged(root);
-		return;
+		return rootNode;
 	}
-	
-	
-
 }

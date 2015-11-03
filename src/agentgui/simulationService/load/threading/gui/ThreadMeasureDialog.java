@@ -155,7 +155,7 @@ public class ThreadMeasureDialog extends JFrame {
 	 */
 	public ThreadMeasureProtocolTab getJPanelMeasureProtocol() {
 		if (jPanelMeasureProtocol == null) {
-			jPanelMeasureProtocol = new ThreadMeasureProtocolTab(this.threadProtocolVector);
+			jPanelMeasureProtocol = new ThreadMeasureProtocolTab(threadProtocolVector);
 		}
 		return jPanelMeasureProtocol;
 	}
@@ -167,7 +167,7 @@ public class ThreadMeasureDialog extends JFrame {
 	 */
 	public ThreadMeasureDetailTab getJPanelMeasureDetail() {
 		if (jPanelMeasureDetail == null) {
-			jPanelMeasureDetail = new ThreadMeasureDetailTab(this.threadInfoStorage);
+			jPanelMeasureDetail = new ThreadMeasureDetailTab(threadInfoStorage);
 		}
 		return jPanelMeasureDetail;
 	}
