@@ -325,7 +325,6 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 							expansionState = expansionState.concat(levelString);
 						}
 					}
-					System.out.println(expansionState);
 				}
 			}
 			//--- delete nodes ---
