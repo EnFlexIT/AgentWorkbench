@@ -304,7 +304,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 			Vector<DefaultMutableTreeNode> toDeleteVect= new Vector<DefaultMutableTreeNode>();
 			
 			@SuppressWarnings("unchecked")
-			Enumeration<DefaultMutableTreeNode> e = node.depthFirstEnumeration();
+			Enumeration<DefaultMutableTreeNode> e = node.breadthFirstEnumeration();
 			if(e != null){
 				while (e.hasMoreElements()){
 					DefaultMutableTreeNode actualElement = e.nextElement();
@@ -392,19 +392,17 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	}
 	
 	public void sortThreads() {
-		DefaultMutableTreeNode tempNode = (DefaultMutableTreeNode) copyNode((DefaultMutableTreeNode) getModel()
-				.getRoot());
+		DefaultMutableTreeNode tempNode = (DefaultMutableTreeNode) copyNode((DefaultMutableTreeNode) getModel().getRoot());
 
 		// --- save expansion state ---
 		expansionState = saveExpansionState();
 
 		// --- sort and update ---
 		@SuppressWarnings("rawtypes")
-		Enumeration e = tempNode.depthFirstEnumeration();
+		Enumeration e = tempNode.breadthFirstEnumeration();
 		while (e.hasMoreElements()) {
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) e
-					.nextElement();
-			if (node.isLeaf()) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
+			if (node.isLeaf() == true) {
 				sortNodesDescending((DefaultMutableTreeNode) node.getParent(),
 						(DefaultTreeModel) getModel());
 			}
@@ -532,8 +530,8 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 		            }else if (e.getClickCount() == 2){
 		            	// --- toggle thread/agent chart visibility on main chart ---
 	        	    	ThreadInfoStorageAgent tis = (ThreadInfoStorageAgent)userObject;
-	        	    	boolean isSelected = leafSelected.get(tis.toString()).booleanValue();
-	        	    	leafSelected.put(tis.toString(),new Boolean(!isSelected));
+	        	    	boolean isSelected = leafSelected.get(tis.getName()).booleanValue();
+	        	    	leafSelected.put(tis.getName(),new Boolean(!isSelected));
 	        	    	nodeName = tis.getName();
 	        	    	
 		                iterator = threadInfoStorage.getMapAgent().get(nodeName).getXYSeriesMap().keySet().iterator();
@@ -726,11 +724,11 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	        if(nodeObj != null){
 		        if(nodeObj.getClass().toString().endsWith("ThreadInfoStorageAgent")){
 	    	    	ThreadInfoStorageAgent tia = (ThreadInfoStorageAgent)nodeObj;
-	    	    	if(leafSelected.containsKey(tia.toString()) == true){
-	    	    		isSelected = leafSelected.get(tia.toString()).booleanValue();
+	    	    	if(leafSelected.containsKey(tia.getName()) == true){
+	    	    		isSelected = leafSelected.get(tia.getName()).booleanValue();
 	    	    	}else{
 	    	    		isSelected = false;
-	    	    		leafSelected.put(tia.toString(), new Boolean(false));    	    		
+	    	    		leafSelected.put(tia.getName(), new Boolean(false));    	    		
 	    	    	}
 	    	    	
 	    	    	if(isSelected == true){

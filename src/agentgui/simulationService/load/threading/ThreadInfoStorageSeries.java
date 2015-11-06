@@ -33,7 +33,7 @@ import java.util.HashMap;
 import org.jfree.data.xy.XYSeries;
 
 /**
- * Basic class for storing Thread-Load data series
+ * Base class for storing Thread-Load data series
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
@@ -76,7 +76,7 @@ public class ThreadInfoStorageSeries {
 	 * @return the name
 	 */
 	public String getName() {
-		return this.name;
+		return name;
 	}
 	
 	/* (non-Javadoc)
@@ -104,7 +104,7 @@ public class ThreadInfoStorageSeries {
 	 */
 	public HashMap<String, XYSeries> getXYSeriesMap() {
 		if(xySeriesMap == null){
-			this.xySeriesMap = new HashMap<String, XYSeries>();
+			xySeriesMap = new HashMap<String, XYSeries>();
 		}
 		return xySeriesMap;
 	}
