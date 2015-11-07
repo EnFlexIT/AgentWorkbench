@@ -57,12 +57,14 @@ import agentgui.simulationService.ontology.PlatformLoad;
  */
 public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	
+	private static final long serialVersionUID = -6884445863598676300L;
+	
+	/** local constants */
 	private static final double LOAD_CPU_IDEAL_PERCENT = 80 ;//default 80
 	private static final double LOAD_CPU_CRIT_PERCENT  = 90 ;//default 90
 	private static final double LOAD_CPU_IDEAL = (LOAD_CPU_IDEAL_PERCENT/100) ;
 	private static final double LOAD_CPU_CRIT  = (LOAD_CPU_CRIT_PERCENT/100) ;
 
-	private static final long serialVersionUID = -6884445863598676300L;
 	/** The PlatformLoad in the different container. */
 	public Hashtable<String, PlatformLoad> loadContainer = null;
 	/** The current LoadAgentMap. */
@@ -70,9 +72,16 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	/** The benchmark value /results in the different container. */
 	public Hashtable<String, Float> loadContainerBenchmarkResults = new Hashtable<String, Float>();
 	
+	/** The remote container name. */
 	private String remoteContainerName;
-	private boolean remoteOnly = true;
-	private boolean changeContainer = false;
+	
+	/** The remote only. */
+	private boolean remoteOnly;
+	
+	/** The change container. */
+	private boolean changeContainer;
+	
+	/** The load cpu ideal. */
 	public double loadCpuIdeal,loadCpuCrit;
 	
 	/**
@@ -82,6 +91,15 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	 */
 	public PredictiveStaticLoadBalancing(LoadExecutionAgent agent) {
 		super(agent);
+		initialize();
+	}
+	
+	/**
+	 * Initialize.
+	 */
+	private void initialize(){
+		remoteOnly = true;
+		changeContainer = false;
 		
 		if(currDisSetup.isUseUserThresholds()){
 			loadCpuIdeal = currDisSetup.getUserThresholds().getThCpuH()/100;
@@ -100,7 +118,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	@Override
 	public void doBalancing() {	
 		/** Start predictive, static distribution of agents on remote containers*/
-		this.PredictiveDistribution(true);	
+		predictiveDistribution(true);	
 	}
 	
 	/**
@@ -109,10 +127,20 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	 * @param verbose the verbose
 	 */
 	@SuppressWarnings("unchecked")
-	public void PredictiveDistribution(boolean verbose){
+	public void predictiveDistribution(boolean verbose){
 		
-		boolean debug = verbose;
-		if(debug){
+		/** All location names */
+		Vector<String> locationNames = null;
+		/** The CPU benchmark values (MFLOPS  * No of CPUs) of each container*/
+		Hashtable<Location, Double> cpu = null;
+		/** All container/locations */
+		Hashtable<String, Location> newContainerLocations;
+		/** The local container*/
+		Location localContainer;
+		/** The actual remote container*/
+		Location remoteContainer;
+		
+		if(verbose){
 			System.out.println("START of predictive, static distribution.");
 		}
 		// ----------------------------------------------------------------------------------
@@ -134,30 +162,24 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 
 		if (currNumberOfContainer<=1) {
 			// --- Just start all defined agents ---------------------
-			this.startAgentsFromCurrAgentList();
+			startAgentsFromCurrAgentList();
 			return;
 		}
 		
 		/*
 		 * ### 1. start containers
 		 */
-		/** All location names */
-		Vector<String> locationNames = null;
 		/** All container/locations */
-		Hashtable<String, Location> newContainerLocations = this.startNumberOfRemoteContainer(currNumberOfContainer - 1, true, null);
+		newContainerLocations = startNumberOfRemoteContainer(currNumberOfContainer - 1, true, null);
 		/** The local container*/
-		Location localContainer = newContainerLocations.get(this.currProject.getProjectFolder());
-		/** The actual remote container*/
-		Location remoteContainer = null;
-		/** The CPU benchmark values (MFLOPS  * No of CPUs) of each container*/
-		Hashtable<Location, Double> cpu = null;
+		localContainer = newContainerLocations.get(currProject.getProjectFolder());
 		
 		
 		/*
 		 * ### 2. get CPU Benchmark of each container
 		 */
 		
-		if (newContainerLocations!=null) {
+		if (newContainerLocations != null) {
 			
 			locationNames = new Vector<String>(newContainerLocations.keySet());
 			cpu = new Hashtable<Location, Double>();
@@ -177,7 +199,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 					mflopsBenchmarkValueTotal = Math.round(mflopsBenchmarkValueTotal*100)/100.0;
 					cpu.put(remoteContainer, mflopsBenchmarkValueTotal);
 					
-					if(debug){
+					if(verbose){
 						System.out.println(remoteContainer.getName()+ ", Benchmark:"+ cpu.get(remoteContainer) + " MFLOPS, ");					
 					}
 				} catch (ServiceException e) {
@@ -186,7 +208,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 				}
 				
 			}
-		}	
+		}
 		
 		/*
 		 * ### 3. calculate predictive distribution and assign agents to container-list
@@ -265,18 +287,18 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 						agentList.add(agent);
 						remoteContainerName = it.next();
 						
-						if(debug){
+						if(verbose){
 							System.out.println("#### IDEAL workload distribution for " + remoteContainer.getName());
 							System.out.println("#### REACHED  " + (100/cpu.get(remoteContainer) * cpuContainerSum.get(remoteContainer)) + "% CPU");						}
 					}else{//not enough containers left
 												
 						if(remoteOnly == true){
-							if(debug){
+							if(verbose){
 								System.out.println("#### NOT ENOUGH REMOTE CONTAINERS #### STILL USING " + remoteContainer.getName());
 							}							
 						}else{
 							remoteContainer = localContainer;
-							if(debug){
+							if(verbose){
 								System.out.println("#### NOT ENOUGH REMOTE CONTAINERS #### USING LOCAL CONTAINER");
 
 							}
@@ -326,17 +348,17 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 				// --- Get the agent, which has to be started ------------
 				AgentClassElement4SimStart agent2Start = it.next();
 				// --- Check for start arguments -------------------------
-				Object[] startArgs = this.getStartArguments(agent2Start);	
+				Object[] startArgs = getStartArguments(agent2Start);	
 				// --- finally start the agent -----------------------				
 				this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs, remoteLocation);
-				if(debug){
+				if(verbose){
 					System.out.println("Agent "+ agent2Start.getStartAsName() + " started on "+ newContainerLocations.get(remoteLocation.getName()));
 				}
 									
 			}
 		} // --- end while
 		
-		if(debug){
+		if(verbose){
 			System.out.println("FINISHED (Predictive, static distribution)");
 		}
 		
