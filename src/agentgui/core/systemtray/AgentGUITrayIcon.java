@@ -49,6 +49,15 @@ import agentgui.core.application.Application;
  */
 public class AgentGUITrayIcon implements ActionListener {
 
+	// --- Some test / debugging settings -----------------
+	public enum TrayUsage {
+		Automatic,
+		TrayIcon,
+		TrayDialog
+	}
+	private TrayUsage trayIconUsage = TrayUsage.Automatic;
+	
+	
 	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 	private TrayIcon trayIcon;
 	
@@ -61,12 +70,33 @@ public class AgentGUITrayIcon implements ActionListener {
 	private AgentGUITrayPopUp trayPopUp;
 	private AgentGUITrayDialog trayDialog;
 	
+	
 	/**
 	 * Constructor of this class.
 	 */
 	public AgentGUITrayIcon() {
 		this.initialize();
 	}
+	
+	/**
+	 * Gets the tray icon usage.
+	 * @return the tray icon usage
+	 */
+	public TrayUsage getTrayIconUsage() {
+		
+		if (this.trayIconUsage==null) {
+			this.trayIconUsage=TrayUsage.Automatic;
+		}
+		if (this.trayIconUsage==TrayUsage.Automatic) {
+			if (SystemTray.isSupported()==true) {
+				this.trayIconUsage=TrayUsage.TrayIcon;
+			} else {
+				this.trayIconUsage=TrayUsage.TrayDialog;
+			}
+		}
+		return trayIconUsage;
+	}
+	
 	/**
 	 * Returns the local {@link SystemTray}.
 	 * @return the system tray
@@ -80,22 +110,27 @@ public class AgentGUITrayIcon implements ActionListener {
 	 */
 	private void initialize() {
 
-		if (SystemTray.isSupported()==true) {
-			// --- System-Tray is supported -------------------------
+		switch (this.getTrayIconUsage()) {
+		case TrayIcon:
 			try {
-				this.getSystemTray().add(this.getTrayIcon());
+				// --- System-Tray is supported ---------------------
+				this.getSystemTray().add(this.getTrayIcon(true));
 				
 			} catch (AWTException e) {
-				System.err.println("TrayIcon supported, but could not be added.");
-				// --- System Tray is NOT supported -----------------
+				System.err.println("TrayIcon supported, but could not be added. => Use TrayDialog instead !");
 				this.getAgentGUITrayDialog(true).setVisible(true);			
-				// --------------------------------------------------
 			}
-		} else {
-			// --- System Tray is NOT supported --------------------- 
+			break;
+			
+		case TrayDialog:
 			this.getAgentGUITrayDialog(true).setVisible(true);
-			// ------------------------------------------------------
+			break;
+
+		default:
+			break;
 		}
+		
+		// --- Refresh tray icon ------------------------------------
 		this.getAgentGUITrayPopUp().refreshView();
 	}
 
@@ -134,13 +169,26 @@ public class AgentGUITrayIcon implements ActionListener {
 	
 	/**
 	 * Returns the current TrayIcon.
+	 *
+	 * @param createIfNotAvailable the create if not available
 	 * @return the TrayIcon
 	 */
 	public TrayIcon getTrayIcon() {
+		return this.getTrayIcon(false);
+	}
+	/**
+	 * Returns or creates the TrayIcon.
+	 *
+	 * @param createIfNotAvailable the create if not available
+	 * @return the TrayIcon
+	 */
+	public TrayIcon getTrayIcon(boolean createIfNotAvailable) {
 		if (trayIcon==null) {
-			trayIcon = new TrayIcon(this.getImageRed(), Application.getGlobalInfo().getApplicationTitle(), this.getAgentGUITrayPopUp());
-			trayIcon.setImageAutoSize(true);
-			trayIcon.addActionListener(this);
+			if (createIfNotAvailable==true) {
+				trayIcon = new TrayIcon(this.getImageRed(), Application.getGlobalInfo().getApplicationTitle(), this.getAgentGUITrayPopUp());
+				trayIcon.setImageAutoSize(true);
+				trayIcon.addActionListener(this);	
+			}
 		}
 		return trayIcon;
 	}
@@ -179,7 +227,9 @@ public class AgentGUITrayIcon implements ActionListener {
 	 * Removes the tray icon out off the system tray.
 	 */
 	public void remove() {
-		this.getSystemTray().remove(trayIcon);
+		if (this.getTrayIcon()!=null) {
+			this.getSystemTray().remove(this.getTrayIcon());
+		}
 	}
 		
 	/* (non-Javadoc)

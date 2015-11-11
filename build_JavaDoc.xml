@@ -2,7 +2,7 @@
 <project default="javadoc-create">
 
 	<tstamp><format property="TODAYS_YEAR" pattern="yyyy"/></tstamp>
-	<property name="javadocExec" value="C:/Program Files/Java/jdk1.7.0_51/bin/javadoc.exe" />
+	<property name="javadocExec" value="C:/Program Files/Java/jdk1.7.0_79/bin/javadoc.exe" />
 	
 	<property name="destinDir" value="doc" />
 	<property name="destinDirAPI" value="${destinDir}\api\\" />

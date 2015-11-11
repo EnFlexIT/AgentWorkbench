@@ -757,6 +757,9 @@ public class Application {
 		// --- ShutdownExecuter -----------------
 		setShutdownThread(null);
 		
+		// --- Remove TrayIcon ------------------
+		setTrayIcon(null);	
+		
 		// --- Shutdown JVM ---------------------
 		System.exit(0);		
 	}

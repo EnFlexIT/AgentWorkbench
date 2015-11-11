@@ -40,6 +40,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
+import agentgui.core.systemtray.AgentGUITrayIcon.TrayUsage;
 import agentgui.core.update.AgentGuiUpdater;
 
 /**
@@ -172,7 +173,6 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		return itemHeader;
 	}
 	
-	
 	/**
 	 * Refresh view.
 	 */
@@ -180,28 +180,38 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		
 		if (Application.getJadePlatform().jadeMainContainerIsRunning(false)) {
 			// --- JADE is running ----------------------------------
-			itemServiceStart.setEnabled(false);
-			itemServiceStop.setEnabled(true);
-			itemOpenRMA.setEnabled(true);
+			this.itemServiceStart.setEnabled(false);
+			this.itemServiceStop.setEnabled(true);
+			this.itemOpenRMA.setEnabled(true);
 			// --- Change Icon color  -------------------------------
-			this.agentGUItray.getTrayIcon().setImage( agentGUItray.getImageGreen() );	
-			if (this.agentGUItray.getAgentGUITrayDialog()!=null ){
+			if (agentGUItray.getTrayIconUsage()==TrayUsage.TrayIcon) {
+				this.agentGUItray.getTrayIcon().setImage(this.agentGUItray.getImageGreen());	
+			} else if (agentGUItray.getTrayIconUsage()==TrayUsage.TrayDialog) {
 				this.agentGUItray.getAgentGUITrayDialog().getjLabel4Icon().setIcon((Icon) agentGUItray.getImageIconGreen());
 			}
-			
+				
 		} else {
 			// --- JADE is NOT running ------------------------------
-			itemServiceStart.setEnabled(true);
-			itemServiceStop.setEnabled(false);
-			itemOpenRMA.setEnabled(false);
+			this.itemServiceStart.setEnabled(true);
+			this.itemServiceStop.setEnabled(false);
+			this.itemOpenRMA.setEnabled(false);
 			// --- Change Icon color  -------------------------------
-			this.agentGUItray.getTrayIcon().setImage( agentGUItray.getImageRed() );	
-			if (this.agentGUItray.getAgentGUITrayDialog()!=null ){
-				this.agentGUItray.getAgentGUITrayDialog().getjLabel4Icon().setIcon((Icon) agentGUItray.getImageIconRed());
+			if (agentGUItray.getTrayIconUsage()==TrayUsage.TrayIcon) {
+				this.agentGUItray.getTrayIcon().setImage(this.agentGUItray.getImageRed());	
+			} else if (agentGUItray.getTrayIconUsage()==TrayUsage.TrayDialog) {
+				this.agentGUItray.getAgentGUITrayDialog().getjLabel4Icon().setIcon((Icon) agentGUItray.getImageIconRed());	
 			}
+			
 		}
-		this.agentGUItray.getTrayIcon().setToolTip(Application.getGlobalInfo().getApplicationTitle() + " - " + Application.getGlobalInfo().getExecutionModeDescription());
+		
+		// --- Set description of the current execution mode --------
+		if (agentGUItray.getTrayIconUsage()==TrayUsage.TrayIcon) {
+			this.agentGUItray.getTrayIcon().setToolTip(Application.getGlobalInfo().getApplicationTitle() + " - " + Application.getGlobalInfo().getExecutionModeDescription());	
+		} else if (agentGUItray.getTrayIconUsage()==TrayUsage.TrayDialog) {
+			this.agentGUItray.getAgentGUITrayDialog().getjLabel4Icon().setToolTipText(Application.getGlobalInfo().getApplicationTitle() + " - " + Application.getGlobalInfo().getExecutionModeDescription());
+		}
 		this.getMenuItemHeader().setLabel(Application.getGlobalInfo().getApplicationTitle() + " - " + Application.getGlobalInfo().getExecutionModeDescription());
+		
 	}
 	
 	/**
