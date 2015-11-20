@@ -45,6 +45,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -71,9 +72,6 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5311458634217524061L;
-	
-	/** The non agents. */
-	public final String NON_AGENTS = "all-non-agent-classes";
 	
 	/** The filtered root. */
 	private DefaultMutableTreeNode filteredRoot;	
@@ -121,6 +119,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 		this.addMouseListener(new MyMouseListener());
 		this.setCellRenderer(new MyTreeCellRenderer());
 		this.filteredRoot = new DefaultMutableTreeNode();
+		ToolTipManager.sharedInstance().registerComponent(this);
 	}
 	
 	/**
@@ -196,7 +195,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
         	    		if(ae.getSource()==viewAgentClass){
         	    			className =  tia.getClassName();	
         	    		}else{
-	        	    		className =  NON_AGENTS;
+	        	    		className =  threadInfoStorage.NON_AGENTS;
 	        	    	}
         	    		folderNamePrefix = "Class: ";
         	    		iteratorClass = threadInfoStorage.getMapAgentClass().get(className).getXYSeriesMap().keySet().iterator();
@@ -744,6 +743,9 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	    	    			setIcon(inActiveIcon);
 	    	    		}
 	    	    	}
+	    	    	String[] classname = tia.getClassName().split("\\.");
+	    	    	setToolTipText("Agent: " + classname[classname.length-1] + " [" +threadInfoStorage.getNoOfAgentsPerClass().get(tia.getClassName()) + "]");
+	    	    	
 	    	    }	
 	    	}
 	        return this;

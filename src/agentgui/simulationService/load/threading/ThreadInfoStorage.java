@@ -31,9 +31,11 @@ package agentgui.simulationService.load.threading;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -66,11 +68,17 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	public final String DELIMITER   				= "<>";
 	public final String AT   						= "@";
 	public final String CLUSTER   					= "Cluster";
+	
+	/** The non agents. */
+	public final String NON_AGENTS = "all.other.classes.nonAgent";
 
 	private static final long serialVersionUID = 5821118253370178316L;
 	
 	/** The tree model. */
 	private DefaultTreeModel model;
+	
+	/** The table model. */
+	private DefaultTableModel tableModel;
 	
 	/** The root node. */
 	private DefaultMutableTreeNode rootNode;
@@ -90,13 +98,16 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	
 	/** The Hash-Map that Stores ThreadInfo of each agent. */
 	private HashMap<String, ThreadInfoStorageAgent> mapAgent;
-
 	
 	/** The Hash-Map that Stores ThreadInfo of each agent-class. */
 	private HashMap<String, ThreadInfoStorageAgentClass> mapAgentClass;
 	
+	/** The no of agents per class. */
 	private HashMap<String, Integer> noOfAgentsPerClass;
 	
+	/** The calculation of metrics. */
+	private ThreadMeasureMetrics threadMeasureMetrics;
+
 	/** The JVM set. */
 	private Set<String> jvmSet;
 	
@@ -218,11 +229,16 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 			String agentName = threadProtocol.getThreadTimes().get(i).toString()+AT+containerName;
 			String classKey;
 			boolean isAgent = threadProtocol.getThreadTimes().get(i).isAgent();
+			int noOfAgents = 1;
 			
 			if(isAgent == true){
 				classKey = threadProtocol.getThreadTimes().get(i).getClassName();
 			}else{
-				classKey = "all-non-agent-classes";
+				classKey = NON_AGENTS;
+			}
+			
+			if (getNoOfAgentsPerClass().get(classKey) == null) {
+				noOfAgentsPerClass.put(classKey, 0);
 			}
 			
 			ThreadInfoStorageAgent agentStorage = getMapAgent().get(agentName);
@@ -234,7 +250,12 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 				agentStorage.getXYSeriesMap().put(TOTAL_CPU_SYSTEM_TIME, new XYSeries(TOTAL_CPU_SYSTEM_TIME+DELIMITER+agentName));
 				agentStorage.getXYSeriesMap().put(DELTA_CPU_SYSTEM_TIME, new XYSeries(DELTA_CPU_SYSTEM_TIME+DELIMITER+agentName));
 				mapAgent.put(agentName, agentStorage);
+				
+				// --- add to agent-counter for class, neccessary for average ---
+				noOfAgentsPerClass.put(classKey,(noOfAgentsPerClass.get(classKey) + 1));
 			}
+			
+			noOfAgents = getNoOfAgentsPerClass().get(classKey);
 			
 			// --- get system-and user data series ---
 			XYSeries agentTotalCPUUserTimeXYSeries = agentStorage.getXYSeriesMap().get(TOTAL_CPU_USER_TIME);
@@ -277,11 +298,8 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 				agentClassStorage.getXYSeriesMap().put(TOTAL_CPU_SYSTEM_TIME,new XYSeries(TOTAL_CPU_SYSTEM_TIME + DELIMITER + classKey));
 				
 				mapAgentClass.put(classKey, agentClassStorage);
-				getNoOfAgentsPerClass().put(classKey,0);
-			}
-			
-			noOfAgentsPerClass.put(classKey, noOfAgentsPerClass.get(classKey)+1);
-			
+				
+			}			
 
 			// --- Metrics only exist for Agent-Threads ---
 			if(isAgent == true){
@@ -337,9 +355,9 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 			index = actualSeries.indexOf(threadProtocol.getTimestamp());
 			if(index >= 0){
 				value = (Double) actualSeries.getY(index);
-				actualSeries.update(threadProtocol.getTimestamp(), (value + (userTime/noOfAgentsPerClass.get(classKey))));
+				actualSeries.update(threadProtocol.getTimestamp(), (value + (userTime/noOfAgents)));
 			}else{//first entry
-				actualSeries.add(threadProtocol.getTimestamp(), (userTime/noOfAgentsPerClass.get(classKey)));
+				actualSeries.add(threadProtocol.getTimestamp(), (userTime/noOfAgents));
 			}
 			
 			actualSeries = agentClassStorage.getXYSeriesMap().get(MAX_TOTAL_CPU_USER_TIME);
@@ -358,9 +376,9 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 			index = actualSeries.indexOf(threadProtocol.getTimestamp());
 			if(index >= 0){
 				value = (Double) actualSeries.getY(index);
-				actualSeries.update(threadProtocol.getTimestamp(), (value + (systemTime/noOfAgentsPerClass.get(classKey))));
+				actualSeries.update(threadProtocol.getTimestamp(), (value + (systemTime/noOfAgents)));
 			}else{//first entry
-				actualSeries.add(threadProtocol.getTimestamp(), (systemTime/noOfAgentsPerClass.get(classKey)));
+				actualSeries.add(threadProtocol.getTimestamp(), (systemTime/noOfAgents));
 			}
 			
 			actualSeries = agentClassStorage.getXYSeriesMap().get(MAX_DELTA_CPU_SYSTEM_TIME);
@@ -378,9 +396,9 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 			index = actualSeries.indexOf(threadProtocol.getTimestamp());
 			if(index >= 0){
 				value = (Double) actualSeries.getY(index);
-				actualSeries.update(threadProtocol.getTimestamp(), (value + (deltaSystemTime/noOfAgentsPerClass.get(classKey))));
+				actualSeries.update(threadProtocol.getTimestamp(), (value + (deltaSystemTime/noOfAgents)));
 			}else{//first entry
-				actualSeries.add(threadProtocol.getTimestamp(), (deltaSystemTime/noOfAgentsPerClass.get(classKey)));
+				actualSeries.add(threadProtocol.getTimestamp(), (deltaSystemTime/noOfAgents));
 			}
 			
 			actualSeries = agentClassStorage.getXYSeriesMap().get(MAX_DELTA_CPU_USER_TIME);
@@ -399,9 +417,9 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 			index = actualSeries.indexOf(threadProtocol.getTimestamp());
 			if(index >= 0){
 				value = (Double) actualSeries.getY(index);
-				actualSeries.update(threadProtocol.getTimestamp(), (value + (deltaUserTime/noOfAgentsPerClass.get(classKey))));
+				actualSeries.update(threadProtocol.getTimestamp(), (value + (deltaUserTime/noOfAgents)));
 			}else{//first entry
-				actualSeries.add(threadProtocol.getTimestamp(), (deltaUserTime/noOfAgentsPerClass.get(classKey)));
+				actualSeries.add(threadProtocol.getTimestamp(), (deltaUserTime/noOfAgents));
 			}	
 		}
 		
@@ -548,6 +566,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 		 * 
 		 * 
 		 */
+		//TODO: one CPU chart for each machine ?
 
 		actualSeries = clusterStorage.getXYSeriesMap().get(AVG_LOAD_CPU);
 		index = actualSeries.indexOf(threadProtocol.getTimestamp());
@@ -598,10 +617,70 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 		}
 		
 		// --- Add (new) nodes to the tree model ----------
-		this.addNodesToTreeModel(mapMachine, mapJVM, mapContainer, mapAgent);
+		addNodesToTreeModel(mapMachine, mapJVM, mapContainer, mapAgent);
+		
+		// --- add data to table model ---
+		clearTableModel();
+		addTableModelRow(mapAgent);
 		
 		return done;
 	}
+	
+	
+	/**
+	 * Gets the table model for this {@link ThreadInfoStorage}.
+	 * @return the table model
+	 */
+	public DefaultTableModel getTableModel() {
+		
+		if (tableModel==null) {
+			
+			Vector<String> header = new Vector<String>();
+			header.add("Thread");
+			header.add("Class");
+			header.add("Intances Of Class");
+			header.add("Predictive Metric");
+			header.add("Real Metric");
+			
+			tableModel = new DefaultTableModel(null, header);
+			// --- Necessary for preventing sorter from throwing error about empty row
+			addTableModelRow(new HashMap<String, ThreadInfoStorageAgent>());
+		}
+		return tableModel;
+	}
+	
+	/**
+	 * Adds a row to the table model.
+	 *
+	 * @param mapAgent the map agent
+	 */
+	private void addTableModelRow(HashMap<String, ThreadInfoStorageAgent> mapAgent) {
+			
+		Iterator<Entry<String, ThreadInfoStorageAgent>> iteratorAgent = mapAgent.entrySet().iterator();
+		
+		while (iteratorAgent.hasNext()) {
+			ThreadInfoStorageAgent actualAgent = iteratorAgent.next().getValue();
+			
+			Vector<Object> row = new Vector<Object>();
+			row.add(actualAgent);
+			row.add(actualAgent.getClassName());
+			row.add(getNoOfAgentsPerClass().get(actualAgent.getClassName()));
+			row.add(actualAgent.getPredictMetricCPU());
+			row.add(actualAgent.getRealMetricCPU());
+			// --- Add row to table model ---
+			getTableModel().addRow(row);
+		}
+	}
+	
+	/**
+	 * Clears the table model.
+	 */
+	private void clearTableModel() {
+		while (getTableModel().getRowCount()>0) {
+			getTableModel().removeRow(0);
+		}
+	}
+	
 	
 	/**
 	 * Adds the nodes to tree model.
@@ -782,11 +861,25 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	 * Gets the number of agents per class.
 	 * @return the number of agents per class
 	 */
-	private HashMap<String, Integer> getNoOfAgentsPerClass() {
+	public HashMap<String, Integer> getNoOfAgentsPerClass() {
 		if (noOfAgentsPerClass == null) {
 			noOfAgentsPerClass = new HashMap<String, Integer>();
 		}
 		return noOfAgentsPerClass;
+	}
+	
+	/**
+	 * Gets the thread measure metrics.
+	 *
+	 * @return the thread measure metrics
+	 */
+	public ThreadMeasureMetrics getThreadMeasureMetrics(){
+		if(threadMeasureMetrics == null){
+			threadMeasureMetrics = new ThreadMeasureMetrics(this, "CALC_TYPE_INTEGRAL", "METRIC_BASE_CLASS");
+			threadMeasureMetrics.setCalcType("CALC_TYPE_INTEGRAL");
+			threadMeasureMetrics.calculateMetrics();
+		}
+		return threadMeasureMetrics;
 	}
 	
 	/**

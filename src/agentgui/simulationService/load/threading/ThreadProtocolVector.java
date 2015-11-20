@@ -185,7 +185,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		row.add(threadTime.getUserTime());
 		
 		// --- Add row to table model -------------------------------
-		this.getTableModel().addRow(row);
+		getTableModel().addRow(row);
 	
 	}
 	
@@ -194,8 +194,8 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	 * Clears the table model.
 	 */
 	private void clearTableModel() {
-		while (this.getTableModel().getRowCount()>0) {
-			this.getTableModel().removeRow(0);
+		while (getTableModel().getRowCount()>0) {
+			getTableModel().removeRow(0);
 		}
 	}
 	
@@ -210,9 +210,9 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		
 		// --- Add the new Thread Times to the table model ----------
 		String pid = threadProtocol.getProcessID();
-		this.clearTableModel();
+		clearTableModel();
 		for (int i = 0; i < threadProtocol.getThreadTimes().size(); i++) {
-			this.addTableModelRow(pid, threadProtocol.getThreadTimes().get(i));
+			addTableModelRow(pid, threadProtocol.getThreadTimes().get(i));
 		}
 		
 		return done;
@@ -224,7 +224,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	@Override
 	public void clear() {
 		super.clear();
-		this.clearTableModel();
+		clearTableModel();
 	}
 	
 	/**

@@ -76,8 +76,8 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
      * a set of standard colors for charts.
      */
     public static final Color[] DEFAULT_CHART_COLORS = {
-    	new Color(0, 0, 0),
-    	new Color(255, 0, 0),
+    	new Color(0, 80, 80),
+    	new Color(255, 80, 80),
     	new Color(0, 0, 255),
     	new Color(153, 115, 0),
         new Color(237, 125, 49),
@@ -154,17 +154,17 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	private boolean showDelta;
 	/** Display setting.Set true to show total. */
 	private boolean showTotal;
-	/** Display setting. Set to true to show the system-time*/
+	/** Display setting. Set to true to show the system-time */
 	private boolean showSystemTime;
-	/** Display setting. Set to true to show the user-time*/
+	/** Display setting. Set to true to show the user-time */
 	private boolean showUserTime;
-	/** Display charts in a new window if true*/
+	/** Display charts in a new window if true */
 	private boolean popup;
-	/** Display legend if true*/
+	/** Display legend if true */
 	private boolean showLegend;
 	/** The frame title. */
 	private String frameTitle;
-	
+
 	/** The pattern. */
 	private float[][] pattern;
 	
@@ -223,60 +223,46 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 		pattern = new float[][]{{10.0f},{10.0f,10.0f},{10.0f,10.0f,2.0f,10.0f},{1.0f,10.0f}};
 		stroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_MITER, 10.0f, pattern[3], 0.0f);
 		String seriesKey;
-		Paint color = Color.BLACK;
+		Color color = Color.BLACK;
 		
 		if(deltaCollection != null){
 			
 			deltaCollection.addChangeListener(new CollectionSeriesChangeListener());
 			totalCollection.addChangeListener(new CollectionSeriesChangeListener());
 			
-			for(int x=0;x<deltaCollection.getSeries().size(); x++){
+			for (int x = 0; x < deltaCollection.getSeries().size(); x++) {
 				seriesKey = deltaCollection.getSeries(x).getKey().toString();
-				
-				color = DEFAULT_CHART_COLORS[0];
-				rendererDelta.setSeriesPaint(x, color);
-				
-				// --- user time series ->  dotted line style ---
-				if(seriesKey.contains("USER") == true){
+				rendererDelta.setSeriesPaint(x, DEFAULT_CHART_COLORS[x]);
+				// --- user time series -> dotted line style ---
+				if (seriesKey.contains("USER") == true) {
 					rendererDelta.setSeriesStroke(x, stroke);
 				}
 			}
-			if(popup == true){
-				axisDelta.setLabelPaint(color);
-			}
-			
 		}
-		
-		if( totalCollection != null){
-			
-			for(int x=0;x<totalCollection.getSeries().size(); x++){
-				seriesKey = totalCollection.getSeries(x).getKey().toString();				
-				
-				color = DEFAULT_CHART_COLORS[1];
-				rendererTotal.setSeriesPaint(x, color);
-				
-				// --- user time series ->  dotted line style ---
-				if(seriesKey.contains("USER") == true){
+
+		if (totalCollection != null) {
+
+			for (int x = 0; x < totalCollection.getSeries().size(); x++) {
+				seriesKey = totalCollection.getSeries(x).getKey().toString();
+				rendererTotal.setSeriesPaint(x, DEFAULT_CHART_COLORS[x]);
+				// --- user time series -> dotted line style ---
+				if (seriesKey.contains("USER") == true) {
 					rendererTotal.setSeriesStroke(x, stroke);
 				}
 			}
-			if(popup == true){
-				axisTotal.setLabelPaint(color);
-			}
-			
 		}
-		
-		if(loadCollection != null){
-			
-			for(int x=0;x<loadCollection.getSeries().size(); x++){
-				seriesKey = loadCollection.getSeries(x).getKey().toString();				
-				color = DEFAULT_CHART_COLORS[2];
-				
+
+		if (loadCollection != null) {
+
+			color = DEFAULT_CHART_COLORS[2];
+			if (popup == true) {
+				axisLoad.setLabelPaint(color);
+			}
+
+			for (int x = 0; x < loadCollection.getSeries().size(); x++) {
+				seriesKey = loadCollection.getSeries(x).getKey().toString();
+
 				rendererLoad.setSeriesPaint(x, color);
-				
-				if(popup == true){
-					axisLoad.setLabelPaint(color);
-				}
 			}
 		}
 	}

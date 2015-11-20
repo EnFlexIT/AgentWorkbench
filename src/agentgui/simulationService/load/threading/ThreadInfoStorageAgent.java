@@ -43,7 +43,7 @@ public class ThreadInfoStorageAgent extends ThreadInfoStorageSeries {
 	private double realMetricCPU;
 	
 	/** The class name. */
-	protected String className;
+	private String className;
 	
 	/** The is agent. */
 	private boolean isAgent;

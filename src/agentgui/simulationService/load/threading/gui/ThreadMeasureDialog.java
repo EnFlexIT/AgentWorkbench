@@ -78,6 +78,9 @@ public class ThreadMeasureDialog extends JFrame {
 	/** The j panel measure detail. */
 	private ThreadMeasureDetailTab jPanelMeasureDetail;
 	
+	/** The j panel measure metrics. */
+	private ThreadMeasureMetricsTab jPanelMeasureMetrics;
+	
 	/** The tool bar. */
 	private ThreadMeasureToolBar toolBar;
 
@@ -143,7 +146,7 @@ public class ThreadMeasureDialog extends JFrame {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			tabbedPane.addTab("Thread Measurement", null, getJPanelMeasureProtocol(), null);
 			tabbedPane.addTab("Thread Details", null, getJPanelMeasureDetail(), null);
-			
+			tabbedPane.addTab("Thread Metrics", null, getJPanelMeasureMetrics(), null);
 		}
 		return tabbedPane;
 	}
@@ -170,6 +173,18 @@ public class ThreadMeasureDialog extends JFrame {
 			jPanelMeasureDetail = new ThreadMeasureDetailTab(threadInfoStorage);
 		}
 		return jPanelMeasureDetail;
+	}
+	
+	/**
+	 * Gets the j panel measure metrics.
+	 *
+	 * @return the j panel measure metrics
+	 */
+	public ThreadMeasureMetricsTab getJPanelMeasureMetrics() {
+		if (jPanelMeasureMetrics == null) {
+			jPanelMeasureMetrics = new ThreadMeasureMetricsTab(threadInfoStorage);
+		}
+		return jPanelMeasureMetrics;
 	}
 	
 	/**

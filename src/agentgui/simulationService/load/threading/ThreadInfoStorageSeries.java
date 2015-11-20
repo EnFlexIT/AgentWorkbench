@@ -40,7 +40,7 @@ import org.jfree.data.xy.XYSeries;
 public class ThreadInfoStorageSeries {
 	
 	/** The name. */
-	protected String name;
+	private String name;
 	
 	/** The xy series hashmap that Contains multiple data-series  */
 	private HashMap<String, XYSeries> xySeriesMap;
