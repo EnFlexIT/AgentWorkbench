@@ -46,8 +46,8 @@ public class ThreadMeasureMetrics {
 	/** The factor max machine load. */
 	private final double FACTOR_MAX_MACHINE_LOAD 	= 0.95d;
 	
-	/** The simulation duration minimum in seconds. */
-	private final double SIMULATION_DURATION_MIN 	= 60;
+	/** The simulation duration minimum in milliseconds, default 5min = 300000 */
+	private final double SIMULATION_DURATION_MIN 	= 60000;
 	
 	/**  Calculation is based on integral of delta system times. */
 	public final String CALC_TYPE_INTEGRAL  		= "CALC_TYPE_INTEGRAL";
@@ -76,14 +76,14 @@ public class ThreadMeasureMetrics {
 	/** The simulation duration. */
 	private double simulationDuration;
 	
-	/** The map thath holds the values (average, integrat, last total), depending on calcType */
+	/** The map that holds the values (average, integral, last total), depending on calcType */
 	private HashMap<String, Double> calcTypeValueMap;
 	
 	/**
 	 * Instantiates a new thread measure metrics.
 	 *
 	 * @param threadInfoStorage the thread info storage
-	 * @param calcType the calc type
+	 * @param calcType the calculation type
 	 * @param metricBase the metric base
 	 */
 	public ThreadMeasureMetrics(ThreadInfoStorage threadInfoStorage, String calcType, String metricBase){
@@ -96,12 +96,7 @@ public class ThreadMeasureMetrics {
 	/**
 	 * Initialize.
 	 */
-	private void initialize(){
-		//TODO
-		Number start = threadInfoStorage.getMapAgentClass().get(threadInfoStorage.NON_AGENTS).getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME).getMinX();
-		Number end   = threadInfoStorage.getMapAgentClass().get(threadInfoStorage.NON_AGENTS).getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME).getMaxX();
-		simulationDuration = end.doubleValue() - start.doubleValue();
-		
+	private void initialize(){		
 		calcTypeValueMap = new HashMap<String, Double>();
 	}
 	
@@ -110,7 +105,7 @@ public class ThreadMeasureMetrics {
 	 */
 	public void calculateMetrics(){
 		
-		if(dataIsUsable() == true){
+		if(isDataUsable() == true){
 						
 			// --- get integral for all threads
 			Iterator<Entry<String, ThreadInfoStorageMachine>> iteratorMachine = threadInfoStorage.getMapMachine().entrySet().iterator();
@@ -192,9 +187,9 @@ public class ThreadMeasureMetrics {
 	 *
 	 * @return true, if usable
 	 */
-	private boolean dataIsUsable(){
+	public boolean isDataUsable(){
 		
-		if (simulationDuration >= SIMULATION_DURATION_MIN){
+		if (getSimulationDuration() >= SIMULATION_DURATION_MIN){
 			return true;
 		}
 		
@@ -222,7 +217,7 @@ public class ThreadMeasureMetrics {
 	 */
 	private double getCPUConsumptionMax(){
 		
-		return FACTOR_MAX_MACHINE_LOAD * simulationDuration;
+		return 100 * FACTOR_MAX_MACHINE_LOAD * simulationDuration;
 	}
 	
 	/**
@@ -267,9 +262,23 @@ public class ThreadMeasureMetrics {
 		
 		//--- simple calculation of area ---
 		for(int x = start; x < end; x++){
+			//--- difference of X
 			double xDiff = series.getX(x+1).doubleValue() - series.getX(x).doubleValue();
-			double yValue = series.getY(x+1).doubleValue();
-			integral = integral + (xDiff * yValue);
+			// --- Y value for first and second measurement
+			double yValue1 = series.getY(x).doubleValue();
+			double yValue2 = series.getY(x+1).doubleValue();
+			
+			integral = integral + (xDiff * yValue2);
+			
+			// --- Subtract or add area of triangle
+			double triangle = (xDiff * (Math.abs(yValue2 - yValue1)))/2;
+			
+			if(yValue2 > yValue1){
+				integral = integral - triangle;
+				
+			}else if (yValue2 < yValue1){
+				integral = integral + triangle;
+			}
 		}
 		
 		return integral;
@@ -306,7 +315,7 @@ public class ThreadMeasureMetrics {
 	public String getMetricBase() {
 		if (metricBase.equals(METRIC_BASE_CLASS) == false
 				&& metricBase.equals(METRIC_BASE_INDIVIDUAL) == false) {
-			metricBase = METRIC_BASE_CLASS;
+			metricBase = METRIC_BASE_INDIVIDUAL;
 		}
 		return metricBase;
 	}
@@ -318,5 +327,19 @@ public class ThreadMeasureMetrics {
 	 */
 	public void setMetricBase(String metricBase) {
 		this.metricBase = metricBase;
+	}
+
+	/**
+	 * Gets the simulation duration.
+	 *
+	 * @return the simulationDuration
+	 */
+	private double getSimulationDuration() {
+		if(threadInfoStorage != null){
+			Number start = threadInfoStorage.getMapAgentClass().get(ThreadProperties.NON_AGENTS_CLASSNAME).getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME).getMinX();
+			Number end   = threadInfoStorage.getMapAgentClass().get(ThreadProperties.NON_AGENTS_CLASSNAME).getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME).getMaxX();
+			simulationDuration = end.doubleValue() - start.doubleValue();
+		}
+		return simulationDuration;
 	}	
 }

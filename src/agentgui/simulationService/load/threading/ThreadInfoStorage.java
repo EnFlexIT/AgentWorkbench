@@ -28,6 +28,7 @@
  */
 package agentgui.simulationService.load.threading;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,7 +48,7 @@ import org.jfree.data.xy.XYSeries;
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadInfoStorage extends Vector<ThreadProtocol>{
+public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadProperties{
 	/**
 	* The available series keys as constants
 	*/
@@ -68,9 +69,6 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	public final String DELIMITER   				= "<>";
 	public final String AT   						= "@";
 	public final String CLUSTER   					= "Cluster";
-	
-	/** The non agents. */
-	public final String NON_AGENTS = "all.other.classes.nonAgent";
 
 	private static final long serialVersionUID = 5821118253370178316L;
 	
@@ -199,6 +197,8 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 			machineStorage.getXYSeriesMap().put(TOTAL_CPU_SYSTEM_TIME, new XYSeries(TOTAL_CPU_SYSTEM_TIME+DELIMITER+machineName));
 			machineStorage.getXYSeriesMap().put(DELTA_CPU_SYSTEM_TIME, new XYSeries(DELTA_CPU_SYSTEM_TIME+DELIMITER+machineName));
 			machineStorage.getXYSeriesMap().put(LOAD_CPU, new XYSeries(LOAD_CPU+DELIMITER+machineName));
+			
+			machineStorage.setMflops(threadProtocol.getMflops());
 			mapMachine.put(machineName, machineStorage);
 		}
 			
@@ -234,7 +234,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 			if(isAgent == true){
 				classKey = threadProtocol.getThreadTimes().get(i).getClassName();
 			}else{
-				classKey = NON_AGENTS;
+				classKey = NON_AGENTS_CLASSNAME;
 			}
 			
 			if (getNoOfAgentsPerClass().get(classKey) == null) {
@@ -566,7 +566,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 		 * 
 		 * 
 		 */
-		//TODO: one CPU chart for each machine ?
+		//TODO: CPU chart for each machine ?
 
 		actualSeries = clusterStorage.getXYSeriesMap().get(AVG_LOAD_CPU);
 		index = actualSeries.indexOf(threadProtocol.getTimestamp());
@@ -642,9 +642,23 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 			header.add("Predictive Metric");
 			header.add("Real Metric");
 			
-			tableModel = new DefaultTableModel(null, header);
+			tableModel = new DefaultTableModel(null, header){
+
+				private static final long serialVersionUID = 1L;
+
+				/* (non-Javadoc)
+				 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+				 */
+				public Class<?> getColumnClass(int column){
+					if (column >= 0 && column <= getColumnCount()) {
+						return getValueAt(0, column).getClass();
+					} else {
+						return Object.class;
+					}
+				}
+			};
 			// --- Necessary for preventing sorter from throwing error about empty row
-			addTableModelRow(new HashMap<String, ThreadInfoStorageAgent>());
+			addTableModelRow(null);
 		}
 		return tableModel;
 	}
@@ -655,20 +669,39 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol>{
 	 * @param mapAgent the map agent
 	 */
 	private void addTableModelRow(HashMap<String, ThreadInfoStorageAgent> mapAgent) {
-			
-		Iterator<Entry<String, ThreadInfoStorageAgent>> iteratorAgent = mapAgent.entrySet().iterator();
-		
-		while (iteratorAgent.hasNext()) {
-			ThreadInfoStorageAgent actualAgent = iteratorAgent.next().getValue();
+		if(mapAgent == null){
+			ThreadInfoStorageAgent actualAgent = new ThreadInfoStorageAgent("", "", false);
 			
 			Vector<Object> row = new Vector<Object>();
 			row.add(actualAgent);
-			row.add(actualAgent.getClassName());
-			row.add(getNoOfAgentsPerClass().get(actualAgent.getClassName()));
-			row.add(actualAgent.getPredictMetricCPU());
-			row.add(actualAgent.getRealMetricCPU());
-			// --- Add row to table model ---
+			row.add("");
+			row.add(0);
+			row.add(0);
+			row.add(0);
 			getTableModel().addRow(row);
+			
+		} else {
+			
+			Iterator<Entry<String, ThreadInfoStorageAgent>> iteratorAgent = mapAgent.entrySet().iterator();
+			
+			while (iteratorAgent.hasNext()) {
+				ThreadInfoStorageAgent actualAgent = iteratorAgent.next().getValue();
+				String[] className = actualAgent.getClassName().split("\\.");
+				
+				Vector<Object> row = new Vector<Object>();
+				row.add(actualAgent);
+				row.add(className[className.length-1]);
+				row.add(getNoOfAgentsPerClass().get(actualAgent.getClassName()));
+				row.add(actualAgent.getPredictMetricCPU());
+				
+				// --- remove decimal .000 ----
+				double cpu = actualAgent.getRealMetricCPU();
+				DecimalFormat df = new DecimalFormat("###");
+				row.add(df.format(cpu));
+				
+				// --- Add row to table model ---
+				getTableModel().addRow(row);
+			}
 		}
 	}
 	

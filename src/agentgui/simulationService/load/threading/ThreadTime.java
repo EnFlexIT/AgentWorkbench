@@ -36,7 +36,7 @@ import java.io.Serializable;
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadTime implements Serializable {
+public class ThreadTime implements Serializable, ThreadProperties {
 
 	private static final long serialVersionUID = 7920683110304631892L;
 	
@@ -61,6 +61,18 @@ public class ThreadTime implements Serializable {
 	/** The real metric. */
 	private double realMetric;
     
+	/**
+	 * Instantiates a new thread time.
+	 */
+	public ThreadTime(){
+		this.setThreadName("");
+    	this.setSystemTime(0);
+    	this.setUserTime(0);
+    	// --- default ---
+    	this.setIsAgent(false);
+    	this.setClassName(NON_AGENTS_CLASSNAME);
+		
+	}
     /**
      * Instantiates a new thread time.
      *
@@ -74,6 +86,7 @@ public class ThreadTime implements Serializable {
     	this.setUserTime(userTime);
     	// --- default ---
     	this.setIsAgent(false);
+    	this.setClassName(NON_AGENTS_CLASSNAME);
     }
     
     /* (non-Javadoc)

@@ -46,7 +46,7 @@ import agentgui.core.sim.setup.SimulationSetup;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
 @XmlRootElement
-public class ThreadProtocolVector extends Vector<ThreadProtocol> {
+public class ThreadProtocolVector extends Vector<ThreadProtocol>{
 
 	private static final long serialVersionUID = -6007682527796979437L;
 
@@ -133,7 +133,8 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 			
 			Vector<String> header = new Vector<String>();
 			header.add("PID");
-			header.add("Thread Name");
+			header.add("Thread");
+			header.add("Class");
 			header.add("System Time [ms]");
 			header.add("User Time [ms]");
 			
@@ -153,7 +154,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 				}
 			};
 			// --- Necessary for preventing sorter from throwing error about empty row
-			addTableModelRow("", new ThreadTime("", 0L, 0L));
+			addTableModelRow("", null);
 		}
 		return tableModel;
 	}
@@ -165,6 +166,9 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	 * @param threadTime the thread time
 	 */
 	private void addTableModelRow(String pid, ThreadTime threadTime) {
+		if(threadTime == null){
+			threadTime = new ThreadTime();
+		}
 		
 		// --- Check for agents out of the start list of the setup --
 		HashMap<String, AgentClassElement4SimStart> agentStartHashMap = this.getAgentStartHashMap();
@@ -177,10 +181,12 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 			}
 		}
 		
+		String[] className = threadTime.getClassName().split("\\.");
 		// --- Create row vector ------------------------------------
 		Vector<Object> row = new Vector<Object>();
 		row.add(pid);
 		row.add(threadTime);
+		row.add(className[className.length-1]);
 		row.add(threadTime.getSystemTime());
 		row.add(threadTime.getUserTime());
 		

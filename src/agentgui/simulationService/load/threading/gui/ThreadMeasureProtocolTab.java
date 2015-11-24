@@ -133,6 +133,7 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 				TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jTableThreadProtocolVector.getModel());
 
 				List<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>();
+				//--- sort system cpu time, descending ---
 				sortKeys.add(new RowSorter.SortKey(3, SortOrder.DESCENDING));
 				sorter.setSortKeys(sortKeys);
 				sorter.setSortsOnUpdates(true);
@@ -188,6 +189,7 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 	private JRadioButton getJRadioButtonNoFilter() {
 		if (jRadioButtonNoFilter == null) {
 			jRadioButtonNoFilter = new JRadioButton("No Filter");
+			jRadioButtonNoFilter.setToolTipText("Display all threads.");
 			jRadioButtonNoFilter.addActionListener(this);
 		}
 		return jRadioButtonNoFilter;
@@ -200,6 +202,7 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 	private JRadioButton getJRadioButtonFilterAgents() {
 		if (jRadioButtonFilterAgents == null) {
 			jRadioButtonFilterAgents = new JRadioButton("Filter for Agents");
+			jRadioButtonFilterAgents.setToolTipText("Display agent threads only.");
 			jRadioButtonFilterAgents.addActionListener(this);
 		}
 		return jRadioButtonFilterAgents;

@@ -1114,8 +1114,7 @@ public class LoadService extends BaseService {
 		 */
 		@Override
 		public void receiveThreadProtocol(ThreadProtocol threadProtocol) {
-			
-			// --- Add information of container and machine name ----
+			// --- Add information about container, machine ----
 			threadProtocol.setContainerName(myCRCReply.getRemoteContainerName());
 			threadProtocol.setProcessID(myCRCReply.getRemotePID());
 			// --- jvm@machine, e.g. 73461@dell-blade-2 ---
@@ -1125,6 +1124,11 @@ public class LoadService extends BaseService {
 			
 			threadProtocol.setJVMName(jvmName);
 			threadProtocol.setMachineName(machineName);
+			
+			int noOfCPU = myCRCReply.getRemotePerformance().getCpu_numberOf();
+			double mflops = myCRCReply.getRemoteBenchmarkResult().getBenchmarkValue();
+			threadProtocol.setMflops(mflops * noOfCPU);
+			
 			
 			// --- Send protocol to the main container --------------
 			try {

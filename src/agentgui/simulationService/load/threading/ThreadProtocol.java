@@ -59,6 +59,9 @@ public class ThreadProtocol implements Serializable {
 	/** The load cpu. */
 	private float loadCPU;
 	
+	/** The mflops. */
+	private double mflops;
+	
 	/** The process id. */
 	private String processID;
 	
@@ -290,6 +293,20 @@ public class ThreadProtocol implements Serializable {
 	 */
 	public String getMachineName() {
 		return machineName;
+	}
+
+	/**
+	 * @return the mflops
+	 */
+	public double getMflops() {
+		return mflops;
+	}
+
+	/**
+	 * @param mflops the mflops to set
+	 */
+	public void setMflops(double mflops) {
+		this.mflops = mflops;
 	}
 
 }

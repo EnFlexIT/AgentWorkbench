@@ -62,6 +62,7 @@ import agentgui.simulationService.load.threading.ThreadInfoStorageCluster;
 import agentgui.simulationService.load.threading.ThreadInfoStorageContainer;
 import agentgui.simulationService.load.threading.ThreadInfoStorageJVM;
 import agentgui.simulationService.load.threading.ThreadInfoStorageMachine;
+import agentgui.simulationService.load.threading.ThreadProperties;
 
 /**
  * The Class ThreadInfoStorageTree.
@@ -195,7 +196,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
         	    		if(ae.getSource()==viewAgentClass){
         	    			className =  tia.getClassName();	
         	    		}else{
-	        	    		className =  threadInfoStorage.NON_AGENTS;
+	        	    		className =  ThreadProperties.NON_AGENTS_CLASSNAME;
 	        	    	}
         	    		folderNamePrefix = "Class: ";
         	    		iteratorClass = threadInfoStorage.getMapAgentClass().get(className).getXYSeriesMap().keySet().iterator();
