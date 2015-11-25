@@ -28,7 +28,6 @@
  */
 package agentgui.simulationService.load.threading;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -695,9 +694,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 				row.add(actualAgent.getPredictMetricCPU());
 				
 				// --- remove decimal .000 ----
-				double cpu = actualAgent.getRealMetricCPU();
-				DecimalFormat df = new DecimalFormat("###");
-				row.add(df.format(cpu));
+				row.add(Math.round(actualAgent.getRealMetricCPU()));
 				
 				// --- Add row to table model ---
 				getTableModel().addRow(row);
@@ -908,8 +905,8 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 	 */
 	public ThreadMeasureMetrics getThreadMeasureMetrics(){
 		if(threadMeasureMetrics == null){
-			threadMeasureMetrics = new ThreadMeasureMetrics(this, "CALC_TYPE_INTEGRAL", "METRIC_BASE_CLASS");
-			threadMeasureMetrics.setCalcType("CALC_TYPE_INTEGRAL");
+			threadMeasureMetrics = new ThreadMeasureMetrics(this, "CALC_TYPE_INTEGRAL_DELTA", "METRIC_BASE_CLASS");
+			threadMeasureMetrics.setCalcType("CALC_TYPE_INTEGRAL_DELTA");
 			threadMeasureMetrics.calculateMetrics();
 		}
 		return threadMeasureMetrics;

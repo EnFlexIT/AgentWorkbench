@@ -83,10 +83,10 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 	private JButton btnCalcMetrics;
 	
 	/** The radio button integral. */
-	private JRadioButton rdbtnIntegral;
+	private JRadioButton rdbtnIntegralDelta;
 	
 	/** The radio button total. */
-	private JRadioButton rdbtnTotal;
+	private JRadioButton rdbtnLastTotal;
 	
 	/** The radio button individual. */
 	private JRadioButton rdbtnIndividual;
@@ -95,7 +95,7 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 	private JRadioButton rdbtnClass;
 	
 	/** The radio button average. */
-	private JRadioButton rdbtnAverage;
+	private JRadioButton rdbtnIntegralTotal;
 	
 	/** The J panel options. */
 	private JPanel JPanelOptions;
@@ -181,7 +181,7 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 				TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jTableThreadInfoMetrics.getModel());
 
 				List<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>();
-				sortKeys.add(new RowSorter.SortKey(3, SortOrder.DESCENDING));
+				sortKeys.add(new RowSorter.SortKey(4, SortOrder.DESCENDING));
 				sorter.setSortKeys(sortKeys);
 				sorter.setSortsOnUpdates(true);
 				
@@ -303,11 +303,11 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 			threadInfoStorage.getThreadMeasureMetrics().setMetricBase(threadInfoStorage.getThreadMeasureMetrics().METRIC_BASE_INDIVIDUAL);
 		} else if (ae.getSource()== this.getRdbtnClass()) {
 			threadInfoStorage.getThreadMeasureMetrics().setMetricBase(threadInfoStorage.getThreadMeasureMetrics().METRIC_BASE_CLASS);
-		} else if (ae.getSource()== this.getRdbtnIntegral()) {
-			threadInfoStorage.getThreadMeasureMetrics().setCalcType(threadInfoStorage.getThreadMeasureMetrics().CALC_TYPE_INTEGRAL);
-		} else if (ae.getSource()== this.getRdbtnAverage()) {
-			threadInfoStorage.getThreadMeasureMetrics().setCalcType(threadInfoStorage.getThreadMeasureMetrics().CALC_TYPE_AVG);
-		} else if (ae.getSource()== this.getRdbtnTotal()) {
+		} else if (ae.getSource()== this.getRdbtnIntegralDelta()) {
+			threadInfoStorage.getThreadMeasureMetrics().setCalcType(threadInfoStorage.getThreadMeasureMetrics().CALC_TYPE_INTEGRAL_DELTA);
+		} else if (ae.getSource()== this.getRdbtnIntegralTotal()) {
+			threadInfoStorage.getThreadMeasureMetrics().setCalcType(threadInfoStorage.getThreadMeasureMetrics().CALC_TYPE_INTEGRAL_TOTAL);
+		} else if (ae.getSource()== this.getRdbtnLastTotal()) {
 			threadInfoStorage.getThreadMeasureMetrics().setCalcType(threadInfoStorage.getThreadMeasureMetrics().CALC_TYPE_LAST_TOTAL);
 		}
 	}
@@ -315,9 +315,16 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 	/**
 	 * Enable metrics calculation button.
 	 */
-	public void enableMetricsCalculationButton(){
+	public void enableMetricsCalculationButton() {
+		if(getBtnCalcMetrics().isEnabled() == true){
+			return;
+		}
 		if(threadInfoStorage.getThreadMeasureMetrics().isDataUsable() == true){
+			getBtnCalcMetrics().setText("Calculate Metrics");
 			getBtnCalcMetrics().setEnabled(true);
+		} else {
+			double timeLeft = threadInfoStorage.getThreadMeasureMetrics().SIMULATION_DURATION_MIN - threadInfoStorage.getThreadMeasureMetrics().getSimulationDuration();
+			getBtnCalcMetrics().setText("Calculate Metrics in " + Math.round(timeLeft/1000) + "s");
 		}
 	}
 	/**
@@ -327,7 +334,7 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 	 */
 	private JButton getBtnCalcMetrics() {
 		if (btnCalcMetrics == null) {
-			btnCalcMetrics = new JButton("Calculate Metrics");
+			btnCalcMetrics = new JButton("");
 			btnCalcMetrics.setVerticalAlignment(SwingConstants.BOTTOM);
 			btnCalcMetrics.setToolTipText("Calculates the real metrics for each agent based on recorded thread times.");
 			btnCalcMetrics.addActionListener(this);
@@ -339,43 +346,43 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 	/**
 	 * Gets the radio button average.
 	 *
-	 * @return the radio button average
+	 * @return the radio button integral total
 	 */
-	private JRadioButton getRdbtnAverage() {
-		if (rdbtnAverage == null) {
-			rdbtnAverage = new JRadioButton("Average");
-			rdbtnAverage.setToolTipText("Calculate Metrices based on average system cpu time.");
-			rdbtnAverage.addActionListener(this);
+	private JRadioButton getRdbtnIntegralTotal() {
+		if (rdbtnIntegralTotal == null) {
+			rdbtnIntegralTotal = new JRadioButton("Total");
+			rdbtnIntegralTotal.setToolTipText("Calculate metrics based based on total integrals.");
+			rdbtnIntegralTotal.addActionListener(this);
 		}
-		return rdbtnAverage;
+		return rdbtnIntegralTotal;
 	}
 	
 	/**
-	 * Gets the radio button integral.
+	 * Gets the radio button integral delta.
 	 *
-	 * @return the radio button integral
+	 * @return the radio button integral delta
 	 */
-	private JRadioButton getRdbtnIntegral() {
-		if (rdbtnIntegral == null) {
-			rdbtnIntegral = new JRadioButton("Integral");
-			rdbtnIntegral.setToolTipText("Calculate Metrices based on integrals.");
-			rdbtnIntegral.addActionListener(this);
+	private JRadioButton getRdbtnIntegralDelta() {
+		if (rdbtnIntegralDelta == null) {
+			rdbtnIntegralDelta = new JRadioButton("Delta");
+			rdbtnIntegralDelta.setToolTipText("Calculate metrics based on delta integrals.");
+			rdbtnIntegralDelta.addActionListener(this);
 		}
-		return rdbtnIntegral;
+		return rdbtnIntegralDelta;
 	}
 	
 	/**
-	 * Gets the radio button total.
+	 * Gets the radio button last total.
 	 *
-	 * @return the radio button total
+	 * @return the radio button last total
 	 */
-	private JRadioButton getRdbtnTotal() {
-		if (rdbtnTotal == null) {
-			rdbtnTotal = new JRadioButton("Total");
-			rdbtnTotal.setToolTipText("Calculate Metrices based on last total system cpu time.");
-			rdbtnTotal.addActionListener(this);
+	private JRadioButton getRdbtnLastTotal() {
+		if (rdbtnLastTotal == null) {
+			rdbtnLastTotal = new JRadioButton("Last Total");
+			rdbtnLastTotal.setToolTipText("Calculate metrics based on last total system cpu time.");
+			rdbtnLastTotal.addActionListener(this);
 		}
-		return rdbtnTotal;
+		return rdbtnLastTotal;
 	}
 	
 	/**
@@ -386,7 +393,7 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 	private JRadioButton getRdbtnIndividual() {
 		if (rdbtnIndividual == null) {
 			rdbtnIndividual = new JRadioButton("Individual");
-			rdbtnIndividual.setToolTipText("Calculate Metrices based on individual agent data.");
+			rdbtnIndividual.setToolTipText("Calculate metrics based on individual agent data.");
 			rdbtnIndividual.addActionListener(this);
 		}
 		return rdbtnIndividual;
@@ -400,7 +407,7 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 	private JRadioButton getRdbtnClass() {
 		if (rdbtnClass == null) {
 			rdbtnClass = new JRadioButton("Class");
-			rdbtnClass.setToolTipText("Calculate Metrices based on agent class data.");
+			rdbtnClass.setToolTipText("Calculate metrics based on agent class data.");
 			rdbtnClass.addActionListener(this);
 		}
 		return rdbtnClass;
@@ -432,24 +439,24 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 			gbc_rdbtnClass.gridx = 4;
 			gbc_rdbtnClass.gridy = 0;
 			JPanelOptions.add(getRdbtnClass(), gbc_rdbtnClass);
-			GridBagConstraints gbc_rdbtnIntegral = new GridBagConstraints();
-			gbc_rdbtnIntegral.anchor = GridBagConstraints.EAST;
-			gbc_rdbtnIntegral.insets = new Insets(0, 0, 5, 5);
-			gbc_rdbtnIntegral.gridx = 2;
-			gbc_rdbtnIntegral.gridy = 1;
-			JPanelOptions.add(getRdbtnIntegral(), gbc_rdbtnIntegral);
-			GridBagConstraints gbc_rdbtnAverage = new GridBagConstraints();
-			gbc_rdbtnAverage.anchor = GridBagConstraints.WEST;
-			gbc_rdbtnAverage.insets = new Insets(0, 0, 5, 5);
-			gbc_rdbtnAverage.gridx = 3;
-			gbc_rdbtnAverage.gridy = 1;
-			JPanelOptions.add(getRdbtnAverage(), gbc_rdbtnAverage);
-			GridBagConstraints gbc_rdbtnTotal = new GridBagConstraints();
-			gbc_rdbtnTotal.anchor = GridBagConstraints.WEST;
-			gbc_rdbtnTotal.insets = new Insets(0, 0, 5, 0);
-			gbc_rdbtnTotal.gridx = 4;
-			gbc_rdbtnTotal.gridy = 1;
-			JPanelOptions.add(getRdbtnTotal(), gbc_rdbtnTotal);
+			GridBagConstraints gbc_rdbtnIntegralDelta = new GridBagConstraints();
+			gbc_rdbtnIntegralDelta.anchor = GridBagConstraints.EAST;
+			gbc_rdbtnIntegralDelta.insets = new Insets(0, 0, 5, 5);
+			gbc_rdbtnIntegralDelta.gridx = 2;
+			gbc_rdbtnIntegralDelta.gridy = 1;
+			JPanelOptions.add(getRdbtnIntegralDelta(), gbc_rdbtnIntegralDelta);
+			GridBagConstraints gbc_rdbtnIntegralTotal = new GridBagConstraints();
+			gbc_rdbtnIntegralTotal.anchor = GridBagConstraints.WEST;
+			gbc_rdbtnIntegralTotal.insets = new Insets(0, 0, 5, 5);
+			gbc_rdbtnIntegralTotal.gridx = 3;
+			gbc_rdbtnIntegralTotal.gridy = 1;
+			JPanelOptions.add(getRdbtnIntegralTotal(), gbc_rdbtnIntegralTotal);
+			GridBagConstraints gbc_rdbtnLastTotal = new GridBagConstraints();
+			gbc_rdbtnLastTotal.anchor = GridBagConstraints.WEST;
+			gbc_rdbtnLastTotal.insets = new Insets(0, 0, 5, 0);
+			gbc_rdbtnLastTotal.gridx = 4;
+			gbc_rdbtnLastTotal.gridy = 1;
+			JPanelOptions.add(getRdbtnLastTotal(), gbc_rdbtnLastTotal);
 			
 			ButtonGroup bgOptionsCalcType = new ButtonGroup();
 			bgOptionsCalcType.add(getRdbtnIndividual());
@@ -458,12 +465,12 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 			getRdbtnClass().setSelected(false);
 			
 			ButtonGroup bgOptionsMetricBase = new ButtonGroup();
-			bgOptionsMetricBase.add(getRdbtnIntegral());
-			bgOptionsMetricBase.add(getRdbtnTotal());
-			bgOptionsMetricBase.add(getRdbtnAverage());
-			getRdbtnIntegral().setSelected(true);
-			getRdbtnTotal().setSelected(false);
-			getRdbtnAverage().setSelected(false);
+			bgOptionsMetricBase.add(getRdbtnIntegralDelta());
+			bgOptionsMetricBase.add(getRdbtnLastTotal());
+			bgOptionsMetricBase.add(getRdbtnIntegralTotal());
+			getRdbtnIntegralDelta().setSelected(true);
+			getRdbtnLastTotal().setSelected(false);
+			getRdbtnIntegralTotal().setSelected(false);
 		}
 		return JPanelOptions;
 	}

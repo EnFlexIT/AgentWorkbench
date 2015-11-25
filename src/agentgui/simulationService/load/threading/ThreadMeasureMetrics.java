@@ -47,13 +47,13 @@ public class ThreadMeasureMetrics {
 	private final double FACTOR_MAX_MACHINE_LOAD 	= 0.95d;
 	
 	/** The simulation duration minimum in milliseconds, default 5min = 300000 */
-	private final double SIMULATION_DURATION_MIN 	= 60000;
+	public final double SIMULATION_DURATION_MIN 	= 60000;
 	
 	/**  Calculation is based on integral of delta system times. */
-	public final String CALC_TYPE_INTEGRAL  		= "CALC_TYPE_INTEGRAL";
+	public final String CALC_TYPE_INTEGRAL_DELTA  		= "CALC_TYPE_INTEGRAL_DELTA";
 	
 	/**  Calculation is based on average system times. */
-	public final String CALC_TYPE_AVG   			= "CALC_TYPE_AVG";
+	public final String CALC_TYPE_INTEGRAL_TOTAL   			= "CALC_TYPE_INTEGRAL_TOTAL";
 	
 	/**  Calculation is based on the last value for CPU system times. */
 	public final String CALC_TYPE_LAST_TOTAL   		= "CALC_TYPE_LAST_TOTAL";
@@ -107,7 +107,6 @@ public class ThreadMeasureMetrics {
 		
 		if(isDataUsable() == true){
 						
-			// --- get integral for all threads
 			Iterator<Entry<String, ThreadInfoStorageMachine>> iteratorMachine = threadInfoStorage.getMapMachine().entrySet().iterator();
 			while (iteratorMachine.hasNext()){
 				
@@ -115,12 +114,12 @@ public class ThreadMeasureMetrics {
 				ThreadInfoStorageMachine actualMachine = iteratorMachine.next().getValue();
 				
 				
-				if (getCalcType().equals(CALC_TYPE_INTEGRAL)) {
+				if (getCalcType().equals(CALC_TYPE_INTEGRAL_DELTA)) {
 					series = actualMachine.getXYSeriesMap().get(threadInfoStorage.DELTA_CPU_SYSTEM_TIME);
 					calcTypeValueMap.put(actualMachine.getName(), getIntegralForTimeSeries(series, 0, series.getItemCount()-1));				
-				} else if (getCalcType().equals(CALC_TYPE_AVG)) {
-//					series = actualMachine.getXYSeriesMap().get(threadInfoStorage.DELTA_CPU_SYSTEM_TIME);
-//					
+				} else if (getCalcType().equals(CALC_TYPE_INTEGRAL_TOTAL)) {
+					series = actualMachine.getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME);
+					calcTypeValueMap.put(actualMachine.getName(), getIntegralForTimeSeries(series, 0, series.getItemCount()-1));
 				} else if (getCalcType().equals(CALC_TYPE_LAST_TOTAL)) {
 					series = actualMachine.getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME);
 					calcTypeValueMap.put(actualMachine.getName(), series.getMaxY());
@@ -131,9 +130,11 @@ public class ThreadMeasureMetrics {
 				while (iteratorAgent.hasNext()){
 					
 					ThreadInfoStorageAgent actualAgent = iteratorAgent.next().getValue();
-					if(actualAgent.isAgent() == true && actualAgent.getName().contains(actualMachine.getName())){
-						
-						actualAgent.setRealMetricCPU( getMetricForAgent(actualAgent, actualMachine) );
+					if (//actualAgent.isAgent() == true && 
+							actualAgent.getName().contains(actualMachine.getName())) {
+
+						actualAgent.setRealMetricCPU(getMetricForAgent(
+								actualAgent, actualMachine));
 					}
 				}
 			}
@@ -154,12 +155,13 @@ public class ThreadMeasureMetrics {
 		
 		if (getMetricBase().equals(METRIC_BASE_INDIVIDUAL)) {
 			// --- calculate Integral based on data of individual agent ---
-			series = agent.getXYSeriesMap().get(threadInfoStorage.DELTA_CPU_SYSTEM_TIME);
 			
-			if (getCalcType().equals(CALC_TYPE_INTEGRAL)) {
+			if (getCalcType().equals(CALC_TYPE_INTEGRAL_DELTA)) {
+				series = agent.getXYSeriesMap().get(threadInfoStorage.DELTA_CPU_SYSTEM_TIME);
 				actualValue = getIntegralForTimeSeries(series, 0, series.getItemCount()-1);				
-			} else if (getCalcType().equals(CALC_TYPE_AVG)) {
-//				actualIntegral = getAverageForTimeSeries(series, 0, series.getItemCount()-1);
+			} else if (getCalcType().equals(CALC_TYPE_INTEGRAL_TOTAL)) {
+				series = agent.getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME);
+				actualValue = getIntegralForTimeSeries(series, 0, series.getItemCount()-1);
 			} else if (getCalcType().equals(CALC_TYPE_LAST_TOTAL)) {
 				series = agent.getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME);
 				actualValue = series.getMaxY();
@@ -167,12 +169,13 @@ public class ThreadMeasureMetrics {
 			
 		} else if (getMetricBase().equals(METRIC_BASE_CLASS)) {
 			// --- calculate Integral based on data of the agent's class (average) ---
-			series = threadInfoStorage.getMapAgentClass().get(agent.getClassName()).getXYSeriesMap().get(threadInfoStorage.AVG_DELTA_CPU_SYSTEM_TIME);
 			
-			if (getCalcType().equals(CALC_TYPE_INTEGRAL)) {
+			if (getCalcType().equals(CALC_TYPE_INTEGRAL_DELTA)) {
+				series = threadInfoStorage.getMapAgentClass().get(agent.getClassName()).getXYSeriesMap().get(threadInfoStorage.AVG_DELTA_CPU_SYSTEM_TIME);
 				actualValue = getIntegralForTimeSeries(series, 0, series.getItemCount()-1);				
-			} else if (getCalcType().equals(CALC_TYPE_AVG)) {
-//				actualIntegral = getAverageForTimeSeries(series, 0, series.getItemCount()-1);
+			} else if (getCalcType().equals(CALC_TYPE_INTEGRAL_TOTAL)) {
+				series = threadInfoStorage.getMapAgentClass().get(agent.getClassName()).getXYSeriesMap().get(threadInfoStorage.AVG_TOTAL_CPU_SYSTEM_TIME);
+				actualValue = getIntegralForTimeSeries(series, 0, series.getItemCount()-1);				
 			} else if (getCalcType().equals(CALC_TYPE_LAST_TOTAL)) {
 				series = threadInfoStorage.getMapAgentClass().get(agent.getClassName()).getXYSeriesMap().get(threadInfoStorage.AVG_TOTAL_CPU_SYSTEM_TIME);
 				actualValue = series.getMaxY();
@@ -290,8 +293,8 @@ public class ThreadMeasureMetrics {
 	 * @return the calc type
 	 */
 	public String getCalcType() {
-		if (calcType.equals(CALC_TYPE_INTEGRAL) == false
-				&& calcType.equals(CALC_TYPE_AVG) == false
+		if (calcType.equals(CALC_TYPE_INTEGRAL_DELTA) == false
+				&& calcType.equals(CALC_TYPE_INTEGRAL_TOTAL) == false
 				&& calcType.equals(CALC_TYPE_LAST_TOTAL) == false) {
 			calcType = CALC_TYPE_LAST_TOTAL;
 		}
@@ -334,7 +337,7 @@ public class ThreadMeasureMetrics {
 	 *
 	 * @return the simulationDuration
 	 */
-	private double getSimulationDuration() {
+	public double getSimulationDuration() {
 		if(threadInfoStorage != null){
 			Number start = threadInfoStorage.getMapAgentClass().get(ThreadProperties.NON_AGENTS_CLASSNAME).getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME).getMinX();
 			Number end   = threadInfoStorage.getMapAgentClass().get(ThreadProperties.NON_AGENTS_CLASSNAME).getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME).getMaxX();
