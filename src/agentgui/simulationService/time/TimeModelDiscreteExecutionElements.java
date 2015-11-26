@@ -39,8 +39,6 @@ import agentgui.core.application.Language;
  */
 public class TimeModelDiscreteExecutionElements extends TimeModelBaseExecutionElements {
 
-	private static final long serialVersionUID = 385807623783469748L;
-
 	private final String toolBarTitle = Language.translate("Zeit");
 	private TimeModelDiscrete timeModelDiscrete = null;
 	

@@ -111,17 +111,17 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JCheckBox jCheckBoxShowLoadMonitor;
 	private JCheckBox jCheckBoxImmediatelyStartLoadRecording;
 	
-	private JComboBox jComboBoxJVMMemoryInitial;
-	private JComboBox jComboBoxJVMMemoryMaximum;
-	private JComboBox jComboBoxRecordingInterval;
+	private JComboBox<String> jComboBoxJVMMemoryInitial;
+	private JComboBox<String> jComboBoxJVMMemoryMaximum;
+	private JComboBox<TimeSelection> jComboBoxRecordingInterval;
 	
-	private Object[] comboData = {JadeRemoteStart.jvmMemo0016MB, JadeRemoteStart.jvmMemo0032MB,
+	private String[] comboData = {JadeRemoteStart.jvmMemo0016MB, JadeRemoteStart.jvmMemo0032MB,
 								  JadeRemoteStart.jvmMemo0064MB, JadeRemoteStart.jvmMemo0128MB,
 								  JadeRemoteStart.jvmMemo0256MB, JadeRemoteStart.jvmMemo0512MB,
 								  JadeRemoteStart.jvmMemo1024MB};
-	private DefaultComboBoxModel comboModelInitial = new DefaultComboBoxModel(comboData);
-	private DefaultComboBoxModel comboModelMaximal = new DefaultComboBoxModel(comboData);
-	private DefaultComboBoxModel comboModelRecordingInterval;
+	private DefaultComboBoxModel<String> comboModelInitial = new DefaultComboBoxModel<String>(comboData);
+	private DefaultComboBoxModel<String> comboModelMaximal = new DefaultComboBoxModel<String>(comboData);
+	private DefaultComboBoxModel<TimeSelection> comboModelRecordingInterval;
 	
 	private KeyAdapter4Numbers keyAdapter4Numbers;
 	private DocumentListener docListener;
@@ -496,16 +496,17 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	 * This method initializes jComboBoxJVMMemoryInitial	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox getJComboBoxJVMMemoryInitial() {
+	private JComboBox<String> getJComboBoxJVMMemoryInitial() {
 		if (jComboBoxJVMMemoryInitial == null) {
-			jComboBoxJVMMemoryInitial = new JComboBox();
+			jComboBoxJVMMemoryInitial = new JComboBox<String>();
 			jComboBoxJVMMemoryInitial.setModel(comboModelInitial);
 			jComboBoxJVMMemoryInitial.setPreferredSize(new Dimension(80, 26));
 			jComboBoxJVMMemoryInitial.addItemListener(new ItemListener() {
 				@Override
 				public void itemStateChanged(ItemEvent ie) {
 					if (ie.getStateChange()==ItemEvent.SELECTED) {
-						JComboBox combo = (JComboBox) ie.getSource();
+						@SuppressWarnings("unchecked")
+						JComboBox<String> combo = (JComboBox<String>) ie.getSource();
 						if (isMemorySelectionError(combo)==false) {
 							// --- Save in project ------------
 							currRemoteContainerConfiguration.setJvmMemAllocInitial((String) jComboBoxJVMMemoryInitial.getSelectedItem());
@@ -525,16 +526,17 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	 * This method initializes jComboBoxJVMMemoryMaximum	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox getJComboBoxJVMMemoryMaximum() {
+	private JComboBox<String> getJComboBoxJVMMemoryMaximum() {
 		if (jComboBoxJVMMemoryMaximum == null) {
-			jComboBoxJVMMemoryMaximum = new JComboBox();
+			jComboBoxJVMMemoryMaximum = new JComboBox<String>();
 			jComboBoxJVMMemoryMaximum.setModel(comboModelMaximal);
 			jComboBoxJVMMemoryMaximum.setPreferredSize(new Dimension(80, 26));
 			jComboBoxJVMMemoryMaximum.addItemListener(new ItemListener() {
 				@Override
 				public void itemStateChanged(ItemEvent ie) {
 					if (ie.getStateChange()==ItemEvent.SELECTED) {
-						JComboBox combo = (JComboBox) ie.getSource();
+						@SuppressWarnings("unchecked")
+						JComboBox<String> combo = (JComboBox<String>) ie.getSource();
 						if (isMemorySelectionError(combo)==false) {
 							// --- Save in project ------------
 							currRemoteContainerConfiguration.setJvmMemAllocMaximum((String) jComboBoxJVMMemoryMaximum.getSelectedItem());
@@ -555,7 +557,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	 * always be larger than the maximum memory of the JVM.
 	 * @return true, if is memory selection error
 	 */
-	private boolean isMemorySelectionError(JComboBox combo) {
+	private boolean isMemorySelectionError(JComboBox<String> combo) {
 		
 		boolean error = false;
 		String initialMemory = (String) getJComboBoxJVMMemoryInitial().getSelectedItem();
@@ -1147,9 +1149,9 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	 * This method initializes jComboBoxInterval.
 	 * @return javax.swing.JComboBox
 	 */
-	private JComboBox getJComboBoxRecordingInterval() {
+	private JComboBox<TimeSelection> getJComboBoxRecordingInterval() {
 		if (jComboBoxRecordingInterval == null) {
-			jComboBoxRecordingInterval = new JComboBox(this.getComboBoxModelRecordingInterval());
+			jComboBoxRecordingInterval = new JComboBox<TimeSelection>(this.getComboBoxModelRecordingInterval());
 			jComboBoxRecordingInterval.setMaximumRowCount(this.getComboBoxModelRecordingInterval().getSize());
 			jComboBoxRecordingInterval.setSelectedItem(this.getComboBoxModelRecordingInterval().getElementAt(0));
 			jComboBoxRecordingInterval.setPreferredSize(new Dimension(60, 26));
@@ -1162,9 +1164,9 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	 * Returns DefaultComboBoxModel of sampling interval.
 	 * @return the default combo box model
 	 */
-	private DefaultComboBoxModel getComboBoxModelRecordingInterval() {
+	private DefaultComboBoxModel<TimeSelection> getComboBoxModelRecordingInterval() {
 		if (comboModelRecordingInterval==null) {
-			comboModelRecordingInterval = new DefaultComboBoxModel();
+			comboModelRecordingInterval = new DefaultComboBoxModel<TimeSelection>();
 			comboModelRecordingInterval.addElement(new TimeSelection(500));
 			
 			comboModelRecordingInterval.addElement(new TimeSelection(1000));

@@ -59,26 +59,30 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-@XmlRootElement public class SimulationSetup {
+@XmlRootElement 
+public class SimulationSetup {
 
-	/**
-	 * Lists the possible reasons why a SimulationSetup can be changed and unsaved  
-	 */
+	/** Lists the possible reasons why a SimulationSetup can be changed and unsaved  */
 	public enum CHANGED {
 		TimeModelSettings,
 		AgentConfiguration,
 		UserRuntimeObject
 	}
 	
-	@XmlTransient private Project currProject = null;
+	@XmlTransient 
+	private Project currProject = null;
 	
-	@XmlTransient public static final String AGENT_LIST_ManualConfiguration = "01 AgentStartManual";
-	@XmlTransient public static final String AGENT_LIST_EnvironmentConfiguration = "02 AgentStartEnvironment";
+	@XmlTransient 
+	public static final String AGENT_LIST_ManualConfiguration = "01 AgentStartManual";
+	@XmlTransient 
+	public static final String AGENT_LIST_EnvironmentConfiguration = "02 AgentStartEnvironment";
 	
 	/** This Hash holds the instances of all agent start lists. */
-	@XmlTransient private HashMap<String, DefaultListModel> hashMap4AgentDefaulListModels = new HashMap<String, DefaultListModel>();
+	@XmlTransient 
+	private HashMap<String, DefaultListModel<AgentClassElement4SimStart>> hashMap4AgentDefaulListModels = new HashMap<String, DefaultListModel<AgentClassElement4SimStart>>();
 	/** The ComboBoxModel for agent lists. */
-	@XmlTransient private DefaultComboBoxModel<String> comboBoxModel4AgentLists = new DefaultComboBoxModel();
+	@XmlTransient 
+	private DefaultComboBoxModel<String> comboBoxModel4AgentLists = new DefaultComboBoxModel<String>();
 	
 	
 	/** The agent list to save. */
@@ -86,7 +90,6 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 	@XmlElement(name="agent")
 	private ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
 
-	
 	
 	/** The environment file name. */
 	private String environmentFileName = null;
@@ -101,6 +104,7 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 	 */
 	@XmlTransient 
 	private Serializable userRuntimeObject = null;
+	
 	
 	
 	/**
@@ -212,7 +216,7 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 		Collections.sort(agentListNames);
 		
 		for (int i = 0; i < agentListNames.size(); i++) {
-			DefaultListModel dlm = this.hashMap4AgentDefaulListModels.get(agentListNames.get(i));
+			DefaultListModel<AgentClassElement4SimStart> dlm = this.hashMap4AgentDefaulListModels.get(agentListNames.get(i));
 			this.addToAgentList(dlm);
 		}
 	}
@@ -224,7 +228,7 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 	 *
 	 * @param lm the DefaultListModel that has to be added to the overall agent list
 	 */
-	private void addToAgentList(DefaultListModel lm) {
+	private void addToAgentList(DefaultListModel<AgentClassElement4SimStart> lm) {
 		if (lm==null) return;
 		for (int i = 0; i < lm.size(); i++) {
 			this.agentList.add((AgentClassElement4SimStart) lm.get(i));
@@ -249,20 +253,20 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 	public void createHashMap4AgentDefaulListModelsFromAgentList() {
 
 		if (this.hashMap4AgentDefaulListModels==null) {
-			this.hashMap4AgentDefaulListModels = new HashMap<String, DefaultListModel>();
+			this.hashMap4AgentDefaulListModels = new HashMap<String, DefaultListModel<AgentClassElement4SimStart>>();
 		}
 		
 		// --- Rebuild the ComboBoxModel for all start lists --------
-		this.comboBoxModel4AgentLists = new DefaultComboBoxModel();
+		this.comboBoxModel4AgentLists = new DefaultComboBoxModel<String>();
 		
 		// --- Run through the list of all configured agent --------- 
-		DefaultListModel dlm = null;
+		DefaultListModel<AgentClassElement4SimStart> dlm = null;
 		for (int i = 0; i < agentList.size(); i++) {
 			
 			AgentClassElement4SimStart ace4ss = agentList.get(i);
 			String memberOf = ace4ss.getListMembership();
 			if (hashMap4AgentDefaulListModels.get(memberOf)==null) {
-				dlm = new DefaultListModel();
+				dlm = new DefaultListModel<AgentClassElement4SimStart>();
 				this.setAgentDefaultListModel(memberOf, dlm);
 			} else {
 				dlm = hashMap4AgentDefaulListModels.get(memberOf);
@@ -278,7 +282,7 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 	 * @param listName the list name
 	 * @param defaultListModel4AgentStarts the default list model4 agent starts
 	 */
-	public void setAgentDefaultListModel(String listName, DefaultListModel defaultListModel4AgentStarts) {
+	public void setAgentDefaultListModel(String listName, DefaultListModel<AgentClassElement4SimStart> defaultListModel4AgentStarts) {
 		if (listName!=null) {
 			this.hashMap4AgentDefaulListModels.put(listName, defaultListModel4AgentStarts);
 			if (this.comboBoxModel4AgentLists.getIndexOf(listName)==-1) {
@@ -316,7 +320,7 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 		}
 		// --- If the default list is not there, create it ----------
 		if (agentLists.contains(AGENT_LIST_ManualConfiguration)==false) {
-			this.getAgentDefaultListModel(new DefaultListModel(), AGENT_LIST_ManualConfiguration);
+			this.getAgentDefaultListModel(new DefaultListModel<AgentClassElement4SimStart>(), AGENT_LIST_ManualConfiguration);
 			agentLists.add(AGENT_LIST_ManualConfiguration);
 		}
 		// --- Sort the list ----------------------------------------
@@ -335,7 +339,7 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 	 * @param listName the list name
 	 * @return the agentListModel
 	 */
-	public DefaultListModel getAgentDefaultListModel(String listName) {
+	public DefaultListModel<AgentClassElement4SimStart> getAgentDefaultListModel(String listName) {
 		return hashMap4AgentDefaulListModels.get(listName);
 	}
 	
@@ -352,9 +356,9 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 	 * or just use an individual name
 	 * @return the DefaultListModel of agents to be started for the specified list
 	 */
-	public DefaultListModel getAgentDefaultListModel(DefaultListModel newDefaultListModel4AgentStarts, String listName) {
+	public DefaultListModel<AgentClassElement4SimStart> getAgentDefaultListModel(DefaultListModel<AgentClassElement4SimStart> newDefaultListModel4AgentStarts, String listName) {
 
-		DefaultListModel dlm = this.getAgentDefaultListModel(listName);
+		DefaultListModel<AgentClassElement4SimStart> dlm = this.getAgentDefaultListModel(listName);
 		if (dlm==null) {
 			dlm = newDefaultListModel4AgentStarts;
 			this.setAgentDefaultListModel(listName, dlm);			

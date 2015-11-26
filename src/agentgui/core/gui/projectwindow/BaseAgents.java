@@ -86,39 +86,39 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	
-	private Project currProject = null;
-	private OntologyClassTreeObject currOntoObject = null;
+	private Project currProject;
+	private OntologyClassTreeObject currOntoObject;
 	
-	private String agentReference = null;  //  @jve:decl-index=0:
-	private String ontoReference = null;  //  @jve:decl-index=0:
+	private String agentReference;
+	private String ontoReference;
 	
-	private JLabel jLabelAgent = null;
-	private JTextField jTextAgent = null;
-	private JLabel jLabelStart = null;
-	private JTextField jTextAgentStartAs = null;
-	private JButton jButtonStartAgent = null;
-	private JButton jButtonAgentListRefresh = null;
-	private JListClassSearcher jAgentList = null;
-	private JPanel jPanelReferences = null;
-	private JScrollPane jScrollReferences = null;
-	private JList jListReferences = null;
-	private JButton jButtonMoveUp = null;
-	private JButton jButtonMoveDown = null;
-	private JButton jButtonRemoveAll = null;
-	private JButton jButtonReferencesAdd = null;
-	private JButton jButtonReferencesRemove = null;
-	private JSplitPane jSplitEast = null;
-	private JScrollPane jScrollOntology = null;
-	private JTree jTreeOntology = null;
-	private JPanel jPanelOntology = null;
-	private JLabel jLabelRecerence = null;
-	private JLabel jLabelOntologie = null;
-	private JSplitPane jSplitOntologie = null;
-	private JPanel jPanelOntoSlots = null;
-	private JPanel jPanelWest = null;
-	private JPanel jPanelEast = null;
-	private JPanel jPanelEastTop = null;
-	private JButton jButtonRename = null;
+	private JLabel jLabelAgent;
+	private JTextField jTextAgent;
+	private JLabel jLabelStart;
+	private JTextField jTextAgentStartAs;
+	private JButton jButtonStartAgent;
+	private JButton jButtonAgentListRefresh;
+	private JListClassSearcher jAgentList;
+	private JPanel jPanelReferences;
+	private JScrollPane jScrollReferences;
+	private JList<AgentStartArgument> jListReferences;
+	private JButton jButtonMoveUp;
+	private JButton jButtonMoveDown;
+	private JButton jButtonRemoveAll;
+	private JButton jButtonReferencesAdd;
+	private JButton jButtonReferencesRemove;
+	private JSplitPane jSplitEast;
+	private JScrollPane jScrollOntology;
+	private JTree jTreeOntology;
+	private JPanel jPanelOntology;
+	private JLabel jLabelRecerence;
+	private JLabel jLabelOntologie;
+	private JSplitPane jSplitOntologie;
+	private JPanel jPanelOntoSlots;
+	private JPanel jPanelWest;
+	private JPanel jPanelEast;
+	private JPanel jPanelEastTop;
+	private JButton jButtonRename;
 	
 	/**
 	 * This is the default constructor
@@ -474,9 +474,9 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 	 * This method initializes jListReferences	
 	 * @return javax.swing.JList	
 	 */
-	private JList getJListReferences() {
+	private JList<AgentStartArgument> getJListReferences() {
 		if (jListReferences == null) {
-			jListReferences = new JList();
+			jListReferences = new JList<AgentStartArgument>();
 			jListReferences.addMouseListener( new MouseAdapter() {
 				public void mouseClicked(MouseEvent me) {
 					if (me.getClickCount() == 2 ) {
@@ -756,8 +756,8 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 			jTextAgent.setText(null);
 			jTextAgentStartAs.setText(null);
 			jListReferences.setListData(new Vector<AgentStartArgument>());
-		}
-		else if (trigger==jButtonStartAgent) {
+			
+		} else if (trigger==jButtonStartAgent) {
 			// ------------------------------------------------------
 			// --- Start the selected agent -------------------------
 			// ------------------------------------------------------

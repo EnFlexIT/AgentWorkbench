@@ -52,12 +52,11 @@ public class JListClassSearcher extends JListWithProgressBar {
 	private DefaultListModel currListModel = null;
 	
 	private String currTextSearch4 = null;
-	private DefaultListModel tmpListModel = null;
 	
 	/**
 	 * This constructor was only build to enable the use of the Visual Editor  
 	 */
-	//@Deprecated
+	@Deprecated
 	public JListClassSearcher() {
 		super();
 	}
@@ -152,7 +151,7 @@ public class JListClassSearcher extends JListWithProgressBar {
 		}
 		
 		// --- Start filtering the Classes ----------------
-		tmpListModel = new DefaultListModel();
+		DefaultListModel tmpListModel = new DefaultListModel();
 		for (int i =0; i<currListModel.getSize();i++) {
 			Object currObject    = currListModel.get(i);
 			Class<?> currClass   = null;

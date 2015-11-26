@@ -312,6 +312,8 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 					timeSeriesHelper.removeSeriesData(this.getSpecifiedTimeSeries());
 					this.getEditedInstances().add(editInstance);
 					break;
+				default:
+					break;
 				}
 			} // end of not edited instances
 			break;
@@ -405,6 +407,8 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 						case EditDataSeriesRemoveData:
 							dataModelTimeSeries.editDataSeriesRemoveData(this.getSpecifiedTimeSeries(), this.getTargetDataSeriesIndex(), editOntology);
 							this.getEditedInstances().add(editInstance);
+							break;
+						default:
 							break;
 						}
 						break;

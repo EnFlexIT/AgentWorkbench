@@ -77,8 +77,8 @@ public class SystemLoadPanel extends JPanel {
 	private JToolBar jToolBarLoad;
 		private JButton jButtonMeasureStart; 
 		private JButton jButtonMeasureSuspend;
-		private JComboBox jComboBoxInterval;
-		private DefaultComboBoxModel comboBoxModelInterval;
+		private JComboBox<TimeSelection> jComboBoxInterval;
+		private DefaultComboBoxModel<TimeSelection> comboBoxModelInterval;
 		private JButton jButtonMeasureRecord;
 		private JButton jButtonMeasureRecordStop;
 		public JLabel jLabelRecord;
@@ -276,9 +276,9 @@ public class SystemLoadPanel extends JPanel {
 	 * This method initializes jComboBoxInterval.
 	 * @return javax.swing.JComboBox
 	 */
-	private JComboBox getJComboBoxInterval() {
+	private JComboBox<TimeSelection> getJComboBoxInterval() {
 		if (jComboBoxInterval == null) {
-			jComboBoxInterval = new JComboBox(this.getComboBoxModelRecordingInterval());
+			jComboBoxInterval = new JComboBox<TimeSelection>(this.getComboBoxModelRecordingInterval());
 			jComboBoxInterval.setMaximumRowCount(comboBoxModelInterval.getSize());
 			jComboBoxInterval.setModel(comboBoxModelInterval);
 			jComboBoxInterval.setToolTipText(Language.translate("Abtastintervall"));
@@ -296,9 +296,9 @@ public class SystemLoadPanel extends JPanel {
 	/**
 	 * This method sets the default values for the ComboBoxModel of sampling interval.
 	 */
-	private DefaultComboBoxModel getComboBoxModelRecordingInterval() {
+	private DefaultComboBoxModel<TimeSelection> getComboBoxModelRecordingInterval() {
 		if (comboBoxModelInterval==null) {
-			comboBoxModelInterval = new DefaultComboBoxModel();
+			comboBoxModelInterval = new DefaultComboBoxModel<TimeSelection>();
 			comboBoxModelInterval.addElement(new TimeSelection(500));
 			comboBoxModelInterval.addElement(new TimeSelection(1000));
 			comboBoxModelInterval.addElement(new TimeSelection(2000));

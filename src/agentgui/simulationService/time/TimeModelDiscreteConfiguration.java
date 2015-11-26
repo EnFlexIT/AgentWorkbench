@@ -93,7 +93,7 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 	private JLabel jLabelWidthUnit = null;
 
 	private JTextField jTextFieldWidthValue = null;
-	private JComboBox jComboBoxWidthUnit = null;
+	private JComboBox<TimeUnit> jComboBoxWidthUnit = null;
 
 	private JSpinner jSpinnerDateStart = null;
 	private JSpinner jSpinnerTimeStart = null;
@@ -480,10 +480,10 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 	 * This method initializes jComboBoxWidthUnit	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox getJComboBoxWidthUnit() {
+	private JComboBox<TimeUnit> getJComboBoxWidthUnit() {
 		if (jComboBoxWidthUnit == null) {
-			DefaultComboBoxModel cbm = new DefaultComboBoxModel(new TimeUnitVector());
-			jComboBoxWidthUnit = new JComboBox(cbm);
+			DefaultComboBoxModel<TimeUnit> cbm = new DefaultComboBoxModel<TimeUnit>(new TimeUnitVector());
+			jComboBoxWidthUnit = new JComboBox<TimeUnit>(cbm);
 			jComboBoxWidthUnit.setPreferredSize(new Dimension(120, 26));
 			jComboBoxWidthUnit.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jComboBoxWidthUnit.addActionListener(new ActionListener() {
@@ -603,7 +603,7 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 		Long stopLong = stop.getTime();
 		
 		// --- Get the current index of the unit list ---------------
-		ComboBoxModel cbm = this.getJComboBoxWidthUnit().getModel();
+		ComboBoxModel<TimeUnit> cbm = this.getJComboBoxWidthUnit().getModel();
 		TimeUnit timeUnit = (TimeUnit) cbm.getSelectedItem();
 		int indexSelected = 0;
 		for (int i = 0; i < cbm.getSize(); i++) {

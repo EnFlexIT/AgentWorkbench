@@ -313,6 +313,8 @@ public class UpdateXySeries extends UpdateDataSeries {
 					xySeriesHelper.removeSeriesData(this.getSpecifiedXySeries());
 					this.getEditedInstances().add(editInstance);
 					break;
+				default:
+					break;
 				}
 			} // end of not edited instances
 			break;
@@ -406,6 +408,8 @@ public class UpdateXySeries extends UpdateDataSeries {
 						case EditDataSeriesRemoveData:
 							dataModelXySeries.editDataSeriesRemoveData(this.getSpecifiedXySeries(), this.getTargetDataSeriesIndex(), editOntology);
 							this.getEditedInstances().add(editInstance);
+							break;
+						default:
 							break;
 						}
 						break;

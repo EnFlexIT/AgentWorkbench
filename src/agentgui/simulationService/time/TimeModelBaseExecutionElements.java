@@ -56,8 +56,6 @@ import agentgui.core.application.Language;
  */
 public abstract class TimeModelBaseExecutionElements implements ActionListener {
 
-	private static final long serialVersionUID = 4966720402773236025L;
-
 	protected final static int ViewTIMER = 0;
 	protected final static int ViewCOUNTDOWN = 1;
 	protected int view = 0;

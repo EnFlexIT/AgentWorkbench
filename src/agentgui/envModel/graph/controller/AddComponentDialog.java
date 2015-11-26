@@ -114,51 +114,51 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 
     private static final long serialVersionUID = -7481141098749690137L;
     
-    public static final String NoFilterString = Language.translate("No Filter!", Language.EN);  //  @jve:decl-index=0:
-    private final String pathImage = GraphGlobals.getPathImages(); // @jve:decl-index=0:
+    public static final String NoFilterString = Language.translate("No Filter!", Language.EN); 
+    private final String pathImage = GraphGlobals.getPathImages(); 
     
-    private AddComponentVisViewer<GraphNode, GraphEdge> visViewer = null;
+    private AddComponentVisViewer<GraphNode, GraphEdge> visViewer;
 
-    private NetworkModel localNetworkModel = null;  //  @jve:decl-index=0:
+    private NetworkModel localNetworkModel;
     private ComponentTypeListElement localComponentTypeListElement;
 	private DomainSettings localDomainSetings;
 	
-    private GraphElementPrototype localGraphElementPrototype = null; // @jve:decl-index=0:
-	private GraphNode localGraphNodeSelected = null;  //  @jve:decl-index=0:
+    private GraphElementPrototype localGraphElementPrototype;
+	private GraphNode localGraphNodeSelected;
 	
 	private boolean isHiddenFactory = false;
-	private ComponentAdapter desktopAdapter = null;  //  @jve:decl-index=0:
+	private ComponentAdapter desktopAdapter;
 	
-	private JSplitPane jSplitPaneContent = null;
+	private JSplitPane jSplitPaneContent;
 	
-	private JLabel jLabelFilter = null;
-    private JLabel jLabelInstructionMerge = null;
-    private JLabel jLabelInstructionSelect = null;
+	private JLabel jLabelFilter;
+    private JLabel jLabelInstructionMerge;
+    private JLabel jLabelInstructionSelect;
 
-    private JComboBox jComboBoxFilter = null;
-    private DefaultComboBoxModel comboBoxModeFilter = null;
-    private String filterString = AddComponentDialog.NoFilterString;  //  @jve:decl-index=0:
+    private JComboBox<String> jComboBoxFilter;
+    private DefaultComboBoxModel<String> comboBoxModeFilter;
+    private String filterString = AddComponentDialog.NoFilterString;
     
-    private JPanel jPanelTop = null;
-    private JPanel jPanelFilter = null;
+    private JPanel jPanelTop;
+    private JPanel jPanelFilter;
 	
-	private JPanel jPanelSplitBottom = null;
-	private JPanel jPanelVisView = null;
-    private JPanel jPanelBottom = null;
+	private JPanel jPanelSplitBottom;
+	private JPanel jPanelVisView;
+    private JPanel jPanelBottom;
 
-    private JScrollPane jScrollPane = null;
-    private DefaultListModel listModelComponentTypes = null;
-    private JList jListComponentTypes = null;
+    private JScrollPane jScrollPane;
+    private DefaultListModel<ComponentTypeListElement> listModelComponentTypes;
+    private JList<ComponentTypeListElement> jListComponentTypes;
     
-    private JToolBar jJToolBarBarVisViewLeft = null;
-    private JToolBar jJToolBarBarVisViewRight = null;
-	private JButton jButtonRotate45 = null;
-	private JButton jButtonRotate90 = null;
-	private JButton jButtonRotate270 = null;
-	private JButton jButtonRotate315 = null;
+    private JToolBar jJToolBarBarVisViewLeft;
+    private JToolBar jJToolBarBarVisViewRight;
+	private JButton jButtonRotate45;
+	private JButton jButtonRotate90;
+	private JButton jButtonRotate270;
+	private JButton jButtonRotate315;
     
-    private JButton jButtonAdd = null;
-    private JButton jButtonClose = null;
+    private JButton jButtonAdd;
+    private JButton jButtonClose;
 
 	
 	/**
@@ -352,9 +352,9 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	 * This method initializes jComboBoxFilter	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox getJComboBoxFilter() {
+	private JComboBox<String> getJComboBoxFilter() {
 		if (jComboBoxFilter == null) {
-			jComboBoxFilter = new JComboBox(this.getNewComboBoxModelFilter());
+			jComboBoxFilter = new JComboBox<String>(this.getNewComboBoxModelFilter());
 			jComboBoxFilter.setPreferredSize(new Dimension(100, 26));
 			jComboBoxFilter.addActionListener(this);
 		}
@@ -365,19 +365,19 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 	 * Gets the ComboBoxModel filter.
 	 * @return the ComboBoxModel filter
 	 */
-	private DefaultComboBoxModel getNewComboBoxModelFilter() {
+	private DefaultComboBoxModel<String> getNewComboBoxModelFilter() {
 
 		Vector<String> filterStrings = new Vector<String>();
-		DefaultListModel typeList = this.getListModelComponentTypes();
+		DefaultListModel<ComponentTypeListElement> typeList = this.getListModelComponentTypes();
 		for (int i=0; i < typeList.size(); i++) {
-			ComponentTypeListElement ctle = (ComponentTypeListElement) typeList.getElementAt(i);
+			ComponentTypeListElement ctle = typeList.getElementAt(i);
 			if (filterStrings.contains(ctle.getDomain())==false) {
 				filterStrings.add(ctle.getDomain());
 			}
 		}
 		Collections.sort(filterStrings);
 		
-		comboBoxModeFilter = new DefaultComboBoxModel();
+		comboBoxModeFilter = new DefaultComboBoxModel<String>();
 		comboBoxModeFilter.addElement(AddComponentDialog.NoFilterString);
 		for (String filterString : filterStrings) {
 			comboBoxModeFilter.addElement(filterString);
@@ -401,9 +401,9 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
      * This method initializes componentTypesList
      * @return javax.swing.JList
      */
-    private JList getJListComponentTypes() {
+    private JList<ComponentTypeListElement> getJListComponentTypes() {
 		if (jListComponentTypes == null) {
-		    jListComponentTypes = new JList(this.getListModelComponentTypes());
+		    jListComponentTypes = new JList<ComponentTypeListElement>(this.getListModelComponentTypes());
 		    jListComponentTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		    jListComponentTypes.addListSelectionListener(new ListSelectionListener() {
 				public void valueChanged(ListSelectionEvent lse) {
@@ -423,7 +423,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
      * @see ComponentTypeListElement
      * @return Object[] - array of component types
      */
-    private DefaultListModel getListModelComponentTypes() {
+    private DefaultListModel<ComponentTypeListElement> getListModelComponentTypes() {
 		
     	if (this.listModelComponentTypes==null) {
     		// --- Create a work Vector -----------------------------
@@ -449,7 +449,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     			}
     		});
     		// --- Add the Vector elements to the ListModel ---------
-    		this.listModelComponentTypes = new DefaultListModel();
+    		this.listModelComponentTypes = new DefaultListModel<ComponentTypeListElement>();
     		for (ComponentTypeListElement ctle : componentTypeVector) {
     			if (this.filterString.equals(AddComponentDialog.NoFilterString)) {
     				// --- No filter applied --------------
@@ -921,9 +921,9 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 
     	this.getJListComponentTypes().clearSelection();
     	// --- Select the right element from the list ---------------
-    	DefaultListModel listModel = this.getListModelComponentTypes();
+    	DefaultListModel<ComponentTypeListElement> listModel = this.getListModelComponentTypes();
     	for (int i = 0; i < listModel.size(); i++) {
-        	ComponentTypeListElement ctsElement = (ComponentTypeListElement) listModel.get(i);
+        	ComponentTypeListElement ctsElement = listModel.get(i);
         	if (ctsElement.getComponentName().equalsIgnoreCase(componentName)) {
         		this.getJListComponentTypes().setSelectedValue(ctsElement, true);
         		break;

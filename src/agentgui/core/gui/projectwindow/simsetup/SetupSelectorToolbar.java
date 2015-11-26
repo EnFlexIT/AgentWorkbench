@@ -74,8 +74,8 @@ public class SetupSelectorToolbar implements ActionListener {
 	private JToolBar jToolBar2Add2 = null;
 	
 	private JLabel jLabelSetupSelector = null;
-	private JComboBox jComboBoxSetupSelector = null;
-	private DefaultComboBoxModel jComboBoxModel4Setups = new DefaultComboBoxModel(); 
+	private JComboBox<String> jComboBoxSetupSelector = null;
+	private DefaultComboBoxModel<String> jComboBoxModel4Setups = new DefaultComboBoxModel<String>(); 
 	
 	private JButton jButtonSetupRename = null;
 	private JButton jButtonSetupCopy = null;
@@ -173,9 +173,9 @@ public class SetupSelectorToolbar implements ActionListener {
 	 * This method initialises jComboBoxSetupSelector	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox getJComboBoxSetupSelector() {
+	private JComboBox<String> getJComboBoxSetupSelector() {
 		if (jComboBoxSetupSelector == null) {
-			jComboBoxSetupSelector = new JComboBox(jComboBoxModel4Setups);
+			jComboBoxSetupSelector = new JComboBox<String>(jComboBoxModel4Setups);
 			jComboBoxSetupSelector.setToolTipText("Setup auswählen");
 			jComboBoxSetupSelector.setMaximumRowCount(18);
 			jComboBoxSetupSelector.setPreferredSize(new Dimension(200, 26));

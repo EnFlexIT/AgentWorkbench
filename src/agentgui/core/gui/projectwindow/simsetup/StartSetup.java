@@ -85,20 +85,21 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 
 	private static final long serialVersionUID = -3929823093128900880L;
 	
-	private String newLine = Application.getGlobalInfo().getNewLineSeparator();  //  @jve:decl-index=0:
-	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
-	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource( PathImage + "StatGreen.png") );  //  @jve:decl-index=0:
+	private String newLine = Application.getGlobalInfo().getNewLineSeparator();  
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
+	private final ImageIcon imageSave = new ImageIcon(getClass().getResource(pathImage + "MBsave.png"));
 	
 	@SuppressWarnings("unused")
-	private final ImageIcon iconRed = new ImageIcon( this.getClass().getResource( PathImage + "StatRed.png") );
-	private final ImageIcon imageSave =  new ImageIcon(getClass().getResource(PathImage + "MBsave.png"));  //  @jve:decl-index=0:
+	private final ImageIcon iconRed =   new ImageIcon(this.getClass().getResource( pathImage + "StatRed.png"));
+	private final ImageIcon iconGreen = new ImageIcon( this.getClass().getResource(pathImage + "StatGreen.png") );
+	
 	
 	private Project currProject;
 	private SimulationSetup currSimSetup = null;  //  @jve:decl-index=0:
 	private AgentClassElement4SimStart agentSelected = null;  //  @jve:decl-index=0:
 	private AgentClassElement4SimStart agentSelectedLast = null;  //  @jve:decl-index=0:
 	
-	private DefaultListModel jListModelAgents2Start = new DefaultListModel();
+	private DefaultListModel<AgentClassElement4SimStart> jListModelAgents2Start = new DefaultListModel<AgentClassElement4SimStart>();
 	
 	private JSplitPane jSplitPane = null;
 	private JPanel jPanelRightSplit = null;
@@ -111,7 +112,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	
 	private JScrollPane jScrollPaneStartList = null;
 	
-	private JList jListStartList = null;
+	private JList<AgentClassElement4SimStart> jListStartList = null;
 	private JButton jButtonAgentAdd = null;
 	private JButton jButtonAgentRemove = null;
 	private JButton jButtonMoveUp = null;
@@ -122,7 +123,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private JLabel jLabelHeader = null;
 
 	private JLabel jLabelStartList = null;
-	private JComboBox jComboBoxStartLists = null;
+	private JComboBox<String> jComboBoxStartLists = null;
 	
 	
 	/**
@@ -271,9 +272,9 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	 * This method initializes jComboBoxStartLists	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox getJComboBoxStartLists() {
+	private JComboBox<String> getJComboBoxStartLists() {
 		if (jComboBoxStartLists == null) {
-			jComboBoxStartLists = new JComboBox();
+			jComboBoxStartLists = new JComboBox<String>();
 			if (currSimSetup!=null) {
 				jComboBoxStartLists.setModel(currSimSetup.getComboBoxModel4AgentLists());	
 			}
@@ -288,7 +289,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	 * This method initializes jListStartList	
 	 * @return javax.swing.JList	
 	 */
-	private JList getJListStartList() {
+	private JList<AgentClassElement4SimStart> getJListStartList() {
 		if (jListStartList == null) {
 			// --- Create MouseInputAdapter for Drag and Drop ------------------ 
 			MouseInputAdapter mouseHandler = new MouseInputAdapter() {
@@ -304,7 +305,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			        int toIndex = jListStartList.locationToIndex(evt.getPoint());
 			        if (toIndex != fromIndex) {
 			            jListModelAgents2Start.removeElementAt(fromIndex);
-			            jListModelAgents2Start.insertElementAt(draggedObject, toIndex);
+			            jListModelAgents2Start.insertElementAt((AgentClassElement4SimStart) draggedObject, toIndex);
 			            fromIndex = toIndex;
 			            agentRenumberList();
 			        }
@@ -312,15 +313,15 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			};
 			
 			// -----------------------------------------------------------------
-			// --- ListCellRenderer zum Anzeigen von Icons erstellen -----------  
+			// --- Create renderer in order to display the icons ---------------  
 			// -----------------------------------------------------------------
-			ListCellRenderer cellRenderer = new ListCellRenderer() {
+			ListCellRenderer<AgentClassElement4SimStart> cellRenderer = new ListCellRenderer<AgentClassElement4SimStart>() {
 				
 				@Override
-				public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+				public Component getListCellRendererComponent(JList<? extends AgentClassElement4SimStart> list, AgentClassElement4SimStart value, int index, boolean isSelected, boolean cellHasFocus) {
 
 					// --- Datenobjekt -----------------------------------------
-					AgentClassElement4SimStart agentInfo = (AgentClassElement4SimStart) value;
+					AgentClassElement4SimStart agentInfo = value;
 					
 					// --- Layout - Werte --------------------------------------
 					Color  bgcolBlue = new Color(57, 105, 138);
@@ -357,7 +358,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			// -----------------------------------------------------------------
 			// --- Hier nun endlich die JList erstellen ------------------------
 			// -----------------------------------------------------------------
-			jListStartList = new JList(jListModelAgents2Start);
+			jListStartList = new JList<AgentClassElement4SimStart>(jListModelAgents2Start);
 			jListStartList.addMouseListener(mouseHandler);
 			jListStartList.addMouseMotionListener(mouseHandler);
 			jListStartList.setCellRenderer(cellRenderer);
@@ -408,7 +409,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (jButtonAgentAdd == null) {
 			jButtonAgentAdd = new JButton();
 			jButtonAgentAdd.setPreferredSize(new Dimension(45, 26));
-			jButtonAgentAdd.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListPlus.png")));
+			jButtonAgentAdd.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListPlus.png")));
 			jButtonAgentAdd.setToolTipText("Agenten hinzufügen");
 			jButtonAgentAdd.setActionCommand("AgentAdd");
 			jButtonAgentAdd.addActionListener(this);
@@ -424,7 +425,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (jButtonAgentRemove == null) {
 			jButtonAgentRemove = new JButton();
 			jButtonAgentRemove.setPreferredSize(new Dimension(45, 26));
-			jButtonAgentRemove.setIcon(new ImageIcon(getClass().getResource(PathImage + "ListMinus.png")));
+			jButtonAgentRemove.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
 			jButtonAgentRemove.setToolTipText("Agenten entfernen");
 			jButtonAgentRemove.setActionCommand("AgentRemove");
 			jButtonAgentRemove.addActionListener(this);
@@ -439,7 +440,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	private JButton getJButtonMoveUp() {
 		if (jButtonMoveUp == null) {
 			jButtonMoveUp = new JButton();
-			jButtonMoveUp.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowUp.png")));
+			jButtonMoveUp.setIcon(new ImageIcon(getClass().getResource(pathImage + "ArrowUp.png")));
 			jButtonMoveUp.setToolTipText("Agent nach oben verschieben");
 			jButtonMoveUp.setPreferredSize(new Dimension(45, 26));
 			jButtonMoveUp.setActionCommand("AgentUp");
@@ -458,7 +459,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			jButtonMoveDown = new JButton();
 			jButtonMoveDown.setPreferredSize(new Dimension(45, 26));
 			jButtonMoveDown.setToolTipText("Agent nach unten verschieben");
-			jButtonMoveDown.setIcon(new ImageIcon(getClass().getResource(PathImage + "ArrowDown.png")));
+			jButtonMoveDown.setIcon(new ImageIcon(getClass().getResource(pathImage + "ArrowDown.png")));
 			jButtonMoveDown.setActionCommand("AgentDown");
 			jButtonMoveDown.addActionListener(this);
 		}
@@ -796,7 +797,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 			case SIMULATION_SETUP_SAVED:
 				break;
 			case SIMULATION_SETUP_ADD_NEW:
-				this.jListModelAgents2Start = new DefaultListModel();
+				this.jListModelAgents2Start = new DefaultListModel<AgentClassElement4SimStart>();
 				this.currSimSetup.setAgentDefaultListModel(SimulationSetup.AGENT_LIST_ManualConfiguration, this.jListModelAgents2Start);
 				this.setupLoad();
 				break;
@@ -821,7 +822,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		if (trigger==jComboBoxStartLists) {
 			String selectedItem = (String) jComboBoxStartLists.getSelectedItem(); 
 			if (selectedItem!=null) {
-				DefaultListModel dlm = currSimSetup.getAgentDefaultListModel(selectedItem);
+				DefaultListModel<AgentClassElement4SimStart> dlm = this.currSimSetup.getAgentDefaultListModel(selectedItem);
 				this.jListModelAgents2Start = dlm;
 				this.jListStartList.setModel(dlm);
 				this.setJListStartListEmptySelection();
