@@ -75,7 +75,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 */
 	private String envFolderPath = null;
 	/** The list model for the agents, which has to be started with the current environment model */
-	private DefaultListModel agents2Start = new DefaultListModel();
+	private DefaultListModel<AgentClassElement4SimStart> agents2Start = new DefaultListModel<AgentClassElement4SimStart>();
 
 	
 	
@@ -174,14 +174,14 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * Gets the list of agents to start.
 	 * @return the agents2 start
 	 */
-	public DefaultListModel getAgents2Start() {
+	public DefaultListModel<AgentClassElement4SimStart> getAgents2Start() {
 		return agents2Start;
 	}
 	/**
 	 * Sets the list of agents to start.
 	 * @param agents2Start the new agents2 start
 	 */
-	public void setAgents2Start(DefaultListModel agents2Start) {
+	public void setAgents2Start(DefaultListModel<AgentClassElement4SimStart> agents2Start) {
 		this.agents2Start = agents2Start;
 	}
 	

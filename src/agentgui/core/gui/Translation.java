@@ -111,8 +111,8 @@ private static final long serialVersionUID = 1L;
 	
 	private Vector<Object> currDataSet = null;
 	private DefaultTableModel dictData = null;
-	private DefaultComboBoxModel langSelectionModelSource = new DefaultComboBoxModel();
-	private DefaultComboBoxModel langSelectionModelDestin = new DefaultComboBoxModel();
+	private DefaultComboBoxModel<LanguageListElement> langSelectionModelSource = new DefaultComboBoxModel<LanguageListElement>();
+	private DefaultComboBoxModel<LanguageListElement> langSelectionModelDestin = new DefaultComboBoxModel<LanguageListElement>();
 	
 	private boolean useGoogleTranslation = false;
 	private String lastGoogleTranslation = null;
@@ -145,8 +145,8 @@ private static final long serialVersionUID = 1L;
 			private JTextPane jTextFieldDestination = null;
 			private JTextPane jTextAreaGoogle = null;
 			
-			private JComboBox jComboBoxSourceLang = null;
-			private JComboBox jComboBoxDestinationLang = null;
+			private JComboBox<LanguageListElement> jComboBoxSourceLang = null;
+			private JComboBox<LanguageListElement> jComboBoxDestinationLang = null;
 
 			private JButton jButtonNextDS = null;
 			private JButton jButtonPreviousDS = null;
@@ -265,7 +265,7 @@ private static final long serialVersionUID = 1L;
 		jTabbedPane.setTitleAt(1, Language.translate("Übersetzen ..."));
 		jButtonClose.setText(Language.translate("Schließen"));
 		
-		jMenuItemDelete.setText(Language.translate("Läschen"));
+		jMenuItemDelete.setText(Language.translate("Löschen"));
 		jMenuItemEdit.setText(Language.translate("Übersetzen"));
 		
 		jLabelSelectSourceLang.setText(Language.translate("Sprache:"));
@@ -970,9 +970,9 @@ private static final long serialVersionUID = 1L;
 	 * This method initializes jComboBoxSourceLang.
 	 * @return javax.swing.JComboBox
 	 */
-	private JComboBox getJComboBoxSourceLang() {
+	private JComboBox<LanguageListElement> getJComboBoxSourceLang() {
 		if (jComboBoxSourceLang == null) {
-			jComboBoxSourceLang = new JComboBox();
+			jComboBoxSourceLang = new JComboBox<LanguageListElement>();
 			jComboBoxSourceLang.setModel(langSelectionModelSource);
 			jComboBoxSourceLang.setPreferredSize(new Dimension(200, 26));
 			jComboBoxSourceLang.addActionListener(new ActionListener() {
@@ -991,9 +991,9 @@ private static final long serialVersionUID = 1L;
 	 * This method initializes jComboBoxDestinationLang.
 	 * @return javax.swing.JComboBox
 	 */
-	private JComboBox getJComboBoxDestinationLang() {
+	private JComboBox<LanguageListElement> getJComboBoxDestinationLang() {
 		if (jComboBoxDestinationLang == null) {
-			jComboBoxDestinationLang = new JComboBox();
+			jComboBoxDestinationLang = new JComboBox<LanguageListElement>();
 			jComboBoxDestinationLang.setModel(langSelectionModelDestin);
 			jComboBoxDestinationLang.setPreferredSize(new Dimension(200, 26));
 			jComboBoxDestinationLang.addActionListener(new ActionListener() {

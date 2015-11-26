@@ -33,6 +33,7 @@ import jade.core.Agent;
 import jade.core.BaseService;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -141,19 +142,18 @@ public class ClassSelector extends JDialog {
 		this.initialize();
 		
 	}
-
 	/**
 	 * Constructor to configure the type of class, we are looking for.
 	 *
-	 * @param owner the owner
+	 * @param ownerFrame the owner
 	 * @param jListClassSearcher an actual instance of a {@link JListClassSearcher}
 	 * @param clazz2Search4CurrentValue the clazz2 search4 current value
 	 * @param clazz2Search4DefaultValue the clazz2 search4 default value
 	 * @param clazz2Search4Description the clazz2 search4 description
 	 * @param allowNull the allow null
 	 */
-	public ClassSelector(Frame owner, JListClassSearcher jListClassSearcher, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
-		super(owner);
+	public ClassSelector(Frame ownerFrame, JListClassSearcher jListClassSearcher, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
+		super(ownerFrame);
 		this.jListClassesFound = jListClassSearcher;
 		this.addDoubleClickEvent2CurrentJListClassSearcher();
 		
@@ -164,6 +164,29 @@ public class ClassSelector extends JDialog {
 		this.setAllowNull(allowNull);
 		this.initialize();
 	}
+	/**
+	 * Constructor to configure the type of class, we are looking for.
+	 * 
+	 * @param ownerDialog the parent Dialog
+	 * @param jListClassSearcher an actual instance of a {@link JListClassSearcher}
+	 * @param clazz2Search4CurrentValue the clazz2 search4 current value
+	 * @param clazz2Search4DefaultValue the clazz2 search4 default value
+	 * @param clazz2Search4Description the clazz2 search4 description
+	 * @param allowNull the allow null
+	 */
+	public ClassSelector(Dialog ownerDialog, JListClassSearcher jListClassSearcher, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
+		super(ownerDialog);
+		this.jListClassesFound = jListClassSearcher;
+		this.addDoubleClickEvent2CurrentJListClassSearcher();
+		
+		this.class2Search4 = jListClassSearcher.getClass2SearchFor();
+		this.class2Search4CurrentValue = clazz2Search4CurrentValue;
+		this.class2Search4DefaultValue = clazz2Search4DefaultValue;
+		this.class2Search4Description = clazz2Search4Description;
+		this.setAllowNull(allowNull);
+		this.initialize();
+	}
+	
 	
 	/**
 	 * Gets the class2 search4.

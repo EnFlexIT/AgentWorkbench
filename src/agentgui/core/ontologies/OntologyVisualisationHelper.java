@@ -200,7 +200,6 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 	
 	/**
 	 * Gets the error stack.
-	 *
 	 * @return the errorStack
 	 */
 	public String getErrorStack() {
@@ -213,21 +212,20 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 
 	/**
 	 * Adds a new sub-ontology to the current project.
-	 *
 	 * @param newSubOntology the new sub ontology
 	 */
-	public void addSubOntology (String newSubOntology) {
+	public boolean addSubOntology(String newSubOntology) {
 		OntologyClass onCla = new OntologyClass(newSubOntology);
-		if (this.subOntologies.contains(onCla.getOntologyMainClass())==false) {
+		if (this.subOntologies.contains(onCla.getOntologyMainClass())==false && onCla.isCorrectTreeBuild()==true) {
 			this.subOntologies.add(onCla.getOntologyMainClass());	
 		}		
 		this.put(onCla.getOntologyMainClass(), onCla);
 		this.buildOntologyTree();
+		return onCla.isCorrectTreeBuild();
 	}
 	
 	/**
 	 * Removes a sub-ontology from the current project.
-	 *
 	 * @param subOntology2Remove the removable sub ontology
 	 */
 	public void removeSubOntology (String subOntology2Remove) {

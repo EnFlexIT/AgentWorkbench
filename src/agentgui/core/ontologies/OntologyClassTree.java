@@ -295,16 +295,19 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
     	boolean clazzIsPredicate = false;
     	
     	
-		// --- Superclass ------------------------------
+    	// --- Remove default package info, if it occurs --    	
+    	if (clazz.getSimpleName().equals("package-info")) return null;
+    	
+		// --- Separate super class -----------------------
     	classInterfaces = clazz.getInterfaces();
     	if (clazz.isInterface()==true) {
-    		// -------------------------------------
-    		// --- For Protege 3.4 -----------------
-    		// -------------------------------------
+    		// --------------------------------------------
+    		// --- For Protege 3.4 ------------------------
+    		// --------------------------------------------
     		clazzParent = classInterfaces[0];
-    		// --- Found: Normal Object -------------
-    		// --- Search Interfaces ----------------
-    		// --- => Concept, AID or AgentAction? --
+    		// --- Found: Normal Object --------------------
+    		// --- Search Interfaces -----------------------
+    		// --- => Concept, AID or AgentAction? ---------
     		for (int i = 0; i < classInterfaces.length; i++) {
     			clazzInterfaceName = classInterfaces[i].getName();
     			if (clazzInterfaceName.equals(BaseClassConcept)) {
@@ -320,23 +323,23 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
     		}
 
     	} else {
-    		// -------------------------------------
-    		// --- For Protege 3.3.1 ---------------
-    		// -------------------------------------
+    		// --------------------------------------------
+    		// --- For Protege 3.3.1 ----------------------
+    		// --------------------------------------------
     		clazzParent = clazz.getSuperclass();
     		// --- evaluate Parent-Class ---------------
     		if (clazzParent.getName().equals(BaseClassOnto)) {
-        		// --- Found: BaseClass of Ontology ----   
+        		// --- Found: BaseClass of Ontology -------
         		clazzIsBaseOnto = true;	       
         		
     		} else if (clazzParent.getName().equals(BaseClassAID)) {
-    			// --- Found: BaseClass of AID ----------
+    			// --- Found: BaseClass of AID ------------
     			clazzIsAID = true;
     			
         	} else if (clazzParent.getName().equals(BaseClassObject)) {
-        		// --- Found: Normal Object -------------
-        		// --- Search Interfaces ----------------
-        		// --- => Concept, AID or AgentAction? --
+        		// --- Found: Normal Object ---------------
+        		// --- Search Interfaces ------------------
+        		// --- => Concept, AID or AgentAction? ----
         		for (int i = 0; i < classInterfaces.length; i++) {
         			clazzInterfaceName = classInterfaces[i].getName();
         			if (clazzInterfaceName.equals(BaseClassConcept)) {
@@ -354,7 +357,7 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
         	
     	}
     	
-    	// --- define userObject for the node ----------
+    	// --- define userObject for the node -------------
     	OntologyClassTreeObject ontoClassTreeUserObject = new OntologyClassTreeObject(this.currOntoClass, clazz); 
     	ontoClassTreeUserObject.setParentOntologySubClass(clazzParent);
     	ontoClassTreeUserObject.setIsBaseOntology(clazzIsBaseOnto);

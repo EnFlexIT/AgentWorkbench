@@ -122,21 +122,27 @@ public class DownloadServer implements HttpConstants, Runnable {
 	
     	// --- Terminate the web server -------------------
     	this.stopServer = true;
-		try {
-			this.currSocket.close();
-		} catch (IOException e) {
-			//e.printStackTrace();
-		}
+    	if (this.currSocket!=null) {
+    		try {
+    			this.currSocket.close();
+    		} catch (IOException e) {
+    			//e.printStackTrace();
+    		}	
+    	}
+		
 		// --- Terminate the worker - Threads -------------
-    	synchronized (threads) {
-    		// --- Stop the worker Threads ----------------
-    		for (int i = 0; i < threads.size(); i++) {
-        		synchronized (threads.get(i)) {
-        			threads.get(i).stopExecution();
-        			threads.get(i).notify();
-				}
+    	if (threads!=null) {
+    		synchronized (threads) {
+        		// --- Stop the worker Threads ----------------
+        		for (int i = 0; i < threads.size(); i++) {
+            		synchronized (threads.get(i)) {
+            			threads.get(i).stopExecution();
+            			threads.get(i).notify();
+    				}
+        		}
     		}
-		}
+    	}
+    	
     	// --- Delete all open resource folder ------------
     	for (String projectFolder : openResources.keySet()) {
     		File folderDelete = openResources.get(projectFolder);

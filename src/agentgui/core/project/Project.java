@@ -205,7 +205,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 * and the classes (also class names) which can be used as start-argument for the agents   
 	 */
 	@XmlElement(name="agentStartConfiguration")
-	private AgentStartConfiguration agentStartConfiguration = null;
+	private AgentStartConfiguration agentStartConfiguration;
 	
 	/**
 	 * This field manages the configuration of JADE (e. g. JADE-Port 1099 etc.)
@@ -228,36 +228,36 @@ import agentgui.core.webserver.JarFileCreator;
 	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
 	 */
 	@XmlTransient 
-	private Serializable userRuntimeObject = null;
+	private Serializable userRuntimeObject;
 	
 	/**
 	 * This attribute holds the instance of the currently selected SimulationSetup
 	 */
 	@XmlElement(name="simulationSetupCurrent")
-	private String simulationSetupCurrent = null;
+	private String simulationSetupCurrent;
 	/**
 	 * This extended HashTable is used in order to store the SimulationsSetup's names 
 	 * and their file names 
 	 */
-	private SimulationSetups simulationSetups = null;
+	private SimulationSetups simulationSetups;
 
 	/**
 	 * This model contains all known environment types of the application 
 	 * and can be also used for tailored environment models / types
 	 */
 	@XmlTransient
-	private DefaultComboBoxModel environmentsComboBoxModel = null;
+	private DefaultComboBoxModel<EnvironmentType> environmentsComboBoxModel;
 	
 	/** The EnvironmentController of the project. */
 	@XmlTransient 
-	private EnvironmentController environmentController = null;
+	private EnvironmentController environmentController;
 	
 	/** Configuration settings for the TimeModel used in this Project */
 	@XmlElement(name="timeModelClass")
 	private String timeModelClass = null;
 	/** The TimeModelController controls the display of the selected TimModel. */
 	@XmlTransient
-	private TimeModelController timeModelController = null;
+	private TimeModelController timeModelController;
 	
 	
 	
@@ -268,12 +268,10 @@ import agentgui.core.webserver.JarFileCreator;
 	
 		// ----------------------------------------------------------
 		// --- Fill the projects ComboBoxModel for environments ----- 
-		environmentsComboBoxModel = new DefaultComboBoxModel();
-		
 		Vector<EnvironmentType> appEnvTypes = Application.getGlobalInfo().getKnownEnvironmentTypes();
 		for (int i = 0; i < appEnvTypes.size(); i++) {
 			EnvironmentType envType = (EnvironmentType) appEnvTypes.get(i);
-			environmentsComboBoxModel.addElement(envType);
+			this.getEnvironmentsComboBoxModel().addElement(envType);
 		}
 		// ----------------------------------------------------------
 		
@@ -986,11 +984,11 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public void subOntologyAdd(String newSubOntology) {
 		if (this.getSubOntologies().contains(newSubOntology)==false) {
-			this.getSubOntologies().add(newSubOntology);
-			this.getOntologyVisualisationHelper().addSubOntology(newSubOntology);
-			setUnsaved(true);
-			setChanged();
-			notifyObservers(CHANGED_ProjectOntology);
+			if (this.getOntologyVisualisationHelper().addSubOntology(newSubOntology)==true) {
+				setUnsaved(true);
+				setChanged();
+				notifyObservers(CHANGED_ProjectOntology);
+			}
 		} 
 	}
 	/**
@@ -1384,14 +1382,17 @@ import agentgui.core.webserver.JarFileCreator;
 	 * @return the environmentsComboBoxModel
 	 */
 	@XmlTransient
-	public DefaultComboBoxModel getEnvironmentsComboBoxModel() {
+	public DefaultComboBoxModel<EnvironmentType> getEnvironmentsComboBoxModel() {
+		if (environmentsComboBoxModel==null) {
+			environmentsComboBoxModel = new DefaultComboBoxModel<EnvironmentType>();
+		}
 		return environmentsComboBoxModel;
 	}
 	/**
 	 * Sets the ComboBoxModel for environment types.
 	 * @param environmentsComboBoxModel the environmentsComboBoxModel to set
 	 */
-	public void setEnvironmentsComboBoxModel(DefaultComboBoxModel environmentsComboBoxModel) {
+	public void setEnvironmentsComboBoxModel(DefaultComboBoxModel<EnvironmentType> environmentsComboBoxModel) {
 		this.environmentsComboBoxModel = environmentsComboBoxModel;
 	}
 

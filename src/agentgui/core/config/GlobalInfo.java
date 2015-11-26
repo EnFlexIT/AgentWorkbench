@@ -29,7 +29,7 @@
 package agentgui.core.config;
 
 import jade.core.Agent;
-import jade.core.Profile;
+import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
 
 import java.awt.Color;
@@ -50,6 +50,7 @@ import agentgui.core.environment.EnvironmentTypes;
 import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.ontologies.gui.OntologyClassVisualisation;
 import agentgui.core.project.PlatformJadeConfig;
+import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
 
@@ -80,6 +81,7 @@ public class GlobalInfo {
 	
 	// --- JADE-Variables ---------------------------------------------------
 	private Integer localeJadeLocalPort = 1099;
+	private Integer localeJadeLocalPortMTP = 7778;
 	private JadeUrlConfiguration urlConfiguraionForMaster;
 				
 	// --- Variables --------------------------------------------------------
@@ -117,28 +119,32 @@ public class GlobalInfo {
 	
 	
 	// --- File-Properties --------------------------------------------------
-	private ExecutionMode fileExecutionMode = null;
+	private ExecutionMode fileExecutionMode;
 	
 	private float filePropBenchValue = 0;
-	private String filePropBenchExecOn = null;
-	private boolean filePropBenchAllwaysSkip = false; 
+	private String filePropBenchExecOn;
+	private boolean filePropBenchAllwaysSkip; 
 	
-	private String filePropLanguage = null;
+	private String filePropLanguage;
 	
-	private boolean filePropServerAutoRun = false;
-	private String filePropServerMasterURL = null;
+	private boolean filePropServerAutoRun = true;
+	private String filePropServerMasterURL;
 	private Integer filePropServerMasterPort = this.localeJadeLocalPort;
 	private Integer filePropServerMasterPort4MTP = 7778;
 	
-	private String filePropServerMasterDBHost = null;
-	private String filePropServerMasterDBName = null;
-	private String filePropServerMasterDBUser = null;
-	private String filePropServerMasterDBPswd = null;
+	private MTP_Creation filePropOwnMtpCreation = MTP_Creation.ConfiguredByJADE;
+	private String filePropOwnMtpIP = PlatformJadeConfig.MTP_IP_AUTO_Config;
+	private Integer filePropOwnMtpPort = 7778;
 	
-	private String googleKey4API = null;
-	private String googleHTTPref = null;
+	private String filePropServerMasterDBHost;
+	private String filePropServerMasterDBName;
+	private String filePropServerMasterDBUser;
+	private String filePropServerMasterDBPswd;
 	
-	private String updateSite = null;
+	private String googleKey4API;
+	private String googleHTTPref;
+	
+	private String updateSite;
 	private Integer updateAutoConfiguration = 0;
 	private Integer updateKeepDictionary = 1;
 	private long updateDateLastChecked = 0;
@@ -799,6 +805,21 @@ public class GlobalInfo {
 	}
 	
 	/**
+	 * This method can be used in order to set the MTP port on which JADE is running (by default: 1099)
+	 * @param localeJadeDefaultPort the localeJadeDefaultPort to set
+	 */
+	public void setJadeLocalPortMTP(int newMtpPort) {
+		localeJadeLocalPortMTP = newMtpPort;
+	}
+	/**
+	 * Returns the MTP port on which JADE will run. 
+	 * @return the localeJadeDefaultPort
+	 */
+	public Integer getJadeLocalPortMTP() {
+		return localeJadeLocalPortMTP;
+	}
+	
+	/**
 	 * Sets the {@link JadeUrlConfiguration} for the server.master.
 	 * @param newJadeUrlConfiguration the new {@link JadeUrlConfiguration} for master
 	 */
@@ -845,9 +866,9 @@ public class GlobalInfo {
 	 * of the AgentGUI-Application
 	 *  
 	 * @return The local JADE default profile
-	 * @see Profile
+	 * @see ProfileImpl
 	 */
-	public Profile getJadeDefaultProfile() {
+	public ProfileImpl getJadeDefaultProfile() {
 		PlatformJadeConfig jadeConfig = this.getJadeDefaultPlatformConfig();
 		return jadeConfig.getNewInstanceOfProfilImpl();
 	}
@@ -1049,6 +1070,50 @@ public class GlobalInfo {
 		return this.filePropServerMasterPort4MTP;
 	}
 
+	
+	/**
+	 * Sets the own MTP creation settings.
+	 * @param ownMtpCreation the new own MTP creation
+	 */
+	public void setOwnMtpCreation(MTP_Creation ownMtpCreation) {
+		this.filePropOwnMtpCreation = ownMtpCreation;
+	}
+	/**
+	 * Returns the setting for the own MTP creation.
+	 * @return the own MTP creation settings
+	 */
+	public MTP_Creation getOwnMtpCreation() {
+		return filePropOwnMtpCreation;
+	}
+	/**
+	 * Sets the own IP-address that should be used with the MTP.
+	 * @param filePropOwnMtpIP the new own MTP IP-Address
+	 */
+	public void setOwnMtpIP(String filePropOwnMtpIP) {
+		this.filePropOwnMtpIP = filePropOwnMtpIP;
+	}
+	/**
+	 * Returns the own MTP IP-address.
+	 * @return the own MTP IP-address
+	 */
+	public String getOwnMtpIP() {
+		return filePropOwnMtpIP;
+	}
+	/**
+	 * Sets the own MTP port.
+	 * @param newOwnMtpPort the new own MTP port
+	 */
+	public void setOwnMtpPort(Integer newOwnMtpPort) {
+		this.filePropOwnMtpPort = newOwnMtpPort;
+	}
+	/**
+	 * Returns the own MTP port.
+	 * @return the own MTP port
+	 */
+	public Integer getOwnMtpPort() {
+		return filePropOwnMtpPort;
+	}
+	
 	/**
 	 * Database property for the server.nmaster
 	 * @param newDBHost the filePropServerMasterDBHost to set

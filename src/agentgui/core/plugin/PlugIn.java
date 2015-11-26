@@ -28,7 +28,7 @@
  */
 package agentgui.core.plugin;
 
-import jade.core.Profile;
+import jade.core.ProfileImpl;
 
 import java.awt.Container;
 import java.util.Observable;
@@ -580,7 +580,7 @@ public abstract class PlugIn implements Observer {
 	 * @param jadeContainerProfile The profile to CHANGE
 	 * @return the CHANGED (!) configuration of the JADE Profile
 	 */
-	public Profile getJadeProfile(Profile jadeContainerProfile) {
+	public ProfileImpl getJadeProfile(ProfileImpl jadeContainerProfile) {
 		return jadeContainerProfile;
 	}
 

@@ -16,15 +16,18 @@
         <agentVector>
             <agent agentReference="gol.acl.agents.GameOfLifeAgent">
                 <startArgumentVector>
-                    <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="1"/>
-                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" position="2"/>
-                    <startArgument ontologyReference="agentgui.ontology.Simple_String" position="3"/>
+                    <startArgument position="1" ontologyReference="agentgui.ontology.TimeSeriesChart"/>
+                    <startArgument position="2" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                    <startArgument position="3" ontologyReference="agentgui.ontology.Simple_String"/>
                 </startArgumentVector>
             </agent>
         </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
         <useLocalPort>1099</useLocalPort>
+        <mtpCreation>ConfiguredByJADE</mtpCreation>
+        <mtpIpAddress>Auto-Configuration</mtpIpAddress>
+        <mtpPort>7778</mtpPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -59,7 +62,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>1250 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>0018 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
     <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
     <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/game_of_life_IDE.jar</downloadResources>

@@ -35,25 +35,34 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.components.ClassElement2Display;
 import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.jade.ClassSearcher;
+import agentgui.core.network.NetworkAddresses;
 import agentgui.core.project.PlatformJadeConfig;
+import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 import agentgui.core.project.Project;
+import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'JADE-Configuration'
@@ -70,12 +79,12 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 	private JLabel jLabelPortExplain = null;
 	private JTextField jTextFieldDefaultPort = null;
 	private JButton jButtonSetPortDefault = null;
-	private JPanel jPanelPort = null;
+	private JPanel jPanelJadeIPandPort = null;
 	private JPanel jPanelServiceLists = null;
 	private JLabel jLabelServicesChosen = null;
 	private JLabel jLabelServicesAvailable = null;
 	private JScrollPane jScrollPaneServicesChosen = null;
-	private JList jListServicesChosen = null;
+	private JList<String> jListServicesChosen = null;
 	private JListClassSearcher jListServicesAvailable = null;
 
 	private JPanel jPanelServiceButtons = null;
@@ -85,6 +94,23 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 	private JLabel jLabelDummyServices = null;
 	private JPanel jPanelServiceAvailable = null;
 	private JButton jButtonSetPort = null;
+	private JLabel jLabelMTP;
+	private JRadioButton jRadioButtonMtpAutoConfig;
+	private JRadioButton jRadioButtonMtpIP;
+	
+	private JTextField jTextFieldDefaultPortMTP;
+	private JButton jButtonSetPortMTP;
+	private JButton jButtonSetPortMTPDefault;
+	private JLabel jLabelMTPport;
+	
+	private JLabel jLabelIP;
+	private JTextField jTextFieldIPAddress;
+	private JButton jButtonIPedit;
+	
+	private JSeparator jSeparator1;
+	private JSeparator jSeparator2;
+	private JSeparator jSeparatorHorizontal;
+	
 	
 	/**
 	 * Constructor of this class
@@ -101,8 +127,16 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 		// --- configure translation ------------
 		jLabelPort.setText(Language.translate("Starte JADE über Port-Nr.:"));
 		jLabelPortExplain.setText(Language.translate("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)"));
-		jButtonSetPortDefault.setToolTipText(Language.translate("Standard verwenden"));
+		
 		jButtonSetPort.setToolTipText(Language.translate("JADE-Port bearbeiten"));
+		jButtonSetPortDefault.setToolTipText(Language.translate("Standard verwenden"));
+		
+		jLabelMTP.setText(Language.translate("MTP-Adresse") + ":");
+		jRadioButtonMtpAutoConfig.setText(Language.translate("JADE-Automatik verwenden"));
+		jRadioButtonMtpIP.setText(Language.translate("IP-Adresse verwenden"));
+		
+		jButtonSetPortMTP.setToolTipText(Language.translate("JADE-Port bearbeiten"));
+		jButtonSetPortMTPDefault.setToolTipText(Language.translate("Standard verwenden"));
 		
 		jLabelServicesChosen.setText(Language.translate("Ausgewählte JADE-Services"));
 		jLabelServicesAvailable.setText(Language.translate("Verfügbare JADE-Services"));
@@ -110,7 +144,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 		jButtonDefaultJadeConfig.setToolTipText(Language.translate("Standardkonfiguration verwenden"));
 		jButtonServiceAdd.setToolTipText(Language.translate("Service hinzufügen"));
 		jButtonServiceRemove.setToolTipText(Language.translate("Service entfernen"));
-				
+		
 	}
 	
 	/**
@@ -118,50 +152,169 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 	 * @return void
 	 */
 	private void initialize() {
-		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
-		gridBagConstraints21.gridx = 0;
-		gridBagConstraints21.fill = GridBagConstraints.BOTH;
-		gridBagConstraints21.insets = new Insets(15, 10, 0, 10);
-		gridBagConstraints21.weightx = 1.0;
-		gridBagConstraints21.weighty = 1.0;
-		gridBagConstraints21.ipadx = 0;
-		gridBagConstraints21.gridwidth = 3;
-		gridBagConstraints21.gridy = 4;
-		GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-		gridBagConstraints5.anchor = GridBagConstraints.WEST;
-		gridBagConstraints5.gridx = 1;
-		gridBagConstraints5.gridy = 0;
-		gridBagConstraints5.fill = GridBagConstraints.NONE;
-		gridBagConstraints5.insets = new Insets(10, 10, 0, 0);
-		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-		gridBagConstraints1.anchor = GridBagConstraints.WEST;
-		gridBagConstraints1.gridx = -1;
-		gridBagConstraints1.gridy = 2;
-		gridBagConstraints1.gridwidth = 2;
-		gridBagConstraints1.insets = new Insets(0, 15, 2, 0);
-		GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		gridBagConstraints.gridx = 0;
-		gridBagConstraints.gridy = 0;
-		gridBagConstraints.ipadx = 0;
-		gridBagConstraints.ipady = 0;
-		gridBagConstraints.insets = new Insets(10, 15, 2, 0);
-		this.setLayout(new GridBagLayout());
-		this.setSize(799, 439);
 		
-		jLabelPortExplain = new JLabel();
-		jLabelPortExplain.setFont(new Font("Dialog", Font.PLAIN, 12));
-		jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)");
-		jLabelPort = new JLabel();
-		jLabelPort.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelPort.setText("Starte JADE über Port-Nr.:");
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0};
+		gridBagLayout.columnWeights = new double[]{1.0};
+		this.setLayout(gridBagLayout);
+		this.setSize(950, 500);
+		
+		GridBagConstraints gbc_jPanelJadeIPandPort = new GridBagConstraints();
+		gbc_jPanelJadeIPandPort.fill = GridBagConstraints.VERTICAL;
+		gbc_jPanelJadeIPandPort.anchor = GridBagConstraints.WEST;
+		gbc_jPanelJadeIPandPort.gridx = 0;
+		gbc_jPanelJadeIPandPort.gridy = 0;
+		gbc_jPanelJadeIPandPort.insets = new Insets(10, 10, 5, 0);
+		
+		GridBagConstraints gbc_jSeparatorHorizontal = new GridBagConstraints();
+		gbc_jSeparatorHorizontal.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jSeparatorHorizontal.insets = new Insets(5, 10, 10, 10);
+		gbc_jSeparatorHorizontal.gridx = 0;
+		gbc_jSeparatorHorizontal.gridy = 1;
 
-		this.add(jLabelPort, gridBagConstraints);
-		this.add(jLabelPortExplain, gridBagConstraints1);
-		this.add(getJPanelPort(), gridBagConstraints5);
-		this.add(getJPanelServiceLists(), gridBagConstraints21);
+		GridBagConstraints gbc_ServiceLists = new GridBagConstraints();
+		gbc_ServiceLists.gridx = 0;
+		gbc_ServiceLists.fill = GridBagConstraints.BOTH;
+		gbc_ServiceLists.insets = new Insets(0, 10, 5, 10);
+		gbc_ServiceLists.weightx = 1.0;
+		gbc_ServiceLists.weighty = 1.0;
+		gbc_ServiceLists.ipadx = 0;
+		gbc_ServiceLists.gridy = 2;
+		
+		this.add(this.getJPanelJadeIPandPort(), gbc_jPanelJadeIPandPort);
+		this.add(this.getJSeparatorHorizontal(), gbc_jSeparatorHorizontal);
+		this.add(this.getJPanelServiceLists(), gbc_ServiceLists);
+		
+		// --- Create the ButtonGroup for the radio buttons ---------
+		ButtonGroup bGroup = new ButtonGroup();
+		bGroup.add(this.getJRadioButtonMtpAutoConfig());
+		bGroup.add(this.getJRadioButtonMtpIP());
+		
 	}
 
+
+	/**
+	 * This method initializes jPanelPort	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getJPanelJadeIPandPort() {
+		if (jPanelJadeIPandPort == null) {
+			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
+			gridBagConstraints15.gridx = 2;
+			gridBagConstraints15.insets = new Insets(0, 5, 5, 5);
+			gridBagConstraints15.gridy = 0;
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.gridx = 3;
+			gridBagConstraints3.insets = new Insets(0, 5, 5, 5);
+			gridBagConstraints3.gridy = 0;
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.anchor = GridBagConstraints.WEST;
+			gridBagConstraints2.insets = new Insets(0, 5, 5, 5);
+			gridBagConstraints2.gridx = 1;
+			gridBagConstraints2.gridy = 0;
+			gridBagConstraints2.weightx = 1.0;
+			jPanelJadeIPandPort = new JPanel();
+			GridBagLayout gbl_jPanelJadeIPandPort = new GridBagLayout();
+			gbl_jPanelJadeIPandPort.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+			gbl_jPanelJadeIPandPort.rowWeights = new double[]{0.0, 1.0};
+			jPanelJadeIPandPort.setLayout(gbl_jPanelJadeIPandPort);
+			jLabelPort = new JLabel();
+			GridBagConstraints gbc_jLabelPort = new GridBagConstraints();
+			gbc_jLabelPort.anchor = GridBagConstraints.WEST;
+			gbc_jLabelPort.insets = new Insets(0, 0, 5, 5);
+			gbc_jLabelPort.gridx = 0;
+			gbc_jLabelPort.gridy = 0;
+			jPanelJadeIPandPort.add(jLabelPort, gbc_jLabelPort);
+			jLabelPort.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelPort.setText("Starte JADE über Port-Nr.:");
+			jPanelJadeIPandPort.add(getJTextFieldDefaultPort(), gridBagConstraints2);
+			jPanelJadeIPandPort.add(getJButtonSetPortDefault(), gridBagConstraints3);
+			jPanelJadeIPandPort.add(getJButtonSetPort(), gridBagConstraints15);
+			GridBagConstraints gbc_jSeparator1 = new GridBagConstraints();
+			gbc_jSeparator1.fill = GridBagConstraints.VERTICAL;
+			gbc_jSeparator1.gridheight = 2;
+			gbc_jSeparator1.insets = new Insets(0, 10, 0, 10);
+			gbc_jSeparator1.gridx = 4;
+			gbc_jSeparator1.gridy = 0;
+			jPanelJadeIPandPort.add(getJSeparator1(), gbc_jSeparator1);
+			GridBagConstraints gbc_jLabaleMTP = new GridBagConstraints();
+			gbc_jLabaleMTP.insets = new Insets(0, 0, 5, 5);
+			gbc_jLabaleMTP.gridx = 5;
+			gbc_jLabaleMTP.gridy = 0;
+			jPanelJadeIPandPort.add(getJLabelMTP(), gbc_jLabaleMTP);
+			GridBagConstraints gbc_jRadioButtonMtpAutoConfig = new GridBagConstraints();
+			gbc_jRadioButtonMtpAutoConfig.anchor = GridBagConstraints.WEST;
+			gbc_jRadioButtonMtpAutoConfig.insets = new Insets(0, 0, 5, 5);
+			gbc_jRadioButtonMtpAutoConfig.gridx = 6;
+			gbc_jRadioButtonMtpAutoConfig.gridy = 0;
+			jPanelJadeIPandPort.add(getJRadioButtonMtpAutoConfig(), gbc_jRadioButtonMtpAutoConfig);
+			GridBagConstraints gbc_jRadioButtonMtpIP = new GridBagConstraints();
+			gbc_jRadioButtonMtpIP.anchor = GridBagConstraints.WEST;
+			gbc_jRadioButtonMtpIP.insets = new Insets(0, 0, 5, 5);
+			gbc_jRadioButtonMtpIP.gridx = 7;
+			gbc_jRadioButtonMtpIP.gridy = 0;
+			jPanelJadeIPandPort.add(getJRadioButtonMtpIP(), gbc_jRadioButtonMtpIP);
+			GridBagConstraints gbc_jButtonIPedit = new GridBagConstraints();
+			gbc_jButtonIPedit.anchor = GridBagConstraints.EAST;
+			gbc_jButtonIPedit.insets = new Insets(0, 0, 5, 5);
+			gbc_jButtonIPedit.gridx = 8;
+			gbc_jButtonIPedit.gridy = 0;
+			jPanelJadeIPandPort.add(getJButtonIPedit(), gbc_jButtonIPedit);
+			GridBagConstraints gbc_jSeparator2 = new GridBagConstraints();
+			gbc_jSeparator2.fill = GridBagConstraints.VERTICAL;
+			gbc_jSeparator2.gridheight = 2;
+			gbc_jSeparator2.insets = new Insets(0, 10, 0, 10);
+			gbc_jSeparator2.gridx = 9;
+			gbc_jSeparator2.gridy = 0;
+			jPanelJadeIPandPort.add(getSeparator_1(), gbc_jSeparator2);
+			GridBagConstraints gbc_jLabelMTPport = new GridBagConstraints();
+			gbc_jLabelMTPport.insets = new Insets(0, 0, 5, 5);
+			gbc_jLabelMTPport.gridx = 10;
+			gbc_jLabelMTPport.gridy = 0;
+			jPanelJadeIPandPort.add(getJLabelMTPport(), gbc_jLabelMTPport);
+			GridBagConstraints gbc_jTextFieldDefaultPortMTP = new GridBagConstraints();
+			gbc_jTextFieldDefaultPortMTP.insets = new Insets(0, 0, 5, 5);
+			gbc_jTextFieldDefaultPortMTP.gridx = 11;
+			gbc_jTextFieldDefaultPortMTP.gridy = 0;
+			jPanelJadeIPandPort.add(getJTextFieldDefaultPortMTP(), gbc_jTextFieldDefaultPortMTP);
+			GridBagConstraints gbc_jButtonSetPortMTP = new GridBagConstraints();
+			gbc_jButtonSetPortMTP.insets = new Insets(0, 0, 5, 5);
+			gbc_jButtonSetPortMTP.gridx = 12;
+			gbc_jButtonSetPortMTP.gridy = 0;
+			jPanelJadeIPandPort.add(getJButtonSetPortMTP(), gbc_jButtonSetPortMTP);
+			GridBagConstraints gbc_jButtonSetPortMTPDefault = new GridBagConstraints();
+			gbc_jButtonSetPortMTPDefault.insets = new Insets(0, 0, 5, 0);
+			gbc_jButtonSetPortMTPDefault.gridx = 13;
+			gbc_jButtonSetPortMTPDefault.gridy = 0;
+			jPanelJadeIPandPort.add(getJButtonSetPortMTPDefault(), gbc_jButtonSetPortMTPDefault);
+			
+			jLabelPortExplain = new JLabel();
+			GridBagConstraints gbc_jLabelPortExplain = new GridBagConstraints();
+			gbc_jLabelPortExplain.fill = GridBagConstraints.VERTICAL;
+			gbc_jLabelPortExplain.anchor = GridBagConstraints.WEST;
+			gbc_jLabelPortExplain.gridwidth = 4;
+			gbc_jLabelPortExplain.insets = new Insets(0, 0, 0, 5);
+			gbc_jLabelPortExplain.gridx = 0;
+			gbc_jLabelPortExplain.gridy = 1;
+			jPanelJadeIPandPort.add(jLabelPortExplain, gbc_jLabelPortExplain);
+			jLabelPortExplain.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)");
+			GridBagConstraints gbc_jLabelIP = new GridBagConstraints();
+			gbc_jLabelIP.anchor = GridBagConstraints.EAST;
+			gbc_jLabelIP.insets = new Insets(0, 0, 0, 5);
+			gbc_jLabelIP.gridx = 5;
+			gbc_jLabelIP.gridy = 1;
+			jPanelJadeIPandPort.add(getJLabelIP(), gbc_jLabelIP);
+			GridBagConstraints gbc_jTextFieldIPAddress = new GridBagConstraints();
+			gbc_jTextFieldIPAddress.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jTextFieldIPAddress.gridwidth = 3;
+			gbc_jTextFieldIPAddress.insets = new Insets(0, 0, 0, 5);
+			gbc_jTextFieldIPAddress.gridx = 6;
+			gbc_jTextFieldIPAddress.gridy = 1;
+			jPanelJadeIPandPort.add(getJTextFieldIPAddress(), gbc_jTextFieldIPAddress);
+		}
+		return jPanelJadeIPandPort;
+	}
 	/**
 	 * This method initializes jTextFieldDefaultPort	
 	 * @return javax.swing.JTextField	
@@ -205,37 +358,145 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 		}
 		return jButtonSetPortDefault;
 	}
-
-	/**
-	 * This method initializes jPanelPort	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelPort() {
-		if (jPanelPort == null) {
-			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
-			gridBagConstraints15.gridx = 1;
-			gridBagConstraints15.insets = new Insets(0, 5, 0, 0);
-			gridBagConstraints15.gridy = 0;
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.gridx = 2;
-			gridBagConstraints3.insets = new Insets(0, 5, 0, 0);
-			gridBagConstraints3.gridy = -1;
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.anchor = GridBagConstraints.WEST;
-			gridBagConstraints2.insets = new Insets(0, 0, 0, 0);
-			gridBagConstraints2.gridx = -1;
-			gridBagConstraints2.gridy = -1;
-			gridBagConstraints2.weightx = 1.0;
-			gridBagConstraints2.fill = GridBagConstraints.VERTICAL;
-			jPanelPort = new JPanel();
-			jPanelPort.setLayout(new GridBagLayout());
-			jPanelPort.add(getJTextFieldDefaultPort(), gridBagConstraints2);
-			jPanelPort.add(getJButtonSetPortDefault(), gridBagConstraints3);
-			jPanelPort.add(getJButtonSetPort(), gridBagConstraints15);
+	private JSeparator getJSeparator1() {
+		if (jSeparator1 == null) {
+			jSeparator1 = new JSeparator();
+			jSeparator1.setOrientation(SwingConstants.VERTICAL);
 		}
-		return jPanelPort;
+		return jSeparator1;
+	}
+	/**
+	 * Gets the JLabel mtp.
+	 * @return the JLabel mtp
+	 */
+	private JLabel getJLabelMTP() {
+		if (jLabelMTP == null) {
+			jLabelMTP = new JLabel("MTP-Address:");
+			jLabelMTP.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelMTP;
+	}
+	/**
+	 * Gets the JRadioButton auto configuration.
+	 * @return the JRadioButton auto configuration
+	 */
+	private JRadioButton getJRadioButtonMtpAutoConfig() {
+		if (jRadioButtonMtpAutoConfig == null) {
+			jRadioButtonMtpAutoConfig = new JRadioButton("Auto-Config");
+			jRadioButtonMtpAutoConfig.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jRadioButtonMtpAutoConfig.addActionListener(this);
+		}
+		return jRadioButtonMtpAutoConfig;
+	}
+	/**
+	 * Gets the JRadioButton for IP usage.
+	 * @return the JRadioButton IP usage 
+	 */
+	private JRadioButton getJRadioButtonMtpIP() {
+		if (jRadioButtonMtpIP == null) {
+			jRadioButtonMtpIP = new JRadioButton("Use IP-Address");
+			jRadioButtonMtpIP.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jRadioButtonMtpIP.addActionListener(this);
+		}
+		return jRadioButtonMtpIP;
+	}
+	private JLabel getJLabelIP() {
+		if (jLabelIP == null) {
+			jLabelIP = new JLabel("IP:");
+			jLabelIP.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelIP;
+	}
+	private JTextField getJTextFieldIPAddress() {
+		if (jTextFieldIPAddress==null) {
+			jTextFieldIPAddress = new JTextField();
+			jTextFieldIPAddress.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldIPAddress.setPreferredSize(new Dimension(250, 26));
+		}
+		return jTextFieldIPAddress;
+	}
+	private JButton getJButtonIPedit() {
+		if (jButtonIPedit == null) {
+			jButtonIPedit = new JButton();
+			jButtonIPedit.setToolTipText("IP auswählen");
+			jButtonIPedit.setPreferredSize(new Dimension(45, 26));
+			jButtonIPedit.setIcon(new ImageIcon(getClass().getResource(PathImage + "edit.png")));
+			jButtonIPedit.addActionListener(this);
+		}
+		return jButtonIPedit;
+	}
+	private JSeparator getSeparator_1() {
+		if (jSeparator2 == null) {
+			jSeparator2 = new JSeparator();
+			jSeparator2.setOrientation(SwingConstants.VERTICAL);
+		}
+		return jSeparator2;
+	}
+	
+	/**
+	 * Gets the JLabel mtp port.
+	 * @return the JLabel mtp port
+	 */
+	private JLabel getJLabelMTPport() {
+		if (jLabelMTPport == null) {
+			jLabelMTPport = new JLabel("MTP-Port:");
+			jLabelMTPport.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelMTPport;
 	}
 
+	/**
+	 * Gets the JTextFielddefault port mtp.
+	 * @return the JTextField default port mtp
+	 */
+	private JTextField getJTextFieldDefaultPortMTP() {
+		if (jTextFieldDefaultPortMTP == null) {
+			jTextFieldDefaultPortMTP = new JTextField();
+			jTextFieldDefaultPortMTP.setText((String) null);
+			jTextFieldDefaultPortMTP.setPreferredSize(new Dimension(71, 26));
+			jTextFieldDefaultPortMTP.setFont(new Font("Dialog", Font.BOLD, 12));
+			jTextFieldDefaultPortMTP.setEditable(false);
+		}
+		return jTextFieldDefaultPortMTP;
+	}
+	/**
+	 * Gets the JButton set port mtp.
+	 * @return the JButton set port mtp
+	 */
+	private JButton getJButtonSetPortMTP() {
+		if (jButtonSetPortMTP == null) {
+			jButtonSetPortMTP = new JButton();
+			jButtonSetPortMTP.setToolTipText("JADE-Port bearbeiten");
+			jButtonSetPortMTP.setPreferredSize(new Dimension(45, 26));
+			jButtonSetPortMTP.setIcon(new ImageIcon(getClass().getResource(PathImage + "edit.png")));
+			jButtonSetPortMTP.setActionCommand("SetPortMTP");
+			jButtonSetPortMTP.addActionListener(this);
+		}
+		return jButtonSetPortMTP;
+	}
+	/**
+	 * Gets the JButton set port mtp default.
+	 * @return the JButton set port mtp default
+	 */
+	private JButton getJButtonSetPortMTPDefault() {
+		if (jButtonSetPortMTPDefault == null) {
+			jButtonSetPortMTPDefault = new JButton();
+			jButtonSetPortMTPDefault.setToolTipText("Standard verwenden");
+			jButtonSetPortMTPDefault.setPreferredSize(new Dimension(45, 26));
+			jButtonSetPortMTPDefault.setActionCommand("SetPortDefault");
+			jButtonSetPortMTPDefault.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBreset.png")));
+			jButtonSetPortMTPDefault.addActionListener(this);
+		}
+		return jButtonSetPortMTPDefault;
+	}
+	
+	private JSeparator getJSeparatorHorizontal() {
+		if (jSeparatorHorizontal == null) {
+			jSeparatorHorizontal = new JSeparator();
+		}
+		return jSeparatorHorizontal;
+	}
+	
 	/**
 	 * This method initializes jPanelServiceLists	
 	 * @return javax.swing.JPanel	
@@ -248,14 +509,14 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			gridBagConstraints14.insets = new Insets(0, 5, 0, 0);
 			gridBagConstraints14.weightx = 0.0;
 			gridBagConstraints14.weighty = 1.0;
-			gridBagConstraints14.gridy = 2;
+			gridBagConstraints14.gridy = 1;
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			gridBagConstraints12.gridx = 2;
 			gridBagConstraints12.anchor = GridBagConstraints.WEST;
-			gridBagConstraints12.insets = new Insets(0, 15, 2, 0);
+			gridBagConstraints12.insets = new Insets(0, 15, 5, 0);
 			gridBagConstraints12.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints12.weightx = 1.0;
-			gridBagConstraints12.gridy = 1;
+			gridBagConstraints12.gridy = 0;
 			jLabelServicesAvailable = new JLabel();
 			jLabelServicesAvailable.setText("Verfügbare JADE-Services");
 			jLabelServicesAvailable.setPreferredSize(new Dimension(156, 16));
@@ -263,24 +524,25 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.gridx = 0;
 			gridBagConstraints11.anchor = GridBagConstraints.WEST;
-			gridBagConstraints11.insets = new Insets(0, 5, 2, 10);
+			gridBagConstraints11.insets = new Insets(0, 5, 5, 10);
 			gridBagConstraints11.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints11.weightx = 1.0;
-			gridBagConstraints11.gridy = 1;
+			gridBagConstraints11.gridy = 0;
 			jLabelServicesChosen = new JLabel();
 			jLabelServicesChosen.setText("Ausgewählte JADE-Services");
 			jLabelServicesChosen.setPreferredSize(new Dimension(156, 16));
 			jLabelServicesChosen.setFont(new Font("Dialog", Font.BOLD, 12));
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
+			gridBagConstraints7.insets = new Insets(0, 0, 0, 5);
 			gridBagConstraints7.fill = GridBagConstraints.BOTH;
-			gridBagConstraints7.gridy = 2;
+			gridBagConstraints7.gridy = 1;
 			gridBagConstraints7.weightx = 0.0;
 			gridBagConstraints7.gridx = 1;
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 			gridBagConstraints4.fill = GridBagConstraints.BOTH;
 			gridBagConstraints4.weighty = 1.0;
 			gridBagConstraints4.insets = new Insets(0, 0, 0, 5);
-			gridBagConstraints4.gridy = 2;
+			gridBagConstraints4.gridy = 1;
 			gridBagConstraints4.weightx = 0.0;
 			jPanelServiceLists = new JPanel();
 			jPanelServiceLists.setLayout(new GridBagLayout());
@@ -312,9 +574,9 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 	 * This method initializes jListServicesChosen	
 	 * @return javax.swing.JList	
 	 */
-	private JList getJListServicesChosen() {
+	private JList<String> getJListServicesChosen() {
 		if (jListServicesChosen == null) {
-			jListServicesChosen = new JList();
+			jListServicesChosen = new JList<String>();
 			jListServicesChosen.setModel(currProject.getJadeConfiguration().getListModelServices());
 		}
 		return jListServicesChosen;
@@ -438,13 +700,68 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 	 */
 	private void refreshDataView() {
 		
+		// --- JADE port ------------------------
 		Integer currPort = currProject.getJadeConfiguration().getLocalPort();
 		if (currPort==null || currPort==0) {
 			currPort = Application.getGlobalInfo().getJadeLocalPort();
 			currProject.getJadeConfiguration().setLocalPort(currPort);
 		}
 		jTextFieldDefaultPort.setText(currPort.toString());
+		
+		// --- MTP address creation -------------
+		MTP_Creation mTP_Creation = currProject.getJadeConfiguration().getMtpCreation();
+		switch (mTP_Creation) {
+		case ConfiguredByJADE:
+			this.getJRadioButtonMtpAutoConfig().setSelected(true);
+			this.getJRadioButtonMtpIP().setSelected(false);
+			break;
+
+		case ConfiguredByIPandPort:
+			this.getJRadioButtonMtpAutoConfig().setSelected(false);
+			this.getJRadioButtonMtpIP().setSelected(true);
+			break;
+		}
+		this.getJTextFieldIPAddress().setText(currProject.getJadeConfiguration().getMtpIpAddress());
+		this.refreshMTPView();
+		
+		// --- MTP port -------------------------	
+		Integer currPortMTP = currProject.getJadeConfiguration().getLocalPortMTP();
+		if (currPortMTP==null || currPortMTP==0) {
+			currPortMTP = Application.getGlobalInfo().getJadeLocalPortMTP();
+			currProject.getJadeConfiguration().setLocalPortMTP(currPortMTP);
+		}
+		this.getJTextFieldDefaultPortMTP().setText(currPortMTP.toString());
+
+		// --- Model for the services used ------
 		this.jListServicesChosen.setModel(currProject.getJadeConfiguration().getListModelServices());
+	}
+	/**
+	 * Refreshes the MTP view.
+	 */
+	private void refreshMTPView() {
+		MTP_Creation mTP_Creation = currProject.getJadeConfiguration().getMtpCreation();
+		switch (mTP_Creation) {
+		case ConfiguredByJADE:
+			this.getJLabelMTPport().setEnabled(false);
+			this.getJTextFieldDefaultPortMTP().setEnabled(false);
+			this.getJButtonSetPortMTP().setEnabled(false);
+			this.getJButtonSetPortMTPDefault().setEnabled(false);
+			this.getJLabelIP().setEnabled(false);
+			this.getJTextFieldIPAddress().setEnabled(false);
+			this.getJButtonIPedit().setEnabled(false);
+			this.getJTextFieldIPAddress().setText(PlatformJadeConfig.MTP_IP_AUTO_Config);
+			break;
+
+		case ConfiguredByIPandPort:
+			this.getJLabelMTPport().setEnabled(true);
+			this.getJTextFieldDefaultPortMTP().setEnabled(true);
+			this.getJButtonSetPortMTP().setEnabled(true);
+			this.getJButtonSetPortMTPDefault().setEnabled(true);
+			this.getJLabelIP().setEnabled(true);
+			this.getJTextFieldIPAddress().setEnabled(true);
+			this.getJButtonIPedit().setEnabled(true);
+			break;
+		}
 	}
 	
 	@Override
@@ -460,13 +777,11 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 
-		//String actCMD = ae.getActionCommand();
 		Object trigger = ae.getSource();
-		
 		if (trigger==jButtonSetPort) {
 			
 			// --- Open Dialog ------------------
-			JadeSetupNewPort newPort = new JadeSetupNewPort(Application.getMainWindow(), currProject.getProjectName(), true, currProject, jTextFieldDefaultPort.getLocationOnScreen());
+			JadeSetupNewPort newPort = new JadeSetupNewPort(Application.getMainWindow(), currProject.getProjectName(), true, this.currProject.getJadeConfiguration().getLocalPort(), jTextFieldDefaultPort.getLocationOnScreen());
 			newPort.setVisible(true);
 			// === Go ahead =====================
 			if (newPort.isCanceled() == false) {
@@ -475,7 +790,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 				if (newLocalPort!=oldLocalPort) {
 					// --- Set changes ----------
 					currProject.getJadeConfiguration().setLocalPort(newLocalPort);
-					jTextFieldDefaultPort.setText(newPort.getNewLocalPort4Jade().toString());
+					jTextFieldDefaultPort.setText(newLocalPort.toString());
 				}
 			}
 			newPort.dispose();
@@ -483,8 +798,45 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			
 			
 		} else if (trigger==jButtonSetPortDefault) {
-			currProject.getJadeConfiguration().setLocalPort(Application.getGlobalInfo().getJadeLocalPort());
-			jTextFieldDefaultPort.setText( Application.getGlobalInfo().getJadeLocalPort().toString() );
+			this.currProject.getJadeConfiguration().setLocalPort(Application.getGlobalInfo().getJadeLocalPort());
+			this.getJTextFieldDefaultPort().setText( Application.getGlobalInfo().getJadeLocalPort().toString() );
+
+		} else if (trigger==this.getJRadioButtonMtpAutoConfig()) {
+			// --- Switch to MTP-auto configuration -------
+			currProject.getJadeConfiguration().setMtpCreation(MTP_Creation.ConfiguredByJADE);
+			this.refreshMTPView();
+			
+		} else if (trigger==this.getJRadioButtonMtpIP()) {
+			// --- Switch to MTP-IP usage -----------------			
+			currProject.getJadeConfiguration().setMtpCreation(MTP_Creation.ConfiguredByIPandPort);
+			this.refreshMTPView();
+			
+		} else if (trigger==this.getJButtonIPedit()) {
+			NetworkAddresses netAddresses = new NetworkAddresses();
+			JPopupMenu popUp = netAddresses.getJPopupMenu4NetworkAddresses(this);
+			popUp.show(this.getJTextFieldIPAddress(), 0, this.getJTextFieldIPAddress().getHeight());
+			
+		} else if (trigger==this.getJButtonSetPortMTP()) {
+			// --- Set MTP port ---------------------------
+			JadeSetupNewPort newPort = new JadeSetupNewPort(Application.getMainWindow(), this.currProject.getProjectName(), true, this.currProject.getJadeConfiguration().getLocalPortMTP(), this.getJTextFieldDefaultPortMTP().getLocationOnScreen());
+			newPort.setVisible(true);
+			// === Go ahead =====================
+			if (newPort.isCanceled() == false) {
+				Integer oldLocalPortMTP = currProject.getJadeConfiguration().getLocalPortMTP();
+				Integer newLocalPortMTP = newPort.getNewLocalPort4Jade();
+				if (newLocalPortMTP!=oldLocalPortMTP) {
+					// --- Set changes ----------
+					currProject.getJadeConfiguration().setLocalPortMTP(newLocalPortMTP);
+					jTextFieldDefaultPortMTP.setText(newLocalPortMTP.toString());
+				}
+			}
+			newPort.dispose();
+			newPort = null;	
+			
+		} else if (trigger==this.getJButtonSetPortMTPDefault()) {
+			// --- Set default MTP port -------------------
+			this.currProject.getJadeConfiguration().setLocalPortMTP(7778);
+			this.getJTextFieldDefaultPortMTP().setText("7778");
 			
 		} else if (trigger==jButtonServiceAdd) {
 			if (jListServicesAvailable.getSelectedValue()!=null) {
@@ -497,9 +849,9 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			
 		} else if (trigger==jButtonServiceRemove) {
 			if (jListServicesChosen.getSelectedValue()!=null) {
-				Object[] selections = jListServicesChosen.getSelectedValues();
-				for (int i = 0; i < selections.length; i++) {
-					String serviceReference = (String) selections[i];
+				List<String> selections = jListServicesChosen.getSelectedValuesList();
+				for (int i = 0; i < selections.size(); i++) {
+					String serviceReference = (String) selections.get(i);
 					currProject.getJadeConfiguration().removeService(serviceReference);
 				}
 			}
@@ -511,20 +863,31 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 
 			// --- Clean current profile configuration --------------
 			PlatformJadeConfig currConfig = currProject.getJadeConfiguration();
-			currConfig.removeAllServices();
 			
 			// --- Set the current model to the default one ---------
 			currConfig.setLocalPort(defaultConfig.getLocalPort());
+			currConfig.setMtpCreation(defaultConfig.getMtpCreation());
+			currConfig.setMtpIpAddress(defaultConfig.getMtpIpAddress());
+			currConfig.setLocalPortMTP(defaultConfig.getLocalPortMTP());
 			
-			DefaultListModel delimo = defaultConfig.getListModelServices();
+			// --- Reset services -----------------------------------
+			currConfig.removeAllServices();
+			DefaultListModel<String> delimo = defaultConfig.getListModelServices();
 			for (int i = 0; i < delimo.size(); i++) {
 				String serviceRef = (String) delimo.get(i);
 				currConfig.addService(serviceRef);
 			}
 			this.refreshDataView();
+		
+		} else if (trigger instanceof JMenuItem) {
+			// --- Trigger from JPopoupMenue for the IP-Addresses ---
+			JMenuItem menuItem = (JMenuItem) trigger;
+			String actCMD = menuItem.getActionCommand();
+			currProject.getJadeConfiguration().setMtpIpAddress(actCMD);
+			this.getJTextFieldIPAddress().setText(actCMD);
 		}
 		
 	}
-
+	
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

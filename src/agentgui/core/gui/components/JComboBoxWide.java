@@ -34,8 +34,10 @@ import java.util.Vector;
  
 /**
  * The Class WideComboBox.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class JComboBoxWide extends JComboBox{ 
+public class JComboBoxWide<E> extends JComboBox<E> { 
  
 	private static final long serialVersionUID = 3185430839619749814L;
 
@@ -52,21 +54,21 @@ public class JComboBoxWide extends JComboBox{
      * Instantiates a new wide JComboBox.
      * @param items the items
      */
-    public JComboBoxWide(final Object items[]){ 
+    public JComboBoxWide(E[] items){ 
         super(items); 
     } 
     /**
      * Instantiates a new wide JComboBox.
      * @param items the items
      */
-    public JComboBoxWide(Vector<?> items) { 
+    public JComboBoxWide(Vector<E> items) { 
         super(items); 
     } 
     /**
      * Instantiates a new wide JComboBox.
      * @param aModel the a model
      */
-    public JComboBoxWide(ComboBoxModel aModel) { 
+    public JComboBoxWide(ComboBoxModel<E> aModel) { 
         super(aModel); 
     } 
  

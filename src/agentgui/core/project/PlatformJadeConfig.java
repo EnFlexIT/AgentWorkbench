@@ -32,6 +32,7 @@ import jade.core.Profile;
 import jade.core.ProfileImpl;
 
 import java.io.Serializable;
+import java.net.InetAddress;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,6 +46,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.network.NetworkAddresses;
 import agentgui.core.network.PortChecker;
 
 /**
@@ -73,6 +75,13 @@ public class PlatformJadeConfig implements Serializable {
 	private static final long serialVersionUID = -9062155032902746361L;
 	
 	private static final boolean debug = false;
+	
+	/**The enumeration MTP_Creation describes the possibilities, how the MTP-address can be configured. */
+	public static enum MTP_Creation {
+		ConfiguredByJADE,
+		ConfiguredByIPandPort
+	}
+	public static String MTP_IP_AUTO_Config = "Auto-Configuration";
 	
 	
 	// --- Services 'Activated automatically' ---------------------------------
@@ -109,10 +118,18 @@ public class PlatformJadeConfig implements Serializable {
 	@XmlTransient
 	private Project currProject = null;
 	@XmlTransient
-	private DefaultListModel listModelServices = null;
+	private DefaultListModel<String> listModelServices = null;
 	
 	@XmlElement(name="useLocalPort")	
 	private Integer useLocalPort = Application.getGlobalInfo().getJadeLocalPort();
+	
+	@XmlElement(name="mtpCreation")
+	private MTP_Creation mtpCreation = MTP_Creation.ConfiguredByJADE;
+	@XmlElement(name="mtpIpAddress")
+	private String mtpIpAddress = MTP_IP_AUTO_Config;
+	@XmlElement(name="mtpPort")
+	private Integer useLocalPortMTP = Application.getGlobalInfo().getJadeLocalPortMTP();
+	
 	@XmlElementWrapper(name = "serviceList")
 	@XmlElement(name="service")			
 	private HashSet<String> useServiceList = new HashSet<String>();
@@ -207,23 +224,91 @@ public class PlatformJadeConfig implements Serializable {
 	 * @param profile the new profile local port mtp
 	 */
 	private void setProfileLocalPortMTP(ProfileImpl profile) {
-		// --- Only set the MTP port in case of SERVER on local machines ------
-		GlobalInfo globalInfo = Application.getGlobalInfo();
-		if (globalInfo.getJadeUrlConfigurationForMaster().isLocalhost()) {
-			switch (globalInfo.getExecutionMode()) {
-			case SERVER:
-			case SERVER_MASTER:
-			case SERVER_SLAVE:
-				// --- See if the configure port for MTP is free --------------
-				Integer freePort = new PortChecker(globalInfo.getServerMasterPort4MTP(), globalInfo.getServerMasterURL()).getFreePort();
-				profile.setParameter("jade_mtp_http_port", freePort.toString());	
-				break;
+		
+		// --------------------------------------------------------------------
+		// --- Check MTP settings if a project is defined ---------------------
+		// --------------------------------------------------------------------
+		if (this.currProject!=null) {
+			// ----------------------------------------------------------------
+			// --- Use the project settings for the MTP configuration ---------
+			// ----------------------------------------------------------------
+			if (this.getMtpCreation()==MTP_Creation.ConfiguredByIPandPort) {
+				// --- Determine the IP address to use ------------------------
+				String ipAddress = null;
+				if (this.getMtpIpAddress()==null || this.getMtpIpAddress().equals("") || this.getMtpIpAddress().equals(MTP_IP_AUTO_Config)) {
+					// --- Auto configuration of the IP address ---------------
+					NetworkAddresses networkAddresses = new NetworkAddresses();
+					InetAddress inetAddress = networkAddresses.getPreferredInetAddress();
+					if (inetAddress!=null) {
+						ipAddress = inetAddress.getHostAddress();
+					}
+				} else {
+					// --- Use configured IP address --------------------------
+					ipAddress = this.getMtpIpAddress();
+				}
+				
+				// --- Set the MTP address ------------------------------------ 
+				if (ipAddress!=null) {
+					Integer freePort = new PortChecker(this.getLocalPortMTP(), ipAddress).getFreePort();
+					profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");					
+				}
+			}
+			
+		} else {
+			// ----------------------------------------------------------------
+			// --- Use the global settings for the MTP configuration ----------
+			// ----------------------------------------------------------------
+			GlobalInfo globalInfo = Application.getGlobalInfo();
+			MTP_Creation mtpCreation = globalInfo.getOwnMtpCreation();
+			String mtpIpAddress = globalInfo.getOwnMtpIP();
+			Integer mtpPort = globalInfo.getOwnMtpPort();
+			
+			if (mtpCreation==MTP_Creation.ConfiguredByIPandPort) {
+				
+				String ipAddress = null;
+				if (mtpIpAddress==null || mtpIpAddress.equals("") || mtpIpAddress.equals(MTP_IP_AUTO_Config)) {
+					// --- Auto configuration of the IP address ---------------
+					NetworkAddresses networkAddresses = new NetworkAddresses();
+					InetAddress inetAddress = networkAddresses.getPreferredInetAddress();
+					if (inetAddress!=null) {
+						ipAddress = inetAddress.getHostAddress();
+					}
+				} else {
+					// --- Use configured IP address --------------------------
+					ipAddress = mtpIpAddress;
+				}	
+				
+				// --- Set the MTP address ------------------------------------ 
+				if (ipAddress!=null) {
+					Integer freePort = new PortChecker(mtpPort, ipAddress).getFreePort();
+					profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");					
+				}
+			}
+			
+			if (globalInfo.getJadeUrlConfigurationForMaster().isLocalhost()) {
+				// --- Set MTP port in case of SERVER on local machines -------
+				switch (globalInfo.getExecutionMode()) {
+				case SERVER:
+				case SERVER_MASTER:
+				case SERVER_SLAVE:
+					// --------------------------------------------------------
+					// --- See if the configure port for MTP is free ----------
+					// --- May happen if a slave is executed, while ----------- 
+					// --- a master is already running ------------------------
+					// --------------------------------------------------------
+					Integer freePort = new PortChecker(globalInfo.getServerMasterPort4MTP(), globalInfo.getServerMasterURL()).getFreePort();
+					profile.setParameter("jade_mtp_http_port", freePort.toString());	
+					break;
 
-			default:
-				break;
-			}	
+				default:
+					break;
+				}	
+			}
+			
 		}
+		
 	}
+	
 	/**
 	 * Adds the local configured SERVICES to the input instance of Profile.
 	 * @param profile the profile to work on
@@ -266,12 +351,11 @@ public class PlatformJadeConfig implements Serializable {
 			// --- add to the local HashSet -------------------------
 			this.useServiceList.add(serviceClassReference);
 			// --- add to the DefaultListModel ----------------------
-			DefaultListModel delimo = this.getListModelServices();
-			delimo.addElement(serviceClassReference);
+			this.getListModelServices().addElement(serviceClassReference);
 			// --- sort the ListModel -------------------------------
 			this.sortListModelServices();
 			// --- if set, set project changed and unsaved ----------
-			if (currProject!=null) {
+			if (this.currProject!=null) {
 				this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 			}
 		}
@@ -288,10 +372,9 @@ public class PlatformJadeConfig implements Serializable {
 			// --- remove from the local HashSet --------------------
 			this.useServiceList.remove(serviceClassReference);
 			// --- remove from the DefaultListModel -----------------
-			DefaultListModel delimo = this.getListModelServices();
-			delimo.removeElement(serviceClassReference);
+			this.getListModelServices().removeElement(serviceClassReference);
 			// --- if set, set project changed and unsaved ----------
-			if (currProject!=null) {
+			if (this.currProject!=null) {
 				this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 			}
 		}
@@ -323,19 +406,17 @@ public class PlatformJadeConfig implements Serializable {
 			return false;
 		}
 	}
-	
 	/**
 	 * Counts the number of services which are currently configured.
-	 *
-	 * @return the integer
+	 * @return the number of services used
 	 */
 	public Integer countUsedServices() {
 		return this.useServiceList.size();
 	}
 	
+	
 	/**
 	 * With this class the LocalPort, which will be used from a JADE-Container can be set.
-	 *
 	 * @param port2Use the new local port
 	 */
 	public void setLocalPort(int port2Use){
@@ -345,26 +426,84 @@ public class PlatformJadeConfig implements Serializable {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 		}
 	}
-	
 	/**
 	 * Returns the current Port which is  configured for a JADE-Container.
-	 *
-	 * @return Integer
+	 * @return the local port on which JADE is running
 	 */
+	@XmlTransient
 	public Integer getLocalPort() {
 		return useLocalPort;
 	}
+
+	/**
+	 * Sets the use local port to use for the JADE MTP
+	 * @param newMTPport the new MTP port to use
+	 */
+	public void setLocalPortMTP(Integer newMTPport) {
+		this.useLocalPortMTP = newMTPport;
+		// --- if set, set project changed and unsaved ----------
+		if (currProject!=null) {
+			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+		}
+	}
+	/**
+	 * Returns the current Port which is configured for the MTP of the JADE main container.
+	 * @return the local MTP port 
+	 */
+	@XmlTransient
+	public Integer getLocalPortMTP() {
+		return useLocalPortMTP;
+	}
+
+	/**
+	 * Sets how the MTP settings have to be created.
+	 * @param mtpCreation the new {@link MTP_Creation}
+	 */
+	public void setMtpCreation(MTP_Creation mtpCreation) {
+		this.mtpCreation = mtpCreation;
+		// --- if set, set project changed and unsaved ----------
+		if (currProject!=null) {
+			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+		}
+	}
+	/**
+	 * Returns how the MTP settings have to be created.
+	 * @return the mtp usage
+	 */
+	@XmlTransient
+	public MTP_Creation getMtpCreation() {
+		return mtpCreation;
+	}
 	
 	/**
+	 * Sets the MTP IP-address.
+	 * @param mtpIpAddress the new MTP IP-address
+	 */
+	public void setMtpIpAddress(String mtpIpAddress) {
+		this.mtpIpAddress = mtpIpAddress;
+		// --- if set, set project changed and unsaved ----------
+		if (currProject!=null) {
+			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+		}
+	}
+	/**
+	 * Returns the MTP IP-address.
+	 * @return the MTP IP-address.
+	 */
+	@XmlTransient
+	public String getMtpIpAddress() {
+		return mtpIpAddress;
+	}
+
+	/**
 	 * Gets the list model services.
-	 *
 	 * @return the listModelServices
 	 */
 	@XmlTransient
-	public DefaultListModel getListModelServices() {
+	public DefaultListModel<String> getListModelServices() {
 		if (listModelServices==null) {
-			listModelServices = new DefaultListModel();
-			Iterator<String> it = useServiceList.iterator();
+			listModelServices = new DefaultListModel<String>();
+			Iterator<String> it = this.useServiceList.iterator();
 			while (it.hasNext()) {
 				listModelServices.addElement(it.next());
 			}
@@ -397,23 +536,18 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public boolean isEqual(PlatformJadeConfig jadeConfig2) {
 		
-		if ( this.countUsedServices() != jadeConfig2.countUsedServices() ) {
-			return false;
-		}
+		if (this.countUsedServices()!=jadeConfig2.countUsedServices()) return false;
 
 		Iterator<String> it = this.useServiceList.iterator();
-		while( it.hasNext() ) {
+		while(it.hasNext()) {
 			String currService = it.next();
-			if ( jadeConfig2.isUsingService(currService) == false ) {
-				return false;
-			}
+			if (jadeConfig2.isUsingService(currService)==false) return false;
 		}
-		// --- Soll der selbe Jade LocalPort verwendet werden ? ----
-		if ( jadeConfig2.getLocalPort().equals(this.getLocalPort()) ) {
-			return true;
-		} else {
-			return false;
-		}		
+
+		if (jadeConfig2.getLocalPort().equals(this.getLocalPort())==false) return false;
+		if (jadeConfig2.getLocalPortMTP().equals(this.getLocalPortMTP())==false) return false;
+		if (jadeConfig2.getMtpCreation()!=this.getMtpCreation()) return false;
+		return true;
 	}
 
 	/**
@@ -428,5 +562,6 @@ public class PlatformJadeConfig implements Serializable {
 		bugOut += "Services:" + getServiceListArgument();
 		return bugOut;
 	}
+
 
 }

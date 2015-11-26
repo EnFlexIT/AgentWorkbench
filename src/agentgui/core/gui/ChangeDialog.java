@@ -93,7 +93,7 @@ public class ChangeDialog extends JDialog implements ActionListener {
 	
 	private JPanel jPanelBottom = null;
 	private JLabel jLabelVersion = null;
-	private JComboBox jComboBoxVersions = null;
+	private JComboBox<String> jComboBoxVersions = null;
 	private JLabel jLabelDummy = null;
 	private JButton jButtonClose = null;
 	
@@ -323,9 +323,9 @@ public class ChangeDialog extends JDialog implements ActionListener {
 	 * Gets the combo box model for the versions.
 	 * @return the combo box model
 	 */
-	private DefaultComboBoxModel getComboBoxModel() {
+	private DefaultComboBoxModel<String> getComboBoxModel() {
 
-		DefaultComboBoxModel cbm = new DefaultComboBoxModel();
+		DefaultComboBoxModel<String> cbm = new DefaultComboBoxModel<String>();
 		Vector<String> versionNumbers = new Vector<String>(); 
 
 		// --- Find all files in the package 'agentgui/ -------------
@@ -396,7 +396,7 @@ public class ChangeDialog extends JDialog implements ActionListener {
 				};
 			});
 			// --- Fill the combo box model -------------------------
-			cbm = new DefaultComboBoxModel(versionNumbers);
+			cbm = new DefaultComboBoxModel<String>(versionNumbers);
 			
 			// --- set the current file -----------------------------
 			this.loadBuildChanges(versionNumbers.get(0));
@@ -408,9 +408,9 @@ public class ChangeDialog extends JDialog implements ActionListener {
 	 * This method initializes jComboBoxVersions	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox getJComboBoxVersions() {
+	private JComboBox<String> getJComboBoxVersions() {
 		if (jComboBoxVersions == null) {
-			jComboBoxVersions = new JComboBox(this.getComboBoxModel());
+			jComboBoxVersions = new JComboBox<String>(this.getComboBoxModel());
 			jComboBoxVersions.setPreferredSize(new Dimension(120, 26));
 			jComboBoxVersions.addActionListener(this);
 		}

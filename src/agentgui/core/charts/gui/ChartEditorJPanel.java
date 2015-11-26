@@ -85,8 +85,8 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	private static final Integer DEFAULT_ImageWidth = 1600; 
 	private static final Integer DEFAULT_ImageHeight = 900;
 	
-	private final String pathImage = Application.getGlobalInfo().getPathImageIntern(); // @jve:decl-index=0:
-    private final Dimension jButtonSize = new Dimension(26, 26); // @jve:decl-index=0:
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern(); 
+    private final Dimension jButtonSize = new Dimension(26, 26); 
      
 	// Swing components
 	protected JToolBar toolBar;
@@ -94,7 +94,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	protected JButton btnImport;
 	protected JButton btnSaveImage = null;
 	protected JLabel jLabelExport = null;
-	protected JComboBox cbImageAspectRatio = null;
+	protected JComboBox<String> cbImageAspectRatio = null;
 	protected JTextField tfImageWidth = null;
 	protected JLabel jLabelX = null;
 	protected JTextField tfImageHeight= null;
@@ -256,10 +256,10 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		return btnSaveImage;
     }
     
-    protected JComboBox getCbImageAspectRatio(){
+    protected JComboBox<String> getCbImageAspectRatio(){
     	if(cbImageAspectRatio == null){
-    		DefaultComboBoxModel formatsModel = new DefaultComboBoxModel(new String[]{"16:9", "4:3"});
-    		cbImageAspectRatio = new JComboBox(formatsModel);
+    		DefaultComboBoxModel<String> formatsModel = new DefaultComboBoxModel<String>(new String[]{"16:9", "4:3"});
+    		cbImageAspectRatio = new JComboBox<String>(formatsModel);
     		cbImageAspectRatio.setToolTipText(Language.translate("Das Seitenverhältnis des exportierten Bildes"));
     		cbImageAspectRatio.addActionListener(this);
     	}

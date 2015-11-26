@@ -45,6 +45,8 @@ import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
+import agentgui.core.project.PlatformJadeConfig;
+import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 
 /**
  * This class manages the properties that are located in the
@@ -84,6 +86,10 @@ public class FileProperties extends Properties {
 	private final String DEF_MASTER_PORT = "12_MASTER_PORT";
 	private final String DEF_MASTER_PORT4MTP = "13_MASTER_PORT4MTP";
 	
+	private final String DEF_OWN_MTP_CREATION = "15_OWN_MTP_CREATION";
+	private final String DEF_OWN_MTP_IP = "16_OWN_MTP_IP";
+	private final String DEF_OWN_MTP_PORT = "17_OWN_MTP_PORT";
+	
 	private final String DEF_MASTER_DB_HOST = "20_MASTER_DB_HOST";
 	private final String DEF_MASTER_DB_NAME = "21_MASTER_DB_NAME";
 	private final String DEF_MASTER_DB_USER = "22_MASTER_DB_USER";
@@ -117,6 +123,9 @@ public class FileProperties extends Properties {
 										this.DEF_MASTER_URL,
 										this.DEF_MASTER_PORT,
 										this.DEF_MASTER_PORT4MTP,
+										this.DEF_OWN_MTP_CREATION,
+										this.DEF_OWN_MTP_IP,
+										this.DEF_OWN_MTP_PORT,
 										this.DEF_UPDATE_SITE,
 										this.DEF_UPDATE_AUTOCONFIG,
 										this.DEF_UPDATE_KEEP_DICTIONARY,
@@ -261,7 +270,7 @@ public class FileProperties extends Properties {
 			Integer propValueInt = Integer.parseInt(propValue.trim());
 			Application.getGlobalInfo().setServerMasterPort(propValueInt);
 		} else {
-			Application.getGlobalInfo().setServerMasterPort(0);
+			Application.getGlobalInfo().setServerMasterPort(1099);
 		}
 		// --- this.DEF_MASTER_PORT4MTP --------------
 		propValue = this.getProperty(this.DEF_MASTER_PORT4MTP);
@@ -269,7 +278,32 @@ public class FileProperties extends Properties {
 			Integer propValueInt = Integer.parseInt(propValue.trim());
 			Application.getGlobalInfo().setServerMasterPort4MTP(propValueInt);
 		} else {
-			Application.getGlobalInfo().setServerMasterPort4MTP(0);
+			Application.getGlobalInfo().setServerMasterPort4MTP(7778);
+		}
+		
+		// --- this.DEF_OWN_MTP_CREATION -------------
+		propValue = this.getProperty(this.DEF_OWN_MTP_CREATION).trim();
+		if ( propValue.equalsIgnoreCase("") == false ) {
+			MTP_Creation ownMtpCreation = MTP_Creation.valueOf(propValue.trim());
+			Application.getGlobalInfo().setOwnMtpCreation(ownMtpCreation);
+		} else {
+			Application.getGlobalInfo().setOwnMtpCreation(MTP_Creation.ConfiguredByJADE);
+		}
+		// --- this.DEF_OWN_MTP_IP -------------------
+		propValue = this.getProperty(this.DEF_OWN_MTP_IP);
+		if ( propValue.equalsIgnoreCase("") == false ) {
+			String ipAddress = propValue.trim();
+			Application.getGlobalInfo().setOwnMtpIP(ipAddress);
+		} else {
+			Application.getGlobalInfo().setOwnMtpIP(PlatformJadeConfig.MTP_IP_AUTO_Config);
+		}
+		// --- this.DEF_OWN_MTP_PORT -------------------
+		propValue = this.getProperty(this.DEF_OWN_MTP_PORT);
+		if ( propValue.equalsIgnoreCase("") == false ) {
+			Integer propValueInt = Integer.parseInt(propValue.trim());
+			Application.getGlobalInfo().setOwnMtpPort(propValueInt);
+		} else {
+			Application.getGlobalInfo().setOwnMtpPort(7778);
 		}
 		
 		
@@ -397,7 +431,6 @@ public class FileProperties extends Properties {
 			Application.getGlobalInfo().setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.NONE);
 		}
 		
-		
 	}
 
 	/**
@@ -457,10 +490,17 @@ public class FileProperties extends Properties {
 
 		// --- this.DEF_MASTER_PORT ------------------
 		this.setProperty(this.DEF_MASTER_PORT, Application.getGlobalInfo().getServerMasterPort().toString());
-
 		// --- this.DEF_MASTER_PORT4MTP --------------
 		this.setProperty(this.DEF_MASTER_PORT4MTP, Application.getGlobalInfo().getServerMasterPort4MTP().toString());
 
+		
+		// --- this.DEF_OWN_MTP_CREATION -------------
+		this.setProperty(this.DEF_OWN_MTP_CREATION, Application.getGlobalInfo().getOwnMtpCreation().toString());
+		// --- this.DEF_OWN_MTP_IP -------------------
+		this.setProperty(this.DEF_OWN_MTP_IP, Application.getGlobalInfo().getOwnMtpIP());
+		// --- this.DEF_OWN_MTP_PORT -----------------
+		this.setProperty(this.DEF_OWN_MTP_PORT, Application.getGlobalInfo().getOwnMtpPort().toString());
+		
 		
 		// --- this.DEF_MASTER_DB_HOST ---------------
 		if (Application.getGlobalInfo().getServerMasterDBHost() == null) {
@@ -575,6 +615,25 @@ public class FileProperties extends Properties {
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT4MTP) ) {				
 				this.setProperty(this.DEF_MASTER_PORT4MTP, Application.getGlobalInfo().getServerMasterPort4MTP().toString());
 				
+			
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_AUTOSTART) ) {
+				if (Application.getGlobalInfo().isServerAutoRun()==true) {
+					this.setProperty(this.DEF_AUTOSTART, "true");
+				} else {
+					this.setProperty(this.DEF_AUTOSTART, "false");	
+				}
+
+				
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_OWN_MTP_CREATION) ) {
+				this.setProperty(this.DEF_OWN_MTP_CREATION, MTP_Creation.ConfiguredByJADE.toString());
+				
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_OWN_MTP_IP) ) {
+				this.setProperty(this.DEF_OWN_MTP_IP, PlatformJadeConfig.MTP_IP_AUTO_Config);
+				
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_OWN_MTP_PORT) ) {
+				this.setProperty(this.DEF_OWN_MTP_PORT, Application.getGlobalInfo().getOwnMtpPort().toString());
+
+				
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_SITE) ) {				
 				this.setProperty(this.DEF_UPDATE_SITE, "http://update.agentgui.org");
 				
@@ -610,6 +669,12 @@ public class FileProperties extends Properties {
 				// ----------------------------------------
 				if (mandatoryProps[i].equals(this.DEF_LANGUAGE)) {
 					this.setProperty(mandatoryProps[i], Language.EN);
+				} else if (mandatoryProps[i].equals(this.DEF_AUTOSTART)) {
+					this.setProperty(mandatoryProps[i], "true");
+				} else if (mandatoryProps[i].equals(this.DEF_OWN_MTP_CREATION)) {
+					this.setProperty(mandatoryProps[i],  MTP_Creation.ConfiguredByJADE.toString());
+				} else if (mandatoryProps[i].equals(this.DEF_OWN_MTP_IP)) {
+					this.setProperty(mandatoryProps[i], PlatformJadeConfig.MTP_IP_AUTO_Config);
 				} else if (mandatoryProps[i].equals(this.DEF_BENCH_SKIP_ALLWAYS)) {
 					this.setProperty(mandatoryProps[i], "true");
 				} else if (mandatoryProps[i].equals(this.DEF_UPDATE_SITE)) {

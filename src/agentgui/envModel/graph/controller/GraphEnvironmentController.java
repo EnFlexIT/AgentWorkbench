@@ -309,7 +309,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    this.setDisplayEnvironmentModel(this.networkModel);
 		    
 		    // --- register a new list of agents, which has to be started with the environment ------
-		    this.setAgents2Start(new DefaultListModel());
+		    this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
 		    this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 	
 		    break;
@@ -380,7 +380,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		if (fileName != null) {
 	
 		    // --- register the list of agents, which has to be started with the environment ------
-		    this.setAgents2Start(new DefaultListModel());
+		    this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
 		    this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
 	
 		    // --- Load the graph topology from the graph file ------------------------------------
@@ -598,7 +598,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		}
     	
     	String search4 = networkComponent.getId();
-    	DefaultListModel agentList = this.getAgents2Start();
+    	DefaultListModel<AgentClassElement4SimStart> agentList = this.getAgents2Start();
     	int i = 0;
     	for (i = 0; i < agentList.size(); i++) {
     		AgentClassElement4SimStart agentElement = (AgentClassElement4SimStart) agentList.get(i);

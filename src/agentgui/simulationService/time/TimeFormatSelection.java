@@ -69,7 +69,7 @@ public class TimeFormatSelection extends JPanelForActions {
 	private JLabel jLabelFormat = null;
 	private JTextField jTextFieldTimeFormat = null;
 	private JButton jButtonTimeFormatDefault = null;
-	private JComboBoxWide jComboBoxTimeFormat = null;
+	private JComboBoxWide<TimeFormat> jComboBoxTimeFormat = null;
 
 	private JPanel jPanelDummy = null;
 
@@ -216,10 +216,10 @@ public class TimeFormatSelection extends JPanelForActions {
 	 * This method initializes jComboBoxTimeFormat.
 	 * @return javax.swing.JComboBox
 	 */
-	private JComboBoxWide getJComboBoxTimeFormat() {
+	private JComboBoxWide<TimeFormat> getJComboBoxTimeFormat() {
 		if (jComboBoxTimeFormat == null) {
-			final DefaultComboBoxModel cbm = new DefaultComboBoxModel(new TimeFormatVector());
-			jComboBoxTimeFormat = new JComboBoxWide(cbm);
+			final DefaultComboBoxModel<TimeFormat> cbm = new DefaultComboBoxModel<TimeFormat>(new TimeFormatVector());
+			jComboBoxTimeFormat = new JComboBoxWide<TimeFormat>(cbm);
 			jComboBoxTimeFormat.setToolTipText("Vorlagen");
 			jComboBoxTimeFormat.setToolTipText(Language.translate(jComboBoxTimeFormat.getToolTipText()));
 			jComboBoxTimeFormat.addActionListener(new ActionListener() {

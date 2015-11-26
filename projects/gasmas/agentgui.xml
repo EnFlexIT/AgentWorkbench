@@ -18,19 +18,22 @@
         <agentVector>
             <agent agentReference="gasmas.agents.components.ClusterNetworkComponentAgent">
                 <startArgumentVector>
-                    <startArgument ontologyReference="agentgui.ontology.Simple_Boolean" position="1"/>
-                    <startArgument ontologyReference="agentgui.ontology.TimeSeriesChart" position="2"/>
+                    <startArgument position="1" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                    <startArgument position="2" ontologyReference="agentgui.ontology.TimeSeriesChart"/>
                 </startArgumentVector>
             </agent>
             <agent agentReference="gasmas.agents.components.ClusterNetworkAgent">
                 <startArgumentVector>
-                    <startArgument ontologyReference="agentgui.ontology.XyChart" position="1"/>
+                    <startArgument position="1" ontologyReference="agentgui.ontology.XyChart"/>
                 </startArgumentVector>
             </agent>
         </agentVector>
     </agentStartConfiguration>
     <jadeConfiguration>
         <useLocalPort>1099</useLocalPort>
+        <mtpCreation>ConfiguredByJADE</mtpCreation>
+        <mtpIpAddress>Auto-Configuration</mtpIpAddress>
+        <mtpPort>7778</mtpPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
@@ -67,8 +70,8 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>MixedClusters (1) Small</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
-    <downloadResources>http://Pandora:8080/gasmas/BIN_DUMP_-1172359784.jar</downloadResources>
-    <downloadResources>http://Pandora:8080/gasmas/gasmas_IDE.jar</downloadResources>
+    <downloadResources>http://Pandora.cs.uni-due.de:8080/gasmas/BIN_DUMP_-1172359784.jar</downloadResources>
+    <downloadResources>http://Pandora.cs.uni-due.de:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>
@@ -103,16 +106,16 @@
             <value>hnord.xml</value>
         </entry>
         <entry>
-            <key>Testimport</key>
-            <value>testimport.xml</value>
+            <key>Simple Net</key>
+            <value>simple_net.xml</value>
         </entry>
         <entry>
             <key>HNord (1) Small</key>
             <value>hnord_1_small.xml</value>
         </entry>
         <entry>
-            <key>Simple Net</key>
-            <value>simple_net.xml</value>
+            <key>Testimport</key>
+            <value>testimport.xml</value>
         </entry>
         <entry>
             <key>MixedClusters (3) Large</key>
@@ -127,14 +130,14 @@
             <value>simple_net_two_entries.xml</value>
         </entry>
         <entry>
-            <key>HNord (3) Large</key>
-            <value>hnord_3_large.xml</value>
-        </entry>
-        <entry>
             <key>HNord Complete</key>
             <value>hnord_complete.xml</value>
         </entry>
+        <entry>
+            <key>HNord (3) Large</key>
+            <value>hnord_3_large.xml</value>
+        </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>false</unsaved>
+    <unsaved>true</unsaved>
 </project>

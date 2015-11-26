@@ -53,8 +53,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 
-import agentgui.core.project.Project;
-
 /**
  * This JDialog is used for the configuration of the port, which JADE uses for its platform
  * 
@@ -70,32 +68,28 @@ public class JadeSetupNewPort extends JDialog implements ActionListener {
 	private JButton jButtonSetPortDefault = null;
 	private JButton jButtonCancel = null;
 
-	private final KeyStroke keyStrokeESCAPE = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);  //  @jve:decl-index=0:
-	private final KeyStroke keyStrokeENTER = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);  //  @jve:decl-index=0:
+	private final KeyStroke keyStrokeESCAPE = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+	private final KeyStroke keyStrokeENTER = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
 	
-	private Point currPosition = null;
-	private Project currProject = null;
-	private boolean canceled = false;
-	private Integer localJadePort = null;
+	private Integer currPort;
+	private Point currPosition;
+	private boolean canceled;
 	
 	
 	/**
 	 * This is the default constructor
 	 */
-	public JadeSetupNewPort(Frame owner, String titel, boolean modal, Project project, Point position) {
+	public JadeSetupNewPort(Frame owner, String titel, boolean modal, int currPort, Point position) {
 		super(owner, titel, modal);
-		currProject = project;
-		currPosition = position;
-		initialize();
+		this.currPort =currPort;
+		this.currPosition = position;
 		
-		// --- Take the "To-use-Port" from the current Project ------
-		localJadePort = currProject.getJadeConfiguration().getLocalPort();
-		this.jTextFieldDefaultPort.setText(localJadePort.toString());
+		this.initialize();
+		this.getJTextFieldDefaultPort().setText(this.currPort.toString());
 	}
 
 	/**
-	 * This method initializes this
-	 * @return void
+	 * This method initialises this
 	 */
 	private void initialize() {
 		
@@ -134,7 +128,7 @@ public class JadeSetupNewPort extends JDialog implements ActionListener {
 	 * @return the new port number to use
 	 */
 	public Integer getNewLocalPort4Jade(){
-		return localJadePort;
+		return currPort;
 	}
 	
 	/**
@@ -169,17 +163,17 @@ public class JadeSetupNewPort extends JDialog implements ActionListener {
 		if (jContentPane == null) {
 
 			jLabelNewPort = new JLabel();
-			jLabelNewPort.setText("New LocalPort:");
+			jLabelNewPort.setText("New Port:");
 			jLabelNewPort.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelNewPort.setBounds(new Rectangle(13, 15, 93, 16));
+			jLabelNewPort.setBounds(new Rectangle(13, 15, 75, 16));
 
 			jContentPane = new JPanel();
 			jContentPane.setLayout(null);
 			jContentPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED), BorderFactory.createEtchedBorder(EtchedBorder.RAISED)));
-			jContentPane.add(getJTextFieldDefaultPort(), null);
+			jContentPane.add(this.getJTextFieldDefaultPort(), null);
 			jContentPane.add(jLabelNewPort, null);
-			jContentPane.add(getJButtonSetPortDefault(), null);
-			jContentPane.add(getJButtonCancel(), null);
+			jContentPane.add(this.getJButtonSetPortDefault(), null);
+			jContentPane.add(this.getJButtonCancel(), null);
 		}
 		return jContentPane;
 	}
@@ -230,7 +224,7 @@ public class JadeSetupNewPort extends JDialog implements ActionListener {
 			// === OK-Action ========================================
 
 			// --- Error check --------------------------------------
-			Long newIntLocalPort = Long.valueOf(this.jTextFieldDefaultPort.getText());
+			Integer newIntLocalPort = Integer.valueOf(this.jTextFieldDefaultPort.getText());
 			
 			// --- check number -------------------------------------
 			if (newIntLocalPort==null || newIntLocalPort==0) {
@@ -246,7 +240,7 @@ public class JadeSetupNewPort extends JDialog implements ActionListener {
 				return;
 			}
 			// --- Remind new value ---------------------------------
-			this.localJadePort = Integer.valueOf(this.jTextFieldDefaultPort.getText());
+			this.currPort = Integer.valueOf(this.jTextFieldDefaultPort.getText());
 			this.canceled = false;
 			this.setVisible(false);
 		

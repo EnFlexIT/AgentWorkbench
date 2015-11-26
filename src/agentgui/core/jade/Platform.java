@@ -31,6 +31,7 @@ package agentgui.core.jade;
 import jade.core.Agent;
 import jade.core.ContainerID;
 import jade.core.Profile;
+import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.debugging.DebugService;
 import jade.wrapper.AgentContainer;
@@ -64,7 +65,7 @@ import agentgui.simulationService.SimulationService;
  */
 public class Platform extends Object {
 
-	public enum UTILITY_AGENT_JOB {
+	public static enum UTILITY_AGENT_JOB {
 		OpernDF,
 		ShutdownPlatform,
 		OpenLoadMonitor,
@@ -399,9 +400,9 @@ public class Platform extends Object {
 	 * used.
 	 * @return Profile (for Jade-Containers)
 	 */
-	public Profile jadeGetContainerProfile() {
+	public ProfileImpl jadeGetContainerProfile() {
 
-		Profile jadeContainerProfile = null;
+		ProfileImpl jadeContainerProfile = null;
 		Project currProject = Application.getProjectFocused();
 		
 		// --- Configure the JADE-Profile to use --------------------
@@ -724,7 +725,7 @@ public class Platform extends Object {
 	 * @param localAgentName the agent name
 	 * @return true, if the agent is running
 	 */
-	public boolean jadeAgentIsRunning (String localAgentName) {
+	public boolean jadeAgentIsRunning(String localAgentName) {
 		return jadeAgentIsRunning(localAgentName, jadeMainContainer.getName());
 	}
 	
@@ -737,22 +738,22 @@ public class Platform extends Object {
 	 */
 	public boolean jadeAgentIsRunning (String localAgentName, String localContainerName) {
 		
-		boolean AgentiR;
-		AgentContainer AgenCont = null;
-		AgentController AgeCon = null;
+		boolean isRunning;
+		AgentContainer  agentContainer = null;
+		AgentController agentController = null;
 		
-		if (jadeIsMainContainerRunning() == false ) {
+		if (this.jadeIsMainContainerRunning()==false) {
 			return false;
 		}
 
 		// --- 0. Set to the right Container ------------------------
-		AgenCont = jadeGetContainer(localContainerName);
-		if ( AgenCont == null ) {
+		agentContainer = jadeGetContainer(localContainerName);
+		if (agentContainer==null) {
 			return false;
 		}
 		// --- 1. try to find the agent in main-container -----------
 		try {
-			AgeCon = AgenCont.getAgent(localAgentName);
+			agentController = agentContainer.getAgent(localAgentName);
 		} 
 		catch (ControllerException CE) {
 			return false; 	// CE.printStackTrace();			
@@ -761,14 +762,14 @@ public class Platform extends Object {
 		// --- 2. try to get agent's state --------------------------				
 		try {
 			@SuppressWarnings("unused")
-			State Stat = AgeCon.getState();
+			State state = agentController.getState();
 			//System.out.println( "Staus of Agent '" + AgeCon.getName() + "': " +  Stat.getCode() + " - " + Stat.getName()); 
-			AgentiR = true;
+			isRunning = true;
 		}
 		catch (Exception eMC) {
-			AgentiR = false; //	eMC.printStackTrace();			
+			isRunning = false; //	eMC.printStackTrace();			
 		}
-		return AgentiR;
+		return isRunning;
 	}	
 	
 	/**
@@ -778,8 +779,10 @@ public class Platform extends Object {
 	 * @return the agent container
 	 */
 	public AgentContainer jadeContainerCreate(String newContainerName) {
-		Profile pSub = this.jadeGetContainerProfile();
+		ProfileImpl pSub = this.jadeGetContainerProfile();
 		pSub.setParameter(Profile.CONTAINER_NAME, newContainerName);
+		pSub.setParameter(Profile.MAIN, (new Boolean(false)).toString());
+		pSub.setParameter(Profile.MTPS, null);
 		AgentContainer agentContainer = jadeRuntime.createAgentContainer(pSub);
 		jadeContainerLocal.add(agentContainer);
 		return agentContainer;		
@@ -921,7 +924,7 @@ public class Platform extends Object {
 	 */
 	public void jadeAgentStart(String newAgentName, Class<? extends Agent> clazz, Object[] startArguments, String inContainer ) {
 		
-		int MsgAnswer;
+		int msgAnswer;
 		String msgHead, msgText;
 		AgentController agentController;
 		AgentContainer agentContainer;
@@ -930,15 +933,15 @@ public class Platform extends Object {
 		if ( jadeIsMainContainerRunning() == false ) {
 			msgHead = Language.translate("JADE wurde noch nicht gestartet!");
 			msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
-			MsgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
-			if ( MsgAnswer == 1 ) return; // --- NO,just exit 
+			msgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
+			if (msgAnswer==JOptionPane.NO_OPTION) return; // --- NO,just exit 
 			// --- Start the JADE-Platform -------------------
-			jadeStart();			
+			this.jadeStart();			
 		}
 		
-		agentContainer = this.jadeGetContainer( inContainer );
-		if (agentContainer == null) {
-			agentContainer = jadeContainerCreate( inContainer );
+		agentContainer = this.jadeGetContainer(inContainer);
+		if (agentContainer==null) {
+			agentContainer = jadeContainerCreate(inContainer);
 		}		
 		try {
 			Agent agent = (Agent) clazz.newInstance();

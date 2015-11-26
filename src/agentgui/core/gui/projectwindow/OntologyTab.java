@@ -73,16 +73,17 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	
 	private Project currProject;
-	private JSplitPane OntoSplitPane = null;
-	private JScrollPane TreeScrollPane = null;
+	private JSplitPane ontoSplitPane = null;
+	private JScrollPane scrollPaneTree = null;
 
-	private JTree OntoTree = null;
-	private JPanel OntoMain = null;
+	private JTree ontoTree = null;
+	private JPanel ontoMain = null;
 	private JPanel jPanelLeft = null;
 	private JPanel jPanelLeftNavi = null;
 	private JButton jButtonAddOntology = null;
 	private JButton jButtonRemoveOntology = null;
 
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -107,6 +108,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 		BorderLayout borderLayout = new BorderLayout();
 		borderLayout.setHgap(50);
 		borderLayout.setVgap(50);
+		
 		this.setLayout(borderLayout);
 		this.setSize(850, 500);
 		this.setAutoscrolls(true);		
@@ -114,37 +116,32 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 		this.setFocusable(true);
 		this.setVisible(true);
 		this.add(getOntoSplitPane(), BorderLayout.CENTER);
-
-
 	}
-
 
 	/**
 	 * This method initializes OntoSplitPane	
-	 * 	
 	 * @return javax.swing.JSplitPane	
 	 */
 	private JSplitPane getOntoSplitPane() {
-		if (OntoSplitPane == null) {
-			OntoSplitPane = new JSplitPane();
-			OntoSplitPane.setDividerLocation(250);
-			OntoSplitPane.setLeftComponent(getJPanelLeft());
-			OntoSplitPane.setRightComponent(getOntoMain());
+		if (ontoSplitPane == null) {
+			ontoSplitPane = new JSplitPane();
+			ontoSplitPane.setDividerLocation(250);
+			ontoSplitPane.setLeftComponent(getJPanelLeft());
+			ontoSplitPane.setRightComponent(getOntoMain());
 		}
-		return OntoSplitPane;
+		return ontoSplitPane;
 	}
 
 	/**
 	 * This method initializes TreeScrollPane	
-	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */
 	private JScrollPane getTreeScrollPane() {
-		if (TreeScrollPane == null) {
-			TreeScrollPane = new JScrollPane();
-			TreeScrollPane.setViewportView(getOntoTree());
+		if (scrollPaneTree == null) {
+			scrollPaneTree = new JScrollPane();
+			scrollPaneTree.setViewportView(getOntoTree());
 		}
-		return TreeScrollPane;
+		return scrollPaneTree;
 	}
 
 	/**
@@ -152,14 +149,14 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	 * @return javax.swing.JTree	
 	 */
 	private JTree getOntoTree() {
-		if (OntoTree == null) {
+		if (ontoTree == null) {
 			//OntoTree = new JTree( CurrProject.Ontology.getOntologyTree() );
-			OntoTree = new JTree( currProject.getOntologyVisualisationHelper().getOntologyTree() );
-			OntoTree.setName("OntoTree");
-			OntoTree.setShowsRootHandles(false);
-			OntoTree.setRootVisible(true);
-			OntoTree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
-			OntoTree.addTreeSelectionListener( new TreeSelectionListener() {
+			ontoTree = new JTree( currProject.getOntologyVisualisationHelper().getOntologyTree() );
+			ontoTree.setName("OntoTree");
+			ontoTree.setShowsRootHandles(false);
+			ontoTree.setRootVisible(true);
+			ontoTree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
+			ontoTree.addTreeSelectionListener( new TreeSelectionListener() {
 				@Override
 				public void valueChanged(TreeSelectionEvent ts) {
 					// ----------------------------------------------------------
@@ -168,10 +165,10 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 					// --- Node auslesen und Slots anzeigen ---------------------
 					DefaultMutableTreeNode currNode = (DefaultMutableTreeNode)ts.getPath().getLastPathComponent();
 					JPanel NewSlotView = new OntologyTabClassView( currNode ); 
-					int DivLoc = OntoSplitPane.getDividerLocation();
-					OntoSplitPane.setRightComponent( NewSlotView );
-					OntoSplitPane.setDividerLocation(DivLoc);
-					OntoMain = NewSlotView; 
+					int DivLoc = ontoSplitPane.getDividerLocation();
+					ontoSplitPane.setRightComponent( NewSlotView );
+					ontoSplitPane.setDividerLocation(DivLoc);
+					ontoMain = NewSlotView; 
 					// ----------------------------------------------------------
 					// --- Tree-Selection abfangen --- S T O P ------------------
 					// ----------------------------------------------------------
@@ -179,7 +176,7 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			});
 
 		}
-		return OntoTree;
+		return ontoTree;
 	}
 	
 	// If expand is true, expands all nodes in the tree.
@@ -207,9 +204,9 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
         }    
         // Expansion or collapse must be done bottom-up
         if (expand) {
-            OntoTree.expandPath(parent);
+            ontoTree.expandPath(parent);
         } else {
-        	OntoTree.collapsePath(parent);
+        	ontoTree.collapsePath(parent);
         }
     }
 	
@@ -220,10 +217,10 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	 * @return javax.swing.JPanel	
 	 */
 	private JPanel getOntoMain() {
-		if (OntoMain == null) {
-			OntoMain = new JPanel();			
+		if (ontoMain == null) {
+			ontoMain = new JPanel();			
 		}
-		return OntoMain;
+		return ontoMain;
 	}
 
 	/**
@@ -312,18 +309,18 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		String ActCMD = ae.getActionCommand();
-		String MsgHead = null;
-		String MsgText = null;
+		String actCMD = ae.getActionCommand();
+		String msgHead = null;
+		String msgText = null;
 
-		if ( ActCMD.equals("OntologieAdd") ) {
+		if (actCMD.equals("OntologieAdd")) {
 			// --- Add Ontology -------------------------------------
 			String ActionTitel = Language.translate("Ontologie hinzufügen"); 
-			OntologieSelector onSel = new OntologieSelector( Application.getMainWindow(), currProject.getProjectName() + ": " + ActionTitel,true );			
+			OntologieSelector onSel = new OntologieSelector(Application.getMainWindow(), currProject.getProjectName() + ": " + ActionTitel, true);			
 			onSel.setVisible(true);
 			// === Wait for user ===
-			if ( onSel.isCanceled() == true ) {
-				Application.setStatusBar( Language.translate("Fertig") );
+			if (onSel.isCanceled()==true) {
+				Application.setStatusBar(Language.translate("Fertig"));
 				return;
 			}
 			String newOntologie = onSel.getNewOntologySelected();
@@ -331,35 +328,38 @@ public class OntologyTab extends JPanel implements Observer, ActionListener {
 			onSel = null;
 			// --- Add ontology ------------------------------------- 
 			currProject.subOntologyAdd(newOntologie);
-		}
-		else if ( ActCMD.equals("OntologieRemove") ) {
+			
+		} else if (actCMD.equals("OntologieRemove")) {
 			// --- Remove Ontology ----------------------------------
-			if ( OntoTree.isSelectionEmpty() ) {
-				MsgHead = Language.translate("Fehlende Auswahl !");
-				MsgText = Language.translate("Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!");			
-				JOptionPane.showInternalMessageDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.INFORMATION_MESSAGE);
+			if (ontoTree.isSelectionEmpty()) {
+				msgHead = Language.translate("Fehlende Auswahl !");
+				msgText = Language.translate("Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!");			
+				JOptionPane.showInternalMessageDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-			DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) OntoTree.getSelectionPath().getLastPathComponent();
+			DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) ontoTree.getSelectionPath().getLastPathComponent();
 			OntologyClassTreeObject octo = (OntologyClassTreeObject) currNode.getUserObject();
 			OntologyClass oc = octo.getOntologyClass();
-			if ( oc==null ) {
+			if (oc==null) {
 				return;
 			}
 			currProject.subOntologyRemove(oc.getOntologyMainClass());
+		
+		} else {
+			System.out.println("Unknown ActionCommand: " + actCMD);
 		}
-		else {
-			System.out.println( "Unknown ActionCommand: " + ActCMD );
-		};
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
 	@Override
 	public void update(Observable arg0, Object OName) {
 		
 		String ObjectName = OName.toString();
 		if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectOntology ) ) {
 			// --- Ansicht auf die projekt-Ontologie aktualisieren --
-			this.OntoTree.setModel( currProject.getOntologyVisualisationHelper().getOntologyTree() );
+			this.ontoTree.setModel( currProject.getOntologyVisualisationHelper().getOntologyTree() );
 			this.OntoTreeExpand2Level(4, true);
 		} else {
 			//System.out.println("Unbekannte Meldung vom Observer: " + ObjectName);

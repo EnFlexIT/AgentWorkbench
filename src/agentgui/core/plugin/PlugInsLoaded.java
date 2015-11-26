@@ -28,7 +28,7 @@
  */
 package agentgui.core.plugin;
 
-import jade.core.Profile;
+import jade.core.ProfileImpl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -179,7 +179,7 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 	 * @param jadeContainerProfile The profile to change
 	 * @return the configured JADE Profile
 	 */
-	public Profile getJadeProfile(Profile jadeContainerProfile) {
+	public ProfileImpl getJadeProfile(ProfileImpl jadeContainerProfile) {
 
 		for (int i = 0; i < this.size(); i++) {
 			PlugIn pi = this.get(i);

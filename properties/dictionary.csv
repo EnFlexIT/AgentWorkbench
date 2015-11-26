@@ -11,6 +11,7 @@ de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;
 de;Abtastintervall;Sampling interval;;;
+de;Adressen;Addresses;;;
 de;Agent auswählen!;Select an Agent!;;;
 de;Agent gestartet;Agent started;;;
 de;Agent nach oben verschieben;Move up agent
@@ -178,6 +179,7 @@ de;Doppelte X-Werte zulassen;Allow duplicate X-Values;;;
 de;Dummy-Agenten starten;Start Dummy agent
 de;Dynamische Lastverteilung aktivieren;Enable dynamic load balancing ;;;
 de;Eigene Auslastungsgrenzwerte verwenden;Use own threshold values
+de;Eigene lokale MTP-Adresse;Own local MTP-Address;;;
 de;Eigenschaften;Properties;;;
 de;Einfach zählendes Zeitmodell (z. B. 1 ... 9999);Simple counting time model (e. g. 1 ... 9999);;;
 de;Einheit;Unit
@@ -261,10 +263,11 @@ de;Hilfe;Help
 de;Hilfs-Raster;Guide Grid;;;
 de;Hintergrundsystem (Master / Slave);Background System (Master / Slave);;;
 de;Hintergrundsystem - Konfiguration;Background System - Configuration;;;
-de;Hintergrundsystem beim Programmstart automatisch initialisieren;Initialize background system at startup automatically;;;
+de;Hintergrundsystem beim Programmstart automatisch initialisieren;Automatically initialize background system at startup;;;
 de;Hinweis;Hint;;;
 de;Hinzufügen;Add
 de;ID;;;;
+de;IP-Adresse verwenden;Use IP-Address;;;
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
 de;Ihre Webseite:;Your Website:;;;
 de;Im Falle eines Updates, eigenes Wörterbuch beibehalten.;In case of an update, keep own dictionary.;;;
@@ -282,6 +285,8 @@ de;JADE wurde lokal gestartet.;JADE is running.
 de;JADE wurde noch nicht gestartet!;JADE has not been started yet!
 de;JADE wurde noch nicht gestartet.;JADE has not been started yet.
 de;JADE zu Simulationsbeginn starten;Start JADE if simulation begins
+de;JADE-Automatik verwenden;Use JADE-Automatic;;;
+de;JADE-Automatik;JADE-Automatic;;;
 de;JADE-Konfiguration;JADE-Configuration
 de;JADE-Port bearbeiten;Edit JADE port;;;
 de;JADE-Tools...;JADE-Tools...
@@ -347,7 +352,6 @@ de;Load Monitor öffnen;Open Load Monitor;null;null;null
 de;Load Monitor;Load Monitor
 de;Log-Manager starten;Start Log Manager
 de;Lokal;Local;;;
-de;Läschen;;;;
 de;Lösche Verzeichnis;Delete Folder;;;
 de;Löschen nicht zulässig!;Deleting not allowed!;;;
 de;Löschen;Delete
@@ -355,6 +359,7 @@ de;MAS-Pause;MAS-Pause
 de;MAS-Start;MAS-Start;;;
 de;MAS-Stop;MAS-Stop
 de;MAS;MAS
+de;MTP-Adresse;MTP-Address;;;
 de;Maximale Geschwindigkeit;Maximum speed
 de;Maximieren;Maximize;;;
 de;Maßstab festlegen;Set scale

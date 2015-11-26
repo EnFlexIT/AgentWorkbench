@@ -43,13 +43,10 @@ import agentgui.core.gui.components.JComboBoxWide;
  */
 public class TableCellEditor4Combo extends AbstractCellEditor implements TableCellEditor {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1544056145162025328L;
 
-	/** The JComboBox. */
-	private JComboBoxWide combo = null;
 	
-	/** The click count to start. */
+	private JComboBoxWide<?> combo = null;
 	private int clickCountToStart = 1;
 	 
 	
@@ -57,7 +54,7 @@ public class TableCellEditor4Combo extends AbstractCellEditor implements TableCe
 	 * Instantiates a new table cell editor for a JComboBox.
 	 * @param comboBox the JComboBox
 	 */
-	public TableCellEditor4Combo(JComboBoxWide comboBox) {
+	public TableCellEditor4Combo(JComboBoxWide<?> comboBox) {
 		this.combo = comboBox;
 	}
 	

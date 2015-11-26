@@ -167,8 +167,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private DefaultTableModel domainTableModel = null;
 	
 	private JLabel jLabelEdgeShape = null;
-	private JComboBox jComboBoxEdgeShapes = null;
-	private DefaultComboBoxModel comboBoxModelEdgeShapes = null;
+	private JComboBox<EdgeShape> jComboBoxEdgeShapes = null;
+	private DefaultComboBoxModel<EdgeShape> comboBoxModelEdgeShapes = null;
 
 	private TableCellEditor4ClassSelector agentClassesCellEditor = null;  		//  @jve:decl-index=0:
 	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  	//  @jve:decl-index=0:
@@ -1210,11 +1210,10 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * Gets the combo4 edge width.
 	 * @return the combo4 edge width
 	 */
-	private JComboBoxWide getJComboBoxEdgeWidth() {
+	private JComboBoxWide<Float> getJComboBoxEdgeWidth() {
 		Float[] sizeList = {(float) 1.0, (float) 1.5, (float) 2.0, (float) 2.5, (float) 3.0, (float) 3.5, (float) 4.0, (float) 4.5, (float) 5.0, (float) 6.0, (float) 7.0, (float) 8.0, (float) 9.0, (float) 10.0, (float) 12.5, (float) 15.0, (float) 17.5, (float) 20.0};
-		DefaultComboBoxModel cbmSizes = new DefaultComboBoxModel(sizeList); 
-		JComboBoxWide combo = new JComboBoxWide(cbmSizes);
-		return combo;
+		DefaultComboBoxModel<Float> cbmSizes = new DefaultComboBoxModel<Float>(sizeList); 
+		return new JComboBoxWide<Float>(cbmSizes);
 	}
 
 	/**
@@ -1230,11 +1229,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * This method initializes jComboBoxNodeSize	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBoxWide getJComboBoxNodeSize() {
+	private JComboBoxWide<Integer> getJComboBoxNodeSize() {
 		Integer[] sizeList = {0,5,6,7,8,9,10,11,12,13,14,15,20,25,30,35,40,45,50};
-		DefaultComboBoxModel cbmSizes = new DefaultComboBoxModel(sizeList); 
+		DefaultComboBoxModel<Integer> cbmSizes = new DefaultComboBoxModel<Integer>(sizeList); 
 
-		JComboBoxWide jComboBoxNodeSize = new JComboBoxWide(cbmSizes);
+		JComboBoxWide<Integer> jComboBoxNodeSize = new JComboBoxWide<Integer>(cbmSizes);
 		jComboBoxNodeSize.setPreferredSize(new Dimension(50, 26));
 		return jComboBoxNodeSize;
 	}
@@ -1243,7 +1242,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * Returns a JComboBox with the list of Domains.
 	 * @return the JComboBox with the available domains
 	 */
-	private JComboBoxWide getJComboBoxDomains() {
+	private JComboBoxWide<String> getJComboBoxDomains() {
 		
 		Vector<String> domainVector =  new Vector<String>();
 		for (int i = 0; i < this.getTableModel4Domains().getRowCount(); i++) {
@@ -1253,9 +1252,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			}
 		}
 		Collections.sort(domainVector);
-		DefaultComboBoxModel comboBoxModel4Domains = new DefaultComboBoxModel(domainVector);
+		DefaultComboBoxModel<String> comboBoxModel4Domains = new DefaultComboBoxModel<String>(domainVector);
 		
-		JComboBoxWide jComboBoxNodeSize = new JComboBoxWide(comboBoxModel4Domains);
+		JComboBoxWide<String> jComboBoxNodeSize = new JComboBoxWide<String>(comboBoxModel4Domains);
 		return jComboBoxNodeSize;
 	}
 	
@@ -1263,16 +1262,16 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * Returns the JComboBox for the possible cluster shapes.
 	 * @return the JComboBox for the possible cluster shapes
 	 */
-	private JComboBoxWide getJComboBoxClusterShape() {
+	private JComboBoxWide<String> getJComboBoxClusterShape() {
 		
-		DefaultComboBoxModel cbmShape = new DefaultComboBoxModel(); 
+		DefaultComboBoxModel<String> cbmShape = new DefaultComboBoxModel<String>(); 
 		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_ELLIPSE);
 		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_RECTANGLE);
 		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_ROUND_RECTANGLE);
 		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_REGULAR_POLYGON);
 		cbmShape.addElement(GeneralGraphSettings4MAS.SHAPE_REGULAR_STAR);
 		
-		JComboBoxWide jComboBoxClusterShape = new JComboBoxWide(cbmShape);
+		JComboBoxWide<String> jComboBoxClusterShape = new JComboBoxWide<String>(cbmShape);
 		jComboBoxClusterShape.setPreferredSize(new Dimension(50, 26));
 		return jComboBoxClusterShape;
 	}
@@ -1405,9 +1404,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * This method initializes jComboBoxEdgeShapes	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox getJComboBoxEdgeShapes() {
+	private JComboBox<EdgeShape> getJComboBoxEdgeShapes() {
 		if (jComboBoxEdgeShapes == null) {
-			jComboBoxEdgeShapes = new JComboBox(this.getComboBoxModel4EdgeShapes());
+			jComboBoxEdgeShapes = new JComboBox<EdgeShape>(this.getComboBoxModel4EdgeShapes());
 		}
 		return jComboBoxEdgeShapes;
 	}
@@ -1415,9 +1414,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * Gets the combo box model4 edge shapes.
 	 * @return the combo box model4 edge shapes
 	 */
-	private DefaultComboBoxModel getComboBoxModel4EdgeShapes() {
+	private DefaultComboBoxModel<EdgeShape> getComboBoxModel4EdgeShapes() {
 		if (comboBoxModelEdgeShapes==null) {
-			comboBoxModelEdgeShapes = new DefaultComboBoxModel();
+			comboBoxModelEdgeShapes = new DefaultComboBoxModel<EdgeShape>();
 			List<EdgeShape> shapes = new ArrayList<EdgeShape>(Arrays.asList(EdgeShape.values()));
 			for (int i = 0; i < shapes.size(); i++) {
 				comboBoxModelEdgeShapes.addElement(shapes.get(i));

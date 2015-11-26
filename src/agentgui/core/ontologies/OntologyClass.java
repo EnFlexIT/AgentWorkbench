@@ -39,7 +39,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  * This class holds detailed information of a single ontology, given by its class reference.<br>
- * Furthermore it creates the needed nodes for the tree, which displays all elements. 
+ * Furthermore, it creates the needed nodes for the tree, which displays all elements. 
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -56,7 +56,10 @@ public class OntologyClass extends Object implements Serializable {
 	public List<String> ontologyConceptNames;
 	public List<String> ontologyAgentActionNames;
 	public List<String> ontologyPredicateNames;
+	
 	public String ontologyErrorStack = "";
+	private boolean correctTreeBuild;
+	
 	
 	/**
 	 * Constructor of this class.
@@ -70,7 +73,7 @@ public class OntologyClass extends Object implements Serializable {
 
 		// --------------------------------------------------------------------
 		// --- Is this the Reference to the Main-class of the ontology? -------
-		if (referenceIsClass(ontologyReference)==true) {
+		if (this.isClassReference(ontologyReference)==true) {
 			// --- Yes, it is -------------------------
 			currOntologyMainClass  = ontologyReference;
 			currOntologySrcPackage = currOntologyMainClass.substring(0, currOntologyMainClass.lastIndexOf("."));
@@ -81,24 +84,41 @@ public class OntologyClass extends Object implements Serializable {
 		}
 		// --------------------------------------------------------------------
 		// --- Build the TreeModel for this ontology --------------------------
-		this.setOntologyTree();		
+		this.setCorrectTreeBuild(this.setOntologyTree());;
  
 		// --------------------------------------------------------------------
 		// --- Set Informations for Concepts, AgentActions and Predicates -----
 		this.setOntologyDetailInfo();
 	}
-
+	
+	/**
+	 * Checks if is correct tree build.
+	 * @return true, if is correct tree build
+	 */
+	public boolean isCorrectTreeBuild() {
+		return correctTreeBuild;
+	}
+	/**
+	 * Sets the correct tree build.
+	 * @param correctTreeBuild the new correct tree build
+	 */
+	public void setCorrectTreeBuild(boolean correctTreeBuild) {
+		this.correctTreeBuild = correctTreeBuild;
+	}
+	
 	/**
 	 * Checks if the given Ontology is a class or not.
 	 *
 	 * @param ontologyReference the ontology reference
 	 * @return true, if the reference is a valid class
 	 */
-	private boolean referenceIsClass(String ontologyReference) {
+	private boolean isClassReference(String ontologyReference) {
+		
 		try {
 			@SuppressWarnings("unused")
 			Class<?> cl = Class.forName(ontologyReference);
 			return true;
+			
 		} catch (ClassNotFoundException e) {
 			//e.printStackTrace();
 			return false;
@@ -108,17 +128,18 @@ public class OntologyClass extends Object implements Serializable {
 	/**
 	 * Creates the OntologyTree of the current Ontology given it's Main-Class.
 	 */
-	private void setOntologyTree() {
+	private boolean setOntologyTree() {
 		OntologyClassTreeObject octo = new OntologyClassTreeObject(this, "Root");
-		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode( octo );
+		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(octo);
 		try {
 			this.projectOntologieTree = new OntologyClassTree(rootNode, this, currOntologySrcPackage);	
+			return true;
 			
 		} catch (Exception ex) {
 			System.err.println("Error while creating the ontology tree for " + this.currOntologySrcPackage + ":");
 			ex.printStackTrace();
 		}
-					
+		return false;		
 	}
 	
 	/**
@@ -149,6 +170,7 @@ public class OntologyClass extends Object implements Serializable {
 				Class<?> currOntoClass = Class.forName(currOntologyMainClass);
 				Method method = currOntoClass.getMethod("getInstance", new Class[0]);
 				ontology = (Ontology) method.invoke(currOntoClass, new Object[0]);
+				
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -168,11 +190,10 @@ public class OntologyClass extends Object implements Serializable {
 	
 	/**
 	 * Provides the @link OntologyClassTree - Object.
-	 *
 	 * @return the projectOntologieTree
 	 */
 	public OntologyClassTree getOntologyTree() {
-		if ( projectOntologieTree == null ) {
+		if (projectOntologieTree==null ) {
 			this.setOntologyTree();	
 		}
 		return projectOntologieTree;
@@ -180,16 +201,13 @@ public class OntologyClass extends Object implements Serializable {
 	
 	/**
 	 * Sets the ontology vocabulary.
-	 *
 	 * @param Class the new ontology vocabulary
 	 */
 	public void setOntologyVocabulary(Class<?> Class) {
 		ontologieVocabulary = new OntologyClassVocabulary(Class);
 	}
-	
 	/**
 	 * Provides a value from the ontology vocabulary, given by its public static name.
-	 *
 	 * @param key The public static name
 	 * @return The Value of the public static variable
 	 */
@@ -199,16 +217,13 @@ public class OntologyClass extends Object implements Serializable {
 
 	/**
 	 * Sets the ontology main class.
-	 *
 	 * @param currOntoMainClass the currOntoMainClass to set
 	 */
 	public void setOntologyMainClass(String currOntoMainClass) {
 		this.currOntologyMainClass = currOntoMainClass;
 	}
-	
 	/**
 	 * Gets the ontology main class.
-	 *
 	 * @return the currOntoMainClass
 	 */
 	public String getOntologyMainClass() {
@@ -217,16 +232,13 @@ public class OntologyClass extends Object implements Serializable {
 
 	/**
 	 * Sets the ontology source package.
-	 *
 	 * @param ontologySourcePackage the currOntologySrcPackage to set
 	 */
 	public void setOntologySourcePackage(String ontologySourcePackage) {
 		this.currOntologySrcPackage = ontologySourcePackage;
 	}
-	
 	/**
 	 * Gets the ontology source package.
-	 *
 	 * @return the currOntologySrcPackage
 	 */
 	public String getOntologySourcePackage() {
@@ -235,16 +247,13 @@ public class OntologyClass extends Object implements Serializable {
 	
 	/**
 	 * Sets the ontology name.
-	 *
 	 * @param currOntoName the currOntoName to set
 	 */
 	public void setOntologyName(String currOntoName) {
 		this.currOntologyName = currOntoName;
 	}
-	
 	/**
 	 * Gets the ontology name.
-	 *
 	 * @return the currOntoName
 	 */
 	public String getOntologyName() {

@@ -84,10 +84,10 @@ public class OptionDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private final String PathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
+	private final String pathImage = Application.getGlobalInfo().getPathImageIntern(); 
 	
-	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource(PathImage + "AgentGUI.png"));
-	private Image image = imageIcon.getImage();  //  @jve:decl-index=0:
+	private ImageIcon imageIcon = new ImageIcon( this.getClass().getResource(pathImage + "AgentGUI.png"));
+	private Image image = imageIcon.getImage();  
 	
 	private Frame owner = null;
 	
@@ -133,41 +133,24 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + Language.translate("Optionen"));
 	    this.jButtonClose.setText(Language.translate("Schließen"));
 	    
-	    // ----------------------------------------------------------
-	    // --- Optionen (Sub-Panel) einbauen ------------------------
-	    // ----------------------------------------------------------
-	    String tabTitle = null;
-	    // ----------------------------------------------------------
-	    startOptions = new StartOptions(this);
-	    tabTitle = Language.translate("Programmstart");
-	    this.addOptionTab(startOptions, null);
+	    // --- Integrate sub panels ---------------------------------
+	    String tabTitle = Language.translate("Programmstart");
+	    this.addOptionTab(this.getStartOptions(), null);
 	    
-	    updateOptions = new UpdateOptions();
 	    tabTitle = Language.translate("Agent.GUI - Update");
-	    this.addOptionTab(updateOptions, null);
+	    this.addOptionTab(this.getUpdateOptions(), null);
 	    
 	    if (Application.isRunningAsServer()==true || execMode==ExecutionMode.DEVICE_SYSTEM) {
 	    	tabTitle = Language.translate("Konsole");
 	    	this.addOptionTab(tabTitle, null, Application.getConsole(), tabTitle);	
 	    }
-	    // ----------------------------------------------------------
 	    
-	    
-	    // --- Baumsturktur entfalten -------------------------------
-	    this.OptionTreeExpand2Level(3, true);
-	    
-		// --- Dialog zentrieren ------------------------------------
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-		int top = (screenSize.height - this.getHeight()) / 2; 
-	    int left = (screenSize.width - this.getWidth()) / 2; 
-	    this.setLocation(left, top);	
-	    
+		 // --- Expand tree -----------------------------------------
+	    this.optionTreeExpand2Level(3, true);
 	}
 	
 	/**
-	 * This method initializes this.
-	 *
-	 * @return void
+	 * This method initialises this.
 	 */
 	private void initialize() {
 		
@@ -175,9 +158,12 @@ public class OptionDialog extends JDialog implements ActionListener {
 		if (this.owner==null) {
 			this.setAlwaysOnTop(true);
 		}
-		this.setSize(977, 609);
-		this.setContentPane(getJPanelBase());
+
 		this.setTitle("Agent.GUI: Optionen");
+		this.setIconImage(image);
+		
+		this.setContentPane(this.getJPanelBase());
+		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.registerEscapeKeyStroke();
 		this.addWindowListener(new WindowAdapter() {
@@ -185,8 +171,15 @@ public class OptionDialog extends JDialog implements ActionListener {
 				setVisible(false);
 			}
 		});
-		// --- Set the IconImage ----------------------------------
-		this.setIconImage( image );
+
+		// --- Size and centre dialog -------------------------------
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+		
+		this.setSize((int) (screenSize.getWidth()*0.5), (int)(screenSize.getHeight()*0.7));
+		
+		int top = (screenSize.height - this.getHeight()) / 2; 
+	    int left = (screenSize.width - this.getWidth()) / 2; 
+	    this.setLocation(left, top);	
 
 	}
 
@@ -219,17 +212,37 @@ public class OptionDialog extends JDialog implements ActionListener {
 				lnfClassname = UIManager.getCrossPlatformLookAndFeelClassName();
 			}
 			UIManager.setLookAndFeel(lnfClassname);
-			SwingUtilities.updateComponentTreeUI(this);				
-		} 
-		catch (Exception e) {
+			SwingUtilities.updateComponentTreeUI(this);
+			
+		} catch (Exception e) {
 				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF()
 					+ " on this platform:" + e.getMessage());
 		}
 	}		
+
+	/**
+	 * Gets the start options.
+	 * @return the start options
+	 */
+	public StartOptions getStartOptions() {
+		if (startOptions==null) {
+			startOptions = new StartOptions(this);
+		}
+		return startOptions;
+	}
+	/**
+	 * Gets the update options.
+	 * @return the update options
+	 */
+	public UpdateOptions getUpdateOptions() {
+		if (updateOptions==null) {
+			updateOptions = new UpdateOptions();
+		}
+		return updateOptions;
+	}
 	
 	/**
 	 * This method initializes jSplitPaneMain.
-	 *
 	 * @return javax.swing.JSplitPane
 	 */
 	private JSplitPane getJSplitPaneMain() {
@@ -400,9 +413,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 */
 	public void addOptionTab(String title, Icon icon, JComponent component, String toolTipText) {
 		component.setName(title); 							
-		jTabbedPaneRight.addTab(title, icon, component, toolTipText);
-		
-		addOptionTabNode(title);
+		this.jTabbedPaneRight.addTab(title, icon, component, toolTipText);
+		this.addOptionTabNode(title);
 	}
 	
 	/**
@@ -425,8 +437,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 * Adds a new node to the left Project-Tree.
 	 * @param newNode the new node
 	 */
-	public void addOptionTabNode( String newNode ) {
-		rootNode.add( new DefaultMutableTreeNode( newNode ) );
+	public void addOptionTabNode(String newNode) {
+		this.rootNode.add(new DefaultMutableTreeNode(newNode));
 	}
 	
 	/**
@@ -497,13 +509,13 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 * @param Up2TreeLevel the up2 tree level
 	 * @param expand the expand
 	 */
-	public void OptionTreeExpand2Level(Integer Up2TreeLevel, boolean expand ) {
+	public void optionTreeExpand2Level(Integer Up2TreeLevel, boolean expand ) {
     	
     	Integer CurrNodeLevel = 1;
     	if ( Up2TreeLevel == null ) 
     		Up2TreeLevel = 1000;
 
-    	OptionTreeExpand( new TreePath(rootNode), expand, CurrNodeLevel, Up2TreeLevel);
+    	optionTreeExpand( new TreePath(rootNode), expand, CurrNodeLevel, Up2TreeLevel);
     }
 	
 	/**
@@ -511,20 +523,20 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 *
 	 * @param parent the parent
 	 * @param expand the expand
-	 * @param CurrNodeLevel the curr node level
-	 * @param Up2TreeLevel the up2 tree level
+	 * @param currNodeLevel the curr node level
+	 * @param up2TreeLevel the up2 tree level
 	 */
-	private void OptionTreeExpand( TreePath parent, boolean expand, Integer CurrNodeLevel, Integer Up2TreeLevel) {
+	private void optionTreeExpand(TreePath parent, boolean expand, Integer currNodeLevel, Integer up2TreeLevel) {
     
         TreeNode node = (TreeNode)parent.getLastPathComponent();
-        if (CurrNodeLevel >= Up2TreeLevel) {
+        if (currNodeLevel >= up2TreeLevel) {
         	return;
         }
         if (node.getChildCount() >= 0) {
             for ( @SuppressWarnings("rawtypes") Enumeration e=node.children(); e.hasMoreElements(); ) {
                 TreeNode n = (TreeNode) e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);
-                OptionTreeExpand(path, expand, CurrNodeLevel+1, Up2TreeLevel);
+                optionTreeExpand(path, expand, currNodeLevel+1, up2TreeLevel);
             }
         }    
         // Expansion or collapse must be done bottom-up
