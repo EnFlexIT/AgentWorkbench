@@ -79,8 +79,10 @@ public class JPanelOwnMTP extends AbstractJPanelForOptions implements ActionList
 	
 	
 	/**
-	 * Constructor of this class
-	 * @param project
+	 * Constructor of this class.
+	 *
+	 * @param optionDialog the option dialog
+	 * @param startOptions the start options
 	 */
 	public JPanelOwnMTP(OptionDialog optionDialog, StartOptions startOptions) {
 		super(optionDialog, startOptions);

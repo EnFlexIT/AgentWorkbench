@@ -33,6 +33,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.DropMode;
@@ -465,8 +466,8 @@ public class JListWithProgressBar extends JPanel {
 	 *
 	 * @return the selected values
 	 */
-	public Object[] getSelectedValues() {
-		return jListLoading.getSelectedValues();
+	public List getSelectedValuesList() {
+		return jListLoading.getSelectedValuesList();
 	}
 	
 	/**

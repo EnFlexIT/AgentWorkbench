@@ -624,7 +624,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		this.getJListStartList().setModel(this.jListModelAgents2Start);
 		
 		// --- Set the ComboBoxModel for the StartList Selector -----
-		DefaultComboBoxModel cbm = currSimSetup.getComboBoxModel4AgentLists();
+		DefaultComboBoxModel<String> cbm = currSimSetup.getComboBoxModel4AgentLists();
 		cbm.setSelectedItem(SimulationSetup.AGENT_LIST_ManualConfiguration);
 		this.getJComboBoxStartLists().setModel(cbm);
 				
@@ -708,15 +708,8 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	 */
 	private void agentRemove() {
 		
-		Object[] agentsSelected = null;
-		if (jListStartList.getSelectedValues().length==0) {
-			agentsSelected = null;
-			return;
-		} else {
-			agentsSelected = jListStartList.getSelectedValues();
-		}
-		for (int i = 0; i < agentsSelected.length; i++) {
-			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) agentsSelected[i]; 
+		for (int i = 0; i < jListStartList.getSelectedValuesList().size(); i++) {
+			AgentClassElement4SimStart ac4s = (AgentClassElement4SimStart) jListStartList.getSelectedValuesList().get(i); 
 			jListModelAgents2Start.removeElement(ac4s);
 		}
 		this.agentRenumberList();
@@ -742,7 +735,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 		Integer position = 0;
 		Integer positionNew = 0;
 		
-		if (jListStartList.getSelectedValues().length == 1) {
+		if (jListStartList.getSelectedValuesList().size()==1) {
 
 			ac4s = (AgentClassElement4SimStart) jListStartList.getSelectedValue();
 			position = jListStartList.getSelectedIndex();

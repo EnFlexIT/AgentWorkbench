@@ -78,7 +78,7 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 	/** This Hash holds the instances of all agent start lists. */
 	@XmlTransient private HashMap<String, DefaultListModel> hashMap4AgentDefaulListModels = new HashMap<String, DefaultListModel>();
 	/** The ComboBoxModel for agent lists. */
-	@XmlTransient private DefaultComboBoxModel comboBoxModel4AgentLists = new DefaultComboBoxModel();
+	@XmlTransient private DefaultComboBoxModel<String> comboBoxModel4AgentLists = new DefaultComboBoxModel();
 	
 	
 	/** The agent list to save. */
@@ -292,16 +292,15 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 	 * Sets the ComboBoxModel for agent lists.
 	 * @param comboBoxModel4AgentLists the comboBoxModel4AgentLists to set
 	 */
-	public void setComboBoxModel4AgentLists(DefaultComboBoxModel comboBoxModel4AgentLists) {
+	public void setComboBoxModel4AgentLists(DefaultComboBoxModel<String> comboBoxModel4AgentLists) {
 		this.comboBoxModel4AgentLists = comboBoxModel4AgentLists;
 	}
-	
 	/**
 	 * Gets the combo box model4 agent lists.
 	 * @return the comboBoxModel4AgentLists
 	 */
 	@XmlTransient
-	public DefaultComboBoxModel getComboBoxModel4AgentLists() {
+	public DefaultComboBoxModel<String> getComboBoxModel4AgentLists() {
 		return comboBoxModel4AgentLists;
 	}
 	/**
@@ -311,7 +310,7 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 		
 		// --- Move the current entries to a Vector -----------------
 		Vector<String> agentLists = new Vector<String>();
-		DefaultComboBoxModel dlm = this.comboBoxModel4AgentLists;
+		DefaultComboBoxModel<String> dlm = this.comboBoxModel4AgentLists;
 		for (int i = 0; i < dlm.getSize(); i++) {
 			agentLists.add((String) dlm.getElementAt(i));
 		}
@@ -323,7 +322,7 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 		// --- Sort the list ----------------------------------------
 		Collections.sort(agentLists);
 		// --- Recreate the JComboBoxModel for agent lists ----------
-		this.comboBoxModel4AgentLists = new DefaultComboBoxModel();
+		this.comboBoxModel4AgentLists = new DefaultComboBoxModel<String>();
 		for (int i = 0; i < agentLists.size(); i++) {
 			this.comboBoxModel4AgentLists.addElement(agentLists.get(i));
 		}

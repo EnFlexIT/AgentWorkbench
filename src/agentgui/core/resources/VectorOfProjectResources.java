@@ -53,7 +53,7 @@ public class VectorOfProjectResources extends Vector<String> {
 	private static final long serialVersionUID = -6728505277548001391L;
 	
 	@XmlTransient 
-	private DefaultListModel resourcesListModel = new DefaultListModel();
+	private DefaultListModel<Resources2Display> resourcesListModel = new DefaultListModel<Resources2Display>();
 	
 	/**
 	 * Instantiates a new project resources.
@@ -176,7 +176,7 @@ public class VectorOfProjectResources extends Vector<String> {
 	 * Sets the resources list model.
 	 * @param resourcesListModel the resourcesListModel to set
 	 */
-	public void setResourcesListModel(DefaultListModel resourcesListModel) {
+	public void setResourcesListModel(DefaultListModel<Resources2Display> resourcesListModel) {
 		this.resourcesListModel = resourcesListModel;
 	}
 	
@@ -185,9 +185,9 @@ public class VectorOfProjectResources extends Vector<String> {
 	 * @return the resourcesListModel
 	 */
 	@XmlTransient 
-	public DefaultListModel getResourcesListModel() {
+	public DefaultListModel<Resources2Display> getResourcesListModel() {
 		if (resourcesListModel==null) {
-			resourcesListModel = new DefaultListModel();
+			resourcesListModel = new DefaultListModel<Resources2Display>();
 			for (int i = 0; i < this.size(); i++) {
 				this.add2DefaultListModel(this.get(i));
 			}

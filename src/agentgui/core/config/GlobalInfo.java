@@ -619,13 +619,8 @@ public class GlobalInfo {
 	 * If the folder doesn't exists, it will be created.
 	 * @return Local path to the folder, where downloads will be saved ('/AgentGUI/download/')
 	 */
-	public String getPathDownloads(boolean absolute) {
-		
+	public String getPathDownloads() {
 		String returnPath = this.FilePath2Absolute(localPathDownloads);;
-		if (absolute==false) {
-			String workingPath = System.getProperty("user.dir");
-			returnPath = returnPath.substring(workingPath.length()+1);
-		}
 		File dir = new File(returnPath);
 		if (dir.exists()==false) {
 			dir.mkdir();
@@ -805,8 +800,8 @@ public class GlobalInfo {
 	}
 	
 	/**
-	 * This method can be used in order to set the MTP port on which JADE is running (by default: 1099)
-	 * @param localeJadeDefaultPort the localeJadeDefaultPort to set
+	 * This method can be used in order to set the MTP port on which JADE is running (by default: 1099).
+	 * @param newMtpPort the new local jade MTP port 
 	 */
 	public void setJadeLocalPortMTP(int newMtpPort) {
 		localeJadeLocalPortMTP = newMtpPort;

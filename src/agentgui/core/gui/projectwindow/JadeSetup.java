@@ -840,7 +840,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			
 		} else if (trigger==jButtonServiceAdd) {
 			if (jListServicesAvailable.getSelectedValue()!=null) {
-				Object[] selections = jListServicesAvailable.getSelectedValues();
+				Object[] selections = jListServicesAvailable.getSelectedValuesList().toArray();
 				for (int i = 0; i < selections.length; i++) {
 					ClassElement2Display serviceElement = (ClassElement2Display) selections[i];
 					currProject.getJadeConfiguration().addService(serviceElement.toString());	

@@ -746,10 +746,8 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		return err;
 	}
 
-	/**
-	 * Action performed.
-	 *
-	 * @param e the e
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {

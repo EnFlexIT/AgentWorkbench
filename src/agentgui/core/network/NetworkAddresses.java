@@ -307,7 +307,7 @@ public class NetworkAddresses {
 	 * the super class and their listing elements as listed below.
 	 * 
 	 * @see NetworkAddresses#getNetworkAddressVector()
-	 * @see NetworkAddresses#getComboModelNetworkAddress()
+	 * @see NetworkAddresses#getJPopupMenu4NetworkAddresses(ActionListener)
 	 * @see NetworkAddresses#getInet4Addresses()
 	 * @see NetworkAddresses#getInet6Addresses()
 	 *

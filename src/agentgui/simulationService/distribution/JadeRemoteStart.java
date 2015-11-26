@@ -64,6 +64,8 @@ public class JadeRemoteStart extends Thread {
 	/** Constant for a memory of 1024 MB. */
 	public static final String jvmMemo1024MB = "1024m";
 	
+	private boolean debug = false;
+	
 	private boolean jvmMemAllocUseDefaults = true;
 	private String jvmMemAllocInitial = JadeRemoteStart.jvmMemo0032MB;
 	private String jvmMemAllocMaximum = JadeRemoteStart.jvmMemo0128MB;
@@ -82,12 +84,15 @@ public class JadeRemoteStart extends Thread {
 	
 	private final String pathBaseDir = Application.getGlobalInfo().getPathBaseDir();
 	
+	
 	/**
 	 * Default constructor.
 	 *
 	 * @param reCoCo the RemoteContainerConfig
 	 */
 	public JadeRemoteStart(RemoteContainerConfig reCoCo) {
+		
+		if (debug) System.out.println("Class '" + this.getClass().getName() + "' in debug modue ...");
 		
 		jadeIsRemoteContainer = reCoCo.getJadeIsRemoteContainer();
 		if (reCoCo.getJvmMemAllocInitial()==null && reCoCo.getJvmMemAllocMaximum()==null) {
@@ -125,38 +130,59 @@ public class JadeRemoteStart extends Thread {
 	 */
 	private void handelExternalJars() {
 		
-		String localDirectoryDownLoad = Application.getGlobalInfo().getPathDownloads(false);
+		String localDirectoryDownLoad = Application.getGlobalInfo().getPathDownloads();
 		String subDirectoryDownloads = Application.getGlobalInfo().getSubFolder4Downloads();
 		String projectSubFolder = null;
 		String downloadProtocol = "";
 		
+		if (debug) {
+			System.out.println("method handelExternalJars()");
+			System.out.println("=> localDirectoryDownLoad=" + localDirectoryDownLoad);
+			System.out.println("=> subDirectoryDownloads=" + subDirectoryDownloads);
+		}
+		
 		for (int i = 0; i < jadeJarInclude.size(); i++) {
 			
 			String httpJarFile = (String) jadeJarInclude.get(i);
+			if (debug) System.out.println("=> httpJarFile=" + httpJarFile);
 			if (projectSubFolder==null) {
+				
 				// --- Find sub-folder -------------------------
 				projectSubFolder = httpJarFile.replace("http://", "");
+				if (debug) System.out.println("=> projectSubFolder(1)=" + projectSubFolder);
+
 				int cut = projectSubFolder.indexOf("/")+1;
 				projectSubFolder = projectSubFolder.substring(cut, projectSubFolder.length());
+				if (debug) System.out.println("=> projectSubFolder(2)=" + projectSubFolder);
+				
 				cut = projectSubFolder.indexOf("/");
 				projectSubFolder = projectSubFolder.substring(0, cut);
 				projectSubFolder+= File.separator;
+				if (debug) System.out.println("=> projectSubFolder(3)=" + projectSubFolder);
 				
 				// --- Correct the Path for the download -------
 				localDirectoryDownLoad = localDirectoryDownLoad + projectSubFolder;
+				if (debug) System.out.println("=> localDirectoryDownLoad=" + localDirectoryDownLoad);
 				
 				// --- Check if this Folder exists -------------
 				extJarFolder = new File(localDirectoryDownLoad);
 				if (extJarFolder.exists()) {
-					deleteFolder(extJarFolder);
+					if (debug) System.out.println("=> Try to delete download direcotory first ...");
+					this.deleteFolder(extJarFolder);
 					extJarFolder.delete();
 				}
+				if (debug) System.out.println("=> Try to create download direcotory .../n");
 				extJarFolder.mkdir();
 			}
 			
 			// --- Define Destination-File ---------------------
 			File remoteFile = new File(httpJarFile);
 			String destinFile = localDirectoryDownLoad + remoteFile.getAbsoluteFile().getName();
+			if (debug) {
+				System.out.println("=> httpJarFile=" + httpJarFile);
+				System.out.println("=> destinFile=" + destinFile);
+				System.out.println("=> Starting download !");
+			}
 			
 			// --- Start the download --------------------------
 			new Download(httpJarFile, destinFile).startDownload();
@@ -173,6 +199,7 @@ public class JadeRemoteStart extends Thread {
 			downloadProtocol += remoteFile.getAbsoluteFile().getName();
 			
 		} // --- end for
+		
 		if (downloadProtocol.equals("")==false) {
 			downloadProtocol = "Download to '" + localDirectoryDownLoad + "': " + downloadProtocol + "";
 			System.out.println(downloadProtocol);
@@ -256,6 +283,8 @@ public class JadeRemoteStart extends Thread {
 		System.out.println( "Execute: " + execute);
 		
 		// --------------------------------------
+		Scanner in = null;
+		Scanner err = null;
 		try {
 			
 			String[] arg = execute.split(" ");
@@ -265,9 +294,12 @@ public class JadeRemoteStart extends Thread {
 			
 			Process p = proBui.start();
 			
-			Scanner in = new Scanner( p.getInputStream() ).useDelimiter( "\\Z" );
-			Scanner err = new Scanner( p.getErrorStream() ).useDelimiter( "\\Z" );
-
+			in = new Scanner(p.getInputStream());
+			in.useDelimiter("\\Z");
+			
+			err = new Scanner(p.getErrorStream());
+			err.useDelimiter("\\Z");
+			
 			while (in.hasNextLine() || err.hasNextLine() ) {
 				if (in.hasNextLine()) {
 					System.out.println("[" + jadeContainerName + "]: " + in.nextLine());	
@@ -288,6 +320,9 @@ public class JadeRemoteStart extends Thread {
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			in.close();
+			err.close();	
 		}
 
 	}

@@ -317,11 +317,11 @@ public class AgentSelector extends JDialog implements ActionListener {
 	 */
 	private boolean okAction() {
 
-		if (jListAgents.getSelectedValues().length==0) {
+		if (jListAgents.getSelectedValuesList().size()==0) {
 			selectedAgentClasses = null;
 			return false;
 		} else {
-			selectedAgentClasses = jListAgents.getSelectedValues();
+			selectedAgentClasses = jListAgents.getSelectedValuesList().toArray();
 			return true;
 		}
 	}

@@ -75,38 +75,38 @@ public class ProjectResources extends JPanel implements Observer {
 	private static final long serialVersionUID = 1L;
 	
 	final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
-	private Project currProject = null;
+	private Project currProject;
 	
-	private JPanel jPanelSimulationEnvironment = null;
-	private JPanel jPanelRightPlugIns = null;
-	private JPanel jPanelRight = null;
+	private JPanel jPanelSimulationEnvironment;
+	private JPanel jPanelRightPlugIns;
+	private JPanel jPanelRight;
 	
-	private JComboBox jComboBoxEnvironmentModelSelector = null;
+	private JComboBox<EnvironmentType> jComboBoxEnvironmentModelSelector;
 
-	private JScrollPane jScrollPane = null;
-	private JScrollPane jScrollPanePlugIns = null;
+	private JScrollPane jScrollPane;
+	private JScrollPane jScrollPanePlugIns;
 	
-	private JList jListResources = null;
-	private JList jListPlugIns = null;
-	private DefaultListModel plugInsListModel = new DefaultListModel();
+	private JList<Resources2Display> jListResources;
+	private JList<PlugInListElement> jListPlugIns;
+	private DefaultListModel<PlugInListElement> plugInsListModel = new DefaultListModel<PlugInListElement>();
 	
-	private JButton jButtonResourcesAdd = null;
-	private JButton jButtonResourcesRemove = null;
-	private JButton jButtonRecourcesRefresh = null;
+	private JButton jButtonResourcesAdd;
+	private JButton jButtonResourcesRemove;
+	private JButton jButtonRecourcesRefresh;
 
-	private JButton jButtonAddPlugIns = null;
-	private JButton jButtonRemovePlugIns = null;
-	private JButton jButtonRefreshPlugIns = null;
+	private JButton jButtonAddPlugIns;
+	private JButton jButtonRemovePlugIns;
+	private JButton jButtonRefreshPlugIns;
 
-	private JLabel jLabelEnvTyp = null;
-	private JLabel jLabelResources = null;
-	private JLabel jLabelPlugIns = null;
+	private JLabel jLabelEnvTyp;
+	private JLabel jLabelResources;
+	private JLabel jLabelPlugIns;
 
-	private JPanel jPanelTimeModelSelection = null;
-	private JLabel jLabelTimeModelClass = null;
-	private JTextField jTextFieldTimeModelClass = null;
-	private JButton jButtonDefaultTimeModel = null;
-	private JButton jButtonSelectTimeModel = null;
+	private JPanel jPanelTimeModelSelection;
+	private JLabel jLabelTimeModelClass;
+	private JTextField jTextFieldTimeModelClass;
+	private JButton jButtonDefaultTimeModel;
+	private JButton jButtonSelectTimeModel;
 	
 	
 	/**
@@ -296,9 +296,9 @@ public class ProjectResources extends JPanel implements Observer {
 	 * This method initializes jListResources	
 	 * @return javax.swing.JList	
 	 */
-	private JList getJListResources() {
+	private JList<Resources2Display> getJListResources() {
 		if (jListResources == null) {
-			jListResources = new JList();
+			jListResources = new JList<Resources2Display>();
 		}
 		return jListResources;
 	}
@@ -358,8 +358,7 @@ public class ProjectResources extends JPanel implements Observer {
 							if (Application.getJadePlatform().jadeStopAskUserBefore()==true) {
 								// --- Remove from the ClassPath ----
 								Vector<String> selection = new Vector<String>();
-								Object[] selectionArray = jListResources.getSelectedValues();
-								for (Object fileR2DObject : selectionArray) {
+								for (Object fileR2DObject : jListResources.getSelectedValuesList()) {
 									Resources2Display fileR2D = (Resources2Display) fileR2DObject;
 									selection.add(fileR2D.getFileOrFolderResource());
 								}
@@ -432,7 +431,7 @@ public class ProjectResources extends JPanel implements Observer {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
 			jScrollPane.setPreferredSize(new Dimension(260, 120));
-			jScrollPane.setViewportView(getJListResources());
+			jScrollPane.setViewportView(this.getJListResources());
 		}
 		return jScrollPane;
 	}
@@ -470,11 +469,11 @@ public class ProjectResources extends JPanel implements Observer {
 	 * This method initialises jComboBoxEnvironmentModelSelector
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBox getJComboBoxEnvironmentModelSelector(){
+	private JComboBox<EnvironmentType> getJComboBoxEnvironmentModelSelector(){
 		if(jComboBoxEnvironmentModelSelector == null){
 			
 			// --- Get current definitions --------------------------
-			jComboBoxEnvironmentModelSelector = new JComboBox();
+			jComboBoxEnvironmentModelSelector = new JComboBox<EnvironmentType>();
 			jComboBoxEnvironmentModelSelector.setModel(this.currProject.getEnvironmentsComboBoxModel());
 			jComboBoxEnvironmentModelSelector.setPreferredSize(new Dimension(400, 25));
 			jComboBoxEnvironmentModelSelector.setSelectedItem(this.currProject.getEnvironmentModelType());
@@ -630,9 +629,9 @@ public class ProjectResources extends JPanel implements Observer {
 	 * This method initializes jListPlugIns	
 	 * @return javax.swing.JList	
 	 */
-	private JList getJListPlugIns() {
+	private JList<PlugInListElement> getJListPlugIns() {
 		if (jListPlugIns == null) {
-			jListPlugIns = new JList();
+			jListPlugIns = new JList<PlugInListElement>();
 			jListPlugIns.setModel(plugInsListModel);
 		}
 		return jListPlugIns;

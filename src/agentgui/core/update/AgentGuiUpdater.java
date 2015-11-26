@@ -129,7 +129,7 @@ public class AgentGuiUpdater extends Thread {
 		this.updateKeepDictionary = this.globalInfo.getUpdateKeepDictionary();
 		this.updateDateLastChecked = this.globalInfo.getUpdateDateLastChecked();
 		
-		this.localDownloadPath = this.globalInfo.getPathDownloads(true);
+		this.localDownloadPath = this.globalInfo.getPathDownloads();
 		this.localWebServerPath = this.globalInfo.getPathWebServer(true);
 		this.localPropertiesPath = this.globalInfo.getPathProperty(true);
 		
@@ -413,7 +413,7 @@ public class AgentGuiUpdater extends Thread {
 	 */
 	private boolean moveAgentGuiUpdaterJar() {
 		
-		String extractedFolder = globalInfo.getPathDownloads(true) + this.localUpdateExtractedFolder;
+		String extractedFolder = globalInfo.getPathDownloads() + this.localUpdateExtractedFolder;
 		String updaterFilePath = extractedFolder + File.separator + this.globalInfo.getFileNameUpdater(false);
 		System.out.println("Trying to move file " + updaterFilePath);
 		File updaterFile = new File(updaterFilePath);

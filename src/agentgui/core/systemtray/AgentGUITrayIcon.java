@@ -169,8 +169,7 @@ public class AgentGUITrayIcon implements ActionListener {
 	
 	/**
 	 * Returns the current TrayIcon.
-	 *
-	 * @param createIfNotAvailable the create if not available
+	 * 
 	 * @return the TrayIcon
 	 */
 	public TrayIcon getTrayIcon() {
