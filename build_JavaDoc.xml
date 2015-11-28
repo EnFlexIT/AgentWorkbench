@@ -38,6 +38,7 @@
 	<target name="javadoc">
 		
 		<!-- Build the API -->
+		<!-- Here the follwing attribute setting was removed after 'packagenames': 'executable="${javadocExec}'" -->
 		<javadoc access="package" 
 			author="true" 
 			source="1.7" 
@@ -53,8 +54,6 @@
 			use="true" 
 			version="true"
 			packagenames="agentgui.,jade."
-			
-			executable="${javadocExec}"
 			
 			classpath= "lib;
 						lib/jade/lib/commons-codec/commons-codec-1.3.jar;
