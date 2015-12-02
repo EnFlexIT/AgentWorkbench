@@ -29,6 +29,8 @@
 package agentgui.envModel.graph.components;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
 
@@ -56,6 +58,13 @@ public class TableCellEditor4Combo extends AbstractCellEditor implements TableCe
 	 */
 	public TableCellEditor4Combo(JComboBoxWide<?> comboBox) {
 		this.combo = comboBox;
+		this.combo.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				fireEditingStopped();
+			}
+		});
 	}
 	
 	/* (non-Javadoc)
@@ -93,21 +102,5 @@ public class TableCellEditor4Combo extends AbstractCellEditor implements TableCe
 	public boolean shouldSelectCell(EventObject anEvent) {
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.AbstractCellEditor#stopCellEditing()
-	 */
-	@Override
-    public boolean stopCellEditing() {
-        return super.stopCellEditing();
-    }
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.AbstractCellEditor#cancelCellEditing()
-	 */
-	@Override
-	public void cancelCellEditing() {
-        super.cancelCellEditing();
-    }
 	
 }

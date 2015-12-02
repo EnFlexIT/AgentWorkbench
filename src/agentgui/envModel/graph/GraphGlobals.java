@@ -248,9 +248,9 @@ public final class GraphGlobals {
 			} else {
 				comp.setForeground(GraphGlobals.Colors.TB_TEXTFOREGROUND);
 				if (row%2==0) {
-					comp.setBackground(GraphGlobals.Colors.TB_ALTERNATEROWCOLOR);
+					comp.setBackground(GraphGlobals.Colors.TB_BACKGROUND);
 				} else {
-					comp.setBackground(GraphGlobals.Colors.TB_BACKGROUND);					
+					comp.setBackground(GraphGlobals.Colors.TB_ALTERNATEROWCOLOR);			
 				}
 			}
 

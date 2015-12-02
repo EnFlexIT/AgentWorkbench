@@ -113,19 +113,20 @@ public class GraphEnvironmentController extends EnvironmentController {
     /** The base file name used for saving the graph and the components (without suffix) */
     private String baseFileName = null;
     /** The GraphMLWriter used to save the graph */
-    private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter = null;
+    private GraphMLWriter<GraphNode, GraphEdge> graphMLWriter;
     /** Known adapter for the import of network models */
     private Vector<NetworkModelFileImporter> importAdapter;
 
     /** The network model currently loaded */
-    private NetworkModel networkModel = null;
+    private NetworkModel networkModel;
     private NetworkModelAdapter networkModelAdapter = new NetworkModelAdapter(this);
     
     /** The NetworkModel that is stored in the clipboard */
-    private NetworkModel clipboardNetworkModel = null;
+    private NetworkModel clipboardNetworkModel;
     
     /** The abstract environment model is just an open slot, where individual things can be placed. */
-    private AbstractEnvironmentModel abstractEnvironmentModel = null;
+    private AbstractEnvironmentModel abstractEnvironmentModel;
+    
     
     
     /**

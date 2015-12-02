@@ -72,14 +72,15 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 
     private final String sourceTopologyTabName = "Topologie";
     
-    private JComponent mainDisplayComponent = null;
+    private JComponent mainDisplayComponent;
     private boolean useTabs = false;
-    private JTabbedPane jTabbedPaneAltNetModels = null;
-    private HashMap<String, GraphEnvironmentControllerGUI> networkModelTabs = null; // @jve:decl-index=0:
+    private JTabbedPane jTabbedPaneAltNetModels;
+    private HashMap<String, GraphEnvironmentControllerGUI> networkModelTabs;
     
-    private BasicGraphGuiJDesktopPane basicGraphGuiJDesktopPane = null;
-    private BasicGraphGuiRootJSplitPane graphGUI = null;
+    private BasicGraphGuiJDesktopPane basicGraphGuiJDesktopPane;
+    private BasicGraphGuiRootJSplitPane graphGUI;
 
+    
     /**
      * This is the default constructor for just displaying the current environment model during a running simulation
      */
@@ -207,8 +208,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 		    this.add(this.mainDisplayComponent, null);
 		    this.validate();
 		    this.repaint();
-
 		}
+		
     }
 
     /**
@@ -276,7 +277,7 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     private void setAlternativeNetworkModels() {
 	
     	NetworkModel nm = this.getGraphController().getNetworkModel();
-		if (nm.getAlternativeNetworkModel().size() > 0) {
+		if (nm!=null && nm.getAlternativeNetworkModel().size() > 0) {
 			
 			this.setUseTabs(true);
 			// --------------------------------------------------------------------------

@@ -46,15 +46,15 @@ public class TableCellRenderer4CheckBox extends DefaultTableCellRenderer {
 	
 	private static final long serialVersionUID = 6053370819529907169L;
 	
-	private JCheckBox checkBox = new JCheckBox();
-
 	/* (non-Javadoc)
 	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 	 */
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		
+		JCheckBox checkBox = new JCheckBox();
 		checkBox.setSelected((Boolean) value);
 		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
+		checkBox.setOpaque(true);
 		GraphGlobals.Colors.setTableCellRendererColors(checkBox, row, isSelected);
 		return checkBox;
 	}

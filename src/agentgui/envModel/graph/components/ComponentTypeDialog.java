@@ -32,8 +32,10 @@ import jade.core.Agent;
 
 import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -129,51 +131,54 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	public final String COL_EdgeColor 				= Language.translate("Color", Language.EN);  			//  @jve:decl-index=0:
 
 	
-	private HashMap<String, ComponentTypeSettings> currCompTypSettings = null;
-	private HashMap<String, DomainSettings> currDomainSettings = null;
+	private HashMap<String, ComponentTypeSettings> currCompTypSettings;
+	private HashMap<String, DomainSettings> currDomainSettings;
 	private boolean currSnap2Grid = true;
 	private double currSnapRaster = 5; 
-	private EdgeShape currEdgeShape = null; 
+	private EdgeShape currEdgeShape; 
 	
-	private Project currProject = null;
+	private Project currProject;
 	private boolean canceled = false;
 
-	private JTabbedPane jTabbedPane = null;
+	private JTabbedPane jTabbedPane;
 
-	private JPanel jContentPane = null;
-	private JPanel jPanelDomains = null;
-	private JPanel jPanelComponents = null;
-	private JPanel jPanelGeneralSettings = null;
-	private JPanel jPanelButtonOkCancel = null;
-	private JPanel jPanelRaster = null;
-	private JScrollPane jScrollPaneClassTableComponents = null;
-	private JScrollPane jScrollPaneClassTableDomains = null;
+	private JPanel jContentPane;
+	private JPanel jPanelDomains;
+	private JPanel jPanelComponents;
+	private JPanel jPanelGeneralSettings;
+	private JPanel jPanelButtonOkCancel;
+	private JPanel jPanelRaster;
+	private JScrollPane jScrollPaneClassTableComponents;
+	private JScrollPane jScrollPaneClassTableDomains;
 	
-	private JLabel jLabelGridHeader = null;
-	private JLabel jLabelGuideGridWidth = null;
-	private JLabel jLabelBottomDummy = null;
-	private JCheckBox jCheckBoxSnap2Grid = null;
-	private JSpinner jSpnnerGridWidth = null;
+	private JLabel jLabelGridHeader;
+	private JLabel jLabelGuideGridWidth;
+	private JLabel jLabelBottomDummy;
+	private JCheckBox jCheckBoxSnap2Grid;
+	private JSpinner jSpnnerGridWidth;
 
-	private JButton jButtonConfirm = null;
-	private JButton jButtonCancel = null;
-	private JButton jButtonAddComponentRow = null;
-	private JButton jButtonRemoveComponentRow = null;
-	private JButton jButtonAddDomain = null;
-	private JButton jButtonRemoveDomainntRow = null;
-	private JTable jTableComponentTypes = null;
-	private DefaultTableModel componentTypesModel = null;
-	private JTable jTableDomainTypes = null;
-	private DefaultTableModel domainTableModel = null;
+	private JButton jButtonConfirm;
+	private JButton jButtonCancel;
+	private JButton jButtonAddComponentRow;
+	private JButton jButtonRemoveComponentRow;
+	private JButton jButtonAddDomain;
+	private JButton jButtonRemoveDomainntRow;
 	
-	private JLabel jLabelEdgeShape = null;
-	private JComboBox<EdgeShape> jComboBoxEdgeShapes = null;
-	private DefaultComboBoxModel<EdgeShape> comboBoxModelEdgeShapes = null;
+	private JTable jTableDomainTypes;
+	private DefaultTableModel domainTableModel;
 
-	private TableCellEditor4ClassSelector agentClassesCellEditor = null;  		//  @jve:decl-index=0:
-	private TableCellEditor4ClassSelector prototypeClassesCellEditor = null;  	//  @jve:decl-index=0:
-	private TableCellEditor4ClassSelector adapterClassesCellEditor = null;  	//  @jve:decl-index=0:
+	private JTable jTableComponentTypes;
+	private DefaultTableModel componentTypesModel;
+	
+	private JLabel jLabelEdgeShape;
+	private JComboBox<EdgeShape> jComboBoxEdgeShapes;
+	private DefaultComboBoxModel<EdgeShape> comboBoxModelEdgeShapes;
 
+	private TableCellEditor4ClassSelector agentClassesCellEditor;  		
+	private TableCellEditor4ClassSelector prototypeClassesCellEditor;  	
+	private TableCellEditor4ClassSelector adapterClassesCellEditor;  
+
+	
 	/**
 	 * This is the default constructor.
 	 *
@@ -181,15 +186,49 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * @param project the current project
 	 */
 	public ComponentTypeDialog(GeneralGraphSettings4MAS graphSettings, Project project) {
+		this.setStartArguments(graphSettings, project);
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new component type dialog.
+	 *
+	 * @param ownerFrame the owner frame
+	 * @param graphSettings the graph settings
+	 * @param project the project
+	 */
+	public ComponentTypeDialog(Frame ownerFrame, GeneralGraphSettings4MAS graphSettings, Project project) {
+		super(ownerFrame);
+		this.setStartArguments(graphSettings, project);
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new component type dialog.
+	 *
+	 * @param ownerDialog the owner dialog
+	 * @param graphSettings the graph settings
+	 * @param project the project
+	 */
+	public ComponentTypeDialog(Dialog ownerDialog, GeneralGraphSettings4MAS graphSettings, Project project) {
+		super(ownerDialog);
+		this.setStartArguments(graphSettings, project);
+		this.initialize();
+	}
+
+	/**
+	 * Sets the start arguments to the local variables.
+	 *
+	 * @param graphSettings the graph settings
+	 * @param project the project
+	 */
+	private void setStartArguments(GeneralGraphSettings4MAS graphSettings, Project project) {
 		this.currCompTypSettings = graphSettings.getCurrentCTS();
 		this.currDomainSettings = graphSettings.getDomainSettings();
 		this.currSnap2Grid = graphSettings.isSnap2Grid();
 		this.currSnapRaster = graphSettings.getSnapRaster();
 		this.currEdgeShape = graphSettings.getEdgeShape();
 		this.currProject = project;
-		initialize();
 	}
-
+	
 	/**
 	 * This method initializes this
 	 * @return void
@@ -1001,6 +1040,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			domainColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxDomains()));
 			domainColumn.setPreferredWidth(20);
 
+			
 			//Set up renderer and editor for the agent class column
 			TableColumn agentClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_AgentClass));
 			agentClassColumn.setCellEditor(this.getAgentClassesCellEditor());
@@ -1011,31 +1051,39 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			prototypeClassColumn.setCellEditor(this.getPrototypeClassesCellEditor());
 			prototypeClassColumn.setCellRenderer(new TableCellRenderer4Label());
 			
+			//Set up renderer and editor for the adapter class column
 			TableColumn adapterClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_AdapterClass));
 			adapterClassColumn.setCellEditor(this.getAdapterClassesCellEditor());
 			adapterClassColumn.setCellRenderer(new TableCellRenderer4Label());
+			
 			
 			//Set up renderer and editor for show label
 			TableColumn showLabelClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_ShowLabel));
 			showLabelClassColumn.setCellEditor(new TableCellEditor4CheckBox(this.getCheckBoxEdgeWidth()));
 			showLabelClassColumn.setCellRenderer(new TableCellRenderer4CheckBox());
-			showLabelClassColumn.setPreferredWidth(15);
+			showLabelClassColumn.setMinWidth(80);
+			showLabelClassColumn.setMaxWidth(80);
+
 			
 			//Set up Editor for the ImageIcon column
 			TableColumn imageIconColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_Image));
 			imageIconColumn.setCellEditor(new TableCellEditor4Image(this, currProject));		
-			imageIconColumn.setPreferredWidth(10);
+			imageIconColumn.setMinWidth(80);
+			imageIconColumn.setMaxWidth(80);
 			
 			//Set up renderer and editor for the edge width.	        
 			TableColumn edgeWidthColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_EdgeWidth));
 			edgeWidthColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxEdgeWidth()));
-			edgeWidthColumn.setPreferredWidth(10);
+			edgeWidthColumn.setMinWidth(60);
+			edgeWidthColumn.setMaxWidth(60);
 			
 			//Set up renderer and editor for the  Color column.	        
 			TableColumn colorColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_EdgeColor));
 			colorColumn.setCellEditor(new TableCellEditor4Color());
 			colorColumn.setCellRenderer(new TableCellRenderer4Color(true));			
-			colorColumn.setPreferredWidth(10);
+			colorColumn.setMinWidth(50);
+			colorColumn.setMaxWidth(50);
+			
 		}
 		return jTableComponentTypes;
 	}
@@ -1429,27 +1477,28 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
-	public void actionPerformed(ActionEvent event) {
+	public void actionPerformed(ActionEvent ae) {
 
-		if(event.getSource().equals(getJButtonAddComponentRow())){
+		if(ae.getSource()==this.getJButtonAddComponentRow()){
 			// --- Add a new row to the component types table -------
 			this.addComponentRow();
-		} else if(event.getSource().equals(getJButtonRemoveComponentRow())) {
+			
+		} else if(ae.getSource()==this.getJButtonRemoveComponentRow()) {
 			// --- Remove a row from the component types table ------
 			if(getJTable4ComponentTypes().getSelectedRow() > -1){
 				this.removeComponentRow(getJTable4ComponentTypes().getSelectedRow());
 			}
 		
-		} else if(event.getSource().equals(getJButtonAddDomain())) {
+		} else if(ae.getSource()==this.getJButtonAddDomain()) {
 			// --- Add a new row to the domain table ----------------
 			this.addDomainRow();
-		} else if(event.getSource().equals(getJButtonRemoveDomainntRow())) {
+		} else if(ae.getSource()==this.getJButtonRemoveDomainntRow()) {
 			// --- Remove a row from the component types table ------
 			if(getJTable4DomainTypes().getSelectedRow() > -1){
 				this.removeDomainRow(getJTable4DomainTypes().getSelectedRow());
 			}
 		
-		} else if(event.getSource().equals(getJButtonConfirm())) {
+		} else if(ae.getSource()==this.getJButtonConfirm()) {
 			
 			HashMap<String, ComponentTypeSettings> ctsHash = new HashMap<String, ComponentTypeSettings>();
 			HashMap<String, DomainSettings> dsHash = new HashMap<String, DomainSettings>();
@@ -1537,7 +1586,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			this.canceled = false;
 			this.setVisible(false);
 			
-		} else if(event.getSource().equals(getJButtonCancel())) {
+		} else if(ae.getSource()==this.getJButtonCancel()) {
 			// --- Canceled, discard changes --------------
 			this.canceled = true;
 			this.setVisible(false);

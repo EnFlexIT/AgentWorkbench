@@ -28,8 +28,10 @@
  */
 package agentgui.envModel.graph.controller;
 
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -51,13 +53,17 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.undo.UndoManager;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.components.ComponentTypeDialog;
+import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.networkModel.GraphNodePairs;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
+import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.networkModel.NetworkModelNotification;
 import agentgui.envModel.graph.prototypes.DistributionNode;
 
@@ -73,47 +79,48 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private final Dimension jButtonSize = new Dimension(26, 26); // @jve:decl-index=0:
 
     private boolean isPasteAction = false;
-    private KeyAdapter keyAdapterPasteActionStop = null; 
+    private KeyAdapter keyAdapterPasteActionStop; 
     
-    private JToolBar jToolBarEdit = null;
-    private JToolBar jToolBarView = null;
+    private JToolBar jToolBarEdit;
+    private JToolBar jToolBarView;
     
-    private JButton jButtonComponents = null;
-    private JButton jButtonWindows = null;
-    private JToggleButton jButtonSatelliteView = null;
-    private JButton jButtonZoomFit2Window = null;
-    private JButton jButtonZoomOne2One = null;
+    private JButton jButtonComponents;
+    private JButton jButtonWindows;
+    private JToggleButton jButtonSatelliteView;
+    private JButton jButtonZoomFit2Window;
+    private JButton jButtonZoomOne2One;
     private JButton jButtonFocusNetworkComponent= null;
-    private JButton jButtonZoomIn = null;
-    private JButton jButtonZoomOut = null;
-    private JButton jButtonSaveImage = null;
-    private JToggleButton jToggleMouseTransforming = null;
-    private JToggleButton jToggleMousePicking = null;
-    private JButton jButtonAddComponent = null;
-    private JButton jButtonRemoveComponent = null;
-    private JButton jButtonMergeNodes = null;
-    private JButton jButtonSplitNode = null;
-    private JButton jButtonRedo = null;
-    private JButton jButtonUndo = null;
-    private JButton jButtonClearGraph = null;
-    private JButton jButtonImportGraph = null;
-    private JButton jButtonCut = null;
-    private JButton jButtonCopy = null;
-    private JButton jButtonPaste = null;
+    private JButton jButtonZoomIn;
+    private JButton jButtonZoomOut;
+    private JButton jButtonSaveImage;
+    private JToggleButton jToggleMouseTransforming;
+    private JToggleButton jToggleMousePicking;
+    private JButton jButtonAddComponent;
+    private JButton jButtonRemoveComponent;
+    private JButton jButtonMergeNodes;
+    private JButton jButtonSplitNode;
+    private JButton jButtonRedo;
+    private JButton jButtonUndo;
+    private JButton jButtonClearGraph;
+    private JButton jButtonImportGraph;
+    private JButton jButtonCut;
+    private JButton jButtonCopy;
+    private JButton jButtonPaste;
     
-    private JPopupMenu edgePopup = null;
-    private JMenuItem jMenuItemDeleteComp = null;
-    private JMenuItem jMenuItemEdgeProp = null;
+    private JPopupMenu edgePopup;
+    private JMenuItem jMenuItemDeleteComp;
+    private JMenuItem jMenuItemEdgeProp;
 
-    private JPopupMenu vertexPopup = null;
-    private JMenuItem jMenuItemNodeProp = null;
-    private JMenuItem jMenuItemAddComp = null;
-    private JMenuItem jMenuItemSplitNode = null;
+    private JPopupMenu vertexPopup;
+    private JMenuItem jMenuItemNodeProp;
+    private JMenuItem jMenuItemAddComp;
+    private JMenuItem jMenuItemSplitNode;
 
-    private GraphEnvironmentController graphController = null; // @jve:decl-index=0:
-    private GraphEnvironmentControllerGUI graphControllerGUI = null;
-    private BasicGraphGui basicGraphGui = null;
+    private GraphEnvironmentController graphController;
+    private GraphEnvironmentControllerGUI graphControllerGUI;
+    private BasicGraphGui basicGraphGui;
 
+    
     /**
      * Instantiates a new graph toolbar.
      */
@@ -122,6 +129,16 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	this.graphController.addObserver(this);
     }
 
+    /**
+     * Gets {@link GraphEnvironmentControllerGUI}
+     * @return the {@link GraphEnvironmentControllerGUI}
+     */
+    private GraphEnvironmentControllerGUI getGraphControllerGUI() {
+    	if (this.graphControllerGUI==null) {
+    		this.graphControllerGUI = this.graphController.getGraphEnvironmentControllerGUI();
+    	}
+    	return this.graphControllerGUI;
+    }
     /**
      * Gets the key adapter paste action stop.
      * @return the key adapter paste action stop
@@ -664,10 +681,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      * Sets locally the GUI elements for the graph.
      */
     private void setGraphGuiElements() {
-    	if (this.graphControllerGUI==null) {
-    		this.graphControllerGUI = this.graphController.getGraphEnvironmentControllerGUI();
-    		this.basicGraphGui = graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui();	
-    	}
+    	this.basicGraphGui = this.getGraphControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui();	
     }
     
     /**
@@ -728,10 +742,10 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 					
 				} else if (ac.equals("PropWindowCloseAll")) {
 					System.out.println(ac);
-					graphControllerGUI.getBasicGraphGuiJDesktopPane().closeAllBasicGraphGuiProperties();
+					getGraphControllerGUI().getBasicGraphGuiJDesktopPane().closeAllBasicGraphGuiProperties();
 					
 				} else {
-					JInternalFrame frame = graphControllerGUI.getBasicGraphGuiJDesktopPane().getEditor(ac);
+					JInternalFrame frame = getGraphControllerGUI().getBasicGraphGuiJDesktopPane().getEditor(ac);
 					frame.moveToFront();
 					
 				}
@@ -749,7 +763,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	pMenue.add(item);
     	
     	// --- List all displayed Frames ----------------------------
-    	BasicGraphGuiJDesktopPane desktopPane = this.graphControllerGUI.getBasicGraphGuiJDesktopPane();
+    	BasicGraphGuiJDesktopPane desktopPane = this.getGraphControllerGUI().getBasicGraphGuiJDesktopPane();
     	JInternalFrame[] intFrames = desktopPane.getAllFrames();
     	
 		boolean separatorSet = false;
@@ -827,15 +841,39 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 		if (ae.getSource() == getJButtonComponents()) {
 			// ------------------------------------------------------
 			// --- Edit the ComponentType settings ------------------
-			ComponentTypeDialog ctsDialog = new ComponentTypeDialog(this.graphController.getNetworkModelAdapter().getGeneralGraphSettings4MAS(), this.graphController.getProject());
-			ctsDialog.setVisible(true);
-			// - - - Waiting here - - -
-			if (ctsDialog.isCanceled()==false) {
-				this.graphController.getNetworkModelAdapter().setGeneralGraphSettings4MAS(ctsDialog.getGeneralGraphSettings4MAS());
-				this.graphController.getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui().setEdgeShapeTransformer();
+			NetworkModel networkModel = this.graphController.getNetworkModelAdapter().getNetworkModel();
+			if (networkModel!=null) {
+				
+				GeneralGraphSettings4MAS settings = networkModel.getGeneralGraphSettings4MAS();
+				
+				ComponentTypeDialog ctsDialog = null;
+				GlobalInfo globalInfo = Application.getGlobalInfo();
+				Frame ownerFrame = globalInfo.getOwnerFrameForComponent(this.getGraphControllerGUI());
+				if (ownerFrame!=null) {
+					ctsDialog = new ComponentTypeDialog(ownerFrame, settings, this.graphController.getProject());
+				} else {
+					Dialog ownerDialog = globalInfo.getOwnerDialogForComponent(this.getGraphControllerGUI());
+					if (ownerDialog!=null) {
+						ctsDialog = new ComponentTypeDialog(ownerDialog, settings, this.graphController.getProject());
+					} else {
+						ctsDialog = new ComponentTypeDialog(settings, this.graphController.getProject());		
+					}
+				}
+				ctsDialog.setVisible(true);
+				// - - - Waiting here - - -
+				if (ctsDialog.isCanceled()==false) {
+					this.graphController.getNetworkModelAdapter().setGeneralGraphSettings4MAS(ctsDialog.getGeneralGraphSettings4MAS());
+					this.graphController.getGraphEnvironmentControllerGUI().getBasicGraphGuiRootJSplitPane().getBasicGraphGui().setEdgeShapeTransformer();
+				}
+				ctsDialog.dispose();
+				ctsDialog = null;
+				
+			} else {
+				// --- No NetworkModel available ----------
+				String title = Language.translate("Missing NetworkModel", Language.EN);
+				String msg = Language.translate("Currently, no network model is available!", Language.EN);
+				JOptionPane.showMessageDialog(this.getGraphControllerGUI(), msg, title, JOptionPane.INFORMATION_MESSAGE);
 			}
-			ctsDialog.dispose();
-			ctsDialog = null;
 			
 		} else if (ae.getSource() == getJButtonWindows()) {
 			// ------------------------------------------------------
@@ -963,7 +1001,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 							msg += "- " + distributionNode.getType() + " (" + distributionNode.getId() + ")\n";
 						}
 						msg += Language.translate("Should they be removed too?", Language.EN);
-						int userAnswer = JOptionPane.showConfirmDialog(this.graphControllerGUI, msg, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+						int userAnswer = JOptionPane.showConfirmDialog(this.getGraphControllerGUI(), msg, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 						if (userAnswer==JOptionPane.NO_OPTION) {
 							removeDistributionNodes = false;
 							for(NetworkComponent distributionNode : disNodeComponents) {
@@ -979,7 +1017,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				this.graphController.getNetworkModelAdapter().removeNetworkComponents(selectedComponents, removeDistributionNodes);	
 			} else {
 				// --- Nothing valid picked -------------------------
-				JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Select a valid element first!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.INFORMATION_MESSAGE);	
+				JOptionPane.showMessageDialog(this.getGraphControllerGUI(), Language.translate("Select a valid element first!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.INFORMATION_MESSAGE);	
 			}
 			
 		} else if (ae.getSource() == getJButtonMergeNodes()) {
@@ -1008,7 +1046,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 					mergeNodes = this.graphController.getNetworkModel().getValidGraphNodePairConfig4Merging(mergeNodes);
 					if (mergeNodes==null) {
 						String msg = "Invalid node selection!";
-						JOptionPane.showMessageDialog(graphControllerGUI, Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(this.getGraphControllerGUI(), Language.translate(msg, Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 
 					} else {
 						this.graphController.getNetworkModelAdapter().mergeNodes(mergeNodes);	
@@ -1016,11 +1054,11 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 					
 				} else {
 					// --- Invalid nodes are picked -----------------
-					JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Select at least two valid vertices!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(this.getGraphControllerGUI(), Language.translate("Select at least two valid vertices!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 				}
 			} else {
 				// --- At least two nodes are required --------------
-				JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Use Shift and click on two vertices at least!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(this.getGraphControllerGUI(), Language.translate("Use Shift and click on two vertices at least!", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 			}	
 			
 			
@@ -1036,20 +1074,20 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 					if(components.size()>=2){
 						this.graphController.getNetworkModelAdapter().splitNetworkModelAtNode(pickedNode);
 					} else {
-						JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("The select Vertex should be at least between two components !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(this.getGraphControllerGUI(), Language.translate("The select Vertex should be at least between two components !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
 
 				} else {
 					if(components.size()==2){
 						this.graphController.getNetworkModelAdapter().splitNetworkModelAtNode(pickedNode);
 					} else {
-						JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("The select Vertex should be between two components !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(this.getGraphControllerGUI(), Language.translate("The select Vertex should be between two components !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 					}
 				}
 					
 			} else {
 				//Multiple vertices are picked
-				JOptionPane.showMessageDialog(graphControllerGUI, Language.translate("Select one vertex !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(this.getGraphControllerGUI(), Language.translate("Select one vertex !", Language.EN), Language.translate("Warning", Language.EN),JOptionPane.WARNING_MESSAGE);
 			}
 		
 		} else if (ae.getSource()==getJButtonUndo()) {

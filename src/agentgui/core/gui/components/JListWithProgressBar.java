@@ -49,23 +49,21 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.ListUI;
 import javax.swing.text.Position.Bias;
 
-import agentgui.core.gui.ClassSelector;
-
 /**
  * This JPanel inherits a JList and a progress bar in order to indicate
  * that the list content can be further filled by a search process.
  *
  * @see JListClassSearcher
- * @see ClassSelector
+ * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class JListWithProgressBar extends JPanel {
+public class JListWithProgressBar<E> extends JPanel {
 
 	private static final long serialVersionUID = 3535748006730839486L;
 
-	public JList jListLoading = null;
-	private JProgressBar jProgressBarLoading = null;
-	private JScrollPane jScrollPane = null;
+	public JList<E> jListLoading;
+	private JProgressBar jProgressBarLoading;
+	private JScrollPane jScrollPane;
 	
 	/**
 	 * These are the default constructors, which are similar
@@ -73,7 +71,7 @@ public class JListWithProgressBar extends JPanel {
 	 */
 	public JListWithProgressBar() {
 		super();
-		jListLoading  = new JList();
+		jListLoading  = new JList<E>();
 		initialize();
 	}
 	
@@ -82,9 +80,9 @@ public class JListWithProgressBar extends JPanel {
 	 *
 	 * @param listModel the list model
 	 */
-	public JListWithProgressBar(ListModel listModel) {
+	public JListWithProgressBar(ListModel<E> listModel) {
 		super();
-		jListLoading  = new JList(listModel);
+		jListLoading  = new JList<E>(listModel);
 		initialize();
 	}
 	
@@ -93,9 +91,9 @@ public class JListWithProgressBar extends JPanel {
 	 *
 	 * @param listData the list data
 	 */
-	public JListWithProgressBar(Object[] listData) {
+	public JListWithProgressBar(E[] listData) {
 		super();
-		jListLoading  = new JList(listData);
+		jListLoading  = new JList<E>(listData);
 		initialize();
 	}
 	
@@ -104,9 +102,9 @@ public class JListWithProgressBar extends JPanel {
 	 *
 	 * @param listData the list data
 	 */
-	public JListWithProgressBar(Vector<?> listData) {
+	public JListWithProgressBar(Vector<E> listData) {
 		super();
-		jListLoading  = new JList(listData);
+		jListLoading  = new JList<E>(listData);
 		initialize();
 	}
 	
@@ -141,9 +139,9 @@ public class JListWithProgressBar extends JPanel {
 	 *
 	 * @return the j list loading
 	 */
-	private JList getjListLoading() {
+	private JList<E> getjListLoading() {
 		if (jListLoading==null) {
-			jListLoading = new JList();
+			jListLoading = new JList<E>();
 		}
 		return jListLoading;
 	}
@@ -238,16 +236,14 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the cell renderer.
-	 *
 	 * @return the cell renderer
 	 */
-	public ListCellRenderer getCellRenderer() {
+	public ListCellRenderer<? super E> getCellRenderer() {
 		return jListLoading.getCellRenderer();
 	}
 	
 	/**
 	 * Gets the drag enabled.
-	 *
 	 * @return the drag enabled
 	 */
 	public boolean getDragEnabled() {
@@ -256,7 +252,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the drop location.
-	 *
 	 * @return the drop location
 	 */
 	public DropLocation getDropLocation() {
@@ -265,7 +260,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the drop mode.
-	 *
 	 * @return the drop mode
 	 */
 	public DropMode getDropMode() {
@@ -274,7 +268,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the first visible index.
-	 *
 	 * @return the first visible index
 	 */
 	public int getFirstVisibleIndex() {
@@ -283,7 +276,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the fixed cell height.
-	 *
 	 * @return the fixed cell height
 	 */
 	public int getFixedCellHeight() {
@@ -292,7 +284,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the fixed cell width.
-	 *
 	 * @return the fixed cell width
 	 */
 	public int getFixedCellWidth() {
@@ -301,7 +292,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the last visible index.
-	 *
 	 * @return the last visible index
 	 */
 	public int getLastVisibleIndex() {
@@ -310,7 +300,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the layout orientation.
-	 *
 	 * @return the layout orientation
 	 */
 	public int getLayoutOrientation() {
@@ -319,7 +308,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the lead selection index.
-	 *
 	 * @return the lead selection index
 	 */
 	public int getLeadSelectionIndex() {
@@ -328,7 +316,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the list selection listeners.
-	 *
 	 * @return the list selection listeners
 	 */
 	public ListSelectionListener[] getListSelectionListeners() {
@@ -337,7 +324,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the max selection index.
-	 *
 	 * @return the max selection index
 	 */
 	public int getMaxSelectionIndex() {
@@ -346,7 +332,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the min selection index.
-	 *
 	 * @return the min selection index
 	 */
 	public int getMinSelectionIndex() {
@@ -355,10 +340,9 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the model.
-	 *
 	 * @return the model
 	 */
-	public ListModel getModel() {
+	public ListModel<E> getModel() {
 		return jListLoading.getModel();
 	}
 	
@@ -376,7 +360,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the preferred scrollable viewport size.
-	 *
 	 * @return the preferred scrollable viewport size
 	 */
 	public Dimension getPreferredScrollableViewportSize() {
@@ -385,7 +368,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the prototype cell value.
-	 *
 	 * @return the prototype cell value
 	 */
 	public Object getPrototypeCellValue() {
@@ -415,7 +397,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the scrollable tracks viewport width.
-	 *
 	 * @return the scrollable tracks viewport width
 	 */
 	public boolean getScrollableTracksViewportWidth() {
@@ -436,7 +417,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the selected index.
-	 *
 	 * @return the selected index
 	 */
 	public int getSelectedIndex() {
@@ -445,7 +425,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the selected indices.
-	 *
 	 * @return the selected indices
 	 */
 	public int[] getSelectedIndices() {
@@ -454,7 +433,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the selected value.
-	 *
 	 * @return the selected value
 	 */
 	public Object getSelectedValue() {
@@ -463,16 +441,14 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the selected values.
-	 *
 	 * @return the selected values
 	 */
-	public List getSelectedValuesList() {
+	public List<E> getSelectedValuesList() {
 		return jListLoading.getSelectedValuesList();
 	}
 	
 	/**
 	 * Gets the selection background.
-	 *
 	 * @return the selection background
 	 */
 	public Color getSelectionBackground() {
@@ -481,7 +457,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the selection foreground.
-	 *
 	 * @return the selection foreground
 	 */
 	public Color getSelectionForeground() {
@@ -490,7 +465,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the selection mode.
-	 *
 	 * @return the selection mode
 	 */
 	public int getSelectionMode() {
@@ -499,7 +473,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the selection model.
-	 *
 	 * @return the selection model
 	 */
 	public ListSelectionModel getSelectionModel() {
@@ -508,7 +481,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the value is adjusting.
-	 *
 	 * @return the value is adjusting
 	 */
 	public boolean getValueIsAdjusting() {
@@ -517,7 +489,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Gets the visible row count.
-	 *
 	 * @return the visible row count
 	 */
 	public int getVisibleRowCount() {
@@ -565,7 +536,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Removes the list selection listener.
-	 *
 	 * @param listener the listener
 	 */
 	public void removeListSelectionListener(ListSelectionListener listener) {
@@ -584,16 +554,14 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the cell renderer.
-	 *
 	 * @param cellRenderer the new cell renderer
 	 */
-	public void setCellRenderer(ListCellRenderer cellRenderer) {
+	public void setCellRenderer(ListCellRenderer<E> cellRenderer) {
 		jListLoading.setCellRenderer(cellRenderer);
 	}
 	
 	/**
 	 * Sets the drag enabled.
-	 *
 	 * @param b the new drag enabled
 	 */
 	public void setDragEnabled(boolean b) {
@@ -602,7 +570,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the drop mode.
-	 *
 	 * @param dropMode the new drop mode
 	 */
 	public void setDropMode(DropMode dropMode) {
@@ -611,7 +578,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the fixed cell height.
-	 *
 	 * @param height the new fixed cell height
 	 */
 	public void setFixedCellHeight(int height) {
@@ -620,7 +586,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the fixed cell width.
-	 *
 	 * @param width the new fixed cell width
 	 */
 	public void setFixedCellWidth(int width) {
@@ -629,7 +594,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the layout orientation.
-	 *
 	 * @param layoutOrientation the new layout orientation
 	 */
 	public void setLayoutOrientation(int layoutOrientation) {
@@ -638,43 +602,38 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the list data.
-	 *
 	 * @param listData the new list data
 	 */
-	public void setListData(Object[] listData) {
+	public void setListData(E[] listData) {
 		jListLoading.setListData(listData);
 	}
 	
 	/**
 	 * Sets the list data.
-	 *
 	 * @param listData the new list data
 	 */
-	public void setListData(Vector<?> listData) {
+	public void setListData(Vector<E> listData) {
 		jListLoading.setListData(listData);		
 	}
 	
 	/**
 	 * Sets the model.
-	 *
 	 * @param model the new model
 	 */
-	public void setModel(ListModel model) {
+	public void setModel(ListModel<E> model) {
 		jListLoading.setModel(model);		
 	}
 	
 	/**
 	 * Sets the prototype cell value.
-	 *
 	 * @param prototypeCellValue the new prototype cell value
 	 */
-	public void setPrototypeCellValue(Object prototypeCellValue) {
+	public void setPrototypeCellValue(E prototypeCellValue) {
 		jListLoading.setPrototypeCellValue(prototypeCellValue);
 	}
 	
 	/**
 	 * Sets the selected index.
-	 *
 	 * @param index the new selected index
 	 */
 	public void setSelectedIndex(int index) {
@@ -683,7 +642,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the selected indices.
-	 *
 	 * @param indices the new selected indices
 	 */
 	public void setSelectedIndices(int[] indices) {
@@ -702,7 +660,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the selection background.
-	 *
 	 * @param selectionBackground the new selection background
 	 */
 	public void setSelectionBackground(Color selectionBackground) {
@@ -711,7 +668,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the selection foreground.
-	 *
 	 * @param selectionForeground the new selection foreground
 	 */
 	public void setSelectionForeground(Color selectionForeground) {
@@ -730,7 +686,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the selection mode.
-	 *
 	 * @param selectionMode the new selection mode
 	 */
 	public void setSelectionMode(int selectionMode) {
@@ -739,7 +694,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the selection model.
-	 *
 	 * @param selectionModel the new selection model
 	 */
 	public void setSelectionModel(ListSelectionModel selectionModel) {
@@ -748,7 +702,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the uI.
-	 *
 	 * @param ui the new uI
 	 */
 	public void setUI(ListUI ui) {
@@ -757,7 +710,6 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the value is adjusting.
-	 *
 	 * @param b the new value is adjusting
 	 */
 	public void setValueIsAdjusting(boolean b) {
@@ -766,12 +718,10 @@ public class JListWithProgressBar extends JPanel {
 	
 	/**
 	 * Sets the visible row count.
-	 *
 	 * @param visibleRowCount the new visible row count
 	 */
 	public void setVisibleRowCount(int visibleRowCount) {
 		jListLoading.setVisibleRowCount(visibleRowCount);		
 	}
 
-
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+} 

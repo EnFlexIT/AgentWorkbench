@@ -43,8 +43,6 @@ import agentgui.envModel.graph.GraphGlobals;
  */
 public class TableCellRenderer4Label implements TableCellRenderer {
 
-	private JLabel rendererComponent = new JLabel();
-	
 	/* (non-Javadoc)
 	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 	 */
@@ -52,7 +50,6 @@ public class TableCellRenderer4Label implements TableCellRenderer {
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		
 		String simpleClassName = "";
-		
 		if(value!=null){
 			String className = (String) value;
 			int simpleNameStart = className.lastIndexOf(".");
@@ -60,10 +57,11 @@ public class TableCellRenderer4Label implements TableCellRenderer {
 				simpleClassName = className.substring(simpleNameStart+1);
 			}
 		}
-		rendererComponent.setText(simpleClassName);
-
-		GraphGlobals.Colors.setTableCellRendererColors(rendererComponent, row, isSelected);
 		
+		JLabel rendererComponent = new JLabel();
+		rendererComponent.setText(simpleClassName);
+		rendererComponent.setOpaque(true);
+		GraphGlobals.Colors.setTableCellRendererColors(rendererComponent, row, isSelected);
 		return rendererComponent;
 	}
 

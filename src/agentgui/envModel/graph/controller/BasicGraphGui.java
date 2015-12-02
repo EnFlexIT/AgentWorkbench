@@ -101,6 +101,7 @@ import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
 
 /**
@@ -119,34 +120,34 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private static final long serialVersionUID = 5764679914667183305L;
 
 	/** Environment model controller, to be passed by the parent GUI. */
-	private GraphEnvironmentController graphController = null; // @jve:decl-index=0:
+	private GraphEnvironmentController graphController;
 	
 	/** The GUI's main component, either the graph visualization, or an empty JPanel if no graph is loaded */
-	private Component centerComponent = null;
+	private Component centerComponent;
 	/** The ToolBar for this component */
-	private BasicGraphGuiTools graphGuiTools = null;
-	private JPanel jPanelToolBars = null;
+	private BasicGraphGuiTools graphGuiTools;
+	private JPanel jPanelToolBars;
 	
-	/** Graph visualization component */
-	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visView = null;
-	private SatelliteView satelliteView = null;
-	private SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite = null;
+	/** Graph visualisation component */
+	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visView;
+	private SatelliteView satelliteView;
+	private SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite;
 	private Dimension visViewSatelliteDimension = new Dimension(250, 200);
 	
 	/** JUNG object handling zooming */
-	private ScalingControl scalingControl = new CrossoverScalingControl(); // @jve:decl-index=0:
+	private ScalingControl scalingControl = new CrossoverScalingControl();
 	/** the margin of the graph for the visualization */
 	private double graphMargin = 25;
-	private Point2D defaultScaleAtPoint = new Point2D.Double(graphMargin, graphMargin); // @jve:decl-index=0:
+	private Point2D defaultScaleAtPoint = new Point2D.Double(graphMargin, graphMargin);
 	/** Indicates that the initial scaling is allowed */
 	private boolean allowInitialScaling = true;
 
-	/** The DefaultModalGraphMouse which can be added to the visualization viewer. Used here for the transforming mode */
-	private DefaultModalGraphMouse<GraphNode, GraphEdge> defaultModalGraphMouse = null; // @jve:decl-index=0:
-	/** The customized picking tool */
-	private GraphEnvironmentMousePlugin graphEnvironmentMousePlugin = null;
-	/** The pluggable graph mouse which can be added to the visualization viewer. Used here for customized Picking mode	 */
-	private PluggableGraphMouse pluggableGraphMouse = null; // @jve:decl-index=0:
+	/** The DefaultModalGraphMouse which can be added to the visualisation viewer. Used here for the transforming mode */
+	private DefaultModalGraphMouse<GraphNode, GraphEdge> defaultModalGraphMouse;
+	/** The customised picking tool */
+	private GraphEnvironmentMousePlugin graphEnvironmentMousePlugin;
+	/** The pluggable graph mouse which can be added to the visualisation viewer. Used here for customised Picking mode	 */
+	private PluggableGraphMouse pluggableGraphMouse; 
 
 	/**
 	 * This is the default constructor
@@ -853,7 +854,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 	/**
 	 * Sets a node or edge as picked
-	 * 
 	 * @param object The GraphNode or GraphEdge to pick
 	 */
 	private void setPickedObject(GraphElement object) {
@@ -881,8 +881,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	public GraphNode getPickedSingleNode() {
 		Set<GraphNode> nodeSet = this.getVisView().getPickedVertexState().getPicked();
-		if (nodeSet.size() == 1)
+		if (nodeSet.size() == 1) {
 			return nodeSet.iterator().next();
+		}
 		return null;
 	}
 
@@ -891,7 +892,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the picked nodes
 	 */
 	public Set<GraphNode> getPickedNodes() {
-		return visView.getPickedVertexState().getPicked();
+		PickedState<GraphNode> nodesPicked = visView.getPickedVertexState();
+		if (nodesPicked!=null) {
+			return nodesPicked.getPicked();
+		}
+		return null;
 	}
 
 	/**
@@ -900,8 +905,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	public GraphEdge getPickedSingleEdge() {
 		Set<GraphEdge> edgeSet = this.getVisView().getPickedEdgeState().getPicked();
-		if (edgeSet.size() == 1)
+		if (edgeSet.size() == 1) {
 			return edgeSet.iterator().next();
+		}
 		return null;
 	}
 
@@ -910,7 +916,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the picked edges
 	 */
 	public Set<GraphEdge> getPickedEdges() {
-		return this.visView.getPickedEdgeState().getPicked();
+		PickedState<GraphEdge> edgesPicked = this.visView.getPickedEdgeState();
+		if (edgesPicked!=null) {
+			return edgesPicked.getPicked();
+		}
+		return null;
 	}
 
 	/**
@@ -1214,6 +1224,15 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private void setSatelliteView(SatelliteView satelliteView) {
 		this.satelliteView = satelliteView;
 	}
+	/**
+	 * Disposes the satellite view.
+	 */
+	private void killSatelliteView() {
+		if (this.satelliteView!=null) {
+			this.getSatelliteView().setVisible(false);
+			this.setSatelliteView(null);	
+		}
+	}
 	
 	/**
 	 * Reloads the satellite view, if it is open.
@@ -1235,13 +1254,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 	}
 	
-	/**
-	 * Disposes the satellite view.
-	 */
-	private void killSatelliteView() {
-		this.getSatelliteView().setVisible(false);
-		this.setSatelliteView(null);
-	}
 
 	
 	/* (non-Javadoc)
