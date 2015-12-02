@@ -75,6 +75,8 @@ import javax.swing.SortOrder;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
@@ -104,12 +106,10 @@ import javax.swing.JComboBox;
  */
 public class ComponentTypeDialog extends JDialog implements ActionListener{
 	
-	/** Generated serialVersionUID */
 	private static final long serialVersionUID = 1L;
-	
 	private final String pathImage = GraphGlobals.getPathImages();
 	
-	private Vector<String> columnHeaderDomains 		= null;  //  @jve:decl-index=0:
+	private Vector<String> columnHeaderDomains 		= null;
 	public final String COL_D_DomainName 			= Language.translate("Name", Language.EN);  			//  @jve:decl-index=0:
 	public final String COL_D_AdapterClass			= Language.translate("Adapter class", Language.EN); 	//  @jve:decl-index=0:
 	public final String COL_D_VertexSize 			= Language.translate("Vertex size", Language.EN);  		//  @jve:decl-index=0:
@@ -119,13 +119,13 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	public final String COL_D_ClusterShape			= Language.translate("Cluster shape", Language.EN);  	//  @jve:decl-index=0:
 	public final String COL_D_ClusterAgent			= Language.translate("Cluster agent", Language.EN);  	//  @jve:decl-index=0:
 	
-	private Vector<String> columnHeaderComponents 	= null;  //  @jve:decl-index=0:
+	private Vector<String> columnHeaderComponents 	= null;
 	public final String COL_TypeSpecifier 			= Language.translate("Type-Specifier", Language.EN);  	//  @jve:decl-index=0:
 	public final String COL_Domain 					= Language.translate("Subnetwork", Language.EN);  		//  @jve:decl-index=0:
-	public final String COL_AgentClass 				= Language.translate("Agent class", Language.EN); 		//  @jve:decl-index=0:
-	public final String COL_GraphPrototyp 			= Language.translate("Graph-prototype", Language.EN);  	//  @jve:decl-index=0:
+	public final String COL_AgentClass 				= Language.translate("Agent Class", Language.EN); 		//  @jve:decl-index=0:
+	public final String COL_GraphPrototyp 			= Language.translate("Graph-Prototype", Language.EN);  	//  @jve:decl-index=0:
 	public final String COL_AdapterClass 			= Language.translate("Adapter class", Language.EN);  	//  @jve:decl-index=0:
-	public final String COL_ShowLabel 				= Language.translate("Show label", Language.EN);  		//  @jve:decl-index=0:
+	public final String COL_ShowLabel 				= Language.translate("Show Label", Language.EN);  		//  @jve:decl-index=0:
 	public final String COL_Image 					= Language.translate("Image", Language.EN);  			//  @jve:decl-index=0:
 	public final String COL_EdgeWidth 				= Language.translate("Width", Language.EN);  			//  @jve:decl-index=0:
 	public final String COL_EdgeColor 				= Language.translate("Color", Language.EN);  			//  @jve:decl-index=0:
@@ -133,8 +133,10 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	
 	private HashMap<String, ComponentTypeSettings> currCompTypSettings;
 	private HashMap<String, DomainSettings> currDomainSettings;
+	
 	private boolean currSnap2Grid = true;
 	private double currSnapRaster = 5; 
+	
 	private EdgeShape currEdgeShape; 
 	
 	private Project currProject;
@@ -145,12 +147,10 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	private JPanel jContentPane;
 	private JPanel jPanelDomains;
 	private JPanel jPanelComponents;
+	private JPanel jPanelRaster;
 	private JPanel jPanelGeneralSettings;
 	private JPanel jPanelButtonOkCancel;
-	private JPanel jPanelRaster;
-	private JScrollPane jScrollPaneClassTableComponents;
-	private JScrollPane jScrollPaneClassTableDomains;
-	
+
 	private JLabel jLabelGridHeader;
 	private JLabel jLabelGuideGridWidth;
 	private JLabel jLabelBottomDummy;
@@ -159,14 +159,16 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 
 	private JButton jButtonConfirm;
 	private JButton jButtonCancel;
-	private JButton jButtonAddComponentRow;
-	private JButton jButtonRemoveComponentRow;
+
 	private JButton jButtonAddDomain;
 	private JButton jButtonRemoveDomainntRow;
-	
+	private JScrollPane jScrollPaneClassTableDomains;
 	private JTable jTableDomainTypes;
 	private DefaultTableModel domainTableModel;
 
+	private JButton jButtonAddComponentRow;
+	private JButton jButtonRemoveComponentRow;
+	private JScrollPane jScrollPaneClassTableComponents;
 	private JTable jTableComponentTypes;
 	private DefaultTableModel componentTypesModel;
 	
@@ -228,10 +230,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		this.currEdgeShape = graphSettings.getEdgeShape();
 		this.currProject = project;
 	}
-	
 	/**
-	 * This method initializes this
-	 * @return void
+	 * This method initialises this.
 	 */
 	private void initialize() {
 		
@@ -275,10 +275,28 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
      * Registers the escape key stroke in order to close this dialog.
      */
     private void registerEscapeKeyStroke() {
+    	final ComponentTypeDialog compTypeDialog = this;
     	final ActionListener listener = new ActionListener() {
-            public final void actionPerformed(final ActionEvent e) {
-            	canceled = true;
-    			setVisible(false);
+            public final void actionPerformed(final ActionEvent ae) {
+            	// --- Stop cell editing, if required ----- 
+            	TableCellEditor editor = getJTable4DomainTypes().getCellEditor();
+				if (editor!=null)  {
+					editor.stopCellEditing();
+					return;
+				}
+				editor = getJTable4ComponentTypes().getCellEditor();
+				if (editor!=null)  {
+					editor.stopCellEditing();
+					return;
+				}
+            	
+            	// --- Close dialog -----------------------
+				String title = Language.translate("Schließen") + " ?";
+				String message = Language.translate("Dialog schließen") + " ?";
+				if (JOptionPane.showConfirmDialog(compTypeDialog, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION) {
+					canceled = true;
+	    			setVisible(false);	
+				}
             }
         };
         final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
@@ -294,8 +312,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This will set the current configuration for the nodes (propagation points) to the
-	 * current view
+	 * This will set the current configuration for the nodes (propagation points) to the current view.
 	 */
 	private void setGeneralConfiguration() {
 		// --- Get the Guide grid configuration -------------------------------
@@ -425,7 +442,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
-	 * This method initializes jContentPane
+	 * This method initializes jContentPane.
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -457,9 +475,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		}
 		return jContentPane;
 	}
+	
 	/**
-	 * This method initializes jTabbedPane	
-	 * @return javax.swing.JTabbedPane	
+	 * This method initializes jTabbedPane	.
+	 *
+	 * @return javax.swing.JTabbedPane
 	 */
 	private JTabbedPane getJTabbedPane() {
 		if (jTabbedPane == null) {
@@ -473,13 +493,26 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			jTabbedPane.setTitleAt(1, Language.translate("Netzwerk-Komponenten"));
 			jTabbedPane.setTitleAt(2, Language.translate("Allgemein"));
 			jTabbedPane.setSelectedIndex(1);
+
+			jTabbedPane.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent ce) {
+					TableCellEditor editor = getJTable4DomainTypes().getCellEditor();
+					if (editor!=null)  editor.stopCellEditing();
+					editor = getJTable4ComponentTypes().getCellEditor();
+					if (editor!=null)  editor.stopCellEditing();
+					setTableCellEditor4DomainsInComponents(null);
+				}
+			});
+			
 		}
 		return jTabbedPane;
 	}
 	
 	/**
-	 * This method initializes jPanelGeneralSettings	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelGeneralSettings	.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelGeneralSettings() {
 		if (jPanelGeneralSettings == null) {
@@ -509,9 +542,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		}
 		return jPanelGeneralSettings;
 	}
+	
 	/**
-	 * This method initializes jPanelRaster	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelRaster	.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelRaster() {
 		if (jPanelRaster == null) {
@@ -580,8 +615,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
-	 * This method initializes jButtonConfirm	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonConfirm	.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonConfirm() {
 		if (jButtonConfirm == null) {
@@ -597,8 +633,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
-	 * This method initializes jButtonCancel	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonCancel	.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
@@ -614,8 +651,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jPanelDomains	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelDomains	.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelDomains() {
 		if (jPanelDomains == null) {
@@ -646,9 +684,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		}
 		return jPanelDomains;
 	}
+	
 	/**
-	 * This method initializes jButtonAddDomain	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonAddDomain	.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonAddDomain() {
 		if (jButtonAddDomain == null) {
@@ -659,9 +699,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		}
 		return jButtonAddDomain;
 	}
+	
 	/**
-	 * This method initializes jButtonRemoveDomainntRow	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonRemoveDomainntRow	.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonRemoveDomainntRow() {
 		if (jButtonRemoveDomainntRow == null) {
@@ -672,9 +714,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		}
 		return jButtonRemoveDomainntRow;
 	}
+	
 	/**
-	 * This method initializes jScrollPaneClassTableDomains	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollPaneClassTableDomains	.
+	 *
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneClassTableDomains() {
 		if (jScrollPaneClassTableDomains == null) {
@@ -683,15 +727,17 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		}
 		return jScrollPaneClassTableDomains;
 	}
+	
 	/**
-	 * This method initializes jTableDomainTypes	
-	 * @return javax.swing.JTable	
+	 * This method initializes jTableDomainTypes	.
+	 *
+	 * @return javax.swing.JTable
 	 */
 	private JTable getJTable4DomainTypes() {
 		if (jTableDomainTypes == null) {
 			
 			jTableDomainTypes = new JTable();
-			jTableDomainTypes.setModel(getTableModel4Domains());
+			jTableDomainTypes.setModel(this.getTableModel4Domains());
 			jTableDomainTypes.setFillsViewportHeight(true);
 			jTableDomainTypes.setShowGrid(false);
 			jTableDomainTypes.setRowHeight(20);
@@ -747,7 +793,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			//Set up renderer and editor for the domain name column
 			TableColumn domainColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_DomainName));
 			domainColumn.setCellEditor(new TableCellEditor4Domains(this));
-
+			
 			//Set up renderer and editor for the agent class column
 			TableColumn agentClassColumn = tcm.getColumn(getColumnHeaderIndexDomains(COL_D_AdapterClass));
 			agentClassColumn.setCellEditor(this.getAdapterClassesCellEditor());
@@ -794,7 +840,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 */
 	private DefaultTableModel getTableModel4Domains(){
 		
-		if (domainTableModel== null) {
+		if (domainTableModel==null) {
 			
 			Vector<Vector<Object>> dataRows = new Vector<Vector<Object>>();
 			
@@ -870,7 +916,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
-	 * This method adds a new row to the jTableClasses' TableModel4Domains
+	 * This method adds a new row to the jTableClasses' TableModel4Domains.
 	 */
 	private void addDomainRow(){
 		// --- Create row vector --------------
@@ -901,7 +947,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		
 		this.getJTable4DomainTypes().changeSelection(newIndex, 0, false, false);
 		this.getJTable4DomainTypes().editCellAt(newIndex, 0);
-		this.setTableCellEditor4DomainsInComponents();
+		this.setTableCellEditor4DomainsInComponents(null);
 	}
 	
 	/**
@@ -926,7 +972,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		} 
 		((DefaultTableModel)getJTable4DomainTypes().getModel()).removeRow(rowNumModel);
 		this.renameDomainInComponents(domainName, defaultDomain);
-		this.setTableCellEditor4DomainsInComponents();	
+		this.setTableCellEditor4DomainsInComponents(null);	
 		
 	}
 	
@@ -954,22 +1000,23 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 				dtmComponents.setValueAt(newDomainName, row, column);	
 			}
 		}
-		this.setTableCellEditor4DomainsInComponents();
+		this.setTableCellEditor4DomainsInComponents(null);
 	}
-	
 	
 	/**
 	 * Sets the table CellEditor for domains in components.
+	 * @param domainVector the string vector of the current domains
 	 */
-	public void setTableCellEditor4DomainsInComponents(){
+	public void setTableCellEditor4DomainsInComponents(Vector<String> domainVector){
 		TableColumnModel tcm = this.getJTable4ComponentTypes().getColumnModel();
 		TableColumn domainColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_Domain));
-		domainColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxDomains()));
+		domainColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxDomains(domainVector)));
 	}
 	
 	/**
-	 * This method initializes jScrollPaneClassTableComponents	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollPaneClassTableComponents	.
+	 *
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneClassTableComponents() {
 		if (jScrollPaneClassTableComponents == null) {
@@ -1037,7 +1084,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			
 			//Set up renderer and editor for domain column
 			TableColumn domainColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_Domain));
-			domainColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxDomains()));
+			domainColumn.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxDomains(null)));
 			domainColumn.setPreferredWidth(20);
 
 			
@@ -1089,7 +1136,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
-	 * This method initiates the jTableClasses' TableModel
+	 * This method initiates the jTableClasses' TableModel.
+	 *
 	 * @return The TableModel
 	 */
 	private DefaultTableModel getTableModel4ComponentTypes(){
@@ -1164,7 +1212,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
-	 * This method adds a new row to the jTableClasses' TableModel
+	 * This method adds a new row to the jTableClasses' TableModel.
 	 */
 	private void addComponentRow(){
 		// --- Create row vector --------------
@@ -1202,8 +1250,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
-	 * This method removes a row from the jTableClasses' TableModel
-	 * @param rowNum
+	 * This method removes a row from the jTableClasses' TableModel.
+	 *
+	 * @param rowNumTable the row num table
 	 */
 	private void removeComponentRow(int rowNumTable){
 		int rowNumModel = this.getJTable4ComponentTypes().convertRowIndexToModel(rowNumTable);
@@ -1211,8 +1260,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jButtonAddComponentRow	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonAddComponentRow	.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonAddComponentRow() {
 		if (jButtonAddComponentRow == null) {
@@ -1273,9 +1323,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
 		return checkBox;
 	}
+	
 	/**
-	 * This method initializes jComboBoxNodeSize	
-	 * @return javax.swing.JComboBox	
+	 * This method initializes jComboBoxNodeSize	.
+	 *
+	 * @return javax.swing.JComboBox
 	 */
 	private JComboBoxWide<Integer> getJComboBoxNodeSize() {
 		Integer[] sizeList = {0,5,6,7,8,9,10,11,12,13,14,15,20,25,30,35,40,45,50};
@@ -1287,11 +1339,10 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
-	 * Returns a JComboBox with the list of Domains.
-	 * @return the JComboBox with the available domains
+	 * Gets the domain vector.
+	 * @return the domain vector
 	 */
-	private JComboBoxWide<String> getJComboBoxDomains() {
-		
+	public Vector<String> getDomainVector() {
 		Vector<String> domainVector =  new Vector<String>();
 		for (int i = 0; i < this.getTableModel4Domains().getRowCount(); i++) {
 			String domain = (String) this.getTableModel4Domains().getValueAt(i, 0);
@@ -1300,10 +1351,21 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			}
 		}
 		Collections.sort(domainVector);
-		DefaultComboBoxModel<String> comboBoxModel4Domains = new DefaultComboBoxModel<String>(domainVector);
-		
-		JComboBoxWide<String> jComboBoxNodeSize = new JComboBoxWide<String>(comboBoxModel4Domains);
-		return jComboBoxNodeSize;
+		return domainVector;
+	}
+	
+	/**
+	 * Returns a JComboBox with the list of Domains.
+	 * @return the JComboBox with the available domains
+	 */
+	private JComboBoxWide<String> getJComboBoxDomains(Vector<String> domainVector) {
+		DefaultComboBoxModel<String> comboBoxModel4Domains = null;
+		if (domainVector==null) {
+			comboBoxModel4Domains = new DefaultComboBoxModel<String>(this.getDomainVector());
+		} else {
+			comboBoxModel4Domains = new DefaultComboBoxModel<String>(domainVector);
+		}
+		return new JComboBoxWide<String>(comboBoxModel4Domains);
 	}
 	
 	/**
@@ -1325,8 +1387,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 	
 	/**
-	 * This method initializes jButtonRemoveComponentRow	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonRemoveComponentRow	.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonRemoveComponentRow() {
 		if (jButtonRemoveComponentRow == null) {
@@ -1363,8 +1426,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jPanelComponents	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelComponents	.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelComponents() {
 		if (jPanelComponents == null) {
@@ -1399,8 +1463,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jCheckBoxSnap2Grid	
-	 * @return javax.swing.JCheckBox	
+	 * This method initializes jCheckBoxSnap2Grid	.
+	 *
+	 * @return javax.swing.JCheckBox
 	 */
 	private JCheckBox getJCheckBoxSnap2Grid() {
 		if (jCheckBoxSnap2Grid == null) {
@@ -1413,8 +1478,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jPanelButtonOkCancel	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelButtonOkCancel	.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelButtonOkCancel() {
 		if (jPanelButtonOkCancel == null) {
@@ -1438,8 +1504,9 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * This method initializes jComboBoxGridWidth	
-	 * @return javax.swing.JComboBox	
+	 * This method initializes jComboBoxGridWidth	.
+	 *
+	 * @return javax.swing.JComboBox
 	 */
 	private JSpinner getJSpinnerGridWidth() {
 		if (jSpnnerGridWidth == null) {
@@ -1448,9 +1515,11 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		}
 		return jSpnnerGridWidth;
 	}
+	
 	/**
-	 * This method initializes jComboBoxEdgeShapes	
-	 * @return javax.swing.JComboBox	
+	 * This method initializes jComboBoxEdgeShapes	.
+	 *
+	 * @return javax.swing.JComboBox
 	 */
 	private JComboBox<EdgeShape> getJComboBoxEdgeShapes() {
 		if (jComboBoxEdgeShapes == null) {
@@ -1492,6 +1561,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		} else if(ae.getSource()==this.getJButtonAddDomain()) {
 			// --- Add a new row to the domain table ----------------
 			this.addDomainRow();
+			
 		} else if(ae.getSource()==this.getJButtonRemoveDomainntRow()) {
 			// --- Remove a row from the component types table ------
 			if(getJTable4DomainTypes().getSelectedRow() > -1){
@@ -1499,7 +1569,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 			}
 		
 		} else if(ae.getSource()==this.getJButtonConfirm()) {
-			
+			// --- Check and prepare new settings -------------------
 			HashMap<String, ComponentTypeSettings> ctsHash = new HashMap<String, ComponentTypeSettings>();
 			HashMap<String, DomainSettings> dsHash = new HashMap<String, DomainSettings>();
 			
@@ -1535,6 +1605,15 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 					ds.setClusterShape(clusterShape);
 					ds.setClusterAgent(clusterAgent);
 					
+					Error error = this.isDomainConfigError(name, ds, dsHash);
+					if (error!=null) {
+						// --- Set focus to error position ---------- 
+						this.getJTabbedPane().setSelectedIndex(0);
+						int tableRow = jtDomains.convertRowIndexToView(row);
+						jtDomains.setRowSelectionInterval(tableRow, tableRow);
+						JOptionPane.showMessageDialog(this, error.getMessage(), error.getTitle(), JOptionPane.WARNING_MESSAGE);
+						return;
+					}
 					dsHash.put(name, ds);
 				}
 			}
@@ -1574,6 +1653,15 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 					cts.setEdgeWidth(edgeWidth);
 					cts.setShowLabel(showLable);
 
+					Error error = this.isComponentTypeError(name, cts, ctsHash);
+					if (error!=null) {
+						// --- Set focus to error position ---------- 
+						this.getJTabbedPane().setSelectedIndex(1);
+						int tableRow = jtComponents.convertRowIndexToView(row);
+						jtComponents.setRowSelectionInterval(tableRow, tableRow);
+						JOptionPane.showMessageDialog(this, error.getMessage(), error.getTitle(), JOptionPane.WARNING_MESSAGE);
+						return;
+					}
 					ctsHash.put(name, cts);
 				}
 			}
@@ -1595,5 +1683,104 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	
 	}
 
-
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+	/**
+	 * Checks if there is domain configuration error.
+	 *
+	 * @param dsName the DomainSettings name
+	 * @param ds the DomainSettings to check
+	 * @param dsHash the DomainSettings hash that contains the already checked DomainSettings
+	 * @return true, if is domain configuration error
+	 */
+	private Error isDomainConfigError(String dsName, DomainSettings ds, HashMap<String, DomainSettings> dsHash) {
+		
+		String title = "";
+		String message = "";
+		if (dsHash.get(dsName)!=null) {
+			// --- Duplicate DomainSettings -------------------------
+			title = Language.translate("Duplicate Domain", Language.EN) + "!";
+			message = Language.translate("The following domain exists at least twice", Language.EN) + ": '" + dsName + "' !";
+			return new Error(title, message);
+		}
+		return null;
+	}
+	
+	/**
+	 * Checks if there is component type error.
+	 *
+	 * @param ctsName the ComponentTypeSettings name
+	 * @param cts the ComponentTypeSettings to check
+	 * @param ctsHash the ComponentTypeSettings hash that contains the already checked ComponentTypeSettings
+	 * @return true, if is component type error
+	 */
+	private Error isComponentTypeError(String ctsName, ComponentTypeSettings cts, HashMap<String, ComponentTypeSettings> ctsHash) {
+		
+		String title = "";
+		String message = "";
+		if (ctsHash.get(ctsName)!=null) {
+			// --- Duplicate ComponentTypeSettings ------------------
+			title = Language.translate("Duplicate Component Type", Language.EN) + "!";
+			message = Language.translate("The following component type exists at least twice", Language.EN) + ": '" + ctsName + "' !";
+			return new Error(title, message);
+		}
+		
+		if (cts.getGraphPrototype()==null || cts.getGraphPrototype().equals("")) {
+			// --- Duplicate ComponentTypeSettings ------------------
+			title = Language.translate("Component Type Error", Language.EN) + "!";
+			message = Language.translate("No Graph-Prototype defined for", Language.EN) + " '" + ctsName + "' !";
+			return new Error(title, message);
+		}
+		return null;
+	}
+	
+	/**
+	 * The Class Error is used to describe an error.
+	 */
+	private class Error {
+		
+		private String message;
+		private String title;
+		
+		/**
+		 * Instantiates a new error.
+		 *
+		 * @param title the title
+		 * @param message the message
+		 */
+		public Error(String title, String message) {
+			this.setTitle(title);
+			this.setMessage(message);
+		}
+		
+		/**
+		 * Gets the title.
+		 * @return the title
+		 */
+		public String getTitle() {
+			return title;
+		}
+		/**
+		 * Sets the title.
+		 * @param title the new title
+		 */
+		public void setTitle(String title) {
+			this.title = title;
+		}
+		
+		/**
+		 * Gets the message.
+		 * @return the message
+		 */
+		public String getMessage() {
+			return message;
+		}
+		/**
+		 * Sets the message.
+		 * @param messag the new message
+		 */
+		public void setMessage(String messag) {
+			this.message = messag;
+		}
+	}
+	
+	
+} 

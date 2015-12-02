@@ -6,7 +6,7 @@
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>gasmas.graphprototypes.Star9GraphElement</graphPrototype>
@@ -30,7 +30,7 @@
                 <adapterClass>gasmas.adapter.ValveAdapter</adapterClass>
                 <agentClass>gasmas.agents.components.SimpleValveAgent</agentClass>
                 <color>-16777012</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeImage>/gasmas/img/Vent.png</edgeImage>
                 <edgeWidth>2.5</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
@@ -42,7 +42,7 @@
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>gasmas.graphprototypes.Star8GraphElement</graphPrototype>
@@ -54,7 +54,7 @@
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>gasmas.graphprototypes.Star7GraphElement</graphPrototype>
@@ -67,7 +67,7 @@
                 <adapterClass>gasmas.adapter.ShortPipeAdapter</adapterClass>
                 <agentClass>gasmas.agents.components.PipeShortAgent</agentClass>
                 <color>-16777216</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
@@ -80,7 +80,7 @@
                 <adapterClass>gasmas.adapter.ExitAdapter</adapterClass>
                 <agentClass>gasmas.agents.components.ExitAgent</agentClass>
                 <color>-65536</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeWidth>10.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>false</showLabel>
@@ -92,7 +92,7 @@
                 <adapterClass>gasmas.adapter.EntryAdapter</adapterClass>
                 <agentClass>gasmas.agents.components.EntryAgent</agentClass>
                 <color>-16724992</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeWidth>10.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>false</showLabel>
@@ -103,7 +103,7 @@
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>gasmas.graphprototypes.Star6GraphElement</graphPrototype>
@@ -115,7 +115,7 @@
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>gasmas.graphprototypes.Star5GraphElement</graphPrototype>
@@ -127,7 +127,7 @@
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.Star4GraphElement</graphPrototype>
                 <showLabel>false</showLabel>
@@ -139,22 +139,9 @@
                 <adapterClass>gasmas.adapter.PipeAdapter</adapterClass>
                 <agentClass>gasmas.agents.components.PipeAgent</agentClass>
                 <color>-16777216</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
-                <showLabel>false</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>ControlValve</key>
-            <value>
-                <adapterClass>gasmas.adapter.ControlValveAdapter</adapterClass>
-                <agentClass>gasmas.agents.components.ControlValveAgent</agentClass>
-                <color>-16777012</color>
-                <domain>Gas network</domain>
-                <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>4.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -164,10 +151,23 @@
                 <adapterClass>gasmas.adapter.BranchAdapter</adapterClass>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.Star3GraphElement</graphPrototype>
+                <showLabel>false</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>ControlValve</key>
+            <value>
+                <adapterClass>gasmas.adapter.ControlValveAdapter</adapterClass>
+                <agentClass>gasmas.agents.components.ControlValveAgent</agentClass>
+                <color>-16777012</color>
+                <domain>Gas Network</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>4.0</edgeWidth>
+                <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -220,7 +220,7 @@
             <value>
                 <agentClass>gasmas.agents.components.StorageAgent</agentClass>
                 <color>-26368</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeWidth>20.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>false</showLabel>
@@ -231,7 +231,7 @@
             <value>
                 <agentClass>gasmas.agents.components.ResistorAgent</agentClass>
                 <color>-6750208</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>4.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
@@ -265,7 +265,7 @@
             <value>
                 <agentClass>gasmas.agents.components.BranchAgent</agentClass>
                 <color>-16777216</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>gasmas.graphprototypes.Star10GraphElement</graphPrototype>
@@ -289,7 +289,7 @@
                 <adapterClass>gasmas.adapter.CompressorAdapter</adapterClass>
                 <agentClass>gasmas.agents.components.CompressorAgent</agentClass>
                 <color>-39424</color>
-                <domain>Gas network</domain>
+                <domain>Gas Network</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>4.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</graphPrototype>
@@ -299,7 +299,7 @@
     </currentCTS>
     <domainSettings>
         <entry>
-            <key>Gas network</key>
+            <key>Gas Network</key>
             <value>
                 <adapterClass>gasmas.adapter.GasNodeAdapter</adapterClass>
                 <clusterAgent>gasmas.agents.components.ClusterNetworkAgent</clusterAgent>

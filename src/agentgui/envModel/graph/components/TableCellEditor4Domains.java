@@ -30,15 +30,17 @@
 package agentgui.envModel.graph.components;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.TableCellEditor;
+import javax.swing.text.BadLocationException;
 
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 
@@ -48,26 +50,20 @@ import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TableCellEditor4Domains extends AbstractCellEditor implements TableCellEditor, ActionListener {
+public class TableCellEditor4Domains extends AbstractCellEditor implements TableCellEditor {
 	
 	private static final long serialVersionUID = -1937780991527069423L;
-	private static final String EDIT = "edit";
 	
 	private ComponentTypeDialog ctsDialog = null;
-	
-	private JTextField textField 	= new JTextField();
-	private JLabel labelField 		= new JLabel();
 	private String domainName;
+	private Vector<String> domainVector; 
 	
 	/**
-	 * Default constructor
+	 * Default constructor.
+	 * @param ctsDialog the ComponentTypeDialog dialog
 	 */
 	public TableCellEditor4Domains(ComponentTypeDialog ctsDialog) {
 		this.ctsDialog = ctsDialog;
-		// --- edit appearance of the text field ----------
-		textField.setActionCommand(EDIT);
-        textField.addActionListener(this);
-        textField.setBorder(BorderFactory.createEmptyBorder());
 	}
 	
 	/* (non-Javadoc)
@@ -79,47 +75,75 @@ public class TableCellEditor4Domains extends AbstractCellEditor implements Table
 	}
 
 	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		
-		if (ae.getActionCommand().equals(EDIT )) {
-			String oldValue = domainName;
-			domainName = textField.getText();
-			// --- Make the renderer reappear -------------. 
-            fireEditingStopped();
-            // --- Apply changes to the display elements 
-			if (oldValue!=null) {
-				if (oldValue.equals(domainName)==false) {
-					// --- Revise the current ComponentTypeSettings -----
-					ctsDialog.renameDomainInComponents(oldValue, domainName);
-				}
-			}
-			ctsDialog.setTableCellEditor4DomainsInComponents();
-        }
-		
-	}
-
-	/* (non-Javadoc)
 	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
 	 */
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		// This method is called when a cell value is edited by the user.
-		domainName = (String) value;
-		if (domainName==null) {
-			textField.setText(domainName);
-			return textField;
-		} else if (domainName.equals(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME)==true) {
-			labelField.setText(domainName);
-			return labelField;
+
+		Component editComponent = null;
+		
+		this.domainVector = ctsDialog.getDomainVector();
+		this.domainName = (String) value;
+		if (this.domainName!=null && this.domainName.equals(GeneralGraphSettings4MAS.DEFAULT_DOMAIN_SETTINGS_NAME)==true) {
+			JLabel jLabel = new JLabel(this.domainName);
+			editComponent = jLabel;
+			
 		} else {
-			textField.setText(domainName);
-			return textField;
+			JTextField jTextField = new JTextField(this.domainName);
+	        jTextField.setBorder(BorderFactory.createEmptyBorder());
+	        jTextField.getDocument().addDocumentListener(this.getTextFieldDocumentListener());
+	        editComponent = jTextField;
+	        
 		}
+		return editComponent;
+	}
+	
+	/**
+	 * Gets the text field document listener.
+	 * @return the text field document listener
+	 */
+	private DocumentListener getTextFieldDocumentListener() {
+		
+		DocumentListener docListener = new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent de) {
+				this.setNewDocValue(de);
+			}
+			@Override
+			public void insertUpdate(DocumentEvent de) {
+				this.setNewDocValue(de);
+			}
+			@Override
+			public void changedUpdate(DocumentEvent de) {
+//				this.setNewDocValue(de);
+			}
+			private void setNewDocValue(DocumentEvent de) {
+				// --- Get old and new value for domain name --------
+				String oldValue = domainName;
+				try {
+					domainName = de.getDocument().getText(0, de.getDocument().getLength());
+				} catch (BadLocationException ble) {
+					ble.printStackTrace();
+					domainName = null;
+				}
+			    // --- Apply changes to the display elements --------
+				if (oldValue!=null) {
+					if (oldValue.equals(domainName)==false) {
+						// --- Revise the ComponentTypeSettings -----
+						ctsDialog.renameDomainInComponents(oldValue, domainName);
+					}
+				}
+				// --- Exchange name in the domain vector ----------- 
+				int pos = domainVector.indexOf(oldValue);
+				if (pos>=0) {
+					domainVector.set(pos, domainName);
+				}
+				// --- Update JComboBox for the domain selection ----
+				ctsDialog.setTableCellEditor4DomainsInComponents(domainVector);
+			}
+		};
+		return docListener;
 	}
 
-	
 	
 }
