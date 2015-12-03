@@ -221,7 +221,7 @@ public class GlobalInfo {
 		// --- Class-Path untersuchen ---------------------------------------
 		for (int i=0; i<JCP_Files.length; i++) {
 
-			if (JCP_Files[i].endsWith(localFileRunnableJar)) {
+			if (JCP_Files[i].endsWith(File.separator + localFileRunnableJar)) {
 				localAppExecutedOver = ExecutedOverAgentGuiJar;
 				
 				File agentGuiJar = new File(JCP_Files[i]);
@@ -557,10 +557,13 @@ public class GlobalInfo {
 		} else {
 			returnPath = localPathProjects;	
 		}
-		// --- See if the folder exists. If not create ---------
-		File testFile = new File(returnPath);
-		if (testFile.exists()==false) {
-			testFile.mkdir();
+		// --- See if the folder exists. If not create it, if -------
+		// --- the parameter forcePathCreation allows that ----------
+		if (forcePathCreation==true) {
+			File testFile = new File(returnPath);
+			if (testFile.exists()==false) {
+				testFile.mkdir();
+			}	
 		}
 		return returnPath;
 	}
