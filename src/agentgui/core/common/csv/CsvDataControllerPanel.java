@@ -105,7 +105,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 	private JButton getBtnImport() {
 		if (btnImport == null) {
 			btnImport = new JButton("Import");
-			btnImport.setIcon(new ImageIcon(CsvDataControllerPanel.class.getResource("/agentgui/envModel/graph/img/import.png")));
+			btnImport.setIcon(new ImageIcon(CsvDataControllerPanel.class.getResource("/agentgui/core/gui/img/import.png")));
 			btnImport.addActionListener(this);
 		}
 		return btnImport;
@@ -113,7 +113,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 	private JButton getBtnExport() {
 		if (btnExport == null) {
 			btnExport = new JButton("Export");
-			btnExport.setIcon(new ImageIcon(CsvDataControllerPanel.class.getResource("/agentgui/envModel/graph/img/export.png")));
+			btnExport.setIcon(new ImageIcon(CsvDataControllerPanel.class.getResource("/agentgui/core/gui/img/export.png")));
 			btnExport.addActionListener(this);
 		}
 		return btnExport;
