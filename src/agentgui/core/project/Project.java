@@ -61,6 +61,7 @@ import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectWindow;
 import agentgui.core.gui.components.JPanel4Visualisation;
+import agentgui.core.gui.projectwindow.AgentLoadMetricsPanel;
 import agentgui.core.gui.projectwindow.BaseAgents;
 import agentgui.core.gui.projectwindow.Distribution;
 import agentgui.core.gui.projectwindow.JadeSetup;
@@ -125,11 +126,18 @@ import agentgui.core.webserver.JarFileCreator;
 	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_UserRuntimeObject = "UserRuntimeObject";
 	
-	/** Constant value in order to set the project view */
+	// --- Constant value in order to set the project view ----------
 	@XmlTransient public static final String VIEW_Developer = "Developer";
 	@XmlTransient public static final String VIEW_User = "User";
 	@XmlTransient public static final String VIEW_Maximize = "MaximizeView";
 	@XmlTransient public static final String VIEW_Restore = "RestoreView";
+	
+	// --- Constants for the the agent distribution metric ----------
+	@XmlTransient public static final String AGENT_METRIC_Reset = "AgentMetric_Reset";
+	@XmlTransient public static final String AGENT_METRIC_ChangedDataSource = "AgentMetric_ChangedDataSource";
+	@XmlTransient public static final String AGENT_METRIC_AgentDescriptionAdded = "AgentMetric_AgentDescriptionAdded";
+	@XmlTransient public static final String AGENT_METRIC_AgentDescriptionEdited = "AgentMetric_AgentDescriptionEdited";
+	@XmlTransient public static final String AGENT_METRIC_AgentDescriptionRemoved = "AgentMetric_AgentDescriptionRemoved";
 	
 	// --- Constants -------------------------------------------
 	@XmlTransient private String defaultSubFolder4Setups   = "setups";
@@ -216,6 +224,9 @@ import agentgui.core.webserver.JarFileCreator;
 	/** The distribution setup. */
 	@XmlElement(name="distributionSetup")
 	private DistributionSetup distributionSetup = new DistributionSetup();
+	
+	@XmlElement(name="agentLoadMetrics")
+	private AgentLoadMetrics agentLoadMetrics;
 	
 	/**
 	 * This field manages the configuration of remote container if needed
@@ -325,6 +336,12 @@ import agentgui.core.webserver.JarFileCreator;
 					   new Distribution(this), Language.translate("Konfiguration"));
 			pwt.add();
 
+			// --- Agent Load Metrics ---------------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
+					   Language.translate("Agenten-Lastmetrik"), null, null, 
+					   new AgentLoadMetricsPanel(this), Language.translate("Konfiguration"));
+			pwt.add();
+			
 		// ------------------------------------------------
 		// --- Simulations-Setup --------------------------
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
@@ -1302,16 +1319,6 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 
 	/**
-	 * Sets the distribution setup.
-	 * @param distributionSetup the distributionSetup to set
-	 */
-	public void setDistributionSetup(DistributionSetup distributionSetup) {
-		this.distributionSetup = distributionSetup;
-		setUnsaved(true);
-		setChanged();
-		notifyObservers(CHANGED_DistributionSetup);
-	}
-	/**
 	 * Gets the distribution setup.
 	 * @return the distributionSetup
 	 */
@@ -1322,22 +1329,50 @@ import agentgui.core.webserver.JarFileCreator;
 		}
 		return distributionSetup;
 	}
-	
+	/**
+	 * Sets the distribution setup.
+	 * @param distributionSetup the distributionSetup to set
+	 */
+	public void setDistributionSetup(DistributionSetup distributionSetup) {
+		this.distributionSetup = distributionSetup;
+		setUnsaved(true);
+		setChanged();
+		notifyObservers(CHANGED_DistributionSetup);
+	}
+
 	/**
 	 * @return the remoteContainerConfiguration
 	 */
 	@XmlTransient
 	public RemoteContainerConfiguration getRemoteContainerConfiguration() {
 		return remoteContainerConfiguration;
-	}
+	}	
 	/**
 	 * @param remoteContainerConfiguration the remoteContainerConfiguration to set
 	 */
 	public void setRemoteContainerConfiguration(RemoteContainerConfiguration remoteContainerConfiguration) {
 		this.remoteContainerConfiguration = remoteContainerConfiguration;
-		setUnsaved(true);
-		setChanged();
-		notifyObservers(CHANGED_RemoteContainerConfiguration);
+		this.setChangedAndNotify(CHANGED_RemoteContainerConfiguration);
+	}
+	
+	/**
+	 * Gets the agent load metrics.
+	 * @return the agent load metrics
+	 */
+	@XmlTransient
+	public AgentLoadMetrics getAgentLoadMetrics() {
+		if (agentLoadMetrics==null) {
+			agentLoadMetrics = new AgentLoadMetrics(this);
+		}
+		return agentLoadMetrics;
+	}
+	/**
+	 * Sets the agent load metrics.
+	 * @param agentLoadMetrics the new agent load metrics
+	 */
+	public void setAgentLoadMetrics(AgentLoadMetrics agentLoadMetrics) {
+		this.agentLoadMetrics = agentLoadMetrics;
+		this.setChangedAndNotify(AGENT_METRIC_Reset);
 	}
 	
 	/**

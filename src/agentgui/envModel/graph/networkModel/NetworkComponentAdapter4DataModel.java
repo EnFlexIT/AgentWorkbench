@@ -30,12 +30,15 @@ package agentgui.envModel.graph.networkModel;
 
 import jade.content.Concept;
 
+import java.awt.Dimension;
 import java.util.Vector;
 
 import javax.swing.JComponent;
 
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
+import agentgui.envModel.graph.controller.BasicGraphGuiJDesktopPane;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+
 
 /**
  * The Class NetworkComponentAdapter4DataModel can be used in order  
@@ -50,9 +53,8 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
  */
 public abstract class NetworkComponentAdapter4DataModel {
 
-	private GraphEnvironmentController graphController = null;
+	private GraphEnvironmentController graphController;
 
-	
 	/**
 	 * Instantiates a new network component data model adapter.
 	 * @param graphController the GraphEnvironmentController
@@ -83,6 +85,19 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * @return the visualisation component
 	 */
 	public abstract JComponent getVisualisationComponent();
+	
+	/**
+	 * Returns the default size for the visualisation of the data model.
+	 * Override this method in order to get control over the window size 
+	 * of your own, customised visualisation. 
+	 * By default this method just returns null.
+	 *
+	 * @param graphDesktop the current desktop instance that will be the host of the visualisation 
+	 * @return the Dimension of the visualisation
+	 */
+	public Dimension getSizeOfVisualisation(BasicGraphGuiJDesktopPane graphDesktop) {
+		return null;
+	}
 	
 	
 	/**

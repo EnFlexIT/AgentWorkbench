@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.common.csv;
 
 import javax.swing.JPanel;
@@ -11,7 +39,6 @@ import javax.swing.table.DefaultTableModel;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import javax.swing.JTable;
 import java.awt.Insets;
@@ -27,27 +54,27 @@ import javax.swing.JCheckBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
-import javax.swing.JSeparator;
 
 /**
+ * The CSV Controller Panel that can be used with a customised CSV-Importer 
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
- *
  */
 public class CsvDataControllerPanel extends JPanel implements ActionListener{
 
-	/**
-	 * Generated serialVersionUID
-	 */
+
 	private static final long serialVersionUID = -8553767098312965499L;
-	/** Swing components */
-	private JToolBar toolBar;
-	private JTable table;
-	private JButton btnImport;
-	private JButton btnExport;
-	private JLabel lblSeparator;
-	private JCheckBox chckbxHasHeadlines;
-	private JComboBox<String> cbSeparator;
+	
+	private JToolBar jToolBarCsvHandling;
+	
+	private JScrollPane jScrollPaneTable;
+	private JTable jTableData;
+	private JButton jButtonImport;
+	private JButton jButtonExport;
+	
+	private JLabel jLabelSeparator;
+	private JCheckBox jCheckBoxHasHeadlines;
+	private JComboBox<String> jComboBoxSeparator;
 	
 	/**
 	 * The CSV data controller instance
@@ -63,88 +90,106 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 	 * Create the panel.
 	 */
 	public CsvDataControllerPanel() {
+		this.initialize();
+	}
+	/**
+	 * Initialize.
+	 */
+	private void initialize() {
+
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		setLayout(gridBagLayout);
+		this.setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_toolBar = new GridBagConstraints();
 		gbc_toolBar.anchor = GridBagConstraints.WEST;
 		gbc_toolBar.insets = new Insets(0, 0, 5, 0);
 		gbc_toolBar.gridx = 0;
 		gbc_toolBar.gridy = 0;
-		add(getToolBar(), gbc_toolBar);
+		this.add(getJToolBarCsvHandling(), gbc_toolBar);
+		
 		GridBagConstraints gbc_table = new GridBagConstraints();
 		gbc_table.fill = GridBagConstraints.BOTH;
 		gbc_table.gridx = 0;
 		gbc_table.gridy = 1;
-		add(new JScrollPane(getTable()), gbc_table);
-
+		this.add(this.getJScrollPaneTable(), gbc_table);
+	}
+	
+	private JToolBar getJToolBarCsvHandling() {
+		if (jToolBarCsvHandling == null) {
+			jToolBarCsvHandling = new JToolBar();
+			jToolBarCsvHandling.setFloatable(false);
+			jToolBarCsvHandling.add(getJButtonImport());
+			jToolBarCsvHandling.add(getJButtonExport());
+			jToolBarCsvHandling.addSeparator();
+			jToolBarCsvHandling.add(getJComboBoxSeparator());
+			jToolBarCsvHandling.add(getJLabelSeparator());
+			jToolBarCsvHandling.addSeparator();
+			jToolBarCsvHandling.add(getJCheckBoxHasHeadlines());
+		}
+		return jToolBarCsvHandling;
+	}
+	
+	private JScrollPane getJScrollPaneTable() {
+		if (jScrollPaneTable==null) {
+			jScrollPaneTable = new JScrollPane();
+			jScrollPaneTable.setViewportView(this.getJTableData());
+		}
+		return jScrollPaneTable;
+	}
+	private JTable getJTableData() {
+		if (jTableData == null) {
+			jTableData = new JTable();
+			jTableData.setFillsViewportHeight(true);
+		}
+		return jTableData;
+	}
+	private JButton getJButtonImport() {
+		if (jButtonImport == null) {
+			jButtonImport = new JButton("Import");
+			jButtonImport.setIcon(new ImageIcon(CsvDataControllerPanel.class.getResource("/agentgui/core/gui/img/import.png")));
+			jButtonImport.addActionListener(this);
+		}
+		return jButtonImport;
+	}
+	private JButton getJButtonExport() {
+		if (jButtonExport == null) {
+			jButtonExport = new JButton("Export");
+			jButtonExport.setIcon(new ImageIcon(CsvDataControllerPanel.class.getResource("/agentgui/core/gui/img/export.png")));
+			jButtonExport.addActionListener(this);
+		}
+		return jButtonExport;
+	}
+	private JComboBox<String> getJComboBoxSeparator() {
+		if (jComboBoxSeparator == null) {
+			jComboBoxSeparator = new JComboBox<String>();
+			jComboBoxSeparator.setModel(new DefaultComboBoxModel<String>(this.seperators));
+		}
+		return jComboBoxSeparator;
 	}
 
-	private JToolBar getToolBar() {
-		if (toolBar == null) {
-			toolBar = new JToolBar();
-			toolBar.add(getBtnImport());
-			toolBar.add(getBtnExport());
-			toolBar.addSeparator(new Dimension(5, toolBar.getHeight()));
-			toolBar.add(getCbSeparator());
-			toolBar.add(getLblSeparator());
-			toolBar.addSeparator(new Dimension(5, toolBar.getHeight()));
-			toolBar.add(getChckbxHasHeadlines());
+	private JLabel getJLabelSeparator() {
+		if (jLabelSeparator == null) {
+			jLabelSeparator = new JLabel(Language.translate("Trennzeichen"));
 		}
-		return toolBar;
-	}
-	private JTable getTable() {
-		if (table == null) {
-			table = new JTable();
-		}
-		return table;
-	}
-	private JButton getBtnImport() {
-		if (btnImport == null) {
-			btnImport = new JButton("Import");
-			btnImport.setIcon(new ImageIcon(CsvDataControllerPanel.class.getResource("/agentgui/core/gui/img/import.png")));
-			btnImport.addActionListener(this);
-		}
-		return btnImport;
-	}
-	private JButton getBtnExport() {
-		if (btnExport == null) {
-			btnExport = new JButton("Export");
-			btnExport.setIcon(new ImageIcon(CsvDataControllerPanel.class.getResource("/agentgui/core/gui/img/export.png")));
-			btnExport.addActionListener(this);
-		}
-		return btnExport;
-	}
-	private JComboBox<String> getCbSeparator() {
-		if (cbSeparator == null) {
-			cbSeparator = new JComboBox<String>();
-			cbSeparator.setModel(new DefaultComboBoxModel<String>(this.seperators));
-		}
-		return cbSeparator;
+		return jLabelSeparator;
 	}
 
-	private JLabel getLblSeparator() {
-		if (lblSeparator == null) {
-			lblSeparator = new JLabel(Language.translate("Trennzeichen"));
+	private JCheckBox getJCheckBoxHasHeadlines() {
+		if (jCheckBoxHasHeadlines == null) {
+			jCheckBoxHasHeadlines = new JCheckBox(Language.translate("Spaltenüberschriften"));
+			jCheckBoxHasHeadlines.setSelected(true);
 		}
-		return lblSeparator;
-	}
-
-	private JCheckBox getChckbxHasHeadlines() {
-		if (chckbxHasHeadlines == null) {
-			chckbxHasHeadlines = new JCheckBox(Language.translate("Spaltenüberschriften"));
-			chckbxHasHeadlines.setSelected(true);
-		}
-		return chckbxHasHeadlines;
+		return jCheckBoxHasHeadlines;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		if(ae.getSource() == this.getBtnImport()){
+		if(ae.getSource() == this.getJButtonImport()){
 			
 			// --- Import data from CSV
 			JFileChooser jFileChooserImportCSV = new JFileChooser(Application.getGlobalInfo().getLastSelectedFolder());
@@ -156,16 +201,17 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 				File csvFile = jFileChooserImportCSV.getSelectedFile();
 				
 				this.importer = new CsvDataController();
-				this.importer.setHeadlines(this.getChckbxHasHeadlines().isSelected());
-				this.importer.setSeparator((String) this.getCbSeparator().getSelectedItem());
+				this.importer.setHeadlines(this.getJCheckBoxHasHeadlines().isSelected());
+				this.importer.setSeparator((String) this.getJComboBoxSeparator().getSelectedItem());
 				
 				this.importer.doImport(csvFile);
 				DefaultTableModel dtm = this.importer.getDataModel();
 				if(dtm != null){
-					this.getTable().setModel(dtm);
+					this.getJTableData().setModel(dtm);
 				}
 			}
-		}else{
+			
+		} else {
 			
 			// --- Export data to CSV
 			JFileChooser jFileChooserExportCSV = new JFileChooser(Application.getGlobalInfo().getLastSelectedFolder());

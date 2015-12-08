@@ -93,23 +93,23 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	private int defaultWidth = 300;
 	private int defaultHeight= 450;
 	
-	private Object selectedGraphObject = null;  //  @jve:decl-index=0:
-	private GraphNode graphNode = null;
-	private NetworkComponent networkComponent = null;
-	private NetworkComponentAdapter networkComponentAdapter = null;
-	private NetworkComponentAdapter4DataModel adapter4DataModel = null;
+	private Object selectedGraphObject;
+	private GraphNode graphNode;
+	private NetworkComponent networkComponent;
+	private NetworkComponentAdapter networkComponentAdapter;
+	private NetworkComponentAdapter4DataModel adapter4DataModel;
 	
-	private JPanel jContentPane = null;  
-	private JToolBar jJToolBarBarNorth = null;
-	private JToolBarButton jToolBarButtonSave = null;
-	private JToolBarButton jToolBarButtonSaveAndExit = null;
-	private JToolBarButton jToolBarButtonDisableRuntimeUpdates = null;
-	private JComponent jComponentContent = null;
+	private JPanel jContentPane;  
+	private JToolBar jJToolBarBarNorth;
+	private JToolBarButton jToolBarButtonSave;
+	private JToolBarButton jToolBarButtonSaveAndExit;
+	private JToolBarButton jToolBarButtonDisableRuntimeUpdates;
+	private JComponent jComponentContent;
 
-	private Vector<Integer> dataModelBase64InitialHashCodes = null;  //  @jve:decl-index=0:
+	private Vector<Integer> dataModelBase64InitialHashCodes;
 	
-	private boolean dataModelNotificationEnabled = true; 
-	private DataModelNotification dataModelNotificationLast = null;  //  @jve:decl-index=0:
+	private boolean dataModelNotificationEnabled; 
+	private DataModelNotification dataModelNotificationLast;
 	
 	
 	/**
@@ -139,8 +139,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		
 		this.setTitle("Component");
-		this.setSize(this.defaultWidth, this.defaultHeight);
-		this.setInitialSizeAndPosition();
 		
 		// --- Remove Frame menu ----------------
 		BasicInternalFrameUI ui = (BasicInternalFrameUI)this.getUI();
@@ -196,6 +194,8 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		this.configureForGraphObject();
 		this.setContentPane(this.getJContentPane());
+		this.setSize(this.defaultWidth, this.defaultHeight);
+		this.setInitialSizeAndPosition();
 		
 		// --- Call to the super-class ----------
 		this.registerAtDesktopAndSetVisible();
@@ -207,7 +207,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 */
 	private void setInitialSizeAndPosition() {
 
-		// --- Get the initial x-position of the property window ----
+		// --- Get the initial x-position of the property window --------------
 		int posBasicGraphGui = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getLocation().x;
 		int posVisViewOnBasicGraphGui = this.basicGraphGui.getVisView().getParent().getLocation().x; 
 		int initialX = posBasicGraphGui + posVisViewOnBasicGraphGui;
@@ -215,6 +215,12 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		if (this.graphDesktop!=null) {
 			Dimension desktopSize = this.graphDesktop.getSize();
 			Dimension newSize = new Dimension(this.defaultWidth, (int) (desktopSize.getHeight()*(2.0/3.0)));
+			// --- Possibly, a user defined size is to be considered ----------
+			if (this.getNetworkComponentAdapter4DataModel()!=null) {
+				Dimension userSize = this.getNetworkComponentAdapter4DataModel().getSizeOfVisualisation(this.graphDesktop); 
+				if (userSize!=null) newSize = userSize;	
+			}
+			
 			if (this.graphDesktop.getLastOpenedEditor()==null) {
 				this.setLocation(initialX, 0);
 				this.setSize(newSize);
@@ -284,13 +290,49 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	}
 	
 	/**
+	 * Returns the current {@link NetworkComponentAdapter}.
+	 * @return the network component adapter
+	 */
+	public NetworkComponentAdapter getNetworkComponentAdapter() {
+		return this.networkComponentAdapter;
+	}
+	/**
+	 * Returns the current adapter for the data model of the {@link NetworkComponent}.
+	 * @return the network component adapter4 data model
+	 */
+	public NetworkComponentAdapter4DataModel getNetworkComponentAdapter4DataModel() {
+		if (this.adapter4DataModel==null) {
+			if (this.getNetworkComponentAdapter()!=null) {
+				this.adapter4DataModel = this.getNetworkComponentAdapter().getNewDataModelAdapter();
+			}	
+		}
+		return this.adapter4DataModel;
+	}
+	/**
+	 * Exchanges the JPanel with the content.
+	 * @param newJPanelContent the new JPanel with the content 
+	 */
+	public void exchangeJPanelContent(JPanel newJPanelContent) {
+
+		if (newJPanelContent==null) return;
+		
+		// --- Remove the old content -----------
+		this.getJContentPane().remove(this.getJPanelContent());
+		// --- Add the new content --------------		
+		this.jComponentContent = newJPanelContent;
+		this.getJContentPane().add(newJPanelContent, BorderLayout.CENTER);
+		this.validate();
+		this.repaint();
+	}
+	
+	/**
 	 * This method initializes jPanelContent	
 	 * @return javax.swing.JPanel	
 	 */
 	private JComponent getJPanelContent() {
 		if (this.jComponentContent==null) {
 			
-			if (this.networkComponentAdapter==null) {
+			if (this.getNetworkComponentAdapter()==null) {
 				// --- No network component adapter was defined -------------------------
 				this.getJToolBarButtonSave().setEnabled(false);
 				this.getJToolBarButtonSaveAndExit().setEnabled(false);
@@ -313,8 +355,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 				
 			} else {
 				// --- There is a network component adapter available -------------------
-				this.adapter4DataModel = this.networkComponentAdapter.getNewDataModelAdapter();
-				if (this.adapter4DataModel==null) {
+				if (this.getNetworkComponentAdapter4DataModel()==null) {
 					// --- No DataModelAdapter was defined -------------------------
 					if (this.graphNode!=null) {
 						this.graphNode.setDataModel(null);
@@ -342,7 +383,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 					
 					if (dataModel==null && dataModelBase64!=null) {
     					// --- Convert Base64 decoded Object ------------------
-    					dataModel = this.adapter4DataModel.getDataModelBase64Decoded(dataModelBase64);
+    					dataModel = this.getNetworkComponentAdapter4DataModel().getDataModelBase64Decoded(dataModelBase64);
     					if (this.graphNode!=null) {
     						this.graphNode.setDataModel(dataModel);
     					} else {
@@ -354,7 +395,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 					// --- Set model to visualisation ------------------------------
 					// --- and get initial base64 values ---------------------------
 					// -------------------------------------------------------------
-					Vector<String> initialBase64EncodedValues = this.adapter4DataModel.getDataModelBase64Encoded(dataModel);
+					Vector<String> initialBase64EncodedValues = this.getNetworkComponentAdapter4DataModel().getDataModelBase64Encoded(dataModel);
 
 					// -------------------------------------------------------------
 					// --- Remind the initial HashCodes ----------------------------
@@ -363,7 +404,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 					this.setDataModelBase64InitialHashCodes(initialBase64EncodedValues);
 
 					// --- Get the visualisation component -------------------------
-					JComponent visualisation = this.adapter4DataModel.getVisualisationComponent();
+					JComponent visualisation = this.getNetworkComponentAdapter4DataModel().getVisualisationComponent();
 					if (visualisation instanceof OntologyInstanceViewer) {
 						((OntologyInstanceViewer)visualisation).setJToolBar4UserFunctions(this.getJJToolBarBarNorth());
 					}
@@ -469,11 +510,11 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		boolean changed = false;
 
-		if (this.adapter4DataModel==null) return false;
+		if (this.getNetworkComponentAdapter4DataModel()==null) return false;
 		
-		this.adapter4DataModel.save();
-		Object dataModel = this.adapter4DataModel.getDataModel();
-		Vector<String> dataModelBase64 = this.adapter4DataModel.getDataModelBase64Encoded(dataModel);
+		this.getNetworkComponentAdapter4DataModel().save();
+		Object dataModel = this.getNetworkComponentAdapter4DataModel().getDataModel();
+		Vector<String> dataModelBase64 = this.getNetworkComponentAdapter4DataModel().getDataModelBase64Encoded(dataModel);
 		
 		if (dataModelBase64==null && this.dataModelBase64InitialHashCodes==null) {
 			changed = false;
@@ -512,10 +553,10 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 */
 	private void save(boolean sendChangesToAgent) {
 		
-		this.adapter4DataModel.save();
+		this.getNetworkComponentAdapter4DataModel().save();
 		
-		Object dataModel = this.adapter4DataModel.getDataModel();
-		Vector<String> dataModelBase64 = this.adapter4DataModel.getDataModelBase64Encoded(dataModel);
+		Object dataModel = this.getNetworkComponentAdapter4DataModel().getDataModel();
+		Vector<String> dataModelBase64 = this.getNetworkComponentAdapter4DataModel().getDataModelBase64Encoded(dataModel);
 
 		if (this.graphNode!=null) {
 			this.graphNode.setDataModel(dataModel);
@@ -566,7 +607,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		if (dmNote!=null) {
 			for (NetworkComponent netComp : comps) {
 				// --- Send notifications -------
-				boolean done = this.networkComponentAdapter.sendAgentNotification(new AID(netComp.getId(), AID.ISLOCALNAME), dmNote);
+				boolean done = this.getNetworkComponentAdapter().sendAgentNotification(new AID(netComp.getId(), AID.ISLOCALNAME), dmNote);
 				if (done==false) {
 					System.err.println("DataModelNotification to agent '" + netComp.getId() + "' could not be send.");
 				}
@@ -624,21 +665,21 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		if (dmn.isForGraphNode(this.graphNode)==true) {
 			// -- Update the model of the current GraphNode ? -------------
 			if (dmn.isUseDataModelBase64Encoded()==true) {
-				this.adapter4DataModel.getDataModelBase64Decoded(dmn.getGraphNode().getDataModelBase64());
+				this.getNetworkComponentAdapter4DataModel().getDataModelBase64Decoded(dmn.getGraphNode().getDataModelBase64());
 			} else {
-				this.adapter4DataModel.setDataModel(dmn.getGraphNode());	
+				this.getNetworkComponentAdapter4DataModel().setDataModel(dmn.getGraphNode());	
 			}
-			this.setDataModelBase64InitialHashCodes(adapter4DataModel.getDataModelBase64Encoded(adapter4DataModel.getDataModel()));
+			this.setDataModelBase64InitialHashCodes(getNetworkComponentAdapter4DataModel().getDataModelBase64Encoded(getNetworkComponentAdapter4DataModel().getDataModel()));
 		}
 		
 		if (dmn.isForNetworkComponent(this.networkComponent)==true) {
 			// -- Update the model of the current NetworkComponent ? ------
 			if (dmn.isUseDataModelBase64Encoded()==true) {
-				this.adapter4DataModel.getDataModelBase64Decoded(dmn.getNetworkComponent().getDataModelBase64());
+				this.getNetworkComponentAdapter4DataModel().getDataModelBase64Decoded(dmn.getNetworkComponent().getDataModelBase64());
 			} else {
-				this.adapter4DataModel.setDataModel(dmn.getNetworkComponent());
+				this.getNetworkComponentAdapter4DataModel().setDataModel(dmn.getNetworkComponent());
 			}
-			this.setDataModelBase64InitialHashCodes(adapter4DataModel.getDataModelBase64Encoded(adapter4DataModel.getDataModel()));
+			this.setDataModelBase64InitialHashCodes(getNetworkComponentAdapter4DataModel().getDataModelBase64Encoded(getNetworkComponentAdapter4DataModel().getDataModel()));
 		}
 		return true;
 		
@@ -673,7 +714,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		if (applyUpdate==true) {
 			try {
 				// --- Update the view --------------------
-				OntologyInstanceViewer ontoViewer = (OntologyInstanceViewer) this.adapter4DataModel.getVisualisationComponent();
+				OntologyInstanceViewer ontoViewer = (OntologyInstanceViewer) this.getNetworkComponentAdapter4DataModel().getVisualisationComponent();
 				uds.applyToOntologyInstanceViewer(ontoViewer);
 				
 			} catch (UpdateDataSeriesException udse) {

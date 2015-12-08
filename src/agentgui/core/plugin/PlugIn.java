@@ -218,10 +218,10 @@ public abstract class PlugIn implements Observer {
 	 * its provided position!
 	 *
 	 * @param projectWindowTab the project window tab
-	 * @param indexPositionGreaterOne the index position greater one
+	 * @param indexPosition the index position (greater one)
 	 */
-	protected void addProjectWindowTab(ProjectWindowTab projectWindowTab, int indexPositionGreaterOne) {
-		projectWindowTab.add(indexPositionGreaterOne);
+	protected void addProjectWindowTab(ProjectWindowTab projectWindowTab, int indexPosition) {
+		projectWindowTab.add(indexPosition);
 		customProjectWindowTab.add(projectWindowTab);
 	}
 	

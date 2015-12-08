@@ -57,6 +57,8 @@ public class TimeModelController implements Observer {
 	private ProjectWindowTab pwt = null;
 	private JPanel4TimeModelConfiguration display4TimeModel = null;
 	
+	private int indexPosOfTimeModel = 0;
+	
 	
 	/**
 	 * Instantiates a new time model controller.
@@ -148,6 +150,7 @@ public class TimeModelController implements Observer {
 	private void addTimeModelDisplayToProjectWindow() {
 		
 		if (this.pwt!=null) {
+			this.indexPosOfTimeModel = this.getIndexPositionOfProjectWindowTab();
 			this.pwt.remove();
 			this.pwt = null;
 			this.display4TimeModel = null;
@@ -155,15 +158,10 @@ public class TimeModelController implements Observer {
 		
 		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
 		if (configPanel!=null) {
-
-			this.pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, 
-					   Language.translate("Zeit-Konfiguration"), null, null, 
-					   configPanel, Language.translate("Simulations-Setup"));
-			this.pwt.add(0);
-			
+			this.pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Zeit-Konfiguration"), null, null, configPanel, Language.translate("Simulations-Setup"));
+			this.pwt.add(this.indexPosOfTimeModel);
 			this.setTimeModel(null);
 		}
-		
 	}
 	
 	/**
@@ -171,11 +169,26 @@ public class TimeModelController implements Observer {
 	 */
 	private void removeTimeModelDisplayFromProjectWindow() {
 		if (this.pwt!=null) {
+			this.indexPosOfTimeModel = this.getIndexPositionOfProjectWindowTab();
 			this.pwt.remove();
 			this.pwt = null;
 			this.display4TimeModel = null;
 			this.currTimeModelClass = null;
 		}
+	}
+	
+	/**
+	 * Gets the index position of project window tab.
+	 * @return the index position of project window tab
+	 */
+	private int getIndexPositionOfProjectWindowTab() {
+		
+		int indexPosFound = 0;
+//		this.pwt.
+		
+		
+		
+		return indexPosFound;
 	}
 	
 	/**

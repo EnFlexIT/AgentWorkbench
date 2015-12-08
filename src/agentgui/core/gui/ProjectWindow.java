@@ -568,11 +568,11 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	 * to keep the 'Info'-Tab and the 'Configuration'-Tab at its provided position!
 	 *
 	 * @param projectWindowTab the project window tab
-	 * @param indexPositionGreaterOne the index position greater one
+	 * @param indexPosition the index position (greater one)
 	 */
-	public void addProjectTab(ProjectWindowTab projectWindowTab, int indexPositionGreaterOne) {
+	public void addProjectTab(ProjectWindowTab projectWindowTab, int indexPosition) {
 
-		int newIndexPos = indexPositionGreaterOne;
+		int newIndexPos = indexPosition;
 		
 		if (newIndexPos<0) {
 			newIndexPos = projectViewRightTabs.getTabCount(); // Default
@@ -586,6 +586,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		
 		// --- add to reminder vector -----------
 		this.tabVector.add(projectWindowTab);
+//		this.tabVector.add(newIndexPos, projectWindowTab);
 		
 		// --- use the private function ---------
 		this.addProjectTabInternal(projectWindowTab);

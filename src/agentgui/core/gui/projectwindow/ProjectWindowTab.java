@@ -64,6 +64,7 @@ public class ProjectWindowTab {
 
 	private int indexPosition = -1;
 
+	
 	/**
 	 * Default constructor for this class.
 	 *
@@ -117,10 +118,10 @@ public class ProjectWindowTab {
 	 * Adds the current Tab-object to the project window
 	 * at the given index position.
 	 *
-	 * @param indexPositionGreaterOne the index position greater one
+	 * @param indexPosition the index position greater one
 	 */
-	public void add(int indexPositionGreaterOne) {
-		this.currProject.getProjectWindow().addProjectTab(this, indexPositionGreaterOne);	
+	public void add(int indexPosition) {
+		this.currProject.getProjectWindow().addProjectTab(this, indexPosition);	
 	}
 	
 	/**
@@ -132,7 +133,6 @@ public class ProjectWindowTab {
 	
 	/**
 	 * To string.
-	 *
 	 * @return the nam of the component
 	 */
 	public String toString() {
@@ -141,16 +141,13 @@ public class ProjectWindowTab {
 	
 	/**
 	 * Sets the display type.
-	 *
 	 * @param displayType the displayType to set
 	 */
 	public void setDisplayType(int displayType) {
 		this.displayType = displayType;
 	}
-	
 	/**
 	 * Gets the display type.
-	 *
 	 * @return the displayType
 	 */
 	public int getDisplayType() {
@@ -159,16 +156,13 @@ public class ProjectWindowTab {
 	
 	/**
 	 * Gets the title.
-	 *
 	 * @return the title
 	 */
 	public String getTitle() {
 		return title;
 	}
-	
 	/**
 	 * Sets the title.
-	 *
 	 * @param title the title to set
 	 */
 	public void setTitle(String title) {
@@ -177,16 +171,13 @@ public class ProjectWindowTab {
 
 	/**
 	 * Gets the icon.
-	 *
 	 * @return the icon
 	 */
 	public Icon getIcon() {
 		return icon;
 	}
-	
 	/**
 	 * Sets the icon.
-	 *
 	 * @param icon the icon to set
 	 */
 	public void setIcon(Icon icon) {
@@ -195,16 +186,13 @@ public class ProjectWindowTab {
 	
 	/**
 	 * Gets the tip text.
-	 *
 	 * @return the tipText
 	 */
 	public String getTipText() {
 		return tipText;
 	}
-	
 	/**
 	 * Sets the tip text.
-	 *
 	 * @param tipText the tipText to set
 	 */
 	public void setTipText(String tipText) {
@@ -213,16 +201,13 @@ public class ProjectWindowTab {
 	
 	/**
 	 * Gets the parent name.
-	 *
 	 * @return the parentName
 	 */
 	public String getParentName() {
 		return parentName;
 	}
-	
 	/**
 	 * Sets the parent name.
-	 *
 	 * @param parentName the parentName to set
 	 */
 	public void setParentName(String parentName) {
@@ -232,16 +217,13 @@ public class ProjectWindowTab {
 	
 	/**
 	 * Gets the component.
-	 *
 	 * @return the comp
 	 */
 	public JComponent getComponent() {
 		return comp;
 	}
-	
 	/**
 	 * Sets the j component.
-	 *
 	 * @param comp the comp to set
 	 */
 	public void setJComponent(JComponent comp) {
@@ -250,16 +232,13 @@ public class ProjectWindowTab {
 
 	/**
 	 * Sets the comp for child comp.
-	 *
 	 * @param jTabbedPane4ChildComponents the new comp for child comp
 	 */
 	public void setCompForChildComp(JTabbedPane jTabbedPane4ChildComponents) {
 		this.compForChildComp = jTabbedPane4ChildComponents;
 	}
-	
 	/**
 	 * Gets the comp for child comp.
-	 *
 	 * @return the comp4childcomp
 	 */
 	public JTabbedPane getCompForChildComp() {
@@ -268,16 +247,13 @@ public class ProjectWindowTab {
 
 	/**
 	 * Sets the index position.
-	 *
 	 * @param indexPosition the indexPosition to set
 	 */
 	public void setIndexPosition(int indexPosition) {
 		this.indexPosition = indexPosition;
 	}
-	
 	/**
 	 * Gets the index position.
-	 *
 	 * @return the indexPosition
 	 */
 	public int getIndexPosition() {
@@ -285,6 +261,3 @@ public class ProjectWindowTab {
 	}
 
 }
-
-	
-
