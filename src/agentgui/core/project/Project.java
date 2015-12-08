@@ -1364,6 +1364,9 @@ import agentgui.core.webserver.JarFileCreator;
 		if (agentLoadMetrics==null) {
 			agentLoadMetrics = new AgentLoadMetrics(this);
 		}
+		if (agentLoadMetrics.getProject()==null) {
+			agentLoadMetrics.setProject(this);
+		}
 		return agentLoadMetrics;
 	}
 	/**

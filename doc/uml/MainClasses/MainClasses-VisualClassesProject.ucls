@@ -130,30 +130,30 @@
   </class>  
   <association id="15">    
     <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
-      <attribute id="16" name="projectWindow">        
-        <position height="15" width="80" x="417" y="364"/>      
+      <attribute id="16" name="timeModelController">        
+        <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="17" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="13" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="18">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="19" name="maxProjectWindowTab">        
+    <end type="SOURCE" refId="9" navigable="false" variant="ASSOCIATION">      
+      <attribute id="19" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="20" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="21">    
-    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="8" navigable="false" variant="ASSOCIATION">      
       <attribute id="22" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -165,19 +165,19 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="24">    
-    <end type="SOURCE" refId="4" navigable="false" variant="ASSOCIATION">      
-      <attribute id="25" name="currProject">        
+    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
+      <attribute id="25" name="pwt">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="26" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="27">    
-    <end type="SOURCE" refId="3" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
       <attribute id="28" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -189,7 +189,7 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="30">    
-    <end type="SOURCE" refId="9" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="11" navigable="false" variant="ASSOCIATION">      
       <attribute id="31" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -201,19 +201,19 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="33">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="34" name="tab4SubPanel">        
+    <end type="SOURCE" refId="12" navigable="false" variant="ASSOCIATION">      
+      <attribute id="34" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="35" minimum="0" maximum="2147483647">        
+      <multiplicity id="35" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="36">    
-    <end type="SOURCE" refId="11" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="10" navigable="false" variant="ASSOCIATION">      
       <attribute id="37" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -225,7 +225,7 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="39">    
-    <end type="SOURCE" refId="5" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
       <attribute id="40" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -237,31 +237,31 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="42">    
-    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
-      <attribute id="43" name="timeModelController">        
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="43" name="maxProjectWindowTab">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="44" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="13" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="45">    
-    <end type="SOURCE" refId="14" navigable="false" variant="ASSOCIATION">      
-      <attribute id="46" name="currProject">        
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="46" name="tabVector">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="47" minimum="0" maximum="1">        
+      <multiplicity id="47" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="48">    
-    <end type="SOURCE" refId="10" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="3" navigable="false" variant="ASSOCIATION">      
       <attribute id="49" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -273,7 +273,7 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="51">    
-    <end type="SOURCE" refId="12" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="7" navigable="false" variant="ASSOCIATION">      
       <attribute id="52" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -285,43 +285,43 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="54">    
-    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
-      <attribute id="55" name="pwt">        
+    <end type="SOURCE" refId="4" navigable="false" variant="ASSOCIATION">      
+      <attribute id="55" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="56" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="57">    
-    <end type="SOURCE" refId="7" navigable="false" variant="ASSOCIATION">      
-      <attribute id="58" name="currProject">        
+    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
+      <attribute id="58" name="environmentController">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="59" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="14" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="60">    
-    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
-      <attribute id="61" name="environmentController">        
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="61" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="62" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="14" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="63">    
-    <end type="SOURCE" refId="8" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="14" navigable="false" variant="ASSOCIATION">      
       <attribute id="64" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -333,19 +333,19 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="66">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="67" name="currProject">        
-        <position height="0" width="0" x="0" y="0"/>      
+    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
+      <attribute id="67" name="projectWindow">        
+        <position height="15" width="80" x="417" y="364"/>      
       </attribute>      
       <multiplicity id="68" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="69">    
-    <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="5" navigable="false" variant="ASSOCIATION">      
       <attribute id="70" name="currProject">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -358,7 +358,7 @@
   </association>  
   <association id="72">    
     <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="73" name="tabVector">        
+      <attribute id="73" name="tab4SubPanel">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="74" minimum="0" maximum="2147483647">        

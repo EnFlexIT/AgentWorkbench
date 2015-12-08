@@ -104,11 +104,19 @@ public class ProjectWindowTab {
 	}
 	
 	/**
+	 * Returns the current instance of the {@link ProjectWindow}.
+	 * @return the project window
+	 */
+	public ProjectWindow getProjectWindow() {
+		return this.currProject.getProjectWindow();
+	}
+	
+	/**
 	 * Adds the current Tab-object to the project window.
 	 */
 	public void add() {
 		try {
-			this.currProject.getProjectWindow().addProjectTab(this);
+			this.getProjectWindow().addProjectTab(this);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -121,14 +129,14 @@ public class ProjectWindowTab {
 	 * @param indexPosition the index position greater one
 	 */
 	public void add(int indexPosition) {
-		this.currProject.getProjectWindow().addProjectTab(this, indexPosition);	
+		this.getProjectWindow().addProjectTab(this, indexPosition);	
 	}
 	
 	/**
 	 * This removes the current Tab from the project window.
 	 */
 	public void remove() {
-		this.currProject.getProjectWindow().remove(this);
+		this.getProjectWindow().remove(this);
 	}
 	
 	/**
@@ -216,17 +224,17 @@ public class ProjectWindowTab {
 	
 	
 	/**
-	 * Gets the component.
-	 * @return the comp
+	 * Returns the JComponent for the visualisation.
+	 * @return the JComponent
 	 */
-	public JComponent getComponent() {
+	public JComponent getJComponentForVisualization() {
 		return comp;
 	}
 	/**
-	 * Sets the j component.
-	 * @param comp the comp to set
+	 * Sets the JComponent for the visualisation.
+	 * @param comp the new JComponent for the visualisation
 	 */
-	public void setJComponent(JComponent comp) {
+	public void setJComponentForVisualization(JComponent comp) {
 		this.comp = comp;
 	}
 

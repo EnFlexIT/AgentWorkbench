@@ -385,7 +385,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			this.remove(this.maxProjectWindowTab);
 			// --- Create the extra JInternalFrame ------------------
 			this.maxTab = new MaximizedTab(this, this.maxProjectWindowTab.getTitle());
-			this.maxTab.add(this.maxProjectWindowTab.getComponent());
+			this.maxTab.add(this.maxProjectWindowTab.getJComponentForVisualization());
 		}
 		return maxTab;
 	}
@@ -432,7 +432,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			// --- Place the enlarged tab back to the other one ---------------
 			if (this.maxProjectWindowTab!=null) {
 				this.addProjectTab(this.maxProjectWindowTab, this.maxProjectWindowTab.getIndexPosition());
-				this.maxProjectWindowTab.getComponent().validate();
+				this.maxProjectWindowTab.getJComponentForVisualization().validate();
 				this.setFocus2Tab(this.maxProjectWindowTab.getTitle());
 				this.maxProjectWindowTab = null;
 
@@ -523,36 +523,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-	 */
-	@Override
-	public void update(Observable observable, Object updateObject) {
-		
-		String ObjectName = updateObject.toString();
-		if (ObjectName.equalsIgnoreCase(Project.CHANGED_ProjectName)) {
-			rootNode.setUserObject(currProject.getProjectName());
-			projectTreeModel.nodeChanged(rootNode);
-			projectTree.repaint();
-			Application.setTitelAddition(currProject.getProjectName());
-			
-		} else if (ObjectName.equals(Project.CHANGED_ProjectView)) {
-			this.setView();			
-			
-		} else if (ObjectName.equals(Project.CHANGED_EnvironmentModelType)) {
-			this.setView();			
-			
-		} else if (ObjectName.equals(Project.VIEW_Maximize)) {
-			this.tabMaximize();
-			
-		} else if (ObjectName.equals(Project.VIEW_Restore)) {
-			this.tabRestore();
-			
-		}
-		this.validate();
-		this.repaint();
-	}
-
 	/**
 	 * Adds a Project-Tab and a new node (child of a specified parent) to the ProjectWindow.
 	 *
@@ -586,7 +556,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		
 		// --- add to reminder vector -----------
 		this.tabVector.add(projectWindowTab);
-//		this.tabVector.add(newIndexPos, projectWindowTab);
 		
 		// --- use the private function ---------
 		this.addProjectTabInternal(projectWindowTab);
@@ -622,14 +591,14 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			tabbedPaneParent = projectViewRightTabs;
 		}
 
-		if (projectWindowTab.getIndexPosition() != -1 && projectWindowTab.getIndexPosition()<pareNode.getChildCount()) {
-			// --- add to parent node/tab at index position ----
+		if (projectWindowTab.getIndexPosition()!=-1 && projectWindowTab.getIndexPosition()<pareNode.getChildCount()) {
+			// --- Add to parent node/tab at index position ----
 			pareNode.insert(newNode, projectWindowTab.getIndexPosition());
-			tabbedPaneParent.insertTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), projectWindowTab.getComponent(), projectWindowTab.getTipText(), projectWindowTab.getIndexPosition());
+			tabbedPaneParent.insertTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), projectWindowTab.getJComponentForVisualization(), projectWindowTab.getTipText(), projectWindowTab.getIndexPosition());
 		} else {
-			// --- just add to parent node/tab -----------------
+			// --- Just add to parent node/tab -----------------
 			pareNode.add(newNode);
-			tabbedPaneParent.addTab( projectWindowTab.getTitle(), projectWindowTab.getIcon(), projectWindowTab.getComponent(), projectWindowTab.getTipText());
+			tabbedPaneParent.addTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), projectWindowTab.getJComponentForVisualization(), projectWindowTab.getTipText());
 		}
 		
 		// --- refresh view ---------------------
@@ -673,7 +642,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 			pareNode.remove(node);
 		}
 
-		JComponent component = projectWindowTab.getComponent();
+		JComponent component = projectWindowTab.getJComponentForVisualization();
 		Container container = component.getParent();
 		if (container!=null) {
 			container.remove(component);	
@@ -767,7 +736,7 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		for (int i=nodeArray.size()-1; i>-1; i--) {
 			currNode = nodeArray.get(i);
 			ProjectWindowTab pwt = (ProjectWindowTab) currNode.getUserObject();
-			Component displayElement = pwt.getComponent();
+			Component displayElement = pwt.getJComponentForVisualization();
 			((JTabbedPane) displayElement.getParent()).setSelectedComponent(displayElement);
 		}
 	}
@@ -775,7 +744,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 	/**
 	 * Rebuilds the ProjectWindow depending on the selected view.
 	 * View can be, up to now, the developer view or the end user view
-	 *
 	 */
 	public void setView() {
 		
@@ -846,7 +814,6 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		
 		// --- Reactivate the TreeSelectionListener -----------------
 		this.pauseTreeSelectionListener = false;
-		
 	}
 	
 	/**
@@ -903,5 +870,34 @@ public class ProjectWindow extends JInternalFrame implements Observer {
 		this.tab4SubPanel.remove(name);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable observable, Object updateObject) {
+		
+		String ObjectName = updateObject.toString();
+		if (ObjectName.equalsIgnoreCase(Project.CHANGED_ProjectName)) {
+			rootNode.setUserObject(currProject.getProjectName());
+			projectTreeModel.nodeChanged(rootNode);
+			projectTree.repaint();
+			Application.setTitelAddition(currProject.getProjectName());
+			
+		} else if (ObjectName.equals(Project.CHANGED_ProjectView)) {
+			this.setView();			
+			
+		} else if (ObjectName.equals(Project.CHANGED_EnvironmentModelType)) {
+			this.setView();			
+			
+		} else if (ObjectName.equals(Project.VIEW_Maximize)) {
+			this.tabMaximize();
+			
+		} else if (ObjectName.equals(Project.VIEW_Restore)) {
+			this.tabRestore();
+			
+		}
+		this.validate();
+		this.repaint();
+	}
 	
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+}  

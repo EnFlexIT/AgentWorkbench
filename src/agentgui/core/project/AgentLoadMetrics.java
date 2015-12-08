@@ -50,11 +50,30 @@ public class AgentLoadMetrics implements Serializable {
 	
 	
 	/**
+	 * Default constructor for this class (usage).
+	 */
+	public AgentLoadMetrics() {
+	}
+	/**
 	 * Instantiates a new agent load metrics.
 	 * @param currProject the current {@link Project} instance
 	 */
 	public AgentLoadMetrics(Project currProject) {
 		this.currProject = currProject;
+	}
+	/**
+	 * Sets the current project instance.
+	 * @param currProject the new project
+	 */
+	public void setProject(Project currProject) {
+		this.currProject = currProject;
+	}
+	/**
+	 * Returns the current project instance.
+	 * @param currProject the new project
+	 */
+	public Project getProject() {
+		return this.currProject;
 	}
 	/**
 	 * Sets the project notification for changes within this class.

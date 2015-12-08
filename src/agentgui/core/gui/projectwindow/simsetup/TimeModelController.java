@@ -32,6 +32,9 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JComponent;
+import javax.swing.JTabbedPane;
+
 import agentgui.core.application.Language;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.Project;
@@ -39,6 +42,7 @@ import agentgui.core.sim.setup.SimulationSetup;
 import agentgui.core.sim.setup.SimulationSetupNotification;
 import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
 import agentgui.simulationService.time.TimeModel;
+
 
 /**
  * The Class TimeModelController is used within Project 
@@ -159,6 +163,7 @@ public class TimeModelController implements Observer {
 		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
 		if (configPanel!=null) {
 			this.pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Zeit-Konfiguration"), null, null, configPanel, Language.translate("Simulations-Setup"));
+			this.pwt.setIndexPosition(this.indexPosOfTimeModel);
 			this.pwt.add(this.indexPosOfTimeModel);
 			this.setTimeModel(null);
 		}
@@ -178,16 +183,18 @@ public class TimeModelController implements Observer {
 	}
 	
 	/**
-	 * Gets the index position of project window tab.
+	 * Returns the current index position of the project window tab.
 	 * @return the index position of project window tab
 	 */
 	private int getIndexPositionOfProjectWindowTab() {
-		
 		int indexPosFound = 0;
-//		this.pwt.
-		
-		
-		
+		if (this.pwt!=null) {
+			JComponent component = this.pwt.getJComponentForVisualization();
+			if (component.getParent()!=null) {
+				JTabbedPane jTabbedPane = (JTabbedPane) component.getParent();	
+				indexPosFound = jTabbedPane.indexOfComponent(this.pwt.getJComponentForVisualization());
+			}
+		}
 		return indexPosFound;
 	}
 	
