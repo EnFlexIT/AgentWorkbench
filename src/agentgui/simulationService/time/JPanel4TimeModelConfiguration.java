@@ -31,7 +31,6 @@ package agentgui.simulationService.time;
 import javax.swing.JPanel;
 
 import agentgui.core.project.Project;
-import agentgui.core.sim.setup.SimulationSetup;
 
 /**
  * The Class JPanel4TimeModelConfiguration has to be extended in order to
@@ -47,6 +46,7 @@ public abstract class JPanel4TimeModelConfiguration extends JPanel {
 
 	protected Project currProject = null;
 	
+	
 	/**
 	 * Instantiates a new display panel for the configuration of the current time model.
 	 * @param project the project
@@ -56,25 +56,22 @@ public abstract class JPanel4TimeModelConfiguration extends JPanel {
 	}
 	
 	/**
-	 * Save the current TimeModel.
-	 * @param timeModel the TimeModel
-	 */
-	protected void saveTimeModelInSimulationSetup(TimeModel timeModel) {
-		SimulationSetup simSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
-		if (simSetup!=null) {
-			simSetup.setTimeModelSettings(timeModel.getTimeModelSetting());	
-		}
-	}
-	
-	/**
 	 * Sets the TimeModel.
 	 * @param timeModel the new TimeModel
 	 */
 	public abstract void setTimeModel(TimeModel timeModel);
+	
 	/**
 	 * Returns the TimeModel.
 	 * @return the TimeModell
 	 */
 	public abstract TimeModel getTimeModel();
+	
+	/**
+	 * Save the current TimeModel to the simulation setup.
+	 */
+	protected void saveTimeModelToSimulationSetup() {
+		this.currProject.getTimeModelController().saveTimeModelToSimulationSetup();
+	}
 	
 }

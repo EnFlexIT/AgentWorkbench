@@ -57,9 +57,10 @@ import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 
 /**
- * The Class TimeModelStrokeConfiguration.
+ * The Class TimeModelStrokeConfiguration extends the class {@link JPanel4TimeModelConfiguration}
+ * and is used in order to configure the {@link TimeModelContinuous}.
  * 
- * @see TimeModelStroke
+ * @see TimeModelContinuous
  * @see TimeModelController
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
@@ -104,8 +105,8 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 	private boolean enabledChangeListener = true;
 
 	private JLabel jLabeDateFormat = null;
-
 	private TimeFormatSelection jPanelTimeFormater = null;
+	
 	
 	/**
 	 * Instantiates a new time model discrete configuration.
@@ -430,7 +431,7 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 				@Override
 				public void actionPerformed(ActionEvent ae) {
 					if (enabledChangeListener==true) {
-						saveTimeModelInSimulationSetup(getTimeModel());	
+						saveTimeModelToSimulationSetup();	
 					}
 				}
 			});
@@ -555,6 +556,7 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 	 * @param factor the new factor explanation text
 	 */
 	private void setFactorExplanationText(Double factor) {
+		
 		if (factor!=null) {
 
 			String stringSimulated = Language.translate("simulierte");
@@ -592,12 +594,11 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 				
 			}
 			
-			
 			jLabelFactorInfoSeconds.setText("1 " + stringSimulated + " " + stringSecond + " = " + textSeconds);
 			jLabelFactorInfoMinutes.setText("1 " + stringSimulated + " " + stringMinute + " = " + textMinutes);
 			jLabelFactorInfoHour.setText("1 " + stringSimulated + " " + stringHour + " = " + textHours);
-			
 		}
+		
 	}
 	
 	/**
@@ -651,8 +652,8 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		this.setFactorExplanationText(factor);
 		
 		this.enabledChangeListener = true;
-		
 	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.DisplayJPanel4Configuration#getTimeModel()
 	 */
@@ -718,10 +719,10 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		if (this.enabledChangeListener==true) {
 			Object ceTrigger = ce.getSource();
 			if (ceTrigger instanceof JSpinner) {
-				this.saveTimeModelInSimulationSetup(getTimeModel());	
+				this.saveTimeModelToSimulationSetup();	
 			}	
 		}
 	}
 
 	
-}  //  @jve:decl-index=0:visual-constraint="-42,14"
+}  

@@ -55,11 +55,11 @@ import agentgui.simulationService.time.TimeModel;
  */
 public class TimeModelController implements Observer {
 
-	private Project currProject = null;
+	private Project currProject;
 	
-	private String currTimeModelClass = null;
-	private ProjectWindowTab pwt = null;
-	private JPanel4TimeModelConfiguration display4TimeModel = null;
+	private String currTimeModelClass;
+	private ProjectWindowTab pwt;
+	private JPanel4TimeModelConfiguration display4TimeModel;
 	
 	private int indexPosOfTimeModel = 0;
 	
@@ -74,6 +74,16 @@ public class TimeModelController implements Observer {
 	}
 	
 	
+	/**
+	 * Sets the time model.
+	 * @param newTimeModel the new time model
+	 */
+	public void setTimeModel(TimeModel newTimeModel) {
+		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
+		if (configPanel!=null) {
+			configPanel.setTimeModel(newTimeModel);
+		} 
+	}
 	/**
 	 * Returns the current time model.
 	 * @return the time model
@@ -96,17 +106,15 @@ public class TimeModelController implements Observer {
 		}
 		return timeModelCopy;
 	}
-
 	
 	/**
-	 * Sets the time model.
-	 * @param newTimeModel the new time model
+	 * Save the current TimeModel to the current simulation setup.
 	 */
-	public void setTimeModel(TimeModel newTimeModel) {
-		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
-		if (configPanel!=null) {
-			configPanel.setTimeModel(newTimeModel);
-		} 
+	public void saveTimeModelToSimulationSetup() {
+		SimulationSetup simSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
+		if (simSetup!=null) {
+			simSetup.setTimeModelSettings(this.getDisplayJPanel4Configuration().getTimeModel().getTimeModelSetting());
+		}
 	}
 	
 	/**
@@ -236,7 +244,7 @@ public class TimeModelController implements Observer {
 				this.addTimeModelDisplayToProjectWindow();
 				this.setupLoad();
 			}
-		
+			
 		} else if (updateObject instanceof SimulationSetupNotification) {
 			// --- Change inside the simulation setup ---------------
 			SimulationSetupNotification scn = (SimulationSetupNotification) updateObject;

@@ -263,21 +263,21 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 	 */
 	@Override
 	public void insertUpdate(DocumentEvent e) {
-		this.saveTimeModelInSimulationSetup(getTimeModel());
+		this.saveTimeModelToSimulationSetup();
 	}
 	/* (non-Javadoc)
 	 * @see javax.swing.event.DocumentListener#removeUpdate(javax.swing.event.DocumentEvent)
 	 */
 	@Override
 	public void removeUpdate(DocumentEvent e) {
-		this.saveTimeModelInSimulationSetup(getTimeModel());
+		this.saveTimeModelToSimulationSetup();
 	}
 	/* (non-Javadoc)
 	 * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.DocumentEvent)
 	 */
 	@Override
 	public void changedUpdate(DocumentEvent e) {
-		this.saveTimeModelInSimulationSetup(getTimeModel());
+		this.saveTimeModelToSimulationSetup();
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"
