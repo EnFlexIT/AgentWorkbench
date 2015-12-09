@@ -227,8 +227,6 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 			}
 		} else if(ae.getSource() == this.getJComboBoxSeparator()) {
 			
-			System.out.println("ComboBox changed");
-			
 			this.getCsvDataController().setSeparator((String) this.getJComboBoxSeparator().getSelectedItem());
 			if(this.getCsvDataController().getDataModel() != null){
 				 this.getCsvDataController().doImport();
