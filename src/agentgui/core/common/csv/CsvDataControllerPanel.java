@@ -77,7 +77,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 	/**
 	 * The CSV data controller instance
 	 */
-	private CsvDataController importer;
+	private CsvDataController csvDataController;
 	/**
 	 * List of CSV data separators to choose from
 	 */
@@ -152,6 +152,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 			jComboBoxSeparator.setFont(new Font("Dialog", Font.BOLD, 12));
 			jComboBoxSeparator.setModel(new DefaultComboBoxModel<String>(this.seperators));
 			jComboBoxSeparator.setPreferredSize(new Dimension(50, 26));
+			jComboBoxSeparator.addActionListener(this);
 		}
 		return jComboBoxSeparator;
 	}
@@ -172,11 +173,21 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 		}
 		return jCheckBoxHasHeadlines;
 	}
-
+	
+	/**
+	 * Gets the {@link CsvDataController}, initializes it if necessary
+	 * @return The {@link CsvDataController} instance
+	 */
+	private CsvDataController getCsvDataController() {
+		if(this.csvDataController == null){
+			this.csvDataController = new CsvDataController();
+		}
+		return this.csvDataController;
+	}
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		if(ae.getSource() == this.getJButtonImport()){
+		if(ae.getSource() == this.getJButtonImport()) {
 			
 			// --- Import data from CSV
 			JFileChooser jFileChooserImportCSV = new JFileChooser(Application.getGlobalInfo().getLastSelectedFolder());
@@ -187,19 +198,18 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 				Application.getGlobalInfo().setLastSelectedFolder(jFileChooserImportCSV.getCurrentDirectory());
 				File csvFile = jFileChooserImportCSV.getSelectedFile();
 				
-				this.importer = new CsvDataController();
-				this.importer.setHeadline(this.getJCheckBoxHasHeadlines().isSelected());
-				this.importer.setSeparator((String) this.getJComboBoxSeparator().getSelectedItem());
-				this.importer.setFile(csvFile);
-				this.importer.doImport();
+				this.getCsvDataController().setHeadline(this.getJCheckBoxHasHeadlines().isSelected());
+				this.getCsvDataController().setSeparator((String) this.getJComboBoxSeparator().getSelectedItem());
+				this.getCsvDataController().setFile(csvFile);
+				this.getCsvDataController().doImport();
 				
-				DefaultTableModel dtm = this.importer.getDataModel();
+				DefaultTableModel dtm = this.csvDataController.getDataModel();
 				if(dtm != null){
 					this.getJTableData().setModel(dtm);
 				}
 			}
 			
-		} else {
+		} else if(ae.getSource() == this.getJButtonExport()) {
 			
 			// --- Export data to CSV
 			JFileChooser jFileChooserExportCSV = new JFileChooser(Application.getGlobalInfo().getLastSelectedFolder());
@@ -212,8 +222,20 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 				if(csvFile.getPath().endsWith(".csv") == false){
 					csvFile = new File(csvFile.getPath().concat(".csv"));
 				}
-				this.importer.setFile(csvFile);
-				this.importer.doExport();
+				this.getCsvDataController().setFile(csvFile);
+				this.getCsvDataController().doExport();
+			}
+		} else if(ae.getSource() == this.getJComboBoxSeparator()) {
+			
+			System.out.println("ComboBox changed");
+			
+			this.getCsvDataController().setSeparator((String) this.getJComboBoxSeparator().getSelectedItem());
+			if(this.getCsvDataController().getDataModel() != null){
+				 this.getCsvDataController().doImport();
+				 DefaultTableModel dtm = this.csvDataController.getDataModel();
+				 if(dtm != null){
+					this.getJTableData().setModel(dtm);
+				 }
 			}
 		}
 	}
