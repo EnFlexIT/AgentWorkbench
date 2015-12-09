@@ -227,7 +227,10 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 			}
 		} else if(ae.getSource() == this.getJComboBoxSeparator()) {
 			
+			// Handle separator changes
 			this.getCsvDataController().setSeparator((String) this.getJComboBoxSeparator().getSelectedItem());
+			
+			// If the model was loaded already, reload it
 			if(this.getCsvDataController().getDataModel() != null){
 				 this.getCsvDataController().doImport();
 				 DefaultTableModel dtm = this.csvDataController.getDataModel();
