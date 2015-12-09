@@ -188,10 +188,11 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 				File csvFile = jFileChooserImportCSV.getSelectedFile();
 				
 				this.importer = new CsvDataController();
-				this.importer.setHeadlines(this.getJCheckBoxHasHeadlines().isSelected());
+				this.importer.setHeadline(this.getJCheckBoxHasHeadlines().isSelected());
 				this.importer.setSeparator((String) this.getJComboBoxSeparator().getSelectedItem());
+				this.importer.setFile(csvFile);
+				this.importer.doImport();
 				
-				this.importer.doImport(csvFile);
 				DefaultTableModel dtm = this.importer.getDataModel();
 				if(dtm != null){
 					this.getJTableData().setModel(dtm);
@@ -211,8 +212,8 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 				if(csvFile.getPath().endsWith(".csv") == false){
 					csvFile = new File(csvFile.getPath().concat(".csv"));
 				}
-				
-				importer.doExport(csvFile);
+				this.importer.setFile(csvFile);
+				this.importer.doExport();
 			}
 		}
 	}
