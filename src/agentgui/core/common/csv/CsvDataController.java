@@ -148,19 +148,34 @@ public class CsvDataController {
 
 	/**
 	 * This method imports data from a CSV file
-	 * @param csvFile The file to import from
 	 */
-	void doImport(){
-		
+	public void doImport(){
+
 		if (this.getFile()==null) {
-			System.err.println("No csv file specified for import!");
+			System.err.println("No CSV file specified for import!");
 			return;
 		}
 		
 		try {
-			// Initialize input stream
+			// --- Initialise a BufferedReader ----------------------
 			BufferedReader br = new BufferedReader(new FileReader(this.getFile()));
-			// Get the first line
+			// --- Do the actual import -----------------------------
+			this.doImport(br);
+			
+		} catch (FileNotFoundException fnfe) {
+			System.err.println("File not found: " + this.getFile().getAbsolutePath());
+//			fnfe.printStackTrace();
+		}
+	}
+	
+	/**
+	 * This method imports data from a CSV file.
+	 * @param br the BufferedReader to use for the read operation
+	 */
+	public void doImport(BufferedReader br){
+		
+		try {
+			// --- Get the first line -------------------------------
 			String inBuffer = br.readLine();
 			
 			if(inBuffer==null){
@@ -169,42 +184,37 @@ public class CsvDataController {
 				
 				String[] parts = inBuffer.split(this.getSeparator());
 				if(this.hasHeadlines()==true){
-					// Use first line's contents as column headers
+					// --- Use first line's contents as headers ----- 
 					this.dataModel = new DefaultTableModel(parts, 0);
 				} else {
-					// Use artificial column headers
+					// --- Use artificial column headers ------------
 					this.dataModel = new DefaultTableModel();
 					for(int i=0; i<parts.length; i++){
 						this.dataModel.addColumn("Column"+(i+1));
 					}
-					// First line contains data
+					// --- First line contains data -----------------
 					this.dataModel.addRow(parts);
 				}
-				// Read linewise, split and append to the table model
+				// --- Read lines, split and append them to  model --
 				while((inBuffer = br.readLine()) != null){
 					parts = inBuffer.split(this.getSeparator());
 					this.dataModel.addRow(parts);
 				}
 			}
 			br.close();
-			
-		} catch (FileNotFoundException e) {
-			System.err.println("File not found!");
+	
 		} catch (IOException e) {
 			System.err.println("Error reading file!");
 		}
-	
-		
 	}
 	
 	/**
 	 * This method exports data to a CSV file
-	 * @param csvFile The file to export to
 	 */
-	void doExport(){
+	public void doExport(){
 		
 		if (this.getFile()==null) {
-			System.err.println("No csv file specified for export!");
+			System.err.println("No CSV file specified for export!");
 			return;
 		}
 		
