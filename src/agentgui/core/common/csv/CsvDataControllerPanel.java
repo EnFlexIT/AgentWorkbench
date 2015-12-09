@@ -28,32 +28,30 @@
  */
 package agentgui.core.common.csv;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
-import java.awt.GridBagLayout;
+import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-
-import java.awt.GridBagConstraints;
-import javax.swing.JTable;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JCheckBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
+import java.awt.Font;
 
 /**
  * The CSV Controller Panel that can be used with a customised CSV-Importer 
@@ -96,26 +94,9 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 	 * Initialize.
 	 */
 	private void initialize() {
-
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		this.setLayout(gridBagLayout);
-		
-		GridBagConstraints gbc_toolBar = new GridBagConstraints();
-		gbc_toolBar.anchor = GridBagConstraints.WEST;
-		gbc_toolBar.insets = new Insets(0, 0, 5, 0);
-		gbc_toolBar.gridx = 0;
-		gbc_toolBar.gridy = 0;
-		this.add(getJToolBarCsvHandling(), gbc_toolBar);
-		
-		GridBagConstraints gbc_table = new GridBagConstraints();
-		gbc_table.fill = GridBagConstraints.BOTH;
-		gbc_table.gridx = 0;
-		gbc_table.gridy = 1;
-		this.add(this.getJScrollPaneTable(), gbc_table);
+		setLayout(new BorderLayout(0, 0));
+		this.add(this.getJToolBarCsvHandling(), BorderLayout.NORTH);
+		this.add(this.getJScrollPaneTable(), BorderLayout.CENTER);
 	}
 	
 	private JToolBar getJToolBarCsvHandling() {
@@ -149,7 +130,8 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 	}
 	private JButton getJButtonImport() {
 		if (jButtonImport == null) {
-			jButtonImport = new JButton("Import");
+			jButtonImport = new JButton();
+			jButtonImport.setToolTipText("Import");
 			jButtonImport.setIcon(new ImageIcon(CsvDataControllerPanel.class.getResource("/agentgui/core/gui/img/import.png")));
 			jButtonImport.addActionListener(this);
 		}
@@ -157,7 +139,8 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 	}
 	private JButton getJButtonExport() {
 		if (jButtonExport == null) {
-			jButtonExport = new JButton("Export");
+			jButtonExport = new JButton();
+			jButtonExport.setToolTipText("Export");
 			jButtonExport.setIcon(new ImageIcon(CsvDataControllerPanel.class.getResource("/agentgui/core/gui/img/export.png")));
 			jButtonExport.addActionListener(this);
 		}
@@ -166,7 +149,9 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 	private JComboBox<String> getJComboBoxSeparator() {
 		if (jComboBoxSeparator == null) {
 			jComboBoxSeparator = new JComboBox<String>();
+			jComboBoxSeparator.setFont(new Font("Dialog", Font.BOLD, 12));
 			jComboBoxSeparator.setModel(new DefaultComboBoxModel<String>(this.seperators));
+			jComboBoxSeparator.setPreferredSize(new Dimension(50, 26));
 		}
 		return jComboBoxSeparator;
 	}
@@ -174,6 +159,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 	private JLabel getJLabelSeparator() {
 		if (jLabelSeparator == null) {
 			jLabelSeparator = new JLabel(Language.translate("Trennzeichen"));
+			jLabelSeparator.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jLabelSeparator;
 	}
@@ -181,6 +167,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 	private JCheckBox getJCheckBoxHasHeadlines() {
 		if (jCheckBoxHasHeadlines == null) {
 			jCheckBoxHasHeadlines = new JCheckBox(Language.translate("Spaltenüberschriften"));
+			jCheckBoxHasHeadlines.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jCheckBoxHasHeadlines.setSelected(true);
 		}
 		return jCheckBoxHasHeadlines;
