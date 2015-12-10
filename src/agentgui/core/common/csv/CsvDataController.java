@@ -34,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Observable;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -42,7 +43,10 @@ import javax.swing.table.DefaultTableModel;
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
  */
-public class CsvDataController {
+public class CsvDataController extends Observable{
+	
+	/** Event code to inform observers that the table model was replaced */
+	public static final int EVENT_TABLE_MODEL_REPLACED = 0;
 	
 	/** The file to import or to export*/
 	private File file;
@@ -144,6 +148,8 @@ public class CsvDataController {
 	 */
 	public void setDataModel(DefaultTableModel dataModel) {
 		this.dataModel = dataModel;
+		setChanged();
+		notifyObservers(EVENT_TABLE_MODEL_REPLACED);
 	}
 
 	/**
@@ -183,23 +189,25 @@ public class CsvDataController {
 			} else {
 				
 				String[] parts = inBuffer.split(this.getSeparator());
+				DefaultTableModel newTableModel;
 				if(this.hasHeadlines()==true){
-					// --- Use first line's contents as headers ----- 
-					this.dataModel = new DefaultTableModel(parts, 0);
+					// --- Use first row's contents as headers ----- 
+					newTableModel = new DefaultTableModel(parts, 0);
 				} else {
 					// --- Use artificial column headers ------------
-					this.dataModel = new DefaultTableModel();
+					newTableModel = new DefaultTableModel();
 					for(int i=0; i<parts.length; i++){
-						this.dataModel.addColumn("Column"+(i+1));
+						newTableModel.addColumn("Column"+(i+1));
 					}
-					// --- First line contains data -----------------
-					this.dataModel.addRow(parts);
+					// --- First row contains data -----------------
+					newTableModel.addRow(parts);
 				}
 				// --- Read lines, split and append them to  model --
 				while((inBuffer = br.readLine()) != null){
 					parts = inBuffer.split(this.getSeparator());
-					this.dataModel.addRow(parts);
+					newTableModel.addRow(parts);
 				}
+				this.setDataModel(newTableModel);
 			}
 			br.close();
 	

@@ -178,7 +178,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 	 * Gets the {@link CsvDataController}, initializes it if necessary
 	 * @return The {@link CsvDataController} instance
 	 */
-	private CsvDataController getCsvDataController() {
+	public CsvDataController getCsvDataController() {
 		if(this.csvDataController == null){
 			this.csvDataController = new CsvDataController();
 		}
