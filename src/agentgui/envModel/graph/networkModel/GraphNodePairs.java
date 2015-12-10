@@ -46,12 +46,25 @@ public class GraphNodePairs {
 	private GraphNode graphNode1 = null;
 	private HashSet<GraphNode> graphNode2Hash = null;
 	private HashSet<GraphNodePairsRevert> revertInfos = null;
+
+	
 	
 	/**
-	 * Constructor.
+	 * Constructor that allows a one to one merge of GraphNodes.
 	 *
 	 * @param node1 the first GraphNode
-	 * @param pairNodes the second GraphNode
+	 * @param node2 the second GraphNode 
+	 */
+	public GraphNodePairs(GraphNode node1, GraphNode node2) {
+		this.graphNode1 = node1;
+		this.graphNode2Hash = new HashSet<GraphNode>();
+		this.graphNode2Hash.add(node2);
+	}
+	/**
+	 * Constructor that allows a one to many merge of GraphNodes.
+	 *
+	 * @param node1 the first GraphNode
+	 * @param pairNodes the {@link HashSet} that describes the GraphNodes to merge with the first one
 	 */
 	public GraphNodePairs(GraphNode node1, HashSet<GraphNode> pairNodes) {
 		this.graphNode1 = node1;

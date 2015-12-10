@@ -48,6 +48,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -611,7 +612,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		
 		// ----------------------------------------------------------------
 		// --- Configure edge label position ------------------------------
-		vViewer.getRenderContext().setLabelOffset(0);
+		vViewer.getRenderContext().setLabelOffset(7);
 		vViewer.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
 
 		// --- Set the EdgeShape of the Visualisation Viewer --------------
@@ -659,7 +660,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 					content = edge.getId();
 				}
 				if (imageRef!= null) {
-					URL url = getClass().getResource(imageRef);
+					URL url = getImageURL(imageRef);
 					if (url != null) {
 						if (showLabel) {
 							content = content + "<br><img src='" + url + "'>";
@@ -694,6 +695,39 @@ public class BasicGraphGui extends JPanel implements Observer {
 		
 		// --- Done -------------------------------------------------------
 		return vViewer;
+	}
+	
+	/**
+	 * Searches and returns the image url for the specified image reference.
+	 *
+	 * @param imageRef the image reference
+	 * @return the URL of the image 
+	 */
+	private URL getImageURL(String imageRef){
+		
+		// --- Abort URL generation ---------------------------------
+		if (imageRef.equals("MissingIcon")==true) return null;
+
+		// --- Resource by the class loader, as configured ----------
+		URL url = getClass().getResource(imageRef);
+		if (url!=null) return url;
+		
+		// --- Prepare folder for projects --------------------------
+		String projectsFolder = Application.getGlobalInfo().getPathProjects(true, false);
+		projectsFolder = projectsFolder.replace("\\", "/");
+		
+		// --- Resource by file, in projects, absolute --------------
+		String extImageRef = (projectsFolder + imageRef).replace("//", "/");
+		try {
+			url = new URL("file", null, -1, extImageRef);
+			if (url!=null) return url;
+			
+		} catch (MalformedURLException urlEx) {
+			//urlEx.printStackTrace();
+		}
+		
+		// --- Nothing found ----------------------------------------
+		return null;
 	}
 	
 	/**
