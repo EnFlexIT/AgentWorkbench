@@ -468,7 +468,9 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 					this.saveValue();
 				}
 				private void saveValue() {
-					saveTimeModelToSimulationSetup();
+					if (enabledChangeListener==true) {
+						saveTimeModelToSimulationSetup();
+					}
 				}
 			});
 			
@@ -489,7 +491,9 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 			jComboBoxWidthUnit.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					saveTimeModelToSimulationSetup();
+					if (enabledChangeListener==true) {
+						saveTimeModelToSimulationSetup();
+					}
 				}
 			}); 
 		}
@@ -507,7 +511,9 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 			jPanelTimeFormater.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					saveTimeModelToSimulationSetup();					
+					if (enabledChangeListener==true) {
+						saveTimeModelToSimulationSetup();					
+					}
 				}
 			});
 		}
