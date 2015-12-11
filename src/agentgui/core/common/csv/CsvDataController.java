@@ -53,7 +53,7 @@ public class CsvDataController extends Observable{
 	/** The field separator for the CSV file */
 	private String separator = ";";
 	/** If true, the first row will be treated as headlines	 */
-	private boolean headline;
+	private boolean headline = true;
 	/** The data model */
 	private DefaultTableModel dataModel;
 

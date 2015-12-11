@@ -33,6 +33,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -58,7 +60,7 @@ import java.awt.Font;
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
  */
-public class CsvDataControllerPanel extends JPanel implements ActionListener{
+public class CsvDataControllerPanel extends JPanel implements ActionListener, Observer{
 
 
 	private static final long serialVersionUID = -8553767098312965499L;
@@ -169,7 +171,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 		if (jCheckBoxHasHeadlines == null) {
 			jCheckBoxHasHeadlines = new JCheckBox(Language.translate("Spaltenüberschriften"));
 			jCheckBoxHasHeadlines.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxHasHeadlines.setSelected(true);
+			jCheckBoxHasHeadlines.setSelected(this.getCsvDataController().hasHeadlines());
 		}
 		return jCheckBoxHasHeadlines;
 	}
@@ -181,6 +183,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 	public CsvDataController getCsvDataController() {
 		if(this.csvDataController == null){
 			this.csvDataController = new CsvDataController();
+			this.csvDataController.addObserver(this);
 		}
 		return this.csvDataController;
 	}
@@ -202,11 +205,6 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 				this.getCsvDataController().setSeparator((String) this.getJComboBoxSeparator().getSelectedItem());
 				this.getCsvDataController().setFile(csvFile);
 				this.getCsvDataController().doImport();
-				
-				DefaultTableModel dtm = this.csvDataController.getDataModel();
-				if(dtm != null){
-					this.getJTableData().setModel(dtm);
-				}
 			}
 			
 		} else if(ae.getSource() == this.getJButtonExport()) {
@@ -233,10 +231,13 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 			// If the model was loaded already, reload it
 			if(this.getCsvDataController().getDataModel() != null){
 				 this.getCsvDataController().doImport();
-				 DefaultTableModel dtm = this.csvDataController.getDataModel();
-				 if(dtm != null){
-					this.getJTableData().setModel(dtm);
-				 }
+			}
+		} else if (ae.getSource() == this.getJCheckBoxHasHeadlines()){
+			this.getCsvDataController().setHeadline(this.getJCheckBoxHasHeadlines().isSelected());
+			
+			// If the model was loaded already, reload it
+			if(this.getCsvDataController().getDataModel() != null){
+				 this.getCsvDataController().doImport();
 			}
 		}
 	}
@@ -251,5 +252,14 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener{
 		frame.getContentPane().add(new CsvDataControllerPanel());
 		frame.setSize(600, 450);
 		frame.setVisible(true);
+	}
+	@Override
+	public void update(Observable o, Object arg) {
+		if(o instanceof CsvDataController && arg.equals(CsvDataController.EVENT_TABLE_MODEL_REPLACED)){
+			DefaultTableModel dtm = this.csvDataController.getDataModel();
+			 if(dtm != null){
+				this.getJTableData().setModel(dtm);
+			 }
+		}
 	}
 }
