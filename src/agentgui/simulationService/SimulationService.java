@@ -616,6 +616,7 @@ public class SimulationService extends BaseService {
 				myLogger.log(Logger.FINER, "Sending new EnvironmentModel to " + sliceName);
 			}
 			if (slice.getNode().getName().equals(this.myContainer.getNodeDescriptor().getName())==true) {
+				this.environmentModel = envModel;
 				this.getServiceActuator().notifySensors(envModel, notifySensorAgents);
 			} else {
 				this.setEnvironmentModel2Slice(slice, envModel, notifySensorAgents);	
@@ -646,7 +647,7 @@ public class SimulationService extends BaseService {
 			}
 			try {
 				if (slice.getNode().getName().equals(this.myContainer.getNodeDescriptor().getName())==true) {
-					environmentModel = envModel;
+					this.environmentModel = envModel;
 					this.getServiceActuator().notifySensors(envModel, aSynchron);
 				} else {
 					slice.stepSimulation(envModel, aSynchron);

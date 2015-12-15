@@ -57,12 +57,12 @@ public class DisplayAgent extends AbstractDisplayAgent {
 
 	private static final long serialVersionUID = -766291673903767678L;
 
-	private GraphEnvironmentController myGraphEnvironmentController = null;
+	private GraphEnvironmentController myGraphEnvironmentController;
 	
-	private Vector<EnvironmentModel> stimuliOfNetworkModel = null;
+	private Vector<EnvironmentModel> stimuliOfNetworkModel;
 	private Boolean stimuliAction = false;
 	
-	private DisplayAgentNotificationHandler myDisplayAgentNotificationHandler = null;
+	private DisplayAgentNotificationHandler myDisplayAgentNotificationHandler;
 	
 	
 	/* (non-Javadoc)
@@ -79,7 +79,6 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected void setup() {
 		super.setup();
-		this.myGraphEnvironmentController = (GraphEnvironmentController) this.getEnvironmentController();
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#afterMove()
@@ -87,7 +86,6 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected void afterMove() {
 		super.afterMove();
-		this.myGraphEnvironmentController = (GraphEnvironmentController) this.getEnvironmentController();
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#takeDown()
@@ -141,7 +139,10 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 * @return the graph environment controller
 	 */
 	protected GraphEnvironmentController getGraphEnvironmentController() {
-		return this.myGraphEnvironmentController;
+		if (myGraphEnvironmentController==null) {
+			myGraphEnvironmentController = (GraphEnvironmentController) this.getEnvironmentController();
+		}
+		return myGraphEnvironmentController;
 	}
 	
 	/**
@@ -190,7 +191,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							myGraphEnvironmentController.setDisplayEnvironmentModel(myEnvironmentModel.getDisplayEnvironment());
+							getGraphEnvironmentController().setDisplayEnvironmentModel(myEnvironmentModel.getDisplayEnvironment());
 						}
 					});
 					

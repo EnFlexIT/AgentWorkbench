@@ -231,6 +231,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return The VisualizationViewer
 	 */
 	public BasicGraphGuiVisViewer<GraphNode, GraphEdge> getVisView() {
+		if (this.visView==null) {
+			this.reLoadGraph();
+		}
 		return this.visView;
 	}
 	/**
@@ -397,10 +400,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Gets the current Graph and repaints the visualisation viewer.
 	 */
 	private void repaintGraph() {
-		if (visView.getGraphLayout().getGraph()!=this.graphController.getNetworkModelAdapter().getGraph()) {
-			visView.getGraphLayout().setGraph(this.graphController.getNetworkModelAdapter().getGraph());
+		if (this.getVisView().getGraphLayout().getGraph()!=this.graphController.getNetworkModelAdapter().getGraph()) {
+			this.getVisView().getGraphLayout().setGraph(this.graphController.getNetworkModelAdapter().getGraph());
 		}
-		visView.repaint();
+		this.getVisView().repaint();
 	}
 
 	/**
