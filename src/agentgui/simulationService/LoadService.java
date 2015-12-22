@@ -146,6 +146,7 @@ public class LoadService extends BaseService {
 	/**  The Load-Information Array of all slices **/
 	private LoadInformation loadInfo = new LoadInformation(); 
 	
+	private Boolean simulationServiceActive;
 	
 	/* (non-Javadoc)
 	 * @see jade.core.BaseService#init(jade.core.AgentContainer, jade.core.Profile)
@@ -752,7 +753,6 @@ public class LoadService extends BaseService {
 		}		
 	}
 	
-	
 	/**
 	 * 'Broadcast' (or receive) the list of all agents in a container.
 	 * The information will be set to the local {@link #loadInfo}.
@@ -762,7 +762,8 @@ public class LoadService extends BaseService {
 	 */
 	private void broadcastGetAIDList(Service.Slice[] slices) throws ServiceException {
 		
-		loadInfo.resetAIDs4Container();
+		if (this.isActiveSimulationService()==false) return;
+		this.loadInfo.resetAIDs4Container();
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Try to get AID's from all Containers !");
@@ -783,7 +784,7 @@ public class LoadService extends BaseService {
 				myLogger.log(Logger.WARNING, "Error while trying to get AID's from " + sliceName, t);
 			}
 		}
-		loadInfo.countAIDs4Container();
+		this.loadInfo.countAIDs4Container();
 	}
 	
 	/**
@@ -795,7 +796,8 @@ public class LoadService extends BaseService {
 	 */
 	private void broadcastGetAIDListSensorAgents(Service.Slice[] slices) throws ServiceException {
 		
-		loadInfo.sensorAgents = new Vector<AID>();
+		if (this.isActiveSimulationService()==false) return;
+		this.loadInfo.sensorAgents = new Vector<AID>();
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Try to get Sensor-AID's from all Containers !");
@@ -818,6 +820,25 @@ public class LoadService extends BaseService {
 		}
 	}
 	
+	/**
+	 * Checks if is active {@link SimulationService}.
+	 * @return true, if is active simulation service
+	 */
+	private boolean isActiveSimulationService() {
+		if (simulationServiceActive==null) {
+			Vector<?> localServices = myContainer.getServiceManager().getLocalServices();
+			for (int i = 0; i < localServices.size(); i++) {
+				ServiceDescriptor sd = (ServiceDescriptor) localServices.get(i);
+				if (sd.getName().equals(SimulationService.NAME)==true) {
+					simulationServiceActive = true;
+					return true;
+				}
+			}
+			simulationServiceActive = false;
+		}
+		return simulationServiceActive;
+	}
+	;
 	/**
 	 * Sends the specified {@link ThreadProtocol} to the main container.
 	 *

@@ -176,8 +176,9 @@ public abstract class SimulationServiceBehaviour extends Behaviour implements Se
 				simHelper.sensorPlugIn(mySensor);	
 			}
 				
-		} catch (ServiceException e) {
-			e.printStackTrace();
+		} catch (ServiceException ae) {
+			System.err.println("Agent '" + this.myAgent.getLocalName() + "': Could not plugin simulated sensor!");
+//			se.printStackTrace();
 		}
 	}
 	

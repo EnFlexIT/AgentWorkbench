@@ -126,7 +126,8 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		try {
 			loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			System.err.println("Service " + LoadService.NAME + " was not started!");
+//			e.printStackTrace();
 		}	
 	}
 	/**
@@ -136,7 +137,8 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		try {
 			simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			System.err.println("Service " + SimulationService.NAME + " was not started!");
+//			e.printStackTrace();
 		}	
 	}
 	/**

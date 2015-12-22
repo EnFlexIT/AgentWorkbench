@@ -147,7 +147,9 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 		remConConf.setJvmMemAllocMaximum(projectRemContConfig.getJvmMemAllocMaximum());
 		
 		try {
-			loadHelper.setDefaults4RemoteContainerConfig(remConConf);
+			if (loadHelper!=null) {
+				loadHelper.setDefaults4RemoteContainerConfig(remConConf);	
+			}
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}

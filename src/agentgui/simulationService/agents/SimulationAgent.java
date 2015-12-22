@@ -167,8 +167,9 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 				simHelper.sensorPlugIn(mySensor);	
 			}
 				
-		} catch (ServiceException e) {
-			e.printStackTrace();
+		} catch (ServiceException se) {
+			System.err.println("Agent '" + this.getLocalName() + "': Could not plugin simulated sensor!");
+//			se.printStackTrace();
 		}
 	}
 	

@@ -34,11 +34,10 @@ de;Agenten auswählen;Select Agent;;;
 de;Agenten entfernen;Remove Agent
 de;Agenten hinzufügen;Add Agent
 de;Agenten in diesem Projekt;Agents in this project
-de;Agenten-Auslastungsmetrik;;;;
 de;Agenten-Klasse;Agent class
 de;Agenten-Klassen;Agent classes
 de;Agenten-Konfiguration;Agent-Configuration
-de;Agenten-Lastmetrik;;;;
+de;Agenten-Lastmetrik;Agent Load-Metric;;;
 de;Agenten-Start;Agent-Start
 de;Agenten;Agents
 de;Agentenklasse;Agent class
