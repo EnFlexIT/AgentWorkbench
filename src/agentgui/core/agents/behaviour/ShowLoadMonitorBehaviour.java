@@ -60,18 +60,19 @@ public class ShowLoadMonitorBehaviour extends OneShotBehaviour {
 	public void action() {
 
 		// --- Wait for the start of the LoadMeasureAgent -----------
+		long waitTimeMax = System.currentTimeMillis() + (1000 * 7);
 		AgentController ageCont = null;
 		while (ageCont==null) {
+			if (System.currentTimeMillis()>=waitTimeMax) break;
 			try {
 				ageCont = myAgent.getContainerController().getAgent(loadAgentName);
 			} catch (ControllerException e1) {
 				block(100);
-				//e1.printStackTrace();
 			}
 		}
 		
-		myAgent.getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
-		myAgent.getContentManager().registerOntology(JADEManagementOntology.getInstance());
+		this.myAgent.getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
+		this.myAgent.getContentManager().registerOntology(JADEManagementOntology.getInstance());
 
 		AID receiver = new AID();   
 		receiver.setLocalName(loadAgentName);
@@ -85,12 +86,12 @@ public class ShowLoadMonitorBehaviour extends OneShotBehaviour {
 		a.setActor( receiver );
 		a.setAction( new ShowMonitorGUI() );
 		try {
-			myAgent.getContentManager().fillContent(msg,a);
+			this.myAgent.getContentManager().fillContent(msg,a);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		myAgent.send(msg);
-		myAgent.doDelete();
+		this.myAgent.send(msg);
+		this.myAgent.doDelete();
 	}
 
 }

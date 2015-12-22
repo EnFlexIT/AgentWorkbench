@@ -86,10 +86,10 @@ public abstract class SimulationManagerAgent extends Agent {
 	@Override
 	protected void setup() {		  
 		
-		// --- get the initial EnvironmentModel from Agent.GUI setup ----------
+		// --- Get the initial EnvironmentModel from Agent.GUI setup ----------
 		this.setEnvironmentModel(this.getEnvironmentModelFromSetup());
 		
-		// --- get the helper for the SimulationService -----------------------
+		// --- Get the helper for the SimulationService -----------------------
 		try {
 		  simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
 		  simHelper.setManagerAgent(this.getAID());
@@ -381,7 +381,9 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * This method removes the CyclicNotificationHandler from this agent.
 	 */
 	private void removeNotificationHandler() {
-		this.removeBehaviour(this.notifyHandler);
+		if (this.notifyHandler!=null) {
+			this.removeBehaviour(this.notifyHandler);
+		}
 	}
 
 	/**

@@ -401,7 +401,7 @@ public class LoadMeasureAgent extends Agent {
 					String machineURL = containerDesc.getPlAddress().getUrl();
 					// --- Get all needed load informations -----------------------------
 					PlatformLoad containerLoad = loadContainer.get(containerName);
-					Integer containerNoAgents = loadContainerAgentMap.noAgentsAtContainer.get(containerName);
+					Integer containerNoAgents = loadContainerAgentMap.getNoAgentsAtContainerHash().get(containerName);
 					loadContainerBenchmarkResults.put(containerName, benchmarkValue);	
 					
 					// ------------------------------------------------------------------

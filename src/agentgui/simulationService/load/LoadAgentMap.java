@@ -64,7 +64,7 @@ public class LoadAgentMap implements Serializable {
 	public Integer noAgentsAtPlatform = null;
 	
 	/** The no agents at container. */
-	public Hashtable<String, Integer> noAgentsAtContainer = null;
+	private Hashtable<String, Integer> noAgentsAtContainer;
 	
 	/**
 	 * Constructor of this class.
@@ -79,7 +79,7 @@ public class LoadAgentMap implements Serializable {
 	public void doCountings() {
 		
 		noAgentsAtPlatform = agentsAtPlatform.size();
-		noAgentsAtContainer = new Hashtable<String, Integer>();
+		this.setNoAgentsAtContainerHash(null);
 		
 		Vector<String> container = new Vector<String>(agentsAtContainer.keySet());
 		Iterator<String> it = container.iterator();
@@ -87,9 +87,9 @@ public class LoadAgentMap implements Serializable {
 			String containerName = it.next();
 			AID_Container_List aidList = agentsAtContainer.get(containerName);
 			if (aidList==null) {
-				noAgentsAtContainer.put(containerName,0);	
+				this.getNoAgentsAtContainerHash().put(containerName, 0);	
 			} else {
-				noAgentsAtContainer.put(containerName,aidList.size());
+				this.getNoAgentsAtContainerHash().put(containerName, aidList.size());
 			}
 		} // --- end while ---
 	}
@@ -148,6 +148,24 @@ public class LoadAgentMap implements Serializable {
 		return agentsAtContainer;
 	}
 
+	/**
+	 * Gets the no agents at container hash.
+	 * @return the no agents at container hash
+	 */
+	public Hashtable<String, Integer> getNoAgentsAtContainerHash() {
+		if (noAgentsAtContainer==null) {
+			noAgentsAtContainer = new Hashtable<String, Integer>();
+		}
+		return noAgentsAtContainer;
+	}
+	/**
+	 * Sets the no agents at container hash.
+	 * @param newHashTable the new hash table
+	 */
+	private void setNoAgentsAtContainerHash(Hashtable<String, Integer> newHashTable) {
+		noAgentsAtContainer = newHashTable;
+	}
+	
 	/**
 	 * Search's for the stored agent information. With this, the current
 	 * location of the agent can be found for example
