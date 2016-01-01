@@ -39,7 +39,7 @@ public class ThreadInfoStorageAgentClass extends ThreadInfoStorageSeries{
 	private double avgPredictiveMetric;
 	
 	/** The average real metric. */
-	private double avgrealMetric;
+	private double avgRealMetric;
 	
 	/** The minimum predictive metric. */
 	private double minPredictiveMetric;
@@ -61,7 +61,7 @@ public class ThreadInfoStorageAgentClass extends ThreadInfoStorageSeries{
 		super(name);
 		
 		this.avgPredictiveMetric 	= 0;
-		this.avgrealMetric 			= 0;
+		this.avgRealMetric 			= 0;
 		this.minPredictiveMetric 	= 0;
 		this.minRealMetric 			= 0;
 		this.maxPredictiveMetric 	= 0;
@@ -92,7 +92,7 @@ public class ThreadInfoStorageAgentClass extends ThreadInfoStorageSeries{
 	 * @return the avgRealMetric
 	 */
 	public double getAvgRealMetric() {
-		return avgrealMetric;
+		return avgRealMetric;
 	}
 	
 	/**
@@ -101,7 +101,7 @@ public class ThreadInfoStorageAgentClass extends ThreadInfoStorageSeries{
 	 * @param avgPrealMetric the new average real metric
 	 */
 	public void setAvgRealMetric(double avgPrealMetric) {
-		this.avgrealMetric = avgPrealMetric;
+		this.avgRealMetric = avgPrealMetric;
 	}
 	
 	/**

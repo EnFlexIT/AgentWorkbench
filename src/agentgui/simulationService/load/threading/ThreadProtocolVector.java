@@ -39,6 +39,11 @@ import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.simulationService.agents.LoadMeasureAgent;
+import jade.domain.AMSService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.AMSAgentDescription;
+import jade.domain.FIPAAgentManagement.SearchConstraints;
 
 /**
  * The Class ThreadProtocolVector is used to handle several {@link ThreadProtocol} instances.
@@ -46,31 +51,68 @@ import agentgui.core.sim.setup.SimulationSetup;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
 @XmlRootElement
-public class ThreadProtocolVector extends Vector<ThreadProtocol>{
+public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 
 	private static final long serialVersionUID = -6007682527796979437L;
 
+	private transient LoadMeasureAgent loadMeasureAgent;
+	
+	/** The ams agent hash map. */
+	private HashMap<String, AMSAgentDescription> amsAgentHashMap;
+	
 	/** The agent start hash map reminder. */
 	private HashMap<String, AgentClassElement4SimStart> agentStartHashMapReminder;
 	
 	/** The table model. */
 	private DefaultTableModel tableModel;
 
+	
 	/**
 	 * Instantiates a new thread protocol vector.
+	 * @param loadMeasureAgent the current {@link LoadMeasureAgent}
 	 */
-	public ThreadProtocolVector() {
-		
+	public ThreadProtocolVector(LoadMeasureAgent loadMeasureAgent) {
+		this.loadMeasureAgent = loadMeasureAgent;
+	}
+	
+	/**
+	 * Gets the agent list from AMS Service.
+	 * @return the agent list from the AMS service
+	 */
+	private AMSAgentDescription[] getAgentListFromAMSService() {
+		AMSAgentDescription[] agents = null;
+		try {
+			SearchConstraints sc = new SearchConstraints();
+			sc.setMaxResults ( new Long(-1) );
+			agents = AMSService.search(this.loadMeasureAgent, new AMSAgentDescription (), sc);
+			
+		} catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+		return agents;
+	}
+	/**
+	 * Gets the AMS agent hash map.
+	 * @return the AMS agent hash map
+	 */
+	private HashMap<String, AMSAgentDescription> getAMSAgentHashMap() {
+		if (amsAgentHashMap==null) {
+			amsAgentHashMap = new HashMap<String, AMSAgentDescription>();
+			for (AMSAgentDescription agentDescription : this.getAgentListFromAMSService()) {
+				amsAgentHashMap.put(agentDescription.getName().getLocalName(), agentDescription);
+			}
+		}
+		return amsAgentHashMap;
 	}
 	
 	/**
 	 * Gets the agent start list of the current {@link SimulationSetup}.
 	 * @return the agent start list
 	 */
-	public ArrayList<AgentClassElement4SimStart> getAgentStartList() {
+	private ArrayList<AgentClassElement4SimStart> getAgentListFromProjectSetup() {
 		Project project = Application.getProjectFocused();
 		if (project!=null) {
-			// --- Get Simulation Setup ---------
+			// --- Get Agent list from simulation setup -------------
 			SimulationSetup simSetup = project.getSimulationSetups().getCurrSimSetup();
 			if (simSetup!=null) {
 				return simSetup.getAgentList();
@@ -78,7 +120,6 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol>{
 		}
 		return null;
 	}
-	
 	/**
 	 * Gets the agent start hash map reminder.
 	 * @return the agent start hash map reminder
@@ -102,7 +143,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol>{
 	 */
 	public HashMap<String, AgentClassElement4SimStart> getAgentStartHashMap() {
 		
-		ArrayList<AgentClassElement4SimStart> agentStartList = this.getAgentStartList();
+		ArrayList<AgentClassElement4SimStart> agentStartList = this.getAgentListFromProjectSetup();
 		if (agentStartList!=null) {
 			// ------------------------------------------------------
 			// --- Check the size of the reminded HashMap -----------
@@ -166,18 +207,34 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol>{
 	 * @param threadTime the thread time
 	 */
 	private void addTableModelRow(String pid, ThreadTime threadTime) {
-		if(threadTime == null){
+		
+		if (threadTime == null) {
 			threadTime = new ThreadTime();
 		}
 		
-		// --- Check for agents out of the start list of the setup --
-		HashMap<String, AgentClassElement4SimStart> agentStartHashMap = this.getAgentStartHashMap();
-		if (agentStartHashMap!=null) {
-			
-			AgentClassElement4SimStart ace4ss = agentStartHashMap.get(threadTime.getThreadName());
-			if (ace4ss!=null) {
+		// --- Check for agents out of the AMS descriptions  --------
+		HashMap<String, AMSAgentDescription> amsAgentHashMap = this.getAMSAgentHashMap();
+		if (amsAgentHashMap!=null) {
+			AMSAgentDescription agentDescription = amsAgentHashMap.get(threadTime.getThreadName());
+			if (agentDescription!=null) {
 				threadTime.setIsAgent(true);
-				threadTime.setClassName(ace4ss.getAgentClassReference());
+			} else {
+				threadTime.setIsAgent(false);
+			}
+		}
+		
+		// --- Check for agent class out of the setup start-list ----
+		if (threadTime.isAgent()==true) {
+			HashMap<String, AgentClassElement4SimStart> agentStartHashMap = this.getAgentStartHashMap();
+			if (agentStartHashMap!=null) {
+				AgentClassElement4SimStart ace4ss = agentStartHashMap.get(threadTime.getThreadName());
+				if (ace4ss!=null) {
+					threadTime.setClassName(ace4ss.getAgentClassReference());
+				}
+			}
+			// --- This is an agent, but the class is unknown -------
+			if (threadTime.getClassName().equals(ThreadProperties.NON_AGENTS_CLASSNAME)) {
+				threadTime.setClassName(ThreadProperties.UNKNOWN_AGENT_CLASSNAME);
 			}
 		}
 		
@@ -203,6 +260,8 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol>{
 		while (getTableModel().getRowCount()>0) {
 			getTableModel().removeRow(0);
 		}
+		// --- Reset AMS Agent Hash Map ---------
+		this.amsAgentHashMap = null;
 	}
 	
 	/* (non-Javadoc)

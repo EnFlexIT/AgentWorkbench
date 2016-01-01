@@ -34,7 +34,11 @@ package agentgui.simulationService.load.threading;
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 public interface ThreadProperties {
-	/** The non agents classname. */
+
+	/** The constant for non agents class name. */
 	public final String NON_AGENTS_CLASSNAME = "all.other.classes.NON-AGENT-THREAD";
 
+	/** The constant for unknown agent class name. */
+	public final String UNKNOWN_AGENT_CLASSNAME = "agent.class.UNKNOWN-AGENT-CLASS";
+	
 }

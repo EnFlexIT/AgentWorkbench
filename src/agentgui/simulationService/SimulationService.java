@@ -420,7 +420,11 @@ public class SimulationService extends BaseService {
 			synchronized(environmentInstanceNextPartsLocal) {
 				// --- Put single changes into the local store until ---- 
 				// --- the expected number of answers is not reached ----
-				environmentInstanceNextPartsLocal.put(fromAgent, nextPart);
+				if (nextPart==null) {
+					environmentInstanceNextPartsLocal.put(fromAgent, "null");
+				} else {
+					environmentInstanceNextPartsLocal.put(fromAgent, nextPart);
+				}
 				
 				// --- If the expected number of answers came back to ---
 				// --- the service, broadcast it to every other node ----

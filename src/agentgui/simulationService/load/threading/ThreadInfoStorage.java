@@ -48,6 +48,7 @@ import org.jfree.data.xy.XYSeries;
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadProperties{
+	
 	/**
 	* The available series keys as constants
 	*/

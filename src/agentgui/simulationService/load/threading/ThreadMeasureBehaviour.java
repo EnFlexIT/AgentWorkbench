@@ -91,9 +91,10 @@ public class ThreadMeasureBehaviour extends TickerBehaviour {
 	@Override
 	protected void onTick() {
 		// --- Do the measurement -------------------------
-		SwingUtilities.invokeLater(new Runnable() { public void run() {
-			doThreadMeasurement();
-			 }});
+		SwingUtilities.invokeLater(new Runnable() { 
+			public void run() {
+				doThreadMeasurement();
+			}});
 		
 		// --- Exit, if this is a one shot behaviour ------
 		if (this.isOneShotBehaviour()) {
@@ -106,7 +107,6 @@ public class ThreadMeasureBehaviour extends TickerBehaviour {
 	private void doThreadMeasurement() {
 		try {
 			this.getLoadMeasureAgent().getLoadServiceHelper().requestThreadMeasurements(this.getLoadMeasureAgent());
-			
 			
 		} catch (ServiceException se) {
 			se.printStackTrace();

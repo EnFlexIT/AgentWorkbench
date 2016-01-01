@@ -28,22 +28,6 @@
  */
 package agentgui.simulationService.agents;
 
-import jade.content.Concept;
-import jade.content.lang.Codec.CodecException;
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.OntologyException;
-import jade.content.onto.UngroundedException;
-import jade.content.onto.basic.Action;
-import jade.core.Agent;
-import jade.core.Location;
-import jade.core.ServiceException;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.ThreadedBehaviourFactory;
-import jade.core.behaviours.TickerBehaviour;
-import jade.domain.FIPANames;
-import jade.domain.JADEAgentManagement.JADEManagementOntology;
-import jade.lang.acl.ACLMessage;
-
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
@@ -70,16 +54,16 @@ import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.balancing.DynamicLoadBalancing;
 import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
 import agentgui.simulationService.load.LoadAgentMap;
+import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadMerger;
 import agentgui.simulationService.load.LoadThresholdLevels;
-import agentgui.simulationService.load.LoadInformation.NodeDescription;
-import agentgui.simulationService.load.gui.SystemLoadPanel;
 import agentgui.simulationService.load.gui.SystemLoadDialog;
+import agentgui.simulationService.load.gui.SystemLoadPanel;
 import agentgui.simulationService.load.gui.SystemLoadSingle;
+import agentgui.simulationService.load.threading.ThreadInfoStorage;
 import agentgui.simulationService.load.threading.ThreadMeasureBehaviour;
 import agentgui.simulationService.load.threading.ThreadProtocol;
-import agentgui.simulationService.load.threading.ThreadInfoStorage;
 import agentgui.simulationService.load.threading.ThreadProtocolVector;
 import agentgui.simulationService.load.threading.gui.ThreadMeasureDialog;
 import agentgui.simulationService.ontology.OSInfo;
@@ -87,6 +71,21 @@ import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
 import agentgui.simulationService.ontology.ShowMonitorGUI;
 import agentgui.simulationService.ontology.ShowThreadGUI;
+import jade.content.Concept;
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.OntologyException;
+import jade.content.onto.UngroundedException;
+import jade.content.onto.basic.Action;
+import jade.core.Agent;
+import jade.core.Location;
+import jade.core.ServiceException;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.ThreadedBehaviourFactory;
+import jade.core.behaviours.TickerBehaviour;
+import jade.domain.FIPANames;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.lang.acl.ACLMessage;
 
 /**
  * This class represents the agent, which monitors the load information 
@@ -874,7 +873,7 @@ public class LoadMeasureAgent extends Agent {
 	 * @param tp the thread protocol
 	 */
 	public void addThreadProtocol(ThreadProtocol tp) {
-		synchronized (getThreadProtocolVector()) {
+		synchronized (this.getThreadProtocolVector()) {
 			if (this.getThreadProtocolVector().getTimestamp()!=tp.getTimestamp()) {
 				this.getThreadProtocolVector().clear();
 			}
@@ -889,7 +888,7 @@ public class LoadMeasureAgent extends Agent {
 	 */
 	public ThreadProtocolVector getThreadProtocolVector() {
 		if (threadProtocolVector==null) {
-			threadProtocolVector = new ThreadProtocolVector();
+			threadProtocolVector = new ThreadProtocolVector(this);
 		}
 		return threadProtocolVector;
 	}
