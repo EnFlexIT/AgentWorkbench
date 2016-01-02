@@ -39,11 +39,7 @@ import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
-import agentgui.simulationService.agents.LoadMeasureAgent;
-import jade.domain.AMSService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.AMSAgentDescription;
-import jade.domain.FIPAAgentManagement.SearchConstraints;
+
 
 /**
  * The Class ThreadProtocolVector is used to handle several {@link ThreadProtocol} instances.
@@ -55,10 +51,6 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 
 	private static final long serialVersionUID = -6007682527796979437L;
 
-	private transient LoadMeasureAgent loadMeasureAgent;
-	
-	/** The ams agent hash map. */
-	private HashMap<String, AMSAgentDescription> amsAgentHashMap;
 	
 	/** The agent start hash map reminder. */
 	private HashMap<String, AgentClassElement4SimStart> agentStartHashMapReminder;
@@ -69,40 +61,9 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	
 	/**
 	 * Instantiates a new thread protocol vector.
-	 * @param loadMeasureAgent the current {@link LoadMeasureAgent}
 	 */
-	public ThreadProtocolVector(LoadMeasureAgent loadMeasureAgent) {
-		this.loadMeasureAgent = loadMeasureAgent;
-	}
-	
-	/**
-	 * Gets the agent list from AMS Service.
-	 * @return the agent list from the AMS service
-	 */
-	private AMSAgentDescription[] getAgentListFromAMSService() {
-		AMSAgentDescription[] agents = null;
-		try {
-			SearchConstraints sc = new SearchConstraints();
-			sc.setMaxResults ( new Long(-1) );
-			agents = AMSService.search(this.loadMeasureAgent, new AMSAgentDescription (), sc);
-			
-		} catch (FIPAException fe) {
-			fe.printStackTrace();
-		}
-		return agents;
-	}
-	/**
-	 * Gets the AMS agent hash map.
-	 * @return the AMS agent hash map
-	 */
-	private HashMap<String, AMSAgentDescription> getAMSAgentHashMap() {
-		if (amsAgentHashMap==null) {
-			amsAgentHashMap = new HashMap<String, AMSAgentDescription>();
-			for (AMSAgentDescription agentDescription : this.getAgentListFromAMSService()) {
-				amsAgentHashMap.put(agentDescription.getName().getLocalName(), agentDescription);
-			}
-		}
-		return amsAgentHashMap;
+	public ThreadProtocolVector() {
+		super();
 	}
 	
 	/**
@@ -212,17 +173,6 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 			threadTime = new ThreadTime();
 		}
 		
-		// --- Check for agents out of the AMS descriptions  --------
-		HashMap<String, AMSAgentDescription> amsAgentHashMap = this.getAMSAgentHashMap();
-		if (amsAgentHashMap!=null) {
-			AMSAgentDescription agentDescription = amsAgentHashMap.get(threadTime.getThreadName());
-			if (agentDescription!=null) {
-				threadTime.setIsAgent(true);
-			} else {
-				threadTime.setIsAgent(false);
-			}
-		}
-		
 		// --- Check for agent class out of the setup start-list ----
 		if (threadTime.isAgent()==true) {
 			HashMap<String, AgentClassElement4SimStart> agentStartHashMap = this.getAgentStartHashMap();
@@ -248,7 +198,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		row.add(threadTime.getUserTime());
 		
 		// --- Add row to table model -------------------------------
-		getTableModel().addRow(row);
+		this.getTableModel().addRow(row);
 	
 	}
 	
@@ -256,25 +206,20 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	 * Clears the table model.
 	 */
 	private void clearTableModel() {
-		while (getTableModel().getRowCount()>0) {
-			getTableModel().removeRow(0);
+		while (this.getTableModel().getRowCount()>0) {
+			this.getTableModel().removeRow(0);
 		}
-		// --- Reset AMS Agent Hash Map ---------
-		this.amsAgentHashMap = null;
 	}
 	
 	/* (non-Javadoc)
 	 * @see java.util.Vector#add(java.lang.Object)
 	 */
 	@Override
-	public boolean add(ThreadProtocol threadProtocol) {
-		
+	public synchronized boolean add(ThreadProtocol threadProtocol) {
 		// --- Add to the local vector ------------------------------
 		boolean done = super.add(threadProtocol);
-		
 		// --- Add the new Thread Times to the table model ----------
 		String pid = threadProtocol.getProcessID();
-		this.clearTableModel();
 		for (int i = 0; i < threadProtocol.getThreadTimes().size(); i++) {
 			this.addTableModelRow(pid, threadProtocol.getThreadTimes().get(i));
 		}
@@ -287,7 +232,7 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	@Override
 	public void clear() {
 		super.clear();
-		clearTableModel();
+		this.clearTableModel();
 	}
 	
 	/**

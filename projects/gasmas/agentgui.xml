@@ -72,8 +72,8 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>MixedClusters (1) Small</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
-    <downloadResources>http://Pandora:8080/gasmas/BIN_DUMP_-1172359784.jar</downloadResources>
-    <downloadResources>http://Pandora:8080/gasmas/gasmas_IDE.jar</downloadResources>
+    <downloadResources>http://132.252.237.200:8080/gasmas/BIN_DUMP_-1172359784.jar</downloadResources>
+    <downloadResources>http://132.252.237.200:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>

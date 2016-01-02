@@ -74,6 +74,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.commons.collections15.map.HashedMap;
+
 import agentgui.core.application.Application;
 import agentgui.core.config.VersionInfo;
 import agentgui.simulationService.agents.LoadMeasureAgent;
@@ -83,6 +85,7 @@ import agentgui.simulationService.load.LoadInformation;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.load.threading.ThreadProtocol;
+import agentgui.simulationService.load.threading.ThreadTime;
 import agentgui.simulationService.load.threading.ThreadTimeReceiver;
 import agentgui.simulationService.load.LoadMeasureSigar;
 import agentgui.simulationService.load.LoadMeasureThread;
@@ -1135,10 +1138,12 @@ public class LoadService extends BaseService {
 		 */
 		@Override
 		public void receiveThreadProtocol(ThreadProtocol threadProtocol) {
-			// --- Add information about container, machine ----
+
+			// --- Add information about container, machine ---------
 			threadProtocol.setContainerName(myCRCReply.getRemoteContainerName());
 			threadProtocol.setProcessID(myCRCReply.getRemotePID());
-			// --- jvm@machine, e.g. 73461@dell-blade-2 ---
+			
+			// --- jvm@machine, e.g. 73461@dell-blade-2 -------------
 			String[] temp = threadProtocol.getProcessID().split("@");
 			String jvmName = temp[0];
 			String machineName = temp[1];
@@ -1150,6 +1155,16 @@ public class LoadService extends BaseService {
 			double mflops = myCRCReply.getRemoteBenchmarkResult().getBenchmarkValue();
 			threadProtocol.setMflops(mflops * noOfCPU);
 			
+			// --- Do the check if a thread is an agent or not ------
+			HashedMap<String, AID> aidHash = new HashedMap<String, AID>();
+			for (AID aid : myContainer.agentNames()) {
+				aidHash.put(aid.getLocalName(), aid);
+			}
+			for (ThreadTime threadTime : threadProtocol.getThreadTimes()) {
+				if (aidHash.get(threadTime.getThreadName())!=null) {
+					threadTime.setIsAgent(true);
+				}
+			}
 			
 			// --- Send protocol to the main container --------------
 			try {

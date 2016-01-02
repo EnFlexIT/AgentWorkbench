@@ -881,12 +881,14 @@ public class LoadMeasureAgent extends Agent {
 	 * @param tp the thread protocol
 	 */
 	public void addThreadProtocol(ThreadProtocol tp) {
-		if (this.getThreadProtocolVector().getTimestamp()!=tp.getTimestamp()) {
-			this.getThreadProtocolVector().clear();
+		synchronized (this.getThreadProtocolVector()) {
+			if (this.getThreadProtocolVector().getTimestamp()!=tp.getTimestamp()) {
+				this.getThreadProtocolVector().clear();
+			}
+			this.getThreadProtocolVector().add(tp);
+			this.getThreadInfoStorage().add(tp);
+			this.getThreadDialog().getJPanelMeasureMetrics().enableMetricsCalculationButton();
 		}
-		this.getThreadProtocolVector().add(tp);
-		this.getThreadInfoStorage().add(tp);
-		this.getThreadDialog().getJPanelMeasureMetrics().enableMetricsCalculationButton();
 	}
 	/**
 	 * Returns the current {@link ThreadProtocol}.
@@ -894,7 +896,7 @@ public class LoadMeasureAgent extends Agent {
 	 */
 	public ThreadProtocolVector getThreadProtocolVector() {
 		if (threadProtocolVector==null) {
-			threadProtocolVector = new ThreadProtocolVector(this);
+			threadProtocolVector = new ThreadProtocolVector();
 		}
 		return threadProtocolVector;
 	}
