@@ -57,14 +57,16 @@ import agentgui.core.project.Project;
 public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration implements DocumentListener {
 
 	private static final long serialVersionUID = -1170433671816358910L;
-	private JLabel jLabelCounterStop = null;
-	private JLabel jLabelCounterStart = null;
-	private JTextField jTextFieldCounterStart = null;
-	private JTextField jTextFieldCounterStop = null;
-	private JLabel jLabelHeader1 = null;
-	private JLabel jLabelHeader2 = null;
-	private JPanel jPanelDummy = null;
 	
+	private JLabel jLabelCounterStop;
+	private JLabel jLabelCounterStart;
+	private JTextField jTextFieldCounterStart;
+	private JTextField jTextFieldCounterStop;
+	private JLabel jLabelHeader1;
+	private JLabel jLabelHeader2;
+	private JPanel jPanelDummy;
+	
+	private boolean enabledChangeListener = true;
 	
 	/**
 	 * Instantiates a new time model stroke configuration.
@@ -226,10 +228,12 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 		} else {
 			tms = (TimeModelStroke) timeModel;
 		}
+		this.enabledChangeListener = false;
 		this.getJTextFieldCounterStart().setText(((Integer)tms.getCounterStart()).toString());
 		this.getJTextFieldCounterStop().setText(((Integer)tms.getCounterStop()).toString());
-		
+		this.enabledChangeListener = true;
 	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.DisplayJPanel4Configuration#getTimeModel()
 	 */
@@ -263,21 +267,30 @@ public class TimeModelStrokeConfiguration extends JPanel4TimeModelConfiguration 
 	 */
 	@Override
 	public void insertUpdate(DocumentEvent e) {
-		this.saveTimeModelToSimulationSetup();
+		this.saveTimeModelStrokeToSimulationSetup();
 	}
 	/* (non-Javadoc)
 	 * @see javax.swing.event.DocumentListener#removeUpdate(javax.swing.event.DocumentEvent)
 	 */
 	@Override
 	public void removeUpdate(DocumentEvent e) {
-		this.saveTimeModelToSimulationSetup();
+		this.saveTimeModelStrokeToSimulationSetup();
 	}
 	/* (non-Javadoc)
 	 * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.DocumentEvent)
 	 */
 	@Override
 	public void changedUpdate(DocumentEvent e) {
-		this.saveTimeModelToSimulationSetup();
+		this.saveTimeModelStrokeToSimulationSetup();
 	}
 	
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+	/**
+	 * Saves the current {@link TimeModelStroke} to the simulation setup.
+	 */
+	private void saveTimeModelStrokeToSimulationSetup() {
+		if (this.enabledChangeListener==true) {
+			this.saveTimeModelToSimulationSetup();
+		}
+	}
+	
+}  
