@@ -252,7 +252,6 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	
 	}
 	
-	
 	/**
 	 * Clears the table model.
 	 */
@@ -268,18 +267,17 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	 * @see java.util.Vector#add(java.lang.Object)
 	 */
 	@Override
-	public synchronized boolean add(ThreadProtocol threadProtocol) {
+	public boolean add(ThreadProtocol threadProtocol) {
 		
 		// --- Add to the local vector ------------------------------
 		boolean done = super.add(threadProtocol);
 		
 		// --- Add the new Thread Times to the table model ----------
 		String pid = threadProtocol.getProcessID();
-		clearTableModel();
+		this.clearTableModel();
 		for (int i = 0; i < threadProtocol.getThreadTimes().size(); i++) {
-			addTableModelRow(pid, threadProtocol.getThreadTimes().get(i));
+			this.addTableModelRow(pid, threadProtocol.getThreadTimes().get(i));
 		}
-		
 		return done;
 	}
 	

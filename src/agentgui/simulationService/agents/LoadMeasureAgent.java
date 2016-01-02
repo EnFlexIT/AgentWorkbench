@@ -77,6 +77,7 @@ import jade.content.lang.sl.SLCodec;
 import jade.content.onto.OntologyException;
 import jade.content.onto.UngroundedException;
 import jade.content.onto.basic.Action;
+import jade.content.onto.basic.Result;
 import jade.core.Agent;
 import jade.core.Location;
 import jade.core.ServiceException;
@@ -84,6 +85,8 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
+import jade.domain.FIPAAgentManagement.FIPAManagementOntology;
+import jade.domain.FIPAAgentManagement.Search;
 import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.lang.acl.ACLMessage;
 
@@ -125,7 +128,7 @@ public class LoadMeasureAgent extends Agent {
 	// --------------------------------------------------------------
 	// --- Display-elements of the Threading ------------------------ 
 	private ThreadMeasureDialog threadDialog;
-	private long threadMeasurementTickingPeriod = 1000L;
+	private long threadMeasurementTickingPeriod = 5000L;
 	// --------------------------------------------------------------
 	
 	// --------------------------------------------------------------
@@ -195,6 +198,7 @@ public class LoadMeasureAgent extends Agent {
 		
 		this.getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
 		this.getContentManager().registerOntology(JADEManagementOntology.getInstance());
+		this.getContentManager().registerOntology(FIPAManagementOntology.getInstance());
 		
 		this.loadBalancing = new DynamicLoadBalancing(this);
 		
@@ -849,7 +853,11 @@ public class LoadMeasureAgent extends Agent {
 	public void reStartThreadMeasurement(boolean oneShotBehaviour) {
 		ThreadMeasureBehaviour tmb = this.getThreadMeasureBehaviour();
 		tmb.setOneShotBehaviour(oneShotBehaviour);
-		tmb.reset();
+		if (oneShotBehaviour==true) {
+			tmb.reset(1);	
+		} else {
+			tmb.reset(this.getThreadMeasurementTickingPeriod());
+		}
 		this.addBehaviour(tmb);
 	}
 	/**
@@ -873,14 +881,12 @@ public class LoadMeasureAgent extends Agent {
 	 * @param tp the thread protocol
 	 */
 	public void addThreadProtocol(ThreadProtocol tp) {
-		synchronized (this.getThreadProtocolVector()) {
-			if (this.getThreadProtocolVector().getTimestamp()!=tp.getTimestamp()) {
-				this.getThreadProtocolVector().clear();
-			}
-			this.getThreadProtocolVector().add(tp);
-			this.getThreadInfoStorage().add(tp);
-			this.getThreadDialog().getJPanelMeasureMetrics().enableMetricsCalculationButton();
+		if (this.getThreadProtocolVector().getTimestamp()!=tp.getTimestamp()) {
+			this.getThreadProtocolVector().clear();
 		}
+		this.getThreadProtocolVector().add(tp);
+		this.getThreadInfoStorage().add(tp);
+		this.getThreadDialog().getJPanelMeasureMetrics().enableMetricsCalculationButton();
 	}
 	/**
 	 * Returns the current {@link ThreadProtocol}.
@@ -917,7 +923,6 @@ public class LoadMeasureAgent extends Agent {
 	 */
 	public ThreadMeasureDialog getThreadDialog() {
 		if (threadDialog==null) {
-			this.reStartThreadMeasurement(true);
 			threadDialog = new ThreadMeasureDialog(this);
 		}
 		return threadDialog;
@@ -951,13 +956,26 @@ public class LoadMeasureAgent extends Agent {
 			if (msg!=null) {
 				// --- Ontology-specific Message ----------------
 				try {
-					act = (Action) getContentManager().extractContent(msg);
-				} catch (UngroundedException e) {
-					e.printStackTrace();
-				} catch (CodecException e) {
-					e.printStackTrace();
-				} catch (OntologyException e) {
-					e.printStackTrace();
+					if (msg.getOntology().equals(FIPAManagementOntology.NAME)==true) {
+						Object fipaMessage = getContentManager().extractContent(msg);
+						if (fipaMessage instanceof Result) {
+							Result result = (Result) fipaMessage;
+							if (result.getAction() instanceof Search ) {
+								// --- no action required -------
+								System.err.println("=> " + this.getAgent().getLocalName() + " - Received " + FIPAManagementOntology.NAME +" result:");
+							}
+						}
+						
+					} else {
+						act = (Action) getContentManager().extractContent(msg);						
+					}
+					
+				} catch (UngroundedException ue) {
+					ue.printStackTrace();
+				} catch (CodecException ce) {
+					ce.printStackTrace();
+				} catch (OntologyException oe) {
+					oe.printStackTrace();
 				}
 
 				if (act!=null) {

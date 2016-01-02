@@ -70,7 +70,6 @@ public class AgentLoadMetrics implements Serializable {
 	}
 	/**
 	 * Returns the current project instance.
-	 * @param currProject the new project
 	 */
 	public Project getProject() {
 		return this.currProject;

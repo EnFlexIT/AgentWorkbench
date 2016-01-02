@@ -97,7 +97,7 @@ public class ThreadMeasureBehaviour extends TickerBehaviour {
 			}});
 		
 		// --- Exit, if this is a one shot behaviour ------
-		if (this.isOneShotBehaviour()) {
+		if (this.isOneShotBehaviour()==true) {
 			this.stop();
 		}
 	}

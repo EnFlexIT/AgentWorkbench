@@ -53,26 +53,17 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 
 	private static final long serialVersionUID = 7052789869732559092L;
 	
-	/** The Constant pathImage. */
 	private static final String pathImage = Application.getGlobalInfo().getPathImageIntern();  //  @jve:decl-index=0:
 	
-	/** The my agent. */
 	private LoadMeasureAgent myAgent;
 	
-	/** The j button measure refresh. */
 	private JButton jButtonMeasureRefresh;
-	
-	/** The j button measure start. */
 	private JButton jButtonMeasureStart;
-	
-	/** The j button measure pause. */
 	private JButton jButtonMeasurePause;
-	
-	/** The j combo box interval. */
-	private JComboBox jComboBoxInterval;
-	
-	/** The combo box model interval. */
-	private DefaultComboBoxModel comboBoxModelInterval;
+
+	private DefaultComboBoxModel<TimeSelection> comboBoxModelInterval;
+	private JComboBox<TimeSelection> jComboBoxInterval;
+
 	
 	/**
 	 * Instantiates a new thread measure tool bar.
@@ -99,15 +90,9 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 		this.add(getJComboBoxInterval());
 		this.addSeparator();
 
-		this.setContinuousMeasurement(false);
-		
-//		this.setRecordingInterval(this.myAgent.getThreadMeasurementTickingPeriod());
-		long tickingInterval = ((TimeSelection) getComboBoxModelRecordingInterval().getElementAt(0)).getTimeInMill();
-		this.myAgent.setThreadMeasurementTickingPeriod(tickingInterval);
-		this.setRecordingInterval(tickingInterval); 
-		
-		// --- start recording immediately ---
-		this.getJButtonMeasureStart().doClick();
+		// --- Start recording immediately ------
+		this.setContinuousMeasurement(true);
+		this.myAgent.reStartThreadMeasurement(false);
 		
 	}
 	
@@ -163,9 +148,9 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 	 * This method initializes jComboBoxInterval.
 	 * @return javax.swing.JComboBox
 	 */
-	public JComboBox getJComboBoxInterval() {
+	public JComboBox<TimeSelection> getJComboBoxInterval() {
 		if (jComboBoxInterval == null) {
-			jComboBoxInterval = new JComboBox(this.getComboBoxModelRecordingInterval());
+			jComboBoxInterval = new JComboBox<TimeSelection>(this.getComboBoxModelRecordingInterval());
 			jComboBoxInterval.setMaximumRowCount(comboBoxModelInterval.getSize());
 			jComboBoxInterval.setModel(comboBoxModelInterval);
 			jComboBoxInterval.setToolTipText(Language.translate("Abtastintervall"));
@@ -175,16 +160,22 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 	}
 	/**
 	 * This method sets the default values for the ComboBoxModel of sampling interval.
+	 * @return the combo box model recording interval
 	 */
-	private DefaultComboBoxModel getComboBoxModelRecordingInterval() {
+	private DefaultComboBoxModel<TimeSelection> getComboBoxModelRecordingInterval() {
 		if (comboBoxModelInterval==null) {
-			comboBoxModelInterval = new DefaultComboBoxModel();
-			comboBoxModelInterval.addElement(new TimeSelection(5000));
+			TimeSelection defaultTimeSelection = new TimeSelection(5000);
+			
+			comboBoxModelInterval = new DefaultComboBoxModel<TimeSelection>();			
+			comboBoxModelInterval.addElement(new TimeSelection(1000));
+			comboBoxModelInterval.addElement(defaultTimeSelection);
 			comboBoxModelInterval.addElement(new TimeSelection(10000));
 			comboBoxModelInterval.addElement(new TimeSelection(15000));
 			comboBoxModelInterval.addElement(new TimeSelection(20000));
 			comboBoxModelInterval.addElement(new TimeSelection(30000));
 			comboBoxModelInterval.addElement(new TimeSelection(60000));
+			
+			comboBoxModelInterval.setSelectedItem(defaultTimeSelection);
 		}
 		return comboBoxModelInterval;
 	}

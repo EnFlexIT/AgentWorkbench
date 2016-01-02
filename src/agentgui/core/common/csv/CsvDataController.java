@@ -70,7 +70,6 @@ public class CsvDataController extends Observable{
 	 * @param file the file to import or to export
 	 * @param separator the separator within the CSV file
 	 * @param headline Indicate if there is a headline or not
-	 * @param dataModel the data model
 	 */
 	public CsvDataController(File file, String separator, boolean headline) {
 		this(file, separator, headline, null);
