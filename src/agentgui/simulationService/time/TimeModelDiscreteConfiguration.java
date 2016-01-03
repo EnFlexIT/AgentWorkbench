@@ -484,8 +484,7 @@ public class TimeModelDiscreteConfiguration extends JPanel4TimeModelConfiguratio
 	 */
 	private JComboBox<TimeUnit> getJComboBoxWidthUnit() {
 		if (jComboBoxWidthUnit == null) {
-			DefaultComboBoxModel<TimeUnit> cbm = new DefaultComboBoxModel<TimeUnit>(new TimeUnitVector());
-			jComboBoxWidthUnit = new JComboBox<TimeUnit>(cbm);
+			jComboBoxWidthUnit = new JComboBox<TimeUnit>(new DefaultComboBoxModel<TimeUnit>(new TimeUnitVector()));
 			jComboBoxWidthUnit.setPreferredSize(new Dimension(120, 26));
 			jComboBoxWidthUnit.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jComboBoxWidthUnit.addActionListener(new ActionListener() {
