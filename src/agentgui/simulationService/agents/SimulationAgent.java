@@ -222,7 +222,7 @@ public abstract class SimulationAgent extends Agent implements ServiceSensorInte
 	 * @see agentgui.simulationService.agents.SimulationServiceListener#setEnvironmentModel(agentgui.simulationService.environment.EnvironmentModel, boolean)
 	 */
 	public void setEnvironmentModel(EnvironmentModel envModel, boolean aSynchron) {
-		myEnvironmentModel = envModel;
+		this.myEnvironmentModel = envModel;
 		if (aSynchron==true) {
 			this.addBehaviour(new ServiceStimulus());	
 		} else {

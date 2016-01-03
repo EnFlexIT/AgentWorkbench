@@ -47,6 +47,7 @@ import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
 import agentgui.envModel.graph.visualisation.notifications.DataModelOpenViewNotification;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraphMultiple;
+import agentgui.envModel.graph.visualisation.notifications.EnableNetworkModelUpdateNotification;
 import agentgui.envModel.graph.visualisation.notifications.GraphLayoutNotification;
 import agentgui.envModel.graph.visualisation.notifications.UpdateTimeSeries;
 import agentgui.envModel.graph.visualisation.notifications.UpdateXySeries;
@@ -100,6 +101,8 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		// ----------------------------------------------------------
 		// --- Examples: Chart Series Actions -----------------------
 		// ----------------------------------------------------------
+		this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(false));
+		
 		this.updateLayout();
 		this.runDataModelNotificationUpdates();
 		
@@ -234,7 +237,6 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		
 	}
 		
-	@SuppressWarnings("unused")
 	private void updateXyTimeSeries_CompleteSeriesActions() {
 		
 		float fromBound = 0f;
@@ -302,7 +304,6 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 	/**
 	 * Update time series: add time series.
 	 */
-	@SuppressWarnings("unused")
 	private void updateTimeSeries_CompleteSeriesActions() {
 		
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
@@ -370,7 +371,6 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 	/**
 	 * Update time series: add time series.
 	 */
-	@SuppressWarnings("unused")
 	private void updateTimeSeries_PartialSeriesActions() {
 		
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case
@@ -489,7 +489,6 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 	/**
 	 * Update layout.
 	 */
-	@SuppressWarnings("unused")
 	private void updateLayout(){
 		
 		// ----------------------------------------------------------
@@ -527,7 +526,6 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 	/**
 	 * Run data model notification updates.
 	 */
-	@SuppressWarnings("unused")
 	private void runDataModelNotificationUpdates() {
 		
 		NetworkComponent netComp = this.myNetworkModel.getNetworkComponent("n38"); // Exit in that case

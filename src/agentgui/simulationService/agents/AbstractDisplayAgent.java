@@ -40,6 +40,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
 import agentgui.core.environment.EnvironmentController;
@@ -406,48 +407,53 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	 * @param jToolBar2Display the j tool bar2 display
 	 * @see TimeModel#getDisplayElements4Execution()
 	 */
-	private void setTimeModelDisplay(TimeModel timeModel, JToolBar jToolBar2DisplayTimeModel) {
+	private void setTimeModelDisplay(final TimeModel timeModel, JToolBar jToolBar2DisplayTimeModel) {
 	
-		if (timeModel!=null) {
+		if (timeModel==null) return;
 			
-			// ------------------------------------------------------
-			// --- Set the JToolBar to display the TimeModel --------
-			if (jToolBar2DisplayTimeModel==null && this.jToolBar4TimeModel==null) {
-				// --- No place for displaying the TimeModel --------
-				return;
+		// ------------------------------------------------------
+		// --- Set the JToolBar to display the TimeModel --------
+		if (jToolBar2DisplayTimeModel==null && this.jToolBar4TimeModel==null) {
+			// --- No place for displaying the TimeModel --------
+			return;
+		} else {
+			// --- Set the JToolBar for the display elements ---- 
+			if (this.jToolBar4TimeModel==null) {
+				this.jToolBar4TimeModel = jToolBar2DisplayTimeModel;
+				
 			} else {
-				// --- Set the JToolBar for the display elements ---- 
-				if (this.jToolBar4TimeModel==null) {
-					this.jToolBar4TimeModel = jToolBar2DisplayTimeModel;
-					
-				} else {
-					if (jToolBar2DisplayTimeModel!=null) {
-						if (this.jToolBar4TimeModel!=jToolBar2DisplayTimeModel) {
-							this.removeTimeModelDisplay();
-							this.jToolBar4TimeModel = jToolBar2DisplayTimeModel;
-						}	
-					}
-					
+				if (jToolBar2DisplayTimeModel!=null) {
+					if (this.jToolBar4TimeModel!=jToolBar2DisplayTimeModel) {
+						this.removeTimeModelDisplay();
+						this.jToolBar4TimeModel = jToolBar2DisplayTimeModel;
+					}	
 				}
+				
 			}
-
-			// ------------------------------------------------------
-			// --- Remind the components to display the TimeModel --- 
-			if (this.jToolBarElements4TimeModel==null) {
-				this.jToolBarElements4TimeModel = timeModel.getDisplayElements4Execution();	
-				if (this.jToolBarElements4TimeModel!=null) {
-					// --- Display the elements in the toolbar ------
-					this.jToolBarElements4TimeModel.addToolbarElements(this.jToolBar4TimeModel);
-				}
-			}
-
-			// ------------------------------------------------------
-			// --- Display the current Time Model -------------------
-			if (this.jToolBarElements4TimeModel!=null) {
-				this.jToolBarElements4TimeModel.setTimeModel(timeModel);
-			}
-			
 		}
+
+		// ------------------------------------------------------
+		// --- Remind the components to display the TimeModel --- 
+		if (this.jToolBarElements4TimeModel==null) {
+			this.jToolBarElements4TimeModel = timeModel.getDisplayElements4Execution();	
+			if (this.jToolBarElements4TimeModel!=null) {
+				// --- Display the elements in the toolbar ------
+				this.jToolBarElements4TimeModel.addToolbarElements(this.jToolBar4TimeModel);
+			}
+		}
+
+		// ------------------------------------------------------
+		// --- Display the current Time Model -------------------
+		if (this.jToolBarElements4TimeModel!=null) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					jToolBarElements4TimeModel.setTimeModel(timeModel);
+				}
+			});
+
+		}
+			
 	}
 	
 	/**

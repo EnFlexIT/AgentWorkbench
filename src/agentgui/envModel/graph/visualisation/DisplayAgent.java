@@ -29,6 +29,7 @@
 package agentgui.envModel.graph.visualisation;
 
 import jade.core.Location;
+import jade.core.behaviours.CyclicBehaviour;
 
 import java.util.Vector;
 
@@ -39,6 +40,7 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
+import agentgui.envModel.graph.visualisation.notifications.EnableNetworkModelUpdateNotification;
 import agentgui.simulationService.agents.AbstractDisplayAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
@@ -59,10 +61,12 @@ public class DisplayAgent extends AbstractDisplayAgent {
 
 	private GraphEnvironmentController myGraphEnvironmentController;
 	
-	private Vector<EnvironmentModel> stimuliOfNetworkModel;
-	private Boolean stimuliAction = false;
+	private EnvironmentModelFetcher envModelFetcher;
+	private Vector<EnvironmentModel> environmentModelStimuli;
 	
 	private DisplayAgentNotificationHandler myDisplayAgentNotificationHandler;
+	
+	private boolean enableNetworkModelUpdate = true;
 	
 	
 	/* (non-Javadoc)
@@ -79,6 +83,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected void setup() {
 		super.setup();
+		this.addBehaviour(this.getEnvironmentModelFetcher());
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#afterMove()
@@ -93,8 +98,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected void takeDown() {
 		this.myGraphEnvironmentController=null;
-		this.stimuliOfNetworkModel=null;
-		this.stimuliAction = null;
+		this.environmentModelStimuli=null;
 		this.disposeDisplayAgentNotificationHandler();
 		this.myDisplayAgentNotificationHandler = null;
 		super.takeDown();
@@ -105,8 +109,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected void beforeMove() {
 		this.myGraphEnvironmentController=null;
-		this.stimuliOfNetworkModel=null;
-		this.stimuliAction = null;
+		this.environmentModelStimuli=null;
 		this.disposeDisplayAgentNotificationHandler();
 		this.myDisplayAgentNotificationHandler = null;
 		super.beforeMove();
@@ -145,15 +148,64 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		return myGraphEnvironmentController;
 	}
 	
+	
+	
 	/**
 	 * Returns the Vector of EnvironmentModel's that arrived this agent by an EnvironmentStimulus.
 	 * @return the stimuli of network model
 	 */
-	private synchronized Vector<EnvironmentModel> getStimuliOfNetworkModel() {
-		if (this.stimuliOfNetworkModel==null) {
-			this.stimuliOfNetworkModel = new Vector<EnvironmentModel>();
+	private synchronized Vector<EnvironmentModel> getEnvironmentModelStimuli() {
+		if (this.environmentModelStimuli==null) {
+			this.environmentModelStimuli = new Vector<EnvironmentModel>();
 		}
-		return this.stimuliOfNetworkModel;
+		return this.environmentModelStimuli;
+	}
+
+	// ----------------------------------------------------------------------------------
+	// --- From here methods and sub classes to work on environment model changes -------
+	// ----------------------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationAgent#setEnvironmentModel(agentgui.simulationService.environment.EnvironmentModel, boolean)
+	 */
+	@Override
+	public void setEnvironmentModel(EnvironmentModel envModel, boolean aSynchron) {
+		this.getEnvironmentModelStimuli().add(envModel);
+		if (this.getEnvironmentModelFetcher().isRunnable()==false) {
+			this.getEnvironmentModelFetcher().restart();
+		}
+	}
+
+	/**
+	 * Get the environment model fetcher.
+	 * @return the environment model fetcher
+	 */
+	private EnvironmentModelFetcher getEnvironmentModelFetcher() {
+		if (envModelFetcher==null) {
+			envModelFetcher = new EnvironmentModelFetcher();
+		}
+		return envModelFetcher;
+	}
+	/**
+	 * The Class EnvironmentModelFetcher.
+	 */
+	private class EnvironmentModelFetcher extends CyclicBehaviour {
+		private static final long serialVersionUID = -3330511176232919534L;
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
+		@Override
+		public void action() {
+			while (getEnvironmentModelStimuli().size()>0) {
+				onEnvironmentStimulus();
+				if (getEnvironmentModelStimuli().size()>10) {
+					// --- In case of too many models remove until there not more than 10 ---------
+					while (getEnvironmentModelStimuli().size()>10) {
+						getEnvironmentModelStimuli().remove(0);
+					}
+				}
+			}
+			this.block();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -162,51 +214,28 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	public void onEnvironmentStimulus() {
 		
-		boolean runStimuliRemover = false;
-		
-		// --- Add the new NetorkModel to the Vector of not yet displayed NetworkModel's ----------
-		this.getStimuliOfNetworkModel().add(myEnvironmentModel);
-
-		// --- Check if the Vector of NetworkModel's needs to be emptied -------------------------- 
-		synchronized (stimuliAction) {
-			if (this.stimuliAction==false) {
-				this.stimuliAction=true;
-				runStimuliRemover = true;
+		try {
+			// --- Empty the Vector of NetworkModel's -----------------------------------
+			EnvironmentModel envModel = this.getEnvironmentModelStimuli().remove(0);
+			if (this.myEnvironmentModel!=envModel) {
+				this.myEnvironmentModel = envModel;	
 			}
-		}
-		
-		if (runStimuliRemover==true) {
-			// --- Empty the Vector of NetworkModel's ---------------------------------------------
-			while (this.getStimuliOfNetworkModel().size()!=0) {
-				try {
-					EnvironmentModel envModel = this.getStimuliOfNetworkModel().get(0);
-					if (this.myEnvironmentModel==envModel) {
-						this.myEnvironmentModel = envModel.getCopy();	
-					} else {
-						this.myEnvironmentModel = envModel;
+			// --- Update TimModel Display ----------------------------------------------
+			this.setTimeModelDisplay(this.myEnvironmentModel.getTimeModel());
+			
+			// --- Update NetworkModel, if allowed -------------------------------------- 
+			if (this.isEnableNetworkModelUpdate()==true) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						getGraphEnvironmentController().setDisplayEnvironmentModel(myEnvironmentModel.getDisplayEnvironment());
 					}
-					this.getStimuliOfNetworkModel().remove(0);
-					
-					this.setTimeModelDisplay(this.myEnvironmentModel.getTimeModel());
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							getGraphEnvironmentController().setDisplayEnvironmentModel(myEnvironmentModel.getDisplayEnvironment());
-						}
-					});
-					
-					
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			} // end while
+				});
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-
-		// --- Set that the Vector of new NetworkModel's is empty now -----------------------------
-		synchronized (stimuliAction) {
-			this.stimuliAction=false;
-		}
-		
 	}
 	
 	/* (non-Javadoc)
@@ -215,7 +244,14 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	@Override
 	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
 		if (notification.getNotification() instanceof DisplayAgentNotificationGraph) {
-			notification = this.getDisplayAgentNotificationHandler().setDisplayNotification(this.getGraphEnvironmentController(), this.getGraphEnvironmentController().getNetworkModel(), notification);
+			if (notification.getNotification() instanceof EnableNetworkModelUpdateNotification) {
+				// --- Enable / Disable the update of the network model ------- 
+				EnableNetworkModelUpdateNotification netmodelUpdate = (EnableNetworkModelUpdateNotification) notification.getNotification(); 
+				this.setEnableNetworkModelUpdate(netmodelUpdate.isEnableNetworkModelUpdate());
+			} else {
+				// --- Do other things ----------------------------------------
+				notification = this.getDisplayAgentNotificationHandler().setDisplayNotification(this.getGraphEnvironmentController(), this.getGraphEnvironmentController().getNetworkModel(), notification);	
+			}
 		}
 		return notification;
 	}
@@ -240,6 +276,21 @@ public class DisplayAgent extends AbstractDisplayAgent {
 			this.myDisplayAgentNotificationHandler.dispose();
 			this.myDisplayAgentNotificationHandler = null;
 		}
+	}
+
+	/**
+	 * Checks if is enable network model update.
+	 * @return true, if is enable network model update
+	 */
+	public boolean isEnableNetworkModelUpdate() {
+		return enableNetworkModelUpdate;
+	}
+	/**
+	 * Sets the enable network model update.
+	 * @param enableNetworkModelUpdate the new enable network model update
+	 */
+	public void setEnableNetworkModelUpdate(boolean enableNetworkModelUpdate) {
+		this.enableNetworkModelUpdate = enableNetworkModelUpdate;
 	}
 	
 }

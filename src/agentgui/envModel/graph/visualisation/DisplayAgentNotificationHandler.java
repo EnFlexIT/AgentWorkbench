@@ -56,7 +56,7 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
  */
 public class DisplayAgentNotificationHandler {
 
-	private Vector<DisplayAgentNotificationGraph> displayNotifications = null;  //  @jve:decl-index=0:
+	private Vector<DisplayAgentNotificationGraph> displayNotifications = null;  
 	private DisplayAgentNotificationThread displayUpdater = null;
 	
 	/**
