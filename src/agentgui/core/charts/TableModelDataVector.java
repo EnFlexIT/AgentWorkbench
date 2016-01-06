@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -142,7 +141,9 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 	// ------------------------------------------------------------------------
 	// ---- In the following the overwritten add and remove methods -----------
 	// ------------------------------------------------------------------------	
-	// --- Add ----------------------------------
+	/* (non-Javadoc)
+	 * @see java.util.Vector#add(java.lang.Object)
+	 */
 	@Override
 	public synchronized boolean add(Vector<Number> rowVector) {
 		Number key = rowVector.get(this.getKeyColumnIndex());
@@ -155,6 +156,9 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 		}
 		return false;
 	}
+	/* (non-Javadoc)
+	 * @see java.util.Vector#addElement(java.lang.Object)
+	 */
 	@Override
 	public synchronized void addElement(Vector<Number> rowVector) {
 		Number key = rowVector.get(this.getKeyColumnIndex());
@@ -166,6 +170,9 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 			System.err.println(this.typeDescription + ": Duplicate key value " + key + " - row data was not added!");
 		}
 	}
+	/* (non-Javadoc)
+	 * @see java.util.Vector#add(int, java.lang.Object)
+	 */
 	@Override
 	public void add(int index, Vector<Number> rowVector) {
 		Number key = rowVector.get(this.getKeyColumnIndex());
@@ -184,12 +191,13 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 			}	
 		}
 	}
-	
+	/* (non-Javadoc)
+	 * @see java.util.Vector#addAll(java.util.Collection)
+	 */
 	@Override
 	public synchronized boolean addAll(Collection<? extends Vector<Number>> collection) {
 		return this.addAll(this.size(), collection);
 	}
-	
 	/* (non-Javadoc)
 	 * @see java.util.Vector#addAll(int, java.util.Collection)
 	 */
@@ -198,11 +206,7 @@ public class TableModelDataVector extends Vector<Vector<Number>> {
 
 		boolean fullSuccess = true;
 		int newIndexPos = index;
-		
-		@SuppressWarnings("unchecked")
-		Iterator<Vector<Number>> it = (Iterator<Vector<Number>>) collection.iterator();
-		while(it.hasNext()) {
-			Vector<Number> rowVector = it.next();
+		for (Vector<Number> rowVector : collection) {
 			Number key = rowVector.get(this.getKeyColumnIndex());
 			if (this.getKeyRowVectorTreeMap().get(key)==null) {
 				this.getKeyRowVectorTreeMap().put(key, rowVector);
