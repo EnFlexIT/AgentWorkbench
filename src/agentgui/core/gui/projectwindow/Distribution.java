@@ -109,6 +109,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JCheckBox jCheckBoxDoLoadDynamic;
 	private JCheckBox jCheckBoxThresholdDefinition;
 	private JCheckBox jCheckBoxShowLoadMonitor;
+	private JCheckBox jCheckBoxShowThreadMonitor;
 	private JCheckBox jCheckBoxImmediatelyStartLoadRecording;
 	
 	private JComboBox<String> jComboBoxJVMMemoryInitial;
@@ -191,6 +192,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		jCheckBoxDoLoadDynamic.setText(Language.translate("Dynamische Lastverteilung aktivieren"));
 		jCheckBoxThresholdDefinition.setText(Language.translate("Eigene Auslastungsgrenzwerte verwenden"));
 		jCheckBoxShowLoadMonitor.setText(Language.translate("Auslastungs-Monitor bei JADE-Start anzeigen"));
+		jCheckBoxShowThreadMonitor.setText(Language.translate("Thread-Monitor bei JADE-Start anzeigen"));
 		jCheckBoxImmediatelyStartLoadRecording.setText(Language.translate("Lastaufzeichnung mit dem Start von JADE beginnen"));
 		
 		jLabelMemoryAlloc.setText(Language.translate("Arbeitsspeicher für Remote-JVM"));
@@ -249,14 +251,19 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			gbcJCheckBoxShowLoadMonitor.gridy = 2;
 			gbcJCheckBoxShowLoadMonitor.insets = new Insets(10, 10, 5, 5);
 			gbcJCheckBoxShowLoadMonitor.anchor = GridBagConstraints.WEST;
+			GridBagConstraints gbcJCheckBoxShowThreadMonitor = new GridBagConstraints();
+			gbcJCheckBoxShowThreadMonitor.gridx = 0;
+			gbcJCheckBoxShowThreadMonitor.gridy = 3;
+			gbcJCheckBoxShowThreadMonitor.insets = new Insets(10, 10, 5, 5);
+			gbcJCheckBoxShowThreadMonitor.anchor = GridBagConstraints.WEST;
 			GridBagConstraints gbcJCheckBoxImmStartLoadRecording = new GridBagConstraints();
 			gbcJCheckBoxImmStartLoadRecording.gridx = 0;
-			gbcJCheckBoxImmStartLoadRecording.gridy = 3;
+			gbcJCheckBoxImmStartLoadRecording.gridy = 4;
 			gbcJCheckBoxImmStartLoadRecording.insets = new Insets(5, 10, 5, 5);
 			gbcJCheckBoxImmStartLoadRecording.anchor = GridBagConstraints.WEST;
 			GridBagConstraints gbcJPanelRecording = new GridBagConstraints();
 			gbcJPanelRecording.gridx = 0;
-			gbcJPanelRecording.gridy = 4;
+			gbcJPanelRecording.gridy = 5;
 			gbcJPanelRecording.insets = new Insets(0, 32, 5, 10);
 			gbcJPanelRecording.anchor = GridBagConstraints.NORTHWEST;
 			
@@ -325,6 +332,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jPanelOnScrollPane.add(getJSeparator01(), gbc_jSeparator01);
 			
 			jPanelOnScrollPane.add(getJCheckBoxShowLoadMonitor(), gbcJCheckBoxShowLoadMonitor);
+			jPanelOnScrollPane.add(getJCheckBoxShowThreadMonitor(), gbcJCheckBoxShowThreadMonitor);
 			jPanelOnScrollPane.add(getJCheckBoxImmediatelyStartLoadRecording(), gbcJCheckBoxImmStartLoadRecording);
 			jPanelOnScrollPane.add(getJPanelRecording(), gbcJPanelRecording);
 			jPanelOnScrollPane.add(getJSeparator02(), gbc_jSeparator02);
@@ -1133,6 +1141,19 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		return jCheckBoxShowLoadMonitor;
 	}
 	/**
+	 * Gets the j check box show thread monitor.
+	 * @return the j check box show thread monitor
+	 */
+	private JCheckBox getJCheckBoxShowThreadMonitor() {
+		if (jCheckBoxShowThreadMonitor == null) {
+			jCheckBoxShowThreadMonitor = new JCheckBox();
+			jCheckBoxShowThreadMonitor.setText("Thread-Monitor bei JADE-Start anzeigen");
+			jCheckBoxShowThreadMonitor.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckBoxShowThreadMonitor.addActionListener(this);
+		}
+		return jCheckBoxShowThreadMonitor;
+	}
+	/**
 	 * This method initializes jCheckBoxDoLoadStatic	
 	 * @return javax.swing.JCheckBox	
 	 */
@@ -1370,6 +1391,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		this.jTextFieldThreadsHigh.setText(((Integer)currUserThresholds.getThNoThreadsH()).toString());
 		
 		this.jCheckBoxShowLoadMonitor.setSelected(currDistributionSetup.isShowLoadMonitorAtPlatformStart());
+		this.jCheckBoxShowThreadMonitor.setSelected(currDistributionSetup.isShowThreadMonitorAtPlatformStart());
 		this.jCheckBoxImmediatelyStartLoadRecording.setSelected(currDistributionSetup.isImmediatelyStartLoadRecording());
 		this.setRecordingInterval(currDistributionSetup.getLoadRecordingInterval());
 		
@@ -1491,7 +1513,9 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		
 		} else if (trigger==jCheckBoxShowLoadMonitor) {
 			currDistributionSetup.setShowLoadMonitorAtPlatformStart(jCheckBoxShowLoadMonitor.isSelected());
-		} else if (trigger==jCheckBoxImmediatelyStartLoadRecording) {
+		} else if (trigger==jCheckBoxShowThreadMonitor) {
+			currDistributionSetup.setShowThreadMonitorAtPlatformStart(jCheckBoxShowThreadMonitor.isSelected());
+		}else if (trigger==jCheckBoxImmediatelyStartLoadRecording) {
 			currDistributionSetup.setImmediatelyStartLoadRecording(jCheckBoxImmediatelyStartLoadRecording.isSelected());
 		} else if (trigger==jComboBoxRecordingInterval) {
 			TimeSelection timeSelection = (TimeSelection) jComboBoxRecordingInterval.getSelectedItem();

@@ -30,25 +30,37 @@ package agentgui.core.gui.projectwindow;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Vector;
 
 import javax.swing.JPanel;
 
+import agentgui.core.project.AgentClassLoadMetrics;
+import agentgui.core.project.AgentClassMetricDescription;
 import agentgui.core.project.Project;
+
 import java.awt.GridBagLayout;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
+
 import java.awt.GridBagConstraints;
 import java.awt.Font;
 import java.awt.Insets;
+
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
- * The Class AgentLoadMetrics displays the configuration of the 
+ * The Class AgentClassLoadMetrics displays the configuration of the 
  * {@link AgentLoadMetricsPanel}.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg - Essen
@@ -75,7 +87,6 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 		this.currProject = currProject;
 		this.currProject.addObserver(this);
 		this.initialize();
-		this.loadMetricsFromProject();
 	}
 	
 	/**
@@ -123,6 +134,8 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 		gbc_jScrollPaneMetric.gridx = 0;
 		gbc_jScrollPaneMetric.gridy = 4;
 		add(getJScrollPaneMetric(), gbc_jScrollPaneMetric);
+		
+		loadMetricsFromProject();
 	}
 	
 	private JLabel getJLabelPrdictive() {
@@ -134,7 +147,7 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 	}
 	private JRadioButton getJRadioButtonPredictive() {
 		if (jRadioButtonPredictive == null) {
-			jRadioButtonPredictive = new JRadioButton("Manueller Vorhersage");
+			jRadioButtonPredictive = new JRadioButton("Manuelle, vorhergesagte Metrik");
 			jRadioButtonPredictive.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jRadioButtonPredictive.addActionListener(this);
 		}
@@ -142,7 +155,7 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 	}
 	private JRadioButton getJRadioButtonReal() {
 		if (jRadioButtonReal == null) {
-			jRadioButtonReal = new JRadioButton("Empirische Metrik");
+			jRadioButtonReal = new JRadioButton("Empirische,reale Metrik");
 			jRadioButtonReal.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jRadioButtonReal.addActionListener(this);
 		}
@@ -164,8 +177,29 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 	}
 	private JTable getJTableMetrics() {
 		if (jTableMetrics == null) {
-			jTableMetrics = new JTable();
+			jTableMetrics = new JTable(this.currProject.getAgentClassLoadMetrics().getTableModel());
+			jTableMetrics.getColumnModel().getColumn(0).setMinWidth(300);
 			jTableMetrics.setFillsViewportHeight(true);
+//			currProject.getAgentClassLoadMetrics().getTableModel().addTableModelListener(new TableModelListener() {
+//				public void tableChanged (TableModelEvent e) {
+//					int row = e.getFirstRow();
+//					int column = e.getColumn();
+//					String columnName = jTableMetrics.getModel().getColumnName(column);
+//					Object data = jTableMetrics.getModel().getValueAt(row, column);
+////					currProject.getAgentClassLoadMetrics()
+//					
+//					}
+//					});
+			
+			// --- Add a sorter if the model is available -------
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(this.currProject.getAgentClassLoadMetrics().getTableModel());
+
+			List<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.DESCENDING));
+			sorter.setSortKeys(sortKeys);
+			sorter.setSortsOnUpdates(true);
+			
+			jTableMetrics.setRowSorter(sorter);	
 		}
 		return jTableMetrics;
 	}
@@ -174,7 +208,17 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 	 * Load metrics settings from the current project.
 	 */
 	private void loadMetricsFromProject() {
-		//TODO
+				
+		jRadioButtonReal.setSelected(currProject.getAgentClassLoadMetrics().isUseRealLoadMetric());
+		jRadioButtonPredictive.setSelected(!currProject.getAgentClassLoadMetrics().isUseRealLoadMetric());
+		
+		AgentClassLoadMetrics aclm = currProject.getAgentClassLoadMetrics();
+		aclm.clearTableModel();
+		Vector<AgentClassMetricDescription> agentClassMetricDescriptionVector = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector();
+		
+		for(int i = 0; i < agentClassMetricDescriptionVector.size(); i++){
+			aclm.addTableModelRow(agentClassMetricDescriptionVector.get(i));
+		}
 	}
 	
 	
@@ -186,12 +230,12 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 		
 		if (ae.getSource()==this.getJRadioButtonPredictive()) {
 			this.pauseObserver = true;
-			this.currProject.getAgentLoadMetrics().setUseRealLoadMetric(false);
+			this.currProject.getAgentClassLoadMetrics().setUseRealLoadMetric(false);
 			this.pauseObserver = false;
 			
 		} else if (ae.getSource()==this.getJRadioButtonReal()) {
 			this.pauseObserver = true;
-			this.currProject.getAgentLoadMetrics().setUseRealLoadMetric(true);
+			this.currProject.getAgentClassLoadMetrics().setUseRealLoadMetric(true);
 			this.pauseObserver = false;
 			
 		}
@@ -219,6 +263,5 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 
 			}	
 		}
-	}
-	
+	}	
 }

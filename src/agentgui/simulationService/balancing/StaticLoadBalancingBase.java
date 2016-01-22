@@ -80,7 +80,7 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 	 */
 	@Override
 	public void onStart() {
-		this.openLoadMonitor();
+		this.openMonitorAgents();
 		this.setDefaults4RemoteContainerConfig();
 		this.startVisualizationAgent();
 	}

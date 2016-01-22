@@ -34,6 +34,11 @@ import java.util.Map.Entry;
 
 import org.jfree.data.xy.XYSeries;
 
+import agentgui.core.application.Application;
+import agentgui.core.project.AgentClassLoadMetrics;
+import agentgui.core.project.AgentClassMetricDescription;
+import agentgui.core.project.Project;
+
 /**
  * The Class ThreadMeasureMetrics.
  * Calculate the "real" metric for agents
@@ -50,10 +55,10 @@ public class ThreadMeasureMetrics {
 	public final double SIMULATION_DURATION_MIN 	= 60000;
 	
 	/**  Calculation is based on integral of delta system times. */
-	public final String CALC_TYPE_INTEGRAL_DELTA  		= "CALC_TYPE_INTEGRAL_DELTA";
+	public final String CALC_TYPE_INTEGRAL_DELTA  	= "CALC_TYPE_INTEGRAL_DELTA";
 	
 	/**  Calculation is based on average system times. */
-	public final String CALC_TYPE_INTEGRAL_TOTAL   			= "CALC_TYPE_INTEGRAL_TOTAL";
+	public final String CALC_TYPE_INTEGRAL_TOTAL   	= "CALC_TYPE_INTEGRAL_TOTAL";
 	
 	/**  Calculation is based on the last value for CPU system times. */
 	public final String CALC_TYPE_LAST_TOTAL   		= "CALC_TYPE_LAST_TOTAL";
@@ -79,14 +84,25 @@ public class ThreadMeasureMetrics {
 	/** The map that holds the values (average, integral, last total), depending on calcType */
 	private HashMap<String, Double> calcTypeValueMap;
 	
+	/** The current project. */
+	private Project currProject;
+	
+	/**
+	 * Instantiates a new thread measure metrics.
+	 */
+	public ThreadMeasureMetrics(){
+		initialize();
+	}
 	/**
 	 * Instantiates a new thread measure metrics.
 	 *
+	 * @param project the project
 	 * @param threadInfoStorage the thread info storage
 	 * @param calcType the calculation type
 	 * @param metricBase the metric base
 	 */
 	public ThreadMeasureMetrics(ThreadInfoStorage threadInfoStorage, String calcType, String metricBase){
+		
 		this.threadInfoStorage = threadInfoStorage;
 		this.calcType = calcType;
 		this.metricBase = metricBase;
@@ -98,12 +114,13 @@ public class ThreadMeasureMetrics {
 	 */
 	private void initialize(){		
 		calcTypeValueMap = new HashMap<String, Double>();
+		currProject = Application.getProjectFocused();
 	}
 	
 	/**
 	 * Calculates the metrics for all agents.
 	 */
-	public void calculateMetrics(){
+	public void getMetrics(){
 		
 		if(isDataUsable() == true){
 						
@@ -130,17 +147,87 @@ public class ThreadMeasureMetrics {
 				while (iteratorAgent.hasNext()){
 					
 					ThreadInfoStorageAgent actualAgent = iteratorAgent.next().getValue();
-					if (//actualAgent.isAgent() == true && 
-							actualAgent.getName().contains(actualMachine.getName())) {
-
-						actualAgent.setRealMetricCPU(getMetricForAgent(
-								actualAgent, actualMachine));
+					if (actualAgent.getName().contains(actualMachine.getName())) {
+						
+						actualAgent.setRealMetricCPU(getMetricForAgent(actualAgent, actualMachine));
 					}
 				}
 			}
+			addOrUpdateAgentClassRealMetrics();
 		}
 	}
 	
+	
+	/**
+	 * Adds or updates the agent class real metrics.
+	 */
+	public void addOrUpdateAgentClassRealMetrics(){
+		
+		HashMap<String, AgentClassMetricDescription> mapAgentClass = new HashMap<String, AgentClassMetricDescription>();
+		
+		Iterator<Entry<String, ThreadInfoStorageAgent>> iteratorAgent = threadInfoStorage.getMapAgent().entrySet().iterator();
+		while (iteratorAgent.hasNext()){
+			
+			ThreadInfoStorageAgent actualAgent = iteratorAgent.next().getValue();
+			if (actualAgent.isAgent() == true) {
+
+				String className = actualAgent.getClassName();
+				double actualMetric = actualAgent.getRealMetricCPU();
+				
+				AgentClassMetricDescription agentClass = mapAgentClass.get(className);
+				int noOfAgents = threadInfoStorage.getNoOfAgentsPerClass().get(className);
+				
+				if(agentClass == null){
+					agentClass = new AgentClassMetricDescription();
+					agentClass.setRealMetricMin(actualMetric);
+					agentClass.setRealMetricMax(actualMetric);
+					agentClass.setRealMetricAverage(actualMetric/noOfAgents);
+					agentClass.setClassName(className);
+					mapAgentClass.put(className, agentClass);
+
+				}else{
+					
+					if(agentClass.getRealMetricMin() > actualMetric){
+						agentClass.setRealMetricMin(actualMetric);
+					}
+					if(agentClass.getRealMetricMax()< actualMetric){
+						agentClass.setRealMetricMax(actualMetric);
+					}
+					
+					agentClass.setRealMetricAverage(agentClass.getRealMetricAverage() + (actualMetric/noOfAgents));	
+
+				}
+				
+			}
+		}
+		
+		AgentClassLoadMetrics aclm = currProject.getAgentClassLoadMetrics();
+		
+		aclm.clearTableModel();
+		
+		//update min, max and average real metrics for agent class in current project
+		Iterator<Entry<String, AgentClassMetricDescription>> iteratorAgentMetricsMap = mapAgentClass.entrySet().iterator();
+		while (iteratorAgentMetricsMap.hasNext()){
+			AgentClassMetricDescription actualAgentClass = iteratorAgentMetricsMap.next().getValue();
+			String className = actualAgentClass.getClassName();
+			double min = actualAgentClass.getRealMetricMin();
+			double max = actualAgentClass.getRealMetricMax();
+			double avg = actualAgentClass.getRealMetricAverage();
+			
+			int index = aclm.getIndexOfAgentClassMetricDescription(className);
+			if(index == -1){
+				aclm.addAgentLoadDescription(className,1 , min, max, avg);
+				aclm.addTableModelRow(new AgentClassMetricDescription(currProject,className,1 , min, max, avg));
+			}else{
+				aclm.getAgentClassMetricDescriptionVector().get(index).setRealMetricMin(min);
+				aclm.getAgentClassMetricDescriptionVector().get(index).setRealMetricMax(max);
+				aclm.getAgentClassMetricDescriptionVector().get(index).setRealMetricAverage(avg);
+				
+				aclm.addTableModelRow(aclm.getAgentClassMetricDescriptionVector().get(index));
+			}
+		}
+		currProject.setAgentLoadMetrics(aclm);
+	}
 
 	/**
 	 * Gets the metric for agent.

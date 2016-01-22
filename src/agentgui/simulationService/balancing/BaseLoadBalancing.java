@@ -342,15 +342,19 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	}
 	
 	/**
-	 * This method will start the Load-Monitor-Agent.
+	 * This method will start the Load-Monitor-Agent and Thread-Monitor-Agent.
 	 */
-	protected void openLoadMonitor() {
+	protected void openMonitorAgents() {
 		if (this.currDisSetup!=null) {
 			if (this.currDisSetup.isShowLoadMonitorAtPlatformStart()==true) {
 				Application.getJadePlatform().jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenLoadMonitor);	
 			}
+			if(this.currDisSetup.isShowThreadMonitorAtPlatformStart()==true){
+				Application.getJadePlatform().jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenThreadMonitor);
+			}
 		} else {
 			Application.getJadePlatform().jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenLoadMonitor);
+			Application.getJadePlatform().jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenThreadMonitor);
 		}
 	}
 	

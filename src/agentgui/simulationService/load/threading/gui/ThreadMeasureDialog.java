@@ -94,6 +94,7 @@ public class ThreadMeasureDialog extends JFrame {
 		this.myAgent = agent;
 		this.threadProtocolVector = this.myAgent.getThreadProtocolVector();
 		this.threadInfoStorage = this.myAgent.getThreadInfoStorage();
+		
 		this.initialize();
 	}
 	

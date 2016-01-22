@@ -639,7 +639,6 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 			header.add("Thread");
 			header.add("Class");
 			header.add("Intances Of Class");
-			header.add("Predictive Metric");
 			header.add("Real Metric");
 			
 			tableModel = new DefaultTableModel(null, header){
@@ -677,7 +676,6 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 			row.add("");
 			row.add(0);
 			row.add(0);
-			row.add(0);
 			getTableModel().addRow(row);
 			
 		} else {
@@ -692,7 +690,6 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 				row.add(actualAgent);
 				row.add(className[className.length-1]);
 				row.add(getNoOfAgentsPerClass().get(actualAgent.getClassName()));
-				row.add(actualAgent.getPredictMetricCPU());
 				
 				// --- remove decimal .000 ----
 				row.add(Math.round(actualAgent.getRealMetricCPU()));
@@ -907,8 +904,6 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 	public ThreadMeasureMetrics getThreadMeasureMetrics(){
 		if(threadMeasureMetrics == null){
 			threadMeasureMetrics = new ThreadMeasureMetrics(this, "CALC_TYPE_INTEGRAL_DELTA", "METRIC_BASE_CLASS");
-			threadMeasureMetrics.setCalcType("CALC_TYPE_INTEGRAL_DELTA");
-			threadMeasureMetrics.calculateMetrics();
 		}
 		return threadMeasureMetrics;
 	}

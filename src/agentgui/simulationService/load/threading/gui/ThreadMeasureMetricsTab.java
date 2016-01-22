@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -60,7 +59,7 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4848470750194315559L;
-
+	
 	/** The thread info storage. */
 	private ThreadInfoStorage threadInfoStorage;
 	
@@ -140,8 +139,6 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 		gbc_JPanelOptions.gridy = 2;
 		add(getJPanelOptions(), gbc_JPanelOptions);
 	}
-	
-
 
 	/**
 	 * Gets the scroll pane table.
@@ -181,7 +178,7 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 				TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jTableThreadInfoMetrics.getModel());
 
 				List<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>();
-				sortKeys.add(new RowSorter.SortKey(4, SortOrder.DESCENDING));
+				sortKeys.add(new RowSorter.SortKey(3, SortOrder.DESCENDING));
 				sorter.setSortKeys(sortKeys);
 				sorter.setSortsOnUpdates(true);
 				
@@ -298,7 +295,8 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 			sorter.setRowFilter(agentFilter);
 			
 		} else if (ae.getSource()== this.getBtnCalcMetrics()) {	
-			threadInfoStorage.getThreadMeasureMetrics().calculateMetrics();
+			threadInfoStorage.getThreadMeasureMetrics().getMetrics();
+			threadInfoStorage.getThreadMeasureMetrics().addOrUpdateAgentClassRealMetrics();
 		} else if (ae.getSource()== this.getRdbtnIndividual()) {
 			threadInfoStorage.getThreadMeasureMetrics().setMetricBase(threadInfoStorage.getThreadMeasureMetrics().METRIC_BASE_INDIVIDUAL);
 		} else if (ae.getSource()== this.getRdbtnClass()) {

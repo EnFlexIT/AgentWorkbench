@@ -220,6 +220,10 @@ public class LoadMeasureAgent extends Agent {
 			this.setSystemLoadDialog(null);	
 		}
 		if (threadDialog!=null) {
+			if(true){//TODO:config-option for automatic storing
+				this.getThreadInfoStorage().getThreadMeasureMetrics().getMetrics();
+				this.getThreadInfoStorage().getThreadMeasureMetrics().addOrUpdateAgentClassRealMetrics();
+			}
 			this.getThreadDialog().setVisible(false);
 			this.setThreadDialog(null);	
 		}
@@ -989,7 +993,9 @@ public class LoadMeasureAgent extends Agent {
 						}
 					} else if (agentAction instanceof ShowThreadGUI) {
 						// --- Open Thread monitor --------
-						getThreadDialog().setVisible(true);
+						if (Application.isOperatingHeadless()==false) {
+							getThreadDialog().setVisible(true);
+						}
 					}
 				}
 			}
