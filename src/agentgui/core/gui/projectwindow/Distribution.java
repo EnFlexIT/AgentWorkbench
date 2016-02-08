@@ -254,7 +254,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			GridBagConstraints gbcJCheckBoxShowThreadMonitor = new GridBagConstraints();
 			gbcJCheckBoxShowThreadMonitor.gridx = 0;
 			gbcJCheckBoxShowThreadMonitor.gridy = 3;
-			gbcJCheckBoxShowThreadMonitor.insets = new Insets(10, 10, 5, 5);
+			gbcJCheckBoxShowThreadMonitor.insets = new Insets(5, 10, 5, 5);
 			gbcJCheckBoxShowThreadMonitor.anchor = GridBagConstraints.WEST;
 			GridBagConstraints gbcJCheckBoxImmStartLoadRecording = new GridBagConstraints();
 			gbcJCheckBoxImmStartLoadRecording.gridx = 0;
