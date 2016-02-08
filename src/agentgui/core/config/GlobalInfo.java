@@ -62,10 +62,8 @@ import agentgui.envModel.graph.visualisation.DisplayAgent;
 
 
 /**
- * This class is for constant values or variables, which can
- * be accessed or used application wide.<br>
- * In the Application class the running instance can be accessed 
- * by using the reference {@link Application#getGlobalInfo()}. 
+ * This class is for constant values or variables that can be accessed or used application wide.<br>
+ * In the Application class the running instance can be accessed by using {@link Application#getGlobalInfo()}. 
  * 
  * @see Application#getGlobalInfo()
  * 
@@ -73,23 +71,27 @@ import agentgui.envModel.graph.visualisation.DisplayAgent;
  */
 public class GlobalInfo {
 
-	// --- constant values -------------------------------------------------- 
+	// --- Constant values -------------------------------------------------- 
 	private static String localAppTitle = "Agent.GUI";
 	
 	private final static String localFileRunnableJar = "AgentGui.jar";
 	private final static String localFileRunnableUpdater = "AgentGuiUpdate.jar";
 	private final static String localPathImageIntern = "/agentgui/core/gui/img/";
-	private final static String fileSeparator = File.separator;
+	
+	private final static String eomJar = "eom4AgentGui.jar";
+	
 	private final static String newLineSeparator = System.getProperty("line.separator");
 	private final static String newLineSeparatorReplacer = "<br>";
-
-	private final static Color localColorMenuHighLight =  new Color(0,0,192);
+	
+	private final static Color localColorMenuHighLight =  new Color(0, 0, 192);
+	
 	
 	// --- JADE-Variables ---------------------------------------------------
+	private static String localFileJade = "jade.jar";
 	private Integer localeJadeLocalPort = 1099;
 	private Integer localeJadeLocalPortMTP = 7778;
 	private JadeUrlConfiguration urlConfiguraionForMaster;
-				
+	
 	// --- Variables --------------------------------------------------------
 	public final static String ExecutedOverIDE = "IDE";
 	public final static String ExecutedOverAgentGuiJar = "Executable";
@@ -99,12 +101,12 @@ public class GlobalInfo {
 	
 	private static String localBaseDir = "";
 	private static String localPathAgentGUI	 = "bin";
-	private static String localPathJade		 = "lib" + fileSeparator + "jade" +  fileSeparator + "lib";
-	private static String localPathLogging  = "log" + fileSeparator;
-	private static String localPathProperty  = "properties" + fileSeparator;
-	private static String localPathProjects  = "projects" + fileSeparator;
-	private static String localPathWebServer = "server" + fileSeparator;
-	private static String localPathDownloads = "download" + fileSeparator;
+	private static String localPathJade		 = "lib" + File.separator + "jade" +  File.separator + "lib";
+	private static String localPathLogging  = "log" + File.separator;
+	private static String localPathProperty  = "properties" + File.separator;
+	private static String localPathProjects  = "projects" + File.separator;
+	private static String localPathWebServer = "server" + File.separator;
+	private static String localPathDownloads = "download" + File.separator;
 	
 	private static String localFileDictionary  = localPathProperty + "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
@@ -115,14 +117,11 @@ public class GlobalInfo {
 	private static String localFileEndProjectZip = "agui";
 	private static String localFileNameProjectOntology = "AgentGUIProjectOntology";
 	
-	private static String localFileJade = "jade.jar";
-	
 	// --- Known EnvironmentTypes of Agent.GUI ------------------------------
 	private EnvironmentTypes knownEnvironmentTypes =  new EnvironmentTypes();
 	
 	// --- Known OntologyClassVisualisation's of Agent.GUI ------------------
 	private Vector<OntologyClassVisualisation> knownOntologyClassVisualisation = null;
-	
 	
 	// --- File-Properties --------------------------------------------------
 	private ExecutionMode fileExecutionMode;
@@ -205,9 +204,9 @@ public class GlobalInfo {
 	public GlobalInfo() {
 
 		Integer  cutAt = 0;
-		String[] JCP_Files = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
-		String[] JCP_Folders = JCP_Files.clone(); 
-		HashSet<String> Folders = new HashSet<String>();  
+		String[] jcpFiles = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+		String[] jcpFolders = jcpFiles.clone(); 
+		HashSet<String> dirsIncluded = new HashSet<String>();  
 		
 		File thisFile = new File(GlobalInfo.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		try {
@@ -215,49 +214,52 @@ public class GlobalInfo {
 		} catch (URISyntaxException uriEx) {
 			uriEx.printStackTrace();
 		}
-		localBaseDir = thisFile.getParent() + File.separator;
+		GlobalInfo.localBaseDir = thisFile.getParent() + File.separator;
 		
 		// ------------------------------------------------------------------
-		// --- Class-Path untersuchen ---------------------------------------
-		for (int i=0; i<JCP_Files.length; i++) {
+		// --- Check the Class-Path settings --------------------------------
+		// ------------------------------------------------------------------
+		for (int i=0; i<jcpFiles.length; i++) {
 
-			if (JCP_Files[i].endsWith(File.separator + localFileRunnableJar)) {
-				localAppExecutedOver = ExecutedOverAgentGuiJar;
+			if (jcpFiles[i].endsWith(GlobalInfo.localFileRunnableJar)==true & jcpFiles[i].endsWith(GlobalInfo.eomJar)==false) {
+				// --- Set the application executed from AgentGui.jar -------
+				GlobalInfo.localAppExecutedOver = GlobalInfo.ExecutedOverAgentGuiJar;
 				
-				File agentGuiJar = new File(JCP_Files[i]);
+				File agentGuiJar = new File(jcpFiles[i]);
 				String agentGuiJarPath = agentGuiJar.getAbsolutePath(); 
-				cutAt = agentGuiJarPath.lastIndexOf(fileSeparator) + 1;
-				localBaseDir = agentGuiJarPath.substring(0, cutAt);	
+				cutAt = agentGuiJarPath.lastIndexOf(File.separator) + 1;
+				GlobalInfo.localBaseDir = agentGuiJarPath.substring(0, cutAt);	
 
-				// --- jade.jar in die ClassLoaderUtility einbinden ----------
-				String jadeJar = this.getPathJade(true) + File.separator + localFileJade;
+				// --- Include jade.jar by the ClassLoaderUtility -----------
+				String jadeJar = this.getPathJade(true) + File.separator + GlobalInfo.localFileJade;
 				ClassLoaderUtil.addJarToClassPath(jadeJar);
 				
-			};
-			if (JCP_Files[i].endsWith(".jar")) {
+			}
+			if (jcpFiles[i].endsWith(".jar")) {
 				// ----------------------------------------------------------
-				// --- Dateinamen herausnehmen ------------------------------
-				cutAt = JCP_Files[i].lastIndexOf(fileSeparator);
-				if(cutAt!=-1){ //only if seperator was actually found
-					JCP_Folders[i] = JCP_Folders[i].substring(0, cutAt);
+				// --- Get the directories of the jar file ------------------
+				cutAt = jcpFiles[i].lastIndexOf(File.separator);
+				if (cutAt!=-1) { 
+					jcpFolders[i] = jcpFolders[i].substring(0, cutAt);
 				}
-			}	
-			Folders.add(JCP_Folders[i]);						
-		} // end for
+			}
+			// --- Remind directory -----------------------------------------
+			dirsIncluded.add(jcpFolders[i]);						
+		}
 		
-		if ( localAppExecutedOver.equals(ExecutedOverIDE)) {
+		
+		if (GlobalInfo.localAppExecutedOver.equals(GlobalInfo.ExecutedOverIDE)) {
 			// --------------------------------------------------------------
-			// --- Verzeichnis-Eintraege eindeutig (unique) machen ----------
-			JCP_Folders = (String[])Folders.toArray(new String[Folders.size()]);
-			for (int j = 0; j < JCP_Folders.length; j++) {				
-				if (JCP_Folders[j].endsWith(localPathAgentGUI)) {
-					// --- bin-Verzeichnis gefunden ---					
-					cutAt = JCP_Folders[j].lastIndexOf(localPathAgentGUI);
-					localBaseDir = JCP_Folders[j].substring(0, cutAt);
+			// --- Make directory entries unique ----------------------------
+			jcpFolders = (String[]) dirsIncluded.toArray(new String[dirsIncluded.size()]);
+			for (int j = 0; j < jcpFolders.length; j++) {				
+				if (jcpFolders[j].endsWith(GlobalInfo.localPathAgentGUI)) {
+					// --- Found bin-Directory ------------------------------					
+					cutAt = jcpFolders[j].lastIndexOf(GlobalInfo.localPathAgentGUI);
+					GlobalInfo.localBaseDir = jcpFolders[j].substring(0, cutAt);
 					break;
 				}
-			} // -- End 'for' --
-
+			} 
 		}
 		// ------------------------------------------------------------------
 
@@ -475,7 +477,7 @@ public class GlobalInfo {
 	 * @return the binary- or bin- base path of the application
 	 */
 	public String getPathBaseDirIDE_BIN( ) {
-		return localBaseDir + localPathAgentGUI + fileSeparator;
+		return localBaseDir + localPathAgentGUI + File.separator;
 	}	
 	/**
 	 * This method can be invoked in order to get the path to the JADE libraries (e. g. 'lib\jade\lib').
@@ -695,7 +697,7 @@ public class GlobalInfo {
 			}	
 		} else {
 			// --- The current instance was executed by using the IDE ---------
-			String path2Jar = "exec" + fileSeparator + "AgentGUI" + fileSeparator + localFileRunnableJar; 
+			String path2Jar = "exec" + File.separator + "AgentGUI" + File.separator + localFileRunnableJar; 
 			if (absolute == true) { 
 				return FilePath2Absolute(path2Jar);
 			} else {

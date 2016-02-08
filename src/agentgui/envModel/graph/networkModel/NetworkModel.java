@@ -33,6 +33,8 @@ import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -756,6 +758,51 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		return comps;
 	}
 
+	/**
+	 * Returns all {@link NetworkComponent}s of the network model ascending sorted by the numeric value of the ID of the component.
+	 * @return an ascending sorted NetworkComponent vector sorted
+	 */
+	public Vector<NetworkComponent> getNetworkComponentVectorSorted() {
+		return this.getNetworkComponentVectorSorted(true);
+	}
+	/**
+	 * Returns all {@link NetworkComponent}s of the network model sorted by the numeric value of the ID of the component.
+	 * @param ascending set true to sort ascending, false to sort descending
+	 * @return a sorted NetworkComponent vector sorted
+	 */
+	public Vector<NetworkComponent> getNetworkComponentVectorSorted(boolean ascending) {
+		
+		Vector<NetworkComponent> netCompVector = new Vector<NetworkComponent>();
+		netCompVector.addAll(this.getNetworkComponents().values());
+		
+		Comparator<NetworkComponent> comp = null;
+		if (ascending==true) {
+			// --- Ascending sorted ---------------------------------
+			comp = new Comparator<NetworkComponent>() {
+				@Override
+				public int compare(NetworkComponent netComp1, NetworkComponent netComp2) {
+					Integer n1 = Integer.parseInt(netComp1.getId().replaceAll("\\D+",""));
+					Integer n2 = Integer.parseInt(netComp2.getId().replaceAll("\\D+",""));
+					return n1.compareTo(n2);
+				}
+			};
+			
+		} else {
+			// --- Desscending sorted -------------------------------
+			comp = new Comparator<NetworkComponent>() {
+				@Override
+				public int compare(NetworkComponent netComp1, NetworkComponent netComp2) {
+					Integer n1 = Integer.parseInt(netComp1.getId().replaceAll("\\D+",""));
+					Integer n2 = Integer.parseInt(netComp2.getId().replaceAll("\\D+",""));
+					return n1.compareTo(n2);
+				}
+			};
+			
+		}
+		Collections.sort(netCompVector, comp);
+		return netCompVector;
+	}
+	
 	/**
 	 * Gets the network component by graph edge id.
 	 * 

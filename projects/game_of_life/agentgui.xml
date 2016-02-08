@@ -43,7 +43,7 @@
         <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
         <loadRecordingInterval>500</loadRecordingInterval>
         <numberOfAgents>18</numberOfAgents>
-        <numberOfContainer>2</numberOfContainer>
+        <numberOfContainer>1</numberOfContainer>
         <showLoadMonitorAtPlatformStart>true</showLoadMonitorAtPlatformStart>
         <staticLoadBalancingClass>gol.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
@@ -64,8 +64,8 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>0242 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
-    <downloadResources>http://132.252.237.30:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
-    <downloadResources>http://132.252.237.30:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
+    <downloadResources>http://Pandora:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
+    <downloadResources>http://Pandora:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>0242 Agents</key>
@@ -121,5 +121,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>true</unsaved>
+    <unsaved>false</unsaved>
 </project>

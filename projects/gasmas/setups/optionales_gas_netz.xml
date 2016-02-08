@@ -82,12 +82,12 @@
             <value>1356623786609</value>
         </entry>
         <entry>
-            <key>TimeStop</key>
-            <value>1356710186609</value>
-        </entry>
-        <entry>
             <key>DisplayUnitIndex</key>
             <value>1</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1356710186609</value>
         </entry>
         <entry>
             <key>TimeFormat</key>

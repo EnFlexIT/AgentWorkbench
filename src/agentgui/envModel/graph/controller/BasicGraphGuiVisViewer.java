@@ -88,7 +88,6 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		this.initialize();
 	}
 
-
 	/**
 	 * This Initializes the VisualizationViewer.
 	 */
@@ -111,6 +110,10 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		// --- useful and faster, but it makes the image quite unclear --------!!
 //		this.renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF); 
 		
+		// ------------------------------------------------------------------------------
+		// --- Test area ----------------------------------------------------------------
+		// ------------------------------------------------------------------------------
+//		this.addPreRenderPaintable(new MapPreRenderer<V, E>(this));
 	}
 	
 	/* (non-Javadoc)
@@ -119,7 +122,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D)g;
-		if (isActionOnTop()==true) {
+		if (this.isActionOnTop()==true) {
 			g2d.drawImage(offscreen, null, 0, 0);
 		} else {
 			super.paintComponent(g);
