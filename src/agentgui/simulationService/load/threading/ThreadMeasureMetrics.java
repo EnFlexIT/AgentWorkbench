@@ -51,7 +51,7 @@ public class ThreadMeasureMetrics {
 	/** The factor max machine load. */
 	private final double FACTOR_MAX_MACHINE_LOAD 	= 0.95d;
 	
-	/** The simulation duration minimum in milliseconds, default 5min = 300000 */
+	/**  The simulation duration minimum in milliseconds, default 5min = 300000. */
 	public final double SIMULATION_DURATION_MIN 	= 60000;
 	
 	/**  Calculation is based on integral of delta system times. */
@@ -81,7 +81,7 @@ public class ThreadMeasureMetrics {
 	/** The simulation duration. */
 	private double simulationDuration;
 	
-	/** The map that holds the values (average, integral, last total), depending on calcType */
+	/**  The map that holds the values (average, integral, last total), depending on calcType. */
 	private HashMap<String, Double> calcTypeValueMap;
 	
 	/** The current project. */
@@ -93,10 +93,10 @@ public class ThreadMeasureMetrics {
 	public ThreadMeasureMetrics(){
 		initialize();
 	}
+	
 	/**
 	 * Instantiates a new thread measure metrics.
 	 *
-	 * @param project the project
 	 * @param threadInfoStorage the thread info storage
 	 * @param calcType the calculation type
 	 * @param metricBase the metric base
@@ -117,6 +117,7 @@ public class ThreadMeasureMetrics {
 		currProject = Application.getProjectFocused();
 	}
 	
+
 	/**
 	 * Calculates the metrics for all agents.
 	 */

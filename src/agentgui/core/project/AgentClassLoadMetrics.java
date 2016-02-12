@@ -44,15 +44,20 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 public class AgentClassLoadMetrics implements Serializable {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2251966049148701116L;
 
+	/** The curr project. */
 	private Project currProject;
+	
+	/** The use real load metric. */
 	private boolean useRealLoadMetric = false;
 	
 	
 	/** The table model. */
 	private DefaultTableModel tableModel;
 	
+	/** The agent class metric description vector. */
 	@XmlElementWrapper(name = "agentClassMetricDescriptionVector")
 	@XmlElement(name = "agentClass")
 	private Vector<AgentClassMetricDescription> agentClassMetricDescriptionVector = null;
@@ -76,9 +81,11 @@ public class AgentClassLoadMetrics implements Serializable {
 	public void setProject(Project currProject) {
 		this.currProject = currProject;
 	}
+	
 	/**
 	 * Returns the current project instance.
-	 * @param currProject the new project
+	 *
+	 * @return the project
 	 */
 
 	@XmlTransient
@@ -130,13 +137,14 @@ public class AgentClassLoadMetrics implements Serializable {
 		this.setProjectNotification(Project.AGENT_METRIC_AgentDescriptionAdded);
 	}
 
+
 	/**
-	 * Adds a new {@link AgentClassMetricDescription}.
+	 * Adds the agent load description.
 	 *
 	 * @param className the class name
-	 * @param userPredictedMetric the user predictive load
-	 * @param realMetricMin the real load min
-	 * @param realMetricMax the real load max
+	 * @param userPredictiveLoad the user predictive load
+	 * @param realLoadMin the real load min
+	 * @param realLoadMax the real load max
 	 * @param realLoadAverage the real load average
 	 */
 	public void addAgentLoadDescription(String className, double userPredictiveLoad, double realLoadMin, double realLoadMax, double realLoadAverage) {
@@ -188,8 +196,9 @@ public class AgentClassLoadMetrics implements Serializable {
 		return null;
 	}	
 	
+
 	/**
-	 * Gets the table model for this {@link ThreadMeasureMetrics}.
+	 * Gets the table model.
 	 * @return the table model
 	 */
 	public DefaultTableModel getTableModel() {

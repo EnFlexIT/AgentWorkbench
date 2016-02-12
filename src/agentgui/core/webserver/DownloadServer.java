@@ -35,6 +35,7 @@ import java.util.*;
 import agentgui.core.application.Application;
 import agentgui.core.common.FileCopier;
 import agentgui.core.network.PortChecker;
+import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.Project;
 
 /**
@@ -160,10 +161,21 @@ public class DownloadServer implements HttpConstants, Runnable {
      */
     public String getHTTPAddress() {
     	String httpAddress = null;
+    	String httpIpAddress = null;
     	try {
-			InetAddress addressLocal = InetAddress.getLocalHost();
-			httpAddress = addressLocal.getCanonicalHostName();
-			httpAddress = "http://" + httpAddress + ":" + port;
+			PlatformJadeConfig jadeConfig = null;
+			if (Application.getProjectFocused()==null) {
+				jadeConfig = Application.getGlobalInfo().getJadeDefaultPlatformConfig();
+			} else {
+				jadeConfig =Application.getProjectFocused().getJadeConfiguration();
+			}
+			httpIpAddress = jadeConfig.getMtpIpAddress();
+    		
+			if (httpIpAddress==null) {
+    			InetAddress addressLocal = InetAddress.getLocalHost();
+    			httpIpAddress = addressLocal.getCanonicalHostName();
+    		}
+			httpAddress = "http://" + httpIpAddress + ":" + port;
 			
     	} catch (UnknownHostException e) {
 			e.printStackTrace();

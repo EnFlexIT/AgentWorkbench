@@ -109,7 +109,7 @@ public class AgentClassMetricDescription implements Serializable{
 	
 	/**
 	 * Sets the user predicted metric.
-	 * @param userPredictiveLoad the new user predicted metric
+	 * @param userPredictedMetric the new user predicted metric
 	 */
 	public void setUserPredictedMetric(double userPredictedMetric) {
 		this.userPredictedMetric = userPredictedMetric;

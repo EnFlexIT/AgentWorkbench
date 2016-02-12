@@ -48,7 +48,8 @@ import agentgui.simulationService.ontology.PlatformLoad;
 
 
 /**
- * This class is for static distribution of Agents based on given metrics
+ * This class is for static distribution of Agents based on given metrics,
+ * predictive or real (empirical)
  * @see StaticLoadBalancingBase
  * @see BaseLoadBalancing
  * @see Distribution
@@ -75,11 +76,11 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	/** The remote container name. */
 	private String remoteContainerName;
 	
-	/** The remote only. */
-	private boolean remoteOnly;
+	/** The remote only boolean, do not use local container. */
+	private boolean isRemoteOnly;
 	
-	/** The change container. */
-	private boolean changeContainer;
+	/** The change container boolean. */
+	private boolean isChangeContainer;
 	
 	/** The load cpu ideal. */
 	public double loadCpuIdeal,loadCpuCrit;
@@ -98,8 +99,8 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	 * Initialize.
 	 */
 	private void initialize(){
-		remoteOnly = true;
-		changeContainer = false;
+		isRemoteOnly = true;
+		isChangeContainer = false;
 		
 		if(currDisSetup.isUseUserThresholds()){
 			loadCpuIdeal = currDisSetup.getUserThresholds().getThCpuH()/100;
@@ -217,10 +218,10 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 		ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
 		/** a mapping of agents to containers*/
 		Hashtable<Location, ArrayList<AgentClassElement4SimStart>> agentContainerList = new Hashtable<Location,ArrayList<AgentClassElement4SimStart>>();
-		/** Holds the temp object for getting the metrics*/
-		LoadBalancingInterface lba = null;
 		/** temp for sum of CPU metrics*/
 		Hashtable<Location, Double> cpuContainerSum = new Hashtable<Location, Double>();
+		
+		double metric;
 		
 		
 		if (currAgentList!=null && locationNames != null) {
@@ -234,42 +235,36 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 				remoteContainer = newContainerLocations.get(remoteContainerName);
 				ArrayList<AgentClassElement4SimStart> agentListLocal = null;
 				
-				if(agent.getElementClass().getSuperclass().getName().equals(LoadBalancingInterface.class.getName()) == true){
+				int index = currProject.getAgentClassLoadMetrics().getIndexOfAgentClassMetricDescription(agent.getElementClass().getSuperclass().getName());
+				if(index != -1){
 					//Loadbalancing Agents to be distributed
 					
 					//still enough "space" on container ?
 					if(cpuContainerSum.get(remoteContainer) == null || 
-					   (cpu.get(remoteContainer)*loadCpuCrit) >= cpuContainerSum.get(remoteContainer)){
-						
-
-						try {
-							lba = (LoadBalancingInterface) Class.forName(agent.getElementClass().getName()).newInstance();
-						} catch (InstantiationException e) {
-							System.out.println("Object for "+ agent.getElementClass().getName() + "could not be istantiated");
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							System.out.println("Could not access class of agent");
-							e.printStackTrace();
-						} catch (ClassNotFoundException e) {
-							System.out.println("Could not find class of agent");
-							e.printStackTrace();
-						}			
+					   (cpu.get(remoteContainer)*loadCpuCrit) >= cpuContainerSum.get(remoteContainer)){		
 						//update sum CPU metrics
-						if(cpuContainerSum.get(remoteContainer)!=null){
-							cpuContainerSum.put(remoteContainer, cpuContainerSum.get(remoteContainer) + lba.getPredictiveMetricCPU());
+						
+						if(currProject.getAgentClassLoadMetrics().isUseRealLoadMetric() == true){
+							metric = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector().get(index).getRealMetricAverage();
 						}else{
-							cpuContainerSum.put(remoteContainer, lba.getPredictiveMetricCPU());
+							metric = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector().get(index).getUserPredictedMetric();	
+						}
+						
+						if(cpuContainerSum.get(remoteContainer)!=null){
+							cpuContainerSum.put(remoteContainer, cpuContainerSum.get(remoteContainer) + metric);
+						}else{
+							cpuContainerSum.put(remoteContainer, metric);
 						}
 						
 						//ideal workload ?
 						if((cpu.get(remoteContainer)*loadCpuIdeal) <= cpuContainerSum.get(remoteContainer)){
 							//change container
-							changeContainer = true;	
+							isChangeContainer = true;	
 						}
 						
 					}else{
 						
-						changeContainer = true;
+						isChangeContainer = true;
 					}		
 					
 				}else{
@@ -278,7 +273,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 					
 				} 
 				
-				if(changeContainer == true){
+				if(isChangeContainer == true){
 					
 					if(it.hasNext() == true && it.next().equals(localContainer.getName()) == false){
 						//save mapping, clear agent list and add actual agent for next iteration
@@ -292,7 +287,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 							System.out.println("#### REACHED  " + (100/cpu.get(remoteContainer) * cpuContainerSum.get(remoteContainer)) + "% CPU");						}
 					}else{//not enough containers left
 												
-						if(remoteOnly == true){
+						if(isRemoteOnly == true){
 							if(verbose){
 								System.out.println("#### NOT ENOUGH REMOTE CONTAINERS #### STILL USING " + remoteContainer.getName());
 							}							
@@ -306,7 +301,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 						System.out.println("#### WARNING reached  " + (100/cpu.get(remoteContainer) * cpuContainerSum.get(remoteContainer)) + "% CPU,");						
 					}
 					//reset
-					changeContainer = false;
+					isChangeContainer = false;
 					
 				}
 //				else{

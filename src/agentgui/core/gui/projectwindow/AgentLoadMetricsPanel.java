@@ -56,6 +56,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -155,7 +157,7 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 	}
 	private JRadioButton getJRadioButtonReal() {
 		if (jRadioButtonReal == null) {
-			jRadioButtonReal = new JRadioButton("Empirische,reale Metrik");
+			jRadioButtonReal = new JRadioButton("Empirische, reale Metrik");
 			jRadioButtonReal.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jRadioButtonReal.addActionListener(this);
 		}
@@ -180,16 +182,50 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 			jTableMetrics = new JTable(this.currProject.getAgentClassLoadMetrics().getTableModel());
 			jTableMetrics.getColumnModel().getColumn(0).setMinWidth(300);
 			jTableMetrics.setFillsViewportHeight(true);
-//			currProject.getAgentClassLoadMetrics().getTableModel().addTableModelListener(new TableModelListener() {
-//				public void tableChanged (TableModelEvent e) {
-//					int row = e.getFirstRow();
-//					int column = e.getColumn();
-//					String columnName = jTableMetrics.getModel().getColumnName(column);
-//					Object data = jTableMetrics.getModel().getValueAt(row, column);
-////					currProject.getAgentClassLoadMetrics()
-//					
-//					}
-//					});
+			currProject.getAgentClassLoadMetrics().getTableModel().addTableModelListener(new TableModelListener() {
+				public void tableChanged (TableModelEvent e) {
+					int row = e.getFirstRow();
+					int column = e.getColumn();
+					if(column != -1){
+						Object data = jTableMetrics.getModel().getValueAt(row, column);
+						Object className = jTableMetrics.getModel().getValueAt(row, 0);
+//						String columnName = jTableMetrics.getModel().getColumnName(column);
+//						System.out.println("columnName: " + columnName + " column: " + column+ " row: " + row + " value: "+ (long)data + " className: " + className);
+						Vector<AgentClassMetricDescription> agentClassMetricDescriptionVector = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector();
+						
+						int index = currProject.getAgentClassLoadMetrics().getIndexOfAgentClassMetricDescription(className.toString());
+						if(index != -1){
+							if(column == 1){
+								agentClassMetricDescriptionVector.get(index).setUserPredictedMetric((long)data);
+							}else if(column == 2){
+								agentClassMetricDescriptionVector.get(index).setRealMetricMin((long)data);
+							}else if(column == 3){
+								agentClassMetricDescriptionVector.get(index).setRealMetricMax((long)data);
+							}else if(column == 4){
+								agentClassMetricDescriptionVector.get(index).setRealMetricAverage((long)data);
+							}	
+							
+							currProject.save();
+						}
+						
+//						for(int i = 0; i < agentClassMetricDescriptionVector.size(); i++){
+//							if(agentClassMetricDescriptionVector.get(i).getClassName().equals(className.toString())){
+//								if(column == 1){
+//									agentClassMetricDescriptionVector.get(i).setUserPredictedMetric((long)data);
+//								}else if(column == 2){
+//									agentClassMetricDescriptionVector.get(i).setRealMetricMin((long)data);
+//								}else if(column == 3){
+//									agentClassMetricDescriptionVector.get(i).setRealMetricMax((long)data);
+//								}else if(column == 4){
+//									agentClassMetricDescriptionVector.get(i).setRealMetricAverage((long)data);
+//								}	
+//								
+//								currProject.save();
+//							}
+//						}
+					}
+					}
+					});
 			
 			// --- Add a sorter if the model is available -------
 			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(this.currProject.getAgentClassLoadMetrics().getTableModel());
