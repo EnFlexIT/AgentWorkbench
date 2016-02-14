@@ -90,9 +90,6 @@ public class GraphEdgeConnection {
 		if (netComps.size()>0) {
 			this.externalNetworkComponent2 = netComps.iterator().next();	
 		}
-		
-		
-		
 	}
 
 	/**

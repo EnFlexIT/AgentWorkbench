@@ -87,6 +87,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		Box,
 		CubicCurve,
 		Line,
+		Polyline,
 		Loop,
 		Orthogonal,
 		QuadCurve,

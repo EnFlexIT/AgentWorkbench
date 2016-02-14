@@ -48,10 +48,10 @@
         <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
         <loadRecordingInterval>500</loadRecordingInterval>
         <numberOfAgents>300</numberOfAgents>
-        <numberOfContainer>3</numberOfContainer>
+        <numberOfContainer>2</numberOfContainer>
         <showLoadMonitorAtPlatformStart>false</showLoadMonitorAtPlatformStart>
-        <showThreadMonitorAtPlatformStart>true</showThreadMonitorAtPlatformStart>
-        <staticLoadBalancingClass>agentgui.simulationService.balancing.PredictiveStaticLoadBalancing</staticLoadBalancingClass>
+        <showThreadMonitorAtPlatformStart>false</showThreadMonitorAtPlatformStart>
+        <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
             <thCpuH>80</thCpuH>
@@ -131,8 +131,8 @@
         <useRealLoadMetric>false</useRealLoadMetric>
     </agentClassLoadMetrics>
     <remoteContainerConfiguration>
-        <jvmMemAllocInitial>32m</jvmMemAllocInitial>
-        <jvmMemAllocMaximum>128m</jvmMemAllocMaximum>
+        <jvmMemAllocInitial>512m</jvmMemAllocInitial>
+        <jvmMemAllocMaximum>1024m</jvmMemAllocMaximum>
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
@@ -174,16 +174,16 @@
             <value>hnord.xml</value>
         </entry>
         <entry>
-            <key>Testimport</key>
-            <value>testimport.xml</value>
+            <key>Simple Net</key>
+            <value>simple_net.xml</value>
         </entry>
         <entry>
             <key>HNord (1) Small</key>
             <value>hnord_1_small.xml</value>
         </entry>
         <entry>
-            <key>Simple Net</key>
-            <value>simple_net.xml</value>
+            <key>Testimport</key>
+            <value>testimport.xml</value>
         </entry>
         <entry>
             <key>MixedClusters (3) Large</key>
@@ -198,12 +198,12 @@
             <value>simple_net_two_entries.xml</value>
         </entry>
         <entry>
-            <key>HNord (3) Large</key>
-            <value>hnord_3_large.xml</value>
-        </entry>
-        <entry>
             <key>HNord Complete</key>
             <value>hnord_complete.xml</value>
+        </entry>
+        <entry>
+            <key>HNord (3) Large</key>
+            <value>hnord_3_large.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>

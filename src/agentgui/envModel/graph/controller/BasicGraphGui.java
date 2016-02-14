@@ -78,6 +78,7 @@ import agentgui.core.gui.imaging.ImagePreview;
 import agentgui.core.gui.imaging.ImageUtils;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.commands.RenameNetworkComponent.NetworkComponentRenamed;
+import agentgui.envModel.graph.networkModel.EdgeShapePolyline;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphElement;
@@ -762,6 +763,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 			break;
 		case Line:
 			edgeShapeTransformer = new EdgeShape.Line<GraphNode, GraphEdge>();
+			break;
+		case Polyline:
+			edgeShapeTransformer = new EdgeShapePolyline<GraphNode, GraphEdge>();
 			break;
 		case Loop:
 			edgeShapeTransformer = new EdgeShape.Loop<GraphNode, GraphEdge>();

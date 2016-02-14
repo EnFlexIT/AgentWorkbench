@@ -232,7 +232,7 @@ public class JadeRemoteStart extends Thread {
 	/**
 	 * This Method starts a Jade-Platform within a new Java Virtual Machine.
 	 */
-	public void startJade(){
+	public void startJade() {
 		
 		String os = System.getProperty("os.name");
 		

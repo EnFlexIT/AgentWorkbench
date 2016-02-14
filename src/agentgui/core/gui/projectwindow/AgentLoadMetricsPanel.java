@@ -196,13 +196,13 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 						int index = currProject.getAgentClassLoadMetrics().getIndexOfAgentClassMetricDescription(className.toString());
 						if(index != -1){
 							if(column == 1){
-								agentClassMetricDescriptionVector.get(index).setUserPredictedMetric((long)data);
+								agentClassMetricDescriptionVector.get(index).setUserPredictedMetric((Long)data);
 							}else if(column == 2){
-								agentClassMetricDescriptionVector.get(index).setRealMetricMin((long)data);
+								agentClassMetricDescriptionVector.get(index).setRealMetricMin((Long)data);
 							}else if(column == 3){
-								agentClassMetricDescriptionVector.get(index).setRealMetricMax((long)data);
+								agentClassMetricDescriptionVector.get(index).setRealMetricMax((Long)data);
 							}else if(column == 4){
-								agentClassMetricDescriptionVector.get(index).setRealMetricAverage((long)data);
+								agentClassMetricDescriptionVector.get(index).setRealMetricAverage((Long)data);
 							}	
 							
 							currProject.save();

@@ -114,6 +114,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 		// --- Test area ----------------------------------------------------------------
 		// ------------------------------------------------------------------------------
 //		this.addPreRenderPaintable(new MapPreRenderer<V, E>(this));
+		
 	}
 	
 	/* (non-Javadoc)
