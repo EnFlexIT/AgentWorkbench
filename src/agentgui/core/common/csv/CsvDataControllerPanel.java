@@ -42,7 +42,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -61,7 +60,6 @@ import java.awt.Font;
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
  */
 public class CsvDataControllerPanel extends JPanel implements ActionListener, Observer{
-
 
 	private static final long serialVersionUID = -8553767098312965499L;
 	
@@ -108,8 +106,8 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 			jToolBarCsvHandling.add(getJButtonImport());
 			jToolBarCsvHandling.add(getJButtonExport());
 			jToolBarCsvHandling.addSeparator();
-			jToolBarCsvHandling.add(getJComboBoxSeparator());
 			jToolBarCsvHandling.add(getJLabelSeparator());
+			jToolBarCsvHandling.add(getJComboBoxSeparator());
 			jToolBarCsvHandling.addSeparator();
 			jToolBarCsvHandling.add(getJCheckBoxHasHeadlines());
 		}
@@ -161,7 +159,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 
 	private JLabel getJLabelSeparator() {
 		if (jLabelSeparator == null) {
-			jLabelSeparator = new JLabel(Language.translate("Trennzeichen"));
+			jLabelSeparator = new JLabel(Language.translate("Separator:", Language.EN));
 			jLabelSeparator.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jLabelSeparator;
@@ -169,9 +167,10 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 
 	private JCheckBox getJCheckBoxHasHeadlines() {
 		if (jCheckBoxHasHeadlines == null) {
-			jCheckBoxHasHeadlines = new JCheckBox(Language.translate("Spaltenüberschriften"));
+			jCheckBoxHasHeadlines = new JCheckBox(Language.translate("Column Headers:", Language.EN));
 			jCheckBoxHasHeadlines.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jCheckBoxHasHeadlines.setSelected(this.getCsvDataController().hasHeadlines());
+			jCheckBoxHasHeadlines.addActionListener(this);
 		}
 		return jCheckBoxHasHeadlines;
 	}
@@ -246,13 +245,13 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 	 * Just for development, remove later
 	 * @param args
 	 */
-	public static void main(String[] args){
-		JFrame frame = new JFrame("CSV Importer");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().add(new CsvDataControllerPanel());
-		frame.setSize(600, 450);
-		frame.setVisible(true);
-	}
+//	public static void main(String[] args){
+//		JFrame frame = new JFrame("CSV Importer");
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.getContentPane().add(new CsvDataControllerPanel());
+//		frame.setSize(600, 450);
+//		frame.setVisible(true);
+//	}
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o instanceof CsvDataController && arg.equals(CsvDataController.EVENT_TABLE_MODEL_REPLACED)){
