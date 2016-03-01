@@ -118,6 +118,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		if (jScrollPaneTable==null) {
 			jScrollPaneTable = new JScrollPane();
 			jScrollPaneTable.setViewportView(this.getJTableData());
+			this.getJTableData().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		}
 		return jScrollPaneTable;
 	}
@@ -241,10 +242,10 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		}
 	}
 	
-	/**
-	 * Just for development, remove later
-	 * @param args
-	 */
+//	/**
+//	 * Just for development, remove later
+//	 * @param args
+//	 */
 //	public static void main(String[] args){
 //		JFrame frame = new JFrame("CSV Importer");
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
