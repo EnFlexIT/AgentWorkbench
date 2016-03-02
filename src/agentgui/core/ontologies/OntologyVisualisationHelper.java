@@ -144,10 +144,7 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 		this.errorStack = new ArrayList<String>();
 		
 		// --- Run through Sub-Ontologies -----------------------
-		Iterator<String> it = this.subOntologies.iterator();
-		while (it.hasNext()) {
-			// --- Get reference of current Sub-Ontology --------
-			String subOntologyReference = it.next();	
+		for (String subOntologyReference : this.subOntologies) {
 			// --- Build SubTree for current SubOntology --------
 			OntologyClass onCla = this.get(subOntologyReference);
 			DefaultMutableTreeNode subRootNode = null;

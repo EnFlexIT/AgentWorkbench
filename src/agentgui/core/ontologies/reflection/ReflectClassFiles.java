@@ -47,7 +47,7 @@ import agentgui.core.ontologies.OntologyClassTree;
 /**
  * This extended ArrayList<String> is used for the search of classes within a 
  * project by using a specified package name. During the initialisation of 
- * this class, the search will start and fill the list with classes found.   
+ * this class, the search will start and fill the list with the classes found.   
  * 
  * @see OntologyClassTree
  * 
@@ -256,8 +256,6 @@ public class ReflectClassFiles extends ArrayList<String> {
 		return classes;
 	}
 	
-	
-	
 	/**
 	 * Reading all Classes from the IDE area by starting at 'BasePath'.
 	 *
@@ -363,6 +361,27 @@ public class ReflectClassFiles extends ArrayList<String> {
 			}		
 		}
 		return fileList;
+	}
+	
+	/**
+	 * Returns the actual classes of the search result.
+	 * @return the classes of result
+	 */
+	public ArrayList<Class<?>> getClassesOfResult() {
+		
+		ArrayList<Class<?>> classesFound = new ArrayList<>();
+		for (String classReference : this) {
+			Class<?> classFound = null;
+			try {
+				classFound = Class.forName(classReference);
+			} catch (ClassNotFoundException cnfe) {
+				//cnfe.printStackTrace();
+			}
+			if (classFound!=null) {
+				classesFound.add(classFound);
+			}
+		}
+		return classesFound;
 	}
 	
 }

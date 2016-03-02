@@ -32,7 +32,7 @@
     <jadeConfiguration>
         <useLocalPort>1099</useLocalPort>
         <mtpCreation>ConfiguredByJADE</mtpCreation>
-        <mtpIpAddress>Auto-Configuration</mtpIpAddress>
+        <mtpIpAddress>132.252.250.126</mtpIpAddress>
         <mtpPort>7778</mtpPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
@@ -138,8 +138,8 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>MixedClusters (1) Small</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
-    <downloadResources>http://132.252.237.205:8080/gasmas/BIN_DUMP_-1172359784.jar</downloadResources>
-    <downloadResources>http://132.252.237.205:8080/gasmas/gasmas_IDE.jar</downloadResources>
+    <downloadResources>http://132.252.250.126:8080/gasmas/BIN_DUMP_-1172359784.jar</downloadResources>
+    <downloadResources>http://132.252.250.126:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>
@@ -174,16 +174,16 @@
             <value>hnord.xml</value>
         </entry>
         <entry>
-            <key>Simple Net</key>
-            <value>simple_net.xml</value>
+            <key>Testimport</key>
+            <value>testimport.xml</value>
         </entry>
         <entry>
             <key>HNord (1) Small</key>
             <value>hnord_1_small.xml</value>
         </entry>
         <entry>
-            <key>Testimport</key>
-            <value>testimport.xml</value>
+            <key>Simple Net</key>
+            <value>simple_net.xml</value>
         </entry>
         <entry>
             <key>MixedClusters (3) Large</key>
@@ -198,12 +198,12 @@
             <value>simple_net_two_entries.xml</value>
         </entry>
         <entry>
-            <key>HNord Complete</key>
-            <value>hnord_complete.xml</value>
-        </entry>
-        <entry>
             <key>HNord (3) Large</key>
             <value>hnord_3_large.xml</value>
+        </entry>
+        <entry>
+            <key>HNord Complete</key>
+            <value>hnord_complete.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>

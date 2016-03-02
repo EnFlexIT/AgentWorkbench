@@ -167,11 +167,11 @@ public class DownloadServer implements HttpConstants, Runnable {
 			if (Application.getProjectFocused()==null) {
 				jadeConfig = Application.getGlobalInfo().getJadeDefaultPlatformConfig();
 			} else {
-				jadeConfig =Application.getProjectFocused().getJadeConfiguration();
+				jadeConfig = Application.getProjectFocused().getJadeConfiguration();
 			}
 			httpIpAddress = jadeConfig.getMtpIpAddress();
     		
-			if (httpIpAddress==null) {
+			if (httpIpAddress==null || httpIpAddress.equals("") || httpIpAddress.equals(PlatformJadeConfig.MTP_IP_AUTO_Config)) {
     			InetAddress addressLocal = InetAddress.getLocalHost();
     			httpIpAddress = addressLocal.getCanonicalHostName();
     		}
