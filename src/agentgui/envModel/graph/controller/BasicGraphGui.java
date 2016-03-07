@@ -68,6 +68,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
 
 import org.apache.commons.collections15.Transformer;
 
@@ -121,6 +122,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 5764679914667183305L;
 
+	/**
+	 * The enumeration ToolBarType describes the toolbar type available in the {@link BasicGraphGui}.
+	 */
+	public enum ToolBarType {
+		ViewControl,
+		EditControl
+	}
+	
 	/** Environment model controller, to be passed by the parent GUI. */
 	private GraphEnvironmentController graphController;
 	
@@ -192,6 +201,25 @@ public class BasicGraphGui extends JPanel implements Observer {
 			}
 		});
 		
+	}
+	
+	/**
+	 * Returns the specified JToolBar of the {@link BasicGraphGui}.
+	 *
+	 * @param toolBarType the tool bar type
+	 * @return the j tool bar
+	 */
+	public JToolBar getJToolBar(ToolBarType toolBarType) {
+		JToolBar toolBar = null;
+		switch (toolBarType) {
+		case EditControl:
+			toolBar = graphGuiTools.getJToolBarEdit();
+			break;
+		case ViewControl:
+			toolBar = graphGuiTools.getJToolBarView();
+			break;
+		}
+		return toolBar;
 	}
 	
 	/**

@@ -57,17 +57,18 @@ public class ReflectClassFiles extends ArrayList<String> {
 
 	private static final long serialVersionUID = -256361698681180954L;
 
-	private String searchInPackage = null;
-	private String[] searchINPathParts = null;
+	private String searchInPackage;
+	private String[] searchINPathParts;
 
+	
 	/**
-	 * Constructor of this class.
-	 * @param searchInPackage the reference to the package in which the search has to be executed
+	 * Instantiates a new reflect class files that searches in sub packages also.
+	 *
+	 * @param searchInPackage the package reference in which the search has to be executed
 	 */
 	public ReflectClassFiles(String searchInPackage) {
-
 		this.searchInPackage = searchInPackage;
-		if (this.searchInPackage!= null) {
+		if (this.searchInPackage!=null) {
 			this.searchINPathParts = this.searchInPackage.split("\\.");
 		}
 		this.setClasses();
@@ -79,7 +80,6 @@ public class ReflectClassFiles extends ArrayList<String> {
 	private void setClasses() {
 		
 		String searchPath = null;
-		ArrayList<String> classList = null;
 		List<File> dirs = new ArrayList<File>();
 		
 		// --- Try to find the resource of the given Reference ------
@@ -92,49 +92,49 @@ public class ReflectClassFiles extends ArrayList<String> {
 			e.printStackTrace();
 		}
 
-		// --- Look at the Result of the Resources-Search ----------
+		// --- Look at the Result of the Resources-Search -----------
 		for (int i = 0; i < dirs.size(); i++) {
 			
+			ArrayList<String> classesFound = null;			
 			File directoryFile = dirs.get(i);
 			if (directoryFile.exists()==true) {
-				
+				// --- Check the specified class resource ------------
 				String pathOfFile = directoryFile.getAbsolutePath();
 				String reference2JarFile = this.getJarReferenceFromPathOfFile(pathOfFile);
-//				System.out.println("=> Reference to JarFile: From " + pathOfFile + " to  " + reference2JarFile);
+				//System.out.println("=> Reference to JarFile: From " + pathOfFile + " to  " + reference2JarFile);
 				if (reference2JarFile!=null) {
 					// --- Points to a jar file ---------------------
 					if (pathOfFile.startsWith("file:") || pathOfFile.endsWith(".jar")) {
-						// --- Path points to a jar-file ----------------
-						classList = getJARClasses(directoryFile);
+						// --- Path points to a jar-file ------------
+						classesFound = this.getJARClasses(directoryFile);
 						
 					} else {
-						// --- Path points to an external IDE-path ------
+						// --- Path points to an external IDE-path --
 						searchPath = reference2JarFile;
-						classList = getIDEClasses(searchPath, searchPath);
+						classesFound = this.getIDEClasses(searchPath, searchPath);
 					}
 					
 				} else {
-					// --- Points to a bin folder of an IDE -------------
+					// --- Points to a bin folder of an IDE ---------
 					searchPath = Application.getGlobalInfo().getPathBaseDirIDE_BIN();
 					if (new File(searchPath).exists()==true) {
-						// --- The Agent.GUI IDE ------------------------
-						classList = getIDEClasses(searchPath, searchPath);
+						// --- The Agent.GUI IDE --------------------
+						classesFound = this.getIDEClasses(searchPath, searchPath);
 					} else {
-						// --- Another IDE bin folder ------------------- 
-						classList = getIDEClasses(pathOfFile, pathOfFile);
+						// --- Another IDE bin folder --------------- 
+						classesFound = this.getIDEClasses(pathOfFile, pathOfFile);
 					}
-					
 				}
 				
 			} else {
 				System.err.println("Reflect classes in '" + this.searchInPackage + "': Could not find " + directoryFile);
 			}
 			
+			// --- Add classes found, if any ------------------------ 
+			if (classesFound!=null && classesFound.size()!=0){
+				this.addAll(classesFound);
+			}
 		}// --- end for ---
-			
-		if(classList!=null){
-			this.addAll(classList);
-		}
 	}
 
 	/**
@@ -220,31 +220,35 @@ public class ReflectClassFiles extends ArrayList<String> {
 	 */
 	private ArrayList<String> getJARClasses(File jarFileInstance) {
 		
-		String clazz = null;
-		ArrayList<String> classes = new ArrayList<String>();
-		
+		ArrayList<String> classesFound = new ArrayList<String>();
 		try {
 			
+			// --- Get URL for the jar file in order to open it -------------------------
 			URL jar = jarFileInstance.toURI().toURL();
 			jar = new URL("jar: " + jar.toExternalForm() + "!/");
-			
+			// --- Open JarURLConnection ------------------------------------------------
 			JarURLConnection conn = (JarURLConnection) jar.openConnection();
 			conn.setUseCaches(false);
 			
+			// --- Run through the list of jar files ------------------------------------
 			JarFile jarFile = conn.getJarFile();
 			Enumeration<JarEntry> enu = jarFile.entries();
 			while (enu.hasMoreElements()) {
-
+				// --- Get the next jar file entry --------------------------------------
 				JarEntry jarEntry = enu.nextElement();
 				if ((jarEntry.getName().endsWith(".class"))) {
-					clazz = jarEntry.getName().replaceAll("/", "\\.");
-					clazz = clazz.substring(0, clazz.length() - (".class").length());
-					// --- Add class to list ? ---
-					if (searchInPackage==null) {
-						classes.add(clazz);	
+					String className = jarEntry.getName().replaceAll("/", "\\.");
+					className = className.substring(0, className.length() - (".class").length());
+					// --- Add class to list ? ------------------------------------------
+					if (this.searchInPackage==null) {
+						classesFound.add(className);	
 					} else {
-						if (clazz.startsWith(searchInPackage) ) {
-							classes.add(clazz);
+						if (className.startsWith(this.searchInPackage) ) {
+							// --- Check if class is in a sub package ---------------
+							String checkName = className.replace(this.searchInPackage + ".", "");
+							if (checkName.indexOf(".")==-1) {
+								classesFound.add(className);
+							}
 						}		
 					}
 				}
@@ -253,7 +257,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return classes;
+		return classesFound;
 	}
 	
 	/**
@@ -282,14 +286,13 @@ public class ReflectClassFiles extends ArrayList<String> {
 					if (searchInPackage==null) {
 						// ------------------------------------------------------------
 						// --- In case that we're not looking for something specific -- 
-						fileList.addAll(getIDEClasses(basePath, files[i].getAbsolutePath()));
+						fileList.addAll(this.getIDEClasses(basePath, files[i].getAbsolutePath()));
 						
 					} else {
 						// ------------------------------------------------------------
 						// --- Only search there, where it is of interest -------------
 						boolean moveDeeper = false;
 						String searchINPath = null;
-						
 						// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 						for (int j=0; j<searchINPathParts.length; j++) {
 							if (searchINPath == null) {
@@ -302,13 +305,12 @@ public class ReflectClassFiles extends ArrayList<String> {
 								moveDeeper = true;
 								break;
 							}						
-							
 						}
 						// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 						if (moveDeeper==true) {
 							// --- search one path level deeper -----------------------
-							fileList.addAll(getIDEClasses(basePath, files[i].getAbsolutePath()) );	
+							fileList.addAll(this.getIDEClasses(basePath, files[i].getAbsolutePath()) );	
 						}
 						// ------------------------------------------------------------
 						// ------------------------------------------------------------
