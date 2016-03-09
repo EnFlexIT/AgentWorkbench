@@ -108,7 +108,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private JButton jButtonPaste;
     
     private JPopupMenu edgePopup;
-    private JMenuItem jMenuItemDeleteComp;
+    private JMenuItem jMenuItemDeleteCompVertex;
+    private JMenuItem jMenuItemDeleteCompEdge;
     private JMenuItem jMenuItemEdgeProp;
 
     private JPopupMenu vertexPopup;
@@ -577,8 +578,10 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     public JPopupMenu getEdgePopup() {
 		if (edgePopup == null) {
 		    edgePopup = new JPopupMenu();
-		    edgePopup.add(getJMenuItemDeleteComp());
-		    edgePopup.addSeparator();
+		    if (this.graphController.getProject()!=null) {
+		    	edgePopup.add(getJMenuItemDeleteCompEdge());
+		    	edgePopup.addSeparator();
+		    }
 		    edgePopup.add(getJMenuItemEdgeProp());
 		}
 		return edgePopup;
@@ -591,28 +594,44 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     public JPopupMenu getVertexPopup() {
 		if (vertexPopup == null) {
 		    vertexPopup = new JPopupMenu();
-		    vertexPopup.add(getJMenuItemAddComp());
-		    vertexPopup.add(getJMenuItemSplitNode());
-		    vertexPopup.addSeparator();
+		    if (this.graphController.getProject()!=null) {
+		    	vertexPopup.add(getJMenuItemAddComp());
+			    vertexPopup.add(getJMenuItemSplitNode());
+		    	vertexPopup.addSeparator();
+			    vertexPopup.add(getJMenuItemDeleteCompVertex());
+			    vertexPopup.addSeparator();
+		    }
 		    vertexPopup.add(getJMenuItemNodeProp());
 		}
 		return vertexPopup;
     }
 
     /**
-     * This method initializes jMenuItemDeleteComp
+     * Gets the JMenuItem to delete the currently selected vertex.
      * @return javax.swing.JMenuItem
      */
-    private JMenuItem getJMenuItemDeleteComp() {
-		if (jMenuItemDeleteComp == null) {
-		    jMenuItemDeleteComp = new JMenuItem();
-		    jMenuItemDeleteComp.setText(Language.translate("Delete Component", Language.EN));
-		    jMenuItemDeleteComp.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
-		    jMenuItemDeleteComp.addActionListener(this);
+    private JMenuItem getJMenuItemDeleteCompVertex() {
+		if (jMenuItemDeleteCompVertex == null) {
+		    jMenuItemDeleteCompVertex = new JMenuItem();
+		    jMenuItemDeleteCompVertex.setText(Language.translate("Delete Component", Language.EN));
+		    jMenuItemDeleteCompVertex.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
+		    jMenuItemDeleteCompVertex.addActionListener(this);
 		}
-		return jMenuItemDeleteComp;
+		return jMenuItemDeleteCompVertex;
     }
-
+    /**
+     * Gets the JMenuItem to delete the currently selected edge.
+     * @return javax.swing.JMenuItem
+     */
+    private JMenuItem getJMenuItemDeleteCompEdge() {
+		if (jMenuItemDeleteCompEdge == null) {
+			jMenuItemDeleteCompEdge = new JMenuItem();
+			jMenuItemDeleteCompEdge.setText(Language.translate("Delete Component", Language.EN));
+			jMenuItemDeleteCompEdge.setIcon(new ImageIcon(getClass().getResource(pathImage + "ListMinus.png")));
+			jMenuItemDeleteCompEdge.addActionListener(this);
+		}
+		return jMenuItemDeleteCompEdge;
+    }
     /**
      * This method initializes jMenuItemNodeProp
      * @return javax.swing.JMenuItem
@@ -957,7 +976,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			// --- Add Component Button Clicked ---------------------
 			this.showAddComponentDialog();
 						
-		} else if (ae.getSource() == getJButtonRemoveComponent() || ae.getSource() == getJMenuItemDeleteComp()) {
+		} else if (ae.getSource() == getJButtonRemoveComponent() || ae.getSource() == getJMenuItemDeleteCompVertex() || ae.getSource() == getJMenuItemDeleteCompEdge()) {
 			// ------------------------------------------------------
 			// --- Remove Component Button clicked ------------------
 			boolean removeDistributionNodes = true;

@@ -1,0 +1,1 @@
+java  -classpath .;.\lib\jade.jar;.\lib\commons-codec\commons-codec-1.3.jar; jade.Boot -conf runjadeHTTPS_Conf.properties %1 %2 %3 %4 %5 %6 %7 %8 %9

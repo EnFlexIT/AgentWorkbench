@@ -40,6 +40,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -114,7 +115,6 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     private DefaultTableModel componentsTableModel = null;
     private boolean quiteTabelModelListener = false;
     
-    /** The graph visualization component */
     private BasicGraphGui graphGUI = null;
 
     private NetworkComponent currNetworkComponent = null;
@@ -476,13 +476,32 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
     	// --- Set Sorter for the table -------------------
 		TableRowSorter<DefaultTableModel> tblSorter = new TableRowSorter<DefaultTableModel>(this.getDefaultTableModel4Components());
 	    this.getJTableComponents().setRowSorter(tblSorter);		    
+	   
+	    // --- Define a comparator for the first row ------
+		tblSorter.setComparator(0, new Comparator<String>() {
+			@Override
+			public int compare(String netCompId1, String netCompId2) {
+				Integer ncID1 = null;
+				Integer ncID2 = null;
+				try {
+					ncID1 = Integer.parseInt(netCompId1.replaceAll("\\D+",""));
+					ncID2 = Integer.parseInt(netCompId2.replaceAll("\\D+",""));
+				} catch (NumberFormatException nfe) {
+				}
 
-	    // --- Define the first sort order ----------------
+				if (ncID1!=null & ncID2!=null) {
+					return ncID1.compareTo(ncID2);
+				}
+				return netCompId1.compareTo(netCompId2);
+			}
+		});
+		 // --- Define the first sort order ----------------
 		List<SortKey> sortKeys = new ArrayList<SortKey>();
 		for (int i = 0; i < this.getJTableComponents().getColumnCount(); i++) {
 		    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
 		}
-		this.getJTableComponents().getRowSorter().setSortKeys(sortKeys);
+		tblSorter.setSortKeys(sortKeys);
+		tblSorter.sort();
 		
 		// --- Define the column widths -------------------
 		TableColumnModel colModel = this.getJTableComponents().getColumnModel();
