@@ -56,6 +56,14 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	
 	
 	/**
+	 * Instantiates a new data model notification. Be aware that with this constructor, no instance copy will be made
+	 * and that this may result to conflict between internal and visualised data model. 
+	 * @param networkComponent the network component
+	 */
+	public DataModelNotification(NetworkComponent networkComponent) {
+		this.networkComponent = networkComponent;
+	}
+	/**
 	 * Instantiates a new data model notification for a NetworkComponent.
 	 *
 	 * @param networkComponent the NetworkComponent that contains the data model
@@ -80,6 +88,16 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 		this.useDataModelBase64Encoded = useDataModelBase64Encoded;
 	}
 	
+	
+	/**
+	 * Instantiates a new data model notification. Be aware that with this constructor, no instance copy will be made
+	 * and that this may result to conflict between internal and visualised data model.
+	 *
+	 * @param graphNode the graph node
+	 */
+	public DataModelNotification(GraphNode graphNode) {
+		this.graphNode = graphNode;
+	}
 	/**
 	 * Instantiates a new data model notification for a GraphNode.
 	 *

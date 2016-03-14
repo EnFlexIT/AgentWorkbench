@@ -31,8 +31,8 @@
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.debugging.DebugService</service>
+            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -45,6 +45,7 @@
         <numberOfAgents>18</numberOfAgents>
         <numberOfContainer>1</numberOfContainer>
         <showLoadMonitorAtPlatformStart>true</showLoadMonitorAtPlatformStart>
+        <showThreadMonitorAtPlatformStart>true</showThreadMonitorAtPlatformStart>
         <staticLoadBalancingClass>gol.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
@@ -56,6 +57,10 @@
             <thNoThreadsL>5</thNoThreadsL>
         </userThresholds>
     </distributionSetup>
+    <agentClassLoadMetrics>
+        <agentClassMetricDescriptionVector/>
+        <useRealLoadMetric>false</useRealLoadMetric>
+    </agentClassLoadMetrics>
     <remoteContainerConfiguration>
         <jvmMemAllocInitial>32m</jvmMemAllocInitial>
         <jvmMemAllocMaximum>128m</jvmMemAllocMaximum>
@@ -64,8 +69,8 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>0242 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
-    <downloadResources>http://Pandora:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
-    <downloadResources>http://Pandora:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
+    <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
+    <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>0242 Agents</key>
@@ -100,12 +105,12 @@
             <value>0018_agents.xml</value>
         </entry>
         <entry>
-            <key>0032 Agents</key>
-            <value>0032_agents.xml</value>
-        </entry>
-        <entry>
             <key>1800 Agents</key>
             <value>1800_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0032 Agents</key>
+            <value>0032_agents.xml</value>
         </entry>
         <entry>
             <key>4050 Agents</key>

@@ -41,7 +41,6 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import agentgui.core.application.Application;
 import agentgui.core.ontologies.OntologyClassTree;
 
 /**
@@ -116,7 +115,8 @@ public class ReflectClassFiles extends ArrayList<String> {
 					
 				} else {
 					// --- Points to a bin folder of an IDE ---------
-					searchPath = Application.getGlobalInfo().getPathBaseDirIDE_BIN();
+					//searchPath = Application.getGlobalInfo().getPathBaseDirIDE_BIN();
+					searchPath = pathOfFile;
 					if (new File(searchPath).exists()==true) {
 						// --- The Agent.GUI IDE --------------------
 						classesFound = this.getIDEClasses(searchPath, searchPath);

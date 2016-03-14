@@ -108,7 +108,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 
 	private Vector<Integer> dataModelBase64InitialHashCodes;
 	
-	private boolean dataModelNotificationEnabled; 
+	private boolean dataModelNotificationEnabled = true; 
 	private DataModelNotification dataModelNotificationLast;
 	
 	
@@ -628,17 +628,16 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 * @param enable the new data model notification enabled
 	 */
 	private void setDataModelNotificationEnabled(boolean enable) {
+
 		String imgName = null;
 		if (enable==true) {
 			imgName = "Refresh.png";
 		} else {
 			imgName = "RefreshNot.png";
 		}
-		ImageIcon imageIcon = new ImageIcon(this.getClass().getResource(pathImage + imgName), null);
+		ImageIcon imageIcon = new ImageIcon(this.getClass().getResource(this.pathImage + imgName), null);
 		this.getJToolBarButtonDisableRuntimeUpdates().setIcon(imageIcon);
-		
 		this.dataModelNotificationEnabled = enable;
-		
 	}
 	
 	/**
@@ -682,7 +681,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			this.setDataModelBase64InitialHashCodes(getNetworkComponentAdapter4DataModel().getDataModelBase64Encoded(getNetworkComponentAdapter4DataModel().getDataModel()));
 		}
 		return true;
-		
 	}
 	
 	/**

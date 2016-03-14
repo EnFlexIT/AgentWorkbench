@@ -159,7 +159,7 @@ public class LoadMeasureThread extends Thread {
 		// ------------------------------------------------------
 		// --- Is this class already executed on this Node ? ----
 		// ------------------------------------------------------		
-		if ( measuredJVMData.threadExists(LoadMeasureThread.threadName) ) {
+		if (measuredJVMData.threadExists(LoadMeasureThread.threadName) ) {
 			return;
 		}		
 		System.out.println("Start measuring the system load !");

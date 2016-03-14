@@ -40,19 +40,13 @@ import agentgui.envModel.graph.prototypes.DistributionNode;
  */
 public class NetworkComponentDirectionSettings {
 
-	/** The network model. */
 	private NetworkModel networkModel = null;
-	/** The network component. */
 	private NetworkComponent networkComponent = null;
 	
-	/** The inner graph nodes. */
 	private HashSet<GraphNode> innerGraphNodes = new HashSet<GraphNode>();
-	/** The outer graph nodes. */
 	private HashSet<GraphNode> outerGraphNodes = new HashSet<GraphNode>();
 	
-	/** The edge connections. */
 	private HashSet<GraphEdgeConnection> edgeConnections = null;
-	/** The edges of the NetworkComponent. */
 	private HashMap<String, GraphEdgeDirection> edgeDirections = null;
 	
 	

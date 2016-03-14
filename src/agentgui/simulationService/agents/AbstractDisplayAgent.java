@@ -448,7 +448,9 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					jToolBarElements4TimeModel.setTimeModel(timeModel);
+					if (jToolBarElements4TimeModel!=null) {
+						jToolBarElements4TimeModel.setTimeModel(timeModel);
+					}
 				}
 			});
 

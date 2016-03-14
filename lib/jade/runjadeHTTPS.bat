@@ -1,1 +1,1 @@
-java  -classpath .;.\lib\jade.jar;.\lib\commons-codec\commons-codec-1.3.jar; jade.Boot -conf runjadeHTTPS_Conf.properties %1 %2 %3 %4 %5 %6 %7 %8 %9
+java  -classpath .;.\lib\jade.jar;.\lib\commons-codec\commons-codec-1.3.jar; jade.Boot -gui -mtp jade.mtp.http.MessageTransportProtocol(https://Pandora.cs.uni-due.de:7778/acc) -jade_mtp_http_https_keyStoreFile MyPlattformKeyStore -jade_mtp_http_https_keyStorePass secrete -jade_mtp_http_https_trustManagerClass jade.mtp.http.https.StrongAuthentication %1 %2 %3 %4 %5 %6 %7 %8 %9
