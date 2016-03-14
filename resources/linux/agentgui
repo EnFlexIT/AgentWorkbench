@@ -17,11 +17,21 @@
 # Please, make sure that the configuration file of Agent.GUI 
 # (see /opt/agentgui/properties/agentgui.ini) is configured in the right way.
 #
-# In order to automatically start Agent.GUI with the system start, you can
-# use the following comand (removeing is shown in the subsequent line).
+# Copy this file to /etc/init.d/ and make it executable by running:
+# chmod +x /etc/init.d/agentgui
+#
+# On Debian/Ubuntu-Distributions use the following command to automatically run Agent.GUI with the system start
+# (removing is shown in the subsequent line):
 # sudo update-rc.d agentgui defaults 99 10
 # sudo update-rc.d -f agentgui remove
 #
+# On (Open)Suse-Distributions use the following command:
+# chkconfig --set agentgui on
+# chkconfig --set agentgui off
+#
+# Make sure to comment out the line for verbosity (. /lib/init/vars.sh)
+# as it doesn't exist in Suse
+# 
 
 # ---------------------------------------------------------
 # Variable settings
