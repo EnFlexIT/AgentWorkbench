@@ -51,9 +51,36 @@ import agentgui.ontology.ValuePair;
 public abstract class DataModel {
 	
 	/** These colors will be used for newly added series. */
-	public static final Color[] DEFAULT_COLORS = {Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.YELLOW, Color.PINK, Color.CYAN, Color.MAGENTA, Color.LIGHT_GRAY, Color.DARK_GRAY, Color.BLACK};
+// --- Old setting from Nils ------------------------------	
+//	public static final Color[] DEFAULT_COLORS = {
+//		Color.RED, 
+//		Color.BLUE, 
+//		Color.GREEN, 
+//		Color.ORANGE, 
+//		Color.YELLOW, 
+//		Color.PINK, 
+//		Color.CYAN, 
+//		Color.MAGENTA, 
+//		Color.LIGHT_GRAY, 
+//		Color.DARK_GRAY, 
+//		Color.BLACK
+//	};
+	public static final Color[] DEFAULT_COLORS = {
+		new Color(91, 155, 213), 
+		new Color(237, 125, 49), 
+		new Color(255, 192, 0), 
+		new Color(165, 165, 165), 
+		new Color(68, 114, 196), 
+		new Color(112, 173, 71), 
+		new Color(37, 94, 145), 
+		new Color(158, 72, 14), 
+		new Color(99, 99, 99), 
+		new Color(153, 115, 0)
+	};
+	
+	
 	/** This line width will be used for newly added series. */
-	public static final float DEFAULT_LINE_WIDTH = 1.0f;
+	public static final float DEFAULT_LINE_WIDTH = 2.0f;
 	
 	
 	/** The ontology representation of the series data. */
