@@ -44,8 +44,11 @@ import agentgui.envModel.graph.networkModel.NetworkComponentAdapter;
 import agentgui.envModel.graph.networkModel.NetworkComponentAdapter4Ontology;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
+import agentgui.ontology.Simple_Float;
+import agentgui.ontology.Simple_Long;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
+import agentgui.ontology.TimeSeriesValuePair;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 
 /**
@@ -59,6 +62,9 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 	private static final long serialVersionUID = 8563478170121892593L;
 
 	private TimeSeries specifiedTimeSeries = null;
+	
+	private long timeStamp;
+	private Vector<Float> valueVector;
 	
 	/**
 	 * Instantiates a new update time series.
@@ -118,6 +124,20 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 		this.setTargetDataSeriesIndex(dataSeriesIndex);
 	}
 
+	
+	/**
+	 * Edits the TimeSeriesChartby adding or exchanging a time dependent data row.
+	 *
+	 * @param timeStamp the time stamp
+	 * @param valueVector the value vector
+	 */
+	public void editTimeSeriesChartAddOrExchangeDataRow(long timeStamp, Vector<Float> valueVector) {
+		this.setTargetAction(UPDATE_ACTION.TimeSeriesChartAddOrExchangeDataRow);
+		this.setTimeStamp(timeStamp);
+		this.setValueVector(valueVector);
+	}
+	
+	
 	/**
 	 * Sets the specified time series.
 	 * @param specifiedTimeSeries the new specified time series
@@ -133,7 +153,36 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 		return specifiedTimeSeries;
 	}
 	
-
+	/**
+	 * Sets the time stamp.
+	 * @param timeStamp the new time stamp
+	 */
+	public void setTimeStamp(long timeStamp) {
+		this.timeStamp = timeStamp;
+	}
+	/**
+	 * Gets the time stamp.
+	 * @return the time stamp
+	 */
+	public long getTimeStamp() {
+		return timeStamp;
+	}
+	
+	/**
+	 * Sets the value vector.
+	 * @param valueVector the new value vector
+	 */
+	public void setValueVector(Vector<Float> valueVector) {
+		this.valueVector = valueVector;
+	}
+	/**
+	 * Gets the value vector.
+	 * @return the value vector
+	 */
+	public Vector<Float> getValueVector() {
+		return valueVector;
+	}
+	
 	/**
 	 * Edits the time series: adds new data to a time series.
 	 *
@@ -273,6 +322,32 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 			break;
 
 		// ------------------------------------------------	
+		// --- From here: Edits for the TimeSeriesChart ---
+		// ------------------------------------------------
+		case TimeSeriesChartAddOrExchangeDataRow:
+
+			for (int i = 0; i < this.getValueVector().size(); i++) {
+				// -- Get the new value for the Time Series i -------
+				Float newFloatValue = this.getValueVector().get(i);
+					
+				// --- Create a new value pair ----------------------
+				Simple_Long sl = new Simple_Long();
+				sl.setLongValue(this.getTimeStamp());
+				
+				Simple_Float sf = new Simple_Float();
+				sf.setFloatValue(newFloatValue);
+				
+				TimeSeriesValuePair tsvp = new TimeSeriesValuePair();
+				tsvp.setTimestamp(sl);
+				tsvp.setValue(sf);
+				
+				// --- Add new value pair to data model -------------
+				TimeSeries ts = (TimeSeries) timeSeriesChart.getTimeSeriesChartData().get(i);
+				ts.addTimeSeriesValuePairs(tsvp);
+			}
+			break;
+			
+		// ------------------------------------------------	
 		// --- From here: Edits of single TimeSeries ------
 		// ------------------------------------------------
 		case EditDataSeriesAddData:
@@ -378,6 +453,24 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 						if (this.getTargetDataSeriesIndex()<=dataModelTimeSeries.getSeriesCount()-1) {
 							dataModelTimeSeries.removeSeries(this.getTargetDataSeriesIndex());	
 						}
+						break;
+						
+					// ------------------------------------------------	
+					// --- From here: Edits for the TimeSeriesChart ---
+					// ------------------------------------------------
+					case TimeSeriesChartAddOrExchangeDataRow:
+						
+						for (int c = 0; c < this.getValueVector().size(); c++) {
+							// -- Get the new value for the Time Series i -------
+							Float newFloatValue = this.getValueVector().get(c);
+							// --- Add new value pair to data model -------------
+							dataModelTimeSeries.getTimeSeriesChartModel().addOrUpdateValuePair(c, this.getTimeStamp(), newFloatValue);
+						}
+						
+						Vector<Number> newRow = new Vector<>();
+						newRow.add(this.getTimeStamp());
+						newRow.addAll(this.getValueVector());
+						dataModelTimeSeries.getTimeSeriesTableModel().addRow(newRow);
 						break;
 						
 					// ------------------------------------------------	

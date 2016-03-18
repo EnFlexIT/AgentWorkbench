@@ -318,6 +318,13 @@ public class UpdateXySeries extends UpdateDataSeries {
 				}
 			} // end of not edited instances
 			break;
+			
+		// ------------------------------------------------	
+		// --- From here: Some 'spare' cases --------------
+		// ------------------------------------------------
+		case TimeSeriesChartAddOrExchangeDataRow:
+			// --- Nothing to do here ---------------------
+			break;
 		}
 
 	}
@@ -414,6 +421,12 @@ public class UpdateXySeries extends UpdateDataSeries {
 						}
 						break;
 						
+					// ------------------------------------------------	
+					// --- From here: Some 'spare' cases --------------
+					// ------------------------------------------------
+					case TimeSeriesChartAddOrExchangeDataRow:
+						// --- Nothing to do here ---------------------
+						break;
 					} // end switch
 					
 				} // end for

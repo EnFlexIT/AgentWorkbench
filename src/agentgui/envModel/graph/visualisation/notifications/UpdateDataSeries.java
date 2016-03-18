@@ -59,7 +59,9 @@ public abstract class UpdateDataSeries extends DisplayAgentNotificationGraph {
 		EditDataSeriesAddData,
 		EditDataSeriesAddOrExchangeData,
 		EditDataSeriesExchangeData,
-		EditDataSeriesRemoveData
+		EditDataSeriesRemoveData,
+		
+		TimeSeriesChartAddOrExchangeDataRow
 	}
 
 	
@@ -174,7 +176,7 @@ public abstract class UpdateDataSeries extends DisplayAgentNotificationGraph {
 	 * @return the series instance edited
 	 */
 	protected HashSet<Integer> getEditedInstances() {
-		if (this.editedInstances==null) {
+		if (editedInstances==null) {
 			editedInstances = new HashSet<Integer>();
 		}
 		return editedInstances;

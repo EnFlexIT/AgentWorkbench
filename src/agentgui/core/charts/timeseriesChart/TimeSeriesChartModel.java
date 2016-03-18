@@ -93,7 +93,7 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 			Float floatValue = simpleFloat.getFloatValue();
 			if (timeStampLong!=null) {
 				TimeSeriesDataItem newItem = new TimeSeriesDataItem(new FixedMillisecond(timeStampLong), floatValue);
-				newSeries.add(newItem);	
+				newSeries.addOrUpdate(newItem);	
 			}
 		}
 		this.addSeries(newSeries);	
@@ -124,11 +124,11 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 				Float floatValue = simpleFloat.getFloatValue();
 				if (timeStampLong!=null) {
 					TimeSeriesDataItem newItem = new TimeSeriesDataItem(new FixedMillisecond(timeStampLong), floatValue);
-					editSeries.add(newItem);	
+					editSeries.addOrUpdate(newItem);	
 				}
 			}
 			
-		}else{
+		} else {
 			throw new NoSuchSeriesException();
 		}
 	}
@@ -156,25 +156,21 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	 * @param newKey The new time stamp
 	 */
 	public void updateKey(Number oldKey, Number newKey) {
-		@SuppressWarnings("unchecked")
-		java.util.Iterator<org.jfree.data.time.TimeSeries> allSeries = getSeries().iterator();
 		
-		// Iterate over all series
-		while(allSeries.hasNext()){
-			org.jfree.data.time.TimeSeries series = allSeries.next();
+		// --- Iterate over all series ------------------------------
+		for (int i=0; i < this.getSeriesCount(); i++) {
+
+			org.jfree.data.time.TimeSeries series = this.getSeries(i);
 			
 			// Try to find a value pair with the old time stamp
 			TimeSeriesDataItem oldValuePair = series.getDataItem(new FixedMillisecond(oldKey.longValue()));
 			
 			// If found, remove it and add a new one with the new time stamp and the old value
 			if(oldValuePair != null){
-				
 				series.delete(new FixedMillisecond(oldKey.longValue()));
 				series.addOrUpdate(new FixedMillisecond(newKey.longValue()), oldValuePair.getValue());
-				
 			}
 		}
-		
 	}
 	/**
 	 * Removes the value pair with the given key from the series with the given index.
@@ -213,7 +209,7 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 				Float floatValue = simpleFloat.getFloatValue();
 				if (timeStampLong!=null) {
 					TimeSeriesDataItem newItem = new TimeSeriesDataItem(new FixedMillisecond(timeStampLong), floatValue);
-					addToSeries.add(newItem);
+					addToSeries.addOrUpdate(newItem);
 				}
 			}
 			

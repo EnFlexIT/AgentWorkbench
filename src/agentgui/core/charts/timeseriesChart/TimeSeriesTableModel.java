@@ -78,7 +78,7 @@ public class TimeSeriesTableModel extends TableModel {
 	 */
 	@Override
 	public void rebuildTableModel() {
-		this.tableModelDataVector=new TableModelDataVector(TimeSeries.class.getSimpleName(), this.tableModelDataVector.isActivateRowNumber(), this.tableModelDataVector.getKeyColumnIndex());
+		this.tableModelDataVector = new TableModelDataVector(TimeSeries.class.getSimpleName(), this.tableModelDataVector.isActivateRowNumber(), this.tableModelDataVector.getKeyColumnIndex());
 		List chartDataSeries = this.parentDataModel.getOntologyModel().getChartData();
 		for (int i = 0; i < chartDataSeries.size(); i++) {
 			DataSeries chartData = (DataSeries) chartDataSeries.get(i);
@@ -208,6 +208,23 @@ public class TimeSeriesTableModel extends TableModel {
 		}
 	}
 	
+	/**
+	 * Adds the specified row vector to the current table model.
+	 * @param newRow the new row
+	 */
+	public void addRow(Vector<Number> newRow) {
+
+		int targetRowIndex = this.getRowIndexByKey(newRow.get(0));
+		if (targetRowIndex==-1) {
+			targetRowIndex = tableModelDataVector.size();
+			tableModelDataVector.add(newRow);
+			this.fireTableRowsInserted(targetRowIndex, targetRowIndex);
+		} else {
+			tableModelDataVector.set(targetRowIndex, newRow);
+			this.fireTableRowsUpdated(targetRowIndex, targetRowIndex);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.TableModel#removeRow(javax.swing.JTable)
 	 */
@@ -274,45 +291,45 @@ public class TimeSeriesTableModel extends TableModel {
 		columnTitles.add(newSeries.getLabel());
 		List valuePairs = parentDataModel.getValuePairsFromSeries(newSeries); 
 		
-		int oldColCount = getColumnCount();
+		int destColIndex = getColumnCount();
 		for (int i=0; i<valuePairs.size(); i++) {
 			
-			// Check if there is a row with this key value
+			// --- Check if there is a row with this key value --------------------------
 			ValuePair vp = (ValuePair) valuePairs.get(i);
 			if (this.getRowCount()==0) {
-				// --- Add a first row ----------------
+				// --- Add a first row --------------------------------------------------
 				Vector<Number> newRow = new Vector<Number>();
 				newRow.add(parentDataModel.getXValueFromPair(vp));
 				newRow.add(parentDataModel.getYValueFromValuePair(vp));
-				
 				tableModelDataVector.add(newRow);
+				destColIndex = 1;
 				
 			} else {
-				// --- TableData is not empty, integrate the new series				
-				int rowIndex = getRowIndexByKey(parentDataModel.getXValueFromPair(vp));
-				if(rowIndex >= 0){
-					// There is one, append the new value
+				// --- TableData is not empty, integrate the new series	-----------------
+				int rowIndex = this.getRowIndexByKey(parentDataModel.getXValueFromPair(vp));
+				if (rowIndex>=0){
+					// --- There is one, append the new value ---------------------------
 					Vector<Number> editRow = tableModelDataVector.get(rowIndex);
-					while(editRow.size() < (oldColCount+1)){
+					while(editRow.size() < (destColIndex+1)){
 						editRow.add(null);
 					}
-					editRow.set(oldColCount, parentDataModel.getYValueFromValuePair(vp));
+					editRow.set(destColIndex, parentDataModel.getYValueFromValuePair(vp));
 					
-				}else{
-					// There is not, add a new row
+				} else {
+					// --- There is not, add a new row ----------------------------------
 					Vector<Number> newRow = new Vector<Number>();
-					// First column contains the time stamp
+					// --- First column contains the time stamp -------------------------
 					newRow.add(parentDataModel.getXValueFromPair(vp));
-					// There is no value for this time stamp in the old series
-					while(newRow.size() < oldColCount){
+					// --- There is no value for this time stamp in the old series ------
+					while(newRow.size() < destColIndex){
 						newRow.add(null);
 					}
-					// Append the new value at the end of the row
-					newRow.add(parentDataModel.getYValueFromValuePair(vp));
+					// --- Append the new value at the end of the row -------------------
+					newRow.add(destColIndex, parentDataModel.getYValueFromValuePair(vp));
 					
-					// Find the right place to insert the new row:
+					// ---- Find the right place to insert the new row: -----------------
 					int insertAt = getRowCount();	// At the end of the table...
-					for(int j=0;j<this.getRowCount();j++){
+					for(int j = 0; j < this.getRowCount(); j++){
 						double compareValue = ((Number) tableModelDataVector.get(j).get(0)).doubleValue();
 						if(compareValue > parentDataModel.getXValueFromPair(vp).doubleValue()){
 							insertAt = j;			// ... or before the first one with a higher time stamp
@@ -326,7 +343,7 @@ public class TimeSeriesTableModel extends TableModel {
 		
 		// Append empty values to all rows for which the new series did not contain a value 
 		for(int i=0; i < getRowCount(); i++){
-			if(tableModelDataVector.get(i).size() <= oldColCount){
+			if(tableModelDataVector.get(i).size() <= destColIndex){
 				tableModelDataVector.get(i).add(null);
 			}
 		}

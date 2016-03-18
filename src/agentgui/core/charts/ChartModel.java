@@ -35,7 +35,6 @@ import agentgui.ontology.DataSeries;
 
 public interface ChartModel {
 	
-	
 	/**
 	 * Returns the chart settings.
 	 * @return the chart settings

@@ -28,9 +28,6 @@
  */
 package agentgui.core.charts.timeseriesChart;
 
-import jade.util.leap.Iterator;
-import jade.util.leap.List;
-
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.gui.ChartTab;
@@ -44,6 +41,7 @@ import agentgui.ontology.TimeSeriesChartSettings;
 import agentgui.ontology.TimeSeriesValuePair;
 import agentgui.ontology.ValuePair;
 import agentgui.simulationService.time.TimeModelDateBased;
+import jade.util.leap.List;
 
 /**
  * Container class managing the data models for the different time series representations.
@@ -105,19 +103,18 @@ public class TimeSeriesDataModel extends DataModel {
 			
 		} else {
 			
-			// The ontology model contains data, add it to the other sub models 
-			Iterator dataSeries = tsom.getTimeSeriesChart().getAllTimeSeriesChartData();
-			while(dataSeries.hasNext()){
-				
-				TimeSeries nextSeries = (TimeSeries) dataSeries.next();
+			// The ontology model contains data, add it to the other sub models
+			for (int i = 0; i < tsom.getTimeSeriesChart().getTimeSeriesChartData().size(); i++) {
+
+				TimeSeries nextSeries = (TimeSeries) tsom.getTimeSeriesChart().getTimeSeriesChartData().get(i);
 				
 				// If there is no color specified for this series, use a default color
-				if(seriesCount > this.ontologyModel.getChartSettings().getYAxisColors().size()){
+				if (seriesCount > this.ontologyModel.getChartSettings().getYAxisColors().size()) {
 					this.ontologyModel.getChartSettings().addYAxisColors(""+DEFAULT_COLORS[(seriesCount-1) % DEFAULT_COLORS.length].getRGB());
 				}
 				
 				// If there is no line width specified for this series, use a default line width
-				if(seriesCount > this.ontologyModel.getChartSettings().getYAxisLineWidth().size()){
+				if (seriesCount > this.ontologyModel.getChartSettings().getYAxisLineWidth().size()) {
 					this.ontologyModel.getChartSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
 				}
 				this.chartModel.addSeries(nextSeries);
@@ -255,7 +252,7 @@ public class TimeSeriesDataModel extends DataModel {
 		TimeSeriesOntologyModel ontoModel = (TimeSeriesOntologyModel) this.ontologyModel;
 		TimeSeriesChartModel chartModel = (TimeSeriesChartModel) this.chartModel;
 		
-		for(int i=0; i<getSeriesCount(); i++){
+		for (int i=0; i<getSeriesCount(); i++) {
 			try {
 				ontoModel.removeValuePair(i, key);
 				chartModel.removeValuePair(i, key);
@@ -270,7 +267,7 @@ public class TimeSeriesDataModel extends DataModel {
 	
 	@Override
 	public String getDefaultSeriesLabel() {
-		return DEFAULT_SERIES_LABEL+" "+(getSeriesCount()+1);
+		return DEFAULT_SERIES_LABEL+" "+(this.getSeriesCount()+1);
 	}
 
 	/* (non-Javadoc)
