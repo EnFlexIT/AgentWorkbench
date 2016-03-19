@@ -168,9 +168,9 @@ public class DisplayAgentNotificationHandler {
 				String graphElementID = graphElementLayout.getGraphElement().getId();
 				
 				// --- Get the local element and apply the layout ---
-				GraphElement localGrahElement = networkModel.getGraphElement(graphElementID);
-				graphElementLayout.setGraphElement(localGrahElement);
-				localGrahElement.setGraphElementLayout(graphElementLayout);
+				GraphElement localGraphElement = networkModel.getGraphElement(graphElementID);
+				graphElementLayout.setGraphElement(localGraphElement);
+				localGraphElement.setGraphElementLayout(graphElementLayout);
 			}
 
 		} else if (displayNotification instanceof DataModelOpenViewNotification) {
