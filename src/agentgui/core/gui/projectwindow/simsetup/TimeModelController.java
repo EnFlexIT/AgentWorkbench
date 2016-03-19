@@ -170,7 +170,7 @@ public class TimeModelController implements Observer {
 		
 		JPanel4TimeModelConfiguration configPanel = this.getDisplayJPanel4Configuration();
 		if (configPanel!=null) {
-			this.pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Zeit-Konfiguration"), null, null, configPanel, Language.translate("Simulations-Setup"));
+			this.pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Zeit-Konfiguration"), null, null, configPanel, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 			this.pwt.setIndexPosition(this.indexPosOfTimeModel);
 			this.pwt.add(this.indexPosOfTimeModel);
 			this.setTimeModel(null);

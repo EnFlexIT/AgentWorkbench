@@ -148,11 +148,11 @@ import agentgui.core.webserver.JarFileCreator;
 	
 	
 	/** This is the 'view' in the context of the mentioned MVC pattern */
-	@XmlTransient private ProjectWindow projectWindow = null;
+	@XmlTransient private ProjectWindow projectWindow;
 	/** This panel holds the instance of environment model display */
-	@XmlTransient private JPanel4Visualisation visualisationTab4SetupExecution = null;
+	@XmlTransient private JPanel4Visualisation visualisationTab4SetupExecution;
 	/** This JDesktopPane that can be used as project desktop. */
-	@XmlTransient private JDesktopPane projectDesktop = null;
+	@XmlTransient private JDesktopPane projectDesktop;
 	
 	/** Indicates that the project is unsaved or not */
 	@XmlTransient private boolean isUnsaved = false;
@@ -310,7 +310,6 @@ import agentgui.core.webserver.JarFileCreator;
 		pwt.add();
 		getProjectWindow().registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Configuration, pwt);
 		
-		
 			// --- External Resources -------------------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
 					   Language.translate("Ressourcen"), null, null, 
@@ -342,14 +341,15 @@ import agentgui.core.webserver.JarFileCreator;
 					   Language.translate("Agenten-Lastmetrik"), null, null, 
 					   new AgentLoadMetricsPanel(this), Language.translate("Konfiguration"));
 			pwt.add();
+		
 			
 		// ------------------------------------------------
 		// --- Simulations-Setup --------------------------
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
-				   Language.translate("Simulations-Setup"), null, null, 
+				   Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup), null, null, 
 				   new TabForSubPanels(this), null);
 		pwt.add();
-		getProjectWindow().registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_SimSetup, pwt);
+		getProjectWindow().registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup, pwt);
 		
 			// --- Maybe a TimeModel has to be displayed --
 			this.getTimeModelController();
@@ -357,21 +357,23 @@ import agentgui.core.webserver.JarFileCreator;
 			// --- start configuration for agents ---------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 					   Language.translate("Agenten-Start"), null, null, 
-					   new StartSetup(this), Language.translate("Simulations-Setup"));
+					   new StartSetup(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 			pwt.add();
 			// --- simulation environment -----------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, 
-					   Language.translate("Simulationsumgebung"), null, null, 
-					   new SimulationEnvironment(this), Language.translate("Simulations-Setup"));
+					   Language.translate("Umgebungsmodell"), null, null, 
+					   new SimulationEnvironment(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 			pwt.add();
 			
 
+		// ------------------------------------------------
 		// --- Visualisation ------------------------------
-		this.visualisationTab4SetupExecution = new JPanel4Visualisation(this, Language.translate("Simulations-Visualisierung"));
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, 
-				   Language.translate("Simulations-Visualisierung"), null, null, 
+				   Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION), null, null, 
 				   this.getVisualisationTab4SetupExecution(), null);
 		pwt.add();
+		
+		// ------------------------------------------------
 		// --- Project Desktop ----------------------------
 		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
 				   Language.translate("Projekt-Desktop"), null, null, 
@@ -1449,7 +1451,7 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient
 	public JPanel4Visualisation getVisualisationTab4SetupExecution() {
 		if (this.visualisationTab4SetupExecution==null) {
-			this.visualisationTab4SetupExecution = new JPanel4Visualisation(this, Language.translate("Simulations-Visualisierung")); 
+			this.visualisationTab4SetupExecution = new JPanel4Visualisation(this, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION)); 
 		}
 		return this.visualisationTab4SetupExecution;
 	}

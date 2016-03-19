@@ -51,6 +51,9 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.logging.Level;
 
+import agentgui.core.application.Application;
+import agentgui.core.environment.EnvironmentController;
+import agentgui.core.project.Project;
 import agentgui.simulationService.agents.SimulationAgent;
 import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
@@ -393,6 +396,13 @@ public class SimulationService extends BaseService {
 		}
 		
 		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#getEnvironmentModelFromSetup()
+		 */
+		@Override
+		public EnvironmentModel getEnvironmentModelFromSetup() throws ServiceException {
+			return mainGetEnvironmentModelFromSetup();
+		}
+		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#getEnvironmentModel()
 		 */
 		public EnvironmentModel getEnvironmentModel() throws ServiceException {
@@ -410,6 +420,7 @@ public class SimulationService extends BaseService {
 		public void setEnvironmentModel(EnvironmentModel envModel, boolean notifySensorAgents) throws ServiceException {
 			broadcastSetEnvironmentModel(envModel, notifySensorAgents, getAllSlices());
 		}
+		
 		// ----------------------------------------------------------
 		// --- EnvironmentModel of the next simulation step ---------
 		/* (non-Javadoc)
@@ -487,7 +498,7 @@ public class SimulationService extends BaseService {
 		public void displayAgentNotification(EnvironmentNotification notification) throws ServiceException {
 			broadcastDisplayAgentNotification(notification);
 		}
-		
+
 	}
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'AgentTimeImpl' ---- End --------------------
@@ -517,8 +528,8 @@ public class SimulationService extends BaseService {
 					myLogger.log(Logger.FINER, "Sending current TimeModel to " + sliceName);
 				}
 				slice.setManagerAgent(envManager);
-			}
-			catch(Throwable t) {
+				
+			} catch(Throwable t) {
 				myLogger.log(Logger.WARNING, "Error propagating current TimeModel to slice  " + sliceName, t);
 			}
 		}
@@ -543,8 +554,8 @@ public class SimulationService extends BaseService {
 				myLogger.log(Logger.FINER, "Sending agent-answer of environment-change to " + sliceName);
 			}
 			slice.setEnvironmentInstanceNextPart(nextPartsLocal);
-		}
-		catch(Throwable t) {
+			
+		} catch(Throwable t) {
 			myLogger.log(Logger.WARNING, "Error while sending agent-answer of environment-change to slice  " + sliceName, t);
 		}
 	}	
@@ -568,8 +579,8 @@ public class SimulationService extends BaseService {
 				myLogger.log(Logger.FINER, "Try to get new environment-parts from " + sliceName);
 			}
 			return slice.getEnvironmentInstanceNextParts();
-		}
-		catch(Throwable t) {
+			
+		} catch(Throwable t) {
 			myLogger.log(Logger.WARNING, "Error while trying to get new environment-parts from slice  " + sliceName, t);
 		}
 		return null;
@@ -593,12 +604,36 @@ public class SimulationService extends BaseService {
 				myLogger.log(Logger.FINER, "Sending reset of environment-change-hash to " + sliceName);
 			}
 			slice.resetEnvironmentInstanceNextParts();
-		}
-		catch(Throwable t) {
+			
+		} catch(Throwable t) {
 			myLogger.log(Logger.WARNING, "Error while sending reset of environment-change-hash to slice  " + sliceName, t);
 		}
 	}	
 	
+	/**
+	 * Returns the {@link EnvironmentModel}, configured in the setup of the end user application.
+	 *
+	 * @throws ServiceException the service exception
+	 */
+	private EnvironmentModel mainGetEnvironmentModelFromSetup() throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Sending request for EnvironmentModel to Main-Container!");
+		}
+		String sliceName = null;
+		try {
+			SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Sending request for EnvironmentModel to " + sliceName);
+			}
+			return slice.getEnvironmentModelFromSetup();
+			
+		} catch(Throwable t) {
+			myLogger.log(Logger.WARNING, "Error while sending request for EnvironmentModel  to slice  " + sliceName, t);
+		}
+		return null;
+	}
 	/**
 	 * Broadcasts the current EnvironmentModel to all slices.
 	 *
@@ -656,6 +691,7 @@ public class SimulationService extends BaseService {
 				} else {
 					slice.stepSimulation(envModel, aSynchron);
 				}
+				
 			} catch (IMTPException err) {
 				myLogger.log(Logger.WARNING, "Error while sending the new EnvironmentModel + step simulation to slice " + sliceName, err);
 			}
@@ -683,8 +719,8 @@ public class SimulationService extends BaseService {
 					myLogger.log(Logger.FINER, "Sending number of expected agent answers to " + sliceName);
 				}
 				slice.setAnswersExpected(answersExpected);
-			}
-			catch(Throwable t) {
+				
+			} catch(Throwable t) {
 				myLogger.log(Logger.WARNING, "Error while sending number of expected agent answers to slice " + sliceName, t);
 			}
 		}
@@ -712,8 +748,8 @@ public class SimulationService extends BaseService {
 						myLogger.log(Logger.FINER, "Sending agent answers to manager at lice " + sliceName);
 					}
 					slice.notifyManagerPutAgentAnswers(agentAnswers);
-				}
-				catch(Throwable t) {
+					
+				} catch(Throwable t) {
 					myLogger.log(Logger.WARNING, "Error while sending agent answers to slice " + sliceName, t);
 				}
 			}
@@ -755,8 +791,8 @@ public class SimulationService extends BaseService {
 					if (notified==true) {
 						return notified;	
 					}
-				}
-				catch(Throwable t) {
+					
+				} catch(Throwable t) {
 					myLogger.log(Logger.WARNING, "Error while sending a notification to agent '" + agentAID.getLocalName() + "' at slice " + sliceName, t);
 				}
 			}
@@ -787,8 +823,8 @@ public class SimulationService extends BaseService {
 						myLogger.log(Logger.FINER, "Sending notification to manager at lice " + sliceName);
 					}
 					return slice.notifyManager(notification);
-				}
-				catch(Throwable t) {
+					
+				} catch(Throwable t) {
 					myLogger.log(Logger.WARNING, "Error while sending notification to Manager at slice " + sliceName, t);
 				}
 			}
@@ -817,8 +853,8 @@ public class SimulationService extends BaseService {
 					myLogger.log(Logger.FINER, "Try sending 'pause simulation'-message to " + sliceName + "!");
 				}
 				slice.setPauseSimulation(pauseSimulation);
-			}
-			catch(Throwable t) {
+				
+			} catch(Throwable t) {
 				myLogger.log(Logger.WARNING, "Error while sending 'pause simulation'-message to slice " + sliceName, t);
 			}
 		}
@@ -846,8 +882,8 @@ public class SimulationService extends BaseService {
 					myLogger.log(Logger.FINER, "Sending migration notification to agents at " + sliceName);
 				}
 				slice.setAgentMigration(transferAgents);
-			}
-			catch(Throwable t) {
+				
+			} catch(Throwable t) {
 				myLogger.log(Logger.WARNING, "Error while sending migration notification to agents at slice " + sliceName, t);
 			}
 		}
@@ -875,8 +911,8 @@ public class SimulationService extends BaseService {
 					myLogger.log(Logger.FINER, "Try to stop simulation-agents on " + sliceName );
 				}
 				slice.stopSimulationAgents();
-			}
-			catch(Throwable t) {
+				
+			} catch(Throwable t) {
 				myLogger.log(Logger.WARNING, "Error while try to get Location-Object from " + sliceName, t);
 			}
 		}	
@@ -901,8 +937,8 @@ public class SimulationService extends BaseService {
 					myLogger.log(Logger.FINER, "Sending EnvironmentModel to DisplayAgents over " + sliceName);
 				}
 				slice.displayAgentSetEnvironmentModel(envModel);
-			}
-			catch(Throwable t) {
+				
+			} catch(Throwable t) {
 				myLogger.log(Logger.WARNING, "Error while sending EnvironmentModel to DisplayAgents over slice  " + sliceName, t);
 			}	
 		}
@@ -927,8 +963,8 @@ public class SimulationService extends BaseService {
 					myLogger.log(Logger.FINER, "Sending Notification to DisplayAgents over " + sliceName);
 				}
 				slice.displayAgentNotification(notification);
-			}
-			catch(Throwable t) {
+				
+			} catch(Throwable t) {
 				myLogger.log(Logger.WARNING, "Error while sending Notification to DisplayAgents over slice  " + sliceName, t);
 			}	
 		}
@@ -994,6 +1030,12 @@ public class SimulationService extends BaseService {
 						myLogger.log(Logger.FINE, "Received AID of the Agent-Manager");
 					}	
 					setManagerAgent(envManager);
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_GET_ENVIRONMENT_MODEL_FROM_SETUP)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Received request for environment model from setup");
+					}
+					cmd.setReturnValue(getEnvironmentModelFromSetup());
 					
 				} else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_MODEL)) {
 					EnvironmentModel envModel = (EnvironmentModel) params[0];
@@ -1141,6 +1183,26 @@ public class SimulationService extends BaseService {
 			environmentManagerDescription = envManager;
 		}
 		
+		/**
+		 * Returns an {@link EnvironmentModel} copy from the setup, if available.
+		 * @return the environment model from setup
+		 */
+		private EnvironmentModel getEnvironmentModelFromSetup() {
+
+			EnvironmentModel envModel = null;
+			Project currProject = Application.getProjectFocused();
+			if (currProject!=null) {
+				// --- Get the environment model from the controller ----------
+				EnvironmentController envController = currProject.getEnvironmentController();
+				if (envController!=null) {
+					EnvironmentModel envModelTmp = envController.getEnvironmentModel();
+					if (envModelTmp!=null) {
+						envModel = envModelTmp.getCopy();
+					}
+				}
+			}
+			return envModel;
+		}
 		/**
 		 * Sets the environment model.
 		 *

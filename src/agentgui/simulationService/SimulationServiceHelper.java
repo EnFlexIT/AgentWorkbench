@@ -231,6 +231,24 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	 */
 	public boolean notifyManagerAgent(EnvironmentNotification notification) throws ServiceException;
 	
+	
+	/**
+	 * Returns the {@link EnvironmentModel} from the setup of the end user application.
+	 *
+	 * @return the environment model from setup
+	 * @throws ServiceException the service exception
+	 */
+	public EnvironmentModel getEnvironmentModelFromSetup() throws ServiceException;
+
+	/**
+	 * Returns the current the {@link EnvironmentModel}.
+	 *
+	 * @return the environment model
+	 * @throws ServiceException the ServiceException
+	 * @see EnvironmentModel
+	 */
+	public EnvironmentModel getEnvironmentModel() throws ServiceException;
+	
 	/**
 	 * Can be used in order to set and distribute an {@link EnvironmentModel} without 
 	 * a direct notification to the involved agents.
@@ -252,14 +270,6 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	 */
 	public void setEnvironmentModel(EnvironmentModel envModel, boolean notifySensorAgents) throws ServiceException;
 
-	/**
-	 * Returns the current the EnvironmentModel.
-	 *
-	 * @return the environment model
-	 * @throws ServiceException the ServiceException
-	 * @see EnvironmentModel
-	 */
-	public EnvironmentModel getEnvironmentModel() throws ServiceException;
 	
 	/**
 	 * This method can be used by a {@link SimulationAgent} in order to set their part
@@ -326,5 +336,6 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	 * @throws ServiceException the service exception
 	 */
 	public void displayAgentNotification(EnvironmentNotification notification) throws ServiceException;
+	
 	
 }

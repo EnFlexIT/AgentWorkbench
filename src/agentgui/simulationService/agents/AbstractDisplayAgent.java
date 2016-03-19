@@ -76,14 +76,14 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 
 	protected boolean isPausedSimulation = true;
 	private boolean isAgentGuiEmbedded = false;
-	private EnvironmentController myEnvironmentController = null;
+	private EnvironmentController myEnvironmentController;
 	
-	private JFrame jFrameStandalone = null;
-	private JPanel usePanel = null;
+	private JFrame jFrameStandalone;
+	private JPanel usePanel;
 
 	/** The display elements for the current TimeModel */
-	private JToolBar jToolBar4TimeModel = null;
-	private TimeModelBaseExecutionElements jToolBarElements4TimeModel = null;
+	private JToolBar jToolBar4TimeModel;
+	private TimeModelBaseExecutionElements jToolBarElements4TimeModel;
 
 	
 	/**

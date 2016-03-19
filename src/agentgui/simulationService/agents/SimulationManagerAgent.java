@@ -85,20 +85,21 @@ public abstract class SimulationManagerAgent extends Agent {
 	 */
 	@Override
 	protected void setup() {		  
-		
-		// --- Get the initial EnvironmentModel from Agent.GUI setup ----------
-		this.setEnvironmentModel(this.getEnvironmentModelFromSetup());
-		
+
 		// --- Get the helper for the SimulationService -----------------------
 		try {
-		  simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-		  simHelper.setManagerAgent(this.getAID());
+		  this.simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+		  this.simHelper.setManagerAgent(this.getAID());
 		  
-		} catch(ServiceException ex) {
-			  ex.printStackTrace();
+		} catch (ServiceException se) {
+			  se.printStackTrace();
 			  this.doDelete();
 			  return;
 		}
+		
+		// --- Get the initial EnvironmentModel from Agent.GUI setup ----------
+		this.setEnvironmentModel(this.getEnvironmentModelFromSetup());
+
 		this.sensorPlugIn();
 		this.addNotificationHandler();
 	}
@@ -117,10 +118,10 @@ public abstract class SimulationManagerAgent extends Agent {
 	 */
 	protected void sensorPlugIn() {
 		// --- Start the ServiceSensor ------------------------------
-		mySensor = new ServiceSensorManager(this);
+		this.mySensor = new ServiceSensorManager(this);
 		// --- Register the sensor to the SimulationService ---------
 		try {
-			simHelper.sensorPlugIn4Manager(mySensor);	
+			this.simHelper.sensorPlugIn4Manager(this.mySensor);	
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -132,11 +133,11 @@ public abstract class SimulationManagerAgent extends Agent {
 	protected void sensorPlugOut() {
 		// --- plug-out the Sensor ----------------------------------
 		try {
-			simHelper.sensorPlugOut4Manager(mySensor);	
+			this.simHelper.sensorPlugOut4Manager(this.mySensor);	
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		mySensor = null;
+		this.mySensor = null;
 	}
 	
 	/**
@@ -189,24 +190,34 @@ public abstract class SimulationManagerAgent extends Agent {
 	/**
 	 * This method is used for initialising the simulation during the .setup()-method of the agent.
 	 * Here the environment model (see class agentgui.simulationService.environment.EnvironmentModel)
-	 * will be set out of the current SimulationSetup.
-	 * In case that you want to fill the EnvironmentModel with your own data, just overwrite this method. 
+	 * will be set out of the current Setup.
+	 * In case that you want to fill the {@link EnvironmentModel} with your own data, just overwrite this method. 
 	 *
-	 * @return the initial environment model
+	 * @return a copy of the {@link EnvironmentModel}, configured in the setup
 	 */
-	public EnvironmentModel getEnvironmentModelFromSetup(){
+	public EnvironmentModel getEnvironmentModelFromSetup() {
 		
 		EnvironmentModel envModel = null;
-		Project currProject = Application.getProjectFocused();
-		if (currProject!=null) {
-			// --- Get the environment model from the controller --
-			EnvironmentController envController = currProject.getEnvironmentController();
-			if (envController!=null) {
-				EnvironmentModel envModelTmp = envController.getEnvironmentModel();
-				if (envModelTmp!=null) {
-					envModel = envModelTmp.getCopy();
+		// --- Try to get the environment model from the project setup -------- 
+		try {
+			envModel = this.simHelper.getEnvironmentModelFromSetup();
+		} catch (ServiceException se) {
+			se.printStackTrace();
+		}
+		
+		// --- Backup solution by directly accessing Application --------------
+		if (envModel==null) {
+			Project currProject = Application.getProjectFocused();
+			if (currProject!=null) {
+				// --- Get the environment model from the controller ----------
+				EnvironmentController envController = currProject.getEnvironmentController();
+				if (envController!=null) {
+					EnvironmentModel envModelTmp = envController.getEnvironmentModel();
+					if (envModelTmp!=null) {
+						envModel = envModelTmp.getCopy();
+					}
 				}
-			}
+			}	
 		}
 		return envModel;
 	}
@@ -231,7 +242,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * @throws ServiceException the ServiceException
 	 */
 	public void stepSimulation(int answersExpected) throws ServiceException {
-		simHelper.stepSimulation(this.getEnvironmentModel(), answersExpected);
+		this.simHelper.stepSimulation(this.getEnvironmentModel(), answersExpected);
 	}
 	
 	/**
@@ -243,7 +254,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	 */
 	public void stepSimulation(EnvironmentModel environmentModel, int answersExpected) throws ServiceException {
 		this.setEnvironmentModel(environmentModel);
-		simHelper.stepSimulation(this.getEnvironmentModel(), answersExpected);
+		this.simHelper.stepSimulation(this.getEnvironmentModel(), answersExpected);
 	}
 
 	/**
@@ -251,7 +262,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	 * @throws ServiceException ServiceException
 	 */
 	public void resetEnvironmentInstanceNextParts() throws ServiceException {
-		simHelper.resetEnvironmentInstanceNextParts();
+		this.simHelper.resetEnvironmentInstanceNextParts();
 	}
 	
 	/**
@@ -322,7 +333,7 @@ public abstract class SimulationManagerAgent extends Agent {
 		boolean send = false;
 		EnvironmentNotification myNotification = new EnvironmentNotification(this.getAID(), true, notification);
 		try {
-			send = simHelper.notifySensorAgent(receiverAID, myNotification);
+			send = this.simHelper.notifySensorAgent(receiverAID, myNotification);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -334,7 +345,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	 */
 	public void sendDisplayAgentNotificationUpdateEnvironmentModel() {
 		try {
-			simHelper.displayAgentSetEnvironmentModel(this.getEnvironmentModel());
+			this.simHelper.displayAgentSetEnvironmentModel(this.getEnvironmentModel());
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -346,7 +357,7 @@ public abstract class SimulationManagerAgent extends Agent {
 	public void sendDisplayAgentNotification(DisplayAgentNotification displayAgentNotification) {
 		try {
 			EnvironmentNotification notification = new EnvironmentNotification(getAID(), true, displayAgentNotification);
-			simHelper.displayAgentNotification(notification);
+			this.simHelper.displayAgentNotification(notification);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -365,7 +376,7 @@ public abstract class SimulationManagerAgent extends Agent {
 			this.notifications.add(notification);	
 		}
 		// --- restart the CyclicNotificationHandler ---------------------
-		notifyHandler.restart();	
+		this.notifyHandler.restart();	
 			
 	}
 	/**

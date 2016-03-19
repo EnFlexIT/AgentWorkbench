@@ -93,6 +93,8 @@ public interface SimulationServiceSlice extends Service.Slice {
 	
 	// ----------------------------------------------------------
 	// --- Methods on the EnvironmentModel ----------------------
+	/** The Constant SIM_SET_ENVIRONMENT_MODEL_FROM_SETUP. */
+	static final String SIM_GET_ENVIRONMENT_MODEL_FROM_SETUP = "sim-set-environment-model-from-setup";
 	/** The Constant SIM_SET_ENVIRONMENT_MODEL. */
 	static final String SIM_SET_ENVIRONMENT_MODEL = "sim-set-environment-model";
 	/** The Constant SIM_STEP_SIMULATION. */
@@ -111,6 +113,15 @@ public interface SimulationServiceSlice extends Service.Slice {
 	static final String SIM_GET_ENVIRONMENT_NEXT_PARTS = "get-environment-next-parts";
 	/** The Constant SIM_RESET_ENVIRONMENT_NEXT_PARTS. */
 	static final String SIM_RESET_ENVIRONMENT_NEXT_PARTS = "reset-environment-next-parts";
+	
+	
+	/**
+	 * Returns the {@link EnvironmentModel} from the setup within the end user application.
+	 *
+	 * @return the environment model from the setup
+	 * @throws IMTPException the IMTP exception
+	 */
+	public EnvironmentModel getEnvironmentModelFromSetup() throws IMTPException;
 	
 	/**
 	 * Can be used in order to set and distribute an {@link EnvironmentModel} without

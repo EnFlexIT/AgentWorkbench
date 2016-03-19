@@ -137,6 +137,31 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	// ----------------------------------------------------------
 	// --- Methods on the Manager-Agent --- S T O P -------------
 	// ----------------------------------------------------------
+	
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#getEnvironmentModelFromSetup()
+	 */
+	@Override
+	public EnvironmentModel getEnvironmentModelFromSetup() throws IMTPException {
+
+		try {
+			GenericCommand cmd = new GenericCommand(SIM_GET_ENVIRONMENT_MODEL_FROM_SETUP, SimulationService.NAME, null);
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if ((result!=null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			return (EnvironmentModel) result;
+			
+		} catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.SimulationServiceSlice#setEnvironmentModel(agentgui.simulationService.environment.EnvironmentModel)
 	 */
@@ -157,8 +182,8 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
 				}
 			}
-		}
-		catch(ServiceException se) {
+			
+		} catch(ServiceException se) {
 			throw new IMTPException("Unable to access remote node", se);
 		}			
 	}
@@ -499,5 +524,5 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 			throw new IMTPException("Unable to access remote node", se);
 		}	
 	}
-	
+
 }

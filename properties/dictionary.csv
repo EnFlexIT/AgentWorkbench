@@ -348,6 +348,7 @@ de;Lade Setup;Load Setup;;;
 de;Lade Umgebung aus;Loading environment from
 de;Lade Umgebungsdatei;Getting environment file
 de;Lastaufzeichnung mit dem Start von JADE beginnen;Record system load immediately on JADE startup;;;
+de;Laufzeit-Visualisierung;Runtime Visualisation;;;
 de;Letzte Änderungen;Recent changes;;;
 de;Liniendicke;Line thickness;;;
 de;Load Monitor öffnen;Open Load Monitor;null;null;null
@@ -521,8 +522,7 @@ de;Simulation-Start;Start simulation
 de;Simulation-Stop;Stop simulation
 de;Simulation;Simulation
 de;Simulations-Setup;Simulation-Setup
-de;Simulations-Visualisierung;Simulation-Visualization
-de;Simulationsumgebung;Simulation Environment
+de;Simulations-Visualisierung;;;;
 de;Simulationszeit;Simulation time
 de;Sniffer-Agenten starten;Start Sniffer agent
 de;Soll die aktuelle Einstellung trotzdem übernommen werden?;Accept setting anyway?;;;
@@ -592,6 +592,7 @@ de;Umgebungs-Setup;"Environment setup	"
 de;Umgebungsdatei;Environment file
 de;Umgebungseigenschaften;Environment properties
 de;Umgebungskonfiguration;Environment Configuration
+de;Umgebungsmodell;Environment Model;;;
 de;Umgebungstyp bzw. -modell für Simulation und Visualisierung;Environment typ and model for simulation and visualization;;;
 de;Umgebungstyp;Environment Type
 de;Umschalten von;Switch from;;;
