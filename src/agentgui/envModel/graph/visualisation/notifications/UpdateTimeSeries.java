@@ -329,7 +329,8 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 			for (int i = 0; i < this.getValueVector().size(); i++) {
 				// -- Get the new value for the Time Series i -------
 				Float newFloatValue = this.getValueVector().get(i);
-					
+				if (newFloatValue==null) continue;
+				
 				// --- Create a new value pair ----------------------
 				Simple_Long sl = new Simple_Long();
 				sl.setLongValue(this.getTimeStamp());
@@ -463,6 +464,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 						for (int c = 0; c < this.getValueVector().size(); c++) {
 							// -- Get the new value for the Time Series i -------
 							Float newFloatValue = this.getValueVector().get(c);
+							if (newFloatValue==null) continue;
 							// --- Add new value pair to data model -------------
 							dataModelTimeSeries.getTimeSeriesChartModel().addOrUpdateValuePair(c, this.getTimeStamp(), newFloatValue);
 						}

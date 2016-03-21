@@ -656,7 +656,9 @@ public class SimulationService extends BaseService {
 			}
 			if (slice.getNode().getName().equals(this.myContainer.getNodeDescriptor().getName())==true) {
 				this.environmentModel = envModel;
-				this.getServiceActuator().notifySensors(envModel, notifySensorAgents);
+				if (notifySensorAgents==true) {
+					this.getServiceActuator().notifySensors(envModel, this.stepSimulationAsynchronous);
+				}
 			} else {
 				this.setEnvironmentModel2Slice(slice, envModel, notifySensorAgents);	
 			}
@@ -1212,7 +1214,7 @@ public class SimulationService extends BaseService {
 		private void setEnvironmentModel(EnvironmentModel newEnvironmentModel, boolean notifySensorAgents) {
 			environmentModel = newEnvironmentModel;
 			if (notifySensorAgents==true) {
-				getServiceActuator().notifySensors(environmentModel, stepSimulationAsynchronous );				
+				getServiceActuator().notifySensors(environmentModel, stepSimulationAsynchronous);				
 			}
 		}
 		/**

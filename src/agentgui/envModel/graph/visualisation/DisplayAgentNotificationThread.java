@@ -76,7 +76,7 @@ public class DisplayAgentNotificationThread extends Thread {
 	
 		while(true) {
 			
-			while(this.displayNotificationHandler.getDisplayNotificationStack().size()>0) {
+			while (this.displayNotificationHandler.getDisplayNotificationStack().size()>0) {
 
 				final DisplayAgentNotificationGraph displayNotification = this.displayNotificationHandler.getDisplayNotificationStack().remove(0);
 				boolean proceed = true;

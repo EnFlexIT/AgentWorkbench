@@ -940,7 +940,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private void setPickedObjects(Vector<GraphElement> objects) {
 		Iterator<GraphElement> objIter = objects.iterator();
 		while (objIter.hasNext()) {
-			setPickedObject(objIter.next());
+			this.setPickedObject(objIter.next());
 		}
 	}
 
@@ -1348,6 +1348,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 				break;
 				
 			case NetworkModelNotification.NETWORK_MODEL_Repaint:
+				this.repaintGraph();
+				break;
+				
 			case NetworkModelNotification.NETWORK_MODEL_Component_Added:
 			case NetworkModelNotification.NETWORK_MODEL_Component_Removed:
 			case NetworkModelNotification.NETWORK_MODEL_Nodes_Merged:

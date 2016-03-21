@@ -132,8 +132,15 @@ public class ReflectClassFiles extends ArrayList<String> {
 			
 			// --- Add classes found, if any ------------------------ 
 			if (classesFound!=null && classesFound.size()!=0){
-				this.addAll(classesFound);
+				// --- Unify results -------------------------------- 
+				for (int j = 0; j < classesFound.size(); j++) {
+					String classFound = classesFound.get(j);
+					if (this.contains(classFound)==false) {
+						this.add(classFound);		
+					}
+				}
 			}
+			
 		}// --- end for ---
 	}
 
