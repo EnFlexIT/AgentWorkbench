@@ -56,13 +56,13 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import agentgui.core.application.Application;
-import agentgui.simulationService.load.threading.ThreadInfoStorage;
-import agentgui.simulationService.load.threading.ThreadInfoStorageAgent;
-import agentgui.simulationService.load.threading.ThreadInfoStorageCluster;
-import agentgui.simulationService.load.threading.ThreadInfoStorageContainer;
-import agentgui.simulationService.load.threading.ThreadInfoStorageJVM;
-import agentgui.simulationService.load.threading.ThreadInfoStorageMachine;
 import agentgui.simulationService.load.threading.ThreadProperties;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorageAgent;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorageCluster;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorageContainer;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorageJVM;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorageMachine;
 
 /**
  * The Class ThreadInfoStorageTree.

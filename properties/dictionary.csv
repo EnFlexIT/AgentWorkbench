@@ -191,6 +191,7 @@ de;Element-Typ;Element type
 de;Element;Element
 de;Embedded System Agent: Bitte wählen Sie den Agenten aus, der gestartet werden soll;Embedded System Agent: Please select the agent that you want to execute;;;
 de;Embedded System Agent;Embedded System Agent;;;
+de;Empirische, reale Metrik;real metric;;;
 de;Endanwender-Ansicht;End users view
 de;Englisch;English
 de;Entferne Agent;Remove agent
@@ -363,6 +364,7 @@ de;MAS-Start;MAS-Start;;;
 de;MAS-Stop;MAS-Stop
 de;MAS;MAS
 de;MTP-Adresse;MTP-Address;;;
+de;Manuelle, vorhergesagte Metrik;predictive metric;;;
 de;Maximale Geschwindigkeit;Maximum speed
 de;Maximieren;Maximize;;;
 de;Maßstab festlegen;Set scale
@@ -371,6 +373,8 @@ de;Mess-Agenten anhalten;Stop load measure agent
 de;Mess-Agenten starten;Start load measure agent
 de;Messung aufzeichnen;Record measurement
 de;Messungsaufzeichnung beenden;Stop recording measurement
+de;Metrik-Konfiguration;Metrics Configuration;;;
+de;Metriken bei Simulationsstop aktualisieren;Autosave Real Metrics on simulation stop;;;
 de;Millisekunden;Milliseconds;;;
 de;Minute;Minute;;;
 de;Minuten;Minutes;;;
@@ -609,6 +613,7 @@ de;Vergrößern ...;Expand View ...
 de;Vergrößern;Zoom In
 de;Verkleinern;Zoom out
 de;Verteilung + Grenzwerte;Distribution + Thresholds
+de;Verteilung basierend auf:;Distribution based on:;;;
 de;Verteilung;Distribution
 de;Verzeichnis bereits vorhanden!;Directory already exists!
 de;Verzeichnis gepackt zu;Folder packed to;;;
@@ -710,6 +715,7 @@ en;;Graph-Prototype;;;
 en;;Measurments;;;
 en;;Milliseconds;;;
 en;;No Graph-Prototype defined for;;;
+en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;;Number of changes;;;
 en;;Paste from Clipboard;;;
 en;;Pause Thread Measurement;;;

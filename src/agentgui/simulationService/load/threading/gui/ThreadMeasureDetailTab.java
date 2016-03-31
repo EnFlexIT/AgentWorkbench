@@ -48,7 +48,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 
-import agentgui.simulationService.load.threading.ThreadInfoStorage;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
 
 /**
  * The Class ThreadMeasureDetailTab.

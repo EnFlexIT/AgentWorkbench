@@ -110,6 +110,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JCheckBox jCheckBoxThresholdDefinition;
 	private JCheckBox jCheckBoxShowLoadMonitor;
 	private JCheckBox jCheckBoxShowThreadMonitor;
+	private JCheckBox jCheckboxAutosaveRealMetricsOnSimStop;
 	private JCheckBox jCheckBoxImmediatelyStartLoadRecording;
 	
 	private JComboBox<String> jComboBoxJVMMemoryInitial;
@@ -193,6 +194,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		jCheckBoxThresholdDefinition.setText(Language.translate("Eigene Auslastungsgrenzwerte verwenden"));
 		jCheckBoxShowLoadMonitor.setText(Language.translate("Auslastungs-Monitor bei JADE-Start anzeigen"));
 		jCheckBoxShowThreadMonitor.setText(Language.translate("Thread-Monitor bei JADE-Start anzeigen"));
+		jCheckboxAutosaveRealMetricsOnSimStop.setText(Language.translate("Metriken bei Simulationsstop aktualisieren"));
 		jCheckBoxImmediatelyStartLoadRecording.setText(Language.translate("Lastaufzeichnung mit dem Start von JADE beginnen"));
 		
 		jLabelMemoryAlloc.setText(Language.translate("Arbeitsspeicher für Remote-JVM"));
@@ -256,9 +258,16 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			gbcJCheckBoxShowThreadMonitor.gridy = 3;
 			gbcJCheckBoxShowThreadMonitor.insets = new Insets(5, 10, 5, 0);
 			gbcJCheckBoxShowThreadMonitor.anchor = GridBagConstraints.WEST;
+			
+			GridBagConstraints gbcJCheckBoxAutosaveRealMetricsOnSimStop = new GridBagConstraints();
+			gbcJCheckBoxAutosaveRealMetricsOnSimStop.gridx = 0;
+			gbcJCheckBoxAutosaveRealMetricsOnSimStop.gridy = 4;
+			gbcJCheckBoxAutosaveRealMetricsOnSimStop.insets = new Insets(5, 10, 5, 0);
+			gbcJCheckBoxAutosaveRealMetricsOnSimStop.anchor = GridBagConstraints.WEST;
+			
 			GridBagConstraints gbcJCheckBoxImmStartLoadRecording = new GridBagConstraints();
 			gbcJCheckBoxImmStartLoadRecording.gridx = 0;
-			gbcJCheckBoxImmStartLoadRecording.gridy = 4;
+			gbcJCheckBoxImmStartLoadRecording.gridy = 5;
 			gbcJCheckBoxImmStartLoadRecording.insets = new Insets(5, 10, 5, 0);
 			gbcJCheckBoxImmStartLoadRecording.anchor = GridBagConstraints.WEST;
 			
@@ -266,59 +275,59 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			gbc_jSeparator02.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jSeparator02.insets = new Insets(0, 10, 5, 100);
 			gbc_jSeparator02.gridx = 0;
-			gbc_jSeparator02.gridy = 6;
+			gbc_jSeparator02.gridy = 7;
 
 			GridBagConstraints gbcJCheckBoxStatic = new GridBagConstraints();
 			gbcJCheckBoxStatic.gridx = 0;
-			gbcJCheckBoxStatic.gridy = 7;
+			gbcJCheckBoxStatic.gridy = 8;
 			gbcJCheckBoxStatic.anchor = GridBagConstraints.WEST;
 			gbcJCheckBoxStatic.insets = new Insets(10, 10, 5, 0);
 			GridBagConstraints gbcJPanelStatic = new GridBagConstraints();
 			gbcJPanelStatic.gridx = 0;
-			gbcJPanelStatic.gridy = 8;
+			gbcJPanelStatic.gridy = 9;
 			gbcJPanelStatic.fill = GridBagConstraints.NONE;
 			gbcJPanelStatic.weightx = 1.0;
 			gbcJPanelStatic.insets = new Insets(5, 32, 5, 10);
 			gbcJPanelStatic.anchor = GridBagConstraints.NORTHWEST;
 			GridBagConstraints gbcJPanelStaticClass = new GridBagConstraints();
 			gbcJPanelStaticClass.gridx = 0;
-			gbcJPanelStaticClass.gridy = 9;
+			gbcJPanelStaticClass.gridy = 10;
 			gbcJPanelStaticClass.anchor = GridBagConstraints.NORTHWEST;
 			gbcJPanelStaticClass.insets = new Insets(5, 32, 5, 0);
 			GridBagConstraints gbcJCheckBoxDynamic = new GridBagConstraints();
 			gbcJCheckBoxDynamic.gridx = 0;
-			gbcJCheckBoxDynamic.gridy = 10;
+			gbcJCheckBoxDynamic.gridy = 11;
 			gbcJCheckBoxDynamic.anchor = GridBagConstraints.WEST;
 			gbcJCheckBoxDynamic.insets = new Insets(10, 10, 5, 0);
 			GridBagConstraints gbcJPanelDynamic = new GridBagConstraints();
 			gbcJPanelDynamic.gridx = 0;
-			gbcJPanelDynamic.gridy = 11;
+			gbcJPanelDynamic.gridy = 12;
 			gbcJPanelDynamic.fill = GridBagConstraints.NONE;
 			gbcJPanelDynamic.weightx = 0.0;
 			gbcJPanelDynamic.insets = new Insets(5, 32, 5, 10);
 			gbcJPanelDynamic.anchor = GridBagConstraints.WEST;
 			GridBagConstraints gbcJCheckBoxThreshold = new GridBagConstraints();
 			gbcJCheckBoxThreshold.gridx = 0;
-			gbcJCheckBoxThreshold.gridy = 12;
+			gbcJCheckBoxThreshold.gridy = 13;
 			gbcJCheckBoxThreshold.insets = new Insets(10, 10, 5, 0);
 			gbcJCheckBoxThreshold.anchor = GridBagConstraints.WEST;
 			GridBagConstraints gbcJPanelThreshold = new GridBagConstraints();
 			gbcJPanelThreshold.gridx = 0;
-			gbcJPanelThreshold.gridy = 13;
+			gbcJPanelThreshold.gridy = 14;
 			gbcJPanelThreshold.insets = new Insets(5, 32, 5, 10);
 			gbcJPanelThreshold.anchor = GridBagConstraints.WEST;
 			gbcJPanelThreshold.fill = GridBagConstraints.NONE;
 			GridBagConstraints gridBagConstraintsDummy = new GridBagConstraints();
 			gridBagConstraintsDummy.gridx = 0;
-			gridBagConstraintsDummy.gridy = 14;
+			gridBagConstraintsDummy.gridy = 15;
 			gridBagConstraintsDummy.fill = GridBagConstraints.NONE;
 			gridBagConstraintsDummy.weighty = 1.0;
 			gridBagConstraintsDummy.insets = new Insets(10, 10, 10, 10);
 			gridBagConstraintsDummy.anchor = GridBagConstraints.NORTHWEST;
 			
 			GridBagLayout gbl_jPanelOnScrollPane = new GridBagLayout();
-			gbl_jPanelOnScrollPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-			gbl_jPanelOnScrollPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+			gbl_jPanelOnScrollPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+			gbl_jPanelOnScrollPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 			
 			
 			jPanelOnScrollPane = new JPanel();
@@ -328,10 +337,11 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			
 			jPanelOnScrollPane.add(getJCheckBoxShowLoadMonitor(), gbcJCheckBoxShowLoadMonitor);
 			jPanelOnScrollPane.add(getJCheckBoxShowThreadMonitor(), gbcJCheckBoxShowThreadMonitor);
+			jPanelOnScrollPane.add(getJCheckboxAutosaveRealMetricsOnSimStop(), gbcJCheckBoxAutosaveRealMetricsOnSimStop);
 			jPanelOnScrollPane.add(getJCheckBoxImmediatelyStartLoadRecording(), gbcJCheckBoxImmStartLoadRecording);
 			GridBagConstraints gbcJPanelRecording = new GridBagConstraints();
 			gbcJPanelRecording.gridx = 0;
-			gbcJPanelRecording.gridy = 5;
+			gbcJPanelRecording.gridy = 6;
 			gbcJPanelRecording.insets = new Insets(0, 32, 5, 10);
 			gbcJPanelRecording.anchor = GridBagConstraints.NORTHWEST;
 			jPanelOnScrollPane.add(getJPanelRecording(), gbcJPanelRecording);
@@ -1153,6 +1163,20 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		}
 		return jCheckBoxShowThreadMonitor;
 	}
+	
+	/**
+	 * Gets the j checkbox autosave real metrics on sim stop.
+	 * @return the j checkbox autosave real metrics on sim stop
+	 */
+	private JCheckBox getJCheckboxAutosaveRealMetricsOnSimStop() {
+		if (jCheckboxAutosaveRealMetricsOnSimStop == null) {
+			jCheckboxAutosaveRealMetricsOnSimStop = new JCheckBox();
+			jCheckboxAutosaveRealMetricsOnSimStop.setText("Metriken bei Simulationsstop aktualisieren");
+			jCheckboxAutosaveRealMetricsOnSimStop.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckboxAutosaveRealMetricsOnSimStop.addActionListener(this);
+		}
+		return jCheckboxAutosaveRealMetricsOnSimStop;
+	}
 	/**
 	 * This method initializes jCheckBoxDoLoadStatic	
 	 * @return javax.swing.JCheckBox	
@@ -1392,6 +1416,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		
 		this.jCheckBoxShowLoadMonitor.setSelected(currDistributionSetup.isShowLoadMonitorAtPlatformStart());
 		this.jCheckBoxShowThreadMonitor.setSelected(currDistributionSetup.isShowThreadMonitorAtPlatformStart());
+		this.jCheckboxAutosaveRealMetricsOnSimStop.setSelected(currDistributionSetup.isAutoSaveRealMetricsOnSimStop());
 		this.jCheckBoxImmediatelyStartLoadRecording.setSelected(currDistributionSetup.isImmediatelyStartLoadRecording());
 		this.setRecordingInterval(currDistributionSetup.getLoadRecordingInterval());
 		
@@ -1510,12 +1535,13 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			currDistributionSetup.setDoDynamicLoadBalancing(jCheckBoxDoLoadDynamic.isSelected());
 		} else if (trigger==jCheckBoxThresholdDefinition) {
 			currDistributionSetup.setUseUserThresholds(jCheckBoxThresholdDefinition.isSelected());
-		
 		} else if (trigger==jCheckBoxShowLoadMonitor) {
 			currDistributionSetup.setShowLoadMonitorAtPlatformStart(jCheckBoxShowLoadMonitor.isSelected());
 		} else if (trigger==jCheckBoxShowThreadMonitor) {
 			currDistributionSetup.setShowThreadMonitorAtPlatformStart(jCheckBoxShowThreadMonitor.isSelected());
-		}else if (trigger==jCheckBoxImmediatelyStartLoadRecording) {
+		} else if (trigger==jCheckboxAutosaveRealMetricsOnSimStop){
+			currDistributionSetup.setAutoSaveRealMetricsOnSimStop(jCheckboxAutosaveRealMetricsOnSimStop.isSelected());
+		} else if (trigger==jCheckBoxImmediatelyStartLoadRecording) {
 			currDistributionSetup.setImmediatelyStartLoadRecording(jCheckBoxImmediatelyStartLoadRecording.isSelected());
 		} else if (trigger==jComboBoxRecordingInterval) {
 			TimeSelection timeSelection = (TimeSelection) jComboBoxRecordingInterval.getSelectedItem();
@@ -1539,6 +1565,4 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			}
 		}
 	}
-
-	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

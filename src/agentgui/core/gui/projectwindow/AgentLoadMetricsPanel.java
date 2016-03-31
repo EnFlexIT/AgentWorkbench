@@ -38,6 +38,7 @@ import java.util.Vector;
 
 import javax.swing.JPanel;
 
+import agentgui.core.application.Language;
 import agentgui.core.project.AgentClassLoadMetrics;
 import agentgui.core.project.AgentClassMetricDescription;
 import agentgui.core.project.Project;
@@ -74,7 +75,7 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 	private Project currProject;
 
 	private boolean pauseObserver = false;
-	private JLabel jLabelPrdictive;
+	private JLabel jLabelPredictive;
 	private JRadioButton jRadioButtonPredictive;
 	private JRadioButton jRadioButtonReal;
 	private JScrollPane jScrollPaneMetric;
@@ -111,7 +112,7 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 		gbc_jLabelPrdictive.insets = new Insets(10, 10, 5, 0);
 		gbc_jLabelPrdictive.gridx = 0;
 		gbc_jLabelPrdictive.gridy = 0;
-		add(getJLabelPrdictive(), gbc_jLabelPrdictive);
+		add(getJLabelPredictive(), gbc_jLabelPrdictive);
 		GridBagConstraints gbc_jRadioButtonPredictive = new GridBagConstraints();
 		gbc_jRadioButtonPredictive.insets = new Insets(5, 10, 5, 0);
 		gbc_jRadioButtonPredictive.anchor = GridBagConstraints.WEST;
@@ -137,15 +138,20 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 		gbc_jScrollPaneMetric.gridy = 4;
 		add(getJScrollPaneMetric(), gbc_jScrollPaneMetric);
 		
+		jRadioButtonPredictive.setText(Language.translate("Manuelle, vorhergesagte Metrik"));
+		jRadioButtonReal.setText(Language.translate("Empirische, reale Metrik"));
+		jLabelPredictive.setText(Language.translate("Verteilung basierend auf:"));
+		jLabelHeaderMetrics.setText(Language.translate("Metrik-Konfiguration"));
+		
 		loadMetricsFromProject();
 	}
 	
-	private JLabel getJLabelPrdictive() {
-		if (jLabelPrdictive == null) {
-			jLabelPrdictive = new JLabel("Verteilung basierend auf:");
-			jLabelPrdictive.setFont(new Font("Dialog", Font.BOLD, 12));
+	private JLabel getJLabelPredictive() {
+		if (jLabelPredictive == null) {
+			jLabelPredictive = new JLabel("Verteilung basierend auf:");
+			jLabelPredictive.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
-		return jLabelPrdictive;
+		return jLabelPredictive;
 	}
 	private JRadioButton getJRadioButtonPredictive() {
 		if (jRadioButtonPredictive == null) {

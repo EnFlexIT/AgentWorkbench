@@ -38,6 +38,9 @@ import agentgui.core.application.Application;
 import agentgui.core.project.AgentClassLoadMetrics;
 import agentgui.core.project.AgentClassMetricDescription;
 import agentgui.core.project.Project;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorageAgent;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorageMachine;
 
 /**
  * The Class ThreadMeasureMetrics.
@@ -131,7 +134,6 @@ public class ThreadMeasureMetrics {
 				XYSeries series;
 				ThreadInfoStorageMachine actualMachine = iteratorMachine.next().getValue();
 				
-				
 				if (getCalcType().equals(CALC_TYPE_INTEGRAL_DELTA)) {
 					series = actualMachine.getXYSeriesMap().get(threadInfoStorage.DELTA_CPU_SYSTEM_TIME);
 					calcTypeValueMap.put(actualMachine.getName(), getIntegralForTimeSeries(series, 0, series.getItemCount()-1));				
@@ -162,7 +164,7 @@ public class ThreadMeasureMetrics {
 	/**
 	 * Adds or updates the agent class real metrics.
 	 */
-	public void addOrUpdateAgentClassRealMetrics(){
+	private void addOrUpdateAgentClassRealMetrics(){
 		
 		HashMap<String, AgentClassMetricDescription> mapAgentClass = new HashMap<String, AgentClassMetricDescription>();
 		

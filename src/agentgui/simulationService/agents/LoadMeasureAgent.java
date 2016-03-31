@@ -61,11 +61,11 @@ import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.gui.SystemLoadDialog;
 import agentgui.simulationService.load.gui.SystemLoadPanel;
 import agentgui.simulationService.load.gui.SystemLoadSingle;
-import agentgui.simulationService.load.threading.ThreadInfoStorage;
 import agentgui.simulationService.load.threading.ThreadMeasureBehaviour;
 import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.load.threading.ThreadProtocolVector;
 import agentgui.simulationService.load.threading.gui.ThreadMeasureDialog;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
 import agentgui.simulationService.ontology.OSInfo;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
@@ -220,9 +220,8 @@ public class LoadMeasureAgent extends Agent {
 			this.setSystemLoadDialog(null);	
 		}
 		if (threadDialog!=null) {
-			if(true){//TODO:config-option for automatic storing
+			if(currProject.getDistributionSetup().isAutoSaveRealMetricsOnSimStop()){
 				this.getThreadInfoStorage().getThreadMeasureMetrics().getMetrics();
-				this.getThreadInfoStorage().getThreadMeasureMetrics().addOrUpdateAgentClassRealMetrics();
 			}
 			this.getThreadDialog().setVisible(false);
 			this.setThreadDialog(null);	

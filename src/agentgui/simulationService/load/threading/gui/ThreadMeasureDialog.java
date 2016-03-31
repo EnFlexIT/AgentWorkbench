@@ -43,8 +43,8 @@ import java.awt.event.WindowEvent;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.simulationService.agents.LoadMeasureAgent;
-import agentgui.simulationService.load.threading.ThreadInfoStorage;
 import agentgui.simulationService.load.threading.ThreadProtocolVector;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
 
 /**
  * The Class ThreadMeasureDialog.

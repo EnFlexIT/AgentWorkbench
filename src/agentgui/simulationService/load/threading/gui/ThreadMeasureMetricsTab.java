@@ -35,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -46,8 +47,8 @@ import javax.swing.SortOrder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import agentgui.simulationService.load.threading.ThreadInfoStorage;
-import agentgui.simulationService.load.threading.ThreadInfoStorageAgent;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorageAgent;
 
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
@@ -296,7 +297,6 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 			
 		} else if (ae.getSource()== this.getBtnCalcMetrics()) {	
 			threadInfoStorage.getThreadMeasureMetrics().getMetrics();
-			threadInfoStorage.getThreadMeasureMetrics().addOrUpdateAgentClassRealMetrics();
 		} else if (ae.getSource()== this.getRdbtnIndividual()) {
 			threadInfoStorage.getThreadMeasureMetrics().setMetricBase(threadInfoStorage.getThreadMeasureMetrics().METRIC_BASE_INDIVIDUAL);
 		} else if (ae.getSource()== this.getRdbtnClass()) {

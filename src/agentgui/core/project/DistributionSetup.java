@@ -62,6 +62,7 @@ public class DistributionSetup implements Serializable {
 
 	private boolean showLoadMonitorAtPlatformStart = true;
 	private boolean showThreadMonitorAtPlatformStart = true;
+	private boolean autoSaveRealMetricsOnSimStop = false;
 	private boolean immediatelyStartLoadRecording = false;
 	private long loadRecordingInterval=500;
 	
@@ -203,6 +204,14 @@ public class DistributionSetup implements Serializable {
 	}
 	
 	/**
+	 * Checks if is auto save on sim stop.
+	 * @return true, if is auto save on sim stop
+	 */
+	public boolean isAutoSaveRealMetricsOnSimStop() {
+		return autoSaveRealMetricsOnSimStop;
+	}
+	
+	/**
 	 * Sets the show load monitor at platform start.
 	 * @param showLoadMonitorAtPlatformStart the new show load monitor at platform start
 	 */
@@ -216,6 +225,14 @@ public class DistributionSetup implements Serializable {
 	 */
 	public void setShowThreadMonitorAtPlatformStart(boolean showThreadMonitorAtPlatformStart) {
 		this.showThreadMonitorAtPlatformStart = showThreadMonitorAtPlatformStart;
+	}
+	
+	/**
+	 * Sets the auto save real metrics on sim stop.
+	 * @param autoSaveRealMetricsOnSimStop the new auto save real metrics on sim stop
+	 */
+	public void setAutoSaveRealMetricsOnSimStop(boolean autoSaveRealMetricsOnSimStop) {
+		this.autoSaveRealMetricsOnSimStop = autoSaveRealMetricsOnSimStop;
 	}
 	
 	/**
