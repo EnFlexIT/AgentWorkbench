@@ -1,13 +1,17 @@
-; Thu Aug 27 11:41:58 CEST 2015
+; Mon Apr 11 17:08:48 CEST 2016
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
 
-([AgentGUI-Distribution_ProjectKB_Instance_10133] of  Property_List
-)
+([AgentGUI-Distribution_ProjectKB_Instance_10133] of  Boolean
 
-([AgentGUI-Distribution_ProjectKB_Instance_10134] of  Property_List
-)
+	(boolean_value FALSE)
+	(name "ButtonDisplayed-View References to Value"))
+
+([AgentGUI-Distribution_ProjectKB_Instance_10134] of  Boolean
+
+	(boolean_value FALSE)
+	(name "ButtonDisplayed-Delete Instance"))
 
 ([AgentGUI-Distribution_ProjectKB_Instance_10135] of  Property_List
 )
@@ -15,75 +19,37 @@
 ([AgentGUI-Distribution_ProjectKB_Instance_10136] of  Property_List
 )
 
-([AgentGUI-Distribution_ProjectKB_Instance_10137] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_10138] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_10139] of  Property_List
+([AgentGUI-Distribution_ProjectKB_Instance_10137] of  Property_List
 )
 
-([AgentGUI-Distribution_ProjectKB_Instance_10140] of  Property_List
-)
-
-([AgentGUI-Distribution_ProjectKB_Instance_10141] of  Property_List
-)
-
-([AgentGUI-Distribution_ProjectKB_Instance_10142] of  Property_List
-)
-
-([AgentGUI-Distribution_ProjectKB_Instance_10143] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_10144] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_10145] of  Property_List
-)
-
-([AgentGUI-Distribution_ProjectKB_Instance_10146] of  Property_List
-)
-
-([AgentGUI-Distribution_ProjectKB_Instance_10147] of  Property_List
-)
-
-([AgentGUI-Distribution_ProjectKB_Instance_10148] of  String
+([AgentGUI-Distribution_ProjectKB_Instance_10163] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([AgentGUI-Distribution_ProjectKB_Instance_10149] of  Map
-)
-
-([AgentGUI-Distribution_ProjectKB_Instance_10150] of  Map_Entry
-
-	(key "InstanceDisplay.yellow_stickies")
-	(key_class "java.lang.String")
-	(value "AgentGUI-Distribution_ProjectKB_Instance_10149")
-	(value_class "java.util.Map"))
-
-([AgentGUI-Distribution_ProjectKB_Instance_10151] of  Map_Entry
+([AgentGUI-Distribution_ProjectKB_Instance_10164] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([AgentGUI-Distribution_ProjectKB_Instance_10152] of  Map_Entry
+([AgentGUI-Distribution_ProjectKB_Instance_10165] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
+
+([AgentGUI-Distribution_ProjectKB_Instance_10166] of  Map
+)
+
+([AgentGUI-Distribution_ProjectKB_Instance_10167] of  Map_Entry
+
+	(key "InstanceDisplay.yellow_stickies")
+	(key_class "java.lang.String")
+	(value "AgentGUI-Distribution_ProjectKB_Instance_10166")
+	(value_class "java.util.Map"))
 
 ([AgentGUI-Distribution_ProjectKB_Instance_133] of  Widget
 
@@ -419,10 +385,10 @@
 ([AgentGUI-Distribution_ProjectKB_Instance_224] of  Map
 
 	(entries
-		[AgentGUI-Distribution_ProjectKB_Instance_10150]
-		[AgentGUI-Distribution_ProjectKB_Instance_10151]
-		[AgentGUI-Distribution_ProjectKB_Instance_10152])
-	(referenced_maps [AgentGUI-Distribution_ProjectKB_Instance_10149]))
+		[AgentGUI-Distribution_ProjectKB_Instance_10164]
+		[AgentGUI-Distribution_ProjectKB_Instance_10165]
+		[AgentGUI-Distribution_ProjectKB_Instance_10167])
+	(referenced_maps [AgentGUI-Distribution_ProjectKB_Instance_10166]))
 
 ([AgentGUI-Distribution_ProjectKB_Instance_98] of  String
 
@@ -445,7 +411,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [AgentGUI-Distribution_ProjectKB_Instance_10148]))
+	(properties [AgentGUI-Distribution_ProjectKB_Instance_10163]))
 
 ([CLSES_TAB] of  Widget
 
@@ -670,11 +636,11 @@
 
 	(browser_slot_names [BROWSER_SLOT_NAMES])
 	(customized_instance_widgets
-		[STANDARD_CLASS_FORM_WIDGET]
-		[PAL_FORM_WIDGET]
 		[STANDARD_SLOT_FORM_WIDGET]
+		[STANDARD_CLASS_FORM_WIDGET]
+		[STANDARD_FACET_FORM_WIDGET]
 		[INSTANCE_ANNOTATION_FORM_WIDGET]
-		[STANDARD_FACET_FORM_WIDGET])
+		[PAL_FORM_WIDGET])
 	(default_cls_metaclass ":STANDARD-CLASS")
 	(default_facet_metaclass ":STANDARD-FACET")
 	(default_instance_widget_class_name "edu.stanford.smi.protege.widget.FormWidget")

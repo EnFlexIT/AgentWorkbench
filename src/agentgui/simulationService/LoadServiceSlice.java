@@ -231,7 +231,23 @@ public interface LoadServiceSlice extends Service.Slice {
 	 */
 	public void requestThreadMeasurement(long timestamp) throws IMTPException;
 
-	public void putThreadProtocol(ThreadProtocol threadProtocol) throws IMTPException ;
+	/**
+	 * Put thread protocol.
+	 *
+	 * @param threadProtocol the thread protocol
+	 * @throws IMTPException the IMTP exception
+	 */
+	public void putThreadProtocol(ThreadProtocol threadProtocol) throws IMTPException;
 
+	
+	// ----------------------------------------------------------
+	// --- Methods for available macines ------------------------
+	static final String SERVICE_REQUEST_AVAILABLE_MACHINES= "requestAvailableMachines";
+	
+	/**
+	 * Main request available machines.
+	 * @throws IMTPException the IMTP exception
+	 */
+	public void mainRequestAvailableMachines() throws IMTPException;
 
 }

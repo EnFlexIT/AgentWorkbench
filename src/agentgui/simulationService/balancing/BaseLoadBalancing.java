@@ -101,7 +101,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	public BaseLoadBalancing(Agent agent) {
 		super(agent);
 		this.currProject = Application.getProjectFocused();		
-		if (currProject!=null) {
+		if (this.currProject!=null) {
 			this.currSimSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
 			this.currDisSetup = this.currProject.getDistributionSetup();
 		}
@@ -125,6 +125,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 
 		try {
 			loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
+			loadHelper.requestAvailableMachines();
 		} catch (ServiceException e) {
 			System.err.println("Service " + LoadService.NAME + " was not started!");
 //			e.printStackTrace();

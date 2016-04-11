@@ -441,5 +441,29 @@ public class LoadServiceProxy extends SliceProxy implements LoadServiceSlice {
 			throw new IMTPException("Unable to access remote node", se);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.LoadServiceSlice#mainRequestAvailableMachines()
+	 */
+	@Override
+	public void mainRequestAvailableMachines() throws IMTPException {
+		
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_REQUEST_AVAILABLE_MACHINES, LoadService.NAME, null);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}			
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
 	
 }

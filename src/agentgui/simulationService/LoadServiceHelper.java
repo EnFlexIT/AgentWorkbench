@@ -41,6 +41,7 @@ import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.load.LoadAgentMap.AID_Container;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
+import agentgui.simulationService.ontology.ClientAvailableMachinesReply;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
@@ -248,8 +249,30 @@ public interface LoadServiceHelper extends ServiceHelper {
 	 * @param loadMeasureAgent the load measure agent
 	 * @throws ServiceException the service exception
 	 */
-	public void requestThreadMeasurements(LoadMeasureAgent loadMeasureAgent) throws ServiceException ;
+	public void requestThreadMeasurements(LoadMeasureAgent loadMeasureAgent) throws ServiceException;
 	
 	
+	/**
+	 * Requests at the main container for the available machines.
+	 *
+	 * @throws ServiceException the service exception
+	 */
+	public void requestAvailableMachines() throws ServiceException;
+	
+	/**
+	 * Puts the available machines to the load information.
+	 *
+	 * @param availableMachines the available machines
+	 * @throws ServiceException the service exception
+	 */
+	public void putAvailableMachines(ClientAvailableMachinesReply availableMachines) throws ServiceException;
+	
+	/**
+	 * Gets the available machines.
+	 *
+	 * @return the available machines
+	 * @throws ServiceException the service exception
+	 */
+	public ClientAvailableMachinesReply getAvailableMachines() throws ServiceException;
 	
 }

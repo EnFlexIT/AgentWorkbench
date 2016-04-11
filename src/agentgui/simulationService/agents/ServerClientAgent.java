@@ -57,6 +57,8 @@ import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
 import agentgui.simulationService.ontology.AgentGuiVersion;
 import agentgui.simulationService.ontology.BenchmarkResult;
+import agentgui.simulationService.ontology.ClientAvailableMachinesReply;
+import agentgui.simulationService.ontology.ClientAvailableMachinesRequest;
 import agentgui.simulationService.ontology.ClientRegister;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
@@ -282,6 +284,17 @@ public class ServerClientAgent extends Agent {
 		
 	}
 	
+	/**
+	 * Forwards a remote container request to the ServerMasterAgent, which comes from
+	 * the local SimulationService.
+	 *
+	 * @param agentAction the agent action
+	 */
+	private void forwardAvailableMachinesRequest(Concept agentAction) {
+		ClientAvailableMachinesRequest req = (ClientAvailableMachinesRequest) agentAction;
+		this.sendMessage2MainServer(req);
+	}
+	
 	// -----------------------------------------------------
 	// --- Message-Receive-Behaviour --- S T A R T ---------
 	// -----------------------------------------------------
@@ -383,6 +396,7 @@ public class ServerClientAgent extends Agent {
 						System.out.println( "Download Update-Information: " + updateInfoURL);
 						// --- Start update process ---------------------------
 						new AgentGuiUpdater(false, updateInfoURL).start();
+					
 						
 					} else if (agentAction instanceof ClientRemoteContainerRequest) {
 						// --- Forward to Server.Master -----------------------
@@ -390,14 +404,28 @@ public class ServerClientAgent extends Agent {
 					
 					} else if (agentAction instanceof ClientRemoteContainerReply) {
 						// --- Answer to 'RemoteContainerRequest' -------------
-						LoadServiceHelper loadHelper = null;
 						try {
-							loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
+							LoadServiceHelper loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
 							loadHelper.putContainerDescription((ClientRemoteContainerReply) agentAction);
 						} catch (ServiceException e) {
 							e.printStackTrace();
 						}
 
+						
+					} else if (agentAction instanceof ClientAvailableMachinesRequest) {
+						// --- Forward to Server.Master -----------------------
+						forwardAvailableMachinesRequest(agentAction);
+						
+					} else if (agentAction instanceof ClientAvailableMachinesReply) {
+						// --- Received information about available machines --
+						try {
+							LoadServiceHelper loadHelper = (LoadServiceHelper) getHelper(LoadService.NAME);
+							loadHelper.putAvailableMachines((ClientAvailableMachinesReply) agentAction);
+						} catch (ServiceException e) {
+							e.printStackTrace();
+						}
+						
+						
 					} else {
 						// --- Unknown AgentAction ------------
 						System.out.println( "----------------------------------------------------" );
@@ -408,8 +436,8 @@ public class ServerClientAgent extends Agent {
 					// --- Fallunterscheidung AgentAction --- E N D E -------------------
 					// ------------------------------------------------------------------
 				}
-			}
-			else {
+			
+			} else {
 				block();
 			}			
 		}

@@ -60,11 +60,14 @@ import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
 import agentgui.simulationService.ontology.AgentGuiVersion;
 import agentgui.simulationService.ontology.BenchmarkResult;
+import agentgui.simulationService.ontology.ClientAvailableMachinesReply;
+import agentgui.simulationService.ontology.ClientAvailableMachinesRequest;
 import agentgui.simulationService.ontology.ClientRegister;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
 import agentgui.simulationService.ontology.ClientTrigger;
 import agentgui.simulationService.ontology.ClientUnregister;
+import agentgui.simulationService.ontology.MachineDescription;
 import agentgui.simulationService.ontology.MasterUpdateNote;
 import agentgui.simulationService.ontology.OSInfo;
 import agentgui.simulationService.ontology.PlatformAddress;
@@ -383,7 +386,7 @@ public class ServerMasterAgent extends Agent {
 							this.prepareForClientOrSlaveUpdate(msg);
 						}
 
-					} else if ( agentAction instanceof SlaveTrigger ) {
+					} else if (agentAction instanceof SlaveTrigger) {
 						
 						SlaveTrigger st = (SlaveTrigger) agentAction;						
 						PlatformTime plTime = st.getTriggerTime();
@@ -395,7 +398,7 @@ public class ServerMasterAgent extends Agent {
 
 						dbTriggerPlatform(senderAID, plDate, plLoad, bmr);
 						
-					} else if ( agentAction instanceof ClientTrigger ) {
+					} else if (agentAction instanceof ClientTrigger) {
 						
 						ClientTrigger st = (ClientTrigger) agentAction;						
 						PlatformTime plTime = st.getTriggerTime();
@@ -407,18 +410,21 @@ public class ServerMasterAgent extends Agent {
 
 						dbTriggerPlatform(senderAID, plDate, plLoad, bmr);
 						
-					} else if ( agentAction instanceof SlaveUnregister ) {
+					} else if (agentAction instanceof SlaveUnregister) {
 
 						dbUnregisterPlatform(senderAID);
 						
-					} else if ( agentAction instanceof ClientUnregister ) {
+					} else if (agentAction instanceof ClientUnregister) {
 						
 						dbUnregisterPlatform(senderAID);
 						
-					} else if ( agentAction instanceof ClientRemoteContainerRequest ) {
+					} else if (agentAction instanceof ClientRemoteContainerRequest) {
 
 						ClientRemoteContainerRequest crcr = (ClientRemoteContainerRequest) agentAction;
 						handleClientRemoteContainerRequest(msg, crcr); // --- !!!!! ---
+
+					} else if (agentAction instanceof ClientAvailableMachinesRequest) {
+						handleAvailableMachineRequest(msg);
 						
 					} else {
 						// --- Unknown AgentAction ------------
@@ -870,7 +876,7 @@ public class ServerMasterAgent extends Agent {
 			return false;
 		}
 		
-		// --- If the SQL-statemant had no results, exit here -----------------
+		// --- If the SQL-statement had no results, exit here -----------------
 		if (exitRequest==true) {
 			return true;
 		}
@@ -908,9 +914,108 @@ public class ServerMasterAgent extends Agent {
 			e.printStackTrace();
 			return false;
 		}		
-		
 		return true;		
+	}
 	
+	
+	/**
+	 * Handles the request for available machines.
+	 *
+	 * @param request the request ACLMessage
+	 * @return true, if successful
+	 */
+	private boolean handleAvailableMachineRequest(ACLMessage request) {
+		
+		boolean exitRequest = false;
+		
+		ClientAvailableMachinesReply replyContent = new ClientAvailableMachinesReply();
+		replyContent.setAvailableMachines(new jade.util.leap.ArrayList());
+		
+		// --------------------------------------------------------------------
+		ResultSet res = this.dbConn.getSqlResult4ExecuteQuery("SELECT * FROM platforms");
+		// --------------------------------------------------------------------
+		try {
+			// --- Do we have a SQL-result ? ----------------------------------
+			if (res.wasNull()) exitRequest = true;
+			if (exitRequest==false && dbConn.getRowCount(res)==0) exitRequest = true;
+			
+			if (exitRequest==true ) {
+				// --- No Server.Slave was found => EXIT ----------------------
+				System.out.println(this.getLocalName() + ": No Server.Slave or Server.Client was found!");
+					
+			} else {
+				// --- Server.Slave was found => request a remote-container ---
+				while (res.next()) {
+					// --------------------------------------------------------
+					// --- Collect single machine info ------------------------
+					// --------------------------------------------------------
+					BenchmarkResult bench = new BenchmarkResult();
+					bench.setBenchmarkValue(res.getFloat("benchmark_value"));
+					
+					OSInfo os = new OSInfo();
+					os.setOs_name(res.getString("os_name"));
+					os.setOs_version(res.getString("os_version"));
+					os.setOs_arch(res.getString("os_arch"));
+					
+					AgentGuiVersion aguiVersion = new AgentGuiVersion();
+					aguiVersion.setMajorRevision(res.getInt("vers_major"));
+					aguiVersion.setMinorRevision(res.getInt("vers_minor"));
+					aguiVersion.setBuildNo(res.getInt("vers_build"));
+					
+					PlatformPerformance plPerf = new PlatformPerformance();
+					plPerf.setCpu_vendor(res.getString("cpu_vendor"));
+					plPerf.setCpu_model(res.getString("cpu_model"));
+					plPerf.setCpu_numberOf(res.getInt("cpu_n"));
+					plPerf.setCpu_speedMhz(res.getInt("cpu_speed_mhz"));
+					plPerf.setMemory_totalMB(res.getInt("memory_total_mb"));
+					
+					PlatformAddress plAdd = new PlatformAddress();
+					plAdd.setIp(res.getString("ip"));
+					plAdd.setUrl(res.getString("url"));
+					plAdd.setPort(res.getInt("jade_port"));
+					plAdd.setHttp4mtp(res.getString("http4mtp"));
+					
+					// --- Create machine description -------------------------
+					MachineDescription md = new MachineDescription();
+					md.setContactAgent(res.getString("contact_agent"));
+					md.setPlatformName(res.getString("platform_name"));
+					md.setIsAvailable(res.getBoolean("currently_available"));
+					md.setIsThresholdExceeded(res.getBoolean("current_load_threshold_exceeded"));
+					md.setBenchmarkResult(bench);
+					md.setRemoteOS(os);
+					md.setAgentGuiVersion(aguiVersion);
+					md.setPerformance(plPerf);
+					md.setPlatformAddress(plAdd);
+					
+					replyContent.getAvailableMachines().add(md);
+				}
+			}
+			res.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		// -------------------------------------------------------------------- 
+		// --- Answer Request with 'ClientAvailableMachinesReply' -------------
+		// --------------------------------------------------------------------		
+		Action act = new Action();
+		act.setActor(this.getAID());
+		act.setAction(replyContent);
+		
+		ACLMessage reply = request.createReply();
+		try {
+			this.getContentManager().fillContent(reply, act);
+			this.send(reply);
+		} catch (CodecException e) {
+			e.printStackTrace();
+			return false;
+		} catch (OntologyException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 	
 }

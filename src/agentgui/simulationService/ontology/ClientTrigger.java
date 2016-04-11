@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ClientTrigger
 * @author ontology bean generator
-* @version 2015/08/27, 11:18:49
+* @version 2016/04/11, 16:51:02
 */
 public class ClientTrigger implements AgentAction {
 

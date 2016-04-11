@@ -8,19 +8,30 @@ import jade.core.*;
 /**
 * Protege name: PlatformPerformance
 * @author ontology bean generator
-* @version 2015/08/27, 11:18:49
+* @version 2016/04/11, 16:51:02
 */
 public class PlatformPerformance implements Concept {
 
    /**
-* Protege name: cpu_numberOf
+* Protege name: cpu_speedMhz
    */
-   private int cpu_numberOf;
-   public void setCpu_numberOf(int value) { 
-    this.cpu_numberOf=value;
+   private int cpu_speedMhz;
+   public void setCpu_speedMhz(int value) { 
+    this.cpu_speedMhz=value;
    }
-   public int getCpu_numberOf() {
-     return this.cpu_numberOf;
+   public int getCpu_speedMhz() {
+     return this.cpu_speedMhz;
+   }
+
+   /**
+* Protege name: cpu_vendor
+   */
+   private String cpu_vendor;
+   public void setCpu_vendor(String value) { 
+    this.cpu_vendor=value;
+   }
+   public String getCpu_vendor() {
+     return this.cpu_vendor;
    }
 
    /**
@@ -35,17 +46,6 @@ public class PlatformPerformance implements Concept {
    }
 
    /**
-* Protege name: cpu_speedMhz
-   */
-   private int cpu_speedMhz;
-   public void setCpu_speedMhz(int value) { 
-    this.cpu_speedMhz=value;
-   }
-   public int getCpu_speedMhz() {
-     return this.cpu_speedMhz;
-   }
-
-   /**
 * Protege name: cpu_model
    */
    private String cpu_model;
@@ -57,14 +57,14 @@ public class PlatformPerformance implements Concept {
    }
 
    /**
-* Protege name: cpu_vendor
+* Protege name: cpu_numberOf
    */
-   private String cpu_vendor;
-   public void setCpu_vendor(String value) { 
-    this.cpu_vendor=value;
+   private int cpu_numberOf;
+   public void setCpu_numberOf(int value) { 
+    this.cpu_numberOf=value;
    }
-   public String getCpu_vendor() {
-     return this.cpu_vendor;
+   public int getCpu_numberOf() {
+     return this.cpu_numberOf;
    }
 
 }

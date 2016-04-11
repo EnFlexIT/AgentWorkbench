@@ -94,6 +94,8 @@ import agentgui.simulationService.load.LoadUnits;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
 import agentgui.simulationService.ontology.AgentGuiVersion;
 import agentgui.simulationService.ontology.BenchmarkResult;
+import agentgui.simulationService.ontology.ClientAvailableMachinesReply;
+import agentgui.simulationService.ontology.ClientAvailableMachinesRequest;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
 import agentgui.simulationService.ontology.OSInfo;
@@ -150,6 +152,9 @@ public class LoadService extends BaseService {
 	private LoadInformation loadInfo = new LoadInformation(); 
 	
 	private Boolean simulationServiceActive;
+	
+	private static ClientAvailableMachinesReply availableMachines;
+	
 	
 	/* (non-Javadoc)
 	 * @see jade.core.BaseService#init(jade.core.AgentContainer, jade.core.Profile)
@@ -423,6 +428,29 @@ public class LoadService extends BaseService {
 		public void requestThreadMeasurements(LoadMeasureAgent loadMeasurementAgent) throws ServiceException {
 			loadMeasureAgent = loadMeasurementAgent;
 			broadcastThreadMeasurementRequest(getAllSlices(), System.currentTimeMillis());
+		}
+
+		
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#requestAvailableMachines()
+		 */
+		@Override
+		public void requestAvailableMachines() throws ServiceException {
+			mainRequestAvailableMachines();
+		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#putAvailableMachines()
+		 */
+		@Override
+		public void putAvailableMachines(ClientAvailableMachinesReply availableMachines) throws ServiceException {
+			LoadService.availableMachines = availableMachines;
+		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.LoadServiceHelper#getAvailableMachines()
+		 */
+		@Override
+		public ClientAvailableMachinesReply getAvailableMachines() throws ServiceException {
+			return LoadService.availableMachines;
 		}
 
 	}
@@ -867,6 +895,34 @@ public class LoadService extends BaseService {
 		}
 	}	
 	
+	
+	/**
+	 * Sends a request to the server.client to ask for all available machines of the server.master.
+	 *
+	 * @return the name of the new container
+	 * @throws ServiceException the service exception
+	 */
+	private void mainRequestAvailableMachines() throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Start a request for availble machines!");
+		}
+		String sliceName = null;
+		try {
+			LoadServiceSlice slice = (LoadServiceSlice) getSlice(MAIN_SLICE);
+			sliceName = slice.getNode().getName();
+			if (myLogger.isLoggable(Logger.FINER)) {
+				myLogger.log(Logger.FINER, "Try to request for availble machines at (" + sliceName + ")");
+			}
+			slice.mainRequestAvailableMachines();
+			
+		} catch(Throwable t) {
+			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
+			myLogger.log(Logger.WARNING, "Error while starting a request for availble machines to " + sliceName, t);
+		}
+	}
+	
+	
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'ServiceComponent' ---- Start ---------------
 	// --------------------------------------------------------------
@@ -917,7 +973,7 @@ public class LoadService extends BaseService {
 					String nickName = (String) params[0];
 					String agentClassName = (String) params[1];
 					Object[] args = (Object[]) params[2];
-					cmd.setReturnValue( this.startAgent(nickName, agentClassName, args) );
+					cmd.setReturnValue(this.startAgent(nickName, agentClassName, args));
 				}
 				else if (cmdName.equals(LoadServiceSlice.SERVICE_START_NEW_REMOTE_CONTAINER)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
@@ -996,6 +1052,12 @@ public class LoadService extends BaseService {
 					}
 					ThreadProtocol threadProtocol = (ThreadProtocol) params[0];
 					this.putThreadProtocolToLoadMeasureAgent(threadProtocol);
+				} 
+				else if (cmdName.equals(LoadServiceSlice.SERVICE_REQUEST_AVAILABLE_MACHINES)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Starting available machine request");
+					}
+					this.requestAvailableMachines();
 				}
 			}
 			catch (Throwable t) {
@@ -1181,7 +1243,12 @@ public class LoadService extends BaseService {
 			loadMeasureAgent.addThreadProtocol(threadProtocol);
 		}
 		
-		
+		/**
+		 * Requests for available machines by forwarding this request to the server.client.
+		 */
+		public void requestAvailableMachines() {
+			sendMsgAvailableMachinesRequest();	
+		}
 		// -----------------------------------------------------------------
 		// --- The real functions for the Service Component --- Stop ------- 
 		// -----------------------------------------------------------------
@@ -1311,6 +1378,43 @@ public class LoadService extends BaseService {
 			}
 		}
 	}
+	
+	
+	/**
+	 * Forwards a request for available machines to the server.cliebnt.
+	 */
+	private void sendMsgAvailableMachinesRequest() {
+		
+		// --- Get the local Address of JADE ------------------------
+		String myPlatformAddress = myContainer.getPlatformID();
+		
+		// --- Define the AgentAction -------------------------------
+		ClientAvailableMachinesRequest request = new ClientAvailableMachinesRequest();
+		
+		Action act = new Action();
+		act.setActor(myContainer.getAMS());
+		act.setAction(request);
+
+		// --- Define receiver of the Message ----------------------- 
+		AID agentGUIAgent = new AID("server.client" + "@" + myPlatformAddress, AID.ISGUID );
+		//mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
+		
+		// --- Build Message ----------------------------------------
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setSender(myContainer.getAMS());
+		msg.addReceiver(agentGUIAgent);		
+		msg.setLanguage(new SLCodec().getName());
+		msg.setOntology(AgentGUI_DistributionOntology.getInstance().getName());
+		try {
+			msg.setContentObject(act);
+		} catch (IOException errCont) {
+			errCont.printStackTrace();
+		}
+
+		// --- Send message -----------------------------------------
+		myContainer.postMessageToLocalAgent(msg, agentGUIAgent);
+	}
+	
 	
 	/**
 	 * This method returns a default configuration for a new remote container.

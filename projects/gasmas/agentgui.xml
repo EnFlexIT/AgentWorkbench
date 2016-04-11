@@ -42,6 +42,7 @@
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>
+        <autoSaveRealMetricsOnSimStop>false</autoSaveRealMetricsOnSimStop>
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>false</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>

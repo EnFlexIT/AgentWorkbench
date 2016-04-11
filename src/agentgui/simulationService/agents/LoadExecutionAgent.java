@@ -65,8 +65,6 @@ public class LoadExecutionAgent extends Agent {
 	public final static int BASE_ACTION_Pause = 1;
 	/** The Constant BASE_ACTION_Restart. */
 	public final static int BASE_ACTION_Restart = 2;
-//	/** The Constant BASE_ACTION_Stop. */
-//	public final static int BASE_ACTION_Stop = 3;
 	
 	private int startArg;
 	
@@ -81,10 +79,9 @@ public class LoadExecutionAgent extends Agent {
 		super.setup();
 		
 		Object[] startArgs = getArguments();
-		startArg = (Integer) startArgs[0];
+		this.startArg = (Integer) startArgs[0];
 		
 		this.addBehaviour(new DoStartAction(this));
-		
 	}
 	
 	/**
@@ -181,7 +178,7 @@ public class LoadExecutionAgent extends Agent {
 			try {
 				@SuppressWarnings("unchecked")
 				Class<? extends StaticLoadBalancingBase> staLoBaClass = (Class<? extends StaticLoadBalancingBase>) Class.forName(currDisSetup.getStaticLoadBalancingClass());
-				return staLoBaClass.getDeclaredConstructor( new Class[] { myAgent.getClass() }).newInstance( new Object[] {myAgent});
+				return staLoBaClass.getDeclaredConstructor( new Class[] { myAgent.getClass() }).newInstance(new Object[] {myAgent});
 				
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();

@@ -1,4 +1,4 @@
-; Thu Aug 27 11:41:58 CEST 2015
+; Mon Apr 11 17:08:48 CEST 2016
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -8,6 +8,14 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([BenchmarkResult] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ClientAvailableMachinesReply] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ClientAvailableMachinesRequest] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -28,6 +36,10 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([ClientUnregister] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([MachineDescription] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
