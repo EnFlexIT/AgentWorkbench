@@ -284,9 +284,6 @@ public class PlatformJadeConfig implements Serializable {
 					Integer freePort = new PortChecker(mtpPort, ipAddress).getFreePort();
 					profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
 					profile.setParameter(Profile.LOCAL_HOST, ipAddress);
-//					profile.setParameter(Profile.CONTAINER_NAME, ipAddress);
-//					profile.setParameter(Profile.PLATFORM_ID, ipAddress);
-//					profile.setParameter(Profile.PRIVILEDGE_LOGICAL_NAME, ipAddress);
 				}
 			}
 			

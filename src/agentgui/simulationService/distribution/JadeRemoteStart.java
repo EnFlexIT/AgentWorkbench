@@ -28,6 +28,7 @@
  */
 package agentgui.simulationService.distribution;
 
+import jade.core.Profile;
 import jade.util.leap.ArrayList;
 
 import java.io.File;
@@ -271,6 +272,12 @@ public class JadeRemoteStart extends Thread {
 		} 
 		jadeArgs += "-host " + jadeHost + " ";
 		jadeArgs += "-port " + jadePort + " ";
+		// -- Configure -local-host -------------
+		String localHost = Application.getGlobalInfo().getJadeDefaultProfile().getProperties().getProperty(Profile.LOCAL_HOST);
+		if (localHost!=null && localHost.equals("")==false) {
+			jadeArgs += "-local-host " + localHost + " ";	
+		}
+		// --- Show GUI? ------------------------
 		if (jadeShowGUI) {
 			jadeArgs += jadeShowGUIAgentName + jadeContainerName + ":jade.tools.rma.rma ";
 		}		
