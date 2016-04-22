@@ -30,11 +30,9 @@ package agentgui.core.common.csv;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Observable;
+import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -55,7 +53,7 @@ public class CsvDataController extends Observable{
 	/** If true, the first row will be treated as headlines	 */
 	private boolean headline = true;
 	/** The data model */
-	private DefaultTableModel dataModel;
+	private DefaultTableModel tableModel;
 
 	
 	/**
@@ -86,7 +84,7 @@ public class CsvDataController extends Observable{
 		this.setFile(file);
 		this.setSeparator(separator);
 		this.setHeadline(headline);
-		this.setDataModel(dataModel);
+		this.setTableModel(dataModel);
 	}
 
 	
@@ -139,14 +137,14 @@ public class CsvDataController extends Observable{
 	 * @return the data model
 	 */
 	public DefaultTableModel getDataModel() {
-		return dataModel;
+		return tableModel;
 	}
 	/**
 	 * Sets the data model.
 	 * @param dataModel the new data model
 	 */
-	public void setDataModel(DefaultTableModel dataModel) {
-		this.dataModel = dataModel;
+	public void setTableModel(DefaultTableModel dataModel) {
+		this.tableModel = dataModel;
 		setChanged();
 		notifyObservers(EVENT_TABLE_MODEL_REPLACED);
 	}
@@ -158,18 +156,26 @@ public class CsvDataController extends Observable{
 
 		if (this.getFile()==null) {
 			System.err.println("No CSV file specified for import!");
-			return;
-		}
-		
-		try {
-			// --- Initialise a BufferedReader ----------------------
-			BufferedReader br = new BufferedReader(new FileReader(this.getFile()));
-			// --- Do the actual import -----------------------------
-			this.doImport(br);
-			
-		} catch (FileNotFoundException fnfe) {
-			System.err.println("File not found: " + this.getFile().getAbsolutePath());
-//			fnfe.printStackTrace();
+		}else{
+			CsvFileReader fileReader = new CsvFileReader(this.separator);
+			Vector<Vector<Object>> importedData = fileReader.importData(this.file);
+			if(importedData != null){
+				Vector<Object> headlines;
+				if(this.hasHeadlines()){
+					headlines = importedData.get(0);
+					importedData.remove(0);
+				}else{
+					headlines = new Vector<Object>();
+					int columnCount = importedData.get(0).size();
+					for(int i=0; i<columnCount; i++){
+						headlines.addElement("Column "+(i+1));
+					}
+				}
+				
+				DefaultTableModel tableModel = new DefaultTableModel();
+				tableModel.setDataVector(importedData, headlines);
+				this.setTableModel(tableModel);
+			}
 		}
 	}
 	
@@ -206,7 +212,7 @@ public class CsvDataController extends Observable{
 					parts = inBuffer.split(this.getSeparator());
 					newTableModel.addRow(parts);
 				}
-				this.setDataModel(newTableModel);
+				this.setTableModel(newTableModel);
 			}
 			br.close();
 	
@@ -225,45 +231,20 @@ public class CsvDataController extends Observable{
 			return;
 		}
 		
-		try {
-			// --- Prepare the file writer --------------
-			PrintWriter fw = new PrintWriter(this.getFile());
-			if (this.hasHeadlines()==true) {
-				// Put the column titles in the first line
-				StringBuffer columnTitles = new StringBuffer();
-				for(int i=0; i<this.getDataModel().getColumnCount(); i++){
-					// Append the title of column i
-					columnTitles.append(this.getDataModel().getColumnName(i));
-					// If more columns follow, append a semicolon
-					if(i<this.getDataModel().getColumnCount() -1){
-						columnTitles.append(this.getSeparator());
-					}
-				}
-				// Write to the file
-				fw.println(columnTitles);
+		@SuppressWarnings("unchecked")
+		Vector<Vector<Object>> tableData = new Vector<>(this.getDataModel().getDataVector());
+		
+		if(this.hasHeadlines() == true){
+			Vector<Object> columnTitles = new Vector<Object>();
+			for(int i=0; i<this.tableModel.getColumnCount(); i++){
+				columnTitles.add(this.tableModel.getColumnName(i));
 			}
-
-			// --- Append the data rows --------------
-			for(int i=0; i<this.getDataModel().getRowCount(); i++){
-				
-				StringBuffer rowData = new StringBuffer();
-				for(int j=0; j<this.getDataModel().getColumnCount(); j++){
-					rowData.append(this.getDataModel().getValueAt(i, j));
-					if(j < this.getDataModel().getColumnCount() - 1){
-						rowData.append(this.getSeparator());
-					}
-				}
-				
-				fw.println(rowData);
-			}
-			
-			// --- Close the file ---------------
-			fw.flush();
-			fw.close();
-			
-		} catch (FileNotFoundException e) {
-			System.err.println("File not found!");
+			tableData.add(0, columnTitles);
 		}
+		
+		CsvFileWriter fileWriter = new CsvFileWriter();
+		fileWriter.exportData(file, tableData);
+		
 	}
 	
 }

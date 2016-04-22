@@ -42,6 +42,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -242,17 +243,17 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		}
 	}
 	
-//	/**
-//	 * Just for development, remove later
-//	 * @param args
-//	 */
-//	public static void main(String[] args){
-//		JFrame frame = new JFrame("CSV Importer");
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.getContentPane().add(new CsvDataControllerPanel());
-//		frame.setSize(600, 450);
-//		frame.setVisible(true);
-//	}
+	/**
+	 * Just for development, remove later
+	 * @param args
+	 */
+	public static void main(String[] args){
+		JFrame frame = new JFrame("CSV Importer");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(new CsvDataControllerPanel());
+		frame.setSize(600, 450);
+		frame.setVisible(true);
+	}
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o instanceof CsvDataController && arg.equals(CsvDataController.EVENT_TABLE_MODEL_REPLACED)){
