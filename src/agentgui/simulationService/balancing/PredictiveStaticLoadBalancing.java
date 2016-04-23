@@ -60,21 +60,20 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	private static final long serialVersionUID = -6884445863598676300L;
 	
 	/** local constants */
-	private static final double LOAD_CPU_IDEAL_PERCENT = 70 ;//default 70
-	private static final double LOAD_CPU_CRIT_PERCENT  = 80 ;//default 80
-	private static final double LOAD_CPU_CRIT_DANGER  = 90 ;//default 80
+	private static final double LOAD_CPU_IDEAL_PERCENT 	= 70 ; //default 70
+	private static final double LOAD_CPU_CRIT_PERCENT  	= 80 ; //default 80
+	private static final double LOAD_CPU_CRIT_DANGER  	= 90 ; //default 90
 	private static final double LOAD_CPU_IDEAL = (LOAD_CPU_IDEAL_PERCENT/100) ;
 	private static final double LOAD_CPU_CRIT  = (LOAD_CPU_CRIT_PERCENT/100) ;
 	
-	/** The load cpu ideal. */
-	public double loadCpuIdeal,loadCpuCrit;
-	
+	/** The load CPU ideal. */
+	private double loadCpuIdeal = LOAD_CPU_IDEAL;
+	/** The load CPU critical. */
+	private double loadCpuCrit  = LOAD_CPU_CRIT;
 	/** The remote only boolean, do not use local machine for agents. */
-	private boolean isRemoteOnly;
-	
+	private boolean isRemoteOnly = true;
 	/** The boolean verbose. */
-	private boolean verbose;
-	
+	private boolean verbose = true;
 	
 	/**
 	 * Instantiates a new predictive static load balancing.
@@ -91,16 +90,13 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	 */
 	private void initialize(){
 		
-		this.verbose = false; //TODO: menu option ?? global setting ??
+		this.verbose = true; //TODO: menu option ?? global setting ??
 		
 		isRemoteOnly = currDisSetup.isRemoteOnly();
 		
 		if(currDisSetup.isUseUserThresholds()){
 			loadCpuIdeal =  (float)currDisSetup.getUserThresholds().getThCpuH()/100;
 			loadCpuCrit  =  (float)currDisSetup.getUserThresholds().getThCpuH()/100;
-		}else{
-			loadCpuIdeal = LOAD_CPU_IDEAL;
-			loadCpuCrit  = LOAD_CPU_CRIT;
 		}		
 	}
 	
@@ -110,8 +106,6 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	 */
 	@Override
 	public void doBalancing() {//one-shot behavior
-		
-		this.initialize();
 		
 		// --------------------------------------------------------------------------------------------------
 		// --- Distribution is based on predictive metrics, thus: 										-----
@@ -134,12 +128,10 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 				if(containerList != null){
 					this.startAgentsOnContainers(containerList, this.verbose);
 				}
-				
 				System.out.println("FINISHED (Predictive, static distribution)");
 			}
 		}
 	}
-	
 	
 	/**
 	 * Start remote container on machines.
@@ -150,12 +142,13 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	private Hashtable<String, Location> getLocationsOfStartedRemoteContainers(boolean verbose) {
 
 		/** All container/locations */
-		Hashtable<String, Location> newContainerLocations;
+		Hashtable<String, Location> containerLocations;
 		
 		/** The number of remote containers. */
 		int numberOfRemoteSlaveMachines = 0;
 		
 		try {
+			
 			ClientAvailableMachinesReply availableMachinesReply =  loadHelper.getAvailableMachines();
 			
 			if(availableMachinesReply != null){
@@ -193,8 +186,8 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 		
 		if(numberOfRemoteSlaveMachines != 0){
 			/** start remote locations*/
-			newContainerLocations = startNumberOfRemoteContainer(numberOfRemoteSlaveMachines , true, null);
-			return newContainerLocations;
+			containerLocations = startNumberOfRemoteContainer(numberOfRemoteSlaveMachines , true, null);
+			return containerLocations;
 			
 		}else{
 			// --- Just start all defined agents locally ---
@@ -205,8 +198,6 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 		}
 		return null;
 	}
-	
-	
 	
 	/**
 	 * Gets the total benchmark of a container.
@@ -267,8 +258,10 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	private Hashtable<Location, ArrayList<AgentClassElement4SimStart>> getAgentContainerList4PredictiveDistribution(Hashtable<String, Location> containerLocations, Hashtable<Location, Double> cpuBenchmark, boolean verbose){
 		/** a mapping of agents to containers*/
 		Hashtable<Location, ArrayList<AgentClassElement4SimStart>> agentContainerList = new Hashtable<Location,ArrayList<AgentClassElement4SimStart>>();
+		
 		/** The local container*/
 		Location localContainer = containerLocations.get(currProject.getProjectFolder());
+		
 		/** A list of agents*/
 		ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
 		
@@ -288,8 +281,13 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 		if (currAgentList!=null && containerNames != null) {
 			// sort local container to last position --> remote container to be occupied first
 			int indexLocalContainer = containerNames.indexOf(localContainer.getName());
-			containerNames.remove(indexLocalContainer);
-			if(isRemoteOnly == false){
+			
+			//if for some reason the local container is the only one
+			if(containerNames.size() > 1){
+				containerNames.remove(indexLocalContainer);	
+			}
+			
+			if(!isRemoteOnly){
 				containerNames.add(localContainer.getName());
 			}
 			
@@ -340,14 +338,12 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 						
 						//ideal workload ?
 						if((cpuBenchmark.get(remoteContainer)*loadCpuIdeal) <= cpuContainerSum.get(remoteContainer)){
-							//change container
 							isChangeContainer = true;	
 						}
 						
-					}else{//change container
+					}else{
 						isChangeContainer = true;
 					}		
-					
 				}else{//Simulation Agent and "unknown" agents always kept locally
 					
 					remoteContainer = localContainer;
