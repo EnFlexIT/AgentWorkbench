@@ -104,6 +104,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JPanel jPanelDummy;
 	
 	private JCheckBox jCheckBoxPreventUsageOfUsedComputers;
+	private JCheckBox jCheckBoxIsRemoteOnly;
 	private JCheckBox jCheckBoxShowRMA;
 	private JCheckBox jCheckBoxDoLoadStatic;
 	private JCheckBox jCheckBoxDoLoadDynamic;
@@ -120,7 +121,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private String[] comboData = {JadeRemoteStart.jvmMemo0016MB, JadeRemoteStart.jvmMemo0032MB,
 								  JadeRemoteStart.jvmMemo0064MB, JadeRemoteStart.jvmMemo0128MB,
 								  JadeRemoteStart.jvmMemo0256MB, JadeRemoteStart.jvmMemo0512MB,
-								  JadeRemoteStart.jvmMemo1024MB};
+								  JadeRemoteStart.jvmMemo1024MB, JadeRemoteStart.jvmMemo2048MB,
+								  JadeRemoteStart.jvmMemo4096MB};
 	private DefaultComboBoxModel<String> comboModelInitial = new DefaultComboBoxModel<String>(comboData);
 	private DefaultComboBoxModel<String> comboModelMaximal = new DefaultComboBoxModel<String>(comboData);
 	private DefaultComboBoxModel<TimeSelection> comboModelRecordingInterval;
@@ -188,6 +190,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		this.setupLoad();
 		
 		jCheckBoxPreventUsageOfUsedComputers.setText(Language.translate("Keine Computer nutzen, die bereits einen Remote-Container beherbergen"));
+		jCheckBoxIsRemoteOnly.setText(Language.translate("Verteilung der Agenten nur auf Remote-Maschinen"));
 		jCheckBoxShowRMA.setText(Language.translate("Remote JADE-RMA beim Start des entfernten Containers anzeigen"));
 		jCheckBoxDoLoadStatic.setText(Language.translate("Statische Lastverteilung aktivieren"));
 		jCheckBoxDoLoadDynamic.setText(Language.translate("Dynamische Lastverteilung aktivieren"));
@@ -389,36 +392,36 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			gridBagConstraints39.gridx = 1;
 			gridBagConstraints39.insets = new Insets(5, 0, 0, 0);
 			gridBagConstraints39.weightx = 0.5;
-			gridBagConstraints39.gridy = 2;
+			gridBagConstraints39.gridy = 3;
 			GridBagConstraints gridBagConstraints32 = new GridBagConstraints();
 			gridBagConstraints32.anchor = GridBagConstraints.WEST;
 			gridBagConstraints32.insets = new Insets(5, 0, 0, 0);
 			gridBagConstraints32.gridx = 5;
-			gridBagConstraints32.gridy = 2;
+			gridBagConstraints32.gridy = 3;
 			gridBagConstraints32.weightx = 0.0;
 			gridBagConstraints32.fill = GridBagConstraints.HORIZONTAL;
 			GridBagConstraints gridBagConstraints34 = new GridBagConstraints();
 			gridBagConstraints34.anchor = GridBagConstraints.EAST;
 			gridBagConstraints34.gridx = 4;
-			gridBagConstraints34.gridy = 2;
+			gridBagConstraints34.gridy = 3;
 			gridBagConstraints34.insets = new Insets(5, 10, 0, 5);
 			GridBagConstraints gridBagConstraints30 = new GridBagConstraints();
 			gridBagConstraints30.anchor = GridBagConstraints.WEST;
 			gridBagConstraints30.insets = new Insets(5, 0, 0, 0);
 			gridBagConstraints30.gridx = 3;
-			gridBagConstraints30.gridy = 2;
+			gridBagConstraints30.gridy = 3;
 			gridBagConstraints30.weightx = 0.0;
 			gridBagConstraints30.fill = GridBagConstraints.HORIZONTAL;
 			GridBagConstraints gridBagConstraints35 = new GridBagConstraints();
 			gridBagConstraints35.anchor = GridBagConstraints.EAST;
 			gridBagConstraints35.gridx = 2;
-			gridBagConstraints35.gridy = 2;
+			gridBagConstraints35.gridy = 3;
 			gridBagConstraints35.insets = new Insets(5, 10, 0, 5);
 			GridBagConstraints gridBagConstraints33 = new GridBagConstraints();
 			gridBagConstraints33.anchor = GridBagConstraints.WEST;
 			gridBagConstraints33.gridwidth = 1;
 			gridBagConstraints33.gridx = 0;
-			gridBagConstraints33.gridy = 2;
+			gridBagConstraints33.gridy = 3;
 			gridBagConstraints33.weightx = 0.0;
 			gridBagConstraints33.insets = new Insets(5, 22, 0, 0);
 			GridBagConstraints gridBagConstraints36 = new GridBagConstraints();
@@ -437,9 +440,16 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			gridBagConstraints37.anchor = GridBagConstraints.WEST;
 			gridBagConstraints37.gridwidth = 5;
 			gridBagConstraints37.gridx = 0;
-			gridBagConstraints37.gridy = 1;
+			gridBagConstraints37.gridy = 2;
 			gridBagConstraints37.weightx = 0.0;
 			gridBagConstraints37.insets = new Insets(8, 0, 0, 0);
+			GridBagConstraints gridBagConstraints40 = new GridBagConstraints();
+			gridBagConstraints40.anchor = GridBagConstraints.WEST;
+			gridBagConstraints40.gridwidth = 5;
+			gridBagConstraints40.gridx = 0;
+			gridBagConstraints40.gridy = 1;
+			gridBagConstraints40.weightx = 0.0;
+			gridBagConstraints40.insets = new Insets(8, 0, 0, 0);
 			
 			jLabelDummy = new JLabel();
 			jLabelDummy.setText(" ");
@@ -454,6 +464,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jPanelRemoteConfig = new JPanel();
 			jPanelRemoteConfig.setLayout(new GridBagLayout());
 			jPanelRemoteConfig.add(getJCheckBoxPreventUsageOfUsedComputers(), gridBagConstraints38);
+			jPanelRemoteConfig.add(getJCheckBoxIsRemoteOnly(), gridBagConstraints40);
 			jPanelRemoteConfig.add(getJCheckBoxShowRMA(), gridBagConstraints37);
 			jPanelRemoteConfig.add(getJButtonRemoteDefault(), gridBagConstraints36);
 			jPanelRemoteConfig.add(jLabelMemoryAlloc, gridBagConstraints33);
@@ -494,6 +505,20 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jCheckBoxPreventUsageOfUsedComputers.addActionListener(this);
 		}
 		return jCheckBoxPreventUsageOfUsedComputers;
+	}
+	
+	/**
+	 * Gets the j check box is remote only.
+	 * @return the j check box is remote only
+	 */
+	private JCheckBox getJCheckBoxIsRemoteOnly() {
+		if (jCheckBoxIsRemoteOnly == null) {
+			jCheckBoxIsRemoteOnly = new JCheckBox();
+			jCheckBoxIsRemoteOnly.setText("Verteilung der Agenten nur auf Remote-Maschinen");
+			jCheckBoxIsRemoteOnly.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckBoxIsRemoteOnly.addActionListener(this);
+		}
+		return jCheckBoxIsRemoteOnly;
 	}
 	
 	/**
@@ -1394,6 +1419,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		this.currRemoteContainerConfiguration = this.currProject.getRemoteContainerConfiguration();
 		
 		this.jCheckBoxPreventUsageOfUsedComputers.setSelected(currRemoteContainerConfiguration.isPreventUsageOfAlreadyUsedComputers());
+		this.jCheckBoxIsRemoteOnly.setSelected(currDistributionSetup.isRemoteOnly());
 		this.jCheckBoxShowRMA.setSelected(currRemoteContainerConfiguration.isShowJADErmaGUI());
 		this.jComboBoxJVMMemoryMaximum.setSelectedItem(currRemoteContainerConfiguration.getJvmMemAllocMaximum());
 		this.jComboBoxJVMMemoryInitial.setSelectedItem(currRemoteContainerConfiguration.getJvmMemAllocInitial());
@@ -1488,7 +1514,9 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	public void actionPerformed(ActionEvent ae) {
 	
 		Object trigger = ae.getSource();
-		if (trigger==jCheckBoxPreventUsageOfUsedComputers) {
+		if (trigger==jCheckBoxIsRemoteOnly) {
+			currDistributionSetup.setRemoteOnly(jCheckBoxIsRemoteOnly.isSelected());
+		} else if (trigger==jCheckBoxPreventUsageOfUsedComputers) {
 			this.currRemoteContainerConfiguration.setPreventUsageOfAlreadyUsedComputers(this.getJCheckBoxPreventUsageOfUsedComputers().isSelected());
 			this.currProject.setRemoteContainerConfiguration(currRemoteContainerConfiguration);
 		
@@ -1504,6 +1532,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			this.getJComboBoxJVMMemoryMaximum().setSelectedItem(this.currRemoteContainerConfiguration .getJvmMemAllocMaximum());
 			this.currProject.setRemoteContainerConfiguration(this.currRemoteContainerConfiguration);
 			
+			this.currDistributionSetup.setRemoteOnly(true);
+			this.jCheckBoxIsRemoteOnly.setSelected(this.currDistributionSetup.isRemoteOnly());
 			
 		} else if (trigger==jButtonCalcContainer) {
 			// --- calculate the number of container required -------

@@ -1201,38 +1201,41 @@ public class LoadService extends BaseService {
 		@Override
 		public void receiveThreadProtocol(ThreadProtocol threadProtocol) {
 
-			// --- Add information about container, machine ---------
-			threadProtocol.setContainerName(myCRCReply.getRemoteContainerName());
-			threadProtocol.setProcessID(myCRCReply.getRemotePID());
-			
-			// --- jvm@machine, e.g. 73461@dell-blade-2 -------------
-			String[] temp = threadProtocol.getProcessID().split("@");
-			String jvmName = temp[0];
-			String machineName = temp[1];
-			
-			threadProtocol.setJVMName(jvmName);
-			threadProtocol.setMachineName(machineName);
-			
-			int noOfCPU = myCRCReply.getRemotePerformance().getCpu_numberOf();
-			double mflops = myCRCReply.getRemoteBenchmarkResult().getBenchmarkValue();
-			threadProtocol.setMflops(mflops * noOfCPU);
-			
-			// --- Do the check if a thread is an agent or not ------
-			HashedMap<String, AID> aidHash = new HashedMap<String, AID>();
-			for (AID aid : myContainer.agentNames()) {
-				aidHash.put(aid.getLocalName(), aid);
-			}
-			for (ThreadTime threadTime : threadProtocol.getThreadTimes()) {
-				if (aidHash.get(threadTime.getThreadName())!=null) {
-					threadTime.setIsAgent(true);
+			if(myCRCReply != null){
+				
+				// --- Add information about container, machine ---------
+				threadProtocol.setContainerName(myCRCReply.getRemoteContainerName());
+				threadProtocol.setProcessID(myCRCReply.getRemotePID());
+				
+				// --- jvm@machine, e.g. 73461@dell-blade-2 -------------
+				String[] temp = threadProtocol.getProcessID().split("@");
+				String jvmName = temp[0];
+				String machineName = temp[1];
+				
+				threadProtocol.setJVMName(jvmName);
+				threadProtocol.setMachineName(machineName);
+				
+				int noOfCPU = myCRCReply.getRemotePerformance().getCpu_numberOf();
+				double mflops = myCRCReply.getRemoteBenchmarkResult().getBenchmarkValue();
+				threadProtocol.setMflops(mflops * noOfCPU);
+				
+				// --- Do the check if a thread is an agent or not ------
+				HashedMap<String, AID> aidHash = new HashedMap<String, AID>();
+				for (AID aid : myContainer.agentNames()) {
+					aidHash.put(aid.getLocalName(), aid);
 				}
-			}
-			
-			// --- Send protocol to the main container --------------
-			try {
-				sendThreadProtocolToMainContainer(threadProtocol);
-			} catch (ServiceException se) {
-				se.printStackTrace();
+				for (ThreadTime threadTime : threadProtocol.getThreadTimes()) {
+					if (aidHash.get(threadTime.getThreadName())!=null) {
+						threadTime.setIsAgent(true);
+					}
+				}
+				
+				// --- Send protocol to the main container --------------
+				try {
+					sendThreadProtocolToMainContainer(threadProtocol);
+				} catch (ServiceException se) {
+					se.printStackTrace();
+				}
 			}	
 		}
 		/**

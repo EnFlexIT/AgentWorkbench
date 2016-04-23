@@ -64,6 +64,10 @@ public class JadeRemoteStart extends Thread {
 	public static final String jvmMemo0512MB = "512m";
 	/** Constant for a memory of 1024 MB. */
 	public static final String jvmMemo1024MB = "1024m";
+	/** Constant for a memory of 2048 MB. */
+	public static final String jvmMemo2048MB = "2048m";
+	/** Constant for a memory of 4096 MB. */
+	public static final String jvmMemo4096MB = "4096m";
 	
 	private boolean debug = false;
 	

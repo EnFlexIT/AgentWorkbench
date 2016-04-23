@@ -66,6 +66,9 @@ public class DistributionSetup implements Serializable {
 	private boolean immediatelyStartLoadRecording = false;
 	private long loadRecordingInterval=500;
 	
+	/** if true, do not use local machine for agents. */
+	private boolean isRemoteOnly = true;
+	
 	
 	/**
 	 * Checks if is do static load balancing.
@@ -263,6 +266,18 @@ public class DistributionSetup implements Serializable {
 	 */
 	public void setLoadRecordingInterval(long loadRecordingInterval) {
 		this.loadRecordingInterval = loadRecordingInterval;
+	}
+	/**
+	 * @return the isRemoteOnly
+	 */
+	public boolean isRemoteOnly() {
+		return isRemoteOnly;
+	}
+	/**
+	 * @param isRemoteOnly the isRemoteOnly to set
+	 */
+	public void setRemoteOnly(boolean isRemoteOnly) {
+		this.isRemoteOnly = isRemoteOnly;
 	}
 	
 }

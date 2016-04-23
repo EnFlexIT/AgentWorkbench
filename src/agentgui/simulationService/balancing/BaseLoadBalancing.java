@@ -37,7 +37,9 @@ import jade.wrapper.ContainerController;
 import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
@@ -343,6 +345,39 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	}
 	
 	/**
+	 * start agents on their assigned locations.
+	 *
+	 * @param agentContainerList the agent container list
+	 * @param verbose the verbose
+	 */
+	protected void startAgentsOnContainers(Hashtable<Location, ArrayList<AgentClassElement4SimStart>> agentContainerList, boolean verbose){
+		
+		/** all container/locations agents are mapped to*/
+		Vector<Location> locations = new Vector<Location>(agentContainerList.keySet());
+		/** iterator for containers*/
+		Iterator<Location> loctionIterator = locations.iterator();
+		
+		while (loctionIterator.hasNext() == true) {		
+			
+			Location location = loctionIterator.next();	
+			
+			for (Iterator<AgentClassElement4SimStart> it = agentContainerList.get(location).iterator(); it.hasNext();) {
+				
+				// --- Get the agent, which has to be started ------------
+				AgentClassElement4SimStart agent2Start = it.next();
+				// --- Check for start arguments -------------------------
+				Object[] startArgs = getStartArguments(agent2Start);	
+				// --- finally start the agent -----------------------				
+				this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs, location);
+				if(verbose){
+					System.out.println("Agent "+ agent2Start.getStartAsName() + " started on "+ location.getName());
+				}					
+			}
+		} // --- end while		
+		return;
+	}
+	
+	/**
 	 * This method will start the Load-Monitor-Agent and Thread-Monitor-Agent.
 	 */
 	protected void openMonitorAgents() {
@@ -498,7 +533,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		Vector<String> containerList = new Vector<String>();
 		while (containerList.size()< numberOfContainer) {
 		
-			String newContainer = this.startRemoteContainer();
+			String newContainer = this.startRemoteContainer(remoteContainerConfig);
 			if (newContainer!=null) {
 				containerList.add(newContainer);	
 			} else {

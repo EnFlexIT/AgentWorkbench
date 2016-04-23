@@ -305,7 +305,7 @@ de;Kanten-Typ;Edge Type;;;
 de;Kein Projekt geöffnet !;No open project!
 de;Kein SVG zugewiesen;No SVG assigned
 de;Kein vordefiniertes Umgebungsmodell verwenden;Don't use a predefined environment model;;;
-de;Keine Computer nutzen, die bereits einen Remote-Container beherbergen;Don't use computer that are already host a remote-container;;;
+de;Keine Computer nutzen, die bereits einen Remote-Container beherbergen;Don't use computer that already host a remote-container;;;
 de;Keine Graph-Datei definiert!;No Graph file defined!
 de;Keine Klasse definiert;No class defined
 de;Keine SVG-Datei definiert!;No SVG file defined!
@@ -614,6 +614,7 @@ de;Vergrößern;Zoom In
 de;Verkleinern;Zoom out
 de;Verteilung + Grenzwerte;Distribution + Thresholds
 de;Verteilung basierend auf:;Distribution based on:;;;
+de;Verteilung der Agenten nur auf Remote-Maschinen;Distribution of agents remote only;;;
 de;Verteilung;Distribution
 de;Verzeichnis bereits vorhanden!;Directory already exists!
 de;Verzeichnis gepackt zu;Folder packed to;;;
