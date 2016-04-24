@@ -282,12 +282,9 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 			// sort local container to last position --> remote container to be occupied first
 			int indexLocalContainer = containerNames.indexOf(localContainer.getName());
 			
-			//if for some reason the local container is the only one
-			if(containerNames.size() > 1){
-				containerNames.remove(indexLocalContainer);	
-			}
+			containerNames.remove(indexLocalContainer);	
 			
-			if(!isRemoteOnly){
+			if(!isRemoteOnly || containerNames.size() == 0){
 				containerNames.add(localContainer.getName());
 			}
 			
