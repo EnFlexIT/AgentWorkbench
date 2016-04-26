@@ -94,11 +94,10 @@ public class NetworkManagerAgent extends SimulationManagerAgent {
 	 */
 	@Override
 	protected void setup() {
+		this.debug = true;
 		super.setup();
-
 		// --- Remind the current network model ---------------------
 		this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
-
 		// --- Make sure that all agents were started ---------------
 		this.addBehaviour(new WaitForTheEndOfSimulationStart(this, 300));
 	}

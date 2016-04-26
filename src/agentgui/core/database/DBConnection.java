@@ -62,9 +62,8 @@ public class DBConnection {
 	private String dbPswd = null;
 
 	private boolean autoCreatePlatformTable=true;
-	
 	private Connection connection = null;
-	private String sql = null;
+
 	
 	/** The Error object of this class */
 	private Error dbError = new Error();
@@ -126,8 +125,8 @@ public class DBConnection {
 		if (this.dbPswd==null) this.dbPswd="";
 		
 		// --- Can the connection be established? ---------
-		if (this.connect()==false) {
-			hasErrors=true;
+		if (this.reConnect()==false) {
+			this.hasErrors=true;
 			return;
 		}
 		// --- Is the database available? -----------------
@@ -164,6 +163,38 @@ public class DBConnection {
 	}
 	
 	/**
+	 * Checks if the connection is (still) valid.
+	 * @return true, if is valid connection
+	 */
+	public boolean isValidConnection() {
+		
+		if (this.connection==null) return false;
+		
+		boolean validConnection = true;
+		try {
+
+			Statement state = (Statement) this.connection.createStatement();
+			ResultSet res = (ResultSet) state.executeQuery("/* ping */ SELECT 1");
+			res.last();
+			if (res.getRow()==0) {
+				validConnection = false;
+			} else {
+				validConnection = true;
+			}		
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			this.dbError.setErrNumber( e.getErrorCode() );
+			this.dbError.setHead( "DB-Verbindungsproblem!" );
+			this.dbError.setText( e.getLocalizedMessage() );
+			this.dbError.setErr(true);
+			this.dbError.show();
+			validConnection = false;
+		}
+		return validConnection;
+	}
+	
+	/**
 	 * Creates the required Database for the server.master agent
 	 * @return True, if the database creation was successful
 	 */
@@ -183,8 +214,7 @@ public class DBConnection {
 		System.out.println(Language.translate("Erzeuge die Datenbank für den Server-Master ... "));
 
 		// --- Create DB --------------------------
-		sql = "CREATE DATABASE " + dbName + " DEFAULT CHARACTER SET utf8";
-		if ( this.getSqlExecuteUpdate(sql)==false ) return false;
+		if (this.getSqlExecuteUpdate("CREATE DATABASE " + dbName + " DEFAULT CHARACTER SET utf8")==false ) return false;
 		
 		// --- Set Connection to Database ---------
 		this.setConnection2Database(dbName);
@@ -207,12 +237,11 @@ public class DBConnection {
 	private boolean createTablePlatforms(boolean reCreate) {
 		
 		if (reCreate==true && this.isPlatformTable()==true ) {
-			sql = "Drop Table platforms";
-			this.getSqlExecuteUpdate(sql);
+			this.getSqlExecuteUpdate("Drop Table platforms");
 		}
 		
 		// --- Create TB 'server' -----------------
-		sql  = "CREATE TABLE platforms (" +
+		String sql  = "CREATE TABLE platforms (" +
 				
 				"id_platform int(11) NOT NULL AUTO_INCREMENT," +
 				"contact_agent varchar(255) CHARACTER SET utf8 NOT NULL," +
@@ -270,7 +299,7 @@ public class DBConnection {
 	 */
 	private boolean isPlatformTableCorrect() {
 		
-		sql  = "SELECT " +
+		String sql  = "SELECT " +
 				"id_platform, contact_agent, platform_name, is_server, ip, url, jade_port, http4mtp, " +
 				"vers_major, vers_minor, vers_build, " +
 				"os_name, os_version, os_arch, " +
@@ -295,7 +324,7 @@ public class DBConnection {
 	 */
 	private boolean isPlatformTable() {
 		
-		sql  = "SELECT * FROM platforms";
+		String sql  = "SELECT * FROM platforms";
 		ResultSet res = this.getSqlResult4ExecuteQuery(sql);
 		if (res==null) {
 			return false;
@@ -341,7 +370,8 @@ public class DBConnection {
 	private void setConnection2Database(String database) {
 		
 		try {
-			connection.setCatalog(database);
+			this.connection.setCatalog(database);
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			this.dbError.setText(e.getLocalizedMessage());
@@ -443,7 +473,24 @@ public class DBConnection {
 	 */
 	public Statement getNewStatement() {
 		try {
-			return (Statement) connection.createStatement();
+			// --- Check if connection is still open ----------------
+			boolean connected = true;
+			if (this.isValidConnection()==false) {
+				connected = this.reConnect();
+			}
+			// --- If connected, create new statement ---------------
+			if (connected==true) {
+				return (Statement) this.connection.createStatement();
+			} else {
+				System.out.println( "Code: " + -1);
+				this.dbError.setErrNumber( -1 );
+				this.dbError.setHead( "Fehler in der DB Connection !" );
+				this.dbError.setText( "Die Verbinng zur Datenbank konnte nicht hergestellt werden!" );
+				this.dbError.setErr(true);
+				this.dbError.show();
+				return null;
+			}
+			
 		} catch (SQLException e) {
 			//e.printStackTrace();
 			System.out.println( "Code: " + e.getErrorCode() );
@@ -461,7 +508,7 @@ public class DBConnection {
 	 * defined in the Application-Options
 	 * @return True, if the connection was established successfully 
 	 */
-	private boolean connect() {
+	private boolean reConnect() {
 		
 		if (this.dbHost==null) {
 			String msg = ""; 
@@ -485,7 +532,7 @@ public class DBConnection {
 			props.setProperty("connectionCollation","utf8_general_ci");
 			
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connection = (Connection) DriverManager.getConnection(dbHost, props);
+			this.connection = (Connection) DriverManager.getConnection(dbHost, props);
 			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

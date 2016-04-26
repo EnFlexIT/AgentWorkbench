@@ -32,11 +32,12 @@
     <jadeConfiguration>
         <useLocalPort>1099</useLocalPort>
         <mtpCreation>ConfiguredByJADE</mtpCreation>
-        <mtpIpAddress>132.252.250.126</mtpIpAddress>
+        <mtpIpAddress>Auto-Configuration</mtpIpAddress>
         <mtpPort>7778</mtpPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
@@ -44,13 +45,14 @@
     <distributionSetup>
         <autoSaveRealMetricsOnSimStop>false</autoSaveRealMetricsOnSimStop>
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
-        <doStaticLoadBalancing>false</doStaticLoadBalancing>
+        <doStaticLoadBalancing>true</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
         <loadRecordingInterval>500</loadRecordingInterval>
         <numberOfAgents>300</numberOfAgents>
         <numberOfContainer>2</numberOfContainer>
-        <showLoadMonitorAtPlatformStart>false</showLoadMonitorAtPlatformStart>
+        <remoteOnly>true</remoteOnly>
+        <showLoadMonitorAtPlatformStart>true</showLoadMonitorAtPlatformStart>
         <showThreadMonitorAtPlatformStart>false</showThreadMonitorAtPlatformStart>
         <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
@@ -139,8 +141,8 @@
     </remoteContainerConfiguration>
     <simulationSetupCurrent>MixedClusters (1) Small</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
-    <downloadResources>http://132.252.250.126:8080/gasmas/BIN_DUMP_-1172359784.jar</downloadResources>
-    <downloadResources>http://132.252.250.126:8080/gasmas/gasmas_IDE.jar</downloadResources>
+    <downloadResources>http://Pandora.cs.uni-due.de:8080/gasmas/BIN_DUMP_-1172359784.jar</downloadResources>
+    <downloadResources>http://Pandora.cs.uni-due.de:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>

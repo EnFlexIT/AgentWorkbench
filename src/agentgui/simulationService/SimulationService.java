@@ -618,19 +618,19 @@ public class SimulationService extends BaseService {
 	private EnvironmentModel mainGetEnvironmentModelFromSetup() throws ServiceException {
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
-			myLogger.log(Logger.CONFIG, "Sending request for EnvironmentModel to Main-Container!");
+			myLogger.log(Logger.CONFIG, "Sending request for environment model to Main-Container!");
 		}
 		String sliceName = null;
 		try {
 			SimulationServiceSlice slice = (SimulationServiceSlice) getSlice(MAIN_SLICE);
 			sliceName = slice.getNode().getName();
 			if (myLogger.isLoggable(Logger.FINER)) {
-				myLogger.log(Logger.FINER, "Sending request for EnvironmentModel to " + sliceName);
+				myLogger.log(Logger.FINER, "Sending request for environment model to " + sliceName);
 			}
 			return slice.getEnvironmentModelFromSetup();
 			
 		} catch(Throwable t) {
-			myLogger.log(Logger.WARNING, "Error while sending request for EnvironmentModel  to slice  " + sliceName, t);
+			myLogger.log(Logger.WARNING, "Error while sending request for environment model  to slice  " + sliceName, t);
 		}
 		return null;
 	}
@@ -1037,7 +1037,8 @@ public class SimulationService extends BaseService {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Received request for environment model from setup");
 					}
-					cmd.setReturnValue(getEnvironmentModelFromSetup());
+					EnvironmentModel envModel = getEnvironmentModelFromSetup(); 
+					cmd.setReturnValue(envModel);
 					
 				} else if (cmdName.equals(SimulationServiceSlice.SIM_SET_ENVIRONMENT_MODEL)) {
 					EnvironmentModel envModel = (EnvironmentModel) params[0];

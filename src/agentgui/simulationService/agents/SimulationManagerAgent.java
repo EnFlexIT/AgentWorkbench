@@ -60,6 +60,9 @@ public abstract class SimulationManagerAgent extends Agent {
 	
 	private static final long serialVersionUID = -7398714332312572026L;
 
+	/** The debug indicator. If true, some debug information will provided during the execution of some methods (e.g. {@link #getEnvironmentModelFromSetup()}). */
+	protected boolean debug = false;
+	
 	/** The SimulationServiceHelper. */
 	protected SimulationServiceHelper simHelper = null;
 	/** The ServiceSensorManager for this agent. */
@@ -187,6 +190,8 @@ public abstract class SimulationManagerAgent extends Agent {
 		}
 	}
 	
+	
+	
 	/**
 	 * This method is used for initialising the simulation during the .setup()-method of the agent.
 	 * Here the environment model (see class agentgui.simulationService.environment.EnvironmentModel)
@@ -201,6 +206,14 @@ public abstract class SimulationManagerAgent extends Agent {
 		// --- Try to get the environment model from the project setup -------- 
 		try {
 			envModel = this.simHelper.getEnvironmentModelFromSetup();
+			if (this.debug==true) {
+				if (envModel==null) {
+					System.err.println(this.getLocalName() + ": Didn't get environment model from SimulationService! - Try local access ...");
+				} else {
+					System.out.println(this.getLocalName() + ": Got environment model from SimulationService!");
+				}	
+			}
+			
 		} catch (ServiceException se) {
 			se.printStackTrace();
 		}
@@ -216,8 +229,18 @@ public abstract class SimulationManagerAgent extends Agent {
 					if (envModelTmp!=null) {
 						envModel = envModelTmp.getCopy();
 					}
+				} else {
+					// --- Could not find environment controller --------------
+					if (this.debug==true) {
+						System.err.println(this.getLocalName() + ": No EnvironmentController coud be found for current project!");	
+					}	
 				}
-			}	
+			} else {
+				// --- No current open project --------------------------------
+				if (this.debug==true) {
+					System.err.println(this.getLocalName() + ": Didn't get Project instance from Application!");	
+				}
+			}
 		}
 		return envModel;
 	}
