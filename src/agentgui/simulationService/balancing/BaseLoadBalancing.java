@@ -167,7 +167,6 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		} else {
 			currThresholdLevels = LoadMeasureThread.getThresholdLevels();
 		}
-
 	}
 	
 	
@@ -179,9 +178,8 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 */
 	protected Object[] getStartArguments(AgentClassElement4SimStart ace4SimStart) {
 		
-		if (ace4SimStart.getStartArguments()==null) {
-			return null;
-		} else {
+		if (ace4SimStart.getStartArguments()!=null) {
+			
 			String selectedAgentReference = ace4SimStart.getElementClass().getName();
 			OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getEnvironmentController(), currProject.getOntologyVisualisationHelper(), currProject.getAgentStartConfiguration(), selectedAgentReference);
 			oiv.setConfigurationXML(ace4SimStart.getStartArguments());
@@ -189,6 +187,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 			Object[] startArgs = oiv.getConfigurationInstances();
 			return startArgs;
 		}
+		return null;
 	}
 	
 	/**
@@ -196,10 +195,11 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 *
 	 * @param nickName the nick name
 	 * @param agentClassName the agent class name
-	 * @param args the start arguments as Object array 
+	 * @param args the start arguments as Object array
+	 * @return true, if successful
 	 */
-	protected void startAgent(String nickName, String agentClassName, Object[] args) {
-		this.startAgent(nickName, agentClassName, args, null);
+	protected boolean startAgent(String nickName, String agentClassName, Object[] args) {
+		return this.startAgent(nickName, agentClassName, args, null);
 	}
 	
 	/**
@@ -207,10 +207,11 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 *
 	 * @param nickName the nick name
 	 * @param agentClass the agent class
-	 * @param args the start arguments as Object array 
+	 * @param args the start arguments as Object array
+	 * @return true, if successful
 	 */
-	protected void startAgent(String nickName, Class<? extends Agent> agentClass, Object[] args) {
-		this.startAgent(nickName, agentClass, args, null);
+	protected boolean startAgent(String nickName, Class<? extends Agent> agentClass, Object[] args) {
+		return this.startAgent(nickName, agentClass, args, null);
 	}
 	
 	/**
@@ -218,10 +219,11 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 *
 	 * @param nickName the nick name
 	 * @param agentClassName the agent class name
-	 * @param args the start arguments as Object array 
+	 * @param args the start arguments as Object array
 	 * @param toLocation the location, where the agent should start
+	 * @return true, if successful
 	 */
-	protected void startAgent(String nickName, String agentClassName, Object[] args, Location toLocation ) {
+	protected boolean startAgent(String nickName, String agentClassName, Object[] args, Location toLocation ) {
 		
 		if (agentClassName==null | agentClassName.equalsIgnoreCase("") | agentClassName.equalsIgnoreCase(Language.translate("Keine")) ) {
 			System.err.println(Language.translate("Agent '" + nickName + "': " + Language.translate("Keine Klasse definiert") + "!"));
@@ -230,11 +232,12 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 			try {
 				@SuppressWarnings("unchecked")
 				Class<? extends Agent> agentClass = (Class<? extends Agent>) Class.forName(agentClassName);
-				this.startAgent(nickName, agentClass, args, toLocation);
+				return this.startAgent(nickName, agentClass, args, toLocation);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
+		return false;
 	}
 	
 	/**
@@ -242,10 +245,11 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 *
 	 * @param nickName the nick name
 	 * @param agentClass the agent class
-	 * @param args the start arguments as Object array 
+	 * @param args the start arguments as Object array
 	 * @param toLocation the location, where the agent should start
+	 * @return true, if successful
 	 */
-	protected void startAgent(String nickName, Class<? extends Agent> agentClass, Object[] args, Location toLocation ) {
+	protected boolean startAgent(String nickName, Class<? extends Agent> agentClass, Object[] args, Location toLocation ) {
 		
 		boolean startLocally = false;
 		ContainerController cc = myAgent.getContainerController();
@@ -277,6 +281,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 				agent.setArguments(args);
 				ac = cc.acceptNewAgent(nickName, agent);
 				ac.start();
+				return true;
 				// --------------------------------------------------
 				
 			} else {
@@ -291,6 +296,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 					try {
 						LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
 						loadHelper.startAgent(nickName, agentClassName, args, containerName);
+						return true;
 					} catch (ServiceException e) {
 						e.printStackTrace();
 					}
@@ -326,6 +332,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 							retryCounter = 0;
 						}
 					} // --- end while
+					return true;
 					// ----------------------------------------------
 					// --- END: 'Start and migrate' - procedure -----	
 					// ----------------------------------------------					
@@ -342,6 +349,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}	
+		return false;
 	}
 	
 	/**
@@ -349,32 +357,37 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 *
 	 * @param agentContainerList the agent container list
 	 * @param verbose the verbose
+	 * @return true, if successful
 	 */
-	protected void startAgentsOnContainers(Hashtable<Location, ArrayList<AgentClassElement4SimStart>> agentContainerList, boolean verbose){
+	protected boolean startAgentsOnContainers(Hashtable<Location, ArrayList<AgentClassElement4SimStart>> agentContainerList, boolean verbose){
 		
-		/** all container/locations agents are mapped to*/
-		Vector<Location> locations = new Vector<Location>(agentContainerList.keySet());
-		/** iterator for containers*/
-		Iterator<Location> loctionIterator = locations.iterator();
-		
-		while (loctionIterator.hasNext() == true) {		
+		if(agentContainerList != null){
+			/** all locations agents are mapped to*/
+			Vector<Location> locations = new Vector<Location>(agentContainerList.keySet());
+			/** iterator for locations*/
+			Iterator<Location> loctionIterator = locations.iterator();
 			
-			Location location = loctionIterator.next();	
-			
-			for (Iterator<AgentClassElement4SimStart> it = agentContainerList.get(location).iterator(); it.hasNext();) {
+			while (loctionIterator.hasNext() == true) {		
 				
-				// --- Get the agent, which has to be started ------------
-				AgentClassElement4SimStart agent2Start = it.next();
-				// --- Check for start arguments -------------------------
-				Object[] startArgs = getStartArguments(agent2Start);	
-				// --- finally start the agent -----------------------				
-				this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs, location);
-				if(verbose){
-					System.out.println("Agent "+ agent2Start.getStartAsName() + " started on "+ location.getName());
-				}					
-			}
-		} // --- end while		
-		return;
+				Location location = loctionIterator.next();	
+				
+				for (Iterator<AgentClassElement4SimStart> it = agentContainerList.get(location).iterator(); it.hasNext();) {
+					
+					// --- Get the agent, which has to be started ------------
+					AgentClassElement4SimStart agent2Start = it.next();
+					// --- Check for start arguments -------------------------
+					Object[] startArgs = getStartArguments(agent2Start);	
+					// --- finally start the agent -----------------------				
+					boolean success = this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs, location);
+					
+					if(success && verbose){
+						System.out.println("Agent "+ agent2Start.getStartAsName() + " started on "+ location.getName());
+					}					
+				}
+			} // --- end while
+			return true;
+		}	
+		return false;
 	}
 	
 	/**
@@ -501,7 +514,6 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 				
 				return newContainerName;
 			}
-			
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -515,7 +527,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 * @param remoteContainerConfig the remote container configuration
 	 * @param filterMainContainer true, if the Main-Container should be filter out of the result
 	 * 
-	 * @return the of all newly started locations
+	 * @return the newly started locations
 	 */
 	protected Hashtable<String, Location> startNumberOfRemoteContainer(int numberOfContainer, boolean filterMainContainer, RemoteContainerConfig remoteContainerConfig) {
 		

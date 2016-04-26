@@ -49,6 +49,7 @@ import agentgui.simulationService.ontology.MachineDescription;
 /**
  * This class is for static distribution of Agents based on given metrics,
  * predictive or real (empirical)
+ * 
  * @see StaticLoadBalancingBase
  * @see BaseLoadBalancing
  * @see Distribution
@@ -90,7 +91,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	 */
 	private void initialize(){
 		
-		this.verbose = true; //TODO: menu option ?? global setting ??
+		this.verbose = false; //TODO: menu option ?? global setting ??
 		
 		isRemoteOnly = currDisSetup.isRemoteOnly();
 		
@@ -126,6 +127,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 				
 				Hashtable<Location, ArrayList<AgentClassElement4SimStart>> containerList = getAgentContainerList4PredictiveDistribution(containerLocations, cpuBenchmark, this.verbose);
 				if(containerList != null){
+					
 					this.startAgentsOnContainers(containerList, this.verbose);
 				}
 				System.out.println("FINISHED (Predictive, static distribution)");
@@ -305,43 +307,12 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 			for (Iterator<AgentClassElement4SimStart> agents2bStartedIterator = agents2bStartedList.iterator(); agents2bStartedIterator.hasNext();) {
 				
 				AgentClassElement4SimStart agent = agents2bStartedIterator.next();
-				remoteContainer = containerLocations.get(remoteContainerName);
-				
 				String  classname = agent.getAgentClassReference();
 				int index = currProject.getAgentClassLoadMetrics().getIndexOfAgentClassMetricDescription(classname);
 				double metric;
 				
-				if(index != -1 && !classname.contains("SimulationManager")){
-					//Load-balancing Agents to be distributed
-					
-					//still enough "space" on container ?
-					if((cpuContainerSum.get(remoteContainer) == null	/* no agents on this container yet*/
-					   || (cpuBenchmark.get(remoteContainer)*loadCpuCrit) >= cpuContainerSum.get(remoteContainer)) /* limits not reached*/
-					   || modeOverload){			/* overload mode*/
-						//update sum CPU metrics
-						
-						if(currProject.getAgentClassLoadMetrics().isUseRealLoadMetric() == true){
-							metric = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector().get(index).getRealMetricAverage();
-						}else{
-							metric = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector().get(index).getUserPredictedMetric();	
-						}
-						
-						// add up
-						if(cpuContainerSum.get(remoteContainer)!=null){
-							cpuContainerSum.put(remoteContainer, cpuContainerSum.get(remoteContainer) + metric);
-						}else{
-							cpuContainerSum.put(remoteContainer, metric);
-						}
-						
-						//ideal workload ?
-						if((cpuBenchmark.get(remoteContainer)*loadCpuIdeal) <= cpuContainerSum.get(remoteContainer)){
-							isChangeContainer = true;	
-						}
-						
-					}else{
-						isChangeContainer = true;
-					}		
-				}else{//Simulation Agent and "unknown" agents always kept locally
+				if(index == -1 || classname.contains("SimulationManager")){//Simulation Agent and "unknown" agents always kept locally
+					//TODO: don't make an exception for SiMa any longer ....one day
 					
 					remoteContainer = localContainer;
 					
@@ -350,7 +321,39 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 							System.out.println("#### No Agent-Class Metric Description available");
 						}
 					}
-				} 
+				}else{
+					remoteContainer = containerLocations.get(remoteContainerName);
+				}
+				
+				//Load-balancing Agents to be distributed
+				
+				//still enough "space" on container ?
+				if((cpuContainerSum.get(remoteContainer) == null	/* no agents on this container yet*/
+				   || (cpuBenchmark.get(remoteContainer)*loadCpuCrit) >= cpuContainerSum.get(remoteContainer)) /* limits not reached*/
+				   || modeOverload){			/* overload mode*/
+					//update sum CPU metrics
+					
+					if(currProject.getAgentClassLoadMetrics().isUseRealLoadMetric() == true){
+						metric = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector().get(index).getRealMetricAverage();
+					}else{
+						metric = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector().get(index).getUserPredictedMetric();	
+					}
+					
+					// add up
+					if(cpuContainerSum.get(remoteContainer)!=null){
+						cpuContainerSum.put(remoteContainer, cpuContainerSum.get(remoteContainer) + metric);
+					}else{
+						cpuContainerSum.put(remoteContainer, metric);
+					}
+					
+					//ideal workload ?
+					if((cpuBenchmark.get(remoteContainer)*loadCpuIdeal) <= cpuContainerSum.get(remoteContainer)){
+						isChangeContainer = true;	
+					}
+					
+				}else{
+					isChangeContainer = true;
+				}
 				
 				if(isChangeContainer == true){
 					
