@@ -35,6 +35,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -55,7 +57,9 @@ import javax.swing.SwingConstants;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.components.ClassElement2Display;
+import agentgui.core.gui.components.JComboBoxMtpProtocol;
 import agentgui.core.gui.components.JListClassSearcher;
+import agentgui.core.gui.options.https.HttpsConfigWindow;
 import agentgui.core.jade.ClassSearcher;
 import agentgui.core.network.NetworkAddresses;
 import agentgui.core.project.PlatformJadeConfig;
@@ -69,12 +73,13 @@ import javax.swing.JSeparator;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class JadeSetup extends JPanel implements ActionListener, Observer {
+public class JadeSetup extends JPanel implements ActionListener, Observer, ItemListener {
 
 	private static final long serialVersionUID = -7016775471452161527L;
 	private final static String PathImage = Application.getGlobalInfo().getPathImageIntern();
 	private Project currProject = null;
-	
+	private HttpsConfigWindow httpsConfigWindow ;
+
 	private JLabel jLabelPort = null;
 	private JLabel jLabelPortExplain = null;
 	private JTextField jTextFieldDefaultPort = null;
@@ -88,12 +93,12 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 	private JListClassSearcher jListServicesAvailable = null;
 
 	private JPanel jPanelServiceButtons = null;
+	private JPanel jPanelServiceAvailable = null;
 	private JButton jButtonDefaultJadeConfig = null;
 	private JButton jButtonServiceAdd = null;
 	private JButton jButtonServiceRemove = null;
-	private JLabel jLabelDummyServices = null;
-	private JPanel jPanelServiceAvailable = null;
 	private JButton jButtonSetPort = null;
+	private JLabel jLabelDummyServices = null;
 	private JLabel jLabelMTP;
 	private JRadioButton jRadioButtonMtpAutoConfig;
 	private JRadioButton jRadioButtonMtpIP;
@@ -108,9 +113,24 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 	private JButton jButtonIPedit;
 	
 	private JSeparator jSeparator1;
-	private JSeparator jSeparator2;
 	private JSeparator jSeparatorHorizontal;
+	private JSeparator jSeparator2;
 	
+	private JLabel jLabelKeyStore;
+	private JLabel jLabelTrustStore;
+	private JLabel jLabelMtpProtocol;
+	private JTextField jTextFieldKeyStoreFile;
+	private JTextField jTextFieldTrustStoreFile;
+	
+	private JButton jButtonEditMtpProtocol;
+	private JComboBoxMtpProtocol jComboBoxMtpProtocol;
+	
+	private String keyStore;
+	private String keyStorePassword;
+	private String trustStore;
+	private String trustStorePassword;
+	private String currentMTP;
+	private String action;
 	
 	/**
 	 * Constructor of this class
@@ -127,7 +147,8 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 		// --- configure translation ------------
 		jLabelPort.setText(Language.translate("Starte JADE über Port-Nr.:"));
 		jLabelPortExplain.setText(Language.translate("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)"));
-		
+		jLabelMtpProtocol.setText(Language.translate("MTP-Protokoll:"));
+
 		jButtonSetPort.setToolTipText(Language.translate("JADE-Port bearbeiten"));
 		jButtonSetPortDefault.setToolTipText(Language.translate("Standard verwenden"));
 		
@@ -215,8 +236,10 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			gridBagConstraints2.weightx = 1.0;
 			jPanelJadeIPandPort = new JPanel();
 			GridBagLayout gbl_jPanelJadeIPandPort = new GridBagLayout();
-			gbl_jPanelJadeIPandPort.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-			gbl_jPanelJadeIPandPort.rowWeights = new double[]{0.0, 1.0};
+			gbl_jPanelJadeIPandPort.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+			gbl_jPanelJadeIPandPort.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+			gbl_jPanelJadeIPandPort.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0};
+			gbl_jPanelJadeIPandPort.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 			jPanelJadeIPandPort.setLayout(gbl_jPanelJadeIPandPort);
 			jLabelPort = new JLabel();
 			GridBagConstraints gbc_jLabelPort = new GridBagConstraints();
@@ -232,12 +255,13 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			jPanelJadeIPandPort.add(getJButtonSetPort(), gridBagConstraints15);
 			GridBagConstraints gbc_jSeparator1 = new GridBagConstraints();
 			gbc_jSeparator1.fill = GridBagConstraints.VERTICAL;
-			gbc_jSeparator1.gridheight = 2;
-			gbc_jSeparator1.insets = new Insets(0, 10, 0, 10);
+			gbc_jSeparator1.gridheight = 6;
+			gbc_jSeparator1.insets = new Insets(0, 10, 5, 10);
 			gbc_jSeparator1.gridx = 4;
 			gbc_jSeparator1.gridy = 0;
 			jPanelJadeIPandPort.add(getJSeparator1(), gbc_jSeparator1);
 			GridBagConstraints gbc_jLabaleMTP = new GridBagConstraints();
+			gbc_jLabaleMTP.anchor = GridBagConstraints.WEST;
 			gbc_jLabaleMTP.insets = new Insets(0, 0, 5, 5);
 			gbc_jLabaleMTP.gridx = 5;
 			gbc_jLabaleMTP.gridy = 0;
@@ -256,62 +280,103 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			jPanelJadeIPandPort.add(getJRadioButtonMtpIP(), gbc_jRadioButtonMtpIP);
 			GridBagConstraints gbc_jButtonIPedit = new GridBagConstraints();
 			gbc_jButtonIPedit.anchor = GridBagConstraints.EAST;
-			gbc_jButtonIPedit.insets = new Insets(0, 0, 5, 5);
+			gbc_jButtonIPedit.insets = new Insets(0, 0, 5, 0);
 			gbc_jButtonIPedit.gridx = 8;
 			gbc_jButtonIPedit.gridy = 0;
 			jPanelJadeIPandPort.add(getJButtonIPedit(), gbc_jButtonIPedit);
-			GridBagConstraints gbc_jSeparator2 = new GridBagConstraints();
-			gbc_jSeparator2.fill = GridBagConstraints.VERTICAL;
-			gbc_jSeparator2.gridheight = 2;
-			gbc_jSeparator2.insets = new Insets(0, 10, 0, 10);
-			gbc_jSeparator2.gridx = 9;
-			gbc_jSeparator2.gridy = 0;
-			jPanelJadeIPandPort.add(getSeparator_1(), gbc_jSeparator2);
 			GridBagConstraints gbc_jLabelMTPport = new GridBagConstraints();
 			gbc_jLabelMTPport.insets = new Insets(0, 0, 5, 5);
-			gbc_jLabelMTPport.gridx = 10;
-			gbc_jLabelMTPport.gridy = 0;
+			gbc_jLabelMTPport.gridx = 0;
+			gbc_jLabelMTPport.gridy = 1;
 			jPanelJadeIPandPort.add(getJLabelMTPport(), gbc_jLabelMTPport);
 			GridBagConstraints gbc_jTextFieldDefaultPortMTP = new GridBagConstraints();
-			gbc_jTextFieldDefaultPortMTP.insets = new Insets(0, 0, 5, 5);
-			gbc_jTextFieldDefaultPortMTP.gridx = 11;
-			gbc_jTextFieldDefaultPortMTP.gridy = 0;
+			gbc_jTextFieldDefaultPortMTP.insets = new Insets(0, 5, 5, 5);
+			gbc_jTextFieldDefaultPortMTP.gridx = 1;
+			gbc_jTextFieldDefaultPortMTP.gridy = 1;
 			jPanelJadeIPandPort.add(getJTextFieldDefaultPortMTP(), gbc_jTextFieldDefaultPortMTP);
 			GridBagConstraints gbc_jButtonSetPortMTP = new GridBagConstraints();
-			gbc_jButtonSetPortMTP.insets = new Insets(0, 0, 5, 5);
-			gbc_jButtonSetPortMTP.gridx = 12;
-			gbc_jButtonSetPortMTP.gridy = 0;
+			gbc_jButtonSetPortMTP.insets = new Insets(0, 5, 5, 5);
+			gbc_jButtonSetPortMTP.gridx = 2;
+			gbc_jButtonSetPortMTP.gridy = 1;
 			jPanelJadeIPandPort.add(getJButtonSetPortMTP(), gbc_jButtonSetPortMTP);
 			GridBagConstraints gbc_jButtonSetPortMTPDefault = new GridBagConstraints();
-			gbc_jButtonSetPortMTPDefault.insets = new Insets(0, 0, 5, 0);
-			gbc_jButtonSetPortMTPDefault.gridx = 13;
-			gbc_jButtonSetPortMTPDefault.gridy = 0;
+			gbc_jButtonSetPortMTPDefault.insets = new Insets(0, 5, 5, 5);
+			gbc_jButtonSetPortMTPDefault.gridx = 3;
+			gbc_jButtonSetPortMTPDefault.gridy = 1;
 			jPanelJadeIPandPort.add(getJButtonSetPortMTPDefault(), gbc_jButtonSetPortMTPDefault);
-			
-			jLabelPortExplain = new JLabel();
-			GridBagConstraints gbc_jLabelPortExplain = new GridBagConstraints();
-			gbc_jLabelPortExplain.fill = GridBagConstraints.VERTICAL;
-			gbc_jLabelPortExplain.anchor = GridBagConstraints.WEST;
-			gbc_jLabelPortExplain.gridwidth = 4;
-			gbc_jLabelPortExplain.insets = new Insets(0, 0, 0, 5);
-			gbc_jLabelPortExplain.gridx = 0;
-			gbc_jLabelPortExplain.gridy = 1;
-			jPanelJadeIPandPort.add(jLabelPortExplain, gbc_jLabelPortExplain);
-			jLabelPortExplain.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)");
 			GridBagConstraints gbc_jLabelIP = new GridBagConstraints();
-			gbc_jLabelIP.anchor = GridBagConstraints.EAST;
-			gbc_jLabelIP.insets = new Insets(0, 0, 0, 5);
+			gbc_jLabelIP.anchor = GridBagConstraints.WEST;
+			gbc_jLabelIP.insets = new Insets(0, 0, 5, 5);
 			gbc_jLabelIP.gridx = 5;
 			gbc_jLabelIP.gridy = 1;
 			jPanelJadeIPandPort.add(getJLabelIP(), gbc_jLabelIP);
 			GridBagConstraints gbc_jTextFieldIPAddress = new GridBagConstraints();
+			gbc_jTextFieldIPAddress.insets = new Insets(0, 0, 5, 0);
 			gbc_jTextFieldIPAddress.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jTextFieldIPAddress.gridwidth = 3;
-			gbc_jTextFieldIPAddress.insets = new Insets(0, 0, 0, 5);
 			gbc_jTextFieldIPAddress.gridx = 6;
 			gbc_jTextFieldIPAddress.gridy = 1;
 			jPanelJadeIPandPort.add(getJTextFieldIPAddress(), gbc_jTextFieldIPAddress);
+			GridBagConstraints gbc_jSeparator2 = new GridBagConstraints();
+			gbc_jSeparator2.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jSeparator2.gridwidth = 4;
+			gbc_jSeparator2.insets = new Insets(0, 0, 5, 0);
+			gbc_jSeparator2.gridx = 5;
+			gbc_jSeparator2.gridy = 2;
+			jPanelJadeIPandPort.add(getJSeparator2(), gbc_jSeparator2);
+			GridBagConstraints gbc_jLabelMtpProtocol = new GridBagConstraints();
+			gbc_jLabelMtpProtocol.anchor = GridBagConstraints.EAST;
+			gbc_jLabelMtpProtocol.insets = new Insets(0, 0, 5, 5);
+			gbc_jLabelMtpProtocol.gridx = 5;
+			gbc_jLabelMtpProtocol.gridy = 3;
+			jPanelJadeIPandPort.add(getJLabelMtpProtocol(), gbc_jLabelMtpProtocol);
+			GridBagConstraints gbc_comboBox = new GridBagConstraints();
+			gbc_comboBox.anchor = GridBagConstraints.WEST;
+			gbc_comboBox.insets = new Insets(0, 0, 5, 5);
+			gbc_comboBox.gridx = 6;
+			gbc_comboBox.gridy = 3;
+			jPanelJadeIPandPort.add(getJcomboBoxMtpProtocol(), gbc_comboBox);
+			GridBagConstraints gbc_jButtonEditMtpProtocol = new GridBagConstraints();
+			gbc_jButtonEditMtpProtocol.insets = new Insets(0, 0, 5, 0);
+			gbc_jButtonEditMtpProtocol.gridx = 8;
+			gbc_jButtonEditMtpProtocol.gridy = 3;
+			jPanelJadeIPandPort.add(getJButtonEditMtpProtocol(), gbc_jButtonEditMtpProtocol);
+			
+			jLabelPortExplain = new JLabel();
+			GridBagConstraints gbc_jLabelPortExplain = new GridBagConstraints();
+			gbc_jLabelPortExplain.anchor = GridBagConstraints.WEST;
+			gbc_jLabelPortExplain.gridwidth = 4;
+			gbc_jLabelPortExplain.insets = new Insets(0, 0, 5, 5);
+			gbc_jLabelPortExplain.gridx = 0;
+			gbc_jLabelPortExplain.gridy = 4;
+			jPanelJadeIPandPort.add(jLabelPortExplain, gbc_jLabelPortExplain);
+			jLabelPortExplain.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)");
+			GridBagConstraints gbc_jLabelKeyStore = new GridBagConstraints();
+			gbc_jLabelKeyStore.anchor = GridBagConstraints.WEST;
+			gbc_jLabelKeyStore.insets = new Insets(0, 0, 5, 5);
+			gbc_jLabelKeyStore.gridx = 5;
+			gbc_jLabelKeyStore.gridy = 4;
+			jPanelJadeIPandPort.add(getJLabelKeyStore(), gbc_jLabelKeyStore);
+			GridBagConstraints gbc_jTextFieldKeyStoreFile = new GridBagConstraints();
+			gbc_jTextFieldKeyStoreFile.gridwidth = 3;
+			gbc_jTextFieldKeyStoreFile.insets = new Insets(0, 0, 5, 0);
+			gbc_jTextFieldKeyStoreFile.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jTextFieldKeyStoreFile.gridx = 6;
+			gbc_jTextFieldKeyStoreFile.gridy = 4;
+			jPanelJadeIPandPort.add(getJTextFieldKeyStoreFile(), gbc_jTextFieldKeyStoreFile);
+			GridBagConstraints gbc_jLabelTrustStore = new GridBagConstraints();
+			gbc_jLabelTrustStore.anchor = GridBagConstraints.WEST;
+			gbc_jLabelTrustStore.insets = new Insets(5, 0, 0, 5);
+			gbc_jLabelTrustStore.gridx = 5;
+			gbc_jLabelTrustStore.gridy = 5;
+			jPanelJadeIPandPort.add(getJLabelTrustStore(), gbc_jLabelTrustStore);
+			GridBagConstraints gbc_jTextFieldTrustStoreFile = new GridBagConstraints();
+			gbc_jTextFieldTrustStoreFile.gridwidth = 3;
+			gbc_jTextFieldTrustStoreFile.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jTextFieldTrustStoreFile.gridx = 6;
+			gbc_jTextFieldTrustStoreFile.gridy = 5;
+			jPanelJadeIPandPort.add(getJTextFieldTrustStoreFile(), gbc_jTextFieldTrustStoreFile);
 		}
 		return jPanelJadeIPandPort;
 	}
@@ -411,7 +476,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 		if (jTextFieldIPAddress==null) {
 			jTextFieldIPAddress = new JTextField();
 			jTextFieldIPAddress.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTextFieldIPAddress.setPreferredSize(new Dimension(250, 26));
+			jTextFieldIPAddress.setPreferredSize(new Dimension(300, 26));
 		}
 		return jTextFieldIPAddress;
 	}
@@ -424,13 +489,6 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			jButtonIPedit.addActionListener(this);
 		}
 		return jButtonIPedit;
-	}
-	private JSeparator getSeparator_1() {
-		if (jSeparator2 == null) {
-			jSeparator2 = new JSeparator();
-			jSeparator2.setOrientation(SwingConstants.VERTICAL);
-		}
-		return jSeparator2;
 	}
 	
 	/**
@@ -694,6 +752,208 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 		}
 		return jButtonServiceRemove;
 	}
+	/**
+	 * This method initializes jSeparator2	
+	 * @return javax.swing.JSeparator	
+	 */
+	private JSeparator getJSeparator2() {
+		if (jSeparator2 == null) {
+			jSeparator2 = new JSeparator();
+		}
+		return jSeparator2;
+	}
+	/**
+	 * This method initializes jLabelKeyStore	
+	 * @return javax.swing.JLabel	
+	 */
+	private JLabel getJLabelKeyStore() {
+		if (jLabelKeyStore == null) {
+			jLabelKeyStore = new JLabel("KeyStore:");
+			jLabelKeyStore.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelKeyStore;
+	}
+	/**
+	 * This method initializes jLabelTrustStore	
+	 * @return javax.swing.JLabel	
+	 */
+	private JLabel getJLabelTrustStore() {
+		if (jLabelTrustStore == null) {
+			jLabelTrustStore = new JLabel("TrustStore:");
+			jLabelTrustStore.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelTrustStore;
+	}
+	/**
+	 * This method initializes jTextFieldKeyStoreFile	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getJTextFieldKeyStoreFile() {
+		if (jTextFieldKeyStoreFile == null) {
+			jTextFieldKeyStoreFile = new JTextField();
+			jTextFieldKeyStoreFile.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldKeyStoreFile.setPreferredSize(new Dimension(300, 26));
+		}
+		return jTextFieldKeyStoreFile;
+	}
+	/**
+	 * This method initializes jTextFieldTrustStoreFile	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getJTextFieldTrustStoreFile() {
+		if (jTextFieldTrustStoreFile == null) {
+			jTextFieldTrustStoreFile = new JTextField();
+			jTextFieldTrustStoreFile.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldTrustStoreFile.setPreferredSize(new Dimension(300, 26));
+		}
+		return jTextFieldTrustStoreFile;
+	}
+	/**
+	 * This method initializes jLabelMtpProtocol	
+	 * @return javax.swing.JLabel	
+	 */
+	private JLabel getJLabelMtpProtocol() {
+		if (jLabelMtpProtocol == null) {
+			jLabelMtpProtocol = new JLabel();
+			jLabelMtpProtocol.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelMtpProtocol;
+	}
+	/**
+	 * This method initializes jButtonEditMtpProtocol	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getJButtonEditMtpProtocol() {
+		if (jButtonEditMtpProtocol == null) {
+			jButtonEditMtpProtocol = new JButton();
+			jButtonEditMtpProtocol.setIcon(new ImageIcon(getClass().getResource(PathImage + "edit.png")));
+			jButtonEditMtpProtocol.setPreferredSize(new Dimension(45, 26));
+			jButtonEditMtpProtocol.addActionListener(this);
+		}
+		return jButtonEditMtpProtocol;
+	}
+	/**
+	 * This method initializes jComboBoxMtpProtocol	
+	 * @return JComboBoxMtpProtocol	
+	 */
+	private JComboBoxMtpProtocol getJcomboBoxMtpProtocol(){
+		if( jComboBoxMtpProtocol == null){
+			jComboBoxMtpProtocol = new JComboBoxMtpProtocol();
+			jComboBoxMtpProtocol.setPreferredSize(new Dimension(80, 26));
+			jComboBoxMtpProtocol.addItemListener(this);
+		}
+		return jComboBoxMtpProtocol;
+	}
+	/**
+	 * This method initializes keyStore.
+	 * @return keyStore
+	 */
+	private String getKeyStore() {
+		return keyStore;
+	}
+	/**
+	 * Sets keyStore.
+	 * @param keyStore
+	 */
+	private void setKeyStore(String keyStore) {
+		this.keyStore = keyStore;
+	}
+	/**
+	 * This method initializes keyStorePassword.
+	 * @return keyStorePassword
+	 */
+	private String getKeyStorePassword() {
+		return keyStorePassword;
+	}
+	/**
+	 * Sets keyStorePassword.
+	 * @param keyStorePassword
+	 */
+	private void setKeyStorePassword(String keyStorePassword) {
+		this.keyStorePassword = keyStorePassword;
+	}
+	/**
+	 * This method initializes trustStore.
+	 * @return trustStore
+	 */
+	private String getTrustStore() {
+		return trustStore;
+	}
+	/**
+	 * Sets trustStore.
+	 * @param trustStore
+	 */
+	private void setTrustStore(String trustStore) {
+		this.trustStore = trustStore;
+	}
+	/**
+	 * This method initializes trustStorePassword.
+	 * @return trustStorePassword
+	 */
+	private String getTrustStorePassword() {
+		return trustStorePassword;
+	}
+	/**
+	 * Sets trustStorePasswords.
+	 * @param trustStorePassword
+	 */
+	private void setTrustStorePassword(String trustStorePassword) {
+		this.trustStorePassword = trustStorePassword;
+	}
+	/**
+	 * Sets JLabels and JTextFields visible true in case choosing HTTPS MTP.
+	 */
+	private void setEnabledTrue(){
+		this.getJTextFieldKeyStoreFile().setEnabled(true);
+		this.getJTextFieldTrustStoreFile().setEnabled(true);
+		this.getJButtonEditMtpProtocol().setEnabled(true);
+	}
+	/**
+	 * Sets JLabels and JTextFields visible false in case choosing HTTP MTP.
+	 */
+	private void setEnabledFalse(){
+		this.getJTextFieldKeyStoreFile().setEnabled(false);
+		this.getJTextFieldTrustStoreFile().setEnabled(false);
+		this.getJButtonEditMtpProtocol().setEnabled(false);
+	}
+	/**
+	 * Opens the HttpsCinfogWindow to configure the HTTPS MTP
+	 */
+	private void editHTTPSsettings() {
+		if (this.action == "BUTTON") {
+			// --- In case that the user choose to edit the HTTPS MTP ----------
+			// --- Open the HttpsConfigWindow ----------------------------------
+			httpsConfigWindow = new HttpsConfigWindow(getKeyStore(), getKeyStorePassword(), getTrustStore(),
+					getTrustStorePassword());
+			// --- Wait for the user -------------------------------------------
+			if (httpsConfigWindow.isCanceled() == false) {
+				// ---- Return the KeyStore and TrustStore chosen by the user --
+				this.setKeyStore(httpsConfigWindow.getKeyStorefilepath());
+				this.setTrustStore(httpsConfigWindow.getTrustStorefilepath());
+				this.setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
+				this.setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
+				this.getJTextFieldKeyStoreFile().setText(this.getKeyStore());
+				this.getJTextFieldTrustStoreFile().setText(this.getTrustStore());
+			} 
+		} else if (this.action == "COMBO") {
+			// --- In case that the user choose to configure new HTTPS MTP ------
+			httpsConfigWindow = new HttpsConfigWindow();
+			// - - Wait for the user - - - - - - - - - - - - -
+			if (httpsConfigWindow.isCanceled() == false) {
+				// ---- Return the KeyStore and TrustStore chosen by the user ---
+				this.setKeyStore(httpsConfigWindow.getKeyStorefilepath());
+				this.setTrustStore(httpsConfigWindow.getTrustStorefilepath());
+				this.setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
+				this.setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
+				this.getJTextFieldKeyStoreFile().setText(this.getKeyStore());
+				this.getJTextFieldTrustStoreFile().setText(this.getTrustStore());
+			} else {
+				// ---- If the Button Cancel is pressed -------------------------
+				getJcomboBoxMtpProtocol().setSelectedProtocol("HTTP");
+				this.setEnabledFalse();
+			}
+		}
+	}
 
 	/**
 	 * This method can be called in order to refresh the view 
@@ -734,6 +994,24 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 
 		// --- Model for the services used ------
 		this.jListServicesChosen.setModel(currProject.getJadeConfiguration().getListModelServices());
+		
+		String mtpProtocol = currProject.getJadeConfiguration().getMtpProtocol();
+		if (mtpProtocol.equals("HTTPS")) {
+			this.getJcomboBoxMtpProtocol().setSelectedProtocol("HTTPS");
+			this.setEnabledTrue();
+			this.setKeyStore(currProject.getJadeConfiguration().getKeyStoreFile());
+			this.setTrustStore(currProject.getJadeConfiguration().getTrustStoreFile());
+			this.setKeyStorePassword(currProject.getJadeConfiguration().getKeyStorePassword());
+			this.setTrustStorePassword(currProject.getJadeConfiguration().getTrustStorePassword());
+			this.getJTextFieldKeyStoreFile().setText(this.getKeyStore());
+			this.getJTextFieldTrustStoreFile().setText(this.getTrustStore());
+			this.currentMTP = "HTTPS";
+		} else {
+			this.getJcomboBoxMtpProtocol().setSelectedProtocol("HTTP");
+			this.setEnabledFalse();
+			this.currentMTP = "HTTP";
+		}
+		
 	}
 	/**
 	 * Refreshes the MTP view.
@@ -885,9 +1163,38 @@ public class JadeSetup extends JPanel implements ActionListener, Observer {
 			String actCMD = menuItem.getActionCommand();
 			currProject.getJadeConfiguration().setMtpIpAddress(actCMD);
 			this.getJTextFieldIPAddress().setText(actCMD);
+		}else if (trigger == jButtonEditMtpProtocol){
+			// --- Open the HttpsConfigWindow ---------------------------------
+			this.action = "BUTTON";
+			editHTTPSsettings();
 		}
 		
 	}
-	
-	
+	@Override
+	public void itemStateChanged(ItemEvent event) {
+		if ( event.getSource() == this.getJcomboBoxMtpProtocol()){
+			this.action = "COMBO";
+			if (this.currentMTP == "HTTPS") {
+				// ---- switch from HTTPS to HTTP ----------------------------------
+				this.setEnabledFalse();
+				this.currProject.getJadeConfiguration().setMtpProtocol("HTTP");
+				this.currentMTP = "HTTP";
+			} else if (this.currentMTP == "HTTP") {
+				// ---- switch between HTTP and HTTPS ------------------------------
+				if (event.getStateChange() == ItemEvent.SELECTED) {
+					Object item = event.getItem();
+					if (item.equals("HTTPS")) {
+						// ---- If the user choose HTTPS ---------------------------
+						this.setEnabledTrue();
+						this.editHTTPSsettings();
+						this.currProject.getJadeConfiguration().setMtpProtocol("HTTPS");
+					} else {
+						// ---- If the user choose HTTP ---------------------------
+						this.setEnabledFalse();
+						this.currProject.getJadeConfiguration().setMtpProtocol("HTTP");
+					}
+				}
+			}
+		}
+	}
 }  //  @jve:decl-index=0:visual-constraint="10,10"

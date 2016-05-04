@@ -276,7 +276,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			
 			DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<String>();
 			comboBoxModel.addElement("");
-			String[] projectFolders = globalInfo.getProjectSubDirectories();
+			String[] projectFolders = getGlobalInfo().getProjectSubDirectories();
 			if (projectFolders!=null && projectFolders.length>0) {
 				for (int i = 0; i < projectFolders.length; i++) {
 					comboBoxModel.addElement(projectFolders[i]);	
@@ -298,7 +298,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			jButtonSelectAgentClass = new JButton();
 			jButtonSelectAgentClass.setToolTipText(Language.translate("Agenten auswählen"));
 			jButtonSelectAgentClass.setPreferredSize(new Dimension(45, 26));
-			jButtonSelectAgentClass.setIcon(new ImageIcon(getClass().getResource(pathImage + "Search.png")));
+			jButtonSelectAgentClass.setIcon(new ImageIcon(getClass().getResource(getPathImage() + "Search.png")));
 			jButtonSelectAgentClass.setActionCommand("esaSelectAgent");
 			jButtonSelectAgentClass.addActionListener(this);
 		}
@@ -628,10 +628,10 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	@Override
 	public void setGlobalData2Form() {
 		
-		if (globalInfo.getExecutionMode()==ExecutionMode.DEVICE_SYSTEM) {
+		if (getGlobalInfo().getExecutionMode()==ExecutionMode.DEVICE_SYSTEM) {
 			// --- In case of a Service / Embedded System Agent ---------		
-			this.getJComboBoxProjectSelector().setSelectedItem(globalInfo.getDeviceServiceProjectFolder());
-			switch (globalInfo.getDeviceServiceExecutionMode()) {
+			this.getJComboBoxProjectSelector().setSelectedItem(getGlobalInfo().getDeviceServiceProjectFolder());
+			switch (getGlobalInfo().getDeviceServiceExecutionMode()) {
 			case SETUP:
 				this.getJRadioButtonExecuteAsService().setSelected(true);
 				this.getJRadioButtonExecuteAsDeviceAgent().setSelected(false);
@@ -641,9 +641,9 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				this.getJRadioButtonExecuteAsDeviceAgent().setSelected(true);
 				break;
 			}
-			this.getJComboBoxSetupSelector().setSelectedItem(globalInfo.getDeviceServiceSetupSelected());
-			this.getJTextFieldAgentClass().setText(globalInfo.getDeviceServiceAgentSelected());
-			switch (globalInfo.getDeviceServiceAgentVisualisation()) {
+			this.getJComboBoxSetupSelector().setSelectedItem(getGlobalInfo().getDeviceServiceSetupSelected());
+			this.getJTextFieldAgentClass().setText(getGlobalInfo().getDeviceServiceAgentSelected());
+			switch (getGlobalInfo().getDeviceServiceAgentVisualisation()) {
 			case NONE:
 				this.getJRadioButtonVisNon().setSelected(true);
 				this.getJRadioButtonVisTrayIcon().setSelected(false);
@@ -670,18 +670,18 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	@Override
 	public void setFormData2Global() {
 
-		this.globalInfo.setDeviceServiceProjectFolder((String) this.getJComboBoxProjectSelector().getSelectedItem());
+		this.getGlobalInfo().setDeviceServiceProjectFolder((String) this.getJComboBoxProjectSelector().getSelectedItem());
 		if (this.getJRadioButtonExecuteAsService().isSelected()) {
-			this.globalInfo.setDeviceServiceExecutionMode(DeviceSystemExecutionMode.SETUP);	
+			this.getGlobalInfo().setDeviceServiceExecutionMode(DeviceSystemExecutionMode.SETUP);	
 		} else if (this.getJRadioButtonExecuteAsDeviceAgent().isSelected()) {
-			this.globalInfo.setDeviceServiceExecutionMode(DeviceSystemExecutionMode.AGENT);
+			this.getGlobalInfo().setDeviceServiceExecutionMode(DeviceSystemExecutionMode.AGENT);
 		}
-		this.globalInfo.setDeviceServiceSetupSelected((String)this.getJComboBoxSetupSelector().getSelectedItem());
-		this.globalInfo.setDeviceServiceAgentSelected(this.getJTextFieldAgentClass().getText());
+		this.getGlobalInfo().setDeviceServiceSetupSelected((String)this.getJComboBoxSetupSelector().getSelectedItem());
+		this.getGlobalInfo().setDeviceServiceAgentSelected(this.getJTextFieldAgentClass().getText());
 		if (this.getJRadioButtonVisNon().isSelected()) {
-			this.globalInfo.setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.NONE);			
+			this.getGlobalInfo().setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.NONE);			
 		} else if (this.getJRadioButtonVisTrayIcon().isSelected()) {
-			this.globalInfo.setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.TRAY_ICON);	
+			this.getGlobalInfo().setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.TRAY_ICON);	
 		}
 	}
 

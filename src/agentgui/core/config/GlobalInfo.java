@@ -136,10 +136,12 @@ public class GlobalInfo {
 	private String filePropServerMasterURL;
 	private Integer filePropServerMasterPort = this.localeJadeLocalPort;
 	private Integer filePropServerMasterPort4MTP = 7778;
+	private String filePropServerMasterProtocol = "HTTP";
 	
 	private MTP_Creation filePropOwnMtpCreation = MTP_Creation.ConfiguredByJADE;
 	private String filePropOwnMtpIP = PlatformJadeConfig.MTP_IP_AUTO_Config;
 	private Integer filePropOwnMtpPort = 7778;
+	private String filePropMtpProtocol ;
 	
 	private String filePropServerMasterDBHost;
 	private String filePropServerMasterDBName;
@@ -159,6 +161,11 @@ public class GlobalInfo {
 	private String deviceServiceSetupSelected;  
 	private String deviceServiceAgentSelected;
 	private EmbeddedSystemAgentVisualisation deviceServiceAgentVisualisation = EmbeddedSystemAgentVisualisation.TRAY_ICON;
+	
+	private String filePropKeyStoreFile;
+	private String filePropKeyStorePassword;
+	private String filePropTrustStoreFile;
+	private String filePropTrustStorePassword;
 	
 	// --- Reminder information for file dialogs ----------------------------
 	private File lastSelectedFolder = null; 
@@ -842,6 +849,7 @@ public class GlobalInfo {
 			urlConfiguraionForMaster = new JadeUrlConfiguration(this.getServerMasterURL());
 			urlConfiguraionForMaster.setPort(this.getServerMasterPort());
 			urlConfiguraionForMaster.setPort4MTP(this.getServerMasterPort4MTP());
+			urlConfiguraionForMaster.setMtpProtocol(this.getServerMasterProtocol());
 		}
 		return urlConfiguraionForMaster;
 	}
@@ -1075,7 +1083,24 @@ public class GlobalInfo {
 	public Integer getServerMasterPort4MTP() {
 		return this.filePropServerMasterPort4MTP;
 	}
-
+	
+	/**
+	 * Gets the filePropServerMasterProtocol.
+	 * @return the file prop server master protocol
+	 * @see FileProperties
+	 */
+	public String getServerMasterProtocol() {
+		return filePropServerMasterProtocol;
+	}
+	
+	/**
+	 * Sets the filePropServerMasterProtocol.
+	 * @param filePropServerMasterProtocol the new filePropServerMasterProtocol
+	 * @see FileProperties
+	 */
+	public void setServerMasterProtocol(String filePropServerMasterProtocol) {
+		this.filePropServerMasterProtocol = filePropServerMasterProtocol;
+	}
 	
 	/**
 	 * Sets the own MTP creation settings.
@@ -1120,6 +1145,21 @@ public class GlobalInfo {
 		return filePropOwnMtpPort;
 	}
 	
+	/**
+	 * Sets the MTP protocol.
+	 * @param newMtpProtocol the new MTP protocol
+	 */
+	public void setMtpProtocol(String newMtpProtocol) {
+		this.filePropMtpProtocol = newMtpProtocol;
+	}
+	
+	/**
+	 * Gets the MTP protocol.
+	 * @return the MTP protocol
+	 */
+	public String getMtpProtocol() {
+		return filePropMtpProtocol;
+	}
 	/**
 	 * Database property for the server.nmaster
 	 * @param newDBHost the filePropServerMasterDBHost to set
@@ -1557,6 +1597,65 @@ public class GlobalInfo {
 		this.deviceServiceAgentVisualisation = deviceServiceAgentVisualisation;
 	}
 	
+	/**
+	 * Gets the KeyStoreFile.
+	 * @return KeyStoreFile
+	 */
+	public String getKeyStoreFile() {
+		return filePropKeyStoreFile;
+	}
+	
+	/**
+	 * Sets the KeyStoreFile.
+	 * @param filePropKeyStoreFile the new KeyStoreFile
+	 */
+	public void setKeyStoreFile(String filePropKeyStoreFile) {
+		this.filePropKeyStoreFile = filePropKeyStoreFile;
+	}
+	
+	/**
+	 * Gets the key store password.
+	 * @return the key store password
+	 */
+	public String getKeyStorePassword() {
+		return filePropKeyStorePassword;
+	}
+	/**
+	 * Sets the KeyStore password.
+	 * @param filePropKeyStorePassword the new KeyStore password
+	 */
+	public void setKeyStorePassword(String filePropKeyStorePassword) {
+		this.filePropKeyStorePassword = filePropKeyStorePassword;
+	}
+	/**
+	 * Gets the TrustStore file.
+	 * @return the TrustStore file
+	 */
+	public String getTrustStoreFile() {
+		return filePropTrustStoreFile;
+	}
+	/**
+	 * Sets the TrustStore file.
+	 * @param filePropTrustStoreFile the new TrustStore file
+	 */
+	public void setTrustStoreFile(String filePropTrustStoreFile) {
+		this.filePropTrustStoreFile = filePropTrustStoreFile;
+	}
+	/**
+	 * Gets the TrustStore password.
+	 * @return the TrustStore password
+	 */
+	public String getTrustStorePassword() {
+		return filePropTrustStorePassword;
+	}
+	/**
+	 * Sets the TrustStore password.
+	 * @param filePropTrustStorePassword the new TrustStore password
+	 */
+	public void setTrustStorePassword(String filePropTrustStorePassword) {
+		this.filePropTrustStorePassword = filePropTrustStorePassword;
+	}
+	
 	
 	// ------------------------------------------------------------------------------------------------------
 	// ---- From here some help methods for container and component handling can be found --- Start --------- 
@@ -1619,6 +1718,4 @@ public class GlobalInfo {
 		}
 		return dialogFound;
 	}
-	// ------------------------------------------------------------------------------------------------------
-	
 }

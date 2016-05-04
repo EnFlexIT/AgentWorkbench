@@ -118,7 +118,7 @@ public class JPanelBackgroundSystem extends AbstractJPanelForOptions {
 	 */
 	@Override
 	public void setGlobalData2Form(){
-		if (this.globalInfo.isServerAutoRun()== true) {
+		if (this.getGlobalInfo().isServerAutoRun()== true) {
 			this.getJCheckBoxAutoStart().setSelected(true);	
 		} else {
 			this.getJCheckBoxAutoStart().setSelected(false);
@@ -130,7 +130,7 @@ public class JPanelBackgroundSystem extends AbstractJPanelForOptions {
 	 */
 	@Override
 	public void setFormData2Global() {
-		this.globalInfo.setServerAutoRun(this.jCheckBoxAutoStart.isSelected());
+		this.getGlobalInfo().setServerAutoRun(this.jCheckBoxAutoStart.isSelected());
 		
 	}
 

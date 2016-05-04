@@ -33,12 +33,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
+
+import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -85,10 +88,12 @@ public class FileProperties extends Properties {
 	private final String DEF_MASTER_URL = "11_MASTER_URL";
 	private final String DEF_MASTER_PORT = "12_MASTER_PORT";
 	private final String DEF_MASTER_PORT4MTP = "13_MASTER_PORT4MTP";
-	
+	private final String DEF_MASTER_PROTOCOL = "14_MASTER_PROTOCOL";
+
 	private final String DEF_OWN_MTP_CREATION = "15_OWN_MTP_CREATION";
 	private final String DEF_OWN_MTP_IP = "16_OWN_MTP_IP";
 	private final String DEF_OWN_MTP_PORT = "17_OWN_MTP_PORT";
+	private final String DEF_OWN_MTP_PROTOCOL = "18_OWN_MTP_PROTOCOL";
 	
 	private final String DEF_MASTER_DB_HOST = "20_MASTER_DB_HOST";
 	private final String DEF_MASTER_DB_NAME = "21_MASTER_DB_NAME";
@@ -113,7 +118,11 @@ public class FileProperties extends Properties {
 	private final String DEF_DeviceServcie_Vis_None = "None";
 	private final String DEF_DeviceServcie_Vis_TrayIcon = "TrayIcon";
 	
-	
+	private final String DEF_KEYSTORE_FILE = "50_KEY_STORE_FILE";
+	private final String DEF_KEYSTORE_PASSWORD = "51_KEY_STORE_PASSWORD";
+	private final String DEF_TRUSTSTORE_FILE = "52_TRUST_STORE_FILE";
+	private final String DEF_TRUSTSTORE_PASSWORD = "53_TRUST_STORE_PASSWORD";
+
 	private String[] mandatoryProps = {	this.DEF_RUNAS,
 										this.DEF_BENCH_VALUE,
 										this.DEF_BENCH_EXEC_ON,
@@ -123,13 +132,19 @@ public class FileProperties extends Properties {
 										this.DEF_MASTER_URL,
 										this.DEF_MASTER_PORT,
 										this.DEF_MASTER_PORT4MTP,
+										this.DEF_MASTER_PROTOCOL,
 										this.DEF_OWN_MTP_CREATION,
+										this.DEF_OWN_MTP_PROTOCOL,
 										this.DEF_OWN_MTP_IP,
 										this.DEF_OWN_MTP_PORT,
 										this.DEF_UPDATE_SITE,
 										this.DEF_UPDATE_AUTOCONFIG,
 										this.DEF_UPDATE_KEEP_DICTIONARY,
-										this.DEF_UPDATE_DATE_LAST_CHECKED
+										this.DEF_UPDATE_DATE_LAST_CHECKED,
+										this.DEF_KEYSTORE_FILE,
+										this.DEF_KEYSTORE_PASSWORD,
+										this.DEF_TRUSTSTORE_FILE,
+										DEF_TRUSTSTORE_PASSWORD
 										};
 	
 	/**
@@ -286,6 +301,13 @@ public class FileProperties extends Properties {
 		} else {
 			Application.getGlobalInfo().setServerMasterPort4MTP(7778);
 		}
+		// --- this.DEF_MASTER_PROTOCOL --------------
+		propValue = this.getProperty(this.DEF_MASTER_PROTOCOL);
+		if (propValue.equalsIgnoreCase("") == false) {
+			Application.getGlobalInfo().setServerMasterProtocol(propValue);
+		} else {
+			Application.getGlobalInfo().setServerMasterProtocol("HTTP");
+		}
 		
 		// --- this.DEF_OWN_MTP_CREATION -------------
 		propValue = this.getProperty(this.DEF_OWN_MTP_CREATION).trim();
@@ -311,7 +333,13 @@ public class FileProperties extends Properties {
 		} else {
 			Application.getGlobalInfo().setOwnMtpPort(7778);
 		}
-		
+		// --- this.DEF_OWN_MTP_PROTOCOL -------------------
+		propValue = this.getProperty(this.DEF_OWN_MTP_PROTOCOL);
+		if (propValue.equalsIgnoreCase("") == false) {
+			Application.getGlobalInfo().setMtpProtocol(propValue);
+		} else {
+			Application.getGlobalInfo().setMtpProtocol("HTTP");
+		}
 		
 		// --- this.DEF_MASTER_DB_HOST ---------------
 		propValue = this.getProperty(this.DEF_MASTER_DB_HOST);
@@ -436,6 +464,44 @@ public class FileProperties extends Properties {
 		} else {
 			Application.getGlobalInfo().setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.NONE);
 		}
+		// --- this.DEF_KEYSTORE_FILE -------------------
+		propValue = this.getProperty(this.DEF_KEYSTORE_FILE);
+		if (propValue.equalsIgnoreCase("") == false) {
+			Application.getGlobalInfo().setKeyStoreFile(propValue);
+		} else {
+			Application.getGlobalInfo().setKeyStoreFile(null);
+		}
+		// --- this.DEF_KEYSTORE_PASSWORD -------------------
+		propValue = this.getProperty(this.DEF_KEYSTORE_PASSWORD);
+		if (propValue.equalsIgnoreCase("") == false) {
+			try {
+				Application.getGlobalInfo()
+						.setKeyStorePassword(new String(Base64.decodeBase64(propValue.getBytes()), "UTF8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		} else {
+			Application.getGlobalInfo().setKeyStorePassword(null);
+		}
+		// --- this.DEF_TRUSTSTORE_FILE -------------------
+		propValue = this.getProperty(this.DEF_TRUSTSTORE_FILE);
+		if (propValue.equalsIgnoreCase("") == false) {
+			Application.getGlobalInfo().setTrustStoreFile(propValue);
+		} else {
+			Application.getGlobalInfo().setTrustStoreFile(null);
+		}
+		// --- this.DEF_TRUSTSTORE_PASSWORD -------------------
+		propValue = this.getProperty(this.DEF_TRUSTSTORE_PASSWORD);
+		if (propValue.equalsIgnoreCase("") == false) {
+			try {
+				Application.getGlobalInfo()
+						.setTrustStorePassword(new String(Base64.decodeBase64(propValue.getBytes()), "UTF8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		} else {
+			Application.getGlobalInfo().setTrustStorePassword(null);
+		}
 		
 	}
 
@@ -498,7 +564,8 @@ public class FileProperties extends Properties {
 		this.setProperty(this.DEF_MASTER_PORT, Application.getGlobalInfo().getServerMasterPort().toString());
 		// --- this.DEF_MASTER_PORT4MTP --------------
 		this.setProperty(this.DEF_MASTER_PORT4MTP, Application.getGlobalInfo().getServerMasterPort4MTP().toString());
-
+		// --- this.DEF_MASTER_PROTOCOL --------------
+		this.setProperty(this.DEF_MASTER_PROTOCOL, Application.getGlobalInfo().getServerMasterProtocol());
 		
 		// --- this.DEF_OWN_MTP_CREATION -------------
 		this.setProperty(this.DEF_OWN_MTP_CREATION, Application.getGlobalInfo().getOwnMtpCreation().toString());
@@ -506,7 +573,8 @@ public class FileProperties extends Properties {
 		this.setProperty(this.DEF_OWN_MTP_IP, Application.getGlobalInfo().getOwnMtpIP());
 		// --- this.DEF_OWN_MTP_PORT -----------------
 		this.setProperty(this.DEF_OWN_MTP_PORT, Application.getGlobalInfo().getOwnMtpPort().toString());
-		
+		// --- this.DEF_OWN_MTP_PROTOCOL -----------------
+		this.setProperty(this.DEF_OWN_MTP_PROTOCOL, Application.getGlobalInfo().getMtpProtocol());
 		
 		// --- this.DEF_MASTER_DB_HOST ---------------
 		if (Application.getGlobalInfo().getServerMasterDBHost() == null) {
@@ -559,7 +627,38 @@ public class FileProperties extends Properties {
 		this.setProperty(this.DEF_UPDATE_KEEP_DICTIONARY, Application.getGlobalInfo().getUpdateKeepDictionary().toString());
 		// --- this.DEF_UPDATE_DATE_LAST_CHECKED ------
 		this.setProperty(this.DEF_UPDATE_DATE_LAST_CHECKED, Application.getGlobalInfo().getUpdateDateLastChecked().toString());
-		
+		// --- this.DEF_KEYSTORE_FILE ------
+		if (Application.getGlobalInfo().getKeyStoreFile()==null || Application.getGlobalInfo().getMtpProtocol().equals("HTTP")) {
+			this.setProperty(this.DEF_KEYSTORE_FILE, "");
+		} else {
+			this.setProperty(this.DEF_KEYSTORE_FILE, Application.getGlobalInfo().getKeyStoreFile());
+		}
+		// --- this.DEF_KEYSTORE_PASSWORD ------
+		if (Application.getGlobalInfo().getKeyStorePassword()==null || Application.getGlobalInfo().getMtpProtocol().equals("HTTP")) {
+			this.setProperty(this.DEF_KEYSTORE_PASSWORD, "");
+		} else {
+			try {
+				this.setProperty(this.DEF_KEYSTORE_PASSWORD, new String(Base64.encodeBase64(Application.getGlobalInfo().getKeyStorePassword().getBytes("UTF8"))));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+		// --- this.DEF_TRUSTSTORE_FILE ------
+		if (Application.getGlobalInfo().getTrustStoreFile()==null || Application.getGlobalInfo().getMtpProtocol().equals("HTTP")) {
+			this.setProperty(this.DEF_TRUSTSTORE_FILE, "");
+		} else {
+			this.setProperty(this.DEF_TRUSTSTORE_FILE, Application.getGlobalInfo().getTrustStoreFile());
+		}
+		// --- this.DEF_TRUSTSTORE_PASSWORD ------
+		if (Application.getGlobalInfo().getTrustStorePassword()==null || Application.getGlobalInfo().getMtpProtocol().equals("HTTP")) {
+			this.setProperty(this.DEF_TRUSTSTORE_PASSWORD, "");
+		} else {
+			try {
+				this.setProperty(this.DEF_TRUSTSTORE_PASSWORD, new String(Base64.encodeBase64(Application.getGlobalInfo().getTrustStorePassword().getBytes("UTF8"))));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		// --- this.DEF_DeviceServcie_ProjectFolder ---
 		if (Application.getGlobalInfo().getDeviceServiceProjectFolder()==null) {
@@ -621,6 +720,8 @@ public class FileProperties extends Properties {
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PORT4MTP) ) {				
 				this.setProperty(this.DEF_MASTER_PORT4MTP, Application.getGlobalInfo().getServerMasterPort4MTP().toString());
 				
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PROTOCOL) ) {				
+				this.setProperty(this.DEF_MASTER_PROTOCOL, Application.getGlobalInfo().getServerMasterProtocol());
 			
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_AUTOSTART) ) {
 				if (Application.getGlobalInfo().isServerAutoRun()==true) {
@@ -638,7 +739,9 @@ public class FileProperties extends Properties {
 				
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_OWN_MTP_PORT) ) {
 				this.setProperty(this.DEF_OWN_MTP_PORT, Application.getGlobalInfo().getOwnMtpPort().toString());
-
+			
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_OWN_MTP_PROTOCOL) ) {
+				this.setProperty(this.DEF_OWN_MTP_PROTOCOL, Application.getGlobalInfo().getMtpProtocol());
 				
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_SITE) ) {				
 				this.setProperty(this.DEF_UPDATE_SITE, "http://update.agentgui.org");
@@ -652,7 +755,19 @@ public class FileProperties extends Properties {
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_DATE_LAST_CHECKED) ) {
 				this.setProperty(this.DEF_UPDATE_DATE_LAST_CHECKED, "0");
 				
-			}	
+			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_KEYSTORE_FILE) ) {
+				this.setProperty(this.DEF_KEYSTORE_FILE, "0");
+			
+			}else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_KEYSTORE_PASSWORD) ) {
+				this.setProperty(this.DEF_KEYSTORE_PASSWORD, "0");
+			
+			}else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_TRUSTSTORE_FILE) ) {
+				this.setProperty(this.DEF_TRUSTSTORE_FILE, "0");
+			
+			}else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_TRUSTSTORE_PASSWORD) ) {
+				this.setProperty(this.DEF_TRUSTSTORE_PASSWORD, "0");
+			}
+			
 			
 		} // end for
 		

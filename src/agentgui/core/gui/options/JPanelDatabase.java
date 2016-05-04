@@ -213,20 +213,20 @@ public class JPanelDatabase extends AbstractJPanelForOptions {
 	 */
 	@Override
 	public void setGlobalData2Form() {
-		this.getJTextFieldDBHost().setText(globalInfo.getServerMasterDBHost());
-		this.getJTextFieldDB().setText(globalInfo.getServerMasterDBName());
-		this.getJTextFieldDBUser().setText(globalInfo.getServerMasterDBUser());
-		this.getJTextFieldDBPswd().setText(globalInfo.getServerMasterDBPswd());
+		this.getJTextFieldDBHost().setText(getGlobalInfo().getServerMasterDBHost());
+		this.getJTextFieldDB().setText(getGlobalInfo().getServerMasterDBName());
+		this.getJTextFieldDBUser().setText(getGlobalInfo().getServerMasterDBUser());
+		this.getJTextFieldDBPswd().setText(getGlobalInfo().getServerMasterDBPswd());
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#setFromData2Global()
 	 */
 	@Override
 	public void setFormData2Global() {
-		this.globalInfo.setServerMasterDBHost(this.jTextFieldDBHost.getText().trim());
-		this.globalInfo.setServerMasterDBName(this.jTextFieldDB.getText().trim());
-		this.globalInfo.setServerMasterDBUser(this.jTextFieldDBUser.getText().trim());
-		this.globalInfo.setServerMasterDBPswd(this.jTextFieldDBPswd.getText().trim());
+		this.getGlobalInfo().setServerMasterDBHost(this.jTextFieldDBHost.getText().trim());
+		this.getGlobalInfo().setServerMasterDBName(this.jTextFieldDB.getText().trim());
+		this.getGlobalInfo().setServerMasterDBUser(this.jTextFieldDBUser.getText().trim());
+		this.getGlobalInfo().setServerMasterDBPswd(this.jTextFieldDBPswd.getText().trim());
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#errorFound()

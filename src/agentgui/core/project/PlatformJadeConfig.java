@@ -82,7 +82,11 @@ public class PlatformJadeConfig implements Serializable {
 		ConfiguredByIPandPort
 	}
 	public static String MTP_IP_AUTO_Config = "Auto-Configuration";
-	
+	public static String MTP_Protocol = "HTTP";
+	public static String KeyStoreFile;
+	public static String KeyStorePassword;
+	public static String TrustStoreFile;
+	public static String TrustStorePassword;
 	
 	// --- Services 'Activated automatically' ---------------------------------
 	public static final String SERVICE_MessagingService = jade.core.messaging.MessagingService.class.getName();
@@ -125,8 +129,21 @@ public class PlatformJadeConfig implements Serializable {
 	
 	@XmlElement(name="mtpCreation")
 	private MTP_Creation mtpCreation = MTP_Creation.ConfiguredByJADE;
+	
 	@XmlElement(name="mtpIpAddress")
 	private String mtpIpAddress = MTP_IP_AUTO_Config;
+	
+	@XmlElement(name="mtpProtocol")
+	private String mtpProtocol = MTP_Protocol;
+	@XmlElement(name="keyStoreFile")
+	private String keyStoreFile = KeyStoreFile;
+	@XmlElement(name="keyStorepassword")
+	private String keyStorePassword = KeyStorePassword;
+	@XmlElement(name="trustStoreFile")
+	private String trustStoreFile = TrustStoreFile;
+	@XmlElement(name="trustStorePassword")
+	private String trustStorePassword = TrustStorePassword;
+	
 	@XmlElement(name="mtpPort")
 	private Integer useLocalPortMTP = Application.getGlobalInfo().getJadeLocalPortMTP();
 	
@@ -246,11 +263,19 @@ public class PlatformJadeConfig implements Serializable {
 					// --- Use configured IP address --------------------------
 					ipAddress = this.getMtpIpAddress();
 				}
-				
 				// --- Set the MTP address ------------------------------------ 
 				if (ipAddress!=null) {
 					Integer freePort = new PortChecker(this.getLocalPortMTP(), ipAddress).getFreePort();
-					profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
+					if(this.getMtpProtocol().equals("HTTP")){
+						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
+					}else{
+						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(https://" + ipAddress + ":" + freePort + "/acc)");
+						profile.setParameter("jade_mtp_http_https_keyStoreFile", this.getKeyStoreFile());
+						profile.setParameter("jade_mtp_http_https_keyStorePass", this.getKeyStorePassword());
+						profile.setParameter("jade_mtp_http_https_trustManagerClass","jade.mtp.http.https.FriendListAuthentication");
+						profile.setParameter("jade_mtp_http_https_friendListFile", this.getTrustStoreFile());
+						profile.setParameter("jade_mtp_http_https_friendListFilePass", this.getTrustStorePassword());
+					}
 					profile.setParameter(Profile.LOCAL_HOST, ipAddress);
 				}
 			}
@@ -265,7 +290,6 @@ public class PlatformJadeConfig implements Serializable {
 			Integer mtpPort = globalInfo.getOwnMtpPort();
 			
 			if (mtpCreation==MTP_Creation.ConfiguredByIPandPort) {
-				
 				String ipAddress = null;
 				if (mtpIpAddress==null || mtpIpAddress.equals("") || mtpIpAddress.equals(MTP_IP_AUTO_Config)) {
 					// --- Auto configuration of the IP address ---------------
@@ -278,11 +302,19 @@ public class PlatformJadeConfig implements Serializable {
 					// --- Use configured IP address --------------------------
 					ipAddress = mtpIpAddress;
 				}	
-				
 				// --- Set the MTP address ------------------------------------ 
 				if (ipAddress!=null) {
 					Integer freePort = new PortChecker(mtpPort, ipAddress).getFreePort();
-					profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
+					if(globalInfo.getMtpProtocol().equals("HTTP")){
+						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
+					}else{
+						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(https://" + ipAddress + ":" + freePort + "/acc)");
+						profile.setParameter("jade_mtp_http_https_keyStoreFile", globalInfo.getKeyStoreFile());
+						profile.setParameter("jade_mtp_http_https_keyStorePass", globalInfo.getKeyStorePassword());
+						profile.setParameter("jade_mtp_http_https_trustManagerClass","jade.mtp.http.https.FriendListAuthentication");
+						profile.setParameter("jade_mtp_http_https_friendListFile", globalInfo.getTrustStoreFile());
+						profile.setParameter("jade_mtp_http_https_friendListFilePass", globalInfo.getTrustStorePassword());
+					}
 					profile.setParameter(Profile.LOCAL_HOST, ipAddress);
 				}
 			}
@@ -306,11 +338,8 @@ public class PlatformJadeConfig implements Serializable {
 					break;
 				}	
 			}
-			
 		}
-		
 	}
-	
 	/**
 	 * Adds the local configured SERVICES to the input instance of Profile.
 	 * @param profile the profile to work on
@@ -477,6 +506,8 @@ public class PlatformJadeConfig implements Serializable {
 		return mtpCreation;
 	}
 	
+	
+	
 	/**
 	 * Sets the MTP IP-address.
 	 * @param mtpIpAddress the new MTP IP-address
@@ -496,7 +527,103 @@ public class PlatformJadeConfig implements Serializable {
 	public String getMtpIpAddress() {
 		return mtpIpAddress;
 	}
-
+	
+	/**
+	 * Sets the MTP Protocol.
+	 * @param mtpProtool the new MTP Protocol
+	 */
+	public void setMtpProtocol(String mtpProtool){
+		this.mtpProtocol = mtpProtool;
+		// --- if set, set project changed and unsaved ----------
+		if (currProject != null) {
+			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+		}
+	}
+	/**
+	 * Gets the MTP Protocol.
+	 * @return the MTP Protocol
+	 */
+	@XmlTransient
+	public String getMtpProtocol(){
+		return mtpProtocol;
+	}
+	
+	/**
+	 * Sets the KeyStoreFile.
+	 * @param keyStoreFile the new KeyStoreFile
+	 */
+	public void setKeyStoreFile(String keyStoreFile){
+		this.keyStoreFile = keyStoreFile;
+		// --- if set, set project changed and unsaved ----------
+		if (currProject != null) {
+			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+		}
+	}
+	/**
+	 * Gets the KeyStoreFile.
+	 * @return the keyStoreFile
+	 */
+	@XmlTransient
+	public String getKeyStoreFile(){
+		return keyStoreFile;
+	}
+	/**
+	 * Sets the KeyStorePassword.
+	 * @param keyStorePassword the new KeyStorePassword
+	 */
+	public void setKeyStorePassword(String keyStorePassword){
+		this.keyStorePassword = keyStorePassword;
+		// --- if set, set project changed and unsaved ----------
+		if (currProject != null) {
+			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+		}
+	}
+	/**
+	 * Gets the KeyStorePassword.
+	 * @return the keyStorePassword
+	 */
+	@XmlTransient
+	public String getKeyStorePassword(){
+		return keyStorePassword;
+	}
+	/**
+	 * Sets the TrustStoreFile.
+	 * @param trustStoreFile the new TrustStoreFile
+	 */
+	public void setTrustStoreFile(String trustStoreFile){
+		this.trustStoreFile = trustStoreFile;
+		// --- if set, set project changed and unsaved ----------
+		if (currProject != null) {
+			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+		}
+	}
+	/**
+	 * Gets the TrustStoreFile.
+	 * @return the trustStoreFile
+	 */
+	@XmlTransient
+	public String getTrustStoreFile(){
+		return trustStoreFile;
+	}
+	/**
+	 * Sets the TrustStorePassword.
+	 * @param trustStorePassword the new TrustStorePassword
+	 */
+	public void setTrustStorePassword(String trustStorePassword){
+		this.trustStorePassword = trustStorePassword;
+		// --- if set, set project changed and unsaved ----------
+		if (currProject != null) {
+			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+		}
+	}
+	/**
+	 * Gets the TrustStorePassword.
+	 * @return the trustStorePassword
+	 */
+	@XmlTransient
+	public String getTrustStorePassword(){
+		return trustStorePassword;
+	}
 	/**
 	 * Gets the list model services.
 	 * @return the listModelServices
@@ -564,6 +691,4 @@ public class PlatformJadeConfig implements Serializable {
 		bugOut += "Services:" + getServiceListArgument();
 		return bugOut;
 	}
-
-
 }

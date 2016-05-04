@@ -94,6 +94,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	private JPanelBackgroundSystem jPanelBackgroundService;
 	private JPanelDatabase jPanelDatabase;
 	private JPanelEmbeddedSystemAgent jPanelEmbeddedSystemAgent;
+	private JPanelMTPConfig jPanelMTPConfig;
 
 	private List<AbstractJPanelForOptions> optionPanels;
 	
@@ -160,6 +161,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		// --- Initiate all sub panels --------------------
 		this.registerOptionPanel(this.getJPanelMasterConfiguration());
 		this.registerOptionPanel(this.getJPanelOwnMTP());
+		this.registerOptionPanel(this.getJPanelMTPConfig());
 		this.registerOptionPanel(this.getJPanelBackgroundSystem());
 		this.registerOptionPanel(this.getJPanelDatabase());
 		this.registerOptionPanel(this.getJPanelEmbeddedSystemAgent());
@@ -180,7 +182,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		gridBagConstraints21.weighty = 0.0;
 		gridBagConstraints21.gridy = 0;
 		
-		this.setSize(680, 440);
+		this.setSize(770, 440);
 		this.setLayout(new GridBagLayout());
 		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		this.add(this.getJPanelTop(), gridBagConstraints21);
@@ -368,6 +370,17 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		}
 		return jPanelEmbeddedSystemAgent;
 	}
+
+	/**
+	 * Gets the JPanelMTPConfig.
+	 * @return the JPanelMTPConfig
+	 */
+	private JPanelMTPConfig getJPanelMTPConfig() {
+		if (jPanelMTPConfig == null) {
+			jPanelMTPConfig = new JPanelMTPConfig(this.optionDialog, this);
+		}
+		return jPanelMTPConfig;
+	}
 	
 	
 	
@@ -529,6 +542,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		case APPLICATION:
 			this.addToConfigPanel(this.getJPanelMasterConfiguration());
 			this.addToConfigPanel(this.getJPanelOwnMTP());
+			this.addToConfigPanel(this.getJPanelMTPConfig());
 			break;
 
 		case SERVER:
@@ -536,6 +550,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		case SERVER_SLAVE:
 			this.addToConfigPanel(this.getJPanelMasterConfiguration());
 			this.addToConfigPanel(this.getJPanelOwnMTP());
+			this.addToConfigPanel(this.getJPanelMTPConfig());
 			this.addToConfigPanel(this.getJPanelBackgroundSystem());
 			this.addToConfigPanel(this.getJPanelDatabase());
 			break;
@@ -543,6 +558,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		case DEVICE_SYSTEM:
 			this.addToConfigPanel(this.getJPanelMasterConfiguration());
 			this.addToConfigPanel(this.getJPanelOwnMTP());
+			this.addToConfigPanel(this.getJPanelMTPConfig());
 			this.addToConfigPanel(this.getJPanelEmbeddedSystemAgent());
 			break;
 
@@ -773,10 +789,17 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		} else if (actCMD.equalsIgnoreCase("resetSettings")) {
 			this.executionModeNew = this.executionModeOld;
 			this.setGlobalData2Form();
+			this.getJPanelMTPConfig().getJComboBoxMtpProtocol().setSelectedProtocol("HTTP");
+			this.getJPanelMTPConfig().setVisibleFalse();
 			
 		} else if (actCMD.equalsIgnoreCase("applySettings")) {
-			this.doOkAction();
-			
+			if(getJPanelMTPConfig().getJComboBoxMtpProtocol().getSelectedProtocol()!= getJPanelMasterConfiguration().getJcomboboxMtpProtocol().getSelectedProtocol() && executionModeNew==ExecutionMode.SERVER) {
+				String title = Language.translate("Different MTP-protocols configured!", Language.EN); 
+				String msg = Language.translate("Please, choose the same Protocol for the server.master and the MTP-protocol!", Language.EN);
+				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
+			}else{
+				this.doOkAction();
+			}
 		} else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actCMD);
 		}

@@ -45,6 +45,7 @@ import javax.swing.JTextField;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
+import agentgui.core.gui.components.JComboBoxMtpProtocol;
 
 /**
  * On this JPanel the starting options of AgentGUI can be set.
@@ -66,7 +67,9 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 	private JTextField jTextFieldMasterPort;
 	private JTextField jTextFieldMasterPort4MTP;
 
-
+	private JComboBoxMtpProtocol jComboBoxMtpProtocol;
+	private JLabel jLabel;
+	
 	/**
 	 * This is the Constructor.
 	 * @param optionDialog the option dialog
@@ -84,9 +87,9 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 	private void initialize() {
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{55, 100, 370, 0};
+		gridBagLayout.columnWidths = new int[]{55, 100, 0, 370, 0};
 		gridBagLayout.rowHeights = new int[]{16, 26, 26, 26, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		this.setPreferredSize(new Dimension(550, 110));
@@ -94,7 +97,7 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 		GridBagConstraints gbc_jLabelJadeConfig = new GridBagConstraints();
 		gbc_jLabelJadeConfig.anchor = GridBagConstraints.WEST;
 		gbc_jLabelJadeConfig.insets = new Insets(0, 0, 5, 5);
-		gbc_jLabelJadeConfig.gridwidth = 3;
+		gbc_jLabelJadeConfig.gridwidth = 4;
 		gbc_jLabelJadeConfig.gridx = 0;
 		gbc_jLabelJadeConfig.gridy = 0;
 		
@@ -105,10 +108,10 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 		gbc_jLabelMasterURL.gridy = 1;
 		
 		GridBagConstraints gbc_jTextFieldMasterURL = new GridBagConstraints();
-		gbc_jTextFieldMasterURL.anchor = GridBagConstraints.WEST;
-		gbc_jTextFieldMasterURL.insets = new Insets(0, 0, 5, 5);
+		gbc_jTextFieldMasterURL.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jTextFieldMasterURL.insets = new Insets(0, 0, 5, 0);
 		gbc_jTextFieldMasterURL.gridwidth = 2;
-		gbc_jTextFieldMasterURL.gridx = 1;
+		gbc_jTextFieldMasterURL.gridx = 3;
 		gbc_jTextFieldMasterURL.gridy = 1;
 		
 		GridBagConstraints gbc_jLabelMasterPort = new GridBagConstraints();
@@ -117,17 +120,23 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 		gbc_jLabelMasterPort.gridx = 0;
 		gbc_jLabelMasterPort.gridy = 2;
 		
+		GridBagConstraints gbc_jComboboxServerMasterMTP = new GridBagConstraints();
+		gbc_jComboboxServerMasterMTP.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jComboboxServerMasterMTP.insets = new Insets(0, 0, 5, 5);
+		gbc_jComboboxServerMasterMTP.gridx = 1;
+		gbc_jComboboxServerMasterMTP.gridy = 1;
+		
 		GridBagConstraints gbc_jTextFieldMasterPort = new GridBagConstraints();
-		gbc_jTextFieldMasterPort.anchor = GridBagConstraints.WEST;
-		gbc_jTextFieldMasterPort.fill = GridBagConstraints.VERTICAL;
+		gbc_jTextFieldMasterPort.gridwidth = 2;
+		gbc_jTextFieldMasterPort.fill = GridBagConstraints.BOTH;
 		gbc_jTextFieldMasterPort.insets = new Insets(0, 0, 5, 5);
 		gbc_jTextFieldMasterPort.gridx = 1;
 		gbc_jTextFieldMasterPort.gridy = 2;
 		
 		GridBagConstraints gbc_jLabelPort = new GridBagConstraints();
 		gbc_jLabelPort.anchor = GridBagConstraints.WEST;
-		gbc_jLabelPort.insets = new Insets(0, 0, 5, 0);
-		gbc_jLabelPort.gridx = 2;
+		gbc_jLabelPort.insets = new Insets(0, 0, 5, 5);
+		gbc_jLabelPort.gridx = 3;
 		gbc_jLabelPort.gridy = 2;
 		
 		GridBagConstraints gbc_jLabelMasterPort4MTP = new GridBagConstraints();
@@ -137,15 +146,16 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 		gbc_jLabelMasterPort4MTP.gridy = 3;
 		
 		GridBagConstraints gbc_jTextFieldMasterPort4MTP = new GridBagConstraints();
-		gbc_jTextFieldMasterPort4MTP.anchor = GridBagConstraints.WEST;
-		gbc_jTextFieldMasterPort4MTP.fill = GridBagConstraints.VERTICAL;
+		gbc_jTextFieldMasterPort4MTP.gridwidth = 2;
+		gbc_jTextFieldMasterPort4MTP.fill = GridBagConstraints.BOTH;
 		gbc_jTextFieldMasterPort4MTP.insets = new Insets(0, 0, 0, 5);
 		gbc_jTextFieldMasterPort4MTP.gridx = 1;
 		gbc_jTextFieldMasterPort4MTP.gridy = 3;
 		
 		GridBagConstraints gbc_jLabelPort4MTP = new GridBagConstraints();
+		gbc_jLabelPort4MTP.insets = new Insets(0, 0, 0, 5);
 		gbc_jLabelPort4MTP.anchor = GridBagConstraints.WEST;
-		gbc_jLabelPort4MTP.gridx = 2;
+		gbc_jLabelPort4MTP.gridx = 3;
 		gbc_jLabelPort4MTP.gridy = 3;
 		
 		
@@ -174,6 +184,14 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 		
 		this.add(jLabelMasterHeader, gbc_jLabelJadeConfig);
 		this.add(jLabelMasterURL, gbc_jLabelMasterURL);
+		
+		jLabel = new JLabel("//:");
+		GridBagConstraints gbc_jLabel = new GridBagConstraints();
+		gbc_jLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_jLabel.anchor = GridBagConstraints.EAST;
+		gbc_jLabel.gridx = 2;
+		gbc_jLabel.gridy = 1;
+		add(jLabel, gbc_jLabel);
 		this.add(this.getJTextFieldMasterURL(), gbc_jTextFieldMasterURL);
 		this.add(jLabelMasterPort, gbc_jLabelMasterPort);
 		this.add(this.getJTextFieldMasterPort(), gbc_jTextFieldMasterPort);
@@ -181,7 +199,7 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 		this.add(jLabelMasterPort4MTP, gbc_jLabelMasterPort4MTP);
 		this.add(this.getJTextFieldMasterPort4MTP(), gbc_jTextFieldMasterPort4MTP);
 		this.add(jLabelPort4MTP, gbc_jLabelPort4MTP);
-
+		this.add(this.getJcomboboxMtpProtocol(), gbc_jComboboxServerMasterMTP);
 	}
 	
 	/**
@@ -241,14 +259,24 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 		}
 		return jTextFieldMasterPort4MTP;
 	}
+	
+	/**
+	 * This method initializes jComboBoxMtpProtocol	
+	 * @return JComboBoxMtpProtocol
+	 */
+	protected JComboBoxMtpProtocol getJcomboboxMtpProtocol(){
+		if(jComboBoxMtpProtocol == null){
+		   jComboBoxMtpProtocol = new JComboBoxMtpProtocol();
+		   jComboBoxMtpProtocol.setPreferredSize(new Dimension(70, 26));
+		}
+		return jComboBoxMtpProtocol;
+	}
 
 	/* (non-Javadoc)
 	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#refreshView()
 	 */
 	@Override
 	public void refreshView() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	/* (non-Javadoc)
@@ -257,9 +285,10 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 	@Override
 	public void setGlobalData2Form(){
 		
-		this.getJTextFieldMasterURL().setText(globalInfo.getServerMasterURL());
-		this.getJTextFieldMasterPort().setText(globalInfo.getServerMasterPort().toString());
-		this.getJTextFieldMasterPort4MTP().setText(globalInfo.getServerMasterPort4MTP().toString());
+		this.getJTextFieldMasterURL().setText(getGlobalInfo().getServerMasterURL());
+		this.getJTextFieldMasterPort().setText(getGlobalInfo().getServerMasterPort().toString());
+		this.getJTextFieldMasterPort4MTP().setText(getGlobalInfo().getServerMasterPort4MTP().toString());
+		this.getJcomboboxMtpProtocol().setSelectedProtocol(getGlobalInfo().getServerMasterProtocol());
 		
 	}
 	/* (non-Javadoc)
@@ -268,12 +297,13 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 	@Override
 	public void setFormData2Global() {
 		
-		this.globalInfo.setServerMasterURL(this.jTextFieldMasterURL.getText().trim());
+		this.getGlobalInfo().setServerMasterURL(this.jTextFieldMasterURL.getText().trim());
 
 		Integer usePort = Integer.parseInt(this.jTextFieldMasterPort.getText().trim());
-		this.globalInfo.setServerMasterPort(usePort);
+		this.getGlobalInfo().setServerMasterPort(usePort);
 		Integer usePort4MTP = Integer.parseInt(this.jTextFieldMasterPort4MTP.getText().trim());
-		this.globalInfo.setServerMasterPort4MTP(usePort4MTP);
+		this.getGlobalInfo().setServerMasterPort4MTP(usePort4MTP);
+		this.getGlobalInfo().setServerMasterProtocol(getJcomboboxMtpProtocol().getSelectedProtocol());
 		
 	}
 	

@@ -103,8 +103,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	
 	private TreeMap<Integer, String[]> additionalNodes = new TreeMap<Integer, String[]>();  //  @jve:decl-index=0:
 	
-	private StartOptions startOptions = null;
-	private UpdateOptions updateOptions = null;
+	private StartOptions startOptions ;
+	private UpdateOptions updateOptions ;
 
 	
 	/**
@@ -175,7 +175,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		// --- Size and centre dialog -------------------------------
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 		
-		this.setSize((int) (screenSize.getWidth()*0.5), (int)(screenSize.getHeight()*0.7));
+		this.setSize((int) (screenSize.getWidth()*0.7), (int)(screenSize.getHeight()*0.8));
 		
 		int top = (screenSize.height - this.getHeight()) / 2; 
 	    int left = (screenSize.width - this.getWidth()) / 2; 

@@ -322,7 +322,7 @@ public class JPanelOwnMTP extends AbstractJPanelForOptions implements ActionList
 	@Override
 	public void setGlobalData2Form() {
 
-		MTP_Creation mTP_Creation = this.globalInfo.getOwnMtpCreation();
+		MTP_Creation mTP_Creation = this.getGlobalInfo().getOwnMtpCreation();
 		switch (mTP_Creation) {
 		case ConfiguredByJADE:
 			this.getJRadioButtonMtpAutoConfig().setSelected(true);
@@ -334,8 +334,8 @@ public class JPanelOwnMTP extends AbstractJPanelForOptions implements ActionList
 			this.getJRadioButtonMtpIP().setSelected(true);
 			break;
 		}
-		this.getJTextFieldIPAddress().setText(this.globalInfo.getOwnMtpIP());
-		this.getJTextFieldDefaultPortMTP().setText(this.globalInfo.getOwnMtpPort().toString());
+		this.getJTextFieldIPAddress().setText(this.getGlobalInfo().getOwnMtpIP());
+		this.getJTextFieldDefaultPortMTP().setText(this.getGlobalInfo().getOwnMtpPort().toString());
 	}
 
 	/* (non-Javadoc)
@@ -344,10 +344,10 @@ public class JPanelOwnMTP extends AbstractJPanelForOptions implements ActionList
 	@Override
 	public void setFormData2Global() {
 
-		this.globalInfo.setOwnMtpCreation(this.getMtpCreation());
-		this.globalInfo.setOwnMtpIP(this.getJTextFieldIPAddress().getText());
+		this.getGlobalInfo().setOwnMtpCreation(this.getMtpCreation());
+		this.getGlobalInfo().setOwnMtpIP(this.getJTextFieldIPAddress().getText());
 		Integer ownMtpPort = Integer.parseInt(this.getJTextFieldDefaultPortMTP().getText().trim());
-		this.globalInfo.setOwnMtpPort(ownMtpPort);
+		this.getGlobalInfo().setOwnMtpPort(ownMtpPort);
 	}
 
 	/* (non-Javadoc)

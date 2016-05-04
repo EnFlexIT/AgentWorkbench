@@ -50,9 +50,7 @@ public abstract class AbstractJPanelForOptions extends JPanel {
 	/** The current parent panel of the {@link StartOptions} */
 	protected StartOptions startOptions;
 	
-	protected GlobalInfo globalInfo = Application.getGlobalInfo();
-	protected String pathImage = globalInfo.getPathImageIntern();
-	
+	private GlobalInfo globalInfo;
 	
 	/**
 	 * Required constructor for the usage of this abstract class.
@@ -63,6 +61,24 @@ public abstract class AbstractJPanelForOptions extends JPanel {
 	public AbstractJPanelForOptions(OptionDialog optionDialog, StartOptions startOptions) {
 		this.optionDialog = optionDialog;
 		this.startOptions = startOptions;
+	}
+	
+	/**
+	 * Returns the global info.
+	 * @return the global info
+	 */
+	protected GlobalInfo getGlobalInfo() {
+		if (globalInfo==null) {
+			globalInfo = Application.getGlobalInfo();
+		}
+		return globalInfo;
+	}
+	/**
+	 * Gets the path image.
+	 * @return the path image
+	 */
+	protected String getPathImage() {
+		return this.getGlobalInfo().getPathImageIntern();
 	}
 	
 	/**

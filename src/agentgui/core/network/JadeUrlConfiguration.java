@@ -51,6 +51,7 @@ public class JadeUrlConfiguration {
 	private InetAddress currInetAddress;
 	private int currPort = -1;
 	private int currPort4MTP = -1;
+	private String currMtpProtocol;
 
 	private boolean errors=false;
 	private String errorMsg;
@@ -191,7 +192,11 @@ public class JadeUrlConfiguration {
 	 */
 	public String getJadeURL4MTP() {
 		if (currInetAddress!=null && currPort4MTP!=-1) {
-			return "http://" + this.currURLorIP + ":" + currPort4MTP + "/acc";	
+			if (currMtpProtocol.equals("HTTP")){
+				return "http://" + this.currURLorIP + ":" + currPort4MTP + "/acc";	
+			}else{
+				return "https://" + this.currURLorIP + ":" + currPort4MTP + "/acc";	
+			}
 		} else {
 			return null;
 		}
@@ -248,6 +253,22 @@ public class JadeUrlConfiguration {
 	 */
 	public void setPort4MTP(int newPort4MTP) {
 		this.currPort4MTP = newPort4MTP;
+	}
+	
+	/**
+	 * Gets the MtpProtocol.
+	 * @return the currMtpProtocol
+	 */
+	public String getMtpProtocol(){
+		return currMtpProtocol;
+	}
+	
+	/**
+	 * Sets the MtpProtocol.
+	 * @param mtpProtocol the new currMtpProtocol
+	 */
+	public void setMtpProtocol(String mtpProtocol){
+		this.currMtpProtocol = mtpProtocol;
 	}
 	
 	
