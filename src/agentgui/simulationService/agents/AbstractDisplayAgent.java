@@ -299,7 +299,9 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 			EnvironmentPanel envPanel = this.getEnvironmentController().getEnvironmentPanel();
 			if (envPanel!=null) {
 				envPanel.setVisible(false);
-				envPanel.dispose();	
+				envPanel.dispose();
+				envPanel = null;
+				this.getEnvironmentController().setEnvironmentPanel(null);
 			}
 			this.setEnvironmentController(null);
 		}

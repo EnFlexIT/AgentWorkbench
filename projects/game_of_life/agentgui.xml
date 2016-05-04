@@ -37,6 +37,7 @@
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>
+        <autoSaveRealMetricsOnSimStop>false</autoSaveRealMetricsOnSimStop>
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>true</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
@@ -44,8 +45,9 @@
         <loadRecordingInterval>500</loadRecordingInterval>
         <numberOfAgents>18</numberOfAgents>
         <numberOfContainer>1</numberOfContainer>
-        <showLoadMonitorAtPlatformStart>true</showLoadMonitorAtPlatformStart>
-        <showThreadMonitorAtPlatformStart>true</showThreadMonitorAtPlatformStart>
+        <remoteOnly>true</remoteOnly>
+        <showLoadMonitorAtPlatformStart>false</showLoadMonitorAtPlatformStart>
+        <showThreadMonitorAtPlatformStart>false</showThreadMonitorAtPlatformStart>
         <staticLoadBalancingClass>gol.SimService.balancing.StartAndBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
         <userThresholds>
@@ -67,7 +69,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>0242 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>1458 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
     <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
     <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/game_of_life_IDE.jar</downloadResources>

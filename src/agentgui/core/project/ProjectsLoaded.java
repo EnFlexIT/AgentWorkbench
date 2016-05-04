@@ -263,10 +263,12 @@ public class ProjectsLoaded {
 		}
 		
 		// --- Read file 'agentgui.xml' ---------------
+		FileReader fr = null;
 		try {
+			fr = new FileReader(XMLFileName);
 			JAXBContext pc = JAXBContext.newInstance(Project.class);
 			Unmarshaller um = pc.createUnmarshaller();
-			project = (Project) um.unmarshal(new FileReader(XMLFileName));
+			project = (Project) um.unmarshal(fr);
 			
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
@@ -274,6 +276,12 @@ public class ProjectsLoaded {
 		} catch (JAXBException ex) {
 			ex.printStackTrace();
 			return null;
+		} finally {
+			try {
+				if (fr!=null) fr.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
 		}
 		
 		// --- check/create default folders -----------
@@ -288,26 +296,30 @@ public class ProjectsLoaded {
 		File userObjectFile = new File(userObjectFileName);
 		if (userObjectFile.exists()) {
 			
+			FileInputStream fis = null;
 			ObjectInputStream inStream = null;
 			try {
-				FileInputStream fis = new FileInputStream(userObjectFileName);
+				fis = new FileInputStream(userObjectFileName);
 				inStream = new ObjectInputStream(fis);
 				Serializable userObject = (Serializable) inStream.readObject();
 				project.setUserRuntimeObject(userObject);
-				inStream.close();
 				
 			} catch(IOException ex) {
 				ex.printStackTrace();
-				
 			} catch(ClassNotFoundException ex) {
 				ex.printStackTrace();
+			} finally {
 				try {
-					inStream.close();
+					if (inStream!=null) inStream.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+				try {
+					if (fis!=null) fis.close();
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
 				}
 			}
-							
 		}
 		return project;
 	}

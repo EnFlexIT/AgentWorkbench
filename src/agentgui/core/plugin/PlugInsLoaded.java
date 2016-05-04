@@ -106,16 +106,19 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 		
 		// ----------------------------------------------------------
 		// --- Check some configurations of the PlugIn -------------- 
-		if (plugIn.getName()==null) {
-			throw new PlugInLoadException(Language.translate("Es wurde kein Name für das PlugIn konfiguriert"));
-		} else if (plugIn.getName().equals("")) {
+		if (plugIn.getName()==null || plugIn.getName().equals("")) {
 			throw new PlugInLoadException(Language.translate("Es wurde kein Name für das PlugIn konfiguriert"));
 		}
 		
 		// --- Remind the classReference in the PlugIn --------------
 		plugIn.setClassReference(plugInReference);
 		// --- Call the onPlugIn() method ---------------------------
-		plugIn.onPlugIn();
+		try {
+			plugIn.onPlugIn();	
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
 		// --- add the PlugIn to the local Vector -------------------
 		this.add(plugIn);		
 		return plugIn;
@@ -127,10 +130,15 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 	 * @param plugIn the plug-in
 	 */
 	public void removePlugIn(PlugIn plugIn) {
-		// --- Call the onPlugOut()method ---------------------------
-		plugIn.onPlugOut();
-		// --- Call the afterPlugOut()method ------------------------
-		plugIn.afterPlugOut();
+		try {
+			// --- Call the onPlugOut()method -----------------------
+			plugIn.onPlugOut();
+			// --- Call the afterPlugOut()method --------------------
+			plugIn.afterPlugOut();
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		// --- remove the PlugIn from the local Vector --------------
 		this.remove(plugIn);
 	}

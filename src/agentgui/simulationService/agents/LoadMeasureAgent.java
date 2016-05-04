@@ -790,8 +790,8 @@ public class LoadMeasureAgent extends Agent {
 		// ----------------------------------------------------------
 		try {
 			this.monitorDatasetWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 		}
 		this.monitorDatasetWriter = null;
 
@@ -799,43 +799,56 @@ public class LoadMeasureAgent extends Agent {
 		// --- Create a complete file of the Monitoring with header - 
 		// ----------------------------------------------------------
 		// --- Writer to copy the tmp-file ----------------
-		BufferedWriter bw = createMonitorFile(this.monitorFileMeasurement);
+		BufferedWriter bwMeasurements = null;
 		BufferedReader br = null;
 		String currLine = null;
 		try {
+			bwMeasurements = createMonitorFile(this.monitorFileMeasurement);
 			// --- add the header-part --------------------	
-			bw.write(this.getHeaderLine() + this.monitorDatasetLineSeperator);
+			bwMeasurements.write(this.getHeaderLine() + this.monitorDatasetLineSeperator);
 			// --- open tmp-file and write it new ---------
 			br = new BufferedReader(new FileReader(this.monitorFileMeasurementTmp));
 			while ((currLine = br.readLine()) != null) { 
-				bw.write(currLine + this.monitorDatasetLineSeperator);
-				bw.flush();
+				bwMeasurements.write(currLine + this.monitorDatasetLineSeperator);
+				bwMeasurements.flush();
 			} 
-			bw.close();
-			br.close();
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (bwMeasurements!=null) bwMeasurements.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+			try {
+				if (br!=null) br.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
 		}
 		
 		// ----------------------------------------------------------
 		// --- Write down all container descriptions ---------------- 
 		// ----------------------------------------------------------
-		bw = createMonitorFile(this.monitorFileMachines);
+		BufferedWriter bwMachines = null;
 		try {
-			Iterator<String> it = this.loadContainer2Display.iterator();
-			while (it.hasNext()) {
-				
-				String containerName = it.next();
-				bw.write(this.monitorDatasetPartsDescription.get(containerName));
-				bw.flush();
+			bwMachines = createMonitorFile(this.monitorFileMachines);
+			for (String containerName : this.loadContainer2Display) {
+				bwMeasurements.write(this.monitorDatasetPartsDescription.get(containerName));
+				bwMeasurements.flush();
 			}
-			bw.close();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (bwMachines!=null) bwMachines.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
 		}
 	}
 	

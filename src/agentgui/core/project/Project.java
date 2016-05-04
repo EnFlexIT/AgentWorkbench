@@ -414,10 +414,12 @@ import agentgui.core.webserver.JarFileCreator;
 		       fos = new FileOutputStream(this.getProjectFolderFullPath() + Application.getGlobalInfo().getFilenameProjectUserObject());
 		       out = new ObjectOutputStream(fos);
 		       out.writeObject(this.userRuntimeObject);
-		       out.close();
 		       
 		    } catch(IOException ex) {
 		    	ex.printStackTrace();
+		    } finally {
+		    	if (out!=null) out.close();
+		    	if (fos!=null) fos.close();
 		    }
 		    
 			// --- Save the current SimulationSetup -------
@@ -428,8 +430,7 @@ import agentgui.core.webserver.JarFileCreator;
 			// --- Notification ---------------------------
 			this.setNotChangedButNotify(Project.SAVED);
 
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println("XML-Error while saving Project-File!");
 			e.printStackTrace();
 		}

@@ -222,6 +222,7 @@ de;Fehler - Projektauswahl !;Error - project selection!
 de;Fehler - Projektverzeichnis !;Error - project folder !
 de;Fehler bei der Ausführung von 'executeQuery'!;Error when executing 'executeQuery'!
 de;Fehler bei der Ausführung von 'executeUpdate'!;Error when executing 'executeUpdate'!
+de;Fehler beim Auslesen der Datensätze!;;;;
 de;Fehler beim Auslesen der Datensätzen!;Error while reading records!
 de;Fehler beim Laden des Bildes:;Error while loading image:;;;
 de;Fehler beim Lesen des Graphen;Error while reading the graph

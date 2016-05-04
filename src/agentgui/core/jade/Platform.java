@@ -28,6 +28,7 @@
  */
 package agentgui.core.jade;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.ContainerID;
 import jade.core.Profile;
@@ -924,34 +925,43 @@ public class Platform extends Object {
 	 */
 	public void jadeAgentStart(String newAgentName, Class<? extends Agent> clazz, Object[] startArguments, String inContainer ) {
 		
-		int msgAnswer;
-		String msgHead, msgText;
-		AgentController agentController;
-		AgentContainer agentContainer;
-
-		// --- Was the system already started? ---------------
-		if ( jadeIsMainContainerRunning() == false ) {
-			msgHead = Language.translate("JADE wurde noch nicht gestartet!");
-			msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
-			msgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
+		// --- Was the system already started? ----------------------
+		if (this.jadeIsMainContainerRunning()==false) {
+			String msgHead = Language.translate("JADE wurde noch nicht gestartet!");
+			String msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
+			int msgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
 			if (msgAnswer==JOptionPane.NO_OPTION) return; // --- NO,just exit 
-			// --- Start the JADE-Platform -------------------
+			// --- Start the JADE-Platform --------------------------
 			this.jadeStart();			
 		}
 		
-		agentContainer = this.jadeGetContainer(inContainer);
+		// --- Get the AgentContainer -------------------------------
+		AgentContainer agentContainer = this.jadeGetContainer(inContainer);
 		if (agentContainer==null) {
 			agentContainer = jadeContainerCreate(inContainer);
-		}		
+		}
+		
+		// --- Check if the agent name is already used --------------
+		Integer newAgentNoTmp = 0;
+		String newAgentNameTmp = newAgentName;
+		try {
+			agentContainer.getAgent(newAgentNameTmp, AID.ISLOCALNAME);
+			while (true) {
+				newAgentNoTmp++;
+				newAgentNameTmp = newAgentName + "-" + newAgentNoTmp;
+				agentContainer.getAgent(newAgentNameTmp, AID.ISLOCALNAME);
+			}
+		} catch (ControllerException ce) {
+			if (newAgentNoTmp>0) newAgentName = newAgentName + "-" + newAgentNoTmp;
+		}
+		
+		// --- Start the actual agent -------------------------------
 		try {
 			Agent agent = (Agent) clazz.newInstance();
 			agent.setArguments(startArguments);
-//			AgentCont = AgeCont.createNewAgent( AgentName, clazz, AgentArgs );
-			agentController = agentContainer.acceptNewAgent(newAgentName, agent);
-			agentController.start();
+			agentContainer.acceptNewAgent(newAgentName, agent).start();;
 
-		} 
-		catch (StaleProxyException e) {
+		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {
 			e.printStackTrace();

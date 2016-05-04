@@ -204,13 +204,13 @@ public class ClassLoaderUtil {
 	 */
 	public static void removeFile(String jarFile) throws RuntimeException,	NoSuchFieldException, IllegalAccessException {
 		
-		URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+//		URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 
 		Class<URLClassLoader> sysclass = URLClassLoader.class;
 		java.lang.reflect.Field ucp = sysclass.getDeclaredField("ucp");
 		ucp.setAccessible(true);
 
-		Object sun_misc_URLClassPath = ucp.get(sysLoader);
+		Object sun_misc_URLClassPath = ucp.get((URLClassLoader) ClassLoader.getSystemClassLoader());
 		Class<? extends Object> clazz = sun_misc_URLClassPath.getClass();
 
 		Field path = clazz.getDeclaredField("path");
@@ -263,12 +263,12 @@ public class ClassLoaderUtil {
 	 */
 	public static void addURL(URL url) throws IOException {
 
-		URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+//		URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 		Class<URLClassLoader> sysclass = URLClassLoader.class;
 		try {
 			Method method = sysclass.getDeclaredMethod("addURL", parameters);
 			method.setAccessible(true);
-			method.invoke(sysLoader, new Object[] { url });
+			method.invoke((URLClassLoader) ClassLoader.getSystemClassLoader(), new Object[] { url });
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw new IOException("Error, could not add URL to system classloader");

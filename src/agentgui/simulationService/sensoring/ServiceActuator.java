@@ -178,7 +178,6 @@ public class ServiceActuator extends Thread {
 	 */
 	public void shutdown() {
 		this.shutdownActuator = true;
-		this.interrupt();
 	}
 	
 	/**

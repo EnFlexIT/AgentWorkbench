@@ -112,27 +112,27 @@ public class SimulationService extends BaseService {
 	/** --- The Agent who is the Manager / Controller of the Simulation -------- */
 	private EnvironmentManagerDescription environmentManagerDescription;
 	/** --- Agents which have registered as display agents for the environment - */
-	private Vector<AID> environmentDisplayAgents = new Vector<AID>();
+	private Vector<AID> environmentDisplayAgents;
 	
 	/** --- The List of Agents, which are registered to this service ----------- */ 
-	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
+	private Hashtable<String, AID> agentList;
 	
 	/** --- The TransactionMap of the simulation ------------------------------- */
-	private TransactionMap transactionMap = new TransactionMap();
+	private TransactionMap transactionMap;
 	/** --- The current EnvironmentModel --------------------------------------- */
 	private EnvironmentModel environmentModel;
 	/** --- The Actuator for this Service, which can inform registered  
 	    	Agents about changes in the Simulation e.g. 'stepTimeModel' -------- */
 	private ServiceActuator localServiceActuator;
-	private ServiceActuatorManager localServiceActuator4Manager = new ServiceActuatorManager();
+	private ServiceActuatorManager localServiceActuator4Manager;
 	
 	/** --- How should an Agent be notified about Environment-Changes? --------- */
 	private boolean stepSimulationAsynchronous = true;
 
 	/** --- The next EnvironmentObject-Instance in parts (answers of agents) --- */
 	private int environmentInstanceNextPartsExpected;
-	private Hashtable<AID, Object> environmentInstanceNextParts = new Hashtable<AID, Object>();
-	private Hashtable<AID, Object> environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
+	private Hashtable<AID, Object> environmentInstanceNextParts;
+	private Hashtable<AID, Object> environmentInstanceNextPartsLocal;
 	
 		
 	/* (non-Javadoc)
@@ -141,26 +141,31 @@ public class SimulationService extends BaseService {
 	public void init(AgentContainer ac, Profile p) throws ProfileException {
 		
 		super.init(ac, p);
-		myContainer = ac;
-		myMainContainer = ac.getMain();		
+		
+		this.myContainer = ac;
+		this.myMainContainer = ac.getMain();	
+		// --- Initialise local attributes ----------------  
+		this.environmentDisplayAgents = new Vector<AID>();
+		this.agentList = new Hashtable<String, AID>();
+		this.transactionMap = new TransactionMap();
+		this.getServiceActuator();
+		this.localServiceActuator4Manager = new ServiceActuatorManager();
+		this.environmentInstanceNextParts = new Hashtable<AID, Object>();
+		this.environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
 		// --- Create filters -----------------------------
-		outFilter = new CommandOutgoingFilter();
-		incFilter = new CommandIncomingFilter();
+		this.outFilter = new CommandOutgoingFilter();
+		this.incFilter = new CommandIncomingFilter();
 		// --- Create local slice -------------------------
-		localSlice = new ServiceComponent();
+		this.localSlice = new ServiceComponent();
 		
-		if (myContainer!=null) {
-			if (myLogger.isLoggable(Logger.FINE)) {
-				myLogger.log(Logger.FINE, "Starting SimulationService: My-Container: " + myContainer.toString());
-			}
-		}
-		if (myMainContainer!=null) {
+		if (this.myMainContainer!=null && myLogger.isLoggable(Logger.FINE)) {
 			// --- Is !=null, if the Service will start at the Main-Container !!! ----
-			if (myLogger.isLoggable(Logger.FINE)) {
-				myLogger.log(Logger.FINE, "Main-Container: " + myMainContainer.toString());
-			}
+			this.myLogger.log(Logger.FINE, "Main-Container: " + myMainContainer.toString());
 		}
-		
+		if (this.myContainer!=null && myLogger.isLoggable(Logger.FINE)) {
+			this.myLogger.log(Logger.FINE, "Starting SimulationService: My-Container: " + myContainer.toString());
+		}
+
 		// --- Reduce the logging level for Messaging -----
 		Logger.getMyLogger("jade.core.messaging.Messaging").setLevel(Level.WARNING);
 		Logger.getMyLogger("jade.core.messaging.MessageManager").setLevel(Level.WARNING);
@@ -177,7 +182,16 @@ public class SimulationService extends BaseService {
 	 */
 	@Override
 	public void shutdown() {
+		this.environmentDisplayAgents = null;
+		this.agentList = null;
+		this.transactionMap = null;
 		this.getServiceActuator().shutdown();
+		this.getServiceActuator().interrupt();
+		this.setServiceActuator(null);
+		this.localServiceActuator4Manager = null;
+		this.environmentInstanceNextParts = null;
+		this.environmentInstanceNextPartsLocal = null;
+		this.environmentModel = null;
 	}
 	/* (non-Javadoc)
 	 * @see jade.core.Service#getName()
@@ -223,6 +237,13 @@ public class SimulationService extends BaseService {
 			localServiceActuator = new ServiceActuator(this.myContainer.getNodeDescriptor().getName());
 		}
 		return localServiceActuator;
+	}
+	/**
+	 * Sets the service actuator.
+	 * @param newServiceActuator the new service actuator
+	 */
+	private void setServiceActuator(ServiceActuator newServiceActuator) {
+		this.localServiceActuator = newServiceActuator;
 	}
 	
 	// --------------------------------------------------------------	
@@ -373,6 +394,7 @@ public class SimulationService extends BaseService {
 		 * @see agentgui.simulationService.SimulationServiceHelper#stepSimulation(agentgui.simulationService.environment.EnvironmentModel, int, boolean)
 		 */
 		public void stepSimulation(EnvironmentModel envModel, int answersExpected, boolean aSynchron) throws ServiceException {
+			
 			// --- step forward the transaction map -------
 			transactionMap.put(environmentModel);
 			// --- next step for the simulation -----------
@@ -428,7 +450,7 @@ public class SimulationService extends BaseService {
 		 */
 		public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws ServiceException {
 
-			synchronized(environmentInstanceNextPartsLocal) {
+			synchronized (environmentInstanceNextPartsLocal) {
 				// --- Put single changes into the local store until ---- 
 				// --- the expected number of answers is not reached ----
 				if (nextPart==null) {
@@ -439,6 +461,7 @@ public class SimulationService extends BaseService {
 				
 				// --- If the expected number of answers came back to ---
 				// --- the service, broadcast it to every other node ----
+				//System.out.println(fromAgent.getLocalName() + ": " + environmentInstanceNextPartsLocal.size() + " - " + getServiceActuator().getNoOfSimulationAnswersExpected());
 				if (environmentInstanceNextPartsLocal.size() >= getServiceActuator().getNoOfSimulationAnswersExpected()) {
 					mainSetEnvironmentInstanceNextPart(environmentInstanceNextPartsLocal);	
 					environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();

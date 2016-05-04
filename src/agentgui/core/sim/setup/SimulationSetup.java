@@ -175,17 +175,18 @@ public class SimulationSetup {
 		    	fos = new FileOutputStream(binFileName);
 		    	out = new ObjectOutputStream(fos);
 		    	out.writeObject(this.userRuntimeObject);
-		    	out.close();
-		       
 		    } catch(IOException ex) {
 		    	ex.printStackTrace();
 		    	saved = false;
+		    } finally {
+		    	out.close();
+		    	fos.close();
 		    }
 			this.currProject.setNotChangedButNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_SAVED));
 		
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			System.out.println("XML-Error while saving Setup-File!");
-			e.printStackTrace();
+			ex.printStackTrace();
 			saved = false;
 		}		
 		return saved;		

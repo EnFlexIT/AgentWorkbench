@@ -70,22 +70,29 @@ public class TextFileRessourceRollOut {
 	 */
 	public void readFile2String() {
 		
-		InputStream inputStream  = this.getClass().getClassLoader().getResourceAsStream(srcRefer); 
+		InputStream inputStream  = null;
 		StringBuilder strBuilder = new StringBuilder();
 		String inputLine		 = "";	
 		
 		// --- Datei einlesen ---------------------------------------
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader( inputStream, "UTF-8"));
+			inputStream  = this.getClass().getClassLoader().getResourceAsStream(srcRefer);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 			while ((inputLine = reader.readLine()) != null) {
 				strBuilder.append(inputLine).append("\n");
 			}
-			inputStream.close();
+			
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
+		} finally {
+			try {
+				if (inputStream!=null) inputStream.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+		}
 		
 		// --- Textinhalt merken ------------------------------------
 		fileContent = strBuilder.toString();
@@ -125,14 +132,18 @@ public class TextFileRessourceRollOut {
 	public void writeFile() {
 		
 		BufferedWriter buffWrite = null;
-		// --- Als Datei im richtigen Verzeichnis ablegen -----
 		try {
 			buffWrite = new BufferedWriter(new FileWriter(destPath));
-			//fileContent.replaceAll("\n", System.getProperty("line.separator"));
 			buffWrite.write(fileContent);
-			buffWrite.close();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				buffWrite.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
 		}
 	}
 	

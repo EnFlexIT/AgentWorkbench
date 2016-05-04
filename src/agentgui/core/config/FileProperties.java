@@ -154,11 +154,13 @@ public class FileProperties extends Properties {
 		this.setDefaultComment();
 		
 		// --- open or create the config file -----------------------
+		FileInputStream fis = null;
 		try {
 			// --- Does the configFile exists ? ---------------------
 			if (new File(configFile).exists()==true) {
 				// --- configFile found -----------------------------
-				this.load(new FileInputStream(configFile));	
+				fis = new FileInputStream(configFile);
+				this.load(fis);	
 				this.checkDefaultConfigValues();
 			} else {
 				// --- configFile NOT found -------------------------
@@ -166,17 +168,21 @@ public class FileProperties extends Properties {
 				this.setConfig2Global();
 				this.save();
 			}				
-		}
-		catch (FileNotFoundException e) {
+		} catch (FileNotFoundException fnfe) {
+			fnfe.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
+		} finally {
+			try {
+				if (fis!=null) fis.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
 		}
 
 		// --- set values of the config-file to global --------------
 		this.setConfig2Global();
-		
+	
 	}
 	
 	/**
@@ -738,12 +744,20 @@ public class FileProperties extends Properties {
 		// --- getting the current values of the mandatory variables -----
 		this.setGlobal2Config();
 		// --- Save the configuration-file -------------------------------
+		FileOutputStream fos = null;
 		try {
-			this.store(new FileOutputStream(configFile), configFileDefaultComment);
+			fos = new FileOutputStream(configFile);
+			this.store(fos, configFileDefaultComment);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				fos.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
 		}
 	}
 	

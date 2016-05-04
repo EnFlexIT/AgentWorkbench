@@ -483,17 +483,22 @@ public class Zipper extends Thread {
 			try {
 				fileWriter = new FileOutputStream(destZipFile);
 				zip = new ZipOutputStream(fileWriter);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				return;
-			}
-
-			addFolderToZip("", srcFolder, zip); 
-			try {
+				addFolderToZip("", srcFolder, zip);
 				zip.flush();
-				zip.close();
+			
 			} catch (Exception ex) {
 				ex.printStackTrace();
+			} finally {
+				try {
+					if (zip!=null) zip.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+				try {
+					if (fileWriter!=null) fileWriter.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
 			}
 
 			// --- Consider the zipMonitor ------------------

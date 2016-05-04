@@ -171,10 +171,11 @@ public class DBConnection {
 		if (this.connection==null) return false;
 		
 		boolean validConnection = true;
+		Statement state = null;
+		ResultSet res = null;
 		try {
-
-			Statement state = (Statement) this.connection.createStatement();
-			ResultSet res = (ResultSet) state.executeQuery("/* ping */ SELECT 1");
+			state = (Statement) this.connection.createStatement();
+			res = (ResultSet) state.executeQuery("/* ping */ SELECT 1");
 			res.last();
 			if (res.getRow()==0) {
 				validConnection = false;
@@ -190,6 +191,18 @@ public class DBConnection {
 			this.dbError.setErr(true);
 			this.dbError.show();
 			validConnection = false;
+			
+		} finally {
+			try {
+				if (res!=null) res.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
+			try {
+				if (state!=null) state.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
 		}
 		return validConnection;
 	}
@@ -298,7 +311,8 @@ public class DBConnection {
 	 * @return true, if is platform table correct
 	 */
 	private boolean isPlatformTableCorrect() {
-		
+
+		boolean isPlatformTableCorrect = true;
 		String sql  = "SELECT " +
 				"id_platform, contact_agent, platform_name, is_server, ip, url, jade_port, http4mtp, " +
 				"vers_major, vers_minor, vers_build, " +
@@ -312,10 +326,13 @@ public class DBConnection {
 				"FROM platforms";
 		
 		ResultSet res = this.getSqlResult4ExecuteQuery(sql, false);
-		if (res==null) {
-			return false;
+		if (res==null) isPlatformTableCorrect = false;
+		try {
+			res.close();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
 		}
-		return true;
+		return isPlatformTableCorrect;
 	}
 	
 	/**
@@ -324,12 +341,17 @@ public class DBConnection {
 	 */
 	private boolean isPlatformTable() {
 		
+		boolean isPlatformTable = true;
 		String sql  = "SELECT * FROM platforms";
+		
 		ResultSet res = this.getSqlResult4ExecuteQuery(sql);
-		if (res==null) {
-			return false;
+		if (res==null) isPlatformTable = false;
+		try {
+			res.close();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
 		}
-		return true;
+		return isPlatformTable;
 	}
 	
 	/**
@@ -338,6 +360,7 @@ public class DBConnection {
 	 */
 	private boolean dbIsAvailable() {
 
+		boolean isDbAvailable = true;
 		String sql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '" + dbName + "'";
 		ResultSet res = this.getSqlResult4ExecuteQuery(sql);
 		if (res==null) {
@@ -346,9 +369,9 @@ public class DBConnection {
 			try {
 				res.last();
 				if ( res.getRow()==0 ) {
-					return false;
+					isDbAvailable = false;
 				} else {
-					return true;
+					isDbAvailable = true;
 				}		
 				
 			} catch (SQLException e) {
@@ -358,9 +381,16 @@ public class DBConnection {
 				this.dbError.setText( e.getLocalizedMessage() );
 				this.dbError.setErr(true);
 				this.dbError.show();
-				return false;
+				isDbAvailable = false;
 			}
 		}
+		
+		try {
+			res.close();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return isDbAvailable;
 	}
 	
 	/**
@@ -391,24 +421,32 @@ public class DBConnection {
 	 */
 	public boolean getSqlExecuteUpdate(String sqlStatement) {
 		
-		Statement state = getNewStatement();
-		if (state!=null) {
+		boolean successfull = false;
+		Statement state = null;
+		try {
+			state = getNewStatement();
+			state.executeUpdate(sqlStatement);
+			successfull = true;
+			
+		} catch (SQLException e) {
+			//e.printStackTrace();
+			String msg = e.getLocalizedMessage() + newLine;
+			msg += sqlStatement;
+			this.dbError.setText(msg);
+			this.dbError.put2Clipboard(sqlStatement);
+			this.dbError.setErrNumber( e.getErrorCode() );
+			this.dbError.setHead( "Fehler bei der Ausführung von 'executeUpdate'!" );
+			this.dbError.setErr(true);
+			this.dbError.show();
+			
+		} finally {
 			try {
-				state.executeUpdate(sqlStatement);
-				return true;
-			} catch (SQLException e) {
-				//e.printStackTrace();
-				String msg = e.getLocalizedMessage() + newLine;
-				msg += sqlStatement;
-				this.dbError.setText(msg);
-				this.dbError.put2Clipboard(sqlStatement);
-				this.dbError.setErrNumber( e.getErrorCode() );
-				this.dbError.setHead( "Fehler bei der Ausführung von 'executeUpdate'!" );
-				this.dbError.setErr(true);
-				this.dbError.show();
+				if (state!=null) state.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
 			}
 		}
-		return false;
+		return successfull;
 	}
 	/**
 	 * This method returns the number of rows from a ResultSet-Object
@@ -444,26 +482,22 @@ public class DBConnection {
 	public ResultSet getSqlResult4ExecuteQuery(String sqlStmt, boolean showErrorDialog) {
 		
 		ResultSet res = null;
-		Statement state = this.getNewStatement();
-		if (state!=null) {
-			try {
-				res = (ResultSet) state.executeQuery(sqlStmt);
-			} catch (SQLException e) {
-				//e.printStackTrace();
-				String msg = e.getLocalizedMessage() + newLine;
-				msg += sqlStmt;
-				this.dbError.setText(msg);
-				this.dbError.put2Clipboard(sqlStmt);
-				this.dbError.setErrNumber( e.getErrorCode() );
-				this.dbError.setHead( "Fehler bei der Ausführung von 'executeQuery'!" );
-				this.dbError.setErr(true);
-				if (showErrorDialog==true) {
-					this.dbError.show();
-				}
+		try {
+			res = (ResultSet) this.getNewStatement().executeQuery(sqlStmt);
+		} catch (SQLException e) {
+			//e.printStackTrace();
+			String msg = e.getLocalizedMessage() + newLine;
+			msg += sqlStmt;
+			this.dbError.setText(msg);
+			this.dbError.put2Clipboard(sqlStmt);
+			this.dbError.setErrNumber( e.getErrorCode() );
+			this.dbError.setHead( "Fehler bei der Ausführung von 'executeQuery'!" );
+			this.dbError.setErr(true);
+			if (showErrorDialog==true) {
+				this.dbError.show();
 			}
-		}		
+		}
 		return res;
-		
 	}
 	
 	/**

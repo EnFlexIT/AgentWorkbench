@@ -67,6 +67,7 @@ import java.util.jar.JarFile;
 
 @SuppressWarnings({"rawtypes","unchecked"})
 public class ClassFinder {
+	
 	private Class searchClass = null;
 	private Map classpathLocations = new HashMap();
 	private Map results = new HashMap();
@@ -268,6 +269,7 @@ public class ClassFinder {
 			URLConnection urlConnection = jarURL.openConnection();
 			JarURLConnection conn = (JarURLConnection) urlConnection;
 			jar = conn.getJarFile();
+			
 		} catch (Exception e) {
 			// not a JAR or disk I/O error
 			// either way, just skip

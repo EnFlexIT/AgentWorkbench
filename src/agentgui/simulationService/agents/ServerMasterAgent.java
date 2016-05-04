@@ -609,78 +609,83 @@ public class ServerMasterAgent extends Agent {
 		
 		// --- Does the AID already exists in TB ----------		
 		sqlStmt = "SELECT * FROM platforms WHERE contact_agent='" + sender.getName() + "'";
-		ResultSet res = dbConn.getSqlResult4ExecuteQuery(sqlStmt);
-		if (res!=null) {
+		ResultSet res = null;
+		try {
+			res = dbConn.getSqlResult4ExecuteQuery(sqlStmt);
+			res.last();
+			if ( res.getRow()==0 ) {
+				// --- Insert new dataset -----------------
+				sqlStmt = "INSERT INTO platforms SET " +
+							"contact_agent = '" + sender.getName() + "'," +
+							"platform_name = '" + platform.getIp() + ":" + platform.getPort() + "/JADE'," + 
+							"is_server = " + isServerBool + "," +
+							"ip = '" + platform.getIp() + "'," +
+							"url = '" + platform.getUrl() + "'," +
+							"jade_port = " + platform.getPort() + "," +
+							"http4mtp = '" + platform.getHttp4mtp() + "'," +
+							"vers_major = " + version.getMajorRevision() + "," +
+							"vers_minor = " + version.getMinorRevision() + "," +
+							"vers_build = " + version.getBuildNo() + "," +
+							"os_name = '" + os.getOs_name() + "'," +
+							"os_version = '" + os.getOs_version() + "'," +
+							"os_arch = '" + os.getOs_arch() + "'," +
+							"cpu_vendor = '" + performance.getCpu_vendor() + "'," +
+							"cpu_model = '" + performance.getCpu_model() + "'," +
+							"cpu_n = " + performance.getCpu_numberOf() + "," +
+							"cpu_speed_mhz = " + performance.getCpu_speedMhz() + "," +
+							"memory_total_mb = " + performance.getMemory_totalMB() + "," +
+							"benchmark_value = 0," +
+							"online_since = now()," + 
+							"last_contact_at = now()," +
+							"local_online_since = '" + sqlDate + "'," +
+							"local_last_contact_at = '" + sqlDate + "'," +
+							"currently_available = "+ dbConn.dbBool2Integer(true) + " ";
+				dbConn.getSqlExecuteUpdate(sqlStmt);
+				
+			} else {
+				// --- Update dataset ---------------------
+				sqlStmt = "UPDATE platforms SET " +
+							"contact_agent = '" + sender.getName() + "'," +
+							"platform_name = '" + platform.getIp() + ":" + platform.getPort() + "/JADE'," + 
+							"is_server = " + isServerBool + "," +
+							"ip = '" + platform.getIp() + "'," +
+							"url = '" + platform.getUrl() + "'," +
+							"jade_port = " + platform.getPort() + "," +
+							"http4mtp = '" + platform.getHttp4mtp() + "'," +
+							"vers_major = " + version.getMajorRevision() + "," +
+							"vers_minor = " + version.getMinorRevision() + "," +
+							"vers_build = " + version.getBuildNo() + "," +
+							"os_name = '" + os.getOs_name() + "'," +
+							"os_version = '" + os.getOs_version() + "'," +
+							"os_arch = '" + os.getOs_arch() + "'," +
+							"cpu_vendor = '" + performance.getCpu_vendor() + "'," +
+							"cpu_model = '" + performance.getCpu_model() + "'," +
+							"cpu_n = " + performance.getCpu_numberOf() + "," +
+							"cpu_speed_mhz = " + performance.getCpu_speedMhz() + "," +
+							"memory_total_mb = " + performance.getMemory_totalMB() + "," +
+							"benchmark_value = 0," +
+							"online_since = now()," + 
+							"last_contact_at = now()," +
+							"local_online_since = '" + sqlDate + "'," +
+							"local_last_contact_at = '" + sqlDate + "'," +
+							"currently_available = "+ dbConn.dbBool2Integer(true) + " " +
+						   "WHERE contact_agent='" + sender.getName() + "'";
+				dbConn.getSqlExecuteUpdate(sqlStmt);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			dbConn.getError().setErrNumber( e.getErrorCode() );
+			dbConn.getError().setHead( "DB-Error during registration of a Slave-Server!" );
+			dbConn.getError().setText( e.getLocalizedMessage() );
+			dbConn.getError().setErr(true);
+			dbConn.getError().show();
+			
+		} finally {
 			try {
-				
-				res.last();
-				if ( res.getRow()==0 ) {
-					// --- Insert new dataset -----------------
-					sqlStmt = "INSERT INTO platforms SET " +
-								"contact_agent = '" + sender.getName() + "'," +
-								"platform_name = '" + platform.getIp() + ":" + platform.getPort() + "/JADE'," + 
-								"is_server = " + isServerBool + "," +
-								"ip = '" + platform.getIp() + "'," +
-								"url = '" + platform.getUrl() + "'," +
-								"jade_port = " + platform.getPort() + "," +
-								"http4mtp = '" + platform.getHttp4mtp() + "'," +
-								"vers_major = " + version.getMajorRevision() + "," +
-								"vers_minor = " + version.getMinorRevision() + "," +
-								"vers_build = " + version.getBuildNo() + "," +
-								"os_name = '" + os.getOs_name() + "'," +
-								"os_version = '" + os.getOs_version() + "'," +
-								"os_arch = '" + os.getOs_arch() + "'," +
-								"cpu_vendor = '" + performance.getCpu_vendor() + "'," +
-								"cpu_model = '" + performance.getCpu_model() + "'," +
-								"cpu_n = " + performance.getCpu_numberOf() + "," +
-								"cpu_speed_mhz = " + performance.getCpu_speedMhz() + "," +
-								"memory_total_mb = " + performance.getMemory_totalMB() + "," +
-								"benchmark_value = 0," +
-								"online_since = now()," + 
-								"last_contact_at = now()," +
-								"local_online_since = '" + sqlDate + "'," +
-								"local_last_contact_at = '" + sqlDate + "'," +
-								"currently_available = "+ dbConn.dbBool2Integer(true) + " ";
-					dbConn.getSqlExecuteUpdate(sqlStmt);
-					
-				} else {
-					// --- Update dataset ---------------------
-					sqlStmt = "UPDATE platforms SET " +
-								"contact_agent = '" + sender.getName() + "'," +
-								"platform_name = '" + platform.getIp() + ":" + platform.getPort() + "/JADE'," + 
-								"is_server = " + isServerBool + "," +
-								"ip = '" + platform.getIp() + "'," +
-								"url = '" + platform.getUrl() + "'," +
-								"jade_port = " + platform.getPort() + "," +
-								"http4mtp = '" + platform.getHttp4mtp() + "'," +
-								"vers_major = " + version.getMajorRevision() + "," +
-								"vers_minor = " + version.getMinorRevision() + "," +
-								"vers_build = " + version.getBuildNo() + "," +
-								"os_name = '" + os.getOs_name() + "'," +
-								"os_version = '" + os.getOs_version() + "'," +
-								"os_arch = '" + os.getOs_arch() + "'," +
-								"cpu_vendor = '" + performance.getCpu_vendor() + "'," +
-								"cpu_model = '" + performance.getCpu_model() + "'," +
-								"cpu_n = " + performance.getCpu_numberOf() + "," +
-								"cpu_speed_mhz = " + performance.getCpu_speedMhz() + "," +
-								"memory_total_mb = " + performance.getMemory_totalMB() + "," +
-								"benchmark_value = 0," +
-								"online_since = now()," + 
-								"last_contact_at = now()," +
-								"local_online_since = '" + sqlDate + "'," +
-								"local_last_contact_at = '" + sqlDate + "'," +
-								"currently_available = "+ dbConn.dbBool2Integer(true) + " " +
-							   "WHERE contact_agent='" + sender.getName() + "'";
-					dbConn.getSqlExecuteUpdate(sqlStmt);
-				}
-				
-			} catch (SQLException e) {
-				e.printStackTrace();
-				dbConn.getError().setErrNumber( e.getErrorCode() );
-				dbConn.getError().setHead( "DB-Error during registration of a Slave-Server!" );
-				dbConn.getError().setText( e.getLocalizedMessage() );
-				dbConn.getError().setErr(true);
-				dbConn.getError().show();
+				if (res!=null) res.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
 			}
 		}
 		
@@ -778,7 +783,6 @@ public class ServerMasterAgent extends Agent {
 		if (excludeIPsql.equals("")==false) {
 			excludeIPsql = "AND ip NOT IN (" + excludeIPsql + ") ";
 		}
-		
 		// --------------------------------------------------------------------
 		// --- Select the machine with the highest potential of 		 ------
 		// --- Mflops (Millions of floating point operations per second) ------
@@ -791,11 +795,13 @@ public class ServerMasterAgent extends Agent {
 		sqlStmt+= "WHERE is_server=-1 AND currently_available=-1 AND current_load_threshold_exceeded=0 ";
 		sqlStmt+= excludeIPsql;
 		sqlStmt+= "ORDER BY (benchmark_value-(benchmark_value*current_load_cpu/100)) DESC";
-		// --------------------------------------------------------------------
-		ResultSet res = dbConn.getSqlResult4ExecuteQuery(sqlStmt);
-		// --------------------------------------------------------------------
 		
+		ResultSet res = null;
 		try {
+			// ----------------------------------------------------------------
+			res = dbConn.getSqlResult4ExecuteQuery(sqlStmt);
+			// ----------------------------------------------------------------
+		
 			// --- Do we have a SQL-result ? ----------------------------------
 			if (res.wasNull())   
 				exitRequest = true;
@@ -855,6 +861,12 @@ public class ServerMasterAgent extends Agent {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
+		} finally {
+			try {
+				if (res!=null) res.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
 		}
 		
 		// -------------------------------------------------------------------- 
@@ -931,10 +943,10 @@ public class ServerMasterAgent extends Agent {
 		ClientAvailableMachinesReply replyContent = new ClientAvailableMachinesReply();
 		replyContent.setAvailableMachines(new jade.util.leap.ArrayList());
 		
-		// --------------------------------------------------------------------
-		ResultSet res = this.dbConn.getSqlResult4ExecuteQuery("SELECT * FROM platforms");
-		// --------------------------------------------------------------------
+		ResultSet res = null;
 		try {
+			// ----------------------------------------------------------------			
+			res = this.dbConn.getSqlResult4ExecuteQuery("SELECT * FROM platforms");
 			// --- Do we have a SQL-result ? ----------------------------------
 			if (res.wasNull()) exitRequest = true;
 			if (exitRequest==false && dbConn.getRowCount(res)==0) exitRequest = true;
@@ -995,6 +1007,12 @@ public class ServerMasterAgent extends Agent {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
+		} finally {
+			try {
+				if (res!=null) res.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
 		}
 		
 		// -------------------------------------------------------------------- 

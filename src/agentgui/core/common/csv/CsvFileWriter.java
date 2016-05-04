@@ -56,58 +56,52 @@ public class CsvFileWriter {
 	public boolean exportData(File csvFile, Object[][] data, String headline){
 
 		// --- Initializations -----------
-				boolean success = false;
-				FileWriter fileWriter = null;
-				
-				try {
-					
-					// --- Create output file --------------
-					fileWriter = new FileWriter(csvFile);
-					
-					if(headline != null){
-						fileWriter.append(headline);
+		boolean success = false;
+		FileWriter fileWriter = null;
+		
+		try {
+			// --- Create output file --------------
+			fileWriter = new FileWriter(csvFile);
+			
+			if(headline != null){
+				fileWriter.append(headline);
+				fileWriter.append(this.newLine);
+			}
+			
+			// --- Iterate over the data ----------
+			for(int i=0; i<data.length; i++){
+				for (int j=0; j<data[i].length; j++){
+					// --- Append next data field
+					fileWriter.append(data[i][j].toString());
+					// --- Append field or line separator -----
+					if (j<(data[i].length-1)){
+						fileWriter.append(this.separator);
+					} else {
 						fileWriter.append(this.newLine);
 					}
-					
-					// --- Iterate over the data ----------
-					for(int i=0; i<data.length; i++){
-						for(int j=0; j<data[i].length; j++){
-							
-							// --- Append next data field
-							fileWriter.append(data[i][j].toString());
-							
-							// --- Append field or line separator -----
-							if(j<(data[i].length-1)){
-								fileWriter.append(this.separator);
-							}else{
-								fileWriter.append(this.newLine);
-							}
-							
-						}
-					}
-					
-					success = true;
-				
-				} catch (IOException e) {
-					
-					System.err.println("Error writing CSV file!");
-					e.printStackTrace();
-					
-				} finally {
-					
-					try {
-						
-						fileWriter.flush();
-						fileWriter.close();
-						
-					} catch (IOException e) {
-						System.out.println("Error while flushing/closing fileWriter !!!");
-		                e.printStackTrace();
-					}
-					
 				}
-				
-				return success;
+			}
+			success = true;
+		
+		} catch (IOException ioe) {
+			System.err.println("Error writing CSV file!");
+			ioe.printStackTrace();
+			
+		} finally {
+			try {
+				fileWriter.flush();
+			} catch (IOException e) {
+				System.out.println("Error while flushing fileWriter !!!");
+                e.printStackTrace();
+			}
+			try {
+				fileWriter.close();
+			} catch (IOException e) {
+				System.out.println("Error while closing fileWriter !!!");
+                e.printStackTrace();
+			}
+		}
+		return success;
 	}
 	
 	/**

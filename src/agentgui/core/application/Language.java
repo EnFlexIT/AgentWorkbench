@@ -358,7 +358,13 @@ public class Language {
 			} 
 			catch (IOException ec) {            
 				System.err.println("Error while closing Dict-File: " + ec);  
-			}   
+			} finally {
+				try {
+					if (in64!=null) in64.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+			}
 		}     
 		// ----------------------------------------------------------
 		// --- proceed the loaded data so that they are usable ------
@@ -432,41 +438,54 @@ public class Language {
 	 */
 	public static void saveDictionaryFile() {
 		
-		BufferedWriter OutWri = null;
-		BufferedWriter OutWri64 = null;
+		BufferedWriter bw = null;
+		BufferedWriter bw64 = null;
 		
-		List<String> DictSorted = new Vector<String>(dictLineList64); 
-		Collections.sort(DictSorted);
+		List<String> dictSorted = new Vector<String>(dictLineList64); 
+		Collections.sort(dictSorted);
 		
 		try { 
-			// --- UTF8-File for the dictionary -------------------------------- 
-			OutWri = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(getDictFileLocation())) );
-			OutWri64 = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(getDictFileLocation64()), "UTF8" ) );
+			// --- UTF8-File for the dictionary --------------------------------
+			FileOutputStream fos = new FileOutputStream(getDictFileLocation());
+			OutputStreamWriter osw = new OutputStreamWriter(fos); 
+			bw = new BufferedWriter(osw);
+			
+			FileOutputStream fos64 = new FileOutputStream(getDictFileLocation64());
+			OutputStreamWriter osw64 = new OutputStreamWriter(fos64); 
+			bw64 = new BufferedWriter(osw64);
 		    
-			for ( final String line : DictSorted ) {
+			for (final String line : dictSorted) {
 				
 				if (line.trim().equals(getEmptyLine())) {
 					// --- just ignore this line --------------------
 				} else {
 					// --- TXT-Version of the dictionary ------------
-					OutWri.write( line );
-			    	OutWri.newLine();
+					bw.write( line );
+			    	bw.newLine();
 			    	
 			    	String encodedLine = new String(Base64.encodeBase64(line.getBytes("UTF8")));
-			    	OutWri64.write(encodedLine);
-			    	OutWri64.newLine();
+			    	bw64.write(encodedLine);
+			    	bw64.newLine();
 				}
 		    	
 		    }
-		    OutWri.close();
-		    OutWri64.close();
-		} 
-		catch (ArrayIndexOutOfBoundsException aioobe) { 
+		    
+		} catch (ArrayIndexOutOfBoundsException aioobe) { 
 			System.out.println( "Error Dict-File: " + aioobe ); 
-		} 
-		catch (IOException e) { 
+		} catch (IOException e) { 
 			System.out.println( "Error Dict-File: "+ e ); 
-		} 
+		} finally {
+			try {
+				if (bw!=null) bw.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			} 
+			try {
+				if (bw64!=null) bw64.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			} 
+		}
 	}
 	
 	/**

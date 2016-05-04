@@ -65,7 +65,17 @@ public class SerialClone {
 		}
 	}
 
+	/**
+	 * Clone x.
+	 *
+	 * @param <T> the generic type
+	 * @param x the x
+	 * @return the t
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws ClassNotFoundException the class not found exception
+	 */
 	private static <T> T cloneX(T x) throws IOException, ClassNotFoundException {
+		
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		CloneOutput cout = new CloneOutput(bout);
 		cout.writeObject(x);
@@ -77,11 +87,21 @@ public class SerialClone {
 		@SuppressWarnings("unchecked")
 		// thanks to Bas de Bakker for the tip!
 		T clone = (T) cin.readObject();
+		
 		cin.close();
+		cin = null;
+		bin.close();
+		bytes = null;
+		cout.close();
+		cout = null;
+		bout.close();
+		bout = null;
+		
 		return clone;
 	}
 
 	private static class CloneOutput extends ObjectOutputStream {
+		
 		Queue<Class<?>> classQueue = new LinkedList<Class<?>>();
 
 		CloneOutput(OutputStream out) throws IOException {
@@ -109,21 +129,18 @@ public class SerialClone {
 		}
 
 		@Override
-		protected Class<?> resolveClass(ObjectStreamClass osc)
-				throws IOException, ClassNotFoundException {
+		protected Class<?> resolveClass(ObjectStreamClass osc) throws IOException, ClassNotFoundException {
 			Class<?> c = output.classQueue.poll();
 			String expected = osc.getName();
 			String found = (c == null) ? null : c.getName();
 			if (!expected.equals(found)) {
-				throw new InvalidClassException("Classes desynchronized: "
-						+ "found " + found + " when expecting " + expected);
+				throw new InvalidClassException("Classes desynchronized: found " + found + " when expecting " + expected);
 			}
 			return c;
 		}
 
 		@Override
-		protected Class<?> resolveProxyClass(String[] interfaceNames)
-				throws IOException, ClassNotFoundException {
+		protected Class<?> resolveProxyClass(String[] interfaceNames) throws IOException, ClassNotFoundException {
 			return output.classQueue.poll();
 		}
 	}

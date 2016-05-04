@@ -31,6 +31,7 @@ package agentgui.simulationService.distribution;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -87,7 +88,7 @@ public class Download {
 		int totBytes, bytes, sumBytes = 0;
 
 		String host = null;
-		
+		InputStream is = null;
 		try {
 			// --- Connect to the SourceObject -----------
 			url = new URL(srcFileURL);
@@ -96,7 +97,7 @@ public class Download {
 			huc.connect();
 			
 			// --- Checking the connection ----------------
-			InputStream is = huc.getInputStream() ;
+			is = huc.getInputStream() ;
 			int code = huc.getResponseCode() ; 
 			if ( code == HttpURLConnection.HTTP_OK )   {  
 
@@ -138,6 +139,12 @@ public class Download {
 			System.out.println("Connection to '" + host + "' timed out: ");
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (is!=null) is.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
 		}
 		return false;
 	}

@@ -388,14 +388,22 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    File graphFile = new File(getEnvFolderPath() + fileName);
 		    if (graphFile.exists()) {
 		    	baseFileName = fileName.substring(0, fileName.lastIndexOf('.'));
+		    	FileReader fileReader = null;
 				try {
 				    // Load graph topology
-				    this.networkModel.setGraph(getGraphMLReader(graphFile).readGraph());
+					fileReader = new FileReader(graphFile);
+				    this.networkModel.setGraph(getGraphMLReader(fileReader).readGraph());
 		
 				} catch (FileNotFoundException e) {
 				    e.printStackTrace();
 				} catch (GraphIOException e) {
 				    e.printStackTrace();
+				} finally {
+					try {
+						if (fileReader!=null) fileReader.close();
+					} catch (IOException ioe) {
+						ioe.printStackTrace();
+					}
 				}
 		    }
 	
@@ -670,6 +678,9 @@ public class GraphEnvironmentController extends EnvironmentController {
 		this.saveGeneralGraphSettings();
 		if (networkModel != null && networkModel.getGraph() != null) {
 			
+			FileWriter fw = null;
+			PrintWriter pw = null;
+			FileWriter componentFileWriter = null;
 		    try {
 				// Save the graph topology
 				String graphFileName = baseFileName + ".graphml";
@@ -677,7 +688,8 @@ public class GraphEnvironmentController extends EnvironmentController {
 				if (!file.exists()) {
 				    file.createNewFile();
 				}
-				PrintWriter pw = new PrintWriter(new FileWriter(file));
+				fw = new FileWriter(file);
+				pw = new PrintWriter(fw);
 				getGraphMLWriter().save(networkModel.getGraph(), pw);
 		
 				// Save the network component definitions
@@ -685,21 +697,24 @@ public class GraphEnvironmentController extends EnvironmentController {
 				if (!componentFile.exists()) {
 				    componentFile.createNewFile();
 				}
-				FileWriter componentFileWriter = new FileWriter(componentFile);
-		
+				componentFileWriter = new FileWriter(componentFile);
 				JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
 				Marshaller marsh = context.createMarshaller();
 				marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 				marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 				marsh.marshal(new NetworkComponentList(networkModel.getNetworkComponents()), componentFileWriter);
-		
-				componentFileWriter.close();
-	
 				
 		    } catch (IOException e) {
 		    	e.printStackTrace();
 		    } catch (JAXBException e) {
 		    	e.printStackTrace();
+		    } finally {
+		    	try {
+					if (componentFileWriter!=null) componentFileWriter.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+		    	if (pw!=null) pw.close();
 		    }
 		}
     }
@@ -894,13 +909,13 @@ public class GraphEnvironmentController extends EnvironmentController {
     }
 
     /**
-     * Creates a new GraphMLReader2 and initiates it with the GraphML file to be loaded
-     * 
-     * @param file The file to be loaded
+     * Creates a new GraphMLReader2 and initiates it with the GraphML file to be loaded.
+     *
+     * @param fileReader the file reader
      * @return The GraphMLReader2
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException the file not found exception
      */
-    private GraphMLReader2<Graph<GraphNode, GraphEdge>, GraphNode, GraphEdge> getGraphMLReader(File file) throws FileNotFoundException {
+    private GraphMLReader2<Graph<GraphNode, GraphEdge>, GraphNode, GraphEdge> getGraphMLReader(FileReader fileReader) throws FileNotFoundException {
 
 		Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>> graphTransformer = new Transformer<GraphMetadata, Graph<GraphNode, GraphEdge>>() {
 		    @Override
@@ -966,9 +981,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    	return null;
 		    }
 		};
-	
-		FileReader fileReader = new FileReader(file);
-	
 		return new GraphMLReader2<Graph<GraphNode, GraphEdge>, GraphNode, GraphEdge>(fileReader, graphTransformer, nodeTransformer, edgeTransformer, hyperEdgeTransformer);
 
     }

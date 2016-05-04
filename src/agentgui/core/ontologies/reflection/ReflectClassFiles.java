@@ -228,6 +228,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 	private ArrayList<String> getJARClasses(File jarFileInstance) {
 		
 		ArrayList<String> classesFound = new ArrayList<String>();
+		JarFile jarFile = null;
 		try {
 			
 			// --- Get URL for the jar file in order to open it -------------------------
@@ -238,7 +239,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 			conn.setUseCaches(false);
 			
 			// --- Run through the list of jar files ------------------------------------
-			JarFile jarFile = conn.getJarFile();
+			jarFile = conn.getJarFile();
 			Enumeration<JarEntry> enu = jarFile.entries();
 			while (enu.hasMoreElements()) {
 				// --- Get the next jar file entry --------------------------------------
@@ -263,6 +264,12 @@ public class ReflectClassFiles extends ArrayList<String> {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (jarFile!=null) jarFile.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
 		}
 		return classesFound;
 	}

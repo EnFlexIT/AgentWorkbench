@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry excluding="contmasstandalone/" kind="src" path="projects"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/jade/lib/jade.jar" sourcepath="/JADE/src">
+	<classpathentry kind="lib" path="lib/jade/lib/jade.jar" sourcepath="/Jade">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/AgentGUI/lib/jade/doc/JADE-doc-4.4.0.zip!/jade/doc/api"/>
 		</attributes>

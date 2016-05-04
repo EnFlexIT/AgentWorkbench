@@ -195,6 +195,13 @@ public class LoadService extends BaseService {
 		}
 	}
 	/* (non-Javadoc)
+	 * @see jade.core.BaseService#shutdown()
+	 */
+	@Override
+	public void shutdown() {
+		super.shutdown();
+	}
+	/* (non-Javadoc)
 	 * @see jade.core.Service#getName()
 	 */
 	public String getName() {
