@@ -142,6 +142,11 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
 			this.graphGUI.dispose();	
 		}
 		
+		// --- Remove from the parent component -------------------------------
+		if (this.getParent()!=null) {
+			this.getParent().remove(this);
+		}
+		
 	}
     
     /**

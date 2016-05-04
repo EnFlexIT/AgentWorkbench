@@ -456,6 +456,10 @@ public class Platform extends Object {
 				}
 			}
 			System.out.println(Language.translate("Jade wurde beendet!"));
+			
+			
+			// --- Clean up the memory ------------
+			System.gc();
 		}
 		// ------------------------------------------------
 
