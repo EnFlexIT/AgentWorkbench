@@ -28,8 +28,6 @@
  */
 package agentgui.core.gui.options.https;
 
-import java.awt.Component;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -43,6 +41,7 @@ import java.security.cert.CertificateException;
 
 import java.util.Enumeration;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -63,7 +62,7 @@ public class KeyStoreController {
 	private static Enumeration<String> enumeration;
 	private static String Alias;
 	private static String line;
-	private static Component frame = null;
+	private static JFrame frame = null;
 
 	/**
 	 * This Initializes the KeyStoreController.

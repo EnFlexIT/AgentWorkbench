@@ -62,13 +62,13 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 	private JLabel jLabelMasterPort4MTP;
 	private JLabel jLabelPort4MTP;
 	private JLabel jLabelPort;
-	
+	private JLabel jLabel;
+
 	private JTextField jTextFieldMasterURL;
 	private JTextField jTextFieldMasterPort;
 	private JTextField jTextFieldMasterPort4MTP;
 
 	private JComboBoxMtpProtocol jComboBoxMtpProtocol;
-	private JLabel jLabel;
 	
 	/**
 	 * This is the Constructor.

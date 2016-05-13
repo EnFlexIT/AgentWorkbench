@@ -256,7 +256,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer, ItemL
 			GridBagConstraints gbc_jSeparator1 = new GridBagConstraints();
 			gbc_jSeparator1.fill = GridBagConstraints.VERTICAL;
 			gbc_jSeparator1.gridheight = 6;
-			gbc_jSeparator1.insets = new Insets(0, 10, 5, 10);
+			gbc_jSeparator1.insets = new Insets(0, 10, 0, 10);
 			gbc_jSeparator1.gridx = 4;
 			gbc_jSeparator1.gridy = 0;
 			jPanelJadeIPandPort.add(getJSeparator1(), gbc_jSeparator1);
@@ -285,6 +285,7 @@ public class JadeSetup extends JPanel implements ActionListener, Observer, ItemL
 			gbc_jButtonIPedit.gridy = 0;
 			jPanelJadeIPandPort.add(getJButtonIPedit(), gbc_jButtonIPedit);
 			GridBagConstraints gbc_jLabelMTPport = new GridBagConstraints();
+			gbc_jLabelMTPport.anchor = GridBagConstraints.WEST;
 			gbc_jLabelMTPport.insets = new Insets(0, 0, 5, 5);
 			gbc_jLabelMTPport.gridx = 0;
 			gbc_jLabelMTPport.gridy = 1;
@@ -341,17 +342,6 @@ public class JadeSetup extends JPanel implements ActionListener, Observer, ItemL
 			gbc_jButtonEditMtpProtocol.gridx = 8;
 			gbc_jButtonEditMtpProtocol.gridy = 3;
 			jPanelJadeIPandPort.add(getJButtonEditMtpProtocol(), gbc_jButtonEditMtpProtocol);
-			
-			jLabelPortExplain = new JLabel();
-			GridBagConstraints gbc_jLabelPortExplain = new GridBagConstraints();
-			gbc_jLabelPortExplain.anchor = GridBagConstraints.WEST;
-			gbc_jLabelPortExplain.gridwidth = 4;
-			gbc_jLabelPortExplain.insets = new Insets(0, 0, 5, 5);
-			gbc_jLabelPortExplain.gridx = 0;
-			gbc_jLabelPortExplain.gridy = 4;
-			jPanelJadeIPandPort.add(jLabelPortExplain, gbc_jLabelPortExplain);
-			jLabelPortExplain.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)");
 			GridBagConstraints gbc_jLabelKeyStore = new GridBagConstraints();
 			gbc_jLabelKeyStore.anchor = GridBagConstraints.WEST;
 			gbc_jLabelKeyStore.insets = new Insets(0, 0, 5, 5);
@@ -365,6 +355,17 @@ public class JadeSetup extends JPanel implements ActionListener, Observer, ItemL
 			gbc_jTextFieldKeyStoreFile.gridx = 6;
 			gbc_jTextFieldKeyStoreFile.gridy = 4;
 			jPanelJadeIPandPort.add(getJTextFieldKeyStoreFile(), gbc_jTextFieldKeyStoreFile);
+			
+			jLabelPortExplain = new JLabel();
+			GridBagConstraints gbc_jLabelPortExplain = new GridBagConstraints();
+			gbc_jLabelPortExplain.anchor = GridBagConstraints.WEST;
+			gbc_jLabelPortExplain.gridwidth = 4;
+			gbc_jLabelPortExplain.insets = new Insets(0, 0, 0, 5);
+			gbc_jLabelPortExplain.gridx = 0;
+			gbc_jLabelPortExplain.gridy = 5;
+			jPanelJadeIPandPort.add(jLabelPortExplain, gbc_jLabelPortExplain);
+			jLabelPortExplain.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)");
 			GridBagConstraints gbc_jLabelTrustStore = new GridBagConstraints();
 			gbc_jLabelTrustStore.anchor = GridBagConstraints.WEST;
 			gbc_jLabelTrustStore.insets = new Insets(5, 0, 0, 5);

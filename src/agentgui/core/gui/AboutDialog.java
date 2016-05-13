@@ -131,10 +131,11 @@ public class AboutDialog extends JDialog implements ActionListener{
 					"Tim Lewen<br>" +
 					"Satyadeep Karnati<br>" +
 					"David Pachula<br>" +
-					"Hanno Monschan" +
+					"Hanno Monschan<br>" +
+					"Mohamed Amine Jedidi" +
 					"</CENTER></HTML></BODY>";
 
-		this.setSize(550, 445);
+		this.setSize(550, 480);
 		this.setIconImage(imageAgentGUI);
 		
 		this.setModal(true);

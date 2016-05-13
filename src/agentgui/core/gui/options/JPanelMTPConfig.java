@@ -44,6 +44,7 @@ import javax.swing.JTextField;
 import javax.swing.ImageIcon;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 import agentgui.core.gui.components.JComboBoxMtpProtocol;
 import agentgui.core.gui.options.https.HttpsConfigWindow;
 
@@ -150,7 +151,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	 */
 	private JLabel getJLabelMTPProtocol() {
 		if (jLabelMTPProtocol == null) {
-			jLabelMTPProtocol = new JLabel("MTP-Protocol:");
+			jLabelMTPProtocol = new JLabel(Language.translate("MTP-Protocol", Language.EN)+":");
 			jLabelMTPProtocol.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelMTPProtocol;
@@ -161,7 +162,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	protected JComboBoxMtpProtocol getJComboBoxMtpProtocol() {
 		if (jComboBoxMtpProtocol == null) {
 			jComboBoxMtpProtocol = new JComboBoxMtpProtocol();
-			jComboBoxMtpProtocol.setPreferredSize(new Dimension(80, 26));
+			jComboBoxMtpProtocol.setPreferredSize(new Dimension(90, 26));
 			jComboBoxMtpProtocol.addItemListener(this);
 		}
 		return jComboBoxMtpProtocol;
@@ -184,7 +185,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	 */
 	private JLabel getJLabelKeystorePath() {
 		if (jLabelKeystorePath == null) {
-			jLabelKeystorePath = new JLabel("KeyStore path:");
+			jLabelKeystorePath = new JLabel("KeyStore:");
 			jLabelKeystorePath.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jLabelKeystorePath;
@@ -194,7 +195,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	 */
 	private JLabel getJLabelTruststorePath() {
 		if (jLabelTruststorePath == null) {
-			jLabelTruststorePath = new JLabel("TrustStore path:");
+			jLabelTruststorePath = new JLabel("TrustStore:");
 			jLabelTruststorePath.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jLabelTruststorePath;
@@ -319,7 +320,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 		} else if (this.action == "COMBO") {
 			// --- In case that the user choose to configure new HTTPS MTP ------
 			httpsConfigWindow = new HttpsConfigWindow();
-			// - - Wait for the user - - - - - - - - - - - - -
+			// --- Wait for the user --------------------------------------------
 			if (httpsConfigWindow.isCanceled() == false) {
 				// ---- Return the KeyStore and TrustStore chosen by the user ---
 				this.setKeyStore(httpsConfigWindow.getKeyStorefilepath());
@@ -356,7 +357,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 						this.setVisibaleTrue();
 						this.editHTTPSsettings();
 					} else {
-						// ---- If the user choose HTTP ---------------------------
+						// ---- If the user choose HTTP ----------------------------
 						this.setVisibleFalse();
 					}
 				}
@@ -370,7 +371,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == this.getJButtonEditMTP()){
-			// --- Open the HttpsConfigWindow ---------------------------------
+			// --- Open the HttpsConfigWindow -------------------------------------
 						this.action = "BUTTON";
 						editHTTPSsettings();
 		}

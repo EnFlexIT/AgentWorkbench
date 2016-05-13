@@ -141,7 +141,7 @@ public class GlobalInfo {
 	private MTP_Creation filePropOwnMtpCreation = MTP_Creation.ConfiguredByJADE;
 	private String filePropOwnMtpIP = PlatformJadeConfig.MTP_IP_AUTO_Config;
 	private Integer filePropOwnMtpPort = 7778;
-	private String filePropMtpProtocol ;
+	private String filePropMtpProtocol = "HTTP";
 	
 	private String filePropServerMasterDBHost;
 	private String filePropServerMasterDBName;

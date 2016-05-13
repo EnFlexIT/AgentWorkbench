@@ -28,8 +28,6 @@
  */
 package agentgui.core.gui.options.https;
 
-import java.awt.Component;
-
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -50,6 +48,7 @@ import java.util.Enumeration;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -73,7 +72,7 @@ public class TrustStoreController {
 	private static DefaultListModel<String> certificatesAliasModel;
 	private static Enumeration<String> enumeration;
 	private static String Alias;
-	private static Component frame;
+	private static JFrame frame;
 
 	/**
 	 * This Initializes the TrustStoreController.
@@ -270,7 +269,7 @@ public class TrustStoreController {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (CertificateException e) {
-			JOptionPane.showMessageDialog(frame, "Please choose a certificate file !");
+			JOptionPane.showMessageDialog(frame, "Please choose a certificate file!");
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();

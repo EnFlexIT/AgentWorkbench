@@ -1,7 +1,7 @@
 /**
  * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
+ * Agent.GUI is a thiswork to develop Multi-agent based simulation 
+ * applications based on the JADE - thiswork in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
  * http://www.dawis.wiwi.uni-due.de
@@ -29,7 +29,6 @@
 package agentgui.core.gui.options.https;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -42,7 +41,6 @@ import java.util.Arrays;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -53,6 +51,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 
 /**
  * This JPanel allows the user to : 
@@ -74,7 +73,6 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 
 	private HttpsConfigWindow httpsConfigWindow;
 
-	private JFrame frame;
 	private JPanel jPanelButtons;
 
 	private JLabel jLabelTrustStoreInformations;
@@ -82,8 +80,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	private JLabel jLabelTrustStorePassword;
 	private JLabel jLabelTrustStoreConfirmPassword;
 	private JLabel jLabelCertificatesList;
+	
 	private JTextField jTextFieldTrustStoreName;
-
 	private JPasswordField jPasswordFieldTrustStorePassword;
 	private JPasswordField jPasswordFieldTrustStoreConfirmPassword;
 
@@ -222,7 +220,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelTrustStoreInformations() {
 		if (jLabelTrustStoreInformations == null) {
-			jLabelTrustStoreInformations = new JLabel("TrustStore Informations");
+			jLabelTrustStoreInformations = new JLabel(Language.translate("TrustStore Informations",Language.EN));
 			jLabelTrustStoreInformations.setFont(new Font("Dialog", Font.BOLD, 11));
 		}
 		return jLabelTrustStoreInformations;
@@ -232,7 +230,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelTruststoreName() {
 		if (jLabelTruststoreName == null) {
-			jLabelTruststoreName = new JLabel("TrustStore Name");
+			jLabelTruststoreName = new JLabel(Language.translate("TrustStore Name",Language.EN));
 			jLabelTruststoreName.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelTruststoreName;
@@ -242,7 +240,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelTrustStorePassword() {
 		if (jLabelTrustStorePassword == null) {
-			jLabelTrustStorePassword = new JLabel("Password");
+			jLabelTrustStorePassword = new JLabel(Language.translate("Password",Language.EN));
 			jLabelTrustStorePassword.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelTrustStorePassword;
@@ -252,7 +250,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelTrustStoreConfirmPassword() {
 		if (jLabelTrustStoreConfirmPassword == null) {
-			jLabelTrustStoreConfirmPassword = new JLabel("Confirm Password");
+			jLabelTrustStoreConfirmPassword = new JLabel(Language.translate("Confirm Password",Language.EN));
 			jLabelTrustStoreConfirmPassword.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelTrustStoreConfirmPassword;
@@ -292,7 +290,6 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	}
 	/**
 	 * Sets JPasswordFieldTrustStoreConfirmPassword.
-	 *
 	 * @param jPasswordFieldTrustStoreConfirmPassword
 	 */
 	protected void setJPasswordFieldTrustStoreConfirmPassword(JPasswordField jPasswordFieldTrustStoreConfirmPassword) {
@@ -303,7 +300,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	protected JLabel getJLabelCertificatesList() {
 		if (jLabelCertificatesList == null) {
-			jLabelCertificatesList = new JLabel("Trusted Certificates:");
+			jLabelCertificatesList = new JLabel(Language.translate("Trusted Certificates",Language.EN));
 			jLabelCertificatesList.setFont(new Font("Dialog", Font.BOLD, 11));
 		}
 		return jLabelCertificatesList;
@@ -314,7 +311,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	private JButton getJButtonApplyTrustStore() {
 		if (jButtonApplyTrustStore == null) {
 			jButtonApplyTrustStore = new JButton("");
-			jButtonApplyTrustStore.setToolTipText("Save");
+			jButtonApplyTrustStore.setToolTipText(Language.translate("Save",Language.EN));
 			jButtonApplyTrustStore.setForeground(new Color(0, 0, 255));
 			jButtonApplyTrustStore.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonApplyTrustStore.setPreferredSize(new Dimension(26, 26));
@@ -329,7 +326,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	protected JButton getJButtonAddCertificate() {
 		if (jButtonAddCertificate == null) {
 			jButtonAddCertificate = new JButton();
-			jButtonAddCertificate.setToolTipText("Add Certificate ");
+			jButtonAddCertificate.setToolTipText(Language.translate("Add Certificate",Language.EN));
 			jButtonAddCertificate.setPreferredSize(new Dimension(35, 26));
 			jButtonAddCertificate.setFont(new Font("SansSerif", Font.BOLD, 15));
 			jButtonAddCertificate.setIcon(iconAdd);
@@ -343,7 +340,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	protected JButton getJButtonRemoveCertificate() {
 		if (jButtonRemoveCertificate == null) {
 			jButtonRemoveCertificate = new JButton();
-			jButtonRemoveCertificate.setToolTipText("Remove Certificate");
+			jButtonRemoveCertificate.setToolTipText(Language.translate("Remove Certificate",Language.EN));
 			jButtonRemoveCertificate.setPreferredSize(new Dimension(35, 26));
 			jButtonRemoveCertificate.setFont(new Font("SansSerif", Font.BOLD, 15));
 			jButtonRemoveCertificate.setIcon(iconRemove);
@@ -402,26 +399,31 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 		if (ae.getSource() == this.getJButtonApplyTrustStore()) {
 			// ----- Create TrustStore ------------------------------------
 			if (this.httpsConfigWindow.getTrustStoreButtonPressed() == "CreateTrustStore") {
-				// ---- Verify if all the fields are filled --------
+				// ---- Verify if all the fields are filled ---------------
 				if (jTextFieldTrustStoreName.getText().equals("") 
 						|| jPasswordFieldTrustStorePassword.getPassword().equals("")
 						|| jPasswordFieldTrustStoreConfirmPassword.getPassword().equals("")) {
-
-					JOptionPane.showMessageDialog(frame, "You must fill out all required fields.");
+					String msg = Language.translate("You must fill out all required fields!",Language.EN);
+					String title = Language.translate("Required fields",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
 				/*
-				 * ----- Verify if The password and its confirm -----
-				 * ---------------- are the same --------------------
+				 * ----- Verify if The password and its confirm -----------
+				 * ---------------- are the same --------------------------
 				 */
 				else if (!Arrays.equals(jPasswordFieldTrustStorePassword.getPassword(),jPasswordFieldTrustStoreConfirmPassword.getPassword())) {
-					JOptionPane.showMessageDialog(frame, "The password and its confirm are not the same");
+					String msg = Language.translate("The password and its confirm are not the same!",Language.EN);
+					String title = Language.translate("Warning",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
 				/*
-				 * ----- Verify if the password is at least ----------
-				 * ------------- 6 characters in length --------------
+				 * ----- Verify if the password is at least ---------------
+				 * ------------- 6 characters in length -------------------
 				 */
 				else if (jPasswordFieldTrustStorePassword.getPassword().length < 6) {
-					JOptionPane.showMessageDialog(frame, "The password should be at least 6 characters in length");
+					String msg = Language.translate("The password should be at least 6 characters in length!",Language.EN);
+					String title = Language.translate("Password length",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}else {
 					String trustStoreName = jTextFieldTrustStoreName.getText() + "TrustStore.jks";
 					String trustStorePassword = new String (jPasswordFieldTrustStorePassword.getPassword());
@@ -432,7 +434,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 						this.httpsConfigWindow.setTrustStorefilepath(jFileChooser.getSelectedFile().getAbsoluteFile().getAbsolutePath() + "\\"+trustStoreName); 
 						TrustStoreController.CreateTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),
 								this.httpsConfigWindow.getTrustStorePassword(),this.httpsConfigWindow.getTrustStorefilepath());
-						JOptionPane.showMessageDialog(frame, "Your TrustStore has been created successfully");
+						
+						String msg = Language.translate("Your TrustStore has been created successfully!",Language.EN);
+						String title = Language.translate("TrustStore created",Language.EN);
+						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
+						
 						this.httpsConfigWindow.getJLabelTrustStoreLocationPath()
 								.setText(this.httpsConfigWindow.getTrustStorefilepath());
 						jTextFieldTrustStoreName.setEnabled(false);
@@ -454,34 +460,41 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 				if (jTextFieldTrustStoreName.getText().equals("")
 						|| jPasswordFieldTrustStorePassword.getPassword().equals("")
 						|| jPasswordFieldTrustStoreConfirmPassword.getPassword().equals("")) {
-
-					JOptionPane.showMessageDialog(frame, "You must fill out all required fields.");
+					String msg = Language.translate("You must fill out all required fields!",Language.EN);
+					String title = Language.translate("Required fields",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
 				/*
 				 * ----- Verify if The password and its confirm ----
 				 * ---------------- are the same -----------------
 				 */
 				else if (!Arrays.equals(jPasswordFieldTrustStorePassword.getPassword(),jPasswordFieldTrustStoreConfirmPassword.getPassword())) {
-					JOptionPane.showMessageDialog(frame, "The password and its confirm are not the same");
+					String msg = Language.translate("The password and its confirm are not the same!",Language.EN);
+					String title = Language.translate("Warning",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
 				/*
 				 * ----- Verify if the password is at least ----------
 				 * ------------- 6 characters in length --------------
 				 */
 				else if (jPasswordFieldTrustStorePassword.getPassword().length < 6) {
-					JOptionPane.showMessageDialog(frame, "The password should be at least 6 characters in length");
+					String msg = Language.translate("The password should be at least 6 characters in length!",Language.EN);
+					String title = Language.translate("Password length",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				} else {
 					String newTrustStorePassword = new String(jPasswordFieldTrustStorePassword.getPassword());
 					String keystorename = this.httpsConfigWindow.getTrustStorefilepath().substring(this.httpsConfigWindow.getTrustStorefilepath().lastIndexOf("\\") + 1);
 					// --- Create JOptionPane to enter the old TrustStore password ---
 					JPanel jPanelPassword = new JPanel();
-					JLabel jLabelEnterPassword = new JLabel("Please enter the old password for  " + keystorename + "  :");
+					String msg1 = Language.translate("Please enter the old password for  ",Language.EN);
+					JLabel jLabelEnterPassword = new JLabel( msg1 + keystorename + "  :");
 					jLabelEnterPassword.setFont(new Font("Dialog", Font.BOLD, 11));
 					JPasswordField jPasswordField = new JPasswordField(10);
 					jPanelPassword.add(jLabelEnterPassword);
 					jPanelPassword.add(jPasswordField);
+					String title = Language.translate("Password",Language.EN);
 					String[] options = new String[] { "OK", "Cancel" };
-					int option = JOptionPane.showOptionDialog(null, jPanelPassword, "Password", JOptionPane.NO_OPTION,
+					int option = JOptionPane.showOptionDialog(null, jPanelPassword, title, JOptionPane.NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, jPasswordField);
 					String oldPassword = new String(jPasswordField.getPassword());
 					if (option == 0) {
@@ -489,14 +502,18 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 						if (this.httpsConfigWindow.getTrustStorePassword().equals(oldPassword)){
 							TrustStoreController.EditTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),
 									this.httpsConfigWindow.getTrustStorePassword(), newTrustStorePassword);
-							JOptionPane.showMessageDialog(frame, "Your TrustStore has been updated successfully ");
+							
+							String msg = Language.translate("Your TrustStore has been updated successfully!",Language.EN);
+							String title1 = Language.translate("TrustStore updated",Language.EN);
+							JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.INFORMATION_MESSAGE); 
+							
 							this.httpsConfigWindow.setTrustStorePassword(newTrustStorePassword);
 							jPasswordFieldTrustStoreConfirmPassword.setText(null);
 							jPasswordFieldTrustStorePassword.setText(newTrustStorePassword);
 						}else{
-							JOptionPane.showMessageDialog(frame,
-									"The password you entered is incorrect. Please try again !",
-									"Warning message", JOptionPane.WARNING_MESSAGE);
+							String msg = Language.translate("The password you entered is incorrect. Please try again!",Language.EN);
+							String title2 = Language.translate("Password incorrect",Language.EN);
+							JOptionPane.showMessageDialog(this, msg, title2, JOptionPane.WARNING_MESSAGE);
 						}
 					}
 				}
@@ -505,8 +522,9 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 			// ----- Add certificate to TrustStore ----------------------
 			// ----- Verify if there is a TrustStore opened ----
 			if (this.httpsConfigWindow.getTrustStorefilepath() == null) {
-				JOptionPane.showMessageDialog(frame, "Please open a Truststore first !", "Warning message",
-						JOptionPane.WARNING_MESSAGE);
+				String msg = Language.translate("Please open a Truststore first!",Language.EN);
+				String title = Language.translate("Warning message",Language.EN);
+				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 
 			} else {
 				// ---- open JfileChooser ---------------------------------
@@ -518,20 +536,22 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 					// ----- Generate a JOptionDialog to enter ----\\
 					// -------------- Certificate alias ------------\\
 					JPanel jPanelCertificate = new JPanel();
-					JLabel jLabelCertificate = new JLabel("Please Enter Certificate's alias :");
+					JLabel jLabelCertificate = new JLabel(Language.translate("Please, enter Certificate's alias ",Language.EN)+":");
 					jLabelCertificate.setFont(new Font("Dialog", Font.BOLD, 11));
 					JTextField jTextFieldAlias = new JTextField(10);
 					jPanelCertificate.add(jLabelCertificate);
 					jPanelCertificate.add(jTextFieldAlias);
+					String title = "Certificate";
 					String[] options = new String[] { "OK", "Cancel" };
-					int option = JOptionPane.showOptionDialog(null, jPanelCertificate, "Message", JOptionPane.NO_OPTION,
+					int option = JOptionPane.showOptionDialog(null, jPanelCertificate, title, JOptionPane.NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, jTextFieldAlias);
 					String certificateAlias = jTextFieldAlias.getText();
 					
 					if (option == 0) {
 						if (certificateAlias.equals("")) {
-							JOptionPane.showMessageDialog(frame, "Please enter your certificate's alias !",
-									"Warning message", JOptionPane.WARNING_MESSAGE);
+							String msg = Language.translate("Please, enter your certificate's alias!",Language.EN);
+							String title1 = Language.translate("Certificate alias",Language.EN);
+							JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.INFORMATION_MESSAGE);
 						} else {
 							// ------------ Press OK Button --------------------
 							TrustStoreController.AddCertificateToTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),
@@ -550,20 +570,23 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 			// ----- Delete certificate to TrustStore ----------------------
 			// ----- Verify if there is a TrustStore opened ----------------
 			if (this.httpsConfigWindow.getTrustStorefilepath() == null) {
-				JOptionPane.showMessageDialog(frame, "Please open a Truststore first !", "Warning message",
-						JOptionPane.WARNING_MESSAGE);
+				String msg = Language.translate("Please, open a Truststore first!",Language.EN);
+				String title = Language.translate("Warning message",Language.EN);
+				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 			} else {
 				if (jListCertificatesAlias.isSelectionEmpty()) {
-					Component frame = null;
-					JOptionPane.showMessageDialog(frame, "You should select a certificate", "Warning",
-							JOptionPane.WARNING_MESSAGE);
+					String msg = Language.translate("You should select a certificate!",Language.EN);
+					String title = Language.translate("Warning message",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				} else {
 					// ------ Get the certificate's alias to delete ----
 					String CertificateAliasToDelete = jListCertificatesAlias.getSelectedValue() + "";
 					// --------- Generate a ConfirmDialog --------------
 					String[] options = new String[] { "Yes", "No" };
-					int option = JOptionPane.showOptionDialog(null, "Would You Like to delete this Certificate ?",
-							"Warning", JOptionPane.NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+					String msg = Language.translate("Would You Like to delete this Certificate?",Language.EN);
+					String title = Language.translate("Warning message",Language.EN);
+					int option = JOptionPane.showOptionDialog(null, msg,title, JOptionPane.NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+					
 					if (option == JOptionPane.YES_OPTION) {
 						// ----- press OK Button ----------------------
 						TrustStoreController.DeleteCertificateFromTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),

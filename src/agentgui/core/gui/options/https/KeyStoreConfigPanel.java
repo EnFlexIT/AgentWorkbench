@@ -1,7 +1,7 @@
 /**
  * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
+ * Agent.GUI is a thiswork to develop Multi-agent based simulation 
+ * applications based on the JADE - thiswork in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
  * http://www.dawis.wiwi.uni-due.de
@@ -41,7 +41,6 @@ import java.util.Arrays;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -51,6 +50,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.Language;
 
 /**
  * This JPanel allows the user to : 
@@ -71,7 +71,6 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	private HttpsConfigWindow httpsConfigWindow;
 
 	private final Dimension fieldSize = new Dimension(120, 26);
-	private JFrame frame;
 
 	private JLabel jLabelKeyStoreName;
 	private JLabel jLabelPassword;
@@ -277,7 +276,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelKeyStoreInformations() {
 		if (jLabelKeyStoreInformations == null) {
-			jLabelKeyStoreInformations = new JLabel("KeyStore Informations");
+			jLabelKeyStoreInformations = new JLabel(Language.translate("Keystore Information",Language.EN));
 			jLabelKeyStoreInformations.setFont(new Font("Dialog", Font.BOLD, 11));
 		}
 		return jLabelKeyStoreInformations;
@@ -287,7 +286,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelKeyStoreName() {
 		if (jLabelKeyStoreName == null) {
-			jLabelKeyStoreName = new JLabel("KeyStore Name");
+			jLabelKeyStoreName = new JLabel(Language.translate("KeyStore Name", Language.EN));
 			jLabelKeyStoreName.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelKeyStoreName;
@@ -297,7 +296,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelPassword() {
 		if (jLabelPassword == null) {
-			jLabelPassword = new JLabel("Password");
+			jLabelPassword = new JLabel(Language.translate("Password",Language.EN));
 			jLabelPassword.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelPassword;
@@ -307,7 +306,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelConfirmPassword() {
 		if (jLabelConfirmPassword == null) {
-			jLabelConfirmPassword = new JLabel("Confirm Password");
+			jLabelConfirmPassword = new JLabel(Language.translate("Confirm Password",Language.EN));
 			jLabelConfirmPassword.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelConfirmPassword;
@@ -317,7 +316,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelAlias() {
 		if (jLabelAlias == null) {
-			jLabelAlias = new JLabel("Alias");
+			jLabelAlias = new JLabel(Language.translate("Alias",Language.EN));
 			jLabelAlias.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelAlias;
@@ -327,7 +326,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelFullName() {
 		if (jLabelFullName == null) {
-			jLabelFullName = new JLabel("Full Name");
+			jLabelFullName = new JLabel(Language.translate("Full Name",Language.EN));
 			jLabelFullName.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelFullName;
@@ -337,7 +336,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelOrganizationalUnit() {
 		if (jLabelOrganizationalUnit == null) {
-			jLabelOrganizationalUnit = new JLabel("Organizational unit");
+			jLabelOrganizationalUnit = new JLabel(Language.translate("Organizational Unit",Language.EN));
 			jLabelOrganizationalUnit.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelOrganizationalUnit;
@@ -347,7 +346,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelOrganization() {
 		if (jLabelOrganization == null) {
-			jLabelOrganization = new JLabel("Organization");
+			jLabelOrganization = new JLabel(Language.translate("Organization",Language.EN));
 			jLabelOrganization.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelOrganization;
@@ -357,7 +356,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelCity() {
 		if (jLabelCity == null) {
-			jLabelCity = new JLabel("City or Locality");
+			jLabelCity = new JLabel(Language.translate("City or Locality",Language.EN));
 			jLabelCity.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelCity;
@@ -367,7 +366,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelState() {
 		if (jLabelState == null) {
-			jLabelState = new JLabel("State or Province");
+			jLabelState = new JLabel(Language.translate("State or Province",Language.EN));
 			jLabelState.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelState;
@@ -377,7 +376,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelCountryCode() {
 		if (jLabelCountryCode == null) {
-			jLabelCountryCode = new JLabel("Country code");
+			jLabelCountryCode = new JLabel(Language.translate("Country Code",Language.EN));
 			jLabelCountryCode.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelCountryCode;
@@ -498,7 +497,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	private JButton getJButtonApplyKeyStore() {
 		if (jButtonApplyKeyStore == null) {
 			jButtonApplyKeyStore = new JButton("");
-			jButtonApplyKeyStore.setToolTipText("Save");
+			jButtonApplyKeyStore.setToolTipText(Language.translate("Save",Language.EN));
 			jButtonApplyKeyStore.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonApplyKeyStore.setForeground(new Color(0, 0, 255));
 			jButtonApplyKeyStore.setVerticalAlignment(SwingConstants.TOP);
@@ -513,10 +512,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JButton getJButtonCertificate() {
 		if (jButtonCertificate == null) {
-			jButtonCertificate = new JButton("Export Certificate");
+			jButtonCertificate = new JButton(Language.translate("Export Certificate",Language.EN));
 			jButtonCertificate.setFont(new Font("Dialog", Font.BOLD, 11));
 			jButtonCertificate.setPreferredSize(new Dimension(127, 26));
-			jButtonCertificate.setToolTipText("Generate own certificate from the KeyStore");
+			jButtonCertificate.setToolTipText(Language.translate("Generate your own certificate from the KeyStore",Language.EN));
 			jButtonCertificate.addActionListener(this);
 		}
 		return jButtonCertificate;
@@ -559,21 +558,27 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 						|| jTextFieldOrganizationalUnit.getText().equals("") || jTextFieldState.getText().equals("")
 						|| jPasswordFieldPassword.getPassword().equals("")
 						|| jPasswordFieldConfirmPassword.getPassword().equals("")) {
-					JOptionPane.showMessageDialog(frame, "You must fill out all required fields.");
+					String msg = Language.translate("You must fill out all required fields!",Language.EN);
+					String title = Language.translate("Required fields",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
 				/*
 				 * ----- Verify if The password and its confirm -----------
 				 * ---------------- are the same --------------------------
 				 */
 				else if (!Arrays.equals(jPasswordFieldPassword.getPassword(),jPasswordFieldConfirmPassword.getPassword())) {
-					JOptionPane.showMessageDialog(frame, "The password and its confirm are not the same");
+					String msg = Language.translate("The password and its confirm are not the same!",Language.EN);
+					String title = Language.translate("Warning",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
 				/*
 				 * ----- Verify if the password is at least ---------------
 				 * ------------- 6 characters in length -------------------
 				 */
 				else if (jPasswordFieldPassword.getPassword().length < 6) {
-					JOptionPane.showMessageDialog(frame, "The password should be at least 6 characters in length");
+					String msg = Language.translate("The password should be at least 6 characters in length!",Language.EN);
+					String title = Language.translate("Password length",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				} else {
 					// ---- Get Provider Informations ---------------------
 					String informations = "CN=" + jTextFieldFullName.getText() + ",OU="
@@ -595,7 +600,10 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 						 */
 						KeyStoreController.CreateKeyStore(informations, alias, keystore_name, keystore_password,
 								KeyStorePath);
-						JOptionPane.showMessageDialog(frame, "Your keystore has been created successfully ");
+						String msg = Language.translate("Your keystore has been created successfully!",Language.EN);
+						String title = Language.translate("KeyStore created",Language.EN);
+						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
+						
 						this.httpsConfigWindow.setKeyStorefilepath(KeyStorePath + keystore_name + "KeyStore.jks");
 						this.httpsConfigWindow.setKeyStorePassword(keystore_password);
 						this.httpsConfigWindow.setKeyStoreAlias(alias);
@@ -639,21 +647,27 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 				// ---- Verify if all the fields are filled -------
 				if (jTextFieldAlias.getText().equals("") || jPasswordFieldPassword.getPassword().equals("")
 						|| jPasswordFieldConfirmPassword.getPassword().equals("")) {
-					JOptionPane.showMessageDialog(frame, "You must fill out all required fields.");
+					String msg = Language.translate("You must fill out all required fields!",Language.EN);
+					String title = Language.translate("Required fields",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
 				/*
 				 * ----- Verify if The password and its confirm ----
 				 * ---------------- are the same -------------------
 				 */
 				else if (!Arrays.equals(jPasswordFieldPassword.getPassword(),jPasswordFieldConfirmPassword.getPassword())) {
-					JOptionPane.showMessageDialog(frame, "The password and its confirm are not the same");
+					String msg = Language.translate("The password and its confirm are not the same!",Language.EN);
+					String title = Language.translate("Warning",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
 				/*
 				 * ----- Verify if the password is at least -------- 
 				 * ----------- 6 characters in length --------------
 				 */
 				else if (jPasswordFieldPassword.getPassword().length < 6) {
-					JOptionPane.showMessageDialog(frame, "The password should be at least 6 characters in length");
+					String msg = Language.translate("The password should be at least 6 characters in length!",Language.EN);
+					String title = Language.translate("Password length",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				} else {
 					
 					String newAlias = jTextFieldAlias.getText();
@@ -661,13 +675,15 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 					String keyStoreName = this.httpsConfigWindow.getKeyStorefilepath().substring(this.httpsConfigWindow.getKeyStorefilepath().lastIndexOf("\\") + 1);
 					// --- Create JOptionPane to enter the old KeyStore password ---
 					JPanel jPanelPassword = new JPanel();
-					JLabel jLabelEnterPassword = new JLabel("Please enter the old password for  " + keyStoreName + "  :");
+					String msg1 = Language.translate("Please, enter the old password for  ",Language.EN);
+					JLabel jLabelEnterPassword = new JLabel( msg1 + keyStoreName + "  :");
 					jLabelEnterPassword.setFont(new Font("Dialog", Font.BOLD, 11));
 					JPasswordField jPasswordField = new JPasswordField(10);
 					jPanelPassword.add(jLabelEnterPassword);
 					jPanelPassword.add(jPasswordField);
 					String[] options = new String[] { "OK", "Cancel" };
-					int option = JOptionPane.showOptionDialog(null, jPanelPassword, "Password", JOptionPane.NO_OPTION,
+					String title = Language.translate("Password",Language.EN);
+					int option = JOptionPane.showOptionDialog(null, jPanelPassword, title, JOptionPane.NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, jPasswordField);
 					String oldPassword = new String(jPasswordField.getPassword());
 					if (option == 0) {
@@ -677,7 +693,9 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 							KeyStoreController.EditKeyStore(this.httpsConfigWindow.getKeyStorefilepath(),
 									this.httpsConfigWindow.getKeyStoreAlias(), newAlias, newKeyStorePassword,
 									this.httpsConfigWindow.getKeyStorePassword());
-							JOptionPane.showMessageDialog(frame, "Your keystore has been updated successfully ");
+							String msg = Language.translate("Your keystore has been updated successfully!",Language.EN);
+							String title1 = Language.translate("KeyStore updated",Language.EN);
+							JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.INFORMATION_MESSAGE); 
 							this.httpsConfigWindow.setKeyStorePassword(newKeyStorePassword);
 							this.httpsConfigWindow.setKeyStoreAlias(newAlias);
 							jPasswordFieldPassword.setText(newKeyStorePassword);
@@ -685,9 +703,9 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 							this.httpsConfigWindow.setKeyStoreAlias(KeyStoreController
 									.GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(), newKeyStorePassword));
 						}else{
-							JOptionPane.showMessageDialog(frame,
-									"The password you entered is incorrect. Please try again !",
-									"Warning message", JOptionPane.WARNING_MESSAGE);
+							String msg = Language.translate("The password you entered is incorrect. Please try again!",Language.EN);
+							String title2 = Language.translate("Password incorrect",Language.EN);
+							JOptionPane.showMessageDialog(this, msg, title2, JOptionPane.WARNING_MESSAGE);
 						}
 					}
 				}
@@ -697,8 +715,9 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 			// ---- Export the certificate ---------------------------
 			// ----- Verify if there is a KeyStore opened ------------
 			if (this.httpsConfigWindow.getKeyStorefilepath() == null) {
-				JOptionPane.showMessageDialog(frame, "Please open a Keystore first !", "Warning message",
-						JOptionPane.WARNING_MESSAGE);
+				String msg = Language.translate("Please open a Keystore first!",Language.EN);
+				String title = Language.translate("Warning message",Language.EN);
+				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 			} else {
 				/*
 				 * ----- Generate a JFileChooser to enter -------
@@ -716,7 +735,9 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 					// ------- Generate the Certificate -----------------
 					KeyStoreController.ExportCertificate(this.httpsConfigWindow.getKeyStorefilepath(),
 							this.httpsConfigWindow.getKeyStorePassword(), certificatePath);
-					JOptionPane.showMessageDialog(frame, "Your certificate has been created successfully ");
+					String msg = Language.translate("Your certificate has been created successfully!",Language.EN);
+					String title = Language.translate("Certificate generated",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
 		}

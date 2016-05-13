@@ -70,7 +70,6 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	private GlobalInfo globalInfo = Application.getGlobalInfo();
 	private String pathImage = globalInfo.getPathImageIntern();
 	private OptionDialog optionDialog;
-	
 
 	private JPanel jPanelTop;
 	private JRadioButton jRadioButtonRunAsApplication;
@@ -761,11 +760,9 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				Application.setTrayIcon(null);	
 				Application.setLogFileWriter(null);
 				break;
-				
 			}
 			// --- Restart ------------------------------------------
 			Application.startAgentGUI();
-			
 		}
 	}
 	
@@ -774,7 +771,6 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		
 		String actCMD = ae.getActionCommand();
 		if (actCMD.equalsIgnoreCase("runAsApplication") || actCMD.equalsIgnoreCase("runAsServer") || actCMD.equalsIgnoreCase("runAsEmbeddedSystemAgent")) {
 			if (getJRadioButtonRunAsApplication().isSelected()) {
@@ -785,7 +781,6 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 				this.executionModeNew = ExecutionMode.DEVICE_SYSTEM;
 			}
 			this.refreshView();	
-			
 		} else if (actCMD.equalsIgnoreCase("resetSettings")) {
 			this.executionModeNew = this.executionModeOld;
 			this.setGlobalData2Form();
@@ -793,7 +788,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			this.getJPanelMTPConfig().setVisibleFalse();
 			
 		} else if (actCMD.equalsIgnoreCase("applySettings")) {
-			if(getJPanelMTPConfig().getJComboBoxMtpProtocol().getSelectedProtocol()!= getJPanelMasterConfiguration().getJcomboboxMtpProtocol().getSelectedProtocol() && executionModeNew==ExecutionMode.SERVER) {
+			if(getJPanelMTPConfig().getJComboBoxMtpProtocol().getSelectedProtocol()!= getJPanelMasterConfiguration().getJcomboboxMtpProtocol().getSelectedProtocol()) {
 				String title = Language.translate("Different MTP-protocols configured!", Language.EN); 
 				String msg = Language.translate("Please, choose the same Protocol for the server.master and the MTP-protocol!", Language.EN);
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
@@ -803,7 +798,5 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		} else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actCMD);
 		}
-		
 	}
-
 }  //  @jve:decl-index=0:visual-constraint="-3,8"
