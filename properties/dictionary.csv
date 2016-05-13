@@ -43,6 +43,7 @@ de;Agenten;Agents
 de;Agentenklasse;Agent class
 de;Agentenliste aktualisieren;Refresh agent list
 de;Aktualisiere Agenten-Liste...;Refreshing agent list
+de;Alias;Alias;;;
 de;Alle Eigenschaftsfenster schließen;Close all property windows;;;
 de;Alle Objekte löschen;Delete all objects
 de;Alle Ontologien;All ontologies
@@ -277,6 +278,7 @@ de;Im Falle eines Updates, eigenes Wörterbuch beibehalten.;In case of an update
 de;Immer Überspringen;Allways Skip
 de;Immer überspringen;Allways Skip;;;
 de;Info;Info
+de;Informationen Keystore;KeyStore Informations;;;
 de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;
 de;Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !;Initial Memory >= Maximum Memory !;;;
 de;Introspector-Agent starten;Start Introspector agent
@@ -316,6 +318,9 @@ de;Keine Umgebungsdatei definiert;No environment file defined
 de;Keine Umgebungsdatei zugewiesen;No environment file assigned
 de;Keine;None
 de;Keiner;None
+de;Kennwort bestätigen;Confirm password;;;
+de;Kennwort;Password;;;
+de;KeyStore Name;KeyStore Name;;;
 de;Kind-Umgebungen;Child playgrounds
 de;Klasse auswählen;Select class
 de;Klasse;Class
@@ -454,8 +459,12 @@ de;Ontologie;Ontology
 de;Ontologieklasse;Ontology Class
 de;Ontologien;Ontologies
 de;Optionen;Options
+de;Organisation;Organization;;;
+de;Organisationseinheit;Organizational Unit;;;
 de;Packe;Packing
 de;Passives Objekt;Passive object
+de;Passwort bestätigen;Comfirm password;;;
+de;Passwort;Password;;;
 de;Pause;Pause
 de;Plug-Ins;Plug-Ins;;;
 de;PlugIn für Agent.GUI;PlugIn for Agent.GUI
@@ -621,6 +630,7 @@ de;Verzeichnis gepackt zu;Folder packed to;;;
 de;Verzeichnis;Folder
 de;Vis.-Geschwindigkeit;Visualisation speed
 de;Visualisierung;Visualization
+de;Vollständiger Name;Full Name;;;
 de;Vor dem Löschen exportieren!;Export before deleting!;;;
 de;Vorhandene Projektverzeichnisse;Available project folders;;;
 de;Vorherige Datenreihe;Previous Data Series;;;
@@ -713,6 +723,7 @@ en;;Gas Driven Motor;;;
 en;;Gas Turbine;;;
 en;;General;;;
 en;;Graph-Prototype;;;
+en;;KeyStore created;;;
 en;;Measurments;;;
 en;;Milliseconds;;;
 en;;No Graph-Prototype defined for;;;
@@ -745,6 +756,7 @@ en;;These are:;;;
 en;;Time Format and Offset;;;
 en;;Time after a signal must be sent at least;;;
 en;;Transmission of power signals;;;
+en;;TrustStore created;;;
 en;;Turbo Compressor;;;
 en;;Update after changes or milliseconds;;;
 en;;Update after changes;;;
@@ -753,6 +765,7 @@ en;;Update of the visualization;;;
 en;;Upgrade costs;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
+en;Agent.GUI: HTTPS Konfiguration;Agent.GUI: HTTPS Configuration;;;
 en;Agenten-Klasse;Agent class;;;
 en;Aktuelles Bild entfernen;Remove current image;;;
 en;Anzahl;Count;;;
@@ -765,6 +778,7 @@ en;Beschriftung zeigen;Show label;;;
 en;Bestätigung;Confirmation;;;
 en;Bild;Image;;;
 en;Bitte spezifizieren Sie das Zeitformat, das in der Datei verwendet wird.;Please, configure the time format of the file data;;;
+en;Bitte wählen Sie das gleiche Protokoll für die server.master und dem MTP-Protokoll!;Please, choose the same Protocol for the server.master and the MTP-protocol!;;;
 en;Bitte wählen Sie ein gültiges Element!;Select a valid element first!;;;
 en;Bitte wählen Sie einen Knoten !;Select one vertex !;;;
 en;Bitte wählen Sie einen Knoten ausserhalb des Zentrums;Select a vertex other than the center of the star;;;
@@ -777,11 +791,15 @@ en;Bitte wählen Sie mindestens zwei gültige Knoten!;Select at least two valid 
 en;Bitte wählen Sie zuerst eine Kante;Select an edge first;;;
 en;Bitte wählen Sie zuerst einen Knoten mit einem Rechtsklick aus!;Right click a valid vertex first;;;
 en;Bitte wählen Sie zwei gültige Knoten;Select two valid vertices;;;
+en;Bitte, Geben Sie das Kennwort für;Please enter the password for;;;
+en;Bitte, Geben Sie das Kennwort für;Please, enter the password for;;;
+en;Bitte, geben Sie Zertifikat Alias;Please, enter Certificate's alias;;;
 en;Bitte, wählen Sie die Netzwerk-Komponente aus, die Sie hinzufügen möchten!;Please, select the network component that you would like to add!;;;
 en;Breite;Width;;;
 en;CSV-Datei;CSV-File;;;
 en;Cluster-Agent;Cluster agent;;;
 en;Cluster-Form;Cluster shape;;;
+en;Das Kennwort und seine bestätigen sind nicht das Gleiche!;The password and its confirm are not the same!;;;
 en;Daten;Data;;;
 en;Der Komponentename existiert bereits! <br> Bitte wählen Sie einen anderen.;The component name already exists!<br>Choose a different one.;;;
 en;Der ausgewählte Knoten des Netzwerkes enthält bereits eine Komponente
@@ -800,6 +818,11 @@ en;Eigenschaften bearbeiten;Edit Properties;;;
 en;Ein Agent.GUI-Update ist verfügbar.<br>Wollen Sie es jetzt herunterladen?;An Agent.GUI-Update is available. Download now?;;;
 en;Ein Agent.GUI-Update wurde heruntergeladen.<br>Wollen Sie es jetzt installieren?;Agent.GUI-Update was downloaded. Install now?;;;
 en;Einstellungen;Settings;;;
+en;Entfernen Zertifikat;Remove Certificate;;;
+en;Erstelle eine neue KeyStore;Create new KeyStore;;;
+en;Erstelle eine neue TrustStore;Create new TrustStore;;;
+en;Erstellen;Create;;;
+en;Export Zertifikat;Export Certificate;;;
 en;Externer Typ;External Type;;;
 en;Farbe (Auswahl);Color picked;;;
 en;Farbe;Color;;;
@@ -810,12 +833,18 @@ Do you want to proceed anyway?;;;
 en;Fehler;Error;;;
 en;Formatiert als;Formatted as;;;
 en;Geben Sie einen gültigen Namen an;Enter a valid name;;;
+en;Generieren Sie Ihr eigenes Zertifikat aus dem KeyStore;Generate your own certificate from the KeyStore;;;
 en;Graph importieren;Import Graph from file;;;
 en;Graph löschen;Clear graph;;;
 en;Graph-Prototyp;Graph-prototype;;;
 en;Halten Sie die Umschalttaste gedrückt und klicken mit der rechten Maustaste auf  zwei Knoten;Use Shift and Right click two vertices;;;
 en;Hinzufügen;Add;;;
 en;Icon auswählen;Choose Icon;;;
+en;Ihr Truststore wurde erfolgreich erstellt!;Your TrustStore has been created successfully!;;;
+en;Ihr keystore wurde erfolgreich erstellt!;Your keystore has been created successfully!;;;
+en;Informationen Keystore;KeyStore Informations;;;
+en;Informationen Keystore;Keystore Information;;;
+en;Informationen Truststore;TrustStore Informations;;;
 en;Initiiere Netzwerkkomponenten;Initiating network components;;;
 en;Kanten-Breite;Edge Width;;;
 en;Kantenfarbe;Edge Color;;;
@@ -832,6 +861,10 @@ definiert für die
 ;No NetworkComponentAdapter
 was defined for
  the GraphNodes of the Domain;;;
+en;Kennwort bestätigen;Confirm Password;;;
+en;Kennwort;Password;;;
+en;KeyStore Datei:;KeyStore File:;;;
+en;KeyStore Datei;KeyStore File;;;
 en;Klicken;Click;;;
 en;Knoten verbinden;Merge two nodes;;;
 en;Knoten zusammenlegen;Merge nodes;;;
@@ -846,7 +879,10 @@ en;Komponente löschen;Delete Component;;;
 en;Komponente löschen?;Delete component?;;;
 en;Komponenten-Typ;Component Type;;;
 en;Komponentensuche;Search Components;;;
+en;Landesvorwahl;Country Code;;;
 en;Lesen;Reading;;;
+en;MTP-Protokoll:;MTP-Protocol:;;;
+en;MTP-Protokoll;MTP-Protocol;;;
 en;Name;Name;;;
 en;Netzwerk-Komponenten vorbereiten;Preparing network components;;;
 en;Netzwerkkomponente hinzufügen;Add Network Component;;;
@@ -855,22 +891,36 @@ en;Neue Startzeit festlegen und zeitliche Verschiebung auf die zu importierenden
 en;Nicht definiert!;Not defined!;;;
 en;Ontologie-Klasse;Ontology class;;;
 en;Optionen;Options;;;
+en;Organisation;Organization;;;
+en;Organisationseinheit;Organizational Unit;;;
+en;Pfad:;Location:;;;
+en;Pfad;Location;;;
 en;Rückgängig;Undo Action;;;
 en;Schließen;Close;;;
 en;Setze Datenmodell für;Setting data model for;;;
+en;Sie müssen alle erforderlichen Felder ausfüllen.;You must fill out all required fields.;;;
 en;Sind Sie sicher, dass Sie den Graphen löschen wollen?;Are you sure that you want to clear the graph?;;;
 en;Sind Sie sicher, dass Sie diese Komponente löschen wollen?;Are you sure that you want to delete this component?;;;
 en;Speichern und Schließen;Save and Exit;;;
 en;Speichern;Save;;;
+en;Staat oder Provinz;State or Province;;;
+en;Stadt oder Ort;City or Locality;;;
 en;Start auf den folgenden Zeitpunkt verschieben:;Adjust time shift to the following start time:;;;
 en;Startzeit:;Start Time:;;;
 en;Startzeitpunkt des aktuellen Simulations Setups verwenden!;Use configured start time of the simulation setup!;;;
 en;Teilnetz;Subnetwork;;;
+en;TrustStore Datei:;TrustStore File:;;;
+en;TrustStore Datei;TrustStore File;;;
+en;TrustStore Name;TrustStore Name;;;
+en;Trusted Zertifikate:;Trusted Certificates:;;;
 en;Typen-Bezeichnung;Type-Specifier;;;
 en;Umschalten auf Picking-Modus;Switch to Picking mode;;;
 en;Unschalten auf Transorming-Modus;Switch to Transforming mode;;;
 en;Verbindungsknoten in zwei Knoten aufteilen;Split the node into two nodes;;;
 en;Verbindungsknoten trennen;Split Node;;;
+en;Verschiedene MTP-Protokolle konfiguriert!;Different MTP-protocols configured!;;;
+en;Vertrauenswürdige Zertifikate;Trusted Certificates;;;
+en;Vollständiger Name;Full Name;;;
 en;Vorbereiten der Netzwerk-Komponenten zur Speicherung;Preparing and encoding network components for saving;;;
 en;Warnung;Warning;;;
 en;Werkzeuge;Tools;;;
@@ -881,9 +931,13 @@ en;Wählen Sie einen Knoten, um diese zu verbinden;Select a vertex to merge;;;
 en;Wählen Sie einen gültigen Knoten;Select a valid vertex;;;
 en;Wählen Sie genau zwei Knoten mit Hilfe der Umschalttaste.;Use Shift and click two vertices;;;
 en;Zeitformat;Time Format;;;
+en;Zertifikat hinzufügen;Add Certificate;;;
 en;Zuordnung von externen Typen zu lokalen Komponenten;Set mapping of external types to local components;;;
 en;Zur Zeit steht kein Agent.GUI-Update zur Verfügung!;There is no Agent.GUI-Update available!;;;
 en;ist verfügbar;is available;;;
 en;wurde heruntergeladen;was downloaded;;;
 en;Änderungen im Netzwerkmodell speichern?;Save Changes to network model?;;;
+en;Öffnen Sie eine Keystore Datei;Open a KeyStore file;;;
+en;Öffnen Sie eine TrustStore Datei;Open a TrustStore file;;;
+en;Öffnen;Open;;;
 en;Übersetztes Datum des Beispiels;Parsed Date from Example;;;
