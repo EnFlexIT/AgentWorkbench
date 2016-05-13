@@ -64,7 +64,8 @@ import agentgui.core.gui.components.JPanel4Visualisation;
 import agentgui.core.gui.projectwindow.AgentLoadMetricsPanel;
 import agentgui.core.gui.projectwindow.BaseAgents;
 import agentgui.core.gui.projectwindow.Distribution;
-import agentgui.core.gui.projectwindow.JadeSetup;
+import agentgui.core.gui.projectwindow.JadeSetupMTP;
+import agentgui.core.gui.projectwindow.JadeSetupServices;
 import agentgui.core.gui.projectwindow.OntologyTab;
 import agentgui.core.gui.projectwindow.ProjectDesktop;
 import agentgui.core.gui.projectwindow.ProjectInfo;
@@ -310,27 +311,32 @@ import agentgui.core.webserver.JarFileCreator;
 		pwt.add();
 		getProjectWindow().registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Configuration, pwt);
 		
-			// --- External Resources -------------------------
+			// --- External Resources ---------------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
 					   Language.translate("Ressourcen"), null, null, 
 					   new ProjectResources(this), Language.translate("Konfiguration"));
 			pwt.add();
-			// --- Used Ontologies ----------------------------
+			// --- Used Ontologies ------------------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
 					   Language.translate("Ontologien"), null, null, 
 					   new OntologyTab(this), Language.translate("Konfiguration"));
 			pwt.add();
-			// --- Project Agents -----------------------------
+			// --- Project Agents -------------------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
 					   Language.translate("Agenten"), null, null, 
 					   new BaseAgents(this), Language.translate("Konfiguration"));
 			pwt.add();
-			// --- JADE-Configuration -------------------------
+			// --- JADE-Services --------------------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-					   Language.translate("JADE-Konfiguration"), null, null, 
-					   new JadeSetup(this), Language.translate("Konfiguration"));
+					   Language.translate("JADE-Services"), null, null, 
+					   new JadeSetupServices(this), Language.translate("Konfiguration"));
 			pwt.add();
-			// --- distribution + thresholds --------------
+			// --- JADE-MTP configuration -----------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
+					   Language.translate("JADE-MTP"), null, null, 
+					   new JadeSetupMTP(this), Language.translate("Konfiguration"));
+			pwt.add();
+			// --- Distribution + Thresholds --------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
 					   Language.translate("Verteilung + Grenzwerte"), null, null, 
 					   new Distribution(this), Language.translate("Konfiguration"));
