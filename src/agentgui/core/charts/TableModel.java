@@ -30,6 +30,11 @@ package agentgui.core.charts;
 
 import jade.util.leap.List;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -329,5 +334,29 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 		return hashSet;
 	}
 	
-	
+	public Vector<Vector<Object>> getAllTableData(boolean addHeaders, boolean isTimeSeriesChart){
+		Vector<Vector<Object>> dataVector = new Vector<Vector<Object>>();
+		
+		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+		
+		if(addHeaders == true){
+			dataVector.addElement(new Vector<Object>(Arrays.asList(columnTitles.toArray())));
+		}
+		
+		
+		Collection<Vector<Number>> treeMapData = this.getTableModelDataVector().getKeyRowVectorTreeMap().values();
+		for(Vector<Number> numberVector : treeMapData){
+			Vector<Object> objectVector = new Vector<Object>(Arrays.asList(numberVector.toArray()));
+			
+			if(isTimeSeriesChart == true){
+				long timestamp = (long) objectVector.get(0);
+				String dateTime = dateFormat.format(new Date(timestamp));
+				objectVector.remove(0);
+				objectVector.insertElementAt(dateTime, 0);
+			}
+			
+			dataVector.addElement(objectVector);
+		}
+		return dataVector;
+	}
 }

@@ -43,7 +43,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -65,6 +64,7 @@ import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.gui.TimeFormatImportConfiguration;
+import agentgui.core.common.csv.CsvFileWriter;
 import agentgui.core.gui.imaging.ConfigurableFileFilter;
 import agentgui.core.gui.imaging.ImageFileView;
 import agentgui.core.gui.imaging.ImagePreview;
@@ -99,6 +99,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	protected JLabel jLabelX = null;
 	protected JTextField tfImageHeight= null;
 	protected JScrollPane scrollPane4SettingTab = null;
+	private JButton jButtonCsvExport;
 	
 	// Tab contents
 	protected ChartTab chartTab;
@@ -167,6 +168,8 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		}else if(ae.getSource() == cbImageAspectRatio){
 			// --- Recalculate image size when aspect ratio changed -
 			this.recalculateImageHeight();
+		}else if(ae.getSource() == jButtonCsvExport){
+			this.exportTableDataAsCSV();
 		}
 
 	}
@@ -195,6 +198,8 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 			toolBar.add(jLabelX);
 			toolBar.add(getTfImageHeight());
 			toolBar.add(getBtnSaveImage());
+			toolBar.addSeparator();
+			toolBar.add(getJButtonCsvExport());
 		}
 		return toolBar;
 	}
@@ -587,5 +592,36 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	private JButton getJButtonCsvExport() {
+		if (jButtonCsvExport == null) {
+			jButtonCsvExport = new JButton("CSV");
+			jButtonCsvExport.addActionListener(this);
+			jButtonCsvExport.setToolTipText("Export table data as CSV");
+		}
+		return jButtonCsvExport;
+	}
+	
+	private boolean exportTableDataAsCSV(){
+		boolean success = false;
+		
+		JFileChooser fileChooser = new JFileChooser();
+		FileNameExtensionFilter csvFilter = new FileNameExtensionFilter("CSV File", "csv");
+		fileChooser.addChoosableFileFilter(csvFilter);
+		fileChooser.setFileFilter(csvFilter);
+		
+		if(fileChooser.showSaveDialog(Application.getMainWindow()) == JFileChooser.APPROVE_OPTION){
+			File csvFile = fileChooser.getSelectedFile();
+			// --- Append suffix if necessary ---------------------------------
+			if(csvFile.getAbsolutePath().toLowerCase().endsWith(".csv") == false){
+				csvFile = new File(csvFile.getAbsolutePath()+".csv");
+			}
+
+			CsvFileWriter fileWriter = new CsvFileWriter();
+			success = fileWriter.exportData(csvFile, this.getDataModel().getTableModel().getAllTableData(true, true));
+		}
+		
+		return success;
+		
 	}
 }
