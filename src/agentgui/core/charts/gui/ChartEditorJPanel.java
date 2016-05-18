@@ -43,6 +43,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Vector;
+
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -64,6 +66,7 @@ import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.gui.TimeFormatImportConfiguration;
+import agentgui.core.charts.timeseriesChart.gui.TimeSeriesChartEditorJPanel;
 import agentgui.core.common.csv.CsvFileWriter;
 import agentgui.core.gui.imaging.ConfigurableFileFilter;
 import agentgui.core.gui.imaging.ImageFileView;
@@ -121,57 +124,6 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 		this.setLayout(new BorderLayout());
 		this.add(getToolBar(), BorderLayout.NORTH);
 		this.add(getTabbedPane(), BorderLayout.CENTER);
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		
-		if (ae.getSource() == btnImport){
-			// --- Import CSV data / Choose file ----------
-			JFileChooser jFileChooserImportCSV = new JFileChooser(Application.getGlobalInfo().getLastSelectedFolder());
-			jFileChooserImportCSV.setFileFilter(new FileNameExtensionFilter(Language.translate("CSV-Dateien"), "csv"));
-			jFileChooserImportCSV.setDialogTitle(Language.translate("CSV-Datei importieren"));
-			if(jFileChooserImportCSV.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-				Application.getGlobalInfo().setLastSelectedFolder(jFileChooserImportCSV.getCurrentDirectory());
-				File csvFile = jFileChooserImportCSV.getSelectedFile();
-				
-				// --- Separate DataModel --------------------------- 
-				if (this.getDataModel() instanceof TimeSeriesDataModel) {
-					// --- Ask for time format ----------------------
-					TimeFormatImportConfiguration importFormatDialog = new TimeFormatImportConfiguration(Application.getMainWindow(), csvFile); 
-					importFormatDialog.setVisible(true);
-					// - - - - - - - - - - - - - - - - - - - - - - -  
-					if (importFormatDialog.isCanceled()==true) return;
-					// --- Import data ------------------------------
-					this.importDataSeriesFromCSV(csvFile, importFormatDialog.getTimeFormat(), importFormatDialog.getTimeOffset());
-					
-				} else {
-					// --- Import data ------------------------------
-					this.importDataSeriesFromCSV(csvFile, null, null);	
-					
-				}
-				this.getTableTab().setButtonsEnabledToSituation();
-			}
-			
-		} else if(ae.getSource() == btnSaveImage) {
-			// --- Export the image ---------------------------------
-			this.saveAsImage();
-		} else if(ae.getSource() == tfImageWidth) {
-			// --- Recalculate image size when enter was pressed ----
-			this.recalculateImageHeight();
-		}else if(ae.getSource() == tfImageHeight){
-			// --- Recalculate image size when enter was pressed-----
-			this.recalculateImageWidth();
-		}else if(ae.getSource() == cbImageAspectRatio){
-			// --- Recalculate image size when aspect ratio changed -
-			this.recalculateImageHeight();
-		}else if(ae.getSource() == jButtonCsvExport){
-			this.exportTableDataAsCSV();
-		}
-
 	}
 
 	/**
@@ -331,26 +283,16 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
     	return tfImageHeight;
     }
 	
-	/* (non-Javadoc)
-	 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
-	 */
-	@Override
-	public void focusGained(FocusEvent arg0) {
-		// --- Not required ---
-	}
-	/* (non-Javadoc)
-	 * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
-	 */
-	@Override
-	public void focusLost(FocusEvent fe) {
-		// --- Recalculate image size when leaving one of the text fields
-		if(fe.getSource()==tfImageWidth){
-			this.recalculateImageHeight();
-		} else if(fe.getSource()==tfImageHeight) {
-			this.recalculateImageWidth();
+	protected JButton getJButtonCsvExport() {
+		if (jButtonCsvExport == null) {
+			jButtonCsvExport = new JButton("");
+			jButtonCsvExport.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBtransExport.png")));
+			jButtonCsvExport.setToolTipText("Export data to CSV");
+			jButtonCsvExport.addActionListener(this);
 		}
+		return jButtonCsvExport;
 	}
-	
+
 	private void setImageDefaultValues() {
 		this.getTfImageWidth().setText(DEFAULT_ImageWidth.toString());
 		this.getTfImageHeight().setText(DEFAULT_ImageHeight.toString());
@@ -593,16 +535,11 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 			e.printStackTrace();
 		}
 	}
-	private JButton getJButtonCsvExport() {
-		if (jButtonCsvExport == null) {
-			jButtonCsvExport = new JButton("CSV");
-			jButtonCsvExport.addActionListener(this);
-			jButtonCsvExport.setToolTipText("Export table data as CSV");
-		}
-		return jButtonCsvExport;
-	}
-	
-	private boolean exportTableDataAsCSV(){
+	/**
+	 * Exports the chart data to a CSV file
+	 * @return Export successful?
+	 */
+	private boolean exportDataAsCSV(){
 		boolean success = false;
 		
 		JFileChooser fileChooser = new JFileChooser();
@@ -618,10 +555,89 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 			}
 
 			CsvFileWriter fileWriter = new CsvFileWriter();
-			success = fileWriter.exportData(csvFile, this.getDataModel().getTableModel().getAllTableData(true, true));
+			
+			// --- Get the data to export ------------------
+			Vector<Vector<Object>> dataVector = null;
+			boolean parseTimestamp = this instanceof TimeSeriesChartEditorJPanel;	// If called from a TimeSeriesChartEditorJPanel, parse the 
+			dataVector = this.getDataModel().getTableModel().getTableDataAsObjectVector(true, parseTimestamp);
+			
+			
+			success = fileWriter.exportData(csvFile, dataVector);
 		}
 		
 		return success;
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		
+		if (ae.getSource() == btnImport){
+			// --- Import CSV data / Choose file ----------
+			JFileChooser jFileChooserImportCSV = new JFileChooser(Application.getGlobalInfo().getLastSelectedFolder());
+			jFileChooserImportCSV.setFileFilter(new FileNameExtensionFilter(Language.translate("CSV-Dateien"), "csv"));
+			jFileChooserImportCSV.setDialogTitle(Language.translate("CSV-Datei importieren"));
+			if(jFileChooserImportCSV.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+				Application.getGlobalInfo().setLastSelectedFolder(jFileChooserImportCSV.getCurrentDirectory());
+				File csvFile = jFileChooserImportCSV.getSelectedFile();
+				
+				// --- Separate DataModel --------------------------- 
+				if (this.getDataModel() instanceof TimeSeriesDataModel) {
+					// --- Ask for time format ----------------------
+					TimeFormatImportConfiguration importFormatDialog = new TimeFormatImportConfiguration(Application.getMainWindow(), csvFile); 
+					importFormatDialog.setVisible(true);
+					// - - - - - - - - - - - - - - - - - - - - - - -  
+					if (importFormatDialog.isCanceled()==true) return;
+					// --- Import data ------------------------------
+					this.importDataSeriesFromCSV(csvFile, importFormatDialog.getTimeFormat(), importFormatDialog.getTimeOffset());
+					
+				} else {
+					// --- Import data ------------------------------
+					this.importDataSeriesFromCSV(csvFile, null, null);	
+					
+				}
+				this.getTableTab().setButtonsEnabledToSituation();
+			}
+			
+		} else if(ae.getSource() == btnSaveImage) {
+			// --- Export the image ---------------------------------
+			this.saveAsImage();
+		} else if(ae.getSource() == tfImageWidth) {
+			// --- Recalculate image size when enter was pressed ----
+			this.recalculateImageHeight();
+		}else if(ae.getSource() == tfImageHeight){
+			// --- Recalculate image size when enter was pressed-----
+			this.recalculateImageWidth();
+		}else if(ae.getSource() == cbImageAspectRatio){
+			// --- Recalculate image size when aspect ratio changed -
+			this.recalculateImageHeight();
+		}else if(ae.getSource() == jButtonCsvExport){
+			this.exportDataAsCSV();
+		}
+	
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
+	 */
+	@Override
+	public void focusGained(FocusEvent arg0) {
+		// --- Not required ---
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
+	 */
+	@Override
+	public void focusLost(FocusEvent fe) {
+		// --- Recalculate image size when leaving one of the text fields
+		if(fe.getSource()==tfImageWidth){
+			this.recalculateImageHeight();
+		} else if(fe.getSource()==tfImageHeight) {
+			this.recalculateImageWidth();
+		}
 	}
 }

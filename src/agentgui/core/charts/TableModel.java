@@ -334,7 +334,22 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 		return hashSet;
 	}
 	
-	public Vector<Vector<Object>> getAllTableData(boolean addHeaders, boolean isTimeSeriesChart){
+	/**
+	 * Converts the table data to a Vector of Object Vectors
+	 * @param addHeaders If true, an additional vector containing the column headers will be added
+	 * @return The table data as a Vector of Object Vectors
+	 */
+	public Vector<Vector<Object>> getTableDataAsObjectVector(boolean addHeaders){
+		return this.getTableDataAsObjectVector(addHeaders, false);
+	}
+	
+	/**
+	 * Converts the table data to a Vector of Object Vectors
+	 * @param addHeaders If true, an additional vector containing the column headers will be added
+	 * @param isTimeSeriesData If true, the first column is interpreted as timestamps and converted to a time format
+	 * @return The table data as a Vector of Object Vectors
+	 */
+	public Vector<Vector<Object>> getTableDataAsObjectVector(boolean addHeaders, boolean isTimeSeriesData){
 		Vector<Vector<Object>> dataVector = new Vector<Vector<Object>>();
 		
 		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
@@ -348,7 +363,7 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 		for(Vector<Number> numberVector : treeMapData){
 			Vector<Object> objectVector = new Vector<Object>(Arrays.asList(numberVector.toArray()));
 			
-			if(isTimeSeriesChart == true){
+			if(isTimeSeriesData == true){
 				long timestamp = (long) objectVector.get(0);
 				String dateTime = dateFormat.format(new Date(timestamp));
 				objectVector.remove(0);
