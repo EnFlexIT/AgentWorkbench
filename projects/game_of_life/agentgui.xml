@@ -6,9 +6,7 @@
     <projectResources>
         <projectResource>D:\10 Java Projects\Game of Life\bin</projectResource>
     </projectResources>
-    <plugins>
-        <className>gol.plugin.GameOfLifePlugIn</className>
-    </plugins>
+    <plugins/>
     <subOntologies>
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
     </subOntologies>
@@ -27,12 +25,13 @@
         <useLocalPort>1099</useLocalPort>
         <mtpCreation>ConfiguredByJADE</mtpCreation>
         <mtpIpAddress>Auto-Configuration</mtpIpAddress>
+        <mtpProtocol>HTTPS</mtpProtocol>
         <mtpPort>7778</mtpPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -107,12 +106,12 @@
             <value>0018_agents.xml</value>
         </entry>
         <entry>
-            <key>1800 Agents</key>
-            <value>1800_agents.xml</value>
-        </entry>
-        <entry>
             <key>0032 Agents</key>
             <value>0032_agents.xml</value>
+        </entry>
+        <entry>
+            <key>1800 Agents</key>
+            <value>1800_agents.xml</value>
         </entry>
         <entry>
             <key>4050 Agents</key>
@@ -128,5 +127,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>false</unsaved>
+    <unsaved>true</unsaved>
 </project>

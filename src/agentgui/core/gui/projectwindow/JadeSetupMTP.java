@@ -52,6 +52,7 @@ import javax.swing.JTextField;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.gui.components.JComboBoxMtpProtocol;
 import agentgui.core.gui.options.https.HttpsConfigWindow;
 import agentgui.core.network.NetworkAddresses;
@@ -492,6 +493,20 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		this.trustStorePassword = trustStorePassword;
 	}
 	/**
+	 * Gets the currentMTP.
+	 * @return the currentMTP
+	 */
+	private String getCurrentMTP(){
+		return currentMTP;
+	}
+	/**
+	 * Sets the currentMTP.
+	 * @param currMTP the new currentMTP
+	 */
+	private void setCurrentMTP(String currMTP){
+		this.currentMTP = currMTP;
+	}
+	/**
 	 * Sets JLabels and JTextFields visible true in case choosing HTTPS MTP.
 	 */
 	private void setEnabledTrue(){
@@ -540,7 +555,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 				this.getJTextFieldTrustStoreFile().setText(this.getTrustStore());
 			} else {
 				// ---- If the Button Cancel is pressed -------------------------
-				getJcomboBoxMtpProtocol().setSelectedProtocol("HTTP");
+				getJcomboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
 				this.setEnabledFalse();
 			}
 		}
@@ -584,8 +599,8 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		this.getJTextFieldDefaultPortMTP().setText(currPortMTP.toString());
 		
 		String mtpProtocol = currProject.getJadeConfiguration().getMtpProtocol();
-		if (mtpProtocol.equals("HTTPS")) {
-			this.getJcomboBoxMtpProtocol().setSelectedProtocol("HTTPS");
+		if (mtpProtocol.equals(MtpProtocol.HTTPS.toString())) {
+			this.getJcomboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTPS);
 			this.setEnabledTrue();
 			this.setKeyStore(currProject.getJadeConfiguration().getKeyStoreFile());
 			this.setTrustStore(currProject.getJadeConfiguration().getTrustStoreFile());
@@ -593,11 +608,11 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			this.setTrustStorePassword(currProject.getJadeConfiguration().getTrustStorePassword());
 			this.getJTextFieldKeyStoreFile().setText(this.getKeyStore());
 			this.getJTextFieldTrustStoreFile().setText(this.getTrustStore());
-			this.currentMTP = "HTTPS";
+			this.setCurrentMTP(MtpProtocol.HTTPS.toString());
 		} else {
-			this.getJcomboBoxMtpProtocol().setSelectedProtocol("HTTP");
+			this.getJcomboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
 			this.setEnabledFalse();
-			this.currentMTP = "HTTP";
+			this.setCurrentMTP(MtpProtocol.HTTP.toString());
 		}
 		
 	}
@@ -719,24 +734,26 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	public void itemStateChanged(ItemEvent event) {
 		if ( event.getSource() == this.getJcomboBoxMtpProtocol()){
 			this.action = "COMBO";
-			if (this.currentMTP == "HTTPS") {
+			if (this.getCurrentMTP()==MtpProtocol.HTTPS.toString()) {
 				// ---- switch from HTTPS to HTTP ----------------------------------
 				this.setEnabledFalse();
-				this.currProject.getJadeConfiguration().setMtpProtocol("HTTP");
-				this.currentMTP = "HTTP";
-			} else if (this.currentMTP == "HTTP") {
+				this.currProject.getJadeConfiguration().setMtpProtocol(MtpProtocol.HTTP.toString());
+				this.setCurrentMTP(MtpProtocol.HTTP.toString());
+			} else if (this.getCurrentMTP()==MtpProtocol.HTTP.toString()) {
 				// ---- switch between HTTP and HTTPS ------------------------------
 				if (event.getStateChange() == ItemEvent.SELECTED) {
 					Object item = event.getItem();
-					if (item.equals("HTTPS")) {
+					if (item.equals(MtpProtocol.HTTPS)) {
 						// ---- If the user choose HTTPS ---------------------------
 						this.setEnabledTrue();
+						this.currProject.getJadeConfiguration().setMtpProtocol(MtpProtocol.HTTPS.toString());
 						this.editHTTPSsettings();
-						this.currProject.getJadeConfiguration().setMtpProtocol("HTTPS");
 					} else {
-						// ---- If the user choose HTTP ---------------------------
+						// ---- If the user choose HTTP ----------------------------
 						this.setEnabledFalse();
-						this.currProject.getJadeConfiguration().setMtpProtocol("HTTP");
+						this.currProject.getJadeConfiguration().setMtpProtocol(MtpProtocol.HTTP.toString());
+						this.getJTextFieldKeyStoreFile().setText(null);
+						this.getJTextFieldTrustStoreFile().setText(null);
 					}
 				}
 			}

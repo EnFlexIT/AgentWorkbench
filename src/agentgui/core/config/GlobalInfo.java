@@ -136,7 +136,7 @@ public class GlobalInfo {
 	private String filePropServerMasterURL;
 	private Integer filePropServerMasterPort = this.localeJadeLocalPort;
 	private Integer filePropServerMasterPort4MTP = 7778;
-	private String filePropServerMasterProtocol = "HTTP";
+	private MtpProtocol filePropServerMasterProtocol = MtpProtocol.HTTP;
 	
 	private MTP_Creation filePropOwnMtpCreation = MTP_Creation.ConfiguredByJADE;
 	private String filePropOwnMtpIP = PlatformJadeConfig.MTP_IP_AUTO_Config;
@@ -203,6 +203,14 @@ public class GlobalInfo {
 	 */
 	public enum EmbeddedSystemAgentVisualisation {
 		NONE, TRAY_ICON
+	}
+	
+	/**
+	 * The Enumeration MtpProtocol describes the usable protocols
+	 * for the message exchange between agent platforms/container
+	 */
+	public enum MtpProtocol {
+		HTTP, HTTPS
 	}
 	
 	/**
@@ -849,7 +857,7 @@ public class GlobalInfo {
 			urlConfiguraionForMaster = new JadeUrlConfiguration(this.getServerMasterURL());
 			urlConfiguraionForMaster.setPort(this.getServerMasterPort());
 			urlConfiguraionForMaster.setPort4MTP(this.getServerMasterPort4MTP());
-			urlConfiguraionForMaster.setMtpProtocol(this.getServerMasterProtocol());
+			urlConfiguraionForMaster.setMtpProtocol(this.getServerMasterProtocol().toString());
 		}
 		return urlConfiguraionForMaster;
 	}
@@ -1089,7 +1097,7 @@ public class GlobalInfo {
 	 * @return the file prop server master protocol
 	 * @see FileProperties
 	 */
-	public String getServerMasterProtocol() {
+	public MtpProtocol getServerMasterProtocol() {
 		return filePropServerMasterProtocol;
 	}
 	
@@ -1098,7 +1106,7 @@ public class GlobalInfo {
 	 * @param filePropServerMasterProtocol the new filePropServerMasterProtocol
 	 * @see FileProperties
 	 */
-	public void setServerMasterProtocol(String filePropServerMasterProtocol) {
+	public void setServerMasterProtocol(MtpProtocol filePropServerMasterProtocol) {
 		this.filePropServerMasterProtocol = filePropServerMasterProtocol;
 	}
 	

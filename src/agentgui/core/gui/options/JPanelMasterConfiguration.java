@@ -289,7 +289,7 @@ public class JPanelMasterConfiguration extends AbstractJPanelForOptions {
 		this.getJTextFieldMasterPort().setText(getGlobalInfo().getServerMasterPort().toString());
 		this.getJTextFieldMasterPort4MTP().setText(getGlobalInfo().getServerMasterPort4MTP().toString());
 		this.getJcomboboxMtpProtocol().setSelectedProtocol(getGlobalInfo().getServerMasterProtocol());
-		
+	
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.core.gui.options.AbstractJPanelForOptions#setFromData2Global()

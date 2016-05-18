@@ -48,6 +48,7 @@ import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
+import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 
@@ -144,7 +145,7 @@ public class FileProperties extends Properties {
 										this.DEF_KEYSTORE_FILE,
 										this.DEF_KEYSTORE_PASSWORD,
 										this.DEF_TRUSTSTORE_FILE,
-										DEF_TRUSTSTORE_PASSWORD
+										this.DEF_TRUSTSTORE_PASSWORD
 										};
 	
 	/**
@@ -304,9 +305,10 @@ public class FileProperties extends Properties {
 		// --- this.DEF_MASTER_PROTOCOL --------------
 		propValue = this.getProperty(this.DEF_MASTER_PROTOCOL);
 		if (propValue.equalsIgnoreCase("") == false) {
-			Application.getGlobalInfo().setServerMasterProtocol(propValue);
+			MtpProtocol ownMtpProtocol = MtpProtocol.valueOf(propValue);
+			Application.getGlobalInfo().setServerMasterProtocol(ownMtpProtocol);
 		} else {
-			Application.getGlobalInfo().setServerMasterProtocol("HTTP");
+			Application.getGlobalInfo().setServerMasterProtocol(MtpProtocol.HTTP);
 		}
 		
 		// --- this.DEF_OWN_MTP_CREATION -------------
@@ -565,7 +567,7 @@ public class FileProperties extends Properties {
 		// --- this.DEF_MASTER_PORT4MTP --------------
 		this.setProperty(this.DEF_MASTER_PORT4MTP, Application.getGlobalInfo().getServerMasterPort4MTP().toString());
 		// --- this.DEF_MASTER_PROTOCOL --------------
-		this.setProperty(this.DEF_MASTER_PROTOCOL, Application.getGlobalInfo().getServerMasterProtocol());
+		this.setProperty(this.DEF_MASTER_PROTOCOL, Application.getGlobalInfo().getServerMasterProtocol().toString());
 		
 		// --- this.DEF_OWN_MTP_CREATION -------------
 		this.setProperty(this.DEF_OWN_MTP_CREATION, Application.getGlobalInfo().getOwnMtpCreation().toString());
@@ -721,7 +723,7 @@ public class FileProperties extends Properties {
 				this.setProperty(this.DEF_MASTER_PORT4MTP, Application.getGlobalInfo().getServerMasterPort4MTP().toString());
 				
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_MASTER_PROTOCOL) ) {				
-				this.setProperty(this.DEF_MASTER_PROTOCOL, Application.getGlobalInfo().getServerMasterProtocol());
+				this.setProperty(this.DEF_MASTER_PROTOCOL, Application.getGlobalInfo().getServerMasterProtocol().toString());
 			
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_AUTOSTART) ) {
 				if (Application.getGlobalInfo().isServerAutoRun()==true) {

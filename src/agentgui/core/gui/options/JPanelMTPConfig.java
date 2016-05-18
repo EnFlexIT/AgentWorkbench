@@ -45,6 +45,7 @@ import javax.swing.ImageIcon;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.gui.components.JComboBoxMtpProtocol;
 import agentgui.core.gui.options.https.HttpsConfigWindow;
 
@@ -279,6 +280,20 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 		this.trustStorePassword = trustStorePassword;
 	}
 	/**
+	 * Gets the currentMTP.
+	 * @return the currentMTP
+	 */
+	private String getCurrentMTP(){
+		return currentMTP;
+	}
+	/**
+	 * Sets the currentMTP.
+	 * @param currMTP the new currentMTP
+	 */
+	private void setCurrentMTP(String currMTP){
+		this.currentMTP = currMTP;
+	}
+	/**
 	 * Sets JLabels and JTextFields visible true in case choosing HTTPS MTP.
 	 */
 	private void setVisibaleTrue(){
@@ -331,7 +346,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 				this.getJTextFieldTrustStorePath().setText(this.getTrustStore());
 			} else {
 				// ---- If the Button Cancel is pressed -------------------------
-				getJComboBoxMtpProtocol().setSelectedProtocol("HTTP");
+				getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
 				this.setVisibleFalse();
 			}
 		}
@@ -344,15 +359,15 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	public void itemStateChanged(ItemEvent event) {
 		if ( event.getSource() == this.getJComboBoxMtpProtocol()){
 			this.action = "COMBO";
-			if (this.currentMTP == "HTTPS") {
+			if (this.getCurrentMTP() == MtpProtocol.HTTPS.toString()) {
 				// ---- switch from HTTPS to HTTP ----------------------------------
 				this.setVisibleFalse();
-				this.currentMTP = "HTTP";
-			} else if (this.currentMTP == "HTTP") {
+				this.setCurrentMTP("HTTP");
+			} else if (this.getCurrentMTP() == MtpProtocol.HTTP.toString()) {
 				// ---- switch between HTTP and HTTPS ------------------------------
 				if (event.getStateChange() == ItemEvent.SELECTED) {
 					Object item = event.getItem();
-					if (item.equals("HTTPS")) {
+					if (item.equals(MtpProtocol.HTTPS)) {
 						// ---- If the user choose HTTPS ---------------------------
 						this.setVisibaleTrue();
 						this.editHTTPSsettings();
@@ -372,8 +387,8 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == this.getJButtonEditMTP()){
 			// --- Open the HttpsConfigWindow -------------------------------------
-						this.action = "BUTTON";
-						editHTTPSsettings();
+			this.action = "BUTTON";
+			editHTTPSsettings();
 		}
 	}
 
@@ -383,18 +398,18 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	@Override
 	public void setGlobalData2Form() {
 		String mtpProtocol = this.getGlobalInfo().getMtpProtocol();
-		if (mtpProtocol.equals("HTTPS")) {
-			this.getJComboBoxMtpProtocol().setSelectedProtocol("HTTPS");
+		if (mtpProtocol.equals(MtpProtocol.HTTPS.toString())) {
+			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTPS);
 			this.setKeyStore(this.getGlobalInfo().getKeyStoreFile());
 			this.setTrustStore(this.getGlobalInfo().getTrustStoreFile());
 			this.setKeyStorePassword(this.getGlobalInfo().getKeyStorePassword());
 			this.setTrustStorePassword(this.getGlobalInfo().getTrustStorePassword());
 			this.getJTextFieldKeyStorePath().setText(this.getKeyStore());
 			this.getJTextFieldTrustStorePath().setText(this.getTrustStore());
-			this.currentMTP = "HTTPS";
+			this.setCurrentMTP(MtpProtocol.HTTPS.toString());
 		} else {
-			this.getJComboBoxMtpProtocol().setSelectedProtocol("HTTP");
-			this.currentMTP = "HTTP";
+			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
+			this.setCurrentMTP(MtpProtocol.HTTP.toString());
 		}
 	}
 
@@ -403,14 +418,14 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	 */
 	@Override
 	public void setFormData2Global() {
-		if (this.getJComboBoxMtpProtocol().getSelectedProtocol() == "HTTPS") {
-			this.getGlobalInfo().setMtpProtocol("HTTPS");
+		if (this.getJComboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTPS) {
+			this.getGlobalInfo().setMtpProtocol(MtpProtocol.HTTPS.toString());
 			this.getGlobalInfo().setKeyStoreFile(this.getKeyStore());
 			this.getGlobalInfo().setTrustStoreFile(this.getTrustStore());
 			this.getGlobalInfo().setKeyStorePassword(this.getKeyStorePassword());
 			this.getGlobalInfo().setTrustStorePassword(this.getTrustStorePassword());
-		} else if (this.getJComboBoxMtpProtocol().getSelectedProtocol() == "HTTP") {
-			this.getGlobalInfo().setMtpProtocol("HTTP");
+		} else if (this.getJComboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTP) {
+			this.getGlobalInfo().setMtpProtocol(MtpProtocol.HTTP.toString());
 		}
 	}
 
@@ -428,11 +443,11 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	@Override
 	public void refreshView() {
 		String mtpProtocol = this.getGlobalInfo().getMtpProtocol();
-		if (mtpProtocol.equals("HTTPS")) {
-			this.getJComboBoxMtpProtocol().setSelectedProtocol("HTTPS");
+		if (mtpProtocol.equals(MtpProtocol.HTTPS.toString())) {
+			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTPS);
 			this.setVisibaleTrue();
 		} else {
-			this.getJComboBoxMtpProtocol().setSelectedProtocol("HTTP");
+			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
 			this.setVisibleFalse();
 		}
 	}

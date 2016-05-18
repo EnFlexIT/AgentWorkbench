@@ -57,6 +57,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
+import agentgui.core.config.GlobalInfo.MtpProtocol;
 
 /**
  * On this JPanel the starting options of AgentGUI can be set.
@@ -784,7 +785,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		} else if (actCMD.equalsIgnoreCase("resetSettings")) {
 			this.executionModeNew = this.executionModeOld;
 			this.setGlobalData2Form();
-			this.getJPanelMTPConfig().getJComboBoxMtpProtocol().setSelectedProtocol("HTTP");
+			this.getJPanelMTPConfig().getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
 			this.getJPanelMTPConfig().setVisibleFalse();
 			
 		} else if (actCMD.equalsIgnoreCase("applySettings")) {

@@ -293,7 +293,9 @@ de;JADE zu Simulationsbeginn starten;Start JADE if simulation begins
 de;JADE-Automatik verwenden;Use JADE-Automatic;;;
 de;JADE-Automatik;JADE-Automatic;;;
 de;JADE-Konfiguration;JADE-Configuration
+de;JADE-MTP;;;;
 de;JADE-Port bearbeiten;Edit JADE port;;;
+de;JADE-Services;;;;
 de;JADE-Tools...;JADE-Tools...
 de;JADE;JADE
 de;JAR;JAR

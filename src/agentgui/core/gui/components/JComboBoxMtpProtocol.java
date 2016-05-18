@@ -31,6 +31,8 @@ package agentgui.core.gui.components;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
+import agentgui.core.config.GlobalInfo.MtpProtocol;
+
 /**
  * The Class JComboBoxMtpProtocol is a JcomboBox 
  * that is used to select a MTP protocol.
@@ -39,10 +41,10 @@ import javax.swing.JComboBox;
  * @version 1.0
  * @since 29-04-2016
  */
-public class JComboBoxMtpProtocol extends JComboBox<String> {
+public class JComboBoxMtpProtocol extends JComboBox<MtpProtocol> {
 
 	private static final long serialVersionUID = 1L;
-	private DefaultComboBoxModel<String> model;
+	private DefaultComboBoxModel<MtpProtocol> model;
 	
 	/**
 	 * Instantiates a new JComboBoxMtpProtocol.
@@ -54,9 +56,11 @@ public class JComboBoxMtpProtocol extends JComboBox<String> {
 	 * Gets the combo box model.
 	 * @return the combo box model
 	 */
-	private DefaultComboBoxModel<String> getComboBoxModel() {
+	private DefaultComboBoxModel<MtpProtocol> getComboBoxModel() {
 		if (model==null) {
-			model = new DefaultComboBoxModel<String>(new String[] { "HTTP", "HTTPS" });
+			model = new DefaultComboBoxModel<MtpProtocol>();
+			model.addElement(MtpProtocol.HTTP);
+			model.addElement(MtpProtocol.HTTPS);
 		}
 		return model;
 	}
@@ -65,14 +69,14 @@ public class JComboBoxMtpProtocol extends JComboBox<String> {
 	 * Gets the selected protocol.
 	 * @return the selected protocol
 	 */
-	public String getSelectedProtocol(){
-		return this.getComboBoxModel().getSelectedItem().toString();
+	public MtpProtocol getSelectedProtocol(){
+		return (MtpProtocol) this.getComboBoxModel().getSelectedItem();
 	}
 	/**
 	 * Sets the selected protocol.
 	 * @param protocolToSelect the new selected protocol
 	 */
-	public void setSelectedProtocol(String protocolToSelect){
+	public void setSelectedProtocol(MtpProtocol protocolToSelect){
 		this.getComboBoxModel().setSelectedItem(protocolToSelect);
 	}
 }
