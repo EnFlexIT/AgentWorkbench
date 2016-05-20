@@ -40,6 +40,7 @@ import jade.core.behaviours.TickerBehaviour;
  * distributed platform by using the {@link LoadService}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ThreadMeasureBehaviour extends TickerBehaviour {
 
@@ -48,12 +49,12 @@ public class ThreadMeasureBehaviour extends TickerBehaviour {
 	/** The load measure agent. */
 	private LoadMeasureAgent loadMeasureAgent;
 	
-	/** The one shot behaviour. */
+	/** The one shot behavior. */
 	private boolean oneShotBehaviour;
 	
 	
 	/**
-	 * Instantiates a new thread measure behaviour.
+	 * Instantiates a new thread measure behavior.
 	 *
 	 * @param loadMeasureAgent the load measure agent
 	 * @param period the period
@@ -70,16 +71,18 @@ public class ThreadMeasureBehaviour extends TickerBehaviour {
 	private LoadMeasureAgent getLoadMeasureAgent() {
 		return loadMeasureAgent;
 	}
+	
 	/**
-	 * Checks if this behaviour is just used once.
-	 * @return true, if is single shot behaviour
+	 * Checks if this behavior is just used once.
+	 * @return true, if is single shot behavior
 	 */
 	public boolean isOneShotBehaviour() {
 		return oneShotBehaviour;
 	}
+	
 	/**
 	 * Sets if the measurement is just used once.
-	 * @param oneShotBehaviour the new one shot behaviour
+	 * @param oneShotBehaviour the new one shot behavior
 	 */
 	public void setOneShotBehaviour(boolean oneShotBehaviour) {
 		this.oneShotBehaviour = oneShotBehaviour;
@@ -96,7 +99,7 @@ public class ThreadMeasureBehaviour extends TickerBehaviour {
 				doThreadMeasurement();
 			}});
 		
-		// --- Exit, if this is a one shot behaviour ------
+		// --- Exit, if this is a one shot behavior ------
 		if (this.isOneShotBehaviour()==true) {
 			this.stop();
 		}
@@ -112,5 +115,4 @@ public class ThreadMeasureBehaviour extends TickerBehaviour {
 			se.printStackTrace();
 		}
 	}
-	
 }

@@ -201,7 +201,6 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 		this.totalCollection = totalCollection;
 		this.loadCollection = loadCollection;
 		initialize();
-		
 	}
 
 	/**

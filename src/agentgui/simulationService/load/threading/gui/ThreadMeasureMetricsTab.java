@@ -55,6 +55,10 @@ import javax.swing.SwingConstants;
 
 /**
  * The Class ThreadMeasureMetricsTab.
+ * 
+ * Displays an auto-sortable table of agents and their metrics.
+ * Filter for agents applicable.
+ * 
  */
 public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 	
@@ -282,7 +286,7 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 				
 				  public boolean include(Entry<? extends Object, ? extends Object> entry) {
 
-					  // --- get column with ThreadTime-Instance (ThreadName) ---
+					  // --- get column with ThreadDetail-Instance (ThreadName) ---
 					  if(entry.getValue(0) instanceof ThreadInfoStorageAgent) {
 						  ThreadInfoStorageAgent tia = (ThreadInfoStorageAgent)entry.getValue(0);	
 						  if(tia.isAgent() == true) {
@@ -321,7 +325,7 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 			getBtnCalcMetrics().setText("Calculate Metrics");
 			getBtnCalcMetrics().setEnabled(true);
 		} else {
-			double timeLeft = threadInfoStorage.getThreadMeasureMetrics().SIMULATION_DURATION_MIN - threadInfoStorage.getThreadMeasureMetrics().getSimulationDuration();
+			double timeLeft = threadInfoStorage.getThreadMeasureMetrics().SIMULATION_DURATION_MIN - threadInfoStorage.getThreadMeasureMetrics().getSimulationDurationMilliSeconds();
 			getBtnCalcMetrics().setText("Calculate Metrics in " + Math.round(timeLeft/1000) + "s");
 		}
 	}

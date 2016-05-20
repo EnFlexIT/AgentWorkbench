@@ -33,6 +33,8 @@ import java.io.Serializable;
 /**
  * The Class AgentClassMetricDescription.
  * 
+ * Describes all information concerning metrics associated with an agent-class
+ * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg - Essen
  */
 public class AgentClassMetricDescription implements Serializable{
@@ -41,9 +43,9 @@ public class AgentClassMetricDescription implements Serializable{
 	private Project currProject;
 	private String className; 
 	private double userPredictedMetric = 5;
-	private double realMetricAverage;		
-	private double realMetricMin;
-	private double realMetricMax;
+	private double realMetricAverage = 0.1;		
+	private double realMetricMin = 0.1;
+	private double realMetricMax = 0.1;
 	
 	/**
 	 * Instantiates a new agent class metric description.

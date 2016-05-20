@@ -45,6 +45,7 @@ import agentgui.core.sim.setup.SimulationSetup;
  * The Class ThreadProtocolVector is used to handle several {@link ThreadProtocol} instances.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
+ * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 @XmlRootElement
 public class ThreadProtocolVector extends Vector<ThreadProtocol> {
@@ -165,41 +166,36 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 	/**
 	 * Adds a table model row.
 	 * @param pid the process ID
-	 * @param threadTime the thread time
+	 * @param threadDetail the thread time
 	 */
-	private void addTableModelRow(String pid, ThreadTime threadTime) {
+	private void addTableModelRow(String pid, ThreadDetail threadDetail) {
 		
-		if (threadTime == null) {
-			threadTime = new ThreadTime();
+		if (threadDetail == null) {
+			threadDetail = new ThreadDetail();
 		}
 		
 		// --- Check for agent class out of the setup start-list ----
-		if (threadTime.isAgent()==true) {
+		if (threadDetail.isAgent()==true) {
 			HashMap<String, AgentClassElement4SimStart> agentStartHashMap = this.getAgentStartHashMap();
 			if (agentStartHashMap!=null) {
-				AgentClassElement4SimStart ace4ss = agentStartHashMap.get(threadTime.getThreadName());
+				AgentClassElement4SimStart ace4ss = agentStartHashMap.get(threadDetail.getThreadName());
 				if (ace4ss!=null) {
-					threadTime.setClassName(ace4ss.getAgentClassReference());
+					threadDetail.setClassName(ace4ss.getAgentClassReference());
 				}
-			}
-			// --- This is an agent, but the class is unknown -------
-			if (threadTime.getClassName().equals(ThreadProperties.NON_AGENTS_CLASSNAME)) {
-				threadTime.setClassName(ThreadProperties.UNKNOWN_AGENT_CLASSNAME);
 			}
 		}
 		
-		String[] className = threadTime.getClassName().split("\\.");
+		String[] className = threadDetail.getClassName().split("\\.");
 		// --- Create row vector ------------------------------------
 		Vector<Object> row = new Vector<Object>();
 		row.add(pid);
-		row.add(threadTime);
+		row.add(threadDetail);
 		row.add(className[className.length-1]);
-		row.add(threadTime.getSystemTime());
-		row.add(threadTime.getUserTime());
+		row.add(threadDetail.getSystemTime());
+		row.add(threadDetail.getUserTime());
 		
 		// --- Add row to table model -------------------------------
 		this.getTableModel().addRow(row);
-	
 	}
 	
 	/**
@@ -220,8 +216,8 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 		boolean done = super.add(threadProtocol);
 		// --- Add the new Thread Times to the table model ----------
 		String pid = threadProtocol.getProcessID();
-		for (int i = 0; i < threadProtocol.getThreadTimes().size(); i++) {
-			this.addTableModelRow(pid, threadProtocol.getThreadTimes().get(i));
+		for (int i = 0; i < threadProtocol.getThreadDetails().size(); i++) {
+			this.addTableModelRow(pid, threadProtocol.getThreadDetails().get(i));
 		}
 		return done;
 	}
@@ -246,5 +242,4 @@ public class ThreadProtocolVector extends Vector<ThreadProtocol> {
 			return this.get(0).getTimestamp();
 		}
 	}
-	
 }

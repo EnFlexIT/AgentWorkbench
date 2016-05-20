@@ -42,7 +42,7 @@ public class ThreadInfoStorageSeries {
 	/** The name. */
 	private String name;
 	
-	/** The xy series hashmap that Contains multiple data-series  */
+	/** The XY series hash map that Contains multiple data-series  */
 	private HashMap<String, XYSeries> xySeriesMap;
 
 	/**
@@ -54,9 +54,9 @@ public class ThreadInfoStorageSeries {
 	}
 	
 	/**
-	 * Gets the last delta for xy series.
+	 * Gets the last delta for XY series.
 	 * @param series the series
-	 * @return the last delta for xy series
+	 * @return the last delta for XY series
 	 */
 	public double getLastDeltaForXYSeries(XYSeries series) {
 		double from, to;
@@ -65,14 +65,13 @@ public class ThreadInfoStorageSeries {
 		if(itemIndex >=1){
 			from = (Double) series.getDataItem(itemIndex-1).getY();
 			to = (Double) series.getDataItem(itemIndex).getY();
-			return  Math.abs(to -from);
+			return  Math.abs(to - from);
 		}
-		return 0;
+		return 0.0d;
 	}
 	
 	/**
 	 * Gets the name.
-	 *
 	 * @return the name
 	 */
 	public String getName() {
@@ -100,6 +99,7 @@ public class ThreadInfoStorageSeries {
     }
 
 	/**
+	 * Gets the XY series map.
 	 * @return the xySeriesMap
 	 */
 	public HashMap<String, XYSeries> getXYSeriesMap() {
@@ -110,6 +110,7 @@ public class ThreadInfoStorageSeries {
 	}
 
 	/**
+	 * Sets the XY series map.
 	 * @param xySeriesMap the xySeriesMap to set
 	 */
 	public void setXYSeriesMap(HashMap<String, XYSeries> xySeriesMap) {

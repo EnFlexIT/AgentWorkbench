@@ -67,6 +67,7 @@ import agentgui.simulationService.ontology.RemoteContainerConfig;
  * of balancing approaches.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ * @author Hanno Monschan - DAWIS - ICB - University of Duisburg - Essen
  */
 public abstract class BaseLoadBalancing extends OneShotBehaviour implements BaseLoadBalancingInterface {
 

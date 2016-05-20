@@ -281,8 +281,6 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 			this.pauseObserver = false;
 			
 		}
-		
-		
 	}
 	
 	/* (non-Javadoc)

@@ -32,7 +32,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 
 import agentgui.simulationService.load.threading.ThreadProtocol;
-import agentgui.simulationService.load.threading.ThreadTime;
+import agentgui.simulationService.load.threading.ThreadDetail;
 import agentgui.simulationService.load.threading.ThreadTimeReceiver;
 
 /**
@@ -629,8 +629,8 @@ public class LoadMeasureThread extends Thread {
 			                continue;   // Thread died
 
 			        	threadName = tmxb.getThreadInfo(id).getThreadName();
-			        	// --- add times, converted to milliseconds, tothreadProtocol
-			        	tp.getThreadTimes().add(new ThreadTime(threadName, (cpuTime/factorMiliseconds), (userTime/factorMiliseconds)));
+			        	// --- add times, converted to milliseconds, to thread-Protocol
+			        	tp.getThreadDetails().add(new ThreadDetail(threadName, (cpuTime/factorMiliseconds), (userTime/factorMiliseconds)));
 			        }
 			        // --- Send protocol to the requester of the measurement --
 			        threadTimeReceiver.receiveThreadProtocol(tp);

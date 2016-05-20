@@ -1383,7 +1383,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 * Sets the agent load metrics.
 	 * @param agentClassLoadMetrics the new agent load metrics
 	 */
-	public void setAgentLoadMetrics(AgentClassLoadMetrics agentClassLoadMetrics) {
+	public void setAgentClassLoadMetrics(AgentClassLoadMetrics agentClassLoadMetrics) {
 		this.agentClassLoadMetrics = agentClassLoadMetrics;
 		this.setChangedAndNotify(AGENT_METRIC_Reset);
 	}

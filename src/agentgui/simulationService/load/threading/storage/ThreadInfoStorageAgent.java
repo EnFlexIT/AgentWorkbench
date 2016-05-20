@@ -36,11 +36,11 @@ package agentgui.simulationService.load.threading.storage;
  */
 public class ThreadInfoStorageAgent extends ThreadInfoStorageSeries {
 		
-	/** The predict metric cpu. */
-	private double predictMetricCPU;
+	/** The predict metric. */
+	private double predictiveMetric;
 	
-	/** The real metric cpu. */
-	private double realMetricCPU;
+	/** The real metric. */
+	private double realMetric;
 	
 	/** The class name. */
 	private String className;
@@ -61,28 +61,28 @@ public class ThreadInfoStorageAgent extends ThreadInfoStorageSeries {
 	}
 	
 	/**
-	 * @return the predictMetricCPU
+	 * @return the predictiveMetric
 	 */
-	public double getPredictMetricCPU() {
-		return predictMetricCPU;
+	public double getPredictiveMetric() {
+		return predictiveMetric;
 	}
 	/**
-	 * @param predictMetricCPU the predictMetricCPU to set
+	 * @param predictiveMetric the predictiveMetric to set
 	 */
-	public void setPredictMetricCPU(double predictMetricCPU) {
-		this.predictMetricCPU = predictMetricCPU;
+	public void setPredictiveMetric(double predictiveMetric) {
+		this.predictiveMetric = predictiveMetric;
 	}
 	/**
-	 * @return the realMetricCPU
+	 * @return the realMetric
 	 */
-	public double getRealMetricCPU() {
-		return realMetricCPU;
+	public double getRealMetric() {
+		return realMetric;
 	}
 	/**
-	 * @param realMetricCPU the realMetricCPU to set
+	 * @param realMetric the realMetric to set
 	 */
-	public void setRealMetricCPU(double realMetricCPU) {
-		this.realMetricCPU = realMetricCPU;
+	public void setRealMetric(double realMetric) {
+		this.realMetric = realMetric;
 	}
 	
 	/**
@@ -103,6 +103,4 @@ public class ThreadInfoStorageAgent extends ThreadInfoStorageSeries {
 	public void setAgent(boolean isAgent) {
 		this.isAgent = isAgent;
 	}
-	
-
 }

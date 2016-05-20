@@ -45,10 +45,10 @@ public class DistributionSetup implements Serializable {
 	
 	private static final long serialVersionUID = -3727386932566490036L;
 	
-	public final static String DEFAULT_StaticLoadBalancingClass = agentgui.simulationService.balancing.StaticLoadBalancing.class.getName();
+	public final static String DEFAULT_StaticLoadBalancingClass = agentgui.simulationService.balancing.PredictiveStaticLoadBalancing.class.getName();
 	public final static String DEFAULT_DynamicLoadBalancingClass = agentgui.simulationService.balancing.DynamicLoadBalancing.class.getName();
 	
-	private boolean doStaticLoadBalancing = false;
+	private boolean doStaticLoadBalancing = true;
 	private String staticLoadBalancingClass = DEFAULT_StaticLoadBalancingClass;
 	
 	private int numberOfAgents = 0;
@@ -57,7 +57,7 @@ public class DistributionSetup implements Serializable {
 	private boolean doDynamicLoadBalancing = false;
 	private String dynamicLoadBalancingClass = DEFAULT_DynamicLoadBalancingClass;
 	
-	private boolean useUserThresholds = false;
+	private boolean useUserThresholds = true;
 	private LoadThresholdLevels UserThresholds = new LoadThresholdLevels();
 
 	private boolean showLoadMonitorAtPlatformStart = true;
@@ -68,6 +68,9 @@ public class DistributionSetup implements Serializable {
 	
 	/** if true, do not use local machine for agents. */
 	private boolean isRemoteOnly = true;
+	
+	/** if true, distribute agents evenly on available machines. */
+	private boolean isEvenDistribution = false;
 	
 	
 	/**
@@ -267,17 +270,41 @@ public class DistributionSetup implements Serializable {
 	public void setLoadRecordingInterval(long loadRecordingInterval) {
 		this.loadRecordingInterval = loadRecordingInterval;
 	}
+	
 	/**
+	 * Checks if is remote only.
+	 *
 	 * @return the isRemoteOnly
 	 */
 	public boolean isRemoteOnly() {
 		return isRemoteOnly;
 	}
+	
 	/**
+	 * Sets the remote only.
+	 *
 	 * @param isRemoteOnly the isRemoteOnly to set
 	 */
 	public void setRemoteOnly(boolean isRemoteOnly) {
 		this.isRemoteOnly = isRemoteOnly;
+	}
+	
+	/**
+	 * Checks if is even distribution.
+	 *
+	 * @return the isRemoteOnly
+	 */
+	public boolean isEvenDistribution() {
+		return isEvenDistribution;
+	}
+	
+	/**
+	 * Sets the even distribution.
+	 *
+	 * @param isEvenDistribution the new even distribution
+	 */
+	public void setEvenDistribution(boolean isEvenDistribution) {
+		this.isEvenDistribution = isEvenDistribution;
 	}
 	
 }

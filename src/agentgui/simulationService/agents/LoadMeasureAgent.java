@@ -64,7 +64,7 @@ import agentgui.simulationService.load.gui.SystemLoadSingle;
 import agentgui.simulationService.load.threading.ThreadMeasureBehaviour;
 import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.load.threading.ThreadProtocolVector;
-import agentgui.simulationService.load.threading.gui.ThreadMeasureDialog;
+import agentgui.simulationService.load.threading.gui.ThreadMonitor;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
 import agentgui.simulationService.ontology.OSInfo;
 import agentgui.simulationService.ontology.PlatformLoad;
@@ -127,7 +127,7 @@ public class LoadMeasureAgent extends Agent {
 
 	// --------------------------------------------------------------
 	// --- Display-elements of the Threading ------------------------ 
-	private ThreadMeasureDialog threadDialog;
+	private ThreadMonitor threadDialog;
 	private long threadMeasurementTickingPeriod = 5000L;
 	// --------------------------------------------------------------
 	
@@ -932,16 +932,16 @@ public class LoadMeasureAgent extends Agent {
 	 * Sets the thread dialog.
 	 * @param threadDialog the new thread dialog
 	 */
-	public void setThreadDialog(ThreadMeasureDialog threadDialog) {
+	public void setThreadDialog(ThreadMonitor threadDialog) {
 		this.threadDialog = threadDialog;
 	}
 	/**
 	 * Gets the thread dialog.
 	 * @return the thread dialog
 	 */
-	public ThreadMeasureDialog getThreadDialog() {
+	public ThreadMonitor getThreadDialog() {
 		if (threadDialog==null) {
-			threadDialog = new ThreadMeasureDialog(this);
+			threadDialog = new ThreadMonitor(this);
 		}
 		return threadDialog;
 	}

@@ -44,33 +44,43 @@ import agentgui.simulationService.load.threading.storage.ThreadInfoStorageMachin
 
 /**
  * The Class ThreadMeasureMetrics.
- * Calculate the "real" metric for agents
+ * 
+ * Calculates the "real" metrics for all (threadable) agents.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ThreadMeasureMetrics {
 	
+	/**  The simulation initialization phase offset (t0) in milliseconds
+	 *  after which metrics can be calculated, default 2min = 120000. */
+	private final long SIMULATION_INIT_OFFSET_MS	    = 120000;
+	
+	/**  The sampling interval offset, default 10. 
+	 *  depending on the recording interval, 
+	 *  this defines the index of the first value (t0)*/
+	private final int SAMPLING_INTERVAL_OFFSET_DEFAULT	= 10;
+	
+	/**  The simulation duration minimum in milliseconds
+	 *  after which metrics can be calculated, default 5min = 300000. */
+	public final double SIMULATION_DURATION_MIN 		= 300000 + SIMULATION_INIT_OFFSET_MS;
 
 	/** The factor max machine load. */
-	private final double FACTOR_MAX_MACHINE_LOAD 	= 0.95d;
-	
-	/**  The simulation duration minimum in milliseconds, default 5min = 300000. */
-	public final double SIMULATION_DURATION_MIN 	= 60000;
+	public final static double FACTOR_MAX_MACHINE_LOAD 	= 0.95d;
 	
 	/**  Calculation is based on integral of delta system times. */
-	public final String CALC_TYPE_INTEGRAL_DELTA  	= "CALC_TYPE_INTEGRAL_DELTA";
+	public final String CALC_TYPE_INTEGRAL_DELTA  		= "CALC_TYPE_INTEGRAL_DELTA";
 	
 	/**  Calculation is based on average system times. */
-	public final String CALC_TYPE_INTEGRAL_TOTAL   	= "CALC_TYPE_INTEGRAL_TOTAL";
+	public final String CALC_TYPE_INTEGRAL_TOTAL   		= "CALC_TYPE_INTEGRAL_TOTAL";
 	
 	/**  Calculation is based on the last value for CPU system times. */
-	public final String CALC_TYPE_LAST_TOTAL   		= "CALC_TYPE_LAST_TOTAL";
+	public final String CALC_TYPE_LAST_TOTAL   			= "CALC_TYPE_LAST_TOTAL";
 	
 	/** The metric calculation based on individual data. */
-	public final String METRIC_BASE_INDIVIDUAL 		= "METRIC_BASE_INDIVIDUAL";
+	public final String METRIC_BASE_INDIVIDUAL 			= "METRIC_BASE_INDIVIDUAL";
 	
 	/** The metric calculation based on class data. */
-	public final String METRIC_BASE_CLASS			= "METRIC_BASE_CLASS";
+	public final String METRIC_BASE_CLASS				= "METRIC_BASE_CLASS";
 	
 	/** The calculation type. */
 	private String calcType;
@@ -84,11 +94,20 @@ public class ThreadMeasureMetrics {
 	/** The simulation duration. */
 	private double simulationDuration;
 	
+	/** The sampling interval. */
+	private double samplingInterval;
+	
+	/** The sampling interval offset. */
+	private int samplingIntervalOffset;
+	
 	/**  The map that holds the values (average, integral, last total), depending on calcType. */
 	private HashMap<String, Double> calcTypeValueMap;
 	
 	/** The current project. */
 	private Project currProject;
+	
+	/** The local machine name. */
+	private String localMachineName;
 	
 	/**
 	 * Instantiates a new thread measure metrics.
@@ -118,6 +137,9 @@ public class ThreadMeasureMetrics {
 	private void initialize(){		
 		calcTypeValueMap = new HashMap<String, Double>();
 		currProject = Application.getProjectFocused();
+		
+		Iterator<Entry<String, ThreadInfoStorageMachine>> iteratorMachine = threadInfoStorage.getMapMachine().entrySet().iterator();
+		localMachineName = iteratorMachine.next().getValue().getName();
 	}
 	
 
@@ -131,15 +153,19 @@ public class ThreadMeasureMetrics {
 			Iterator<Entry<String, ThreadInfoStorageMachine>> iteratorMachine = threadInfoStorage.getMapMachine().entrySet().iterator();
 			while (iteratorMachine.hasNext()){
 				
-				XYSeries series;
+				
 				ThreadInfoStorageMachine actualMachine = iteratorMachine.next().getValue();
+				XYSeries series = actualMachine.getXYSeriesMap().get(this.threadInfoStorage.TOTAL_CPU_SYSTEM_TIME);
+				
+				samplingIntervalOffset = getSamplingIntervalOffset(series);
+				samplingInterval = getSamplingIntervalMilliSeconds(series,samplingIntervalOffset);
 				
 				if (getCalcType().equals(CALC_TYPE_INTEGRAL_DELTA)) {
 					series = actualMachine.getXYSeriesMap().get(threadInfoStorage.DELTA_CPU_SYSTEM_TIME);
-					calcTypeValueMap.put(actualMachine.getName(), getIntegralForTimeSeries(series, 0, series.getItemCount()-1));				
+					calcTypeValueMap.put(actualMachine.getName(), getIntegralForTimeSeries(series, samplingIntervalOffset, series.getItemCount()-1));				
 				} else if (getCalcType().equals(CALC_TYPE_INTEGRAL_TOTAL)) {
 					series = actualMachine.getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME);
-					calcTypeValueMap.put(actualMachine.getName(), getIntegralForTimeSeries(series, 0, series.getItemCount()-1));
+					calcTypeValueMap.put(actualMachine.getName(), getIntegralForTimeSeries(series, samplingIntervalOffset, series.getItemCount()-1));
 				} else if (getCalcType().equals(CALC_TYPE_LAST_TOTAL)) {
 					series = actualMachine.getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME);
 					calcTypeValueMap.put(actualMachine.getName(), series.getMaxY());
@@ -151,8 +177,7 @@ public class ThreadMeasureMetrics {
 					
 					ThreadInfoStorageAgent actualAgent = iteratorAgent.next().getValue();
 					if (actualAgent.getName().contains(actualMachine.getName())) {
-						
-						actualAgent.setRealMetricCPU(getMetricForAgent(actualAgent, actualMachine));
+						actualAgent.setRealMetric(getMetricForAgent(actualAgent, actualMachine, samplingIntervalOffset, samplingInterval));
 					}
 				}
 			}
@@ -163,6 +188,8 @@ public class ThreadMeasureMetrics {
 	
 	/**
 	 * Adds or updates the agent class real metrics.
+	 * 
+	 * 
 	 */
 	private void addOrUpdateAgentClassRealMetrics(){
 		
@@ -175,7 +202,7 @@ public class ThreadMeasureMetrics {
 			if (actualAgent.isAgent() == true) {
 
 				String className = actualAgent.getClassName();
-				double actualMetric = actualAgent.getRealMetricCPU();
+				double actualMetric = actualAgent.getRealMetric();
 				
 				AgentClassMetricDescription agentClass = mapAgentClass.get(className);
 				int noOfAgents = threadInfoStorage.getNoOfAgentsPerClass().get(className);
@@ -198,9 +225,7 @@ public class ThreadMeasureMetrics {
 					}
 					
 					agentClass.setRealMetricAverage(agentClass.getRealMetricAverage() + (actualMetric/noOfAgents));	
-
 				}
-				
 			}
 		}
 		
@@ -229,17 +254,19 @@ public class ThreadMeasureMetrics {
 				aclm.addTableModelRow(aclm.getAgentClassMetricDescriptionVector().get(index));
 			}
 		}
-		currProject.setAgentLoadMetrics(aclm);
+		currProject.setAgentClassLoadMetrics(aclm);
 	}
 
 	/**
-	 * Gets the metric for agent.
+	 * Gets the metric for a single agent.
 	 *
 	 * @param agent the agent
 	 * @param machine the machine
+	 * @param samplingIntervalOffset the sampling interval offset
+	 * @param samplingInterval the sampling interval
 	 * @return the metric for agent
 	 */
-	private double getMetricForAgent(ThreadInfoStorageAgent agent, ThreadInfoStorageMachine machine){
+	private double getMetricForAgent(ThreadInfoStorageAgent agent,ThreadInfoStorageMachine machine, int samplingIntervalOffset, double samplingInterval){
 		XYSeries series = new XYSeries("");
 		double actualValue = 0.0d;
 		
@@ -248,10 +275,10 @@ public class ThreadMeasureMetrics {
 			
 			if (getCalcType().equals(CALC_TYPE_INTEGRAL_DELTA)) {
 				series = agent.getXYSeriesMap().get(threadInfoStorage.DELTA_CPU_SYSTEM_TIME);
-				actualValue = getIntegralForTimeSeries(series, 0, series.getItemCount()-1);				
+				actualValue = getIntegralForTimeSeries(series, samplingIntervalOffset, series.getItemCount()-1);				
 			} else if (getCalcType().equals(CALC_TYPE_INTEGRAL_TOTAL)) {
 				series = agent.getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME);
-				actualValue = getIntegralForTimeSeries(series, 0, series.getItemCount()-1);
+				actualValue = getIntegralForTimeSeries(series, samplingIntervalOffset, series.getItemCount()-1);
 			} else if (getCalcType().equals(CALC_TYPE_LAST_TOTAL)) {
 				series = agent.getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME);
 				actualValue = series.getMaxY();
@@ -262,77 +289,76 @@ public class ThreadMeasureMetrics {
 			
 			if (getCalcType().equals(CALC_TYPE_INTEGRAL_DELTA)) {
 				series = threadInfoStorage.getMapAgentClass().get(agent.getClassName()).getXYSeriesMap().get(threadInfoStorage.AVG_DELTA_CPU_SYSTEM_TIME);
-				actualValue = getIntegralForTimeSeries(series, 0, series.getItemCount()-1);				
+				actualValue = getIntegralForTimeSeries(series, samplingIntervalOffset, series.getItemCount()-1);				
 			} else if (getCalcType().equals(CALC_TYPE_INTEGRAL_TOTAL)) {
 				series = threadInfoStorage.getMapAgentClass().get(agent.getClassName()).getXYSeriesMap().get(threadInfoStorage.AVG_TOTAL_CPU_SYSTEM_TIME);
-				actualValue = getIntegralForTimeSeries(series, 0, series.getItemCount()-1);				
+				actualValue = getIntegralForTimeSeries(series, samplingIntervalOffset, series.getItemCount()-1);				
 			} else if (getCalcType().equals(CALC_TYPE_LAST_TOTAL)) {
 				series = threadInfoStorage.getMapAgentClass().get(agent.getClassName()).getXYSeriesMap().get(threadInfoStorage.AVG_TOTAL_CPU_SYSTEM_TIME);
 				actualValue = series.getMaxY();
 			}
 		}
+		
 		//--- rule of three ---
-		return (getMFLOPConsumptionReal(machine) * actualValue)/calcTypeValueMap.get(machine.getName());
+		return (getMetricTotal(machine) * actualValue)/calcTypeValueMap.get(machine.getName());
 	}
 	
 	/**
-	 * Checks if data/measurement is usable for determining metrics.
+	 * Checks if data/measurement is sufficient for determining metrics.
 	 *
 	 * @return true, if usable
 	 */
 	public boolean isDataUsable(){
 		
-		if (getSimulationDuration() >= SIMULATION_DURATION_MIN){
+		if (getSimulationDurationMilliSeconds() >= SIMULATION_DURATION_MIN){
 			return true;
 		}
-		
 		return false;
 	}
 	
 	/**
-	 * Gets the real CPU consumption.
+	 * Gets the total CPU utilization.
 	 * (calculation of area)
 	 *
 	 * @param machine the machine
-	 * @return the CPU consumption real
+	 * @return the CPU total CPU utilization of machine
 	 */
-	private double getCPUConsumptionReal(ThreadInfoStorageMachine machine){
+	private double getCPUTotal(ThreadInfoStorageMachine machine){
 		
 		XYSeries series = machine.getXYSeriesMap().get(threadInfoStorage.LOAD_CPU);
-		return getIntegralForTimeSeries(series, 0, series.getItemCount()-1);
+		return getIntegralForTimeSeries(series, samplingIntervalOffset, series.getItemCount()-1);
 	}
 	
 	/**
-	 * Gets the theoretical max. CPU consumption.
+	 * Gets the theoretical max. CPU utilization within interval.
 	 * (calculation of area)
-	 * 
-	 * @return the CPU consumption max
+	 *
+	 * @param machine the machine
+	 * @return the CPU max
 	 */
-	private double getCPUConsumptionMax(){
-		
-		return 100 * FACTOR_MAX_MACHINE_LOAD * simulationDuration;
+	private double getCPUMax(ThreadInfoStorageMachine machine){
+		return  (100 * FACTOR_MAX_MACHINE_LOAD * samplingInterval);
 	}
 	
 	/**
-	 * Gets the calculated real MFLOP.
+	 * Gets the maximum metric of machine in MFLOP / millisecond
 	 *
 	 * @param machine the machine
-	 * @return the MFLOP consumption real
+	 * @return the MFLOPs
 	 */
-	private double getMFLOPConsumptionReal(ThreadInfoStorageMachine machine){
-		//--- rule of three ---
-		return (getMFLOPMax(machine) * getCPUConsumptionReal(machine))/getCPUConsumptionMax();
-	}
-	
-	/**
-	 * Gets the MFLOP max.
-	 *
-	 * @param machine the machine
-	 * @return the MFLOP
-	 */
-	private double getMFLOPMax(ThreadInfoStorageMachine machine){
-		
+	private double getMetricMax(ThreadInfoStorageMachine machine){
 		return FACTOR_MAX_MACHINE_LOAD * machine.getMflops();
+	}
+	
+	/**
+	 * Gets the total metric (MFLOP) of all agents, machine.
+	 *
+	 * @param machine the machine
+	 * @return the total MFLOP consumption
+	 */
+	private double getMetricTotal(ThreadInfoStorageMachine machine){
+		//--- rule of three ---
+		return (getMetricMax(machine) * getCPUTotal(machine))/getCPUMax(machine);
 	}
 
 	/**
@@ -344,6 +370,7 @@ public class ThreadMeasureMetrics {
 	 * @return the integral for time series
 	 */
 	private double getIntegralForTimeSeries(XYSeries series, int start, int end){
+		//hint: all Values are stored in milliseconds
 		double integral = 0.0d;
 		
 		if(end > series.getItemCount()-1){
@@ -373,7 +400,6 @@ public class ThreadMeasureMetrics {
 				integral = integral + triangle;
 			}
 		}
-		
 		return integral;
 	}
 	
@@ -423,16 +449,55 @@ public class ThreadMeasureMetrics {
 	}
 
 	/**
-	 * Gets the simulation duration.
+	 * Gets the simulation duration in milliseconds.
 	 *
 	 * @return the simulationDuration
 	 */
-	public double getSimulationDuration() {
-		if(threadInfoStorage != null){
-			Number start = threadInfoStorage.getMapAgentClass().get(ThreadProperties.NON_AGENTS_CLASSNAME).getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME).getMinX();
-			Number end   = threadInfoStorage.getMapAgentClass().get(ThreadProperties.NON_AGENTS_CLASSNAME).getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME).getMaxX();
-			simulationDuration = end.doubleValue() - start.doubleValue();
+	public double getSimulationDurationMilliSeconds() {
+		double simulationDuration = 0;
+
+		if(this.threadInfoStorage != null){
+			double start = this.threadInfoStorage.getMapMachine().get(localMachineName).getXYSeriesMap().get(this.threadInfoStorage.TOTAL_CPU_SYSTEM_TIME).getMinX();
+			double end   = this.threadInfoStorage.getMapMachine().get(localMachineName).getXYSeriesMap().get(this.threadInfoStorage.TOTAL_CPU_SYSTEM_TIME).getMaxX();
+			simulationDuration = end - start;
 		}
 		return simulationDuration;
 	}	
+	
+	/**
+	 * Gets the sampling interval offset.
+	 *
+	 * @param series the series
+	 * @return the sampling interval offset
+	 */
+	private int getSamplingIntervalOffset(XYSeries series){
+		double start = series.getX(0).doubleValue();
+		
+		for(int i = 0; i < series.getItemCount(); i++){
+			double actual = series.getX(i).doubleValue();
+			if((actual-start)>=SIMULATION_INIT_OFFSET_MS){
+				return i;
+			}
+		}
+		return SAMPLING_INTERVAL_OFFSET_DEFAULT;
+	}
+	
+	/**
+	 * Gets the sampling interval in milliseconds.
+	 *
+	 * @param series the series
+	 * @param samplingIntervalOffset the sampling interval offset
+	 * @return the sampling interval
+	 */
+	private double getSamplingIntervalMilliSeconds(XYSeries series, int samplingIntervalOffset){
+		
+		double samplingInterval = this.simulationDuration;
+		
+		if(this.threadInfoStorage != null){
+			Number start = series.getX(samplingIntervalOffset); //first value
+			Number end   = series.getMaxX(); //last value
+			samplingInterval = end.doubleValue() - start.doubleValue();
+		}
+		return samplingInterval;
+	}
 }

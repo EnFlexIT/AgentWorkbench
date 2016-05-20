@@ -52,10 +52,13 @@ import java.awt.event.ActionListener;
 import javax.swing.JRadioButton;
 
 import agentgui.simulationService.load.threading.ThreadProtocolVector;
-import agentgui.simulationService.load.threading.ThreadTime;
+import agentgui.simulationService.load.threading.ThreadDetail;
 
 /**
  * The Class ThreadMeasureProtocolTab.
+ * 
+ * Displays an auto-sortable table with thread details e.g. system-time and user-time
+ * Filter for agents applicable.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
@@ -227,9 +230,9 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 				
 				  public boolean include(Entry<? extends Object, ? extends Object> entry) {
 
-					  // --- get column with ThreadTime-Instance (ThreadName) ---
-					  if(entry.getValue(1) instanceof ThreadTime) {
-						  ThreadTime tt = (ThreadTime)entry.getValue(1);	
+					  // --- get column with ThreadDetail-Instance (ThreadName) ---
+					  if(entry.getValue(1) instanceof ThreadDetail) {
+						  ThreadDetail tt = (ThreadDetail)entry.getValue(1);	
 						  if(tt.isAgent() == true) {
 							  return true;
 						  }
@@ -237,10 +240,7 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 					  return false;
 				 }
 			};
-			
 			sorter.setRowFilter(agentFilter);
-			
 		}
 	}
-	
 }

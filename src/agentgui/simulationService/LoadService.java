@@ -85,7 +85,7 @@ import agentgui.simulationService.load.LoadInformation;
 import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.load.threading.ThreadProtocol;
-import agentgui.simulationService.load.threading.ThreadTime;
+import agentgui.simulationService.load.threading.ThreadDetail;
 import agentgui.simulationService.load.threading.ThreadTimeReceiver;
 import agentgui.simulationService.load.LoadMeasureSigar;
 import agentgui.simulationService.load.LoadMeasureThread;
@@ -1231,9 +1231,9 @@ public class LoadService extends BaseService {
 				for (AID aid : myContainer.agentNames()) {
 					aidHash.put(aid.getLocalName(), aid);
 				}
-				for (ThreadTime threadTime : threadProtocol.getThreadTimes()) {
-					if (aidHash.get(threadTime.getThreadName())!=null) {
-						threadTime.setIsAgent(true);
+				for (ThreadDetail threadDetail : threadProtocol.getThreadDetails()) {
+					if (aidHash.get(threadDetail.getThreadName())!=null) {
+						threadDetail.setIsAgent(true);
 					}
 				}
 				

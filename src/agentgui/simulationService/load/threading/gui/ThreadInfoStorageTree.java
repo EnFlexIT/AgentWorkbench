@@ -67,6 +67,11 @@ import agentgui.simulationService.load.threading.storage.ThreadInfoStorageMachin
 /**
  * The Class ThreadInfoStorageTree.
  * 
+ * Builds up a tree: cluster->machine->JVM->Container
+ * Each clickable node displays details about
+ * CPU utilization an thread times.
+ * Filter for agents applicable.
+ * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 public class ThreadInfoStorageTree extends JTree implements ActionListener{
@@ -196,7 +201,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
         	    		if(ae.getSource()==viewAgentClass){
         	    			className =  tia.getClassName();	
         	    		}else{
-	        	    		className =  ThreadProperties.NON_AGENTS_CLASSNAME;
+	        	    		className =  ThreadProperties.UNKNOWN_AGENT_CLASSNAME;
 	        	    	}
         	    		folderNamePrefix = "Class: ";
         	    		iteratorClass = threadInfoStorage.getMapAgentClass().get(className).getXYSeriesMap().keySet().iterator();
@@ -653,19 +658,16 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 		        	    }
 		        	}	
         	    }
-    	    	
     	    	// --- create scroll-pane in pop-up window ---
         	    new ThreadInfoScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, popupXYSeriesCollectionLoad, true, folderNamePrefix+nodeName);
     	    }
-
 	    }
 		
 		/* (non-Javadoc)
 		 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 		 */
 		@Override
-		public void mouseReleased(MouseEvent e){
-			
+		public void mouseReleased(MouseEvent e){	
 		}
 		
 		/* (non-Javadoc)
@@ -673,7 +675,6 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 		 */
 		@Override
 		public void mouseEntered(MouseEvent e){
-			
 		}
 		
 		/* (non-Javadoc)
@@ -681,7 +682,6 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 		 */
 		@Override
 		public void mouseExited(MouseEvent e){
-			
 		}		
 	}	
 	
@@ -746,7 +746,6 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	    	    	}
 	    	    	String[] classname = tia.getClassName().split("\\.");
 	    	    	setToolTipText("Agent: " + classname[classname.length-1] + " [" +threadInfoStorage.getNoOfAgentsPerClass().get(tia.getClassName()) + "]");
-	    	    	
 	    	    }	
 	    	}
 	        return this;

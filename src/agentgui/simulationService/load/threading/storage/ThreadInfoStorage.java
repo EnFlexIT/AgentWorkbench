@@ -70,6 +70,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 	public final String MAX_DELTA_CPU_SYSTEM_TIME 	= "MAX_DELTA_CPU_SYSTEM_TIME";	
 	public final String LOAD_CPU 			  		= "LOAD_CPU";
 	public final String AVG_LOAD_CPU 			  	= "AVG_LOAD_CPU";
+	
 	public final String DELIMITER   				= "<>";
 	public final String AT   						= "@";
 	public final String CLUSTER   					= "Cluster";
@@ -224,21 +225,22 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 		 * calculate values and put them to time series 
 		 */
 		
-		for (int i = 0; i < threadProtocol.getThreadTimes().size(); i++) {
+		for (int i = 0; i < threadProtocol.getThreadDetails().size(); i++) {
 			
 			/******* AGENT
 			 * simply add data to series
 			 * 
 			 */
-			String agentName = threadProtocol.getThreadTimes().get(i).toString()+AT+containerName;
+			String agentName = threadProtocol.getThreadDetails().get(i).toString()+AT+containerName;
 			String classKey;
-			boolean isAgent = threadProtocol.getThreadTimes().get(i).isAgent();
+			boolean isAgent = threadProtocol.getThreadDetails().get(i).isAgent();
 			int noOfAgents = 1;
 			
-			if(isAgent == true){
-				classKey = threadProtocol.getThreadTimes().get(i).getClassName();
-			}else{
-				classKey = NON_AGENTS_CLASSNAME;
+			classKey = threadProtocol.getThreadDetails().get(i).getClassName();
+	
+			if(!isAgent ){
+				classKey = UNKNOWN_AGENT_CLASSNAME;
+//				classKey = UNKNOWN_AGENT_CLASSNAME + "->" + agentName.substring(0, agentName.indexOf("@"));
 			}
 			
 			if (getNoOfAgentsPerClass().get(classKey) == null) {
@@ -266,8 +268,8 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 			XYSeries totalCPUSystemTimeXYSeries = agentStorage.getXYSeriesMap().get(TOTAL_CPU_SYSTEM_TIME);
 			
 			// --- get total system-and user time ---
-			double userTime = threadProtocol.getThreadTimes().get(i).getUserTime();
-			double systemTime = threadProtocol.getThreadTimes().get(i).getSystemTime();
+			double userTime = threadProtocol.getThreadDetails().get(i).getUserTime();
+			double systemTime = threadProtocol.getThreadDetails().get(i).getSystemTime();
 			
 			//--- update with time of actual thread ---
 			sumTotalCPUUsertime = sumTotalCPUUsertime + userTime;
@@ -307,8 +309,8 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 
 			// --- Metrics only exist for Agent-Threads ---
 			if(isAgent == true){
-				double predictiveMetric = threadProtocol.getThreadTimes().get(i).getPredictiveMetric();
-				double realMetric = threadProtocol.getThreadTimes().get(i).getRealMetric();	
+				double predictiveMetric = threadProtocol.getThreadDetails().get(i).getPredictiveMetric();
+				double realMetric = threadProtocol.getThreadDetails().get(i).getRealMetric();	
 				
 				// --- update MIN and MAX predictive-metric values ---
 				if(predictiveMetric < agentClassStorage.getMinPredictiveMetric()){
@@ -570,7 +572,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 		 * 
 		 * 
 		 */
-		//TODO: CPU chart for each machine ?
+		//TODO: CPU chart for each machine in one window ?
 
 		actualSeries = clusterStorage.getXYSeriesMap().get(AVG_LOAD_CPU);
 		index = actualSeries.indexOf(threadProtocol.getTimestamp());
@@ -642,7 +644,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 			Vector<String> header = new Vector<String>();
 			header.add("Thread");
 			header.add("Class");
-			header.add("Intances Of Class");
+			header.add("Instances Of Class");
 			header.add("Real Metric");
 			
 			tableModel = new DefaultTableModel(null, header){
@@ -696,7 +698,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 				row.add(getNoOfAgentsPerClass().get(actualAgent.getClassName()));
 				
 				// --- remove decimal .000 ----
-				row.add(Math.round(actualAgent.getRealMetricCPU()));
+				row.add(Math.round(actualAgent.getRealMetric()));
 				
 				// --- Add row to table model ---
 				getTableModel().addRow(row);

@@ -166,8 +166,9 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 		if (comboBoxModelInterval==null) {
 			TimeSelection defaultTimeSelection = new TimeSelection(5000);
 			
-			comboBoxModelInterval = new DefaultComboBoxModel<TimeSelection>();			
+			comboBoxModelInterval = new DefaultComboBoxModel<TimeSelection>();	
 			comboBoxModelInterval.addElement(new TimeSelection(1000));
+			comboBoxModelInterval.addElement(new TimeSelection(2000));
 			comboBoxModelInterval.addElement(defaultTimeSelection);
 			comboBoxModelInterval.addElement(new TimeSelection(10000));
 			comboBoxModelInterval.addElement(new TimeSelection(15000));

@@ -45,6 +45,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Transport Protocol class for recorded Thread-Times
+ * Holds information about the measurement of all threads on 
+ * a machine at a given time.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
@@ -53,13 +55,13 @@ public class ThreadProtocol implements Serializable {
 	
 	private static final long serialVersionUID = 7906666593362238059L;
 	
-	/** The timestamp. */
+	/** The time stamp. */
 	private long timestamp;
 	
-	/** The load cpu. */
+	/** The load CPU. */
 	private float loadCPU;
 	
-	/** The mflops. */
+	/** The MFLOPS. */
 	private double mflops;
 	
 	/** The process id. */
@@ -68,14 +70,14 @@ public class ThreadProtocol implements Serializable {
 	/** The container name. */
 	private String containerName;
 	
-	/** The jvm name. */
+	/** The JVM name. */
 	private String jvmName;
 	
 	/** The machine name. */
 	private String machineName;
 	
-	/** The thread times. */
-	private Vector<ThreadTime> threadTimes;
+	/** The thread details. */
+	private Vector<ThreadDetail> threadDetails;
 	
 	
 	/**
@@ -96,66 +98,68 @@ public class ThreadProtocol implements Serializable {
 	/**
 	 * Instantiates a new thread protocol.
 	 *
-	 * @param timestamp the timestamp
+	 * @param timestamp the time stamp
 	 * @param processID the process id
 	 * @param containerName the container name
-	 * @param threadTimes the thread times
+	 * @param threadDetails the thread details
 	 */
-	public ThreadProtocol(long timestamp, String processID, String containerName, float loadCPU, Vector<ThreadTime> threadTimes) {
+	public ThreadProtocol(long timestamp, String processID, String containerName, float loadCPU, Vector<ThreadDetail> threadDetails) {
 		this.containerName = containerName;
 		this.loadCPU = loadCPU;
 		this.processID = processID;
 		this.timestamp = timestamp;
-		this.threadTimes = threadTimes;
+		this.threadDetails = threadDetails;
 	}
 
 	/**
-	 * Gets the timestamp.
-	 * @return the timestamp
+	 * Gets the time stamp.
+	 * @return the time stamp
 	 */
 	public long getTimestamp() {
 		return timestamp;
 	}
+	
 	/**
-	 * Sets the timestamp.
-	 * @param timestamp the new timestamp
+	 * Sets the time stamp.
+	 * @param timestamp the new time stamp
 	 */
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
 	
 	/**
-	 * Sets the load cpu.
-	 * @param loadCPU the new load cpu
+	 * Sets the load CPU.
+	 * @param loadCPU the new load CPU
 	 */
 	public void setLoadCPU(float loadCPU) {
 		this.loadCPU = loadCPU;
 	}
 	
 	/**
-	 * Gets the load cpu.
-	 * @return the load cpu
+	 * Gets the load CPU.
+	 * @return the load CPU
 	 */
 	public float getLoadCPU() {
 		return loadCPU;
 	}
 	
 	/**
-	 * Gets the thread times.
-	 * @return the thread times
+	 * Gets the thread details.
+	 * @return the thread details
 	 */
-	public Vector<ThreadTime> getThreadTimes() {
-		if (threadTimes==null) {
-			threadTimes = new Vector<ThreadTime>();
+	public Vector<ThreadDetail> getThreadDetails() {
+		if (threadDetails==null) {
+			threadDetails = new Vector<ThreadDetail>();
 		}
-		return threadTimes;
+		return threadDetails;
 	}
+	
 	/**
-	 * Sets the thread times.
-	 * @param threadTimes the new thread times
+	 * Sets the thread details.
+	 * @param threadDetails the new thread details
 	 */
-	public void setThreadTimes(Vector<ThreadTime> threadTimes) {
-		this.threadTimes = threadTimes;
+	public void setThreadDetails(Vector<ThreadDetail> threadDetails) {
+		this.threadDetails = threadDetails;
 	}
 	
 	/**
@@ -165,6 +169,7 @@ public class ThreadProtocol implements Serializable {
 	public String getContainerName() {
 		return containerName;
 	}
+	
 	/**
 	 * Sets the container name.
 	 * @param containerName the new container name
@@ -180,6 +185,7 @@ public class ThreadProtocol implements Serializable {
 	public String getProcessID() {
 		return processID;
 	}
+	
 	/**
 	 * Sets the processID .
 	 * @param processID the process ID
@@ -221,7 +227,7 @@ public class ThreadProtocol implements Serializable {
 	 */
 	public void addThreadProtocol(ThreadProtocol threadProtocol2Add) {
 		if (threadProtocol2Add.getTimestamp()==this.getTimestamp()) {
-			this.getThreadTimes().addAll(threadProtocol2Add.getThreadTimes());
+			this.getThreadDetails().addAll(threadProtocol2Add.getThreadDetails());
 		}
 	}
 	
@@ -258,7 +264,7 @@ public class ThreadProtocol implements Serializable {
 			this.setLoadCPU(tp.getLoadCPU());
 			this.setProcessID(tp.getProcessID());
 			this.setTimestamp(tp.getTimestamp());
-			this.setThreadTimes(tp.getThreadTimes());
+			this.setThreadDetails(tp.getThreadDetails());
 		}
 		return done;
 	}
@@ -296,17 +302,16 @@ public class ThreadProtocol implements Serializable {
 	}
 
 	/**
-	 * @return the mflops
+	 * @return the MFLOPS
 	 */
 	public double getMflops() {
 		return mflops;
 	}
 
 	/**
-	 * @param mflops the mflops to set
+	 * @param mflops the MFLOPS to set
 	 */
 	public void setMflops(double mflops) {
 		this.mflops = mflops;
 	}
-
 }
