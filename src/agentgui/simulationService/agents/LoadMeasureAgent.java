@@ -28,6 +28,25 @@
  */
 package agentgui.simulationService.agents;
 
+import jade.content.Concept;
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.OntologyException;
+import jade.content.onto.UngroundedException;
+import jade.content.onto.basic.Action;
+import jade.content.onto.basic.Result;
+import jade.core.Agent;
+import jade.core.Location;
+import jade.core.ServiceException;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.ThreadedBehaviourFactory;
+import jade.core.behaviours.TickerBehaviour;
+import jade.domain.FIPANames;
+import jade.domain.FIPAAgentManagement.FIPAManagementOntology;
+import jade.domain.FIPAAgentManagement.Search;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.lang.acl.ACLMessage;
+
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
@@ -71,24 +90,6 @@ import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
 import agentgui.simulationService.ontology.ShowMonitorGUI;
 import agentgui.simulationService.ontology.ShowThreadGUI;
-import jade.content.Concept;
-import jade.content.lang.Codec.CodecException;
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.OntologyException;
-import jade.content.onto.UngroundedException;
-import jade.content.onto.basic.Action;
-import jade.content.onto.basic.Result;
-import jade.core.Agent;
-import jade.core.Location;
-import jade.core.ServiceException;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.ThreadedBehaviourFactory;
-import jade.core.behaviours.TickerBehaviour;
-import jade.domain.FIPANames;
-import jade.domain.FIPAAgentManagement.FIPAManagementOntology;
-import jade.domain.FIPAAgentManagement.Search;
-import jade.domain.JADEAgentManagement.JADEManagementOntology;
-import jade.lang.acl.ACLMessage;
 
 /**
  * This class represents the agent, which monitors the load information 
