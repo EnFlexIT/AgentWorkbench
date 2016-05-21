@@ -83,11 +83,11 @@ public class TrustStoreController {
 
 	/**
 	 * This method allows the user to create a TrustStore and protect its
-	 * integrity with a password
-	 * 
-	 * @param TrustStoreName
-	 * @param TrustStorePassword
-	 * @param CertificateToAdd
+	 * integrity with a password.
+	 *
+	 * @param TrustStoreName the trust store name
+	 * @param TrustStorePassword the trust store password
+	 * @param trustStorePath the trust store path
 	 */
 	public static void CreateTrustStore(String TrustStoreName, String TrustStorePassword, String trustStorePath) {
 

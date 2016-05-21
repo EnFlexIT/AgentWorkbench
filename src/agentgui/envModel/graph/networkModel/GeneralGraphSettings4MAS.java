@@ -29,11 +29,23 @@
 package agentgui.envModel.graph.networkModel;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Vector;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import agentgui.envModel.graph.controller.CustomToolbarComponentDescription;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import jade.util.leap.Serializable;
 
@@ -111,6 +123,13 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	/** The edge shape. */
 	private EdgeShape edgeShape = EdgeShape.Line;
 	
+	/** 
+	 * The current vector of custom BasicGraphGuiCustomJBottonDescription. 
+	 **/
+	@XmlTransient
+	private Vector<CustomToolbarComponentDescription> customToolbarComponentDescriptions;
+	
+	
 	/**
 	 * Default constructor
 	 */
@@ -118,7 +137,64 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	}
 	
 	/**
-	 * Creates a clone of the current instance
+	 * Loads the specified file .
+	 *
+	 * @param file the file to load
+	 * @return the general graph settings for the MAS
+	 */
+	public static GeneralGraphSettings4MAS load(File file) {
+		
+		GeneralGraphSettings4MAS ggs4MAS = null;
+		try {
+			
+			if (file.exists()==false) GeneralGraphSettings4MAS.save(file, new GeneralGraphSettings4MAS());
+			FileReader componentReader = new FileReader(file);
+		    
+			JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
+		    Unmarshaller unmarsh = context.createUnmarshaller();
+		    ggs4MAS = (GeneralGraphSettings4MAS) unmarsh.unmarshal(componentReader);
+		    
+		    componentReader.close();
+	
+		} catch (JAXBException ex) {
+		    ex.printStackTrace();
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+		} catch (IOException ex) {
+		    ex.printStackTrace();
+		}
+		return ggs4MAS;
+	}
+	/**
+	 * Saves the specified graph setting into the specified file.
+	 * @param file the file to save
+	 * @param ggs4MAS the actual GeneralGraphSettings4MAS
+	 */
+	public static void save(File file, GeneralGraphSettings4MAS ggs4MAS) {
+		
+		try {
+		    
+			if (!file.exists()) file.createNewFile();
+		    FileWriter componentFileWriter = new FileWriter(file);
+	
+		    JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
+		    Marshaller marsh = context.createMarshaller();
+		    marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+		    marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		    marsh.marshal(ggs4MAS, componentFileWriter);
+	
+		    componentFileWriter.close();
+	
+		} catch (IOException e) {
+		    e.printStackTrace();
+		} catch (JAXBException e) {
+		    e.printStackTrace();
+		}
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
 	 */
 	@Override
 	public GeneralGraphSettings4MAS clone() {
@@ -132,16 +208,13 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	
 	/**
 	 * Gets a copy from the current instance.
-	 * @return the copy
+	 * @return the copy of the current
 	 */
 	public GeneralGraphSettings4MAS getCopy() {
-		
-		HashMap<String, ComponentTypeSettings> copyCTS = this.copyComponentTypeSettings();
-		HashMap<String, DomainSettings> copyDS = this.copyDomainSettings();
-		
 		GeneralGraphSettings4MAS copy = new GeneralGraphSettings4MAS();
-		copy.setCurrentCTS(copyCTS);
-		copy.setDomainSettings(copyDS);
+		copy.setCurrentCTS(this.copyComponentTypeSettings());
+		copy.setDomainSettings(this.copyDomainSettings());
+		copy.setCustomToolbarComponentDescriptions(this.copyCustomToolbarComponentDescription());
 		return copy;
 	}
 	
@@ -150,9 +223,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * @return the hash map
 	 */
 	private HashMap <String, ComponentTypeSettings> copyComponentTypeSettings() {
-		
 		HashMap<String, ComponentTypeSettings> copyCtsHash = new HashMap<String, ComponentTypeSettings>();
-		
 		Iterator<String> ctsIt = this.getCurrentCTS().keySet().iterator();
 		while (ctsIt.hasNext()) {
 			String element = ctsIt.next();
@@ -166,9 +237,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * @return the hash map
 	 */
 	private HashMap <String, DomainSettings> copyDomainSettings() {
-		
 		HashMap<String, DomainSettings> copyDomainHash = new HashMap<String, DomainSettings>();
-		
 		Iterator<String> ctsIt = this.getDomainSettings().keySet().iterator();
 		while (ctsIt.hasNext()) {
 			String element = ctsIt.next();
@@ -177,7 +246,18 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		}
 		return copyDomainHash;
 	}
-	
+	/**
+	 * Copy custom toolbar component descriptions.
+	 * @return the vector
+	 */
+	private Vector<CustomToolbarComponentDescription> copyCustomToolbarComponentDescription() {
+		Vector<CustomToolbarComponentDescription> copyCTCD = new Vector<>();
+		for (CustomToolbarComponentDescription ctcd : this.getCustomToolbarComponentDescriptions()) {
+			copyCTCD.add(ctcd.getCopy());
+		}
+		if (copyCTCD.size()==0) copyCTCD = null;
+		return copyCTCD;
+	}
 	
 	/**
 	 * Get the component type settings HashMap 
@@ -265,6 +345,26 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 */
 	public EdgeShape getEdgeShape() {
 		return edgeShape;
+	}
+
+
+	/**
+	 * Returns the vector of custom {@link CustomToolbarComponentDescription}.
+	 * @return the vector of custom {@link CustomToolbarComponentDescription}.
+	 */
+	@XmlTransient
+	public Vector<CustomToolbarComponentDescription> getCustomToolbarComponentDescriptions() {
+		if (customToolbarComponentDescriptions==null) {
+			customToolbarComponentDescriptions = new Vector<CustomToolbarComponentDescription>();
+		}
+		return customToolbarComponentDescriptions;
+	}
+	/**
+	 * Sets the vector of custom {@link CustomToolbarComponentDescription}.
+	 * @param newCustomToolbarComponentDescriptions the new vector of custom CustomToolbarComponentDescription
+	 */
+	public void setCustomToolbarComponentDescriptions(Vector<CustomToolbarComponentDescription> newCustomToolbarComponentDescriptions) {
+		this.customToolbarComponentDescriptions = newCustomToolbarComponentDescriptions;
 	}
 	
 }

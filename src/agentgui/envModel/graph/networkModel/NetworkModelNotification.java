@@ -71,6 +71,7 @@ public class NetworkModelNotification {
 	
 	public static final int NETWORK_MODEL_ExportGraphAsImage = 30;
 	
+	public static final int NETWORK_MODEL_AddedCustomToolbarComponentDescription = 40;
 	
 	/** The reason. */
 	private int reason = 0;

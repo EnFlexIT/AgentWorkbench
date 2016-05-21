@@ -129,6 +129,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 		ViewControl,
 		EditControl
 	}
+	/**
+	 * The enumeration ToolBarSurrounding describes, if a customised toolbar button is to be shown during configuration or during runtime.
+	 */
+	public enum ToolBarSurrounding {
+		Both,
+		ConfigurationOnly,
+		RuntimeOnly
+	}
 	
 	/** Environment model controller, to be passed by the parent GUI. */
 	private GraphEnvironmentController graphController;

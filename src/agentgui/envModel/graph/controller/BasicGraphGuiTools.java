@@ -40,10 +40,12 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -817,6 +819,93 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	
     }
     
+    /**
+     * Rebuild custom toolbar component.
+     */
+    private void rebuildCustomToolbarComponent() {
+    	Vector<CustomToolbarComponentDescription> customComponents = this.graphController.getNetworkModel().getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions();
+    	for (CustomToolbarComponentDescription customCopnent : customComponents) {
+    		this.addCustomToolbarComponent(customCopnent);
+    	}
+    }
+    /**
+     * Adds the specified custom toolbar component.
+     * @param compDescription the component description
+     */
+    private void addCustomToolbarComponent(CustomToolbarComponentDescription compDescription) {
+    	
+    	if (compDescription==null || compDescription.getToolBarType()==null || compDescription.getToolBarSurrounding()==null) return;
+    	// --------------------------------------------------------------------
+    	// --- Check if the component should currently be added ---------------
+    	// --------------------------------------------------------------------
+    	boolean isExecutionTime = this.graphController.getProject()==null;
+    	boolean addComponent = false;
+    	switch (compDescription.getToolBarSurrounding()) {
+		case Both:
+			addComponent = true;
+			break;
+		case ConfigurationOnly:
+			if (isExecutionTime==false) addComponent = true;
+			break;
+		case RuntimeOnly:
+			if (isExecutionTime==true) addComponent = true;
+			break;
+		}
+    	if (addComponent==false) return;
+    	
+    	// --------------------------------------------------------------------
+    	// --- Get the needed JToolBar ----------------------------------------
+    	// --------------------------------------------------------------------
+    	JToolBar toolBar = null;
+    	switch (compDescription.getToolBarType()) {
+		case EditControl:
+			// --- Nothing to do in case of edit & execution --------
+			if (isExecutionTime==true) return;
+			toolBar = this.getJToolBarEdit();
+			break;
+
+		case ViewControl:
+			toolBar = this.getJToolBarView();
+			break;
+		}
+
+    	// --------------------------------------------------------------------
+    	// --- Add the component, if not already there ------------------------
+    	// --------------------------------------------------------------------
+    	AbstractCustomToolbarComponent componentClass = compDescription.getToolBarComponent(this.graphController);
+    	// --- Avoid double creation ------------------------------------------
+    	if (componentClass!=null && componentClass.getCreatedCustomComponent()==null) {
+			// --- Create and remind the custom component ---------------------
+    		JComponent customComponent = componentClass.getCustomComponent();
+			componentClass.setCreatedCustomComponent(customComponent);
+        	// --- Does the component already exists --------------------------
+			if (toolBar.getComponentIndex(customComponent)==-1) {
+        		// --- Add a JSeparator first, if wished ----------------------
+        		if (compDescription.isAddSeparatorFirst()==true) {
+        			if (compDescription.getIndexPosition()==null) {
+            			toolBar.addSeparator();
+            		} else {
+            			toolBar.add(new JToolBar.Separator(), (int)compDescription.getIndexPosition());
+            		}	
+        		}
+        		// --- Add new component --------------------------------------
+        		if (compDescription.getIndexPosition()==null) {
+        			toolBar.add(customComponent);
+        		} else {
+        			if (compDescription.isAddSeparatorFirst()==true) {
+        				toolBar.add(customComponent, (int)compDescription.getIndexPosition()+1);
+        			} else {
+        				toolBar.add(customComponent, (int)compDescription.getIndexPosition());
+        			}
+        		}
+        		toolBar.validate();
+        		toolBar.repaint();
+        	}
+    	}
+    	
+    }
+    
+    
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
@@ -832,7 +921,19 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			Object infoObject = nmNotification.getInfoObject();
 			
 			switch (reason) {
+			case NetworkModelNotification.NETWORK_MODEL_Reload:
+				// --- Check for customised JButtons  -------------------------
+				this.rebuildCustomToolbarComponent();
+				break;
+				
+			case NetworkModelNotification.NETWORK_MODEL_AddedCustomToolbarComponentDescription:
+				// --- A BasicGraphGuiCustomJButtonDescription was added ------
+				CustomToolbarComponentDescription compDescription = (CustomToolbarComponentDescription) infoObject;
+				this.addCustomToolbarComponent(compDescription);	
+				break;
+				
 			case NetworkModelNotification.NETWORK_MODEL_Satellite_View:
+				// --- Toggle satellite view button ---------------------------
 				Boolean visible = (Boolean) infoObject;
 				if (this.getJToggleButtonSatelliteView().isSelected()==true && visible==false) {
 					this.getJToggleButtonSatelliteView().setSelected(false);
@@ -842,6 +943,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				break;
 			
 			case NetworkModelNotification.NETWORK_MODEL_Paste_Action_Do:
+				// --- Set parameter for 'PASTE' action -----------------------
 				this.isPasteAction=true;
 				break;
 			}

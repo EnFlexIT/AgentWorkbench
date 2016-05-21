@@ -189,7 +189,7 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @return the general graph settings4 mas
      */
     public GeneralGraphSettings4MAS getGeneralGraphSettings4MAS() {
-    	return this.networkModel.getGeneralGraphSettings4MAS();
+    	return this.getNetworkModel().getGeneralGraphSettings4MAS();
     }
     /**
      * Gets the current ComponentTypeSettings
@@ -298,21 +298,11 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    break;
 	
 		case SIMULATION_SETUP_ADD_NEW:
-		    
-			GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
-			if (this.networkModel!=null) {
-				generalGraphSettings4MAS = this.networkModel.getGeneralGraphSettings4MAS();	
-			}
-			
 			this.updateGraphFileName();
-		    networkModel = new NetworkModel();
-		    networkModel.setGeneralGraphSettings4MAS(generalGraphSettings4MAS);
-		    this.setDisplayEnvironmentModel(this.networkModel);
-		    
-		    // --- register a new list of agents, which has to be started with the environment ------
+		    this.setDisplayEnvironmentModel(null);
+		    // --- Register a new list of agents that has to be started with the environment ------
 		    this.setAgents2Start(new DefaultListModel<AgentClassElement4SimStart>());
 		    this.registerDefaultListModel4SimulationStart(SimulationSetup.AGENT_LIST_EnvironmentConfiguration);
-	
 		    break;
 	
 		case SIMULATION_SETUP_COPY:
@@ -331,13 +321,13 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    if (componentFile.exists()) {
 		    	componentFile.delete();
 		    }
-		    updateGraphFileName();
+		    this.updateGraphFileName();
 		    break;
 	
 		case SIMULATION_SETUP_RENAME:
 		    File oldGraphFile = new File(getEnvFolderPath() + baseFileName + ".graphml");
 		    File oldComponentFile = new File(getEnvFolderPath() + baseFileName + ".xml");
-		    updateGraphFileName();
+		    this.updateGraphFileName();
 		    if (oldGraphFile.exists()) {
 				File newGraphFile = new File(getEnvFolderPath() + baseFileName + ".graphml");
 				oldGraphFile.renameTo(newGraphFile);
@@ -363,16 +353,14 @@ public class GraphEnvironmentController extends EnvironmentController {
 		this.getCurrentSimulationSetup().setEnvironmentFileName(baseFileName + ".graphml");
     }
 
-    /*
-     * (non-Javadoc)
-     * @see EnvironmentController#loadEnvironment()
+    /* (non-Javadoc)
+     * @see agentgui.core.environment.EnvironmentController#loadEnvironment()
      */
     @Override
     protected void loadEnvironment() {
 
-    	this.networkModel = new NetworkModel();
-    	String fileName = getCurrentSimulationSetup().getEnvironmentFileName();
-    	
+    	NetworkModel networkModel = new NetworkModel();
+    	String fileName = this.getCurrentSimulationSetup().getEnvironmentFileName();
     	if (Application.getMainWindow()!=null) {
     		Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     		Application.setStatusBar(Language.translate("Lade Setup") + " :" + fileName + " ...");
@@ -392,7 +380,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 				try {
 				    // Load graph topology
 					fileReader = new FileReader(graphFile);
-				    this.networkModel.setGraph(getGraphMLReader(fileReader).readGraph());
+					networkModel.setGraph(getGraphMLReader(fileReader).readGraph());
 		
 				} catch (FileNotFoundException e) {
 				    e.printStackTrace();
@@ -416,7 +404,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 				    JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
 				    Unmarshaller unmarsh = context.createUnmarshaller();
 				    NetworkComponentList compList = (NetworkComponentList) unmarsh.unmarshal(componentReader);
-				    this.networkModel.setNetworkComponents(compList.getComponentList());
+				    networkModel.setNetworkComponents(compList.getComponentList());
 		
 				    componentReader.close();
 		
@@ -430,11 +418,17 @@ public class GraphEnvironmentController extends EnvironmentController {
 		    }
 		}
 	
-		// --- Loading component type settings from the simulation setup --------------------------
-		this.loadGeneralGraphSettings();
-	
+		// --- Load component type settings from file ---------------------------------------------
+		GeneralGraphSettings4MAS ggs4MAS = this.loadGeneralGraphSettings();
+		// --- Remind the list of custom toolbar elements -----------------------------------------		
+		if (this.getNetworkModel()!=null) {
+			ggs4MAS.setCustomToolbarComponentDescriptions(this.getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions());
+		}
+		// --- Assign settings to the NetworkModel ------------------------------------------------ 
+		networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
+		
 		// --- Use the local method in order to inform the observer -------------------------------
-		this.setDisplayEnvironmentModel(this.networkModel);
+		this.setDisplayEnvironmentModel(networkModel);
 
 		// --- Decode the data models that are Base64 encoded in the moment -----------------------  
 		this.setNetworkComponentDataModelBase64Decoded();
@@ -449,6 +443,135 @@ public class GraphEnvironmentController extends EnvironmentController {
 		
     }
 
+    /* (non-Javadoc)
+     * @see agentgui.core.environment.EnvironmentController#saveEnvironment()
+     */
+    @Override
+    protected void saveEnvironment() {
+
+		this.validateNetworkComponentAndAgents2Start();
+		this.saveGeneralGraphSettings();
+		if (this.getNetworkModel()!=null && this.getNetworkModel().getGraph() != null) {
+			
+			FileWriter fw = null;
+			PrintWriter pw = null;
+			FileWriter componentFileWriter = null;
+		    try {
+				// Save the graph topology
+				String graphFileName = baseFileName + ".graphml";
+				File file = new File(getEnvFolderPath() + graphFileName);
+				if (!file.exists()) {
+				    file.createNewFile();
+				}
+				fw = new FileWriter(file);
+				pw = new PrintWriter(fw);
+				getGraphMLWriter().save(this.getNetworkModel().getGraph(), pw);
+		
+				// Save the network component definitions
+				File componentFile = new File(getEnvFolderPath() + baseFileName + ".xml");
+				if (!componentFile.exists()) {
+				    componentFile.createNewFile();
+				}
+				componentFileWriter = new FileWriter(componentFile);
+				JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
+				Marshaller marsh = context.createMarshaller();
+				marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+				marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+				marsh.marshal(new NetworkComponentList(this.getNetworkModel().getNetworkComponents()), componentFileWriter);
+				
+		    } catch (IOException e) {
+		    	e.printStackTrace();
+		    } catch (JAXBException e) {
+		    	e.printStackTrace();
+		    } finally {
+		    	try {
+					if (componentFileWriter!=null) componentFileWriter.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+		    	if (pw!=null) pw.close();
+		    }
+		}
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see agentgui.core.environment.EnvironmentController#setEnvironmentModel(java.lang.Object)
+     */
+    @Override
+    public void setDisplayEnvironmentModel(DisplaytEnvironmentModel displaytEnvironmentModel) {
+		try {
+		    if (displaytEnvironmentModel == null) {
+		    	this.setNetworkModel(null);
+		    } else {
+		    	this.setNetworkModel((NetworkModel) displaytEnvironmentModel);
+		    }
+	
+		} catch (Exception ex) {
+		    ex.printStackTrace();
+		}
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see agentgui.core.environment.EnvironmentController#getEnvironmentModel()
+     */
+    @Override
+    public DisplaytEnvironmentModel getDisplayEnvironmentModel() {
+    	return this.getNetworkModel();
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see agentgui.core.environment.EnvironmentController#getEnvironmentModelCopy()
+     */
+    @Override
+    public DisplaytEnvironmentModel getDisplayEnvironmentModelCopy() {
+		return this.getNetworkModel().getCopy();
+    }
+    
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#setAbstractEnvironmentModel(java.lang.Object)
+	 */
+	@Override
+	public void setAbstractEnvironmentModel(AbstractEnvironmentModel abstractEnvironmentModel) {
+		this.abstractEnvironmentModel = abstractEnvironmentModel;
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModel()
+	 */
+	@Override
+	public AbstractEnvironmentModel getAbstractEnvironmentModel() {
+		return this.abstractEnvironmentModel;
+	}
+	/* (non-Javadoc)
+	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModelCopy()
+	 */
+	@Override
+	public AbstractEnvironmentModel getAbstractEnvironmentModelCopy() {
+		if (this.abstractEnvironmentModel==null) {
+			return null;
+		} else {
+			return this.abstractEnvironmentModel.getCopy();	
+		}
+	}
+    
+	 /**
+     * Load general graph settings.
+     */
+    private GeneralGraphSettings4MAS loadGeneralGraphSettings() {
+    	File componentFile = new File(getEnvFolderPath() + generalGraphSettings4MASFile + ".xml");
+		return GeneralGraphSettings4MAS.load(componentFile);
+    }
+    /**
+     * Save general graph settings.
+     */
+    private void saveGeneralGraphSettings() {
+    	File componentFile = new File(getEnvFolderPath() + generalGraphSettings4MASFile + ".xml");
+    	GeneralGraphSettings4MAS.save(componentFile, this.getGeneralGraphSettings4MAS());
+    }
+	
+	
     /**
      * Clean up / correct list of agents corresponding to the current NetworkModel.
      */
@@ -456,7 +579,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 		// --------------------------------------------------------------------
 		// --- Get the current ComponentTypeSettings --------------------------
-		HashMap<String, ComponentTypeSettings> cts = this.networkModel.getGeneralGraphSettings4MAS().getCurrentCTS();
+		HashMap<String, ComponentTypeSettings> cts = this.getNetworkModel().getGeneralGraphSettings4MAS().getCurrentCTS();
 	
 		// --------------------------------------------------------------------
 		// --- Transfer the agent list into a HashMap for a faster access -----
@@ -478,12 +601,12 @@ public class GraphEnvironmentController extends EnvironmentController {
 	
 		// --------------------------------------------------------------------
 		// --- Run through the network components and validate agent list -----
-		Collection<String> compNameCollection = this.networkModel.getNetworkComponents().keySet();
+		Collection<String> compNameCollection = this.getNetworkModel().getNetworkComponents().keySet();
 		String[] compNames = compNameCollection.toArray(new String[compNameCollection.size()]);
 		for (int i = 0; i < compNames.length; i++) {
 		    // --- Current component ------------------------------------------
 		    String compName = compNames[i];
-		    NetworkComponent comp = this.networkModel.getNetworkComponent(compName);
+		    NetworkComponent comp = this.getNetworkModel().getNetworkComponent(compName);
 	
 		    if (!(comp instanceof ClusterNetworkComponent)) {
 			    // ----------------------------------------------------------------
@@ -491,7 +614,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 			    ComponentTypeSettings ctsSingle = cts.get(comp.getType());
 			    if (ctsSingle == null) {
 					// --- remove this component ---
-					this.networkModel.removeNetworkComponent(comp);
+					this.getNetworkModel().removeNetworkComponent(comp);
 					comp = null;
 		
 			    } else {
@@ -666,189 +789,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 		return agentClass;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see EnvironmentController#saveEnvironment()
-     */
-    @Override
-    protected void saveEnvironment() {
-
-		this.validateNetworkComponentAndAgents2Start();
-		this.saveGeneralGraphSettings();
-		if (networkModel != null && networkModel.getGraph() != null) {
-			
-			FileWriter fw = null;
-			PrintWriter pw = null;
-			FileWriter componentFileWriter = null;
-		    try {
-				// Save the graph topology
-				String graphFileName = baseFileName + ".graphml";
-				File file = new File(getEnvFolderPath() + graphFileName);
-				if (!file.exists()) {
-				    file.createNewFile();
-				}
-				fw = new FileWriter(file);
-				pw = new PrintWriter(fw);
-				getGraphMLWriter().save(networkModel.getGraph(), pw);
-		
-				// Save the network component definitions
-				File componentFile = new File(getEnvFolderPath() + baseFileName + ".xml");
-				if (!componentFile.exists()) {
-				    componentFile.createNewFile();
-				}
-				componentFileWriter = new FileWriter(componentFile);
-				JAXBContext context = JAXBContext.newInstance(NetworkComponentList.class);
-				Marshaller marsh = context.createMarshaller();
-				marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-				marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-				marsh.marshal(new NetworkComponentList(networkModel.getNetworkComponents()), componentFileWriter);
-				
-		    } catch (IOException e) {
-		    	e.printStackTrace();
-		    } catch (JAXBException e) {
-		    	e.printStackTrace();
-		    } finally {
-		    	try {
-					if (componentFileWriter!=null) componentFileWriter.close();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
-		    	if (pw!=null) pw.close();
-		    }
-		}
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see agentgui.core.environment.EnvironmentController#setEnvironmentModel(java.lang.Object)
-     */
-    @Override
-    public void setDisplayEnvironmentModel(DisplaytEnvironmentModel displaytEnvironmentModel) {
-		try {
-		    if (displaytEnvironmentModel == null) {
-		    	this.setNetworkModel(null);
-		    } else {
-		    	this.setNetworkModel((NetworkModel) displaytEnvironmentModel);
-		    }
-	
-		} catch (Exception ex) {
-		    ex.printStackTrace();
-		}
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see agentgui.core.environment.EnvironmentController#getEnvironmentModel()
-     */
-    @Override
-    public DisplaytEnvironmentModel getDisplayEnvironmentModel() {
-    	return this.networkModel;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see agentgui.core.environment.EnvironmentController#getEnvironmentModelCopy()
-     */
-    @Override
-    public DisplaytEnvironmentModel getDisplayEnvironmentModelCopy() {
-		NetworkModel netModel = this.networkModel.getCopy();
-		return netModel;
-    }
-    
-	/* (non-Javadoc)
-	 * @see agentgui.core.environment.EnvironmentController#setAbstractEnvironmentModel(java.lang.Object)
-	 */
-	@Override
-	public void setAbstractEnvironmentModel(AbstractEnvironmentModel abstractEnvironmentModel) {
-		this.abstractEnvironmentModel = abstractEnvironmentModel;
-	}
-	/* (non-Javadoc)
-	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModel()
-	 */
-	@Override
-	public AbstractEnvironmentModel getAbstractEnvironmentModel() {
-		return this.abstractEnvironmentModel;
-	}
-	/* (non-Javadoc)
-	 * @see agentgui.core.environment.EnvironmentController#getAbstractEnvironmentModelCopy()
-	 */
-	@Override
-	public AbstractEnvironmentModel getAbstractEnvironmentModelCopy() {
-		if (this.abstractEnvironmentModel==null) {
-			return null;
-		} else {
-			return this.abstractEnvironmentModel.getCopy();	
-		}
-	}
-
-	
-    /**
-     * Load general graph settings.
-     */
-    private void loadGeneralGraphSettings() {
-
-		try {
-		    File componentFile = new File(getEnvFolderPath() + generalGraphSettings4MASFile + ".xml");
-		    FileReader componentReader = new FileReader(componentFile);
-	
-		    JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
-		    Unmarshaller unmarsh = context.createUnmarshaller();
-		    GeneralGraphSettings4MAS ggs4MAS = (GeneralGraphSettings4MAS) unmarsh.unmarshal(componentReader);
-		    this.networkModel.setGeneralGraphSettings4MAS(ggs4MAS);
-		    componentReader.close();
-	
-		} catch (JAXBException ex) {
-		    ex.printStackTrace();
-		} catch (FileNotFoundException ex) {
-		    // create the file for the GeneralGraphSettings
-			this.saveGeneralGraphSettings();
-			System.out.println("Created file " + getEnvFolderPath() + generalGraphSettings4MASFile + ".xml");
-			
-		} catch (IOException ex) {
-		    ex.printStackTrace();
-		}
-    }
-
-    /**
-     * Save general graph settings.
-     */
-    private void saveGeneralGraphSettings() {
-
-		try {
-		    File componentFile = new File(getEnvFolderPath() + generalGraphSettings4MASFile + ".xml");
-		    if (!componentFile.exists()) {
-		    	componentFile.createNewFile();
-		    }
-	
-		    FileWriter componentFileWriter = new FileWriter(componentFile);
-	
-		    JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
-		    Marshaller marsh = context.createMarshaller();
-		    marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-		    marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		    marsh.marshal(this.networkModel.getGeneralGraphSettings4MAS(), componentFileWriter);
-	
-		    componentFileWriter.close();
-	
-		} catch (IOException e) {
-		    e.printStackTrace();
-		} catch (JAXBException e) {
-		    e.printStackTrace();
-		}
-
-    }
-    
-    /**
-     * Gets the known import adapter.
-     * @return the import adapter
-     */
-    public Vector<NetworkModelFileImporter> getImportAdapter() {
-    	if (this.importAdapter==null) {
-    		this.importAdapter = new Vector<NetworkModelFileImporter>();
-    	}
-    	return this.importAdapter;
-    }
     
     /**
      * Gets the GraphMLWriter, creates and initiates a new instance if null
@@ -1084,7 +1024,6 @@ public class GraphEnvironmentController extends EnvironmentController {
 		};
 		Thread decoder = new Thread(decode, "Base64-Decoder");
 		decoder.start();
-		
     }
 
     /**
@@ -1203,7 +1142,6 @@ public class GraphEnvironmentController extends EnvironmentController {
     	};
 		Thread encoder = new Thread(encode, "Base64-Encoder");
 		encoder.start();
-    	
     }
 
     /**
@@ -1230,6 +1168,31 @@ public class GraphEnvironmentController extends EnvironmentController {
 			ex.printStackTrace();
 		}
     	
+    }
+    
+    /**
+     * Gets the known import adapter.
+     * @return the import adapter
+     */
+    public Vector<NetworkModelFileImporter> getImportAdapter() {
+    	if (this.importAdapter==null) {
+    		this.importAdapter = new Vector<NetworkModelFileImporter>();
+    	}
+    	return this.importAdapter;
+    }
+    
+    /**
+     * Adds a {@link CustomToolbarComponentDescription}, so that customised components will be added to a toolbar of the {@link BasicGraphGui}.
+     * @param customButtonDescription the CustomToolbarComponentDescription to add
+     */
+    public void addCustomToolbarComponentDescription(CustomToolbarComponentDescription customButtonDescription) {
+    	if (this.getNetworkModel()!=null && this.getNetworkModel().getGeneralGraphSettings4MAS()!=null) {
+    		this.getNetworkModel().getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions().add(customButtonDescription);
+    		this.getNetworkModelAdapter().addCustomToolbarComponentDescription(customButtonDescription);
+    	} else {
+    		String errMsg = Language.translate("Could not add custom button: No NetworkModel was defined yet!", Language.EN);
+    		System.err.println(errMsg);
+    	}
     }
     
 }

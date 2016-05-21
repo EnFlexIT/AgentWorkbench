@@ -49,6 +49,7 @@ import agentgui.envModel.graph.commands.RenameNetworkComponent;
 import agentgui.envModel.graph.commands.SetGeneralGraphSettings4MAS;
 import agentgui.envModel.graph.commands.SetNetworkModel;
 import agentgui.envModel.graph.commands.SplitNetworkComponent;
+import agentgui.envModel.graph.controller.CustomToolbarComponentDescription;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -294,6 +295,16 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	public void selectNetworkComponent(NetworkComponent networkComponent) {
 		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Component_Select);
 		notification.setInfoObject(networkComponent);
+		this.notifyObservers(notification);
+	}
+	
+	/**
+	 * Informs that a CustomToolbarComponentDescription was added to the {@link GeneralGraphSettings4MAS}
+	 * @param customButtonDescription the custom button description
+	 */
+	public void addCustomToolbarComponentDescription(CustomToolbarComponentDescription customButtonDescription) {
+		NetworkModelNotification notification = new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_AddedCustomToolbarComponentDescription);
+		notification.setInfoObject(customButtonDescription);
 		this.notifyObservers(notification);
 	}
 	

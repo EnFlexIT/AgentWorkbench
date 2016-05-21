@@ -66,7 +66,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	private static final long serialVersionUID = -5712689010090750522L;
 
 	/** This attribute stores layout settings like the DomainSettings and the ComponentTypeSettings. */
-	private GeneralGraphSettings4MAS generalGraphSettings4MAS = null;
+	private GeneralGraphSettings4MAS generalGraphSettings4MAS;
 	
 	/** The original JUNG graph created or imported in the application. */
 	private Graph<GraphNode, GraphEdge> graph;
@@ -78,7 +78,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	private transient HashMap<GraphElement, NetworkComponents> graphElementToNetworkComponents;  
 	
 	/** The Hash of NetworkComponentAdapter. */
-	private transient HashMap<String, NetworkComponentAdapter> networkComponentAdapterHash = null;
+	private transient HashMap<String, NetworkComponentAdapter> networkComponentAdapterHash;
 	
 	/**
 	 * This HashMap can hold alternative NetworkModel's that can be used to 
@@ -86,9 +86,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * The NetworkModel's placed in this HashMap will be also displayed 
 	 * by the {@link DisplayAgent}.
 	 */
-	private HashMap<String, NetworkModel> alternativeNetworkModel = null;
+	private HashMap<String, NetworkModel> alternativeNetworkModel;
 
-	
 	/** The outer network components of this NetworkModel with no Connections */
 	private transient ArrayList<String> outerNetworkComponents;
 	private transient int connectionsOfBiggestBranch;
