@@ -86,7 +86,7 @@ import agentgui.simulationService.load.LoadInformation.Container2Wait4;
 import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.load.threading.ThreadDetail;
-import agentgui.simulationService.load.threading.ThreadTimeReceiver;
+import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
 import agentgui.simulationService.load.LoadMeasureSigar;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadThresholdLevels;
@@ -937,7 +937,7 @@ public class LoadService extends BaseService {
 	 * Inner class ServiceComponent. Will receive Commands, which 
 	 * are coming from the LoadServiceProxy and do local method invocations. 
 	 */
-	private class ServiceComponent implements Service.Slice, ThreadTimeReceiver {
+	private class ServiceComponent implements Service.Slice, ThreadProtocolReceiver {
 		
 		private static final long serialVersionUID = 1776886375724997808L;
 
@@ -1203,7 +1203,7 @@ public class LoadService extends BaseService {
 			LoadMeasureThread.doThreadMeasurement(timestamp, this);
 		}
 		/* (non-Javadoc)
-		 * @see agentgui.simulationService.load.threading.ThreadTimeReceiver#receiveThreadProtocol(agentgui.simulationService.load.threading.ThreadProtocol)
+		 * @see agentgui.simulationService.load.threading.ThreadProtocolReceiver#receiveThreadProtocol(agentgui.simulationService.load.threading.ThreadProtocol)
 		 */
 		@Override
 		public void receiveThreadProtocol(ThreadProtocol threadProtocol) {

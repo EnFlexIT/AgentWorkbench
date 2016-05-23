@@ -103,7 +103,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	 */
 	private void initialize(){
 		
-		this.verbose = true; //menu option ?? global setting ??
+		this.verbose = false; //menu option ?? global setting ??
 		
 		isRemoteOnly = currDisSetup.isRemoteOnly();
 		isEvenDistribution = currDisSetup.isEvenDistribution();
@@ -320,9 +320,14 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 				if(!isRemoteOnly || containerNames.size() == 0){
 					containerNames.add(localContainer.getName());
 				}
+				ArrayList<AgentClassElement4SimStart> agents2bStartedList;
 				
-//				ArrayList<AgentClassElement4SimStart> agents2bStartedList = this.getSortedAgentList(currSimSetup.getAgentList(), SORT_DESCENDING);
-				ArrayList<AgentClassElement4SimStart> agents2bStartedList = this.getSortedAgentList(currSimSetup.getAgentList(), SORT_DESCENDING_CHARGE);
+				//sort Agents to fit to distribution method
+				if(isEvenDistribution){
+					agents2bStartedList = this.getSortedAgentList(currSimSetup.getAgentList(), SORT_DESCENDING);
+				}else{
+					agents2bStartedList = this.getSortedAgentList(currSimSetup.getAgentList(), SORT_DESCENDING_CHARGE);
+				}
 				
 				containerIterator = containerNames.iterator();	
 				
@@ -456,7 +461,8 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 					if( agentContainerList.containsKey(remoteContainer)){
 						
 						double value = 100/cpuBenchmark.get(remoteContainer) * cpuContainerSum.get(remoteContainer);
-						consoleOutput += Math.round(value) + "% CPU => " + remoteContainerName + "\r\n";
+						int noOfAgents = agentContainerList.get(remoteContainer).size();
+						consoleOutput += remoteContainerName +  " => " + Math.round(value) + "% CPU, " + noOfAgents + " agents \r\n";
 						
 						if( value >= LOAD_CPU_CRIT_DANGER){
 							isOverload = true;

@@ -33,7 +33,7 @@ package agentgui.simulationService.load.threading.storage;
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadInfoStorageAgentClass extends ThreadInfoStorageSeries{
+public class ThreadInfoStorageAgentClass extends ThreadInfoStorageXYSeries{
 	
 	/** The average predictive metric. */
 	private double avgPredictiveMetric;

@@ -73,16 +73,16 @@ public class ThreadMonitor extends JFrame {
 	private ThreadInfoStorage threadInfoStorage;
 	
 	/** The j panel measure protocol. */
-	private ThreadMeasureProtocolTab jPanelMeasureProtocol;
+	private ThreadMonitorProtocolTableTab jPanelMeasureProtocol;
 	
 	/** The j panel measure tree detail. */
-	private ThreadMeasureTreeDetailTab jPanelMeasureTreeDetail;
+	private ThreadMonitorTreeDetailTab jPanelMeasureTreeDetail;
 	
 	/** The j panel measure metrics. */
-	private ThreadMeasureMetricsTab jPanelMeasureMetrics;
+	private ThreadMonitorMetricsTableTab jPanelMeasureMetrics;
 	
 	/** The tool bar. */
-	private ThreadMeasureToolBar toolBar;
+	private ThreadMonitorToolBar toolBar;
 
 	
 	/**
@@ -144,7 +144,7 @@ public class ThreadMonitor extends JFrame {
 	private JTabbedPane getTabbedPane() {
 		if (tabbedPane == null) {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-			tabbedPane.addTab("Thread Measurement", null, getJPanelMeasureProtocol(), null);
+			tabbedPane.addTab("Thread Protocol", null, getJPanelMeasureProtocol(), null);
 			tabbedPane.addTab("Thread Details", null, getJPanelMeasureTreeDetail(), null);
 			tabbedPane.addTab("Thread Metrics", null, getJPanelMeasureMetrics(), null);
 		}
@@ -156,9 +156,9 @@ public class ThreadMonitor extends JFrame {
 	 *
 	 * @return the j panel measure protocol
 	 */
-	public ThreadMeasureProtocolTab getJPanelMeasureProtocol() {
+	public ThreadMonitorProtocolTableTab getJPanelMeasureProtocol() {
 		if (jPanelMeasureProtocol == null) {
-			jPanelMeasureProtocol = new ThreadMeasureProtocolTab(threadProtocolVector);
+			jPanelMeasureProtocol = new ThreadMonitorProtocolTableTab(threadProtocolVector);
 		}
 		return jPanelMeasureProtocol;
 	}
@@ -168,9 +168,9 @@ public class ThreadMonitor extends JFrame {
 	 *
 	 * @return the j panel measure tree detail
 	 */
-	public ThreadMeasureTreeDetailTab getJPanelMeasureTreeDetail() {
+	public ThreadMonitorTreeDetailTab getJPanelMeasureTreeDetail() {
 		if (jPanelMeasureTreeDetail == null) {
-			jPanelMeasureTreeDetail = new ThreadMeasureTreeDetailTab(threadInfoStorage);
+			jPanelMeasureTreeDetail = new ThreadMonitorTreeDetailTab(threadInfoStorage);
 		}
 		return jPanelMeasureTreeDetail;
 	}
@@ -180,9 +180,9 @@ public class ThreadMonitor extends JFrame {
 	 *
 	 * @return the j panel measure metrics
 	 */
-	public ThreadMeasureMetricsTab getJPanelMeasureMetrics() {
+	public ThreadMonitorMetricsTableTab getJPanelMeasureMetrics() {
 		if (jPanelMeasureMetrics == null) {
-			jPanelMeasureMetrics = new ThreadMeasureMetricsTab(threadInfoStorage);
+			jPanelMeasureMetrics = new ThreadMonitorMetricsTableTab(threadInfoStorage);
 		}
 		return jPanelMeasureMetrics;
 	}
@@ -192,9 +192,9 @@ public class ThreadMonitor extends JFrame {
 	 *
 	 * @return the thread measure tool bar
 	 */
-	private ThreadMeasureToolBar getThreadMeasureToolBar() {
+	private ThreadMonitorToolBar getThreadMeasureToolBar() {
 		if (toolBar == null) {
-			toolBar = new ThreadMeasureToolBar(this.myAgent);
+			toolBar = new ThreadMonitorToolBar(this.myAgent);
 		}
 		return toolBar;
 	}

@@ -31,15 +31,15 @@ package agentgui.simulationService.load.threading;
 import agentgui.simulationService.load.LoadMeasureThread;
 
 /**
- * The Interface ThreadTimeReceiver can be used in order to register
+ * The Interface ThreadProtocolReceiver can be used in order to register
  * as a receiver for the thread measurements of the {@link LoadMeasureThread}.
  * 
  * @see LoadMeasureThread
- * @see LoadMeasureThread#doThreadMeasurement(long, ThreadTimeReceiver)
+ * @see LoadMeasureThread#doThreadMeasurement(long, ThreadProtocolReceiver)
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public interface ThreadTimeReceiver {
+public interface ThreadProtocolReceiver {
 
 	/**
 	 * Receives a thread measurement by a {@link ThreadProtocol}.

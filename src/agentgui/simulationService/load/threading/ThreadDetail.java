@@ -37,7 +37,7 @@ import java.io.Serializable;
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadDetail implements Serializable, ThreadProperties {
+public class ThreadDetail implements Serializable, ThreadDetailProperties {
 
 	private static final long serialVersionUID = 7920683110304631892L;
 	

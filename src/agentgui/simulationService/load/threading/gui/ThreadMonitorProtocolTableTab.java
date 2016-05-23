@@ -55,14 +55,14 @@ import agentgui.simulationService.load.threading.ThreadProtocolVector;
 import agentgui.simulationService.load.threading.ThreadDetail;
 
 /**
- * The Class ThreadMeasureProtocolTab.
+ * The Class ThreadMonitorProtocolTableTab.
  * 
  * Displays an auto-sortable table with thread details e.g. system-time and user-time
  * Filter for agents applicable.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
+public class ThreadMonitorProtocolTableTab extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -7315494195421538651L;
 
@@ -89,7 +89,7 @@ public class ThreadMeasureProtocolTab extends JPanel implements ActionListener {
 	 *
 	 * @param threadProtocolVector the thread protocol vector
 	 */
-	public ThreadMeasureProtocolTab(ThreadProtocolVector threadProtocolVector) {
+	public ThreadMonitorProtocolTableTab(ThreadProtocolVector threadProtocolVector) {
 		this.threadProtocolVector = threadProtocolVector;
 		this.initialize();
 	}

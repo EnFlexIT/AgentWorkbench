@@ -33,7 +33,7 @@ import java.lang.management.ThreadMXBean;
 
 import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.load.threading.ThreadDetail;
-import agentgui.simulationService.load.threading.ThreadTimeReceiver;
+import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
 
 /**
  * This class represents the Thread, which is permanently running on a system
@@ -54,6 +54,7 @@ import agentgui.simulationService.load.threading.ThreadTimeReceiver;
  *  
  * @author Christopher Nde - DAWIS - ICB - University of Duisburg - Essen
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
+ * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
 public class LoadMeasureThread extends Thread {
     
@@ -579,14 +580,14 @@ public class LoadMeasureThread extends Thread {
 
 	/**
 	 * Does the thread measurement. For this, a single thread will be started and the results 
-	 * will be transfered to the specified {@link ThreadTimeReceiver}.
+	 * will be transfered to the specified {@link ThreadProtocolReceiver}.
 	 * 
-	 * @see ThreadTimeReceiver
+	 * @see ThreadProtocolReceiver
 	 *
 	 * @param timestamp the time stamp of the initial request
-	 * @param threadTimeReceiver the {@link ThreadTimeReceiver}
+	 * @param threadProtocolReceiver the {@link ThreadProtocolReceiver}
 	 */
-	public static void doThreadMeasurement(final long timestamp, final ThreadTimeReceiver threadTimeReceiver) {
+	public static void doThreadMeasurement(final long timestamp, final ThreadProtocolReceiver threadProtocolReceiver) {
 
 		if (timestamp!=threadMeasurementLastTimeStamp) {
 
@@ -609,7 +610,7 @@ public class LoadMeasureThread extends Thread {
 			        	}	
 			        } else{
 			        	System.err.println("ThreadTimeMeasurement not supported !!");
-			        	threadTimeReceiver.receiveThreadProtocol(null);
+			        	threadProtocolReceiver.receiveThreadProtocol(null);
 			        	return;
 			        }
 			        
@@ -633,14 +634,11 @@ public class LoadMeasureThread extends Thread {
 			        	tp.getThreadDetails().add(new ThreadDetail(threadName, (cpuTime/factorMiliseconds), (userTime/factorMiliseconds)));
 			        }
 			        // --- Send protocol to the requester of the measurement --
-			        threadTimeReceiver.receiveThreadProtocol(tp);
-					
+			        threadProtocolReceiver.receiveThreadProtocol(tp);
 				}
 			};
 			// --- Start measurement thread -----------------------------------
 			threadMeasurement.run();
 		}
 	}
-	
-	
 }

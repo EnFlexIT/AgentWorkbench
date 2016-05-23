@@ -34,7 +34,7 @@ package agentgui.simulationService.load.threading.storage;
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadInfoStorageAgent extends ThreadInfoStorageSeries {
+public class ThreadInfoStorageAgent extends ThreadInfoStorageXYSeries {
 		
 	/** The predict metric. */
 	private double predictiveMetric;

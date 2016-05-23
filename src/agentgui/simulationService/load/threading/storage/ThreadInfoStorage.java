@@ -43,15 +43,20 @@ import javax.swing.tree.TreeNode;
 import org.jfree.data.xy.XYSeries;
 
 import agentgui.simulationService.load.threading.ThreadMeasureMetrics;
-import agentgui.simulationService.load.threading.ThreadProperties;
+import agentgui.simulationService.load.threading.ThreadDetailProperties;
 import agentgui.simulationService.load.threading.ThreadProtocol;
 
 /**
- * Storage class for all relevant load information about agents/threads.
+ * Storage class for relevant load information about agents/threads.
+ * 
+ * Analyses the received ThredProtocol and adds data to the corresponding
+ * XY-Series, calculates moving averages and delta-values.
+ * Updates table model of ThreadMonitorProtocolTableTab and tree model
+ * of ThreadMonitorTreeDetailTab
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadProperties{
+public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadDetailProperties{
 	
 	/**
 	* The available series keys as constants
@@ -776,21 +781,21 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadP
 	      			String keyJVM = (String) iteratorJvm.next();
 	      			DefaultMutableTreeNode jvm = new DefaultMutableTreeNode(mapJVM.get(keyJVM));
 	      			
-	      			if (machine.getIndex((TreeNode)jvm) == -1 && ((ThreadInfoStorageSeries) jvm.getUserObject()).getName().contains(((ThreadInfoStorageSeries) machine.getUserObject()).getName())){
+	      			if (machine.getIndex((TreeNode)jvm) == -1 && ((ThreadInfoStorageXYSeries) jvm.getUserObject()).getName().contains(((ThreadInfoStorageXYSeries) machine.getUserObject()).getName())){
 	      				machine.add(jvm);
 		  	    	
 	      				while (iteratorContainer.hasNext()) {
 	      					String keyContainer = (String) iteratorContainer.next();
 	      					DefaultMutableTreeNode container = new DefaultMutableTreeNode(mapContainer.get(keyContainer));
 				  	      
-	      					if (jvm.getIndex((TreeNode)container) == -1 && ((ThreadInfoStorageSeries) container.getUserObject()).getName().contains(((ThreadInfoStorageSeries) jvm.getUserObject()).getName())){
+	      					if (jvm.getIndex((TreeNode)container) == -1 && ((ThreadInfoStorageXYSeries) container.getUserObject()).getName().contains(((ThreadInfoStorageXYSeries) jvm.getUserObject()).getName())){
 	      						jvm.add(container);
 				  	    	
 	      						while (iteratorAgent.hasNext()) {
 	      							String keyAgent = (String) iteratorAgent.next();
 	      							DefaultMutableTreeNode agent = new DefaultMutableTreeNode(mapAgent.get(keyAgent));
 						  	      
-	      							if (container.getIndex((TreeNode)agent) == -1 && ((ThreadInfoStorageSeries) agent.getUserObject()).getName().contains(((ThreadInfoStorageSeries) container.getUserObject()).getName())){
+	      							if (container.getIndex((TreeNode)agent) == -1 && ((ThreadInfoStorageXYSeries) agent.getUserObject()).getName().contains(((ThreadInfoStorageXYSeries) container.getUserObject()).getName())){
 	      								container.add(agent);
 						  	    	  
 	      							}

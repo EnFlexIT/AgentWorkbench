@@ -33,7 +33,7 @@ package agentgui.simulationService.load.threading.storage;
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadInfoStorageCluster extends ThreadInfoStorageSeries{
+public class ThreadInfoStorageCluster extends ThreadInfoStorageXYSeries{
 	
 	/**
 	 * Instantiates a new thread info storage for a JVM.

@@ -45,11 +45,11 @@ import agentgui.simulationService.agents.LoadMeasureAgent;
 
 
 /**
- * The Class ThreadMeasureToolBar.
+ * The Class ThreadMonitorToolBar.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
+public class ThreadMonitorToolBar extends JToolBar implements ActionListener {
 
 	private static final long serialVersionUID = 7052789869732559092L;
 	
@@ -68,7 +68,7 @@ public class ThreadMeasureToolBar extends JToolBar implements ActionListener {
 	/**
 	 * Instantiates a new thread measure tool bar.
 	 */
-	public ThreadMeasureToolBar(LoadMeasureAgent agent) {
+	public ThreadMonitorToolBar(LoadMeasureAgent agent) {
 		this.myAgent = agent;
 		this.initialize();
 	}

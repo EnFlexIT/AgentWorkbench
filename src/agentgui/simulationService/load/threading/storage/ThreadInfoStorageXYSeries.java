@@ -37,7 +37,7 @@ import org.jfree.data.xy.XYSeries;
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadInfoStorageSeries {
+public class ThreadInfoStorageXYSeries {
 	
 	/** The name. */
 	private String name;
@@ -49,7 +49,7 @@ public class ThreadInfoStorageSeries {
 	 * Instantiates a new thread info storage series.
 	 * @param name the name
 	 */
-	public ThreadInfoStorageSeries(String name) {
+	public ThreadInfoStorageXYSeries(String name) {
 		this.name = name;
 	}
 	

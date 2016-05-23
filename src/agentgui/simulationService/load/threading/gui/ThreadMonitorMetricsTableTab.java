@@ -54,13 +54,13 @@ import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
 /**
- * The Class ThreadMeasureMetricsTab.
+ * The Class ThreadMonitorMetricsTableTab.
  * 
  * Displays an auto-sortable table of agents and their metrics.
  * Filter for agents applicable.
  * 
  */
-public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
+public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListener {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4848470750194315559L;
@@ -109,7 +109,7 @@ public class ThreadMeasureMetricsTab extends JPanel implements ActionListener {
 	 *
 	 * @param threadInfoStorage the thread info storage
 	 */
-	public ThreadMeasureMetricsTab(ThreadInfoStorage threadInfoStorage) {
+	public ThreadMonitorMetricsTableTab(ThreadInfoStorage threadInfoStorage) {
 		this.threadInfoStorage = threadInfoStorage;
 		initialize();
 	}

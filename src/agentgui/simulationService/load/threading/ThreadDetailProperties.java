@@ -29,11 +29,11 @@
 package agentgui.simulationService.load.threading;
 
 /**
- * The Interface ThreadProperties.
+ * The Interface ThreadDetailProperties.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public interface ThreadProperties {
+public interface ThreadDetailProperties {
 
 	/** The constant for unknown agent class names. */
 	public final String UNKNOWN_AGENT_CLASSNAME = "agent.class.UNKNOWN-AGENT-CLASS";

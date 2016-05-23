@@ -33,7 +33,7 @@ package agentgui.simulationService.load.threading.storage;
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadInfoStorageMachine extends ThreadInfoStorageSeries{
+public class ThreadInfoStorageMachine extends ThreadInfoStorageXYSeries{
 	
 	/** The MFLOPS of that (physical) machine. */
 	private double mflops;

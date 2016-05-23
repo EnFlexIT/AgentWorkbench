@@ -33,7 +33,7 @@ package agentgui.simulationService.load.threading.storage;
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadInfoStorageContainer extends ThreadInfoStorageSeries{
+public class ThreadInfoStorageContainer extends ThreadInfoStorageXYSeries{
 	
 	/**
 	 * Instantiates a new thread info storage for a container.

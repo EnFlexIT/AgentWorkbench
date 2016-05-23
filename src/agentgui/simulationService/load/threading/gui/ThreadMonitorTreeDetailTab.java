@@ -51,7 +51,7 @@ import javax.swing.event.TreeModelListener;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
 
 /**
- * The Class ThreadMeasureTreeDetailTab.
+ * The Class ThreadMonitorTreeDetailTab.
  * 
  * Displays detailed information about thread/agent load.
  * Builds a Tree view Cluster->Machines->JCM->Container
@@ -59,7 +59,7 @@ import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadMeasureTreeDetailTab extends JPanel implements ActionListener {
+public class ThreadMonitorTreeDetailTab extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -7315494195421538651L;
 
@@ -99,7 +99,7 @@ public class ThreadMeasureTreeDetailTab extends JPanel implements ActionListener
 	 * @param threadInfoStorage
 	 *            the thread info storage
 	 */
-	public ThreadMeasureTreeDetailTab(ThreadInfoStorage threadInfoStorage) {
+	public ThreadMonitorTreeDetailTab(ThreadInfoStorage threadInfoStorage) {
 		this.threadInfoStorage = threadInfoStorage;
 		initialize();
 	}
