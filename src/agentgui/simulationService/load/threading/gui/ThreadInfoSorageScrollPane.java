@@ -63,13 +63,13 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- * The Class ThreadInfoScrollPane.
+ * The Class ThreadInfoSorageScrollPane.
  * 
  * Displays a JPanel with Chart of multiple Series and display/filtering options.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadInfoScrollPane extends JPanel implements ActionListener{
+public class ThreadInfoSorageScrollPane extends JPanel implements ActionListener{
 	
 	/**
      * The Constant DEFAULT_CHART_COLORS defines
@@ -188,7 +188,7 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 	 * @param popup the popup
 	 * @param frameTitle the frame title
 	 */
-	public ThreadInfoScrollPane(XYSeriesCollection deltaCollection, XYSeriesCollection totalCollection, XYSeriesCollection loadCollection, boolean popup, String frameTitle) {		
+	public ThreadInfoSorageScrollPane(XYSeriesCollection deltaCollection, XYSeriesCollection totalCollection, XYSeriesCollection loadCollection, boolean popup, String frameTitle) {		
 		super();
 		this.showDelta = true;
 		this.showTotal = true;
@@ -443,7 +443,7 @@ public class ThreadInfoScrollPane extends JPanel implements ActionListener{
 			//---nothing to do ---
 		}else if (ae.getSource() == getBtnExportCSV()){
 			
-			int userSelection = getFileChooser().showSaveDialog(ThreadInfoScrollPane.this);
+			int userSelection = getFileChooser().showSaveDialog(ThreadInfoSorageScrollPane.this);
 			 
 			if (userSelection == JFileChooser.APPROVE_OPTION) {
 			    File fileToSave = fileChooser.getSelectedFile();
