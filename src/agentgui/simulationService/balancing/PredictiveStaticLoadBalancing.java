@@ -81,8 +81,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	private double loadCpuIdeal = LOAD_CPU_IDEAL;
 	/** The load CPU critical. */
 	private double loadCpuCrit  = LOAD_CPU_CRIT;
-	/** The remote only boolean, do not use local machine for agents. */
-	private boolean isRemoteOnly = true;
+	
 	/** The boolen for even distribution of agents on all available machines. */
 	private boolean isEvenDistribution = false;
 	/** The boolean verbose. */
@@ -105,7 +104,6 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 		
 		this.verbose = false; //menu option ?? global setting ??
 		
-		isRemoteOnly = currDisSetup.isRemoteOnly();
 		isEvenDistribution = currDisSetup.isEvenDistribution();
 		
 		if(currDisSetup.isUseUserThresholds()){
@@ -281,7 +279,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 		Hashtable<Location, ArrayList<AgentClassElement4SimStart>> agentContainerList = new Hashtable<Location,ArrayList<AgentClassElement4SimStart>>();
 		
 		/** The local container*/
-		Location localContainer = containerLocations.get(currProject.getProjectFolder());
+		Location localContainer = containerLocations.get(localContainerName);
 		
 		/** A list of agents*/
 		ArrayList<AgentClassElement4SimStart> agentList = new ArrayList<AgentClassElement4SimStart>();
@@ -469,14 +467,13 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 						}
 					}
 				}
-				consoleOutput += "#### --------------- ####";
+				consoleOutput += "#### --------------- ####\r\n";
 				
 				if(isOverload){//color text red
 //					consoleOutput = (char)27 + "[31;37m" + consoleOutput;//add red text color
-					consoleOutput += "###### WARNING ! NOT ENOUGH MACHINES IN CLUSTER ! ######";
+					consoleOutput += "###### WARNING ! NOT ENOUGH MACHINES IN CLUSTER ! ######\r\n";
 //					consoleOutput += (char)27 + "[0m";//remove formatting
 				}
-				
 				return agentContainerList;
 			}
 		}	

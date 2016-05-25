@@ -103,8 +103,18 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 			if (newContainerLocations!=null) {
 				locationNames = new Vector<String>(newContainerLocations.keySet());
 				cont4DisMax = newContainerLocations.size();
-			}			
+			}		
 			
+			/* remove local container from location names ?*/
+			if (locationNames!=null){
+				if(isRemoteOnly && locationNames.size() != 0){
+					int indexLocalContainer = locationNames.indexOf(localContainerName);
+					if(indexLocalContainer != -1){
+						locationNames.remove(indexLocalContainer);
+						cont4DisMax--;
+					}
+				}
+			}
 			// --- merge all agents, which have to be started ------------
 			Vector<AgentClassElement4SimStart> currAgentListMerged = new Vector<AgentClassElement4SimStart>();
 			if (currAgentList!=null) {
@@ -130,13 +140,15 @@ public class StaticLoadBalancing extends StaticLoadBalancingBase {
 					if (cont4DisI>=cont4DisMax) {
 						cont4DisI=0;
 					}
-					// --- finally start the agent -----------------------				
-					this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs, location);
-				
+					// --- finally start the agent -----------------------		
+					//TODO: don't make an exception for SiMa any longer ....one day
+					if(agent2Start.getAgentClassReference().contains("SimulationManager")){
+						this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs, newContainerLocations.get(localContainerName));
+					}else{
+						this.startAgent(agent2Start.getStartAsName(), agent2Start.getAgentClassReference(), startArgs, location);	
+					}				
 				}
 			} // --- end for
 		} // --- end if
-		
 	}
-	
 }

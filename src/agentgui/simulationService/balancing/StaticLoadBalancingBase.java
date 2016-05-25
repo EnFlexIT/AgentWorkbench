@@ -59,6 +59,10 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 	protected int currNumberOfAgents = 0;
 	/** The current number of container. */
 	protected int currNumberOfContainer = 0;
+	/** The remote only boolean, do not use local machine for agents. */
+	protected boolean isRemoteOnly = true;
+	/** The local container name. */
+	protected String localContainerName;
 
 
 	/**
@@ -73,6 +77,8 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 		// --- of container, which are wanted for this setup --------
 		currNumberOfAgents = currDisSetup.getNumberOfAgents();
 		currNumberOfContainer = currDisSetup.getNumberOfContainer();
+		localContainerName = currProject.getProjectFolder();
+		isRemoteOnly = currDisSetup.isRemoteOnly();
 	}
 	
 	/**
