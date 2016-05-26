@@ -627,6 +627,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadD
 			actualSeries.add(threadProtocol.getTimestamp(), deltaSystemTime);
 		}
 		
+		//TODO: Observer  pattern notifyObserver
 		// --- Add (new) nodes to the tree model ----------
 		addNodesToTreeModel(mapMachine, mapJVM, mapContainer, mapAgent);
 		

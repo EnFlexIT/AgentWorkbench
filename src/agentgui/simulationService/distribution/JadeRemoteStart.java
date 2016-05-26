@@ -51,29 +51,35 @@ import agentgui.simulationService.ontology.RemoteContainerConfig;
 public class JadeRemoteStart extends Thread {
 
 	/** Constant for a memory of 16 MB. */
-	public static final String jvmMemo0016MB = "16m";
+	public static final String jvmMemo16MB 	= "16m";
 	/** Constant for a memory of 32 MB. */
-	public static final String jvmMemo0032MB = "32m";
+	public static final String jvmMemo32MB 	= "32m";
 	/** Constant for a memory of 64 MB. */
-	public static final String jvmMemo0064MB = "64m";
+	public static final String jvmMemo64MB 	= "64m";
 	/** Constant for a memory of 128 MB. */
-	public static final String jvmMemo0128MB = "128m";
+	public static final String jvmMemo128MB = "128m";
 	/** Constant for a memory of 256 MB. */
-	public static final String jvmMemo0256MB = "256m";
+	public static final String jvmMemo256MB = "256m";
 	/** Constant for a memory of 512 MB. */
-	public static final String jvmMemo0512MB = "512m";
+	public static final String jvmMemo512MB = "512m";
 	/** Constant for a memory of 1024 MB. */
-	public static final String jvmMemo1024MB = "1024m";
+	public static final String jvmMemo1GB 	= "1g";
 	/** Constant for a memory of 2048 MB. */
-	public static final String jvmMemo2048MB = "2048m";
+	public static final String jvmMemo2GB 	= "2g";
 	/** Constant for a memory of 4096 MB. */
-	public static final String jvmMemo4096MB = "4096m";
+	public static final String jvmMemo4GB 	= "4g";
+	/** Constant for a memory of 8192 MB. */
+	public static final String jvmMemo8GB 	= "8g";
+	/** Constant for a memory of 16384 MB. */
+	public static final String jvmMemo16GB 	= "16g";
+	/** Constant for a memory of 32768 MB. */
+	public static final String jvmMemo32GB 	= "32g";
 	
 	private boolean debug = false;
 	
 	private boolean jvmMemAllocUseDefaults = true;
-	private String jvmMemAllocInitial = JadeRemoteStart.jvmMemo0032MB;
-	private String jvmMemAllocMaximum = JadeRemoteStart.jvmMemo0128MB;
+	private String jvmMemAllocInitial = JadeRemoteStart.jvmMemo128MB;
+	private String jvmMemAllocMaximum = JadeRemoteStart.jvmMemo512MB;
 	
 	private boolean jadeIsRemoteContainer = true; 
 	private boolean jadeShowGUI = true; 
@@ -102,8 +108,8 @@ public class JadeRemoteStart extends Thread {
 		jadeIsRemoteContainer = reCoCo.getJadeIsRemoteContainer();
 		if (reCoCo.getJvmMemAllocInitial()==null && reCoCo.getJvmMemAllocMaximum()==null) {
 			this.jvmMemAllocUseDefaults = true;	
-			this.jvmMemAllocInitial = JadeRemoteStart.jvmMemo0032MB;
-			this.jvmMemAllocMaximum = JadeRemoteStart.jvmMemo0128MB;
+			this.jvmMemAllocInitial = JadeRemoteStart.jvmMemo32MB;
+			this.jvmMemAllocMaximum = JadeRemoteStart.jvmMemo128MB;
 		} else {
 			this.jvmMemAllocUseDefaults = false;
 			this.jvmMemAllocInitial = reCoCo.getJvmMemAllocInitial();

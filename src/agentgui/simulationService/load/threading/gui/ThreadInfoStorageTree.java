@@ -226,7 +226,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	    	    	
 	    	    }
 	    	    // --- create scroll-pane in pop-up window ---
-	    	    new ThreadInfoSorageScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, null, true, folderNamePrefix+className);
+	    	    new ThreadInfoStorageScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, null, true, folderNamePrefix+className);
 			}
 		}
 	}
@@ -659,7 +659,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 		        	}	
         	    }
     	    	// --- create scroll-pane in pop-up window ---
-        	    new ThreadInfoSorageScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, popupXYSeriesCollectionLoad, true, folderNamePrefix+nodeName);
+        	    new ThreadInfoStorageScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, popupXYSeriesCollectionLoad, true, folderNamePrefix+nodeName);
     	    }
 	    }
 		

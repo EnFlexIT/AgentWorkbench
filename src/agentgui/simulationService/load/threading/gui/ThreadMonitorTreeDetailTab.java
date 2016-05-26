@@ -73,7 +73,7 @@ public class ThreadMonitorTreeDetailTab extends JPanel implements ActionListener
 	private JScrollPane leftScrollPane;
 
 	/** The right scroll pane. */
-	private ThreadInfoSorageScrollPane rightScrollPane;
+	private ThreadInfoStorageScrollPane rightScrollPane;
 
 	/** The J panel filter. */
 	private JPanel JPanelFilter;
@@ -264,9 +264,9 @@ public class ThreadMonitorTreeDetailTab extends JPanel implements ActionListener
 	 * 
 	 * @return the right scroll pane
 	 */
-	private ThreadInfoSorageScrollPane getRightScrollPane() {
+	private ThreadInfoStorageScrollPane getRightScrollPane() {
 		if (rightScrollPane == null) {
-			rightScrollPane = new ThreadInfoSorageScrollPane(threadTree.getSeriesChartsDelta(), threadTree.getSeriesChartsTotal(), null, false, "");
+			rightScrollPane = new ThreadInfoStorageScrollPane(threadTree.getSeriesChartsDelta(), threadTree.getSeriesChartsTotal(), null, false, "");
 		}
 		return rightScrollPane;
 	}

@@ -45,8 +45,8 @@ public class RemoteContainerConfiguration implements Serializable {
 	private boolean preventUsageOfAlreadyUsedComputers = true;
 	private boolean showJADErmaGUI = false;
 	
-	private String jvmMemAllocInitial = JadeRemoteStart.jvmMemo0128MB;
-	private String jvmMemAllocMaximum = JadeRemoteStart.jvmMemo1024MB;
+	private String jvmMemAllocInitial = JadeRemoteStart.jvmMemo128MB;
+	private String jvmMemAllocMaximum = JadeRemoteStart.jvmMemo1GB;
 	
 	/**
 	 * Instantiates a new remote container configuration.

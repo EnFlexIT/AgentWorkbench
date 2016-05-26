@@ -35,7 +35,7 @@ import java.util.Map.Entry;
 import org.jfree.data.xy.XYSeries;
 
 import agentgui.core.application.Application;
-import agentgui.core.project.AgentClassLoadMetrics;
+import agentgui.core.project.AgentClassLoadMetricsTable;
 import agentgui.core.project.AgentClassMetricDescription;
 import agentgui.core.project.Project;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
@@ -51,18 +51,9 @@ import agentgui.simulationService.load.threading.storage.ThreadInfoStorageMachin
  */
 public class ThreadMeasureMetrics {
 	
-	/**  The simulation initialization phase offset (t0) in milliseconds
-	 *  after which metrics can be calculated, default 2min = 120000. */
-	private final long SIMULATION_INIT_OFFSET_MS	    = 120000;
-	
-	/**  The sampling interval offset, default 10. 
-	 *  depending on the recording interval, 
-	 *  this defines the index of the first value (t0)*/
-	private final int SAMPLING_INTERVAL_OFFSET_DEFAULT	= 10;
-	
 	/**  The simulation duration minimum in milliseconds
-	 *  after which metrics can be calculated, default 5min = 300000. */
-	public final double SIMULATION_DURATION_MIN 		= 300000 + SIMULATION_INIT_OFFSET_MS;
+	 *  after which metrics can be calculated, default 5s = 5000. */
+	public final double SIMULATION_DURATION_MIN 		= 5000;
 
 	/** The factor max machine load. */
 	public final static double FACTOR_MAX_MACHINE_LOAD 	= 0.95d;
@@ -157,7 +148,7 @@ public class ThreadMeasureMetrics {
 				ThreadInfoStorageMachine actualMachine = iteratorMachine.next().getValue();
 				XYSeries series = actualMachine.getXYSeriesMap().get(this.threadInfoStorage.TOTAL_CPU_SYSTEM_TIME);
 				
-				samplingIntervalOffset = getSamplingIntervalOffset(series);
+				samplingIntervalOffset = 1; //ignore first value (t0 start)
 				samplingInterval = getSamplingIntervalMilliSeconds(series,samplingIntervalOffset);
 				
 				if (getCalcType().equals(CALC_TYPE_INTEGRAL_DELTA)) {
@@ -229,7 +220,7 @@ public class ThreadMeasureMetrics {
 			}
 		}
 		
-		AgentClassLoadMetrics aclm = currProject.getAgentClassLoadMetrics();
+		AgentClassLoadMetricsTable aclm = currProject.getAgentClassLoadMetrics();
 		
 		aclm.clearTableModel();
 		
@@ -462,24 +453,6 @@ public class ThreadMeasureMetrics {
 			simulationDuration = end - start;
 		}
 		return simulationDuration;
-	}	
-	
-	/**
-	 * Gets the sampling interval offset.
-	 *
-	 * @param series the series
-	 * @return the sampling interval offset
-	 */
-	private int getSamplingIntervalOffset(XYSeries series){
-		double start = series.getX(0).doubleValue();
-		
-		for(int i = 0; i < series.getItemCount(); i++){
-			double actual = series.getX(i).doubleValue();
-			if((actual-start)>=SIMULATION_INIT_OFFSET_MS){
-				return i;
-			}
-		}
-		return SAMPLING_INTERVAL_OFFSET_DEFAULT;
 	}
 	
 	/**

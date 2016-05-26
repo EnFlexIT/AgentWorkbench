@@ -28,6 +28,7 @@
  */
 package agentgui.simulationService.load.threading.gui;
 
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -47,6 +49,7 @@ import javax.swing.SortOrder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import agentgui.core.application.Language;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorageAgent;
 
@@ -86,6 +89,9 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 	/** The button calculate metrics. */
 	private JButton btnCalcMetrics;
 	
+	/** The btn calc metrics hint. */
+	private JLabel lblCalcMetricsHint;
+	
 	/** The radio button integral. */
 	private JRadioButton rdbtnIntegralDelta;
 	
@@ -103,6 +109,14 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 	
 	/** The J panel options. */
 	private JPanel JPanelOptions;
+	
+	private String lblCalcMetricsHintString = Language.translate("Calculate the real metrics based on recorded chart value selection.");
+	private String btnCalcMetricsString = Language.translate("Calculates the real metrics for each agent based on recorded thread times.");
+	private String rdBtnIntegralTotalString = Language.translate("Calculate metrics based on total integrals.");
+	private String rdBtnIntegralDeltaString = Language.translate("Calculate metrics based on delta integrals.");
+	private String rdBtnLastTotalString =  Language.translate("Calculate metrics based on last total system cpu time.");
+	private String rdBtnIndividualString = Language.translate("Calculate metrics based on individual agent data.");
+	private String rdBtnClassString = Language.translate("Calculate metrics based on agent class data.");
 	
 	/**
 	 * Instantiates a new thread measure metrics tab.
@@ -226,17 +240,25 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 			// --- Set default value -----------------------
 			getJRadioButtonNoFilter().setSelected(true);
 			getJRadioButtonFilterAgents().setSelected(false);
+			
+			GridBagConstraints gbc_btnCalcMetricsHint = new GridBagConstraints();
+			gbc_btnCalcMetricsHint.anchor = GridBagConstraints.EAST;
+			gbc_btnCalcMetricsHint.insets = new Insets(1, 5, 5, 1);
+			gbc_btnCalcMetricsHint.gridx = 4;
+			gbc_btnCalcMetricsHint.gridy = 0;
+			JPanelFilter.add(getLblCalcMetricsHint(), gbc_btnCalcMetricsHint);
+			
 			GridBagConstraints gbc_btnCalcMetrics = new GridBagConstraints();
 			gbc_btnCalcMetrics.anchor = GridBagConstraints.EAST;
 			gbc_btnCalcMetrics.insets = new Insets(1, 5, 5, 1);
-			gbc_btnCalcMetrics.gridx = 4;
+			gbc_btnCalcMetrics.gridx = 5;
 			gbc_btnCalcMetrics.gridy = 0;
 			JPanelFilter.add(getBtnCalcMetrics(), gbc_btnCalcMetrics);
 			
 		}
 		return JPanelFilter;
 	}
-	
+
 	/**
 	 * Gets the j radio button no filter.
 	 * @return the j radio button no filter
@@ -338,11 +360,23 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 		if (btnCalcMetrics == null) {
 			btnCalcMetrics = new JButton("");
 			btnCalcMetrics.setVerticalAlignment(SwingConstants.BOTTOM);
-			btnCalcMetrics.setToolTipText("Calculates the real metrics for each agent based on recorded thread times.");
+			btnCalcMetrics.setToolTipText(btnCalcMetricsString );
 			btnCalcMetrics.addActionListener(this);
 			btnCalcMetrics.setEnabled(false);
 		}
 		return btnCalcMetrics;
+	}
+	
+	/**
+	 * Gets the button calculate metrics hint.
+	 * @return the button calculate metrics hint
+	 */
+	private JLabel getLblCalcMetricsHint() {
+		if (lblCalcMetricsHint == null) {
+			lblCalcMetricsHint = new JLabel(lblCalcMetricsHintString);
+			lblCalcMetricsHint.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return lblCalcMetricsHint;
 	}
 	
 	/**
@@ -353,7 +387,7 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 	private JRadioButton getRdbtnIntegralTotal() {
 		if (rdbtnIntegralTotal == null) {
 			rdbtnIntegralTotal = new JRadioButton("Total");
-			rdbtnIntegralTotal.setToolTipText("Calculate metrics based based on total integrals.");
+			rdbtnIntegralTotal.setToolTipText(rdBtnIntegralTotalString );
 			rdbtnIntegralTotal.addActionListener(this);
 		}
 		return rdbtnIntegralTotal;
@@ -367,7 +401,7 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 	private JRadioButton getRdbtnIntegralDelta() {
 		if (rdbtnIntegralDelta == null) {
 			rdbtnIntegralDelta = new JRadioButton("Delta");
-			rdbtnIntegralDelta.setToolTipText("Calculate metrics based on delta integrals.");
+			rdbtnIntegralDelta.setToolTipText(rdBtnIntegralDeltaString);
 			rdbtnIntegralDelta.addActionListener(this);
 		}
 		return rdbtnIntegralDelta;
@@ -381,7 +415,7 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 	private JRadioButton getRdbtnLastTotal() {
 		if (rdbtnLastTotal == null) {
 			rdbtnLastTotal = new JRadioButton("Last Total");
-			rdbtnLastTotal.setToolTipText("Calculate metrics based on last total system cpu time.");
+			rdbtnLastTotal.setToolTipText(rdBtnLastTotalString);
 			rdbtnLastTotal.addActionListener(this);
 		}
 		return rdbtnLastTotal;
@@ -395,7 +429,7 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 	private JRadioButton getRdbtnIndividual() {
 		if (rdbtnIndividual == null) {
 			rdbtnIndividual = new JRadioButton("Individual");
-			rdbtnIndividual.setToolTipText("Calculate metrics based on individual agent data.");
+			rdbtnIndividual.setToolTipText(rdBtnIndividualString);
 			rdbtnIndividual.addActionListener(this);
 		}
 		return rdbtnIndividual;
@@ -409,7 +443,7 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 	private JRadioButton getRdbtnClass() {
 		if (rdbtnClass == null) {
 			rdbtnClass = new JRadioButton("Class");
-			rdbtnClass.setToolTipText("Calculate metrics based on agent class data.");
+			rdbtnClass.setToolTipText(rdBtnClassString);
 			rdbtnClass.addActionListener(this);
 		}
 		return rdbtnClass;

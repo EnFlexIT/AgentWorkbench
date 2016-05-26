@@ -119,11 +119,12 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JComboBox<String> jComboBoxJVMMemoryMaximum;
 	private JComboBox<TimeSelection> jComboBoxRecordingInterval;
 	
-	private String[] comboData = {JadeRemoteStart.jvmMemo0016MB, JadeRemoteStart.jvmMemo0032MB,
-								  JadeRemoteStart.jvmMemo0064MB, JadeRemoteStart.jvmMemo0128MB,
-								  JadeRemoteStart.jvmMemo0256MB, JadeRemoteStart.jvmMemo0512MB,
-								  JadeRemoteStart.jvmMemo1024MB, JadeRemoteStart.jvmMemo2048MB,
-								  JadeRemoteStart.jvmMemo4096MB};
+	private String[] comboData = {JadeRemoteStart.jvmMemo16MB, JadeRemoteStart.jvmMemo32MB,
+								  JadeRemoteStart.jvmMemo64MB, JadeRemoteStart.jvmMemo128MB,
+								  JadeRemoteStart.jvmMemo256MB, JadeRemoteStart.jvmMemo512MB,
+								  JadeRemoteStart.jvmMemo1GB, JadeRemoteStart.jvmMemo2GB,
+								  JadeRemoteStart.jvmMemo4GB, JadeRemoteStart.jvmMemo8GB,
+								  JadeRemoteStart.jvmMemo16GB,JadeRemoteStart.jvmMemo32GB};
 	private DefaultComboBoxModel<String> comboModelInitial = new DefaultComboBoxModel<String>(comboData);
 	private DefaultComboBoxModel<String> comboModelMaximal = new DefaultComboBoxModel<String>(comboData);
 	private DefaultComboBoxModel<TimeSelection> comboModelRecordingInterval;
@@ -177,6 +178,9 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JLabel jLabelDummy;
 	private JSeparator jSeparator01;
 	private JSeparator jSeparator02;
+	private JSeparator jSeparator03;
+	private JSeparator jSeparator04;
+	private JSeparator jSeparator05;
 
 	
 	/**
@@ -253,78 +257,105 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			gbc_jSeparator01.gridx = 0;
 			gbc_jSeparator01.gridy = 1;
 			
-			GridBagConstraints gbcJCheckBoxShowLoadMonitor = new GridBagConstraints();
-			gbcJCheckBoxShowLoadMonitor.gridx = 0;
-			gbcJCheckBoxShowLoadMonitor.gridy = 2;
-			gbcJCheckBoxShowLoadMonitor.insets = new Insets(10, 10, 5, 0);
-			gbcJCheckBoxShowLoadMonitor.anchor = GridBagConstraints.WEST;
 			GridBagConstraints gbcJCheckBoxShowThreadMonitor = new GridBagConstraints();
 			gbcJCheckBoxShowThreadMonitor.gridx = 0;
-			gbcJCheckBoxShowThreadMonitor.gridy = 3;
+			gbcJCheckBoxShowThreadMonitor.gridy = 2;
 			gbcJCheckBoxShowThreadMonitor.insets = new Insets(5, 10, 5, 0);
 			gbcJCheckBoxShowThreadMonitor.anchor = GridBagConstraints.WEST;
-			
-			GridBagConstraints gbcJCheckBoxAutosaveRealMetricsOnSimStop = new GridBagConstraints();
-			gbcJCheckBoxAutosaveRealMetricsOnSimStop.gridx = 0;
-			gbcJCheckBoxAutosaveRealMetricsOnSimStop.gridy = 4;
-			gbcJCheckBoxAutosaveRealMetricsOnSimStop.insets = new Insets(5, 10, 5, 0);
-			gbcJCheckBoxAutosaveRealMetricsOnSimStop.anchor = GridBagConstraints.WEST;
-			
-			GridBagConstraints gbcJCheckBoxImmStartLoadRecording = new GridBagConstraints();
-			gbcJCheckBoxImmStartLoadRecording.gridx = 0;
-			gbcJCheckBoxImmStartLoadRecording.gridy = 5;
-			gbcJCheckBoxImmStartLoadRecording.insets = new Insets(5, 10, 5, 0);
-			gbcJCheckBoxImmStartLoadRecording.anchor = GridBagConstraints.WEST;
+			GridBagConstraints gbcJCheckBoxAutosaveThreadMetricsOnSimStop = new GridBagConstraints();
+			gbcJCheckBoxAutosaveThreadMetricsOnSimStop.gridx = 0;
+			gbcJCheckBoxAutosaveThreadMetricsOnSimStop.gridy = 3;
+			gbcJCheckBoxAutosaveThreadMetricsOnSimStop.insets = new Insets(5, 10, 5, 0);
+			gbcJCheckBoxAutosaveThreadMetricsOnSimStop.anchor = GridBagConstraints.WEST;
 			
 			GridBagConstraints gbc_jSeparator02 = new GridBagConstraints();
 			gbc_jSeparator02.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jSeparator02.insets = new Insets(0, 10, 5, 100);
 			gbc_jSeparator02.gridx = 0;
-			gbc_jSeparator02.gridy = 7;
+			gbc_jSeparator02.gridy = 4;
+			
+			GridBagConstraints gbcJCheckBoxShowLoadMonitor = new GridBagConstraints();
+			gbcJCheckBoxShowLoadMonitor.gridx = 0;
+			gbcJCheckBoxShowLoadMonitor.gridy = 5;
+			gbcJCheckBoxShowLoadMonitor.insets = new Insets(10, 10, 5, 0);
+			gbcJCheckBoxShowLoadMonitor.anchor = GridBagConstraints.WEST;
+			GridBagConstraints gbcJCheckBoxImmStartLoadRecording = new GridBagConstraints();
+			gbcJCheckBoxImmStartLoadRecording.gridx = 0;
+			gbcJCheckBoxImmStartLoadRecording.gridy = 6;
+			gbcJCheckBoxImmStartLoadRecording.insets = new Insets(5, 10, 5, 0);
+			gbcJCheckBoxImmStartLoadRecording.anchor = GridBagConstraints.WEST;
+			GridBagConstraints gbcJPanelRecording = new GridBagConstraints();
+			gbcJPanelRecording.gridx = 0;
+			gbcJPanelRecording.gridy = 7;
+			gbcJPanelRecording.insets = new Insets(0, 32, 5, 10);
+			gbcJPanelRecording.anchor = GridBagConstraints.NORTHWEST;
+			
+			GridBagConstraints gbc_jSeparator03 = new GridBagConstraints();
+			gbc_jSeparator03.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jSeparator03.insets = new Insets(0, 10, 5, 100);
+			gbc_jSeparator03.gridx = 0;
+			gbc_jSeparator03.gridy = 8;
 
 			GridBagConstraints gbcJCheckBoxStatic = new GridBagConstraints();
 			gbcJCheckBoxStatic.gridx = 0;
-			gbcJCheckBoxStatic.gridy = 8;
+			gbcJCheckBoxStatic.gridy = 11;
 			gbcJCheckBoxStatic.anchor = GridBagConstraints.WEST;
 			gbcJCheckBoxStatic.insets = new Insets(10, 10, 5, 0);
+			
+			GridBagConstraints gbcJPanelStaticClass = new GridBagConstraints();
+			gbcJPanelStaticClass.gridx = 0;
+			gbcJPanelStaticClass.gridy = 12;
+			gbcJPanelStaticClass.anchor = GridBagConstraints.NORTHWEST;
+			gbcJPanelStaticClass.insets = new Insets(5, 32, 5, 0);
+			
 			GridBagConstraints gbcJPanelStatic = new GridBagConstraints();
 			gbcJPanelStatic.gridx = 0;
-			gbcJPanelStatic.gridy = 9;
+			gbcJPanelStatic.gridy = 13;
 			gbcJPanelStatic.fill = GridBagConstraints.NONE;
 			gbcJPanelStatic.weightx = 1.0;
 			gbcJPanelStatic.insets = new Insets(5, 32, 5, 10);
 			gbcJPanelStatic.anchor = GridBagConstraints.NORTHWEST;
-			GridBagConstraints gbcJPanelStaticClass = new GridBagConstraints();
-			gbcJPanelStaticClass.gridx = 0;
-			gbcJPanelStaticClass.gridy = 10;
-			gbcJPanelStaticClass.anchor = GridBagConstraints.NORTHWEST;
-			gbcJPanelStaticClass.insets = new Insets(5, 32, 5, 0);
+			
+			
+			GridBagConstraints gbc_jSeparator04 = new GridBagConstraints();
+			gbc_jSeparator04.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jSeparator04.insets = new Insets(0, 10, 5, 100);
+			gbc_jSeparator04.gridx = 0;
+			gbc_jSeparator04.gridy = 14;
+			
 			GridBagConstraints gbcJCheckBoxDynamic = new GridBagConstraints();
 			gbcJCheckBoxDynamic.gridx = 0;
-			gbcJCheckBoxDynamic.gridy = 11;
+			gbcJCheckBoxDynamic.gridy = 15;
 			gbcJCheckBoxDynamic.anchor = GridBagConstraints.WEST;
 			gbcJCheckBoxDynamic.insets = new Insets(10, 10, 5, 0);
 			GridBagConstraints gbcJPanelDynamic = new GridBagConstraints();
 			gbcJPanelDynamic.gridx = 0;
-			gbcJPanelDynamic.gridy = 12;
+			gbcJPanelDynamic.gridy = 16;
 			gbcJPanelDynamic.fill = GridBagConstraints.NONE;
 			gbcJPanelDynamic.weightx = 0.0;
 			gbcJPanelDynamic.insets = new Insets(5, 32, 5, 10);
 			gbcJPanelDynamic.anchor = GridBagConstraints.WEST;
+			
+			GridBagConstraints gbc_jSeparator05 = new GridBagConstraints();
+			gbc_jSeparator05.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jSeparator05.insets = new Insets(0, 10, 5, 100);
+			gbc_jSeparator05.gridx = 0;
+			gbc_jSeparator05.gridy = 17;
+			
 			GridBagConstraints gbcJCheckBoxThreshold = new GridBagConstraints();
 			gbcJCheckBoxThreshold.gridx = 0;
-			gbcJCheckBoxThreshold.gridy = 13;
+			gbcJCheckBoxThreshold.gridy = 18;
 			gbcJCheckBoxThreshold.insets = new Insets(10, 10, 5, 0);
 			gbcJCheckBoxThreshold.anchor = GridBagConstraints.WEST;
 			GridBagConstraints gbcJPanelThreshold = new GridBagConstraints();
 			gbcJPanelThreshold.gridx = 0;
-			gbcJPanelThreshold.gridy = 14;
+			gbcJPanelThreshold.gridy = 19;
 			gbcJPanelThreshold.insets = new Insets(5, 32, 5, 10);
 			gbcJPanelThreshold.anchor = GridBagConstraints.WEST;
 			gbcJPanelThreshold.fill = GridBagConstraints.NONE;
 			GridBagConstraints gridBagConstraintsDummy = new GridBagConstraints();
 			gridBagConstraintsDummy.gridx = 0;
-			gridBagConstraintsDummy.gridy = 15;
+			gridBagConstraintsDummy.gridy = 20;
 			gridBagConstraintsDummy.fill = GridBagConstraints.NONE;
 			gridBagConstraintsDummy.weighty = 1.0;
 			gridBagConstraintsDummy.insets = new Insets(10, 10, 10, 10);
@@ -339,25 +370,21 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jPanelOnScrollPane.setLayout(gbl_jPanelOnScrollPane);
 			jPanelOnScrollPane.add(getJPanelRemoteConfig(), gbcJPanelRemoteConfig);
 			jPanelOnScrollPane.add(getJSeparator01(), gbc_jSeparator01);
-			
 			jPanelOnScrollPane.add(getJCheckBoxShowLoadMonitor(), gbcJCheckBoxShowLoadMonitor);
 			jPanelOnScrollPane.add(getJCheckBoxShowThreadMonitor(), gbcJCheckBoxShowThreadMonitor);
-			jPanelOnScrollPane.add(getJCheckboxAutosaveRealMetricsOnSimStop(), gbcJCheckBoxAutosaveRealMetricsOnSimStop);
-			jPanelOnScrollPane.add(getJCheckBoxImmediatelyStartLoadRecording(), gbcJCheckBoxImmStartLoadRecording);
-			GridBagConstraints gbcJPanelRecording = new GridBagConstraints();
-			gbcJPanelRecording.gridx = 0;
-			gbcJPanelRecording.gridy = 6;
-			gbcJPanelRecording.insets = new Insets(0, 32, 5, 10);
-			gbcJPanelRecording.anchor = GridBagConstraints.NORTHWEST;
-			jPanelOnScrollPane.add(getJPanelRecording(), gbcJPanelRecording);
+			jPanelOnScrollPane.add(getJCheckboxAutosaveRealMetricsOnSimStop(), gbcJCheckBoxAutosaveThreadMetricsOnSimStop);
 			jPanelOnScrollPane.add(getJSeparator02(), gbc_jSeparator02);
-			
+			jPanelOnScrollPane.add(getJCheckBoxImmediatelyStartLoadRecording(), gbcJCheckBoxImmStartLoadRecording);
+			jPanelOnScrollPane.add(getJPanelRecording(), gbcJPanelRecording);
+			jPanelOnScrollPane.add(getJSeparator03(), gbc_jSeparator03);
 			jPanelOnScrollPane.add(getJCheckBoxDoLoadStatic(), gbcJCheckBoxStatic);
 			jPanelOnScrollPane.add(getJPanelStatic(), gbcJPanelStatic);
 			jPanelOnScrollPane.add(getJPanelStaticClass(), gbcJPanelStaticClass);
 			jPanelOnScrollPane.add(getJCheckBoxDoLoadDynamic(), gbcJCheckBoxDynamic);
+			jPanelOnScrollPane.add(getJSeparator04(), gbc_jSeparator04);
 			jPanelOnScrollPane.add(getJPanelDynamic(), gbcJPanelDynamic);
 			jPanelOnScrollPane.add(getJCheckBoxThresholdDefinition(), gbcJCheckBoxThreshold);
+			jPanelOnScrollPane.add(getJSeparator05(), gbc_jSeparator05);
 			jPanelOnScrollPane.add(getJPanelThreshold(), gbcJPanelThreshold);
 			jPanelOnScrollPane.add(getJPanelDummy(), gridBagConstraintsDummy);
 		}
@@ -382,6 +409,39 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jSeparator02 = new JSeparator();
 		}
 		return jSeparator02;
+	}
+	
+	/**
+	 * Gets the j separator03.
+	 * @return the j separator03
+	 */
+	private JSeparator getJSeparator03() {
+		if (jSeparator03 == null) {
+			jSeparator03 = new JSeparator();
+		}
+		return jSeparator03;
+	}
+	
+	/**
+	 * Gets the j separator04.
+	 * @return the j separator04
+	 */
+	private JSeparator getJSeparator04() {
+		if (jSeparator04 == null) {
+			jSeparator04 = new JSeparator();
+		}
+		return jSeparator04;
+	}
+	
+	/**
+	 * Gets the j separator05.
+	 * @return the j separator05
+	 */
+	private JSeparator getJSeparator05() {
+		if (jSeparator05 == null) {
+			jSeparator05 = new JSeparator();
+		}
+		return jSeparator05;
 	}
 
 	/**
@@ -445,20 +505,6 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			gridBagConstraints37.gridy = 3;
 			gridBagConstraints37.weightx = 0.0;
 			gridBagConstraints37.insets = new Insets(8, 0, 0, 0);
-			GridBagConstraints gridBagConstraints40 = new GridBagConstraints();
-			gridBagConstraints40.anchor = GridBagConstraints.WEST;
-			gridBagConstraints40.gridwidth = 5;
-			gridBagConstraints40.gridx = 0;
-			gridBagConstraints40.gridy = 1;
-			gridBagConstraints40.weightx = 0.0;
-			gridBagConstraints40.insets = new Insets(8, 0, 0, 0);
-			GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
-			gridBagConstraints41.anchor = GridBagConstraints.WEST;
-			gridBagConstraints41.gridwidth = 5;
-			gridBagConstraints41.gridx = 0;
-			gridBagConstraints41.gridy = 2;
-			gridBagConstraints41.weightx = 0.0;
-			gridBagConstraints41.insets = new Insets(8, 0, 0, 0);
 			
 			jLabelDummy = new JLabel();
 			jLabelDummy.setText(" ");
@@ -472,9 +518,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			
 			jPanelRemoteConfig = new JPanel();
 			jPanelRemoteConfig.setLayout(new GridBagLayout());
-			jPanelRemoteConfig.add(getJCheckBoxPreventUsageOfUsedComputers(), gridBagConstraints38);
-			jPanelRemoteConfig.add(getJCheckBoxIsRemoteOnly(), gridBagConstraints40);
-			jPanelRemoteConfig.add(getJCheckBoxIsEvenDistribution(), gridBagConstraints41);			
+			jPanelRemoteConfig.add(getJCheckBoxPreventUsageOfUsedComputers(), gridBagConstraints38);		
 			jPanelRemoteConfig.add(getJCheckBoxShowRMA(), gridBagConstraints37);
 			jPanelRemoteConfig.add(getJButtonRemoteDefault(), gridBagConstraints36);
 			jPanelRemoteConfig.add(jLabelMemoryAlloc, gridBagConstraints33);
@@ -631,6 +675,12 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		String maximumMemory = (String) getJComboBoxJVMMemoryMaximum().getSelectedItem();
 		int initMem = Integer.parseInt(initialMemory.replaceAll("[a-zA-Z]", ""));
 		int maxiMem = Integer.parseInt(maximumMemory.replaceAll("[a-zA-Z]", ""));
+		if(initialMemory.contains("g")){
+			initMem = initMem*1024;
+		}
+		if(maximumMemory.contains("g")){
+			maxiMem = maxiMem*1024;
+		}
 		
 		if (initMem>=maxiMem) {
 			combo.hidePopup();
@@ -681,23 +731,23 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			gridBagConstraints27.anchor = GridBagConstraints.CENTER;
 			gridBagConstraints27.insets = new Insets(5, 5, 0, 0);
 			gridBagConstraints27.fill = GridBagConstraints.NONE;
-			gridBagConstraints27.gridy = 1;
+			gridBagConstraints27.gridy = 3;
 			jLabelCalculation = new JLabel();
 			jLabelCalculation.setText("");
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
-			gridBagConstraints10.gridx = 2;
+			gridBagConstraints10.gridx = 3;
 			gridBagConstraints10.insets = new Insets(0, 5, 5, 0);
-			gridBagConstraints10.gridy = 0;
+			gridBagConstraints10.gridy = 2;
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
 			gridBagConstraints9.gridx = 0;
 			gridBagConstraints9.anchor = GridBagConstraints.WEST;
 			gridBagConstraints9.insets = new Insets(5, 0, 0, 5);
-			gridBagConstraints9.gridy = 1;
+			gridBagConstraints9.gridy = 3;
 			jLabelContainerExpected = new JLabel();
 			jLabelContainerExpected.setText("Anzahl Container");
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
 			gridBagConstraints8.fill = GridBagConstraints.VERTICAL;
-			gridBagConstraints8.gridy = 1;
+			gridBagConstraints8.gridy = 3;
 			gridBagConstraints8.weightx = 1.0;
 			gridBagConstraints8.anchor = GridBagConstraints.WEST;
 			gridBagConstraints8.insets = new Insets(5, 10, 0, 5);
@@ -707,15 +757,35 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			gridBagConstraints7.gridx = 0;
 			gridBagConstraints7.anchor = GridBagConstraints.WEST;
 			gridBagConstraints7.fill = GridBagConstraints.NONE;
-			gridBagConstraints7.gridy = 0;
+			gridBagConstraints7.gridy = 2;
 			jLabelAgentsExpected = new JLabel();
 			jLabelAgentsExpected.setText("Anzahl Agenten (erwartet)");
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.fill = GridBagConstraints.NONE;
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
 			gridBagConstraints6.gridx = 1;
+			gridBagConstraints6.gridy = 2;
 			gridBagConstraints6.insets = new Insets(0, 10, 5, 5);
 			gridBagConstraints6.weightx = 1.0;
+			
+			GridBagConstraints gridBagConstraints40 = new GridBagConstraints();
+			gridBagConstraints40.fill = GridBagConstraints.WEST;
+			gridBagConstraints40.anchor = GridBagConstraints.WEST;
+//			gridBagConstraints40.gridwidth = 5;
+			gridBagConstraints40.gridx = 0;
+			gridBagConstraints40.gridy = 0;
+			gridBagConstraints40.weightx = 0.0;
+			gridBagConstraints40.insets = new Insets(8, 0, 5, 5);
+			
+			GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
+			gridBagConstraints41.fill = GridBagConstraints.WEST;
+			gridBagConstraints41.anchor = GridBagConstraints.WEST;
+//			gridBagConstraints41.gridwidth = 5;
+			gridBagConstraints41.gridx = 0;
+			gridBagConstraints41.gridy = 1;
+			gridBagConstraints41.weightx = 0.0;
+			gridBagConstraints41.insets = new Insets(8, 0, 5, 5);
+			
 			jPanelStatic = new JPanel();
 			jPanelStatic.setLayout(new GridBagLayout());
 //			jPanelStatic.setPreferredSize(new Dimension(500, 57));
@@ -725,6 +795,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jPanelStatic.add(jLabelContainerExpected, gridBagConstraints9);
 			jPanelStatic.add(getJButtonCalcContainer(), gridBagConstraints10);
 			jPanelStatic.add(jLabelCalculation, gridBagConstraints27);
+			jPanelStatic.add(getJCheckBoxIsRemoteOnly(), gridBagConstraints40);
+			jPanelStatic.add(getJCheckBoxIsEvenDistribution(), gridBagConstraints41);	
 		}
 		return jPanelStatic;
 	}
@@ -776,6 +848,45 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			jTextFieldStaticLoadClass = new JTextField();
 			jTextFieldStaticLoadClass.setPreferredSize(new Dimension(400, 26));
 			jTextFieldStaticLoadClass.setEditable(false);
+			jTextFieldStaticLoadClass.getDocument().addDocumentListener(new DocumentListener(){
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					checkBalancingMethod();
+				}
+			  	@Override
+			  	public void removeUpdate(DocumentEvent e) {
+//			  		checkBalancingMethod();
+				}
+			  	@Override
+			  	public void insertUpdate(DocumentEvent e) {
+					 checkBalancingMethod();
+				}
+	
+			  	public void checkBalancingMethod() {
+			  		if(jTextFieldStaticLoadClass.getText().equals("agentgui.simulationService.balancing.StaticLoadBalancing")){
+			  			getJTextFieldAgentsExpected().setVisible(true);
+			  			jLabelAgentsExpected.setVisible(true);
+			  			getJTextFieldContainerExpected().setVisible(true);
+			  			jLabelContainerExpected.setVisible(true);
+			  			getJButtonCalcContainer().setVisible(true);
+			  			jLabelCalculation.setVisible(true);
+			  			getJCheckBoxIsRemoteOnly().setVisible(true);
+			  			getJCheckBoxIsEvenDistribution().setVisible(false);
+			  			
+			  			
+			  		}else if(jTextFieldStaticLoadClass.getText().equals("agentgui.simulationService.balancing.PredictiveStaticLoadBalancing")){
+			  			getJTextFieldAgentsExpected().setVisible(false);
+			  			jLabelAgentsExpected.setVisible(false);
+			  			getJTextFieldContainerExpected().setVisible(false);
+			  			jLabelContainerExpected.setVisible(false);
+			  			getJButtonCalcContainer().setVisible(false);
+			  			jLabelCalculation.setVisible(false);
+			  			getJCheckBoxIsRemoteOnly().setVisible(true);
+			  			getJCheckBoxPreventUsageOfUsedComputers().setSelected(true);
+			  			getJCheckBoxIsEvenDistribution().setVisible(true);
+			  		}
+			  	}
+			});
 		}
 		return jTextFieldStaticLoadClass;
 	}
@@ -1220,7 +1331,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JCheckBox getJCheckboxAutosaveRealMetricsOnSimStop() {
 		if (jCheckboxAutosaveRealMetricsOnSimStop == null) {
 			jCheckboxAutosaveRealMetricsOnSimStop = new JCheckBox();
-			jCheckboxAutosaveRealMetricsOnSimStop.setText("Metriken bei Simulationsstop aktualisieren");
+			jCheckboxAutosaveRealMetricsOnSimStop.setText("Metriken der Agenten bei Simulationsstop aktualisieren");
 			jCheckboxAutosaveRealMetricsOnSimStop.setFont(new Font("Dialog", Font.BOLD, 12));
 			jCheckboxAutosaveRealMetricsOnSimStop.addActionListener(this);
 		}

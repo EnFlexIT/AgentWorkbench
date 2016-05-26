@@ -63,18 +63,19 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- * The Class ThreadInfoSorageScrollPane.
+ * The Class ThreadInfoStorageScrollPane.
  * 
  * Displays a JPanel with Chart of multiple Series and display/filtering options.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadInfoSorageScrollPane extends JPanel implements ActionListener{
+public class ThreadInfoStorageScrollPane extends JPanel implements ActionListener{
 	
 	/**
      * The Constant DEFAULT_CHART_COLORS defines
      * a set of standard colors for charts.
      */
+//    public static final Color[] DEFAULT_CHART_COLORS = agentgui.core.charts.DataModel.DEFAULT_COLORS;
     public static final Color[] DEFAULT_CHART_COLORS = {
     	new Color(0, 80, 80),
     	new Color(255, 80, 80),
@@ -90,7 +91,7 @@ public class ThreadInfoSorageScrollPane extends JPanel implements ActionListener
         new Color(91, 155, 213),
         new Color(165, 165, 165)
     };
-	
+    
 	private static final long serialVersionUID = 1L;
 	
 	/** The plot. */
@@ -188,7 +189,7 @@ public class ThreadInfoSorageScrollPane extends JPanel implements ActionListener
 	 * @param popup the popup
 	 * @param frameTitle the frame title
 	 */
-	public ThreadInfoSorageScrollPane(XYSeriesCollection deltaCollection, XYSeriesCollection totalCollection, XYSeriesCollection loadCollection, boolean popup, String frameTitle) {		
+	public ThreadInfoStorageScrollPane(XYSeriesCollection deltaCollection, XYSeriesCollection totalCollection, XYSeriesCollection loadCollection, boolean popup, String frameTitle) {		
 		super();
 		this.showDelta = true;
 		this.showTotal = true;
@@ -219,8 +220,8 @@ public class ThreadInfoSorageScrollPane extends JPanel implements ActionListener
 		}
 		
 		
-		pattern = new float[][]{{10.0f},{10.0f,10.0f},{10.0f,10.0f,2.0f,10.0f},{1.0f,10.0f}};
-		stroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_MITER, 10.0f, pattern[3], 0.0f);
+		pattern = new float[][]{{10.0f},{10.0f,10.0f},{10.0f,10.0f,2.0f,10.0f},{3.0f,3.0f,3.0f}};
+		stroke = new BasicStroke(1.0f, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_MITER, 10.0f, pattern[3], 0.0f);
 		String seriesKey;
 		Color color = Color.BLACK;
 		
@@ -443,7 +444,7 @@ public class ThreadInfoSorageScrollPane extends JPanel implements ActionListener
 			//---nothing to do ---
 		}else if (ae.getSource() == getBtnExportCSV()){
 			
-			int userSelection = getFileChooser().showSaveDialog(ThreadInfoSorageScrollPane.this);
+			int userSelection = getFileChooser().showSaveDialog(ThreadInfoStorageScrollPane.this);
 			 
 			if (userSelection == JFileChooser.APPROVE_OPTION) {
 			    File fileToSave = fileChooser.getSelectedFile();
@@ -485,11 +486,11 @@ public class ThreadInfoSorageScrollPane extends JPanel implements ActionListener
 		
 		for(int x=0;x<totalCollection.getSeries().size(); x++){
 			condition = (totalCollection.getSeries(x).getKey().toString().contains("SYSTEM") && showSystemTime  && showTotal) || (totalCollection.getSeries(x).getKey().toString().contains("USER") && showUserTime && showTotal);
-			rendererTotal.setSeriesLinesVisible(x, condition);
+			rendererTotal.setSeriesVisible(x, condition);
 		}
 		for(int x=0;x<deltaCollection.getSeries().size(); x++){
 			condition = (deltaCollection.getSeries(x).getKey().toString().contains("SYSTEM") && showSystemTime  && showDelta) || (deltaCollection.getSeries(x).getKey().toString().contains("USER") && showUserTime && showDelta);
-			rendererDelta.setSeriesLinesVisible(x, condition);
+			rendererDelta.setSeriesVisible(x, condition);
 		}
 		//--- hide or show legend ---
 		chart.getLegend().setVisible(showLegend);

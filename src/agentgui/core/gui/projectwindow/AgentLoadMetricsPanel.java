@@ -39,7 +39,7 @@ import java.util.Vector;
 import javax.swing.JPanel;
 
 import agentgui.core.application.Language;
-import agentgui.core.project.AgentClassLoadMetrics;
+import agentgui.core.project.AgentClassLoadMetricsTable;
 import agentgui.core.project.AgentClassMetricDescription;
 import agentgui.core.project.Project;
 
@@ -48,6 +48,8 @@ import java.awt.GridBagLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Font;
 import java.awt.Insets;
@@ -55,6 +57,7 @@ import java.awt.Insets;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.event.TableModelEvent;
@@ -63,7 +66,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
- * The Class AgentClassLoadMetrics displays the configuration of the 
+ * The Class AgentClassLoadMetricsTable displays the configuration of the 
  * {@link AgentLoadMetricsPanel}.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg - Essen
@@ -80,8 +83,14 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 	private JRadioButton jRadioButtonReal;
 	private JScrollPane jScrollPaneMetric;
 	private JLabel jLabelHeaderMetrics;
+	private JTextArea jTextAreaMetricExplanation;
 	private JTable jTableMetrics;
 	
+	private String metricExplanationString = "Metrik: Äquivalent für die Leistungsfähigkeit einer Maschine, die durch den Thread vollständig ausgelastet würde.[Einheit:MFLOPs, Wert:0-200]";
+	private String headerMetricsString = "Metrik-Konfiguration"; 
+	private String labelPredictiveString = "Verteilung der Agenten bei \"PredictiveStaticLoadBalancing\" basierend auf:";
+	private String buttonRealString = "Empirisch ermittelte, reale Metrik";
+	private String buttonPredictiveString = "Manuell eingegebene, vorhergesagte Metrik";
 	/**
 	 * Instantiates a new agent load metrics.
 	 * @param currProject the curr project
@@ -107,55 +116,70 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		GridBagConstraints gbc_jLabelPrdictive = new GridBagConstraints();
-		gbc_jLabelPrdictive.anchor = GridBagConstraints.WEST;
-		gbc_jLabelPrdictive.insets = new Insets(10, 10, 5, 0);
-		gbc_jLabelPrdictive.gridx = 0;
-		gbc_jLabelPrdictive.gridy = 0;
-		add(getJLabelPredictive(), gbc_jLabelPrdictive);
+		
+		GridBagConstraints gbc_jLabelMetricExplanation = new GridBagConstraints();
+		gbc_jLabelMetricExplanation.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jLabelMetricExplanation.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jLabelMetricExplanation.insets = new Insets(10, 10, 5, 0);
+		gbc_jLabelMetricExplanation.gridx = 0;
+		gbc_jLabelMetricExplanation.gridy = 0;
+		this.add(getJTextAreaMetricExplanation(), gbc_jLabelMetricExplanation);
+		
+		GridBagConstraints gbc_jLabelPredictive = new GridBagConstraints();
+		gbc_jLabelPredictive.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jLabelPredictive.insets = new Insets(10, 10, 5, 0);
+		gbc_jLabelPredictive.gridx = 0;
+		gbc_jLabelPredictive.gridy = 1;
+		this.add(getJLabelPredictive(), gbc_jLabelPredictive);
+		
 		GridBagConstraints gbc_jRadioButtonPredictive = new GridBagConstraints();
 		gbc_jRadioButtonPredictive.insets = new Insets(5, 10, 5, 0);
-		gbc_jRadioButtonPredictive.anchor = GridBagConstraints.WEST;
+		gbc_jRadioButtonPredictive.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jRadioButtonPredictive.gridx = 0;
-		gbc_jRadioButtonPredictive.gridy = 1;
-		add(getJRadioButtonPredictive(), gbc_jRadioButtonPredictive);
+		gbc_jRadioButtonPredictive.gridy = 2;
+		this.add(getJRadioButtonPredictive(), gbc_jRadioButtonPredictive);
+		
 		GridBagConstraints gbc_jRadioButtonReal = new GridBagConstraints();
 		gbc_jRadioButtonReal.insets = new Insets(0, 10, 5, 0);
-		gbc_jRadioButtonReal.anchor = GridBagConstraints.WEST;
+		gbc_jRadioButtonReal.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jRadioButtonReal.gridx = 0;
-		gbc_jRadioButtonReal.gridy = 2;
-		add(getJRadioButtonReal(), gbc_jRadioButtonReal);
+		gbc_jRadioButtonReal.gridy = 3;
+		this.add(getJRadioButtonReal(), gbc_jRadioButtonReal);
+		
 		GridBagConstraints gbc_jLabelHeaderMetrics = new GridBagConstraints();
-		gbc_jLabelHeaderMetrics.anchor = GridBagConstraints.WEST;
-		gbc_jLabelHeaderMetrics.insets = new Insets(10, 10, 0, 0);
+		gbc_jLabelHeaderMetrics.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jLabelHeaderMetrics.insets = new Insets(10, 10, 10, 0);
 		gbc_jLabelHeaderMetrics.gridx = 0;
-		gbc_jLabelHeaderMetrics.gridy = 3;
-		add(getJLabelHeaderMetrics(), gbc_jLabelHeaderMetrics);
+		gbc_jLabelHeaderMetrics.gridy = 4;
+		this.add(getJLabelHeaderMetrics(), gbc_jLabelHeaderMetrics);
+		
 		GridBagConstraints gbc_jScrollPaneMetric = new GridBagConstraints();
 		gbc_jScrollPaneMetric.insets = new Insets(5, 10, 10, 10);
+		gbc_jScrollPaneMetric.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jScrollPaneMetric.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneMetric.gridx = 0;
-		gbc_jScrollPaneMetric.gridy = 4;
-		add(getJScrollPaneMetric(), gbc_jScrollPaneMetric);
+		gbc_jScrollPaneMetric.gridy = 5;
+		this.add(getJScrollPaneMetric(), gbc_jScrollPaneMetric);
 		
-		jRadioButtonPredictive.setText(Language.translate("Manuelle, vorhergesagte Metrik"));
-		jRadioButtonReal.setText(Language.translate("Empirische, reale Metrik"));
-		jLabelPredictive.setText(Language.translate("Verteilung basierend auf:"));
-		jLabelHeaderMetrics.setText(Language.translate("Metrik-Konfiguration"));
+		getJRadioButtonPredictive().setText(Language.translate(buttonPredictiveString));
+		getJRadioButtonReal().setText(Language.translate(buttonRealString));
+		getJLabelPredictive().setText(Language.translate(labelPredictiveString));
+		getJLabelHeaderMetrics().setText(Language.translate(headerMetricsString));
+		getJTextAreaMetricExplanation().setText(Language.translate(metricExplanationString));
 		
 		loadMetricsFromProject();
 	}
 	
 	private JLabel getJLabelPredictive() {
 		if (jLabelPredictive == null) {
-			jLabelPredictive = new JLabel("Verteilung basierend auf:");
+			jLabelPredictive = new JLabel(labelPredictiveString);
 			jLabelPredictive.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelPredictive;
 	}
 	private JRadioButton getJRadioButtonPredictive() {
 		if (jRadioButtonPredictive == null) {
-			jRadioButtonPredictive = new JRadioButton("Manuelle, vorhergesagte Metrik");
+			jRadioButtonPredictive = new JRadioButton(buttonPredictiveString);
 			jRadioButtonPredictive.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jRadioButtonPredictive.addActionListener(this);
 		}
@@ -163,7 +187,7 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 	}
 	private JRadioButton getJRadioButtonReal() {
 		if (jRadioButtonReal == null) {
-			jRadioButtonReal = new JRadioButton("Empirische, reale Metrik");
+			jRadioButtonReal = new JRadioButton(buttonRealString);
 			jRadioButtonReal.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jRadioButtonReal.addActionListener(this);
 		}
@@ -173,16 +197,34 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 		if (jScrollPaneMetric == null) {
 			jScrollPaneMetric = new JScrollPane();
 			jScrollPaneMetric.setViewportView(getJTableMetrics());
+			jScrollPaneMetric.setMinimumSize(new Dimension(300, 300));
 		}
 		return jScrollPaneMetric;
 	}
 	private JLabel getJLabelHeaderMetrics() {
 		if (jLabelHeaderMetrics == null) {
-			jLabelHeaderMetrics = new JLabel("Metrik-Konfiguration");
+			jLabelHeaderMetrics = new JLabel(headerMetricsString);
 			jLabelHeaderMetrics.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelHeaderMetrics;
 	}
+	
+	private JTextArea getJTextAreaMetricExplanation() {
+		if (jTextAreaMetricExplanation == null) {
+			jTextAreaMetricExplanation = new JTextArea(metricExplanationString);
+			jTextAreaMetricExplanation.setFont(new Font("Dialog", Font.BOLD, 12));
+			jTextAreaMetricExplanation.setWrapStyleWord(true);
+			jTextAreaMetricExplanation.setLineWrap(true);
+			jTextAreaMetricExplanation.setOpaque(false);
+			jTextAreaMetricExplanation.setEditable(false);
+			jTextAreaMetricExplanation.setFocusable(false);
+			jTextAreaMetricExplanation.setMinimumSize(new Dimension(600, 30));
+			jTextAreaMetricExplanation.setBackground(new Color(214,217,223));
+			jTextAreaMetricExplanation.setBorder(null);
+		}
+		return jTextAreaMetricExplanation;
+	}
+	
 	private JTable getJTableMetrics() {
 		if (jTableMetrics == null) {
 			jTableMetrics = new JTable(this.currProject.getAgentClassLoadMetrics().getTableModel());
@@ -213,22 +255,6 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 							
 							currProject.save();
 						}
-						
-//						for(int i = 0; i < agentClassMetricDescriptionVector.size(); i++){
-//							if(agentClassMetricDescriptionVector.get(i).getClassName().equals(className.toString())){
-//								if(column == 1){
-//									agentClassMetricDescriptionVector.get(i).setUserPredictedMetric((long)data);
-//								}else if(column == 2){
-//									agentClassMetricDescriptionVector.get(i).setRealMetricMin((long)data);
-//								}else if(column == 3){
-//									agentClassMetricDescriptionVector.get(i).setRealMetricMax((long)data);
-//								}else if(column == 4){
-//									agentClassMetricDescriptionVector.get(i).setRealMetricAverage((long)data);
-//								}	
-//								
-//								currProject.save();
-//							}
-//						}
 					}
 					}
 					});
@@ -254,7 +280,7 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 		jRadioButtonReal.setSelected(currProject.getAgentClassLoadMetrics().isUseRealLoadMetric());
 		jRadioButtonPredictive.setSelected(!currProject.getAgentClassLoadMetrics().isUseRealLoadMetric());
 		
-		AgentClassLoadMetrics aclm = currProject.getAgentClassLoadMetrics();
+		AgentClassLoadMetricsTable aclm = currProject.getAgentClassLoadMetrics();
 		aclm.clearTableModel();
 		Vector<AgentClassMetricDescription> agentClassMetricDescriptionVector = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector();
 		

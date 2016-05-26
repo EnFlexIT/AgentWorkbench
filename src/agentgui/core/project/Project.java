@@ -227,8 +227,8 @@ import agentgui.core.webserver.JarFileCreator;
 	private DistributionSetup distributionSetup = new DistributionSetup();
 	
 	/** The agent class load metrics. */
-	@XmlElement(name="agentClassLoadMetrics")
-	private AgentClassLoadMetrics agentClassLoadMetrics;
+	@XmlElement(name="agentClassLoadMetricsTable")
+	private AgentClassLoadMetricsTable agentClassLoadMetricsTable;
 	
 	/**
 	 * This field manages the configuration of remote container if needed
@@ -1370,21 +1370,21 @@ import agentgui.core.webserver.JarFileCreator;
 	 * @return the agent class load metrics
 	 */
 	@XmlTransient
-	public AgentClassLoadMetrics getAgentClassLoadMetrics() {
-		if (agentClassLoadMetrics==null) {
-			agentClassLoadMetrics = new AgentClassLoadMetrics(this);
+	public AgentClassLoadMetricsTable getAgentClassLoadMetrics() {
+		if (agentClassLoadMetricsTable==null) {
+			agentClassLoadMetricsTable = new AgentClassLoadMetricsTable(this);
 		}
-		if (agentClassLoadMetrics.getProject()==null) {
-			agentClassLoadMetrics.setProject(this);
+		if (agentClassLoadMetricsTable.getProject()==null) {
+			agentClassLoadMetricsTable.setProject(this);
 		}
-		return agentClassLoadMetrics;
+		return agentClassLoadMetricsTable;
 	}
 	/**
 	 * Sets the agent load metrics.
-	 * @param agentClassLoadMetrics the new agent load metrics
+	 * @param agentClassLoadMetricsTable the new agent load metrics
 	 */
-	public void setAgentClassLoadMetrics(AgentClassLoadMetrics agentClassLoadMetrics) {
-		this.agentClassLoadMetrics = agentClassLoadMetrics;
+	public void setAgentClassLoadMetrics(AgentClassLoadMetricsTable agentClassLoadMetricsTable) {
+		this.agentClassLoadMetricsTable = agentClassLoadMetricsTable;
 		this.setChangedAndNotify(AGENT_METRIC_Reset);
 	}
 	

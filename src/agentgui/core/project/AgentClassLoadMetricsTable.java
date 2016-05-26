@@ -37,12 +37,12 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * The Class AgentClassLoadMetrics describes the predictive or real measured metrics of the.
+ * The Class AgentClassLoadMetricsTable describes the predictive or real measured metrics of the.
  * agent classes within a project.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AgentClassLoadMetrics implements Serializable {
+public class AgentClassLoadMetricsTable implements Serializable {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2251966049148701116L;
@@ -65,13 +65,13 @@ public class AgentClassLoadMetrics implements Serializable {
 	/**
 	 * Instantiates a new agent class load metrics.
 	 */
-	public AgentClassLoadMetrics() {
+	public AgentClassLoadMetricsTable() {
 	}
 	/**
 	 * Instantiates a new agent load metrics.
 	 * @param currProject the current {@link Project} instance
 	 */
-	public AgentClassLoadMetrics(Project currProject) {
+	public AgentClassLoadMetricsTable(Project currProject) {
 		this.currProject = currProject;
 	}
 	/**
@@ -216,6 +216,14 @@ public class AgentClassLoadMetrics implements Serializable {
 			tableModel = new DefaultTableModel(null, header){
 
 				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					if(column == 1){
+						return true;
+					}
+					return false;
+				}
 
 				/* (non-Javadoc)
 				 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)

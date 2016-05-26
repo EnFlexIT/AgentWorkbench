@@ -113,6 +113,13 @@ de;CPU;CPU
 de;CSV-Datei importieren;Import CSV file;;;
 de;CSV-Dateien;CSV files;;;
 de;CSV-Version des Wörterbuchs übernehmen?;Take over the csv-version of the dictionary?;;;
+de;Calculate metrics based on agent class data.;;;;
+de;Calculate metrics based on delta integrals.;;;;
+de;Calculate metrics based on individual agent data.;;;;
+de;Calculate metrics based on last total system cpu time.;;;;
+de;Calculate metrics based on total integrals.;;;;
+de;Calculate the real metrics based on recorded chart value selection.;;;;
+de;Calculates the real metrics for each agent based on recorded thread times.;;;;
 de;Class not found:;Class not found:
 de;Container;Container
 de;Countdown-Ansicht;Countdown view;;;
@@ -192,7 +199,7 @@ de;Element-Typ;Element type
 de;Element;Element
 de;Embedded System Agent: Bitte wählen Sie den Agenten aus, der gestartet werden soll;Embedded System Agent: Please select the agent that you want to execute;;;
 de;Embedded System Agent;Embedded System Agent;;;
-de;Empirische, reale Metrik;real metric;;;
+de;Empirisch ermittelte, reale Metrik;emperically measured, real metric;;;
 de;Endanwender-Ansicht;End users view
 de;Englisch;English
 de;Entferne Agent;Remove agent
@@ -373,7 +380,7 @@ de;MAS-Stop;MAS-Stop
 de;MAS;MAS
 de;MTP-Adresse;MTP-Address;;;
 de;MTP-Protokoll:;MTP-Protocol:;;;
-de;Manuelle, vorhergesagte Metrik;predictive metric;;;
+de;Manuell eingegebene, vorhergesagte Metrik;manually entered, predictive metric;;;
 de;Maximale Geschwindigkeit;Maximum speed
 de;Maximieren;Maximize;;;
 de;Maßstab festlegen;Set scale
@@ -383,7 +390,8 @@ de;Mess-Agenten starten;Start load measure agent
 de;Messung aufzeichnen;Record measurement
 de;Messungsaufzeichnung beenden;Stop recording measurement
 de;Metrik-Konfiguration;Metrics Configuration;;;
-de;Metriken bei Simulationsstop aktualisieren;Autosave Real Metrics on simulation stop;;;
+de;Metrik: Äquivalent für die Leistungsfähigkeit einer Maschine, die durch den Thread vollständig ausgelastet würde.[Einheit:MFLOPs, Wert:0-200];Metric: Equivalent for the performance of a machine which could be totally utilized by a thread. [unit:MFLOPs, value:0-200];;;
+de;Metriken bei Simulationsstop aktualisieren;Autosave Thread Metrics on simulation stop;;;
 de;Millisekunden;Milliseconds;;;
 de;Minute;Minute;;;
 de;Minuten;Minutes;;;
@@ -625,7 +633,8 @@ de;Vergrößern ...;Expand View ...
 de;Vergrößern;Zoom In
 de;Verkleinern;Zoom out
 de;Verteilung + Grenzwerte;Distribution + Thresholds
-de;Verteilung basierend auf:;Distribution based on:;;;
+de;Verteilung der Agenten basierend auf:;Distribution of agents based on:;;;
+de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;Distribution of agents in "PredictiveStaticLoadBalancing" based on:;;;
 de;Verteilung der Agenten nur auf Remote-Maschinen;Distribution of agents remote only;;;
 de;Verteilung;Distribution
 de;Verzeichnis bereits vorhanden!;Directory already exists!
