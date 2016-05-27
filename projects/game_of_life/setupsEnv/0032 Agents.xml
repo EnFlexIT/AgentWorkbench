@@ -10,11 +10,11 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>1&amp;0</key>
+            <key>3&amp;5</key>
             <value>0</value>
         </entry>
         <entry>
-            <key>3&amp;5</key>
+            <key>1&amp;0</key>
             <value>0</value>
         </entry>
         <entry>
@@ -22,7 +22,7 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>2&amp;5</key>
+            <key>3&amp;7</key>
             <value>0</value>
         </entry>
         <entry>
@@ -30,11 +30,7 @@
             <value>1</value>
         </entry>
         <entry>
-            <key>3&amp;7</key>
-            <value>0</value>
-        </entry>
-        <entry>
-            <key>2&amp;4</key>
+            <key>2&amp;5</key>
             <value>0</value>
         </entry>
         <entry>
@@ -42,7 +38,7 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>2&amp;7</key>
+            <key>2&amp;4</key>
             <value>0</value>
         </entry>
         <entry>
@@ -50,15 +46,27 @@
             <value>1</value>
         </entry>
         <entry>
-            <key>1&amp;3</key>
-            <value>1</value>
+            <key>2&amp;7</key>
+            <value>0</value>
         </entry>
         <entry>
             <key>2&amp;6</key>
             <value>0</value>
         </entry>
         <entry>
+            <key>1&amp;3</key>
+            <value>1</value>
+        </entry>
+        <entry>
+            <key>0&amp;7</key>
+            <value>0</value>
+        </entry>
+        <entry>
             <key>0&amp;3</key>
+            <value>0</value>
+        </entry>
+        <entry>
+            <key>0&amp;6</key>
             <value>0</value>
         </entry>
         <entry>
@@ -79,14 +87,6 @@
         </entry>
         <entry>
             <key>0&amp;0</key>
-            <value>0</value>
-        </entry>
-        <entry>
-            <key>0&amp;7</key>
-            <value>0</value>
-        </entry>
-        <entry>
-            <key>0&amp;6</key>
             <value>0</value>
         </entry>
         <entry>

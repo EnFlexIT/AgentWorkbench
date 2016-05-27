@@ -47,13 +47,16 @@ import jade.core.mobility.AgentMobilityHelper;
 import jade.util.Logger;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 
 import agentgui.core.application.Application;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.project.Project;
+import agentgui.simulationService.agents.AbstractDisplayAgent;
 import agentgui.simulationService.agents.SimulationAgent;
 import agentgui.simulationService.agents.SimulationManagerAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
@@ -112,7 +115,8 @@ public class SimulationService extends BaseService {
 	/** --- The Agent who is the Manager / Controller of the Simulation -------- */
 	private EnvironmentManagerDescription environmentManagerDescription;
 	/** --- Agents which have registered as display agents for the environment - */
-	private Vector<AID> environmentDisplayAgents;
+	private Vector<AbstractDisplayAgent> displayAgents;
+	private HashMap<String, Integer> displayAgentDistribution;
 	
 	/** --- The List of Agents, which are registered to this service ----------- */ 
 	private Hashtable<String, AID> agentList;
@@ -145,10 +149,10 @@ public class SimulationService extends BaseService {
 		this.myContainer = ac;
 		this.myMainContainer = ac.getMain();	
 		// --- Initialise local attributes ----------------  
-		this.environmentDisplayAgents = new Vector<AID>();
+		this.displayAgents = new Vector<AbstractDisplayAgent>();
+		this.displayAgentDistribution = new HashMap<String, Integer>();
 		this.agentList = new Hashtable<String, AID>();
 		this.transactionMap = new TransactionMap();
-		this.getServiceActuator();
 		this.localServiceActuator4Manager = new ServiceActuatorManager();
 		this.environmentInstanceNextParts = new Hashtable<AID, Object>();
 		this.environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
@@ -176,13 +180,15 @@ public class SimulationService extends BaseService {
 	 */
 	@Override
 	public void boot(Profile p) throws ServiceException {
+		this.getServiceActuator();
 	}
 	/* (non-Javadoc)
 	 * @see jade.core.BaseService#shutdown()
 	 */
 	@Override
 	public void shutdown() {
-		this.environmentDisplayAgents = null;
+		this.displayAgents = null;
+		this.displayAgentDistribution = null;
 		this.agentList = null;
 		this.transactionMap = null;
 		this.getServiceActuator().shutdown();
@@ -266,6 +272,7 @@ public class SimulationService extends BaseService {
 				
 		// ----------------------------------------------------------
 		// --- Methods for the synchronised time --------------------
+		// ----------------------------------------------------------
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#getSynchTimeDifferenceMillis()
 		 */
@@ -290,6 +297,7 @@ public class SimulationService extends BaseService {
 		
 		// ----------------------------------------------------------
 		// --- Methods to work on agents ----------------------------
+		// ----------------------------------------------------------
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#setAgentMigration(java.util.Vector)
 		 */
@@ -315,6 +323,7 @@ public class SimulationService extends BaseService {
 		
 		// ----------------------------------------------------------
 		// --- Methods for the Manager-Agent ------------------------
+		// ----------------------------------------------------------
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#setManagerAgent(jade.core.AID)
 		 */
@@ -336,6 +345,7 @@ public class SimulationService extends BaseService {
 		
 		// ----------------------------------------------------------
 		// --- Register, unregister or notify Agents-Sensors --------
+		// ----------------------------------------------------------
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#sensorPlugIn(agentgui.simulationService.sensoring.ServiceSensor)
 		 */
@@ -357,6 +367,7 @@ public class SimulationService extends BaseService {
 		
 		// ----------------------------------------------------------
 		// --- Register, unregister or notify Manager-Sensors -------
+		// ----------------------------------------------------------
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#sensorPlugIn4Manager(agentgui.simulationService.sensoring.ServiceSensorManager)
 		 */
@@ -372,6 +383,7 @@ public class SimulationService extends BaseService {
 
 		// ----------------------------------------------------------
 		// --- Methods for the Simulation ---------------------------
+		// ----------------------------------------------------------
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#getStepSimulationAsynchronous()
 		 */
@@ -445,6 +457,7 @@ public class SimulationService extends BaseService {
 		
 		// ----------------------------------------------------------
 		// --- EnvironmentModel of the next simulation step ---------
+		// ----------------------------------------------------------
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#setEnvironmentInstanceNextPart(jade.core.AID, java.lang.Object)
 		 */
@@ -483,28 +496,26 @@ public class SimulationService extends BaseService {
 		}
 		
 		// ----------------------------------------------------------
-		// --- EnvironmentModel of the next simulation step ---------
+		// --- Methods for the Display Agents -----------------------
+		// ----------------------------------------------------------
 		/* (non-Javadoc)
-		 * @see agentgui.simulationService.SimulationServiceHelper#displayAgentRegister(jade.core.AID)
+		 * @see agentgui.simulationService.SimulationServiceHelper#displayAgentRegister(agentgui.simulationService.agents.AbstractDisplayAgent)
 		 */
 		@Override
-		public void displayAgentRegister(AID displayAgent) throws ServiceException {
-			synchronized (environmentDisplayAgents) {
-				environmentDisplayAgents.add(displayAgent);
+		public void displayAgentRegister(AbstractDisplayAgent displayAgent) throws ServiceException {
+			synchronized (displayAgents) {
+				displayAgents.add(displayAgent);
+				broadcastDisplayAgentContainerUnRegistration(true);
 			}
 		}
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#displayAgentUnregister(jade.core.AID)
 		 */
 		@Override
-		public void displayAgentUnregister(AID displayAgent) throws ServiceException {
-			synchronized (environmentDisplayAgents) {
-				Vector<AID> displayAgents = new Vector<AID>(environmentDisplayAgents);
-				for (AID aid: displayAgents) {
-					if (aid.getLocalName().equals(displayAgent.getLocalName())) {
-						environmentDisplayAgents.remove(aid);
-					}
-				}
+		public void displayAgentUnregister(AbstractDisplayAgent displayAgent) throws ServiceException {
+			synchronized (displayAgents) {
+				displayAgents.remove(displayAgent);
+				broadcastDisplayAgentContainerUnRegistration(false);
 			}
 		}
 		/* (non-Javadoc)
@@ -795,7 +806,7 @@ public class SimulationService extends BaseService {
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Sending notfication to agent '" + agentAID.getLocalName() + "'!");
 		}
-		// --- First try to find the agent locally -------- 
+		// --- First try to find the agent locally ------------------
 		boolean notified = this.getServiceActuator().notifySensorAgent(agentAID, notification);
 		if (notified==true) {
 			// --- Found locally - done! ----------------------------
@@ -944,6 +955,39 @@ public class SimulationService extends BaseService {
 	}
 	
 	/**
+	 * Broadcast that this container is host for a display agent and does the (un-)registration in each container.
+	 *
+	 * @param isRegisterContainer set true, if you want to register the local container as a host for a display agent, otherwise false
+	 * @throws ServiceException the service exception
+	 */
+	private void broadcastDisplayAgentContainerUnRegistration(boolean isRegisterContainer) throws ServiceException {
+		
+		String containerName = this.myContainer.getNodeDescriptor().getName();
+		String action = "Register";
+		if (isRegisterContainer==false) {
+			action = "Unregister";
+		}
+				
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, action + " container as host fo a DisplayAgent!");
+		}
+		Service.Slice[] slices = getAllSlices();
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, action + " container as host fo a DisplayAgent at slice " + sliceName);
+				}
+				slice.doDisplayAgentContainerUnRegister(containerName, isRegisterContainer);
+				
+			} catch(Throwable t) {
+				myLogger.log(Logger.WARNING, "Error while " + action + " container as host fo a DisplayAgent at slice " + sliceName, t);
+			}	
+		}
+	}
+	/**
 	 * Sets a new EnvironmentModel to all registered DisplayAgents.
 	 * @param notification the notification
 	 * @throws ServiceException the service exception
@@ -952,23 +996,27 @@ public class SimulationService extends BaseService {
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Sending EnvironmentModel to DisplayAgents!");
 		}
+		
+		Set<String> displayContainer = displayAgentDistribution.keySet();
 		Service.Slice[] slices = getAllSlices();
 		for (int i = 0; i < slices.length; i++) {
 			String sliceName = null;
 			try {
 				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
 				sliceName = slice.getNode().getName();
-				if (myLogger.isLoggable(Logger.FINER)) {
-					myLogger.log(Logger.FINER, "Sending EnvironmentModel to DisplayAgents over " + sliceName);
+				// --- Only send if a DisplayAgent is known at this node ------
+				if (displayContainer.contains(sliceName)==true) {
+					if (myLogger.isLoggable(Logger.FINER)) {
+						myLogger.log(Logger.FINER, "Sending EnvironmentModel to DisplayAgents at slice " + sliceName);
+					}
+					slice.displayAgentSetEnvironmentModel(envModel);
 				}
-				slice.displayAgentSetEnvironmentModel(envModel);
 				
 			} catch(Throwable t) {
-				myLogger.log(Logger.WARNING, "Error while sending EnvironmentModel to DisplayAgents over slice  " + sliceName, t);
+				myLogger.log(Logger.WARNING, "Error while sending EnvironmentModel to DisplayAgents at slice " + sliceName, t);
 			}	
 		}
 	}
-	
 	/**
 	 * Sends a new Notification to all registered DisplayAgents.
 	 * @param notification the notification
@@ -976,24 +1024,30 @@ public class SimulationService extends BaseService {
 	 */
 	private void broadcastDisplayAgentNotification(EnvironmentNotification notification) throws ServiceException {
 		if (myLogger.isLoggable(Logger.CONFIG)) {
-			myLogger.log(Logger.CONFIG, "Sending Notification to DisplayAgents!");
+			myLogger.log(Logger.CONFIG, "Sending DisplayAgentNotification to DisplayAgents!");
 		}
+		
+		Set<String> displayContainer = displayAgentDistribution.keySet();
 		Service.Slice[] slices = getAllSlices();
 		for (int i = 0; i < slices.length; i++) {
 			String sliceName = null;
 			try {
 				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
 				sliceName = slice.getNode().getName();
-				if (myLogger.isLoggable(Logger.FINER)) {
-					myLogger.log(Logger.FINER, "Sending Notification to DisplayAgents over " + sliceName);
+				// --- Only send if a DisplayAgent is known at this node ------
+				if (displayContainer.contains(sliceName)==true) {
+					if (myLogger.isLoggable(Logger.FINER)) {
+						myLogger.log(Logger.FINER, "Sending display notification to slice " + sliceName);
+					}
+					slice.displayAgentNotification(notification);
 				}
-				slice.displayAgentNotification(notification);
 				
 			} catch(Throwable t) {
-				myLogger.log(Logger.WARNING, "Error while sending Notification to DisplayAgents over slice  " + sliceName, t);
+				myLogger.log(Logger.WARNING, "Error while sending display notification to slice " + sliceName, t);
 			}	
 		}
 	}
+	
 	
 	// --------------------------------------------------------------	
 	// ---- Inner-Class 'ServiceComponent' ---- Start ---------------
@@ -1150,16 +1204,24 @@ public class SimulationService extends BaseService {
 					}
 					setAgentMigration(transferAgents);
 					
+				} else if (cmdName.equals(SimulationServiceSlice.SERVICE_DISPLAY_CONTAINER_UN_REGISTRATION)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Received display container registration");
+					}
+					String containerName = (String) params[0];
+					Boolean isRegisterContainer = (boolean) params[1];
+					doDisplayAgentContainerUnRegister(containerName, isRegisterContainer);
+					
 				} else if (cmdName.equals(SimulationServiceSlice.SERVICE_DISPLAY_AGENT_SET_ENVIRONMENT_MODEL)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Getting EnvironmentModel for DisplayAgents");
+						myLogger.log(Logger.FINE, "Received EnvironmentModel for DisplayAgents");
 					}
 					EnvironmentModel envModel = (EnvironmentModel) params[0];
 					displayAgentSetEnvironmentModel(envModel);
 					
 				} else if (cmdName.equals(SimulationServiceSlice.SERVICE_DISPLAY_AGENT_NOTIFICATION)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Getting EnvironmentModel for DisplayAgents");
+						myLogger.log(Logger.FINE, "Received DisplayAgentNotification");
 					}
 					EnvironmentNotification notification = (EnvironmentNotification) params[0];
 					displayAgentNotification(notification);
@@ -1362,15 +1424,46 @@ public class SimulationService extends BaseService {
 		}
 		
 		/**
+		 * Does the (un-)registration of a container that hosts a dislay agent.
+		 *
+		 * @param containerName the container name
+		 * @param isRegisterContainer the is register container
+		 */
+		private void doDisplayAgentContainerUnRegister(String containerName, boolean isRegisterContainer) {
+
+			Integer noOfDAs = displayAgentDistribution.get(containerName);
+			if (isRegisterContainer==true) {
+				// --------------------------------------------------
+				// --- Register display agent container -------------
+				// --------------------------------------------------
+				if (noOfDAs==null) {
+					displayAgentDistribution.put(containerName, 1);
+				} else {
+					displayAgentDistribution.put(containerName, noOfDAs+1);
+				}
+				
+			} else {
+				// --------------------------------------------------
+				// --- Unregister display agent container -----------
+				// --------------------------------------------------
+				if (noOfDAs!=null) {
+					if (noOfDAs<=1) {
+						displayAgentDistribution.remove(containerName);
+					} else {
+						displayAgentDistribution.put(containerName, noOfDAs-1);
+					}
+				}
+			}
+		}
+		/**
 		 * Sets a new EnvironmentModel to all registered DisplayAgents.
 		 * @param notification the EnvironmentNotification
 		 */
 		public void displayAgentSetEnvironmentModel(EnvironmentModel envModel) {
-			synchronized (environmentDisplayAgents) {
-				if (environmentDisplayAgents!=null) {
-					for (AID aid: environmentDisplayAgents) {
-						ServiceSensor sensor = getServiceActuator().getSensor(aid);
-						sensor.putEnvironmentModel(envModel, stepSimulationAsynchronous);
+			synchronized (displayAgents) {
+				if (displayAgents!=null) {
+					for (AbstractDisplayAgent displayAgent : displayAgents) {
+						getServiceActuator().notifySensor(envModel, displayAgent.getAID());
 					}
 				}
 			}
@@ -1380,12 +1473,9 @@ public class SimulationService extends BaseService {
 		 * @param notification the EnvironmentNotification
 		 */
 		public void displayAgentNotification(EnvironmentNotification notification) {
-			synchronized (environmentDisplayAgents) {
-				if (environmentDisplayAgents!=null) {
-					for (AID aid: environmentDisplayAgents) {
-						ServiceSensor sensor = getServiceActuator().getSensor(aid);
-						sensor.notifyAgent(notification);
-					}
+			synchronized (displayAgents) {
+				for (AbstractDisplayAgent displayAgent : displayAgents) {
+					getServiceActuator().notifySensorAgent(displayAgent.getAID(), notification);
 				}
 			}
 		}

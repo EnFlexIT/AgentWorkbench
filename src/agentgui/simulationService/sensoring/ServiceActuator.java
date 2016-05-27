@@ -61,11 +61,15 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 public class ServiceActuator extends Thread {
 
 	private enum Job {
-		NotifySensors,
-		NotifySensorAgentsDoDelete,
-		NotifySensorPauseSimulation, 
+		NotifySingleSensor,
+		NotifySingleSensorForEnvironmentModel,
+		NotifyAllSensorsForEnvironmentModel,
+		NotifyAllSensorAgentsDoDelete,
+		NotifyAllSensorPauseSimulation, 
 		SetMigration
 	}
+	
+	private Object notificationTrigger;
 	
 	private Vector<ActuatorJob> jobVector;
 	
@@ -75,7 +79,7 @@ public class ServiceActuator extends Thread {
 	private Vector<ServiceSensor> serviceSensorsPassive;
 
 	private ServiceSensor[] serviceSensorArray;
-	private HashMap<String, ServiceSensor> sensorSearchHash;
+	private HashMap<AID, ServiceSensor> sensorSearchHashMap;
 
 	
 	/**
@@ -113,7 +117,11 @@ public class ServiceActuator extends Thread {
 		synchronized (this.getJobVector()) {
 			this.getJobVector().add(actuatorJob);	
 		}
-		this.interrupt();
+		if (this.getState()==Thread.State.WAITING) {
+			synchronized (this.getNotificationTrigger()) {
+				this.getNotificationTrigger().notify();
+			}
+		}
 	}
 	/**
 	 * Removes a job from the local jobVector and returns it as the next job.
@@ -126,6 +134,16 @@ public class ServiceActuator extends Thread {
 			}
 		}
 		return null;
+	}
+	/**
+	 * Gets the notification trigger.
+	 * @return the notification trigger
+	 */
+	private Object getNotificationTrigger() {
+		if (notificationTrigger==null) {
+			notificationTrigger = new Object();
+		}
+		return notificationTrigger;
 	}
 	
 	/* (non-Javadoc)
@@ -146,15 +164,23 @@ public class ServiceActuator extends Thread {
 					Object[] arg = actuatorJob.getArguments();
 					// --- Job case separation ------------
 					switch (job) {
-					case NotifySensors:
+					case NotifySingleSensor:
+						this.notifySensorAgentJob((AID)arg[0], (EnvironmentNotification)arg[1]);
+						break;
+						
+					case NotifySingleSensorForEnvironmentModel:
+						this.notifySensorJob((EnvironmentModel)arg[0], (AID)arg[1]);
+						break;
+					
+					case NotifyAllSensorsForEnvironmentModel:
 						this.notifySensorsJob((EnvironmentModel)arg[0], (Boolean)arg[1]);
 						break;
 
-					case NotifySensorAgentsDoDelete:
+					case NotifyAllSensorAgentsDoDelete:
 						this.notifySensorAgentsDoDeleteJob();
 						break;
 						
-					case NotifySensorPauseSimulation:
+					case NotifyAllSensorPauseSimulation:
 						this.notifySensorPauseSimulationJob((Boolean)arg[0]);
 						break;
 					
@@ -164,10 +190,16 @@ public class ServiceActuator extends Thread {
 					}
 					
 				}
-				Thread.sleep(1000 * 10);
+				
+				if (this.getJobVector().size()==0) {
+					synchronized (this.getNotificationTrigger()) {
+						this.getNotificationTrigger().wait();
+					}
+				}
 				
 			} catch (InterruptedException ie) {
 				// ie.printStackTrace();
+				Thread.interrupted();
 			}
 			
 		} // --- end while ----
@@ -236,15 +268,35 @@ public class ServiceActuator extends Thread {
 	 * @return the ServiceSensor
 	 */
 	public ServiceSensor getSensor(AID aid) {
-		String searchFor = aid.getLocalName();
-		if (this.sensorSearchHash==null || this.sensorSearchHash.size()!=this.getServiceSensorArray().length) {
-			this.sensorSearchHash = new HashMap<String, ServiceSensor>();
-			ServiceSensor[] sensors = this.getServiceSensorArray();
-			for (int i=0; i<sensors.length; i++) {
-				this.sensorSearchHash.put(sensors[i].getServiceSensor().getAID().getLocalName(), sensors[i]);
+		
+		ServiceSensor serviceSensorFound = null;
+		if (this.sensorSearchHashMap==null) {
+			// --- Create the sensor search HashMap -----------------  
+			this.sensorSearchHashMap = this.createServiceSensorHashMap(this.getServiceSensorArray());
+			serviceSensorFound = this.sensorSearchHashMap.get(aid);
+		} else {
+			// --- Try to find the service sensor first -------------
+			serviceSensorFound = this.sensorSearchHashMap.get(aid);
+			if (serviceSensorFound==null && this.sensorSearchHashMap.size()!=this.getServiceSensorArray().length) {
+				// --- Recreate the sensor search HashMap -----------
+				this.sensorSearchHashMap = this.createServiceSensorHashMap(this.getServiceSensorArray());
+				serviceSensorFound = this.sensorSearchHashMap.get(aid);				
 			}
 		}
-		return this.sensorSearchHash.get(searchFor);
+		return serviceSensorFound;
+	}
+	/**
+	 * Creates a service sensor HashMap from the specified array of {@link ServiceSensor}.
+	 * @param serviceSensorArray the service sensor array
+	 * @return the hash map
+	 */
+	private HashMap<AID, ServiceSensor> createServiceSensorHashMap(ServiceSensor[] serviceSensorArray) {
+		HashMap<AID, ServiceSensor> sensorSearchHashMap = new HashMap<AID, ServiceSensor>();
+		ServiceSensor[] sensors = this.getServiceSensorArray();
+		for (int i=0; i<sensors.length; i++) {
+			sensorSearchHashMap.put(sensors[i].getServiceSensor().getAID(), sensors[i]);
+		}
+		return sensorSearchHashMap;
 	}
 	
 	/**
@@ -252,7 +304,7 @@ public class ServiceActuator extends Thread {
 	 * @return the sensors
 	 */
 	private ServiceSensor[] getServiceSensorArray() {
-		if (this.serviceSensorArray==null || this.getServiceSensors().size()!=serviceSensorArray.length) {
+		if (this.serviceSensorArray==null || this.getServiceSensors().size()!=this.serviceSensorArray.length) {
 			this.serviceSensorArray = new ServiceSensor[this.getServiceSensors().size()];
 			this.getServiceSensors().toArray(this.serviceSensorArray);
 		}
@@ -280,24 +332,6 @@ public class ServiceActuator extends Thread {
 		return this.getServiceSensors().size() - this.getServiceSensorsPassive().size();
 	}
 	
-	/**
-	 * Notify an agent through the sensor.
-	 *
-	 * @param aid the aid
-	 * @param notification the notification
-	 * @return true, if successful
-	 */
-	public boolean notifySensorAgent(AID aid, EnvironmentNotification notification) {
-		ServiceSensor sensor = this.getSensor(aid);
-		if (sensor==null) {
-			// --- Agent/Sensor was NOT found ---
-			return false;
-		} else {
-			// --- Agent/Sensor was found -------
-			sensor.notifyAgent(notification);
-			return true;
-		}		
-	}
 	
 	// ------------------------------------------------------------------------
 	// --- Thread Jobs ---------------------------------------------- Start ---
@@ -315,7 +349,7 @@ public class ServiceActuator extends Thread {
 		Object[] arg = new Object[2];
 		arg[0] = environmentModel;
 		arg[1] = async;
-		this.addJob(Job.NotifySensors, arg);
+		this.addJob(Job.NotifyAllSensorsForEnvironmentModel, arg);
 	}
 	/**
 	 * Notify sensors job.
@@ -331,11 +365,35 @@ public class ServiceActuator extends Thread {
 	}
 
 	/**
+	 * Notifies the sensor of the specified agent about a new environment model.
+	 * @param environmentModel the environment model
+	 * @param aid the aid of the designated agent
+	 */
+	public void notifySensor(EnvironmentModel environmentModel, AID aid) {
+		Object[] arg = new Object[2];
+		arg[0] = aid;
+		arg[1] = environmentModel;
+		this.addJob(Job.NotifySingleSensorForEnvironmentModel, arg);
+	}
+	/**
+	 * Notify sensor job.
+	 *
+	 * @param environmentModel the environment model
+	 * @param aid the aid
+	 */
+	private void notifySensorJob(EnvironmentModel environmentModel, AID aid) {
+		ServiceSensor sensor = this.getSensor(aid);
+		if (sensor!=null) {
+			sensor.putEnvironmentModel(environmentModel, true);
+		}
+	}
+	
+	/**
 	 * This method will kill all registered SimulationAgents
 	 * to provide a faster(!) shutdown of the system.
 	 */
 	public void notifySensorAgentsDoDelete() {
-		this.addJob(Job.NotifySensorAgentsDoDelete, null);
+		this.addJob(Job.NotifyAllSensorAgentsDoDelete, null);
 	}
 	/**
 	 * This method will kill all registered SimulationAgents
@@ -355,7 +413,7 @@ public class ServiceActuator extends Thread {
 	public void notifySensorPauseSimulation(boolean isPauseSimulation) {
 		Object[] arg = new Object[2];
 		arg[0] = isPauseSimulation;
-		this.addJob(Job.NotifySensorPauseSimulation, arg);
+		this.addJob(Job.NotifyAllSensorPauseSimulation, arg);
 	}
 	/**
 	 * Notify that simulation has to be paused or not.
@@ -381,19 +439,50 @@ public class ServiceActuator extends Thread {
 	 * This method will place a 'newLocation'-Object to every agent which is registered to this actuator.
 	 * @param transferAgents the Vector of agents to migrate
 	 */
-	public void setMigrationJob(Vector<AID_Container> transferAgents) {
+	private void setMigrationJob(Vector<AID_Container> transferAgents) {
 
 		Object[] arrTransfer = transferAgents.toArray();
 		for (int i = arrTransfer.length-1; i>=0; i--) {
 			AID aid = ((AID_Container)arrTransfer[i]).getAID();
 			Location newLocation = ((AID_Container)arrTransfer[i]).getNewLocation();
-			ServiceSensor sensorAgent = this.getSensor(aid); 
-			if (sensorAgent!=null) {
-				sensorAgent.putMigrationLocation(newLocation);
+			ServiceSensor agentSensor = this.getSensor(aid); 
+			if (agentSensor!=null) {
+				agentSensor.putMigrationLocation(newLocation);
 			}
 		}
 	}
 
+	/**
+	 * Notifies an agent through the service sensor.
+	 *
+	 * @param aid the aid
+	 * @param notification the notification
+	 * @return true, if successful
+	 */
+	public boolean notifySensorAgent(AID aid, EnvironmentNotification notification) {
+		if (this.getSensor(aid)!=null) {
+			Object[] arg = new Object[2];
+			arg[0] = aid;
+			arg[1] = notification;
+			this.addJob(Job.NotifySingleSensor, arg);
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * Notify agent job.
+	 *
+	 * @param aid the aid
+	 * @param notification the notification
+	 */
+	private void notifySensorAgentJob(AID aid, EnvironmentNotification notification) {
+		ServiceSensor sensor = this.getSensor(aid);
+		if (sensor!=null) {
+			sensor.notifyAgent(notification);
+		}		
+	}
+	
+	
 	// ------------------------------------------------------------------------
 	// --- Internal sub class ActuatorJob --------------------------- Start ---
 	// ------------------------------------------------------------------------

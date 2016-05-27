@@ -6,7 +6,9 @@
     <projectResources>
         <projectResource>D:\10 Java Projects\Game of Life\bin</projectResource>
     </projectResources>
-    <plugins/>
+    <plugins>
+        <className>gol.plugin.GameOfLifePlugIn</className>
+    </plugins>
     <subOntologies>
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
     </subOntologies>
@@ -40,6 +42,7 @@
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>true</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
+        <evenDistribution>false</evenDistribution>
         <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
         <loadRecordingInterval>500</loadRecordingInterval>
         <numberOfAgents>18</numberOfAgents>
@@ -68,10 +71,10 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>1458 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>0128 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
-    <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
-    <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
+    <downloadResources>http://Pandora:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
+    <downloadResources>http://Pandora:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>0242 Agents</key>
@@ -127,5 +130,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>true</unsaved>
+    <unsaved>false</unsaved>
 </project>

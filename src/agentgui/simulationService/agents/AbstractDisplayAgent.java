@@ -129,7 +129,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 		
 		// --- Build the visual components --------------------------
 		this.buildVisualizationGUI();
-		// --- Register as Displaying Agent -------------------------
+		// --- Register as DisplayAgent at the SimulationService ----
 		this.registerAsDisplayAgent();
 		// --- Display the current TimeModel ------------------------
 		this.displayTimeModel();
@@ -241,9 +241,9 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	protected void registerAsDisplayAgent() {
 		try {
 			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			simHelper.displayAgentRegister(this.getAID());	
-		} catch (ServiceException e) {
-			e.printStackTrace();
+			simHelper.displayAgentRegister(this);	
+		} catch (ServiceException se) {
+			se.printStackTrace();
 		}
 	}
 	/**
@@ -252,9 +252,9 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	protected void unregisterAsDisplayAgent() {
 		try {
 			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			simHelper.displayAgentUnregister(this.getAID());	
-		} catch (ServiceException e) {
-			e.printStackTrace();
+			simHelper.displayAgentUnregister(this);	
+		} catch (ServiceException se) {
+			se.printStackTrace();
 		}
 	}
 	

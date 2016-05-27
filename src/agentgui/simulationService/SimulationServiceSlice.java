@@ -247,6 +247,7 @@ public interface SimulationServiceSlice extends Service.Slice {
 	/** The Constant SERVICE_DISPLAY_AGENT_NOTIFY. */
 	static final String SERVICE_DISPLAY_AGENT_SET_ENVIRONMENT_MODEL = "service-display-agent-set-environment-model";
 	static final String SERVICE_DISPLAY_AGENT_NOTIFICATION = "service-display-agent-notification";
+	static final String SERVICE_DISPLAY_CONTAINER_UN_REGISTRATION = "service-display-container-un-registration";
 	
 	/**
 	 * Notifies all registered DisplayAgents about a new EnvironmentModel.
@@ -260,6 +261,16 @@ public interface SimulationServiceSlice extends Service.Slice {
 	 * @throws IMTPException the iMTP exception
 	 */
 	public void displayAgentNotification(EnvironmentNotification notification) throws IMTPException;
+	
+	
+	/**
+	 * Does the (un-)registration for a display agent in a container .
+	 *
+	 * @param containerName the container name
+	 * @param isRegisterContainer the is register container
+	 * @throws IMTPException the IMTP exception
+	 */
+	public void doDisplayAgentContainerUnRegister(String containerName, boolean isRegisterContainer) throws IMTPException;
 
 	
 }

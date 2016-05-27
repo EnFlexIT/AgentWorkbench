@@ -236,29 +236,28 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		return jTextFieldProjectFolder;
 	}
 	
-	@Override
-	/**
-	 * Get the notyfication of the ObjectModel
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
-	public void update(Observable arg0, Object OName) {
+	@Override
+	public void update(Observable observable, Object updateObject) {
 		
-		String ObjectName = OName.toString();
-		if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectName ) ) {
-			if ( projectName.isFocusOwner() == false ) {
+		String updateAction = updateObject.toString();
+		if ( updateAction.equalsIgnoreCase(Project.CHANGED_ProjectName) ) {
+			if (projectName.isFocusOwner()==false) {
 				projectName.setText( currProject.getProjectName() );				
 			}								
-		}			
-		else if ( ObjectName.equalsIgnoreCase( Project.CHANGED_ProjectDescription ) ) {
+		} else if (updateAction.equalsIgnoreCase( Project.CHANGED_ProjectDescription) ) {
 			if ( jTextAreaProjectDescription.isFocusOwner() == false ) {
 				jTextAreaProjectDescription.setText( currProject.getProjectDescription() );
 			}
-		}			
-		else {
-			//System.out.println("Unbekannter Updatebefehl vom Observerable ...");
-		};
+		}
 		this.repaint();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 

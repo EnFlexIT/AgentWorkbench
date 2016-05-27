@@ -525,4 +525,29 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 		}	
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#doDisplayAgentContainerUnRegister(java.lang.String, boolean)
+	 */
+	@Override
+	public void doDisplayAgentContainerUnRegister(String containerName, boolean isRegisterContainer) throws IMTPException {
+		try {
+			GenericCommand cmd = new GenericCommand(SERVICE_DISPLAY_CONTAINER_UN_REGISTRATION, SimulationService.NAME, null);
+			cmd.addParam(containerName);
+			cmd.addParam(isRegisterContainer);
+			
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			
+		} catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}	
+	}
+
 }
