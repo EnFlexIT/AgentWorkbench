@@ -69,9 +69,7 @@ public class ServiceActuator extends Thread {
 		SetMigration
 	}
 	
-	private Object notificationTrigger;
-	
-	private Vector<ActuatorJob> jobVector;
+	private Vector<ActuatorJob> jobVector = new Vector<ActuatorJob>();
 	
 	private boolean shutdownActuator;
 	
@@ -92,16 +90,6 @@ public class ServiceActuator extends Thread {
 	}
 	
 	/**
-	 * Gets the job vector.
-	 * @return the job vector
-	 */
-	private Vector<ActuatorJob> getJobVector() {
-		if (jobVector==null) {
-			jobVector = new Vector<ActuatorJob>();
-		}
-		return jobVector;
-	}
-	/**
 	 * Adds a job to the local jobVector and interrupts the actuator thread.
 	 * @param job the job
 	 * @param arguments the arguments
@@ -114,37 +102,12 @@ public class ServiceActuator extends Thread {
 	 * @param actuatorJob the ActuatorJob to do
 	 */
 	private void addJob(ActuatorJob actuatorJob) {
-		synchronized (this.getJobVector()) {
-			this.getJobVector().add(actuatorJob);	
-		}
-		if (this.getState()==Thread.State.WAITING) {
-			synchronized (this.getNotificationTrigger()) {
-				this.getNotificationTrigger().notify();
-			}
+		synchronized (this.jobVector) {
+			this.jobVector.add(actuatorJob);
+			this.jobVector.notify();
 		}
 	}
-	/**
-	 * Removes a job from the local jobVector and returns it as the next job.
-	 * @param job the job
-	 */
-	private ActuatorJob getNextJob() {
-		synchronized (this.getJobVector()) {
-			if (this.getJobVector().size()!=0) {
-				return this.getJobVector().remove(0);	
-			}
-		}
-		return null;
-	}
-	/**
-	 * Gets the notification trigger.
-	 * @return the notification trigger
-	 */
-	private Object getNotificationTrigger() {
-		if (notificationTrigger==null) {
-			notificationTrigger = new Object();
-		}
-		return notificationTrigger;
-	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#run()
@@ -156,13 +119,23 @@ public class ServiceActuator extends Thread {
 		while (this.shutdownActuator==false) {
 		
 			try {
-				// --- Get the next job, if any -----------
-				ActuatorJob actuatorJob = this.getNextJob();
+				
+				// --- Get the next job, if any -------------------------------
+				ActuatorJob actuatorJob = null;
+				synchronized (this.jobVector) {
+					if (this.jobVector.size()>0) {
+						actuatorJob = this.jobVector.remove(0);	
+					} else {
+						this.jobVector.wait();
+					}
+				}
+				
+				// --- Do the actual job --------------------------------------
 				if (actuatorJob!=null) {
-					// --- Get Job and arguments ----------
+					// --- Get Job and arguments ------------------------------
 					Job job = actuatorJob.getJob();
 					Object[] arg = actuatorJob.getArguments();
-					// --- Job case separation ------------
+					// --- Job case separation --------------------------------
 					switch (job) {
 					case NotifySingleSensor:
 						this.notifySensorAgentJob((AID)arg[0], (EnvironmentNotification)arg[1]);
@@ -188,18 +161,10 @@ public class ServiceActuator extends Thread {
 						this.setMigrationJob((Vector<AID_Container>)arg[0]);
 						break;
 					}
-					
-				}
-				
-				if (this.getJobVector().size()==0) {
-					synchronized (this.getNotificationTrigger()) {
-						this.getNotificationTrigger().wait();
-					}
 				}
 				
 			} catch (InterruptedException ie) {
 				// ie.printStackTrace();
-				Thread.interrupted();
 			}
 			
 		} // --- end while ----
@@ -267,7 +232,7 @@ public class ServiceActuator extends Thread {
 	 * @param aid the AID of the agent
 	 * @return the ServiceSensor
 	 */
-	public ServiceSensor getSensor(AID aid) {
+	private ServiceSensor getSensor(AID aid) {
 		
 		ServiceSensor serviceSensorFound = null;
 		if (this.sensorSearchHashMap==null) {
