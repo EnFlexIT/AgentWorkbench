@@ -43,13 +43,13 @@ import agentgui.simulationService.load.threading.storage.ThreadInfoStorageAgent;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorageMachine;
 
 /**
- * The Class ThreadMeasureMetrics.
+ * The Class ThreadCalculateMetrics.
  * 
  * Calculates the "real" metrics for all (threadable) agents.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ThreadMeasureMetrics {
+public class ThreadCalculateMetrics {
 	
 	/**  The simulation duration minimum in milliseconds
 	 *  after which metrics can be calculated, default 5s = 5000. */
@@ -103,7 +103,7 @@ public class ThreadMeasureMetrics {
 	/**
 	 * Instantiates a new thread measure metrics.
 	 */
-	public ThreadMeasureMetrics(){
+	public ThreadCalculateMetrics(){
 		initialize();
 	}
 	
@@ -114,7 +114,7 @@ public class ThreadMeasureMetrics {
 	 * @param calcType the calculation type
 	 * @param metricBase the metric base
 	 */
-	public ThreadMeasureMetrics(ThreadInfoStorage threadInfoStorage, String calcType, String metricBase){
+	public ThreadCalculateMetrics(ThreadInfoStorage threadInfoStorage, String calcType, String metricBase){
 		
 		this.threadInfoStorage = threadInfoStorage;
 		this.calcType = calcType;

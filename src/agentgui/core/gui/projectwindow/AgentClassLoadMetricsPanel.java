@@ -67,11 +67,11 @@ import javax.swing.table.TableRowSorter;
 
 /**
  * The Class AgentClassLoadMetricsTable displays the configuration of the 
- * {@link AgentLoadMetricsPanel}.
+ * {@link AgentClassLoadMetricsPanel}.
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Observer {
+public class AgentClassLoadMetricsPanel extends JPanel  implements ActionListener, Observer {
 
 	private static final long serialVersionUID = -5111277438539494520L;
 	
@@ -95,7 +95,7 @@ public class AgentLoadMetricsPanel extends JPanel  implements ActionListener, Ob
 	 * Instantiates a new agent load metrics.
 	 * @param currProject the curr project
 	 */
-	public AgentLoadMetricsPanel(Project currProject) {
+	public AgentClassLoadMetricsPanel(Project currProject) {
 		this.currProject = currProject;
 		this.currProject.addObserver(this);
 		this.initialize();

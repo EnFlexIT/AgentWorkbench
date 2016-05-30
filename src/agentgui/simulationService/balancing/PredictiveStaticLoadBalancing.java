@@ -65,7 +65,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	private static final double LOAD_CPU_LOW_PERCENT 	= 5 ;	//default 5
 	private static final double LOAD_CPU_IDEAL_PERCENT 	= 70 ; //default 70
 	private static final double LOAD_CPU_CRIT_PERCENT  	= 80 ; //default 80
-	private static final double LOAD_CPU_CRIT_DANGER  	= (100 * agentgui.simulationService.load.threading.ThreadMeasureMetrics.FACTOR_MAX_MACHINE_LOAD); //default 95%
+	private static final double LOAD_CPU_CRIT_DANGER  	= (100 * agentgui.simulationService.load.threading.ThreadCalculateMetrics.FACTOR_MAX_MACHINE_LOAD); //default 95%
 	private static final double LOAD_CPU_LOW = (LOAD_CPU_LOW_PERCENT/100) ;
 	private static final double LOAD_CPU_IDEAL = (LOAD_CPU_IDEAL_PERCENT/100) ;
 	private static final double LOAD_CPU_CRIT  = (LOAD_CPU_CRIT_PERCENT/100) ;

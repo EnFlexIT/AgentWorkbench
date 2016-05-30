@@ -76,7 +76,7 @@ public class ThreadMonitor extends JFrame {
 	private ThreadMonitorProtocolTableTab jPanelMeasureProtocol;
 	
 	/** The j panel measure tree detail. */
-	private ThreadMonitorTreeDetailTab jPanelMeasureTreeDetail;
+	private ThreadMonitorDetailTreeTab jPanelMeasureTreeDetail;
 	
 	/** The j panel measure metrics. */
 	private ThreadMonitorMetricsTableTab jPanelMeasureMetrics;
@@ -168,9 +168,9 @@ public class ThreadMonitor extends JFrame {
 	 *
 	 * @return the j panel measure tree detail
 	 */
-	public ThreadMonitorTreeDetailTab getJPanelMeasureTreeDetail() {
+	public ThreadMonitorDetailTreeTab getJPanelMeasureTreeDetail() {
 		if (jPanelMeasureTreeDetail == null) {
-			jPanelMeasureTreeDetail = new ThreadMonitorTreeDetailTab(threadInfoStorage);
+			jPanelMeasureTreeDetail = new ThreadMonitorDetailTreeTab(threadInfoStorage);
 		}
 		return jPanelMeasureTreeDetail;
 	}

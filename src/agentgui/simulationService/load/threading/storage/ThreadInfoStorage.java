@@ -42,7 +42,7 @@ import javax.swing.tree.TreeNode;
 
 import org.jfree.data.xy.XYSeries;
 
-import agentgui.simulationService.load.threading.ThreadMeasureMetrics;
+import agentgui.simulationService.load.threading.ThreadCalculateMetrics;
 import agentgui.simulationService.load.threading.ThreadDetailProperties;
 import agentgui.simulationService.load.threading.ThreadProtocol;
 
@@ -52,7 +52,7 @@ import agentgui.simulationService.load.threading.ThreadProtocol;
  * Analyses the received ThredProtocol and adds data to the corresponding
  * XY-Series, calculates moving averages and delta-values.
  * Updates table model of ThreadMonitorProtocolTableTab and tree model
- * of ThreadMonitorTreeDetailTab
+ * of ThreadMonitorDetailTreeTab
  * 
  * @author Hanno Monschan - DAWIS - ICB - University of Duisburg-Essen
  */
@@ -114,7 +114,7 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadD
 	private HashMap<String, Integer> noOfAgentsPerClass;
 	
 	/** The calculation of metrics. */
-	private ThreadMeasureMetrics threadMeasureMetrics;
+	private ThreadCalculateMetrics threadCalculateMetrics;
 
 	/** The JVM set. */
 	private Set<String> jvmSet;
@@ -913,11 +913,11 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadD
 	 *
 	 * @return the thread measure metrics
 	 */
-	public ThreadMeasureMetrics getThreadMeasureMetrics(){
-		if(threadMeasureMetrics == null){
-			threadMeasureMetrics = new ThreadMeasureMetrics(this, "CALC_TYPE_INTEGRAL_DELTA", "METRIC_BASE_CLASS");
+	public ThreadCalculateMetrics getThreadMeasureMetrics(){
+		if(threadCalculateMetrics == null){
+			threadCalculateMetrics = new ThreadCalculateMetrics(this, "CALC_TYPE_INTEGRAL_DELTA", "METRIC_BASE_CLASS");
 		}
-		return threadMeasureMetrics;
+		return threadCalculateMetrics;
 	}
 	
 	/**

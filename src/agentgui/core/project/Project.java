@@ -61,7 +61,7 @@ import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectWindow;
 import agentgui.core.gui.components.JPanel4Visualisation;
-import agentgui.core.gui.projectwindow.AgentLoadMetricsPanel;
+import agentgui.core.gui.projectwindow.AgentClassLoadMetricsPanel;
 import agentgui.core.gui.projectwindow.BaseAgents;
 import agentgui.core.gui.projectwindow.Distribution;
 import agentgui.core.gui.projectwindow.JadeSetupMTP;
@@ -345,7 +345,7 @@ import agentgui.core.webserver.JarFileCreator;
 			// --- Agent Load Metrics ---------------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
 					   Language.translate("Agenten-Lastmetrik"), null, null, 
-					   new AgentLoadMetricsPanel(this), Language.translate("Konfiguration"));
+					   new AgentClassLoadMetricsPanel(this), Language.translate("Konfiguration"));
 			pwt.add();
 		
 			
