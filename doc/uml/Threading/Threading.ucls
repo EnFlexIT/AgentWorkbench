@@ -66,9 +66,9 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="8" language="java" name="agentgui.simulationService.load.threading.ThreadMeasureMetrics" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/simulationService/load/threading/ThreadMeasureMetrics.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="agentgui.simulationService.load.threading.ThreadCalculateMetrics" 
+    project="AgentGUI" file="/AgentGUI/src/agentgui/simulationService/load/threading/ThreadCalculateMetrics.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2277" y="114"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -82,8 +82,12 @@
   </realization>  
   <association id="10">    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="11" name="threadDetails"/>      
-      <multiplicity id="12" minimum="0" maximum="2147483647"/>    
+      <attribute id="11" name="threadDetails">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="12" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
