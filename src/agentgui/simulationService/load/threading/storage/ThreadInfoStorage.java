@@ -571,6 +571,9 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadD
 		}else{//first entry
 			actualSeries.add(threadProtocol.getTimestamp(), deltaSystemTime);
 		}
+		
+		//update average Load
+		machineStorage.setActualAverageLoadCPU(getThreadMeasureMetrics().getAverageCPUPercentage(machineStorage));
 
 		/*******
 		 * CLUSTER

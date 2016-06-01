@@ -38,6 +38,9 @@ public class ThreadInfoStorageMachine extends ThreadInfoStorageXYSeries{
 	/** The MFLOPS of that (physical) machine. */
 	private double mflops;
 	
+	/** The actual average load cpu. */
+	private double actualAverageLoadCPU;
+	
 	/**
 	 * Instantiates a new thread info storage machine.
 	 * @param name the name
@@ -57,6 +60,20 @@ public class ThreadInfoStorageMachine extends ThreadInfoStorageXYSeries{
 	 */
 	public void setMflops(double mflops) {
 		this.mflops = mflops;
+	}
+
+	/**
+	 * @return the actualAverageLoadCPU
+	 */
+	public double getActualAverageLoadCPU() {
+		return actualAverageLoadCPU;
+	}
+
+	/**
+	 * @param actualAverageLoadCPU the actualAverageLoadCPU to set
+	 */
+	public void setActualAverageLoadCPU(double actualAverageLoadCPU) {
+		this.actualAverageLoadCPU = actualAverageLoadCPU;
 	}
 
 }
