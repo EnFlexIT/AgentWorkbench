@@ -82,9 +82,6 @@ public class ThreadCalculateMetrics {
 	/** The thread info storage. */
 	private ThreadInfoStorage threadInfoStorage;
 	
-	/** The simulation duration. */
-	private double simulationDuration;
-	
 	/** The sampling interval. */
 	private double samplingInterval;
 	
@@ -464,7 +461,7 @@ public class ThreadCalculateMetrics {
 	 */
 	private double getSamplingIntervalMilliSeconds(XYSeries series, int samplingIntervalOffset){
 		
-		double samplingInterval = this.simulationDuration;
+		double samplingInterval = this.getSimulationDurationMilliSeconds();
 		
 		if(this.threadInfoStorage != null){
 			Number start = series.getX(samplingIntervalOffset); //first value
