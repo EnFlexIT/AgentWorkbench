@@ -904,7 +904,6 @@ public class LoadMeasureAgent extends Agent {
 			}
 			this.getThreadProtocolVector().add(tp);
 			this.getThreadInfoStorage().add(tp);
-			this.getThreadDialog().getJPanelMeasureMetrics().enableMetricsCalculationButton();
 		}
 	}
 	/**

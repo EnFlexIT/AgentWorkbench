@@ -635,6 +635,9 @@ public class ThreadInfoStorage extends Vector<ThreadProtocol> implements ThreadD
 		clearTableModel();
 		addTableModelRow(mapAgent);
 		
+		//update metrics
+		getThreadMeasureMetrics().getMetrics();
+		
 		return done;
 	}
 	

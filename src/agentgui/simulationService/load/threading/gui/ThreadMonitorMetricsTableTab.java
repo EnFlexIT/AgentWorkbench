@@ -53,7 +53,6 @@ import agentgui.core.application.Language;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorageAgent;
 
-import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
 /**
@@ -86,11 +85,8 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 	/** The j radio button filter agents. */
 	private JRadioButton jRadioButtonFilterAgents;
 	
-	/** The button calculate metrics. */
-	private JButton btnCalcMetrics;
-	
 	/** The btn calc metrics hint. */
-	private JLabel lblCalcMetricsHint;
+	private JLabel lblCalcBaseHint;
 	
 	/** The radio button integral. */
 	private JRadioButton rdbtnIntegralDelta;
@@ -110,8 +106,7 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 	/** The J panel options. */
 	private JPanel JPanelOptions;
 	
-	private String lblCalcMetricsHintString = Language.translate("Calculate the real metrics based on recorded chart value selection.");
-	private String btnCalcMetricsString = Language.translate("Calculates the real metrics for each agent based on recorded thread times.");
+	private String lblCalcBaseHintString = Language.translate("Calculate the real metrics based on recorded chart value selection.");
 	private String rdBtnIntegralTotalString = Language.translate("Calculate metrics based on total integrals.");
 	private String rdBtnIntegralDeltaString = Language.translate("Calculate metrics based on delta integrals.");
 	private String rdBtnLastTotalString =  Language.translate("Calculate metrics based on last total system cpu time.");
@@ -241,19 +236,12 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 			getJRadioButtonNoFilter().setSelected(true);
 			getJRadioButtonFilterAgents().setSelected(false);
 			
-			GridBagConstraints gbc_btnCalcMetricsHint = new GridBagConstraints();
-			gbc_btnCalcMetricsHint.anchor = GridBagConstraints.EAST;
-			gbc_btnCalcMetricsHint.insets = new Insets(1, 5, 5, 1);
-			gbc_btnCalcMetricsHint.gridx = 4;
-			gbc_btnCalcMetricsHint.gridy = 0;
-			JPanelFilter.add(getLblCalcMetricsHint(), gbc_btnCalcMetricsHint);
-			
-			GridBagConstraints gbc_btnCalcMetrics = new GridBagConstraints();
-			gbc_btnCalcMetrics.anchor = GridBagConstraints.EAST;
-			gbc_btnCalcMetrics.insets = new Insets(1, 5, 5, 1);
-			gbc_btnCalcMetrics.gridx = 5;
-			gbc_btnCalcMetrics.gridy = 0;
-			JPanelFilter.add(getBtnCalcMetrics(), gbc_btnCalcMetrics);
+			GridBagConstraints gbc_calcBaseHint = new GridBagConstraints();
+			gbc_calcBaseHint.anchor = GridBagConstraints.EAST;
+			gbc_calcBaseHint.insets = new Insets(1, 5, 5, 1);
+			gbc_calcBaseHint.gridx = 4;
+			gbc_calcBaseHint.gridy = 0;
+			JPanelFilter.add(getLblCalcBaseHint(), gbc_calcBaseHint);
 			
 		}
 		return JPanelFilter;
@@ -321,8 +309,6 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 			
 			sorter.setRowFilter(agentFilter);
 			
-		} else if (ae.getSource()== this.getBtnCalcMetrics()) {	
-			threadInfoStorage.getThreadMeasureMetrics().getMetrics();
 		} else if (ae.getSource()== this.getRdbtnIndividual()) {
 			threadInfoStorage.getThreadMeasureMetrics().setMetricBase(threadInfoStorage.getThreadMeasureMetrics().METRIC_BASE_INDIVIDUAL);
 		} else if (ae.getSource()== this.getRdbtnClass()) {
@@ -335,48 +321,17 @@ public class ThreadMonitorMetricsTableTab extends JPanel implements ActionListen
 			threadInfoStorage.getThreadMeasureMetrics().setCalcType(threadInfoStorage.getThreadMeasureMetrics().CALC_TYPE_LAST_TOTAL);
 		}
 	}
-
-	/**
-	 * Enable metrics calculation button.
-	 */
-	public void enableMetricsCalculationButton() {
-		if(getBtnCalcMetrics().isEnabled() == true){
-			return;
-		}
-		if(threadInfoStorage.getThreadMeasureMetrics().isDataUsable() == true){
-			getBtnCalcMetrics().setText("Calculate Metrics");
-			getBtnCalcMetrics().setEnabled(true);
-		} else {
-			double timeLeft = threadInfoStorage.getThreadMeasureMetrics().SIMULATION_DURATION_MIN - threadInfoStorage.getThreadMeasureMetrics().getSimulationDurationMilliSeconds();
-			getBtnCalcMetrics().setText("Calculate Metrics in " + Math.round(timeLeft/1000) + "s");
-		}
-	}
-	/**
-	 * Gets the button for calculating the metrics.
-	 *
-	 * @return the button calculation metrics
-	 */
-	private JButton getBtnCalcMetrics() {
-		if (btnCalcMetrics == null) {
-			btnCalcMetrics = new JButton("");
-			btnCalcMetrics.setVerticalAlignment(SwingConstants.BOTTOM);
-			btnCalcMetrics.setToolTipText(btnCalcMetricsString );
-			btnCalcMetrics.addActionListener(this);
-			btnCalcMetrics.setEnabled(false);
-		}
-		return btnCalcMetrics;
-	}
 	
 	/**
 	 * Gets the button calculate metrics hint.
 	 * @return the button calculate metrics hint
 	 */
-	private JLabel getLblCalcMetricsHint() {
-		if (lblCalcMetricsHint == null) {
-			lblCalcMetricsHint = new JLabel(lblCalcMetricsHintString);
-			lblCalcMetricsHint.setFont(new Font("Dialog", Font.BOLD, 12));
+	private JLabel getLblCalcBaseHint() {
+		if (lblCalcBaseHint == null) {
+			lblCalcBaseHint = new JLabel(lblCalcBaseHintString);
+			lblCalcBaseHint.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
-		return lblCalcMetricsHint;
+		return lblCalcBaseHint;
 	}
 	
 	/**
