@@ -226,7 +226,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	    	    	
 	    	    }
 	    	    // --- create scroll-pane in pop-up window ---
-	    	    new ThreadInfoStorageScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, null, true, folderNamePrefix+className);
+	    	    new ThreadInfoStorageScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, null, true, folderNamePrefix+className, null);
 			}
 		}
 	}
@@ -571,6 +571,8 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	    		popupXYSeriesCollectionTotal = new XYSeriesCollection();
 	    	    popupXYSeriesCollectionDelta = new XYSeriesCollection();
 	    	    popupXYSeriesCollectionLoad = new XYSeriesCollection();
+	    	    
+	    	    Object extraObject = null;
 	
 	    	    if(userObject.getClass().toString().endsWith("ThreadInfoStorageCluster")){
 	    	    	ThreadInfoStorageCluster tis = (ThreadInfoStorageCluster)userObject;
@@ -598,7 +600,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 			    	ThreadInfoStorageMachine tis = (ThreadInfoStorageMachine)userObject;
 	    	    	nodeName = tis.getName();
 		    		folderNamePrefix = "Machine: ";
-		    		
+		    		extraObject = threadInfoStorage.getMapMachine().get(nodeName);
 		            iterator = threadInfoStorage.getMapMachine().get(nodeName).getXYSeriesMap().keySet().iterator();
 		            
 		            if(threadInfoStorage.getMapMachine().get(nodeName) != null){
@@ -659,7 +661,7 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 		        	}	
         	    }
     	    	// --- create scroll-pane in pop-up window ---
-        	    new ThreadInfoStorageScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, popupXYSeriesCollectionLoad, true, folderNamePrefix+nodeName);
+        	    new ThreadInfoStorageScrollPane(popupXYSeriesCollectionDelta, popupXYSeriesCollectionTotal, popupXYSeriesCollectionLoad, true, folderNamePrefix+nodeName, extraObject);
     	    }
 	    }
 		

@@ -31,6 +31,7 @@ package agentgui.simulationService.load.threading.gui;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -51,11 +52,17 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.Layer;
+import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.TextAnchor;
+
+import agentgui.simulationService.load.threading.storage.ThreadInfoStorageMachine;
 
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -109,6 +116,9 @@ public class ThreadInfoStorageScrollPane extends JPanel implements ActionListene
 	/** The load collection. */
 	private XYSeriesCollection loadCollection;
 	
+	/** The extra object as additional parameter. */
+	private Object extraObject;
+	
 	/** The J panel filter. */
 	private JPanel JPanelFilter;
 	
@@ -150,6 +160,9 @@ public class ThreadInfoStorageScrollPane extends JPanel implements ActionListene
 	
 	/** The axis load. */
 	private NumberAxis axisLoad;
+	
+	/** The avg cpu load. */
+	private ValueMarker avgCPULoad;
 
 	/** Display setting.Set true to show delta. */
 	private boolean showDelta;
@@ -189,7 +202,7 @@ public class ThreadInfoStorageScrollPane extends JPanel implements ActionListene
 	 * @param popup the popup
 	 * @param frameTitle the frame title
 	 */
-	public ThreadInfoStorageScrollPane(XYSeriesCollection deltaCollection, XYSeriesCollection totalCollection, XYSeriesCollection loadCollection, boolean popup, String frameTitle) {		
+	public ThreadInfoStorageScrollPane(XYSeriesCollection deltaCollection, XYSeriesCollection totalCollection, XYSeriesCollection loadCollection, boolean popup, String frameTitle, Object extraObject) {		
 		super();
 		this.showDelta = true;
 		this.showTotal = true;
@@ -201,6 +214,7 @@ public class ThreadInfoStorageScrollPane extends JPanel implements ActionListene
 		this.deltaCollection = deltaCollection;
 		this.totalCollection = totalCollection;
 		this.loadCollection = loadCollection;
+		this.extraObject = extraObject;
 		initialize();
 	}
 
@@ -295,7 +309,15 @@ public class ThreadInfoStorageScrollPane extends JPanel implements ActionListene
 		 */
 		@Override
 		public void datasetChanged(DatasetChangeEvent event) {
-			
+			if(extraObject != null){
+				if(extraObject.getClass().toString().endsWith("ThreadInfoStorageMachine")){
+					ThreadInfoStorageMachine tim = (ThreadInfoStorageMachine)extraObject;
+					
+					double avgLoadCPU = Math.round(tim.getActualAverageLoadCPU());
+					avgCPULoad.setValue(avgLoadCPU);
+					avgCPULoad.setLabel("Average CPU: " + avgLoadCPU);
+				}
+			}
 			if(popup == false){
 				// -- set one color for a series  ---
 				if(deltaCollection != null){
@@ -644,6 +666,23 @@ public class ThreadInfoStorageScrollPane extends JPanel implements ActionListene
 			plot.setDomainGridlinePaint(Color.BLACK);
 			plot.setRangeGridlinePaint(Color.BLACK);
 			
+			
+			// add Marker for average CPU utilization
+			double avgLoadCPU = 0;
+			if(extraObject != null){
+				if(extraObject.getClass().toString().endsWith("ThreadInfoStorageMachine")){
+					ThreadInfoStorageMachine tim = (ThreadInfoStorageMachine)extraObject;
+					avgLoadCPU = Math.round(tim.getActualAverageLoadCPU());				
+				}
+			
+				avgCPULoad = new ValueMarker(avgLoadCPU,Color.BLUE, new BasicStroke(3.0f), Color.BLUE,  new BasicStroke(3.0f), 1.0f);
+			    avgCPULoad.setPaint(Color.BLUE);
+			    avgCPULoad.setLabel("Average CPU: "+avgLoadCPU);
+			    avgCPULoad.setLabelAnchor(RectangleAnchor.BOTTOM);
+			    avgCPULoad.setLabelTextAnchor(TextAnchor.TOP_LEFT);
+			    avgCPULoad.setLabelFont(new Font("Verdana", Font.BOLD, 12));
+			    plot.addRangeMarker(2, avgCPULoad, Layer.FOREGROUND);
+			}
 		}
 		return plot;
 	}

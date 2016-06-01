@@ -266,7 +266,7 @@ public class ThreadMonitorDetailTreeTab extends JPanel implements ActionListener
 	 */
 	private ThreadInfoStorageScrollPane getRightScrollPane() {
 		if (rightScrollPane == null) {
-			rightScrollPane = new ThreadInfoStorageScrollPane(threadTree.getSeriesChartsDelta(), threadTree.getSeriesChartsTotal(), null, false, "");
+			rightScrollPane = new ThreadInfoStorageScrollPane(threadTree.getSeriesChartsDelta(), threadTree.getSeriesChartsTotal(), null, false, "", null);
 		}
 		return rightScrollPane;
 	}

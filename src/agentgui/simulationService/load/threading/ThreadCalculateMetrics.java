@@ -329,6 +329,17 @@ public class ThreadCalculateMetrics {
 	}
 	
 	/**
+	 * Gets the average CPU percentage.
+	 *
+	 * @param machine the machine
+	 * @return the average CPU percentage
+	 */
+	public double getAverageCPUPercentage(ThreadInfoStorageMachine machine){
+		return (getCPUTotal(machine) * 100) / getCPUMax(machine);
+		
+	}
+	
+	/**
 	 * Gets the maximum metric of machine in MFLOP / millisecond
 	 *
 	 * @param machine the machine
@@ -463,7 +474,7 @@ public class ThreadCalculateMetrics {
 		
 		double samplingInterval = this.getSimulationDurationMilliSeconds();
 		
-		if(this.threadInfoStorage != null){
+		if(this.threadInfoStorage != null && series.getItemCount() > samplingIntervalOffset){
 			Number start = series.getX(samplingIntervalOffset); //first value
 			Number end   = series.getMaxX(); //last value
 			samplingInterval = end.doubleValue() - start.doubleValue();
