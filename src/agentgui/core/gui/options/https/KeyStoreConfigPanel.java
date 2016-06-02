@@ -724,9 +724,9 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 					// ------- Get Certificate Path --------------------
 					String certificatePath = jFileChooserSave.getSelectedFile().getAbsoluteFile().getAbsolutePath();
 					// ------- Get KeySTore information ----------------
-					KeyStoreController.GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword());
+					String Alias = KeyStoreController.GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword());
 					// ------- Generate the Certificate -----------------
-					KeyStoreController.ExportCertificate(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword(), certificatePath);
+					KeyStoreController.ExportCertificate(this.httpsConfigWindow.getKeyStorefilepath(),Alias,this.httpsConfigWindow.getKeyStorePassword(), certificatePath);
 					String msg = Language.translate("Your certificate has been created successfully!",Language.EN);
 					String title = Language.translate("Certificate generated",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);

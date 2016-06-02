@@ -496,8 +496,7 @@ public class FileProperties extends Properties {
 		propValue = this.getProperty(this.DEF_TRUSTSTORE_PASSWORD);
 		if (propValue.equalsIgnoreCase("") == false) {
 			try {
-				Application.getGlobalInfo()
-						.setTrustStorePassword(new String(Base64.decodeBase64(propValue.getBytes()), "UTF8"));
+				Application.getGlobalInfo().setTrustStorePassword(new String(Base64.decodeBase64(propValue.getBytes()), "UTF8"));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}

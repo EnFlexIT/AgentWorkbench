@@ -238,8 +238,8 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		return jButtonSetPortDefault;
 	}
 	/**
-	 * Gets the JLabel mtp.
-	 * @return the JLabel mtp
+	 * Gets the JLabel MTP.
+	 * @return the JLabel MTP
 	 */
 	private JLabel getJLabelMTP() {
 		if (jLabelMTP == null) {

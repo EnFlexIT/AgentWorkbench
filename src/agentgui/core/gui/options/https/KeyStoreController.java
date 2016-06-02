@@ -274,7 +274,7 @@ public class KeyStoreController {
 	 * @param KeyStorePassword
 	 * @param CertificateName
 	 */
-	public static void ExportCertificate(String KeyStoreName, String KeyStorePassword, String CertificateName) {
+	public static void ExportCertificate(String KeyStoreName, String Alias, String KeyStorePassword, String CertificateName) {
 		/*
 		 * ---------------------------------------------------------------------
 		 * ------- Execute the command line to create the certificate ----------
