@@ -730,25 +730,25 @@ public class ThreadInfoStorageScrollPane extends JPanel implements ActionListene
 					 */				    
 				    if(collection1.getSeriesCount() != 0){
 				    	// --- write header ---
-					    writer.append("Date");
-					    writer.append(',');
+					    writer.append("\"Date\"");
+					    writer.append(';');
 					    //--- delta ---
 					    for(int x=0;x<collection1.getSeries().size(); x++){
-					    	writer.append(collection1.getSeries(x).getKey().toString());
-					    	writer.append(',');						
+					    	writer.append("\"" + collection1.getSeries(x).getKey().toString() + "\"");
+					    	writer.append(';');						
 						}
 					    // --- total ---
 					    if(collection2 != null){
 					    	for(int x=0;x<collection2.getSeries().size(); x++){
-						    	writer.append(collection2.getSeries(x).getKey().toString());
-						    	writer.append(',');						
+						    	writer.append("\"" + collection2.getSeries(x).getKey().toString() + "\"");
+						    	writer.append(';');						
 							}
 					    }
 					    // --- load ---
 					    if(collection3 != null){
 					    	for(int x=0;x<collection3.getSeries().size(); x++){
-						    	writer.append(collection3.getSeries(x).getKey().toString());
-						    	writer.append(',');						
+						    	writer.append("\"" + collection3.getSeries(x).getKey().toString() + "\"");
+						    	writer.append(';');						
 							}
 					    }
 					    writer.append('\n');
@@ -756,25 +756,25 @@ public class ThreadInfoStorageScrollPane extends JPanel implements ActionListene
 				    	// --- write data rows ---
 					    int rowCount = collection1.getItemCount(0);
 					    for(int row = 0;row < rowCount; row++){
-					    	writer.append(collection1.getSeries(0).getDataItem(row).getX().toString());//Date
-					    	writer.append(',');	
+					    	writer.append("\"" + collection1.getSeries(0).getDataItem(row).getX().toString().replace('.',',') + "\"");//Date
+					    	writer.append(';');	
 					    	//---delta ---
 						    for(int x = 0;x < collection1.getSeries().size(); x++){		
-						    	writer.append(collection1.getSeries(x).getDataItem(row).getY().toString());//value
-						    	writer.append(',');
+						    	writer.append("\"" + collection1.getSeries(x).getDataItem(row).getY().toString().replace('.',',') + "\"");//value
+						    	writer.append(';');
 							}
 						    //---total ---
 						    if(collection2 != null){
 						    	for(int x = 0;x < collection2.getSeries().size(); x++){
-							    	writer.append(collection2.getSeries(x).getDataItem(row).getY().toString());//value
-							    	writer.append(',');						
+							    	writer.append("\"" + collection2.getSeries(x).getDataItem(row).getY().toString().replace('.',',') + "\"");//value
+							    	writer.append(';');						
 								}
 						    }
 						    //---load ---
 						    if(collection3 != null){
 						    	for(int x = 0;x < collection3.getSeries().size(); x++){
-							    	writer.append(collection3.getSeries(x).getDataItem(row).getY().toString());//value
-							    	writer.append(',');						
+							    	writer.append("\"" + collection3.getSeries(x).getDataItem(row).getY().toString().replace('.',',') + "\"");//value
+							    	writer.append(';');						
 								}
 						    }
 						    writer.append('\n');

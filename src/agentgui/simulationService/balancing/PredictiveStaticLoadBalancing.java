@@ -34,6 +34,7 @@ import jade.core.ServiceException;
 import jade.util.leap.List;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
@@ -72,6 +73,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 	
 	private static final String SORT_DESCENDING = "SORT_DESCENDING";
 	private static final String SORT_DESCENDING_CHARGE = "SORT_DESCENDING_CHARGE";
+	private static final String SORT_RANDOM = "SORT_RANDOM";
 	
 	/** The console output. */
 	private String consoleOutput;
@@ -320,7 +322,7 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 				}
 				ArrayList<AgentClassElement4SimStart> agents2bStartedList;
 				
-				//sort Agents to fit to distribution method
+				//sort Agents by class metrics to best fit distribution method
 				if(isEvenDistribution){
 					agents2bStartedList = this.getSortedAgentList(currSimSetup.getAgentList(), SORT_DESCENDING);
 				}else{
@@ -398,9 +400,9 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 							}
 							metric = 1;
 						}else{
-							//get agent metric
+							//get agent class metric from project settings
 							if(currProject.getAgentClassLoadMetrics().isUseRealLoadMetric() == true){
-								metric = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector().get(classNameIndex).getRealMetricAverage();
+								metric = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector().get(classNameIndex).getRealMetric();
 							}else{
 								metric = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector().get(classNameIndex).getUserPredictedMetric();	
 							}
@@ -520,6 +522,9 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 					}
 				}
 			}
+		}else if(order.equals(SORT_RANDOM)){
+			//sort agents randomly, e.g. feacdefaacbdfe
+			 Collections.shuffle(sortedAgentList);
 		}
 		return sortedAgentList;
 	}
@@ -544,8 +549,8 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 				double metricB = 0;
 				
 				if(currProject.getAgentClassLoadMetrics().isUseRealLoadMetric() == true){
-					metricA = sortedAcmdv.get(indexB-1).getRealMetricAverage();
-					metricB = sortedAcmdv.get(indexB).getRealMetricAverage();
+					metricA = sortedAcmdv.get(indexB-1).getRealMetric();
+					metricB = sortedAcmdv.get(indexB).getRealMetric();
 				}else{
 					metricA = sortedAcmdv.get(indexB-1).getUserPredictedMetric();
 					metricB = sortedAcmdv.get(indexB).getUserPredictedMetric();	

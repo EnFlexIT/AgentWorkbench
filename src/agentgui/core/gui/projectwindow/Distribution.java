@@ -181,6 +181,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JSeparator jSeparator03;
 	private JSeparator jSeparator04;
 	private JSeparator jSeparator05;
+	
+	private String autosaveRealMetricsOnSimStopString = "Reale Metriken der Agenten bei Simulationsstop aktualisieren";
 
 	
 	/**
@@ -203,7 +205,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		jCheckBoxThresholdDefinition.setText(Language.translate("Eigene Auslastungsgrenzwerte verwenden"));
 		jCheckBoxShowLoadMonitor.setText(Language.translate("Auslastungs-Monitor bei JADE-Start anzeigen"));
 		jCheckBoxShowThreadMonitor.setText(Language.translate("Thread-Monitor bei JADE-Start anzeigen"));
-		jCheckboxAutosaveRealMetricsOnSimStop.setText(Language.translate("Metriken bei Simulationsstop aktualisieren"));
+		jCheckboxAutosaveRealMetricsOnSimStop.setText(Language.translate(autosaveRealMetricsOnSimStopString));
 		jCheckBoxImmediatelyStartLoadRecording.setText(Language.translate("Lastaufzeichnung mit dem Start von JADE beginnen"));
 		
 		jLabelMemoryAlloc.setText(Language.translate("Arbeitsspeicher für Remote-JVM"));
@@ -882,7 +884,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			  			getJButtonCalcContainer().setVisible(false);
 			  			jLabelCalculation.setVisible(false);
 			  			getJCheckBoxIsRemoteOnly().setVisible(true);
-			  			getJCheckBoxPreventUsageOfUsedComputers().setSelected(true);
+			  			currRemoteContainerConfiguration.setPreventUsageOfAlreadyUsedComputers(true);
+			  			getJCheckBoxPreventUsageOfUsedComputers().setSelected(currRemoteContainerConfiguration.isPreventUsageOfAlreadyUsedComputers());
 			  			getJCheckBoxIsEvenDistribution().setVisible(true);
 			  		}
 			  	}
@@ -1331,7 +1334,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JCheckBox getJCheckboxAutosaveRealMetricsOnSimStop() {
 		if (jCheckboxAutosaveRealMetricsOnSimStop == null) {
 			jCheckboxAutosaveRealMetricsOnSimStop = new JCheckBox();
-			jCheckboxAutosaveRealMetricsOnSimStop.setText("Metriken der Agenten bei Simulationsstop aktualisieren");
+			jCheckboxAutosaveRealMetricsOnSimStop.setText(autosaveRealMetricsOnSimStopString);
 			jCheckboxAutosaveRealMetricsOnSimStop.setFont(new Font("Dialog", Font.BOLD, 12));
 			jCheckboxAutosaveRealMetricsOnSimStop.addActionListener(this);
 		}

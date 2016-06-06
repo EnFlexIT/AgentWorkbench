@@ -142,13 +142,13 @@ public class AgentClassLoadMetricsTable implements Serializable {
 	 * Adds the agent load description.
 	 *
 	 * @param className the class name
-	 * @param userPredictiveLoad the user predictive load
-	 * @param realLoadMin the real load min
-	 * @param realLoadMax the real load max
-	 * @param realLoadAverage the real load average
+	 * @param userPredictiveLoad the user predictive metric
+	 * @param realMetricMin the real metric min
+	 * @param realMetricMax the real metric max
+	 * @param realMetricAverage the real metric average
 	 */
-	public void addAgentLoadDescription(String className, double userPredictiveLoad, double realLoadMin, double realLoadMax, double realLoadAverage) {
-		this.getAgentClassMetricDescriptionVector().addElement(new AgentClassMetricDescription(currProject,className, userPredictiveLoad, realLoadMin, realLoadMax, realLoadAverage));
+	public void addAgentLoadDescription(String className, double userPredictiveLoad, double realMetric, double realMetricMin, double realMetricMax, double realMetricAverage) {
+		this.getAgentClassMetricDescriptionVector().addElement(new AgentClassMetricDescription(currProject, className, userPredictiveLoad, realMetric, realMetricMin, realMetricMax, realMetricAverage));
 		this.setProjectNotification(Project.AGENT_METRIC_AgentDescriptionAdded);
 	}
 	/**
@@ -180,6 +180,26 @@ public class AgentClassLoadMetricsTable implements Serializable {
 		}
 		return -1;
 	}
+	
+	/**
+	 * Copy real metrics average to real metrics.
+	 */
+	public void copyRealMetricsAverage2RealMetrics(){		
+		for(int i = 0; i < this.agentClassMetricDescriptionVector.size(); i++){
+			this.agentClassMetricDescriptionVector.get(i).setRealMetric(this.agentClassMetricDescriptionVector.get(i).getRealMetricAverage());
+		}
+	}
+	
+	/**
+	 * Load metrics settings from the current project.
+	 */
+	public void loadMetricsFromProject() {
+		this.clearTableModel();		
+		for(int i = 0; i < this.agentClassMetricDescriptionVector.size(); i++){
+			this.addTableModelRow(this.agentClassMetricDescriptionVector.get(i));
+		}
+	}
+	
 	/**
 	 * Gets the agent class metric description.
 	 *
@@ -208,6 +228,7 @@ public class AgentClassLoadMetricsTable implements Serializable {
 			Vector<String> header = new Vector<String>();
 			header.add("Class");
 			header.add("Predictive Metric");
+			header.add("Real Metric");
 			header.add("Real Metric Min");
 			header.add("Real Metric Max");
 			header.add("Real Metric Average");
@@ -256,6 +277,7 @@ public class AgentClassLoadMetricsTable implements Serializable {
 		row.add(agentClass);
 		// ---Math.round.. remove decimal .000 ----
 		row.add(Math.round(agentClass.getUserPredictedMetric()));
+		row.add(Math.round(agentClass.getRealMetric()));
 		row.add(Math.round(agentClass.getRealMetricMin()));
 		row.add(Math.round(agentClass.getRealMetricMax()));
 		row.add(Math.round(agentClass.getRealMetricAverage()));

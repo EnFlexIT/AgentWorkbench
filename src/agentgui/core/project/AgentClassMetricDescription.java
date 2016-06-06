@@ -43,7 +43,8 @@ public class AgentClassMetricDescription implements Serializable{
 	private Project currProject;
 	private String className; 
 	private double userPredictedMetric = 5;
-	private double realMetricAverage = 0.1;		
+	private double realMetric = 0.1;	
+	private double realMetricAverage = 0.1;
 	private double realMetricMin = 0.1;
 	private double realMetricMax = 0.1;
 	
@@ -68,10 +69,11 @@ public class AgentClassMetricDescription implements Serializable{
 	 * @param realMetricMax the maximum real load max
 	 * @param realMetricAverage the real metric average
 	 */
-	public AgentClassMetricDescription(Project currProject,String className, double userPredictedMetric, double realMetricMin, double realMetricMax, double realMetricAverage) {
+	public AgentClassMetricDescription(Project currProject,String className, double userPredictedMetric, double realMetric, double realMetricMin, double realMetricMax, double realMetricAverage) {
 		this.currProject = currProject;
 		this.setClassName(className);
 		this.setUserPredictedMetric(userPredictedMetric);
+		this.setRealMetric(realMetric);
 		this.setRealMetricMin(realMetricMin);
 		this.setRealMetricMax(realMetricMax);
 		this.setRealMetricAverage(realMetricAverage);
@@ -118,6 +120,22 @@ public class AgentClassMetricDescription implements Serializable{
 		setProjectNotification(Project.AGENT_METRIC_AgentDescriptionEdited);
 	}
 	
+	/**
+	 * Gets the real metric.
+	 * @return the real metric 
+	 */
+	public double getRealMetric() {
+		return realMetric;
+	}
+	
+	/**
+	 * Sets the real metric.
+	 * @param realMetricAverage the new real metric
+	 */
+	public void setRealMetric(double realMetric) {
+		this.realMetric = realMetric;
+		setProjectNotification(Project.AGENT_METRIC_AgentDescriptionEdited);
+	}
 	/**
 	 * Gets the real metric average.
 	 * @return the real metric average

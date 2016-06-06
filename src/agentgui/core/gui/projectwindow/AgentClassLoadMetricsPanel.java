@@ -39,7 +39,6 @@ import java.util.Vector;
 import javax.swing.JPanel;
 
 import agentgui.core.application.Language;
-import agentgui.core.project.AgentClassLoadMetricsTable;
 import agentgui.core.project.AgentClassMetricDescription;
 import agentgui.core.project.Project;
 
@@ -54,6 +53,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Font;
 import java.awt.Insets;
 
+import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -81,6 +81,7 @@ public class AgentClassLoadMetricsPanel extends JPanel  implements ActionListene
 	private JLabel jLabelPredictive;
 	private JRadioButton jRadioButtonPredictive;
 	private JRadioButton jRadioButtonReal;
+	private JButton jButtonCopyReal;
 	private JScrollPane jScrollPaneMetric;
 	private JLabel jLabelHeaderMetrics;
 	private JTextArea jTextAreaMetricExplanation;
@@ -91,6 +92,8 @@ public class AgentClassLoadMetricsPanel extends JPanel  implements ActionListene
 	private String labelPredictiveString = "Verteilung der Agenten bei \"PredictiveStaticLoadBalancing\" basierend auf:";
 	private String buttonRealString = "Empirisch ermittelte, reale Metrik";
 	private String buttonPredictiveString = "Manuell eingegebene, vorhergesagte Metrik";
+	private String buttonCopyRealString = "Übernehme Durchschnittswerte für reale Metrik";
+	
 	/**
 	 * Instantiates a new agent load metrics.
 	 * @param currProject the curr project
@@ -161,13 +164,23 @@ public class AgentClassLoadMetricsPanel extends JPanel  implements ActionListene
 		gbc_jScrollPaneMetric.gridy = 5;
 		this.add(getJScrollPaneMetric(), gbc_jScrollPaneMetric);
 		
+		GridBagConstraints gbc_jButtonCopyReal = new GridBagConstraints();
+		gbc_jButtonCopyReal.insets = new Insets(10, 10, 10, 10);
+		gbc_jButtonCopyReal.anchor = GridBagConstraints.EAST;
+		gbc_jButtonCopyReal.gridx = 0;
+		gbc_jButtonCopyReal.gridy = 6;
+		this.add(getJButtonCopyReal(), gbc_jButtonCopyReal);
+		
 		getJRadioButtonPredictive().setText(Language.translate(buttonPredictiveString));
 		getJRadioButtonReal().setText(Language.translate(buttonRealString));
+		getJButtonCopyReal().setText(Language.translate(buttonCopyRealString));
 		getJLabelPredictive().setText(Language.translate(labelPredictiveString));
 		getJLabelHeaderMetrics().setText(Language.translate(headerMetricsString));
 		getJTextAreaMetricExplanation().setText(Language.translate(metricExplanationString));
 		
-		loadMetricsFromProject();
+		this.currProject.getAgentClassLoadMetrics().loadMetricsFromProject();
+		jRadioButtonReal.setSelected(currProject.getAgentClassLoadMetrics().isUseRealLoadMetric());
+		jRadioButtonPredictive.setSelected(!currProject.getAgentClassLoadMetrics().isUseRealLoadMetric());
 	}
 	
 	private JLabel getJLabelPredictive() {
@@ -193,6 +206,16 @@ public class AgentClassLoadMetricsPanel extends JPanel  implements ActionListene
 		}
 		return jRadioButtonReal;
 	}
+	
+	private JButton getJButtonCopyReal() {
+		if (jButtonCopyReal == null) {
+			jButtonCopyReal = new JButton(buttonCopyRealString);
+			jButtonCopyReal.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jButtonCopyReal.addActionListener(this);
+		}
+		return jButtonCopyReal;
+	}
+	
 	private JScrollPane getJScrollPaneMetric() {
 		if (jScrollPaneMetric == null) {
 			jScrollPaneMetric = new JScrollPane();
@@ -246,10 +269,12 @@ public class AgentClassLoadMetricsPanel extends JPanel  implements ActionListene
 							if(column == 1){
 								agentClassMetricDescriptionVector.get(index).setUserPredictedMetric((Long)data);
 							}else if(column == 2){
-								agentClassMetricDescriptionVector.get(index).setRealMetricMin((Long)data);
+								agentClassMetricDescriptionVector.get(index).setRealMetric((Long)data);
 							}else if(column == 3){
-								agentClassMetricDescriptionVector.get(index).setRealMetricMax((Long)data);
+								agentClassMetricDescriptionVector.get(index).setRealMetricMin((Long)data);
 							}else if(column == 4){
+								agentClassMetricDescriptionVector.get(index).setRealMetricMax((Long)data);
+							}else if(column == 5){
 								agentClassMetricDescriptionVector.get(index).setRealMetricAverage((Long)data);
 							}	
 							
@@ -263,30 +288,13 @@ public class AgentClassLoadMetricsPanel extends JPanel  implements ActionListene
 			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(this.currProject.getAgentClassLoadMetrics().getTableModel());
 
 			List<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>();
-			sortKeys.add(new RowSorter.SortKey(4, SortOrder.DESCENDING));
+			sortKeys.add(new RowSorter.SortKey(5, SortOrder.DESCENDING));
 			sorter.setSortKeys(sortKeys);
 			sorter.setSortsOnUpdates(true);
 			
 			jTableMetrics.setRowSorter(sorter);	
 		}
 		return jTableMetrics;
-	}
-	
-	/**
-	 * Load metrics settings from the current project.
-	 */
-	private void loadMetricsFromProject() {
-				
-		jRadioButtonReal.setSelected(currProject.getAgentClassLoadMetrics().isUseRealLoadMetric());
-		jRadioButtonPredictive.setSelected(!currProject.getAgentClassLoadMetrics().isUseRealLoadMetric());
-		
-		AgentClassLoadMetricsTable aclm = currProject.getAgentClassLoadMetrics();
-		aclm.clearTableModel();
-		Vector<AgentClassMetricDescription> agentClassMetricDescriptionVector = currProject.getAgentClassLoadMetrics().getAgentClassMetricDescriptionVector();
-		
-		for(int i = 0; i < agentClassMetricDescriptionVector.size(); i++){
-			aclm.addTableModelRow(agentClassMetricDescriptionVector.get(i));
-		}
 	}
 	
 	
@@ -306,6 +314,11 @@ public class AgentClassLoadMetricsPanel extends JPanel  implements ActionListene
 			this.currProject.getAgentClassLoadMetrics().setUseRealLoadMetric(true);
 			this.pauseObserver = false;
 			
+		} else if (ae.getSource()==this.getJButtonCopyReal()) {
+			this.pauseObserver = true;
+			this.currProject.getAgentClassLoadMetrics().copyRealMetricsAverage2RealMetrics();
+			this.currProject.getAgentClassLoadMetrics().loadMetricsFromProject();
+			this.pauseObserver = false;
 		}
 	}
 	

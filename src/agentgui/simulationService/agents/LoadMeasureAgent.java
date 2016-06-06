@@ -222,7 +222,8 @@ public class LoadMeasureAgent extends Agent {
 		}
 		if (threadDialog!=null) {
 			if(currProject.getDistributionSetup().isAutoSaveRealMetricsOnSimStop()){
-				this.getThreadInfoStorage().getThreadMeasureMetrics().getMetrics();
+				this.currProject.getAgentClassLoadMetrics().copyRealMetricsAverage2RealMetrics();
+				this.currProject.getAgentClassLoadMetrics().loadMetricsFromProject();
 			}
 			this.getThreadDialog().setVisible(false);
 			this.setThreadDialog(null);	
