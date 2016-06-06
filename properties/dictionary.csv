@@ -357,6 +357,7 @@ de;Konsole;Console
 de;Kontinuierlich fortschreitende Zeit.;Continuously progressing time.;;;
 de;Kontinuierliche Thread-Messung;Continuous Thread Measurement;;;
 de;Kontinuierliches 2D-Umgebungsmodell;Continuous 2D environment model
+de;Kopiere Durchschnittswert für reale Metrik;;;;
 de;Label;Label;;;
 de;Lade SVG-Datei;Loading SVG file
 de;Lade Setup;Load Setup;;;
@@ -506,6 +507,7 @@ de;Quell-Sprache;Source language;;;
 de;RMA (Remote Monitoring Agent) öffnen;Open RMA (Remote Monitoring Agent)
 de;Raster verwenden;Use guide grid;;;
 de;Raster-Breite;Grid width;;;
+de;Reale Metriken der Agenten bei Simulationsstop aktualisieren;;;;
 de;Rechts-Klick für weitere Optionen;Right-Click for more options
 de;Reihen-Eigenschaften;Series-Properties;;;
 de;Remote JADE-RMA beim Start des entfernten Containers anzeigen;Display remote JADE-RMA at the start of the remote container;;;
@@ -694,6 +696,7 @@ de;Änderungen anwenden;Apply Changes;;;
 de;Öffne Projekt;Open Project;;;
 de;Öffnen;Open
 de;Über...;About ...
+de;Übernehme Durchschnittswerte für reale Metrik;;;;
 de;Übernehmen;Apply
 de;Übersetzen ...;Translate ...
 de;Übersetzen;Translate
