@@ -194,9 +194,11 @@ public class AgentClassLoadMetricsTable implements Serializable {
 	 * Load metrics settings from the current project.
 	 */
 	public void loadMetricsFromProject() {
-		this.clearTableModel();		
-		for(int i = 0; i < this.agentClassMetricDescriptionVector.size(); i++){
-			this.addTableModelRow(this.agentClassMetricDescriptionVector.get(i));
+		this.clearTableModel();
+		if(this.agentClassMetricDescriptionVector != null){
+			for(int i = 0; i < this.agentClassMetricDescriptionVector.size(); i++){
+				this.addTableModelRow(this.agentClassMetricDescriptionVector.get(i));
+			}
 		}
 	}
 	
