@@ -58,10 +58,10 @@ public abstract class NetworkComponentAdapter {
 	protected GraphNode graphNode;
 	
 	/** The OntologyVisualisationHelper, for ontologies. */
-	private OntologyVisualisationHelper ovHelper = null;
+	private OntologyVisualisationHelper ovHelper;
 	
 	/** The stored NetworkComponentAdapter4DataModel for accelerating the load and save process of NetworkModel's */
-	private NetworkComponentAdapter4DataModel networkComponentAdapter4DataModel=null;
+	private NetworkComponentAdapter4DataModel networkComponentAdapter4DataModel;
 	
 	
 	/**

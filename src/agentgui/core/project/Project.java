@@ -45,6 +45,7 @@ import javax.swing.DesktopManager;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
@@ -56,6 +57,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.common.PathHandling;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
@@ -83,6 +85,7 @@ import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.resources.VectorOfProjectResources;
 import agentgui.core.sim.setup.SimulationSetups;
+import agentgui.core.update.VersionInformation;
 import agentgui.core.webserver.DownloadServer;
 import agentgui.core.webserver.JarFileCreator;
 
@@ -96,35 +99,27 @@ import agentgui.core.webserver.JarFileCreator;
 @XmlRootElement public class Project extends Observable {
 
 	// --- public statics --------------------------------------
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String PREPARE_FOR_SAVING = "ProjectPrepare4Saving";
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String SAVED = "ProjectSaved";
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectName = "ProjectName";
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectDescription = "ProjectDescription";
-	/** Constant value in order to inform the Observer about changes of this kind */
-	@XmlTransient public static final String CHANGED_ProjectFolder= "ProjectFolder";
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectView = "ProjectView";
-	/** Constant value in order to inform the Observer about changes of this kind */
+	@XmlTransient public static final String CHANGED_ProjectStartTab = "ProjectStartTab";
+	@XmlTransient public static final String CHANGED_ProjectFolder= "ProjectFolder";
+	
+	@XmlTransient public static final String CHANGED_VersionInformation= "VersionInformation";
+	@XmlTransient public static final String CHANGED_UpdateAutoConfiguration= "UpdateAutoConfiguration";
+	@XmlTransient public static final String CHANGED_UpdateSite = "UpdateSite";
+	@XmlTransient public static final String CHANGED_UpdateDateLastChecked= "UpdateDateLastChecked";
+	
 	@XmlTransient public static final String CHANGED_EnvironmentModelType= "EnvironmentModelType";
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_StartArguments4BaseAgent = "StartArguments4BaseAgents";
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_TimeModelClass = "TimeModelConfiguration";
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectOntology = "ProjectOntology";
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_ProjectResources = "ProjectResources";
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_JadeConfiguration = "JadeConfiguration";
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_DistributionSetup = "DistributionSetup";
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_RemoteContainerConfiguration = "RemoteContainerConfiguration";
-	/** Constant value in order to inform the Observer about changes of this kind */
 	@XmlTransient public static final String CHANGED_UserRuntimeObject = "UserRuntimeObject";
 	
 	// --- Constant value in order to set the project view ----------
@@ -132,6 +127,7 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient public static final String VIEW_User = "User";
 	@XmlTransient public static final String VIEW_Maximize = "MaximizeView";
 	@XmlTransient public static final String VIEW_Restore = "RestoreView";
+	@XmlTransient public static final String VIEW_TabsLoaded = "TabsLoaded";
 	
 	// --- Constants for the the agent distribution metric ----------
 	@XmlTransient public static final String AGENT_METRIC_Reset = "AgentMetric_Reset";
@@ -162,11 +158,17 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlTransient private String projectFolderFullPath;
 	
 	// --- Variables saved within the project file -------------
-	@XmlElement(name="projectName")			private String projectName;
-	@XmlElement(name="projectDescription")	private String projectDescription;
-	@XmlElement(name="projectView")			private String projectView;			// --- View for developer or end-user ---
+	@XmlElement(name="projectName")				private String projectName;
+	@XmlElement(name="projectDescription")		private String projectDescription;
+	@XmlElement(name="projectStartTab")			private String projectStartTab;	
+	@XmlElement(name="projectView")				private String projectView;			// --- View for developer or end-user ---
 
-	@XmlElement(name="environmentModel")	private String environmentModelName;	
+	@XmlElement(name="versionInformation")		private VersionInformation versionInformation;
+	@XmlElement(name="updateAutoConfiguration")	private Integer updateAutoConfiguration;
+	@XmlElement(name="updateSite")				private String updateSite;
+	@XmlElement(name="updateDateLastChecked")	private Long updateDateLastChecked;
+	
+	@XmlElement(name="environmentModel")		private String environmentModelName;	
 	
 	/**
 	 * This Vector holds the additional resources which are used for the current project 
@@ -298,62 +300,41 @@ import agentgui.core.webserver.JarFileCreator;
 		ProjectWindowTab pwt = null;
 		// ------------------------------------------------
 		// --- General Informations -----------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
-								   Language.translate("Info"), null, null, 
-								   new ProjectInfo(this), null);
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Info"), null, null, new ProjectInfo(this), null);
 		pwt.add();
 		
 		// ------------------------------------------------
 		// --- Configuration ------------------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-				   Language.translate("Konfiguration"), null, null, 
-				   new TabForSubPanels(this), null);
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Konfiguration"), null, null, new TabForSubPanels(this), null);
 		pwt.add();
 		getProjectWindow().registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Configuration, pwt);
 		
 			// --- External Resources ---------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-					   Language.translate("Ressourcen"), null, null, 
-					   new ProjectResources(this), Language.translate("Konfiguration"));
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ressourcen"), null, null, new ProjectResources(this), Language.translate("Konfiguration"));
 			pwt.add();
 			// --- Used Ontologies ------------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-					   Language.translate("Ontologien"), null, null, 
-					   new OntologyTab(this), Language.translate("Konfiguration"));
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ontologien"), null, null, new OntologyTab(this), Language.translate("Konfiguration"));
 			pwt.add();
 			// --- Project Agents -------------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-					   Language.translate("Agenten"), null, null, 
-					   new BaseAgents(this), Language.translate("Konfiguration"));
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten"), null, null, new BaseAgents(this), Language.translate("Konfiguration"));
 			pwt.add();
 			// --- JADE-Services --------------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-					   Language.translate("JADE-Services"), null, null, 
-					   new JadeSetupServices(this), Language.translate("Konfiguration"));
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("JADE-Services"), null, null, new JadeSetupServices(this), Language.translate("Konfiguration"));
 			pwt.add();
 			// --- JADE-MTP configuration -----------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-					   Language.translate("JADE-MTP"), null, null, 
-					   new JadeSetupMTP(this), Language.translate("Konfiguration"));
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("JADE-MTP"), null, null, new JadeSetupMTP(this), Language.translate("Konfiguration"));
 			pwt.add();
 			// --- Distribution + Thresholds --------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-					   Language.translate("Verteilung + Grenzwerte"), null, null, 
-					   new Distribution(this), Language.translate("Konfiguration"));
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Verteilung + Grenzwerte"), null, null, new Distribution(this), Language.translate("Konfiguration"));
 			pwt.add();
-
 			// --- Agent Load Metrics ---------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, 
-					   Language.translate("Agenten-Lastmetrik"), null, null, 
-					   new AgentClassLoadMetricsPanel(this), Language.translate("Konfiguration"));
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten-Lastmetrik"), null, null, new AgentClassLoadMetricsPanel(this), Language.translate("Konfiguration"));
 			pwt.add();
 		
 			
 		// ------------------------------------------------
 		// --- Simulations-Setup --------------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
-				   Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup), null, null, 
-				   new TabForSubPanels(this), null);
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup), null, null, new TabForSubPanels(this), null);
 		pwt.add();
 		getProjectWindow().registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup, pwt);
 		
@@ -361,34 +342,25 @@ import agentgui.core.webserver.JarFileCreator;
 			this.getTimeModelController();
 			
 			// --- start configuration for agents ---------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
-					   Language.translate("Agenten-Start"), null, null, 
-					   new StartSetup(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Agenten-Start"), null, null, new StartSetup(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 			pwt.add();
 			// --- simulation environment -----------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, 
-					   Language.translate("Umgebungsmodell"), null, null, 
-					   new SimulationEnvironment(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate("Umgebungsmodell"), null, null, new SimulationEnvironment(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 			pwt.add();
 			
 
 		// ------------------------------------------------
 		// --- Visualisation ------------------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, 
-				   Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION), null, null, 
-				   this.getVisualisationTab4SetupExecution(), null);
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION), null, null, this.getVisualisationTab4SetupExecution(), null);
 		pwt.add();
 		
 		// ------------------------------------------------
 		// --- Project Desktop ----------------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, 
-				   Language.translate("Projekt-Desktop"), null, null, 
-				   new ProjectDesktop(this), null);
+		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Projekt-Desktop"), null, null, new ProjectDesktop(this), null);
 		pwt.add();
 		
 		// --- Expand the tree view -----------------------
 		this.getProjectWindow().projectTreeExpand2Level(3, true);
-		
 	}
 	
 	/**
@@ -396,7 +368,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	public boolean save() {
 		// --- Save the current project -------------------
-		Application.setStatusBar( projectName + ": " + Language.translate("speichern") + " ... ");
+		Application.setStatusBar(this.projectName + ": " + Language.translate("speichern") + " ... ");
 		this.setNotChangedButNotify(Project.PREPARE_FOR_SAVING);		
 		
 		try {			
@@ -468,8 +440,7 @@ import agentgui.core.webserver.JarFileCreator;
 			if (msgAnswer == JOptionPane.CANCEL_OPTION) {
 				return false;
 			} else if (msgAnswer == JOptionPane.YES_OPTION) {
-				if ( save()== false ) 
-					return false;
+				if (this.save()== false) return false;
 			}
 		}
 		// --- ggf. noch Jade beenden ---------------------
@@ -813,7 +784,9 @@ import agentgui.core.webserver.JarFileCreator;
 		setChanged();
 		notifyObservers(CHANGED_ProjectName);
 	}
+	
 	/**
+	 * Returns the project name.
 	 * @return the projectName
 	 */
 	@XmlTransient
@@ -822,6 +795,7 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 	
 	/**
+	 * Sets the project description.
 	 * @param newProjectDescription the projectDescription to set
 	 */
 	public void setProjectDescription(String newProjectDescription) {
@@ -838,6 +812,27 @@ import agentgui.core.webserver.JarFileCreator;
 		return projectDescription;
 	}
 	/**
+	 * Sets the project start tab.
+	 * @param projectStartTab the new project start tab
+	 */
+	public void setProjectStartTab(String projectStartTab) {
+		this.projectStartTab = projectStartTab;
+		setUnsaved(true);
+		setChanged();
+		notifyObservers(CHANGED_ProjectStartTab);
+	}
+	/**
+	 * Gets the project start tab.
+	 * @return the project start tab
+	 */
+	@XmlTransient
+	public String getProjectStartTab() {
+		return projectStartTab;
+	}
+	
+	// ---- The Projects directory information ----------------------
+	/**
+	 * Sets the current project folder.
 	 * @param newProjectFolder the projectFolder to set
 	 */
 	@XmlTransient
@@ -847,12 +842,14 @@ import agentgui.core.webserver.JarFileCreator;
 		notifyObservers(CHANGED_ProjectFolder);
 	}
 	/**
+	 * Returns the current project folder that is one sub-directory name of the Agent.GUI's project directory.
 	 * @return the projectFolder
 	 */
 	public String getProjectFolder() {
 		return projectFolder;
 	}
 	/**
+	 * Returns the absolute location of project directory as full path.
 	 * @return the ProjectFolderFullPath
 	 */
 	public String getProjectFolderFullPath() {
@@ -861,10 +858,8 @@ import agentgui.core.webserver.JarFileCreator;
 		}
 		return projectFolderFullPath;
 	}
-	
 	/**
 	 * Gets the projects temporary folder.
-	 *
 	 * @return the projects temporary folder
 	 */
 	public String getProjectTempFolderFullPath(){
@@ -877,6 +872,94 @@ import agentgui.core.webserver.JarFileCreator;
 		return tmpFolder;
 	}
 	
+	// --- Version and Update information ---------------------------
+	/**
+	 * Sets the projects {@link VersionInformation}.
+	 * @param versionInformation the new project version information
+	 */
+	public void setVersionInformation(VersionInformation versionInformation) {
+		this.versionInformation = versionInformation;
+		setUnsaved(true);
+		setChanged();
+		notifyObservers(CHANGED_VersionInformation);
+	}
+	/**
+	 * Gets the projects {@link VersionInformation}.
+	 * @return the project version information
+	 */
+	@XmlTransient
+	public VersionInformation getVersionInformation() {
+		if (versionInformation==null) {
+			versionInformation = new VersionInformation();
+			versionInformation.setMajorRevision(0);
+			versionInformation.setMinorRevision(1);
+			versionInformation.setBuild(1);
+		}
+		return versionInformation;
+	}
+	/**
+	 * Sets the update auto configuration (1-3).
+	 * @param updateAutoConfiguration the new update auto configuration
+	 */
+	public void setUpdateAutoConfiguration(Integer updateAutoConfiguration) {
+		this.updateAutoConfiguration = updateAutoConfiguration;
+		setUnsaved(true);
+		setChanged();
+		notifyObservers(CHANGED_UpdateAutoConfiguration);
+
+	}
+	/**
+	 * Returns the current auto-update configuration.
+	 * @return the auto-update configuration
+	 */
+	@XmlTransient
+	public Integer getUpdateAutoConfiguration() {
+		if (updateAutoConfiguration==null) {
+			updateAutoConfiguration = 0;
+		}
+		return updateAutoConfiguration;
+	}
+	/**
+	 * Sets the update site.
+	 * @param updateSite the new update site
+	 */
+	public void setUpdateSite(String updateSite) {
+		this.updateSite = updateSite;
+		setUnsaved(true);
+		setChanged();
+		notifyObservers(CHANGED_UpdateSite);
+	}
+	/**
+	 * Returns the update site.
+	 * @return the update site
+	 */
+	@XmlTransient
+	public String getUpdateSite() {
+		if (updateSite==null) {
+			updateSite = GlobalInfo.DEFAULT_UPDATE_SITE;
+		}
+		return updateSite;
+	}
+	/**
+	 * Sets the date of the last update check.
+	 * @param updateDateLastChecked the new date for the last update check
+	 */
+	public void setUpdateDateLastChecked(Long updateDateLastChecked) {
+		this.updateDateLastChecked = updateDateLastChecked;
+		setUnsaved(true);
+		setChanged();
+		notifyObservers(CHANGED_UpdateDateLastChecked);
+	}
+	/**
+	 * Returns the date of the last update check.
+	 * @return the date of the last update check
+	 */
+	@XmlTransient
+	public Long getUpdateDateLastChecked() {
+		return updateDateLastChecked;
+	}
+	
+	// --- Visualisation instances ----------------------------------
 	/**
 	 * Gets the project window.
 	 * @return the project window
@@ -908,14 +991,23 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 
 	/**
-	 * @param projectView the projectView to set
+	 * Sets the new project view that is either {@link Project#VIEW_Developer} or {@link Project#VIEW_User}.
+	 * @param newProjectView the new project view to set
 	 */
 	@XmlTransient
-	public void setProjectView(String projectView) {
-		this.projectView = projectView;
-		setUnsaved(true);
-		setChanged();
-		notifyObservers(CHANGED_ProjectView);
+	public void setProjectView(String newProjectView) {
+		if (newProjectView.equals(this.projectView)==false) {
+			// --- Remind the start tab for the project ---
+			DefaultMutableTreeNode oldStartNode = this.getProjectWindow().getStartTabNode();
+			// --- Change view ----------------------------
+			this.projectView = newProjectView;
+			setUnsaved(true);
+			setChanged();
+			notifyObservers(CHANGED_ProjectView);	
+			// --- Find and set the new start tab ---------
+			DefaultMutableTreeNode newStartNode = this.getProjectWindow().getTreeNode(oldStartNode.getUserObject().toString());
+			this.getProjectWindow().setStartTabNode(newStartNode);
+		}
 	}
 	/**
 	 * @return the projectView
@@ -1461,6 +1553,13 @@ import agentgui.core.webserver.JarFileCreator;
 			this.visualisationTab4SetupExecution = new JPanel4Visualisation(this, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION)); 
 		}
 		return this.visualisationTab4SetupExecution;
+	}
+
+	/**
+	 * Does the project update.
+	 */
+	public void doProjectUpdate() {
+		// TODO Auto-generated method stub
 	}
 
 }

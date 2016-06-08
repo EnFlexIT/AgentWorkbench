@@ -568,6 +568,7 @@ de;Start-Argumente für den ausgewählten Agenten;Start-arguments for the select
 de;Start-Konfiguration;Start-Configuration
 de;Start-Liste:;Start list:;;;
 de;Start-Objekte aus Projekt-Ontologie;Startup objects from project-ontology
+de;Start-Tab;;;;
 de;Start;Start
 de;Startargument definieren für Agent;Define start argument for agent;;;
 de;Starte Agent.GUI - Service;Start Agent.GUI - Service
@@ -633,11 +634,14 @@ de;Verfügbare JADE-Services;Available JADE Services;;;
 de;Vergrößern ...;Expand View ...
 de;Vergrößern;Zoom In
 de;Verkleinern;Zoom out
+de;Version;Version;;;
+de;Versionnummer bearbeiten;Edit Version Number;;;
 de;Verteilung + Grenzwerte;Distribution + Thresholds
 de;Verteilung der Agenten basierend auf:;Distribution of agents based on:;;;
 de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;Distribution of agents in "PredictiveStaticLoadBalancing" based on:;;;
 de;Verteilung der Agenten nur auf Remote-Maschinen;Distribution of agents remote only;;;
 de;Verteilung;Distribution
+de;Verwenden Sie das Kontextmenü im Projektbaum, um einen Start-Tab festzulegen.;Use the context menu in the project tree in order to specify a start tab.;;;
 de;Verzeichnis bereits vorhanden!;Directory already exists!
 de;Verzeichnis gepackt zu;Folder packed to;;;
 de;Verzeichnis;Folder
@@ -777,6 +781,7 @@ en;;Update after changes;;;
 en;;Update after milliseconds (Realtime);;;
 en;;Update of the visualization;;;
 en;;Upgrade costs;;;
+en;;Writing;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agent.GUI: HTTPS Konfiguration;Agent.GUI: HTTPS Configuration;;;

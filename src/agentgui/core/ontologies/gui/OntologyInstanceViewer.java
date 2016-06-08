@@ -494,7 +494,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		if (jScrollPaneDynForm == null) {
 			jScrollPaneDynForm = new JScrollPane();
 			jScrollPaneDynForm.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			jScrollPaneDynForm.setViewportView(this.getDynForm());
+			jScrollPaneDynForm.setViewportView(this.getDynForm().getJPanelOntologyVisualization());
 		}
 		return jScrollPaneDynForm;
 	}
@@ -611,14 +611,6 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * @param configurationXML64 the new configuration xm l64
 	 */
 	public void setConfigurationXML64(String[] configurationXML64) {
-		this.setConfigurationXML64(configurationXML64, false);
-	}
-	/**
-	 * Sets the configuration in XML in a Base64 decode form.
-	 * @param configurationXML64 the new configuration xm l64
-	 * @param avoidGuiUpdate the avoid gui update
-	 */
-	public void setConfigurationXML64(String[] configurationXML64, boolean avoidGuiUpdate) {
 		
 		String[] configXML = new String[configurationXML64.length];
 		for (int i = 0; i < configurationXML64.length; i++) {
@@ -634,13 +626,10 @@ public class OntologyInstanceViewer extends JTabbedPane {
 			}
 		}
 		
-		this.getDynForm().setOntoArgsXML(configXML, avoidGuiUpdate);
-		
-		if (avoidGuiUpdate==false) {
-			this.getDynTableJPanel().refreshTableModel();
-			if (this.getSelectedIndex()==1) {
-				this.setXMLText();
-			}
+		this.getDynForm().setOntoArgsXML(configXML);
+		this.getDynTableJPanel().refreshTableModel();
+		if (this.getSelectedIndex()==1) {
+			this.setXMLText();
 		}
 		
 	}
@@ -677,22 +666,11 @@ public class OntologyInstanceViewer extends JTabbedPane {
 	 * @param configurationInstances the configurationInstances to set
 	 */
 	public void setConfigurationInstances(final Object[] configurationInstances) {
-		this.setConfigurationInstances(configurationInstances, false);
-	}
-	/**
-	 * Sets the configuration instances of the ontology objects.
-	 * 
-	 * @param configurationInstances the configurationInstances to set
-	 * @param avoidGuiUpdate the avoid gui update
-	 */
-	public void setConfigurationInstances(final Object[] configurationInstances, boolean avoidGuiUpdate) {
-		this.getDynForm().setOntoArgsInstance(configurationInstances, avoidGuiUpdate);
-		if (avoidGuiUpdate==false) {
-			this.getDynTableJPanel().refreshTableModel();
-			if (this.getSelectedIndex()==1) {
-				this.setXMLText();
-			}	
-		}
+		this.getDynForm().setOntoArgsInstance(configurationInstances);
+		this.getDynTableJPanel().refreshTableModel();
+		if (this.getSelectedIndex()==1) {
+			this.setXMLText();
+		}	
 	}
 	
 	/**

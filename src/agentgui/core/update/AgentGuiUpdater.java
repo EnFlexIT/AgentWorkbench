@@ -45,6 +45,8 @@ import agentgui.simulationService.distribution.DownloadThread;
 
 /**
  * The Class AgentGuiUpdater.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class AgentGuiUpdater extends Thread {
 

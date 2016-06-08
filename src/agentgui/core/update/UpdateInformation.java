@@ -45,24 +45,24 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.application.Language;
-import agentgui.core.config.VersionInfo;
 
 /**
- * The Class UpdateInformation.
+ * The Class UpdateInformation extends the class {@link VersionInformation} and add some additional
+ * information for the download of an update.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 @XmlRootElement
-public class UpdateInformation {
+public class UpdateInformation extends VersionInformation {
 
-	private Integer majorRevision = null;
-	private Integer minorRevision = null;
-	private Integer build = null;
+	private static final long serialVersionUID = -4484122392563983935L;
 
-	private String downloadLink = null; 
-	private String downloadFile = null;
-	private Integer downloadSize = null;
+	private String downloadLink; 
+	private String downloadFile;
+	private Integer downloadSize;
 	
 	@XmlTransient private boolean error = false;
-	@XmlTransient private String errorMsg = null;
+	@XmlTransient private String errorMsg;
 	
 	
 	/**
@@ -202,86 +202,8 @@ public class UpdateInformation {
 	    this.setDownloadFile(updateInfo.getDownloadFile());
 	    this.setDownloadSize(updateInfo.getDownloadSize());
 		
-//		return updateInfo;
 	}
 	
-	/**
-	 * Checks if is update.
-	 * @return true, if is update
-	 */
-	public boolean isNewerVersion(VersionInfo versionInfo) {
-		return this.isNewerVersion(versionInfo.getVersionMajor(), versionInfo.getVersionMinor(), versionInfo.getVersionBuild());
-	}
-	
-	/**
-	 * Checks if is newer version.
-	 *
-	 * @param localMajorRevision the major revision to compare
-	 * @param localMinorRevision the minor revision to compare
-	 * @param localBuild the build number to compare
-	 * @return true, if is newer version
-	 */
-	public boolean isNewerVersion(Integer localMajorRevision, Integer localMinorRevision, Integer localBuild) {
-		
-		if (this.majorRevision>localMajorRevision) {
-			return true;
-		} else if (this.majorRevision==localMajorRevision) {
-			if (this.minorRevision>localMinorRevision) {
-				return true;
-			} else if (this.minorRevision==localMinorRevision) {
-				if (this.build>localBuild) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Gets the major revision.
-	 * @return the majorRevision
-	 */
-	public Integer getMajorRevision() {
-		return majorRevision;
-	}
-	
-	/**
-	 * Sets the major revision.
-	 * @param majorRevision the majorRevision to set
-	 */
-	public void setMajorRevision(Integer majorRevision) {
-		this.majorRevision = majorRevision;
-	}
-	
-	/**
-	 * Gets the minor revision.
-	 * @return the minorRevision
-	 */
-	public Integer getMinorRevision() {
-		return minorRevision;
-	}
-	/**
-	 * Sets the minor revision.
-	 * @param minorRevision the minorRevision to set
-	 */
-	public void setMinorRevision(Integer minorRevision) {
-		this.minorRevision = minorRevision;
-	}
-	
-	/**
-	 * Gets the builds the.
-	 * @return the build
-	 */
-	public Integer getBuild() {
-		return build;
-	}
-	/**
-	 * Sets the builds the.
-	 * @param build the build to set
-	 */
-	public void setBuild(Integer build) {
-		this.build = build;
-	}
 	
 	/**
 	 * Gets the download link.

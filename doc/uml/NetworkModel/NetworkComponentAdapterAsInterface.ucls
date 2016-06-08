@@ -60,91 +60,91 @@
     </display>  
   </class>  
   <association id="7">    
-    <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
-      <attribute id="8" name="networkComponentAdapter">        
+    <end type="SOURCE" refId="5" navigable="false" variant="ASSOCIATION">      
+      <attribute id="8" name="networkComponents">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="9" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="10">    
-    <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
-      <attribute id="11" name="networkComponent">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="12" minimum="0" maximum="1">        
+      <multiplicity id="9" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="13">    
+  <generalization id="10">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <association id="11">    
     <end type="SOURCE" refId="5" navigable="false" variant="ASSOCIATION">      
-      <attribute id="14" name="networkComponents">        
+      <attribute id="12" name="networkComponentAdapterHash">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="15" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="16">    
-    <end type="SOURCE" refId="5" navigable="false" variant="ASSOCIATION">      
-      <attribute id="17" name="networkComponentAdapterHash">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="18" minimum="0" maximum="2147483647">        
+      <multiplicity id="13" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="19">    
+  <association id="14">    
     <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
-      <attribute id="20" name="adapter4DataModel">        
+      <attribute id="15" name="adapter4DataModel">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="21" minimum="0" maximum="1">        
+      <multiplicity id="16" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="22">    
+  <association id="17">    
     <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
-      <attribute id="23" name="networkComponent">        
+      <attribute id="18" name="networkComponent">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="24" minimum="0" maximum="1">        
+      <multiplicity id="19" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="25">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <association id="26">    
-    <end type="SOURCE" refId="5" navigable="false" variant="ASSOCIATION">      
-      <attribute id="27" name="alternativeNetworkModel">        
+  <association id="20">    
+    <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
+      <attribute id="21" name="networkComponentAdapter">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="28" minimum="0" maximum="2147483647">        
+      <multiplicity id="22" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="23">    
+    <end type="SOURCE" refId="5" navigable="false" variant="ASSOCIATION">      
+      <attribute id="24" name="alternativeNetworkModel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="25" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="5" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="26">    
+    <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
+      <attribute id="27" name="networkComponent">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="28" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

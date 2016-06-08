@@ -28,13 +28,6 @@
  */
 package agentgui.core.ontologies.gui;
 
-import jade.content.lang.Codec.CodecException;
-import jade.content.lang.xml.XMLCodec;
-import jade.content.onto.Ontology;
-import jade.content.onto.OntologyException;
-import jade.util.leap.ArrayList;
-import jade.util.leap.List;
-
 import java.awt.Rectangle;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -46,7 +39,6 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -63,6 +55,12 @@ import agentgui.core.project.AgentStartArgument;
 import agentgui.core.project.AgentStartConfiguration;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.xml.XMLCodec;
+import jade.content.onto.Ontology;
+import jade.content.onto.OntologyException;
+import jade.util.leap.ArrayList;
+import jade.util.leap.List;
 
 /**
  * This class can be used in order to generate a Swing based user form, that represents
@@ -75,9 +73,7 @@ import agentgui.simulationService.time.TimeModelDateBased;
  * @author Marvin Steinberg - University of Duisburg - Essen
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public abstract class DynFormBase extends JPanel {
-
-	private static final long serialVersionUID = 7690503315848756188L;
+public abstract class DynFormBase {
 
 	/** Necessary parameter that comes from the constructor */
 	protected OntologyVisualisationHelper ontologyVisualisationHelper = null;
@@ -99,13 +95,13 @@ public abstract class DynFormBase extends JPanel {
 	protected KeyAdapter4Numbers numWatcherFloat = new KeyAdapter4Numbers(true);
 	/** The KeyAdapter for Integer values */
 	protected KeyAdapter4Numbers numWatcherInteger = new KeyAdapter4Numbers(false);
-
  
-	/** The root node for the class hierarchy of the current ontology configuration */ 
-	protected DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Root");
 	/** The TreeModel for the class hierarchy of the current ontology configuration */ 
-	protected DefaultTreeModel objectTree = new DefaultTreeModel(rootNode);
-
+	protected DefaultTreeModel objectTree;
+	/** The root node for the class hierarchy of the current ontology configuration */ 
+	private DefaultMutableTreeNode rootNode;
+	
+	
 	/** Reminder Hash that stores an {@link OntologyClassWidget} for a specific tree node */
 	private HashMap<DefaultMutableTreeNode, OntologyClassWidget> ontologyClassWidget = null;
 	/** Reminder Hash that stores the tree node of a given {@link DynType} */
@@ -133,18 +129,34 @@ public abstract class DynFormBase extends JPanel {
 		return this.currOntologyClassReferenceList;
 	}
 	
+	
 	/**
-	 * Gets the object tree with all elements to display.
+	 * Returns the object tree with all elements to display.
 	 * @return the object tree
 	 */
-	public DefaultTreeModel getObjectTree() {
+	protected DefaultTreeModel getObjectTree() {
+		if (objectTree==null) {
+			objectTree = new DefaultTreeModel(this.getRootNode());
+		}
 		return this.objectTree;
 	}
+	/**
+	 * Returns the root node of the object tree.
+	 * @return the root node
+	 * @see #getObjectTree()
+	 */
+	protected DefaultMutableTreeNode getRootNode() {
+		if (rootNode==null) {
+			rootNode  = new DefaultMutableTreeNode("Root");
+		}
+		return rootNode;
+	}
+	
 	/**
 	 * Shows the object tree in a visual way in a JDialog, if the internal debug value is set to be true.
 	 */
 	protected void showObjectTree() {
-		this.dtv = new DynTreeViewer(objectTree);
+		this.dtv = new DynTreeViewer(this.getObjectTree());
 		this.dtv.setVisible(true);
 	}
 
@@ -307,7 +319,7 @@ public abstract class DynFormBase extends JPanel {
 	 */
 	protected void setXMLFromInstances(){
 	
-		int numOfChilds = rootNode.getChildCount();
+		int numOfChilds = this.getRootNode().getChildCount();
 		this.ontoArgsXML = new String[numOfChilds];
 		
 		// ----------------------------------------------------------
@@ -317,7 +329,7 @@ public abstract class DynFormBase extends JPanel {
 		for (int i = 0; i < numOfChilds; i++) {
 			
 			// --- Get DynType (userObject) of this node ------------
-			DefaultMutableTreeNode currNode =  (DefaultMutableTreeNode) rootNode.getChildAt(i);
+			DefaultMutableTreeNode currNode =  (DefaultMutableTreeNode) this.getRootNode().getChildAt(i);
 			DynType dt = (DynType) currNode.getUserObject();
 			String className = dt.getClassName();
 			
@@ -337,15 +349,7 @@ public abstract class DynFormBase extends JPanel {
 	 * arguments, fills the form and creates the instances.
 	 */
 	protected void setInstancesFromXML() {
-		this.setInstancesFromXML(false);
-	}
-	/**
-	 * This method reads the current XML configuration of the
-	 * arguments, fills the form and creates the instances.
-	 * @param avoidGuiUpdate the new instances from XML
-	 */
-	protected void setInstancesFromXML(boolean avoidGuiUpdate) {
-		this.ontoArgsInstance = this.getInstancesFromXML(this.ontoArgsXML, avoidGuiUpdate);
+		this.ontoArgsInstance = this.getInstancesFromXML(this.ontoArgsXML);
 	}
 
 	/**
@@ -353,10 +357,9 @@ public abstract class DynFormBase extends JPanel {
 	 * the form and creates the instances.
 	 *
 	 * @param ontoArgsXML the ontology arguments as String array containing XML
-	 * @param avoidGuiUpdate set true, if you want to avoid an update of the UI
 	 * @return the concrete instances from the XML argument description
 	 */
-	protected Object[] getInstancesFromXML(String[] ontoArgsXML, boolean avoidGuiUpdate ) {
+	protected Object[] getInstancesFromXML(String[] ontoArgsXML) {
 		
 		if (ontoArgsXML==null) return null;
 		
@@ -367,11 +370,11 @@ public abstract class DynFormBase extends JPanel {
 		// --- Walk through the objectTree, which was generated ----- 
 		// --- during the creation of the DynForm - object 		-----
 		// ----------------------------------------------------------
-		int numOfChilds = rootNode.getChildCount();
+		int numOfChilds = this.getRootNode().getChildCount();
 		for (int i = 0; i < numOfChilds; i++) {
 			
 			// --- Get DynType (userObject) of this node ------------
-			DefaultMutableTreeNode currNode =  (DefaultMutableTreeNode) rootNode.getChildAt(i);
+			DefaultMutableTreeNode currNode =  (DefaultMutableTreeNode) this.getRootNode().getChildAt(i);
 			DynType dt = (DynType) currNode.getUserObject();
 			String className = dt.getClassName();
 			
@@ -385,13 +388,11 @@ public abstract class DynFormBase extends JPanel {
 				Object argumentInstance = this.getInstanceOfXML(ontoArgsXML[i], className, ontology);
 				if (argumentInstance!=null) {
 					// --- Set the current instance to the form -----
-					if (avoidGuiUpdate==false) {
-						this.setFormState(argumentInstance, currNode);
-						if (Application.getGlobalInfo().isOntologyClassVisualisation(className)==true) {
-							OntologyClassWidget widget = this.getOntologyClassWidget(currNode);
-							if (widget!=null) {
-								widget.invokeSetOntologyClassInstance(argumentInstance);	
-							}
+					this.setFormState(argumentInstance, currNode);
+					if (Application.getGlobalInfo().isOntologyClassVisualisation(className)==true) {
+						OntologyClassWidget widget = this.getOntologyClassWidget(currNode);
+						if (widget!=null) {
+							widget.invokeSetOntologyClassInstance(argumentInstance);	
 						}
 					}
 					// --- Remind object state as instance ----------
@@ -431,7 +432,8 @@ public abstract class DynFormBase extends JPanel {
 			e.printStackTrace();
 		} catch (OntologyException e) {
 			e.printStackTrace();
-		}	
+		}
+		if (xmlRepresentation!=null) xmlRepresentation.trim();
 		if (debug) {
 			System.out.println(xmlRepresentation);
 		}
@@ -478,7 +480,7 @@ public abstract class DynFormBase extends JPanel {
 	 */
 	protected void setInstancesFromForm() {
 		
-		int numOfChilds = rootNode.getChildCount();
+		int numOfChilds = this.getRootNode().getChildCount();
 		this.ontoArgsInstance = new Object[numOfChilds];
 		this.ontoArgsXML = new String[numOfChilds];
 		
@@ -489,7 +491,7 @@ public abstract class DynFormBase extends JPanel {
 		for (int i = 0; i < numOfChilds; i++) {
 			
 			// --- Get DynType (userObject) of this node ------------
-			DefaultMutableTreeNode currNode =  (DefaultMutableTreeNode) rootNode.getChildAt(i);
+			DefaultMutableTreeNode currNode =  (DefaultMutableTreeNode) this.getRootNode().getChildAt(i);
 			DynType dt = (DynType) currNode.getUserObject();
 			String className = dt.getClassName();
 			
@@ -1111,9 +1113,9 @@ public abstract class DynFormBase extends JPanel {
 	 */
 	protected void resetValuesOnForm() {
 		
-		int noOfSubNodes = this.rootNode.getChildCount();
+		int noOfSubNodes = rootNode.getChildCount();
 		for (int i=0; i < noOfSubNodes; i++) {
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.rootNode.getChildAt(i);
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.getRootNode().getChildAt(i);
 			this.resetValuesOnSubForm(node);
 		}
 		this.save(true);

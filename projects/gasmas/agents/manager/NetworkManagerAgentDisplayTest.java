@@ -96,12 +96,12 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 		// --- Put the environment model into the SimulationService -
 		// --- in order to make it accessible for the whole agency --
 		((TimeModelContinuous) this.getTimeModel()).setExecuted(true);
-		this.notifyAboutEnvironmentChanges();
+//		this.notifyAboutEnvironmentChanges();
 		
 		// ----------------------------------------------------------
 		// --- Examples: Chart Series Actions -----------------------
 		// ----------------------------------------------------------
-		this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(false));
+		this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(true));
 		
 		this.updateLayout();
 		this.runDataModelNotificationUpdates();

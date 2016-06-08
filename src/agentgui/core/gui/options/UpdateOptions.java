@@ -51,6 +51,7 @@ import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 
 import javax.swing.JCheckBox;
 
@@ -70,7 +71,6 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 	private JPanel jPanelUpdateLink;
 	private JPanel jPanelDummy;
 	
-	private ButtonGroup updateAutoConfig; 
 	private JRadioButton jRadioButtonUpdateAutomated;
 	private JRadioButton jRadioButtonUpdateDownloadAndAsk;
 	private JRadioButton jRadioButtonUpdateDisabled;
@@ -189,10 +189,10 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		this.add(jLabelUpdateDictionary, gridBagConstraints12);
 		this.add(getJCheckBoxUpdateKeepDictionary(), gridBagConstraints22);
 		
-		this.updateAutoConfig = new ButtonGroup();
-		this.updateAutoConfig.add(this.getJRadioButtonUpdateAutomated());
-		this.updateAutoConfig.add(this.getJRadioButtonUpdateDownloadAndAsk());
-		this.updateAutoConfig.add(this.getJRadioButtonUpdateDisabled());
+		ButtonGroup updateAutoConfig = new ButtonGroup();
+		updateAutoConfig.add(this.getJRadioButtonUpdateAutomated());
+		updateAutoConfig.add(this.getJRadioButtonUpdateDownloadAndAsk());
+		updateAutoConfig.add(this.getJRadioButtonUpdateDisabled());
 		
 	}
 	
@@ -353,7 +353,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 			this.setFromData2Global();
 			
 		} else if (actionFrom==getJButtonUpdateSiteDefault()) {
-			this.getJTextFieldUpdateSite().setText("http://update.agentgui.org");
+			this.getJTextFieldUpdateSite().setText(GlobalInfo.DEFAULT_UPDATE_SITE);
 			this.getJRadioButtonUpdateAutomated().setSelected(true);
 			this.getJCheckBoxUpdateKeepDictionary().setSelected(true);
 		}

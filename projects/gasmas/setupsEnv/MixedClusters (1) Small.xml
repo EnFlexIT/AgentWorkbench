@@ -2,6 +2,33 @@
 <networkComponentList>
     <componentList>
         <entry>
+            <key>n23</key>
+            <value>
+                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP58</graphElementIDs>
+                <id>n23</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Exit</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n1</key>
+            <value>
+                <dataModelsBase64>
+                    <dataModelBase64>PFBpcGUgYWxpYXM9IlRlc3QgMiIgSUQ9IiIgdG89IiIgZnJvbT0iIj4KCTxmbG93TWluPgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9mbG93TWluPgoJPGN1cnJlbnRGbG93PgoJCTxGbG93UGFyYW1ldGVycyB0ZW1wZXJhdHVyZT0iMC4wRiIgZmxvdz0iMC4wRiIgcHJlc3N1cmU9IjAuMEYiIHJleW5vbGRzTnVtYmVyPSIwIiBtYXNzRmxvdz0iMC4wRiIgZmx1aWRWZWxvY2l0eT0iMC4wRiIvPgoJPC9jdXJyZW50Rmxvdz4KCTxmbG93TWF4PgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9mbG93TWF4PgoJPGhlYXRUcmFuc2ZlckNvZWZmaWNpZW50PgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9oZWF0VHJhbnNmZXJDb2VmZmljaWVudD4KCTxwcmVzc3VyZU1heD4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvcHJlc3N1cmVNYXg+Cgk8bGluZU9mU2lnaHQ+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L2xpbmVPZlNpZ2h0PgoJPERpYW1ldGVyPgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9EaWFtZXRlcj4KCTxyb3VnaG5lc3M+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L3JvdWdobmVzcz4KCTxMZW5ndGg+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L0xlbmd0aD4KPC9QaXBlPgo=</dataModelBase64>
+                </dataModelsBase64>
+                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n1</graphElementIDs>
+                <graphElementIDs>PP6</graphElementIDs>
+                <graphElementIDs>PP1</graphElementIDs>
+                <id>n1</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Pipe</type>
+            </value>
+        </entry>
+        <entry>
             <key>n41</key>
             <value>
                 <agentClassName>gasmas.agents.components.SimpleValveAgent</agentClassName>
@@ -15,40 +42,22 @@
             </value>
         </entry>
         <entry>
-            <key>n1</key>
+            <key>n22</key>
             <value>
-                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
+                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>n1</graphElementIDs>
-                <graphElementIDs>PP6</graphElementIDs>
-                <graphElementIDs>PP1</graphElementIDs>
-                <id>n1</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Pipe</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n23</key>
-            <value>
-                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
-                <directed>false</directed>
+                <graphElementIDs>n22_0</graphElementIDs>
                 <graphElementIDs>PP58</graphElementIDs>
-                <id>n23</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Exit</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n40</key>
-            <value>
-                <agentClassName>gasmas.agents.components.SimpleValveAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP92</graphElementIDs>
-                <graphElementIDs>n40</graphElementIDs>
-                <graphElementIDs>PP87</graphElementIDs>
-                <id>n40</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Valve</type>
+                <graphElementIDs>PP69</graphElementIDs>
+                <graphElementIDs>PP59</graphElementIDs>
+                <graphElementIDs>n22_1</graphElementIDs>
+                <graphElementIDs>PP53</graphElementIDs>
+                <graphElementIDs>n22_2</graphElementIDs>
+                <graphElementIDs>PP54</graphElementIDs>
+                <graphElementIDs>n22_3</graphElementIDs>
+                <id>n22</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star4GraphElement</prototypeClassName>
+                <type>Branch4</type>
             </value>
         </entry>
         <entry>
@@ -71,22 +80,16 @@
             </value>
         </entry>
         <entry>
-            <key>n22</key>
+            <key>n40</key>
             <value>
-                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
+                <agentClassName>gasmas.agents.components.SimpleValveAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>n22_0</graphElementIDs>
-                <graphElementIDs>PP58</graphElementIDs>
-                <graphElementIDs>PP69</graphElementIDs>
-                <graphElementIDs>PP59</graphElementIDs>
-                <graphElementIDs>PP53</graphElementIDs>
-                <graphElementIDs>n22_1</graphElementIDs>
-                <graphElementIDs>PP54</graphElementIDs>
-                <graphElementIDs>n22_2</graphElementIDs>
-                <graphElementIDs>n22_3</graphElementIDs>
-                <id>n22</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.Star4GraphElement</prototypeClassName>
-                <type>Branch4</type>
+                <graphElementIDs>PP92</graphElementIDs>
+                <graphElementIDs>n40</graphElementIDs>
+                <graphElementIDs>PP87</graphElementIDs>
+                <id>n40</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Valve</type>
             </value>
         </entry>
         <entry>
@@ -114,6 +117,19 @@
             </value>
         </entry>
         <entry>
+            <key>n45</key>
+            <value>
+                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n45</graphElementIDs>
+                <graphElementIDs>PP90</graphElementIDs>
+                <graphElementIDs>PP100</graphElementIDs>
+                <id>n45</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Pipe</type>
+            </value>
+        </entry>
+        <entry>
             <key>n5</key>
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
@@ -131,16 +147,22 @@
             </value>
         </entry>
         <entry>
-            <key>n45</key>
+            <key>n44</key>
             <value>
-                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
+                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>n45</graphElementIDs>
-                <graphElementIDs>PP90</graphElementIDs>
+                <graphElementIDs>n44_3</graphElementIDs>
+                <graphElementIDs>n44_2</graphElementIDs>
+                <graphElementIDs>n44_1</graphElementIDs>
+                <graphElementIDs>PP98</graphElementIDs>
+                <graphElementIDs>PP103</graphElementIDs>
+                <graphElementIDs>PP99</graphElementIDs>
+                <graphElementIDs>PP104</graphElementIDs>
+                <graphElementIDs>n44_0</graphElementIDs>
                 <graphElementIDs>PP100</graphElementIDs>
-                <id>n45</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Pipe</type>
+                <id>n44</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star4GraphElement</prototypeClassName>
+                <type>Branch4</type>
             </value>
         </entry>
         <entry>
@@ -154,25 +176,6 @@
                 <id>n4</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
                 <type>Pipe</type>
-            </value>
-        </entry>
-        <entry>
-            <key>n44</key>
-            <value>
-                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>n44_3</graphElementIDs>
-                <graphElementIDs>n44_2</graphElementIDs>
-                <graphElementIDs>n44_1</graphElementIDs>
-                <graphElementIDs>PP98</graphElementIDs>
-                <graphElementIDs>PP99</graphElementIDs>
-                <graphElementIDs>PP103</graphElementIDs>
-                <graphElementIDs>PP104</graphElementIDs>
-                <graphElementIDs>PP100</graphElementIDs>
-                <graphElementIDs>n44_0</graphElementIDs>
-                <id>n44</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.Star4GraphElement</prototypeClassName>
-                <type>Branch4</type>
             </value>
         </entry>
         <entry>
@@ -194,8 +197,8 @@
                 <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
                 <directed>true</directed>
                 <graphElementIDs>PP92</graphElementIDs>
-                <graphElementIDs>PP98</graphElementIDs>
                 <graphElementIDs>n43</graphElementIDs>
+                <graphElementIDs>PP98</graphElementIDs>
                 <id>n43</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>Compressor</type>
@@ -230,6 +233,10 @@
         <entry>
             <key>n9</key>
             <value>
+                <dataModelsBase64>
+                    <dataModelBase64>PENvbXBTdGF0IGFsaWFzPSIiIElEPSIiIHVwZ3JhZGVDb3N0cz0iMC4wRiIgYnVpbGRpbmdDb3N0cz0iMC4wRiI+Cgk8Z2FzRHJpdmVuTW90b3JzPgoJCTxHYXNEcml2ZW5Nb3RvciBhbGlhcz0iIiBJRD0iIj4KCQkJPGVuZXJneVJhdGVGdW5Db2VmZj4KCQkJCTxDYWxjM1BhcmFtZXRlciBjb2VmZl8zXzM9IjAuMEYiIGNvZWZmXzFfMz0iMC4wRiIgY29lZmZfMl8zPSIwLjBGIi8+CgkJCTwvZW5lcmd5UmF0ZUZ1bkNvZWZmPgoJCQk8Z21NYXhpbWFsUG93ZXJNZWFzdXJlbWVudHM+CgkJCQk8Q29tcFN0YXRNYXhQbWVhc3VybWVudD4KCQkJCQk8bWF4aW1hbFBvd2VyPgoJCQkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJCQk8L21heGltYWxQb3dlcj4KCQkJCQk8c3BlZU1QPgoJCQkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJCQk8L3NwZWVNUD4KCQkJCTwvQ29tcFN0YXRNYXhQbWVhc3VybWVudD4KCQkJPC9nbU1heGltYWxQb3dlck1lYXN1cmVtZW50cz4KCQkJPGdtUG93ZXJGdW5Db2VmZj4KCQkJCTxDYWxjM1BhcmFtZXRlciBjb2VmZl8zXzM9IjAuMEYiIGNvZWZmXzFfMz0iMC4wRiIgY29lZmZfMl8zPSIwLjBGIi8+CgkJCTwvZ21Qb3dlckZ1bkNvZWZmPgoJCQk8Z21TcGVjaWZpY0VuZXJneUNvbnN1bXB0aW9uTWVhc3VyZW1lbnRzPgoJCQkJPENvbXBTdGF0U0VDbWVhc3VybWVudD4KCQkJCQk8Y29tcmVzc29yUG93ZXI+CgkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCTwvY29tcmVzc29yUG93ZXI+CgkJCQkJPGZ1ZWxDb25zdW1wdGlvbj4KCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJPC9mdWVsQ29uc3VtcHRpb24+CgkJCQk8L0NvbXBTdGF0U0VDbWVhc3VybWVudD4KCQkJPC9nbVNwZWNpZmljRW5lcmd5Q29uc3VtcHRpb25NZWFzdXJlbWVudHM+CgkJPC9HYXNEcml2ZW5Nb3Rvcj4KCTwvZ2FzRHJpdmVuTW90b3JzPgoJPGdhc1R1cmJpbmVzPgoJCTxHYXNUdXJiaW5lIGFsaWFzPSIiIElEPSIiPgoJCQk8ZW5lcmd5UmF0ZUZ1bkNvZWZmPgoJCQkJPENhbGMzUGFyYW1ldGVyIGNvZWZmXzNfMz0iMC4wRiIgY29lZmZfMV8zPSIwLjBGIiBjb2VmZl8yXzM9IjAuMEYiLz4KCQkJPC9lbmVyZ3lSYXRlRnVuQ29lZmY+CgkJCTxndFBvd2VyRnVuQ29lZmY+CgkJCQk8Q2FsYzlQYXJhbWV0ZXIgY29lZmZfN185PSIwLjBGIiBjb2VmZl8xXzk9IjAuMEYiIGNvZWZmXzVfOT0iMC4wRiIgY29lZmZfMl85PSIwLjBGIiBjb2VmZl80Xzk9IjAuMEYiIGNvZWZmXzNfOT0iMC4wRiIgY29lZmZfNl85PSIwLjBGIiBjb2VmZl85Xzk9IjAuMEYiIGNvZWZmXzhfOT0iMC4wRiIvPgoJCQk8L2d0UG93ZXJGdW5Db2VmZj4KCQkJPGd0U3BlY2lmaWNFbmVyZ3lDb25zdW1wdGlvbk1lYXN1cmVtZW50cz4KCQkJCTxDb21wU3RhdFNFQ21lYXN1cm1lbnQ+CgkJCQkJPGNvbXJlc3NvclBvd2VyPgoJCQkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJCQk8L2NvbXJlc3NvclBvd2VyPgoJCQkJCTxmdWVsQ29uc3VtcHRpb24+CgkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCTwvZnVlbENvbnN1bXB0aW9uPgoJCQkJPC9Db21wU3RhdFNFQ21lYXN1cm1lbnQ+CgkJCTwvZ3RTcGVjaWZpY0VuZXJneUNvbnN1bXB0aW9uTWVhc3VyZW1lbnRzPgoJCQk8Z3RNYXhpbWFsUG93ZXJNZWFzdXJlbWVudHM+CgkJCQk8Q29tcFN0YXRNYXhQdG9BbWJpZW50VGVtcGVyYXR1cmU+CgkJCQkJPG1lYXN1cmVtZW50c01QPgoJCQkJCQk8Q29tcFN0YXRNYXhQbWVhc3VybWVudD4KCQkJCQkJCTxtYXhpbWFsUG93ZXI+CgkJCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJCQk8L21heGltYWxQb3dlcj4KCQkJCQkJCTxzcGVlTVA+CgkJCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJCQk8L3NwZWVNUD4KCQkJCQkJPC9Db21wU3RhdE1heFBtZWFzdXJtZW50PgoJCQkJCTwvbWVhc3VyZW1lbnRzTVA+CgkJCQkJPHRlbXBlcmF0dXJlTVA+CgkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCTwvdGVtcGVyYXR1cmVNUD4KCQkJCTwvQ29tcFN0YXRNYXhQdG9BbWJpZW50VGVtcGVyYXR1cmU+CgkJCTwvZ3RNYXhpbWFsUG93ZXJNZWFzdXJlbWVudHM+CgkJPC9HYXNUdXJiaW5lPgoJPC9nYXNUdXJiaW5lcz4KCTxwaXN0b25Db21wcmVzc29yPgoJCTxQaXN0b25Db21wcmVzc29yIGFsaWFzPSIiIElEPSIiIGRyaXZlPSIiIGFkZGl0aW9uYWxSZWR1Y3Rpb25Wb2xGbG93PSIwLjBGIiBtYXhpbWFsQ29tcHJlc3Npb25SYXRpbz0iMC4wRiIgYWRpYWJhdGljRWZmaWNpZW5jeVBpc3Rvbj0iMC4wRiI+CgkJCTxzcGVlZE1heD4KCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQk8L3NwZWVkTWF4PgoJCQk8c3BlZWRNaW4+CgkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJPC9zcGVlZE1pbj4KCQkJPG9wZXJhdGluZ1ZvbHVtZT4KCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQk8L29wZXJhdGluZ1ZvbHVtZT4KCQkJPG1heGltYWxUb3JxdWU+CgkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJPC9tYXhpbWFsVG9ycXVlPgoJCTwvUGlzdG9uQ29tcHJlc3Nvcj4KCTwvcGlzdG9uQ29tcHJlc3Nvcj4KCTxlbGVjdHJpY01vdG9ycz4KCQk8RWxlY3RyaWNNb3RvciBhbGlhcz0iIiBJRD0iIj4KCQkJPGVuZXJneVJhdGVGdW5Db2VmZj4KCQkJCTxDYWxjM1BhcmFtZXRlciBjb2VmZl8zXzM9IjAuMEYiIGNvZWZmXzFfMz0iMC4wRiIgY29lZmZfMl8zPSIwLjBGIi8+CgkJCTwvZW5lcmd5UmF0ZUZ1bkNvZWZmPgoJCQk8ZW1Qb3dlckZ1bkNvZWZmPgoJCQkJPENhbGM5UGFyYW1ldGVyIGNvZWZmXzdfOT0iMC4wRiIgY29lZmZfMV85PSIwLjBGIiBjb2VmZl81Xzk9IjAuMEYiIGNvZWZmXzJfOT0iMC4wRiIgY29lZmZfNF85PSIwLjBGIiBjb2VmZl8zXzk9IjAuMEYiIGNvZWZmXzZfOT0iMC4wRiIgY29lZmZfOV85PSIwLjBGIiBjb2VmZl84Xzk9IjAuMEYiLz4KCQkJPC9lbVBvd2VyRnVuQ29lZmY+CgkJCTxlbU1heGltYWxQb3dlck1lYXN1cmVtZW50cz4KCQkJCTxDb21wU3RhdE1heFA+CgkJCQkJPGFtYmllbnRUZW1wZXJhdHVyZT4KCQkJCQkJPENvbXBTdGF0TWF4UHRvQW1iaWVudFRlbXBlcmF0dXJlPgoJCQkJCQkJPG1lYXN1cmVtZW50c01QPgoJCQkJCQkJCTxDb21wU3RhdE1heFBtZWFzdXJtZW50PgoJCQkJCQkJCQk8bWF4aW1hbFBvd2VyPgoJCQkJCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJCQkJCTwvbWF4aW1hbFBvd2VyPgoJCQkJCQkJCQk8c3BlZU1QPgoJCQkJCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJCQkJCTwvc3BlZU1QPgoJCQkJCQkJCTwvQ29tcFN0YXRNYXhQbWVhc3VybWVudD4KCQkJCQkJCTwvbWVhc3VyZW1lbnRzTVA+CgkJCQkJCQk8dGVtcGVyYXR1cmVNUD4KCQkJCQkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJCQkJCTwvdGVtcGVyYXR1cmVNUD4KCQkJCQkJPC9Db21wU3RhdE1heFB0b0FtYmllbnRUZW1wZXJhdHVyZT4KCQkJCQk8L2FtYmllbnRUZW1wZXJhdHVyZT4KCQkJCQk8bWVhc3VyZW1lbnRzVHlwZT4KCQkJCQkJPENvbXBTdGF0TWF4UG1lYXN1cm1lbnQ+CgkJCQkJCQk8bWF4aW1hbFBvd2VyPgoJCQkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCQkJPC9tYXhpbWFsUG93ZXI+CgkJCQkJCQk8c3BlZU1QPgoJCQkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCQkJPC9zcGVlTVA+CgkJCQkJCTwvQ29tcFN0YXRNYXhQbWVhc3VybWVudD4KCQkJCQk8L21lYXN1cmVtZW50c1R5cGU+CgkJCQk8L0NvbXBTdGF0TWF4UD4KCQkJPC9lbU1heGltYWxQb3dlck1lYXN1cmVtZW50cz4KCQkJPGVtU3BlY2lmaWNFbmVyZ3lDb25zdW1wdGlvbk1lYXN1cmVtZW50cz4KCQkJCTxDb21wU3RhdFNFQ21lYXN1cm1lbnQ+CgkJCQkJPGNvbXJlc3NvclBvd2VyPgoJCQkJCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCQkJCQk8L2NvbXJlc3NvclBvd2VyPgoJCQkJCTxmdWVsQ29uc3VtcHRpb24+CgkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCTwvZnVlbENvbnN1bXB0aW9uPgoJCQkJPC9Db21wU3RhdFNFQ21lYXN1cm1lbnQ+CgkJCTwvZW1TcGVjaWZpY0VuZXJneUNvbnN1bXB0aW9uTWVhc3VyZW1lbnRzPgoJCTwvRWxlY3RyaWNNb3Rvcj4KCTwvZWxlY3RyaWNNb3RvcnM+Cgk8Y29uZmlndXJhdGlvbnM+CgkJPENvbXBTdGF0Q29uZmlndXJhdGlvbiBuck9mU2VyaWFsU3RhZ2VzPSIwIiBjb25mSUQ9IiI+CgkJCTxzdGFnZXM+CgkJCQk8Q29tcFN0YXRTdGFnZSBzdGFnZU5vPSIwIiBub09mUGFyYWxsZWxVbml0cz0iMCI+CgkJCQkJPGNvbXByZXNzb3I+CgkJCQkJCTxDb21wU3RhdENvbXByZXNzb3JXaXRoU3BlZWQgYWxpYXM9IiIgSUQ9IiIgbm9taW5hbFNwZWVkPSIwIi8+CgkJCQkJPC9jb21wcmVzc29yPgoJCQkJPC9Db21wU3RhdFN0YWdlPgoJCQk8L3N0YWdlcz4KCQk8L0NvbXBTdGF0Q29uZmlndXJhdGlvbj4KCTwvY29uZmlndXJhdGlvbnM+Cgk8dHVyYm9Db21wcmVzc29yPgoJCTxUdXJib0NvbXByZXNzb3IgYWxpYXM9IiIgSUQ9IiIgZHJpdmU9IiIgZWZmaWNpZW5jeU9mQ2hva2VsaW5lPSIwLjBGIj4KCQkJPHNwZWVkTWF4PgoJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCTwvc3BlZWRNYXg+CgkJCTxzcGVlZE1pbj4KCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQk8L3NwZWVkTWluPgoJCQk8Y2hva2VsaW5lX2NvZWZmPgoJCQkJPENhbGMzUGFyYW1ldGVyIGNvZWZmXzNfMz0iMC4wRiIgY29lZmZfMV8zPSIwLjBGIiBjb2VmZl8yXzM9IjAuMEYiLz4KCQkJPC9jaG9rZWxpbmVfY29lZmY+CgkJCTxldGFfYWRfaXNvbGluZV9jb2VmZj4KCQkJCTxDYWxjOVBhcmFtZXRlciBjb2VmZl83Xzk9IjAuMEYiIGNvZWZmXzFfOT0iMC4wRiIgY29lZmZfNV85PSIwLjBGIiBjb2VmZl8yXzk9IjAuMEYiIGNvZWZmXzRfOT0iMC4wRiIgY29lZmZfM185PSIwLjBGIiBjb2VmZl82Xzk9IjAuMEYiIGNvZWZmXzlfOT0iMC4wRiIgY29lZmZfOF85PSIwLjBGIi8+CgkJCTwvZXRhX2FkX2lzb2xpbmVfY29lZmY+CgkJCTxzZXR0bGVsaW5lTWVhc3VyZW1lbnRzPgoJCQkJPENvbXBTdGF0VGNNZWFzdXJlbWVudD4KCQkJCQk8YWRpYWJhdGljSGVhZD4KCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJPC9hZGlhYmF0aWNIZWFkPgoJCQkJCTx2b2x1bWV0cmljRmxvd3JhdGU+CgkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCTwvdm9sdW1ldHJpY0Zsb3dyYXRlPgoJCQkJCTxzcGVlZD4KCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJPC9zcGVlZD4KCQkJCTwvQ29tcFN0YXRUY01lYXN1cmVtZW50PgoJCQk8L3NldHRsZWxpbmVNZWFzdXJlbWVudHM+CgkJCTxuX2lzb2xpbmVfY29lZmY+CgkJCQk8Q2FsYzlQYXJhbWV0ZXIgY29lZmZfN185PSIwLjBGIiBjb2VmZl8xXzk9IjAuMEYiIGNvZWZmXzVfOT0iMC4wRiIgY29lZmZfMl85PSIwLjBGIiBjb2VmZl80Xzk9IjAuMEYiIGNvZWZmXzNfOT0iMC4wRiIgY29lZmZfNl85PSIwLjBGIiBjb2VmZl85Xzk9IjAuMEYiIGNvZWZmXzhfOT0iMC4wRiIvPgoJCQk8L25faXNvbGluZV9jb2VmZj4KCQkJPGNoYXJhY3RlcmlzdGljRGlhZ3JhbU1lYXN1cmVtZW50cz4KCQkJCTxDb21wU3RhdEFkaWFiYXRpY0VmZmljaWVuY3kgYWRpYWJhdGljRWZmaWNpZW5jeT0iIj4KCQkJCQk8bWVhc3VyZW1lbnRzPgoJCQkJCQk8Q29tcFN0YXRUY01lYXN1cmVtZW50PgoJCQkJCQkJPGFkaWFiYXRpY0hlYWQ+CgkJCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJCQk8L2FkaWFiYXRpY0hlYWQ+CgkJCQkJCQk8dm9sdW1ldHJpY0Zsb3dyYXRlPgoJCQkJCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQkJCQkJPC92b2x1bWV0cmljRmxvd3JhdGU+CgkJCQkJCQk8c3BlZWQ+CgkJCQkJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCQkJCQk8L3NwZWVkPgoJCQkJCQk8L0NvbXBTdGF0VGNNZWFzdXJlbWVudD4KCQkJCQk8L21lYXN1cmVtZW50cz4KCQkJCTwvQ29tcFN0YXRBZGlhYmF0aWNFZmZpY2llbmN5PgoJCQk8L2NoYXJhY3RlcmlzdGljRGlhZ3JhbU1lYXN1cmVtZW50cz4KCQkJPHN1cmdlbGluZV9jb2VmZj4KCQkJCTxDYWxjM1BhcmFtZXRlciBjb2VmZl8zXzM9IjAuMEYiIGNvZWZmXzFfMz0iMC4wRiIgY29lZmZfMl8zPSIwLjBGIi8+CgkJCTwvc3VyZ2VsaW5lX2NvZWZmPgoJCTwvVHVyYm9Db21wcmVzc29yPgoJPC90dXJib0NvbXByZXNzb3I+Cgk8c3RlYW1UdXJiaW5lcz4KCQk8U3RlYW1UdXJiaW5lIGFsaWFzPSIiIElEPSIiIGV4cGxpY2l0PSJmYWxzZSI+CgkJCTxlbmVyZ3lSYXRlRnVuQ29lZmY+CgkJCQk8Q2FsYzNQYXJhbWV0ZXIgY29lZmZfM18zPSIwLjBGIiBjb2VmZl8xXzM9IjAuMEYiIGNvZWZmXzJfMz0iMC4wRiIvPgoJCQk8L2VuZXJneVJhdGVGdW5Db2VmZj4KCQkJPHBvd2VyTWluPgoJCQkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+CgkJCTwvcG93ZXJNaW4+CgkJCTxwb3dlck1heD4KCQkJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJCQk8L3Bvd2VyTWF4PgoJCTwvU3RlYW1UdXJiaW5lPgoJPC9zdGVhbVR1cmJpbmVzPgo8L0NvbXBTdGF0Pgo=</dataModelBase64>
+                    <dataModelBase64>PENvbXByZXNzb3IgYWxpYXM9IlRlc3QiIElEPSIiIHRvPSIiIGZyb209IiIgZnVlbEdhc1ZlcnRleD0iIiB2YWx1ZT0iZmFsc2UiIGZsb3dEaXJlY3Rpb249ImZhbHNlIiBpbnRlcm5hbEJ5cGFzc1JlcXVpcmVkPSJmYWxzZSIgZHJhZ0ZhY3Rvck91dD0iMC4wRiIgZ2FzQ29vbGVyRXhpc3Rpbmc9ImZhbHNlIiBkcmFnRmFjdG9ySW49IjAuMEYiPgoJPGZsb3dNaW4+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L2Zsb3dNaW4+Cgk8Y3VycmVudEZsb3c+CgkJPEZsb3dQYXJhbWV0ZXJzIHRlbXBlcmF0dXJlPSIwLjBGIiBmbG93PSIwLjBGIiBwcmVzc3VyZT0iMC4wRiIgcmV5bm9sZHNOdW1iZXI9IjAiIG1hc3NGbG93PSIwLjBGIiBmbHVpZFZlbG9jaXR5PSIwLjBGIi8+Cgk8L2N1cnJlbnRGbG93PgoJPGZsb3dNYXg+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L2Zsb3dNYXg+Cgk8cHJlc3N1cmVMb3NzT3V0PgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9wcmVzc3VyZUxvc3NPdXQ+Cgk8cHJlc3N1cmVJbk1pbj4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvcHJlc3N1cmVJbk1pbj4KCTxwcmVzc3VyZUxvc3NJbj4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvcHJlc3N1cmVMb3NzSW4+Cgk8ZGlhbWV0ZXJPdXQ+CgkJPFZhbHVlVHlwZSBVbml0PSIiIFZhbHVlPSIwLjBGIi8+Cgk8L2RpYW1ldGVyT3V0PgoJPGNvb2xlZE91dHB1dFRlbXBlcmF0dXJlPgoJCTxWYWx1ZVR5cGUgVW5pdD0iIiBWYWx1ZT0iMC4wRiIvPgoJPC9jb29sZWRPdXRwdXRUZW1wZXJhdHVyZT4KCTxwcmVzc3VyZU91dE1heD4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvcHJlc3N1cmVPdXRNYXg+Cgk8ZGlhbWV0ZXJJbj4KCQk8VmFsdWVUeXBlIFVuaXQ9IiIgVmFsdWU9IjAuMEYiLz4KCTwvZGlhbWV0ZXJJbj4KPC9Db21wcmVzc29yPgo=</dataModelBase64>
+                </dataModelsBase64>
                 <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
                 <directed>true</directed>
                 <graphElementIDs>n9</graphElementIDs>
@@ -245,12 +252,12 @@
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>n8_1</graphElementIDs>
                 <graphElementIDs>PP19</graphElementIDs>
+                <graphElementIDs>n8_1</graphElementIDs>
                 <graphElementIDs>n8_2</graphElementIDs>
                 <graphElementIDs>PP21</graphElementIDs>
-                <graphElementIDs>PP20</graphElementIDs>
                 <graphElementIDs>n8_0</graphElementIDs>
+                <graphElementIDs>PP20</graphElementIDs>
                 <graphElementIDs>PP22</graphElementIDs>
                 <id>n8</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
@@ -317,17 +324,6 @@
             </value>
         </entry>
         <entry>
-            <key>n29</key>
-            <value>
-                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP68</graphElementIDs>
-                <id>n29</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
-                <type>Exit</type>
-            </value>
-        </entry>
-        <entry>
             <key>n47</key>
             <value>
                 <agentClassName>gasmas.agents.components.EntryAgent</agentClassName>
@@ -336,6 +332,17 @@
                 <id>n47</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Entry</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n29</key>
+            <value>
+                <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP68</graphElementIDs>
+                <id>n29</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
+                <type>Exit</type>
             </value>
         </entry>
         <entry>
@@ -379,9 +386,9 @@
                 <graphElementIDs>PP68</graphElementIDs>
                 <graphElementIDs>PP67</graphElementIDs>
                 <graphElementIDs>PP66</graphElementIDs>
-                <graphElementIDs>PP39</graphElementIDs>
-                <graphElementIDs>PP60</graphElementIDs>
                 <graphElementIDs>n25_0</graphElementIDs>
+                <graphElementIDs>PP60</graphElementIDs>
+                <graphElementIDs>PP39</graphElementIDs>
                 <graphElementIDs>n25_1</graphElementIDs>
                 <graphElementIDs>n25_2</graphElementIDs>
                 <graphElementIDs>n25_3</graphElementIDs>
@@ -406,19 +413,6 @@
             </value>
         </entry>
         <entry>
-            <key>n12</key>
-            <value>
-                <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
-                <directed>true</directed>
-                <graphElementIDs>PP30</graphElementIDs>
-                <graphElementIDs>n12</graphElementIDs>
-                <graphElementIDs>PP22</graphElementIDs>
-                <id>n12</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
-                <type>Compressor</type>
-            </value>
-        </entry>
-        <entry>
             <key>n30</key>
             <value>
                 <agentClassName>gasmas.agents.components.ExitAgent</agentClassName>
@@ -427,6 +421,19 @@
                 <id>n30</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DistributionNode</prototypeClassName>
                 <type>Exit</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n12</key>
+            <value>
+                <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
+                <directed>true</directed>
+                <graphElementIDs>n12</graphElementIDs>
+                <graphElementIDs>PP30</graphElementIDs>
+                <graphElementIDs>PP22</graphElementIDs>
+                <id>n12</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
+                <type>Compressor</type>
             </value>
         </entry>
         <entry>
@@ -449,10 +456,10 @@
                 <directed>false</directed>
                 <graphElementIDs>n32_2</graphElementIDs>
                 <graphElementIDs>PP74</graphElementIDs>
-                <graphElementIDs>PP71</graphElementIDs>
                 <graphElementIDs>n32_0</graphElementIDs>
-                <graphElementIDs>PP72</graphElementIDs>
+                <graphElementIDs>PP71</graphElementIDs>
                 <graphElementIDs>n32_1</graphElementIDs>
+                <graphElementIDs>PP72</graphElementIDs>
                 <graphElementIDs>PP70</graphElementIDs>
                 <id>n32</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
@@ -499,46 +506,33 @@
             </value>
         </entry>
         <entry>
-            <key>n17</key>
-            <value>
-                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP45</graphElementIDs>
-                <graphElementIDs>PP44</graphElementIDs>
-                <graphElementIDs>PP42</graphElementIDs>
-                <graphElementIDs>n17_0</graphElementIDs>
-                <graphElementIDs>n17_2</graphElementIDs>
-                <graphElementIDs>n17_1</graphElementIDs>
-                <graphElementIDs>PP36</graphElementIDs>
-                <id>n17</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
-                <type>Branch3</type>
-            </value>
-        </entry>
-        <entry>
             <key>n35</key>
             <value>
                 <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
                 <directed>true</directed>
                 <graphElementIDs>PP79</graphElementIDs>
-                <graphElementIDs>PP75</graphElementIDs>
                 <graphElementIDs>n35</graphElementIDs>
+                <graphElementIDs>PP75</graphElementIDs>
                 <id>n35</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>Compressor</type>
             </value>
         </entry>
         <entry>
-            <key>n18</key>
+            <key>n17</key>
             <value>
-                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
+                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>PP46</graphElementIDs>
+                <graphElementIDs>PP45</graphElementIDs>
+                <graphElementIDs>PP42</graphElementIDs>
                 <graphElementIDs>PP44</graphElementIDs>
-                <graphElementIDs>n18</graphElementIDs>
-                <id>n18</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
-                <type>Pipe</type>
+                <graphElementIDs>n17_0</graphElementIDs>
+                <graphElementIDs>n17_2</graphElementIDs>
+                <graphElementIDs>PP36</graphElementIDs>
+                <graphElementIDs>n17_1</graphElementIDs>
+                <id>n17</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
+                <type>Branch3</type>
             </value>
         </entry>
         <entry>
@@ -555,20 +549,16 @@
             </value>
         </entry>
         <entry>
-            <key>n19</key>
+            <key>n18</key>
             <value>
-                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
+                <agentClassName>gasmas.agents.components.PipeAgent</agentClassName>
                 <directed>false</directed>
-                <graphElementIDs>PP47</graphElementIDs>
-                <graphElementIDs>n19_0</graphElementIDs>
-                <graphElementIDs>PP37</graphElementIDs>
-                <graphElementIDs>PP50</graphElementIDs>
-                <graphElementIDs>PP51</graphElementIDs>
-                <graphElementIDs>n19_2</graphElementIDs>
-                <graphElementIDs>n19_1</graphElementIDs>
-                <id>n19</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
-                <type>Branch3</type>
+                <graphElementIDs>PP46</graphElementIDs>
+                <graphElementIDs>PP44</graphElementIDs>
+                <graphElementIDs>n18</graphElementIDs>
+                <id>n18</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.SimpleGraphElement</prototypeClassName>
+                <type>Pipe</type>
             </value>
         </entry>
         <entry>
@@ -581,13 +571,30 @@
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
                 <directed>false</directed>
                 <graphElementIDs>PP79</graphElementIDs>
-                <graphElementIDs>n37_0</graphElementIDs>
                 <graphElementIDs>PP115</graphElementIDs>
+                <graphElementIDs>n37_0</graphElementIDs>
                 <graphElementIDs>n37_2</graphElementIDs>
-                <graphElementIDs>n37_1</graphElementIDs>
                 <graphElementIDs>PP81</graphElementIDs>
+                <graphElementIDs>n37_1</graphElementIDs>
                 <graphElementIDs>PP82</graphElementIDs>
                 <id>n37</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
+                <type>Branch3</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n19</key>
+            <value>
+                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>n19_0</graphElementIDs>
+                <graphElementIDs>PP47</graphElementIDs>
+                <graphElementIDs>PP37</graphElementIDs>
+                <graphElementIDs>PP50</graphElementIDs>
+                <graphElementIDs>n19_2</graphElementIDs>
+                <graphElementIDs>PP51</graphElementIDs>
+                <graphElementIDs>n19_1</graphElementIDs>
+                <id>n19</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
                 <type>Branch3</type>
             </value>
@@ -608,23 +615,6 @@
             </value>
         </entry>
         <entry>
-            <key>n13</key>
-            <value>
-                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
-                <directed>false</directed>
-                <graphElementIDs>PP32</graphElementIDs>
-                <graphElementIDs>PP31</graphElementIDs>
-                <graphElementIDs>PP30</graphElementIDs>
-                <graphElementIDs>n13_1</graphElementIDs>
-                <graphElementIDs>PP34</graphElementIDs>
-                <graphElementIDs>n13_2</graphElementIDs>
-                <graphElementIDs>n13_0</graphElementIDs>
-                <id>n13</id>
-                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
-                <type>Branch3</type>
-            </value>
-        </entry>
-        <entry>
             <key>n39</key>
             <value>
                 <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
@@ -641,6 +631,23 @@
                 <id>n39</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star4GraphElement</prototypeClassName>
                 <type>Branch4</type>
+            </value>
+        </entry>
+        <entry>
+            <key>n13</key>
+            <value>
+                <agentClassName>gasmas.agents.components.BranchAgent</agentClassName>
+                <directed>false</directed>
+                <graphElementIDs>PP32</graphElementIDs>
+                <graphElementIDs>PP31</graphElementIDs>
+                <graphElementIDs>PP30</graphElementIDs>
+                <graphElementIDs>n13_1</graphElementIDs>
+                <graphElementIDs>n13_2</graphElementIDs>
+                <graphElementIDs>PP34</graphElementIDs>
+                <graphElementIDs>n13_0</graphElementIDs>
+                <id>n13</id>
+                <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
+                <type>Branch3</type>
             </value>
         </entry>
         <entry>

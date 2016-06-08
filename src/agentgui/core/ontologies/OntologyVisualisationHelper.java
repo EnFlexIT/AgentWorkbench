@@ -57,8 +57,8 @@ public class OntologyVisualisationHelper extends HashMap<String, OntologyClass> 
 
 	private static final long serialVersionUID = 2055269152886396404L;
 	
-	private Vector<String> subOntologies = null;
-	private DefaultTreeModel projectOntologyTree = null;
+	private Vector<String> subOntologies;
+	private DefaultTreeModel projectOntologyTree;
 	
 	private boolean hasErrors = false;
 	private ArrayList<String> errorStack = new ArrayList<String>();

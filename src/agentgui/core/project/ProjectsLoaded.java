@@ -153,7 +153,7 @@ public class ProjectsLoaded {
 		}
 
 		// --- ClassLoader unload -------------------------
-		if(projectsOpen.size()!=0) {
+		if (this.projectsOpen.size()!=0) {
 			Application.getProjectFocused().resourcesRemove();
 		}
 		
@@ -199,7 +199,7 @@ public class ProjectsLoaded {
 
 		// --- Instantiate project-window and the default tabs ----------------
 		newProject.addDefaultTabs();
-
+		
 		// --- Load configured PlugIns ----------------------------------------
 		newProject.plugInVectorLoad();
 		
@@ -209,11 +209,12 @@ public class ProjectsLoaded {
 
 		// --- Configure the project view in the main application -------------
 		if (Application.getMainWindow()!=null) {
-			Application.getProjectsLoaded().setProjectView();		
+			newProject.setMaximized();
+			Application.getProjectsLoaded().setProjectView();
+			newProject.setChangedAndNotify(Project.VIEW_TabsLoaded);		
 			Application.getMainWindow().setCloseButtonPosition(true);
 			Application.setTitelAddition(newProject.getProjectName());
 			Application.setStatusBar(Language.translate("Fertig"));	
-			newProject.setMaximized();
 		}
 		
 		if (addNew==true) {

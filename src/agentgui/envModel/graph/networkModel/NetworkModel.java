@@ -294,7 +294,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				
 			} else {
 				// -------------------------------------------------------
-				// ---- Alternative Approach to copy the NetworkModel ----
+				// ---- Alternative approach to copy the NetworkModel ----
 				// -------------------------------------------------------
 				netModel = new NetworkModel();
 				
@@ -2074,57 +2074,72 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		if (this.networkComponentAdapterHash==null) {
 			this.networkComponentAdapterHash = new HashMap<String, NetworkComponentAdapter>();
 		}
-		
 		NetworkComponentAdapter netCompAdapter = this.networkComponentAdapterHash.get(componentTypeName);
 		if (netCompAdapter==null) {
-			// --------------------------------------------------------------------------
-			// --- Find and initialize the corresponding NetworkComponentAdapter --------
-			// --------------------------------------------------------------------------
-			String adapterClassname = null;
-			if (componentTypeName.startsWith(GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX)) {
-				// --- Find the NetworkComponentAdapter for the GraphNode ---------------
-				String searchFor = componentTypeName.replace(GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX, "");
-				DomainSettings ds = this.generalGraphSettings4MAS.getDomainSettings().get(searchFor);
-				if (ds!=null) {
-					adapterClassname = ds.getAdapterClass();	
-				}
-				
-			} else {
-				// --- Create the NetworkComponentAdapter, if it exists -----------------
-				ComponentTypeSettings cts = this.generalGraphSettings4MAS.getCurrentCTS().get(componentTypeName);
-				if (cts!=null) {
-					adapterClassname = cts.getAdapterClass();	
-				}
-				
-			}
-			// --------------------------------------------------------------------------
-			// --- Initialize the found NetworkComponentAdapter -------------------------
-			// --------------------------------------------------------------------------
-			if (adapterClassname!=null) {
-				try {
-				
-					@SuppressWarnings("unchecked")
-					Class<? extends NetworkComponentAdapter> nca = (Class<? extends NetworkComponentAdapter>) Class.forName(adapterClassname);
-					
-					// --- look for the right constructor parameter ---------
-					Class<?>[] conParameter = new Class[1];
-					conParameter[0] = GraphEnvironmentController.class;
-				
-					// --- Get the constructor ------------------------------	
-					Constructor<?> ncaConstructor = nca.getConstructor(conParameter);
-					
-					// --- Define the argument for the newInstance call ----- 
-					Object[] args = new Object[1];
-					args[0] = graphController;
-					
-					netCompAdapter = (NetworkComponentAdapter) ncaConstructor.newInstance(args);
-					this.networkComponentAdapterHash.put(componentTypeName, netCompAdapter);
-					
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
+			// --- Create corresponding NetworkComponentAdapter -----
+			netCompAdapter = this.createNetworkComponentAdapter(graphController, componentTypeName);
+			this.networkComponentAdapterHash.put(componentTypeName, netCompAdapter);
+		}
+		return netCompAdapter;
+	}
+	
+	
+	/**
+	 * Creates the {@link NetworkComponentAdapter} that is specified with the component type name.
+	 *
+	 * @param graphController the current graph controller
+	 * @param componentTypeName the component type name
+	 * @return the network component adapter
+	 */
+	public NetworkComponentAdapter createNetworkComponentAdapter(GraphEnvironmentController graphController, String componentTypeName) {
 		
+		NetworkComponentAdapter netCompAdapter = null;
+		
+		// --------------------------------------------------------------------------
+		// --- Find and initialise the corresponding NetworkComponentAdapter --------
+		// --------------------------------------------------------------------------
+		String adapterClassname = null;
+		if (componentTypeName.startsWith(GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX)) {
+			// --- Find the NetworkComponentAdapter for the GraphNode ---------------
+			String searchFor = componentTypeName.replace(GeneralGraphSettings4MAS.GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX, "");
+			DomainSettings ds = this.generalGraphSettings4MAS.getDomainSettings().get(searchFor);
+			if (ds!=null) {
+				adapterClassname = ds.getAdapterClass();	
+			}
+			
+		} else {
+			// --- Create the NetworkComponentAdapter, if it exists -----------------
+			ComponentTypeSettings cts = this.generalGraphSettings4MAS.getCurrentCTS().get(componentTypeName);
+			if (cts!=null) {
+				adapterClassname = cts.getAdapterClass();	
+			}
+			
+		}
+		// --------------------------------------------------------------------------
+		// --- Initialise the found NetworkComponentAdapter -------------------------
+		// --------------------------------------------------------------------------
+		if (adapterClassname!=null) {
+
+			try {
+				@SuppressWarnings("unchecked")
+				Class<? extends NetworkComponentAdapter> nca = (Class<? extends NetworkComponentAdapter>) Class.forName(adapterClassname);
+				
+				// --- look for the right constructor parameter ---------
+				Class<?>[] conParameter = new Class[1];
+				conParameter[0] = GraphEnvironmentController.class;
+			
+				// --- Get the constructor ------------------------------	
+				Constructor<?> ncaConstructor = nca.getConstructor(conParameter);
+				
+				// --- Define the argument for the newInstance call ----- 
+				Object[] args = new Object[1];
+				args[0] = graphController;
+				
+				netCompAdapter = (NetworkComponentAdapter) ncaConstructor.newInstance(args);
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 		return netCompAdapter;
 	}

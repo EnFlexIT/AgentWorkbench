@@ -10,8 +10,8 @@
                 <graphElementIDs>n0_2</graphElementIDs>
                 <graphElementIDs>n0_1</graphElementIDs>
                 <graphElementIDs>PP26</graphElementIDs>
-                <graphElementIDs>PP3</graphElementIDs>
                 <graphElementIDs>PP17</graphElementIDs>
+                <graphElementIDs>PP3</graphElementIDs>
                 <graphElementIDs>PP2</graphElementIDs>
                 <id>n0</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.Star3GraphElement</prototypeClassName>
@@ -78,8 +78,8 @@
                 <agentClassName>gasmas.agents.components.CompressorAgent</agentClassName>
                 <directed>true</directed>
                 <graphElementIDs>PP6</graphElementIDs>
-                <graphElementIDs>Compressor</graphElementIDs>
                 <graphElementIDs>PP2</graphElementIDs>
+                <graphElementIDs>Compressor</graphElementIDs>
                 <id>Compressor</id>
                 <prototypeClassName>agentgui.envModel.graph.prototypes.DirectedSimpleGraphElement</prototypeClassName>
                 <type>Compressor</type>

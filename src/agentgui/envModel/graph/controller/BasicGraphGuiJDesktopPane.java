@@ -40,6 +40,7 @@ import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 
+import agentgui.core.application.Application;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
 import agentgui.envModel.graph.visualisation.notifications.DataModelNotification;
@@ -73,7 +74,11 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 * Initialize this.
 	 */
 	private void initialize() {
-		this.setSize(new Dimension(300, 300));
+		
+		Dimension desktopSize = Application.getMainWindow().getJDesktopPane4Projects().getSize();
+		this.setSize(desktopSize);
+		this.setPreferredSize(desktopSize);
+		
 		this.setDoubleBuffered(true);
 		this.setAutoscrolls(false);
 		this.addComponentListener(this.getComponentListener());

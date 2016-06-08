@@ -66,7 +66,6 @@ import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 public class FileProperties extends Properties {
 
 	private static final long serialVersionUID = 7953205356494195952L;
-	private final String defaultUpdateSite = "http://update.agentgui.org";
 	
 	private GlobalInfo globalInfo = null;
 	private VersionInfo versionInfo = null;
@@ -745,7 +744,7 @@ public class FileProperties extends Properties {
 				this.setProperty(this.DEF_OWN_MTP_PROTOCOL, Application.getGlobalInfo().getMtpProtocol());
 				
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_SITE) ) {				
-				this.setProperty(this.DEF_UPDATE_SITE, "http://update.agentgui.org");
+				this.setProperty(this.DEF_UPDATE_SITE, GlobalInfo.DEFAULT_UPDATE_SITE);
 				
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_AUTOCONFIG) ) {				
 				this.setProperty(this.DEF_UPDATE_AUTOCONFIG, "0");
@@ -800,7 +799,7 @@ public class FileProperties extends Properties {
 				} else if (mandatoryProps[i].equals(this.DEF_BENCH_SKIP_ALLWAYS)) {
 					this.setProperty(mandatoryProps[i], "true");
 				} else if (mandatoryProps[i].equals(this.DEF_UPDATE_SITE)) {
-					this.setProperty(mandatoryProps[i], this.defaultUpdateSite);
+					this.setProperty(mandatoryProps[i], GlobalInfo.DEFAULT_UPDATE_SITE);
 				} else {
 					this.setProperty(mandatoryProps[i], "");	
 				}
@@ -825,7 +824,7 @@ public class FileProperties extends Properties {
 					}
 				} else if (mandatoryProps[i].equals(this.DEF_UPDATE_SITE)) {
 					if (value.equals("")) {
-						this.setProperty(mandatoryProps[i], this.defaultUpdateSite);
+						this.setProperty(mandatoryProps[i], GlobalInfo.DEFAULT_UPDATE_SITE);
 						somethingMissed = true;
 					}
 				}

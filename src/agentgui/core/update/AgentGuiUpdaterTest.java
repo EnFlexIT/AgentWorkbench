@@ -6,8 +6,8 @@ public class AgentGuiUpdaterTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-//		new AgentGuiUpdater(true, "http://preupdate.agentgui.org/?key=xml").start();
-		new AgentGuiUpdater().start();
+		new AgentGuiUpdater(true, "http://preupdate.agentgui.org/?key=xml").start();
+//		new AgentGuiUpdater().start();
 	}
 
 }

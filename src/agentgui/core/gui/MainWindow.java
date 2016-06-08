@@ -614,12 +614,12 @@ public class MainWindow extends JFrame implements ComponentListener {
 				public void actionPerformed(ActionEvent evt) {
 					JRadioButtonMenuItem actuator = (JRadioButtonMenuItem) evt.getSource();
 					if (actuator==viewDeveloper) {
-						if (Application.getProjectFocused().getProjectView().equalsIgnoreCase("Developer")==false) {
+						if (Application.getProjectFocused().getProjectView().equals(Project.VIEW_Developer)==false) {
 							Application.getProjectFocused().setProjectView(Project.VIEW_Developer);
 						}
 						
 					} else if (actuator==viewEndUser) {
-						if (Application.getProjectFocused().getProjectView().equalsIgnoreCase("User")==false) {
+						if (Application.getProjectFocused().getProjectView().equals(Project.VIEW_User)==false) {
 							Application.getProjectFocused().setProjectView(Project.VIEW_User);
 						}
 
@@ -976,106 +976,106 @@ public class MainWindow extends JFrame implements ComponentListener {
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		public void actionPerformed(ActionEvent ae) {
-			String ActCMD = ae.getActionCommand();	
+			String actionCMD = ae.getActionCommand();	
 	
 			// --- Menu Projekt -------------------------------
-			if ( ActCMD.equalsIgnoreCase("ProjectNew") ) {
+			if ( actionCMD.equalsIgnoreCase("ProjectNew") ) {
 				Application.getProjectsLoaded().add( true );
 				
-			} else if ( ActCMD.equalsIgnoreCase("ProjectOpen") ) {
+			} else if ( actionCMD.equalsIgnoreCase("ProjectOpen") ) {
 				Application.getProjectsLoaded().add( false );
 				
-			} else if ( ActCMD.equalsIgnoreCase("ProjectClose") ) {
+			} else if ( actionCMD.equalsIgnoreCase("ProjectClose") ) {
 				Project currProject = Application.getProjectFocused();
 				if ( currProject != null ) currProject.close();
 				
-			} else if ( ActCMD.equalsIgnoreCase("ProjectSave") ) {
+			} else if ( actionCMD.equalsIgnoreCase("ProjectSave") ) {
 				Project currProject = Application.getProjectFocused();
 				if ( currProject != null ) currProject.save();
 				
-			} else if ( ActCMD.equalsIgnoreCase("ProjectImport") ) {
+			} else if ( actionCMD.equalsIgnoreCase("ProjectImport") ) {
 				Application.getProjectsLoaded().projectImport();
 				
-			} else if ( ActCMD.equalsIgnoreCase("ProjectExport") ) {
+			} else if ( actionCMD.equalsIgnoreCase("ProjectExport") ) {
 				Application.getProjectsLoaded().projectExport();
 				
-			} else if ( ActCMD.equalsIgnoreCase("ProjectDelete") ) {
+			} else if ( actionCMD.equalsIgnoreCase("ProjectDelete") ) {
 				Application.getProjectsLoaded().projectDelete();
 				
-			} else if ( ActCMD.equalsIgnoreCase("ApplicationQuit") ) {
+			} else if ( actionCMD.equalsIgnoreCase("ApplicationQuit") ) {
 				Application.quit();
 			
 			// --- Menu Ansicht / View ------------------------
-			} else if ( ActCMD.equalsIgnoreCase("ViewConsole") ) {
+			} else if ( actionCMD.equalsIgnoreCase("ViewConsole") ) {
 				Application.getMainWindow().doSwitchConsole();
 			
 			// --- Menu Jade ----------------------------------
-			} else if ( ActCMD.equalsIgnoreCase("JadeStart") ) {
+			} else if ( actionCMD.equalsIgnoreCase("JadeStart") ) {
 				Application.getJadePlatform().jadeStart();
 			
-			} else if ( ActCMD.equalsIgnoreCase("JadeStop") ) {
+			} else if ( actionCMD.equalsIgnoreCase("JadeStop") ) {
 				Application.getJadePlatform().jadeStop();
 			
-			} else if ( ActCMD.equalsIgnoreCase("PopRMAStart") ) {
+			} else if ( actionCMD.equalsIgnoreCase("PopRMAStart") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("rma", null);
 			
-			} else if ( ActCMD.equalsIgnoreCase("PopSniffer") ) {
+			} else if ( actionCMD.equalsIgnoreCase("PopSniffer") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("sniffer", null);
 			
-			} else if ( ActCMD.equalsIgnoreCase("PopDummy") ) {
+			} else if ( actionCMD.equalsIgnoreCase("PopDummy") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("dummy", null);
 			
-			} else if ( ActCMD.equalsIgnoreCase("PopDF") ) {
+			} else if ( actionCMD.equalsIgnoreCase("PopDF") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("DF", null);
 			
-			} else if ( ActCMD.equalsIgnoreCase("PopIntrospec") ) {
+			} else if ( actionCMD.equalsIgnoreCase("PopIntrospec") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("introspector", null);
 			
-			} else if ( ActCMD.equalsIgnoreCase("PopLog") ) {
+			} else if ( actionCMD.equalsIgnoreCase("PopLog") ) {
 				Application.getJadePlatform().jadeSystemAgentOpen("log", null);
 			
 			// --- Menu Simulation ----------------------------
-			} else if ( ActCMD.equalsIgnoreCase("SimulationStart") ) {
+			} else if ( actionCMD.equalsIgnoreCase("SimulationStart") ) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
 				Application.getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
 			
-			} else if ( ActCMD.equalsIgnoreCase("SimulationPause") ) {
+			} else if ( actionCMD.equalsIgnoreCase("SimulationPause") ) {
 				Object[] startWith = new Object[1];
 				startWith[0] = LoadExecutionAgent.BASE_ACTION_Pause;
 				Application.getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
 			
-			} else if ( ActCMD.equalsIgnoreCase("SimulationStop") ) {
+			} else if ( actionCMD.equalsIgnoreCase("SimulationStop") ) {
 				Application.getJadePlatform().jadeStop();
 				
-			} else if ( ActCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
+			} else if ( actionCMD.equalsIgnoreCase("ContainerMonitoring") ) { 
 				Application.getJadePlatform().jadeSystemAgentOpen("loadMonitor", null);
 			
-			} else if ( ActCMD.equalsIgnoreCase("ThreadMonitoring") ) { 
+			} else if ( actionCMD.equalsIgnoreCase("ThreadMonitoring") ) { 
 				Application.getJadePlatform().jadeSystemAgentOpen("threadMonitor", null);
 			
 			// --- Menu Extras => NOT here !! ---------------
-			} else if ( ActCMD.equalsIgnoreCase("ExtraTranslation") ) {
+			} else if ( actionCMD.equalsIgnoreCase("ExtraTranslation") ) {
 				Application.showTranslationDialog();
 			
-			} else if ( ActCMD.equalsIgnoreCase("ExtraBenchmark") ) {
+			} else if ( actionCMD.equalsIgnoreCase("ExtraBenchmark") ) {
 				Application.doBenchmark(true);
 						
-			} else if ( ActCMD.equalsIgnoreCase("ExtraOptions") ) {
+			} else if ( actionCMD.equalsIgnoreCase("ExtraOptions") ) {
 				Application.showOptionDialog();
 			
 			// --- Menu Hilfe ---------------------------------
-			} else if ( ActCMD.equalsIgnoreCase("HelpUpdate") ) {
+			} else if ( actionCMD.equalsIgnoreCase("HelpUpdate") ) {
 				new AgentGuiUpdater(true).start();
 			
-			}else if ( ActCMD.equalsIgnoreCase("HelpChanges") ) {
+			}else if ( actionCMD.equalsIgnoreCase("HelpChanges") ) {
 				Application.showChangeDialog();
 			
-			} else if ( ActCMD.equalsIgnoreCase("HelpAbout") ) {
+			} else if ( actionCMD.equalsIgnoreCase("HelpAbout") ) {
 				Application.showAboutDialog();
 			
 			} else {
-				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);
+				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actionCMD);
 			}			
 		}		
 	}		

@@ -290,7 +290,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 			gridBagConstraints.gridx = 0;
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
-			jContentPane.add(getOntologyInstanceViewer(), gridBagConstraints);
+			jContentPane.add(this.getOntologyInstanceViewer(), gridBagConstraints);
 			jContentPane.add(getJPanelBottom(), gridBagConstraints3);
 		}
 		return jContentPane;

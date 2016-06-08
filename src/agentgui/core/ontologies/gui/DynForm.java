@@ -34,7 +34,6 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -63,9 +62,10 @@ import agentgui.core.project.AgentStartConfiguration;
  */
 public class DynForm extends DynFormBase {
 
-	private static final long serialVersionUID = 7942028680794127910L;
-	
 	private int indentPerLevel = 5;
+	
+	private JPanel jPanelOntologyVisualization;
+	
 	
 	/**
 	 * Constructor of this class by using a project and an agent reference.
@@ -92,7 +92,7 @@ public class DynForm extends DynFormBase {
 				}
 
 				// --- Start building the GUI -----------------------
-				this.buildGUI();
+				this.getJPanelOntologyVisualization();
 				this.setIsEmptyForm(false);
 				// --- If wanted show some debug informations -------
 				if (debug==true) {
@@ -123,7 +123,7 @@ public class DynForm extends DynFormBase {
 			}
 
 			// --- Start building the GUI -----------------------
-			this.buildGUI();
+			this.getJPanelOntologyVisualization();
 			this.setIsEmptyForm(false);
 			// --- If wanted show some debug informations -------
 			if (debug==true) {
@@ -135,57 +135,58 @@ public class DynForm extends DynFormBase {
 	
 	/**
 	 * This method starts building the Swing GUI.
+	 * @return the j panel ontology visualisation
 	 */
-	private void buildGUI(){
-		
-		int yPos = 0;
-
-		// --- Set the preferences for the Main Panel -----
-		this.setLayout(null);
-		
-		
-		// --- Maybe a debug print to the console ---------
-		if (debug==true && currOntologyClassReferenceList.size()!=0) {
-			System.out.println("Creating GUI");	
-		}	
-		
-		// --- Iterate over the available Start-Objects ---
-		for (int i = 0; i < currOntologyClassReferenceList.size(); i++) {
-			AgentStartArgument agentStartArgument = currOntologyClassReferenceList.get(i); 
-			if (agentStartArgument!=null) {
-				
-				int startObjectPosition = agentStartArgument.getPosition(); 
-				String startObjectClass = agentStartArgument.getOntologyReference();
-				String startObjectClassMask = startObjectPosition + ": ";
-				if (agentStartArgument.getDisplayTitle()!=null) {
-					startObjectClassMask += agentStartArgument.getDisplayTitle();
-				}
-				
-				JPanel startObjectPanel = new JPanel(null);
-				
-				// --- Get the info about the slots --------------------
-				OntologySingleClassDescription osc = this.ontologyVisualisationHelper.getSlots4ClassAsObject(startObjectClass);
-				if(osc!=null) {
-					Sorter.sortSlotDescriptionArray(osc.getArrayList4SlotDescriptions());
-					this.createGUI(osc, i, 0, startObjectClass, startObjectClassMask, (DefaultMutableTreeNode) rootNode, startObjectPanel);
-				} else {
-					System.out.println("Could not get OntologySingleClassDescription for " + startObjectClass);
-				}
-
-				// --- 
-				this.setPanelBounds(startObjectPanel);
-				startObjectPanel.setLocation(0, yPos);
-				this.add(startObjectPanel);
-				
-				// --- Configure the next position for a panel ----------
-				yPos = yPos + ((int)startObjectPanel.getBounds().getHeight()) + 2;
-			}
+	public JPanel getJPanelOntologyVisualization(){
+		if (jPanelOntologyVisualization==null) {
+			jPanelOntologyVisualization = new JPanel();
+			jPanelOntologyVisualization.setLayout(null);
 			
+			int yPos = 0;
+
+			// --- Maybe a debug print to the console ---------
+			if (this.debug==true && this.currOntologyClassReferenceList.size()!=0) {
+				System.out.println("Creating GUI");	
+			}	
+			
+			// --- Iterate over the available Start-Objects ---
+			for (int i = 0; i < this.currOntologyClassReferenceList.size(); i++) {
+				AgentStartArgument agentStartArgument = this.currOntologyClassReferenceList.get(i); 
+				if (agentStartArgument!=null) {
+					
+					int startObjectPosition = agentStartArgument.getPosition(); 
+					String startObjectClass = agentStartArgument.getOntologyReference();
+					String startObjectClassMask = startObjectPosition + ": ";
+					if (agentStartArgument.getDisplayTitle()!=null) {
+						startObjectClassMask += agentStartArgument.getDisplayTitle();
+					}
+					
+					JPanel startObjectPanel = new JPanel(null);
+					
+					// --- Get the info about the slots --------------------
+					OntologySingleClassDescription osc = this.ontologyVisualisationHelper.getSlots4ClassAsObject(startObjectClass);
+					if(osc!=null) {
+						Sorter.sortSlotDescriptionArray(osc.getArrayList4SlotDescriptions());
+						this.createGUI(osc, i, 0, startObjectClass, startObjectClassMask, (DefaultMutableTreeNode) this.getRootNode(), startObjectPanel);
+					} else {
+						System.out.println("Could not get OntologySingleClassDescription for " + startObjectClass);
+					}
+
+					// --- 
+					this.setPanelBounds(startObjectPanel);
+					startObjectPanel.setLocation(0, yPos);
+					jPanelOntologyVisualization.add(startObjectPanel);
+					
+					// --- Configure the next position for a panel ----------
+					yPos = yPos + ((int)startObjectPanel.getBounds().getHeight()) + 2;
+				}
+				
+			}
+			// --- Justify the Preferred Size of this Panel ---
+			this.adjustPreferredSize();
+			this.save(true);
 		}
-		// --- Justify the Preferred Size of this Panel ---
-		this.setPreferredSize(this);
-		this.save(true);
-		
+		return jPanelOntologyVisualization;
 	}
 	
 	/**
@@ -245,12 +246,9 @@ public class DynForm extends DynFormBase {
 			this.setPanelBounds(parentPanel);
 			
 			// --- go through each field / inner class ----
-			Iterator<OntologySingleClassSlotDescription> iterator = oscd.getArrayList4SlotDescriptions().iterator();
-			while (iterator.hasNext()) {
-				
-				OntologySingleClassSlotDescription oscsd = iterator.next();
+			for (OntologySingleClassSlotDescription oscsd : oscd.getArrayList4SlotDescriptions()) {
 
-				if(isRawType(oscsd.getSlotVarTypeCorrected())){
+				if (this.isRawType(oscsd.getSlotVarTypeCorrected())){
 					// --- Here we have a field with a final type (String, int, ...) ----
 					this.createOuterElements(oscsd, depth, parentPanel, parentNode, false);
 					
@@ -293,7 +291,17 @@ public class DynForm extends DynFormBase {
 		// ---------------------------------------------------------------------
 		
 	}	
-
+	/**
+	 * This Method sets the preferred size of a specified panel according
+	 * to the position of the 'submitButton'.
+	 */
+	private void adjustPreferredSize() {
+		JPanel panel = this.jPanelOntologyVisualization;
+		this.setPanelBounds(panel);
+		this.jPanelOntologyVisualization.setPreferredSize(new Dimension(panel.getWidth(), panel.getHeight() + 20));
+		this.jPanelOntologyVisualization.validate();
+	}
+	
 	/**
 	 * This method search's for a similar node in the path (directed to the
 	 * root node) to prevent a cyclic creation of form elements.
@@ -305,7 +313,7 @@ public class DynForm extends DynFormBase {
 	private boolean objectAlreadyInPath(String objectClass, DefaultMutableTreeNode startNode){
 		
 		DefaultMutableTreeNode currNode = startNode; 
-		while (currNode!=this.rootNode) {
+		while (currNode!=this.getRootNode()) {
 			DynType dt = (DynType) currNode.getUserObject();
 			if (dt.getClassName().equals(objectClass)) {
 				return true;
@@ -636,8 +644,7 @@ public class DynForm extends DynFormBase {
 		}
 		
 		// --- refresh the GUI ----------------------------------------------------------
-		this.setPreferredSize(this);
-		this.validate();
+		this.adjustPreferredSize();
 		
 		return newNode;
 	}
@@ -673,8 +680,7 @@ public class DynForm extends DynFormBase {
 		this.moveAfterAddOrRemove(movement, previousNode);
 
 		// --- refresh the GUI ----------------------------------------------------------
-		this.setPreferredSize(this);
-		this.validate();
+		this.adjustPreferredSize();
 		
 	}
 
@@ -686,9 +692,7 @@ public class DynForm extends DynFormBase {
 	 */
 	private void moveAfterAddOrRemove(int movement, DefaultMutableTreeNode node) {
 		
-		if (node==rootNode) {
-			return;
-		}
+		if (node==this.getRootNode()) return;
 		
 		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) node.getParent();
 		JPanel parentPanel = null;
@@ -727,16 +731,6 @@ public class DynForm extends DynFormBase {
 		
 	}
 	
-	/**
-	 * This Method sets the preferred size of a specified panel according
-	 * to the position of the 'submitButton'.
-	 *
-	 * @param panel the new preferred size
-	 */
-	private void setPreferredSize(JPanel panel) {
-		this.setPanelBounds(panel);
-		this.setPreferredSize(new Dimension(panel.getWidth(), panel.getHeight() + 20));
-	}
 	/**
 	 * Sets the invisible.
 	 *
@@ -806,7 +800,7 @@ public class DynForm extends DynFormBase {
 	 * @return the agentArgsInstance
 	 */
 	public Object[] getOntoArgsInstanceCopy() {
-		return this.getInstancesFromXML(ontoArgsXML, true);
+		return this.getInstancesFromXML(ontoArgsXML);
 	}
 	
 	/**
@@ -814,21 +808,12 @@ public class DynForm extends DynFormBase {
 	 * @param ontologyInstances the new instances of the ontology arguments
 	 */
 	public void setOntoArgsInstance(Object[] ontologyInstances) {
-		this.setOntoArgsInstance(ontologyInstances, false);
-	}
-	/**
-	 * Sets the instances of the ontology arguments.
-	 * @param ontologyInstances the new instances of the ontology arguments
-	 */
-	public void setOntoArgsInstance(Object[] ontologyInstances, boolean avoidGuiUpdate) {
 		if (ontologyInstances==null) {
 			this.resetValuesOnForm();
 		} else {
 			this.ontoArgsInstance = ontologyInstances;
 			this.setXMLFromInstances();
-			if (avoidGuiUpdate==false) {
-				this.setInstancesFromXML();
-			}
+			this.setInstancesFromXML();
 		}
 	}
 
@@ -845,16 +830,8 @@ public class DynForm extends DynFormBase {
 	 * @param ontoArgsXML the new onto args xml
 	 */
 	public void setOntoArgsXML(String[] ontoArgsXML) {
-		this.setOntoArgsXML(ontoArgsXML, false);
-	}
-	/**
-	 * Sets the ontology arguments as XML string-array.
-	 * @param ontoArgsXML the new onto args xml
-	 * @param avoidGuiUpdate the avoid gui update
-	 */
-	public void setOntoArgsXML(String[] ontoArgsXML, boolean avoidGuiUpdate) {
 		this.ontoArgsXML = ontoArgsXML;
-		this.setInstancesFromXML(avoidGuiUpdate);
+		this.setInstancesFromXML();
 	}
 
 }

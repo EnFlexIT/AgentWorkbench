@@ -78,6 +78,7 @@ public class GlobalInfo {
 	private final static String localFileRunnableUpdater = "AgentGuiUpdate.jar";
 	private final static String localPathImageIntern = "/agentgui/core/gui/img/";
 	
+	public static final String DEFAULT_UPDATE_SITE = "http://update.agentgui.org";
 	private final static String eomJar = "eom4AgentGui.jar";
 	
 	private final static String newLineSeparator = System.getProperty("line.separator");
@@ -1726,4 +1727,21 @@ public class GlobalInfo {
 		}
 		return dialogFound;
 	}
+	
+	
+	/**
+	 * Returns the specified bytes in a human readable byte count.
+	 *
+	 * @param bytes the bytes
+	 * @param si set true, if you want to use SI conversion
+	 * @return the human readable byte count
+	 */
+	public static String getHumanReadableByteCount(long bytes, boolean si) {
+	    int unit = si ? 1000 : 1024;
+	    if (bytes < unit) return bytes + " B";
+	    int exp = (int) (Math.log(bytes) / Math.log(unit));
+	    String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+	}
+	
 }

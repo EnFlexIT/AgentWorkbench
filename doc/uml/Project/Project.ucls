@@ -1,17 +1,19 @@
-<class-diagram version="1.0.11" icons="true" automaticImage="PNG" always-add-relationships="false" 
-  generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" corner="BOTTOM_RIGHT" language="java" name="agentgui.core.project.Project" project="AgentGUI" 
-    file="/AgentGUI/src/agentgui/core/project/Project.java" binary="false">    
-    <position x="41" y="37" width="362" height="1625"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false"/>      
-      <operations public="true" package="true" protected="true" private="false"/>    
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.9" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+  realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" language="java" name="agentgui.core.project.Project" project="AgentGUI" 
+    file="/AgentGUI/src/agentgui/core/project/Project.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="1625" width="362" x="41" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-    visibility="true">    
-    <attributes public="true" package="true" protected="true" private="true"/>    
-    <operations public="true" package="true" protected="true" private="true"/>  
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
   </classifier-display>  
   <association-display labels="true" multiplicity="true"/>
 </class-diagram>

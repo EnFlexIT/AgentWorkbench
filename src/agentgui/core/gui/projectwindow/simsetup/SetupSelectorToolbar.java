@@ -178,7 +178,7 @@ public class SetupSelectorToolbar implements ActionListener {
 			jComboBoxSetupSelector = new JComboBox<String>(jComboBoxModel4Setups);
 			jComboBoxSetupSelector.setToolTipText("Setup auswählen");
 			jComboBoxSetupSelector.setMaximumRowCount(18);
-			jComboBoxSetupSelector.setPreferredSize(new Dimension(200, 26));
+			jComboBoxSetupSelector.setPreferredSize(new Dimension(250, 26));
 			jComboBoxSetupSelector.addActionListener(this);
 		}
 		return jComboBoxSetupSelector;

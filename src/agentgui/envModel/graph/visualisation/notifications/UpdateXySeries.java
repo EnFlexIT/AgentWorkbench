@@ -194,7 +194,7 @@ public class UpdateXySeries extends UpdateDataSeries {
 		Object dataModel = null;
 		switch (this.getComponentType()) {
 		case GraphNode:
-			GraphNode node =(GraphNode)networkModel.getGraphElement(this.getComponentID());
+			GraphNode node = (GraphNode)networkModel.getGraphElement(this.getComponentID());
 			if (node==null) {
 				throw new UpdateDataSeriesException("GraphNode '" + this.getComponentID() + "' could not be found in the NetworkModel!");
 			}
@@ -202,7 +202,7 @@ public class UpdateXySeries extends UpdateDataSeries {
 			if (dataModel==null) {
 				NetworkComponentAdapter nca = networkModel.getNetworkComponentAdapter(null, node);
 				NetworkComponentAdapter4Ontology nca4o = (NetworkComponentAdapter4Ontology) nca.getStoredDataModelAdapter();
-				nca4o.setDataModel(dataModel, true);
+				nca4o.setDataModel(dataModel);
 				dataModel = nca4o.getDataModel();
 				node.setDataModel(dataModel);
 			}
@@ -217,7 +217,7 @@ public class UpdateXySeries extends UpdateDataSeries {
 			if (dataModel==null) {
 				NetworkComponentAdapter nca = networkModel.getNetworkComponentAdapter(null, networkComponent);
 				NetworkComponentAdapter4Ontology nca4o = (NetworkComponentAdapter4Ontology) nca.getStoredDataModelAdapter();
-				nca4o.setDataModel(dataModel, true);
+				nca4o.setDataModel(dataModel);
 				dataModel = nca4o.getDataModel();
 				networkComponent.setDataModel(dataModel);
 			}

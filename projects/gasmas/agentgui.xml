@@ -2,7 +2,15 @@
 <project>
     <projectName>GasMAS</projectName>
     <projectDescription>MAS zur Simulation eines Gasnetzes (nur technische Ebene).</projectDescription>
+    <projectStartTab>2|2</projectStartTab>
     <projectView>Developer</projectView>
+    <versionInformation>
+        <build>1</build>
+        <majorRevision>0</majorRevision>
+        <minorRevision>1</minorRevision>
+    </versionInformation>
+    <updateAutoConfiguration>0</updateAutoConfiguration>
+    <updateSite>http://update.agentgui.org</updateSite>
     <environmentModel>gridEnvironment</environmentModel>
     <projectResources>
         <projectResource>D:\10 Java Projects\EnergyOptionModel\bin</projectResource>
@@ -67,84 +75,20 @@
             <thNoThreadsL>5</thNoThreadsL>
         </userThresholds>
     </distributionSetup>
-    <agentClassLoadMetrics>
-        <agentClassMetricDescriptionVector>
-            <agentClass>
-                <className>gasmas.agents.components.BranchAgent</className>
-                <realMetricAverage>0.0</realMetricAverage>
-                <realMetricMax>0.0</realMetricMax>
-                <realMetricMin>0.0</realMetricMin>
-                <userPredictedMetric>1.0</userPredictedMetric>
-            </agentClass>
-            <agentClass>
-                <className>gasmas.agents.components.ControlValveAgent</className>
-                <realMetricAverage>0.0</realMetricAverage>
-                <realMetricMax>0.0</realMetricMax>
-                <realMetricMin>0.0</realMetricMin>
-                <userPredictedMetric>1.0</userPredictedMetric>
-            </agentClass>
-            <agentClass>
-                <className>gasmas.agents.components.CompressorAgent</className>
-                <realMetricAverage>0.0</realMetricAverage>
-                <realMetricMax>0.0</realMetricMax>
-                <realMetricMin>0.0</realMetricMin>
-                <userPredictedMetric>1.0</userPredictedMetric>
-            </agentClass>
-            <agentClass>
-                <className>gasmas.agents.components.SimpleValveAgent</className>
-                <realMetricAverage>0.0</realMetricAverage>
-                <realMetricMax>0.0</realMetricMax>
-                <realMetricMin>0.0</realMetricMin>
-                <userPredictedMetric>1.0</userPredictedMetric>
-            </agentClass>
-            <agentClass>
-                <className>gasmas.agents.components.PipeAgent</className>
-                <realMetricAverage>0.0</realMetricAverage>
-                <realMetricMax>0.0</realMetricMax>
-                <realMetricMin>0.0</realMetricMin>
-                <userPredictedMetric>1.0</userPredictedMetric>
-            </agentClass>
-            <agentClass>
-                <className>agent.class.UNKNOWN-AGENT-CLASS</className>
-                <realMetricAverage>0.0</realMetricAverage>
-                <realMetricMax>0.0</realMetricMax>
-                <realMetricMin>0.0</realMetricMin>
-                <userPredictedMetric>1.0</userPredictedMetric>
-            </agentClass>
-            <agentClass>
-                <className>gasmas.agents.components.ExitAgent</className>
-                <realMetricAverage>0.0</realMetricAverage>
-                <realMetricMax>0.0</realMetricMax>
-                <realMetricMin>0.0</realMetricMin>
-                <userPredictedMetric>1.0</userPredictedMetric>
-            </agentClass>
-            <agentClass>
-                <className>gasmas.agents.manager.NetworkManagerAgentDisplayTest</className>
-                <realMetricAverage>0.0</realMetricAverage>
-                <realMetricMax>0.0</realMetricMax>
-                <realMetricMin>0.0</realMetricMin>
-                <userPredictedMetric>1.0</userPredictedMetric>
-            </agentClass>
-            <agentClass>
-                <className>gasmas.agents.components.EntryAgent</className>
-                <realMetricAverage>0.0</realMetricAverage>
-                <realMetricMax>0.0</realMetricMax>
-                <realMetricMin>0.0</realMetricMin>
-                <userPredictedMetric>1.0</userPredictedMetric>
-            </agentClass>
-        </agentClassMetricDescriptionVector>
+    <agentClassLoadMetricsTable>
+        <agentClassMetricDescriptionVector/>
         <useRealLoadMetric>false</useRealLoadMetric>
-    </agentClassLoadMetrics>
+    </agentClassLoadMetricsTable>
     <remoteContainerConfiguration>
         <jvmMemAllocInitial>512m</jvmMemAllocInitial>
-        <jvmMemAllocMaximum>1024m</jvmMemAllocMaximum>
+        <jvmMemAllocMaximum>1g</jvmMemAllocMaximum>
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
     <simulationSetupCurrent>MixedClusters (1) Small</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
-    <downloadResources>http://Pandora:8080/gasmas/BIN_DUMP_-1172359784.jar</downloadResources>
-    <downloadResources>http://Pandora:8080/gasmas/gasmas_IDE.jar</downloadResources>
+    <downloadResources>http://Pandora.cs.uni-due.de:8080/gasmas/BIN_DUMP_-1172359784.jar</downloadResources>
+    <downloadResources>http://Pandora.cs.uni-due.de:8080/gasmas/gasmas_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>SmallClusters (2) Mid</key>
@@ -187,10 +131,6 @@
             <value>hnord_1_small.xml</value>
         </entry>
         <entry>
-            <key>Simple Net</key>
-            <value>simple_net.xml</value>
-        </entry>
-        <entry>
             <key>MixedClusters (3) Large</key>
             <value>mixedclusters_3_large.xml</value>
         </entry>
@@ -212,5 +152,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>false</unsaved>
+    <unsaved>true</unsaved>
 </project>

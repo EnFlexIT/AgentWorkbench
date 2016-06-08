@@ -72,7 +72,7 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	 */
 	public DataModelNotification(NetworkComponent networkComponent, NetworkModel networkModel) {
 		NetworkComponentAdapter4DataModel adapter4DataModel = networkModel.getNetworkComponentAdapter(null, networkComponent).getStoredDataModelAdapter();
-		networkComponent.setDataModelBase64(adapter4DataModel.getDataModelBase64Encoded(networkComponent.getDataModel(), true));
+		networkComponent.setDataModelBase64(adapter4DataModel.getDataModelBase64Encoded(networkComponent.getDataModel()));
 		this.networkComponent = networkComponent.getCopy(networkModel);
 	}
 	/**
@@ -107,7 +107,7 @@ public class DataModelNotification extends DisplayAgentNotificationGraph {
 	 */
 	public DataModelNotification(GraphNode graphNode, NetworkModel networkModel) {
 		NetworkComponentAdapter4DataModel adapter4DataModel = networkModel.getNetworkComponentAdapter(null, graphNode).getStoredDataModelAdapter();
-		graphNode.setDataModelBase64(adapter4DataModel.getDataModelBase64Encoded(graphNode.getDataModel(), true));
+		graphNode.setDataModelBase64(adapter4DataModel.getDataModelBase64Encoded(graphNode.getDataModel()));
 		this.graphNode = graphNode.getCopy(networkModel);
 	}
 	/**

@@ -28,15 +28,22 @@
  */
 package agentgui.envModel.graph.networkModel;
 
-import jade.content.onto.Ontology;
-
+import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 import javax.swing.JComponent;
 
+import org.apache.commons.codec.binary.Base64;
+
+import agentgui.core.common.ExceptionHandling;
+import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.xml.XMLCodec;
+import jade.content.onto.Ontology;
+import jade.content.onto.OntologyException;
 
 /**
  * The Class NetworkComponentAdapter4Ontology.
@@ -45,12 +52,11 @@ import agentgui.envModel.graph.controller.GraphEnvironmentController;
  */
 public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentAdapter4DataModel {
 
-	private OntologyVisualisationHelper ovh = null;
-	private OntologyInstanceViewer oiv = null;
-
-
+	private OntologyVisualisationHelper ovh;
+	private OntologyInstanceViewer oiv;
+	
 	/**
-	 * Instantiates a new network component adapter4 ontology.
+	 * Instantiates a new network component adapter for ontologies.
 	 *
 	 * @param graphController the graph controller
 	 */
@@ -141,16 +147,17 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#setDataModel(java.lang.Object, boolean)
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#setDataModel(java.lang.Object)
 	 */
 	@Override
-	public void setDataModel(Object dataModel, boolean avoidGuiUpdate) {
+	public void setDataModel(Object dataModel) {
 		Object[] dataModelArray = null;
 		if (dataModel!=null) {
 			dataModelArray = (Object[]) dataModel;	
 		}
-		this.getOntologyInstanceViewer().setConfigurationInstances(dataModelArray, avoidGuiUpdate);
+		this.getOntologyInstanceViewer().setConfigurationInstances(dataModelArray);	
 	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getDataModel()
 	 */
@@ -160,44 +167,183 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	}
 	
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getDataModelBase64Encoded(java.lang.Object, boolean)
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getDataModelBase64Encoded(java.lang.Object)
 	 */
 	@Override
-	public Vector<String> getDataModelBase64Encoded(Object dataModel, boolean avoidGuiUpdate) {
-		
-		this.setDataModel(dataModel, avoidGuiUpdate);
-		
-		Vector<String> base64Vector = new Vector<String>();
-		String[] base64Array = this.getOntologyInstanceViewer().getConfigurationXML64();
-		for (int i = 0; i < base64Array.length; i++) {
-			if (base64Array[i]!=null) {
-				if (base64Array[i].equals("")==false) {
-					base64Vector.addElement(base64Array[i]);
-				}
-			}
-		} 
-		if (base64Vector.isEmpty()) {
-			base64Vector=null;
-		} else if (base64Vector.size()==0) {
+	public Vector<String> getDataModelBase64Encoded(Object dataModel) {
+		Vector<String> base64Vector = this.getXML64FromInstances((Object[]) dataModel);
+		if (base64Vector.size()==0) {
 			base64Vector=null;
 		}
 		return base64Vector;
 	}
 
 	/* (non-Javadoc)
-	 * @see agentgui.envModel.graph.networkModel.NetworkComponentDataModelAdapter#getDataModelBase64Decoded(java.lang.String)
+	 * @see agentgui.envModel.graph.networkModel.NetworkComponentAdapter4DataModel#getDataModelBase64Decoded(java.util.Vector)
 	 */
 	@Override
-	public Object getDataModelBase64Decoded(Vector<String> dataModel, boolean avoidGuiUpdate) {
-		
+	public Object getDataModelBase64Decoded(Vector<String> dataModel) {
 		if (dataModel==null) {
 			throw new NullPointerException("Vector<String> 'dataModel' must not be null!");
 		}
-		
-		String[] base64Array = new String[this.getOntologyClassReferences().length];
-		dataModel.toArray(base64Array);
-		this.getOntologyInstanceViewer().setConfigurationXML64(base64Array, avoidGuiUpdate);
-		return this.getOntologyInstanceViewer().getConfigurationInstances();
+		return this.getInstancesFromXML64(dataModel);
 	}
 
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, conversion from XML64 to instances --------------------------------
+	// ----------------------------------------------------------------------------------
+	/**
+	 * Gets the instances from xm l64.
+	 *
+	 * @param ontoXML64Vector the onto xm l64 vector
+	 * @return the instances from xm l64
+	 */
+	private Object[] getInstancesFromXML64(Vector<String> ontoXML64Vector) {
+		
+		// --- Decode Base64 first ----------------------------------
+		Vector<String> ontoXMLVector = new Vector<>();
+		for (String ontoXML64 : ontoXML64Vector) {
+			String ontoXML = null;
+			if (ontoXML64!=null && ontoXML64.equals("")==false) {
+				try {
+					ontoXML = new String(Base64.decodeBase64(ontoXML64.getBytes()), "UTF8");	
+				} catch (UnsupportedEncodingException uee) {
+					uee.printStackTrace();
+				}
+			}
+			ontoXMLVector.add(ontoXML);
+		}
+		
+		// --- Create instances -------------------------------------
+		Object[] instances = new Object[this.getOntologyClassReferences().length];
+		String[] classReferences = this.getOntologyClassReferences();
+		for (int i = 0; i < classReferences.length; i++) {
+			// --- Get the corresponding Ontology-Instance ----------
+			OntologyClassTreeObject octo = this.getOntologyVisualisationHelper().getClassTreeObject(classReferences[i]);
+			Ontology ontology = octo.getOntologyClass().getOntologyInstance();
+			
+			String xml = null;
+			if (i<=(ontoXMLVector.size()-1)) {
+				xml = ontoXMLVector.get(i);
+			}
+			instances[i] = this.getInstanceOfXML(xml, classReferences[i], ontology);
+		}
+		return instances;
+	}
+	/**
+	 * This method translates an XML String to an object instance by the
+	 * given instance of the current ontology. The translated object must
+	 * be a part of this ontology.
+	 *
+	 * @param xmlString the xml string
+	 * @param ontology the ontology
+	 * @return the instance of xml
+	 */
+	private Object getInstanceOfXML(String xmlString, String className, Ontology ontology) {
+		
+		Object objectInstance = null;
+
+		if (xmlString!=null && xmlString.equals("")==false) {
+			try {
+				XMLCodec codec = new XMLCodec();
+				objectInstance = codec.decodeObject(ontology, xmlString);
+				
+			} catch (CodecException ce) {
+				ce.printStackTrace();
+				
+			} catch (OntologyException oe) {
+				//oe.printStackTrace();
+				// --- No object was created from XML ---------------
+				// --- -> Try to create an empty instance -----------
+				System.err.println("Ontology '" + ontology.getName() + "' -> XML to Object: " + ExceptionHandling.getFirstTextLineOfException(oe));
+				objectInstance = this.getNewClassInstance(className);
+				System.err.println("Ontology '" + ontology.getName() + "' -> XML to Object: Created an empty instance for class '" + className + "' !");
+				
+			}		
+		}
+		return objectInstance;
+	}
+	/**
+	 * This method returns a new instance of a given class given by its full class name.
+	 * @param className the class name
+	 * @return the new class instance
+	 */
+	private Object getNewClassInstance(String className) {
+		Object instance = null;
+		try {
+			// --- OntologyBeanGenerator for Protege 3.3.1 ----------
+			Class<?> clazz = Class.forName(className);
+			instance = clazz.newInstance();	
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return instance;
+	}
+	
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, conversion from instance to XML64 ---------------------------------
+	// ----------------------------------------------------------------------------------
+	/**
+	 * This method creates the XML form from the instances.
+	 *
+	 * @param ontoInstances the ontology instances as object array
+	 * @return the XML from instances
+	 */
+	private Vector<String> getXML64FromInstances(Object[] ontoInstances) {
+	
+		Vector<String> xml64Vector = new Vector<>();
+		String[] classReferences = this.getOntologyClassReferences();
+		for (int i = 0; i < classReferences.length; i++) {
+			
+			// --- Get the corresponding Ontology-Instance ----------
+			OntologyClassTreeObject octo = this.getOntologyVisualisationHelper().getClassTreeObject(classReferences[i]);
+			Ontology ontology = octo.getOntologyClass().getOntologyInstance();
+						
+			// --- Generate XML of this object ----------------------
+			String xml = this.getXMLOfInstance(ontoInstances[i], ontology);
+			String xml64 = null;
+			if (xml!=null && xml.equals("")==false) {
+				try {
+					xml64 = new String(Base64.encodeBase64(xml.getBytes("UTF8")));
+				} catch (UnsupportedEncodingException uee) {
+					uee.printStackTrace();
+				}	
+			}
+			xml64Vector.add(xml64);
+		}
+		return xml64Vector;
+	}
+	/**
+	 * This method translates an object instance to a String by the
+	 * given instance of the current ontology. The object must be a
+	 * part of this ontology.
+	 *
+	 * @param ontologyObject the ontology object
+	 * @param ontology the ontology
+	 * @return the xML of instance
+	 */
+	private String getXMLOfInstance(Object ontologyObject, Ontology ontology) {
+		
+		XMLCodec codec = new XMLCodec();
+		String xmlRepresentation = null;
+		try {
+			// --- OntologyBeanGenerator for Protege 3.3.1 ---------------
+			xmlRepresentation = codec.encodeObject(ontology, ontologyObject, true);
+			
+		} catch (CodecException e) {
+			e.printStackTrace();
+		} catch (OntologyException e) {
+			e.printStackTrace();
+		}
+		if (xmlRepresentation!=null) xmlRepresentation.trim();
+		return xmlRepresentation;
+	}
+	
 }

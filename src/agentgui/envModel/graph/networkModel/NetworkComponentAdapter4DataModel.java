@@ -134,15 +134,7 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * Sets the data model to the visualisation component and will refresh the visualisation.
 	 * @param dataModel the new data model
 	 */
-	public void setDataModel(Object dataModel) {
-		this.setDataModel(dataModel, false);
-	}
-	/**
-	 * Sets the data model to the visualisation component and will refresh the visualisation.
-	 * @param dataModel the new data model
-	 * @param avoidGuiUpdate set true, if you want to avoid an update of the GUI
-	 */
-	public abstract void setDataModel(Object dataModel, boolean avoidGuiUpdate);
+	public abstract void setDataModel(Object dataModel);
 	
 	/**
 	 * Returns the data model from the visualisation component.
@@ -152,21 +144,11 @@ public abstract class NetworkComponentAdapter4DataModel {
 	
 	/**
 	 * Returns the data model of a {@link NetworkComponent} as Vector of Base64 encoded String.
-	 * 
-	 * @param dataModel the data model
-	 * @return the data model encoded as Base64 String
-	 */
-	public Vector<String> getDataModelBase64Encoded(Object dataModel) {
-		return this.getDataModelBase64Encoded(dataModel, false);
-	}
-	/**
-	 * Returns the data model of a {@link NetworkComponent} as Vector of Base64 encoded String.
 	 *
 	 * @param dataModel the data model
-	 * @param avoidGuiUpdate the avoid gui update
 	 * @return the data model encoded as Base64 String
 	 */
-	public abstract Vector<String> getDataModelBase64Encoded(Object dataModel, boolean avoidGuiUpdate);
+	public abstract Vector<String> getDataModelBase64Encoded(Object dataModel);
 	
 	/**
 	 * Returns the data model of a {@link NetworkComponent} as Object
@@ -175,17 +157,6 @@ public abstract class NetworkComponentAdapter4DataModel {
 	 * @param dataModel the data model as String Vector
 	 * @return the data model base64 decode
 	 */
-	public Object getDataModelBase64Decoded(Vector<String> dataModel) {
-		return this.getDataModelBase64Decoded(dataModel, false);
-	}
-	/**
-	 * Returns the data model of a {@link NetworkComponent} as Object
-	 * specified by a Base64 encoded String.
-	 *
-	 * @param dataModel the data model as String Vector
-	 * @param avoidGuiUpdate true, if a GUI-update should be avoided 
-	 * @return the data model base64 decode
-	 */
-	public abstract Object getDataModelBase64Decoded(Vector<String> dataModel, boolean avoidGuiUpdate);
+	public abstract Object getDataModelBase64Decoded(Vector<String> dataModel);
 	
 }

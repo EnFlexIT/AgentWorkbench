@@ -85,52 +85,52 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <generalization id="10">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
+  <dependency id="10">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
   <dependency id="11">    
     <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="2"/>  
   </dependency>  
   <dependency id="12">    
     <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="6"/>  
+    <end type="TARGET" refId="8"/>  
   </dependency>  
   <dependency id="13">    
     <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="7"/>  
+    <end type="TARGET" refId="9"/>  
   </dependency>  
   <generalization id="14">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <dependency id="15">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="9"/>  
-  </dependency>  
-  <dependency id="16">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="9"/>  
-  </dependency>  
-  <generalization id="17">    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
-  <dependency id="18">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="8"/>  
-  </dependency>  
-  <dependency id="19">    
+  <dependency id="15">    
     <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="3"/>  
   </dependency>  
-  <dependency id="20">    
+  <dependency id="16">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="17">    
     <end type="SOURCE" refId="8"/>    
     <end type="TARGET" refId="9"/>  
   </dependency>  
+  <generalization id="18">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <dependency id="19">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="9"/>  
+  </dependency>  
+  <generalization id="20">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
   <dependency id="21">    
-    <end type="SOURCE" refId="6"/>    
+    <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="7"/>  
   </dependency>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Game of Life</projectName>
+    <projectStartTab>2|2</projectStartTab>
     <projectView>Developer</projectView>
+    <versionInformation>
+        <build>1</build>
+        <majorRevision>0</majorRevision>
+        <minorRevision>1</minorRevision>
+    </versionInformation>
+    <updateAutoConfiguration>0</updateAutoConfiguration>
+    <updateSite>http://update.agentgui.org</updateSite>
     <environmentModel>Squared</environmentModel>
     <projectResources>
         <projectResource>D:\10 Java Projects\Game of Life\bin</projectResource>
@@ -71,10 +79,10 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>0032 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>0968 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
-    <downloadResources>http://132.252.237.190:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
-    <downloadResources>http://132.252.237.190:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
+    <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
+    <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
     <simulationSetups>
         <entry>
             <key>0242 Agents</key>

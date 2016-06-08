@@ -250,7 +250,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 			if (dataModel==null) {
 				NetworkComponentAdapter nca = networkModel.getNetworkComponentAdapter(null, node);
 				NetworkComponentAdapter4Ontology nca4o = (NetworkComponentAdapter4Ontology) nca.getStoredDataModelAdapter();
-				nca4o.setDataModel(dataModel, true);
+				nca4o.setDataModel(dataModel);
 				dataModel = nca4o.getDataModel();
 				node.setDataModel(dataModel);
 			}
@@ -265,7 +265,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 			if (dataModel==null) {
 				NetworkComponentAdapter nca = networkModel.getNetworkComponentAdapter(null, networkComponent);
 				NetworkComponentAdapter4Ontology nca4o = (NetworkComponentAdapter4Ontology) nca.getStoredDataModelAdapter();
-				nca4o.setDataModel(dataModel, true);
+				nca4o.setDataModel(dataModel);
 				dataModel = nca4o.getDataModel();
 				networkComponent.setDataModel(dataModel);
 			}

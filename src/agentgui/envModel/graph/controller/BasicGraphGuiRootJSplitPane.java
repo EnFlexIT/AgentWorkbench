@@ -139,8 +139,6 @@ public class BasicGraphGuiRootJSplitPane extends JInternalFrame implements ListS
 		
 		((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
 		this.setBorder(BorderFactory.createEmptyBorder());
-		this.setSize(new Dimension(600, 450));
-		
 		this.setContentPane(this.getJSplitPaneRoot());
 		this.setNumberOfComponents();
 		
