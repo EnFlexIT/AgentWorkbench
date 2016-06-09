@@ -85,7 +85,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>MixedClusters (1) Small</simulationSetupCurrent>
+    <simulationSetupCurrent>Testimport</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
     <downloadResources>http://Pandora.cs.uni-due.de:8080/gasmas/BIN_DUMP_-1172359784.jar</downloadResources>
     <downloadResources>http://Pandora.cs.uni-due.de:8080/gasmas/gasmas_IDE.jar</downloadResources>

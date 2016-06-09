@@ -189,6 +189,9 @@ public class DataModelEnDecoderThread extends Thread {
 		} catch (Exception ex) {
 			//ex.printStackTrace();
 		}
+		// --- Finally, adjust the number of Threads ----------------
+		if (noOfVector>this.elementsToConvert) noOfVector=this.elementsToConvert;
+		if (noOfVector>30) noOfVector=30;
 		if (noOfVector<=0) noOfVector=1;
 		
 		// --- Define separation Vector -----------------------------

@@ -28,18 +28,15 @@
  */
 package agentgui.envModel.graph.networkModel;
 
-import jade.core.AID;
-import jade.lang.acl.ACLMessage;
-
 import java.util.Vector;
 
 import javax.swing.JComponent;
 
 import agentgui.core.environment.EnvironmentController;
-import agentgui.core.ontologies.OntologyVisualisationHelper;
-import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
+import jade.core.AID;
+import jade.lang.acl.ACLMessage;
 
 /**
  * The Class NetworkComponentAdapter can be used in order to extend the local 
@@ -56,9 +53,6 @@ public abstract class NetworkComponentAdapter {
 	protected NetworkComponent networkComponent;
 	/** The current GraphNode */
 	protected GraphNode graphNode;
-	
-	/** The OntologyVisualisationHelper, for ontologies. */
-	private OntologyVisualisationHelper ovHelper;
 	
 	/** The stored NetworkComponentAdapter4DataModel for accelerating the load and save process of NetworkModel's */
 	private NetworkComponentAdapter4DataModel networkComponentAdapter4DataModel;
@@ -99,28 +93,8 @@ public abstract class NetworkComponentAdapter {
 	public NetworkComponentAdapter4DataModel getStoredDataModelAdapter() {
 		if (networkComponentAdapter4DataModel==null) {
 			networkComponentAdapter4DataModel = this.getNewDataModelAdapter();
-			if (networkComponentAdapter4DataModel!=null && networkComponentAdapter4DataModel instanceof NetworkComponentAdapter4Ontology){
-				this.storeOntologyVisualisationHelper(networkComponentAdapter4DataModel);
-			}
 		}
 		return networkComponentAdapter4DataModel;
-	}
-	
-	/**
-	 * Returns the NetworkComponentAdapter4DataModel for the application.<br>
-	 * DO NOT OVERRIDE !!!
-	 * 
-	 * @return the NetworkComponentAdapter4DataModel 
-	 */
-	private void storeOntologyVisualisationHelper(NetworkComponentAdapter4DataModel nca4dm) {
-		NetworkComponentAdapter4Ontology nca4Onto = (NetworkComponentAdapter4Ontology) nca4dm;
-		if (this.ovHelper!=null) {
-			nca4Onto.setOntologyVisualisationHelper(this.ovHelper);
-		} else {
-			// --- Remind this for later ------------------------------------------------ 
-			OntologyInstanceViewer oiv = (OntologyInstanceViewer) nca4Onto.getVisualisationComponent();
-			this.ovHelper = oiv.getOntologyVisualisationHelper();	
-		}
 	}
 	
 	/**
