@@ -75,9 +75,11 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 */
 	private void initialize() {
 		
-		Dimension desktopSize = Application.getMainWindow().getJDesktopPane4Projects().getSize();
-		this.setSize(desktopSize);
-		this.setPreferredSize(desktopSize);
+		if (Application.isOperatingHeadless()==false && Application.getMainWindow()!=null) {
+			Dimension desktopSize = Application.getMainWindow().getJDesktopPane4Projects().getSize();
+			this.setSize(desktopSize);
+			this.setPreferredSize(desktopSize);	
+		}
 		
 		this.setDoubleBuffered(true);
 		this.setAutoscrolls(false);

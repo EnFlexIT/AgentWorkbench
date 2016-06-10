@@ -284,6 +284,7 @@ de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht
 de;Ihre Webseite:;Your Website:;;;
 de;Im Falle eines Updates, eigenes Wörterbuch beibehalten.;In case of an update, keep own dictionary.;;;
 de;Immer Überspringen;Always Skip;null;null;null
+de;Immer überspringen;;;;
 de;Info;Info
 de;Informationen Keystore;KeyStore Informations;;;
 de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;

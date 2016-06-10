@@ -12,9 +12,7 @@
     <updateAutoConfiguration>0</updateAutoConfiguration>
     <updateSite>http://update.agentgui.org</updateSite>
     <environmentModel>gridEnvironment</environmentModel>
-    <projectResources>
-        <projectResource>D:\10 Java Projects\EnergyOptionModel\bin</projectResource>
-    </projectResources>
+    <projectResources/>
     <plugins>
         <className>gasmas.plugin.GasMasPlugIn</className>
     </plugins>
@@ -46,8 +44,8 @@
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.debugging.DebugService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -123,12 +121,12 @@
             <value>hnord.xml</value>
         </entry>
         <entry>
-            <key>Testimport</key>
-            <value>testimport.xml</value>
-        </entry>
-        <entry>
             <key>HNord (1) Small</key>
             <value>hnord_1_small.xml</value>
+        </entry>
+        <entry>
+            <key>Testimport</key>
+            <value>testimport.xml</value>
         </entry>
         <entry>
             <key>MixedClusters (3) Large</key>
@@ -143,12 +141,12 @@
             <value>simple_net_two_entries.xml</value>
         </entry>
         <entry>
-            <key>HNord (3) Large</key>
-            <value>hnord_3_large.xml</value>
-        </entry>
-        <entry>
             <key>HNord Complete</key>
             <value>hnord_complete.xml</value>
+        </entry>
+        <entry>
+            <key>HNord (3) Large</key>
+            <value>hnord_3_large.xml</value>
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
