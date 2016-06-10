@@ -173,7 +173,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param controller The Graph Environment controller
 	 */
 	public BasicGraphGui(GraphEnvironmentController controller) {
-		super();
 		this.graphController = controller;
 		this.graphController.addObserver(this);
 		this.graphGuiTools = new BasicGraphGuiTools(this.graphController);
