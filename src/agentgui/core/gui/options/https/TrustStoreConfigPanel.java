@@ -72,6 +72,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	private final Dimension fieldSize = new Dimension(120, 26);
 
 	private HttpsConfigWindow httpsConfigWindow;
+	private TrustStoreController trustStoreController;
 
 	private JPanel jPanelButtons;
 
@@ -214,6 +215,15 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 			jPanelButtons.add(getJButtonRemoveCertificate(), gbc_jButtonRemoveCertificate);
 		}
 		return jPanelButtons;
+	}
+	/**
+	 * This method initializes TrustStoreController.
+	 */
+	protected TrustStoreController getTrustStoreController() {
+		if (trustStoreController == null) {
+			trustStoreController = new TrustStoreController();
+		}
+		return trustStoreController;
 	}
 	/**
 	 * This method initializes jLabelTrustStoreInformations.
@@ -432,15 +442,13 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 					int jfile = jFileChooser.showSaveDialog(null);
 					if (jfile == JFileChooser.APPROVE_OPTION) {
 						this.httpsConfigWindow.setTrustStorefilepath(jFileChooser.getSelectedFile().getAbsoluteFile().getAbsolutePath() + "\\"+trustStoreName); 
-						TrustStoreController.CreateTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),
-								this.httpsConfigWindow.getTrustStorePassword(),this.httpsConfigWindow.getTrustStorefilepath());
+						getTrustStoreController().CreateTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(),this.httpsConfigWindow.getTrustStorefilepath());
 						
 						String msg = Language.translate("Your TrustStore has been created successfully!",Language.EN);
 						String title = Language.translate("TrustStore created",Language.EN);
 						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
 						
-						this.httpsConfigWindow.getJLabelTrustStoreLocationPath()
-								.setText(this.httpsConfigWindow.getTrustStorefilepath());
+						this.httpsConfigWindow.getJLabelTrustStoreLocationPath().setText(this.httpsConfigWindow.getTrustStorefilepath());
 						jTextFieldTrustStoreName.setEnabled(false);
 						jLabelCertificatesList.setVisible(true);
 						jscrollPane.setVisible(true);
@@ -449,8 +457,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 						jPasswordFieldTrustStoreConfirmPassword.setText(null);
 						jPasswordFieldTrustStorePassword.setText(trustStorePassword);
 						jTextFieldTrustStoreName.setText(this.httpsConfigWindow.getTrustStorefilepath().substring(this.httpsConfigWindow.getTrustStorefilepath().lastIndexOf("\\") + 1));
-						jListCertificatesAlias.setModel(TrustStoreController.CertificatesAliaslist(
-								this.httpsConfigWindow.getTrustStorefilepath(), this.httpsConfigWindow.getTrustStorePassword()));
+						getListCertificatesAlias().setModel(getTrustStoreController().CertificatesAliaslist(this.httpsConfigWindow.getTrustStorefilepath(), this.httpsConfigWindow.getTrustStorePassword()));
 						this.httpsConfigWindow.setTrustStoreButtonPressed("EditTrustStore");
 					}
 				}
@@ -500,8 +507,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 					if (option == 0) {
 						// ------------ Press OK -------------------------------
 						if (this.httpsConfigWindow.getTrustStorePassword().equals(oldPassword)){
-							TrustStoreController.EditTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),
-									this.httpsConfigWindow.getTrustStorePassword(), newTrustStorePassword);
+							getTrustStoreController().EditTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(), newTrustStorePassword);
 							
 							String msg = Language.translate("Your TrustStore has been updated successfully!",Language.EN);
 							String title1 = Language.translate("TrustStore updated",Language.EN);
@@ -543,8 +549,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 					jPanelCertificate.add(jTextFieldAlias);
 					String title = "Certificate";
 					String[] options = new String[] { "OK", "Cancel" };
-					int option = JOptionPane.showOptionDialog(null, jPanelCertificate, title, JOptionPane.NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, jTextFieldAlias);
+					int option = JOptionPane.showOptionDialog(null, jPanelCertificate, title, JOptionPane.NO_OPTION,JOptionPane.PLAIN_MESSAGE, null, options, jTextFieldAlias);
 					String certificateAlias = jTextFieldAlias.getText();
 					
 					if (option == 0) {
@@ -554,12 +559,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 							JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.INFORMATION_MESSAGE);
 						} else {
 							// ------------ Press OK Button --------------------
-							TrustStoreController.AddCertificateToTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),
-									this.httpsConfigWindow.getTrustStorePassword(), certificateToAdd, certificateAlias);
-							TrustStoreController.Certificateslist();
-							jListCertificatesAlias.setModel(TrustStoreController.CertificatesAliaslist(
-									this.httpsConfigWindow.getTrustStorefilepath(),
-									this.httpsConfigWindow.getTrustStorePassword()));
+							getTrustStoreController().AddCertificateToTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(), certificateToAdd, certificateAlias);
+							getListCertificatesAlias().setModel(getTrustStoreController().CertificatesAliaslist(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword()));
 						}
 					}
 				} else {
@@ -574,7 +575,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 				String title = Language.translate("Warning message",Language.EN);
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 			} else {
-				if (jListCertificatesAlias.isSelectionEmpty()) {
+				if (getListCertificatesAlias().isSelectionEmpty()) {
 					String msg = Language.translate("You should select a certificate!",Language.EN);
 					String title = Language.translate("Warning message",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
@@ -589,12 +590,8 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 					
 					if (option == JOptionPane.YES_OPTION) {
 						// ----- press OK Button ----------------------
-						TrustStoreController.DeleteCertificateFromTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),
-								this.httpsConfigWindow.getTrustStorePassword(), CertificateAliasToDelete);
-						TrustStoreController.Certificateslist();
-						jListCertificatesAlias.setModel(
-								TrustStoreController.CertificatesAliaslist(this.httpsConfigWindow.getTrustStorefilepath(),
-										this.httpsConfigWindow.getTrustStorePassword()));
+						getTrustStoreController().DeleteCertificateFromTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(), CertificateAliasToDelete);
+						getListCertificatesAlias().setModel(getTrustStoreController().CertificatesAliaslist(this.httpsConfigWindow.getTrustStorefilepath(),	this.httpsConfigWindow.getTrustStorePassword()));
 					}
 				}
 			}

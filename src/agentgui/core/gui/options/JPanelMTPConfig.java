@@ -397,8 +397,8 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	 */
 	@Override
 	public void setGlobalData2Form() {
-		String mtpProtocol = this.getGlobalInfo().getMtpProtocol();
-		if (mtpProtocol.equals(MtpProtocol.HTTPS.toString())) {
+		MtpProtocol mtpProtocol = this.getGlobalInfo().getMtpProtocol();
+		if (mtpProtocol.equals(MtpProtocol.HTTPS)) {
 			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTPS);
 			this.setKeyStore(this.getGlobalInfo().getKeyStoreFile());
 			this.setTrustStore(this.getGlobalInfo().getTrustStoreFile());
@@ -419,13 +419,13 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	@Override
 	public void setFormData2Global() {
 		if (this.getJComboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTPS) {
-			this.getGlobalInfo().setMtpProtocol(MtpProtocol.HTTPS.toString());
+			this.getGlobalInfo().setMtpProtocol(MtpProtocol.HTTPS);
 			this.getGlobalInfo().setKeyStoreFile(this.getKeyStore());
 			this.getGlobalInfo().setTrustStoreFile(this.getTrustStore());
 			this.getGlobalInfo().setKeyStorePassword(this.getKeyStorePassword());
 			this.getGlobalInfo().setTrustStorePassword(this.getTrustStorePassword());
 		} else if (this.getJComboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTP) {
-			this.getGlobalInfo().setMtpProtocol(MtpProtocol.HTTP.toString());
+			this.getGlobalInfo().setMtpProtocol(MtpProtocol.HTTP);
 		}
 	}
 
@@ -442,8 +442,8 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	 */
 	@Override
 	public void refreshView() {
-		String mtpProtocol = this.getGlobalInfo().getMtpProtocol();
-		if (mtpProtocol.equals(MtpProtocol.HTTPS.toString())) {
+		MtpProtocol mtpProtocol = this.getGlobalInfo().getMtpProtocol();
+		if (mtpProtocol.equals(MtpProtocol.HTTPS)) {
 			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTPS);
 			this.setVisibaleTrue();
 		} else {

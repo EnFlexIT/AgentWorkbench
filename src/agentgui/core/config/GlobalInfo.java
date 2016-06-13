@@ -38,11 +38,14 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Vector;
 
 import javax.swing.JComponent;
+
+import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -142,7 +145,7 @@ public class GlobalInfo {
 	private MTP_Creation filePropOwnMtpCreation = MTP_Creation.ConfiguredByJADE;
 	private String filePropOwnMtpIP = PlatformJadeConfig.MTP_IP_AUTO_Config;
 	private Integer filePropOwnMtpPort = 7778;
-	private String filePropMtpProtocol = "HTTP";
+	private MtpProtocol filePropMtpProtocol = MtpProtocol.HTTP;
 	
 	private String filePropServerMasterDBHost;
 	private String filePropServerMasterDBName;
@@ -164,9 +167,9 @@ public class GlobalInfo {
 	private EmbeddedSystemAgentVisualisation deviceServiceAgentVisualisation = EmbeddedSystemAgentVisualisation.TRAY_ICON;
 	
 	private String filePropKeyStoreFile;
-	private String filePropKeyStorePassword;
+	private String filePropKeyStorePasswordEncrypted;
 	private String filePropTrustStoreFile;
-	private String filePropTrustStorePassword;
+	private String filePropTrustStorePasswordEncrypted;
 	
 	// --- Reminder information for file dialogs ----------------------------
 	private File lastSelectedFolder = null; 
@@ -1158,7 +1161,7 @@ public class GlobalInfo {
 	 * Sets the MTP protocol.
 	 * @param newMtpProtocol the new MTP protocol
 	 */
-	public void setMtpProtocol(String newMtpProtocol) {
+	public void setMtpProtocol(MtpProtocol newMtpProtocol) {
 		this.filePropMtpProtocol = newMtpProtocol;
 	}
 	
@@ -1166,7 +1169,7 @@ public class GlobalInfo {
 	 * Gets the MTP protocol.
 	 * @return the MTP protocol
 	 */
-	public String getMtpProtocol() {
+	public MtpProtocol getMtpProtocol() {
 		return filePropMtpProtocol;
 	}
 	/**
@@ -1621,21 +1624,7 @@ public class GlobalInfo {
 	public void setKeyStoreFile(String filePropKeyStoreFile) {
 		this.filePropKeyStoreFile = filePropKeyStoreFile;
 	}
-	
-	/**
-	 * Gets the key store password.
-	 * @return the key store password
-	 */
-	public String getKeyStorePassword() {
-		return filePropKeyStorePassword;
-	}
-	/**
-	 * Sets the KeyStore password.
-	 * @param filePropKeyStorePassword the new KeyStore password
-	 */
-	public void setKeyStorePassword(String filePropKeyStorePassword) {
-		this.filePropKeyStorePassword = filePropKeyStorePassword;
-	}
+
 	/**
 	 * Gets the TrustStore file.
 	 * @return the TrustStore file
@@ -1650,21 +1639,67 @@ public class GlobalInfo {
 	public void setTrustStoreFile(String filePropTrustStoreFile) {
 		this.filePropTrustStoreFile = filePropTrustStoreFile;
 	}
+	
+	/**
+	 * Gets the KeyStorePassword
+	 * @return the KeyStorePassword
+	 */
+	public String getKeyStorePassword() {
+		return this.pwDecrypt(this.getKeyStorePasswordEncrypted());
+	}
+	/**
+	 * Sets the KeyStore password.
+	 * @param newPassword the new KeyStore password
+	 */
+	public void setKeyStorePassword(String newPassword) {
+		this.setKeyStorePasswordEncrypted(this.pwEncrypt(newPassword));
+	}
+	
+	/**
+	 * Gets the KeyStorePasswordEncrypted.
+	 * @return the filePropKeyStorePasswordEncrypted
+	 */
+	public String getKeyStorePasswordEncrypted() {
+		return filePropKeyStorePasswordEncrypted;
+	}
+	
+	/**
+	 * Sets the KeyStorePasswordEncrypted.
+	 * @param filePropKeyStorePasswordEncrypted the new KeyStorePasswordEncrypted
+	 */
+	public void setKeyStorePasswordEncrypted(String filePropKeyStorePasswordEncrypted) {
+		this.filePropKeyStorePasswordEncrypted = filePropKeyStorePasswordEncrypted;
+	}
 	/**
 	 * Gets the TrustStore password.
 	 * @return the TrustStore password
 	 */
 	public String getTrustStorePassword() {
-		return filePropTrustStorePassword;
+		return this.pwDecrypt(this.getTrustStorePasswordEncrypted());
 	}
 	/**
 	 * Sets the TrustStore password.
 	 * @param filePropTrustStorePassword the new TrustStore password
 	 */
-	public void setTrustStorePassword(String filePropTrustStorePassword) {
-		this.filePropTrustStorePassword = filePropTrustStorePassword;
+	public void setTrustStorePassword(String newPassword) {
+		this.setTrustStorePasswordEncrypted(this.pwEncrypt(newPassword));
 	}
 	
+	/**
+	 * Sets the trust store password encrypted.
+	 * @param filePropTrustStorePasswordEncrypted the new trust store password encrypted
+	 */
+	public void setTrustStorePasswordEncrypted(String filePropTrustStorePasswordEncrypted) {
+		this.filePropTrustStorePasswordEncrypted = filePropTrustStorePasswordEncrypted;
+	}
+	
+	/**
+	 * Gets the TrustStorePasswordEncrypted.
+	 * @return the TrustStorePasswordEncrypted
+	 */
+	public String getTrustStorePasswordEncrypted() {
+		return filePropTrustStorePasswordEncrypted;
+	}
 	
 	// ------------------------------------------------------------------------------------------------------
 	// ---- From here some help methods for container and component handling can be found --- Start --------- 
@@ -1742,6 +1777,36 @@ public class GlobalInfo {
 	    int exp = (int) (Math.log(bytes) / Math.log(unit));
 	    String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
 	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+	}
+	
+	/**
+	 * This method is used to decrypt password.
+	 * @param encryptedPSWD the encrypted password
+	 * @return the password decrypted
+	 */
+	public String pwDecrypt(String encryptedPSWD) {
+		String pwDecrypted = encryptedPSWD;
+		try {
+			pwDecrypted = new String(Base64.decodeBase64(encryptedPSWD.getBytes()), "UTF8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return pwDecrypted;
+	}
+	
+	/**
+	 * This method is used to encrypt password.
+	 * @param pswd the password
+	 * @return the password encrypted
+	 */
+	public String pwEncrypt(String pswd) {
+		String encryptedPSWD = pswd;
+		try {
+			encryptedPSWD = new String(Base64.encodeBase64(pswd.getBytes("UTF8")));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return encryptedPSWD;
 	}
 	
 }

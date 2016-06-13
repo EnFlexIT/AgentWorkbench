@@ -49,6 +49,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -75,6 +76,8 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
 	private KeyStoreConfigPanel keyStoreConfigPanel;
 	private TrustStoreConfigPanel trustStoreConfigPanel;
+	private TrustStoreController trustStoreController;
+	private KeyStoreController keyStoreController;
 
 	private JPanel jPanelHeader;
 	private JPanel jPanelFooter;
@@ -431,6 +434,24 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		return trustStoreConfigPanel;
 	}
 	/**
+	 * This method initializes TrustStoreController.
+	 */
+	protected TrustStoreController getTrustStoreController() {
+		if (trustStoreController == null) {
+			trustStoreController = new TrustStoreController();
+		}
+		return trustStoreController;
+	}
+	/**
+	 * This method initializes KeyStoreController.
+	 */
+	protected KeyStoreController getKeyStoreController() {
+		if (keyStoreController == null) {
+			keyStoreController = new KeyStoreController();
+		}
+		return keyStoreController;
+	}
+	/**
 	 * This method initializes jButtonOpenKeyStore.
 	 */
 	private JButton getJButtonOpenKeyStore() {
@@ -665,9 +686,9 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	 */
 	public void getKeyStoreData() {
 		
-		setKeyStoreAlias(KeyStoreController.GetKeyStoreAlias(getKeyStorefilepath(), getKeyStorePassword())); 
+		setKeyStoreAlias(getKeyStoreController().GetKeyStoreAlias(getKeyStorefilepath(), getKeyStorePassword())); 
 		// ---- Get the Content of the keyStore ----------------------
-		data = KeyStoreController.ListKeyStoreContent(keyStorefilepath, keyStorePassword);
+		data = getKeyStoreController().ListKeyStoreContent(keyStorefilepath, keyStorePassword);
 		// ---- Substring informations from the result ---------------
 		String FullName = data.substring(data.indexOf("CN=") + 3, data.indexOf(",OU"));
 		String OrganizationalUnit = data.substring(data.indexOf("OU=") + 3, data.indexOf(",O="));
@@ -693,8 +714,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		this.getKeyStoreConfigPanel().getJTextFieldOrganization().setText(Organization);
 		this.getKeyStoreConfigPanel().getJTextFieldOrganizationalUnit().setText(OrganizationalUnit);
 		this.getKeyStoreConfigPanel().getJTextFieldState().setText(State);
-		this.getKeyStoreConfigPanel().getJTextFieldKeyStoreName()
-				.setText(getKeyStorefilepath().substring(getKeyStorefilepath().lastIndexOf("\\") + 1));
+		this.getKeyStoreConfigPanel().getJTextFieldKeyStoreName().setText(getKeyStorefilepath().substring(getKeyStorefilepath().lastIndexOf("\\") + 1));
 		this.getKeyStoreConfigPanel().getJTextFieldAlias().setText(getKeyStoreAlias());
 		this.getKeyStoreConfigPanel().getJPasswordField().setText(getKeyStorePassword());
 		this.getKeyStoreConfigPanel().getJPasswordConfirmPassword().setText(null);
@@ -707,15 +727,13 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	 */
 	public void getTrustStoreData() {
 		// ---- Prepare the TrustStore form for update -------------
-		this.getTrustStoreConfigPanel().getJTextFieldTrustStoreName()
-				.setText(getTrustStorefilepath().substring(getTrustStorefilepath().lastIndexOf("\\") + 1));
+		this.getTrustStoreConfigPanel().getJTextFieldTrustStoreName().setText(getTrustStorefilepath().substring(getTrustStorefilepath().lastIndexOf("\\") + 1));
 		this.getTrustStoreConfigPanel().getJTextFieldTrustStoreName().setEnabled(false);
 		this.getTrustStoreConfigPanel().getJLabelCertificatesList().setVisible(true);
 		this.getTrustStoreConfigPanel().getScrollPane().setVisible(true);
 		this.getTrustStoreConfigPanel().getJButtonAddCertificate().setVisible(true);
 		this.getTrustStoreConfigPanel().getJButtonRemoveCertificate().setVisible(true);
-		this.getTrustStoreConfigPanel().getListCertificatesAlias()
-				.setModel(TrustStoreController.CertificatesAliaslist(getTrustStorefilepath(), getTrustStorePassword()));
+		this.getTrustStoreConfigPanel().getListCertificatesAlias().setModel(getTrustStoreController().CertificatesAliaslist(getTrustStorefilepath(), getTrustStorePassword()));
 		this.getTrustStoreConfigPanel().getJPasswordFieldTrustStorePassword().setText(getTrustStorePassword());
 		this.getTrustStoreConfigPanel().getJPasswordFieldTrustStorePassword().setEnabled(true);
 		this.getTrustStoreConfigPanel().getJPasswordFieldTrustStoreConfirmPassword().setText(null);
@@ -763,19 +781,18 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 					// --- Create JOptionPane to enter the KeyStore password ---
 					jPanelPassword = new JPanel();
 					String msg = Language.translate("Please, enter the password for  ",Language.EN);
-					jLabelEnterPassword = new JLabel( msg + keystorename + "  :");
+					jLabelEnterPassword = new JLabel( msg + " " +keystorename + "  :");
 					jLabelEnterPassword.setFont(new Font("Dialog", Font.BOLD, 11));
 					JPasswordField jPasswordField = new JPasswordField(10);
 					jPanelPassword.add(jLabelEnterPassword);
 					jPanelPassword.add(jPasswordField);
 					String[] options = new String[] { "OK", "Cancel" };
 					String title = Language.translate("Password",Language.EN);
-					int option = JOptionPane.showOptionDialog(null, jPanelPassword, title, JOptionPane.NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, jPasswordField);
+					int option = JOptionPane.showOptionDialog(null, jPanelPassword, title, JOptionPane.NO_OPTION,JOptionPane.PLAIN_MESSAGE, null, options, jPasswordField);
 					if (option == 0) {
 						// ------------ Press OK --------------------------------
 						keyStorePassword = new String(jPasswordField.getPassword());
-						setKeyStoreAlias(KeyStoreController.GetKeyStoreAlias(keyStorefilepath, keyStorePassword)); 
+						setKeyStoreAlias(getKeyStoreController().GetKeyStoreAlias(keyStorefilepath, keyStorePassword)); 
 						if (keyStoreAlias == null) {
 							jLabelKeyStoreLocationPath.setText(null);
 							keyStorefilepath = null;
@@ -825,22 +842,26 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 					// --- Create JOptionPane to enter the TrustStore password -
 					JPanel jPanelEnterPassword = new JPanel();
 					String msg = Language.translate("Please enter the password for  ",Language.EN);
-					jLabelEnterPassword = new JLabel( msg + truststorename + "  :");
+					jLabelEnterPassword = new JLabel( msg + " " +truststorename + "  :");
 					jLabelEnterPassword.setFont(new Font("Dialog", Font.BOLD, 11));
 					JPasswordField jPasswordFiled = new JPasswordField(10);
 					jPanelEnterPassword.add(jLabelEnterPassword);
 					jPanelEnterPassword.add(jPasswordFiled);
 					String[] options = new String[] { "OK", "Cancel" };
 					String title = Language.translate("Password",Language.EN);
-					int option = JOptionPane.showOptionDialog(null, jPanelEnterPassword, title,
-							JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, jPasswordFiled);
+					int option = JOptionPane.showOptionDialog(null, jPanelEnterPassword, title,JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, jPasswordFiled);
 					trustStorePassword = new String(jPasswordFiled.getPassword());
 					if (option == 0) {
 						// ---- Press OK Button ------------------------------
-						String alias = TrustStoreController.GetTrustStoreAlias(trustStorefilepath, trustStorePassword);
-						if (alias == null) {
+						boolean passwordIsTrue = getTrustStoreController().OpenTrustStore(trustStorefilepath, trustStorePassword);
+						if (passwordIsTrue == false) {
 							jLabelTrustStoreLocationPath.setText(null);
 							trustStorefilepath = null;
+							getTrustStoreConfigPanel().getJTextFieldTrustStoreName().setText(null);
+							getTrustStoreConfigPanel().getJPasswordFieldTrustStorePassword().setText(null);
+							getTrustStoreConfigPanel().getJPasswordFieldTrustStoreConfirmPassword().setText(null);
+							DefaultListModel<String> defaultListModel = new DefaultListModel<String>();
+							getTrustStoreConfigPanel().getListCertificatesAlias().setModel(defaultListModel);
 						} else {
 							getTrustStoreData();
 						}

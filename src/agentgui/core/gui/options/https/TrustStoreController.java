@@ -43,10 +43,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-
 import java.util.Enumeration;
-
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -60,19 +57,16 @@ import javax.swing.JOptionPane;
  */
 public class TrustStoreController {
 
-	static Runtime runtime = Runtime.getRuntime();
-	private static InputStream certInputStream;
-	private static FileInputStream fileInputStream;
-	private static FileOutputStream fileOutputStream;
-	private static File trustStoreFile;
-	private static KeyStore trustStore;
-	private static CertificateFactory certificateFactory;
-	private static Certificate certificate;
-	private static DefaultComboBoxModel<String> certificatesModel;
-	private static DefaultListModel<String> certificatesAliasModel;
-	private static Enumeration<String> enumeration;
-	private static String Alias;
-	private static JFrame frame;
+	private Runtime runtime = Runtime.getRuntime();
+	private InputStream certInputStream;
+	private FileInputStream fileInputStream;
+	private FileOutputStream fileOutputStream;
+	private File trustStoreFile;
+	private KeyStore trustStore;
+	private CertificateFactory certificateFactory;
+	private Certificate certificate;
+	private DefaultListModel<String> certificatesAliasModel;
+	private JFrame frame;
 
 	/**
 	 * This Initializes the TrustStoreController.
@@ -89,10 +83,9 @@ public class TrustStoreController {
 	 * @param TrustStorePassword the trust store password
 	 * @param trustStorePath the trust store path
 	 */
-	public static void CreateTrustStore(String TrustStoreName, String TrustStorePassword, String trustStorePath) {
+	public void CreateTrustStore(String TrustStoreName, String TrustStorePassword, String trustStorePath) {
 
 		try {
-
 			// ----- Specify the TrustStore file type -------------------------
 			KeyStore emptyTrustStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			// ----- Create an empty TrustStore file --------------------------
@@ -119,15 +112,16 @@ public class TrustStoreController {
 		}
 	}
 
-	/**
-	 * This method Returns Alias in the TrustStore
-	 * 
-	 * @param TrustStoreName
-	 * @param TrustStorePassword
-	 * @return Alias
-	 */
-	public static String GetTrustStoreAlias(String TrustStoreName, String TrustStorePassword) {
 
+	/**
+	 * This method open a TrustStore. It returns true if the password is correct.
+	 *
+	 * @param TrustStoreName the TrustStore name
+	 * @param TrustStorePassword the TrustStore password
+	 * @return true, if successful
+	 */
+	public boolean OpenTrustStore(String TrustStoreName, String TrustStorePassword) {
+		boolean password = true;
 		// --- Creates a FileInputStream from the TrustStore -------------------
 		File file = new File(TrustStoreName);
 		KeyStore trustStore = null;
@@ -150,19 +144,9 @@ public class TrustStoreController {
 			// --- Open a warning Message dialog if the password is incorrect --
 			JOptionPane.showMessageDialog(frame, e.getMessage() + " !");
 			e.printStackTrace();
-			return null;
+			password = false;
 		}
-
-		// --- Get TrustStore's Alias ------------------------------------------
-		try {
-			enumeration = trustStore.aliases();
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		}
-		while (enumeration.hasMoreElements()) {
-			Alias = (String) enumeration.nextElement();
-		}
-		return Alias;
+		return password;
 	}
 
 	/**
@@ -172,7 +156,7 @@ public class TrustStoreController {
 	 * @param OldTrustStorePassword
 	 * @param NewTrustStorePassword
 	 */
-	public static void EditTrustStore(String TrustStoreName, String OldTrustStorePassword,
+	public void EditTrustStore(String TrustStoreName, String OldTrustStorePassword,
 			String NewTrustStorePassword) {
 
 		Process process1 = null;
@@ -235,7 +219,7 @@ public class TrustStoreController {
 	 * @param CertificateToAdd
 	 * @param CertificateAlias
 	 */
-	public static void AddCertificateToTrustStore(String TrustStoreName, String TrustStorePassword,
+	public void AddCertificateToTrustStore(String TrustStoreName, String TrustStorePassword,
 			String CertificateToAdd, String CertificateAlias) {
 
 		try {
@@ -284,27 +268,21 @@ public class TrustStoreController {
 	 * @param TrustStorePassword
 	 * @param CertificateAliasToDelete
 	 */
-	public static void DeleteCertificateFromTrustStore(String TrustStoreName, String TrustStorePassword,
-			String CertificateAliasToDelete) {
+	public void DeleteCertificateFromTrustStore(String TrustStoreName, String TrustStorePassword,String CertificateAliasToDelete) {
 
 		try {
 			// --- Creates a FileInputStream from the TrustStore -----------
 			trustStoreFile = new File(TrustStoreName);
 			fileInputStream = new FileInputStream(trustStoreFile);
-
 			// --- Loads the TrustStore from the given InputStream ---------
 			KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			trustStore.load(fileInputStream, TrustStorePassword.toCharArray());
-
 			// ---- Delete the certificate from the TrustStore -------------
 			trustStore.deleteEntry(CertificateAliasToDelete);
-
 			// ----- Create a FileOutputStream -----------------------------
 			fileOutputStream = new FileOutputStream(trustStoreFile);
-
 			// ----- Store the TrustStore ----------------------------------
 			trustStore.store(fileOutputStream, TrustStorePassword.toCharArray());
-
 			// ----- Close the FileOutputStream ----------------------------
 			fileOutputStream.close();
 
@@ -327,9 +305,7 @@ public class TrustStoreController {
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(frame, e.getMessage() + " !");
 				}
-
 		}
-
 	}
 
 	/**
@@ -337,7 +313,7 @@ public class TrustStoreController {
 	 * buffer of bytes that may be read from the stream
 	 */
 	@SuppressWarnings("resource")
-	private static InputStream Stream(String fileName) throws IOException {
+	private InputStream Stream(String fileName) throws IOException {
 		// ---- Create a FileInputStream ------------------------------
 		FileInputStream fileInputStream = new FileInputStream(fileName);
 		// ---- Create a DataInputStream ------------------------------
@@ -351,41 +327,20 @@ public class TrustStoreController {
 
 		return byteArrayInputStream;
 	}
-
 	/**
-	 * This method returns Certificates located in the project directory.
+	 * This method returns Certificate's alias for the TrustStore.
 	 */
-	public static DefaultComboBoxModel<String> Certificateslist() {
-		// ----- Create model for the jComboBoxCertificates ---------
-		certificatesModel = new DefaultComboBoxModel<String>();
-		// ----- Get all files located in the project directory -----
-		File directory = new File(System.getProperty("user.dir"));
-		File[] listOfFiles = directory.listFiles();
-		// ----- Get all Certificates files -------------------------
-		for (int i = 0; i < listOfFiles.length; i++) {
-			if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".cer")) {
-				certificatesModel.addElement(listOfFiles[i].getName());
-			}
-		}
-		// ----- Set the CertificatesModel to jComboBoxCertificates -
-		return certificatesModel;
-	}
-
-	/**
-	 * This method returns Certificate's Alias for the TrustStore.
-	 */
-	public static DefaultListModel<String> CertificatesAliaslist(String TrustStoreName, String TrustStorePassword) {
+	public DefaultListModel<String> CertificatesAliaslist(String TrustStoreName, String TrustStorePassword) {
 		// ----- Create model for the jListCertificatesAlias -------
 		certificatesAliasModel = new DefaultListModel<String>();
 		try {
 			// --- Creates a FileInputStream from the TrustStore ---
 			File file = new File(TrustStoreName);
 			fileInputStream = new FileInputStream(file);
-
 			// --- Loads the KeyStore from the given InputStream ---
 			KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			trustStore.load(fileInputStream, TrustStorePassword.toCharArray());
-
+			
 			// --- Get All TrustStore's Certificates Alias ---------
 			Enumeration<String> enumeration = trustStore.aliases();
 			while (enumeration.hasMoreElements()) {
@@ -411,7 +366,6 @@ public class TrustStoreController {
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(frame, e.getMessage() + " !");
 				}
-
 		}
 		return certificatesAliasModel;
 	}

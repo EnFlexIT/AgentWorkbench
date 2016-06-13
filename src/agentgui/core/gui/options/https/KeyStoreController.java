@@ -53,16 +53,16 @@ import javax.swing.JOptionPane;
  */
 public class KeyStoreController {
 
-	private static Runtime runtime = Runtime.getRuntime();
-	private static StringBuilder builder;
-	private static Process process;
-	private static BufferedReader bufferedReader;
-	private static KeyStore keystore;
-	private static InputStream inputStream;
-	private static Enumeration<String> enumeration;
-	private static String Alias;
-	private static String line;
-	private static JFrame frame = null;
+	private Runtime runtime = Runtime.getRuntime();
+	private StringBuilder builder;
+	private Process process;
+	private BufferedReader bufferedReader;
+	private KeyStore keystore;
+	private InputStream inputStream;
+	private Enumeration<String> enumeration;
+	private String Alias;
+	private String line;
+	private JFrame frame = null;
 
 	/**
 	 * This Initializes the KeyStoreController.
@@ -80,7 +80,7 @@ public class KeyStoreController {
 	 * @param KeystorePassword
 	 * @param keyStorePath 
 	 */
-	public static void CreateKeyStore(String Informations, String Alias, String KeyStoreName, String KeystorePassword, String keyStorePath) {
+	public void CreateKeyStore(String Informations, String Alias, String KeyStoreName, String KeystorePassword, String keyStorePath) {
 		/*
 		 * ---------------------------------------------------------------------
 		 * ------- Execute the command line to create the KeyStore -------------
@@ -94,7 +94,7 @@ public class KeyStoreController {
 		try {
 			process = runtime.exec(
 					"keytool -genkey -dname \"" + Informations + "\" -alias " + Alias + " -keystore " + keyStorePath + KeyStoreName
-							+ "KeyStore.jks " + " -storepass " + KeystorePassword + " -keypass " + KeystorePassword);
+							+ "KeyStore.jks " + " -storepass " + KeystorePassword + " -keypass " + KeystorePassword + " -validity 360");
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -107,7 +107,7 @@ public class KeyStoreController {
 	 * @param keyStorePassword
 	 * @return the content
 	 */
-	public static String ListKeyStoreContent(String KeyStoreName, String keyStorePassword) {
+	public String ListKeyStoreContent(String KeyStoreName, String keyStorePassword) {
 		String content = null;
 		builder = new StringBuilder();
 		line = null;
@@ -148,7 +148,7 @@ public class KeyStoreController {
 	 * @param KeyStorePassword
 	 * @return Alias
 	 */
-	public static String GetKeyStoreAlias(String KeyStoreName, String KeyStorePassword) {
+	public String GetKeyStoreAlias(String KeyStoreName, String KeyStorePassword) {
 		try {
 			// --- Specify the KeyStore type -----------------------------------
 			keystore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -195,7 +195,7 @@ public class KeyStoreController {
 	 * @param OldKeyStorePassword
 	 * @param NewKeyStorePassword
 	 */
-	public static void EditKeyStore(String KeyStoreName, String OldAlias, String NewAlias, String NewKeyStorePassword,
+	public void EditKeyStore(String KeyStoreName, String OldAlias, String NewAlias, String NewKeyStorePassword,
 			String OldKeyStorePassword) {
 
 		Process process1 = null;
@@ -274,7 +274,7 @@ public class KeyStoreController {
 	 * @param KeyStorePassword
 	 * @param CertificateName
 	 */
-	public static void ExportCertificate(String KeyStoreName, String Alias, String KeyStorePassword, String CertificateName) {
+	public void ExportCertificate(String KeyStoreName, String Alias, String KeyStorePassword, String CertificateName) {
 		/*
 		 * ---------------------------------------------------------------------
 		 * ------- Execute the command line to create the certificate ----------
@@ -286,7 +286,7 @@ public class KeyStoreController {
 		process = null;
 		try {
 			process = runtime.exec("keytool -export -alias " + Alias + " -keystore " + KeyStoreName + " -storepass "
-					+ KeyStorePassword + " -file " + CertificateName + ".cer");
+					+ KeyStorePassword + " -file " + CertificateName + ".cer" );
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			JOptionPane.showMessageDialog(frame, e1.getMessage() + " !");

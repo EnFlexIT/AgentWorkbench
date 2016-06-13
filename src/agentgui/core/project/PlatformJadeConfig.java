@@ -46,6 +46,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.network.NetworkAddresses;
 import agentgui.core.network.PortChecker;
 
@@ -82,11 +83,6 @@ public class PlatformJadeConfig implements Serializable {
 		ConfiguredByIPandPort
 	}
 	public static String MTP_IP_AUTO_Config = "Auto-Configuration";
-	public static String MTP_Protocol = "HTTP";
-	public static String KeyStoreFile;
-	public static String KeyStorePassword;
-	public static String TrustStoreFile;
-	public static String TrustStorePassword;
 	
 	// --- Services 'Activated automatically' ---------------------------------
 	public static final String SERVICE_MessagingService = jade.core.messaging.MessagingService.class.getName();
@@ -120,9 +116,9 @@ public class PlatformJadeConfig implements Serializable {
 	
 	// --- Runtime variables -------------------------------------------------- 
 	@XmlTransient
-	private Project currProject = null;
+	private Project currProject;
 	@XmlTransient
-	private DefaultListModel<String> listModelServices = null;
+	private DefaultListModel<String> listModelServices;
 	
 	@XmlElement(name="useLocalPort")	
 	private Integer useLocalPort = Application.getGlobalInfo().getJadeLocalPort();
@@ -134,15 +130,20 @@ public class PlatformJadeConfig implements Serializable {
 	private String mtpIpAddress = MTP_IP_AUTO_Config;
 	
 	@XmlElement(name="mtpProtocol")
-	private String mtpProtocol = MTP_Protocol;
+	private MtpProtocol mtpProtocol = MtpProtocol.HTTP;
+	
 	@XmlElement(name="keyStoreFile")
-	private String keyStoreFile = KeyStoreFile;
-	@XmlElement(name="keyStorepassword")
-	private String keyStorePassword = KeyStorePassword;
+	private String keyStoreFile;
 	@XmlElement(name="trustStoreFile")
-	private String trustStoreFile = TrustStoreFile;
+	private String trustStoreFile;
+
+	@XmlElement(name="keyStorePassword")
+	private String keyStorePasswordEncrypted;
 	@XmlElement(name="trustStorePassword")
-	private String trustStorePassword = TrustStorePassword;
+	private String trustStorePasswordEncrypted;
+	
+	
+	
 	
 	@XmlElement(name="mtpPort")
 	private Integer useLocalPortMTP = Application.getGlobalInfo().getJadeLocalPortMTP();
@@ -266,7 +267,7 @@ public class PlatformJadeConfig implements Serializable {
 				// --- Set the MTP address ------------------------------------ 
 				if (ipAddress!=null) {
 					Integer freePort = new PortChecker(this.getLocalPortMTP(), ipAddress).getFreePort();
-					if(this.getMtpProtocol().equals("HTTP")){
+					if(this.getMtpProtocol().equals(MtpProtocol.HTTP)){
 						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
 					}else{
 						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(https://" + ipAddress + ":" + freePort + "/acc)");
@@ -305,7 +306,7 @@ public class PlatformJadeConfig implements Serializable {
 				// --- Set the MTP address ------------------------------------ 
 				if (ipAddress!=null) {
 					Integer freePort = new PortChecker(mtpPort, ipAddress).getFreePort();
-					if(globalInfo.getMtpProtocol().equals("HTTP")){
+					if(globalInfo.getMtpProtocol().equals(MtpProtocol.HTTP)){
 						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
 					}else{
 						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(https://" + ipAddress + ":" + freePort + "/acc)");
@@ -532,7 +533,7 @@ public class PlatformJadeConfig implements Serializable {
 	 * Sets the MTP Protocol.
 	 * @param mtpProtool the new MTP Protocol
 	 */
-	public void setMtpProtocol(String mtpProtool){
+	public void setMtpProtocol(MtpProtocol mtpProtool){
 		this.mtpProtocol = mtpProtool;
 		// --- if set, set project changed and unsaved ----------
 		if (currProject != null) {
@@ -544,7 +545,7 @@ public class PlatformJadeConfig implements Serializable {
 	 * @return the MTP Protocol
 	 */
 	@XmlTransient
-	public String getMtpProtocol(){
+	public MtpProtocol getMtpProtocol(){
 		return mtpProtocol;
 	}
 	
@@ -572,7 +573,7 @@ public class PlatformJadeConfig implements Serializable {
 	 * @param keyStorePassword the new KeyStorePassword
 	 */
 	public void setKeyStorePassword(String keyStorePassword){
-		this.keyStorePassword = keyStorePassword;
+		this.setKeyStorePasswordEncrypted(Application.getGlobalInfo().pwEncrypt(keyStorePassword));
 		// --- if set, set project changed and unsaved ----------
 		if (currProject != null) {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
@@ -584,8 +585,27 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	@XmlTransient
 	public String getKeyStorePassword(){
-		return keyStorePassword;
+		return Application.getGlobalInfo().pwDecrypt(this.getKeyStorePasswordEncrypted());
 	}
+	
+	/**
+	 * Sets the KeyStorePasswordEncrypted.
+	 * @param keyStorePasswordEncrypted the KeyStorePasswordEncrypted
+	 */
+	public void setKeyStorePasswordEncrypted(String keyStorePasswordEncrypted) {
+		this.keyStorePasswordEncrypted = keyStorePasswordEncrypted;
+	}
+	
+	/**
+	 * Gets the KeyStorePasswordEncrypted.
+	 * @return the keyStorePasswordEncrypted
+	 */
+	@XmlTransient
+	public String getKeyStorePasswordEncrypted() {
+		return keyStorePasswordEncrypted;
+	}
+	
+	
 	/**
 	 * Sets the TrustStoreFile.
 	 * @param trustStoreFile the new TrustStoreFile
@@ -610,7 +630,7 @@ public class PlatformJadeConfig implements Serializable {
 	 * @param trustStorePassword the new TrustStorePassword
 	 */
 	public void setTrustStorePassword(String trustStorePassword){
-		this.trustStorePassword = trustStorePassword;
+		this.setTrustStorePasswordEncrypted(Application.getGlobalInfo().pwEncrypt(trustStorePassword));
 		// --- if set, set project changed and unsaved ----------
 		if (currProject != null) {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
@@ -622,7 +642,24 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	@XmlTransient
 	public String getTrustStorePassword(){
-		return trustStorePassword;
+		return Application.getGlobalInfo().pwDecrypt(this.getTrustStorePasswordEncrypted());
+	}
+	
+	/**
+	 * Gets the trust store password encrypted.
+	 * @return the trust store password encrypted
+	 */
+	public String getTrustStorePasswordEncrypted() {
+		return trustStorePasswordEncrypted;
+	}
+	
+	/**
+	 * Sets the TrustStorePasswordEncrypted.
+	 * @param trustStorePasswordEncrypted the new TrustStorePasswordEncrypted
+	 */
+	@XmlTransient
+	public void setTrustStorePasswordEncrypted(String trustStorePasswordEncrypted) {
+		this.trustStorePasswordEncrypted = trustStorePasswordEncrypted;
 	}
 	/**
 	 * Gets the list model services.
@@ -691,4 +728,6 @@ public class PlatformJadeConfig implements Serializable {
 		bugOut += "Services:" + getServiceListArgument();
 		return bugOut;
 	}
+
+	
 }

@@ -33,15 +33,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-
-import org.apache.commons.codec.binary.Base64;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -337,9 +334,10 @@ public class FileProperties extends Properties {
 		// --- this.DEF_OWN_MTP_PROTOCOL -------------------
 		propValue = this.getProperty(this.DEF_OWN_MTP_PROTOCOL);
 		if (propValue.equalsIgnoreCase("") == false) {
-			Application.getGlobalInfo().setMtpProtocol(propValue);
+			MtpProtocol ownMtpProtocol = MtpProtocol.valueOf(propValue);
+			Application.getGlobalInfo().setMtpProtocol(ownMtpProtocol);
 		} else {
-			Application.getGlobalInfo().setMtpProtocol("HTTP");
+			Application.getGlobalInfo().setMtpProtocol(MtpProtocol.HTTP);
 		}
 		
 		// --- this.DEF_MASTER_DB_HOST ---------------
@@ -475,14 +473,9 @@ public class FileProperties extends Properties {
 		// --- this.DEF_KEYSTORE_PASSWORD -------------------
 		propValue = this.getProperty(this.DEF_KEYSTORE_PASSWORD);
 		if (propValue.equalsIgnoreCase("") == false) {
-			try {
-				Application.getGlobalInfo()
-						.setKeyStorePassword(new String(Base64.decodeBase64(propValue.getBytes()), "UTF8"));
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+			Application.getGlobalInfo().setKeyStorePasswordEncrypted(propValue);
 		} else {
-			Application.getGlobalInfo().setKeyStorePassword(null);
+			Application.getGlobalInfo().setKeyStorePasswordEncrypted(null);
 		}
 		// --- this.DEF_TRUSTSTORE_FILE -------------------
 		propValue = this.getProperty(this.DEF_TRUSTSTORE_FILE);
@@ -494,13 +487,9 @@ public class FileProperties extends Properties {
 		// --- this.DEF_TRUSTSTORE_PASSWORD -------------------
 		propValue = this.getProperty(this.DEF_TRUSTSTORE_PASSWORD);
 		if (propValue.equalsIgnoreCase("") == false) {
-			try {
-				Application.getGlobalInfo().setTrustStorePassword(new String(Base64.decodeBase64(propValue.getBytes()), "UTF8"));
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+			Application.getGlobalInfo().setTrustStorePasswordEncrypted(propValue);
 		} else {
-			Application.getGlobalInfo().setTrustStorePassword(null);
+			Application.getGlobalInfo().setTrustStorePasswordEncrypted(null);
 		}
 		
 	}
@@ -574,7 +563,7 @@ public class FileProperties extends Properties {
 		// --- this.DEF_OWN_MTP_PORT -----------------
 		this.setProperty(this.DEF_OWN_MTP_PORT, Application.getGlobalInfo().getOwnMtpPort().toString());
 		// --- this.DEF_OWN_MTP_PROTOCOL -----------------
-		this.setProperty(this.DEF_OWN_MTP_PROTOCOL, Application.getGlobalInfo().getMtpProtocol());
+		this.setProperty(this.DEF_OWN_MTP_PROTOCOL, Application.getGlobalInfo().getMtpProtocol().toString());
 		
 		// --- this.DEF_MASTER_DB_HOST ---------------
 		if (Application.getGlobalInfo().getServerMasterDBHost() == null) {
@@ -628,36 +617,28 @@ public class FileProperties extends Properties {
 		// --- this.DEF_UPDATE_DATE_LAST_CHECKED ------
 		this.setProperty(this.DEF_UPDATE_DATE_LAST_CHECKED, Application.getGlobalInfo().getUpdateDateLastChecked().toString());
 		// --- this.DEF_KEYSTORE_FILE ------
-		if (Application.getGlobalInfo().getKeyStoreFile()==null || Application.getGlobalInfo().getMtpProtocol().equals("HTTP")) {
+		if (Application.getGlobalInfo().getKeyStoreFile()==null || Application.getGlobalInfo().getMtpProtocol().equals(MtpProtocol.HTTP)) {
 			this.setProperty(this.DEF_KEYSTORE_FILE, "");
 		} else {
 			this.setProperty(this.DEF_KEYSTORE_FILE, Application.getGlobalInfo().getKeyStoreFile());
 		}
 		// --- this.DEF_KEYSTORE_PASSWORD ------
-		if (Application.getGlobalInfo().getKeyStorePassword()==null || Application.getGlobalInfo().getMtpProtocol().equals("HTTP")) {
+		if (Application.getGlobalInfo().getKeyStorePasswordEncrypted()==null || Application.getGlobalInfo().getMtpProtocol().equals(MtpProtocol.HTTP)) {
 			this.setProperty(this.DEF_KEYSTORE_PASSWORD, "");
 		} else {
-			try {
-				this.setProperty(this.DEF_KEYSTORE_PASSWORD, new String(Base64.encodeBase64(Application.getGlobalInfo().getKeyStorePassword().getBytes("UTF8"))));
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+			this.setProperty(this.DEF_KEYSTORE_PASSWORD, Application.getGlobalInfo().getKeyStorePasswordEncrypted());
 		}
 		// --- this.DEF_TRUSTSTORE_FILE ------
-		if (Application.getGlobalInfo().getTrustStoreFile()==null || Application.getGlobalInfo().getMtpProtocol().equals("HTTP")) {
+		if (Application.getGlobalInfo().getTrustStoreFile()==null || Application.getGlobalInfo().getMtpProtocol().equals(MtpProtocol.HTTP)) {
 			this.setProperty(this.DEF_TRUSTSTORE_FILE, "");
 		} else {
 			this.setProperty(this.DEF_TRUSTSTORE_FILE, Application.getGlobalInfo().getTrustStoreFile());
 		}
 		// --- this.DEF_TRUSTSTORE_PASSWORD ------
-		if (Application.getGlobalInfo().getTrustStorePassword()==null || Application.getGlobalInfo().getMtpProtocol().equals("HTTP")) {
+		if (Application.getGlobalInfo().getTrustStorePasswordEncrypted()==null || Application.getGlobalInfo().getMtpProtocol().equals(MtpProtocol.HTTP)) {
 			this.setProperty(this.DEF_TRUSTSTORE_PASSWORD, "");
 		} else {
-			try {
-				this.setProperty(this.DEF_TRUSTSTORE_PASSWORD, new String(Base64.encodeBase64(Application.getGlobalInfo().getTrustStorePassword().getBytes("UTF8"))));
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+			this.setProperty(this.DEF_TRUSTSTORE_PASSWORD, Application.getGlobalInfo().getTrustStorePasswordEncrypted());
 		}
 		
 		// --- this.DEF_DeviceServcie_ProjectFolder ---
@@ -741,7 +722,7 @@ public class FileProperties extends Properties {
 				this.setProperty(this.DEF_OWN_MTP_PORT, Application.getGlobalInfo().getOwnMtpPort().toString());
 			
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_OWN_MTP_PROTOCOL) ) {
-				this.setProperty(this.DEF_OWN_MTP_PROTOCOL, Application.getGlobalInfo().getMtpProtocol());
+				this.setProperty(this.DEF_OWN_MTP_PROTOCOL, Application.getGlobalInfo().getMtpProtocol().toString());
 				
 			} else if ( mandatoryProps[i].equalsIgnoreCase(this.DEF_UPDATE_SITE) ) {				
 				this.setProperty(this.DEF_UPDATE_SITE, GlobalInfo.DEFAULT_UPDATE_SITE);

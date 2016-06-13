@@ -176,7 +176,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 		this.graphController = controller;
 		this.graphController.addObserver(this);
 		this.graphGuiTools = new BasicGraphGuiTools(this.graphController);
-		
 		this.initialize();
 		this.reLoadGraph();
 	}

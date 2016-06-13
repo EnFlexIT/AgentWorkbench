@@ -69,6 +69,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = -4676410555112580221L;
 
 	private HttpsConfigWindow httpsConfigWindow;
+	private KeyStoreController keyStoreController;
 
 	private final Dimension fieldSize = new Dimension(120, 26);
 
@@ -270,6 +271,15 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		gbc_jTextFieldCountryCode.gridy = 10;
 		add(getJTextFieldCountryCode(), gbc_jTextFieldCountryCode);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+	}
+	/**
+	 * This method initializes KeyStoreController.
+	 */
+	protected KeyStoreController getKeyStoreController() {
+		if (keyStoreController == null) {
+			keyStoreController = new KeyStoreController();
+		}
+		return keyStoreController;
 	}
 	/**
 	 * This method initializes jLabelKeyStoreInformations.
@@ -598,7 +608,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 						/* ---- Create the KeyStore with informations ------
 						 * ---------------- entered by the User ------------
 						 */
-						KeyStoreController.CreateKeyStore(informations, alias, keystore_name, keystore_password,
+						getKeyStoreController().CreateKeyStore(informations, alias, keystore_name, keystore_password,
 								KeyStorePath);
 						String msg = Language.translate("Your keystore has been created successfully!",Language.EN);
 						String title = Language.translate("KeyStore created",Language.EN);
@@ -608,7 +618,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 						this.httpsConfigWindow.setKeyStorePassword(keystore_password);
 						this.httpsConfigWindow.setKeyStoreAlias(alias);
 						// ---- Get the Content of the keyStore ---------------
-						String result = KeyStoreController.ListKeyStoreContent(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword());
+						String result = getKeyStoreController().ListKeyStoreContent(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword());
 						// ---- Substring informations from the result --------
 						String FullName = result.substring(result.indexOf("CN=") + 3, result.indexOf(",OU"));
 						String OrganizationalUnit = result.substring(result.indexOf("OU=") + 3, result.indexOf(",O="));
@@ -686,7 +696,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 						// ------------ Press OK -------------------------------
 						if (this.httpsConfigWindow.getKeyStorePassword().equals(oldPassword)){
 							// ---- Edit the KeyStore Alias and Password ---
-							KeyStoreController.EditKeyStore(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStoreAlias(), newAlias, newKeyStorePassword,
+							getKeyStoreController().EditKeyStore(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStoreAlias(), newAlias, newKeyStorePassword,
 									this.httpsConfigWindow.getKeyStorePassword());
 							String msg = Language.translate("Your keystore has been updated successfully!",Language.EN);
 							String title1 = Language.translate("KeyStore updated",Language.EN);
@@ -695,7 +705,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 							this.httpsConfigWindow.setKeyStoreAlias(newAlias);
 							jPasswordFieldPassword.setText(newKeyStorePassword);
 							jPasswordFieldConfirmPassword.setText(null);
-							this.httpsConfigWindow.setKeyStoreAlias(KeyStoreController.GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(), newKeyStorePassword));
+							this.httpsConfigWindow.setKeyStoreAlias(getKeyStoreController().GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(), newKeyStorePassword));
 						}else{
 							String msg = Language.translate("The password you entered is incorrect. Please try again!",Language.EN);
 							String title2 = Language.translate("Password incorrect",Language.EN);
@@ -724,9 +734,9 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 					// ------- Get Certificate Path --------------------
 					String certificatePath = jFileChooserSave.getSelectedFile().getAbsoluteFile().getAbsolutePath();
 					// ------- Get KeySTore information ----------------
-					String Alias = KeyStoreController.GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword());
+					String Alias = getKeyStoreController().GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword());
 					// ------- Generate the Certificate -----------------
-					KeyStoreController.ExportCertificate(this.httpsConfigWindow.getKeyStorefilepath(),Alias,this.httpsConfigWindow.getKeyStorePassword(), certificatePath);
+					getKeyStoreController().ExportCertificate(this.httpsConfigWindow.getKeyStorefilepath(),Alias,this.httpsConfigWindow.getKeyStorePassword(), certificatePath);
 					String msg = Language.translate("Your certificate has been created successfully!",Language.EN);
 					String title = Language.translate("Certificate generated",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
