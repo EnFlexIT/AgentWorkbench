@@ -1785,11 +1785,13 @@ public class GlobalInfo {
 	 * @return the password decrypted
 	 */
 	public String pwDecrypt(String encryptedPSWD) {
-		String pwDecrypted = encryptedPSWD;
-		try {
-			pwDecrypted = new String(Base64.decodeBase64(encryptedPSWD.getBytes()), "UTF8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		String pwDecrypted = null;
+		if (encryptedPSWD!=null && encryptedPSWD.trim().equals("")==false) {
+			try {
+				pwDecrypted = new String(Base64.decodeBase64(encryptedPSWD.getBytes()), "UTF8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		}
 		return pwDecrypted;
 	}
@@ -1800,11 +1802,13 @@ public class GlobalInfo {
 	 * @return the password encrypted
 	 */
 	public String pwEncrypt(String pswd) {
-		String encryptedPSWD = pswd;
-		try {
-			encryptedPSWD = new String(Base64.encodeBase64(pswd.getBytes("UTF8")));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		String encryptedPSWD = null;
+		if (pswd!=null && pswd.trim().equals("")==false) {
+			try {
+				encryptedPSWD = new String(Base64.encodeBase64(pswd.getBytes("UTF8")));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		}
 		return encryptedPSWD;
 	}

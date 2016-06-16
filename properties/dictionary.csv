@@ -1,6 +1,7 @@
 SOURCE_LANGUAGE;DE;EN;IT;ES;FR
 de;' ist bereits geöffnet!;' is already open!;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
+de;(Falls bereits verwendet, wird versucht den nÃƒÆ’Ã‚Â¤chst hÃƒÆ’Ã‚Â¶heren Port zu nutzen);;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
 de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
@@ -574,6 +575,7 @@ de;Start;Start
 de;Startargument definieren für Agent;Define start argument for agent;;;
 de;Starte Agent.GUI - Service;Start Agent.GUI - Service
 de;Starte Agent.GUI als:;Start Agent.GUI as:
+de;Starte JADE ÃƒÆ’Ã‚Â¼ber Port-Nr.:;;;;
 de;Starte JADE über Port-Nr.:;Start JADE via port no.:
 de;Starte Messung der Systemauslastung;Start measuring the system load
 de;Starten als:;Start as:
@@ -751,6 +753,7 @@ en;;Number of changes;;;
 en;;Paste from Clipboard;;;
 en;;Pause Thread Measurement;;;
 en;;Piston Compressor;;;
+en;;Please open a Keystore first!;;;
 en;;Please, select the tab of the component that you want to delete!;;;
 en;;Please, specifiy the ID for the new Electric Motor!;;;
 en;;Please, specifiy the ID for the new Gas Driven Motor!;;;
@@ -782,6 +785,7 @@ en;;Update after changes;;;
 en;;Update after milliseconds (Realtime);;;
 en;;Update of the visualization;;;
 en;;Upgrade costs;;;
+en;;Warning message;;;
 en;;Writing;;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;

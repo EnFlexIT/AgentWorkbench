@@ -29,6 +29,7 @@
 package agentgui.core.gui.options.https;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -705,7 +706,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 							this.httpsConfigWindow.setKeyStoreAlias(newAlias);
 							jPasswordFieldPassword.setText(newKeyStorePassword);
 							jPasswordFieldConfirmPassword.setText(null);
-							this.httpsConfigWindow.setKeyStoreAlias(getKeyStoreController().GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(), newKeyStorePassword));
+							Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
+							this.httpsConfigWindow.setKeyStoreAlias(getKeyStoreController().GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(), newKeyStorePassword, ownerDialog));
 						}else{
 							String msg = Language.translate("The password you entered is incorrect. Please try again!",Language.EN);
 							String title2 = Language.translate("Password incorrect",Language.EN);
@@ -734,7 +736,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 					// ------- Get Certificate Path --------------------
 					String certificatePath = jFileChooserSave.getSelectedFile().getAbsoluteFile().getAbsolutePath();
 					// ------- Get KeySTore information ----------------
-					String Alias = getKeyStoreController().GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword());
+					Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
+					String Alias = getKeyStoreController().GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword(), ownerDialog);
 					// ------- Generate the Certificate -----------------
 					getKeyStoreController().ExportCertificate(this.httpsConfigWindow.getKeyStorefilepath(),Alias,this.httpsConfigWindow.getKeyStorePassword(), certificatePath);
 					String msg = Language.translate("Your certificate has been created successfully!",Language.EN);

@@ -118,7 +118,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 */
 	public EnvironmentPanel getOrCreateEnvironmentPanel() {
 		if (this.myEnvironmentPanel==null) {
-			this.myEnvironmentPanel = createEnvironmentPanel();
+			this.myEnvironmentPanel = this.createEnvironmentPanel();
 		}
 		return this.myEnvironmentPanel;
 	}

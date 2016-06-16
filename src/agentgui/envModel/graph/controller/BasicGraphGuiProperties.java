@@ -542,23 +542,27 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 	 */
 	private void save(boolean sendChangesToAgent) {
 		
-		this.getNetworkComponentAdapter4DataModel().save();
-		
-		if (this.graphNode!=null) {
-			this.graphNode.setDataModel(this.newDataModel);
-			this.graphNode.setDataModelBase64(this.newDataModelBase64);
-		} else {
-			this.networkComponent.setDataModel(this.newDataModel);
-			this.networkComponent.setDataModelBase64(this.newDataModelBase64);
-		}
-		
-		if (this.graphController.getProject()!=null) {
-			// --- Setup case -------------------
-			this.graphController.setProjectUnsaved();
+		NetworkComponentAdapter4DataModel nca4dm = this.getNetworkComponentAdapter4DataModel();
+		if (nca4dm!=null) {
+			nca4dm.save();
+			this.newDataModel = nca4dm.getDataModel();
 			
-		} else if (this.graphController.getProject()==null && sendChangesToAgent==true) {
-			// --- Execution case ---------------			
-			this.sendChangesToAgent();
+			if (this.graphNode!=null) {
+				this.graphNode.setDataModel(this.newDataModel);
+				this.graphNode.setDataModelBase64(this.newDataModelBase64);
+			} else {
+				this.networkComponent.setDataModel(this.newDataModel);
+				this.networkComponent.setDataModelBase64(this.newDataModelBase64);
+			}
+			
+			if (this.graphController.getProject()!=null) {
+				// --- Setup case -------------------
+				this.graphController.setProjectUnsaved();
+				
+			} else if (this.graphController.getProject()==null && sendChangesToAgent==true) {
+				// --- Execution case ---------------			
+				this.sendChangesToAgent();
+			}			
 		}
 		
 	}
@@ -708,18 +712,21 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		
 		String actionCommand = ae.getActionCommand();
 		if (actionCommand.equals("Save") || actionCommand.equals("SaveAndExit")) {
+			// --- Actions for 'Save' and 'Save and Exit' -----------
 			if (this.graphController.getProject()!=null) {
 				this.save();	
 			} else {
 				this.save(true);
 			}
-		}
-		if (actionCommand.equals("SaveAndExit")) {
-			this.setVisible(false);
-			this.dispose();
-		}
+			// --- Close, if 'Save and Exit' ------------------------
+			if (actionCommand.equals("SaveAndExit")) {
+				this.setVisible(false);
+				this.dispose();
+			
+			} 
 		
-		if (actionCommand.equals("DisableRuntimeUpdates")) {
+		} else if (actionCommand.equals("DisableRuntimeUpdates")) {
+			// --- Disable runtime updates --------------------------
 			if (this.isDataModelNotificationEnabled()==false) {
 				this.setDataModelNotificationEnabled(true);
 				this.setDataModelNotification(this.dataModelNotificationLast);
@@ -727,7 +734,6 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 				this.setDataModelNotificationEnabled(false);
 			}
 		}
-		
 	}
 
 	

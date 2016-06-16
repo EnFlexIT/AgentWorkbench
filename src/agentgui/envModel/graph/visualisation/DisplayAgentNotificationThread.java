@@ -168,6 +168,12 @@ public class DisplayAgentNotificationThread extends Thread {
 	 */
 	public void sendDataModelUpdate(DisplayAgentNotificationGraph displayNotification) {
 		
+		// --- Avoid exceptions -----------------------------------------------
+		if (displayNotification==null) return;
+		if (this.graphController==null) return;
+		if (this.graphController.getGraphEnvironmentControllerGUI()==null) return;
+		
+		// --- Place notification ---------------------------------------------
 		if (displayNotification instanceof DataModelNotification) {
 			// --- Put DataModelNotification to the display -------------------
 			DataModelNotification dataModelNotification = (DataModelNotification) displayNotification; 
@@ -178,7 +184,6 @@ public class DisplayAgentNotificationThread extends Thread {
 			UpdateDataSeries uds = (UpdateDataSeries) displayNotification;
 			this.graphController.getGraphEnvironmentControllerGUI().getBasicGraphGuiJDesktopPane().setUpdateDataSeries(uds);
 		}
-
 	}
 
 	

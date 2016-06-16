@@ -71,7 +71,7 @@ public class SimulationEnvironment extends JPanel implements Observer, ActionLis
 	private void initialize(){
 		
 		this.setLayout(new BorderLayout());
-		this.add(getEnvironmentControllerGUI(), BorderLayout.CENTER);
+		this.add(this.getEnvironmentControllerGUI(), BorderLayout.CENTER);
 		
 	}
 	

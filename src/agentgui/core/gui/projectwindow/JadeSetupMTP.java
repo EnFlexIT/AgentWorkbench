@@ -747,8 +747,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		if (this.action == "BUTTON") {
 			// --- In case that the user choose to edit the HTTPS MTP ----------
 			// --- Open the HttpsConfigWindow ----------------------------------
-			httpsConfigWindow = new HttpsConfigWindow(getKeyStore(), getKeyStorePassword(), getTrustStore(),
-					getTrustStorePassword());
+			httpsConfigWindow = new HttpsConfigWindow(Application.getMainWindow(), getKeyStore(), getKeyStorePassword(), getTrustStore(), getTrustStorePassword());
 			// --- Wait for the user -------------------------------------------
 			if (httpsConfigWindow.isCanceled() == false) {
 				// ---- Return the KeyStore and TrustStore chosen by the user --
@@ -765,7 +764,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			} 
 		} else if (this.action == "COMBO") {
 			// --- In case that the user choose to configure new HTTPS MTP ------
-			httpsConfigWindow = new HttpsConfigWindow();
+			httpsConfigWindow = new HttpsConfigWindow(Application.getMainWindow());
 			// - - Wait for the user - - - - - - - - - - - - -
 			if (httpsConfigWindow.isCanceled() == false) {
 				// ---- Return the KeyStore and TrustStore chosen by the user ---

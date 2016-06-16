@@ -119,26 +119,11 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
 	private boolean canceled;
 
+	
 	/**
-	 * Instantiates a new httpsConfigWindow.
+	 * Instantiates a new https config window.
 	 */
-	public HttpsConfigWindow() {
-		this.initialize();
-	}
-	/**
-	 * Instantiates a new httpsConfigWindow.
-	 * @param keystore
-	 * @param keystore_password
-	 * @param Truststore
-	 * @param Truststore_password
-	 */
-	public HttpsConfigWindow(String keystore, String keystore_password, String Truststore, String Truststore_password) {
-		this.setKeyStorefilepath(keystore);
-		this.setKeyStorePassword(keystore_password);
-		this.setTrustStorefilepath(Truststore);
-		this.setTrustStorePassword(Truststore_password);
-		this.getKeyStoreData();
-		this.getTrustStoreData();
+	private HttpsConfigWindow() {
 		this.initialize();
 	}
 	/**
@@ -157,6 +142,46 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		super(owner);
 		this.initialize();
 	}
+	/**
+	 * Instantiates a new https config window.
+	 *
+	 * @param owner the owner
+	 * @param keystore the keystore
+	 * @param keystore_password the keystore_password
+	 * @param Truststore the truststore
+	 * @param Truststore_password the truststore_password
+	 */
+	public HttpsConfigWindow(Dialog owner, String keystore, String keystore_password, String Truststore, String Truststore_password) {
+		super(owner);
+		this.setKeyStorefilepath(keystore);
+		this.setKeyStorePassword(keystore_password);
+		this.setTrustStorefilepath(Truststore);
+		this.setTrustStorePassword(Truststore_password);
+		this.getKeyStoreData();
+		this.getTrustStoreData();
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new httpsConfigWindow.
+	 *
+	 * @param owner the owner
+	 * @param keystore the keystore
+	 * @param keystore_password the keystore_password
+	 * @param Truststore the truststore
+	 * @param Truststore_password the truststore_password
+	 */
+	public HttpsConfigWindow(Frame owner, String keystore, String keystore_password, String Truststore, String Truststore_password) {
+		super(owner);
+		this.setKeyStorefilepath(keystore);
+		this.setKeyStorePassword(keystore_password);
+		this.setTrustStorefilepath(Truststore);
+		this.setTrustStorePassword(Truststore_password);
+		this.getKeyStoreData();
+		this.getTrustStoreData();
+		this.initialize();
+	}
+	
+	
 	/**
 	 * Initialize the contents of the dialog.
 	 */
@@ -686,7 +711,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	 */
 	public void getKeyStoreData() {
 		
-		setKeyStoreAlias(getKeyStoreController().GetKeyStoreAlias(getKeyStorefilepath(), getKeyStorePassword())); 
+		setKeyStoreAlias(getKeyStoreController().GetKeyStoreAlias(getKeyStorefilepath(), getKeyStorePassword(), this)); 
 		// ---- Get the Content of the keyStore ----------------------
 		data = getKeyStoreController().ListKeyStoreContent(keyStorefilepath, keyStorePassword);
 		// ---- Substring informations from the result ---------------
@@ -792,7 +817,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 					if (option == 0) {
 						// ------------ Press OK --------------------------------
 						keyStorePassword = new String(jPasswordField.getPassword());
-						setKeyStoreAlias(getKeyStoreController().GetKeyStoreAlias(keyStorefilepath, keyStorePassword)); 
+						setKeyStoreAlias(getKeyStoreController().GetKeyStoreAlias(keyStorefilepath, keyStorePassword, this)); 
 						if (keyStoreAlias == null) {
 							jLabelKeyStoreLocationPath.setText(null);
 							keyStorefilepath = null;
