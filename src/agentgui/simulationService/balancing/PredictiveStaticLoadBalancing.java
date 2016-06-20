@@ -324,9 +324,9 @@ public class PredictiveStaticLoadBalancing extends StaticLoadBalancingBase{
 				
 				//sort Agents by class metrics to best fit distribution method
 				if(isEvenDistribution){
-					agents2bStartedList = this.getSortedAgentList(currSimSetup.getAgentList(), SORT_DESCENDING);
+					agents2bStartedList = this.getSortedAgentList(currSimSetup.getAgentList(), SORT_RANDOM);
 				}else{
-					agents2bStartedList = this.getSortedAgentList(currSimSetup.getAgentList(), SORT_DESCENDING_CHARGE);
+					agents2bStartedList = this.getSortedAgentList(currSimSetup.getAgentList(), SORT_DESCENDING);
 				}
 				
 				containerIterator = containerNames.iterator();	
