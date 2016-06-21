@@ -101,7 +101,7 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 	@Override
 	protected TimeSeriesChartTab getChartTab(){
 		if(chartTab == null){
-			chartTab = new TimeSeriesChartTab((TimeSeriesDataModel) this.dataModel);
+			chartTab = new TimeSeriesChartTab((TimeSeriesDataModel) this.dataModel, this);
 		}
 		return (TimeSeriesChartTab) chartTab;
 	}

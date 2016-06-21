@@ -31,10 +31,18 @@ package agentgui.core.charts.gui;
 import jade.util.leap.List;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Stroke;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -45,11 +53,11 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.chart.title.LegendTitle;
-
+import org.jfree.data.general.Series;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.NoSuchSeriesException;
 
-public abstract class ChartTab extends ChartPanel {
+public abstract class ChartTab extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -7678959452705514151L;
 	
@@ -73,19 +81,44 @@ public abstract class ChartTab extends ChartPanel {
 	/** The data model (containing ontology-, chart- and tablemodel) for this chart	 */
 	protected DataModel dataModel;
 	
+	protected ChartPanel chartPanel;
+	protected JToolBar jToolBarSeriesVisibility;
+	
+	protected ChartEditorJPanel parent;
+	
 	
 	/**
 	 * Constructor
 	 * @param chart The chart to be displayed
 	 */
-	public ChartTab(JFreeChart chart) {
-		super(chart);
-		this.setBackground(Color.WHITE);								// Component background
-		this.getChart().getPlot().setBackgroundPaint(Color.WHITE);		// Chart background
+	public ChartTab(JFreeChart chart, ChartEditorJPanel parent) {
 		
-		// Background grid color
-		this.getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
-		this.getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
+		this.parent = parent;
+		
+		// --- Create and configure the chart panel ---
+		this.chartPanel = new ChartPanel(chart);
+		this.chartPanel.setBackground(Color.WHITE);								// Component background
+		this.chartPanel.getChart().getPlot().setBackgroundPaint(Color.WHITE);		// Chart background
+		this.chartPanel.getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
+		this.chartPanel.getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
+		
+		// --- Create the tool bar --------------------
+		this.populateVisibilityToolBar();
+		
+		// --- Add components to the panel ------------
+		this.setLayout(new BorderLayout());
+		this.add(this.chartPanel, BorderLayout.CENTER);
+		this.add(this.getJToolBarSeriesVisibility(), BorderLayout.SOUTH);
+		
+	}
+	
+	private JToolBar getJToolBarSeriesVisibility(){
+		if(this.jToolBarSeriesVisibility == null){
+			this.jToolBarSeriesVisibility = new JToolBar();
+			this.jToolBarSeriesVisibility.setFloatable(false);
+			this.jToolBarSeriesVisibility.setLayout(new FlowLayout(FlowLayout.CENTER));
+		}
+		return this.jToolBarSeriesVisibility;
 	}
 	
 	/**
@@ -124,15 +157,15 @@ public abstract class ChartTab extends ChartPanel {
 		LegendTitle legend = null;
 		if(hideLegend){
 			// Remove legend while exporting the image
-			legend = getChart().getLegend();
-			getChart().removeLegend();
+			legend = this.chartPanel.getChart().getLegend();
+			this.chartPanel.getChart().removeLegend();
 		}
 		
-		BufferedImage thumb = getChart().createBufferedImage(width, height, 600, 400, null);
+		BufferedImage thumb = this.chartPanel.getChart().createBufferedImage(width, height, 600, 400, null);
 		
 		if(hideLegend){
 			// If the legend was removed, add it after exporting the image 
-			getChart().addLegend(legend);
+			this.chartPanel.getChart().addLegend(legend);
 		}
 		return thumb;
 	}
@@ -165,7 +198,7 @@ public abstract class ChartTab extends ChartPanel {
 			}
 			
 			// Set it as renderer for all plots
-			XYPlot plot = (XYPlot) this.getChart().getPlot();
+			XYPlot plot = (XYPlot) this.chartPanel.getChart().getPlot();
 			plot.setRenderer(renderer);
 			
 			applyColorSettings();
@@ -179,7 +212,7 @@ public abstract class ChartTab extends ChartPanel {
 	 */
 	public void applyColorSettings(){
 		List colors = dataModel.getOntologyModel().getChartSettings().getYAxisColors();
-		XYItemRenderer renderer = getChart().getXYPlot().getRenderer();
+		XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
 		for(int i=0; i < colors.size(); i++){
 			String colorString = (String) colors.get(i);
 			if (colorString!=null && colorString.equals("")==false) {
@@ -194,7 +227,7 @@ public abstract class ChartTab extends ChartPanel {
 	 */
 	public void applyLineWidthsSettings(){
 		List lineWidths = dataModel.getOntologyModel().getChartSettings().getYAxisLineWidth();
-		XYItemRenderer renderer = getChart().getXYPlot().getRenderer();
+		XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
 		
 		for(int i = 0; i < lineWidths.size(); i++){
 			Stroke newStroke = new BasicStroke((Float) lineWidths.get(i));
@@ -204,16 +237,16 @@ public abstract class ChartTab extends ChartPanel {
 	}
 	
 	public void setXAxisLabel(String label){
-		getChart().getXYPlot().getDomainAxis().setLabel(label);
+		this.chartPanel.getChart().getXYPlot().getDomainAxis().setLabel(label);
 	}
 	
 	public void setYAxisLabel(String label){
-		getChart().getXYPlot().getRangeAxis().setLabel(label);
+		this.chartPanel.getChart().getXYPlot().getRangeAxis().setLabel(label);
 	}
 	
 	public void setSeriesColor(int seriesIndex, Color color) throws NoSuchSeriesException{
 		if(seriesIndex < dataModel.getSeriesCount()){
-			XYItemRenderer renderer = getChart().getXYPlot().getRenderer();
+			XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
 			renderer.setSeriesPaint(seriesIndex, color);
 		}else{
 			throw new NoSuchSeriesException();
@@ -222,7 +255,7 @@ public abstract class ChartTab extends ChartPanel {
 	
 	public void setSeriesLineWidth(int seriesIndex, float lineWidth) throws NoSuchSeriesException{
 		if(seriesIndex < dataModel.getSeriesCount()){
-			XYItemRenderer renderer = getChart().getXYPlot().getRenderer();
+			XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
 			renderer.setSeriesStroke(seriesIndex, new BasicStroke(lineWidth));
 		}else{
 			throw new NoSuchSeriesException();
@@ -235,6 +268,7 @@ public abstract class ChartTab extends ChartPanel {
 	 * Applies some settings for chart visualization. If chart type specific settings are required, override this method.
 	 */
 	protected void applySettings(){
+		
 		if(dataModel.getOntologyModel().getChartSettings().getRendererType() != null){
 			// If a renderer type is specified, use that
 			setRenderer(dataModel.getOntologyModel().getChartSettings().getRendererType());
@@ -246,9 +280,51 @@ public abstract class ChartTab extends ChartPanel {
 		applyColorSettings();
 		applyLineWidthsSettings();
 		
-		this.getChart().getPlot().setBackgroundPaint(Color.WHITE);		// Chart background
-		this.getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
-		this.getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
+		this.chartPanel.getChart().getPlot().setBackgroundPaint(Color.WHITE);		// Chart background
+		this.chartPanel.getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
+		this.chartPanel.getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
+		
+	}
+	
+	/**
+	 * Returns the chart visualized by this panel
+	 * @return The chart visualized by this panel
+	 */
+	public JFreeChart getChart(){
+		return this.chartPanel.getChart();
+	}
+
+	/**
+	 * Creates a JCheckBox for every series and add it to the JToolBar
+	 */
+	private void populateVisibilityToolBar(){
+		
+		for(int i=0; i<parent.getDataModel().getSeriesCount(); i++){
+			Series series = parent.getDataModel().getChartModel().getSeries(i);
+			JCheckBox seriesCheckBox = new JCheckBox((String)series.getKey());
+			seriesCheckBox.addActionListener(this);
+			seriesCheckBox.setSelected(true);		// Assuming initially visible
+			this.getJToolBarSeriesVisibility().add(seriesCheckBox);
+		}
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		if(ae.getSource() instanceof JCheckBox){
+			
+			String seriesLabel = ((JCheckBox)ae.getSource()).getText();
+			XYPlot plot = this.chartPanel.getChart().getXYPlot();
+			
+			for(int i=0; i<plot.getSeriesCount(); i++){
+				if(plot.getDataset().getSeriesKey(i).equals(seriesLabel)){
+					XYItemRenderer renderer = plot.getRenderer();
+					boolean currentlyVisible = renderer.getItemVisible(i, 0);
+					renderer.setSeriesVisible(i, !currentlyVisible);
+				}
+			}
+			
+		}
 	}
 
 }

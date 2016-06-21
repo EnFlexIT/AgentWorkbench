@@ -45,7 +45,7 @@ public class XyChartTab extends ChartTab {
 	 * Instantiates a new XyChartTab.
 	 * @param model the model
 	 */
-	public XyChartTab(XyDataModel model){
+	public XyChartTab(XyDataModel model, XyChartEditorJPanel parent){
 		super(ChartFactory.createXYLineChart(
 				model.getOntologyModel().getChartSettings().getChartTitle(), 
 				model.getOntologyModel().getChartSettings().getXAxisLabel(), 
@@ -53,7 +53,7 @@ public class XyChartTab extends ChartTab {
 				(XYDataset) model.getChartModel(), 
 				PlotOrientation.VERTICAL, 
 				true, false, false
-		));
+		), parent);
 		
 		this.dataModel = model;
 		this.applySettings();
@@ -66,7 +66,7 @@ public class XyChartTab extends ChartTab {
 	public void replaceModel(DataModel newModel) {
 		this.dataModel = newModel;
 		
-		this.setChart(ChartFactory.createXYLineChart(
+		this.chartPanel.setChart(ChartFactory.createXYLineChart(
 				dataModel.getOntologyModel().getChartSettings().getChartTitle(), 
 				dataModel.getOntologyModel().getChartSettings().getXAxisLabel(), 
 				dataModel.getOntologyModel().getChartSettings().getYAxisLabel(), 

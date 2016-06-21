@@ -33,7 +33,6 @@ import java.text.SimpleDateFormat;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.axis.DateAxis;
-
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartTab;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
@@ -51,14 +50,15 @@ public class TimeSeriesChartTab extends ChartTab {
 	 * Constructor
 	 * @param model The data model for this time series
 	 */
-	public TimeSeriesChartTab(TimeSeriesDataModel model){
+	public TimeSeriesChartTab(TimeSeriesDataModel model, TimeSeriesChartEditorJPanel parent){
+		
 		super(ChartFactory.createTimeSeriesChart(
 				model.getTimeSeriesOntologyModel().getChartSettings().getChartTitle(), 
 				model.getTimeSeriesOntologyModel().getChartSettings().getXAxisLabel(), 
 				model.getTimeSeriesOntologyModel().getChartSettings().getYAxisLabel(), 
 				model.getTimeSeriesChartModel(), 
 				true, false, false
-		));
+		), parent);
 		
 		this.dataModel = model;
 		
@@ -69,7 +69,7 @@ public class TimeSeriesChartTab extends ChartTab {
 	public void replaceModel(DataModel newModel) {
 		this.dataModel = newModel;
 		
-		this.setChart(ChartFactory.createTimeSeriesChart(
+		this.chartPanel.setChart(ChartFactory.createTimeSeriesChart(
 				this.dataModel.getOntologyModel().getChartSettings().getChartTitle(), 
 				this.dataModel.getOntologyModel().getChartSettings().getXAxisLabel(), 
 				this.dataModel.getOntologyModel().getChartSettings().getYAxisLabel(), 
@@ -87,7 +87,7 @@ public class TimeSeriesChartTab extends ChartTab {
 	@Override
 	protected void applySettings() {
 		super.applySettings();
-		DateAxis da = (DateAxis) getChart().getXYPlot().getDomainAxis();
+		DateAxis da = (DateAxis) this.chartPanel.getChart().getXYPlot().getDomainAxis();
 		
 		DateFormat dateFormat = new SimpleDateFormat(((TimeSeriesDataModel)dataModel).getTimeFormat());
 		da.setDateFormatOverride(dateFormat);
@@ -99,7 +99,7 @@ public class TimeSeriesChartTab extends ChartTab {
 	 */
 	void setTimeFormat(String timeFormat){
 		DateFormat dateFormat = new SimpleDateFormat(timeFormat);
-		DateAxis da = (DateAxis) getChart().getXYPlot().getDomainAxis();
+		DateAxis da = (DateAxis) this.chartPanel.getChart().getXYPlot().getDomainAxis();
 		da.setDateFormatOverride(dateFormat);
 	}
 	
