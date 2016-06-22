@@ -60,6 +60,7 @@ import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 import agentgui.core.project.Project;
 import javax.swing.JSeparator;
+import javax.swing.JCheckBox;
 
 /**
  * Represents the JPanel/Tab 'Configuration' - 'JADE-Configuration'
@@ -109,8 +110,10 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	private JPanel jPanelMTPaddress;
 	private JPanel jPanelProtocol;
 	private JPanel jPanelPorts;
-	private JSeparator jSeparatorA;
 	private JSeparator jSeparatorB;
+	private JSeparator jSeparatorC;
+	private JSeparator jSeparatorA;
+	private JCheckBox jCheckBoxSkipUserRequestForJadeStart;
 	
 	/**
 	 * Constructor of this class
@@ -149,46 +152,77 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		
 		GridBagLayout gblMain = new GridBagLayout();
 		gblMain.columnWidths = new int[]{0, 0};
-		gblMain.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+		gblMain.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
 		gblMain.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-		gblMain.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gblMain.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gblMain);
-		GridBagConstraints gbc_jPanelPorts = new GridBagConstraints();
-		gbc_jPanelPorts.insets = new Insets(10, 10, 5, 10);
-		gbc_jPanelPorts.fill = GridBagConstraints.BOTH;
-		gbc_jPanelPorts.gridx = 0;
-		gbc_jPanelPorts.gridy = 0;
-		add(getJPanelPorts(), gbc_jPanelPorts);
+		GridBagConstraints gbc_jCheckBoxSkipUserRequestForJadeStart = new GridBagConstraints();
+		gbc_jCheckBoxSkipUserRequestForJadeStart.anchor = GridBagConstraints.WEST;
+		gbc_jCheckBoxSkipUserRequestForJadeStart.insets = new Insets(15, 10, 5, 10);
+		gbc_jCheckBoxSkipUserRequestForJadeStart.gridx = 0;
+		gbc_jCheckBoxSkipUserRequestForJadeStart.gridy = 0;
+		add(getJCheckBoxSkipUserRequestForJadeStart(), gbc_jCheckBoxSkipUserRequestForJadeStart);
 		GridBagConstraints gbc_jSeparatorA = new GridBagConstraints();
 		gbc_jSeparatorA.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jSeparatorA.insets = new Insets(5, 10, 5, 10);
 		gbc_jSeparatorA.gridx = 0;
 		gbc_jSeparatorA.gridy = 1;
 		add(getJSeparatorA(), gbc_jSeparatorA);
-		GridBagConstraints gbc_jPanelMTPaddress = new GridBagConstraints();
-		gbc_jPanelMTPaddress.insets = new Insets(10, 10, 5, 10);
-		gbc_jPanelMTPaddress.fill = GridBagConstraints.BOTH;
-		gbc_jPanelMTPaddress.gridx = 0;
-		gbc_jPanelMTPaddress.gridy = 2;
-		add(getJPanelMTPaddress(), gbc_jPanelMTPaddress);
+		GridBagConstraints gbc_jPanelPorts = new GridBagConstraints();
+		gbc_jPanelPorts.insets = new Insets(10, 10, 5, 10);
+		gbc_jPanelPorts.fill = GridBagConstraints.BOTH;
+		gbc_jPanelPorts.gridx = 0;
+		gbc_jPanelPorts.gridy = 2;
+		add(getJPanelPorts(), gbc_jPanelPorts);
 		GridBagConstraints gbc_jSeparatorB = new GridBagConstraints();
 		gbc_jSeparatorB.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jSeparatorB.insets = new Insets(5, 10, 5, 10);
 		gbc_jSeparatorB.gridx = 0;
 		gbc_jSeparatorB.gridy = 3;
 		add(getJSeparatorB(), gbc_jSeparatorB);
+		GridBagConstraints gbc_jPanelMTPaddress = new GridBagConstraints();
+		gbc_jPanelMTPaddress.insets = new Insets(10, 10, 5, 10);
+		gbc_jPanelMTPaddress.fill = GridBagConstraints.BOTH;
+		gbc_jPanelMTPaddress.gridx = 0;
+		gbc_jPanelMTPaddress.gridy = 4;
+		add(getJPanelMTPaddress(), gbc_jPanelMTPaddress);
+		GridBagConstraints gbc_jSeparatorC = new GridBagConstraints();
+		gbc_jSeparatorC.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jSeparatorC.insets = new Insets(5, 10, 5, 10);
+		gbc_jSeparatorC.gridx = 0;
+		gbc_jSeparatorC.gridy = 5;
+		add(getJSeparatorC(), gbc_jSeparatorC);
 		GridBagConstraints gbc_jPanelProtocol = new GridBagConstraints();
 		gbc_jPanelProtocol.insets = new Insets(10, 10, 0, 10);
 		gbc_jPanelProtocol.anchor = GridBagConstraints.WEST;
 		gbc_jPanelProtocol.fill = GridBagConstraints.VERTICAL;
 		gbc_jPanelProtocol.gridx = 0;
-		gbc_jPanelProtocol.gridy = 4;
+		gbc_jPanelProtocol.gridy = 6;
 		add(getJPanelProtocol(), gbc_jPanelProtocol);
 		
 		// --- Create the ButtonGroup for the radio buttons ---------
 		ButtonGroup bGroup = new ButtonGroup();
 		bGroup.add(this.getJRadioButtonMtpAutoConfig());
 		bGroup.add(this.getJRadioButtonMtpIP());
+	}
+
+	/**
+	 * Gets the JCheckBox that indicates to skip user request for the JADE start.
+	 * @return the JCheckBox that indicates to skip user request for the JADE start
+	 */
+	private JCheckBox getJCheckBoxSkipUserRequestForJadeStart() {
+		if (jCheckBoxSkipUserRequestForJadeStart == null) {
+			jCheckBoxSkipUserRequestForJadeStart = new JCheckBox(Language.translate("JADE direkt starten ohne nachzufragen."));
+			jCheckBoxSkipUserRequestForJadeStart.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckBoxSkipUserRequestForJadeStart.addActionListener(this);
+		}
+		return jCheckBoxSkipUserRequestForJadeStart;
+	}
+	private JSeparator getJSeparatorA() {
+		if (jSeparatorA == null) {
+			jSeparatorA = new JSeparator();
+		}
+		return jSeparatorA;
 	}
 
 	/**
@@ -382,21 +416,21 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	 * Gets the jSeparatorA.
 	 * @return the jSeparatorA
 	 */
-	private JSeparator getJSeparatorA() {
-		if (jSeparatorA == null) {
-			jSeparatorA = new JSeparator();
-		}
-		return jSeparatorA;
-	}
-	/**
-	 * Gets the jSeparatorB.
-	 * @return the jSeparatorB
-	 */
 	private JSeparator getJSeparatorB() {
 		if (jSeparatorB == null) {
 			jSeparatorB = new JSeparator();
 		}
 		return jSeparatorB;
+	}
+	/**
+	 * Gets the jSeparatorB.
+	 * @return the jSeparatorB
+	 */
+	private JSeparator getJSeparatorC() {
+		if (jSeparatorC == null) {
+			jSeparatorC = new JSeparator();
+		}
+		return jSeparatorC;
 	}
 	/**
 	 * This method initializes jTextFieldDefaultPort	
@@ -792,8 +826,11 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	 */
 	private void refreshDataView() {
 		
+		// --- Skip JADE start request ----------
+		this.getJCheckBoxSkipUserRequestForJadeStart().setSelected(this.currProject.getJadeConfiguration().isSkipUserRequestForJadeStart());
+		
 		// --- JADE port ------------------------
-		Integer currPort = currProject.getJadeConfiguration().getLocalPort();
+		Integer currPort = this.currProject.getJadeConfiguration().getLocalPort();
 		if (currPort==null || currPort==0) {
 			currPort = Application.getGlobalInfo().getJadeLocalPort();
 			currProject.getJadeConfiguration().setLocalPort(currPort);
@@ -801,7 +838,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		jTextFieldDefaultPort.setText(currPort.toString());
 		
 		// --- MTP address creation -------------
-		MTP_Creation mTP_Creation = currProject.getJadeConfiguration().getMtpCreation();
+		MTP_Creation mTP_Creation = this.currProject.getJadeConfiguration().getMtpCreation();
 		switch (mTP_Creation) {
 		case ConfiguredByJADE:
 			this.getJRadioButtonMtpAutoConfig().setSelected(true);
@@ -813,18 +850,18 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			this.getJRadioButtonMtpIP().setSelected(true);
 			break;
 		}
-		this.getJTextFieldIPAddress().setText(currProject.getJadeConfiguration().getMtpIpAddress());
+		this.getJTextFieldIPAddress().setText(this.currProject.getJadeConfiguration().getMtpIpAddress());
 		this.refreshMTPView();
 		
 		// --- MTP port -------------------------	
-		Integer currPortMTP = currProject.getJadeConfiguration().getLocalPortMTP();
+		Integer currPortMTP = this.currProject.getJadeConfiguration().getLocalPortMTP();
 		if (currPortMTP==null || currPortMTP==0) {
 			currPortMTP = Application.getGlobalInfo().getJadeLocalPortMTP();
-			currProject.getJadeConfiguration().setLocalPortMTP(currPortMTP);
+			this.currProject.getJadeConfiguration().setLocalPortMTP(currPortMTP);
 		}
 		this.getJTextFieldDefaultPortMTP().setText(currPortMTP.toString());
 		
-		MtpProtocol mtpProtocol = currProject.getJadeConfiguration().getMtpProtocol();
+		MtpProtocol mtpProtocol = this.currProject.getJadeConfiguration().getMtpProtocol();
 		if (mtpProtocol.equals(MtpProtocol.HTTPS)) {
 			this.getJcomboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTPS);
 			this.setEnabledTrue();
@@ -883,8 +920,11 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	public void actionPerformed(ActionEvent ae) {
 
 		Object trigger = ae.getSource();
-		if (trigger==jButtonSetPort) {
+		if (trigger==this.getJCheckBoxSkipUserRequestForJadeStart()) {
+			// --- Skip the request for the JADE start ---- 
+			this.currProject.getJadeConfiguration().setSkipUserRequestForJadeStart(this.getJCheckBoxSkipUserRequestForJadeStart().isSelected());
 			
+		} else if (trigger==this.getJButtonSetPort()) {
 			// --- Open Dialog ------------------
 			JadeSetupNewPort newPort = new JadeSetupNewPort(Application.getMainWindow(), currProject.getProjectName(), true, this.currProject.getJadeConfiguration().getLocalPort(), jTextFieldDefaultPort.getLocationOnScreen());
 			newPort.setVisible(true);
@@ -902,7 +942,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			newPort = null;	
 			
 			
-		} else if (trigger==jButtonSetPortDefault) {
+		} else if (trigger==this.getJButtonSetPortDefault()) {
 			this.currProject.getJadeConfiguration().setLocalPort(Application.getGlobalInfo().getJadeLocalPort());
 			this.getJTextFieldDefaultPort().setText( Application.getGlobalInfo().getJadeLocalPort().toString() );
 
@@ -985,4 +1025,5 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			}
 		}
 	}
+	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

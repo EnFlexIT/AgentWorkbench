@@ -1,7 +1,6 @@
 SOURCE_LANGUAGE;DE;EN;IT;ES;FR
 de;' ist bereits geöffnet!;' is already open!;;;
 de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of the dictionary ...;;;
-de;(Falls bereits verwendet, wird versucht den nÃƒÆ’Ã‚Â¤chst hÃƒÆ’Ã‚Â¶heren Port zu nutzen);;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
 de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
@@ -81,6 +80,7 @@ de;Basis-Agenten;Base agents
 de;Basis-Info;Basic info
 de;Bearbeiten;Edit
 de;Beenden;Quit
+de;Beim nächsten mal direkt starten und nicht erneut nachfragen.;Directly start and do not ask again next time.;;;
 de;Beschleunigungsfaktor;Acceleration Factor;;;
 de;Beschreibung;Description
 de;Beschriftung X Achse;Label X axis ;;;
@@ -294,6 +294,7 @@ de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information abou
 de;Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !;Initial Memory >= Maximum Memory !;;;
 de;Introspector-Agent starten;Start Introspector agent
 de;Italienisch;Italian
+de;JADE direkt starten ohne nachzufragen.;Directly start JADE without further confirmation.;;;
 de;JADE starten;Start JADE
 de;JADE stoppen;Stop JADE
 de;JADE wird zur Zeit ausgeführt!;JADE is already running!
@@ -303,10 +304,12 @@ de;JADE wurde noch nicht gestartet.;JADE has not been started yet.
 de;JADE zu Simulationsbeginn starten;Start JADE if simulation begins
 de;JADE-Automatik verwenden;Use JADE-Automatic;;;
 de;JADE-Automatik;JADE-Automatic;;;
+de;JADE-Config;;;;
 de;JADE-Konfiguration;JADE-Configuration
 de;JADE-MTP;;;;
 de;JADE-Port bearbeiten;Edit JADE port;;;
 de;JADE-Services;;;;
+de;JADE-Settings;;;;
 de;JADE-Tools...;JADE-Tools...
 de;JADE;JADE
 de;JAR;JAR
@@ -577,7 +580,6 @@ de;Start;Start
 de;Startargument definieren für Agent;Define start argument for agent;;;
 de;Starte Agent.GUI - Service;Start Agent.GUI - Service
 de;Starte Agent.GUI als:;Start Agent.GUI as:
-de;Starte JADE ÃƒÆ’Ã‚Â¼ber Port-Nr.:;;;;
 de;Starte JADE über Port-Nr.:;Start JADE via port no.:
 de;Starte Messung der Systemauslastung;Start measuring the system load
 de;Starten als:;Start as:

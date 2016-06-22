@@ -120,6 +120,9 @@ public class PlatformJadeConfig implements Serializable {
 	@XmlTransient
 	private DefaultListModel<String> listModelServices;
 	
+	@XmlElement(name="skipUserRequestForJadeStart")
+	private boolean skipUserRequestForJadeStart;
+	
 	@XmlElement(name="useLocalPort")	
 	private Integer useLocalPort = Application.getGlobalInfo().getJadeLocalPort();
 	
@@ -448,13 +451,32 @@ public class PlatformJadeConfig implements Serializable {
 	
 	
 	/**
+	 * Sets the skip user request for jade start.
+	 * @param skipUserRequestForJadeStart the new skip user request for jade start
+	 */
+	public void setSkipUserRequestForJadeStart(boolean skipUserRequestForJadeStart) {
+		this.skipUserRequestForJadeStart = skipUserRequestForJadeStart;
+		if (this.currProject!=null) {
+			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
+		}
+	}
+	/**
+	 * Checks if is skip user request for jade start.
+	 * @return true, if is skip user request for jade start
+	 */
+	@XmlTransient
+	public boolean isSkipUserRequestForJadeStart() {
+		return skipUserRequestForJadeStart;
+	}
+	
+	
+	/**
 	 * With this class the LocalPort, which will be used from a JADE-Container can be set.
 	 * @param port2Use the new local port
 	 */
 	public void setLocalPort(int port2Use){
-		useLocalPort = port2Use;
-		// --- if set, set project changed and unsaved ----------
-		if (currProject!=null) {
+		this.useLocalPort = port2Use;
+		if (this.currProject!=null) {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 		}
 	}
@@ -473,8 +495,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setLocalPortMTP(Integer newMTPport) {
 		this.useLocalPortMTP = newMTPport;
-		// --- if set, set project changed and unsaved ----------
-		if (currProject!=null) {
+		if (this.currProject!=null) {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 		}
 	}
@@ -493,8 +514,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setMtpCreation(MTP_Creation mtpCreation) {
 		this.mtpCreation = mtpCreation;
-		// --- if set, set project changed and unsaved ----------
-		if (currProject!=null) {
+		if (this.currProject!=null) {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 		}
 	}
@@ -515,8 +535,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setMtpIpAddress(String mtpIpAddress) {
 		this.mtpIpAddress = mtpIpAddress;
-		// --- if set, set project changed and unsaved ----------
-		if (currProject!=null) {
+		if (this.currProject!=null) {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 		}
 	}
@@ -535,8 +554,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setMtpProtocol(MtpProtocol mtpProtool){
 		this.mtpProtocol = mtpProtool;
-		// --- if set, set project changed and unsaved ----------
-		if (currProject != null) {
+		if (this.currProject != null) {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 		}
 	}
@@ -555,8 +573,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setKeyStoreFile(String keyStoreFile){
 		this.keyStoreFile = keyStoreFile;
-		// --- if set, set project changed and unsaved ----------
-		if (currProject != null) {
+		if (this.currProject != null) {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 		}
 	}
@@ -574,8 +591,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setKeyStorePassword(String keyStorePassword){
 		this.setKeyStorePasswordEncrypted(Application.getGlobalInfo().pwEncrypt(keyStorePassword));
-		// --- if set, set project changed and unsaved ----------
-		if (currProject != null) {
+		if (this.currProject != null) {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 		}
 	}
@@ -612,8 +628,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setTrustStoreFile(String trustStoreFile){
 		this.trustStoreFile = trustStoreFile;
-		// --- if set, set project changed and unsaved ----------
-		if (currProject != null) {
+		if (this.currProject != null) {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 		}
 	}
@@ -631,8 +646,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public void setTrustStorePassword(String trustStorePassword){
 		this.setTrustStorePasswordEncrypted(Application.getGlobalInfo().pwEncrypt(trustStorePassword));
-		// --- if set, set project changed and unsaved ----------
-		if (currProject != null) {
+		if (this.currProject != null) {
 			this.currProject.setChangedAndNotify(Project.CHANGED_JadeConfiguration);
 		}
 	}

@@ -139,9 +139,7 @@ import agentgui.core.webserver.JarFileCreator;
 	// --- Constants -------------------------------------------
 	@XmlTransient private String defaultSubFolder4Setups   = "setups";
 	@XmlTransient private String defaultSubFolderEnvSetups = "setupsEnv";
-	@XmlTransient private final String[] defaultSubFolders	   	 = {defaultSubFolder4Setups,
-															  		defaultSubFolderEnvSetups, 
-															  		};
+	@XmlTransient private final String[] defaultSubFolders = {defaultSubFolder4Setups, defaultSubFolderEnvSetups};
 	
 	
 	/** This is the 'view' in the context of the mentioned MVC pattern */
@@ -322,7 +320,7 @@ import agentgui.core.webserver.JarFileCreator;
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("JADE-Services"), null, null, new JadeSetupServices(this), Language.translate("Konfiguration"));
 			pwt.add();
 			// --- JADE-MTP configuration -----------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("JADE-MTP"), null, null, new JadeSetupMTP(this), Language.translate("Konfiguration"));
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("JADE-Settings"), null, null, new JadeSetupMTP(this), Language.translate("Konfiguration"));
 			pwt.add();
 			// --- Distribution + Thresholds --------------
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Verteilung + Grenzwerte"), null, null, new Distribution(this), Language.translate("Konfiguration"));
@@ -428,7 +426,7 @@ import agentgui.core.webserver.JarFileCreator;
 		Integer msgAnswer = 0;
 		
 		Application.setStatusBar(Language.translate("Projekt schließen") + " ...");
-		if (isUnsaved()==true) {
+		if (this.isUnsaved()==true) {
 			msgHead = Language.translate("Projekt '@' speichern?");
 			msgHead = msgHead.replace( "'@'", "'" + projectName + "'");			
 			msgText = Language.translate(
@@ -436,11 +434,15 @@ import agentgui.core.webserver.JarFileCreator;
 						"Möchten Sie es nun speichern ?");
 			msgText = msgText.replace( "'@'", "'" + projectName + "'");
 			
-			msgAnswer = JOptionPane.showInternalConfirmDialog (Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_CANCEL_OPTION );
-			if (msgAnswer == JOptionPane.CANCEL_OPTION) {
-				return false;
-			} else if (msgAnswer == JOptionPane.YES_OPTION) {
-				if (this.save()== false) return false;
+			if (Application.getMainWindow()!=null) {
+				msgAnswer = JOptionPane.showInternalConfirmDialog (Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_CANCEL_OPTION );
+				if (msgAnswer == JOptionPane.CANCEL_OPTION) {
+					return false;
+				} else if (msgAnswer == JOptionPane.YES_OPTION) {
+					if (this.save()==false) return false;
+				}
+			} else {
+				if (this.save()==false) return false;
 			}
 		}
 		// --- ggf. noch Jade beenden ---------------------
