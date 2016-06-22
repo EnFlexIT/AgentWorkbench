@@ -30,10 +30,9 @@ package agentgui.core.charts.xyChart.gui;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.XYDataset;
-
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartTab;
+import agentgui.core.charts.xyChart.XyChartModel;
 import agentgui.core.charts.xyChart.XyDataModel;
 
 public class XyChartTab extends ChartTab {
@@ -50,13 +49,15 @@ public class XyChartTab extends ChartTab {
 				model.getOntologyModel().getChartSettings().getChartTitle(), 
 				model.getOntologyModel().getChartSettings().getXAxisLabel(), 
 				model.getOntologyModel().getChartSettings().getYAxisLabel(), 
-				(XYDataset) model.getChartModel(), 
+				((XyChartModel)model.getChartModel()).getXySeriesCollection(), 
 				PlotOrientation.VERTICAL, 
 				true, false, false
 		), parent);
 		
 		this.dataModel = model;
 		this.applySettings();
+		
+		this.dataModel.getChartModel().addObserver(this);
 	}
 	
 	/* (non-Javadoc)
@@ -70,12 +71,14 @@ public class XyChartTab extends ChartTab {
 				dataModel.getOntologyModel().getChartSettings().getChartTitle(), 
 				dataModel.getOntologyModel().getChartSettings().getXAxisLabel(), 
 				dataModel.getOntologyModel().getChartSettings().getYAxisLabel(), 
-				(XYDataset) dataModel.getChartModel(), 
+				((XyChartModel)dataModel.getChartModel()).getXySeriesCollection(), 
 				PlotOrientation.VERTICAL, 
 				true, false, false
 		));
 		
 		this.applySettings();
+		
+		this.dataModel.getChartModel().addObserver(this);
 	}
 	
 }

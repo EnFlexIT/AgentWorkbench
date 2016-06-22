@@ -56,13 +56,15 @@ public class TimeSeriesChartTab extends ChartTab {
 				model.getTimeSeriesOntologyModel().getChartSettings().getChartTitle(), 
 				model.getTimeSeriesOntologyModel().getChartSettings().getXAxisLabel(), 
 				model.getTimeSeriesOntologyModel().getChartSettings().getYAxisLabel(), 
-				model.getTimeSeriesChartModel(), 
+				model.getTimeSeriesChartModel().getTimeSeriesCollection(), 
 				true, false, false
 		), parent);
 		
 		this.dataModel = model;
 		
 		applySettings();
+		
+		model.getChartModel().addObserver(this);
 	}
 
 	@Override
@@ -73,12 +75,13 @@ public class TimeSeriesChartTab extends ChartTab {
 				this.dataModel.getOntologyModel().getChartSettings().getChartTitle(), 
 				this.dataModel.getOntologyModel().getChartSettings().getXAxisLabel(), 
 				this.dataModel.getOntologyModel().getChartSettings().getYAxisLabel(), 
-				((TimeSeriesDataModel)this.dataModel).getTimeSeriesChartModel(), 
+				((TimeSeriesDataModel)this.dataModel).getTimeSeriesChartModel().getTimeSeriesCollection(), 
 				true, false, false
 		));
 		
 		applySettings();
 		
+		dataModel.getChartModel().addObserver(this);
 	}
 
 	/* (non-Javadoc)

@@ -254,14 +254,18 @@ public abstract class DataModel {
 		}
 		
 		// Add the data to the sub models
+		seriesCount++;
+		
+		// Ontology model
 		ontologyModel.addSeries(series);
 		// Apply default settings
 		ontologyModel.getChartSettings().addYAxisColors(""+DEFAULT_COLORS[getSeriesCount() % DEFAULT_COLORS.length].getRGB());
 		ontologyModel.getChartSettings().addYAxisLineWidth(DEFAULT_LINE_WIDTH);
 		
+		// Chart and table model
 		chartModel.addSeries(series);
 		tableModel.addSeries(series);
-		seriesCount++;
+		
 		this.getChartSettingModel().refresh();
 
 	}
@@ -309,10 +313,10 @@ public abstract class DataModel {
 	 * @throws NoSuchSeriesException Thrown if there is no series with that index
 	 */
 	public void removeSeries(int seriesIndex) throws NoSuchSeriesException{
+		this.seriesCount--;
 		this.ontologyModel.removeSeries(seriesIndex);
 		this.chartModel.removeSeries(seriesIndex);
 		this.tableModel.removeSeries(seriesIndex);
-		this.seriesCount--;
 		this.getChartSettingModel().refresh();
 		
 	}

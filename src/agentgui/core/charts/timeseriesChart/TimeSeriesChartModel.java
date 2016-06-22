@@ -34,6 +34,7 @@ import java.util.TimeZone;
 
 import org.jfree.data.general.SeriesException;
 import org.jfree.data.time.FixedMillisecond;
+import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.time.TimeSeriesDataItem;
 
@@ -50,11 +51,17 @@ import agentgui.ontology.TimeSeriesValuePair;
  * 
  * @author Nils
  */
-public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartModel{
+public class TimeSeriesChartModel extends ChartModel{
 	
-	private static final long serialVersionUID = 2315036788757231999L;
-
-	private TimeSeriesDataModel tsDataModel;
+	/**
+	 * The parent {@link TimeSeriesDataModel}
+	 */
+	private TimeSeriesDataModel parent;
+	
+	/**
+	 * The JFreeChart data model for this chart
+	 */
+	private TimeSeriesCollection timeSeriesCollection;
 
 	
 	/**
@@ -62,8 +69,8 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	 * @param timeSeriesDataModel the current TimeSeriesDataModel
 	 */
 	public TimeSeriesChartModel(TimeSeriesDataModel timeSeriesDataModel){
-		super(TimeZone.getTimeZone("GMT"));
-		this.tsDataModel = timeSeriesDataModel;
+		this.timeSeriesCollection = new TimeSeriesCollection();
+		this.parent = timeSeriesDataModel;
 	}
 	
 	/* (non-Javadoc)
@@ -71,7 +78,7 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	 */
 	@Override
 	public TimeSeriesChartSettings getChartSettings() {
-		return (TimeSeriesChartSettings)tsDataModel.getOntologyModel().getChartSettings();
+		return (TimeSeriesChartSettings)parent.getOntologyModel().getChartSettings();
 	}
 	
 	/* (non-Javadoc)
@@ -96,7 +103,10 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 				newSeries.addOrUpdate(newItem);	
 			}
 		}
-		this.addSeries(newSeries);	
+		this.getTimeSeriesCollection().addSeries(newSeries);	
+		
+		this.setChanged();
+		this.notifyObservers(ChartModel.EventType.SERIES_ADDED);
 		
 	}
 	
@@ -107,7 +117,7 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	public void exchangeSeries(int seriesIndex, DataSeries series) throws NoSuchSeriesException {
 		if(seriesIndex < this.getSeriesCount()){
 			// --- edit series ---
-			org.jfree.data.time.TimeSeries editSeries = (org.jfree.data.time.TimeSeries) this.getSeries().get(seriesIndex);
+			org.jfree.data.time.TimeSeries editSeries = (org.jfree.data.time.TimeSeries) this.getSeries(seriesIndex);
 			editSeries.clear();
 			if (series.getLabel()!=null) {
 				editSeries.setKey(series.getLabel());
@@ -131,6 +141,9 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 		} else {
 			throw new NoSuchSeriesException();
 		}
+		
+		this.setChanged();
+		this.notifyObservers(ChartModel.EventType.SERIES_EXCHANGED);
 	}
 
 	/**
@@ -180,7 +193,7 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	 */
 	public void removeValuePair(int seriesIndex, Number key) throws NoSuchSeriesException {
 		if(seriesIndex < this.getSeriesCount()){
-			org.jfree.data.time.TimeSeries series = (org.jfree.data.time.TimeSeries) getSeries().get(seriesIndex);
+			org.jfree.data.time.TimeSeries series = getSeries(seriesIndex);
 			series.delete(new FixedMillisecond(key.longValue()));
 		}else{
 			throw new NoSuchSeriesException();
@@ -198,7 +211,7 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 
 		if (targetDataSeriesIndex<=(this.getSeriesCount()-1)) {
 			// --- Get the series -------------------------
-			org.jfree.data.time.TimeSeries addToSeries = (org.jfree.data.time.TimeSeries) this.getSeries().get(targetDataSeriesIndex);
+			org.jfree.data.time.TimeSeries addToSeries = (org.jfree.data.time.TimeSeries) this.getSeries(targetDataSeriesIndex);
 			List valuePairs = ((agentgui.ontology.TimeSeries)series).getTimeSeriesValuePairs();
 			for (int i = 0; i < valuePairs.size(); i++) {
 				TimeSeriesValuePair valuePair = (TimeSeriesValuePair) valuePairs.get(i);
@@ -225,7 +238,7 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	public void editSeriesAddOrExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 		
 		if (targetDataSeriesIndex<=(this.getSeriesCount()-1)) {
-			org.jfree.data.time.TimeSeries addToSeries = (org.jfree.data.time.TimeSeries) this.getSeries().get(targetDataSeriesIndex);
+			org.jfree.data.time.TimeSeries addToSeries = (org.jfree.data.time.TimeSeries) this.getSeries(targetDataSeriesIndex);
 			List valuePairs = ((agentgui.ontology.TimeSeries)series).getTimeSeriesValuePairs();
 			for (int i = 0; i < valuePairs.size(); i++) {
 				TimeSeriesValuePair valuePair = (TimeSeriesValuePair) valuePairs.get(i);
@@ -253,7 +266,7 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	public void editSeriesExchangeData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 
 		if (targetDataSeriesIndex<=(this.getSeriesCount()-1)) {
-			org.jfree.data.time.TimeSeries exchangeSeries = (org.jfree.data.time.TimeSeries) this.getSeries().get(targetDataSeriesIndex);
+			org.jfree.data.time.TimeSeries exchangeSeries = (org.jfree.data.time.TimeSeries) this.getSeries(targetDataSeriesIndex);
 			List valuePairs = ((agentgui.ontology.TimeSeries)series).getTimeSeriesValuePairs();
 			for (int i = 0; i < valuePairs.size(); i++) {
 				TimeSeriesValuePair valuePair = (TimeSeriesValuePair) valuePairs.get(i);
@@ -284,7 +297,7 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 	public void editSeriesRemoveData(DataSeries series, int targetDataSeriesIndex) throws NoSuchSeriesException {
 
 		if (targetDataSeriesIndex<=(this.getSeriesCount()-1)) {
-			org.jfree.data.time.TimeSeries removeSeries = (org.jfree.data.time.TimeSeries) this.getSeries().get(targetDataSeriesIndex);
+			org.jfree.data.time.TimeSeries removeSeries = (org.jfree.data.time.TimeSeries) this.getSeries(targetDataSeriesIndex);
 			List valuePairs = ((agentgui.ontology.TimeSeries)series).getTimeSeriesValuePairs();
 			for (int i = 0; i < valuePairs.size(); i++) {
 				TimeSeriesValuePair valuePair = (TimeSeriesValuePair) valuePairs.get(i);
@@ -298,6 +311,49 @@ public class TimeSeriesChartModel extends TimeSeriesCollection implements ChartM
 		} else {
 			throw new NoSuchSeriesException();			
 		}
+	}
+
+	@Override
+	public TimeSeries getSeries(int seriesIndex) {
+		return this.getTimeSeriesCollection().getSeries(seriesIndex);
+	}
+
+	@Override
+	public void removeSeries(int seriesIndex) {
+		this.getTimeSeriesCollection().removeSeries(seriesIndex);
+		
+		this.setChanged();
+		this.notifyObservers(ChartModel.EventType.SERIES_REMOVED);
+	}
+	
+	/**
+	 * Gets the JFreeChart data model for this chart
+	 * @return The JFreeChart data model for this chart
+	 */
+	public TimeSeriesCollection getTimeSeriesCollection(){
+		if(this.timeSeriesCollection == null){
+			this.timeSeriesCollection = new TimeSeriesCollection(TimeZone.getTimeZone("GMT"));
+		}
+		return this.timeSeriesCollection;
+	}
+	
+	/**
+	 * Returns the number of series in this chart
+	 * @return
+	 */
+	public int getSeriesCount(){
+		return this.getTimeSeriesCollection().getSeriesCount();
+	}
+
+	@Override
+	public void setSeriesLabel(int seriesIndex, String newLabel) {
+		TimeSeries series = this.getSeries(seriesIndex);
+		if(series != null){
+			series.setKey(newLabel);
+		}
+		
+		this.setChanged();
+		this.notifyObservers(ChartModel.EventType.SERIES_RENAMED);
 	}
 
 }

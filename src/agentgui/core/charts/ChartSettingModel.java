@@ -150,7 +150,7 @@ public class ChartSettingModel {
 	public void setSeriesLabel(int seriesIndex, String newLabel) throws NoSuchSeriesException{
 		this.parentDataModel.getOntologyModel().getSeries(seriesIndex).setLabel(newLabel);
 		this.parentDataModel.getTableModel().setSeriesLabel(seriesIndex, newLabel);
-		this.parentDataModel.getChartModel().getSeries(seriesIndex).setKey(newLabel);
+		this.parentDataModel.getChartModel().setSeriesLabel(seriesIndex, newLabel);
 	}
 	/**
 	 * Sets the plot color for a data series, specified by its index 

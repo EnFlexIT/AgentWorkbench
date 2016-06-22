@@ -39,6 +39,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -54,10 +56,12 @@ import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.general.Series;
+
+import agentgui.core.charts.ChartModel;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.NoSuchSeriesException;
 
-public abstract class ChartTab extends JPanel implements ActionListener {
+public abstract class ChartTab extends JPanel implements ActionListener, Observer {
 
 	private static final long serialVersionUID = -7678959452705514151L;
 	
@@ -103,7 +107,7 @@ public abstract class ChartTab extends JPanel implements ActionListener {
 		this.chartPanel.getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
 		
 		// --- Create the tool bar --------------------
-		this.populateVisibilityToolBar();
+		this.rebuildVisibilityToolBar();
 		
 		// --- Add components to the panel ------------
 		this.setLayout(new BorderLayout());
@@ -116,7 +120,7 @@ public abstract class ChartTab extends JPanel implements ActionListener {
 		if(this.jToolBarSeriesVisibility == null){
 			this.jToolBarSeriesVisibility = new JToolBar();
 			this.jToolBarSeriesVisibility.setFloatable(false);
-			this.jToolBarSeriesVisibility.setLayout(new FlowLayout(FlowLayout.CENTER));
+			this.jToolBarSeriesVisibility.setLayout(new WrappedFlowLayout(FlowLayout.CENTER));
 		}
 		return this.jToolBarSeriesVisibility;
 	}
@@ -297,34 +301,86 @@ public abstract class ChartTab extends JPanel implements ActionListener {
 	/**
 	 * Creates a JCheckBox for every series and add it to the JToolBar
 	 */
-	private void populateVisibilityToolBar(){
+	private void rebuildVisibilityToolBar(){
 		
-		for(int i=0; i<parent.getDataModel().getSeriesCount(); i++){
+		this.getJToolBarSeriesVisibility().removeAll();
+
+		// Iterate over all series
+		int seriesCount = this.getChart().getXYPlot().getDataset().getSeriesCount();
+		for(int i=0; i<seriesCount; i++){
+			
+			// Create JCheckBox for this series
 			Series series = parent.getDataModel().getChartModel().getSeries(i);
 			JCheckBox seriesCheckBox = new JCheckBox((String)series.getKey());
 			seriesCheckBox.addActionListener(this);
-			seriesCheckBox.setSelected(true);		// Assuming initially visible
+			
+			// Set state according to current visibility
+			boolean currentlyVisible = this.getChart().getXYPlot().getRenderer().getItemVisible(i, 0);
+			seriesCheckBox.setSelected(currentlyVisible);
+			
+			seriesCheckBox.setToolTipText(this.generateToolTipTextForVisibilityCheckBox(seriesCheckBox));
+			
+			// Add to the JToolBar
 			this.getJToolBarSeriesVisibility().add(seriesCheckBox);
 		}
+		
+		this.getJToolBarSeriesVisibility().repaint();
+		this.getJToolBarSeriesVisibility().revalidate();
 		
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+		
+		// Visibility checkbox - show or hide a series
 		if(ae.getSource() instanceof JCheckBox){
 			
-			String seriesLabel = ((JCheckBox)ae.getSource()).getText();
-			XYPlot plot = this.chartPanel.getChart().getXYPlot();
-			
+			// Determine which series to hide
+			JCheckBox source = (JCheckBox) ae.getSource();
+			String seriesLabel = source.getText();
+
+			// Find the series
+			XYPlot plot = this.getChart().getXYPlot();
 			for(int i=0; i<plot.getSeriesCount(); i++){
+				
+				// Toggle visibility
 				if(plot.getDataset().getSeriesKey(i).equals(seriesLabel)){
 					XYItemRenderer renderer = plot.getRenderer();
 					boolean currentlyVisible = renderer.getItemVisible(i, 0);
-					renderer.setSeriesVisible(i, !currentlyVisible);
+					renderer.setSeriesVisible(i, new Boolean(!currentlyVisible));
 				}
 			}
 			
+			// Update the tooltip text to reflect the new state
+			source.setToolTipText(this.generateToolTipTextForVisibilityCheckBox(source));
+			
 		}
 	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if(o instanceof ChartModel){
+			if(arg == ChartModel.EventType.SERIES_ADDED
+					|| arg == ChartModel.EventType.SERIES_REMOVED
+					|| arg == ChartModel.EventType.SERIES_RENAMED
+					|| arg == ChartModel.EventType.SERIES_EXCHANGED){
+				this.rebuildVisibilityToolBar();
+			}
+		}
+	}
+	
+	/**
+	 * Generates a ToolTip text for visibility checkboxes based on their current selection state
+	 * @param checkBox The checkbox to generate a text for
+	 * @return The tooltip text
+	 */
+	private String generateToolTipTextForVisibilityCheckBox(JCheckBox checkBox){
+		if(checkBox.isSelected()){
+			return "Hide " + checkBox.getText();
+		}else{
+			return "Show " + checkBox.getText();
+		}
+	}
+	
 
 }

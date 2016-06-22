@@ -28,18 +28,29 @@
  */
 package agentgui.core.charts;
 
+import java.util.Observable;
+
 import org.jfree.data.general.Series;
 
 import agentgui.ontology.ChartSettingsGeneral;
 import agentgui.ontology.DataSeries;
 
-public interface ChartModel {
+public abstract class ChartModel extends Observable{
+	
+	/**
+	 * Chart Model event types
+	 * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
+	 *
+	 */
+	public enum EventType{
+		SERIES_ADDED, SERIES_REMOVED, SERIES_RENAMED, SERIES_EXCHANGED
+	}
 	
 	/**
 	 * Returns the chart settings.
 	 * @return the chart settings
 	 */
-	public ChartSettingsGeneral getChartSettings();
+	public abstract ChartSettingsGeneral getChartSettings();
 	
 	/**
 	 * Returns the jfreeChart series specified by the index position.
@@ -52,19 +63,26 @@ public interface ChartModel {
 	 * Adds the series.
 	 * @param series the series
 	 */
-	public void addSeries(DataSeries series);
+	public abstract void addSeries(DataSeries series);
+	/**
+	 * Removes the data series with the given index from the chart model
+	 * @param seriesIndex The series index
+	 */
+	public abstract void removeSeries(int seriesIndex);
+	/**
+	 * Sets a new label for the series with the specified index
+	 * @param seriesIndex The series index
+	 * @param newLabel The new label
+	 */
+	public abstract void setSeriesLabel(int seriesIndex, String newLabel);
+
 	/**
 	 * Exchanges the series specified by the series index with the given DataSeries.
 	 * @param seriesIndex the series index
 	 * @param series the DataSeries
 	 * @throws NoSuchSeriesException the no such series exception
 	 */
-	public void exchangeSeries(int seriesIndex, DataSeries series) throws NoSuchSeriesException;
-	/**
-	 * Removes the data series with the given index from the chart model
-	 * @param seriesIndex The series index
-	 */
-	public void removeSeries(int seriesIndex);
+	public abstract void exchangeSeries(int seriesIndex, DataSeries series) throws NoSuchSeriesException;
 	
 	
 }

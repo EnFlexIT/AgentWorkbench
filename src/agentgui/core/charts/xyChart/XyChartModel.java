@@ -43,18 +43,24 @@ import agentgui.ontology.XyDataSeries;
 import agentgui.ontology.XySeriesChartSettings;
 import agentgui.ontology.XyValuePair;
 
-public class XyChartModel extends XYSeriesCollection implements ChartModel {
+public class XyChartModel extends ChartModel {
 
-	private static final long serialVersionUID = 8270571170143064082L;
-
-	private XyDataModel xyDataModel;
+	/**
+	 * The parent {@link XyDataModel}
+	 */
+	private XyDataModel parent;
+	
+	/**
+	 * The JFreeChart data model for this chart
+	 */
+	private XYSeriesCollection xySeriesCollection;
 	
 	/**
 	 * Instantiates a new XYChartModel.
-	 * @param xyDataModel the current XyDataModel
+	 * @param parent the current XyDataModel
 	 */
-	public XyChartModel(XyDataModel xyDataModel) {
-		this.xyDataModel = xyDataModel;
+	public XyChartModel(XyDataModel parent) {
+		this.parent = parent;
 	}
 	
 	/* (non-Javadoc)
@@ -62,7 +68,7 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 	 */
 	@Override
 	public XySeriesChartSettings getChartSettings() {
-		return (XySeriesChartSettings) xyDataModel.getOntologyModel().getChartSettings();
+		return (XySeriesChartSettings) parent.getOntologyModel().getChartSettings();
 	}
 
 	/**
@@ -86,7 +92,10 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 	 */
 	@Override
 	public void addSeries(DataSeries series) {
-		this.addSeries(this.getXYSeriesFromXyDataSeries((XyDataSeries)series));
+		this.getXySeriesCollection().addSeries(this.getXYSeriesFromXyDataSeries((XyDataSeries)series));
+		
+		this.setChanged();
+		this.notifyObservers(ChartModel.EventType.SERIES_ADDED);
 	}
 
 	/* (non-Javadoc)
@@ -123,15 +132,18 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 				}
 				currSerieses.set(seriesIndex, newSeries);
 
-				this.removeAllSeries();
+				this.getXySeriesCollection().removeAllSeries();
 				for (int i = 0; i < currSerieses.size(); i++) {
-					this.addSeries(currSerieses.get(i));
+					this.getXySeriesCollection().addSeries(currSerieses.get(i));
 				}
 			}
 			
 		}else{
 			throw new NoSuchSeriesException();
 		}
+		
+		this.setChanged();
+		this.notifyObservers(ChartModel.EventType.SERIES_ADDED);
 	}
 	
 	/**
@@ -140,7 +152,7 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 	public void setXYSeriesAccordingToOntologyModel(int seriesIndex) {
 		
 		try {
-			List xyData = this.xyDataModel.getOntologyModel().getSeriesData(seriesIndex);
+			List xyData = this.parent.getOntologyModel().getSeriesData(seriesIndex);
 			XYSeries xySeries = this.getSeries(seriesIndex);	
 			xySeries.clear();
 			
@@ -185,6 +197,49 @@ public class XyChartModel extends XYSeriesCollection implements ChartModel {
 			// --- Reset this series in order to keep the order -----
 			this.setXYSeriesAccordingToOntologyModel(seriesIndex);
 		}
+	}
+
+	@Override
+	public XYSeries getSeries(int seriesIndex) {
+		return this.getXySeriesCollection().getSeries(seriesIndex);
+	}
+
+	@Override
+	public void removeSeries(int seriesIndex) {
+		this.getXySeriesCollection().removeSeries(seriesIndex);
+		
+		this.setChanged();
+		this.notifyObservers(ChartModel.EventType.SERIES_REMOVED);
+	}
+	
+	/**
+	 * Gets the JFreeChart data model for this chart
+	 * @return The JFreeChart data model for this chart
+	 */
+	public XYSeriesCollection getXySeriesCollection(){
+		if(this.xySeriesCollection == null){
+			this.xySeriesCollection = new XYSeriesCollection();
+		}
+		return this.xySeriesCollection;
+	}
+	
+	/**
+	 * Returns the number of series in this chart
+	 * @return
+	 */
+	public int getSeriesCount(){
+		return this.getXySeriesCollection().getSeriesCount();
+	}
+
+	@Override
+	public void setSeriesLabel(int seriesIndex, String newLabel) {
+		XYSeries series = this.getSeries(seriesIndex);
+		if(series != null){
+			series.setKey(newLabel);
+		}
+		
+		this.setChanged();
+		this.notifyObservers(ChartModel.EventType.SERIES_RENAMED);
 	}
 	
 }
