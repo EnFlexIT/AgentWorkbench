@@ -147,6 +147,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		gridBagConstraints45.insets = new Insets(5, 5, 5, 5);
 		gridBagConstraints45.gridy = 3;
 		GridBagConstraints gridBagConstraints43 = new GridBagConstraints();
+		gridBagConstraints43.anchor = GridBagConstraints.WEST;
 		gridBagConstraints43.gridx = 0;
 		gridBagConstraints43.insets = new Insets(5, 0, 5, 5);
 		gridBagConstraints43.gridy = 3;
@@ -583,21 +584,21 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		} else {
 
 			jLabelExecuteAs.setEnabled(true);
+			jLabelSetupHeader.setEnabled(true);
+			jLabelSetup.setEnabled(true);
 			this.getJRadioButtonExecuteAsService().setEnabled(true);
 			this.getJRadioButtonExecuteAsDeviceAgent().setEnabled(true);
+			this.getJComboBoxSetupSelector().setEnabled(true);
 			
 			if (this.getJRadioButtonExecuteAsService().isSelected()==false && this.getJRadioButtonExecuteAsDeviceAgent().isSelected()==false) {
-				this.getJComboBoxSetupSelector().setSelectedItem(null);
 				this.getJTextFieldAgentClass().setText(null);
 				this.getJTextFieldAgentName().setText(null);
 				
-				jLabelSetupHeader.setEnabled(false);
-				jLabelSetup.setEnabled(false);
 				jLabelAgentHeader.setEnabled(false);
 				jLabelAgent.setEnabled(false);
 				jLabelAgentName.setEnabled(false);
 				jLabelVisConfig.setEnabled(false);
-				this.getJComboBoxSetupSelector().setEnabled(false);
+
 				this.getJTextFieldAgentClass().setEnabled(false);
 				this.getJTextFieldAgentName().setEnabled(false);
 				this.getJButtonEsaSelectAgent().setEnabled(false);
@@ -608,13 +609,10 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				this.getJTextFieldAgentClass().setText(null);
 				this.getJTextFieldAgentName().setText(null);
 
-				jLabelSetupHeader.setEnabled(true);
-				jLabelSetup.setEnabled(true);
 				jLabelAgentHeader.setEnabled(false);
 				jLabelAgent.setEnabled(false);
 				jLabelAgentName.setEnabled(false);
 				jLabelVisConfig.setEnabled(false);
-				this.getJComboBoxSetupSelector().setEnabled(true);
 				this.getJTextFieldAgentClass().setEnabled(false);
 				this.getJTextFieldAgentName().setEnabled(false);
 				this.getJButtonEsaSelectAgent().setEnabled(false);
@@ -622,15 +620,11 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				this.getJRadioButtonVisTrayIcon().setEnabled(false);
 
 			} else if (this.getJRadioButtonExecuteAsDeviceAgent().isSelected()) {
-				this.getJComboBoxSetupSelector().setSelectedItem(null);
 				
-				jLabelSetupHeader.setEnabled(false);
-				jLabelSetup.setEnabled(false);
 				jLabelAgentHeader.setEnabled(true);
 				jLabelAgent.setEnabled(true);
 				jLabelAgentName.setEnabled(true);
 				jLabelVisConfig.setEnabled(true);
-				this.getJComboBoxSetupSelector().setEnabled(false);
 				this.getJTextFieldAgentClass().setEnabled(true);
 				this.getJTextFieldAgentName().setEnabled(true);
 				this.getJButtonEsaSelectAgent().setEnabled(true);
@@ -694,8 +688,8 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				break;
 			}
 			this.getJComboBoxSetupSelector().setSelectedItem(getGlobalInfo().getDeviceServiceSetupSelected());
-			this.getJTextFieldAgentClass().setText(getGlobalInfo().getDeviceServiceAgentSelected());
-			this.getJTextFieldAgentName().setText(getGlobalInfo().getDeviceServiceAgentNameSelected());
+			this.getJTextFieldAgentClass().setText(getGlobalInfo().getDeviceServiceAgentClassName());
+			this.getJTextFieldAgentName().setText(getGlobalInfo().getDeviceServiceAgentName());
 			switch (getGlobalInfo().getDeviceServiceAgentVisualisation()) {
 			case NONE:
 				this.getJRadioButtonVisNon().setSelected(true);
@@ -730,8 +724,8 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			this.getGlobalInfo().setDeviceServiceExecutionMode(DeviceSystemExecutionMode.AGENT);
 		}
 		this.getGlobalInfo().setDeviceServiceSetupSelected((String)this.getJComboBoxSetupSelector().getSelectedItem());
-		this.getGlobalInfo().setDeviceServiceAgentSelected(this.getJTextFieldAgentClass().getText());
-		this.getGlobalInfo().setDeviceServiceAgentNameSelected(this.getJTextFieldAgentName().getText());
+		this.getGlobalInfo().setDeviceServiceAgentClassName(this.getJTextFieldAgentClass().getText());
+		this.getGlobalInfo().setDeviceServiceAgentName(this.getJTextFieldAgentName().getText());
 		if (this.getJRadioButtonVisNon().isSelected()) {
 			this.getGlobalInfo().setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.NONE);			
 		} else if (this.getJRadioButtonVisTrayIcon().isSelected()) {

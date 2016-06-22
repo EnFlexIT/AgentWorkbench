@@ -343,18 +343,21 @@ public class Platform extends Object {
 	 * @return true, if successful
 	 */
 	public boolean jadeStart4EmbeddedSystemAgent() {
-		String agentClassName = Application.getGlobalInfo().getDeviceServiceAgentSelected();
+		String agentClassName = Application.getGlobalInfo().getDeviceServiceAgentClassName();
+		String agentName = Application.getGlobalInfo().getDeviceServiceAgentName();
 		if (agentClassName!=null) {
-			return this.jadeStart4EmbeddedSystemAgent(agentClassName);
+			return this.jadeStart4EmbeddedSystemAgent(agentClassName, agentName);
 		}
 		return false;
 	}
 	/**
 	 * Start JADE for a specified embedded system agent.
+	 *
 	 * @param agentClassName the agent class name
+	 * @param agentName the agents name
 	 * @return true, if successful
 	 */
-	public boolean jadeStart4EmbeddedSystemAgent(String agentClassName) {
+	public boolean jadeStart4EmbeddedSystemAgent(String agentClassName, String agentName) {
 		
 		boolean jadeStarted = false;
 		
@@ -381,7 +384,12 @@ public class Platform extends Object {
 			try {
 				// --- Start the selected Agent ---------------------
 				Class<?> agentClass = Class.forName(agentClassName);
-				String startAs = agentClass.getSimpleName();
+				String startAs = null;
+				if (agentName==null || agentName.equals("")==true) {
+					startAs = agentClass.getSimpleName();
+				} else {
+					startAs = agentName;
+				}
 				this.jadeAgentStart(startAs, agentClassName);
 				System.out.println(Language.translate("Agent gestartet") + ": '" + agentClassName + "'");
 				return true;

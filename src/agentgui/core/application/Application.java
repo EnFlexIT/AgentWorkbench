@@ -725,6 +725,10 @@ public class Application {
 			// --- Load project -----------------------------------------------
 			Project projectOpened = getProjectsLoaded().add(projectFolder);
 			if (projectOpened!=null) {
+				// --- Switch to the specified setup --------------------------
+				if (simulationSetup!=null && simulationSetup.equals("")==false) {
+					projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
+				}
 				// --- Start JADE for an embedded system agent ----------------
 				getJadePlatform().jadeStart4EmbeddedSystemAgent();
 			}

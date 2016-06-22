@@ -163,8 +163,8 @@ public class GlobalInfo {
 	private String deviceServiceProjectFolder;
 	private DeviceSystemExecutionMode deviceServiceExecutionMode = DeviceSystemExecutionMode.SETUP;
 	private String deviceServiceSetupSelected;  
-	private String deviceServiceAgentSelected;
-	private String deviceServiceAgentNameSelected;
+	private String deviceServiceAgentClassName;
+	private String deviceServiceAgentName;
 	private EmbeddedSystemAgentVisualisation deviceServiceAgentVisualisation = EmbeddedSystemAgentVisualisation.TRAY_ICON;
 	
 	private String filePropKeyStoreFile;
@@ -1581,35 +1581,35 @@ public class GlobalInfo {
 	}
 	
 	/**
-	 * Gets the device service agent selected.
-	 * @return the device service agent selected
+	 * Returns the device service agent class name.
+	 * @return the device service agent class name
 	 */
-	public String getDeviceServiceAgentSelected() {
-		return deviceServiceAgentSelected;
+	public String getDeviceServiceAgentClassName() {
+		return deviceServiceAgentClassName;
 	}
 	/**
-	 * Sets the device service agent selected.
-	 * @param deviceServiceAgentSelected the new device service agent selected
+	 * Sets the device service agent class name.
+	 * @param deviceServiceAgentClassName the new device service agent class to use
 	 */
-	public void setDeviceServiceAgentSelected(String deviceServiceAgentSelected) {
-		this.deviceServiceAgentSelected = deviceServiceAgentSelected;
+	public void setDeviceServiceAgentClassName(String deviceServiceAgentClassName) {
+		this.deviceServiceAgentClassName = deviceServiceAgentClassName;
 	}
 	
 	/**
-	 * Gets the device service agent name selected.
-	 * @return the device service agent name selected
+	 * Returns the device service agent name.
+	 * @return the device service agent name
 	 */
-	public String getDeviceServiceAgentNameSelected() {
-		return deviceServiceAgentNameSelected;
+	public String getDeviceServiceAgentName() {
+		return deviceServiceAgentName;
+	}
+	/**
+	 * Sets the device service agent name.
+	 * @param deviceServiceAgentName the new device service agent name 
+	 */
+	public void setDeviceServiceAgentName(String deviceServiceAgentName) {
+		this.deviceServiceAgentName = deviceServiceAgentName;
 	}
 	
-	/**
-	 * Sets the device service agent name selected.
-	 * @param deviceServiceAgentNameSelected the new device service agent name selected
-	 */
-	public void setDeviceServiceAgentNameSelected(String deviceServiceAgentNameSelected) {
-		this.deviceServiceAgentNameSelected = deviceServiceAgentNameSelected;
-	}
 	/**
 	 * Gets the device service agent visualisation.
 	 * @return the device service agent visualisation

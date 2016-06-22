@@ -449,16 +449,16 @@ public class FileProperties extends Properties {
 		// --- this.DEF_DeviceServcie_Agent -----------
 		propValue = this.getProperty(this.DEF_DeviceServcie_Agent);
 		if (propValue==null || propValue.equals("")) {
-			Application.getGlobalInfo().setDeviceServiceAgentSelected(null);
+			Application.getGlobalInfo().setDeviceServiceAgentClassName(null);
 		} else {
-			Application.getGlobalInfo().setDeviceServiceAgentSelected(propValue);
+			Application.getGlobalInfo().setDeviceServiceAgentClassName(propValue);
 		}
 		// --- this.DEF_DeviceServcie_AgentName -----------
 		propValue = this.getProperty(this.DEF_DeviceServcie_AgentName);
 		if (propValue == null || propValue.equals("")) {
-			Application.getGlobalInfo().setDeviceServiceAgentNameSelected(null);
+			Application.getGlobalInfo().setDeviceServiceAgentName(null);
 		} else {
-			Application.getGlobalInfo().setDeviceServiceAgentNameSelected(propValue);
+			Application.getGlobalInfo().setDeviceServiceAgentName(propValue);
 		}
 		// --- this.DEF_DeviceServcie_Vis -------------
 		propValue = this.getProperty(this.DEF_DeviceServcie_Vis);
@@ -671,16 +671,16 @@ public class FileProperties extends Properties {
 			this.setProperty(this.DEF_DeviceServcie_Setup, Application.getGlobalInfo().getDeviceServiceSetupSelected());
 		}
 		// --- this.DEF_DeviceServcie_Agent -----------
-		if (Application.getGlobalInfo().getDeviceServiceAgentSelected()==null) {
+		if (Application.getGlobalInfo().getDeviceServiceAgentClassName()==null) {
 			this.setProperty(this.DEF_DeviceServcie_Agent, "");
 		} else {
-			this.setProperty(this.DEF_DeviceServcie_Agent, Application.getGlobalInfo().getDeviceServiceAgentSelected());
+			this.setProperty(this.DEF_DeviceServcie_Agent, Application.getGlobalInfo().getDeviceServiceAgentClassName());
 		}
 		// --- this.DEF_DeviceServcie_AgentName -----------
-		if (Application.getGlobalInfo().getDeviceServiceAgentNameSelected() == null) {
+		if (Application.getGlobalInfo().getDeviceServiceAgentName() == null) {
 			this.setProperty(this.DEF_DeviceServcie_AgentName, "");
 		} else {
-			this.setProperty(this.DEF_DeviceServcie_AgentName, Application.getGlobalInfo().getDeviceServiceAgentNameSelected());
+			this.setProperty(this.DEF_DeviceServcie_AgentName, Application.getGlobalInfo().getDeviceServiceAgentName());
 		}
 		// --- this.DEF_DeviceServcie_Vis -------------
 		switch (Application.getGlobalInfo().getDeviceServiceAgentVisualisation()) {
