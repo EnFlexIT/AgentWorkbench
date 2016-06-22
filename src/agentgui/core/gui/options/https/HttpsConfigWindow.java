@@ -49,7 +49,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -109,7 +108,6 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	private String keyStoreAlias;
 	private String keyStorePassword;
 	private String trustStorePassword;
-	private String data;
 	private String keyStoreButtonPressed;
 	private String trustStoreButtonPressed;
 
@@ -121,7 +119,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
 	
 	/**
-	 * Instantiates a new https config window.
+	 * Instantiates a new HttpsConfigWindow.
 	 */
 	private HttpsConfigWindow() {
 		this.initialize();
@@ -143,20 +141,20 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		this.initialize();
 	}
 	/**
-	 * Instantiates a new https config window.
+	 * Instantiates a new HttpsConfigWindow.
 	 *
 	 * @param owner the owner
-	 * @param keystore the keystore
-	 * @param keystore_password the keystore_password
-	 * @param Truststore the truststore
-	 * @param Truststore_password the truststore_password
+	 * @param keystore the KeyStore
+	 * @param keystorePassword the KeyStore password
+	 * @param truststore the TrustStore
+	 * @param truststorePassword the TrustStore password
 	 */
-	public HttpsConfigWindow(Dialog owner, String keystore, String keystore_password, String Truststore, String Truststore_password) {
+	public HttpsConfigWindow(Dialog owner, String keystore, String keystorePassword, String truststore, String truststorePassword) {
 		super(owner);
 		this.setKeyStorefilepath(keystore);
-		this.setKeyStorePassword(keystore_password);
-		this.setTrustStorefilepath(Truststore);
-		this.setTrustStorePassword(Truststore_password);
+		this.setKeyStorePassword(keystorePassword);
+		this.setTrustStorefilepath(truststore);
+		this.setTrustStorePassword(truststorePassword);
 		this.getKeyStoreData();
 		this.getTrustStoreData();
 		this.initialize();
@@ -165,23 +163,21 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	 * Instantiates a new httpsConfigWindow.
 	 *
 	 * @param owner the owner
-	 * @param keystore the keystore
-	 * @param keystore_password the keystore_password
-	 * @param Truststore the truststore
-	 * @param Truststore_password the truststore_password
+	 * @param keystore the KeyStore
+	 * @param keystorePassword the KeyStore password
+	 * @param truststore the TrustStore
+	 * @param truststorePassword the TrustStore password
 	 */
-	public HttpsConfigWindow(Frame owner, String keystore, String keystore_password, String Truststore, String Truststore_password) {
+	public HttpsConfigWindow(Frame owner, String keystore, String keystorePassword, String truststore, String truststorePassword) {
 		super(owner);
 		this.setKeyStorefilepath(keystore);
-		this.setKeyStorePassword(keystore_password);
-		this.setTrustStorefilepath(Truststore);
-		this.setTrustStorePassword(Truststore_password);
+		this.setKeyStorePassword(keystorePassword);
+		this.setTrustStorefilepath(truststore);
+		this.setTrustStorePassword(truststorePassword);
 		this.getKeyStoreData();
 		this.getTrustStoreData();
 		this.initialize();
 	}
-	
-	
 	/**
 	 * Initialize the contents of the dialog.
 	 */
@@ -700,45 +696,30 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		jTextField.setText(null);
 	}
 	/**
-	 * Sets JTextField enabled false
-	 * @param jTextField
-	 */
-	protected void setFieldsEnabledFalse(JTextField jTextField) {
-		jTextField.setEnabled(false);
-	}
-	/**
 	 * Get KeyStore informations and fill in fields with
 	 */
 	public void getKeyStoreData() {
 		
-		setKeyStoreAlias(getKeyStoreController().GetKeyStoreAlias(getKeyStorefilepath(), getKeyStorePassword(), this)); 
+		setKeyStoreAlias(getKeyStoreController().getKeyStoreAlias(getKeyStorefilepath(), getKeyStorePassword(), this)); 
 		// ---- Get the Content of the keyStore ----------------------
-		data = getKeyStoreController().ListKeyStoreContent(keyStorefilepath, keyStorePassword);
-		// ---- Substring informations from the result ---------------
-		String FullName = data.substring(data.indexOf("CN=") + 3, data.indexOf(",OU"));
-		String OrganizationalUnit = data.substring(data.indexOf("OU=") + 3, data.indexOf(",O="));
-		String Organization = data.substring(data.indexOf("O=") + 2, data.indexOf(",L"));
-		String Locality = data.substring(data.indexOf("L=") + 2, data.indexOf(",ST"));
-		String State = data.substring(data.indexOf("ST=") + 3, data.indexOf(",C"));
-		String CountryCode = data.substring(data.indexOf("C=") + 2, data.indexOf("C=") + 4);
-
+		KeyStoreSettings keyStoreSettings = getKeyStoreController().listKeyStoreContent(keyStorefilepath, keyStorePassword);
 		// ----- Fill in fields with KeyStore informations ----------
-		setFieldsEnabledFalse(this.getKeyStoreConfigPanel().getJTextFieldCity());
-		setFieldsEnabledFalse(this.getKeyStoreConfigPanel().getJTextFieldCountryCode());
-		setFieldsEnabledFalse(this.getKeyStoreConfigPanel().getJTextFieldFullName());
-		setFieldsEnabledFalse(this.getKeyStoreConfigPanel().getJTextFieldOrganization());
-		setFieldsEnabledFalse(this.getKeyStoreConfigPanel().getJTextFieldOrganizationalUnit());
-		setFieldsEnabledFalse(this.getKeyStoreConfigPanel().getJTextFieldState());
-		setFieldsEnabledFalse(this.getKeyStoreConfigPanel().getJTextFieldKeyStoreName());
+		this.getKeyStoreConfigPanel().getJTextFieldCity().setEnabled(false);
+		this.getKeyStoreConfigPanel().getJTextFieldCountryCode().setEnabled(false);
+		this.getKeyStoreConfigPanel().getJTextFieldFullName().setEnabled(false);
+		this.getKeyStoreConfigPanel().getJTextFieldOrganization().setEnabled(false);
+		this.getKeyStoreConfigPanel().getJTextFieldOrganizationalUnit().setEnabled(false);
+		this.getKeyStoreConfigPanel().getJTextFieldState().setEnabled(false);
+		this.getKeyStoreConfigPanel().getJTextFieldKeyStoreName().setEnabled(false);
 		this.getKeyStoreConfigPanel().getJPasswordField().setEnabled(true);
 		this.getKeyStoreConfigPanel().getJPasswordConfirmPassword().setEnabled(true);
 		this.getKeyStoreConfigPanel().getJTextFieldAlias().setEnabled(true);
-		this.getKeyStoreConfigPanel().getJTextFieldCity().setText(Locality);
-		this.getKeyStoreConfigPanel().getJTextFieldCountryCode().setText(CountryCode);
-		this.getKeyStoreConfigPanel().getJTextFieldFullName().setText(FullName);
-		this.getKeyStoreConfigPanel().getJTextFieldOrganization().setText(Organization);
-		this.getKeyStoreConfigPanel().getJTextFieldOrganizationalUnit().setText(OrganizationalUnit);
-		this.getKeyStoreConfigPanel().getJTextFieldState().setText(State);
+		this.getKeyStoreConfigPanel().getJTextFieldCity().setText(keyStoreSettings.getCityOrLocality());
+		this.getKeyStoreConfigPanel().getJTextFieldCountryCode().setText(keyStoreSettings.getCoutryCode());
+		this.getKeyStoreConfigPanel().getJTextFieldFullName().setText(keyStoreSettings.getFullName());
+		this.getKeyStoreConfigPanel().getJTextFieldOrganization().setText(keyStoreSettings.getOrganization());
+		this.getKeyStoreConfigPanel().getJTextFieldOrganizationalUnit().setText(keyStoreSettings.getOrginazationalUnit());
+		this.getKeyStoreConfigPanel().getJTextFieldState().setText(keyStoreSettings.getStateOrProvince());
 		this.getKeyStoreConfigPanel().getJTextFieldKeyStoreName().setText(getKeyStorefilepath().substring(getKeyStorefilepath().lastIndexOf("\\") + 1));
 		this.getKeyStoreConfigPanel().getJTextFieldAlias().setText(getKeyStoreAlias());
 		this.getKeyStoreConfigPanel().getJPasswordField().setText(getKeyStorePassword());
@@ -758,11 +739,13 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		this.getTrustStoreConfigPanel().getScrollPane().setVisible(true);
 		this.getTrustStoreConfigPanel().getJButtonAddCertificate().setVisible(true);
 		this.getTrustStoreConfigPanel().getJButtonRemoveCertificate().setVisible(true);
-		this.getTrustStoreConfigPanel().getListCertificatesAlias().setModel(getTrustStoreController().CertificatesAliaslist(getTrustStorefilepath(), getTrustStorePassword()));
-		this.getTrustStoreConfigPanel().getJPasswordFieldTrustStorePassword().setText(getTrustStorePassword());
-		this.getTrustStoreConfigPanel().getJPasswordFieldTrustStorePassword().setEnabled(true);
-		this.getTrustStoreConfigPanel().getJPasswordFieldTrustStoreConfirmPassword().setText(null);
-		this.getTrustStoreConfigPanel().getJPasswordFieldTrustStoreConfirmPassword().setEnabled(true);
+		this.getTrustStoreController().clearTableModel();
+		this.getTrustStoreController().getTrustedCertificatesList(getTrustStorefilepath(),  getTrustStorePassword());
+		this.getTrustStoreConfigPanel().getjTableTrusTedCertificates().setModel(this.getTrustStoreController().getTableModel());
+		this.getTrustStoreConfigPanel().getJPasswordFieldPassword().setText(getTrustStorePassword());
+		this.getTrustStoreConfigPanel().getJPasswordFieldPassword().setEnabled(true);
+		this.getTrustStoreConfigPanel().getJPasswordFieldConfirmPassword().setText(null);
+		this.getTrustStoreConfigPanel().getJPasswordFieldConfirmPassword().setEnabled(true);
 		this.getJLabelTrustStoreLocationPath().setText(getTrustStorefilepath());
 		this.getJLabelTrustStoreLocationPath().setToolTipText(getTrustStorefilepath());
 		trustStoreButtonPressed = "EditTrustStore";
@@ -817,7 +800,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 					if (option == 0) {
 						// ------------ Press OK --------------------------------
 						keyStorePassword = new String(jPasswordField.getPassword());
-						setKeyStoreAlias(getKeyStoreController().GetKeyStoreAlias(keyStorefilepath, keyStorePassword, this)); 
+						setKeyStoreAlias(getKeyStoreController().getKeyStoreAlias(keyStorefilepath, keyStorePassword, this)); 
 						if (keyStoreAlias == null) {
 							jLabelKeyStoreLocationPath.setText(null);
 							keyStorefilepath = null;
@@ -844,10 +827,10 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 			trustStoreConfigPanel.getScrollPane().setVisible(false);
 			trustStoreConfigPanel.getJButtonAddCertificate().setVisible(false);
 			trustStoreConfigPanel.getJButtonRemoveCertificate().setVisible(false);
-			trustStoreConfigPanel.getJPasswordFieldTrustStoreConfirmPassword().setText(null);
-			trustStoreConfigPanel.getJPasswordFieldTrustStorePassword().setText(null);
-			trustStoreConfigPanel.getJPasswordFieldTrustStoreConfirmPassword().setEnabled(true);
-			trustStoreConfigPanel.getJPasswordFieldTrustStorePassword().setEnabled(true);
+			trustStoreConfigPanel.getJPasswordFieldConfirmPassword().setText(null);
+			trustStoreConfigPanel.getJPasswordFieldPassword().setText(null);
+			trustStoreConfigPanel.getJPasswordFieldConfirmPassword().setEnabled(true);
+			trustStoreConfigPanel.getJPasswordFieldPassword().setEnabled(true);
 			jLabelTrustStoreLocationPath.setText(null);
 			trustStorefilepath = null;
 			trustStoreButtonPressed = "CreateTrustStore";
@@ -878,15 +861,14 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 					trustStorePassword = new String(jPasswordFiled.getPassword());
 					if (option == 0) {
 						// ---- Press OK Button ------------------------------
-						boolean passwordIsTrue = getTrustStoreController().OpenTrustStore(trustStorefilepath, trustStorePassword);
+						boolean passwordIsTrue = getTrustStoreController().openTrustStore(trustStorefilepath, trustStorePassword, this);
 						if (passwordIsTrue == false) {
 							jLabelTrustStoreLocationPath.setText(null);
 							trustStorefilepath = null;
 							getTrustStoreConfigPanel().getJTextFieldTrustStoreName().setText(null);
-							getTrustStoreConfigPanel().getJPasswordFieldTrustStorePassword().setText(null);
-							getTrustStoreConfigPanel().getJPasswordFieldTrustStoreConfirmPassword().setText(null);
-							DefaultListModel<String> defaultListModel = new DefaultListModel<String>();
-							getTrustStoreConfigPanel().getListCertificatesAlias().setModel(defaultListModel);
+							getTrustStoreConfigPanel().getJPasswordFieldPassword().setText(null);
+							getTrustStoreConfigPanel().getJPasswordFieldConfirmPassword().setText(null);
+							this.getTrustStoreController().clearTableModel();
 						} else {
 							getTrustStoreData();
 						}

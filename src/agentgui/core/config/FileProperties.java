@@ -111,7 +111,8 @@ public class FileProperties extends Properties {
 	private final String DEF_DeviceServcie_ExecAsAgent = "Agent";
 	private final String DEF_DeviceServcie_Setup = "42_DEVICE_SERVICE_SETUP";
 	private final String DEF_DeviceServcie_Agent = "43_DEVICE_SERVICE_AGENT";
-	private final String DEF_DeviceServcie_Vis = "44_DEVICE_SERVICE_VISUALISATION";
+	private final String DEF_DeviceServcie_AgentName = "44_DEVICE_SERVICE_AGENT_Name";
+	private final String DEF_DeviceServcie_Vis = "45_DEVICE_SERVICE_VISUALISATION";
 	private final String DEF_DeviceServcie_Vis_None = "None";
 	private final String DEF_DeviceServcie_Vis_TrayIcon = "TrayIcon";
 	
@@ -452,6 +453,13 @@ public class FileProperties extends Properties {
 		} else {
 			Application.getGlobalInfo().setDeviceServiceAgentSelected(propValue);
 		}
+		// --- this.DEF_DeviceServcie_AgentName -----------
+		propValue = this.getProperty(this.DEF_DeviceServcie_AgentName);
+		if (propValue == null || propValue.equals("")) {
+			Application.getGlobalInfo().setDeviceServiceAgentNameSelected(null);
+		} else {
+			Application.getGlobalInfo().setDeviceServiceAgentNameSelected(propValue);
+		}
 		// --- this.DEF_DeviceServcie_Vis -------------
 		propValue = this.getProperty(this.DEF_DeviceServcie_Vis);
 		if (propValue==null || propValue.equals("")) {
@@ -667,6 +675,12 @@ public class FileProperties extends Properties {
 			this.setProperty(this.DEF_DeviceServcie_Agent, "");
 		} else {
 			this.setProperty(this.DEF_DeviceServcie_Agent, Application.getGlobalInfo().getDeviceServiceAgentSelected());
+		}
+		// --- this.DEF_DeviceServcie_AgentName -----------
+		if (Application.getGlobalInfo().getDeviceServiceAgentNameSelected() == null) {
+			this.setProperty(this.DEF_DeviceServcie_AgentName, "");
+		} else {
+			this.setProperty(this.DEF_DeviceServcie_AgentName, Application.getGlobalInfo().getDeviceServiceAgentNameSelected());
 		}
 		// --- this.DEF_DeviceServcie_Vis -------------
 		switch (Application.getGlobalInfo().getDeviceServiceAgentVisualisation()) {

@@ -164,6 +164,7 @@ public class GlobalInfo {
 	private DeviceSystemExecutionMode deviceServiceExecutionMode = DeviceSystemExecutionMode.SETUP;
 	private String deviceServiceSetupSelected;  
 	private String deviceServiceAgentSelected;
+	private String deviceServiceAgentNameSelected;
 	private EmbeddedSystemAgentVisualisation deviceServiceAgentVisualisation = EmbeddedSystemAgentVisualisation.TRAY_ICON;
 	
 	private String filePropKeyStoreFile;
@@ -1594,6 +1595,21 @@ public class GlobalInfo {
 		this.deviceServiceAgentSelected = deviceServiceAgentSelected;
 	}
 	
+	/**
+	 * Gets the device service agent name selected.
+	 * @return the device service agent name selected
+	 */
+	public String getDeviceServiceAgentNameSelected() {
+		return deviceServiceAgentNameSelected;
+	}
+	
+	/**
+	 * Sets the device service agent name selected.
+	 * @param deviceServiceAgentNameSelected the new device service agent name selected
+	 */
+	public void setDeviceServiceAgentNameSelected(String deviceServiceAgentNameSelected) {
+		this.deviceServiceAgentNameSelected = deviceServiceAgentNameSelected;
+	}
 	/**
 	 * Gets the device service agent visualisation.
 	 * @return the device service agent visualisation

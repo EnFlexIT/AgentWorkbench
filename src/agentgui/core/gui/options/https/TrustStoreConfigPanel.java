@@ -1,7 +1,7 @@
 /**
  * ***************************************************************
- * Agent.GUI is a thiswork to develop Multi-agent based simulation 
- * applications based on the JADE - thiswork in compliance with the 
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
  * http://www.dawis.wiwi.uni-due.de
@@ -29,6 +29,7 @@
 package agentgui.core.gui.options.https;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -36,20 +37,21 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.EtchedBorder;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 
@@ -65,33 +67,49 @@ import agentgui.core.application.Language;
  * @since 05-04-2016
  */
 
-public class TrustStoreConfigPanel extends JPanel implements ActionListener {
+public class TrustStoreConfigPanel extends JPanel implements ActionListener,MouseListener {
 
 	private static final long serialVersionUID = -4676410555112580221L;
 
-	private final Dimension fieldSize = new Dimension(120, 26);
-
 	private HttpsConfigWindow httpsConfigWindow;
 	private TrustStoreController trustStoreController;
-
 	private JPanel jPanelButtons;
+	private JPanel jPanelCertificateInfo;
 
 	private JLabel jLabelTrustStoreInformations;
 	private JLabel jLabelTruststoreName;
 	private JLabel jLabelTrustStorePassword;
 	private JLabel jLabelTrustStoreConfirmPassword;
 	private JLabel jLabelCertificatesList;
+	private JLabel jLabelCertificateAlias;
+	private JLabel jLabelCertificateValidity;
+	private JLabel jLabelOwnerInformations;
+	private JLabel jLabelCertificateInformations;
+	private JLabel jLabelFullname;
+	private JLabel jLabelOrganization;
+	private JLabel jLabelOrginazationalUnit;
+	private JLabel jLabelCity;
+	private JLabel jLabelStateOrProvince;
+	private JLabel jLabelCoutryCode;
+	private JLabel jLabelAlias;
+	private JLabel jLabelValidity;
+	private JLabel jLabelName;
+	private JLabel jLabelOrg;
+	private JLabel jLabelOrgUnit;
+	private JLabel jLabelCityOrLocality;
+	private JLabel jLabelState;
+	private JLabel jLabelCountry;
 	
 	private JTextField jTextFieldTrustStoreName;
-	private JPasswordField jPasswordFieldTrustStorePassword;
-	private JPasswordField jPasswordFieldTrustStoreConfirmPassword;
+	private JPasswordField jPasswordFieldPassword;
+	private JPasswordField jPasswordFieldConfirmPassword;
 
 	private JButton jButtonAddCertificate;
 	private JButton jButtonRemoveCertificate;
 	private JButton jButtonApplyTrustStore;
 	
 	private JScrollPane jscrollPane;
-	private JList<String> jListCertificatesAlias;
+	private JTable jTableTrusTedCertificates;
 	
 	private JFileChooser jFileChooser;
 	private JFileChooser jFileChooserFile;
@@ -100,6 +118,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	private final ImageIcon iconSave = new ImageIcon( this.getClass().getResource( pathImage + "MBsave.png") );
 	private final ImageIcon iconAdd = new ImageIcon( this.getClass().getResource( pathImage + "ListPlus.png") );
 	private final ImageIcon iconRemove = new ImageIcon( this.getClass().getResource( pathImage + "ListMinus.png") );
+	private final Dimension fieldSize = new Dimension(120, 26);
 
 	/**
 	 * Create the application.
@@ -162,14 +181,14 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 		gbc_jPasswordFieldTrustStorePassword.insets = new Insets(0, 0, 5, 10);
 		gbc_jPasswordFieldTrustStorePassword.gridx = 1;
 		gbc_jPasswordFieldTrustStorePassword.gridy = 2;
-		add(getJPasswordFieldTrustStorePassword(), gbc_jPasswordFieldTrustStorePassword);
+		add(getJPasswordFieldPassword(), gbc_jPasswordFieldTrustStorePassword);
 		GridBagConstraints gbc_jPasswordFieldTrustStoreConfirmPassword = new GridBagConstraints();
 		gbc_jPasswordFieldTrustStoreConfirmPassword.gridwidth = 2;
 		gbc_jPasswordFieldTrustStoreConfirmPassword.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jPasswordFieldTrustStoreConfirmPassword.insets = new Insets(0, 0, 5, 10);
 		gbc_jPasswordFieldTrustStoreConfirmPassword.gridx = 1;
 		gbc_jPasswordFieldTrustStoreConfirmPassword.gridy = 3;
-		add(getJPasswordFieldTrustStoreConfirmPassword(), gbc_jPasswordFieldTrustStoreConfirmPassword);
+		add(getJPasswordFieldConfirmPassword(), gbc_jPasswordFieldTrustStoreConfirmPassword);
 		GridBagConstraints gbc_LabelCertificatesList = new GridBagConstraints();
 		gbc_LabelCertificatesList.anchor = GridBagConstraints.WEST;
 		gbc_LabelCertificatesList.insets = new Insets(5, 10, 5, 5);
@@ -216,6 +235,303 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jPanelButtons;
 	}
+	
+	private JPanel getJPanelCertificateInfo(){
+		if (jPanelCertificateInfo == null){
+			jPanelCertificateInfo = new JPanel();
+			
+			GridBagLayout gridBagLayout = new GridBagLayout();
+			gridBagLayout.columnWidths = new int[]{0, 0, 0};
+			gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+			gridBagLayout.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			jPanelCertificateInfo.setLayout(gridBagLayout);
+			GridBagConstraints gbc_jLabelCertificateInformations = new GridBagConstraints();
+			gbc_jLabelCertificateInformations.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCertificateInformations.gridwidth = 2;
+			gbc_jLabelCertificateInformations.insets = new Insets(0, 5, 5, 0);
+			gbc_jLabelCertificateInformations.gridx = 0;
+			gbc_jLabelCertificateInformations.gridy = 0;
+			jPanelCertificateInfo.add(getJLabelCertificateInformations(), gbc_jLabelCertificateInformations);
+			GridBagConstraints gbc_jLabelCertificateAlias = new GridBagConstraints();
+			gbc_jLabelCertificateAlias.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCertificateAlias.insets = new Insets(0, 5, 5, 5);
+			gbc_jLabelCertificateAlias.gridx = 0;
+			gbc_jLabelCertificateAlias.gridy = 1;
+			jPanelCertificateInfo.add(getJLabelCertificateAlias(), gbc_jLabelCertificateAlias);
+			GridBagConstraints gbc_jLabelAlias = new GridBagConstraints();
+			gbc_jLabelAlias.anchor = GridBagConstraints.WEST;
+			gbc_jLabelAlias.insets = new Insets(0, 0, 5, 0);
+			gbc_jLabelAlias.gridx = 1;
+			gbc_jLabelAlias.gridy = 1;
+			jPanelCertificateInfo.add(getJLabelAlias(), gbc_jLabelAlias);
+			GridBagConstraints gbc_jLabelCertificateValidity = new GridBagConstraints();
+			gbc_jLabelCertificateValidity.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCertificateValidity.insets = new Insets(0, 5, 5, 5);
+			gbc_jLabelCertificateValidity.gridx = 0;
+			gbc_jLabelCertificateValidity.gridy = 2;
+			jPanelCertificateInfo.add(getJLabelCertificateExpirationdDate(), gbc_jLabelCertificateValidity);
+			GridBagConstraints gbc_jLabelValidity = new GridBagConstraints();
+			gbc_jLabelValidity.anchor = GridBagConstraints.WEST;
+			gbc_jLabelValidity.insets = new Insets(0, 0, 5, 0);
+			gbc_jLabelValidity.gridx = 1;
+			gbc_jLabelValidity.gridy = 2;
+			jPanelCertificateInfo.add(getJLabelValidity(), gbc_jLabelValidity);
+			GridBagConstraints gbc_jLabelOwnerInformations = new GridBagConstraints();
+			gbc_jLabelOwnerInformations.gridwidth = 2;
+			gbc_jLabelOwnerInformations.insets = new Insets(10, 5, 5, 0);
+			gbc_jLabelOwnerInformations.anchor = GridBagConstraints.WEST;
+			gbc_jLabelOwnerInformations.gridx = 0;
+			gbc_jLabelOwnerInformations.gridy = 3;
+			jPanelCertificateInfo.add(getJLabelOwnerInformations(), gbc_jLabelOwnerInformations);
+			GridBagConstraints gbc_jLabelFullname = new GridBagConstraints();
+			gbc_jLabelFullname.insets = new Insets(0, 5, 5, 5);
+			gbc_jLabelFullname.anchor = GridBagConstraints.WEST;
+			gbc_jLabelFullname.gridx = 0;
+			gbc_jLabelFullname.gridy = 4;
+			jPanelCertificateInfo.add(getJLabelFullname(), gbc_jLabelFullname);
+			GridBagConstraints gbc_jLabelName = new GridBagConstraints();
+			gbc_jLabelName.anchor = GridBagConstraints.WEST;
+			gbc_jLabelName.insets = new Insets(0, 0, 5, 0);
+			gbc_jLabelName.gridx = 1;
+			gbc_jLabelName.gridy = 4;
+			jPanelCertificateInfo.add(getJLabelName(), gbc_jLabelName);
+			GridBagConstraints gbc_jLabelOrganization = new GridBagConstraints();
+			gbc_jLabelOrganization.anchor = GridBagConstraints.WEST;
+			gbc_jLabelOrganization.insets = new Insets(0, 5, 5, 5);
+			gbc_jLabelOrganization.gridx = 0;
+			gbc_jLabelOrganization.gridy = 5;
+			jPanelCertificateInfo.add(getJLabelOrganization(), gbc_jLabelOrganization);
+			GridBagConstraints gbc_jLabelOrg = new GridBagConstraints();
+			gbc_jLabelOrg.anchor = GridBagConstraints.WEST;
+			gbc_jLabelOrg.insets = new Insets(0, 0, 5, 0);
+			gbc_jLabelOrg.gridx = 1;
+			gbc_jLabelOrg.gridy = 5;
+			jPanelCertificateInfo.add(getJLabelOrg(), gbc_jLabelOrg);
+			GridBagConstraints gbc_jLabelOrginazationalUnit = new GridBagConstraints();
+			gbc_jLabelOrginazationalUnit.insets = new Insets(0, 5, 5, 5);
+			gbc_jLabelOrginazationalUnit.anchor = GridBagConstraints.WEST;
+			gbc_jLabelOrginazationalUnit.gridx = 0;
+			gbc_jLabelOrginazationalUnit.gridy = 6;
+			jPanelCertificateInfo.add(getJLabelOrginazationalUnit(), gbc_jLabelOrginazationalUnit);
+			GridBagConstraints gbc_jLabelOrgUnit = new GridBagConstraints();
+			gbc_jLabelOrgUnit.anchor = GridBagConstraints.WEST;
+			gbc_jLabelOrgUnit.insets = new Insets(0, 0, 5, 0);
+			gbc_jLabelOrgUnit.gridx = 1;
+			gbc_jLabelOrgUnit.gridy = 6;
+			jPanelCertificateInfo.add(getJLabelOrgUnit(), gbc_jLabelOrgUnit);
+			GridBagConstraints gbc_jLabelCity = new GridBagConstraints();
+			gbc_jLabelCity.insets = new Insets(0, 5, 5, 5);
+			gbc_jLabelCity.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCity.gridx = 0;
+			gbc_jLabelCity.gridy = 7;
+			jPanelCertificateInfo.add(getJLabelCity(), gbc_jLabelCity);
+			GridBagConstraints gbc_jLabelCityOrLocality = new GridBagConstraints();
+			gbc_jLabelCityOrLocality.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCityOrLocality.insets = new Insets(0, 0, 5, 0);
+			gbc_jLabelCityOrLocality.gridx = 1;
+			gbc_jLabelCityOrLocality.gridy = 7;
+			jPanelCertificateInfo.add(getJLabelCityOrLocality(), gbc_jLabelCityOrLocality);
+			GridBagConstraints gbc_jLabelStateOrProvince = new GridBagConstraints();
+			gbc_jLabelStateOrProvince.anchor = GridBagConstraints.WEST;
+			gbc_jLabelStateOrProvince.insets = new Insets(0, 5, 5, 5);
+			gbc_jLabelStateOrProvince.gridx = 0;
+			gbc_jLabelStateOrProvince.gridy = 8;
+			jPanelCertificateInfo.add(getJLabelStateOrProvince(), gbc_jLabelStateOrProvince);
+			GridBagConstraints gbc_jLabelState = new GridBagConstraints();
+			gbc_jLabelState.anchor = GridBagConstraints.WEST;
+			gbc_jLabelState.insets = new Insets(0, 0, 5, 0);
+			gbc_jLabelState.gridx = 1;
+			gbc_jLabelState.gridy = 8;
+			jPanelCertificateInfo.add(getJLabelState(), gbc_jLabelState);
+			GridBagConstraints gbc_jLabelCoutryCode = new GridBagConstraints();
+			gbc_jLabelCoutryCode.insets = new Insets(0, 5, 0, 5);
+			gbc_jLabelCoutryCode.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCoutryCode.gridx = 0;
+			gbc_jLabelCoutryCode.gridy = 9;
+			jPanelCertificateInfo.add(getJLabelCoutryCode(), gbc_jLabelCoutryCode);
+			GridBagConstraints gbc_jLabelCountry = new GridBagConstraints();
+			gbc_jLabelCountry.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCountry.gridx = 1;
+			gbc_jLabelCountry.gridy = 9;
+			jPanelCertificateInfo.add(getJLabelCountry(), gbc_jLabelCountry);
+		}
+		return jPanelCertificateInfo;
+	}
+	
+	/**
+	 * This method initializes jLabelCertificateAlias.
+	 */
+	private JLabel getJLabelCertificateAlias() {
+		if (jLabelCertificateAlias == null) {
+			jLabelCertificateAlias = new JLabel("Alias:");
+			jLabelCertificateAlias.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelCertificateAlias;
+	}
+	/**
+	 * This method initializes jLabelCertificateValidity.
+	 */
+	private JLabel getJLabelCertificateExpirationdDate() {
+		if (jLabelCertificateValidity == null) {
+			jLabelCertificateValidity = new JLabel("Expiration date:");
+			jLabelCertificateValidity.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelCertificateValidity;
+	}
+	/**
+	 * This method initializes jLabelOwnerInformations.
+	 */
+	private JLabel getJLabelOwnerInformations() {
+		if (jLabelOwnerInformations == null) {
+			jLabelOwnerInformations = new JLabel("Owner Informations");
+			jLabelOwnerInformations.setFont(new Font("Dialog", Font.BOLD, 11));
+		}
+		return jLabelOwnerInformations;
+	}
+	/**
+	 * This method initializes jLabelCertificateInformations.
+	 */
+	private JLabel getJLabelCertificateInformations() {
+		if (jLabelCertificateInformations == null) {
+			jLabelCertificateInformations = new JLabel("Certificate Informations");
+			jLabelCertificateInformations.setFont(new Font("Dialog", Font.BOLD, 11));
+		}
+		return jLabelCertificateInformations;
+	}
+	/**
+	 * This method initializes jLabelFullname.
+	 */
+	private JLabel getJLabelFullname() {
+		if (jLabelFullname == null) {
+			jLabelFullname = new JLabel("Full Name:");
+			jLabelFullname.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelFullname;
+	}
+	/**
+	 * This method initializes jLabelOrganization.
+	 */
+	private JLabel getJLabelOrganization() {
+		if (jLabelOrganization == null) {
+			jLabelOrganization = new JLabel("Organization:");
+			jLabelOrganization.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelOrganization;
+	}
+	/**
+	 * This method initializes jLabelOrginazationalUnit.
+	 */
+	private JLabel getJLabelOrginazationalUnit() {
+		if (jLabelOrginazationalUnit == null) {
+			jLabelOrginazationalUnit = new JLabel("Orginazational Unit:");
+			jLabelOrginazationalUnit.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelOrginazationalUnit;
+	}
+	/**
+	 * This method initializes jLabelCity.
+	 */
+	private JLabel getJLabelCity() {
+		if (jLabelCity == null) {
+			jLabelCity = new JLabel("City Or Locality:");
+			jLabelCity.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelCity;
+	}
+	/**
+	 * This method initializes jLabelStateOrProvince.
+	 */
+	private JLabel getJLabelStateOrProvince() {
+		if (jLabelStateOrProvince == null) {
+			jLabelStateOrProvince = new JLabel("State Or Province:");
+			jLabelStateOrProvince.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelStateOrProvince;
+	}
+	/**
+	 * This method initializes jLabelCoutryCode.
+	 */
+	private JLabel getJLabelCoutryCode() {
+		if (jLabelCoutryCode == null) {
+			jLabelCoutryCode = new JLabel("Coutry Code:");
+			jLabelCoutryCode.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelCoutryCode;
+	}
+	/**
+	 * This method initializes jLabelAlias.
+	 */
+	private JLabel getJLabelAlias() {
+		if (jLabelAlias == null) {
+			jLabelAlias = new JLabel("");
+		}
+		return jLabelAlias;
+	}
+	/**
+	 * This method initializes jLabelValidity.
+	 */
+	private JLabel getJLabelValidity() {
+		if (jLabelValidity == null) {
+			jLabelValidity = new JLabel("");
+		}
+		return jLabelValidity;
+	}
+	/**
+	 * This method initializes jLabelName.
+	 */
+	private JLabel getJLabelName() {
+		if (jLabelName == null) {
+			jLabelName = new JLabel("");
+		}
+		return jLabelName;
+	}
+	/**
+	 * This method initializes jLabelOrg.
+	 */
+	private JLabel getJLabelOrg() {
+		if (jLabelOrg == null) {
+			jLabelOrg = new JLabel("");
+		}
+		return jLabelOrg;
+	}
+	/**
+	 * This method initializes jLabelOrgUnit.
+	 */
+	private JLabel getJLabelOrgUnit() {
+		if (jLabelOrgUnit == null) {
+			jLabelOrgUnit = new JLabel("");
+		}
+		return jLabelOrgUnit;
+	}
+	/**
+	 * This method initializes jLabelCityOrLocality.
+	 */
+	private JLabel getJLabelCityOrLocality() {
+		if (jLabelCityOrLocality == null) {
+			jLabelCityOrLocality = new JLabel("");
+		}
+		return jLabelCityOrLocality;
+	}
+	/**
+	 * This method initializes jLabelState.
+	 */
+	private JLabel getJLabelState() {
+		if (jLabelState == null) {
+			jLabelState = new JLabel("");
+		}
+		return jLabelState;
+	}
+	/**
+	 * This method initializes jLabelCountry.
+	 */
+	private JLabel getJLabelCountry() {
+		if (jLabelCountry == null) {
+			jLabelCountry = new JLabel("");
+		}
+		return jLabelCountry;
+	}
+	
 	/**
 	 * This method initializes TrustStoreController.
 	 */
@@ -279,31 +595,24 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	/**
 	 * This method initializes jPasswordFieldTrustStorePassword.
 	 */
-	protected JPasswordField getJPasswordFieldTrustStorePassword() {
-		if (jPasswordFieldTrustStorePassword == null) {
-			jPasswordFieldTrustStorePassword = new JPasswordField();
-			jPasswordFieldTrustStorePassword.setEnabled(false);
-			jPasswordFieldTrustStorePassword.setPreferredSize(this.fieldSize);
+	protected JPasswordField getJPasswordFieldPassword() {
+		if (jPasswordFieldPassword == null) {
+			jPasswordFieldPassword = new JPasswordField();
+			jPasswordFieldPassword.setEnabled(false);
+			jPasswordFieldPassword.setPreferredSize(this.fieldSize);
 		}
-		return jPasswordFieldTrustStorePassword;
+		return jPasswordFieldPassword;
 	}
 	/**
 	 * This method initializes jPasswordFieldTrustStoreConfirmPassword.
 	 */
-	protected JPasswordField getJPasswordFieldTrustStoreConfirmPassword() {
-		if (jPasswordFieldTrustStoreConfirmPassword == null) {
-			jPasswordFieldTrustStoreConfirmPassword = new JPasswordField();
-			jPasswordFieldTrustStoreConfirmPassword.setEnabled(false);
-			jPasswordFieldTrustStoreConfirmPassword.setPreferredSize(this.fieldSize);
+	protected JPasswordField getJPasswordFieldConfirmPassword() {
+		if (jPasswordFieldConfirmPassword == null) {
+			jPasswordFieldConfirmPassword = new JPasswordField();
+			jPasswordFieldConfirmPassword.setEnabled(false);
+			jPasswordFieldConfirmPassword.setPreferredSize(this.fieldSize);
 		}
-		return jPasswordFieldTrustStoreConfirmPassword;
-	}
-	/**
-	 * Sets JPasswordFieldTrustStoreConfirmPassword.
-	 * @param jPasswordFieldTrustStoreConfirmPassword
-	 */
-	protected void setJPasswordFieldTrustStoreConfirmPassword(JPasswordField jPasswordFieldTrustStoreConfirmPassword) {
-		this.jPasswordFieldTrustStoreConfirmPassword = jPasswordFieldTrustStoreConfirmPassword;
+		return jPasswordFieldConfirmPassword;
 	}
 	/**
 	 * This method initializes jLabelCertificatesList.
@@ -364,19 +673,10 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 	protected JScrollPane getScrollPane() {
 		if (jscrollPane == null) {
 			jscrollPane = new JScrollPane();
-			jscrollPane.setViewportView(getListCertificatesAlias());
+			jscrollPane.setViewportView(getjTableTrusTedCertificates());
+			jscrollPane.setPreferredSize(new Dimension(200, 170));
 		}
 		return jscrollPane;
-	}
-	/**
-	 * This method initializes jListCertificatesAlias.
-	 */
-	protected JList<String> getListCertificatesAlias() {
-		if (jListCertificatesAlias == null) {
-			jListCertificatesAlias = new JList<String>();
-			jListCertificatesAlias.setVisibleRowCount(4);
-		}
-		return jListCertificatesAlias;
 	}
 	/**
 	 * This method initializes jFileChooser.
@@ -401,6 +701,18 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 		return jFileChooserFile;
 	}
 	
+	/**
+	 * Gets the jTableTrusTedCertificates.
+	 * @return the jTableTrusTedCertificates
+	 */
+	public JTable getjTableTrusTedCertificates() {
+		if (jTableTrusTedCertificates == null) {
+			jTableTrusTedCertificates = new JTable(getTrustStoreController().getTableModel());
+			jTableTrusTedCertificates.addMouseListener(this);
+		}
+		return jTableTrusTedCertificates;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -410,86 +722,83 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 			// ----- Create TrustStore ------------------------------------
 			if (this.httpsConfigWindow.getTrustStoreButtonPressed() == "CreateTrustStore") {
 				// ---- Verify if all the fields are filled ---------------
-				if (jTextFieldTrustStoreName.getText().equals("") 
-						|| jPasswordFieldTrustStorePassword.getPassword().equals("")
-						|| jPasswordFieldTrustStoreConfirmPassword.getPassword().equals("")) {
+				if (this.getJTextFieldTrustStoreName().getText().equals("")  || this.getJPasswordFieldPassword().getPassword().equals("") || this.getJPasswordFieldConfirmPassword().getPassword().equals("")) {
 					String msg = Language.translate("You must fill out all required fields!",Language.EN);
 					String title = Language.translate("Required fields",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
-				/*
+				/* --------------------------------------------------------
 				 * ----- Verify if The password and its confirm -----------
 				 * ---------------- are the same --------------------------
 				 */
-				else if (!Arrays.equals(jPasswordFieldTrustStorePassword.getPassword(),jPasswordFieldTrustStoreConfirmPassword.getPassword())) {
+				else if (!Arrays.equals(this.getJPasswordFieldPassword().getPassword(),this.getJPasswordFieldConfirmPassword().getPassword())) {
 					String msg = Language.translate("The password and its confirm are not the same!",Language.EN);
 					String title = Language.translate("Warning",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
-				/*
+				/* --------------------------------------------------------
 				 * ----- Verify if the password is at least ---------------
 				 * ------------- 6 characters in length -------------------
 				 */
-				else if (jPasswordFieldTrustStorePassword.getPassword().length < 6) {
+				else if (this.getJPasswordFieldPassword().getPassword().length < 6) {
 					String msg = Language.translate("The password should be at least 6 characters in length!",Language.EN);
 					String title = Language.translate("Password length",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}else {
-					String trustStoreName = jTextFieldTrustStoreName.getText() + "TrustStore.jks";
-					String trustStorePassword = new String (jPasswordFieldTrustStorePassword.getPassword());
+					String trustStoreName = this.getJTextFieldTrustStoreName().getText() + "TrustStore.jks";
+					String trustStorePassword = new String (this.getJPasswordFieldPassword().getPassword());
 					this.httpsConfigWindow.setTrustStorePassword(trustStorePassword);
 					getJFileChooser();
 					int jfile = jFileChooser.showSaveDialog(null);
 					if (jfile == JFileChooser.APPROVE_OPTION) {
+						Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
 						this.httpsConfigWindow.setTrustStorefilepath(jFileChooser.getSelectedFile().getAbsoluteFile().getAbsolutePath() + "\\"+trustStoreName); 
-						getTrustStoreController().CreateTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(),this.httpsConfigWindow.getTrustStorefilepath());
-						
+						this.getTrustStoreController().createTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(),this.httpsConfigWindow.getTrustStorefilepath(),ownerDialog);
 						String msg = Language.translate("Your TrustStore has been created successfully!",Language.EN);
 						String title = Language.translate("TrustStore created",Language.EN);
 						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
-						
 						this.httpsConfigWindow.getJLabelTrustStoreLocationPath().setText(this.httpsConfigWindow.getTrustStorefilepath());
-						jTextFieldTrustStoreName.setEnabled(false);
-						jLabelCertificatesList.setVisible(true);
-						jscrollPane.setVisible(true);
-						jButtonAddCertificate.setVisible(true);
-						jButtonRemoveCertificate.setVisible(true);
-						jPasswordFieldTrustStoreConfirmPassword.setText(null);
-						jPasswordFieldTrustStorePassword.setText(trustStorePassword);
-						jTextFieldTrustStoreName.setText(this.httpsConfigWindow.getTrustStorefilepath().substring(this.httpsConfigWindow.getTrustStorefilepath().lastIndexOf("\\") + 1));
-						getListCertificatesAlias().setModel(getTrustStoreController().CertificatesAliaslist(this.httpsConfigWindow.getTrustStorefilepath(), this.httpsConfigWindow.getTrustStorePassword()));
+						this.getJTextFieldTrustStoreName().setEnabled(false);
+						this.getJLabelCertificatesList().setVisible(true);
+						this.getScrollPane().setVisible(true);
+						this.getJButtonAddCertificate().setVisible(true);
+						this.getJButtonRemoveCertificate().setVisible(true);
+						this.getJPasswordFieldConfirmPassword().setText(null);
+						this.getJPasswordFieldPassword().setText(trustStorePassword);
+						this.getJTextFieldTrustStoreName().setText(this.httpsConfigWindow.getTrustStorefilepath().substring(this.httpsConfigWindow.getTrustStorefilepath().lastIndexOf("\\") + 1));
+						this.getTrustStoreController().clearTableModel();
+						this.getTrustStoreController().getTrustedCertificatesList(this.httpsConfigWindow.getTrustStorefilepath(), this.httpsConfigWindow.getTrustStorePassword());
+						this.getjTableTrusTedCertificates().setModel(getTrustStoreController().getTableModel());
 						this.httpsConfigWindow.setTrustStoreButtonPressed("EditTrustStore");
 					}
 				}
 
 			} else if (this.httpsConfigWindow.getTrustStoreButtonPressed() == "EditTrustStore") {
-				// ---- Verify if all the fields are filled ----
-				if (jTextFieldTrustStoreName.getText().equals("")
-						|| jPasswordFieldTrustStorePassword.getPassword().equals("")
-						|| jPasswordFieldTrustStoreConfirmPassword.getPassword().equals("")) {
+				// ---- Verify if all the fields are filled ----------
+				if (this.getJTextFieldTrustStoreName().getText().equals("") || this.getJPasswordFieldPassword().getPassword().equals("") || this.getJPasswordFieldConfirmPassword().getPassword().equals("")) {
 					String msg = Language.translate("You must fill out all required fields!",Language.EN);
 					String title = Language.translate("Required fields",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
-				/*
-				 * ----- Verify if The password and its confirm ----
-				 * ---------------- are the same -----------------
+				/* ---------------------------------------------------
+				 * ----- Verify if The password and its confirm ------
+				 * ---------------- are the same ---------------------
 				 */
-				else if (!Arrays.equals(jPasswordFieldTrustStorePassword.getPassword(),jPasswordFieldTrustStoreConfirmPassword.getPassword())) {
+				else if (!Arrays.equals(this.getJPasswordFieldPassword().getPassword(),this.getJPasswordFieldConfirmPassword().getPassword())) {
 					String msg = Language.translate("The password and its confirm are not the same!",Language.EN);
 					String title = Language.translate("Warning",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
-				/*
+				/* ---------------------------------------------------
 				 * ----- Verify if the password is at least ----------
 				 * ------------- 6 characters in length --------------
 				 */
-				else if (jPasswordFieldTrustStorePassword.getPassword().length < 6) {
+				else if (this.getJPasswordFieldPassword().getPassword().length < 6) {
 					String msg = Language.translate("The password should be at least 6 characters in length!",Language.EN);
 					String title = Language.translate("Password length",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				} else {
-					String newTrustStorePassword = new String(jPasswordFieldTrustStorePassword.getPassword());
+					String newTrustStorePassword = new String(this.getJPasswordFieldPassword().getPassword());
 					String keystorename = this.httpsConfigWindow.getTrustStorefilepath().substring(this.httpsConfigWindow.getTrustStorefilepath().lastIndexOf("\\") + 1);
 					// --- Create JOptionPane to enter the old TrustStore password ---
 					JPanel jPanelPassword = new JPanel();
@@ -507,15 +816,13 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 					if (option == 0) {
 						// ------------ Press OK -------------------------------
 						if (this.httpsConfigWindow.getTrustStorePassword().equals(oldPassword)){
-							getTrustStoreController().EditTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(), newTrustStorePassword);
-							
+							this.getTrustStoreController().editTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(), newTrustStorePassword);
 							String msg = Language.translate("Your TrustStore has been updated successfully!",Language.EN);
 							String title1 = Language.translate("TrustStore updated",Language.EN);
 							JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.INFORMATION_MESSAGE); 
-							
 							this.httpsConfigWindow.setTrustStorePassword(newTrustStorePassword);
-							jPasswordFieldTrustStoreConfirmPassword.setText(null);
-							jPasswordFieldTrustStorePassword.setText(newTrustStorePassword);
+							this.getJPasswordFieldConfirmPassword().setText(null);
+							this.getJPasswordFieldPassword().setText(newTrustStorePassword);
 						}else{
 							String msg = Language.translate("The password you entered is incorrect. Please try again!",Language.EN);
 							String title2 = Language.translate("Password incorrect",Language.EN);
@@ -537,10 +844,9 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 				this.httpsConfigWindow.getJFileChooser();
 				int result = this.httpsConfigWindow.getJFileChooser().showOpenDialog(null);
 				if (result == JFileChooser.APPROVE_OPTION) {
-					// ---- Choose the certificate to add ------------
+					// ---- Choose the certificate to add ------------------------------
 					String certificateToAdd = this.httpsConfigWindow.getJFileChooser().getSelectedFile().getPath();
-					// ----- Generate a JOptionDialog to enter ----\\
-					// -------------- Certificate alias ------------\\
+					// ----- Generate a JOptionDialog to enter certificate alias -------
 					JPanel jPanelCertificate = new JPanel();
 					JLabel jLabelCertificate = new JLabel(Language.translate("Please, enter Certificate's alias ",Language.EN)+":");
 					jLabelCertificate.setFont(new Font("Dialog", Font.BOLD, 11));
@@ -551,16 +857,18 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 					String[] options = new String[] { "OK", "Cancel" };
 					int option = JOptionPane.showOptionDialog(null, jPanelCertificate, title, JOptionPane.NO_OPTION,JOptionPane.PLAIN_MESSAGE, null, options, jTextFieldAlias);
 					String certificateAlias = jTextFieldAlias.getText();
-					
 					if (option == 0) {
 						if (certificateAlias.equals("")) {
 							String msg = Language.translate("Please, enter your certificate's alias!",Language.EN);
 							String title1 = Language.translate("Certificate alias",Language.EN);
 							JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.INFORMATION_MESSAGE);
 						} else {
+							Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
 							// ------------ Press OK Button --------------------
-							getTrustStoreController().AddCertificateToTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(), certificateToAdd, certificateAlias);
-							getListCertificatesAlias().setModel(getTrustStoreController().CertificatesAliaslist(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword()));
+							this.getTrustStoreController().addCertificateToTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(), certificateToAdd, certificateAlias, ownerDialog);
+							this.getTrustStoreController().clearTableModel();
+							this.getTrustStoreController().getTrustedCertificatesList(this.httpsConfigWindow.getTrustStorefilepath(), this.httpsConfigWindow.getTrustStorePassword());
+							this.getjTableTrusTedCertificates().setModel(this.getTrustStoreController().getTableModel());
 						}
 					}
 				} else {
@@ -575,13 +883,14 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 				String title = Language.translate("Warning message",Language.EN);
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 			} else {
-				if (getListCertificatesAlias().isSelectionEmpty()) {
+				if (getjTableTrusTedCertificates().getSelectedRow() == -1) {
 					String msg = Language.translate("You should select a certificate!",Language.EN);
 					String title = Language.translate("Warning message",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				} else {
 					// ------ Get the certificate's alias to delete ----
-					String CertificateAliasToDelete = jListCertificatesAlias.getSelectedValue() + "";
+					int RowSelected = jTableTrusTedCertificates.getSelectedRow();
+					String CertificateAliasToDelete = jTableTrusTedCertificates.getValueAt(RowSelected, 0).toString();
 					// --------- Generate a ConfirmDialog --------------
 					String[] options = new String[] { "Yes", "No" };
 					String msg = Language.translate("Would You Like to delete this Certificate?",Language.EN);
@@ -589,13 +898,51 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener {
 					int option = JOptionPane.showOptionDialog(null, msg,title, JOptionPane.NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 					
 					if (option == JOptionPane.YES_OPTION) {
+						Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
 						// ----- press OK Button ----------------------
-						getTrustStoreController().DeleteCertificateFromTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(), CertificateAliasToDelete);
-						getListCertificatesAlias().setModel(getTrustStoreController().CertificatesAliaslist(this.httpsConfigWindow.getTrustStorefilepath(),	this.httpsConfigWindow.getTrustStorePassword()));
+						this.getTrustStoreController().deleteCertificateFromTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(), CertificateAliasToDelete, ownerDialog);
+						this.getTrustStoreController().clearTableModel();
+						this.getTrustStoreController().getTrustedCertificatesList(this.httpsConfigWindow.getTrustStorefilepath(), this.httpsConfigWindow.getTrustStorePassword());
+						this.getjTableTrusTedCertificates().setModel(this.getTrustStoreController().getTableModel());
 					}
 				}
 			}
-		
 		}
+	}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if(e.getSource()== this.getjTableTrusTedCertificates()){
+			if (e.getClickCount() == 2) {
+				// ---- Get alias of selected certificate ----------------------
+				int row = this.getjTableTrusTedCertificates().getSelectedRow();
+				String alias = this.getjTableTrusTedCertificates().getValueAt(row, 0).toString();
+				// ---- Get informations of selected certificate --------------
+				CertificateSettings certificateSettings = this.getTrustStoreController().getCertificateSettings(alias, this.httpsConfigWindow.getTrustStorefilepath(), this.httpsConfigWindow.getTrustStorePassword());
+				
+				this.getJLabelAlias().setText(alias);
+				this.getJLabelValidity().setText(certificateSettings.getValidity());
+				this.getJLabelName().setText(certificateSettings.getKeyStoreSettings().getFullName());
+				this.getJLabelOrg().setText(certificateSettings.getKeyStoreSettings().getOrganization());
+				this.getJLabelOrgUnit().setText(certificateSettings.getKeyStoreSettings().getOrginazationalUnit());
+				this.getJLabelCityOrLocality().setText(certificateSettings.getKeyStoreSettings().getCityOrLocality());
+				this.getJLabelState().setText(certificateSettings.getKeyStoreSettings().getStateOrProvince());
+				this.getJLabelCountry().setText(certificateSettings.getKeyStoreSettings().getCoutryCode());
+				// ---- Display certificate informations ----------------------
+				String title = Language.translate("Certificate informations", Language.EN);
+				JOptionPane.showMessageDialog(null, getJPanelCertificateInfo(), title, JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+	}
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
 	}
 }

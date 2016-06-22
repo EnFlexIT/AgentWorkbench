@@ -320,8 +320,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 		if (this.action == "BUTTON") {
 			// --- In case that the user choose to edit the HTTPS MTP ----------
 			// --- Open the HttpsConfigWindow ----------------------------------
-			httpsConfigWindow = new HttpsConfigWindow(this.optionDialog, getKeyStore(), getKeyStorePassword(), getTrustStore(),
-					getTrustStorePassword());
+			httpsConfigWindow = new HttpsConfigWindow(this.optionDialog, getKeyStore(), getKeyStorePassword(), getTrustStore(), getTrustStorePassword());
 			// --- Wait for the user -------------------------------------------
 			if (httpsConfigWindow.isCanceled() == false) {
 				// ---- Return the KeyStore and TrustStore chosen by the user --
@@ -345,7 +344,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 				this.getJTextFieldKeyStorePath().setText(this.getKeyStore());
 				this.getJTextFieldTrustStorePath().setText(this.getTrustStore());
 			} else {
-				// ---- If the Button Cancel is pressed -------------------------
+				// ---- Button Cancel is pressed -------------------------------
 				getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
 				this.setVisibleFalse();
 			}

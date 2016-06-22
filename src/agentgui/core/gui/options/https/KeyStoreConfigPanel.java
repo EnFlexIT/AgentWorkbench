@@ -1,7 +1,7 @@
 /**
  * ***************************************************************
- * Agent.GUI is a thiswork to develop Multi-agent based simulation 
- * applications based on the JADE - thiswork in compliance with the 
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
  * FIPA specifications. 
  * Copyright (C) 2010 Christian Derksen and DAWIS
  * http://www.dawis.wiwi.uni-due.de
@@ -38,6 +38,9 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -72,8 +75,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	private HttpsConfigWindow httpsConfigWindow;
 	private KeyStoreController keyStoreController;
 
-	private final Dimension fieldSize = new Dimension(120, 26);
-
+	private JPanel jPanelCertificate;
+	
 	private JLabel jLabelKeyStoreName;
 	private JLabel jLabelPassword;
 	private JLabel jLabelConfirmPassword;
@@ -85,6 +88,11 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	private JLabel jLabelState;
 	private JLabel jLabelCountryCode;
 	private JLabel jLabelKeyStoreInformations;
+	private JLabel jLabelCertificateName;
+	private JLabel jLabelCertificateValidity;
+	private JLabel jLabelCertificateValidityDays;
+	private JLabel jLabelCertificatePath;
+	private JLabel jLabelCertificateInformation;
 
 	private JTextField jTextFieldKeyStoreName;
 	private JTextField jTextFieldAlias;
@@ -94,18 +102,25 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	private JTextField jTextFieldCity;
 	private JTextField jTextFieldState;
 	private JTextField jTextFieldCountryCode;
+	private JTextField jTextFieldCertificateValidity;
+	private JTextField jTextFieldCertificateName;
+	private JTextField jTextFieldCertificatePath;
 
 	private JPasswordField jPasswordFieldPassword;
 	private JPasswordField jPasswordFieldConfirmPassword;
 
 	private JButton jButtonCertificate;
 	private JButton jButtonApplyKeyStore;
+	private JButton jButtonCertificatePath;
 
 	private JFileChooser jFileChooserOpen;
 	private JFileChooser jFileChooserSave;
 	
 	private final String pathImage = Application.getGlobalInfo().getPathImageIntern();
 	private final ImageIcon iconSave = new ImageIcon( this.getClass().getResource( pathImage + "MBsave.png") );
+	private final ImageIcon iconOpen = new ImageIcon( this.getClass().getResource( pathImage + "MBopen.png") );
+	private final Dimension fieldSize = new Dimension(120, 26);
+	private Set<String> ISO_COUNTRIES = new HashSet<String>(Arrays.asList(Locale.getISOCountries()));
 
 	/**
 	 * Create the application.
@@ -122,8 +137,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, 0.0 };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-				Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelKeyStoreInformations = new GridBagConstraints();
 		gbc_jLabelKeyStoreInformations.anchor = GridBagConstraints.SOUTHWEST;
@@ -272,6 +286,77 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		gbc_jTextFieldCountryCode.gridy = 10;
 		add(getJTextFieldCountryCode(), gbc_jTextFieldCountryCode);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+	}
+	/**
+	 * Create the JPanel.
+	 * @return the jPanelCertificate
+	 */
+	public JPanel getJPanelCertificate() {
+		if (jPanelCertificate == null) {
+			jPanelCertificate = new JPanel();
+			GridBagLayout gridBagLayout = new GridBagLayout();
+			gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0 };
+			gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0 };
+			gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
+			gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0 };
+			jPanelCertificate.setLayout(gridBagLayout);
+			GridBagConstraints gbc_jLabelCertificateInformation = new GridBagConstraints();
+			gbc_jLabelCertificateInformation.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCertificateInformation.gridwidth = 2;
+			gbc_jLabelCertificateInformation.insets = new Insets(0, 5, 10, 5);
+			gbc_jLabelCertificateInformation.gridx = 0;
+			gbc_jLabelCertificateInformation.gridy = 0;
+			jPanelCertificate.add(getJLabelCertificateInformation(), gbc_jLabelCertificateInformation);
+			GridBagConstraints gbc_jLabelCertificateName = new GridBagConstraints();
+			gbc_jLabelCertificateName.insets = new Insets(0, 5, 5, 5);
+			gbc_jLabelCertificateName.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCertificateName.gridx = 0;
+			gbc_jLabelCertificateName.gridy = 1;
+			jPanelCertificate.add(getJLabelCertificateName(), gbc_jLabelCertificateName);
+			GridBagConstraints gbc_jLabelCertificateValidity = new GridBagConstraints();
+			gbc_jLabelCertificateValidity.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCertificateValidity.insets = new Insets(0, 5, 5, 5);
+			gbc_jLabelCertificateValidity.gridx = 0;
+			gbc_jLabelCertificateValidity.gridy = 2;
+			jPanelCertificate.add(getJLabelCertificateValidity(), gbc_jLabelCertificateValidity);
+			GridBagConstraints gbc_jLabelCertificateValidityDays = new GridBagConstraints();
+			gbc_jLabelCertificateValidityDays.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCertificateValidityDays.insets = new Insets(0, 5, 5, 5);
+			gbc_jLabelCertificateValidityDays.gridx = 2;
+			gbc_jLabelCertificateValidityDays.gridy = 2;
+			jPanelCertificate.add(getJLabelCertificateValidityDays(), gbc_jLabelCertificateValidityDays);
+			GridBagConstraints gbc_jLabelCertificatePath = new GridBagConstraints();
+			gbc_jLabelCertificatePath.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCertificatePath.insets = new Insets(0, 5, 0, 0);
+			gbc_jLabelCertificatePath.gridx = 0;
+			gbc_jLabelCertificatePath.gridy = 3;
+			jPanelCertificate.add(getJLabelCertificatePath(), gbc_jLabelCertificatePath);
+			GridBagConstraints gbc_jTextFieldCertificateName = new GridBagConstraints();
+			gbc_jTextFieldCertificateName.gridwidth = 2;
+			gbc_jTextFieldCertificateName.insets = new Insets(0, 0, 5, 0);
+			gbc_jTextFieldCertificateName.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jTextFieldCertificateName.gridx = 1;
+			gbc_jTextFieldCertificateName.gridy = 1;
+			jPanelCertificate.add(getJTextFieldCertificateName(), gbc_jTextFieldCertificateName);
+			GridBagConstraints gbc_jTextFieldCertificateValidity = new GridBagConstraints();
+			gbc_jTextFieldCertificateValidity.gridwidth = 1;
+			gbc_jTextFieldCertificateValidity.insets = new Insets(0, 0, 5, 0);
+			gbc_jTextFieldCertificateValidity.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jTextFieldCertificateValidity.gridx = 1;
+			gbc_jTextFieldCertificateValidity.gridy = 2;
+			jPanelCertificate.add(getJTextFieldCertificateValidity(), gbc_jTextFieldCertificateValidity);
+			GridBagConstraints gbc_jTextFieldCertificatePath = new GridBagConstraints();
+			gbc_jTextFieldCertificatePath.insets = new Insets(0, 0, 0, 0);
+			gbc_jTextFieldCertificatePath.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jTextFieldCertificatePath.gridx = 1;
+			gbc_jTextFieldCertificatePath.gridy = 3;
+			jPanelCertificate.add(getJTextFieldCertificatePath(), gbc_jTextFieldCertificatePath);
+			GridBagConstraints gbc_jButtonCertificatePath = new GridBagConstraints();
+			gbc_jButtonCertificatePath.gridx = 2;
+			gbc_jButtonCertificatePath.gridy = 3;
+			jPanelCertificate.add(getButtonCertificatePath(), gbc_jButtonCertificatePath);
+		}
+		return jPanelCertificate;
 	}
 	/**
 	 * This method initializes KeyStoreController.
@@ -552,7 +637,122 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}
 		return jFileChooserSave;
 	}
-	
+	/**
+	 * This method initializes jLabelCertificateName.
+	 */
+	private JLabel getJLabelCertificateName() {
+		if (jLabelCertificateName == null) {
+			jLabelCertificateName = new JLabel("Certificate Name:");
+			jLabelCertificateName.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelCertificateName;
+	}
+	/**
+	 * This method initializes jTextFieldCertificateName.
+	 */
+	private JTextField getJTextFieldCertificateName() {
+		if (jTextFieldCertificateName == null) {
+			jTextFieldCertificateName = new JTextField();
+			jTextFieldCertificateName.setPreferredSize(new Dimension(300, 26));
+		}
+		return jTextFieldCertificateName;
+	}
+	/**
+	 * This method initializes jLabelCertificateValidity.
+	 */
+	private JLabel getJLabelCertificateValidity() {
+		if (jLabelCertificateValidity == null) {
+			jLabelCertificateValidity = new JLabel("Certificate validity:");
+			jLabelCertificateValidity.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelCertificateValidity;
+	}
+	/**
+	 * This method initializes jLabelCertificateValidity.
+	 */
+	private JLabel getJLabelCertificateValidityDays() {
+		if (jLabelCertificateValidityDays == null) {
+			jLabelCertificateValidityDays = new JLabel("day(s)");
+			jLabelCertificateValidityDays.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelCertificateValidityDays;
+	}
+	/**
+	 * This method initializes jTextFieldCertificateValidity.
+	 */
+	private JTextField getJTextFieldCertificateValidity() {
+		if (jTextFieldCertificateValidity == null) {
+			jTextFieldCertificateValidity = new JTextField();
+			jTextFieldCertificateValidity.setPreferredSize(new Dimension(300, 26));
+		}
+		return jTextFieldCertificateValidity;
+	}
+	/**
+	 * This method initializes jTextFieldCertificatePath.
+	 */
+	public JTextField getJTextFieldCertificatePath() {
+		if (jTextFieldCertificatePath == null) {
+			jTextFieldCertificatePath = new JTextField();
+			jTextFieldCertificatePath.setPreferredSize(new Dimension(300, 26));
+		}
+		return jTextFieldCertificatePath;
+	}
+	/**
+	 * This method initializes jLabelCertificatePath.
+	 */
+	private JLabel getJLabelCertificatePath() {
+		if (jLabelCertificatePath == null) {
+			jLabelCertificatePath = new JLabel("Certificate path:");
+			jLabelCertificatePath.setFont(new Font("Dialog", Font.PLAIN, 11));
+			
+		}
+		return jLabelCertificatePath;
+	}
+	/**
+	 * This method initializes jButtonCertificatePath.
+	 */
+	private JButton getButtonCertificatePath() {
+		if (jButtonCertificatePath == null) {
+			jButtonCertificatePath = new JButton("");
+			jButtonCertificatePath.setPreferredSize(new Dimension(26, 26));
+			jButtonCertificatePath.setIcon(iconOpen);
+			jButtonCertificatePath.addActionListener(this);
+		}
+		return jButtonCertificatePath;
+	}
+	/**
+	 * This method initializes jLabelCertificateInformation.
+	 */
+	private JLabel getJLabelCertificateInformation() {
+		if (jLabelCertificateInformation == null) {
+			jLabelCertificateInformation = new JLabel("Certifcate Informations");
+			jLabelCertificateInformation.setFont(new Font("Dialog", Font.BOLD, 11));
+		}
+		return jLabelCertificateInformation;
+	}
+	/**
+	 * Checks if is numeric.
+	 * @param input the input
+	 * @return true, if is numeric
+	 */
+	public boolean isNumeric(String input) {
+		try {
+			Integer.parseInt(input);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+    /**
+     * Checks if is valid ISO country code.
+     *
+     * @param s the s
+     * @return true, if is valid ISO country code
+     */
+    public boolean isValidISOCountry(String s) {
+        return ISO_COUNTRIES.contains(s);
+    }
+    
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -563,128 +763,119 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 			// ----- Create KeyStore --------------------------------------
 			if (this.httpsConfigWindow.getKeyStoreButtonPressed() == "CreateKeyStore") {
 				// ---- Verify if all the fields are filled ---------------
-				if (jTextFieldKeyStoreName.getText().equals("") || jTextFieldAlias.getText().equals("")
-						|| jTextFieldCity.getText().equals("") || jTextFieldCountryCode.getText().equals("")
-						|| jTextFieldFullName.getText().equals("") || jTextFieldOrganization.getText().equals("")
-						|| jTextFieldOrganizationalUnit.getText().equals("") || jTextFieldState.getText().equals("")
-						|| jPasswordFieldPassword.getPassword().equals("")
-						|| jPasswordFieldConfirmPassword.getPassword().equals("")) {
+				if (this.getJTextFieldKeyStoreName().getText().equals("") || this.getJTextFieldAlias().getText().equals("") || this.getJTextFieldCity().getText().equals("") || this.getJTextFieldCountryCode().getText().equals("")
+						|| this.getJTextFieldFullName().getText().equals("") || this.getJTextFieldOrganization().getText().equals("") || this.getJTextFieldOrganizationalUnit().getText().equals("") || this.getJTextFieldState().getText().equals("")
+						|| this.getJPasswordField().getPassword().equals("") || this.getJPasswordConfirmPassword().getPassword().equals("")) {
 					String msg = Language.translate("You must fill out all required fields!",Language.EN);
 					String title = Language.translate("Required fields",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
-				/*
+				/* --------------------------------------------------------
 				 * ----- Verify if The password and its confirm -----------
 				 * ---------------- are the same --------------------------
 				 */
-				else if (!Arrays.equals(jPasswordFieldPassword.getPassword(),jPasswordFieldConfirmPassword.getPassword())) {
+				else if (!Arrays.equals(this.getJPasswordField().getPassword(),this.getJPasswordConfirmPassword().getPassword())) {
 					String msg = Language.translate("The password and its confirm are not the same!",Language.EN);
 					String title = Language.translate("Warning",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
-				/*
+				/* --------------------------------------------------------
 				 * ----- Verify if the password is at least ---------------
 				 * ------------- 6 characters in length -------------------
 				 */
-				else if (jPasswordFieldPassword.getPassword().length < 6) {
+				else if (this.getJPasswordField().getPassword().length < 6) {
 					String msg = Language.translate("The password should be at least 6 characters in length!",Language.EN);
 					String title = Language.translate("Password length",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
-				} else {
+				} 
+				/* -------------------------------------------------------
+				 * ----- Verify if the Country code is valid -------------
+				 * ------------------ ISO code ---------------------------
+				 */
+				else if (isValidISOCountry(this.getJTextFieldCountryCode().getText())==false) {
+					String msg = Language.translate("You must use a valid country code!",Language.EN);
+					String title = Language.translate("Country code",Language.EN);
+					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
+				}else {
 					// ---- Get Provider Informations ---------------------
-					String informations = "CN=" + jTextFieldFullName.getText() + ",OU="
-							+ jTextFieldOrganizationalUnit.getText() + ",O=" + jTextFieldOrganization.getText() + ",L="
-							+ jTextFieldCity.getText() + ",S=" + jTextFieldState.getText() + ",C="
-							+ jTextFieldCountryCode.getText();
-					String alias = jTextFieldAlias.getText();
-					String keystore_name = jTextFieldKeyStoreName.getText();
-					String keystore_password = new String(jPasswordFieldPassword.getPassword());
+					String informations = "CN=" + this.getJTextFieldFullName().getText() + ",OU=" + this.getJTextFieldOrganizationalUnit().getText() + ",O=" + this.getJTextFieldOrganization().getText() + ",L=" + this.getJTextFieldCity().getText() + ",S=" + this.getJTextFieldState().getText() + ",C=" + this.getJTextFieldCountryCode().getText();
+					String alias = this.getJTextFieldAlias().getText();
+					String keystoreName = this.getJTextFieldKeyStoreName().getText();
+					String keystorePassword = new String(this.getJPasswordField().getPassword());
 
 					// ----- Open jFileChooser to select the directory ---- 
 					getJFileChooserOpen();
 					int jfile = jFileChooserOpen.showSaveDialog(null);
 					if (jfile == JFileChooser.APPROVE_OPTION) {
-						// ---- Get The selected directory path ------------
+						// ---- Get The selected directory path ------------------------------------
 						String KeyStorePath = jFileChooserOpen.getSelectedFile().getAbsoluteFile().getAbsolutePath() + "\\";
-						/* ---- Create the KeyStore with informations ------
-						 * ---------------- entered by the User ------------
-						 */
-						getKeyStoreController().CreateKeyStore(informations, alias, keystore_name, keystore_password,
-								KeyStorePath);
+						// ---- Create the KeyStore with informations  entered by the User ---------
+						getKeyStoreController().createKeyStore(informations, alias, keystoreName, keystorePassword, KeyStorePath);
 						String msg = Language.translate("Your keystore has been created successfully!",Language.EN);
 						String title = Language.translate("KeyStore created",Language.EN);
 						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
 						
-						this.httpsConfigWindow.setKeyStorefilepath(KeyStorePath + keystore_name + "KeyStore.jks");
-						this.httpsConfigWindow.setKeyStorePassword(keystore_password);
+						this.httpsConfigWindow.setKeyStorefilepath(KeyStorePath + keystoreName + "KeyStore.jks");
+						this.httpsConfigWindow.setKeyStorePassword(keystorePassword);
 						this.httpsConfigWindow.setKeyStoreAlias(alias);
-						// ---- Get the Content of the keyStore ---------------
-						String result = getKeyStoreController().ListKeyStoreContent(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword());
-						// ---- Substring informations from the result --------
-						String FullName = result.substring(result.indexOf("CN=") + 3, result.indexOf(",OU"));
-						String OrganizationalUnit = result.substring(result.indexOf("OU=") + 3, result.indexOf(",O="));
-						String Organization = result.substring(result.indexOf("O=") + 2, result.indexOf(",L"));
-						String Locality = result.substring(result.indexOf("L=") + 2, result.indexOf(",ST"));
-						String State = result.substring(result.indexOf("ST=") + 3, result.indexOf(",C"));
-						String CountryCode = result.substring(result.indexOf("C=") + 2, result.indexOf("C=") + 4);
-						// ----- Fill in fields with KeyStore informations -----
-						this.httpsConfigWindow.setFieldsEnabledFalse(jTextFieldCity);
-						this.httpsConfigWindow.setFieldsEnabledFalse(jTextFieldCity);
-						this.httpsConfigWindow.setFieldsEnabledFalse(jTextFieldCountryCode);
-						this.httpsConfigWindow.setFieldsEnabledFalse(jTextFieldFullName);
-						this.httpsConfigWindow.setFieldsEnabledFalse(jTextFieldOrganization);
-						this.httpsConfigWindow.setFieldsEnabledFalse(jTextFieldOrganizationalUnit);
-						this.httpsConfigWindow.setFieldsEnabledFalse(jTextFieldState);
-						this.httpsConfigWindow.setFieldsEnabledFalse(jTextFieldKeyStoreName);
-						jTextFieldCity.setText(Locality);
-						jTextFieldCountryCode.setText(CountryCode);
-						jTextFieldFullName.setText(FullName);
-						jTextFieldOrganization.setText(Organization);
-						jTextFieldOrganizationalUnit.setText(OrganizationalUnit);
-						jTextFieldState.setText(State);
-						jTextFieldKeyStoreName.setText(this.httpsConfigWindow.getKeyStorefilepath().substring(this.httpsConfigWindow.getKeyStorefilepath().lastIndexOf("\\") + 1));
-						jTextFieldAlias.setText(this.httpsConfigWindow.getKeyStoreAlias());
-						jPasswordFieldPassword.setText(keystore_password);
-						jPasswordFieldConfirmPassword.setText(null);
-						this.httpsConfigWindow.getJLabelKeyStoreLocationPath().setText(KeyStorePath + "\\" + keystore_name + "KeyStore.jks");
+						// ---- Get the Content of the keyStore ------------------------------------
+						KeyStoreSettings keyStoreSettings = getKeyStoreController().listKeyStoreContent(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword());
+						// ----- Fill in fields with KeyStore informations -------------------------
+						this.getJTextFieldCity().setEnabled(false);
+						this.getJTextFieldCountryCode().setEnabled(false);
+						this.getJTextFieldFullName().setEnabled(false);
+						this.getJTextFieldOrganization().setEnabled(false);
+						this.getJTextFieldOrganizationalUnit().setEnabled(false);
+						this.getJTextFieldState().setEnabled(false);
+						this.getJTextFieldKeyStoreName().setEnabled(false);
+						this.getJTextFieldCity().setText(keyStoreSettings.getCityOrLocality());
+						this.getJTextFieldCountryCode().setText(keyStoreSettings.getCoutryCode());
+						this.getJTextFieldFullName().setText(keyStoreSettings.getFullName());
+						this.getJTextFieldOrganization().setText(keyStoreSettings.getOrganization());
+						this.getJTextFieldOrganizationalUnit().setText(keyStoreSettings.getOrginazationalUnit());
+						this.getJTextFieldState().setText(keyStoreSettings.getStateOrProvince());
+						this.getJTextFieldKeyStoreName().setText(this.httpsConfigWindow.getKeyStorefilepath().substring(this.httpsConfigWindow.getKeyStorefilepath().lastIndexOf("\\") + 1));
+						this.getJTextFieldAlias().setText(this.httpsConfigWindow.getKeyStoreAlias());
+						this.getJPasswordField().setText(keystorePassword);
+						this.getJPasswordConfirmPassword().setText(null);
+						this.httpsConfigWindow.getJLabelKeyStoreLocationPath().setText(KeyStorePath + "\\" + keystoreName + "KeyStore.jks");
 						this.httpsConfigWindow.setKeyStoreButtonPressed("UpdateKeyStore");
 					}
 				}
 			} else if (this.httpsConfigWindow.getKeyStoreButtonPressed() == "UpdateKeyStore") {
 				// ---- Update KeyStore ---------------------------
 				// ---- Verify if all the fields are filled -------
-				if (jTextFieldAlias.getText().equals("") || jPasswordFieldPassword.getPassword().equals("")
-						|| jPasswordFieldConfirmPassword.getPassword().equals("")) {
+				if (this.getJTextFieldAlias().getText().equals("") || this.getJPasswordField().getPassword().equals("") || this.getJPasswordConfirmPassword().getPassword().equals("")) {
 					String msg = Language.translate("You must fill out all required fields!",Language.EN);
 					String title = Language.translate("Required fields",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
-				/*
+				/* -------------------------------------------------
 				 * ----- Verify if The password and its confirm ----
 				 * ---------------- are the same -------------------
 				 */
-				else if (!Arrays.equals(jPasswordFieldPassword.getPassword(),jPasswordFieldConfirmPassword.getPassword())) {
+				else if (!Arrays.equals(this.getJPasswordField().getPassword(),this.getJPasswordConfirmPassword().getPassword())) {
 					String msg = Language.translate("The password and its confirm are not the same!",Language.EN);
 					String title = Language.translate("Warning",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
-				/*
+				/* -------------------------------------------------
 				 * ----- Verify if the password is at least -------- 
 				 * ----------- 6 characters in length --------------
 				 */
-				else if (jPasswordFieldPassword.getPassword().length < 6) {
+				else if (this.getJPasswordField().getPassword().length < 6) {
 					String msg = Language.translate("The password should be at least 6 characters in length!",Language.EN);
 					String title = Language.translate("Password length",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				} else {
-					
-					String newAlias = jTextFieldAlias.getText();
-					String newKeyStorePassword = new String(jPasswordFieldPassword.getPassword());
+					String newAlias = this.getJTextFieldAlias().getText();
+					String newKeyStorePassword = new String(this.getJPasswordField().getPassword());
 					String keyStoreName = this.httpsConfigWindow.getKeyStorefilepath().substring(this.httpsConfigWindow.getKeyStorefilepath().lastIndexOf("\\") + 1);
+					
 					// --- Create JOptionPane to enter the old KeyStore password ---
 					JPanel jPanelPassword = new JPanel();
-					String msg1 = Language.translate("Please, enter the old password for  ",Language.EN);
-					JLabel jLabelEnterPassword = new JLabel( msg1 + keyStoreName + "  :");
+					String msg = Language.translate("Please, enter the old password for  ",Language.EN);
+					JLabel jLabelEnterPassword = new JLabel( msg + keyStoreName + "  :");
 					jLabelEnterPassword.setFont(new Font("Dialog", Font.BOLD, 11));
 					JPasswordField jPasswordField = new JPasswordField(10);
 					jPanelPassword.add(jLabelEnterPassword);
@@ -696,22 +887,21 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 					if (option == 0) {
 						// ------------ Press OK -------------------------------
 						if (this.httpsConfigWindow.getKeyStorePassword().equals(oldPassword)){
+							Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
 							// ---- Edit the KeyStore Alias and Password ---
-							getKeyStoreController().EditKeyStore(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStoreAlias(), newAlias, newKeyStorePassword,
-									this.httpsConfigWindow.getKeyStorePassword());
-							String msg = Language.translate("Your keystore has been updated successfully!",Language.EN);
+							getKeyStoreController().editKeyStore(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStoreAlias(), newAlias, newKeyStorePassword, this.httpsConfigWindow.getKeyStorePassword(), ownerDialog);
+							String msg1 = Language.translate("Your keystore has been updated successfully!",Language.EN);
 							String title1 = Language.translate("KeyStore updated",Language.EN);
-							JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.INFORMATION_MESSAGE); 
+							JOptionPane.showMessageDialog(this, msg1, title1, JOptionPane.INFORMATION_MESSAGE); 
 							this.httpsConfigWindow.setKeyStorePassword(newKeyStorePassword);
 							this.httpsConfigWindow.setKeyStoreAlias(newAlias);
-							jPasswordFieldPassword.setText(newKeyStorePassword);
-							jPasswordFieldConfirmPassword.setText(null);
-							Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
-							this.httpsConfigWindow.setKeyStoreAlias(getKeyStoreController().GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(), newKeyStorePassword, ownerDialog));
+							this.getJPasswordField().setText(newKeyStorePassword);
+							this.getJPasswordConfirmPassword().setText(null);
+							this.httpsConfigWindow.setKeyStoreAlias(getKeyStoreController().getKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(), newKeyStorePassword, ownerDialog));
 						}else{
-							String msg = Language.translate("The password you entered is incorrect. Please try again!",Language.EN);
+							String msg2 = Language.translate("The password you entered is incorrect. Please try again!",Language.EN);
 							String title2 = Language.translate("Password incorrect",Language.EN);
-							JOptionPane.showMessageDialog(this, msg, title2, JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(this, msg2, title2, JOptionPane.WARNING_MESSAGE);
 						}
 					}
 				}
@@ -725,26 +915,45 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 				String title = Language.translate("Warning message",Language.EN);
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 			} else {
-				/*
-				 * ----- Generate a JFileChooser to enter -------
-				 * -------------- Certificate name ---------------
-				 */
-				getJFileChooserSave();
-				jFileChooserSave = new JFileChooser();
-				int jfile = jFileChooserSave.showSaveDialog(null);
-				if (jfile == JFileChooser.APPROVE_OPTION) {
-					// ------- Get Certificate Path --------------------
-					String certificatePath = jFileChooserSave.getSelectedFile().getAbsoluteFile().getAbsolutePath();
-					// ------- Get KeySTore information ----------------
-					Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
-					String Alias = getKeyStoreController().GetKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword(), ownerDialog);
-					// ------- Generate the Certificate -----------------
-					getKeyStoreController().ExportCertificate(this.httpsConfigWindow.getKeyStorefilepath(),Alias,this.httpsConfigWindow.getKeyStorePassword(), certificatePath);
-					String msg = Language.translate("Your certificate has been created successfully!",Language.EN);
-					String title = Language.translate("Certificate generated",Language.EN);
-					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
+				String[] options = new String[] { "OK", "Cancel" };
+				String title = Language.translate("Export Certificate",Language.EN);
+				int option = JOptionPane.showOptionDialog(null, getJPanelCertificate(), title, JOptionPane.NO_OPTION,JOptionPane.PLAIN_MESSAGE, null, options, jTextFieldCertificateName);
+				if (option == 0) {
+					if (this.httpsConfigWindow.getKeyStorefilepath() == null) {
+						String msg = Language.translate("Please open a Keystore first!",Language.EN);
+						String title1 = Language.translate("Warning message",Language.EN);
+						JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.WARNING_MESSAGE);
+					} else if ( isNumeric(getJTextFieldCertificateValidity().getText()) == false){
+						String msg = Language.translate("Please, enter number of days in validity field!",Language.EN);
+						String title2 = Language.translate("Numeric value",Language.EN);
+						JOptionPane.showMessageDialog(this, msg, title2, JOptionPane.WARNING_MESSAGE);
+						getJTextFieldCertificateValidity().setText(null);
+						getJTextFieldCertificateName().setText(null);
+						getJTextFieldCertificatePath().setText(null);
+					} else {
+						Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
+						// ------- Get Certificate Path --------------------
+						String certificatePath = getJTextFieldCertificatePath().getText() + "\\" +getJTextFieldCertificateName().getText();
+						String validity = getJTextFieldCertificateValidity().getText();
+						// ------- Get KeySTore information ----------------
+						String alias = getKeyStoreController().getKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword(), ownerDialog);
+						// ------- Generate the Certificate -----------------
+						getKeyStoreController().exportCertificate(this.httpsConfigWindow.getKeyStorefilepath(),alias,this.httpsConfigWindow.getKeyStorePassword(), certificatePath, validity, ownerDialog);
+						String msg = Language.translate("Your certificate has been created successfully!",Language.EN);
+						String title1 = Language.translate("Certificate generated",Language.EN);
+						JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
 			}
-		}
+		} else if (ae.getSource() == this.getButtonCertificatePath()) {
+			// --- Open a JFileChooser to select the certificate -------
+			this.getJFileChooserOpen();
+			int result = this.getJFileChooserOpen().showOpenDialog(null);
+			if (result == JFileChooser.APPROVE_OPTION) {
+				// ---- Get the certificate's path ---------------------
+				String certificatePath = this.getJFileChooserOpen().getSelectedFile().getPath();
+				getJTextFieldCertificatePath().setText(certificatePath);
+			}
 		}
 	}
 }

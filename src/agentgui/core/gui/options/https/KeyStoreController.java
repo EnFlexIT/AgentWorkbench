@@ -28,21 +28,20 @@
  */
 package agentgui.core.gui.options.https;
 
-import java.awt.Dialog;
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 import java.util.Enumeration;
-
-import javax.swing.JFrame;
+import java.awt.Dialog;
 import javax.swing.JOptionPane;
 
 /**
@@ -54,7 +53,6 @@ import javax.swing.JOptionPane;
  */
 public class KeyStoreController {
 
-	private JFrame frame;
 
 	/**
 	 * This Initializes the KeyStoreController.
@@ -66,28 +64,24 @@ public class KeyStoreController {
 	 * This method allows the user to create a KeyStore and protect its
 	 * integrity with a password
 	 * 
-	 * @param Informations of the provider
-	 * @param Alias for the KeyStore
-	 * @param KeyStoreName
-	 * @param KeystorePassword
+	 * @param informations of the provider
+	 * @param alias for the KeyStore
+	 * @param keyStoreName
+	 * @param keystorePassword
 	 * @param keyStorePath 
 	 */
-	public void CreateKeyStore(String Informations, String Alias, String KeyStoreName, String KeystorePassword, String keyStorePath) {
+	public void createKeyStore(String informations, String alias, String keyStoreName, String keystorePassword, String keyStorePath) {
 		/*
 		 * ---------------------------------------------------------------------
 		 * ------- Execute the command line to create the KeyStore -------------
 		 * ----------------------- ---------------------------------------------
 		 * 
 		 * keytool -genkey -dname {informations} -alias {alias} -keypass
-		 * {key_password} -keystore {keystore_name} -storepass
-		 * {keystore_password}
+		 * {key_password} -keystore {keystore_name} -storepass {keystore_password}
 		 */
-
 		try {
 			Runtime runtime = Runtime.getRuntime();
-			runtime.exec(
-					"keytool -genkey -dname \"" + Informations + "\" -alias " + Alias + " -keystore " + keyStorePath + KeyStoreName
-							+ "KeyStore.jks " + " -storepass " + KeystorePassword + " -keypass " + KeystorePassword + " -validity 360");
+			runtime.exec("keytool -genkey -dname \"" + informations + "\" -alias " + alias + " -keystore " + keyStorePath + keyStoreName + "KeyStore.jks " + " -storepass " + keystorePassword + " -keypass " + keystorePassword);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -96,65 +90,68 @@ public class KeyStoreController {
 	/**
 	 * This method returns the content of a KeyStore
 	 * 
-	 * @param KeyStoreName
+	 * @param keyStoreName
 	 * @param keyStorePassword
 	 * @return the content
 	 */
-	public String ListKeyStoreContent(String KeyStoreName, String keyStorePassword) {
-		
-		String content = null;
-		StringBuilder builder = new StringBuilder();
-		/*
-		 * ---------------------------------------------------------------------
-		 * --------- Execute the command line to list the content --------------
-		 * ----------------------- of the KeyStore -----------------------------
-		 * ---------------------------------------------------------------------
-		 * 
-		 * keytool -list -v -keystore {keystore_name} -storepass
-		 * {keystore_password}
-		 */
-		Runtime runtime = null;
-		Process process = null;
+	public KeyStoreSettings listKeyStoreContent(String keyStoreName, String keyStorePassword) {
+		KeyStoreSettings keyStoreSettings = new KeyStoreSettings();
+		FileInputStream fileInputStream = null;
+		String provider = null;
 		try {
-			runtime = Runtime.getRuntime();
-			process = runtime.exec("keytool -list -v -keystore " + KeyStoreName + " -storepass " + keyStorePassword);
-
-			// ---- Create a BufferedReader ----------------------------------------
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			String line = null;
-			while ((line = bufferedReader.readLine()) != null) {
-				builder.append(line);
-			}
+			// --- Creates a FileInputStream from the TrustStore ---
+			File file = new File(keyStoreName);
+			fileInputStream = new FileInputStream(file);
+			// --- Loads the KeyStore from the given InputStream ---
+			KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keystore.load(fileInputStream, keyStorePassword.toCharArray());
+			// --- Get KeyStore alias ------------------------------
+			Enumeration<String> enumeration = keystore.aliases();
+			// --- Get KeyStore provider ------------------------------
+			String alias = (String) enumeration.nextElement();
+			Certificate certificate = keystore.getCertificate(alias);
+	        provider = ( (X509Certificate) certificate).getIssuerDN().getName();
 			
+		} catch (java.security.cert.CertificateException | NoSuchAlgorithmException | FileNotFoundException | KeyStoreException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 		// ---- Get the content ------------------------------------------------
-		content = builder.toString().replace(" ", "");
-		return content;
+		keyStoreSettings.setFullName(provider.substring(provider.indexOf("CN=") + 3, provider.indexOf(", OU")));
+		keyStoreSettings.setOrginazationalUnit(provider.substring(provider.indexOf("OU=") + 3, provider.indexOf(", O=")));
+		keyStoreSettings.setOrganization(provider.substring(provider.indexOf("O=") + 2, provider.indexOf(", L")));
+		keyStoreSettings.setCityOrLocality(provider.substring(provider.indexOf("L=") + 2, provider.indexOf(", ST")));
+		keyStoreSettings.setStateOrProvince(provider.substring(provider.indexOf("ST=") + 3, provider.indexOf(", C")));
+		keyStoreSettings.setCoutryCode(provider.substring(provider.indexOf("C=") + 2, provider.indexOf("C=") + 4));
+		
+		return keyStoreSettings;
 	}
 
 	/**
 	 * This method returns the KeyStore alias.
 	 *
-	 * @param KeyStoreName the key store name
-	 * @param KeyStorePassword the key store password
+	 * @param keyStoreName the key store name
+	 * @param keyStorePassword the key store password
 	 * @param ownerDialog the owner dialog
 	 * @return Alias
 	 */
-	public String GetKeyStoreAlias(String KeyStoreName, String KeyStorePassword, Dialog ownerDialog) {
-		
+	public String getKeyStoreAlias(String keyStoreName, String keyStorePassword, Dialog ownerDialog) {
+
 		KeyStore keystore = null;
+		String alias = null;
 		try {
 			// --- Specify the KeyStore type -----------------------------------
 			keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-
 			// --- Creates a FileInputStream from the KeyStore -----------------
-			InputStream inputStream = new FileInputStream(KeyStoreName);
+			InputStream inputStream = new FileInputStream(keyStoreName);
 			// --- Loads the KeyStore from the given InputStream ---------------
-			keystore.load(inputStream, KeyStorePassword.toCharArray());
-			
+			keystore.load(inputStream, keyStorePassword.toCharArray());
+			// --- Get KeyStore's Alias -------------------------------------------
+			Enumeration<String> enumeration = keystore.aliases();
+			if (enumeration.hasMoreElements()) {
+				alias = (String) enumeration.nextElement();
+			}
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (CertificateException e) {
@@ -162,41 +159,28 @@ public class KeyStoreController {
 		} catch (KeyStoreException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			/*
-			 * -------- Open a warning Message dialog if the password ---------
-			 * --------------------- is incorrect -----------------------------
-			 */
+			 // --- Open a warning Message dialog if the password is incorrect --
 			if (ownerDialog!=null) {
 				JOptionPane.showMessageDialog(ownerDialog, e.getMessage() + " !");	
 			}
 			e.printStackTrace();
 			return null;
 		}
-		// --- Get KeyStore's Alias -------------------------------------------
-		Enumeration<String> enumeration = null;
-		try {
-			enumeration = keystore.aliases();
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		}
-		String alias = null;
-		if (enumeration.hasMoreElements()) {
-			alias = (String) enumeration.nextElement();
-		}
 		return alias;
 	}
 
 	/**
 	 * This method allows the user to change the password and alias of a
-	 * KeyStore
-	 * 
-	 * @param KeyStoreName
-	 * @param OldAlias
-	 * @param NewAlias
-	 * @param OldKeyStorePassword
-	 * @param NewKeyStorePassword
+	 * KeyStore.
+	 *
+	 * @param keyStoreName the KeyStore name
+	 * @param oldAlias the old alias
+	 * @param newAlias the new alias
+	 * @param newKeyStorePassword the new KeyStore password
+	 * @param oldKeyStorePassword the old KeyStore password
+	 * @param ownerDialog the owner dialog
 	 */
-	public void EditKeyStore(String KeyStoreName, String OldAlias, String NewAlias, String NewKeyStorePassword, String OldKeyStorePassword) {
+	public void editKeyStore(String keyStoreName, String oldAlias, String newAlias, String newKeyStorePassword, String oldKeyStorePassword, Dialog ownerDialog) {
 
 		Runtime runtime = Runtime.getRuntime();
 		Process process1 = null;
@@ -212,9 +196,7 @@ public class KeyStoreController {
 		 * {new_password} -keystore {keystore_name} -storepass {old_password}
 		 */
 		try {
-			process1 = runtime.exec("keytool -keypasswd -alias " + OldAlias + " -keypass " + OldKeyStorePassword
-					+ " -new " + NewKeyStorePassword + " -keystore " + KeyStoreName + " -storepass "
-					+ OldKeyStorePassword);
+			process1 = runtime.exec("keytool -keypasswd -alias " + oldAlias + " -keypass " + oldKeyStorePassword + " -new " + newKeyStorePassword + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -233,12 +215,12 @@ public class KeyStoreController {
 		 * {key_password}
 		 */
 		try {
-			process2 = runtime
-					.exec("keytool -changealias -alias " + OldAlias + " -destalias " + NewAlias + " -keystore "
-							+ KeyStoreName + " -storepass " + OldKeyStorePassword + " -keypass " + NewKeyStorePassword);
+			process2 = runtime.exec("keytool -changealias -alias " + oldAlias + " -destalias " + newAlias + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword + " -keypass " + newKeyStorePassword);
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(frame, e1.getMessage() + " !");
+			if (ownerDialog!=null) {
+				JOptionPane.showMessageDialog(ownerDialog, e1.getMessage() + " !");	
+			}
 		}
 		try {
 			process2.waitFor();
@@ -255,43 +237,72 @@ public class KeyStoreController {
 		 * 
 		 */
 		try {
-			process3 = runtime.exec("keytool -alias " + NewAlias + " -storepasswd -new " + NewKeyStorePassword
-					+ " -keystore " + KeyStoreName + " -storepass " + OldKeyStorePassword);
+			process3 = runtime.exec("keytool -alias " + newAlias + " -storepasswd -new " + newKeyStorePassword + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-
 		try {
 			process3.waitFor();
 		} catch (InterruptedException e1) {
+			if (ownerDialog!=null) {
+				JOptionPane.showMessageDialog(ownerDialog, e1.getMessage() + " !");	
+			}
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(frame, e1.getMessage() + " !");
 		}
 	}
+	
 	/**
-	 * This method allows the user to export certificate from KeyStore
-	 * 
-	 * @param KeyStoreName
-	 * @param KeyStorePassword
-	 * @param CertificateName
+	 * This method allows the user to export certificate from KeyStore.
+	 *
+	 * @param keyStoreName the KeyStore name
+	 * @param alias the alias
+	 * @param keyStorePassword the KeyStore password
+	 * @param certificateName the certificate name
+	 * @param ownerDialog the owner dialog
 	 */
-	public void ExportCertificate(String KeyStoreName, String Alias, String KeyStorePassword, String CertificateName) {
+	public void exportCertificate(String keyStoreName, String alias, String keyStorePassword, String certificateName , String validity, Dialog ownerDialog) {
+		Runtime runtime = Runtime.getRuntime();
+		Process process1 = null;
 		/*
 		 * ---------------------------------------------------------------------
-		 * ------- Execute the command line to create the certificate ----------
+		 * ------- Execute the command line to generate the certificate --------
+		 * --------------------- in the KeyStore file --------------------------
 		 * ---------------------------------------------------------------------
+		 * 
+		 * keytool -selfcert -alias {alias} -keystore {keystore_name} -storepass
+		 * {keystore_password} -keyalg RSA -validity {validity}
+		 */
+		
+		try {
+			process1 = runtime.exec("keytool -selfcert -alias " + alias + " -keystore " + keyStoreName + " -storepass " + keyStorePassword + " -keyalg RSA -validity " + validity );
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			if (ownerDialog!=null) {
+				JOptionPane.showMessageDialog(ownerDialog, e1.getMessage() + " !");	
+			}
+		}
+		
+		try {
+			process1.waitFor();
+		} catch (InterruptedException e2) {
+			e2.printStackTrace();
+		}
+		
+		/* 
+		 * -------------------------------------------------------------------
+		 * ----- Execute the command line to export the certificate ----------
+		 * -------------------------------------------------------------------
 		 * 
 		 * keytool -export -alias {alias} -keystore {keystore_name} -storepass
 		 * {keystore_password} -file {certificate_name}
 		 */
 		try {
-			Runtime runtime = Runtime.getRuntime();
-			runtime.exec("keytool -export -alias " + Alias + " -keystore " + KeyStoreName + " -storepass "
-					+ KeyStorePassword + " -file " + CertificateName + ".cer" );
+			runtime.exec("keytool -export -alias " + alias + " -keystore " + keyStoreName + " -storepass " + keyStorePassword + " -file " + certificateName + ".cer"); 
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(frame, e1.getMessage() + " !");
+			if (ownerDialog!=null) {
+				JOptionPane.showMessageDialog(ownerDialog, e1.getMessage() + " !");	
+			}
 		}
 	}
-	
 }

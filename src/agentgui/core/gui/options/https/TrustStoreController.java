@@ -28,6 +28,7 @@
  */
 package agentgui.core.gui.options.https;
 
+import java.awt.Dialog;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -43,10 +44,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
-import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
+import java.util.Vector;
+
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * This class allows the user to manage a TrustStore.
@@ -56,19 +61,9 @@ import javax.swing.JOptionPane;
  * @since 05-04-2016
  */
 public class TrustStoreController {
-
-	private Runtime runtime = Runtime.getRuntime();
-	private InputStream certInputStream;
-	private FileInputStream fileInputStream;
-	private FileOutputStream fileOutputStream;
-	private File trustStoreFile;
-	private KeyStore trustStore;
-	private CertificateFactory certificateFactory;
-	private Certificate certificate;
-	private DefaultListModel<String> certificatesAliasModel;
-	private JFrame frame;
-
-	/**
+	 private DefaultTableModel tableModel;
+	
+	 /**
 	 * This Initializes the TrustStoreController.
 	 */
 	public TrustStoreController() {
@@ -79,70 +74,61 @@ public class TrustStoreController {
 	 * This method allows the user to create a TrustStore and protect its
 	 * integrity with a password.
 	 *
-	 * @param TrustStoreName the trust store name
-	 * @param TrustStorePassword the trust store password
-	 * @param trustStorePath the trust store path
+	 * @param trustStoreName the TrustStore name
+	 * @param trustStorePassword the TrustStore password
+	 * @param trustStorePath the TrustStore path
+	 * @param ownerDialog the owner dialog
 	 */
-	public void CreateTrustStore(String TrustStoreName, String TrustStorePassword, String trustStorePath) {
+	public void createTrustStore(String trustStoreName, String trustStorePassword, String trustStorePath, Dialog ownerDialog) {
 
 		try {
 			// ----- Specify the TrustStore file type -------------------------
 			KeyStore emptyTrustStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			// ----- Create an empty TrustStore file --------------------------
-			emptyTrustStore.load(null, TrustStorePassword.toCharArray());
-
+			emptyTrustStore.load(null, trustStorePassword.toCharArray());
 			// ----- Create a FileOutputStream --------------------------------
 			FileOutputStream fos = new FileOutputStream(trustStorePath);
 			// ----- Store the empty TrustStore -------------------------------
-			emptyTrustStore.store(fos, TrustStorePassword.toCharArray());
+			emptyTrustStore.store(fos, trustStorePassword.toCharArray());
 			// ----- Close the FileOutputStream -------------------------------
 			fos.close();
 			
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (KeyStoreException e1) {
-			e1.printStackTrace();
-		} catch (NoSuchAlgorithmException e1) {
-			e1.printStackTrace();
-		} catch (CertificateException e1) {
+		} catch (FileNotFoundException | KeyStoreException | NoSuchAlgorithmException | CertificateException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(frame, e1.getMessage() + " !");
+			if (ownerDialog!=null) {
+				JOptionPane.showMessageDialog(ownerDialog, e1.getMessage() + " !");	
+			}
 		}
 	}
-
 
 	/**
 	 * This method open a TrustStore. It returns true if the password is correct.
 	 *
-	 * @param TrustStoreName the TrustStore name
-	 * @param TrustStorePassword the TrustStore password
+	 * @param trustStoreName the TrustStore name
+	 * @param trustStorePassword the TrustStore password
+	 * @param ownerDialog the owner dialog
 	 * @return true, if successful
 	 */
-	public boolean OpenTrustStore(String TrustStoreName, String TrustStorePassword) {
+	public boolean openTrustStore(String trustStoreName, String trustStorePassword, Dialog ownerDialog) {
+		FileInputStream fileInputStream =null;
 		boolean password = true;
 		// --- Creates a FileInputStream from the TrustStore -------------------
-		File file = new File(TrustStoreName);
+		File file = new File(trustStoreName);
 		KeyStore trustStore = null;
 		try {
 			fileInputStream = new FileInputStream(file);
-
 			// --- Loads the TrustStore from the given InputStream -------------
 			trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			trustStore.load(fileInputStream, TrustStorePassword.toCharArray());
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (CertificateException e) {
+			trustStore.load(fileInputStream, trustStorePassword.toCharArray());
+		} catch (FileNotFoundException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// --- Open a warning Message dialog if the password is incorrect --
-			JOptionPane.showMessageDialog(frame, e.getMessage() + " !");
+			if (ownerDialog!=null) {
+				JOptionPane.showMessageDialog(ownerDialog, e.getMessage() + " !");	
+			}
 			e.printStackTrace();
 			password = false;
 		}
@@ -150,15 +136,14 @@ public class TrustStoreController {
 	}
 
 	/**
-	 * This method allows the user to change the password of a TrustStore
-	 * 
-	 * @param TrustStoreName
-	 * @param OldTrustStorePassword
-	 * @param NewTrustStorePassword
+	 * This method allows the user to change the password of a TrustStore.
+	 *
+	 * @param trustStoreName the TrustStore name
+	 * @param oldTrustStorePassword the old TrustStore password
+	 * @param newTrustStorePassword the new TrustStore password
 	 */
-	public void EditTrustStore(String TrustStoreName, String OldTrustStorePassword,
-			String NewTrustStorePassword) {
-
+	public void editTrustStore(String trustStoreName, String oldTrustStorePassword, String newTrustStorePassword) {
+		Runtime runtime = Runtime.getRuntime();
 		Process process1 = null;
 		Process process2 = null;
 
@@ -172,8 +157,7 @@ public class TrustStoreController {
 		 */
 
 		try {
-			process1 = runtime.exec("keytool -keypasswd -keypass " + OldTrustStorePassword + " -new "
-					+ NewTrustStorePassword + " -keystore " + TrustStoreName + " -storepass " + OldTrustStorePassword);
+			process1 = runtime.exec("keytool -keypasswd -keypass " + oldTrustStorePassword + " -new " + newTrustStorePassword + " -keystore " + trustStoreName + " -storepass " + oldTrustStorePassword);
 
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -196,8 +180,7 @@ public class TrustStoreController {
 		 */
 
 		try {
-			process2 = runtime.exec("keytool -storepasswd -new " + NewTrustStorePassword + " -keystore "
-					+ TrustStoreName + " -storepass " + OldTrustStorePassword);
+			process2 = runtime.exec("keytool -storepasswd -new " + newTrustStorePassword + " -keystore " + trustStoreName + " -storepass " + oldTrustStorePassword);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -212,98 +195,105 @@ public class TrustStoreController {
 	}
 
 	/**
-	 * This method allows the user to add certificate to a TrustStore
-	 * 
-	 * @param TrustStoreName
-	 * @param TrustStorePassword
-	 * @param CertificateToAdd
-	 * @param CertificateAlias
+	 * This method allows the user to add certificate to a TrustStore.
+	 *
+	 * @param trustStoreName the TrustStore name
+	 * @param trustStorePassword the TrustStore password
+	 * @param certificateToAdd the certificate to add
+	 * @param certificateAlias the certificate alias
+	 * @param ownerDialog the owner dialog
 	 */
-	public void AddCertificateToTrustStore(String TrustStoreName, String TrustStorePassword,
-			String CertificateToAdd, String CertificateAlias) {
-
+	public void addCertificateToTrustStore(String trustStoreName, String trustStorePassword, String certificateToAdd, String certificateAlias, Dialog ownerDialog) {
+		FileInputStream fileInputStream = null;
+		FileOutputStream fileOutputStream = null;
+		InputStream certInputStream = null;
+		File trustStoreFile = null;
+		KeyStore trustStore = null;
+		CertificateFactory certificateFactory = null;
+		Certificate certificate = null;
 		try {
 			// ----- Create a FileInputStream --------------------------------
-			trustStoreFile = new File(TrustStoreName);
-			fileInputStream = new FileInputStream(TrustStoreName);
+			trustStoreFile = new File(trustStoreName);
+			fileInputStream = new FileInputStream(trustStoreName);
 			// ----- Specify the TrustStore file type ------------------------
 			trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			// ----- Load the TrustStore -------------------------------------
-			trustStore.load(fileInputStream, TrustStorePassword.toCharArray());
+			trustStore.load(fileInputStream, trustStorePassword.toCharArray());
 			// ----- Specify the certificate type ----------------------------
 			certificateFactory = CertificateFactory.getInstance("X.509");
 			// ----- Get the trusted certificate file ------------------------
-			certInputStream = Stream(CertificateToAdd);
+			certInputStream = stream(certificateToAdd);
 			certificate = certificateFactory.generateCertificate(certInputStream);
 			// ----- Close the FileInputStream -------------------------------
 			fileInputStream.close();
 			// ----- Assign the trusted certificate to the given alias -------
-			trustStore.setCertificateEntry(CertificateAlias, certificate);
+			trustStore.setCertificateEntry(certificateAlias, certificate);
 			// ----- Create a FileOutputStream -------------------------------
 			fileOutputStream = new FileOutputStream(trustStoreFile);
 			// ----- Store the TrustStore ------------------------------------
-			trustStore.store(fileOutputStream, TrustStorePassword.toCharArray());
+			trustStore.store(fileOutputStream, trustStorePassword.toCharArray());
 			// ----- Close the FileOutputStream ------------------------------
 			fileOutputStream.close();
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
+		} catch (FileNotFoundException | KeyStoreException | NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (CertificateException e) {
-			JOptionPane.showMessageDialog(frame, "Please choose a certificate file!");
+			if (ownerDialog!=null) {
+				JOptionPane.showMessageDialog(ownerDialog, "Please choose a certificate file!");	
+			}
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(frame, e.getMessage() + " !");
+			if (ownerDialog!=null) {
+				JOptionPane.showMessageDialog(ownerDialog, e.getMessage() + " !");	
+			}
 		}
 	}
 
 	/**
-	 * This method allows the user to delete certificate from TrustStore
-	 * 
-	 * @param TrustStoreName
-	 * @param TrustStorePassword
-	 * @param CertificateAliasToDelete
+	 * This method allows the user to delete certificate from TrustStore.
+	 *
+	 * @param trustStoreName the TrustStore name
+	 * @param trustStorePassword the TrustStore password
+	 * @param certificateAliasToDelete the certificate alias to delete
+	 * @param ownerDialog the owner dialog
 	 */
-	public void DeleteCertificateFromTrustStore(String TrustStoreName, String TrustStorePassword,String CertificateAliasToDelete) {
-
+	public void deleteCertificateFromTrustStore(String trustStoreName, String trustStorePassword,String certificateAliasToDelete, Dialog ownerDialog) {
+		FileInputStream fileInputStream =null;
+		FileOutputStream fileOutputStream = null;
+		File trustStoreFile = null;
 		try {
 			// --- Creates a FileInputStream from the TrustStore -----------
-			trustStoreFile = new File(TrustStoreName);
+			trustStoreFile = new File(trustStoreName);
 			fileInputStream = new FileInputStream(trustStoreFile);
 			// --- Loads the TrustStore from the given InputStream ---------
 			KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			trustStore.load(fileInputStream, TrustStorePassword.toCharArray());
+			trustStore.load(fileInputStream, trustStorePassword.toCharArray());
 			// ---- Delete the certificate from the TrustStore -------------
-			trustStore.deleteEntry(CertificateAliasToDelete);
+			trustStore.deleteEntry(certificateAliasToDelete);
 			// ----- Create a FileOutputStream -----------------------------
 			fileOutputStream = new FileOutputStream(trustStoreFile);
 			// ----- Store the TrustStore ----------------------------------
-			trustStore.store(fileOutputStream, TrustStorePassword.toCharArray());
+			trustStore.store(fileOutputStream, trustStorePassword.toCharArray());
 			// ----- Close the FileOutputStream ----------------------------
 			fileOutputStream.close();
 
-		} catch (java.security.cert.CertificateException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (KeyStoreException e) {
+		} catch (java.security.cert.CertificateException | NoSuchAlgorithmException | FileNotFoundException | KeyStoreException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(frame, e.getMessage() + " !");
+			if (ownerDialog!=null) {
+				JOptionPane.showMessageDialog(ownerDialog, e.getMessage() + " !");	
+			}
 		} finally {
 			if (null != fileInputStream)
 				try {
 					fileInputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
-					JOptionPane.showMessageDialog(frame, e.getMessage() + " !");
+					if (ownerDialog!=null) {
+						JOptionPane.showMessageDialog(ownerDialog, e.getMessage() + " !");	
+					}
 				}
 		}
 	}
@@ -313,7 +303,7 @@ public class TrustStoreController {
 	 * buffer of bytes that may be read from the stream
 	 */
 	@SuppressWarnings("resource")
-	private InputStream Stream(String fileName) throws IOException {
+	private InputStream stream(String fileName) throws IOException {
 		// ---- Create a FileInputStream ------------------------------
 		FileInputStream fileInputStream = new FileInputStream(fileName);
 		// ---- Create a DataInputStream ------------------------------
@@ -327,46 +317,151 @@ public class TrustStoreController {
 
 		return byteArrayInputStream;
 	}
+	
 	/**
-	 * This method returns Certificate's alias for the TrustStore.
+	 * Gets the tableModel.
+	 * @return the tableModel
 	 */
-	public DefaultListModel<String> CertificatesAliaslist(String TrustStoreName, String TrustStorePassword) {
-		// ----- Create model for the jListCertificatesAlias -------
-		certificatesAliasModel = new DefaultListModel<String>();
-		try {
-			// --- Creates a FileInputStream from the TrustStore ---
-			File file = new File(TrustStoreName);
-			fileInputStream = new FileInputStream(file);
-			// --- Loads the KeyStore from the given InputStream ---
-			KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			trustStore.load(fileInputStream, TrustStorePassword.toCharArray());
+	public DefaultTableModel getTableModel() {
+		if (tableModel == null) {
+			// ---- Create header for the TableModel -----------------
+			Vector<String> header = new Vector<String>();
+			header.add("Certificate alias");
+			header.add("Certificate owner");
+			header.add("Expiration date");
 			
-			// --- Get All TrustStore's Certificates Alias ---------
+			tableModel = new DefaultTableModel(null,header) {
+				private static final long serialVersionUID = 1L;
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
+		}
+		return tableModel;
+	}
+	
+	/**
+	 * Adds row to the TableModel
+	 *
+	 * @param certificateSettings the CertificateSettings
+	 */
+	public void addTableModelRow(CertificateSettings certificateSettings) {
+		if(certificateSettings == null){
+		   certificateSettings = new CertificateSettings();
+		}
+		Vector<Object> row = new Vector<Object>();
+		row.add(certificateSettings.getCertificateAlias());
+		row.add(certificateSettings.getKeyStoreSettings().getFullName());
+		row.add(certificateSettings.getValidity());
+		getTableModel().addRow(row); 
+	}
+	
+	/**
+	 * Clears the table model.
+	 */
+	public void clearTableModel() {
+		while (getTableModel().getRowCount()>0) {
+			getTableModel().removeRow(0);
+		}
+	}
+	
+	/**
+	 * Get TrustedCertificates list .
+	 *
+	 * @param trustStoreName the TrustStore name
+	 * @param trustStorePassword the TrustStore password
+	 */
+	public void getTrustedCertificatesList(String trustStoreName, String trustStorePassword) {
+		CertificateSettings certificateSettings = null;
+		FileInputStream fileInputStream = null;
+		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+		try {
+			// --- Creates a FileInputStream from the TrustStore -----
+			File file = new File(trustStoreName);
+			fileInputStream = new FileInputStream(file);
+			// --- Loads the TrustStore from the given InputStream ---
+			KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			trustStore.load(fileInputStream, trustStorePassword.toCharArray());
+			certificateSettings = new CertificateSettings();
+			// --- Get All TrustStore's Certificates Alias -----------
 			Enumeration<String> enumeration = trustStore.aliases();
 			while (enumeration.hasMoreElements()) {
 				String alias = (String) enumeration.nextElement();
-				certificatesAliasModel.addElement(alias);
+				certificateSettings.setCertificateAlias(alias);
+				Certificate cert = trustStore.getCertificate(alias);
+		        
+				String provider = ( (X509Certificate) cert).getIssuerDN().getName();
+		        certificateSettings.getKeyStoreSettings().setFullName(provider.substring(provider.indexOf("CN=") + 3, provider.indexOf(", OU")));
+		        certificateSettings.getKeyStoreSettings().setOrginazationalUnit(provider.substring(provider.indexOf("OU=") + 3, provider.indexOf(", O=")));
+		        certificateSettings.getKeyStoreSettings().setOrganization(provider.substring(provider.indexOf("O=") + 2, provider.indexOf(", L")));
+		        certificateSettings.getKeyStoreSettings().setCityOrLocality(provider.substring(provider.indexOf("L=") + 2, provider.indexOf(", ST")));
+		        certificateSettings.getKeyStoreSettings().setStateOrProvince(provider.substring(provider.indexOf("ST=") + 3, provider.indexOf(", C")));
+		        certificateSettings.getKeyStoreSettings().setCoutryCode(provider.substring(provider.indexOf("C=") + 2, provider.indexOf("C=") + 4));
+		       
+		        Date date = ((X509Certificate) cert).getNotAfter();
+				certificateSettings.setValidity(DATE_FORMAT.format(date));
+				
+				addTableModelRow(certificateSettings);
 			}
-		} catch (java.security.cert.CertificateException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (KeyStoreException e) {
+		} catch (java.security.cert.CertificateException | NoSuchAlgorithmException | FileNotFoundException | KeyStoreException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(frame, e.getMessage() + " !");
 		} finally {
 			if (null != fileInputStream)
 				try {
 					fileInputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
-					JOptionPane.showMessageDialog(frame, e.getMessage() + " !");
 				}
 		}
-		return certificatesAliasModel;
+	}
+	
+	/**
+	 * Gets the certificate settings.
+	 *
+	 * @param alias the certificate alias
+	 * @param trustStoreName the TrustStore name
+	 * @param trustStorePassword TrustStore password
+	 * @return the certificate settings
+	 */
+	public CertificateSettings getCertificateSettings(String alias, String trustStoreName, String trustStorePassword){
+		CertificateSettings certificateSettings = new CertificateSettings();
+		FileInputStream fileInputStream = null;
+		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+
+		try {
+			// --- Creates a FileInputStream from the TrustStore -----
+			File file = new File(trustStoreName);
+			fileInputStream = new FileInputStream(file);
+			// --- Loads the TrustStore from the given InputStream ---
+			KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			trustStore.load(fileInputStream, trustStorePassword.toCharArray());
+			
+			Certificate cert = trustStore.getCertificate(alias);
+	        String provider = ( (X509Certificate) cert).getIssuerDN().getName();
+	        certificateSettings.getKeyStoreSettings().setFullName(provider.substring(provider.indexOf("CN=") + 3, provider.indexOf(", OU")));
+	        certificateSettings.getKeyStoreSettings().setOrginazationalUnit(provider.substring(provider.indexOf("OU=") + 3, provider.indexOf(", O=")));
+	        certificateSettings.getKeyStoreSettings().setOrganization(provider.substring(provider.indexOf("O=") + 2, provider.indexOf(", L")));
+	        certificateSettings.getKeyStoreSettings().setCityOrLocality(provider.substring(provider.indexOf("L=") + 2, provider.indexOf(", ST")));
+	        certificateSettings.getKeyStoreSettings().setStateOrProvince(provider.substring(provider.indexOf("ST=") + 3, provider.indexOf(", C")));
+	        certificateSettings.getKeyStoreSettings().setCoutryCode(provider.substring(provider.indexOf("C=") + 2, provider.indexOf("C=") + 4));
+	        Date date = ((X509Certificate) cert).getNotAfter();
+			certificateSettings.setValidity(DATE_FORMAT.format(date));
+			
+		} catch (java.security.cert.CertificateException | NoSuchAlgorithmException | FileNotFoundException | KeyStoreException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (null != fileInputStream)
+				try {
+					fileInputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
+		return certificateSettings;
 	}
 }

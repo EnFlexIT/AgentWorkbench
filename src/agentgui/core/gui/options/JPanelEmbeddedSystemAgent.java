@@ -94,6 +94,8 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private JLabel jLabelVisConfig;
 	private JRadioButton jRadioButtonVisNon;
 	private JRadioButton jRadioButtonVisTrayIcon;
+	private JLabel jLabelAgentName;
+	private JTextField jTextFieldAgentName;
 	
 	
 	/**
@@ -111,67 +113,68 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 	private void initialize() {
 		
 		GridBagConstraints gridBagConstraints49 = new GridBagConstraints();
+		gridBagConstraints49.insets = new Insets(0, 0, 0, 5);
 		gridBagConstraints49.gridx = 1;
 		gridBagConstraints49.anchor = GridBagConstraints.WEST;
-		gridBagConstraints49.gridy = 10;
+		gridBagConstraints49.gridy = 11;
 		GridBagConstraints gridBagConstraints40 = new GridBagConstraints();
 		gridBagConstraints40.gridx = 1;
 		gridBagConstraints40.anchor = GridBagConstraints.WEST;
-		gridBagConstraints40.insets = new Insets(2, 0, 0, 0);
-		gridBagConstraints40.gridy = 9;
+		gridBagConstraints40.insets = new Insets(2, 0, 5, 5);
+		gridBagConstraints40.gridy = 10;
 		GridBagConstraints gridBagConstraints48 = new GridBagConstraints();
 		gridBagConstraints48.gridx = 0;
 		gridBagConstraints48.gridwidth = 2;
 		gridBagConstraints48.anchor = GridBagConstraints.WEST;
-		gridBagConstraints48.insets = new Insets(15, 0, 0, 0);
+		gridBagConstraints48.insets = new Insets(15, 0, 5, 5);
 		gridBagConstraints48.gridy = 4;
 		GridBagConstraints gridBagConstraints47 = new GridBagConstraints();
 		gridBagConstraints47.gridx = 0;
 		gridBagConstraints47.anchor = GridBagConstraints.WEST;
-		gridBagConstraints47.insets = new Insets(5, 0, 0, 0);
+		gridBagConstraints47.insets = new Insets(5, 0, 5, 5);
 		gridBagConstraints47.gridy = 5;
 		GridBagConstraints gridBagConstraints46 = new GridBagConstraints();
 		gridBagConstraints46.fill = GridBagConstraints.VERTICAL;
 		gridBagConstraints46.gridy = 5;
 		gridBagConstraints46.weightx = 1.0;
 		gridBagConstraints46.anchor = GridBagConstraints.WEST;
-		gridBagConstraints46.insets = new Insets(5, 5, 0, 0);
+		gridBagConstraints46.insets = new Insets(5, 5, 5, 5);
 		gridBagConstraints46.gridx = 1;
 		GridBagConstraints gridBagConstraints45 = new GridBagConstraints();
 		gridBagConstraints45.gridx = 1;
 		gridBagConstraints45.anchor = GridBagConstraints.WEST;
 		gridBagConstraints45.fill = GridBagConstraints.NONE;
-		gridBagConstraints45.insets = new Insets(5, 5, 0, 0);
+		gridBagConstraints45.insets = new Insets(5, 5, 5, 5);
 		gridBagConstraints45.gridy = 3;
 		GridBagConstraints gridBagConstraints43 = new GridBagConstraints();
 		gridBagConstraints43.gridx = 0;
-		gridBagConstraints43.insets = new Insets(5, 0, 0, 0);
+		gridBagConstraints43.insets = new Insets(5, 0, 5, 5);
 		gridBagConstraints43.gridy = 3;
 		GridBagConstraints gridBagConstraints29 = new GridBagConstraints();
 		gridBagConstraints29.gridx = 0;
 		gridBagConstraints29.anchor = GridBagConstraints.WEST;
-		gridBagConstraints29.insets = new Insets(5, 0, 0, 0);
+		gridBagConstraints29.insets = new Insets(5, 0, 5, 5);
 		gridBagConstraints29.gridwidth = 2;
-		gridBagConstraints29.gridy = 8;
+		gridBagConstraints29.gridy = 9;
 		GridBagConstraints gridBagConstraints39 = new GridBagConstraints();
 		gridBagConstraints39.gridx = 2;
-		gridBagConstraints39.insets = new Insets(5, 5, 0, 0);
+		gridBagConstraints39.insets = new Insets(5, 5, 5, 0);
 		gridBagConstraints39.gridy = 7;
 		GridBagConstraints gridBagConstraints38 = new GridBagConstraints();
 		gridBagConstraints38.fill = GridBagConstraints.BOTH;
 		gridBagConstraints38.gridy = 7;
 		gridBagConstraints38.weightx = 1.0;
 		gridBagConstraints38.anchor = GridBagConstraints.WEST;
-		gridBagConstraints38.insets = new Insets(5, 5, 0, 0);
+		gridBagConstraints38.insets = new Insets(5, 5, 5, 5);
 		gridBagConstraints38.gridx = 1;
 		GridBagConstraints gridBagConstraints37 = new GridBagConstraints();
 		gridBagConstraints37.gridx = 0;
-		gridBagConstraints37.insets = new Insets(5, 0, 0, 0);
+		gridBagConstraints37.insets = new Insets(5, 0, 5, 5);
 		gridBagConstraints37.anchor = GridBagConstraints.WEST;
 		gridBagConstraints37.gridy = 7;
 		GridBagConstraints gridBagConstraints36 = new GridBagConstraints();
 		gridBagConstraints36.gridx = 0;
-		gridBagConstraints36.insets = new Insets(15, 0, 0, 0);
+		gridBagConstraints36.insets = new Insets(15, 0, 5, 5);
 		gridBagConstraints36.gridwidth = 2;
 		gridBagConstraints36.anchor = GridBagConstraints.WEST;
 		gridBagConstraints36.gridy = 6;
@@ -179,21 +182,22 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		gridBagConstraints35.gridx = 0;
 		gridBagConstraints35.gridwidth = 2;
 		gridBagConstraints35.anchor = GridBagConstraints.WEST;
-		gridBagConstraints35.insets = new Insets(10, 0, 0, 0);
+		gridBagConstraints35.insets = new Insets(10, 0, 5, 5);
 		gridBagConstraints35.gridy = 1;
 		GridBagConstraints gridBagConstraints34 = new GridBagConstraints();
 		gridBagConstraints34.fill = GridBagConstraints.NONE;
 		gridBagConstraints34.gridy = 2;
 		gridBagConstraints34.weightx = 0.0;
 		gridBagConstraints34.anchor = GridBagConstraints.WEST;
-		gridBagConstraints34.insets = new Insets(5, 5, 0, 0);
+		gridBagConstraints34.insets = new Insets(5, 5, 5, 5);
 		gridBagConstraints34.gridx = 1;
 		GridBagConstraints gridBagConstraints33 = new GridBagConstraints();
 		gridBagConstraints33.gridx = 0;
-		gridBagConstraints33.insets = new Insets(5, 0, 0, 0);
+		gridBagConstraints33.insets = new Insets(5, 0, 5, 5);
 		gridBagConstraints33.anchor = GridBagConstraints.WEST;
 		gridBagConstraints33.gridy = 2;
 		GridBagConstraints gridBagConstraints32 = new GridBagConstraints();
+		gridBagConstraints32.insets = new Insets(0, 0, 5, 5);
 		gridBagConstraints32.gridx = 0;
 		gridBagConstraints32.gridwidth = 2;
 		gridBagConstraints32.anchor = GridBagConstraints.WEST;
@@ -241,9 +245,11 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		jLabelVisConfig.setFont(new Font("Dialog", Font.BOLD, 12));
 		
 		this.setSize(new Dimension(550, 318));
-		this.setLayout(new GridBagLayout());
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0};
+		this.setLayout(gridBagLayout);
 		
-		this.setPreferredSize(new Dimension(550, 297));
+		this.setPreferredSize(new Dimension(572, 392));
 		this.add(jLabelEmbeddedHeader, gridBagConstraints32);
 		this.add(jLabelProject, gridBagConstraints33);
 		this.add(getJComboBoxProjectSelector(), gridBagConstraints34);
@@ -252,6 +258,23 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		this.add(jLabelAgent, gridBagConstraints37);
 		this.add(getJTextFieldAgentClass(), gridBagConstraints38);
 		this.add(getJButtonEsaSelectAgent(), gridBagConstraints39);
+		{
+			jLabelAgentName = new JLabel("Agent Name:");
+			GridBagConstraints gbc_jLabelAgentName = new GridBagConstraints();
+			gbc_jLabelAgentName.anchor = GridBagConstraints.WEST;
+			gbc_jLabelAgentName.insets = new Insets(5, 0, 5, 5);
+			gbc_jLabelAgentName.gridx = 0;
+			gbc_jLabelAgentName.gridy = 8;
+			add(jLabelAgentName, gbc_jLabelAgentName);
+		}
+		{
+			GridBagConstraints gbc_jTextFieldAgentName = new GridBagConstraints();
+			gbc_jTextFieldAgentName.insets = new Insets(5, 5, 5, 5);
+			gbc_jTextFieldAgentName.fill = GridBagConstraints.BOTH;
+			gbc_jTextFieldAgentName.gridx = 1;
+			gbc_jTextFieldAgentName.gridy = 8;
+			add(getJTextFieldAgentName(), gbc_jTextFieldAgentName);
+		}
 		this.add(jLabelVisConfig, gridBagConstraints29);
 		this.add(jLabelExecuteAs, gridBagConstraints43);
 		this.add(getJPanelExecution(), gridBagConstraints45);
@@ -401,6 +424,18 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		}
 		return jTextFieldAgentClass;
 	}
+	
+	/**
+	 * Gets the jTextFieldAgentName.
+	 * @return the jTextFieldAgentName
+	 */
+	private JTextField getJTextFieldAgentName(){
+		if( jTextFieldAgentName == null){
+			jTextFieldAgentName = new JTextField();
+			jTextFieldAgentName.setPreferredSize(new Dimension(300, 26));
+		}
+		return jTextFieldAgentName;
+	}
 	/**
 	 * This method initializes jRadioButtonVisNon	
 	 * @return javax.swing.JRadioButton	
@@ -442,6 +477,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			this.esaProjectSelected = null;
 			this.getJComboBoxSetupSelector().setSelectedItem(null);
 			this.getJTextFieldAgentClass().setText(null);
+			this.getJTextFieldAgentName().setText(null);
 			if (this.esaClassSelector!=null) {
 				this.esaClassSelector.dispose();
 				this.esaClassSelector = null;	
@@ -454,6 +490,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				this.esaProjectSelected = selectedProject;
 				this.setComboBoxModelSetup();
 				this.getJTextFieldAgentClass().setText(null);
+				this.getJTextFieldAgentName().setText(null);
 				this.getClassSelector4ProjectAgents(selectedProject);
 				
 			} else {
@@ -464,12 +501,14 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 					// --- Reinitialise settings ---------- 
 					this.esaProjectSelected = null;
 					this.getJTextFieldAgentClass().setText(null);
+					this.getJTextFieldAgentName().setText(null);
 					this.esaClassSelector.dispose();
 					this.esaClassSelector = null;
 					// --- Now reinitialise ---------------
 					this.esaProjectSelected = selectedProject;
 					this.setComboBoxModelSetup();
 					this.getJTextFieldAgentClass().setText(null);
+					this.getJTextFieldAgentName().setText(null);
 					this.getClassSelector4ProjectAgents(selectedProject);
 
 				}
@@ -512,6 +551,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		// --- act in the dialog ... ----------------------
 		if (cs.isCanceled()==true) return;
 		this.getJTextFieldAgentClass().setText(cs.getClassSelected());
+		this.getJTextFieldAgentName().setText(null);
 	}
 	
 	
@@ -528,12 +568,14 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			jLabelSetup.setEnabled(false);
 			jLabelAgentHeader.setEnabled(false);
 			jLabelAgent.setEnabled(false);
+			jLabelAgentName.setEnabled(false);
 			jLabelVisConfig.setEnabled(false);
 			
 			this.getJRadioButtonExecuteAsService().setEnabled(false);
 			this.getJRadioButtonExecuteAsDeviceAgent().setEnabled(false);
 			this.getJComboBoxSetupSelector().setEnabled(false);
 			this.getJTextFieldAgentClass().setEnabled(false);
+			this.getJTextFieldAgentName().setEnabled(false);
 			this.getJButtonEsaSelectAgent().setEnabled(false);
 			this.getJRadioButtonVisNon().setEnabled(false);
 			this.getJRadioButtonVisTrayIcon().setEnabled(false);
@@ -547,28 +589,34 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			if (this.getJRadioButtonExecuteAsService().isSelected()==false && this.getJRadioButtonExecuteAsDeviceAgent().isSelected()==false) {
 				this.getJComboBoxSetupSelector().setSelectedItem(null);
 				this.getJTextFieldAgentClass().setText(null);
+				this.getJTextFieldAgentName().setText(null);
 				
 				jLabelSetupHeader.setEnabled(false);
 				jLabelSetup.setEnabled(false);
 				jLabelAgentHeader.setEnabled(false);
 				jLabelAgent.setEnabled(false);
+				jLabelAgentName.setEnabled(false);
 				jLabelVisConfig.setEnabled(false);
 				this.getJComboBoxSetupSelector().setEnabled(false);
 				this.getJTextFieldAgentClass().setEnabled(false);
+				this.getJTextFieldAgentName().setEnabled(false);
 				this.getJButtonEsaSelectAgent().setEnabled(false);
 				this.getJRadioButtonVisNon().setEnabled(false);
 				this.getJRadioButtonVisTrayIcon().setEnabled(false);
 				
 			} else if (this.getJRadioButtonExecuteAsService().isSelected()) {
 				this.getJTextFieldAgentClass().setText(null);
-				
+				this.getJTextFieldAgentName().setText(null);
+
 				jLabelSetupHeader.setEnabled(true);
 				jLabelSetup.setEnabled(true);
 				jLabelAgentHeader.setEnabled(false);
 				jLabelAgent.setEnabled(false);
+				jLabelAgentName.setEnabled(false);
 				jLabelVisConfig.setEnabled(false);
 				this.getJComboBoxSetupSelector().setEnabled(true);
 				this.getJTextFieldAgentClass().setEnabled(false);
+				this.getJTextFieldAgentName().setEnabled(false);
 				this.getJButtonEsaSelectAgent().setEnabled(false);
 				this.getJRadioButtonVisNon().setEnabled(false);
 				this.getJRadioButtonVisTrayIcon().setEnabled(false);
@@ -580,9 +628,11 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				jLabelSetup.setEnabled(false);
 				jLabelAgentHeader.setEnabled(true);
 				jLabelAgent.setEnabled(true);
+				jLabelAgentName.setEnabled(true);
 				jLabelVisConfig.setEnabled(true);
 				this.getJComboBoxSetupSelector().setEnabled(false);
 				this.getJTextFieldAgentClass().setEnabled(true);
+				this.getJTextFieldAgentName().setEnabled(true);
 				this.getJButtonEsaSelectAgent().setEnabled(true);
 				this.getJRadioButtonVisNon().setEnabled(true);
 				this.getJRadioButtonVisTrayIcon().setEnabled(true);
@@ -605,6 +655,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			this.getJComboBoxProjectSelector().setSelectedItem(null);
 			this.getJComboBoxSetupSelector().setSelectedItem(null);
 			this.getJTextFieldAgentClass().setText(null);
+			this.getJTextFieldAgentName().setText(null);
 			this.esaClassSelector = null;
 			break;
 
@@ -613,6 +664,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			this.getJComboBoxProjectSelector().setSelectedItem(null);
 			this.getJComboBoxSetupSelector().setSelectedItem(null);
 			this.getJTextFieldAgentClass().setText(null);
+			this.getJTextFieldAgentName().setText(null);
 			this.esaClassSelector = null;
 			break;
 			
@@ -643,6 +695,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			}
 			this.getJComboBoxSetupSelector().setSelectedItem(getGlobalInfo().getDeviceServiceSetupSelected());
 			this.getJTextFieldAgentClass().setText(getGlobalInfo().getDeviceServiceAgentSelected());
+			this.getJTextFieldAgentName().setText(getGlobalInfo().getDeviceServiceAgentNameSelected());
 			switch (getGlobalInfo().getDeviceServiceAgentVisualisation()) {
 			case NONE:
 				this.getJRadioButtonVisNon().setSelected(true);
@@ -678,6 +731,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 		}
 		this.getGlobalInfo().setDeviceServiceSetupSelected((String)this.getJComboBoxSetupSelector().getSelectedItem());
 		this.getGlobalInfo().setDeviceServiceAgentSelected(this.getJTextFieldAgentClass().getText());
+		this.getGlobalInfo().setDeviceServiceAgentNameSelected(this.getJTextFieldAgentName().getText());
 		if (this.getJRadioButtonVisNon().isSelected()) {
 			this.getGlobalInfo().setDeviceServiceAgentVisualisation(EmbeddedSystemAgentVisualisation.NONE);			
 		} else if (this.getJRadioButtonVisTrayIcon().isSelected()) {
@@ -737,6 +791,13 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 							esaSelectAgent();
 						}
 					});
+					return true;
+				}
+				// --- Agent Name ? -------------------------------------
+				if (this.getJTextFieldAgentName().getText()==null || this.getJTextFieldAgentName().getText().equals("")) {
+					msgHead = Language.translate("Fehlender Agent Name!");
+					msgText = Language.translate("Bitte geben Sie Agenten Name") + "!";	
+					JOptionPane.showMessageDialog(this.optionDialog.getContentPane(), msgText, msgHead, JOptionPane.ERROR_MESSAGE);
 					return true;
 				}
 				
