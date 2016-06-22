@@ -125,8 +125,8 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		this.refreshDataView();
 		
 		// --- configure translation ------------
-		jLabelPort.setText(Language.translate("Starte JADE ÃƒÆ’Ã‚Â¼ber Port-Nr.:"));
-		jLabelPortExplain.setText(Language.translate("(Falls bereits verwendet, wird versucht den nÃƒÆ’Ã‚Â¤chst hÃƒÆ’Ã‚Â¶heren Port zu nutzen)"));
+		jLabelPort.setText(Language.translate("Starte JADE über Port-Nr.:"));
+		jLabelPortExplain.setText(Language.translate("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)"));
 		jLabelMtpProtocol.setText(Language.translate("MTP-Protokoll:"));
 
 		jButtonSetPort.setToolTipText(Language.translate("JADE-Port bearbeiten"));
@@ -324,7 +324,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			gbc_jLabelPort.gridy = 0;
 			jPanelPorts.add(jLabelPort, gbc_jLabelPort);
 			jLabelPort.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelPort.setText("Starte JADE ÃƒÆ’Ã‚Â¼ber Port-Nr.:");
+			jLabelPort.setText("Starte JADE über Port-Nr.:");
 			GridBagConstraints gbc_jTextFieldDefaultPort = new GridBagConstraints();
 			gbc_jTextFieldDefaultPort.insets = new Insets(0, 0, 5, 5);
 			gbc_jTextFieldDefaultPort.gridx = 1;
@@ -365,6 +365,8 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			jPanelPorts.add(getJButtonSetPortMTPDefault(), gbc_jButtonSetPortMTPDefault);
 			
 			jLabelPortExplain = new JLabel();
+			jLabelPortExplain.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)");
 			GridBagConstraints gbc_jLabelPortExplain = new GridBagConstraints();
 			gbc_jLabelPortExplain.anchor = GridBagConstraints.WEST;
 			gbc_jLabelPortExplain.gridwidth = 4;
@@ -372,8 +374,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			gbc_jLabelPortExplain.gridx = 0;
 			gbc_jLabelPortExplain.gridy = 2;
 			jPanelPorts.add(jLabelPortExplain, gbc_jLabelPortExplain);
-			jLabelPortExplain.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nÃƒÆ’Ã‚Â¤chst hÃƒÆ’Ã‚Â¶heren Port zu nutzen)");
+			
 		}
 		return jPanelPorts;
 	}
