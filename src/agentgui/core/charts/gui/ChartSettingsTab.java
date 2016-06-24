@@ -220,7 +220,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	}
 	protected JLabel getLblRendererType() {
 		if (lblRendererType == null) {
-			lblRendererType = new JLabel(Language.translate("Art der Darstellung"));
+			lblRendererType = new JLabel(Language.translate("Renderer"));
 		}
 		return lblRendererType;
 	}
@@ -278,7 +278,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 			tblSeriesSettings.setFillsViewportHeight(true);
 			
 			this.chartSettingModel.getTableModelSeriesSettings().addTableModelListener(this);
-			this.chartSettingModel.refreshTableModel();
+			this.chartSettingModel.updateSeriesList();
 			this.refreshRenderEditorTblSeriesSettings();
 		}
 		return tblSeriesSettings;
@@ -367,7 +367,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	 */
 	private void setChartTitle(String newTitle){
 		chartSettingModel.setChartTitle(newTitle);
-		parent.getChartTab().getChart().setTitle(newTitle);
+//		parent.getChartTab().getChart().setTitle(newTitle);
 	}
 	/**
 	 * Sets the x axis label for the chart
@@ -375,7 +375,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	 */
 	private void setXAxisLabel(String newXAxisLabel){
 		chartSettingModel.setChartXAxisLabel(newXAxisLabel);
-		parent.getChartTab().setXAxisLabel(newXAxisLabel);
+//		parent.getChartTab().setXAxisLabel(newXAxisLabel);
 	}
 	/**
 	 * Sets the y axis label for the chart
@@ -383,7 +383,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	 */
 	private void setYAxisLabel(String newYAxisLabel){
 		chartSettingModel.setChartYAxisLabel(newYAxisLabel);
-		parent.getChartTab().setYAxisLabel(newYAxisLabel);
+//		parent.getChartTab().setYAxisLabel(newYAxisLabel);
 	}
 	/**
 	 * Sets the renderer type for the chart
@@ -391,7 +391,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	 */
 	private void setRenderType(String newRendererType){
 		chartSettingModel.setRenderType(newRendererType);
-		parent.getChartTab().setRenderer(newRendererType);
+//		parent.getChartTab().setRenderer(newRendererType);
 	}
 	/**
 	 * Sets the series label for a data series, specified by its index 
@@ -401,7 +401,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	 */
 	private void setSeriesLabel(int seriesIndex, String newLabel) throws NoSuchSeriesException{
 		chartSettingModel.setSeriesLabel(seriesIndex, newLabel);
-		parent.getChartTab().getChart().fireChartChanged();		// Trigger repaint 
+//		parent.getChartTab().getChart().fireChartChanged();		// Trigger repaint 
 	}
 	/**
 	 * Sets the plot color for a data series, specified by its index 
@@ -411,7 +411,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	 */
 	private void setSeriesColor(int seriesIndex, Color newColor) throws NoSuchSeriesException{
 		chartSettingModel.setSeriesColor(seriesIndex, newColor);
-		parent.getChartTab().setSeriesColor(seriesIndex, newColor);
+//		parent.getChartTab().setSeriesColor(seriesIndex, newColor);
 	}
 	/**
 	 * Sets the plot line width for a data series, specified by its index 
@@ -421,7 +421,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	 */
 	private void setSeriesLineWidth(int seriesIndex, Float newWidth) throws NoSuchSeriesException{
 		chartSettingModel.setSeriesLineWidth(seriesIndex, newWidth);
-		parent.getChartTab().setSeriesLineWidth(seriesIndex, newWidth);
+//		parent.getChartTab().setSeriesLineWidth(seriesIndex, newWidth);
 	}
 	
 	/**

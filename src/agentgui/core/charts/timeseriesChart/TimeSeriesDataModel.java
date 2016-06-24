@@ -28,6 +28,11 @@
  */
 package agentgui.core.charts.timeseriesChart;
 
+import java.util.Observable;
+
+import agentgui.core.charts.ChartSettingModel;
+import agentgui.core.charts.ChartSettingModel.ChartSettingsUpdateNotification;
+import agentgui.core.charts.ChartSettingModel.EventType;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.gui.ChartTab;
@@ -267,7 +272,18 @@ public class TimeSeriesDataModel extends DataModel {
 	
 	@Override
 	public String getDefaultSeriesLabel() {
-		return DEFAULT_SERIES_LABEL+" "+(this.getSeriesCount()+1);
+		
+		// Build a series label from the default label and the number of series.
+		// If the resulting label already exists, increase the number.
+		
+		String seriesLabel;
+		int suffix = this.getSeriesCount();
+		do{
+			suffix++;
+			seriesLabel = DEFAULT_SERIES_LABEL+" "+suffix;
+		}while(this.getChartModel().getSeries(seriesLabel) != null);
+		
+		return seriesLabel;
 	}
 
 	/* (non-Javadoc)
@@ -345,5 +361,22 @@ public class TimeSeriesDataModel extends DataModel {
 		this.getTimeSeriesTableModel().editSeriesRemoveData(removeTimeSeries, targetDataSeriesIndex);
 	}
 
+	@Override
+	public void update(Observable o, Object arg) {
+		super.update(o, arg);
+		
+		if(o instanceof ChartSettingModel){
+			ChartSettingsUpdateNotification notification = (ChartSettingsUpdateNotification) arg;
+			if(notification.getEventType() == EventType.TIME_FORMAT_CHANGED){
+				String newTimeFormat = (String) notification.getNewSetting();
+				this.setTimeFormat(newTimeFormat);
+			}
+		}
+	}
+
+	@Override
+	public String getBaseStringForSeriesLabel() {
+		return DEFAULT_SERIES_LABEL;
+	}
 	
 }

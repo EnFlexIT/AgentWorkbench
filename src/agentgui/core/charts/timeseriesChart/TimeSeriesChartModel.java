@@ -319,6 +319,11 @@ public class TimeSeriesChartModel extends ChartModel{
 	}
 
 	@Override
+	public TimeSeries getSeries(String seriesLabel) {
+		return this.getTimeSeriesCollection().getSeries(seriesLabel);
+	}
+
+	@Override
 	public void removeSeries(int seriesIndex) {
 		this.getTimeSeriesCollection().removeSeries(seriesIndex);
 		

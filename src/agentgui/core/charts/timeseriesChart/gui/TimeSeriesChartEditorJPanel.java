@@ -85,6 +85,8 @@ public class TimeSeriesChartEditorJPanel extends ChartEditorJPanel {
 		
 		this.getChartTab().replaceModel(this.getDataModel());
 		this.getChartSettingsTab().replaceModel(this.getDataModel().getChartSettingModel());
+		
+		this.getDataModel().getChartSettingModel().addObserver(this.getChartTab());
 	}
 	
 	/* (non-Javadoc)

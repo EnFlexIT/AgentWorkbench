@@ -60,6 +60,13 @@ public abstract class ChartModel extends Observable{
 	public abstract Series getSeries(int seriesIndex);
 	
 	/**
+	 * Returns the jfreeChart series with the specified label.
+	 * @param seriesLabel The label
+	 * @return The series
+	 */
+	public abstract Series getSeries(String seriesLabel);
+	
+	/**
 	 * Adds the series.
 	 * @param series the series
 	 */

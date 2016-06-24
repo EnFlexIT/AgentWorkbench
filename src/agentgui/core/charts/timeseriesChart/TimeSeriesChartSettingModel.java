@@ -67,15 +67,14 @@ public class TimeSeriesChartSettingModel extends ChartSettingModel {
 	public String getTimeFormat() {
 		return timeFormat;
 	}
+	
 	/**
 	 * Sets the time format.
 	 * @param newTimeFormat the new time format
 	 */
 	public void setTimeFormat(String newTimeFormat) {
 		this.timeFormat = newTimeFormat;
-		TimeSeriesOntologyModel tsom = ((TimeSeriesOntologyModel)this.parentDataModel.getOntologyModel());
-		TimeSeriesChartSettings tscs = (TimeSeriesChartSettings) tsom.getChartSettings();
-		tscs.setTimeFormat(newTimeFormat);
+		this.sendNotifications(EventType.TIME_FORMAT_CHANGED, newTimeFormat);
 	}
 	
 	

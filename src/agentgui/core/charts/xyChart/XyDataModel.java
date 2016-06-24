@@ -264,5 +264,9 @@ public class XyDataModel extends DataModel {
 		((XyChartModel)this.chartModel).exchangeSeries(targetDataSeriesIndex, this.ontologyModel.getSeries(targetDataSeriesIndex));
 		((XyTableModel)this.tableModel).exchangeSeries(targetDataSeriesIndex, this.ontologyModel.getSeries(targetDataSeriesIndex));
 	}
+	@Override
+	public String getBaseStringForSeriesLabel() {
+		return DEFAULT_SERIES_LABEL;
+	}
 
 }

@@ -205,6 +205,11 @@ public class XyChartModel extends ChartModel {
 	}
 
 	@Override
+	public XYSeries getSeries(String seriesLabel) {
+		return this.getXySeriesCollection().getSeries(seriesLabel);
+	}
+
+	@Override
 	public void removeSeries(int seriesIndex) {
 		this.getXySeriesCollection().removeSeries(seriesIndex);
 		

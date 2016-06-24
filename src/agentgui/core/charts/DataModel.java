@@ -31,7 +31,10 @@ package agentgui.core.charts;
 import jade.util.leap.List;
 
 import java.awt.Color;
+import java.util.Observable;
+import java.util.Observer;
 
+import agentgui.core.charts.ChartSettingModel.ChartSettingsUpdateNotification;
 import agentgui.core.charts.timeseriesChart.TimeSeriesChartSettingModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesOntologyModel;
 import agentgui.core.charts.xyChart.XyOntologyModel;
@@ -48,7 +51,7 @@ import agentgui.ontology.ValuePair;
  *  
  * @author Nils Loose - DAWIS - ICB University of Duisburg - Essen
  */
-public abstract class DataModel {
+public abstract class DataModel implements Observer{
 	
 	/** These colors will be used for newly added series. */
 // --- Old setting from Nils ------------------------------	
@@ -160,10 +163,30 @@ public abstract class DataModel {
 	public abstract List getValuePairsFromSeries(DataSeries series);
 	
 	/**
-	 * Gets the default series label.
-	 * @return the default series label
+	 * Builds a default series label, that can be used for new series if no label is specified.
+	 * The label is built from a chart-type specific base string and a numerical suffix based on the current
+	 * number of series. If a series with the resulting label already exists, the suffix will be incremented.
+	 * @return The default series label
 	 */
-	public abstract String getDefaultSeriesLabel();
+	public String getDefaultSeriesLabel(){
+		
+		String seriesLabel;
+		int suffix = this.getSeriesCount();
+		
+		// --- Build series labels until a non-existing one is found -----------
+		do{
+			suffix++;
+			seriesLabel = this.getBaseStringForSeriesLabel()+" "+suffix;
+		}while(this.getChartModel().getSeries(seriesLabel) != null);
+		
+		return seriesLabel;
+	}
+	
+	/**
+	 * Returns a string that can be used for generating default series labels 
+	 * @return The base string for series labels
+	 */
+	public abstract String getBaseStringForSeriesLabel();
 	
 	/**
 	 * Returns the ontology model.
@@ -223,6 +246,7 @@ public abstract class DataModel {
 			} else {
 				chartSettingModel = new ChartSettingModel(this);	
 			}
+			chartSettingModel.addObserver(this);
 		}
 		return chartSettingModel;
 	}
@@ -266,7 +290,8 @@ public abstract class DataModel {
 		chartModel.addSeries(series);
 		tableModel.addSeries(series);
 		
-		this.getChartSettingModel().refresh();
+//		this.getChartSettingModel().refresh();
+		this.getChartSettingModel().updateSeriesList();
 
 	}
 	
@@ -317,7 +342,8 @@ public abstract class DataModel {
 		this.ontologyModel.removeSeries(seriesIndex);
 		this.chartModel.removeSeries(seriesIndex);
 		this.tableModel.removeSeries(seriesIndex);
-		this.getChartSettingModel().refresh();
+//		this.getChartSettingModel().refresh();
+		this.getChartSettingModel().updateSeriesList();
 		
 	}
 
@@ -355,6 +381,61 @@ public abstract class DataModel {
 	 * @throws NoSuchSeriesException the no such series exception
 	 */
 	public abstract void editDataSeriesRemoveData(DataSeries series, int targetDataSeriesIndex, boolean editOntology) throws NoSuchSeriesException;
-	
-	
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if(o instanceof ChartSettingModel){
+			
+			ChartSettingsUpdateNotification notification = (ChartSettingsUpdateNotification) arg;
+			
+			try {
+				int seriesIndex = notification.getSeriesIndex();
+				switch(notification.getEventType()){
+					case TITLE_CHANGED:
+						this.ontologyModel.getChartSettings().setChartTitle((String) notification.getNewSetting());
+						break;
+						
+					case X_AXIS_LABEL_CHANGED:
+						this.ontologyModel.getChartSettings().setXAxisLabel((String) notification.getNewSetting());
+						break;
+						
+					case Y_AXIS_LABEL_CHANGED:
+						this.ontologyModel.getChartSettings().setYAxisLabel((String) notification.getNewSetting());
+						break;
+					
+					case RENDERER_CHANGED:
+						this.ontologyModel.getChartSettings().setRendererType((String) notification.getNewSetting());
+						break;
+						
+					case SERIES_LABEL_CHANGED:
+						String newLabel = (String) notification.getNewSetting();
+						this.getOntologyModel().getSeries(seriesIndex).setLabel(newLabel);
+						this.getChartModel().setSeriesLabel(seriesIndex, newLabel);
+						this.getTableModel().setSeriesLabel(seriesIndex, newLabel);
+						break;
+						
+					case SERIES_COLOR_CHANGED:
+						Color newColor = (Color) notification.getNewSetting();
+						List seriesColors = this.getOntologyModel().getChartSettings().getYAxisColors();
+						seriesColors.remove(seriesIndex);
+						seriesColors.add(seriesIndex, ""+newColor.getRGB());
+						break;
+						
+					case SERIES_LINE_WIDTH_CHANGED:
+						List seriesLineWidths = this.getOntologyModel().getChartSettings().getYAxisLineWidth();
+						seriesLineWidths.remove(seriesIndex);
+						seriesLineWidths.add(seriesIndex, notification.getNewSetting());
+						break;
+						
+					default:
+						break;
+				}
+			} catch (NoSuchSeriesException e) {
+				System.err.println("Error: Trying to modify a non-existing series");
+				e.printStackTrace();
+			}
+		}
+		
+	}
+
 }

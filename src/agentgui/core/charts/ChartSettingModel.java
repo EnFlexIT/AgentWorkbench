@@ -29,6 +29,8 @@
 package agentgui.core.charts;
 
 import java.awt.Color;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
@@ -42,7 +44,14 @@ import agentgui.ontology.DataSeries;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class ChartSettingModel {
+public class ChartSettingModel extends Observable{
+	
+	/**
+	 * List of constants indicating changes of chart settings
+	 */
+	public enum EventType{
+		TITLE_CHANGED, X_AXIS_LABEL_CHANGED, Y_AXIS_LABEL_CHANGED, RENDERER_CHANGED, TIME_FORMAT_CHANGED, SERIES_LABEL_CHANGED, SERIES_COLOR_CHANGED, SERIES_LINE_WIDTH_CHANGED
+	}
 
 	protected DataModel parentDataModel;
 	
@@ -54,6 +63,8 @@ public class ChartSettingModel {
 	private DefaultTableModel tableModelSeriesSettings = null;
 	
 	private Vector<ChartSettingModelListener> chartSettingModelListener = null;
+	
+	private boolean notificationsEnabled = true;
 	
 	/**
 	 * Instantiates a new chart setting model.
@@ -68,12 +79,14 @@ public class ChartSettingModel {
 	 * Sets the current instance according to the settings in the ontology.
 	 */
 	public void refresh() {
+		this.notificationsEnabled = false;
 		this.chartTitle = this.parentDataModel.getOntologyModel().getChartSettings().getChartTitle();
 		this.chartXAxisLabel = this.parentDataModel.getOntologyModel().getChartSettings().getXAxisLabel();
 		this.chartYAxisLabel = this.parentDataModel.getOntologyModel().getChartSettings().getYAxisLabel();
 		this.renderType = this.parentDataModel.getOntologyModel().getChartSettings().getRendererType();
-		this.refreshTableModel();
+		this.updateSeriesList();
 		this.informChartSettingModelListener();
+		this.notificationsEnabled = true;
 	}
 	
 	/**
@@ -89,7 +102,7 @@ public class ChartSettingModel {
 	 */
 	public void setChartTitle(String newTitle) {
 		this.chartTitle = newTitle;
-		this.parentDataModel.getOntologyModel().getChartSettings().setChartTitle(newTitle);
+		this.sendNotifications(EventType.TITLE_CHANGED, newTitle);
 	}
 
 	/**
@@ -105,8 +118,7 @@ public class ChartSettingModel {
 	 */
 	public void setChartXAxisLabel(String newXAxisLabel) {
 		this.chartXAxisLabel = newXAxisLabel;
-		this.parentDataModel.getOntologyModel().getChartSettings().setXAxisLabel(newXAxisLabel);
-		this.parentDataModel.getTableModel().setXColumnLabel(newXAxisLabel);
+		this.sendNotifications(EventType.X_AXIS_LABEL_CHANGED, newXAxisLabel);
 	}
 
 	/**
@@ -122,7 +134,7 @@ public class ChartSettingModel {
 	 */
 	public void setChartYAxisLabel(String newYAxisLabel) {
 		this.chartYAxisLabel = newYAxisLabel;
-		this.parentDataModel.getOntologyModel().getChartSettings().setYAxisLabel(newYAxisLabel);
+		this.sendNotifications(EventType.Y_AXIS_LABEL_CHANGED, newYAxisLabel);
 	}
 
 	/**
@@ -138,7 +150,9 @@ public class ChartSettingModel {
 	 */
 	public void setRenderType(String newRendererType) {
 		this.renderType = newRendererType;
-		this.parentDataModel.getOntologyModel().getChartSettings().setRendererType(newRendererType);
+//		this.parentDataModel.getOntologyModel().getChartSettings().setRendererType(newRendererType);
+
+		this.sendNotifications(EventType.RENDERER_CHANGED, newRendererType);
 	}
 	
 	/**
@@ -148,9 +162,13 @@ public class ChartSettingModel {
 	 * @throws NoSuchSeriesException Invalid series index
 	 */
 	public void setSeriesLabel(int seriesIndex, String newLabel) throws NoSuchSeriesException{
-		this.parentDataModel.getOntologyModel().getSeries(seriesIndex).setLabel(newLabel);
-		this.parentDataModel.getTableModel().setSeriesLabel(seriesIndex, newLabel);
-		this.parentDataModel.getChartModel().setSeriesLabel(seriesIndex, newLabel);
+		// Old version
+//		this.parentDataModel.getOntologyModel().getSeries(seriesIndex).setLabel(newLabel);
+//		this.parentDataModel.getTableModel().setSeriesLabel(seriesIndex, newLabel);
+//		this.parentDataModel.getChartModel().setSeriesLabel(seriesIndex, newLabel);
+		
+		this.sendNotifications(EventType.SERIES_LABEL_CHANGED, seriesIndex, newLabel);
+		
 	}
 	/**
 	 * Sets the plot color for a data series, specified by its index 
@@ -159,8 +177,12 @@ public class ChartSettingModel {
 	 * @throws NoSuchSeriesException Invalid series index
 	 */
 	public void setSeriesColor(int seriesIndex, Color newColor) throws NoSuchSeriesException{
-		this.parentDataModel.getOntologyModel().getChartSettings().getYAxisColors().remove(seriesIndex);
-		this.parentDataModel.getOntologyModel().getChartSettings().getYAxisColors().add(seriesIndex, ""+newColor.getRGB());
+
+		// Old approach
+//		this.parentDataModel.getOntologyModel().getChartSettings().getYAxisColors().remove(seriesIndex);
+//		this.parentDataModel.getOntologyModel().getChartSettings().getYAxisColors().add(seriesIndex, ""+newColor.getRGB());
+		
+		this.sendNotifications(EventType.SERIES_COLOR_CHANGED, seriesIndex, newColor);
 	}
 	/**
 	 * Sets the plot line width for a data series, specified by its index 
@@ -169,8 +191,12 @@ public class ChartSettingModel {
 	 * @throws NoSuchSeriesException Invalid series index
 	 */
 	public void setSeriesLineWidth(int seriesIndex, Float newWidth) throws NoSuchSeriesException{
-		this.parentDataModel.getOntologyModel().getChartSettings().getYAxisLineWidth().remove(seriesIndex);
-		this.parentDataModel.getOntologyModel().getChartSettings().getYAxisLineWidth().add(seriesIndex, newWidth);
+
+		// Old approach
+//		this.parentDataModel.getOntologyModel().getChartSettings().getYAxisLineWidth().remove(seriesIndex);
+//		this.parentDataModel.getOntologyModel().getChartSettings().getYAxisLineWidth().add(seriesIndex, newWidth);
+		
+		this.sendNotifications(EventType.SERIES_LINE_WIDTH_CHANGED, seriesIndex, newWidth);
 	}
 	
 	/**
@@ -195,9 +221,9 @@ public class ChartSettingModel {
 	}
 
 	/**
-	 * Refreshes the current table model.
+	 * Updates the list of series-specific settings.
 	 */
-	public void refreshTableModel() {
+	public void updateSeriesList() {
 
 		// --- Remove all elements first ----------------------------
 		while(this.getTableModelSeriesSettings().getRowCount()>0) {
@@ -267,6 +293,107 @@ public class ChartSettingModel {
 		for (int i = 0; i < this.getChartSettingModelListener().size(); i++) {
 			this.getChartSettingModelListener().get(i).replaceModel(this);
 		}
+	}
+	
+	/**
+	 * Sends a notification about a chart related change to the observers
+	 * @param eventType The event type, indicating which setting was changed
+	 * @param newValue The new value of the setting
+	 */
+	protected void sendNotifications(EventType eventType, Object newValue){
+		this.sendNotifications(eventType, -1, newValue);
+	}
+	
+	/**
+	 * Sends a notification about a series related change to the observers
+	 * @param eventType The event type, indicating which setting was changed
+	 * @param seriesIndex The index of the affected series
+	 * @param newSetting The new value of the setting
+	 */
+	protected void sendNotifications(EventType eventType, int seriesIndex, Object newSetting){
+		if(this.notificationsEnabled){
+			// --- Prepare ChartSettingsUpdateInfo object ------------
+			ChartSettingsUpdateNotification notification = new ChartSettingsUpdateNotification();
+			notification.setEventType(eventType);
+			notification.setSeriesIndex(seriesIndex);
+			notification.setNewSetting(newSetting);
+			
+			// --- Notify observers ------------------------
+			this.setChanged();
+			this.notifyObservers(notification);
+		}
+	}
+	
+	
+	
+	@Override
+	public synchronized void addObserver(Observer o) {
+		super.addObserver(o);
+	}
+
+
+
+	/**
+	 * This class provides information about changes of settings to observers
+	 * 
+	 * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
+	 *
+	 */
+	public class ChartSettingsUpdateNotification{
+		
+		private EventType eventType;
+		private int seriesIndex;
+		private Object newSetting;
+		
+		/**
+		 * Returns the event type that specifies which settings have changed.
+		 * @return The event type
+		 */
+		public EventType getEventType() {
+			return eventType;
+		}
+		
+		/**
+		 * Sets the event type that specifies which settings have changed.
+		 * @param eventType The event type
+		 */
+		public void setEventType(EventType eventType) {
+			this.eventType = eventType;
+		}
+		
+		/**
+		 * Returns the index of the affected series, or -1 if the change is not series-specific.
+		 * @return the series index
+		 */
+		public int getSeriesIndex() {
+			return seriesIndex;
+		}
+		
+		/**
+		 * Sets the index of the affected series.
+		 * @param seriesIndex The series index
+		 */
+		public void setSeriesIndex(int seriesIndex) {
+			this.seriesIndex = seriesIndex;
+		}
+		
+		/**
+		 * Returns the new value of the changed setting.
+		 * @return The new value
+		 */
+		public Object getNewSetting() {
+			return newSetting;
+		}
+		
+		/**
+		 * Sets the new setting.
+		 * @param newSetting the new new setting
+		 */
+		public void setNewSetting(Object newSetting) {
+			this.newSetting = newSetting;
+		}
+		
+		
 	}
 
 

@@ -58,6 +58,8 @@ import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.general.Series;
 
 import agentgui.core.charts.ChartModel;
+import agentgui.core.charts.ChartSettingModel;
+import agentgui.core.charts.ChartSettingModel.ChartSettingsUpdateNotification;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.NoSuchSeriesException;
 
@@ -113,6 +115,8 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 		this.setLayout(new BorderLayout());
 		this.add(this.chartPanel, BorderLayout.CENTER);
 		this.add(this.getJToolBarSeriesVisibility(), BorderLayout.SOUTH);
+		
+//		parent.getDataModel().getChartSettingModel().addObserver(this);
 		
 	}
 	
@@ -360,11 +364,38 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o instanceof ChartModel){
-			if(arg == ChartModel.EventType.SERIES_ADDED
-					|| arg == ChartModel.EventType.SERIES_REMOVED
-					|| arg == ChartModel.EventType.SERIES_RENAMED
-					|| arg == ChartModel.EventType.SERIES_EXCHANGED){
-				this.rebuildVisibilityToolBar();
+			// Rebuild the toolbar (all other changes are handled by the ChartPanel component from JFreeChart)
+			this.rebuildVisibilityToolBar();
+		}else if(o instanceof ChartSettingModel){
+			
+			try {
+				ChartSettingsUpdateNotification notification = (ChartSettingsUpdateNotification) arg;
+				int seriesIndex = notification.getSeriesIndex();
+				
+				switch(notification.getEventType()){
+					case TITLE_CHANGED:
+						this.chartPanel.getChart().getTitle().setText((String) notification.getNewSetting());
+						break;
+						
+					case RENDERER_CHANGED:
+						this.setRenderer((String) notification.getNewSetting());
+						break;
+					
+					case SERIES_COLOR_CHANGED:
+						this.setSeriesColor(seriesIndex, (Color) notification.getNewSetting());
+						break;
+					
+					case SERIES_LINE_WIDTH_CHANGED:
+						this.setSeriesLineWidth(seriesIndex, (float) notification.getNewSetting());
+						break;
+						
+					default:
+						// Nothing to do for other event types
+						break;
+				}
+			} catch (NoSuchSeriesException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
