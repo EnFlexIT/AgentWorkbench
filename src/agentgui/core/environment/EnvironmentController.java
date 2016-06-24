@@ -134,8 +134,8 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * @return the current simulation setup
 	 */
 	protected SimulationSetup getCurrentSimulationSetup(){
-		if (currProject!=null) {
-			return currProject.getSimulationSetups().getCurrSimSetup();
+		if (this.getProject()!=null) {
+			return this.getProject().getSimulationSetups().getCurrSimSetup();
 		}
 		return null;
 	}

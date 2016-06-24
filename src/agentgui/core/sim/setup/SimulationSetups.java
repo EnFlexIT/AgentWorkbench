@@ -71,10 +71,10 @@ public class SimulationSetups extends Hashtable<String, String> {
 	private final String XML_FilePostfix = Application.getGlobalInfo().getXmlFilePostfix();
 	
 	private Project currProject = Application.getProjectFocused();
-	private SimulationSetup currSimSetup = null;
+	private SimulationSetup currSimSetup;
 	
-	private String currSimSetupName = null;
-	private String currSimXMLFile = null;
+	private String currSimSetupName;
+	private String currSimXMLFile;
 
 	
 	/**
@@ -243,7 +243,7 @@ public class SimulationSetups extends Hashtable<String, String> {
 		// --- Configure to the specified setup -----------
 		this.currSimSetupName = name;
 		this.currProject.setSimulationSetupCurrent(name);
-		this.currSimXMLFile = currProject.getSubFolder4Setups(true) + this.get(currSimSetupName);
+		this.currSimXMLFile = this.currProject.getSubFolder4Setups(true) + this.get(currSimSetupName);
 		
 		// --- Create new instance of SimulationSetup -----
 		this.currSimSetup = new SimulationSetup(this.currProject);
@@ -461,6 +461,9 @@ public class SimulationSetups extends Hashtable<String, String> {
 	 * @return {@link SimulationSetup}
 	 */
 	public SimulationSetup getCurrSimSetup() {
+		if (this.currSimSetup==null && this.currSimSetupName!=null) {
+			this.setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, currSimSetupName, false);
+		}
 		return currSimSetup;
 	}
 	/**

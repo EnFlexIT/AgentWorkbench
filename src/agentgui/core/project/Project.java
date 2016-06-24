@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.Writer;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Observable;
@@ -74,7 +76,7 @@ import agentgui.core.gui.projectwindow.ProjectInfo;
 import agentgui.core.gui.projectwindow.ProjectResources;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.gui.projectwindow.TabForSubPanels;
-import agentgui.core.gui.projectwindow.simsetup.SimulationEnvironment;
+import agentgui.core.gui.projectwindow.simsetup.EnvironmentModelSetup;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.jade.ClassSearcher;
@@ -343,7 +345,7 @@ import agentgui.core.webserver.JarFileCreator;
 			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Agenten-Start"), null, null, new StartSetup(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 			pwt.add();
 			// --- simulation environment -----------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate("Umgebungsmodell"), null, null, new SimulationEnvironment(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate("Umgebungsmodell"), null, null, new EnvironmentModelSetup(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 			pwt.add();
 			
 
@@ -512,7 +514,7 @@ import agentgui.core.webserver.JarFileCreator;
 	@XmlElementWrapper(name = "simulationSetups")
 	public SimulationSetups getSimulationSetups() {
 		if (this.simulationSetups==null) {
-			this.simulationSetups=new SimulationSetups(this, getSimulationSetupCurrent());
+			this.simulationSetups = new SimulationSetups(this, this.getSimulationSetupCurrent());
 		}
 		return this.simulationSetups;
 	}
@@ -1023,14 +1025,35 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 
 	/**
-	 * @param environmentModel the environmentModel to set
+	 * Sets the new environment model name.
+	 * @param newEnvironmentModelName the new environment model name
 	 */
 	@XmlTransient
-	public void setEnvironmentModelName(String environmentModel) {
-		this.environmentModelName = environmentModel;
-		this.setUnsaved(true);
-		setChanged();
-		notifyObservers(CHANGED_EnvironmentModelType);
+	public void setEnvironmentModelName(String newEnvironmentModelName) {
+		// --- Check if a new model is to set -----------------------
+		boolean setNewEnvironmentModel = false;
+		if (this.environmentModelName==null & newEnvironmentModelName==null) {
+			setNewEnvironmentModel = false;
+		} else {
+			if (this.environmentModelName==null || newEnvironmentModelName==null) {
+				setNewEnvironmentModel = true;
+			} else {
+				if (this.environmentModelName.equals(newEnvironmentModelName)==true) {
+					setNewEnvironmentModel = false;
+				} else {
+					setNewEnvironmentModel = true;
+				}
+			}
+		}
+		
+		// --- In case that a new environment model is to set -------
+		if (setNewEnvironmentModel==true) {
+			this.environmentModelName = newEnvironmentModelName;
+			this.resetEnvironmentController();
+			this.setUnsaved(true);
+			setChanged();
+			notifyObservers(CHANGED_EnvironmentModelType);	
+		}
 	}
 	/**
 	 * @return the environmentModel
@@ -1502,21 +1525,56 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 
 	/**
-	 * Returns the EnvironmentController of the project - an 
-	 * extended class of {@link EnvironmentController}.
-	 * @return the environment controller 
+	 * Returns the EnvironmentController of the project - an extended class of {@link EnvironmentController}.
+	 * @return the current environment controller 
 	 */
 	@XmlTransient
-	public EnvironmentController getEnvironmentController(){
-		return this.environmentController;
+	public EnvironmentController getEnvironmentController() {
+		if (environmentController==null) {
+
+			EnvironmentType envType = this.getEnvironmentModelType();
+			Class<? extends EnvironmentController> envControllerClass = envType.getEnvironmentControllerClass();
+			if (envControllerClass==null) {
+				// --- If NO environment is specified -------------------
+				return null;
+			} 
+
+			// --- If an environment IS specified -----------------------
+			try {
+				
+				Class<?>[] conParameter = new Class[1];
+				conParameter[0] = Project.class;
+				Constructor<?> envControllerConstructor = envControllerClass.getConstructor(conParameter);
+
+				// --- Define the argument for the newInstance call ----- 
+				Object[] args = new Object[1];
+				args[0] = this;
+				environmentController = (EnvironmentController) envControllerConstructor.newInstance(args);
+				
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			
+			
+		}
+		return environmentController;
 	}
 	/**
-	 * Sets the EnvironmentController of the project - an 
-	 * extended class of {@link EnvironmentController}. 
-	 * @param environmentController
+	 * Resets the current EnvironmentController of the project - an extended {@link EnvironmentController}. 
 	 */
-	public void setEnvironmentController(EnvironmentController environmentController) {
-		this.environmentController = environmentController;
+	public void resetEnvironmentController() {
+		this.environmentController = null;
+		this.getEnvironmentController();
 	}
 
 	/**

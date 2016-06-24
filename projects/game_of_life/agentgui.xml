@@ -41,8 +41,8 @@
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.debugging.DebugService</service>
+            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -71,7 +71,16 @@
         </userThresholds>
     </distributionSetup>
     <agentClassLoadMetricsTable>
-        <agentClassMetricDescriptionVector/>
+        <agentClassMetricDescriptionVector>
+            <agentClass>
+                <className>agent.class.UNKNOWN-AGENT-CLASS</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>NaN</realMetricAverage>
+                <realMetricMax>NaN</realMetricMax>
+                <realMetricMin>NaN</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+        </agentClassMetricDescriptionVector>
         <useRealLoadMetric>false</useRealLoadMetric>
     </agentClassLoadMetricsTable>
     <remoteContainerConfiguration>
@@ -118,12 +127,12 @@
             <value>0018_agents.xml</value>
         </entry>
         <entry>
-            <key>0032 Agents</key>
-            <value>0032_agents.xml</value>
-        </entry>
-        <entry>
             <key>1800 Agents</key>
             <value>1800_agents.xml</value>
+        </entry>
+        <entry>
+            <key>0032 Agents</key>
+            <value>0032_agents.xml</value>
         </entry>
         <entry>
             <key>4050 Agents</key>
@@ -139,5 +148,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>false</unsaved>
+    <unsaved>true</unsaved>
 </project>

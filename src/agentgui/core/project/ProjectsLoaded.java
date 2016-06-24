@@ -54,7 +54,6 @@ import javax.xml.bind.Unmarshaller;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.Zipper;
-import agentgui.core.environment.EnvironmentType;
 import agentgui.core.gui.ProjectNewOpen;
 import agentgui.core.gui.ProjectNewOpen.DialogAction;
 
@@ -173,21 +172,8 @@ public class ProjectsLoaded {
 			}
 		}
 		
-		// --- Remind the current name of the used environment model type -----
-		boolean reloadEnvironmentType = false;
-		String envModelName = newProject.getEnvironmentModelName();
-		EnvironmentType envType = newProject.getEnvironmentModelType();
-		if (envType.getInternalKey().equals("none")) {
-			// --- The environment model was NOT FOUND YET ----------
-			// --- => Maybe a PlugIn contains an environment model --
-			reloadEnvironmentType = true;
-		} else {
-			// --- The environment model was ALREADY FOUND ----------
-			reloadEnvironmentType = false;
-		}
-		
 		// --- Maybe take over Agent.GUI default JADE configuration -----------
-		if(addNew==true) {
+		if (addNew==true) {
 			newProject.setJadeConfiguration(Application.getGlobalInfo().getJadeDefaultPlatformConfig());
 		}
 		
@@ -197,11 +183,11 @@ public class ProjectsLoaded {
 			newProject.getSimulationSetups().setupCreateDefault();			
 		}
 
-		// --- Instantiate project-window and the default tabs ----------------
-		newProject.addDefaultTabs();
-		
 		// --- Load configured PlugIns ----------------------------------------
 		newProject.plugInVectorLoad();
+
+		// --- Load the environment controller --------------------------------
+		newProject.getEnvironmentController();
 		
 		// --- add project to the project-listing -----------------------------
 		projectsOpen.add(newProject);
@@ -209,7 +195,10 @@ public class ProjectsLoaded {
 
 		// --- Configure the project view in the main application -------------
 		if (Application.getMainWindow()!=null) {
+			// --- Instantiate project-window and the default tabs ----------------		
+			newProject.addDefaultTabs();
 			newProject.setMaximized();
+			
 			Application.getProjectsLoaded().setProjectView();
 			newProject.setChangedAndNotify(Project.VIEW_TabsLoaded);		
 			Application.getMainWindow().setCloseButtonPosition(true);
@@ -223,11 +212,6 @@ public class ProjectsLoaded {
 		} else {
 			// --- Set Project to unsaved ------------
 			newProject.setUnsaved(false);
-		}
-		
-		// --- In case of an environment model in a PlugIn --------------------
-		if (envModelName!=null && reloadEnvironmentType==true) {
-			newProject.setNotChangedButNotify(Project.CHANGED_EnvironmentModelType);		
 		}
 		return newProject;
 	}
