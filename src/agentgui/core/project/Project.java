@@ -293,77 +293,6 @@ import agentgui.core.webserver.JarFileCreator;
 	};
 	
 	/**
-	 * This methods adds all default Agent.GUI-tabs to the ProjectWindow 
-	 */
-	public void addDefaultTabs() {
-		
-		ProjectWindowTab pwt = null;
-		// ------------------------------------------------
-		// --- General Informations -----------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Info"), null, null, new ProjectInfo(this), null);
-		pwt.add();
-		
-		// ------------------------------------------------
-		// --- Configuration ------------------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Konfiguration"), null, null, new TabForSubPanels(this), null);
-		pwt.add();
-		getProjectWindow().registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Configuration, pwt);
-		
-			// --- External Resources ---------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ressourcen"), null, null, new ProjectResources(this), Language.translate("Konfiguration"));
-			pwt.add();
-			// --- Used Ontologies ------------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ontologien"), null, null, new OntologyTab(this), Language.translate("Konfiguration"));
-			pwt.add();
-			// --- Project Agents -------------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten"), null, null, new BaseAgents(this), Language.translate("Konfiguration"));
-			pwt.add();
-			// --- JADE-Services --------------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("JADE-Services"), null, null, new JadeSetupServices(this), Language.translate("Konfiguration"));
-			pwt.add();
-			// --- JADE-MTP configuration -----------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("JADE-Settings"), null, null, new JadeSetupMTP(this), Language.translate("Konfiguration"));
-			pwt.add();
-			// --- Distribution + Thresholds --------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Verteilung + Grenzwerte"), null, null, new Distribution(this), Language.translate("Konfiguration"));
-			pwt.add();
-			// --- Agent Load Metrics ---------------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten-Lastmetrik"), null, null, new AgentClassLoadMetricsPanel(this), Language.translate("Konfiguration"));
-			pwt.add();
-		
-			
-		// ------------------------------------------------
-		// --- Simulations-Setup --------------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup), null, null, new TabForSubPanels(this), null);
-		pwt.add();
-		getProjectWindow().registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup, pwt);
-		
-			// --- Maybe a TimeModel has to be displayed --
-			this.getTimeModelController();
-			
-			// --- start configuration for agents ---------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Agenten-Start"), null, null, new StartSetup(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
-			pwt.add();
-			// --- simulation environment -----------------
-			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate("Umgebungsmodell"), null, null, new EnvironmentModelSetup(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
-			pwt.add();
-			
-
-		// ------------------------------------------------
-		// --- Visualisation ------------------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION), null, null, this.getVisualisationTab4SetupExecution(), null);
-		pwt.add();
-		
-		// ------------------------------------------------
-		// --- Project Desktop ----------------------------
-		pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Projekt-Desktop"), null, null, new ProjectDesktop(this), null);
-		pwt.add();
-		
-		// --- Expand the tree view -----------------------
-		this.getProjectWindow().projectTreeExpand2Level(3, true);
-	}
-	
-	/**
 	 * Saves the current MAS-Project to the file 'agentgui.xml'
 	 */
 	public boolean save() {
@@ -767,7 +696,7 @@ import agentgui.core.webserver.JarFileCreator;
 			// --- Validate the main application window -----------------
 			Application.getMainWindow().validate();
 			// --- Be sure that everything is there as needed ----------- 
-			if (getProjectWindow()!=null && getProjectWindow().getParent()!=null) {
+			if (this.getProjectWindow()!=null && this.getProjectWindow().getParent()!=null) {
 				// --- Maximise now -------------------------------------
 				((BasicInternalFrameUI) getProjectWindow().getUI()).setNorthPane(null);
 				DesktopManager dtm = Application.getMainWindow().getJDesktopPane4Projects().getDesktopManager();
@@ -965,13 +894,79 @@ import agentgui.core.webserver.JarFileCreator;
 	
 	// --- Visualisation instances ----------------------------------
 	/**
-	 * Gets the project window.
-	 * @return the project window
+	 * Creates / Returns the project window with all {@link ProjectWindowTab}'s.
+	 * @return the project window for the current project
 	 */
 	@XmlTransient
 	public ProjectWindow getProjectWindow() {
 		if (this.projectWindow==null) {
 			this.projectWindow = new ProjectWindow(this);
+			
+			ProjectWindowTab pwt = null;
+			// ------------------------------------------------
+			// --- General Informations -----------------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Info"), null, null, new ProjectInfo(this), null);
+			pwt.add();
+			
+			// ------------------------------------------------
+			// --- Configuration ------------------------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Konfiguration"), null, null, new TabForSubPanels(this), null);
+			pwt.add();
+			this.projectWindow.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Configuration, pwt);
+			
+				// --- External Resources ---------------------
+				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ressourcen"), null, null, new ProjectResources(this), Language.translate("Konfiguration"));
+				pwt.add();
+				// --- Used Ontologies ------------------------
+				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ontologien"), null, null, new OntologyTab(this), Language.translate("Konfiguration"));
+				pwt.add();
+				// --- Project Agents -------------------------
+				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten"), null, null, new BaseAgents(this), Language.translate("Konfiguration"));
+				pwt.add();
+				// --- JADE-Services --------------------------
+				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("JADE-Services"), null, null, new JadeSetupServices(this), Language.translate("Konfiguration"));
+				pwt.add();
+				// --- JADE-MTP configuration -----------------
+				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("JADE-Settings"), null, null, new JadeSetupMTP(this), Language.translate("Konfiguration"));
+				pwt.add();
+				// --- Distribution + Thresholds --------------
+				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Verteilung + Grenzwerte"), null, null, new Distribution(this), Language.translate("Konfiguration"));
+				pwt.add();
+				// --- Agent Load Metrics ---------------------
+				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten-Lastmetrik"), null, null, new AgentClassLoadMetricsPanel(this), Language.translate("Konfiguration"));
+				pwt.add();
+			
+				
+			// ------------------------------------------------
+			// --- Simulations-Setup --------------------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup), null, null, new TabForSubPanels(this), null);
+			pwt.add();
+			this.projectWindow.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup, pwt);
+			
+				// --- Maybe a TimeModel has to be displayed --
+				this.getTimeModelController();
+				
+				// --- start configuration for agents ---------
+				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Agenten-Start"), null, null, new StartSetup(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+				pwt.add();
+				// --- simulation environment -----------------
+				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate("Umgebungsmodell"), null, null, new EnvironmentModelSetup(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+				pwt.add();
+				
+
+			// ------------------------------------------------
+			// --- Visualisation ------------------------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALISATION), null, null, this.getVisualisationTab4SetupExecution(), null);
+			pwt.add();
+			
+			// ------------------------------------------------
+			// --- Project Desktop ----------------------------
+			pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Projekt-Desktop"), null, null, new ProjectDesktop(this), null);
+			pwt.add();
+			
+			// --- Expand the tree view -----------------------
+			this.projectWindow.projectTreeExpand2Level(3, true);
+			
 		}
 		return projectWindow;
 	}

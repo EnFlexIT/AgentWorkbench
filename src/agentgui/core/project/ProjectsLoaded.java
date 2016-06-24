@@ -195,8 +195,8 @@ public class ProjectsLoaded {
 
 		// --- Configure the project view in the main application -------------
 		if (Application.getMainWindow()!=null) {
+
 			// --- Instantiate project-window and the default tabs ----------------		
-			newProject.addDefaultTabs();
 			newProject.setMaximized();
 			
 			Application.getProjectsLoaded().setProjectView();
