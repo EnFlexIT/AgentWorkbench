@@ -143,7 +143,7 @@ public class TrustStoreController {
 	 * @param newTrustStorePassword the new TrustStore password
 	 */
 	public void editTrustStore(String trustStoreName, String oldTrustStorePassword, String newTrustStorePassword) {
-		Runtime runtime = Runtime.getRuntime();
+		String os = System.getProperty("os.name");
 		Process process1 = null;
 		Process process2 = null;
 
@@ -152,13 +152,18 @@ public class TrustStoreController {
 		 * ---------------- Execute the command line to update -----------------
 		 * -------------------------- the Key password -------------------------
 		 * 
-		 * keytool -keypasswd -alias {alias} -keypass {key_password} -new
-		 * {new_password} -keystore {truststore_name} -storepass {old_password}
+		 * keytool -keypasswd -alias {alias} -keypass {oldTrustStorePassword} 
+		 * -new {newTrustStorePassword} -keystore {trustStoreName} 
+		 * -storepass {oldTrustStorePassword}
 		 */
 
 		try {
-			process1 = runtime.exec("keytool -keypasswd -keypass " + oldTrustStorePassword + " -new " + newTrustStorePassword + " -keystore " + trustStoreName + " -storepass " + oldTrustStorePassword);
-
+			if (os.toLowerCase().contains("windows") == true) {
+				process1 = Runtime.getRuntime().exec("keytool -keypasswd -keypass " + oldTrustStorePassword + " -new " + newTrustStorePassword + " -keystore " + trustStoreName + " -storepass " + oldTrustStorePassword);
+			} else if (os.toLowerCase().contains("linux") == true) {
+				String[] command = {"/bin/sh", "-c","keytool -keypasswd -keypass " + oldTrustStorePassword + " -new " + newTrustStorePassword + " -keystore " + trustStoreName + " -storepass " + oldTrustStorePassword};
+				process1 = Runtime.getRuntime().exec(command);
+			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -175,12 +180,17 @@ public class TrustStoreController {
 		 * ------------- Execute the command line to update -------------------
 		 * --------------------- truststore password --------------------------
 		 * 
-		 * keytool -storepasswd -new {new_password} -keystore {truststore_name}
-		 * -storepass {old_password}
+		 * keytool -storepasswd -new {newTrustStorePassword} -keystore 
+		 * {trustStoreName} -storepass {oldTrustStorePassword}
 		 */
 
 		try {
-			process2 = runtime.exec("keytool -storepasswd -new " + newTrustStorePassword + " -keystore " + trustStoreName + " -storepass " + oldTrustStorePassword);
+			if (os.toLowerCase().contains("windows") == true) {
+				process2 = Runtime.getRuntime().exec("keytool -storepasswd -new " + newTrustStorePassword + " -keystore " + trustStoreName + " -storepass " + oldTrustStorePassword);
+			} else if (os.toLowerCase().contains("linux") == true) {
+				String[] command = {"/bin/sh", "-c","keytool -storepasswd -new " + newTrustStorePassword + " -keystore " + trustStoreName + " -storepass " + oldTrustStorePassword};
+				process2 = Runtime.getRuntime().exec(command);
+			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

@@ -37,6 +37,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
@@ -808,7 +809,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 					int jfile = jFileChooserOpen.showSaveDialog(null);
 					if (jfile == JFileChooser.APPROVE_OPTION) {
 						// ---- Get The selected directory path ------------------------------------
-						String KeyStorePath = jFileChooserOpen.getSelectedFile().getAbsoluteFile().getAbsolutePath() + "\\";
+						String KeyStorePath = jFileChooserOpen.getSelectedFile().getAbsoluteFile().getAbsolutePath() + File.separator;
 						// ---- Create the KeyStore with informations  entered by the User ---------
 						getKeyStoreController().createKeyStore(informations, alias, keystoreName, keystorePassword, KeyStorePath);
 						String msg = Language.translate("Your keystore has been created successfully!",Language.EN);
@@ -838,7 +839,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 						this.getJTextFieldAlias().setText(this.httpsConfigWindow.getKeyStoreAlias());
 						this.getJPasswordField().setText(keystorePassword);
 						this.getJPasswordConfirmPassword().setText(null);
-						this.httpsConfigWindow.getJLabelKeyStoreLocationPath().setText(KeyStorePath + "\\" + keystoreName + "KeyStore.jks");
+						this.httpsConfigWindow.getJLabelKeyStoreLocationPath().setText(KeyStorePath + keystoreName + "KeyStore.jks");
 						this.httpsConfigWindow.setKeyStoreButtonPressed("UpdateKeyStore");
 					}
 				}
@@ -933,7 +934,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 					} else {
 						Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
 						// ------- Get Certificate Path --------------------
-						String certificatePath = getJTextFieldCertificatePath().getText() + "\\" +getJTextFieldCertificateName().getText();
+						String certificatePath = getJTextFieldCertificatePath().getText() + File.separator +getJTextFieldCertificateName().getText();
 						String validity = getJTextFieldCertificateValidity().getText();
 						// ------- Get KeySTore information ----------------
 						String alias = getKeyStoreController().getKeyStoreAlias(this.httpsConfigWindow.getKeyStorefilepath(),this.httpsConfigWindow.getKeyStorePassword(), ownerDialog);

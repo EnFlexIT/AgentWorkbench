@@ -39,7 +39,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-
 import java.util.Enumeration;
 import java.awt.Dialog;
 import javax.swing.JOptionPane;
@@ -71,21 +70,27 @@ public class KeyStoreController {
 	 * @param keyStorePath 
 	 */
 	public void createKeyStore(String informations, String alias, String keyStoreName, String keystorePassword, String keyStorePath) {
+		String os = System.getProperty("os.name");
 		/*
 		 * ---------------------------------------------------------------------
 		 * ------- Execute the command line to create the KeyStore -------------
-		 * ----------------------- ---------------------------------------------
+		 * ---------------------------------------------------------------------
 		 * 
 		 * keytool -genkey -dname {informations} -alias {alias} -keypass
-		 * {key_password} -keystore {keystore_name} -storepass {keystore_password}
+		 * {keystorePassword} -keystore {keyStoreName} -storepass {keystorePassword}
 		 */
 		try {
-			Runtime runtime = Runtime.getRuntime();
-			runtime.exec("keytool -genkey -dname \"" + informations + "\" -alias " + alias + " -keystore " + keyStorePath + keyStoreName + "KeyStore.jks " + " -storepass " + keystorePassword + " -keypass " + keystorePassword);
-		} catch (IOException e1) {
-			e1.printStackTrace();
+			if (os.toLowerCase().contains("windows") == true) {
+				Runtime.getRuntime().exec("keytool -genkey -dname \"" + informations + "\" -alias " + alias + " -keystore "+ keyStorePath + keyStoreName + "KeyStore.jks  -storepass " + keystorePassword+ " -keypass " + keystorePassword);
+			} else if (os.toLowerCase().contains("linux") == true) {
+				String[] command = { "/bin/sh", "-c","keytool -genkey -dname \"" + informations + "\" -alias " + alias + " -keystore " + keyStorePath+ keyStoreName + "KeyStore.jks  -storepass " + keystorePassword + " -keypass "+ keystorePassword + "" };
+				Runtime.getRuntime().exec(command);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
+	
 
 	/**
 	 * This method returns the content of a KeyStore
@@ -181,8 +186,7 @@ public class KeyStoreController {
 	 * @param ownerDialog the owner dialog
 	 */
 	public void editKeyStore(String keyStoreName, String oldAlias, String newAlias, String newKeyStorePassword, String oldKeyStorePassword, Dialog ownerDialog) {
-
-		Runtime runtime = Runtime.getRuntime();
+		String os = System.getProperty("os.name");
 		Process process1 = null;
 		Process process2 = null;
 		Process process3 = null;
@@ -192,13 +196,20 @@ public class KeyStoreController {
 		 * ---------------------- the Key password -----------------------------
 		 * ---------------------------------------------------------------------
 		 * 
-		 * keytool -keypasswd -alias {alias} -keypass {key_password} -new
-		 * {new_password} -keystore {keystore_name} -storepass {old_password}
+		 * keytool -keypasswd -alias {oldAlias} -keypass {oldKeyStorePassword} 
+		 * -new {newKeyStorePassword} -keystore {keyStoreName} 
+		 * -storepass {oldKeyStorePassword}
 		 */
+		
 		try {
-			process1 = runtime.exec("keytool -keypasswd -alias " + oldAlias + " -keypass " + oldKeyStorePassword + " -new " + newKeyStorePassword + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword);
-		} catch (IOException e1) {
-			e1.printStackTrace();
+			if (os.toLowerCase().contains("windows") == true) {
+				process1 = Runtime.getRuntime().exec("keytool -keypasswd -alias " + oldAlias + " -keypass " + oldKeyStorePassword + " -new " + newKeyStorePassword + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword);
+			} else if (os.toLowerCase().contains("linux") == true) {
+				String[] command = { "/bin/sh", "-c","keytool -keypasswd -alias " + oldAlias + " -keypass " + oldKeyStorePassword + " -new " + newKeyStorePassword + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword};
+				process1 =  Runtime.getRuntime().exec(command);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		try {
 			process1.waitFor();
@@ -210,17 +221,20 @@ public class KeyStoreController {
 		 * --------- Execute the command line to update the alias --------------
 		 * ---------------------------------------------------------------------
 		 * 
-		 * keytool -changealias -alias {old_alias} -destalias {new_alias}
-		 * -keystore {keystore_name} -storepass {old_password} -keypass
-		 * {key_password}
+		 * keytool -changealias -alias {oldAlias} -destalias {newAlias}
+		 * -keystore {keyStoreName} -storepass {oldKeyStorePassword} -keypass
+		 * {newKeyStorePassword}
 		 */
+		
 		try {
-			process2 = runtime.exec("keytool -changealias -alias " + oldAlias + " -destalias " + newAlias + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword + " -keypass " + newKeyStorePassword);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			if (ownerDialog!=null) {
-				JOptionPane.showMessageDialog(ownerDialog, e1.getMessage() + " !");	
+			if (os.toLowerCase().contains("windows") == true) {
+				process2 = Runtime.getRuntime().exec("keytool -changealias -alias " + oldAlias + " -destalias " + newAlias + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword + " -keypass " + newKeyStorePassword);
+			} else if (os.toLowerCase().contains("linux") == true) {
+				String[] command = { "/bin/sh", "-c","keytool -changealias -alias " + oldAlias + " -destalias " + newAlias + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword + " -keypass " + newKeyStorePassword};
+				process2 =  Runtime.getRuntime().exec(command);
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		try {
 			process2.waitFor();
@@ -232,14 +246,20 @@ public class KeyStoreController {
 		 * ------ Execute the command line to update KeyStore password ---------
 		 * ---------------------------------------------------------------------
 		 * 
-		 * keytool -alias {new_alias} -storepasswd -new {new_password} -keystore
-		 * {keystore_name} -storepass {old_password}
+		 * keytool -alias {newAlias} -storepasswd -new {newKeyStorePassword}
+		 *  -keystore {keyStoreName} -storepass {oldKeyStorePassword}
 		 * 
 		 */
+		
 		try {
-			process3 = runtime.exec("keytool -alias " + newAlias + " -storepasswd -new " + newKeyStorePassword + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword);
-		} catch (IOException e1) {
-			e1.printStackTrace();
+			if (os.toLowerCase().contains("windows") == true) {
+				process3 = Runtime.getRuntime().exec("keytool -alias " + newAlias + " -storepasswd -new " + newKeyStorePassword + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword);
+			} else if (os.toLowerCase().contains("linux") == true) {
+				String[] command = { "/bin/sh", "-c","keytool -alias " + newAlias + " -storepasswd -new " + newKeyStorePassword + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword};
+				process3 =  Runtime.getRuntime().exec(command);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		try {
 			process3.waitFor();
@@ -261,7 +281,7 @@ public class KeyStoreController {
 	 * @param ownerDialog the owner dialog
 	 */
 	public void exportCertificate(String keyStoreName, String alias, String keyStorePassword, String certificateName , String validity, Dialog ownerDialog) {
-		Runtime runtime = Runtime.getRuntime();
+		String os = System.getProperty("os.name");
 		Process process1 = null;
 		/*
 		 * ---------------------------------------------------------------------
@@ -269,19 +289,19 @@ public class KeyStoreController {
 		 * --------------------- in the KeyStore file --------------------------
 		 * ---------------------------------------------------------------------
 		 * 
-		 * keytool -selfcert -alias {alias} -keystore {keystore_name} -storepass
-		 * {keystore_password} -keyalg RSA -validity {validity}
+		 * keytool -selfcert -alias {alias} -keystore {keyStoreName} -storepass
+		 * {keyStorePassword} -keyalg RSA -validity {validity}
 		 */
-		
 		try {
-			process1 = runtime.exec("keytool -selfcert -alias " + alias + " -keystore " + keyStoreName + " -storepass " + keyStorePassword + " -keyalg RSA -validity " + validity );
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			if (ownerDialog!=null) {
-				JOptionPane.showMessageDialog(ownerDialog, e1.getMessage() + " !");	
+			if (os.toLowerCase().contains("windows") == true) {
+				process1 = Runtime.getRuntime().exec("keytool -selfcert -alias " + alias + " -keystore " + keyStoreName + " -storepass " + keyStorePassword + " -keyalg RSA -validity " + validity );
+			} else if (os.toLowerCase().contains("linux") == true) {
+				String[] command = { "/bin/sh", "-c","keytool -selfcert -alias " + alias + " -keystore " + keyStoreName + " -storepass " + keyStorePassword + " -keyalg RSA -validity " + validity };
+				process1 =  Runtime.getRuntime().exec(command);
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
 		try {
 			process1.waitFor();
 		} catch (InterruptedException e2) {
@@ -293,11 +313,16 @@ public class KeyStoreController {
 		 * ----- Execute the command line to export the certificate ----------
 		 * -------------------------------------------------------------------
 		 * 
-		 * keytool -export -alias {alias} -keystore {keystore_name} -storepass
-		 * {keystore_password} -file {certificate_name}
+		 * keytool -export -alias {alias} -keystore {keyStoreName} -storepass
+		 * {keyStorePassword} -file {certificateName}
 		 */
 		try {
-			runtime.exec("keytool -export -alias " + alias + " -keystore " + keyStoreName + " -storepass " + keyStorePassword + " -file " + certificateName + ".cer"); 
+			if (os.toLowerCase().contains("windows") == true) {
+				Runtime.getRuntime().exec("keytool -export -alias " + alias + " -keystore " + keyStoreName + " -storepass " + keyStorePassword + " -file " + certificateName + ".cer");
+			} else if (os.toLowerCase().contains("linux") == true) {
+				String[] command = { "/bin/sh", "-c","keytool -export -alias " + alias + " -keystore " + keyStoreName + " -storepass " + keyStorePassword + " -file " + certificateName + ".cer"};
+				Runtime.getRuntime().exec(command);
+			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			if (ownerDialog!=null) {

@@ -39,6 +39,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.Arrays;
 
 import javax.swing.ImageIcon;
@@ -752,7 +753,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 					int jfile = jFileChooser.showSaveDialog(null);
 					if (jfile == JFileChooser.APPROVE_OPTION) {
 						Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
-						this.httpsConfigWindow.setTrustStorefilepath(jFileChooser.getSelectedFile().getAbsoluteFile().getAbsolutePath() + "\\"+trustStoreName); 
+						this.httpsConfigWindow.setTrustStorefilepath(jFileChooser.getSelectedFile().getAbsoluteFile().getAbsolutePath() + File.separator +trustStoreName); 
 						this.getTrustStoreController().createTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(),this.httpsConfigWindow.getTrustStorefilepath(),ownerDialog);
 						String msg = Language.translate("Your TrustStore has been created successfully!",Language.EN);
 						String title = Language.translate("TrustStore created",Language.EN);
