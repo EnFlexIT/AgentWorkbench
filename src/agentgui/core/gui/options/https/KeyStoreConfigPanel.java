@@ -943,6 +943,9 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 						String msg = Language.translate("Your certificate has been created successfully!",Language.EN);
 						String title1 = Language.translate("Certificate generated",Language.EN);
 						JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.INFORMATION_MESSAGE);
+						getJTextFieldCertificateValidity().setText(null);
+						getJTextFieldCertificateName().setText(null);
+						getJTextFieldCertificatePath().setText(null);
 					}
 				}
 			}
