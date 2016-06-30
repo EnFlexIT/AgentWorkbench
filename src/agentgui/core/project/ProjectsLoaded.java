@@ -183,11 +183,11 @@ public class ProjectsLoaded {
 			newProject.getSimulationSetups().setupCreateDefault();			
 		}
 
-		// --- Load configured PlugIns ----------------------------------------
-		newProject.plugInVectorLoad();
-
 		// --- Load the TimeModelController -----------------------------------
 		newProject.getTimeModelController();
+		
+		// --- Load configured PlugIns ----------------------------------------
+		newProject.plugInVectorLoad();
 
 		// --- Load the environment controller --------------------------------
 		newProject.getEnvironmentController();
