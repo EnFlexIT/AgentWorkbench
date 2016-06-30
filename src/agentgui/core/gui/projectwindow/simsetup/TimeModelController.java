@@ -71,6 +71,7 @@ public class TimeModelController implements Observer {
 		this.currProject = project;
 		this.currProject.addObserver(this);
 		this.addTimeModelDisplayToProjectWindow();
+		this.setupLoad();
 	}
 	
 	

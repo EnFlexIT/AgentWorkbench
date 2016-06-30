@@ -186,6 +186,9 @@ public class ProjectsLoaded {
 		// --- Load configured PlugIns ----------------------------------------
 		newProject.plugInVectorLoad();
 
+		// --- Load the TimeModelController -----------------------------------
+		newProject.getTimeModelController();
+
 		// --- Load the environment controller --------------------------------
 		newProject.getEnvironmentController();
 		

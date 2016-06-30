@@ -183,8 +183,8 @@ public class TimeModelDiscrete extends TimeModelDateBased {
 			
 			if (timeModelSettings.size()==0) {
 				// --- Use Default values -----------------
-				this.timeStart = System.currentTimeMillis();
-				this.timeStop = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
+				this.timeStart = this.getDateForMidnight(System.currentTimeMillis()).getTime();
+				this.timeStop = this.timeStart + 1000 * 60 * 60 * 24;
 				this.time = new Long(0);
 				this.step = new Long(1000 * 60);
 				this.stepDisplayUnitAsIndexOfTimeUnitVector = 1;

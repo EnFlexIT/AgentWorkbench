@@ -28,6 +28,10 @@
  */
 package agentgui.simulationService.time;
 
+import java.util.Calendar;
+import java.util.Date;
+
+
 /**
  * The Class TimeModelDateBased.
  * 
@@ -96,6 +100,33 @@ public abstract class TimeModelDateBased extends TimeModel {
 			}
 		}
 		return this.timeFormat;
+	}
+	
+	/**
+	 * Returns the midnight date for the specified time stamp.
+	 * @param timeStamp the time stamp
+	 * @return the date for midnight
+	 */
+	public Date getDateForMidnight(long timeStamp) {
+		return this.getDateForMidnight(new Date(timeStamp));
+	}
+	/**
+	 * Returns the midnight date for the specified date.
+	 * @param date the date to adjust
+	 * @return the date for midnight
+	 */
+	public Date getDateForMidnight(Date date) {
+		
+		Calendar startCalenderMerged = Calendar.getInstance();
+		
+		startCalenderMerged.setTime(date);
+		startCalenderMerged.set(Calendar.HOUR_OF_DAY, 0);
+		startCalenderMerged.set(Calendar.MINUTE, 0);
+		startCalenderMerged.set(Calendar.SECOND, 0);
+		startCalenderMerged.set(Calendar.MILLISECOND, 0);
+		
+		Date newDate = startCalenderMerged.getTime();
+		return newDate;
 	}
 	
 }

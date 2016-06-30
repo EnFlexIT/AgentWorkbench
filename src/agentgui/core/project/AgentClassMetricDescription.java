@@ -130,7 +130,7 @@ public class AgentClassMetricDescription implements Serializable{
 	
 	/**
 	 * Sets the real metric.
-	 * @param realMetricAverage the new real metric
+	 * @param realMetric the new real metric
 	 */
 	public void setRealMetric(double realMetric) {
 		this.realMetric = realMetric;

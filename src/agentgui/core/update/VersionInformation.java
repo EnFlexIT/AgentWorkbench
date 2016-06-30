@@ -79,7 +79,7 @@ public class VersionInformation implements Serializable {
 	/**
 	 * Checks if this version is a newer version than the specified version.
 	 *
-	 * @param localVersionInfo the local version info to compare
+	 * @param versionInformation the local version info to compare
 	 * @return true, if this instance describes a newer version
 	 */
 	public boolean isNewerVersion(VersionInformation versionInformation) {

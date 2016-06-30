@@ -364,14 +364,14 @@ public class TimeModelContinuous extends TimeModelDateBased {
 	 */
 	@Override
 	public void step() {
-		// TODO Auto-generated method stub
+		// --- nothing to do here -------------------------
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.time.TimeModel#stepBack()
 	 */
 	@Override
 	public void stepBack() {
-		// TODO Auto-generated method stub
+		// --- nothing to do here -------------------------
 	}
 	
 	/* (non-Javadoc)
@@ -400,8 +400,8 @@ public class TimeModelContinuous extends TimeModelDateBased {
 			
 			if (timeModelSettings.size()==0) {
 				// --- Use Default values -----------------
-				this.timeStart = System.currentTimeMillis();
-				this.timeStop = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
+				this.timeStart = this.getDateForMidnight(System.currentTimeMillis()).getTime();
+				this.timeStop = this.timeStart + 1000 * 60 * 60 * 24;
 				this.accelerationFactor = 1;
 				this.timeFormat = TimeModelDateBased.DEFAULT_TIME_FORMAT;
 				return;

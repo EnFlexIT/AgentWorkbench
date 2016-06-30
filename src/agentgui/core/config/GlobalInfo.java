@@ -1695,7 +1695,7 @@ public class GlobalInfo {
 	}
 	/**
 	 * Sets the TrustStore password.
-	 * @param filePropTrustStorePassword the new TrustStore password
+	 * @param newPassword the new TrustStore password
 	 */
 	public void setTrustStorePassword(String newPassword) {
 		this.setTrustStorePasswordEncrypted(this.pwEncrypt(newPassword));

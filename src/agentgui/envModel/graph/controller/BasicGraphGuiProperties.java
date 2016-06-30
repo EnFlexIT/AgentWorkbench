@@ -494,7 +494,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			// --- Data model has changed ! ---------------------------
 			String diaTitle = Language.translate("Close Properties", Language.EN);
 			String diaQuestion = null;
-			if (graphController.getProject()!=null) {
+			if (this.graphController.getProject()!=null) {
 				// --- Setup case -------------
 				diaQuestion = Language.translate("Save changes to network model?", Language.EN);
 			} else {
@@ -505,7 +505,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 			// --- User request ---------------------------------------
 			int diaAnswer = JOptionPane.showInternalConfirmDialog(this, diaQuestion, diaTitle, JOptionPane.YES_NO_CANCEL_OPTION);
 			if (diaAnswer==JOptionPane.YES_OPTION) {
-				if (graphController.getProject()!=null) {
+				if (this.graphController.getProject()!=null) {
 					// --- Setup case -------------
 					this.save();	
 				} else {
@@ -546,6 +546,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 		if (nca4dm!=null) {
 			nca4dm.save();
 			this.newDataModel = nca4dm.getDataModel();
+			this.newDataModelBase64 = nca4dm.getDataModelBase64Encoded(this.newDataModel);
 			
 			if (this.graphNode!=null) {
 				this.graphNode.setDataModel(this.newDataModel);

@@ -229,13 +229,16 @@ public class XyChartModel extends ChartModel {
 	}
 	
 	/**
-	 * Returns the number of series in this chart
-	 * @return
+	 * Returns the number of series in this chart.
+	 * @return the number of series 
 	 */
 	public int getSeriesCount(){
 		return this.getXySeriesCollection().getSeriesCount();
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#setSeriesLabel(int, java.lang.String)
+	 */
 	@Override
 	public void setSeriesLabel(int seriesIndex, String newLabel) {
 		XYSeries series = this.getSeries(seriesIndex);

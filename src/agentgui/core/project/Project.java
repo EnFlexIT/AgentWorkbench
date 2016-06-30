@@ -943,9 +943,6 @@ import agentgui.core.webserver.JarFileCreator;
 			pwt.add();
 			this.projectWindow.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup, pwt);
 			
-				// --- Maybe a TimeModel has to be displayed --
-				this.getTimeModelController();
-				
 				// --- start configuration for agents ---------
 				pwt = new ProjectWindowTab(this, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Agenten-Start"), null, null, new StartSetup(this), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 				pwt.add();
