@@ -343,8 +343,10 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 				tsvp.setValue(sf);
 				
 				// --- Add new value pair to data model -------------
-				TimeSeries ts = (TimeSeries) timeSeriesChart.getTimeSeriesChartData().get(i);
-				ts.addTimeSeriesValuePairs(tsvp);
+				if (i>0 && i<=timeSeriesChart.getTimeSeriesChartData().size()-1) {
+					TimeSeries ts = (TimeSeries) timeSeriesChart.getTimeSeriesChartData().get(i);
+					ts.addTimeSeriesValuePairs(tsvp);
+				}
 			}
 			break;
 			
