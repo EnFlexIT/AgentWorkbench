@@ -30,7 +30,6 @@ package agentgui.core.charts;
 
 import java.awt.Color;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
@@ -308,29 +307,21 @@ public class ChartSettingModel extends Observable{
 	 * Sends a notification about a series related change to the observers
 	 * @param eventType The event type, indicating which setting was changed
 	 * @param seriesIndex The index of the affected series
-	 * @param newSetting The new value of the setting
+	 * @param newValue The new value of the setting
 	 */
-	protected void sendNotifications(EventType eventType, int seriesIndex, Object newSetting){
+	protected void sendNotifications(EventType eventType, int seriesIndex, Object newValue){
 		if(this.notificationsEnabled){
 			// --- Prepare ChartSettingsUpdateInfo object ------------
 			ChartSettingsUpdateNotification notification = new ChartSettingsUpdateNotification();
 			notification.setEventType(eventType);
 			notification.setSeriesIndex(seriesIndex);
-			notification.setNewSetting(newSetting);
+			notification.setNewValue(newValue);
 			
 			// --- Notify observers ------------------------
 			this.setChanged();
 			this.notifyObservers(notification);
 		}
 	}
-	
-	
-	
-	@Override
-	public synchronized void addObserver(Observer o) {
-		super.addObserver(o);
-	}
-
 
 
 	/**
@@ -343,7 +334,7 @@ public class ChartSettingModel extends Observable{
 		
 		private EventType eventType;
 		private int seriesIndex;
-		private Object newSetting;
+		private Object newValue;
 		
 		/**
 		 * Returns the event type that specifies which settings have changed.
@@ -381,19 +372,28 @@ public class ChartSettingModel extends Observable{
 		 * Returns the new value of the changed setting.
 		 * @return The new value
 		 */
-		public Object getNewSetting() {
-			return newSetting;
+		public Object getNewValue() {
+			return newValue;
 		}
 		
 		/**
 		 * Sets the new setting.
-		 * @param newSetting the new new setting
+		 * @param newValue the new new setting
 		 */
-		public void setNewSetting(Object newSetting) {
-			this.newSetting = newSetting;
+		public void setNewValue(Object newValue) {
+			this.newValue = newValue;
 		}
 		
 		
+	}
+
+
+	public boolean isNotificationsEnabled() {
+		return notificationsEnabled;
+	}
+
+	public void setNotificationsEnabled(boolean notificationsEnabled) {
+		this.notificationsEnabled = notificationsEnabled;
 	}
 
 

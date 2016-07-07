@@ -97,6 +97,7 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	public ChartSettingsTab(ChartSettingModel chartSettingModel, ChartEditorJPanel parent) {
 		this.chartSettingModel = chartSettingModel;
 		this.chartSettingModel.addChartSettingModelListener(this);
+		this.chartSettingModel.addObserver(parent.getChartTab());
 		this.parent = parent;
 		this.initialize(); 
 		this.setChartSettingModelData();
@@ -109,11 +110,16 @@ public class ChartSettingsTab extends JPanel implements DocumentListener, ChartS
 	public void replaceModel(ChartSettingModel newChartSettingModel) {
 		if (newChartSettingModel!=this.chartSettingModel) {
 			this.chartSettingModel.removeChartSettingModelListener(this);
+			this.chartSettingModel.deleteObserver(parent.getChartTab());
 			this.chartSettingModel = newChartSettingModel;
 			this.chartSettingModel.addChartSettingModelListener(this);
+			this.chartSettingModel.addObserver(parent.getChartTab());
 			this.chartSettingModel.getTableModelSeriesSettings().addTableModelListener(this);
 		}
+		
+		this.chartSettingModel.setNotificationsEnabled(false);
 		this.setChartSettingModelData();
+		this.chartSettingModel.setNotificationsEnabled(true);
 	}
 	
 	/**

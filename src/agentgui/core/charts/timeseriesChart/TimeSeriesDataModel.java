@@ -368,7 +368,7 @@ public class TimeSeriesDataModel extends DataModel {
 		if(o instanceof ChartSettingModel){
 			ChartSettingsUpdateNotification notification = (ChartSettingsUpdateNotification) arg;
 			if(notification.getEventType() == EventType.TIME_FORMAT_CHANGED){
-				String newTimeFormat = (String) notification.getNewSetting();
+				String newTimeFormat = (String) notification.getNewValue();
 				this.setTimeFormat(newTimeFormat);
 			}
 		}

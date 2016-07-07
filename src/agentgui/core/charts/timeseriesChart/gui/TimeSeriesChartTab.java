@@ -33,6 +33,8 @@ import java.text.SimpleDateFormat;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.data.time.TimeSeriesCollection;
+
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.gui.ChartTab;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
@@ -71,15 +73,18 @@ public class TimeSeriesChartTab extends ChartTab {
 	public void replaceModel(DataModel newModel) {
 		this.dataModel = newModel;
 		
-		this.chartPanel.setChart(ChartFactory.createTimeSeriesChart(
-				this.dataModel.getOntologyModel().getChartSettings().getChartTitle(), 
-				this.dataModel.getOntologyModel().getChartSettings().getXAxisLabel(), 
-				this.dataModel.getOntologyModel().getChartSettings().getYAxisLabel(), 
-				((TimeSeriesDataModel)this.dataModel).getTimeSeriesChartModel().getTimeSeriesCollection(), 
-				true, false, false
-		));
+//		this.chartPanel.setChart(ChartFactory.createTimeSeriesChart(
+//				this.dataModel.getOntologyModel().getChartSettings().getChartTitle(), 
+//				this.dataModel.getOntologyModel().getChartSettings().getXAxisLabel(), 
+//				this.dataModel.getOntologyModel().getChartSettings().getYAxisLabel(), 
+//				((TimeSeriesDataModel)this.dataModel).getTimeSeriesChartModel().getTimeSeriesCollection(), 
+//				true, false, false
+//		));
+//		
+//		applySettings();
 		
-		applySettings();
+		TimeSeriesCollection tsc = ((TimeSeriesDataModel)this.dataModel).getTimeSeriesChartModel().getTimeSeriesCollection();
+		this.chartPanel.getChart().getXYPlot().setDataset(tsc);
 		
 		dataModel.getChartModel().addObserver(this);
 	}

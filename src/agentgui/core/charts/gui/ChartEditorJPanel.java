@@ -94,16 +94,16 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	// Swing components
 	protected JToolBar toolBar;
 	protected JTabbedPane tabbedPane;
-	protected JButton btnImport;
-	protected JButton btnSaveImage = null;
+	protected JButton jButtonCsvImport;
+	protected JButton jButtonCsvExport;
+
+	protected JButton jButtonSaveAsImage = null;
 	protected JLabel jLabelExport = null;
 	protected JComboBox<String> cbImageAspectRatio = null;
 	protected JTextField tfImageWidth = null;
 	protected JLabel jLabelX = null;
 	protected JTextField tfImageHeight= null;
 	protected JScrollPane scrollPane4SettingTab = null;
-	private JButton jButtonCsvExport;
-	
 	// Tab contents
 	protected ChartTab chartTab;
 	protected TableTab tableTab;
@@ -142,16 +142,15 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 			toolBar = new JToolBar();
 			toolBar.setFloatable(false);
 			toolBar.setRollover(true);
-			toolBar.add(getBtnImport());
+			toolBar.add(getJButtonCsvImport());
+			toolBar.add(getJButtonCsvExport());
 			toolBar.addSeparator();
 			toolBar.add(jLabelExport);
 			toolBar.add(getCbImageAspectRatio());
 			toolBar.add(getTfImageWidth());
 			toolBar.add(jLabelX);
 			toolBar.add(getTfImageHeight());
-			toolBar.add(getBtnSaveImage());
-			toolBar.addSeparator();
-			toolBar.add(getJButtonCsvExport());
+			toolBar.add(getJButtonSaveAsImage());
 		}
 		return toolBar;
 	}
@@ -187,30 +186,30 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	
 	protected abstract ChartSettingsTab getChartSettingsTab();
 	
-	protected JButton getBtnImport() {
-		if (btnImport == null) {
-			btnImport = new JButton("");
-			btnImport.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBtransImport.png")));
-			btnImport.setPreferredSize(jButtonSize);
-			btnImport.setToolTipText(Language.translate("Neue Datenreihe(n) importieren"));
-			btnImport.addActionListener(this);
+	protected JButton getJButtonCsvImport() {
+		if (jButtonCsvImport == null) {
+			jButtonCsvImport = new JButton("");
+			jButtonCsvImport.setIcon(new ImageIcon(getClass().getResource(pathImage + "MBtransImport.png")));
+			jButtonCsvImport.setPreferredSize(jButtonSize);
+			jButtonCsvImport.setToolTipText(Language.translate("Neue Datenreihe(n) importieren"));
+			jButtonCsvImport.addActionListener(this);
 		}
-		return btnImport;
+		return jButtonCsvImport;
 	}
 	
 	/**
      * This method initializes jButtonSaveImage
      * @return javax.swing.JButton
      */
-    protected JButton getBtnSaveImage() {
-		if (btnSaveImage == null) {
-			btnSaveImage = new JButton();
-			btnSaveImage.setIcon(new ImageIcon(getClass().getResource(pathImage  + "SaveAsImage.png")));
-			btnSaveImage.setPreferredSize(jButtonSize);
-			btnSaveImage.setToolTipText(Language.translate("Als Bild exportieren"));
-			btnSaveImage.addActionListener(this);
+    protected JButton getJButtonSaveAsImage() {
+		if (jButtonSaveAsImage == null) {
+			jButtonSaveAsImage = new JButton();
+			jButtonSaveAsImage.setIcon(new ImageIcon(getClass().getResource(pathImage  + "SaveAsImage.png")));
+			jButtonSaveAsImage.setPreferredSize(jButtonSize);
+			jButtonSaveAsImage.setToolTipText(Language.translate("Als Bild exportieren"));
+			jButtonSaveAsImage.addActionListener(this);
 		}
-		return btnSaveImage;
+		return jButtonSaveAsImage;
     }
     
     protected JComboBox<String> getCbImageAspectRatio(){
@@ -575,7 +574,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		if (ae.getSource() == btnImport){
+		if (ae.getSource() == jButtonCsvImport){
 			// --- Import CSV data / Choose file ----------
 			JFileChooser jFileChooserImportCSV = new JFileChooser(Application.getGlobalInfo().getLastSelectedFolder());
 			jFileChooserImportCSV.setFileFilter(new FileNameExtensionFilter(Language.translate("CSV-Dateien"), "csv"));
@@ -602,7 +601,7 @@ public abstract class ChartEditorJPanel extends OntologyClassEditorJPanel implem
 				this.getTableTab().setButtonsEnabledToSituation();
 			}
 			
-		} else if(ae.getSource() == btnSaveImage) {
+		} else if(ae.getSource() == jButtonSaveAsImage) {
 			// --- Export the image ---------------------------------
 			this.saveAsImage();
 		} else if(ae.getSource() == tfImageWidth) {

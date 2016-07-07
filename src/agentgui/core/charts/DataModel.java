@@ -392,30 +392,30 @@ public abstract class DataModel implements Observer{
 				int seriesIndex = notification.getSeriesIndex();
 				switch(notification.getEventType()){
 					case TITLE_CHANGED:
-						this.ontologyModel.getChartSettings().setChartTitle((String) notification.getNewSetting());
+						this.ontologyModel.getChartSettings().setChartTitle((String) notification.getNewValue());
 						break;
 						
 					case X_AXIS_LABEL_CHANGED:
-						this.ontologyModel.getChartSettings().setXAxisLabel((String) notification.getNewSetting());
+						this.ontologyModel.getChartSettings().setXAxisLabel((String) notification.getNewValue());
 						break;
 						
 					case Y_AXIS_LABEL_CHANGED:
-						this.ontologyModel.getChartSettings().setYAxisLabel((String) notification.getNewSetting());
+						this.ontologyModel.getChartSettings().setYAxisLabel((String) notification.getNewValue());
 						break;
 					
 					case RENDERER_CHANGED:
-						this.ontologyModel.getChartSettings().setRendererType((String) notification.getNewSetting());
+						this.ontologyModel.getChartSettings().setRendererType((String) notification.getNewValue());
 						break;
 						
 					case SERIES_LABEL_CHANGED:
-						String newLabel = (String) notification.getNewSetting();
+						String newLabel = (String) notification.getNewValue();
 						this.getOntologyModel().getSeries(seriesIndex).setLabel(newLabel);
 						this.getChartModel().setSeriesLabel(seriesIndex, newLabel);
 						this.getTableModel().setSeriesLabel(seriesIndex, newLabel);
 						break;
 						
 					case SERIES_COLOR_CHANGED:
-						Color newColor = (Color) notification.getNewSetting();
+						Color newColor = (Color) notification.getNewValue();
 						List seriesColors = this.getOntologyModel().getChartSettings().getYAxisColors();
 						seriesColors.remove(seriesIndex);
 						seriesColors.add(seriesIndex, ""+newColor.getRGB());
@@ -424,7 +424,7 @@ public abstract class DataModel implements Observer{
 					case SERIES_LINE_WIDTH_CHANGED:
 						List seriesLineWidths = this.getOntologyModel().getChartSettings().getYAxisLineWidth();
 						seriesLineWidths.remove(seriesIndex);
-						seriesLineWidths.add(seriesIndex, notification.getNewSetting());
+						seriesLineWidths.add(seriesIndex, notification.getNewValue());
 						break;
 						
 					default:

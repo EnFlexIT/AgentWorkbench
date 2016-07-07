@@ -374,19 +374,27 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 				
 				switch(notification.getEventType()){
 					case TITLE_CHANGED:
-						this.chartPanel.getChart().getTitle().setText((String) notification.getNewSetting());
+						this.chartPanel.getChart().getTitle().setText((String) notification.getNewValue());
+						break;
+						
+					case X_AXIS_LABEL_CHANGED:
+						this.getChart().getXYPlot().getDomainAxis().setLabel((String) notification.getNewValue());
+						break;
+						
+					case Y_AXIS_LABEL_CHANGED:
+						this.getChart().getXYPlot().getRangeAxis().setLabel((String) notification.getNewValue());
 						break;
 						
 					case RENDERER_CHANGED:
-						this.setRenderer((String) notification.getNewSetting());
+						this.setRenderer((String) notification.getNewValue());
 						break;
 					
 					case SERIES_COLOR_CHANGED:
-						this.setSeriesColor(seriesIndex, (Color) notification.getNewSetting());
+						this.setSeriesColor(seriesIndex, (Color) notification.getNewValue());
 						break;
 					
 					case SERIES_LINE_WIDTH_CHANGED:
-						this.setSeriesLineWidth(seriesIndex, (float) notification.getNewSetting());
+						this.setSeriesLineWidth(seriesIndex, (float) notification.getNewValue());
 						break;
 						
 					default:

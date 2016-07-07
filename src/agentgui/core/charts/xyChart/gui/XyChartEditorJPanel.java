@@ -80,6 +80,8 @@ public class XyChartEditorJPanel extends ChartEditorJPanel {
 		this.getChartTab().replaceModel(this.getDataModel());
 		this.getChartSettingsTab().replaceModel(this.getDataModel().getChartSettingModel());
 		
+		this.getDataModel().getChartSettingModel().addObserver(this.getChartTab());
+		
 		this.getTableTab().setButtonsEnabledToSituation();
 		
 	}
