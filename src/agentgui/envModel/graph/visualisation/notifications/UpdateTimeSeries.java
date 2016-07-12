@@ -343,7 +343,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 				tsvp.setValue(sf);
 				
 				// --- Add new value pair to data model -------------
-				if (i>0 && i<=timeSeriesChart.getTimeSeriesChartData().size()-1) {
+				if (i>=0 && i<=timeSeriesChart.getTimeSeriesChartData().size()-1) {
 					TimeSeries ts = (TimeSeries) timeSeriesChart.getTimeSeriesChartData().get(i);
 					ts.addTimeSeriesValuePairs(tsvp);
 				}
@@ -463,7 +463,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 					// ------------------------------------------------
 					case TimeSeriesChartAddOrExchangeDataRow:
 						
-						for (int c = 0; c < this.getValueVector().size(); c++) {
+						for (int c=0; c<this.getValueVector().size(); c++) {
 							// -- Get the new value for the Time Series i -------
 							Float newFloatValue = this.getValueVector().get(c);
 							if (newFloatValue==null) continue;
