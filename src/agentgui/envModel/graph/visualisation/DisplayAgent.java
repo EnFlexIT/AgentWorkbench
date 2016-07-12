@@ -67,6 +67,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	private DisplayAgentNotificationHandler myDisplayAgentNotificationHandler;
 	
 	private boolean enableNetworkModelUpdate = true;
+	private boolean enableNetworkModelCopy = false;
 	
 	
 	/* (non-Javadoc)
@@ -225,12 +226,25 @@ public class DisplayAgent extends AbstractDisplayAgent {
 			
 			// --- Update NetworkModel, if allowed -------------------------------------- 
 			if (this.isEnableNetworkModelUpdate()==true) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						getGraphEnvironmentController().setDisplayEnvironmentModel(myEnvironmentModel.getDisplayEnvironment());
-					}
-				});
+				if (this.isEnableNetworkModelCopy()==true) {
+					final NetworkModel netModelCopy = this.getNetworkModel().getCopy();
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							getGraphEnvironmentController().setDisplayEnvironmentModel(netModelCopy);
+						}
+					});
+					
+				} else {
+					// --- Set original NetworkModel ------------------------------------ 
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							getGraphEnvironmentController().setDisplayEnvironmentModel(myEnvironmentModel.getDisplayEnvironment());
+						}
+					});					
+					
+				}
 			}
 			
 		} catch (Exception ex) {
@@ -291,6 +305,21 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 */
 	public void setEnableNetworkModelUpdate(boolean enableNetworkModelUpdate) {
 		this.enableNetworkModelUpdate = enableNetworkModelUpdate;
+	}
+	
+	/**
+	 * Checks if is enable network model copy.
+	 * @return true, if is enable network model copy
+	 */
+	public boolean isEnableNetworkModelCopy() {
+		return enableNetworkModelCopy;
+	}
+	/**
+	 * Sets the enable network model copy.
+	 * @param enableNetworkModelCopy the new enable network model copy
+	 */
+	public void setEnableNetworkModelCopy(boolean enableNetworkModelCopy) {
+		this.enableNetworkModelCopy = enableNetworkModelCopy;
 	}
 	
 }
