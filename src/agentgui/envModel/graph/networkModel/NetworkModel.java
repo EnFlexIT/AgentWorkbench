@@ -2150,33 +2150,53 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @param graphElement the graph element
 	 * @return the domain
 	 */
-	public String getDomain(Object graphElement) {
+	public String getDomain(GraphElement graphElement) {
 		
 		String domain = null;
 		if (graphElement instanceof GraphNode) {
-			// --- Have a look if every component is in the same domain -------
-			String domainIitial = null;
+			
+			// --- Make a majority decision for the domain --------------------
+			HashMap<String, Integer> domainCountings = new HashMap<String, Integer>(); 
 			String domainTmp = null;
-			HashSet<NetworkComponent> netComps = this.getNetworkComponents((GraphNode) graphElement);
-			for (NetworkComponent netComp : netComps) {
+
+			// --- Check all NetworkComponents --------------------------------
+			for (NetworkComponent netComp : this.getNetworkComponents((GraphNode) graphElement)) {
 				
 				if (netComp instanceof ClusterNetworkComponent) {
 					domainTmp = ((ClusterNetworkComponent)netComp).getDomain();
 				} else {
-					domainTmp = this.generalGraphSettings4MAS.getCurrentCTS().get(netComp.getType()).getDomain();	
+					domainTmp = this.generalGraphSettings4MAS.getCurrentCTS().get(netComp.getType()).getDomain();
+					// --- For a DistributionNode return the result -----------
+					if (netComp.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+						return domainTmp;
+					}
 				}
 				
-				if (domainIitial==null) {
-					// --- Remind that value ----------------------------------
-					domainIitial=domainTmp;
-				} else {
-					if (domainTmp.equalsIgnoreCase(domainIitial)==false) {
-						domainIitial=null;
-						break;
+				if (domainTmp!=null) {
+					Integer noOfDomain = domainCountings.get(domainTmp);
+					if (noOfDomain==null) {
+						domainCountings.put(domainTmp, 1);
+					} else {
+						domainCountings.put(domainTmp, noOfDomain+1);
 					}
 				}
 			}
-			domain = domainIitial;
+
+			// --- Determine the domain ---------------------------------------
+			if (domainCountings.size()==1) {
+				domain = domainTmp;
+			} else {
+				// --- Find the maximum counting of domains ------------------- 
+				Integer countsMax = 0; 
+				Set<String> domainKeys = domainCountings.keySet();
+				for (String domainKey : domainKeys) {
+					Integer counts = domainCountings.get(domainKey);
+					if (counts > countsMax) {
+						domain = domainKey;
+						countsMax = counts;
+					}
+				}
+			}
 			
 		} else if (graphElement instanceof GraphEdge) {
 			// --- Get the corresponding NetworkComponent and have a look ----- 

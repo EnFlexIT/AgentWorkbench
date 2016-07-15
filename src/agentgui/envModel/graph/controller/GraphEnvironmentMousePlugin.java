@@ -80,18 +80,15 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
  */
 public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNode, GraphEdge> implements MouseWheelListener, MouseMotionListener, KeyListener, Observer {
 	
-	/** The GraphEnvironmentController **/
-	private GraphEnvironmentController graphController = null;
-	/** The parent BasicGraphGUI */
-	private BasicGraphGui basicGraphGUI = null;
-	/** The current VisualizationViewer	*/
-	private BasicGraphGuiVisViewer<GraphNode,GraphEdge> visViewer = null; 	
+	private GraphEnvironmentController graphController;
+	private BasicGraphGui basicGraphGUI;
+	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visViewer; 	
 	
 	/** Indicates that a paste action is currently running*/
 	private boolean isPasteAction = false;
-	private NetworkModel networkModel2Paste = null;
-	private GraphNode graphNodeUpperLeft2Paste = null;
-	private GraphNode[] graphNodes2Paste = null;
+	private NetworkModel networkModel2Paste;
+	private GraphNode graphNodeUpperLeft2Paste;
+	private GraphNode[] graphNodes2Paste;
 	
 	/** Move panel with right currently ? */
 	private boolean movePanelWithRightAction = false;
@@ -100,7 +97,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 
 	private Vector<GraphNode> nodesTemp = new Vector<GraphNode>();
 	private Vector<GraphNode> nodesMoved = new Vector<GraphNode>();
-	private HashMap<String, Point2D> nodesMovedOldPositions = null;
+	private HashMap<String, Point2D> nodesMovedOldPositions;
 	
 	/** Whether to center the zoom at the current mouse position */
 	private boolean zoomAtMouse = true;
