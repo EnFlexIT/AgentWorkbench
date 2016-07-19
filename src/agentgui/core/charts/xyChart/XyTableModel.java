@@ -93,18 +93,28 @@ public class XyTableModel extends TableModel {
 	@Override
 	public void rebuildTableModel() {
 		
+		// Remember the current width of the table columns
+		Vector<Integer> columnWidths = this.getColumnWidths();
+		
+		// Remember column widths
 		int seriesSelected = this.getFocusedSeriesIndex();
+		
+		// Rebuild the table model
 		this.seriesTableModels = null;
 		this.tableModelDataVector = null;
-		
 		List chartDataSeries = this.parentDataModel.getOntologyModel().getChartData();
 		for (int i = 0; i < chartDataSeries.size(); i++) {
 			DataSeries chartData = (DataSeries) chartDataSeries.get(i);
 			this.addSeries(chartData);
 		}
+		
+		// Select previously selected series
 		if (seriesSelected!=-1) {
 			this.focusSeries(seriesSelected);
 		}
+		
+		// Set the width of the columns like before
+		this.setColumnWidths(columnWidths);
 	}
 	
 	/**

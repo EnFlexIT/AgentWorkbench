@@ -39,7 +39,6 @@ import javax.swing.DefaultDesktopManager;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
-
 import agentgui.core.application.Application;
 import agentgui.envModel.graph.networkModel.GraphEdge;
 import agentgui.envModel.graph.networkModel.GraphNode;
@@ -244,26 +243,32 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	 * Sets the data model update.
 	 * @param dataModelNotification the new data model update
 	 */
-	public void setDataModelNotification(DataModelNotification dataModelNotification) {
+	public void setDataModelNotification(final DataModelNotification dataModelNotification) {
 		
-		Vector<String> internalFramesTitles = new Vector<String>(this.getHashMapEditorFrames().keySet());
-		for (String internalFrameTitles : internalFramesTitles) {
-			JInternalFrame internalFrame = this.getHashMapEditorFrames().get(internalFrameTitles);
-			if (internalFrame instanceof BasicGraphGuiProperties) {
-				// --- Put notification into the property dialog ---- 
-				BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;
-				if (basicProperties.setDataModelNotification(dataModelNotification)==true) {
-					return; // --- Done ! ---
-				}
-			}
-		}
+//		SwingUtilities.invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+
+				Vector<String> internalFramesTitles = new Vector<String>(getHashMapEditorFrames().keySet());
+				for (String internalFrameTitles : internalFramesTitles) {
+					JInternalFrame internalFrame = getHashMapEditorFrames().get(internalFrameTitles);
+					if (internalFrame instanceof BasicGraphGuiProperties) {
+						// --- Put notification into the property dialog ---- 
+						BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;
+						if (basicProperties.setDataModelNotification(dataModelNotification)==true) return; // --- Done ! ---
+					}
+				}			
+			
+//			}
+//		});
+		
 	}
 	
 	/**
 	 * Sets an {@link UpdateDataSeries} to a data model.
 	 * @param updateDataSeries the new update data series
 	 */
-	public void setUpdateDataSeries(UpdateDataSeries updateDataSeries) {
+	public void setUpdateDataSeries(final UpdateDataSeries updateDataSeries) {
 		
 		// ----------------------------------------------------------
 		// --- Apply the update to the NetworkModel first -----------
@@ -277,19 +282,23 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 
 		// ----------------------------------------------------------
 		// --- Apply to an open property window, if there is one ----
-		Vector<String> internalFramesTitles = new Vector<String>(this.getHashMapEditorFrames().keySet());
-		for (String internalFrameTitles : internalFramesTitles) {
-			JInternalFrame internalFrame = this.getHashMapEditorFrames().get(internalFrameTitles);
-			if (internalFrame instanceof BasicGraphGuiProperties) {
-				// --- Put notification into the property dialog ---- 
-				BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;
-				if (basicProperties.setUpdateDataSeries(updateDataSeries)==true) {
-					// --- Done ! ---
-					break; 
+//		SwingUtilities.invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+				
+				Vector<String> internalFramesTitles = new Vector<String>(getHashMapEditorFrames().keySet());
+				for (String internalFrameTitles : internalFramesTitles) {
+					JInternalFrame internalFrame = getHashMapEditorFrames().get(internalFrameTitles);
+					if (internalFrame instanceof BasicGraphGuiProperties) {
+						// --- Put notification into the property dialog ---- 
+						BasicGraphGuiProperties basicProperties = (BasicGraphGuiProperties) internalFrame;
+						if (basicProperties.setUpdateDataSeries(updateDataSeries)==true) break;// --- Done ! ---
+					}
 				}
-			}
-		}
-	}
+				
+//			}
+//		});
 	
+	}
 	
 }

@@ -230,7 +230,7 @@ public class ChartSettingModel extends Observable{
 		}
 		
 		// --- Add rows containing the series specific settings -----
-		for(int i=0; i < parentDataModel.getSeriesCount(); i++){
+		for(int i=0; i < parentDataModel.getOntologyModel().getChartData().size(); i++){
 				
 			// Extract series settings from the ontology model
 			DataSeries series = (DataSeries) parentDataModel.getOntologyModel().getChartData().get(i);

@@ -34,6 +34,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Vector;
@@ -41,6 +42,8 @@ import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
@@ -54,6 +57,8 @@ import agentgui.ontology.ValuePair;
 public abstract class TableModel extends AbstractTableModel implements TableModelListener {
 
 	private static final long serialVersionUID = -6719770378777635821L;
+	
+	protected JTable myJTable;
 	
 	/** The column titles */
 	protected Vector<String> columnTitles;
@@ -373,5 +378,48 @@ public abstract class TableModel extends AbstractTableModel implements TableMode
 			dataVector.addElement(objectVector);
 		}
 		return dataVector;
+	}
+	
+	/**
+	 * Creates a vector containing the current width of all table columns
+	 * @return The column width array
+	 */
+	protected Vector<Integer> getColumnWidths(){
+		
+		if(this.myJTable == null){
+			return null;
+		}
+		
+		TableColumnModel tcm = this.myJTable.getColumnModel();
+
+		// Array based old approach
+//		int[] columnWidths = new int[this.getColumnCount()];
+//		for(int i=0; i<this.getColumnCount(); i++){
+//			TableColumn tc = tcm.getColumn(i);
+//			if(tc != null){
+//				columnWidths[i] = tc.getWidth();
+//			}
+//		}
+		
+		Vector<Integer> cwVector = new Vector<Integer>();
+		for(TableColumn tc : Collections.list(tcm.getColumns())){
+			cwVector.addElement(tc.getWidth());
+		}
+		
+		return cwVector;
+	}
+	
+	/**
+	 * Sets the width of the table columns according to the integer array
+	 * @param columnWidths Array containing the widths to set
+	 */
+	protected void setColumnWidths(Vector<Integer> columnWidths){
+		if(columnWidths != null){
+			TableColumnModel tcm = this.myJTable.getColumnModel();
+			for(int i=0; i<this.getColumnCount() && i<columnWidths.size(); i++){
+				TableColumn tc = tcm.getColumn(i);
+				tc.setPreferredWidth(columnWidths.get(i));
+			}
+		}
 	}
 }

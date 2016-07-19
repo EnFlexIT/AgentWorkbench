@@ -29,15 +29,10 @@
 package agentgui.core.charts.timeseriesChart.gui;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
-
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter.SortKey;
-import javax.swing.SortOrder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -53,6 +48,7 @@ import agentgui.core.charts.gui.TableCellEditor4Time;
 import agentgui.core.charts.gui.TableCellRenderer4Time;
 import agentgui.core.charts.gui.TableTab;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
+import agentgui.core.charts.timeseriesChart.TimeSeriesTableModel;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 
@@ -105,6 +101,7 @@ public class TimeSeriesTableTab extends TableTab {
 			};
 			
 			jTable.setModel(dataModelLocal.getTableModel());
+			((TimeSeriesTableModel)dataModelLocal.getTableModel()).setTable(jTable);
 			jTable.setShowGrid(false);
 			jTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jTable.setCellSelectionEnabled(true);
@@ -134,14 +131,14 @@ public class TimeSeriesTableTab extends TableTab {
 					}
 				});				
 			}
-			jTable.setRowSorter(sorter);
-			
 			// --- Initially sort by key ------------
-			List<SortKey> sortKeys = new ArrayList<SortKey>();
-			for (int i = 0; i < jTable.getColumnCount(); i++) {
-			    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
-			}
-			jTable.getRowSorter().setSortKeys(sortKeys);
+			jTable.setRowSorter(sorter);
+//			jTable.getRowSorter().toggleSortOrder(0);
+			
+//			List<SortKey> sortKeys = new ArrayList<SortKey>();
+//			for (int i = 0; i < jTable.getColumnCount(); i++) {
+//			    sortKeys.add(new SortKey(i, SortOrder.ASCENDING));
+//			}
 			
 		}
 		return jTable;

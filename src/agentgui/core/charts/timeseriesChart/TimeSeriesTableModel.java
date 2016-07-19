@@ -36,8 +36,8 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.JTable;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.event.TableModelEvent;
-
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.TableModel;
 import agentgui.core.charts.TableModelDataVector;
@@ -54,6 +54,7 @@ public class TimeSeriesTableModel extends TableModel {
 	private static final long serialVersionUID = 7951673309652098789L;
 	
 	private static final String DEFAULT_TIME_COLUMN_TITLE = "Time";
+	
 	
 	/**
 	 * Constructor
@@ -78,12 +79,27 @@ public class TimeSeriesTableModel extends TableModel {
 	 */
 	@Override
 	public void rebuildTableModel() {
+		
+		SortKey sortKey = this.getSortKey();
+				
+		columnTitles.clear();
+		columnTitles.add(DEFAULT_TIME_COLUMN_TITLE);
+		
+		// Remember the current width of the table columns
+		Vector<Integer> columnWidths = this.getColumnWidths();
+		
+		// Rebuild the table model
 		this.tableModelDataVector = new TableModelDataVector(TimeSeries.class.getSimpleName(), this.tableModelDataVector.isActivateRowNumber(), this.tableModelDataVector.getKeyColumnIndex());
 		List chartDataSeries = this.parentDataModel.getOntologyModel().getChartData();
 		for (int i = 0; i < chartDataSeries.size(); i++) {
 			DataSeries chartData = (DataSeries) chartDataSeries.get(i);
-			this.addSeries(chartData);
+			this.addSeries(chartData, false);
 		}
+		
+		// Set the width of the columns like before
+		this.setColumnWidths(columnWidths);
+		
+		this.setSortKey(sortKey);
 	}
 	
 	/* (non-Javadoc)
@@ -287,11 +303,22 @@ public class TimeSeriesTableModel extends TableModel {
 	 * @param newSeries
 	 */
 	public void addSeries(DataSeries newSeries){
+		this.addSeries(newSeries, true);
+	}
+	
+	/**
+	 * Add a new time series to the table model
+	 * @param newSeries
+	 * @param restoreSorting Restore sort order afterwards?
+	 */
+	public void addSeries(DataSeries newSeries, boolean restoreSorting){
 		
-		columnTitles.add(newSeries.getLabel());
+		SortKey sortKey = this.getSortKey();
+		
 		List valuePairs = parentDataModel.getValuePairsFromSeries(newSeries); 
 		
 		int destColIndex = getColumnCount();
+		columnTitles.add(newSeries.getLabel());
 		for (int i=0; i<valuePairs.size(); i++) {
 			
 			// --- Check if there is a row with this key value --------------------------
@@ -349,6 +376,10 @@ public class TimeSeriesTableModel extends TableModel {
 		}
 		fireTableStructureChanged();
 		
+		if(restoreSorting == true && this.getColumnCount() > 0){
+			this.setSortKey(sortKey);
+		}
+		
 	}
 	
 	/**
@@ -357,6 +388,8 @@ public class TimeSeriesTableModel extends TableModel {
 	 * @throws NoSuchSeriesException Will be thrown if there is no series with the specified index
 	 */
 	public void removeSeries(int seriesIndex) throws NoSuchSeriesException {
+		
+		SortKey sortKey = this.getSortKey();
 		
 		if (this.getColumnCount()==2) {
 			// --- The last series has to be removed ------
@@ -377,6 +410,10 @@ public class TimeSeriesTableModel extends TableModel {
 			
 		}
 		fireTableStructureChanged();
+		
+		if(this.getColumnCount() > 0){
+			this.setSortKey(sortKey);
+		}
 	}
 	
 	/**
@@ -436,6 +473,10 @@ public class TimeSeriesTableModel extends TableModel {
 		this.removeEmptyRows();
 		
 		this.fireTableStructureChanged();
+		
+		if(this.getColumnCount() > 0){
+			this.myJTable.getRowSorter().toggleSortOrder(0);
+		}
 		
 	}
 
@@ -669,6 +710,26 @@ public class TimeSeriesTableModel extends TableModel {
 		return (TimeSeriesOntologyModel)this.parentDataModel.getOntologyModel();
 	}
 	
+	public void setTable(JTable table){
+		this.myJTable = table;
+	}
 	
+	private SortKey getSortKey(){
+		SortKey sortKey = null;
+		
+		if(myJTable.getRowSorter().getSortKeys().size() > 0){
+			sortKey = myJTable.getRowSorter().getSortKeys().get(0);
+		}
+
+		return sortKey;
+		
+	}
 	
+	private void setSortKey(SortKey sortKey){
+		if(sortKey != null){
+			Vector<SortKey> keyVector = new Vector<SortKey>();
+			keyVector.addElement(sortKey);
+			myJTable.getRowSorter().setSortKeys(keyVector);
+		}
+	}
 }
