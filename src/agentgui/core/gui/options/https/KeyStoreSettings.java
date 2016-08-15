@@ -47,6 +47,7 @@ public class KeyStoreSettings {
     protected String stateOrProvince;
     protected String coutryCode;
     protected String path;
+    protected String validity;
 
     /**
      * Gets the key store name.
@@ -207,5 +208,21 @@ public class KeyStoreSettings {
     public void setPath(String value) {
         this.path = value;
     }
+    
+    /**
+     * Gets the validity.
+     * @return the validity
+     */
+    public String getValidity() {
+		return validity;
+	}
+    
+    /**
+     * Sets the validity.
+     * @param validity the new validity
+     */
+    public void setValidity(String validity) {
+		this.validity = validity;
+	}
 
 }

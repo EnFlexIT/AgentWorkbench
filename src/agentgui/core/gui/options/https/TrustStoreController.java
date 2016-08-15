@@ -397,7 +397,7 @@ public class TrustStoreController {
 			// --- Get All TrustStore's Certificates Alias -----------
 			Enumeration<String> enumeration = trustStore.aliases();
 			while (enumeration.hasMoreElements()) {
-				String alias = (String) enumeration.nextElement();
+				String alias = enumeration.nextElement();
 				certificateSettings.setCertificateAlias(alias);
 				Certificate cert = trustStore.getCertificate(alias);
 		        

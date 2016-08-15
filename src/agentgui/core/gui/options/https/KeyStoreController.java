@@ -39,6 +39,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.awt.Dialog;
 import javax.swing.JOptionPane;
@@ -51,7 +53,6 @@ import javax.swing.JOptionPane;
  * @since 05-04-2016
  */
 public class KeyStoreController {
-
 
 	/**
 	 * This Initializes the KeyStoreController.
@@ -69,7 +70,7 @@ public class KeyStoreController {
 	 * @param keystorePassword
 	 * @param keyStorePath 
 	 */
-	public void createKeyStore(String informations, String alias, String keyStoreName, String keystorePassword, String keyStorePath) {
+	public void createKeyStore(String informations, String alias, String keyStoreName, String keystorePassword, String keyStorePath, String keyStoreValidity) {
 		String os = System.getProperty("os.name");
 		/*
 		 * ---------------------------------------------------------------------
@@ -81,9 +82,9 @@ public class KeyStoreController {
 		 */
 		try {
 			if (os.toLowerCase().contains("windows") == true) {
-				Runtime.getRuntime().exec("keytool -genkey -dname \"" + informations + "\" -alias " + alias + " -keystore "+ keyStorePath + keyStoreName + "KeyStore.jks  -storepass " + keystorePassword+ " -keypass " + keystorePassword);
+				Runtime.getRuntime().exec("keytool -genkey -dname \"" + informations + "\" -alias " + alias + " -keystore "+ keyStorePath + keyStoreName + "KeyStore.jks  -storepass " + keystorePassword+ " -keypass " + keystorePassword + " -validity " + keyStoreValidity);
 			} else if (os.toLowerCase().contains("linux") == true) {
-				String[] command = { "/bin/sh", "-c","keytool -genkey -dname \"" + informations + "\" -alias " + alias + " -keystore " + keyStorePath+ keyStoreName + "KeyStore.jks  -storepass " + keystorePassword + " -keypass "+ keystorePassword + "" };
+				String[] command = { "/bin/sh", "-c","keytool -genkey -dname \"" + informations + "\" -alias " + alias + " -keystore " + keyStorePath+ keyStoreName + "KeyStore.jks  -storepass " + keystorePassword + " -keypass "+ keystorePassword + " -validity " + keyStoreValidity + "" };
 				Runtime.getRuntime().exec(command);
 			}
 		} catch (IOException e) {
@@ -103,6 +104,7 @@ public class KeyStoreController {
 		KeyStoreSettings keyStoreSettings = new KeyStoreSettings();
 		FileInputStream fileInputStream = null;
 		String provider = null;
+		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 		try {
 			// --- Creates a FileInputStream from the TrustStore ---
 			File file = new File(keyStoreName);
@@ -113,9 +115,12 @@ public class KeyStoreController {
 			// --- Get KeyStore alias ------------------------------
 			Enumeration<String> enumeration = keystore.aliases();
 			// --- Get KeyStore provider ------------------------------
-			String alias = (String) enumeration.nextElement();
+			String alias = enumeration.nextElement();
 			Certificate certificate = keystore.getCertificate(alias);
 	        provider = ( (X509Certificate) certificate).getIssuerDN().getName();
+	        
+	        Date date = ((X509Certificate) certificate).getNotAfter();
+	        keyStoreSettings.setValidity(DATE_FORMAT.format(date));
 			
 		} catch (java.security.cert.CertificateException | NoSuchAlgorithmException | FileNotFoundException | KeyStoreException e) {
 			e.printStackTrace();
@@ -155,7 +160,7 @@ public class KeyStoreController {
 			// --- Get KeyStore's Alias -------------------------------------------
 			Enumeration<String> enumeration = keystore.aliases();
 			if (enumeration.hasMoreElements()) {
-				alias = (String) enumeration.nextElement();
+				alias = enumeration.nextElement();
 			}
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();

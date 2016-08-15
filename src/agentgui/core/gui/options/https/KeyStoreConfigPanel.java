@@ -94,7 +94,9 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	private JLabel jLabelCertificateValidityDays;
 	private JLabel jLabelCertificatePath;
 	private JLabel jLabelCertificateInformation;
-
+	private JLabel jLabelValidity;
+	private JLabel jLabelDays;
+	
 	private JTextField jTextFieldKeyStoreName;
 	private JTextField jTextFieldAlias;
 	private JTextField jTextFieldFullName;
@@ -106,6 +108,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	private JTextField jTextFieldCertificateValidity;
 	private JTextField jTextFieldCertificateName;
 	private JTextField jTextFieldCertificatePath;
+	private JTextField jTextFieldValidity;
 
 	private JPasswordField jPasswordFieldPassword;
 	private JPasswordField jPasswordFieldConfirmPassword;
@@ -136,9 +139,9 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, 0.0 };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelKeyStoreInformations = new GridBagConstraints();
 		gbc_jLabelKeyStoreInformations.anchor = GridBagConstraints.SOUTHWEST;
@@ -275,18 +278,35 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		add(getJTextFieldState(), gbc_jTextFieldState);
 		GridBagConstraints gbc_jLabelCountryCode = new GridBagConstraints();
 		gbc_jLabelCountryCode.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jLabelCountryCode.insets = new Insets(0, 10, 0, 5);
+		gbc_jLabelCountryCode.insets = new Insets(0, 10, 5, 5);
 		gbc_jLabelCountryCode.gridx = 0;
 		gbc_jLabelCountryCode.gridy = 10;
 		add(getJLabelCountryCode(), gbc_jLabelCountryCode);
 		GridBagConstraints gbc_jTextFieldCountryCode = new GridBagConstraints();
 		gbc_jTextFieldCountryCode.gridwidth = 2;
 		gbc_jTextFieldCountryCode.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldCountryCode.insets = new Insets(0, 0, 0, 10);
+		gbc_jTextFieldCountryCode.insets = new Insets(0, 0, 5, 10);
 		gbc_jTextFieldCountryCode.gridx = 1;
 		gbc_jTextFieldCountryCode.gridy = 10;
 		add(getJTextFieldCountryCode(), gbc_jTextFieldCountryCode);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		GridBagConstraints gbc_jLabelValidity = new GridBagConstraints();
+		gbc_jLabelValidity.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jLabelValidity.insets = new Insets(0, 10, 0, 5);
+		gbc_jLabelValidity.gridx = 0;
+		gbc_jLabelValidity.gridy = 11;
+		add(getJLabelValidity(), gbc_jLabelValidity);
+		GridBagConstraints gbc_jTextFieldValidity = new GridBagConstraints();
+		gbc_jTextFieldValidity.insets = new Insets(0, 0, 0, 5);
+		gbc_jTextFieldValidity.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jTextFieldValidity.gridx = 1;
+		gbc_jTextFieldValidity.gridy = 11;
+		add(getJTextFieldValidity(), gbc_jTextFieldValidity);
+		GridBagConstraints gbc_jLabelDays = new GridBagConstraints();
+		gbc_jLabelDays.insets = new Insets(0, 0, 0, 10);
+		gbc_jLabelDays.gridx = 2;
+		gbc_jLabelDays.gridy = 11;
+		add(getJLabelDays(), gbc_jLabelDays);
 	}
 	/**
 	 * Create the JPanel.
@@ -479,6 +499,27 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		return jLabelCountryCode;
 	}
 	/**
+	 * This method initializes jLabelValidity.
+	 */
+	private JLabel getJLabelValidity() {
+		if (jLabelValidity == null) {
+			jLabelValidity = new JLabel(Language.translate("Validity",Language.EN));
+			jLabelValidity.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelValidity;
+	}
+	/**
+	 * This method initializes jTextFieldValidity.
+	 */
+	protected JTextField getJTextFieldValidity() {
+		if (jTextFieldValidity == null) {
+			jTextFieldValidity = new JTextField();
+			jTextFieldValidity.setEnabled(false);
+			jTextFieldValidity.setPreferredSize(this.fieldSize);
+		}
+		return jTextFieldValidity;
+	}
+	/**
 	 * This method initializes jTextFieldKeyStoreName.
 	 */
 	protected JTextField getJTextFieldKeyStoreName() {
@@ -643,7 +684,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelCertificateName() {
 		if (jLabelCertificateName == null) {
-			jLabelCertificateName = new JLabel("Certificate Name:");
+			jLabelCertificateName = new JLabel(Language.translate("Certificate Name:",Language.EN));
 			jLabelCertificateName.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelCertificateName;
@@ -663,7 +704,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelCertificateValidity() {
 		if (jLabelCertificateValidity == null) {
-			jLabelCertificateValidity = new JLabel("Certificate validity:");
+			jLabelCertificateValidity = new JLabel(Language.translate("Certificate validity:",Language.EN));
 			jLabelCertificateValidity.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelCertificateValidity;
@@ -673,7 +714,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelCertificateValidityDays() {
 		if (jLabelCertificateValidityDays == null) {
-			jLabelCertificateValidityDays = new JLabel("day(s)");
+			jLabelCertificateValidityDays = new JLabel(Language.translate("day(s)",Language.EN));
 			jLabelCertificateValidityDays.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
 		return jLabelCertificateValidityDays;
@@ -726,10 +767,20 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelCertificateInformation() {
 		if (jLabelCertificateInformation == null) {
-			jLabelCertificateInformation = new JLabel("Certifcate Informations");
+			jLabelCertificateInformation = new JLabel(Language.translate("Certifcate Information",Language.EN));
 			jLabelCertificateInformation.setFont(new Font("Dialog", Font.BOLD, 11));
 		}
 		return jLabelCertificateInformation;
+	}
+	/**
+	 * This method initializes jLabelDays.
+	 */
+	private JLabel getJLabelDays() {
+		if (jLabelDays == null) {
+			jLabelDays = new JLabel(Language.translate("day(s)",Language.EN));
+			jLabelDays.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jLabelDays;
 	}
 	/**
 	 * Checks if is numeric.
@@ -766,7 +817,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 				// ---- Verify if all the fields are filled ---------------
 				if (this.getJTextFieldKeyStoreName().getText().equals("") || this.getJTextFieldAlias().getText().equals("") || this.getJTextFieldCity().getText().equals("") || this.getJTextFieldCountryCode().getText().equals("")
 						|| this.getJTextFieldFullName().getText().equals("") || this.getJTextFieldOrganization().getText().equals("") || this.getJTextFieldOrganizationalUnit().getText().equals("") || this.getJTextFieldState().getText().equals("")
-						|| this.getJPasswordField().getPassword().equals("") || this.getJPasswordConfirmPassword().getPassword().equals("")) {
+						|| this.getJTextFieldValidity().getText().equals("") || this.getJPasswordField().getPassword().equals("") || this.getJPasswordConfirmPassword().getPassword().equals("")) {
 					String msg = Language.translate("You must fill out all required fields!",Language.EN);
 					String title = Language.translate("Required fields",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
@@ -797,26 +848,35 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 					String msg = Language.translate("You must use a valid country code!",Language.EN);
 					String title = Language.translate("Country code",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
+				}
+				/* -------------------------------------------------------
+				 * ----- Verify if the Validity value is number ----------
+				 * -------------------------------------------------------
+				 */
+				else if ( isNumeric(getJTextFieldValidity().getText()) == false){
+						String msg = Language.translate("Please, enter number of days in validity field!",Language.EN);
+						String title = Language.translate("Numeric value",Language.EN);
+						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}else {
 					// ---- Get Provider Informations ---------------------
 					String informations = "CN=" + this.getJTextFieldFullName().getText() + ",OU=" + this.getJTextFieldOrganizationalUnit().getText() + ",O=" + this.getJTextFieldOrganization().getText() + ",L=" + this.getJTextFieldCity().getText() + ",S=" + this.getJTextFieldState().getText() + ",C=" + this.getJTextFieldCountryCode().getText();
 					String alias = this.getJTextFieldAlias().getText();
 					String keystoreName = this.getJTextFieldKeyStoreName().getText();
 					String keystorePassword = new String(this.getJPasswordField().getPassword());
-
+					String keyStoreValidity = this.getJTextFieldValidity().getText();
 					// ----- Open jFileChooser to select the directory ---- 
 					getJFileChooserOpen();
 					int jfile = jFileChooserOpen.showSaveDialog(null);
 					if (jfile == JFileChooser.APPROVE_OPTION) {
 						// ---- Get The selected directory path ------------------------------------
-						String KeyStorePath = jFileChooserOpen.getSelectedFile().getAbsoluteFile().getAbsolutePath() + File.separator;
+						String keyStorePath = jFileChooserOpen.getSelectedFile().getAbsoluteFile().getAbsolutePath() + File.separator;
 						// ---- Create the KeyStore with informations  entered by the User ---------
-						getKeyStoreController().createKeyStore(informations, alias, keystoreName, keystorePassword, KeyStorePath);
+						getKeyStoreController().createKeyStore(informations, alias, keystoreName, keystorePassword, keyStorePath, keyStoreValidity);
 						String msg = Language.translate("Your keystore has been created successfully!",Language.EN);
 						String title = Language.translate("KeyStore created",Language.EN);
 						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
 						
-						this.httpsConfigWindow.setKeyStorefilepath(KeyStorePath + keystoreName + "KeyStore.jks");
+						this.httpsConfigWindow.setKeyStorefilepath(keyStorePath + keystoreName + "KeyStore.jks");
 						this.httpsConfigWindow.setKeyStorePassword(keystorePassword);
 						this.httpsConfigWindow.setKeyStoreAlias(alias);
 						// ---- Get the Content of the keyStore ------------------------------------
@@ -829,17 +889,19 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 						this.getJTextFieldOrganizationalUnit().setEnabled(false);
 						this.getJTextFieldState().setEnabled(false);
 						this.getJTextFieldKeyStoreName().setEnabled(false);
+						this.getJTextFieldValidity().setEnabled(false);
 						this.getJTextFieldCity().setText(keyStoreSettings.getCityOrLocality());
 						this.getJTextFieldCountryCode().setText(keyStoreSettings.getCoutryCode());
 						this.getJTextFieldFullName().setText(keyStoreSettings.getFullName());
 						this.getJTextFieldOrganization().setText(keyStoreSettings.getOrganization());
 						this.getJTextFieldOrganizationalUnit().setText(keyStoreSettings.getOrginazationalUnit());
 						this.getJTextFieldState().setText(keyStoreSettings.getStateOrProvince());
+						this.getJTextFieldValidity().setText(keyStoreSettings.getValidity());
 						this.getJTextFieldKeyStoreName().setText(this.httpsConfigWindow.getKeyStorefilepath().substring(this.httpsConfigWindow.getKeyStorefilepath().lastIndexOf("\\") + 1));
 						this.getJTextFieldAlias().setText(this.httpsConfigWindow.getKeyStoreAlias());
 						this.getJPasswordField().setText(keystorePassword);
 						this.getJPasswordConfirmPassword().setText(null);
-						this.httpsConfigWindow.getJLabelKeyStoreLocationPath().setText(KeyStorePath + keystoreName + "KeyStore.jks");
+						this.httpsConfigWindow.getJLabelKeyStoreLocationPath().setText(keyStorePath + keystoreName + "KeyStore.jks");
 						this.httpsConfigWindow.setKeyStoreButtonPressed("UpdateKeyStore");
 					}
 				}

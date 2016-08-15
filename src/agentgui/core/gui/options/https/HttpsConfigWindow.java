@@ -184,11 +184,12 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	private void initialize() {
 		this.setTitle(Language.translate("Agent.GUI: HTTPS Configuration",Language.EN));
 		this.setIconImage(image);
-		this.setBounds(100, 100, 820, 560);
+		this.setBounds(100, 100, 820, 590);
 		this.setLocationRelativeTo(null);
 		this.setModal(true);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				canceled=true;
 				setVisible(false);
@@ -696,14 +697,14 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		jTextField.setText(null);
 	}
 	/**
-	 * Get KeyStore informations and fill in fields with
+	 * Get KeyStore information and fill in fields with
 	 */
 	public void getKeyStoreData() {
 		
 		setKeyStoreAlias(getKeyStoreController().getKeyStoreAlias(getKeyStorefilepath(), getKeyStorePassword(), this)); 
 		// ---- Get the Content of the keyStore ----------------------
 		KeyStoreSettings keyStoreSettings = getKeyStoreController().listKeyStoreContent(keyStorefilepath, keyStorePassword);
-		// ----- Fill in fields with KeyStore informations ----------
+		// ----- Fill in fields with KeyStore information ------------
 		this.getKeyStoreConfigPanel().getJTextFieldCity().setEnabled(false);
 		this.getKeyStoreConfigPanel().getJTextFieldCountryCode().setEnabled(false);
 		this.getKeyStoreConfigPanel().getJTextFieldFullName().setEnabled(false);
@@ -711,6 +712,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		this.getKeyStoreConfigPanel().getJTextFieldOrganizationalUnit().setEnabled(false);
 		this.getKeyStoreConfigPanel().getJTextFieldState().setEnabled(false);
 		this.getKeyStoreConfigPanel().getJTextFieldKeyStoreName().setEnabled(false);
+		this.getKeyStoreConfigPanel().getJTextFieldValidity().setEnabled(false);
 		this.getKeyStoreConfigPanel().getJPasswordField().setEnabled(true);
 		this.getKeyStoreConfigPanel().getJPasswordConfirmPassword().setEnabled(true);
 		this.getKeyStoreConfigPanel().getJTextFieldAlias().setEnabled(true);
@@ -720,6 +722,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		this.getKeyStoreConfigPanel().getJTextFieldOrganization().setText(keyStoreSettings.getOrganization());
 		this.getKeyStoreConfigPanel().getJTextFieldOrganizationalUnit().setText(keyStoreSettings.getOrginazationalUnit());
 		this.getKeyStoreConfigPanel().getJTextFieldState().setText(keyStoreSettings.getStateOrProvince());
+		this.getKeyStoreConfigPanel().getJTextFieldValidity().setText(keyStoreSettings.getValidity());
 		this.getKeyStoreConfigPanel().getJTextFieldKeyStoreName().setText(getKeyStorefilepath().substring(getKeyStorefilepath().lastIndexOf("\\") + 1));
 		this.getKeyStoreConfigPanel().getJTextFieldAlias().setText(getKeyStoreAlias());
 		this.getKeyStoreConfigPanel().getJPasswordField().setText(getKeyStorePassword());
@@ -729,7 +732,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		keyStoreButtonPressed = "UpdateKeyStore";
 	}
 	/**
-	 * Get TrustStore informations and fill in fields with
+	 * Get TrustStore information and fill in fields with
 	 */
 	public void getTrustStoreData() {
 		// ---- Prepare the TrustStore form for update -------------
@@ -769,6 +772,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 			setFieldsEnabledTrue(keyStoreConfigPanel.getJPasswordField());
 			setFieldsEnabledTrue(keyStoreConfigPanel.getJPasswordConfirmPassword());
 			setFieldsEnabledTrue(keyStoreConfigPanel.getJTextFieldAlias());
+			setFieldsEnabledTrue(keyStoreConfigPanel.getJTextFieldValidity());
 			keyStoreConfigPanel.getJTextFieldKeyStoreName().requestFocus();
 			jLabelKeyStoreLocationPath.setText(null);
 			keyStorefilepath = null;

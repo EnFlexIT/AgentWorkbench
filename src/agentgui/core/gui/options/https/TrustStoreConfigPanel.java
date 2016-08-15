@@ -385,7 +385,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 	 */
 	private JLabel getJLabelOwnerInformations() {
 		if (jLabelOwnerInformations == null) {
-			jLabelOwnerInformations = new JLabel("Owner Informations");
+			jLabelOwnerInformations = new JLabel("Owner Information");
 			jLabelOwnerInformations.setFont(new Font("Dialog", Font.BOLD, 11));
 		}
 		return jLabelOwnerInformations;
@@ -547,7 +547,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 	 */
 	private JLabel getJLabelTrustStoreInformations() {
 		if (jLabelTrustStoreInformations == null) {
-			jLabelTrustStoreInformations = new JLabel(Language.translate("TrustStore Informations",Language.EN));
+			jLabelTrustStoreInformations = new JLabel(Language.translate("TrustStore Information",Language.EN));
 			jLabelTrustStoreInformations.setFont(new Font("Dialog", Font.BOLD, 11));
 		}
 		return jLabelTrustStoreInformations;
@@ -717,6 +717,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
+	@Override
 	public void actionPerformed(ActionEvent ae) {
 		// ---- Save changes in case of creating of editing TrustStore ----
 		if (ae.getSource() == this.getJButtonApplyTrustStore()) {
