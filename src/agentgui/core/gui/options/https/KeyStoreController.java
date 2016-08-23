@@ -82,9 +82,9 @@ public class KeyStoreController {
 		 */
 		try {
 			if (os.toLowerCase().contains("windows") == true) {
-				Runtime.getRuntime().exec("keytool -genkey -dname \"" + informations + "\" -alias " + alias + " -keystore "+ keyStorePath + keyStoreName + "KeyStore.jks  -storepass " + keystorePassword+ " -keypass " + keystorePassword + " -validity " + keyStoreValidity);
+				Runtime.getRuntime().exec("keytool -genkey -dname \"" + informations + "\" -alias " + alias + " -keystore " + "\"" + keyStorePath + keyStoreName + "KeyStore.jks\"  -storepass " + keystorePassword+ " -keypass " + keystorePassword + " -validity " + keyStoreValidity);
 			} else if (os.toLowerCase().contains("linux") == true) {
-				String[] command = { "/bin/sh", "-c","keytool -genkey -dname \"" + informations + "\" -alias " + alias + " -keystore " + keyStorePath+ keyStoreName + "KeyStore.jks  -storepass " + keystorePassword + " -keypass "+ keystorePassword + " -validity " + keyStoreValidity + "" };
+				String[] command = { "/bin/sh", "-c","keytool -genkey -dname \"" + informations + "\" -alias " + alias + " -keystore " + "\"" + keyStorePath+ keyStoreName + "KeyStore.jks\"  -storepass " + keystorePassword + " -keypass "+ keystorePassword + " -validity " + keyStoreValidity + "" };
 				Runtime.getRuntime().exec(command);
 			}
 		} catch (IOException e) {
@@ -208,9 +208,9 @@ public class KeyStoreController {
 		
 		try {
 			if (os.toLowerCase().contains("windows") == true) {
-				process1 = Runtime.getRuntime().exec("keytool -keypasswd -alias " + oldAlias + " -keypass " + oldKeyStorePassword + " -new " + newKeyStorePassword + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword);
+				process1 = Runtime.getRuntime().exec("keytool -keypasswd -alias " + oldAlias + " -keypass " + oldKeyStorePassword + " -new " + newKeyStorePassword + " -keystore " + "\"" + keyStoreName + "\"" + " -storepass " + oldKeyStorePassword);
 			} else if (os.toLowerCase().contains("linux") == true) {
-				String[] command = { "/bin/sh", "-c","keytool -keypasswd -alias " + oldAlias + " -keypass " + oldKeyStorePassword + " -new " + newKeyStorePassword + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword};
+				String[] command = { "/bin/sh", "-c","keytool -keypasswd -alias " + oldAlias + " -keypass " + oldKeyStorePassword + " -new " + newKeyStorePassword + " -keystore " + "\"" + keyStoreName + "\"" + " -storepass " + oldKeyStorePassword};
 				process1 =  Runtime.getRuntime().exec(command);
 			}
 		} catch (IOException e) {
@@ -233,9 +233,9 @@ public class KeyStoreController {
 		
 		try {
 			if (os.toLowerCase().contains("windows") == true) {
-				process2 = Runtime.getRuntime().exec("keytool -changealias -alias " + oldAlias + " -destalias " + newAlias + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword + " -keypass " + newKeyStorePassword);
+				process2 = Runtime.getRuntime().exec("keytool -changealias -alias " + oldAlias + " -destalias " + newAlias + " -keystore " + "\"" + keyStoreName + "\"" + " -storepass " + oldKeyStorePassword + " -keypass " + newKeyStorePassword);
 			} else if (os.toLowerCase().contains("linux") == true) {
-				String[] command = { "/bin/sh", "-c","keytool -changealias -alias " + oldAlias + " -destalias " + newAlias + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword + " -keypass " + newKeyStorePassword};
+				String[] command = { "/bin/sh", "-c","keytool -changealias -alias " + oldAlias + " -destalias " + newAlias + " -keystore " + "\"" + keyStoreName + "\"" + " -storepass " + oldKeyStorePassword + " -keypass " + newKeyStorePassword};
 				process2 =  Runtime.getRuntime().exec(command);
 			}
 		} catch (IOException e) {
@@ -258,9 +258,9 @@ public class KeyStoreController {
 		
 		try {
 			if (os.toLowerCase().contains("windows") == true) {
-				process3 = Runtime.getRuntime().exec("keytool -alias " + newAlias + " -storepasswd -new " + newKeyStorePassword + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword);
+				process3 = Runtime.getRuntime().exec("keytool -alias " + newAlias + " -storepasswd -new " + newKeyStorePassword + " -keystore " + "\"" + keyStoreName + "\"" + " -storepass " + oldKeyStorePassword);
 			} else if (os.toLowerCase().contains("linux") == true) {
-				String[] command = { "/bin/sh", "-c","keytool -alias " + newAlias + " -storepasswd -new " + newKeyStorePassword + " -keystore " + keyStoreName + " -storepass " + oldKeyStorePassword};
+				String[] command = { "/bin/sh", "-c","keytool -alias " + newAlias + " -storepasswd -new " + newKeyStorePassword + " -keystore " + "\"" + keyStoreName + "\"" + " -storepass " + oldKeyStorePassword};
 				process3 =  Runtime.getRuntime().exec(command);
 			}
 		} catch (IOException e) {
@@ -299,9 +299,9 @@ public class KeyStoreController {
 		 */
 		try {
 			if (os.toLowerCase().contains("windows") == true) {
-				process1 = Runtime.getRuntime().exec("keytool -selfcert -alias " + alias + " -keystore " + keyStoreName + " -storepass " + keyStorePassword + " -keyalg RSA -validity " + validity );
+				process1 = Runtime.getRuntime().exec("keytool -selfcert -alias " + alias + " -keystore " + "\"" + keyStoreName + "\"" + " -storepass " + keyStorePassword + " -keyalg RSA -validity " + validity );
 			} else if (os.toLowerCase().contains("linux") == true) {
-				String[] command = { "/bin/sh", "-c","keytool -selfcert -alias " + alias + " -keystore " + keyStoreName + " -storepass " + keyStorePassword + " -keyalg RSA -validity " + validity };
+				String[] command = { "/bin/sh", "-c","keytool -selfcert -alias " + alias + " -keystore " + "\"" + keyStoreName + "\"" + " -storepass " + keyStorePassword + " -keyalg RSA -validity " + validity };
 				process1 =  Runtime.getRuntime().exec(command);
 			}
 		} catch (IOException e) {
@@ -323,9 +323,9 @@ public class KeyStoreController {
 		 */
 		try {
 			if (os.toLowerCase().contains("windows") == true) {
-				Runtime.getRuntime().exec("keytool -export -alias " + alias + " -keystore " + keyStoreName + " -storepass " + keyStorePassword + " -file " + certificateName + ".cer");
+				Runtime.getRuntime().exec("keytool -export -alias " + alias + " -keystore " + "\"" + keyStoreName + "\"" + " -storepass " + keyStorePassword + " -file \"" + certificateName + ".cer\"");
 			} else if (os.toLowerCase().contains("linux") == true) {
-				String[] command = { "/bin/sh", "-c","keytool -export -alias " + alias + " -keystore " + keyStoreName + " -storepass " + keyStorePassword + " -file " + certificateName + ".cer"};
+				String[] command = { "/bin/sh", "-c","keytool -export -alias " + alias + " -keystore " + "\"" + keyStoreName + "\"" + " -storepass " + keyStorePassword + " -file \"" + certificateName + ".cer\""};
 				Runtime.getRuntime().exec(command);
 			}
 		} catch (IOException e1) {

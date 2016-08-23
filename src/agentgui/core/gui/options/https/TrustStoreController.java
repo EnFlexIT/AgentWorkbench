@@ -159,9 +159,9 @@ public class TrustStoreController {
 
 		try {
 			if (os.toLowerCase().contains("windows") == true) {
-				process1 = Runtime.getRuntime().exec("keytool -keypasswd -keypass " + oldTrustStorePassword + " -new " + newTrustStorePassword + " -keystore " + trustStoreName + " -storepass " + oldTrustStorePassword);
+				process1 = Runtime.getRuntime().exec("keytool -keypasswd -keypass " + oldTrustStorePassword + " -new " + newTrustStorePassword + " -keystore " + "\"" + trustStoreName + "\"" + " -storepass " + oldTrustStorePassword);
 			} else if (os.toLowerCase().contains("linux") == true) {
-				String[] command = {"/bin/sh", "-c","keytool -keypasswd -keypass " + oldTrustStorePassword + " -new " + newTrustStorePassword + " -keystore " + trustStoreName + " -storepass " + oldTrustStorePassword};
+				String[] command = {"/bin/sh", "-c","keytool -keypasswd -keypass " + oldTrustStorePassword + " -new " + newTrustStorePassword + " -keystore " + "\"" + trustStoreName + "\"" + " -storepass " + oldTrustStorePassword};
 				process1 = Runtime.getRuntime().exec(command);
 			}
 		} catch (IOException e1) {
@@ -186,9 +186,9 @@ public class TrustStoreController {
 
 		try {
 			if (os.toLowerCase().contains("windows") == true) {
-				process2 = Runtime.getRuntime().exec("keytool -storepasswd -new " + newTrustStorePassword + " -keystore " + trustStoreName + " -storepass " + oldTrustStorePassword);
+				process2 = Runtime.getRuntime().exec("keytool -storepasswd -new " + newTrustStorePassword + " -keystore " + "\"" + trustStoreName + "\"" + " -storepass " + oldTrustStorePassword);
 			} else if (os.toLowerCase().contains("linux") == true) {
-				String[] command = {"/bin/sh", "-c","keytool -storepasswd -new " + newTrustStorePassword + " -keystore " + trustStoreName + " -storepass " + oldTrustStorePassword};
+				String[] command = {"/bin/sh", "-c","keytool -storepasswd -new " + newTrustStorePassword + " -keystore " + "\"" + trustStoreName + "\"" + " -storepass " + oldTrustStorePassword};
 				process2 = Runtime.getRuntime().exec(command);
 			}
 		} catch (IOException e1) {
