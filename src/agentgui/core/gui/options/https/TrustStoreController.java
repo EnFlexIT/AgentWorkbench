@@ -129,7 +129,6 @@ public class TrustStoreController {
 			if (ownerDialog!=null) {
 				JOptionPane.showMessageDialog(ownerDialog, e.getMessage() + " !");	
 			}
-			e.printStackTrace();
 			password = false;
 		}
 		return password;

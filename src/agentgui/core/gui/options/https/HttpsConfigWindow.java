@@ -51,11 +51,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -796,11 +799,14 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 					jLabelEnterPassword = new JLabel( msg + " " +keystorename + "  :");
 					jLabelEnterPassword.setFont(new Font("Dialog", Font.BOLD, 11));
 					JPasswordField jPasswordField = new JPasswordField(10);
+					
+					// Add a listener to request the focus for the password field after it was added to the dialog
+					jPasswordField.addAncestorListener(new RequestFocusListener());
+					
 					jPanelPassword.add(jLabelEnterPassword);
 					jPanelPassword.add(jPasswordField);
-					String[] options = new String[] { "OK", "Cancel" };
 					String title = Language.translate("Password",Language.EN);
-					int option = JOptionPane.showOptionDialog(null, jPanelPassword, title, JOptionPane.NO_OPTION,JOptionPane.PLAIN_MESSAGE, null, options, jPasswordField);
+					int option = JOptionPane.showOptionDialog(null, jPanelPassword, title, JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE, null, null, jPasswordField);
 					if (option == 0) {
 						// ------------ Press OK --------------------------------
 						keyStorePassword = new String(jPasswordField.getPassword());
@@ -857,11 +863,11 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 					jLabelEnterPassword = new JLabel( msg + " " +truststorename + "  :");
 					jLabelEnterPassword.setFont(new Font("Dialog", Font.BOLD, 11));
 					JPasswordField jPasswordFiled = new JPasswordField(10);
+					jPasswordFiled.addAncestorListener(new RequestFocusListener());
 					jPanelEnterPassword.add(jLabelEnterPassword);
 					jPanelEnterPassword.add(jPasswordFiled);
-					String[] options = new String[] { "OK", "Cancel" };
 					String title = Language.translate("Password",Language.EN);
-					int option = JOptionPane.showOptionDialog(null, jPanelEnterPassword, title,JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, jPasswordFiled);
+					int option = JOptionPane.showOptionDialog(null, jPanelEnterPassword, title,JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, jPasswordFiled);
 					trustStorePassword = new String(jPasswordFiled.getPassword());
 					if (option == 0) {
 						// ---- Press OK Button ------------------------------
@@ -906,5 +912,68 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 			}
 		}
 	}
+	
+	/**
+	 * 
+	 * Taken from https://tips4java.wordpress.com/2010/03/14/dialog-focus/
+	 * 
+	 * Convenience class to request focus on a component.
+	 *
+	 * When the component is added to a realized Window then component will
+	 * request focus immediately, since the ancestorAdded event is fired
+	 * immediately.
+	 *
+	 * When the component is added to a non realized Window, then the focus
+	 * request will be made once the window is realized, since the
+	 * ancestorAdded event will not be fired until then.
+	 *
+	 * Using the default constructor will cause the listener to be removed
+	 * from the component once the AncestorEvent is generated. A second constructor
+	 * allows you to specify a boolean value of false to prevent the
+	 * AncestorListener from being removed when the event is generated. This will
+	 * allow you to reuse the listener each time the event is generated.
+	 * 
+	 */
+	private class RequestFocusListener implements AncestorListener{
 
+		private boolean removeListener;
+
+		/*
+		 *  Convenience constructor. The listener is only used once and then it is
+		 *  removed from the component.
+		 */
+		public RequestFocusListener()
+		{
+			this(true);
+		}
+
+		/*
+		 *  Constructor that controls whether this listen can be used once or
+		 *  multiple times.
+		 *
+		 *  @param removeListener when true this listener is only invoked once
+		 *                        otherwise it can be invoked multiple times.
+		 */
+		public RequestFocusListener(boolean removeListener)
+		{
+			this.removeListener = removeListener;
+		}
+
+		@Override
+		public void ancestorAdded(AncestorEvent e)
+		{
+			JComponent component = e.getComponent();
+			component.requestFocusInWindow();
+
+			if (removeListener)
+				component.removeAncestorListener( this );
+		}
+
+		@Override
+		public void ancestorMoved(AncestorEvent e) {}
+
+		@Override
+		public void ancestorRemoved(AncestorEvent e) {}
+		
+	}
 }

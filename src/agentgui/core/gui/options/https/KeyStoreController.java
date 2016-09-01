@@ -173,7 +173,6 @@ public class KeyStoreController {
 			if (ownerDialog!=null) {
 				JOptionPane.showMessageDialog(ownerDialog, e.getMessage() + " !");	
 			}
-			e.printStackTrace();
 			return null;
 		}
 		return alias;
