@@ -102,6 +102,11 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 	private JScrollPane spLog;
 	private JTextArea taLog;
 	private JButton btnSave;
+	
+	private static final String DEBUG_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
+	private static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/vanilla/profile.jsp";
+	private static final String DEBUG_CLIENT_ID = "testclient";
+	private static final String DEBUG_CLIENT_SECRET = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
 
 	/**
 	 * This is the Constructor
@@ -246,14 +251,14 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 			gbc_lblLicenseServer.insets = new Insets(0, 0, 5, 5);
 			gbc_lblLicenseServer.gridx = 1;
 			gbc_lblLicenseServer.gridy = 2;
-			jPanelTop.add(getLblLicenseServer(), gbc_lblLicenseServer);
+//			jPanelTop.add(getLblLicenseServer(), gbc_lblLicenseServer);
 			
 			GridBagConstraints gbc_tfLicenseServer = new GridBagConstraints();
 			gbc_tfLicenseServer.insets = new Insets(0, 0, 5, 5);
 			gbc_tfLicenseServer.fill = GridBagConstraints.HORIZONTAL;
 			gbc_tfLicenseServer.gridx = 2;
 			gbc_tfLicenseServer.gridy = 2;
-			jPanelTop.add(getTfLicenseServer(), gbc_tfLicenseServer);
+//			jPanelTop.add(getTfLicenseServer(), gbc_tfLicenseServer);
 			GridBagConstraints gbc_cbTrustEverybody = new GridBagConstraints();
 			gbc_cbTrustEverybody.insets = new Insets(0, 0, 5, 0);
 			gbc_cbTrustEverybody.gridx = 4;
@@ -264,13 +269,13 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 			gbc_lblIdProvider.insets = new Insets(0, 0, 5, 5);
 			gbc_lblIdProvider.gridx = 1;
 			gbc_lblIdProvider.gridy = 3;
-			jPanelTop.add(getLblIdProvider(), gbc_lblIdProvider);
+//			jPanelTop.add(getLblIdProvider(), gbc_lblIdProvider);
 			GridBagConstraints gbc_tfIdProvider = new GridBagConstraints();
 			gbc_tfIdProvider.insets = new Insets(0, 0, 5, 5);
 			gbc_tfIdProvider.fill = GridBagConstraints.HORIZONTAL;
 			gbc_tfIdProvider.gridx = 2;
 			gbc_tfIdProvider.gridy = 3;
-			jPanelTop.add(getTfIdProvider(), gbc_tfIdProvider);
+//			jPanelTop.add(getTfIdProvider(), gbc_tfIdProvider);
 			GridBagConstraints gbc_btnConfigTrust = new GridBagConstraints();
 			gbc_btnConfigTrust.insets = new Insets(0, 0, 5, 0);
 			gbc_btnConfigTrust.gridx = 4;
@@ -281,25 +286,25 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 			gbc_lblClientId.anchor = GridBagConstraints.EAST;
 			gbc_lblClientId.gridx = 1;
 			gbc_lblClientId.gridy = 4;
-			jPanelTop.add(getLblClientId(), gbc_lblClientId);
+//			jPanelTop.add(getLblClientId(), gbc_lblClientId);
 			GridBagConstraints gbc_tfClientId = new GridBagConstraints();
 			gbc_tfClientId.insets = new Insets(0, 0, 5, 5);
 			gbc_tfClientId.fill = GridBagConstraints.HORIZONTAL;
 			gbc_tfClientId.gridx = 2;
 			gbc_tfClientId.gridy = 4;
-			jPanelTop.add(getTfClientId(), gbc_tfClientId);
+//			jPanelTop.add(getTfClientId(), gbc_tfClientId);
 			GridBagConstraints gbc_lblClientSecret = new GridBagConstraints();
 			gbc_lblClientSecret.insets = new Insets(0, 0, 0, 5);
 			gbc_lblClientSecret.anchor = GridBagConstraints.EAST;
 			gbc_lblClientSecret.gridx = 1;
 			gbc_lblClientSecret.gridy = 5;
-			jPanelTop.add(getLblClientSecret(), gbc_lblClientSecret);
+//			jPanelTop.add(getLblClientSecret(), gbc_lblClientSecret);
 			GridBagConstraints gbc_tfClientSecret = new GridBagConstraints();
 			gbc_tfClientSecret.insets = new Insets(0, 0, 0, 5);
 			gbc_tfClientSecret.fill = GridBagConstraints.HORIZONTAL;
 			gbc_tfClientSecret.gridx = 2;
 			gbc_tfClientSecret.gridy = 5;
-			jPanelTop.add(getTfClientSecret(), gbc_tfClientSecret);
+//			jPanelTop.add(getTfClientSecret(), gbc_tfClientSecret);
 			
 		}
 		return jPanelTop;
@@ -411,13 +416,13 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 	
 	// Optional: UserInfo request
 	// Alternatively: pass Access Token on to another client, use it to access a resource there
-	public String stepSix(AccessToken accessToken) throws ParseException, IOException {
+	public String doResourceAccess(AccessToken accessToken) throws ParseException, IOException {
 		if (accessToken != null) {
 			getOIDCCLient().dumpTokenInfo();
 			// only for debugging
 			oidcClient.requestUserInfo();
 			log("UserInfoJSON:");
-			//log(oidcClient.getUserInfoJSON());
+			log(oidcClient.getUserInfoJSON()+"");
 		}
 		return processURL(oidcClient.getRedirectURI().toURL(), accessToken);
 	}
@@ -440,15 +445,15 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 					SimpleOIDCClient.trustEverybody(null);
 				}
 				
-				oidcClient.setIssuerURI(getTfIdProvider().getText());
+				oidcClient.setIssuerURI(getIssuerURI());
 				oidcClient.retrieveProviderMetadata();
-				oidcClient.setClientMetadata(getTfLicenseServer().getText());
-				oidcClient.setClientID(getTfClientId().getText(), getTfClientSecret().getText());
-				oidcClient.setRedirectURI(getTfLicenseServer().getText());
+				oidcClient.setClientMetadata(getResourceURI());
+				oidcClient.setClientID(getClientId(), getClientSecret());
+				oidcClient.setRedirectURI(getResourceURI());
 				
 				
 				log("try a direct access to the resource (EOM licenseer)");
-				authRedirection = stepSix(accessToken);
+				authRedirection = doResourceAccess(accessToken);
 
 				if (authRedirection == null) { 	// no authentication required (or already authenticated?)
 					log("resource available");
@@ -466,7 +471,7 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 				accessToken = oidcClient.getAccessToken();
 
 				log("access the resource (licenseer) again, this time sending an access token");
-				authRedirection = stepSix(accessToken);
+				authRedirection = doResourceAccess(accessToken);
 				if (authRedirection == null) { 	// no authentication required (or already authenticated?)
 					log("resource available");
 					log("the logged in resource should be shown");
@@ -552,7 +557,7 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 	private JTextField getTfPassword() {
 		if (tfPassword == null) {
 			tfPassword = new JTextField();
-			tfPassword.setText("test");
+//			tfPassword.setText("test");
 			tfPassword.setColumns(10);
 		}
 		return tfPassword;
@@ -560,21 +565,21 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 	private JFormattedTextField getTfLicenseServer() {
 		if (tfLicenseServer == null) {
 			tfLicenseServer = new JFormattedTextField();
-			tfLicenseServer.setText("https://se238124.zim.uni-due.de:18443/vanilla/profile.jsp");
+			tfLicenseServer.setText(DEBUG_RESOURCE_URI);
 		}
 		return tfLicenseServer;
 	}
 	private JFormattedTextField getTfIdProvider() {
 		if (tfIdProvider == null) {
 			tfIdProvider = new JFormattedTextField();
-			tfIdProvider.setText("https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/");
+			tfIdProvider.setText(DEBUG_ISSUER_URI);
 		}
 		return tfIdProvider;
 	}
 	private JTextField getTfClientId() {
 		if (tfClientId == null) {
 			tfClientId = new JTextField();
-			tfClientId.setText("testclient");
+			tfClientId.setText(DEBUG_CLIENT_ID);
 			tfClientId.setColumns(10);
 		}
 		return tfClientId;
@@ -588,7 +593,7 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 	private JTextField getTfClientSecret() {
 		if (tfClientSecret == null) {
 			tfClientSecret = new JTextField();
-			tfClientSecret.setText("b3b651a0-66a7-435e-8f1c-b1460bbfe9e0");
+			tfClientSecret.setText(DEBUG_CLIENT_SECRET);
 			tfClientSecret.setColumns(10);
 		}
 		return tfClientSecret;
@@ -635,6 +640,26 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 		return btnSave;
 	}
 	
+	private String getIssuerURI(){
+//		return getTfIdProvider().getText();
+		return DEBUG_ISSUER_URI;
+	}
+	
+	private String getResourceURI(){
+//		return getTfLicenseServer().getText();
+		return DEBUG_RESOURCE_URI;
+	}
+	
+	private String getClientId(){
+//		return getTfClientId().getText();
+		return DEBUG_CLIENT_ID;
+	}
+	
+	private String getClientSecret(){
+//		return getTfClientSecret().getText();
+		return DEBUG_CLIENT_SECRET;
+	}
+		
 	private boolean getTrustEverybody(){
 		return getCbTrustEverybody().isSelected();
 	}
