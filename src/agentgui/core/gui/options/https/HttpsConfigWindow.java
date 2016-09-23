@@ -54,9 +54,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 import javax.swing.WindowConstants;
-import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
@@ -121,12 +119,6 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	private boolean canceled;
 
 	
-	/**
-	 * Instantiates a new HttpsConfigWindow.
-	 */
-	private HttpsConfigWindow() {
-		this.initialize();
-	}
 	/**
 	 * Instantiates a new httpsConfigWindow.
 	 * @param owner the owner
@@ -235,20 +227,6 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		this.setVisible(true);
 	}
 	/**
-	 * Sets the look and feel.
-	 */
-	private static void setLookAndFeel() {
-		try {
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (Exception e) {
-		}
-	}
-	/**
 	 * Checks if is canceled.
 	 * @return true, if is canceled
 	 */
@@ -261,13 +239,6 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	 */
 	private void setCanceled(boolean isCanceled) {
 		this.canceled = isCanceled;
-	}
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		setLookAndFeel();
-		new HttpsConfigWindow();
 	}
 	/**
 	 * This method initializes jLabelKeyStoreFile.

@@ -56,6 +56,8 @@ import agentgui.core.application.Language;
 import agentgui.core.common.Zipper;
 import agentgui.core.gui.ProjectNewOpen;
 import agentgui.core.gui.ProjectNewOpen.DialogAction;
+import agentgui.core.sim.setup.SimulationSetupNotification;
+import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 
 /**
  * This class holds the list of the projects, that are currently open
@@ -203,7 +205,8 @@ public class ProjectsLoaded {
 			newProject.setMaximized();
 			
 			Application.getProjectsLoaded().setProjectView();
-			newProject.setChangedAndNotify(Project.VIEW_TabsLoaded);		
+			newProject.setChangedAndNotify(Project.VIEW_TabsLoaded);
+			newProject.setChangedAndNotify(new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_LOAD));
 			Application.getMainWindow().setCloseButtonPosition(true);
 			Application.setTitelAddition(newProject.getProjectName());
 			Application.setStatusBar(Language.translate("Fertig"));	
