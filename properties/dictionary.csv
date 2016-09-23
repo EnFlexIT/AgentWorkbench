@@ -19,6 +19,7 @@ de;Agent nach unten verschieben;Move down agent
 de;Agent starten...;Start agent...
 de;Agent und Ontologie-Referenz auswählen!;Select an agent and an ontology reference!;;;
 de;Agent.GUI - Anwendungsvisualisierungen;Agent.GUI - Application Visualisations;;;
+de;Agent.GUI - Authorisierung;;;;
 de;Agent.GUI - Projekt öffnen;Agent.GUI – Open project
 de;Agent.GUI - Standard verwenden;Use Agent.GUI defaults
 de;Agent.GUI - Tray Icon anzeigen;Display Agent.GUI - Tray Icon;;;
@@ -75,12 +76,14 @@ de;Auswahl - Agenten;Agent selection
 de;Auswahl - Ontologien;Ontology selection
 de;Auswahl Ontologien;Ontology selection
 de;Auswahl Startliste;Selection: start list;;;
+de;Authorisierung;;;;
 de;Automatisch sortieren;Automatically sort;;;
 de;Basis-Agenten;Base agents
 de;Basis-Info;Basic info
 de;Bearbeiten;Edit
 de;Beenden;Quit
 de;Beim nächsten mal direkt starten und nicht erneut nachfragen.;Directly start and do not ask again next time.;;;
+de;Benutzername;;;;
 de;Beschleunigungsfaktor;Acceleration Factor;;;
 de;Beschreibung;Description
 de;Beschriftung X Achse;Label X axis ;;;
@@ -123,6 +126,8 @@ de;Calculate metrics based on total integrals.;;;;
 de;Calculate the real metrics based on recorded chart value selection.;;;;
 de;Calculates the real metrics for each agent based on recorded thread times.;;;;
 de;Class not found:;Class not found:
+de;Client-ID;;;;
+de;Client-Secret;;;;
 de;Container;Container
 de;Countdown-Ansicht;Countdown view;;;
 de;DF (Directory Facilitator) starten;Start DF (Directory Facilitator)
@@ -281,6 +286,7 @@ de;Hintergrundsystem - Konfiguration;Background System - Configuration;;;
 de;Hintergrundsystem beim Programmstart automatisch initialisieren;Automatically initialize background system at startup;;;
 de;Hinweis;Hint;;;
 de;Hinzufügen;Add
+de;ID-Provider;;;;
 de;ID;;;;
 de;IP-Adresse verwenden;Use IP-Address;;;
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
@@ -319,6 +325,7 @@ de;Jade wurde beendet!;JADE was stopped!
 de;Jahre;Years;;;
 de;Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteilung;Java class for the start of the simulation agents and the static load balancing
 de;Java-Klasse für die dynamische Lastverteilung;Java class for dynamic load balancing
+de;Jedem vertrauen;;;;
 de;Kanten-Typ;Edge Type;;;
 de;Kein Projekt geöffnet !;No open project!
 de;Kein SVG zugewiesen;No SVG assigned
@@ -374,6 +381,7 @@ de;Lastaufzeichnung mit dem Start von JADE beginnen;Record system load immediate
 de;Laufzeit-Visualisierung;Runtime Visualisation;;;
 de;Letzte Änderungen;Recent changes;;;
 de;Liniendicke;Line thickness;;;
+de;Lizenz-Server;;;;
 de;Load Monitor öffnen;Open Load Monitor;null;null;null
 de;Load Monitor;Load Monitor
 de;Log-Manager starten;Start Log Manager
@@ -476,6 +484,7 @@ de;Ontologie-Referenz auswählen!;Select an ontology reference!;;;
 de;Ontologie;Ontology
 de;Ontologieklasse;Ontology Class
 de;Ontologien;Ontologies
+de;Open-ID-Connect-Werte;;;;
 de;Optionen;Options
 de;Organisation;Organization;;;
 de;Organisationseinheit;Organizational Unit;;;
@@ -636,6 +645,7 @@ de;Update automatisch herunterladen, Installationszeitpunkt manuell festlegen;Do
 de;Update-Konfiguration;Update Configuration;;;
 de;Updates automatisch installieren;Install updates automatically;;;
 de;Updates nicht automatisch herunterladen oder installieren;Do not automatically download or install ;;;
+de;Verbinden;;;;
 de;Verbindungsknoten;Connection nodes;;;
 de;Verfügbare JADE-Services;Available JADE Services;;;
 de;Vergrößern ...;Expand View ...
@@ -648,6 +658,7 @@ de;Verteilung der Agenten basierend auf:;Distribution of agents based on:;;;
 de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;Distribution of agents in "PredictiveStaticLoadBalancing" based on:;;;
 de;Verteilung der Agenten nur auf Remote-Maschinen;Distribution of agents remote only;;;
 de;Verteilung;Distribution
+de;Vertrauen konfigurieren;;;;
 de;Verwenden Sie das Kontextmenü im Projektbaum, um einen Start-Tab festzulegen.;Use the context menu in the project tree in order to specify a start tab.;;;
 de;Verzeichnis bereits vorhanden!;Directory already exists!
 de;Verzeichnis gepackt zu;Folder packed to;;;
@@ -727,11 +738,13 @@ en;;Add Turbo Compressor;;;
 en;;Agent Class;;;
 en;;Also remove node components?;;;
 en;;Building costs;;;
+en;;Certificate alias;;;
 en;;Characteristic Diagram;;;
 en;;Close Properties;;;
 en;;Component Type Error;;;
 en;;Compressor;;;
 en;;Copy Selection;;;
+en;;Country code;;;
 en;;Cut Selection;;;
 en;;Depending on delta watts (percent);;;
 en;;Depending on watts (absolute);;;
@@ -754,10 +767,13 @@ en;;Milliseconds;;;
 en;;No Graph-Prototype defined for;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;;Number of changes;;;
+en;;Password length;;;
 en;;Paste from Clipboard;;;
 en;;Pause Thread Measurement;;;
 en;;Piston Compressor;;;
+en;;Please choose a TrustStore file! Your TrustStore name should ends with 'TrustStore';;;
 en;;Please open a Keystore first!;;;
+en;;Please, enter your certificate's alias!;;;
 en;;Please, select the tab of the component that you want to delete!;;;
 en;;Please, specifiy the ID for the new Electric Motor!;;;
 en;;Please, specifiy the ID for the new Gas Driven Motor!;;;
@@ -767,6 +783,7 @@ en;;Please, specifiy the ID for the new Turbo Compressor!;;;
 en;;Refresh Thread Measurement;;;
 en;;Remove Component;;;
 en;;Remove Turbo Compressor;;;
+en;;Required fields;;;
 en;;Save and send data model changes to agent(s)?;;;
 en;;Save changes to network model?;;;
 en;;Should they be removed too?;;;
@@ -777,11 +794,13 @@ en;;Start Thread Measurement;;;
 en;;The following component type exists at least twice;;;
 en;;The following domain exists at least twice;;;
 en;;The following error occured:;;;
+en;;The password should be at least 6 characters in length!;;;
 en;;The selection contains also NetworkComponets that are single nodes.;;;
 en;;These are:;;;
 en;;Time Format and Offset;;;
 en;;Time after a signal must be sent at least;;;
 en;;Transmission of power signals;;;
+en;;TrustStore Information;;;
 en;;TrustStore created;;;
 en;;Turbo Compressor;;;
 en;;Update after changes or milliseconds;;;
@@ -789,8 +808,14 @@ en;;Update after changes;;;
 en;;Update after milliseconds (Realtime);;;
 en;;Update of the visualization;;;
 en;;Upgrade costs;;;
+en;;Validity;;;
 en;;Warning message;;;
+en;;Would You Like to delete this Certificate?;;;
 en;;Writing;;;
+en;;You must fill out all required fields!;;;
+en;;You must use a valid country code!;;;
+en;;You should open a KeyStore to run the HTTPS MTP!;;;
+en;;day(s);;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;
 en;Agent.GUI: HTTPS Konfiguration;Agent.GUI: HTTPS Configuration;;;

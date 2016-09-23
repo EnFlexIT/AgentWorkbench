@@ -120,6 +120,8 @@ public class FileProperties extends Properties {
 	private final String DEF_KEYSTORE_PASSWORD = "51_KEY_STORE_PASSWORD";
 	private final String DEF_TRUSTSTORE_FILE = "52_TRUST_STORE_FILE";
 	private final String DEF_TRUSTSTORE_PASSWORD = "53_TRUST_STORE_PASSWORD";
+	
+	private final String DEF_OIDC_USERNAME = "60_OIDC_USERNAME";
 
 	private String[] mandatoryProps = {	this.DEF_RUNAS,
 										this.DEF_BENCH_VALUE,
@@ -499,7 +501,13 @@ public class FileProperties extends Properties {
 		} else {
 			Application.getGlobalInfo().setTrustStorePasswordEncrypted(null);
 		}
-		
+		// --- this.DEF_OIDC_USERNAME -------------------
+		propValue = this.getProperty(this.DEF_OIDC_USERNAME);
+		if (propValue !=null && propValue.equalsIgnoreCase("") == false) {
+			Application.getGlobalInfo().setOIDCUsername(propValue);
+		} else {
+			Application.getGlobalInfo().setOIDCUsername(null);
+		}
 	}
 
 	/**
@@ -692,6 +700,10 @@ public class FileProperties extends Properties {
 			break;
 		}
 		
+		// --- this.DEF_OIDC_USERNAME -------------
+		if(Application.getGlobalInfo().getOIDCUsername()!=null){
+			this.setProperty(this.DEF_OIDC_USERNAME, Application.getGlobalInfo().getOIDCUsername());
+		}
 
 	}	
 	

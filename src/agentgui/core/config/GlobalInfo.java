@@ -172,6 +172,9 @@ public class GlobalInfo {
 	private String filePropTrustStoreFile;
 	private String filePropTrustStorePasswordEncrypted;
 	
+	private String oidcUsername;
+
+	
 	// --- Reminder information for file dialogs ----------------------------
 	private File lastSelectedFolder = null; 
 	
@@ -180,6 +183,7 @@ public class GlobalInfo {
 	private FileProperties fileProperties = null;
 	/** Can be used in order to access the version information */
 	private VersionInfo versionInfo = null;
+
 
 	/**
 	 * The Enumeration of possible ExecutionModes.
@@ -1717,6 +1721,22 @@ public class GlobalInfo {
 		return filePropTrustStorePasswordEncrypted;
 	}
 	
+	/**
+	 * Sets the OpenID Connect user name
+	 * @param oidcUsername the user name for the OpenID Connect protocol
+	 */
+	public void setOIDCUsername(String oidcUsername) {
+		this.oidcUsername=oidcUsername;		
+	}
+	
+	/**
+	 * Gets the OpenID Connect user name
+	 * @return the user name for the OpenID Connect protocol
+	 */
+	public String getOIDCUsername() {
+		return oidcUsername;
+	}
+	
 	// ------------------------------------------------------------------------------------------------------
 	// ---- From here some help methods for container and component handling can be found --- Start --------- 
 	// ------------------------------------------------------------------------------------------------------
@@ -1828,5 +1848,4 @@ public class GlobalInfo {
 		}
 		return encryptedPSWD;
 	}
-	
 }

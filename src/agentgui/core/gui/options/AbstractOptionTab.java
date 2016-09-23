@@ -40,6 +40,8 @@ public abstract class AbstractOptionTab extends JPanel implements ActionListener
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 210514550187553667L;
+	protected OptionDialog optionDialog;
+
 	
 	/**
 	 * Instantiates a new abstract option tab.
@@ -53,6 +55,8 @@ public abstract class AbstractOptionTab extends JPanel implements ActionListener
 	 */
 	public AbstractOptionTab(OptionDialog optionDialog) {
 		super();
+		this.optionDialog=optionDialog;
+
 	}
 	
 	/**
