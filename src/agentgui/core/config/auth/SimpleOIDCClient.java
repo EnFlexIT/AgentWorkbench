@@ -19,7 +19,7 @@
    limitations under the License.
 */
 
-package agentgui.core.config;
+package agentgui.core.config.auth;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -122,6 +122,10 @@ public class SimpleOIDCClient {
 	private JSONObject userInfoClaims;
 	private JWTClaimsSet idClaims;
 
+	public void reset() {
+		
+	}
+	
 	/*
 	 * Issuer discovery
 		The WebFinger protocol is used to find the OpenID Provider (OP). The library does not have any out-of-the box support for WebFinger, so in the following example we assume you already have acquired the issuer URL of the OP (possibly from developer documentation).
@@ -495,10 +499,20 @@ public class SimpleOIDCClient {
 
 		return claims;
 	}
+	
+	public JWTClaimsSet getIdClaims(){
+		try {
+			return verifyIdToken();
+		} catch (ParseException e) {
+			return new JWTClaimsSet.Builder().build(); // return empty claims
+		}
+	}
 
 	public JSONObject getUserInfoJSON() {
 		return userInfoClaims;
 	}
+	
+
 
 	// https://stackoverflow.com/questions/13022717/java-and-https-url-connection-without-downloading-certificate
 	// https://stackoverflow.com/questions/859111/how-do-i-accept-a-self-signed-certificate-with-a-java-httpsurlconnection

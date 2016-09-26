@@ -728,6 +728,8 @@ public class MainWindow extends JFrame implements ComponentListener {
 			jMenuExtra.addSeparator();
 			jMenuExtra.add( new CWMenueItem( "ExtraOptions", Language.translate("Optionen"), null ));
 			
+			jMenuExtra.add( new CWMenueItem( "Authentication", Language.translate("Authorisierung"), null ));
+			
 			}
 		return jMenuExtra;
 	}
@@ -1063,7 +1065,10 @@ public class MainWindow extends JFrame implements ComponentListener {
 						
 			} else if ( actionCMD.equalsIgnoreCase("ExtraOptions") ) {
 				Application.showOptionDialog();
-			
+				
+			} else if ( actionCMD.equalsIgnoreCase("Authentication") ) {
+				Application.showAuthenticationDialog();
+				
 			// --- Menu Hilfe ---------------------------------
 			} else if ( actionCMD.equalsIgnoreCase("HelpUpdate") ) {
 				new AgentGuiUpdater(true).start();

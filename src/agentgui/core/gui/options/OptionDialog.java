@@ -73,6 +73,7 @@ import javax.swing.tree.TreeSelectionModel;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
+import agentgui.core.config.auth.AuthOptions;
 
 /**
  * This JDialog represents the option dialog, where the 

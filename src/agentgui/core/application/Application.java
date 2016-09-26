@@ -44,6 +44,7 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
+import agentgui.core.config.auth.OIDCAuthorization;
 import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.ChangeDialog;
@@ -784,6 +785,17 @@ public class Application {
 	public static void showOptionDialog() {
 		showOptionDialog(null);
 	}
+	
+	
+	/**
+	 * Opens the OpenID Connect dialog 
+	 * 
+	 */
+	public static void showAuthenticationDialog() {
+		OIDCAuthorization.getInstance().getDialog(getGlobalInfo().getOIDCUsername(), mainWindow).setVisible(true);
+	}
+	
+	
 	/**
 	 * Opens the Option-Dialog of the application with a specified TabName
 	 * @param focusOnTab Can be used to set the focus directly to a Tab specified by its name 
