@@ -87,6 +87,17 @@ public abstract class BasicGraphGuiJInternalFrame extends JInternalFrame {
 	}
 	
 	/**
+	 * Checks if the position of this frame should be reminded as a last opened editor.
+	 * if this method returns true (which is the default case), the internal frame will 
+	 * be reminded and a next internal frame will be adjusted relative to the frame position.
+	 * Override this method if you don't want to remind this internal frame as a 'last opened editor'
+	 *  
+	 * @return true, if the position of this frame should be reminded
+	 */
+	protected boolean isRemindAsLastOpenedEditor() {
+		return true;
+	}
+	/**
 	 * Register at the graph desktop and set this extended JInternalFrame visible.
 	 * @see JDesktopPane
 	 * @param jDesktopLayer the layer in which the JInternaFrame has to be added (e.g. JDesktopPane.PALETTE_LAYER) 
@@ -96,18 +107,21 @@ public abstract class BasicGraphGuiJInternalFrame extends JInternalFrame {
 		// --- Does the dialog for that component already exists? ---------
 		JInternalFrame compProps = this.graphDesktop.getEditor(this.getTitle()); 
 		if (compProps!=null) {
-			super.dispose();
-			
-			compProps.moveToFront();
 			try {
+				// --- Make visible, if invisible --------- 
+				if (compProps.isVisible()==false) compProps.setVisible(true);
+				// --- Move to front ----------------------
+				compProps.moveToFront();
+				// --- Set selected -----------------------
 				compProps.setSelected(true);
+				
 			} catch (PropertyVetoException pve) {
 				pve.printStackTrace();
 			}
 			
 		} else {
 			this.graphDesktop.add(this, jDesktopLayer);
-			this.graphDesktop.registerEditor(this);
+			this.graphDesktop.registerEditor(this, this.isRemindAsLastOpenedEditor());
 			
 			this.setVisible(true);	
 		}

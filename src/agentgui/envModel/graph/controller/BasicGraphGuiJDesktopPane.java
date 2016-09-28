@@ -55,11 +55,11 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 
 	private static final long serialVersionUID = 5733873560749370049L;
 	
-	private GraphEnvironmentController graphController = null;
+	private GraphEnvironmentController graphController;
 	
-	private HashMap<String, JInternalFrame> editorFrames = null;  //  @jve:decl-index=0:
+	private HashMap<String, JInternalFrame> editorFrames;  
 	private Vector<JInternalFrame> lastOpenedEditor = new Vector<JInternalFrame>();
-	private ComponentListener myComponentAdapter = null;  //  @jve:decl-index=0:
+	private ComponentListener myComponentAdapter; 
 
 	
 	/**
@@ -108,13 +108,16 @@ public class BasicGraphGuiJDesktopPane extends JDesktopPane {
 	/**
 	 * Can be used in order to register a property window for components or nodes.
 	 * @param internalFrame the JInternalFrame to register
+	 * @param remindAsLastOpenedEditor indicator to remind as last opened editor or not
 	 */
-	public void registerEditor(JInternalFrame internalFrame) {
+	public void registerEditor(JInternalFrame internalFrame, boolean remindAsLastOpenedEditor ) {
 		this.getHashMapEditorFrames().put(internalFrame.getTitle(), internalFrame);
-		this.setLastOpenedEditor(internalFrame);
+		if (remindAsLastOpenedEditor==true) {
+			this.setLastOpenedEditor(internalFrame);
+		}
 	}
 	/**
-	 * Unregisters a property window for components or nodes
+	 * Unregisters a property window for components or nodes.
 	 * @param internalFrame the JInternalFrame to unregister
 	 */
 	public void unregisterEditor(JInternalFrame internalFrame) {

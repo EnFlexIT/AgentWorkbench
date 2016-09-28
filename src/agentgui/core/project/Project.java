@@ -86,7 +86,9 @@ import agentgui.core.plugin.PlugInLoadException;
 import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.resources.VectorOfProjectResources;
+import agentgui.core.sim.setup.SimulationSetupNotification;
 import agentgui.core.sim.setup.SimulationSetups;
+import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.update.VersionInformation;
 import agentgui.core.webserver.DownloadServer;
 import agentgui.core.webserver.JarFileCreator;
@@ -509,6 +511,14 @@ import agentgui.core.webserver.JarFileCreator;
 		// --- load all configured PlugIns to the project -
 		this.plugInVectorLoad();
 		
+	}
+	/**
+	 * Informs all PlugIn's that the setup was loaded.
+	 */
+	public void plugInVectorInformSetupLoaded() {
+		for (PlugIn plugIn : this.getPlugInsLoaded()) {
+			plugIn.update(this, new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_LOAD));
+		}
 	}
 	/**
 	 * This method loads a single PlugIn, given by its class reference

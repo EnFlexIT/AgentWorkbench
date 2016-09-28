@@ -80,7 +80,18 @@
 						lib/jung/jung-visualization-2.0.1.jar;
 						lib/jung/stax-api-1.0.1.jar;
 						lib/jung/vecmath-1.3.1.jar;
-						lib/jung/wstx-asl-3.2.6.jar;"
+						lib/jung/wstx-asl-3.2.6.jar;
+						lib/oidc/activation-1.1.jar;
+						lib/oidc/commons-collections4-4.1.jar;
+						lib/oidc/commons-io-2.5.jar;
+						lib/oidc/commons-lang3-3.4.jar;
+						lib/oidc/jcip-annotations-1.0-1.jar;
+						lib/oidc/json-smart-1.3.1.jar;
+						lib/oidc/lang-tag-1.4.3.jar;
+						lib/oidc/mail-1.4.7.jar;
+						lib/oidc/nimbus-jose-jwt-4.26.1.jar;
+						lib/oidc/oauth2-oidc-sdk-5.17.1.jar;"	
+			
 			>
 		
 			<bottom><![CDATA[<i>Copyright &copy; 2009-${TODAYS_YEAR} by Christian Derksen & DAWIS @ ICB - University Duisburg-Essen. All Rights Reserved.</i>]]></bottom>

@@ -19,7 +19,6 @@ de;Agent nach unten verschieben;Move down agent
 de;Agent starten...;Start agent...
 de;Agent und Ontologie-Referenz auswählen!;Select an agent and an ontology reference!;;;
 de;Agent.GUI - Anwendungsvisualisierungen;Agent.GUI - Application Visualisations;;;
-de;Agent.GUI - Authorisierung;;;;
 de;Agent.GUI - Projekt öffnen;Agent.GUI – Open project
 de;Agent.GUI - Standard verwenden;Use Agent.GUI defaults
 de;Agent.GUI - Tray Icon anzeigen;Display Agent.GUI - Tray Icon;;;
@@ -126,8 +125,6 @@ de;Calculate metrics based on total integrals.;;;;
 de;Calculate the real metrics based on recorded chart value selection.;;;;
 de;Calculates the real metrics for each agent based on recorded thread times.;;;;
 de;Class not found:;Class not found:
-de;Client-ID;;;;
-de;Client-Secret;;;;
 de;Container;Container
 de;Countdown-Ansicht;Countdown view;;;
 de;DF (Directory Facilitator) starten;Start DF (Directory Facilitator)
@@ -214,6 +211,7 @@ de;Entferne Hindernis;Remove obstacle
 de;Entfernen;Remove;;;
 de;Entpacke;Unpacking
 de;Entwickler-Ansicht;Developer view
+de;Erfolgreich;;;;
 de;Erweiterungsadapter für Netzwerkkomponenten;Extension adapter for network components;;;
 de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
@@ -254,6 +252,7 @@ de;Fehler: URL oder IP !;Error in  URL or IP !;;;
 de;Fehler;Error
 de;Fehlerhafte Auswahl!;Incorrect selection!;;;
 de;Fehlerhafte Eingabe;Faulty input;;;
+de;Fehlgeschlagen;;;;
 de;Fenster;Window
 de;Fertig;Ready
 de;Folgende Add-On-Dienste starten:;Start the following add-on services:
@@ -286,8 +285,8 @@ de;Hintergrundsystem - Konfiguration;Background System - Configuration;;;
 de;Hintergrundsystem beim Programmstart automatisch initialisieren;Automatically initialize background system at startup;;;
 de;Hinweis;Hint;;;
 de;Hinzufügen;Add
-de;ID-Provider;;;;
 de;ID;;;;
+de;IP auswählen;;;;
 de;IP-Adresse verwenden;Use IP-Address;;;
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
 de;Ihre Webseite:;Your Website:;;;
@@ -381,7 +380,6 @@ de;Lastaufzeichnung mit dem Start von JADE beginnen;Record system load immediate
 de;Laufzeit-Visualisierung;Runtime Visualisation;;;
 de;Letzte Änderungen;Recent changes;;;
 de;Liniendicke;Line thickness;;;
-de;Lizenz-Server;;;;
 de;Load Monitor öffnen;Open Load Monitor;null;null;null
 de;Load Monitor;Load Monitor
 de;Log-Manager starten;Start Log Manager
@@ -484,7 +482,7 @@ de;Ontologie-Referenz auswählen!;Select an ontology reference!;;;
 de;Ontologie;Ontology
 de;Ontologieklasse;Ontology Class
 de;Ontologien;Ontologies
-de;Open-ID-Connect-Werte;;;;
+de;OpenID Connect-Authorisierung;;;;
 de;Optionen;Options
 de;Organisation;Organization;;;
 de;Organisationseinheit;Organizational Unit;;;
@@ -527,6 +525,7 @@ de;Reale Metriken der Agenten bei Simulationsstop aktualisieren;;;;
 de;Rechts-Klick für weitere Optionen;Right-Click for more options
 de;Reihen-Eigenschaften;Series-Properties;;;
 de;Remote JADE-RMA beim Start des entfernten Containers anzeigen;Display remote JADE-RMA at the start of the remote container;;;
+de;Renderer;;;;
 de;Ressourcen;Resources
 de;SVG Dateien;SVG files
 de;SVG laden;Load SVG
@@ -658,7 +657,6 @@ de;Verteilung der Agenten basierend auf:;Distribution of agents based on:;;;
 de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;Distribution of agents in "PredictiveStaticLoadBalancing" based on:;;;
 de;Verteilung der Agenten nur auf Remote-Maschinen;Distribution of agents remote only;;;
 de;Verteilung;Distribution
-de;Vertrauen konfigurieren;;;;
 de;Verwenden Sie das Kontextmenü im Projektbaum, um einen Start-Tab festzulegen.;Use the context menu in the project tree in order to specify a start tab.;;;
 de;Verzeichnis bereits vorhanden!;Directory already exists!
 de;Verzeichnis gepackt zu;Folder packed to;;;
@@ -738,13 +736,11 @@ en;;Add Turbo Compressor;;;
 en;;Agent Class;;;
 en;;Also remove node components?;;;
 en;;Building costs;;;
-en;;Certificate alias;;;
 en;;Characteristic Diagram;;;
 en;;Close Properties;;;
 en;;Component Type Error;;;
 en;;Compressor;;;
 en;;Copy Selection;;;
-en;;Country code;;;
 en;;Cut Selection;;;
 en;;Depending on delta watts (percent);;;
 en;;Depending on watts (absolute);;;
@@ -767,13 +763,10 @@ en;;Milliseconds;;;
 en;;No Graph-Prototype defined for;;;
 en;;No NetworkComponentAdapter<br>was defined for the<br> NetworkComponent;;;
 en;;Number of changes;;;
-en;;Password length;;;
 en;;Paste from Clipboard;;;
 en;;Pause Thread Measurement;;;
 en;;Piston Compressor;;;
-en;;Please choose a TrustStore file! Your TrustStore name should ends with 'TrustStore';;;
 en;;Please open a Keystore first!;;;
-en;;Please, enter your certificate's alias!;;;
 en;;Please, select the tab of the component that you want to delete!;;;
 en;;Please, specifiy the ID for the new Electric Motor!;;;
 en;;Please, specifiy the ID for the new Gas Driven Motor!;;;
@@ -783,7 +776,6 @@ en;;Please, specifiy the ID for the new Turbo Compressor!;;;
 en;;Refresh Thread Measurement;;;
 en;;Remove Component;;;
 en;;Remove Turbo Compressor;;;
-en;;Required fields;;;
 en;;Save and send data model changes to agent(s)?;;;
 en;;Save changes to network model?;;;
 en;;Should they be removed too?;;;
@@ -794,7 +786,6 @@ en;;Start Thread Measurement;;;
 en;;The following component type exists at least twice;;;
 en;;The following domain exists at least twice;;;
 en;;The following error occured:;;;
-en;;The password should be at least 6 characters in length!;;;
 en;;The selection contains also NetworkComponets that are single nodes.;;;
 en;;These are:;;;
 en;;Time Format and Offset;;;
@@ -810,11 +801,7 @@ en;;Update of the visualization;;;
 en;;Upgrade costs;;;
 en;;Validity;;;
 en;;Warning message;;;
-en;;Would You Like to delete this Certificate?;;;
 en;;Writing;;;
-en;;You must fill out all required fields!;;;
-en;;You must use a valid country code!;;;
-en;;You should open a KeyStore to run the HTTPS MTP!;;;
 en;;day(s);;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;

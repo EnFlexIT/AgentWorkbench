@@ -425,7 +425,6 @@ public class AboutDialog extends JDialog implements ActionListener{
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
-			return;
 		
 		} else if (ae.getSource() == jLabelLinkDAWIS) {
 			try {
@@ -435,7 +434,6 @@ public class AboutDialog extends JDialog implements ActionListener{
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
-			return;
 			
 		}
 		

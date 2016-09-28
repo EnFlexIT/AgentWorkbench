@@ -326,5 +326,13 @@ public class NetworkComponent implements Serializable {
 	public void setDataModelBase64(Vector<String> dataModelBase64) {
 		this.dataModelBase64 = dataModelBase64;
 	}	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.getId() + " - " + this.getType();
+	}
 	
 }

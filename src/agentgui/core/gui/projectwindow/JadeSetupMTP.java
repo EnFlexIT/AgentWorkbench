@@ -138,9 +138,11 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		jLabelMTP.setText(Language.translate("MTP-Adresse") + ":");
 		jRadioButtonMtpAutoConfig.setText(Language.translate("JADE-Automatik verwenden"));
 		jRadioButtonMtpIP.setText(Language.translate("IP-Adresse verwenden"));
+		jButtonIPedit.setToolTipText(Language.translate("IP auswählen"));
 		
 		jButtonSetPortMTP.setToolTipText(Language.translate("JADE-Port bearbeiten"));
 		jButtonSetPortMTPDefault.setToolTipText(Language.translate("Standard verwenden"));
+		
 		
 	}
 	
@@ -543,7 +545,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	private JButton getJButtonIPedit() {
 		if (jButtonIPedit == null) {
 			jButtonIPedit = new JButton();
-			jButtonIPedit.setToolTipText("IP auswÃƒÆ’Ã‚Â¤hlen");
+			jButtonIPedit.setToolTipText("IP auswählen");
 			jButtonIPedit.setPreferredSize(new Dimension(45, 26));
 			jButtonIPedit.setIcon(new ImageIcon(getClass().getResource(PathImage + "edit.png")));
 			jButtonIPedit.addActionListener(this);
