@@ -28,10 +28,6 @@
  */
 package agentgui.core.gui;
 
-import jade.debugging.components.JPanelConsole;
-import jade.debugging.components.JTabbedPane4Consoles;
-import jade.debugging.components.SysOutBoard;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -46,8 +42,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -84,13 +80,16 @@ import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
 import agentgui.core.project.Project;
 import agentgui.core.update.AgentGuiUpdater;
 import agentgui.simulationService.agents.LoadExecutionAgent;
+import jade.debugging.components.JPanelConsole;
+import jade.debugging.components.JTabbedPane4Consoles;
+import jade.debugging.components.SysOutBoard;
 
 /**
  * This class represents the main user-interface of the application AgentGUI.
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class MainWindow extends JFrame implements ComponentListener {
+public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -153,15 +152,13 @@ public class MainWindow extends JFrame implements ComponentListener {
 		this.setIconImage(imageAgentGUI);
 		
 		// --- Set the Look and Feel of the Application -----------
-		if (Application.getGlobalInfo().getAppLnF() != null) {
+		if (Application.getGlobalInfo().getAppLnF()!=null) {
 			this.setLookAndFeel(Application.getGlobalInfo().getAppLnF());
 		}
 		
 		// --- Create the Main-Elements of the Application --------
 		this.initComponents();
-		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		this.setToScreenSize();
 		this.setLocationRelativeTo(null);
 		this.pack();	
 		
@@ -193,15 +190,52 @@ public class MainWindow extends JFrame implements ComponentListener {
 		this.add(getJToolBarApplication(), BorderLayout.NORTH);
 		this.add(getStatusBar(), BorderLayout.SOUTH);
 		this.add(getMainSplitpane());
-		this.setSize(1150, 640);	
+	
 		
-		// --- Listener for closing the application -------
+		Dimension frameSize = this.getSizeRelatedToScreenSize();
+		this.setPreferredSize(frameSize);
+		this.setSize(frameSize);
+
+		// --- Maximze the JFrame, if configured in the GlobalInfo --
+		if (Application.getGlobalInfo().isMaximzeMainWindow()==true) {
+			this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		}
+		
+		// --- Listener for closing the application -----------------
 		this.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
-			Application.quit();
+				Application.quit();
 			}
 		});
-		this.addComponentListener(this);
+		
+		// --- Listener for state max / Normal events ---------------
+		this.addWindowStateListener(new WindowAdapter() {
+			@Override
+			public void windowStateChanged(WindowEvent evt) {
+				if (evt.getNewState()==JFrame.NORMAL) {
+					Application.getGlobalInfo().setMaximzeMainWindow(false);
+				} else if (evt.getNewState()==JFrame.MAXIMIZED_BOTH) {
+					Application.getGlobalInfo().setMaximzeMainWindow(true);
+				}
+			}			
+		});
+		
+		// --- Listener for resizing events of the window -----------  
+		this.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent ce) {
+				if (consoleIsVisible() == false) {
+					jSplitPane4ProjectDesktop.setDividerLocation(jSplitPane4ProjectDesktop.getHeight());			
+				}
+				if (Application.getProjectsLoaded().count()!= 0) {
+					Application.getProjectFocused().setMaximized();
+					setCloseButtonPosition( true );
+				} else {
+					setCloseButtonPosition(false);
+				}
+			}
+		});
 		
 		// --- Set button for simulation control ---------- 
 		this.setSimulationReady2Start();
@@ -209,16 +243,20 @@ public class MainWindow extends JFrame implements ComponentListener {
 	}	
 
 	/**
-	 * Sets frame size in relation to the screen size.
+	 * Return the size in relation (scaled) to the screen size.
 	 */
-	private void setToScreenSize() {
+	private Dimension getSizeRelatedToScreenSize() {
+		// --- Default size ---------------------
+		Dimension frameSize = new Dimension(1150, 640);
+
+		// --- Scale relative to screen ---------
 		double scale = 0.9;
 		Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
 		int frameWidth = (int) (screenDimension.getWidth() * scale);
 		int frameHeight = (int) (screenDimension.getHeight() * scale);
-		Dimension frameSize = new Dimension(frameWidth, frameHeight);
-		this.setSize(frameSize);
-		this.setPreferredSize(frameSize);
+		frameSize.setSize(frameWidth, frameHeight);
+
+		return frameSize;
 	}
 	
 	// ------------------------------------------------------------
@@ -926,16 +964,15 @@ public class MainWindow extends JFrame implements ComponentListener {
 	 */
 	public void setCloseButtonPosition(boolean setVisible){
 		
-		if (jMenuCloseButton.isVisible() == false ) {
+		if (jMenuCloseButton.isVisible()==false ) {
 			jMenuCloseButton.setVisible(true);
 		}
 		if (setVisible==true){
-			jMenuCloseButton.setIcon( iconClose );	
-			jMenuCloseButton.setEnabled( true );	
-		}
-		else {
-			jMenuCloseButton.setIcon( iconCloseDummy );
-			jMenuCloseButton.setEnabled( false );
+			jMenuCloseButton.setIcon(iconClose);	
+			jMenuCloseButton.setEnabled(true);	
+		} else {
+			jMenuCloseButton.setIcon(iconCloseDummy);
+			jMenuCloseButton.setEnabled(false);
 		}		
 		
 		if (jMenuBarMain!=null) {
@@ -1397,42 +1434,6 @@ public class MainWindow extends JFrame implements ComponentListener {
 	}	
 	// -------------------------------------------------------------------
 	// -------------------------------------------------------------------
-	
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.ComponentListener#componentShown(java.awt.event.ComponentEvent)
-	 */
-	@Override
-	public void componentShown(ComponentEvent e) {
-	}
-	/* (non-Javadoc)
-	 * @see java.awt.event.ComponentListener#componentHidden(java.awt.event.ComponentEvent)
-	 */
-	@Override
-	public void componentHidden(ComponentEvent e) {
-	}
-	/* (non-Javadoc)
-	 * @see java.awt.event.ComponentListener#componentMoved(java.awt.event.ComponentEvent)
-	 */
-	@Override
-	public void componentMoved(ComponentEvent e) {
-	}
-	/* (non-Javadoc)
-	 * @see java.awt.event.ComponentListener#componentResized(java.awt.event.ComponentEvent)
-	 */
-	@Override
-	public void componentResized(ComponentEvent e) {
-		if (consoleIsVisible() == false) {
-			jSplitPane4ProjectDesktop.setDividerLocation(jSplitPane4ProjectDesktop.getHeight());			
-		}
-		if (Application.getProjectsLoaded().count()!= 0) {
-			Application.getProjectFocused().setMaximized();
-			setCloseButtonPosition( true );
-		}
-		else {
-			setCloseButtonPosition( false );
-		}
-	}
 	
 
 	/**

@@ -80,6 +80,7 @@ public class FileProperties extends Properties {
 	private final String DEF_BENCH_SKIP_ALLWAYS = "04_BENCH_SKIP_ALLWAYS";
 
 	private final String DEF_LANGUAGE = "05_LANGUAGE";
+	private final String DEF_MAXIMiZE_MAIN_WINDOW = "06_MAXIMiZE_MAIN_WINDOW";
 	
 	private final String DEF_AUTOSTART = "10_AUTOSTART";
 	private final String DEF_MASTER_URL = "11_MASTER_URL";
@@ -270,6 +271,13 @@ public class FileProperties extends Properties {
 			Application.getGlobalInfo().setLanguage("en");
 		}
 		
+		// --- this.DEF_MAXIMiZE_MAIN_WINDOW ---------
+		propValue = this.getProperty(this.DEF_MAXIMiZE_MAIN_WINDOW);
+		if (propValue!=null && propValue.trim().equalsIgnoreCase("true") == true) {
+			Application.getGlobalInfo().setMaximzeMainWindow(true);
+		} else {
+			Application.getGlobalInfo().setMaximzeMainWindow(false);
+		}
 		
 		// --- this.DEF_AUTOSTART --------------------
 		propValue = this.getProperty(this.DEF_AUTOSTART).trim();
@@ -551,9 +559,15 @@ public class FileProperties extends Properties {
 			this.setProperty(this.DEF_LANGUAGE, Application.getGlobalInfo().getLanguage());
 		}
 
+		// --- this.DEF_MAXIMiZE_MAIN_WINDOW ---------
+		if (Application.getGlobalInfo().isMaximzeMainWindow()==true) {
+			this.setProperty(this.DEF_MAXIMiZE_MAIN_WINDOW, "true");			
+		} else {
+			this.setProperty(this.DEF_MAXIMiZE_MAIN_WINDOW, "false");
+		}
 		
 		// --- this.DEF_AUTOSTART --------------------
-		if ( Application.getGlobalInfo().isServerAutoRun() == true ) {
+		if (Application.getGlobalInfo().isServerAutoRun()==true) {
 			this.setProperty(this.DEF_AUTOSTART, "true");
 		} else {
 			this.setProperty(this.DEF_AUTOSTART, "false");

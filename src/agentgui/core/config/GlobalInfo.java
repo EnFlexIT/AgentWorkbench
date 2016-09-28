@@ -56,6 +56,7 @@ import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.environment.EnvironmentTypes;
+import agentgui.core.gui.MainWindow;
 import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.ontologies.gui.OntologyClassVisualisation;
 import agentgui.core.project.PlatformJadeConfig;
@@ -135,6 +136,7 @@ public class GlobalInfo {
 	private boolean filePropBenchAllwaysSkip; 
 	
 	private String filePropLanguage;
+	private boolean maximizeMainWindow = false;
 	
 	private boolean filePropServerAutoRun = true;
 	private String filePropServerMasterURL;
@@ -1026,6 +1028,21 @@ public class GlobalInfo {
 		return filePropLanguage;
 	}
 
+	/**
+	 * Sets to initially maximize the {@link MainWindow}.
+	 * @param isMaximzeMainWindow the new maximze indicator
+	 */
+	public void setMaximzeMainWindow(boolean isMaximzeMainWindow) {
+		maximizeMainWindow = isMaximzeMainWindow;
+	}
+	/**
+	 * Returns if the {@link MainWindow} has to be maximized at start up.
+	 * @return true, if the main window is to be maximzed 
+	 */
+	public boolean isMaximzeMainWindow() {
+		return maximizeMainWindow;
+	}
+	
 	// ---- Connection to the Master-Server -------------------------
 	/**
 	 * Can be used in order to start the active server mode immediately after the program execution.
