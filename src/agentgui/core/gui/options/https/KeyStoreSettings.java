@@ -141,7 +141,7 @@ public class KeyStoreSettings {
      * Sets the orginazational unit.
      * @param value the new orginazational unit
      */
-    public void setOrginazationalUnit(String value) {
+    public void setOrganizationalUnit(String value) {
         this.orginazationalUnit = value;
     }
 
@@ -189,7 +189,7 @@ public class KeyStoreSettings {
      * Sets the coutry code.
      * @param value the new coutry code
      */
-    public void setCoutryCode(String value) {
+    public void setCountryCode(String value) {
         this.coutryCode = value;
     }
 

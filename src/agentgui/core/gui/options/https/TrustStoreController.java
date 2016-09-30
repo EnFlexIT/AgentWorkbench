@@ -48,10 +48,14 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
 
 /**
  * This class allows the user to manage a TrustStore.
@@ -384,7 +388,6 @@ public class TrustStoreController {
 	public void getTrustedCertificatesList(String trustStoreName, String trustStorePassword) {
 		CertificateSettings certificateSettings = null;
 		FileInputStream fileInputStream = null;
-		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 		try {
 			// --- Creates a FileInputStream from the TrustStore -----
 			File file = new File(trustStoreName);
@@ -397,19 +400,9 @@ public class TrustStoreController {
 			Enumeration<String> enumeration = trustStore.aliases();
 			while (enumeration.hasMoreElements()) {
 				String alias = enumeration.nextElement();
-				certificateSettings.setCertificateAlias(alias);
 				Certificate cert = trustStore.getCertificate(alias);
-		        
-				String provider = ( (X509Certificate) cert).getIssuerDN().getName();
-		        certificateSettings.getKeyStoreSettings().setFullName(provider.substring(provider.indexOf("CN=") + 3, provider.indexOf(", OU")));
-		        certificateSettings.getKeyStoreSettings().setOrginazationalUnit(provider.substring(provider.indexOf("OU=") + 3, provider.indexOf(", O=")));
-		        certificateSettings.getKeyStoreSettings().setOrganization(provider.substring(provider.indexOf("O=") + 2, provider.indexOf(", L")));
-		        certificateSettings.getKeyStoreSettings().setCityOrLocality(provider.substring(provider.indexOf("L=") + 2, provider.indexOf(", ST")));
-		        certificateSettings.getKeyStoreSettings().setStateOrProvince(provider.substring(provider.indexOf("ST=") + 3, provider.indexOf(", C")));
-		        certificateSettings.getKeyStoreSettings().setCoutryCode(provider.substring(provider.indexOf("C=") + 2, provider.indexOf("C=") + 4));
-		       
-		        Date date = ((X509Certificate) cert).getNotAfter();
-				certificateSettings.setValidity(DATE_FORMAT.format(date));
+				certificateSettings = getCertificateSettings(cert);
+				certificateSettings.setCertificateAlias(alias);
 				
 				addTableModelRow(certificateSettings);
 			}
@@ -438,7 +431,6 @@ public class TrustStoreController {
 	public CertificateSettings getCertificateSettings(String alias, String trustStoreName, String trustStorePassword){
 		CertificateSettings certificateSettings = new CertificateSettings();
 		FileInputStream fileInputStream = null;
-		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 
 		try {
 			// --- Creates a FileInputStream from the TrustStore -----
@@ -449,15 +441,7 @@ public class TrustStoreController {
 			trustStore.load(fileInputStream, trustStorePassword.toCharArray());
 			
 			Certificate cert = trustStore.getCertificate(alias);
-	        String provider = ( (X509Certificate) cert).getIssuerDN().getName();
-	        certificateSettings.getKeyStoreSettings().setFullName(provider.substring(provider.indexOf("CN=") + 3, provider.indexOf(", OU")));
-	        certificateSettings.getKeyStoreSettings().setOrginazationalUnit(provider.substring(provider.indexOf("OU=") + 3, provider.indexOf(", O=")));
-	        certificateSettings.getKeyStoreSettings().setOrganization(provider.substring(provider.indexOf("O=") + 2, provider.indexOf(", L")));
-	        certificateSettings.getKeyStoreSettings().setCityOrLocality(provider.substring(provider.indexOf("L=") + 2, provider.indexOf(", ST")));
-	        certificateSettings.getKeyStoreSettings().setStateOrProvince(provider.substring(provider.indexOf("ST=") + 3, provider.indexOf(", C")));
-	        certificateSettings.getKeyStoreSettings().setCoutryCode(provider.substring(provider.indexOf("C=") + 2, provider.indexOf("C=") + 4));
-	        Date date = ((X509Certificate) cert).getNotAfter();
-			certificateSettings.setValidity(DATE_FORMAT.format(date));
+			certificateSettings = getCertificateSettings(cert);
 			
 		} catch (java.security.cert.CertificateException | NoSuchAlgorithmException | FileNotFoundException | KeyStoreException e) {
 			e.printStackTrace();
@@ -473,4 +457,35 @@ public class TrustStoreController {
 		}
 		return certificateSettings;
 	}
+	
+	public CertificateSettings getCertificateSettings(Certificate cert){
+		CertificateSettings certificateSettings = new CertificateSettings();
+		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+
+		
+		String provider = ( (X509Certificate) cert).getSubjectX500Principal().getName();
+		LdapName ldapDN;
+		try {
+			ldapDN = new LdapName(provider);
+			HashMap<String,String> providerParts = new HashMap<String,String>();
+			for(Rdn rdn: ldapDN.getRdns()) {
+				providerParts.put(rdn.getType(), (String) rdn.getValue());
+			}				
+
+	        certificateSettings.getKeyStoreSettings().setFullName(providerParts.get("CN"));
+	        certificateSettings.getKeyStoreSettings().setOrganizationalUnit(providerParts.get("OU"));
+	        certificateSettings.getKeyStoreSettings().setOrganization(providerParts.get("O"));
+	        certificateSettings.getKeyStoreSettings().setCityOrLocality(providerParts.get("L"));
+	        certificateSettings.getKeyStoreSettings().setStateOrProvince(providerParts.get("ST"));
+	        certificateSettings.getKeyStoreSettings().setCountryCode(providerParts.get("C"));
+		} catch (InvalidNameException e) {
+			e.printStackTrace();
+		}
+      
+        Date date = ((X509Certificate) cert).getNotAfter();
+		certificateSettings.setValidity(DATE_FORMAT.format(date));
+		
+		return certificateSettings;
+	}
+
 }

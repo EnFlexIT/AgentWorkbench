@@ -129,11 +129,11 @@ public class KeyStoreController {
 		}
 		// ---- Get the content ------------------------------------------------
 		keyStoreSettings.setFullName(provider.substring(provider.indexOf("CN=") + 3, provider.indexOf(", OU")));
-		keyStoreSettings.setOrginazationalUnit(provider.substring(provider.indexOf("OU=") + 3, provider.indexOf(", O=")));
+		keyStoreSettings.setOrganizationalUnit(provider.substring(provider.indexOf("OU=") + 3, provider.indexOf(", O=")));
 		keyStoreSettings.setOrganization(provider.substring(provider.indexOf("O=") + 2, provider.indexOf(", L")));
 		keyStoreSettings.setCityOrLocality(provider.substring(provider.indexOf("L=") + 2, provider.indexOf(", ST")));
 		keyStoreSettings.setStateOrProvince(provider.substring(provider.indexOf("ST=") + 3, provider.indexOf(", C")));
-		keyStoreSettings.setCoutryCode(provider.substring(provider.indexOf("C=") + 2, provider.indexOf("C=") + 4));
+		keyStoreSettings.setCountryCode(provider.substring(provider.indexOf("C=") + 2, provider.indexOf("C=") + 4));
 		
 		return keyStoreSettings;
 	}
