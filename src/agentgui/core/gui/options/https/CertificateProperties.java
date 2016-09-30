@@ -28,6 +28,15 @@
  */
 package agentgui.core.gui.options.https;
 
+import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
+
 /**
  * The Class KeyStoreSettings.
  * 
@@ -35,17 +44,19 @@ package agentgui.core.gui.options.https;
  * @version 1.0
  * @since 05-04-2016
  */
-public class KeyStoreSettings {
+public class CertificateProperties {
+	
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 
     protected String keyStoreName;
     protected String password;
     protected String alias;
-    protected String fullName;
+    protected String commonName;
     protected String organization;
-    protected String orginazationalUnit;
+    protected String organizationalUnit;
     protected String cityOrLocality;
     protected String stateOrProvince;
-    protected String coutryCode;
+    protected String countryCode;
     protected String path;
     protected String validity;
 
@@ -98,19 +109,19 @@ public class KeyStoreSettings {
     }
 
     /**
-     * Gets the full name.
-     * @return the full name
+     * Gets the common name.
+     * @return the common name
      */
-    public String getFullName() {
-        return fullName;
+    public String getCommonName() {
+        return commonName;
     }
 
     /**
-     * Sets the full name.
-     * @param value the new full name
+     * Sets the common name.
+     * @param value the new common name
      */
-    public void setFullName(String value) {
-        this.fullName = value;
+    public void setCommonName(String value) {
+        this.commonName = value;
     }
 
     /**
@@ -130,19 +141,19 @@ public class KeyStoreSettings {
     }
 
     /**
-     * Gets the orginazational unit.
-     * @return the orginazational unit
+     * Gets the organizational unit.
+     * @return the organizational unit
      */
-    public String getOrginazationalUnit() {
-        return orginazationalUnit;
+    public String getOrganizationalUnit() {
+        return organizationalUnit;
     }
 
     /**
-     * Sets the orginazational unit.
-     * @param value the new orginazational unit
+     * Sets the organizational unit.
+     * @param value the new organizational unit
      */
     public void setOrganizationalUnit(String value) {
-        this.orginazationalUnit = value;
+        this.organizationalUnit = value;
     }
 
     /**
@@ -181,8 +192,8 @@ public class KeyStoreSettings {
      * Gets the coutry code.
      * @return the coutry code
      */
-    public String getCoutryCode() {
-        return coutryCode;
+    public String getCountryCode() {
+        return countryCode;
     }
 
     /**
@@ -190,7 +201,7 @@ public class KeyStoreSettings {
      * @param value the new coutry code
      */
     public void setCountryCode(String value) {
-        this.coutryCode = value;
+        this.countryCode = value;
     }
 
     /**
@@ -225,4 +236,29 @@ public class KeyStoreSettings {
 		this.validity = validity;
 	}
 
+    public void parseFromCertificate(X509Certificate cert) {
+		String provider = cert.getSubjectX500Principal().getName();
+
+		LdapName ldapDN;
+		try {
+			ldapDN = new LdapName(provider);
+			HashMap<String,String> providerParts = new HashMap<String,String>();
+			for(Rdn rdn: ldapDN.getRdns()) {
+				providerParts.put(rdn.getType(), (String) rdn.getValue());
+			}				
+
+	        this.setCommonName(providerParts.get("CN"));
+	        this.setOrganizationalUnit(providerParts.get("OU"));
+	        this.setOrganization(providerParts.get("O"));
+	        this.setCityOrLocality(providerParts.get("L"));
+	        this.setStateOrProvince(providerParts.get("ST"));
+	        this.setCountryCode(providerParts.get("C"));
+		} catch (InvalidNameException e) {
+			e.printStackTrace();
+		}
+      
+        Date date = ((X509Certificate) cert).getNotAfter();
+        this.setValidity(DATE_FORMAT.format(date));
+    	
+    }
 }

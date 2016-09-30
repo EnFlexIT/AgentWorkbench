@@ -29,7 +29,6 @@
 package agentgui.core.gui.options.https;
 
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -91,7 +90,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 	private JLabel jLabelOrginazationalUnit;
 	private JLabel jLabelCity;
 	private JLabel jLabelStateOrProvince;
-	private JLabel jLabelCoutryCode;
+	private JLabel jLabelCountryCode;
 	private JLabel jLabelAlias;
 	private JLabel jLabelValidity;
 	private JLabel jLabelName;
@@ -345,12 +344,12 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 			gbc_jLabelState.gridx = 1;
 			gbc_jLabelState.gridy = 8;
 			jPanelCertificateInfo.add(getJLabelState(), gbc_jLabelState);
-			GridBagConstraints gbc_jLabelCoutryCode = new GridBagConstraints();
-			gbc_jLabelCoutryCode.insets = new Insets(0, 5, 0, 5);
-			gbc_jLabelCoutryCode.anchor = GridBagConstraints.WEST;
-			gbc_jLabelCoutryCode.gridx = 0;
-			gbc_jLabelCoutryCode.gridy = 9;
-			jPanelCertificateInfo.add(getJLabelCoutryCode(), gbc_jLabelCoutryCode);
+			GridBagConstraints gbc_jLabelCountryCode = new GridBagConstraints();
+			gbc_jLabelCountryCode.insets = new Insets(0, 5, 0, 5);
+			gbc_jLabelCountryCode.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCountryCode.gridx = 0;
+			gbc_jLabelCountryCode.gridy = 9;
+			jPanelCertificateInfo.add(getJLabelCountryCode(), gbc_jLabelCountryCode);
 			GridBagConstraints gbc_jLabelCountry = new GridBagConstraints();
 			gbc_jLabelCountry.anchor = GridBagConstraints.WEST;
 			gbc_jLabelCountry.gridx = 1;
@@ -451,14 +450,14 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		return jLabelStateOrProvince;
 	}
 	/**
-	 * This method initializes jLabelCoutryCode.
+	 * This method initializes jLabelCountryCode.
 	 */
-	private JLabel getJLabelCoutryCode() {
-		if (jLabelCoutryCode == null) {
-			jLabelCoutryCode = new JLabel("Coutry Code:");
-			jLabelCoutryCode.setFont(new Font("Dialog", Font.PLAIN, 11));
+	private JLabel getJLabelCountryCode() {
+		if (jLabelCountryCode == null) {
+			jLabelCountryCode = new JLabel(Language.translate("Country Code:","EN"));
+			jLabelCountryCode.setFont(new Font("Dialog", Font.PLAIN, 11));
 		}
-		return jLabelCoutryCode;
+		return jLabelCountryCode;
 	}
 	/**
 	 * This method initializes jLabelAlias.
@@ -538,7 +537,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 	 */
 	protected TrustStoreController getTrustStoreController() {
 		if (trustStoreController == null) {
-			trustStoreController = new TrustStoreController();
+			trustStoreController = new TrustStoreController(Application.getGlobalInfo().getOwnerDialogForComponent(this));
 		}
 		return trustStoreController;
 	}
@@ -747,15 +746,14 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 					String title = Language.translate("Password length",Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}else {
-					String trustStoreName = this.getJTextFieldTrustStoreName().getText() + "TrustStore.jks";
+					String trustStoreName = this.getJTextFieldTrustStoreName().getText() + HttpsConfigWindow.TRUSTSTORE_FILENAME;
 					String trustStorePassword = new String (this.getJPasswordFieldPassword().getPassword());
 					this.httpsConfigWindow.setTrustStorePassword(trustStorePassword);
 					getJFileChooser();
 					int jfile = jFileChooser.showSaveDialog(null);
 					if (jfile == JFileChooser.APPROVE_OPTION) {
-						Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
 						this.httpsConfigWindow.setTrustStorefilepath(jFileChooser.getSelectedFile().getAbsoluteFile().getAbsolutePath() + File.separator +trustStoreName); 
-						this.getTrustStoreController().createTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(),this.httpsConfigWindow.getTrustStorefilepath(),ownerDialog);
+						this.getTrustStoreController().createTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword());
 						String msg = Language.translate("Your TrustStore has been created successfully!",Language.EN);
 						String title = Language.translate("TrustStore created",Language.EN);
 						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
@@ -769,7 +767,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 						this.getJPasswordFieldPassword().setText(trustStorePassword);
 						this.getJTextFieldTrustStoreName().setText(this.httpsConfigWindow.getTrustStorefilepath().substring(this.httpsConfigWindow.getTrustStorefilepath().lastIndexOf("\\") + 1));
 						this.getTrustStoreController().clearTableModel();
-						this.getTrustStoreController().getTrustedCertificatesList(this.httpsConfigWindow.getTrustStorefilepath(), this.httpsConfigWindow.getTrustStorePassword());
+						this.getTrustStoreController().getTrustedCertificatesList();
 						this.getjTableTrusTedCertificates().setModel(getTrustStoreController().getTableModel());
 						this.httpsConfigWindow.setTrustStoreButtonPressed("EditTrustStore");
 					}
@@ -818,7 +816,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 					if (option == 0) {
 						// ------------ Press OK -------------------------------
 						if (this.httpsConfigWindow.getTrustStorePassword().equals(oldPassword)){
-							this.getTrustStoreController().editTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(), newTrustStorePassword);
+							this.getTrustStoreController().changeTrustStorePassword(newTrustStorePassword);
 							String msg = Language.translate("Your TrustStore has been updated successfully!",Language.EN);
 							String title1 = Language.translate("TrustStore updated",Language.EN);
 							JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.INFORMATION_MESSAGE); 
@@ -865,11 +863,10 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 							String title1 = Language.translate("Certificate alias",Language.EN);
 							JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.INFORMATION_MESSAGE);
 						} else {
-							Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
 							// ------------ Press OK Button --------------------
-							this.getTrustStoreController().addCertificateToTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(), certificateToAdd, certificateAlias, ownerDialog);
+							this.getTrustStoreController().addCertificateToTrustStore(certificateToAdd, certificateAlias);
 							this.getTrustStoreController().clearTableModel();
-							this.getTrustStoreController().getTrustedCertificatesList(this.httpsConfigWindow.getTrustStorefilepath(), this.httpsConfigWindow.getTrustStorePassword());
+							this.getTrustStoreController().getTrustedCertificatesList();
 							this.getjTableTrusTedCertificates().setModel(this.getTrustStoreController().getTableModel());
 						}
 					}
@@ -900,11 +897,10 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 					int option = JOptionPane.showOptionDialog(null, msg,title, JOptionPane.NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 					
 					if (option == JOptionPane.YES_OPTION) {
-						Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
 						// ----- press OK Button ----------------------
-						this.getTrustStoreController().deleteCertificateFromTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword(), CertificateAliasToDelete, ownerDialog);
+						this.getTrustStoreController().deleteCertificateFromTrustStore(CertificateAliasToDelete);
 						this.getTrustStoreController().clearTableModel();
-						this.getTrustStoreController().getTrustedCertificatesList(this.httpsConfigWindow.getTrustStorefilepath(), this.httpsConfigWindow.getTrustStorePassword());
+						this.getTrustStoreController().getTrustedCertificatesList();
 						this.getjTableTrusTedCertificates().setModel(this.getTrustStoreController().getTableModel());
 					}
 				}
@@ -919,16 +915,16 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 				int row = this.getjTableTrusTedCertificates().getSelectedRow();
 				String alias = this.getjTableTrusTedCertificates().getValueAt(row, 0).toString();
 				// ---- Get informations of selected certificate --------------
-				CertificateSettings certificateSettings = this.getTrustStoreController().getCertificateSettings(alias, this.httpsConfigWindow.getTrustStorefilepath(), this.httpsConfigWindow.getTrustStorePassword());
+				CertificateProperties certificateProperties = this.getTrustStoreController().getCertificateProperties(alias);
 				
 				this.getJLabelAlias().setText(alias);
-				this.getJLabelValidity().setText(certificateSettings.getValidity());
-				this.getJLabelName().setText(certificateSettings.getKeyStoreSettings().getFullName());
-				this.getJLabelOrg().setText(certificateSettings.getKeyStoreSettings().getOrganization());
-				this.getJLabelOrgUnit().setText(certificateSettings.getKeyStoreSettings().getOrginazationalUnit());
-				this.getJLabelCityOrLocality().setText(certificateSettings.getKeyStoreSettings().getCityOrLocality());
-				this.getJLabelState().setText(certificateSettings.getKeyStoreSettings().getStateOrProvince());
-				this.getJLabelCountry().setText(certificateSettings.getKeyStoreSettings().getCoutryCode());
+				this.getJLabelValidity().setText(certificateProperties.getValidity());
+				this.getJLabelName().setText(certificateProperties.getCommonName());
+				this.getJLabelOrg().setText(certificateProperties.getOrganization());
+				this.getJLabelOrgUnit().setText(certificateProperties.getOrganizationalUnit());
+				this.getJLabelCityOrLocality().setText(certificateProperties.getCityOrLocality());
+				this.getJLabelState().setText(certificateProperties.getStateOrProvince());
+				this.getJLabelCountry().setText(certificateProperties.getCountryCode());
 				// ---- Display certificate informations ----------------------
 				String title = Language.translate("Certificate informations", Language.EN);
 				JOptionPane.showMessageDialog(null, getJPanelCertificateInfo(), title, JOptionPane.INFORMATION_MESSAGE);
