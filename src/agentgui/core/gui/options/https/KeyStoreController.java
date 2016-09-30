@@ -29,8 +29,11 @@
 package agentgui.core.gui.options.https;
 
 import java.awt.Dialog;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.InvalidKeyException;
+import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -38,26 +41,29 @@ import java.security.KeyStore.Entry;
 import java.security.KeyStore.PasswordProtection;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.SignatureException;
 import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Date;
 import java.util.Enumeration;
 
-import sun.security.tools.keytool.CertAndKeyGen;
-import sun.security.util.DerValue;
-import sun.security.x509.CertificateExtensions;
-import sun.security.x509.Extension;
-import sun.security.x509.KeyUsageExtension;
-import sun.security.x509.SubjectKeyIdentifierExtension;
-import sun.security.x509.X500Name;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.X500NameBuilder;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v1CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.crypto.params.RSAKeyParameters;
+import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 /**
  * This class allows the user to manage a KeyStore.
@@ -93,7 +99,7 @@ public class KeyStoreController extends TrustStoreController {
 		String filename;
 		try {
 			kpg = KeyPairGenerator.getInstance(ALGO_RSA);
-			kpg.initialize(1024);
+			kpg.initialize(keysize);
 
 			KeyPair kp = kpg.genKeyPair();
 //			kp.getPrivate().
@@ -101,67 +107,60 @@ public class KeyStoreController extends TrustStoreController {
 			KeyFactory fact = KeyFactory.getInstance(ALGO_RSA);
 
 			try {
-				RSAPublicKeySpec pub = fact.getKeySpec(kp.getPublic(), RSAPublicKeySpec.class);
-				pub.getModulus();
-				pub.getPublicExponent();
+				X509Certificate[] chain = new X509Certificate[1];
 
-				RSAPrivateKeySpec priv;
-				priv = fact.getKeySpec(kp.getPrivate(), RSAPrivateKeySpec.class);
-				priv.getModulus();
-				priv.getPrivateExponent();
+				RSAPublicKeySpec pub = fact.getKeySpec(kp.getPublic(), RSAPublicKeySpec.class);
 
 				filename = keyStorePath + keyStoreName + HttpsConfigWindow.KEYSTORE_FILENAME;
 
 				init(filename, keystorePassword);
 
-				CertAndKeyGen keypair = new CertAndKeyGen(ALGO_RSA, "SHA1WithRSA", null);
+				ContentSigner sigGen = new JcaContentSignerBuilder("SHA1withRSA").setProvider(new BouncyCastleProvider()).build(kp.getPrivate());
+				SubjectPublicKeyInfo subPubKeyInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(new RSAKeyParameters(false, pub.getModulus(), pub.getPublicExponent()));
 
-				X500Name x500Name = new X500Name(certificateProperties.getCommonName(), certificateProperties.getOrganizationalUnit(), certificateProperties.getOrganization(), certificateProperties.getCityOrLocality(), certificateProperties.getStateOrProvince(), certificateProperties.getCountryCode());
+				Date startDate = new Date();
+				Date endDate = new Date(System.currentTimeMillis() + Long.parseLong(validity) * 24 * 60 * 60);
 
-				keypair.generate(keysize);
-				PrivateKey privKey = keypair.getPrivateKey();
+				X500NameBuilder namebuilder = new X500NameBuilder(X500Name.getDefaultStyle());
+				namebuilder.addRDN(BCStyle.CN, certificateProperties.getCommonName());
+				namebuilder.addRDN(BCStyle.OU, certificateProperties.getOrganizationalUnit());
+				namebuilder.addRDN(BCStyle.O, certificateProperties.getOrganization());
+				namebuilder.addRDN(BCStyle.L, certificateProperties.getCityOrLocality());
+				namebuilder.addRDN(BCStyle.ST, certificateProperties.getStateOrProvince());
+				namebuilder.addRDN(BCStyle.C, certificateProperties.getCountryCode());
 
-				X509Certificate[] chain = new X509Certificate[1];
-				
-			    CertificateExtensions extensions = new CertificateExtensions();
+				X500Name x500Name = namebuilder.build();
 
-			    // Example extension.
-			    // See KeyTool source for more.
-			    /*
-			    boolean[] keyUsagePolicies = new boolean[9];
-			    keyUsagePolicies[0] = true; // Digital Signature
-			    keyUsagePolicies[2] = true; // Key encipherment
-			    KeyUsageExtension kue = new KeyUsageExtension(keyUsagePolicies);*/
-			    SubjectKeyIdentifierExtension skie = new SubjectKeyIdentifierExtension(keypair.getPublicKey().getEncodedInternal());
-			    
-			    byte[] keyUsageValue = new DerValue(DerValue.tag_OctetString, skie.getExtensionValue()).toByteArray();
-			    extensions.set(KeyUsageExtension.NAME, new Extension(
-			    		skie.getExtensionId(),
-			            false, // Critical
-			            keyUsageValue));
+				X509v1CertificateBuilder v1CertGen = new X509v1CertificateBuilder(
+						x500Name,
+						BigInteger.ONE,
+						startDate, endDate,
+						x500Name,
+						subPubKeyInfo);
 
-//				chain[0] = keypair.getSelfCertificate(x500Name, new Date(), Long.parseLong(validity) * 24 * 60 * 60, extensions);
-				chain[0] = keypair.getSelfCertificate(x500Name, new Date(), Long.parseLong(validity) * 24 * 60 * 60);
+				X509CertificateHolder certHolder = v1CertGen.build(sigGen);
 
-				trustStore.setKeyEntry(certificateProperties.getAlias(), privKey, keystorePassword.toCharArray(), chain);
+				JcaX509CertificateConverter converter = new JcaX509CertificateConverter()
+						.setProvider(new BouncyCastleProvider());
+				converter.getCertificate(certHolder);
+
+				chain[0] = converter.getCertificate(certHolder);
+
+				trustStore.setKeyEntry(certificateProperties.getAlias(), kp.getPrivate(), keystorePassword.toCharArray(), chain);
 
 				saveTrustStore();
 
 			} catch (InvalidKeySpecException e) {
 				e.printStackTrace();
-			} catch (KeyStoreException e) {
-				e.printStackTrace();
-			} catch (InvalidKeyException e) {
-				e.printStackTrace();
 			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (OperatorCreationException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (CertificateException e) {
 				e.printStackTrace();
-			} catch (SignatureException e) {
-				e.printStackTrace();
-			} catch (NoSuchProviderException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (KeyStoreException e) {
 				e.printStackTrace();
 			}
 
@@ -227,8 +226,25 @@ public class KeyStoreController extends TrustStoreController {
 	 * @param certificateName the certificate name
 	 * @param ownerDialog the owner dialog
 	 */
-	public void exportCertificate(String alias) {
-		getCertificate(alias);
+	public void exportCertificate(String alias, String certificatePath) {
+		X509Certificate cert = getCertificate(alias);
+
+		try {
+
+			File certFile = new File(certificatePath, alias + ".crt");
+			FileOutputStream os = new FileOutputStream(certFile);
+			os.write(cert.getEncoded());
+			os.flush();
+			os.close();
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (CertificateEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public void printAliasesList(String keyPasswd) {

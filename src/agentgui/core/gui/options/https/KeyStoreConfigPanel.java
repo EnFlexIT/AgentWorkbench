@@ -29,7 +29,6 @@
 package agentgui.core.gui.options.https;
 
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -972,7 +971,6 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 					if (option == 0) {
 						// ------------ Press OK -------------------------------
 						if (this.httpsConfigWindow.getKeyStorePassword().equals(oldPassword)){
-							Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
 							// ---- Edit the KeyStore Alias and Password ---
 							getKeyStoreController().editLonelyKeyEntry(this.httpsConfigWindow.getKeyAlias(), newKeyAlias, newKeyStorePassword, this.httpsConfigWindow.getKeyStorePassword());
 							String msg1 = Language.translate("Your keystore has been updated successfully!",Language.EN);
@@ -1017,12 +1015,12 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 //						getJTextFieldCertificatePath().setText(null);
 					} else {
 						// ------- Get Certificate Path --------------------
-//						String certificatePath = getJTextFieldCertificatePath().getText() + File.separator +getJTextFieldCertificateName().getText();
+						String certificatePath = getJTextFieldCertificatePath().getText() + File.separator +getJTextFieldCertificateName().getText();
 //						String validity = getJTextFieldCertificateValidity().getText();
 						// ------- Get KeySTore information ----------------
 						String alias = getKeyStoreController().getFirstCertificateProperties().getAlias();
 						// ------- Generate the Certificate -----------------
-						getKeyStoreController().exportCertificate(alias);
+						getKeyStoreController().exportCertificate(alias, certificatePath);
 						String msg = Language.translate("Your certificate has been created successfully!",Language.EN);
 						String title1 = Language.translate("Certificate generated",Language.EN);
 						JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.INFORMATION_MESSAGE);
