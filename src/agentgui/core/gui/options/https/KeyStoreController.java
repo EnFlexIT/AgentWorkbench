@@ -90,13 +90,12 @@ public class KeyStoreController extends TrustStoreController {
 	 * 
 	 * @param informations of the provider
 	 * @param alias for the KeyStore
-	 * @param keyStoreName
+	 * @param keyStoreFile
 	 * @param keystorePassword
 	 * @param keyStorePath
 	 */
-	public void createKeyStore(CertificateProperties certificateProperties, String keyStoreName, String keystorePassword, String keyStorePath, String validity) {
+	public void createKeyStore(CertificateProperties certificateProperties, File keyStoreFile, String keystorePassword, String validity) {
 		KeyPairGenerator kpg;
-		String filename;
 		try {
 			kpg = KeyPairGenerator.getInstance(ALGO_RSA);
 			kpg.initialize(keysize);
@@ -111,9 +110,7 @@ public class KeyStoreController extends TrustStoreController {
 
 				RSAPublicKeySpec pub = fact.getKeySpec(kp.getPublic(), RSAPublicKeySpec.class);
 
-				filename = keyStorePath + keyStoreName + HttpsConfigWindow.KEYSTORE_FILENAME;
-
-				init(filename, keystorePassword);
+				init(keyStoreFile, keystorePassword);
 
 				ContentSigner sigGen = new JcaContentSignerBuilder("SHA1withRSA").setProvider(new BouncyCastleProvider()).build(kp.getPrivate());
 				SubjectPublicKeyInfo subPubKeyInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(new RSAKeyParameters(false, pub.getModulus(), pub.getPublicExponent()));

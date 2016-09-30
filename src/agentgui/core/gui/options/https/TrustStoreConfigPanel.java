@@ -752,12 +752,12 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 					getJFileChooser();
 					int jfile = jFileChooser.showSaveDialog(null);
 					if (jfile == JFileChooser.APPROVE_OPTION) {
-						this.httpsConfigWindow.setTrustStorefilepath(jFileChooser.getSelectedFile().getAbsoluteFile().getAbsolutePath() + File.separator +trustStoreName); 
-						this.getTrustStoreController().createTrustStore(this.httpsConfigWindow.getTrustStorefilepath(),this.httpsConfigWindow.getTrustStorePassword());
+						this.httpsConfigWindow.setTrustStoreFile(new File(jFileChooser.getSelectedFile().getAbsoluteFile().getAbsolutePath() + File.separator +trustStoreName)); 
+						this.getTrustStoreController().createTrustStore(this.httpsConfigWindow.getTrustStoreFile(),this.httpsConfigWindow.getTrustStorePassword());
 						String msg = Language.translate("Your TrustStore has been created successfully!",Language.EN);
 						String title = Language.translate("TrustStore created",Language.EN);
 						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
-						this.httpsConfigWindow.getJLabelTrustStoreLocationPath().setText(this.httpsConfigWindow.getTrustStorefilepath());
+						this.httpsConfigWindow.getJLabelTrustStoreLocationPath().setText(this.httpsConfigWindow.getTrustStoreFile().getAbsolutePath());
 						this.getJTextFieldTrustStoreName().setEnabled(false);
 						this.getJLabelCertificatesList().setVisible(true);
 						this.getScrollPane().setVisible(true);
@@ -765,7 +765,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 						this.getJButtonRemoveCertificate().setVisible(true);
 						this.getJPasswordFieldConfirmPassword().setText(null);
 						this.getJPasswordFieldPassword().setText(trustStorePassword);
-						this.getJTextFieldTrustStoreName().setText(this.httpsConfigWindow.getTrustStorefilepath().substring(this.httpsConfigWindow.getTrustStorefilepath().lastIndexOf("\\") + 1));
+						this.getJTextFieldTrustStoreName().setText(this.httpsConfigWindow.getTrustStoreFile().getAbsolutePath());
 						this.getTrustStoreController().clearTableModel();
 						this.getTrustStoreController().getTrustedCertificatesList();
 						this.getjTableTrusTedCertificates().setModel(getTrustStoreController().getTableModel());
@@ -799,11 +799,11 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				} else {
 					String newTrustStorePassword = new String(this.getJPasswordFieldPassword().getPassword());
-					String keystorename = this.httpsConfigWindow.getTrustStorefilepath().substring(this.httpsConfigWindow.getTrustStorefilepath().lastIndexOf("\\") + 1);
+					String keystoreName = this.httpsConfigWindow.getTrustStoreFile().getName();
 					// --- Create JOptionPane to enter the old TrustStore password ---
 					JPanel jPanelPassword = new JPanel();
 					String msg1 = Language.translate("Please enter the old password for  ",Language.EN);
-					JLabel jLabelEnterPassword = new JLabel( msg1 + keystorename + "  :");
+					JLabel jLabelEnterPassword = new JLabel( msg1 + keystoreName + "  :");
 					jLabelEnterPassword.setFont(new Font("Dialog", Font.BOLD, 11));
 					JPasswordField jPasswordField = new JPasswordField(10);
 					jPanelPassword.add(jLabelEnterPassword);
@@ -834,7 +834,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}else if (ae.getSource() == this.getJButtonAddCertificate()) {
 			// ----- Add certificate to TrustStore ----------------------
 			// ----- Verify if there is a TrustStore opened ----
-			if (this.httpsConfigWindow.getTrustStorefilepath() == null) {
+			if (this.httpsConfigWindow.getTrustStoreFile() == null) {
 				String msg = Language.translate("Please open a Truststore first!",Language.EN);
 				String title = Language.translate("Warning message",Language.EN);
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
@@ -877,7 +877,7 @@ public class TrustStoreConfigPanel extends JPanel implements ActionListener,Mous
 		}else if (ae.getSource() == this.getJButtonRemoveCertificate()) {
 			// ----- Delete certificate to TrustStore ----------------------
 			// ----- Verify if there is a TrustStore opened ----------------
-			if (this.httpsConfigWindow.getTrustStorefilepath() == null) {
+			if (this.httpsConfigWindow.getTrustStoreFile() == null) {
 				String msg = Language.translate("Please, open a Truststore first!",Language.EN);
 				String title = Language.translate("Warning message",Language.EN);
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);

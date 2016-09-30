@@ -33,6 +33,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Dimension;
@@ -73,9 +74,9 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	private JButton jButtonEditMTP;
 	private JComboBoxMtpProtocol jComboBoxMtpProtocol;
 
-	private String keyStore;
+	private File keyStore;
 	private String keyStorePassword;
-	private String trustStore;
+	private File trustStore;
 	private String trustStorePassword;
 	private String currentMTP;
 	private String action;
@@ -227,14 +228,14 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	 * This method initializes keyStore.
 	 * @return keyStore
 	 */
-	private String getKeyStore() {
+	private File getKeyStore() {
 		return keyStore;
 	}
 	/**
 	 * Sets keyStore.
 	 * @param keyStore
 	 */
-	private void setKeyStore(String keyStore) {
+	private void setKeyStore(File keyStore) {
 		this.keyStore = keyStore;
 	}
 	/**
@@ -255,14 +256,14 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	 * This method initializes trustStore.
 	 * @return trustStore
 	 */
-	private String getTrustStore() {
+	private File getTrustStore() {
 		return trustStore;
 	}
 	/**
 	 * Sets trustStore.
 	 * @param trustStore
 	 */
-	private void setTrustStore(String trustStore) {
+	private void setTrustStore(File trustStore) {
 		this.trustStore = trustStore;
 	}
 	/**
@@ -324,12 +325,12 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 			// --- Wait for the user -------------------------------------------
 			if (httpsConfigWindow.isCanceled() == false) {
 				// ---- Return the KeyStore and TrustStore chosen by the user --
-				this.setKeyStore(httpsConfigWindow.getKeyStorefilepath());
-				this.setTrustStore(httpsConfigWindow.getTrustStorefilepath());
+				this.setKeyStore(httpsConfigWindow.getKeyStoreFile());
+				this.setTrustStore(httpsConfigWindow.getTrustStoreFile());
 				this.setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
 				this.setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
-				this.getJTextFieldKeyStorePath().setText(this.getKeyStore());
-				this.getJTextFieldTrustStorePath().setText(this.getTrustStore());
+				this.getJTextFieldKeyStorePath().setText(this.getKeyStore().getAbsolutePath());
+				this.getJTextFieldTrustStorePath().setText(this.getTrustStore().getAbsolutePath());
 			} 
 		} else if (this.action == "COMBO") {
 			// --- In case that the user choose to configure new HTTPS MTP ------
@@ -337,12 +338,12 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 			// --- Wait for the user --------------------------------------------
 			if (httpsConfigWindow.isCanceled() == false) {
 				// ---- Return the KeyStore and TrustStore chosen by the user ---
-				this.setKeyStore(httpsConfigWindow.getKeyStorefilepath());
-				this.setTrustStore(httpsConfigWindow.getTrustStorefilepath());
+				this.setKeyStore(httpsConfigWindow.getKeyStoreFile());
+				this.setTrustStore(httpsConfigWindow.getTrustStoreFile());
 				this.setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
 				this.setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
-				this.getJTextFieldKeyStorePath().setText(this.getKeyStore());
-				this.getJTextFieldTrustStorePath().setText(this.getTrustStore());
+				this.getJTextFieldKeyStorePath().setText(this.getKeyStore().getAbsolutePath());
+				this.getJTextFieldTrustStorePath().setText(this.getTrustStore().getAbsolutePath());
 			} else {
 				// ---- Button Cancel is pressed -------------------------------
 				getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
@@ -399,12 +400,12 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 		MtpProtocol mtpProtocol = this.getGlobalInfo().getMtpProtocol();
 		if (mtpProtocol.equals(MtpProtocol.HTTPS)) {
 			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTPS);
-			this.setKeyStore(this.getGlobalInfo().getKeyStoreFile());
-			this.setTrustStore(this.getGlobalInfo().getTrustStoreFile());
+			this.setKeyStore(new File(this.getGlobalInfo().getKeyStoreFile()));
+			this.setTrustStore(new File(this.getGlobalInfo().getTrustStoreFile()));
 			this.setKeyStorePassword(this.getGlobalInfo().getKeyStorePassword());
 			this.setTrustStorePassword(this.getGlobalInfo().getTrustStorePassword());
-			this.getJTextFieldKeyStorePath().setText(this.getKeyStore());
-			this.getJTextFieldTrustStorePath().setText(this.getTrustStore());
+			this.getJTextFieldKeyStorePath().setText(this.getKeyStore().getAbsolutePath());
+			this.getJTextFieldTrustStorePath().setText(this.getTrustStore().getAbsolutePath());
 			this.setCurrentMTP(MtpProtocol.HTTPS.toString());
 		} else {
 			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
@@ -419,8 +420,8 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	public void setFormData2Global() {
 		if (this.getJComboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTPS) {
 			this.getGlobalInfo().setMtpProtocol(MtpProtocol.HTTPS);
-			this.getGlobalInfo().setKeyStoreFile(this.getKeyStore());
-			this.getGlobalInfo().setTrustStoreFile(this.getTrustStore());
+			this.getGlobalInfo().setKeyStoreFile(this.getKeyStore().getAbsolutePath());
+			this.getGlobalInfo().setTrustStoreFile(this.getTrustStore().getAbsolutePath());
 			this.getGlobalInfo().setKeyStorePassword(this.getKeyStorePassword());
 			this.getGlobalInfo().setTrustStorePassword(this.getTrustStorePassword());
 		} else if (this.getJComboBoxMtpProtocol().getSelectedProtocol()==MtpProtocol.HTTP) {

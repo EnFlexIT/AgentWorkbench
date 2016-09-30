@@ -823,7 +823,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		this.getJTextFieldOrganizationalUnit().setText(keyStoreSettings.getOrganizationalUnit());
 		this.getJTextFieldState().setText(keyStoreSettings.getStateOrProvince());
 		this.getJTextFieldValidity().setText(keyStoreSettings.getValidity());
-		this.getJTextFieldKeyStoreName().setText(this.httpsConfigWindow.getKeyStorefilepath().substring(this.httpsConfigWindow.getKeyStorefilepath().lastIndexOf("\\") + 1));
+		this.getJTextFieldKeyStoreName().setText(this.httpsConfigWindow.getKeyStoreFile().getName());
 		this.getJTextFieldAlias().setText(this.httpsConfigWindow.getKeyAlias());
 		this.getJPasswordField().setText(getKeyStoreController().getTrustStorePassword());
 		this.getJPasswordConfirmPassword().setText(null);
@@ -906,23 +906,24 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 					int jfile = jFileChooserOpen.showSaveDialog(null);
 					if (jfile == JFileChooser.APPROVE_OPTION) {
 						// ---- Get The selected directory path ------------------------------------
-						String keyStorePath = jFileChooserOpen.getSelectedFile().getAbsoluteFile().getAbsolutePath() + File.separator;
+						File keyStoreFile = new File(jFileChooserOpen.getSelectedFile().getAbsoluteFile().getAbsolutePath() + File.separator +keystoreName + HttpsConfigWindow.KEYSTORE_FILENAME);
+
 						// ---- Create the KeyStore with informations  entered by the User ---------
-						getKeyStoreController().createKeyStore(certificateProperties, keystoreName, keystorePassword, keyStorePath, keyStoreValidity);
+						getKeyStoreController().createKeyStore(certificateProperties, keyStoreFile, keystorePassword, keyStoreValidity);
 						String msg = Language.translate("Your keystore has been created successfully!",Language.EN);
 						String title = Language.translate("KeyStore created",Language.EN);
 						JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
 						
-						this.httpsConfigWindow.setKeyStorefilepath(keyStorePath + keystoreName + HttpsConfigWindow.KEYSTORE_FILENAME);
+						this.httpsConfigWindow.setKeyStoreFile(keyStoreFile);
 						this.httpsConfigWindow.setKeyStorePassword(keystorePassword);
 						this.httpsConfigWindow.setKeyAlias(this.getJTextFieldAlias().getText());
 						// ---- Get the Content of the keyStore ------------------------------------
-						getKeyStoreController().openTrustStore(this.httpsConfigWindow.getKeyStorefilepath(), keystorePassword);
+						getKeyStoreController().openTrustStore(this.httpsConfigWindow.getKeyStoreFile(), keystorePassword);
 						CertificateProperties keyStoreSettings = getKeyStoreController().getFirstCertificateProperties();
 						
 						fillFields(keyStoreSettings);
 
-						this.httpsConfigWindow.getJLabelKeyStoreLocationPath().setText(keyStorePath + keystoreName + HttpsConfigWindow.KEYSTORE_FILENAME);
+						this.httpsConfigWindow.getJLabelKeyStoreLocationPath().setText(keyStoreFile.getAbsolutePath());
 						this.httpsConfigWindow.setKeyStoreButtonPressed("UpdateKeyStore");
 					}
 				}
@@ -954,7 +955,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 				} else {
 					String newKeyAlias = this.getJTextFieldAlias().getText();
 					String newKeyStorePassword = new String(this.getJPasswordField().getPassword());
-					String keyStoreName = this.httpsConfigWindow.getKeyStorefilepath().substring(this.httpsConfigWindow.getKeyStorefilepath().lastIndexOf("\\") + 1);
+					String keyStoreName = this.httpsConfigWindow.getKeyStoreFile().getName();
 					
 					// --- Create JOptionPane to enter the old KeyStore password ---
 					JPanel jPanelPassword = new JPanel();
@@ -993,7 +994,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		}else if (ae.getSource() == this.getJButtonCertificate()) {
 			// ---- Export the certificate ---------------------------
 			// ----- Verify if there is a KeyStore opened ------------
-			if (this.httpsConfigWindow.getKeyStorefilepath() == null) {
+			if (this.httpsConfigWindow.getKeyStoreFile() == null) {
 				String msg = Language.translate("Please open a Keystore first!",Language.EN);
 				String title = Language.translate("Warning message",Language.EN);
 				JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
@@ -1002,7 +1003,7 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 				String title = Language.translate("Export Certificate",Language.EN);
 				int option = JOptionPane.showOptionDialog(null, getJPanelCertificate(), title, JOptionPane.NO_OPTION,JOptionPane.PLAIN_MESSAGE, null, options, jTextFieldCertificateName);
 				if (option == 0) {
-					if (this.httpsConfigWindow.getKeyStorefilepath() == null) {
+					if (this.httpsConfigWindow.getKeyStoreFile() == null) {
 						String msg = Language.translate("Please open a Keystore first!",Language.EN);
 						String title1 = Language.translate("Warning message",Language.EN);
 						JOptionPane.showMessageDialog(this, msg, title1, JOptionPane.WARNING_MESSAGE);

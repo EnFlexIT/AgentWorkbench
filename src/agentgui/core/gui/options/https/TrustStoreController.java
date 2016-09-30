@@ -65,7 +65,6 @@ public class TrustStoreController {
 	private FileInputStream trustStoreInputStream = null;
 	private File trustStoreFile;
 	private FileOutputStream trustStoreOutputStream;
-	private String trustStoreName;
 	private String trustStorePassword;
 
 	public String getTrustStorePassword() {
@@ -90,15 +89,15 @@ public class TrustStoreController {
 	/**
 	 * This Initializes the TrustStoreController.
 	 */
-	public TrustStoreController(Dialog ownerDialog, String trustStoreName, String trustStorePassword, boolean edit) {
+	public TrustStoreController(Dialog ownerDialog, File trustStoreFile, String trustStorePassword, boolean edit) {
 		this.ownerDialog = ownerDialog;
 		try {
 			trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			if (trustStoreName != null && trustStorePassword != null) {
+			if (trustStoreFile != null && trustStorePassword != null) {
 				if(edit){
-					openTrustStore(trustStoreName, trustStorePassword);
+					openTrustStore(trustStoreFile, trustStorePassword);
 				} else {
-					createTrustStore(trustStoreName, trustStorePassword);
+					createTrustStore(trustStoreFile, trustStorePassword);
 				}
 			}
 		} catch (KeyStoreException e) {
@@ -110,20 +109,17 @@ public class TrustStoreController {
 	 * This method allows the user to create a TrustStore and protect its
 	 * integrity with a password.
 	 *
-	 * @param trustStoreName the TrustStore name
+	 * @param trustStoreFile the TrustStore file
 	 * @param trustStorePassword the TrustStore password
-	 * @param trustStorePath the TrustStore path
-	 * @param ownerDialog the owner dialog
 	 */
-	public void createTrustStore(String trustStoreName, String trustStorePassword) {
-		openTrustStore(trustStoreName, trustStorePassword);
+	public void createTrustStore(File trustStoreFile, String trustStorePassword) {
+		openTrustStore(trustStoreFile, trustStorePassword);
 		saveTrustStore();
 	}
 
-	public void init(String trustStoreName, String trustStorePassword) {
-		this.trustStoreName = trustStoreName;
+	public void init(File trustStoreFile, String trustStorePassword) {
 		this.trustStorePassword = trustStorePassword;
-		trustStoreFile = new File(trustStoreName);
+		this.trustStoreFile = trustStoreFile;
 		try {
 			trustStore.load(null, trustStorePassword.toCharArray());
 			initialized = true;
@@ -139,18 +135,16 @@ public class TrustStoreController {
 	/**
 	 * This method open a TrustStore. It returns true if the password is correct.
 	 *
-	 * @param trustStoreName the TrustStore name
+	 * @param trustStoreFile the TrustStore name
 	 * @param trustStorePassword the TrustStore password
-	 * @param ownerDialog the owner dialog
 	 * @return true, if successful
 	 */
-	public boolean openTrustStore(String trustStoreName, String trustStorePassword) {
+	public boolean openTrustStore(File trustStoreFile, String trustStorePassword) {
 		boolean successful = false;
-		init(trustStoreName, trustStorePassword);
+		init(trustStoreFile, trustStorePassword);
 		this.trustStoreInputStream = null;
 
 		try {
-			trustStoreFile = new File(trustStoreName);
 			if (trustStoreFile.exists()) {
 				trustStoreInputStream = new FileInputStream(trustStoreFile);
 			}
@@ -175,7 +169,7 @@ public class TrustStoreController {
 	public void saveTrustStore(String trustStorePassword) {
 		try {
 			// ----- Create a FileOutputStream --------------------------------
-			trustStoreOutputStream = new FileOutputStream(trustStoreName);
+			trustStoreOutputStream = new FileOutputStream(trustStoreFile);
 			// ----- Store the TrustStore -------------------------------
 			trustStore.store(trustStoreOutputStream, trustStorePassword.toCharArray());
 			// ----- Close the FileOutputStream -------------------------------
@@ -193,8 +187,6 @@ public class TrustStoreController {
 	/**
 	 * This method allows the user to change the password of a TrustStore.
 	 *
-	 * @param trustStoreName the TrustStore name
-	 * @param oldTrustStorePassword the old TrustStore password
 	 * @param newTrustStorePassword the new TrustStore password
 	 */
 	public void changeTrustStorePassword(String newTrustStorePassword) {
@@ -219,11 +211,8 @@ public class TrustStoreController {
 	/**
 	 * This method allows the user to add certificate to a TrustStore.
 	 *
-	 * @param trustStoreName the TrustStore name
-	 * @param trustStorePassword the TrustStore password
 	 * @param certificateToAdd the certificate to add
 	 * @param certificateAlias the certificate alias
-	 * @param ownerDialog the owner dialog
 	 */
 	public void addCertificateToTrustStore(String certificateToAdd, String certificateAlias) {
 		InputStream certInputStream = null;
@@ -262,10 +251,7 @@ public class TrustStoreController {
 	/**
 	 * This method allows the user to delete certificate from TrustStore.
 	 *
-	 * @param trustStoreName the TrustStore name
-	 * @param trustStorePassword the TrustStore password
 	 * @param certificateAliasToDelete the certificate alias to delete
-	 * @param ownerDialog the owner dialog
 	 */
 	public void deleteCertificateFromTrustStore(String certificateAliasToDelete) {
 		try {
@@ -351,8 +337,6 @@ public class TrustStoreController {
 	/**
 	 * Get TrustedCertificates list .
 	 *
-	 * @param trustStoreName the TrustStore name
-	 * @param trustStorePassword the TrustStore password
 	 * @return
 	 */
 	public Enumeration<String> getTrustedCertificatesList() {
@@ -390,8 +374,6 @@ public class TrustStoreController {
 	 * Gets the certificate properties.
 	 *
 	 * @param alias the certificate alias
-	 * @param trustStoreName the TrustStore name
-	 * @param trustStorePassword TrustStore password
 	 * @return the certificate properties
 	 */
 	public CertificateProperties getCertificateProperties(String alias) {
