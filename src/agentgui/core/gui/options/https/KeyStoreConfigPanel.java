@@ -307,6 +307,8 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		gbc_jLabelDays.gridx = 2;
 		gbc_jLabelDays.gridy = 11;
 		add(getJLabelDays(), gbc_jLabelDays);
+		
+		getKeyStoreController(); // init the controller
 	}
 	/**
 	 * Create the JPanel.

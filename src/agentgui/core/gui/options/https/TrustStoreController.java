@@ -77,14 +77,30 @@ public class TrustStoreController {
 	}
 
 	private Dialog ownerDialog;
+	private boolean initialized = false;
 
+	/*
+	 * generates a blank controller, which still needs to initialize the trustStore
+	 */
+	public TrustStoreController(Dialog ownerDialog){
+		this(ownerDialog, null, null, false);
+	}
+	
+	
 	/**
 	 * This Initializes the TrustStoreController.
 	 */
-	public TrustStoreController(Dialog ownerDialog) {
+	public TrustStoreController(Dialog ownerDialog, String trustStoreName, String trustStorePassword, boolean edit) {
 		this.ownerDialog = ownerDialog;
 		try {
 			trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			if (trustStoreName != null && trustStorePassword != null) {
+				if(edit){
+					openTrustStore(trustStoreName, trustStorePassword);
+				} else {
+					createTrustStore(trustStoreName, trustStorePassword);
+				}
+			}
 		} catch (KeyStoreException e) {
 			e.printStackTrace();
 		}
@@ -110,6 +126,7 @@ public class TrustStoreController {
 		trustStoreFile = new File(trustStoreName);
 		try {
 			trustStore.load(null, trustStorePassword.toCharArray());
+			initialized = true;
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (CertificateException e) {
@@ -118,6 +135,7 @@ public class TrustStoreController {
 			e.printStackTrace();
 		}
 	}
+
 	/**
 	 * This method open a TrustStore. It returns true if the password is correct.
 	 *
@@ -393,6 +411,10 @@ public class TrustStoreController {
 			e.printStackTrace();
 		}
 		return (X509Certificate) cert;
+	}
+	
+	public boolean isInitzialized(){
+		return initialized ;
 	}
 
 }

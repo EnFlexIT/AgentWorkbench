@@ -714,10 +714,13 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 
 		// ---- Get the Content of the keyStore ----------------------
 		CertificateProperties certificateProperties = null;
-
-		certificateProperties = getKeyStoreConfigPanel().getKeyStoreController().getFirstCertificateProperties();
+		KeyStoreController controller = getKeyStoreConfigPanel().getKeyStoreController();
+		controller.openTrustStore(getKeyStorefilepath(), getKeyStorePassword());
+		if (controller.isInitzialized()) {
+			certificateProperties = getKeyStoreConfigPanel().getKeyStoreController().getFirstCertificateProperties();
+		} 
 		if (certificateProperties != null) {
-			
+
 			getKeyStoreConfigPanel().fillFields(certificateProperties);
 			setKeyAlias(certificateProperties.getAlias());
 
@@ -739,6 +742,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		this.getTrustStoreConfigPanel().getJButtonAddCertificate().setVisible(true);
 		this.getTrustStoreConfigPanel().getJButtonRemoveCertificate().setVisible(true);
 		getTrustStoreConfigPanel().getTrustStoreController().clearTableModel();
+		getTrustStoreConfigPanel().getTrustStoreController().openTrustStore(getTrustStorefilepath(), getTrustStorePassword());
 		getTrustStoreConfigPanel().getTrustStoreController().getTrustedCertificatesList();
 		this.getTrustStoreConfigPanel().getjTableTrusTedCertificates().setModel(getTrustStoreConfigPanel().getTrustStoreController().getTableModel());
 		this.getTrustStoreConfigPanel().getJPasswordFieldPassword().setText(getTrustStorePassword());
@@ -803,9 +807,15 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 					if (option == 0) {
 						// ------------ Press OK --------------------------------
 						keyStorePassword = new String(jPasswordField.getPassword());
-					
-						if(getKeyStoreConfigPanel().getKeyStoreController().openTrustStore(keystorename, keyStorePassword)){
-							setKeyAlias(getKeyStoreConfigPanel().getKeyStoreController().getFirstCertificateProperties().getAlias());
+
+						if (getKeyStoreConfigPanel()
+								.getKeyStoreController()
+								.openTrustStore(keystorename, keyStorePassword)) {
+							setKeyAlias(
+									getKeyStoreConfigPanel()
+									.getKeyStoreController()
+									.getFirstCertificateProperties()
+									.getAlias());
 						}
 						if (getKeyAlias() == null) {
 							jLabelKeyStoreLocationPath.setText(null);
