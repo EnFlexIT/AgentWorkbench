@@ -28,6 +28,9 @@
  */
 package agentgui.core.config.auth;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -35,6 +38,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -112,14 +116,14 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 
 		this.setSize(770, 440);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, 1.0 };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0 };
 		gridBagLayout.columnWeights = new double[] { 1.0 };
 		this.setLayout(gridBagLayout);
 		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
 		GridBagConstraints gbc_btnSave = new GridBagConstraints();
 		gbc_btnSave.anchor = GridBagConstraints.EAST;
-		gbc_btnSave.insets = new Insets(0, 0, 5, 0);
+		gbc_btnSave.insets = new Insets(10, 10, 10, 10);
 		gbc_btnSave.gridx = 0;
 		gbc_btnSave.gridy = 0;
 		this.add(getBtnSave(), gbc_btnSave);
@@ -132,13 +136,15 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 
 		GridBagConstraints gbc_btnConfigTrust = new GridBagConstraints();
 		gbc_btnConfigTrust.anchor = GridBagConstraints.EAST;
-		gbc_btnConfigTrust.insets = new Insets(0, 0, 5, 0);
+		gbc_btnConfigTrust.insets = new Insets(0, 0, 5, 10);
 		gbc_btnConfigTrust.gridx = 0;
 		gbc_btnConfigTrust.gridy = 2;
 		this.add(getBtnConfigTrust(), gbc_btnConfigTrust);
 
 		GridBagConstraints gbc_spLog = new GridBagConstraints();
 		gbc_spLog.fill = GridBagConstraints.BOTH;
+		gbc_spLog.insets = new Insets(10, 10, 10, 10);
+
 		gbc_spLog.gridx = 0;
 		gbc_spLog.gridy = 3;
 		add(getSpLog(), gbc_spLog);
@@ -148,7 +154,7 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 	private JScrollPane getSpLog() {
 		if (spLog == null) {
 			spLog = new JScrollPane();
-			spLog.setColumnHeaderView(getTaLog());
+			spLog.setViewportView(getTaLog()); // ColumnHeaderView();
 		}
 		return spLog;
 	}
@@ -171,9 +177,16 @@ public class AuthOptions extends AbstractOptionTab implements ActionListener {
 
 	private JButton getBtnSave() {
 		if (btnSave == null) {
-			btnSave = new JButton(Language.translate("Speichern"));
+			final ImageIcon iconSave = new ImageIcon( this.getClass().getResource( Application.getGlobalInfo().getPathImageIntern() + "MBsave.png") );
+
+			btnSave = new JButton();
 			btnSave.setActionCommand(COMMAND_SAVE);
 			btnSave.addActionListener(this);
+			btnSave.setToolTipText(Language.translate("Speichern"));
+			btnSave.setForeground(new Color(0, 0, 255));
+			btnSave.setFont(new Font("Dialog", Font.BOLD, 12));
+			btnSave.setPreferredSize(new Dimension(26, 26));
+			btnSave.setIcon(iconSave);
 		}
 		return btnSave;
 	}

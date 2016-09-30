@@ -123,7 +123,10 @@ public class SimpleOIDCClient {
 	private JWTClaimsSet idClaims;
 
 	public void reset() {
-		
+		accessToken = null;
+		idToken = null;
+		userInfoClaims = null;
+		idClaims = null;
 	}
 	
 	/*
