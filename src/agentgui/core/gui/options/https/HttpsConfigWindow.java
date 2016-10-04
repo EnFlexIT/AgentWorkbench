@@ -184,7 +184,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	 * Initialize the contents of the dialog.
 	 */
 	private void initialize() {
-		this.setTitle(Language.translate("Agent.GUI: HTTPS Configuration", Language.EN));
+		this.setTitle(Language.translate("[EXPERIMENTAL] Agent.GUI: HTTPS Configuration", Language.EN));
 		this.setIconImage(image);
 		this.setBounds(100, 100, 820, 590);
 		this.setLocationRelativeTo(null);
