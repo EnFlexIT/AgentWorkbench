@@ -24,7 +24,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	public static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/vanilla/profile.jsp";
 	public static final String DEBUG_CLIENT_ID = "testclient";
 	public static final String DEBUG_CLIENT_SECRET = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
-
 	private static final String COMMAND_CONNECT = "connectOIDC";
 
 	private JLabel lblOIDCValues;
@@ -42,8 +41,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	private JLabel lblClientId;
 	private JTextField tfClientSecret;
 	private JLabel lblClientSecret;
-
-	private JCheckBox cbTrustEverybody;
 
 	private ActionListener parentGUI;
 	private OIDCAuthorization owner;
@@ -181,12 +178,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		gbc_tfClientSecret.gridx = 2;
 		gbc_tfClientSecret.gridy = 5;
 		// this.add(getTfLicenseServer(), gbc_tfLicenseServer);
-		GridBagConstraints gbc_cbTrustEverybody = new GridBagConstraints();
-		gbc_cbTrustEverybody.anchor = GridBagConstraints.WEST;
-		gbc_cbTrustEverybody.insets = new Insets(0, 0, 0, 10);
-		gbc_cbTrustEverybody.gridx = 2;
-		gbc_cbTrustEverybody.gridy = 2;
-		this.add(getCbTrustEverybody(), gbc_cbTrustEverybody);
 		
 		bConnect.setText(Language.translate("Verbinden"));
 		GridBagConstraints gbc_btnResult = new GridBagConstraints();
@@ -303,13 +294,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 			lblClientSecret = new JLabel(Language.translate("Client-Secret"));
 		}
 		return lblClientSecret;
-	}
-
-	public JCheckBox getCbTrustEverybody() {
-		if (cbTrustEverybody == null) {
-			cbTrustEverybody = new JCheckBox(Language.translate("Jedem vertrauen"));
-		}
-		return cbTrustEverybody;
 	}
 
 	/* (non-Javadoc)

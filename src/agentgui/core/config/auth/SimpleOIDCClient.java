@@ -21,23 +21,18 @@
 
 package agentgui.core.config.auth;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
+import java.net.URLConnection;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -122,13 +117,15 @@ public class SimpleOIDCClient {
 	private JSONObject userInfoClaims;
 	private JWTClaimsSet idClaims;
 
+	private File trustStoreFile;
+
 	public void reset() {
 		accessToken = null;
 		idToken = null;
 		userInfoClaims = null;
 		idClaims = null;
 	}
-	
+
 	/*
 	 * Issuer discovery
 		The WebFinger protocol is used to find the OpenID Provider (OP). The library does not have any out-of-the box support for WebFinger, so in the following example we assume you already have acquired the issuer URL of the OP (possibly from developer documentation).
@@ -176,7 +173,10 @@ public class SimpleOIDCClient {
 	public void retrieveProviderMetadata() throws IOException, ParseException {
 		URL providerConfigurationURL = issuerURI.resolve(URLPATH_WELL_KNOWN_OPENID).toURL();
 //		System.out.println(providerConfigurationURL);
-		InputStream stream = providerConfigurationURL.openStream();
+		URLConnection conn = providerConfigurationURL.openConnection();
+
+		Trust.trustSpecific((HttpsURLConnection) conn, trustStoreFile);
+		InputStream stream = conn.getInputStream();
 		// Read all data from URL
 		String providerInfo = null;
 		try (java.util.Scanner s = new java.util.Scanner(stream)) {
@@ -227,7 +227,7 @@ public class SimpleOIDCClient {
 
 		// Make registration request
 		OIDCClientRegistrationRequest registrationRequest = new OIDCClientRegistrationRequest(providerMetadata.getRegistrationEndpointURI(), clientMetadata, initialAccessToken);
-		HTTPResponse regHTTPResponse = registrationRequest.toHTTPRequest().send();
+		HTTPResponse regHTTPResponse = registrationRequest.toHTTPRequest().send(Trust.getAllHostsValid(), Trust.getSocketFactory(trustStoreFile));
 
 		// Parse and check response
 		ClientRegistrationResponse registrationResponse = OIDCClientRegistrationResponseParser.parse(regHTTPResponse);
@@ -389,7 +389,7 @@ public class SimpleOIDCClient {
 
 		HTTPResponse tokenHTTPResp = null;
 		try {
-			tokenHTTPResp = tokenReq.toHTTPRequest().send(HttpsURLConnection.getDefaultHostnameVerifier(),HttpsURLConnection.getDefaultSSLSocketFactory());
+			tokenHTTPResp = tokenReq.toHTTPRequest().send(Trust.getAllHostsValid(), Trust.getSocketFactory(trustStoreFile));
 		} catch (SerializeException | IOException e) {
 			// TODO proper error handling
 			e.printStackTrace();
@@ -454,7 +454,7 @@ public class SimpleOIDCClient {
 
 		HTTPResponse userInfoHTTPResp = null;
 		try {
-			userInfoHTTPResp = userInfoReq.toHTTPRequest().send(HttpsURLConnection.getDefaultHostnameVerifier(),HttpsURLConnection.getDefaultSSLSocketFactory());
+			userInfoHTTPResp = userInfoReq.toHTTPRequest().send(Trust.getAllHostsValid(), Trust.getSocketFactory(trustStoreFile));
 		} catch (SerializeException | IOException e) {
 			// TODO proper error handling
 			e.printStackTrace();
@@ -502,8 +502,8 @@ public class SimpleOIDCClient {
 
 		return claims;
 	}
-	
-	public JWTClaimsSet getIdClaims(){
+
+	public JWTClaimsSet getIdClaims() {
 		try {
 			return verifyIdToken();
 		} catch (ParseException e) {
@@ -514,57 +514,10 @@ public class SimpleOIDCClient {
 	public JSONObject getUserInfoJSON() {
 		return userInfoClaims;
 	}
-	
 
-
-	// https://stackoverflow.com/questions/13022717/java-and-https-url-connection-without-downloading-certificate
-	// https://stackoverflow.com/questions/859111/how-do-i-accept-a-self-signed-certificate-with-a-java-httpsurlconnection
-	// SECURITY BREACH!!! !!NEVER!! use this on production systems, only for debugging
-	public static void trustEverybody(HttpsURLConnection connection) {
-		// Create all-trusting host name verifier
-		HostnameVerifier allHostsValid = new HostnameVerifier() {
-			public boolean verify(String hostname, SSLSession session) {
-				return true;
-			}
-		};
-
-		// Install the all-trusting trust manager and host name verifier
-		SSLContext sc = getTrustEverybodySSLContext();
-
-		if (connection == null) {
-			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-			HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-		} else {
-			connection.setSSLSocketFactory(sc.getSocketFactory());
-			connection.setHostnameVerifier(allHostsValid);
-		}
+	public void setTrustStore(File trustStoreFile) {
+		this.trustStoreFile = trustStoreFile;
+//		Trust.trustSpecific(null, trustStoreFile);
 	}
-
-	private static SSLContext getTrustEverybodySSLContext() {
-		// Create a trust manager that does not validate certificate chains
-		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-				return null;
-			}
-
-			public void checkClientTrusted(X509Certificate[] certs, String authType) {
-			}
-
-			public void checkServerTrusted(X509Certificate[] certs, String authType) {
-			}
-		} };
-
-		SSLContext sc = null;
-		try {
-			sc = SSLContext.getInstance("SSL");
-			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (KeyManagementException e) {
-			e.printStackTrace();
-		}
-		return sc;
-	}
-	// SECURITY BREACH!!! !!NEVER!! use this on production systems, only for debugging
 
 }

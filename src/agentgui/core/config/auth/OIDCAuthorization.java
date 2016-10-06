@@ -32,6 +32,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -44,6 +45,8 @@ import javax.swing.JDialog;
 
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
+
+import agentgui.core.application.Application;
 
 /**
  * The Class OIDCAuthorization.
@@ -86,7 +89,7 @@ public class OIDCAuthorization {
 	public JDialog getDialog(String presetUsername, Frame ownerFrame) {
 		JDialog authDialog = new JDialog(ownerFrame);
 		authDialog.setContentPane(getPanel());
-		if(presetUsername!=null){
+		if (presetUsername != null) {
 			getPanel().getTfUsername().setText(presetUsername);
 		}
 		authDialog.setSize(new Dimension(500, 150));
@@ -166,22 +169,15 @@ public class OIDCAuthorization {
 		return OIDCPanel.DEBUG_CLIENT_SECRET;
 	}
 
-	private boolean getTrustEverybody() {
-		return getPanel().getCbTrustEverybody().isSelected();
-	}
-
 	public boolean connect(String username, String password) {
 
 		String authRedirection = "";
 		AccessToken accessToken = null;
 
 		try {
-
-			if (getTrustEverybody()) {
-				SimpleOIDCClient.trustEverybody(null);
-			}
-
 			getOIDCClient();
+			oidcClient.setTrustStore(new File(Application.getGlobalInfo().getPathProperty(false) + Trust.OIDC_TRUST_STORE));
+
 			oidcClient.setIssuerURI(getIssuerURI());
 			oidcClient.retrieveProviderMetadata();
 			oidcClient.setClientMetadata(getResourceURI());
@@ -191,12 +187,12 @@ public class OIDCAuthorization {
 //			System.out.println("try a direct access to the resource (EOM licenseer)");
 			authRedirection = doResourceAccess(accessToken);
 
-			if (authRedirection == null) { 	// no authentication required (or already authenticated?)
+//			if (authRedirection == null) { 	// no authentication required (or already authenticated?)
 //				System.out.println("resource available");
-				return true;
-			}
+//				return true;
+//			}
 
-//			System.out.println("authentication redirection neccessary");
+//			System.out.println("authentication redirection necessary");
 
 //		System.out.println("parse authentication parameters from redirection");
 			oidcClient.parseAuthenticationDataFromRedirect(authRedirection, false); // don't override clientID
@@ -216,14 +212,12 @@ public class OIDCAuthorization {
 				System.err.println("OIDC authorization failed");
 				return false;
 			}
+
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -255,9 +249,8 @@ public class OIDCAuthorization {
 		HttpURLConnection.setFollowRedirects(false);
 
 		HttpsURLConnection conn = (HttpsURLConnection) requestURL.openConnection();
-		if (getTrustEverybody()) {
-			SimpleOIDCClient.trustEverybody(conn);
-		}
+		Trust.trustSpecific(conn, new File(Application.getGlobalInfo().getPathProperty(false) + Trust.OIDC_TRUST_STORE));
+
 		conn.setRequestMethod("GET");
 		if (accessToken != null) {
 			conn.setRequestProperty("Authorization", "bearer " + accessToken);
@@ -280,10 +273,12 @@ public class OIDCAuthorization {
 			return null;
 		} else if (responseCode == 200) { //
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+/*
 			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
+ 			while ((inputLine = in.readLine()) != null) {
 //				System.out.println(inputLine);
 			}
+*/
 			in.close();
 			return null;
 		} else {
