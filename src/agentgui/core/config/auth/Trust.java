@@ -10,10 +10,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -22,22 +20,8 @@ public class Trust {
 	public static final String OIDC_TRUST_STORE = "oidcTrustStore.jks";
 	private static final String TRUSTSTORE_PASSWORD = "HoYp8FfLLVJJFX1APMQA";
 
-	// SECURITY BREACH!!! !!NEVER!! use this on production systems, only for debugging
-
-	// https://stackoverflow.com/questions/13022717/java-and-https-url-connection-without-downloading-certificate
-	// https://stackoverflow.com/questions/859111/how-do-i-accept-a-self-signed-certificate-with-a-java-httpsurlconnection
-	public static HostnameVerifier getAllHostsValid() {
-		// Create all-trusting host name verifier
-		return new HostnameVerifier() {
-			public boolean verify(String hostname, SSLSession session) {
-				return true;
-			}
-		};
-	}
-
 	public static void trustSpecific(HttpsURLConnection connection, File trustStoreFile) {
 		connection.setSSLSocketFactory(getSocketFactory(trustStoreFile));
-		connection.setHostnameVerifier(getAllHostsValid());
 	}
 
 	public static SSLSocketFactory getSocketFactory(File trustStoreFile) {

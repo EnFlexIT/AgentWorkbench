@@ -227,7 +227,7 @@ public class SimpleOIDCClient {
 
 		// Make registration request
 		OIDCClientRegistrationRequest registrationRequest = new OIDCClientRegistrationRequest(providerMetadata.getRegistrationEndpointURI(), clientMetadata, initialAccessToken);
-		HTTPResponse regHTTPResponse = registrationRequest.toHTTPRequest().send(Trust.getAllHostsValid(), Trust.getSocketFactory(trustStoreFile));
+		HTTPResponse regHTTPResponse = registrationRequest.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
 
 		// Parse and check response
 		ClientRegistrationResponse registrationResponse = OIDCClientRegistrationResponseParser.parse(regHTTPResponse);
@@ -389,7 +389,7 @@ public class SimpleOIDCClient {
 
 		HTTPResponse tokenHTTPResp = null;
 		try {
-			tokenHTTPResp = tokenReq.toHTTPRequest().send(Trust.getAllHostsValid(), Trust.getSocketFactory(trustStoreFile));
+			tokenHTTPResp = tokenReq.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
 		} catch (SerializeException | IOException e) {
 			// TODO proper error handling
 			e.printStackTrace();
@@ -454,7 +454,7 @@ public class SimpleOIDCClient {
 
 		HTTPResponse userInfoHTTPResp = null;
 		try {
-			userInfoHTTPResp = userInfoReq.toHTTPRequest().send(Trust.getAllHostsValid(), Trust.getSocketFactory(trustStoreFile));
+			userInfoHTTPResp = userInfoReq.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
 		} catch (SerializeException | IOException e) {
 			// TODO proper error handling
 			e.printStackTrace();
