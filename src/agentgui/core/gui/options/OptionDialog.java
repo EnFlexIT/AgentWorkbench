@@ -73,7 +73,6 @@ import javax.swing.tree.TreeSelectionModel;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.config.auth.AuthOptions;
 
 /**
  * This JDialog represents the option dialog, where the 
@@ -106,7 +105,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 	
 	private StartOptions startOptions ;
 	private UpdateOptions updateOptions ;
-	private AuthOptions authOptions;
 
 	
 	/**
@@ -146,9 +144,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    	tabTitle = Language.translate("Konsole");
 	    	this.addOptionTab(tabTitle, null, Application.getConsole(), tabTitle);	
 	    }
-	    
-	    tabTitle = Language.translate("Authorisierung");
-	    this.addOptionTab(this.getAuthOptions(), null);
 	    
 		 // --- Expand tree -----------------------------------------
 	    this.optionTreeExpand2Level(3, true);
@@ -244,17 +239,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 			updateOptions = new UpdateOptions();
 		}
 		return updateOptions;
-	}
-	
-	/**
-	 * Gets the authorization options.
-	 * @return the authorization options
-	 */
-	public AuthOptions getAuthOptions() {
-		if (authOptions==null) {
-			authOptions = new AuthOptions(this);
-		}
-		return authOptions;
 	}
 	
 	/**
