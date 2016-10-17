@@ -49,17 +49,21 @@ import com.nimbusds.oauth2.sdk.token.AccessToken;
 import agentgui.core.application.Application;
 
 /**
- * The Class OIDCAuthorization.
+ * This class provides a simple interface to the OpenID Connect authorization.
+ * Use with getInstance(), getDialog()/connect() and getUserID().
  */
 public class OIDCAuthorization {
 
-	private static final String OIDC_ID_CLAIM_USERID = "sub";
+	/**  The claim used by OIDC to describe the username (subject). */
+	private static final String OIDC_ID_CLAIM_USERID = "sub"; // subject
 
 	/** The instance. */
 	private static OIDCAuthorization instance;
 
+	/**  The wrapped instance of the OIDC Client. */
 	private SimpleOIDCClient oidcClient;
 
+	/**  The panel used in the dialog. */
 	private OIDCPanel oidcPanel;
 
 	/**
@@ -81,9 +85,10 @@ public class OIDCAuthorization {
 	}
 
 	/**
-	 * Gets the dialog.
+	 * Gets the authorization dialog.
 	 *
-	 * @param presetUsername the preset username
+	 * @param presetUsername username which should be shown preset when displaying the dialog
+	 * @param ownerFrame the frame to which the dialog should belong (to center etc.)
 	 * @return the dialog
 	 */
 	public JDialog getDialog(String presetUsername, Frame ownerFrame) {
@@ -97,6 +102,12 @@ public class OIDCAuthorization {
 		return authDialog;
 	}
 
+	/**
+	 * Gets the authorization gui panel in case it should be shown at a different place than the dialog.
+	 *
+	 * @param parentGUI the parent GUI element which can listen to the events
+	 * @return the panel
+	 */
 	public OIDCPanel getPanel(ActionListener parentGUI) {
 		if (oidcPanel == null) {
 			oidcPanel = getPanel().setParent(parentGUI);
@@ -104,6 +115,11 @@ public class OIDCAuthorization {
 		return oidcPanel;
 	}
 
+	/**
+	 * Gets the panel without setting a ActionListener, so this has to be done manually.
+	 *
+	 * @return the panel
+	 */
 	public OIDCPanel getPanel() {
 		if (oidcPanel == null) {
 			oidcPanel = new OIDCPanel(this);
@@ -112,7 +128,7 @@ public class OIDCAuthorization {
 	}
 
 	/**
-	 * Checks if is valid.
+	 * Checks if OIDC token is valid, so access has been granted.
 	 *
 	 * @return true, if is valid
 	 */
@@ -124,11 +140,12 @@ public class OIDCAuthorization {
 	}
 
 	/**
-	 * Gets the user ID.
+	 * Gets the unique ID of the user authenticated.
 	 *
 	 * @return the user ID
+	 * @throws OIDCProblemException if the token is not valid/the user is not authenticated yet
 	 */
-	public String getUserID() {
+	public String getUserID() throws OIDCProblemException {
 		String userID;
 		if (!isValid()) {
 			throw new OIDCProblemException();
@@ -142,6 +159,11 @@ public class OIDCAuthorization {
 		return "";
 	}
 
+	/**
+	 * Gets the OIDC client.
+	 *
+	 * @return the OIDC client
+	 */
 	public SimpleOIDCClient getOIDCClient() {
 		if (oidcClient == null) {
 			oidcClient = new SimpleOIDCClient();
@@ -149,28 +171,51 @@ public class OIDCAuthorization {
 		return oidcClient;
 	}
 
+	/**
+	 * Gets the issuer URI.
+	 * 
+	 *
+	 * @return the issuer URI
+	 */
 	private String getIssuerURI() {
-//		return getTfIdProvider().getText();
 		return OIDCPanel.DEBUG_ISSUER_URI;
 	}
 
+	/**
+	 * Gets the resource URI.
+	 *
+	 * @return the resource URI
+	 */
 	private String getResourceURI() {
-//		return getTfLicenseServer().getText();
 		return OIDCPanel.DEBUG_RESOURCE_URI;
 	}
 
+	/**
+	 * Gets the client id.
+	 *
+	 * @return the client id
+	 */
 	private String getClientId() {
-//		return getTfClientId().getText();
 		return OIDCPanel.DEBUG_CLIENT_ID;
 	}
 
+	/**
+	 * Gets the client secret.
+	 *
+	 * @return the client secret
+	 */
 	private String getClientSecret() {
-//		return getTfClientSecret().getText();
 		return OIDCPanel.DEBUG_CLIENT_SECRET;
 	}
 
+	/**
+	 * Connect to the authorization server and get a valid token
+	 *
+	 * @param username the username
+	 * @param password the password
+	 * @return true, if successful
+	 */
 	public boolean connect(String username, String password) {
-
 		String authRedirection = "";
 		AccessToken accessToken = null;
 
@@ -198,7 +243,7 @@ public class OIDCAuthorization {
 //		System.out.println("parse authentication parameters from redirection");
 			oidcClient.parseAuthenticationDataFromRedirect(authRedirection, false); // don't override clientID
 //		System.out.println("set USER credentials");
-			oidcClient.setResourceOwnerCredentials(getPanel().getTfUsername().getText(), getPanel().getTfPassword().getText());
+			oidcClient.setResourceOwnerCredentials(username, password);
 
 			oidcClient.requestToken();
 			accessToken = oidcClient.getAccessToken();
@@ -226,6 +271,14 @@ public class OIDCAuthorization {
 	}
 
 	// Optional: UserInfo request
+	/**
+	 * Try to access a resource secured by OIDC (currently that means: print user ID ).
+	 *
+	 * @param accessToken the access token
+	 * @return the string
+	 * @throws ParseException the parse exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	// Alternatively: pass Access Token on to another client, use it to access a resource there
 	public String doResourceAccess(AccessToken accessToken) throws ParseException, IOException {
 		if (accessToken != null) {
@@ -241,6 +294,14 @@ public class OIDCAuthorization {
 		return processURL(getOIDCClient().getRedirectURI().toURL(), accessToken);
 	}
 
+	/**
+	 * Process a URL, that is: try to access it's resource, display error if any, return a redirection URL if indicated by the server.
+	 *
+	 * @param requestURL the requested URL
+	 * @param accessToken the access token
+	 * @return the string
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public String processURL(URL requestURL, AccessToken accessToken) throws IOException {
 		String redirectionURL = "";
 
@@ -288,8 +349,12 @@ public class OIDCAuthorization {
 		}
 	}
 
+	/**
+	 * The Class OIDCProblemException, indicating a problem in the authorization process.
+	 */
 	class OIDCProblemException extends RuntimeException {
 
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = -6015464771451068526L;
 
 	}

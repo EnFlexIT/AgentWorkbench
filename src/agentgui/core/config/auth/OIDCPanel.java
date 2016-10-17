@@ -1,7 +1,34 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.config.auth;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,57 +37,86 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import agentgui.core.application.Language;
 
+/**
+ * The Class OIDCPanel.
+ */
 public class OIDCPanel extends JPanel implements ActionListener {
 
+	/** The Constant DEBUG_ISSUER_URI. */
 	public static final String DEBUG_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
+	
+	/** The Constant DEBUG_RESOURCE_URI. */
 	public static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/vanilla/profile.jsp";
+	
+	/** The Constant DEBUG_CLIENT_ID. */
 	public static final String DEBUG_CLIENT_ID = "testclient";
+	
+	/** The Constant DEBUG_CLIENT_SECRET. */
 	public static final String DEBUG_CLIENT_SECRET = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
+	
+	/** The Constant COMMAND_CONNECT. */
 	private static final String COMMAND_CONNECT = "connectOIDC";
 
+	/** The lbl OIDC values. */
 	private JLabel lblOIDCValues;
+	
+	/** The b connect. */
 	private JButton bConnect;
 
+	/** The tf username. */
 	private JTextField tfUsername;
+	
+	/** The lbl username. */
 	private JLabel lblUsername;
+	
+	/** The lbl password. */
 	private JLabel lblPassword;
-	private JLabel lblLicenseServer;
-	private JLabel lblIdProvider;
+	
+	/** The tf password. */
 	private JTextField tfPassword;
-	private JFormattedTextField tfLicenseServer;
-	private JFormattedTextField tfIdProvider;
-	private JTextField tfClientId;
-	private JLabel lblClientId;
-	private JTextField tfClientSecret;
-	private JLabel lblClientSecret;
-
+	
+	/** The parent GUI. */
 	private ActionListener parentGUI;
+	
+	/** The owner. */
 	private OIDCAuthorization owner;
 
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -169367444435859302L;
+	
+	/** The btn result. */
 	private JButton btnResult;
 
+	/**
+	 * Instantiates a new OIDC panel.
+	 *
+	 * @param owner the owner
+	 */
 	public OIDCPanel(OIDCAuthorization owner) {
 		this();
 		this.owner = owner;
 	}
 
+	/**
+	 * Sets the parent.
+	 *
+	 * @param parent the parent
+	 * @return the OIDC panel
+	 */
 	public OIDCPanel setParent(ActionListener parent) {
 		this.parentGUI = parent;
 		return this; // for chaining
 	}
 
+	/**
+	 * Instantiates a new OIDC panel.
+	 */
 	private OIDCPanel() {
 		super();
 
@@ -189,8 +245,8 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * This method initializes jButtonApply
-	 * 
+	 * This method initializes jButtonApply.
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getBConnect() {
@@ -203,6 +259,11 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		return bConnect;
 	}
 
+	/**
+	 * Gets the tf username.
+	 *
+	 * @return the tf username
+	 */
 	public JTextField getTfUsername() {
 		if (tfUsername == null) {
 			tfUsername = new JTextField();
@@ -211,6 +272,11 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		return tfUsername;
 	}
 
+	/**
+	 * Gets the lbl username.
+	 *
+	 * @return the lbl username
+	 */
 	private JLabel getLblUsername() {
 		if (lblUsername == null) {
 			lblUsername = new JLabel(Language.translate("Benutzername"));
@@ -218,6 +284,11 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		return lblUsername;
 	}
 
+	/**
+	 * Gets the lbl password.
+	 *
+	 * @return the lbl password
+	 */
 	private JLabel getLblPassword() {
 		if (lblPassword == null) {
 			lblPassword = new JLabel(Language.translate("Passwort"));
@@ -225,20 +296,12 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		return lblPassword;
 	}
 
-	private JLabel getLblLicenseServer() {
-		if (lblLicenseServer == null) {
-			lblLicenseServer = new JLabel(Language.translate("Lizenz-Server"));
-		}
-		return lblLicenseServer;
-	}
 
-	private JLabel getLblIdProvider() {
-		if (lblIdProvider == null) {
-			lblIdProvider = new JLabel(Language.translate("ID-Provider"));
-		}
-		return lblIdProvider;
-	}
-
+	/**
+	 * Gets the tf password.
+	 *
+	 * @return the tf password
+	 */
 	public JTextField getTfPassword() {
 		if (tfPassword == null) {
 			tfPassword = new JTextField();
@@ -246,54 +309,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 			tfPassword.setColumns(10);
 		}
 		return tfPassword;
-	}
-
-	private JFormattedTextField getTfLicenseServer() {
-		if (tfLicenseServer == null) {
-			tfLicenseServer = new JFormattedTextField();
-			tfLicenseServer.setText(DEBUG_RESOURCE_URI);
-		}
-		return tfLicenseServer;
-	}
-
-	private JFormattedTextField getTfIdProvider() {
-		if (tfIdProvider == null) {
-			tfIdProvider = new JFormattedTextField();
-			tfIdProvider.setText(DEBUG_ISSUER_URI);
-		}
-		return tfIdProvider;
-	}
-
-	private JTextField getTfClientId() {
-		if (tfClientId == null) {
-			tfClientId = new JTextField();
-			tfClientId.setText(DEBUG_CLIENT_ID);
-			tfClientId.setColumns(10);
-		}
-		return tfClientId;
-	}
-
-	private JLabel getLblClientId() {
-		if (lblClientId == null) {
-			lblClientId = new JLabel(Language.translate("Client-ID"));
-		}
-		return lblClientId;
-	}
-
-	private JTextField getTfClientSecret() {
-		if (tfClientSecret == null) {
-			tfClientSecret = new JTextField();
-			tfClientSecret.setText(DEBUG_CLIENT_SECRET);
-			tfClientSecret.setColumns(10);
-		}
-		return tfClientSecret;
-	}
-
-	private JLabel getLblClientSecret() {
-		if (lblClientSecret == null) {
-			lblClientSecret = new JLabel(Language.translate("Client-Secret"));
-		}
-		return lblClientSecret;
 	}
 
 	/* (non-Javadoc)
@@ -313,6 +328,11 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	}
 
+	/**
+	 * Gets the btn result.
+	 *
+	 * @return the btn result
+	 */
 	private JButton getBtnResult() {
 		if (btnResult == null) {
 			btnResult = new JButton("result");
@@ -322,6 +342,11 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		return btnResult;
 	}
 
+	/**
+	 * Display result.
+	 *
+	 * @param successful the successful
+	 */
 	public void displayResult(boolean successful) {
 		getBtnResult().setVisible(true);
 		if (successful) {

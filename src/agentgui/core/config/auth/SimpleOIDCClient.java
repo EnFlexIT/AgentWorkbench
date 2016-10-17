@@ -1,23 +1,31 @@
-/*
-      
-      oauth2-oidc-sdk/original cookbook code
-      Copyright  2012-2016, Connect2id Ltd and contributors.
-      
-      Changes
-      Copyright 2016 sehawagn/friesenkiwi/pokerazor/Hanno - Felix Wagner
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 
 package agentgui.core.config.auth;
 
@@ -32,7 +40,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -81,44 +88,78 @@ import com.nimbusds.openid.connect.sdk.rp.OIDCClientRegistrationResponseParser;
 
 import net.minidev.json.JSONObject;
 
-/* 
+/** 
  * This very simple OpenID Connect (OIDC) Public Client implementation is built after the official cookbook at
  * https://bitbucket.org/connect2id/oauth-2.0-sdk-with-openid-connect-extensions/src/23e6a6c5b751fadd79938859def37ff7a0d05c24/docs/cookbook_client.md
  * The original code was used and altered to create an easy to use native application client for some simple and common use cases.
  * It implements only a small subset of OIDC primitives and is therefore not a feature complete wrapper around the connect2id/nimbusds library.
  * It has been proven to work as a client to keycloak.
  */
-
 public class SimpleOIDCClient {
+	
+	/** The Constant URLPATH_WELL_KNOWN_OPENID. */
 	private static final String URLPATH_WELL_KNOWN_OPENID = ".well-known/openid-configuration";
 
+	/** The issuer URI. */
 	private URI issuerURI;
+	
+	/** The provider metadata. */
 	private OIDCProviderMetadata providerMetadata;
+	
+	/** The authorization endpoint URI. */
 	private URI authorizationEndpointURI;
+	
+	/** The user info endpoint URI. */
 	private URI userInfoEndpointURI;
 
+	/** The client information. */
 	private OIDCClientInformation clientInformation;
+	
+	/** The client metadata JSON. */
 	private String clientMetadataJSON;
+	
+	/** The client metadata. */
 	private OIDCClientMetadata clientMetadata;
+	
+	/** The client ID. */
 	private ClientID clientID;
+	
+	/** The client secret. */
 	private Secret clientSecret;
 
+	/** The state. */
 	private State state;
+	
+	/** The nonce. */
 	private Nonce nonce;
 
+	/** The redirect URI. */
 	private URI redirectURI;
 
+	/** The auth code. */
 	private AuthorizationCode authCode;
+	
+	/** The resource owner credentials grant. */
 	private ResourceOwnerPasswordCredentialsGrant resourceOwnerCredentialsGrant;
 
+	/** The access token. */
 	private AccessToken accessToken;
+	
+	/** The id token. */
 	private JWT idToken;
 
+	/** The user info claims. */
 	private JSONObject userInfoClaims;
+	
+	/** The id claims. */
 	private JWTClaimsSet idClaims;
 
+	/** The trust store file. */
 	private File trustStoreFile;
 
+	/**
+	 * Reset.
+	 */
 	public void reset() {
 		accessToken = null;
 		idToken = null;
@@ -126,7 +167,7 @@ public class SimpleOIDCClient {
 		idClaims = null;
 	}
 
-	/*
+	/**
 	 * Issuer discovery
 		The WebFinger protocol is used to find the OpenID Provider (OP). The library does not have any out-of-the box support for WebFinger, so in the following example we assume you already have acquired the issuer URL of the OP (possibly from developer documentation).
 	 */
@@ -134,10 +175,22 @@ public class SimpleOIDCClient {
 		throw new RuntimeException("WebFinger OpenID Provider discovery is not yet implemented. Set issuer manually by calling setIssuerURI().");
 	}
 
+	/**
+	 * Sets the issuer URI.
+	 *
+	 * @param issuerURIString the new issuer URI
+	 * @throws URISyntaxException the URI syntax exception
+	 */
 	public void setIssuerURI(String issuerURIString) throws URISyntaxException {
 		issuerURI = new URI(issuerURIString);
 	}
 
+	/**
+	 * Sets the authorization endpoint URI.
+	 *
+	 * @param authorizationEndpointURIString the new authorization endpoint URI
+	 * @throws URISyntaxException the URI syntax exception
+	 */
 	/*
 	 * If the provider does not support the discovery protocol, set authorizationEndpointURI manually with the authorization endpoint URL received out-of-band.
 	 */
@@ -145,30 +198,54 @@ public class SimpleOIDCClient {
 		setAuthorizationEndpointURI(new URI(authorizationEndpointURIString));
 	}
 
+	/**
+	 * Sets the authorization endpoint URI.
+	 *
+	 * @param endpointURI the new authorization endpoint URI
+	 */
 	public void setAuthorizationEndpointURI(URI endpointURI) {
 		authorizationEndpointURI = endpointURI;
 	}
 
-	/*
+	/**
+	 * Sets the user info endpoint URI.
 	 * If the provider does not support the discovery protocol, set userInfoEndpointURI manually with the user info endpoint URL received out-of-band.
+	 *
+	 * @param userInfoEndpointURI the new user info endpoint URI
+	 * @throws URISyntaxException the URI syntax exception
 	 */
 	void setUserInfoEndpointURI(String userInfoEndpointURI) throws URISyntaxException {
 		this.userInfoEndpointURI = new URI(userInfoEndpointURI);
 	}
 
+	/**
+	 * Sets the provider metadata by String.
+	 *
+	 * @param providerMetadataString the new provider metadata
+	 * @throws ParseException the parse exception
+	 */
 	void setProviderMetadata(String providerMetadataString) throws ParseException {
 		setProviderMetadata(OIDCProviderMetadata.parse(providerMetadataString));
 	}
 
+	/**
+	 * Sets the provider metadata by object.
+	 *
+	 * @param providerMetadata the new provider metadata
+	 */
 	void setProviderMetadata(OIDCProviderMetadata providerMetadata) {
 		this.providerMetadata = providerMetadata;
 		authorizationEndpointURI = providerMetadata.getAuthorizationEndpointURI();
 		userInfoEndpointURI = providerMetadata.getUserInfoEndpointURI();
 	}
 
-	/*
-	 * Provider configuration information
+	/**
+	 * Retrieve provider metadata.
+	 * 	Provider configuration information
 	 *	Obtaining the provider configuration information can be done either out-of-band or using the optional discovery process:
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws ParseException the parse exception
 	 */
 	public void retrieveProviderMetadata() throws IOException, ParseException {
 		URL providerConfigurationURL = issuerURI.resolve(URLPATH_WELL_KNOWN_OPENID).toURL();
@@ -185,16 +262,23 @@ public class SimpleOIDCClient {
 		setProviderMetadata(OIDCProviderMetadata.parse(providerInfo));
 	}
 
-	/*
+	/**
+	 * Sets the client ID.
 	 * If the provider does not support dynamic client registration, set client ID with the client id received out-of-band.	
+	 * @param clientIDString the new client ID
 	 */
 	void setClientID(String clientIDString) {
 		setClientID(clientIDString, null);
 	}
 
-	/*
+	/**
+	 * Sets the client ID.
 	 * If the provider does not support dynamic client registration, set client ID and client secret with the client credentials received out-of-band.	
+	 *
+	 * @param clientIDString the client ID string
+	 * @param clientSecret the client secret
 	 */
+
 	public void setClientID(String clientIDString, String clientSecret) {
 		clientID = new ClientID(clientIDString);
 		if (this.clientSecret != null && (clientSecret == null || clientSecret.isEmpty())) {
@@ -205,21 +289,38 @@ public class SimpleOIDCClient {
 		clientInformation = new OIDCClientInformation(clientID, null, clientMetadata, this.clientSecret);
 	}
 
+	/**
+	 * Sets the client registration metadata.
+	 *
+	 * @param allowedClientRedirectURI the new client registration metadata
+	 * @throws ParseException the parse exception
+	 */
 	public void setClientRegistrationMetadata(String allowedClientRedirectURI) throws ParseException {
 		clientMetadataJSON = "{\"redirect_uris\": [\"" + allowedClientRedirectURI + "\"],\"response_types\": [\"code\"]}";
 
 		clientMetadata = OIDCClientMetadata.parse(JSONObjectUtils.parse(clientMetadataJSON));
 	}
 
+	/**
+	 * Sets the client metadata.
+	 *
+	 * @param allowedClientRedirectURI the new client metadata
+	 * @throws ParseException the parse exception
+	 */
 	public void setClientMetadata(String allowedClientRedirectURI) throws ParseException {
 		clientMetadataJSON = "{\"application_type\": \"native\",\"redirect_uris\": [\"" + allowedClientRedirectURI + "\"],\"response_types\": [\"code\"]}";
 
 		clientMetadata = OIDCClientMetadata.parse(JSONObjectUtils.parse(clientMetadataJSON));
 	}
 
-	/*
+	/**
 	 * Client registration
-	 * If the provider supports dynamic registration, a new client can be registered using the client registration process: 
+	 * If the provider supports dynamic registration, a new client can be registered using the client registration process:
+	 * 	 *
+	 * @param initialAccessToken the initial access token
+	 * @throws SerializeException the serialize exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws ParseException the parse exception
 	 */
 	public void registerClient(BearerAccessToken initialAccessToken) throws SerializeException, IOException, ParseException {
 //		System.out.println("Client metadata");
@@ -249,21 +350,43 @@ public class SimpleOIDCClient {
 		}
 	}
 
-	/*
+	/**
+	 * Sets the redirect URI.
 	 * Make sure redirectURI matches a URI known by the provider.
+	 *
+	 * @param redirectURIString the new redirect URI
+	 * @throws URISyntaxException the URI syntax exception
 	 */
 	public void setRedirectURI(String redirectURIString) throws URISyntaxException {
 		this.redirectURI = new URI(redirectURIString);
 	}
 
+	/**
+	 * Gets the redirect URI.
+	 *
+	 * @return the redirect URI
+	 */
 	public URI getRedirectURI() {
 		return this.redirectURI;
 	}
 
+	/**
+	 * Gets the state.
+	 *
+	 * @return the state
+	 */
 	public State getState() {
 		return this.state;
 	}
 
+	/**
+	 * Parses the authentication data from redirect.
+	 *
+	 * @param redirectionURL the redirection URL
+	 * @param overrideClient the override client
+	 * @throws ParseException the parse exception
+	 * @throws URISyntaxException the URI syntax exception
+	 */
 	public void parseAuthenticationDataFromRedirect(String redirectionURL, boolean overrideClient) throws ParseException, URISyntaxException {
 		AuthenticationRequest authenticationRequest = AuthenticationRequest.parse(new URI(redirectionURL));
 		setAuthorizationEndpointURI(authenticationRequest.getEndpointURI());
@@ -274,10 +397,13 @@ public class SimpleOIDCClient {
 		redirectURI = authenticationRequest.getRedirectionURI();
 	}
 
-	/*
+	/**
 	 * Authentication request
 	 * The authentication request is done by redirecting the end user to the provider, for more details see the OIDC specification. The redirect URL is built as follows, using the Authorization Code Flow:
 	 * To specify additional parameters in the authentication request, use AuthenticationRequest.Builder.
+	 *
+	 * @return the uri
+	 * @throws SerializeException the serialize exception
 	 */
 	public URI buildAuthorizationCodeRequest() throws SerializeException {
 		if (state == null) {
@@ -310,12 +436,14 @@ public class SimpleOIDCClient {
 		return authReqURI;
 	}
 
-	/*
+	/**
 	 * Receive the Authentication Response
 	 * The authentication response is sent from the provider by redirecting the end user to the redirect URI specified in the initial authentication request from the client.
 	 * Code flow
 	 * The Authorization Code can be extracted from the query part of the redirect URL:
-	*/
+	 *
+	 * @param responseURL the response URL
+	 */
 	public void processAuthenticationResponse(String responseURL) {
 		AuthenticationResponse authResp = null;
 		try {
@@ -352,6 +480,12 @@ public class SimpleOIDCClient {
 		}
 	}
 
+	/**
+	 * Verify the state.
+	 *
+	 * @param state the state
+	 * @return true, if successful
+	 */
 	private boolean verifyState(State state) {
 		if (state != null && this.state != null && this.state.equals(state)) {
 			return true;
@@ -361,11 +495,17 @@ public class SimpleOIDCClient {
 		return false;
 	}
 
+	/**
+	 * Sets the resource owner credentials.
+	 *
+	 * @param user the user
+	 * @param password the password
+	 */
 	public void setResourceOwnerCredentials(String user, String password) {
 		resourceOwnerCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(user, new Secret(password));
 	}
 
-	/*
+	/**
 	 * Token Request
 	 * When an authorization code (using code or hybrid flow) has been obtained, a token request can made to get the access token and the id token:
 	 */
@@ -417,10 +557,20 @@ public class SimpleOIDCClient {
 		idToken = accessTokenResponse.getOIDCTokens().getIDToken();
 	}
 
+	/**
+	 * Gets the access token.
+	 *
+	 * @return the access token
+	 */
 	public AccessToken getAccessToken() {
 		return accessToken;
 	}
 
+	/**
+	 * Dump token info.
+	 *
+	 * @throws ParseException the parse exception
+	 */
 	public void dumpTokenInfo() throws ParseException {
 		System.out.println("Access Token:");
 		System.out.println(accessToken);
@@ -438,10 +588,10 @@ public class SimpleOIDCClient {
 		}
 	}
 
-	/*
+	/**
 	 * UserInfo Request
-	 * Using the access token, information about the end user can be obtained by making a user info request:
-	 */
+	 * Using the access token, information about the end user can be obtained by making a user info request	
+	*/
 	public void requestUserInfo() {
 		if (accessToken == null) {
 			System.err.println("Access Token null, stopping UserInfo retrieval");
@@ -487,9 +637,12 @@ public class SimpleOIDCClient {
 		userInfoClaims = successResponse.getUserInfo().toJSONObject();
 	}
 
-	/*
+	/**
 	 * Validate the ID token
-	 * The id token obtained from the token request must be validated, see ID token validation:
+	 * The id token obtained from the token request must be validated, see ID token validation
+	 * 	 *
+	 * @return the JWT claims set
+	 * @throws ParseException the parse exception
 	 */
 	private JWTClaimsSet verifyIdToken() throws ParseException {
 		JWTClaimsSet claims = null;
@@ -503,6 +656,11 @@ public class SimpleOIDCClient {
 		return claims;
 	}
 
+	/**
+	 * Gets the id claims.
+	 *
+	 * @return the id claims
+	 */
 	public JWTClaimsSet getIdClaims() {
 		try {
 			return verifyIdToken();
@@ -511,10 +669,20 @@ public class SimpleOIDCClient {
 		}
 	}
 
+	/**
+	 * Gets the user info JSON.
+	 *
+	 * @return the user info JSON
+	 */
 	public JSONObject getUserInfoJSON() {
 		return userInfoClaims;
 	}
 
+	/**
+	 * Sets the trust store.
+	 *
+	 * @param trustStoreFile the new trust store
+	 */
 	public void setTrustStore(File trustStoreFile) {
 		this.trustStoreFile = trustStoreFile;
 //		Trust.trustSpecific(null, trustStoreFile);
