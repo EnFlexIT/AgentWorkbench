@@ -10,7 +10,6 @@ de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br> Can the name
 de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;
-de;Ablaufdatum;;;;
 de;Abtastintervall;Sampling interval;;;
 de;Adressen;Addresses;;;
 de;Agent auswählen!;Select an Agent!;;;
@@ -83,14 +82,13 @@ de;Basis-Info;Basic info
 de;Bearbeiten;Edit
 de;Beenden;Quit
 de;Beim nächsten mal direkt starten und nicht erneut nachfragen.;Directly start and do not ask again next time.;;;
-de;Benutzername;;;;
+de;Benutzername;User Name;;;
 de;Beschleunigungsfaktor;Acceleration Factor;;;
 de;Beschreibung;Description
 de;Beschriftung X Achse;Label X axis ;;;
 de;Beschriftung Y Achse;Label Y axis ;;;
 de;Beschriftung anzeigen;Show label;;;
 de;Beschriftungen anzeigen;Show labels;;;
-de;Bitte geben Sie Agenten Name;;;;
 de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
 de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
 de;Bitte geben Sie die URL oder IP des Hauptservers an!;Please, configure the URL or IP of the main server!;;;
@@ -212,7 +210,7 @@ de;Entferne Hindernis;Remove obstacle
 de;Entfernen;Remove;;;
 de;Entpacke;Unpacking
 de;Entwickler-Ansicht;Developer view
-de;Erfolgreich;;;;
+de;Erfolgreich;Successful;;;
 de;Erweiterungsadapter für Netzwerkkomponenten;Extension adapter for network components;;;
 de;Erzeuge die Datenbank für den Server-Master ...;Creating the database for the Server.Master ...
 de;Es wurde kein Name für das PlugIn konfiguriert;There was no name configured for the PlugIn
@@ -227,7 +225,6 @@ de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Date
 de;Fehlende Auswahl !;Missing Selection !;;;
 de;Fehlende Auswahl!;Missing selection!
 de;Fehlende Ontologie-Auswahl !;Missing ontology selection!
-de;Fehlender Agent Name!;;;;
 de;Fehlender Agent!;Missing Agent!;;;
 de;Fehlendes Projekt!;Missing Project!;;;
 de;Fehlendes Simulations-Setup!;Missing Simulation Setup!;;;
@@ -253,7 +250,7 @@ de;Fehler: URL oder IP !;Error in  URL or IP !;;;
 de;Fehler;Error
 de;Fehlerhafte Auswahl!;Incorrect selection!;;;
 de;Fehlerhafte Eingabe;Faulty input;;;
-de;Fehlgeschlagen;;;;
+de;Fehlgeschlagen;Failed;;;
 de;Fenster;Window
 de;Fertig;Ready
 de;Folgende Add-On-Dienste starten:;Start the following add-on services:
@@ -287,13 +284,13 @@ de;Hintergrundsystem beim Programmstart automatisch initialisieren;Automatically
 de;Hinweis;Hint;;;
 de;Hinzufügen;Add
 de;ID;;;;
-de;IP auswählen;;;;
+de;IP auswählen;Select IP;;;
 de;IP-Adresse verwenden;Use IP-Address;;;
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
 de;Ihre Webseite:;Your Website:;;;
 de;Im Falle eines Updates, eigenes Wörterbuch beibehalten.;In case of an update, keep own dictionary.;;;
 de;Immer Überspringen;Always Skip;null;null;null
-de;Immer überspringen;;;;
+de;Immer überspringen;Allways Skip;;;
 de;Info;Info
 de;Informationen Keystore;KeyStore Informations;;;
 de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;
@@ -325,7 +322,6 @@ de;Jade wurde beendet!;JADE was stopped!
 de;Jahre;Years;;;
 de;Java-Klasse für den Start der Simulations-Agenten und die statische Lastverteilung;Java class for the start of the simulation agents and the static load balancing
 de;Java-Klasse für die dynamische Lastverteilung;Java class for dynamic load balancing
-de;Jedem vertrauen;;;;
 de;Kanten-Typ;Edge Type;;;
 de;Kein Projekt geöffnet !;No open project!
 de;Kein SVG zugewiesen;No SVG assigned
@@ -483,7 +479,7 @@ de;Ontologie-Referenz auswählen!;Select an ontology reference!;;;
 de;Ontologie;Ontology
 de;Ontologieklasse;Ontology Class
 de;Ontologien;Ontologies
-de;OpenID Connect-Authorisierung;;;;
+de;OpenID Connect-Autorisierung;OpenID Connect-Authorization;;;
 de;Optionen;Options
 de;Organisation;Organization;;;
 de;Organisationseinheit;Organizational Unit;;;
@@ -645,7 +641,7 @@ de;Update automatisch herunterladen, Installationszeitpunkt manuell festlegen;Do
 de;Update-Konfiguration;Update Configuration;;;
 de;Updates automatisch installieren;Install updates automatically;;;
 de;Updates nicht automatisch herunterladen oder installieren;Do not automatically download or install ;;;
-de;Verbinden;;;;
+de;Verbinden;Connect;;;
 de;Verbindungsknoten;Connection nodes;;;
 de;Verfügbare JADE-Services;Available JADE Services;;;
 de;Vergrößern ...;Expand View ...
@@ -658,7 +654,6 @@ de;Verteilung der Agenten basierend auf:;Distribution of agents based on:;;;
 de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;Distribution of agents in "PredictiveStaticLoadBalancing" based on:;;;
 de;Verteilung der Agenten nur auf Remote-Maschinen;Distribution of agents remote only;;;
 de;Verteilung;Distribution
-de;Vertrauen konfigurieren;;;;
 de;Verwenden Sie das Kontextmenü im Projektbaum, um einen Start-Tab festzulegen.;Use the context menu in the project tree in order to specify a start tab.;;;
 de;Verzeichnis bereits vorhanden!;Directory already exists!
 de;Verzeichnis gepackt zu;Folder packed to;;;
@@ -690,8 +685,6 @@ de;Zeit-Konfiguration;Time Configuration;;;
 de;Zeit;Time;;;
 de;Zeitmodell verwenden;Use a time model;;;
 de;Zeitmodell;Time model;;;
-de;Zertifikats-Alias;;;;
-de;Zertifikatsbesitzer;;;;
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
 de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project .;null;null;null
 de;Zurücksetzen;Reset

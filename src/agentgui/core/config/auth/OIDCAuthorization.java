@@ -87,10 +87,10 @@ public class OIDCAuthorization {
 		JDialog authDialog = new JDialog(ownerFrame);
 		OIDCPanel oidcPanel = new OIDCPanel(this);
 		if (presetUsername!=null) {
-			oidcPanel.getTfUsername().setText(presetUsername);
+			oidcPanel.getJTextFieldUsername().setText(presetUsername);
 		}
 		authDialog.setContentPane(oidcPanel);
-		authDialog.setSize(new Dimension(500, 180));
+		authDialog.setSize(new Dimension(500, 190));
 		authDialog.setLocationRelativeTo(null);
 		return authDialog;
 	}
@@ -273,7 +273,7 @@ public class OIDCAuthorization {
 		HttpURLConnection.setFollowRedirects(false);
 
 		HttpsURLConnection conn = (HttpsURLConnection) requestURL.openConnection();
-		Trust.trustSpecific(conn, new File(Application.getGlobalInfo().getPathProperty(false) + Trust.OIDC_TRUST_STORE));
+		Trust.trustSpecific(conn, new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
 
 		conn.setRequestMethod("GET");
 		if (accessToken != null) {

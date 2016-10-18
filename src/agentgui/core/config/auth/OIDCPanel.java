@@ -29,6 +29,7 @@
 package agentgui.core.config.auth;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -42,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 
 /**
@@ -49,23 +51,24 @@ import agentgui.core.application.Language;
  */
 public class OIDCPanel extends JPanel implements ActionListener {
 
+	private static final long serialVersionUID = -169367444435859302L;
+
 	public static final String DEBUG_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
 	public static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/vanilla/profile.jsp";
 	public static final String DEBUG_CLIENT_ID = "testclient";
 	public static final String DEBUG_CLIENT_SECRET = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
 	private static final String COMMAND_CONNECT = "connectOIDC";
 
-	
-	private JLabel lblOIDCValues;
-	private JButton bConnect;
-	private JTextField tfUsername;
-	private JLabel lblUsername;
-	private JLabel lblPassword;
-	private JPasswordField tfPassword;
-	private ActionListener parentGUI;
 	private OIDCAuthorization owner;
-	private static final long serialVersionUID = -169367444435859302L;
-	private JButton btnResult;
+
+	private JLabel jLabelHeader;
+	private JLabel jLabelUsername;
+	private JTextField jTextFieldUsername;
+	private JLabel jLabelPassword;
+	private JPasswordField jPasswordField;
+	private ActionListener parentGUI;
+	private JButton jButtonConnect;
+	private JLabel jLabelResult;
 
 	
 	/**
@@ -98,7 +101,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 24, 22, 0 };
-		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, 1.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		this.setLayout(gridBagLayout);
 		
@@ -108,134 +111,136 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		gridBagConstraints18.gridy = 0;
 		gridBagConstraints18.insets = new Insets(10, 20, 0, 10);
 		
-		GridBagConstraints gbc_lblOIDCValues = new GridBagConstraints();
-		gbc_lblOIDCValues.gridwidth = 2;
-		gbc_lblOIDCValues.insets = new Insets(10, 10, 5, 5);
-		gbc_lblOIDCValues.gridy = 0;
-		gbc_lblOIDCValues.ipadx = 0;
-		gbc_lblOIDCValues.anchor = GridBagConstraints.WEST;
-		gbc_lblOIDCValues.weightx = 0.0;
-		gbc_lblOIDCValues.gridx = 0;
+		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
+		gbc_jLabelHeader.gridwidth = 3;
+		gbc_jLabelHeader.insets = new Insets(10, 10, 10, 10);
+		gbc_jLabelHeader.gridy = 0;
+		gbc_jLabelHeader.ipadx = 0;
+		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
+		gbc_jLabelHeader.weightx = 0.0;
+		gbc_jLabelHeader.gridx = 0;
 
-		lblOIDCValues = new JLabel();
-		lblOIDCValues.setFont(new Font("Dialog", Font.BOLD, 12));
-		this.add(lblOIDCValues, gbc_lblOIDCValues);
-		// this.add(getTfClientSecret(), gbc_tfClientSecret);
+		jLabelHeader = new JLabel();
+		jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabelHeader.setText(Language.translate("OpenID Connect-Autorisierung"));
+		this.add(jLabelHeader, gbc_jLabelHeader);
 
-		lblOIDCValues.setText(Language.translate("OpenID Connect-Authorisierung"));
-		GridBagConstraints gbc_lblUsername = new GridBagConstraints();
-		gbc_lblUsername.insets = new Insets(0, 10, 5, 5);
-		gbc_lblUsername.anchor = GridBagConstraints.WEST;
-		gbc_lblUsername.gridx = 0;
-		gbc_lblUsername.gridy = 1;
-		this.add(getLblUsername(), gbc_lblUsername);
-		GridBagConstraints gbc_tfUsername = new GridBagConstraints();
-		gbc_tfUsername.insets = new Insets(0, 0, 5, 5);
-		gbc_tfUsername.fill = GridBagConstraints.HORIZONTAL;
-		gbc_tfUsername.gridx = 1;
-		gbc_tfUsername.gridy = 1;
-		this.add(getTfUsername(), gbc_tfUsername);
-		GridBagConstraints gbc_bConnect = new GridBagConstraints();
-		gbc_bConnect.anchor = GridBagConstraints.WEST;
-		gbc_bConnect.gridx = 2;
-		gbc_bConnect.gridy = 1;
-		gbc_bConnect.weightx = 0.0;
-		gbc_bConnect.insets = new Insets(0, 0, 5, 10);
-		this.add(getBConnect(), gbc_bConnect);
-		GridBagConstraints gbc_lblPassword = new GridBagConstraints();
-		gbc_lblPassword.anchor = GridBagConstraints.EAST;
-		gbc_lblPassword.insets = new Insets(0, 10, 5, 5);
-		gbc_lblPassword.gridx = 0;
-		gbc_lblPassword.gridy = 2;
-		this.add(getLblPassword(), gbc_lblPassword);
-		GridBagConstraints gbc_tfPassword = new GridBagConstraints();
-		gbc_tfPassword.insets = new Insets(0, 0, 5, 5);
-		gbc_tfPassword.fill = GridBagConstraints.HORIZONTAL;
-		gbc_tfPassword.gridx = 1;
-		gbc_tfPassword.gridy = 2;
-		this.add(getTfPassword(), gbc_tfPassword);
+		GridBagConstraints gbc_jLabelUsername = new GridBagConstraints();
+		gbc_jLabelUsername.insets = new Insets(0, 10, 5, 5);
+		gbc_jLabelUsername.anchor = GridBagConstraints.WEST;
+		gbc_jLabelUsername.gridx = 0;
+		gbc_jLabelUsername.gridy = 1;
+		this.add(getJLabelUsername(), gbc_jLabelUsername);
+		GridBagConstraints gbc_jTextFieldUsername = new GridBagConstraints();
+		gbc_jTextFieldUsername.gridwidth = 2;
+		gbc_jTextFieldUsername.insets = new Insets(0, 0, 5, 10);
+		gbc_jTextFieldUsername.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jTextFieldUsername.gridx = 1;
+		gbc_jTextFieldUsername.gridy = 1;
+		this.add(getJTextFieldUsername(), gbc_jTextFieldUsername);
+		GridBagConstraints gbc_jLabelPassword = new GridBagConstraints();
+		gbc_jLabelPassword.anchor = GridBagConstraints.WEST;
+		gbc_jLabelPassword.insets = new Insets(0, 10, 10, 5);
+		gbc_jLabelPassword.gridx = 0;
+		gbc_jLabelPassword.gridy = 2;
+		this.add(getJLabelPassword(), gbc_jLabelPassword);
+		GridBagConstraints gbc_jPasswordField = new GridBagConstraints();
+		gbc_jPasswordField.gridwidth = 2;
+		gbc_jPasswordField.insets = new Insets(0, 0, 10, 10);
+		gbc_jPasswordField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jPasswordField.gridx = 1;
+		gbc_jPasswordField.gridy = 2;
+		this.add(getJPasswordField(), gbc_jPasswordField);
 
-		bConnect.setText(Language.translate("Verbinden"));
-		GridBagConstraints gbc_btnResult = new GridBagConstraints();
-		gbc_btnResult.insets = new Insets(0, 0, 0, 5);
-		gbc_btnResult.gridx = 1;
-		gbc_btnResult.gridy = 3;
-		add(getBtnResult(), gbc_btnResult);
+		GridBagConstraints gbc_jButtonConnect = new GridBagConstraints();
+		gbc_jButtonConnect.anchor = GridBagConstraints.WEST;
+		gbc_jButtonConnect.gridx = 1;
+		gbc_jButtonConnect.gridy = 3;
+		gbc_jButtonConnect.weightx = 0.0;
+		gbc_jButtonConnect.insets = new Insets(0, 0, 0, 10);
+		this.add(getJButtonConnect(), gbc_jButtonConnect);
+		GridBagConstraints gbc_jLabelResult = new GridBagConstraints();
+		gbc_jLabelResult.insets = new Insets(0, 0, 0, 10);
+		gbc_jLabelResult.gridx = 2;
+		gbc_jLabelResult.gridy = 3;
+		add(getJLabelResult(), gbc_jLabelResult);
 
-	}
-
-	/**
-	 * This method initializes jButtonApply.
-	 * @return javax.swing.JButton
-	 */
-	private JButton getBConnect() {
-		if (bConnect == null) {
-			bConnect = new JButton();
-			bConnect.setFont(new Font("Dialog", Font.BOLD, 12));
-			bConnect.setActionCommand(COMMAND_CONNECT);
-			bConnect.addActionListener(this);
-		}
-		return bConnect;
-	}
-
-	/**
-	 * Gets the tf username.
-	 * @return the tf username
-	 */
-	public JTextField getTfUsername() {
-		if (tfUsername == null) {
-			tfUsername = new JTextField();
-			tfUsername.setColumns(10);
-		}
-		return tfUsername;
 	}
 
 	/**
 	 * Gets the lbl username.
 	 * @return the lbl username
 	 */
-	private JLabel getLblUsername() {
-		if (lblUsername == null) {
-			lblUsername = new JLabel(Language.translate("Benutzername"));
+	private JLabel getJLabelUsername() {
+		if (jLabelUsername == null) {
+			jLabelUsername = new JLabel(Language.translate("Benutzername"));
+			jLabelUsername.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
-		return lblUsername;
+		return jLabelUsername;
 	}
-
+	/**
+	 * Gets the tf username.
+	 * @return the tf username
+	 */
+	public JTextField getJTextFieldUsername() {
+		if (jTextFieldUsername == null) {
+			jTextFieldUsername = new JTextField();
+			jTextFieldUsername.setPreferredSize(new Dimension(100, 26));
+			jTextFieldUsername.setColumns(10);
+		}
+		return jTextFieldUsername;
+	}
+	
 	/**
 	 * Gets the lbl password.
-	 *
 	 * @return the lbl password
 	 */
-	private JLabel getLblPassword() {
-		if (lblPassword == null) {
-			lblPassword = new JLabel(Language.translate("Passwort"));
+	private JLabel getJLabelPassword() {
+		if (jLabelPassword == null) {
+			jLabelPassword = new JLabel(Language.translate("Passwort"));
+			jLabelPassword.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
-		return lblPassword;
+		return jLabelPassword;
 	}
-
-
 	/**
 	 * Gets the tf password.
 	 * @return the tf password
 	 */
-	public JPasswordField getTfPassword() {
-		if (tfPassword == null) {
-			tfPassword = new JPasswordField();
-			tfPassword.setColumns(10);
+	public JPasswordField getJPasswordField() {
+		if (jPasswordField == null) {
+			jPasswordField = new JPasswordField();
+			jPasswordField.setPreferredSize(new Dimension(100, 26));
+			jPasswordField.setColumns(10);
 		}
-		return tfPassword;
+		return jPasswordField;
 	}
 
+	/**
+	 * This method initializes jButtonApply.
+	 * @return javax.swing.JButton
+	 */
+	private JButton getJButtonConnect() {
+		if (jButtonConnect == null) {
+			jButtonConnect = new JButton(Language.translate("Verbinden"));
+			jButtonConnect.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonConnect.setForeground(new Color(0, 0, 153));
+			jButtonConnect.setActionCommand(COMMAND_CONNECT);
+			jButtonConnect.addActionListener(this);
+		}
+		return jButtonConnect;
+	}
+	
 	/**
 	 * Gets the btn result.
 	 * @return the btn result
 	 */
-	private JButton getBtnResult() {
-		if (btnResult == null) {
-			btnResult = new JButton("result");
-			btnResult.setVisible(false);
+	private JLabel getJLabelResult() {
+		if (jLabelResult == null) {
+			jLabelResult = new JLabel("Result");
+			jLabelResult.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelResult.setVisible(false);
 		}
-		return btnResult;
+		return jLabelResult;
 	}
 
 	/**
@@ -243,13 +248,13 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	 * @param successful the successful
 	 */
 	public void displayResult(boolean successful) {
-		getBtnResult().setVisible(true);
+		this.getJLabelResult().setVisible(true);
 		if (successful) {
-			getBtnResult().setBackground(new Color(0, 255, 0));
-			getBtnResult().setText(Language.translate("Erfolgreich"));
+			this.getJLabelResult().setText(Language.translate("Erfolgreich"));
+			this.getJLabelResult().setForeground(new Color(0, 153, 0));
 		} else {
-			getBtnResult().setBackground(new Color(255, 0, 0));
-			getBtnResult().setText(Language.translate("Fehlgeschlagen"));
+			this.getJLabelResult().setText(Language.translate("Fehlgeschlagen"));
+			this.getJLabelResult().setForeground(new Color(153, 0, 0));
 		}
 	}
 	
@@ -262,8 +267,10 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	
 		String actCMD = ae.getActionCommand();
 		if (actCMD.equalsIgnoreCase(COMMAND_CONNECT)) {
-			char[] pswd = getTfPassword().getPassword();
-			displayResult(owner.connect(getTfUsername().getText().trim(), new String(pswd)));
+			char[] pswd = getJPasswordField().getPassword();
+			String userName = getJTextFieldUsername().getText().trim();
+			Application.getGlobalInfo().setOIDCUsername(userName);
+			displayResult(owner.connect(userName, new String(pswd)));
 			
 		} else {
 			if (parentGUI != null) {

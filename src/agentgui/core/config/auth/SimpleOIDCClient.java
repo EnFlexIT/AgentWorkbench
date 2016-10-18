@@ -97,64 +97,30 @@ import net.minidev.json.JSONObject;
  */
 public class SimpleOIDCClient {
 	
-	/** The Constant URLPATH_WELL_KNOWN_OPENID. */
 	private static final String URLPATH_WELL_KNOWN_OPENID = ".well-known/openid-configuration";
-
-	/** The issuer URI. */
+	
 	private URI issuerURI;
-	
-	/** The provider metadata. */
-	private OIDCProviderMetadata providerMetadata;
-	
-	/** The authorization endpoint URI. */
 	private URI authorizationEndpointURI;
-	
-	/** The user info endpoint URI. */
 	private URI userInfoEndpointURI;
-
-	/** The client information. */
-	private OIDCClientInformation clientInformation;
-	
-	/** The client metadata JSON. */
-	private String clientMetadataJSON;
-	
-	/** The client metadata. */
-	private OIDCClientMetadata clientMetadata;
-	
-	/** The client ID. */
-	private ClientID clientID;
-	
-	/** The client secret. */
-	private Secret clientSecret;
-
-	/** The state. */
-	private State state;
-	
-	/** The nonce. */
-	private Nonce nonce;
-
-	/** The redirect URI. */
 	private URI redirectURI;
 
-	/** The auth code. */
+	private OIDCProviderMetadata providerMetadata;
+	private OIDCClientInformation clientInformation;
+	private OIDCClientMetadata clientMetadata;
+	private String clientMetadataJSON;
+	
+	private ClientID clientID;
+	private Secret clientSecret;
+	private State state;
+	private Nonce nonce;
+
 	private AuthorizationCode authCode;
-	
-	/** The resource owner credentials grant. */
 	private ResourceOwnerPasswordCredentialsGrant resourceOwnerCredentialsGrant;
-
-	/** The access token. */
 	private AccessToken accessToken;
-	
-	/** The id token. */
 	private JWT idToken;
-
-	/** The user info claims. */
 	private JSONObject userInfoClaims;
-	
-	/** The id claims. */
 	private JWTClaimsSet idClaims;
 
-	/** The trust store file. */
 	private File trustStoreFile;
 
 	/**

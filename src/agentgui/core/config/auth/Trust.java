@@ -49,10 +49,7 @@ import javax.net.ssl.TrustManagerFactory;
  */
 public class Trust {
 	
-	/** The Constant OIDC_TRUST_STORE. */
 	public static final String OIDC_TRUST_STORE = "oidcTrustStore.jks";
-	
-	/** The Constant TRUSTSTORE_PASSWORD. */
 	private static final String TRUSTSTORE_PASSWORD = "HoYp8FfLLVJJFX1APMQA";
 
 	/**
