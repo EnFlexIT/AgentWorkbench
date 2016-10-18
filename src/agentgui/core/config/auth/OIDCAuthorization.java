@@ -30,7 +30,6 @@ package agentgui.core.config.auth;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -54,17 +53,9 @@ import agentgui.core.application.Application;
  */
 public class OIDCAuthorization {
 
-	/**  The claim used by OIDC to describe the username (subject). */
 	private static final String OIDC_ID_CLAIM_USERID = "sub"; // subject
-
-	/** The instance. */
 	private static OIDCAuthorization instance;
-
-	/**  The wrapped instance of the OIDC Client. */
 	private SimpleOIDCClient oidcClient;
-
-	/**  The panel used in the dialog. */
-	private OIDCPanel oidcPanel;
 
 	/**
 	 * Instantiates a new OIDC authorization.
@@ -92,39 +83,16 @@ public class OIDCAuthorization {
 	 * @return the dialog
 	 */
 	public JDialog getDialog(String presetUsername, Frame ownerFrame) {
+		
 		JDialog authDialog = new JDialog(ownerFrame);
-		authDialog.setContentPane(getPanel());
-		if (presetUsername != null) {
-			getPanel().getTfUsername().setText(presetUsername);
+		OIDCPanel oidcPanel = new OIDCPanel(this);
+		if (presetUsername!=null) {
+			oidcPanel.getTfUsername().setText(presetUsername);
 		}
-		authDialog.setSize(new Dimension(500, 150));
+		authDialog.setContentPane(oidcPanel);
+		authDialog.setSize(new Dimension(500, 180));
 		authDialog.setLocationRelativeTo(null);
 		return authDialog;
-	}
-
-	/**
-	 * Gets the authorization gui panel in case it should be shown at a different place than the dialog.
-	 *
-	 * @param parentGUI the parent GUI element which can listen to the events
-	 * @return the panel
-	 */
-	public OIDCPanel getPanel(ActionListener parentGUI) {
-		if (oidcPanel == null) {
-			oidcPanel = getPanel().setParent(parentGUI);
-		}
-		return oidcPanel;
-	}
-
-	/**
-	 * Gets the panel without setting a ActionListener, so this has to be done manually.
-	 *
-	 * @return the panel
-	 */
-	public OIDCPanel getPanel() {
-		if (oidcPanel == null) {
-			oidcPanel = new OIDCPanel(this);
-		}
-		return oidcPanel;
 	}
 
 	/**
@@ -161,7 +129,6 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the OIDC client.
-	 *
 	 * @return the OIDC client
 	 */
 	public SimpleOIDCClient getOIDCClient() {
@@ -173,8 +140,6 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the issuer URI.
-	 * 
-	 *
 	 * @return the issuer URI
 	 */
 	private String getIssuerURI() {
@@ -183,7 +148,6 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the resource URI.
-	 *
 	 * @return the resource URI
 	 */
 	private String getResourceURI() {
@@ -192,7 +156,6 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the client id.
-	 *
 	 * @return the client id
 	 */
 	private String getClientId() {
@@ -201,7 +164,6 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the client secret.
-	 *
 	 * @return the client secret
 	 */
 	private String getClientSecret() {
@@ -240,9 +202,9 @@ public class OIDCAuthorization {
 
 //			System.out.println("authentication redirection necessary");
 
-//		System.out.println("parse authentication parameters from redirection");
+//			System.out.println("parse authentication parameters from redirection");
 			oidcClient.parseAuthenticationDataFromRedirect(authRedirection, false); // don't override clientID
-//		System.out.println("set USER credentials");
+//			System.out.println("set USER credentials");
 			oidcClient.setResourceOwnerCredentials(username, password);
 
 			oidcClient.requestToken();
@@ -281,8 +243,8 @@ public class OIDCAuthorization {
 	 */
 	// Alternatively: pass Access Token on to another client, use it to access a resource there
 	public String doResourceAccess(AccessToken accessToken) throws ParseException, IOException {
+		
 		if (accessToken != null) {
-
 			System.out.println(OIDCAuthorization.getInstance().getUserID());
 
 //			getOIDCClient().dumpTokenInfo();

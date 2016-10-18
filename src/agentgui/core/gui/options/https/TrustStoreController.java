@@ -60,6 +60,7 @@ import agentgui.core.application.Language;
  * @since 05-04-2016
  */
 public class TrustStoreController {
+	
 	private DefaultTableModel tableModel;
 	protected KeyStore trustStore;
 	private FileInputStream trustStoreInputStream = null;
@@ -250,7 +251,6 @@ public class TrustStoreController {
 
 	/**
 	 * This method allows the user to delete certificate from TrustStore.
-	 *
 	 * @param certificateAliasToDelete the certificate alias to delete
 	 */
 	public void deleteCertificateFromTrustStore(String certificateAliasToDelete) {
@@ -286,7 +286,6 @@ public class TrustStoreController {
 
 	/**
 	 * Gets the tableModel.
-	 * 
 	 * @return the tableModel
 	 */
 	public DefaultTableModel getTableModel() {
@@ -311,7 +310,6 @@ public class TrustStoreController {
 
 	/**
 	 * Adds row to the TableModel
-	 *
 	 * @param certificateProperties the CertificateProperties
 	 */
 	public void addTableModelRow(CertificateProperties certificateProperties) {
@@ -336,8 +334,7 @@ public class TrustStoreController {
 
 	/**
 	 * Get TrustedCertificates list .
-	 *
-	 * @return
+	 * @return the trusted certificates list
 	 */
 	public Enumeration<String> getTrustedCertificatesList() {
 		CertificateProperties certificateProperties = null;
@@ -361,6 +358,10 @@ public class TrustStoreController {
 		return null;
 	}
 
+	/**
+	 * Gets the first certificate properties.
+	 * @return the first certificate properties
+	 */
 	public CertificateProperties getFirstCertificateProperties() {
 		Enumeration<String> keyStoreContents = getTrustedCertificatesList();
 		CertificateProperties certificateProperties = null;
@@ -385,6 +386,11 @@ public class TrustStoreController {
 		return certificateProperties;
 	}
 
+	/**
+	 * Gets the certificate with the specified alias.
+	 * @param alias the alias
+	 * @return the certificate
+	 */
 	public X509Certificate getCertificate(String alias) {
 		Certificate cert = null;
 		try {
@@ -395,6 +401,10 @@ public class TrustStoreController {
 		return (X509Certificate) cert;
 	}
 	
+	/**
+	 * Checks if is initzialized.
+	 * @return true, if is initzialized
+	 */
 	public boolean isInitzialized(){
 		return initialized ;
 	}

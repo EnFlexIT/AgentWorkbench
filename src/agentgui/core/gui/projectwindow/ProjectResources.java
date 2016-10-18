@@ -471,8 +471,6 @@ public class ProjectResources extends JPanel implements Observer {
 	 */
 	private JComboBox<EnvironmentType> getJComboBoxEnvironmentModelSelector(){
 		if(jComboBoxEnvironmentModelSelector == null){
-			
-			// --- Get current definitions --------------------------
 			jComboBoxEnvironmentModelSelector = new JComboBox<EnvironmentType>();
 			jComboBoxEnvironmentModelSelector.setModel(this.currProject.getEnvironmentsComboBoxModel());
 			jComboBoxEnvironmentModelSelector.setPreferredSize(new Dimension(400, 25));

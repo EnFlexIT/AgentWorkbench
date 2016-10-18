@@ -172,6 +172,11 @@ import agentgui.core.webserver.JarFileCreator;
 	
 	@XmlElement(name="environmentModel")		private String environmentModelName;	
 	
+	
+	/**
+	 * The project class loader.
+	 */
+	@XmlTransient private ProjectClassLoader projectClassLoader;
 	/**
 	 * This Vector holds the additional resources which are used for the current project 
 	 * (external jar files or the binary folder of a development project)  
@@ -1222,6 +1227,18 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 
 	/**
+	 * Gets the project class loader.
+	 * @return the project class loader
+	 */
+	public ProjectClassLoader getProjectClassLoader() {
+		if (projectClassLoader==null) {
+			projectClassLoader = new ProjectClassLoader();
+		}
+		return projectClassLoader;
+	}
+
+	
+	/**
 	 * @param projectResources the projectResources to set
 	 */
 	public void setProjectResources(VectorOfProjectResources projectResources) {
@@ -1338,6 +1355,9 @@ import agentgui.core.webserver.JarFileCreator;
 					jarArchiveFile.deleteOnExit();
 					
 					// --- Add to the class loader --------
+//					URL url = new URL("file:/" + jarArchiveFile.getAbsolutePath());
+//					this.getProjectClassLoader().addURL(url);
+					
 					ClassLoaderUtil.addFile(jarArchiveFile.getAbsoluteFile());
 					ClassLoaderUtil.addJarToClassPath(jarArchivePath);
 					
@@ -1350,6 +1370,9 @@ import agentgui.core.webserver.JarFileCreator;
 					
 				} else {
 					// --- Load the given jar-file ------------------
+//					URL url = new URL("file:/" + jarFile4Display);
+//					this.getProjectClassLoader().addURL(url);
+//					
 					ClassLoaderUtil.addFile(file.getAbsoluteFile());
 					ClassLoaderUtil.addJarToClassPath(jarFileCorrected);
 					

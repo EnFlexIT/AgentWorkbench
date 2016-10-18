@@ -1586,26 +1586,42 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	/**
 	 * Returns the network component vector with the DistributionNode as last.
 	 * 
-	 * @param componentVector the component vector
+	 * @param componentHashSet the component hash set
 	 * @return the network component vector with distribution node as last
 	 */
-	public Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(HashSet<NetworkComponent> componentVector) {
+	public Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(HashSet<NetworkComponent> componentHashSet) {
 
 		NetworkComponent distributionNodeComponent = null;
 		Vector<NetworkComponent> newComponentVector = new Vector<NetworkComponent>();
-		for (NetworkComponent component : componentVector) {
+		for (NetworkComponent component : componentHashSet) {
 			if (component.getPrototypeClassName().equals(DistributionNode.class.getName())) {
 				distributionNodeComponent = component;
 			} else {
 				newComponentVector.add(component);
 			}
 		}
-		if (distributionNodeComponent != null) {
+		if (distributionNodeComponent!=null) {
 			newComponentVector.add(distributionNodeComponent);
 		}
 		return newComponentVector;
 	}
-
+	/**
+	 * Returns the first {@link DistributionNode} NetworkComponent, if available.
+	 * @param componentHashSet the component hash set
+	 * @return the distribution node
+	 */
+	public NetworkComponent getDistributionNode(HashSet<NetworkComponent> componentHashSet) {
+		
+		NetworkComponent distributionNodeComponent = null;
+		for (NetworkComponent component : componentHashSet) {
+			if (component.getPrototypeClassName().equals(DistributionNode.class.getName())) {
+				distributionNodeComponent = component;
+				break;
+			}
+		}
+		return distributionNodeComponent;
+	}
+	
 	/**
 	 * Checks, if a component list contains a DistributionNode.
 	 * 

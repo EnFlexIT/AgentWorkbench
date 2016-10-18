@@ -414,7 +414,9 @@ public class Application {
 	 * @param args the start arguments
 	 * @return the remaining arguments, which are not proceeded by Agent.GUI
 	 */
-	private static String[] proceedStartArguments(String[] args){
+	private static String[] proceedStartArguments(String[] args) {
+		
+		if (args==null) return new String[0];
 		
 		Vector<String> remainingArgsVector = new Vector<String>();
 
@@ -765,6 +767,9 @@ public class Application {
 		// --- Remove TrayIcon ------------------
 		setTrayIcon(null);	
 		
+		// --- Stop the OSGI platform -----------
+//		OSGIApplication.getInstance().stopOSGI();
+		
 		// --- Shutdown JVM ---------------------
 		System.exit(0);		
 	}
@@ -786,15 +791,12 @@ public class Application {
 		showOptionDialog(null);
 	}
 	
-	
 	/**
 	 * Opens the OpenID Connect dialog 
-	 * 
 	 */
 	public static void showAuthenticationDialog() {
 		OIDCAuthorization.getInstance().getDialog(getGlobalInfo().getOIDCUsername(), mainWindow).setVisible(true);
 	}
-	
 	
 	/**
 	 * Opens the Option-Dialog of the application with a specified TabName

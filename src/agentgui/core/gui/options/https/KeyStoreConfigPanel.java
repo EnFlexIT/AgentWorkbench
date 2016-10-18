@@ -88,9 +88,6 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 	private JLabel jLabelState;
 	private JLabel jLabelCountryCode;
 	private JLabel jLabelKeyStoreInformations;
-	private JLabel jLabelCertificateName;
-	private JLabel jLabelCertificateValidity;
-	private JLabel jLabelCertificateValidityDays;
 	private JLabel jLabelCertificatePath;
 	private JLabel jLabelCertificateInformation;
 	private JLabel jLabelValidity;
@@ -681,16 +678,6 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 		return jFileChooserSave;
 	}
 	/**
-	 * This method initializes jLabelCertificateName.
-	 */
-	private JLabel getJLabelCertificateName() {
-		if (jLabelCertificateName == null) {
-			jLabelCertificateName = new JLabel(Language.translate("Certificate Name:",Language.EN));
-			jLabelCertificateName.setFont(new Font("Dialog", Font.PLAIN, 11));
-		}
-		return jLabelCertificateName;
-	}
-	/**
 	 * This method initializes jTextFieldCertificateName.
 	 */
 	private JTextField getJTextFieldCertificateName() {
@@ -699,26 +686,6 @@ public class KeyStoreConfigPanel extends JPanel implements ActionListener {
 			jTextFieldCertificateName.setPreferredSize(new Dimension(300, 26));
 		}
 		return jTextFieldCertificateName;
-	}
-	/**
-	 * This method initializes jLabelCertificateValidity.
-	 */
-	private JLabel getJLabelCertificateValidity() {
-		if (jLabelCertificateValidity == null) {
-			jLabelCertificateValidity = new JLabel(Language.translate("Certificate validity:",Language.EN));
-			jLabelCertificateValidity.setFont(new Font("Dialog", Font.PLAIN, 11));
-		}
-		return jLabelCertificateValidity;
-	}
-	/**
-	 * This method initializes jLabelCertificateValidity.
-	 */
-	private JLabel getJLabelCertificateValidityDays() {
-		if (jLabelCertificateValidityDays == null) {
-			jLabelCertificateValidityDays = new JLabel(Language.translate("day(s)",Language.EN));
-			jLabelCertificateValidityDays.setFont(new Font("Dialog", Font.PLAIN, 11));
-		}
-		return jLabelCertificateValidityDays;
 	}
 	/**
 	 * This method initializes jTextFieldCertificateValidity.

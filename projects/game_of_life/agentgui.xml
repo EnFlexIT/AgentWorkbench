@@ -34,9 +34,13 @@
     <jadeConfiguration>
         <skipUserRequestForJadeStart>false</skipUserRequestForJadeStart>
         <useLocalPort>1099</useLocalPort>
-        <mtpCreation>ConfiguredByJADE</mtpCreation>
+        <mtpCreation>ConfiguredByIPandPort</mtpCreation>
         <mtpIpAddress>Auto-Configuration</mtpIpAddress>
-        <mtpProtocol>HTTPS</mtpProtocol>
+        <mtpProtocol>HTTP</mtpProtocol>
+        <keyStoreFile>D:\10 Java Projects\AgentGUI\resources\security\Agent-HyGridKeyStore.jks</keyStoreFile>
+        <trustStoreFile>D:\10 Java Projects\AgentGUI\resources\security\Agent-HyGridTrustStore.jks</trustStoreFile>
+        <keyStorePassword>MTIzNDU2</keyStorePassword>
+        <trustStorePassword>MTIzNDU2</trustStorePassword>
         <mtpPort>7778</mtpPort>
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
@@ -89,7 +93,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>0968 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>0128 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
     <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
     <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/game_of_life_IDE.jar</downloadResources>

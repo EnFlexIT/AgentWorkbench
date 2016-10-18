@@ -86,13 +86,12 @@ public class KeyStoreController extends TrustStoreController {
 
 	/**
 	 * This method allows the user to create a KeyStore and protect its
-	 * integrity with a password
-	 * 
-	 * @param informations of the provider
-	 * @param alias for the KeyStore
-	 * @param keyStoreFile
-	 * @param keystorePassword
-	 * @param keyStorePath
+	 * integrity with a password.
+	 *
+	 * @param certificateProperties the certificate properties
+	 * @param keyStoreFile the key store file
+	 * @param keystorePassword the keystore password
+	 * @param validity the validity
 	 */
 	public void createKeyStore(CertificateProperties certificateProperties, File keyStoreFile, String keystorePassword, String validity) {
 		KeyPairGenerator kpg;
@@ -217,11 +216,8 @@ public class KeyStoreController extends TrustStoreController {
 	/**
 	 * This method allows the user to export certificate from KeyStore.
 	 *
-	 * @param keyStoreName the KeyStore name
 	 * @param alias the alias
-	 * @param keyStorePassword the KeyStore password
-	 * @param certificateName the certificate name
-	 * @param ownerDialog the owner dialog
+	 * @param certificatePath the certificate path
 	 */
 	public void exportCertificate(String alias, String certificatePath) {
 		X509Certificate cert = getCertificate(alias);

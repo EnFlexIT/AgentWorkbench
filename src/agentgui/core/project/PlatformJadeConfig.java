@@ -270,9 +270,9 @@ public class PlatformJadeConfig implements Serializable {
 				// --- Set the MTP address ------------------------------------ 
 				if (ipAddress!=null) {
 					Integer freePort = new PortChecker(this.getLocalPortMTP(), ipAddress).getFreePort();
-					if(this.getMtpProtocol().equals(MtpProtocol.HTTP)){
+					if (this.getMtpProtocol()==MtpProtocol.HTTP) {
 						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
-					}else{
+					} else {
 						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(https://" + ipAddress + ":" + freePort + "/acc)");
 						profile.setParameter("jade_mtp_http_https_keyStoreFile", this.getKeyStoreFile());
 						profile.setParameter("jade_mtp_http_https_keyStorePass", this.getKeyStorePassword());
@@ -309,9 +309,9 @@ public class PlatformJadeConfig implements Serializable {
 				// --- Set the MTP address ------------------------------------ 
 				if (ipAddress!=null) {
 					Integer freePort = new PortChecker(mtpPort, ipAddress).getFreePort();
-					if(globalInfo.getMtpProtocol().equals(MtpProtocol.HTTP)){
+					if (globalInfo.getMtpProtocol()==MtpProtocol.HTTP) {
 						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(http://" + ipAddress + ":" + freePort + "/acc)");
-					}else{
+					} else {
 						profile.setParameter(Profile.MTPS, "jade.mtp.http.MessageTransportProtocol(https://" + ipAddress + ":" + freePort + "/acc)");
 						profile.setParameter("jade_mtp_http_https_keyStoreFile", globalInfo.getKeyStoreFile());
 						profile.setParameter("jade_mtp_http_https_keyStorePass", globalInfo.getKeyStorePassword());

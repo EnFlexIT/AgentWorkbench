@@ -584,10 +584,18 @@ public class NetworkModelAdapter implements NetworkModelInterface {
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getNetworkComponentVectorWithDistributionNodeAsLast(java.util.HashSet)
 	 */
 	@Override
-	public Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(HashSet<NetworkComponent> componentVector) {
-		return this.graphController.getNetworkModel().getNetworkComponentVectorWithDistributionNodeAsLast(componentVector);
+	public Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(HashSet<NetworkComponent> componentHashSet) {
+		return this.graphController.getNetworkModel().getNetworkComponentVectorWithDistributionNodeAsLast(componentHashSet);
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#getDistributionNode(java.util.HashSet)
+	 */
+	@Override
+	public NetworkComponent getDistributionNode(HashSet<NetworkComponent> componentHashSet) {
+		return this.graphController.getNetworkModel().getDistributionNode(componentHashSet);
+	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.envModel.graph.networkModel.NetworkModelInterface#containsDistributionNode(java.util.HashSet)
 	 */

@@ -90,7 +90,9 @@
 						lib/oidc/lang-tag-1.4.3.jar;
 						lib/oidc/mail-1.4.7.jar;
 						lib/oidc/nimbus-jose-jwt-4.26.1.jar;
-						lib/oidc/oauth2-oidc-sdk-5.17.1.jar;"	
+						lib/oidc/oauth2-oidc-sdk-5.17.1.jar;	
+						lib/bc/bcpkix-jdk15on-155.jar
+						lib/bc/bcprov-jdk15on-155.jar "
 			
 			>
 		

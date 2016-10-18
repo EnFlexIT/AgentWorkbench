@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import agentgui.envModel.graph.prototypes.DistributionNode;
 import edu.uci.ics.jung.graph.Graph;
 
 public interface NetworkModelInterface {
@@ -328,12 +329,19 @@ public interface NetworkModelInterface {
 	/**
 	 * Returns the network component vector with the DistributionNode as last.
 	 * 
-	 * @param componentVector the component vector
+	 * @param componentHashSet the component hash set
 	 * @return the network component vector with distribution node as last
 	 */
-	public abstract Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(
-			HashSet<NetworkComponent> componentVector);
+	public abstract Vector<NetworkComponent> getNetworkComponentVectorWithDistributionNodeAsLast(HashSet<NetworkComponent> componentHashSet);
 
+	/**
+	 * Returns the first {@link DistributionNode} NetworkComponent, if available.
+	 * 
+	 * @param componentHashSet the component hash set
+	 * @return the distribution node
+	 */
+	public abstract NetworkComponent getDistributionNode(HashSet<NetworkComponent> componentHashSet);
+	
 	/**
 	 * Checks, if a component list contains distribution node.
 	 * 

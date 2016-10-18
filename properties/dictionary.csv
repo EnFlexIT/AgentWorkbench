@@ -10,6 +10,7 @@ de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br> Can the name
 de;Abbrechen;Cancel;;;
 de;Abbruch: Kein Projekt geöffnet!;Canceled: No project open!;;;
 de;Abbruch;Cancel;;;
+de;Ablaufdatum;;;;
 de;Abtastintervall;Sampling interval;;;
 de;Adressen;Addresses;;;
 de;Agent auswählen!;Select an Agent!;;;
@@ -657,6 +658,7 @@ de;Verteilung der Agenten basierend auf:;Distribution of agents based on:;;;
 de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;Distribution of agents in "PredictiveStaticLoadBalancing" based on:;;;
 de;Verteilung der Agenten nur auf Remote-Maschinen;Distribution of agents remote only;;;
 de;Verteilung;Distribution
+de;Vertrauen konfigurieren;;;;
 de;Verwenden Sie das Kontextmenü im Projektbaum, um einen Start-Tab festzulegen.;Use the context menu in the project tree in order to specify a start tab.;;;
 de;Verzeichnis bereits vorhanden!;Directory already exists!
 de;Verzeichnis gepackt zu;Folder packed to;;;
@@ -688,6 +690,8 @@ de;Zeit-Konfiguration;Time Configuration;;;
 de;Zeit;Time;;;
 de;Zeitmodell verwenden;Use a time model;;;
 de;Zeitmodell;Time model;;;
+de;Zertifikats-Alias;;;;
+de;Zertifikatsbesitzer;;;;
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
 de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project .;null;null;null
 de;Zurücksetzen;Reset
@@ -776,6 +780,7 @@ en;;Please, specifiy the ID for the new Turbo Compressor!;;;
 en;;Refresh Thread Measurement;;;
 en;;Remove Component;;;
 en;;Remove Turbo Compressor;;;
+en;;Required fields;;;
 en;;Save and send data model changes to agent(s)?;;;
 en;;Save changes to network model?;;;
 en;;Should they be removed too?;;;
@@ -802,6 +807,7 @@ en;;Upgrade costs;;;
 en;;Validity;;;
 en;;Warning message;;;
 en;;Writing;;;
+en;;You must fill out all required fields!;;;
 en;;day(s);;;
 en;Abbruch;Cancel;;;
 en;Adapter-Klasse;Adapter class;;;

@@ -39,6 +39,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import agentgui.core.application.Language;
@@ -48,54 +49,27 @@ import agentgui.core.application.Language;
  */
 public class OIDCPanel extends JPanel implements ActionListener {
 
-	/** The Constant DEBUG_ISSUER_URI. */
 	public static final String DEBUG_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
-	
-	/** The Constant DEBUG_RESOURCE_URI. */
 	public static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/vanilla/profile.jsp";
-	
-	/** The Constant DEBUG_CLIENT_ID. */
 	public static final String DEBUG_CLIENT_ID = "testclient";
-	
-	/** The Constant DEBUG_CLIENT_SECRET. */
 	public static final String DEBUG_CLIENT_SECRET = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
-	
-	/** The Constant COMMAND_CONNECT. */
 	private static final String COMMAND_CONNECT = "connectOIDC";
 
-	/** The lbl OIDC values. */
+	
 	private JLabel lblOIDCValues;
-	
-	/** The b connect. */
 	private JButton bConnect;
-
-	/** The tf username. */
 	private JTextField tfUsername;
-	
-	/** The lbl username. */
 	private JLabel lblUsername;
-	
-	/** The lbl password. */
 	private JLabel lblPassword;
-	
-	/** The tf password. */
-	private JTextField tfPassword;
-	
-	/** The parent GUI. */
+	private JPasswordField tfPassword;
 	private ActionListener parentGUI;
-	
-	/** The owner. */
 	private OIDCAuthorization owner;
-
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -169367444435859302L;
-	
-	/** The btn result. */
 	private JButton btnResult;
 
+	
 	/**
 	 * Instantiates a new OIDC panel.
-	 *
 	 * @param owner the owner
 	 */
 	public OIDCPanel(OIDCAuthorization owner) {
@@ -126,14 +100,8 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		gridBagLayout.rowHeights = new int[] { 0, 0, 24, 22, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-
 		this.setLayout(gridBagLayout);
-
-/*
-		GridBagLayout gbl_jPanelTop = new GridBagLayout();
-		gbl_jPanelTop.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		this.setLayout(gbl_jPanelTop);
-	*/	
+		
 		GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
 		gridBagConstraints18.anchor = GridBagConstraints.WEST;
 		gridBagConstraints18.gridx = 1;
@@ -186,55 +154,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		gbc_tfPassword.gridx = 1;
 		gbc_tfPassword.gridy = 2;
 		this.add(getTfPassword(), gbc_tfPassword);
-		GridBagConstraints gbc_lblLicenseServer = new GridBagConstraints();
-		gbc_lblLicenseServer.anchor = GridBagConstraints.EAST;
-		gbc_lblLicenseServer.insets = new Insets(0, 0, 5, 5);
-		gbc_lblLicenseServer.gridx = 1;
-		gbc_lblLicenseServer.gridy = 2;
-//		this.add(getLblLicenseServer(), gbc_lblLicenseServer);
 
-		GridBagConstraints gbc_tfLicenseServer = new GridBagConstraints();
-		gbc_tfLicenseServer.insets = new Insets(0, 0, 5, 5);
-		gbc_tfLicenseServer.fill = GridBagConstraints.HORIZONTAL;
-		gbc_tfLicenseServer.gridx = 2;
-		gbc_tfLicenseServer.gridy = 2;
-		GridBagConstraints gbc_lblIdProvider = new GridBagConstraints();
-		gbc_lblIdProvider.anchor = GridBagConstraints.EAST;
-		gbc_lblIdProvider.insets = new Insets(0, 0, 5, 5);
-		gbc_lblIdProvider.gridx = 1;
-		gbc_lblIdProvider.gridy = 3;
-//		this.add(getLblIdProvider(), gbc_lblIdProvider);
-		GridBagConstraints gbc_tfIdProvider = new GridBagConstraints();
-		gbc_tfIdProvider.insets = new Insets(0, 0, 5, 5);
-		gbc_tfIdProvider.fill = GridBagConstraints.HORIZONTAL;
-		gbc_tfIdProvider.gridx = 2;
-		gbc_tfIdProvider.gridy = 3;
-//		this.add(getTfIdProvider(), gbc_tfIdProvider);
-		GridBagConstraints gbc_lblClientId = new GridBagConstraints();
-		gbc_lblClientId.insets = new Insets(0, 0, 5, 5);
-		gbc_lblClientId.anchor = GridBagConstraints.EAST;
-		gbc_lblClientId.gridx = 1;
-		gbc_lblClientId.gridy = 4;
-//		this.add(getLblClientId(), gbc_lblClientId);
-		GridBagConstraints gbc_tfClientId = new GridBagConstraints();
-		gbc_tfClientId.insets = new Insets(0, 0, 5, 5);
-		gbc_tfClientId.fill = GridBagConstraints.HORIZONTAL;
-		gbc_tfClientId.gridx = 2;
-		gbc_tfClientId.gridy = 4;
-//		this.add(getTfClientId(), gbc_tfClientId);
-		GridBagConstraints gbc_lblClientSecret = new GridBagConstraints();
-		gbc_lblClientSecret.insets = new Insets(0, 0, 0, 5);
-		gbc_lblClientSecret.anchor = GridBagConstraints.EAST;
-		gbc_lblClientSecret.gridx = 1;
-		gbc_lblClientSecret.gridy = 5;
-//		this.add(getLblClientSecret(), gbc_lblClientSecret);
-		GridBagConstraints gbc_tfClientSecret = new GridBagConstraints();
-		gbc_tfClientSecret.insets = new Insets(0, 0, 0, 5);
-		gbc_tfClientSecret.fill = GridBagConstraints.HORIZONTAL;
-		gbc_tfClientSecret.gridx = 2;
-		gbc_tfClientSecret.gridy = 5;
-		// this.add(getTfLicenseServer(), gbc_tfLicenseServer);
-		
 		bConnect.setText(Language.translate("Verbinden"));
 		GridBagConstraints gbc_btnResult = new GridBagConstraints();
 		gbc_btnResult.insets = new Insets(0, 0, 0, 5);
@@ -246,7 +166,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes jButtonApply.
-	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getBConnect() {
@@ -261,7 +180,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	/**
 	 * Gets the tf username.
-	 *
 	 * @return the tf username
 	 */
 	public JTextField getTfUsername() {
@@ -274,7 +192,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	/**
 	 * Gets the lbl username.
-	 *
 	 * @return the lbl username
 	 */
 	private JLabel getLblUsername() {
@@ -299,52 +216,30 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	/**
 	 * Gets the tf password.
-	 *
 	 * @return the tf password
 	 */
-	public JTextField getTfPassword() {
+	public JPasswordField getTfPassword() {
 		if (tfPassword == null) {
-			tfPassword = new JTextField();
-//			tfPassword.setText("test");
+			tfPassword = new JPasswordField();
 			tfPassword.setColumns(10);
 		}
 		return tfPassword;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		String actCMD = ae.getActionCommand();
-
-		if (actCMD.equalsIgnoreCase(COMMAND_CONNECT)) {
-			displayResult(owner.connect(getTfUsername().getText(), getTfPassword().getText()));
-		} else {
-			if (parentGUI != null) {
-				parentGUI.actionPerformed(ae);
-			}
-		}
-
-	}
-
 	/**
 	 * Gets the btn result.
-	 *
 	 * @return the btn result
 	 */
 	private JButton getBtnResult() {
 		if (btnResult == null) {
 			btnResult = new JButton("result");
-//			btnResult.setEnabled(false);
-			getBtnResult().setVisible(false);
+			btnResult.setVisible(false);
 		}
 		return btnResult;
 	}
 
 	/**
 	 * Display result.
-	 *
 	 * @param successful the successful
 	 */
 	public void displayResult(boolean successful) {
@@ -357,4 +252,24 @@ public class OIDCPanel extends JPanel implements ActionListener {
 			getBtnResult().setText(Language.translate("Fehlgeschlagen"));
 		}
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+	
+		String actCMD = ae.getActionCommand();
+		if (actCMD.equalsIgnoreCase(COMMAND_CONNECT)) {
+			char[] pswd = getTfPassword().getPassword();
+			displayResult(owner.connect(getTfUsername().getText().trim(), new String(pswd)));
+			
+		} else {
+			if (parentGUI != null) {
+				parentGUI.actionPerformed(ae);
+			}
+		}
+	}
+	
 }

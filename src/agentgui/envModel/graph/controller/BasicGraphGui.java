@@ -50,7 +50,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -79,6 +78,7 @@ import agentgui.core.gui.imaging.ImagePreview;
 import agentgui.core.gui.imaging.ImageUtils;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.commands.RenameNetworkComponent.NetworkComponentRenamed;
+import agentgui.envModel.graph.networkModel.ComponentTypeSettings;
 import agentgui.envModel.graph.networkModel.EdgeShapePolyline;
 import agentgui.envModel.graph.networkModel.GeneralGraphSettings4MAS;
 import agentgui.envModel.graph.networkModel.GraphEdge;
@@ -105,6 +105,7 @@ import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ConstantDirectionalEdgeValueTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.PickedState;
+import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import edu.uci.ics.jung.visualization.renderers.Checkmark;
 
 /**
@@ -311,12 +312,26 @@ public class BasicGraphGui extends JPanel implements Observer {
 		return graphEnvironmentMousePlugin;
 	}
 	
+
 	/**
-	 * Gets the PluggableGraphMouse.
+	 * Returns the PluggableGraphMouse.
 	 * @return the pluggableGraphMouse
 	 */
 	public PluggableGraphMouse getPluggableGraphMouse() {
-		if (pluggableGraphMouse == null) {
+		return this.getPluggableGraphMouse(false);
+	}
+	/**
+	 * Returns the PluggableGraphMouse.
+	 * @param reCreatePluggableGraphMouse the re create pluggable graph mouse
+	 * @return the pluggableGraphMouse
+	 */
+	public PluggableGraphMouse getPluggableGraphMouse(boolean reCreatePluggableGraphMouse) {
+		
+		if (reCreatePluggableGraphMouse==true & pluggableGraphMouse!=null) {
+			pluggableGraphMouse = null;
+		}
+		
+		if (pluggableGraphMouse==null) {
 
 			// --- Create the context menu Plugin ---------
 			GraphEnvironmentPopupPlugin<GraphNode, GraphEdge> popupPlugin = new GraphEnvironmentPopupPlugin<GraphNode, GraphEdge>(this);
@@ -362,33 +377,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 
 	/**
-	 * Sets the graph coordinates to values bigger than 0 for the x and the y axis.
-	 * 
-	 * @param graph the graph
-	 * @return the graph
-	 */
-	private Graph<GraphNode, GraphEdge> correctGraphCoordinates(Graph<GraphNode, GraphEdge> graph2Correct, double xCorrect, double yCorrect) {
-
-		if (xCorrect == 0 && yCorrect == 0) {
-			return graph2Correct; // --- Nothing to correct ---------------------
-		}
-
-		// --- Correct the positions of the graph nodes ---
-		Graph<GraphNode, GraphEdge> graph = graph2Correct;
-		Collection<GraphNode> nodeCollection = graph.getVertices();
-		GraphNode[] nodes = nodeCollection.toArray(new GraphNode[nodeCollection.size()]);
-		for (int i = 0; i < nodes.length; i++) {
-			Point2D pos = nodes[i].getPosition();
-			pos.setLocation(pos.getX() + xCorrect, pos.getY() + yCorrect);
-			nodes[i].setPosition(pos);
-		}
-		return graph;
-	}
-
-	/**
-	 * This method assigns a graph to a new VisualizationViewer and adds it to the GUI. This is used for creating graphs for the first time.
-	 * 
-	 * @param graph The graph
+	 * This method assigns a graph to a new VisualizationViewer and adds it to the GUI. 
 	 */
 	private void reLoadGraph() {
 
@@ -413,7 +402,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 			this.visViewSatellite = null;
 			this.centerComponent = new JPanel();
 			this.add(centerComponent, BorderLayout.CENTER);
-
 		} else {
 			// --- Graph to display -------------
 			this.visView = this.getNewVisualizationViewer(graph);
@@ -426,9 +414,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			this.validate();
 			this.zoomSetInitialScalingAndMovement();
 			this.zoomOneToOneMoveFocus(this.visViewSatellite);
-			
 		}
-
 	}
 
 	/**
@@ -522,24 +508,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> getNewVisualizationViewer(Graph<GraphNode, GraphEdge> graph) {
 
 		// ----------------------------------------------------------------
-		// --- Get the spread of the graph and correct the positions ------
-		// ----------------------------------------------------------------
-		double moveX = 0;
-		double moveY = 0;
-
-		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
-		if (graphDimension.getX() != this.graphMargin) moveX = (graphDimension.getX() * (-1)) + this.graphMargin;
-		if (graphDimension.getY() != this.graphMargin) moveY = (graphDimension.getY() * (-1)) + this.graphMargin;
-		
-		// --- Correct graph position, if this is used in the setup -------
-		if (this.graphController.getProject()!=null) {
-			graph = this.correctGraphCoordinates(graph, moveX, moveY);	
-		}
-
-		// ----------------------------------------------------------------
 		// --- Define graph layout ----------------------------------------
 		// ----------------------------------------------------------------
 		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
+		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
 		layout.setSize(new Dimension((int) (graphDimension.getWidth() + 2 * graphMargin), (int) (graphDimension.getHeight() + 2 * graphMargin)));
 		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
 			@Override
@@ -548,6 +520,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			}
 		});
 
+		
 		// ----------------------------------------------------------------
 		// --- Create a new VisualizationViewer instance ------------------
 		// ----------------------------------------------------------------
@@ -556,23 +529,89 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.setDoubleBuffered(true);
 		
 		// --- Configure mouse interaction --------------------------------
-		this.defaultModalGraphMouse = null; // Reset new VisualizationViewer
-		this.pluggableGraphMouse = null; // Reset new VisualizationViewer
-		vViewer.setGraphMouse(this.getPluggableGraphMouse());
+		vViewer.setGraphMouse(this.getPluggableGraphMouse(true));
 		vViewer.addKeyListener(this.getGraphEnvironmentMousePlugin(false));
 		
+		// --- Set the pick size of the visualisation viewer --------
+		((ShapePickSupport<GraphNode, GraphEdge>) vViewer.getPickSupport()).setPickSize(5);
+		
+		
 		// ----------------------------------------------------------------
-		// --- Set tool tip for nodes -------------------------------------
+		// --- Define edge and node ToolTip --------------------- Start ---
+		// ----------------------------------------------------------------
+		
+		// --- Edge -------------------------------------------------------
 		vViewer.setVertexToolTipTransformer(new Transformer<GraphNode, String>() {
 			@Override
-			public String transform(GraphNode edge) {
-				String toolTip = "<html>";
-				toolTip += "" + edge.getId() + "";  
+			public String transform(GraphNode node) {
+				
+				HashSet<NetworkComponent> netCompsAtNode = graphController.getNetworkModel().getNetworkComponents(node);
+				NetworkComponent netCompDisNode =  graphController.getNetworkModel().getDistributionNode(netCompsAtNode);
+				
+				// --- Generally define the toolTip -----------------------
+				String toolTip = "<html><b>GraphNode: " + node.getId() + "</b>";
+				if (netCompDisNode!=null) {
+					// --- In case of a distribution node -----------------
+					String type = netCompDisNode.getType();
+					String domain = "unknown";
+					String isAgent = "?";
+					ComponentTypeSettings cts = graphController.getGeneralGraphSettings4MAS().getCurrentCTS().get(type);
+					if (cts!=null) {
+						domain = cts.getDomain();
+						if (cts.getAgentClass()==null) {
+							isAgent = "No";
+						} else {
+							isAgent = "Yes";
+						}
+					}
+					// --- Define the ToolTip -----------------------------
+					toolTip += "<br><b>NetworkComponent: " + netCompDisNode.getId() + "</b><br>(Domain: " + domain + ", Type: " + type + ", isAgent: " + isAgent + ")";  
+				}
+				
+				// --- Show position in edit mode only --------------------
+				if (graphController.getProject()!=null) {
+					toolTip += "<br>(x=" + node.getPosition().getX() + " - y=" + node.getPosition().getY() + ")";	
+				}
 				toolTip += "</html>";
 				return toolTip;
 			}
 		});
+		
+		// --- Node -------------------------------------------------------
+		vViewer.setEdgeToolTipTransformer(new Transformer<GraphEdge, String>() {
+			@Override
+			public String transform(GraphEdge edge) {
+				String toolTip = null;
+				NetworkComponent netComp = graphController.getNetworkModel().getNetworkComponent(edge);
+				if (netComp!=null) {
+					String type = netComp.getType();
+					String domain = "unknown";
+					String isAgent = "?";
+					ComponentTypeSettings cts = graphController.getGeneralGraphSettings4MAS().getCurrentCTS().get(type);
+					if (cts!=null) {
+						domain = cts.getDomain();
+						if (cts.getAgentClass()==null) {
+							isAgent = "No";
+						} else {
+							isAgent = "Yes";
+						}
+					}
+					// --- Define the ToolTip -----------------------------
+					toolTip = "<html>";
+					toolTip += "<b>NetworkComponent: " + netComp.getId() + "</b><br>(Domain: " + domain + ", Type: " + type + ", isAgent: " + isAgent + ")";  
+					toolTip += "</html>";
+				}
+				return toolTip;
+			}
+		});
+		// ----------------------------------------------------------------
+		// --- Define edge and node ToolTip ------------------------ End---
+		// ----------------------------------------------------------------
 
+		// ----------------------------------------------------------------
+		// --- Node configurations ------------------------------ Start ---
+		// ----------------------------------------------------------------
+		
 		// --- Configure the node shape and size --------------------------
 		vViewer.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<GraphNode, GraphEdge>());
 		
@@ -649,10 +688,13 @@ public class BasicGraphGui extends JPanel implements Observer {
 		});
 		
 		// ----------------------------------------------------------------
+		// --- Edge configurations ------------------------------ Start ---
+		// ----------------------------------------------------------------
+		
 		// --- Configure edge label position ------------------------------
-		vViewer.getRenderContext().setLabelOffset(7);
+		vViewer.getRenderContext().setLabelOffset(6);
 		vViewer.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
-
+		
 		// --- Set the EdgeShape of the Visualisation Viewer --------------
 		this.setEdgeShapeTransformer(vViewer);
 		
