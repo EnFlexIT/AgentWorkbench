@@ -184,7 +184,7 @@ public class OIDCAuthorization {
 		try {
 			getOIDCClient();
 			oidcClient.reset();
-			oidcClient.setTrustStore(new File(Application.getGlobalInfo().getPathProperty(false) + Trust.OIDC_TRUST_STORE));
+			oidcClient.setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
 
 			oidcClient.setIssuerURI(getIssuerURI());
 			oidcClient.retrieveProviderMetadata();
