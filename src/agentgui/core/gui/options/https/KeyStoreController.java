@@ -115,7 +115,7 @@ public class KeyStoreController extends TrustStoreController {
 				SubjectPublicKeyInfo subPubKeyInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(new RSAKeyParameters(false, pub.getModulus(), pub.getPublicExponent()));
 
 				Date startDate = new Date();
-				Date endDate = new Date(System.currentTimeMillis() + Long.parseLong(validity) * 24 * 60 * 60);
+				Date endDate = new Date(System.currentTimeMillis() + Long.parseLong(validity) * 24 * 60 * 60 * 1000);
 
 				X500NameBuilder namebuilder = new X500NameBuilder(X500Name.getDefaultStyle());
 				namebuilder.addRDN(BCStyle.CN, certificateProperties.getCommonName());
@@ -212,19 +212,33 @@ public class KeyStoreController extends TrustStoreController {
 
 		saveTrustStore(newPassword);
 	}
+	
+	/**
+	 * This method allows the user to export certificate from KeyStore. The name of the file will be alias + ".cer"
+	 *
+	 * @param alias the alias
+	 * @param certificatePath the certificate path
+	 */
+	public void exportCertificate(String alias, String certificatePath){
+		exportCertificate(alias, certificatePath, false);
+	}
 
 	/**
 	 * This method allows the user to export certificate from KeyStore.
 	 *
 	 * @param alias the alias
 	 * @param certificatePath the certificate path
+	 * @param fullPath if true, use the certificatePath as full file name+path, so also containing the filename
 	 */
-	public void exportCertificate(String alias, String certificatePath) {
+	public void exportCertificate(String alias, String certificatePath, boolean fullPath) {
 		X509Certificate cert = getCertificate(alias);
 
 		try {
+			if(!fullPath){
+				certificatePath = certificatePath + alias + ".crt";
+			}
 
-			File certFile = new File(certificatePath, alias + ".crt");
+			File certFile = new File(certificatePath);
 			FileOutputStream os = new FileOutputStream(certFile);
 			os.write(cert.getEncoded());
 			os.flush();
