@@ -41,6 +41,7 @@ import agentgui.envModel.graph.networkModel.NetworkComponent;
 import agentgui.envModel.graph.networkModel.NetworkModel;
 import agentgui.envModel.graph.visualisation.notifications.DisplayAgentNotificationGraph;
 import agentgui.envModel.graph.visualisation.notifications.EnableNetworkModelUpdateNotification;
+import agentgui.envModel.graph.visualisation.notifications.EnvironmentModelUpdateNotification;
 import agentgui.simulationService.agents.AbstractDisplayAgent;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
@@ -262,6 +263,16 @@ public class DisplayAgent extends AbstractDisplayAgent {
 				// --- Enable / Disable the update of the network model ------- 
 				EnableNetworkModelUpdateNotification netmodelUpdate = (EnableNetworkModelUpdateNotification) notification.getNotification(); 
 				this.setEnableNetworkModelUpdate(netmodelUpdate.isEnableNetworkModelUpdate());
+				
+			} else if (notification.getNotification() instanceof EnvironmentModelUpdateNotification) {
+				// --- An explicit EnvironmentModel update was send -----------
+				EnvironmentModelUpdateNotification envModelUpdate = (EnvironmentModelUpdateNotification) notification.getNotification();
+				boolean enabledNetworkModelUpdate = this.isEnableNetworkModelUpdate();
+				this.setEnableNetworkModelUpdate(true);
+				this.getEnvironmentModelStimuli().add(envModelUpdate.getEnvironmentModel());
+				this.onEnvironmentStimulus();
+				this.setEnableNetworkModelUpdate(enabledNetworkModelUpdate);
+				
 			} else {
 				// --- Do other things ----------------------------------------
 				notification = this.getDisplayAgentNotificationHandler().setDisplayNotification(this.getGraphEnvironmentController(), this.getGraphEnvironmentController().getNetworkModel(), notification);	

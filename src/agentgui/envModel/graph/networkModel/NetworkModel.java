@@ -221,7 +221,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @param graphElement the graph element
 	 * @param networkComponent the network component
 	 */
-	public boolean removeGraphElementToNetworkComponentRelation(GraphElement graphElement, NetworkComponent networkComponent) {
+	private boolean removeGraphElementToNetworkComponentRelation(GraphElement graphElement, NetworkComponent networkComponent) {
 		
 		boolean done = false;
 		if (graphElement==null) return false;
@@ -569,6 +569,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	public void removeNetworkComponent(NetworkComponent networkComponent, boolean removeDistributionNodes, boolean refreshGraphElements) {
 
 		// --- Make sure that the NetworkComponent is on its own ----
+		Vector<GraphNodePairs> graphNodePairsToReMerge = new Vector<>();
 		HashSet<GraphElement> graphElements = this.getGraphElementsOfNetworkComponent(networkComponent, new GraphNode());
 		if (graphElements!=null) {
 			for (GraphElement graphElement : graphElements) {
@@ -577,7 +578,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				if (isDistributionGraphNode==false || (isDistributionGraphNode==true && removeDistributionNodes==true)) {
 					HashSet<NetworkComponent> networkComponents = this.getNetworkComponents(node);
 					if (networkComponents.size() > 1) {
-						this.splitNetworkModelAtNode(node);
+						graphNodePairsToReMerge.add(this.splitNetworkModelAtNode(node));
 					}	
 				}
 			}	
@@ -602,8 +603,16 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			this.removeGraphElementToNetworkComponentRelation(graphElement, networkComponent);
 
 		}
-		// ----------------------------------------------------------------
+		
+		// --- Remove the NetworkComponent --------------------------
 		this.networkComponents.remove(networkComponent.getId());
+		
+		// --- Re-Merge the previously splitted nodes, if needed ---- 
+		for (GraphNodePairs graphNodePairs : graphNodePairsToReMerge) {
+			this.mergeNodes(graphNodePairs);
+		}
+		
+		// --- Refresh the GraphElements ----------------------------
 		if (refreshGraphElements==true) {
 			this.refreshGraphElements();
 		}
@@ -1362,15 +1371,20 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		
 		// --- Create revert information --------------------------------------
 		HashSet<GraphNodePairsRevert> revertInfos = new HashSet<GraphNodePairsRevert>();
+
+		// --------------------------------------------------------------------
+		// --- Get first GraphNode and NetworkCommponent ----------------------
+		GraphNode graphNode1 = (GraphNode) this.getGraphElement(nodes2Merge.getGraphNode1().getId());
+		if (graphNode1==null) return null;
+		NetworkComponent comp1 = this.getNetworkComponents(graphNode1).iterator().next();
 		
 		// --------------------------------------------------------------------
 		// --- Walk through the list of GraphNode that have to be merged ------
-		GraphNode graphNode1 = (GraphNode) this.getGraphElement(nodes2Merge.getGraphNode1().getId());
-		NetworkComponent comp1 = this.getNetworkComponents(graphNode1).iterator().next();
 		for (GraphNode graphNode2 : nodes2Merge.getGraphNode2Hash() ) {
 			
 			// --- Make sure that this is a current GraphNode -----------------
 			graphNode2 = (GraphNode) this.getGraphElement(graphNode2.getId());
+			if (graphNode2==null) continue;
 			NetworkComponent comp2 = this.getNetworkComponents(graphNode2).iterator().next();
 
 			// --- Find the intersection set of the Graph elements of the two NetworkComponent
