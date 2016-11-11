@@ -371,98 +371,103 @@ public abstract class PlugIn implements Observer {
 	@Override
 	public void update(Observable observable, Object updateObject) {
 		
-		// ----------------------------------------------------------
-		this.updateFromObserver(observable, updateObject);
-		// ----------------------------------------------------------
-		
-		// ----------------------------------------------------------
-		// --- Changes in the Project-Configuration -----------------
-		// ----------------------------------------------------------
-		if (updateObject==null) {
-			return;			
-		} else if (updateObject.equals(Project.PREPARE_FOR_SAVING)) {
-			this.onPrepareForSaving();
-		} else if (updateObject.equals(Project.SAVED)) {
-			this.onProjectSaved();
-		} else if (updateObject.equals(Project.CHANGED_ProjectName)) {
-			this.onProjectChangedProjectName();
-		} else if (updateObject.equals(Project.CHANGED_ProjectDescription)) {
-			this.onProjectChangedProjectDescription();
-		} else if (updateObject.equals(Project.CHANGED_ProjectFolder)) {
-			// --- Do Nothing here !!! ----------
-			// this.onProjectChangedProjectFolder();
-		} else if (updateObject.equals(Project.CHANGED_ProjectView)) {
-			this.onProjectChangedProjectView();
-		} else if (updateObject.equals(Project.CHANGED_EnvironmentModelType)) {
-			this.onProjectChangedEnvironmentModel();
-		} else if (updateObject.equals(Project.CHANGED_StartArguments4BaseAgent)) {
-			this.onProjectChangedAgentStartConfiguration();
-		} else if (updateObject.equals(Project.CHANGED_TimeModelClass)) {
-			this.onProjectChangedTimeModelConfiguration();
-		} else if (updateObject.equals(Project.CHANGED_ProjectOntology)) {
-			this.onProjectChangedProjectOntology();
-		} else if (updateObject.equals(Project.CHANGED_ProjectResources)) {
-			this.onProjectChangedProjectResources();
-		} else if (updateObject.equals(Project.CHANGED_JadeConfiguration)) {
-			this.onProjectChangedJadeConfiguration();
-			
-		} else if (updateObject.equals(Project.CHANGED_DistributionSetup)) {
-			this.onProjectChangedDistributionSetup();
-		} else if (updateObject.equals(Project.CHANGED_RemoteContainerConfiguration)) {
-			this.onProjectChangedRemoteContainerConfiguration();
-		} else if (updateObject.equals(Project.CHANGED_UserRuntimeObject)) {
-			this.onProjectChangedUserRuntimeObject();
-			
-		// ----------------------------------------------------------
-		// --- Changes with the SimulationSetups --------------------			
-		// ----------------------------------------------------------
-		} else if (updateObject instanceof SimulationSetupNotification) {
-			
-			SimulationSetupNotification sscn = (SimulationSetupNotification) updateObject;
-			SimulationSetup simSetup = project.getSimulationSetups().getCurrSimSetup();
-			switch (sscn.getUpdateReason()) {
-			case SIMULATION_SETUP_ADD_NEW:
-				this.onSimSetupAddNew(simSetup);
-				break;
-			case SIMULATION_SETUP_COPY:
-				this.onSimSetupCopy(simSetup);
-				break;
-			case SIMULATION_SETUP_LOAD:
-				this.onSimSetupLoad(simSetup);
-				break;
-			case SIMULATION_SETUP_PREPARE_SAVING:
-				this.onSimSetupPrepareSaving(simSetup);
-				break;
-			case SIMULATION_SETUP_REMOVE:
-				this.onSimSetupRemove(simSetup);
-				break;
-			case SIMULATION_SETUP_RENAME:
-				this.onSimSetupRename(simSetup);
-				break;
-			case SIMULATION_SETUP_SAVED:
-				this.onSimSetupSaved(simSetup);
-				break;
-			}
-		
-		// ----------------------------------------------------------
-		// --- Changes with the Project-PlugIns ---------------------			
-		// ----------------------------------------------------------
-		} else if (updateObject.toString().equals(PlugIn.CHANGED)) {
+		try {
 
-			PlugInNotification pin = (PlugInNotification) updateObject;
-			int pinUpdate = pin.getUpdateReason();
-			PlugIn plugIn = pin.getPlugIn();
-			if (pinUpdate == PlugIn.ADDED) {
-				this.onPlugInAdded(plugIn);
-			} else if (pinUpdate == PlugIn.REMOVED) {
-				this.onPlugInRemoved(plugIn);
-			}			
+			// ----------------------------------------------------------
+			this.updateFromObserver(observable, updateObject);
+			// ----------------------------------------------------------
 			
-		} else {
-			//System.out.println("Unknown Notification from Observer " + observable.toString() + ": " + updateObject.toString() );
+			// ----------------------------------------------------------
+			// --- Changes in the Project-Configuration -----------------
+			// ----------------------------------------------------------
+			if (updateObject==null) {
+				return;			
+			} else if (updateObject.equals(Project.PREPARE_FOR_SAVING)) {
+				this.onPrepareForSaving();
+			} else if (updateObject.equals(Project.SAVED)) {
+				this.onProjectSaved();
+			} else if (updateObject.equals(Project.CHANGED_ProjectName)) {
+				this.onProjectChangedProjectName();
+			} else if (updateObject.equals(Project.CHANGED_ProjectDescription)) {
+				this.onProjectChangedProjectDescription();
+			} else if (updateObject.equals(Project.CHANGED_ProjectFolder)) {
+				// --- Do Nothing here !!! ----------
+				// this.onProjectChangedProjectFolder();
+			} else if (updateObject.equals(Project.CHANGED_ProjectView)) {
+				this.onProjectChangedProjectView();
+			} else if (updateObject.equals(Project.CHANGED_EnvironmentModelType)) {
+				this.onProjectChangedEnvironmentModel();
+			} else if (updateObject.equals(Project.CHANGED_StartArguments4BaseAgent)) {
+				this.onProjectChangedAgentStartConfiguration();
+			} else if (updateObject.equals(Project.CHANGED_TimeModelClass)) {
+				this.onProjectChangedTimeModelConfiguration();
+			} else if (updateObject.equals(Project.CHANGED_ProjectOntology)) {
+				this.onProjectChangedProjectOntology();
+			} else if (updateObject.equals(Project.CHANGED_ProjectResources)) {
+				this.onProjectChangedProjectResources();
+			} else if (updateObject.equals(Project.CHANGED_JadeConfiguration)) {
+				this.onProjectChangedJadeConfiguration();
+				
+			} else if (updateObject.equals(Project.CHANGED_DistributionSetup)) {
+				this.onProjectChangedDistributionSetup();
+			} else if (updateObject.equals(Project.CHANGED_RemoteContainerConfiguration)) {
+				this.onProjectChangedRemoteContainerConfiguration();
+			} else if (updateObject.equals(Project.CHANGED_UserRuntimeObject)) {
+				this.onProjectChangedUserRuntimeObject();
+				
+			// ----------------------------------------------------------
+			// --- Changes with the SimulationSetups --------------------			
+			// ----------------------------------------------------------
+			} else if (updateObject instanceof SimulationSetupNotification) {
+				
+				SimulationSetupNotification sscn = (SimulationSetupNotification) updateObject;
+				SimulationSetup simSetup = project.getSimulationSetups().getCurrSimSetup();
+				switch (sscn.getUpdateReason()) {
+				case SIMULATION_SETUP_ADD_NEW:
+					this.onSimSetupAddNew(simSetup);
+					break;
+				case SIMULATION_SETUP_COPY:
+					this.onSimSetupCopy(simSetup);
+					break;
+				case SIMULATION_SETUP_LOAD:
+					this.onSimSetupLoad(simSetup);
+					break;
+				case SIMULATION_SETUP_PREPARE_SAVING:
+					this.onSimSetupPrepareSaving(simSetup);
+					break;
+				case SIMULATION_SETUP_REMOVE:
+					this.onSimSetupRemove(simSetup);
+					break;
+				case SIMULATION_SETUP_RENAME:
+					this.onSimSetupRename(simSetup);
+					break;
+				case SIMULATION_SETUP_SAVED:
+					this.onSimSetupSaved(simSetup);
+					break;
+				}
+			
+			// ----------------------------------------------------------
+			// --- Changes with the Project-PlugIns ---------------------			
+			// ----------------------------------------------------------
+			} else if (updateObject.toString().equals(PlugIn.CHANGED)) {
+
+				PlugInNotification pin = (PlugInNotification) updateObject;
+				int pinUpdate = pin.getUpdateReason();
+				PlugIn plugIn = pin.getPlugIn();
+				if (pinUpdate == PlugIn.ADDED) {
+					this.onPlugInAdded(plugIn);
+				} else if (pinUpdate == PlugIn.REMOVED) {
+					this.onPlugInRemoved(plugIn);
+				}			
+				
+			} else {
+				//System.out.println("Unknown Notification from Observer " + observable.toString() + ": " + updateObject.toString() );
+			}
+
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		
-		
 	}
 
 	/**

@@ -202,7 +202,11 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 	 */
 	public void notifyPluginsForStartMAS() {
 		for (PlugIn plugin : this) {
-			plugin.onMasWillBeExecuted();
+			try {
+				plugin.onMasWillBeExecuted();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 
@@ -211,7 +215,11 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 	 */
 	public void notifyPluginsForTerminatedMAS() {
 		for (PlugIn plugin : this) {
-			plugin.onMasWasTerminated();
+			try {
+				plugin.onMasWasTerminated();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 	
