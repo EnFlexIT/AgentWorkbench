@@ -259,16 +259,22 @@ public class Platform extends Object {
 				// --------------------------------------------------
 				this.delayHeadlessServerStartByCheckingMasterURL();
 				
+				// --- Notify plugins for agent Start --------------- 
+				this.notifyPluginsForStartMAS();
+				
 				// --- Start Platform -------------------------------
 				jadeRuntime = Runtime.instance();	
 				jadeRuntime.invokeOnTermination(new Runnable() {
 					public void run() {
+						// --- terminate platform -------------------
 						jadeMainContainer = null;
 						jadeRuntime = null;
 						Application.setStatusJadeRunning(false);
 						if (Application.getMainWindow()!=null){
 							Application.getMainWindow().setSimulationReady2Start();
 						}
+						// --- Notify plugins for termination -------
+						notifyPluginsForTerminatedMAS();
 					}
 				});
 				// --- Start MainContainer --------------------------
@@ -293,6 +299,25 @@ public class Platform extends Object {
 		
 		Application.setStatusJadeRunning(true);
 		return startSucceed;
+	}
+	
+	/**
+	 * Notifies all loaded plugins for the upcoming agent start.
+	 */
+	private void notifyPluginsForStartMAS() {
+		Project currProject = Application.getProjectFocused();
+		if (currProject!=null) {
+			currProject.getPlugInsLoaded().notifyPluginsForStartMAS();	
+		}
+	}
+	/**
+	 * Notifies all project plugins for agent termination.
+	 */
+	private void notifyPluginsForTerminatedMAS() {
+		Project currProject = Application.getProjectFocused();
+		if (currProject!=null) {
+			currProject.getPlugInsLoaded().notifyPluginsForTerminatedMAS();	
+		}
 	}
 	
 	/**

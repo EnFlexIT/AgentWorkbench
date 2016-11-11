@@ -584,6 +584,17 @@ public abstract class PlugIn implements Observer {
 		return jadeContainerProfile;
 	}
 
+	/**
+	 * Will be executed, if the Multi-Agent System is about to start.
+	 */
+	public void onMasWillBeExecuted() {	}
+
+	/**
+	 * Will be executed, if the Multi-Agent System was terminated.
+	 */
+	public void onMasWasTerminated() {	}
+	
+	
 	// ------------------------------------------------------------------------
 	// --- Protected methods for the PlugIn-development --- END --------------- 
 	// ------------------------------------------------------------------------

@@ -196,4 +196,23 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 		return jadeContainerProfile;
 	}
 
+	
+	/**
+	 * Notifies all loaded plugins for the upcoming agent start.
+	 */
+	public void notifyPluginsForStartMAS() {
+		for (PlugIn plugin : this) {
+			plugin.onMasWillBeExecuted();
+		}
+	}
+
+	/**
+	 * Notifies all project plugins for agent termination.
+	 */
+	public void notifyPluginsForTerminatedMAS() {
+		for (PlugIn plugin : this) {
+			plugin.onMasWasTerminated();
+		}
+	}
+	
 }
