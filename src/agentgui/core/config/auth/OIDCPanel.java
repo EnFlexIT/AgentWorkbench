@@ -54,7 +54,9 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = -169367444435859302L;
 
 	public static final String DEBUG_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
-	public static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/vanilla/profile.jsp";
+	public static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/eom-modelexchange-1.0-SNAPSHOT/api/model/1";
+
+//	public static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/vanilla/profile.jsp";
 	public static final String DEBUG_CLIENT_ID = "testclient";
 	public static final String DEBUG_CLIENT_SECRET = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
 	private static final String COMMAND_CONNECT = "connectOIDC";
@@ -70,10 +72,11 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	private JButton jButtonConnect;
 	private JLabel jLabelResult;
 
-	
 	/**
 	 * Instantiates a new OIDC panel.
+	 * 
 	 * @param owner the owner
+	 * @param availabilityHandler
 	 */
 	public OIDCPanel(OIDCAuthorization owner) {
 		this();
@@ -104,13 +107,13 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, 1.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		this.setLayout(gridBagLayout);
-		
+
 		GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
 		gridBagConstraints18.anchor = GridBagConstraints.WEST;
 		gridBagConstraints18.gridx = 1;
 		gridBagConstraints18.gridy = 0;
 		gridBagConstraints18.insets = new Insets(10, 20, 0, 10);
-		
+
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
 		gbc_jLabelHeader.gridwidth = 3;
 		gbc_jLabelHeader.insets = new Insets(10, 10, 10, 10);
@@ -169,6 +172,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	/**
 	 * Gets the lbl username.
+	 * 
 	 * @return the lbl username
 	 */
 	private JLabel getJLabelUsername() {
@@ -178,8 +182,10 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		}
 		return jLabelUsername;
 	}
+
 	/**
 	 * Gets the tf username.
+	 * 
 	 * @return the tf username
 	 */
 	public JTextField getJTextFieldUsername() {
@@ -190,9 +196,10 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldUsername;
 	}
-	
+
 	/**
 	 * Gets the lbl password.
+	 * 
 	 * @return the lbl password
 	 */
 	private JLabel getJLabelPassword() {
@@ -202,8 +209,10 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		}
 		return jLabelPassword;
 	}
+
 	/**
 	 * Gets the tf password.
+	 * 
 	 * @return the tf password
 	 */
 	public JPasswordField getJPasswordField() {
@@ -217,6 +226,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes jButtonApply.
+	 * 
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonConnect() {
@@ -229,9 +239,10 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		}
 		return jButtonConnect;
 	}
-	
+
 	/**
 	 * Gets the btn result.
+	 * 
 	 * @return the btn result
 	 */
 	private JLabel getJLabelResult() {
@@ -245,6 +256,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	/**
 	 * Display result.
+	 * 
 	 * @param successful the successful
 	 */
 	public void displayResult(boolean successful) {
@@ -257,26 +269,25 @@ public class OIDCPanel extends JPanel implements ActionListener {
 			this.getJLabelResult().setForeground(new Color(153, 0, 0));
 		}
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-	
+
 		String actCMD = ae.getActionCommand();
 		if (actCMD.equalsIgnoreCase(COMMAND_CONNECT)) {
 			char[] pswd = getJPasswordField().getPassword();
 			String userName = getJTextFieldUsername().getText().trim();
 			Application.getGlobalInfo().setOIDCUsername(userName);
 			displayResult(owner.connect(userName, new String(pswd)));
-			
+
 		} else {
 			if (parentGUI != null) {
 				parentGUI.actionPerformed(ae);
 			}
 		}
 	}
-	
+
 }

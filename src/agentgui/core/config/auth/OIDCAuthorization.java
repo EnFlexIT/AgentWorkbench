@@ -56,11 +56,16 @@ public class OIDCAuthorization {
 	private static final String OIDC_ID_CLAIM_USERID = "sub"; // subject
 	private static OIDCAuthorization instance;
 	private SimpleOIDCClient oidcClient;
+	private String resourceURI = OIDCPanel.DEBUG_RESOURCE_URI;
+	private OIDCResourceAvailabilityHandler availabilityHandler;
+	private URLProcessor urlProcessor;
+	private JDialog authDialog;
 
 	/**
 	 * Instantiates a new OIDC authorization.
 	 */
 	private OIDCAuthorization() {
+		urlProcessor = new URLProcessor();
 	}
 
 	/**
@@ -75,6 +80,13 @@ public class OIDCAuthorization {
 		return instance;
 	}
 
+	public JDialog getDialog() {
+		if (authDialog == null) {
+			authDialog = getDialog("", null);
+		}
+		return authDialog;
+	}
+
 	/**
 	 * Gets the authorization dialog.
 	 *
@@ -83,10 +95,10 @@ public class OIDCAuthorization {
 	 * @return the dialog
 	 */
 	public JDialog getDialog(String presetUsername, Frame ownerFrame) {
-		
-		JDialog authDialog = new JDialog(ownerFrame);
+
+		authDialog = new JDialog(ownerFrame);
 		OIDCPanel oidcPanel = new OIDCPanel(this);
-		if (presetUsername!=null) {
+		if (presetUsername != null) {
 			oidcPanel.getJTextFieldUsername().setText(presetUsername);
 		}
 		authDialog.setContentPane(oidcPanel);
@@ -129,6 +141,7 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the OIDC client.
+	 * 
 	 * @return the OIDC client
 	 */
 	public SimpleOIDCClient getOIDCClient() {
@@ -140,6 +153,7 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the issuer URI.
+	 * 
 	 * @return the issuer URI
 	 */
 	private String getIssuerURI() {
@@ -147,15 +161,25 @@ public class OIDCAuthorization {
 	}
 
 	/**
+	 * Sets the resource URI.
+	 */
+	private void setResourceURI(String resourceURI) {
+		this.resourceURI = resourceURI;
+	}
+
+	/**
 	 * Gets the resource URI.
+	 * 
 	 * @return the resource URI
 	 */
 	private String getResourceURI() {
-		return OIDCPanel.DEBUG_RESOURCE_URI;
+
+		return resourceURI;
 	}
 
 	/**
 	 * Gets the client id.
+	 * 
 	 * @return the client id
 	 */
 	private String getClientId() {
@@ -164,6 +188,7 @@ public class OIDCAuthorization {
 
 	/**
 	 * Gets the client secret.
+	 * 
 	 * @return the client secret
 	 */
 	private String getClientSecret() {
@@ -193,7 +218,7 @@ public class OIDCAuthorization {
 			oidcClient.setRedirectURI(getResourceURI());
 
 //			System.out.println("try a direct access to the resource (EOM licenseer)");
-			authRedirection = doResourceAccess(accessToken);
+			authRedirection = accessUserID(accessToken);
 
 //			if (authRedirection == null) { 	// no authentication required (or already authenticated?)
 //				System.out.println("resource available");
@@ -210,11 +235,19 @@ public class OIDCAuthorization {
 			oidcClient.requestToken();
 			accessToken = oidcClient.getAccessToken();
 
+//			System.out.println("This is the access token");
+//			System.out.println(accessToken);
+
 //			System.out.println("access the resource (licenseer) again, this time sending an access token");
-			authRedirection = doResourceAccess(accessToken);
+			authRedirection = accessUserID(accessToken);
 			if (authRedirection == null) { 	// no authentication required (or already authenticated?)
 //				System.out.println("resource available");
 //				System.out.println("the logged in resource should be shown");
+
+				if (availabilityHandler != null) {
+					availabilityHandler.onResourceAvailable(urlProcessor);
+				}
+
 				return true;
 			} else {
 				System.err.println("OIDC authorization failed");
@@ -232,6 +265,26 @@ public class OIDCAuthorization {
 		return false;
 	}
 
+	public OIDCAuthorization setAvailabilityHandler(OIDCResourceAvailabilityHandler availabilityHandler) {
+		this.availabilityHandler = availabilityHandler;
+		return this;
+	}
+
+	public void accessResource(String url, String presetUsername, Frame ownerFrame) {
+		try {
+			setResourceURI(url);
+			String result = urlProcessor.processURL(new URL(getResourceURI()));
+			if (result == null) {
+				// all good (unlikely)
+			} else {
+				getDialog(presetUsername, ownerFrame).setVisible(true);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	// Optional: UserInfo request
 	/**
 	 * Try to access a resource secured by OIDC (currently that means: print user ID ).
@@ -242,10 +295,10 @@ public class OIDCAuthorization {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	// Alternatively: pass Access Token on to another client, use it to access a resource there
-	public String doResourceAccess(AccessToken accessToken) throws ParseException, IOException {
-		
+	public String accessUserID(AccessToken accessToken) throws ParseException, IOException {
+
 		if (accessToken != null) {
-			System.out.println(OIDCAuthorization.getInstance().getUserID());
+//			System.out.println(OIDCAuthorization.getInstance().getUserID());
 
 //			getOIDCClient().dumpTokenInfo();
 			// only for debugging
@@ -253,61 +306,94 @@ public class OIDCAuthorization {
 //			System.out.println("UserInfoJSON:");
 //			System.out.println(getOIDCClient().getUserInfoJSON() + "");
 		}
-		return processURL(getOIDCClient().getRedirectURI().toURL(), accessToken);
+		return urlProcessor.setAccessToken(accessToken).processURL(getOIDCClient().getRedirectURI().toURL());
 	}
 
-	/**
-	 * Process a URL, that is: try to access it's resource, display error if any, return a redirection URL if indicated by the server.
-	 *
-	 * @param requestURL the requested URL
-	 * @param accessToken the access token
-	 * @return the string
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	public String processURL(URL requestURL, AccessToken accessToken) throws IOException {
-		String redirectionURL = "";
+	public class URLProcessor {
+		private String redirectionURL = null;
+		private int responseCode = -1;
+		private String content = "";
+		private boolean debug = false;
+		AccessToken accessToken;
+		private HttpsURLConnection connection = null;
+
+		public HttpsURLConnection getConnection() {
+			return connection;
+		}
+
+		public String getRedirectionURL() {
+			return redirectionURL;
+		}
+
+		public int getResponseCode() {
+			return responseCode;
+		}
+
+		public String getContent() {
+			return content;
+		}
+
+		public URLProcessor setAccessToken(AccessToken accessToken) {
+			this.accessToken = accessToken;
+			return this;
+		}
+
+		/**
+		 * Process a URL, that is: try to access it's resource, display error if any, return a redirection URL if indicated by the server.
+		 *
+		 * @param requestURL the requested URL
+		 * @param accessToken the access token
+		 * @return null if the access succeeded, a redirectionURL as string in case the authorization is not valid yet
+		 * @throws IOException Signals that an I/O exception has occurred.
+		 */
+		public String processURL(URL requestURL) throws IOException {
 
 //		System.out.println("requestURL=");
 //		System.out.println(requestURL);
 
-		HttpURLConnection.setFollowRedirects(false);
+			content = "";
 
-		HttpsURLConnection conn = (HttpsURLConnection) requestURL.openConnection();
-		Trust.trustSpecific(conn, new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
+			HttpURLConnection.setFollowRedirects(false);
 
-		conn.setRequestMethod("GET");
-		if (accessToken != null) {
-			conn.setRequestProperty("Authorization", "bearer " + accessToken);
-		}
+			connection = (HttpsURLConnection) requestURL.openConnection();
+			Trust.trustSpecific(connection, new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
 
-		conn.connect();
-
-		int responseCode = conn.getResponseCode();
-
-		if (responseCode == 302) {
-			redirectionURL = conn.getHeaderField("Location");
-//			System.out.println("redirection to:");
-//			System.out.println(redirectionURL);
-			return redirectionURL;
-		} else if (responseCode == 400) {
-			System.err.println("400: General Error");
-			return null;
-		} else if (responseCode == 500) {
-			System.err.println("500");
-			return null;
-		} else if (responseCode == 200) { //
-			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-/*
-			String inputLine;
- 			while ((inputLine = in.readLine()) != null) {
-//				System.out.println(inputLine);
+			connection.setRequestMethod("GET");
+			if (accessToken != null) {
+				connection.setRequestProperty("Authorization", "Bearer " + accessToken);
 			}
-*/
-			in.close();
-			return null;
-		} else {
-			System.out.println("responseCode =" + responseCode);
-			return null;
+
+			connection.connect();
+
+			responseCode = connection.getResponseCode();
+
+			if (responseCode == 200) { //
+				/*
+				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream().re));
+				
+				String inputLine;
+				while ((inputLine = in.readLine()) != null) {
+					content += inputLine;
+				}
+				in.close();
+				*/
+				redirectionURL = null;
+			} else if (responseCode == 302) {
+				redirectionURL = connection.getHeaderField("Location");
+				if (debug) {
+					System.out.println("redirection to:");
+					System.out.println(redirectionURL);
+				}
+			} else {
+				if (debug) {
+					System.out.println("other response code");
+				}
+			}
+			if (debug) {
+				System.out.println("responseCode = " + responseCode);
+				System.out.println(content);
+			}
+			return redirectionURL;
 		}
 	}
 

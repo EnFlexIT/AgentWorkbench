@@ -88,7 +88,7 @@ import com.nimbusds.openid.connect.sdk.rp.OIDCClientRegistrationResponseParser;
 
 import net.minidev.json.JSONObject;
 
-/** 
+/**
  * This very simple OpenID Connect (OIDC) Public Client implementation is built after the official cookbook at
  * https://bitbucket.org/connect2id/oauth-2.0-sdk-with-openid-connect-extensions/src/23e6a6c5b751fadd79938859def37ff7a0d05c24/docs/cookbook_client.md
  * The original code was used and altered to create an easy to use native application client for some simple and common use cases.
@@ -96,9 +96,9 @@ import net.minidev.json.JSONObject;
  * It has been proven to work as a client to keycloak.
  */
 public class SimpleOIDCClient {
-	
+
 	private static final String URLPATH_WELL_KNOWN_OPENID = ".well-known/openid-configuration";
-	
+
 	private URI issuerURI;
 	private URI authorizationEndpointURI;
 	private URI userInfoEndpointURI;
@@ -108,7 +108,7 @@ public class SimpleOIDCClient {
 	private OIDCClientInformation clientInformation;
 	private OIDCClientMetadata clientMetadata;
 	private String clientMetadataJSON;
-	
+
 	private ClientID clientID;
 	private Secret clientSecret;
 	private State state;
@@ -135,7 +135,7 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Issuer discovery
-		The WebFinger protocol is used to find the OpenID Provider (OP). The library does not have any out-of-the box support for WebFinger, so in the following example we assume you already have acquired the issuer URL of the OP (possibly from developer documentation).
+	 * The WebFinger protocol is used to find the OpenID Provider (OP). The library does not have any out-of-the box support for WebFinger, so in the following example we assume you already have acquired the issuer URL of the OP (possibly from developer documentation).
 	 */
 	public void lookupOpenIDProvider() {
 		throw new RuntimeException("WebFinger OpenID Provider discovery is not yet implemented. Set issuer manually by calling setIssuerURI().");
@@ -207,8 +207,8 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Retrieve provider metadata.
-	 * 	Provider configuration information
-	 *	Obtaining the provider configuration information can be done either out-of-band or using the optional discovery process:
+	 * Provider configuration information
+	 * Obtaining the provider configuration information can be done either out-of-band or using the optional discovery process:
 	 *
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws ParseException the parse exception
@@ -230,7 +230,8 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Sets the client ID.
-	 * If the provider does not support dynamic client registration, set client ID with the client id received out-of-band.	
+	 * If the provider does not support dynamic client registration, set client ID with the client id received out-of-band.
+	 * 
 	 * @param clientIDString the new client ID
 	 */
 	void setClientID(String clientIDString) {
@@ -239,7 +240,7 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Sets the client ID.
-	 * If the provider does not support dynamic client registration, set client ID and client secret with the client credentials received out-of-band.	
+	 * If the provider does not support dynamic client registration, set client ID and client secret with the client credentials received out-of-band.
 	 *
 	 * @param clientIDString the client ID string
 	 * @param clientSecret the client secret
@@ -282,7 +283,8 @@ public class SimpleOIDCClient {
 	/**
 	 * Client registration
 	 * If the provider supports dynamic registration, a new client can be registered using the client registration process:
-	 * 	 *
+	 * *
+	 * 
 	 * @param initialAccessToken the initial access token
 	 * @throws SerializeException the serialize exception
 	 * @throws IOException Signals that an I/O exception has occurred.
@@ -513,8 +515,8 @@ public class SimpleOIDCClient {
 		if (tokenResponse instanceof TokenErrorResponse) {
 			ErrorObject error = ((TokenErrorResponse) tokenResponse).getErrorObject();
 			// TODO error handling
-			System.err.println("Error at token retrieval");
-			System.err.println(error);
+//			System.err.println("Error at token retrieval");
+//			System.err.println(error);
 			return;
 		}
 
@@ -556,8 +558,8 @@ public class SimpleOIDCClient {
 
 	/**
 	 * UserInfo Request
-	 * Using the access token, information about the end user can be obtained by making a user info request	
-	*/
+	 * Using the access token, information about the end user can be obtained by making a user info request
+	 */
 	public void requestUserInfo() {
 		if (accessToken == null) {
 			System.err.println("Access Token null, stopping UserInfo retrieval");
@@ -606,7 +608,8 @@ public class SimpleOIDCClient {
 	/**
 	 * Validate the ID token
 	 * The id token obtained from the token request must be validated, see ID token validation
-	 * 	 *
+	 * *
+	 * 
 	 * @return the JWT claims set
 	 * @throws ParseException the parse exception
 	 */
