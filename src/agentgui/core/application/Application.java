@@ -659,85 +659,90 @@ public class Application {
 	 */
 	public static void startServiceOrEmbeddedSystemAgent() {
 		
-		final String projectFolder = getGlobalInfo().getDeviceServiceProjectFolder();
-		DeviceSystemExecutionMode execMode = getGlobalInfo().getDeviceServiceExecutionMode();
-		final String simulationSetup = getGlobalInfo().getDeviceServiceSetupSelected();
-		
-		EmbeddedSystemAgentVisualisation embSysAgentVis = getGlobalInfo().getDeviceServiceAgentVisualisation();
-		
-		// ---- Case separation DeviceSystemExecutionMode ---------------------
-		switch (execMode) {
-		case SETUP:
-			// ----------------------------------------------------------------
-			// --- Execute a setup --------------------------------------------
-			// ----------------------------------------------------------------
-			getTrayIcon();
-			getProjectsLoaded();
+		try {
+			
+			final String projectFolder = getGlobalInfo().getDeviceServiceProjectFolder();
+			DeviceSystemExecutionMode execMode = getGlobalInfo().getDeviceServiceExecutionMode();
+			final String simulationSetup = getGlobalInfo().getDeviceServiceSetupSelected();
+			
+			EmbeddedSystemAgentVisualisation embSysAgentVis = getGlobalInfo().getDeviceServiceAgentVisualisation();
+			
+			// ---- Case separation DeviceSystemExecutionMode ---------------------------
+			switch (execMode) {
+			case SETUP:
+				// ----------------------------------------------------------------------
+				// --- Execute a setup --------------------------------------------------
+				// ----------------------------------------------------------------------
+				getTrayIcon();
+				getProjectsLoaded();
 
-			startApplication();
-			if (getMainWindow()!=null) {
-				getMainWindow().setStatusBar(Language.translate("Fertig"));
-			}
-			doBenchmark(false);
-			waitForBenchmark();
-		
-			// --- Execute the simulation setup -----------------------
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					// --- Open the specified project ---------------------------------
-					Project projectOpened = getProjectsLoaded().add(projectFolder);
-					if (projectOpened!=null) {
-						// --- Select the specified simulation setup ------------------
-						boolean setupLoaded = projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
-						if (setupLoaded==true) {
-							if (getJadePlatform().jadeStart(false)==true) {
-								// --- Start Setup ------------------------------------
-								Object[] startWith = new Object[1];
-								startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
-								getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
+				startApplication();
+				if (getMainWindow()!=null) {
+					getMainWindow().setStatusBar(Language.translate("Fertig"));
+				}
+				doBenchmark(false);
+				waitForBenchmark();
+			
+				// --- Execute the simulation setup -------------------------------------
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						// --- Open the specified project -------------------------------
+						Project projectOpened = getProjectsLoaded().add(projectFolder);
+						if (projectOpened!=null) {
+							// --- Select the specified simulation setup ----------------
+							boolean setupLoaded = projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
+							if (setupLoaded==true) {
+								if (getJadePlatform().jadeStart(false)==true) {
+									// --- Start Setup ----------------------------------
+									Object[] startWith = new Object[1];
+									startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
+									getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
+								}
 							}
 						}
-					}
-				} // end run method
-			});// end runnable
-			break;
-
-		case AGENT:
-			// ----------------------------------------------------------------
-			// --- Just execute an agent with limited visualisation ----------- 
-			// ----------------------------------------------------------------
-			switch (embSysAgentVis) {
-			case TRAY_ICON:
-				getTrayIcon();
+					} // end run method
+				});// end runnable
 				break;
-				
-			case NONE:
-				// --- Start writing a LogFile, if not already executed -------
-				if (getLogFileWriter()==null) {
-					startLogFileWriter();
-					// --- Create some initial output for the log file --------
-					getGlobalInfo().getVersionInfo().printVersionInfo();
-					System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
+
+			case AGENT:
+				// ----------------------------------------------------------------------
+				// --- Just execute an agent with limited visualisation -----------------
+				// ----------------------------------------------------------------------
+				switch (embSysAgentVis) {
+				case TRAY_ICON:
+					getTrayIcon();
+					break;
+					
+				case NONE:
+					// --- Start writing a LogFile, if not already executed -------------
+					if (getLogFileWriter()==null) {
+						startLogFileWriter();
+						// --- Create some initial output for the log file --------------
+						getGlobalInfo().getVersionInfo().printVersionInfo();
+						System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
+					}
+					// --- Start observing shutdown file --------------------------------
+					startShutdownThread();
+					break;
 				}
-				// --- Start observing shutdown file --------------------------
-				startShutdownThread();
+				
+				// --- Load project -----------------------------------------------------
+				Project projectOpened = getProjectsLoaded().add(projectFolder);
+				if (projectOpened!=null) {
+					// --- Switch to the specified setup --------------------------------
+					if (simulationSetup!=null && simulationSetup.equals("")==false) {
+						projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
+					}
+					// --- Start JADE for an embedded system agent ----------------------
+					getJadePlatform().jadeStart4EmbeddedSystemAgent();
+				}
 				break;
 			}
 			
-			// --- Load project -----------------------------------------------
-			Project projectOpened = getProjectsLoaded().add(projectFolder);
-			if (projectOpened!=null) {
-				// --- Switch to the specified setup --------------------------
-				if (simulationSetup!=null && simulationSetup.equals("")==false) {
-					projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
-				}
-				// --- Start JADE for an embedded system agent ----------------
-				getJadePlatform().jadeStart4EmbeddedSystemAgent();
-			}
-			break;
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		
 	}
 	
 	/**
