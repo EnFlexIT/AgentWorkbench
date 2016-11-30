@@ -264,7 +264,6 @@ public class SimpleOIDCClient {
 	 */
 	public void setClientRegistrationMetadata(String allowedClientRedirectURI) throws ParseException {
 		clientMetadataJSON = "{\"redirect_uris\": [\"" + allowedClientRedirectURI + "\"],\"response_types\": [\"code\"]}";
-
 		clientMetadata = OIDCClientMetadata.parse(JSONObjectUtils.parse(clientMetadataJSON));
 	}
 
@@ -276,7 +275,6 @@ public class SimpleOIDCClient {
 	 */
 	public void setClientMetadata(String allowedClientRedirectURI) throws ParseException {
 		clientMetadataJSON = "{\"application_type\": \"native\",\"redirect_uris\": [\"" + allowedClientRedirectURI + "\"],\"response_types\": [\"code\"]}";
-
 		clientMetadata = OIDCClientMetadata.parse(JSONObjectUtils.parse(clientMetadataJSON));
 	}
 
@@ -304,7 +302,7 @@ public class SimpleOIDCClient {
 		if (registrationResponse instanceof ClientRegistrationErrorResponse) {
 			ClientRegistrationErrorResponse errorResponse = ((ClientRegistrationErrorResponse) registrationResponse);
 			ErrorObject error = errorResponse.getErrorObject();
-			System.err.println(errorResponse.indicatesSuccess());
+			System.err.println(this.getClass().getSimpleName() + " - " + errorResponse.indicatesSuccess());
 			System.err.println("Dynamic Client Registration failed, Error:");
 			System.err.println(errorResponse);
 			System.err.println(error);
@@ -331,7 +329,6 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Gets the redirect URI.
-	 *
 	 * @return the redirect URI
 	 */
 	public URI getRedirectURI() {
@@ -340,7 +337,6 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Gets the state.
-	 *
 	 * @return the state
 	 */
 	public State getState() {
@@ -417,7 +413,6 @@ public class SimpleOIDCClient {
 		try {
 			authResp = AuthenticationResponseParser.parse(new URI(responseURL));
 		} catch (ParseException | URISyntaxException e) {
-			// TODO error handling
 			e.printStackTrace();
 
 		}
@@ -425,7 +420,7 @@ public class SimpleOIDCClient {
 		if (authResp instanceof AuthenticationErrorResponse) {
 			AuthenticationErrorResponse errorResponse = (AuthenticationErrorResponse) authResp;
 			ErrorObject error = errorResponse.getErrorObject();
-			System.err.println("Authentication failed! Error:");
+			System.err.println(this.getClass().getSimpleName() + " - Authentication failed! Error:");
 			System.err.println(errorResponse.indicatesSuccess());
 			System.err.println(errorResponse);
 			System.err.println(error);
@@ -437,8 +432,7 @@ public class SimpleOIDCClient {
 			 * specified in the previous outgoing authentication request.
 			*/
 			if (!verifyState(successResponse.getState())) {
-				// TODO proper error handling
-				System.err.println("state not valid");
+				System.err.println(this.getClass().getSimpleName() + " - " + "State not valid");
 				return;
 			}
 
@@ -455,10 +449,10 @@ public class SimpleOIDCClient {
 	 * @return true, if successful
 	 */
 	private boolean verifyState(State state) {
-		if (state != null && this.state != null && this.state.equals(state)) {
+		if (state != null && this.state!=null && this.state.equals(state)) {
 			return true;
 		}
-		System.err.println("this.state=" + this.state);
+		System.err.println(this.getClass().getSimpleName() + " - this.state=" + this.state);
 		System.err.println("     state=" + state);
 		return false;
 	}
@@ -478,10 +472,11 @@ public class SimpleOIDCClient {
 	 * When an authorization code (using code or hybrid flow) has been obtained, a token request can made to get the access token and the id token:
 	 */
 	public void requestToken() {
+		
 		AuthorizationGrant grant;
 		if (authCode == null) {
 			if (resourceOwnerCredentialsGrant == null) {
-				System.err.println("Authentication Code is null and no user/password set, stopping token retrieval");
+				System.err.println(this.getClass().getSimpleName() + " - Authentication Code is null and no user/password set, stopping token retrieval");
 				return;
 			} else {
 				grant = resourceOwnerCredentialsGrant;
@@ -489,17 +484,11 @@ public class SimpleOIDCClient {
 		} else {
 			grant = new AuthorizationCodeGrant(authCode, redirectURI);
 		}
-		TokenRequest tokenReq = new TokenRequest(
-				providerMetadata.getTokenEndpointURI(),
-				new ClientSecretBasic(clientID,
-						clientInformation.getSecret()),
-				grant);
-
+		TokenRequest tokenReq = new TokenRequest(providerMetadata.getTokenEndpointURI(), new ClientSecretBasic(clientID, clientInformation.getSecret()), grant);
 		HTTPResponse tokenHTTPResp = null;
 		try {
 			tokenHTTPResp = tokenReq.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
 		} catch (SerializeException | IOException e) {
-			// TODO proper error handling
 			e.printStackTrace();
 		}
 
@@ -508,15 +497,13 @@ public class SimpleOIDCClient {
 		try {
 			tokenResponse = OIDCTokenResponseParser.parse(tokenHTTPResp);
 		} catch (ParseException e) {
-			// TODO proper error handling
 			e.printStackTrace();
 		}
 
 		if (tokenResponse instanceof TokenErrorResponse) {
 			ErrorObject error = ((TokenErrorResponse) tokenResponse).getErrorObject();
-			// TODO error handling
-//			System.err.println("Error at token retrieval");
-//			System.err.println(error);
+			System.err.println(this.getClass().getSimpleName() + " - Error at token retrieval");
+			System.err.println(error);
 			return;
 		}
 
@@ -562,7 +549,7 @@ public class SimpleOIDCClient {
 	 */
 	public void requestUserInfo() {
 		if (accessToken == null) {
-			System.err.println("Access Token null, stopping UserInfo retrieval");
+			System.err.println(this.getClass().getSimpleName() + " - Access Token null, stopping UserInfo retrieval");
 			return;
 		}
 
@@ -574,7 +561,6 @@ public class SimpleOIDCClient {
 		try {
 			userInfoHTTPResp = userInfoReq.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
 		} catch (SerializeException | IOException e) {
-			// TODO proper error handling
 			e.printStackTrace();
 		}
 
@@ -582,7 +568,6 @@ public class SimpleOIDCClient {
 		try {
 			userInfoResponse = UserInfoResponse.parse(userInfoHTTPResp);
 		} catch (ParseException e) {
-			// TODO proper error handling
 			e.printStackTrace();
 		}
 
@@ -590,7 +575,7 @@ public class SimpleOIDCClient {
 			UserInfoErrorResponse errorResponse = ((UserInfoErrorResponse) userInfoResponse);
 			ErrorObject error = errorResponse.getErrorObject();
 
-			System.err.println(errorResponse.indicatesSuccess());
+			System.err.println(this.getClass().getSimpleName() + " - " + errorResponse.indicatesSuccess());
 			System.err.println("Userinfo retrieval failed:");
 			System.err.println(errorResponse);
 			System.err.println(error);
@@ -618,16 +603,13 @@ public class SimpleOIDCClient {
 		try {
 			claims = idToken.getJWTClaimsSet();
 		} catch (java.text.ParseException e) {
-			// TODO error handling
 			e.printStackTrace();
 		}
-
 		return claims;
 	}
 
 	/**
 	 * Gets the id claims.
-	 *
 	 * @return the id claims
 	 */
 	public JWTClaimsSet getIdClaims() {
@@ -640,7 +622,6 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Gets the user info JSON.
-	 *
 	 * @return the user info JSON
 	 */
 	public JSONObject getUserInfoJSON() {
@@ -649,7 +630,6 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Sets the trust store.
-	 *
 	 * @param trustStoreFile the new trust store
 	 */
 	public void setTrustStore(File trustStoreFile) {

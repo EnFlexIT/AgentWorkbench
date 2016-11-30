@@ -69,19 +69,10 @@ public class ThreadCalculateMetrics {
 	/** The metric calculation based on class data. */
 	public final String METRIC_BASE_CLASS				= "METRIC_BASE_CLASS";
 	
-	/** The calculation type. */
 	private String calcType;
-	
-	/** The base for calculation of metric. */
 	private String metricBase;
-
-	/** The thread info storage. */
 	private ThreadInfoStorage threadInfoStorage;
-	
-	/** The sampling interval. */
 	private double samplingInterval;
-	
-	/** The sampling interval offsets. */
 	private int samplingIntervalOffsetStart, samplingIntervalOffsetEnd;
 	
 	/**  The map that holds the values (average, integral, last total), depending on calcType. */
@@ -183,7 +174,7 @@ public class ThreadCalculateMetrics {
 				AgentClassMetricDescription agentClass = mapAgentClass.get(className);
 				int noOfAgents = threadInfoStorage.getNoOfAgentsPerClass().get(className);
 				
-				if(agentClass == null){
+				if (agentClass == null){
 					agentClass = new AgentClassMetricDescription();
 					agentClass.setRealMetricMin(actualMetric);
 					agentClass.setRealMetricMax(actualMetric);
@@ -191,7 +182,7 @@ public class ThreadCalculateMetrics {
 					agentClass.setClassName(className);
 					mapAgentClass.put(className, agentClass);
 
-				}else{
+				} else {
 					
 					if(agentClass.getRealMetricMin() > actualMetric){
 						agentClass.setRealMetricMin(actualMetric);
@@ -205,31 +196,35 @@ public class ThreadCalculateMetrics {
 //			}
 		}
 		
-		//update min, max and average real metrics for agent class in current project
-		AgentClassLoadMetricsTable aclm = currProject.getAgentClassLoadMetrics();
-		aclm.clearTableModel();
-		
-		Iterator<Entry<String, AgentClassMetricDescription>> iteratorAgentMetricsMap = mapAgentClass.entrySet().iterator();
-		while (iteratorAgentMetricsMap.hasNext()){
-			AgentClassMetricDescription actualAgentClass = iteratorAgentMetricsMap.next().getValue();
-			String className = actualAgentClass.getClassName();
-			double min = actualAgentClass.getRealMetricMin();
-			double max = actualAgentClass.getRealMetricMax();
-			double avg = actualAgentClass.getRealMetricAverage();
+		// --- Update min, max and average real metrics for agent class in current project --------
+		if (this.currProject!=null) {
 			
-			int index = aclm.getIndexOfAgentClassMetricDescription(className);
-			if(index == -1){
-				aclm.addAgentLoadDescription(className,1 , 1, min, max, avg);
-				aclm.addTableModelRow(new AgentClassMetricDescription(currProject,className,1 , 1,  min, max, avg));
-			}else{
-				aclm.getAgentClassMetricDescriptionVector().get(index).setRealMetricMin(min);
-				aclm.getAgentClassMetricDescriptionVector().get(index).setRealMetricMax(max);
-				aclm.getAgentClassMetricDescriptionVector().get(index).setRealMetricAverage(avg);
+			AgentClassLoadMetricsTable aclm = this.currProject.getAgentClassLoadMetrics();
+			aclm.clearTableModel();
+			
+			Iterator<Entry<String, AgentClassMetricDescription>> iteratorAgentMetricsMap = mapAgentClass.entrySet().iterator();
+			while (iteratorAgentMetricsMap.hasNext()){
+				AgentClassMetricDescription actualAgentClass = iteratorAgentMetricsMap.next().getValue();
+				String className = actualAgentClass.getClassName();
+				double min = actualAgentClass.getRealMetricMin();
+				double max = actualAgentClass.getRealMetricMax();
+				double avg = actualAgentClass.getRealMetricAverage();
 				
-				aclm.addTableModelRow(aclm.getAgentClassMetricDescriptionVector().get(index));
+				int index = aclm.getIndexOfAgentClassMetricDescription(className);
+				if(index == -1){
+					aclm.addAgentLoadDescription(className,1 , 1, min, max, avg);
+					aclm.addTableModelRow(new AgentClassMetricDescription(this.currProject,className,1 , 1,  min, max, avg));
+				}else{
+					aclm.getAgentClassMetricDescriptionVector().get(index).setRealMetricMin(min);
+					aclm.getAgentClassMetricDescriptionVector().get(index).setRealMetricMax(max);
+					aclm.getAgentClassMetricDescriptionVector().get(index).setRealMetricAverage(avg);
+					
+					aclm.addTableModelRow(aclm.getAgentClassMetricDescriptionVector().get(index));
+				}
 			}
+			this.currProject.setAgentClassLoadMetrics(aclm);
 		}
-		currProject.setAgentClassLoadMetrics(aclm);
+		
 	}
 	
 	/**

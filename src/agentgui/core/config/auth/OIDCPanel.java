@@ -72,11 +72,10 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	private JButton jButtonConnect;
 	private JLabel jLabelResult;
 
+	
 	/**
 	 * Instantiates a new OIDC panel.
-	 * 
 	 * @param owner the owner
-	 * @param availabilityHandler
 	 */
 	public OIDCPanel(OIDCAuthorization owner) {
 		this();
@@ -108,12 +107,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		this.setLayout(gridBagLayout);
 
-		GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
-		gridBagConstraints18.anchor = GridBagConstraints.WEST;
-		gridBagConstraints18.gridx = 1;
-		gridBagConstraints18.gridy = 0;
-		gridBagConstraints18.insets = new Insets(10, 20, 0, 10);
-
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
 		gbc_jLabelHeader.gridwidth = 3;
 		gbc_jLabelHeader.insets = new Insets(10, 10, 10, 10);
@@ -122,58 +115,60 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
 		gbc_jLabelHeader.weightx = 0.0;
 		gbc_jLabelHeader.gridx = 0;
-
-		jLabelHeader = new JLabel();
-		jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelHeader.setText(Language.translate("OpenID Connect-Autorisierung"));
-		this.add(jLabelHeader, gbc_jLabelHeader);
-
+		this.add(this.getJLabelHeader(), gbc_jLabelHeader);
 		GridBagConstraints gbc_jLabelUsername = new GridBagConstraints();
 		gbc_jLabelUsername.insets = new Insets(0, 10, 5, 5);
 		gbc_jLabelUsername.anchor = GridBagConstraints.WEST;
 		gbc_jLabelUsername.gridx = 0;
 		gbc_jLabelUsername.gridy = 1;
-		this.add(getJLabelUsername(), gbc_jLabelUsername);
+		this.add(this.getJLabelUsername(), gbc_jLabelUsername);
 		GridBagConstraints gbc_jTextFieldUsername = new GridBagConstraints();
 		gbc_jTextFieldUsername.gridwidth = 2;
 		gbc_jTextFieldUsername.insets = new Insets(0, 0, 5, 10);
 		gbc_jTextFieldUsername.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldUsername.gridx = 1;
 		gbc_jTextFieldUsername.gridy = 1;
-		this.add(getJTextFieldUsername(), gbc_jTextFieldUsername);
+		this.add(this.getJTextFieldUsername(), gbc_jTextFieldUsername);
 		GridBagConstraints gbc_jLabelPassword = new GridBagConstraints();
 		gbc_jLabelPassword.anchor = GridBagConstraints.WEST;
 		gbc_jLabelPassword.insets = new Insets(0, 10, 10, 5);
 		gbc_jLabelPassword.gridx = 0;
 		gbc_jLabelPassword.gridy = 2;
-		this.add(getJLabelPassword(), gbc_jLabelPassword);
+		this.add(this.getJLabelPassword(), gbc_jLabelPassword);
 		GridBagConstraints gbc_jPasswordField = new GridBagConstraints();
 		gbc_jPasswordField.gridwidth = 2;
 		gbc_jPasswordField.insets = new Insets(0, 0, 10, 10);
 		gbc_jPasswordField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jPasswordField.gridx = 1;
 		gbc_jPasswordField.gridy = 2;
-		this.add(getJPasswordField(), gbc_jPasswordField);
-
+		this.add(this.getJPasswordField(), gbc_jPasswordField);
 		GridBagConstraints gbc_jButtonConnect = new GridBagConstraints();
 		gbc_jButtonConnect.anchor = GridBagConstraints.WEST;
 		gbc_jButtonConnect.gridx = 1;
 		gbc_jButtonConnect.gridy = 3;
 		gbc_jButtonConnect.weightx = 0.0;
 		gbc_jButtonConnect.insets = new Insets(0, 0, 0, 10);
-		this.add(getJButtonConnect(), gbc_jButtonConnect);
+		this.add(this.getJButtonConnect(), gbc_jButtonConnect);
 		GridBagConstraints gbc_jLabelResult = new GridBagConstraints();
 		gbc_jLabelResult.insets = new Insets(0, 0, 0, 10);
 		gbc_jLabelResult.gridx = 2;
 		gbc_jLabelResult.gridy = 3;
-		add(getJLabelResult(), gbc_jLabelResult);
+		add(this.getJLabelResult(), gbc_jLabelResult);
 
 	}
 
+	
+	private JLabel getJLabelHeader() {
+		if (jLabelHeader==null) {
+			jLabelHeader = new JLabel();
+			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelHeader.setText("Agent.GUI & EOM: " + Language.translate("Web Service Authentifizierung"));
+		}
+		return jLabelHeader;
+	}
 	/**
-	 * Gets the lbl username.
-	 * 
-	 * @return the lbl username
+	 * Gets the JLabel user name.
+	 * @return the JLabel user name
 	 */
 	private JLabel getJLabelUsername() {
 		if (jLabelUsername == null) {
@@ -184,9 +179,8 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * Gets the tf username.
-	 * 
-	 * @return the tf username
+	 * Gets the JTextField user name.
+	 * @return the JTextField user name
 	 */
 	public JTextField getJTextFieldUsername() {
 		if (jTextFieldUsername == null) {
@@ -196,11 +190,9 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldUsername;
 	}
-
 	/**
-	 * Gets the lbl password.
-	 * 
-	 * @return the lbl password
+	 * Gets the JLabel password.
+	 * @return the JLabel password
 	 */
 	private JLabel getJLabelPassword() {
 		if (jLabelPassword == null) {
@@ -211,9 +203,8 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * Gets the tf password.
-	 * 
-	 * @return the tf password
+	 * Gets the JLabel password.
+	 * @return the JLabel password
 	 */
 	public JPasswordField getJPasswordField() {
 		if (jPasswordField == null) {
@@ -223,11 +214,9 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		}
 		return jPasswordField;
 	}
-
 	/**
-	 * This method initializes jButtonApply.
-	 * 
-	 * @return javax.swing.JButton
+	 * Gets the JButton connect.
+	 * @return the JButton connect
 	 */
 	private JButton getJButtonConnect() {
 		if (jButtonConnect == null) {
@@ -239,11 +228,9 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		}
 		return jButtonConnect;
 	}
-
 	/**
-	 * Gets the btn result.
-	 * 
-	 * @return the btn result
+	 * Gets the JLabel result.
+	 * @return the JLabel result
 	 */
 	private JLabel getJLabelResult() {
 		if (jLabelResult == null) {

@@ -117,7 +117,7 @@ public class MainWindow extends JFrame {
 	private JMenuBar jMenuBarMain;
 	private JMenu jMenuMainProject;
 	private JMenu jMenuMainView;
-		private ButtonGroup viewGroup;  //  @jve:decl-index=0:
+		private ButtonGroup viewGroup;  
 		public JRadioButtonMenuItem viewDeveloper; 
 		public JRadioButtonMenuItem viewEndUser; 
 	private JMenu jMenuMainJade;
@@ -259,9 +259,6 @@ public class MainWindow extends JFrame {
 		return frameSize;
 	}
 	
-	// ------------------------------------------------------------
-	// --- Statusanzeigen etc. definieren - START -----------------
-	// ------------------------------------------------------------
 	/**
 	 * Gets the status bar.
 	 * @return the status bar
@@ -296,7 +293,6 @@ public class MainWindow extends JFrame {
 	
 	/**
 	 * Sets a text in the applications status bar.
-	 *
 	 * @param message the new status bar
 	 */
 	public void setStatusBar(String message) {
@@ -341,11 +337,10 @@ public class MainWindow extends JFrame {
 	
 	/**
 	 * Here the 'look and feel' LnF of java Swing can be set.
-	 *
 	 * @param newLnF the new look and feel
 	 */
 	public void setLookAndFeel(String newLnF) {
-		// --- Look and fell einstellen --------------- 
+
 		if (newLnF==null) return;		
 		Application.getGlobalInfo().setAppLnf(newLnF);
 		try {
@@ -357,8 +352,7 @@ public class MainWindow extends JFrame {
 			SwingUtilities.updateComponentTreeUI(this);
 			
 		} catch (Exception e) {
-				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF()
-					+ " on this platform:" + e.getMessage());
+				System.err.println("Cannot install " + Application.getGlobalInfo().getAppLnF() + " on this platform:" + e.getMessage());
 		}
 		if (jMenuExtraLnF!=null){
 			jMenuExtraLnF.removeAll();
@@ -431,14 +425,11 @@ public class MainWindow extends JFrame {
 		this.setAlwaysOnTop(true);
 		this.setAlwaysOnTop(false);		
 	}
-	// ------------------------------------------------------------
-	// --- Statusanzeigen etc. definieren - ENDE ------------------
-	// ------------------------------------------------------------
 	
 	
-	// ------------------------------------------------------------
-	// --- Desktop der Anwendung definieren - START ---------------
-	// ------------------------------------------------------------
+	
+	
+	
 	/**
 	 * Gets the main splitpane.
 	 * @return the main splitpane
@@ -765,8 +756,7 @@ public class MainWindow extends JFrame {
 
 			jMenuExtra.addSeparator();
 			jMenuExtra.add( new CWMenueItem( "ExtraOptions", Language.translate("Optionen"), null ));
-			
-			jMenuExtra.add( new CWMenueItem( "Authentication", Language.translate("Authorisierung"), null ));
+			jMenuExtra.add( new CWMenueItem( "Authentication", Language.translate("Web Service Authentifizierung"), null ));
 			
 			}
 		return jMenuExtra;
@@ -803,7 +793,6 @@ public class MainWindow extends JFrame {
 		 */
 		private class JMenuItemLang extends JMenuItem implements ActionListener {
 			 
-			/** The Constant serialVersionUID. */
 			private static final long serialVersionUID = 1L;
 			
 			/**

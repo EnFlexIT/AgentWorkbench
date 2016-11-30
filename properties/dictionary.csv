@@ -75,7 +75,6 @@ de;Auswahl - Agenten;Agent selection
 de;Auswahl - Ontologien;Ontology selection
 de;Auswahl Ontologien;Ontology selection
 de;Auswahl Startliste;Selection: start list;;;
-de;Authorisierung;;;;
 de;Automatisch sortieren;Automatically sort;;;
 de;Basis-Agenten;Base agents
 de;Basis-Info;Basic info
@@ -367,7 +366,7 @@ de;Konsole;Console
 de;Kontinuierlich fortschreitende Zeit.;Continuously progressing time.;;;
 de;Kontinuierliche Thread-Messung;Continuous Thread Measurement;;;
 de;Kontinuierliches 2D-Umgebungsmodell;Continuous 2D environment model
-de;Kopiere Durchschnittswert für reale Metrik;;;;
+de;Kopiere Durchschnittswert für reale Metrik;Copy average for real metric;;;
 de;Label;Label;;;
 de;Lade SVG-Datei;Loading SVG file
 de;Lade Setup;Load Setup;;;
@@ -518,7 +517,7 @@ de;Quell-Sprache;Source language;;;
 de;RMA (Remote Monitoring Agent) öffnen;Open RMA (Remote Monitoring Agent)
 de;Raster verwenden;Use guide grid;;;
 de;Raster-Breite;Grid width;;;
-de;Reale Metriken der Agenten bei Simulationsstop aktualisieren;;;;
+de;Reale Metriken der Agenten bei Simulationsstop aktualisieren;Update real agent metrics at simulation stop;;;
 de;Rechts-Klick für weitere Optionen;Right-Click for more options
 de;Reihen-Eigenschaften;Series-Properties;;;
 de;Remote JADE-RMA beim Start des entfernten Containers anzeigen;Display remote JADE-RMA at the start of the remote container;;;
@@ -669,6 +668,8 @@ de;Vorlagen;Templates;;;
 de;Warte auf Agentenliste...;Waiting for agent list...
 de;Warte auf Ontologie-Liste...;Waiting for ontology list...
 de;Warte auf das Ende des Benchmarks ...;Waiting for the end of the benchmark ...;;;
+de;Web Service Authentifizierung;Web Service Authentication;;;
+de;Web Service-Authentifizierung;Web Service Authentication;;;
 de;Wert;Value;;;
 de;Wiederherstellen;Restore;;;
 de;Wochen;Weeks;;;
@@ -713,7 +714,7 @@ de;Änderungen anwenden;Apply Changes;;;
 de;Öffne Projekt;Open Project;;;
 de;Öffnen;Open
 de;Über...;About ...
-de;Übernehme Durchschnittswerte für reale Metrik;;;;
+de;Übernehme Durchschnittswerte für reale Metrik;Accept average values for real metric;;;
 de;Übernehmen;Apply
 de;Übersetzen ...;Translate ...
 de;Übersetzen;Translate

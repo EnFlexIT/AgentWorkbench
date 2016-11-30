@@ -30,10 +30,8 @@ package agentgui.core.config.auth;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -48,7 +46,7 @@ import com.nimbusds.oauth2.sdk.token.AccessToken;
 import agentgui.core.application.Application;
 
 /**
- * This class provides a simple interface to the OpenID Connect authorization.
+ * This class provides a simple interface to the OpenID Connect authorisation.
  * Use with getInstance(), getDialog()/connect() and getUserID().
  */
 public class OIDCAuthorization {
@@ -342,7 +340,6 @@ public class OIDCAuthorization {
 		 * Process a URL, that is: try to access it's resource, display error if any, return a redirection URL if indicated by the server.
 		 *
 		 * @param requestURL the requested URL
-		 * @param accessToken the access token
 		 * @return null if the access succeeded, a redirectionURL as string in case the authorization is not valid yet
 		 * @throws IOException Signals that an I/O exception has occurred.
 		 */

@@ -762,7 +762,6 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 					}
 					
 				} else if (ac.equals("PropWindowCloseAll")) {
-					System.out.println(ac);
 					getGraphControllerGUI().getBasicGraphGuiJDesktopPane().closeAllBasicGraphGuiProperties();
 					
 				} else {
