@@ -210,10 +210,20 @@ public class TrustStoreController {
 	}
 
 	/**
-	 * This method allows the user to add certificate to a TrustStore.
+	 * Adds a certificate to the truststore
+	 * @param certificate The certificate
+	 * @param alias The certificate alias
+	 * @throws KeyStoreException Error adding the certificate
+	 */
+	public void addCertificate(X509Certificate certificate, String alias) throws KeyStoreException{
+		this.trustStore.setCertificateEntry(alias, certificate);
+	}
+
+	/**
+	 * Loads a certificate from a file, adds it to the truststore and saves the truststore
 	 *
-	 * @param certificateToAdd the certificate to add
-	 * @param certificateAlias the certificate alias
+	 * @param certificateToAdd The path to the certificate file
+	 * @param certificateAlias the certificate alias The certificate alias
 	 */
 	public void addCertificateToTrustStore(String certificateToAdd, String certificateAlias) {
 		InputStream certInputStream = null;
