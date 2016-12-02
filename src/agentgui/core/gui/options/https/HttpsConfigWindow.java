@@ -717,7 +717,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		CertificateProperties certificateProperties = null;
 		KeyStoreController controller = getKeyStoreConfigPanel().getKeyStoreController();
 		controller.openTrustStore(getKeyStoreFile(), getKeyStorePassword());
-		if (controller.isInitzialized()) {
+		if (controller.isInitialized()) {
 			certificateProperties = getKeyStoreConfigPanel().getKeyStoreController().getFirstCertificateProperties();
 		} 
 		if (certificateProperties != null) {

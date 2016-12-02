@@ -68,10 +68,20 @@ public class TrustStoreController {
 	private FileOutputStream trustStoreOutputStream;
 	private String trustStorePassword;
 
+	/**
+	 * Gets the trust store password.
+	 *
+	 * @return the trust store password
+	 */
 	public String getTrustStorePassword() {
 		return trustStorePassword;
 	}
 
+	/**
+	 * Sets the trust store password.
+	 *
+	 * @param trustStorePassword the new trust store password
+	 */
 	public void setTrustStorePassword(String trustStorePassword) {
 		this.trustStorePassword = trustStorePassword;
 	}
@@ -118,6 +128,11 @@ public class TrustStoreController {
 		saveTrustStore();
 	}
 
+	/**
+	 * Initializes the truststore controller.
+	 * @param trustStoreFile the trust store file
+	 * @param trustStorePassword the trust store password
+	 */
 	public void init(File trustStoreFile, String trustStorePassword) {
 		this.trustStorePassword = trustStorePassword;
 		this.trustStoreFile = trustStoreFile;
@@ -163,10 +178,17 @@ public class TrustStoreController {
 		return successful;
 	}
 
+	/**
+	 * Save the trust store.
+	 */
 	public void saveTrustStore() {
 		saveTrustStore(this.trustStorePassword);
 	}
 
+	/**
+	 * Save the trust store.
+	 * @param trustStorePassword the trust store password
+	 */
 	public void saveTrustStore(String trustStorePassword) {
 		try {
 			// ----- Create a FileOutputStream --------------------------------
@@ -194,6 +216,12 @@ public class TrustStoreController {
 		saveTrustStore(newTrustStorePassword);
 	}
 
+	
+	/**
+	 * Change a certificate alias.
+	 * @param oldAlias the old alias
+	 * @param newAlias the new alias
+	 */
 	public void changeAlias(String oldAlias, String newAlias) {
 		System.out.println("change alias from " + oldAlias + " to " + newAlias);
 
@@ -221,7 +249,6 @@ public class TrustStoreController {
 
 	/**
 	 * Loads a certificate from a file, adds it to the truststore and saves the truststore
-	 *
 	 * @param certificateToAdd The path to the certificate file
 	 * @param certificateAlias the certificate alias The certificate alias
 	 */
@@ -383,7 +410,6 @@ public class TrustStoreController {
 
 	/**
 	 * Gets the certificate properties.
-	 *
 	 * @param alias the certificate alias
 	 * @return the certificate properties
 	 */
@@ -412,10 +438,10 @@ public class TrustStoreController {
 	}
 	
 	/**
-	 * Checks if is initzialized.
-	 * @return true, if is initzialized
+	 * Checks if is initialized.
+	 * @return true, if is initialized
 	 */
-	public boolean isInitzialized(){
+	public boolean isInitialized(){
 		return initialized ;
 	}
 
