@@ -297,7 +297,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 	/**
 	 * Sets JLabels and JTextFields visible true in case choosing HTTPS MTP.
 	 */
-	private void setVisibaleTrue(){
+	private void setVisibleTrue(){
 		this.getJLabelKeystorePath().setVisible(true);
 		this.getJLabelTruststorePath().setVisible(true);
 		this.getJTextFieldKeyStorePath().setVisible(true);
@@ -369,8 +369,12 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 					Object item = event.getItem();
 					if (item.equals(MtpProtocol.HTTPS)) {
 						// ---- If the user choose HTTPS ---------------------------
-						this.setVisibaleTrue();
-						this.editHTTPSsettings();
+						this.setVisibleTrue();
+						
+						// --- If the stores are not defined or do not exist, open the configuration dialog ----------
+						if(this.keyStore == null || this.trustStore == null || this.keyStore.exists() == false || this.trustStore.exists() == false){
+							this.editHTTPSsettings();
+						}
 					} else {
 						// ---- If the user choose HTTP ----------------------------
 						this.setVisibleFalse();
@@ -445,7 +449,7 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 		MtpProtocol mtpProtocol = this.getGlobalInfo().getMtpProtocol();
 		if (mtpProtocol.equals(MtpProtocol.HTTPS)) {
 			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTPS);
-			this.setVisibaleTrue();
+			this.setVisibleTrue();
 		} else {
 			this.getJComboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
 			this.setVisibleFalse();
