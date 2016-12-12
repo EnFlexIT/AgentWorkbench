@@ -184,7 +184,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	 * Initialize the contents of the dialog.
 	 */
 	private void initialize() {
-		this.setTitle(Language.translate("[EXPERIMENTAL] Agent.GUI: HTTPS Configuration", Language.EN));
+		this.setTitle(Language.translate("Agent.GUI: HTTPS Configuration", Language.EN));
 		this.setIconImage(image);
 		this.setBounds(100, 100, 820, 590);
 		this.setLocationRelativeTo(null);
@@ -780,11 +780,14 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 			keyStoreButtonPressed = "CreateKeyStore";
 
 		} else if (ae.getSource() == this.getJButtonOpenKeyStore()) {
+			
 			// ---- Open a KeyStore --------------------------------
 			// ---- open JfileChooser ------------------------------
-			getJFileChooser();
-			int jfile = jFileChooser.showOpenDialog(null);
-			if (jfile == JFileChooser.APPROVE_OPTION) {
+			getJFileChooser().setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
+			if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+				
+				Application.getGlobalInfo().setLastSelectedFolder(getJFileChooser().getCurrentDirectory());
+				
 				// -------- Get the path of selected KeyStore file -------------
 				keyStoreFile = jFileChooser.getSelectedFile();
 				// ---- Get the KeyStoreName -----------------------------------
@@ -830,7 +833,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 					String title = Language.translate("Warning message", Language.EN);
 					JOptionPane.showMessageDialog(this, msg, title, JOptionPane.WARNING_MESSAGE);
 				}
-			} else if (jfile == JFileChooser.CANCEL_OPTION) {
+			} else {
 				// ------ Close the jFileChooser ---------------------------------
 				jFileChooser.remove(jFileChooser);
 			}
@@ -853,11 +856,14 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 			trustStoreButtonPressed = "CreateTrustStore";
 
 		} else if (ae.getSource() == this.getJButtonOpenTrustStore()) {
+			
 			// ---- Open a TrustStore ---------------------------------------
 			// ---- open JfileChooser ---------------------------------------
-			getJFileChooser();
-			int result = jFileChooser.showOpenDialog(null);
-			if (result == JFileChooser.APPROVE_OPTION) {
+			getJFileChooser().setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
+			if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+				
+				Application.getGlobalInfo().setLastSelectedFolder(getJFileChooser().getCurrentDirectory());
+				
 				// ---- Get the path of selected TrustStore file ------------
 				trustStoreFile = jFileChooser.getSelectedFile();
 				// ---- Get the TrustStoreName ------------------------------
