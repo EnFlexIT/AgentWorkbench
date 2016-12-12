@@ -50,7 +50,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
@@ -486,7 +485,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 			
 		} else {
 			// --- Project was selected -------------------
-			Project selectedProject = Application.getProjectsLoaded().getProject(projectFolderSelected);
+			Project selectedProject = Project.load(projectFolderSelected);
 			if (this.esaProjectSelected==null) {
 				this.esaProjectSelected = selectedProject;
 				this.setComboBoxModelSetup();

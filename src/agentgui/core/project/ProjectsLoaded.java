@@ -32,12 +32,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -47,9 +41,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -166,7 +157,7 @@ public class ProjectsLoaded {
 			
 		} else {
 			// --- Get data model from file ---------------
-			newProject = this.getProject(localTmpProjectFolder);
+			newProject = Project.load(localTmpProjectFolder);
 			if (newProject==null) {
 				return null;
 			}
@@ -220,100 +211,6 @@ public class ProjectsLoaded {
 		return newProject;
 	}
 
-	/**
-	 * Loads and returns the specified project to a Project instance.
-	 * By loading, this method will also load external jar-resources
-	 * by using the ClassLoader
-	 *
-	 * @param projectSubDirectory the project sub directory
-	 * @return the project
-	 */
-	public Project getProject(String projectSubDirectory) {
-		
-		Project project = null;
-		
-		// --- Get data model from file ---------------
-		String projectFolder = Application.getGlobalInfo().getPathProjects(true) + projectSubDirectory + File.separator;
-		String XMLFileName = projectFolder + Application.getGlobalInfo().getFileNameProject();	
-		String userObjectFileName = projectFolder + Application.getGlobalInfo().getFilenameProjectUserObject();
-	
-		// --- Does the file exists -------------------
-		File xmlFile = new File(XMLFileName);
-		if (xmlFile.exists()==false) {
-			
-			System.out.println(Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + " " + XMLFileName);
-			Application.setStatusBar(Language.translate("Fertig"));
-			
-			String title = Language.translate("Projekt-Ladefehler!");
-			String message = Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + "\n";
-			message += XMLFileName;
-			JOptionPane.showInternalMessageDialog(Application.getMainWindow().getJDesktopPane4Projects(), message, title, JOptionPane.WARNING_MESSAGE);
-			return null;
-		}
-		
-		// --- Read file 'agentgui.xml' ---------------
-		FileReader fr = null;
-		try {
-			fr = new FileReader(XMLFileName);
-			JAXBContext pc = JAXBContext.newInstance(Project.class);
-			Unmarshaller um = pc.createUnmarshaller();
-			project = (Project) um.unmarshal(fr);
-			
-		} catch (FileNotFoundException ex) {
-			ex.printStackTrace();
-			return null;
-		} catch (JAXBException ex) {
-			ex.printStackTrace();
-			return null;
-		} finally {
-			try {
-				if (fr!=null) fr.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
-		}
-		
-		// --- check/create default folders -----------
-		project.setProjectFolder(projectSubDirectory);
-		project.checkCreateSubFolders();
-		
-		// --- Load additional jar-resources ----------
-		project.resourcesLoad();
-		
-		// --- Reading the serializable user object of - 
-		// --- the Project from the 'agentgui.bin' -----
-		File userObjectFile = new File(userObjectFileName);
-		if (userObjectFile.exists()) {
-			
-			FileInputStream fis = null;
-			ObjectInputStream inStream = null;
-			try {
-				fis = new FileInputStream(userObjectFileName);
-				inStream = new ObjectInputStream(fis);
-				Serializable userObject = (Serializable) inStream.readObject();
-				project.setUserRuntimeObject(userObject);
-				
-			} catch(IOException ex) {
-				ex.printStackTrace();
-			} catch(ClassNotFoundException ex) {
-				ex.printStackTrace();
-			} finally {
-				try {
-					if (inStream!=null) inStream.close();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
-				try {
-					if (fis!=null) fis.close();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
-			}
-		}
-		return project;
-	}
-	
-	
 	/**
 	 * This method will try to close all open projects
 	 * @return Returns true on success

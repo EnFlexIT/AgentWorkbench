@@ -71,5 +71,6 @@ public class GasMasPlugIn extends PlugIn {
 		// --- Test for a custom tollbar button for the graph environment ----- 
 		this.graphController.addCustomToolbarComponentDescription(new CustomToolbarComponentDescription(ToolBarType.ViewControl, ToolBarSurrounding.RuntimeOnly, CustomToolbarButton.class, null, true));
 	}
+
 	
 }

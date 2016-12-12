@@ -29,9 +29,13 @@
 package agentgui.core.project;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.Writer;
@@ -49,7 +53,9 @@ import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -298,6 +304,110 @@ import agentgui.core.webserver.JarFileCreator;
 		// ----------------------------------------------------------
 		
 	};
+	
+	/**
+	 * Loads and returns the project from the specified project sub-directory. Both files will be loaded (agentgui.xml and agentgui.bin).
+	 * By loading, this method will also load external jar-resources by using the ClassLoader.
+	 *
+	 * @param projectSubDirectory the project sub directory
+	 * @return the project
+	 */
+	public static Project load(String projectSubDirectory) {
+		String projectFolder = Application.getGlobalInfo().getPathProjects(true) + projectSubDirectory + File.separator;
+		return load(new File(projectFolder));
+	}
+	/**
+	 * Loads and returns the project from the specified directory. Both files will be loaded (agentgui.xml and agentgui.bin).
+	 * By loading, this method will also load external jar-resources by using the ClassLoader.
+	 *
+	 * @param projectPath the project path
+	 * @return the project
+	 */
+	public static Project load(File projectPath) {
+		
+		Project project = null;
+		
+		// --- Get data model from file ---------------
+		String XMLFileName = projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFileNameProject();	
+		String userObjectFileName = projectPath.getAbsolutePath() + File.separator + Application.getGlobalInfo().getFilenameProjectUserObject();
+		String projectSubDirectory = projectPath.getParentFile().toPath().relativize(projectPath.toPath()).toString();
+		
+		// --- Does the file exists -------------------
+		File xmlFile = new File(XMLFileName);
+		if (xmlFile.exists()==false) {
+			
+			System.out.println(Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + " " + XMLFileName);
+			Application.setStatusBar(Language.translate("Fertig"));
+			
+			String title = Language.translate("Projekt-Ladefehler!");
+			String message = Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + "\n";
+			message += XMLFileName;
+			JOptionPane.showInternalMessageDialog(Application.getMainWindow().getJDesktopPane4Projects(), message, title, JOptionPane.WARNING_MESSAGE);
+			return null;
+		}
+		
+		// --- Read file 'agentgui.xml' ---------------
+		FileReader fr = null;
+		try {
+			fr = new FileReader(XMLFileName);
+			JAXBContext pc = JAXBContext.newInstance(Project.class);
+			Unmarshaller um = pc.createUnmarshaller();
+			project = (Project) um.unmarshal(fr);
+			
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+			return null;
+		} catch (JAXBException ex) {
+			ex.printStackTrace();
+			return null;
+		} finally {
+			try {
+				if (fr!=null) fr.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+		}
+		
+		// --- check/create default folders -----------
+		project.setProjectFolder(projectSubDirectory);
+		project.checkCreateSubFolders();
+		
+		// --- Load additional jar-resources ----------
+		project.resourcesLoad();
+		
+		// --- Reading the serializable user object of - 
+		// --- the Project from the 'agentgui.bin' -----
+		File userObjectFile = new File(userObjectFileName);
+		if (userObjectFile.exists()) {
+			
+			FileInputStream fis = null;
+			ObjectInputStream inStream = null;
+			try {
+				fis = new FileInputStream(userObjectFileName);
+				inStream = new ObjectInputStream(fis);
+				Serializable userObject = (Serializable) inStream.readObject();
+				project.setUserRuntimeObject(userObject);
+				
+			} catch(IOException ex) {
+				ex.printStackTrace();
+			} catch(ClassNotFoundException ex) {
+				ex.printStackTrace();
+			} finally {
+				try {
+					if (inStream!=null) inStream.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+				try {
+					if (fis!=null) fis.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+			}
+		}
+		
+		return project;
+	}
 	
 	/**
 	 * Saves the current MAS-Project to the file 'agentgui.xml'

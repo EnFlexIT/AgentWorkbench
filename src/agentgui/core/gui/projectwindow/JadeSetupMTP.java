@@ -129,8 +129,8 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		this.refreshDataView();
 		
 		// --- configure translation ------------
-		jLabelPort.setText(Language.translate("Starte JADE ÃƒÂ¼ber Port-Nr.:"));
-		jLabelPortExplain.setText(Language.translate("(Falls bereits verwendet, wird versucht den nÃƒÂ¤chst hÃƒÂ¶heren Port zu nutzen)"));
+		jLabelPort.setText(Language.translate("Starte JADE über Port-Nr.:"));
+		jLabelPortExplain.setText(Language.translate("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)"));
 		jLabelMtpProtocol.setText(Language.translate("MTP-Protokoll:"));
 
 		jButtonSetPort.setToolTipText(Language.translate("JADE-Port bearbeiten"));
@@ -139,7 +139,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		jLabelMTP.setText(Language.translate("MTP-Adresse") + ":");
 		jRadioButtonMtpAutoConfig.setText(Language.translate("JADE-Automatik verwenden"));
 		jRadioButtonMtpIP.setText(Language.translate("IP-Adresse verwenden"));
-		jButtonIPedit.setToolTipText(Language.translate("IP auswÃƒÂ¤hlen"));
+		jButtonIPedit.setToolTipText(Language.translate("IP auswählen"));
 		
 		jButtonSetPortMTP.setToolTipText(Language.translate("JADE-Port bearbeiten"));
 		jButtonSetPortMTPDefault.setToolTipText(Language.translate("Standard verwenden"));
@@ -361,7 +361,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			gbc_jLabelPort.gridy = 0;
 			jPanelPorts.add(jLabelPort, gbc_jLabelPort);
 			jLabelPort.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelPort.setText("Starte JADE ÃƒÂ¼ber Port-Nr.:");
+			jLabelPort.setText("Starte JADE über Port-Nr.:");
 			GridBagConstraints gbc_jTextFieldDefaultPort = new GridBagConstraints();
 			gbc_jTextFieldDefaultPort.insets = new Insets(0, 0, 5, 5);
 			gbc_jTextFieldDefaultPort.gridx = 1;
@@ -403,7 +403,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 			
 			jLabelPortExplain = new JLabel();
 			jLabelPortExplain.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nÃƒÂ¤chst hÃƒÂ¶heren Port zu nutzen)");
+			jLabelPortExplain.setText("(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen)");
 			GridBagConstraints gbc_jLabelPortExplain = new GridBagConstraints();
 			gbc_jLabelPortExplain.anchor = GridBagConstraints.WEST;
 			gbc_jLabelPortExplain.gridwidth = 4;
@@ -546,7 +546,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	private JButton getJButtonIPedit() {
 		if (jButtonIPedit == null) {
 			jButtonIPedit = new JButton();
-			jButtonIPedit.setToolTipText("IP auswÃƒÂ¤hlen");
+			jButtonIPedit.setToolTipText("IP auswählen");
 			jButtonIPedit.setPreferredSize(new Dimension(45, 26));
 			jButtonIPedit.setIcon(new ImageIcon(getClass().getResource(PathImage + "edit.png")));
 			jButtonIPedit.addActionListener(this);
@@ -781,7 +781,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 	/**
 	 * Opens the HttpsCinfogWindow to configure the HTTPS MTP
 	 */
-	private void showHttpsConfigWindow() {
+	private void editHTTPSsettings() {
 		if (this.action == "BUTTON") {
 			// --- In case that the user choose to edit the HTTPS MTP ----------
 			// --- Open the HttpsConfigWindow ----------------------------------
@@ -995,7 +995,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 		}else if (trigger == jButtonEditMtpProtocol){
 			// --- Open the HttpsConfigWindow ---------------------------------
 			this.action = "BUTTON";
-			showHttpsConfigWindow();
+			editHTTPSsettings();
 		}
 		
 	}
@@ -1016,11 +1016,7 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 						// ---- If the user choose HTTPS ---------------------------
 						this.setEnabledTrue();
 						this.currProject.getJadeConfiguration().setMtpProtocol(MtpProtocol.HTTPS);
-						
-						// --- If the stores are not defined or do not exist, open the configuration dialog ----------
-						if(this.keyStore == null || this.trustStore == null || this.keyStore.exists() == false || this.trustStore.exists() == false){
-							this.showHttpsConfigWindow();
-						}
+						this.editHTTPSsettings();
 					} else {
 						// ---- If the user choose HTTP ----------------------------
 						this.setEnabledFalse();
