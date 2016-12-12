@@ -410,9 +410,18 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 	
 	/**
-	 * Saves the current MAS-Project to the file 'agentgui.xml'
+	 * Saves the current Project to the files 'agentgui.xml' and agentgui.bin.
+	 * @return true, if successful
 	 */
 	public boolean save() {
+		return this.save(new File(this.getProjectFolderFullPath()));
+	}
+	/**
+	 * Saves the current Project to the files 'agentgui.xml' and agentgui.bin.
+	 * @param projectPath the project path where the files have to be stored
+	 * @return true, if successful
+	 */
+	public boolean save(File projectPath) {
 		// --- Save the current project -------------------
 		Application.setStatusBar(this.projectName + ": " + Language.translate("speichern") + " ... ");
 		this.setNotChangedButNotify(Project.PREPARE_FOR_SAVING);		
@@ -426,7 +435,7 @@ import agentgui.core.webserver.JarFileCreator;
 			pm.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 			//pm.marshal( this, System.out );
 			// --- Write values to xml-File ---------------
-			Writer pw = new FileWriter(this.getProjectFolderFullPath() + Application.getGlobalInfo().getFileNameProject() );
+			Writer pw = new FileWriter(projectPath + File.separator + Application.getGlobalInfo().getFileNameProject() );
 			pm.marshal(this, pw);
 			pw.close();
 			
@@ -435,7 +444,7 @@ import agentgui.core.webserver.JarFileCreator;
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
 		    try {
-		       fos = new FileOutputStream(this.getProjectFolderFullPath() + Application.getGlobalInfo().getFilenameProjectUserObject());
+		       fos = new FileOutputStream(projectPath + File.separator + Application.getGlobalInfo().getFilenameProjectUserObject());
 		       out = new ObjectOutputStream(fos);
 		       out.writeObject(this.userRuntimeObject);
 		       
@@ -507,9 +516,6 @@ import agentgui.core.webserver.JarFileCreator;
 			}
 		}
 		
-		// ------------------------------------------------		
-		// --- Projekt kann geschlossen werden ------------
-		// ------------------------------------------------
 		// --- Clear PlugIns ------------------------------
 		this.plugInVectorRemove();
 		// --- Clear ClassPath ----------------------------
