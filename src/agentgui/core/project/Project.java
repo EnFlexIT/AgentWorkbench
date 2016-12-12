@@ -414,14 +414,14 @@ import agentgui.core.webserver.JarFileCreator;
 	 * @return true, if successful
 	 */
 	public boolean save() {
-		return this.save(new File(this.getProjectFolderFullPath()));
+		return this.save(new File(this.getProjectFolderFullPath()), true);
 	}
 	/**
 	 * Saves the current Project to the files 'agentgui.xml' and agentgui.bin.
 	 * @param projectPath the project path where the files have to be stored
 	 * @return true, if successful
 	 */
-	public boolean save(File projectPath) {
+	public boolean save(File projectPath, boolean saveSetup) {
 		// --- Save the current project -------------------
 		Application.setStatusBar(this.projectName + ": " + Language.translate("speichern") + " ... ");
 		this.setNotChangedButNotify(Project.PREPARE_FOR_SAVING);		
@@ -456,7 +456,9 @@ import agentgui.core.webserver.JarFileCreator;
 		    }
 		    
 			// --- Save the current SimulationSetup -------
-			this.getSimulationSetups().setupSave();
+		    if (saveSetup==true) {
+		    	this.getSimulationSetups().setupSave();
+		    }
 			
 			this.setUnsaved(false);			
 
