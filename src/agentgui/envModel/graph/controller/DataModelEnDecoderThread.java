@@ -77,7 +77,7 @@ public class DataModelEnDecoderThread extends Thread {
 	private int percentProgressOld = -1;
 	private Object finalizer;
 	
-	private boolean isHeadLessperation = Application.isOperatingHeadless();
+	private boolean isHeadlessOperation = Application.isOperatingHeadless();
 	private ProgressMonitor progressMonitor;
 	private long firstDisplayWaitTime = 1000;		// ms
 	private long firstDisplayTime;
@@ -235,14 +235,16 @@ public class DataModelEnDecoderThread extends Thread {
 		}
 
     	// --- Finally, close progress monitor ---------------------- 
-    	SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-		    	getProgressMonitor().setVisible(false);
-		    	getProgressMonitor().dispose();
-		    	graphController.setBasicGraphGuiVisViewerActionOnTop(false);
-			}
-		});
+    	if (isHeadlessOperation==false) {
+    		SwingUtilities.invokeLater(new Runnable() {
+    			@Override
+    			public void run() {
+    		    	getProgressMonitor().setVisible(false);
+    		    	getProgressMonitor().dispose();
+    		    	graphController.setBasicGraphGuiVisViewerActionOnTop(false);
+    			}
+    		});    		
+    	}
 		
 	}
 	
@@ -265,7 +267,7 @@ public class DataModelEnDecoderThread extends Thread {
 		final int percentProgressNew = Math.round(progressCalc);
 
 		// --- Only display progress, if procedure is too long ------
-		if (this.isHeadLessperation==false && System.currentTimeMillis()>this.firstDisplayTime && percentProgressNew!=percentProgressOld) {
+		if (this.isHeadlessOperation==false && System.currentTimeMillis()>this.firstDisplayTime && percentProgressNew!=percentProgressOld) {
 			
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override

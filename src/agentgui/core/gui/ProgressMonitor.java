@@ -118,7 +118,7 @@ public class ProgressMonitor implements ActionListener {
 			
 			jDialog.setTitle(this.windowTitle);
 			jDialog.setIconImage(this.getImageAgentGUI());	
-			jDialog.setContentPane(getJContentPane());
+			jDialog.setContentPane(this.getJContentPane());
 			jDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			
 			this.progressMonitorContainer = jDialog; 
@@ -134,7 +134,7 @@ public class ProgressMonitor implements ActionListener {
 			
 			jInternalFrame.setTitle(this.windowTitle);
 			jInternalFrame.setFrameIcon(this.getImageIconAgentGUI());	
-			jInternalFrame.setContentPane(getJContentPane());
+			jInternalFrame.setContentPane(this.getJContentPane());
 			jInternalFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			
 			this.progressMonitorContainer = jInternalFrame;
