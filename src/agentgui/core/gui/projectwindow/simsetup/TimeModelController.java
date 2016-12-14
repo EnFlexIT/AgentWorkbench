@@ -35,6 +35,7 @@ import java.util.Observer;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.Project;
@@ -70,7 +71,9 @@ public class TimeModelController implements Observer {
 	public TimeModelController(Project project) {
 		this.currProject = project;
 		this.currProject.addObserver(this);
-		this.addTimeModelDisplayToProjectWindow();
+		if(Application.isOperatingHeadless() == false){
+			this.addTimeModelDisplayToProjectWindow();
+		}
 		this.setupLoad();
 	}
 	
