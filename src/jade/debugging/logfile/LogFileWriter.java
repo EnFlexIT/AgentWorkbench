@@ -54,6 +54,8 @@ public class LogFileWriter {
 	private FileWriter fileWriter;
 	private BufferedWriter bufferedWriter;
 	
+	private boolean logActive = true;
+	
 	
 	/**
 	 * Instantiates a new log file writer that uses the
@@ -103,52 +105,66 @@ public class LogFileWriter {
 	/**
 	 * Returns the logging path and file name as string.
 	 * @return the logging path and file name 
+	 * @throws IOException 
 	 */
-	private String getLoggingFileName() {
+	private String getLoggingFileName() throws IOException {
+//		System.out.println("1");
+
 		// --- Check, if the logging directory exists -----
 		File logPath = new File(this.getLoggingPath());
+//		System.out.println("2");
+
 		try {
+//			System.out.println("3");
+
 			if (logPath.exists()==false) {
+//				System.out.println("4");
+
 				try {
-					logPath.mkdir();
+
+					if (!logPath.mkdir()){
+						throw new IOException("Logfile path creation failed");
+					}
+//					System.out.println("6");
+
 				} catch (Exception ex) {
-					ex.printStackTrace();
+//					System.out.println("heylo");
+					IOException newEx = new IOException("Creation of logfile path failed. Unsufficient permissions at "+logPath.toString()+"? Logging will be turned off.", ex);
+					logActive = false;
+					throw newEx;
 				}
 			}
 			return this.getLoggingPath() + "/" + this.getTimeStampPrefix() + "_" + this.getPID() + "_AgentGui.log";
-			
-		} catch (Exception ex) {
+		} catch (IOException ex) { // pass the usual exception on
+			throw ex;
+		} catch (Exception ex) { // catch everything else
 			ex.printStackTrace();
 		}
-		return null;
+		return "";
 	}
 	
 	/**
 	 * Start file writer.
+	 * @throws IOException 
 	 */
-	private void startFileWriter(){
-		try {
-			this.fileWriter = new FileWriter(this.getLoggingFileName(), true);
-			this.bufferedWriter = new BufferedWriter(this.fileWriter);
-			
-		} catch (IOException ioe){
-			ioe.printStackTrace();
-		}
+	private void startFileWriter() throws IOException{
+		this.fileWriter = new FileWriter(this.getLoggingFileName(), true);
+		this.bufferedWriter = new BufferedWriter(this.fileWriter);
 	}
 	/**
 	 * Stop file writer.
+	 * @throws IOException 
 	 */
 	public void stopFileWriter() {
-		if (this.fileWriter!=null) {
+		if (this.fileWriter!=null && bufferedWriter!=null) {
 			try {
-				this.bufferedWriter.write(this.newLine);
 				this.bufferedWriter.flush();
 				this.bufferedWriter.close();
 				this.fileWriter.close();
-				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+
 		}
 	}
 	
@@ -182,39 +198,43 @@ public class LogFileWriter {
 	 * @param text the text to print out
 	 */
 	public void appendText(String text) {
-		
-		// --- Writing to a new log file? -----------------
-		if (System.currentTimeMillis()>=this.nextMidnightTimeStamp) {
-			this.stopFileWriter();
-			this.startFileWriter();
-			this.nextMidnightTimeStamp = this.getNextMidnightTimestamp();
-		}
-		
-		// --- Format the current system time ------------- 
-		String prefix = this.getDateFormatter().format(new Date(System.currentTimeMillis())) + " ";
-		String newText = text;
-		if (newText.startsWith(PrintStreamListener.SystemOutput)) {
-			newText = newText.substring(PrintStreamListener.SystemOutput.length()).trim();
-			prefix += PrintStreamListener.SystemOutput + " ";
-		} else if (text.startsWith(PrintStreamListener.SystemError)) {
-			newText = newText.substring(PrintStreamListener.SystemError.length()).trim();
-			prefix += PrintStreamListener.SystemError + " ";
-		}
-
-		if (newText==null || newText.equals("")) {
+		if(!logActive){
 			return;
-		} else if (newText.endsWith(this.newLine)==false) {
-			newText = newText.replace("\r\n", "\n");
-			newText = newText.replace("\r", "\n");
-			newText = newText.replace("\n"+"\n", "\n");
-			newText = prefix + newText.replace("\n", this.newLine + "                      ") + newLine;
 		}
-
 		try {
+
+			// --- Writing to a new log file? -----------------
+			if (System.currentTimeMillis()>=this.nextMidnightTimeStamp) {
+				this.stopFileWriter();
+				this.startFileWriter();
+				this.nextMidnightTimeStamp = this.getNextMidnightTimestamp();
+			}
+			
+			// --- Format the current system time ------------- 
+			String prefix = this.getDateFormatter().format(new Date(System.currentTimeMillis())) + " ";
+			String newText = text;
+			if (newText.startsWith(PrintStreamListener.SystemOutput)) {
+				newText = newText.substring(PrintStreamListener.SystemOutput.length()).trim();
+				prefix += PrintStreamListener.SystemOutput + " ";
+			} else if (text.startsWith(PrintStreamListener.SystemError)) {
+				newText = newText.substring(PrintStreamListener.SystemError.length()).trim();
+				prefix += PrintStreamListener.SystemError + " ";
+			}
+	
+			if (newText==null || newText.equals("")) {
+				return;
+			} else if (newText.endsWith(this.newLine)==false) {
+				newText = newText.replace("\r\n", "\n");
+				newText = newText.replace("\r", "\n");
+				newText = newText.replace("\n"+"\n", "\n");
+				newText = prefix + newText.replace("\n", this.newLine + "                      ") + newLine;
+			}
+
 			this.bufferedWriter.write(newText);
 			this.bufferedWriter.flush();
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
+			logActive=false;
 			e.printStackTrace();
 		}
 		

@@ -244,7 +244,7 @@ public class Application {
 	 * @return the console
 	 */
 	public static JPanelConsole getConsole() {
-		if (Application.console==null) {
+		if (Application.console==null && isOperatingHeadless()==false) {
 			Application.console = new JPanelConsole(true);
 		}
 		return Application.console;
