@@ -525,8 +525,10 @@ import agentgui.core.webserver.JarFileCreator;
 		
 		// --- Close Project ------------------------------
 		ProjectsLoaded loadedProjects = Application.getProjectsLoaded();
-		int Index = loadedProjects.getIndexByName(projectName); // --- Merker Index ---		
-		getProjectWindow().dispose();
+		int Index = loadedProjects.getIndexByName(projectName); // --- Merker Index ---	
+		if(Application.isOperatingHeadless() == false){
+			getProjectWindow().dispose();
+		}
 		loadedProjects.remove(this);
 		
 		int nProjects = loadedProjects.count();
