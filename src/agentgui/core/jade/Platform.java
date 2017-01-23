@@ -205,6 +205,16 @@ public class Platform extends Object {
 			// -------------------------------------------------
 			// --- Run as Service / Embedded System Agent ------
 			// -------------------------------------------------
+			
+			// --- Make sure that the project was loaded -------
+			while (Application.getProjectFocused()==null) {
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException ie) {
+					ie.printStackTrace();
+				}
+			}
+			
 			switch (Application.getGlobalInfo().getDeviceServiceExecutionMode()) {
 			case SETUP:
 				if (jadeAgentIsRunning(BackgroundSystemAgentApplication)==false) {
