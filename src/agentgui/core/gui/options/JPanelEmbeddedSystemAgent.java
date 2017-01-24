@@ -617,6 +617,8 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				this.getJButtonEsaSelectAgent().setEnabled(false);
 				this.getJRadioButtonVisNon().setEnabled(false);
 				this.getJRadioButtonVisTrayIcon().setEnabled(false);
+				
+				this.getJComboBoxSetupSelector().setEnabled(true);
 
 			} else if (this.getJRadioButtonExecuteAsDeviceAgent().isSelected()) {
 				
@@ -630,6 +632,7 @@ public class JPanelEmbeddedSystemAgent extends AbstractJPanelForOptions implemen
 				this.getJRadioButtonVisNon().setEnabled(true);
 				this.getJRadioButtonVisTrayIcon().setEnabled(true);
 				
+				this.getJComboBoxSetupSelector().setEnabled(false);
 			}
 		}
 	}
