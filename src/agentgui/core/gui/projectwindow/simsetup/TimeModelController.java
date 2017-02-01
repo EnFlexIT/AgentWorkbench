@@ -245,7 +245,9 @@ public class TimeModelController implements Observer {
 				
 			} else if (this.currProject.getTimeModelClass().equals(this.currTimeModelClass)==false) {
 				// --- Display the new TimeModel display ------------
-				this.addTimeModelDisplayToProjectWindow();
+				if (Application.isOperatingHeadless()==false) {
+					this.addTimeModelDisplayToProjectWindow();
+				}
 				this.setupLoad();
 			}
 			
