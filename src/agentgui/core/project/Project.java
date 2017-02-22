@@ -316,6 +316,19 @@ import agentgui.core.webserver.JarFileCreator;
 		String projectFolder = Application.getGlobalInfo().getPathProjects(true) + projectSubDirectory + File.separator;
 		return load(new File(projectFolder));
 	}
+	
+	/**
+	 * Loads and returns the project from the specified project sub-directory. Both files will be loaded (agentgui.xml and agentgui.bin).
+	 * External jar resources will optionally be loaded.
+	 *
+	 * @param projectSubDirectory the project sub directory
+	 * @param loadResources load external jar resources?
+	 * @return the project
+	 */
+	public static Project load(String projectSubDirectory, boolean loadResources) {
+		String projectFolder = Application.getGlobalInfo().getPathProjects(true) + projectSubDirectory + File.separator;
+		return load(new File(projectFolder), loadResources);
+	}
 	/**
 	 * Loads and returns the project from the specified directory. Both files will be loaded (agentgui.xml and agentgui.bin).
 	 * By loading, this method will also load external jar-resources by using the ClassLoader.
@@ -323,7 +336,19 @@ import agentgui.core.webserver.JarFileCreator;
 	 * @param projectPath the project path
 	 * @return the project
 	 */
-	public static Project load(File projectPath) {
+	public static Project load(File projectPath){
+		return load(projectPath, true);
+	}
+	
+	/**
+	 * Loads and returns the project from the specified directory. Both files will be loaded (agentgui.xml and agentgui.bin).
+	 * External jar resources will optionally be loaded.
+	 *
+	 * @param projectPath the project path
+	 * @param loadResources load external jar resources?
+	 * @return the project
+	 */
+	public static Project load(File projectPath, boolean loadResources) {
 		
 		Project project = null;
 		
@@ -373,7 +398,9 @@ import agentgui.core.webserver.JarFileCreator;
 		project.checkCreateSubFolders();
 		
 		// --- Load additional jar-resources ----------
-		project.resourcesLoad();
+		if(loadResources == true){
+			project.resourcesLoad();
+		}
 		
 		// --- Reading the serializable user object of - 
 		// --- the Project from the 'agentgui.bin' -----
