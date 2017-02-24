@@ -44,7 +44,7 @@ import agentgui.core.application.Application;
 /**
  * This class is used for the management of the used ontologies inside a project.
  * It can add or remove further (sub)-ontologies in order to reduce the effort 
- * of building your own complex ontology.<b>
+ * of building your own complex ontology.<br>
  * Basically this class will evaluate the ontologies given by the Vector of
  * references to the ontologies. One result will be the DefaultTreeMap, which
  * allows the visualisation of the ontologies as tree. The other will be a

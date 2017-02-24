@@ -129,7 +129,7 @@ public class Application {
 	}	
 	/**
 	 * Will return the instance of this singleton class
-	 * @return The instance of this class
+	 * @return The instance of this static class
 	 */
 	public static Application getInstance() {
 		return Application.thisApp;
