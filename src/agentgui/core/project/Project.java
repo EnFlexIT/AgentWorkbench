@@ -398,7 +398,7 @@ import agentgui.core.webserver.JarFileCreator;
 		project.checkCreateSubFolders();
 		
 		// --- Load additional jar-resources ----------
-		if(loadResources == true){
+		if (loadResources == true) {
 			project.resourcesLoad();
 		}
 		

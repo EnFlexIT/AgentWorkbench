@@ -62,7 +62,9 @@ public class SerialClone {
 			throw new IllegalArgumentException(e);
 		} catch (ClassNotFoundException e) {
 			throw new IllegalArgumentException(e);
-		}
+		} catch (StackOverflowError e) {
+			throw new IllegalArgumentException(e);
+		} 
 	}
 
 	/**
@@ -76,28 +78,36 @@ public class SerialClone {
 	 */
 	private static <T> T cloneX(T x) throws IOException, ClassNotFoundException {
 		
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		CloneOutput cout = new CloneOutput(bout);
-		cout.writeObject(x);
-		byte[] bytes = bout.toByteArray();
-
-		ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
-		CloneInput cin = new CloneInput(bin, cout);
-
-		@SuppressWarnings("unchecked")
-		// thanks to Bas de Bakker for the tip!
-		T clone = (T) cin.readObject();
+		try{
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			CloneOutput cout = new CloneOutput(bout);
+			cout.writeObject(x);
+			byte[] bytes = bout.toByteArray();
+	
+			ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
+			CloneInput cin = new CloneInput(bin, cout);
+	
+			@SuppressWarnings("unchecked")
+			// thanks to Bas de Bakker for the tip!
+			T clone = (T) cin.readObject();
+			
+			cin.close();
+			cin = null;
+			bin.close();
+			bytes = null;
+			cout.close();
+			cout = null;
+			bout.close();
+			bout = null;
+			
+			return clone;
+			
+		} catch (StackOverflowError e) {
+			System.err.println("StackOverflowError at SerialClone");
+			e.printStackTrace();
+			return null;
+		}
 		
-		cin.close();
-		cin = null;
-		bin.close();
-		bytes = null;
-		cout.close();
-		cout = null;
-		bout.close();
-		bout = null;
-		
-		return clone;
 	}
 
 	private static class CloneOutput extends ObjectOutputStream {
