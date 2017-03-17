@@ -55,6 +55,7 @@ public class OIDCAuthorization {
 	private static OIDCAuthorization instance;
 	private SimpleOIDCClient oidcClient;
 	private String resourceURI = OIDCPanel.DEBUG_RESOURCE_URI;
+	private String issuerURI = OIDCPanel.DEBUG_ISSUER_URI;
 	private OIDCResourceAvailabilityHandler availabilityHandler;
 	private URLProcessor urlProcessor;
 	private JDialog authDialog;
@@ -154,14 +155,21 @@ public class OIDCAuthorization {
 	 * 
 	 * @return the issuer URI
 	 */
-	private String getIssuerURI() {
-		return OIDCPanel.DEBUG_ISSUER_URI;
+	public String getIssuerURI() {
+		return issuerURI;
 	}
 
 	/**
+	 * Sets the issuer URI.
+	 */
+	public void setIssuerURI(String issuerURI) {
+		this.issuerURI = issuerURI;
+	}
+	
+	/**
 	 * Sets the resource URI.
 	 */
-	private void setResourceURI(String resourceURI) {
+	public void setResourceURI(String resourceURI) {
 		this.resourceURI = resourceURI;
 	}
 
@@ -170,7 +178,7 @@ public class OIDCAuthorization {
 	 * 
 	 * @return the resource URI
 	 */
-	private String getResourceURI() {
+	public String getResourceURI() {
 
 		return resourceURI;
 	}
@@ -180,7 +188,7 @@ public class OIDCAuthorization {
 	 * 
 	 * @return the client id
 	 */
-	private String getClientId() {
+	public String getClientId() {
 		return OIDCPanel.DEBUG_CLIENT_ID;
 	}
 
@@ -189,8 +197,13 @@ public class OIDCAuthorization {
 	 * 
 	 * @return the client secret
 	 */
-	private String getClientSecret() {
+	public String getClientSecret() {
 		return OIDCPanel.DEBUG_CLIENT_SECRET;
+	}
+	
+	public void setTrustStore(File truststoreFile){
+		getOIDCClient();
+		oidcClient.setTrustStore(truststoreFile);
 	}
 
 	/**
@@ -207,7 +220,6 @@ public class OIDCAuthorization {
 		try {
 			getOIDCClient();
 			oidcClient.reset();
-			oidcClient.setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
 
 			oidcClient.setIssuerURI(getIssuerURI());
 			oidcClient.retrieveProviderMetadata();
@@ -235,6 +247,7 @@ public class OIDCAuthorization {
 
 //			System.out.println("This is the access token");
 //			System.out.println(accessToken);
+			urlProcessor.setAccessToken(accessToken);
 
 //			System.out.println("access the resource (licenseer) again, this time sending an access token");
 			authRedirection = accessUserID(accessToken);
@@ -249,6 +262,7 @@ public class OIDCAuthorization {
 				return true;
 			} else {
 				System.err.println("OIDC authorization failed");
+				System.err.println("authRedirection="+authRedirection);
 				return false;
 			}
 

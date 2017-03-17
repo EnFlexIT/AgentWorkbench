@@ -36,6 +36,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -54,7 +55,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = -169367444435859302L;
 
 	public static final String DEBUG_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
-	public static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/eom-modelexchange-1.0-SNAPSHOT/api/model/1";
+	public static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/enflex-licensor-1.0-SNAPSHOT/api/private/test";
 
 //	public static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/vanilla/profile.jsp";
 	public static final String DEBUG_CLIENT_ID = "testclient";
@@ -80,6 +81,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	public OIDCPanel(OIDCAuthorization owner) {
 		this();
 		this.owner = owner;
+		this.owner.setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
 	}
 
 	/**
