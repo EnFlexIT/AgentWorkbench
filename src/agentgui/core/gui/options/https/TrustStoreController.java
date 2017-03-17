@@ -69,6 +69,15 @@ public class TrustStoreController {
 	private String trustStorePassword;
 
 	/**
+	 * returns the key store object for direct interaction
+	 *
+	 * @return the key store object
+	 */
+	public KeyStore getKeyStore(){
+		return trustStore;
+	}
+		
+	/**
 	 * Gets the trust store password.
 	 *
 	 * @return the trust store password
@@ -173,6 +182,8 @@ public class TrustStoreController {
 			// --- Open a warning Message dialog if the password is incorrect --
 			if (ownerDialog != null) {
 				JOptionPane.showMessageDialog(ownerDialog, e.getMessage() + "!");
+			} else {
+				e.printStackTrace();
 			}
 		}
 		return successful;
