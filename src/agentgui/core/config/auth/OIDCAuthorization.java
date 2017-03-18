@@ -230,10 +230,13 @@ public class OIDCAuthorization {
 //			System.out.println("try a direct access to the resource (EOM licenseer)");
 			authRedirection = accessUserID(accessToken);
 
-//			if (authRedirection == null) { 	// no authentication required (or already authenticated?)
-//				System.out.println("resource available");
-//				return true;
-//			}
+			if (authRedirection == null) { 	// no authentication required (or already authenticated?)
+				System.out.println("resource available");
+				if (availabilityHandler != null) {
+					availabilityHandler.onResourceAvailable(urlProcessor);
+				}
+				return true;
+			}
 
 //			System.out.println("authentication redirection necessary");
 
