@@ -56,13 +56,28 @@ import agentgui.core.application.Application;
  */
 public class OIDCAuthorization {
 
-	private static final String OIDC_ID_CLAIM_USERID = "sub"; // subject
+	/** The claim representing the user ID in OIDC (subject) */
+	private static final String OIDC_ID_CLAIM_USERID = "sub";
+
+	/** The single instance of this singleton class. */
 	private static OIDCAuthorization instance;
+
+	/** The OIDC client. */
 	private SimpleOIDCClient oidcClient;
+
+	/** The accessed resource URI, initialized with @see OIDCPanel.DEBUG_RESOURCE_URI. */
 	private String resourceURI = OIDCPanel.DEBUG_RESOURCE_URI;
+
+	/** The URI of the OIDC provider/issuer. */
 	private String issuerURI = OIDCPanel.DEBUG_ISSUER_URI;
+
+	/** The availability handler called when the resource is available. */
 	private OIDCResourceAvailabilityHandler availabilityHandler;
+
+	/** The URLProcessor used for the network communication. */
 	private URLProcessor urlProcessor;
+
+	/** The authorization dialog. */
 	private JDialog authDialog;
 
 	/**
@@ -70,10 +85,6 @@ public class OIDCAuthorization {
 	 */
 	private OIDCAuthorization() {
 		urlProcessor = new URLProcessor();
-	}
-	
-	public URLProcessor getUrlProcessor(){
-		return urlProcessor;
 	}
 
 	/**
@@ -88,6 +99,108 @@ public class OIDCAuthorization {
 		return instance;
 	}
 
+	/**
+	 * Gets the OIDC client.
+	 * 
+	 * @return the OIDC client
+	 */
+	public SimpleOIDCClient getOIDCClient() {
+		if (oidcClient == null) {
+			oidcClient = new SimpleOIDCClient();
+		}
+		return oidcClient;
+	}
+
+	/**
+	 * Gets the url processor.
+	 *
+	 * @return the url processor
+	 */
+	public URLProcessor getUrlProcessor() {
+		return urlProcessor;
+	}
+
+	/**
+	 * Sets the trust store.
+	 *
+	 * @param truststoreFile the new trust store
+	 */
+	public void setTrustStore(File truststoreFile) {
+		getOIDCClient();
+		oidcClient.setTrustStore(truststoreFile);
+	}
+
+	/**
+	 * Sets the availability handler.
+	 *
+	 * @param availabilityHandler the availability handler
+	 * @return the OIDC authorization
+	 */
+	public OIDCAuthorization setAvailabilityHandler(OIDCResourceAvailabilityHandler availabilityHandler) {
+		this.availabilityHandler = availabilityHandler;
+		return this;
+	}
+
+	/**
+	 * Gets the issuer URI.
+	 * 
+	 * @return the issuer URI
+	 */
+	public String getIssuerURI() {
+		return issuerURI;
+	}
+
+	/**
+	 * Sets the issuer URI.
+	 *
+	 * @param issuerURI the new issuer URI
+	 */
+	public void setIssuerURI(String issuerURI) {
+		this.issuerURI = issuerURI;
+	}
+
+	/**
+	 * Gets the resource URI.
+	 * 
+	 * @return the resource URI
+	 */
+	public String getResourceURI() {
+
+		return resourceURI;
+	}
+
+	/**
+	 * Sets the resource URI.
+	 *
+	 * @param resourceURI the new resource URI
+	 */
+	public void setResourceURI(String resourceURI) {
+		this.resourceURI = resourceURI;
+	}
+
+	/**
+	 * Gets the client id.
+	 * 
+	 * @return the client id
+	 */
+	public String getClientID() {
+		return OIDCPanel.DEBUG_CLIENT_ID;
+	}
+
+	/**
+	 * Gets the client secret.
+	 * 
+	 * @return the client secret
+	 */
+	public String getClientSecret() {
+		return OIDCPanel.DEBUG_CLIENT_SECRET;
+	}
+
+	/**
+	 * Gets the authorization dialog (with null defaults).
+	 *
+	 * @return the dialog
+	 */
 	public JDialog getDialog() {
 		if (authDialog == null) {
 			authDialog = getDialog("", null);
@@ -148,74 +261,9 @@ public class OIDCAuthorization {
 	}
 
 	/**
-	 * Gets the OIDC client.
-	 * 
-	 * @return the OIDC client
+	 * Inits the authorization process.
 	 */
-	public SimpleOIDCClient getOIDCClient() {
-		if (oidcClient == null) {
-			oidcClient = new SimpleOIDCClient();
-		}
-		return oidcClient;
-	}
-
-	/**
-	 * Gets the issuer URI.
-	 * 
-	 * @return the issuer URI
-	 */
-	public String getIssuerURI() {
-		return issuerURI;
-	}
-
-	/**
-	 * Sets the issuer URI.
-	 */
-	public void setIssuerURI(String issuerURI) {
-		this.issuerURI = issuerURI;
-	}
-	
-	/**
-	 * Sets the resource URI.
-	 */
-	public void setResourceURI(String resourceURI) {
-		this.resourceURI = resourceURI;
-	}
-
-	/**
-	 * Gets the resource URI.
-	 * 
-	 * @return the resource URI
-	 */
-	public String getResourceURI() {
-
-		return resourceURI;
-	}
-
-	/**
-	 * Gets the client id.
-	 * 
-	 * @return the client id
-	 */
-	public String getClientId() {
-		return OIDCPanel.DEBUG_CLIENT_ID;
-	}
-
-	/**
-	 * Gets the client secret.
-	 * 
-	 * @return the client secret
-	 */
-	public String getClientSecret() {
-		return OIDCPanel.DEBUG_CLIENT_SECRET;
-	}
-	
-	public void setTrustStore(File truststoreFile){
-		getOIDCClient();
-		oidcClient.setTrustStore(truststoreFile);
-	}
-	
-	public void init(){
+	public void init() {
 		getOIDCClient();
 		oidcClient.reset();
 		urlProcessor = new URLProcessor();
@@ -224,24 +272,21 @@ public class OIDCAuthorization {
 			oidcClient.setIssuerURI(getIssuerURI());
 			oidcClient.retrieveProviderMetadata();
 			oidcClient.setClientMetadata(getResourceURI());
-			oidcClient.setClientID(getClientId(), getClientSecret());
+			oidcClient.setClientID(getClientID(), getClientSecret());
 			oidcClient.setRedirectURI(getResourceURI());
 			urlProcessor.prepare(oidcClient.getRedirectURI().toURL());
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
 
 	/**
-	 * Connect to the authorization server and get a valid token
+	 * Connect to the authorization server and get a valid token.
 	 *
 	 * @param username the username
 	 * @param password the password
@@ -288,7 +333,7 @@ public class OIDCAuthorization {
 				return true;
 			} else {
 				System.err.println("OIDC authorization failed");
-				System.err.println("authRedirection="+authRedirection);
+				System.err.println("authRedirection=" + authRedirection);
 				return false;
 			}
 
@@ -303,11 +348,13 @@ public class OIDCAuthorization {
 		return false;
 	}
 
-	public OIDCAuthorization setAvailabilityHandler(OIDCResourceAvailabilityHandler availabilityHandler) {
-		this.availabilityHandler = availabilityHandler;
-		return this;
-	}
-
+	/**
+	 * Access resource.
+	 *
+	 * @param url the url
+	 * @param presetUsername the preset username
+	 * @param ownerFrame the owner frame
+	 */
 	public void accessResource(String url, String presetUsername, Frame ownerFrame) {
 		try {
 			setResourceURI(url);
@@ -346,49 +393,109 @@ public class OIDCAuthorization {
 		return urlProcessor.prepare(getOIDCClient().getRedirectURI().toURL()).process();
 	}
 
+	/**
+	 * The Class URLProcessor.
+	 */
 	public class URLProcessor {
-		
+
+		/** The Constant CHARSET_UTF_8. */
 		private static final String CHARSET_UTF_8 = "UTF-8";
+
+		/** The Constant CRLF. */
 		private static final String CRLF = "\r\n"; // Line separator required by multipart/form-data.
+
+		/** The Constant CONTENT_DISPOSITION_NAME. */
 		private static final String CONTENT_DISPOSITION_NAME = "file";
+
+		/** The Constant HTTP_METHOD_POST. */
 		private static final String HTTP_METHOD_POST = "POST";
 
+		/** The debug. */
 		private boolean debug = false;
 
+		/** The upload file. */
 		private File uploadFile;
-		
+
+		/** The connection. */
 		private HttpsURLConnection connection = null;
+
+		/** The access token. */
 		private AccessToken accessToken;
-		
+
+		/** The redirection URL. */
 		private String redirectionURL = null;
+
+		/** The response code. */
 		private int responseCode = -1;
-		
-		public void setUploadFile(File uploadFile){
+
+		/**
+		 * Sets the upload file.
+		 *
+		 * @param uploadFile the new upload file
+		 */
+		public void setUploadFile(File uploadFile) {
 			this.uploadFile = uploadFile;
 			injectUpload();
 		}
 
+		/**
+		 * Gets the upload file.
+		 *
+		 * @return the upload file
+		 */
+		public File getUploadFile() {
+			return uploadFile;
+		}
+
+		/**
+		 * Gets the connection.
+		 *
+		 * @return the connection
+		 */
 		public HttpsURLConnection getConnection() {
 			return connection;
 		}
 
+		/**
+		 * Gets the redirection URL.
+		 *
+		 * @return the redirection URL
+		 */
 		public String getRedirectionURL() {
 			return redirectionURL;
 		}
 
+		/**
+		 * Gets the response code.
+		 *
+		 * @return the response code
+		 */
 		public int getResponseCode() {
 			return responseCode;
 		}
 
+		/**
+		 * Sets the access token.
+		 *
+		 * @param accessToken the access token
+		 * @return the URL processor
+		 */
 		public URLProcessor setAccessToken(AccessToken accessToken) {
 			this.accessToken = accessToken;
 			return this;
 		}
-		
-		public URLProcessor prepare(URL requestURL) throws IOException{
+
+		/**
+		 * Prepare.
+		 *
+		 * @param requestURL the request URL
+		 * @return the URL processor
+		 * @throws IOException Signals that an I/O exception has occurred.
+		 */
+		public URLProcessor prepare(URL requestURL) throws IOException {
 //			System.out.println("requestURL=");
 //			System.out.println(requestURL);
-			
+
 			connection = (HttpsURLConnection) requestURL.openConnection();
 			connection.setInstanceFollowRedirects(false);
 			Trust.trustSpecific(connection, new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
@@ -397,18 +504,17 @@ public class OIDCAuthorization {
 			if (accessToken != null) {
 				connection.setRequestProperty("Authorization", "Bearer " + accessToken);
 			}
-			
-			if(uploadFile != null){
+
+			if (uploadFile != null) {
 				injectUpload();
 			}
-			
+
 			return this;
 		}
 
 		/**
 		 * Process a URL, that is: try to access it's resource, display error if any, return a redirection URL if indicated by the server.
 		 *
-		 * @param requestURL the requested URL
 		 * @return null if the access succeeded, a redirectionURL as string in case the authorization is not valid yet
 		 * @throws IOException Signals that an I/O exception has occurred.
 		 */
@@ -435,7 +541,10 @@ public class OIDCAuthorization {
 			}
 			return redirectionURL;
 		}
-		
+
+		/**
+		 * Inject upload.
+		 */
 		public void injectUpload() {
 			String charset = CHARSET_UTF_8;
 			String boundary = Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
@@ -466,10 +575,8 @@ public class OIDCAuthorization {
 				// End of multipart/form-data
 				writer.append("--" + boundary + "--").append(CRLF).flush();
 			} catch (ProtocolException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
