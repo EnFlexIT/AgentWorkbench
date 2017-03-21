@@ -66,6 +66,10 @@ public class OIDCAuthorization {
 	private OIDCAuthorization() {
 		urlProcessor = new URLProcessor();
 	}
+	
+	public URLProcessor getUrlProcessor(){
+		return urlProcessor;
+	}
 
 	/**
 	 * Gets the single instance of OIDCAuthorization.
@@ -205,6 +209,30 @@ public class OIDCAuthorization {
 		getOIDCClient();
 		oidcClient.setTrustStore(truststoreFile);
 	}
+	
+	public void init(){
+		getOIDCClient();
+		oidcClient.reset();
+
+		try {
+			oidcClient.setIssuerURI(getIssuerURI());
+			oidcClient.retrieveProviderMetadata();
+			oidcClient.setClientMetadata(getResourceURI());
+			oidcClient.setClientID(getClientId(), getClientSecret());
+			oidcClient.setRedirectURI(getResourceURI());
+			urlProcessor.prepare(oidcClient.getRedirectURI().toURL());
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 	/**
 	 * Connect to the authorization server and get a valid token
@@ -218,17 +246,11 @@ public class OIDCAuthorization {
 		AccessToken accessToken = null;
 
 		try {
-			getOIDCClient();
-			oidcClient.reset();
 
-			oidcClient.setIssuerURI(getIssuerURI());
-			oidcClient.retrieveProviderMetadata();
-			oidcClient.setClientMetadata(getResourceURI());
-			oidcClient.setClientID(getClientId(), getClientSecret());
-			oidcClient.setRedirectURI(getResourceURI());
 
 //			System.out.println("try a direct access to the resource (EOM licenseer)");
-			authRedirection = accessUserID(accessToken);
+//			authRedirection = accessUserID(accessToken);
+			authRedirection = urlProcessor.process();
 
 			if (authRedirection == null) { 	// no authentication required (or already authenticated?)
 				System.out.println("resource available");
@@ -288,7 +310,7 @@ public class OIDCAuthorization {
 	public void accessResource(String url, String presetUsername, Frame ownerFrame) {
 		try {
 			setResourceURI(url);
-			String result = urlProcessor.processURL(new URL(getResourceURI()));
+			String result = urlProcessor.prepare(new URL(getResourceURI())).process();
 			if (result == null) {
 				// all good (unlikely)
 			} else {
@@ -321,7 +343,7 @@ public class OIDCAuthorization {
 //			System.out.println("UserInfoJSON:");
 //			System.out.println(getOIDCClient().getUserInfoJSON() + "");
 		}
-		return urlProcessor.setAccessToken(accessToken).processURL(getOIDCClient().getRedirectURI().toURL());
+		return urlProcessor.prepare(getOIDCClient().getRedirectURI().toURL()).process();
 	}
 
 	public class URLProcessor {
@@ -352,6 +374,19 @@ public class OIDCAuthorization {
 			this.accessToken = accessToken;
 			return this;
 		}
+		
+		public URLProcessor prepare(URL requestURL) throws IOException{
+			connection = (HttpsURLConnection) requestURL.openConnection();
+			connection.setInstanceFollowRedirects(false);
+			Trust.trustSpecific(connection, new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
+
+			connection.setRequestMethod("GET");
+			if (accessToken != null) {
+				connection.setRequestProperty("Authorization", "Bearer " + accessToken);
+			}
+			
+			return this;
+		}
 
 		/**
 		 * Process a URL, that is: try to access it's resource, display error if any, return a redirection URL if indicated by the server.
@@ -360,22 +395,10 @@ public class OIDCAuthorization {
 		 * @return null if the access succeeded, a redirectionURL as string in case the authorization is not valid yet
 		 * @throws IOException Signals that an I/O exception has occurred.
 		 */
-		public String processURL(URL requestURL) throws IOException {
+		public String process() throws IOException {
 
 //		System.out.println("requestURL=");
 //		System.out.println(requestURL);
-
-			content = "";
-
-			HttpURLConnection.setFollowRedirects(false);
-
-			connection = (HttpsURLConnection) requestURL.openConnection();
-			Trust.trustSpecific(connection, new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
-
-			connection.setRequestMethod("GET");
-			if (accessToken != null) {
-				connection.setRequestProperty("Authorization", "Bearer " + accessToken);
-			}
 
 			connection.connect();
 
