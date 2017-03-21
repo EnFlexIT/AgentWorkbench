@@ -32,9 +32,14 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.ProtocolException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -213,6 +218,7 @@ public class OIDCAuthorization {
 	public void init(){
 		getOIDCClient();
 		oidcClient.reset();
+		urlProcessor = new URLProcessor();
 
 		try {
 			oidcClient.setIssuerURI(getIssuerURI());
@@ -246,13 +252,10 @@ public class OIDCAuthorization {
 		AccessToken accessToken = null;
 
 		try {
-
-
-//			System.out.println("try a direct access to the resource (EOM licenseer)");
-//			authRedirection = accessUserID(accessToken);
+//			System.out.println("try a direct access to the resource");
 			authRedirection = urlProcessor.process();
 
-			if (authRedirection == null) { 	// no authentication required (or already authenticated?)
+			if (authRedirection == null) { 	// no authentication required
 				System.out.println("resource available");
 				if (availabilityHandler != null) {
 					availabilityHandler.onResourceAvailable(urlProcessor);
@@ -274,16 +277,14 @@ public class OIDCAuthorization {
 //			System.out.println(accessToken);
 			urlProcessor.setAccessToken(accessToken);
 
-//			System.out.println("access the resource (licenseer) again, this time sending an access token");
-			authRedirection = accessUserID(accessToken);
-			if (authRedirection == null) { 	// no authentication required (or already authenticated?)
-//				System.out.println("resource available");
-//				System.out.println("the logged in resource should be shown");
+//			System.out.println("access the resource again, this time sending an access token");
+			authRedirection = urlProcessor.prepare(oidcClient.getRedirectURI().toURL()).process();
+			if (authRedirection == null) { 	// authenticated
+//				System.out.println("resource available now");
 
 				if (availabilityHandler != null) {
 					availabilityHandler.onResourceAvailable(urlProcessor);
 				}
-
 				return true;
 			} else {
 				System.err.println("OIDC authorization failed");
@@ -312,12 +313,11 @@ public class OIDCAuthorization {
 			setResourceURI(url);
 			String result = urlProcessor.prepare(new URL(getResourceURI())).process();
 			if (result == null) {
-				// all good (unlikely)
+				// all good (unlikely on first call)
 			} else {
 				getDialog(presetUsername, ownerFrame).setVisible(true);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -347,12 +347,26 @@ public class OIDCAuthorization {
 	}
 
 	public class URLProcessor {
+		
+		private static final String CHARSET_UTF_8 = "UTF-8";
+		private static final String CRLF = "\r\n"; // Line separator required by multipart/form-data.
+		private static final String CONTENT_DISPOSITION_NAME = "file";
+		private static final String HTTP_METHOD_POST = "POST";
+
+		private boolean debug = false;
+
+		private File uploadFile;
+		
+		private HttpsURLConnection connection = null;
+		private AccessToken accessToken;
+		
 		private String redirectionURL = null;
 		private int responseCode = -1;
-		private String content = "";
-		private boolean debug = false;
-		AccessToken accessToken;
-		private HttpsURLConnection connection = null;
+		
+		public void setUploadFile(File uploadFile){
+			this.uploadFile = uploadFile;
+			injectUpload();
+		}
 
 		public HttpsURLConnection getConnection() {
 			return connection;
@@ -366,16 +380,15 @@ public class OIDCAuthorization {
 			return responseCode;
 		}
 
-		public String getContent() {
-			return content;
-		}
-
 		public URLProcessor setAccessToken(AccessToken accessToken) {
 			this.accessToken = accessToken;
 			return this;
 		}
 		
 		public URLProcessor prepare(URL requestURL) throws IOException{
+//			System.out.println("requestURL=");
+//			System.out.println(requestURL);
+			
 			connection = (HttpsURLConnection) requestURL.openConnection();
 			connection.setInstanceFollowRedirects(false);
 			Trust.trustSpecific(connection, new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
@@ -383,6 +396,10 @@ public class OIDCAuthorization {
 			connection.setRequestMethod("GET");
 			if (accessToken != null) {
 				connection.setRequestProperty("Authorization", "Bearer " + accessToken);
+			}
+			
+			if(uploadFile != null){
+				injectUpload();
 			}
 			
 			return this;
@@ -396,24 +413,11 @@ public class OIDCAuthorization {
 		 * @throws IOException Signals that an I/O exception has occurred.
 		 */
 		public String process() throws IOException {
-
-//		System.out.println("requestURL=");
-//		System.out.println(requestURL);
-
 			connection.connect();
 
 			responseCode = connection.getResponseCode();
 
 			if (responseCode == 200) { //
-				/*
-				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream().re));
-				
-				String inputLine;
-				while ((inputLine = in.readLine()) != null) {
-					content += inputLine;
-				}
-				in.close();
-				*/
 				redirectionURL = null;
 			} else if (responseCode == 302) {
 				redirectionURL = connection.getHeaderField("Location");
@@ -428,9 +432,46 @@ public class OIDCAuthorization {
 			}
 			if (debug) {
 				System.out.println("responseCode = " + responseCode);
-				System.out.println(content);
 			}
 			return redirectionURL;
+		}
+		
+		public void injectUpload() {
+			String charset = CHARSET_UTF_8;
+			String boundary = Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
+
+			try {
+				connection.setRequestMethod(HTTP_METHOD_POST);
+				connection.setDoOutput(true);
+				connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+				OutputStream output = connection.getOutputStream();
+				PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true);
+
+				// Send binary file.
+				writer.append("--" + boundary).append(CRLF);
+				writer.append("Content-Disposition: form-data; name=\"" + CONTENT_DISPOSITION_NAME + "\"; filename=\"" + uploadFile.getName() + "\"").append(CRLF);
+
+				String mediaType = URLConnection.guessContentTypeFromName(uploadFile.getName());
+				if (mediaType != null) {
+					writer.append("Content-Type: " + mediaType).append(CRLF);
+				}
+
+				writer.append("Content-Transfer-Encoding: binary").append(CRLF);
+				writer.append(CRLF).flush();
+				Files.copy(uploadFile.toPath(), output);
+				output.flush(); // Important before continuing with writer
+				writer.append(CRLF).flush(); // CRLF is important, indicates end o)f boundary
+
+				// End of multipart/form-data
+				writer.append("--" + boundary + "--").append(CRLF).flush();
+			} catch (ProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

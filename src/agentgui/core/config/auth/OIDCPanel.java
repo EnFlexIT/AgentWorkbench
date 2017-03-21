@@ -270,6 +270,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 			char[] pswd = getJPasswordField().getPassword();
 			String userName = getJTextFieldUsername().getText().trim();
 			Application.getGlobalInfo().setOIDCUsername(userName);
+			owner.init();
 			displayResult(owner.connect(userName, new String(pswd)));
 
 		} else {
