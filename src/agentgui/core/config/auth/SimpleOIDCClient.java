@@ -218,7 +218,9 @@ public class SimpleOIDCClient {
 //		System.out.println(providerConfigurationURL);
 		URLConnection conn = providerConfigurationURL.openConnection();
 
-		Trust.trustSpecific((HttpsURLConnection) conn, trustStoreFile);
+		if(trustStoreFile!=null){
+			Trust.trustSpecific((HttpsURLConnection) conn, trustStoreFile);
+		}
 		InputStream stream = conn.getInputStream();
 		// Read all data from URL
 		String providerInfo = null;

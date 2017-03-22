@@ -80,27 +80,27 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="11">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="12" name="owner">        
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="12" name="oidcClient">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="13" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="14">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="15" name="availabilityHandler">        
+      <attribute id="15" name="instance">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="16" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <nesting id="17">    
@@ -109,14 +109,14 @@
   </nesting>  
   <association id="18">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="19" name="oidcClient">        
+      <attribute id="19" name="availabilityHandler">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="20" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
+    <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <nesting id="21">    
@@ -124,8 +124,8 @@
     <end type="TARGET" refId="5"/>  
   </nesting>  
   <association id="22">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="23" name="instance">        
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="23" name="owner">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="24" minimum="0" maximum="1">        

@@ -80,11 +80,16 @@ public class OIDCAuthorization {
 	/** The authorization dialog. */
 	private JDialog authDialog;
 
+	private String presetUsername;
+
+	private Frame ownerFrame;
+
+	private boolean inited = false;
+
 	/**
 	 * Instantiates a new OIDC authorization.
 	 */
 	private OIDCAuthorization() {
-		urlProcessor = new URLProcessor();
 	}
 
 	/**
@@ -117,6 +122,9 @@ public class OIDCAuthorization {
 	 * @return the url processor
 	 */
 	public URLProcessor getUrlProcessor() {
+		if (urlProcessor == null) {
+			init();
+		}
 		return urlProcessor;
 	}
 
@@ -261,11 +269,11 @@ public class OIDCAuthorization {
 	}
 
 	/**
-	 * Inits the authorization process.
+	 * Initiates the authorization process by setting the necessary URIs and data to the OIDC client and preparing the URLProcessor.
 	 */
 	public void init() {
 		getOIDCClient();
-		oidcClient.reset();
+//		oidcClient.reset();
 		urlProcessor = new URLProcessor();
 
 		try {
@@ -282,7 +290,7 @@ public class OIDCAuthorization {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		inited = true;
 	}
 
 	/**
@@ -292,41 +300,21 @@ public class OIDCAuthorization {
 	 * @param password the password
 	 * @return true, if successful
 	 */
-	public boolean connect(String username, String password) {
+	public boolean authorizeByUserAndPW(String username, String password) {
 		String authRedirection = "";
-		AccessToken accessToken = null;
+
+		if (!inited) {
+			init();
+		}
 
 		try {
-//			System.out.println("try a direct access to the resource");
-			authRedirection = urlProcessor.process();
-
-			if (authRedirection == null) { 	// no authentication required
-				System.out.println("resource available");
-				if (availabilityHandler != null) {
-					availabilityHandler.onResourceAvailable(urlProcessor);
-				}
-				return true;
-			}
-
-//			System.out.println("authentication redirection necessary");
-
-//			System.out.println("parse authentication parameters from redirection");
-			oidcClient.parseAuthenticationDataFromRedirect(authRedirection, false); // don't override clientID
-//			System.out.println("set USER credentials");
 			oidcClient.setResourceOwnerCredentials(username, password);
-
 			oidcClient.requestToken();
-			accessToken = oidcClient.getAccessToken();
 
-//			System.out.println("This is the access token");
-//			System.out.println(accessToken);
-			urlProcessor.setAccessToken(accessToken);
+			urlProcessor.setAccessToken(oidcClient.getAccessToken());
 
-//			System.out.println("access the resource again, this time sending an access token");
 			authRedirection = urlProcessor.prepare(oidcClient.getRedirectURI().toURL()).process();
 			if (authRedirection == null) { 	// authenticated
-//				System.out.println("resource available now");
-
 				if (availabilityHandler != null) {
 					availabilityHandler.onResourceAvailable(urlProcessor);
 				}
@@ -336,61 +324,51 @@ public class OIDCAuthorization {
 				System.err.println("authRedirection=" + authRedirection);
 				return false;
 			}
-
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return false;
 	}
 
 	/**
-	 * Access resource.
+	 * Access some resource previously set by {@link #setResourceURI(String)}. If not accessible, show user/password dialog
+	 *
+	 * @return true, if successful
+	 */
+	public boolean accessResource() {
+		try {
+			getUrlProcessor().prepare(new URL(getResourceURI()));
+			String result = urlProcessor.process();
+			if (result == null) {
+				// all good (unlikely on first call)
+				if (availabilityHandler != null) {
+					availabilityHandler.onResourceAvailable(urlProcessor);
+				}
+				return true;
+			} else {
+				getOIDCClient().parseAuthenticationDataFromRedirect(result, false); // don't override clientID
+				getDialog(presetUsername, ownerFrame).setVisible(true);
+				return false;
+			}
+		} catch (IOException | ParseException | URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * Access some resource like {@link #accessResource()}, but also provide the URL and presetUsername/ownerFrame for the dialog.
 	 *
 	 * @param url the url
 	 * @param presetUsername the preset username
 	 * @param ownerFrame the owner frame
 	 */
-	public void accessResource(String url, String presetUsername, Frame ownerFrame) {
-		try {
-			setResourceURI(url);
-			String result = urlProcessor.prepare(new URL(getResourceURI())).process();
-			if (result == null) {
-				// all good (unlikely on first call)
-			} else {
-				getDialog(presetUsername, ownerFrame).setVisible(true);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	// Optional: UserInfo request
-	/**
-	 * Try to access a resource secured by OIDC (currently that means: print user ID ).
-	 *
-	 * @param accessToken the access token
-	 * @return the string
-	 * @throws ParseException the parse exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	// Alternatively: pass Access Token on to another client, use it to access a resource there
-	public String accessUserID(AccessToken accessToken) throws ParseException, IOException {
-
-		if (accessToken != null) {
-//			System.out.println(OIDCAuthorization.getInstance().getUserID());
-
-//			getOIDCClient().dumpTokenInfo();
-			// only for debugging
-//			getOIDCClient().requestUserInfo();
-//			System.out.println("UserInfoJSON:");
-//			System.out.println(getOIDCClient().getUserInfoJSON() + "");
-		}
-		return urlProcessor.prepare(getOIDCClient().getRedirectURI().toURL()).process();
+	public boolean accessResource(String url, String presetUsername, Frame ownerFrame) {
+		setResourceURI(url);
+		this.presetUsername = presetUsername;
+		this.ownerFrame = ownerFrame;
+		
+		return accessResource();
 	}
 
 	/**
@@ -435,7 +413,9 @@ public class OIDCAuthorization {
 		 */
 		public void setUploadFile(File uploadFile) {
 			this.uploadFile = uploadFile;
-			injectUpload();
+			if (uploadFile != null) {
+				injectUpload();
+			}
 		}
 
 		/**
@@ -543,7 +523,7 @@ public class OIDCAuthorization {
 		}
 
 		/**
-		 * Inject upload.
+		 * Inject a file to upload into the URLConnection and set method to POST.
 		 */
 		public void injectUpload() {
 			String charset = CHARSET_UTF_8;

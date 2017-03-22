@@ -37,7 +37,7 @@ import agentgui.core.config.auth.OIDCAuthorization.URLProcessor;
 public interface OIDCResourceAvailabilityHandler {
 	
 	/**
-	 * This method is called by the @see {@link agentgui.core.config.auth.OIDCAuthorization#connect(String, String)} method, as soon as the resource becomes available (directly or after login etc.). It has to be implemented by a descendant class.
+	 * This method is called by the @see {@link agentgui.core.config.auth.OIDCAuthorization#authorizeByUserAndPW(String, String)} method, as soon as the resource becomes available (directly or after login etc.). It has to be implemented by a descendant class.
 	 *
 	 * @param urlProcessor the URLProcessor which was used to establish the connection and from where the return values can be acquired.
 	 */

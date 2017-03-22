@@ -45,6 +45,8 @@ import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.config.auth.OIDCAuthorization;
+import agentgui.core.config.auth.OIDCPanel;
+import agentgui.core.config.auth.Trust;
 import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.ChangeDialog;
@@ -800,7 +802,8 @@ public class Application {
 	 * Opens the OpenID Connect dialog 
 	 */
 	public static void showAuthenticationDialog() {
-		OIDCAuthorization.getInstance().getDialog(getGlobalInfo().getOIDCUsername(), mainWindow).setVisible(true);
+		OIDCAuthorization.getInstance().setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
+		OIDCAuthorization.getInstance().accessResource(OIDCPanel.DEBUG_RESOURCE_URI,getGlobalInfo().getOIDCUsername(), mainWindow);
 	}
 	
 	/**

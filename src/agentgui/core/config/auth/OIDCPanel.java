@@ -81,7 +81,6 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	public OIDCPanel(OIDCAuthorization owner) {
 		this();
 		this.owner = owner;
-		this.owner.setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
 	}
 
 	/**
@@ -253,6 +252,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		if (successful) {
 			this.getJLabelResult().setText(Language.translate("Erfolgreich"));
 			this.getJLabelResult().setForeground(new Color(0, 153, 0));
+			this.getParent().getParent().getParent().setVisible(false);
 		} else {
 			this.getJLabelResult().setText(Language.translate("Fehlgeschlagen"));
 			this.getJLabelResult().setForeground(new Color(153, 0, 0));
@@ -270,8 +270,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 			char[] pswd = getJPasswordField().getPassword();
 			String userName = getJTextFieldUsername().getText().trim();
 			Application.getGlobalInfo().setOIDCUsername(userName);
-			owner.init();
-			displayResult(owner.connect(userName, new String(pswd)));
+			displayResult(owner.authorizeByUserAndPW(userName, new String(pswd)));
 
 		} else {
 			if (parentGUI != null) {
