@@ -707,7 +707,11 @@ public class Platform extends Object {
 			}
 			
 			// --- Start the JADE-Platform --------------------------
-			this.jadeStart(showRMA);
+			if(this.jadeStart(showRMA) == false){
+				// --- Abort if the jade platform was not started -----------
+				return;
+			}
+			
 			if (agentNameForStart.equalsIgnoreCase("rma")) {
 				try {
 					agentController = jadeMainContainer.getAgent("rma");
@@ -1026,8 +1030,12 @@ public class Platform extends Object {
 			String msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
 			int msgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
 			if (msgAnswer==JOptionPane.NO_OPTION) return; // --- NO,just exit 
-			// --- Start the JADE-Platform --------------------------
-			this.jadeStart();			
+			
+			// --- Start the JADE-Platform -------------------------------
+			if (this.jadeStart() == false) {
+				// --- Abort if JADE was not successfully started --------
+				return;
+			}
 		}
 		
 		// --- Get the AgentContainer -------------------------------
