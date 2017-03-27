@@ -12,8 +12,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jade/lib/migration.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jade/lib/XMLCodec.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdbc/mysql-connector-java-5.0.8-bin.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jep-2.3.1/djep-1.0.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jep-2.3.1/jep-2.3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jFreeChart/iText-2.1.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jFreeChart/jcommon-1.0.18.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jFreeChart/jfreechart-1.0.15.jar"/>
@@ -47,5 +45,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/scimark2lib.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bc/bcpkix-jdk15on-155.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bc/bcprov-jdk15on-155.jar"/>
+	<classpathentry kind="lib" path="lib/jep-2.3.1/djep-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/jep-2.3.1/jep-2.3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
