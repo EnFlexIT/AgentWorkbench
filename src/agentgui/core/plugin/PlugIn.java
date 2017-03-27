@@ -590,6 +590,14 @@ public abstract class PlugIn implements Observer {
 	}
 
 	/**
+	 * Checks for valid precondition before the MAS execution.
+	 * @return true, if the preconditions are valid
+	 */
+	public boolean hasValidPreconditionForMasExecution() {
+		return true;
+	}
+
+	/**
 	 * Will be executed, if the Multi-Agent System is about to start.
 	 */
 	public void onMasWillBeExecuted() {	}

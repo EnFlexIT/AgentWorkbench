@@ -198,6 +198,26 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 
 	
 	/**
+	 * Checks, if the plugins return that they find valid preconditions before the execution of the MAS.
+	 * @return true, if the preconditions are valid 
+	 */
+	public boolean haveValidPreconditions() {
+		boolean validPrecondition = true;
+		for (PlugIn plugin : this) {
+			try {
+				validPrecondition = plugin.hasValidPreconditionForMasExecution();
+				if (validPrecondition==false) {
+					System.err.println("PlugIn '" + plugin.getName() + "' found invalid preconditions for the MAS execution.");
+					break;
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		return validPrecondition;
+	}
+
+	/**
 	 * Notifies all loaded plugins for the upcoming agent start.
 	 */
 	public void notifyPluginsForStartMAS() {
@@ -209,7 +229,6 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 			}
 		}
 	}
-
 	/**
 	 * Notifies all project plugins for agent termination.
 	 */
@@ -222,5 +241,5 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 			}
 		}
 	}
-	
+
 }

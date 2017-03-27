@@ -53,6 +53,7 @@ import agentgui.core.agents.UtilityAgent;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.Project;
 import agentgui.core.webserver.DownloadServer;
 import agentgui.simulationService.LoadService;
@@ -272,6 +273,11 @@ public class Platform extends Object {
 				// --- Notify plugins for agent Start --------------- 
 				this.notifyPluginsForStartMAS();
 				
+				// --- Check for valid plugin preconditions --------- 
+				if (this.hasValidPreconditionsInPlugins()==false) {
+					return false;
+				}
+				
 				// --- Start Platform -------------------------------
 				jadeRuntime = Runtime.instance();	
 				jadeRuntime.invokeOnTermination(new Runnable() {
@@ -295,8 +301,8 @@ public class Platform extends Object {
 				}
 				startSucceed = true;
 				
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (Exception ex) {
+				ex.printStackTrace();
 				return false;
 			}
 			
@@ -311,6 +317,18 @@ public class Platform extends Object {
 		return startSucceed;
 	}
 	
+	/**
+	 * Checks, if the preconditions in the {@link PlugInsLoaded} of the {@link Project} are fulfilled.
+	 * @return true, if the preconditions are fulfilled 
+	 */
+	private boolean hasValidPreconditionsInPlugins() {
+		boolean hasValidPreconditions = true;
+		Project currProject = Application.getProjectFocused();
+		if (currProject!=null) {
+			hasValidPreconditions = currProject.getPlugInsLoaded().haveValidPreconditions();	
+		}
+		return hasValidPreconditions;
+	}
 	/**
 	 * Notifies all loaded plugins for the upcoming agent start.
 	 */
