@@ -30,6 +30,7 @@ package agentgui.core.config.auth;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -220,12 +221,12 @@ public class OIDCAuthorization {
 	 * Gets the authorization dialog.
 	 *
 	 * @param presetUsername username which should be shown preset when displaying the dialog
-	 * @param ownerFrame the frame to which the dialog should belong (to center etc.)
+	 * @param owner the window to which the dialog should belong (to center etc.)
 	 * @return the dialog
 	 */
-	public JDialog getDialog(String presetUsername, Frame ownerFrame) {
+	public JDialog getDialog(String presetUsername, Window owner) {
 
-		authDialog = new JDialog(ownerFrame);
+		authDialog = new JDialog(owner);
 		OIDCPanel oidcPanel = new OIDCPanel(this);
 		if (presetUsername != null) {
 			oidcPanel.getJTextFieldUsername().setText(presetUsername);
@@ -347,7 +348,11 @@ public class OIDCAuthorization {
 				return true;
 			} else {
 				getOIDCClient().parseAuthenticationDataFromRedirect(result, false); // don't override clientID
-				getDialog(presetUsername, ownerFrame).setVisible(true);
+				if (availabilityHandler != null) {
+					availabilityHandler.onAuthorizationNecessary(this);
+				} else {
+					getDialog(presetUsername, ownerFrame).setVisible(true);
+				}
 				return false;
 			}
 		} catch (IOException | ParseException | URISyntaxException e) {

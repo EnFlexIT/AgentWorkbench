@@ -42,4 +42,6 @@ public interface OIDCResourceAvailabilityHandler {
 	 * @param urlProcessor the URLProcessor which was used to establish the connection and from where the return values can be acquired.
 	 */
 	public void onResourceAvailable(URLProcessor urlProcessor);
+
+	public void onAuthorizationNecessary(OIDCAuthorization oidcAuthorization);
 }
