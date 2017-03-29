@@ -84,6 +84,7 @@ public class DownloadServer implements HttpConstants, Runnable {
 			
 			PortChecker pc = new PortChecker(port);
 			currSocket = new ServerSocket(pc.getFreePort());
+			System.out.println("Started HTTP download server (for load balancing/agent mobility resources or update propagation) on port "+currSocket.getLocalPort()+" of ALL network adresses/devices.");
 			while (true) {
 	            Socket s = currSocket.accept();
 	            if (this.stopServer==true) {

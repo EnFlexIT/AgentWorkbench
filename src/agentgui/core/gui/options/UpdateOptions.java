@@ -350,7 +350,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		
 		Object actionFrom = ae.getSource();
 		if (actionFrom==getJButtonUpdateSiteApply()) {
-			this.setFromData2Global();
+			this.setFormData2Global();
 			
 		} else if (actionFrom==getJButtonUpdateSiteDefault()) {
 			this.getJTextFieldUpdateSite().setText(GlobalInfo.DEFAULT_UPDATE_SITE);
@@ -361,9 +361,9 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 	}
 	
 	/**
-	 * Sets the from data2 global.
+	 * Sets the form data2 global.
 	 */
-	private void setFromData2Global() {
+	private void setFormData2Global() {
 		
 		Application.getGlobalInfo().setUpdateSite(this.getJTextFieldUpdateSite().getText().trim());
 		

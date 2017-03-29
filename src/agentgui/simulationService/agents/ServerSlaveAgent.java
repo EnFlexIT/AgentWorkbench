@@ -145,15 +145,17 @@ public class ServerSlaveAgent extends Agent {
 		
 		// --- Define Main-Platform-Info ------------------
 		JadeUrlConfiguration myURL = Application.getGlobalInfo().getJadeUrlConfigurationForMaster();
-		mainPlatform.setIp(myURL.getHostIP());
-		mainPlatform.setUrl(myURL.getHostName());
-		mainPlatform.setPort(myURL.getPort());
-		mainPlatform.setHttp4mtp(myURL.getJadeURL4MTP());
-		
-		// --- Define Receiver of local Status-Info -------
-		mainPlatformAgent = new AID("server.master" + "@" + myURL.getJadeURL(), AID.ISGUID );
-		mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
-		
+		if(!myURL.hasErrors()){
+			mainPlatform.setIp(myURL.getHostIP());
+			mainPlatform.setUrl(myURL.getHostName());
+			mainPlatform.setPort(myURL.getPort());
+			mainPlatform.setHttp4mtp(myURL.getJadeURL4MTP());
+			
+			// --- Define Receiver of local Status-Info -------
+			mainPlatformAgent = new AID("server.master" + "@" + myURL.getJadeURL(), AID.ISGUID );
+			mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());
+		}
+
 		// --- Set myTime ---------------------------------
 		myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
 		
@@ -202,7 +204,9 @@ public class ServerSlaveAgent extends Agent {
 	 * @return true, if successful
 	 */
 	private boolean sendMessage2MainServer(Concept agentAction) {
-		
+		if(mainPlatformAgent==null){
+			return false;
+		}
 		try {
 			// --- Definition einer neuen 'Action' --------
 			Action act = new Action();

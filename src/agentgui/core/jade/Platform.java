@@ -481,13 +481,14 @@ public class Platform extends Object {
 			jadeContainerProfile = currProject.getPlugInsLoaded().getJadeProfile(jadeContainerProfile);
 			System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );
 			
-			// --- Start Download-Server for project-resources ------
-			DownloadServer webServer = Application.startDownloadServer();			
-			
 			// --- If the current project has external resources ---- 
 			boolean ideExecuted = Application.getGlobalInfo().AppExecutedOver().equalsIgnoreCase("IDE");
 			if (currProject.getProjectResources().size()>0 || ideExecuted==true) {
-				webServer.setProjectDownloadResources(currProject);
+				if (currProject.getDistributionSetup().isDoStaticLoadBalancing()==true || currProject.getDistributionSetup().isDoDynamicLoadBalancing()==true){
+					// --- Start Download-Server for project-resources ------
+					DownloadServer webServer = Application.startDownloadServer();			
+					webServer.setProjectDownloadResources(currProject);
+				}
 			}
 			
 		}		

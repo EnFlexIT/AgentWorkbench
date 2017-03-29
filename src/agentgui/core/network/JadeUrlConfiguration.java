@@ -69,14 +69,17 @@ public class JadeUrlConfiguration {
 	public JadeUrlConfiguration(String urlOrIPtoCheck) {
 				
 		try {
-			if (urlOrIPtoCheck==null || urlOrIPtoCheck.trim().equals("")) {
-				this.currURLorIP = InetAddress.getLocalHost().getCanonicalHostName();
-				this.currInetAddress = InetAddress.getLocalHost();
+			if (urlOrIPtoCheck == null || urlOrIPtoCheck.trim().equals("")) {
+				this.errors = true;
+				this.errorMsg="JADE URL empty.";
+				return;
+//				this.currURLorIP = InetAddress.getLocalHost().getCanonicalHostName();
+//				this.currInetAddress = InetAddress.getLocalHost();
 			} else {
 				this.currURLorIP = this.filterPort(urlOrIPtoCheck);
 				this.currInetAddress = InetAddress.getByName(this.currURLorIP);
 			}
-			this.errors=false;
+			this.errors = false;
 					
 		} catch (UnknownHostException err) {
 //			err.printStackTrace();
@@ -152,6 +155,9 @@ public class JadeUrlConfiguration {
 	 * @return true, if the jade platform configuration is equal
 	 */
 	public boolean isEqualJadePlatform(JadeUrlConfiguration jucToCompare) {
+		if(hasErrors()){
+			return false;
+		}
 		if (jucToCompare.getHostIP().equals(this.getHostIP())==true) {
 			if (jucToCompare.getPort()==this.getPort()) {
 				return true;
@@ -165,6 +171,9 @@ public class JadeUrlConfiguration {
 	 * @return True, if the JADE URL is pointing to the local machine 
 	 */
 	public boolean isLocalhost() {
+		if(hasErrors()){
+			return false;
+		}
 		for (InetAddress inetAddress : this.getLocalInetAddresses()) {
 			if (inetAddress.equals(this.currInetAddress)) {
 				return true;

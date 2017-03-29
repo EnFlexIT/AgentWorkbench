@@ -155,18 +155,19 @@ public class ServerClientAgent extends Agent {
 		
 		// --- Define Main-Platform-Info ------------------
 		JadeUrlConfiguration myURL = Application.getGlobalInfo().getJadeUrlConfigurationForMaster();
-		mainPlatform.setIp(myURL.getHostIP());
-		mainPlatform.setUrl(myURL.getHostName());
-		mainPlatform.setPort(myURL.getPort());
-		mainPlatform.setHttp4mtp(myURL.getJadeURL4MTP());
-		
-		// --- Define Receiver of local Status-Info -------
-		String jadeURL = myURL.getJadeURL();
-		if (jadeURL!=null) {
-			mainPlatformAgent = new AID("server.master" + "@" + myURL.getJadeURL(), AID.ISGUID );
-			mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());	
-		}		
-		
+		if(!myURL.hasErrors()){
+			mainPlatform.setIp(myURL.getHostIP());
+			mainPlatform.setUrl(myURL.getHostName());
+			mainPlatform.setPort(myURL.getPort());
+			mainPlatform.setHttp4mtp(myURL.getJadeURL4MTP());
+			
+			// --- Define Receiver of local Status-Info -------
+			String jadeURL = myURL.getJadeURL();
+			if (jadeURL!=null) {
+				mainPlatformAgent = new AID("server.master" + "@" + myURL.getJadeURL(), AID.ISGUID );
+				mainPlatformAgent.addAddresses(mainPlatform.getHttp4mtp());	
+			}		
+		}
 		// --- Set myTime ---------------------------------
 		myPlatformTime.setTimeStampAsString( Long.toString(System.currentTimeMillis()) ) ;
 		

@@ -95,7 +95,7 @@ public class GlobalInfo {
 	private static String localFileJade = "jade.jar";
 	private Integer localeJadeLocalPort = 1099;
 	private Integer localeJadeLocalPortMTP = 7778;
-	private JadeUrlConfiguration urlConfiguraionForMaster;
+	private JadeUrlConfiguration urlConfigurationForMaster;
 	
 	// --- Variables --------------------------------------------------------
 	public final static String ExecutedOverIDE = "IDE";
@@ -856,21 +856,23 @@ public class GlobalInfo {
 	 * @param newJadeUrlConfiguration the new {@link JadeUrlConfiguration} for master
 	 */
 	public void setJadeUrlConfigurationForMaster(JadeUrlConfiguration newJadeUrlConfiguration) {
-		this.urlConfiguraionForMaster = newJadeUrlConfiguration;
+		this.urlConfigurationForMaster = newJadeUrlConfiguration;
 	}
 	/**
 	 * Returns the {@link JadeUrlConfiguration} for the server.master.
 	 * @return the JadeUrlConfiguration
 	 */
 	public JadeUrlConfiguration getJadeUrlConfigurationForMaster() {
-		if (urlConfiguraionForMaster==null) {
+		if (urlConfigurationForMaster==null) {
 			// --- Define the address of the server.master platform -----------
-			urlConfiguraionForMaster = new JadeUrlConfiguration(this.getServerMasterURL());
-			urlConfiguraionForMaster.setPort(this.getServerMasterPort());
-			urlConfiguraionForMaster.setPort4MTP(this.getServerMasterPort4MTP());
-			urlConfiguraionForMaster.setMtpProtocol(this.getServerMasterProtocol().toString());
+			urlConfigurationForMaster = new JadeUrlConfiguration(this.getServerMasterURL());
+			if(urlConfigurationForMaster.hasErrors() == false){
+				urlConfigurationForMaster.setPort(this.getServerMasterPort());
+				urlConfigurationForMaster.setPort4MTP(this.getServerMasterPort4MTP());
+				urlConfigurationForMaster.setMtpProtocol(this.getServerMasterProtocol().toString());
+			}
 		}
-		return urlConfiguraionForMaster;
+		return urlConfigurationForMaster;
 	}
 	
 	/**

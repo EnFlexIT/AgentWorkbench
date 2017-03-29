@@ -28,9 +28,15 @@
  */
 package agentgui.core.webserver;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.net.Socket;
+import java.util.Date;
+import java.util.Vector;
 
 /**
  * This class will be used within the {@link DownloadServer} as handler for
@@ -204,18 +210,22 @@ outerloop:
                 fname = fname.substring(1);
             }
             File targ = new File(server.getRoot(), fname);
-            if (targ.isDirectory()) {
-                File ind = new File(targ, "index.html");
-                if (ind.exists()) {
-                    targ = ind;
+            
+            // IMPORTANT: Necessary but probably not sufficient to mitigate directory traversal
+            if(targ.toPath().toRealPath().startsWith(server.getRoot().toPath().toRealPath())){
+                if (targ.isDirectory()) {
+                    File ind = new File(targ, "index.html");
+                    if (ind.exists()) {
+                        targ = ind;
+                    }
                 }
-            }
-            boolean OK = printHeaders(targ, ps);
-            if (doingGet) {
-                if (OK) {
-                    sendFile(targ, ps);
-                } else {
-                    send404(targ, ps);
+                boolean OK = printHeaders(targ, ps);
+                if (doingGet) {
+                    if (OK) {
+                        sendFile(targ, ps);
+                    } else {
+                        send404(targ, ps);
+                    }
                 }
             }
         } finally {
