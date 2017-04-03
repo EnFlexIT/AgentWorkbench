@@ -104,7 +104,7 @@ public class GraphElementLayout {
 		
 		if (this.myGraphElement instanceof GraphNode) {
 			this.setGraphNodeValues();
-		} else if (this.myGraphElement instanceof GraphEdge){
+		} else if (this.myGraphElement instanceof GraphEdge) {
 			this.setGraphEdgeValues();
 		}
 		

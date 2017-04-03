@@ -30,6 +30,7 @@ package agentgui.envModel.graph.visualisation;
 
 import jade.core.Location;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
 
 import java.util.Vector;
 
@@ -59,7 +60,7 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 public class DisplayAgent extends AbstractDisplayAgent {
 
 	private static final long serialVersionUID = -766291673903767678L;
-
+	
 	private GraphEnvironmentController myGraphEnvironmentController;
 	
 	private EnvironmentModelFetcher envModelFetcher;
@@ -69,6 +70,8 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	
 	private boolean enableNetworkModelUpdate = true;
 	private boolean enableNetworkModelCopy = false;
+	
+	private Vector<ACLMessageForwardingListener> aclMessageForwardingListeners;
 	
 	
 	/* (non-Javadoc)
@@ -86,6 +89,7 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	protected void setup() {
 		super.setup();
 		this.addBehaviour(this.getEnvironmentModelFetcher());
+		this.addBehaviour(new MessageReceiveBehaviour());
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.AbstractDisplayAgent#afterMove()
@@ -331,6 +335,59 @@ public class DisplayAgent extends AbstractDisplayAgent {
 	 */
 	public void setEnableNetworkModelCopy(boolean enableNetworkModelCopy) {
 		this.enableNetworkModelCopy = enableNetworkModelCopy;
+	}
+
+	
+	/**
+	 * Gets the list of registered ACL message forwarding listeners.
+	 * @return the ACL message forwarding
+	 */
+	private Vector<ACLMessageForwardingListener> getACLMessageForwardingListeners() {
+		if(this.aclMessageForwardingListeners == null){
+			this.aclMessageForwardingListeners = new Vector<ACLMessageForwardingListener>();
+		}
+		return aclMessageForwardingListeners;
+	}
+	/**
+	 * Adds a new ACL message forwarding listener.
+	 * @param listener the listener
+	 */
+	public void addACLMessageForwardingListener(ACLMessageForwardingListener listener){
+		this.getACLMessageForwardingListeners().addElement(listener);
+	}
+	/**
+	 * Removes an ACL message forwarding listener.
+	 * @param listener the listener
+	 */
+	public void removeACLMessageForwardingListener(ACLMessageForwardingListener listener){
+		this.getACLMessageForwardingListeners().remove(listener);
+	}
+	/**
+	 * Forward an ACL message to the registered listeners.
+	 * @param message the notification
+	 */
+	private void forwardACLMessage(ACLMessage message){
+		for (ACLMessageForwardingListener listener : this.getACLMessageForwardingListeners()) {
+			listener.forwardACLMessage(message);
+		}
+	}
+	
+	/**
+	 * Behaviour for receiving ACL messages. The messages will be forwarded to registered NetworkComponentAdapters
+	 * 
+	 * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
+	 */
+	private class MessageReceiveBehaviour extends CyclicBehaviour{
+		private static final long serialVersionUID = 6462851620274965730L;
+		@Override
+		public void action() {
+			ACLMessage msg = myAgent.receive();
+			if (msg != null) {
+				DisplayAgent.this.forwardACLMessage(msg);
+			} else {
+				this.block();
+			}
+		}
 	}
 	
 }

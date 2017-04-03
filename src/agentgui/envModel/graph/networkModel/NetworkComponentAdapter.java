@@ -178,5 +178,20 @@ public abstract class NetworkComponentAdapter {
 			displayAgent.send(msg);
 		}
 	}
+
+	/**
+	 * Checks if the current view is the runtime visualisation.
+	 * @return true, if is runtime visualisation
+	 */
+	protected boolean isRuntimeVisualization(){
+		return (this.graphController.getProject()==null);
+	}
+	/**
+	 * Checks if the current view is the setup configuration.
+	 * @return true, if is setup configuration
+	 */
+	protected boolean isSetupConfiguration(){
+		return (this.graphController.getProject()!=null);
+	}
 	
 }
