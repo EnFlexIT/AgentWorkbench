@@ -13,6 +13,9 @@
      ====================================================================== -->
 <project name="AgentGui" default="execute" basedir=".">
 	
+	<property name="ant.build.javac.source" value="1.7"/>
+	<property name="ant.build.javac.target" value="1.7"/>
+	
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
           Properties: Folder structure / ClassPath / Version Info                        
          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -167,7 +170,7 @@
     	  </fileset>
     	</path>
 
-    	<echo message="Compile: Java-Version ${ant.java.version}" />
+    	<echo message="Compile: Java-Version ${ant.build.javac.target}" />
     	<javac debug="true" destdir="${binaryDirANT}" encoding="UTF-8" includeantruntime="false" deprecation="true" >    		
     		<src path="${sourceDir}" />
     		<classpath refid="class.path" />
