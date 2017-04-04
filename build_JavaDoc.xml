@@ -2,7 +2,6 @@
 <project default="javadoc-create">
 
 	<tstamp><format property="TODAYS_YEAR" pattern="yyyy"/></tstamp>
-	<property name="javadocExec" value="C:/Program Files/Java/jdk1.7.0_79/bin/javadoc.exe" />
 	
 	<property name="destinDir" value="doc" />
 	<property name="destinDirAPI" value="${destinDir}\api\\" />
@@ -38,7 +37,6 @@
 	<target name="javadoc">
 		
 		<!-- Build the API -->
-		<!-- Here the follwing attribute setting was removed after 'packagenames': 'executable="${javadocExec}'" -->
 		<javadoc access="package" 
 			author="true" 
 			source="1.7" 

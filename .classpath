@@ -8,7 +8,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/hyperic-sigar/sigar-bin/lib/log4j.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hyperic-sigar/sigar-bin/lib/sigar.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jade/lib/commons-codec/commons-codec-1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jade/lib/jade.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jade/lib/jade.jar" sourcepath="/Jade"/>
 	<classpathentry exported="true" kind="lib" path="lib/jade/lib/migration.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jade/lib/XMLCodec.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdbc/mysql-connector-java-5.0.8-bin.jar"/>
