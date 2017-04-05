@@ -61,7 +61,11 @@ public class BasicGraphGuiTableCellRenderEditor extends AbstractCellEditor imple
 	 */
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		JLabel jLabelDisplay = new JLabel(value.toString());
+		String labelValue = "";
+		if(value!=null){
+			labelValue=value.toString();
+		}
+		JLabel jLabelDisplay = new JLabel(labelValue);
 		jLabelDisplay.setFont(new Font("Dialog", Font.PLAIN, 12));
 		GraphGlobals.Colors.setTableCellRendererColors(jLabelDisplay, row, isSelected);
 		return jLabelDisplay;

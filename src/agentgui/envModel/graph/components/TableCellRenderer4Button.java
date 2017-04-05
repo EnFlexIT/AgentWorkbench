@@ -49,7 +49,11 @@ public class TableCellRenderer4Button implements TableCellRenderer {
 	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 	 */
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		button.setText(value.toString());
+		String labelValue = "";
+		if(value!=null){
+			labelValue=value.toString();
+		}
+		button.setText(labelValue);
 		button.setOpaque(true);
 		GraphGlobals.Colors.setTableCellRendererColors(button, row, isSelected);
 		return button;
