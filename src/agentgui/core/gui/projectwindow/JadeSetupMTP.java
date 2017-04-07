@@ -795,25 +795,37 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 				this.getJTextFieldTrustStoreFile().setText(this.getTrustStore().getAbsolutePath());
 			} 
 		} else if (this.action == "COMBO") {
-			// --- In case that the user choose to configure new HTTPS MTP ------
-			httpsConfigWindow = new HttpsConfigWindow(Application.getMainWindow());
-			// - - Wait for the user - - - - - - - - - - - - -
-			if (httpsConfigWindow.isCanceled() == false) {
-				// ---- Return the KeyStore and TrustStore chosen by the user ---
-				this.setKeyStore(httpsConfigWindow.getKeyStoreFile());
-				this.setTrustStore(httpsConfigWindow.getTrustStoreFile());
-				this.setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
-				this.setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
-				this.currProject.getJadeConfiguration().setKeyStoreFile(httpsConfigWindow.getKeyStoreFile().getAbsolutePath());
-				this.currProject.getJadeConfiguration().setTrustStoreFile(httpsConfigWindow.getTrustStoreFile().getAbsolutePath());
-				this.currProject.getJadeConfiguration().setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
-				this.currProject.getJadeConfiguration().setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
-				this.getJTextFieldKeyStoreFile().setText(this.getKeyStore().getAbsolutePath());
-				this.getJTextFieldTrustStoreFile().setText(this.getTrustStore().getAbsolutePath());
-			} else {
-				// ---- If the Button Cancel is pressed -------------------------
-				this.getJcomboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
-				this.setHttpsComponentsEnabledState(false);
+			
+			String keyStoreFilePath = this.currProject.getJadeConfiguration().getKeyStoreFile();
+			String trustStoreFilePath = this.currProject.getJadeConfiguration().getTrustStoreFile();
+			
+			File keyStoreFile = new File(keyStoreFilePath);
+			File trustStoreFile = new File(trustStoreFilePath);
+			
+			// --- If the certificate stores are not set or not existing, show the store configuration window ----------
+			if(keyStoreFile.exists() == false || trustStoreFile.exists() == false){
+				
+				// --- In case that the user choose to configure new HTTPS MTP ------
+				httpsConfigWindow = new HttpsConfigWindow(Application.getMainWindow());
+				
+				// - - Wait for the user - - - - - - - - - - - - -
+				if (httpsConfigWindow.isCanceled() == false) {
+					// ---- Return the KeyStore and TrustStore chosen by the user ---
+					this.setKeyStore(httpsConfigWindow.getKeyStoreFile());
+					this.setTrustStore(httpsConfigWindow.getTrustStoreFile());
+					this.setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
+					this.setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
+					this.currProject.getJadeConfiguration().setKeyStoreFile(httpsConfigWindow.getKeyStoreFile().getAbsolutePath());
+					this.currProject.getJadeConfiguration().setTrustStoreFile(httpsConfigWindow.getTrustStoreFile().getAbsolutePath());
+					this.currProject.getJadeConfiguration().setKeyStorePassword(httpsConfigWindow.getKeyStorePassword());
+					this.currProject.getJadeConfiguration().setTrustStorePassword(httpsConfigWindow.getTrustStorePassword());
+					this.getJTextFieldKeyStoreFile().setText(this.getKeyStore().getAbsolutePath());
+					this.getJTextFieldTrustStoreFile().setText(this.getTrustStore().getAbsolutePath());
+				} else {
+					// ---- If the Button Cancel is pressed -------------------------
+					this.getJcomboBoxMtpProtocol().setSelectedProtocol(MtpProtocol.HTTP);
+					this.setHttpsComponentsEnabledState(false);
+				}
 			}
 		}
 	}
