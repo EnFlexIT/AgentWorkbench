@@ -36,7 +36,7 @@ import agentgui.envModel.graph.controller.BasicGraphGui.ToolBarType;
 
 
 /**
- * The Class BasicGraphGuiCustomJBottonDescription can bes used in order to 
+ * The Class CustomToolbarComponentDescription can be used in order to 
  * describe a customised JButton that is to be integrated into the toolbars
  * of the {@link BasicGraphGui}.
  * 

@@ -46,6 +46,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
@@ -291,17 +292,17 @@ public class UserMapping extends JDialog implements ActionListener {
 	 * Gets the JComboBox for the known components.
 	 * @return the JComboBox for the components
 	 */
-	private JComboBoxWide getJComboBoxComponents() {
+	private JComboBoxWide<String> getJComboBoxComponents() {
 		
 		Vector<String> ctsVector =  new Vector<String>();
-		HashMap<String, ComponentTypeSettings> cts = this.generalGraphSettings4MAS.getCurrentCTS();
+		TreeMap<String, ComponentTypeSettings> cts = this.generalGraphSettings4MAS.getCurrentCTS();
 		for (String ctsName : cts.keySet()) {
 			ctsVector.addElement(ctsName);	
 		}
 		Collections.sort(ctsVector);
-		DefaultComboBoxModel comboBoxModel4Domains = new DefaultComboBoxModel(ctsVector);
+		DefaultComboBoxModel<String> comboBoxModel4Domains = new DefaultComboBoxModel<String>(ctsVector);
 		
-		JComboBoxWide jComboBoxNodeSize = new JComboBoxWide(comboBoxModel4Domains);
+		JComboBoxWide<String> jComboBoxNodeSize = new JComboBoxWide<String>(comboBoxModel4Domains);
 		return jComboBoxNodeSize;
 	}
 	

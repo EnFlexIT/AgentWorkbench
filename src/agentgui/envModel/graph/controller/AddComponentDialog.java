@@ -44,10 +44,10 @@ import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -428,7 +428,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     	if (this.listModelComponentTypes==null) {
     		// --- Create a work Vector -----------------------------
     		Vector<ComponentTypeListElement> componentTypeVector = new Vector<ComponentTypeListElement>();
-        	HashMap<String, ComponentTypeSettings> ctsHash = this.graphController.getComponentTypeSettings();
+        	TreeMap<String, ComponentTypeSettings> ctsHash = this.graphController.getComponentTypeSettings();
     		if (ctsHash != null) {
     			Iterator<String> ctsIt = ctsHash.keySet().iterator();
     		    while (ctsIt.hasNext()) {

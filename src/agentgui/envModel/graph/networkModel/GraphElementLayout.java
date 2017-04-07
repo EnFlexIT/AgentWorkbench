@@ -30,8 +30,8 @@ package agentgui.envModel.graph.networkModel;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeMap;
 
 /**
  * The Class GraphElementLayout.
@@ -42,8 +42,8 @@ public class GraphElementLayout {
 	private GraphElement myGraphElement = null;
 	
 	private NetworkModel networkModel = null;
-	private HashMap<String, DomainSettings> domainHash = null;
-	private HashMap<String, ComponentTypeSettings> ctsHash = null;
+	private TreeMap<String, DomainSettings> domainHash = null;
+	private TreeMap<String, ComponentTypeSettings> ctsHash = null;
 
 	private DomainSettings myDomain = null;
 	private ComponentTypeSettings myComponentTypeSettings = null;

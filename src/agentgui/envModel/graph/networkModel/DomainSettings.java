@@ -42,7 +42,7 @@ public class DomainSettings implements Serializable {
 	private static final long serialVersionUID = 469880829860930598L;
 	
 	private boolean showLabel = true;
-	private Integer vertexSize = GeneralGraphSettings4MAS.DEFAULT_VERTEX_SIZE; 
+	private int vertexSize = GeneralGraphSettings4MAS.DEFAULT_VERTEX_SIZE; 
 	private String vertexColor = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_COLOR.getRGB());
 	private String vertexColorPicked = String.valueOf(GeneralGraphSettings4MAS.DEFAULT_VERTEX_PICKED_COLOR.getRGB());
 	/** The adapter class that can extend functionalities for a NetworkComponent  */
@@ -104,14 +104,14 @@ public class DomainSettings implements Serializable {
 	 * Gets the vertex size.
 	 * @return the vertexSize
 	 */
-	public Integer getVertexSize() {
+	public int getVertexSize() {
 		return vertexSize;
 	}
 	/**
 	 * Sets the vertex size.
 	 * @param vertexSize the vertexSize to set
 	 */
-	public void setVertexSize(Integer vertexSize) {
+	public void setVertexSize(int vertexSize) {
 		this.vertexSize = vertexSize;
 	}
 

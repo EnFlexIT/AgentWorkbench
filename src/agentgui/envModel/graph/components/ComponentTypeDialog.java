@@ -49,9 +49,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -131,8 +131,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	public final String COL_EdgeColor 				= Language.translate("Color", Language.EN);  			//  @jve:decl-index=0:
 
 	
-	private HashMap<String, ComponentTypeSettings> currCompTypSettings;
-	private HashMap<String, DomainSettings> currDomainSettings;
+	private TreeMap<String, ComponentTypeSettings> currCompTypSettings;
+	private TreeMap<String, DomainSettings> currDomainSettings;
 	
 	private boolean currSnap2Grid = true;
 	private double currSnapRaster = 5; 
@@ -325,14 +325,14 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * Returns all component type settings.
 	 * @return the ComponentTypeSettings
 	 */
-	public HashMap<String, ComponentTypeSettings> getComponentTypeSettings() {
+	public TreeMap<String, ComponentTypeSettings> getComponentTypeSettings() {
 		return this.currCompTypSettings;
 	}
 	/**
 	 * Returns the domain settings.
 	 * @return the DomainSettings
 	 */
-	public HashMap<String, DomainSettings> getDomainSettings() {
+	public TreeMap<String, DomainSettings> getDomainSettings() {
 		return this.currDomainSettings;
 	}
 	/**
@@ -1570,8 +1570,8 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 		
 		} else if(ae.getSource()==this.getJButtonConfirm()) {
 			// --- Check and prepare new settings -------------------
-			HashMap<String, ComponentTypeSettings> ctsHash = new HashMap<String, ComponentTypeSettings>();
-			HashMap<String, DomainSettings> dsHash = new HashMap<String, DomainSettings>();
+			TreeMap<String, ComponentTypeSettings> ctsHash = new TreeMap<String, ComponentTypeSettings>();
+			TreeMap<String, DomainSettings> dsHash = new TreeMap<String, DomainSettings>();
 			
 			// --- Get the domain settings from table ---------------
 			JTable jtDomains = this.getJTable4DomainTypes();
@@ -1691,7 +1691,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * @param dsHash the DomainSettings hash that contains the already checked DomainSettings
 	 * @return true, if is domain configuration error
 	 */
-	private Error isDomainConfigError(String dsName, DomainSettings ds, HashMap<String, DomainSettings> dsHash) {
+	private Error isDomainConfigError(String dsName, DomainSettings ds, TreeMap<String, DomainSettings> dsHash) {
 		
 		String title = "";
 		String message = "";
@@ -1712,7 +1712,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener{
 	 * @param ctsHash the ComponentTypeSettings hash that contains the already checked ComponentTypeSettings
 	 * @return true, if is component type error
 	 */
-	private Error isComponentTypeError(String ctsName, ComponentTypeSettings cts, HashMap<String, ComponentTypeSettings> ctsHash) {
+	private Error isComponentTypeError(String ctsName, ComponentTypeSettings cts, TreeMap<String, ComponentTypeSettings> ctsHash) {
 		
 		String title = "";
 		String message = "";

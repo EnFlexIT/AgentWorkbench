@@ -39,6 +39,7 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -192,14 +193,14 @@ public class GraphEnvironmentController extends EnvironmentController {
      * Gets the current ComponentTypeSettings
      * @return HashMap<String, ComponentTypeSettings> The current component type settings map.
      */
-    public HashMap<String, ComponentTypeSettings> getComponentTypeSettings() {
+    public TreeMap<String, ComponentTypeSettings> getComponentTypeSettings() {
     	return this.getGeneralGraphSettings4MAS().getCurrentCTS();
     }
     /**
      * Returns the DomainSttings.
      * @return the DomainSttings
      */
-    public HashMap<String, DomainSettings> getDomainSettings() {
+    public TreeMap<String, DomainSettings> getDomainSettings() {
     	return this.getGeneralGraphSettings4MAS().getDomainSettings();
     }
     
@@ -588,7 +589,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 		// --------------------------------------------------------------------
 		// --- Get the current ComponentTypeSettings --------------------------
-		HashMap<String, ComponentTypeSettings> cts = this.getNetworkModel().getGeneralGraphSettings4MAS().getCurrentCTS();
+		TreeMap<String, ComponentTypeSettings> cts = this.getNetworkModel().getGeneralGraphSettings4MAS().getCurrentCTS();
 	
 		// --------------------------------------------------------------------
 		// --- Transfer the agent list into a HashMap for a faster access -----

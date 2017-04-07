@@ -34,8 +34,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
@@ -53,7 +53,8 @@ import jade.util.leap.Serializable;
  * A custom user object encapsulating the required objects which can be placed in the Project object. 
  * You can add more attributes in this class if required, but be careful to cast and use the user object properly.
  * 
- * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati 
+ * @author Satyadeep Karnati - CSE - Indian Institute of Technology, Guwahati
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
 @XmlRootElement
 public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
@@ -111,16 +112,13 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	public static final String GRAPH_NODE_NETWORK_COMPONENT_ADAPTER_PREFIX = "GraphNodeAdapter_";
 	
 	
-	/** The component type settings used in the {@link GraphEnvironmentController} */
-	private HashMap<String, ComponentTypeSettings> currentCTS = null;
 	/** The available domains used in the {@link GraphEnvironmentController} */
-	private HashMap<String, DomainSettings> currentDomainSettings = null;
+	private TreeMap<String, DomainSettings> currentDomainSettings;
+	/** The component type settings used in the {@link GraphEnvironmentController} */
+	private TreeMap<String, ComponentTypeSettings> currentCTS;
 	
-	/** The snap2 grid. */
 	private boolean snap2Grid = true;
-	/** The snap raster. */
 	private double snapRaster = DEFAULT_RASTER_SIZE;
-	/** The edge shape. */
 	private EdgeShape edgeShape = EdgeShape.Line;
 	
 	/** 
@@ -134,6 +132,150 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * Default constructor
 	 */
 	public GeneralGraphSettings4MAS() {
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compareObject) {
+		
+		if (compareObject==null || (compareObject instanceof GeneralGraphSettings4MAS)==false) return false;
+
+		boolean isEqual = true;
+		GeneralGraphSettings4MAS ggsToCompare = (GeneralGraphSettings4MAS) compareObject;
+		if (compareObject!=this) {
+			// --- Compare Domain settings ----------------
+			if (isEqual==true) {
+				isEqual = this.hasEqualDomainSettings(ggsToCompare);
+			}
+			// --- Compare ComponentTypeSettings ----------
+			if (isEqual==true) {
+				isEqual = this.hasEqualComponentTypeSettings(ggsToCompare);
+			}
+			// --- Compare 'snap2Grid' --------------------
+			if (isEqual==true) {
+				isEqual = (ggsToCompare.isSnap2Grid()==this.isSnap2Grid());
+			}
+			// --- Compare 'snapRaster' -------------------
+			if (isEqual==true) {
+				isEqual = (ggsToCompare.getSnapRaster()==this.getSnapRaster());
+			}
+			// --- Compare 'edgeShape' --------------------
+			if (isEqual==true) {
+				isEqual = (ggsToCompare.getEdgeShape()==this.getEdgeShape());
+			}
+		}
+		return isEqual;
+	}
+	
+	/**
+	 * Checks for equal domain settings.
+	 *
+	 * @param ggsToCompare the GeneralGraphSettings4MAS to compare
+	 * @return true, if successful
+	 */
+	public boolean hasEqualDomainSettings(GeneralGraphSettings4MAS ggsToCompare) {
+		
+		boolean isEqual = true;
+		TreeMap<String, DomainSettings> dsTreeMapToCompare = ggsToCompare.getDomainSettings();
+		isEqual = (dsTreeMapToCompare.size()==this.getDomainSettings().size());
+		if (isEqual==true) {
+			// --- Compare each element in the TreeMap ----
+			Vector<String> keyVector = new Vector<String>(dsTreeMapToCompare.keySet());
+			for (int i = 0; i < keyVector.size(); i++) {
+				String key = keyVector.get(i);
+				DomainSettings ds2Comp = dsTreeMapToCompare.get(key);
+				DomainSettings dsLocal = this.getDomainSettings().get(key);
+				if (dsLocal==null) return false;
+				if (isEqualDomainSetting(ds2Comp, dsLocal)==false) return false;
+			}
+		}
+		return isEqual;
+	}
+	/**
+	 * Checks if the both {@link DomainSettings} are equal.
+	 * 
+	 * @param ds1 the first  DomainSetting
+	 * @param ds2 the second DomainSetting
+	 * @return true, if is equal DomainSetting
+	 */
+	public static boolean isEqualDomainSetting(DomainSettings ds1, DomainSettings ds2) {
+		
+		boolean isEqual = true;
+		if (isEqual==true) isEqual = (ds1.isShowLabel()==ds2.isShowLabel());
+		if (isEqual==true) isEqual = (ds1.getVertexSize()==ds2.getVertexSize());
+		if (isEqual==true) isEqual = isEqualString(ds1.getVertexColor(), ds2.getVertexColor());
+		if (isEqual==true) isEqual = isEqualString(ds1.getVertexColorPicked(), ds2.getVertexColorPicked());
+		if (isEqual==true) isEqual = isEqualString(ds1.getAdapterClass(), ds2.getAdapterClass());
+		if (isEqual==true) isEqual = isEqualString(ds1.getClusterAgent(), ds2.getClusterAgent());
+		if (isEqual==true) isEqual = isEqualString(ds1.getClusterShape(), ds2.getClusterShape());
+		return isEqual;
+	}
+	
+	/**
+	 * Checks for equal component type settings.
+	 *
+	 * @param ggsToCompare the GeneralGraphSettings4MAS to compare
+	 * @return true, if successful
+	 */
+	public boolean hasEqualComponentTypeSettings(GeneralGraphSettings4MAS ggsToCompare) {
+		
+		boolean isEqual = true;
+		TreeMap<String, ComponentTypeSettings> ctsTreeMapToCompare = ggsToCompare.getCurrentCTS();
+		isEqual = (ctsTreeMapToCompare.size()==this.getCurrentCTS().size());
+		if (isEqual==true) {
+			// --- Compare each element in the TreeMap ----
+			Vector<String> keyVector = new Vector<String>(ctsTreeMapToCompare.keySet());
+			for (int i = 0; i < keyVector.size(); i++) {
+				String key = keyVector.get(i);
+				ComponentTypeSettings cts2Comp = ctsTreeMapToCompare.get(key);
+				ComponentTypeSettings ctsLocal = this.getCurrentCTS().get(key);
+				if (ctsLocal==null) return false;
+				if (isEqualComponentTypeSettings(cts2Comp, ctsLocal)==false) return false;
+			}
+		}
+		return isEqual;
+	}
+	/**
+	 * Checks if the both {@link ComponentTypeSettings} are equal.
+	 * 
+	 * @param cts1 the first ComponentTypeSettings
+	 * @param cts2 the second ComponentTypeSettings
+	 * @return true, if is equal ComponentTypeSettings
+	 */
+	public static boolean isEqualComponentTypeSettings(ComponentTypeSettings cts1, ComponentTypeSettings cts2) {
+		
+		boolean isEqual = true;
+		if (isEqual==true) isEqual = isEqualString(cts1.getDomain(), cts2.getDomain());
+		if (isEqual==true) isEqual = isEqualString(cts1.getAgentClass(), cts2.getAgentClass());
+		if (isEqual==true) isEqual = isEqualString(cts1.getGraphPrototype(), cts2.getGraphPrototype());
+		if (isEqual==true) isEqual = isEqualString(cts1.getAdapterClass(), cts2.getAdapterClass());
+		if (isEqual==true) isEqual = (cts1.getEdgeWidth()==cts2.getEdgeWidth());
+		if (isEqual==true) isEqual = isEqualString(cts1.getEdgeImage(), cts2.getEdgeImage());
+		if (isEqual==true) isEqual = isEqualString(cts1.getColor(), cts2.getColor());
+		if (isEqual==true) isEqual = (cts1.isShowLabel()==cts2.isShowLabel());
+		return isEqual;
+	}
+	/**
+	 * Checks if is equal string setting.
+	 *
+	 * @param string1 the string 1
+	 * @param string2 the string 2
+	 * @return true, if is equal string
+	 */
+	private static boolean isEqualString(String string1, String string2) {
+		boolean isEqual = true;
+		if (string1==null & string2==null) {
+			isEqual = true;
+		} else if (string1==null & string2!=null) {
+			isEqual = false;
+		} else if (string1!=null & string2==null) {
+			isEqual = false;
+		} else {
+			isEqual = string1.equals(string2);
+		}
+		return isEqual;
 	}
 	
 	/**
@@ -168,23 +310,34 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	/**
 	 * Saves the specified graph setting into the specified file.
 	 * @param file the file to save
-	 * @param ggs4MAS the actual GeneralGraphSettings4MAS
+	 * @param ggs4MASToSave the actual GeneralGraphSettings4MAS
 	 */
-	public static void save(File file, GeneralGraphSettings4MAS ggs4MAS) {
+	public static void save(File file, GeneralGraphSettings4MAS ggs4MASToSave) {
 		
 		try {
-		    
-			if (!file.exists()) file.createNewFile();
-		    FileWriter componentFileWriter = new FileWriter(file);
-	
-		    JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
-		    Marshaller marsh = context.createMarshaller();
-		    marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-		    marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		    marsh.marshal(ggs4MAS, componentFileWriter);
-	
-		    componentFileWriter.close();
-	
+			
+			boolean writeFile = false;
+			if (file.exists()==false) {
+				writeFile = true;
+			} else {
+				// --- Compare for equal settings ---------
+				GeneralGraphSettings4MAS ggs4MASToCompare = load(file);
+				writeFile = (ggs4MASToSave.equals(ggs4MASToCompare)==false);
+			}
+			
+			if (writeFile==true) {
+				// --- Write GeneralGraphSettings4MAS ----- 
+				FileWriter componentFileWriter = new FileWriter(file);
+				
+				JAXBContext context = JAXBContext.newInstance(GeneralGraphSettings4MAS.class);
+				Marshaller marsh = context.createMarshaller();
+				marsh.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+				marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+				marsh.marshal(ggs4MASToSave, componentFileWriter);
+				
+				componentFileWriter.close();
+			}
+			
 		} catch (IOException e) {
 		    e.printStackTrace();
 		} catch (JAXBException e) {
@@ -192,7 +345,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		}
 	}
 	
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
@@ -205,15 +358,17 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 			return null;
 		}
 	}
-	
 	/**
-	 * Gets a copy from the current instance.
-	 * @return the copy of the current
+	 * Returns a deep copy of the current instance.
+	 * @return the deep copy of the settings
 	 */
 	public GeneralGraphSettings4MAS getCopy() {
 		GeneralGraphSettings4MAS copy = new GeneralGraphSettings4MAS();
 		copy.setCurrentCTS(this.copyComponentTypeSettings());
 		copy.setDomainSettings(this.copyDomainSettings());
+		copy.setSnap2Grid(this.isSnap2Grid());
+		copy.setSnapRaster(this.getSnapRaster());
+		copy.setEdgeShape(this.getEdgeShape());
 		copy.setCustomToolbarComponentDescriptions(this.copyCustomToolbarComponentDescription());
 		return copy;
 	}
@@ -222,8 +377,8 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * Copies the component type settings.
 	 * @return the hash map
 	 */
-	private HashMap <String, ComponentTypeSettings> copyComponentTypeSettings() {
-		HashMap<String, ComponentTypeSettings> copyCtsHash = new HashMap<String, ComponentTypeSettings>();
+	private TreeMap <String, ComponentTypeSettings> copyComponentTypeSettings() {
+		TreeMap<String, ComponentTypeSettings> copyCtsHash = new TreeMap<String, ComponentTypeSettings>();
 		Iterator<String> ctsIt = this.getCurrentCTS().keySet().iterator();
 		while (ctsIt.hasNext()) {
 			String element = ctsIt.next();
@@ -236,8 +391,8 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * Copies the component type settings.
 	 * @return the hash map
 	 */
-	private HashMap <String, DomainSettings> copyDomainSettings() {
-		HashMap<String, DomainSettings> copyDomainHash = new HashMap<String, DomainSettings>();
+	private TreeMap <String, DomainSettings> copyDomainSettings() {
+		TreeMap<String, DomainSettings> copyDomainHash = new TreeMap<String, DomainSettings>();
 		Iterator<String> ctsIt = this.getDomainSettings().keySet().iterator();
 		while (ctsIt.hasNext()) {
 			String element = ctsIt.next();
@@ -263,9 +418,9 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * Get the component type settings HashMap 
 	 * @return the currentCTS
 	 */
-	public HashMap<String, ComponentTypeSettings> getCurrentCTS() {
+	public TreeMap<String, ComponentTypeSettings> getCurrentCTS() {
 		if (currentCTS==null) {
-			currentCTS = new HashMap<String, ComponentTypeSettings>();
+			currentCTS = new TreeMap<String, ComponentTypeSettings>();
 		}
 		return currentCTS;
 	}
@@ -273,7 +428,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * Set the component type settings HashMap
 	 * @param currentCTS the currentCTS to set
 	 */
-	public void setCurrentCTS(HashMap<String, ComponentTypeSettings> currentCTS) {
+	public void setCurrentCTS(TreeMap<String, ComponentTypeSettings> currentCTS) {
 		this.currentCTS = currentCTS;
 	}
 
@@ -281,9 +436,9 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * Gets the domain settings.
 	 * @return the currentDomainSettings
 	 */
-	public HashMap<String, DomainSettings> getDomainSettings() {
+	public TreeMap<String, DomainSettings> getDomainSettings() {
 		if (currentDomainSettings==null) {
-			currentDomainSettings = new HashMap<String, DomainSettings>();
+			currentDomainSettings = new TreeMap<String, DomainSettings>();
 		}
 		if (this.currentDomainSettings.size()==0) {
 			DomainSettings ds = new DomainSettings();
@@ -299,7 +454,7 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 * Sets the domain settings.
 	 * @param domainSettings the domain settings
 	 */
-	public void setDomainSettings(HashMap<String, DomainSettings> domainSettings) {
+	public void setDomainSettings(TreeMap<String, DomainSettings> domainSettings) {
 		this.currentDomainSettings = domainSettings;
 	}
 
