@@ -36,7 +36,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -54,10 +53,8 @@ public class OIDCPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -169367444435859302L;
 
-	public static final String DEBUG_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
 	public static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/enflex-licensor-1.0-SNAPSHOT/api/private/test";
 
-//	public static final String DEBUG_RESOURCE_URI = "https://se238124.zim.uni-due.de:18443/vanilla/profile.jsp";
 	public static final String DEBUG_CLIENT_ID = "testclient";
 	public static final String DEBUG_CLIENT_SECRET = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
 	private static final String COMMAND_CONNECT = "connectOIDC";

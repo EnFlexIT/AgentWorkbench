@@ -70,7 +70,7 @@ public class OIDCAuthorization {
 	private String resourceURI = OIDCPanel.DEBUG_RESOURCE_URI;
 
 	/** The URI of the OIDC provider/issuer. */
-	private String issuerURI = OIDCPanel.DEBUG_ISSUER_URI;
+	private String issuerURI = Application.getGlobalInfo().getOIDCIssuerURI();
 
 	/** The availability handler called when the resource is available. */
 	private OIDCResourceAvailabilityHandler availabilityHandler;
@@ -113,6 +113,11 @@ public class OIDCAuthorization {
 	public SimpleOIDCClient getOIDCClient() {
 		if (oidcClient == null) {
 			oidcClient = new SimpleOIDCClient();
+			try {
+				oidcClient.setIssuerURI(getIssuerURI());
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
 		}
 		return oidcClient;
 	}

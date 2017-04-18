@@ -123,6 +123,7 @@ public class FileProperties extends Properties {
 	private final String DEF_TRUSTSTORE_PASSWORD = "53_TRUST_STORE_PASSWORD";
 	
 	private final String DEF_OIDC_USERNAME = "60_OIDC_USERNAME";
+	private final String DEF_OIDC_ISSUER_URI = "61_OIDC_ISSUER_URI";
 
 	private String[] mandatoryProps = {	this.DEF_RUNAS,
 										this.DEF_BENCH_VALUE,
@@ -509,6 +510,13 @@ public class FileProperties extends Properties {
 		} else {
 			Application.getGlobalInfo().setTrustStorePasswordEncrypted(null);
 		}
+		// --- this.DEF_OIDC_ISSUER_URI -------------------
+		propValue = this.getProperty(this.DEF_OIDC_ISSUER_URI);
+		if (propValue !=null && propValue.equalsIgnoreCase("") == false) {
+			Application.getGlobalInfo().setOIDCIssuerURI(propValue);
+		} else {
+			Application.getGlobalInfo().setOIDCIssuerURI(null);
+		}
 		// --- this.DEF_OIDC_USERNAME -------------------
 		propValue = this.getProperty(this.DEF_OIDC_USERNAME);
 		if (propValue !=null && propValue.equalsIgnoreCase("") == false) {
@@ -712,6 +720,13 @@ public class FileProperties extends Properties {
 		case TRAY_ICON:
 			this.setProperty(this.DEF_DeviceServcie_Vis, this.DEF_DeviceServcie_Vis_TrayIcon);
 			break;
+		}
+		
+		// --- this.DEF_OIDC_ISSUER_URI ------------------
+		if (Application.getGlobalInfo().getOIDCIssuerURI() == null) {
+			this.setProperty(this.DEF_OIDC_ISSUER_URI, "");
+		} else {
+			this.setProperty(this.DEF_OIDC_ISSUER_URI, Application.getGlobalInfo().getOIDCIssuerURI());	
 		}
 		
 		// --- this.DEF_OIDC_USERNAME -------------

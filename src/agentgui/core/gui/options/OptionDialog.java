@@ -105,6 +105,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	
 	private StartOptions startOptions ;
 	private UpdateOptions updateOptions ;
+	private OIDCOptions oidcOptions;
 
 	
 	/**
@@ -140,12 +141,16 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    tabTitle = Language.translate("Agent.GUI - Update");
 	    this.addOptionTab(this.getUpdateOptions(), null);
 	    
+	    
 	    if (Application.isRunningAsServer()==true || execMode==ExecutionMode.DEVICE_SYSTEM) {
 	    	tabTitle = Language.translate("Konsole");
 	    	this.addOptionTab(tabTitle, null, Application.getConsole(), tabTitle);	
 	    }
 	    
-		 // --- Expand tree -----------------------------------------
+	    tabTitle = Language.translate("OpenID Connect");
+	    this.addOptionTab(this.getOIDCOptions(), null);
+
+	    // --- Expand tree -----------------------------------------
 	    this.optionTreeExpand2Level(3, true);
 	}
 	
@@ -239,6 +244,17 @@ public class OptionDialog extends JDialog implements ActionListener {
 			updateOptions = new UpdateOptions();
 		}
 		return updateOptions;
+	}
+	
+	/**
+	 * Gets the OIDC options.
+	 * @return the OIDC options
+	 */
+	public OIDCOptions getOIDCOptions() {
+		if (oidcOptions==null) {
+			oidcOptions = new OIDCOptions();
+		}
+		return oidcOptions;
 	}
 	
 	/**

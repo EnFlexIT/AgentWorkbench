@@ -83,6 +83,8 @@ public class GlobalInfo {
 	private final static String localPathImageIntern = "/agentgui/core/gui/img/";
 	
 	public static final String DEFAULT_UPDATE_SITE = "http://update.agentgui.org";
+	public static final String DEFAULT_OIDC_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
+
 	private final static String eomJar = "eom4AgentGui.jar";
 	
 	private final static String newLineSeparator = System.getProperty("line.separator");
@@ -175,8 +177,8 @@ public class GlobalInfo {
 	private String filePropTrustStorePasswordEncrypted;
 	
 	private String oidcUsername;
+	private String oidcIssuerURI;
 
-	
 	// --- Reminder information for file dialogs ----------------------------
 	private File lastSelectedFolder = null; 
 	
@@ -1505,12 +1507,29 @@ public class GlobalInfo {
 	public void setUpdateSite(String updateSite) {
 		this.updateSite = updateSite;
 	}
+	
 	/**
 	 * Returns the update site.
 	 * @return the update site
 	 */
 	public String getUpdateSite() {
 		return updateSite;
+	}
+	
+	/**
+	 * Sets the OIDC issuer URI.
+	 * @param OIDCIssuerURI the new OIDC issuer URI
+	 */
+	public void setOIDCIssuerURI(String OIDCIssuerURI) {
+		this.oidcIssuerURI = OIDCIssuerURI;
+	}
+	
+	/**
+	 * Returns the OIDC issuer URI.
+	 * @return the OIDCIssuerURI
+	 */
+	public String getOIDCIssuerURI() {
+		return oidcIssuerURI;
 	}
 
 	/**
