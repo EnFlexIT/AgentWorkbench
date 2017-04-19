@@ -162,13 +162,14 @@ public class BasicGraphGui extends JPanel implements Observer {
 	/** Indicates that the initial scaling is allowed */
 	private boolean allowInitialScaling = true;
 
-	/** The DefaultModalGraphMouse which can be added to the visualisation viewer. Used here for the transforming mode */
-	private DefaultModalGraphMouse<GraphNode, GraphEdge> defaultModalGraphMouse;
-	/** The customised picking tool */
-	private GraphEnvironmentMousePlugin graphEnvironmentMousePlugin;
-	/** The pluggable graph mouse which can be added to the visualisation viewer. Used here for customised Picking mode	 */
 	private PluggableGraphMouse pluggableGraphMouse; 
+	private GraphEnvironmentMousePlugin graphEnvironmentMousePlugin;
+	private GraphEnvironmentPopupPlugin<GraphNode, GraphEdge> graphEnvironmentPopupPlugin;
 
+	private DefaultModalGraphMouse<GraphNode, GraphEdge> defaultModalGraphMouse;
+	
+
+	
 	/**
 	 * This is the default constructor
 	 * @param controller The Graph Environment controller
@@ -176,14 +177,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 	public BasicGraphGui(GraphEnvironmentController controller) {
 		this.graphController = controller;
 		this.graphController.addObserver(this);
-		this.graphGuiTools = new BasicGraphGuiTools(this.graphController);
 		this.initialize();
 		this.reLoadGraph();
 	}
-
 	/**
 	 * This method initializes this
-	 * @return void
 	 */
 	private void initialize() {
 
@@ -207,9 +205,18 @@ public class BasicGraphGui extends JPanel implements Observer {
 				}
 			}
 		});
-		
 	}
 	
+	/**
+	 * Returns the instance of the BasicGraphGuiTools.
+	 * @return the BasicGraphGuiTools
+	 */
+	private BasicGraphGuiTools getBasicGraphGuiTools() {
+		if (graphGuiTools==null) {
+			graphGuiTools = new BasicGraphGuiTools(this.graphController);
+		}
+		return graphGuiTools;
+	}
 	/**
 	 * Returns the specified JToolBar of the {@link BasicGraphGui}.
 	 *
@@ -220,10 +227,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 		JToolBar toolBar = null;
 		switch (toolBarType) {
 		case EditControl:
-			toolBar = graphGuiTools.getJToolBarEdit();
+			toolBar = this.getBasicGraphGuiTools().getJToolBarEdit();
 			break;
 		case ViewControl:
-			toolBar = graphGuiTools.getJToolBarView();
+			toolBar = this.getBasicGraphGuiTools().getJToolBarView();
 			break;
 		}
 		return toolBar;
@@ -237,10 +244,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 		if (jPanelToolBars==null) {
 			jPanelToolBars = new JPanel();
 			jPanelToolBars.setLayout(new BoxLayout(jPanelToolBars, BoxLayout.X_AXIS));
-			jPanelToolBars.add(this.graphGuiTools.getJToolBarView(), null);
+			jPanelToolBars.add(this.getBasicGraphGuiTools().getJToolBarView(), null);
 			// --- In case of editing the simulation setup ----------
 		    if (this.graphController.getProject()!=null) {
-		    	jPanelToolBars.add(this.graphGuiTools.getJToolBarEdit(), null);
+		    	jPanelToolBars.add(this.getBasicGraphGuiTools().getJToolBarEdit(), null);
 		    }
 		}
 		return jPanelToolBars;
@@ -295,57 +302,42 @@ public class BasicGraphGui extends JPanel implements Observer {
 		return this.scalingControl;
 	}
 
-	/**
-	 * Gets the graph environment mouse plugin.
-	 *
-	 * @param reCreate the re create
-	 * @return the graph environment mouse plugin
-	 */
-	private GraphEnvironmentMousePlugin getGraphEnvironmentMousePlugin(boolean reCreate) {
-		if (reCreate==true) {
-			graphEnvironmentMousePlugin = new GraphEnvironmentMousePlugin(this);
-		} else {
-			if (graphEnvironmentMousePlugin==null) {
-				graphEnvironmentMousePlugin = new GraphEnvironmentMousePlugin(this);
-			}	
-		}
-		return graphEnvironmentMousePlugin;
-	}
-	
 
 	/**
 	 * Returns the PluggableGraphMouse.
 	 * @return the pluggableGraphMouse
 	 */
 	public PluggableGraphMouse getPluggableGraphMouse() {
-		return this.getPluggableGraphMouse(false);
-	}
-	/**
-	 * Returns the PluggableGraphMouse.
-	 * @param reCreatePluggableGraphMouse the re create pluggable graph mouse
-	 * @return the pluggableGraphMouse
-	 */
-	public PluggableGraphMouse getPluggableGraphMouse(boolean reCreatePluggableGraphMouse) {
-		
-		if (reCreatePluggableGraphMouse==true & pluggableGraphMouse!=null) {
-			pluggableGraphMouse = null;
-		}
-		
 		if (pluggableGraphMouse==null) {
-
-			// --- Create the context menu Plugin ---------
-			GraphEnvironmentPopupPlugin<GraphNode, GraphEdge> popupPlugin = new GraphEnvironmentPopupPlugin<GraphNode, GraphEdge>(this);
-			popupPlugin.setEdgePopup(this.graphGuiTools.getEdgePopup());
-			popupPlugin.setVertexPopup(this.graphGuiTools.getVertexPopup());
-
-			// --- Define the PluggableGraphMouse --------- 
 			pluggableGraphMouse = new PluggableGraphMouse();
-			pluggableGraphMouse.add(this.getGraphEnvironmentMousePlugin(true));
-			pluggableGraphMouse.add(popupPlugin);
+			pluggableGraphMouse.add(this.getGraphEnvironmentMousePlugin());
+			pluggableGraphMouse.add(this.getGraphEnvironmentPopupPlugin());
 		}
 		return pluggableGraphMouse;
 	}
-
+	/**
+	 * Returns the {@link GraphEnvironmentMousePlugin}
+	 * @return the graph environment mouse plugin
+	 */
+	private GraphEnvironmentMousePlugin getGraphEnvironmentMousePlugin() {
+		if (graphEnvironmentMousePlugin==null) {
+			graphEnvironmentMousePlugin = new GraphEnvironmentMousePlugin(this);
+		}	
+		return graphEnvironmentMousePlugin;
+	}
+	/**
+	 * Returns the GraphEnvironmentPopupPlugin.
+	 * @return the graph environment popup plugin
+	 */
+	private GraphEnvironmentPopupPlugin<GraphNode, GraphEdge> getGraphEnvironmentPopupPlugin() {
+		if (graphEnvironmentPopupPlugin==null) {
+			graphEnvironmentPopupPlugin = new GraphEnvironmentPopupPlugin<GraphNode, GraphEdge>(this);
+			graphEnvironmentPopupPlugin.setEdgePopup(this.getBasicGraphGuiTools().getEdgePopup());
+			graphEnvironmentPopupPlugin.setVertexPopup(this.getBasicGraphGuiTools().getVertexPopup());
+		}
+		return graphEnvironmentPopupPlugin;
+	}
+	
 	/**
 	 * Gets the DefaultModalGraphMouse.
 	 * @return the default modal graph mouse
@@ -528,9 +520,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 		vViewer.setBackground(Color.WHITE);
 		vViewer.setDoubleBuffered(true);
 		
-		// --- Configure mouse interaction --------------------------------
-		vViewer.setGraphMouse(this.getPluggableGraphMouse(true));
-		vViewer.addKeyListener(this.getGraphEnvironmentMousePlugin(false));
+		// --- Configure mouse and key interaction ------------------------
+		vViewer.setGraphMouse(this.getPluggableGraphMouse());
+		vViewer.addKeyListener(this.getGraphEnvironmentMousePlugin());
 		
 		// --- Set the pick size of the visualisation viewer --------
 		((ShapePickSupport<GraphNode, GraphEdge>) vViewer.getPickSupport()).setPickSize(5);

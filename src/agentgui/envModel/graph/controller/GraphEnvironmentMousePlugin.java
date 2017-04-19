@@ -601,7 +601,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	private void setPasteAction(boolean doPaste, boolean finalisePasteAction) {
 		
 		// --- Are we in picking mode? ------------------------------
-		if (this.getVisViewer().getGraphMouse() == basicGraphGUI.getPluggableGraphMouse()) {
+		if (this.getVisViewer().getGraphMouse() == this.basicGraphGUI.getPluggableGraphMouse()) {
 			
 			this.isPasteAction = doPaste;
 			if (this.isPasteAction==true) {
