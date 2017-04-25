@@ -124,7 +124,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 */
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> getVisViewer(){
 		if (this.visViewer==null) {
-			this.visViewer = this.basicGraphGUI.getVisView();
+			this.visViewer = this.basicGraphGUI.getVisualizationViewer();
 		}
 		return this.visViewer;
 	}
@@ -223,14 +223,14 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 						Point2D pointCurrent = new Point2D.Double(node.getPosition().getX(), node.getPosition().getY());
 						Point2D pointStored  = this.nodesMovedOldPositions.get(node.getId());
 						if (pointCurrent.equals(pointStored)==false) {
-							this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelAdapter().setGraphNodesMoved(this.visViewer, this.nodesMovedOldPositions);
+							this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelAdapter().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions);
 							break;
 						}
 					} // end for
 					
 				} else {
 					// --- Should never happen ------------
-					this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelAdapter().setGraphNodesMoved(this.visViewer, this.nodesMovedOldPositions);
+					this.basicGraphGUI.getGraphEnvironmentController().getNetworkModelAdapter().setGraphNodesMoved(this.getVisViewer(), this.nodesMovedOldPositions);
 				}
 			}
 			this.nodesMovedOldPositions = null;
@@ -449,7 +449,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	private void mouseDraggedSuperAction(MouseEvent me) {
 	
 		if(locked == false) {
-            VisualizationViewer<GraphNode,GraphEdge> vv = this.basicGraphGUI.getVisView();
+            VisualizationViewer<GraphNode,GraphEdge> vv = this.basicGraphGUI.getVisualizationViewer();
             if(vertex != null) {
                 Point p = me.getPoint();
                 Point2D graphPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);

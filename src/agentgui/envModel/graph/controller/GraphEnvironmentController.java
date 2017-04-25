@@ -960,7 +960,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		try {
 			GraphEnvironmentControllerGUI graphControllerGUI = this.getGraphEnvironmentControllerGUI();
 			if (graphControllerGUI!=null) {
-				basicGraphGuiVisViewer = graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisView();
+				basicGraphGuiVisViewer = graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getVisualizationViewer();
 				if (basicGraphGuiVisViewer!=null) {
 					basicGraphGuiVisViewer.setActionOnTop(actionOnTopIsRunning);
 					if (actionOnTopIsRunning==false) {

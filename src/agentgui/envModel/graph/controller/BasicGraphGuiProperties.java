@@ -168,7 +168,7 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 
 		// --- Get the initial x-position of the property window --------------
 		int posBasicGraphGui = this.graphControllerGUI.getBasicGraphGuiRootJSplitPane().getBasicGraphGui().getLocation().x;
-		int posVisViewOnBasicGraphGui = this.basicGraphGui.getVisView().getParent().getLocation().x; 
+		int posVisViewOnBasicGraphGui = this.basicGraphGui.getVisualizationViewer().getParent().getLocation().x; 
 		int initialX = posBasicGraphGui + posVisViewOnBasicGraphGui;
 		
 		if (this.graphDesktop!=null) {

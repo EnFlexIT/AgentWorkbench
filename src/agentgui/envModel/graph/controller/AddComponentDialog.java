@@ -842,7 +842,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
     private void selectNextNodeInMainGraph(NetworkModel networkModelThatWasAdded, GraphNode selectedGraphNode) {
     	
     	GraphNode graphNodeSelect = null;
-    	VisualizationViewer<GraphNode, GraphEdge> mainVisView = this.basicGraphGui.getVisView();
+    	VisualizationViewer<GraphNode, GraphEdge> mainVisView = this.basicGraphGui.getVisualizationViewer();
     	
     	Collection<GraphNode> possibleGraphNode = networkModelThatWasAdded.getGraph().getVertices();
     	if (possibleGraphNode.size()==1) {

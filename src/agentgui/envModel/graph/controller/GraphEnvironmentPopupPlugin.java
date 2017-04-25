@@ -98,7 +98,7 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
      */
     public void showPopUp(Object graphObject) {
     	
-    	BasicGraphGuiVisViewer<GraphNode, GraphEdge> visView = this.basicGraphGui.getVisView();
+    	BasicGraphGuiVisViewer<GraphNode, GraphEdge> visView = this.basicGraphGui.getVisualizationViewer();
     	Point locationMouse = MouseInfo.getPointerInfo().getLocation();
     	Point locationPanel = visView.getLocationOnScreen();
     	Point locationOnPanel = new Point(locationMouse.x - locationPanel.x, locationMouse.y - locationPanel.y);
@@ -145,7 +145,7 @@ public class GraphEnvironmentPopupPlugin<V, E> extends AbstractPopupGraphMousePl
         
     	Point2D p = me.getPoint();
     	
-		VisualizationViewer<GraphNode,GraphEdge> visView = this.basicGraphGui.getVisView();
+		VisualizationViewer<GraphNode,GraphEdge> visView = this.basicGraphGui.getVisualizationViewer();
         GraphElementAccessor<GraphNode,GraphEdge> pickSupport = visView.getPickSupport();
         if(pickSupport != null) {
             GraphNode vertex = (GraphNode) pickSupport.getVertex(visView.getGraphLayout(), p.getX(), p.getY());

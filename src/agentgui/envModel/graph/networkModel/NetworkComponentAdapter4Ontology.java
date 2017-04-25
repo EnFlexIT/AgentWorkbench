@@ -307,8 +307,11 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 			Ontology ontology = octo.getOntologyClass().getOntologyInstance();
 						
 			// --- Generate XML of this object ----------------------
-			String xml = this.getXMLOfInstance(ontoInstances[i], ontology);
+			String xml = null;
 			String xml64 = null;
+			if (i<ontoInstances.length) {
+				xml = this.getXMLOfInstance(ontoInstances[i], ontology);
+			}
 			if (xml!=null && xml.equals("")==false) {
 				try {
 					xml64 = new String(Base64.encodeBase64(xml.getBytes("UTF8")));

@@ -200,7 +200,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			public void componentAdded(ContainerEvent ce) {
 				if (doneAdded==false) {
 					validate();
-					zoomSetInitialScalingAndMovement();
+					zoomSetInitialScalingAndMovement(getVisualizationViewer());
 					doneAdded=true;
 				}
 			}
@@ -258,7 +258,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	public void dispose() {
 		this.killSatelliteView();
-		this.visView = null;
+		this.setVisualizationViewer(null);
 		this.visViewSatellite = null;
 	}
 	
@@ -268,16 +268,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	public GraphEnvironmentController getGraphEnvironmentController() {
 		return this.graphController;
-	}
-	/**
-	 * Gets the VisualizationViewer
-	 * @return The VisualizationViewer
-	 */
-	public BasicGraphGuiVisViewer<GraphNode, GraphEdge> getVisView() {
-		if (this.visView==null) {
-			this.reLoadGraph();
-		}
-		return this.visView;
 	}
 	/**
 	 * Gets the VisualizationViewer for the satellite view
@@ -354,7 +344,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the default scale at point
 	 */
 	private Point2D getDefaultScaleAtPoint() {
-		Rectangle2D rectVis = this.visView.getVisibleRect();
+		Rectangle2D rectVis = this.getVisualizationViewer().getVisibleRect();
 		if (rectVis.isEmpty()==false) {
 			this.defaultScaleAtPoint = new Point2D.Double(rectVis.getCenterX(), rectVis.getCenterY());
 		}
@@ -373,38 +363,32 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private void reLoadGraph() {
 
-		Graph<GraphNode, GraphEdge> graph = null;
-		if (this.graphController.getNetworkModel()!=null) {
-			graph = this.graphController.getNetworkModel().getGraph();	
-		}
+		Graph<GraphNode, GraphEdge> graph = this.getGraph();
 
 		// --- Remove the old component -------------------
 		if (this.centerComponent!=null) {
 			this.remove(centerComponent);
 			this.centerComponent = null;
-			this.visView = null;
 			this.visViewSatellite = null;
 		}
 
 		// --- Set the display ----------------------------
 		if (graph==null) {
 			// --- NO graph to display ----------
-			this.visView = null;
 			this.killSatelliteView();
 			this.visViewSatellite = null;
 			this.centerComponent = new JPanel();
 			this.add(centerComponent, BorderLayout.CENTER);
 		} else {
 			// --- Graph to display -------------
-			this.visView = this.getNewVisualizationViewer(graph);
+			this.getVisualizationViewer().getGraphLayout().setGraph(graph);
 			this.visViewSatellite = this.getNewVisualizationViewerSatellite();
 			this.reloadSatelliteView();
-			this.centerComponent = new GraphZoomScrollPane(this.visView);
+			this.centerComponent = new GraphZoomScrollPane(this.getVisualizationViewer());
 			this.add(this.centerComponent, BorderLayout.CENTER);
 
-			this.allowInitialScaling = true;
 			this.validate();
-			this.zoomSetInitialScalingAndMovement();
+			this.zoomFit2Window(this.getVisualizationViewer());
 			this.zoomOneToOneMoveFocus(this.visViewSatellite);
 		}
 	}
@@ -413,10 +397,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Gets the current Graph and repaints the visualisation viewer.
 	 */
 	private void repaintGraph() {
-		if (this.getVisView().getGraphLayout().getGraph()!=this.graphController.getNetworkModelAdapter().getGraph()) {
-			this.getVisView().getGraphLayout().setGraph(this.graphController.getNetworkModelAdapter().getGraph());
+		Graph<GraphNode, GraphEdge> graph = this.getGraph();
+		if (graph!=null && this.getVisualizationViewer().getGraphLayout().getGraph()!=graph) {
+			this.getVisualizationViewer().getGraphLayout().setGraph(graph);
 		}
-		this.getVisView().repaint();
+		this.getVisualizationViewer().repaint();
 	}
 
 	/**
@@ -492,281 +477,303 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 	
 	/**
-	 * Gets the new visualization viewer for a given graph.
-	 *
-	 * @param graph the graph
-	 * @return the new VisualizationViewer
+	 * Returns the current graph.
+	 * @return the graph
 	 */
-	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> getNewVisualizationViewer(Graph<GraphNode, GraphEdge> graph) {
+	private Graph<GraphNode, GraphEdge> getGraph() {
+		Graph<GraphNode, GraphEdge> graph = null;
+		if (this.graphController.getNetworkModel()!=null) {
+			graph = this.graphController.getNetworkModel().getGraph();	
+		}
+		return graph;
+	}
+	
+	/**
+	 * Sets the VisualizationViewer.
+	 * @param newVisView the new VisualizationViewer
+	 */
+	private void setVisualizationViewer(BasicGraphGuiVisViewer<GraphNode, GraphEdge> newVisView) {
+		this.visView = newVisView;
+	}
+	/**
+	 * Gets the VisualizationViewer
+	 * @return The VisualizationViewer
+	 */
+	public BasicGraphGuiVisViewer<GraphNode, GraphEdge> getVisualizationViewer() {
+		
+		if (visView==null) {
+			// ----------------------------------------------------------------
+			// --- Get the current graph --------------------------------------
+			// ----------------------------------------------------------------
+			Graph<GraphNode, GraphEdge> graph = this.getGraph();
 
-		// ----------------------------------------------------------------
-		// --- Define graph layout ----------------------------------------
-		// ----------------------------------------------------------------
-		Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
-		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
-		layout.setSize(new Dimension((int) (graphDimension.getWidth() + 2 * graphMargin), (int) (graphDimension.getHeight() + 2 * graphMargin)));
-		layout.setInitializer(new Transformer<GraphNode, Point2D>() {
-			@Override
-			public Point2D transform(GraphNode node) {
-				return node.getPosition(); // The position is specified in the GraphNode instance
-			}
-		});
-
-		
-		// ----------------------------------------------------------------
-		// --- Create a new VisualizationViewer instance ------------------
-		// ----------------------------------------------------------------
-		final BasicGraphGuiVisViewer<GraphNode, GraphEdge> vViewer = new BasicGraphGuiVisViewer<GraphNode, GraphEdge>(layout);
-		vViewer.setBackground(Color.WHITE);
-		vViewer.setDoubleBuffered(true);
-		
-		// --- Configure mouse and key interaction ------------------------
-		vViewer.setGraphMouse(this.getPluggableGraphMouse());
-		vViewer.addKeyListener(this.getGraphEnvironmentMousePlugin());
-		
-		// --- Set the pick size of the visualisation viewer --------
-		((ShapePickSupport<GraphNode, GraphEdge>) vViewer.getPickSupport()).setPickSize(5);
-		
-		
-		// ----------------------------------------------------------------
-		// --- Define edge and node ToolTip --------------------- Start ---
-		// ----------------------------------------------------------------
-		
-		// --- Edge -------------------------------------------------------
-		vViewer.setVertexToolTipTransformer(new Transformer<GraphNode, String>() {
-			@Override
-			public String transform(GraphNode node) {
-				
-				HashSet<NetworkComponent> netCompsAtNode = graphController.getNetworkModel().getNetworkComponents(node);
-				NetworkComponent netCompDisNode =  graphController.getNetworkModel().getDistributionNode(netCompsAtNode);
-				
-				// --- Generally define the toolTip -----------------------
-				String toolTip = "<html><b>GraphNode: " + node.getId() + "</b>";
-				if (netCompDisNode!=null) {
-					// --- In case of a distribution node -----------------
-					String type = netCompDisNode.getType();
-					String domain = "unknown";
-					String isAgent = "?";
-					ComponentTypeSettings cts = graphController.getGeneralGraphSettings4MAS().getCurrentCTS().get(type);
-					if (cts!=null) {
-						domain = cts.getDomain();
-						if (cts.getAgentClass()==null) {
-							isAgent = "No";
-						} else {
-							isAgent = "Yes";
-						}
-					}
-					// --- Define the ToolTip -----------------------------
-					toolTip += "<br><b>NetworkComponent: " + netCompDisNode.getId() + "</b><br>(Domain: " + domain + ", Type: " + type + ", isAgent: " + isAgent + ")";  
+			// ----------------------------------------------------------------
+			// --- Define graph layout ----------------------------------------
+			// ----------------------------------------------------------------
+			Layout<GraphNode, GraphEdge> layout = new StaticLayout<GraphNode, GraphEdge>(graph);
+			Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
+			layout.setSize(new Dimension((int) (graphDimension.getWidth() + 2 * graphMargin), (int) (graphDimension.getHeight() + 2 * graphMargin)));
+			layout.setInitializer(new Transformer<GraphNode, Point2D>() {
+				@Override
+				public Point2D transform(GraphNode node) {
+					return node.getPosition(); // The position is specified in the GraphNode instance
 				}
-				
-				// --- Show position in edit mode only --------------------
-				if (graphController.getProject()!=null) {
-					toolTip += "<br>(x=" + node.getPosition().getX() + " - y=" + node.getPosition().getY() + ")";	
-				}
-				toolTip += "</html>";
-				return toolTip;
-			}
-		});
-		
-		// --- Node -------------------------------------------------------
-		vViewer.setEdgeToolTipTransformer(new Transformer<GraphEdge, String>() {
-			@Override
-			public String transform(GraphEdge edge) {
-				String toolTip = null;
-				NetworkComponent netComp = graphController.getNetworkModel().getNetworkComponent(edge);
-				if (netComp!=null) {
-					String type = netComp.getType();
-					String domain = "unknown";
-					String isAgent = "?";
-					ComponentTypeSettings cts = graphController.getGeneralGraphSettings4MAS().getCurrentCTS().get(type);
-					if (cts!=null) {
-						domain = cts.getDomain();
-						if (cts.getAgentClass()==null) {
-							isAgent = "No";
-						} else {
-							isAgent = "Yes";
-						}
-					}
-					// --- Define the ToolTip -----------------------------
-					toolTip = "<html>";
-					toolTip += "<b>NetworkComponent: " + netComp.getId() + "</b><br>(Domain: " + domain + ", Type: " + type + ", isAgent: " + isAgent + ")";  
-					toolTip += "</html>";
-				}
-				return toolTip;
-			}
-		});
-		// ----------------------------------------------------------------
-		// --- Define edge and node ToolTip ------------------------ End---
-		// ----------------------------------------------------------------
-
-		// ----------------------------------------------------------------
-		// --- Node configurations ------------------------------ Start ---
-		// ----------------------------------------------------------------
-		
-		// --- Configure the node shape and size --------------------------
-		vViewer.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<GraphNode, GraphEdge>());
-		
-		// --- Configure node icons, if configured ------------------------
-		vViewer.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>() {
-
-			private final String pickedPostfix = "[picked]";
-			private HashMap<String, LayeredIcon> iconHash = new HashMap<String, LayeredIcon>();
-
-			@Override
-			public Icon transform(GraphNode node) {
-
-				Icon icon = null;
-				GraphElementLayout nodeLayout = node.getGraphElementLayout(graphController.getNetworkModel());
-				boolean picked = vViewer.getPickedVertexState().isPicked(node);
-				String nodeImagePath = nodeLayout.getImageReference();
-
-				if (nodeImagePath != null) {
-					if (nodeImagePath.equals("MissingIcon")==false) {
-						// --- 1. Search in the local Hash ------
-						LayeredIcon layeredIcon = null;
-						if (picked == true) {
-							layeredIcon = this.iconHash.get(nodeImagePath + this.pickedPostfix);
-						} else {
-							layeredIcon = this.iconHash.get(nodeImagePath);
-						}
-						// --- 2. If necessary, load the image --
-						if (layeredIcon == null) {
-							ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath);
-							if (imageIcon != null) {
-								// --- 3. Remind this images ----
-								LayeredIcon layeredIconUnPicked = new LayeredIcon(imageIcon.getImage());
-								this.iconHash.put(nodeImagePath, layeredIconUnPicked);
-
-								LayeredIcon layeredIconPicked = new LayeredIcon(imageIcon.getImage());
-								layeredIconPicked.add(new Checkmark(nodeLayout.getColorPicked()));
-								this.iconHash.put(nodeImagePath + this.pickedPostfix, layeredIconPicked);
-								// --- 4. Return the right one --
-								if (picked == true) {
-									layeredIcon = layeredIconPicked;
-								} else {
-									layeredIcon = layeredIconUnPicked;
-								}
+			});
+			
+			// ----------------------------------------------------------------
+			// --- Create a new VisualizationViewer instance ------------------
+			// ----------------------------------------------------------------
+			visView = new BasicGraphGuiVisViewer<GraphNode, GraphEdge>(layout);
+			visView.setBackground(Color.WHITE);
+			visView.setDoubleBuffered(true);
+			
+			// --- Configure mouse and key interaction ------------------------
+			visView.setGraphMouse(this.getPluggableGraphMouse());
+			visView.addKeyListener(this.getGraphEnvironmentMousePlugin());
+			
+			// --- Set the pick size of the visualisation viewer --------
+			((ShapePickSupport<GraphNode, GraphEdge>) visView.getPickSupport()).setPickSize(5);
+			
+			
+			// ----------------------------------------------------------------
+			// --- Define edge and node ToolTip --------------------- Start ---
+			// ----------------------------------------------------------------
+			
+			// --- Edge -------------------------------------------------------
+			visView.setVertexToolTipTransformer(new Transformer<GraphNode, String>() {
+				@Override
+				public String transform(GraphNode node) {
+					
+					HashSet<NetworkComponent> netCompsAtNode = graphController.getNetworkModel().getNetworkComponents(node);
+					NetworkComponent netCompDisNode =  graphController.getNetworkModel().getDistributionNode(netCompsAtNode);
+					
+					// --- Generally define the toolTip -----------------------
+					String toolTip = "<html><b>GraphNode: " + node.getId() + "</b>";
+					if (netCompDisNode!=null) {
+						// --- In case of a distribution node -----------------
+						String type = netCompDisNode.getType();
+						String domain = "unknown";
+						String isAgent = "?";
+						ComponentTypeSettings cts = graphController.getGeneralGraphSettings4MAS().getCurrentCTS().get(type);
+						if (cts!=null) {
+							domain = cts.getDomain();
+							if (cts.getAgentClass()==null) {
+								isAgent = "No";
+							} else {
+								isAgent = "Yes";
 							}
 						}
-						icon = layeredIcon;
+						// --- Define the ToolTip -----------------------------
+						toolTip += "<br><b>NetworkComponent: " + netCompDisNode.getId() + "</b><br>(Domain: " + domain + ", Type: " + type + ", isAgent: " + isAgent + ")";  
 					}
+					
+					// --- Show position in edit mode only --------------------
+					if (graphController.getProject()!=null) {
+						toolTip += "<br>(x=" + node.getPosition().getX() + " - y=" + node.getPosition().getY() + ")";	
+					}
+					toolTip += "</html>";
+					return toolTip;
 				}
-				return icon;
-			}
+			});
+			
+			// --- Node -------------------------------------------------------
+			visView.setEdgeToolTipTransformer(new Transformer<GraphEdge, String>() {
+				@Override
+				public String transform(GraphEdge edge) {
+					String toolTip = null;
+					NetworkComponent netComp = graphController.getNetworkModel().getNetworkComponent(edge);
+					if (netComp!=null) {
+						String type = netComp.getType();
+						String domain = "unknown";
+						String isAgent = "?";
+						ComponentTypeSettings cts = graphController.getGeneralGraphSettings4MAS().getCurrentCTS().get(type);
+						if (cts!=null) {
+							domain = cts.getDomain();
+							if (cts.getAgentClass()==null) {
+								isAgent = "No";
+							} else {
+								isAgent = "Yes";
+							}
+						}
+						// --- Define the ToolTip -----------------------------
+						toolTip = "<html>";
+						toolTip += "<b>NetworkComponent: " + netComp.getId() + "</b><br>(Domain: " + domain + ", Type: " + type + ", isAgent: " + isAgent + ")";  
+						toolTip += "</html>";
+					}
+					return toolTip;
+				}
+			});
+			// ----------------------------------------------------------------
+			// --- Define edge and node ToolTip ------------------------ End---
+			// ----------------------------------------------------------------
 
-		});
+			// ----------------------------------------------------------------
+			// --- Node configurations ------------------------------ Start ---
+			// ----------------------------------------------------------------
+			
+			// --- Configure the node shape and size --------------------------
+			visView.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<GraphNode, GraphEdge>());
+			
+			// --- Configure node icons, if configured ------------------------
+			visView.getRenderContext().setVertexIconTransformer(new Transformer<GraphNode, Icon>() {
 
-		// --- Configure node colors --------------------------------------
-		vViewer.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
-			@Override
-			public Paint transform(GraphNode node) {
-				if (vViewer.getPickedVertexState().isPicked(node)) {
-					return node.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
-				} 
-				return node.getGraphElementLayout(graphController.getNetworkModel()).getColor();
-			}
-		});
+				private final String pickedPostfix = "[picked]";
+				private HashMap<String, LayeredIcon> iconHash = new HashMap<String, LayeredIcon>();
 
-		// --- Configure to show node labels ------------------------------
-		vViewer.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
-			@Override
-			public String transform(GraphNode node) {
-				if (node.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel()==true) {
-					return node.getGraphElementLayout(graphController.getNetworkModel()).getLabelText();
-				}
-				return null;
-			}
-		});
-		
-		// ----------------------------------------------------------------
-		// --- Edge configurations ------------------------------ Start ---
-		// ----------------------------------------------------------------
-		
-		// --- Configure edge label position ------------------------------
-		vViewer.getRenderContext().setLabelOffset(6);
-		vViewer.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
-		
-		// --- Set the EdgeShape of the Visualisation Viewer --------------
-		this.setEdgeShapeTransformer(vViewer);
-		
-		// --- Set edge width ---------------------------------------------
-		vViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
-			@Override
-			public Stroke transform(GraphEdge edge) {
-				return new BasicStroke(edge.getGraphElementLayout(graphController.getNetworkModel()).getSize());
-			}
-		});
-		
-		// --- Configure edge color ---------------------------------------
-		Transformer<GraphEdge, Paint> edgeColorTransformer = new Transformer<GraphEdge, Paint>() {
-			@Override
-			public Paint transform(GraphEdge edge) {
-				Color initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColor();
-				if (vViewer.getPickedEdgeState().isPicked(edge)) {
-					initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
-				}
-				return initColor;
-			}}; 
-		vViewer.getRenderContext().setEdgeDrawPaintTransformer(edgeColorTransformer);
-		vViewer.getRenderContext().setArrowFillPaintTransformer(edgeColorTransformer);
-		vViewer.getRenderContext().setArrowDrawPaintTransformer(edgeColorTransformer);
-		
-		// --- Configure Edge Image Labels --------------------------------
-		vViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
-			@Override
-			public String transform(GraphEdge edge) {
-				// --- Get the needed info --------------------------------
-				String imageRef = edge.getGraphElementLayout(graphController.getNetworkModel()).getImageReference();
-				boolean showLabel = edge.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel();
-				// --- Configure color ------------------------------------
-				Color color = Color.BLACK;
-				if (vViewer.getPickedEdgeState().isPicked(edge)) {
-					color = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
-				}
-				String htmlColor = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
-				
-				// --- Get the text / image content -----------------------
-				String content = "";
-				if (showLabel) {
-					content = edge.getId();
-				}
-				if (imageRef!= null) {
-					URL url = getImageURL(imageRef);
-					if (url != null) {
-						if (showLabel) {
-							content = content + "<br><img src='" + url + "'>";
-						} else {
-							content = "<img src='" + url + "'>";
+				@Override
+				public Icon transform(GraphNode node) {
+
+					Icon icon = null;
+					GraphElementLayout nodeLayout = node.getGraphElementLayout(graphController.getNetworkModel());
+					boolean picked = visView.getPickedVertexState().isPicked(node);
+					String nodeImagePath = nodeLayout.getImageReference();
+
+					if (nodeImagePath != null) {
+						if (nodeImagePath.equals("MissingIcon")==false) {
+							// --- 1. Search in the local Hash ------
+							LayeredIcon layeredIcon = null;
+							if (picked == true) {
+								layeredIcon = this.iconHash.get(nodeImagePath + this.pickedPostfix);
+							} else {
+								layeredIcon = this.iconHash.get(nodeImagePath);
+							}
+							// --- 2. If necessary, load the image --
+							if (layeredIcon == null) {
+								ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath);
+								if (imageIcon != null) {
+									// --- 3. Remind this images ----
+									LayeredIcon layeredIconUnPicked = new LayeredIcon(imageIcon.getImage());
+									this.iconHash.put(nodeImagePath, layeredIconUnPicked);
+
+									LayeredIcon layeredIconPicked = new LayeredIcon(imageIcon.getImage());
+									layeredIconPicked.add(new Checkmark(nodeLayout.getColorPicked()));
+									this.iconHash.put(nodeImagePath + this.pickedPostfix, layeredIconPicked);
+									// --- 4. Return the right one --
+									if (picked == true) {
+										layeredIcon = layeredIconPicked;
+									} else {
+										layeredIcon = layeredIconUnPicked;
+									}
+								}
+							}
+							icon = layeredIcon;
 						}
 					}
+					return icon;
 				}
-				// --- Set the return value -------------------------------
-				String textDisplay = "<html><center><font color='[COLOR]'>[CONTENT]</font></center></html>";
-				textDisplay = textDisplay.replace("[COLOR]", htmlColor);
-				textDisplay = textDisplay.replace("[CONTENT]", content);
-				return textDisplay;
-			}
-		});
 
-		// --- Set edge renderer for a background color of an edge --------
-		vViewer.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer() {
-			@Override
-			public boolean isShowMarker(GraphEdge edge) {
-				return edge.getGraphElementLayout(graphController.getNetworkModel()).isMarkerShow();
-			}
-			@Override
-			public float getMarkerStrokeWidth(GraphEdge edge) {
-				return edge.getGraphElementLayout(graphController.getNetworkModel()).getMarkerStrokeWidth();
-			}
-			@Override
-			public Color getMarkerColor(GraphEdge edge) {
-				return edge.getGraphElementLayout(graphController.getNetworkModel()).getMarkerColor();
-			}
-		});
-		
-		// --- Done -------------------------------------------------------
-		return vViewer;
+			});
+
+			// --- Configure node colors --------------------------------------
+			visView.getRenderContext().setVertexFillPaintTransformer(new Transformer<GraphNode, Paint>() {
+				@Override
+				public Paint transform(GraphNode node) {
+					if (visView.getPickedVertexState().isPicked(node)) {
+						return node.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
+					} 
+					return node.getGraphElementLayout(graphController.getNetworkModel()).getColor();
+				}
+			});
+
+			// --- Configure to show node labels ------------------------------
+			visView.getRenderContext().setVertexLabelTransformer(new Transformer<GraphNode, String>() {
+				@Override
+				public String transform(GraphNode node) {
+					if (node.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel()==true) {
+						return node.getGraphElementLayout(graphController.getNetworkModel()).getLabelText();
+					}
+					return null;
+				}
+			});
+			
+			// ----------------------------------------------------------------
+			// --- Edge configurations ------------------------------ Start ---
+			// ----------------------------------------------------------------
+			
+			// --- Configure edge label position ------------------------------
+			visView.getRenderContext().setLabelOffset(6);
+			visView.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<GraphNode, GraphEdge>(.5, .5));
+			
+			// --- Set the EdgeShape of the Visualisation Viewer --------------
+			this.setEdgeShapeTransformer(visView);
+			
+			// --- Set edge width ---------------------------------------------
+			visView.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
+				@Override
+				public Stroke transform(GraphEdge edge) {
+					return new BasicStroke(edge.getGraphElementLayout(graphController.getNetworkModel()).getSize());
+				}
+			});
+			
+			// --- Configure edge color ---------------------------------------
+			Transformer<GraphEdge, Paint> edgeColorTransformer = new Transformer<GraphEdge, Paint>() {
+				@Override
+				public Paint transform(GraphEdge edge) {
+					Color initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColor();
+					if (visView.getPickedEdgeState().isPicked(edge)) {
+						initColor = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
+					}
+					return initColor;
+				}}; 
+			visView.getRenderContext().setEdgeDrawPaintTransformer(edgeColorTransformer);
+			visView.getRenderContext().setArrowFillPaintTransformer(edgeColorTransformer);
+			visView.getRenderContext().setArrowDrawPaintTransformer(edgeColorTransformer);
+			
+			// --- Configure Edge Image Labels --------------------------------
+			visView.getRenderContext().setEdgeLabelTransformer(new Transformer<GraphEdge, String>() {
+				@Override
+				public String transform(GraphEdge edge) {
+					// --- Get the needed info --------------------------------
+					String imageRef = edge.getGraphElementLayout(graphController.getNetworkModel()).getImageReference();
+					boolean showLabel = edge.getGraphElementLayout(graphController.getNetworkModel()).isShowLabel();
+					// --- Configure color ------------------------------------
+					Color color = Color.BLACK;
+					if (visView.getPickedEdgeState().isPicked(edge)) {
+						color = edge.getGraphElementLayout(graphController.getNetworkModel()).getColorPicked();
+					}
+					String htmlColor = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+					
+					// --- Get the text / image content -----------------------
+					String content = "";
+					if (showLabel) {
+						content = edge.getId();
+					}
+					if (imageRef!= null) {
+						URL url = getImageURL(imageRef);
+						if (url != null) {
+							if (showLabel) {
+								content = content + "<br><img src='" + url + "'>";
+							} else {
+								content = "<img src='" + url + "'>";
+							}
+						}
+					}
+					// --- Set the return value -------------------------------
+					String textDisplay = "<html><center><font color='[COLOR]'>[CONTENT]</font></center></html>";
+					textDisplay = textDisplay.replace("[COLOR]", htmlColor);
+					textDisplay = textDisplay.replace("[CONTENT]", content);
+					return textDisplay;
+				}
+			});
+
+			// --- Set edge renderer for a background color of an edge --------
+			visView.getRenderer().setEdgeRenderer(new GraphEnvironmentEdgeRenderer() {
+				@Override
+				public boolean isShowMarker(GraphEdge edge) {
+					return edge.getGraphElementLayout(graphController.getNetworkModel()).isMarkerShow();
+				}
+				@Override
+				public float getMarkerStrokeWidth(GraphEdge edge) {
+					return edge.getGraphElementLayout(graphController.getNetworkModel()).getMarkerStrokeWidth();
+				}
+				@Override
+				public Color getMarkerColor(GraphEdge edge) {
+					return edge.getGraphElementLayout(graphController.getNetworkModel()).getMarkerColor();
+				}
+			});
+			
+		}
+		return visView;
 	}
 	
 	/**
@@ -807,7 +814,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @see GeneralGraphSettings4MAS#getEdgeShape()
 	 */
 	public void setEdgeShapeTransformer() {
-		this.setEdgeShapeTransformer(this.getVisView());
+		this.setEdgeShapeTransformer(this.getVisualizationViewer());
 	}
 	
 	/**
@@ -868,33 +875,33 @@ public class BasicGraphGui extends JPanel implements Observer {
 		SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite = null;
 		
 		// --- Set dimension and create a new SatelliteVisualizationViewer ----
-		visViewSatellite = new SatelliteVisualizationViewer<GraphNode, GraphEdge>(this.visView, this.getVisViewSatelliteDimension());
+		visViewSatellite = new SatelliteVisualizationViewer<GraphNode, GraphEdge>(this.getVisualizationViewer(), this.getVisViewSatelliteDimension());
 		visViewSatellite.scaleToLayout(this.scalingControl);
 		visViewSatellite.setGraphMouse(new SatelliteGraphMouse(1/1.1f, 1.1f));
 		
 		
 		// --- Configure the node shape and size ------------------------------
-		visViewSatellite.getRenderContext().setVertexShapeTransformer(this.visView.getRenderContext().getVertexShapeTransformer());
+		visViewSatellite.getRenderContext().setVertexShapeTransformer(this.getVisualizationViewer().getRenderContext().getVertexShapeTransformer());
 		// --- Configure node icons, if configured ----------------------------
-		visViewSatellite.getRenderContext().setVertexIconTransformer(this.visView.getRenderContext().getVertexIconTransformer());
+		visViewSatellite.getRenderContext().setVertexIconTransformer(this.getVisualizationViewer().getRenderContext().getVertexIconTransformer());
 		// --- Configure node colors ------------------------------------------
-		visViewSatellite.getRenderContext().setVertexFillPaintTransformer(this.visView.getRenderContext().getVertexFillPaintTransformer());
+		visViewSatellite.getRenderContext().setVertexFillPaintTransformer(this.getVisualizationViewer().getRenderContext().getVertexFillPaintTransformer());
 		// --- Configure node label transformer -------------------------------
-		visViewSatellite.getRenderContext().setVertexLabelTransformer(this.visView.getRenderContext().getVertexLabelTransformer());
+		visViewSatellite.getRenderContext().setVertexLabelTransformer(this.getVisualizationViewer().getRenderContext().getVertexLabelTransformer());
 		
 		// --- Use straight lines as edges ------------------------------------
-		visViewSatellite.getRenderContext().setEdgeShapeTransformer(this.visView.getRenderContext().getEdgeShapeTransformer());
+		visViewSatellite.getRenderContext().setEdgeShapeTransformer(this.getVisualizationViewer().getRenderContext().getEdgeShapeTransformer());
 		// --- Set edge width -------------------------------------------------
-		visViewSatellite.getRenderContext().setEdgeStrokeTransformer(this.visView.getRenderContext().getEdgeStrokeTransformer());
+		visViewSatellite.getRenderContext().setEdgeStrokeTransformer(this.getVisualizationViewer().getRenderContext().getEdgeStrokeTransformer());
 		// --- Configure edge color -------------------------------------------
-		visViewSatellite.getRenderContext().setEdgeDrawPaintTransformer(this.visView.getRenderContext().getEdgeDrawPaintTransformer());
-		visViewSatellite.getRenderContext().setArrowFillPaintTransformer(this.visView.getRenderContext().getEdgeDrawPaintTransformer());
-		visViewSatellite.getRenderContext().setArrowDrawPaintTransformer(this.visView.getRenderContext().getEdgeDrawPaintTransformer());
+		visViewSatellite.getRenderContext().setEdgeDrawPaintTransformer(this.getVisualizationViewer().getRenderContext().getEdgeDrawPaintTransformer());
+		visViewSatellite.getRenderContext().setArrowFillPaintTransformer(this.getVisualizationViewer().getRenderContext().getEdgeDrawPaintTransformer());
+		visViewSatellite.getRenderContext().setArrowDrawPaintTransformer(this.getVisualizationViewer().getRenderContext().getEdgeDrawPaintTransformer());
 
 		// --- Configure Edge Image Labels ------------------------------------
-		visViewSatellite.getRenderContext().setEdgeLabelTransformer(this.visView.getRenderContext().getEdgeLabelTransformer());
+		visViewSatellite.getRenderContext().setEdgeLabelTransformer(this.getVisualizationViewer().getRenderContext().getEdgeLabelTransformer());
 		// --- Set edge renderer for a background color of an edge ------------
-		visViewSatellite.getRenderer().setEdgeRenderer(this.visView.getRenderer().getEdgeRenderer());
+		visViewSatellite.getRenderer().setEdgeRenderer(this.getVisualizationViewer().getRenderer().getEdgeRenderer());
 		
 		// --- Just for debugging purposes ------------------------------------
 		if (debug==true) {
@@ -955,10 +962,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Clears the picked nodes and edges
 	 */
 	private void clearPickedObjects() {
-		if (visView!=null) {
-			visView.getPickedVertexState().clear();
-			visView.getPickedEdgeState().clear();	
-		}
+		this.getVisualizationViewer().getPickedVertexState().clear();
+		this.getVisualizationViewer().getPickedEdgeState().clear();	
 	}
 
 	/**
@@ -967,9 +972,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private void setPickedObject(GraphElement object) {
 		if (object instanceof GraphEdge) {
-			visView.getPickedEdgeState().pick((GraphEdge) object, true);
+			this.getVisualizationViewer().getPickedEdgeState().pick((GraphEdge) object, true);
 		} else if (object instanceof GraphNode) {
-			visView.getPickedVertexState().pick((GraphNode) object, true);
+			this.getVisualizationViewer().getPickedVertexState().pick((GraphNode) object, true);
 		}
 	}
 
@@ -989,7 +994,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return GraphNode - the GraphNode which is picked.
 	 */
 	public GraphNode getPickedSingleNode() {
-		Set<GraphNode> nodeSet = this.getVisView().getPickedVertexState().getPicked();
+		Set<GraphNode> nodeSet = this.getVisualizationViewer().getPickedVertexState().getPicked();
 		if (nodeSet.size() == 1) {
 			return nodeSet.iterator().next();
 		}
@@ -1001,7 +1006,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the picked nodes
 	 */
 	public Set<GraphNode> getPickedNodes() {
-		PickedState<GraphNode> nodesPicked = visView.getPickedVertexState();
+		PickedState<GraphNode> nodesPicked = this.getVisualizationViewer().getPickedVertexState();
 		if (nodesPicked!=null) {
 			return nodesPicked.getPicked();
 		}
@@ -1013,7 +1018,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return GraphEdge - the GraphNode which is picked.
 	 */
 	public GraphEdge getPickedSingleEdge() {
-		Set<GraphEdge> edgeSet = this.getVisView().getPickedEdgeState().getPicked();
+		Set<GraphEdge> edgeSet = this.getVisualizationViewer().getPickedEdgeState().getPicked();
 		if (edgeSet.size() == 1) {
 			return edgeSet.iterator().next();
 		}
@@ -1025,7 +1030,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the picked edges
 	 */
 	public Set<GraphEdge> getPickedEdges() {
-		PickedState<GraphEdge> edgesPicked = this.visView.getPickedEdgeState();
+		PickedState<GraphEdge> edgesPicked = this.getVisualizationViewer().getPickedEdgeState();
 		if (edgesPicked!=null) {
 			return edgesPicked.getPicked();
 		}
@@ -1153,7 +1158,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 				// ---------------------------------------------
 				// --- Export current display to image ---------
 				// ---------------------------------------------
-				this.exportAsImage(this.getVisView(), selectedPath, selectedExtension);
+				this.exportAsImage(this.getVisualizationViewer(), selectedPath, selectedExtension);
 				// ---------------------------------------------
 
 				if (Application.getGlobalInfo() != null) {
@@ -1210,16 +1215,26 @@ public class BasicGraphGui extends JPanel implements Observer {
 	}
 	
 	/**
+	 * Zooms and fits to the window.
+	 * @param visViewer the vis viewer
+	 */
+	private void zoomFit2Window(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
+		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
+		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
+		this.allowInitialScaling = true;
+		this.zoomSetInitialScalingAndMovement(visViewer);
+	}
+	
+	/**
 	 * Sets the initial scaling for the graph on the VisualizationViewer.
 	 */
-	private void zoomSetInitialScalingAndMovement() {
+	private void zoomSetInitialScalingAndMovement(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
 		
-		if (this.visView == null) return;
 		if (this.allowInitialScaling == false) return;
 
-		Graph<GraphNode, GraphEdge> currGraph = this.visView.getGraphLayout().getGraph();
+		Graph<GraphNode, GraphEdge> currGraph = visViewer.getGraphLayout().getGraph();
 		Rectangle2D rectGraph = GraphGlobals.getGraphSpreadDimension(currGraph);
-		Rectangle2D rectVis = this.visView.getVisibleRect();
+		Rectangle2D rectVis = this.getVisualizationViewer().getVisibleRect();
 		if (rectVis.isEmpty()) return;
 
 		Point2D scaleAt = new Point2D.Double(0, 0);
@@ -1252,11 +1267,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 
 		// --- Set movement -----------
-		this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).translate(moveX, moveY);
+		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).translate(moveX, moveY);
 
 		// --- Set scaling ------------
 		if (scale != 0 && scale != 1) {
-			this.scalingControl.scale(this.visView, scale, scaleAt);
+			this.scalingControl.scale(visViewer, scale, scaleAt);
 		}
 		this.allowInitialScaling = false;
 
@@ -1293,25 +1308,25 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private void zoomComponent() {
 		
-		Set<GraphNode> nodesPicked = this.visView.getPickedVertexState().getPicked();
+		Set<GraphNode> nodesPicked = this.getVisualizationViewer().getPickedVertexState().getPicked();
 		if (nodesPicked.size()!=0) {
 			HashSet<NetworkComponent> components = this.graphController.getNetworkModelAdapter().getNetworkComponentsFullySelected(nodesPicked);
-			if (components.size()!=0) {
+			if (components!=null && components.size()!=0) {
 				// --- Get the dimension of the selected nodes ------ 
 				Rectangle2D areaSelected = GraphGlobals.getGraphSpreadDimension(nodesPicked);
 				Point2D areaCenter = new Point2D.Double(areaSelected.getCenterX(), areaSelected.getCenterY());
 				// --- Create temporary GraphNode -------------------
 				GraphNode tmpNode = new GraphNode("tmPCenter", areaCenter);
-				this.visView.getGraphLayout().getGraph().addVertex(tmpNode);
+				this.getVisualizationViewer().getGraphLayout().getGraph().addVertex(tmpNode);
 				// --- Get the needed positions ---------------------
-				Point2D tmpNodePos = this.visView.getGraphLayout().transform(tmpNode);
-				Point2D visViewCenter = this.visView.getRenderContext().getMultiLayerTransformer().inverseTransform(this.visView.getCenter());
+				Point2D tmpNodePos = this.getVisualizationViewer().getGraphLayout().transform(tmpNode);
+				Point2D visViewCenter = this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(this.getVisualizationViewer().getCenter());
 				// --- Calculate movement ---------------------------
 				final double dx = (visViewCenter.getX() - tmpNodePos.getX());
 				final double dy = (visViewCenter.getY() - tmpNodePos.getY());
 				// --- Remove temporary GraphNode and move view -----
-				this.visView.getGraphLayout().getGraph().removeVertex(tmpNode);
-				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy); 
+				this.getVisualizationViewer().getGraphLayout().getGraph().removeVertex(tmpNode);
+				this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy); 
 			}
 		}
 	}
@@ -1411,10 +1426,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Fit2Window:
-				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
-				this.visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
-				this.allowInitialScaling = true;
-				this.zoomSetInitialScalingAndMovement();
+				this.zoomFit2Window(this.getVisualizationViewer());
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Component:
@@ -1422,17 +1434,17 @@ public class BasicGraphGui extends JPanel implements Observer {
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_One2One:
-				visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
-				visView.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
-				this.zoomOneToOneMoveFocus(this.visView);
+				this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
+				this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
+				this.zoomOneToOneMoveFocus(this.getVisualizationViewer());
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_In:
-				this.getScalingControl().scale(visView, 1.1f, this.getDefaultScaleAtPoint());
+				this.getScalingControl().scale(this.getVisualizationViewer(), 1.1f, this.getDefaultScaleAtPoint());
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Out:
-				this.getScalingControl().scale(visView, 1 / 1.1f, this.getDefaultScaleAtPoint());
+				this.getScalingControl().scale(this.getVisualizationViewer(), 1 / 1.1f, this.getDefaultScaleAtPoint());
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_ExportGraphAsImage:
@@ -1440,11 +1452,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Picking:
-				this.visView.setGraphMouse(this.getPluggableGraphMouse());
+				this.getVisualizationViewer().setGraphMouse(this.getPluggableGraphMouse());
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_GraphMouse_Transforming:
-				this.visView.setGraphMouse(this.getDefaultModalGraphMouse());
+				this.getVisualizationViewer().setGraphMouse(this.getDefaultModalGraphMouse());
 				break;
 
 			default:
