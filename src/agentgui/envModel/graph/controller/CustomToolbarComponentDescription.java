@@ -70,7 +70,7 @@ public class CustomToolbarComponentDescription implements Serializable {
 	public CustomToolbarComponentDescription(ToolBarType toolBarType, ToolBarSurrounding toolBarSurrounding, Class<? extends AbstractCustomToolbarComponent> customComponentClass) {
 		if (toolBarType==ToolBarType.EditControl && toolBarSurrounding==ToolBarSurrounding.RuntimeOnly) {
 			try {
-				String errMsg = "A cutomized JButton for the BasicGraphGui can not be defined as an edit control element at runtime!";
+				String errMsg = "A cutomized JComponent for the BasicGraphGui can not be defined as an edit control element at runtime!";
 				throw new CustomToolbarComponentException(errMsg);
 			} catch (CustomToolbarComponentException ex) {
 				ex.printStackTrace();
@@ -237,5 +237,45 @@ public class CustomToolbarComponentDescription implements Serializable {
 		return customComponent;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compareObject) {
+
+		if (compareObject==null) return false;
+		if (!(compareObject instanceof CustomToolbarComponentDescription)) return false;
+		
+		// --- Compare the objects ------------------------
+		CustomToolbarComponentDescription compObject = (CustomToolbarComponentDescription) compareObject;
+		
+		if (compObject.getToolBarType()!=this.getToolBarType()) return false;
+		if (compObject.getToolBarSurrounding()!=this.getToolBarSurrounding()) return false;
+		if (this.isEqualString(compObject.getCustomComponentClass().getName(), this.getCustomComponentClass().getName())==false) return false;
+		if (compObject.getIndexPosition()!=this.getIndexPosition()) return false;
+		if (compObject.isAddSeparatorFirst()!=this.isAddSeparatorFirst()) return false;
+		
+		return true;
+	}
+	/**
+	 * Checks if is equal string setting.
+	 *
+	 * @param string1 the string 1
+	 * @param string2 the string 2
+	 * @return true, if is equal string
+	 */
+	private boolean isEqualString(String string1, String string2) {
+		boolean isEqual = true;
+		if (string1==null & string2==null) {
+			isEqual = true;
+		} else if (string1==null & string2!=null) {
+			isEqual = false;
+		} else if (string1!=null & string2==null) {
+			isEqual = false;
+		} else {
+			isEqual = string1.equals(string2);
+		}
+		return isEqual;
+	}
 	
 }

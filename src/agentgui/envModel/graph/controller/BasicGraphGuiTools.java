@@ -124,6 +124,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     private BasicGraphGui basicGraphGui;
 
     
+    private Vector<CustomToolbarComponentDescription> customToolbarComponentDescriptionAdded;
+    
     /**
      * Instantiates a new graph toolbar.
      */
@@ -819,13 +821,38 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     }
     
     /**
+     * Returns the vector of CustomToolbarComponentDescription's that were already added.
+     * @return the custom toolbar component description added
+     */
+    private Vector<CustomToolbarComponentDescription> getCustomToolbarComponentDescriptionAdded() {
+    	if (customToolbarComponentDescriptionAdded==null) {
+    		customToolbarComponentDescriptionAdded = new Vector<>();
+    	}
+    	return customToolbarComponentDescriptionAdded;
+    }
+    
+    /**
      * Rebuild custom toolbar component.
      */
     private void rebuildCustomToolbarComponent() {
     	Vector<CustomToolbarComponentDescription> customComponents = this.graphController.getNetworkModel().getGeneralGraphSettings4MAS().getCustomToolbarComponentDescriptions();
     	for (CustomToolbarComponentDescription customCopnent : customComponents) {
-    		this.addCustomToolbarComponent(customCopnent);
+    		if (this.isAlreadyAdded(customCopnent)==false) {
+    			this.addCustomToolbarComponent(customCopnent);
+    		}
     	}
+    }
+    /**
+     * Checks if the specified {@link CustomToolbarComponentDescription} is already added.
+     *
+     * @param compDescription the CustomToolbarComponentDescription
+     * @return true, if is already added
+     */
+    private boolean isAlreadyAdded(CustomToolbarComponentDescription compDescription) {
+    	for (int i = 0; i < this.getCustomToolbarComponentDescriptionAdded().size(); i++) {
+			if (this.getCustomToolbarComponentDescriptionAdded().get(i).equals(compDescription)) return true;
+		}
+    	return false;
     }
     /**
      * Adds the specified custom toolbar component.
@@ -881,10 +908,11 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 			if (toolBar.getComponentIndex(customComponent)==-1) {
         		// --- Add a JSeparator first, if wished ----------------------
         		if (compDescription.isAddSeparatorFirst()==true) {
+        			JToolBar.Separator separator = new JToolBar.Separator(); 
         			if (compDescription.getIndexPosition()==null) {
-            			toolBar.addSeparator();
+            			toolBar.add(separator);
             		} else {
-            			toolBar.add(new JToolBar.Separator(), (int)compDescription.getIndexPosition());
+            			toolBar.add(separator, (int)compDescription.getIndexPosition());
             		}	
         		}
         		// --- Add new component --------------------------------------
@@ -899,6 +927,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
         		}
         		toolBar.validate();
         		toolBar.repaint();
+        		// --- Remind added component ---------------------------------
+        		this.getCustomToolbarComponentDescriptionAdded().add(compDescription);
         	}
     	}
     	
