@@ -65,11 +65,11 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 	 */
 	public ImportNetworkModel(GraphEnvironmentController graphController) {
 		this.graphController = graphController;
-		this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
 		
 		// --- Define the import adapter and the file to import -----
 		this.selectFile();
 		if (this.networkModelFileImporter!=null && this.networkModelFileSelected!=null) {
+			this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
 			this.doEdit();
 		} else {
 			this.setCanceled(true);
