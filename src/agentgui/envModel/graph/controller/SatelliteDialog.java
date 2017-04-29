@@ -28,7 +28,8 @@
  */
 package agentgui.envModel.graph.controller;
 
-import java.awt.Dimension;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -39,48 +40,67 @@ import javax.swing.JDialog;
 import agentgui.core.application.Language;
 import agentgui.envModel.graph.GraphGlobals;
 
+
 /**
- * The Class SatelliteView.
+ * The Class SatelliteDialog.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class SatelliteView extends JDialog {
+public class SatelliteDialog extends JDialog {
 
 	private static final long serialVersionUID = -4309439744074827584L;
 
 	private final String pathImage = GraphGlobals.getPathImages();
-	private final ImageIcon iconAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png"));
-	private final Image imageAgentGUI = iconAgentGUI.getImage();
+	private final Image imageAgentGUI = new ImageIcon(this.getClass().getResource(pathImage + "AgentGUI.png")).getImage();
 	
-	private GraphEnvironmentController graphController = null;
-	private BasicGraphGui basicGraphGui = null;
+	private GraphEnvironmentController graphController;
+	
 	
 	/**
 	 * Instantiates a new satellite view.
 	 *
+	 * @param ownerFrame the owner frame
 	 * @param graphEnvController GraphEnvironmentController
 	 * @param basicGraphGui the BasicGraphGui
 	 */
-	public SatelliteView(GraphEnvironmentController graphEnvController, BasicGraphGui basicGraphGui) {
+	public SatelliteDialog(Frame ownerFrame, GraphEnvironmentController graphEnvController, BasicGraphGui basicGraphGui) {
+		super(ownerFrame);
+		this.initialize(graphEnvController, basicGraphGui);
+	}
+	/**
+	 * Instantiates a new satellite view.
+	 *
+	 * @param ownerDialog the owner dialog
+	 * @param graphEnvController GraphEnvironmentController
+	 * @param basicGraphGui the BasicGraphGui
+	 */
+	public SatelliteDialog(Dialog ownerDialog, GraphEnvironmentController graphEnvController, BasicGraphGui basicGraphGui) {
+		super(ownerDialog);
+		this.initialize(graphEnvController, basicGraphGui);
+	}
+	/**
+	 * Initialises this dialog.
+	 *
+	 * @param graphEnvController the current GraphEnvironmentController
+	 * @param basicGraphGui the current BasicGraphGui
+	 */
+	private void initialize(GraphEnvironmentController graphEnvController, BasicGraphGui basicGraphGui) {
 		
-		super();
-		this.basicGraphGui = basicGraphGui;
 		this.graphController = graphEnvController;
 		
-		Dimension dim = (Dimension) this.basicGraphGui.getVisViewSatelliteDimension().clone();
-		dim.setSize(dim.getWidth(), dim.getHeight()+50);
-		this.setSize(dim);
-		this.setIconImage(imageAgentGUI);
-		this.setAlwaysOnTop(true);
-		
-		this.add(this.basicGraphGui.getVisViewSatellite());
 		this.setTitle(Language.translate("Übersicht"));
+		this.setIconImage(imageAgentGUI);
+
+		this.setSize(200, 150);
+		this.add(basicGraphGui.getSatelliteVisualizationViewer());
 		
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
 				graphController.getNetworkModelAdapter().setSatelliteView(false);
 			}
 		});
-		
 	}
 	
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+	
+} 
 	

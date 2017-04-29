@@ -117,7 +117,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 
     /** The network model currently loaded */
     private NetworkModel networkModel;
-    private NetworkModelAdapter networkModelAdapter = new NetworkModelAdapter(this);
+    private NetworkModelAdapter networkModelAdapter;
     
     /** The NetworkModel that is stored in the clipboard */
     private NetworkModel clipboardNetworkModel;
@@ -233,6 +233,10 @@ public class GraphEnvironmentController extends EnvironmentController {
      * @return NetworkModel - The environment model
      */
     public NetworkModel getNetworkModel() {
+    	if (networkModel==null) {
+    		networkModel = new NetworkModel();
+    		networkModel.setGeneralGraphSettings4MAS(this.loadGeneralGraphSettings());
+    	}
     	return networkModel;
     }
 	/**
@@ -241,9 +245,9 @@ public class GraphEnvironmentController extends EnvironmentController {
      */
     public NetworkModelAdapter getNetworkModelAdapter() {
     	if (networkModelAdapter==null) {
-    		this.networkModelAdapter = new NetworkModelAdapter(this);
+    		networkModelAdapter = new NetworkModelAdapter(this);
     	}
-    	return this.networkModelAdapter;
+    	return networkModelAdapter;
     }
     
     /**
@@ -445,7 +449,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 		this.setNetworkComponentDataModelBase64Decoded();
 		
 		// --- Reset Undo-Manager -----------------------------------------------------------------
-		this.networkModelAdapter.getUndoManager().discardAllEdits();
+		this.getNetworkModelAdapter().getUndoManager().discardAllEdits();
 
 		if (Application.getMainWindow()!=null) {
 			Application.setStatusBar(Language.translate("Fertig"));

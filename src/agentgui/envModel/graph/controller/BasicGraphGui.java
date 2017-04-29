@@ -32,13 +32,12 @@ package agentgui.envModel.graph.controller;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.ContainerAdapter;
@@ -63,7 +62,6 @@ import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -143,16 +141,16 @@ public class BasicGraphGui extends JPanel implements Observer {
 	private GraphEnvironmentController graphController;
 	
 	/** The GUI's main component, either the graph visualization, or an empty JPanel if no graph is loaded */
-	private Component centerComponent;
+	private GraphZoomScrollPane graphZoomScrollPane;
 	/** The ToolBar for this component */
 	private BasicGraphGuiTools graphGuiTools;
 	private JPanel jPanelToolBars;
 	
 	/** Graph visualisation component */
 	private BasicGraphGuiVisViewer<GraphNode, GraphEdge> visView;
-	private SatelliteView satelliteView;
+	
+	private SatelliteDialog satelliteDialog;
 	private SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite;
-	private Dimension visViewSatelliteDimension = new Dimension(250, 200);
 	
 	/** JUNG object handling zooming */
 	private ScalingControl scalingControl = new CrossoverScalingControl();
@@ -193,6 +191,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		
 		// --- Add components -----------------------------
 		this.add(this.getJPanelToolBars(), BorderLayout.WEST);
+		this.add(this.getGraphZoomScrollPane(), BorderLayout.CENTER);
 
 		this.addContainerListener(new ContainerAdapter() {
 			boolean doneAdded = false;
@@ -257,9 +256,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Dispose this panel.
 	 */
 	public void dispose() {
-		this.killSatelliteView();
+		this.disposeSatelliteView();
 		this.setVisualizationViewer(null);
-		this.visViewSatellite = null;
 	}
 	
 	/**
@@ -268,21 +266,6 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	public GraphEnvironmentController getGraphEnvironmentController() {
 		return this.graphController;
-	}
-	/**
-	 * Gets the VisualizationViewer for the satellite view
-	 * @return The VisualizationViewer
-	 */
-	public SatelliteVisualizationViewer<GraphNode, GraphEdge> getVisViewSatellite() {
-		return this.visViewSatellite;
-	}
-	
-	/**
-	 * Returns the dimension of the SatelliteVisualizationViewer.
-	 * @return the vis view satellite dimension
-	 */
-	public Dimension getVisViewSatelliteDimension() {
-		return this.visViewSatelliteDimension;
 	}
 	/**
 	 * Gets the scaling control.
@@ -363,34 +346,17 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private void reLoadGraph() {
 
+		// --- Display the current Graph ------------------
 		Graph<GraphNode, GraphEdge> graph = this.getGraph();
+		this.getVisualizationViewer().getGraphLayout().setGraph(graph);
+		this.validate();
+		this.zoomFit2Window(this.getVisualizationViewer());
+		
+		this.getSatelliteVisualizationViewer().getGraphLayout().setGraph(graph);
+//		this.reloadSatelliteView();
+		this.zoomFit2Window(this.getSatelliteVisualizationViewer());
 
-		// --- Remove the old component -------------------
-		if (this.centerComponent!=null) {
-			this.remove(centerComponent);
-			this.centerComponent = null;
-			this.visViewSatellite = null;
-		}
 
-		// --- Set the display ----------------------------
-		if (graph==null) {
-			// --- NO graph to display ----------
-			this.killSatelliteView();
-			this.visViewSatellite = null;
-			this.centerComponent = new JPanel();
-			this.add(centerComponent, BorderLayout.CENTER);
-		} else {
-			// --- Graph to display -------------
-			this.getVisualizationViewer().getGraphLayout().setGraph(graph);
-			this.visViewSatellite = this.getNewVisualizationViewerSatellite();
-			this.reloadSatelliteView();
-			this.centerComponent = new GraphZoomScrollPane(this.getVisualizationViewer());
-			this.add(this.centerComponent, BorderLayout.CENTER);
-
-			this.validate();
-			this.zoomFit2Window(this.getVisualizationViewer());
-			this.zoomOneToOneMoveFocus(this.visViewSatellite);
-		}
 	}
 
 	/**
@@ -481,11 +447,18 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the graph
 	 */
 	private Graph<GraphNode, GraphEdge> getGraph() {
-		Graph<GraphNode, GraphEdge> graph = null;
-		if (this.graphController.getNetworkModel()!=null) {
-			graph = this.graphController.getNetworkModel().getGraph();	
+		return this.graphController.getNetworkModel().getGraph();
+	}
+	
+	/**
+	 * Gets the graph zoom scroll pane.
+	 * @return the graph zoom scroll pane
+	 */
+	public GraphZoomScrollPane getGraphZoomScrollPane() {
+		if (graphZoomScrollPane==null) {
+			graphZoomScrollPane = new GraphZoomScrollPane(this.getVisualizationViewer());
 		}
-		return graph;
+		return graphZoomScrollPane;
 	}
 	
 	/**
@@ -864,57 +837,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 		visViewer.getRenderContext().setEdgeShapeTransformer(edgeShapeTransformer);
 		visViewer.repaint();
 	}
-	
-	/**
-	 * Returns the new SatelliteVisualizationViewer.
-	 * @return the new SatelliteVisualizationViewer
-	 */
-	private SatelliteVisualizationViewer<GraphNode, GraphEdge> getNewVisualizationViewerSatellite() {
-		
-		boolean debug = false;
-		SatelliteVisualizationViewer<GraphNode, GraphEdge> visViewSatellite = null;
-		
-		// --- Set dimension and create a new SatelliteVisualizationViewer ----
-		visViewSatellite = new SatelliteVisualizationViewer<GraphNode, GraphEdge>(this.getVisualizationViewer(), this.getVisViewSatelliteDimension());
-		visViewSatellite.scaleToLayout(this.scalingControl);
-		visViewSatellite.setGraphMouse(new SatelliteGraphMouse(1/1.1f, 1.1f));
-		
-		
-		// --- Configure the node shape and size ------------------------------
-		visViewSatellite.getRenderContext().setVertexShapeTransformer(this.getVisualizationViewer().getRenderContext().getVertexShapeTransformer());
-		// --- Configure node icons, if configured ----------------------------
-		visViewSatellite.getRenderContext().setVertexIconTransformer(this.getVisualizationViewer().getRenderContext().getVertexIconTransformer());
-		// --- Configure node colors ------------------------------------------
-		visViewSatellite.getRenderContext().setVertexFillPaintTransformer(this.getVisualizationViewer().getRenderContext().getVertexFillPaintTransformer());
-		// --- Configure node label transformer -------------------------------
-		visViewSatellite.getRenderContext().setVertexLabelTransformer(this.getVisualizationViewer().getRenderContext().getVertexLabelTransformer());
-		
-		// --- Use straight lines as edges ------------------------------------
-		visViewSatellite.getRenderContext().setEdgeShapeTransformer(this.getVisualizationViewer().getRenderContext().getEdgeShapeTransformer());
-		// --- Set edge width -------------------------------------------------
-		visViewSatellite.getRenderContext().setEdgeStrokeTransformer(this.getVisualizationViewer().getRenderContext().getEdgeStrokeTransformer());
-		// --- Configure edge color -------------------------------------------
-		visViewSatellite.getRenderContext().setEdgeDrawPaintTransformer(this.getVisualizationViewer().getRenderContext().getEdgeDrawPaintTransformer());
-		visViewSatellite.getRenderContext().setArrowFillPaintTransformer(this.getVisualizationViewer().getRenderContext().getEdgeDrawPaintTransformer());
-		visViewSatellite.getRenderContext().setArrowDrawPaintTransformer(this.getVisualizationViewer().getRenderContext().getEdgeDrawPaintTransformer());
 
-		// --- Configure Edge Image Labels ------------------------------------
-		visViewSatellite.getRenderContext().setEdgeLabelTransformer(this.getVisualizationViewer().getRenderContext().getEdgeLabelTransformer());
-		// --- Set edge renderer for a background color of an edge ------------
-		visViewSatellite.getRenderer().setEdgeRenderer(this.getVisualizationViewer().getRenderer().getEdgeRenderer());
-		
-		// --- Just for debugging purposes ------------------------------------
-		if (debug==true) {
-			JDialog jDialogSatellite = new JDialog();
-			jDialogSatellite.setSize(300,300);
-			jDialogSatellite.setAlwaysOnTop(true);
-			jDialogSatellite.add(visViewSatellite);
-			jDialogSatellite.setVisible(true);
-		}
-		return visViewSatellite;
-	}
-	
-	
 	
 	/**
 	 * This method notifies the observers about a graph object selection
@@ -1234,7 +1157,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 		Graph<GraphNode, GraphEdge> currGraph = visViewer.getGraphLayout().getGraph();
 		Rectangle2D rectGraph = GraphGlobals.getGraphSpreadDimension(currGraph);
-		Rectangle2D rectVis = this.getVisualizationViewer().getVisibleRect();
+		Rectangle2D rectVis = visViewer.getVisibleRect();
 		if (rectVis.isEmpty()) return;
 
 		Point2D scaleAt = new Point2D.Double(0, 0);
@@ -1282,6 +1205,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @param visViewer the VisualizationViewer
 	 */
 	private void zoomOneToOneMoveFocus(VisualizationViewer<GraphNode, GraphEdge> visViewer) {
+		
+		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
+		visViewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
 		
 		Graph<GraphNode, GraphEdge> graph = visViewer.getGraphLayout().getGraph();
 		Rectangle2D graphDimension = GraphGlobals.getGraphSpreadDimension(graph);
@@ -1331,54 +1257,90 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 	}
 
+	
+	
+	/**
+	 * Gets the VisualizationViewer for the satellite view
+	 * @return The VisualizationViewer
+	 */
+	public SatelliteVisualizationViewer<GraphNode, GraphEdge> getSatelliteVisualizationViewer() {
+		if (visViewSatellite==null) {
+			
+			// --- Set dimension and create a new SatelliteVisualizationViewer ----
+			visViewSatellite = new SatelliteVisualizationViewer<GraphNode, GraphEdge>(this.getVisualizationViewer(), this.getDimensionOfSatelliteVisualizationViewer());
+			visViewSatellite.scaleToLayout(this.scalingControl);
+			visViewSatellite.setGraphMouse(new SatelliteGraphMouse(1/1.1f, 1.1f));
+			
+			// --- Configure the node shape and size ------------------------------
+			visViewSatellite.getRenderContext().setVertexShapeTransformer(this.getVisualizationViewer().getRenderContext().getVertexShapeTransformer());
+			// --- Configure node icons, if configured ----------------------------
+			visViewSatellite.getRenderContext().setVertexIconTransformer(this.getVisualizationViewer().getRenderContext().getVertexIconTransformer());
+			// --- Configure node colors ------------------------------------------
+			visViewSatellite.getRenderContext().setVertexFillPaintTransformer(this.getVisualizationViewer().getRenderContext().getVertexFillPaintTransformer());
+			// --- Configure node label transformer -------------------------------
+			visViewSatellite.getRenderContext().setVertexLabelTransformer(this.getVisualizationViewer().getRenderContext().getVertexLabelTransformer());
+			
+			// --- Use straight lines as edges ------------------------------------
+			visViewSatellite.getRenderContext().setEdgeShapeTransformer(this.getVisualizationViewer().getRenderContext().getEdgeShapeTransformer());
+			// --- Set edge width -------------------------------------------------
+			visViewSatellite.getRenderContext().setEdgeStrokeTransformer(this.getVisualizationViewer().getRenderContext().getEdgeStrokeTransformer());
+			// --- Configure edge color -------------------------------------------
+			visViewSatellite.getRenderContext().setEdgeDrawPaintTransformer(this.getVisualizationViewer().getRenderContext().getEdgeDrawPaintTransformer());
+			visViewSatellite.getRenderContext().setArrowFillPaintTransformer(this.getVisualizationViewer().getRenderContext().getEdgeDrawPaintTransformer());
+			visViewSatellite.getRenderContext().setArrowDrawPaintTransformer(this.getVisualizationViewer().getRenderContext().getEdgeDrawPaintTransformer());
+
+			// --- Configure Edge Image Labels ------------------------------------
+			visViewSatellite.getRenderContext().setEdgeLabelTransformer(this.getVisualizationViewer().getRenderContext().getEdgeLabelTransformer());
+			// --- Set edge renderer for a background color of an edge ------------
+			visViewSatellite.getRenderer().setEdgeRenderer(this.getVisualizationViewer().getRenderer().getEdgeRenderer());
+		}
+		return visViewSatellite;
+	}
+	/**
+	 * Returns the dimension of the SatelliteVisualizationViewer.
+	 * @return the vis view satellite dimension
+	 */
+	private Dimension getDimensionOfSatelliteVisualizationViewer() {
+		double ratio = 0.3;
+		Dimension vvSize = this.getVisualizationViewer().getSize();
+		Dimension visViewSateliteSize = new Dimension((int)(vvSize.getWidth()*ratio), (int) (vvSize.getHeight()*ratio)); 
+		return visViewSateliteSize;
+	}
 	/**
 	 * Returns the satellite view.
 	 * @return the satellite view
 	 */
-	private SatelliteView getSatelliteView() {
-		if (this.satelliteView ==null){
-			this.satelliteView = new SatelliteView(this.graphController, this);
+	private SatelliteDialog getSatelliteDialog() {
+		if (satelliteDialog ==null){
+			Frame ownerFrame = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+			if (ownerFrame!=null) {
+				satelliteDialog = new SatelliteDialog(ownerFrame, this.graphController, this);
+			} else {
+				Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
+				satelliteDialog = new SatelliteDialog(ownerDialog, this.graphController, this);
+			}
+			satelliteDialog.setSize(this.getDimensionOfSatelliteVisualizationViewer());
 		}
-		return this.satelliteView;
+		return satelliteDialog;
 	}
 	/**
 	 * Sets the satellite view.
-	 * @param satelliteView the new satellite view
+	 * @param satelliteDialog the new satellite view
 	 */
-	private void setSatelliteView(SatelliteView satelliteView) {
-		this.satelliteView = satelliteView;
+	private void setSatelliteDialog(SatelliteDialog satelliteDialog) {
+		this.satelliteDialog = satelliteDialog;
 	}
 	/**
 	 * Disposes the satellite view.
 	 */
-	private void killSatelliteView() {
-		if (this.satelliteView!=null) {
-			this.getSatelliteView().setVisible(false);
-			this.setSatelliteView(null);	
+	private void disposeSatelliteView() {
+		if (this.getSatelliteDialog()!=null) {
+			this.getSatelliteDialog().setVisible(false);
+			this.getSatelliteDialog().dispose();
+			this.setSatelliteDialog(null);	
 		}
 	}
 	
-	/**
-	 * Reloads the satellite view, if it is open.
-	 */
-	private void reloadSatelliteView() {
-		if (this.getSatelliteView().isVisible()) {
-
-			Point currPosition = this.getSatelliteView().getLocation();
-			Rectangle rect = this.getSatelliteView().getBounds();
-			
-			this.killSatelliteView();
-			this.getSatelliteView().setBounds(rect);
-			this.getSatelliteView().setLocation(currPosition);
-			this.getSatelliteView().validate();
-			this.getSatelliteView().setVisible(true);
-			
-		} else {
-			this.killSatelliteView();
-		}
-	}
-	
-
 	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
@@ -1399,7 +1361,8 @@ public class BasicGraphGui extends JPanel implements Observer {
 
 			case NetworkModelNotification.NETWORK_MODEL_Satellite_View:
 				Boolean visible = (Boolean) infoObject;
-				this.getSatelliteView().setVisible(visible);
+				this.getSatelliteDialog().setVisible(visible);
+				this.zoomFit2Window(this.getSatelliteVisualizationViewer());
 				break;
 				
 			case NetworkModelNotification.NETWORK_MODEL_Repaint:
@@ -1429,14 +1392,12 @@ public class BasicGraphGui extends JPanel implements Observer {
 				this.zoomFit2Window(this.getVisualizationViewer());
 				break;
 
+			case NetworkModelNotification.NETWORK_MODEL_Zoom_One2One:
+				this.zoomOneToOneMoveFocus(this.getVisualizationViewer());
+				break;
+				
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_Component:
 				this.zoomComponent();
-				break;
-
-			case NetworkModelNotification.NETWORK_MODEL_Zoom_One2One:
-				this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setToIdentity();
-				this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setToIdentity();
-				this.zoomOneToOneMoveFocus(this.getVisualizationViewer());
 				break;
 
 			case NetworkModelNotification.NETWORK_MODEL_Zoom_In:

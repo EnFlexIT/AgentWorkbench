@@ -97,7 +97,6 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * Default constructor.
 	 */
 	public NetworkModel() {
-		this.graph = new SparseGraph<GraphNode, GraphEdge>();
 		this.graphElements = new HashMap<String, GraphElement>();
 		this.networkComponents = new HashMap<String, NetworkComponent>();
 	}
@@ -126,6 +125,9 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return the JUNG Graph
 	 */
 	public Graph<GraphNode, GraphEdge> getGraph() {
+		if (graph==null) {
+			graph = new SparseGraph<GraphNode, GraphEdge>();
+		}
 		return graph;
 	}
 	/**
@@ -358,7 +360,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		Graph<GraphNode, GraphEdge> copyGraph = new SparseGraph<GraphNode, GraphEdge>();
 
 		// --- Copy all nodes and remind the relation between ID and new instance -------
-		Collection<GraphNode> nodesCollection = this.graph.getVertices();
+		Collection<GraphNode> nodesCollection = this.getGraph().getVertices();
 		GraphNode[] nodes = nodesCollection.toArray(new GraphNode[nodesCollection.size()]);
 		HashMap<String, GraphNode> graphNodeCopies = new HashMap<String, GraphNode>();
 		for (int i = 0; i < nodes.length; i++) {
@@ -369,13 +371,13 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 
 		// --- Copy the edges -----------------------------------------------------------
-		Collection<GraphEdge> edgesCollection = this.graph.getEdges();
+		Collection<GraphEdge> edgesCollection = this.getGraph().getEdges();
 		GraphEdge[] edges = edgesCollection.toArray(new GraphEdge[edgesCollection.size()]);
 		for (int i = 0; i < edges.length; i++) {
 			GraphEdge edge = edges[i];
-			EdgeType edgeType = this.graph.getEdgeType(edge);
-			GraphNode first = this.graph.getEndpoints(edge).getFirst();
-			GraphNode second = this.graph.getEndpoints(edge).getSecond();
+			EdgeType edgeType = this.getGraph().getEdgeType(edge);
+			GraphNode first = this.getGraph().getEndpoints(edge).getFirst();
+			GraphNode second = this.getGraph().getEndpoints(edge).getSecond();
 
 			GraphNode copyFirst = graphNodeCopies.get(first.getId());
 			GraphNode copySecond = graphNodeCopies.get(second.getId());
@@ -406,10 +408,10 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * Reloads the the GraphElementsMap.
 	 */
 	public void refreshGraphElements() {
-		if (this.graph != null) {
+		if (this.getGraph()!=null) {
 			this.graphElements = new HashMap<String, GraphElement>();
-			this.registerGraphElement(graph.getVertices().toArray(new GraphNode[0]));
-			this.registerGraphElement(graph.getEdges().toArray(new GraphEdge[0]));
+			this.registerGraphElement(this.getGraph().getVertices().toArray(new GraphNode[0]));
+			this.registerGraphElement(this.getGraph().getEdges().toArray(new GraphEdge[0]));
 		}
 		
 		// --- Refresh the reminder of the relation between GraphElement and NetworkComonent ------ 
@@ -588,14 +590,14 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		for (GraphElement graphElement : this.getGraphElementsFromNetworkComponent(networkComponent)) {
 
 			if (graphElement instanceof GraphEdge) {
-				this.graph.removeEdge((GraphEdge) graphElement);
+				this.getGraph().removeEdge((GraphEdge) graphElement);
 				this.getGraphElements().remove(graphElement.getId());
 				
 			} else if (graphElement instanceof GraphNode) {
 				GraphNode node = (GraphNode) graphElement;
 				boolean isDistributionGraphNode = this.isDistributionNode(node)!=null;
 				if (isDistributionGraphNode==false || (isDistributionGraphNode==true && removeDistributionNodes==true)) {
-					this.graph.removeVertex((GraphNode) graphElement);
+					this.getGraph().removeVertex((GraphNode) graphElement);
 					this.getGraphElements().remove(graphElement.getId());
 				}
 				
@@ -649,13 +651,13 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		
 		// --- Remove edges from the graph --------------------------
 		for (GraphElement graphElement : graphEdges2Remove) {
-			this.graph.removeEdge((GraphEdge) graphElement);
+			this.getGraph().removeEdge((GraphEdge) graphElement);
 		}
 		// --- Remove edges from the graph --------------------------
 		for (GraphElement graphElement : graphNodes2Remove) {
 			GraphNode graphNode = (GraphNode) graphElement;
-			if (this.graph.getIncidentEdges(graphNode).size() < 2) {
-				this.graph.removeVertex(graphNode);
+			if (this.getGraph().getIncidentEdges(graphNode).size() < 2) {
+				this.getGraph().removeVertex(graphNode);
 			} 
 		}
 		
@@ -1187,7 +1189,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				}
 				if (getNetworkComponents(graphNode).contains(clusterNC)) {
 					clusterNC.getGraphElementIDs().remove(graphNode.getId());
-					graph.removeVertex(graphNode);
+					this.getGraph().removeVertex(graphNode);
 					graphElements.remove(graphNode);
 				}
 			}
@@ -1200,7 +1202,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				counter++;
 			}
 			GraphEdge edge = new GraphEdge(clusterNC + "_" + counter, GeneralGraphSettings4MAS.NETWORK_COMPONENT_TYPE_4_CLUSTER);
-			graph.addEdge(edge, centerOfCluster, (GraphNode) graphElement, EdgeType.UNDIRECTED);
+			this.getGraph().addEdge(edge, centerOfCluster, (GraphNode) graphElement, EdgeType.UNDIRECTED);
 			graphElementIDs.add(edge.getId());
 			graphElementIDs.add(graphElement.getId());
 		}
@@ -1257,7 +1259,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 						GraphNode node = (GraphNode)graphElements.get(i);
 						if (this.graphElements.get(node.getId())==null) {
 							// --- GraphNode locally new --------------------------------
-							this.graph.addVertex(node);	
+							this.getGraph().addVertex(node);	
 							this.graphElements.put(node.getId(), node);
 						} else {
 							// --- GraphNode locally available --------------------------
@@ -1272,7 +1274,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 						GraphEdge edge = (GraphEdge) graphElements.get(i);
 						GraphNode node1 = (GraphNode) this.graphElements.get(suppGraph.getEndpoints(edge).getFirst().getId());
 						GraphNode node2 = (GraphNode) this.graphElements.get(suppGraph.getEndpoints(edge).getSecond().getId());
-						this.graph.addEdge(edge, node1, node2, suppGraph.getEdgeType(edge));
+						this.getGraph().addEdge(edge, node1, node2, suppGraph.getEdgeType(edge));
 						this.graphElements.put(edge.getId(), edge);
 						this.addGraphElementToNetworkComponentRelation(edge, nc);
 						
@@ -1394,7 +1396,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			// Checking the constraint - Two network components can have maximum one node in common
 			if (intersection.size() == 0) {
 				// --- No intersection node found - proceed -------------------
-				for (GraphEdge edgeOld : this.graph.getIncidentEdges(graphNode2)) {
+				for (GraphEdge edgeOld : this.getGraph().getIncidentEdges(graphNode2)) {
 					// --- switch connection to graphNode1 ----------
 					GraphEdge edgeNew = this.switchEdgeBetweenGraphNodes(edgeOld, graphNode1, graphNode2);
 					this.removeGraphElementToNetworkComponent(edgeOld);
@@ -1410,7 +1412,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				this.addGraphElementToNetworkComponentRelation(graphNode1, comp2);
 				
 				// --- Removing node2 from the graph and network model --------
-				this.graph.removeVertex(graphNode2);
+				this.getGraph().removeVertex(graphNode2);
 				this.graphElements.remove(graphNode2.getId());
 			}
 		}
@@ -1440,7 +1442,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			GraphNode graphNode = (GraphNode) this.getGraphElement(revertInfo.getGraphNode().getId());
 			if (graphNode==null) {
 				graphNode = revertInfo.getGraphNode();
-				this.graph.addVertex(graphNode);
+				this.getGraph().addVertex(graphNode);
 			}
 			this.switchEdgeBetweenGraphNodes(graphEdge, graphNode, mergedGraphNode);
 			
@@ -1487,7 +1489,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		for (int i = 0; i < (netCompVector.size() - 1); i++) {
 			NetworkComponent component = netCompVector.get(i);
 			// --- Incident Edges on the node ---------------------------------
-			for (GraphEdge odlEdge : this.graph.getIncidentEdges(node2SplitAt)) { // for each incident edge
+			for (GraphEdge odlEdge : this.getGraph().getIncidentEdges(node2SplitAt)) { // for each incident edge
 				// --- If the edge is in comp2 --------------------------------
 				if (component.getGraphElementIDs().contains(odlEdge.getId())) {
 					// --- Creating a new Graph node --------------------------
@@ -1508,7 +1510,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 					
 					if (moveOppositeNode==true) {
 						// --- Shift position of the new node a bit -----------
-						GraphNode otherNode = this.graph.getOpposite(newNode, newEdge);
+						GraphNode otherNode = this.getGraph().getOpposite(newNode, newEdge);
 						newNode.setPosition(this.getShiftedPosition(otherNode, newNode));	
 					}
 
@@ -1538,23 +1540,23 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	private GraphEdge switchEdgeBetweenGraphNodes(GraphEdge edge, GraphNode newGraphNode, GraphNode oldGraphNode) {
 		
 		// Find the node on the other side of the edge
-		GraphNode otherNode = graph.getOpposite(oldGraphNode, edge);
+		GraphNode otherNode = this.getGraph().getOpposite(oldGraphNode, edge);
 		// Create a new edge with the same ID and type
 		GraphEdge newEdge = new GraphEdge(edge.getId(), edge.getComponentType());
 
-		if (graph.getSource(edge) != null) {
+		if (this.getGraph().getSource(edge) != null) {
 			// if the edge is directed
-			if (graph.getSource(edge)==oldGraphNode) {
-				graph.addEdge(newEdge, newGraphNode, otherNode, EdgeType.DIRECTED);
-			} else if (graph.getDest(edge)==oldGraphNode) {
-				graph.addEdge(newEdge, otherNode, newGraphNode, EdgeType.DIRECTED);
+			if (this.getGraph().getSource(edge)==oldGraphNode) {
+				this.getGraph().addEdge(newEdge, newGraphNode, otherNode, EdgeType.DIRECTED);
+			} else if (this.getGraph().getDest(edge)==oldGraphNode) {
+				this.getGraph().addEdge(newEdge, otherNode, newGraphNode, EdgeType.DIRECTED);
 			}
 		} else {
 			// if the edge is undirected
-			graph.addEdge(newEdge, newGraphNode, otherNode, EdgeType.UNDIRECTED);
+			this.getGraph().addEdge(newEdge, newGraphNode, otherNode, EdgeType.UNDIRECTED);
 		}
 		// Removing the old edge from the graph and network model
-		graph.removeEdge(edge);
+		this.getGraph().removeEdge(edge);
 		graphElements.remove(edge.getId());
 		graphElements.put(newEdge.getId(), newEdge);
 
@@ -1712,7 +1714,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		for (String graphElementID : networkComponent.getGraphElementIDs()) {
 			GraphElement elem = getGraphElement(graphElementID);
 			// The center node should be incident on all the edges of the component
-			if (elem instanceof GraphEdge && !graph.isIncident(node, (GraphEdge) elem)) {
+			if (elem instanceof GraphEdge && !this.getGraph().isIncident(node, (GraphEdge) elem)) {
 				return false;
 			}
 		}
@@ -1851,7 +1853,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			
 			if (getGraphElement(graphNode.getId()) == null) {
 				GraphNode graphNodeCopy = graphNode.getCopy(this);
-				graph.addVertex(graphNodeCopy);
+				this.getGraph().addVertex(graphNodeCopy);
 				graphElements.put(graphNodeCopy.getId(), graphNodeCopy);
 			}
 		}
@@ -1864,7 +1866,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 
 			GraphNode copyFirst = (GraphNode) graphElements.get(first.getId());
 			GraphNode copySecond = (GraphNode) graphElements.get(second.getId());
-			graph.addEdge(graphEdgeNew, copyFirst, copySecond, edgeType);
+			this.getGraph().addEdge(graphEdgeNew, copyFirst, copySecond, edgeType);
 		}
 
 		for (NetworkComponent networkComponent : clusterNetworkComponent.getClusterNetworkModel().getNetworkComponents().values()) {
@@ -1995,7 +1997,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			return outerNetworkComponents;
 		}
 		outerNetworkComponents = new ArrayList<String>();
-		for (GraphNode graphNode : graph.getVertices()) {
+		for (GraphNode graphNode : this.getGraph().getVertices()) {
 			if (isFreeGraphNode(graphNode)) {
 				NetworkComponent networkComponent = getNetworkComponents(graphNode).iterator().next();
 				outerNetworkComponents.add(networkComponent.getId());
@@ -2061,8 +2063,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		
 		if (graphEdge!=null && graphNodeFrom!=null && graphNodeTo!=null) {
 			// --- Set graph directed ----------------
-			this.graph.removeEdge(graphEdge);
-			this.graph.addEdge(graphEdge, graphNodeFrom, graphNodeTo, EdgeType.DIRECTED);
+			this.getGraph().removeEdge(graphEdge);
+			this.getGraph().addEdge(graphEdge, graphNodeFrom, graphNodeTo, EdgeType.DIRECTED);
 		} 
 		
 	}
