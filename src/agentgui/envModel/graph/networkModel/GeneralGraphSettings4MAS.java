@@ -83,6 +83,9 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 	 
 	public static final String NETWORK_COMPONENT_TYPE_4_CLUSTER = "C L U S T E R !";
 	
+	/** Basic color for image icons. If using dynamic colorization, this color will be replaced */
+	public static final Color IMAGE_ICON_BASIC_COLOR = new Color(179, 179, 179);
+	
 	/** Default shapes for nodes */
 	public static final String SHAPE_ELLIPSE = "Ellipse";
 	public static final String SHAPE_RECTANGLE = "Rectangle";

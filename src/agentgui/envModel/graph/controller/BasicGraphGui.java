@@ -120,7 +120,7 @@ import edu.uci.ics.jung.visualization.renderers.Checkmark;
 public class BasicGraphGui extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 5764679914667183305L;
-
+	
 	/**
 	 * The enumeration ToolBarType describes the toolbar type available in the {@link BasicGraphGui}.
 	 */
@@ -417,7 +417,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 			} else if (shapeForm.equals(GeneralGraphSettings4MAS.SHAPE_IMAGE_SHAPE)) {
 				
 				String imageRef = node.getGraphElementLayout(graphController.getNetworkModel()).getImageReference();
-				shape = shapeMap.get(imageRef);
+
+				//TODO only rebuild if changed
+//				shape = shapeMap.get(imageRef);
+				shape = null;
 				if (shape == null) {
 					ImageIcon imageIcon = GraphGlobals.getImageIcon(imageRef);
 					if (imageIcon != null) {
@@ -605,22 +608,35 @@ public class BasicGraphGui extends JPanel implements Observer {
 						if (nodeImagePath.equals("MissingIcon")==false) {
 							// --- 1. Search in the local Hash ------
 							LayeredIcon layeredIcon = null;
+							Color currentColor = nodeLayout.getColor();
+							String colorPostfix = "[" + currentColor.getRGB() + "]";
 							if (picked == true) {
-								layeredIcon = this.iconHash.get(nodeImagePath + this.pickedPostfix);
+								layeredIcon = this.iconHash.get(nodeImagePath + colorPostfix + this.pickedPostfix);
 							} else {
-								layeredIcon = this.iconHash.get(nodeImagePath);
+								layeredIcon = this.iconHash.get(nodeImagePath + colorPostfix);
 							}
 							// --- 2. If necessary, load the image --
 							if (layeredIcon == null) {
 								ImageIcon imageIcon = GraphGlobals.getImageIcon(nodeImagePath);
-								if (imageIcon != null) {
+								
+								// --- Prepare the image ---------
+								BufferedImage bufferedImage;
+								if(currentColor.equals(Color.WHITE) || currentColor.equals(Color.BLACK)){
+									// --- If the color is set to black or white, just use the unchanged image ----------
+									bufferedImage = convertToBufferedImage(imageIcon.getImage());
+								}else{
+									// --- Otherwise, replace the defined basic color with the one specified in the node layout ---------
+									bufferedImage = exchangeColor(convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_BASIC_COLOR, currentColor);
+								}
+								
+								if (bufferedImage != null) {
 									// --- 3. Remind this images ----
-									LayeredIcon layeredIconUnPicked = new LayeredIcon(imageIcon.getImage());
-									this.iconHash.put(nodeImagePath, layeredIconUnPicked);
+									LayeredIcon layeredIconUnPicked = new LayeredIcon(bufferedImage);
+									this.iconHash.put(nodeImagePath + colorPostfix, layeredIconUnPicked);
 
-									LayeredIcon layeredIconPicked = new LayeredIcon(imageIcon.getImage());
+									LayeredIcon layeredIconPicked = new LayeredIcon(bufferedImage);
 									layeredIconPicked.add(new Checkmark(nodeLayout.getColorPicked()));
-									this.iconHash.put(nodeImagePath + this.pickedPostfix, layeredIconPicked);
+									this.iconHash.put(nodeImagePath + colorPostfix + this.pickedPostfix, layeredIconPicked);
 									// --- 4. Return the right one --
 									if (picked == true) {
 										layeredIcon = layeredIconPicked;
@@ -1341,6 +1357,36 @@ public class BasicGraphGui extends JPanel implements Observer {
 		}
 	}
 	
+	/**
+	 * Converts an {@link Image} to a {@link BufferedImage}
+	 * @param image The image
+	 * @return The buffered image
+	 */
+	private BufferedImage convertToBufferedImage(Image image){
+		BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D biGraphics = bufferedImage.createGraphics();
+		biGraphics.drawImage(image, 0, 0, null);
+		biGraphics.dispose();
+		return bufferedImage;
+	}
+	
+	/**
+	 * Replaces a specified color with another one in an image.
+	 * @param image The image 
+	 * @param oldColor The color that will be replaced
+	 * @param newColor The new color
+	 * @return The image
+	 */
+	private BufferedImage exchangeColor(BufferedImage image, Color oldColor, Color newColor){
+		for(int x=0; x<image.getWidth(); x++){
+			for(int y=0; y<image.getHeight(); y++){
+				if(image.getRGB(x, y) == oldColor.getRGB()){
+					image.setRGB(x, y, newColor.getRGB());
+				}
+			}
+		}
+		return image;
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
