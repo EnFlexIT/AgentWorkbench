@@ -1327,7 +1327,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * @return the satellite view
 	 */
 	private SatelliteDialog getSatelliteDialog() {
-		if (satelliteDialog ==null){
+		if (satelliteDialog==null){
 			Frame ownerFrame = Application.getGlobalInfo().getOwnerFrameForComponent(this);
 			if (ownerFrame!=null) {
 				satelliteDialog = new SatelliteDialog(ownerFrame, this.graphController, this);
@@ -1350,9 +1350,9 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 * Disposes the satellite view.
 	 */
 	private void disposeSatelliteView() {
-		if (this.getSatelliteDialog()!=null) {
-			this.getSatelliteDialog().setVisible(false);
-			this.getSatelliteDialog().dispose();
+		if (this.satelliteDialog!=null) {
+			this.satelliteDialog.setVisible(false);
+			this.satelliteDialog.dispose();
 			this.setSatelliteDialog(null);	
 		}
 	}
