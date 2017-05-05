@@ -69,12 +69,11 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-
-import org.apache.commons.collections15.map.HashedMap;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.VersionInfo;
@@ -1227,7 +1226,7 @@ public class LoadService extends BaseService {
 				threadProtocol.setMflops(mflops * noOfCPU);
 				
 				// --- Do the check if a thread is an agent or not ------
-				HashedMap<String, AID> aidHash = new HashedMap<String, AID>();
+				HashMap<String, AID> aidHash = new HashMap<String, AID>();
 				for (AID aid : myContainer.agentNames()) {
 					aidHash.put(aid.getLocalName(), aid);
 				}

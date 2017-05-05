@@ -621,10 +621,10 @@ public class BasicGraphGui extends JPanel implements Observer {
 								
 								// --- Prepare the image ---------
 								BufferedImage bufferedImage;
-								if(currentColor.equals(Color.WHITE) || currentColor.equals(Color.BLACK)){
+								if (currentColor.equals(Color.WHITE) || currentColor.equals(Color.BLACK)) {
 									// --- If the color is set to black or white, just use the unchanged image ----------
 									bufferedImage = convertToBufferedImage(imageIcon.getImage());
-								}else{
+								} else {
 									// --- Otherwise, replace the defined basic color with the one specified in the node layout ---------
 									bufferedImage = exchangeColor(convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_BASIC_COLOR, currentColor);
 								}
