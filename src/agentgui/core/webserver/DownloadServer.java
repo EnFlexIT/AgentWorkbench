@@ -34,6 +34,7 @@ import java.util.*;
 
 import agentgui.core.application.Application;
 import agentgui.core.common.FileCopier;
+import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.network.PortChecker;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.Project;
@@ -280,7 +281,7 @@ public class DownloadServer implements HttpConstants, Runnable {
     	// -------------------------------------------------------------------------
 		// --- If we're running in the IDE of Agent.GUI ----------------------------
     	// -------------------------------------------------------------------------
-		if (Application.getGlobalInfo().AppExecutedOver().equalsIgnoreCase("IDE")) {
+		if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 			
 			if (destinDirNewlyCreated==false) {
     			destinDir = new File(destinDirName);

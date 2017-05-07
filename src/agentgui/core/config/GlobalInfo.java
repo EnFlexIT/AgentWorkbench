@@ -28,10 +28,6 @@
  */
 package agentgui.core.config;
 
-import jade.core.Agent;
-import jade.core.ProfileImpl;
-import jade.wrapper.AgentContainer;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -40,7 +36,6 @@ import java.awt.Frame;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.util.HashSet;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -63,6 +58,9 @@ import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
 import agentgui.envModel.graph.visualisation.DisplayAgent;
+import jade.core.Agent;
+import jade.core.ProfileImpl;
+import jade.wrapper.AgentContainer;
 
 
 /**
@@ -100,9 +98,7 @@ public class GlobalInfo {
 	private JadeUrlConfiguration urlConfigurationForMaster;
 	
 	// --- Variables --------------------------------------------------------
-	public final static String ExecutedOverIDE = "IDE";
-	public final static String ExecutedOverAgentGuiJar = "Executable";
-	private static String localAppExecutedOver = ExecutedOverIDE;
+	private static ExecutionEnvironment localExecutionEnvironment = ExecutionEnvironment.ExecutedOverIDE;
 	
 	private static String localAppLnF = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
 	
@@ -188,6 +184,14 @@ public class GlobalInfo {
 	/** Can be used in order to access the version information */
 	private VersionInfo versionInfo = null;
 
+	
+	/**
+	 * The Enumeration that contains the descriptors of the ExecutionEnvironment.
+	 */
+	public enum ExecutionEnvironment {
+		ExecutedOverIDE,
+		ExecutedOverAgentGuiJar 
+	}
 
 	/**
 	 * The Enumeration of possible ExecutionModes.
@@ -231,69 +235,47 @@ public class GlobalInfo {
 	 */
 	public GlobalInfo() {
 
-		Integer  cutAt = 0;
-		String[] jcpFiles = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
-		String[] jcpFolders = jcpFiles.clone(); 
-		HashSet<String> dirsIncluded = new HashSet<String>();  
-		
+		// --------------------------------------------------------------------
+		// --- Get initial base directory by checking this class location -----
+		// --------------------------------------------------------------------
 		File thisFile = new File(GlobalInfo.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-		try {
-			thisFile = new File(GlobalInfo.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-		} catch (URISyntaxException uriEx) {
-			uriEx.printStackTrace();
+		if (thisFile.getAbsolutePath().contains("%20")==true) {
+			try {
+				thisFile = new File(GlobalInfo.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+			} catch (URISyntaxException uriEx) {
+				uriEx.printStackTrace();
+			}
 		}
-		GlobalInfo.localBaseDir = thisFile.getParent() + File.separator;
+		GlobalInfo.localBaseDir = thisFile + File.separator;
+		if (thisFile.getAbsolutePath().endsWith(GlobalInfo.localPathAgentGUI)) {
+			GlobalInfo.localBaseDir = thisFile.getParent() + File.separator;
+		}
 		
-		// ------------------------------------------------------------------
-		// --- Check the Class-Path settings --------------------------------
-		// ------------------------------------------------------------------
-		for (int i=0; i<jcpFiles.length; i++) {
-
-			if (jcpFiles[i].endsWith(GlobalInfo.localFileRunnableJar)==true & jcpFiles[i].endsWith(GlobalInfo.eomJar)==false) {
-				// --- Set the application executed from AgentGui.jar -------
-				GlobalInfo.localAppExecutedOver = GlobalInfo.ExecutedOverAgentGuiJar;
+		// --------------------------------------------------------------------
+		// --- Check the Class-Path settings ----------------------------------
+		// --------------------------------------------------------------------
+		String[] classPathFiles = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+		for (int i=0; i<classPathFiles.length; i++) {
+			// --- Correct execution parameter, if executed by AgentGui.jar ---
+			if (classPathFiles[i].endsWith(GlobalInfo.localFileRunnableJar)==true & classPathFiles[i].endsWith(GlobalInfo.eomJar)==false) {
+				// --- Set the application executed from AgentGui.jar ---------
+				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverAgentGuiJar);
 				
-				File agentGuiJar = new File(jcpFiles[i]);
+				File agentGuiJar = new File(classPathFiles[i]);
 				String agentGuiJarPath = agentGuiJar.getAbsolutePath(); 
-				cutAt = agentGuiJarPath.lastIndexOf(File.separator) + 1;
+				int cutAt = agentGuiJarPath.lastIndexOf(File.separator) + 1;
 				GlobalInfo.localBaseDir = agentGuiJarPath.substring(0, cutAt);	
 
-				// --- Include jade.jar by the ClassLoaderUtility -----------
+				// --- Include jade.jar by the ClassLoaderUtility -------------
 				String jadeJar = this.getPathJade(true) + File.separator + GlobalInfo.localFileJade;
 				ClassLoaderUtil.addJarToClassPath(jadeJar);
-				
 			}
-			if (jcpFiles[i].endsWith(".jar")) {
-				// ----------------------------------------------------------
-				// --- Get the directories of the jar file ------------------
-				cutAt = jcpFiles[i].lastIndexOf(File.separator);
-				if (cutAt!=-1) { 
-					jcpFolders[i] = jcpFolders[i].substring(0, cutAt);
-				}
-			}
-			// --- Remind directory -----------------------------------------
-			dirsIncluded.add(jcpFolders[i]);						
 		}
-		
-		
-		if (GlobalInfo.localAppExecutedOver.equals(GlobalInfo.ExecutedOverIDE)) {
-			// --------------------------------------------------------------
-			// --- Make directory entries unique ----------------------------
-			jcpFolders = (String[]) dirsIncluded.toArray(new String[dirsIncluded.size()]);
-			for (int j = 0; j < jcpFolders.length; j++) {				
-				if (jcpFolders[j].endsWith(GlobalInfo.localPathAgentGUI)) {
-					// --- Found bin-Directory ------------------------------					
-					cutAt = jcpFolders[j].lastIndexOf(GlobalInfo.localPathAgentGUI);
-					GlobalInfo.localBaseDir = jcpFolders[j].substring(0, cutAt);
-					break;
-				}
-			} 
-		}
-		// ------------------------------------------------------------------
+		// --------------------------------------------------------------------
 
 		
-		// ------------------------------------------------------------------
-		// --- Define the known EnvironmentTypes of Agent.GUI ---------------
+		// --------------------------------------------------------------------
+		// --- Define the known EnvironmentTypes of Agent.GUI -----------------
 		String envKey = null;
 		String envDisplayName = null;
 		String envDisplayNameLanguage = null;
@@ -301,7 +283,7 @@ public class GlobalInfo {
 		Class<? extends Agent> displayAgentClass = null;
 		EnvironmentType envType = null;
 		
-		// --- No environment -----------------------------------------------
+		// --- No environment -------------------------------------------------
 		envKey = "none";
 		envDisplayName = "Kein vordefiniertes Umgebungsmodell verwenden";
 		envDisplayNameLanguage = Language.DE;
@@ -310,7 +292,7 @@ public class GlobalInfo {
 		envType = new EnvironmentType(envKey, envDisplayName, envDisplayNameLanguage, envControllerClass, displayAgentClass);
 		addEnvironmentType(envType);
 		
-		// --- Grid Environment ---------------------------------------------
+		// --- Grid Environment -----------------------------------------------
 		envKey = "gridEnvironment";
 		envDisplayName = "Graph bzw. Netzwerk";
 		envDisplayNameLanguage = Language.DE;
@@ -320,8 +302,8 @@ public class GlobalInfo {
 		addEnvironmentType(envType);
 		
 		
-		// ------------------------------------------------------------------
-		// --- Add the known OntologyClassVisualisation's of Agent.GUI ------
+		// --------------------------------------------------------------------
+		// --- Add the known OntologyClassVisualisation's of Agent.GUI --------
 		this.registerOntologyClassVisualisation(TimeSeriesVisualisation.class.getName());
 		this.registerOntologyClassVisualisation(XyChartVisualisation.class.getName());
 		
@@ -467,9 +449,17 @@ public class GlobalInfo {
 	 * @return - 'IDE', if Agent.GUI is executed out of the IDE, where Agent.GUI is developed OR<br>
 	 * - 'Executable', if Agent.GUI is running as executable jar-File
 	 */
-	public String AppExecutedOver() {
-		return localAppExecutedOver;
+	public ExecutionEnvironment getExecutionEnvironment() {
+		return localExecutionEnvironment;
 	}
+	/**
+	 * Sets the execution environment.
+	 * @param executionEnvironment the new execution environment
+	 */
+	private void setExecutionEnvironment(ExecutionEnvironment executionEnvironment ) {
+		localExecutionEnvironment = executionEnvironment;
+	}
+	
 	/**
 	 * This method returns the actual String for a new line string
 	 * @return a String that can be used for new lines in text  
@@ -514,22 +504,37 @@ public class GlobalInfo {
 	 */
 	public String getPathJade(boolean absolute){
 		if (absolute == true) { 
-			return FilePath2Absolute( localPathJade );
+			return getFilePathAbsolute(localPathJade);
 		} else {
 			return localPathJade;	
 		}		
 	}
+	/**
+	 * Creates the directory if not already there and thus required.
+	 * @param path the path
+	 */
+	private void createDirectoryIfRequired(String path) {
+		// --- Check, if the folder exists. If not create -----------
+		File testDirectory = new File(path);
+		if (testDirectory.exists()==false) {
+			testDirectory.mkdir();
+		}
+	}
+	
 	/**
 	 * This method can be invoked in order to get the path to the property folder 'properties\'.
 	 * @param absolute set true if you want to get the full path to this 
 	 * @return the path reference to the property folder
 	 */
 	public String getPathProperty(boolean absolute){
-		if ( absolute == true ) { 
-			return FilePath2Absolute(localPathProperty);
+		String propPath = null;
+		if (absolute==true) { 
+			propPath =  getFilePathAbsolute(localPathProperty);
 		} else {
-			return localPathProperty;	
-		}	
+			propPath = localPathProperty;	
+		}
+		this.createDirectoryIfRequired(propPath);
+		return propPath;
 	}
 	/**
 	 * This method can be invoked in order to get the path to the logging directory 'log\'.
@@ -539,15 +544,11 @@ public class GlobalInfo {
 	public String getPathLogging(boolean absolute){
 		String returnPath = null;
 		if (absolute==true ) { 
-			returnPath = FilePath2Absolute(localPathLogging);
+			returnPath = getFilePathAbsolute(localPathLogging);
 		} else {
 			returnPath = localPathLogging;	
 		}	
-		// --- Check, if the folder exists. If not create -----------
-		File testFile = new File(returnPath);
-		if (testFile.exists()==false) {
-			testFile.mkdir();
-		}
+		this.createDirectoryIfRequired(returnPath);
 		return returnPath;
 	}
 	/**
@@ -556,11 +557,7 @@ public class GlobalInfo {
 	 * @return the path reference to the property file agentgui.ini
 	 */
 	public String getPathConfigFile(boolean absolute) {
-		if (absolute==true) {
-			return getPathProperty(true) + localFileProperties;
-		} else {
-			return getPathProperty(false) + localFileProperties;
-		}
+		return getPathProperty(absolute) + localFileProperties;
 	}
 	
 	/**
@@ -583,17 +580,14 @@ public class GlobalInfo {
 	public String getPathProjects(boolean absolute, boolean forcePathCreation){
 		String returnPath = null;
 		if (absolute == true) { 
-			returnPath = FilePath2Absolute(localPathProjects);
+			returnPath = getFilePathAbsolute(localPathProjects);
 		} else {
 			returnPath = localPathProjects;	
 		}
 		// --- See if the folder exists. If not create it, if -------
 		// --- the parameter forcePathCreation allows that ----------
 		if (forcePathCreation==true) {
-			File testFile = new File(returnPath);
-			if (testFile.exists()==false) {
-				testFile.mkdir();
-			}	
+			this.createDirectoryIfRequired(returnPath);
 		}
 		return returnPath;
 	}
@@ -639,16 +633,12 @@ public class GlobalInfo {
 	 * @return Local path to the download server of Agent.GUI ('/AgentGUI/server/')
 	 */
 	public String getPathWebServer(boolean absolute) {
-		
-		String returnPath = FilePath2Absolute(localPathWebServer);
+		String returnPath = getFilePathAbsolute(localPathWebServer);
 		if (absolute==false) { 
 			String workingPath = System.getProperty("user.dir");
 			returnPath = returnPath.substring(workingPath.length()+1);
 		}
-		File dir = new File(returnPath);
-		if (dir.exists()==false) {
-			dir.mkdir();
-		}
+		this.createDirectoryIfRequired(returnPath);
 		return returnPath;
 	}
 	
@@ -659,11 +649,8 @@ public class GlobalInfo {
 	 * @return Local path to the folder, where downloads will be saved ('/AgentGUI/download/')
 	 */
 	public String getPathDownloads() {
-		String returnPath = this.FilePath2Absolute(localPathDownloads);;
-		File dir = new File(returnPath);
-		if (dir.exists()==false) {
-			dir.mkdir();
-		}
+		String returnPath = this.getFilePathAbsolute(localPathDownloads);;
+		this.createDirectoryIfRequired(returnPath);
 		return returnPath;
 	}
 	/**
@@ -716,10 +703,10 @@ public class GlobalInfo {
 	 */
 	public String getFileRunnableJar(boolean absolute){
 		
-		if (localAppExecutedOver.equals(ExecutedOverAgentGuiJar)) {
+		if (getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 			// --- The current instance was executed over an AgentGui.jar -----
 			if (absolute == true && localFileRunnableJar != null) { 
-				return FilePath2Absolute(localFileRunnableJar);
+				return getFilePathAbsolute(localFileRunnableJar);
 			}else {
 				return localFileRunnableJar;	
 			}	
@@ -727,7 +714,7 @@ public class GlobalInfo {
 			// --- The current instance was executed by using the IDE ---------
 			String path2Jar = "exec" + File.separator + "AgentGUI" + File.separator + localFileRunnableJar; 
 			if (absolute == true) { 
-				return FilePath2Absolute(path2Jar);
+				return getFilePathAbsolute(path2Jar);
 			} else {
 				return path2Jar;	
 			}
@@ -754,7 +741,7 @@ public class GlobalInfo {
 		}
 		// --- Absolute Path of the dictionary file? ------
 		if ( absolute== true ) { 
-			return FilePath2Absolute(fileName);
+			return getFilePathAbsolute(fileName);
 		}
 		else {
 			return fileName;	
@@ -769,7 +756,7 @@ public class GlobalInfo {
 	 */
 	public String getFileNameUpdater(boolean absolute) {
 		if (absolute == true) { 
-			return FilePath2Absolute(localFileRunnableUpdater);
+			return getFilePathAbsolute(localFileRunnableUpdater);
 		} else {
 			return localFileRunnableUpdater;	
 		}
@@ -816,9 +803,8 @@ public class GlobalInfo {
 	 * @param filePathRelative The relative path to convert
 	 * @return The absolute path of the given relative one 
 	 */
-	private String FilePath2Absolute(String filePathRelative){
-		String pathAbsolute = localBaseDir + filePathRelative;
-		return pathAbsolute;		
+	private String getFilePathAbsolute(String filePathRelative){
+		return localBaseDir + filePathRelative;		
 	}
 	// ---------------------------------------------------------
 	// ---------------------------------------------------------

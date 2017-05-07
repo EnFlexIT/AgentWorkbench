@@ -43,6 +43,7 @@ import javax.swing.SwingUtilities;
 import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.common.ClassLoaderUtil;
+import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.gui.components.ClassElement2Display;
 import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.gui.components.JListWithProgressBar;
@@ -166,7 +167,7 @@ public class ClassSearcherSingle {
 		// --- Search for packages in project -------------
 		if (this.currProject!=null) {
 			// --- We are using our IDE in the moment -----			
-			if (Application.getGlobalInfo().AppExecutedOver().equalsIgnoreCase("IDE")) {
+			if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 				packagesInProject.addElement(currProject.getProjectFolder());
 			} 
 			// --- If we have external resources ----------

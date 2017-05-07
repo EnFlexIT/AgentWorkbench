@@ -37,6 +37,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.common.Zipper;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.config.VersionInfo;
 import agentgui.core.gui.ProgressMonitor;
@@ -225,7 +226,7 @@ public class AgentGuiUpdater extends Thread {
 		
 		// ------------------------------------------------
 		// --- Execution out of the IDE? ------------------
-		if (this.globalInfo.AppExecutedOver().equals(GlobalInfo.ExecutedOverIDE)) {
+		if (this.globalInfo.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 			this.doUpdateProcedure=false; // set to 'true' for further developments of the AgentGuiUpdater class 
 			this.askBeforeDownload=true;
 			this.askBeforeProjectShutdownAndUnzip=true;

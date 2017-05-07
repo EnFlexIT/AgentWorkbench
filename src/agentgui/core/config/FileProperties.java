@@ -153,11 +153,9 @@ public class FileProperties extends Properties {
 	 * Default constructor of this class. Will use the default config-file 'agentgui.xml'
 	 */
 	public FileProperties(GlobalInfo globalInfo) {
-		
 		this.globalInfo = globalInfo;
 		this.versionInfo = this.globalInfo.getVersionInfo();
 		this.configFile = this.globalInfo.getPathConfigFile(true);
-		
 		this.initialize();
 //		println4SysProps();
 //		println4EnvProps();
@@ -167,7 +165,7 @@ public class FileProperties extends Properties {
 	 */
 	private void initialize() {
 
-		// --- set the Default-Comment for config file --------------
+		// --- Set the Default-Comment for config file --------------
 		this.setDefaultComment();
 		
 		// --- open or create the config file -----------------------

@@ -53,6 +53,7 @@ import agentgui.core.agents.UtilityAgent;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.Project;
 import agentgui.core.webserver.DownloadServer;
@@ -482,7 +483,7 @@ public class Platform extends Object {
 			System.out.println("JADE-Profile: Use " + currProject.getProjectName() + "-configuration" );
 			
 			// --- If the current project has external resources ---- 
-			boolean ideExecuted = Application.getGlobalInfo().AppExecutedOver().equalsIgnoreCase("IDE");
+			boolean ideExecuted = Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE;
 			if (currProject.getProjectResources().size()>0 || ideExecuted==true) {
 				if (currProject.getDistributionSetup().isDoStaticLoadBalancing()==true || currProject.getDistributionSetup().isDoDynamicLoadBalancing()==true){
 					// --- Start Download-Server for project-resources ------
