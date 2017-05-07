@@ -82,45 +82,50 @@ public class Application {
 	/** Indicates that the application is running headless */
 	private static Boolean headlessOperation;
 	
+	/** The indicator to do system exit on quit. */
+	private static boolean doSystemExitOnQuit = true;
+	/** The quit application. */
+	private static boolean quitJVM = false;
+	
 	/**
 	 * This ClassDetector is used in order to search for agent classe's, ontology's and BaseService'.
 	 * If a project was newly opened, the search process will restart in order to determine the integrated
 	 * classes of the project. 
 	 */
-	private static ClassSearcher classSearcher = null;
+	private static ClassSearcher classSearcher;
 	
 	/** The instance of this singleton class */
 	private static Application thisApp = new Application();
 	/** This attribute holds the current state of the configurable runtime informations */
-	private static GlobalInfo globalInfo = null;
+	private static GlobalInfo globalInfo;
 	/** This will hold the instance of the main application window */
-	private static MainWindow mainWindow = null;
+	private static MainWindow mainWindow;
 	/** Here the tray icon of the application can be accessed */
-	private static AgentGUITrayIcon trayIcon = null;
+	private static AgentGUITrayIcon trayIcon;
 	/** This is the instance of the main application window */
-	private static JPanelConsole console = null;
+	private static JPanelConsole console;
 	/** In case that a log file has to be written */
-	private static LogFileWriter logFileWriter = null;
+	private static LogFileWriter logFileWriter;
 	/** In case of headless operation */
 	private static ShutdownThread shutdownThread;
 	/** The About dialog of the main application window. */
-	private static AboutDialog about = null;
+	private static AboutDialog about;
 	/** The About dialog of the application.*/
-	private static OptionDialog options = null;
+	private static OptionDialog options;
 	/** With this attribute/class the agent platform (JADE) will be controlled. */
-	private static Platform jadePlatform = null;
+	private static Platform jadePlatform;
 	/** The ODBC connection to the database */
-	private static DBConnection dbConnection = null;
+	private static DBConnection dbConnection;
 	/** Simple web-server that can be used for larger data transfer. */
-	private static DownloadServer downloadServer = null;
+	private static DownloadServer downloadServer;
 	
 
 	/** The project that has to be opened after application start. Received from program parameter.*/
-	private static String project2OpenAfterStart = null;
+	private static String project2OpenAfterStart;
 	/** Holds the list of the open projects. */
-	private static ProjectsLoaded projectsLoaded = null;
+	private static ProjectsLoaded projectsLoaded;
 	/** Holds the reference of the currently focused project */
-	private static Project projectFocused = null;
+	private static Project projectFocused;
 	
 	
 	
@@ -748,6 +753,36 @@ public class Application {
 	}
 	
 	/**
+	 * Sets to do <code>System.exit</code> when calling the {@link #quit()} method.
+	 * @param doSystemExitOnQuit the new do system exit on quit
+	 */
+	public static void setDoSystemExitOnQuit(boolean doSystemExitOnQuit) {
+		Application.doSystemExitOnQuit = doSystemExitOnQuit;
+	}
+	/**
+	 * Checks if is do system exit on quit.
+	 * @return true, if is do system exit on quit
+	 */
+	private static boolean isDoSystemExitOnQuit() {
+		return doSystemExitOnQuit;
+	}
+	
+	/**
+	 * Checks if is quit JVM.
+	 * @return true, if is quit JVM
+	 */
+	public static boolean isQuitJVM() {
+		return quitJVM;
+	}
+	/**
+	 * Sets to quit the JVM.
+	 * @param quitJVM the new quit JVM
+	 */
+	private static void setQuitJVM(boolean quitJVM) {
+		Application.quitJVM = quitJVM;
+	}
+
+	/**
 	 * Quits Agent.GUI (Application | Server | Service & Embedded System Agent)
 	 */
 	public static void quit() {
@@ -774,11 +809,13 @@ public class Application {
 		// --- Remove TrayIcon ------------------
 		setTrayIcon(null);	
 		
-		// --- Stop the OSGI platform -----------
-//		OSGIApplication.getInstance().stopOSGI();
-		
-		// --- Shutdown JVM ---------------------
-		System.exit(0);		
+		if (isDoSystemExitOnQuit()==true) {
+			// --- Shutdown JVM -----------------
+			System.exit(0);		
+		} else {
+			// --- Indicate to stop the JVM -----
+			setQuitJVM(true);
+		}
 	}
 
 	/**
