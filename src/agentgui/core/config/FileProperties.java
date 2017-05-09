@@ -903,7 +903,9 @@ public class FileProperties extends Properties {
 			e.printStackTrace();
 		} finally {
 			try {
-				fos.close();
+				if (fos!=null) {
+					fos.close();
+				}
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}

@@ -111,7 +111,7 @@ public class GlobalInfo {
 	private static String localPathWebServer = "server" + File.separator;
 	private static String localPathDownloads = "download" + File.separator;
 	
-	private static String localFileDictionary  = localPathProperty + "dictionary";
+	private static String localFileDictionary  = "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
 	private static String localFileNameProject = "agentgui.xml";
 	private static String localFileNameProjectUserObject = "agentgui.bin";
@@ -190,7 +190,8 @@ public class GlobalInfo {
 	 */
 	public enum ExecutionEnvironment {
 		ExecutedOverIDE,
-		ExecutedOverAgentGuiJar 
+		ExecutedOverAgentGuiJar,
+		ExecutedOverOSGI,
 	}
 
 	/**
@@ -235,47 +236,69 @@ public class GlobalInfo {
 	 */
 	public GlobalInfo() {
 
-		// --------------------------------------------------------------------
-		// --- Get initial base directory by checking this class location -----
-		// --------------------------------------------------------------------
-		File thisFile = new File(GlobalInfo.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-		if (thisFile.getAbsolutePath().contains("%20")==true) {
-			try {
-				thisFile = new File(GlobalInfo.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-			} catch (URISyntaxException uriEx) {
-				uriEx.printStackTrace();
+		boolean debug=false;
+		try {
+			// ----------------------------------------------------------------			
+			// --- Get initial base directory by checking this class location -
+			// ----------------------------------------------------------------
+			File thisFile = new File(GlobalInfo.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+			if (thisFile.getAbsolutePath().contains("%20")==true) {
+				try {
+					thisFile = new File(GlobalInfo.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+				} catch (URISyntaxException uriEx) {
+					uriEx.printStackTrace();
+				}
 			}
-		}
-		GlobalInfo.localBaseDir = thisFile + File.separator;
-		if (thisFile.getAbsolutePath().endsWith(GlobalInfo.localPathAgentGUI)) {
-			GlobalInfo.localBaseDir = thisFile.getParent() + File.separator;
-		}
-		
-		// --------------------------------------------------------------------
-		// --- Check the Class-Path settings ----------------------------------
-		// --------------------------------------------------------------------
-		String[] classPathFiles = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
-		for (int i=0; i<classPathFiles.length; i++) {
-			// --- Correct execution parameter, if executed by AgentGui.jar ---
-			if (classPathFiles[i].endsWith(GlobalInfo.localFileRunnableJar)==true & classPathFiles[i].endsWith(GlobalInfo.eomJar)==false) {
-				// --- Set the application executed from AgentGui.jar ---------
-				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverAgentGuiJar);
+			
+			// ----------------------------------------------------------------
+			// --- Examine the path reference found --------------------------
+			// ----------------------------------------------------------------
+			String pathFound = thisFile.getAbsolutePath(); 
+			if (pathFound.endsWith(".jar") && pathFound.endsWith(GlobalInfo.localFileRunnableJar)==false && pathFound.contains(File.separator + "plugins" + File.separator)) {
+				// --- OSGI environment ---------------------------------------
+				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverOSGI);
+				int cutAt = pathFound.indexOf("plugins" + File.separator);
+				GlobalInfo.localBaseDir = pathFound.substring(0, cutAt);
 				
-				File agentGuiJar = new File(classPathFiles[i]);
-				String agentGuiJarPath = agentGuiJar.getAbsolutePath(); 
-				int cutAt = agentGuiJarPath.lastIndexOf(File.separator) + 1;
-				GlobalInfo.localBaseDir = agentGuiJarPath.substring(0, cutAt);	
-
-				// --- Include jade.jar by the ClassLoaderUtility -------------
-				String jadeJar = this.getPathJade(true) + File.separator + GlobalInfo.localFileJade;
-				ClassLoaderUtil.addJarToClassPath(jadeJar);
+			} else {
+				// --- IDE or AgentGui.jar case -------------------------------
+				GlobalInfo.localBaseDir = thisFile + File.separator;
+				if (thisFile.getAbsolutePath().endsWith(GlobalInfo.localPathAgentGUI)) {
+					GlobalInfo.localBaseDir = thisFile.getParent() + File.separator;
+				}
 			}
+			
+			// ----------------------------------------------------------------
+			// --- Check the Class-Path settings for AgentGui.jar -------------
+			// ----------------------------------------------------------------
+			String[] classPathFiles = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+			for (int i=0; i<classPathFiles.length; i++) {
+				// --- Correct parameter, if executed by AgentGui.jar ---------
+				if (classPathFiles[i].endsWith(GlobalInfo.localFileRunnableJar)==true & classPathFiles[i].endsWith(GlobalInfo.eomJar)==false) {
+					// --- Set the application executed from AgentGui.jar -----
+					this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverAgentGuiJar);
+					
+					File agentGuiJar = new File(classPathFiles[i]);
+					String agentGuiJarPath = agentGuiJar.getAbsolutePath(); 
+					int cutAt = agentGuiJarPath.lastIndexOf(File.separator) + 1;
+					GlobalInfo.localBaseDir = agentGuiJarPath.substring(0, cutAt);	
+					
+					// --- Include jade.jar by the ClassLoaderUtility ---------
+					String jadeJar = this.getPathJade(true) + File.separator + GlobalInfo.localFileJade;
+					ClassLoaderUtil.addJarToClassPath(jadeJar);
+				}
+			}
+			// ----------------------------------------------------------------
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		// --------------------------------------------------------------------
-
+		if (debug==true) System.err.println(localAppTitle + " execution directory is '" + localBaseDir + "'");
 		
 		// --------------------------------------------------------------------
 		// --- Define the known EnvironmentTypes of Agent.GUI -----------------
+		// --------------------------------------------------------------------
 		String envKey = null;
 		String envDisplayName = null;
 		String envDisplayNameLanguage = null;
@@ -308,12 +331,17 @@ public class GlobalInfo {
 		this.registerOntologyClassVisualisation(XyChartVisualisation.class.getName());
 		
 	}
+	
 	/**
 	 * Initialises this class by reading the file properties and the current version information.
 	 */
 	public void initialize() {
-		this.getFileProperties();
-		this.getVersionInfo();
+		try {
+			this.getFileProperties();
+			this.getVersionInfo();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	/**
@@ -735,17 +763,11 @@ public class GlobalInfo {
 		// --- TXT-Version or Base64-encoded dictionary ---
 		String fileName = null;
 		if (base64==true) {
-			fileName = localFileDictionary + ".bin";
+			fileName = getPathProperty(absolute) + localFileDictionary + ".bin";
 		} else {
-			fileName = localFileDictionary + ".csv";
+			fileName = getPathProperty(absolute) + localFileDictionary + ".csv";
 		}
-		// --- Absolute Path of the dictionary file? ------
-		if ( absolute== true ) { 
-			return getFilePathAbsolute(fileName);
-		}
-		else {
-			return fileName;	
-		}
+		return fileName;
 	}
 	
 	

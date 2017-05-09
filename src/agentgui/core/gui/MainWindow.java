@@ -761,24 +761,25 @@ public class MainWindow extends JFrame {
 			}
 		return jMenuExtra;
 	}
-		// ------------------------------------------------------------
-		// --- Sprache ------------------------------------------------
-		// ------------------------------------------------------------
+		// ----------------------------------------------------------
+		// --- Sprache ----------------------------------------------
+		// ----------------------------------------------------------
 		/**
 		 * Setj menu extra lang.
 		 */
 		private void setjMenuExtraLang() {
 			
-			// --- Anzeige der Sprachen -------------------
+			// --- Display languages --------------------------------
 			String[] languageList = Language.getLanguages(true); 
 			boolean setBold = false;
-			for(int i=0; i<languageList.length; i++) {
-				if ( Language.isCurrentLanguage(languageList[i])) 
+			for (int i=0; i<languageList.length; i++) {
+				if (Language.isCurrentLanguage(languageList[i])) {
 					setBold = true;
-				else 
+				} else {
 					setBold = false;					
-				jMenuExtraLang.add( new JMenuItemLang(languageList[i], setBold) );
-			};
+				}
+				jMenuExtraLang.add(new JMenuItemLang(languageList[i], setBold));
+			}
 
 			jMenuExtraLang.addSeparator();
 			jMenuExtraLang.add(new CWMenueItem("ExtraTranslation", Language.translate("Übersetzen ..."), null));
