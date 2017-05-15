@@ -301,13 +301,12 @@ public class TimeModelContinuous extends TimeModelDateBased {
 	 * @param agent the agent
 	 * @return the synchronized system time
 	 */
-	private long getSystemTimeSynchronized() {
+	protected long getSystemTimeSynchronized() {
 		long sysTime;
 		if (this.getTimeAskingAgent()==null) {
 			// --- Just take the local time -------------------------
 			sysTime = System.currentTimeMillis();
-			System.err.println("No agent was set. Took local time!");
-			
+			logTookLocalTime();
 		} else {
 			// --- Try to get the synchronized platform time --------
 			try {
@@ -319,6 +318,13 @@ public class TimeModelContinuous extends TimeModelDateBased {
 			}
 		}
 		return sysTime;
+	}
+	
+	/**
+	 * Outputs a message to the STDERR console, indicating that no load balancing agent was set and therefore the local time was taken
+	 */
+	protected void logTookLocalTime(){
+		System.err.println("No agent was set. Took local time!");
 	}
 	
 	/**

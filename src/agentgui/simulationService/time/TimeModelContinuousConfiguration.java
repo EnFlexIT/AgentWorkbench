@@ -102,9 +102,9 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 	private JSpinner jSpinnerMillisStop = null;
 	private JSpinner jSpinnerAcceleration = null;
 
-	private boolean enabledChangeListener = true;
+	protected boolean enabledChangeListener = true;
 
-	private JLabel jLabeDateFormat = null;
+	private JLabel jLabelDateFormat = null;
 	private TimeFormatSelection jPanelTimeFormater = null;
 	
 	
@@ -120,7 +120,7 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 	/**
 	 * This method initializes this
 	 */
-	private void initialize() {
+	protected void initialize() {
 		
 		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
 		gridBagConstraints21.gridx = 1;
@@ -212,10 +212,10 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 		jLabelStop.setText(Language.translate(jLabelStop.getText()) + ":");
 		jLabelStop.setFont(new Font("Dialog", Font.BOLD, 12));
 
-		jLabeDateFormat = new JLabel();
-		jLabeDateFormat.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabeDateFormat.setText("Ansicht");
-		jLabeDateFormat.setText(Language.translate(jLabeDateFormat.getText()) + ":");
+		jLabelDateFormat = new JLabel();
+		jLabelDateFormat.setFont(new Font("Dialog", Font.BOLD, 12));
+		jLabelDateFormat.setText("Ansicht");
+		jLabelDateFormat.setText(Language.translate(jLabelDateFormat.getText()) + ":");
 
 		jLabelAcceleration = new JLabel();
 		jLabelAcceleration.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -233,7 +233,7 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
         this.add(jLabelStop, gridBagConstraints10);
         this.add(getJPanelStopSettings(), gridBagConstraints11);
         this.add(getJPanelDivider(), gridBagConstraints4);
-        this.add(jLabeDateFormat, gridBagConstraints20);
+        this.add(jLabelDateFormat, gridBagConstraints20);
         this.add(getJPanelTimeFormater(), gridBagConstraints21);
 	}
 
@@ -423,7 +423,7 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 	 * This method initializes timeFormater	
 	 * @return agentgui.simulationService.time.TimeFormatSelection	
 	 */
-	private TimeFormatSelection getJPanelTimeFormater() {
+	protected TimeFormatSelection getJPanelTimeFormater() {
 		if (jPanelTimeFormater == null) {
 			jPanelTimeFormater = new TimeFormatSelection();
 			jPanelTimeFormater.setPreferredSize(new Dimension(360, 80));
@@ -443,7 +443,7 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 	 * This method initializes jPanelWidthSettings	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getJPanelWidthSettings() {
+	protected JPanel getJPanelWidthSettings() {
 		if (jPanelWidthSettings == null) {
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			gridBagConstraints12.gridx = 2;
@@ -530,7 +530,7 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 	 * This method initializes jPanelDivider	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getJPanelDivider() {
+	protected JPanel getJPanelDivider() {
 		if (jPanelDivider == null) {
 			jPanelDivider = new JPanel();
 			jPanelDivider.setLayout(new GridBagLayout());
@@ -543,7 +543,7 @@ public class TimeModelContinuousConfiguration extends JPanel4TimeModelConfigurat
 	 * This method initializes jPanelDummy	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getJPanelDummy() {
+	protected JPanel getJPanelDummy() {
 		if (jPanelDummy == null) {
 			jPanelDummy = new JPanel();
 			jPanelDummy.setLayout(new GridBagLayout());
