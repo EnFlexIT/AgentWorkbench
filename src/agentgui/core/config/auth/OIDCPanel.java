@@ -36,12 +36,20 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import com.nimbusds.oauth2.sdk.ParseException;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -244,14 +252,14 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	 * 
 	 * @param successful the successful
 	 */
-	public void displayResult(boolean successful) {
+	public void displayResult(boolean successful, String message) {
 		this.getJLabelResult().setVisible(true);
 		if (successful) {
 			this.getJLabelResult().setText(Language.translate("Erfolgreich"));
 			this.getJLabelResult().setForeground(new Color(0, 153, 0));
 			this.getParent().getParent().getParent().setVisible(false);
 		} else {
-			this.getJLabelResult().setText(Language.translate("Fehlgeschlagen"));
+			this.getJLabelResult().setText(Language.translate("Fehlgeschlagen")+": "+message);
 			this.getJLabelResult().setForeground(new Color(153, 0, 0));
 		}
 	}
@@ -267,7 +275,12 @@ public class OIDCPanel extends JPanel implements ActionListener {
 			char[] pswd = getJPasswordField().getPassword();
 			String userName = getJTextFieldUsername().getText().trim();
 			Application.getGlobalInfo().setOIDCUsername(userName);
-			displayResult(owner.authorizeByUserAndPW(userName, new String(pswd)));
+			try {
+				displayResult(owner.authorizeByUserAndPW(userName, new String(pswd)),null);
+			} catch (ParseException | URISyntaxException | IOException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException e) {
+				displayResult(false, e.getLocalizedMessage());
+				e.printStackTrace();
+			}
 
 		} else {
 			if (parentGUI != null) {

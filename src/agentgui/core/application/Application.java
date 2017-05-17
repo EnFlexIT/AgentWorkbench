@@ -33,11 +33,19 @@ import jade.debugging.logfile.LogFileWriter;
 
 import java.awt.HeadlessException;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Vector;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
+import com.nimbusds.oauth2.sdk.ParseException;
 
 import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.config.GlobalInfo;
@@ -839,8 +847,13 @@ public class Application {
 	 * Opens the OpenID Connect dialog 
 	 */
 	public static void showAuthenticationDialog() {
-		OIDCAuthorization.getInstance().setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
-		OIDCAuthorization.getInstance().accessResource(OIDCPanel.DEBUG_RESOURCE_URI,getGlobalInfo().getOIDCUsername(), mainWindow);
+		try {
+			OIDCAuthorization.getInstance().setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
+			OIDCAuthorization.getInstance().accessResource(OIDCPanel.DEBUG_RESOURCE_URI,getGlobalInfo().getOIDCUsername(), mainWindow);
+		} catch (URISyntaxException | KeyManagementException | ParseException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
+//			e.printStackTrace();
+			System.err.println("Authentication failed: "+e.getClass()+": "+e.getMessage());
+		}
 	}
 	
 	/**

@@ -30,12 +30,17 @@
 package agentgui.core.config.auth;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -212,13 +217,17 @@ public class SimpleOIDCClient {
 	 *
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws ParseException the parse exception
+	 * @throws KeyStoreException
+	 * @throws CertificateException
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
 	 */
-	public void retrieveProviderMetadata() throws IOException, ParseException {
+	public void retrieveProviderMetadata() throws IOException, ParseException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		URL providerConfigurationURL = issuerURI.resolve(URLPATH_WELL_KNOWN_OPENID).toURL();
 //		System.out.println(providerConfigurationURL);
 		URLConnection conn = providerConfigurationURL.openConnection();
 
-		if(trustStoreFile!=null){
+		if (trustStoreFile != null) {
 			Trust.trustSpecific((HttpsURLConnection) conn, trustStoreFile);
 		}
 		InputStream stream = conn.getInputStream();
@@ -289,8 +298,12 @@ public class SimpleOIDCClient {
 	 * @throws SerializeException the serialize exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws ParseException the parse exception
+	 * @throws KeyStoreException
+	 * @throws CertificateException
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
 	 */
-	public void registerClient(BearerAccessToken initialAccessToken) throws SerializeException, IOException, ParseException {
+	public void registerClient(BearerAccessToken initialAccessToken) throws SerializeException, IOException, ParseException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 //		System.out.println("Client metadata");
 //		System.out.println(metadata.toJSONObject());
 
@@ -331,6 +344,7 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Gets the redirect URI.
+	 * 
 	 * @return the redirect URI
 	 */
 	public URI getRedirectURI() {
@@ -339,6 +353,7 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Gets the state.
+	 * 
 	 * @return the state
 	 */
 	public State getState() {
@@ -451,7 +466,7 @@ public class SimpleOIDCClient {
 	 * @return true, if successful
 	 */
 	private boolean verifyState(State state) {
-		if (state != null && this.state!=null && this.state.equals(state)) {
+		if (state != null && this.state != null && this.state.equals(state)) {
 			return true;
 		}
 		System.err.println(this.getClass().getSimpleName() + " - this.state=" + this.state);
@@ -472,9 +487,14 @@ public class SimpleOIDCClient {
 	/**
 	 * Token Request
 	 * When an authorization code (using code or hybrid flow) has been obtained, a token request can made to get the access token and the id token:
+	 * 
+	 * @throws KeyStoreException
+	 * @throws CertificateException
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
 	 */
-	public void requestToken() {
-		
+	public void requestToken() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+
 		AuthorizationGrant grant;
 		if (authCode == null) {
 			if (resourceOwnerCredentialsGrant == null) {
@@ -527,8 +547,9 @@ public class SimpleOIDCClient {
 	 * Dump token info.
 	 *
 	 * @throws ParseException the parse exception
+	 * @throws java.text.ParseException
 	 */
-	public void dumpTokenInfo() throws ParseException {
+	public void dumpTokenInfo() throws ParseException, java.text.ParseException {
 		System.out.println("Access Token:");
 		System.out.println(accessToken);
 
@@ -548,8 +569,16 @@ public class SimpleOIDCClient {
 	/**
 	 * UserInfo Request
 	 * Using the access token, information about the end user can be obtained by making a user info request
+	 * 
+	 * @throws KeyStoreException
+	 * @throws CertificateException
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
+	 * @throws ParseException
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
-	public void requestUserInfo() {
+	public void requestUserInfo() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, ParseException, FileNotFoundException, IOException {
 		if (accessToken == null) {
 			System.err.println(this.getClass().getSimpleName() + " - Access Token null, stopping UserInfo retrieval");
 			return;
@@ -560,18 +589,10 @@ public class SimpleOIDCClient {
 				(BearerAccessToken) accessToken);
 
 		HTTPResponse userInfoHTTPResp = null;
-		try {
-			userInfoHTTPResp = userInfoReq.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
-		} catch (SerializeException | IOException e) {
-			e.printStackTrace();
-		}
+		userInfoHTTPResp = userInfoReq.toHTTPRequest().send(null, Trust.getSocketFactory(trustStoreFile));
 
 		UserInfoResponse userInfoResponse = null;
-		try {
-			userInfoResponse = UserInfoResponse.parse(userInfoHTTPResp);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		userInfoResponse = UserInfoResponse.parse(userInfoHTTPResp);
 
 		if (userInfoResponse instanceof UserInfoErrorResponse) {
 			UserInfoErrorResponse errorResponse = ((UserInfoErrorResponse) userInfoResponse);
@@ -599,31 +620,32 @@ public class SimpleOIDCClient {
 	 * 
 	 * @return the JWT claims set
 	 * @throws ParseException the parse exception
+	 * @throws java.text.ParseException
 	 */
-	private JWTClaimsSet verifyIdToken() throws ParseException {
+	private JWTClaimsSet verifyIdToken() throws ParseException, java.text.ParseException {
 		JWTClaimsSet claims = null;
-		try {
-			claims = idToken.getJWTClaimsSet();
-		} catch (java.text.ParseException e) {
-			e.printStackTrace();
-		}
+		claims = idToken.getJWTClaimsSet();
+
 		return claims;
 	}
 
 	/**
 	 * Gets the id claims.
+	 * 
 	 * @return the id claims
+	 * @throws java.text.ParseException
 	 */
 	public JWTClaimsSet getIdClaims() {
 		try {
 			return verifyIdToken();
-		} catch (ParseException e) {
+		} catch (ParseException | java.text.ParseException e) {
 			return new JWTClaimsSet.Builder().build(); // return empty claims
 		}
 	}
 
 	/**
 	 * Gets the user info JSON.
+	 * 
 	 * @return the user info JSON
 	 */
 	public JSONObject getUserInfoJSON() {
@@ -632,6 +654,7 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Sets the trust store.
+	 * 
 	 * @param trustStoreFile the new trust store
 	 */
 	public void setTrustStore(File trustStoreFile) {

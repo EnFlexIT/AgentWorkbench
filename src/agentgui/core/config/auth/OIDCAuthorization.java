@@ -36,11 +36,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.ProtocolException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -109,15 +112,12 @@ public class OIDCAuthorization {
 	 * Gets the OIDC client.
 	 * 
 	 * @return the OIDC client
+	 * @throws URISyntaxException
 	 */
-	public SimpleOIDCClient getOIDCClient() {
+	public SimpleOIDCClient getOIDCClient() throws URISyntaxException {
 		if (oidcClient == null) {
 			oidcClient = new SimpleOIDCClient();
-			try {
-				oidcClient.setIssuerURI(getIssuerURI());
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
+			oidcClient.setIssuerURI(getIssuerURI());
 		}
 		return oidcClient;
 	}
@@ -126,8 +126,15 @@ public class OIDCAuthorization {
 	 * Gets the url processor.
 	 *
 	 * @return the url processor
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 * @throws ParseException
+	 * @throws KeyStoreException 
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	public URLProcessor getUrlProcessor() {
+	public URLProcessor getUrlProcessor() throws ParseException, URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		if (urlProcessor == null) {
 			init();
 		}
@@ -138,8 +145,9 @@ public class OIDCAuthorization {
 	 * Sets the trust store.
 	 *
 	 * @param truststoreFile the new trust store
+	 * @throws URISyntaxException
 	 */
-	public void setTrustStore(File truststoreFile) {
+	public void setTrustStore(File truststoreFile) throws URISyntaxException {
 		getOIDCClient();
 		oidcClient.setTrustStore(truststoreFile);
 	}
@@ -246,8 +254,9 @@ public class OIDCAuthorization {
 	 * Checks if OIDC token is valid, so access has been granted.
 	 *
 	 * @return true, if is valid
+	 * @throws URISyntaxException
 	 */
-	public boolean isValid() {
+	public boolean isValid() throws URISyntaxException {
 		if (getOIDCClient().getAccessToken() != null) {
 			return true;
 		}
@@ -259,8 +268,9 @@ public class OIDCAuthorization {
 	 *
 	 * @return the user ID
 	 * @throws OIDCProblemException if the token is not valid/the user is not authenticated yet
+	 * @throws URISyntaxException
 	 */
-	public String getUserID() throws OIDCProblemException {
+	public String getUserID() throws OIDCProblemException, URISyntaxException {
 		String userID;
 		if (!isValid()) {
 			throw new OIDCProblemException();
@@ -276,26 +286,26 @@ public class OIDCAuthorization {
 
 	/**
 	 * Initiates the authorization process by setting the necessary URIs and data to the OIDC client and preparing the URLProcessor.
+	 * 
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws KeyStoreException 
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	public void init() {
+	public void init() throws URISyntaxException, ParseException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		getOIDCClient();
 //		oidcClient.reset();
 		urlProcessor = new URLProcessor();
 
-		try {
-			oidcClient.setIssuerURI(getIssuerURI());
-			oidcClient.retrieveProviderMetadata();
-			oidcClient.setClientMetadata(getResourceURI());
-			oidcClient.setClientID(getClientID(), getClientSecret());
-			oidcClient.setRedirectURI(getResourceURI());
-			urlProcessor.prepare(oidcClient.getRedirectURI().toURL());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		oidcClient.setIssuerURI(getIssuerURI());
+		oidcClient.retrieveProviderMetadata();
+		oidcClient.setClientMetadata(getResourceURI());
+		oidcClient.setClientID(getClientID(), getClientSecret());
+		oidcClient.setRedirectURI(getResourceURI());
+		urlProcessor.prepare(oidcClient.getRedirectURI().toURL());
 		inited = true;
 	}
 
@@ -305,65 +315,66 @@ public class OIDCAuthorization {
 	 * @param username the username
 	 * @param password the password
 	 * @return true, if successful
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 * @throws ParseException
+	 * @throws KeyStoreException 
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	public boolean authorizeByUserAndPW(String username, String password) {
+	public boolean authorizeByUserAndPW(String username, String password) throws ParseException, URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		String authRedirection = "";
 
 		if (!inited) {
 			init();
 		}
 
-		try {
-			oidcClient.setResourceOwnerCredentials(username, password);
-			oidcClient.requestToken();
+		oidcClient.setResourceOwnerCredentials(username, password);
+		oidcClient.requestToken();
 
-			urlProcessor.setAccessToken(oidcClient.getAccessToken());
+		urlProcessor.setAccessToken(oidcClient.getAccessToken());
 
-			authRedirection = urlProcessor.prepare(oidcClient.getRedirectURI().toURL()).process();
-			if (authRedirection == null) { 	// authenticated
-				if (availabilityHandler != null) {
-					availabilityHandler.onResourceAvailable(urlProcessor);
-				}
-				return true;
-			} else {
-				System.err.println("OIDC authorization failed");
-				System.err.println("authRedirection=" + authRedirection);
-				return false;
+		authRedirection = urlProcessor.prepare(oidcClient.getRedirectURI().toURL()).process();
+		if (authRedirection == null) { 	// authenticated
+			if (availabilityHandler != null) {
+				availabilityHandler.onResourceAvailable(urlProcessor);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			return true;
+		} else {
+			System.err.println("OIDC authorization failed");
+			System.err.println("authRedirection=" + authRedirection);
+			return false;
 		}
-		return false;
 	}
 
 	/**
 	 * Access some resource previously set by {@link #setResourceURI(String)}. If not accessible, show user/password dialog
 	 *
 	 * @return true, if successful
+	 * @throws KeyStoreException 
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	public boolean accessResource() {
-		try {
-			getUrlProcessor().prepare(new URL(getResourceURI()));
-			String result = urlProcessor.process();
-			if (result == null) {
-				// all good (unlikely on first call)
-				if (availabilityHandler != null) {
-					availabilityHandler.onResourceAvailable(urlProcessor);
-				}
-				return true;
-			} else {
-				getOIDCClient().parseAuthenticationDataFromRedirect(result, false); // don't override clientID
-				if (availabilityHandler != null) {
-					availabilityHandler.onAuthorizationNecessary(this);
-				} else {
-					getDialog(presetUsername, ownerFrame).setVisible(true);
-				}
-				return false;
+	public boolean accessResource() throws IOException, ParseException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+		getUrlProcessor().prepare(new URL(getResourceURI()));
+		String result = urlProcessor.process();
+		if (result == null) {
+			// all good (unlikely on first call)
+			if (availabilityHandler != null) {
+				availabilityHandler.onResourceAvailable(urlProcessor);
 			}
-		} catch (IOException | ParseException | URISyntaxException e) {
-			e.printStackTrace();
+			return true;
+		} else {
+			getOIDCClient().parseAuthenticationDataFromRedirect(result, false); // don't override clientID
+			if (availabilityHandler != null) {
+				availabilityHandler.onAuthorizationNecessary(this);
+			} else {
+				getDialog(presetUsername, ownerFrame).setVisible(true);
+			}
+			return false;
 		}
-		return false;
 	}
 
 	/**
@@ -372,12 +383,19 @@ public class OIDCAuthorization {
 	 * @param url the url
 	 * @param presetUsername the preset username
 	 * @param ownerFrame the owner frame
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws KeyStoreException 
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	public boolean accessResource(String url, String presetUsername, Frame ownerFrame) {
+	public boolean accessResource(String url, String presetUsername, Frame ownerFrame) throws ParseException, IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		setResourceURI(url);
 		this.presetUsername = presetUsername;
 		this.ownerFrame = ownerFrame;
-		
+
 		return accessResource();
 	}
 
@@ -420,8 +438,9 @@ public class OIDCAuthorization {
 		 * Sets the upload file.
 		 *
 		 * @param uploadFile the new upload file
+		 * @throws IOException
 		 */
-		public void setUploadFile(File uploadFile) {
+		public void setUploadFile(File uploadFile) throws IOException {
 			this.uploadFile = uploadFile;
 			if (uploadFile != null) {
 				injectUpload();
@@ -481,8 +500,12 @@ public class OIDCAuthorization {
 		 * @param requestURL the request URL
 		 * @return the URL processor
 		 * @throws IOException Signals that an I/O exception has occurred.
+		 * @throws KeyStoreException 
+		 * @throws CertificateException 
+		 * @throws NoSuchAlgorithmException 
+		 * @throws KeyManagementException 
 		 */
-		public URLProcessor prepare(URL requestURL) throws IOException {
+		public URLProcessor prepare(URL requestURL) throws IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 //			System.out.println("requestURL=");
 //			System.out.println(requestURL);
 
@@ -534,41 +557,37 @@ public class OIDCAuthorization {
 
 		/**
 		 * Inject a file to upload into the URLConnection and set method to POST.
+		 * 
+		 * @throws IOException
 		 */
-		public void injectUpload() {
+		public void injectUpload() throws IOException {
 			String charset = CHARSET_UTF_8;
 			String boundary = Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
 
-			try {
-				connection.setRequestMethod(HTTP_METHOD_POST);
-				connection.setDoOutput(true);
-				connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+			connection.setRequestMethod(HTTP_METHOD_POST);
+			connection.setDoOutput(true);
+			connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 
-				OutputStream output = connection.getOutputStream();
-				PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true);
+			OutputStream output = connection.getOutputStream();
+			PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true);
 
-				// Send binary file.
-				writer.append("--" + boundary).append(CRLF);
-				writer.append("Content-Disposition: form-data; name=\"" + CONTENT_DISPOSITION_NAME + "\"; filename=\"" + uploadFile.getName() + "\"").append(CRLF);
+			// Send binary file.
+			writer.append("--" + boundary).append(CRLF);
+			writer.append("Content-Disposition: form-data; name=\"" + CONTENT_DISPOSITION_NAME + "\"; filename=\"" + uploadFile.getName() + "\"").append(CRLF);
 
-				String mediaType = URLConnection.guessContentTypeFromName(uploadFile.getName());
-				if (mediaType != null) {
-					writer.append("Content-Type: " + mediaType).append(CRLF);
-				}
-
-				writer.append("Content-Transfer-Encoding: binary").append(CRLF);
-				writer.append(CRLF).flush();
-				Files.copy(uploadFile.toPath(), output);
-				output.flush(); // Important before continuing with writer
-				writer.append(CRLF).flush(); // CRLF is important, indicates end o)f boundary
-
-				// End of multipart/form-data
-				writer.append("--" + boundary + "--").append(CRLF).flush();
-			} catch (ProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+			String mediaType = URLConnection.guessContentTypeFromName(uploadFile.getName());
+			if (mediaType != null) {
+				writer.append("Content-Type: " + mediaType).append(CRLF);
 			}
+
+			writer.append("Content-Transfer-Encoding: binary").append(CRLF);
+			writer.append(CRLF).flush();
+			Files.copy(uploadFile.toPath(), output);
+			output.flush(); // Important before continuing with writer
+			writer.append(CRLF).flush(); // CRLF is important, indicates end o)f boundary
+
+			// End of multipart/form-data
+			writer.append("--" + boundary + "--").append(CRLF).flush();
 		}
 	}
 

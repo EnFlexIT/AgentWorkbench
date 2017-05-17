@@ -48,7 +48,7 @@ import javax.net.ssl.TrustManagerFactory;
  * This class helps managing the trust to a specific key/certificate for a given connection.
  */
 public class Trust {
-	
+
 	public static final String OIDC_TRUST_STORE = "oidcTrustStore.jks";
 	private static final String TRUSTSTORE_PASSWORD = "HoYp8FfLLVJJFX1APMQA";
 
@@ -57,8 +57,14 @@ public class Trust {
 	 *
 	 * @param connection the connection
 	 * @param trustStoreFile the trust store file
+	 * @throws IOException 
+	 * @throws KeyStoreException 
+	 * @throws FileNotFoundException 
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	public static void trustSpecific(HttpsURLConnection connection, File trustStoreFile) {
+	public static void trustSpecific(HttpsURLConnection connection, File trustStoreFile) throws KeyManagementException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, KeyStoreException, IOException {
 		connection.setSSLSocketFactory(getSocketFactory(trustStoreFile));
 	}
 
@@ -67,8 +73,14 @@ public class Trust {
 	 *
 	 * @param trustStoreFile the trust store file
 	 * @return the socket factory
+	 * @throws IOException 
+	 * @throws KeyStoreException 
+	 * @throws FileNotFoundException 
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	public static SSLSocketFactory getSocketFactory(File trustStoreFile) {
+	public static SSLSocketFactory getSocketFactory(File trustStoreFile) throws KeyManagementException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, KeyStoreException, IOException {
 		SSLContext trustableSSLContext = getTrustableSSLContext(trustStoreFile);
 		return trustableSSLContext.getSocketFactory();
 	}
@@ -78,33 +90,25 @@ public class Trust {
 	 *
 	 * @param trustStoreFile the trust store file
 	 * @return the trustable SSL context
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 * @throws CertificateException
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyStoreException
+	 * @throws KeyManagementException
 	 */
-	private static SSLContext getTrustableSSLContext(File trustStoreFile) {
+	private static SSLContext getTrustableSSLContext(File trustStoreFile) throws NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException, KeyStoreException, KeyManagementException {
 		SSLContext sslContext = null;
 
-		try {
-			KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			trustStore.load(new FileInputStream(trustStoreFile), TRUSTSTORE_PASSWORD.toCharArray());
+		KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		trustStore.load(new FileInputStream(trustStoreFile), TRUSTSTORE_PASSWORD.toCharArray());
 
-			TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-			tmf.init(trustStore);
-			TrustManager[] tms = tmf.getTrustManagers();
+		TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+		tmf.init(trustStore);
+		TrustManager[] tms = tmf.getTrustManagers();
 
-			sslContext = SSLContext.getInstance("TLS");
-			sslContext.init(null, tms, null);
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (CertificateException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (KeyManagementException e) {
-			e.printStackTrace();
-		}
+		sslContext = SSLContext.getInstance("TLS");
+		sslContext.init(null, tms, null);
 		return sslContext;
 	}
 }
