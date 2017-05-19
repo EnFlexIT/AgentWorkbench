@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.ProtocolException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -564,30 +565,35 @@ public class OIDCAuthorization {
 			String charset = CHARSET_UTF_8;
 			String boundary = Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
 
-			connection.setRequestMethod(HTTP_METHOD_POST);
-			connection.setDoOutput(true);
-			connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-
-			OutputStream output = connection.getOutputStream();
-			PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true);
-
-			// Send binary file.
-			writer.append("--" + boundary).append(CRLF);
-			writer.append("Content-Disposition: form-data; name=\"" + CONTENT_DISPOSITION_NAME + "\"; filename=\"" + uploadFile.getName() + "\"").append(CRLF);
-
-			String mediaType = URLConnection.guessContentTypeFromName(uploadFile.getName());
-			if (mediaType != null) {
-				writer.append("Content-Type: " + mediaType).append(CRLF);
+			try {
+				connection.setRequestMethod(HTTP_METHOD_POST);
+				connection.setDoOutput(true);
+				connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+				
+				OutputStream output = connection.getOutputStream();
+				PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true);
+				
+				// Send binary file.
+				writer.append("--" + boundary).append(CRLF);
+				writer.append("Content-Disposition: form-data; name=\"" + CONTENT_DISPOSITION_NAME + "\"; filename=\"" + uploadFile.getName() + "\"").append(CRLF);
+				
+				String mediaType = URLConnection.guessContentTypeFromName(uploadFile.getName());
+				if (mediaType != null) {
+					writer.append("Content-Type: " + mediaType).append(CRLF);
+				}
+				
+				writer.append("Content-Transfer-Encoding: binary").append(CRLF);
+				writer.append(CRLF).flush();
+				Files.copy(uploadFile.toPath(), output);
+				output.flush(); // Important before continuing with writer
+				writer.append(CRLF).flush(); // CRLF is important, indicates end o)f boundary
+				
+				// End of multipart/form-data
+				writer.append("--" + boundary + "--").append(CRLF).flush();
+			} catch (IllegalStateException | ProtocolException e) {
+				// don't inject file, because http connection was already connected, will usually be overwritten later anyways
+//				e.printStackTrace();
 			}
-
-			writer.append("Content-Transfer-Encoding: binary").append(CRLF);
-			writer.append(CRLF).flush();
-			Files.copy(uploadFile.toPath(), output);
-			output.flush(); // Important before continuing with writer
-			writer.append(CRLF).flush(); // CRLF is important, indicates end o)f boundary
-
-			// End of multipart/form-data
-			writer.append("--" + boundary + "--").append(CRLF).flush();
 		}
 	}
 
