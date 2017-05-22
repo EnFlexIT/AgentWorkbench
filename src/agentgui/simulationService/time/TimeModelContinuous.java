@@ -296,10 +296,8 @@ public class TimeModelContinuous extends TimeModelDateBased {
 	 * Returns the system time, which is either the synchronized time of the SimulationService 
 	 * or, in case of an inactive JADE platform, the time of the local machine. 
 	 *
-	 * @see SimulationServiceHelper#getSynchTimeMillis()
-	 * 
-	 * @param agent the agent
 	 * @return the synchronized system time
+	 * @see SimulationServiceHelper#getSynchTimeMillis()
 	 */
 	protected long getSystemTimeSynchronized() {
 		long sysTime;
