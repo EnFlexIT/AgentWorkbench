@@ -180,10 +180,6 @@ import agentgui.core.webserver.JarFileCreator;
 	
 	
 	/**
-	 * The project class loader.
-	 */
-	@XmlTransient private ProjectClassLoader projectClassLoader;
-	/**
 	 * This Vector holds the additional resources which are used for the current project 
 	 * (external jar files or the binary folder of a development project)  
 	 */
@@ -1374,24 +1370,14 @@ import agentgui.core.webserver.JarFileCreator;
 	}
 
 	/**
-	 * Gets the project class loader.
-	 * @return the project class loader
-	 */
-	public ProjectClassLoader getProjectClassLoader() {
-		if (projectClassLoader==null) {
-			projectClassLoader = new ProjectClassLoader();
-		}
-		return projectClassLoader;
-	}
-
-	
-	/**
+	 * Sets the project resources.
 	 * @param projectResources the projectResources to set
 	 */
 	public void setProjectResources(VectorOfProjectResources projectResources) {
 		this.projectResources = projectResources;
 	}
 	/**
+	 * Returns the project resources.
 	 * @return the projectResources
 	 */
 	@XmlTransient
@@ -1409,7 +1395,7 @@ import agentgui.core.webserver.JarFileCreator;
 	 */
 	private String retrievBinResourceFromPath(String resourcePath) {
 		
-		// --- Get Agent.GUI base directory and walk up two parent folders ---
+		// --- Get Agent.GUI base directory and walk up to parent folders ----
 		File searchDir = new File(Application.getGlobalInfo().getPathBaseDir());
 		for (int i=0; i<2; i++) {
 			if (searchDir!=null) {

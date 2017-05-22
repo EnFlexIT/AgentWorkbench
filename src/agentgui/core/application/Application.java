@@ -176,11 +176,12 @@ public class Application {
 	public static boolean isOperatingHeadless() {
 		if (headlessOperation==null) {
 			// --- Do headless check ----------------------
-			JDialog hcDialog;
+			JDialog jDialog;
 			try {
-				hcDialog = new JDialog();
-				hcDialog.validate();
-				hcDialog = null;
+				jDialog = new JDialog();
+				jDialog.validate();
+				jDialog.dispose();
+				jDialog = null;
 				headlessOperation = false;
 				
 			} catch (HeadlessException he) {
