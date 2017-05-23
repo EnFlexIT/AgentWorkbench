@@ -63,7 +63,7 @@ public class TrustStoreController {
 	
 	private DefaultTableModel tableModel;
 	protected KeyStore trustStore;
-	private FileInputStream trustStoreInputStream = null;
+	private InputStream trustStoreInputStream = null;
 	private File trustStoreFile;
 	private FileOutputStream trustStoreOutputStream;
 	private String trustStorePassword;
@@ -156,7 +156,7 @@ public class TrustStoreController {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * This method open a TrustStore. It returns true if the password is correct.
 	 *
@@ -165,14 +165,30 @@ public class TrustStoreController {
 	 * @return true, if successful
 	 */
 	public boolean openTrustStore(File trustStoreFile, String trustStorePassword) {
+		if (trustStoreFile.exists()) {
+			try {
+				trustStoreInputStream = new FileInputStream(trustStoreFile);
+				init(trustStoreFile, trustStorePassword);
+				return openTrustStoreFromStream(trustStoreInputStream, trustStorePassword);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * This method opens a TrustStore directly from stream. It returns true if the password is correct. It will NOT initialize this controller, because the file for write interaction is missing
+	 *
+	 * @param trustStoreInputStream the TrustStore name
+	 * @param trustStorePassword the TrustStore password
+	 * @return true, if successful
+	 */
+	public boolean openTrustStoreFromStream(InputStream trustStoreInputStream, String trustStorePassword) {
 		boolean successful = false;
-		init(trustStoreFile, trustStorePassword);
-		this.trustStoreInputStream = null;
+		this.trustStoreInputStream = trustStoreInputStream;
 
 		try {
-			if (trustStoreFile.exists()) {
-				trustStoreInputStream = new FileInputStream(trustStoreFile);
-			}
 			// --- Loads the TrustStore from the given InputStream -------------
 			trustStore.load(trustStoreInputStream, trustStorePassword.toCharArray());
 			successful = true;
