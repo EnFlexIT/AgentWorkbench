@@ -49,8 +49,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import com.nimbusds.oauth2.sdk.ParseException;
-
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 
@@ -277,7 +275,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 			Application.getGlobalInfo().setOIDCUsername(userName);
 			try {
 				displayResult(owner.authorizeByUserAndPW(userName, new String(pswd)),null);
-			} catch (ParseException | URISyntaxException | IOException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException e) {
+			} catch (URISyntaxException | IOException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException e) {
 				displayResult(false, e.getLocalizedMessage());
 				e.printStackTrace();
 			}

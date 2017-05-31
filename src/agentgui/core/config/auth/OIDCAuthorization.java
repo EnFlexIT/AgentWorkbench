@@ -135,7 +135,7 @@ public class OIDCAuthorization {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws KeyManagementException 
 	 */
-	public URLProcessor getUrlProcessor() throws ParseException, URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+	public URLProcessor getUrlProcessor() throws URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		if (urlProcessor == null) {
 			init();
 		}
@@ -296,14 +296,18 @@ public class OIDCAuthorization {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws KeyManagementException 
 	 */
-	public void init() throws URISyntaxException, ParseException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+	public void init() throws URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		getOIDCClient();
 //		oidcClient.reset();
 		urlProcessor = new URLProcessor();
 
 		oidcClient.setIssuerURI(getIssuerURI());
-		oidcClient.retrieveProviderMetadata();
-		oidcClient.setClientMetadata(getResourceURI());
+		try {
+			oidcClient.retrieveProviderMetadata();
+			oidcClient.setClientMetadata(getResourceURI());
+		} catch (ParseException e) {
+			throw new IOException("OIDC ParseException");
+		}
 		oidcClient.setClientID(getClientID(), getClientSecret());
 		oidcClient.setRedirectURI(getResourceURI());
 		urlProcessor.prepare(oidcClient.getRedirectURI().toURL());
@@ -324,7 +328,7 @@ public class OIDCAuthorization {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws KeyManagementException 
 	 */
-	public boolean authorizeByUserAndPW(String username, String password) throws ParseException, URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+	public boolean authorizeByUserAndPW(String username, String password) throws URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		String authRedirection = "";
 
 		if (!inited) {
@@ -358,7 +362,7 @@ public class OIDCAuthorization {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws KeyManagementException 
 	 */
-	public boolean accessResource() throws IOException, ParseException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+	public boolean accessResource() throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		getUrlProcessor().prepare(new URL(getResourceURI()));
 		String result = urlProcessor.process();
 		if (result == null) {
@@ -368,7 +372,11 @@ public class OIDCAuthorization {
 			}
 			return true;
 		} else {
-			getOIDCClient().parseAuthenticationDataFromRedirect(result, false); // don't override clientID
+			try {
+				getOIDCClient().parseAuthenticationDataFromRedirect(result, false); // don't override clientID
+			} catch (ParseException e) {
+				throw new IOException("OIDC ParseException");
+			}
 			if (availabilityHandler != null) {
 				availabilityHandler.onAuthorizationNecessary(this);
 			} else {
@@ -392,7 +400,7 @@ public class OIDCAuthorization {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws KeyManagementException 
 	 */
-	public boolean accessResource(String url, String presetUsername, Frame ownerFrame) throws ParseException, IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+	public boolean accessResource(String url, String presetUsername, Frame ownerFrame) throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		setResourceURI(url);
 		this.presetUsername = presetUsername;
 		this.ownerFrame = ownerFrame;

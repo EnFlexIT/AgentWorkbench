@@ -45,8 +45,6 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import com.nimbusds.oauth2.sdk.ParseException;
-
 import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
@@ -851,7 +849,7 @@ public class Application {
 		try {
 			OIDCAuthorization.getInstance().setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
 			OIDCAuthorization.getInstance().accessResource(OIDCPanel.DEBUG_RESOURCE_URI,getGlobalInfo().getOIDCUsername(), mainWindow);
-		} catch (URISyntaxException | KeyManagementException | ParseException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
+		} catch (URISyntaxException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
 //			e.printStackTrace();
 			System.err.println("Authentication failed: "+e.getClass()+": "+e.getMessage());
 		}
