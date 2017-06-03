@@ -41,25 +41,14 @@ public class ThreadDetail implements Serializable, ThreadDetailProperties {
 
 	private static final long serialVersionUID = 7920683110304631892L;
 	
-	/** The thread name. */
 	private String threadName;
-	
-	/** The class name. */
 	private String className;
-	
-	/** The is agent. */
 	private boolean isAgent;
 	
-	/** The system time. */
 	private long systemTime;
-	
-	/** The user time. */
 	private long userTime;
 	
-	/** The predictive metric. */
 	private double predictiveMetric;
-	
-	/** The real metric. */
 	private double realMetric;
     
 	/**

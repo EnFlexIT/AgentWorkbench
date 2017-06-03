@@ -73,7 +73,7 @@ public class LoadMeasureThread extends Thread {
 	public static String threadName = "Agent.GUI - Load Monitoring";
 	
 	/** The sampling interval of this Thread. */
-	private int localmsInterval = 500;
+	private int localIntervalInMS = 500;
 	/** The number of measurements, which will be used for the mean value. */
 	private int localuseN4AvgCount = 5;
 	
@@ -145,7 +145,7 @@ public class LoadMeasureThread extends Thread {
 	 * @param useN4AvgCount the number of measurements, which will be used for the average
 	 */
 	public LoadMeasureThread(Integer msInterval, Integer useN4AvgCount) {
-		localmsInterval = msInterval;
+		localIntervalInMS = msInterval;
 		localuseN4AvgCount = useN4AvgCount;
 		loadCurrentAvg = new LoadMeasureAvgSigar(localuseN4AvgCount);
 		loadCurrentAvgJVM = new LoadMeasureAvgJVM(localuseN4AvgCount);
@@ -169,13 +169,14 @@ public class LoadMeasureThread extends Thread {
 		
 		long timeStart = 0;
 		long timeEnd = 0;
-		long timeWork = 0;
+		long timeNext = 0;
+		long timeSleep = 0;
 		
 		while(true){
 		try {
 			// --- Define the time for the next measurement -----
 			timeStart = System.currentTimeMillis();
-
+			
 			// --- Measure here ---------------------------------
 			this.measuredMemCpuData.measureLoadOfSystem();
 			this.measuredJVMData.measureLoadOfSystem();
@@ -233,14 +234,16 @@ public class LoadMeasureThread extends Thread {
 			// --- check values and Threshold-Levels ------------
 			setThresholdLevelExceeded(LoadMeasureThread.isLevelExceeded());			
 			
-			// --- Wait for the end of the measure-interval -----
-			sleep(localmsInterval);	
+			// --- Define sleep interval ------------------------
+			timeEnd = System.currentTimeMillis();
+			timeNext = timeStart + localIntervalInMS;
+			timeSleep = timeNext - timeEnd;
+			if (timeSleep>0) {
+				sleep(timeSleep);	
+			}
 			if (debugInterval) {
-				timeEnd = System.currentTimeMillis();
-				timeWork = timeEnd - timeStart;
-				System.out.println("=> Start-Time: " + timeStart);
-				System.out.println("=> End-Time:   " + timeEnd);
-				System.out.println("=> RunTime:    " + timeWork + "ms");
+				long timeWork = timeEnd - timeStart;
+				System.out.println("[Load Measurement] Work Time: " + timeWork + "ms + Sleep Time: " + timeSleep + "ms = Interval: " + (timeWork + timeSleep) + "ms");
 			}
 			
 			
@@ -616,22 +619,23 @@ public class LoadMeasureThread extends Thread {
 			        
 			        // --- Do measurement ------------------------------------- 
 			        String threadName;
-			        long cpuTime = 0L;
-			        long userTime = 0L;
+			        long nanosCpuTime = 0L;
+			        long nanosUserTime = 0L;
 			        long factorMiliseconds = 1000000;
 
-			        long[] ids = tmxb.getAllThreadIds();
-			        for (long id : ids) {
-			            
-			            cpuTime = tmxb.getThreadCpuTime(id);
-			            userTime = tmxb.getThreadUserTime(id);
-			            
-			            if ( cpuTime == -1 || userTime == -1 )
-			                continue;   // Thread died
+			        long[] threadIDs = tmxb.getAllThreadIds();
+			        for (int i = 0; i < threadIDs.length; i++) {
+			        	
+			        	long threadID = threadIDs[i];
+			            nanosCpuTime = tmxb.getThreadCpuTime(threadID);
+			            nanosUserTime = tmxb.getThreadUserTime(threadID);
+			            if (nanosCpuTime==-1 || nanosUserTime==-1) {
+			            	continue;   // Thread died
+			            }
 
-			        	threadName = tmxb.getThreadInfo(id).getThreadName();
+			        	threadName = tmxb.getThreadInfo(threadID).getThreadName();
 			        	// --- add times, converted to milliseconds, to thread-Protocol
-			        	tp.getThreadDetails().add(new ThreadDetail(threadName, (cpuTime/factorMiliseconds), (userTime/factorMiliseconds)));
+			        	tp.getThreadDetails().add(new ThreadDetail(threadName, (nanosCpuTime/factorMiliseconds), (nanosUserTime/factorMiliseconds)));
 			        }
 			        // --- Send protocol to the requester of the measurement --
 			        threadProtocolReceiver.receiveThreadProtocol(tp);
@@ -641,4 +645,6 @@ public class LoadMeasureThread extends Thread {
 			threadMeasurement.run();
 		}
 	}
+	
+	
 }
