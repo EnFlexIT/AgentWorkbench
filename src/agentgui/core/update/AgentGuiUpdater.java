@@ -133,7 +133,7 @@ public class AgentGuiUpdater extends Thread {
 		this.updateDateLastChecked = this.globalInfo.getUpdateDateLastChecked();
 		
 		this.localDownloadPath = this.globalInfo.getPathDownloads();
-		this.localWebServerPath = this.globalInfo.getPathWebServer(true);
+		this.localWebServerPath = this.globalInfo.getPathWebServer();
 		this.localPropertiesPath = this.globalInfo.getPathProperty(true);
 		
 		this.latestVersionInfoFullPath = this.localDownloadPath + AgentGuiUpdater.UPDATE_VERSION_INFO_FILE;

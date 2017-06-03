@@ -1062,7 +1062,7 @@ public class Application {
 	public static DownloadServer startDownloadServer() {
 		if (downloadServer==null) {
 			downloadServer = new DownloadServer();
-			downloadServer.setRoot(getGlobalInfo().getPathWebServer(true));
+			downloadServer.setRoot(getGlobalInfo().getPathWebServer());
 			new Thread(downloadServer).start();
 		}
 		return downloadServer;

@@ -196,7 +196,7 @@ public class DownloadServer implements HttpConstants, Runnable {
     	 
     	String pathSep = File.separator;
     	String sourceDirName = project.getProjectFolderFullPath();
-    	String destinDirName = Application.getGlobalInfo().getPathWebServer(true) + project.getProjectFolder();    	
+    	String destinDirName = Application.getGlobalInfo().getPathWebServer() + project.getProjectFolder();    	
     	
     	File destinDir = null;
     	boolean destinDirNewlyCreated = false;

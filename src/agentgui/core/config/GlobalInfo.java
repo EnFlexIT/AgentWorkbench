@@ -660,12 +660,8 @@ public class GlobalInfo {
 	 * If the folder doesn't exists, it will be created.
 	 * @return Local path to the download server of Agent.GUI ('/AgentGUI/server/')
 	 */
-	public String getPathWebServer(boolean absolute) {
-		String returnPath = getFilePathAbsolute(localPathWebServer);
-		if (absolute==false) { 
-			String workingPath = System.getProperty("user.dir");
-			returnPath = returnPath.substring(workingPath.length()+1);
-		}
+	public String getPathWebServer() {
+		String returnPath = this.getFilePathAbsolute(localPathWebServer);
 		this.createDirectoryIfRequired(returnPath);
 		return returnPath;
 	}
