@@ -28,9 +28,6 @@
  */
 package agentgui.core.application;
 
-import jade.debugging.components.JPanelConsole;
-import jade.debugging.logfile.LogFileWriter;
-
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.IOException;
@@ -68,6 +65,8 @@ import agentgui.core.sim.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.systemtray.AgentGUITrayIcon;
 import agentgui.core.update.AgentGuiUpdater;
 import agentgui.core.webserver.DownloadServer;
+import agentgui.logging.components.JPanelConsole;
+import agentgui.logging.logfile.LogFileWriter;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.load.LoadMeasureThread;
 
@@ -473,6 +472,12 @@ public class Application {
 					remainingArgsVector.removeElement(args[i]);
 					setOperatingHeadless(true);
 
+				} else if (args[i].equalsIgnoreCase("-log")) {
+					// --------------------------------------------------------
+					// --- Start log file writing -----------------------------
+					remainingArgsVector.removeElement(args[i]);
+					startLogFileWriter();
+
 				} else if (args[i].equalsIgnoreCase("-help")) {
 					// --------------------------------------------------------
 					// --- print out the help for the start arguments ---------	
@@ -526,8 +531,9 @@ public class Application {
 		System.out.println("");
 		System.out.println("1. '-project projectFolder': opens the project located in the Agent.GUI folder 'project' (e.g. 'myProject')");
 		System.out.println("2. '-headless'             : will set Agent.GUI to operate headless (without any GUI)");
-		System.out.println("3. '-jade'                 : indicates that JADE has to be started. For the JADE start arguments, see JADE administrative guide." );
-		System.out.println("4. '-help' or '-?'         : provides this information to the console" );
+		System.out.println("3. '-jade'                 : indicates that JADE has to be started. For the JADE start arguments, see JADE administrative guide.");
+		System.out.println("4. '-log'                  : starts the Agent.GUI log file writer.");
+		System.out.println("5. '-help' or '-?'         : provides this information to the console");
 		System.out.println("");
 		System.out.println("");
 	}

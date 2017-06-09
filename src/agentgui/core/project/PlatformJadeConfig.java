@@ -102,7 +102,7 @@ public class PlatformJadeConfig implements Serializable {
 	public static final String SERVICE_BEManagementService = jade.imtp.leap.nio.BEManagementService.class.getName();
 	
 	// --- Agent.GUI-Services -------------------------------------------------
-	public static final String SERVICE_DebugService = jade.debugging.DebugService.class.getName();
+	public static final String SERVICE_DebugService = agentgui.logging.DebugService.class.getName();
 	public static final String SERVICE_AgentGUI_LoadService = agentgui.simulationService.LoadService.class.getName();
 	public static final String SERVICE_AgentGUI_SimulationService = agentgui.simulationService.SimulationService.class.getName();
 	

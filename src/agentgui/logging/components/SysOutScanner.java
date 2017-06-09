@@ -26,18 +26,23 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package jade.debugging.logfile;
+package agentgui.logging.components;
+
+import jade.core.ServiceException;
 
 import java.io.PrintStream;
 import java.util.Vector;
 
+import agentgui.logging.DebugService;
+
 /**
- * This Class can be used in order to listen to the output that will be generated 
+ * This Class can be used in order to listen to the output which will be generated<br> 
  * through the console by using System.out and System.err - commands.<br>
  * <br>
- * The received output will be stored in the local Vector<String> outputStack 
- * that can be accessed by the synchronised method {@link #getStack()}.   
+ * The received output will be received in the local <code>Vector<String></code> outputStack., which<br>
+ * can be accessed by the getStack() - method in a synchronised way.<br>   
  * 
+ * @see SysOutBoard
  * @see PrintStreamListener
  * @see System#out
  * @see System#err
@@ -47,14 +52,23 @@ import java.util.Vector;
 public class SysOutScanner {
 
 	private Vector<String> outputStack = new Vector<String>(); 
-	private LogFileWriter logFileWriter;
+	private DebugService debugService;
+	private JPanelConsole localConsole;
 
 	/**
-	 * Constructor of this class, if running local in an application.
-	 * @param localConsole the LogFileWriter
+	 * Constructor of this class, if running from the DebugService.
+	 * @param debugService the current DebugService
 	 */
-	public SysOutScanner(LogFileWriter localConsole) {
-		this.logFileWriter = localConsole;
+	public SysOutScanner(DebugService debugService) {
+		this.debugService = debugService;
+		this.setScanner();
+	}
+	/**
+	 * Constructor of this class, if running local in an application.
+	 * @param localConsole the local console
+	 */
+	public SysOutScanner(JPanelConsole localConsole) {
+		this.localConsole = localConsole;
 		this.setScanner();
 	}
 	
@@ -87,7 +101,8 @@ public class SysOutScanner {
 	/**
 	 * This method will be used in order to append an output line (System.out or System.err) 
 	 * to the local outputStack
-	 * @param lineOutput the line output
+	 *
+	 * @param lineOutput the line output to display
 	 */
 	public void append2Stack(String lineOutput) {
 		if (this.outputStack.size()>=20) {
@@ -96,15 +111,24 @@ public class SysOutScanner {
 		this.outputStack.add(lineOutput);
 		
 		// --- If a local Console window is used --------------------------------------------------
-		if (this.logFileWriter!=null) {
-			this.logFileWriter.appendText(this.getStack());		
+		if (this.localConsole!=null) {
+			this.localConsole.appendText(this.getStack());		
+		}
+		
+		// --- If a DebuggingService is registered transfer the output to the Main-Container ------
+		if (this.debugService!=null) {
+			try {
+				this.debugService.sendLocalConsoleOutput2Main(this.getStack());
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}	
 		}
 		
 	}
 	
 	/**
 	 * Can be used in order to get the current outputStack of the local console.
-	 * @return the stack
+	 * @return the current output stack
 	 */
 	public synchronized Vector<String> getStack() {
 		Vector<String> stack = this.outputStack;

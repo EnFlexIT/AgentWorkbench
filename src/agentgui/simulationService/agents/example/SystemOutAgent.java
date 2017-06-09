@@ -42,7 +42,7 @@ import jade.core.behaviours.TickerBehaviour;
  * using <code>System.out.println(String)</code> and <code>System.err.println(String)</code>.<br>  
  * The agent can be migrated to a remote container, if the background system is set up
  * and will demonstrate the usage of the remote debugging ability of <b>Agent.GUI</b>.<br> 
- * Therefore the Service 'jade.debugging.DebugService' has to be set up within a project!
+ * Therefore the Service 'agentgui.logging.DebugService' has to be set up within a project!
  *    
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */

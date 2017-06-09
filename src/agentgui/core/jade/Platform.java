@@ -34,7 +34,6 @@ import jade.core.ContainerID;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
-import jade.debugging.DebugService;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.ControllerException;
@@ -57,6 +56,7 @@ import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.Project;
 import agentgui.core.webserver.DownloadServer;
+import agentgui.logging.DebugService;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.SimulationService;
 

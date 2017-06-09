@@ -79,10 +79,10 @@ import agentgui.core.application.Language;
 import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
 import agentgui.core.project.Project;
 import agentgui.core.update.AgentGuiUpdater;
+import agentgui.logging.components.JPanelConsole;
+import agentgui.logging.components.JTabbedPane4Consoles;
+import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
-import jade.debugging.components.JPanelConsole;
-import jade.debugging.components.JTabbedPane4Consoles;
-import jade.debugging.components.SysOutBoard;
 
 /**
  * This class represents the main user-interface of the application AgentGUI.

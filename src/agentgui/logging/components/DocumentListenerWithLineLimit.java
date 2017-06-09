@@ -1,4 +1,4 @@
-package jade.debugging.components;
+package agentgui.logging.components;
 
 import javax.swing.*;
 import javax.swing.event.*;

@@ -1,4 +1,4 @@
-package jade.debugging.components;
+package agentgui.logging.components;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

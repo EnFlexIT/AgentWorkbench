@@ -1,4 +1,4 @@
-package jade.debugging.components;
+package agentgui.logging.logfile;
 
 import java.io.OutputStream;
 import java.io.PrintStream;

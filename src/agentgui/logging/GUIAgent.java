@@ -1,8 +1,8 @@
-package jade.debugging;
+package agentgui.logging;
 
+import agentgui.logging.components.JFrame4Consoles;
+import agentgui.logging.components.SysOutBoard;
 import jade.core.Agent;
-import jade.debugging.components.JFrame4Consoles;
-import jade.debugging.components.SysOutBoard;
 
 public class GUIAgent extends Agent {
 

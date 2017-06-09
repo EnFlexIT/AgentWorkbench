@@ -25,24 +25,20 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package jade.debugging;
+package agentgui.logging;
 
-import jade.core.IMTPException;
-import jade.core.Service;
+import jade.core.ServiceException;
+import jade.core.ServiceHelper;
 
-import java.util.Vector;
 
 /**
- * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg / Essen
  */
-public interface DebugServiceSlice extends Service.Slice {
+public interface DebugServiceHelper extends ServiceHelper {
 
-	// ----------------------------------------------------------
-	// --- Horizontal commands of the service -------------------
-	// ----------------------------------------------------------
+	public static final String SERVICE_NAME = "agentgui.logging.DebugService";
 	
-	static final String DEBUG_SEND_LOCAL_OUTPUT = "send-local-output";
-	public void sendLocalConsoleOutput2Main(String localContainerName, Vector<String> lines2transfer) throws IMTPException;
+	// --- Methods for distributed debugging ------------------------
+	public void sendLocalConsoleOutput() throws ServiceException;
 	
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.6" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
-  realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
+<class-diagram version="1.1.14" icons="true" automaticImage="PNG" always-add-relationships="false" 
+  generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" language="java" name="agentgui.core.application.Application" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/application/Application.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="287" y="155"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -13,8 +13,8 @@
   <class id="2" language="java" name="agentgui.core.gui.MainWindow.CWMenueItem" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/gui/MainWindow.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="622" y="236"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -22,8 +22,8 @@
   <class id="3" language="java" name="agentgui.core.gui.MainWindow.JMenuItmenLnF" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/gui/MainWindow.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="774" y="154"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -31,8 +31,8 @@
   <class id="4" language="java" name="agentgui.core.gui.MainWindow" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/gui/MainWindow.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="498" y="154"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -40,8 +40,8 @@
   <class id="5" language="java" name="agentgui.core.gui.MainWindow.JMenuItemLang" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/gui/MainWindow.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="626" y="75"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -49,8 +49,8 @@
   <class id="6" language="java" name="agentgui.core.gui.MainWindow.AngledLinesWindowsCornerIcon" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/gui/MainWindow.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="822" y="75"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -58,8 +58,8 @@
   <class id="7" language="java" name="agentgui.core.gui.MainWindow.JToolBarButton" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/gui/MainWindow.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="773" y="236"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -67,17 +67,17 @@
   <class id="8" language="java" name="agentgui.core.systemtray.AgentGUITrayIcon" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/systemtray/AgentGUITrayIcon.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="84" y="75"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="jade.debugging.components.JPanelConsole" project="AgentGUI" 
-    file="/AgentGUI/src/jade/debugging/components/JPanelConsole.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="9" language="java" name="agentgui.logging.components.JPanelConsole" project="AgentGUI" 
+    file="/AgentGUI/src/agentgui/logging/components/JPanelConsole.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="288" y="75"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -85,8 +85,8 @@
   <class id="10" language="java" name="agentgui.core.gui.AboutDialog" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/gui/AboutDialog.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="101" y="236"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -94,8 +94,8 @@
   <class id="11" language="java" name="agentgui.core.gui.ChangeDialog" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/gui/ChangeDialog.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="96" y="322"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -103,8 +103,8 @@
   <class id="12" language="java" name="agentgui.core.gui.ClassSelector" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/gui/ClassSelector.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="449" y="236"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -112,8 +112,8 @@
   <class id="13" language="java" name="agentgui.core.gui.ProjectNewOpen" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/gui/ProjectNewOpen.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="287" y="236"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -121,8 +121,8 @@
   <class id="14" language="java" name="agentgui.core.gui.options.OptionDialog" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/gui/options/OptionDialog.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="91" y="156"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -130,8 +130,8 @@
   <class id="15" language="java" name="agentgui.core.gui.Translation" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/gui/Translation.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="669" y="322"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -139,8 +139,8 @@
   <class id="16" language="java" name="agentgui.core.ontologies.gui.OntologyInstanceViewer" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/ontologies/gui/OntologyInstanceViewer.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="280" y="322"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
@@ -148,98 +148,130 @@
   <class id="17" language="java" name="agentgui.core.ontologies.gui.OntologyInstanceDialog" project="AgentGUI" 
     file="/AgentGUI/src/agentgui/core/ontologies/gui/OntologyInstanceDialog.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="476" y="322"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
   <association id="18">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="19" name="console"/>      
-      <multiplicity id="20" minimum="0" maximum="1"/>    
+    <end type="SOURCE" refId="17" navigable="false" variant="ASSOCIATION">      
+      <attribute id="19" name="oiv">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="20" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
+    <end type="TARGET" refId="16" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="21">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="22" name="about"/>      
-      <multiplicity id="23" minimum="0" maximum="1"/>    
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="22" name="mainWindow">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="23" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="24">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="25" name="oiv"/>      
-      <multiplicity id="26" minimum="0" maximum="1"/>    
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="25" name="about">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="26" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="16" navigable="true"/>    
+    <end type="TARGET" refId="10" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="27">    
+  <association id="27">    
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="28" name="console">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="29" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="30">    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="7"/>  
   </nesting>  
-  <association id="28">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="29" name="jPanelConsoleLocal"/>      
-      <multiplicity id="30" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
   <nesting id="31">    
     <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="5"/>  
+    <end type="TARGET" refId="3"/>  
   </nesting>  
-  <nesting id="32">    
+  <association id="32">    
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="33" name="options">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="34" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="35">    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="2"/>  
   </nesting>  
-  <association id="33">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="34" name="trayIcon"/>      
-      <multiplicity id="35" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
   <association id="36">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="37" name="options"/>      
-      <multiplicity id="38" minimum="0" maximum="1"/>    
+    <end type="SOURCE" refId="4" navigable="false" variant="ASSOCIATION">      
+      <attribute id="37" name="jPanelConsoleLocal">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="38" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
+    <end type="TARGET" refId="9" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="39">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="40" name="mainWindow"/>      
-      <multiplicity id="41" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="42">    
+  <nesting id="39">    
     <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="6"/>  
+    <end type="TARGET" refId="5"/>  
   </nesting>  
-  <association id="43">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="44" name="thisApp"/>      
-      <multiplicity id="45" minimum="0" maximum="1"/>    
+  <association id="40">    
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="41" name="trayIcon">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="42" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="8" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="43">    
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="44" name="thisApp">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="45" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <nesting id="46">    
     <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="3"/>  
+    <end type="TARGET" refId="6"/>  
   </nesting>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-    accessors="true" visibility="true">    
+    sort-features="false" accessors="true" visibility="true">    
     <attributes public="false" package="false" protected="false" private="false" static="true"/>    
     <operations public="false" package="false" protected="false" private="false" static="true"/>  
   </classifier-display>  

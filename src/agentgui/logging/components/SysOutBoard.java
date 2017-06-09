@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package jade.debugging.components;
+package agentgui.logging.components;
 
 import java.util.HashMap;
 

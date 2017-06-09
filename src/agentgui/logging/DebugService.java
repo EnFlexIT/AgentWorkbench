@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package jade.debugging;
+package agentgui.logging;
 
 import jade.core.Agent;
 import jade.core.AgentContainer;
@@ -43,12 +43,6 @@ import jade.core.ServiceException;
 import jade.core.ServiceHelper;
 import jade.core.VerticalCommand;
 import jade.core.management.AgentManagementSlice;
-import jade.debugging.components.JFrame4Consoles;
-import jade.debugging.components.JPanelConsole;
-import jade.debugging.components.JTabbedPane4Consoles;
-import jade.debugging.components.PrintStreamListener;
-import jade.debugging.components.SysOutBoard;
-import jade.debugging.components.SysOutScanner;
 import jade.util.Logger;
 
 import java.util.HashMap;
@@ -57,6 +51,12 @@ import java.util.Set;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
+import agentgui.logging.components.JFrame4Consoles;
+import agentgui.logging.components.JPanelConsole;
+import agentgui.logging.components.JTabbedPane4Consoles;
+import agentgui.logging.components.PrintStreamListener;
+import agentgui.logging.components.SysOutBoard;
+import agentgui.logging.components.SysOutScanner;
 
 
 /**
