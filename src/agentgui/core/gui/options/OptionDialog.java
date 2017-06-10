@@ -103,8 +103,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 	
 	private TreeMap<Integer, String[]> additionalNodes = new TreeMap<Integer, String[]>();  //  @jve:decl-index=0:
 	
-	private StartOptions startOptions ;
-	private UpdateOptions updateOptions ;
+	private StartOptions startOptions;
+	private LogFileOptions logFileOptions;
+	private UpdateOptions updateOptions;
 	private OIDCOptions oidcOptions;
 
 	
@@ -135,20 +136,15 @@ public class OptionDialog extends JDialog implements ActionListener {
 	    this.jButtonClose.setText(Language.translate("Schließen"));
 	    
 	    // --- Integrate sub panels ---------------------------------
-	    String tabTitle = Language.translate("Programmstart");
 	    this.addOptionTab(this.getStartOptions(), null);
-	    
-	    tabTitle = Language.translate("Agent.GUI - Update");
 	    this.addOptionTab(this.getUpdateOptions(), null);
-	    
+	    this.addOptionTab(this.getOIDCOptions(), null);
+	    this.addOptionTab(this.getLogFileOptions(), null);
 	    
 	    if (Application.isRunningAsServer()==true || execMode==ExecutionMode.DEVICE_SYSTEM) {
-	    	tabTitle = Language.translate("Konsole");
+	    	String tabTitle = Language.translate("Konsole");
 	    	this.addOptionTab(tabTitle, null, Application.getConsole(), tabTitle);	
 	    }
-	    
-	    tabTitle = Language.translate("OpenID Connect");
-	    this.addOptionTab(this.getOIDCOptions(), null);
 
 	    // --- Expand tree -----------------------------------------
 	    this.optionTreeExpand2Level(3, true);
@@ -229,28 +225,37 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 * Gets the start options.
 	 * @return the start options
 	 */
-	public StartOptions getStartOptions() {
+	private StartOptions getStartOptions() {
 		if (startOptions==null) {
 			startOptions = new StartOptions(this);
 		}
 		return startOptions;
 	}
 	/**
+	 * Gets the log file options.
+	 * @return the log file options
+	 */
+	private LogFileOptions getLogFileOptions() {
+		if (logFileOptions==null) {
+			logFileOptions = new LogFileOptions();
+		}
+		return logFileOptions;
+	}
+	/**
 	 * Gets the update options.
 	 * @return the update options
 	 */
-	public UpdateOptions getUpdateOptions() {
+	private UpdateOptions getUpdateOptions() {
 		if (updateOptions==null) {
 			updateOptions = new UpdateOptions();
 		}
 		return updateOptions;
 	}
-	
 	/**
 	 * Gets the OIDC options.
 	 * @return the OIDC options
 	 */
-	public OIDCOptions getOIDCOptions() {
+	private OIDCOptions getOIDCOptions() {
 		if (oidcOptions==null) {
 			oidcOptions = new OIDCOptions();
 		}

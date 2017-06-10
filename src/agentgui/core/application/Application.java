@@ -270,7 +270,11 @@ public class Application {
 	 */
 	public static LogFileWriter startLogFileWriter() {
 		if (logFileWriter==null) {
-			logFileWriter = new LogFileWriter();	
+			if (getGlobalInfo().getLoggingBasePath()!=null) {
+				logFileWriter = new LogFileWriter(getGlobalInfo().getLoggingBasePath());
+			} else {
+				logFileWriter = new LogFileWriter();
+			}
 		}
 		return logFileWriter;
 	}
@@ -302,6 +306,9 @@ public class Application {
 		if (Application.globalInfo==null) {
 			Application.globalInfo = new GlobalInfo();
 			Application.globalInfo.initialize();
+			if (Application.globalInfo.isLoggingEnabled()==true) {
+				startLogFileWriter();
+			}
 		}
 		return Application.globalInfo;
 	}

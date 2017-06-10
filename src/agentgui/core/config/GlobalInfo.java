@@ -105,7 +105,6 @@ public class GlobalInfo {
 	private static String localBaseDir = "";
 	private static String localPathAgentGUI	 = "bin";
 	private static String localPathJade		 = "lib" + File.separator + "jade" +  File.separator + "lib";
-	private static String localPathLogging  = "log" + File.separator;
 	private static String localPathProperty  = "properties" + File.separator;
 	private static String localPathProjects  = "projects" + File.separator;
 	private static String localPathWebServer = "server" + File.separator;
@@ -135,6 +134,9 @@ public class GlobalInfo {
 	
 	private String filePropLanguage;
 	private boolean maximizeMainWindow = false;
+	
+	private boolean filePropLoggingEnabled;
+	private String filePropLoggingBasePath;
 	
 	private boolean filePropServerAutoRun = true;
 	private String filePropServerMasterURL;
@@ -176,13 +178,13 @@ public class GlobalInfo {
 	private String oidcIssuerURI;
 
 	// --- Reminder information for file dialogs ----------------------------
-	private File lastSelectedFolder = null; 
+	private File lastSelectedFolder; 
 	
 	// --- FileProperties and VersionInfo -----------------------------------
 	/** Holds the instance of the file properties which are defined in '/properties/agentgui.ini' */
-	private FileProperties fileProperties = null;
+	private FileProperties fileProperties;
 	/** Can be used in order to access the version information */
-	private VersionInfo versionInfo = null;
+	private VersionInfo versionInfo;
 
 	
 	/**
@@ -563,21 +565,6 @@ public class GlobalInfo {
 		}
 		this.createDirectoryIfRequired(propPath);
 		return propPath;
-	}
-	/**
-	 * This method can be invoked in order to get the path to the logging directory 'log\'.
-	 * @param absolute set true if you want to get the full path to this 
-	 * @return the path reference to the property folder
-	 */
-	public String getPathLogging(boolean absolute){
-		String returnPath = null;
-		if (absolute==true ) { 
-			returnPath = getFilePathAbsolute(localPathLogging);
-		} else {
-			returnPath = localPathLogging;	
-		}	
-		this.createDirectoryIfRequired(returnPath);
-		return returnPath;
 	}
 	/**
 	 * This method will return the concrete path to the property file 'agentgui.ini' relatively or absolute
@@ -1050,6 +1037,42 @@ public class GlobalInfo {
 	public boolean isMaximzeMainWindow() {
 		return maximizeMainWindow;
 	}
+	
+	
+	// ---- Logging configuration -----------------------------------
+	/**
+	 * Sets the logging enabled (or not).
+	 * @param enableLogging the new logging enabled
+	 */
+	public void setLoggingEnabled(boolean enableLogging) {
+		this.filePropLoggingEnabled = enableLogging;
+	}
+	/**
+	 * Checks if the file logging is enabled.
+	 * @return true, if file logging is enabled
+	 */
+	public boolean isLoggingEnabled() {
+		return this.filePropLoggingEnabled;
+	}
+	
+	/**
+	 * Sets the logging base path.
+	 * @param newLoggingbasePath the new logging base path
+	 */
+	public void setLoggingBasePath(String newLoggingbasePath) {
+		this.filePropLoggingBasePath = newLoggingbasePath.trim();
+		if (this.filePropLoggingBasePath.equals("")) {
+			this.filePropLoggingBasePath = null;
+		}
+	}
+	/**
+	 * Returns the logging base path.
+	 * @return the logging base path
+	 */
+	public String getLoggingBasePath() {
+		return this.filePropLoggingBasePath;
+	}
+
 	
 	// ---- Connection to the Master-Server -------------------------
 	/**
@@ -1890,4 +1913,5 @@ public class GlobalInfo {
 		}
 		return encryptedPSWD;
 	}
+
 }

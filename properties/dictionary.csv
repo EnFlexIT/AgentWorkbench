@@ -91,7 +91,6 @@ de;Beschriftungen anzeigen;Show labels;;;
 de;Bitte geben Sie den Namen für das neue Setup an!;Please enter a name for the new setup!
 de;Bitte geben Sie den neuen Namen für das Setup an!;Please specify the new name for the setup!
 de;Bitte geben Sie die URL oder IP des Hauptservers an!;Please, configure the URL or IP of the main server!;;;
-de;Bitte geben Sie einen Bezeichner fü-r die Referenz an!;;;;
 de;Bitte geben Sie einen Bezeichner für die Referenz an!;Please, specify an identifier for the reference!;;;
 de;Bitte nur ganze Zahlen größer 0 eingeben!;Please integer numbers greater than 0!;;;
 de;Bitte spezifizieren Sie den Typ des Startarguments!;Please specify the type of the start argument!
@@ -220,6 +219,8 @@ de;Export:;Export:;;;
 de;Externe jar-Ressourcen;External jar resources;;;
 de;Extras;Extras
 de;Faktor;Factor;;;
+de;Falls ausgewählt, wird die Log-Datei in jedem Ausführungsmodus erstellt.;If selected, the log file will be created in every execution mode.;;;
+de;Falls nicht ausgewählt, wird die Log-Datei immer nur im 'Headless-Modus' erstellt (z.B. im Modus ';If not selected, the log file will only be created in 'headless mode' (for example, in ';;;
 de;Farbe;Color;;;
 de;Fehlende Angaben über den Datenbank-Host.<br>Bitte überprüfen Sie die Datenbank-Einstellungen!;Missing informations about the database host.<br> Please check your database settings!
 de;Fehlende Auswahl !;Missing Selection !;;;
@@ -379,7 +380,12 @@ de;Letzte Änderungen;Recent changes;;;
 de;Liniendicke;Line thickness;;;
 de;Load Monitor öffnen;Open Load Monitor;null;null;null
 de;Load Monitor;Load Monitor
+de;Log Datei;Log File;;;
+de;Log-Datei Einstellungen;Log-File - Configuration;;;
+de;Log-Datei Konfiguration;;;;
+de;Log-Datei immer erstellen;Allways create log file;;;
 de;Log-Manager starten;Start Log Manager
+de;Log-Verzeichnis;Log-Directory;;;
 de;Lokal;Local;;;
 de;Lösche Verzeichnis;Delete Folder;;;
 de;Löschen nicht zulässig!;Deleting not allowed!;;;
@@ -480,7 +486,7 @@ de;Ontologie;Ontology
 de;Ontologieklasse;Ontology Class
 de;Ontologien;Ontologies
 de;OpenID Connect-Autorisierung;OpenID Connect-Authorization;;;
-de;OpenID Connect-Konfiguration;;;;
+de;OpenID Connect-Konfiguration;OpenID Connect - Configuration;;;
 de;OpenID Connect;;;;
 de;Optionen;Options
 de;Organisation;Organization;;;
@@ -524,7 +530,6 @@ de;Reale Metriken der Agenten bei Simulationsstop aktualisieren;Update real agen
 de;Rechts-Klick für weitere Optionen;Right-Click for more options
 de;Reihen-Eigenschaften;Series-Properties;;;
 de;Remote JADE-RMA beim Start des entfernten Containers anzeigen;Display remote JADE-RMA at the start of the remote container;;;
-de;Renderer;;;;
 de;Ressourcen;Resources
 de;SVG Dateien;SVG files
 de;SVG laden;Load SVG
@@ -574,6 +579,7 @@ de;Speichern;Save
 de;Spielfeld;Playground
 de;Sprache:;Language:
 de;Sprache;Language
+de;Standard Log-Verzeichnis:;Default Log-Directory;;;
 de;Standard verwenden;Use Default;;;
 de;Standardkonfiguration verwenden;Use default configuration;;;
 de;Start bei:;Start at:;;;
@@ -714,6 +720,7 @@ de;yEd GraphML Datei;yEd GraphML file
 de;yEd GraphML;yEd GraphML
 de;zu Datei;to file
 de;Änderungen anwenden;Apply Changes;;;
+de;Änderungen der Log-Datei - Einstellungen werden erst mit dem nächsten Start der Anwendung wirksam.;Changes to the log file settings will not take effect until the application will be restarted.;;;
 de;Öffne Projekt;Open Project;;;
 de;Öffnen;Open
 de;Über...;About ...

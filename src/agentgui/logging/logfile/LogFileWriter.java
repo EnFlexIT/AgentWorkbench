@@ -72,7 +72,9 @@ public class LogFileWriter {
 	 * @param loggingBasePath the logging base path
 	 */
 	public LogFileWriter(String loggingBasePath) {
-		this.setLoggingBasePath(loggingBasePath);
+		if (loggingBasePath!=null && loggingBasePath.trim().equals("")==false) {
+			this.setLoggingBasePath(loggingBasePath);
+		}
 		this.initialize();
 	}
 	/**
@@ -100,17 +102,25 @@ public class LogFileWriter {
 	private String getLoggingBasePath() {
 		if (loggingBasePath==null) {
 			// --- The default case -------------
-			loggingBasePath = "./log";
-			String os = System.getProperty("os.name");
-			if (os.toLowerCase().contains("windows")==true) {
-				// --- nothing to do here ---
-			} else if (os.toLowerCase().contains("linux")==true) {
-				loggingBasePath = "/var/log/agentgui";
-			}
-			loggingBasePath = loggingBasePath.replace("/", File.separator);	
+			loggingBasePath = getDefaultLoggingBasePath();	
 		}
 		return loggingBasePath;
 	}
+	/**
+	 * Gets the default logging base path.
+	 * @return the default logging base path
+	 */
+	public static String getDefaultLoggingBasePath() {
+		String defaultLoggingBasePath = "./log";
+		String os = System.getProperty("os.name");
+		if (os.toLowerCase().contains("windows")==true) {
+			// --- nothing to do here ---
+		} else if (os.toLowerCase().contains("linux")==true) {
+			defaultLoggingBasePath = "/var/log/agentgui";
+		}
+		return defaultLoggingBasePath.replace("/", File.separator);
+	}
+	
 	/**
 	 * Returns the logging path and file name as string.
 	 * @return the logging path and file name 
@@ -231,7 +241,6 @@ public class LogFileWriter {
 		String newLogFile = this.getLoggingFileName(timeStamp);
 		File logDirectory = new File(newLogFile).getParentFile();
 		if (logDirectory.exists()==true) {
-			
 			// ------------------------------------------------------
 			// --- Search for older files with current day prefix ---
 			// ------------------------------------------------------
