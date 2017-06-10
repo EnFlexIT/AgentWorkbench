@@ -1060,8 +1060,7 @@ public class GlobalInfo {
 	 * @param newLoggingbasePath the new logging base path
 	 */
 	public void setLoggingBasePath(String newLoggingbasePath) {
-		this.filePropLoggingBasePath = newLoggingbasePath.trim();
-		if (this.filePropLoggingBasePath.equals("")) {
+		if (newLoggingbasePath!=null && newLoggingbasePath.trim().equals("")==false) {
 			this.filePropLoggingBasePath = null;
 		}
 	}
