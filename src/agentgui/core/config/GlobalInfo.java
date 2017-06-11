@@ -365,7 +365,7 @@ public class GlobalInfo {
 			// ------------------------------------------------------
 			// --- Does JADE run? -----------------------------------
 			// ------------------------------------------------------			
-			AgentContainer mainContainer = Application.getJadePlatform().jadeGetMainContainer();
+			AgentContainer mainContainer = Application.getJadePlatform().getMainContainer();
 			if (mainContainer!=null) {
 				// --------------------------------------------------
 				// --- JADE is running ------------------------------

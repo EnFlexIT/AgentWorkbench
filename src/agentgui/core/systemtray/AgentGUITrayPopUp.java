@@ -178,7 +178,7 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 	 */
 	public void refreshView() {
 		
-		if (Application.getJadePlatform().jadeMainContainerIsRunning(false)) {
+		if (Application.getJadePlatform().isMainContainerRunning(false)) {
 			// --- JADE is running ----------------------------------
 			this.itemServiceStart.setEnabled(false);
 			this.itemServiceStop.setEnabled(true);
@@ -222,9 +222,9 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 		DeviceSystemExecutionMode deviceSysExecMode = Application.getGlobalInfo().getDeviceServiceExecutionMode(); 
 		if (appExecMode==ExecutionMode.DEVICE_SYSTEM && deviceSysExecMode==DeviceSystemExecutionMode.AGENT) {
 			// --- Start JADE for an embedded system agent ----------------
-			Application.getJadePlatform().jadeStart4EmbeddedSystemAgent();
+			Application.getJadePlatform().start4EmbeddedSystemAgent();
 		} else {
-			Application.getJadePlatform().jadeStart();	
+			Application.getJadePlatform().start();	
 		}
 	}
 	
@@ -243,10 +243,10 @@ public class AgentGUITrayPopUp extends PopupMenu implements ActionListener {
 			this.startJade();
 			this.refreshView();
 		} else if ( ActCMD.equalsIgnoreCase("stoptAgentGUIService")) {
-			Application.getJadePlatform().jadeStop();
+			Application.getJadePlatform().stop();
 			this.refreshView();
 		} else if ( ActCMD.equalsIgnoreCase("openRMA")) {
-			Application.getJadePlatform().jadeSystemAgentOpen("rma", null);
+			Application.getJadePlatform().startSystemAgent("rma", null);
 		} else if ( ActCMD.equalsIgnoreCase("Config")) {
 			Application.showOptionDialog();
 		} else if ( ActCMD.equalsIgnoreCase("Konsole")) {

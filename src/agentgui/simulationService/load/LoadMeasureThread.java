@@ -30,8 +30,10 @@ package agentgui.simulationService.load;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.util.ArrayList;
 
 import agentgui.simulationService.load.threading.ThreadProtocol;
+import agentgui.simulationService.load.monitoring.AbstractMonitoringTask;
 import agentgui.simulationService.load.threading.ThreadDetail;
 import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
 
@@ -127,6 +129,8 @@ public class LoadMeasureThread extends Thread {
 	/** Reminder for the last thread measurement */
 	private static long threadMeasurementLastTimeStamp;
 	
+	// --- Monitoring tasks for this thread -----------------------------------
+	private static ArrayList<AbstractMonitoringTask> monitoringTasks;
 	
 	
 	/**
@@ -231,8 +235,11 @@ public class LoadMeasureThread extends Thread {
 			    System.out.println( "JVM-Number of Threads: " + jvmThreadCount );
 			}
 
-			// --- check values and Threshold-Levels ------------
+			// --- Check values and Threshold-Levels ------------
 			setThresholdLevelExceeded(LoadMeasureThread.isLevelExceeded());			
+			
+			// --- Do the registered monitoring tasks -----------
+			this.doMonitoringTasks();
 			
 			// --- Define sleep interval ------------------------
 			timeEnd = System.currentTimeMillis();
@@ -245,7 +252,6 @@ public class LoadMeasureThread extends Thread {
 				long timeWork = timeEnd - timeStart;
 				System.out.println("[Load Measurement] Work Time: " + timeWork + "ms + Sleep Time: " + timeSleep + "ms = Interval: " + (timeWork + timeSleep) + "ms");
 			}
-			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -646,5 +652,51 @@ public class LoadMeasureThread extends Thread {
 		}
 	}
 	
+	/**
+	 * Returns the registered Monitoring tasks.
+	 * @return the monitoring tasks
+	 */
+	private static ArrayList<AbstractMonitoringTask> getMonitoringTasks() {
+		if (monitoringTasks==null) {
+			monitoringTasks = new ArrayList<>();					
+		}
+		return monitoringTasks;
+	}
+	/**
+	 * Can be used to register a JVM monitoring task.
+	 * @param monitoringTask the monitoring task
+	 */
+	public static void registerMonitoringTask(AbstractMonitoringTask monitoringTask) {
+		if (getMonitoringTasks().contains(monitoringTask)==false) {
+			getMonitoringTasks().add(monitoringTask);
+		}
+	}
+	/**
+	 * Removes the specified monitoring task.
+	 * @param monitoringTask the monitoring task
+	 */
+	public static void removeMonitoringTask(AbstractMonitoringTask monitoringTask) {
+		getMonitoringTasks().remove(monitoringTask);
+	}
+	/**
+	 * Does the tasks of the registered monitoring tasks.
+	 */
+	private void doMonitoringTasks() {
+
+		if (LoadMeasureThread.getMonitoringTasks().size()==0) return; 
+		
+		// --- Execute the defined tasks ------------------
+		ArrayList<AbstractMonitoringTask> tasks = new ArrayList<>(LoadMeasureThread.getMonitoringTasks());
+		for (int i = 0; i < tasks.size(); i++) {
+			// --- Execute single task --------------------
+			AbstractMonitoringTask task = tasks.get(i);
+			try {
+				task.doMonitoringTask();
+			} catch (Exception ex) {
+				System.err.println("Error while executing '" + task.getTaskDescription() + "': " + ex.getMessage());
+				ex.printStackTrace();
+			}
+		}
+	}
 	
 }

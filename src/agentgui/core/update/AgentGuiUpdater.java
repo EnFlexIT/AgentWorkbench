@@ -508,7 +508,7 @@ public class AgentGuiUpdater extends Thread {
 	 */
 	private boolean isPreparedForInstallation() {
 		// --- Stop Jade ------------------------
-		Application.getJadePlatform().jadeStop();
+		Application.getJadePlatform().stop();
 		// --- Close open projects --------------
 		if (Application.getProjectsLoaded().closeAll()==false) {
 			return false;	

@@ -701,7 +701,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			case SERVER_SLAVE:
 				// --- Background System Modus ----------------------
 				System.out.println("\n" + Language.translate("Neustart des Server-Dienstes") + " ...");
-				Application.getJadePlatform().jadeStop();
+				Application.getJadePlatform().stop();
 				Application.setTrayIcon(null);
 				Application.startAgentGUI();
 				break;
@@ -709,7 +709,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			case DEVICE_SYSTEM:
 				// --- Device / Embedded System Agent ---------------
 				System.out.println("\n" + Language.translate("Neustart") + " " + Application.getGlobalInfo().getExecutionModeDescription(this.executionModeNew) + " ...");
-				Application.getJadePlatform().jadeStop();
+				Application.getJadePlatform().stop();
 				if (Application.getProjectsLoaded()!= null) {
 					if (Application.getProjectsLoaded().closeAll()==false) return;	
 				}		
@@ -731,7 +731,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			
 			// ------------------------------------------------------
 			// --- Controlled shutdown of the current execution -----
-			Application.getJadePlatform().jadeStop();
+			Application.getJadePlatform().stop();
 			
 			// --- Case separation for current ExecutionMode --------
 			switch (this.executionModeOld) {

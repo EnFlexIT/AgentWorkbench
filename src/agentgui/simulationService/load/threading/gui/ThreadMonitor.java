@@ -47,7 +47,7 @@ import agentgui.simulationService.load.threading.ThreadProtocolVector;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
 
 /**
- * The Class ThreadMonitor.
+ * The Class SingleThreadMonitor.
  * 
  * Displays detailed information about thread/agent load.
  * 

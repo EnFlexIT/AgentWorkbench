@@ -316,7 +316,7 @@ public class ProjectResources extends JPanel implements Observer {
 			jButtonResourcesAdd.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
-					if (Application.getJadePlatform().jadeStopAskUserBefore()==true) {
+					if (Application.getJadePlatform().stopAskUserBefore()==true) {
 						
 						FileNameExtensionFilter filter = new FileNameExtensionFilter("jar", "JAR");
 						
@@ -355,7 +355,7 @@ public class ProjectResources extends JPanel implements Observer {
 			jButtonResourcesRemove.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 
-							if (Application.getJadePlatform().jadeStopAskUserBefore()==true) {
+							if (Application.getJadePlatform().stopAskUserBefore()==true) {
 								// --- Remove from the ClassPath ----
 								Vector<String> selection = new Vector<String>();
 								for (Object fileR2DObject : jListResources.getSelectedValuesList()) {
@@ -386,7 +386,7 @@ public class ProjectResources extends JPanel implements Observer {
 			jButtonRecourcesRefresh.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							
-							if (Application.getJadePlatform().jadeStopAskUserBefore()) {
+							if (Application.getJadePlatform().stopAskUserBefore()) {
 								Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 								currProject.resourcesReLoad();
 								Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

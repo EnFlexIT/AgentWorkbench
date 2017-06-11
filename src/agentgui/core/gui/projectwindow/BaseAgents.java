@@ -723,7 +723,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 						// --- Check, if this agent is already running ---------
 						int i = 1;
 						startAsNew = startAs;
-						while ( Application.getJadePlatform().jadeAgentIsRunning( startAs, currProject.getProjectFolder() ) == true ){
+						while ( Application.getJadePlatform().isAgentRunning( startAs, currProject.getProjectFolder() ) == true ){
 							startAs = startAsNew + i;
 							i++; 
 						}
@@ -793,7 +793,7 @@ public class BaseAgents extends JPanel implements Observer, ActionListener {
 				}
 				
 				// --- Start the Agent now --------------------------
-				Application.getJadePlatform().jadeAgentStart(jTextAgentStartAs.getText(), selectedAgentClass, startArgs, currProject.getProjectFolder());	
+				Application.getJadePlatform().startAgent(jTextAgentStartAs.getText(), selectedAgentClass, startArgs, currProject.getProjectFolder());	
 				jTextAgent.setText(null);
 				jTextAgentStartAs.setText(null);
 				jAgentList.clearSelection();

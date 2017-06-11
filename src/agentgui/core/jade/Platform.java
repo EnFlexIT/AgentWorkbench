@@ -28,27 +28,16 @@
  */
 package agentgui.core.jade;
 
-import jade.core.AID;
-import jade.core.Agent;
-import jade.core.ContainerID;
-import jade.core.Profile;
-import jade.core.ProfileImpl;
-import jade.core.Runtime;
-import jade.wrapper.AgentContainer;
-import jade.wrapper.AgentController;
-import jade.wrapper.ControllerException;
-import jade.wrapper.StaleProxyException;
-import jade.wrapper.State;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 
 import agentgui.core.agents.UtilityAgent;
+import agentgui.core.agents.UtilityAgent.UtilityAgentJob;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
@@ -59,6 +48,15 @@ import agentgui.core.webserver.DownloadServer;
 import agentgui.logging.DebugService;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.SimulationService;
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.Profile;
+import jade.core.ProfileImpl;
+import jade.core.Runtime;
+import jade.wrapper.AgentContainer;
+import jade.wrapper.AgentController;
+import jade.wrapper.ControllerException;
+import jade.wrapper.StaleProxyException;
 
 /**
  * This class manages the interaction between AgentGUI and JADE.<br>
@@ -69,23 +67,15 @@ import agentgui.simulationService.SimulationService;
  */
 public class Platform extends Object {
 
-	public static enum UTILITY_AGENT_JOB {
-		OpernDF,
-		ShutdownPlatform,
-		OpenLoadMonitor,
-		OpenThreadMonitor
-	}
-	
 	private static final String BackgroundSystemAgentApplication = "server.client";
 	private static final String BackgroundSystemAgentServerMaster = "server.master";
 	private static final String BackgroundSystemAgentServerSlave = "server.slave";
 
-	private Runtime jadeRuntime;
-	private AgentContainer jadeMainContainer;
-	private Vector<AgentContainer> jadeContainerLocal = new Vector<AgentContainer>();
-	private Vector<ContainerID> jadeContainerRemote = new Vector<ContainerID>();
+	private final String newLine = Application.getGlobalInfo().getNewLineSeparator();
+
 	
-	private String newLine = Application.getGlobalInfo().getNewLineSeparator();
+	private AgentContainer jadeMainContainer;
+	private ArrayList<AgentContainer> agentContainerList;
 	
 	
 	/**
@@ -96,6 +86,85 @@ public class Platform extends Object {
 	}	
 	
 	/**
+	 * Starts JADE without displaying the RMA
+	 * @return true, if successful
+	 */		
+	public boolean start() {
+		return start(false, null);
+	}	
+	/**
+	 * Starts JADE.
+	 * @param showRMA set true, if you want also to start the RMA agent and its visualisation 
+	 * @return true, if successful
+	 */
+	public boolean start(boolean showRMA) {
+		return start(showRMA, null);
+	}
+	/**
+	 * Starts JADE.
+	 * @param showRMA set true, if you want also to start the RMA agent and its visualisation 
+	 * @param containerProfile the actual container Profile
+	 * @return true, if successful
+	 */
+	public boolean start(boolean showRMA, Profile containerProfile) {
+		
+		boolean startSucceed = false;		
+		
+		if (this.isMainContainerRunning()==false) {
+			try {
+				// --------------------------------------------------
+				// --- In case of execution as Service, check -------
+				// --- Master-URL and maybe delay the JADE start ----
+				// --------------------------------------------------
+				this.delayHeadlessServerStartByCheckingMasterURL();
+				
+				// --- Notify plugins for agent Start --------------- 
+				this.notifyPluginsForStartMAS();
+				
+				// --- Check for valid plugin preconditions --------- 
+				if (this.hasValidPreconditionsInPlugins()==false) {
+					return false;
+				}
+				
+				// --- Start Platform -------------------------------
+				Runtime jadeRuntime = Runtime.instance();	
+				jadeRuntime.invokeOnTermination(new Runnable() {
+					public void run() {
+						// --- terminate platform -------------------
+						jadeMainContainer = null;
+						Application.setStatusJadeRunning(false);
+						if (Application.getMainWindow()!=null){
+							Application.getMainWindow().setSimulationReady2Start();
+						}
+						// --- Notify plugins for termination -------
+						notifyPluginsForTerminatedMAS();
+					}
+				});
+				// --- Start MainContainer --------------------------
+				if (containerProfile!=null) {
+					jadeMainContainer = jadeRuntime.createMainContainer(containerProfile);
+				} else {
+					jadeMainContainer = jadeRuntime.createMainContainer(this.getContainerProfile());
+				}
+				startSucceed = true;
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				return false;
+			}
+			
+		} else {
+			System.out.println( "JADE läuft bereits! => " + Runtime.instance().toString() );			
+		}
+
+		// --- Start the Application Background-Agents ---------------
+		if (this.startBackgroundAgents(showRMA)==false) return false;
+		
+		Application.setStatusJadeRunning(true);
+		return startSucceed;
+	}
+	
+	/**
 	 * This Method will start - depending on the Configuration - the
 	 * programs-background-agents.
 	 * It starts directly after starting the JADE-Platform
@@ -103,7 +172,7 @@ public class Platform extends Object {
 	 * @param showRMA specifies if the rma should appear or not
 	 * @return true, if successful
 	 */
-	private boolean jadeStartBackgroundAgents(boolean showRMA) {
+	private boolean startBackgroundAgents(boolean showRMA) {
 		
 		// ----------------------------------------------------------
 		// --- Differentiation of the Application-Case --------------
@@ -113,12 +182,12 @@ public class Platform extends Object {
 		
 		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
-			if (jadeAgentIsRunning(BackgroundSystemAgentApplication)==false) {
-				jadeAgentStart(BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
+			if (isAgentRunningInMainContainer(BackgroundSystemAgentApplication)==false) {
+				startAgent(BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
 			}
 			// --- Start RMA ('Remote Monitoring Agent') -----------
 			if (showRMA==true) {
-				jadeSystemAgentOpen("rma", null);	
+				startSystemAgent("rma", null);	
 			}
 			break;
 		
@@ -129,7 +198,7 @@ public class Platform extends Object {
 			// --- Connecting to Database ----------------------
 			if (Application.getDatabaseConnection(true).hasErrors()==true ) {
 				
-				this.jadeStop();
+				this.stop();
 				
 				String msgHead = "";
 				String msgText = "";
@@ -156,8 +225,8 @@ public class Platform extends Object {
 				
 			}
 			// --- Starting 'Server.Master'-Agent --------------				
-			if (jadeAgentIsRunning(BackgroundSystemAgentServerMaster)==false) {
-				this.jadeAgentStart(BackgroundSystemAgentServerMaster, agentgui.simulationService.agents.ServerMasterAgent.class.getName());	
+			if (isAgentRunningInMainContainer(BackgroundSystemAgentServerMaster)==false) {
+				this.startAgent(BackgroundSystemAgentServerMaster, agentgui.simulationService.agents.ServerMasterAgent.class.getName());	
 			}
 			break;
 			
@@ -171,7 +240,7 @@ public class Platform extends Object {
 				Application.getGlobalInfo().getServerMasterPort4MTP().equals(0)==true ||
 				Application.getGlobalInfo().getJadeUrlConfigurationForMaster().hasErrors()==true) {
 				
-				this.jadeStop();
+				this.stop();
 				
 				String msgHead = "";
 				String msgText = "";
@@ -198,8 +267,8 @@ public class Platform extends Object {
 				
 			} 
 			// --- Starting 'Server.Slave'-Agent ---------------
-			if (jadeAgentIsRunning(BackgroundSystemAgentServerSlave)==false) {			
-				this.jadeAgentStart(BackgroundSystemAgentServerSlave, agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
+			if (isAgentRunningInMainContainer(BackgroundSystemAgentServerSlave)==false) {			
+				this.startAgent(BackgroundSystemAgentServerSlave, agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
 			}
 			break;
 		
@@ -219,8 +288,8 @@ public class Platform extends Object {
 			
 			switch (Application.getGlobalInfo().getDeviceServiceExecutionMode()) {
 			case SETUP:
-				if (jadeAgentIsRunning(BackgroundSystemAgentApplication)==false) {
-					jadeAgentStart(BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
+				if (isAgentRunningInMainContainer(BackgroundSystemAgentApplication)==false) {
+					startAgent(BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());	
 				}
 				break;
 
@@ -236,86 +305,6 @@ public class Platform extends Object {
 			break;
 		}
 		return true;
-	}
-
-	/**
-	 * Starts JADE without displaying the RMA
-	 * @return true, if successful
-	 */		
-	public boolean jadeStart() {
-		return jadeStart(false, null);
-	}	
-	/**
-	 * Starts JADE.
-	 * @param showRMA set true, if you want also to start the RMA agent and its visualisation 
-	 * @return true, if successful
-	 */
-	public boolean jadeStart(boolean showRMA) {
-		return jadeStart(showRMA, null);
-	}
-	/**
-	 * Starts JADE.
-	 * @param showRMA set true, if you want also to start the RMA agent and its visualisation 
-	 * @param containerProfile the actual container Profile
-	 * @return true, if successful
-	 */
-	public boolean jadeStart(boolean showRMA, Profile containerProfile) {
-		
-		boolean startSucceed = false;		
-		
-		if (this.jadeIsMainContainerRunning()==false) {
-			try {
-				// --------------------------------------------------
-				// --- In case of execution as Service, check -------
-				// --- Master-URL and maybe delay the JADE start ----
-				// --------------------------------------------------
-				this.delayHeadlessServerStartByCheckingMasterURL();
-				
-				// --- Notify plugins for agent Start --------------- 
-				this.notifyPluginsForStartMAS();
-				
-				// --- Check for valid plugin preconditions --------- 
-				if (this.hasValidPreconditionsInPlugins()==false) {
-					return false;
-				}
-				
-				// --- Start Platform -------------------------------
-				jadeRuntime = Runtime.instance();	
-				jadeRuntime.invokeOnTermination(new Runnable() {
-					public void run() {
-						// --- terminate platform -------------------
-						jadeMainContainer = null;
-						jadeRuntime = null;
-						Application.setStatusJadeRunning(false);
-						if (Application.getMainWindow()!=null){
-							Application.getMainWindow().setSimulationReady2Start();
-						}
-						// --- Notify plugins for termination -------
-						notifyPluginsForTerminatedMAS();
-					}
-				});
-				// --- Start MainContainer --------------------------
-				if (containerProfile!=null) {
-					jadeMainContainer = jadeRuntime.createMainContainer(containerProfile);
-				} else {
-					jadeMainContainer = jadeRuntime.createMainContainer(this.jadeGetContainerProfile());
-				}
-				startSucceed = true;
-				
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				return false;
-			}
-			
-		} else {
-			System.out.println( "JADE läuft bereits! => " + jadeRuntime );			
-		}
-
-		// --- Start the Application Background-Agents ---------------
-		if (this.jadeStartBackgroundAgents(showRMA)==false) return false;
-		
-		Application.setStatusJadeRunning(true);
-		return startSucceed;
 	}
 	
 	/**
@@ -397,11 +386,11 @@ public class Platform extends Object {
 	 * Start JADE for a globally specified embedded system agent.
 	 * @return true, if successful
 	 */
-	public boolean jadeStart4EmbeddedSystemAgent() {
+	public boolean start4EmbeddedSystemAgent() {
 		String agentClassName = Application.getGlobalInfo().getDeviceServiceAgentClassName();
 		String agentName = Application.getGlobalInfo().getDeviceServiceAgentName();
 		if (agentClassName!=null) {
-			return this.jadeStart4EmbeddedSystemAgent(agentClassName, agentName);
+			return this.start4EmbeddedSystemAgent(agentClassName, agentName);
 		}
 		return false;
 	}
@@ -412,12 +401,12 @@ public class Platform extends Object {
 	 * @param agentName the agents name
 	 * @return true, if successful
 	 */
-	public boolean jadeStart4EmbeddedSystemAgent(String agentClassName, String agentName) {
+	public boolean start4EmbeddedSystemAgent(String agentClassName, String agentName) {
 		
 		boolean jadeStarted = false;
 		
 		// --- Remove the Agent.GUI services ------------------------
-		Profile jadeProfile = this.jadeGetContainerProfile();
+		Profile jadeProfile = this.getContainerProfile();
 		// --- Stop the DownloadServer again ------------------------
 		Application.stopDownloadServer();
 
@@ -435,7 +424,7 @@ public class Platform extends Object {
 		jadeProfile.setParameter("services", servicesNew);
 		
 		// --- start JADE with this profile -------------------------
-		if (this.jadeStart(false, jadeProfile)) {
+		if (this.start(false, jadeProfile)) {
 			try {
 				// --- Start the selected Agent ---------------------
 				Class<?> agentClass = Class.forName(agentClassName);
@@ -445,7 +434,7 @@ public class Platform extends Object {
 				} else {
 					startAs = agentName;
 				}
-				this.jadeAgentStart(startAs, agentClassName);
+				this.startAgent(startAs, agentClassName);
 				System.out.println(Language.translate("Agent gestartet") + ": '" + agentClassName + "'");
 				return true;
 				
@@ -464,7 +453,7 @@ public class Platform extends Object {
 	 * used.
 	 * @return Profile (for Jade-Containers)
 	 */
-	public ProfileImpl jadeGetContainerProfile() {
+	public ProfileImpl getContainerProfile() {
 
 		ProfileImpl jadeContainerProfile = null;
 		Project currProject = Application.getProjectFocused();
@@ -499,17 +488,17 @@ public class Platform extends Object {
 	/**
 	 * Shutting down the jade-platform.
 	 */
-	public void jadeStop() {
+	public void stop() {
 
 		// ------------------------------------------------
 		// --- Starts the UtilityAgent which sends --------
 		// --- a 'ShutdownPlatform()' to the AMS   --------	
 		// ------------------------------------------------
-		if (jadeIsMainContainerRunning()) {
-			this.jadeUtilityAgentStart(UTILITY_AGENT_JOB.ShutdownPlatform);
+		if (isMainContainerRunning()) {
+			this.startUtilityAgent(UtilityAgentJob.ShutdownPlatform);
 			// --- Wait for the end of Jade ---------------
 			Long timeStop = System.currentTimeMillis() + (10 * 1000);
-			while(jadeIsMainContainerRunning()) {
+			while(isMainContainerRunning()) {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -531,10 +520,8 @@ public class Platform extends Object {
 		Application.stopDownloadServer();
 		
 		// --- Reset runtime-variables -------------------- 
-		jadeContainerRemote.removeAllElements();
-		jadeContainerLocal.removeAllElements();
-		jadeMainContainer = null;
-		jadeRuntime = null;
+		this.getAgentContainerList().clear();
+		this.jadeMainContainer = null;
 		
 		Application.setStatusJadeRunning(false);
 		if (Application.getMainWindow()!=null) {
@@ -547,15 +534,15 @@ public class Platform extends Object {
 	 * Asks the user to shutdown Jade.
 	 * @return true, if the user answered 'yes'
 	 */
-	public boolean jadeStopAskUserBefore() {
+	public boolean stopAskUserBefore() {
 		
-		if(this.jadeIsMainContainerRunning()==true && Application.getMainWindow()!=null) {
-			String MsgHead = Language.translate("JADE wird zur Zeit ausgeführt!");
-			String MsgText = Language.translate("Möchten Sie JADE nun beenden?");
-			Integer MsgAnswer =  JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
-			if ( MsgAnswer == 1 ) return false; // --- NO,just exit 
+		if (this.isMainContainerRunning()==true && Application.getMainWindow()!=null) {
+			String title = Language.translate("JADE wird zur Zeit ausgeführt!");
+			String message = Language.translate("Möchten Sie JADE nun beenden?");
+			Integer answer =  JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), message, title, JOptionPane.YES_NO_OPTION);
+			if (answer==1) return false; // --- NO,just exit 
 			// --- Stop the JADE-Platform -------------------
-			this.jadeStop();
+			this.stop();
 		}
 		return true;
 	}
@@ -566,11 +553,11 @@ public class Platform extends Object {
 	 * @param forceJadeStart will force the jade start, if JADE is not running
 	 * @return true, if the MainContainer is running
 	 */
-	public boolean jadeMainContainerIsRunning(boolean forceJadeStart) {
+	public boolean isMainContainerRunning(boolean forceJadeStart) {
 		if (forceJadeStart==true) {
-			jadeSystemAgentOpen("rma", null);
+			this.startSystemAgent("rma", null);
 		}		
-		return jadeIsMainContainerRunning();
+		return this.isMainContainerRunning();
 	}
 	
 	/**
@@ -578,37 +565,35 @@ public class Platform extends Object {
 	 *
 	 * @return true, if the Main-Container is running
 	 */
-	public boolean jadeIsMainContainerRunning () {
+	public boolean isMainContainerRunning () {
 		boolean isRunning;		
 		try {
 			jadeMainContainer.getState();
 			isRunning = true;
-		}
-		catch (Exception eMC) {
+			
+		} catch (Exception eMC) {
 			isRunning = false; //	eMC.printStackTrace();	
 			jadeMainContainer = null;
 			try {
-				jadeRuntime.shutDown();				
-			} catch (Exception eRT ) { 
-				//eRT.printStackTrace();				
+				Runtime.instance().shutDown();				
+			} catch (Exception ex) { 
+				//ex.printStackTrace();				
 			}			
-			jadeRuntime = null;	
 		}
 		return isRunning;
 	}
-	
 	
 	/**
 	 * Starts the Utility-Agent with a job defined in its start argument.
 	 *
 	 * @param utilityAgentJob the job for the utility UtilityAgent to do
-	 * @see UTILITY_AGENT_JOB
+	 * @see UtilityAgentJob
 	 * @see UtilityAgent
 	 */
-	public void jadeUtilityAgentStart(UTILITY_AGENT_JOB utilityAgentJob) {
+	public void startUtilityAgent(UtilityAgentJob utilityAgentJob) {
 		Object[] agentArgs = new Object[1];
 		agentArgs[0] = utilityAgentJob;
-		jadeAgentStart("utility", agentgui.core.agents.UtilityAgent.class.getName(), agentArgs);
+		startAgent("utility", agentgui.core.agents.UtilityAgent.class.getName(), agentArgs);
 	}
 	
 	/**
@@ -617,8 +602,8 @@ public class Platform extends Object {
 	 * @param rootAgentName the root agent name
 	 * @param optionalSuffixNo the optional postfix no
 	 */
-	public void jadeSystemAgentOpen(String rootAgentName, Integer optionalSuffixNo) {
-		this.jadeSystemAgentOpen(rootAgentName, optionalSuffixNo, null);
+	public void startSystemAgent(String rootAgentName, Integer optionalSuffixNo) {
+		this.startSystemAgent(rootAgentName, optionalSuffixNo, null);
 	}
 	
 	/**
@@ -632,7 +617,7 @@ public class Platform extends Object {
 	 * @param optionalSuffixNo an optional postfix no
 	 * @param openArgs the open args
 	 */
-	public void jadeSystemAgentOpen(String rootAgentName, Integer optionalSuffixNo, Object[] openArgs) {
+	public void startSystemAgent(String rootAgentName, Integer optionalSuffixNo, Object[] openArgs) {
 		
 		// --- Table of the known Jade System-Agents ----------------
 		Hashtable<String, String> systemAgents = new Hashtable<String, String>();
@@ -674,7 +659,7 @@ public class Platform extends Object {
 		}
 		
 		// --- Was the system already started? ----------------------
-		if (this.jadeIsMainContainerRunning()==false) {
+		if (this.isMainContainerRunning()==false) {
 			
 			boolean isSkipUserRequest = false;
 			Project currProject = Application.getProjectFocused(); 
@@ -709,7 +694,7 @@ public class Platform extends Object {
 			}
 			
 			// --- Start the JADE-Platform --------------------------
-			if(this.jadeStart(showRMA) == false){
+			if(this.start(showRMA) == false){
 				// --- Abort if the jade platform was not started -----------
 				return;
 			}
@@ -733,7 +718,7 @@ public class Platform extends Object {
 		}
 		
 		// --- Does an agent (see name) already exists? -------------
-		if (jadeAgentIsRunning(agentNameForStart)==true && agentNameForStart.equalsIgnoreCase("df")==false) {
+		if (isAgentRunningInMainContainer(agentNameForStart)==true && agentNameForStart.equalsIgnoreCase("df")==false) {
 			// --- Agent already EXISTS !! --------------------------
 			int msgAnswer;
 			String msgHead = Language.translate("Der Agent '") + rootAgentName +  Language.translate("' ist bereits geöffnet!");
@@ -745,7 +730,7 @@ public class Platform extends Object {
 			}
 			if (msgAnswer==0) {
 				// --- YES - Start another agent of this kind --------
-				jadeSystemAgentOpen(rootAgentName, newSuffixNo(rootAgentName), openArgs);
+				startSystemAgent(rootAgentName, newSuffixNo(rootAgentName), openArgs);
 			}
 			
 		} else {
@@ -753,17 +738,17 @@ public class Platform extends Object {
 			try {
 				if (agentNameForStart.equalsIgnoreCase("df")) {
 					// --- Show the DF-GUI --------------------------
-					this.jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpernDF);
+					this.startUtilityAgent(UtilityAgentJob.OpernDF);
 					return;					
 				} else if (agentNameForStart.equalsIgnoreCase("loadMonitor") ) {
-					this.jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenLoadMonitor);
+					this.startUtilityAgent(UtilityAgentJob.OpenLoadMonitor);
 					return;
 				} else if (agentNameForStart.equalsIgnoreCase("threadMonitor") ) {
-					this.jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenThreadMonitor);
+					this.startUtilityAgent(UtilityAgentJob.OpenThreadMonitor);
 					return;
 				} else if (agentNameForStart.equalsIgnoreCase("simstarter")) {
 					String containerName = Application.getProjectFocused().getProjectFolder();
-					this.jadeAgentStart(agentNameForStart, agentNameClass, openArgs, containerName);
+					this.startAgent(agentNameForStart, agentNameClass, openArgs, containerName);
 				} else {
 					// --- Show a standard jade ToolAgent -----------
 					agentController = jadeMainContainer.createNewAgent(agentNameForStart, agentNameClass, openArgs);
@@ -787,7 +772,7 @@ public class Platform extends Object {
 		String newAgentName = agentName;
 		Integer i = 0;
 		
-		while (jadeAgentIsRunning(newAgentName)==true) {
+		while (isAgentRunningInMainContainer(newAgentName)==true) {
 			i++;
 			newAgentName = agentName + i.toString();			
 		}			
@@ -796,13 +781,12 @@ public class Platform extends Object {
 	
 	/**
 	 * Kills an agent in the MainContainer, if it is running.
-	 *
 	 * @param localAgentName the agent name
 	 */
-	public void jadeKillAgentInMainContainer(String localAgentName) {
+	public void killAgentInMainContainer(String localAgentName) {
 
 		AgentController agentController = null;
-		if ( jadeAgentIsRunning(localAgentName) ) {
+		if (isAgentRunningInMainContainer(localAgentName)) {
 			// --- get Agent(Controller) -----
 			try {
 				agentController = jadeMainContainer.getAgent(localAgentName);
@@ -817,9 +801,7 @@ public class Platform extends Object {
 				// e.printStackTrace();
 			}
 		}
-	}	
-	
-	
+	}
 	
 	/**
 	 * Checks, whether one Agent is running (or not) in the main-container.
@@ -827,8 +809,24 @@ public class Platform extends Object {
 	 * @param localAgentName the agent name
 	 * @return true, if the agent is running
 	 */
-	public boolean jadeAgentIsRunning(String localAgentName) {
-		return jadeAgentIsRunning(localAgentName, jadeMainContainer.getName());
+	public boolean isAgentRunningInMainContainer(String localAgentName) {
+		return isAgentRunning(localAgentName, this.jadeMainContainer);
+	}
+	
+	/**
+	 * Checks, if the specified Agent is running (or not).
+	 *
+	 * @param localAgentName the agent name
+	 * @return true, if the agent is running
+	 */
+	public boolean isAgentRunning(String localAgentName) {
+		// --- Check if agent is running in the main container ------
+		if (this.isAgentRunningInMainContainer(localAgentName)) return true;
+		// --- Check if agent is running in other container ---------
+		for (AgentContainer agentContainer : this.getAgentContainerList()) {
+			if (this.isAgentRunning(localAgentName, agentContainer)) return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -838,81 +836,97 @@ public class Platform extends Object {
 	 * @param localContainerName the local container name
 	 * @return true, if the agent is running
 	 */
-	public boolean jadeAgentIsRunning (String localAgentName, String localContainerName) {
+	public boolean isAgentRunning(String localAgentName, String localContainerName) {
 		
-		boolean isRunning;
-		AgentContainer  agentContainer = null;
-		AgentController agentController = null;
+		if (this.isMainContainerRunning()==false) return false;
+		if (localAgentName==null) return false;
+		if (localContainerName==null) return false;
 		
-		if (this.jadeIsMainContainerRunning()==false) {
-			return false;
-		}
-
-		// --- 0. Set to the right Container ------------------------
-		agentContainer = jadeGetContainer(localContainerName);
-		if (agentContainer==null) {
-			return false;
-		}
-		// --- 1. try to find the agent in main-container -----------
-		try {
-			agentController = agentContainer.getAgent(localAgentName);
-		} 
-		catch (ControllerException CE) {
-			return false; 	// CE.printStackTrace();			
-		}
-		
-		// --- 2. try to get agent's state --------------------------				
-		try {
-			@SuppressWarnings("unused")
-			State state = agentController.getState();
-			//System.out.println( "Staus of Agent '" + AgeCon.getName() + "': " +  Stat.getCode() + " - " + Stat.getName()); 
-			isRunning = true;
-		}
-		catch (Exception eMC) {
-			isRunning = false; //	eMC.printStackTrace();			
-		}
-		return isRunning;
-	}	
+		return this.isAgentRunning(localAgentName, this.getContainer(localContainerName));
+	}
 	
 	/**
-	 * Adding an AgentContainer to the local platform.
+	 * Checks, whether one Agent is running (or not) in the specified container
 	 *
-	 * @param newContainerName the container name
-	 * @return the agent container
+	 * @param localAgentName the agent name
+	 * @param localContainerName the local container name
+	 * @return true, if the agent is running
 	 */
-	public AgentContainer jadeContainerCreate(String newContainerName) {
-		ProfileImpl pSub = this.jadeGetContainerProfile();
-		pSub.setParameter(Profile.CONTAINER_NAME, newContainerName);
-		pSub.setParameter(Profile.MAIN, (new Boolean(false)).toString());
-		pSub.setParameter(Profile.MTPS, null);
-		AgentContainer agentContainer = jadeRuntime.createAgentContainer(pSub);
-		jadeContainerLocal.add(agentContainer);
-		return agentContainer;		
+	public boolean isAgentRunning(String localAgentName, AgentContainer agentContainer) {
+		
+		if (this.isMainContainerRunning()==false) return false;
+		if (localAgentName==null) return false;
+		if (agentContainer==null) return false;
+		
+		// --- 1. Try to find the agent in the container ------------
+		AgentController agentController = null;
+		try {
+			agentController = agentContainer.getAgent(localAgentName);
+		
+		} catch (ControllerException ce) {
+			// ce.printStackTrace();
+			return false; 				
+		}
+		
+		// --- 2. Try to get the agent's state ----------------------
+		boolean isRunning;
+		try {
+			agentController.getState();
+			isRunning = true;
+		
+		} catch (StaleProxyException spex) {
+			// spex.printStackTrace();
+			isRunning = false; 			
+		}		
+		return isRunning;
 	}	
 	
 	/**
 	 * Returns the Jade main container.
 	 * @return the agent container
 	 */
-	public AgentContainer jadeGetMainContainer() {
-		if (jadeIsMainContainerRunning()==false) {
+	public AgentContainer getMainContainer() {
+		if (this.isMainContainerRunning()==false) {
 			return null;
 		}
 		return this.jadeMainContainer;
 	}
 	/**
-	 * Returns the Container given by it's name.
+	 * Adding an AgentContainer to the local platform.
+	 *
+	 * @param newContainerName the container name
+	 * @return the agent container
+	 */
+	public AgentContainer createAgentContainer(String newContainerName) {
+		ProfileImpl pSub = this.getContainerProfile();
+		pSub.setParameter(Profile.CONTAINER_NAME, newContainerName);
+		pSub.setParameter(Profile.MAIN, (new Boolean(false)).toString());
+		pSub.setParameter(Profile.MTPS, null);
+		AgentContainer agentContainer = Runtime.instance().createAgentContainer(pSub);
+		this.getAgentContainerList().add(agentContainer);
+		return agentContainer;		
+	}
+	
+	/**
+	 * Returns the List of local agent container.
+	 * @return the agent container local
+	 */
+	public ArrayList<AgentContainer> getAgentContainerList() {
+		if (agentContainerList==null) {
+			agentContainerList = new ArrayList<>();
+		}
+		return agentContainerList;
+	}
+	/**
+	 * Returns the {@link AgentContainer} given by it's name.
 	 *
 	 * @param containerNameSearch the container name search
 	 * @return the agent container
 	 */
-	public AgentContainer jadeGetContainer(String containerNameSearch ) {
+	public AgentContainer getContainer(String containerNameSearch ) {
 		
-		AgentContainer agentContainer = null;
-		String agentContainerName = null;
-		
-		// --- IfJADE is not already running -------------------
-		if (jadeIsMainContainerRunning()==false) {
+		// --- If JADE is not already running -------------------
+		if (this.isMainContainerRunning()==false) {
 			return null;
 		}
 		// --- Searching for the 'Main-Container'? -------------
@@ -921,15 +935,17 @@ public class Platform extends Object {
 		}	
 		
 		// --- Get the right container ------------------------- 
-		for (int i=0; i < jadeContainerLocal.size(); i++) {
-			agentContainer = jadeContainerLocal.get(i);
+		AgentContainer agentContainer = null;
+		for (int i=0; i < this.getAgentContainerList().size(); i++) {
+			
+			agentContainer = this.getAgentContainerList().get(i);
+			String agentContainerName = null;
 			try {
 				agentContainerName = agentContainer.getContainerName();
-			} 
-			catch (ControllerException ex) {
+			} catch (ControllerException ex) {
 				ex.printStackTrace();
-			}			
-			if (agentContainerName.equalsIgnoreCase( containerNameSearch )==true) {
+			}
+			if (agentContainerName!=null && agentContainerName.equalsIgnoreCase(containerNameSearch)==true) {
 				break;
 			}
 		}		
@@ -941,24 +957,15 @@ public class Platform extends Object {
 	 *
 	 * @param containerName the container name
 	 */
-	public void jadeKillContainer(String containerName) {
-		AgentContainer agentContainer = null;
-		agentContainer = jadeGetContainer(containerName);
-		jadeContainerKill( agentContainer );
-	}
-	
-	/**
-	 * Jade container kill.
-	 *
-	 * @param agentContainer the agent container
-	 */
-	public void jadeContainerKill( AgentContainer agentContainer ) {
-		
-		jadeContainerLocal.remove( agentContainer );
-		try {
-			agentContainer.kill();
-		} catch (StaleProxyException e) {
-			//e.printStackTrace();
+	public void killContainer(String containerName) {
+		AgentContainer agentContainer = this.getContainer(containerName);
+		if (agentContainer!=null) {
+			try {
+				this.getAgentContainerList().remove(agentContainer);
+				agentContainer.kill();
+			} catch (StaleProxyException e) {
+				//e.printStackTrace();
+			}
 		}
 	}
 	
@@ -968,9 +975,9 @@ public class Platform extends Object {
 	 * @param newAgentName the agent name
 	 * @param agentClassName the agent class name
 	 */
-	public void jadeAgentStart(String newAgentName, String agentClassName) {
+	public void startAgent(String newAgentName, String agentClassName) {
 		String MainContainerName = jadeMainContainer.getName();
-		jadeAgentStart(newAgentName, agentClassName, null, MainContainerName) ;
+		startAgent(newAgentName, agentClassName, null, MainContainerName) ;
 	}
 	
 	/**
@@ -980,8 +987,8 @@ public class Platform extends Object {
 	 * @param agentClassName the agent class name
 	 * @param inContainer the container name
 	 */
-	public void jadeAgentStart(String newAgentName, String agentClassName, String inContainer ) {
-		jadeAgentStart(newAgentName, agentClassName, null, inContainer) ;
+	public void startAgent(String newAgentName, String agentClassName, String inContainer ) {
+		startAgent(newAgentName, agentClassName, null, inContainer) ;
 	}
 	
 	/**
@@ -991,9 +998,9 @@ public class Platform extends Object {
 	 * @param agentClassName the agent class name
 	 * @param startArguments the start arguments for the agent
 	 */
-	public void jadeAgentStart(String newAgentName, String agentClassName, Object[] startArguments ) {
+	public void startAgent(String newAgentName, String agentClassName, Object[] startArguments ) {
 		String MainContainerName = jadeMainContainer.getName();
-		jadeAgentStart(newAgentName, agentClassName, startArguments, MainContainerName);
+		startAgent(newAgentName, agentClassName, startArguments, MainContainerName);
 	}
 	
 	/**
@@ -1004,12 +1011,11 @@ public class Platform extends Object {
 	 * @param startArguments the start arguments for the agent
 	 * @param inContainer the container name
 	 */
-	public void jadeAgentStart(String newAgentName, String agentClassName, Object[] startArguments, String inContainer ) {
-		
+	public void startAgent(String newAgentName, String agentClassName, Object[] startArguments, String inContainer ) {
 		try {
 			@SuppressWarnings("unchecked")
 			Class<? extends Agent> clazz = (Class<? extends Agent>) Class.forName(agentClassName);
-			jadeAgentStart(newAgentName, clazz, startArguments, inContainer );
+			startAgent(newAgentName, clazz, startArguments, inContainer );
 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -1024,26 +1030,26 @@ public class Platform extends Object {
 	 * @param startArguments the start arguments for the agent
 	 * @param inContainer the container name
 	 */
-	public void jadeAgentStart(String newAgentName, Class<? extends Agent> clazz, Object[] startArguments, String inContainer ) {
+	public void startAgent(String newAgentName, Class<? extends Agent> clazz, Object[] startArguments, String inContainer ) {
 		
 		// --- Was the system already started? ----------------------
-		if (this.jadeIsMainContainerRunning()==false) {
+		if (this.isMainContainerRunning()==false) {
 			String msgHead = Language.translate("JADE wurde noch nicht gestartet!");
 			String msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
 			int msgAnswer = JOptionPane.showInternalConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
 			if (msgAnswer==JOptionPane.NO_OPTION) return; // --- NO,just exit 
 			
 			// --- Start the JADE-Platform -------------------------------
-			if (this.jadeStart() == false) {
+			if (this.start() == false) {
 				// --- Abort if JADE was not successfully started --------
 				return;
 			}
 		}
 		
 		// --- Get the AgentContainer -------------------------------
-		AgentContainer agentContainer = this.jadeGetContainer(inContainer);
+		AgentContainer agentContainer = this.getContainer(inContainer);
 		if (agentContainer==null) {
-			agentContainer = jadeContainerCreate(inContainer);
+			agentContainer = createAgentContainer(inContainer);
 		}
 		
 		// --- Check if the agent name is already used --------------
@@ -1056,8 +1062,12 @@ public class Platform extends Object {
 				newAgentNameTmp = newAgentName + "-" + newAgentNoTmp;
 				agentContainer.getAgent(newAgentNameTmp, AID.ISLOCALNAME);
 			}
+			
 		} catch (ControllerException ce) {
-			if (newAgentNoTmp>0) newAgentName = newAgentName + "-" + newAgentNoTmp;
+			//ce.printStackTrace();
+			if (newAgentNoTmp>0) {
+				newAgentName = newAgentName + "-" + newAgentNoTmp;
+			}
 		}
 		
 		// --- Start the actual agent -------------------------------
@@ -1075,5 +1085,5 @@ public class Platform extends Object {
 		}		
 	}
 	
-	
-}// -- End Class ---
+
+}

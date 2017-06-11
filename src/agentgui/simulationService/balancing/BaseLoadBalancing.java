@@ -43,9 +43,9 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.core.agents.AgentClassElement4SimStart;
+import agentgui.core.agents.UtilityAgent.UtilityAgentJob;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.jade.Platform.UTILITY_AGENT_JOB;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
@@ -397,14 +397,14 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	protected void openMonitorAgents() {
 		if (this.currDisSetup!=null) {
 			if (this.currDisSetup.isShowLoadMonitorAtPlatformStart()==true) {
-				Application.getJadePlatform().jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenLoadMonitor);	
+				Application.getJadePlatform().startUtilityAgent(UtilityAgentJob.OpenLoadMonitor);	
 			}
 			if(this.currDisSetup.isShowThreadMonitorAtPlatformStart()==true){
-				Application.getJadePlatform().jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenThreadMonitor);
+				Application.getJadePlatform().startUtilityAgent(UtilityAgentJob.OpenThreadMonitor);
 			}
 		} else {
-			Application.getJadePlatform().jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenLoadMonitor);
-			Application.getJadePlatform().jadeUtilityAgentStart(UTILITY_AGENT_JOB.OpenThreadMonitor);
+			Application.getJadePlatform().startUtilityAgent(UtilityAgentJob.OpenLoadMonitor);
+			Application.getJadePlatform().startUtilityAgent(UtilityAgentJob.OpenThreadMonitor);
 		}
 	}
 	

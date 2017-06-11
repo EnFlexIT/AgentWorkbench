@@ -333,8 +333,9 @@ public class Application {
 		return Application.trayIcon;
 	}
 	/**
-	 * Sets the tray icon.
-	 * @param newTrayIcon the new tray icon
+	 * Sets the tray icon. If a tray icon already exists and the parameter 
+	 * is set to <code>null</code>, the current tray icon will be removed. 
+	 * @param newTrayIcon the new tray icon or <code>null</code>
 	 */
 	public static void setTrayIcon(AgentGUITrayIcon newTrayIcon) {
 		if (trayIcon!=null && newTrayIcon==null) {
@@ -568,8 +569,9 @@ public class Application {
 	
 	
 	/**
-	 * This methods starts Agent.GUI in application or server mode
-	 * depending on the configuration in 'properties/agentgui.ini'
+	 * This methods starts Agent.GUI into application or server mode, which
+	 * depends on the configuration in 'properties/agentgui.ini'.<br>
+	 * Inverse method to {@link #stopAgentGUI()}
 	 */
 	public static void startAgentGUI() {
 		
@@ -670,7 +672,7 @@ public class Application {
 		if (getGlobalInfo().isServerAutoRun()==true) {
 			// --- Wait until the benchmark result is available -----
 			waitForBenchmark();
-			boolean jadeStarted = getJadePlatform().jadeStart();
+			boolean jadeStarted = getJadePlatform().start();
 			if (isOperatingHeadless()==true && jadeStarted==false) {
 				Application.quit();
 			}
@@ -720,11 +722,11 @@ public class Application {
 							// --- Select the specified simulation setup ----------------
 							boolean setupLoaded = projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
 							if (setupLoaded==true) {
-								if (getJadePlatform().jadeStart(false)==true) {
+								if (getJadePlatform().start(false)==true) {
 									// --- Start Setup ----------------------------------
 									Object[] startWith = new Object[1];
 									startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
-									getJadePlatform().jadeSystemAgentOpen("simstarter", null, startWith);
+									getJadePlatform().startSystemAgent("simstarter", null, startWith);
 								}
 							}
 						}
@@ -762,7 +764,7 @@ public class Application {
 						projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
 					}
 					// --- Start JADE for an embedded system agent ----------------------
-					getJadePlatform().jadeStart4EmbeddedSystemAgent();
+					getJadePlatform().start4EmbeddedSystemAgent();
 				}
 				break;
 			}
@@ -772,6 +774,53 @@ public class Application {
 		}
 	}
 	
+	/**
+	 * This methods stops Agent.GUI, running in application or server mode, which 
+	 * depends on the configuration in 'properties/agentgui.ini'.<br>
+	 * Inverse method to {@link #startAgentGUI()} 
+	 */
+	public static void stopAgentGUI() {
+		
+		// --- Shutdown JADE --------------------
+		getJadePlatform().stop();
+
+		// --- Close open projects --------------
+		if (getProjectsLoaded().closeAll()==false) return;	
+		
+		// --- Save file properties -------------
+		getGlobalInfo().getFileProperties().save();
+		
+		// --- Save dictionary ------------------
+		Language.saveDictionaryFile();
+		
+		// --- Remove TrayIcon ------------------
+		setTrayIcon(null);	
+		
+	}
+	/**
+	 * Quits Agent.GUI (Application | Server | Service & Embedded System Agent)
+	 */
+	public static void quit() {
+
+		// --- Stop Agent.GUI -------------------
+		stopAgentGUI();
+		System.out.println(Language.translate("Programmende... ") );
+		
+		// --- LogFileWriter --------------------
+		getLogFileWriter().stopFileWriter();
+		setLogFileWriter(null);
+		
+		// --- ShutdownExecuter -----------------
+		setShutdownThread(null);
+		
+		if (isDoSystemExitOnQuit()==true) {
+			// --- Shutdown JVM -----------------
+			System.exit(0);		
+		} else {
+			// --- Indicate to stop the JVM -----
+			setQuitJVM(true);
+		}
+	}
 	/**
 	 * Sets to do <code>System.exit</code> when calling the {@link #quit()} method.
 	 * @param doSystemExitOnQuit the new do system exit on quit
@@ -801,43 +850,8 @@ public class Application {
 	private static void setQuitJVM(boolean quitJVM) {
 		Application.quitJVM = quitJVM;
 	}
-
-	/**
-	 * Quits Agent.GUI (Application | Server | Service & Embedded System Agent)
-	 */
-	public static void quit() {
-
-		// --- Shutdown JADE --------------------
-		getJadePlatform().jadeStop();
-
-		// --- Close open projects --------------
-		if (getProjectsLoaded().closeAll()==false) return;	
-		
-		// --- Save file properties -------------
-		getGlobalInfo().getFileProperties().save();
-		
-		// --- Done -----------------------------
-		System.out.println(Language.translate("Programmende... ") );
-		Language.saveDictionaryFile();
-		
-		// --- LogFileWriter --------------------
-		setLogFileWriter(null);
-		
-		// --- ShutdownExecuter -----------------
-		setShutdownThread(null);
-		
-		// --- Remove TrayIcon ------------------
-		setTrayIcon(null);	
-		
-		if (isDoSystemExitOnQuit()==true) {
-			// --- Shutdown JVM -----------------
-			System.exit(0);		
-		} else {
-			// --- Indicate to stop the JVM -----
-			setQuitJVM(true);
-		}
-	}
-
+	
+	
 	/**
 	 * Opens the translation dialog of the application
 	 */
@@ -1012,7 +1026,7 @@ public class Application {
 		}
 		
 		// --- JADE shutdown ----------------------------------------		
-		getJadePlatform().jadeStop();
+		getJadePlatform().stop();
 		// --- Close projects ---------------------------------------
 		if (getProjectsLoaded()!=null) {
 			if (getProjectsLoaded().closeAll()==false) return;	

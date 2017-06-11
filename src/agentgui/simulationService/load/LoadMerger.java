@@ -33,7 +33,7 @@ import java.util.Vector;
 import agentgui.simulationService.ontology.PlatformLoad;
 
 /**
- * This class it to be used in order to merge the load information of one JVM or 
+ * This class is to be used in order to merge the load information of one JVM or 
  * of one machine/computer, even such information come several times.<br> 
  * If, for example, the number of agents are counted for the JVM, where the
  * end-user application of Agent.GUI is running (usually the Main-Container and

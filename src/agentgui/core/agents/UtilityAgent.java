@@ -32,7 +32,6 @@ import agentgui.core.agents.behaviour.PlatformShutdownBehaviour;
 import agentgui.core.agents.behaviour.ShowDFBehaviour;
 import agentgui.core.agents.behaviour.ShowLoadMonitorBehaviour;
 import agentgui.core.agents.behaviour.ShowThreadMonitorBehaviour;
-import agentgui.core.jade.Platform.UTILITY_AGENT_JOB;
 import jade.core.Agent;
 
 /**
@@ -50,13 +49,13 @@ import jade.core.Agent;
  * 
  * @see agentgui.core.jade.Platform
  * 
- * @see agentgui.core.jade.Platform.UTILITY_AGENT_JOB#OpernDF
+ * @see agentgui.core.jade.Platform.UtilityAgentJob#OpernDF
  * @see agentgui.core.agents.behaviour.ShowDFBehaviour
  * 
- * @see agentgui.core.jade.Platform.UTILITY_AGENT_JOB#ShutdownPlatform
+ * @see agentgui.core.jade.Platform.UtilityAgentJob#ShutdownPlatform
  * @see agentgui.core.agents.behaviour.PlatformShutdownBehaviour
  * 
- * @see agentgui.core.jade.Platform.UTILITY_AGENT_JOB#OpenLoadMonitor
+ * @see agentgui.core.jade.Platform.UtilityAgentJob#OpenLoadMonitor
  * @see agentgui.core.agents.behaviour.ShowLoadMonitorBehaviour
  * @see agentgui.simulationService.agents.LoadMeasureAgent
  * 
@@ -64,9 +63,19 @@ import jade.core.Agent;
  */
 public class UtilityAgent extends Agent {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4018534357973603L;
+	
+	/**
+	 * This enumeration describes the possible jobs of this {@link UtilityAgent}.
+	 */
+	public static enum UtilityAgentJob {
+		OpernDF,
+		ShutdownPlatform,
+		OpenLoadMonitor,
+		OpenThreadMonitor
+	}
 
+	
 	/**
 	 * The setup will evaluate the start argument for the agent and 
 	 * will add the corresponding behaviour to it.
@@ -81,7 +90,7 @@ public class UtilityAgent extends Agent {
 			return;
 		}
 		
-		UTILITY_AGENT_JOB job = (UTILITY_AGENT_JOB) args[0];
+		UtilityAgentJob job = (UtilityAgentJob) args[0];
 		switch (job) {
 		case OpernDF:
 			this.addBehaviour(new ShowDFBehaviour());

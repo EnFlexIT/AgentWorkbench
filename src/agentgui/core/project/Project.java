@@ -528,7 +528,7 @@ import agentgui.core.webserver.JarFileCreator;
 			}
 		}
 		// --- ggf. noch Jade beenden ---------------------
-		if (Application.getJadePlatform().jadeStopAskUserBefore()==false) {
+		if (Application.getJadePlatform().stopAskUserBefore()==false) {
 			return false;
 		}
 
@@ -828,7 +828,7 @@ import agentgui.core.webserver.JarFileCreator;
 		
 		if (forceClassPathReload) {
 			// --- stop Jade ------------------------------
-			if (Application.getJadePlatform().jadeStopAskUserBefore()==false) {
+			if (Application.getJadePlatform().stopAskUserBefore()==false) {
 				return;
 			}
 			// --- unload ClassPath -----------------------
