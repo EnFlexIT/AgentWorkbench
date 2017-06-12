@@ -48,6 +48,7 @@ import agentgui.core.webserver.DownloadServer;
 import agentgui.logging.DebugService;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.load.LoadMeasureThread;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Profile;
@@ -131,7 +132,9 @@ public class Platform extends Object {
 				jadeRuntime.invokeOnTermination(new Runnable() {
 					public void run() {
 						// --- terminate platform -------------------
+						LoadMeasureThread.removeMonitoringTasksForAgents();
 						jadeMainContainer = null;
+						getAgentContainerList().clear();
 						Application.setStatusJadeRunning(false);
 						if (Application.getMainWindow()!=null){
 							Application.getMainWindow().setSimulationReady2Start();
@@ -1074,8 +1077,9 @@ public class Platform extends Object {
 		try {
 			Agent agent = (Agent) clazz.newInstance();
 			agent.setArguments(startArguments);
-			agentContainer.acceptNewAgent(newAgentName, agent).start();;
-
+			AgentController agentController = agentContainer.acceptNewAgent(newAgentName, agent);
+			agentController.start();
+			
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {

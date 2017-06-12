@@ -175,8 +175,9 @@ public class MainWindow extends JFrame {
 		this.setCloseButtonPosition(false);
 		this.pack();		
 		
-		//this.setExtendedState(Frame.MAXIMIZED_BOTH);
 		this.setVisible(true);
+		this.validate();
+		this.repaint();
 		
 	}
 	

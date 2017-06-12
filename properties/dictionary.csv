@@ -382,7 +382,7 @@ de;Load Monitor öffnen;Open Load Monitor;null;null;null
 de;Load Monitor;Load Monitor
 de;Log Datei;Log File;;;
 de;Log-Datei Einstellungen;Log-File - Configuration;;;
-de;Log-Datei Konfiguration;;;;
+de;Log-Datei Konfiguration;Log File Configuration;;;
 de;Log-Datei immer erstellen;Allways create log file;;;
 de;Log-Manager starten;Start Log Manager
 de;Log-Verzeichnis;Log-Directory;;;
@@ -529,7 +529,9 @@ de;Raster-Breite;Grid width;;;
 de;Reale Metriken der Agenten bei Simulationsstop aktualisieren;Update real agent metrics at simulation stop;;;
 de;Rechts-Klick für weitere Optionen;Right-Click for more options
 de;Reihen-Eigenschaften;Series-Properties;;;
+de;Reinitialisiere;Reinitialize;;;
 de;Remote JADE-RMA beim Start des entfernten Containers anzeigen;Display remote JADE-RMA at the start of the remote container;;;
+de;Renderer;;;;
 de;Ressourcen;Resources
 de;SVG Dateien;SVG files
 de;SVG laden;Load SVG
@@ -579,6 +581,7 @@ de;Speichern;Save
 de;Spielfeld;Playground
 de;Sprache:;Language:
 de;Sprache;Language
+de;Sprachumstellung zu;Language switch to;;;
 de;Standard Log-Verzeichnis:;Default Log-Directory;;;
 de;Standard verwenden;Use Default;;;
 de;Standardkonfiguration verwenden;Use default configuration;;;

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 
 import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.load.monitoring.AbstractMonitoringTask;
+import agentgui.simulationService.load.monitoring.SingleAgentMonitor;
 import agentgui.simulationService.load.threading.ThreadDetail;
 import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
 
@@ -677,6 +678,18 @@ public class LoadMeasureThread extends Thread {
 	 */
 	public static void removeMonitoringTask(AbstractMonitoringTask monitoringTask) {
 		getMonitoringTasks().remove(monitoringTask);
+	}
+	/**
+	 * Removes the monitoring tasks for agents.
+	 */
+	public static void removeMonitoringTasksForAgents() {
+		ArrayList<AbstractMonitoringTask> tasks = new ArrayList<>(LoadMeasureThread.getMonitoringTasks());
+		for (int i = 0; i < tasks.size(); i++) {
+			AbstractMonitoringTask task = tasks.get(i);
+			if (task instanceof SingleAgentMonitor) {
+				getMonitoringTasks().remove(task);
+			}
+		}
 	}
 	/**
 	 * Does the tasks of the registered monitoring tasks.

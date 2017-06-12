@@ -71,6 +71,9 @@ public abstract class AbstractMonitoringTask {
 	
 	private MonitoringState monitoringState;
 	
+	private Integer checkIntervalInSeconds;
+	private long nextCheckTime;
+	
 	
 	/**
 	 * Returns the current {@link MonitoringType}.
@@ -82,7 +85,6 @@ public abstract class AbstractMonitoringTask {
 	 * @return the monitoring measure
 	 */
 	public abstract MonitoringMeasureType getMonitoringMeasureType();
-	
 	/**
 	 * Has to return a suitable task description.
 	 * @return the task description
@@ -98,7 +100,31 @@ public abstract class AbstractMonitoringTask {
 	 * @return the fault measure
 	 */
 	public abstract Runnable getFaultMeasure();
-	
+	/**
+	 * Has to return true in case that the monitoring task can be removed after the failure measure was executed.
+	 * @return true, if the monitoring task can be removed
+	 */
+	public abstract boolean removeTaskAfterMeasure();
+		
+		
+	/**
+	 * Returns the check interval in seconds.
+	 * @return the check interval in seconds
+	 */
+	public int getCheckIntervalInSeconds() {
+		if (checkIntervalInSeconds==null || checkIntervalInSeconds==0) {
+			checkIntervalInSeconds = 5;
+		}
+		return checkIntervalInSeconds;
+	}
+	/**
+	 * Sets the check interval in seconds. If set to <code>null</code> or 0, the 
+	 * default value of 5s will be taken.
+	 * @param newcheckIntervalInSeconds the new check interval in seconds
+	 */
+	public void setCheckIntervalInSeconds(Integer newcheckIntervalInSeconds) {
+		this.checkIntervalInSeconds = newcheckIntervalInSeconds;
+	}
 	
 	/**
 	 * Returns the current monitoring state.
@@ -114,7 +140,7 @@ public abstract class AbstractMonitoringTask {
 	 * Sets the current {@link MonitoringState}.
 	 * @param monitoringState the new monitoring state
 	 */
-	private void setMonitoringState(MonitoringState monitoringState) {
+	protected void setMonitoringState(MonitoringState monitoringState) {
 		this.monitoringState = monitoringState;
 	}
 	/**
@@ -124,31 +150,44 @@ public abstract class AbstractMonitoringTask {
 	 */
 	public MonitoringState doMonitoringTask() {
 		
-		if (this.isFaultlessProcess()==true) {
-			// --- No errors found ------------------------
-			this.setMonitoringState(MonitoringState.OK);
-		} else {
-			// --- Errors found - change current state ----
-			this.setMonitoringState(MonitoringState.FAULTY_PROCESS);
-			// --- Try to get fault measure ---------------
-			switch (this.getMonitoringMeasureType()) {
-			case SHUTDOWN_JVM:
-				this.doShutDownJVM();
-				break;
-			
-			case REDO_AGENTGUI_START_SEQUENCE:
-				this.doRedoAgentGuiStartSequence();
-				break;
+		if (System.currentTimeMillis()>this.nextCheckTime) {
+		
+			if (this.isFaultlessProcess()==true) {
+				// --- No errors found ------------------------------
+				this.setMonitoringState(MonitoringState.OK);
+			} else {
+				// --- Errors found - change current state ----------
+				this.setMonitoringState(MonitoringState.FAULTY_PROCESS);
+				// --- Try to get fault measure ---------------------
+				switch (this.getMonitoringMeasureType()) {
+				case SHUTDOWN_JVM:
+					System.err.println("[MonitoringEvent] Shutdown JVM for '" + this.getTaskDescription() + "'");
+					this.doShutDownJVM();
+					break;
 				
-			case RESTART_AGENT:
-				this.doRestartAgent();
-				break;
-			
-			case CUSTOM_MEASURE:
-				this.doCustomMeasure();
-				break;
-			}			
-		} 
+				case REDO_AGENTGUI_START_SEQUENCE:
+					System.err.println("[MonitoringEvent] Redo Agent.GUI start sequence for '" + this.getTaskDescription() + "'");
+					this.doRedoAgentGuiStartSequence();
+					break;
+					
+				case RESTART_AGENT:
+					System.err.println("[MonitoringEvent] Restart agent for '" + this.getTaskDescription() + "'");
+					this.doCustomMeasure();
+					break;
+					
+				case CUSTOM_MEASURE:
+					System.err.println("[MonitoringEvent] Do custom measure for '" + this.getTaskDescription() + "'");
+					this.doCustomMeasure();
+					break;
+				}	
+				// --- Remove task after measure execution? ---------
+				if (this.removeTaskAfterMeasure()==true) {
+					this.removeTaskAfterMeasure();
+				}
+			}
+			// --- Set the next check time --------------------------
+			this.nextCheckTime = System.currentTimeMillis() + (this.getCheckIntervalInSeconds()*1000);
+		}
 		return this.getMonitoringState();
 	}
 
@@ -160,16 +199,17 @@ public abstract class AbstractMonitoringTask {
 		// ----------------------------------------------------------
 		// --- Do normal application quit ---------------------------
 		// ----------------------------------------------------------
+		this.setMonitoringState(MonitoringState.FAULTY_PROCESS_EXCUTED_MEASURE);
 		Application.quit();
 
 		// ----------------------------------------------------------
-		// --- In case that the executions arrives here, wait 5s. --- 
-		// --- Finally, terminate the JVM from this point -----------
+		// --- In case that executions still arrives here, wait 5s. - 
+		// --- Finally, terminate the JVM from here. ----------------
 		// ----------------------------------------------------------
 		try {
 			Thread.sleep(1000 * 5);
 		} catch (InterruptedException ie) {
-			ie.printStackTrace();
+			//ie.printStackTrace();
 		}
 		System.exit(1);
 	}
@@ -179,22 +219,20 @@ public abstract class AbstractMonitoringTask {
 	 * to reset the system in a neutral state (e.g. shutdown JADE etc.).
 	 */
 	private void doRedoAgentGuiStartSequence() {
-		// --- Stop Agent.GUI -------------------
-		Application.stopAgentGUI();
-		System.out.println(Language.translate("Reinitialisiere ... ") );
-		// --- Start Agent.GUI ------------------
-		Application.startAgentGUI();
+		
+		try {
+			// --- Stop Agent.GUI -------------------
+			this.setMonitoringState(MonitoringState.FAULTY_PROCESS_EXCUTED_MEASURE);
+			Application.stopAgentGUI();
+			System.err.println("=> " + Language.translate("Reinitialisiere") + " " + Application.getGlobalInfo().getApplicationTitle()  + " ... ");
+			// --- Start Agent.GUI ------------------
+			Application.startAgentGUI();
+			
+		} catch (Exception ex) {
+			this.setMonitoringState(MonitoringState.FAULTY_PROCESS_FAULTY_MEASURE);
+			ex.printStackTrace();
+		}
 	}
-	
-	/**
-	 * Restarts the specified agent.
-	 */
-	private void doRestartAgent() {
-		
-		
-		
-	}
-	
 	/**
 	 * Does the specific custom measure.
 	 */
@@ -205,7 +243,7 @@ public abstract class AbstractMonitoringTask {
 			try {
 				// --- Start repair thread ------------ 
 				Thread repairThread = new Thread(this.getFaultMeasure());
-				repairThread.setName(this.getTaskDescription());
+				repairThread.setName(this.getTaskDescription() + "_Measure");
 				repairThread.start();
 				this.setMonitoringState(MonitoringState.FAULTY_PROCESS_EXCUTED_MEASURE);
 				
@@ -226,8 +264,15 @@ public abstract class AbstractMonitoringTask {
 	/**
 	 * Registers at the local {@link LoadMeasureThread}. Thus, the monitoring is active.
 	 */
-	public void register() {
+	public void registerTask() {
 		LoadMeasureThread.registerMonitoringTask(this);
 	}
+	/**
+	 * Removes the current monitoring task.
+	 */
+	public void unregisterTask() {
+		LoadMeasureThread.removeMonitoringTask(this);
+	}
 	
+
 }

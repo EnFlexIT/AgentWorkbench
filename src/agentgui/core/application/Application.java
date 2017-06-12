@@ -352,6 +352,15 @@ public class Application {
 		return Application.mainWindow;
 	}
 	/**
+	 * Starts the main application window (JFrame)
+	 */
+	public static void startMainWindow() {
+		if (isOperatingHeadless()==false) {
+			setMainWindow(new MainWindow());
+			getProjectsLoaded().setProjectView();
+		}
+	}
+	/**
 	 * Sets the main window.
 	 * @param newMainWindow the new main window
 	 */
@@ -556,11 +565,17 @@ public class Application {
 			
 			// --- open the specified project -------------
 			Application.setStatusBar(Language.translate("Öffne Projekt") + " '" + project2OpenAfterStart + "'...");
+
+			// --- Repaint main window first --------------
+			getMainWindow().validate();
+			getMainWindow().repaint();
+
+			// --- Open the project -----------------------
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					getProjectsLoaded().add(project2OpenAfterStart);
-					project2OpenAfterStart=null;
+					//project2OpenAfterStart=null;
 				}
 			});
 			Application.setStatusBar(Language.translate("Fertig"));
@@ -612,7 +627,7 @@ public class Application {
 			getTrayIcon();
 			getProjectsLoaded();
 
-			startApplication();
+			startMainWindow();
 			getMainWindow().setStatusBar(Language.translate("Fertig"));
 			doBenchmark(false);
 			waitForBenchmark();
@@ -654,15 +669,6 @@ public class Application {
 		
 	}
 	
-	/**
-	 * Opens the main application window (JFrame)
-	 */
-	public static void startApplication() {
-		if (isOperatingHeadless()==false) {
-			setMainWindow(new MainWindow());
-			getProjectsLoaded().setProjectView();
-		}
-	}
 	
 	/**
 	 * Starts the main procedure for the Server-Version of Agent.GUI
@@ -705,7 +711,7 @@ public class Application {
 				getTrayIcon();
 				getProjectsLoaded();
 
-				startApplication();
+				startMainWindow();
 				if (getMainWindow()!=null) {
 					getMainWindow().setStatusBar(Language.translate("Fertig"));
 				}
@@ -786,6 +792,9 @@ public class Application {
 
 		// --- Close open projects --------------
 		if (getProjectsLoaded().closeAll()==false) return;	
+
+		// --- Close visualisation --------------
+		setMainWindow(null);
 		
 		// --- Save file properties -------------
 		getGlobalInfo().getFileProperties().save();
@@ -807,7 +816,9 @@ public class Application {
 		System.out.println(Language.translate("Programmende... ") );
 		
 		// --- LogFileWriter --------------------
-		getLogFileWriter().stopFileWriter();
+		if (getLogFileWriter()!=null) {
+			getLogFileWriter().stopFileWriter();
+		}
 		setLogFileWriter(null);
 		
 		// --- ShutdownExecuter -----------------
@@ -1025,20 +1036,13 @@ public class Application {
 			
 		}
 		
-		// --- JADE shutdown ----------------------------------------		
-		getJadePlatform().stop();
-		// --- Close projects ---------------------------------------
-		if (getProjectsLoaded()!=null) {
-			if (getProjectsLoaded().closeAll()==false) return;	
-		}
+		// --- Stop Agent.GUI ---------------------------------------
+		stopAgentGUI();
 		// --- Switch Language --------------------------------------
+		System.out.println("=> " + Language.translate("Sprachumstellung zu") + " '" + newLang + "'.");
 		Language.changeApplicationLanguageTo(newLang);
-		// --- Close MainWindow -------------------------------------
-		getMainWindow().dispose();
-		mainWindow = null;
 		// --- Restart application ----------------------------------
-		startApplication();	
-
+		startAgentGUI();
 	}	
 	
 	/**

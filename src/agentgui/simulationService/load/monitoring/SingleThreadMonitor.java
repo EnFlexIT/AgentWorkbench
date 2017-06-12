@@ -62,6 +62,9 @@ public class SingleThreadMonitor extends AbstractMonitoringTask {
 		if (monitoringMeasureType==null) {
 			throw new IllegalArgumentException("No measure were specified in case of a thread failure.");
 		}
+		if (monitoringMeasureType==MonitoringMeasureType.RESTART_AGENT) {
+			throw new IllegalArgumentException("An agents restart can not be defines by a " + this.getClass().getSimpleName() + ".");
+		}
 		if (monitoringMeasureType==MonitoringMeasureType.CUSTOM_MEASURE && runnable==null) {
 			throw new IllegalArgumentException("No runnable was defined for the custom measure.");
 		}
@@ -99,11 +102,18 @@ public class SingleThreadMonitor extends AbstractMonitoringTask {
 		return this.monitoringMeasureType;
 	}
 	/* (non-Javadoc)
+	 * @see agentgui.simulationService.load.monitoring.AbstractMonitoringTask#removeAfterMeasure()
+	 */
+	@Override
+	public boolean removeTaskAfterMeasure() {
+		return true;
+	}
+	/* (non-Javadoc)
 	 * @see agentgui.simulationService.load.monitoring.AbstractMonitoringTask#getTaskDescription()
 	 */
 	@Override
 	public String getTaskDescription() {
-		return "Monitoring for thread " + this.threadToMonitor.getName();
+		return "Monitoring of thread " + this.threadToMonitor.getName();
 	}
-
+	
 }

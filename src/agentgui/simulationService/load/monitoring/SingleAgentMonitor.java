@@ -28,10 +28,12 @@
  */
 package agentgui.simulationService.load.monitoring;
 
+import agentgui.core.application.Application;
 import jade.core.Agent;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.ControllerException;
+import jade.wrapper.StaleProxyException;
 
 /**
  * The Class SingleAgentMonitor can be used to monitor any {@link Agent}.
@@ -40,15 +42,18 @@ import jade.wrapper.ControllerException;
  */
 public class SingleAgentMonitor extends AbstractMonitoringTask {
 
-	private String agentName; 
-	private String agentClass;
-	private ContainerController containerController;
-	
 	private MonitoringMeasureType monitoringMeasureType;
 	private Runnable measure;
+
+	private String agentName; 
+	private String agentClass;
+	private Object[] agentStartArguments;
+	
+	private ContainerController containerController;
+	
 	
 	/**
-	 * Instantiates a new thread monitor.
+	 * Instantiates a new agent monitor.
 	 *
 	 * @param agent the agent to monitor
 	 * @param monitoringMeasureType the {@link MonitoringMeasureType}
@@ -57,7 +62,7 @@ public class SingleAgentMonitor extends AbstractMonitoringTask {
 		this(agent, monitoringMeasureType, null);
 	}
 	/**
-	 * Instantiates a new thread monitor.
+	 * Instantiates a new agent monitor.
 	 *
 	 * @param agent the agent to monitor
 	 * @param monitoringMeasureType the {@link MonitoringMeasureType}
@@ -76,10 +81,19 @@ public class SingleAgentMonitor extends AbstractMonitoringTask {
 		
 		this.agentName = agent.getLocalName();
 		this.agentClass = agent.getClass().getName();
+		this.agentStartArguments = agent.getArguments();
 		this.containerController = agent.getContainerController();
 		
 		this.monitoringMeasureType = monitoringMeasureType;
 		this.measure = runnable;
+	}
+	
+	/**
+	 * Checks if the platform is running.
+	 * @return true, if is platform running
+	 */
+	protected boolean isPlatformRunning() {
+		return Application.getJadePlatform().isMainContainerRunning();
 	}
 	
 	/* (non-Javadoc)
@@ -87,6 +101,12 @@ public class SingleAgentMonitor extends AbstractMonitoringTask {
 	 */
 	@Override
 	public boolean isFaultlessProcess() {
+		
+		// --- 0. Is the platform still running? --------------------
+		if (this.isPlatformRunning()==false) {
+			this.unregisterTask();
+			return false;
+		}
 		
 		// --- 1. Try to find the agent in the container ------------
 		AgentController agentController = null;
@@ -115,7 +135,30 @@ public class SingleAgentMonitor extends AbstractMonitoringTask {
 	 */
 	@Override
 	public Runnable getFaultMeasure() {
-		return this.measure;
+		
+		// --- 0. Is the platform still running? ----------
+		if (this.isPlatformRunning()==false) {
+			this.unregisterTask();
+			return null;
+		}
+		
+		// -- In case of an individual measure action -----
+		if (this.measure!=null) return this.measure;
+
+		// --- Only for the restart of the agent ----------
+		Runnable failureMeasure = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					containerController.createNewAgent(agentName, agentClass, agentStartArguments).start();
+				} catch (StaleProxyException spex) {
+					//spex.printStackTrace();
+					System.err.println("[MonitoringEvent] Agent restart failed.");
+					setMonitoringState(MonitoringState.FAULTY_PROCESS_FAULTY_MEASURE);
+				}
+			}
+		};
+		return failureMeasure;
 	}
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.load.monitoring.AbstractMonitoringTask#getMonitoringType()
@@ -132,11 +175,29 @@ public class SingleAgentMonitor extends AbstractMonitoringTask {
 		return this.monitoringMeasureType;
 	}
 	/* (non-Javadoc)
+	 * @see agentgui.simulationService.load.monitoring.AbstractMonitoringTask#removeTaskAfterMeasure()
+	 */
+	@Override
+	public boolean removeTaskAfterMeasure() {
+		return false;
+	}
+	/* (non-Javadoc)
 	 * @see agentgui.simulationService.load.monitoring.AbstractMonitoringTask#getTaskDescription()
 	 */
 	@Override
 	public String getTaskDescription() {
-		return "Monitoring for agent " + this.agentName;
+		return "Monitoring of agent " + this.agentName + "(" + this.agentClass + ")";
 	}
-
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object objectToCompare) {
+		if (objectToCompare instanceof SingleAgentMonitor) {
+			SingleAgentMonitor sam = (SingleAgentMonitor) objectToCompare;
+			return sam.getTaskDescription().equals(this.getTaskDescription());
+		}
+		return false;
+	}
+	
 }

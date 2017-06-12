@@ -47,7 +47,7 @@
             <service>jade.core.event.NotificationService</service>
             <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
-            <service>agentgui.log.DebugService</service>
+            <service>agentgui.logging.DebugService</service>
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>

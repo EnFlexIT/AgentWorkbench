@@ -61,6 +61,8 @@ import agentgui.ontology.XyValuePair;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.agents.SimulationManagerAgent;
+import agentgui.simulationService.load.monitoring.AbstractMonitoringTask.MonitoringMeasureType;
+import agentgui.simulationService.load.monitoring.SingleAgentMonitor;
 import agentgui.simulationService.time.TimeModelContinuous;
 
 /**
@@ -81,6 +83,9 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 	protected void setup() {
 		super.setup();
 
+		// --- Make sure that the agent allways runs ----------------
+		new SingleAgentMonitor(this, MonitoringMeasureType.RESTART_AGENT).registerTask();
+		
 		// --- Remind the current network model ---------------------
 		this.myNetworkModel = (NetworkModel) this.getDisplayEnvironment();
 
