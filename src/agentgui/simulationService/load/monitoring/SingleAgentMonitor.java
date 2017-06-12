@@ -56,7 +56,7 @@ public class SingleAgentMonitor extends AbstractMonitoringTask {
 	 * Instantiates a new agent monitor.
 	 *
 	 * @param agent the agent to monitor
-	 * @param monitoringMeasureType the {@link MonitoringMeasureType}
+	 * @param monitoringMeasureType the actual MonitoringMeasureType
 	 */
 	public SingleAgentMonitor(Agent agent, MonitoringMeasureType monitoringMeasureType) {
 		this(agent, monitoringMeasureType, null);
@@ -65,7 +65,7 @@ public class SingleAgentMonitor extends AbstractMonitoringTask {
 	 * Instantiates a new agent monitor.
 	 *
 	 * @param agent the agent to monitor
-	 * @param monitoringMeasureType the {@link MonitoringMeasureType}
+	 * @param monitoringMeasureType the actual MonitoringMeasureType
 	 * @param runnable the runnable
 	 */
 	public SingleAgentMonitor(Agent agent, MonitoringMeasureType monitoringMeasureType, Runnable runnable) {

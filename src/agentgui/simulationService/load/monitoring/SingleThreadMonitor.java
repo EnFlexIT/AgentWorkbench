@@ -43,7 +43,7 @@ public class SingleThreadMonitor extends AbstractMonitoringTask {
 	 * Instantiates a new thread monitor.
 	 *
 	 * @param threadToMonitor the thread to monitor
-	 * @param monitoringMeasureType the {@link MonitoringMeasureType}
+	 * @param monitoringMeasureType the actual MonitoringMeasureType
 	 */
 	public SingleThreadMonitor(Thread threadToMonitor, MonitoringMeasureType monitoringMeasureType) {
 		this(threadToMonitor, monitoringMeasureType, null);
@@ -52,7 +52,7 @@ public class SingleThreadMonitor extends AbstractMonitoringTask {
 	 * Instantiates a new thread monitor.
 	 *
 	 * @param threadToMonitor the thread to monitor
-	 * @param monitoringMeasureType the {@link MonitoringMeasureType}
+	 * @param monitoringMeasureType the actual MonitoringMeasureType
 	 * @param runnable the runnable
 	 */
 	public SingleThreadMonitor(Thread threadToMonitor, MonitoringMeasureType monitoringMeasureType, Runnable runnable) {

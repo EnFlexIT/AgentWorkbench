@@ -49,13 +49,13 @@ import jade.core.Agent;
  * 
  * @see agentgui.core.jade.Platform
  * 
- * @see agentgui.core.jade.Platform.UtilityAgentJob#OpernDF
+ * @see agentgui.core.agents.UtilityAgent.UtilityAgentJob#OpernDF
  * @see agentgui.core.agents.behaviour.ShowDFBehaviour
  * 
- * @see agentgui.core.jade.Platform.UtilityAgentJob#ShutdownPlatform
+ * @see agentgui.core.agents.UtilityAgent.UtilityAgentJob#ShutdownPlatform
  * @see agentgui.core.agents.behaviour.PlatformShutdownBehaviour
  * 
- * @see agentgui.core.jade.Platform.UtilityAgentJob#OpenLoadMonitor
+ * @see agentgui.core.agents.UtilityAgent.UtilityAgentJob#OpenLoadMonitor
  * @see agentgui.core.agents.behaviour.ShowLoadMonitorBehaviour
  * @see agentgui.simulationService.agents.LoadMeasureAgent
  * 

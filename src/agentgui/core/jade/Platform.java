@@ -849,10 +849,10 @@ public class Platform extends Object {
 	}
 	
 	/**
-	 * Checks, whether one Agent is running (or not) in the specified container
+	 * Checks, whether one Agent is running (or not) in the specified container.
 	 *
 	 * @param localAgentName the agent name
-	 * @param localContainerName the local container name
+	 * @param agentContainer the agent container
 	 * @return true, if the agent is running
 	 */
 	public boolean isAgentRunning(String localAgentName, AgentContainer agentContainer) {
