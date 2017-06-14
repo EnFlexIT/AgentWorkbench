@@ -714,13 +714,17 @@ public class GlobalInfo {
 	 */
 	public String getFileRunnableJar(boolean absolute){
 		
-		if (getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
+		if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverAgentGuiJar) {
 			// --- The current instance was executed over an AgentGui.jar -----
-			if (absolute == true && localFileRunnableJar != null) { 
-				return getFilePathAbsolute(localFileRunnableJar);
-			}else {
+			if (absolute==true && localFileRunnableJar!=null) { 
+				return this.getFilePathAbsolute(localFileRunnableJar);
+			} else {
 				return localFileRunnableJar;	
 			}	
+		} else if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverOSGI) {
+			// TODO
+			System.err.println("Runnable jar for OSGI is not defined yet.");
+			return null;
 		} else {
 			// --- The current instance was executed by using the IDE ---------
 			String path2Jar = "exec" + File.separator + "AgentGUI" + File.separator + localFileRunnableJar; 
