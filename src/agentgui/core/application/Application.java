@@ -1075,7 +1075,7 @@ public class Application {
 	 * Waits for until the end of the benchmark.
 	 */
 	private static void waitForBenchmark() {
-		while(benchmarkRunning==true) {
+		while (benchmarkRunning==true) {
 			Application.setStatusBar(Language.translate("Warte auf das Ende des Benchmarks ..."));
 			try {
 				Thread.sleep(250);

@@ -103,13 +103,9 @@ public class LoadMeasureAgent extends Agent {
 	
 	// --------------------------------------------------------------
 	// --- To which Project are we running in the moment ------------ 
-	/** The current project. */
 	private Project currProject;
-	/** The current SimulationSetup. */
 	private SimulationSetup currSimSetup;
-	/** The current DistributionSetup. */
 	private DistributionSetup currDisSetup;
-	/** The Load Helper for this agent */
 	private LoadServiceHelper loadHelper;
 	
 	// --------------------------------------------------------------
@@ -140,21 +136,27 @@ public class LoadMeasureAgent extends Agent {
 	// --------------------------------------------------------------
 	
 	// --------------------------------------------------------------
+	// --- Time of a measurement and its String-formatter -----------
+	private Long monitorTimeStamp;
+	private SimpleDateFormat monitorTimeStampFormat = new SimpleDateFormat("dd.MM.yy hh:mm:ss;S");
+
+	// --------------------------------------------------------------
 	// --- Over all and current threshold level ---------------------
 	/** The indicator if thresholds exceeded over all. */
 	public Integer loadThresholdExceededOverAll = 0;
 	/** The currently configured threshold levels. */
-	public LoadThresholdLevels loadThresholdLevels = null;
-	/** The average cycle time of a simulation. */
-	public double loadCycleTime = 0;
+	public LoadThresholdLevels loadThresholdLevels;
 	/** The used (dead or alive) nodes of the system, ordered ascending. */
-	public Vector<String> loadContainer2Display = null;
+	public Vector<String> loadContainer2Display;
+
+	/** The average cycle time of a simulation. */
+	private double loadCycleTime = 0;
 	/** The current LoadAgentMap. */
-	public LoadAgentMap loadContainerAgentMap = null;
+	private LoadAgentMap loadContainerAgentMap;
 	/** The PlatformLoad in the different container. */
-	public Hashtable<String, PlatformLoad> loadContainer = null;
+	private Hashtable<String, PlatformLoad> loadContainer;
 	/** The Location information in the different container. */
-	public Hashtable<String, Location> loadContainerLoactions = null;
+	private Hashtable<String, Location> loadContainerLoactions;
 	/** The benchmark value /results in the different container. */
 	public Hashtable<String, Float> loadContainerBenchmarkResults = new Hashtable<String, Float>();
 	
@@ -176,9 +178,6 @@ public class LoadMeasureAgent extends Agent {
 	private final String monitorFileMeasurementTmp = "LoadMeasurement.tmp";
 	private final String monitorFileMeasurement = "LoadMeasurement.csv";
 	private final String monitorFileMachines = "LoadMachines.txt";
-	// --- Timestamp of a measurement and its String-format ---------
-	private Long monitorTimeStamp;
-	private SimpleDateFormat monitorTimeStampFormat = new SimpleDateFormat("dd.MM.yy hh:mm:ss;S");
 	
 	private Hashtable<String, String> monitorDatasetParts = new Hashtable<String, String>();
 	private Hashtable<String, String> monitorDatasetPartsHeader = new Hashtable<String, String>();
@@ -203,7 +202,7 @@ public class LoadMeasureAgent extends Agent {
 		
 		this.loadBalancing = new DynamicLoadBalancing(this);
 		
-		this.addBehaviour(this.getMonitorBehaviour()) ;
+		this.addBehaviour(this.getMonitorBehaviour());
 		this.addBehaviour(new ReceiveBehaviour());
 	}
 	
@@ -238,7 +237,7 @@ public class LoadMeasureAgent extends Agent {
 	 */
 	public MonitorBehaviour getMonitorBehaviour() {
 		if (monitorBehaviour==null) {
-			monitorBehaviour = new MonitorBehaviour(this, getMonitorBehaviourTickingPeriod());
+			monitorBehaviour = new MonitorBehaviour(this, this.getMonitorBehaviourTickingPeriod());
 		}
 		return monitorBehaviour;
 	}
@@ -273,7 +272,6 @@ public class LoadMeasureAgent extends Agent {
 	public DynamicLoadBalancingBase getLoadBalancing() {
 		return loadBalancing;
 	}
-
 	
 	/**
 	 * Sets the system load dialog.
@@ -347,6 +345,68 @@ public class LoadMeasureAgent extends Agent {
 		return loadHelper;
 	}
 	
+	
+	/**
+	 * Return the average cycle time of a sequential simulation.
+	 * @return the load cycle time
+	 */
+	public double getLoadCycleTime() {
+		return loadCycleTime;
+	}
+	/**
+	 * Sets the average cycle time of a sequential simulation.
+	 * @param newLoadCycleTime the new load cycle time
+	 */
+	public void setLoadCycleTime(double newLoadCycleTime) {
+		loadCycleTime = newLoadCycleTime;
+	}
+	
+	/**
+	 * Return the current LoadAgentMap.
+	 * @return the load container agent map
+	 */
+	public LoadAgentMap getLoadContainerAgentMap() {
+		return loadContainerAgentMap;
+	}
+	/**
+	 * Return the current LoadAgentMap.
+	 * @param newLoadAgentMap the new load container agent map
+	 */
+	public void setLoadContainerAgentMap(LoadAgentMap newLoadAgentMap) {
+		loadContainerAgentMap = newLoadAgentMap;
+	}
+
+	/**
+	 * Returns the current {@link PlatformLoad} by container name.
+	 * @return the load container
+	 */
+	public Hashtable<String, PlatformLoad> getLoadContainer() {
+		return loadContainer;
+	}
+	/**
+	 * Sets the current {@link PlatformLoad} by container name.
+	 * @param newLoadContainer the new load container
+	 */
+	public void setLoadContainer(Hashtable<String, PlatformLoad> newLoadContainer) {
+		loadContainer = newLoadContainer;
+	}
+	
+	/**
+	 * Returns the current Location information in the different container.
+	 * @return the load container loaction's
+	 */
+	public Hashtable<String, Location> getLoadContainerLoactions() {
+		return loadContainerLoactions;
+	}
+	/**
+	 * Sets the load container loaction's.
+	 * @param newLoadContainerLocation the new load container location
+	 */
+	public void setLoadContainerLoactions(Hashtable<String, Location> newLoadContainerLocation) {
+		loadContainerLoactions = newLoadContainerLocation;
+	}
+	
+	
 	/**
 	 * This TickerBehaviour measures, displays (if wanted) and stores the measured load values.
 	 * 
@@ -381,16 +441,16 @@ public class LoadMeasureAgent extends Agent {
 
 				// --- Get the PlatformLoad and the Agents at their locations -----------
 				monitorTimeStamp = System.currentTimeMillis();
-				loadCycleTime = getLoadServiceHelper().getAvgCycleTime();
-				loadContainer = getLoadServiceHelper().getContainerLoads();
-				loadContainerAgentMap = getLoadServiceHelper().getAgentMap();
-				loadContainerLoactions = getLoadServiceHelper().getContainerLocations();
+				setLoadCycleTime(getLoadServiceHelper().getAvgCycleTime());
+				setLoadContainer(getLoadServiceHelper().getContainerLoads());
+				setLoadContainerAgentMap(getLoadServiceHelper().getAgentMap());
+				setLoadContainerLoactions(getLoadServiceHelper().getContainerLocations());
 				
 				// --- Display number of agents -----------------------------------------
 				if (getSystemLoadPanel()!=null) {
-					getSystemLoadPanel().setNumberOfAgents(loadContainerAgentMap.noAgentsAtPlatform);
-					getSystemLoadPanel().setNumberOfContainer(loadContainer.size());
-					getSystemLoadPanel().setCycleTime(loadCycleTime);
+					getSystemLoadPanel().setNumberOfAgents(getLoadContainerAgentMap().noAgentsAtPlatform);
+					getSystemLoadPanel().setNumberOfContainer(getLoadContainer().size());
+					getSystemLoadPanel().setCycleTime(getLoadCycleTime());
 				}
 				loadThresholdLevels = LoadMeasureThread.getThresholdLevels();				
 				// Initialise variables JVM-balancing -----------------------------------
@@ -410,8 +470,8 @@ public class LoadMeasureAgent extends Agent {
 					String jvmPID = containerDesc.getJvmPID(); 
 					String machineURL = containerDesc.getPlAddress().getUrl();
 					// --- Get all needed load informations -----------------------------
-					PlatformLoad containerLoad = loadContainer.get(containerName);
-					Integer containerNoAgents = loadContainerAgentMap.getNoAgentsAtContainerHash().get(containerName);
+					PlatformLoad containerLoad = getLoadContainer().get(containerName);
+					Integer containerNoAgents = getLoadContainerAgentMap().getNoAgentsAtContainerHash().get(containerName);
 					loadContainerBenchmarkResults.put(containerName, benchmarkValue);	
 					
 					// ------------------------------------------------------------------
@@ -693,20 +753,20 @@ public class LoadMeasureAgent extends Agent {
 		
 		String dataSet = null;
 		StringBuilder sb = new StringBuilder();
-		// --- Build complete dataset ---------------------
-		Iterator<String> it = loadContainer2Display.iterator();
-		while (it.hasNext()) {
+
+		// --- Build complete dataset -----------------------------------------
+		for (int i = 0; i < loadContainer2Display.size(); i++) {
 			
-			String containerName = it.next();
+			String containerName = loadContainer2Display.get(i);
 			String dataSetpart = monitorDatasetParts.get(containerName);
-			if (dataSetpart== null) {
-				dataSetpart = getDatasetPartEmpty();
+			if (dataSetpart==null) {
+				dataSetpart = this.getDatasetPartEmpty();
 			}
 			sb.append(dataSetpart);
 		}
 		dataSet = sb.toString();
 		
-		// --- If the LOCALE DecimalSeperator is differnt to '.' (dot ---------
+		// --- If the LOCALE DecimalSeperator is different to '.' (dot) -------
 		if ( monitorDecimalSeparator.equals(".") == false ) {
 			dataSet = dataSet.replaceAll("\\.", monitorDecimalSeparator);
 		}
@@ -971,24 +1031,26 @@ public class LoadMeasureAgent extends Agent {
 		@Override
 		public void action() {
 			
-			Action act = null;
-			
 			ACLMessage msg = myAgent.receive();			
 			if (msg!=null) {
-				// --- Ontology-specific Message ----------------
+
+				Action act = null;
 				try {
+					// --- Extract message content ----------------------------
+					Object msgContent = getContentManager().extractContent(msg);
 					if (msg.getOntology().equals(FIPAManagementOntology.NAME)==true) {
-						Object fipaMessage = getContentManager().extractContent(msg);
-						if (fipaMessage instanceof Result) {
-							Result result = (Result) fipaMessage;
+						// --- Ontology-specific Message ----------------------
+						if (msgContent instanceof Result) {
+							Result result = (Result) msgContent;
 							if (result.getAction() instanceof Search ) {
-								// --- no action required -------
+								// --- no action required ---------------------
 								System.err.println("=> " + this.getAgent().getLocalName() + " - Received " + FIPAManagementOntology.NAME +" result:");
 							}
 						}
 						
-					} else {
-						act = (Action) getContentManager().extractContent(msg);						
+					} else if (msgContent instanceof Action) {
+						// --- Agent action -----------------------------------
+						act = (Action) msgContent;						
 					}
 					
 				} catch (UngroundedException ue) {
@@ -999,6 +1061,7 @@ public class LoadMeasureAgent extends Agent {
 					oe.printStackTrace();
 				}
 
+				// --- Work on the Agent action -------------------------------
 				if (act!=null) {
 					Concept agentAction = act.getAction();
 					if (agentAction instanceof ShowMonitorGUI) {
@@ -1013,8 +1076,8 @@ public class LoadMeasureAgent extends Agent {
 						}
 					}
 				}
-			}
-			else {
+			
+			} else {
 				block();
 			}			
 		}

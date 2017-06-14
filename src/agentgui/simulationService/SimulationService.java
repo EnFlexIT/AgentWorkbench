@@ -1027,24 +1027,27 @@ public class SimulationService extends BaseService {
 			myLogger.log(Logger.CONFIG, "Sending DisplayAgentNotification to DisplayAgents!");
 		}
 		
-		Set<String> displayContainer = displayAgentDistribution.keySet();
-		Service.Slice[] slices = getAllSlices();
-		for (int i = 0; i < slices.length; i++) {
-			String sliceName = null;
-			try {
-				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
-				sliceName = slice.getNode().getName();
-				// --- Only send if a DisplayAgent is known at this node ------
-				if (displayContainer.contains(sliceName)==true) {
-					if (myLogger.isLoggable(Logger.FINER)) {
-						myLogger.log(Logger.FINER, "Sending display notification to slice " + sliceName);
+		if (displayAgentDistribution!=null) {
+			// --- Distribute the notifications -----------------------------------------
+			Set<String> displayContainer = displayAgentDistribution.keySet();
+			Service.Slice[] slices = getAllSlices();
+			for (int i = 0; i < slices.length; i++) {
+				String sliceName = null;
+				try {
+					SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+					sliceName = slice.getNode().getName();
+					// --- Only send if a DisplayAgent is known at this node ------------
+					if (displayContainer.contains(sliceName)==true) {
+						if (myLogger.isLoggable(Logger.FINER)) {
+							myLogger.log(Logger.FINER, "Sending display notification to slice " + sliceName);
+						}
+						slice.displayAgentNotification(notification);
 					}
-					slice.displayAgentNotification(notification);
-				}
-				
-			} catch(Throwable t) {
-				myLogger.log(Logger.WARNING, "Error while sending display notification to slice " + sliceName, t);
-			}	
+					
+				} catch(Throwable t) {
+					myLogger.log(Logger.WARNING, "Error while sending display notification to slice " + sliceName, t);
+				}	
+			}			
 		}
 	}
 	

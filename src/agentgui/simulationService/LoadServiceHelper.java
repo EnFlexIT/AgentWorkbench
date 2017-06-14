@@ -56,9 +56,6 @@ public interface LoadServiceHelper extends ServiceHelper {
 	/** The name of this service. */
 	public static final String SERVICE_NAME = "agentgui.simulationService.LoadService";
 	
-	/** The name of the file, which stores the local node description. */
-	public static final String SERVICE_NODE_DESCRIPTION_FILE = "AgentGUINode.bin";
-	
 	// --- Methods for agent and container handling -----------------
 	/**
 	 * Start an agent on a specified location.

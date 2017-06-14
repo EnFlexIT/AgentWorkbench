@@ -83,7 +83,7 @@ public class NetworkManagerAgentDisplayTest extends SimulationManagerAgent {
 	protected void setup() {
 		super.setup();
 
-		// --- Make sure that the agent allways runs ----------------
+		// --- Make sure that the agent always runs -----------------
 		new SingleAgentMonitor(this, MonitoringMeasureType.RESTART_AGENT).registerTask();
 		
 		// --- Remind the current network model ---------------------

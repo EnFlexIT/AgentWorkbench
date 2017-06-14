@@ -45,9 +45,9 @@
         <serviceList>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>jade.debugging.DebugService</service>
             <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
+            <service>agentgui.logging.DebugService</service>
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>
@@ -59,7 +59,7 @@
         <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
         <loadRecordingInterval>500</loadRecordingInterval>
         <numberOfAgents>18</numberOfAgents>
-        <numberOfContainer>1</numberOfContainer>
+        <numberOfContainer>2</numberOfContainer>
         <remoteOnly>true</remoteOnly>
         <showLoadMonitorAtPlatformStart>false</showLoadMonitorAtPlatformStart>
         <showThreadMonitorAtPlatformStart>false</showThreadMonitorAtPlatformStart>
@@ -93,7 +93,7 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>0128 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>1458 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
     <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/BIN_DUMP_495248449.jar</downloadResources>
     <downloadResources>http://Pandora.cs.uni-due.de:8080/game_of_life/game_of_life_IDE.jar</downloadResources>
@@ -131,12 +131,12 @@
             <value>0018_agents.xml</value>
         </entry>
         <entry>
-            <key>1800 Agents</key>
-            <value>1800_agents.xml</value>
-        </entry>
-        <entry>
             <key>0032 Agents</key>
             <value>0032_agents.xml</value>
+        </entry>
+        <entry>
+            <key>1800 Agents</key>
+            <value>1800_agents.xml</value>
         </entry>
         <entry>
             <key>4050 Agents</key>
@@ -152,5 +152,5 @@
         </entry>
     </simulationSetups>
     <subFolderEnvSetups>setupsEnv</subFolderEnvSetups>
-    <unsaved>true</unsaved>
+    <unsaved>false</unsaved>
 </project>

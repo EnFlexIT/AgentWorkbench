@@ -104,13 +104,13 @@ public abstract class DynamicLoadBalancingBase extends BaseLoadBalancing  {
 	protected void setMeasurements() {
 		
 		currThresholdExceededOverAll = new Integer(myLoadAgent.loadThresholdExceededOverAll);
-		currContainerLoactions = new Hashtable<String, Location>(myLoadAgent.loadContainerLoactions) ;
+		currContainerLoactions = new Hashtable<String, Location>(myLoadAgent.getLoadContainerLoactions()) ;
 		currContainerBenchmarkResults = new Hashtable<String, Float>(myLoadAgent.loadContainerBenchmarkResults);
 		
 		loadMachines4Balancing = new Hashtable<String, LoadMerger>(myLoadAgent.loadMachines4Balancing);
 		loadJVM4Balancing = new Hashtable<String, LoadMerger>(myLoadAgent.loadJVM4Balancing) ;
-		loadContainer = new Hashtable<String, PlatformLoad>(myLoadAgent.loadContainer) ;
-		loadContainerAgentMap = myLoadAgent.loadContainerAgentMap;
+		loadContainer = new Hashtable<String, PlatformLoad>(myLoadAgent.getLoadContainer()) ;
+		loadContainerAgentMap = myLoadAgent.getLoadContainerAgentMap();
 		
 	}
 

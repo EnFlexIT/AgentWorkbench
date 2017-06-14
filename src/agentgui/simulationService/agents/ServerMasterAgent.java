@@ -907,7 +907,7 @@ public class ServerMasterAgent extends Agent {
 		act.setActor(this.getAID());
 		act.setAction(crcr);
 
-		// --- Nachricht zusammenbauen und ... --------------------------------
+		// --- Create Message and ... -----------------------------------------
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setSender(getAID());
 		msg.addReceiver(slavePlatformAgent);

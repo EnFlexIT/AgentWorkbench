@@ -33,6 +33,7 @@ import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 
 import agentgui.simulationService.load.threading.ThreadProtocol;
+import agentgui.core.application.Application;
 import agentgui.simulationService.load.monitoring.AbstractMonitoringTask;
 import agentgui.simulationService.load.monitoring.SingleAgentMonitor;
 import agentgui.simulationService.load.threading.ThreadDetail;
@@ -114,8 +115,8 @@ public class LoadMeasureThread extends Thread {
 	private static int thresholdLevelExceededNoThreads = 0;
 	
 	// --- Resulting Benchmark-Value ------------------------------------------
-	/** The local benchmark value. */
-	private static float compositeBenchmarkValue = 0;
+	/** The local systems benchmark value. As default the stored value will be taken */
+	private static float compositeBenchmarkValue = Application.getGlobalInfo().getBenchValue();
 	
 	// --- Current Values of Interest -----------------------------------------
 	/** Percentage value of CPU load. */

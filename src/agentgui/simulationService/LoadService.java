@@ -28,6 +28,43 @@
  */
 package agentgui.simulationService;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import agentgui.core.application.Application;
+import agentgui.core.config.VersionInfo;
+import agentgui.simulationService.agents.LoadMeasureAgent;
+import agentgui.simulationService.load.LoadAgentMap;
+import agentgui.simulationService.load.LoadAgentMap.AID_Container;
+import agentgui.simulationService.load.LoadInformation;
+import agentgui.simulationService.load.LoadInformation.Container2Wait4;
+import agentgui.simulationService.load.LoadInformation.NodeDescription;
+import agentgui.simulationService.load.LoadMeasureSigar;
+import agentgui.simulationService.load.LoadMeasureThread;
+import agentgui.simulationService.load.LoadThresholdLevels;
+import agentgui.simulationService.load.LoadUnits;
+import agentgui.simulationService.load.threading.ThreadDetail;
+import agentgui.simulationService.load.threading.ThreadProtocol;
+import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
+import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
+import agentgui.simulationService.ontology.AgentGuiVersion;
+import agentgui.simulationService.ontology.BenchmarkResult;
+import agentgui.simulationService.ontology.ClientAvailableMachinesReply;
+import agentgui.simulationService.ontology.ClientAvailableMachinesRequest;
+import agentgui.simulationService.ontology.ClientRemoteContainerReply;
+import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
+import agentgui.simulationService.ontology.OSInfo;
+import agentgui.simulationService.ontology.PlatformAddress;
+import agentgui.simulationService.ontology.PlatformLoad;
+import agentgui.simulationService.ontology.PlatformPerformance;
+import agentgui.simulationService.ontology.RemoteContainerConfig;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
@@ -59,50 +96,6 @@ import jade.util.Logger;
 import jade.util.ObjectManager;
 import jade.util.leap.ArrayList;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import agentgui.core.application.Application;
-import agentgui.core.config.VersionInfo;
-import agentgui.simulationService.agents.LoadMeasureAgent;
-import agentgui.simulationService.load.LoadAgentMap;
-import agentgui.simulationService.load.LoadAgentMap.AID_Container;
-import agentgui.simulationService.load.LoadInformation;
-import agentgui.simulationService.load.LoadInformation.Container2Wait4;
-import agentgui.simulationService.load.LoadInformation.NodeDescription;
-import agentgui.simulationService.load.threading.ThreadProtocol;
-import agentgui.simulationService.load.threading.ThreadDetail;
-import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
-import agentgui.simulationService.load.LoadMeasureSigar;
-import agentgui.simulationService.load.LoadMeasureThread;
-import agentgui.simulationService.load.LoadThresholdLevels;
-import agentgui.simulationService.load.LoadUnits;
-import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
-import agentgui.simulationService.ontology.AgentGuiVersion;
-import agentgui.simulationService.ontology.BenchmarkResult;
-import agentgui.simulationService.ontology.ClientAvailableMachinesReply;
-import agentgui.simulationService.ontology.ClientAvailableMachinesRequest;
-import agentgui.simulationService.ontology.ClientRemoteContainerReply;
-import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
-import agentgui.simulationService.ontology.OSInfo;
-import agentgui.simulationService.ontology.PlatformAddress;
-import agentgui.simulationService.ontology.PlatformLoad;
-import agentgui.simulationService.ontology.PlatformPerformance;
-import agentgui.simulationService.ontology.RemoteContainerConfig;
-
 /**
  * This extended BaseService is basically used to transport the load information 
  * from different remote locations to the Main-Container. Beside the load, measured
@@ -123,11 +116,6 @@ public class LoadService extends BaseService {
 	/** The external NAME of the this Service ('agentgui.simulationService.LoadService'). */
 	public static final String NAME = LoadServiceHelper.SERVICE_NAME;
 	
-	/** The file-name which stores the local node- (computer)- description as a file. */
-	public static final String SERVICE_NODE_DESCRIPTION_FILE = LoadServiceHelper.SERVICE_NODE_DESCRIPTION_FILE;
-	/** A marker to prevent concurrent access to the NODE_DESCRIPTION_FILE */
-	public static boolean currentlyWritingFile = false;
-	
 	private AgentContainer myContainer;
 	private MainContainer myMainContainer;
 
@@ -137,20 +125,17 @@ public class LoadService extends BaseService {
 	private Filter outFilter;
 	private ServiceComponent localSlice;
 	
-	private String myContainerMTPurl;
+	private String myMTP_URL;
+	private Boolean simulationServiceActive;
 	
 	/** The local ClientRemoteContainerReply instance. */
 	private ClientRemoteContainerReply myCRCReply; 
-	
+	private RemoteContainerConfig defaults4RemoteContainerConfig; 
+
 	/** The List of Agents, which are registered to this service  **/ 
 	private Hashtable<String,AID> agentList = new Hashtable<String,AID>();
-	
-	private RemoteContainerConfig defaults4RemoteContainerConfig; 
-	
 	/**  The Load-Information Array of all slices **/
 	private LoadInformation loadInfo = new LoadInformation(); 
-	
-	private Boolean simulationServiceActive;
 	
 	private static ClientAvailableMachinesReply availableMachines;
 	
@@ -171,7 +156,7 @@ public class LoadService extends BaseService {
 		
 		if (myContainer!=null) {
 			if (myLogger.isLoggable(Logger.FINE)) {
-				myLogger.log(Logger.FINE, "Starting LoadService: My-Container: " + myContainer.toString());
+				myLogger.log(Logger.FINE, "Starting LoadService for container: " + myContainer.toString());
 			}
 		}
 		if (myMainContainer!=null) {
@@ -189,9 +174,7 @@ public class LoadService extends BaseService {
 	 */
 	public void boot(Profile p) throws ServiceException {
 		super.boot(p);
-		if (myMainContainer==null) {
-			setLocalCRCReply(true);
-		}
+		this.getLocalClientRemoteContainerReply();
 	}
 	/* (non-Javadoc)
 	 * @see jade.core.BaseService#shutdown()
@@ -304,15 +287,14 @@ public class LoadService extends BaseService {
 		 * @see agentgui.simulationService.LoadServiceHelper#getLocalCRCReply()
 		 */
 		public ClientRemoteContainerReply getLocalCRCReply() throws ServiceException {
-			return myCRCReply;
+			return getLocalClientRemoteContainerReply();
 		}
 		
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.LoadServiceHelper#setAndSaveCRCReplyLocal(agentgui.simulationService.ontology.ClientRemoteContainerReply)
 		 */
 		public void setAndSaveCRCReplyLocal(ClientRemoteContainerReply crcReply) throws ServiceException {
-			myCRCReply = crcReply;
-			saveCRCReply(myCRCReply);
+			setLocalClientRemoteContainerReply(crcReply);
 		}
 
 		// ----------------------------------------------------------
@@ -325,7 +307,7 @@ public class LoadService extends BaseService {
 				// --- RemoteContainerRequest WAS NOT successful ----
 				loadInfo.setNewContainerCanceled(crcReply.getRemoteContainerName());
 			} else {
-				broadcastPutContainerDescription(getAllSlices(), crcReply);	
+				broadcastPutContainerDescription(crcReply);	
 			}
 		}
 		
@@ -486,8 +468,8 @@ public class LoadService extends BaseService {
 					myLogger.log(Logger.FINER, "Sending migration notification to agents at " + sliceName);
 				}
 				slice.setAgentMigration(transferAgents);
-			}
-			catch(Throwable t) {
+			
+			} catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while sending migration notification to agents at slice " + sliceName, t);
 			}
@@ -517,8 +499,8 @@ public class LoadService extends BaseService {
 				myLogger.log(Logger.FINER, "Start agent '" + localName4Agent + "' on container " + sliceName + "");
 			}
 			return slice.startAgent(localName4Agent, agentClassName, args);
-		}
-		catch(Throwable t) {
+		
+		} catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 			myLogger.log(Logger.WARNING, "Error while trying to get the default remote container configuration from " + sliceName, t);
 		}
@@ -544,8 +526,8 @@ public class LoadService extends BaseService {
 				myLogger.log(Logger.FINER, "Sending the default remote container configuration to container (" + sliceName + ")");
 			}
 			slice.setDefaults4RemoteContainerConfig(remoteContainerConfig);
-		}
-		catch(Throwable t) {
+		
+		} catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 			myLogger.log(Logger.WARNING, "Error while try to send the default remote container configuration to container " + sliceName, t);
 		}
@@ -572,8 +554,8 @@ public class LoadService extends BaseService {
 				myLogger.log(Logger.FINER, "Start request for the default remote container configuration at container (" + sliceName + ")");
 			}
 			return slice.getAutoRemoteContainerConfig();
-		}
-		catch(Throwable t) {
+		
+		} catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 			myLogger.log(Logger.WARNING, "Error while trying to get the default remote container configuration from " + sliceName, t);
 		}
@@ -601,8 +583,8 @@ public class LoadService extends BaseService {
 				myLogger.log(Logger.FINER, "Try to start a new remote container (" + sliceName + ")");
 			}
 			return slice.startNewRemoteContainer(remoteConfig);
-		}
-		catch(Throwable t) {
+			
+		} catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 			myLogger.log(Logger.WARNING, "Error while starting a new remote-container from " + sliceName, t);
 		}
@@ -629,8 +611,8 @@ public class LoadService extends BaseService {
 				myLogger.log(Logger.FINER, "Try to start a new remote container (" + sliceName + ")");
 			}
 			return slice.getNewContainer2Wait4Status(containerName2Wait4);
-		}
-		catch(Throwable t) {
+			
+		} catch(Throwable t) {
 			// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 			myLogger.log(Logger.WARNING, "Error while starting a new remote-container from " + sliceName, t);
 		}
@@ -661,8 +643,8 @@ public class LoadService extends BaseService {
 				}
 				Location cLoc = slice.getLocation();
 				loadInfo.containerLocations.put(sliceName, cLoc);
-			}
-			catch(Throwable t) {
+			
+			} catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while try to get Location-Object from " + sliceName, t);
 			}
@@ -670,13 +652,25 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
+	 * Broadcasts the local container description (instance of ClientRemoteContainerReply).
+	 */
+	private void broadcastLocalContainerDescription() {
+		try {
+			this.broadcastPutContainerDescription(this.getLocalClientRemoteContainerReply());
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+	/**
 	 * Broadcast informtion's of the remote-container (OS etc.) to all remote-container of this platform.
 	 *
 	 * @param slices the slices
 	 * @param crcReply the ClientRemoteContainerReply
 	 * @throws ServiceException the service exception
 	 */
-	private void broadcastPutContainerDescription(Service.Slice[] slices, ClientRemoteContainerReply crcReply) throws ServiceException {
+	private void broadcastPutContainerDescription(ClientRemoteContainerReply crcReply) throws ServiceException {
+		
+		Service.Slice[] slices = this.getAllSlices();
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Sending remote container Information!");
@@ -690,8 +684,8 @@ public class LoadService extends BaseService {
 					myLogger.log(Logger.FINER, "Try sending remote container Information to " + sliceName );
 				}
 				slice.putContainerDescription(crcReply);
-			}
-			catch(Throwable t) {
+			
+			} catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while try to send container information to " + sliceName, t);
 			}
@@ -721,8 +715,8 @@ public class LoadService extends BaseService {
 					myLogger.log(Logger.FINER, "Try to set threshold level to " + sliceName);
 				}
 				slice.setThresholdLevels(thresholdLevels);
-			}
-			catch(Throwable t) {
+			
+			} catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while try to set threshold level to slice " + sliceName, t);
 			}
@@ -753,8 +747,8 @@ public class LoadService extends BaseService {
 				}
 				PlatformLoad pl = slice.measureLoad();
 				loadInfo.containerLoads.put(sliceName, pl);
-			}
-			catch(Throwable t) {
+			
+			} catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while executing 'MeasureLoad' on slice " + sliceName, t);
 			}
@@ -782,8 +776,8 @@ public class LoadService extends BaseService {
 					myLogger.log(Logger.FINER, "Try to request thread measurement of " + sliceName);
 				}
 				slice.requestThreadMeasurement(timeStamp);
-			}
-			catch(Throwable t) {
+			
+			} catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while requesting Thread Measurement on slice " + sliceName, t);
 			}
@@ -815,8 +809,8 @@ public class LoadService extends BaseService {
 				}
 				AID[] aid = slice.getAIDList();
 				loadInfo.putAIDs4Container(sliceName, aid);
-			}
-			catch(Throwable t) {
+			
+			} catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while trying to get AID's from " + sliceName, t);
 			}
@@ -849,8 +843,8 @@ public class LoadService extends BaseService {
 				}
 				AID[] aidList = slice.getAIDListSensorAgents();
 				loadInfo.sensorAgents.addAll(new Vector<AID>(Arrays.asList(aidList)) );
-			}
-			catch(Throwable t) {
+			
+			} catch(Throwable t) {
 				// NOTE that slices are always retrieved from the main and not from the cache --> No need to retry in case of failure 
 				myLogger.log(Logger.WARNING, "Error while trying to get Sensor-AID's from " + sliceName, t);
 			}
@@ -895,8 +889,8 @@ public class LoadService extends BaseService {
 				myLogger.log(Logger.FINER, "Send thread protocol to " + sliceName);
 			}
 			slice.putThreadProtocol(threadProtocol);
-		}
-		catch(Throwable t) {
+		
+		} catch(Throwable t) {
 			myLogger.log(Logger.WARNING, "Error while sending the thread protocol to slice  " + sliceName, t);
 		}
 	}	
@@ -980,93 +974,90 @@ public class LoadService extends BaseService {
 					String agentClassName = (String) params[1];
 					Object[] args = (Object[]) params[2];
 					cmd.setReturnValue(this.startAgent(nickName, agentClassName, args));
-				}
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_START_NEW_REMOTE_CONTAINER)) {
+					
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_START_NEW_REMOTE_CONTAINER)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Starting a new remote-container for this platform");
 					}
 					RemoteContainerConfig remoteConfig = (RemoteContainerConfig) params[0];
 					cmd.setReturnValue(this.startRemoteContainer(remoteConfig));
-				}
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_SET_DEFAULTS_4_REMOTE_CONTAINER_CONFIG)) {
+					
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_SET_DEFAULTS_4_REMOTE_CONTAINER_CONFIG)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Got the default settings for ");
 					}
 					RemoteContainerConfig remoteContainerConfig = (RemoteContainerConfig) params[0];
 					defaults4RemoteContainerConfig = remoteContainerConfig;
-				}
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_AUTO_REMOTE_CONTAINER_CONFIG)) {
+					
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_AUTO_REMOTE_CONTAINER_CONFIG)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Answering to request for 'get_default_remote_container_config'");
 					}
 					cmd.setReturnValue(this.getAutoRemoteContainerConfig());
-				}
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_NEW_CONTAINER_2_WAIT_4_STATUS)) {
+					
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_NEW_CONTAINER_2_WAIT_4_STATUS)) {
 					String container2Wait4 = (String) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Answering request for new container status of container '" + container2Wait4 + "'");
 					}
 					cmd.setReturnValue(this.getNewContainer2Wait4Status(container2Wait4));
-				}
-				
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_LOCATION)) {
+					
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_LOCATION)) {
 					cmd.setReturnValue(myContainer.here());
-				}
-
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_SET_THRESHOLD_LEVEL)) {
+					
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_SET_THRESHOLD_LEVEL)) {
 					LoadThresholdLevels thresholdLevels = (LoadThresholdLevels) params[0];
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Getting new threshold levels for load");
 					}
 					this.setThresholdLevels(thresholdLevels);
-				}
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_MEASURE_LOAD)) {
+					
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_MEASURE_LOAD)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Answering request for Container-Load");
 					}
 					cmd.setReturnValue(this.measureLoad());
-				}
-				
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_PUT_CONTAINER_DESCRIPTION)) {
+					
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_PUT_CONTAINER_DESCRIPTION)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Putting in container description");
+						myLogger.log(Logger.FINE, "Putting container description");
 					}
 					this.putContainerDescription((ClientRemoteContainerReply) params[0]);
-				}
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_CONTAINER_DESCRIPTION)) {
+					
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_GET_CONTAINER_DESCRIPTION)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Answering request for container description");
 					}
 					cmd.setReturnValue(this.getContainerDescription());
-				}
-				else if (cmdName.equals(SimulationServiceSlice.SIM_STEP_SIMULATION)) {
+					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_STEP_SIMULATION)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Received 'Step Simulation'");
 					}	
 					this.setSimulationCycleStartTimeStamp();
-				}
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_THREAD_MEASUREMENT_REQUEST)) {
+					
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_THREAD_MEASUREMENT_REQUEST)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Starting thread measurement for this platform");
 					}
 					long timestamp = (Long) params[0];
 					this.startThreadMeasurement(timestamp);
-				}
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_THREAD_MEASUREMENT_PUT)) {
+					
+				} else if (cmdName.equals(LoadServiceSlice.SERVICE_THREAD_MEASUREMENT_PUT)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Got ThreadProtocol for display");
 					}
 					ThreadProtocol threadProtocol = (ThreadProtocol) params[0];
 					this.putThreadProtocolToLoadMeasureAgent(threadProtocol);
-				} 
-				else if (cmdName.equals(LoadServiceSlice.SERVICE_REQUEST_AVAILABLE_MACHINES)) {
+					
+				}  else if (cmdName.equals(LoadServiceSlice.SERVICE_REQUEST_AVAILABLE_MACHINES)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
 						myLogger.log(Logger.FINE, "Starting available machine request");
 					}
 					this.requestAvailableMachines();
 				}
-			}
-			catch (Throwable t) {
+				
+			} catch (Throwable t) {
 				cmd.setReturnValue(t);
 			}
 			return null;
@@ -1182,7 +1173,7 @@ public class LoadService extends BaseService {
 		 * @return the container description
 		 */
 		private ClientRemoteContainerReply getContainerDescription() {
-			return myCRCReply;
+			return getLocalClientRemoteContainerReply();
 		}
 		
 		/**
@@ -1207,11 +1198,12 @@ public class LoadService extends BaseService {
 		@Override
 		public void receiveThreadProtocol(ThreadProtocol threadProtocol) {
 
-			if(myCRCReply != null){
+			ClientRemoteContainerReply crcReply = getLocalClientRemoteContainerReply();
+			if (crcReply!=null) {
 				
 				// --- Add information about container, machine ---------
-				threadProtocol.setContainerName(myCRCReply.getRemoteContainerName());
-				threadProtocol.setProcessID(myCRCReply.getRemotePID());
+				threadProtocol.setContainerName(crcReply.getRemoteContainerName());
+				threadProtocol.setProcessID(crcReply.getRemotePID());
 				
 				// --- jvm@machine, e.g. 73461@dell-blade-2 -------------
 				String[] temp = threadProtocol.getProcessID().split("@");
@@ -1221,8 +1213,8 @@ public class LoadService extends BaseService {
 				threadProtocol.setJVMName(jvmName);
 				threadProtocol.setMachineName(machineName);
 				
-				int noOfCPU = myCRCReply.getRemotePerformance().getCpu_numberOf();
-				double mflops = myCRCReply.getRemoteBenchmarkResult().getBenchmarkValue();
+				int noOfCPU = crcReply.getRemotePerformance().getCpu_numberOf();
+				double mflops = crcReply.getRemoteBenchmarkResult().getBenchmarkValue();
 				threadProtocol.setMflops(mflops * noOfCPU);
 				
 				// --- Do the check if a thread is an agent or not ------
@@ -1293,14 +1285,14 @@ public class LoadService extends BaseService {
 			String cmdName = cmd.getName();
 //			System.out.println( "=> out " + cmdName + " - " + cmd.getService() + " - " + cmd.getService().getClass() );	
 			
-			if (cmdName.equals(MessagingSlice.SET_PLATFORM_ADDRESSES) && myContainerMTPurl==null ) {
+			if (cmdName.equals(MessagingSlice.SET_PLATFORM_ADDRESSES) && myMTP_URL==null ) {
 				// --- Handle that the MTP-Address was created ------
 				Object[] params = cmd.getParams();
 				AID aid = (AID)params[0];
 				String[] aidArr = aid.getAddressesArray();
 				if (aidArr.length!=0) {
-					myContainerMTPurl = aidArr[0];
-					setLocalCRCReply(false);
+					myMTP_URL = aidArr[0];
+					broadcastLocalContainerDescription();;
 				}
 				// Veto the original SEND_MESSAGE command, if needed
 				// return false;
@@ -1581,96 +1573,31 @@ public class LoadService extends BaseService {
 	}
 	
 	/**
-	 * Here the local ContainerDescription will be stored on disk.
-	 *
-	 * @param crcReply the ClientRemoteContainerReply to store
-	 */
-	private void saveCRCReply(ClientRemoteContainerReply crcReply) {
-		
-		LoadService.currentlyWritingFile = true;
-		String mySavingPath = LoadService.SERVICE_NODE_DESCRIPTION_FILE;
-		try {
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(mySavingPath));
-			out.writeObject(crcReply);
-			out.flush();
-			out.close();
-			
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		LoadService.currentlyWritingFile = false;
-	}
-	
-	/**
-	 * This method reads the ContainerDescription from the local file.
-	 *
-	 * @return the stored ClientRemoteContainerReply, if available
-	 * @see LoadService#SERVICE_NODE_DESCRIPTION_FILE
-	 */
-	private ClientRemoteContainerReply loadCRCReply() {
-		
-		ClientRemoteContainerReply crcReply = null;
-		String mySavingPath = LoadService.SERVICE_NODE_DESCRIPTION_FILE;
-
-		// --- Wait until the file-writing process is finished ------ 
-		while (LoadService.currentlyWritingFile==true) {
-			try {
-				Thread.sleep(50);				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		// --- If the file exists, parse it now ---------------------
-		if (new File(mySavingPath).exists()) {
-			
-			try {
-				ObjectInputStream in = new ObjectInputStream(new FileInputStream(mySavingPath));
-				crcReply = (ClientRemoteContainerReply) in.readObject();
-				in.close();
-				
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-			
-			// --- Set informations, which have to be local one -----
-			crcReply.setRemoteContainerName(myContainer.getID().getName());
-			crcReply.setRemotePID(LoadMeasureThread.getLoadCurrentJVM().getJvmPID());
-		}
-		return crcReply;
-	}
-
-	/**
 	 * This method defines the local field 'myCRCReply' which is an instance
 	 * of 'ClientRemoteContainerReply' and holds the information about
 	 * Performance, BenchmarkResult, Network-Addresses of this container-node.
 	 *
-	 * @param loadFile indicates if the local file should be used or not
+	 * @return the local client remote container reply
 	 */
-	private void setLocalCRCReply(boolean loadFile) {
-		
-		ClientRemoteContainerReply crcReply = null;
-		if (loadFile==true) {
-			// --- Load the Descriptions from the local file ----------------------------
-			crcReply = loadCRCReply();
-		}
-		
-		if (crcReply==null){
-			// --- Build the Descriptions from the running system -----------------------
+	private ClientRemoteContainerReply getLocalClientRemoteContainerReply() {
+		if (myCRCReply==null) {
+			// ----------------------------------------------------------------
+			// --- In case of the man container, wait for the MTP-URL ---------
+			// ----------------------------------------------------------------
+			if (this.myMainContainer!=null && this.myMTP_URL==null) return null;
 			
-			// --- Get infos about the network connection -----
+			// ----------------------------------------------------------------
+			// --- Build the Descriptions from the running system -------------
+			// ----------------------------------------------------------------
+			
+			// --- Get info about the network connection -----
 			InetAddress currAddress = null;
 			InetAddress addressLocal = null;
 			InetAddress addressLocalAlt = null;
 			String hostIP, hostName, port;
 			
 			try {
-				currAddress = InetAddress.getByName(myContainer.getID().getAddress());
+				currAddress = InetAddress.getByName(this.myContainer.getID().getAddress());
 				addressLocal = InetAddress.getLocalHost();
 				addressLocalAlt = InetAddress.getByName("127.0.0.1");
 				if (currAddress.equals(addressLocalAlt)) {
@@ -1681,15 +1608,15 @@ public class LoadService extends BaseService {
 			}
 			hostIP = currAddress.getHostAddress();
 			hostName = currAddress.getHostName();
-			port = myContainer.getID().getPort();
+			port = this.myContainer.getID().getPort();
 			
 			// --- Define Platform-Info -----------------------
 			PlatformAddress myPlatform = new PlatformAddress();
 			myPlatform.setIp(hostIP);
 			myPlatform.setUrl(hostName);
 			myPlatform.setPort(Integer.parseInt(port));
-			myPlatform.setHttp4mtp(this.myContainerMTPurl);	
-					
+			myPlatform.setHttp4mtp(this.myMTP_URL);
+			
 			// --- Set OS-Informations ------------------------
 			OSInfo myOS = new OSInfo();
 			myOS.setOs_name(System.getProperty("os.name"));
@@ -1705,22 +1632,17 @@ public class LoadService extends BaseService {
 			myPerformance.setCpu_speedMhz((int) sys.getMhz());
 			myPerformance.setMemory_totalMB((int) LoadUnits.bytes2(sys.getTotalMemory(), LoadUnits.CONVERT2_MEGA_BYTE));
 			
-			// --- Set the performance (Mflops) of the system -
-			float benchValue = 0;
-			BenchmarkResult bench = null;
-			if (LoadMeasureThread.getCompositeBenchmarkValue()==0) {
-				ClientRemoteContainerReply storedCRCreply = loadCRCReply();
-				if (storedCRCreply==null) {
-					benchValue = 0;
-				} else {
-					bench = storedCRCreply.getRemoteBenchmarkResult();
-					benchValue = bench.getBenchmarkValue();	
-				}				
-			} else {
-				benchValue = LoadMeasureThread.getCompositeBenchmarkValue();
+			// --- Wait until benchmarks end ------------------
+			while (Application.isBenchmarkRunning()==true) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException ex) {
+					ex.printStackTrace();
+				}
 			}
-			bench = new BenchmarkResult();
-			bench.setBenchmarkValue(benchValue);
+			// --- Set the performance (Mflops) of the system -
+			BenchmarkResult bench = new BenchmarkResult();
+			bench.setBenchmarkValue(LoadMeasureThread.getCompositeBenchmarkValue());
 			
 			// --- Get the PID of this JVM --------------------
 			String jvmPID = LoadMeasureThread.getLoadCurrentJVM().getJvmPID();
@@ -1733,28 +1655,29 @@ public class LoadService extends BaseService {
 			version.setBuildNo(versionInfo.getVersionBuild());
 			
 			// --- Finally define this local description ------
-			crcReply = new ClientRemoteContainerReply();
-			crcReply.setRemoteContainerName(myContainer.getID().getName());
-			crcReply.setRemotePID(jvmPID);
-			crcReply.setRemoteAddress(myPlatform);
-			crcReply.setRemoteOS(myOS);
-			crcReply.setRemotePerformance(myPerformance);
-			crcReply.setRemoteBenchmarkResult(bench);
-			crcReply.setRemoteAgentGuiVersion(version);
+			myCRCReply = new ClientRemoteContainerReply();
+			myCRCReply.setRemoteContainerName(myContainer.getID().getName());
+			myCRCReply.setRemotePID(jvmPID);
+			myCRCReply.setRemoteAddress(myPlatform);
+			myCRCReply.setRemoteOS(myOS);
+			myCRCReply.setRemotePerformance(myPerformance);
+			myCRCReply.setRemoteBenchmarkResult(bench);
+			myCRCReply.setRemoteAgentGuiVersion(version);
+			
+			// --- Broadcast the ClientRemoteContainerReply-Object to all other container ---
+			this.broadcastLocalContainerDescription();
 			
 		}
-
-		// --- Set the local value of the ClientRemoteContainerReply --------------------
-		myCRCReply = crcReply;
-		
+		return myCRCReply;
+	}
+	/**
+	 * Sets the local client remote container reply.
+	 * @param newCRCReply the new local client remote container reply
+	 */
+	private void setLocalClientRemoteContainerReply(ClientRemoteContainerReply newCRCReply) {
+		myCRCReply = newCRCReply;
 		// --- Broadcast the ClientRemoteContainerReply-Object to all other container ---
-		Service.Slice[] slices;
-		try {
-			slices = getAllSlices();
-			broadcastPutContainerDescription(slices, myCRCReply);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
+		this.broadcastLocalContainerDescription();
 
 	}
 	
