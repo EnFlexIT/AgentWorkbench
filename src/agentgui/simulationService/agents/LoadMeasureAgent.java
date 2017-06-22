@@ -69,6 +69,7 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
+import agentgui.logging.logfile.LogFileWriter;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.balancing.DynamicLoadBalancing;
@@ -858,6 +859,9 @@ public class LoadMeasureAgent extends Agent {
 		if (this.monitorDatasetWriter==null) {
 			this.monitorDatasetWriter = this.createBufferedWriter(this.getFileMeasurementTmp());
 			this.nextMidnightTimeStamp = GlobalInfo.getNextMidnightFromTimeStamp(this.monitorTimeStamp);
+			
+			File logDirectory = this.getFileMeasurementTmp().getParentFile();
+			LogFileWriter.deleteOldLogFiles(this.monitorTimeStamp, logDirectory);
 		} 
 		
 		// --- Write the dataset to the file --------------

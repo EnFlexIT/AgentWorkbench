@@ -49,11 +49,12 @@ import agentgui.logging.logfile.PrintStreamListener.PrintStreamListenerType;
  */
 public class LogFileWriter {
 
-	private final static String SYSTEM_OUTPUT = "[SysOut]";
-	private final static String SYSTEM_ERROR  = "[SysErr]";
+	private static final long CONSERVATION_PERIOD = 1000 * 60 *60 * 24 * 360;
+	
+	private static final String SYSTEM_OUTPUT = "[SysOut]";
+	private static final String SYSTEM_ERROR  = "[SysErr]";
 	
 	private final String newLine = System.getProperty("line.separator");
-	private long conservationPeriod = 1000 * 60 *60 * 24 * 360;
 	
 	private SimpleDateFormat dateFormatter;
 	private long nextMidnightTimeStamp;
@@ -136,61 +137,6 @@ public class LogFileWriter {
 	}
 
 	/**
-	 * Deletes old log files. Based on the current date and its corresponding day prefix, the 
-	 * files that are older than {@link #conservationPeriod} will be removed out of the corresponding 
-	 * month directory  
-	 * 
-	 * @param timeStamp the current time in milliseconds
-	 */
-	private void deleteOldLogFiles(long timeStamp) {
-		
-		String newLogFile = this.getLoggingFileName(timeStamp);
-		File logDirectory = new File(newLogFile).getParentFile();
-		if (logDirectory.exists()==true) {
-			// ------------------------------------------------------
-			// --- Search for older files with current day prefix ---
-			// ------------------------------------------------------
-			final String oldFilePrefix = Application.getGlobalInfo().getLoggingDayPrefix(timeStamp);
-			File[] oldLogs = logDirectory.listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					boolean accept = name.startsWith(oldFilePrefix);
-					if (accept==true) {
-						// --- Check the date of the log file -------
-						long lastMod = new File(dir, name).lastModified();
-						if (lastMod + conservationPeriod > System.currentTimeMillis()) {
-							accept = false;
-						}
-					}
-					return accept;
-				}
-			});
-			// ------------------------------------------------------
-			
-			// ------------------------------------------------------
-			// --- Remove the files found ---------------------------
-			// ------------------------------------------------------
-			for (int i = 0; i < oldLogs.length; i++) {
-				File oldLog = oldLogs[i]; 
-				try {
-					if (oldLog.delete()==false) {
-						System.err.println("Agent.GUI-Logging: Log file '" + oldLog.getAbsolutePath() + "' could not be removed.");
-					} else {
-						System.out.println("Agent.GUI-Logging: Removed old log file '" + oldLog.getAbsolutePath() + "'.");
-					}
-					
-				} catch (SecurityException se) {
-					System.err.println("Agent.GUI-Logging: Log file removement failed: " + se.getMessage());
-				} catch (Exception ex) {
-					System.err.println("Agent.GUI-Logging: Log file removement failed: " + ex.getMessage());
-				}
-			}
-			// ------------------------------------------------------
-		}
-		
-	}
-	
-	/**
 	 * Returns the local date formatter.
 	 * @return the date formatter
 	 */
@@ -210,9 +156,13 @@ public class LogFileWriter {
 		try {
 
 			// --- Writing to a new log file? -----------------
-			if (System.currentTimeMillis()>=this.nextMidnightTimeStamp) {
+			long timeStamp = System.currentTimeMillis();
+			if (timeStamp>=this.nextMidnightTimeStamp) {
 				// --- Next day, new log file! ----------------
-				this.deleteOldLogFiles(System.currentTimeMillis());
+				String newLogFile = this.getLoggingFileName(timeStamp);
+				File logDirectory = new File(newLogFile).getParentFile();
+				LogFileWriter.deleteOldLogFiles(timeStamp, logDirectory);
+				
 				this.stopFileWriter();
 				this.startFileWriter();
 				this.nextMidnightTimeStamp = GlobalInfo.getNextMidnightFromTimeStamp(System.currentTimeMillis());
@@ -265,5 +215,59 @@ public class LogFileWriter {
 		}
 	}
 	
+
+	/**
+	 * Deletes old log files. Based on the current date and its corresponding day prefix, the 
+	 * files that are older than {@link #CONSERVATION_PERIOD} will be removed out of the corresponding 
+	 * month directory  
+	 *
+	 * @param timeStamp the current time in milliseconds
+	 * @param logDirectory the logging directory to search in
+	 */
+	public static void deleteOldLogFiles(long timeStamp, File logDirectory) {
+		
+		if (logDirectory.exists()==true) {
+			// ------------------------------------------------------
+			// --- Search for older files with current day prefix ---
+			// ------------------------------------------------------
+			final String oldFilePrefix = Application.getGlobalInfo().getLoggingDayPrefix(timeStamp);
+			File[] oldLogs = logDirectory.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					boolean accept = name.startsWith(oldFilePrefix);
+					if (accept==true) {
+						// --- Check the date of the log file -------
+						long lastMod = new File(dir, name).lastModified();
+						if (lastMod + CONSERVATION_PERIOD > System.currentTimeMillis()) {
+							accept = false;
+						}
+					}
+					return accept;
+				}
+			});
+			// ------------------------------------------------------
+			
+			// ------------------------------------------------------
+			// --- Remove the files found ---------------------------
+			// ------------------------------------------------------
+			for (int i = 0; i < oldLogs.length; i++) {
+				File oldLog = oldLogs[i]; 
+				try {
+					if (oldLog.delete()==false) {
+						System.err.println("Agent.GUI-Logging: Log file '" + oldLog.getAbsolutePath() + "' could not be removed.");
+					} else {
+						System.out.println("Agent.GUI-Logging: Removed old log file '" + oldLog.getAbsolutePath() + "'.");
+					}
+					
+				} catch (SecurityException se) {
+					System.err.println("Agent.GUI-Logging: Log file removement failed: " + se.getMessage());
+				} catch (Exception ex) {
+					System.err.println("Agent.GUI-Logging: Log file removement failed: " + ex.getMessage());
+				}
+			}
+			// ------------------------------------------------------
+		}
+		
+	}
 	
 }
