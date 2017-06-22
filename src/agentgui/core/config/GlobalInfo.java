@@ -36,6 +36,8 @@ import java.awt.Frame;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -586,7 +588,7 @@ public class GlobalInfo {
 	}
 	
 	/**
-	 * This method will return the path to the project folder ('project\').
+	 * This method will return the path to the project folder ('./project').
 	 *
 	 * @param absolute set true if you want to get the full path to this
 	 * @param forcePathCreation if true, the path will be created if it not already exists
@@ -1065,17 +1067,60 @@ public class GlobalInfo {
 	 */
 	public void setLoggingBasePath(String newLoggingbasePath) {
 		if (newLoggingbasePath!=null && newLoggingbasePath.trim().equals("")==false) {
-			this.filePropLoggingBasePath = null;
+			this.filePropLoggingBasePath = newLoggingbasePath;
 		}
 	}
 	/**
-	 * Returns the logging base path.
+	 * Returns the relative logging base path. If not set differently, the method will return the default path.
 	 * @return the logging base path
 	 */
 	public String getLoggingBasePath() {
-		return this.filePropLoggingBasePath;
+		return this.getLoggingBasePath(false);
 	}
-
+	/**
+	 * Returns the relative logging base path. If not set differently, the method will return the default path.
+	 * @param forcePathCreation set true, if the directory should be created
+	 * @return the logging base path
+	 */
+	public String getLoggingBasePath(boolean forcePathCreation) {
+		if (filePropLoggingBasePath==null) {
+			filePropLoggingBasePath = getLoggingBasePathDefault();
+		}
+		if (forcePathCreation==true) {
+			this.createDirectoryIfRequired(filePropLoggingBasePath);
+		}
+		return filePropLoggingBasePath;
+	}
+	/**
+	 * Returns the default logging base path.
+	 * @return the default logging base path
+	 */
+	public static String getLoggingBasePathDefault() {
+		String defaultLoggingBasePath = "./log";
+		String os = System.getProperty("os.name");
+		if (os.toLowerCase().contains("windows")==true) {
+			// --- nothing to do here ---
+		} else if (os.toLowerCase().contains("linux")==true) {
+			defaultLoggingBasePath = "/var/log/agentgui";
+		}
+		return defaultLoggingBasePath.replace("/", File.separator);
+	}
+	
+	/**
+	 * Returns the logging directory by month.
+	 * @param timeStamp the timestamp
+	 * @param forcePathCreation set true, if the directory should be created 
+	 * @return the logging directory by month
+	 */
+	public String getLoggingPathByMonth(long timeStamp, boolean forcePathCreation){
+		Date date = new Date(timeStamp);
+		String monthDescriptor = new SimpleDateFormat("MM").format(date) + "_" + new SimpleDateFormat("MMM").format(date);
+		String logPathByMonth = this.getLoggingBasePath(forcePathCreation) + File.separator + monthDescriptor + File.separator; 
+		if (forcePathCreation==true) {
+			this.createDirectoryIfRequired(logPathByMonth);
+		}
+		return logPathByMonth;
+	}
 	
 	// ---- Connection to the Master-Server -------------------------
 	/**

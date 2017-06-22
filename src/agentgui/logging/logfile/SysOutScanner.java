@@ -31,6 +31,8 @@ package agentgui.logging.logfile;
 import java.io.PrintStream;
 import java.util.Vector;
 
+import agentgui.logging.logfile.PrintStreamListener.PrintStreamListenerType;
+
 /**
  * This Class can be used in order to listen to the output that will be generated 
  * through the console by using System.out and System.err - commands.<br>
@@ -46,7 +48,7 @@ import java.util.Vector;
  */
 public class SysOutScanner {
 
-	private Vector<String> outputStack = new Vector<String>(); 
+	private Vector<PrintStreamListenerOutput> outputStack = new Vector<PrintStreamListenerOutput>(); 
 	private LogFileWriter logFileWriter;
 
 	/**
@@ -67,8 +69,8 @@ public class SysOutScanner {
 		PrintStream orgStreamErr = System.err;
 		try {
 			// --- Build new PrintStream's ------ 
-			PrintStream listenStreamOut = new PrintStreamListener(orgStreamOut, this, PrintStreamListener.SystemOutput);
-			PrintStream listenStreamErr = new PrintStreamListener(orgStreamErr, this, PrintStreamListener.SystemError);
+			PrintStream listenStreamOut = new PrintStreamListener(orgStreamOut, this, PrintStreamListenerType.SystemOutput);
+			PrintStream listenStreamErr = new PrintStreamListener(orgStreamErr, this, PrintStreamListenerType.SystemError);
 
 			System.setOut(listenStreamOut);
 			System.setErr(listenStreamErr);
@@ -87,28 +89,26 @@ public class SysOutScanner {
 	/**
 	 * This method will be used in order to append an output line (System.out or System.err) 
 	 * to the local outputStack
-	 * @param lineOutput the line output
+	 * @param listenerOutput the PrintStreamListenerOutput 
 	 */
-	public void append2Stack(String lineOutput) {
+	public void append2Stack(PrintStreamListenerOutput listenerOutput) {
 		if (this.outputStack.size()>=20) {
 			this.outputStack.remove(0);
 		}
-		this.outputStack.add(lineOutput);
+		this.outputStack.add(listenerOutput);
 		
 		// --- If a local Console window is used --------------------------------------------------
 		if (this.logFileWriter!=null) {
 			this.logFileWriter.appendText(this.getStack());		
 		}
-		
 	}
-	
 	/**
 	 * Can be used in order to get the current outputStack of the local console.
 	 * @return the stack
 	 */
-	public synchronized Vector<String> getStack() {
-		Vector<String> stack = this.outputStack;
-		this.outputStack = new Vector<String>();
+	public synchronized Vector<PrintStreamListenerOutput> getStack() {
+		Vector<PrintStreamListenerOutput> stack = this.outputStack;
+		this.outputStack = new Vector<>();
 		return stack;
 	}
 	

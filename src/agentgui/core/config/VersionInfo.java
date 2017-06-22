@@ -68,7 +68,6 @@ public class VersionInfo extends Properties {
 		this.printVersionInfo();
 	}
 
-
 	/**
 	 * Loads the version information to this instance.
 	 */
@@ -85,10 +84,18 @@ public class VersionInfo extends Properties {
 	}
 	
 	/**
-	 * Prints out the current version and build information.
+	 * Returns the version, build and Java information as String.
+	 * @return the version info
+	 */
+	public String getVersionInfo() {
+		return this.getFullVersionInfo(true, " ") + " on " + this.getJavaInfo() + ""; 
+	}
+	
+	/**
+	 * Prints out the current version, build and Java information.
 	 */
 	public void printVersionInfo() {
-		System.out.println(this.getFullVersionInfo(true, " ") + " on " + this.getJavaInfo() + "");
+		System.out.println(this.getVersionInfo());
 		if (debug==true) {
 			System.out.println("Version.Mayor " + this.getVersionMajor());
 			System.out.println("Version.Minor " + this.getVersionMinor());

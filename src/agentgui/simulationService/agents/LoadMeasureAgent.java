@@ -173,7 +173,7 @@ public class LoadMeasureAgent extends Agent {
 	// --- Some System-String ---------------------------------------
 	private final String monitorDatasetDelimiter = ";";
 	private final String monitorDatasetLineSeperator = System.getProperty("line.separator");
-	private String monitorDecimalSeparator = Character.toString(new DecimalFormatSymbols().getDecimalSeparator());
+	private final String monitorDecimalSeparator = Character.toString(new DecimalFormatSymbols().getDecimalSeparator());
 	// --- Files which will be created for storing monitoring data --  
 	private final String monitorFileMeasurementTmp = "LoadMeasurement.tmp";
 	private final String monitorFileMeasurement = "LoadMeasurement.csv";

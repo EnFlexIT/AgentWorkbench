@@ -270,11 +270,7 @@ public class Application {
 	 */
 	public static LogFileWriter startLogFileWriter() {
 		if (logFileWriter==null) {
-			if (getGlobalInfo().getLoggingBasePath()!=null) {
-				logFileWriter = new LogFileWriter(getGlobalInfo().getLoggingBasePath());
-			} else {
-				logFileWriter = new LogFileWriter();
-			}
+			logFileWriter = new LogFileWriter();
 		}
 		return logFileWriter;
 	}
@@ -291,9 +287,12 @@ public class Application {
 	 * @param newLogFileWriter the new LogFileWriter
 	 */
 	public static void setLogFileWriter(LogFileWriter newLogFileWriter) {
-		if (logFileWriter!=null && newLogFileWriter!=logFileWriter) {
+		if (newLogFileWriter==null && logFileWriter!=null) {
 			logFileWriter.stopFileWriter();
 		}
+		if (newLogFileWriter!=null && newLogFileWriter!=logFileWriter) {
+			logFileWriter.stopFileWriter();
+		} 
 		logFileWriter = newLogFileWriter;
 	}
 	
@@ -815,10 +814,7 @@ public class Application {
 		stopAgentGUI();
 		System.out.println(Language.translate("Programmende... ") );
 		
-		// --- LogFileWriter --------------------
-		if (getLogFileWriter()!=null) {
-			getLogFileWriter().stopFileWriter();
-		}
+		// --- Stop LogFileWriter ---------------
 		setLogFileWriter(null);
 		
 		// --- ShutdownExecuter -----------------

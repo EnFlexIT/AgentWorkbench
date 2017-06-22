@@ -41,6 +41,7 @@ import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -49,10 +50,8 @@ import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.logging.logfile.LogFileWriter;
-
-import javax.swing.JCheckBox;
 
 /**
  * The Class LogFileOptions extends an {@link AbstractOptionTab} and is
@@ -251,7 +250,7 @@ public class LogFileOptions extends AbstractOptionTab implements ActionListener 
 	
 	private JLabel getJLabelDefaultLogLocation() {
 		if (jLabelDefaultLogLocation == null) {
-			String displayText = Language.translate("Standard Log-Verzeichnis:") + " '" + LogFileWriter.getDefaultLoggingBasePath() + File.separator + "[MONTH]'";
+			String displayText = Language.translate("Standard Log-Verzeichnis:") + " '" + GlobalInfo.getLoggingBasePathDefault() + File.separator + "[MONTH]'";
 			jLabelDefaultLogLocation = new JLabel(displayText);
 			jLabelDefaultLogLocation.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
@@ -313,7 +312,12 @@ public class LogFileOptions extends AbstractOptionTab implements ActionListener 
 	 * Fills the form with data from the properties file.
 	 */
 	private void setGlobalData2Form() {
-		this.getJTextLoggingBasePath().setText(Application.getGlobalInfo().getLoggingBasePath());
+		String logBasePath = Application.getGlobalInfo().getLoggingBasePath();
+		if (logBasePath.equals(GlobalInfo.getLoggingBasePathDefault())) {
+			this.getJTextLoggingBasePath().setText(null);
+		} else {
+			this.getJTextLoggingBasePath().setText(logBasePath);
+		}
 		this.getJCheckBoxLoggingEnabled().setSelected(Application.getGlobalInfo().isLoggingEnabled());
 	}
 	/**

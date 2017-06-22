@@ -597,7 +597,7 @@ public class FileProperties extends Properties {
 			this.setProperty(this.DEF_LOGGING_ENABLED, "false");
 		}
 		// --- this.DEF_LOGGING_BASE_PATH ------------
-		if (this.globalInfo.getLoggingBasePath()==null) {
+		if (this.globalInfo.getLoggingBasePath()==null || this.globalInfo.getLoggingBasePath().equals(GlobalInfo.getLoggingBasePathDefault())) {
 			this.setProperty(this.DEF_LOGGING_BASE_PATH, "");
 		} else {
 			this.setProperty(this.DEF_LOGGING_BASE_PATH, this.globalInfo.getLoggingBasePath());	

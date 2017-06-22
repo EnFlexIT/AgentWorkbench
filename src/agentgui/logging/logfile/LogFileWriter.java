@@ -39,6 +39,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
+import agentgui.core.application.Application;
+import agentgui.logging.logfile.PrintStreamListener.PrintStreamListenerType;
+
 /**
  * The Class LogFileWriter enables to redirect 
  * console output to a specified log file. 
@@ -47,10 +50,11 @@ import java.util.Vector;
  */
 public class LogFileWriter {
 
+	private final static String SYSTEM_OUTPUT = "[SysOut]";
+	private final static String SYSTEM_ERROR  = "[SysErr]";
+	
 	private final String newLine = System.getProperty("line.separator");
 	private long conservationPeriod = 1000 * 60 *60 * 24 * 360;
-	
-	private String loggingBasePath; 
 	
 	private SimpleDateFormat dateFormatter;
 	private long nextMidnightTimeStamp;
@@ -58,67 +62,19 @@ public class LogFileWriter {
 	private FileWriter fileWriter;
 	private BufferedWriter bufferedWriter;
 	
-	private boolean logActive = true;
-	
 	
 	/**
 	 * Instantiates a new log file writer that uses the log directory for the logging file.
 	 */
 	public LogFileWriter() {
 		this.initialize();
-	}
-	/**
-	 * Instantiates a new log file writer that uses the log directory for the logging file.
-	 * @param loggingBasePath the logging base path
-	 */
-	public LogFileWriter(String loggingBasePath) {
-		if (loggingBasePath!=null && loggingBasePath.trim().equals("")==false) {
-			this.setLoggingBasePath(loggingBasePath);
-		}
-		this.initialize();
+		this.appendText(new PrintStreamListenerOutput(PrintStreamListenerType.SystemOutput, Application.getGlobalInfo().getVersionInfo().getVersionInfo()));
 	}
 	/**
 	 * Initialize.
 	 */
 	private void initialize() {
 		new SysOutScanner(this);
-	}
-	/**
-	 * Sets the logging base path.
-	 * @param newLoggingBasePath the new logging base path
-	 */
-	private void setLoggingBasePath(String newLoggingBasePath) {
-		if (newLoggingBasePath!=null && newLoggingBasePath.trim().equals("")==false) {
-			this.loggingBasePath = newLoggingBasePath;	
-		}
-	}
-	/**
-	 * Returns the logging base path for the Agent.GUI logging. Within Windows and other systems, the
-	 * local local directory './log' will be used. Within Linux the folder '/var/log/agentgui'
-	 * will be returned and used. 
-	 * 
-	 * @return the logging base path
-	 */
-	private String getLoggingBasePath() {
-		if (loggingBasePath==null) {
-			// --- The default case -------------
-			loggingBasePath = getDefaultLoggingBasePath();	
-		}
-		return loggingBasePath;
-	}
-	/**
-	 * Gets the default logging base path.
-	 * @return the default logging base path
-	 */
-	public static String getDefaultLoggingBasePath() {
-		String defaultLoggingBasePath = "./log";
-		String os = System.getProperty("os.name");
-		if (os.toLowerCase().contains("windows")==true) {
-			// --- nothing to do here ---
-		} else if (os.toLowerCase().contains("linux")==true) {
-			defaultLoggingBasePath = "/var/log/agentgui";
-		}
-		return defaultLoggingBasePath.replace("/", File.separator);
 	}
 	
 	/**
@@ -128,24 +84,15 @@ public class LogFileWriter {
 	 */
 	public String getLoggingFileName(long timeStamp) {
 
-		// --- Check, if the logging directory exists -----
-		String logBasePath = this.getLoggingBasePath();
-		String monthDescriptor = this.getMonthDescriptor(timeStamp);
 		try {
 
-			File logBasePathFile = new File(logBasePath);
-			if (logBasePathFile.exists()==false && this.creatrDirectory(logBasePathFile)==false) {
-				logActive = false;
+			String logPathByMonth = Application.getGlobalInfo().getLoggingPathByMonth(timeStamp, true);
+			// --- Check, if the logging directory exists -----
+			File logBasePathFile = new File(logPathByMonth);
+			if (logBasePathFile.exists()==false) {
 				return null;
 			}
-			
-			File logMonPathFile = new File(logBasePath  + File.separator + monthDescriptor); 
-			if (logMonPathFile.exists()==false && this.creatrDirectory(logMonPathFile)==false) {
-				logActive = false;
-				return null;
-			}
-			
-			return logBasePath + File.separator + monthDescriptor + File.separator + this.getTimeStampPrefix(timeStamp) + "_" + this.getPID() + "_AgentGui.log";
+			return logPathByMonth + this.getTimeStampPrefix(timeStamp) + "_" + this.getPID() + "_AgentGui.log";
 			
 		} catch (Exception ex) { 
 			ex.printStackTrace();
@@ -161,14 +108,6 @@ public class LogFileWriter {
 		return "DAY_" + sdf.format(new Date(timeStamp));
 	}
 	/**
-	 * Gets the month descriptor.
-	 * @return the month descriptor
-	 */
-	private String getMonthDescriptor(long timeStamp) {
-		Date date = new Date(timeStamp);
-		return new SimpleDateFormat("MM").format(date) + "_" + new SimpleDateFormat("MMM").format(date);		
-	}
-	/**
 	 * Returns the local process ID (PID).
 	 * @return the PID
 	 */
@@ -177,44 +116,23 @@ public class LogFileWriter {
 		String pidChar = localProcessName.substring(0, localProcessName.indexOf("@"));
 		return "PID_" + pidChar;
 	}
-	/**
-	 * Tries to create the specified directory.
-	 * @return true, if successful
-	 */
-	private boolean creatrDirectory(File dirToCreate) throws IOException {
-		
-		boolean dirCreated = false;
-		if (dirToCreate!=null) {
-			
-			try {
-				dirCreated = dirToCreate.mkdir();
-				if (dirCreated ==false) {
-					throw new IOException("Agent.GUI-Logging: Directory creation failed for '" + dirToCreate.toString() + "'");
-				}
-
-			} catch (Exception ex) {
-				throw new IOException("Agent.GUI-Logging: Directory creation failed for. Unsufficient permissions for "+ dirToCreate.toString() +"? File logging will be turned off.", ex);
-			}
-			
-		}
-		return dirCreated;
-	}
+	
 	
 	/**
-	 * Start file writer.
+	 * Starts the log file writer.
 	 * @throws IOException 
 	 */
 	private void startFileWriter() throws IOException {
 		String logFileName = this.getLoggingFileName(System.currentTimeMillis());
 		if (logFileName==null) {
-			System.err.println("Agent.GUI-Logging: Log file name was null. Thus, the log file writer will not be started.");
+			System.err.println(Application.getGlobalInfo().getApplicationTitle() + "-Logging: Log file name was null. Thus, the log file writer will not be started.");
 		} else {
 			this.fileWriter = new FileWriter(logFileName, true);
 			this.bufferedWriter = new BufferedWriter(this.fileWriter);
 		}
 	}
 	/**
-	 * Stop file writer.
+	 * Stop the log file writer.
 	 * @throws IOException 
 	 */
 	public void stopFileWriter() {
@@ -223,6 +141,10 @@ public class LogFileWriter {
 				this.bufferedWriter.flush();
 				this.bufferedWriter.close();
 				this.fileWriter.close();
+				
+				this.bufferedWriter = null;
+				this.fileWriter = null;
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -312,11 +234,10 @@ public class LogFileWriter {
 	
 	/**
 	 * This method can be used in order to append the console output from a remote container
-	 * @param text the text to print out
+	 * @param pslOutput the PrintStreamListenerOutput
 	 */
-	public void appendText(String text) {
+	public void appendText(PrintStreamListenerOutput pslOutput) {
 		
-		if (logActive==false)return;
 		try {
 
 			// --- Writing to a new log file? -----------------
@@ -327,25 +248,30 @@ public class LogFileWriter {
 				this.startFileWriter();
 				this.nextMidnightTimeStamp = this.getNextMidnightFromTimeStamp(System.currentTimeMillis());
 			}
+
+			// --- Get the new output line ----------------
+			if (pslOutput.getLineOutput()==null) return;
+			String newText = pslOutput.getLineOutput().trim();
+			if (newText.equals("")) return;
 			
-			// --- Format the current system time ------------- 
-			String prefix = this.getDateFormatter().format(new Date(System.currentTimeMillis())) + " ";
-			String newText = text;
-			if (newText.startsWith(PrintStreamListener.SystemOutput)) {
-				newText = newText.substring(PrintStreamListener.SystemOutput.length()).trim();
-				prefix += PrintStreamListener.SystemOutput + " ";
-			} else if (text.startsWith(PrintStreamListener.SystemError)) {
-				newText = newText.substring(PrintStreamListener.SystemError.length()).trim();
-				prefix += PrintStreamListener.SystemError + " ";
+			// --- Format the current system time ---------
+			String timePrefix = this.getDateFormatter().format(new Date(System.currentTimeMillis())) + " ";
+			switch (pslOutput.getPrintStreamListenerType()) {
+			case SystemOutput:
+				timePrefix += SYSTEM_OUTPUT + " ";
+				break;
+			case SystemError:
+				timePrefix += SYSTEM_ERROR + " ";
+				break;
 			}
-	
-			if (newText==null || newText.equals("")) {
-				return;
-			} else if (newText.endsWith(this.newLine)==false) {
+			newText = timePrefix + newText;
+			
+			// --- Handle new lines -----------------------
+			if (newText.endsWith(this.newLine)==false) {
 				newText = newText.replace("\r\n", "\n");
 				newText = newText.replace("\r", "\n");
 				newText = newText.replace("\n"+"\n", "\n");
-				newText = prefix + newText.replace("\n", this.newLine + "                      ") + newLine;
+				newText = newText.replace("\n", this.newLine + "                      ") + this.newLine;
 			}
 
 			// --- Start file writer if needed ------------
@@ -356,7 +282,6 @@ public class LogFileWriter {
 			this.bufferedWriter.flush();
 			
 		} catch (Exception e) {
-			logActive=false;
 			e.printStackTrace();
 		}
 		
@@ -365,7 +290,7 @@ public class LogFileWriter {
 	 * Appends the specified text vector to the log file.
 	 * @param stack the stack
 	 */
-	public void appendText(Vector<String> stack) {
+	public void appendText(Vector<PrintStreamListenerOutput> stack) {
 		for (int i = 0; i < stack.size(); i++) {
 			this.appendText(stack.get(i));
 		}
