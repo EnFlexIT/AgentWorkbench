@@ -35,8 +35,10 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
@@ -129,6 +131,7 @@ public class GlobalInfo {
 	
 	// --- File-Properties --------------------------------------------------
 	private ExecutionMode fileExecutionMode;
+	private String processID;
 	
 	private float filePropBenchValue = 0;
 	private String filePropBenchExecOn;
@@ -391,7 +394,17 @@ public class GlobalInfo {
 		return execMode;
 	}
 	
-	
+	/**
+	 * Returns the systems process ID of the JVM.
+	 * @return the process ID
+	 */
+	public String getProcessID() {
+		if (processID==null) {
+			String localProcessName = ManagementFactory.getRuntimeMXBean().getName();
+			processID = "PID_" + localProcessName.substring(0, localProcessName.indexOf("@"));
+		}
+		return processID;
+	}
 	
 	/**
 	 * Gets the execution mode description of the current {@link ExecutionMode}.
@@ -1121,6 +1134,16 @@ public class GlobalInfo {
 		}
 		return logPathByMonth;
 	}
+	/**
+	 * Returns the day prefix for log files using the specified timestamp (e.g. DAY_18).
+	 * @param timeStamp the time stamp
+	 * @return the time stamp prefix
+	 */
+	public String getLoggingDayPrefix(long timeStamp) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd");
+		return "DAY_" + sdf.format(new Date(timeStamp));
+	}
+
 	
 	// ---- Connection to the Master-Server -------------------------
 	/**
@@ -1926,6 +1949,20 @@ public class GlobalInfo {
 	    int exp = (int) (Math.log(bytes) / Math.log(unit));
 	    String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
 	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+	}
+	/**
+	 * Returns the next midnight time stamp for the specified time.
+	 * @return the next midnight time stamp
+	 */
+	public static long getNextMidnightFromTimeStamp(long timeStamp) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(timeStamp);
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal.getTimeInMillis();
 	}
 	
 	/**

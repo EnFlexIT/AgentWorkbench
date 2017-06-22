@@ -59,7 +59,7 @@
   </class>  
   <dependency id="7">    
     <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="2"/>  
+    <end type="TARGET" refId="4"/>  
   </dependency>  
   <association id="8">    
     <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
@@ -75,7 +75,7 @@
   </association>  
   <dependency id="11">    
     <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="4"/>  
+    <end type="TARGET" refId="2"/>  
   </dependency>  
   <generalization id="12">    
     <end type="SOURCE" refId="4"/>    

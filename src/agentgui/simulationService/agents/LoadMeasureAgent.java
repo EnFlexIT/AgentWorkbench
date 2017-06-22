@@ -65,6 +65,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
@@ -174,11 +175,16 @@ public class LoadMeasureAgent extends Agent {
 	private final String monitorDatasetDelimiter = ";";
 	private final String monitorDatasetLineSeperator = System.getProperty("line.separator");
 	private final String monitorDecimalSeparator = Character.toString(new DecimalFormatSymbols().getDecimalSeparator());
+
 	// --- Files which will be created for storing monitoring data --  
 	private final String monitorFileMeasurementTmp = "LoadMeasurement.tmp";
 	private final String monitorFileMeasurement = "LoadMeasurement.csv";
 	private final String monitorFileMachines = "LoadMachines.txt";
 	
+	private String monitorFilePathCorpus;
+	private long nextMidnightTimeStamp;
+	
+	// --- Information about machines and dataset -------------------
 	private Hashtable<String, String> monitorDatasetParts = new Hashtable<String, String>();
 	private Hashtable<String, String> monitorDatasetPartsHeader = new Hashtable<String, String>();
 	private Hashtable<String, String> monitorDatasetPartsDescription = new Hashtable<String, String>();
@@ -217,6 +223,7 @@ public class LoadMeasureAgent extends Agent {
 		}
 		if (loadDialog!=null) {
 			this.getSystemLoadDialog().setVisible(false);
+			this.getSystemLoadDialog().dispose();
 			this.setSystemLoadDialog(null);	
 		}
 		if (threadDialog!=null) {
@@ -632,6 +639,8 @@ public class LoadMeasureAgent extends Agent {
 		this.dynLoadBalancaingStillActivated = dynLoadBalancaingStillActivated;
 	}
 	
+
+	
 	/**
 	 * Checks if the current LoadAgent has to the save the load information in a file.
 	 * @return the monitorSaveLoad
@@ -644,16 +653,69 @@ public class LoadMeasureAgent extends Agent {
 	 * @param monitorSaveLoad true, if the information should be saved
 	 */
 	public void setMonitorSaveLoad(boolean monitorSaveLoad) {
-		
 		this.monitorSaveLoad = monitorSaveLoad;
-		// --- Create DatasetWriter -----------------------
 		if (this.monitorSaveLoad==true) {
-			monitorDatasetWriter = this.createMonitorFile(this.monitorFileMeasurementTmp);
-		}
-		// --- Close the current DatasetWriter ------------ 
-		if (this.monitorSaveLoad==false && this.monitorDatasetWriter!=null) {
+			// --- Create DatasetWriter -------------------
+			this.monitorDatasetWriter = this.createBufferedWriter(this.getFileMeasurementTmp());
+			this.nextMidnightTimeStamp = GlobalInfo.getNextMidnightFromTimeStamp(this.monitorTimeStamp);
+		} else if (this.monitorSaveLoad==false && this.monitorDatasetWriter!=null) {
+			// --- Close the current DatasetWriter -------- 
 			this.closeMonitorFile();				
 		}
+	}
+	
+	/**
+	 * Returns the current monitoring-file path corpus.
+	 * @return the monitor file corpus
+	 */
+	private String getMonitoringFilePathCorpus() {
+		if (monitorFilePathCorpus==null) {
+			monitorFilePathCorpus = this.getMonitoringFilePathCorpusByTime(System.currentTimeMillis());
+		}
+		return monitorFilePathCorpus;
+	}
+	/**
+	 * Sets the monitoring file path corpus.
+	 * @param monitorFileCorpus the new monitoring file path corpus
+	 */
+	private void setMonitoringFilePathCorpus(String monitorFileCorpus) {
+		this.monitorFilePathCorpus = monitorFileCorpus;
+	}
+	
+	/**
+	 * Returns the path corpus for a monitoring file.
+	 * @param timeStamp the time stamp
+	 * @return the file corpus
+	 */
+	private String getMonitoringFilePathCorpusByTime(long timeStamp) {
+		String logPath = Application.getGlobalInfo().getLoggingPathByMonth(timeStamp, true);
+		String dayPrefix = Application.getGlobalInfo().getLoggingDayPrefix(timeStamp);
+		String processID = Application.getGlobalInfo().getProcessID();
+		return logPath + dayPrefix + "_" + processID + "_";
+	}
+	/**
+	 * Returns the file object for the temporary measurements.
+	 * @return the file for the temporary 
+	 */
+	private File getFileMeasurementTmp() {
+		String fileName = this.getMonitoringFilePathCorpus() + monitorFileMeasurementTmp; 
+		return new File(fileName);
+	}
+	/**
+	 * Returns the file object for the measurements.
+	 * @return the file for the temporary 
+	 */
+	private File getFileMeasurement() {
+		String fileName = this.getMonitoringFilePathCorpus() + monitorFileMeasurement; 
+		return new File(fileName);
+	}
+	/**
+	 * Return the file object for the machine descriptions.
+	 * @param fileMachines the new file for machine descriptions
+	 */
+	private File getFileMachines() {
+		String fileName = this.getMonitoringFilePathCorpus() + monitorFileMachines; 
+		return new File(fileName);
 	}
 	
 	/**
@@ -670,7 +732,7 @@ public class LoadMeasureAgent extends Agent {
 		String dataSet = null;
 		if (platformLoad == null) {
 			
-			dataSet = getDatasetPartEmpty();
+			dataSet = getEmptyDatasetPartForContainer();
 		} else {
 			
 			StringBuilder sb = new StringBuilder();
@@ -726,22 +788,20 @@ public class LoadMeasureAgent extends Agent {
 	}
 	
 	/**
-	 * This method builds one EMPTY part for the load dataset, where one part correspond to one container.
-	 *
+	 * This method builds an empty part for the load dataset, where one part correspond to one container.
 	 * @return an empty String for a dataset 
 	 */
-	private String getDatasetPartEmpty() {
-		
+	private String getEmptyDatasetPartForContainer() {
 		StringBuilder sb = new StringBuilder();
-		// --- CPU-Load -----------------------------------
+		// --- CPU-Load -------------------------
 		sb.append(monitorDatasetDelimiter);
-		// --- Memory-Load of the machine -----------------
+		// --- Memory-Load of the machine -------
 		sb.append(monitorDatasetDelimiter);
-		// --- Java Heap-Load -----------------------------
+		// --- Java Heap-Load -------------------
 		sb.append(monitorDatasetDelimiter);
-		// --- Number of Threads --------------------------
+		// --- Number of Threads ----------------
 		sb.append(monitorDatasetDelimiter);
-		// --- Number of Agents ---------------------------
+		// --- Number of Agents -----------------
 		sb.append(monitorDatasetDelimiter);
 		return sb.toString();
 	}
@@ -760,26 +820,26 @@ public class LoadMeasureAgent extends Agent {
 			String containerName = loadContainer2Display.get(i);
 			String dataSetpart = monitorDatasetParts.get(containerName);
 			if (dataSetpart==null) {
-				dataSetpart = this.getDatasetPartEmpty();
+				dataSetpart = this.getEmptyDatasetPartForContainer();
 			}
 			sb.append(dataSetpart);
 		}
 		dataSet = sb.toString();
 		
 		// --- If the LOCALE DecimalSeperator is different to '.' (dot) -------
-		if ( monitorDecimalSeparator.equals(".") == false ) {
-			dataSet = dataSet.replaceAll("\\.", monitorDecimalSeparator);
+		if (this.monitorDecimalSeparator.equals(".")==false ) {
+			dataSet = dataSet.replaceAll("\\.", this.monitorDecimalSeparator);
 		}
 		
 		// --- Add TimeStamp ------------------------------
-		String timeStamp = monitorTimeStampFormat.format(new Date(monitorTimeStamp));
-		dataSet = timeStamp + monitorDatasetDelimiter + dataSet;
+		String timeStamp = this.monitorTimeStampFormat.format(new Date(this.monitorTimeStamp));
+		dataSet = timeStamp + this.monitorDatasetDelimiter + dataSet;
 
 		// --- Save the dataset to file -------------------
 		this.saveDataSet(dataSet);
 
 		// --- Reset the dataset Array --------------------
-		monitorDatasetParts.clear();
+		this.monitorDatasetParts.clear();
 	}
 	
 	/**
@@ -788,17 +848,25 @@ public class LoadMeasureAgent extends Agent {
 	 */
 	private void saveDataSet(String dataSet) {
 	
+		// --- Writing to a new log file? -----------------
+		if (this.monitorDatasetWriter!=null && this.monitorTimeStamp>=this.nextMidnightTimeStamp) {
+			// --- Next day, new log file! ----------------
+			this.closeMonitorFile();;
+		}
+		
 		// --- Check if the file is open ------------------
 		if (this.monitorDatasetWriter==null) {
-			this.monitorDatasetWriter = this.createMonitorFile(this.monitorFileMeasurement);
-		}
+			this.monitorDatasetWriter = this.createBufferedWriter(this.getFileMeasurementTmp());
+			this.nextMidnightTimeStamp = GlobalInfo.getNextMidnightFromTimeStamp(this.monitorTimeStamp);
+		} 
 		
 		// --- Write the dataset to the file --------------
 		try {
 			this.monitorDatasetWriter.write(dataSet + this.monitorDatasetLineSeperator);
 			this.monitorDatasetWriter.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
+			
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 		} 
 		
 	}
@@ -830,13 +898,12 @@ public class LoadMeasureAgent extends Agent {
 	 * @param fileName the file name
 	 * @return the buffered writer
 	 */
-	private BufferedWriter createMonitorFile(String fileName) {
+	private BufferedWriter createBufferedWriter(File file) {
 		
-		File monitorFile = new File(fileName); 
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		try {
-			fw = new FileWriter(monitorFile);
+			fw = new FileWriter(file);
 			bw = new BufferedWriter(fw);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -858,29 +925,30 @@ public class LoadMeasureAgent extends Agent {
 			ioe.printStackTrace();
 		}
 		this.monitorDatasetWriter = null;
+		this.nextMidnightTimeStamp = 0;
 
 		// ----------------------------------------------------------
 		// --- Create a complete file of the Monitoring with header - 
 		// ----------------------------------------------------------
-		// --- Writer to copy the tmp-file ----------------
 		BufferedWriter bwMeasurements = null;
 		BufferedReader br = null;
 		String currLine = null;
 		try {
-			bwMeasurements = createMonitorFile(this.monitorFileMeasurement);
+			// --- Create writer to copy the tmp-file -----
+			bwMeasurements = createBufferedWriter(this.getFileMeasurement());
 			// --- add the header-part --------------------	
 			bwMeasurements.write(this.getHeaderLine() + this.monitorDatasetLineSeperator);
 			// --- open tmp-file and write it new ---------
-			br = new BufferedReader(new FileReader(this.monitorFileMeasurementTmp));
+			br = new BufferedReader(new FileReader(this.getFileMeasurementTmp()));
 			while ((currLine = br.readLine()) != null) { 
 				bwMeasurements.write(currLine + this.monitorDatasetLineSeperator);
 				bwMeasurements.flush();
 			} 
 			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (FileNotFoundException fnfEx) {
+			fnfEx.printStackTrace();
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
 		} finally {
 			try {
 				if (bwMeasurements!=null) bwMeasurements.close();
@@ -889,37 +957,52 @@ public class LoadMeasureAgent extends Agent {
 			}
 			try {
 				if (br!=null) br.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
 			}
 		}
+		
+		// --- Delete tmp-file --------------------------------------
+		this.getFileMeasurementTmp().delete();
 		
 		// ----------------------------------------------------------
 		// --- Write down all container descriptions ---------------- 
 		// ----------------------------------------------------------
 		BufferedWriter bwMachines = null;
 		try {
-			bwMachines = createMonitorFile(this.monitorFileMachines);
+			bwMachines = createBufferedWriter(this.getFileMachines());
 			for (String containerName : this.loadContainer2Display) {
-				bwMeasurements.write(this.monitorDatasetPartsDescription.get(containerName));
-				bwMeasurements.flush();
+				bwMachines.write(this.monitorDatasetPartsDescription.get(containerName));
+				bwMachines.flush();
 			}
 			
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
 		} finally {
 			try {
-				if (bwMachines!=null) bwMachines.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
+				if (bwMachines!=null) {
+					bwMachines.close();
+				}
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
 			}
 		}
+		
+		// ----------------------------------------------------------		
+		// --- Reset the corpus pat for the log files ---------------
+		// ----------------------------------------------------------
+		this.setMonitoringFilePathCorpus(null);
+		
 	}
 	
 	
 	// ------------------------------------------------------------
 	// --- Methods for the Thread Measurements --- Start ----------
 	// ------------------------------------------------------------
+	/**
+	 * Gets the thread measure behaviour.
+	 * @return the thread measure behaviour
+	 */
 	public ThreadMeasureBehaviour getThreadMeasureBehaviour() {
 		if (threadMeasureBehaviour==null) {
 			threadMeasureBehaviour = new ThreadMeasureBehaviour(this, this.getThreadMeasurementTickingPeriod());

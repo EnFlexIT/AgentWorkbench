@@ -33,13 +33,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
+import agentgui.core.config.GlobalInfo;
 import agentgui.logging.logfile.PrintStreamListener.PrintStreamListenerType;
 
 /**
@@ -87,36 +86,21 @@ public class LogFileWriter {
 		try {
 
 			String logPathByMonth = Application.getGlobalInfo().getLoggingPathByMonth(timeStamp, true);
+			String dayPrefix = Application.getGlobalInfo().getLoggingDayPrefix(timeStamp);
+			String processID = Application.getGlobalInfo().getProcessID();
+			
 			// --- Check, if the logging directory exists -----
 			File logBasePathFile = new File(logPathByMonth);
 			if (logBasePathFile.exists()==false) {
 				return null;
 			}
-			return logPathByMonth + this.getTimeStampPrefix(timeStamp) + "_" + this.getPID() + "_AgentGui.log";
+			return logPathByMonth + dayPrefix + "_" + processID + "_AgentGui.log";
 			
 		} catch (Exception ex) { 
 			ex.printStackTrace();
 		}
 		return null;
 	}
-	/**
-	 * Gets the time stamp prefix for the log file.
-	 * @return the time stamp prefix
-	 */
-	private String getTimeStampPrefix(long timeStamp) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd");
-		return "DAY_" + sdf.format(new Date(timeStamp));
-	}
-	/**
-	 * Returns the local process ID (PID).
-	 * @return the PID
-	 */
-	private String getPID() {
-		String localProcessName = ManagementFactory.getRuntimeMXBean().getName();
-		String pidChar = localProcessName.substring(0, localProcessName.indexOf("@"));
-		return "PID_" + pidChar;
-	}
-	
 	
 	/**
 	 * Starts the log file writer.
@@ -166,7 +150,7 @@ public class LogFileWriter {
 			// ------------------------------------------------------
 			// --- Search for older files with current day prefix ---
 			// ------------------------------------------------------
-			final String oldFilePrefix = this.getTimeStampPrefix(timeStamp);
+			final String oldFilePrefix = Application.getGlobalInfo().getLoggingDayPrefix(timeStamp);
 			File[] oldLogs = logDirectory.listFiles(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
@@ -218,21 +202,6 @@ public class LogFileWriter {
 	}
 	
 	/**
-	 * Gets the next midnight time stamp.
-	 * @return the next midnight time stamp
-	 */
-	private long getNextMidnightFromTimeStamp(long timeStamp) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(timeStamp);
-		cal.add(Calendar.DAY_OF_MONTH, 1);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		return cal.getTimeInMillis();
-	}
-	
-	/**
 	 * This method can be used in order to append the console output from a remote container
 	 * @param pslOutput the PrintStreamListenerOutput
 	 */
@@ -246,7 +215,7 @@ public class LogFileWriter {
 				this.deleteOldLogFiles(System.currentTimeMillis());
 				this.stopFileWriter();
 				this.startFileWriter();
-				this.nextMidnightTimeStamp = this.getNextMidnightFromTimeStamp(System.currentTimeMillis());
+				this.nextMidnightTimeStamp = GlobalInfo.getNextMidnightFromTimeStamp(System.currentTimeMillis());
 			}
 
 			// --- Get the new output line ----------------
