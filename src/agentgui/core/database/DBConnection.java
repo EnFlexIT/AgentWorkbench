@@ -39,6 +39,7 @@ import javax.swing.JOptionPane;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.ResultSet;
@@ -565,7 +566,7 @@ public class DBConnection {
 			props.setProperty("characterEncoding","UTF-8");
 			props.setProperty("connectionCollation","utf8_general_ci");
 			
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			ClassLoadServiceUtility.newInstance("com.mysql.jdbc.Driver");
 			this.connection = (Connection) DriverManager.getConnection(dbHost, props);
 			
 		} catch (ClassNotFoundException e) {

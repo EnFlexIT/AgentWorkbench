@@ -30,10 +30,10 @@ package agentgui.core.ontologies;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import org.apache.commons.codec.binary.Base64;
 
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.Ontology;
@@ -186,9 +186,7 @@ public class OntologyInstanceHelper {
 		if (ontologyClassReference!=null) {
 			try {
 				// --- Try to get an instance of the current Ontology ---------
-				Class<?> currOntoClass = Class.forName(ontologyClassReference);
-				Method method = currOntoClass.getMethod("getInstance", new Class[0]);
-				ontology = (Ontology) method.invoke(currOntoClass, new Object[0]);
+				ontology = ClassLoadServiceUtility.getOntologyInstance(ontologyClassReference);
 				
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();

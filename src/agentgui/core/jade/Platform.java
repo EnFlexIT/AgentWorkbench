@@ -40,6 +40,7 @@ import agentgui.core.agents.UtilityAgent;
 import agentgui.core.agents.UtilityAgent.UtilityAgentJob;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.plugin.PlugInsLoaded;
@@ -430,7 +431,7 @@ public class Platform extends Object {
 		if (this.start(false, jadeProfile)) {
 			try {
 				// --- Start the selected Agent ---------------------
-				Class<?> agentClass = Class.forName(agentClassName);
+				Class<?> agentClass = ClassLoadServiceUtility.forName(agentClassName);
 				String startAs = null;
 				if (agentName==null || agentName.equals("")==true) {
 					startAs = agentClass.getSimpleName();
@@ -980,7 +981,7 @@ public class Platform extends Object {
 	 */
 	public void startAgent(String newAgentName, String agentClassName) {
 		String MainContainerName = jadeMainContainer.getName();
-		startAgent(newAgentName, agentClassName, null, MainContainerName) ;
+		this.startAgent(newAgentName, agentClassName, null, MainContainerName) ;
 	}
 	
 	/**
@@ -991,7 +992,7 @@ public class Platform extends Object {
 	 * @param inContainer the container name
 	 */
 	public void startAgent(String newAgentName, String agentClassName, String inContainer ) {
-		startAgent(newAgentName, agentClassName, null, inContainer) ;
+		this.startAgent(newAgentName, agentClassName, null, inContainer) ;
 	}
 	
 	/**
@@ -1003,7 +1004,7 @@ public class Platform extends Object {
 	 */
 	public void startAgent(String newAgentName, String agentClassName, Object[] startArguments ) {
 		String MainContainerName = jadeMainContainer.getName();
-		startAgent(newAgentName, agentClassName, startArguments, MainContainerName);
+		this.startAgent(newAgentName, agentClassName, startArguments, MainContainerName);
 	}
 	
 	/**
@@ -1016,9 +1017,8 @@ public class Platform extends Object {
 	 */
 	public void startAgent(String newAgentName, String agentClassName, Object[] startArguments, String inContainer ) {
 		try {
-			@SuppressWarnings("unchecked")
-			Class<? extends Agent> clazz = (Class<? extends Agent>) Class.forName(agentClassName);
-			startAgent(newAgentName, clazz, startArguments, inContainer );
+			Class<? extends Agent> clazz = ClassLoadServiceUtility.getAgentClass(agentClassName);
+			this.startAgent(newAgentName, clazz, startArguments, inContainer );
 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -1029,11 +1029,11 @@ public class Platform extends Object {
 	 * Starts an agent as specified
 	 *
 	 * @param newAgentName the agent name
-	 * @param clazz the class of the agent
+	 * @param agentClass the class of the agent
 	 * @param startArguments the start arguments for the agent
 	 * @param inContainer the container name
 	 */
-	public void startAgent(String newAgentName, Class<? extends Agent> clazz, Object[] startArguments, String inContainer ) {
+	public void startAgent(String newAgentName, Class<? extends Agent> agentClass, Object[] startArguments, String inContainer ) {
 		
 		// --- Was the system already started? ----------------------
 		if (this.isMainContainerRunning()==false) {
@@ -1075,17 +1075,13 @@ public class Platform extends Object {
 		
 		// --- Start the actual agent -------------------------------
 		try {
-			Agent agent = (Agent) clazz.newInstance();
+			Agent agent = (Agent) ClassLoadServiceUtility.newInstance(agentClass.getName());
 			agent.setArguments(startArguments);
 			AgentController agentController = agentContainer.acceptNewAgent(newAgentName, agent);
 			agentController.start();
 			
-		} catch (StaleProxyException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}		
 	}
 	

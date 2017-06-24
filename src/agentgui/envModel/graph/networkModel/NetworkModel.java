@@ -30,7 +30,6 @@ package agentgui.envModel.graph.networkModel;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,6 +39,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.common.SerialClone;
 import agentgui.envModel.graph.GraphGlobals;
 import agentgui.envModel.graph.controller.GraphEnvironmentController;
@@ -1684,14 +1684,14 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 * @return true if the component is a star graph element
 	 */
 	public boolean isStarGraphElement(NetworkComponent comp) {
+
 		GraphElementPrototype graphElement = null;
 		try {
-			Class<?> theClass;
-			theClass = Class.forName(comp.getPrototypeClassName());
-			graphElement = (GraphElementPrototype) theClass.newInstance();
+			graphElement = (GraphElementPrototype) ClassLoadServiceUtility.newInstance(comp.getPrototypeClassName());
+
 		} catch (ClassNotFoundException ex) {
+			System.err.println(" GraphElementPrototype class must be in class path.");
 			ex.printStackTrace();
-			System.err.println(ex + " GraphElementPrototype class must be in class path.");
 		} catch (InstantiationException ex) {
 			System.err.println(ex + " GraphElementPrototype class must be concrete.");
 		} catch (IllegalAccessException ex) {
@@ -2151,24 +2151,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		// --- Initialise the found NetworkComponentAdapter -------------------------
 		// --------------------------------------------------------------------------
 		if (adapterClassname!=null) {
-
 			try {
-				@SuppressWarnings("unchecked")
-				Class<? extends NetworkComponentAdapter> nca = (Class<? extends NetworkComponentAdapter>) Class.forName(adapterClassname);
-				
-				// --- look for the right constructor parameter ---------
-				Class<?>[] conParameter = new Class[1];
-				conParameter[0] = GraphEnvironmentController.class;
-			
-				// --- Get the constructor ------------------------------	
-				Constructor<?> ncaConstructor = nca.getConstructor(conParameter);
-				
-				// --- Define the argument for the newInstance call ----- 
-				Object[] args = new Object[1];
-				args[0] = graphController;
-				
-				netCompAdapter = (NetworkComponentAdapter) ncaConstructor.newInstance(args);
-				
+				netCompAdapter = ClassLoadServiceUtility.getNetworkComponentAdapterInstance(adapterClassname, graphController);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

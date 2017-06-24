@@ -53,6 +53,7 @@ import org.apache.commons.collections15.Transformer;
 import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.project.Project;
@@ -796,7 +797,7 @@ public class GraphEnvironmentController extends EnvironmentController {
     	
     	Class<? extends Agent> agentClass = null;
 		try {
-		    agentClass = (Class<? extends Agent>) Class.forName(agentReference);
+		    agentClass = (Class<? extends Agent>) ClassLoadServiceUtility.forName(agentReference);
 		} catch (ClassNotFoundException ex) {
 		    System.err.println("Could not find agent class '" + agentReference + "'");
 		}

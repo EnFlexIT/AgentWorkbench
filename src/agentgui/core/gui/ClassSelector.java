@@ -64,6 +64,7 @@ import javax.swing.WindowConstants;
 import agentgui.core.agents.AgentClassElement;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.gui.components.ClassElement2Display;
 import agentgui.core.gui.components.JListClassSearcher;
 import agentgui.core.gui.components.JListWithProgressBar;
@@ -540,8 +541,7 @@ public class ClassSelector extends JDialog {
 		} else {
 			// --- If a default value is configured, there should be a valid class ------ 
 			try {
-				@SuppressWarnings("unused")
-				Class<?> clazz = Class.forName(className);
+				ClassLoadServiceUtility.forName(className);
 				jButton.setIcon(new ImageIcon(getClass().getResource(PathImage + "MBcheckGreen.png")));
 				this.setValidClass(true);
 				return true;

@@ -41,6 +41,7 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.ontologies.OntologyClassTree;
 
 /**
@@ -359,7 +360,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 								currClass = searchInPackage + "." + currClass;
 								Class<?> clazzFound = null;
 								try {
-									clazzFound = Class.forName(currClass);
+									clazzFound = ClassLoadServiceUtility.forName(currClass);
 								} catch (ClassNotFoundException cnfe) {
 									//cnfe.printStackTrace();
 								}
@@ -389,7 +390,7 @@ public class ReflectClassFiles extends ArrayList<String> {
 		for (String classReference : this) {
 			Class<?> classFound = null;
 			try {
-				classFound = Class.forName(classReference);
+				classFound = ClassLoadServiceUtility.forName(classReference);
 			} catch (ClassNotFoundException cnfe) {
 				//cnfe.printStackTrace();
 			}

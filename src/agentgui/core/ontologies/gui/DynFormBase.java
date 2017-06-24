@@ -45,6 +45,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Application;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.common.ExceptionHandling;
 import agentgui.core.common.KeyAdapter4Numbers;
 import agentgui.core.environment.EnvironmentController;
@@ -423,7 +424,7 @@ public abstract class DynFormBase {
 //			if (ontologyClassName.contains(".impl.Default")==true) {
 //				// --- OntologyBeanGenerator for Protege 3.4 -------------
 //				ontologyClassName = ontologyClassName.replace(".impl.Default", ".");
-//				Class<?> ontologyClass = Class.forName(ontologyClassName);
+//				Class<?> ontologyClass = ClassLoadServiceUtility.forName(ontologyClassName);
 //			}
 			// --- OntologyBeanGenerator for Protege 3.3.1 ---------------
 			xmlRepresentation = codec.encodeObject(ontology, ontologyObject, true);
@@ -542,14 +543,13 @@ public abstract class DynFormBase {
 	 */
 	private Object getNewClassInstance(String className) {
 		
-		Class<?> clazz = null;
 		Object obj = null;
 		try {
 			
-			clazz = Class.forName(className);
+			Class<?> clazz = ClassLoadServiceUtility.forName(className);
 			if (clazz.isInterface()==false) {
 				// --- OntologyBeanGenerator for Protege 3.3.1 ---------------- 
-				obj = clazz.newInstance();	
+				obj = ClassLoadServiceUtility.newInstance(className);	
 				
 			} else {
 				// --- OntologyBeanGenerator  Protege 3.4 ---------------------
@@ -557,8 +557,7 @@ public abstract class DynFormBase {
 				String clazzNameSimple = clazz.getSimpleName();
 				String defaultClass = packageName + ".impl.Default" + clazzNameSimple;
 				
-				clazz = Class.forName(defaultClass);
-				obj = clazz.newInstance();
+				obj = ClassLoadServiceUtility.newInstance(defaultClass);
 			}
 			
 		} catch (ClassNotFoundException e) {

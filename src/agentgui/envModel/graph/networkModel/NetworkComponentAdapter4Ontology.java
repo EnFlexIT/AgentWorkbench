@@ -35,6 +35,7 @@ import javax.swing.JComponent;
 
 import org.apache.commons.codec.binary.Base64;
 
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.common.ExceptionHandling;
 import agentgui.core.ontologies.OntologyClassTreeObject;
 import agentgui.core.ontologies.OntologyVisualisationHelper;
@@ -273,8 +274,7 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 		Object instance = null;
 		try {
 			// --- OntologyBeanGenerator for Protege 3.3.1 ----------
-			Class<?> clazz = Class.forName(className);
-			instance = clazz.newInstance();	
+			instance = ClassLoadServiceUtility.newInstance(className);	
 			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

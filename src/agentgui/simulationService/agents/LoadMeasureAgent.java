@@ -28,25 +28,6 @@
  */
 package agentgui.simulationService.agents;
 
-import jade.content.Concept;
-import jade.content.lang.Codec.CodecException;
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.OntologyException;
-import jade.content.onto.UngroundedException;
-import jade.content.onto.basic.Action;
-import jade.content.onto.basic.Result;
-import jade.core.Agent;
-import jade.core.Location;
-import jade.core.ServiceException;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.ThreadedBehaviourFactory;
-import jade.core.behaviours.TickerBehaviour;
-import jade.domain.FIPANames;
-import jade.domain.FIPAAgentManagement.FIPAManagementOntology;
-import jade.domain.FIPAAgentManagement.Search;
-import jade.domain.JADEAgentManagement.JADEManagementOntology;
-import jade.lang.acl.ACLMessage;
-
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
@@ -56,7 +37,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -65,6 +45,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
@@ -92,6 +73,24 @@ import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
 import agentgui.simulationService.ontology.ShowMonitorGUI;
 import agentgui.simulationService.ontology.ShowThreadGUI;
+import jade.content.Concept;
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.OntologyException;
+import jade.content.onto.UngroundedException;
+import jade.content.onto.basic.Action;
+import jade.content.onto.basic.Result;
+import jade.core.Agent;
+import jade.core.Location;
+import jade.core.ServiceException;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.ThreadedBehaviourFactory;
+import jade.core.behaviours.TickerBehaviour;
+import jade.domain.FIPANames;
+import jade.domain.FIPAAgentManagement.FIPAManagementOntology;
+import jade.domain.FIPAAgentManagement.Search;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.lang.acl.ACLMessage;
 
 /**
  * This class represents the agent, which monitors the load information 
@@ -600,24 +599,9 @@ public class LoadMeasureAgent extends Agent {
 			// --- If the dynamic load balancing is activated: ---------------------
 			LoadMeasureAgent thisLoadAgent = (LoadMeasureAgent) myAgent;
 			try {
-				@SuppressWarnings("unchecked")
-				Class<? extends DynamicLoadBalancingBase> dynLoBaClass = (Class<? extends DynamicLoadBalancingBase>) Class.forName(getDistributionSetup().getDynamicLoadBalancingClass());
-				loadBalancing = dynLoBaClass.getDeclaredConstructor( new Class[] { thisLoadAgent.getClass() }).newInstance( new Object[] { thisLoadAgent });
-				
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
+				loadBalancing = ClassLoadServiceUtility.getDynamicLoadBalancing(getDistributionSetup().getDynamicLoadBalancingClass(), thisLoadAgent);
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}	
 			// --- If loading of the class was not successful ----------------------
 			// --- start the default class for balancing	  ----------------------

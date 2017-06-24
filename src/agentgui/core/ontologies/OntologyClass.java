@@ -28,14 +28,14 @@
  */
 package agentgui.core.ontologies;
 
-import jade.content.onto.Ontology;
-
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import jade.content.onto.Ontology;
 
 /**
  * This class holds detailed information of a single ontology, given by its class reference.<br>
@@ -115,14 +115,13 @@ public class OntologyClass extends Object implements Serializable {
 	private boolean isClassReference(String ontologyReference) {
 		
 		try {
-			@SuppressWarnings("unused")
-			Class<?> cl = Class.forName(ontologyReference);
+			ClassLoadServiceUtility.forName(ontologyReference);
 			return true;
 			
 		} catch (ClassNotFoundException e) {
 			//e.printStackTrace();
-			return false;
 		}
+		return false;
 	}
 	
 	/**
@@ -167,9 +166,7 @@ public class OntologyClass extends Object implements Serializable {
 		// --- Try to get an instance of the current Ontology ---------
 		if(currOntologyMainClass!=null){
 			try {
-				Class<?> currOntoClass = Class.forName(currOntologyMainClass);
-				Method method = currOntoClass.getMethod("getInstance", new Class[0]);
-				ontology = (Ontology) method.invoke(currOntoClass, new Object[0]);
+				ontology = ClassLoadServiceUtility.getOntologyInstance(this.currOntologyMainClass);
 				
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();

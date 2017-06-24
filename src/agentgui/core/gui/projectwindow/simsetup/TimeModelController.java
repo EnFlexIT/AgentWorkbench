@@ -37,6 +37,7 @@ import javax.swing.JTabbedPane;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.gui.projectwindow.ProjectWindowTab;
 import agentgui.core.project.Project;
 import agentgui.core.sim.setup.SimulationSetup;
@@ -139,11 +140,9 @@ public class TimeModelController implements Observer {
 			if (this.currTimeModelClass!=null && this.currTimeModelClass.length()!=0) {
 
 				try {
-					@SuppressWarnings("unchecked")
-					Class<? extends TimeModel> timeModelClass = (Class<? extends TimeModel>) Class.forName(this.currTimeModelClass);
-					TimeModel timeModel = (TimeModel) timeModelClass.newInstance();
+					TimeModel timeModel = ClassLoadServiceUtility.getTimeModelInstance(this.currTimeModelClass);
 					this.display4TimeModel = timeModel.getJPanel4Configuration(this.currProject);
-					
+
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				} catch (InstantiationException e) {

@@ -34,6 +34,7 @@ import java.util.HashSet;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.envModel.graph.prototypes.GraphElementPrototype;
 import agentgui.envModel.graph.prototypes.StarGraphElement;
 
@@ -144,8 +145,7 @@ public class NetworkComponentFactory {
     	
     	// --- Create the graph of the NetworkComponent -------------
     	try {
-		    Class<?> theClass = Class.forName(graphPrototypeClass);
-		    graphElementPrototype = (GraphElementPrototype) theClass.newInstance();
+		    graphElementPrototype = (GraphElementPrototype) ClassLoadServiceUtility.newInstance(graphPrototypeClass);
 		    
 		} catch (ClassNotFoundException ex) {
 		    System.err.println(factoryName + "GraphElementPrototype class must be in class path.\n" + ex);

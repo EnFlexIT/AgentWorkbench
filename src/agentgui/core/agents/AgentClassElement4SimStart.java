@@ -39,6 +39,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.codec.binary.Base64;
 
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
+
 /**
  * Provides a container instance in order to configure an agents 
  * start configuration. This class is used in the simulation setup
@@ -154,15 +156,14 @@ public class AgentClassElement4SimStart {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public String toString(){
 		
 		if (agentClass== null) {
 			try {
 				// --- Does the class exists ? ------------
-				agentClass = (Class<? extends Agent>) Class.forName(agentClassReference);
-			
+				agentClass = ClassLoadServiceUtility.getAgentClass(agentClassReference);
+				
 			} catch (NoClassDefFoundError exeption) {
 				System.err.println("Agent class definition not found for '" + agentClassReference + "'!");
 			} catch (ClassNotFoundException exeption) {

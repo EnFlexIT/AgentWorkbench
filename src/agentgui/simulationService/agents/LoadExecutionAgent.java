@@ -32,9 +32,8 @@ import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
 
-import java.lang.reflect.InvocationTargetException;
-
 import agentgui.core.application.Application;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.gui.MainWindow;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
@@ -173,27 +172,12 @@ public class LoadExecutionAgent extends Agent {
 		
 		// --- Get the current distribution setup ---------
 		DistributionSetup currDisSetup = Application.getProjectFocused().getDistributionSetup();
-		if (currDisSetup.isDoStaticLoadBalancing()== true) {
+		if (currDisSetup.isDoStaticLoadBalancing()==true) {
 
 			try {
-				@SuppressWarnings("unchecked")
-				Class<? extends StaticLoadBalancingBase> staLoBaClass = (Class<? extends StaticLoadBalancingBase>) Class.forName(currDisSetup.getStaticLoadBalancingClass());
-				return staLoBaClass.getDeclaredConstructor( new Class[] { myAgent.getClass() }).newInstance(new Object[] {myAgent});
-				
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
+				return ClassLoadServiceUtility.getStaticLoadBalancing(currDisSetup.getStaticLoadBalancingClass(), myAgent);
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 			
 		} else {

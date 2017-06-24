@@ -37,6 +37,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import agentgui.core.application.Application;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.ontologies.reflection.ReflectClassFiles;
 
 /**
@@ -123,22 +124,22 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		
 		// --- Add node AID 'Agent-Identifier' ------------
 		try {
-			Class<?> AIDClass = Class.forName(BaseClassAID);
-			this.aidNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, AIDClass) );			
+			Class<?> AIDClass = ClassLoadServiceUtility.forName(BaseClassAID);
+			this.aidNode = new DefaultMutableTreeNode(new OntologyClassTreeObject(currOntoClass, AIDClass));			
 		} catch (ClassNotFoundException e) {
 			//e.printStackTrace();
 			System.out.println( "Could not find AID-Class !!!" );
-			this.aidNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, "AID") );
+			this.aidNode = new DefaultMutableTreeNode(new OntologyClassTreeObject(currOntoClass, "AID"));
 		}
-		this.conceptNode.add( aidNode );
+		this.conceptNode.add(aidNode);
 		
 		// --- Add node 'AgentAction' ---------------------
-		this.aActionNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(currOntoClass, "AgentAction") );
-		this.conceptNode.add( aActionNode );		
+		this.aActionNode = new DefaultMutableTreeNode(new OntologyClassTreeObject(currOntoClass, "AgentAction"));
+		this.conceptNode.add(aActionNode);		
 
 		// --- Add node 'Predicate' -----------------------
-		this.predicateNode = new DefaultMutableTreeNode( new OntologyClassTreeObject(this.currOntoClass, "Predicate") );
-		this.rootNode.add( predicateNode );
+		this.predicateNode = new DefaultMutableTreeNode(new OntologyClassTreeObject(this.currOntoClass, "Predicate"));
+		this.rootNode.add(predicateNode);
 		
 	}
 	
@@ -265,9 +266,9 @@ public class OntologyClassTree extends DefaultTreeModel implements Serializable 
 		
     	try {
     		// --- Inspect the given class ---------------------
-    		Class<?> clazz = Class.forName(clazzName);
+    		Class<?> clazz = ClassLoadServiceUtility.forName(clazzName);
     		// --- Return object for Protege 3.3.1 -------------
-    		return getNewTreeNodeUserObject(clazz);
+    		return this.getNewTreeNodeUserObject(clazz);
 	    	
     	} catch (ClassNotFoundException cnfe) {
     		cnfe.printStackTrace();

@@ -31,6 +31,7 @@ package agentgui.envModel.graph.controller;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.envModel.graph.controller.BasicGraphGui.ToolBarSurrounding;
 import agentgui.envModel.graph.controller.BasicGraphGui.ToolBarType;
 
@@ -151,7 +152,7 @@ public class CustomToolbarComponentDescription implements Serializable {
 		
 		Class<? extends AbstractCustomToolbarComponent> clazz = null;
 		try {
-			clazz = (Class<? extends AbstractCustomToolbarComponent>) Class.forName(this.customComponentClassName);
+			clazz = (Class<? extends AbstractCustomToolbarComponent>) ClassLoadServiceUtility.forName(this.customComponentClassName);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

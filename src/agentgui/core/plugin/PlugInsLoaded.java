@@ -28,14 +28,13 @@
  */
 package agentgui.core.plugin;
 
-import jade.core.ProfileImpl;
-
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
 import agentgui.core.application.Language;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.project.Project;
+import jade.core.ProfileImpl;
 
 /**
  * This class represents the list of plug-in's, which are loaded in a single
@@ -60,34 +59,14 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 	public PlugIn loadPlugin(Project project, String plugInReference) throws PlugInLoadException {
 		
 		PlugIn plugIn = null;
-		Class<?> plugInClass = null;
-
-		// ----------------------------------------------------------
-		// --- Try to get the class for the PlugIn Reference --------
-		try {
-			plugInClass = (Class<?>) Class.forName(plugInReference);
-		} catch (ClassNotFoundException e) {
-			throw new PlugInLoadException(e);
-		}
-		if (plugInClass==null) return null; 
 		
 		// ----------------------------------------------------------
 		// --- If the plugIn-class WAS found  -----------------------
 		try {
+			plugIn = ClassLoadServiceUtility.getPlugInInstance(plugInReference, project);
 			
-			// --- look for the right constructor parameter ---------
-			Class<?>[] conParameter = new Class[1];
-			conParameter[0] = Project.class;
-		
-			// --- Get the constructor ------------------------------	
-			Constructor<?> plugInClassConstructor = plugInClass.getConstructor(conParameter);
-			
-			// --- Define the argument for the newInstance call ----- 
-			Object[] args = new Object[1];
-			args[0] = project;
-			
-			plugIn = (PlugIn) plugInClassConstructor.newInstance(args);
-			
+		} catch (ClassNotFoundException e) {
+			throw new PlugInLoadException(e);
 		} catch (SecurityException e) {
 			throw new PlugInLoadException(e);
 		} catch (NoSuchMethodException e) {

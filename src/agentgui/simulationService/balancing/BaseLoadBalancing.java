@@ -28,15 +28,6 @@
  */
 package agentgui.simulationService.balancing;
 
-import jade.core.Agent;
-import jade.core.Location;
-import jade.core.ServiceException;
-import jade.core.behaviours.OneShotBehaviour;
-import jade.wrapper.AgentController;
-import jade.wrapper.ContainerController;
-import jade.wrapper.ControllerException;
-import jade.wrapper.StaleProxyException;
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -46,6 +37,7 @@ import agentgui.core.agents.AgentClassElement4SimStart;
 import agentgui.core.agents.UtilityAgent.UtilityAgentJob;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.ontologies.gui.OntologyInstanceViewer;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
@@ -60,6 +52,13 @@ import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
+import jade.core.Agent;
+import jade.core.Location;
+import jade.core.ServiceException;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.wrapper.AgentController;
+import jade.wrapper.ContainerController;
+import jade.wrapper.ControllerException;
 
 /**
  * This class is the abstract super class for the dynamic and static load balancing.
@@ -231,9 +230,9 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		} else {
 			// --- Initialize the agent-class -------------
 			try {
-				@SuppressWarnings("unchecked")
-				Class<? extends Agent> agentClass = (Class<? extends Agent>) Class.forName(agentClassName);
+				Class<? extends Agent> agentClass = ClassLoadServiceUtility.getAgentClass(agentClassName);
 				return this.startAgent(nickName, agentClass, args, toLocation);
+				
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -278,7 +277,8 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 			if (startLocally==true) {
 				// --------------------------------------------------
 				// --- Start on this local container ----------------				
-				Agent agent = (Agent) agentClass.newInstance();
+				Agent agent = (Agent) ClassLoadServiceUtility.newInstance(agentClass.getName());
+				
 				agent.setArguments(args);
 				ac = cc.acceptNewAgent(nickName, agent);
 				ac.start();
@@ -308,7 +308,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 					// ----------------------------------------------
 					// --- START: 'Start and migrate' - procedure ---
 					// ----------------------------------------------
-					Agent agent = (Agent) agentClass.newInstance();
+					Agent agent = (Agent) ClassLoadServiceUtility.newInstance(agentClass.getName());
 					agent.setArguments(args);
 					ac = cc.acceptNewAgent(nickName, agent);
 					ac.start();
@@ -341,14 +341,8 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 				// --------------------------------------------------
 			}
 			
-		} catch (StaleProxyException e) {
-			e.printStackTrace();
-		} catch (ControllerException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}	
 		return false;
 	}

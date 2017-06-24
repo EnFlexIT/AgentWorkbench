@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.VersionInfo;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.LoadAgentMap;
@@ -1083,7 +1084,7 @@ public class LoadService extends BaseService {
 			try {
 				Agent agent = (Agent) ObjectManager.load(agentClassName, ObjectManager.AGENT_TYPE);
 				if (agent == null) {
-					agent = (Agent)Class.forName(agentClassName).newInstance();
+					agent = (Agent) ClassLoadServiceUtility.newInstance(agentClassName);
 				}
 				agent.setArguments(args);
 				myContainer.initAgent(agentID, agent, null, null);

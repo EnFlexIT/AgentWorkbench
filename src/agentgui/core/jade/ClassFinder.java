@@ -56,6 +56,8 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
+
 /**
  * This utility class was based originally on Daniel Le Berre's <code>RTSI</code>
  * class. This class can be called in different modes, but the principal use is
@@ -428,6 +430,6 @@ public class ClassFinder {
 	}
 
 	private Class callClassForName(String classname) throws ClassNotFoundException {
-		return Class.forName(classname, false, getClass().getClassLoader());
+		return ClassLoadServiceUtility.forName(classname);
 	}
 }

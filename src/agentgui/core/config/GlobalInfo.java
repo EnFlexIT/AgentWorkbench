@@ -51,6 +51,7 @@ import agentgui.core.application.Language;
 import agentgui.core.benchmark.BenchmarkMeasurement;
 import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
 import agentgui.core.charts.xyChart.XyChartVisualisation;
+import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.common.ClassLoaderUtil;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
@@ -473,11 +474,10 @@ public class GlobalInfo {
 	 */
 	public String getAppLnF() {
 		try {
-			@SuppressWarnings("unused")
-			Class<?> currOntoClass = Class.forName(localAppLnF);
+			ClassLoadServiceUtility.forName(localAppLnF);
 			return localAppLnF;
-		} catch (ClassNotFoundException e) {
-			//e.printStackTrace();
+		} catch (ClassNotFoundException cnfEx) {
+			//cnfEx.printStackTrace();
 		}
 		return null;
 	};
@@ -1449,18 +1449,17 @@ public class GlobalInfo {
 	 */
 	public OntologyClassVisualisation registerOntologyClassVisualisation(String classNameOfOntologyClassVisualisation) {
 		
+		OntologyClassVisualisation ontoClassVisualisation = null;
 		try {
 			if (this.isOntologyClassVisualisation(classNameOfOntologyClassVisualisation)==false) {
-				Class<?> clazz = Class.forName(classNameOfOntologyClassVisualisation);
-				OntologyClassVisualisation ontoClassVisualisation = (OntologyClassVisualisation) clazz.newInstance();
+				ontoClassVisualisation = ClassLoadServiceUtility.getOntologyClassVisualisationInstance(classNameOfOntologyClassVisualisation);
 				this.getKnownOntologyClassVisualisations().add(ontoClassVisualisation);	
-				return ontoClassVisualisation;
 			}
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return null;
+		return ontoClassVisualisation;
 	}
 	/**
 	 * Unregister an OntologyClassVisualisation.
